@@ -1,5 +1,5 @@
 import {ProseMirror} from "prosemirror/dist/edit/main"
-import {fidusFnSchema} from "../../schema/footnotes"
+import {fnSchema} from "../../schema/footnotes"
 import {collabEditing} from "prosemirror/dist/collab"
 import {elt} from "prosemirror/dist/util/dom"
 
@@ -11,7 +11,7 @@ export class ModFootnotes {
     constructor(editor) {
         editor.mod.footnotes = this
         this.editor = editor
-        this.schema = fidusFnSchema
+        this.schema = fnSchema
         this.footnotes = []
         this.init()
         this.bindEvents()

@@ -1,4 +1,4 @@
-import {BaseHTMLExporter} from "../html"
+import {BaseHTMLExporter} from "../html/base"
 import {obj2Node, node2Obj} from "../tools/json"
 import {BibliographyDB} from "../../bibliography/database"
 import {createSlug} from "../tools/file"

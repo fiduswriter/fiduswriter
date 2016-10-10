@@ -1,6 +1,6 @@
 import {obj2Node} from "../tools/json"
 import {createSlug} from "../tools/file"
-import {findImages} from "../tools/html"
+//import {findImages} from "../tools/html"
 import {zipFileCreator} from "../tools/zip"
 import {BibliographyDB} from "../../bibliography/database"
 import {ImageDB} from "../../images/database"
@@ -10,7 +10,7 @@ import {addAlert} from "../../common/common"
  * The importer will not import from a different version and the exporter
   * will include this number in all exports.
  */
-let FW_FILETYPE_VERSION = "1.2"
+let FW_FILETYPE_VERSION = "1.3"
 
 /** Create a Fidus Writer document and upload it to the server as a backup.
  * @function uploadNative
@@ -66,30 +66,64 @@ export class NativeExporter {
 }
 
 // used in copy
-export let exportNative = function(aDocument, anImageDB, aBibDB, callback) {
+export let exportNative = function(doc, anImageDB, aBibDB, callback) {
     let shrunkBibDB = {},
-        citeList = []
+        shrunkImageDB = {},
+        citeList = [],
+        imageList = [],
+        contents = obj2Node(doc.contents),
+        footnotesHtml = '',
+        httpIncludes = []
 
     addAlert('info', gettext('File export has been initiated.'))
 
-    let contents = obj2Node(aDocument.contents)
-
-    let images = findImages(contents)
-
-    let imageUrls = _.pluck(images, 'url')
-
-
-    let shrunkImageDB = _.filter(anImageDB, function(anImage) {
-        return (imageUrls.indexOf(anImage.image.split('?').shift()) !== -1)
+    jQuery(contents).find('figure').not("[data-image='']").each(function() {
+        imageList.push(parseInt(jQuery(this).attr('data-image')))
     })
+
 
     jQuery(contents).find('.citation').each(function() {
         citeList.push(jQuery(this).attr('data-bib-entry'))
     })
 
 
-    citeList = _.uniq(citeList.join(',').split(','))
+    jQuery(contents).find('.footnote-marker').each(function() {
+        footnotesHtml += jQuery(this).attr('contents')
+    })
 
+    if (doc.metadata.abstract) {
+        let abstract = obj2Node(doc.metadata.abstract)
+        jQuery(abstract).find('.citation').each(function() {
+            citeList.push(jQuery(this).attr('data-bib-entry'))
+        })
+        jQuery(abstract).find('.footnote-marker').each(function() {
+            footnotesHtml += jQuery(this).attr('contents')
+        })
+    }
+
+    if (footnotesHtml.length > 0) {
+        let fnDiv = document.createElement('div')
+        fnDiv.innerHTML = footnotesHtml
+        jQuery(fnDiv).find('.citation').each(function() {
+            citeList.push(jQuery(this).attr('data-bib-entry'))
+        })
+        jQuery(fnDiv).find('figure').not("[data-image='']").each(function() {
+            imageList.push(parseInt(jQuery(this).attr('data-image')))
+        })
+    }
+
+    imageList = _.uniq(imageList)
+
+    for (let image in imageList) {
+        let imageDbEntry = anImageDB[imageList[image]]
+        shrunkImageDB[imageList[image]] = imageDbEntry
+        httpIncludes.push({
+            url: imageDbEntry.image,
+            filename: imageDbEntry.image.split('/').pop()
+        })
+    }
+
+    citeList = _.uniq(citeList.join(',').split(','))
     // If the number of cited items is 1 and that one item is an empty string,
     // there are no cited items at all.
     if (citeList.length === 1 && citeList[0] === '') {
@@ -103,18 +137,27 @@ export let exportNative = function(aDocument, anImageDB, aBibDB, callback) {
         shrunkBibDB[citeList[i]] = aBibDB[citeList[i]]
     }
 
-    callback(aDocument, shrunkImageDB, shrunkBibDB, images)
+    let docCopy = _.clone(doc)
+
+    // Remove items that aren't needed.
+    delete(docCopy.comment_version)
+    delete(docCopy.access_rights)
+    delete(docCopy.version)
+    delete(docCopy.owner)
+    delete(docCopy.id)
+
+    callback(docCopy, shrunkImageDB, shrunkBibDB, httpIncludes)
 
 }
 
-let exportNativeFile = function(aDocument, shrunkImageDB,
+let exportNativeFile = function(doc, shrunkImageDB,
     shrunkBibDB, images, upload = false, editor = false) {
 
     let httpOutputList = images
 
     let outputList = [{
         filename: 'document.json',
-        contents: JSON.stringify(aDocument),
+        contents: JSON.stringify(doc),
     }, {
         filename: 'images.json',
         contents: JSON.stringify(shrunkImageDB)
@@ -127,6 +170,6 @@ let exportNativeFile = function(aDocument, shrunkImageDB,
     }]
 
     zipFileCreator(outputList, httpOutputList, createSlug(
-            aDocument.title) +
+            doc.title) +
         '.fidus', 'application/fidus+zip', false, upload, editor)
 }

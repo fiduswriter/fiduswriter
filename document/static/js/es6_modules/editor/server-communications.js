@@ -95,7 +95,7 @@ export class ModServerCommunications {
             case 'welcome':
                 this.activateConnection()
                 break
-            case 'document_data':
+            case 'doc_data':
                 this.editor.receiveDocument(data)
                 break
             case 'confirm_diff_version':

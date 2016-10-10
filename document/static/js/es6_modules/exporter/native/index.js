@@ -103,18 +103,27 @@ export let exportNative = function(doc, anImageDB, aBibDB, callback) {
         shrunkBibDB[citeList[i]] = aBibDB[citeList[i]]
     }
 
-    callback(doc, shrunkImageDB, shrunkBibDB, images)
+    let docCopy = _.clone(doc)
+
+    // Remove items that aren't needed.
+    delete(docCopy.comment_version)
+    delete(docCopy.access_rights)
+    delete(docCopy.version)
+    delete(docCopy.owner)
+    delete(docCopy.id)
+
+    callback(docCopy, shrunkImageDB, shrunkBibDB, images)
 
 }
 
-let exportNativeFile = function(aDocument, shrunkImageDB,
+let exportNativeFile = function(doc, shrunkImageDB,
     shrunkBibDB, images, upload = false, editor = false) {
 
     let httpOutputList = images
 
     let outputList = [{
         filename: 'document.json',
-        contents: JSON.stringify(aDocument),
+        contents: JSON.stringify(doc),
     }, {
         filename: 'images.json',
         contents: JSON.stringify(shrunkImageDB)
@@ -127,6 +136,6 @@ let exportNativeFile = function(aDocument, shrunkImageDB,
     }]
 
     zipFileCreator(outputList, httpOutputList, createSlug(
-            aDocument.title) +
+            doc.title) +
         '.fidus', 'application/fidus+zip', false, upload, editor)
 }

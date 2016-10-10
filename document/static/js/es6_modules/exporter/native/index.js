@@ -88,6 +88,15 @@ export let exportNative = function(doc, anImageDB, aBibDB, callback) {
     })
 
 
+    if (doc.metadata.abstract) {
+        let abstract = obj2Node(doc.metadata.abstract)
+        jQuery(abstract).find('.citation').each(function() {
+            citeList.push(jQuery(this).attr('data-bib-entry'))
+        })
+    }
+
+    // Todo: find images and citations in footnotes.
+
     citeList = _.uniq(citeList.join(',').split(','))
 
     // If the number of cited items is 1 and that one item is an empty string,

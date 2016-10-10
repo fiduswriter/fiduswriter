@@ -249,7 +249,7 @@ class Bold(InlineContent, ListOfInlineContent):
     Bold is [InlineContent]
     interpretation: inline content formatted as bold text
     """
-    template = '{"nn":"B","c":[%s]}'
+    template = '{"nn":"STRONG","c":[%s]}'
 
     def __str__(self):
         return self.template % ','.join([

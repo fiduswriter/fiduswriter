@@ -11,6 +11,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.db.models import Q
 from django.core.serializers.python import Serializer
+from django.contrib.admin.views.decorators import staff_member_required
 
 from avatar.utils import get_primary_avatar, get_default_avatar_url
 from avatar.templatetags.avatar_tags import avatar_url
@@ -388,6 +389,60 @@ def delete_revision_js(request):
             if document.owner == request.user:
                 status = 200
                 revision.delete()
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+# For upgrading old docs and to merge outstanding diffs.
+@staff_member_required
+def upgrade_all_docs(request):
+    response = {}
+    return render(request, 'document/upgrade_all_docs.html', response)
+
+
+@staff_member_required
+def get_all_docs_js(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 200
+        doc_list = Document.objects.all()
+        paginator = Paginator(docs, 25) # Get 10 docs per page
+
+        batch = request.POST['batch']
+        try:
+            response['docs'] = paginator.page(batch)
+        except EmptyPage:
+            response['docs'] = []
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@staff_member_required
+def save_doc_js(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 200
+        doc_id = request.POST['id']
+        doc = Document.objects.get(pk=int(revision_id))
+        # Only looking at fields that may have changed.
+        if request.POST['contents']:
+            doc.contents = request.POST['contents']
+        if request.POST['metadata']:
+            doc.metadata = request.POST['metadata']
+        if request.POST['settings']:
+            doc.settings = request.POST['settings']
+        if request.POST['version']:
+            doc.version = request.POST['version']
+        if request.POST['last_diffs']:
+            doc.version = request.POST['last_diffs']
+        if request.POST['diff_version']:
+            doc.version = request.POST['diff_version']
+        doc.save()
     return JsonResponse(
         response,
         status=status

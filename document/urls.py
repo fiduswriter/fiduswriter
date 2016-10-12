@@ -30,4 +30,19 @@ urlpatterns = [
         views.access_right_save_js,
         name='access_right_save_js'
     ),
+    url(
+        '^upgrade_all/$',
+        views.upgrade_all_documents_js,
+        name='upgrade_all_documents_js'
+    ),
+    url(
+        '^upgrade_all/get_all/$',
+        views.get_all_docs_js,
+        name='get_all_docs_js'
+    ),
+    url(
+        '^upgrade_all/save/$',
+        views.save_doc_js,
+        name='save_doc_js'
+    )
 ]

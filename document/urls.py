@@ -31,17 +31,17 @@ urlpatterns = [
         name='access_right_save_js'
     ),
     url(
-        '^upgrade_all/$',
-        views.upgrade_all_documents_js,
-        name='upgrade_all_documents_js'
+        '^update_all/$',
+        views.update_all_docs,
+        name='update_all_docs'
     ),
     url(
-        '^upgrade_all/get_all/$',
+        '^update_all/get_all/$',
         views.get_all_docs_js,
         name='get_all_docs_js'
     ),
     url(
-        '^upgrade_all/save/$',
+        '^update_all/save_doc/$',
         views.save_doc_js,
         name='save_doc_js'
     )

@@ -12,7 +12,7 @@ import {ModTools} from "./tools/mod"
 import {ModSettings} from "./settings/mod"
 import {ModMenus} from "./menus/mod"
 import {ModServerCommunications} from "./server-communications"
-import {editorToModel, modelToEditor, updateDoc} from "../schema/convert"
+import {editorToModel, modelToEditor, updateDoc, setDocDefaults} from "../schema/convert"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
 import {Paste} from "./paste/paste"
@@ -316,18 +316,7 @@ export class Editor {
         if (this.doc.version === 0) {
             // If the document is new, change the url. Then forget that the document is new.
             window.history.replaceState("", "", `/document/${this.doc.id}/`)
-
-            let defaultSettings = [
-                ['papersize', 1117],
-                ['citationstyle', defaultCitationStyle],
-                ['documentstyle', defaultDocumentStyle]
-            ]
-
-            defaultSettings.forEach(function(variable) {
-                if (that.doc.settings[variable[0]] === undefined) {
-                    that.doc.settings[variable[0]] = variable[1]
-                }
-            })
+            setDocDefaults(this.doc)
 
         }
     }

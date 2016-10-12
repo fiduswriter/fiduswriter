@@ -9,6 +9,20 @@ import {docSchema} from "../schema/document"
 import {defaultDocumentStyle} from "../style/documentstyle-list"
 import {defaultCitationStyle} from "../style/citation-definitions"
 
+export let setDocDefaults = function(doc) {
+    let defaultSettings = [
+        ['papersize', 1117],
+        ['citationstyle', defaultCitationStyle],
+        ['documentstyle', defaultDocumentStyle]
+    ]
+
+    defaultSettings.forEach(function(variable) {
+        if (doc.settings[variable[0]] === undefined) {
+            doc.settings[variable[0]] = variable[1]
+        }
+    })
+}
+
 export let updateDoc = function(doc) {
     /* This is to clean documents taking all the accepted formatting from older
        versions and outputting the current version of the doc format.
@@ -31,22 +45,13 @@ export let updateDoc = function(doc) {
             doc = JSON.parse(JSON.stringify(doc))
             doc.contents = newDoc.contents
             doc.metadata = newDoc.metadata
-            let defaultSettings = [
-                ['papersize', 1117],
-                ['citationstyle', defaultCitationStyle],
-                ['documentstyle', defaultDocumentStyle]
-            ]
-
-            defaultSettings.forEach(function(variable) {
-                if (doc.settings[variable[0]] === undefined) {
-                    doc.settings[variable[0]] = variable[1]
-                }
-            })
             doc.settings['doc_version'] = 0
         //case 0:
             // Here we add upgrades from version 0 once there is a higher version
             // number.
     }
+
+    setDocDefaults(doc)
 
     return doc
 

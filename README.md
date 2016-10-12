@@ -137,7 +137,7 @@ Advanced options
 
 ### Development/upgrade:
 
-  1. Before upgrading, update all your documents to the latest document version. An administrator needs to navigate to `/document/update_all/` on your server using a browser.
+  1. Before upgrading, update all your documents to the latest document version. An administrator needs to navigate to `/document/maintenance/` on your server using a browser.
 
   2. Download the updated sources. If you have installed Fidus Writer from github and the upgrade is minor, the command will likely be:
 
@@ -159,4 +159,4 @@ Advanced options
 
   > `./manage.py collectstatic`  
 
-  7. Update all the documents again to the latest document version. An administrator needs to navigate to `/document/update_all/` on your server using a browser.
+  7. Update all the documents again to the latest document version. An administrator needs to navigate to `/document/maintenance/` on your server using a browser.

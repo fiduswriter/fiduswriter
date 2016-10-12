@@ -4,12 +4,28 @@ import {collabEditing} from "prosemirror/dist/collab"
 import {modelToEditor, editorToModel, updateDoc, setDocDefaults} from "../../schema/convert"
 import {docSchema} from "../../schema/document"
 import {addAlert, csrfToken} from "../../common/common"
+import {Menu} from "../../menu/menu"
 
 // To apply all diffs to documents.
 
-export class UpdateAllDocs {
+export class DocMaintenance {
     constructor() {
         this.batch = 1
+        this.button = false
+        this.batchesDone = false
+        this.savesLeft = 0
+        new Menu('maintenance')
+    }
+
+    bind() {
+        let that = this
+        jQuery(document).on('click', 'button#update:not(.disabled)', function(){
+            that.button = this
+            jQuery(that.button).addClass('disabled fw-dark')
+            jQuery(that.button).removeClass('fw-orange')
+            jQuery(that.button).html(gettext('Updating'))
+            that.init()
+        })
     }
 
     init() {
@@ -19,7 +35,7 @@ export class UpdateAllDocs {
     getNewBatch() {
         let that = this
         jQuery.ajax({
-          url: "/document/update_all/get_all/",
+          url: "/document/maintenance/get_all/",
           type: 'POST',
           dataType: 'json',
           crossDomain: false, // obviates need for sameOrigin test
@@ -37,6 +53,11 @@ export class UpdateAllDocs {
                       that.fixDoc(doc)
                   })
                   that.getNewBatch()
+              } else {
+                  that.batchesDone = true
+                  if (that.savesLeft===0) {
+                      that.done()
+                  }
               }
           }
         })
@@ -100,10 +121,15 @@ export class UpdateAllDocs {
 
         doc.last_diffs = doc.last_diffs.slice(doc.last_diffs.length - unappliedDiffs)
         while (doc.last_diffs.length > 0) {
-            let diff = doc.last_diffs.shift()
-            let steps = [diff].map(j => Step.fromJSON(docSchema, j))
-            let client_ids = [diff].map(j => j.client_id)
-            pm.mod.collab.receive(steps, client_ids)
+            try {
+                let diff = doc.last_diffs.shift()
+                let steps = [diff].map(j => Step.fromJSON(docSchema, j))
+                let client_ids = [diff].map(j => j.client_id)
+                pm.mod.collab.receive(steps, client_ids)
+            } catch (error) {
+                addAlert('error', gettext('Discarded useless diffs for: ') + doc.id)
+                doc.last_diffs = []
+            }
         }
         let newDoc = editorToModel(pm.doc)
         doc.contents = newDoc.contents
@@ -119,19 +145,28 @@ export class UpdateAllDocs {
         doc.metadata = window.JSON.stringify(doc.metadata)
         doc.settings = window.JSON.stringify(doc.settings)
         doc.last_diffs = window.JSON.stringify(doc.last_diffs)
+        this.savesLeft++
         jQuery.ajax({
-            url: "/document/update_all/save_doc/",
+            url: "/document/maintenance/save_doc/",
             type: 'POST',
             dataType: 'json',
             crossDomain: false, // obviates need for sameOrigin test
             beforeSend: function(xhr, settings) {
-              xhr.setRequestHeader("X-CSRFToken", csrfToken)
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
             },
             data: doc,
             success: function(data) {
-             addAlert('success', gettext('The document has been updated: ') + doc.id)
+                addAlert('success', gettext('The document has been updated: ') + doc.id)
+                that.savesLeft--
+                if (that.savesLeft===0 && that.batchesDone) {
+                    that.done()
+                }
             }
         })
+    }
+
+    done() {
+        jQuery(this.button).html(gettext('Update done!'))
     }
 }
 

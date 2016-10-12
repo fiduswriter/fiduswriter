@@ -148,7 +148,7 @@ export class Editor {
             // We have unapplied diffs -- this hsould only happen if the last disconnect
             // happened before we could save. We try to apply the diffs and then save
             // immediately.
-            try{
+            try {
                 // We only try because this fails if the PM diff format has changed
                 // again.
                 while (this.docInfo.unapplied_diffs.length > 0) {

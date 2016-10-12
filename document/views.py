@@ -399,9 +399,9 @@ def delete_revision_js(request):
 
 # For upgrading old docs and to merge outstanding diffs.
 @staff_member_required
-def update_all_docs(request):
+def maintenance(request):
     response = {}
-    return render(request, 'document/update_all_docs.html', response)
+    return render(request, 'document/maintenance.html', response)
 
 
 @staff_member_required

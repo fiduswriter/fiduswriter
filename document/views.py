@@ -208,8 +208,6 @@ def get_reviewer_for_post(request):
             reviewer = create_user(request, u_data)
             reviewers = User.objects.filter(email=email)
             reviewer = reviewers[0]
-            # print (email)
-            # print (reviewers)
         return reviewer
     except ObjectDoesNotExist:
         print ("could not create user for email " + email)

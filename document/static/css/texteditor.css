@@ -136,7 +136,7 @@ body {
 }
 
 .editortoolbar #current-position {
-  max-width: 90px;
+  /*max-width: 90px;*/
   min-width: 62px;
   color: #000;
   background-color: #f2f2f2;

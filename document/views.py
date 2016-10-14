@@ -188,12 +188,7 @@ def login_user(request, u_name, u_pass):
             return user
         else:
             return False
-        # if request.user.is_authenticated():
-        #  logout(request)
-        # user = authenticate(username=u_name, password=u_pass)
-        # if user is not None:
-        #    login(request, user)
-        # return user
+
     except ObjectDoesNotExist:
         return False
 

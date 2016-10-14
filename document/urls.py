@@ -53,5 +53,19 @@ urlpatterns = [
         views.document_review_js,
         name='document_review_js'
     ),
-
+    url(
+        '^maintenance/$',
+        views.maintenance,
+        name='update_all_docs'
+    ),
+    url(
+        '^maintenance/get_all/$',
+        views.get_all_docs_js,
+        name='get_all_docs_js'
+    ),
+    url(
+        '^maintenance/save_doc/$',
+        views.save_doc_js,
+        name='save_doc_js'
+    )
 ]

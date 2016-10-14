@@ -10,7 +10,6 @@ class SessionUserInfo():
         self.user = None
         self.is_owner = False
         self.access_rights = 'read'
-        self.is_new = False
         self.document_id = 0
         self.access_rights = dict()
 
@@ -30,11 +29,9 @@ class SessionUserInfo():
             can_access = True
             self.is_owner = True
             self.access_rights = 'write'
-            self.is_new = True
             document = Document.objects.create(owner_id=self.user.id)
             self.document_id = document.id
         else:
-            self.is_new = False
             document = Document.objects.filter(id=int(document_id))
             if len(document) > 0:
                 document = document[0]

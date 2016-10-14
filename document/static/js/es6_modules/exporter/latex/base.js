@@ -1,8 +1,8 @@
-import {BaseExporter} from "../html/base"
+import {BaseDOMExporter} from "../tools/dom-export"
 import {obj2Node} from "../tools/json"
 import {BibLatexExporter} from "../../bibliography/exporter/biblatex"
 
-export class BaseLatexExporter extends BaseExporter {
+export class BaseLatexExporter extends BaseDOMExporter {
 
     findLatexDocumentFeatures(htmlCode, title, author,
         subtitle, keywords, specifiedAuthors,
@@ -203,12 +203,12 @@ export class BaseLatexExporter extends BaseExporter {
         this.replaceText(htmlCode, '\u000E', '')
         this.replaceText(htmlCode, '\u000F', '')
 
-        jQuery(htmlCode).find('i').each(function() {
+        jQuery(htmlCode).find('em').each(function() {
             jQuery(this).replaceWith('\\emph{' + this.innerHTML +
                 '}')
         })
 
-        jQuery(htmlCode).find('b').each(function() {
+        jQuery(htmlCode).find('strong').each(function() {
             jQuery(this).replaceWith('\\textbf{' + this.innerHTML +
                 '}')
         })

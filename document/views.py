@@ -2,6 +2,7 @@ import time
 from django.shortcuts import render
 from django.apps import apps
 from django.shortcuts import redirect
+from django.core import serializers
 from django.http import HttpResponse, JsonResponse, HttpRequest
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
@@ -16,6 +17,8 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.db.models import Q
 from django.core.serializers.python import Serializer
+from django.contrib.admin.views.decorators import staff_member_required
+from django.core.paginator import Paginator, EmptyPage
 
 from avatar.utils import get_primary_avatar, get_default_avatar_url
 from avatar.templatetags.avatar_tags import avatar_url
@@ -633,6 +636,70 @@ def delete_revision_js(request):
             if document.owner == request.user:
                 status = 200
                 revision.delete()
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+# For upgrading old docs and to merge outstanding diffs.
+@staff_member_required
+def maintenance(request):
+    response = {}
+    return render(request, 'document/maintenance.html', response)
+
+
+@staff_member_required
+def get_all_docs_js(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 200
+        doc_list = Document.objects.all()
+        paginator = Paginator(doc_list, 10)  # Get 10 docs per page
+
+        batch = request.POST['batch']
+        try:
+            response['docs'] = serializers.serialize(
+                'json',
+                paginator.page(batch)
+            )
+        except EmptyPage:
+            response['docs'] = "[]"
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@staff_member_required
+def save_doc_js(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 200
+        doc_id = request.POST['id']
+        doc = Document.objects.get(pk=int(doc_id))
+        # Only looking at fields that may have changed.
+        contents = request.POST.get('contents', False)
+        metadata = request.POST.get('metadata', False)
+        settings = request.POST.get('settings', False)
+        last_diffs = request.POST.get('last_diffs', False)
+        diff_version = request.POST.get('diff_version', False)
+        version = request.POST.get('version', False)
+        if contents:
+            doc.contents = contents
+        if metadata:
+            doc.metadata = metadata
+        if settings:
+            doc.settings = settings
+        if version:
+            doc.version = version
+        if last_diffs:
+            doc.last_diffs = last_diffs
+        if diff_version:
+            doc.diff_version = diff_version
+        doc.save()
     return JsonResponse(
         response,
         status=status

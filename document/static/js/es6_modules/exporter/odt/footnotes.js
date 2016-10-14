@@ -1,7 +1,7 @@
 import {OdtExporterCitations} from "./citations"
 import {OdtExporterImages} from "./images"
 import {OdtExporterRichtext} from "./richtext"
-import {fidusFnSchema} from "../../schema/footnotes"
+import {fnSchema} from "../../schema/footnotes"
 import {noSpaceTmp} from "../../common/common"
 import {descendantNodes} from "../tools/pmJSON"
 
@@ -110,7 +110,7 @@ export class OdtExporterFootnotes {
         })
         let fnNode = document.createElement('div')
         fnNode.innerHTML = fnHTML
-        this.fnPmJSON = fidusFnSchema.parseDOM(fnNode).toJSON()
+        this.fnPmJSON = fnSchema.parseDOM(fnNode).toJSON()
     }
 
 }

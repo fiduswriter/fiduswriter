@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Document Update" %}{% endblock %}
+{% block extraheaders %}
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/registration.css" />
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/alerts.css" />
+    <!--  Translations -->
+    <script type="text/javascript" src="/jsi18n/"></script>
+    <!-- jQuery -->
+    <script type="text/javascript" src="{{ JQUERY_URL }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/maintenance.es5.js"></script>
+{% endblock %}
+{% block contents %}
+    <div class ="fw-login-left">
+        <h1 class="fw-login-title">{% trans "Document Maintenance" %}</h1>
+        <p>
+            {% blocktrans %}
+            Before and after upgrading Fidus Writer, you should update all the documents
+            of all users to the newest document version. Only do this if you know that
+            no user is currently editing any document!
+            {% endblocktrans %}
+        </p>
+    </div>
+    <div class="fw-login-right">
+        <button id="update" class="fw-button fw-orange">{% trans "Update all documents (DANGER!)" %}</button>
+    </div>
+{% endblock %}

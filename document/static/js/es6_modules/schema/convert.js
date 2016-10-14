@@ -4,10 +4,61 @@
 import {node2Obj, obj2Node} from "../exporter/tools/json"
 import {nodeToDOM} from "prosemirror/dist/model/to_dom"
 import {parseDOM} from "prosemirror/dist/model/from_dom"
-import {fidusSchema} from "../schema/document"
+import {docSchema} from "../schema/document"
 
+import {defaultDocumentStyle} from "../style/documentstyle-list"
+import {defaultCitationStyle} from "../style/citation-definitions"
+
+export let setDocDefaults = function(doc) {
+    let defaultSettings = [
+        ['papersize', 1117],
+        ['citationstyle', defaultCitationStyle],
+        ['documentstyle', defaultDocumentStyle]
+    ]
+
+    defaultSettings.forEach(function(variable) {
+        if (doc.settings[variable[0]] === undefined) {
+            doc.settings[variable[0]] = variable[1]
+        }
+    })
+}
+
+export let updateDoc = function(doc) {
+    /* This is to clean documents taking all the accepted formatting from older
+       versions and outputting the current version of the doc format.
+       We achieve this by parsing doc -> pmDoc -> doc and copying the contents
+       and metadata of the output.
+    */
+
+    // We version the parts of the document. Notice that this isn't the same as
+    // the versions of FW files. While the FW file version refers to what files
+    // there could be, the doc_version refers to how the data is stored in those
+    // files
+
+
+    let docVersion = doc.settings['doc_version']
+
+    switch(docVersion) {
+        case undefined:
+            // Fidus Writer 1.1-3.0
+            let newDoc = editorToModel(modelToEditor(doc))
+            doc = JSON.parse(JSON.stringify(doc))
+            doc.contents = newDoc.contents
+            doc.metadata = newDoc.metadata
+            doc.settings['doc_version'] = 0
+        //case 0:
+            // Here we add upgrades from version 0 once there is a higher version
+            // number.
+    }
+
+    setDocDefaults(doc)
+
+    return doc
+
+}
 
 export let modelToEditor = function(doc) {
+
     // We start with a document of which we use the metadata and contents entries.
     let editorNode = document.createElement('div'),
         titleNode = doc.metadata.title ? obj2Node(doc.metadata.title) : document.createElement('div'),
@@ -31,19 +82,7 @@ export let modelToEditor = function(doc) {
     editorNode.appendChild(keywordsNode)
     editorNode.appendChild(contentsNode)
 
-    // In order to stick with the format used in Fidus Writer 1.1-2.0,
-    // we do a few smaller modifications to the node before it is saved.
-
-    let fnNodes = editorNode.querySelectorAll('span.footnote')
-
-      for (let i = 0; i < fnNodes.length; i++) {
-          let newNode = document.createElement('span')
-          newNode.setAttribute('contents',fnNodes[i].innerHTML)
-          newNode.classList.add('footnote-marker')
-          fnNodes[i].parentNode.replaceChild(newNode, fnNodes[i])
-      }
-
-      let pmDoc = parseDOM(fidusSchema, editorNode, {
+      let pmDoc = parseDOM(docSchema, editorNode, {
           preserveWhitespace: true
       })
 
@@ -56,39 +95,6 @@ export let editorToModel = function(pmDoc) {
     // we do a few smaller modifications to the node before it is saved.
     let node = pmDoc.content.toDOM()
 
-    // Turn <span class='footnote-marker' contents='<p>...</p>'></span> into
-    // <span classs='footnote'><p>...</p></span>
-    let fnNodes = node.querySelectorAll('.footnote-marker')
-
-    for (let i = 0; i < fnNodes.length; i++) {
-        let newNode = document.createElement('span')
-        newNode.innerHTML = fnNodes[i].getAttribute('contents')
-        newNode.classList.add('footnote')
-        fnNodes[i].parentNode.replaceChild(newNode, fnNodes[i])
-    }
-
-    // Turn <strong>...</strong> into <b>...</b>
-    let strongNodes = node.querySelectorAll('strong')
-
-    for (let i = 0; i < strongNodes.length; i++) {
-        let newNode = document.createElement('b')
-        while (strongNodes[i].firstChild) {
-            newNode.appendChild(strongNodes[i].firstChild)
-        }
-        strongNodes[i].parentNode.replaceChild(newNode, strongNodes[i])
-    }
-
-    // Turn <em>...</em> into <i>...</i>
-    let emNodes = node.querySelectorAll('em')
-
-    for (let i = 0; i < emNodes.length; i++) {
-        let newNode = document.createElement('i')
-        while (emNodes[i].firstChild) {
-            newNode.appendChild(emNodes[i].firstChild)
-        }
-        emNodes[i].parentNode.replaceChild(newNode, emNodes[i])
-    }
-
     // Remove katex contents of <span class="equation" >
     let mathNodes = node.querySelectorAll('span.equation')
 
@@ -97,16 +103,6 @@ export let editorToModel = function(pmDoc) {
             mathNodes[i].removeChild(mathNodes[i].firstChild)
         }
     }
-
-    // TODO: Possibly enable this, but only for saving on server, not for exports.
-    // Remove all rendered contents (equations and images) of figures.
-    //let figureNodes = node.querySelectorAll('figure')
-    //
-    //for (let i = 0; i < figureNodes.length; i++) {
-    //    while (figureNodes[i].firstChild) {
-    //        figureNodes[i].removeChild(figureNodes[i].firstChild)
-    //    }
-    //}
 
     // Remove all contenteditable attributes
     let ceNodes = node.querySelectorAll('[contenteditable]')

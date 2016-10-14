@@ -60,23 +60,23 @@ class DocumentWS(BaseWebSocketHandler):
 
     def send_document(self):
         response = dict()
-        response['type'] = 'document_data'
-        response['document'] = dict()
-        response['document']['id'] = self.doc['id']
-        response['document']['version'] = self.doc['version']
+        response['type'] = 'doc_data'
+        response['doc'] = dict()
+        response['doc']['id'] = self.doc['id']
+        response['doc']['version'] = self.doc['version']
         if self.doc['diff_version'] < self.doc['version']:
             print('!!!diff version issue!!!')
             self.doc['diff_version'] = self.doc['version']
             self.doc["last_diffs"] = []
-        response['document']['title'] = self.doc['title']
-        response['document']['contents'] = self.doc['contents']
-        response['document']['metadata'] = self.doc['metadata']
-        response['document']['settings'] = self.doc['settings']
+        response['doc']['title'] = self.doc['title']
+        response['doc']['contents'] = self.doc['contents']
+        response['doc']['metadata'] = self.doc['metadata']
+        response['doc']['settings'] = self.doc['settings']
         document_owner = self.doc['db'].owner
         access_rights = get_accessrights(
             AccessRight.objects.filter(
                 document__owner=document_owner))
-        response['document']['access_rights'] = access_rights
+        response['doc']['access_rights'] = access_rights
 
         # TODO: switch on filtering when choose workflow and have UI for
         # assigning roles to users
@@ -89,45 +89,44 @@ class DocumentWS(BaseWebSocketHandler):
         # TODO momenifi: The rights that were in this field do not exit in the
         # list of possible rights in models.py. Is it 'review' you meant here?
         if (self.user_info.access_rights != 'review'):
-            response['document']['comments'] = self.doc["comments"]
+            response['doc']['comments'] = self.doc["comments"]
         # response['document']['comments'] = filtered_comments
-        response['document']['comment_version'] = self.doc["comment_version"]
-        response['document']['access_rights'] = get_accessrights(
+        response['doc']['comment_version'] = self.doc["comment_version"]
+        response['doc']['access_rights'] = get_accessrights(
             AccessRight.objects.filter(document__owner=document_owner))
-        response['document']['owner'] = dict()
-        response['document']['owner']['id'] = document_owner.id
-        response['document']['owner']['name'] = document_owner.readable_name
-        response['document']['owner'][
+        response['doc']['owner'] = dict()
+        response['doc']['owner']['id'] = document_owner.id
+        response['doc']['owner']['name'] = document_owner.readable_name
+        response['doc']['owner'][
             'avatar'] = avatar_url(document_owner, 80)
-        response['document']['owner']['team_members'] = []
+        response['doc']['owner']['team_members'] = []
 
         for team_member in document_owner.leader.all():
             tm_object = dict()
             tm_object['id'] = team_member.member.id
             tm_object['name'] = team_member.member.readable_name
             tm_object['avatar'] = avatar_url(team_member.member, 80)
-            response['document']['owner']['team_members'].append(tm_object)
-        response['document_values'] = dict()
-        response['document_values']['is_owner'] = self.user_info.is_owner
-        response['document_values']['rights'] = self.user_info.access_rights
+            response['doc']['owner']['team_members'].append(tm_object)
+        response['doc_info'] = dict()
+        response['doc_info']['is_owner'] = self.user_info.is_owner
+        response['doc_info']['rights'] = self.user_info.access_rights
         if self.doc['version'] > self.doc['diff_version']:
             print('!!!diff version issue!!!')
             self.doc['diff_version'] = self.doc['version']
             self.doc["last_diffs"] = []
         elif self.doc['diff_version'] > self.doc['version']:
             needed_diffs = self.doc['diff_version'] - self.doc['version']
-            response['document_values']['last_diffs'] = self.doc[
+            # We only send those diffs needed by the receiver.
+            response['doc_info']['unapplied_diffs'] = self.doc[
                 "last_diffs"][-needed_diffs:]
         else:
-            response['document_values']['last_diffs'] = []
-        if self.user_info.is_new:
-            response['document_values']['is_new'] = True
+            response['doc_info']['unapplied_diffs'] = []
         if not self.user_info.is_owner:
             response['user'] = dict()
             response['user']['id'] = self.user_info.user.id
             response['user']['name'] = self.user_info.user.readable_name
             response['user']['avatar'] = avatar_url(self.user_info.user, 80)
-        response['document_values']['session_id'] = self.id
+        response['doc_info']['session_id'] = self.id
         self.write_message(response)
 
     def on_message(self, message):
@@ -147,7 +146,7 @@ class DocumentWS(BaseWebSocketHandler):
         elif parsed["type"] == 'selection_change':
             self.handle_selection_change(message, parsed)
         elif (
-            parsed["type"] == 'update_document' and
+            parsed["type"] == 'update_doc' and
             self.can_update_document()
         ):
             self.handle_document_update(parsed)
@@ -180,6 +179,7 @@ class DocumentWS(BaseWebSocketHandler):
         self.doc['title'] = changes['title']
         self.doc['contents'] = changes['contents']
         self.doc['metadata'] = changes['metadata']
+        self.doc['settings'] = changes['settings']
         self.doc['version'] = changes['version']
 
     def update_title(self, title):
@@ -221,12 +221,12 @@ class DocumentWS(BaseWebSocketHandler):
         DocumentWS.send_participant_list(self.user_info.document_id)
 
     def handle_document_update(self, parsed):
-        self.update_document(parsed["document"])
+        self.update_document(parsed["doc"])
         DocumentWS.save_document(self.user_info.document_id, False)
         message = {
             "type": 'check_hash',
-            "diff_version": parsed["document"]["version"],
-            "hash": parsed["document"]["hash"]
+            "diff_version": parsed["doc"]["version"],
+            "hash": parsed["hash"]
         }
         DocumentWS.send_updates(message, self.user_info.document_id, self.id)
 

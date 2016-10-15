@@ -109,14 +109,7 @@ export class ModMenusUpdateUI {
         const startElement = start.node(1)
         const currentElement = start.node(2)
         const endElement = end.node(1)
-	if(start.depth >2)
-	{
-	   jQuery('#button-table').css('display','none')
-	}
-	else
-	{
-	   jQuery('#button-table').css('display','')
-	}
+
         if (startElement !== endElement) {
             /* Selection goes across document parts or across footnotes */
             this.calculatePlaceHolderCss(pm)
@@ -132,20 +125,6 @@ export class ModMenusUpdateUI {
             if (currentPm === pm) {
                 this.calculatePlaceHolderCss(pm, startElement)
                 jQuery('#current-position').html(PART_LABELS[startElement.type.name])
-                // to hide/show table manipulation button	       
-		 if(currentElement !== undefined){                
-			switch (currentElement.type.name)
-			{		
-				case 'table':	
-	                	jQuery('#tableEdit').css('display','')
-				break
-                     		default:
-				jQuery('#tableEdit').css('display','none')
-				break
-			}
-		}
-		else{jQuery('#tableEdit').css('display','none')
-		}
                 switch (startElement.type.name) {
                     case 'title':
                     case 'subtitle':

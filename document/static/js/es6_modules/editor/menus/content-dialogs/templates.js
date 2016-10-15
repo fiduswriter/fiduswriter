@@ -4,12 +4,110 @@ export let linkDialogTemplate = _.template('\
         <p><input class="link" type="text" value="<%- link  %>" placeholder="' + gettext("Link") + '"/></p>\
     </div>\
 ')
-export let tableDialogTemplate = _.template('\
-    <div title="' + gettext("table") + '">\
-        <p><input id="nrows" class="rows" type="number" min="1" title="Should be a positive integer" value="" placeholder="' + gettext("number of rows") + '"/></p>\
-        <p><input id="ncol" class="cols" type="number" min="1" title="Should be a positive integer" value="" placeholder="' + gettext("number of columns") + '"/></p>\
-    </div>\
-')
+export let tableInsertTemplate = _.template(`
+    <li>
+        <table class="insert-table-selection">
+            <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+        </table>
+        <div class="ui-dialog-buttonset">
+            <button class="ui-button fw-button fw-dark table-insert">` + gettext("Insert") + `</button>
+        </div>
+    </li>
+`)
+
+export let tableEditTemplate = _.template(`
+    <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+        <span class="ui-button-text" title="` + gettext("Insert row after")+ `">
+            <input type="radio" >
+            <label class="fw-pulldown-item row-after">` + gettext("Insert row after")+ `</label>
+        </span>
+    </li>
+    <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+        <span class="ui-button-text" title="` + gettext("Insert row before")+ `">
+            <input type="radio" >
+            <label class="fw-pulldown-item row-before">` + gettext("Insert row before")+ `</label>
+        </span>
+    </li>
+    <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+        <span class="ui-button-text" title="` + gettext("Insert column after")+ `">
+            <input type="radio" >
+            <label class="fw-pulldown-item col-after">` + gettext("Insert column after")+ `</label>
+        </span>
+    </li>
+    <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+        <span class="ui-button-text" title="` + gettext("Insert column before")+ `">
+            <input type="radio" >
+            <label class="fw-pulldown-item col-before">` + gettext("Insert column before")+ `</label>
+        </span>
+    </li>
+    <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+        <span class="ui-button-text" title="` + gettext("Remove column")+ `">
+            <input type="radio" >
+            <label class="fw-pulldown-item col-remove">` + gettext("Remove column")+ `</label>
+        </span>
+    </li>
+    <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+        <span class="ui-button-text" title="` + gettext("Remove row")+ `">
+            <input type="radio" >
+            <label class="fw-pulldown-item row-remove">` + gettext("Remove row")+ `</label>
+        </span>
+    </li>
+    <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+        <span class="ui-button-text" title="` + gettext("Remove table")+ `">
+            <input type="radio" >
+            <label class="fw-pulldown-item table-remove">` + gettext("Remove table")+ `</label>
+        </span>
+    </li>
+`)
+
 export let mathDialogTemplate = _.template('\
     <div title="' + gettext("Math") + '">\
         <p><span class="math-field-header">Type formula here: </span><span class="math-field" type="text" name="math" ></span></p>\

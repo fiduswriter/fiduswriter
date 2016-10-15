@@ -1,31 +1,18 @@
-/**
- * Default DropKick theme
- *
- * Feel free to edit the default theme
- * or even add your own.
- *
- * See the readme for theming help
- *
- */
-
-/***** Begin Theme, feel free to edit in here! ******/
-
-/* One container to bind them... */
-.dk_container {
+.dk-select {
     background: -moz-linear-gradient(top, #fdfdfe, #eaeaea);
     background: -webkit-gradient(linear, left top, left bottom, from(#fdfdfe), to(#eaeaea));
     line-height: 34px;
     height: 36px;
 }
-.dk_container:focus {
+.dk-select:focus {
     outline: 0;
 }
-.dk_container a {
+.dk-select a {
     cursor: pointer;
     text-decoration: none;
 }
 /* Opens the dropdown and holds the menu label */
-.dk_toggle {
+.dk-selected {
     overflow: hidden;
     white-space: nowrap;
     background-repeat: no-repeat;
@@ -33,7 +20,7 @@
     padding: 0 4px;
     height: 34px;
 }
-.dk_toggle:after {
+/*.dk-selected:after {
     display: block;
     position: absolute;
     right: 10px;
@@ -45,27 +32,36 @@
     line-height: 34px;
     content: '\f0dc';
     font-size: 10px;
+}*/
+
+
+.dk-select-open-down .dk-selected {
+    border-color: #ccc;
 }
 
-/* Applied whenever the dropdown is open */
-.dk_open {
-    z-index: 10;
+.dk-select-open-up .dk-selected:after, .dk-select-open-down .dk-selected:after {
+    border-left-color: #ccc;
 }
-
+.dk-select-open-up .dk-selected:before, .dk-select-open-down .dk-selected:before {
+    border-bottom-color: #ccc;
+}
 /* The outer container of the options */
-.dk_options a {
+.dk-select-open-down .dk-select-options {
+    border-color: #ccc;
+}
+
+.dk-option {
     background-color: #fff;
     border-bottom: 1px solid #ccc;
     padding: 0 4px;
     height: 24px;
     line-height: 24px;
 }
-.dk_options a:hover, .dk_option_current a {
+.dk-select-options .dk-option-highlight, .dk-select-options .dk-option-selected {
     background-color: #c9c9c9;
-    text-decoration: none;
 }
 /* Inner container for options, this is what makes the scrollbar possible. */
-.dk_options_inner {
+.dk-select-options_inner {
     border: 1px solid #ccc;
     border-top-width: 0;
     border-bottom-width: 0;
@@ -73,68 +69,19 @@
     padding: 0;
 }
 /* Set a max-height on the options inner */
-.dk_options_inner, .dk_touch .dk_options {
+.dk-select-options_inner, .dk_touch .dk-select-options {
     max-height: 185px;
 }
-/******  End Theme ******/
 
-/***** Critical to the continued enjoyment of working dropdowns ******/
+.dk-selected:hover, .dk-selected:focus {
+  outline: none;
+  border-color: #b73717;
+}
 
-.dk_container {
-    display: none;
-    float: left;
-    position: relative;
+ .dk-selected:hover:before, .dk-selected:focus:before {
+     border-top-color: #b73717;
+ }
+
+.dk-selected:hover:after, .dk-selected:focus:after {
+    border-left-color: #b73717;
 }
-.dk_container a {
-    outline: 0;
-}
-.dk_toggle {
-    display: -moz-inline-stack;
-    display: inline-block;
-    *
-    display: inline;
-    position: relative;
-    zoom: 1;
-}
-.dk_toggle > .dk_label {
-    display: block;
-    height: 100%;
-    width: auto;
-    overflow: hidden;
-    margin-right: 30px;
-}
-.dk_open {
-    position: relative;
-}
-.dk_open .dk_options {
-    display: block;
-}
-.dk_open .dk_label {
-    color: inherit;
-}
-.dk_options {
-    display: none;
-    position: absolute;
-    right: 0;
-    width: 100%;
-}
-.dk_options a, .dk_options a:link, .dk_options a:visited {
-    display: block;
-}
-.dk_options_inner {
-    overflow-y: scroll;
-    position: relative;
-}
-.dk_touch .dk_options {
-    overflow: hidden;
-}
-.dk_touch .dk_options_inner {
-    max-height: none;
-    overflow: visible;
-}
-.dk_fouc select {
-    position: relative;
-    top: -99999em;
-    visibility: hidden;
-}
-/***** End Critical to the continued enjoyment of working dropdowns ******/

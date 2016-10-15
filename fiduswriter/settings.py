@@ -322,7 +322,6 @@ JS_LOCATIONS = {
     'JQUERYUI_URL': STATIC_URL + 'js/libs/jquery-ui.min.js',
     'UNDERSCOREJS_URL': STATIC_URL + 'js/libs/underscore-min.js',
     'DATATABLES_URL': STATIC_URL + 'js/libs/jquery.dataTables.min.js',
-    'DROPKICKJS_URL': STATIC_URL + 'js/libs/dropkick.min.js',
     'CITEPROC_URL': STATIC_URL + 'js/libs/citeproc.js'
 }
 

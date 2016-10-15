@@ -136,7 +136,7 @@ body {
 }
 
 .editortoolbar #current-position {
-  max-width: 90px;
+  /*max-width: 90px;*/
   min-width: 62px;
   color: #000;
   background-color: #f2f2f2;
@@ -173,7 +173,7 @@ body {
     display: block;
     position: absolute;
     right: 10px;
-    top: 7px;
+    top: 0px;
     font-family: 'fontello';
     font-style: normal;
     font-weight: normal;
@@ -437,6 +437,7 @@ body {counter-reset: pagination-footnote pagination-footnote-reference;}
 }
 .ProseMirror-content table {
   border-collapse: collapse;
+  margin: 10px 0 10px 0;
 }
 .ProseMirror-content td {
   vertical-align: top;
@@ -566,4 +567,33 @@ margin-left: 1em;
     font-size:2em;
     vertical-align:middle;
     display: none;
+}
+
+#table-dialog li {
+    padding: 0 11px;
+}
+
+table.insert-table-selection {
+    margin: 10px 0 10px 0;
+}
+
+table.insert-table-selection, table.insert-table-selection td {
+    border: 1px solid #ddd;
+}
+
+table.insert-table-selection td {
+    min-width: 30px;
+    height: 18px;
+}
+
+table.insert-table-selection td.hover {
+    background-color: #c9c9c9;
+}
+
+table.insert-table-selection td.selected {
+    background-color: #4f4d4f;
+}
+
+table.insert-table-selection td.selected.hover {
+    background-color: #585858;
 }

@@ -1,7 +1,7 @@
-#book-dialog td .dk_toggle {
+#book-dialog td .dk-selected, #book-dialog td .dk-select-options {
     width: 486px !important;
 }
 
-#book-dialog th .dk_toggle {
+#book-dialog th .dk-selected, #book-dialog th .dk-select-options {
     width: 140px !important;
 }

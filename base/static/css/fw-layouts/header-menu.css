@@ -46,7 +46,7 @@
 .fw-nav-item.active-menu-wrapper:after {
     position: absolute;
     left: 50%;
-    top: 37px;
+    top: 25px;
     display: block;
     font-family: 'fontello';
     content: '\25b4';

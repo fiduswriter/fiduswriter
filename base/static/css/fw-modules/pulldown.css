@@ -43,7 +43,7 @@
 
 .fw-pulldown:after {
     position: absolute;
-    top: -2px;
+    top: -9px;
     display: block;
     font-family: 'fontello';
     content: '\25b4';

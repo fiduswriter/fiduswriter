@@ -270,7 +270,7 @@ export class Editor {
         } else {
             jQuery('#editor-navigation').show()
             jQuery('.metadata-menu-item, #open-close-header, .save, \
-          .multibuttonsCover, .papersize-menu, .metadata-menu, \
+          .papersize-menu, .metadata-menu, \
           .documentstyle-menu, .citationstyle-menu').removeClass('disabled')
             if (this.docInfo.is_owner) {
                 // bind the share dialog to the button if the user is the document owner
@@ -283,7 +283,7 @@ export class Editor {
             }
             else {
                 jQuery('.metadata-menu-item, #open-close-header, .save, \
-              .multibuttonsCover, .papersize-menu, .metadata-menu, \
+              .papersize-menu, .metadata-menu, \
               .documentstyle-menu, .citationstyle-menu').removeClass('disabled')
             }
         }

@@ -87,11 +87,8 @@ export class DocxExporterTables {
     getSideMargins() {
         if (!this.sideMargins) {
             let marginsEl = this.styleXml.querySelector('style[*|styleId="TableGrid"]')
-            window.styleXML = this.styleXml
-            console.log(marginsEl)
             if (!marginsEl) {
                 marginsEl = this.styleXml.querySelector('style[*|styleId="TableNormal"] tblCellMar')
-                console.log(marginsEl)
             }
             let leftEl = marginsEl.querySelector('left')
             let rightEl = marginsEl.querySelector('right')

@@ -1,6 +1,7 @@
 import {DocxExporterRels} from "./rels"
 import {DocxExporterCitations} from "./citations"
 import {DocxExporterImages} from "./images"
+import {DocxExporterLists} from "./lists"
 import {DocxExporterRichtext} from "./richtext"
 import {fnSchema} from "../../schema/footnotes"
 import {noSpaceTmp} from "../../common/common"
@@ -68,6 +69,7 @@ export class DocxExporterFootnotes {
         this.htmlFootnotes = [] // footnotes in HTML
         this.fnXml = false
         this.ctXml = false
+        this.styleXml = false
         this.filePath = 'word/footnotes.xml'
         this.ctFilePath = "[Content_Types].xml"
         this.settingsFilePath = 'word/settings.xml'
@@ -94,8 +96,15 @@ export class DocxExporterFootnotes {
                 this.rels,
                 this.fnPmJSON
             )
+            this.lists = new DocxExporterLists(
+                this.exporter,
+                this.rels,
+                this.fnPmJSON
+            )
             return this.rels.init().then(function(){
                 return that.images.init()
+            }).then(function() {
+                return that.lists.init()
             }).then(function() {
                 return that.initCt()
             }).then(function() {
@@ -139,7 +148,7 @@ export class DocxExporterFootnotes {
     }
 
     addStyle(styleName, xml) {
-        if (!this.styleXml.querySelector(`style[styleid="${styleName}"]`)) {
+        if (!this.styleXml.querySelector(`style[*|styleId="${styleName}"]`)) {
             let stylesEl = this.styleXml.querySelector('styles')
             stylesEl.insertAdjacentHTML('beforeend', xml)
         }

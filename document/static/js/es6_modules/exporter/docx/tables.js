@@ -65,7 +65,7 @@ export class DocxExporterTables {
         }
         if (!this.styleXml.querySelector(`style[*|styleId="TableNormal"]`)) {
             let stylesEl = this.styleXml.querySelector('styles')
-            stylesEl.insertAdjacentHTML('beforeend', DEFAULT_TABLENORMAL_XML)
+            stylesEl.insertAdjacentHTML('beforeEnd', DEFAULT_TABLENORMAL_XML)
         }
         this.addTableNormalStyle = true
     }
@@ -79,7 +79,7 @@ export class DocxExporterTables {
         }
         if (!this.styleXml.querySelector('style[*|styleId="TableGrid"]')) {
             let stylesEl = this.styleXml.querySelector('styles')
-            stylesEl.insertAdjacentHTML('beforeend', DEFAULT_TABLEGRID_XML)
+            stylesEl.insertAdjacentHTML('beforeEnd', DEFAULT_TABLEGRID_XML)
         }
         this.addTableGridStyle = true
     }

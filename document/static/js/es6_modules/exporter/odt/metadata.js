@@ -30,7 +30,7 @@ export class OdtExporterMetadata {
         // Title
         let titleEl = this.metaXml.querySelector('title')
         if (!titleEl) {
-            metaEl.insertAdjacentHTML('beforeend', '<dc:title></dc:title>')
+            metaEl.insertAdjacentHTML('beforeEnd', '<dc:title></dc:title>')
             titleEl = this.metaXml.querySelector('title')
         }
         titleEl.innerHTML = escapeText(this.metadata.title)
@@ -45,13 +45,13 @@ export class OdtExporterMetadata {
         }
         let allAuthorsEl = this.metaXml.querySelector('creator')
         if (!allAuthorsEl) {
-            metaEl.insertAdjacentHTML('beforeend', '<dc:creator></dc:creator>')
+            metaEl.insertAdjacentHTML('beforeEnd', '<dc:creator></dc:creator>')
             allAuthorsEl = this.metaXml.querySelector('creator')
         }
         allAuthorsEl.innerHTML = allAuthors
         let initialAuthorEl = this.metaXml.querySelector('initial-creator')
         if (!initialAuthorEl) {
-            metaEl.insertAdjacentHTML('beforeend', '<meta:initial-creator></meta:initial-creator>')
+            metaEl.insertAdjacentHTML('beforeEnd', '<meta:initial-creator></meta:initial-creator>')
             initialAuthorEl = this.metaXml.querySelector('initial-creator')
         }
         initialAuthorEl.innerHTML = initialAuthor
@@ -65,7 +65,7 @@ export class OdtExporterMetadata {
         // Add new keywords
         let keywords = this.metadata.keywords.split(/[,;]/).map(entry => entry.trim()).filter(entry => entry.length)
         keywords.forEach(function(keyword){
-            metaEl.insertAdjacentHTML('beforeend', `<meta:keyword>${keyword}</meta:keyword>`)
+            metaEl.insertAdjacentHTML('beforeEnd', `<meta:keyword>${keyword}</meta:keyword>`)
         })
 
         // time
@@ -75,7 +75,7 @@ export class OdtExporterMetadata {
         createdEl.innerHTML = dateString
         let dateEl = this.metaXml.querySelector('date')
         if (!dateEl) {
-            metaEl.insertAdjacentHTML('beforeend', '<dc:date></dc:date>')
+            metaEl.insertAdjacentHTML('beforeEnd', '<dc:date></dc:date>')
             dateEl = this.metaXml.querySelector('date')
         }
         dateEl.innerHTML = `${dateString}.000000000`

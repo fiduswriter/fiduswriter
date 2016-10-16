@@ -30,7 +30,7 @@ export class DocxExporterMetadata {
         // Title
         let titleEl = this.coreXml.querySelector('title')
         if (!titleEl) {
-            corePropertiesEl.insertAdjacentHTML('beforeend', '<dc:title></dc:title>')
+            corePropertiesEl.insertAdjacentHTML('beforeEnd', '<dc:title></dc:title>')
             titleEl = this.coreXml.querySelector('title')
         }
         titleEl.innerHTML = escapeText(this.metadata.title)
@@ -45,13 +45,13 @@ export class DocxExporterMetadata {
         }
         let allAuthorsEl = this.coreXml.querySelector('creator')
         if (!allAuthorsEl) {
-            corePropertiesEl.insertAdjacentHTML('beforeend', '<dc:creator></dc:creator>')
+            corePropertiesEl.insertAdjacentHTML('beforeEnd', '<dc:creator></dc:creator>')
             allAuthorsEl = this.coreXml.querySelector('creator')
         }
         allAuthorsEl.innerHTML = allAuthors
         let lastAuthorEl = this.coreXml.querySelector('lastModifiedBy')
         if (!lastAuthorEl) {
-            corePropertiesEl.insertAdjacentHTML('beforeend', '<dc:lastModifiedBy></dc:lastModifiedBy>')
+            corePropertiesEl.insertAdjacentHTML('beforeEnd', '<dc:lastModifiedBy></dc:lastModifiedBy>')
             lastAuthorEl = this.coreXml.querySelector('lastModifiedBy')
         }
         lastAuthorEl.innerHTML = lastAuthor
@@ -59,7 +59,7 @@ export class DocxExporterMetadata {
         // Keywords
         let keywordsEl = this.coreXml.querySelector('keywords')
         if (!keywordsEl) {
-            corePropertiesEl.insertAdjacentHTML('beforeend', '<dc:keywords></dc:keywords>')
+            corePropertiesEl.insertAdjacentHTML('beforeEnd', '<dc:keywords></dc:keywords>')
             keywordsEl = this.coreXml.querySelector('keywords')
         }
         keywordsEl.innerHTML = escapeText(this.metadata.keywords)
@@ -71,7 +71,7 @@ export class DocxExporterMetadata {
         createdEl.innerHTML = dateString
         let modifiedEl = this.coreXml.querySelector('modified')
         if (!modifiedEl) {
-            corePropertiesEl.insertAdjacentHTML('beforeend', '<dcterms:modified xsi:type="dcterms:W3CDTF"></dcterms:modified>')
+            corePropertiesEl.insertAdjacentHTML('beforeEnd', '<dcterms:modified xsi:type="dcterms:W3CDTF"></dcterms:modified>')
             modifiedEl = this.coreXml.querySelector('modified')
         }
         modifiedEl.innerHTML = dateString

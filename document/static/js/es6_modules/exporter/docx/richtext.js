@@ -66,7 +66,7 @@ export class DocxExporterRichtext {
             case 'ordered_list':
                 options = _.clone(options)
                 options.section = 'ListParagraph'
-                options.list_type = '1'
+                options.list_type = this.exporter.lists.getNumberedType()
                 if (options.list_depth === undefined) {
                     options.list_depth = 0
                 } else {
@@ -76,7 +76,7 @@ export class DocxExporterRichtext {
             case 'bullet_list':
                 options = _.clone(options)
                 options.section = 'ListParagraph'
-                options.list_type = '2'
+                options.list_type = this.exporter.lists.getBulletType()
                 if (options.list_depth === undefined) {
                     options.list_depth = 0
                 } else {

@@ -10,12 +10,11 @@ import {DocxExporterRels} from "./rels"
 import {DocxExporterFootnotes} from "./footnotes"
 import {DocxExporterMetadata} from "./metadata"
 import {DocxExporterMath} from "./math"
+import {DocxExporterTables} from "./tables"
+import {DocxExporterLists} from "./lists"
 
 /*
-Exporter to Microsoft Word.
-
-This exporter is experimental.
-
+Exporter to Office Open XML docx (Microsoft Word)
 */
 
 export class DocxExporter {
@@ -41,12 +40,14 @@ export class DocxExporter {
         // throughout the application in the future.
         this.pmJSON = createPmJSON(this.doc)
         this.docTitle = textContent(this.pmJSON.content[0])
+        this.tables = new DocxExporterTables(this)
         this.math = new DocxExporterMath(this)
         this.metadata = new DocxExporterMetadata(this, this.pmJSON)
         this.footnotes = new DocxExporterFootnotes(this, this.pmJSON)
         this.render = new DocxExporterRender(this, this.pmJSON)
         this.rels = new DocxExporterRels(this, 'document')
         this.images = new DocxExporterImages(this, this.imageDB, this.rels, that.pmJSON)
+        this.lists = new DocxExporterLists(this, this.rels, that.pmJSON)
         this.citations = new DocxExporterCitations(this, this.bibDB, this.pmJSON)
         this.richtext = new DocxExporterRichtext(
             this,
@@ -61,6 +62,8 @@ export class DocxExporter {
         this.xml.init().then(() => {
                 return that.metadata.init()
             }).then(() => {
+                return that.tables.init()
+            }).then(() => {
                 return that.math.init()
             }).then(() => {
                 return that.render.init()
@@ -68,6 +71,8 @@ export class DocxExporter {
                 return that.rels.init()
             }).then(() => {
                 return that.images.init()
+            }).then(() => {
+                return that.lists.init()
             }).then(() => {
                 return that.footnotes.init()
             }).then(() => {

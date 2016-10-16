@@ -82,5 +82,14 @@ export class DocxExporterRels {
         return rId
     }
 
+    addNumberingRel() {
+        let rels = this.xml.querySelector('Relationships')
+        let rId = this.maxRelId + 1
+        let string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/>`
+        rels.insertAdjacentHTML('beforeend', string)
+        this.maxRelId = rId
+        return rId
+    }
+
 
 }

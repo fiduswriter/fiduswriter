@@ -169,6 +169,20 @@ export class OdtExporterRichtext {
                     ` + end
                 }
                 break
+            case 'table':
+                let columns = node.content[0].content.length
+                start += '<table:table>'
+                start += `<table:table-column table:number-columns-repeated="${columns}" />`
+                end = '</table:table>' + end
+                break
+            case 'table_row':
+                start += '<table:table-row>'
+                end = '</table:table-row>' + end
+                break
+            case 'table_cell':
+                start += '<table:table-cell>'
+                end = '</table:table-cell>' + end
+                break
             case 'equation':
                 let latex = node.attrs.equation
                 let objectNumber = this.exporter.math.addMath(latex)

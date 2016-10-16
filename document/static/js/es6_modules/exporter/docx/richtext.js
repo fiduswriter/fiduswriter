@@ -195,9 +195,13 @@ export class DocxExporterRichtext {
                     let cy = imgDBEntry.height * 9525 // height in EMU
                     // Shrink image if too large for paper.
                     if (options.dimensions) {
-                        if (cx > options.dimensions.width) {
+                        let width = options.dimensions.width
+                        if (options.tableSideMargins) {
+                            width = width - options.tableSideMargins
+                        }
+                        if (cx > width) {
                             let rel = cy/cx
-                            cx = options.dimensions.width
+                            cx = width
                             cy = cx * rel
                         }
                         if (cy > options.dimensions.height) {
@@ -274,6 +278,46 @@ export class DocxExporterRichtext {
                     end += noSpaceTmp`
                         </w:p>`
                 }
+                break
+            case 'table':
+                this.exporter.tables.addTableGridStyle()
+                start += noSpaceTmp`
+                    <w:tbl>
+                        <w:tblPr>
+                            <w:tblStyle w:val="TableGrid" />
+                            <w:tblW w:w="0" w:type="auto" />
+                            <w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1" />
+                        </w:tblPr>
+                        <w:tblGrid>`
+                let cellWidth = 63500 // standard width
+                let columns = node.content[0].content.length
+                options = _.clone(options)
+                if (options.dimensions && options.dimensions.width) {
+                    cellWidth = parseInt(options.dimensions.width / columns) - 2540 // subtracting for border width
+                } else if (!options.dimensions) {
+                    options.dimensions = {}
+                }
+                options.dimensions =  _.clone(options.dimensions)
+                options.dimensions.width = cellWidth
+                options.tableSideMargins = this.exporter.tables.getSideMargins()
+                for (let i=0;i<columns;i++) {
+                    start += `<w:gridCol w:w="${parseInt(cellWidth / 635)}" />`
+                }
+                start += '</w:tblGrid>'
+                end = '</w:tbl>' + end
+
+                break
+            case 'table_row':
+                start += '<w:tr>'
+                end = '</w:tr>' + end
+                break
+            case 'table_cell':
+                start += noSpaceTmp`
+                    <w:tc>
+                        <w:tcPr>
+                            <w:tcW w:w="${parseInt(options.dimensions.width  / 635)}" w:type="dxa" />
+                        </w:tcPr>`
+                end = '</w:tc>' + end
                 break
             case 'equation':
                 let latex = node.attrs.equation

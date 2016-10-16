@@ -52,7 +52,7 @@ export class DocxExporterMath {
     getOmml(latex) {
         if(!this.addedCambriaMath) {
             let fontsEl = this.fontTableXml.querySelector('fonts')
-            fontsEl.insertAdjacentHTML('beforeend', CAMBRIA_MATH_FONT_DECLARATION)
+            fontsEl.insertAdjacentHTML('beforeEnd', CAMBRIA_MATH_FONT_DECLARATION)
             this.addedCambriaMath = true
         }
         let mathml = TeXZilla.toMathML(latex)

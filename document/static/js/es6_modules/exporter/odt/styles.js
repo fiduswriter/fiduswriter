@@ -70,7 +70,7 @@ export class OdtExporterStyles {
         }
         this.boldStyleId = ++this.inlineStyleCounter
         let autoStylesEl = this.contentXml.querySelector('automatic-styles')
-        autoStylesEl.insertAdjacentHTML('beforeend', noSpaceTmp`
+        autoStylesEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
             <style:style style:name="T${this.boldStyleId}" style:family="text">
                 <style:text-properties fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
             </style:style>
@@ -84,7 +84,7 @@ export class OdtExporterStyles {
         }
         this.italicStyleId = ++this.inlineStyleCounter
         let autoStylesEl = this.contentXml.querySelector('automatic-styles')
-        autoStylesEl.insertAdjacentHTML('beforeend', noSpaceTmp`
+        autoStylesEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
             <style:style style:name="T${this.italicStyleId}" style:family="text">
                 <style:text-properties fo:font-style="italic" style:font-style-asian="italic" style:font-style-complex="italic"/>
             </style:style>
@@ -98,7 +98,7 @@ export class OdtExporterStyles {
         }
         this.boldItalicStyleId = ++this.inlineStyleCounter
         let autoStylesEl = this.contentXml.querySelector('automatic-styles')
-        autoStylesEl.insertAdjacentHTML('beforeend', noSpaceTmp`
+        autoStylesEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
             <style:style style:name="T${this.boldItalicStyleId}" style:family="text">
                 <style:text-properties fo:font-style="italic" style:font-style-asian="italic" style:font-style-complex="italic" fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
             </style:style>
@@ -113,7 +113,7 @@ export class OdtExporterStyles {
             let stylesEl = this.stylesXml.querySelector('styles')
             let displayName = styleName.split('_20_').join(' ')
             stylesEl.insertAdjacentHTML(
-                'beforeend',
+                'beforeEnd',
                 `<style:style style:name="${styleName}" style:display-name="${displayName}" style:family="paragraph" style:parent-style-name="Standard" style:class="text" />`
             )
         }
@@ -125,7 +125,7 @@ export class OdtExporterStyles {
         if ((!stylesParStyle) && (!contentParStyle)) {
             let stylesEl = this.stylesXml.querySelector('styles')
             stylesEl.insertAdjacentHTML(
-                'beforeend',
+                'beforeEnd',
                 GRAPHIC_STYLES[styleName]
             )
         }
@@ -138,7 +138,7 @@ export class OdtExporterStyles {
         }
         this.bulletListStyleId[0] = ++this.listStyleCounter
         let autoStylesEl = this.contentXml.querySelector('automatic-styles')
-        autoStylesEl.insertAdjacentHTML('beforeend', noSpaceTmp`
+        autoStylesEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
             <text:list-style style:name="L${this.bulletListStyleId[0]}">
                 <text:list-level-style-bullet text:level="1" text:style-name="Bullet_20_Symbols" text:bullet-char="•">
                     <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
@@ -202,7 +202,7 @@ export class OdtExporterStyles {
         }
         this.orderedListStyleId[0] = ++this.listStyleCounter
         let autoStylesEl = this.contentXml.querySelector('automatic-styles')
-        autoStylesEl.insertAdjacentHTML('beforeend', noSpaceTmp`
+        autoStylesEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
             <text:list-style style:name="L${this.orderedListStyleId[0]}">
                 <text:list-level-style-number text:level="1" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
                     <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
@@ -265,7 +265,7 @@ export class OdtExporterStyles {
         let parStyleId = ++this.blockStyleCounter
         let autoStylesEl = this.contentXml.querySelector('automatic-styles')
         autoStylesEl.insertAdjacentHTML(
-            'beforeend',
+            'beforeEnd',
             `<style:style style:name="P1" style:family="paragraph" style:parent-style-name="Standard" style:list-style-name="L1" />`
         )
         return parStyleId

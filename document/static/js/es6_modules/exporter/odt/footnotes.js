@@ -79,7 +79,7 @@ export class OdtExporterFootnotes {
     addStyle(styleName, xml) {
         if (!this.styleXml.querySelector(`style[*|name="${styleName}"]`)) {
             let stylesEl = this.styleXml.querySelector('styles')
-            stylesEl.insertAdjacentHTML('beforeend', xml)
+            stylesEl.insertAdjacentHTML('beforeEnd', xml)
         }
     }
 
@@ -89,7 +89,7 @@ export class OdtExporterFootnotes {
             oldFnStyleConfigEl.parentNode.removeChild(oldFnStyleConfigEl)
         }
         let stylesEl = this.styleXml.querySelector('styles')
-        stylesEl.insertAdjacentHTML('beforeend', DEFAULT_STYLE_FOOTNOTE_CONFIGURATION)
+        stylesEl.insertAdjacentHTML('beforeEnd', DEFAULT_STYLE_FOOTNOTE_CONFIGURATION)
     }
 
     findFootnotes() {

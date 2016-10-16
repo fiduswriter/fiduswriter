@@ -33,7 +33,7 @@ export class DocxExporterImages {
         let contentDec = types.querySelector('Default[Extension='+fileEnding+']')
         if (!contentDec) {
             let string = `<Default ContentType="image/${fileEnding}" Extension="${fileEnding}"/>`
-            types.insertAdjacentHTML('beforeend', string)
+            types.insertAdjacentHTML('beforeEnd', string)
         }
     }
 

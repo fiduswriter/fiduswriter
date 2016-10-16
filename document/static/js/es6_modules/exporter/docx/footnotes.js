@@ -133,7 +133,7 @@ export class DocxExporterFootnotes {
         let override = this.ctXml.querySelector(`Override[PartName="/${this.filePath}"]`)
         if (!override) {
             let types = this.ctXml.querySelector('Types')
-            types.insertAdjacentHTML('beforeend', `<Override PartName="/${this.filePath}" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footnotes+xml"/>`)
+            types.insertAdjacentHTML('beforeEnd', `<Override PartName="/${this.filePath}" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footnotes+xml"/>`)
         }
     }
 
@@ -150,7 +150,7 @@ export class DocxExporterFootnotes {
     addStyle(styleName, xml) {
         if (!this.styleXml.querySelector(`style[*|styleId="${styleName}"]`)) {
             let stylesEl = this.styleXml.querySelector('styles')
-            stylesEl.insertAdjacentHTML('beforeend', xml)
+            stylesEl.insertAdjacentHTML('beforeEnd', xml)
         }
     }
 
@@ -182,7 +182,7 @@ export class DocxExporterFootnotes {
         this.exporter.rels.addFootnoteRel()
         return this.exporter.xml.getXml(this.filePath, DEFAULT_XML).then(function(xml){
             let footnotesEl = xml.querySelector('footnotes')
-            footnotesEl.insertAdjacentHTML('beforeend', that.fnXml)
+            footnotesEl.insertAdjacentHTML('beforeEnd', that.fnXml)
             that.xml = xml
         })
     }
@@ -193,7 +193,7 @@ export class DocxExporterFootnotes {
             let footnotePr = settingsXml.querySelector('footnotePr')
             if (!footnotePr) {
                 let settingsEl = settingsXml.querySelector('settings')
-                settingsEl.insertAdjacentHTML('beforeend', DEFAULT_SETTINGS_XML)
+                settingsEl.insertAdjacentHTML('beforeEnd', DEFAULT_SETTINGS_XML)
             }
             that.settingsXml = settingsXml
             return window.Promise.resolve()

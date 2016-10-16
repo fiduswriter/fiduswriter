@@ -39,7 +39,7 @@ export class OdtExporterImages {
             imgManifest = manifestEl.querySelector(`file-entry[*|full-path="Pictures/${imgFileName}"]`)
         }
         let string = `  <manifest:file-entry manifest:full-path="Pictures/${imgFileName}" manifest:media-type="image/${fileNameEnding}"/>`
-        manifestEl.insertAdjacentHTML('beforeend', string)
+        manifestEl.insertAdjacentHTML('beforeEnd', string)
         return imgFileName
     }
 

@@ -41,9 +41,9 @@ export class OdtExporterMath {
         this.exporter.xml.addXmlFile(`Object ${objectNumber}/content.xml`, mathml)
         let manifestEl = this.manifestXml.querySelector('manifest')
         let stringOne = `<manifest:file-entry manifest:full-path="Object ${objectNumber}/content.xml" manifest:media-type="text/xml"/>`
-        manifestEl.insertAdjacentHTML('beforeend', stringOne)
+        manifestEl.insertAdjacentHTML('beforeEnd', stringOne)
         let stringTwo = `<manifest:file-entry manifest:full-path="Object ${objectNumber}/" manifest:version="1.2" manifest:media-type="application/vnd.oasis.opendocument.formula"/>`
-        manifestEl.insertAdjacentHTML('beforeend', stringTwo)
+        manifestEl.insertAdjacentHTML('beforeEnd', stringTwo)
         return objectNumber
     }
 

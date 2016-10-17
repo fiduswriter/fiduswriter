@@ -140,58 +140,19 @@ export class OdtExporterStyles {
         let autoStylesEl = this.contentXml.querySelector('automatic-styles')
         autoStylesEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
             <text:list-style style:name="L${this.bulletListStyleId[0]}">
-                <text:list-level-style-bullet text:level="1" text:style-name="Bullet_20_Symbols" text:bullet-char="•">
-                    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-                        <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="0.5in" fo:text-indent="-0.25in" fo:margin-left="0.5in" />
-                    </style:list-level-properties>
-                </text:list-level-style-bullet>
-                <text:list-level-style-bullet text:level="2" text:style-name="Bullet_20_Symbols" text:bullet-char="◦">
-                    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-                        <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="0.75in" fo:text-indent="-0.25in" fo:margin-left="0.75in" />
-                    </style:list-level-properties>
-                </text:list-level-style-bullet>
-                <text:list-level-style-bullet text:level="3" text:style-name="Bullet_20_Symbols" text:bullet-char="▪">
-                    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-                        <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1in" fo:text-indent="-0.25in" fo:margin-left="1in" />
-                    </style:list-level-properties>
-                </text:list-level-style-bullet>
-                <text:list-level-style-bullet text:level="4" text:style-name="Bullet_20_Symbols" text:bullet-char="•">
-                    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-                        <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.25in" fo:text-indent="-0.25in" fo:margin-left="1.25in" />
-                    </style:list-level-properties>
-                </text:list-level-style-bullet>
-                <text:list-level-style-bullet text:level="5" text:style-name="Bullet_20_Symbols" text:bullet-char="◦">
-                    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-                        <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.5in" fo:text-indent="-0.25in" fo:margin-left="1.5in" />
-                    </style:list-level-properties>
-                </text:list-level-style-bullet>
-                <text:list-level-style-bullet text:level="6" text:style-name="Bullet_20_Symbols" text:bullet-char="▪">
-                    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-                        <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.75in" fo:text-indent="-0.25in" fo:margin-left="1.75in" />
-                    </style:list-level-properties>
-                </text:list-level-style-bullet>
-                <text:list-level-style-bullet text:level="7" text:style-name="Bullet_20_Symbols" text:bullet-char="•">
-                    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-                        <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2in" fo:text-indent="-0.25in" fo:margin-left="2in" />
-                    </style:list-level-properties>
-                </text:list-level-style-bullet>
-                <text:list-level-style-bullet text:level="8" text:style-name="Bullet_20_Symbols" text:bullet-char="◦">
-                    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-                        <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.25in" fo:text-indent="-0.25in" fo:margin-left="2.25in" />
-                    </style:list-level-properties>
-                </text:list-level-style-bullet>
-                <text:list-level-style-bullet text:level="9" text:style-name="Bullet_20_Symbols" text:bullet-char="▪">
-                    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-                        <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.5in" fo:text-indent="-0.25in" fo:margin-left="2.5in" />
-                    </style:list-level-properties>
-                </text:list-level-style-bullet>
-                <text:list-level-style-bullet text:level="10" text:style-name="Bullet_20_Symbols" text:bullet-char="•">
-                    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-                        <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.75in" fo:text-indent="-0.25in" fo:margin-left="2.75in" />
-                    </style:list-level-properties>
-                </text:list-level-style-bullet>
             </text:list-style>
         `)
+        let listStyleEl = autoStylesEl.lastChild
+        // ODT files seem to contain ten levels of lists (1-10)
+        for(let level=1;level<11;level++) {
+            listStyleEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
+                <text:list-level-style-bullet text:level="${level}" text:style-name="Bullet_20_Symbols" text:bullet-char="•">
+                    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+                        <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="${(level+1)*0.25}in" fo:text-indent="-0.25in" fo:margin-left="${(level+1)*0.25}in" />
+                    </style:list-level-properties>
+                </text:list-level-style-bullet>
+            `)
+        }
         this.bulletListStyleId[1] = this.addListParStyle(this.bulletListStyleId[0])
         return this.bulletListStyleId
     }
@@ -204,58 +165,19 @@ export class OdtExporterStyles {
         let autoStylesEl = this.contentXml.querySelector('automatic-styles')
         autoStylesEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
             <text:list-style style:name="L${this.orderedListStyleId[0]}">
-                <text:list-level-style-number text:level="1" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-                    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-                        <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="0.5in" fo:text-indent="-0.25in" fo:margin-left="0.5in" />
-                    </style:list-level-properties>
-                </text:list-level-style-number>
-                <text:list-level-style-number text:level="2" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-                    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-                        <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="0.75in" fo:text-indent="-0.25in" fo:margin-left="0.75in" />
-                    </style:list-level-properties>
-                </text:list-level-style-number>
-                <text:list-level-style-number text:level="3" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-                    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-                        <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1in" fo:text-indent="-0.25in" fo:margin-left="1in" />
-                    </style:list-level-properties>
-                </text:list-level-style-number>
-                <text:list-level-style-number text:level="4" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-                    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-                        <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.25in" fo:text-indent="-0.25in" fo:margin-left="1.25in" />
-                    </style:list-level-properties>
-                </text:list-level-style-number>
-                <text:list-level-style-number text:level="5" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-                    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-                        <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.5in" fo:text-indent="-0.25in" fo:margin-left="1.5in" />
-                    </style:list-level-properties>
-                </text:list-level-style-number>
-                <text:list-level-style-number text:level="6" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-                    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-                        <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.75in" fo:text-indent="-0.25in" fo:margin-left="1.75in" />
-                    </style:list-level-properties>
-                </text:list-level-style-number>
-                <text:list-level-style-number text:level="7" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-                    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-                        <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2in" fo:text-indent="-0.25in" fo:margin-left="2in" />
-                    </style:list-level-properties>
-                </text:list-level-style-number>
-                <text:list-level-style-number text:level="8" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-                    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-                        <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.25in" fo:text-indent="-0.25in" fo:margin-left="2.25in" />
-                    </style:list-level-properties>
-                </text:list-level-style-number>
-                <text:list-level-style-number text:level="9" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-                    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-                        <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.5in" fo:text-indent="-0.25in" fo:margin-left="2.5in" />
-                    </style:list-level-properties>
-                </text:list-level-style-number>
-                <text:list-level-style-number text:level="10" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-                    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-                        <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.75in" fo:text-indent="-0.25in" fo:margin-left="2.75in" />
-                    </style:list-level-properties>
-                </text:list-level-style-number>
             </text:list-style>
         `)
+        let listStyleEl = autoStylesEl.lastChild
+        // ODT files seem to contain ten levels of lists (1-10)
+        for(let level=1;level<11;level++) {
+            listStyleEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
+                <text:list-level-style-number text:level="${level}" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+                    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+                        <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="${(level+1)*.25}in" fo:text-indent="-0.25in" fo:margin-left="${(level+1)*.25}in" />
+                    </style:list-level-properties>
+                </text:list-level-style-number>
+            `)
+        }
         this.orderedListStyleId[1] = this.addListParStyle(this.orderedListStyleId[0])
         return this.orderedListStyleId
     }

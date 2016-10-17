@@ -175,7 +175,7 @@ export class DocxExporterLists {
             </w:num>
         `)
         let newAbstractNum = this.numberingXml.querySelector(`abstractNum[*|abstractNumId="${abstractNumId}"]`)
-        // Definition seem to always define 8 levels.
+        // Definition seem to always define 9 levels (0-8).
         for(let level = 0; level < 9; level++) {
             newAbstractNum.insertAdjacentHTML('beforeEnd', noSpaceTmp`
                 <w:lvl w:ilvl="${level}" w:tplc="04090001" w:tentative="1">
@@ -214,7 +214,7 @@ export class DocxExporterLists {
             </w:abstractNum>
         `)
         let newAbstractNum = this.numberingXml.querySelector(`abstractNum[*|abstractNumId="${abstractNumId}"]`)
-        // Definition seem to always define 8 levels.
+        // Definition seem to always define 9 levels (0-8).
         for(let level = 0; level < 9; level++) {
             newAbstractNum.insertAdjacentHTML('beforeEnd', noSpaceTmp`
                 <w:lvl w:ilvl="${level}" w:tplc="0409000F">

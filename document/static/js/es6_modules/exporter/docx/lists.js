@@ -109,14 +109,16 @@ export class DocxExporterLists {
         let that = this
         let allAbstractNum = [].slice.call(this.numberingXml.querySelectorAll('abstractNum'))
         allAbstractNum.forEach((abstractNum) => {
-            // We check the format for the lowest level list and use the first one we find  for 'bullet' or 'decimal'.
+            // We check the format for the lowest level list and use the first one we find  for 'bullet' or 'not bullet'
+            // This means that if a list is defined using anything else than bullets, it will be accepted as the format of
+            // the numeric list.
             let levelZeroFormat = abstractNum.querySelector('lvl[*|ilvl="0"] numFmt').getAttribute('w:val')
             let abstractNumId = parseInt(abstractNum.getAttribute('w:abstractNumId'))
             if(levelZeroFormat==='bullet' && !(that.bulletAbstractType)) {
                 let numEl = that.numberingXml.querySelector(`abstractNumId[*|val="${abstractNumId}"]`).parentElement
                 let numId = parseInt(numEl.getAttribute('w:numId'))
                 that.bulletType = numId
-            } else if(levelZeroFormat==='decimal' && !(that.numberedAbstractType)) {
+            } else if(levelZeroFormat!=='bullet' && !(that.numberedAbstractType)) {
                 that.numberedAbstractType = abstractNumId
             }
             if(that.maxAbstractNumId < abstractNumId) {
@@ -167,119 +169,30 @@ export class DocxExporterLists {
                 <w:nsid w:val="3620195A" />
                 <w:multiLevelType w:val="hybridMultilevel" />
                 <w:tmpl w:val="A74C9E6A" />
-                <w:lvl w:ilvl="0" w:tplc="04090001">
-                    <w:start w:val="1" />
-                    <w:numFmt w:val="bullet" />
-                    <w:lvlText w:val="" />
-                    <w:lvlJc w:val="left" />
-                    <w:pPr>
-                        <w:ind w:left="720" w:hanging="360" />
-                    </w:pPr>
-                    <w:rPr>
-                        <w:rFonts w:ascii="Symbol" w:hAnsi="Symbol" w:hint="default" />
-                    </w:rPr>
-                </w:lvl>
-                <w:lvl w:ilvl="1" w:tplc="04090003" w:tentative="1">
-                    <w:start w:val="1" />
-                    <w:numFmt w:val="bullet" />
-                    <w:lvlText w:val="o" />
-                    <w:lvlJc w:val="left" />
-                    <w:pPr>
-                        <w:ind w:left="1440" w:hanging="360" />
-                    </w:pPr>
-                    <w:rPr>
-                        <w:rFonts w:ascii="Courier New" w:hAnsi="Courier New" w:cs="Courier New" w:hint="default" />
-                    </w:rPr>
-                </w:lvl>
-                <w:lvl w:ilvl="2" w:tplc="04090005" w:tentative="1">
-                    <w:start w:val="1" />
-                    <w:numFmt w:val="bullet" />
-                    <w:lvlText w:val="" />
-                    <w:lvlJc w:val="left" />
-                    <w:pPr>
-                        <w:ind w:left="2160" w:hanging="360" />
-                    </w:pPr>
-                    <w:rPr>
-                        <w:rFonts w:ascii="Wingdings" w:hAnsi="Wingdings" w:hint="default" />
-                    </w:rPr>
-                </w:lvl>
-                <w:lvl w:ilvl="3" w:tplc="04090001" w:tentative="1">
-                    <w:start w:val="1" />
-                    <w:numFmt w:val="bullet" />
-                    <w:lvlText w:val="" />
-                    <w:lvlJc w:val="left" />
-                    <w:pPr>
-                        <w:ind w:left="2880" w:hanging="360" />
-                    </w:pPr>
-                    <w:rPr>
-                        <w:rFonts w:ascii="Symbol" w:hAnsi="Symbol" w:hint="default" />
-                    </w:rPr>
-                </w:lvl>
-                <w:lvl w:ilvl="4" w:tplc="04090003" w:tentative="1">
-                    <w:start w:val="1" />
-                    <w:numFmt w:val="bullet" />
-                    <w:lvlText w:val="o" />
-                    <w:lvlJc w:val="left" />
-                    <w:pPr>
-                        <w:ind w:left="3600" w:hanging="360" />
-                    </w:pPr>
-                    <w:rPr>
-                        <w:rFonts w:ascii="Courier New" w:hAnsi="Courier New" w:cs="Courier New" w:hint="default" />
-                    </w:rPr>
-                </w:lvl>
-                <w:lvl w:ilvl="5" w:tplc="04090005" w:tentative="1">
-                    <w:start w:val="1" />
-                    <w:numFmt w:val="bullet" />
-                    <w:lvlText w:val="" />
-                    <w:lvlJc w:val="left" />
-                    <w:pPr>
-                        <w:ind w:left="4320" w:hanging="360" />
-                    </w:pPr>
-                    <w:rPr>
-                        <w:rFonts w:ascii="Wingdings" w:hAnsi="Wingdings" w:hint="default" />
-                    </w:rPr>
-                </w:lvl>
-                <w:lvl w:ilvl="6" w:tplc="04090001" w:tentative="1">
-                    <w:start w:val="1" />
-                    <w:numFmt w:val="bullet" />
-                    <w:lvlText w:val="" />
-                    <w:lvlJc w:val="left" />
-                    <w:pPr>
-                        <w:ind w:left="5040" w:hanging="360" />
-                    </w:pPr>
-                    <w:rPr>
-                        <w:rFonts w:ascii="Symbol" w:hAnsi="Symbol" w:hint="default" />
-                    </w:rPr>
-                </w:lvl>
-                <w:lvl w:ilvl="7" w:tplc="04090003" w:tentative="1">
-                    <w:start w:val="1" />
-                    <w:numFmt w:val="bullet" />
-                    <w:lvlText w:val="o" />
-                    <w:lvlJc w:val="left" />
-                    <w:pPr>
-                        <w:ind w:left="5760" w:hanging="360" />
-                    </w:pPr>
-                    <w:rPr>
-                        <w:rFonts w:ascii="Courier New" w:hAnsi="Courier New" w:cs="Courier New" w:hint="default" />
-                    </w:rPr>
-                </w:lvl>
-                <w:lvl w:ilvl="8" w:tplc="04090005" w:tentative="1">
-                    <w:start w:val="1" />
-                    <w:numFmt w:val="bullet" />
-                    <w:lvlText w:val="" />
-                    <w:lvlJc w:val="left" />
-                    <w:pPr>
-                        <w:ind w:left="6480" w:hanging="360" />
-                    </w:pPr>
-                    <w:rPr>
-                        <w:rFonts w:ascii="Wingdings" w:hAnsi="Wingdings" w:hint="default" />
-                    </w:rPr>
-                </w:lvl>
-                </w:abstractNum>
+            </w:abstractNum>
             <w:num w:numId="${numId}">
                 <w:abstractNumId w:val="${abstractNumId}" />
             </w:num>
         `)
+        let newAbstractNum = this.numberingXml.querySelector(`abstractNum[*|abstractNumId="${abstractNumId}"]`)
+        // Definition seem to always define 8 levels.
+        for(let level = 0; level < 9; level++) {
+            newAbstractNum.insertAdjacentHTML('beforeEnd', noSpaceTmp`
+                <w:lvl w:ilvl="${level}" w:tplc="04090001" w:tentative="1">
+                    <w:start w:val="1" />
+                    <w:numFmt w:val="bullet" />
+                    <w:lvlText w:val="" />
+                    <w:lvlJc w:val="left" />
+                    <w:pPr>
+                        <w:ind w:left="${(level+1)*720}" w:hanging="360" />
+                    </w:pPr>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Symbol" w:hAnsi="Symbol" w:hint="default" />
+                    </w:rPr>
+                </w:lvl>
+            `)
+        }
+
     }
 
     addNumberedNumType(numId, abstractNumId) {
@@ -298,89 +211,23 @@ export class DocxExporterLists {
                 <w:nsid w:val="7F6635F3" />
                 <w:multiLevelType w:val="hybridMultilevel" />
                 <w:tmpl w:val="BFFEF214" />
-                <w:lvl w:ilvl="0" w:tplc="0409000F">
-                    <w:start w:val="1" />
-                    <w:numFmt w:val="decimal" />
-                    <w:lvlText w:val="%1." />
-                    <w:lvlJc w:val="left" />
-                    <w:pPr>
-                        <w:ind w:left="720" w:hanging="360" />
-                    </w:pPr>
-                </w:lvl>
-                <w:lvl w:ilvl="1" w:tplc="04090019" w:tentative="1">
-                    <w:start w:val="1" />
-                    <w:numFmt w:val="lowerLetter" />
-                    <w:lvlText w:val="%2." />
-                    <w:lvlJc w:val="left" />
-                    <w:pPr>
-                        <w:ind w:left="1440" w:hanging="360" />
-                    </w:pPr>
-                </w:lvl>
-                <w:lvl w:ilvl="2" w:tplc="0409001B" w:tentative="1">
-                    <w:start w:val="1" />
-                    <w:numFmt w:val="lowerRoman" />
-                    <w:lvlText w:val="%3." />
-                    <w:lvlJc w:val="right" />
-                    <w:pPr>
-                        <w:ind w:left="2160" w:hanging="180" />
-                    </w:pPr>
-                </w:lvl>
-                <w:lvl w:ilvl="3" w:tplc="0409000F" w:tentative="1">
-                    <w:start w:val="1" />
-                    <w:numFmt w:val="decimal" />
-                    <w:lvlText w:val="%4." />
-                    <w:lvlJc w:val="left" />
-                    <w:pPr>
-                        <w:ind w:left="2880" w:hanging="360" />
-                    </w:pPr>
-                </w:lvl>
-                <w:lvl w:ilvl="4" w:tplc="04090019" w:tentative="1">
-                    <w:start w:val="1" />
-                    <w:numFmt w:val="lowerLetter" />
-                    <w:lvlText w:val="%5." />
-                    <w:lvlJc w:val="left" />
-                    <w:pPr>
-                        <w:ind w:left="3600" w:hanging="360" />
-                    </w:pPr>
-                </w:lvl>
-                <w:lvl w:ilvl="5" w:tplc="0409001B" w:tentative="1">
-                    <w:start w:val="1" />
-                    <w:numFmt w:val="lowerRoman" />
-                    <w:lvlText w:val="%6." />
-                    <w:lvlJc w:val="right" />
-                    <w:pPr>
-                        <w:ind w:left="4320" w:hanging="180" />
-                    </w:pPr>
-                </w:lvl>
-                <w:lvl w:ilvl="6" w:tplc="0409000F" w:tentative="1">
-                    <w:start w:val="1" />
-                    <w:numFmt w:val="decimal" />
-                    <w:lvlText w:val="%7." />
-                    <w:lvlJc w:val="left" />
-                    <w:pPr>
-                        <w:ind w:left="5040" w:hanging="360" />
-                    </w:pPr>
-                </w:lvl>
-                <w:lvl w:ilvl="7" w:tplc="04090019" w:tentative="1">
-                    <w:start w:val="1" />
-                    <w:numFmt w:val="lowerLetter" />
-                    <w:lvlText w:val="%8." />
-                    <w:lvlJc w:val="left" />
-                    <w:pPr>
-                        <w:ind w:left="5760" w:hanging="360" />
-                    </w:pPr>
-                </w:lvl>
-                <w:lvl w:ilvl="8" w:tplc="0409001B" w:tentative="1">
-                    <w:start w:val="1" />
-                    <w:numFmt w:val="lowerRoman" />
-                    <w:lvlText w:val="%9." />
-                    <w:lvlJc w:val="right" />
-                    <w:pPr>
-                        <w:ind w:left="6480" w:hanging="180" />
-                    </w:pPr>
-                </w:lvl>
             </w:abstractNum>
         `)
+        let newAbstractNum = this.numberingXml.querySelector(`abstractNum[*|abstractNumId="${abstractNumId}"]`)
+        // Definition seem to always define 8 levels.
+        for(let level = 0; level < 9; level++) {
+            newAbstractNum.insertAdjacentHTML('beforeEnd', noSpaceTmp`
+                <w:lvl w:ilvl="${level}" w:tplc="0409000F">
+                    <w:start w:val="1" />
+                    <w:numFmt w:val="decimal" />
+                    <w:lvlText w:val="%${level+1}." />
+                    <w:lvlJc w:val="left" />
+                    <w:pPr>
+                        <w:ind w:left="${(level+1)*720}" w:hanging="360" />
+                    </w:pPr>
+                </w:lvl>
+            `)
+        }
     }
 
 

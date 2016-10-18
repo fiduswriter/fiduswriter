@@ -47,10 +47,13 @@ class Document(models.Model):
 
 RIGHTS_CHOICES = (
     ('read', 'Reader'),
+    ('read-without-comments', 'Read without comments'),
+    # Can read the text, but not the comments.
     ('write', 'Writer'),
-    ('edit', 'Editor'),  # Editor as in "Editor of Journal X"
     ('review', 'Reviewer'),
-    ('comment', 'Commentator')
+    ('comment', 'Commentator'),
+    ('edit', 'Editor'),
+    # Editor as in "Editor of Journal X"
 )
 
 # Editor and Reviewer can only comment and not edit document

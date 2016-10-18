@@ -281,10 +281,6 @@ def del_reviewer_js(request):
                 access_right = AccessRight.objects.get(
                     document_id=doc_id, user_id=reviewer.id)
                 if access_right.rights == 'comment':
-                    # access_right.rights = ''
-                    # TODO momenifi: There is no such thing as an empty access
-                    # rights in the list of possible rights in models.py.
-                    # Should the access right be deleted entirely?
                     access_right.delete()
                     status = 200
                     response['msg'] = 'user updated and comment rights removed'
@@ -473,9 +469,7 @@ def submit_right_js(request):
         tgt_users = request.POST.getlist('collaborators[]')
         doc_id = int(tgt_doc)
         document = Document.objects.get(id=doc_id)
-        # TODO momenifi: The rights that were in this field do not exit in the
-        # list of possible rights in models.py. Is it 'review' you meant here?
-        tgt_right = 'review'
+        tgt_right = 'read-without-comments'
         try:
             the_user = User.objects.filter(is_superuser=1)
             if len(the_user) > 0:

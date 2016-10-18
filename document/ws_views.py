@@ -3,7 +3,6 @@ import atexit
 from copy import deepcopy
 
 from document.helpers.session_user_info import SessionUserInfo
-# from document.helpers.filtering_comments import filter_comments_by_role
 from ws.base import BaseWebSocketHandler
 from logging import info, error
 from tornado.escape import json_decode, json_encode
@@ -78,19 +77,17 @@ class DocumentWS(BaseWebSocketHandler):
                 document__owner=document_owner))
         response['doc']['access_rights'] = access_rights
 
-        # TODO: switch on filtering when choose workflow and have UI for
-        # assigning roles to users
-        # filtered_comments = filter_comments_by_role(
-        #     DocumentWS.sessions[self.user_info.document_id]["comments"],
-        #     access_rights,
-        #     'editing',
-        #     self.user_info
-        # )
-        # TODO momenifi: The rights that were in this field do not exit in the
-        # list of possible rights in models.py. Is it 'review' you meant here?
-        if (self.user_info.access_rights != 'review'):
+        if (self.user_info.access_rights == 'read-without-comments'):
+            response['doc']['comments'] = []
+        elif (self.user_info.access_rights == 'review'):
+            # Reviewer should only get his/her own comments
+            filtered_comments = {}
+            for key, value in self.doc["comments"].items():
+                if value["user"] == self.user_info.user.id:
+                    filtered_comments[key] = value
+            response['doc']['comments'] = filtered_comments
+        else:
             response['doc']['comments'] = self.doc["comments"]
-        # response['document']['comments'] = filtered_comments
         response['doc']['comment_version'] = self.doc["comment_version"]
         response['doc']['access_rights'] = get_accessrights(
             AccessRight.objects.filter(document__owner=document_owner))
@@ -144,7 +141,7 @@ class DocumentWS(BaseWebSocketHandler):
         elif parsed["type"] == 'check_diff_version':
             self.check_diff_version(parsed)
         elif parsed["type"] == 'selection_change':
-            self.handle_selection_change(message, parsed)
+            self.handle_selection_change(parsed)
         elif (
             parsed["type"] == 'update_doc' and
             self.can_update_document()
@@ -153,9 +150,9 @@ class DocumentWS(BaseWebSocketHandler):
         elif parsed["type"] == 'update_title' and self.can_update_document():
             self.handle_title_update(parsed)
         elif parsed["type"] == 'setting_change' and self.can_update_document():
-            self.handle_settings_change(message, parsed)
+            self.handle_settings_change(parsed)
         elif parsed["type"] == 'diff' and self.can_update_document():
-            self.handle_diff(message, parsed)
+            self.handle_diff(parsed)
 
     def update_document(self, changes):
         if changes['version'] == self.doc['version']:
@@ -243,17 +240,17 @@ class DocumentWS(BaseWebSocketHandler):
         }
         DocumentWS.send_updates(chat, self.user_info.document_id)
 
-    def handle_selection_change(self, message, parsed):
+    def handle_selection_change(self, parsed):
         if self.user_info.document_id in DocumentWS.sessions and parsed[
                 "diff_version"] == self.doc['diff_version']:
             DocumentWS.send_updates(
-                message, self.user_info.document_id, self.id)
+                parsed, self.user_info.document_id, self.id)
 
-    def handle_settings_change(self, message, parsed):
+    def handle_settings_change(self, parsed):
         DocumentWS.sessions[
             self.user_info.document_id]['settings'][
             parsed['variable']] = parsed['value']
-        DocumentWS.send_updates(message, self.user_info.document_id, self.id)
+        DocumentWS.send_updates(parsed, self.user_info.document_id, self.id)
 
     # Checks if the diff only contains changes to comments.
     def only_comments(self, parsed_diffs):
@@ -265,7 +262,7 @@ class DocumentWS(BaseWebSocketHandler):
                 only_comment = False
         return only_comment
 
-    def handle_diff(self, message, parsed):
+    def handle_diff(self, parsed):
         if (
             self.user_info.access_rights in COMMENT_ONLY and
             not self.only_comments(parsed['diff'])
@@ -284,7 +281,11 @@ class DocumentWS(BaseWebSocketHandler):
             self.update_comments(parsed["comments"])
             self.confirm_diff(parsed["request_id"])
             DocumentWS.send_updates(
-                message, self.user_info.document_id, self.id)
+                parsed,
+                self.user_info.document_id,
+                self.id,
+                self.user_info.user.id
+            )
         elif parsed["diff_version"] != self.doc['diff_version']:
             if parsed["diff_version"] < (
                     self.doc['diff_version'] - len(self.doc["last_diffs"])):
@@ -380,30 +381,35 @@ class DocumentWS(BaseWebSocketHandler):
             DocumentWS.send_updates(message, document_id)
 
     @classmethod
-    def send_updates(cls, message, document_id, sender_id=None):
+    def send_updates(cls, message, document_id, sender_id=None, user_id=None):
         info("sending message to %d waiters", len(cls.sessions[document_id]))
-        for waiter in cls.sessions[document_id]['participants'].keys():
-            # TODO momenifi: The rights that were in this field do not exit in
-            # the list of possible rights in models.py. Is it 'review' you
-            # meant here?
-            # And is the restructuring achieving what you are trying to do?
-            if cls.sessions[
-                document_id
-            ]['participants'][
-                waiter
-            ].user_info.access_rights == 'review' \
-              and len(message['comments']) > 0:
-                # The reviewer should not receive the comments update, so we
-                # remove the comments from the copy of the message sent to
-                # the reviewer. We still need to sned the rest of the message
-                # as it may contain other diff information.
-                message = deepcopy(message)
-                message['comments'] = []
-            if cls.sessions[document_id][
-                    'participants'][waiter].id != sender_id:
+        for waiter in cls.sessions[document_id]['participants'].values():
+            if waiter.id != sender_id:
+                if "comments" in message and len(message["comments"]) > 0:
+                    # Filter comments if needed
+                    access_rights = waiter.user_info.access_rights
+                    if access_rights == 'read-without-comments':
+                        # The reader should not receive the comments update, so
+                        # we remove the comments from the copy of the message
+                        # sent to the reviewer. We still need to sned the rest
+                        # of the message as it may contain other diff
+                        # information.
+                        message = deepcopy(message)
+                        message['comments'] = []
+                    if (
+                        access_rights == 'review'
+                        and user_id != waiter.user_info.user.id
+                    ):
+                        # The reviewer should not receive comments updates from
+                        # others than themselves, so we remove the comments
+                        # from the copy of the message sent to the reviewer
+                        # that are not from them. We still need to sned the
+                        # rest of the message as it may contain other diff
+                        # information.
+                        message = deepcopy(message)
+                        message['comments'] = []
                 try:
-                    cls.sessions[document_id]['participants'][
-                        waiter].write_message(message)
+                    waiter.write_message(message)
                 except WebSocketClosedError:
                     error("Error sending message", exc_info=True)
 

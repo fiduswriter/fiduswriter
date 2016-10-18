@@ -362,7 +362,9 @@ class DocumentWS(BaseWebSocketHandler):
     def send_participant_list(cls, document_id):
         if document_id in DocumentWS.sessions:
             participant_list = []
-            for session_id, waiter in cls.sessions[document_id]['participants'].items():
+            for session_id, waiter in cls.sessions[
+                document_id
+            ]['participants'].items():
                 participant_list.append({
                     'session_id': session_id,
                     'id': waiter.user_info.user.id,

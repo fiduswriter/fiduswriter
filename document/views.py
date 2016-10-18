@@ -199,16 +199,16 @@ def login_user(request, u_name, u_pass):
 def get_reviewer_for_post(request):
     email = request.POST.get('email')
     u_name = request.POST.get('user_name')
-    print (u_name)
-    print (email)
     try:
         reviewers = User.objects.filter(email=email)
         if len(reviewers) > 0:
             reviewer = reviewers[0]
         else:
             # "reviewer with this email does not exist so create it"
-            # TODO: Security issue - remove 'ojspass'
-            u_data = make_user_data(u_name, 'ojspass', email)
+            u_data = make_user_data(
+                u_name,
+                settings.SERVER_INFO['OJS_PASSWORD'],
+                email)
             reviewer = create_user(request, u_data)
             reviewers = User.objects.filter(email=email)
             reviewer = reviewers[0]
@@ -304,8 +304,11 @@ def document_review_js(request):
         # email = request.POST.get('email')
         u_name = request.POST.get('user_name')
         response = {}
-        if (app_key == "d5PW586jwefjn!3fv"):
-            reviewer = login_user(request, u_name, 'ojspass')
+        if (app_key == settings.SERVER_INFO['OJS_KEY']):
+            reviewer = login_user(
+                request,
+                u_name,
+                settings.SERVER_INFO['OJS_PASSWORD'])
             if reviewer is not None:
                 return redirect(
                     '/document/' + str(doc_id) + '/', permanent=True

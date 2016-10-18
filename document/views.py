@@ -284,10 +284,8 @@ def del_reviewer_js(request):
                     # access_right.rights = ''
                     # TODO momenifi: There is no such thing as an empty access
                     # rights in the list of possible rights in models.py.
-                    # Is it 'review' you meant here? OR should the access right
-                    # be deleted entirely?
-                    access_right.rights = 'review'
-                    access_right.save()
+                    # Should the access right be deleted entirely?
+                    access_right.delete()
                     status = 200
                     response['msg'] = 'user updated and comment rights removed'
                     response['document_id'] = str(doc_id)

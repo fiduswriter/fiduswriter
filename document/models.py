@@ -66,7 +66,7 @@ class AccessRight(models.Model):
     document = models.ForeignKey(Document)
     user = models.ForeignKey(User)
     rights = models.CharField(
-        max_length=7,
+        max_length=21,
         choices=RIGHTS_CHOICES,
         blank=False)
 

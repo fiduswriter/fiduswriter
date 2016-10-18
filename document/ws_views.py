@@ -183,6 +183,7 @@ class DocumentWS(BaseWebSocketHandler):
         self.doc['title'] = title
 
     def update_comments(self, comments_updates):
+        comments_updates = deepcopy(comments_updates)
         for cd in comments_updates:
             id = str(cd["id"])
             if cd["type"] == "create":
@@ -361,18 +362,12 @@ class DocumentWS(BaseWebSocketHandler):
     def send_participant_list(cls, document_id):
         if document_id in DocumentWS.sessions:
             participant_list = []
-            for waiter in cls.sessions[document_id]['participants'].keys():
+            for session_id, waiter in cls.sessions[document_id]['participants'].items():
                 participant_list.append({
-                    'session_id': waiter,
-                    'id': cls.sessions[document_id]['participants'][
-                        waiter
-                    ].user_info.user.id,
-                    'name': cls.sessions[document_id]['participants'][
-                        waiter
-                    ].user_info.user.readable_name,
-                    'avatar': avatar_url(cls.sessions[document_id][
-                        'participants'
-                    ][waiter].user_info.user, 80)
+                    'session_id': session_id,
+                    'id': waiter.user_info.user.id,
+                    'name': waiter.user_info.user.readable_name,
+                    'avatar': avatar_url(waiter.user_info.user, 80)
                 })
             message = {
                 "participant_list": participant_list,
@@ -396,7 +391,7 @@ class DocumentWS(BaseWebSocketHandler):
                         # information.
                         message = deepcopy(message)
                         message['comments'] = []
-                    if (
+                    elif (
                         access_rights == 'review'
                         and user_id != waiter.user_info.user.id
                     ):

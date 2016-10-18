@@ -1,13 +1,14 @@
 import uuid
 import atexit
+from copy import deepcopy
 
 from document.helpers.session_user_info import SessionUserInfo
-# from document.helpers.filtering_comments import filter_comments_by_role
 from ws.base import BaseWebSocketHandler
 from logging import info, error
 from tornado.escape import json_decode, json_encode
 from tornado.websocket import WebSocketClosedError
-from document.models import AccessRight, COMMENT_ONLY, CAN_UPDATE_DOCUMENT
+from document.models import AccessRight, COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
+    CAN_COMMUNICATE
 from document.views import get_accessrights
 from avatar.templatetags.avatar_tags import avatar_url
 
@@ -26,7 +27,6 @@ class DocumentWS(BaseWebSocketHandler):
         self.user_info = SessionUserInfo()
         doc_db, can_access = self.user_info.init_access(
             document_id, current_user)
-
         if can_access:
             if doc_db.id in DocumentWS.sessions:
                 self.doc = DocumentWS.sessions[doc_db.id]
@@ -78,16 +78,17 @@ class DocumentWS(BaseWebSocketHandler):
                 document__owner=document_owner))
         response['doc']['access_rights'] = access_rights
 
-        # TODO: switch on filtering when choose workflow and have UI for
-        # assigning roles to users
-        # filtered_comments = filter_comments_by_role(
-        #     DocumentWS.sessions[self.user_info.document_id]["comments"],
-        #     access_rights,
-        #     'editing',
-        #     self.user_info
-        # )
-        response['doc']['comments'] = self.doc["comments"]
-        # response['doc']['comments'] = filtered_comments
+        if (self.user_info.access_rights == 'read-without-comments'):
+            response['doc']['comments'] = []
+        elif (self.user_info.access_rights == 'review'):
+            # Reviewer should only get his/her own comments
+            filtered_comments = {}
+            for key, value in self.doc["comments"].items():
+                if value["user"] == self.user_info.user.id:
+                    filtered_comments[key] = value
+            response['doc']['comments'] = filtered_comments
+        else:
+            response['doc']['comments'] = self.doc["comments"]
         response['doc']['comment_version'] = self.doc["comment_version"]
         response['doc']['access_rights'] = get_accessrights(
             AccessRight.objects.filter(document__owner=document_owner))
@@ -134,14 +135,14 @@ class DocumentWS(BaseWebSocketHandler):
         print(parsed["type"])
         if parsed["type"] == 'get_document':
             self.send_document()
-        elif parsed["type"] == 'participant_update':
+        elif parsed["type"] == 'participant_update' and self.can_communicate():
             self.handle_participant_update()
-        elif parsed["type"] == 'chat':
+        elif parsed["type"] == 'chat' and self.can_communicate():
             self.handle_chat(parsed)
         elif parsed["type"] == 'check_diff_version':
             self.check_diff_version(parsed)
         elif parsed["type"] == 'selection_change':
-            self.handle_selection_change(message, parsed)
+            self.handle_selection_change(parsed)
         elif (
             parsed["type"] == 'update_doc' and
             self.can_update_document()
@@ -150,9 +151,9 @@ class DocumentWS(BaseWebSocketHandler):
         elif parsed["type"] == 'update_title' and self.can_update_document():
             self.handle_title_update(parsed)
         elif parsed["type"] == 'setting_change' and self.can_update_document():
-            self.handle_settings_change(message, parsed)
+            self.handle_settings_change(parsed)
         elif parsed["type"] == 'diff' and self.can_update_document():
-            self.handle_diff(message, parsed)
+            self.handle_diff(parsed)
 
     def update_document(self, changes):
         if changes['version'] == self.doc['version']:
@@ -183,6 +184,7 @@ class DocumentWS(BaseWebSocketHandler):
         self.doc['title'] = title
 
     def update_comments(self, comments_updates):
+        comments_updates = deepcopy(comments_updates)
         for cd in comments_updates:
             id = str(cd["id"])
             if cd["type"] == "create":
@@ -240,17 +242,17 @@ class DocumentWS(BaseWebSocketHandler):
         }
         DocumentWS.send_updates(chat, self.user_info.document_id)
 
-    def handle_selection_change(self, message, parsed):
+    def handle_selection_change(self, parsed):
         if self.user_info.document_id in DocumentWS.sessions and parsed[
                 "diff_version"] == self.doc['diff_version']:
             DocumentWS.send_updates(
-                message, self.user_info.document_id, self.id)
+                parsed, self.user_info.document_id, self.id)
 
-    def handle_settings_change(self, message, parsed):
+    def handle_settings_change(self, parsed):
         DocumentWS.sessions[
             self.user_info.document_id]['settings'][
             parsed['variable']] = parsed['value']
-        DocumentWS.send_updates(message, self.user_info.document_id, self.id)
+        DocumentWS.send_updates(parsed, self.user_info.document_id, self.id)
 
     # Checks if the diff only contains changes to comments.
     def only_comments(self, parsed_diffs):
@@ -262,7 +264,7 @@ class DocumentWS(BaseWebSocketHandler):
                 only_comment = False
         return only_comment
 
-    def handle_diff(self, message, parsed):
+    def handle_diff(self, parsed):
         if (
             self.user_info.access_rights in COMMENT_ONLY and
             not self.only_comments(parsed['diff'])
@@ -281,7 +283,11 @@ class DocumentWS(BaseWebSocketHandler):
             self.update_comments(parsed["comments"])
             self.confirm_diff(parsed["request_id"])
             DocumentWS.send_updates(
-                message, self.user_info.document_id, self.id)
+                parsed,
+                self.user_info.document_id,
+                self.id,
+                self.user_info.user.id
+            )
         elif parsed["diff_version"] != self.doc['diff_version']:
             if parsed["diff_version"] < (
                     self.doc['diff_version'] - len(self.doc["last_diffs"])):
@@ -336,6 +342,9 @@ class DocumentWS(BaseWebSocketHandler):
     def can_update_document(self):
         return self.user_info.access_rights in CAN_UPDATE_DOCUMENT
 
+    def can_communicate(self):
+        return self.user_info.access_rights in CAN_COMMUNICATE
+
     def on_close(self):
         print('Websocket closing')
         if (
@@ -357,18 +366,17 @@ class DocumentWS(BaseWebSocketHandler):
     def send_participant_list(cls, document_id):
         if document_id in DocumentWS.sessions:
             participant_list = []
-            for waiter in cls.sessions[document_id]['participants'].keys():
+            for session_id, waiter in cls.sessions[
+                document_id
+            ]['participants'].items():
+                access_rights = waiter.user_info.access_rights
+                if access_rights not in CAN_COMMUNICATE:
+                    continue
                 participant_list.append({
-                    'session_id': waiter,
-                    'id': cls.sessions[document_id]['participants'][
-                        waiter
-                    ].user_info.user.id,
-                    'name': cls.sessions[document_id]['participants'][
-                        waiter
-                    ].user_info.user.readable_name,
-                    'avatar': avatar_url(cls.sessions[document_id][
-                        'participants'
-                    ][waiter].user_info.user, 80)
+                    'session_id': session_id,
+                    'id': waiter.user_info.user.id,
+                    'name': waiter.user_info.user.readable_name,
+                    'avatar': avatar_url(waiter.user_info.user, 80)
                 })
             message = {
                 "participant_list": participant_list,
@@ -377,14 +385,46 @@ class DocumentWS(BaseWebSocketHandler):
             DocumentWS.send_updates(message, document_id)
 
     @classmethod
-    def send_updates(cls, message, document_id, sender_id=None):
+    def send_updates(cls, message, document_id, sender_id=None, user_id=None):
         info("sending message to %d waiters", len(cls.sessions[document_id]))
-        for waiter in cls.sessions[document_id]['participants'].keys():
-            if cls.sessions[document_id][
-                    'participants'][waiter].id != sender_id:
+        for waiter in cls.sessions[document_id]['participants'].values():
+            if waiter.id != sender_id:
+                access_rights = waiter.user_info.access_rights
+                if "comments" in message and len(message["comments"]) > 0:
+                    # Filter comments if needed
+                    if access_rights == 'read-without-comments':
+                        # The reader should not receive the comments update, so
+                        # we remove the comments from the copy of the message
+                        # sent to the reviewer. We still need to sned the rest
+                        # of the message as it may contain other diff
+                        # information.
+                        message = deepcopy(message)
+                        message['comments'] = []
+                    elif (
+                        access_rights == 'review' and
+                        user_id != waiter.user_info.user.id
+                    ):
+                        # The reviewer should not receive comments updates from
+                        # others than themselves, so we remove the comments
+                        # from the copy of the message sent to the reviewer
+                        # that are not from them. We still need to sned the
+                        # rest of the message as it may contain other diff
+                        # information.
+                        message = deepcopy(message)
+                        message['comments'] = []
+                elif (
+                    message['type'] in ["chat", "connections"] and
+                    access_rights not in CAN_COMMUNICATE
+                ):
+                    continue
+                elif (
+                    message['type'] == "selection_change" and
+                    access_rights not in CAN_COMMUNICATE and
+                    user_id != waiter.user_info.user.id
+                ):
+                    continue
                 try:
-                    cls.sessions[document_id]['participants'][
-                        waiter].write_message(message)
+                    waiter.write_message(message)
                 except WebSocketClosedError:
                     error("Error sending message", exc_info=True)
 

@@ -47,10 +47,13 @@ class Document(models.Model):
 
 RIGHTS_CHOICES = (
     ('read', 'Reader'),
+    ('read-without-comments', 'Reader without comment access'),
+    # Can read the text, but not the comments.
     ('write', 'Writer'),
-    ('edit', 'Editor'),  # Editor as in "Editor of Journal X"
     ('review', 'Reviewer'),
-    ('comment', 'Commentator')
+    ('comment', 'Commentator'),
+    ('edit', 'Editor'),
+    # Editor as in "Editor of Journal X"
 )
 
 # Editor and Reviewer can only comment and not edit document
@@ -58,22 +61,31 @@ COMMENT_ONLY = ('edit', 'review', 'comment')
 
 CAN_UPDATE_DOCUMENT = ['write', 'edit', 'review', 'comment']
 
+# Whether the collaborator is allowed to know about other collaborators
+# and communicate with them.
+CAN_COMMUNICATE = ['read', 'write', 'comment']
+
 
 class AccessRight(models.Model):
     document = models.ForeignKey(Document)
     user = models.ForeignKey(User)
     rights = models.CharField(
-        max_length=7,
+        max_length=21,
         choices=RIGHTS_CHOICES,
         blank=False)
 
     class Meta:
         unique_together = (("document", "user"),)
 
-    # def __unicode__(self):
-    #    return self.user.username+' ('+self.rights+') on '+self.document.title
-        # return self.user.readable_name+' ('+self.rights+') on
-        # '+self.document.title
+    def __unicode__(self):
+        return (
+            '%(name)s %(rights)s on %(doc_id)d' %
+            {
+                'name': self.user.readable_name,
+                'rights': self.rights,
+                'doc_id': self.document.id
+            }
+        )
 
 
 def revision_filename(instance, filename):

@@ -5,6 +5,7 @@ import {HTMLExporter} from "../../exporter/html"
 import {EpubExporter} from "../../exporter/epub"
 import {DocxExporter} from "../../exporter/docx"
 import {OdtExporter} from "../../exporter/odt"
+import {selectJournal} from "../../submit/journal"
 
 export class ModMenusActions {
     constructor(mod) {
@@ -92,6 +93,14 @@ export class ModMenusActions {
         let that = this
         that.mod.editor.save(function () {
             window.location.href = '/'
+        })
+    }
+
+    submitOjs() {
+        let that = this
+        let list = null
+        that.mod.editor.save(function () {
+            selectJournal(that.mod.editor)
         })
     }
 

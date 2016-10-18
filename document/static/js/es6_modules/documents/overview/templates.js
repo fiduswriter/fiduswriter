@@ -40,7 +40,7 @@ export let documentsListItemTemplate = _.template('\
                     <span class="fw-inline fw-searchable"><%- aDocument.owner.name %></span>\
                 </td>\
                 <td width="60"  class="td-icon">\
-                    <span class="rights fw-inline" data-id="<%- aDocument.id %>">\
+                    <span class="rights fw-inline" data-id="<%- aDocument.id %>" title="<%- aDocument.rights %>">\
                         <i data-id="<%- aDocument.id %>" class="icon-access-right icon-access-<%- aDocument.rights %>"></i>\
                     </span>\
                 </td>\

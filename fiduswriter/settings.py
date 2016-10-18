@@ -6,15 +6,23 @@ DEBUG = True
 
 SERVER_INFO = {
     # This determines whether the server is used for testing and will let the
-    # users upon signup know that their documents may disappear.
+    # users know upon signup know that their documents may disappear.
     'TEST_SERVER': True,
     # This determines whether experimental or unfinished features will be
     # enabled.
     'EXPERIMENTAL': False,
     # This is the contact email that will be shown in various places all over
-    # the site. It will also be used to forward feedback messages.
+    # the site.
     'CONTACT_EMAIL': 'mail@email.com',
-    'WS_PORT': False
+    # If the FW instance is connected to an Open Journal System's instance,
+    # add the url here.
+    'OJS_URL': False,
+    # An app key for OJS to connect with. Change it to a secret value.
+    'OJS_KEY': 'S5cr4T',
+    # A standard password for accounts made automatically by OJS.
+    'OJS_PASSWORD': 'p4$$w04D',  # TODO: get rid of this!
+    # If websockets is running on a non-standard port, add it here:
+    'WS_PORT': False,
 }
 
 ADMINS = (

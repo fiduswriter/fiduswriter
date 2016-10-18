@@ -7,7 +7,8 @@ from ws.base import BaseWebSocketHandler
 from logging import info, error
 from tornado.escape import json_decode, json_encode
 from tornado.websocket import WebSocketClosedError
-from document.models import AccessRight, COMMENT_ONLY, CAN_UPDATE_DOCUMENT
+from document.models import AccessRight, COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
+    CAN_COMMUNICATE
 from document.views import get_accessrights
 from avatar.templatetags.avatar_tags import avatar_url
 
@@ -134,9 +135,9 @@ class DocumentWS(BaseWebSocketHandler):
         print(parsed["type"])
         if parsed["type"] == 'get_document':
             self.send_document()
-        elif parsed["type"] == 'participant_update':
+        elif parsed["type"] == 'participant_update' and self.can_communicate():
             self.handle_participant_update()
-        elif parsed["type"] == 'chat':
+        elif parsed["type"] == 'chat' and self.can_communicate():
             self.handle_chat(parsed)
         elif parsed["type"] == 'check_diff_version':
             self.check_diff_version(parsed)
@@ -341,6 +342,9 @@ class DocumentWS(BaseWebSocketHandler):
     def can_update_document(self):
         return self.user_info.access_rights in CAN_UPDATE_DOCUMENT
 
+    def can_communicate(self):
+        return self.user_info.access_rights in CAN_COMMUNICATE
+
     def on_close(self):
         print('Websocket closing')
         if (
@@ -365,6 +369,9 @@ class DocumentWS(BaseWebSocketHandler):
             for session_id, waiter in cls.sessions[
                 document_id
             ]['participants'].items():
+                access_rights = waiter.user_info.access_rights
+                if access_rights not in CAN_COMMUNICATE:
+                    continue
                 participant_list.append({
                     'session_id': session_id,
                     'id': waiter.user_info.user.id,
@@ -382,9 +389,9 @@ class DocumentWS(BaseWebSocketHandler):
         info("sending message to %d waiters", len(cls.sessions[document_id]))
         for waiter in cls.sessions[document_id]['participants'].values():
             if waiter.id != sender_id:
+                access_rights = waiter.user_info.access_rights
                 if "comments" in message and len(message["comments"]) > 0:
                     # Filter comments if needed
-                    access_rights = waiter.user_info.access_rights
                     if access_rights == 'read-without-comments':
                         # The reader should not receive the comments update, so
                         # we remove the comments from the copy of the message
@@ -394,8 +401,8 @@ class DocumentWS(BaseWebSocketHandler):
                         message = deepcopy(message)
                         message['comments'] = []
                     elif (
-                        access_rights == 'review'
-                        and user_id != waiter.user_info.user.id
+                        access_rights == 'review' and
+                        user_id != waiter.user_info.user.id
                     ):
                         # The reviewer should not receive comments updates from
                         # others than themselves, so we remove the comments
@@ -405,6 +412,17 @@ class DocumentWS(BaseWebSocketHandler):
                         # information.
                         message = deepcopy(message)
                         message['comments'] = []
+                elif (
+                    message['type'] in ["chat", "connections"] and
+                    access_rights not in CAN_COMMUNICATE
+                ):
+                    continue
+                elif (
+                    message['type'] == "selection_change" and
+                    access_rights not in CAN_COMMUNICATE and
+                    user_id != waiter.user_info.user.id
+                ):
+                    continue
                 try:
                     waiter.write_message(message)
                 except WebSocketClosedError:

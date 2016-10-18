@@ -61,6 +61,10 @@ COMMENT_ONLY = ('edit', 'review', 'comment')
 
 CAN_UPDATE_DOCUMENT = ['write', 'edit', 'review', 'comment']
 
+# Whether the collaborator is allowed to know about other collaborators
+# and communicate with them.
+CAN_COMMUNICATE = ['read', 'write', 'comment']
+
 
 class AccessRight(models.Model):
     document = models.ForeignKey(Document)

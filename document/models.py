@@ -47,7 +47,7 @@ class Document(models.Model):
 
 RIGHTS_CHOICES = (
     ('read', 'Reader'),
-    ('read-without-comments', 'Read without comments'),
+    ('read-without-comments', 'Reader without comment access'),
     # Can read the text, but not the comments.
     ('write', 'Writer'),
     ('review', 'Reviewer'),
@@ -77,10 +77,15 @@ class AccessRight(models.Model):
     class Meta:
         unique_together = (("document", "user"),)
 
-    # def __unicode__(self):
-    #    return self.user.username+' ('+self.rights+') on '+self.document.title
-        # return self.user.readable_name+' ('+self.rights+') on
-        # '+self.document.title
+    def __unicode__(self):
+        return (
+            '%(name)s %(rights)s on %(doc_id)d' %
+            {
+                'name': self.user.readable_name,
+                'rights': self.rights,
+                'doc_id': self.document.id
+            }
+        )
 
 
 def revision_filename(instance, filename):

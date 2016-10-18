@@ -20,6 +20,8 @@ import {defaultDocumentStyle} from "../style/documentstyle-list"
 import {defaultCitationStyle} from "../style/citation-definitions"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
+export const READ_ONLY_ROLES = ['read', 'read-without-comments']
+
 
 export class Editor {
     // A class that contains everything that happens on the editor page.
@@ -82,14 +84,16 @@ export class Editor {
         let that = this
         // Set Auto-save to send the document every two minutes, if it has changed.
         this.sendDocumentTimer = window.setInterval(function() {
-            if (that.docInfo && that.docInfo.changed && that.docInfo.rights !== 'read') {
+            if (that.docInfo && that.docInfo.changed &&
+                READ_ONLY_ROLES.indexOf(that.docInfo.rights) === -1) {
                 that.save()
             }
         }, 120000)
 
         // Set Auto-save to send the title every 5 seconds, if it has changed.
         this.sendDocumentTitleTimer = window.setInterval(function() {
-            if (that.docInfo && that.docInfo.title_changed && that.docInfo.rights !== 'read') {
+            if (that.docInfo && that.docInfo.title_changed &&
+                READ_ONLY_ROLES.indexOf(that.docInfo.rights) === -1) {
                 that.docInfo.title_changed = false
                 that.mod.serverCommunications.send({
                     type: 'update_title',
@@ -100,7 +104,8 @@ export class Editor {
 
         // Auto save the document when the user leaves the page.
         window.addEventListener("beforeunload", function (event) {
-            if (that.docInfo && that.docInfo.changed && that.docInfo.rights !== 'read') {
+            if (that.docInfo && that.docInfo.changed &&
+                READ_ONLY_ROLES.indexOf(that.docInfo.rights) === -1) {
                 that.save()
             }
         })
@@ -262,7 +267,7 @@ export class Editor {
         this.mod.settings.layout.layoutMetadata()
 
 
-        if (this.docInfo.rights === 'read') {
+        if (READ_ONLY_ROLES.indexOf(this.docInfo.rights) > -1) {
             jQuery('#editor-navigation').hide()
             jQuery('.metadata-menu-item, #open-close-header, .save, \
           .multibuttonsCover, .papersize-menu, .metadata-menu, \
@@ -395,7 +400,7 @@ export class Editor {
     onFilterTransform(transform) {
         let prohibited = false
 
-        if (this.docInfo.rights === 'read') {
+        if (READ_ONLY_ROLES.indexOf(this.docInfo.rights) > -1) {
             // User only has read access. Don't allow anything.
             prohibited = true
         } else if (COMMENT_ONLY_ROLES.indexOf(this.docInfo.rights) > -1) {

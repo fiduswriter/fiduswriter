@@ -2,6 +2,7 @@ import {documentrevisionsTemplate, documentrevisionsConfirmDeleteTemplate} from 
 import {ImportFidusFile} from "../../importer/file"
 import {downloadFile} from "../../exporter/tools/file"
 import {deactivateWait, addAlert, localizeDate, csrfToken} from "../../common/common"
+import JSZipUtils from "jszip-utils"
 
 /**
  * Functions for the recovering previously created document revisions.
@@ -84,44 +85,29 @@ export class DocumentRevisionsDialog {
 
     recreate(id, user) {
         let that = this
-            // Have to use window.XMLHttpRequest rather than jQuery.ajax as it's the only way to receive a blob.
-        let xhr = new window.XMLHttpRequest()
-        xhr.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                let fidusFile = this.response
-
-                new ImportFidusFile(
-                    fidusFile,
-                    user,
-                    false,
-                    that.bibDB,
-                    that.imageDB,
-                    function(noErrors, returnValue) {
-                        deactivateWait()
-                        if (noErrors) {
-                            let aDocument = returnValue.aDocument
-                            addAlert('info', aDocument.title + gettext(
-                                ' successfully imported.'))
-                            that.callback({
-                                action: 'added-document',
-                                doc: aDocument
-                            })
-                        } else {
-                            addAlert('error', returnValue)
-                        }
+        JSZipUtils.getBinaryContent(`/document/get_revision/${id}/`, function(err, fidusFile) {
+            new ImportFidusFile(
+                fidusFile,
+                user,
+                false,
+                that.bibDB,
+                that.imageDB,
+                function(noErrors, returnValue) {
+                    deactivateWait()
+                    if (noErrors) {
+                        let doc = returnValue.aDocument
+                        addAlert('info', doc.title + gettext(
+                            ' successfully imported.'))
+                        that.callback({
+                            action: 'added-document',
+                            doc
+                        })
+                    } else {
+                        addAlert('error', returnValue)
                     }
-                )
-            }
-        }
-
-        xhr.open('POST', '/document/download/')
-        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
-        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest")
-        xhr.setRequestHeader("X-CSRFToken", csrfToken)
-        xhr.responseType = 'blob'
-        xhr.send("id=" + id)
-
-
+                }
+            )
+        })
     }
 
     /**
@@ -131,21 +117,9 @@ export class DocumentRevisionsDialog {
      */
 
     download(id, filename) {
-        // Have to use window.XMLHttpRequest rather than jQuery.ajax as it's the only way to receive a blob.
-
-        let xhr = new window.XMLHttpRequest()
-        xhr.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                downloadFile(filename, this.response)
-            }
-        }
-
-        xhr.open('POST', '/document/download/')
-        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
-        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest")
-        xhr.setRequestHeader("X-CSRFToken", csrfToken)
-        xhr.responseType = 'blob'
-        xhr.send("id=" + id)
+        JSZipUtils.getBinaryContent(`/document/get_revision/${id}/`, function(err, fidusFile) {
+            downloadFile(filename, fidusFile)
+        })
     }
 
     /**

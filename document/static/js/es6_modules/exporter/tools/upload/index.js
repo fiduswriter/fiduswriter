@@ -8,7 +8,6 @@ import {addAlert, csrfToken} from "../../../common/common"
  */
 export let uploadFile = function(zipFilename, blob, editor) {
 
-
     let diaButtons = {}
 
     diaButtons[gettext("Save")] = function() {

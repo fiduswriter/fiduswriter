@@ -465,7 +465,6 @@ def access_right_save_js(request):
 @transaction.atomic
 def submit_right_js(request):
     status = 405
-    print status
     response = {}
     if request.is_ajax() and request.method == 'POST':
         tgt_doc = request.POST.get('documentId')
@@ -526,7 +525,7 @@ def import_js(request):
 
 
 @login_required
-def upload_js(request):
+def upload_revision_js(request):
     response = {}
     can_save = False
     status = 405
@@ -582,45 +581,24 @@ def profile_js(request):
 
 
 # Download a revision that was previously uploaded
-
-
 @login_required
-def download_js(request):
-    can_access = False
-    response = {}
-    if request.is_ajax() and request.method == 'POST':
-        revision_id = request.POST['id']
-        revision = DocumentRevision.objects.filter(pk=int(revision_id))
-        if len(revision) > 0:
-            revision = revision[0]
-            document = revision.document
-            if document.owner == request.user:
-                can_access = True
-                # else:
-                #    access_rights = AccessRight.objects.filter(
-                #        document=document, user=request.user)
-                # if len(access_rights) > 0:
-                #     can_save = True
-        if can_access:
-            response = {}
-            http_response = HttpResponse(
-                revision.file_object.file,
-                content_type='application/zip; charset=x-user-defined',
-                status=200
-            )
-            http_response[
-                'Content-Disposition'] = 'attachment; filename=some_name.zip'
-            return http_response
-    return JsonResponse(
-        response,
-        status=405
+def get_revision(request, revision_id):
+    revision = DocumentRevision.objects.get(pk=int(revision_id))
+    if not request.user.is_staff and revision.document.owner != request.user:
+        return HttpResponse(status=405)
+    http_response = HttpResponse(
+        revision.file_object.file,
+        content_type='application/zip; charset=x-user-defined',
+        status=200
     )
+    http_response[
+        'Content-Disposition'] = 'attachment; filename=some_name.zip'
+    return http_response
 
 
 @login_required
 def delete_revision_js(request):
     response = {}
-    # can_save = False
     status = 405
     if request.is_ajax() and request.method == 'POST':
         revision_id = request.POST['id']
@@ -695,6 +673,41 @@ def save_doc_js(request):
         if diff_version:
             doc.diff_version = diff_version
         doc.save()
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@staff_member_required
+def get_all_revision_ids_js(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 200
+        revisions = DocumentRevision.objects.only('id')
+        response["revision_ids"] = []
+        for revision in revisions:
+            response["revision_ids"].append(revision.id)
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@staff_member_required
+def update_revision_js(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 200
+        revision_id = request.POST['id']
+        revision = DocumentRevision.objects.get(pk=int(revision_id))
+        # keep the filename
+        file_name = revision.file_object.name
+        revision.file_object = request.FILES['file']
+        revision.file_object.name = file_name
+        revision.save()
     return JsonResponse(
         response,
         status=status

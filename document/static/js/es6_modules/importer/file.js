@@ -1,15 +1,34 @@
 import {ImportNative} from "./native"
 import {updateDoc} from "../schema/convert"
 import JSZip from "jszip"
-
+import {FW_FILETYPE_VERSION} from "../exporter/native"
 /** The current Fidus Writer filetype version. The importer will not import from
  * a different version and the exporter will include this number in all exports.
  */
-const FW_FILETYPE_VERSION = 1.3,
-    MIN_FW_FILETYPE_VERSION = 1.1,
-    MAX_FW_FILETYPE_VERSION = 1.3
+const MIN_FW_FILETYPE_VERSION = 1.1, MAX_FW_FILETYPE_VERSION = parseInt(FW_FILETYPE_VERSION)
 
 const TEXT_FILENAMES = ['mimetype', 'filetype-version', 'document.json', 'images.json', 'bibliography.json']
+
+export function updateFileDoc(doc, filetypeVersion) {
+    switch(filetypeVersion) {
+        case "1.1":
+        case "1.2":
+            doc = _.clone(doc)
+            delete(doc.comment_version)
+            delete(doc.access_rights)
+            delete(doc.version)
+            delete(doc.owner)
+            delete(doc.id)
+            delete(doc.hash)
+            doc = updateDoc(doc)
+            break
+        case "1.3":
+            doc = updateDoc(doc)
+            break
+    }
+    return doc
+
+}
 
 export class ImportFidusFile {
 
@@ -94,15 +113,15 @@ export class ImportFidusFile {
     }
 
     processFidusFile() {
-        let filetypeVersion = parseFloat(_.findWhere(this.textFiles, {
+        let filetypeVersion = _.findWhere(this.textFiles, {
                 filename: 'filetype-version'
-            }).contents, 10),
+            }).contents,
             mimeType = _.findWhere(this.textFiles, {
                 filename: 'mimetype'
             }).contents
         if (mimeType === 'application/fidus+zip' &&
-            filetypeVersion >= MIN_FW_FILETYPE_VERSION &&
-            filetypeVersion <= MAX_FW_FILETYPE_VERSION) {
+            parseFloat(filetypeVersion) >= MIN_FW_FILETYPE_VERSION &&
+            parseFloat(filetypeVersion) <= MAX_FW_FILETYPE_VERSION) {
             // This seems to be a valid fidus file with current version number.
             let shrunkBibDB = JSON.parse(
                 _.findWhere(
@@ -112,9 +131,9 @@ export class ImportFidusFile {
             let shrunkImageDB = JSON.parse(_.findWhere(this.textFiles, {
                 filename: 'images.json'
             }).contents)
-            let aDocument = updateDoc(JSON.parse(_.findWhere(this.textFiles, {
+            let aDocument = updateFileDoc(JSON.parse(_.findWhere(this.textFiles, {
                 filename: 'document.json'
-            }).contents))
+            }).contents), filetypeVersion)
 
             return new ImportNative(aDocument, shrunkBibDB, shrunkImageDB, this.otherFiles, this.user, this.bibDB, this.imageDB, this.callback)
 

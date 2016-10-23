@@ -99,6 +99,7 @@ class DocumentRevision(models.Model):
     file_object = models.FileField(upload_to=revision_filename)
     file_name = models.CharField(max_length=255, default='', blank=True)
 
+
 TEMPLATE_CHOICES = (
     ('docx', 'Docx'),
     ('odt', 'ODT')

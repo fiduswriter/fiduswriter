@@ -10,7 +10,7 @@ import {addAlert} from "../../common/common"
  * The importer will not import from a different version and the exporter
   * will include this number in all exports.
  */
-let FW_FILETYPE_VERSION = "1.3"
+export let FW_FILETYPE_VERSION = "1.3"
 
 /** Create a Fidus Writer document and upload it to the server as a backup.
  * @function uploadNative

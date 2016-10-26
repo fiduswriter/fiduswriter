@@ -3,16 +3,19 @@ import {journalDialogTemplate} from "./templates"
 import {addAlert, csrfToken} from "../common/common"
 
 
-let setRights = function(doc,user,access_rights){
+let setRights = function(orginalDocId,CopyDocId,user,access_rights){
     let that = this
 	let collaborators = [],
     rights = []
 	access_rights.forEach(function(item,index){
-		collaborators[collaborators.length]=item.user_id
+	    if (item.document_id==orginalDocId){
+	        collaborators[collaborators.length]=item.user_id
+	    }
+
 	})
 	collaborators[collaborators.length]=user.id
 	let postData = {
-        'documentId': doc.id,
+        'documentId': CopyDocId,
         'collaborators[]': collaborators,
     }
     jQuery.ajax({
@@ -69,7 +72,7 @@ export let selectJournal = function(editor) {
             savecopy(editor.doc, editor.bibDB.bibDB, editor.imageDB.db,
                 editor.bibDB.bibDB, editor.imageDB.db, editor.user,
                 function(doc, docInfo, newBibEntries){
-            		setRights(doc,editor.user,editor.doc.access_rights)
+            		setRights(editor.doc.id,doc.id,editor.user,editor.doc.access_rights)
                     let dataToOjs = new window.FormData()
                     dataToOjs.append('username', userProfile["username"])
                     dataToOjs.append('title', editor.doc.title)

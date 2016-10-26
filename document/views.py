@@ -236,8 +236,8 @@ def reviewer_js(request):
         try:
             access_right = AccessRight.objects.get(
                 document_id=doc_id, user_id=reviewer.id)
-            if access_right.rights != 'comment':
-                access_right.rights = 'comment'
+            if access_right.rights != 'review':
+                access_right.rights = 'review'
                 access_right.save()
                 response['email'] = request.POST.get('email')
                 response['msg'] = 'comment rights given to the user'
@@ -254,7 +254,7 @@ def reviewer_js(request):
         except ObjectDoesNotExist:
             access_right = AccessRight.objects.create(
                 document_id=doc_id,
-                user_id=reviewer.id, rights='comment', )
+                user_id=reviewer.id, rights='review', )
             access_right.save()
             status = 200
             response['email'] = request.POST.get('email')
@@ -280,7 +280,7 @@ def del_reviewer_js(request):
             try:
                 access_right = AccessRight.objects.get(
                     document_id=doc_id, user_id=reviewer.id)
-                if access_right.rights == 'comment':
+                if access_right.rights == 'review':
                     access_right.delete()
                     status = 200
                     response['msg'] = 'user updated and comment rights removed'

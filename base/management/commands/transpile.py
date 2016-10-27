@@ -73,15 +73,15 @@ class Command(BaseCommand):
             package_json = json.load(package_contents)
             # Check if we have a git version of prosemirror. In that case,
             # transpile it.
-            if package_json["dependencies"]["prosemirror"][:3] == "git":
-                print("Installing ProseMirror dependencies")
-                shutil.os.chdir(
-                    os.path.join(
-                        PROJECT_PATH,
-                        "node_modules/prosemirror"))
-                call(["npm", "install"])
-                call(["npm", "run", "dist"])
-                shutil.os.chdir(os.path.join(PROJECT_PATH))
+            # if package_json["dependencies"]["prosemirror"][:3] == "git":
+            #    print("Installing ProseMirror dependencies")
+            #    shutil.os.chdir(
+            #        os.path.join(
+            #            PROJECT_PATH,
+            #            "node_modules/prosemirror"))
+            #    call(["npm", "install"])
+            #    call(["npm", "run", "dist"])
+            #    shutil.os.chdir(os.path.join(PROJECT_PATH))
 
             if package_json["dependencies"]["katex"] != old_katex_version:
                 # Katex has been updated!

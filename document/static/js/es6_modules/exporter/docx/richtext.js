@@ -108,13 +108,13 @@ export class DocxExporterRichtext {
                 // Check for hyperlink, bold/strong and italic/em
                 let hyperlink, strong, em
                 if (node.marks) {
-                    strong = _.findWhere(node.marks, {_:'strong'})
-                    em = _.findWhere(node.marks, {_:'em'})
-                    hyperlink = _.findWhere(node.marks, {_:'link'})
+                    strong = _.findWhere(node.marks, {type:'strong'})
+                    em = _.findWhere(node.marks, {type:'em'})
+                    hyperlink = _.findWhere(node.marks, {type:'link'})
                 }
 
                 if (hyperlink) {
-                    let refId = this.rels.addLinkRel(hyperlink.href)
+                    let refId = this.rels.addLinkRel(hyperlink.attrs.href)
                     start += `<w:hyperlink r:id="rId${refId}"><w:r>`
                     end += '</w:t></w:r></w:hyperlink>'
                 } else {

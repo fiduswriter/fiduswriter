@@ -1,4 +1,4 @@
-import {Step} from "prosemirror/dist/transform"
+import {Step} from "prosemirror-old/dist/transform"
 import {docSchema} from "../../schema/document"
 
 export class ModCollabDocChanges {

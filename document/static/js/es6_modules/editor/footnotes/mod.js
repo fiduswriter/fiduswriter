@@ -1,7 +1,7 @@
-import {ProseMirror} from "prosemirror/dist/edit/main"
+import {ProseMirror} from "prosemirror-old/dist/edit/main"
 import {fnSchema} from "../../schema/footnotes"
-import {collabEditing} from "prosemirror/dist/collab"
-import {elt} from "prosemirror/dist/util/dom"
+import {collabEditing} from "prosemirror-old/dist/collab"
+import {elt} from "prosemirror-old/dist/util/dom"
 
 import {ModFootnoteEditor} from "./editor"
 import {ModFootnoteMarkers} from "./markers"

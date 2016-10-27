@@ -1,9 +1,9 @@
-import {parseDOM} from "prosemirror/dist/model/from_dom"
-import {Step} from "prosemirror/dist/transform"
+import {parseDOM} from "prosemirror-old/dist/model/from_dom"
+import {Step} from "prosemirror-old/dist/transform"
 import {Paste} from "../paste/paste"
 import {COMMENT_ONLY_ROLES} from "../editor"
-import {elt} from "prosemirror/dist/util/dom"
-import {collabEditing} from "prosemirror/dist/collab"
+import {elt} from "prosemirror-old/dist/util/dom"
+import {collabEditing} from "prosemirror-old/dist/collab"
 
 /* Functions related to the footnote editor instance */
 export class ModFootnoteEditor {

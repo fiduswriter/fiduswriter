@@ -1,9 +1,9 @@
 import {Doc, BlockQuote, OrderedList, BulletList, ListItem, HorizontalRule,
         Paragraph, Heading, CodeBlock, Image, HardBreak, CodeMark, EmMark,
-        StrongMark, LinkMark} from "prosemirror/dist/schema-basic"
-import {Table, TableRow, TableCell} from "prosemirror/dist/schema-table"
+        StrongMark, LinkMark} from "prosemirror-old/dist/schema-basic"
+import {Table, TableRow, TableCell} from "prosemirror-old/dist/schema-table"
 
-import {Schema, Block, Inline, Text, Attribute, MarkType} from "prosemirror/dist/model"
+import {Schema, Block, Inline, Text, Attribute, MarkType} from "prosemirror-old/dist/model"
 
 import {Figure, Citation, Equation} from "./document"
 

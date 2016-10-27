@@ -1,4 +1,4 @@
-import {Keymap} from "prosemirror/dist/edit"
+import {Keymap} from "prosemirror-old/dist/edit"
 
 export class ModMenusKeyBindings {
     constructor(mod) {

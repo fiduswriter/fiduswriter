@@ -2,8 +2,8 @@
  We use the DOM import for ProseMirror as the JSON we store in the database is really jsonized HTML.
 */
 import {node2Obj, obj2Node} from "../exporter/tools/json"
-import {nodeToDOM} from "prosemirror/dist/model/to_dom"
-import {parseDOM} from "prosemirror/dist/model/from_dom"
+import {nodeToDOM} from "prosemirror-old/dist/model/to_dom"
+import {parseDOM} from "prosemirror-old/dist/model/from_dom"
 import {docSchema} from "../schema/document"
 
 import {defaultDocumentStyle} from "../style/documentstyle-list"

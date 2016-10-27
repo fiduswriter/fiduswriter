@@ -1,4 +1,4 @@
-import {TextSelection} from "prosemirror/dist/edit/selection"
+import {TextSelection} from "prosemirror-old/dist/edit/selection"
 /**
  * Helper functions for testing FidusWriter with Selenium.
  * @namespace testCaret

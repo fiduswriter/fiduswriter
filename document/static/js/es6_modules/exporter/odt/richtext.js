@@ -85,13 +85,13 @@ export class OdtExporterRichtext {
                 // Check for hyperlink, bold/strong and italic/em
                 let hyperlink, strong, em
                 if (node.marks) {
-                    strong = _.findWhere(node.marks, {_:'strong'})
-                    em = _.findWhere(node.marks, {_:'em'})
-                    hyperlink = _.findWhere(node.marks, {_:'link'})
+                    strong = _.findWhere(node.marks, {type:'strong'})
+                    em = _.findWhere(node.marks, {type:'em'})
+                    hyperlink = _.findWhere(node.marks, {type:'link'})
                 }
 
                 if (hyperlink) {
-                    start += `<text:a xlink:type="simple" xlink:href="${hyperlink.href}">`
+                    start += `<text:a xlink:type="simple" xlink:href="${hyperlink.attrs.href}">`
                     end = '</text:a>' + end
                 }
 

@@ -3,7 +3,6 @@ Functions related to the editing and sharing of comments.
 based on https://github.com/ProseMirror/website/blob/master/src/client/collab/comment.js
 */
 import {eventMixin} from "./event"
-import {Transform} from "prosemirror/dist/transform"
 import {Comment} from "./comment"
 
 export class ModCommentStore {

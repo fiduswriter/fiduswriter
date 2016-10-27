@@ -1,5 +1,5 @@
 import {linkDialogTemplate} from "./templates"
-import  {commands} from "prosemirror/dist/edit/commands"
+import  {commands} from "prosemirror-old/dist/edit/commands"
 
 // TODO: turn into class (like FigureDialog)
 export let linkDialog = function (mod) {

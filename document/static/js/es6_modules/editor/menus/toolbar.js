@@ -3,7 +3,7 @@ import {FigureDialog} from "./content-dialogs/figure"
 import {linkDialog} from "./content-dialogs/link"
 import {TableDropdown} from "./content-dialogs/table"
 import {MathDialog} from "./content-dialogs/math"
-import {commands} from "prosemirror/dist/edit/commands"
+import {commands} from "prosemirror-old/dist/edit/commands"
 
 /* Bindings for the toolbar menu */
 export class ModMenusToolbar {

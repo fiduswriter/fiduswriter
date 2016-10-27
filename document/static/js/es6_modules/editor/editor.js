@@ -1,8 +1,8 @@
 import * as objectHash from "object-hash/dist/object_hash"
 
 /* Functions for ProseMirror integration.*/
-import {ProseMirror} from "prosemirror/dist/edit/main"
-import {collabEditing} from "prosemirror/dist/collab"
+import {ProseMirror} from "prosemirror-old/dist/edit/main"
+import {collabEditing} from "prosemirror-old/dist/collab"
 import {docSchema} from "../schema/document"
 import {ModComments} from "./comments/mod"
 import {ModFootnotes} from "./footnotes/mod"

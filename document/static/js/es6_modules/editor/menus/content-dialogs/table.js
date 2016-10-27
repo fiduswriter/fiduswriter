@@ -1,6 +1,6 @@
-import {commands} from "prosemirror/dist/edit/commands"
+import {commands} from "prosemirror-old/dist/edit/commands"
 import {tableInsertTemplate, tableEditTemplate} from "./templates"
-import {createTable, addColumnAfter, addColumnBefore, removeColumn, addRowBefore, addRowAfter, removeRow} from "prosemirror/dist/schema-table"
+import {createTable, addColumnAfter, addColumnBefore, removeColumn, addRowBefore, addRowAfter, removeRow} from "prosemirror-old/dist/schema-table"
 
 export class TableDropdown {
     constructor(mod) {

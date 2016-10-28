@@ -66,7 +66,7 @@ export class DocxExporterFootnotes {
         this.fnPmJSON = false
         this.images = false
         this.citations = false
-        this.htmlFootnotes = [] // footnotes in HTML
+        this.footnotes = [] // footnotes
         this.fnXml = false
         this.ctXml = false
         this.styleXml = false
@@ -79,7 +79,7 @@ export class DocxExporterFootnotes {
     init() {
         let that = this
         this.findFootnotes()
-        if (this.htmlFootnotes.length || (this.exporter.citations.citFm.citationType==='note' && this.exporter.citations.citInfos.length)) {
+        if (this.footnotes.length || (this.exporter.citations.citFm.citationType==='note' && this.exporter.citations.citInfos.length)) {
             this.convertFootnotes()
             this.rels = new DocxExporterRels(this.exporter, 'footnotes')
             this.citations = new DocxExporterCitations(this.exporter, this.exporter.bibDB, this.fnPmJSON)
@@ -159,20 +159,24 @@ export class DocxExporterFootnotes {
         descendantNodes(this.pmJSON).forEach(
             function(node) {
                 if (node.type==='footnote') {
-                    that.htmlFootnotes.push(node.attrs.contents)
+                    that.footnotes.push(node.attrs.footnote)
                 }
             }
         )
     }
 
     convertFootnotes() {
-        let fnHTML = ''
-        this.htmlFootnotes.forEach(function(htmlFn){
-            fnHTML += `<div class='footnote-container'>${htmlFn}</div>`
+        let fnContent = []
+        this.footnotes.forEach(function(footnote){
+            fnContent.push({
+                type: 'footnotecontainer',
+                content: footnote
+            })
         })
-        let fnNode = document.createElement('div')
-        fnNode.innerHTML = fnHTML
-        this.fnPmJSON = fnSchema.parseDOM(fnNode).toJSON()
+        this.fnPmJSON = {
+            type: 'doc',
+            content: fnContent
+        }
     }
 
     createXml() {

@@ -4,7 +4,7 @@
 import {node2Obj, obj2Node} from "../exporter/tools/json"
 import {nodeToDOM} from "prosemirror-old/dist/model/to_dom"
 import {parseDOM} from "prosemirror-old/dist/model/from_dom"
-import {docSchema} from "../schema/document"
+import {docSchema} from "./document"
 
 import {defaultDocumentStyle} from "../style/documentstyle-list"
 import {defaultCitationStyle} from "../style/citation-definitions"
@@ -82,7 +82,7 @@ export let modelToEditor = function(doc) {
     editorNode.appendChild(keywordsNode)
     editorNode.appendChild(contentsNode)
 
-      let pmDoc = parseDOM(docSchema, editorNode, {
+      let pmDoc = docSchema.parseDOM(editorNode, {
           preserveWhitespace: true
       })
 

@@ -333,17 +333,7 @@ export class Editor {
     // Creates a hash value for the entire document so that we can compare with other clients if
     // we really have the same contents
     getHash() {
-        let doc = this.pm.mod.collab.versionDoc.copy()
-        // We need to convert the footnotes from HTML to PM nodes and from that
-        // to JavaScript objects, to ensure that the attribute order of everything
-        // within the footnote will be the same in all browsers, so that the
-        // resulting checksums are the same.
-        doc.descendants(function(node){
-            if (node.type.name==='footnote') {
-                node.attr.contents = this.mod.footnotes.fnEditor.htmlTofootnoteNode(node.attr.contents)
-            }
-        })
-        return objectHash.MD5(JSON.parse(JSON.stringify(doc.toJSON())), {unorderedArrays: true})
+        return objectHash.MD5(this.pm.mod.collab.versionDoc.toJSON(), {unorderedArrays: true})
     }
 
     // Get updates to document and then send updates to the server

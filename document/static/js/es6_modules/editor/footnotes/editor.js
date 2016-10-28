@@ -2,8 +2,8 @@ import {parseDOM} from "prosemirror-old/dist/model/from_dom"
 import {Step} from "prosemirror-old/dist/transform"
 import {Paste} from "../paste/paste"
 import {COMMENT_ONLY_ROLES} from "../editor"
-import {elt} from "prosemirror-old/dist/util/dom"
 import {collabEditing} from "prosemirror-old/dist/collab"
+import {fnNodeToPmNode} from "../../schema/footnotes-convert"
 
 /* Functions related to the footnote editor instance */
 export class ModFootnoteEditor {
@@ -81,7 +81,7 @@ export class ModFootnoteEditor {
         this.mod.fnPm.setDoc(this.mod.fnPm.schema.nodeFromJSON({"type":"doc","content":[{"type": "footnote_end"}]}))
         this.mod.footnotes.forEach((footnote, index) => {
             let node = that.mod.editor.pm.doc.nodeAt(footnote.from)
-            that.renderFootnote(node.attrs.contents, index)
+            that.renderFootnote(node.attrs.footnote, index)
         })
         let collab = this.mod.fnPm.mod.collab
         collab.versionDoc = this.mod.fnPm.doc
@@ -90,25 +90,12 @@ export class ModFootnoteEditor {
         this.bindEvents()
     }
 
-    // Convert the footnote HTML stored with the marker to a PM node representation of the footnote.
-    htmlTofootnoteNode(contents) {
-        let footnoteDOM = elt('div', {
-            class: 'footnote-container'
-        })
-        footnoteDOM.innerHTML = contents
-        let node = parseDOM(this.mod.schema, footnoteDOM, {
-            preserveWhitespace: true,
-            topNode: false
-        })
 
-        return node.firstChild
-    }
 
 
     renderFootnote(contents, index = 0) {
         this.rendering = true
-
-        let node = this.htmlTofootnoteNode(contents)
+        let node = fnNodeToPmNode(contents)
         let pos = 0
         for (let i=0; i<index;i++) {
             pos += this.mod.fnPm.doc.child(i).nodeSize
@@ -117,7 +104,7 @@ export class ModFootnoteEditor {
         this.mod.fnPm.tr.insert(pos, node).apply({filter:false})
         // Most changes to the footnotes are followed by a change to the main editor,
         // so changes are sent to collaborators automatically. When footnotes are added/deleted,
-        // the change is reverse, so we need to inform collabs manually.
+        // the change is reversed, so we need to inform collabs manually.
         this.mod.editor.mod.collab.docChanges.sendToCollaborators()
         this.rendering = false
 

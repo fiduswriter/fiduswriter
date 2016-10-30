@@ -1,6 +1,6 @@
-import {obj2Node,node2Obj} from "../exporter/tools/json"
 import {BibEntryTypes} from "../bibliography/statics"
 import {addAlert, csrfToken} from "../common/common"
+import {docSchema} from "../schema/document"
 
 export class ImportNative {
     /* Save document information into the database */
@@ -196,7 +196,7 @@ export class ImportNative {
 
     translateReferenceIds(BibTranslationTable,
         ImageTranslationTable) {
-        let contents = obj2Node(this.aDocument.contents)
+        let contents = docSchema.nodeFromJSON(this.aDocument.contents).toDOM()
         jQuery(contents).find('img').each(function() {
             let translationEntry = _.findWhere(ImageTranslationTable, {
                 oldUrl: jQuery(this).attr('src')
@@ -223,7 +223,7 @@ export class ImportNative {
             jQuery(this).attr('data-bib-entry', citekeys.join(','))
         })
 
-        this.aDocument.contents = node2Obj(contents)
+        this.aDocument.contents = docSchema.parseDOM(contents).firstChild.toJSON()
 
         this.createNewDocument()
     }

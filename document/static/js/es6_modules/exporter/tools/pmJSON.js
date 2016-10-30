@@ -2,24 +2,18 @@
 // marked as hidden removed.
 
 export let removeHidden = function(node) {
-    if (node.attrs && node.attrs.hidden === true) {
-        return false
-    }
-    let content = []
-    if (node.content) {
+    let keys = Object.keys(node), returnNode = {}
+
+    keys.forEach(function(key){
+        if (key !== 'content') {
+            returnNode[key] = node[key]
+        }
+    })
+    if ((!node.attrs || !node.attrs.hidden) && node.content) {
+        returnNode.content = []
         node.content.forEach(function(child){
-            let subNode = removeHidden(child)
-            if (subNode) {
-                content.push(subNode)
-            }
+            returnNode.content.push(removeHidden(child))
         })
-    }
-    let returnNode = {
-        type: node.type,
-        attrs: node.attrs,
-    }
-    if (content.length) {
-        returnNode.content = content
     }
     return returnNode
 }

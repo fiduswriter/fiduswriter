@@ -1,5 +1,6 @@
 import {ModSettingsLayout} from "./layout"
 import {ModSettingsSet} from "./set"
+import {loadCSS} from "fg-loadcss/src/loadCSS"
 
 /* A Module relted to setting document settings such as citation style and
 papersize and making needed changes to the DOM when settings are set/change.*/
@@ -21,7 +22,7 @@ export class ModSettings {
                         that.updateDocumentStyleCSS()
                         break
                     case 'citationstyle':
-                        that.mod.editor.mod.citations.resetCitations()
+                        that.editor.mod.citations.resetCitations()
                         break
                 }
             }
@@ -41,7 +42,7 @@ export class ModSettings {
         documentStyleLink.parentElement.removeChild(documentStyleLink.previousElementSibling)
 
         let stylesheet = loadCSS(
-            staticUrl + `css/document/${this.mod.editor.doc.settings.documentstyle}.css`,
+            staticUrl + `css/document/${this.editor.doc.settings.documentstyle}.css`,
             documentStyleLink
         )
         stylesheet.addEventListener( "load", function() {
@@ -51,8 +52,8 @@ export class ModSettings {
             // TODO: Find a way that is more reliable than a timeout to check
             // for font loading.
             window.setTimeout(function() {
-                that.mod.editor.mod.comments.layout.layoutComments()
-                that.mod.editor.mod.footnotes.layout.layoutFootnotes()
+                that.editor.mod.comments.layout.layoutComments()
+                that.editor.mod.footnotes.layout.layoutFootnotes()
             }, 250)
         })
 

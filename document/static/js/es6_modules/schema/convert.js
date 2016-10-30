@@ -24,11 +24,6 @@ export let updateDoc = function(doc) {
 
     switch(docVersion) {
         case undefined: // Fidus Writer 1.1-3.0
-        //    let newDoc = editorToModel(modelToEditor(doc))
-        //    doc = JSON.parse(JSON.stringify(doc))
-        //    doc.contents = newDoc.contents
-        //    doc.metadata = newDoc.metadata
-        //    doc.settings['doc_version'] = 0
         case 0: // Fidus Writer 3.1 prerelease
             let pmContents = htmlJsonToPmJson(doc)
             pmContents.attrs = {
@@ -50,11 +45,6 @@ export let updateDoc = function(doc) {
             doc.contents = pmContents
             doc.metadata = pmMetadata
             doc.settings = pmSettings
-
-            //let newNewDoc = editorToModel({firstChild:pmArticle})
-            //doc.contents = newNewDoc.contents
-            //doc.metadata = newNewDoc.metadata
-            // doc.settings = {'doc_version':1}
     }
     return doc
 }
@@ -63,12 +53,11 @@ export let getMetadata = function(pmDoc) {
     let metadata = {}
     for (let i=0;i<pmDoc.childCount;i++) {
         let pmNode = pmDoc.child(i)
-        if (!pmNode.type.isMetadata || pmNode.hidden) {
-            return
-        }
-        let value = pmNode.toDOM().innerHTML
-        if (value.length > 0 && value !== "<p></p>") {
-            metadata[pmNode.type.name] = value
+        if (pmNode.type.isMetadata || !pmNode.attrs.hidden) {
+            let value = pmNode.toDOM().innerHTML
+            if (value.length > 0 && value !== "<p></p>") {
+                metadata[pmNode.type.name] = value
+            }
         }
     }
     return metadata
@@ -130,38 +119,3 @@ let htmlJsonToPmJson = function(doc) {
 
     return pmDoc.firstChild.toJSON()
 }
-
-
-// export let editorToModel = function(pmDoc) {
-//     // In order to stick with the format used in Fidus Writer 1.1-2.0,
-//     // we do a few smaller modifications to the node before it is saved.
-//     let node = pmDoc.firstChild.toDOM()
-//
-//     // Remove katex contents of <span class="equation" >
-//     let mathNodes = node.querySelectorAll('span.equation')
-//
-//     for (let i = 0; i < mathNodes.length; i++) {
-//         while (mathNodes[i].firstChild) {
-//             mathNodes[i].removeChild(mathNodes[i].firstChild)
-//         }
-//     }
-//
-//     // Remove all contenteditable attributes
-//     let ceNodes = node.querySelectorAll('[contenteditable]')
-//
-//     for (let i = 0; i < ceNodes.length; i++) {
-//         ceNodes[i].removeAttribute('contenteditable')
-//     }
-//
-//     // We convert the node into a json object with two entries: metadata and contents
-//     let doc = {
-//         metadata: {}
-//     }
-//     doc.metadata.title = node2Obj(node.querySelector('.article-title'))
-//     doc.metadata.subtitle = node2Obj(node.querySelector('.article-subtitle'))
-//     doc.metadata.authors = node2Obj(node.querySelector('.article-authors'))
-//     doc.metadata.abstract = node2Obj(node.querySelector('.article-abstract'))
-//     doc.metadata.keywords = node2Obj(node.querySelector('.article-keywords'))
-//     doc.contents = node2Obj(node.querySelector('.article-body'))
-//     return doc
-// }

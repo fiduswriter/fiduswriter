@@ -161,14 +161,6 @@ class Footnote extends Inline {
     }
     get matchDOMTag() {
         return {
-            // To support import from FW 1.1-3.0
-            //"span.footnote": dom => ({
-            //    footnote: htmlToFnNode(dom.innerHTML)
-            //}),
-            //"span.footnote-marker[contents]": dom => ({
-            //    footnote: htmlToFnNode(dom.getAttribute('contents'))
-            //}),
-            // Current FW
             "span.footnote-marker[data-footnote]": dom => ({
                 footnote: htmlToFnNode(dom.getAttribute('data-footnote'))
             })

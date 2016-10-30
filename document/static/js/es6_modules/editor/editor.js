@@ -12,7 +12,7 @@ import {ModTools} from "./tools/mod"
 import {ModSettings} from "./settings/mod"
 import {ModMenus} from "./menus/mod"
 import {ModServerCommunications} from "./server-communications"
-import {editorToModel, modelToEditor, updateDoc, setDocDefaults} from "../schema/convert"
+import {editorToModel, updateDoc, setDocDefaults} from "../schema/convert"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
 import {Paste} from "./paste/paste"
@@ -144,7 +144,7 @@ export class Editor {
         if (this.mod.collab.docChanges.awaitingDiffResponse) {
             this.mod.collab.docChanges.enableDiffSending()
         }
-        let pmDoc = modelToEditor(this.doc)
+        let pmDoc = docSchema.nodeFromJSON({type:'doc',content:[this.doc.pmContents]})
         this.pm.setDoc(pmDoc)
         this.pm.mod.collab.version = this.doc.version
 
@@ -181,7 +181,7 @@ export class Editor {
         this.mod.comments.store.setVersion(this.doc.comment_version)
         this.pm.mod.collab.mustSend.add(function() {
             that.mod.collab.docChanges.sendToCollaborators()
-        }, 0) // priority : 0 so that other things cna be scheduled before this.
+        }, 0) // priority : 0 so that other things can be scheduled before this.
         this.pm.mod.collab.receivedTransform.add((transform, options) => {that.onTransform(transform, false)})
         this.mod.footnotes.fnEditor.renderAllFootnotes()
         _.each(this.doc.comments, function(comment) {
@@ -262,9 +262,9 @@ export class Editor {
 
         jQuery('span[data-citationstyle=' + this.doc.settings.citationstyle +
             ']').addClass('selected')
-        this.mod.settings.layout.displayPapersize()
+        //this.mod.settings.layout.displayPapersize()
 
-        this.mod.settings.layout.layoutMetadata()
+        //this.mod.settings.layout.layoutMetadata()
 
 
         if (READ_ONLY_ROLES.indexOf(this.docInfo.rights) > -1) {
@@ -353,7 +353,10 @@ export class Editor {
         let tmpDoc = editorToModel(this.pm.mod.collab.versionDoc)
         this.doc.contents = tmpDoc.contents
         this.doc.metadata = tmpDoc.metadata
-        this.doc.title = this.pm.mod.collab.versionDoc.firstChild.textContent
+        this.doc.pmContents = this.pm.mod.collab.versionDoc.firstChild.toJSON()
+        this.doc.pmMetadata = getMetadata(this.pm.mod.collab.versionDoc)
+        this.doc.pmSettings = getSettings(this.pm.mod.collab.versionDoc)
+        this.doc.title = this.pm.mod.collab.versionDoc.firstChild.firstChild.textContent
         this.doc.version = this.pm.mod.collab.version
         this.docInfo.hash = this.getHash()
         this.doc.comments = this.mod.comments.store.comments
@@ -410,7 +413,8 @@ export class Editor {
 
     // Things to be executed on every editor transform.
     onTransform(transform, local) {
-        let updateBibliography = false, updateTitle = false, commentIds = [], that = this
+        let updateBibliography = false, updateTitle = false, updateSettings = false,
+            commentIds = [], that = this
             // Check what area is affected
 
         transform.steps.forEach(function(step, index) {
@@ -429,8 +433,11 @@ export class Editor {
                         }
 
                     })
+                    if (step.from===0 && step.jsonID === 'replaceAround') {
+                        updateSettings = true
+                    }
                 }
-                let docPart = that.pm.doc.resolve(step.from).node(1)
+                let docPart = that.pm.doc.resolve(step.from).node(2)
                 if (docPart && docPart.type.name === 'title') {
                     updateTitle = true
                 }
@@ -443,7 +450,7 @@ export class Editor {
         }
 
         if (updateTitle) {
-            let documentTitle = this.pm.doc.firstChild.textContent
+            let documentTitle = this.pm.doc.firstChild.firstChild.textContent
             // The title has changed. We will update our document. Mark it as changed so
             // that an update may be sent to the server.
             if (documentTitle.substring(0, 255) !== this.doc.title) {
@@ -452,6 +459,9 @@ export class Editor {
                     this.docInfo.title_changed = true
                 }
             }
+        }
+        if (updateSettings) {
+            this.mod.settings.set.check(this.pm.doc.firstChild.attrs)
         }
         if (local && commentIds.length > 0) {
             // Check if the deleted comment referrers still are somewhere else in the doc.

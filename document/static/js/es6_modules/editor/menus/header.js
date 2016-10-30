@@ -81,8 +81,19 @@ export class ModMenusHeader {
               if (that.mod.editor.doc.owner.id === that.mod.editor.user.id)
                 that.mod.actions.submitOjs()
           })
+
           // Document Style switching
+          jQuery(document).on('click', '.documentstyle-menu:not(.disabled)', function () {
+              jQuery('span.documentstyle.selected').removeClass('selected')
+              let documentstyle = that.mod.editor.pm.doc.firstChild.attrs.documentstyle
+              jQuery(`span.documentstyle[data-documentstyle="${documentstyle}"]`).addClass('selected')
+          })
           jQuery(document).on('mousedown', "#header-navigation .style:not(.disabled)", function() {
+              let article = that.mod.editor.pm.doc.firstChild
+              let attrs = _.clone(article.attrs)
+              attrs.documentstyle = jQuery(this).attr('data-style')
+              that.mod.editor.pm.tr.setNodeType(0, false, attrs).apply()
+
               if (that.mod.editor.mod.settings.set.setSetting('documentstyle',
                       jQuery(this).attr('data-style'), true)) {
                   that.mod.editor.docInfo.changed = true
@@ -91,7 +102,17 @@ export class ModMenusHeader {
           })
 
           // Citation Style switching
+          jQuery(document).on('click', '.citationstyle-menu:not(.disabled)', function () {
+              jQuery('span.citationstyle.selected').removeClass('selected')
+              let citationstyle = that.mod.editor.pm.doc.firstChild.attrs.citationstyle
+              jQuery(`span.citationstyle[data-citationstyle="${citationstyle}"]`).addClass('selected')
+          })
           jQuery(document).on('mousedown', "#header-navigation .citationstyle:not(.disabled)", function() {
+              let article = that.mod.editor.pm.doc.firstChild
+              let attrs = _.clone(article.attrs)
+              attrs.citationstyle = jQuery(this).attr('data-citationstyle')
+              that.mod.editor.pm.tr.setNodeType(0, false, attrs).apply()
+
               if (that.mod.editor.mod.settings.set.setSetting('citationstyle',
                       jQuery(this).attr('data-citationstyle'), true)) {
                   that.mod.editor.docInfo.changed = true
@@ -115,17 +136,48 @@ export class ModMenusHeader {
           })
 
           // Paper size switching
+          jQuery(document).on('click', '.papersize-menu:not(.disabled)', function () {
+              jQuery('span.papersize.selected').removeClass('selected')
+              let papersize = that.mod.editor.pm.doc.firstChild.attrs.papersize
+              jQuery(`span.papersize[data-papersize="${papersize}"]`).addClass('selected')
+          })
           jQuery(document).on('mousedown', "#header-navigation .papersize:not(.disabled)", function() {
+              let article = that.mod.editor.pm.doc.firstChild
+              let attrs = _.clone(article.attrs)
+              attrs.papersize = jQuery(this).attr('data-papersize')
+              that.mod.editor.pm.tr.setNodeType(0, false, attrs).apply()
+
               if (that.mod.editor.mod.settings.set.setSetting('papersize',
                       parseInt(jQuery(this).attr('data-paperheight')), true)) {
                   that.mod.editor.docInfo.changed = true
               }
               return false
           })
-          /** Turn enabled metadata off and disabled metadata on, Function is bound to clicking option in metadata menu.
+
+          jQuery(document).on('click', '.metadata-menu:not(.disabled)', function () {
+              jQuery('span.metadata-menu-item.selected').removeClass('selected')
+              that.mod.editor.pm.doc.firstChild.forEach(function(node){
+                  if (node.type.isMetadata && !node.attrs.hidden) {
+                      jQuery(`span.metadata-menu-item.metadata-${node.type.name}`).addClass('selected')
+                  }
+              })
+          })
+
+          /** Turn enabled metadata off and disabled metadata on.
+              Function is bound to clicking option in metadata menu.
            */
-          jQuery(document).on('mousedown', '.metadata-menu-item:not(.disabled)', function () {
+          jQuery(document).on('click', '.metadata-menu-item:not(.disabled)', function () {
               let theMetadata = jQuery(this).attr('data-metadata')
+              let offset, attrs
+              that.mod.editor.pm.doc.firstChild.forEach(function(node, nodeOffset){
+                  if (node.type.name===theMetadata) {
+                      offset = nodeOffset + 1 // We need to add one as we are looking at offset values within the firstChild
+                      attrs = _.clone(node.attrs)
+                      attrs.hidden = (!attrs.hidden)
+                  }
+              })
+
+              that.mod.editor.pm.tr.setNodeType(offset, false, attrs).apply()
 
               that.mod.editor.mod.settings.set.setSetting('metadata-' + theMetadata,
                   !that.mod.editor.doc.settings['metadata-' +

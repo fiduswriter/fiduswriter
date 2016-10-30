@@ -56,7 +56,7 @@ export class ModCitations {
         if (this.emptyCitations.length > 0) {
             this.citRenderer = new RenderCitations(
                 document.getElementById('paper-editable'), // TODO: Should we point this to somewhere else?
-                this.editor.doc.settings.citationstyle,
+                document.querySelector('div.article').getAttribute('data-citationstyle'),
                 this.editor.bibDB,
                 false,
                 function() {

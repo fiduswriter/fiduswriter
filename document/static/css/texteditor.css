@@ -291,6 +291,13 @@ input.required, error {
 font {
     color: inherit !important;
 }
+
+/* Don't show metadata fields marked as hidden*/
+
+.metadata[data-hidden] {
+    display: none;
+}
+
 /* For default contents of title and contents field*/
 
 #document-contents:before, #document-title:before, #metadata-subtitle:before, #metadata-abstract:before, #metadata-authors:before, #metadata-keywords:before {

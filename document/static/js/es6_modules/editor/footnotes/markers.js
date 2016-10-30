@@ -184,10 +184,8 @@ export class ModFootnoteMarkers {
 
 
     updateFootnoteMarker(index) {
-        console.log('updateFootnoteMarker')
         this.updating = true
         let fnContents = this.mod.fnPm.doc.child(index).toJSON().content
-        //let fnContents = JSON.stringify(this.mod.fnPm.doc.child(index).toJSON().content)
         let footnote = this.mod.footnotes[index]
         if (footnote) {
             let node = this.mod.editor.pm.doc.nodeAt(footnote.from)

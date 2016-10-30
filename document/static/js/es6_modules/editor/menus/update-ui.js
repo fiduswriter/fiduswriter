@@ -43,10 +43,11 @@ export class ModMenusUpdateUI {
         let pm = this.mod.editor.pm, fnPm = this.mod.editor.mod.footnotes.fnPm,
           currentPm = this.mod.editor.currentPm
 
-        // We count on the the title node being the first one in the document
-        const documentTitle = pm.doc.firstChild.type.name === 'title' &&
-            pm.doc.firstChild.textContent.length > 0 ?
-            pm.doc.firstChild.textContent : gettext('Untitled Document')
+        const article = pm.doc.firstChild
+        // We count on the the title node being the first one in the article
+        const documentTitle = article.firstChild.type.name === 'title' &&
+            article.firstChild.textContent.length > 0 ?
+            article.firstChild.textContent : gettext('Untitled Document')
 
 
         jQuery('title').html('Fidus Writer - ' + documentTitle)
@@ -100,15 +101,15 @@ export class ModMenusUpdateUI {
         const rawEnd = Math.max(currentPm.selection.from, currentPm.selection.to)
         const end = currentPm.doc.resolve(rawEnd)
 
-        if (start.depth === 0 || end.depth === 0) {
+        if (start.depth < 2 || end.depth < 2 ) {
             // The selection must be outermost elements. Do not go any further in
             // analyzing things.
             return
         }
 
-        const startElement = start.node(1)
-        const currentElement = start.node(2)
-        const endElement = end.node(1)
+        const startElement = start.node(2)
+        const currentElement = start.node(3)
+        const endElement = end.node(2)
 
         if (startElement !== endElement) {
             /* Selection goes across document parts or across footnotes */
@@ -241,7 +242,7 @@ export class ModMenusUpdateUI {
             }]
 
         placeHolders.forEach(function(elementType, index) {
-            let partElement = pm.doc.child(i)
+            let partElement = pm.doc.firstChild.child(i)
             if (partElement.type.name !== elementType.type) {
                 return false
             }

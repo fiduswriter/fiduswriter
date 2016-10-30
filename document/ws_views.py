@@ -265,6 +265,7 @@ class DocumentWS(BaseWebSocketHandler):
         return only_comment
 
     def handle_diff(self, parsed):
+        print parsed
         if (
             self.user_info.access_rights in COMMENT_ONLY and
             not self.only_comments(parsed['diff'])

@@ -1,19 +1,42 @@
-import {BlockQuote, OrderedList, BulletList, ListItem, HorizontalRule,
+import {Doc, BlockQuote, OrderedList, BulletList, ListItem, HorizontalRule,
         Paragraph, Heading, CodeBlock, Image, HardBreak, CodeMark, EmMark,
         StrongMark, LinkMark} from "prosemirror-old/dist/schema-basic"
 import {Table, TableRow, TableCell} from "prosemirror-old/dist/schema-table"
 import {Schema, Block, Inline, Text, Attribute, MarkType} from "prosemirror-old/dist/model"
 import {elt} from "prosemirror-old/dist/util/dom"
-import {katexRender} from "../katex/katex"
 import {htmlToFnNode, fnNodeToHtml} from "./footnotes-convert"
 import {Figure, Citation, Equation} from "./common"
+import {defaultDocumentStyle} from "../style/documentstyle-list"
+import {defaultCitationStyle} from "../style/citation-definitions"
 
-class Doc extends Block {
+class Article extends Block {
+    get attrs() {
+        return {
+            papersize: new Attribute({
+                default: 'A4'
+            }),
+            citationstyle: new Attribute({
+                default: defaultCitationStyle
+            }),
+            documentstyle: new Attribute({
+                default: defaultDocumentStyle
+            })
+        }
+    }
     get matchDOMTag() {
-        return {"div.ProseMirror-content": null}
+        return {"div.article": dom => ({
+            papersize: dom.getAttribute('data-papersize'),
+            citationstyle: dom.getAttribute('data-citationstyle'),
+            documentstyle: dom.getAttribute('data-documentstyle')
+        })}
     }
     toDOM(node) {
-        return ["div", {class: 'ProseMirror-content'}, 0]
+        return ["div", {
+            class: 'article',
+            'data-papersize': node.attrs.papersize,
+            'data-citationstyle': node.attrs.citationstyle,
+            'data-documentstyle': node.attrs.documentstyle
+        }, 0]
     }
 }
 
@@ -26,39 +49,95 @@ class Title extends Block {
     }
 }
 
-class Subtitle extends Block {
+class Metadata extends Block {
+    get isMetadata() {return true}
+}
+
+class Subtitle extends Metadata {
+    get attrs() {
+        return {
+            hidden: new Attribute({
+                default: true
+            })
+        }
+    }
     get matchDOMTag() {
-        return {"div[id='metadata-subtitle']": null}
+        return {"div[id='metadata-subtitle']": dom => ({
+            hidden: dom.getAttribute('data-hidden') === "true" ? true : false
+        })}
     }
     toDOM(node) {
-        return ["div", {id: 'metadata-subtitle'}, 0]
+        return ["div", {
+            id: 'metadata-subtitle',
+            class: 'metadata',
+            'data-hidden': node.attrs.hidden
+        }, 0]
     }
 }
 
-class Authors extends Block {
+class Authors extends Metadata {
+    get attrs() {
+        return {
+            hidden: new Attribute({
+                default: true
+            })
+        }
+    }
     get matchDOMTag() {
-        return {"div[id='metadata-authors']": null}
+        return {"div[id='metadata-authors']": dom => ({
+            hidden: dom.getAttribute('data-hidden')
+        })}
     }
     toDOM(node) {
-        return ["div", {id: 'metadata-authors'}, 0]
+        return ["div", {
+            id: 'metadata-authors',
+            class: 'metadata',
+            'data-hidden': node.attrs.hidden
+        }, 0]
     }
 }
 
-class Abstract extends Block {
+class Abstract extends Metadata {
+    get attrs() {
+        return {
+            hidden: new Attribute({
+                default: true
+            })
+        }
+    }
     get matchDOMTag() {
-        return {"div[id='metadata-abstract']": null}
+        return {"div[id='metadata-abstract']": dom => ({
+            hidden: dom.getAttribute('data-hidden')
+        })}
     }
     toDOM(node) {
-        return ["div", {id: 'metadata-abstract'}, 0]
+        return ["div", {
+            id: 'metadata-abstract',
+            class: 'metadata',
+            'data-hidden': node.attrs.hidden
+        }, 0]
     }
 }
 
-class Keywords extends Block {
+class Keywords extends Metadata {
+    get attrs() {
+        return {
+            hidden: new Attribute({
+                default: true
+            })
+        }
+    }
     get matchDOMTag() {
-        return {"div[id='metadata-keywords']": null}
+        return {"div[id='metadata-keywords']": dom => ({
+            hidden: dom.getAttribute('data-hidden')
+        })}
     }
     toDOM(node) {
-        return ["div", {id: 'metadata-keywords'}, 0]
+        return ["div", {
+            id: 'metadata-keywords',
+            class: 'metadata',
+            'data-hidden': node.attrs.hidden
+        }, 0]
     }
 }
 
@@ -127,7 +206,8 @@ class CommentMark extends MarkType {
 
 export const docSchema = new Schema({
   nodes: {
-    doc: {type: Doc, content: "title subtitle authors abstract keywords body"},
+    doc: {type: Doc, content: "article"}, // Transformations don't work well on the top most element
+    article: {type: Article, content: "title subtitle authors abstract keywords body"},
     title: {type: Title, content: "text*", group: "part"},
     subtitle: {type: Subtitle, content: "text*", group: "part"},
     authors: {type: Authors, content: "text*", group: "part"},

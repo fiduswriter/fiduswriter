@@ -2,8 +2,26 @@ export class ModSettingsSet {
     constructor(mod) {
         mod.set = this
         this.mod = mod
+        this.settings = {}
     }
 
+
+    check(newSettings) {
+        let that = this
+        Object.keys(newSettings).forEach(function(key){
+            if(that.settings[key] !== newSettings[key]) {
+                that.settings[key] = newSettings[key]
+                switch(key) {
+                    case 'documentstyle':
+                        this.mod.layout.displayDocumentstyle()
+                        break
+                    case 'citationstyle':
+                        this.mod.layout.displayCitationstyle()
+                        break
+                }
+            }
+        })
+    }
 
     /** Sets a variable in this.mod.editor.doc.settings to a value and sends
      * a change notification to other editors.
@@ -27,7 +45,7 @@ export class ModSettingsSet {
             })
         }
 
-        switch (variable.split('-')[0]) { // Split so that the various metadata- settings all trigegr 'metadata'
+        switch (variable.split('-')[0]) { // Split so that the various metadata- settings all trigger 'metadata'
             case 'documentstyle':
                 this.mod.layout.displayDocumentstyle()
                 break
@@ -35,10 +53,10 @@ export class ModSettingsSet {
                 this.mod.layout.displayCitationstyle()
                 break
             case 'papersize':
-                this.mod.layout.displayPapersize()
+                //this.mod.layout.displayPapersize()
                 break
             case 'metadata':
-                this.mod.layout.layoutMetadata()
+                //this.mod.layout.layoutMetadata()
                 break
         }
 

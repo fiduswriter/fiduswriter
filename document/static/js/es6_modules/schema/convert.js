@@ -2,8 +2,6 @@
  We use the DOM import for ProseMirror as the JSON we store in the database is really jsonized HTML.
 */
 import {node2Obj, obj2Node} from "../exporter/tools/json"
-import {nodeToDOM} from "prosemirror-old/dist/model/to_dom"
-import {parseDOM} from "prosemirror-old/dist/model/from_dom"
 import {docSchema} from "./document"
 
 import {defaultDocumentStyle} from "../style/documentstyle-list"
@@ -38,6 +36,8 @@ export let updateDoc = function(doc) {
 
     let docVersion = doc.settings['doc_version']
 
+    setDocDefaults(doc)
+
     switch(docVersion) {
         case undefined:
             // Fidus Writer 1.1-3.0
@@ -46,15 +46,57 @@ export let updateDoc = function(doc) {
             doc.contents = newDoc.contents
             doc.metadata = newDoc.metadata
             doc.settings['doc_version'] = 0
-        //case 0:
-            // Here we add upgrades from version 0 once there is a higher version
-            // number.
+        case 0:
+            let pmContents = modelToEditor(doc).firstChild.toJSON()
+            console.log(pmContents)
+            pmContents.attrs = {
+                papersize: doc.settings.papersize === 1117 ? 'A4' : 'US Letter',
+                documentstyle: doc.settings.documentstyle,
+                citationstyle: doc.settings.citationstyle
+            }
+            pmContents.content.forEach(function(docSection){
+                console.log(docSection)
+                if (['subtitle', 'abstract', 'authors', 'keywords'].indexOf(docSection.type) !== -1) {
+                    if (doc.settings[`metadata-${docSection.type}`]) {
+                        docSection.attrs.hidden = false
+                    }
+                }
+            })
+            let pmArticle = docSchema.nodeFromJSON(pmContents)
+            let pmMetadata = getMetadata(pmArticle)
+            let pmSettings = getSettings(pmArticle)
+            doc = JSON.parse(JSON.stringify(doc))
+            doc.pmContents = pmContents
+            doc.pmMetadata = pmMetadata
+            doc.pmSettings = pmSettings
+
+            let newNewDoc = editorToModel({firstChild:pmArticle})
+            doc.contents = newNewDoc.contents
+            doc.metadata = newNewDoc.metadata
+            // doc.settings = {'doc_version':1}
     }
-
-    setDocDefaults(doc)
-
     return doc
+}
 
+let getMetadata = function(pmDoc) {
+    let metadata = {}
+    for (let i=0;i<pmDoc.childCount;i++) {
+        let pmNode = pmDoc.child(i)
+        if (!pmNode.type.isMetadata || pmNode.hidden) {
+            return
+        }
+        let value = pmNode.toDOM().innerHTML
+        if (value.length > 0 && value !== "<p></p>") {
+            metadata[pmNode.type.name] = value
+        }
+    }
+    return metadata
+}
+
+let getSettings = function(pmDoc) {
+    let settings = _.clone(pmDoc.attrs)
+    settings.doc_version = 1
+    return settings
 }
 
 export let modelToEditor = function(doc) {
@@ -68,6 +110,7 @@ export let modelToEditor = function(doc) {
         abstractNode = doc.metadata.abstract ? obj2Node(doc.metadata.abstract) : document.createElement('div'),
         keywordsNode = doc.metadata.keywords ? obj2Node(doc.metadata.keywords) : document.createElement('div')
 
+    editorNode.class = 'article'
     titleNode.id = 'document-title'
     subtitleNode.id = 'metadata-subtitle'
     authorsNode.id = 'metadata-authors'
@@ -93,7 +136,7 @@ export let modelToEditor = function(doc) {
 export let editorToModel = function(pmDoc) {
     // In order to stick with the format used in Fidus Writer 1.1-2.0,
     // we do a few smaller modifications to the node before it is saved.
-    let node = pmDoc.content.toDOM()
+    let node = pmDoc.firstChild.toDOM()
 
     // Remove katex contents of <span class="equation" >
     let mathNodes = node.querySelectorAll('span.equation')

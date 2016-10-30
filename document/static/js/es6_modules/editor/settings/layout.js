@@ -12,10 +12,10 @@ export class ModSettingsLayout {
 
     /** Layout metadata and then mark the document as having changed.
      */
-    setMetadataDisplay() {
-        this.layoutMetadata()
-        this.mod.editor.docInfo.changed = true
-    }
+    /*setMetadataDisplay() {
+        //this.layoutMetadata()
+        //this.mod.editor.docInfo.changed = true
+    }*/
 
     /** Display the document style.
      */
@@ -23,9 +23,9 @@ export class ModSettingsLayout {
 
         let documentStyleLink, stylesheet, that = this
 
-        jQuery("#header-navigation .style.selected").removeClass('selected')
+        /*jQuery("#header-navigation .style.selected").removeClass('selected')
         jQuery('span[data-style=' + this.mod.editor.doc.settings.documentstyle + ']').addClass('selected')
-
+        */
         documentStyleLink = document.getElementById('document-style-link')
 
         // Remove previous style.
@@ -52,24 +52,24 @@ export class ModSettingsLayout {
     /** Display the citation style.
      */
     displayCitationstyle() {
-        jQuery("#header-navigation .citationstyle.selected").removeClass(
+    /*    jQuery("#header-navigation .citationstyle.selected").removeClass(
             'selected')
         jQuery('span[data-citationstyle=' + this.mod.editor.doc.settings.citationstyle + ']').addClass(
-            'selected')
+            'selected')*/
         this.mod.editor.mod.citations.resetCitations()
     }
 
     /** Display the document's paper size.
      */
-    displayPapersize() {
+    /*displayPapersize() {
         jQuery("#header-navigation .papersize.selected").removeClass(
             'selected')
         jQuery('span[data-paperheight=' + this.mod.editor.doc.settings.papersize +
             ']').addClass('selected')
-    }
+    }*/
 
 
-    layoutMetadata() {
+    /*layoutMetadata() {
         let metadataCss = ''
         let metadataItems = ['subtitle', 'abstract', 'authors', 'keywords']
         let that = this
@@ -84,6 +84,6 @@ export class ModSettingsLayout {
 
         jQuery('#metadata-styles')[0].innerHTML = metadataCss
 
-    }
+    }*/
 
 }

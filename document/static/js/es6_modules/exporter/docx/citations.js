@@ -1,12 +1,12 @@
 import {FormatCitations} from "../../citations/format"
 import {docSchema} from "../../schema/document"
-import {descendantNodes} from "../tools/pmJSON"
+import {descendantNodes} from "../tools/doc-contents"
 
 export class DocxExporterCitations {
-    constructor(exporter, bibDB, pmJSON) {
+    constructor(exporter, bibDB, docContents) {
         this.exporter = exporter
         this.bibDB = bibDB
-        this.pmJSON = pmJSON
+        this.docContents = docContents
         this.citInfos = []
         this.citationTexts = []
         this.pmCits = []
@@ -26,7 +26,7 @@ export class DocxExporterCitations {
             this.citInfos = this.citInfos.concat(origCitInfos)
         }
 
-        descendantNodes(this.pmJSON).forEach(
+        descendantNodes(this.docContents).forEach(
             function(node){
                 if (node.type==='citation') {
                     that.citInfos.push(node.attrs)
@@ -58,8 +58,7 @@ export class DocxExporterCitations {
             citationsHTML += '<p>'+ct[0][1]+'</p>'
         })
 
-        // We create a standard body DOm node, add the citations into it, and parse it back.
-
+        // We create a standard body DOM node, add the citations into it, and parse it back.
         let bodyNode = docSchema.nodeFromJSON({type:'body'})
         let dom = bodyNode.toDOM()
         dom.innerHTML = citationsHTML

@@ -142,8 +142,7 @@ export class Editor {
         if (this.mod.collab.docChanges.awaitingDiffResponse) {
             this.mod.collab.docChanges.enableDiffSending()
         }
-        let pmDoc = docSchema.nodeFromJSON({type:'doc',content:[this.doc.contents]})
-        this.pm.setDoc(pmDoc)
+        this.setPmDoc()
         this.pm.mod.collab.version = this.doc.version
 
 
@@ -162,7 +161,7 @@ export class Editor {
                 // We couldn't apply the diffs. They are likely corrupted.
                 // We set the original document, increase the version by one and
                 // save to the server.
-                this.pm.setDoc(pmDoc)
+                this.setPmDoc()
                 console.warn('Diffs could not be applied correctly!')
                 this.pm.mod.collab.version = this.doc.version + this.docInfo.unapplied_diffs.length + 1
                 this.docInfo.unapplied_diffs = []
@@ -194,6 +193,13 @@ export class Editor {
             that.enableUI()
         })
         this.waitingForDocument = false
+    }
+
+    setPmDoc() {
+        // Given that the article node is the second outer-most node, we need
+        // to wrap it in a doc node before setting it in PM.
+        let pmDoc = docSchema.nodeFromJSON({type:'doc',content:[this.doc.contents]})
+        this.pm.setDoc(pmDoc)
     }
 
     askForDocument() {

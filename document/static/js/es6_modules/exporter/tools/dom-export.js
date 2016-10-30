@@ -4,7 +4,7 @@ WARNING: DEPRECATED!
 
 Base exporter class for dom-based exports. This is the deprecated way of creating exports.
 The latex, epub and html export filters go over a DOM of a document which they change little
-by little, and they are all based on this class.
+by little, and they are all based on the BaseDOMExporter class.
 
     New exporters should instead by walking a pmJSON tree.
     This is how the ODT and DOCX export filters work.

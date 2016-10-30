@@ -3,7 +3,7 @@ import {OdtExporterImages} from "./images"
 import {OdtExporterRichtext} from "./richtext"
 import {fnSchema} from "../../schema/footnotes"
 import {noSpaceTmp} from "../../common/common"
-import {descendantNodes} from "../tools/pmJSON"
+import {descendantNodes} from "../tools/doc-contents"
 
 
 const DEFAULT_STYLE_FOOTNOTE = noSpaceTmp`
@@ -27,9 +27,9 @@ const DEFAULT_STYLE_FOOTNOTE_CONFIGURATION = noSpaceTmp`
     `
 
 export class OdtExporterFootnotes {
-    constructor(exporter, pmJSON) {
+    constructor(exporter, docContents) {
         this.exporter = exporter
-        this.pmJSON = pmJSON
+        this.docContents = docContents
         this.fnPmJSON = false
         this.images = false
         this.citations = false
@@ -94,7 +94,7 @@ export class OdtExporterFootnotes {
 
     findFootnotes() {
         let that = this
-        descendantNodes(this.pmJSON).forEach(
+        descendantNodes(this.docContents).forEach(
             function(node) {
                 if (node.type==='footnote') {
                     that.footnotes.push(node.attrs.footnote)

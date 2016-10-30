@@ -7,52 +7,10 @@ import {docSchema} from "./document"
 import {defaultDocumentStyle} from "../style/documentstyle-list"
 import {defaultCitationStyle} from "../style/citation-definitions"
 
-export let updateDoc = function(doc) {
-    /* This is to clean documents taking all the accepted formatting from older
-       versions and outputting the current version of the doc format.
-       We achieve this by parsing doc -> pmDoc -> doc and copying the contents
-       and metadata of the output.
-    */
-
-    // We version the parts of the document. Notice that this isn't the same as
-    // the versions of FW files. While the FW file version refers to what files
-    // there could be, the doc_version refers to how the data is stored in those
-    // files
-
-
-    let docVersion = doc.settings['doc_version']
-
-    switch(docVersion) {
-        case undefined: // Fidus Writer 1.1-3.0
-        case 0: // Fidus Writer 3.1 prerelease
-            let pmContents = htmlJsonToPmJson(doc)
-            pmContents.attrs = {
-                papersize: doc.settings.papersize === 1020 ? 'US Letter': 'A4',
-                documentstyle: doc.settings.documentstyle ? doc.settings.documentstyle : defaultDocumentStyle,
-                citationstyle: doc.settings.citationstyle ? doc.settings.citationstyle : defaultCitationStyle
-            }
-            pmContents.content.forEach(function(docSection){
-                if (['subtitle', 'abstract', 'authors', 'keywords'].indexOf(docSection.type) !== -1) {
-                    if (doc.settings[`metadata-${docSection.type}`]) {
-                        docSection.attrs.hidden = false
-                    }
-                }
-            })
-            let pmArticle = docSchema.nodeFromJSON(pmContents)
-            let pmMetadata = getMetadata(pmArticle)
-            let pmSettings = getSettings(pmArticle)
-            doc = JSON.parse(JSON.stringify(doc))
-            doc.contents = pmContents
-            doc.metadata = pmMetadata
-            doc.settings = pmSettings
-    }
-    return doc
-}
-
-export let getMetadata = function(pmDoc) {
+export let getMetadata = function(pmArticle) {
     let metadata = {}
-    for (let i=0;i<pmDoc.childCount;i++) {
-        let pmNode = pmDoc.child(i)
+    for (let i=0;i<pmArticle.childCount;i++) {
+        let pmNode = pmArticle.child(i)
         if (pmNode.type.isMetadata || !pmNode.attrs.hidden) {
             let value = pmNode.toDOM().innerHTML
             if (value.length > 0 && value !== "<p></p>") {
@@ -63,13 +21,38 @@ export let getMetadata = function(pmDoc) {
     return metadata
 }
 
-export let getSettings = function(pmDoc) {
-    let settings = _.clone(pmDoc.attrs)
+export let getSettings = function(pmArticle) {
+    let settings = _.clone(pmArticle.attrs)
     settings.doc_version = 1
     return settings
 }
 
-let htmlJsonToPmJson = function(doc) {
+export let updateDoc = function(doc) {
+    /* This is to clean documents taking all the accepted formatting from older
+       versions and outputting the current version of the doc format.
+       Notice that this isn't the same as the version of the FW export file.
+       While the FW file version also says something about what files could be
+       available inside the FW zip, the doc_version refers to how the data is
+       stored in those files.
+       In general, an update to the doc_version will likely also trigger an
+       update to the version of the FW export file, the reverse is not always
+       true.
+    */
+
+
+    let docVersion = doc.settings['doc_version']
+
+    switch(docVersion) {
+        case undefined: // Fidus Writer 1.1-3.0
+        case 0: // Fidus Writer 3.1 prerelease
+            doc = convertDocV0(doc)
+    }
+    return doc
+}
+
+
+
+let convertDocV0 = function(doc) {
 
     // We start with a document of which we use the metadata and contents entries.
     let editorNode = document.createElement('div'),
@@ -117,5 +100,25 @@ let htmlJsonToPmJson = function(doc) {
         preserveWhitespace: true
     })
 
-    return pmDoc.firstChild.toJSON()
+    let docContents = pmDoc.firstChild.toJSON()
+    docContents.attrs = {
+        papersize: doc.settings.papersize === 1020 ? 'US Letter': 'A4',
+        documentstyle: doc.settings.documentstyle ? doc.settings.documentstyle : defaultDocumentStyle,
+        citationstyle: doc.settings.citationstyle ? doc.settings.citationstyle : defaultCitationStyle
+    }
+    docContents.content.forEach(function(docSection){
+        if (['subtitle', 'abstract', 'authors', 'keywords'].indexOf(docSection.type) !== -1) {
+            if (doc.settings[`metadata-${docSection.type}`]) {
+                docSection.attrs.hidden = false
+            }
+        }
+    })
+    let pmArticle = docSchema.nodeFromJSON(docContents)
+    let pmMetadata = getMetadata(pmArticle)
+    let pmSettings = getSettings(pmArticle)
+    doc = JSON.parse(JSON.stringify(doc))
+    doc.contents = docContents
+    doc.metadata = pmMetadata
+    doc.settings = pmSettings
+    return doc
 }

@@ -1,5 +1,5 @@
 import {noSpaceTmp} from "../../common/common"
-import {descendantNodes} from "../tools/pmJSON"
+import {descendantNodes} from "../tools/doc-contents"
 
 let DEFAULT_LISTPARAGRAPH_XML = noSpaceTmp`
     <w:style w:type="paragraph" w:styleId="ListParagraph">
@@ -22,10 +22,10 @@ let DEFAULT_NUMBERING_XML = '<?xml version="1.0" encoding="UTF-8" standalone="ye
 
 
 export class DocxExporterLists {
-    constructor(exporter, rels, pmJSON) {
+    constructor(exporter, rels, docContents) {
         this.exporter = exporter
         this.rels = rels
-        this.pmJSON = pmJSON
+        this.docContents = docContents
         this.useBulletList = false
         this.usedNumberedList = 0
         this.styleXml = false
@@ -72,7 +72,7 @@ export class DocxExporterLists {
 
     findLists() {
         let that = this
-        descendantNodes(this.pmJSON).forEach(
+        descendantNodes(this.docContents).forEach(
             function(node) {
                 if (node.type==='bullet_list') {
                     that.useBulletList = true

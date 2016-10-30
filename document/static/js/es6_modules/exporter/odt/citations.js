@@ -1,12 +1,12 @@
 import {FormatCitations} from "../../citations/format"
 import {docSchema} from "../../schema/document"
-import {descendantNodes} from "../tools/pmJSON"
+import {descendantNodes} from "../tools/doc-contents"
 
 export class OdtExporterCitations {
-    constructor(exporter, bibDB, pmJSON) {
+    constructor(exporter, bibDB, docContents) {
         this.exporter = exporter
         this.bibDB = bibDB
-        this.pmJSON = pmJSON
+        this.docContents = docContents
         this.citInfos = []
         this.citationTexts = []
         this.pmCits = []
@@ -26,7 +26,7 @@ export class OdtExporterCitations {
             this.citInfos = this.citInfos.concat(origCitInfos)
         }
 
-        descendantNodes(this.pmJSON).forEach(
+        descendantNodes(this.docContents).forEach(
             function(node){
                 if (node.type==='citation') {
                     that.citInfos.push(node.attrs)

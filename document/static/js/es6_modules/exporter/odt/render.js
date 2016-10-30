@@ -1,10 +1,10 @@
-import {textContent} from "../tools/pmJSON"
+import {textContent} from "../tools/doc-contents"
 import {escapeText, domDescendantTexNodes} from "../tools/html"
 
 export class OdtExporterRender {
-    constructor(exporter, pmJSON) {
+    constructor(exporter, docContents) {
         this.exporter = exporter
-        this.pmJSON = pmJSON
+        this.docContents = docContents
         this.filePath = "content.xml"
         this.xml = false
     }
@@ -21,31 +21,31 @@ export class OdtExporterRender {
 
     // Define the tags that are to be looked for in the document
     getTagData(pmBib) {
-        
+
         this.tags = [
             {
                 title: 'title',
-                content: textContent(this.pmJSON.content[0])
+                content: textContent(this.docContents.content[0])
             },
             {
                 title: 'subtitle',
-                content: textContent(this.pmJSON.content[1])
+                content: textContent(this.docContents.content[1])
             },
             {
                 title: 'authors',
-                content: textContent(this.pmJSON.content[2])
+                content: textContent(this.docContents.content[2])
             },
             {
                 title: '@abstract', // The '@' triggers handling as block
-                content: this.pmJSON.content[3]
+                content: this.docContents.content[3]
             },
             {
                 title: 'keywords',
-                content: textContent(this.pmJSON.content[4])
+                content: textContent(this.docContents.content[4])
             },
             {
                 title: '@body', // The '@' triggers handling as block
-                content: this.pmJSON.content[5]
+                content: this.docContents.content[5]
             },
             {
                 title: '@bibliography', // The '@' triggers handling as block

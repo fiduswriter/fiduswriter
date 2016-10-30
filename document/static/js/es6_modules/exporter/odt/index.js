@@ -1,6 +1,6 @@
 import {createSlug, getDatabasesIfNeeded} from "../tools/file"
 import {XmlZip} from "../tools/xml-zip"
-import {textContent, removeHidden} from "../tools/pmJSON"
+import {textContent, removeHidden} from "../tools/doc-contents"
 
 import {OdtExporterCitations} from "./citations"
 import {OdtExporterImages} from "./images"
@@ -28,7 +28,7 @@ export class OdtExporter {
         this.bibDB = bibDB
         this.imageDB = imageDB
         this.pmBib = false
-        this.pmJSON = false
+        this.docContents = false
         this.docTitle = false
 
         getDatabasesIfNeeded(this, doc).then(function(){
@@ -42,15 +42,15 @@ export class OdtExporter {
         let that = this
         // We use the doc in the pm format as this is what we will be using
         // throughout the application in the future.
-        this.pmJSON = removeHidden(this.doc.contents)
-        this.docTitle = textContent(this.pmJSON.content[0])
-        this.metadata = new OdtExporterMetadata(this, this.pmJSON)
-        this.footnotes = new OdtExporterFootnotes(this, this.pmJSON)
-        this.render = new OdtExporterRender(this, this.pmJSON)
+        this.docContents = removeHidden(this.doc.contents)
+        this.docTitle = textContent(this.docContents.content[0])
+        this.metadata = new OdtExporterMetadata(this, this.docContents)
+        this.footnotes = new OdtExporterFootnotes(this, this.docContents)
+        this.render = new OdtExporterRender(this, this.docContents)
         this.styles = new OdtExporterStyles(this)
         this.math = new OdtExporterMath(this)
-        this.images = new OdtExporterImages(this, this.imageDB, that.pmJSON)
-        this.citations = new OdtExporterCitations(this, this.bibDB, that.pmJSON)
+        this.images = new OdtExporterImages(this, this.imageDB, that.docContents)
+        this.citations = new OdtExporterCitations(this, this.bibDB, that.docContents)
         this.richtext = new OdtExporterRichtext(
             this,
             this.citations,

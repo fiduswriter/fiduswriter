@@ -108,7 +108,7 @@ let htmlJsonToPmJson = function(doc) {
 
 
     // Footnotes FW 1.1-3.0
-    let fW11Footnotes = [].slice.call(editorNode.querySelectorAll('footnote,span.footnote'))
+    let fw11Footnotes = [].slice.call(editorNode.querySelectorAll('footnote,span.footnote'))
     fw11Footnotes.forEach(function(footnote){
         let newFn = document.createElement('span')
         newFn.classList.add('footnote-marker')

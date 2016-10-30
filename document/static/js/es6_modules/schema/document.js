@@ -42,10 +42,12 @@ class Article extends Block {
 
 class Title extends Block {
     get matchDOMTag() {
-        return {"div[id='document-title']": null}
+        return {"div.article-title": null}
     }
     toDOM(node) {
-        return ["div", {id: 'document-title'}, 0]
+        return ["div", {
+            class: 'article-part article-title'
+        }, 0]
     }
 }
 
@@ -62,14 +64,13 @@ class Subtitle extends Metadata {
         }
     }
     get matchDOMTag() {
-        return {"div[id='metadata-subtitle']": dom => ({
+        return {"div.article-subtitle": dom => ({
             hidden: dom.getAttribute('data-hidden') === "true" ? true : false
         })}
     }
     toDOM(node) {
         return ["div", {
-            id: 'metadata-subtitle',
-            class: 'metadata',
+            class: 'article-part metadata article-subtitle',
             'data-hidden': node.attrs.hidden
         }, 0]
     }
@@ -84,14 +85,13 @@ class Authors extends Metadata {
         }
     }
     get matchDOMTag() {
-        return {"div[id='metadata-authors']": dom => ({
+        return {"div.article-authors": dom => ({
             hidden: dom.getAttribute('data-hidden')
         })}
     }
     toDOM(node) {
         return ["div", {
-            id: 'metadata-authors',
-            class: 'metadata',
+            class: 'article-part metadata article-authors',
             'data-hidden': node.attrs.hidden
         }, 0]
     }
@@ -106,14 +106,13 @@ class Abstract extends Metadata {
         }
     }
     get matchDOMTag() {
-        return {"div[id='metadata-abstract']": dom => ({
+        return {"div.article-abstract": dom => ({
             hidden: dom.getAttribute('data-hidden')
         })}
     }
     toDOM(node) {
         return ["div", {
-            id: 'metadata-abstract',
-            class: 'metadata',
+            class: 'article-part metadata article-abstract',
             'data-hidden': node.attrs.hidden
         }, 0]
     }
@@ -128,14 +127,13 @@ class Keywords extends Metadata {
         }
     }
     get matchDOMTag() {
-        return {"div[id='metadata-keywords']": dom => ({
+        return {"div.article-keywords": dom => ({
             hidden: dom.getAttribute('data-hidden')
         })}
     }
     toDOM(node) {
         return ["div", {
-            id: 'metadata-keywords',
-            class: 'metadata',
+            class: 'article-part metadata article-keywords',
             'data-hidden': node.attrs.hidden
         }, 0]
     }
@@ -143,10 +141,12 @@ class Keywords extends Metadata {
 
 class Body extends Block {
     get matchDOMTag() {
-        return {"div[id='document-contents']": null}
+        return {"div.article-body": null}
     }
     toDOM(node) {
-        return ["div", {id: 'document-contents'}, 0]
+        return ["div", {
+            class: 'article-part article-body'
+        }, 0]
     }
 }
 
@@ -162,12 +162,12 @@ class Footnote extends Inline {
     get matchDOMTag() {
         return {
             // To support import from FW 1.1-3.0
-            "span.footnote": dom => ({
-                footnote: htmlToFnNode(dom.innerHTML)
-            }),
-            "span.footnote-marker[contents]": dom => ({
-                footnote: htmlToFnNode(dom.getAttribute('contents'))
-            }),
+            //"span.footnote": dom => ({
+            //    footnote: htmlToFnNode(dom.innerHTML)
+            //}),
+            //"span.footnote-marker[contents]": dom => ({
+            //    footnote: htmlToFnNode(dom.getAttribute('contents'))
+            //}),
             // Current FW
             "span.footnote-marker[data-footnote]": dom => ({
                 footnote: htmlToFnNode(dom.getAttribute('data-footnote'))

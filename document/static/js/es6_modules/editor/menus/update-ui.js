@@ -217,27 +217,27 @@ export class ModMenusUpdateUI {
             i = 0,
             placeHolders = [{
                 'type': 'title',
-                'selector': '#document-title',
+                'selector': '.article-title',
                 'placeHolder': gettext('Title...')
             }, {
                 'type': 'subtitle',
-                'selector': '#metadata-subtitle',
+                'selector': '.article-subtitle',
                 'placeHolder': gettext('Subtitle...')
             }, {
                 'type': 'authors',
-                'selector': '#metadata-authors',
+                'selector': '.article-authors',
                 'placeHolder': gettext('Authors...')
             }, {
                 'type': 'abstract',
-                'selector': '#metadata-abstract',
+                'selector': '.article-abstract',
                 'placeHolder': gettext('Abstract...')
             }, {
                 'type': 'keywords',
-                'selector': '#metadata-keywords',
+                'selector': '.article-keywords',
                 'placeHolder': gettext('Keywords...')
             }, {
                 'type': 'body',
-                'selector': '#document-contents',
+                'selector': '.article-body',
                 'placeHolder': gettext('Body...')
             }]
 

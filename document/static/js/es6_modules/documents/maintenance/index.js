@@ -2,7 +2,7 @@ import {ProseMirror} from "prosemirror-old/dist/edit/main"
 import {Step} from "prosemirror-old/dist/transform"
 import {collabEditing} from "prosemirror-old/dist/collab"
 import {updateFileDoc} from "../../importer/file"
-import {modelToEditor, editorToModel, updateDoc} from "../../schema/convert"
+import {updateDoc, getMetadata, getSettings} from "../../schema/convert"
 import {docSchema} from "../../schema/document"
 import {addAlert, csrfToken} from "../../common/common"
 import {Menu} from "../../menu/menu"
@@ -117,8 +117,7 @@ export class DocMaintenance {
             collab.unconfirmedMaps = []
         }
         pm.on.setDoc.add(pm.mod.collab.afterSetDoc)
-
-        let pmDoc = modelToEditor({contents: doc.contents, metadata: doc.metadata})
+        let pmDoc = docSchema.nodeFromJSON({type:'doc',content:[doc.contents]})
         pm.setDoc(pmDoc)
         let unappliedDiffs = doc.diff_version - doc.version
 
@@ -134,12 +133,13 @@ export class DocMaintenance {
                 doc.last_diffs = []
             }
         }
-        let newDoc = editorToModel(pm.doc)
-        doc.contents = newDoc.contents
-        doc.metadata = newDoc.metadata
+        let pmArticle = pm.doc.firstChild
+        doc.contents = pmArticle.toJSON()
+        doc.metadata = getMetadata(pmArticle)
+        doc.settings = getSettings(pmArticle)
         doc.version = doc.diff_version
-        return
     }
+
 
     saveDoc(doc) {
         let that = this

@@ -142,7 +142,7 @@ export class Editor {
         if (this.mod.collab.docChanges.awaitingDiffResponse) {
             this.mod.collab.docChanges.enableDiffSending()
         }
-        let pmDoc = docSchema.nodeFromJSON({type:'doc',content:[this.doc.pmContents]})
+        let pmDoc = docSchema.nodeFromJSON({type:'doc',content:[this.doc.contents]})
         this.pm.setDoc(pmDoc)
         this.pm.mod.collab.version = this.doc.version
 
@@ -339,14 +339,14 @@ export class Editor {
 
     // Collects updates of the document from ProseMirror and saves it under this.doc
     getUpdates(callback) {
-        let tmpDoc = editorToModel(this.pm.mod.collab.versionDoc)
-        this.doc.contents = tmpDoc.contents
-        this.doc.metadata = tmpDoc.metadata
-
-        this.doc.pmContents = this.pm.mod.collab.versionDoc.firstChild.toJSON()
-        this.doc.pmMetadata = getMetadata(this.pm.mod.collab.versionDoc)
-        this.doc.pmSettings = getSettings(this.pm.mod.collab.versionDoc)
-        this.doc.title = this.pm.mod.collab.versionDoc.firstChild.firstChild.textContent
+        //let tmpDoc = editorToModel(this.pm.mod.collab.versionDoc)
+        //this.doc.contents = tmpDoc.contents
+        //this.doc.metadata = tmpDoc.metadata
+        let pmArticle = this.pm.mod.collab.versionDoc.firstChild
+        this.doc.contents = pmArticle.toJSON()
+        this.doc.metadata = getMetadata(pmArticle)
+        this.doc.settings = getSettings(pmArticle)
+        this.doc.title = pmArticle.firstChild.textContent
         this.doc.version = this.pm.mod.collab.version
         this.docInfo.hash = this.getHash()
         this.doc.comments = this.mod.comments.store.comments

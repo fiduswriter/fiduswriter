@@ -1,6 +1,6 @@
 import {createSlug, getDatabasesIfNeeded} from "../tools/file"
 import {XmlZip} from "../tools/xml-zip"
-import {textContent, createPmJSON} from "../tools/pmJSON"
+import {textContent, removeHidden} from "../tools/pmJSON"
 
 import {OdtExporterCitations} from "./citations"
 import {OdtExporterImages} from "./images"
@@ -42,7 +42,7 @@ export class OdtExporter {
         let that = this
         // We use the doc in the pm format as this is what we will be using
         // throughout the application in the future.
-        this.pmJSON = createPmJSON(this.doc)
+        this.pmJSON = removeHidden(this.doc.contents)
         this.docTitle = textContent(this.pmJSON.content[0])
         this.metadata = new OdtExporterMetadata(this, this.pmJSON)
         this.footnotes = new OdtExporterFootnotes(this, this.pmJSON)

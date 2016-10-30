@@ -1,23 +1,28 @@
-import {modelToEditor} from "../../schema/convert"
+// Return a json that is the same as the existing json, but with all parts
+// marked as hidden removed.
 
-export let createPmJSON = function(doc) {
-    let pmJSON = modelToEditor(doc).toJSON()
-    // We remove those parts of the doc that are't enabled in the settings
-    if (!doc.settings['metadata-subtitle']) {
-        delete pmJSON.content[1].content
+export let removeHidden = function(node) {
+    if (node.attrs && node.attrs.hidden === true) {
+        return false
     }
-    if (!doc.settings['metadata-authors']) {
-        delete pmJSON.content[2].content
+    let content = []
+    if (node.content) {
+        node.content.forEach(function(child){
+            let subNode = removeHidden(child)
+            if (subNode) {
+                content.push(subNode)
+            }
+        })
     }
-    if (!doc.settings['metadata-abstract']) {
-        delete pmJSON.content[3].content
+    let returnNode = {
+        type: node.type,
+        attrs: node.attrs,
     }
-    if (!doc.settings['metadata-keywords']) {
-        delete pmJSON.content[4].content
+    if (content.length) {
+        returnNode.content = content
     }
-    return pmJSON
+    return returnNode
 }
-
 
 export let descendantNodes = function(node) {
     let returnValue = [node]

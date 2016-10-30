@@ -12,12 +12,10 @@ import {ModTools} from "./tools/mod"
 import {ModSettings} from "./settings/mod"
 import {ModMenus} from "./menus/mod"
 import {ModServerCommunications} from "./server-communications"
-import {editorToModel, updateDoc, setDocDefaults} from "../schema/convert"
+import {editorToModel, updateDoc} from "../schema/convert"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
 import {Paste} from "./paste/paste"
-import {defaultDocumentStyle} from "../style/documentstyle-list"
-import {defaultCitationStyle} from "../style/citation-definitions"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']
@@ -257,15 +255,8 @@ export class Editor {
       #open-close-header').removeClass('disabled')
 
 
-        this.mod.settings.layout.displayDocumentstyle()
-        this.mod.settings.layout.displayCitationstyle()
-
-        jQuery('span[data-citationstyle=' + this.doc.settings.citationstyle +
-            ']').addClass('selected')
-        //this.mod.settings.layout.displayPapersize()
-
-        //this.mod.settings.layout.layoutMetadata()
-
+        this.mod.settings.updateDocumentStyleCSS()
+        this.mod.citations.resetCitations()
 
         if (READ_ONLY_ROLES.indexOf(this.docInfo.rights) > -1) {
             jQuery('#editor-navigation').hide()
@@ -319,10 +310,8 @@ export class Editor {
 
 
         if (this.doc.version === 0) {
-            // If the document is new, change the url. Then forget that the document is new.
+            // If the document is new, change the url.
             window.history.replaceState("", "", `/document/${this.doc.id}/`)
-            setDocDefaults(this.doc)
-
         }
     }
 
@@ -353,6 +342,7 @@ export class Editor {
         let tmpDoc = editorToModel(this.pm.mod.collab.versionDoc)
         this.doc.contents = tmpDoc.contents
         this.doc.metadata = tmpDoc.metadata
+
         this.doc.pmContents = this.pm.mod.collab.versionDoc.firstChild.toJSON()
         this.doc.pmMetadata = getMetadata(this.pm.mod.collab.versionDoc)
         this.doc.pmSettings = getSettings(this.pm.mod.collab.versionDoc)
@@ -461,7 +451,7 @@ export class Editor {
             }
         }
         if (updateSettings) {
-            this.mod.settings.set.check(this.pm.doc.firstChild.attrs)
+            this.mod.settings.check(this.pm.doc.firstChild.attrs)
         }
         if (local && commentIds.length > 0) {
             // Check if the deleted comment referrers still are somewhere else in the doc.

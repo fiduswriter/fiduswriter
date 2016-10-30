@@ -7,20 +7,6 @@ import {docSchema} from "./document"
 import {defaultDocumentStyle} from "../style/documentstyle-list"
 import {defaultCitationStyle} from "../style/citation-definitions"
 
-export let setDocDefaults = function(doc) {
-    let defaultSettings = [
-        ['papersize', 1117],
-        ['citationstyle', defaultCitationStyle],
-        ['documentstyle', defaultDocumentStyle]
-    ]
-
-    defaultSettings.forEach(function(variable) {
-        if (doc.settings[variable[0]] === undefined) {
-            doc.settings[variable[0]] = variable[1]
-        }
-    })
-}
-
 export let updateDoc = function(doc) {
     /* This is to clean documents taking all the accepted formatting from older
        versions and outputting the current version of the doc format.
@@ -36,8 +22,6 @@ export let updateDoc = function(doc) {
 
     let docVersion = doc.settings['doc_version']
 
-    setDocDefaults(doc)
-
     switch(docVersion) {
         case undefined:
             // Fidus Writer 1.1-3.0
@@ -48,14 +32,12 @@ export let updateDoc = function(doc) {
             doc.settings['doc_version'] = 0
         case 0:
             let pmContents = modelToEditor(doc).firstChild.toJSON()
-            console.log(pmContents)
             pmContents.attrs = {
-                papersize: doc.settings.papersize === 1117 ? 'A4' : 'US Letter',
-                documentstyle: doc.settings.documentstyle,
-                citationstyle: doc.settings.citationstyle
+                papersize: doc.settings.papersize === 1020 ? 'US Letter': 'A4',
+                documentstyle: doc.settings.documentstyle ? doc.settings.documentstyle : defaultDocumentStyle,
+                citationstyle: doc.settings.citationstyle ? doc.settings.citationstyle : defaultCitationStyle
             }
             pmContents.content.forEach(function(docSection){
-                console.log(docSection)
                 if (['subtitle', 'abstract', 'authors', 'keywords'].indexOf(docSection.type) !== -1) {
                     if (doc.settings[`metadata-${docSection.type}`]) {
                         docSection.attrs.hidden = false

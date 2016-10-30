@@ -150,8 +150,6 @@ class DocumentWS(BaseWebSocketHandler):
             self.handle_document_update(parsed)
         elif parsed["type"] == 'update_title' and self.can_update_document():
             self.handle_title_update(parsed)
-        elif parsed["type"] == 'setting_change' and self.can_update_document():
-            self.handle_settings_change(parsed)
         elif parsed["type"] == 'diff' and self.can_update_document():
             self.handle_diff(parsed)
 
@@ -247,12 +245,6 @@ class DocumentWS(BaseWebSocketHandler):
                 "diff_version"] == self.doc['diff_version']:
             DocumentWS.send_updates(
                 parsed, self.user_info.document_id, self.id)
-
-    def handle_settings_change(self, parsed):
-        DocumentWS.sessions[
-            self.user_info.document_id]['settings'][
-            parsed['variable']] = parsed['value']
-        DocumentWS.send_updates(parsed, self.user_info.document_id, self.id)
 
     # Checks if the diff only contains changes to comments.
     def only_comments(self, parsed_diffs):

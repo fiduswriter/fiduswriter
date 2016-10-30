@@ -94,10 +94,6 @@ export class ModMenusHeader {
               attrs.documentstyle = jQuery(this).attr('data-style')
               that.mod.editor.pm.tr.setNodeType(0, false, attrs).apply()
 
-              if (that.mod.editor.mod.settings.set.setSetting('documentstyle',
-                      jQuery(this).attr('data-style'), true)) {
-                  that.mod.editor.docInfo.changed = true
-              }
               return false
           })
 
@@ -113,11 +109,6 @@ export class ModMenusHeader {
               attrs.citationstyle = jQuery(this).attr('data-citationstyle')
               that.mod.editor.pm.tr.setNodeType(0, false, attrs).apply()
 
-              if (that.mod.editor.mod.settings.set.setSetting('citationstyle',
-                      jQuery(this).attr('data-citationstyle'), true)) {
-                  that.mod.editor.docInfo.changed = true
-                  that.mod.editor.mod.comments.layout.layoutComments()
-              }
               return false
           })
           // Tools
@@ -147,10 +138,6 @@ export class ModMenusHeader {
               attrs.papersize = jQuery(this).attr('data-papersize')
               that.mod.editor.pm.tr.setNodeType(0, false, attrs).apply()
 
-              if (that.mod.editor.mod.settings.set.setSetting('papersize',
-                      parseInt(jQuery(this).attr('data-paperheight')), true)) {
-                  that.mod.editor.docInfo.changed = true
-              }
               return false
           })
 
@@ -179,9 +166,6 @@ export class ModMenusHeader {
 
               that.mod.editor.pm.tr.setNodeType(offset, false, attrs).apply()
 
-              that.mod.editor.mod.settings.set.setSetting('metadata-' + theMetadata,
-                  !that.mod.editor.doc.settings['metadata-' +
-                      theMetadata], true)
           })
 
           jQuery(document).on('mousedown', '.share:not(.disabled)', function() {

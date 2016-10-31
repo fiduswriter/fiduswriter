@@ -267,62 +267,62 @@ class MovementInSingleChildParagraph(CaretPositionTest):
             'name': 'leftFromOneAfterDocStart',
             'description': "left arrow decrements caret offset",
             'givenContents': None,
-            'givenCaret': 16,
+            'givenCaret': 17,
             'givenKeys': Keys.ARROW_LEFT,
-            'expectedCaret': 15
+            'expectedCaret': 16
         }),
         CaretTestCase(**{
             'name': 'leftFromDocStart',
             'description': "left arrow does nothing when caret is at start of"
                            " document",
             'givenContents': None,
-            'givenCaret': 1,
+            'givenCaret': 2,
             'givenKeys': Keys.ARROW_LEFT,
-            'expectedCaret': 1
+            'expectedCaret': 2
         }),
         CaretTestCase(**{
             'name': 'rightFromOneBeforeDocEnd',
             'description': "right arrow increments caret offset",
             'givenContents': None,
-            'givenCaret': 14 + len(SHORT_LOREM),
+            'givenCaret': 15 + len(SHORT_LOREM),
             'givenKeys': Keys.ARROW_RIGHT,
-            'expectedCaret': 15 + len(SHORT_LOREM),
+            'expectedCaret': 16 + len(SHORT_LOREM),
         }),
         CaretTestCase(**{
             'name': 'rightFromDocEnd',
             'description': "right arrow does nothing when caret is at end of"
                            " document",
             'givenContents': None,
-            'givenCaret': 15 + len(SHORT_LOREM),
+            'givenCaret': 16 + len(SHORT_LOREM),
             'givenKeys': Keys.ARROW_RIGHT,
-            'expectedCaret': 15 + len(SHORT_LOREM)
+            'expectedCaret': 16 + len(SHORT_LOREM)
         }),
         CaretTestCase(**{
             'name': 'upArrowFromMidFirstDocLine',
             'description': "up arrow moves caret from within first line of"
                            " document to beginning of document",
             'givenContents': None,
-            'givenCaret': 14,
+            'givenCaret': 15,
             'givenKeys': Keys.ARROW_UP,
-            'expectedCaret': 1
+            'expectedCaret': 2
         }),
         CaretTestCase(**{
             'name': 'upArrowFromDocStart',
             'description': "up arrow does nothing when caret is at start of"
                            " document",
             'givenContents': None,
-            'givenCaret': 1,
+            'givenCaret': 2,
             'givenKeys': Keys.ARROW_UP,
-            'expectedCaret': 1
+            'expectedCaret': 2
         }),
         CaretTestCase(**{
             'name': 'downFromDocEnd',
             'description': "down arrow does nothing when caret is at end of"
                            " document",
             'givenContents': None,
-            'givenCaret': 15 + len(SHORT_LOREM),
+            'givenCaret': 16 + len(SHORT_LOREM),
             'givenKeys': Keys.ARROW_DOWN,
-            'expectedCaret': 15 + len(SHORT_LOREM),
+            'expectedCaret': 16 + len(SHORT_LOREM),
         }),
     ]
 
@@ -393,8 +393,8 @@ class InsertionOfLink(LiveTornadoTestCase, Manipulator):
             'description': 'caret at start of paragraph turns start of text'
             ' into link',
             'givenContents': Contents(Paragraph(Text(SHORT_LOREM))),
-            'givenCaretStart': 14,
-            'givenCaretEnd': 14 + len('Lo'),
+            'givenCaretStart': 15,
+            'givenCaretEnd': 15 + len('Lo'),
             'expectedContents': Contents(
                 Paragraph(
                     Link(
@@ -407,14 +407,14 @@ class InsertionOfLink(LiveTornadoTestCase, Manipulator):
                     )
                 )
             ),
-            'expectedCaret': 14,
+            'expectedCaret': 15,
         }),
         InsertionTestCase(**{
             'name': 'linkInsideBold',
             'description': 'caret within Bold creates link within Bold',
             'givenContents': Contents(Paragraph(BoldText(SHORT_LOREM))),
-            'givenCaretStart': 14 + len('Lorem'),
-            'givenCaretEnd': 14 + len('Lorem ipsum'),
+            'givenCaretStart': 15 + len('Lorem'),
+            'givenCaretEnd': 15 + len('Lorem ipsum'),
             'expectedContents': Contents(
                 Paragraph(
                     BoldText('Lorem'),
@@ -422,7 +422,7 @@ class InsertionOfLink(LiveTornadoTestCase, Manipulator):
                     BoldText(SHORT_LOREM[len('Lorem ipsum'):])
                 )
             ),
-            'expectedCaret': 14 + len('Lorem'),
+            'expectedCaret': 15 + len('Lorem'),
         }),
     ]
 

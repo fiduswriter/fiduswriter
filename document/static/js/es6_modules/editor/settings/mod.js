@@ -1,5 +1,3 @@
-import {ModSettingsLayout} from "./layout"
-import {ModSettingsSet} from "./set"
 import {loadCSS} from "fg-loadcss/src/loadCSS"
 
 /* A Module relted to setting document settings such as citation style and

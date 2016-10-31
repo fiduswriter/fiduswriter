@@ -1,5 +1,9 @@
 import {PaginateForPrint} from "paginate-for-print/dist/paginate-for-print"
 
+const PAPER_HEIGHTS = {
+    'A4': 1117,
+    'US Letter': 1020
+}
 
 export class ModToolsPrint {
     constructor(mod) {
@@ -64,13 +68,14 @@ export class ModToolsPrint {
         })
 
         jQuery(flowTo).show()
+
         this.paginator = new PaginateForPrint({
             'flowFromElement' : flowCopy,
             'enableFrontmatter' : false,
             'alwaysEven' : false,
             'autoStart': false,
             'pageWidth': 790,
-            'pageHeight': this.mod.editor.doc.settings.papersize,
+            'pageHeight': PAPER_HEIGHTS[this.mod.editor.doc.settings.papersize],
             'outerMargin': 90,
             'innerMargin': 90,
             'contentsTopMargin': 80,

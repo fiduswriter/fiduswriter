@@ -21,7 +21,7 @@ from test.mock.document_contents import (
     Contents,
     Paragraph,
     Text,
-    Bold,
+    BoldLink,
     BoldText,
     ItalicText,
     Link
@@ -417,11 +417,9 @@ class InsertionOfLink(LiveTornadoTestCase, Manipulator):
             'givenCaretEnd': 14 + len('Lorem ipsum'),
             'expectedContents': Contents(
                 Paragraph(
-                    Bold(
-                        Text('Lorem'),
-                        Link(' ipsum', linkAddress, linkTitle),
-                        Text(SHORT_LOREM[len('Lorem ipsum'):])
-                    ),
+                    BoldText('Lorem'),
+                    BoldLink(' ipsum', linkAddress, linkTitle),
+                    BoldText(SHORT_LOREM[len('Lorem ipsum'):])
                 )
             ),
             'expectedCaret': 14 + len('Lorem'),

@@ -1,10 +1,7 @@
 """
-This is the *assumed* spec of document-contents, to which the tests will be
+This is the spec of document-contents, to which the tests will be
 restricted.
 """
-
-# CONSTANTS
-BR_ELEM_STRING = '{"nn":"BR"}'
 
 
 # OBJECTS
@@ -15,23 +12,17 @@ class Contents(list):
 
 
     >>> str(Contents(Paragraph())) == ''.join([
-    ...     '{"nn":"DIV","a":[["id","document-contents"]],"c":[',
-    ...         '{"nn":"P","c":[',
-    ...             '{"nn":"BR"}',
+    ...     '{"type":"article","content":[',
+    ...         '{"type":"paragraph","content":[',
     ...         ']}',
     ...     ']}',
     ... ])
     True
     """
-    # template = '{"nn":"DIV","a":[["id","document-contents"]],"c":[%s]}'
-    template = ''.join([
-        '{"nn":"DIV",',
-        '"a":[',
-        '["id","document-contents"]',
-        '],',
-        '"c":[%s]',
-        '}',
-    ])
+
+    template = (
+        '{"type":"article","content":[%s]}'
+    )
 
     def __init__(self, *manyBlockContents):
         for b in manyBlockContents:
@@ -81,13 +72,12 @@ class Paragraph(BlockContent, ListOfInlineContent):
     interpretation: paragraph of text and other inline content
 
 
-    >>> str(Paragraph()) == Paragraph.template % (BR_ELEM_STRING)
+    >>> str(Paragraph()) == Paragraph.template % ('')
     True
     >>> str(Paragraph(
     ...     Text('Yetis are cool.')
     ... )) == Paragraph.template % ','.join([
-    ...     Text.template %  dict(contents='Yetis are cool.'),
-    ...     BR_ELEM_STRING
+    ...     Text.template %  dict(contents='Yetis are cool.')
     ... ])
     True
     >>> str(Paragraph(
@@ -112,25 +102,23 @@ class Paragraph(BlockContent, ListOfInlineContent):
     ... %  dict(bibliographyId=0, textBefore='', page='122'),
     ...     Link.template
     ... %  dict(text='about', address='/about/', title='About'),
-    ...     BR_ELEM_STRING,
     ... ])
     True
     >>> str(Paragraph(Text('x'))) == ''.join([
-    ...     '{"nn":"P","c":[',
-    ...             '{"t":"x"},',
-    ...             '{"nn":"BR"}',
+    ...     '{"type":"paragraph","content":[',
+    ...             '{"type:"text","text":"x"},',
     ...     ']}',
     ... ])
     True
 
     """
-    template = '{"nn":"P","c":[%s]}'
+    template = '{"type":"paragraph","content":[%s]}'
 
     def __str__(self):
         return self.template % ','.join([
             str(ic)
             for ic in self
-        ] + [BR_ELEM_STRING])
+        ])
 
 
 class Headline(BlockContent, ListOfInlineContent):
@@ -238,24 +226,10 @@ class Text(FlatInlineContent):
     Text is String
     interpretation: string without formatting
     """
-    template = '{"t":"%(contents)s"}'
+    template = '{"type":"text","text":"%(contents)s"}'
 
-    def __init__(self, t):
-        self.contents = t
-
-
-class Bold(InlineContent, ListOfInlineContent):
-    """
-    Bold is [InlineContent]
-    interpretation: inline content formatted as bold text
-    """
-    template = '{"nn":"STRONG","c":[%s]}'
-
-    def __str__(self):
-        return self.template % ','.join([
-            str(ic)
-            for ic in self
-        ])
+    def __init__(self, contents):
+        self.contents = contents
 
 
 class BoldText(Text):
@@ -263,7 +237,9 @@ class BoldText(Text):
     BoldText is String
     interpretation: string formatted as bold text
     """
-    template = '{"nn":"STRONG","c":[{"t":"%(contents)s"}]}'
+    template = (
+        '{"type":"text","marks":[{"type":"strong"}],"text":"%(contents)s"}'
+    )
 
 
 class ItalicText(Text):
@@ -271,7 +247,7 @@ class ItalicText(Text):
     ItalicText is String
     interpretation: string formatted as italic text
     """
-    template = '{"nn":"EM","c":[{"t":"%(contents)s"}]}'
+    template = '{"type":"text","marks":[{"type":"em"}],"text":"%(contents)s"}'
 
 
 class Link(FlatInlineContent):
@@ -280,8 +256,29 @@ class Link(FlatInlineContent):
     interpretation: text formatted as a link, referencing the given address
     """
     template = (
-        '{"nn":"A","a":[["href","%(address)s"],["title","%(title)s"]],'
-        '"c":[{"t":"%(text)s"}]}'
+        '{"type":"text","marks":[{"type":"link","attrs":{"href":"%(address)s",'
+        '"title":"%(title)s"}}],"text":"%(text)s"}'
+    )
+
+    def __init__(self, text, address, title):
+        self.text = text
+        self.address = address
+        self.title = title
+
+    def __str__(self):
+        return self.template % self.__dict__
+
+
+class BoldLink(FlatInlineContent):
+    """
+    BoldLink is (String, String, String)
+    interpretation: bold text formatted as a link, referencing
+    the given address
+    """
+    template = (
+        '{"type":"text","marks":[{"type":"strong"},'
+        '{"type":"link","attrs":{"href":"%(address)s","title":"%(title)s"}}],'
+        '"text":"%(text)s"}'
     )
 
     def __init__(self, text, address, title):
@@ -298,12 +295,10 @@ class Footnote(FlatInlineContent):
     Footnote is String
     interpretation: string formatted as reference symbol and footnote
     """
-    template = ''.join([
-        '{"nn":"SPAN", "a":[["class","footnote"]], "c":[',
-        '{"t":"%(text)s"},',
-        '{"nn":"BR"}',
-        ']}',
-    ])
+    template = (
+        '{"type":"footnote","attrs":{"footnote":[{"type":"paragraph",'
+        '"content":[{"type":"text","text":"%(text)s"}]}]}}'
+    )
 
     def __init__(self, text):
         self.text = text
@@ -314,15 +309,11 @@ class Citation(FlatInlineContent):
     Citation is (Integer, String, String)
     interpretation: reference to a bibliography entry
     """
-    template = ''.join([
-        '{"nn":"SPAN","a":[',
-        '["class","citation"],',
-        '["data-bib-entry","%(bibliographyId)i"],',
-        '["data-bib-before","%(textBefore)s"],',
-        '["data-bib-page","%(page)s"],',
-        '["data-bib-format","autocite"]',
-        ']}'
-    ])
+    template = (
+        '{"type":"citation","attrs":{"bibFormat":"autocite",'
+        '"bibEntry":"%(bibliographyId)i","bibBefore":"%(textBefore)s",'
+        '"bibPage":"%(page)s"}}'
+    )
 
     def __init__(self, bibliographyId, textBefore, page):
         self.bibliographyId = bibliographyId
@@ -335,40 +326,26 @@ class Equation(FlatInlineContent):
     Equation is String
     interpretation: formula string formatted as an equation
     """
-    template = ''.join([
-        '{"nn":"SPAN","a":[',
-        '["class","equation"],',
-        '["data-equation","%(formula)s"]',
-        ']}',
-    ])
+    template = (
+        '{"type":"equation","attrs":{"equation":"%(formula)s"}}'
+    )
 
     def __init__(self, formula):
         self.formula = formula
 
 
-class Comment(InlineContent, ListOfInlineContent):
+class Comment(FlatInlineContent):
     """
     Comment is [FlatInlineContent]
     interpretation: list of FlatInlineContent formatted as commented, with
                     associated comment data
     """
-    template = ''.join([
-        '{"nn":"SPAN",',
-        '"a":[',
-        '["class","comment"],',
-        '["data-id","%(dataId)s"],',
-        '],',
-        '"c":[%(children)s]',
-        '}',
-    ])
+    template = (
+        '{"type":"text","marks":[{"type":"comment",'
+        '"attrs":{"id":%(dataId)s}}],"text":"%(contents)s"}'
+    )
 
-    def __init__(self, _id, dataId, *children):
+    def __init__(self, _id, dataId, contents):
         self.id = _id
         self.dataId = dataId
-        super(Comment, self).__init__(*children)
-
-    def __str__(self):
-        return self.template % dict(
-            self.__dict__,
-            children=self.getChildrenString()
-        )
+        self.contents = contents

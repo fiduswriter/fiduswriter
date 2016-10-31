@@ -43,10 +43,7 @@ export class BaseDOMExporter {
             let newFootnote = document.createElement('section')
             newFootnote.id = 'fn' + counter
             newFootnote.setAttribute('role','doc-footnote')
-            newFootnote.innerHTML = footnote.getAttribute('contents')
-            //while (footnote.firstChild) {
-            //    newFootnote.appendChild(footnote.firstChild)
-            //}
+            newFootnote.innerHTML = footnote.getAttribute('data-footnote')
             footnotesContainer.appendChild(newFootnote)
         })
         htmlCode.appendChild(footnotesContainer)

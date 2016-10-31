@@ -9,6 +9,7 @@ import {katexOpfIncludes} from "../../katex/opf-includes"
 import {addAlert} from "../../common/common"
 import {katexRender} from "../../katex/katex"
 import {BaseEpubExporter} from "./base"
+import {docSchema} from "../../schema/document"
 
 
 export class EpubExporter extends BaseEpubExporter {
@@ -103,20 +104,22 @@ export class EpubExporter extends BaseEpubExporter {
 
         let authors = [this.doc.owner.name]
 
-        if (this.doc.settings['metadata-authors'] && this.doc.metadata.authors) {
-            let tempNode = obj2Node(this.doc.metadata.authors)
-            if (tempNode.textContent.length > 0) {
-                authors = jQuery.map(tempNode.textContent.split(","), jQuery.trim)
-            }
+        let docContents = docSchema.nodeFromJSON(this.doc.contents).toDOM()
+        // Remove hidden parts
+        let hiddenEls = [].slice.call(docContents.querySelectorAll('[data-hidden=true]'))
+        hiddenEls.forEach(function(hiddenEl){
+            hiddenEl.parentElement.removeChild(hiddenEl)
+        })
+
+        let authorsEl = docContents.querySelector('.article-authors')
+        if (authorsEl && authorsEl.textContent.length > 0) {
+            authors = jQuery.map(authorsEl.textContent.split(","), jQuery.trim)
         }
 
         let keywords = []
-
-        if (this.doc.settings['metadata-keywords'] && this.doc.metadata.keywords) {
-            let tempNode = obj2Node(this.doc.metadata.keywords)
-            if (tempNode.textContent.length > 0) {
-                keywords = jQuery.map(tempNode.textContent.split(","), jQuery.trim)
-            }
+        let keywordsEl = docContents.querySelector('.article-keywords')
+        if (keywordsEl && keywordsEl.textContent.length > 0) {
+            keywords = jQuery.map(keywordsEl.textContent.split(","), jQuery.trim)
         }
 
 

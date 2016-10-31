@@ -1,7 +1,7 @@
 /* To convert to and from how the document is stored in the database to how ProseMirror expects it.
  We use the DOM import for ProseMirror as the JSON we store in the database is really jsonized HTML.
 */
-import {node2Obj, obj2Node} from "../exporter/tools/json"
+import {obj2Node} from "../exporter/tools/json"
 import {docSchema} from "./document"
 
 import {defaultDocumentStyle} from "../style/documentstyle-list"

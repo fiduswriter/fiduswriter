@@ -36,8 +36,8 @@ export class ModCitations {
         citations.forEach(function(citation){
             citation.innerHTML = ''
         })
-        if (document.getElementById('document-bibliography').innerHTML !== '') {
-            document.getElementById('document-bibliography').innerHTML = ''
+        if (document.querySelector('.article-bibliography').innerHTML !== '') {
+            document.querySelector('.article-bibliography').innerHTML = ''
         }
         let citationsContainer = document.getElementById('citation-footnote-box-container')
         if (citationsContainer.innerHTML !== '') {
@@ -78,7 +78,7 @@ export class ModCitations {
         }
         this.citationType = citRenderer.fm.citationType
 
-        document.getElementById('document-bibliography').innerHTML = citRenderer.fm.bibliographyHTML
+        document.querySelector('.article-bibliography').innerHTML = citRenderer.fm.bibliographyHTML
         let citationsContainer = document.getElementById('citation-footnote-box-container')
         if (this.citationType==='note') {
 

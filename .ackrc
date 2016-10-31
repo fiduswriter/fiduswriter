@@ -24,6 +24,7 @@
 --ignore-directory=is:static-es5
 --ignore-directory=is:static-libs
 --ignore-directory=is:es6-cache
+--ignore-directory=is:fixtures
 --ignore-directory=is:venv
 --ignore-file=ext:bak
 --ignore-file=match:/~$/

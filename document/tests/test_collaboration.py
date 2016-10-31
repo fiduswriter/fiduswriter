@@ -107,7 +107,7 @@ class Manipulator(object):
             doc.get_absolute_url()
         ))
         WebDriverWait(driver, self.WAIT_TIME).until(
-            EC.presence_of_element_located((By.ID, 'document-contents'))
+            EC.presence_of_element_located((By.CLASS_NAME, 'article-body'))
         )
 
 
@@ -390,7 +390,7 @@ class SelectAndBoldTest(LiveTornadoTestCase, ThreadManipulator):
 
     def get_boldtext(self, driver):
         btext = driver.find_element_by_xpath(
-            '//*[@id="document-contents"]/p/strong')
+            '//*[contains(@class, "article-body")]/p/strong')
         return btext.text
         # return driver.execute_script(
         #     'window.theEditor.pm.doc.content.content[5].content.content[0].content.content[0].text;'
@@ -471,7 +471,7 @@ class SelectAndItalicTest(LiveTornadoTestCase, ThreadManipulator):
 
     def get_boldtext(self, driver):
         itext = driver.find_element_by_xpath(
-            '//*[@id="document-contents"]/p/em')
+            '//*[contains(@class, "article-body")]/p/em')
         return itext.text
 
     def test_select_and_italic(self):
@@ -549,7 +549,7 @@ class MakeNumberedlistTest(LiveTornadoTestCase, ThreadManipulator):
 
     def get_numberedlist(self, driver):
         numberedTags = driver.find_elements_by_xpath(
-            '//*[@id="document-contents"]//ol//li')
+            '//*[contains(@class, "article-body")]//ol//li')
         return numberedTags
 
     def test_numberedlist(self):
@@ -640,7 +640,7 @@ class MakeBulletlistTest(LiveTornadoTestCase, ThreadManipulator):
 
     def get_bulletlist(self, driver):
         bulletTags = driver.find_elements_by_xpath(
-            '//*[@id="document-contents"]//ul//li')
+            '//*[contains(@class, "article-body")]//ul//li')
         return bulletTags
 
     def test_bulletlist(self):
@@ -732,7 +732,7 @@ class MakeBlockqouteTest(LiveTornadoTestCase, ThreadManipulator):
 
     def get_blockqoute(self, driver):
         blockqouteTags = driver.find_elements_by_xpath(
-            '//*[@id="document-contents"]/blockquote')
+            '//*[contains(@class, "article-body")]/blockquote')
         return blockqouteTags
 
     def test_blockqoute(self):
@@ -824,7 +824,7 @@ class AddLinkTest(LiveTornadoTestCase, ThreadManipulator):
 
     def get_link(self, driver):
         atag = driver.find_element_by_xpath(
-            '//*[@id="document-contents"]/p/a')
+            '//*[contains(@class, "article-body")]/p/a')
         return atag.text
 
     def test_select_and_italic(self):
@@ -1001,7 +1001,7 @@ class SelectDeleteUndoTest(LiveTornadoTestCase, ThreadManipulator):
         button.click()
 
     def get_undo(self, driver):
-        content = driver.find_element_by_id('document-contents')
+        content = driver.find_element_by_class_name('article-body')
 
         return content.text
 
@@ -1087,7 +1087,7 @@ class AddMathEquationTest(LiveTornadoTestCase, ThreadManipulator):
 
     def get_mathequation(self, driver):
         math = driver.find_element_by_xpath(
-            '//*[@id="document-contents"]/p[1]/span[2]'
+            '//*[contains(@class, "article-body")]/p[1]/span[2]'
             # OR '//*[@class="equation"]'
         )
 
@@ -1305,7 +1305,7 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
 
     def get_image(self, driver):
         figure = driver.find_element_by_xpath(
-            '//*[@id="document-contents"]/figure'
+            '//*[contains(@class, "article-body")]/figure'
         )
         image = figure.find_elements_by_tag_name('img')
 
@@ -1313,7 +1313,7 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
 
     def get_caption(self, driver):
         caption = driver.find_element_by_xpath(
-            '//*[@id="document-contents"]/figure/figcaption/span[2]'
+            '//*[contains(@class, "article-body")]/figure/figcaption/span[2]'
         )
 
         return caption.text
@@ -1467,7 +1467,7 @@ class AddCiteTest(LiveTornadoTestCase, ThreadManipulator):
 
     def get_citation_within_text(self, driver):
         cite_within_doc = driver.find_element_by_xpath(
-            '//*[@id="document-contents"]/p[1]/span[2]'
+            '//*[contains(@class, "article-body")]/p[1]/span[2]'
         )
         return cite_within_doc.text
 

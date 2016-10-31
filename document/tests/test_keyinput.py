@@ -180,7 +180,7 @@ class Manipulator(object):
             doc.get_absolute_url()
         ))
         WebDriverWait(DRIVER, 10).until(
-            EC.presence_of_element_located((By.ID, 'document-contents'))
+            EC.presence_of_element_located((By.CLASS_NAME, 'article-body'))
         )
 
     # execute javascript

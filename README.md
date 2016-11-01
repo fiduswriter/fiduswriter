@@ -25,7 +25,7 @@ Simple install
 
 The following are instructions working on Ubuntu 14.04. Make adjustments as needed for other systems.
 
-**Please make sure, that the account you are using is not a member of the group "root" as this will break the installation routine**
+**Please make sure, that you only use root permissions where advised. Otherwise the installation will fail!**
 
 1. Install the development packages of libjpeg, gettext, zlib, python, npm and the python virtual environment creator by running:
 

@@ -10,6 +10,9 @@ export class LatexExporterConvert {
         this.bibDB = bibDB
         this.usedImageDB = {}
         this.usedBibs = []
+        // While walking the tree, we take note of the kinds of features That
+        // are present in the file, so that we can assemble an preamble and
+        // epilogue based on our findings.
         this.features = {}
     }
 

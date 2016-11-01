@@ -25,13 +25,12 @@ Simple install
 
 The following are instructions working on Ubuntu 14.04. Make adjustments as needed for other systems.
 
-**Please make sure, that you only use root permissions where advised. Otherwise the installation will fail!**
+**Please make sure, that you only use root permissions where advised. Otherwise,the installation will fail!**
 
 1. Install the development packages of libjpeg, gettext, zlib, python, npm and the python virtual environment creator by running:
 
   > `sudo apt-get install libjpeg-dev python-dev python-virtualenv gettext zlib1g-dev git npm nodejs nodejs-legacy`
   
-
 2. Download the Fidus Writer sources to your computer from github by running:
 
   > `git clone https://github.com/fiduswriter/fiduswriter.git`

@@ -128,7 +128,6 @@ class Manipulator(object):
     def createAndLoginUser(self):
         """Creates a dummy user in the database, and logs in the browser as that
            user."""
-        # TODO: replace with fixture
         self.user = self.createUser(self.username, self.email, self.passtext)
         self.loginUser(self.username, self.passtext)
 

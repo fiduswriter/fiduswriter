@@ -1,105 +1,23 @@
-import time
 import os
+import time
 import multiprocessing
-
 from random import randrange
-
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
-from allauth.account.models import EmailAddress
-from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import User
-from django.test import Client
 from django.conf import settings
-
 from test.testcases import LiveTornadoTestCase
 from document.models import Document
 
+from selenium_helper import SeleniumHelper
 
-class Manipulator(object):
+
+
+class EditorHelper(SeleniumHelper):
     """
-    Methods for manipulating django and the browser.
+    Common functions used in threaded tests
     """
-    user = None
-    username = 'User'
-    email = 'test@example.com'
-    passtext = 'p4ssw0rd'
-
-    @classmethod
-    def getDrivers(cls):
-        # django native clients, to be used for faster login.
-        cls.client = Client()
-        cls.client2 = Client()
-        if os.getenv("SAUCE_USERNAME"):
-            username = os.environ["SAUCE_USERNAME"]
-            access_key = os.environ["SAUCE_ACCESS_KEY"]
-            capabilities = {}
-            if os.getenv("TRAVIS_BUILD_NUMBER"):
-                capabilities["build"] = os.environ["TRAVIS_BUILD_NUMBER"]
-                capabilities["tags"] = [
-                    os.environ["TRAVIS_PYTHON_VERSION"],
-                    "CI"
-                ]
-                capabilities["tunnel-identifier"] = os.environ[
-                    "TRAVIS_JOB_NUMBER"
-                ]
-
-            capabilities["browserName"] = "chrome"
-            hub_url = "%s:%s@localhost:4445" % (username, access_key)
-            cls.driver = webdriver.Remote(
-                desired_capabilities=capabilities,
-                command_executor="http://%s/wd/hub" % hub_url
-            )
-            cls.driver2 = webdriver.Remote(
-                desired_capabilities=capabilities,
-                command_executor="http://%s/wd/hub" % hub_url
-            )
-            cls.WAIT_TIME = 25
-        else:
-            cls.driver = webdriver.Chrome()
-            cls.driver2 = webdriver.Chrome()
-            cls.WAIT_TIME = 3
-        # Set sizes of browsers so that all buttons are visible.
-        cls.driver.set_window_position(0, 0)
-        cls.driver.set_window_size(1024, 768)
-        cls.driver2.set_window_position(0, 0)
-        cls.driver2.set_window_size(1024, 768)
-
-    # create django data
-    def createUser(cls):
-        user = User.objects.create(
-            username=cls.username,
-            password=make_password(cls.passtext),
-            is_active=True
-        )
-        user.save()
-
-        # avoid the unverified-email login trap
-        EmailAddress.objects.create(
-            user=user,
-            email=cls.email,
-            verified=True,
-        ).save()
-
-        return user
-
-    # drive browser
-    def loginUser(self, driver, client):
-        client.force_login(user=self.user)
-        cookie = client.cookies['sessionid']
-        if driver.current_url == 'data:,':
-            # To set the cookie at the right domain we load the front page.
-            driver.get('%s%s' % (self.live_server_url, '/'))
-        driver.add_cookie({
-            'name': 'sessionid',
-            'value': cookie.value,
-            'secure': False,
-            'path': '/'
-        })
 
     def createNewDocument(self):
         doc = Document.objects.create(
@@ -113,15 +31,9 @@ class Manipulator(object):
             self.live_server_url,
             doc.get_absolute_url()
         ))
-        WebDriverWait(driver, self.WAIT_TIME).until(
+        WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'article-body'))
         )
-
-
-class ThreadManipulator(Manipulator):
-    """
-    Common functions used in threaded tests
-    """
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
@@ -138,7 +50,7 @@ class ThreadManipulator(Manipulator):
 
     def wait_for_doc_size(self, driver, size, seconds=False):
         if seconds is False:
-            seconds = self.WAIT_TIME
+            seconds = self.wait_time
         doc_size = driver.execute_script(
             'return window.theEditor.pm.doc.content.size')
         if doc_size < size and seconds > 0:
@@ -147,7 +59,7 @@ class ThreadManipulator(Manipulator):
 
     def wait_for_doc_sync(self, driver, driver2, seconds=False):
         if seconds is False:
-            seconds = self.WAIT_TIME
+            seconds = self.wait_time
         doc_str = driver.execute_script(
             'return window.theEditor.pm.doc.toString()')
         doc2_str = driver2.execute_script(
@@ -158,7 +70,7 @@ class ThreadManipulator(Manipulator):
             self.wait_for_doc_sync(driver, driver2, seconds - 0.1)
 
 
-class OneUserTwoBrowsersTests(LiveTornadoTestCase, ThreadManipulator):
+class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
     """
     Tests in which collaboration between two browsers with the same user logged
     into both browsers.
@@ -170,7 +82,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, ThreadManipulator):
     @classmethod
     def setUpClass(cls):
         super(OneUserTwoBrowsersTests, cls).setUpClass()
-        cls.getDrivers()
+        driver_data = cls.getDrivers(2)
+        cls.driver = driver_data["drivers"][0]
+        cls.driver2 = driver_data["drivers"][1]
+        cls.client = driver_data["clients"][0]
+        cls.client2 = driver_data["clients"][1]
+        cls.wait_time = driver_data["wait_time"]
 
     @classmethod
     def tearDownClass(cls):
@@ -468,7 +385,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, ThreadManipulator):
             'window.theEditor.pm.setTextSelection(23,28)')
 
         p2 = multiprocessing.Process(
-            target=self.make_bold,
+            target=self.make_italic,
             args=(self.driver2,)
         )
         p2.start()
@@ -706,7 +623,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, ThreadManipulator):
         button.click()
 
         # wait to load popup
-        linktitle = WebDriverWait(driver, self.WAIT_TIME).until(
+        linktitle = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "linktitle"))
         )
         linktitle.click()
@@ -783,7 +700,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, ThreadManipulator):
         button.click()
 
         # wait for footnote to be created
-        WebDriverWait(driver, self.WAIT_TIME).until(
+        WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located(
                 (By.CLASS_NAME, "footnote-container")
             )
@@ -931,7 +848,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, ThreadManipulator):
         button.click()
 
         # wait to load popup
-        insert_button = WebDriverWait(driver, self.WAIT_TIME).until(
+        insert_button = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "insert-math"))
         )
         insert_button.click()
@@ -1003,7 +920,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, ThreadManipulator):
         button = driver.find_element_by_id('button-comment')
         button.click()
 
-        textArea = WebDriverWait(driver, self.WAIT_TIME).until(
+        textArea = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "commentText"))
         )
         textArea.click()
@@ -1078,7 +995,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, ThreadManipulator):
         button = driver.find_element_by_id('button-figure')
         button.click()
 
-        caption = WebDriverWait(driver, self.WAIT_TIME).until(
+        caption = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "caption"))
         )
 
@@ -1087,7 +1004,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, ThreadManipulator):
         # click on 'Insert image' button
         driver.find_element_by_id('insertFigureImage').click()
 
-        upload_button = WebDriverWait(driver, self.WAIT_TIME).until(
+        upload_button = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.ID, 'selectImageUploadButton'))
         )
 
@@ -1101,7 +1018,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, ThreadManipulator):
 
         # inorder to select the image we send the image path in the
         # LOCAL MACHINE to the input tag
-        upload_image_url = WebDriverWait(driver, self.WAIT_TIME).until(
+        upload_image_url = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located(
                 (By.XPATH, '//*[@id="uploadimage"]/form/div[1]/input[2]')
             )
@@ -1113,7 +1030,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, ThreadManipulator):
             '//*[contains(@class, "ui-button") and text()="Upload"]').click()
 
         # click on 'Use image' button
-        WebDriverWait(driver, self.WAIT_TIME).until(
+        WebDriverWait(driver, self.wait_time).until(
             EC.element_to_be_clickable(
                 (By.CSS_SELECTOR, '#select_imagelist tr.checked')
             )
@@ -1208,7 +1125,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, ThreadManipulator):
         button.click()
 
         # click on 'Register new source' button
-        register_new_source = WebDriverWait(driver, self.WAIT_TIME).until(
+        register_new_source = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located(
                 (By.CLASS_NAME, 'register-new-bib-source')
             )
@@ -1216,7 +1133,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, ThreadManipulator):
         register_new_source.click()
 
         # select source
-        select_source = WebDriverWait(driver, self.WAIT_TIME).until(
+        select_source = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.ID, 'source-type-selection'))
         )
         select_source.click()
@@ -1258,7 +1175,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, ThreadManipulator):
             '//*[contains(@class, "ui-button") and text()="Submit"]').click()
 
         # Wait for source to be listed
-        WebDriverWait(driver, self.WAIT_TIME).until(
+        WebDriverWait(driver, self.wait_time).until(
             EC.element_to_be_clickable(
                 (
                     By.CSS_SELECTOR,

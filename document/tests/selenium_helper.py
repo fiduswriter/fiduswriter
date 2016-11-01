@@ -6,6 +6,7 @@ from allauth.account.models import EmailAddress
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 
+
 class SeleniumHelper(object):
     """
     Methods for manipulating django and the browser for testing purposes.
@@ -16,7 +17,7 @@ class SeleniumHelper(object):
     passtext = 'p4ssw0rd'
 
     @classmethod
-    def getDrivers(cls, number):
+    def get_drivers(cls, number):
         # django native clients, to be used for faster login.
         clients = []
         for i in range(number):
@@ -64,7 +65,7 @@ class SeleniumHelper(object):
         }
 
     # create django data
-    def createUser(self):
+    def create_user(self):
         user = User.objects.create(
             username=self.username,
             password=make_password(self.passtext),
@@ -82,7 +83,7 @@ class SeleniumHelper(object):
         return user
 
     # drive browser
-    def loginUser(self, driver, client):
+    def login_user(self, driver, client):
         client.force_login(user=self.user)
         cookie = client.cookies['sessionid']
         if driver.current_url == 'data:,':

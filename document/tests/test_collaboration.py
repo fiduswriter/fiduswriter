@@ -8,66 +8,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from django.conf import settings
 from test.testcases import LiveTornadoTestCase
-from document.models import Document
-
-from selenium_helper import SeleniumHelper
-
-
-
-class EditorHelper(SeleniumHelper):
-    """
-    Common functions used in threaded tests
-    """
-
-    def createNewDocument(self):
-        doc = Document.objects.create(
-            owner=self.user,
-        )
-        doc.save()
-        return doc
-
-    def loadDocumentEditor(self, driver, doc):
-        driver.get("%s%s" % (
-            self.live_server_url,
-            doc.get_absolute_url()
-        ))
-        WebDriverWait(driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CLASS_NAME, 'article-body'))
-        )
-    def input_text(self, document_input, text):
-        for char in text:
-            document_input.send_keys(char)
-            time.sleep(randrange(30, 40) / 200.0)
-
-    def add_title(self, driver):
-        title = "My title"
-        driver.execute_script(
-            'window.theEditor.pm.setTextSelection(2,2)')
-        document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
-        )
-        self.input_text(document_input, title)
-
-    def wait_for_doc_size(self, driver, size, seconds=False):
-        if seconds is False:
-            seconds = self.wait_time
-        doc_size = driver.execute_script(
-            'return window.theEditor.pm.doc.content.size')
-        if doc_size < size and seconds > 0:
-            time.sleep(0.1)
-            self.wait_for_doc_size(driver, size, seconds - 0.1)
-
-    def wait_for_doc_sync(self, driver, driver2, seconds=False):
-        if seconds is False:
-            seconds = self.wait_time
-        doc_str = driver.execute_script(
-            'return window.theEditor.pm.doc.toString()')
-        doc2_str = driver2.execute_script(
-            'return window.theEditor.pm.doc.toString()')
-        if (doc_str != doc2_str):
-            # The strings don't match.
-            time.sleep(0.1)
-            self.wait_for_doc_sync(driver, driver2, seconds - 0.1)
+from editor_helper import EditorHelper
 
 
 class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
@@ -82,7 +23,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
     @classmethod
     def setUpClass(cls):
         super(OneUserTwoBrowsersTests, cls).setUpClass()
-        driver_data = cls.getDrivers(2)
+        driver_data = cls.get_drivers(2)
         cls.driver = driver_data["drivers"][0]
         cls.driver2 = driver_data["drivers"][1]
         cls.client = driver_data["clients"][0]
@@ -96,10 +37,10 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         super(OneUserTwoBrowsersTests, cls).tearDownClass()
 
     def setUp(self):
-        self.user = self.createUser()
-        self.loginUser(self.driver, self.client)
-        self.loginUser(self.driver2, self.client2)
-        self.doc = self.createNewDocument()
+        self.user = self.create_user()
+        self.login_user(self.driver, self.client)
+        self.login_user(self.driver2, self.client2)
+        self.doc = self.create_new_document()
 
     def get_title(self, driver):
         # Title is child 0.
@@ -120,8 +61,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         Test typing in collaborative mode with one user using browser windows
         with the user typing separately at small, random intervals.
         """
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
 
         document_input = self.driver.find_element_by_class_name(
             'ProseMirror-content'
@@ -191,8 +132,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         Test typing in collaborative mode with one user using browser windows
         with the user typing simultaneously in two different threads.
         """
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
 
         document_input = self.driver.find_element_by_class_name(
             'ProseMirror-content'
@@ -290,8 +231,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         Test typing in collaborative mode with one user typing and
         another user bold some part of the text in two different threads.
         """
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
 
@@ -353,8 +294,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         Test typing in collaborative mode with one user typing and
         another user italic some part of the text in two different threads.
         """
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
 
@@ -416,8 +357,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             Test typing in collaborative mode with one user typing and
             another user use numbered list button in two different threads.
             """
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
         self.add_title(self.driver)
 
         document_input = self.driver.find_element_by_class_name(
@@ -492,8 +433,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             Test typing in collaborative mode with one user typing and
             another user use bullet list button in two different threads.
             """
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
 
@@ -569,8 +510,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             Test typing in collaborative mode with one user typing and
             another user use block qoute button in two different threads.
             """
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
 
@@ -646,8 +587,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         another user select some part of the text and add link
         in two different threads.
         """
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
 
@@ -725,8 +666,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         Test typing in collaborative mode with one user typing and
         another user add a footnote in two different threads.
         """
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
 
@@ -794,8 +735,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         another user delete and undo some part of the text in two different
         threads.
         """
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
 
@@ -867,8 +808,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         another user insert math equation in middle of the text in two
         different threads.
         """
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
 
@@ -940,8 +881,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         another user add some comment in middle of the text in two different
         threads.
         """
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
 
@@ -1062,8 +1003,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         Test typing in collaborative mode with one user typing and
         another user insert figure middle of the text in two different threads.
         """
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
 
@@ -1202,8 +1143,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         Test typing in collaborative mode with one user typing and
         another user add cite in two different threads.
         """
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
 

@@ -16,6 +16,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
     Tests in which collaboration between two browsers with the same user logged
     into both browsers.
     """
+    user = None
     TEST_TEXT = "Lorem ipsum dolor sit amet."
     MULTILINE_TEST_TEXT = "Lorem ipsum\ndolor sit amet."
     fixtures = ["initial_bib_rules.json", ]
@@ -38,8 +39,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
     def setUp(self):
         self.user = self.create_user()
-        self.login_user(self.driver, self.client)
-        self.login_user(self.driver2, self.client2)
+        self.login_user(self.user, self.driver, self.client)
+        self.login_user(self.user, self.driver2, self.client2)
         self.doc = self.create_new_document()
 
     def get_title(self, driver):

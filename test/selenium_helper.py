@@ -11,10 +11,7 @@ class SeleniumHelper(object):
     """
     Methods for manipulating django and the browser for testing purposes.
     """
-    user = None
-    username = 'User'
-    email = 'test@example.com'
-    passtext = 'p4ssw0rd'
+
 
     @classmethod
     def get_drivers(cls, number):
@@ -65,10 +62,15 @@ class SeleniumHelper(object):
         }
 
     # create django data
-    def create_user(self):
+    def create_user(
+        self,
+        username='User',
+        email='test@example.com',
+        passtext='p4ssw0rd'
+    ):
         user = User.objects.create(
-            username=self.username,
-            password=make_password(self.passtext),
+            username=username,
+            password=make_password(passtext),
             is_active=True
         )
         user.save()
@@ -76,15 +78,15 @@ class SeleniumHelper(object):
         # avoid the unverified-email login trap
         EmailAddress.objects.create(
             user=user,
-            email=self.email,
+            email=email,
             verified=True,
         ).save()
 
         return user
 
     # drive browser
-    def login_user(self, driver, client):
-        client.force_login(user=self.user)
+    def login_user(self, user, driver, client):
+        client.force_login(user=user)
         cookie = client.cookies['sessionid']
         if driver.current_url == 'data:,':
             # To set the cookie at the right domain we load the front page.

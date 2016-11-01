@@ -13,8 +13,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from allauth.account.models import EmailAddress
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
+from django.test import Client
 from django.conf import settings
-
 
 from test.testcases import LiveTornadoTestCase
 from document.models import Document
@@ -29,7 +29,11 @@ class Manipulator(object):
     email = 'test@example.com'
     passtext = 'p4ssw0rd'
 
-    def getDrivers(self):
+    @classmethod
+    def getDrivers(cls):
+        # django native clients, to be used for faster login.
+        cls.client = Client()
+        cls.client2 = Client()
         if os.getenv("SAUCE_USERNAME"):
             username = os.environ["SAUCE_USERNAME"]
             access_key = os.environ["SAUCE_ACCESS_KEY"]
@@ -46,30 +50,30 @@ class Manipulator(object):
 
             capabilities["browserName"] = "chrome"
             hub_url = "%s:%s@localhost:4445" % (username, access_key)
-            self.driver = webdriver.Remote(
+            cls.driver = webdriver.Remote(
                 desired_capabilities=capabilities,
                 command_executor="http://%s/wd/hub" % hub_url
             )
-            self.driver2 = webdriver.Remote(
+            cls.driver2 = webdriver.Remote(
                 desired_capabilities=capabilities,
                 command_executor="http://%s/wd/hub" % hub_url
             )
-            self.WAIT_TIME = 25
+            cls.WAIT_TIME = 25
         else:
-            self.driver = webdriver.Chrome()
-            self.driver2 = webdriver.Chrome()
-            self.WAIT_TIME = 3
+            cls.driver = webdriver.Chrome()
+            cls.driver2 = webdriver.Chrome()
+            cls.WAIT_TIME = 3
         # Set sizes of browsers so that all buttons are visible.
-        self.driver.set_window_position(0, 0)
-        self.driver.set_window_size(1024, 768)
-        self.driver2.set_window_position(0, 0)
-        self.driver2.set_window_size(1024, 768)
+        cls.driver.set_window_position(0, 0)
+        cls.driver.set_window_size(1024, 768)
+        cls.driver2.set_window_position(0, 0)
+        cls.driver2.set_window_size(1024, 768)
 
     # create django data
-    def createUser(self):
+    def createUser(cls):
         user = User.objects.create(
-            username=self.username,
-            password=make_password(self.passtext),
+            username=cls.username,
+            password=make_password(cls.passtext),
             is_active=True
         )
         user.save()
@@ -77,27 +81,25 @@ class Manipulator(object):
         # avoid the unverified-email login trap
         EmailAddress.objects.create(
             user=user,
-            email=self.email,
+            email=cls.email,
             verified=True,
         ).save()
 
         return user
 
     # drive browser
-    def loginUser(self, driver):
-        driver.get('%s%s' % (
-            self.live_server_url,
-            '/account/login/'
-        ))
-        (driver
-            .find_element_by_id('id_login')
-            .send_keys(self.username))
-        (driver
-            .find_element_by_id('id_password')
-            .send_keys(self.passtext + Keys.RETURN))
-        WebDriverWait(driver, self.WAIT_TIME).until(
-            EC.presence_of_element_located((By.ID, 'user-preferences'))
-        )
+    def loginUser(self, driver, client):
+        client.login(username=self.username, password=self.passtext)
+        cookie = client.cookies['sessionid']
+        if driver.current_url == 'data:,':
+            # To set the cookie at the right domain we load the front page.
+            driver.get('%s%s' % (self.live_server_url,'/'))
+        driver.add_cookie({
+            'name': 'sessionid',
+            'value': cookie.value,
+            'secure': False,
+            'path': '/'
+        })
 
     def createNewDocument(self):
         doc = Document.objects.create(
@@ -156,23 +158,31 @@ class ThreadManipulator(Manipulator):
             self.wait_for_doc_sync(driver, driver2, seconds - 0.1)
 
 
-class SimpleTypingTest(LiveTornadoTestCase, Manipulator):
+class OneUserTwoBrowsersTests(LiveTornadoTestCase, ThreadManipulator):
     """
-    Test typing in collaborative mode with one user using browser windows
-    with the user typing separately at small, random intervals.
+    Tests in which collaboration between two browsers with the same user logged
+    into both browsers.
     """
     TEST_TEXT = "Lorem ipsum dolor sit amet."
+    MULTILINE_TEST_TEXT = "Lorem ipsum\ndolor sit amet."
+    fixtures = ["initial_bib_rules.json", ]
+
+    @classmethod
+    def setUpClass(cls):
+        super(OneUserTwoBrowsersTests, cls).setUpClass()
+        cls.getDrivers()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.driver.quit()
+        cls.driver2.quit()
+        super(OneUserTwoBrowsersTests, cls).tearDownClass()
 
     def setUp(self):
-        self.getDrivers()
         self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
+        self.loginUser(self.driver, self.client)
+        self.loginUser(self.driver2, self.client2)
         self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
 
     def get_title(self, driver):
         # Title is child 0.
@@ -189,6 +199,10 @@ class SimpleTypingTest(LiveTornadoTestCase, Manipulator):
         )
 
     def test_typing(self):
+        """
+        Test typing in collaborative mode with one user using browser windows
+        with the user typing separately at small, random intervals.
+        """
         self.loadDocumentEditor(self.driver, self.doc)
         self.loadDocumentEditor(self.driver2, self.doc)
 
@@ -255,40 +269,11 @@ class SimpleTypingTest(LiveTornadoTestCase, Manipulator):
             self.get_contents(self.driver)
         )
 
-
-class TypingTest(LiveTornadoTestCase, ThreadManipulator):
-    """
-    Test typing in collaborative mode with one user using browser windows
-    with the user typing simultaneously in two different threads.
-    """
-    TEST_TEXT = "Lorem ipsum dolor sit amet."
-
-    def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
-
-    def get_title(self, driver):
-        # Title is child 0.
-        return driver.execute_script(
-            'return window.theEditor.pm.doc.firstChild'
-            '.content.content[0].textContent;'
-        )
-
-    def get_contents(self, driver):
-        # Contents is child 5.
-        return driver.execute_script(
-            'return window.theEditor.pm.doc.firstChild'
-            '.content.content[5].textContent;'
-        )
-
-    def test_typing(self):
+    def test_threaded_typing(self):
+        """
+        Test typing in collaborative mode with one user using browser windows
+        with the user typing simultaneously in two different threads.
+        """
         self.loadDocumentEditor(self.driver, self.doc)
         self.loadDocumentEditor(self.driver2, self.doc)
 
@@ -374,25 +359,6 @@ class TypingTest(LiveTornadoTestCase, ThreadManipulator):
             self.get_contents(self.driver)
         )
 
-
-class SelectAndBoldTest(LiveTornadoTestCase, ThreadManipulator):
-    """
-    Test typing in collaborative mode with one user typing and
-    another user bold some part of the text in two different threads.
-    """
-    TEST_TEXT = "Lorem ipsum dolor sit amet."
-
-    def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
-
     def make_bold(self, driver):
         button = driver.find_element_by_id('button-bold')
         button.click()
@@ -401,11 +367,12 @@ class SelectAndBoldTest(LiveTornadoTestCase, ThreadManipulator):
         btext = driver.find_element_by_xpath(
             '//*[contains(@class, "article-body")]/p/strong')
         return btext.text
-        # return driver.execute_script(
-        #     'window.theEditor.pm.doc.content.content[5].content.content[0].content.content[0].text;'
-        # )
 
     def test_select_and_bold(self):
+        """
+        Test typing in collaborative mode with one user typing and
+        another user bold some part of the text in two different threads.
+        """
         self.loadDocumentEditor(self.driver, self.doc)
         self.loadDocumentEditor(self.driver2, self.doc)
 
@@ -455,35 +422,20 @@ class SelectAndBoldTest(LiveTornadoTestCase, ThreadManipulator):
             len(self.get_boldtext(self.driver2))
         )
 
-
-class SelectAndItalicTest(LiveTornadoTestCase, ThreadManipulator):
-    """
-    Test typing in collaborative mode with one user typing and
-    another user italic some part of the text in two different threads.
-    """
-    TEST_TEXT = "Lorem ipsum dolor sit amet."
-
-    def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
-
-    def make_bold(self, driver):
+    def make_italic(self, driver):
         button = driver.find_element_by_id('button-italic')
         button.click()
 
-    def get_boldtext(self, driver):
+    def get_italictext(self, driver):
         itext = driver.find_element_by_xpath(
             '//*[contains(@class, "article-body")]/p/em')
         return itext.text
 
     def test_select_and_italic(self):
+        """
+        Test typing in collaborative mode with one user typing and
+        another user italic some part of the text in two different threads.
+        """
         self.loadDocumentEditor(self.driver, self.doc)
         self.loadDocumentEditor(self.driver2, self.doc)
 
@@ -493,7 +445,7 @@ class SelectAndItalicTest(LiveTornadoTestCase, ThreadManipulator):
             'ProseMirror-content'
         )
 
-        # Total: 22
+        # Total: 23
         self.driver.execute_script(
             'window.theEditor.pm.setTextSelection(23,23)')
 
@@ -525,32 +477,13 @@ class SelectAndItalicTest(LiveTornadoTestCase, ThreadManipulator):
 
         self.assertEqual(
             5,
-            len(self.get_boldtext(self.driver2))
+            len(self.get_italictext(self.driver2))
         )
 
         self.assertEqual(
-            len(self.get_boldtext(self.driver)),
-            len(self.get_boldtext(self.driver2))
+            len(self.get_italictext(self.driver)),
+            len(self.get_italictext(self.driver2))
         )
-
-
-class MakeNumberedlistTest(LiveTornadoTestCase, ThreadManipulator):
-    """
-        Test typing in collaborative mode with one user typing and
-        another user use numbered list button in two different threads.
-        """
-    TEST_TEXT = "Lorem ipsum\ndolor sit amet."
-
-    def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
 
     def make_numberedlist(self, driver):
         button = driver.find_element_by_id('button-ol')
@@ -562,6 +495,10 @@ class MakeNumberedlistTest(LiveTornadoTestCase, ThreadManipulator):
         return numberedTags
 
     def test_numberedlist(self):
+        """
+            Test typing in collaborative mode with one user typing and
+            another user use numbered list button in two different threads.
+            """
         self.loadDocumentEditor(self.driver, self.doc)
         self.loadDocumentEditor(self.driver2, self.doc)
         self.add_title(self.driver)
@@ -570,13 +507,13 @@ class MakeNumberedlistTest(LiveTornadoTestCase, ThreadManipulator):
             'ProseMirror-content'
         )
 
-        # Total: 22
+        # Total: 23
         self.driver.execute_script(
             'window.theEditor.pm.setTextSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
-            args=(document_input, self.TEST_TEXT)
+            args=(document_input, self.MULTILINE_TEST_TEXT)
         )
         p1.start()
 
@@ -624,25 +561,6 @@ class MakeNumberedlistTest(LiveTornadoTestCase, ThreadManipulator):
             len(self.get_numberedlist(self.driver2))
         )
 
-
-class MakeBulletlistTest(LiveTornadoTestCase, ThreadManipulator):
-    """
-        Test typing in collaborative mode with one user typing and
-        another user use bullet list button in two different threads.
-        """
-    TEST_TEXT = "Lorem ipsum\ndolor sit amet lorem ipsum."
-
-    def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
-
     def make_bulletlist(self, driver):
         button = driver.find_element_by_id('button-ul')
         button.click()
@@ -653,6 +571,10 @@ class MakeBulletlistTest(LiveTornadoTestCase, ThreadManipulator):
         return bulletTags
 
     def test_bulletlist(self):
+        """
+            Test typing in collaborative mode with one user typing and
+            another user use bullet list button in two different threads.
+            """
         self.loadDocumentEditor(self.driver, self.doc)
         self.loadDocumentEditor(self.driver2, self.doc)
 
@@ -668,7 +590,7 @@ class MakeBulletlistTest(LiveTornadoTestCase, ThreadManipulator):
 
         p1 = multiprocessing.Process(
             target=self.input_text,
-            args=(document_input, self.TEST_TEXT)
+            args=(document_input, self.MULTILINE_TEST_TEXT)
         )
         p1.start()
 
@@ -716,35 +638,20 @@ class MakeBulletlistTest(LiveTornadoTestCase, ThreadManipulator):
             len(self.get_bulletlist(self.driver2))
         )
 
-
-class MakeBlockqouteTest(LiveTornadoTestCase, ThreadManipulator):
-    """
-        Test typing in collaborative mode with one user typing and
-        another user use block qoute button in two different threads.
-        """
-    TEST_TEXT = "Lorem ipsum dolor sit amet."
-
-    def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
-
-    def make_blockqoute(self, driver):
+    def make_blockquote(self, driver):
         button = driver.find_element_by_id('button-blockquote')
         button.click()
 
-    def get_blockqoute(self, driver):
-        blockqouteTags = driver.find_elements_by_xpath(
+    def get_blockquote(self, driver):
+        blockquoteTags = driver.find_elements_by_xpath(
             '//*[contains(@class, "article-body")]/blockquote')
-        return blockqouteTags
+        return blockquoteTags
 
-    def test_blockqoute(self):
+    def test_blockquote(self):
+        """
+            Test typing in collaborative mode with one user typing and
+            another user use block qoute button in two different threads.
+            """
         self.loadDocumentEditor(self.driver, self.doc)
         self.loadDocumentEditor(self.driver2, self.doc)
 
@@ -777,7 +684,7 @@ class MakeBlockqouteTest(LiveTornadoTestCase, ThreadManipulator):
             'window.theEditor.pm.setTextSelection(23,23)')
 
         p2 = multiprocessing.Process(
-            target=self.make_blockqoute,
+            target=self.make_blockquote,
             args=(self.driver2,)
         )
         p2.start()
@@ -786,33 +693,13 @@ class MakeBlockqouteTest(LiveTornadoTestCase, ThreadManipulator):
 
         self.assertEqual(
             1,
-            len(self.get_blockqoute(self.driver2))
+            len(self.get_blockquote(self.driver2))
         )
 
         self.assertEqual(
-            len(self.get_blockqoute(self.driver)),
-            len(self.get_blockqoute(self.driver2))
+            len(self.get_blockquote(self.driver)),
+            len(self.get_blockquote(self.driver2))
         )
-
-
-class AddLinkTest(LiveTornadoTestCase, ThreadManipulator):
-    """
-    Test typing in collaborative mode with one user typing and
-    another user select some part of the text and add link
-    in two different threads.
-    """
-    TEST_TEXT = "Lorem ipsum dolor sit amet."
-
-    def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
 
     def addlink(self, driver):
         button = driver.find_element_by_id('button-link')
@@ -837,6 +724,11 @@ class AddLinkTest(LiveTornadoTestCase, ThreadManipulator):
         return atag.text
 
     def test_select_and_italic(self):
+        """
+        Test typing in collaborative mode with one user typing and
+        another user select some part of the text and add link
+        in two different threads.
+        """
         self.loadDocumentEditor(self.driver, self.doc)
         self.loadDocumentEditor(self.driver2, self.doc)
 
@@ -846,7 +738,7 @@ class AddLinkTest(LiveTornadoTestCase, ThreadManipulator):
             'ProseMirror-content'
         )
 
-        # Total: 22
+        # Total: 23
         self.driver.execute_script(
             'window.theEditor.pm.setTextSelection(23,23)')
 
@@ -886,25 +778,6 @@ class AddLinkTest(LiveTornadoTestCase, ThreadManipulator):
             len(self.get_link(self.driver2))
         )
 
-
-class AddFootnoteTest(LiveTornadoTestCase, ThreadManipulator):
-    """
-    Test typing in collaborative mode with one user typing and
-    another user add a footnote in two different threads.
-    """
-    TEST_TEXT = "Lorem ipsum dolor sit amet."
-
-    def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
-
     def make_footnote(self, driver):
         button = driver.find_element_by_id('button-footnote')
         button.click()
@@ -931,6 +804,10 @@ class AddFootnoteTest(LiveTornadoTestCase, ThreadManipulator):
         return atag.text
 
     def test_footnote(self):
+        """
+        Test typing in collaborative mode with one user typing and
+        another user add a footnote in two different threads.
+        """
         self.loadDocumentEditor(self.driver, self.doc)
         self.loadDocumentEditor(self.driver2, self.doc)
 
@@ -982,26 +859,6 @@ class AddFootnoteTest(LiveTornadoTestCase, ThreadManipulator):
             len(self.get_footnote(self.driver2))
         )
 
-
-class SelectDeleteUndoTest(LiveTornadoTestCase, ThreadManipulator):
-    """
-    Test typing in collaborative mode with one user typing and
-    another user delete and undo some part of the text in two different
-    threads.
-    """
-    TEST_TEXT = "Lorem ipsum dolor sit amet."
-
-    def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
-
     def perform_delete_undo(self, driver):
         element = driver.find_element_by_class_name('ProseMirror-content')
         element.send_keys(Keys.BACKSPACE)
@@ -1015,6 +872,11 @@ class SelectDeleteUndoTest(LiveTornadoTestCase, ThreadManipulator):
         return content.text
 
     def test_delete_undo(self):
+        """
+        Test typing in collaborative mode with one user typing and
+        another user delete and undo some part of the text in two different
+        threads.
+        """
         self.loadDocumentEditor(self.driver, self.doc)
         self.loadDocumentEditor(self.driver2, self.doc)
 
@@ -1064,26 +926,6 @@ class SelectDeleteUndoTest(LiveTornadoTestCase, ThreadManipulator):
             self.get_undo(self.driver2)
         )
 
-
-class AddMathEquationTest(LiveTornadoTestCase, ThreadManipulator):
-    """
-    Test typing in collaborative mode with one user typing and
-    another user insert math equation in middle of the text in two different
-    threads.
-    """
-    TEST_TEXT = "Lorem ipsum dolor sit amet."
-
-    def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
-
     def make_mathequation(self, driver):
         button = driver.find_element_by_id('button-math')
         button.click()
@@ -1103,6 +945,11 @@ class AddMathEquationTest(LiveTornadoTestCase, ThreadManipulator):
         return math.text
 
     def test_mathequation(self):
+        """
+        Test typing in collaborative mode with one user typing and
+        another user insert math equation in middle of the text in two
+        different threads.
+        """
         self.loadDocumentEditor(self.driver, self.doc)
         self.loadDocumentEditor(self.driver2, self.doc)
 
@@ -1112,7 +959,7 @@ class AddMathEquationTest(LiveTornadoTestCase, ThreadManipulator):
             'ProseMirror-content'
         )
 
-        # Total: 22
+        # Total: 23
         self.driver.execute_script(
             'window.theEditor.pm.setTextSelection(23,23)')
 
@@ -1152,26 +999,6 @@ class AddMathEquationTest(LiveTornadoTestCase, ThreadManipulator):
             len(self.get_mathequation(self.driver2))
         )
 
-
-class AddCommentTest(LiveTornadoTestCase, ThreadManipulator):
-    """
-    Test typing in collaborative mode with one user typing and
-    another user add some comment in middle of the text in two different
-    threads.
-    """
-    TEST_TEXT = "Lorem ipsum dolor sit amet."
-
-    def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
-
     def add_comment(self, driver):
         button = driver.find_element_by_id('button-comment')
         button.click()
@@ -1191,6 +1018,11 @@ class AddCommentTest(LiveTornadoTestCase, ThreadManipulator):
         return comment.text
 
     def test_comment(self):
+        """
+        Test typing in collaborative mode with one user typing and
+        another user add some comment in middle of the text in two different
+        threads.
+        """
         self.loadDocumentEditor(self.driver, self.doc)
         self.loadDocumentEditor(self.driver2, self.doc)
 
@@ -1241,25 +1073,6 @@ class AddCommentTest(LiveTornadoTestCase, ThreadManipulator):
             len(self.get_comment(self.driver)),
             len(self.get_comment(self.driver2))
         )
-
-
-class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
-    """
-    Test typing in collaborative mode with one user typing and
-    another user insert figure middle of the text in two different threads.
-    """
-    TEST_TEXT = "Lorem ipsum dolor sit amet."
-
-    def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
 
     def add_figure(self, driver):
         button = driver.find_element_by_id('button-figure')
@@ -1328,6 +1141,10 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
         return caption.text
 
     def test_insertFigure(self):
+        """
+        Test typing in collaborative mode with one user typing and
+        another user insert figure middle of the text in two different threads.
+        """
         self.loadDocumentEditor(self.driver, self.doc)
         self.loadDocumentEditor(self.driver2, self.doc)
 
@@ -1337,7 +1154,7 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
             'ProseMirror-content'
         )
 
-        # Total: 22
+        # Total: 23
         self.driver.execute_script(
             'window.theEditor.pm.setTextSelection(23,23)')
 
@@ -1385,27 +1202,6 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
             len(self.get_caption(self.driver)),
             len(self.get_caption(self.driver2))
         )
-
-
-class AddCiteTest(LiveTornadoTestCase, ThreadManipulator):
-    """
-    Test typing in collaborative mode with one user typing and
-    another user add cite in two different threads.
-    """
-    TEST_TEXT = "Lorem ipsum dolor sit amet."
-    # Load bibliography data
-    fixtures = ["initial_bib_rules.json", ]
-
-    def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
 
     def add_citation(self, driver):
         button = driver.find_element_by_id('button-cite')
@@ -1485,6 +1281,10 @@ class AddCiteTest(LiveTornadoTestCase, ThreadManipulator):
         return cite_bib.text
 
     def test_citation(self):
+        """
+        Test typing in collaborative mode with one user typing and
+        another user add cite in two different threads.
+        """
         self.loadDocumentEditor(self.driver, self.doc)
         self.loadDocumentEditor(self.driver2, self.doc)
 

@@ -5,7 +5,6 @@ import sys
 import threading
 from unittest import skipIf         # NOQA: Imported here for backward compatibility
 
-
 from django.core.exceptions import ImproperlyConfigured
 from django.db import connections
 from django.utils import six
@@ -94,11 +93,7 @@ class LiveTornadoTestCase(TransactionTestCase):
     """
 
     static_handler = None
-
-    @property
-    def live_server_url(self):
-        return 'http://%s:%s' % (
-            self.server_thread.host, self.server_thread.port)
+    live_server_url = None
 
     @classmethod
     def setUpClass(cls):
@@ -156,6 +151,9 @@ class LiveTornadoTestCase(TransactionTestCase):
             # in case of errors.
             cls._tearDownClassInternal()
             raise cls.server_thread.error
+
+        cls.live_server_url = 'http://%s:%s' % (
+            cls.server_thread.host, cls.server_thread.port)
 
         super(LiveTornadoTestCase, cls).setUpClass()
 

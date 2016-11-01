@@ -177,13 +177,15 @@ class SimpleTypingTest(LiveTornadoTestCase, Manipulator):
     def get_title(self, driver):
         # Title is child 0.
         return driver.execute_script(
-            'return window.theEditor.pm.doc.firstChild.content.content[0].textContent;'
+            'return window.theEditor.pm.doc.firstChild'
+            '.content.content[0].textContent;'
         )
 
     def get_contents(self, driver):
         # Contents is child 5.
         return driver.execute_script(
-            'return window.theEditor.pm.doc.firstChild.content.content[5].textContent;'
+            'return window.theEditor.pm.doc.firstChild'
+            '.content.content[5].textContent;'
         )
 
     def test_typing(self):
@@ -275,13 +277,15 @@ class TypingTest(LiveTornadoTestCase, ThreadManipulator):
     def get_title(self, driver):
         # Title is child 0.
         return driver.execute_script(
-            'return window.theEditor.pm.doc.firstChild.content.content[0].textContent;'
+            'return window.theEditor.pm.doc.firstChild'
+            '.content.content[0].textContent;'
         )
 
     def get_contents(self, driver):
         # Contents is child 5.
         return driver.execute_script(
-            'return window.theEditor.pm.doc.firstChild.content.content[5].textContent;'
+            'return window.theEditor.pm.doc.firstChild'
+            '.content.content[5].textContent;'
         )
 
     def test_typing(self):

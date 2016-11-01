@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+
+# TODO: rewrite to use the EditorHelper class, like test_collaboration.
+# * Make it more readable and prevent new logins for every document opening.
+# * Decide whether some of the tests can be removed.
+
 from collections import namedtuple
 from itertools import chain
 import os

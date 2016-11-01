@@ -1,15 +1,11 @@
 # -*- coding: utf-8 -*-
-from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import NoAlertPresentException
 import time
-import os
-from django.contrib.auth.models import User
-from allauth.account.models import EmailAddress
-from django.contrib.auth.hashers import make_password
 
 from test.testcases import LiveTornadoTestCase
 from test.selenium_helper import SeleniumHelper
+
 
 class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
 
@@ -32,10 +28,10 @@ class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
         self.accept_next_alert = True
         self.user = self.create_user(
             username='Yeti',
-            email = 'yeti@snowman.com',
-            passtext = 'otter1'
+            email='yeti@snowman.com',
+            passtext='otter1'
         )
-        self.login_user(self.user,self.driver, self.client)
+        self.login_user(self.user, self.driver, self.client)
 
     def test_edit_profile(self):
         driver = self.driver

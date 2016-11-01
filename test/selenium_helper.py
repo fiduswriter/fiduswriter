@@ -12,7 +12,6 @@ class SeleniumHelper(object):
     Methods for manipulating django and the browser for testing purposes.
     """
 
-
     @classmethod
     def get_drivers(cls, number):
         # django native clients, to be used for faster login.

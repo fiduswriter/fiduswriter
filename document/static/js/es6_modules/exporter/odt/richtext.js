@@ -15,7 +15,7 @@ export class OdtExporterRichtext {
         let start = '', content = '', end = ''
 
         switch(node.type) {
-            case 'doc':
+            case 'article':
                 break
             case 'body':
                 options = _.clone(options)

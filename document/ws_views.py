@@ -303,8 +303,6 @@ class DocumentWS(BaseWebSocketHandler):
                 self.send_document()
         else:
             print('comment_version incorrect!')
-            print(parsed["comment_version"])
-            print(self.doc['comment_version'])
 
     def check_diff_version(self, parsed):
         pdv = parsed["diff_version"]

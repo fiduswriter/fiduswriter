@@ -14,11 +14,7 @@ import {OdtExporterMath} from "./math"
 /*
 Exporter to Open Document Text (LibreOffice)
 
-This exporter is experimental.
-
 */
-
-
 
 export class OdtExporter {
     constructor(doc, templateUrl, bibDB, imageDB) {

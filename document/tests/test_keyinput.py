@@ -261,68 +261,70 @@ class CaretPositionTest(LiveTornadoTestCase, Manipulator):
 
 class MovementInSingleChildParagraph(CaretPositionTest):
     __metaclass__ = DataCasesToTestMethodsMeta
+    body_start = 15
+    title_start = 2
     movement_within_short = [
         # movement within a short node
         CaretTestCase(**{
             'name': 'leftFromOneAfterDocStart',
             'description': "left arrow decrements caret offset",
             'givenContents': None,
-            'givenCaret': 17,
+            'givenCaret': body_start + 1,
             'givenKeys': Keys.ARROW_LEFT,
-            'expectedCaret': 16
+            'expectedCaret': body_start
         }),
         CaretTestCase(**{
             'name': 'leftFromDocStart',
             'description': "left arrow does nothing when caret is at start of"
                            " document",
             'givenContents': None,
-            'givenCaret': 2,
+            'givenCaret': title_start,
             'givenKeys': Keys.ARROW_LEFT,
-            'expectedCaret': 2
+            'expectedCaret': title_start
         }),
         CaretTestCase(**{
             'name': 'rightFromOneBeforeDocEnd',
             'description': "right arrow increments caret offset",
             'givenContents': None,
-            'givenCaret': 15 + len(SHORT_LOREM),
+            'givenCaret': body_start + len(SHORT_LOREM) - 1,
             'givenKeys': Keys.ARROW_RIGHT,
-            'expectedCaret': 16 + len(SHORT_LOREM),
+            'expectedCaret': body_start + len(SHORT_LOREM),
         }),
         CaretTestCase(**{
             'name': 'rightFromDocEnd',
             'description': "right arrow does nothing when caret is at end of"
                            " document",
             'givenContents': None,
-            'givenCaret': 16 + len(SHORT_LOREM),
+            'givenCaret': body_start + len(SHORT_LOREM),
             'givenKeys': Keys.ARROW_RIGHT,
-            'expectedCaret': 16 + len(SHORT_LOREM)
+            'expectedCaret': body_start + len(SHORT_LOREM)
         }),
         CaretTestCase(**{
             'name': 'upArrowFromMidFirstDocLine',
             'description': "up arrow moves caret from within first line of"
                            " document to beginning of document",
             'givenContents': None,
-            'givenCaret': 15,
+            'givenCaret': body_start,
             'givenKeys': Keys.ARROW_UP,
-            'expectedCaret': 2
+            'expectedCaret': title_start
         }),
         CaretTestCase(**{
             'name': 'upArrowFromDocStart',
             'description': "up arrow does nothing when caret is at start of"
                            " document",
             'givenContents': None,
-            'givenCaret': 2,
+            'givenCaret': title_start,
             'givenKeys': Keys.ARROW_UP,
-            'expectedCaret': 2
+            'expectedCaret': title_start
         }),
         CaretTestCase(**{
             'name': 'downFromDocEnd',
             'description': "down arrow does nothing when caret is at end of"
                            " document",
             'givenContents': None,
-            'givenCaret': 16 + len(SHORT_LOREM),
+            'givenCaret': body_start + len(SHORT_LOREM),
             'givenKeys': Keys.ARROW_DOWN,
-            'expectedCaret': 16 + len(SHORT_LOREM),
+            'expectedCaret': body_start + len(SHORT_LOREM),
         }),
     ]
 

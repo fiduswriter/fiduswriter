@@ -59,6 +59,11 @@ class Manipulator(object):
             self.driver = webdriver.Chrome()
             self.driver2 = webdriver.Chrome()
             self.WAIT_TIME = 3
+        # Set sizes of browsers so that all buttons are visible.
+        self.driver.set_window_position(0, 0)
+        self.driver.set_window_size(1024, 768)
+        self.driver2.set_window_position(0, 0)
+        self.driver2.set_window_size(1024, 768)
 
     # create django data
     def createUser(self):
@@ -123,7 +128,7 @@ class ThreadManipulator(Manipulator):
     def add_title(self, driver):
         title = "My title"
         driver.execute_script(
-            'window.theEditor.pm.setTextSelection(1,1)')
+            'window.theEditor.pm.setTextSelection(2,2)')
         document_input = self.driver.find_element_by_class_name(
             'ProseMirror-content'
         )
@@ -172,13 +177,13 @@ class SimpleTypingTest(LiveTornadoTestCase, Manipulator):
     def get_title(self, driver):
         # Title is child 0.
         return driver.execute_script(
-            'return window.theEditor.pm.doc.content.content[0].textContent;'
+            'return window.theEditor.pm.doc.firstChild.content.content[0].textContent;'
         )
 
     def get_contents(self, driver):
         # Contents is child 5.
         return driver.execute_script(
-            'return window.theEditor.pm.doc.content.content[5].textContent;'
+            'return window.theEditor.pm.doc.firstChild.content.content[5].textContent;'
         )
 
     def test_typing(self):
@@ -197,9 +202,9 @@ class SimpleTypingTest(LiveTornadoTestCase, Manipulator):
         # First start tag is length 1, so placing after first start tag is
         # position 1
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(1,1)')
+            'window.theEditor.pm.setTextSelection(2,2)')
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(1,1)')
+            'window.theEditor.pm.setTextSelection(2,2)')
 
         first_part = "Here is "
         second_part = "my title"
@@ -228,9 +233,9 @@ class SimpleTypingTest(LiveTornadoTestCase, Manipulator):
         # Added content is 16 characters long, so + 16.
         # Total: 30.
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(30,30)')
+            'window.theEditor.pm.setTextSelection(31,31)')
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(30,30)')
+            'window.theEditor.pm.setTextSelection(31,31)')
 
         for char in self.TEST_TEXT:
             document_input.send_keys(char)
@@ -270,13 +275,13 @@ class TypingTest(LiveTornadoTestCase, ThreadManipulator):
     def get_title(self, driver):
         # Title is child 0.
         return driver.execute_script(
-            'return window.theEditor.pm.doc.content.content[0].textContent;'
+            'return window.theEditor.pm.doc.firstChild.content.content[0].textContent;'
         )
 
     def get_contents(self, driver):
         # Contents is child 5.
         return driver.execute_script(
-            'return window.theEditor.pm.doc.content.content[5].textContent;'
+            'return window.theEditor.pm.doc.firstChild.content.content[5].textContent;'
         )
 
     def test_typing(self):
@@ -294,9 +299,9 @@ class TypingTest(LiveTornadoTestCase, ThreadManipulator):
         # First start tag is length 1, so placing after first start tag is
         # position 1
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(1,1)')
+            'window.theEditor.pm.setTextSelection(2,2)')
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(1,1)')
+            'window.theEditor.pm.setTextSelection(2,2)')
 
         first_part = "Here is "
         second_part = "my title"
@@ -335,9 +340,9 @@ class TypingTest(LiveTornadoTestCase, ThreadManipulator):
         # Added content is 16 characters long, so + 16.
         # Total: 30.
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(30,30)')
+            'window.theEditor.pm.setTextSelection(31,31)')
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(30,30)')
+            'window.theEditor.pm.setTextSelection(31,31)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -408,7 +413,7 @@ class SelectAndBoldTest(LiveTornadoTestCase, ThreadManipulator):
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -426,7 +431,7 @@ class SelectAndBoldTest(LiveTornadoTestCase, ThreadManipulator):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(22,27)')
+            'window.theEditor.pm.setTextSelection(23,28)')
 
         p2 = multiprocessing.Process(
             target=self.make_bold,
@@ -486,7 +491,7 @@ class SelectAndItalicTest(LiveTornadoTestCase, ThreadManipulator):
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -504,7 +509,7 @@ class SelectAndItalicTest(LiveTornadoTestCase, ThreadManipulator):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(22,27)')
+            'window.theEditor.pm.setTextSelection(23,28)')
 
         p2 = multiprocessing.Process(
             target=self.make_bold,
@@ -563,7 +568,7 @@ class MakeNumberedlistTest(LiveTornadoTestCase, ThreadManipulator):
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -572,7 +577,7 @@ class MakeNumberedlistTest(LiveTornadoTestCase, ThreadManipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 28)
+        self.wait_for_doc_size(self.driver2, 30)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
@@ -581,7 +586,7 @@ class MakeNumberedlistTest(LiveTornadoTestCase, ThreadManipulator):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p2 = multiprocessing.Process(
             target=self.make_numberedlist,
@@ -591,10 +596,10 @@ class MakeNumberedlistTest(LiveTornadoTestCase, ThreadManipulator):
         p2.join()
 
         # Wait for the first processor to write some text and go to next line
-        self.wait_for_doc_size(self.driver2, 45)
+        self.wait_for_doc_size(self.driver2, 47)
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(40,40)')
+            'window.theEditor.pm.setTextSelection(41,41)')
 
         p2 = multiprocessing.Process(
             target=self.make_numberedlist,
@@ -653,9 +658,9 @@ class MakeBulletlistTest(LiveTornadoTestCase, ThreadManipulator):
             'ProseMirror-content'
         )
 
-        # Total: 22
+        # Total: 23
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -664,7 +669,7 @@ class MakeBulletlistTest(LiveTornadoTestCase, ThreadManipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 28)
+        self.wait_for_doc_size(self.driver2, 30)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
@@ -673,7 +678,7 @@ class MakeBulletlistTest(LiveTornadoTestCase, ThreadManipulator):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p2 = multiprocessing.Process(
             target=self.make_bulletlist,
@@ -683,10 +688,10 @@ class MakeBulletlistTest(LiveTornadoTestCase, ThreadManipulator):
         p2.join()
 
         # Wait for the first processor to write enough text and go to next line
-        self.wait_for_doc_size(self.driver2, 45)
+        self.wait_for_doc_size(self.driver2, 47)
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(40,40)')
+            'window.theEditor.pm.setTextSelection(41,41)')
 
         p2 = multiprocessing.Process(
             target=self.make_bulletlist,
@@ -747,7 +752,7 @@ class MakeBlockqouteTest(LiveTornadoTestCase, ThreadManipulator):
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -765,7 +770,7 @@ class MakeBlockqouteTest(LiveTornadoTestCase, ThreadManipulator):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p2 = multiprocessing.Process(
             target=self.make_blockqoute,
@@ -839,7 +844,7 @@ class AddLinkTest(LiveTornadoTestCase, ThreadManipulator):
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -857,7 +862,7 @@ class AddLinkTest(LiveTornadoTestCase, ThreadManipulator):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(22,27)')
+            'window.theEditor.pm.setTextSelection(23,28)')
 
         p2 = multiprocessing.Process(
             target=self.addlink,
@@ -933,7 +938,7 @@ class AddFootnoteTest(LiveTornadoTestCase, ThreadManipulator):
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -951,7 +956,7 @@ class AddFootnoteTest(LiveTornadoTestCase, ThreadManipulator):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(27,27)')
+            'window.theEditor.pm.setTextSelection(28,28)')
 
         p2 = multiprocessing.Process(
             target=self.make_footnote,
@@ -1017,7 +1022,7 @@ class SelectDeleteUndoTest(LiveTornadoTestCase, ThreadManipulator):
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -1035,7 +1040,7 @@ class SelectDeleteUndoTest(LiveTornadoTestCase, ThreadManipulator):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(22,27)')
+            'window.theEditor.pm.setTextSelection(23,28)')
 
         p2 = multiprocessing.Process(
             target=self.perform_delete_undo,
@@ -1105,7 +1110,7 @@ class AddMathEquationTest(LiveTornadoTestCase, ThreadManipulator):
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -1123,7 +1128,7 @@ class AddMathEquationTest(LiveTornadoTestCase, ThreadManipulator):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(27,27)')
+            'window.theEditor.pm.setTextSelection(28,28)')
 
         p2 = multiprocessing.Process(
             target=self.make_mathequation,
@@ -1193,7 +1198,7 @@ class AddCommentTest(LiveTornadoTestCase, ThreadManipulator):
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -1211,7 +1216,7 @@ class AddCommentTest(LiveTornadoTestCase, ThreadManipulator):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(22,27)')
+            'window.theEditor.pm.setTextSelection(23,28)')
 
         p2 = multiprocessing.Process(
             target=self.add_comment,
@@ -1330,7 +1335,7 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -1348,7 +1353,7 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(27,27)')
+            'window.theEditor.pm.setTextSelection(28,28)')
 
         p2 = multiprocessing.Process(
             target=self.add_figure,
@@ -1472,7 +1477,7 @@ class AddCiteTest(LiveTornadoTestCase, ThreadManipulator):
         return cite_within_doc.text
 
     def get_citation_bib(self, driver):
-        cite_bib = driver.find_element_by_id('document-bibliography')
+        cite_bib = driver.find_element_by_class_name('article-bibliography')
         return cite_bib.text
 
     def test_citation(self):
@@ -1487,7 +1492,7 @@ class AddCiteTest(LiveTornadoTestCase, ThreadManipulator):
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -1505,7 +1510,7 @@ class AddCiteTest(LiveTornadoTestCase, ThreadManipulator):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(27,27)')
+            'window.theEditor.pm.setTextSelection(28,28)')
 
         p2 = multiprocessing.Process(
             target=self.add_citation,

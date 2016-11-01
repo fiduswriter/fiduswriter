@@ -8,20 +8,41 @@ restricted.
 class Contents(list):
     """
     Contents is [BlockContent]
-    interpretation: represents the document-contents element
+    interpretation: represents the document-contents basic structure
 
 
     >>> str(Contents(Paragraph())) == ''.join([
-    ...     '{"type":"article","content":[',
-    ...         '{"type":"paragraph","content":[',
-    ...         ']}',
-    ...     ']}',
+    ...     '{"papersize":"A4","citationstyle":"apa",'
+    ...     '"documentstyle":"elephant"},'
+    ...     '"content":['
+    ...         '{"type":"title"},'
+    ...         '{"type":"subtitle","attrs":{"hidden":true}},'
+    ...         '{"type":"authors","attrs":{"hidden":true}},'
+    ...         '{"type":"abstract","attrs":{"hidden":true},"content":['
+    ...             '{"type": "paragraph"}'
+    ...         ']},'
+    ...         '{"type":"keywords","attrs":{"hidden":true}},'
+    ...         '{"type":"body","content":['
+    ...              '{"type":"paragraph","content":[]}',
+    ...         ']}'
+    ...     ']}'
     ... ])
     True
     """
 
     template = (
-        '{"type":"article","content":[%s]}'
+        '{"type":"article","attrs":'
+        '{"papersize":"A4","citationstyle":"apa","documentstyle":"elephant"},'
+        '"content":['
+            '{"type":"title"},'
+            '{"type":"subtitle","attrs":{"hidden":true}},'
+            '{"type":"authors","attrs":{"hidden":true}},'
+            '{"type":"abstract","attrs":{"hidden":true},"content":['
+                '{"type":"paragraph"}'
+            ']},'
+            '{"type":"keywords","attrs":{"hidden":true}},'
+            '{"type":"body","content":[%s]}'
+        ']}'
     )
 
     def __init__(self, *manyBlockContents):

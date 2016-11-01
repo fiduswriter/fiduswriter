@@ -30,11 +30,25 @@ export class ModMenusUpdateUI {
 
     bindEvents() {
         let that = this, pm = this.mod.editor.pm
-        pm.updateScheduler([pm.on.selectionChange,pm.on.change,pm.on.activeMarkChange,pm.on.blur,pm.on.focus,pm.on.setDoc], function() {
+        pm.updateScheduler([
+            pm.on.selectionChange,
+            pm.on.change,
+            pm.on.activeMarkChange,
+            pm.on.blur,
+            pm.on.focus,
+            pm.on.setDoc
+        ], function() {
             return that.updateUI()
         })
         let fnPm = this.mod.editor.mod.footnotes.fnPm
-        fnPm.updateScheduler([fnPm.on.selectionChange, fnPm.on.change, fnPm.on.activeMarkChange, fnPm.on.blur, fnPm.on.focus, fnPm.on.setDoc], function() {
+        fnPm.updateScheduler([
+            fnPm.on.selectionChange,
+            fnPm.on.change,
+            fnPm.on.activeMarkChange,
+            fnPm.on.blur,
+            fnPm.on.focus,
+            fnPm.on.setDoc
+        ], function() {
             return that.updateUI()
         })
     }

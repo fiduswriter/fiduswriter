@@ -196,10 +196,18 @@ export class Editor {
     }
 
     setPmDoc() {
+        let that = this
         // Given that the article node is the second outer-most node, we need
         // to wrap it in a doc node before setting it in PM.
-        let pmDoc = docSchema.nodeFromJSON({type:'doc',content:[this.doc.contents]})
-        this.pm.setDoc(pmDoc)
+        if (this.doc.contents.type) {
+            let pmDoc = docSchema.nodeFromJSON({type:'doc',content:[this.doc.contents]})
+            this.pm.setDoc(pmDoc)
+        } else{
+            // Document is new
+            this.getUpdates(function(){
+                that.setPmDoc() // We need to set the doc so that events such as for ui update are triggered.
+            })
+        }
     }
 
     askForDocument() {
@@ -345,9 +353,6 @@ export class Editor {
 
     // Collects updates of the document from ProseMirror and saves it under this.doc
     getUpdates(callback) {
-        //let tmpDoc = editorToModel(this.pm.mod.collab.versionDoc)
-        //this.doc.contents = tmpDoc.contents
-        //this.doc.metadata = tmpDoc.metadata
         let pmArticle = this.pm.mod.collab.versionDoc.firstChild
         this.doc.contents = pmArticle.toJSON()
         this.doc.metadata = getMetadata(pmArticle)

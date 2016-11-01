@@ -89,11 +89,11 @@ class Manipulator(object):
 
     # drive browser
     def loginUser(self, driver, client):
-        client.login(username=self.username, password=self.passtext)
+        client.force_login(user=self.user)
         cookie = client.cookies['sessionid']
         if driver.current_url == 'data:,':
             # To set the cookie at the right domain we load the front page.
-            driver.get('%s%s' % (self.live_server_url,'/'))
+            driver.get('%s%s' % (self.live_server_url, '/'))
         driver.add_cookie({
             'name': 'sessionid',
             'value': cookie.value,
@@ -723,7 +723,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, ThreadManipulator):
             '//*[contains(@class, "article-body")]/p/a')
         return atag.text
 
-    def test_select_and_italic(self):
+    def test_add_link(self):
         """
         Test typing in collaborative mode with one user typing and
         another user select some part of the text and add link

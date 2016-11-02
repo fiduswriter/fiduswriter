@@ -52,7 +52,7 @@ export class EpubBookExporter extends BaseEpubExporter {
 
 
         if (this.book.cover_image) {
-            this.coverImage = _.findWhere(this.imageDB, {
+            this.coverImage = _.findWhere(this.imageDB.db, {
                 pk: this.book.cover_image
             })
             this.images.push({

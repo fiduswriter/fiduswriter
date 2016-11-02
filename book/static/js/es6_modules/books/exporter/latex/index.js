@@ -1,104 +1,84 @@
 import {getMissingChapterData, getImageAndBibDB, uniqueObjects} from "../tools"
-import {latexBookIndexTemplate} from "./templates"
-import {obj2Node} from "../../../exporter/tools/json"
-import {BaseLatexExporter} from "../../../exporter/latex/base"
+import {LatexExporterConvert} from "../../../exporter/latex/convert"
+import {bookTexTemplate} from "./templates"
 import {createSlug} from "../../../exporter/tools/file"
-import {findImages} from "../../../exporter/tools/html"
-import {zipFileCreator} from "../../../exporter/tools/zip"
+import {removeHidden} from "../../../exporter/tools/doc-contents"
 import {BibLatexExporter} from "../../../bibliography/exporter/biblatex"
+import {zipFileCreator} from "../../../exporter/tools/zip"
 
+export class LatexBookExporter {
 
-export class LatexBookExporter extends BaseLatexExporter {
     constructor(book, user, docList) {
-        super()
         let that = this
         this.book = book
+        this.book.chapters = _.sortBy(this.book.chapters, function (chapter) {
+            return chapter.number
+        })
         this.user = user // Not used, but we keep it for consistency
         this.docList = docList
-        getMissingChapterData(book, docList, function () {
+        this.textFiles = []
+        this.httpFiles = []
+        let p = []
+        p.push(new window.Promise((resolve) => {
+            getMissingChapterData(book, docList, function () {
+                resolve()
+            })
+        }))
+        p.push(new window.Promise((resolve) => {
             getImageAndBibDB(book, docList, function (imageDB,
                 bibDB) {
                 that.bibDB = bibDB
                 that.imageDB = imageDB // Apparently not used
-                that.exportOne()
+                resolve()
             })
+        }))
+        window.Promise.all(p).then(() => {
+            that.init()
         })
     }
 
-
-    exportOne() {
-        let htmlCode, outputList = [],
-            images = [],
-            listedWorksList = [],
-            allContent = document.createElement('div')
-
-
-        this.book.chapters = _.sortBy(this.book.chapters, function (chapter) {
-            return chapter.number
+    init() {
+        let that = this
+        this.zipFileName = `${createSlug(this.book.title)}.latex.zip`
+        let bibIds = [], imageIds = [], features = {}
+        this.book.chapters.forEach((chapter, index) => {
+            let converter = new LatexExporterConvert(that, that.imageDB, that.bibDB)
+            let doc = _.findWhere(that.docList, {id: chapter.text})
+            let chapterContents = removeHidden(doc.contents)
+            let convertedDoc = converter.init(chapterContents)
+            that.textFiles.push({
+                filename: `chapter-${index+1}.tex`,
+                contents: convertedDoc.latex
+            })
+            bibIds = _.unique(bibIds.concat(convertedDoc.bibIds))
+            imageIds = _.unique(imageIds.concat(convertedDoc.imageIds))
+            Object.assign(features, converter.features)
         })
-
-        for (let i = 0; i < this.book.chapters.length; i++) {
-
-            let aDocument = _.findWhere(this.docList, {
-                id: this.book.chapters[i].text
-            })
-
-            let title = aDocument.title
-
-            let contents = obj2Node(aDocument.contents)
-
-            allContent.innerHTML += contents.innerHTML
-
-            images = images.concat(findImages(contents))
-
-            let latexCode = this.htmlToLatex(title, aDocument.owner.name,
-                contents, aDocument.settings, aDocument.metadata, true,
-                listedWorksList)
-
-            listedWorksList = latexCode.listedWorksList
-
-            outputList.push({
-                filename: 'chapter-' + this.book.chapters[i].number + '.tex',
-                contents: latexCode.latex
-            })
-
+        if (bibIds.length > 0) {
+            let bibExport = new BibLatexExporter(bibIds, this.bibDB.db, false)
+            this.textFiles.push({filename: 'bibliography.bib', contents: bibExport.bibtexStr})
         }
-        let author = this.book.owner_name
-        if (this.book.metadata.author && this.book.metadata.author !== '') {
-            author = this.book.metadata.author
-        }
-
-        let documentFeatures = this.findLatexDocumentFeatures(
-            allContent, this.book.title, author, this.book.metadata.subtitle, this.book.metadata.keywords, this.book.metadata.author, this.book.metadata, 'book')
-
-
-        let latexStart = documentFeatures.latexStart + documentFeatures.latexAfterAbstract
-        let latexEnd = documentFeatures.latexEnd
-
-        outputList.push({
-            filename: createSlug(
-                this.book.title) + '.tex',
-            contents: latexBookIndexTemplate({
-                aBook: this.book,
-                latexStart: latexStart,
-                latexEnd: latexEnd
+        imageIds.forEach(function(id){
+            that.httpFiles.push({
+                filename: that.imageDB.db[id].image.split('/').pop(),
+                url: that.imageDB.db[id].image
+            })
+        })
+        // Start a converter, only for creating a preamble/epilogue that combines
+        // the features of all of the contained chapters.
+        let bookConverter = new LatexExporterConvert(that, that.imageDB, that.bibDB)
+        bookConverter.features = features
+        let preamble = bookConverter.assemblePreamble()
+        let epilogue = bookConverter.assembleEpilogue()
+        this.textFiles.push({
+            filename: `book.tex`,
+            contents: bookTexTemplate({
+                book: this.book,
+                preamble,
+                epilogue
             })
         })
 
-        let bibtex = new BibLatexExporter(listedWorksList,
-            this.bibDB, false)
-
-        if (bibtex.bibtexStr.length > 0) {
-            outputList.push({
-                filename: 'bibliography.bib',
-                contents: bibtex.bibtexStr
-            })
-        }
-
-        images = uniqueObjects(images)
-
-        zipFileCreator(outputList, images, createSlug(
-                this.book.title) +
-            '.latex.zip')
+        zipFileCreator(this.textFiles, this.httpFiles, this.zipFileName)
     }
 }

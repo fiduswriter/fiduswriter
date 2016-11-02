@@ -1,11 +1,8 @@
 import {escapeLatexText} from "./escape-latex"
-import {noSpaceTmp} from "../../common/common"
-import {BibLatexExporter} from "../../bibliography/exporter/biblatex"
 
 export class LatexExporterConvert {
-    constructor(exporter, docContents, imageDB, bibDB) {
+    constructor(exporter, imageDB, bibDB) {
         this.exporter = exporter
-        this.docContents = docContents
         this.imageDB = imageDB
         this.bibDB = bibDB
         this.imageIds = []
@@ -16,38 +13,23 @@ export class LatexExporterConvert {
         this.features = {}
     }
 
-    init() {
-        let allParts = this.assembleAllParts()
-        let latex = this.docDeclaration + allParts.preamble + allParts.body + allParts.epilogue
-        let returnObject = {
-            latex,
-            imageIds: this.imageIds
-        }
-        if (this.bibIds.length > 0) {
-            let bibExport = new BibLatexExporter(
-                this.bibIds, this.bibDB.db, false)
-            returnObject.bibtex = bibExport.bibtexStr
-        }
-        return returnObject
-
-    }
-
-    assembleAllParts() {
-        let rawTransformation = this.walkJson(this.docContents)
+    init(docContents) {
+        let rawTransformation = this.walkJson(docContents)
         let body = this.postProcess(rawTransformation)
         let preamble = this.assemblePreamble()
         let epilogue = this.assembleEpilogue()
-        return {
-            preamble,
-            body,
-            epilogue
+        let latex = this.docDeclaration + preamble + body + epilogue
+        let returnObject = {
+            latex,
+            imageIds: this.imageIds,
+            bibIds: this.bibIds
         }
+        return returnObject
     }
 
     get docDeclaration() {
         return '\\documentclass{article}\n'
     }
-
 
 
     walkJson(node, options = {}) {
@@ -69,16 +51,16 @@ export class LatexExporterConvert {
                     end = '}' + end
                     this.features.subtitle = true
                 }
+                break
+            case 'authors':
+                if (node.content) {
+                    start += '\n\\author{'
+                    end = '}' + end
+                }
                 // We add the maketitle command here. TODO: This relies on the
                 // existence of a subtitle node, even if it has no content.
                 // It would be better if it wouldn't have to rely on this.
                 start += '\n\n\\maketitle\n'
-                break
-            case 'authors':
-                if (node.content) {
-                    start += '\n\\authors{'
-                    end = '}' + end
-                }
                 break
             case 'keywords':
                 if (node.content) {
@@ -94,7 +76,6 @@ export class LatexExporterConvert {
                 }
                 break
             case 'body':
-                start += '\n\\tableofcontents\n'
                 break
             case 'paragraph':
                 start += '\n\n'
@@ -337,10 +318,10 @@ export class LatexExporterConvert {
     }
 
     assemblePreamble() {
-        let preamble = '\\usepackage[utf8]{luainputenc}'
+        let preamble = '\n\\usepackage[utf8]{luainputenc}'
 
         if (this.features.subtitle) {
-            preamble += noSpaceTmp`
+            preamble += `
                 \n\\usepackage{titling}
                 \n\\newcommand{\\subtitle}[1]{%
                     \n\t\\posttitle{%
@@ -352,7 +333,7 @@ export class LatexExporterConvert {
         }
 
         if (this.features.keywords) {
-            preamble += noSpaceTmp`
+            preamble += `
                 \n\\def\\keywords{\\vspace{.5em}
                 \n{\\textit{Keywords}:\\,\\relax%
                 \n}}
@@ -365,7 +346,7 @@ export class LatexExporterConvert {
         }
 
         if (this.features.citations) {
-            preamble += noSpaceTmp`
+            preamble += `
                 \n\\usepackage[backend=biber,hyperref=false,citestyle=authoryear,bibstyle=authoryear]{biblatex}
                 \n\\bibliography{bibliography}
             `
@@ -378,7 +359,7 @@ export class LatexExporterConvert {
         if (this.features.images) {
             preamble += '\n\\usepackage{graphicx}'
             // The following scales graphics down to text width, but not scaling them up if they are smaller
-            preamble += noSpaceTmp`
+            preamble += `
                 \n\\usepackage{calc}
                 \n\\newlength{\\imgwidth}
                 \n\\newcommand\\scaledgraphics[1]{%

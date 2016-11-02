@@ -1,4 +1,3 @@
-import {obj2Node} from "../tools/json"
 import {BaseDOMExporter} from "../tools/dom-export"
 import {RenderCitations} from "../../citations/render"
 import {docSchema} from "../../schema/document"

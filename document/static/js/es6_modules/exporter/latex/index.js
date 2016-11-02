@@ -32,10 +32,10 @@ export class LatexExporter {
         if (this.conversion.bibtex) {
             this.textFiles.push({filename: 'bibliography.bib', contents: this.conversion.bibtex})
         }
-        Object.keys(this.conversion.usedImageDB).forEach(function(key){
+        this.conversion.imageIds.forEach(function(id){
             that.httpFiles.push({
-                filename: that.conversion.usedImageDB[key].image.split('/').pop(),
-                url: that.conversion.usedImageDB[key].image
+                filename: that.imageDB.db[id].image.split('/').pop(),
+                url: that.imageDB.db[id].image
             })
         })
 

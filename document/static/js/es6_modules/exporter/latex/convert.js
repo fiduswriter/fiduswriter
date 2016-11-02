@@ -8,8 +8,8 @@ export class LatexExporterConvert {
         this.docContents = docContents
         this.imageDB = imageDB
         this.bibDB = bibDB
-        this.usedImageDB = {}
-        this.usedBibs = []
+        this.imageIds = []
+        this.bibIds = []
         // While walking the tree, we take note of the kinds of features That
         // are present in the file, so that we can assemble an preamble and
         // epilogue based on our findings.
@@ -21,11 +21,11 @@ export class LatexExporterConvert {
         let latex = this.docDeclaration + allParts.preamble + allParts.body + allParts.epilogue
         let returnObject = {
             latex,
-            usedImageDB: this.usedImageDB
+            imageIds: this.imageIds
         }
-        if (this.usedBibs.length > 0) {
+        if (this.bibIds.length > 0) {
             let bibExport = new BibLatexExporter(
-                this.usedBibs, this.bibDB.db, false)
+                this.bibIds, this.bibDB.db, false)
             returnObject.bibtex = bibExport.bibtexStr
         }
         return returnObject
@@ -208,8 +208,8 @@ export class LatexExporterConvert {
                         let bibDBEntry = that.bibDB.db[citationEntry]
                         if (bibDBEntry) {
                             citationEntryKeys.push(bibDBEntry.entry_key)
-                            if (that.usedBibs.indexOf(citationEntry) === -1) {
-                                that.usedBibs.push(citationEntry)
+                            if (that.bibIds.indexOf(citationEntry) === -1) {
+                                that.bibIds.push(citationEntry)
                             }
                         }
                     })
@@ -237,8 +237,8 @@ export class LatexExporterConvert {
                         citationCommand += '{'
 
                         citationCommand += that.bibDB.db[citationEntry].entry_key
-                        if (that.usedBibs.indexOf(citationEntry) === -1) {
-                            that.usedBibs.push(citationEntry)
+                        if (that.bibIds.indexOf(citationEntry) === -1) {
+                            that.bibIds.push(citationEntry)
                         }
                         citationCommand += '}'
                     })
@@ -251,7 +251,7 @@ export class LatexExporterConvert {
                 let figureType = node.attrs.figureCategory
                 let caption = node.attrs.caption
                 let imageDBEntry = this.imageDB.db[node.attrs.image]
-                this.usedImageDB[node.attrs.image] = imageDBEntry
+                this.imageIds.push(node.attrs.image)
                 let filePathName = imageDBEntry.image
                 let innerFigure = ''
                 if (filePathName) {
@@ -323,7 +323,9 @@ export class LatexExporterConvert {
         .replace(/\\end{code}\n\n\\begin{code}\n\n/g, '')
         .replace(/\\end{quote}\n\n\\begin{quote}\n\n/g, '')
         // Remove the last divider in any any table row.
-        .replace(/& \\\\/g, '\\\\')
+        .replace(/&  \\\\/g, '\\\\')
+        // Remove new lines between table cells.
+        .replace(/\n & \n\n/g, ' & ')
     }
 
     assembleEpilogue() {

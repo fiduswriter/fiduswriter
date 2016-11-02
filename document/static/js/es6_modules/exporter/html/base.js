@@ -1,58 +1,20 @@
 import {obj2Node} from "../tools/json"
 import {BaseDOMExporter} from "../tools/dom-export"
 import {RenderCitations} from "../../citations/render"
+import {docSchema} from "../../schema/document"
 
 export class BaseHTMLExporter extends BaseDOMExporter {
     joinDocumentParts(callback) {
 
         let that = this
 
-        this.contents = document.createElement('div')
-        if (this.doc.contents) {
-            let tempNode = obj2Node(this.doc.contents)
-            while (tempNode.firstChild) {
-                this.contents.appendChild(tempNode.firstChild)
-            }
-        }
+        this.contents = docSchema.nodeFromJSON(this.doc.contents).toDOM()
 
-        if (this.doc.settings['metadata-keywords'] && this.doc.metadata.keywords) {
-            let tempNode = obj2Node(this.doc.metadata.keywords)
-            if (tempNode.textContent.length > 0) {
-                tempNode.id = 'keywords'
-                this.contents.insertBefore(tempNode, this.contents.firstChild)
-            }
-        }
-
-        if (this.doc.settings['metadata-authors'] && this.doc.metadata.authors) {
-            let tempNode = obj2Node(this.doc.metadata.authors)
-            if (tempNode.textContent.length > 0) {
-                tempNode.id = 'authors'
-                this.contents.insertBefore(tempNode, this.contents.firstChild)
-            }
-        }
-
-        if (this.doc.settings['metadata-abstract'] && this.doc.metadata.abstract) {
-            let tempNode = obj2Node(this.doc.metadata.abstract)
-            if (tempNode.textContent.length > 0) {
-                tempNode.id = 'abstract'
-                this.contents.insertBefore(tempNode, this.contents.firstChild)
-            }
-        }
-
-        if (this.doc.settings['metadata-subtitle'] && this.doc.metadata.subtitle) {
-            let tempNode = obj2Node(this.doc.metadata.subtitle)
-            if (tempNode.textContent.length > 0) {
-                tempNode.id = 'subtitle'
-                this.contents.insertBefore(tempNode, this.contents.firstChild)
-            }
-        }
-
-        if (this.doc.title) {
-            let tempNode = document.createElement('h1')
-            tempNode.classList.add('title')
-            tempNode.textContent = this.doc.title
-            this.contents.insertBefore(tempNode, this.contents.firstChild)
-        }
+        // Remove hidden parts
+        let hiddenEls = [].slice.call(this.contents.querySelectorAll('[data-hidden=true]'))
+        hiddenEls.forEach(function(hiddenEl){
+            hiddenEl.parentElement.removeChild(hiddenEl)
+        })
 
         let citRenderer = new RenderCitations(
             this.contents,

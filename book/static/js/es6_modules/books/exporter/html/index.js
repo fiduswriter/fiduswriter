@@ -2,7 +2,8 @@ import {katexRender} from "../../../katex/katex"
 
 import {getMissingChapterData, getImageAndBibDB, uniqueObjects} from "../tools"
 import {htmlBookExportTemplate, htmlBookIndexTemplate, htmlBookIndexItemTemplate} from "./templates"
-import {obj2Node} from "../../../exporter/tools/json"
+import {docSchema} from "../../../schema/document"
+import {removeHidden} from "../../../exporter/tools/doc-contents"
 import {BaseEpubExporter} from "../../../exporter/epub/base"
 import {createSlug} from "../../../exporter/tools/file"
 import {findImages} from "../../../exporter/tools/html"
@@ -47,7 +48,9 @@ export class HTMLBookExporter extends BaseEpubExporter { // extension is correct
                 id: this.book.chapters[i].text
             })
 
-            let contents = obj2Node(doc.contents)
+            let docContents = removeHidden(doc.contents)
+
+            let contents = docSchema.nodeFromJSON(docContents).toDOM()
 
             let equations = contents.querySelectorAll('.equation')
 
@@ -157,8 +160,7 @@ export class HTMLBookExporter extends BaseEpubExporter { // extension is correct
                 settings: doc.settings,
                 styleSheets,
                 contents: contentsCode,
-                math: this.math,
-                obj2Node
+                math: this.math
             })
 
             outputList.push({

@@ -1,16 +1,15 @@
-import {obj2Node} from "../tools/json"
 import {createSlug} from "../tools/file"
 //import {findImages} from "../tools/html"
 import {zipFileCreator} from "../tools/zip"
 import {BibliographyDB} from "../../bibliography/database"
 import {ImageDB} from "../../images/database"
 import {addAlert} from "../../common/common"
-
+import {docSchema} from "../../schema/document"
 /** The current Fidus Writer filetype version.
- * The importer will not import from a different version and the exporter
+ * The importer will not import from a higher version and the exporter
   * will include this number in all exports.
  */
-export let FW_FILETYPE_VERSION = "1.3"
+export let FW_FILETYPE_VERSION = "1.4"
 
 /** Create a Fidus Writer document and upload it to the server as a backup.
  * @function uploadNative
@@ -71,7 +70,7 @@ export let exportNative = function(doc, anImageDB, aBibDB, callback) {
         shrunkImageDB = {},
         citeList = [],
         imageList = [],
-        contents = obj2Node(doc.contents),
+        contents = docSchema.nodeFromJSON(doc.contents).toDOM(),
         footnotesHtml = '',
         httpIncludes = []
 
@@ -88,18 +87,9 @@ export let exportNative = function(doc, anImageDB, aBibDB, callback) {
 
 
     jQuery(contents).find('.footnote-marker').each(function() {
-        footnotesHtml += jQuery(this).attr('contents')
+        footnotesHtml += jQuery(this).attr('data-footnote')
     })
 
-    if (doc.metadata.abstract) {
-        let abstract = obj2Node(doc.metadata.abstract)
-        jQuery(abstract).find('.citation').each(function() {
-            citeList.push(jQuery(this).attr('data-bib-entry'))
-        })
-        jQuery(abstract).find('.footnote-marker').each(function() {
-            footnotesHtml += jQuery(this).attr('contents')
-        })
-    }
 
     if (footnotesHtml.length > 0) {
         let fnDiv = document.createElement('div')

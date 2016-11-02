@@ -4,9 +4,9 @@ WARNING: DEPRECATED!
 
 Base exporter class for dom-based exports. This is the deprecated way of creating exports.
 The latex, epub and html export filters go over a DOM of a document which they change little
-by little, and they are all based on this class.
+by little, and they are all based on the BaseDOMExporter class.
 
-    New exporters should instead by walking a pmJSON tree.
+    New exporters should instead by walking the doc.contents tree.
     This is how the ODT and DOCX export filters work.
 */
 
@@ -43,10 +43,7 @@ export class BaseDOMExporter {
             let newFootnote = document.createElement('section')
             newFootnote.id = 'fn' + counter
             newFootnote.setAttribute('role','doc-footnote')
-            newFootnote.innerHTML = footnote.getAttribute('contents')
-            //while (footnote.firstChild) {
-            //    newFootnote.appendChild(footnote.firstChild)
-            //}
+            newFootnote.innerHTML = footnote.getAttribute('data-footnote')
             footnotesContainer.appendChild(newFootnote)
         })
         htmlCode.appendChild(footnotesContainer)

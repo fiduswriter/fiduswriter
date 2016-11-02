@@ -120,9 +120,6 @@ export class ModServerCommunications {
             case 'confirm_diff':
                 this.editor.mod.collab.docChanges.confirmDiff(data.request_id)
                 break
-            case 'setting_change':
-                this.editor.mod.settings.set.setSetting(data.variable, data.value, false)
-                break
             case 'check_hash':
                 this.editor.mod.collab.docChanges.checkHash(data.diff_version, data.hash)
                 break

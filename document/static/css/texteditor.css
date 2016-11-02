@@ -218,7 +218,7 @@ div#statusarea .error {
     position: relative;
     max-width: 1600px;
 }
-#flow #document-bibliography {
+#flow .article-bibliography {
     background-color: lightgrey;
 }
 #paper-editable .citation, .equation {
@@ -291,15 +291,22 @@ input.required, error {
 font {
     color: inherit !important;
 }
+
+/* Don't show metadata fields marked as hidden*/
+
+.metadata[data-hidden] {
+    display: none;
+}
+
 /* For default contents of title and contents field*/
 
-#document-contents:before, #document-title:before, #metadata-subtitle:before, #metadata-abstract:before, #metadata-authors:before, #metadata-keywords:before {
+.article-part:before {
     text-transform: none;
     color: #cecece;
 }
 /* For Firefox problem: shows input fields without height. */
 
-#document-contents, #document-title, #metadata-subtitle, #metadata-abstract, #metadata-authors, #metadata-keywords {
+.article-part {
     min-height: 1.5em;
     line-height: initial; /* Cancel out 1.6em line height for metadata/title. */
 }
@@ -316,12 +323,11 @@ font {
 span.delete {
     cursor: pointer;
 }
-#document-title:focus, #document-contents:focus {
+
+.article-title:focus, .article-body:focus {
     outline: none;
 }
-/*#document-contents {*/
-    /*min-height: 400px;*/
-/*}*/
+
 
 .pagination-footnote-item {
     width: 100%;
@@ -346,7 +352,7 @@ span.delete {
     border: 1px solid #ccc;
 }
 
-#document-contents, .pagination-footnote > * > * {
+.article-body, .pagination-footnote > * > * {
     font-size: 12pt;
 }
 

@@ -1,63 +1,49 @@
-import {obj2Node} from "../tools/json"
-import {createSlug} from "../tools/file"
-import {findImages} from "../tools/html"
+import {createSlug, getDatabasesIfNeeded} from "../tools/file"
+import {removeHidden} from "../tools/doc-contents"
+import {LatexExporterConvert} from "./convert"
 import {zipFileCreator} from "../tools/zip"
 import {BibLatexExporter} from "../../bibliography/exporter/biblatex"
-import {BibliographyDB} from "../../bibliography/database"
-import {addAlert} from "../../common/common"
-import {BaseLatexExporter} from "./base"
+/*
+ Exporter to LaTeX
+*/
 
-
-export class LatexExporter extends BaseLatexExporter {
-    constructor(doc, bibDB) {
-        super()
+export class LatexExporter {
+    constructor(doc, bibDB, imageDB) {
         let that = this
         this.doc = doc
-        if (bibDB) {
-            this.bibDB = bibDB // the bibliography has already been loaded for some other purpose. We reuse it.
-            this.exportOne()
-        } else {
-            this.bibDB = new BibliographyDB(doc.owner.id, false, false, false)
-            this.bibDB.getDB(function() {
-                that.exportOne()
-            })
+        this.bibDB = bibDB
+        this.imageDB = imageDB
+        this.docContents = false
+        this.zipFileName = false
+        this.textFiles = []
+        this.httpFiles = []
+
+        getDatabasesIfNeeded(this, doc).then(function(){
+            that.init()
+        })
+    }
+
+    init() {
+        let that = this
+        this.zipFileName = `${createSlug(this.doc.title)}.latex.zip`
+        this.docContents = removeHidden(this.doc.contents)
+        this.converter = new LatexExporterConvert(this, this.imageDB, this.bibDB)
+        this.conversion = this.converter.init(this.docContents)
+        if (this.conversion.bibIds.length > 0) {
+            let bibExport = new BibLatexExporter(this.conversion.bibIds, this.bibDB.db, false)
+            this.textFiles.push({filename: 'bibliography.bib', contents: bibExport.bibtexStr})
         }
+        this.textFiles.push({filename: 'document.tex', contents: this.conversion.latex})
+        this.conversion.imageIds.forEach(function(id){
+            that.httpFiles.push({
+                filename: that.imageDB.db[id].image.split('/').pop(),
+                url: that.imageDB.db[id].image
+            })
+        })
+
+        zipFileCreator(this.textFiles, this.httpFiles, this.zipFileName)
     }
 
 
-    exportOne() {
-        let title = this.doc.title
 
-        addAlert('info', title + ': ' + gettext(
-            'Latex export has been initiated.'))
-
-        let contents = document.createElement('div')
-
-        let tempNode = obj2Node(this.doc.contents)
-
-        while (tempNode.firstChild) {
-            contents.appendChild(tempNode.firstChild)
-        }
-
-        let httpOutputList = findImages(contents)
-
-        let latexCode = this.htmlToLatex(title, this.doc.owner.name, contents,
-            this.doc.settings, this.doc.metadata)
-
-        let outputList = [{
-            filename: 'document.tex',
-            contents: latexCode.latex
-        }]
-
-        if (latexCode.bibtex.length > 0) {
-            outputList.push({
-                filename: 'bibliography.bib',
-                contents: latexCode.bibtex
-            })
-        }
-
-        zipFileCreator(outputList, httpOutputList, createSlug(
-                title) +
-            '.latex.zip')
-    }
 }

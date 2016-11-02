@@ -71,7 +71,7 @@ export class ModMenusActions {
     downloadLatex() {
         let that = this
         that.mod.editor.save(function() {
-            new LatexExporter(that.mod.editor.doc, that.mod.editor.bibDB)
+            new LatexExporter(that.mod.editor.doc, that.mod.editor.bibDB, that.mod.editor.imageDB)
         })
     }
 

@@ -1,12 +1,12 @@
 import {FormatCitations} from "../../citations/format"
 import {docSchema} from "../../schema/document"
-import {descendantNodes} from "../tools/pmJSON"
+import {descendantNodes} from "../tools/doc-contents"
 
 export class DocxExporterCitations {
-    constructor(exporter, bibDB, pmJSON) {
+    constructor(exporter, bibDB, docContents) {
         this.exporter = exporter
         this.bibDB = bibDB
-        this.pmJSON = pmJSON
+        this.docContents = docContents
         this.citInfos = []
         this.citationTexts = []
         this.pmCits = []
@@ -26,7 +26,7 @@ export class DocxExporterCitations {
             this.citInfos = this.citInfos.concat(origCitInfos)
         }
 
-        descendantNodes(this.pmJSON).forEach(
+        descendantNodes(this.docContents).forEach(
             function(node){
                 if (node.type==='citation') {
                     that.citInfos.push(node.attrs)
@@ -58,18 +58,19 @@ export class DocxExporterCitations {
             citationsHTML += '<p>'+ct[0][1]+'</p>'
         })
 
-        // We create a standard document DOM node, add the citations
-        // into the last child (the body) and parse it back.
-        let dom = docSchema.parseDOM(document.createTextNode('')).toDOM()
-        dom.lastElementChild.innerHTML = citationsHTML
-        this.pmCits = docSchema.parseDOM(dom).lastChild.toJSON().content
+        // We create a standard body DOM node, add the citations into it, and parse it back.
+        let bodyNode = docSchema.nodeFromJSON({type:'body'})
+        let dom = bodyNode.toDOM()
+        dom.innerHTML = citationsHTML
+        this.pmCits = docSchema.parseDOM(dom, {topNode: bodyNode}).toJSON().content
 
         // Now we do the same for the bibliography.
-        dom = docSchema.parseDOM(document.createTextNode('')).toDOM()
-        dom.lastElementChild.innerHTML = this.citFm.bibliographyHTML
+        bodyNode = docSchema.nodeFromJSON({type:'body'})
+        dom = bodyNode.toDOM()
+        dom.innerHTML = this.citFm.bibliographyHTML
         // Remove empty bibliography header (used in web version)
-        dom.lastElementChild.removeChild(dom.lastElementChild.firstElementChild)
-        this.pmBib = docSchema.parseDOM(dom).lastChild.toJSON()
+        dom.removeChild(dom.firstElementChild)
+        this.pmBib = docSchema.parseDOM(dom, {topNode: bodyNode}).toJSON()
         // use the References style for the paragraphs in the bibliography
         this.pmBib.type = 'bibliography'
     }

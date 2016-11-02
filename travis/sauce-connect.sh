@@ -14,13 +14,11 @@ pushd $SAUCE_TMP_DIR
 SAUCE_CONNECT_PLATFORM=$(uname | sed -e 's/Darwin/osx/' -e 's/Linux/linux/')
 case "${SAUCE_CONNECT_PLATFORM}" in
     linux)
-        SC_DISTRIBUTION_FMT=tar.gz
-        SC_DISTRIBUTION_SHASUM=d5ea79fb0c182606324de806f27349432db995ef;;
+        SC_DISTRIBUTION_FMT=tar.gz;;
     osx)
-        SC_DISTRIBUTION_FMT=zip
-        SC_DISTRIBUTION_SHASUM=cc3e4e61384510e68a90479ee70eccdea0e5628e;;
+        SC_DISTRIBUTION_FMT=zip;;
 esac
-SC_DISTRIBUTION=sc-4.4.0-${SAUCE_CONNECT_PLATFORM}.${SC_DISTRIBUTION_FMT}
+SC_DISTRIBUTION=sc-4.4.1-${SAUCE_CONNECT_PLATFORM}.${SC_DISTRIBUTION_FMT}
 SC_READYFILE=sauce-connect-ready-$RANDOM
 SC_LOGFILE=$HOME/sauce-connect.log
 if [ ! -z "${TRAVIS_JOB_NUMBER}" ]; then
@@ -28,13 +26,7 @@ if [ ! -z "${TRAVIS_JOB_NUMBER}" ]; then
 fi
 echo "Downloading Sauce Connect"
 wget http://saucelabs.com/downloads/${SC_DISTRIBUTION}
-SC_ACTUAL_SHASUM="$(openssl sha1 ${SC_DISTRIBUTION} | cut -d' ' -f2)"
-if [[ "$SC_ACTUAL_SHASUM" != "$SC_DISTRIBUTION_SHASUM" ]]; then
-    echo "SHA1 sum of Sauce Connect file didn't match!"
-    exit 1
-fi
 SC_DIR=$(tar -ztf ${SC_DISTRIBUTION} | head -n1)
-
 echo "Extracting Sauce Connect"
 case "${SC_DISTRIBUTION_FMT}" in
     tar.gz)

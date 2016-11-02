@@ -1,12 +1,12 @@
 import JSZipUtils from "jszip-utils"
-import {descendantNodes} from "../tools/pmJSON"
+import {descendantNodes} from "../tools/doc-contents"
 
 export class DocxExporterImages {
-    constructor(exporter, imageDB, rels, pmJSON) {
+    constructor(exporter, imageDB, rels, docContents) {
         this.exporter = exporter
         this.imageDB = imageDB
         this.rels = rels
-        this.pmJSON = pmJSON
+        this.docContents = docContents
         this.imgIdTranslation = {}
         this.ctXml = false
     }
@@ -43,7 +43,7 @@ export class DocxExporterImages {
         let that = this, usedImgs = []
 
 
-        descendantNodes(this.pmJSON).forEach(
+        descendantNodes(this.docContents).forEach(
             function(node) {
                 if (node.type==='figure' && node.attrs.image !== 'false') {
                     if (!(node.attrs.image in usedImgs)) {

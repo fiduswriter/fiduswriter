@@ -2,7 +2,7 @@ import {ProseMirror} from "prosemirror-old/dist/edit/main"
 import {Step} from "prosemirror-old/dist/transform"
 import {collabEditing} from "prosemirror-old/dist/collab"
 import {updateFileDoc} from "../../importer/file"
-import {modelToEditor, editorToModel, setDocDefaults, updateDoc} from "../../schema/convert"
+import {updateDoc, getMetadata, getSettings} from "../../schema/convert"
 import {docSchema} from "../../schema/document"
 import {addAlert, csrfToken} from "../../common/common"
 import {Menu} from "../../menu/menu"
@@ -69,7 +69,7 @@ export class DocMaintenance {
     }
 
     fixDoc(doc) {
-        let newDoc = {
+        let oldDoc = {
             contents: window.JSON.parse(doc.fields.contents),
             diff_version: doc.fields.diff_version,
             last_diffs: window.JSON.parse(doc.fields.last_diffs),
@@ -81,12 +81,11 @@ export class DocMaintenance {
         }
 
         // updates doc to the newest version
-        doc = updateDoc(newDoc)
+        doc = updateDoc(oldDoc)
 
         // only proceed with saving if the doc update has changed something or there
         // are last diffs
-        if (doc !== newDoc || doc.last_diffs.length > 0) {
-            setDocDefaults(doc)
+        if (doc !== oldDoc || doc.last_diffs.length > 0) {
             if (doc.last_diffs.length > 0) {
                 this.applyDiffs(doc)
             }
@@ -118,8 +117,7 @@ export class DocMaintenance {
             collab.unconfirmedMaps = []
         }
         pm.on.setDoc.add(pm.mod.collab.afterSetDoc)
-
-        let pmDoc = modelToEditor({contents: doc.contents, metadata: doc.metadata})
+        let pmDoc = docSchema.nodeFromJSON({type:'doc',content:[doc.contents]})
         pm.setDoc(pmDoc)
         let unappliedDiffs = doc.diff_version - doc.version
 
@@ -135,12 +133,13 @@ export class DocMaintenance {
                 doc.last_diffs = []
             }
         }
-        let newDoc = editorToModel(pm.doc)
-        doc.contents = newDoc.contents
-        doc.metadata = newDoc.metadata
+        let pmArticle = pm.doc.firstChild
+        doc.contents = pmArticle.toJSON()
+        doc.metadata = getMetadata(pmArticle)
+        doc.settings = getSettings(pmArticle)
         doc.version = doc.diff_version
-        return
     }
+
 
     saveDoc(doc) {
         let that = this
@@ -261,11 +260,6 @@ export class DocMaintenance {
     done() {
         jQuery(this.button).html(gettext('All documents and revisions updated!'))
     }
-
-
-}
-
-export let applyAllDiffs = function(contents, metadata, last_diffs) {
 
 
 }

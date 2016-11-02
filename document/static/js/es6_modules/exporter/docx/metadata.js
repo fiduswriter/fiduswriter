@@ -1,16 +1,16 @@
-import {textContent} from "../tools/pmJSON"
+import {textContent} from "../tools/doc-contents"
 import {escapeText} from "../tools/html"
 
 
 export class DocxExporterMetadata {
-    constructor(exporter, pmJSON) {
+    constructor(exporter, docContents) {
         this.exporter = exporter
-        this.pmJSON = pmJSON
+        this.docContents = docContents
         this.coreXml = false
         this.metadata = {
-            authors: textContent(this.pmJSON.content[2]),
-            keywords: textContent(this.pmJSON.content[4]),
-            title: textContent(this.pmJSON.content[0])
+            authors: textContent(this.docContents.content[2]),
+            keywords: textContent(this.docContents.content[4]),
+            title: textContent(this.docContents.content[0])
         }
     }
 

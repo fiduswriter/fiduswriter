@@ -1,6 +1,6 @@
 import {createSlug, getDatabasesIfNeeded, downloadFile} from "../tools/file"
 import {XmlZip} from "../tools/xml-zip"
-import {textContent, createPmJSON} from "../tools/pmJSON"
+import {textContent, removeHidden} from "../tools/doc-contents"
 
 import {DocxExporterCitations} from "./citations"
 import {DocxExporterImages} from "./images"
@@ -25,7 +25,7 @@ export class DocxExporter {
         this.bibDB = bibDB
         this.imageDB = imageDB
         this.pmBib = false
-        this.pmJSON = false
+        this.docContents = false
         this.docTitle = false
 
         getDatabasesIfNeeded(this, doc).then(function(){
@@ -38,17 +38,17 @@ export class DocxExporter {
         let that = this
         // We use the doc in the pm format as this is what we will be using
         // throughout the application in the future.
-        this.pmJSON = createPmJSON(this.doc)
-        this.docTitle = textContent(this.pmJSON.content[0])
+        this.docContents = removeHidden(this.doc.contents)
+        this.docTitle = textContent(this.docContents.content[0])
         this.tables = new DocxExporterTables(this)
         this.math = new DocxExporterMath(this)
-        this.metadata = new DocxExporterMetadata(this, this.pmJSON)
-        this.footnotes = new DocxExporterFootnotes(this, this.pmJSON)
-        this.render = new DocxExporterRender(this, this.pmJSON)
+        this.metadata = new DocxExporterMetadata(this, this.docContents)
+        this.footnotes = new DocxExporterFootnotes(this, this.docContents)
+        this.render = new DocxExporterRender(this, this.docContents)
         this.rels = new DocxExporterRels(this, 'document')
-        this.images = new DocxExporterImages(this, this.imageDB, this.rels, that.pmJSON)
-        this.lists = new DocxExporterLists(this, this.rels, that.pmJSON)
-        this.citations = new DocxExporterCitations(this, this.bibDB, this.pmJSON)
+        this.images = new DocxExporterImages(this, this.imageDB, this.rels, that.docContents)
+        this.lists = new DocxExporterLists(this, this.rels, that.docContents)
+        this.citations = new DocxExporterCitations(this, this.bibDB, this.docContents)
         this.richtext = new DocxExporterRichtext(
             this,
             this.rels,

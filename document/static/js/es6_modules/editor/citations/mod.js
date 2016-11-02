@@ -36,8 +36,8 @@ export class ModCitations {
         citations.forEach(function(citation){
             citation.innerHTML = ''
         })
-        if (document.getElementById('document-bibliography').innerHTML !== '') {
-            document.getElementById('document-bibliography').innerHTML = ''
+        if (document.querySelector('.article-bibliography').innerHTML !== '') {
+            document.querySelector('.article-bibliography').innerHTML = ''
         }
         let citationsContainer = document.getElementById('citation-footnote-box-container')
         if (citationsContainer.innerHTML !== '') {
@@ -56,7 +56,7 @@ export class ModCitations {
         if (this.emptyCitations.length > 0) {
             this.citRenderer = new RenderCitations(
                 document.getElementById('paper-editable'), // TODO: Should we point this to somewhere else?
-                this.editor.doc.settings.citationstyle,
+                document.querySelector('div.article').getAttribute('data-citationstyle'),
                 this.editor.bibDB,
                 false,
                 function() {
@@ -78,7 +78,7 @@ export class ModCitations {
         }
         this.citationType = citRenderer.fm.citationType
 
-        document.getElementById('document-bibliography').innerHTML = citRenderer.fm.bibliographyHTML
+        document.querySelector('.article-bibliography').innerHTML = citRenderer.fm.bibliographyHTML
         let citationsContainer = document.getElementById('citation-footnote-box-container')
         if (this.citationType==='note') {
 

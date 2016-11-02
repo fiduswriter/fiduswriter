@@ -1,189 +1,69 @@
-import time
 import os
+import time
 import multiprocessing
-
 from random import randrange
-
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
-from allauth.account.models import EmailAddress
-from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import User
 from django.conf import settings
-
-
 from test.testcases import LiveTornadoTestCase
-from document.models import Document
+from editor_helper import EditorHelper
 
 
-class Manipulator(object):
+class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
     """
-    Methods for manipulating django and the browser.
+    Tests in which collaboration between two browsers with the same user logged
+    into both browsers.
     """
     user = None
-    username = 'User'
-    email = 'test@example.com'
-    passtext = 'p4ssw0rd'
-
-    def getDrivers(self):
-        if os.getenv("SAUCE_USERNAME"):
-            username = os.environ["SAUCE_USERNAME"]
-            access_key = os.environ["SAUCE_ACCESS_KEY"]
-            capabilities = {}
-            if os.getenv("TRAVIS_BUILD_NUMBER"):
-                capabilities["build"] = os.environ["TRAVIS_BUILD_NUMBER"]
-                capabilities["tags"] = [
-                    os.environ["TRAVIS_PYTHON_VERSION"],
-                    "CI"
-                ]
-                capabilities["tunnel-identifier"] = os.environ[
-                    "TRAVIS_JOB_NUMBER"
-                ]
-
-            capabilities["browserName"] = "chrome"
-            hub_url = "%s:%s@localhost:4445" % (username, access_key)
-            self.driver = webdriver.Remote(
-                desired_capabilities=capabilities,
-                command_executor="http://%s/wd/hub" % hub_url
-            )
-            self.driver2 = webdriver.Remote(
-                desired_capabilities=capabilities,
-                command_executor="http://%s/wd/hub" % hub_url
-            )
-            self.WAIT_TIME = 25
-        else:
-            self.driver = webdriver.Chrome()
-            self.driver2 = webdriver.Chrome()
-            self.WAIT_TIME = 3
-
-    # create django data
-    def createUser(self):
-        user = User.objects.create(
-            username=self.username,
-            password=make_password(self.passtext),
-            is_active=True
-        )
-        user.save()
-
-        # avoid the unverified-email login trap
-        EmailAddress.objects.create(
-            user=user,
-            email=self.email,
-            verified=True,
-        ).save()
-
-        return user
-
-    # drive browser
-    def loginUser(self, driver):
-        driver.get('%s%s' % (
-            self.live_server_url,
-            '/account/login/'
-        ))
-        (driver
-            .find_element_by_id('id_login')
-            .send_keys(self.username))
-        (driver
-            .find_element_by_id('id_password')
-            .send_keys(self.passtext + Keys.RETURN))
-        WebDriverWait(driver, self.WAIT_TIME).until(
-            EC.presence_of_element_located((By.ID, 'user-preferences'))
-        )
-
-    def createNewDocument(self):
-        doc = Document.objects.create(
-            owner=self.user,
-        )
-        doc.save()
-        return doc
-
-    def loadDocumentEditor(self, driver, doc):
-        driver.get("%s%s" % (
-            self.live_server_url,
-            doc.get_absolute_url()
-        ))
-        WebDriverWait(driver, self.WAIT_TIME).until(
-            EC.presence_of_element_located((By.ID, 'document-contents'))
-        )
-
-
-class ThreadManipulator(Manipulator):
-    """
-    Common functions used in threaded tests
-    """
-    def input_text(self, document_input, text):
-        for char in text:
-            document_input.send_keys(char)
-            time.sleep(randrange(30, 40) / 200.0)
-
-    def add_title(self, driver):
-        title = "My title"
-        driver.execute_script(
-            'window.theEditor.pm.setTextSelection(1,1)')
-        document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
-        )
-        self.input_text(document_input, title)
-
-    def wait_for_doc_size(self, driver, size, seconds=False):
-        if seconds is False:
-            seconds = self.WAIT_TIME
-        doc_size = driver.execute_script(
-            'return window.theEditor.pm.doc.content.size')
-        if doc_size < size and seconds > 0:
-            time.sleep(0.1)
-            self.wait_for_doc_size(driver, size, seconds - 0.1)
-
-    def wait_for_doc_sync(self, driver, driver2, seconds=False):
-        if seconds is False:
-            seconds = self.WAIT_TIME
-        doc_str = driver.execute_script(
-            'return window.theEditor.pm.doc.toString()')
-        doc2_str = driver2.execute_script(
-            'return window.theEditor.pm.doc.toString()')
-        if (doc_str != doc2_str):
-            # The strings don't match.
-            time.sleep(0.1)
-            self.wait_for_doc_sync(driver, driver2, seconds - 0.1)
-
-
-class SimpleTypingTest(LiveTornadoTestCase, Manipulator):
-    """
-    Test typing in collaborative mode with one user using browser windows
-    with the user typing separately at small, random intervals.
-    """
     TEST_TEXT = "Lorem ipsum dolor sit amet."
+    MULTILINE_TEST_TEXT = "Lorem ipsum\ndolor sit amet."
+    fixtures = ["initial_bib_rules.json", ]
+
+    @classmethod
+    def setUpClass(cls):
+        super(OneUserTwoBrowsersTests, cls).setUpClass()
+        driver_data = cls.get_drivers(2)
+        cls.driver = driver_data["drivers"][0]
+        cls.driver2 = driver_data["drivers"][1]
+        cls.client = driver_data["clients"][0]
+        cls.client2 = driver_data["clients"][1]
+        cls.wait_time = driver_data["wait_time"]
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.driver.quit()
+        cls.driver2.quit()
+        super(OneUserTwoBrowsersTests, cls).tearDownClass()
 
     def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
+        self.user = self.create_user()
+        self.login_user(self.user, self.driver, self.client)
+        self.login_user(self.user, self.driver2, self.client2)
+        self.doc = self.create_new_document()
 
     def get_title(self, driver):
         # Title is child 0.
         return driver.execute_script(
-            'return window.theEditor.pm.doc.content.content[0].textContent;'
+            'return window.theEditor.pm.doc.firstChild'
+            '.content.content[0].textContent;'
         )
 
     def get_contents(self, driver):
         # Contents is child 5.
         return driver.execute_script(
-            'return window.theEditor.pm.doc.content.content[5].textContent;'
+            'return window.theEditor.pm.doc.firstChild'
+            '.content.content[5].textContent;'
         )
 
     def test_typing(self):
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+        """
+        Test typing in collaborative mode with one user using browser windows
+        with the user typing separately at small, random intervals.
+        """
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
 
         document_input = self.driver.find_element_by_class_name(
             'ProseMirror-content'
@@ -197,9 +77,9 @@ class SimpleTypingTest(LiveTornadoTestCase, Manipulator):
         # First start tag is length 1, so placing after first start tag is
         # position 1
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(1,1)')
+            'window.theEditor.pm.setTextSelection(2,2)')
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(1,1)')
+            'window.theEditor.pm.setTextSelection(2,2)')
 
         first_part = "Here is "
         second_part = "my title"
@@ -228,9 +108,9 @@ class SimpleTypingTest(LiveTornadoTestCase, Manipulator):
         # Added content is 16 characters long, so + 16.
         # Total: 30.
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(30,30)')
+            'window.theEditor.pm.setTextSelection(31,31)')
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(30,30)')
+            'window.theEditor.pm.setTextSelection(31,31)')
 
         for char in self.TEST_TEXT:
             document_input.send_keys(char)
@@ -248,40 +128,13 @@ class SimpleTypingTest(LiveTornadoTestCase, Manipulator):
             self.get_contents(self.driver)
         )
 
-
-class TypingTest(LiveTornadoTestCase, ThreadManipulator):
-    """
-    Test typing in collaborative mode with one user using browser windows
-    with the user typing simultaneously in two different threads.
-    """
-    TEST_TEXT = "Lorem ipsum dolor sit amet."
-
-    def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
-
-    def get_title(self, driver):
-        # Title is child 0.
-        return driver.execute_script(
-            'return window.theEditor.pm.doc.content.content[0].textContent;'
-        )
-
-    def get_contents(self, driver):
-        # Contents is child 5.
-        return driver.execute_script(
-            'return window.theEditor.pm.doc.content.content[5].textContent;'
-        )
-
-    def test_typing(self):
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+    def test_threaded_typing(self):
+        """
+        Test typing in collaborative mode with one user using browser windows
+        with the user typing simultaneously in two different threads.
+        """
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
 
         document_input = self.driver.find_element_by_class_name(
             'ProseMirror-content'
@@ -294,9 +147,9 @@ class TypingTest(LiveTornadoTestCase, ThreadManipulator):
         # First start tag is length 1, so placing after first start tag is
         # position 1
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(1,1)')
+            'window.theEditor.pm.setTextSelection(2,2)')
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(1,1)')
+            'window.theEditor.pm.setTextSelection(2,2)')
 
         first_part = "Here is "
         second_part = "my title"
@@ -335,9 +188,9 @@ class TypingTest(LiveTornadoTestCase, ThreadManipulator):
         # Added content is 16 characters long, so + 16.
         # Total: 30.
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(30,30)')
+            'window.theEditor.pm.setTextSelection(31,31)')
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(30,30)')
+            'window.theEditor.pm.setTextSelection(31,31)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -365,40 +218,22 @@ class TypingTest(LiveTornadoTestCase, ThreadManipulator):
             self.get_contents(self.driver)
         )
 
-
-class SelectAndBoldTest(LiveTornadoTestCase, ThreadManipulator):
-    """
-    Test typing in collaborative mode with one user typing and
-    another user bold some part of the text in two different threads.
-    """
-    TEST_TEXT = "Lorem ipsum dolor sit amet."
-
-    def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
-
     def make_bold(self, driver):
         button = driver.find_element_by_id('button-bold')
         button.click()
 
     def get_boldtext(self, driver):
         btext = driver.find_element_by_xpath(
-            '//*[@id="document-contents"]/p/strong')
+            '//*[contains(@class, "article-body")]/p/strong')
         return btext.text
-        # return driver.execute_script(
-        #     'window.theEditor.pm.doc.content.content[5].content.content[0].content.content[0].text;'
-        # )
 
     def test_select_and_bold(self):
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+        """
+        Test typing in collaborative mode with one user typing and
+        another user bold some part of the text in two different threads.
+        """
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
 
@@ -408,7 +243,7 @@ class SelectAndBoldTest(LiveTornadoTestCase, ThreadManipulator):
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -426,7 +261,7 @@ class SelectAndBoldTest(LiveTornadoTestCase, ThreadManipulator):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(22,27)')
+            'window.theEditor.pm.setTextSelection(23,28)')
 
         p2 = multiprocessing.Process(
             target=self.make_bold,
@@ -446,37 +281,22 @@ class SelectAndBoldTest(LiveTornadoTestCase, ThreadManipulator):
             len(self.get_boldtext(self.driver2))
         )
 
-
-class SelectAndItalicTest(LiveTornadoTestCase, ThreadManipulator):
-    """
-    Test typing in collaborative mode with one user typing and
-    another user italic some part of the text in two different threads.
-    """
-    TEST_TEXT = "Lorem ipsum dolor sit amet."
-
-    def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
-
-    def make_bold(self, driver):
+    def make_italic(self, driver):
         button = driver.find_element_by_id('button-italic')
         button.click()
 
-    def get_boldtext(self, driver):
+    def get_italictext(self, driver):
         itext = driver.find_element_by_xpath(
-            '//*[@id="document-contents"]/p/em')
+            '//*[contains(@class, "article-body")]/p/em')
         return itext.text
 
     def test_select_and_italic(self):
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+        """
+        Test typing in collaborative mode with one user typing and
+        another user italic some part of the text in two different threads.
+        """
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
 
@@ -484,9 +304,9 @@ class SelectAndItalicTest(LiveTornadoTestCase, ThreadManipulator):
             'ProseMirror-content'
         )
 
-        # Total: 22
+        # Total: 23
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -504,10 +324,10 @@ class SelectAndItalicTest(LiveTornadoTestCase, ThreadManipulator):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(22,27)')
+            'window.theEditor.pm.setTextSelection(23,28)')
 
         p2 = multiprocessing.Process(
-            target=self.make_bold,
+            target=self.make_italic,
             args=(self.driver2,)
         )
         p2.start()
@@ -516,32 +336,13 @@ class SelectAndItalicTest(LiveTornadoTestCase, ThreadManipulator):
 
         self.assertEqual(
             5,
-            len(self.get_boldtext(self.driver2))
+            len(self.get_italictext(self.driver2))
         )
 
         self.assertEqual(
-            len(self.get_boldtext(self.driver)),
-            len(self.get_boldtext(self.driver2))
+            len(self.get_italictext(self.driver)),
+            len(self.get_italictext(self.driver2))
         )
-
-
-class MakeNumberedlistTest(LiveTornadoTestCase, ThreadManipulator):
-    """
-        Test typing in collaborative mode with one user typing and
-        another user use numbered list button in two different threads.
-        """
-    TEST_TEXT = "Lorem ipsum\ndolor sit amet."
-
-    def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
 
     def make_numberedlist(self, driver):
         button = driver.find_element_by_id('button-ol')
@@ -549,30 +350,34 @@ class MakeNumberedlistTest(LiveTornadoTestCase, ThreadManipulator):
 
     def get_numberedlist(self, driver):
         numberedTags = driver.find_elements_by_xpath(
-            '//*[@id="document-contents"]//ol//li')
+            '//*[contains(@class, "article-body")]//ol//li')
         return numberedTags
 
     def test_numberedlist(self):
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+        """
+            Test typing in collaborative mode with one user typing and
+            another user use numbered list button in two different threads.
+            """
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
         self.add_title(self.driver)
 
         document_input = self.driver.find_element_by_class_name(
             'ProseMirror-content'
         )
 
-        # Total: 22
+        # Total: 23
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
-            args=(document_input, self.TEST_TEXT)
+            args=(document_input, self.MULTILINE_TEST_TEXT)
         )
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 28)
+        self.wait_for_doc_size(self.driver2, 30)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
@@ -581,7 +386,7 @@ class MakeNumberedlistTest(LiveTornadoTestCase, ThreadManipulator):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p2 = multiprocessing.Process(
             target=self.make_numberedlist,
@@ -591,10 +396,10 @@ class MakeNumberedlistTest(LiveTornadoTestCase, ThreadManipulator):
         p2.join()
 
         # Wait for the first processor to write some text and go to next line
-        self.wait_for_doc_size(self.driver2, 45)
+        self.wait_for_doc_size(self.driver2, 47)
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(40,40)')
+            'window.theEditor.pm.setTextSelection(41,41)')
 
         p2 = multiprocessing.Process(
             target=self.make_numberedlist,
@@ -615,37 +420,22 @@ class MakeNumberedlistTest(LiveTornadoTestCase, ThreadManipulator):
             len(self.get_numberedlist(self.driver2))
         )
 
-
-class MakeBulletlistTest(LiveTornadoTestCase, ThreadManipulator):
-    """
-        Test typing in collaborative mode with one user typing and
-        another user use bullet list button in two different threads.
-        """
-    TEST_TEXT = "Lorem ipsum\ndolor sit amet lorem ipsum."
-
-    def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
-
     def make_bulletlist(self, driver):
         button = driver.find_element_by_id('button-ul')
         button.click()
 
     def get_bulletlist(self, driver):
         bulletTags = driver.find_elements_by_xpath(
-            '//*[@id="document-contents"]//ul//li')
+            '//*[contains(@class, "article-body")]//ul//li')
         return bulletTags
 
     def test_bulletlist(self):
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+        """
+            Test typing in collaborative mode with one user typing and
+            another user use bullet list button in two different threads.
+            """
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
 
@@ -653,18 +443,18 @@ class MakeBulletlistTest(LiveTornadoTestCase, ThreadManipulator):
             'ProseMirror-content'
         )
 
-        # Total: 22
+        # Total: 23
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
-            args=(document_input, self.TEST_TEXT)
+            args=(document_input, self.MULTILINE_TEST_TEXT)
         )
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 28)
+        self.wait_for_doc_size(self.driver2, 30)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
@@ -673,7 +463,7 @@ class MakeBulletlistTest(LiveTornadoTestCase, ThreadManipulator):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p2 = multiprocessing.Process(
             target=self.make_bulletlist,
@@ -683,10 +473,10 @@ class MakeBulletlistTest(LiveTornadoTestCase, ThreadManipulator):
         p2.join()
 
         # Wait for the first processor to write enough text and go to next line
-        self.wait_for_doc_size(self.driver2, 45)
+        self.wait_for_doc_size(self.driver2, 47)
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(40,40)')
+            'window.theEditor.pm.setTextSelection(41,41)')
 
         p2 = multiprocessing.Process(
             target=self.make_bulletlist,
@@ -707,37 +497,22 @@ class MakeBulletlistTest(LiveTornadoTestCase, ThreadManipulator):
             len(self.get_bulletlist(self.driver2))
         )
 
-
-class MakeBlockqouteTest(LiveTornadoTestCase, ThreadManipulator):
-    """
-        Test typing in collaborative mode with one user typing and
-        another user use block qoute button in two different threads.
-        """
-    TEST_TEXT = "Lorem ipsum dolor sit amet."
-
-    def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
-
-    def make_blockqoute(self, driver):
+    def make_blockquote(self, driver):
         button = driver.find_element_by_id('button-blockquote')
         button.click()
 
-    def get_blockqoute(self, driver):
-        blockqouteTags = driver.find_elements_by_xpath(
-            '//*[@id="document-contents"]/blockquote')
-        return blockqouteTags
+    def get_blockquote(self, driver):
+        blockquoteTags = driver.find_elements_by_xpath(
+            '//*[contains(@class, "article-body")]/blockquote')
+        return blockquoteTags
 
-    def test_blockqoute(self):
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+    def test_blockquote(self):
+        """
+            Test typing in collaborative mode with one user typing and
+            another user use block qoute button in two different threads.
+            """
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
 
@@ -747,7 +522,7 @@ class MakeBlockqouteTest(LiveTornadoTestCase, ThreadManipulator):
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -765,10 +540,10 @@ class MakeBlockqouteTest(LiveTornadoTestCase, ThreadManipulator):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p2 = multiprocessing.Process(
-            target=self.make_blockqoute,
+            target=self.make_blockquote,
             args=(self.driver2,)
         )
         p2.start()
@@ -777,40 +552,20 @@ class MakeBlockqouteTest(LiveTornadoTestCase, ThreadManipulator):
 
         self.assertEqual(
             1,
-            len(self.get_blockqoute(self.driver2))
+            len(self.get_blockquote(self.driver2))
         )
 
         self.assertEqual(
-            len(self.get_blockqoute(self.driver)),
-            len(self.get_blockqoute(self.driver2))
+            len(self.get_blockquote(self.driver)),
+            len(self.get_blockquote(self.driver2))
         )
-
-
-class AddLinkTest(LiveTornadoTestCase, ThreadManipulator):
-    """
-    Test typing in collaborative mode with one user typing and
-    another user select some part of the text and add link
-    in two different threads.
-    """
-    TEST_TEXT = "Lorem ipsum dolor sit amet."
-
-    def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
 
     def addlink(self, driver):
         button = driver.find_element_by_id('button-link')
         button.click()
 
         # wait to load popup
-        linktitle = WebDriverWait(driver, self.WAIT_TIME).until(
+        linktitle = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "linktitle"))
         )
         linktitle.click()
@@ -824,12 +579,17 @@ class AddLinkTest(LiveTornadoTestCase, ThreadManipulator):
 
     def get_link(self, driver):
         atag = driver.find_element_by_xpath(
-            '//*[@id="document-contents"]/p/a')
+            '//*[contains(@class, "article-body")]/p/a')
         return atag.text
 
-    def test_select_and_italic(self):
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+    def test_add_link(self):
+        """
+        Test typing in collaborative mode with one user typing and
+        another user select some part of the text and add link
+        in two different threads.
+        """
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
 
@@ -837,9 +597,9 @@ class AddLinkTest(LiveTornadoTestCase, ThreadManipulator):
             'ProseMirror-content'
         )
 
-        # Total: 22
+        # Total: 23
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -857,7 +617,7 @@ class AddLinkTest(LiveTornadoTestCase, ThreadManipulator):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(22,27)')
+            'window.theEditor.pm.setTextSelection(23,28)')
 
         p2 = multiprocessing.Process(
             target=self.addlink,
@@ -877,31 +637,12 @@ class AddLinkTest(LiveTornadoTestCase, ThreadManipulator):
             len(self.get_link(self.driver2))
         )
 
-
-class AddFootnoteTest(LiveTornadoTestCase, ThreadManipulator):
-    """
-    Test typing in collaborative mode with one user typing and
-    another user add a footnote in two different threads.
-    """
-    TEST_TEXT = "Lorem ipsum dolor sit amet."
-
-    def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
-
     def make_footnote(self, driver):
         button = driver.find_element_by_id('button-footnote')
         button.click()
 
         # wait for footnote to be created
-        WebDriverWait(driver, self.WAIT_TIME).until(
+        WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located(
                 (By.CLASS_NAME, "footnote-container")
             )
@@ -922,8 +663,12 @@ class AddFootnoteTest(LiveTornadoTestCase, ThreadManipulator):
         return atag.text
 
     def test_footnote(self):
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+        """
+        Test typing in collaborative mode with one user typing and
+        another user add a footnote in two different threads.
+        """
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
 
@@ -933,7 +678,7 @@ class AddFootnoteTest(LiveTornadoTestCase, ThreadManipulator):
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -951,7 +696,7 @@ class AddFootnoteTest(LiveTornadoTestCase, ThreadManipulator):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(27,27)')
+            'window.theEditor.pm.setTextSelection(28,28)')
 
         p2 = multiprocessing.Process(
             target=self.make_footnote,
@@ -973,26 +718,6 @@ class AddFootnoteTest(LiveTornadoTestCase, ThreadManipulator):
             len(self.get_footnote(self.driver2))
         )
 
-
-class SelectDeleteUndoTest(LiveTornadoTestCase, ThreadManipulator):
-    """
-    Test typing in collaborative mode with one user typing and
-    another user delete and undo some part of the text in two different
-    threads.
-    """
-    TEST_TEXT = "Lorem ipsum dolor sit amet."
-
-    def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
-
     def perform_delete_undo(self, driver):
         element = driver.find_element_by_class_name('ProseMirror-content')
         element.send_keys(Keys.BACKSPACE)
@@ -1001,13 +726,18 @@ class SelectDeleteUndoTest(LiveTornadoTestCase, ThreadManipulator):
         button.click()
 
     def get_undo(self, driver):
-        content = driver.find_element_by_id('document-contents')
+        content = driver.find_element_by_class_name('article-body')
 
         return content.text
 
     def test_delete_undo(self):
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+        """
+        Test typing in collaborative mode with one user typing and
+        another user delete and undo some part of the text in two different
+        threads.
+        """
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
 
@@ -1017,7 +747,7 @@ class SelectDeleteUndoTest(LiveTornadoTestCase, ThreadManipulator):
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -1035,7 +765,7 @@ class SelectDeleteUndoTest(LiveTornadoTestCase, ThreadManipulator):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(22,27)')
+            'window.theEditor.pm.setTextSelection(23,28)')
 
         p2 = multiprocessing.Process(
             target=self.perform_delete_undo,
@@ -1055,47 +785,32 @@ class SelectDeleteUndoTest(LiveTornadoTestCase, ThreadManipulator):
             self.get_undo(self.driver2)
         )
 
-
-class AddMathEquationTest(LiveTornadoTestCase, ThreadManipulator):
-    """
-    Test typing in collaborative mode with one user typing and
-    another user insert math equation in middle of the text in two different
-    threads.
-    """
-    TEST_TEXT = "Lorem ipsum dolor sit amet."
-
-    def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
-
     def make_mathequation(self, driver):
         button = driver.find_element_by_id('button-math')
         button.click()
 
         # wait to load popup
-        insert_button = WebDriverWait(driver, self.WAIT_TIME).until(
+        insert_button = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "insert-math"))
         )
         insert_button.click()
 
     def get_mathequation(self, driver):
         math = driver.find_element_by_xpath(
-            '//*[@id="document-contents"]/p[1]/span[2]'
+            '//*[contains(@class, "article-body")]/p[1]/span[2]'
             # OR '//*[@class="equation"]'
         )
 
         return math.text
 
     def test_mathequation(self):
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+        """
+        Test typing in collaborative mode with one user typing and
+        another user insert math equation in middle of the text in two
+        different threads.
+        """
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
 
@@ -1103,9 +818,9 @@ class AddMathEquationTest(LiveTornadoTestCase, ThreadManipulator):
             'ProseMirror-content'
         )
 
-        # Total: 22
+        # Total: 23
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -1123,7 +838,7 @@ class AddMathEquationTest(LiveTornadoTestCase, ThreadManipulator):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(27,27)')
+            'window.theEditor.pm.setTextSelection(28,28)')
 
         p2 = multiprocessing.Process(
             target=self.make_mathequation,
@@ -1143,31 +858,11 @@ class AddMathEquationTest(LiveTornadoTestCase, ThreadManipulator):
             len(self.get_mathequation(self.driver2))
         )
 
-
-class AddCommentTest(LiveTornadoTestCase, ThreadManipulator):
-    """
-    Test typing in collaborative mode with one user typing and
-    another user add some comment in middle of the text in two different
-    threads.
-    """
-    TEST_TEXT = "Lorem ipsum dolor sit amet."
-
-    def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
-
     def add_comment(self, driver):
         button = driver.find_element_by_id('button-comment')
         button.click()
 
-        textArea = WebDriverWait(driver, self.WAIT_TIME).until(
+        textArea = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "commentText"))
         )
         textArea.click()
@@ -1182,8 +877,13 @@ class AddCommentTest(LiveTornadoTestCase, ThreadManipulator):
         return comment.text
 
     def test_comment(self):
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+        """
+        Test typing in collaborative mode with one user typing and
+        another user add some comment in middle of the text in two different
+        threads.
+        """
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
 
@@ -1193,7 +893,7 @@ class AddCommentTest(LiveTornadoTestCase, ThreadManipulator):
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -1211,7 +911,7 @@ class AddCommentTest(LiveTornadoTestCase, ThreadManipulator):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(22,27)')
+            'window.theEditor.pm.setTextSelection(23,28)')
 
         p2 = multiprocessing.Process(
             target=self.add_comment,
@@ -1233,30 +933,11 @@ class AddCommentTest(LiveTornadoTestCase, ThreadManipulator):
             len(self.get_comment(self.driver2))
         )
 
-
-class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
-    """
-    Test typing in collaborative mode with one user typing and
-    another user insert figure middle of the text in two different threads.
-    """
-    TEST_TEXT = "Lorem ipsum dolor sit amet."
-
-    def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
-
     def add_figure(self, driver):
         button = driver.find_element_by_id('button-figure')
         button.click()
 
-        caption = WebDriverWait(driver, self.WAIT_TIME).until(
+        caption = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "caption"))
         )
 
@@ -1265,7 +946,7 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
         # click on 'Insert image' button
         driver.find_element_by_id('insertFigureImage').click()
 
-        upload_button = WebDriverWait(driver, self.WAIT_TIME).until(
+        upload_button = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.ID, 'selectImageUploadButton'))
         )
 
@@ -1279,7 +960,7 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
 
         # inorder to select the image we send the image path in the
         # LOCAL MACHINE to the input tag
-        upload_image_url = WebDriverWait(driver, self.WAIT_TIME).until(
+        upload_image_url = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located(
                 (By.XPATH, '//*[@id="uploadimage"]/form/div[1]/input[2]')
             )
@@ -1291,7 +972,7 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
             '//*[contains(@class, "ui-button") and text()="Upload"]').click()
 
         # click on 'Use image' button
-        WebDriverWait(driver, self.WAIT_TIME).until(
+        WebDriverWait(driver, self.wait_time).until(
             EC.element_to_be_clickable(
                 (By.CSS_SELECTOR, '#select_imagelist tr.checked')
             )
@@ -1305,7 +986,7 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
 
     def get_image(self, driver):
         figure = driver.find_element_by_xpath(
-            '//*[@id="document-contents"]/figure'
+            '//*[contains(@class, "article-body")]/figure'
         )
         image = figure.find_elements_by_tag_name('img')
 
@@ -1313,14 +994,18 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
 
     def get_caption(self, driver):
         caption = driver.find_element_by_xpath(
-            '//*[@id="document-contents"]/figure/figcaption/span[2]'
+            '//*[contains(@class, "article-body")]/figure/figcaption/span[2]'
         )
 
         return caption.text
 
     def test_insertFigure(self):
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+        """
+        Test typing in collaborative mode with one user typing and
+        another user insert figure middle of the text in two different threads.
+        """
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
 
@@ -1328,9 +1013,9 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
             'ProseMirror-content'
         )
 
-        # Total: 22
+        # Total: 23
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -1348,7 +1033,7 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(27,27)')
+            'window.theEditor.pm.setTextSelection(28,28)')
 
         p2 = multiprocessing.Process(
             target=self.add_figure,
@@ -1377,33 +1062,12 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
             len(self.get_caption(self.driver2))
         )
 
-
-class AddCiteTest(LiveTornadoTestCase, ThreadManipulator):
-    """
-    Test typing in collaborative mode with one user typing and
-    another user add cite in two different threads.
-    """
-    TEST_TEXT = "Lorem ipsum dolor sit amet."
-    # Load bibliography data
-    fixtures = ["initial_bib_rules.json", ]
-
-    def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
-
     def add_citation(self, driver):
         button = driver.find_element_by_id('button-cite')
         button.click()
 
         # click on 'Register new source' button
-        register_new_source = WebDriverWait(driver, self.WAIT_TIME).until(
+        register_new_source = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located(
                 (By.CLASS_NAME, 'register-new-bib-source')
             )
@@ -1411,7 +1075,7 @@ class AddCiteTest(LiveTornadoTestCase, ThreadManipulator):
         register_new_source.click()
 
         # select source
-        select_source = WebDriverWait(driver, self.WAIT_TIME).until(
+        select_source = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.ID, 'source-type-selection'))
         )
         select_source.click()
@@ -1453,7 +1117,7 @@ class AddCiteTest(LiveTornadoTestCase, ThreadManipulator):
             '//*[contains(@class, "ui-button") and text()="Submit"]').click()
 
         # Wait for source to be listed
-        WebDriverWait(driver, self.WAIT_TIME).until(
+        WebDriverWait(driver, self.wait_time).until(
             EC.element_to_be_clickable(
                 (
                     By.CSS_SELECTOR,
@@ -1467,17 +1131,21 @@ class AddCiteTest(LiveTornadoTestCase, ThreadManipulator):
 
     def get_citation_within_text(self, driver):
         cite_within_doc = driver.find_element_by_xpath(
-            '//*[@id="document-contents"]/p[1]/span[2]'
+            '//*[contains(@class, "article-body")]/p[1]/span[2]'
         )
         return cite_within_doc.text
 
     def get_citation_bib(self, driver):
-        cite_bib = driver.find_element_by_id('document-bibliography')
+        cite_bib = driver.find_element_by_class_name('article-bibliography')
         return cite_bib.text
 
     def test_citation(self):
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
+        """
+        Test typing in collaborative mode with one user typing and
+        another user add cite in two different threads.
+        """
+        self.load_document_editor(self.driver, self.doc)
+        self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
 
@@ -1487,7 +1155,7 @@ class AddCiteTest(LiveTornadoTestCase, ThreadManipulator):
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(22,22)')
+            'window.theEditor.pm.setTextSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -1505,7 +1173,7 @@ class AddCiteTest(LiveTornadoTestCase, ThreadManipulator):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(27,27)')
+            'window.theEditor.pm.setTextSelection(28,28)')
 
         p2 = multiprocessing.Process(
             target=self.add_citation,

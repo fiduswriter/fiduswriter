@@ -15,7 +15,7 @@ export class OdtExporterRichtext {
         let start = '', content = '', end = ''
 
         switch(node.type) {
-            case 'doc':
+            case 'article':
                 break
             case 'body':
                 options = _.clone(options)
@@ -71,7 +71,10 @@ export class OdtExporterRichtext {
             case 'footnote':
                 options = _.clone(options)
                 options.section = 'Footnote'
-                content += this.transformRichtext(this.exporter.footnotes.fnPmJSON.content[this.fnCounter++], options)
+                content += this.transformRichtext({
+                    type: 'footnotecontainer',
+                    content: node.attrs.footnote
+                }, options)
                 start += noSpaceTmp`
                 <text:note text:id="ftn${this.fnAlikeCounter++}" text:note-class="footnote">
                     <text:note-citation>${this.fnAlikeCounter}</text:note-citation>

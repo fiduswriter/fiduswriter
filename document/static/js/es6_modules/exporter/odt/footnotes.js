@@ -3,7 +3,7 @@ import {OdtExporterImages} from "./images"
 import {OdtExporterRichtext} from "./richtext"
 import {fnSchema} from "../../schema/footnotes"
 import {noSpaceTmp} from "../../common/common"
-import {descendantNodes} from "../tools/pmJSON"
+import {descendantNodes} from "../tools/doc-contents"
 
 
 const DEFAULT_STYLE_FOOTNOTE = noSpaceTmp`
@@ -27,20 +27,20 @@ const DEFAULT_STYLE_FOOTNOTE_CONFIGURATION = noSpaceTmp`
     `
 
 export class OdtExporterFootnotes {
-    constructor(exporter, pmJSON) {
+    constructor(exporter, docContents) {
         this.exporter = exporter
-        this.pmJSON = pmJSON
+        this.docContents = docContents
         this.fnPmJSON = false
         this.images = false
         this.citations = false
-        this.htmlFootnotes = [] // footnotes in HTML
+        this.footnotes = []
         this.styleFilePath = 'styles.xml'
     }
 
     init() {
         let that = this
         this.findFootnotes()
-        if (this.htmlFootnotes.length || (this.exporter.citations.citFm.citationType==='note' && this.exporter.citations.citInfos.length)) {
+        if (this.footnotes.length || (this.exporter.citations.citFm.citationType==='note' && this.exporter.citations.citInfos.length)) {
             this.convertFootnotes()
             this.citations = new OdtExporterCitations(this.exporter, this.exporter.bibDB, this.fnPmJSON)
             // Get the citinfos from the main body document so that they will be
@@ -94,23 +94,27 @@ export class OdtExporterFootnotes {
 
     findFootnotes() {
         let that = this
-        descendantNodes(this.pmJSON).forEach(
+        descendantNodes(this.docContents).forEach(
             function(node) {
                 if (node.type==='footnote') {
-                    that.htmlFootnotes.push(node.attrs.contents)
+                    that.footnotes.push(node.attrs.footnote)
                 }
             }
         )
     }
 
     convertFootnotes() {
-        let fnHTML = ''
-        this.htmlFootnotes.forEach(function(htmlFn){
-            fnHTML += `<div class='footnote-container'>${htmlFn}</div>`
+        let fnContent = []
+        this.footnotes.forEach(function(footnote){
+            fnContent.push({
+                type: 'footnotecontainer',
+                content: footnote
+            })
         })
-        let fnNode = document.createElement('div')
-        fnNode.innerHTML = fnHTML
-        this.fnPmJSON = fnSchema.parseDOM(fnNode).toJSON()
+        this.fnPmJSON = {
+            type: 'doc',
+            content: fnContent
+        }
     }
 
 }

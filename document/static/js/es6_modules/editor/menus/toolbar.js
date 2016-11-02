@@ -100,7 +100,7 @@ export class ModMenusToolbar {
         jQuery(document).on('mousedown', '#button-footnote:not(.disabled)', function (event) {
             that.executeAction(event, function(){
                 let nodeType = that.mod.editor.currentPm.schema.nodes['footnote']
-                that.mod.editor.pm.tr.replaceSelection(nodeType.createAndFill({contents:'<p></p>'})).apply()
+                that.mod.editor.pm.tr.replaceSelection(nodeType.createAndFill()).apply()
             })
         })
         // strong/bold

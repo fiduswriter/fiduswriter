@@ -61,7 +61,7 @@ export class ModFootnoteMarkers {
                     that.mod.footnotes.splice(index, 0, footnote)
                     if (renderFootnote) {
                         let node = that.mod.editor.pm.doc.nodeAt(footnote.from)
-                        that.mod.fnEditor.renderFootnote(node.attrs.contents, index)
+                        that.mod.fnEditor.renderFootnote(node.attrs.footnote, index)
                     }
                     index++
                 })
@@ -185,14 +185,12 @@ export class ModFootnoteMarkers {
 
     updateFootnoteMarker(index) {
         this.updating = true
-
-        let fnContents = this.mod.fnPm.doc.child(index)
-        let fnHTML = fnContents.toDOM().innerHTML
+        let fnContents = this.mod.fnPm.doc.child(index).toJSON().content
         let footnote = this.mod.footnotes[index]
         if (footnote) {
             let node = this.mod.editor.pm.doc.nodeAt(footnote.from)
             this.mod.editor.pm.tr.setNodeType(footnote.from, node.type, {
-                contents: fnHTML
+                footnote: fnContents
             }).apply()
         }
         this.updating = false

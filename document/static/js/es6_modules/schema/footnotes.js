@@ -5,7 +5,7 @@ import {Table, TableRow, TableCell} from "prosemirror-old/dist/schema-table"
 
 import {Schema, Block, Inline, Text, Attribute, MarkType} from "prosemirror-old/dist/model"
 
-import {Figure, Citation, Equation} from "./document"
+import {Figure, Citation, Equation} from "./common"
 
 
 class FootnoteContainer extends Block {

@@ -1,42 +1,22 @@
 # -*- coding: utf-8 -*-
-from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import NoAlertPresentException
 import time
-import os
-from django.contrib.auth.models import User
-from allauth.account.models import EmailAddress
-from django.contrib.auth.hashers import make_password
 
 from test.testcases import LiveTornadoTestCase
+from test.selenium_helper import SeleniumHelper
 
 
-class EditProfileTest(LiveTornadoTestCase):
+class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
 
     @classmethod
     def setUpClass(cls):
         super(EditProfileTest, cls).setUpClass()
-        cls.setUpDriver()
         cls.base_url = cls.live_server_url
-        cls.driver.implicitly_wait(30)
-
-    @classmethod
-    def setUpDriver(cls):
-        if os.getenv("SAUCE_USERNAME"):
-            username = os.environ["SAUCE_USERNAME"]
-            access_key = os.environ["SAUCE_ACCESS_KEY"]
-            capabilities = {}
-            capabilities["build"] = os.environ["TRAVIS_BUILD_NUMBER"]
-            capabilities["tags"] = [os.environ["TRAVIS_PYTHON_VERSION"], "CI"]
-            capabilities["tunnel-identifier"] = os.environ["TRAVIS_JOB_NUMBER"]
-            capabilities["browserName"] = "chrome"
-            hub_url = "%s:%s@localhost:4445" % (username, access_key)
-            cls.driver = webdriver.Remote(
-                desired_capabilities=capabilities,
-                command_executor="http://%s/wd/hub" % hub_url
-            )
-        else:
-            cls.driver = webdriver.Chrome()
+        driver_data = cls.get_drivers(1)
+        cls.driver = driver_data["drivers"][0]
+        cls.client = driver_data["clients"][0]
+        cls.driver.implicitly_wait(driver_data["wait_time"])
 
     @classmethod
     def tearDownClass(cls):
@@ -46,34 +26,16 @@ class EditProfileTest(LiveTornadoTestCase):
     def setUp(self):
         self.verificationErrors = []
         self.accept_next_alert = True
-
-    # create django data
-    def createUser(self, username, email, passtext):
-        user = User.objects.create(
-            username=username,
-            password=make_password(passtext),
-            is_active=True
+        self.user = self.create_user(
+            username='Yeti',
+            email='yeti@snowman.com',
+            passtext='otter1'
         )
-        user.save()
-
-        # avoid the unverified-email login trap
-        EmailAddress.objects.create(
-            user=user,
-            email=email,
-            verified=True,
-        ).save()
-
-        return user
+        self.login_user(self.user, self.driver, self.client)
 
     def test_edit_profile(self):
-        self.createUser('Yeti', 'yeti@example.com', 'otter1')
         driver = self.driver
-        driver.get(self.base_url + "/account/login/")
-        driver.find_element_by_id("id_login").clear()
-        driver.find_element_by_id("id_login").send_keys("Yeti")
-        driver.find_element_by_id("id_password").clear()
-        driver.find_element_by_id("id_password").send_keys("otter1")
-        driver.find_element_by_xpath("//button[@type='submit']").click()
+        driver.get(self.base_url + "/")
         driver.find_element_by_id("preferences-btn").click()
         driver.find_element_by_link_text("Edit profile").click()
         driver.find_element_by_id("first_name").clear()

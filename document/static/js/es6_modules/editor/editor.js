@@ -12,12 +12,10 @@ import {ModTools} from "./tools/mod"
 import {ModSettings} from "./settings/mod"
 import {ModMenus} from "./menus/mod"
 import {ModServerCommunications} from "./server-communications"
-import {editorToModel, modelToEditor, updateDoc, setDocDefaults} from "../schema/convert"
+import {getSettings, getMetadata, updateDoc} from "../schema/convert"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
 import {Paste} from "./paste/paste"
-import {defaultDocumentStyle} from "../style/documentstyle-list"
-import {defaultCitationStyle} from "../style/citation-definitions"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']
@@ -144,8 +142,7 @@ export class Editor {
         if (this.mod.collab.docChanges.awaitingDiffResponse) {
             this.mod.collab.docChanges.enableDiffSending()
         }
-        let pmDoc = modelToEditor(this.doc)
-        this.pm.setDoc(pmDoc)
+        this.setPmDoc()
         this.pm.mod.collab.version = this.doc.version
 
 
@@ -164,7 +161,7 @@ export class Editor {
                 // We couldn't apply the diffs. They are likely corrupted.
                 // We set the original document, increase the version by one and
                 // save to the server.
-                this.pm.setDoc(pmDoc)
+                this.setPmDoc()
                 console.warn('Diffs could not be applied correctly!')
                 this.pm.mod.collab.version = this.doc.version + this.docInfo.unapplied_diffs.length + 1
                 this.docInfo.unapplied_diffs = []
@@ -181,7 +178,7 @@ export class Editor {
         this.mod.comments.store.setVersion(this.doc.comment_version)
         this.pm.mod.collab.mustSend.add(function() {
             that.mod.collab.docChanges.sendToCollaborators()
-        }, 0) // priority : 0 so that other things cna be scheduled before this.
+        }, 0) // priority : 0 so that other things can be scheduled before this.
         this.pm.mod.collab.receivedTransform.add((transform, options) => {that.onTransform(transform, false)})
         this.mod.footnotes.fnEditor.renderAllFootnotes()
         _.each(this.doc.comments, function(comment) {
@@ -196,6 +193,21 @@ export class Editor {
             that.enableUI()
         })
         this.waitingForDocument = false
+    }
+
+    setPmDoc() {
+        let that = this
+        // Given that the article node is the second outer-most node, we need
+        // to wrap it in a doc node before setting it in PM.
+        if (this.doc.contents.type) {
+            let pmDoc = docSchema.nodeFromJSON({type:'doc',content:[this.doc.contents]})
+            this.pm.setDoc(pmDoc)
+        } else{
+            // Document is new
+            this.getUpdates(function(){
+                that.setPmDoc() // We need to set the doc so that events such as for ui update are triggered.
+            })
+        }
     }
 
     askForDocument() {
@@ -257,15 +269,8 @@ export class Editor {
       #open-close-header').removeClass('disabled')
 
 
-        this.mod.settings.layout.displayDocumentstyle()
-        this.mod.settings.layout.displayCitationstyle()
-
-        jQuery('span[data-citationstyle=' + this.doc.settings.citationstyle +
-            ']').addClass('selected')
-        this.mod.settings.layout.displayPapersize()
-
-        this.mod.settings.layout.layoutMetadata()
-
+        this.mod.settings.updateDocumentStyleCSS()
+        this.mod.citations.resetCitations()
 
         if (READ_ONLY_ROLES.indexOf(this.docInfo.rights) > -1) {
             jQuery('#editor-navigation').hide()
@@ -319,10 +324,8 @@ export class Editor {
 
 
         if (this.doc.version === 0) {
-            // If the document is new, change the url. Then forget that the document is new.
+            // If the document is new, change the url.
             window.history.replaceState("", "", `/document/${this.doc.id}/`)
-            setDocDefaults(this.doc)
-
         }
     }
 
@@ -333,17 +336,7 @@ export class Editor {
     // Creates a hash value for the entire document so that we can compare with other clients if
     // we really have the same contents
     getHash() {
-        let doc = this.pm.mod.collab.versionDoc.copy()
-        // We need to convert the footnotes from HTML to PM nodes and from that
-        // to JavaScript objects, to ensure that the attribute order of everything
-        // within the footnote will be the same in all browsers, so that the
-        // resulting checksums are the same.
-        doc.descendants(function(node){
-            if (node.type.name==='footnote') {
-                node.attr.contents = this.mod.footnotes.fnEditor.htmlTofootnoteNode(node.attr.contents)
-            }
-        })
-        return objectHash.MD5(JSON.parse(JSON.stringify(doc.toJSON())), {unorderedArrays: true})
+        return objectHash.MD5(this.pm.mod.collab.versionDoc.toJSON(), {unorderedArrays: true})
     }
 
     // Get updates to document and then send updates to the server
@@ -360,10 +353,11 @@ export class Editor {
 
     // Collects updates of the document from ProseMirror and saves it under this.doc
     getUpdates(callback) {
-        let tmpDoc = editorToModel(this.pm.mod.collab.versionDoc)
-        this.doc.contents = tmpDoc.contents
-        this.doc.metadata = tmpDoc.metadata
-        this.doc.title = this.pm.mod.collab.versionDoc.firstChild.textContent
+        let pmArticle = this.pm.mod.collab.versionDoc.firstChild
+        this.doc.contents = pmArticle.toJSON()
+        this.doc.metadata = getMetadata(pmArticle)
+        this.doc.settings = getSettings(pmArticle)
+        this.doc.title = pmArticle.firstChild.textContent
         this.doc.version = this.pm.mod.collab.version
         this.docInfo.hash = this.getHash()
         this.doc.comments = this.mod.comments.store.comments
@@ -420,7 +414,8 @@ export class Editor {
 
     // Things to be executed on every editor transform.
     onTransform(transform, local) {
-        let updateBibliography = false, updateTitle = false, commentIds = [], that = this
+        let updateBibliography = false, updateTitle = false, updateSettings = false,
+            commentIds = [], that = this
             // Check what area is affected
 
         transform.steps.forEach(function(step, index) {
@@ -439,8 +434,11 @@ export class Editor {
                         }
 
                     })
+                    if (step.from===0 && step.jsonID === 'replaceAround') {
+                        updateSettings = true
+                    }
                 }
-                let docPart = that.pm.doc.resolve(step.from).node(1)
+                let docPart = that.pm.doc.resolve(step.from).node(2)
                 if (docPart && docPart.type.name === 'title') {
                     updateTitle = true
                 }
@@ -453,7 +451,7 @@ export class Editor {
         }
 
         if (updateTitle) {
-            let documentTitle = this.pm.doc.firstChild.textContent
+            let documentTitle = this.pm.doc.firstChild.firstChild.textContent
             // The title has changed. We will update our document. Mark it as changed so
             // that an update may be sent to the server.
             if (documentTitle.substring(0, 255) !== this.doc.title) {
@@ -462,6 +460,9 @@ export class Editor {
                     this.docInfo.title_changed = true
                 }
             }
+        }
+        if (updateSettings) {
+            this.mod.settings.check(this.pm.doc.firstChild.attrs)
         }
         if (local && commentIds.length > 0) {
             // Check if the deleted comment referrers still are somewhere else in the doc.

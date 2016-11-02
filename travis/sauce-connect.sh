@@ -14,9 +14,9 @@ pushd $SAUCE_TMP_DIR
 SAUCE_CONNECT_PLATFORM=$(uname | sed -e 's/Darwin/osx/' -e 's/Linux/linux/')
 case "${SAUCE_CONNECT_PLATFORM}" in
     linux)
-        SC_DISTRIBUTION_FMT=tar.gz
+        SC_DISTRIBUTION_FMT=tar.gz;;
     osx)
-        SC_DISTRIBUTION_FMT=zip
+        SC_DISTRIBUTION_FMT=zip;;
 esac
 SC_DISTRIBUTION=sc-4.4.1-${SAUCE_CONNECT_PLATFORM}.${SC_DISTRIBUTION_FMT}
 SC_READYFILE=sauce-connect-ready-$RANDOM
@@ -27,7 +27,6 @@ fi
 echo "Downloading Sauce Connect"
 wget http://saucelabs.com/downloads/${SC_DISTRIBUTION}
 SC_DIR=$(tar -ztf ${SC_DISTRIBUTION} | head -n1)
-
 echo "Extracting Sauce Connect"
 case "${SC_DISTRIBUTION_FMT}" in
     tar.gz)

@@ -28,21 +28,13 @@ export let bookPrintTemplate = _.template('\
     <% } %>\
     <div class="chapter">\
         <h1 class="title"><%= chapter.title %></h1>\
-        <% if (chapter.settings) { %>\
-            <% if (chapter.settings["metadata-subtitle"] && chapter.metadata.subtitle) { %>\
-                <% tempNode = obj2Node(chapter.metadata.subtitle) %>\
-                <% if (tempNode.textContent.length > 0) { %>\
-                    <h2 class="metadata-subtitle"><%= tempNode.textContent %></h2>\
-                <% } %>\
-            <% } %>\
-            <% if (chapter.settings["metadata-abstract"] && chapter.metadata.abstract ) { %>\
-                <% tempNode = obj2Node(chapter.metadata.abstract) %>\
-                <% if (tempNode.textContent.length > 0) { %>\
-                    <h2 class="metadata-abstract"><%= tempNode.textContent %></h2>\
-                <% } %>\
-            <% } %>\
+        <% if (chapter.metadata.subtitle) { %>\
+            <h2 class="metadata-subtitle"><%= chapter.metadata.subtitle %></h2>\
         <% } %>\
-        <%= modelToViewNode(obj2Node(JSON.parse(chapter.contents))).innerHTML %>\
+        <% if (chapter.metadata.abstract ) { %>\
+            <div class="metadata-abstract"><%= chapter.metadata.abstract %></div>\
+        <% } %>\
+        <%= docSchema.nodeFromJSON(_.findWhere(chapter.contents.content,{type:"body"})).toDOM().innerHTML %>\
     </div>\
 <% }); %>\
 ')

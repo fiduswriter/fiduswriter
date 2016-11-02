@@ -1,6 +1,6 @@
 import {bookPrintStartTemplate, bookPrintTemplate} from "./templates"
-import {obj2Node} from "../exporter/tools/json"
-import {RenderCitations} from "../citations/format"
+import {docSchema} from "../schema/document"
+import {RenderCitations} from "../citations/render"
 import {BibliographyDB} from "../bibliography/database"
 import {deactivateWait, addAlert, csrfToken} from "../common/common"
 import {PaginateForPrint} from "paginate-for-print/dist/paginate-for-print"
@@ -62,6 +62,8 @@ export class PrintBook {
                 i].metadata)
             aBook.chapters[i].settings = JSON.parse(aBook.chapters[
                 i].settings)
+            aBook.chapters[i].contents = JSON.parse(aBook.chapters[
+                i].contents)
             if (this.documentOwners.indexOf(aBook.chapters[i].owner)===-1) {
                 this.documentOwners.push(aBook.chapters[i].owner)
             }
@@ -80,32 +82,6 @@ export class PrintBook {
 
 
     }
-
-    modelToViewNode(node) {
-        // TODO: add needed changes
-        return node
-    }
-
-        /* TODO: IS this still useful? Should it be part of the modeltoViewNode?
-        createFootnoteView = function (htmlFragment, number) {
-            let fn = document.createElement('span'), id
-            fn.classList.add('pagination-footnote')
-
-            fn.appendChild(document.createElement('span'))
-            fn.firstChild.appendChild(document.createElement('span'))
-            fn.firstChild.firstChild.appendChild(htmlFragment)
-
-            if (typeof number === 'undefined') {
-                number = document.getElementById('flow').querySelectorAll('.pagination-footnote').length
-
-                while (document.getElementById('pagination-footnote-'+number)) {
-                    number++
-                }
-            }
-
-            fn.id = 'pagination-footnote-'+ number
-            return fn
-        }*/
 
     getBookData(id) {
         let that = this
@@ -137,15 +113,16 @@ export class PrintBook {
         jQuery(document.body).addClass(this.theBook.settings.documentstyle)
         jQuery('#book')[0].outerHTML = bookPrintTemplate({
             theBook: this.theBook,
-            modelToViewNode: this.modelToViewNode,
-            obj2Node
+            docSchema
         })
 
         this.citRenderer = new RenderCitations(
             document.body,
             this.theBook.settings.citationstyle,
             this.bibDB,
+            true,
             function() {
+                console.log('there')
                 that.fillPrintPageTwo()
             }
         )
@@ -160,14 +137,22 @@ export class PrintBook {
             jQuery(bibliography).parent().remove()
         }
 
+        // Move the bibliography header text into the HTML, to prevent it getting mangled by the pagination process.
+        let bibliographyHeader = document.querySelector('.article-bibliography-header')
+        if (bibliographyHeader) {
+            let bibliographyHeaderText = window.getComputedStyle(bibliographyHeader, ':before').getPropertyValue('content').replace(/"/g, '')
+            bibliographyHeader.innerHTML = bibliographyHeaderText
+            bibliographyHeader.classList.remove('article-bibliography-header')
+        }
+
+
         this.printConfig['frontmatterContents'] = bookPrintStartTemplate({theBook: this.theBook})
 
 
-        // TODO: render equations
         let paginator = new PaginateForPrint(this.printConfig)
         paginator.initiate()
         jQuery("#pagination-contents").addClass('user-contents')
-        jQuery('head title').html(jQuery('#document-title').text())
+        jQuery('head title').html(jQuery('.article-title').text())
 
 
     }

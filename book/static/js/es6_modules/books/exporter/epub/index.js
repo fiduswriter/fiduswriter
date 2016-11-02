@@ -8,6 +8,8 @@ import {BaseEpubExporter} from "../../../exporter/epub/base"
 import {ncxTemplate, ncxItemTemplate, navTemplate, navItemTemplate,
   containerTemplate, xhtmlTemplate} from "../../../exporter/epub/templates"
 import {node2Obj, obj2Node} from "../../../exporter/tools/json"
+import {docSchema} from "../../../schema/document"
+import {removeHidden} from "../../../exporter/tools/doc-contents"
 import {findImages} from "../../../exporter/tools/html"
 import {createSlug} from "../../../exporter/tools/file"
 import {zipFileCreator} from "../../../exporter/tools/zip"
@@ -91,7 +93,9 @@ export class EpubBookExporter extends BaseEpubExporter {
                 id: this.book.chapters[i].text
             })
 
-            let tempNode = obj2Node(aChapter.document.contents)
+            let docContents = removeHidden(aChapter.document.contents)
+
+            let tempNode = docSchema.nodeFromJSON(docContents).toDOM()
 
             let contents = document.createElement('body')
 
@@ -101,24 +105,6 @@ export class EpubBookExporter extends BaseEpubExporter {
 
             this.images = this.images.concat(findImages(contents))
 
-            let startHTML = '<h1 class="title">' + aChapter.document.title + '</h1>'
-
-            if (aChapter.document.settings && aChapter.document.settings['metadata-subtitle'] && aChapter.document.metadata.subtitle) {
-                tempNode = obj2Node(aChapter.document.metadata.subtitle)
-                if (tempNode && tempNode.textContent.length > 0) {
-                    startHTML += '<h2 class="subtitle">' + tempNode.textContent +
-                        '</h2>'
-                }
-            }
-            if (aChapter.document.settings && aChapter.document.settings['metadata-abstract'] && aChapter.document.metadata.abstract) {
-                tempNode = obj2Node(aChapter.document.metadata.abstract)
-                if (tempNode && tempNode.textContent.length > 0) {
-                    startHTML += '<div class="abstract">' + tempNode.textContent +
-                        '</div>'
-                }
-            }
-
-            contents.innerHTML = startHTML + contents.innerHTML
 
             contents = this.cleanHTML(contents)
 

@@ -135,22 +135,3 @@ class Persons(object):
                     name += ' {' + person['last'] + '}'
             ref.append(name)
         return ref
-
-
-class BibDate(object):
-
-    def __init__(self, date_str):
-        date_str = date_str.replace('-AA', '')
-        self.date = 'AA-AA-AA'
-        date_format = '%Y-AA-AA'
-        date_spliter = re.compile(r"[\s,\./\-]")
-        date_len = len(date_spliter.split(date_str))
-        if 2 < date_len:
-            date_format = '%Y-%m-%d'
-        elif 2 == date_len:
-            date_format = '%Y-%m-AA'
-        try:
-            the_date = dateutil.parser.parse(date_str)
-            self.date = the_date.strftime(date_format)
-        except ValueError:
-            pass

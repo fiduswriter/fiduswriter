@@ -311,9 +311,24 @@ export class BibLatexParser {
         return name
     }
 
-    reformDate(date) {
-        //reform date
-        return date
+    reformDate(dateStr) {
+        dateStr = dateStr.replace(/-AA/g,'')
+        let dateFormat = '%Y-AA-AA'
+        let dateLen = dateStr.split(/[\s,\./\-]/g).length
+        if (2 < dateLen) {
+            dateFormat = '%Y-%m-%d'
+        } else if (2 === dateLen) {
+            dateFormat = '%Y-%m-AA'
+        }
+        let theDate = new Date(dateStr)
+        if ('Invalid Date' == theDate) {
+            dateFormat = ''
+        } else {
+            dateFormat = dateFormat.replace('%d', ("0" + theDate.getDate()).slice(-2))
+            dateFormat = dateFormat.replace('%m', ("0" + theDate.getMonth()).slice(-2))
+            dateFormat = dateFormat.replace('%Y', theDate.getFullYear())
+        }
+        return dateFormat
     }
 
 

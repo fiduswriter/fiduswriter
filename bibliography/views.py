@@ -11,7 +11,6 @@ from django.db.models import Max, Count
 from django.core.serializers.python import Serializer
 
 from bibliography.bib import Persons
-from bibliography.bib import BibDate
 
 from bibliography.models import (
     Entry,
@@ -135,10 +134,6 @@ def import_bibtex_js(request):
                     # restore name list value like "author"
                     persons = Persons(val)
                     val = persons.get_names()
-                elif 'f_date' == field_type.field_type:
-                    # restore date value like "date"
-                    bib_date = BibDate(val)
-                    val = bib_date.date
                 if isinstance(val, list):
                     val = ' and '.join(val)
                 the_fields[field_type.field_name] = val

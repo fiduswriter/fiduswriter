@@ -108,8 +108,16 @@
 .icon-access-write:before {content: '\270e'; } /* '✎' */
 .icon-access-read:before { content: '\e70a'; } /* '' */
 .icon-access-comment:before { content: '\f0e5'; } /* '' */
+/* Review related user rights */
 .icon-access-read-without-comments:before { content: '\e70a'; } /* '' */
-.icon-access-review:before { content: '\f0e5'; } /* '' */
+.icon-access-review:before { content: '\f0e5'} /* '' */
+
+.icon-access-read-without-comments:before, .icon-access-review:before {
+    background-color: #000;
+    color: #fff;
+    padding: 2px;
+    border-radius: 4px;
+}
 /*
  * styles for Lato
  */

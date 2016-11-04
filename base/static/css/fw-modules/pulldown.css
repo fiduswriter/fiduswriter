@@ -6,7 +6,7 @@
     z-index: 100;
 }
 .fw-pulldown.fw-left, .fw-pulldown.fw-center {
-    left: 0
+    left: -10px
 }
 .fw-pulldown.fw-right {
     right: 0
@@ -17,6 +17,13 @@
     background-color: #fff;
     padding: 6px 0;
     box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+.fw-pulldown-header {
+    line-height: 18px;
+    background-color: #2c2723;
+    color: #fff;
+    display: block;
 }
 
 .fw-pulldown-item {

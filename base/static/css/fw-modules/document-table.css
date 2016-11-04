@@ -39,10 +39,10 @@
     height: 225px;
 }
 
-.fw-document-table-body [class^="icon-"]:before,
+/*.fw-document-table-body [class^="icon-"]:before,
 .fw-document-table-body [class*=" icon-"]:before {
     line-height: 3px;
-}
+}*/
 
 .fw-document-table tbody tr:hover {
   background-color: #fbf9d2;

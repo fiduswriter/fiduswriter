@@ -36,8 +36,6 @@ export class OdtExporter {
 
     init() {
         let that = this
-        // We use the doc in the pm format as this is what we will be using
-        // throughout the application in the future.
         this.docContents = removeHidden(this.doc.contents)
         this.docTitle = textContent(this.docContents.content[0])
         this.metadata = new OdtExporterMetadata(this, this.docContents)

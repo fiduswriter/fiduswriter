@@ -3,11 +3,11 @@
 WARNING: DEPRECATED!
 
 Base exporter class for dom-based exports. This is the deprecated way of creating exports.
-The latex, epub and html export filters go over a DOM of a document which they change little
+The epub and html export filters go over a DOM of a document which they change little
 by little, and they are all based on the BaseDOMExporter class.
 
     New exporters should instead by walking the doc.contents tree.
-    This is how the ODT and DOCX export filters work.
+    This is how the LaTeX, ODT and DOCX export filters work.
 */
 
 export class BaseDOMExporter {
@@ -54,10 +54,6 @@ export class BaseDOMExporter {
         jQuery(htmlCode).find('.comment').each(function() {
            jQuery(this).replaceWith(this.innerHTML)
         })
-
-        //jQuery(htmlCode).find('script').each(function() {
-        //    jQuery(this).replaceWith('')
-        //})
 
         return htmlCode
     }

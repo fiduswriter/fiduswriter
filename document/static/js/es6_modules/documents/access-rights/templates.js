@@ -47,6 +47,11 @@ export let collaboratorsTemplate = _.template('<% _.each(collaborators, function
                     <div class="fw-pulldown fw-left">\
                         <ul>\
                             <li>\
+                                <span class="fw-pulldown-header" title="'+gettext("Basic access rights")+'">\
+                                    ' + gettext("Basic") + '\
+                                </span>\
+                            </li>\
+                            <li>\
                                 <span class="fw-pulldown-item" data-right="write" title="'+gettext("Write")+'">\
                                     <i class="icon-access-write" >' + gettext("Write") + '</i>\
                                 </span>\
@@ -61,7 +66,12 @@ export let collaboratorsTemplate = _.template('<% _.each(collaborators, function
                                     <i class="icon-access-read">' + gettext("Read") + '</i>\
                                 </span>\
                             </li>\
-                            <!--li>\
+                            <li>\
+                                <span class="fw-pulldown-header" title="'+gettext("Access rights used within document review")+'">\
+                                    ' + gettext("Review") + '\
+                                </span>\
+                            </li>\
+                            <li>\
                                 <span class="fw-pulldown-item" data-right="read-without-comments" title="'+gettext("Read document but not see comments and chats of others")+'">\
                                     <i class="icon-access-read-without-comments">' + gettext("No comments") + '</i>\
                                 </span>\
@@ -70,7 +80,7 @@ export let collaboratorsTemplate = _.template('<% _.each(collaborators, function
                                 <span class="fw-pulldown-item" data-right="review" title="'+gettext("Comment, but not see comments and chats of others")+'">\
                                     <i class="icon-access-review">' + gettext("Review") + '</i>\
                                 </span>\
-                            </li-->\
+                            </li>\
                         </ul>\
                     </div>\
                 </div>\

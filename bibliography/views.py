@@ -59,6 +59,7 @@ def save_bib_to_db(inserting_obj, suffix):
             # This is important for BibTranslationTable on doc import
             return similar[0]
 
+
 # bibtex file import
 @login_required
 def import_bibtex_js(request):

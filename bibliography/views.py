@@ -109,7 +109,7 @@ def import_bibtex_js(request):
             the_fields = {}
             # save the posted values
             for key, val in bib.iteritems():
-                if key in ['bibtype', 'year', 'month']:
+                if key in ['bibtype']:
                     # do not save the value of type, year and month
                     continue
                 elif key in e_fields:
@@ -129,6 +129,7 @@ def import_bibtex_js(request):
                 if isinstance(val, list):
                     val = ' and '.join(val)
                 the_fields[field_type.field_name] = val
+
             inserting_obj['fields'] = json.dumps(the_fields)
             old_key = inserting_obj['entry_key']
             the_entry = save_bib_to_db(inserting_obj, 0)

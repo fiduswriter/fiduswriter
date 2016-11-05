@@ -211,8 +211,12 @@ export class BibLatexParser {
             delete this.entries[this.currentEntry]
             return
         }
-        this.entries[this.currentEntry][kv[0]] = this.scanBibtexString(kv[
-            1])
+        this.entries[this.currentEntry][kv[0]] = this.scanBibtexString(kv[1])
+        // date may come either as year, year + month or as date field.
+        // We therefore need to catch these hear and transform it to the
+        // date field after evaluating all the fields.
+        // All other date fields only come in the form of a date string.
+        let date = {}
         while (this.tryMatch(",")) {
             this.match(",")
             //fixes problems with commas at the end of a list
@@ -226,55 +230,24 @@ export class BibLatexParser {
             }
             let val = this.scanBibtexString(kv[1])
             switch (kv[0]) {
-            case 'date':
-            case 'month':
-            case 'year':
-                this.entries[this.currentEntry].date[kv[0]] = val
-                break
-            default:
-                this.entries[this.currentEntry][kv[0]] = val
+                case 'date':
+                case 'month':
+                case 'year':
+                    date[kv[0]] = val
+                    break
+                default:
+                    this.entries[this.currentEntry][kv[0]] = val
             }
 
         }
-        let issued = this.entries[this.currentEntry].date.date
-        let dateFormat = 'd.m.Y'
-        if ('undefined' === typeof (issued) || '' === issued) {
-            if ('undefined' === typeof (this.entries[this.currentEntry].date
-                .month)) {
-                issued = ''
-                dateFormat = 'Y'
-            } else {
-                issued = '-' + this.entries[this.currentEntry].date.month
-                dateFormat = 'm.Y'
-            }
-            if ('undefined' == typeof (this.entries[this.currentEntry].date
-                .year)) {
-                issued = ''
-                dateFormat = ''
-            } else {
-                issued = this.entries[this.currentEntry].date.year + issued
-            }
-        } else {
-            if (issued.indexOf('/') !== -1) {
-                // TODO: handle dates that have a from/to value
-                issued = issued.split('/')[0]
-            }
-            let dateDividers = issued.match(/-/g)
-            if (!dateDividers) {
-                dateFormat = 'Y'
-            } else if (1 === dateDividers.length) {
-                dateFormat = 'm.Y'
-            }
+        if (date.date) {
+            // date string has precedence.
+            this.entries[this.currentEntry].date = date.date
+        } else if (date.year && date.month) {
+            this.entries[this.currentEntry].date = `${date.year}-${date.month}`
+        } else if (date.year) {
+            this.entries[this.currentEntry].date = `${date.year}`
         }
-        issued = new Date(issued)
-        if ('Invalid Date' == issued) {
-            dateFormat = ''
-        } else {
-            dateFormat = dateFormat.replace('d', issued.getDate())
-            dateFormat = dateFormat.replace('m', MONTH_NAMES[issued.getMonth()])
-            dateFormat = dateFormat.replace('Y', issued.getFullYear())
-        }
-        this.entries[this.currentEntry].date = dateFormat
 
         for(let fKey in this.entries[this.currentEntry]) {
             if('bibtype' == fKey)
@@ -313,6 +286,7 @@ export class BibLatexParser {
     }
 
     reformDate(dateStr) {
+        // TODO: handle start/end dates
         dateStr = dateStr.replace(/-AA/g,'')
         let dateFormat = '%Y-AA-AA'
         let dateLen = dateStr.split(/[\s,\./\-]/g).length
@@ -326,7 +300,7 @@ export class BibLatexParser {
             dateFormat = ''
         } else {
             dateFormat = dateFormat.replace('%d', ("0" + theDate.getDate()).slice(-2))
-            dateFormat = dateFormat.replace('%m', ("0" + theDate.getMonth()).slice(-2))
+            dateFormat = dateFormat.replace('%m', ("0" + (theDate.getMonth()+1)).slice(-2))
             dateFormat = dateFormat.replace('%Y', theDate.getFullYear())
         }
         return dateFormat
@@ -444,10 +418,9 @@ export class BibLatexParser {
 
     entryBody() {
         this.currentEntry = this.key()
-
         this.entries[this.currentEntry] = {}
         this.entries[this.currentEntry].bibtype = this.currentType
-        this.entries[this.currentEntry].date = {}
+        //this.entries[this.currentEntry].date = {}
         this.match(",")
         this.keyValueList()
     }

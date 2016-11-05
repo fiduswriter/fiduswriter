@@ -10,8 +10,6 @@ from django.db import IntegrityError
 from django.db.models import Max, Count
 from django.core.serializers.python import Serializer
 
-from bibliography.bib import Persons
-
 from bibliography.models import (
     Entry,
     EntryType,
@@ -62,8 +60,6 @@ def save_bib_to_db(inserting_obj, suffix):
             return similar[0]
 
 # bibtex file import
-
-
 @login_required
 def import_bibtex_js(request):
     response = {}
@@ -129,11 +125,6 @@ def import_bibtex_js(request):
                          'the field.')
                     )
                     continue
-
-                if 'l_name' == field_type.field_type:
-                    # restore name list value like "author"
-                    persons = Persons(val)
-                    val = persons.get_names()
                 if isinstance(val, list):
                     val = ' and '.join(val)
                 the_fields[field_type.field_name] = val

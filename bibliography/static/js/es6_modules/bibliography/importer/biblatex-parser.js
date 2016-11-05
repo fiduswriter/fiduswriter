@@ -1,4 +1,5 @@
 import {TexSpecialChars, BibFieldTypes} from "../statics"
+import {BibLatexNameStringParser} from "./name-string-parser"
 
 /** Parses files in BibTeX/BibLaTeX format
  * @function bibTexParser
@@ -139,7 +140,7 @@ export class BibLatexParser {
                 this.match('"')
                 return this.input.substring(start, end)
             } else if (this.pos == this.input.length - 1) {
-                console.log("Unterminated value:" + this.input.substring(
+                console.warn("Unterminated value:" + this.input.substring(
                     start))
             }
             this.pos++
@@ -159,7 +160,7 @@ export class BibLatexParser {
             } else if (k.match("^[0-9]+$")) {
                 return k
             } else {
-                console.log("Value unexpected:" + this.input.substring(
+                console.warn("Value unexpected:" + this.input.substring(
                     start))
             }
         }
@@ -179,7 +180,7 @@ export class BibLatexParser {
         let start = this.pos
         while (true) {
             if (this.pos == this.input.length) {
-                console.log("Runaway key")
+                console.warn("Runaway key")
                 return
             }
             if (this.input[this.pos].match("[a-zA-Z0-9_:;`\\.\\\?+/-]")) {
@@ -197,7 +198,7 @@ export class BibLatexParser {
             let val = this.value()
             return [key, val]
         } else {
-            console.log(
+            console.warn(
                 "... = value expected, equals sign missing: " + this.input
                 .substring(this.pos))
         }
@@ -306,9 +307,9 @@ export class BibLatexParser {
 
     }
 
-    reformName(name) {
-        //reform name
-        return name
+    reformName(nameString) {
+        let nameStringParser = new BibLatexNameStringParser(nameString)
+        return nameStringParser.output
     }
 
     reformDate(dateStr) {

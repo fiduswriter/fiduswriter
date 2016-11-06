@@ -1,4 +1,4 @@
-import {TexSpecialChars, BibFieldTypes} from "../statics"
+import {TexSpecialChars, BibFieldTypes, BibFieldAliasTypes, BibEntryTypes, BibEntryAliasTypes} from "../statics"
 import {BibLatexNameStringParser} from "./name-string-parser"
 
 /** Parses files in BibTeX/BibLaTeX format
@@ -65,7 +65,7 @@ export class BibLatexParser {
         if (this.input.substring(this.pos, this.pos + s.length) == s) {
             this.pos += s.length
         } else {
-            console.log("Token mismatch, expected " + s +
+            console.warn("Token mismatch, expected " + s +
                 ", found " + this.input
                 .substring(this.pos))
         }
@@ -124,7 +124,7 @@ export class BibLatexParser {
                 '\\') {
                 bracecount++
             } else if (this.pos == this.input.length - 1) {
-                console.log("Unterminated value")
+                console.warn("Unterminated value")
             }
             this.pos++
         }
@@ -250,8 +250,31 @@ export class BibLatexParser {
         }
 
         for(let fKey in this.entries[this.currentEntry]) {
-            if('bibtype' == fKey)
+            if('bibtype' == fKey) {
+                let bibtype = this.entries[this.currentEntry]['bibtype']
+                if (BibEntryAliasTypes[bibtype]) {
+                    bibtype = BibEntryAliasTypes[bibtype]
+                    this.entries[this.currentEntry]['bibtype'] = bibtype
+                }
+
+                let entry_type = _.findWhere(BibEntryTypes, {biblatex: bibtype})
+                if('undefined' == typeof(entry_type)) {
+                    this.errors.push({
+                        type: 'unknown_type',
+                        entry: this.currentEntry,
+                        type_name: bibtype
+                    })
+                    this.entries[this.currentEntry]['bibtype'] = 'misc'
+                }
                 continue
+            }
+            // Replace alias fields with their main term.
+            if (BibFieldAliasTypes[fKey]) {
+                let value = this.entries[this.currentEntry][fKey]
+                delete this.entries[this.currentEntry][fKey]
+                fKey = BibFieldAliasTypes[fKey]
+                this.entries[this.currentEntry][fKey] = value
+            }
             let field = BibFieldTypes[fKey]
 
             if('undefined' == typeof(field)) {
@@ -267,7 +290,7 @@ export class BibLatexParser {
             let fValue = this.entries[this.currentEntry][fKey]
             switch(fType) {
                 case 'l_name':
-                    this.entries[this.currentEntry][fKey] = this.reformName(fValue)
+                    this.entries[this.currentEntry][fKey] = this.reformNameList(fValue)
                     break
                 case 'f_date':
                     this.entries[this.currentEntry][fKey] = this.reformDate(fValue)
@@ -280,9 +303,9 @@ export class BibLatexParser {
 
     }
 
-    reformName(nameString) {
+    reformNameList(nameString) {
         let nameStringParser = new BibLatexNameStringParser(nameString)
-        return nameStringParser.output
+        return nameStringParser.output.join(' and ')
     }
 
     reformDate(dateStr) {
@@ -416,11 +439,10 @@ export class BibLatexParser {
 
 
 
-    entryBody() {
+    entry() {
         this.currentEntry = this.key()
         this.entries[this.currentEntry] = {}
         this.entries[this.currentEntry].bibtype = this.currentType
-        //this.entries[this.currentEntry].date = {}
         this.match(",")
         this.keyValueList()
     }
@@ -440,9 +462,6 @@ export class BibLatexParser {
         this.value()
     }
 
-    entry() {
-        this.entryBody()
-    }
 
     scanBibtexString(value) {
         let len = TexSpecialChars.length
@@ -453,7 +472,6 @@ export class BibLatexParser {
         }
         // Delete multiple spaces
         value = value.replace(/ +(?= )/g, '')
-        //value = value.replace(/\{(.*?)\}/g, '$1')
         return value
     }
 

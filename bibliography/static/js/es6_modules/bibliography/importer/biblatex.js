@@ -20,18 +20,18 @@ export class BibLatexImporter {
         diaButtons[gettext('Import')] = function () {
             let bibFile = jQuery('#bib-uploader')[0].files
             if (0 === bibFile.length) {
-                console.log('no file found')
+                console.warn('no file found')
                 return false
             }
             bibFile = bibFile[0]
             if (10485760 < bibFile.size) {
-                console.log('file too big')
+                console.warn('file too big')
                 return false
             }
             activateWait()
             let reader = new window.FileReader()
             reader.onerror = function (e) {
-                console.log('error', e.target.error.code)
+                console.error('error', e.target.error.code)
             }
             reader.onload = function(event){that.processFile(event.target.result)}
             reader.readAsText(bibFile)
@@ -89,6 +89,11 @@ export class BibLatexImporter {
                         addAlert('error', error.field_name + gettext(' of ') +
                             error.entry +
                             gettext(' cannot not be saved. Fidus Writer does not support the field.')
+                        )
+                    case 'unknown_type':
+                        addAlert('warning', error.type_name + gettext(' of ') +
+                            error.entry +
+                            gettext(' is saved as "misc". Fidus Writer does not support the entry type.')
                         )
                         break
                 }
@@ -148,23 +153,12 @@ export class BibLatexImporter {
                 if (that.callback) {
                     that.callback(ids)
                 }
-                let errors = response.errors,
-                    warnings = response.warning,
-                    len = errors.length
-
-                for (let i = 0; i < len; i++) {
-                    addAlert('error', errors[i])
-                }
-                len = warnings.length
-                for (let i = 0; i < len; i++) {
-                    addAlert('warning', warnings[i])
-                }
 
                 callback()
 
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                console.log(jqXHR.responseText)
+                console.error(jqXHR.responseText)
             },
             complete: function () {
             }

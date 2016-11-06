@@ -14,9 +14,7 @@ from bibliography.models import (
     Entry,
     EntryType,
     EntryField,
-    EntryCategory,
-    EntryTypeAlias,
-    EntryFieldAlias
+    EntryCategory
 )
 
 from document.models import AccessRight
@@ -66,76 +64,31 @@ def import_bibtex_js(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
-        response['errors'] = []
-        response['warning'] = []
         bibs = json.loads(request.POST['bibs'])
         status = 200
         e_types = {}
         for e_type in EntryType.objects.all():
             e_types[e_type.type_name] = e_type
-        e_types_alias = {}
-        for e_type in EntryTypeAlias.objects.all():
-            e_types_alias[e_type.type_name] = e_type
-        e_fields = {}
-        for e_field in EntryField.objects.all():
-            e_fields[e_field.field_name] = e_field
-        e_fields_alias = {}
-        for e_field in EntryFieldAlias.objects.all():
-            e_fields_alias[e_field.field_name] = e_field
         new_bibs = []
         response['key_translations'] = {}
         for bib_key in bibs:
             bib = bibs[bib_key]
             bib_type_name = bib['bibtype']
+            del bib['bibtype']
             # the entry type must exists
             if bib_type_name in e_types:
                 the_type = e_types[bib_type_name]
-            elif bib_type_name in e_types_alias:
-                type_alias = e_types_alias[bib_type_name]
-                the_type = type_alias.type_alias
-            else:
-                the_type = e_types['misc']
-                response['warning'].append(
-                    bib_key +
-                    ' is saved as misc. Fidus Writer does not support "' +
-                    bib_type_name +
-                    '"')
 
             inserting_obj = {
                 'entry_key': bib_key,
                 'entry_owner': request.user,
-                'entry_type': the_type
+                'entry_type': the_type,
+                'fields': json.dumps(bib)
             }
-            the_fields = {}
-            # save the posted values
-            for key, val in bib.iteritems():
-                if key in ['bibtype']:
-                    # do not save the value of type, year and month
-                    continue
-                elif key in e_fields:
-                    field_type = e_fields[key]
-                elif key in e_fields_alias:
-                    field_alias = e_fields_alias[key]
-                    field_type = field_alias.field_alias
-                else:
-                    response['errors'].append(
-                        key +
-                        ' of ' +
-                        bib_key +
-                        (' could not be saved. Fidus Writer does not support '
-                         'the field.')
-                    )
-                    continue
-                if isinstance(val, list):
-                    val = ' and '.join(val)
-                the_fields[field_type.field_name] = val
-
-            inserting_obj['fields'] = json.dumps(the_fields)
-            old_key = inserting_obj['entry_key']
             the_entry = save_bib_to_db(inserting_obj, 0)
             if the_entry:
                 new_bibs.append(the_entry)
-                response['key_translations'][old_key] = the_entry.entry_key
+                response['key_translations'][bib_key] = the_entry.entry_key
             response['bibs'] = serializer.serialize(
                 new_bibs,
                 fields=(

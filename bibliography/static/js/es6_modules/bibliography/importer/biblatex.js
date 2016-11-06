@@ -90,6 +90,7 @@ export class BibLatexImporter {
                             error.entry +
                             gettext(' cannot not be saved. Fidus Writer does not support the field.')
                         )
+                        break
                     case 'unknown_type':
                         addAlert('warning', error.type_name + gettext(' of ') +
                             error.entry +

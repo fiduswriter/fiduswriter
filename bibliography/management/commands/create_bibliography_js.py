@@ -76,10 +76,15 @@ class Command(BaseCommand):
         output_js += '}'
 
         # list of aliases for field types.
-        output_js += '/** A list of all field aliases and what they refer to. */\n'
+        output_js += (
+            '/** A list of all field aliases and what they refer to. */\n'
+        )
         output_js += 'export let BibFieldAliasTypes = {\n'
         for field in EntryFieldAlias.objects.all():
-            output_js += str(field.field_name) + ': \''+ str(field.field_alias.field_name) + '\',\n'
+            output_js += (
+                str(field.field_name) + ': \''
+                + str(field.field_alias.field_name) + '\',\n'
+            )
         output_js += '}\n'
 
         # list of all bibentry types and their fields
@@ -118,10 +123,15 @@ class Command(BaseCommand):
         output_js += '}\n'
 
         # list of aliases for bibentry types.
-        output_js += '/** A list of all bibentry aliases and what they refer to. */\n'
+        output_js += (
+            '/** A list of all bibentry aliases and what they refer to. */\n'
+        )
         output_js += 'export let BibEntryAliasTypes = {\n'
         for entry_type in EntryTypeAlias.objects.all():
-            output_js += str(entry_type.type_name) + ': \''+ str(entry_type.type_alias.type_name) + '\',\n'
+            output_js += (
+                str(entry_type.type_name) + ': \''
+                + str(entry_type.type_alias.type_name) + '\',\n'
+            )
         output_js += '}\n'
 
         # list of all the localization keys

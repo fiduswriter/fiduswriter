@@ -44,7 +44,7 @@ export class ModMenusHeader {
 
           jQuery('.metadata-menu-item, #open-close-header, .saverevision, .multibuttonsCover, \
           .savecopy, .download, .template-export, .latex, .epub, .html, .print, .style, .citationstyle, \
-          .tools-item, .papersize, .metadata-menu-item, .share, #open-close-header, \
+          .tools-item, .papersize, .metadata-menu-item, .share, .submit-ojs, #open-close-header, \
           .save, .papersize-menu, .metadata-menu, .documentstyle-menu, \
           .citationstyle-menu, .exporter-menu').addClass('disabled')
 
@@ -78,8 +78,7 @@ export class ModMenusHeader {
           })
 
           jQuery(document).on('mousedown', '.submit-ojs:not(.disabled)', function() {
-              if (that.mod.editor.doc.owner.id === that.mod.editor.user.id)
-                that.mod.actions.submitOjs()
+              that.mod.actions.submitOjs()
           })
 
           // Document Style switching

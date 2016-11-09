@@ -285,6 +285,7 @@ export class Editor {
             if (this.docInfo.is_owner) {
                 // bind the share dialog to the button if the user is the document owner
                 jQuery('.share').removeClass('disabled')
+                jQuery('.submit-ojs').removeClass('disabled')
             }
             if (COMMENT_ONLY_ROLES.indexOf(this.docInfo.rights) > -1) {
                 let toolbar = jQuery('.editortoolbar')

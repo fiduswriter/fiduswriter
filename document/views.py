@@ -157,13 +157,9 @@ def get_documentlist_js(request):
     )
 
 
-def make_user_data(u_name, u_pass, u_email):
-    # u_name = 'ojsuser'
-    # u_pass = '1234567'
+def make_user_data(u_name, u_email):
     u_data = {
         'username': u_name,
-        'password1': u_pass,
-        'password2': u_pass,
         'email': u_email
     }
 
@@ -175,18 +171,19 @@ def create_user(request, user_data):
     try:
         signup_form.is_valid()
         user = signup_form.save(request)
+        user.set_unusable_password()
+        user.save()
         return user
     except:
         return False
 
 
-def login_user(request, u_name, u_pass):
-    from django.contrib.auth import authenticate
+def login_user(request, u_name):
     try:
         user = User.objects.get(username=u_name)
         if (user and user.is_active and apps.is_installed(
               'django.contrib.sessions')):
-            user = authenticate(username=u_name, password=u_pass)
+            user.backend = settings.AUTHENTICATION_BACKENDS[0]
             login(request, user)
             return user
         else:
@@ -207,7 +204,6 @@ def get_reviewer_for_post(request):
             # "reviewer with this email does not exist so create it"
             u_data = make_user_data(
                 u_name,
-                settings.SERVER_INFO['OJS_PASSWORD'],
                 email)
             reviewer = create_user(request, u_data)
             reviewers = User.objects.filter(email=email)
@@ -307,8 +303,7 @@ def document_review_js(request):
         if (app_key == settings.SERVER_INFO['OJS_KEY']):
             reviewer = login_user(
                 request,
-                u_name,
-                settings.SERVER_INFO['OJS_PASSWORD'])
+                u_name)
             if reviewer is not None:
                 return redirect(
                     '/document/' + str(doc_id) + '/', permanent=True

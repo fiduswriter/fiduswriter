@@ -19,8 +19,6 @@ SERVER_INFO = {
     'OJS_URL': False,
     # An app key for OJS to connect with. Change it to a secret value.
     'OJS_KEY': 'S5cr4T',
-    # A standard password for accounts made automatically by OJS.
-    'OJS_PASSWORD': 'p4$$w04D',  # TODO: get rid of this!
     # If websockets is running on a non-standard port, add it here:
     'WS_PORT': False,
 }

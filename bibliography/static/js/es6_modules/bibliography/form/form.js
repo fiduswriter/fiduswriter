@@ -363,9 +363,9 @@ export class BibEntryForm {
 
                     len = required_values.length
                     for (let i = 0; i < len; i++) {
-                        if ('undefined' === typeof(required_values[i])
-                            || null === required_values[i]
-                            || '' === required_values[i]) {
+                        if ('undefined' === typeof(required_values[i]) ||
+                            null === required_values[i] ||
+                            '' === required_values[i]) {
                             the_value = ''
                             break dataTypeSwitch
                         }

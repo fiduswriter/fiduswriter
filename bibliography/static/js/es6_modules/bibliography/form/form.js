@@ -334,12 +334,12 @@ export class BibEntryForm {
                             break
                         case 'my':
                             required_values = [y_val, m_val]
-                            required_dates = [y_val + '/' + m_val]
+                            required_dates = [`${y_val}/${m_val}`]
                             date_form = 'Y/m'
                             break
                         case 'mdy':
                             required_values = [y_val, m_val, d_val]
-                            required_dates = [y_val + '/' + m_val + '/' + d_val]
+                            required_dates = [`${y_val}/${m_val}/${d_val}`]
                             date_form = 'Y/m/d'
                             break
                         case 'y/y':
@@ -348,13 +348,14 @@ export class BibEntryForm {
                             break
                         case 'my/my':
                             required_values = [y_val, y2_val, m_val, m2_val]
-                            required_dates = [y_val + '/' + m_val, y2_val + '/' + m2_val]
+                            required_dates = [`${y_val}/${m_val}`, `${y2_val}/${m2_val}`]
                             date_form = 'Y/m-Y2/m2'
                             break
                         case 'mdy/mdy':
                             required_values = [y_val, m_val, d_val, y2_val, m2_val, d2_val]
-                            required_dates = [y_val + '/' + m_val + '/' + d_val,
-                                y2_val + '/' + m2_val + '/' + d2_val
+                            required_dates = [
+                                `${y_val}/${m_val}/${d_val}`,
+                                `${y2_val}/${m2_val}/${d2_val}`
                             ]
                             date_form = 'Y/m/d-Y2/m2/d2'
                             break
@@ -362,7 +363,9 @@ export class BibEntryForm {
 
                     len = required_values.length
                     for (let i = 0; i < len; i++) {
-                        if ('undefined' === typeof(required_values[i]) || null === required_values[i] || '' === required_values[i]) {
+                        if ('undefined' === typeof(required_values[i])
+                            || null === required_values[i]
+                            || '' === required_values[i]) {
                             the_value = ''
                             break dataTypeSwitch
                         }
@@ -410,11 +413,8 @@ export class BibEntryForm {
                         }
                         the_value[the_value.length] = full_name
                     })
-                    if (0 === the_value.length) {
-                        the_value = ''
-                    } else {
-                        the_name += '[]'
-                    }
+                    // list to string
+                    the_value = the_value.join(' and ')
                     break
                 case 'literallist':
                     the_value = []
@@ -423,19 +423,17 @@ export class BibEntryForm {
                         if ('' === input_val) return true
                         the_value[the_value.length] = '{' + input_val + '}'
                     })
-                    if (0 === the_value.length) {
-                        the_value = ''
-                    } else {
-                        the_name += '[]'
-                    }
+                    // list to string
+                    the_value = the_value.join(' and ')
                     break
                 case 'checkbox':
                     //if it is a checkbox, the value will be restored as an Array
                     the_name = the_name + '[]'
                     if (undefined === formValues[the_name]) formValues[the_name] = []
-                    if ($this.prop("checked")) formValues[the_name][formValues[
-                        the_name].length] = $this.val()
-                    return
+                    if ($this.prop("checked")) {
+                        formValues[the_name][formValues[the_name].length] = $this.val()
+                    }
+                    break
                 default:
                     the_value = $this.val().replace(/(^\s+)|(\s+$)/g, "")
             }

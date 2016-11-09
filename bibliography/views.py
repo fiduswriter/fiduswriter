@@ -295,12 +295,8 @@ def save_js(request):
                             response['errormsg'][
                                 'eField' + key] = 'Value must be number'
                             continue
-                    elif f_type.field_type in ['l_name', 'l_literal', 'l_key']:
-                        if isinstance(val, list):
-                            val = ' and '.join(val)
 
                     the_fields[f_type.field_name] = val
-                    # setattr(the_entry, f_type.field_name, val)
 
             if 0 == len(response['errormsg']):
                 if 0 < the_id:  # saving changes

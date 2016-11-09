@@ -252,7 +252,7 @@ class DocumentWS(BaseWebSocketHandler):
         only_comment = True
         for diff in parsed_diffs:
             if not (diff['stepType'] in allowed_operations and diff[
-                    'mark']['_'] == 'comment'):
+                    'mark']['type'] == 'comment'):
                 only_comment = False
         return only_comment
 

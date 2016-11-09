@@ -53,6 +53,11 @@ export class ModMenusToolbar {
             })
         })
 
+        //reveiw finished
+        jQuery(document).on('click', '#reviewed:not(.disabled)', function () {
+            that.mod.actions.submitReview()
+        })
+
         // blockstyle paragraph, h1 - h3, lists
         jQuery(document).on('mousedown', '.toolbarheadings label', function (event) {
             const blockTypes = {

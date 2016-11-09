@@ -19,7 +19,7 @@ import {Paste} from "./paste/paste"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']
-
+export const REVIEW_ROLES = ['review']
 
 export class Editor {
     // A class that contains everything that happens on the editor page.
@@ -297,6 +297,10 @@ export class Editor {
               .documentstyle-menu, .citationstyle-menu').removeClass('disabled')
             }
         }
+        if (REVIEW_ROLES.indexOf(this.docInfo.rights) > -1)
+          jQuery('#reviewed').show()
+        else
+          jQuery('#reviewed').hide()
     }
 
     receiveDocument(data) {

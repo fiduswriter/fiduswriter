@@ -26,7 +26,7 @@ export class BibLatexParser {
         this.pos = 0
         this.input = ""
 
-        this.entries = {}
+        this.entries = []
         this.strings = {
             JAN: "January",
             FEB: "February",
@@ -42,7 +42,7 @@ export class BibLatexParser {
             DEC: "December"
         }
         this.currentKey = ""
-        this.currentEntry = ""
+        this.currentEntry = false
         this.currentType = ""
         this.errors = []
 
@@ -208,10 +208,11 @@ export class BibLatexParser {
         let kv = this.keyEqualsValue()
         if (_.isUndefined(kv)) {
             // Entry has no fields, so we delete it.
-            delete this.entries[this.currentEntry]
+            // It was the last one pushed, so we remove the last one
+            this.entries.pop()
             return
         }
-        this.entries[this.currentEntry][kv[0]] = this.scanBibtexString(kv[1])
+        this.currentEntry['fields'][kv[0]] = this.scanBibtexString(kv[1])
         // date may come either as year, year + month or as date field.
         // We therefore need to catch these hear and transform it to the
         // date field after evaluating all the fields.
@@ -236,67 +237,65 @@ export class BibLatexParser {
                     date[kv[0]] = val
                     break
                 default:
-                    this.entries[this.currentEntry][kv[0]] = val
+                    this.currentEntry['fields'][kv[0]] = val
             }
 
         }
         if (date.date) {
             // date string has precedence.
-            this.entries[this.currentEntry].date = date.date
+            this.currentEntry['fields']['date'] = date.date
         } else if (date.year && date.month) {
-            this.entries[this.currentEntry].date = `${date.year}-${date.month}`
+            this.currentEntry['fields']['date'] = `${date.year}-${date.month}`
         } else if (date.year) {
-            this.entries[this.currentEntry].date = `${date.year}`
+            this.currentEntry['fields']['date'] = `${date.year}`
         }
 
-        for(let fKey in this.entries[this.currentEntry]) {
-            if('bibtype' == fKey) {
-                let bibtype = this.entries[this.currentEntry]['bibtype']
-                if (BibEntryAliasTypes[bibtype]) {
-                    bibtype = BibEntryAliasTypes[bibtype]
-                    this.entries[this.currentEntry]['bibtype'] = bibtype
-                }
+        let entryType = this.currentEntry['entry_type']
+        if (BibEntryAliasTypes[entryType]) {
+            entryType = BibEntryAliasTypes[entryType]
+            this.currentEntry['entry_type'] = entryType
+        }
 
-                let entry_type = _.findWhere(BibEntryTypes, {biblatex: bibtype})
-                if('undefined' == typeof(entry_type)) {
-                    this.errors.push({
-                        type: 'unknown_type',
-                        entry: this.currentEntry,
-                        type_name: bibtype
-                    })
-                    this.entries[this.currentEntry]['bibtype'] = 'misc'
-                }
-                continue
-            }
+        let eType = _.findWhere(BibEntryTypes, {biblatex: entryType})
+        if('undefined' == typeof(eType)) {
+            this.errors.push({
+                type: 'unknown_type',
+                entry: this.currentEntry['entry_key'],
+                type_name: entryType
+            })
+            this.currentEntry['entry_type'] = 'misc'
+        }
+
+        for(let fKey in this.currentEntry['fields']) {
             // Replace alias fields with their main term.
             if (BibFieldAliasTypes[fKey]) {
-                let value = this.entries[this.currentEntry][fKey]
-                delete this.entries[this.currentEntry][fKey]
+                let value = this.currentEntry['fields'][fKey]
+                delete this.currentEntry['fields'][fKey]
                 fKey = BibFieldAliasTypes[fKey]
-                this.entries[this.currentEntry][fKey] = value
+                this.currentEntry['fields'][fKey] = value
             }
             let field = BibFieldTypes[fKey]
 
             if('undefined' == typeof(field)) {
                 this.errors.push({
                     type: 'unknown_field',
-                    entry: this.currentEntry,
+                    entry: this.currentEntry['entry_key'],
                     field_name: fKey
                 })
-                delete this.entries[this.currentEntry][fKey]
+                delete this.currentEntry['fields'][fKey]
                 continue
             }
             let fType = field['type']
-            let fValue = this.entries[this.currentEntry][fKey]
+            let fValue = this.currentEntry['fields'][fKey]
             switch(fType) {
                 case 'l_name':
-                    this.entries[this.currentEntry][fKey] = this.reformNameList(fValue)
+                    this.currentEntry['fields'][fKey] = this.reformNameList(fValue)
                     break
                 case 'f_date':
-                    this.entries[this.currentEntry][fKey] = this.reformDate(fValue)
+                    this.currentEntry['fields'][fKey] = this.reformDate(fValue)
                     break
                 case 'f_literal':
-                    this.entries[this.currentEntry][fKey] = this.reformLiteral(fValue)
+                    this.currentEntry['fields'][fKey] = this.reformLiteral(fValue)
                     break
             }
         }
@@ -437,12 +436,13 @@ export class BibLatexParser {
         }
     }
 
-
-
-    entry() {
-        this.currentEntry = this.key()
-        this.entries[this.currentEntry] = {}
-        this.entries[this.currentEntry].bibtype = this.currentType
+    newEntry() {
+        this.currentEntry = {
+            'entry_type': this.currentType,
+            'entry_key': this.key(),
+            'fields': {}
+        }
+        this.entries.push(this.currentEntry)
         this.match(",")
         this.keyValueList()
     }
@@ -486,7 +486,7 @@ export class BibLatexParser {
             } else if (d == "@comment") {
                 continue
             } else {
-                this.entry()
+                this.newEntry()
             }
             this.match("}")
         }

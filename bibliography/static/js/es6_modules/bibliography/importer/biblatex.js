@@ -99,8 +99,7 @@ export class BibLatexImporter {
                         break
                 }
             })
-            this.bibKeylist = Object.keys(this.bibEntries)
-            this.totalChunks = Math.ceil(this.bibKeylist.length / 50)
+            this.totalChunks = Math.ceil(this.bibEntries.length / 50)
             this.currentChunkNumber = 0
             this.processChunk()
         }
@@ -110,12 +109,9 @@ export class BibLatexImporter {
     processChunk() {
         let that = this
         if (this.currentChunkNumber < this.totalChunks) {
-            let currentChunk = {}
             let fromNumber = this.currentChunkNumber * 50
             let toNumber = fromNumber + 50
-            for (let i = fromNumber; i < toNumber; i++) {
-                currentChunk[this.bibKeylist[i]] = this.bibEntries[this.bibKeylist[i]]
-            }
+            let currentChunk = this.bibEntries.slice(fromNumber, toNumber)
             this.sendChunk(currentChunk, function () {
                 that.currentChunkNumber++
                 that.processChunk()

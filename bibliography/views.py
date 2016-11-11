@@ -171,24 +171,23 @@ def import_bibtex_js(request):
             e_types[e_type.type_name] = e_type
         new_bibs = []
         response['key_translations'] = {}
-        for bib_key in bibs:
-            bib = bibs[bib_key]
-            bib_type_name = bib['bibtype']
-            del bib['bibtype']
+        for bib in bibs:
+            entry_type = bib['entry_type']
+            entry_key = bib['entry_key']
             # the entry type must exists
-            if bib_type_name in e_types:
-                the_type = e_types[bib_type_name]
+            if entry_type in e_types:
+                the_type = e_types[entry_type]
 
             inserting_obj = {
-                'entry_key': bib_key,
+                'entry_key': entry_key,
                 'entry_owner': request.user,
                 'entry_type': the_type,
-                'fields': json.dumps(bib)
+                'fields': json.dumps(bib['fields'])
             }
             the_entry = save_bib_to_db(inserting_obj, 0)
             if the_entry:
                 new_bibs.append(the_entry)
-                response['key_translations'][bib_key] = the_entry.entry_key
+                response['key_translations'][entry_key] = the_entry.entry_key
             response['bibs'] = serializer.serialize(
                 new_bibs,
                 fields=(

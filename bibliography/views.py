@@ -58,51 +58,6 @@ def save_bib_to_db(inserting_obj, suffix):
             return similar[0]
 
 
-# bibtex file import
-@login_required
-def import_bibtex_js(request):
-    response = {}
-    status = 405
-    if request.is_ajax() and request.method == 'POST':
-        bibs = json.loads(request.POST['bibs'])
-        status = 200
-        e_types = {}
-        for e_type in EntryType.objects.all():
-            e_types[e_type.type_name] = e_type
-        new_bibs = []
-        response['key_translations'] = {}
-        for bib_key in bibs:
-            bib = bibs[bib_key]
-            bib_type_name = bib['bibtype']
-            del bib['bibtype']
-            # the entry type must exists
-            if bib_type_name in e_types:
-                the_type = e_types[bib_type_name]
-
-            inserting_obj = {
-                'entry_key': bib_key,
-                'entry_owner': request.user,
-                'entry_type': the_type,
-                'fields': json.dumps(bib)
-            }
-            the_entry = save_bib_to_db(inserting_obj, 0)
-            if the_entry:
-                new_bibs.append(the_entry)
-                response['key_translations'][bib_key] = the_entry.entry_key
-            response['bibs'] = serializer.serialize(
-                new_bibs,
-                fields=(
-                    'entry_key',
-                    'entry_owner',
-                    'entry_type',
-                    'entry_cat',
-                    'fields'))
-    return JsonResponse(
-        response,
-        status=status
-    )
-
-
 def check_access_rights(other_user_id, this_user):
     other_user_id = int(other_user_id)
     has_access = False
@@ -203,6 +158,50 @@ def biblist_js(request):
         status=status
     )
 
+# bibtex file import
+@login_required
+def import_bibtex_js(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        bibs = json.loads(request.POST['bibs'])
+        status = 200
+        e_types = {}
+        for e_type in EntryType.objects.all():
+            e_types[e_type.type_name] = e_type
+        new_bibs = []
+        response['key_translations'] = {}
+        for bib_key in bibs:
+            bib = bibs[bib_key]
+            bib_type_name = bib['bibtype']
+            del bib['bibtype']
+            # the entry type must exists
+            if bib_type_name in e_types:
+                the_type = e_types[bib_type_name]
+
+            inserting_obj = {
+                'entry_key': bib_key,
+                'entry_owner': request.user,
+                'entry_type': the_type,
+                'fields': json.dumps(bib)
+            }
+            the_entry = save_bib_to_db(inserting_obj, 0)
+            if the_entry:
+                new_bibs.append(the_entry)
+                response['key_translations'][bib_key] = the_entry.entry_key
+            response['bibs'] = serializer.serialize(
+                new_bibs,
+                fields=(
+                    'entry_key',
+                    'entry_owner',
+                    'entry_type',
+                    'entry_cat',
+                    'fields'))
+    return JsonResponse(
+        response,
+        status=status
+    )
+
 
 # save changes or create a new entry
 @login_required
@@ -212,8 +211,10 @@ def save_js(request):
     status = 403
     if request.is_ajax() and request.method == 'POST':
         owner_id = request.user.id
-        if 'owner_id' in request.POST:
-            requested_owner_id = int(request.POST['owner_id'])
+        bib_data = json.loads(request.POST['bib_data'])
+        print bib_data
+        if 'owner_id' in bib_data:
+            requested_owner_id = int(bib_data['owner_id'])
             # If the user has write access to at least one document of another
             # user, we allow him to add new and edit bibliography entries of
             # this user.
@@ -222,72 +223,35 @@ def save_js(request):
                     user=request.user.id, rights='w')) > 0:
                 owner_id = requested_owner_id
         status = 200
-        the_id = int(request.POST['id'])
-        the_type = EntryType.objects.filter(pk=int(request.POST['entrytype']))
+        the_id = int(bib_data['id'])
+        the_type = EntryType.objects.filter(pk=int(bib_data['entrytype']))
         # the entry type must exists
         if the_type.exists():
             the_type = the_type[0]
             the_fields = {}
             the_cat = ''
             # save the posted values
-            for key, val in request.POST.iteritems():
+            for key, val in bib_data.iteritems():
                 if 'id' == key or 'entrytype' == key:
                     # do nothing, if it is the ID or EntryType
                     continue
-                elif 'entryCat[]' == key:
+                elif 'entryCat' == key:
                     # categories are given as Array
                     # store them with loop
-                    val = request.POST.getlist(key)
                     the_cat = ','.join(val)
                 else:
-                    # store other values into EntryValues
-                    if 0 < key.find('[]'):
-                        val = request.POST.getlist(key)
-                    key = key[6:]
-                    # key should be formed like "eField" + name of the value
-                    # type
-                    key = key.replace('[]', '')
                     f_type = EntryField.objects.filter(field_name=key)
                     if f_type.exists():
                         f_type = f_type[0]
                     else:
+                        print "NOT EXIST"
+                        print key
                         continue
 
-                    if '' == val:
-                        pass
-                    elif 'null' == val:
-                        # empty value not allowed
-                        response['errormsg'][
-                            'eField' + key] = 'Value must not be empty'
-                        continue
-                    elif f_type.field_type == 'f_date':
-                        # reform date field
-                        dates = val.split('-')
-                        new_value = []
-                        i = 0
-                        for each_date in dates:
-                            date_parts = each_date.split('/')
-                            new_value.append('')
-                            if date_parts[0].isdigit():
-                                new_value[i] += date_parts[0]
-                            else:
-                                new_value[i] += 'AA'
-                            if (2 <= len(date_parts) and
-                                    date_parts[1].isdigit()):
-                                new_value[i] += '-' + date_parts[1]
-                            else:
-                                new_value[i] += '-AA'
-                            if (3 <= len(date_parts) and
-                                    date_parts[2].isdigit()):
-                                new_value[i] += '-' + date_parts[2]
-                            else:
-                                new_value[i] += '-AA'
-                            i += 1
-                        if 1 == len(new_value):
-                            val = new_value[0]
-                        else:
-                            val = new_value[0] + '/' + new_value[1]
-                    elif f_type.field_type == 'f_integer':
+                    if f_type.field_type == 'f_integer':
+                        print "integer"
+                        print val
+                        print val == int(val, 10)
                         # must be int
                         try:
                             val = int(val, 10)

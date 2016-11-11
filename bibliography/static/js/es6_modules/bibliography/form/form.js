@@ -182,21 +182,21 @@ export class BibEntryForm {
         }
         let ret = ''
         let eitheror_fields = [],
-            the_value
+            theValue
 
         jQuery.each(fields, function() {
             //if the fieldtype must be "either or", then save it in the array
             if (0 === id) {
-                the_value = ''
+                theValue = ''
             } else {
-                the_value = that.bibDB[id][BibFieldTypes[this].name]
-                if ('undefined' === typeof(the_value)) {
-                    the_value = ''
+                theValue = that.bibDB[id][BibFieldTypes[this].name]
+                if ('undefined' === typeof(theValue)) {
+                    theValue = ''
                 }
             }
             //get html with template function of underscore.js
             if ('f_date' == BibFieldTypes[this].type) {
-                let date_form_html = that.getFormPart(BibFieldTypes[this], this, the_value),
+                let date_form_html = that.getFormPart(BibFieldTypes[this], this, theValue),
                     date_format = date_form_html[1]
                 ret += dateinputTrTemplate({
                     'fieldTitle': BibFieldTypes[this].title,
@@ -207,7 +207,7 @@ export class BibEntryForm {
             } else {
                 ret += inputTrTemplate({
                     'fieldTitle': BibFieldTypes[this].title,
-                    'inputForm': that.getFormPart(BibFieldTypes[this], this, the_value)
+                    'inputForm': that.getFormPart(BibFieldTypes[this], this, theValue)
                 })
             }
         })
@@ -230,18 +230,18 @@ export class BibEntryForm {
             })
 
             if (0 === id) {
-                the_value = ''
+                theValue = ''
             } else {
-                the_value = that.bibDB[id][selected_field.name]
-                if ('undefined' === typeof(the_value)) {
-                    the_value = ''
+                theValue = that.bibDB[id][selected_field.name]
+                if ('undefined' === typeof(theValue)) {
+                    theValue = ''
                 }
             }
 
             ret = eitherorTrTemplate({
                 'fields': eitheror_fields,
                 'selected': selected_field,
-                'inputForm': that.getFormPart(selected_field, id, the_value)
+                'inputForm': that.getFormPart(selected_field, id, theValue)
             }) + ret
         }
         return ret
@@ -288,13 +288,13 @@ export class BibEntryForm {
             let $this = jQuery(this)
             let the_name = $this.attr('name') || $this.attr('data-field-name')
             let the_type = $this.attr('type') || $this.attr('data-type')
-            let the_value = ''
+            let theValue = ''
             let isMust = (1 == $this.parents('#optionTab1').length)
             let eitheror = $this.parents('.eitheror')
             if (1 == eitheror.length) {
                 //if it is a either-or-field
-                let field_names = eitheror.find('.field-names .fw-pulldown-item')
-                field_names.each(function() {
+                let fieldNames = eitheror.find('.field-names .fw-pulldown-item')
+                fieldNames.each(function() {
                     if (jQuery(this).hasClass('selected')) {
                         the_name = 'eField' + jQuery(this).data('value')
                     } else {
@@ -309,7 +309,7 @@ export class BibEntryForm {
                     if (0 === selected_key_item.length) {
                         selected_key_item = $this.find('.fw-pulldown-item:eq(0)')
                     }
-                    the_value = selected_key_item.data('value')
+                    theValue = selected_key_item.data('value')
                     break
                 case 'date':
                     //if it is a date form, the values will be formatted yyyy-mm-dd
@@ -330,26 +330,26 @@ export class BibEntryForm {
                     switch (date_format) {
                         case 'y':
                             required_values = required_dates = [y_val]
-                            date_form = 'Y'
+                            date_form = 'Y-AA-AA'
                             break
                         case 'my':
                             required_values = [y_val, m_val]
                             required_dates = [`${y_val}/${m_val}`]
-                            date_form = 'Y/m'
+                            date_form = 'Y-m-AA'
                             break
                         case 'mdy':
                             required_values = [y_val, m_val, d_val]
                             required_dates = [`${y_val}/${m_val}/${d_val}`]
-                            date_form = 'Y/m/d'
+                            date_form = 'Y-m-d'
                             break
                         case 'y/y':
                             required_values = required_dates = [y_val, y2_val]
-                            date_form = 'Y-Y2'
+                            date_form = 'Y-AA-AA/Y2-AA-AA'
                             break
                         case 'my/my':
                             required_values = [y_val, y2_val, m_val, m2_val]
                             required_dates = [`${y_val}/${m_val}`, `${y2_val}/${m2_val}`]
-                            date_form = 'Y/m-Y2/m2'
+                            date_form = 'Y-m-AA/Y2-m2-AA'
                             break
                         case 'mdy/mdy':
                             required_values = [y_val, m_val, d_val, y2_val, m2_val, d2_val]
@@ -357,7 +357,7 @@ export class BibEntryForm {
                                 `${y_val}/${m_val}/${d_val}`,
                                 `${y2_val}/${m2_val}/${d2_val}`
                             ]
-                            date_form = 'Y/m/d-Y2/m2/d2'
+                            date_form = 'Y-m-d/Y2-m2-d2'
                             break
                     }
 
@@ -366,7 +366,7 @@ export class BibEntryForm {
                         if ('undefined' === typeof(required_values[i]) ||
                             null === required_values[i] ||
                             '' === required_values[i]) {
-                            the_value = ''
+                            theValue = ''
                             break dataTypeSwitch
                         }
                     }
@@ -375,26 +375,26 @@ export class BibEntryForm {
                     for (let i = 0; i < len; i++) {
                         let date_obj = new Date(required_dates[i])
                         if ('Invalid Date' == date_obj) {
-                            the_value = ''
+                            theValue = ''
                             break dataTypeSwitch
                         }
                         date_objs.push(date_obj)
                     }
 
-                    date_form = date_form.replace('d', date_objs[0].getUTCDate())
-                    date_form = date_form.replace('m', date_objs[0].getUTCMonth() + 1)
-                    date_form = date_form.replace('Y', date_objs[0].getUTCFullYear())
+                    date_form = date_form.replace('d', date_objs[0].getDate())
+                    date_form = date_form.replace('m', date_objs[0].getMonth() + 1)
+                    date_form = date_form.replace('Y', date_objs[0].getFullYear())
 
                     if (2 == date_objs.length) {
-                        date_form = date_form.replace('d2', date_objs[1].getUTCDate())
-                        date_form = date_form.replace('m2', date_objs[1].getUTCMonth() + 1)
-                        date_form = date_form.replace('Y2', date_objs[1].getUTCFullYear())
+                        date_form = date_form.replace('d2', date_objs[1].getDate())
+                        date_form = date_form.replace('m2', date_objs[1].getMonth() + 1)
+                        date_form = date_form.replace('Y2', date_objs[1].getFullYear())
                     }
 
-                    the_value = date_form
+                    theValue = date_form
                     break
                 case 'namelist':
-                    the_value = []
+                    theValue = []
                     $this.find('.fw-list-input').each(function() {
                         let $tr = jQuery(this)
                         let first_name = jQuery.trim($tr.find(
@@ -411,37 +411,40 @@ export class BibEntryForm {
                         } else {
                             full_name = '{' + first_name + '} {' + last_name + '}'
                         }
-                        the_value[the_value.length] = full_name
+                        theValue[theValue.length] = full_name
                     })
                     // list to string
-                    the_value = the_value.join(' and ')
+                    theValue = theValue.join(' and ')
                     break
                 case 'literallist':
-                    the_value = []
+                    theValue = []
                     $this.find('.fw-list-input').each(function() {
                         let input_val = jQuery.trim(jQuery(this).find('.fw-input').val())
                         if ('' === input_val) return true
-                        the_value[the_value.length] = '{' + input_val + '}'
+                        theValue[theValue.length] = '{' + input_val + '}'
                     })
                     // list to string
-                    the_value = the_value.join(' and ')
+                    theValue = theValue.join(' and ')
                     break
                 case 'checkbox':
                     //if it is a checkbox, the value will be restored as an Array
-                    the_name = the_name + '[]'
+                    //the_name = the_name + '[]'
                     if (undefined === formValues[the_name]) formValues[the_name] = []
                     if ($this.prop("checked")) {
                         formValues[the_name][formValues[the_name].length] = $this.val()
                     }
                     break
                 default:
-                    the_value = $this.val().replace(/(^\s+)|(\s+$)/g, "")
+                    theValue = $this.val().replace(/(^\s+)|(\s+$)/g, "")
             }
 
-            if (isMust && (undefined === the_value || '' === the_value)) {
-                the_value = 'null'
+            if (isMust && (undefined === theValue || '' === theValue)) {
+                theValue = 'null'
             }
-            formValues[the_name] = the_value
+            if (isMust || '' !== theValue) {
+                console.log([isMust,theValue])
+                formValues[the_name] = theValue
+            }
         })
         this.callback(formValues)
         jQuery('#createbook .warning').detach()
@@ -450,17 +453,16 @@ export class BibEntryForm {
 
     /** Recover the current value of a certain field in the bibliography item form.
      * @function getFormPart
-     * @param form_info Information about the field -- such as it's type (date, text string, etc.)
-     * @param the_id The id specifying the field.
-     * @param the_value The current value of the field.
+     * @param formInfo Information about the field -- such as it's type (date, text string, etc.)
+     * @param fieldName The id specifying the field.
+     * @param theValue The current value of the field.
      */
-    getFormPart(form_info, the_id, the_value) {
-        let the_type = form_info.type
-        let field_name = 'eField' + the_id
+    getFormPart(formInfo, fieldName, theValue) {
+        let the_type = formInfo.type
         switch (the_type) {
             case 'f_date':
-                the_value = formatDateString(the_value)
-                let dates = the_value.split('-'),
+                theValue = formatDateString(theValue)
+                let dates = theValue.split('-'),
                     y_val = ['', ''],
                     m_val = ['', ''],
                     d_val = ['', ''],
@@ -504,35 +506,35 @@ export class BibEntryForm {
 
                 return [
                     dateinputTemplate({
-                        'fieldName': field_name,
+                        'fieldName': fieldName,
                         'dateSelect': dateselectTemplate({
                             'type': 'date',
-                            'formname': 'date' + the_id,
+                            'formname': 'date' + fieldName,
                             'value': d_val[0]
                         }),
                         'monthSelect': dateselectTemplate({
                             'type': 'month',
-                            'formname': 'month' + the_id,
+                            'formname': 'month' + fieldName,
                             'value': m_val[0]
                         }),
                         'yearSelect': dateselectTemplate({
                             'type': 'year',
-                            'formname': 'year' + the_id,
+                            'formname': 'year' + fieldName,
                             'value': y_val[0]
                         }),
                         'date2Select': dateselectTemplate({
                             'type': 'date2',
-                            'formname': 'date2' + the_id,
+                            'formname': 'date2' + fieldName,
                             'value': d_val[1]
                         }),
                         'month2Select': dateselectTemplate({
                             'type': 'month2',
-                            'formname': 'month2' + the_id,
+                            'formname': 'month2' + fieldName,
                             'value': m_val[1]
                         }),
                         'year2Select': dateselectTemplate({
                             'type': 'year2',
-                            'formname': 'year2' + the_id,
+                            'formname': 'year2' + fieldName,
                             'value': y_val[1]
                         })
                     }),
@@ -540,7 +542,7 @@ export class BibEntryForm {
                 ]
                 break
             case 'l_name':
-                let names = the_value.split('} and {'),
+                let names = theValue.split('} and {'),
                     name_values = []
 
                 for (let i = 0; i < names.length; i++) {
@@ -561,7 +563,7 @@ export class BibEntryForm {
                 }
                 return listInputTemplate({
                     'filedType': 'namelist',
-                    'fieldName': field_name,
+                    'fieldName': fieldName,
                     'inputForm': namelistInputTemplate({
                         'fieldValue': name_values
                     })
@@ -569,7 +571,7 @@ export class BibEntryForm {
                 break
             case 'l_key':
             case 'l_literal':
-                let literals = the_value.split('} and {')
+                let literals = theValue.split('} and {')
                 let literal_values = []
                 for (let i = 0; i < literals.length; i++) {
                     literal_values[literal_values.length] = literals[i].replace('{',
@@ -579,20 +581,20 @@ export class BibEntryForm {
                     literal_values[0] = ''
                 return listInputTemplate({
                     'filedType': 'literallist',
-                    'fieldName': field_name,
+                    'fieldName': fieldName,
                     'inputForm': literallistInputTemplate({
                         'fieldValue': literal_values
                     })
                 })
             case 'f_key':
-                if ('undefined' != typeof(form_info.localization)) {
+                if ('undefined' != typeof(formInfo.localization)) {
                     let l_keys = _.select(LocalizationKeys, function(obj) {
-                            return obj.type == form_info.localization
+                            return obj.type == formInfo.localization
                         }),
                         key_options = [],
                         selected_value_title = ''
                     jQuery.each(l_keys, function() {
-                        if (this.name == the_value) {
+                        if (this.name == theValue) {
                             selected_value_title = this.title
                         }
                         key_options.push({
@@ -601,9 +603,9 @@ export class BibEntryForm {
                         })
                     })
                     return selectTemplate({
-                        'fieldName': field_name,
+                        'fieldName': fieldName,
                         'fieldTitle': selected_value_title,
-                        'fieldValue': the_value,
+                        'fieldValue': theValue,
                         'fieldDefault': {
                             'value': '',
                             'title': ''
@@ -614,16 +616,16 @@ export class BibEntryForm {
                     // TODO: Check if we really want this template here.
                     return inputTemplate({
                         'fieldType': 'text',
-                        'fieldName': field_name,
-                        'fieldValue': the_value
+                        'fieldName': fieldName,
+                        'fieldValue': theValue
                     })
                 }
                 break
             default:
                 return inputTemplate({
                     'fieldType': 'text',
-                    'fieldName': field_name,
-                    'fieldValue': the_value
+                    'fieldName': fieldName,
+                    'fieldValue': theValue
                 })
         }
     }

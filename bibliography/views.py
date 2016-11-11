@@ -13,7 +13,6 @@ from django.core.serializers.python import Serializer
 from bibliography.models import (
     Entry,
     EntryType,
-    EntryField,
     EntryCategory
 )
 
@@ -157,6 +156,7 @@ def biblist_js(request):
         response,
         status=status
     )
+
 
 # bibtex file import
 @login_required

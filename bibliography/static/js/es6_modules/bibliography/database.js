@@ -132,12 +132,13 @@ export class BibliographyDB {
      * @param postData The bibliography data to send to the server.
      */
     createBibEntry(bibData, callback) {
-        console.log(bibData)
         let that = this
         activateWait()
         jQuery.ajax({
             url: '/bibliography/save/',
-            data: {bib_data: JSON.stringify(bibData)},
+            data: {
+                bib_data: JSON.stringify(bibData)
+            },
             type: 'POST',
             dataType: 'json',
             crossDomain: false, // obviates need for sameOrigin test

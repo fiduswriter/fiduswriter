@@ -270,6 +270,17 @@ export class BibEntryForm {
         addRemoveListHandler()
     }
 
+    getEntryCat() {
+        let entryCats = []
+        jQuery('.entry-cat').each(function() {
+            let $this = jQuery(this)
+            if ($this.prop("checked")) {
+                entryCats.push($this.val())
+            }
+        })
+        return entryCats.join(',')
+    }
+
     /** Handles the submission of the bibliography entry form.
      * @function onCreateBibEntrySubmitHandler
      * @param id The id of the bibliography item.
@@ -278,7 +289,9 @@ export class BibEntryForm {
         //when submitted, the values in form elements will be restored
         let formValues = {
             'id': id,
-            'entrytype': jQuery('#id_entrytype').val()
+            'entry_type': jQuery('#id_entrytype').val(),
+            'entry_cat': this.getEntryCat(),
+            'fields': {},
         }
         if (this.ownerId) {
             formValues['owner_id'] = this.ownerId
@@ -286,8 +299,9 @@ export class BibEntryForm {
 
         jQuery('.entryForm').each(function() {
             let $this = jQuery(this)
-            let the_name = $this.attr('name') || $this.attr('data-field-name')
-            let the_type = $this.attr('type') || $this.attr('data-type')
+            let theName = $this.attr('name') || $this.attr('data-field-name')
+            let bibFieldType = BibFieldTypes[theName]
+            let theOtherType = $this.attr('type') || $this.attr('data-type')
             let theValue = ''
             let isMust = (1 == $this.parents('#optionTab1').length)
             let eitheror = $this.parents('.eitheror')
@@ -296,22 +310,25 @@ export class BibEntryForm {
                 let fieldNames = eitheror.find('.field-names .fw-pulldown-item')
                 fieldNames.each(function() {
                     if (jQuery(this).hasClass('selected')) {
-                        the_name = 'eField' + jQuery(this).data('value')
+                        theName = jQuery(this).data('value')
                     } else {
-                        formValues['eField' + jQuery(this).data('value')] = ''
+                        formValues.fields[jQuery(this).data('value')] = ''
                     }
                 })
             }
-
-            dataTypeSwitch: switch (the_type) {
-                case 'fieldkeys':
-                    let selected_key_item = $this.find('.fw-pulldown-item.selected')
-                    if (0 === selected_key_item.length) {
-                        selected_key_item = $this.find('.fw-pulldown-item:eq(0)')
+            dataTypeSwitch: switch (bibFieldType.type) {
+                case 'f_key':
+                    if (bibFieldType.localization) {
+                        let selected_key_item = $this.find('.fw-pulldown-item.selected')
+                        if (0 === selected_key_item.length) {
+                            selected_key_item = $this.find('.fw-pulldown-item:eq(0)')
+                        }
+                        theValue = selected_key_item.data('value')
+                    } else {
+                        theValue = $this.val().replace(/(^\s+)|(\s+$)/g, "")
                     }
-                    theValue = selected_key_item.data('value')
                     break
-                case 'date':
+                case 'f_date':
                     //if it is a date form, the values will be formatted yyyy-mm-dd
                     let y_val = $this.find('.select-year').val(),
                         m_val = $this.find('.select-month').val(),
@@ -393,7 +410,7 @@ export class BibEntryForm {
 
                     theValue = date_form
                     break
-                case 'namelist':
+                case 'l_name':
                     theValue = []
                     $this.find('.fw-list-input').each(function() {
                         let $tr = jQuery(this)
@@ -416,24 +433,29 @@ export class BibEntryForm {
                     // list to string
                     theValue = theValue.join(' and ')
                     break
-                case 'literallist':
+                case 'l_literal':
                     theValue = []
                     $this.find('.fw-list-input').each(function() {
-                        let input_val = jQuery.trim(jQuery(this).find('.fw-input').val())
-                        if ('' === input_val) return true
-                        theValue[theValue.length] = '{' + input_val + '}'
+                        let inputVal = jQuery.trim(jQuery(this).find('.fw-input').val())
+                        if ('' === inputVal) return true
+                        theValue.push('{' + inputVal + '}')
                     })
                     // list to string
                     theValue = theValue.join(' and ')
                     break
-                case 'checkbox':
-                    //if it is a checkbox, the value will be restored as an Array
-                    //the_name = the_name + '[]'
-                    if (undefined === formValues[the_name]) formValues[the_name] = []
-                    if ($this.prop("checked")) {
-                        formValues[the_name][formValues[the_name].length] = $this.val()
+                case 'f_integer':
+                    theValue = parseInt($this.val().replace(/(^\s+)|(\s+$)/g, ""))
+                    if (window.isNaN(theValue)) {
+                        theValue = ''
                     }
                     break
+                /*case 'checkbox':
+                    //if it is a checkbox, the value will be restored as an Array
+                    if (undefined === formValues.fields[theName]) formValues.fields[theName] = []
+                    if ($this.prop("checked")) {
+                        formValues.fields[theName][formValues.fields[theName].length] = $this.val()
+                    }
+                    break*/
                 default:
                     theValue = $this.val().replace(/(^\s+)|(\s+$)/g, "")
             }
@@ -442,8 +464,7 @@ export class BibEntryForm {
                 theValue = 'null'
             }
             if (isMust || '' !== theValue) {
-                console.log([isMust,theValue])
-                formValues[the_name] = theValue
+                formValues.fields[theName] = theValue
             }
         })
         this.callback(formValues)

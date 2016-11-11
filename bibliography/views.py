@@ -212,7 +212,6 @@ def save_js(request):
     if request.is_ajax() and request.method == 'POST':
         owner_id = request.user.id
         bib_data = json.loads(request.POST['bib_data'])
-        print bib_data
         if 'owner_id' in bib_data:
             requested_owner_id = int(bib_data['owner_id'])
             # If the user has write access to at least one document of another
@@ -223,77 +222,45 @@ def save_js(request):
                     user=request.user.id, rights='w')) > 0:
                 owner_id = requested_owner_id
         status = 200
-        the_id = int(bib_data['id'])
-        the_type = EntryType.objects.filter(pk=int(bib_data['entrytype']))
+        the_id = bib_data['id']
+        the_cat = bib_data['entry_cat']
+        the_fields = bib_data['fields']
+        the_type = EntryType.objects.filter(pk=int(bib_data['entry_type']))
         # the entry type must exists
         if the_type.exists():
             the_type = the_type[0]
-            the_fields = {}
-            the_cat = ''
-            # save the posted values
-            for key, val in bib_data.iteritems():
-                if 'id' == key or 'entrytype' == key:
-                    # do nothing, if it is the ID or EntryType
-                    continue
-                elif 'entryCat' == key:
-                    # categories are given as Array
-                    # store them with loop
-                    the_cat = ','.join(val)
-                else:
-                    f_type = EntryField.objects.filter(field_name=key)
-                    if f_type.exists():
-                        f_type = f_type[0]
-                    else:
-                        print "NOT EXIST"
-                        print key
-                        continue
 
-                    if f_type.field_type == 'f_integer':
-                        print "integer"
-                        print val
-                        print val == int(val, 10)
-                        # must be int
-                        try:
-                            val = int(val, 10)
-                        except ValueError:
-                            response['errormsg'][
-                                'eField' + key] = 'Value must be number'
-                            continue
-
-                    the_fields[f_type.field_name] = val
-
-            if 0 == len(response['errormsg']):
-                if 0 < the_id:  # saving changes
-                    the_entry = Entry.objects.get(
-                        pk=the_id,
-                        entry_owner=owner_id
-                    )
-                    the_entry.entry_type = the_type
-                else:  # creating a new entry
-                    status = 201
-                    the_entry = Entry(
-                        entry_key='tmp_key',
-                        entry_owner_id=owner_id,
-                        entry_type=the_type
-                    )
-                    the_entry.save()
-                    the_entry.entry_key = 'Fidusbibliography_' + str(
-                        the_entry.id
-                    )
-                # clear categories of the entry to restore them new
-                the_entry.entry_cat = the_cat
-                the_entry.fields = json.dumps(the_fields)
-                the_entry.save()
-                response['values'] = serializer.serialize(
-                    [the_entry],
-                    fields=(
-                        'entry_key',
-                        'entry_owner',
-                        'entry_type',
-                        'entry_cat',
-                        'fields'
-                    )
+            if 0 < the_id:  # saving changes
+                the_entry = Entry.objects.get(
+                    pk=the_id,
+                    entry_owner=owner_id
                 )
+                the_entry.entry_type = the_type
+            else:  # creating a new entry
+                status = 201
+                the_entry = Entry(
+                    entry_key='tmp_key',
+                    entry_owner_id=owner_id,
+                    entry_type=the_type
+                )
+                the_entry.save()
+                the_entry.entry_key = 'Fidusbibliography_' + str(
+                    the_entry.id
+                )
+            # clear categories of the entry to restore them new
+            the_entry.entry_cat = the_cat
+            the_entry.fields = json.dumps(the_fields)
+            the_entry.save()
+            response['values'] = serializer.serialize(
+                [the_entry],
+                fields=(
+                    'entry_key',
+                    'entry_owner',
+                    'entry_type',
+                    'entry_cat',
+                    'fields'
+                )
+            )
         else:
             # if the entry type doesn't exist
             status = 202

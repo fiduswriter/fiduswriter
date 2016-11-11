@@ -131,14 +131,18 @@ export class BibliographyDB {
      * @function createBibEntry
      * @param postData The bibliography data to send to the server.
      */
-    createBibEntry(bibData, callback) {
+    createBibEntry(bib, callback) {
         let that = this
         activateWait()
+        let sendData = {
+            bibs: JSON.stringify([bib])
+        }
+        if (this.docOwnerId !== 0) {
+            sendData['owner_id'] = this.docOwnerId
+        }
         jQuery.ajax({
             url: '/bibliography/save/',
-            data: {
-                bib_data: JSON.stringify(bibData)
-            },
+            data: sendData,
             type: 'POST',
             dataType: 'json',
             crossDomain: false, // obviates need for sameOrigin test
@@ -175,12 +179,12 @@ export class BibliographyDB {
      */
     displayCreateBibEntryError(errors) {
         let noError = true
-        for (let eKey in errors) {
-            let eMsg = '<div class="warning">' + errors[eKey] + '</div>'
-            if ('error' == eKey) {
+        for (let error in errors) {
+            let eMsg = '<div class="warning">' + error + '</div>'
+            if ('error' == error) {
                 jQuery('#createbook').prepend(eMsg)
             } else {
-                jQuery('#id_' + eKey).after(eMsg)
+                jQuery('#id_' + error).after(eMsg)
             }
             noError = false
         }

@@ -206,13 +206,13 @@ def import_bibtex_js(request):
 @login_required
 def save_js(request):
     response = {}
-    response['errormsg'] = {}
+    response['errormsg'] = []
+    response['values'] = []
     status = 403
     if request.is_ajax() and request.method == 'POST':
         owner_id = request.user.id
-        bib_data = json.loads(request.POST['bib_data'])
-        if 'owner_id' in bib_data:
-            requested_owner_id = int(bib_data['owner_id'])
+        if 'owner_id' in request.POST:
+            requested_owner_id = int(request.POST['owner_id'])
             # If the user has write access to at least one document of another
             # user, we allow him to add new and edit bibliography entries of
             # this user.
@@ -221,50 +221,54 @@ def save_js(request):
                     user=request.user.id, rights='w')) > 0:
                 owner_id = requested_owner_id
         status = 200
-        the_id = bib_data['id']
-        the_cat = bib_data['entry_cat']
-        the_fields = bib_data['fields']
-        the_type = EntryType.objects.filter(pk=int(bib_data['entry_type']))
-        # the entry type must exists
-        if the_type.exists():
-            the_type = the_type[0]
+        bibs = json.loads(request.POST['bibs'])
+        for bib in bibs:
+            the_id = bib['id']
+            the_cat = bib['entry_cat']
+            the_fields = bib['fields']
+            the_type = EntryType.objects.filter(pk=int(bib['entry_type']))
+            # the entry type must exists
+            if the_type.exists():
+                the_type = the_type[0]
 
-            if 0 < the_id:  # saving changes
-                the_entry = Entry.objects.get(
-                    pk=the_id,
-                    entry_owner=owner_id
-                )
-                the_entry.entry_type = the_type
-            else:  # creating a new entry
-                status = 201
-                the_entry = Entry(
-                    entry_key='tmp_key',
-                    entry_owner_id=owner_id,
-                    entry_type=the_type
-                )
+                if 0 < the_id:  # saving changes
+                    the_entry = Entry.objects.get(
+                        pk=the_id,
+                        entry_owner=owner_id
+                    )
+                    the_entry.entry_type = the_type
+                else:  # creating a new entry
+                    status = 201
+                    the_entry = Entry(
+                        entry_key='tmp_key',
+                        entry_owner_id=owner_id,
+                        entry_type=the_type
+                    )
+                    the_entry.save()
+                    the_entry.entry_key = 'Fidusbibliography_' + str(
+                        the_entry.id
+                    )
+                # clear categories of the entry to restore them new
+                the_entry.entry_cat = the_cat
+                the_entry.fields = json.dumps(the_fields)
                 the_entry.save()
-                the_entry.entry_key = 'Fidusbibliography_' + str(
-                    the_entry.id
+                response['values'].append(
+                    serializer.serialize(
+                        [the_entry],
+                        fields=(
+                            'entry_key',
+                            'entry_owner',
+                            'entry_type',
+                            'entry_cat',
+                            'fields'
+                        )
+                    )[0]
                 )
-            # clear categories of the entry to restore them new
-            the_entry.entry_cat = the_cat
-            the_entry.fields = json.dumps(the_fields)
-            the_entry.save()
-            response['values'] = serializer.serialize(
-                [the_entry],
-                fields=(
-                    'entry_key',
-                    'entry_owner',
-                    'entry_type',
-                    'entry_cat',
-                    'fields'
-                )
-            )
-        else:
-            # if the entry type doesn't exist
-            status = 202
-            errormsg = 'this type of entry does not exist.'
-            response['errormsg']['error'] = errormsg
+            else:
+                # if the entry type doesn't exist
+                status = 202
+                errormsg = 'this type of entry does not exist.'
+                response['errormsg'].append(errormsg)
 
     return JsonResponse(
         response,

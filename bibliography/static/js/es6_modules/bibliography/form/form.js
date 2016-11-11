@@ -293,9 +293,9 @@ export class BibEntryForm {
             'entry_cat': this.getEntryCat(),
             'fields': {},
         }
-        if (this.ownerId) {
-            formValues['owner_id'] = this.ownerId
-        }
+        //if (this.ownerId) {
+        //    formValues['owner_id'] = this.ownerId
+        //}
 
         jQuery('.entryForm').each(function() {
             let $this = jQuery(this)

@@ -251,7 +251,7 @@ def save_js(request):
                         translate_key = True
                     else:
                         entry_key = 'tmp_key'
-                        translation_key = False
+                        translate_key = False
                     the_entry = Entry(
                         entry_key=entry_key,
                         entry_owner_id=owner_id,

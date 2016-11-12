@@ -133,7 +133,7 @@ export class BibLatexImporter {
         }, that = this
 
         jQuery.ajax({
-            url: '/bibliography/import_bibtex/',
+            url: '/bibliography/save/',
             type: 'post',
             data: postData,
             dataType: 'json',

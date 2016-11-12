@@ -439,6 +439,7 @@ export class BibLatexParser {
     newEntry() {
         this.currentEntry = {
             'entry_type': this.currentType,
+            'entry_cat': '',
             'entry_key': this.key(),
             'fields': {}
         }

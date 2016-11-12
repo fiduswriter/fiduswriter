@@ -281,6 +281,12 @@ export class BibEntryForm {
         return entryCats.join(',')
     }
 
+    getEntryType() {
+        let entryId = parseInt(jQuery('#id_entrytype').val())
+        let entryType = BibEntryTypes[entryId].name
+        return entryType
+    }
+
     /** Handles the submission of the bibliography entry form.
      * @function onCreateBibEntrySubmitHandler
      * @param id The id of the bibliography item.
@@ -289,7 +295,7 @@ export class BibEntryForm {
         //when submitted, the values in form elements will be restored
         let formValues = {
             'id': id,
-            'entry_type': jQuery('#id_entrytype').val(),
+            'entry_type': this.getEntryType(),
             'entry_cat': this.getEntryCat(),
             'fields': {},
         }

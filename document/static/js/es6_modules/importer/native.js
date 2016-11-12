@@ -282,21 +282,31 @@ export class ImportNative {
         function sendBibItems() {
 
             if (newBibEntries.length > 0) {
-                let bibEntries = _.pluck(newBibEntries, 'entry'),
-                    bibDict = {}
+                let bibEntries = _.pluck(newBibEntries, 'entry'), bibs = []
 
-                for (let i = 0; i < bibEntries.length; i++) {
-                    bibEntries[i]['bibtype'] = BibEntryTypes[bibEntries[i]['entry_type']].name
-                    bibDict[bibEntries[i]['entry_key']] = bibEntries[i]
-                    delete bibDict[bibEntries[i]['entry_key']].entry_type
-
-                    delete bibDict[bibEntries[i]['entry_key']].entry_cat
-                    delete bibDict[bibEntries[i]['entry_key']].entry_key
+                for (let importedBib in bibEntries) {
+                    let bib = {
+                        'entry_type': BibEntryTypes[importedBib['entry_type']].name,
+                        'entry_cat': '',
+                        'entry_key': importedBib['entry_key'],
+                        'fields': {}
+                    }
+                    for (let key in window.Object.keys(importedBib)) {
+                        switch (key) {
+                            case 'entry_type':
+                            case 'entry_cat':
+                            case 'entry_key':
+                                break
+                            default:
+                                bib['fields'][key] = importedBib[key]
+                        }
+                    }
+                    bib.push(bib)
                 }
                 jQuery.ajax({
-                    url: '/bibliography/import_bibtex/',
+                    url: '/bibliography/save/',
                     data: {
-                        bibs: JSON.stringify(bibDict)
+                        bibs: JSON.stringify(bibs)
                     },
                     type: 'POST',
                     dataType: 'json',

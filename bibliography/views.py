@@ -170,24 +170,28 @@ def import_bibtex_js(request):
         for e_type in EntryType.objects.all():
             e_types[e_type.type_name] = e_type
         new_bibs = []
-        response['key_translations'] = {}
+        key_translations = {}
         for bib in bibs:
             entry_type = bib['entry_type']
-            entry_key = bib['entry_key']
             # the entry type must exists
             if entry_type in e_types:
                 the_type = e_types[entry_type]
-
             inserting_obj = {
-                'entry_key': entry_key,
                 'entry_owner': request.user,
                 'entry_type': the_type,
                 'fields': json.dumps(bib['fields'])
             }
+            if "entry_key" in bib:
+                old_entry_key = bib['entry_key']
+                inserting_obj['entry_key'] = old_entry_key
+            else:
+                old_entry_key = False
+
             the_entry = save_bib_to_db(inserting_obj, 0)
             if the_entry:
                 new_bibs.append(the_entry)
-                response['key_translations'][entry_key] = the_entry.entry_key
+                if old_entry_key:
+                    key_translations[old_entry_key] = the_entry.entry_key
             response['bibs'] = serializer.serialize(
                 new_bibs,
                 fields=(
@@ -196,6 +200,8 @@ def import_bibtex_js(request):
                     'entry_type',
                     'entry_cat',
                     'fields'))
+        if key_translations != {}:
+            response['key_translations'] = key_translations
     return JsonResponse(
         response,
         status=status
@@ -207,9 +213,10 @@ def import_bibtex_js(request):
 def save_js(request):
     response = {}
     response['errormsg'] = []
-    response['values'] = []
-    status = 403
+    response['bibs'] = []
+    status = 405
     if request.is_ajax() and request.method == 'POST':
+        status = 200
         owner_id = request.user.id
         if 'owner_id' in request.POST:
             requested_owner_id = int(request.POST['owner_id'])
@@ -220,7 +227,7 @@ def save_js(request):
                     document__owner=requested_owner_id,
                     user=request.user.id, rights='w')) > 0:
                 owner_id = requested_owner_id
-        status = 200
+        key_translations = {}
         bibs = json.loads(request.POST['bibs'])
         for bib in bibs:
             the_id = bib['id']
@@ -239,20 +246,29 @@ def save_js(request):
                     the_entry.entry_type = the_type
                 else:  # creating a new entry
                     status = 201
+                    if 'entry_key' in bib:
+                        entry_key = bib['entry_key']
+                        translate_key = True
+                    else:
+                        entry_key = 'tmp_key'
+                        translation_key = False
                     the_entry = Entry(
-                        entry_key='tmp_key',
+                        entry_key=entry_key,
                         entry_owner_id=owner_id,
                         entry_type=the_type
                     )
                     the_entry.save()
-                    the_entry.entry_key = 'Fidusbibliography_' + str(
-                        the_entry.id
-                    )
+                    if translate_key:
+                        key_translations[entry_key] = the_entry.entry_key
+                    else:
+                        the_entry.entry_key = 'Fidusbibliography_' + str(
+                            the_entry.id
+                        )
                 # clear categories of the entry to restore them new
                 the_entry.entry_cat = the_cat
                 the_entry.fields = json.dumps(the_fields)
                 the_entry.save()
-                response['values'].append(
+                response['bibs'].append(
                     serializer.serialize(
                         [the_entry],
                         fields=(
@@ -269,7 +285,8 @@ def save_js(request):
                 status = 202
                 errormsg = 'this type of entry does not exist.'
                 response['errormsg'].append(errormsg)
-
+        if not key_translations == {}:
+            response['key_translations'] = key_translations
     return JsonResponse(
         response,
         status=status

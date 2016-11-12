@@ -153,7 +153,7 @@ export class BibliographyDB {
                 if (that.displayCreateBibEntryError(response.errormsg)) {
                     addAlert('success', gettext('The bibliography has been updated'))
                     let newBibPks = []
-                    let bibList = response.values
+                    let bibList = response.bibs
                     for (let i = 0; i < bibList.length; i++) {
                         newBibPks.push(that.serverBibItemToBibDB(bibList[i]))
                     }

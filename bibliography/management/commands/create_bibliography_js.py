@@ -6,6 +6,8 @@ from bibliography.models import (
     TexSpecialChar,
     EntryField,
     EntryType,
+    EntryFieldAlias,
+    EntryTypeAlias,
     LocalizationKey
 )
 
@@ -71,12 +73,23 @@ class Command(BaseCommand):
                 fid = localization_key[field.id]
                 output_js += '\'localization\': \'' + fid + '\''
             output_js += '},\n'
+        output_js += '}'
+
+        # list of aliases for field types.
+        output_js += (
+            '/** A list of all field aliases and what they refer to. */\n'
+        )
+        output_js += 'export let BibFieldAliasTypes = {\n'
+        for field in EntryFieldAlias.objects.all():
+            output_js += (
+                str(field.field_name) + ': \''
+                + str(field.field_alias.field_name) + '\',\n'
+            )
         output_js += '}\n'
 
         # list of all bibentry types and their fields
         output_js += '/** A list of all bibentry types and their fields. */\n'
         output_js += 'export let BibEntryTypes = {\n'
-
         for entry_type in EntryType.objects.all():
             output_js += str(entry_type.pk) + ' : {\n'
             output_js += '\'id\': ' + str(entry_type.id) + ', '
@@ -107,6 +120,18 @@ class Command(BaseCommand):
             output_js += ']\n'
             output_js += '},\n'
 
+        output_js += '}\n'
+
+        # list of aliases for bibentry types.
+        output_js += (
+            '/** A list of all bibentry aliases and what they refer to. */\n'
+        )
+        output_js += 'export let BibEntryAliasTypes = {\n'
+        for entry_type in EntryTypeAlias.objects.all():
+            output_js += (
+                str(entry_type.type_name) + ': \''
+                + str(entry_type.type_alias.type_name) + '\',\n'
+            )
         output_js += '}\n'
 
         # list of all the localization keys

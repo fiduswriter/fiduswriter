@@ -34,7 +34,7 @@ export let categoryTemplate = _.template('\
         <th><h4 class="fw-tablerow-title"><%- fieldTitle %></h4></th>\
         <td><% _.each(categories, function(cat) { %>\
             <label class="fw-checkable fw-checkable-label<%- cat.checked %>" for="entryCat<%- cat.id %>"><%- cat.category_title %></label>\
-            <input class="fw-checkable-input entryForm entry-cat" type="checkbox" id="entryCat<%- cat.id %>" name="entryCat" value="<%- cat.id %>"<%- cat.checked %> />\
+            <input class="fw-checkable-input entry-cat" type="checkbox" id="entryCat<%- cat.id %>" name="entryCat" value="<%- cat.id %>"<%- cat.checked %> />\
         <% }) %></td>\
     </tr>')
 

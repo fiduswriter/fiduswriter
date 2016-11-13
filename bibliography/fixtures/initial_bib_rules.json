@@ -5598,7 +5598,7 @@
             "type_title": "Article",
             "type_name": "article",
             "type_order": 1,
-            "biblatex": "article", 
+            "biblatex": "article",
             "csl": "article",
             "required_fields": [6, 15, 50, 83],
             "optional_fields": [85, 5, 14, 82, 84, 18, 19, 20, 21, 49, 47, 46, 52, 63, 74, 91, 60, 26, 45, 67, 90, 59, 44, 2, 72, 16, 28, 29, 30, 87, 88]
@@ -5610,7 +5610,7 @@
             "type_title": "Book",
             "type_name": "book",
             "type_order": 10,
-            "biblatex": "book", 
+            "biblatex": "book",
             "csl": "book",
             "required_fields": [6, 83, 15],
             "optional_fields": [18, 19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 56, 55, 57, 52, 63, 91, 70, 17, 92, 74, 60, 59, 71, 54, 41, 13, 67, 68, 2, 72, 16, 28, 29, 30, 87, 88]
@@ -5622,7 +5622,7 @@
             "type_title": "Multi-volume book",
             "type_name": "mvbook",
             "type_order": 11,
-            "biblatex": "mvbook", 
+            "biblatex": "mvbook",
             "csl": "book",
             "required_fields": [6, 83, 15],
             "optional_fields": [18, 19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 52, 63, 17, 92, 74, 60, 59, 71, 54, 41, 68, 2, 72, 16, 28, 29, 30, 87, 88]
@@ -5634,7 +5634,7 @@
             "type_title": "In book",
             "type_name": "inbook",
             "type_order": 12,
-            "biblatex": "inbook", 
+            "biblatex": "inbook",
             "csl": "chapter",
             "required_fields": [6, 83, 11, 15],
             "optional_fields": [8, 18, 19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 56, 55, 57, 10, 12, 52, 63, 91, 70, 17, 92, 74, 60, 59, 71, 54, 41, 13, 67, 2, 72, 16, 28, 29, 30, 87, 88]
@@ -5646,7 +5646,7 @@
             "type_title": "Book in book",
             "type_name": "bookinbook",
             "type_order": 13,
-            "biblatex": "bookinbook", 
+            "biblatex": "bookinbook",
             "csl": "chapter",
             "required_fields": [6, 83, 11, 15],
             "optional_fields": [8, 18, 19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 56, 55, 57, 10, 12, 52, 63, 91, 70, 17, 92, 74, 60, 59, 71, 54, 41, 13, 67, 2, 72, 16, 28, 29, 30, 87, 88]
@@ -5658,7 +5658,7 @@
             "type_title": "Supplemental material in a book",
             "type_name": "suppbook",
             "type_order": 14,
-            "biblatex": "suppbook", 
+            "biblatex": "suppbook",
             "csl": "chapter",
             "required_fields": [6, 83, 11, 15],
             "optional_fields": [8, 18, 19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 56, 55, 57, 10, 12, 52, 63, 91, 70, 17, 92, 74, 60, 59, 71, 54, 41, 13, 67, 2, 72, 16, 28, 29, 30, 87, 88]
@@ -5670,13 +5670,13 @@
             "type_title": "Booklet",
             "type_name": "booklet",
             "type_order": 15,
-            "biblatex": "booklet", 
+            "biblatex": "booklet",
             "csl": "pamphlet",
             "required_fields": [83, 15],
             "eitheror_fields": [6, 18],
             "optional_fields": [82, 84, 52, 36, 86, 59, 54, 13, 67, 68, 2, 72, 16, 28, 29, 30, 87, 88]
         }
-        
+
     }, {
         "pk": 8,
         "model": "bibliography.entrytype",
@@ -5684,7 +5684,7 @@
             "type_title": "Collection",
             "type_name": "collection",
             "type_order": 20,
-            "biblatex": "collection", 
+            "biblatex": "collection",
             "csl": "dataset",
             "required_fields": [18, 83, 15],
             "optional_fields": [19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 56, 55, 57, 52, 63, 91, 70, 17, 92, 74, 60, 59, 71, 54, 41, 13, 67, 68, 2, 72, 16, 28, 29, 30, 87, 88]
@@ -5696,7 +5696,7 @@
             "type_title": "Multi-volume collection",
             "type_name": "mvcollection",
             "type_order": 21,
-            "biblatex": "mvcollection", 
+            "biblatex": "mvcollection",
             "csl": "dataset",
             "required_fields": [18, 83, 15],
             "optional_fields": [19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 52, 63, 17, 92, 74, 60, 59, 71, 54, 41, 68, 2, 72, 16, 28, 29, 30, 87, 88]
@@ -5708,7 +5708,7 @@
             "type_title": "In collection",
             "type_name": "incollection",
             "type_order": 22,
-            "biblatex": "incollection", 
+            "biblatex": "incollection",
             "csl": "entry",
             "required_fields": [6, 18, 83, 11, 15],
             "optional_fields": [19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 56, 55, 57, 10, 12, 52, 63, 91, 70, 17, 92, 74, 60, 59, 71, 54, 41, 13, 67, 2, 72, 16, 28, 29, 30, 87, 88]
@@ -5720,7 +5720,7 @@
             "type_title": "Supplemental material in a collection",
             "type_name": "suppcollection",
             "type_order": 23,
-            "biblatex": "suppcollection", 
+            "biblatex": "suppcollection",
             "csl": "entry",
             "required_fields": [6, 18, 83, 11, 15],
             "optional_fields": [19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 56, 55, 57, 10, 12, 52, 63, 91, 70, 17, 92, 74, 60, 59, 71, 54, 41, 13, 67, 2, 72, 16, 28, 29, 30, 87, 88]
@@ -5732,12 +5732,12 @@
             "type_title": "Manual",
             "type_name": "manual",
             "type_order": 40,
-            "biblatex": "manual", 
+            "biblatex": "manual",
             "csl": "book",
             "required_fields": [83, 15],
             "eitheror_fields": [6, 18],
             "optional_fields": [82, 84, 52, 17, 86, 74, 60, 90, 59, 61, 71, 54, 41, 13, 67, 68, 2, 72, 16, 28, 29, 30, 87, 88]
-        } 
+        }
     }, {
         "pk": 13,
         "model": "bibliography.entrytype",
@@ -5745,7 +5745,7 @@
             "type_title": "Miscellany",
             "type_name": "misc",
             "type_order": 41,
-            "biblatex": "misc", 
+            "biblatex": "misc",
             "csl": "entry",
             "required_fields": [83, 15],
             "eitheror_fields": [6, 18],
@@ -5758,7 +5758,7 @@
             "type_title": "Online resource",
             "type_name": "online",
             "type_order": 42,
-            "biblatex": "online", 
+            "biblatex": "online",
             "csl": "webpage",
             "required_fields": [83, 15, 87],
             "eitheror_fields": [6, 18],
@@ -5771,7 +5771,7 @@
             "type_title": "Patent",
             "type_name": "patent",
             "type_order": 43,
-            "biblatex": "patent", 
+            "biblatex": "patent",
             "csl": "patent",
             "required_fields": [6, 83, 60, 15],
             "optional_fields": [35, 82, 84, 86, 90, 54, 59, 2, 72, 16, 28, 29, 30, 87, 88]
@@ -5783,7 +5783,7 @@
             "type_title": "Periodical",
             "type_name": "periodical",
             "type_order": 50,
-            "biblatex": "periodical", 
+            "biblatex": "periodical",
             "csl": "book",
             "required_fields": [18, 83, 15],
             "optional_fields": [19, 20, 21, 82, 47, 46, 52, 74, 91, 60, 45, 59, 44, 2, 72, 16, 28, 29, 30, 87, 88]
@@ -5795,7 +5795,7 @@
             "type_title": "Supplemental material in a periodical",
             "type_name": "suppperiodical",
             "type_order": 51,
-            "biblatex": "suppperiodical", 
+            "biblatex": "suppperiodical",
             "csl": "entry",
             "required_fields": [6, 15, 50, 83],
             "optional_fields": [85, 5, 14, 82, 84, 18, 19, 20, 21, 49, 47, 46, 52, 63, 74, 91, 60, 26, 45, 67, 90, 59, 44, 2, 72, 16, 28, 29, 30, 87, 88]
@@ -5807,7 +5807,7 @@
             "type_title": "Proceedings",
             "type_name": "proceedings",
             "type_order": 60,
-            "biblatex": "proceedings", 
+            "biblatex": "proceedings",
             "csl": "entry",
             "required_fields": [18, 83, 15],
             "optional_fields": [82, 84, 56, 55, 57, 32, 31, 89, 52, 91, 70, 92, 74, 60, 59, 61, 71, 54, 41, 13, 67, 68, 2, 72, 16, 28, 29, 30, 87, 88]
@@ -5819,7 +5819,7 @@
             "type_title": "Multi-volume proceedings",
             "type_name": "mvproceedings",
             "type_order": 61,
-            "biblatex": "mvproceedings", 
+            "biblatex": "mvproceedings",
             "csl": "entry",
             "required_fields": [18, 83, 15],
             "optional_fields": [82, 84, 32, 31, 89, 52, 92, 74, 60, 59, 61, 71, 54, 41, 68, 2, 72, 16, 28, 29, 30, 87, 88]
@@ -5831,7 +5831,7 @@
             "type_title": "Article in a proceedings",
             "type_name": "inproceedings",
             "type_order": 62,
-            "biblatex": "inproceedings", 
+            "biblatex": "inproceedings",
             "csl": "paper-conference",
             "required_fields": [6, 18, 83, 11, 15],
             "optional_fields": [82, 84, 56, 55, 57, 10, 12, 32, 31, 89, 52, 91, 70, 92, 74, 60, 59, 61, 71, 54, 41, 13, 67, 2, 72, 16, 28, 29, 30, 87, 88]
@@ -5843,7 +5843,7 @@
             "type_title": "Reference",
             "type_name": "reference",
             "type_order": 70,
-            "biblatex": "book", 
+            "biblatex": "book",
             "csl": "reference",
             "required_fields": [18, 83, 15],
             "optional_fields": [19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 56, 55, 57, 52, 63, 91, 70, 17, 92, 74, 60, 59, 71, 54, 41, 13, 67, 68, 2, 72, 16, 28, 29, 30, 87, 88]
@@ -5855,7 +5855,7 @@
             "type_title": "Multi-volume work of reference",
             "type_name": "mvreference",
             "type_order": 71,
-            "biblatex": "mvreference", 
+            "biblatex": "mvreference",
             "csl": "book",
             "required_fields": [18, 83, 15],
             "optional_fields": [19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 52, 63, 17, 92, 74, 60, 59, 71, 54, 41, 68, 2, 72, 16, 28, 29, 30, 87, 88]
@@ -5867,7 +5867,7 @@
             "type_title": "Article in a work of reference",
             "type_name": "inreference",
             "type_order": 72,
-            "biblatex": "inreference", 
+            "biblatex": "inreference",
             "csl": "entry",
             "required_fields": [6, 18, 83, 11, 15],
             "optional_fields": [19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 56, 55, 57, 10, 12, 52, 63, 91, 70, 17, 92, 74, 60, 59, 71, 54, 41, 13, 67, 2, 72, 16, 28, 29, 30, 87, 88]
@@ -5879,7 +5879,7 @@
             "type_title": "Report",
             "type_name": "report",
             "type_order": 80,
-            "biblatex": "report", 
+            "biblatex": "report",
             "csl": "report",
             "required_fields": [6, 83, 86, 38, 15],
             "optional_fields": [82, 84, 52, 60, 90, 59, 54, 43, 13, 67, 68, 2, 72, 16, 28, 29, 30, 87, 88]
@@ -5891,7 +5891,7 @@
             "type_title": "Thesis",
             "type_name": "thesis",
             "type_order": 81,
-            "biblatex": "thesis", 
+            "biblatex": "thesis",
             "csl": "thesis",
             "required_fields": [6, 83, 86, 38, 15],
             "optional_fields": [82, 84, 52, 59, 54, 41, 13, 67, 68, 2, 72, 16, 28, 29, 30, 87, 88]
@@ -5903,7 +5903,7 @@
             "type_title": "Unpublished",
             "type_name": "unpublished",
             "type_order": 90,
-            "biblatex": "unpublished", 
+            "biblatex": "unpublished",
             "csl": "manuscript",
             "required_fields": [6, 83, 15],
             "optional_fields": [82, 84, 52, 36, 59, 54, 41, 15, 2, 72, 87, 88]
@@ -5915,7 +5915,7 @@
             "type_title": "Magazine article",
             "type_name": "article-magazine",
             "type_order": 2,
-            "biblatex": "article", 
+            "biblatex": "article",
             "csl": "article-magazine",
             "required_fields": [6, 15, 50, 83],
             "optional_fields": [85, 5, 14, 82, 84, 18, 19, 20, 21, 49, 47, 46, 52, 63, 74, 91, 60, 26, 45, 67, 90, 59, 44, 2, 72, 16, 28, 29, 30, 87, 88]
@@ -5927,7 +5927,7 @@
             "type_title": "Newspaper article",
             "type_name": "article-newspaper",
             "type_order": 3,
-            "biblatex": "article", 
+            "biblatex": "article",
             "csl": "article-newspaper",
             "required_fields": [6, 15, 50, 83],
             "optional_fields": [85, 5, 14, 82, 84, 18, 19, 20, 21, 49, 47, 46, 52, 63, 74, 91, 60, 26, 45, 67, 90, 59, 44, 2, 72, 16, 28, 29, 30, 87, 88]
@@ -5939,7 +5939,7 @@
             "type_title": "Journal article",
             "type_name": "article-journal",
             "type_order": 4,
-            "biblatex": "article", 
+            "biblatex": "article",
             "csl": "article-journal",
             "required_fields": [6, 15, 50, 83],
             "optional_fields": [85, 5, 14, 82, 84, 18, 19, 20, 21, 49, 47, 46, 52, 63, 74, 91, 60, 26, 45, 67, 90, 59, 44, 2, 72, 16, 28, 29, 30, 87, 88]
@@ -5951,7 +5951,7 @@
             "type_title": "Encyclopedia entry",
             "type_name": "entry-encyclopedia",
             "type_order": 73,
-            "biblatex": "inreference", 
+            "biblatex": "inreference",
             "csl": "entry-encyclopedia",
             "required_fields": [6, 18, 83, 11, 15],
             "optional_fields": [19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 56, 55, 57, 10, 12, 52, 63, 91, 70, 17, 92, 74, 60, 59, 71, 54, 41, 13, 67, 2, 72, 16, 28, 29, 30, 87, 88]
@@ -5963,7 +5963,7 @@
             "type_title": "Dictionary entry",
             "type_name": "entry-dictionary",
             "type_order": 74,
-            "biblatex": "inreference", 
+            "biblatex": "inreference",
             "csl": "entry-dictionary",
             "required_fields": [6, 18, 83, 11, 15],
             "optional_fields": [19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 56, 55, 57, 10, 12, 52, 63, 91, 70, 17, 92, 74, 60, 59, 71, 54, 41, 13, 67, 2, 72, 16, 28, 29, 30, 87, 88]
@@ -5975,7 +5975,7 @@
             "type_title": "Blog post",
             "type_name": "post-weblog",
             "type_order": 5,
-            "biblatex": "online", 
+            "biblatex": "online",
             "csl": "post-weblog",
             "required_fields": [83, 15, 87],
             "eitheror_fields": [6, 18],
@@ -5988,7 +5988,7 @@
             "type_title": "Forum post",
             "type_name": "post",
             "type_order": 30,
-            "biblatex": "online", 
+            "biblatex": "online",
             "csl": "post",
             "required_fields": [83, 15, 87],
             "eitheror_fields": [6, 18],
@@ -6207,7 +6207,7 @@
         "pk": 8,
         "model": "bibliography.entryfieldalias",
         "fields": {
-            "field_name": "annote,",
+            "field_name": "annote",
             "field_alias": 4
         }
     }, {

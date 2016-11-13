@@ -283,15 +283,14 @@ export class ImportNative {
 
             if (newBibEntries.length > 0) {
                 let bibEntries = _.pluck(newBibEntries, 'entry'), bibs = []
-
-                for (let importedBib in bibEntries) {
+                for (let importedBib of bibEntries) {
                     let bib = {
                         'entry_type': BibEntryTypes[importedBib['entry_type']].name,
                         'entry_cat': '',
                         'entry_key': importedBib['entry_key'],
                         'fields': {}
                     }
-                    for (let key in window.Object.keys(importedBib)) {
+                    for (let key of window.Object.keys(importedBib)) {
                         switch (key) {
                             case 'entry_type':
                             case 'entry_cat':
@@ -301,7 +300,7 @@ export class ImportNative {
                                 bib['fields'][key] = importedBib[key]
                         }
                     }
-                    bib.push(bib)
+                    bibs.push(bib)
                 }
                 jQuery.ajax({
                     url: '/bibliography/save/',
@@ -316,15 +315,16 @@ export class ImportNative {
                     },
                     success: function(response, textStatus, jqXHR) {
                         let errors = response.errors,
-                            warnings = response.warning,
-                            len = errors.length
-
-                        for (let i = 0; i < len; i++) {
-                            addAlert('error', errors[i])
+                            warnings = response.warning
+                        if (errors) {
+                            errors.forEach(function(error){
+                                addAlert('error', error)
+                            })
                         }
-                        len = warnings.length
-                        for (let i = 0; i < len; i++) {
-                            addAlert('warning', warnings[i])
+                        if (warnings) {
+                            warnings.forEach(function(warning){
+                                addAlert('warning', warning)
+                            })
                         }
                         _.each(response.key_translations, function(newKey, oldKey) {
                             let newID = _.findWhere(response.bibs, {
@@ -339,7 +339,7 @@ export class ImportNative {
                         that.translateReferenceIds(BibTranslationTable, ImageTranslationTable)
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
-                        console.log(jqXHR.responseText)
+                        console.error(jqXHR.responseText)
                     },
                     complete: function() {}
                 })

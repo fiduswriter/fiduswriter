@@ -19,7 +19,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
     user = None
     TEST_TEXT = "Lorem ipsum dolor sit amet."
     MULTILINE_TEST_TEXT = "Lorem ipsum\ndolor sit amet."
-    fixtures = ["initial_bib_rules.json", ]
+    fixtures = []
 
     @classmethod
     def setUpClass(cls):

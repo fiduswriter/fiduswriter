@@ -23,7 +23,7 @@ export class ModMenusCitation {
 
         let citeItemData = {
             'id': pk,
-            'type': bibInfo.entry_type,
+            'type': bibInfo.bib_type,
             'title': bibInfo.title.replace(/[{}]/g, ''),
             'author': bibauthor.replace(/[{}]/g, '')
         }

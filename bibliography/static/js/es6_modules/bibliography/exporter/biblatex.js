@@ -1,5 +1,5 @@
 import {zipFileCreator} from "../../exporter/tools/zip"
-import {BibEntryTypes, BibFieldTypes} from "../statics"
+import {BibTypes, BibFieldTypes} from "../statics"
 
 
 const TexSpecialChars = [ // A much smaller list, as biblatex does understand utf8
@@ -63,12 +63,12 @@ export class BibLatexExporter {
             let pk = this.pks[i]
             let bib = this.aBibDB[pk]
             let bibEntry = {
-                'type': BibEntryTypes[bib['entry_type']]['biblatex'],
+                'type': BibTypes[bib['bib_type']]['biblatex'],
                 'key': bib['entry_key']
             }
             let fValues = {}
             for (let fKey in bib) {
-                if ('entry_key' == fKey || 'id' == fKey || 'entry_type' ==
+                if ('entry_key' == fKey || 'id' == fKey || 'bib_type' ==
                     fKey || 'entry_owner' == fKey || 0 === fKey.indexOf(
                         'bibtype') ||
                     'entry_cat' == fKey)

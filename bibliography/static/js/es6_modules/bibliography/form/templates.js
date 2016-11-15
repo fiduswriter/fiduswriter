@@ -4,9 +4,9 @@ export let sourcetypeTemplate = _.template('<div id="source-type-selection" clas
         <span id="selected-source-type-title"><%= fieldTitle %></span>\
         <span class="icon-down-dir"></span>\
         <div class="fw-pulldown fw-center">\
-            <ul><% _.each(_.sortBy(options, function(source_type){ return source_type.order; }), function(opt) { %>\
+            <ul><% Object.keys(options).forEach(function(key) { %>\
                 <li>\
-                    <span class="fw-pulldown-item" data-value="<%- opt.id %>"><%= gettext(opt.title) %></span>\
+                    <span class="fw-pulldown-item" data-value="<%- key %>"><%= titles[key] %></span>\
                 </li>\
             <% }) %></ul>\
         </div>\
@@ -70,14 +70,14 @@ export let inputTrTemplate = _.template('\
 export let eitherorTrTemplate = _.template('<tr class="eitheror">\
         <th>\
             <div class="fw-bib-field-pulldown fw-bib-form-pulldown">\
-                <label><%- selected.title %></label>\
+                <label><%- BibFieldTitles[selected] %></label>\
                 <span class="icon-down-dir"></span>\
                 <div class="fw-pulldown field-names fw-left">\
                     <ul><% _.each(fields, function(field) { %>\
                         <li>\
-                            <span class="fw-pulldown-item<% if(selected.id == field.id) { %> selected<% } %>"\
-                                data-value="<%= field.name %>">\
-                                <%- field.title %>\
+                            <span class="fw-pulldown-item<% if(selected == field) { %> selected<% } %>"\
+                                data-value="<%= field %>">\
+                                <%- BibFieldTitles[field] %>\
                             </span>\
                         </li>\
                     <% }) %></ul>\

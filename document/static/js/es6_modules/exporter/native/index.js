@@ -9,7 +9,7 @@ import {docSchema} from "../../schema/document"
  * The importer will not import from a higher version and the exporter
   * will include this number in all exports.
  */
-export let FW_FILETYPE_VERSION = "1.4"
+export let FW_FILETYPE_VERSION = "1.5"
 
 /** Create a Fidus Writer document and upload it to the server as a backup.
  * @function uploadNative

@@ -1,4 +1,4 @@
-import {BibEntryTypes, BibFieldTypes} from "../statics"
+import {BibTypes, BibFieldTypes} from "../statics"
 
 /** Converts a BibDB to a DB of the CSL type.
  * @param bibDB The bibliography database to convert.
@@ -39,7 +39,7 @@ export class CSLExporter {
                 }
             }
         }
-        cslOutput['type'] = BibEntryTypes[bib.entry_type].csl
+        cslOutput['type'] = BibTypes[bib.bib_type].csl
         return cslOutput
     }
 

@@ -1,4 +1,3 @@
-import {BibEntryTypes} from "../bibliography/statics"
 import {addAlert, csrfToken} from "../common/common"
 import {docSchema} from "../schema/document"
 
@@ -285,14 +284,14 @@ export class ImportNative {
                 let bibEntries = _.pluck(newBibEntries, 'entry'), bibs = []
                 for (let importedBib of bibEntries) {
                     let bib = {
-                        'entry_type': BibEntryTypes[importedBib['entry_type']].name,
+                        'bib_type': importedBib['bib_type'],
                         'entry_cat': '',
                         'entry_key': importedBib['entry_key'],
                         'fields': {}
                     }
                     for (let key of window.Object.keys(importedBib)) {
                         switch (key) {
-                            case 'entry_type':
+                            case 'bib_type':
                             case 'entry_cat':
                             case 'entry_key':
                                 break

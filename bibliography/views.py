@@ -12,7 +12,6 @@ from django.core.serializers.python import Serializer
 
 from bibliography.models import (
     Entry,
-    EntryType,
     EntryCategory
 )
 
@@ -69,7 +68,7 @@ def biblist_js(request):
                         entry_owner__in=user_ids), fields=(
                             'entry_key',
                             'entry_owner',
-                            'entry_type',
+                            'bib_type',
                             'entry_cat',
                             'fields'
                         )
@@ -106,7 +105,7 @@ def biblist_js(request):
                                 entry_owner=user_id), fields=(
                                     'entry_key',
                                     'entry_owner',
-                                    'entry_type',
+                                    'bib_type',
                                     'entry_cat',
                                     'fields'
                                 )
@@ -121,7 +120,7 @@ def biblist_js(request):
                         ), fields=(
                             'entry_key',
                             'entry_owner',
-                            'entry_type',
+                            'bib_type',
                             'entry_cat',
                             'fields'
                         )
@@ -136,16 +135,14 @@ def biblist_js(request):
 
 
 def save_bib_to_db(inserting_obj, suffix):
-    print inserting_obj
     if 'id' in inserting_obj:
         old_entries = Entry.objects.filter(pk=int(inserting_obj['id']))
-        print old_entries
         if len(old_entries) == 0:
             del inserting_obj['id']
             return save_bib_to_db(inserting_obj, suffix)
         else:
             the_entry = old_entries[0]
-            the_entry.entry_type = inserting_obj['entry_type']
+            the_entry.bib_type = inserting_obj['bib_type']
             the_entry.entry_cat = inserting_obj['entry_cat']
             the_entry.fields = inserting_obj['fields']
             the_entry.save()
@@ -190,29 +187,13 @@ def save_js(request):
                     document__owner=requested_owner_id,
                     user=request.user.id, rights='w')) > 0:
                 owner_id = requested_owner_id
-        e_types = {}
-        for e_type in EntryType.objects.all():
-            e_types[e_type.type_name] = e_type
         new_bibs = []
         key_translations = {}
         for bib in bibs:
-            entry_type = bib['entry_type']
-            # the entry type must exists
-            if entry_type in e_types:
-                the_type = e_types[entry_type]
-            else:
-                # if the entry type doesn't exist
-                status = 202
-                errormsg = 'this type of entry does not exist.'
-                response['errormsg'].append(errormsg)
-                return JsonResponse(
-                    response,
-                    status=status
-                )
             inserting_obj = {
                 'entry_owner_id': owner_id,
                 'entry_cat': bib['entry_cat'],
-                'entry_type': the_type,
+                'bib_type': bib['bib_type'],
                 'fields': json.dumps(bib['fields'])
             }
             if 'entry_key' in bib:
@@ -232,7 +213,7 @@ def save_js(request):
             fields=(
                 'entry_key',
                 'entry_owner',
-                'entry_type',
+                'bib_type',
                 'entry_cat',
                 'fields'))
         if key_translations != {}:

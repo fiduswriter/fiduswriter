@@ -1,4 +1,4 @@
-import {TexSpecialChars, BibFieldTypes, BibFieldAliasTypes, BibEntryTypes, BibEntryAliasTypes} from "../statics"
+import {TexSpecialChars, BibFieldTypes, BiblatexFieldAliasTypes, BibTypes, BiblatexAliasTypes} from "../statics"
 import {BibLatexNameStringParser} from "./name-string-parser"
 
 /** Parses files in BibTeX/BibLaTeX format
@@ -250,28 +250,35 @@ export class BibLatexParser {
             this.currentEntry['fields']['date'] = `${date.year}`
         }
 
-        let entryType = this.currentEntry['entry_type']
-        if (BibEntryAliasTypes[entryType]) {
-            entryType = BibEntryAliasTypes[entryType]
-            this.currentEntry['entry_type'] = entryType
+        let biblatexType = this.currentEntry['biblatex_type']
+        if (BiblatexAliasTypes[biblatexType]) {
+            biblatexType = BiblatexAliasTypes[biblatexType]
         }
 
-        let eType = _.findWhere(BibEntryTypes, {biblatex: entryType})
-        if('undefined' == typeof(eType)) {
+        let bibType = ''
+        Object.keys(BibTypes).forEach((bType) => {
+            if (BibTypes[bType]['biblatex'] === biblatexType) {
+                bibType = bType
+            }
+        })
+
+        if(bibType === '') {
             this.errors.push({
                 type: 'unknown_type',
                 entry: this.currentEntry['entry_key'],
-                type_name: entryType
+                type_name: biblatexType
             })
-            this.currentEntry['entry_type'] = 'misc'
+            this.currentEntry['bib_type'] = 'misc'
+        } else {
+            this.currentEntry['bib_type'] = bibType
         }
 
         for(let fKey in this.currentEntry['fields']) {
             // Replace alias fields with their main term.
-            if (BibFieldAliasTypes[fKey]) {
+            if (BiblatexFieldAliasTypes[fKey]) {
                 let value = this.currentEntry['fields'][fKey]
                 delete this.currentEntry['fields'][fKey]
-                fKey = BibFieldAliasTypes[fKey]
+                fKey = BiblatexFieldAliasTypes[fKey]
                 this.currentEntry['fields'][fKey] = value
             }
             let field = BibFieldTypes[fKey]
@@ -438,7 +445,7 @@ export class BibLatexParser {
 
     newEntry() {
         this.currentEntry = {
-            'entry_type': this.currentType,
+            'biblatex_type': this.currentType,
             'entry_cat': '',
             'entry_key': this.key(),
             'fields': {}

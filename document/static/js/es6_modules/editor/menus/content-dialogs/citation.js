@@ -76,7 +76,7 @@ export let citationDialog = function (mod) {
     _.each(editor.bibDB.db, function(bib, index) {
         let bibEntry = {
                 'id': index,
-                'type': bib.entry_type,
+                'type': bib.bib_type,
                 'title': bib.title || '',
                 'author': bib.author || bib.editor || ''
             },

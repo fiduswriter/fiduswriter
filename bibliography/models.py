@@ -127,9 +127,9 @@ class Entry(models.Model):
     # identifier of the user, who created the entry.
     entry_owner = models.ForeignKey(User)
     # identifier of the entrytype for the entry.
-    entry_type = models.ForeignKey(EntryType)
     entry_cat = models.CharField(max_length=255, default='')
     last_modified = models.DateTimeField(auto_now=True)
+    bib_type = models.CharField(max_length=30, default='')
     fields = models.TextField(default='{}')  # json object with all the fields
 
     def __unicode__(self):

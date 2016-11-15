@@ -51,14 +51,21 @@ class Command(BaseCommand):
                       'lookup by field name. */\n')
         output_js += 'export let BibFieldTypes = {\n'
         for field in EntryField.objects.all():
-            output_js += str(field.field_name) + ': {\n'
-            output_js += '\'id\': ' + str(field.id) + ', '
-            output_js += '\'type\': \'' + field.field_type + '\', '
-            output_js += '\'name\': \'' + field.field_name + '\', '
-            output_js += '\'biblatex\': \'' + field.biblatex + '\', '
+            output_js += '\'' + str(field.field_name) + '\': {\n'
+            output_js += 'type: \'' + field.field_type + '\', '
+            output_js += 'biblatex: \'' + field.biblatex + '\', '
             if field.csl != '':
-                output_js += '\'csl\': \'' + field.csl + '\', '
-            output_js += '\'title\': gettext(\'' + escape(
+                output_js += 'csl: \'' + field.csl + '\', '
+            if field.id in localization_key:
+                fid = localization_key[field.id]
+                output_js += 'localization: \'' + fid + '\''
+            output_js += '},\n'
+        output_js += '}'
+
+        output2_js = 'export let BibFieldTitles = {\n'
+        for field in EntryField.objects.all():
+            output2_js += '\'' + str(field.field_name) + '\': '
+            output2_js += 'gettext(\'' + escape(
                 field.field_title
             ).replace(
                 '\\ ', ' '
@@ -68,53 +75,38 @@ class Command(BaseCommand):
                 '\\)', ')'
             ).replace(
                 '\\-', '-'
-            ) + '\'),'
-            if field.id in localization_key:
-                fid = localization_key[field.id]
-                output_js += '\'localization\': \'' + fid + '\''
-            output_js += '},\n'
-        output_js += '}'
+            ) + '\'),\n'
+        output2_js += '}\n\n'
 
         # list of aliases for field types.
         output_js += (
             '/** A list of all field aliases and what they refer to. */\n'
         )
-        output_js += 'export let BibFieldAliasTypes = {\n'
+        output_js += 'export let BiblatexFieldAliasTypes = {\n'
         for field in EntryFieldAlias.objects.all():
             output_js += (
-                str(field.field_name) + ': \''
-                + str(field.field_alias.field_name) + '\',\n'
+                '\''+str(field.field_name) + '\': \''
+                + str(field.field_alias.biblatex) + '\',\n'
             )
         output_js += '}\n'
 
         # list of all bibentry types and their fields
-        output_js += '/** A list of all bibentry types and their fields. */\n'
-        output_js += 'export let BibEntryTypes = {\n'
-        for entry_type in EntryType.objects.all():
-            output_js += str(entry_type.pk) + ' : {\n'
-            output_js += '\'id\': ' + str(entry_type.id) + ', '
-            output_js += '\'order\': ' + str(entry_type.type_order) + ', '
-            output_js += '\'name\': \'' + entry_type.type_name + '\', '
-            output_js += '\'biblatex\': \'' + entry_type.biblatex + '\', '
-            output_js += '\'csl\': \'' + entry_type.csl + '\', '
-            output_js += '\'title\': gettext(\'' + escape(
-                entry_type.type_title
-            ).replace('\\ ', ' ').replace(
-                '\\(', '('
-            ).replace(
-                '\\)', ')'
-            ).replace(
-                '\\-', '-'
-            ) + '\'), '
-            output_js += '\'required\':['
+        output_js += '/** A list of all bib types and their fields. */\n'
+        output_js += 'export let BibTypes = {\n'
+        for entry_type in EntryType.objects.all().order_by('type_order'):
+            output_js += '\'' + str(entry_type.type_name) + '\' : {\n'
+            output_js += 'order: ' + str(entry_type.type_order) + ', \n'
+            output_js += 'biblatex: \'' + entry_type.biblatex + '\', \n'
+            output_js += 'csl: \'' + entry_type.csl + '\', \n'
+            output_js += 'required:['
             for field in entry_type.required_fields.all():
                 output_js += '\'' + field.field_name + '\','
             output_js += '],\n'
-            output_js += '\'eitheror\':['
+            output_js += 'eitheror:['
             for field in entry_type.eitheror_fields.all():
                 output_js += '\'' + field.field_name + '\','
             output_js += '],\n'
-            output_js += '\'optional\':['
+            output_js += 'optional:['
             for field in entry_type.optional_fields.all():
                 output_js += '\'' + field.field_name + '\','
             output_js += ']\n'
@@ -122,29 +114,42 @@ class Command(BaseCommand):
 
         output_js += '}\n'
 
+        output2_js += 'export let BibTypeTitles = {\n'
+        for entry_type in EntryType.objects.all():
+            output2_js += '\'' + str(entry_type.type_name) + '\' : '
+            output2_js += 'gettext(\'' + escape(
+                entry_type.type_title
+            ).replace('\\ ', ' ').replace(
+                '\\(', '('
+            ).replace(
+                '\\)', ')'
+            ).replace(
+                '\\-', '-'
+            ) + '\'),\n'
+        output2_js += '}\n'
         # list of aliases for bibentry types.
         output_js += (
             '/** A list of all bibentry aliases and what they refer to. */\n'
         )
-        output_js += 'export let BibEntryAliasTypes = {\n'
+        output_js += 'export let BiblatexAliasTypes = {\n'
         for entry_type in EntryTypeAlias.objects.all():
             output_js += (
-                str(entry_type.type_name) + ': \''
-                + str(entry_type.type_alias.type_name) + '\',\n'
+                '\'' + str(entry_type.type_name) + '\': \''
+                + str(entry_type.type_alias.biblatex) + '\',\n'
             )
         output_js += '}\n'
 
         # list of all the localization keys
-        output_js += ('/** A list of all the bibliography keys and their full '
-                      'name. */\n')
-        output_js += 'export let LocalizationKeys = [\n'
+        output2_js += ('/** A list of all the bibliography keys and their '
+                       'full name. */\n')
+        output2_js += 'export let LocalizationKeys = [\n'
         for l_key in LocalizationKey.objects.all():
-            output_js += '{\n'
-            output_js += '\'type\': \'' + l_key.key_type + '\', '
-            output_js += '\'name\': \'' + l_key.key_name + '\', '
-            output_js += '\'title\': \'' + escape(l_key.key_title) + '\'\n'
-            output_js += '},\n'
-        output_js += ']\n'
+            output2_js += '{\n'
+            output2_js += 'type: \'' + l_key.key_type + '\', \n'
+            output2_js += 'name: \'' + l_key.key_name + '\', \n'
+            output2_js += 'title: \'' + escape(l_key.key_title) + '\'\n'
+            output2_js += '},\n'
+        output2_js += ']\n'
 
         # write the file
         d = os.path.dirname(
@@ -163,3 +168,13 @@ class Command(BaseCommand):
         bib_js_file.write(output_js.encode('utf8'))
 
         bib_js_file.close()
+
+        bib2_js_file = open(
+            PROJECT_PATH+('/bibliography/static/js/es6_modules/bibliography/'
+                          'form/titles.js'),
+            "w"
+        )
+
+        bib2_js_file.write(output2_js.encode('utf8'))
+
+        bib2_js_file.close()

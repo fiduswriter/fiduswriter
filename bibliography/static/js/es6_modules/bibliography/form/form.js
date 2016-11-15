@@ -21,8 +21,12 @@ import {
 } from "./templates"
 
 import {
-    LocalizationKeys, BibEntryTypes, BibFieldTypes
-} from "../statics.js"
+    BibTypes, BibFieldTypes
+} from "../statics"
+
+import {
+    LocalizationKeys, BibTypeTitles, BibFieldTitles
+} from "./titles"
 
 import {addDropdownBox, setCheckableLabel} from "../../common/common"
 
@@ -52,7 +56,7 @@ export class BibEntryForm {
             entryCat = []
         } else {
             dialogHeader = gettext('Edit Source')
-            let entryType = BibEntryTypes[type]
+            let entryType = BibTypes[type]
             rFields = entryType.required
             oFields = entryType.optional
             eoFields = entryType.eitheror
@@ -79,14 +83,15 @@ export class BibEntryForm {
         if ('' === type || typeof(type) === 'undefined') {
             typeTitle = gettext('Select source type')
         } else {
-            typeTitle = BibEntryTypes[type]['title']
+            typeTitle = BibTypeTitles[type]
         }
 
         let sourType = sourcetypeTemplate({
-            'fieldTitle': typeTitle,
-            'fieldName': 'entrytype',
-            'fieldValue': type,
-            'options': BibEntryTypes
+            fieldTitle: typeTitle,
+            fieldName: 'entrytype',
+            fieldValue: type,
+            options: BibTypes,
+            titles: BibTypeTitles
         })
 
         //get html of dialog body
@@ -189,7 +194,7 @@ export class BibEntryForm {
             if (0 === id) {
                 theValue = ''
             } else {
-                theValue = that.bibDB[id][BibFieldTypes[this].name]
+                theValue = that.bibDB[id][this]
                 if ('undefined' === typeof(theValue)) {
                     theValue = ''
                 }
@@ -199,31 +204,28 @@ export class BibEntryForm {
                 let date_form_html = that.getFormPart(BibFieldTypes[this], this, theValue),
                     date_format = date_form_html[1]
                 ret += dateinputTrTemplate({
-                    'fieldTitle': BibFieldTypes[this].title,
+                    'fieldTitle': BibFieldTitles[this],
                     'format': date_format,
                     'inputForm': date_form_html[0],
                     dateFormat
                 })
             } else {
                 ret += inputTrTemplate({
-                    'fieldTitle': BibFieldTypes[this].title,
+                    'fieldTitle': BibFieldTitles[this],
                     'inputForm': that.getFormPart(BibFieldTypes[this], this, theValue)
                 })
             }
         })
 
-        jQuery.each(eitheror, function() {
-            eitheror_fields.push(BibFieldTypes[this])
-        })
-
         if (1 < eitheror.length) {
-            let selected_field = eitheror_fields[0]
-            jQuery.each(eitheror_fields, function() {
+            let selected = eitheror[0]
+            eitheror.forEach(function(field) {
                 //if the field has value, get html with template function of underscore.js
                 if (0 !== id) {
-                    let current_val = that.bibDB[id][this.name]
+
+                    let current_val = that.bibDB[id][field]
                     if (null !== current_val && 'undefined' !== typeof(current_val) && '' !== current_val) {
-                        selected_field = this
+                        selected = field
                         return false
                     }
                 }
@@ -232,16 +234,17 @@ export class BibEntryForm {
             if (0 === id) {
                 theValue = ''
             } else {
-                theValue = that.bibDB[id][selected_field.name]
+                theValue = that.bibDB[id][selected]
                 if ('undefined' === typeof(theValue)) {
                     theValue = ''
                 }
             }
 
             ret = eitherorTrTemplate({
-                'fields': eitheror_fields,
-                'selected': selected_field,
-                'inputForm': that.getFormPart(selected_field, id, theValue)
+                'fields': eitheror,
+                'BibFieldTitles': BibFieldTitles,
+                'selected': selected,
+                'inputForm': that.getFormPart(BibFieldTypes[selected], selected, theValue)
             }) + ret
         }
         return ret
@@ -254,7 +257,7 @@ export class BibEntryForm {
      */
 
     updateBibEntryDialog(id, type) {
-        let entryType = BibEntryTypes[type]
+        let entryType = BibTypes[type]
 
         jQuery('#optionTab1 > table > tbody').html(this.getFieldForms(
             entryType.required,
@@ -281,10 +284,8 @@ export class BibEntryForm {
         return entryCats.join(',')
     }
 
-    getEntryType() {
-        let entryId = parseInt(jQuery('#id_entrytype').val())
-        let entryType = BibEntryTypes[entryId].name
-        return entryType
+    getBibType() {
+        return jQuery('#id_entrytype').val()
     }
 
     /** Handles the submission of the bibliography entry form.
@@ -295,13 +296,10 @@ export class BibEntryForm {
         //when submitted, the values in form elements will be restored
         let formValues = {
             'id': id,
-            'entry_type': this.getEntryType(),
+            'bib_type': this.getBibType(),
             'entry_cat': this.getEntryCat(),
             'fields': {},
         }
-        //if (this.ownerId) {
-        //    formValues['owner_id'] = this.ownerId
-        //}
 
         jQuery('.entryForm').each(function() {
             let $this = jQuery(this)
@@ -485,8 +483,7 @@ export class BibEntryForm {
      * @param theValue The current value of the field.
      */
     getFormPart(formInfo, fieldName, theValue) {
-        let the_type = formInfo.type
-        switch (the_type) {
+        switch (formInfo.type) {
             case 'f_date':
                 theValue = formatDateString(theValue)
                 let dates = theValue.split('-'),

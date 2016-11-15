@@ -3,7 +3,8 @@ import {BibEntryForm} from "../form/form"
 import {editCategoriesTemplate, categoryFormsTemplate, bibtableTemplate,
     bibliographyCategoryListItemTemplate} from "./templates"
 import {BibliographyDB} from "../database"
-import {BibEntryTypes} from "../statics"
+import {BibTypes} from "../statics"
+import {BibTypeTitles} from "../titles"
 import {BibLatexImporter} from "../importer/biblatex"
 import {BibLatexExporter} from "../exporter/biblatex"
 import {addDropdownBox} from "../../common/common"
@@ -197,8 +198,8 @@ export class BibliographyOverview {
             $tr.replaceWith(bibtableTemplate({
                 'id': pk,
                 'cats': bibInfo.entry_cat.split(','),
-                'type': bibInfo.entry_type,
-                'typetitle': BibEntryTypes[bibInfo.entry_type]['title'],
+                'type': bibInfo.bib_type,
+                'typetitle': BibTypeTitles[bibInfo.bib_type],
                 'title': bibtitle,
                 'author': bibauthor,
                 'published': formatDateString(bibInfo.date)
@@ -207,8 +208,8 @@ export class BibliographyOverview {
             jQuery('#bibliography > tbody').append(bibtableTemplate({
                 'id': pk,
                 'cats': bibInfo.entry_cat.split(','),
-                'type': bibInfo.entry_type,
-                'typetitle': BibEntryTypes[bibInfo.entry_type]['title'],
+                'type': bibInfo.bib_type,
+                'typetitle': BibTypeTitles[bibInfo.bib_type],
                 'title': bibtitle,
                 'author': bibauthor,
                 'published': formatDateString(bibInfo.date)

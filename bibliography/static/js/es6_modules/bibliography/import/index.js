@@ -1,11 +1,11 @@
-import {BibLatexParser} from "./biblatex-parser"
+import {BibLatexParser} from "biblatex-csl-converter"
 import {importBibTemplate} from "./templates"
 import {activateWait, deactivateWait, addAlert, csrfToken} from "../../common/common"
 
 /** First step of the BibTeX file import. Creates a dialog box to specify upload file.
  */
 
-export class BibLatexImporter {
+export class BibLatexFileImporter {
 
     constructor(db, callback) {
         this.db = db
@@ -69,12 +69,14 @@ export class BibLatexImporter {
      * processes client side and cuts into chunks to be uploaded to the server.
      * @param e File object that is to be imported.
      */
-    processFile(file) {
+    processFile(fileContents) {
         let that = this
-        let bibData = new BibLatexParser()
-        bibData.setInput(file)
-        bibData.bibtex()
-        this.bibEntries = bibData.getEntries()
+        let bibData = new BibLatexParser(fileContents)
+        this.bibEntries = bibData.output
+        this.bibEntries.forEach((bibEntry) => {
+            // We add an empty category list for all newly imported bib entries.
+            bibEntry.entry_cat = ''
+        })
         if (_.isEmpty(this.bibEntries)) {
             deactivateWait()
             addAlert('error', gettext('No bibliography entries could be found in import file.'))

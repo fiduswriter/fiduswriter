@@ -22,7 +22,7 @@ import {
 
 import {
     BibTypes, BibFieldTypes
-} from "../statics"
+} from "biblatex-csl-converter"
 
 import {
     LocalizationKeys, BibTypeTitles, BibFieldTitles

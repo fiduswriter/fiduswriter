@@ -1,5 +1,4 @@
 import {citeprocSys} from "./citeproc-sys"
-import {CSLExporter} from "../bibliography/exporter/csl"
 import {citationDefinitions} from "../style/citation-definitions"
 import {FormatCitations} from "./format"
 /**

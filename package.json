@@ -40,7 +40,8 @@
     "datatables": "1.10.12",
     "dropkickjs": "2.1.10",
     "texzilla": "0.9.9",
-    "napa": "2.3.0"
+    "napa": "2.3.0",
+    "biblatex-csl-converter": "0.9.6"
   },
   "napa": {
     "citeproc": "Juris-M/citeproc-js#1.1.136"

@@ -1,5 +1,5 @@
 import {citeprocSys} from "./citeproc-sys"
-import {CSLExporter} from "../bibliography/exporter/csl"
+import {CSLExporter} from "biblatex-csl-converter"
 import {citationDefinitions} from "../style/citation-definitions"
 
 
@@ -26,7 +26,7 @@ export class FormatCitations {
         this.bibliography = ''
         // Convert bibDB to CSL format.
         let cslGetter = new CSLExporter(this.bibDB.db) // TODO: Figure out if this conversion should be done earlier and cached
-        this.cslDB = cslGetter.cslDB
+        this.cslDB = cslGetter.output
         if (this.formatAllCitations()) {
             this.getFormattedCitations()
             this.formatBibliography()

@@ -47,9 +47,8 @@ def check_access_rights(other_user_id, this_user):
         has_access = True
     return has_access
 
+
 # returns list of bibliography items
-
-
 @login_required
 def biblist_js(request):
     response = {}

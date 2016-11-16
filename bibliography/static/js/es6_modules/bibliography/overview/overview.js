@@ -5,8 +5,8 @@ import {editCategoriesTemplate, categoryFormsTemplate, bibtableTemplate,
 import {BibliographyDB} from "../database"
 import {BibTypes} from "../statics"
 import {BibTypeTitles} from "../titles"
-import {BibLatexImporter} from "../importer/biblatex"
-import {BibLatexExporter} from "../exporter/biblatex"
+import {BibLatexFileImporter} from "../import"
+import {BibLatexFileExporter} from "../export"
 import {addDropdownBox} from "../../common/common"
 import {Menu} from "../../menu/menu"
 
@@ -327,7 +327,7 @@ export class BibliographyOverview {
 
         //import a bib file
         jQuery('.import-bib').bind('click', function () {
-            new BibLatexImporter(that.bibDB, function(bibEntries) {
+            new BibLatexFileImporter(that.bibDB, function(bibEntries) {
                 that.addBibList(bibEntries)
             })
         })
@@ -342,7 +342,7 @@ export class BibliographyOverview {
             }
 
             jQuery('.entry-select:checked').each(function () {
-                ids[ids.length] = jQuery(this).attr('data-id')
+                ids[ids.length] = parseInt(jQuery(this).attr('data-id'))
             })
 
             if (0 === ids.length) {
@@ -354,7 +354,8 @@ export class BibliographyOverview {
                 that.deleteBibEntryDialog(ids)
                 break
             case 'export':
-                new BibLatexExporter(ids, that.bibDB.db, true)
+                let exporter = new BibLatexFileExporter(that.bibDB, ids)
+                exporter.init()
                 break
             }
         })

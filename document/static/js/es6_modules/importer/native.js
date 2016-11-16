@@ -289,7 +289,7 @@ export class ImportNative {
                         'entry_key': importedBib['entry_key'],
                         'fields': {}
                     }
-                    for (let key of window.Object.keys(importedBib)) {
+                    for (let key of Object.keys(importedBib)) {
                         switch (key) {
                             case 'bib_type':
                             case 'entry_cat':

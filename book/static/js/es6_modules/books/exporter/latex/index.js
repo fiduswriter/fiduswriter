@@ -3,7 +3,7 @@ import {LatexExporterConvert} from "../../../exporter/latex/convert"
 import {bookTexTemplate} from "./templates"
 import {createSlug} from "../../../exporter/tools/file"
 import {removeHidden} from "../../../exporter/tools/doc-contents"
-import {BibLatexExporter} from "../../../bibliography/exporter/biblatex"
+import {BibLatexExporter} from "biblatex-csl-converter"
 import {zipFileCreator} from "../../../exporter/tools/zip"
 
 export class LatexBookExporter {
@@ -55,8 +55,8 @@ export class LatexBookExporter {
             Object.assign(features, converter.features)
         })
         if (bibIds.length > 0) {
-            let bibExport = new BibLatexExporter(bibIds, this.bibDB.db, false)
-            this.textFiles.push({filename: 'bibliography.bib', contents: bibExport.bibtexStr})
+            let bibExport = new BibLatexExporter(this.bibDB.db, bibIds)
+            this.textFiles.push({filename: 'bibliography.bib', contents: bibExport.output})
         }
         imageIds.forEach(function(id){
             that.httpFiles.push({

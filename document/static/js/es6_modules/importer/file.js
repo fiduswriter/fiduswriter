@@ -79,8 +79,7 @@ const ENTRY_TYPES = {
 }
 
 let updateBib = function(bib) {
-    console.log(bib)
-    window.Object.keys(bib).forEach((bibId)=>{
+    Object.keys(bib).forEach((bibId)=>{
         let bibEntry = bib[bibId]
         if (bibEntry['entry_type']) {
             bibEntry['bib_type'] = ENTRY_TYPES[bibEntry['entry_type']]
@@ -151,7 +150,7 @@ export class ImportFidusFile {
             }
 
             filenames.forEach(function(filename){
-                p.push(new window.Promise(function(resolve){
+                p.push(new Promise(function(resolve){
                     let fileType, fileList
                     if (TEXT_FILENAMES.indexOf(filename) !== -1) {
                         fileType = 'string'

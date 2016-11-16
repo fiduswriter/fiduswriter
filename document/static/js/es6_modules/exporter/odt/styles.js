@@ -35,7 +35,7 @@ export class OdtExporterStyles {
         }).then(function(contentXml){
             that.contentXml = contentXml
             that.getStyleCounters()
-            return window.Promise.resolve()
+            return Promise.resolve()
         })
     }
 

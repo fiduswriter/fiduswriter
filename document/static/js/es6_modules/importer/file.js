@@ -165,7 +165,7 @@ export class ImportFidusFile {
                     })
                 }))
             })
-            window.Promise.all(p).then(function(){
+            Promise.all(p).then(function(){
                 that.processFidusFile()
             })
         })

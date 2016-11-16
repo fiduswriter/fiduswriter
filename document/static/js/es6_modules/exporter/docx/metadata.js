@@ -19,7 +19,7 @@ export class DocxExporterMetadata {
         return this.exporter.xml.getXml("docProps/core.xml").then(function(coreXml){
             that.coreXml = coreXml
             that.addMetadata()
-            return window.Promise.resolve()
+            return Promise.resolve()
         })
     }
 

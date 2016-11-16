@@ -22,7 +22,7 @@ export class ModServerCommunications {
         let websocketProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
 
         try {
-            this.ws = new window.WebSocket(`${websocketProtocol}//${websocketServer}${websocketPort}/ws/doc/${this.editor.doc.id}`)
+            this.ws = new window.WebSocket(`${websocketProtocol}//${window.websocketServer}${window.websocketPort}/ws/doc/${this.editor.doc.id}`)
             this.ws.onopen = function() {
                 console.log('connection open')
                 jQuery('#unobtrusive_messages').html('')

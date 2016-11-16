@@ -71,17 +71,10 @@
       "document",
       "console",
       "jQuery",
-	  "gettext",
-	  "_",
-	  "$",
-	  "zip",
-      "CSL",
       "MathQuill",
-      "staticUrl",
-      "pagination",
-      "paginationConfig",
-      "websocketServer",
-      "websocketPort"
+      "CSL",
+	  "gettext",
+	  "_"
     ]
   }
 }

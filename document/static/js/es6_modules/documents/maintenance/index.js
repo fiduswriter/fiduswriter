@@ -208,7 +208,7 @@ export class DocMaintenance {
                         openedFiles[fileName] = fileContent
                     }))
                 })
-                window.Promise.all(p).then(function(){
+                Promise.all(p).then(function(){
                     let filetypeVersion = openedFiles["filetype-version"]
                     if (filetypeVersion !== FW_FILETYPE_VERSION) {
                         let doc = window.JSON.parse(openedFiles["document.json"])

@@ -19,12 +19,12 @@ export class LatexBookExporter {
         this.textFiles = []
         this.httpFiles = []
         let p = []
-        p.push(new window.Promise((resolve) => {
+        p.push(new Promise((resolve) => {
             getMissingChapterData(book, docList, function () {
                 resolve()
             })
         }))
-        p.push(new window.Promise((resolve) => {
+        p.push(new Promise((resolve) => {
             getImageAndBibDB(book, docList, function (imageDB,
                 bibDB) {
                 that.bibDB = bibDB
@@ -32,7 +32,7 @@ export class LatexBookExporter {
                 resolve()
             })
         }))
-        window.Promise.all(p).then(() => {
+        Promise.all(p).then(() => {
             that.init()
         })
     }

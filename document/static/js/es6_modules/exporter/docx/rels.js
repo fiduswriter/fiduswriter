@@ -29,7 +29,7 @@ export class DocxExporterRels {
         return this.exporter.xml.getXml(this.ctFilePath).then(function(ctXml) {
             that.ctXml = ctXml
             that.addRelsToCt()
-            return window.Promise.resolve()
+            return Promise.resolve()
         })
     }
 

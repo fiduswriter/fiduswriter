@@ -33,10 +33,10 @@ export class DocxExporterMath {
 
     setupXslt() {
         let that = this
-        return new window.Promise((resolve) => {
+        return new Promise((resolve) => {
             jQuery.ajax({
                 type: 'GET',
-                url: staticUrl + 'xsl/mml2omml.xsl',
+                url: window.staticUrl + 'xsl/mml2omml.xsl',
                 dataType: 'text',
                 success: function(xslFile) {
                     const parser = new window.DOMParser()

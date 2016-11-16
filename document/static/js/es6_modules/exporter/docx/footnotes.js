@@ -116,7 +116,7 @@ export class DocxExporterFootnotes {
             })
         } else {
             // No footnotes were found.
-            return window.Promise.resolve()
+            return Promise.resolve()
         }
     }
 
@@ -125,7 +125,7 @@ export class DocxExporterFootnotes {
         return this.exporter.xml.getXml(this.ctFilePath).then(function(ctXml) {
             that.ctXml = ctXml
             that.addRelsToCt()
-            return window.Promise.resolve()
+            return Promise.resolve()
         })
     }
 
@@ -143,7 +143,7 @@ export class DocxExporterFootnotes {
             that.styleXml = styleXml
             that.addStyle('Footnote', DEFAULT_STYLE_FOOTNOTE)
             that.addStyle('FootnoteAnchor', DEFAULT_STYLE_FOOTNOTE_ANCHOR)
-            return window.Promise.resolve()
+            return Promise.resolve()
         })
     }
 
@@ -200,7 +200,7 @@ export class DocxExporterFootnotes {
                 settingsEl.insertAdjacentHTML('beforeEnd', DEFAULT_SETTINGS_XML)
             }
             that.settingsXml = settingsXml
-            return window.Promise.resolve()
+            return Promise.resolve()
         })
     }
 

@@ -163,7 +163,8 @@ export let reviewSubmit = function(editor){
         let dataToOjs = new window.FormData()
         dataToOjs.append('email', userProfile["email"])
         dataToOjs.append('doc_id', editor.doc.id)
-        dataToOjs.append('submission_id', editor.doc.OJSsubmissionId)
+        dataToOjs.append('journal_id', "3")
+        dataToOjs.append('submission_id', "40")
         dataToOjs.append('review_round', "1")
         jQuery.ajax({
             url: window.ojsUrl+'/index.php/index/gateway/plugin/RestApiGatewayPlugin/articleReviews',

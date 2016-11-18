@@ -111,6 +111,13 @@ export class ModMenusActions {
         })
     }
 
+    ReturnToOJS(){
+        let that = this
+        that.mod.editor.save(function () {
+         window.location.href = window.ojsUrl
+        })
+    }
+
     showKeyBindings() {
         this.mod.editor.mod.tools.showKeyBindings.show()
     }

@@ -1,5 +1,5 @@
 import {savecopy} from "../exporter/native/copy"
-import {journalDialogTemplate} from "./templates"
+import {journalDialogTemplate,reviewSubmitDialogTemplate} from "./templates"
 import {addAlert, csrfToken} from "../common/common"
 
 
@@ -118,7 +118,7 @@ export let selectJournal = function(editor) {
                 success: function (result) {
                     list =result['journals']
                     let journal = null
-                        jQuery(journalDialogTemplate({journals: list})).dialog({
+                    jQuery(journalDialogTemplate({journals: list})).dialog({
                         autoOpen: true,
                         height: list.length*100,
                         width: 300,
@@ -139,7 +139,8 @@ export let selectJournal = function(editor) {
 
 /*submit the review*/
 export let reviewSubmit = function(editor){
- let userProfile = {}
+        let diaButtons = {}
+        let userProfile = {}
         let data1 = new window.FormData()
         data1.append('id', editor.user.id)
         jQuery.ajax({
@@ -166,22 +167,49 @@ export let reviewSubmit = function(editor){
         dataToOjs.append('journal_id', "3")
         dataToOjs.append('submission_id', "40")
         dataToOjs.append('review_round', "1")
-        jQuery.ajax({
-            url: window.ojsUrl+'/index.php/index/gateway/plugin/RestApiGatewayPlugin/articleReviews',
-            data: dataToOjs,
-            type: 'POST',
-            cache: false,
-            contentType: false,
-            processData: false,
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-               xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: function() {
-               addAlert('success','The editor will be informed about finishing your review')
-               },
-            error: function() {
-               addAlert('error', 'There is error while sending the signal of finishing review, please try it again')
-            }
+        dataToOjs.append('editor_message',jQuery("#message-editor").val())
+        dataToOjs.append('message-editor-author',jQuery("#message-editor").val())
+
+        diaButtons[gettext("Submit")] = function() {
+                    console.log(jQuery("#message-editor").val())
+            jQuery.ajax({
+                url: window.ojsUrl+'/index.php/index/gateway/plugin/RestApiGatewayPlugin/articleReviews',
+                data: dataToOjs,
+                type: 'POST',
+                cache: false,
+                contentType: false,
+                processData: false,
+                crossDomain: false, // obviates need for sameOrigin test
+                beforeSend: function(xhr, settings) {
+                    xhr.setRequestHeader("X-CSRFToken", csrfToken)
+                },
+                success: function() {
+                    addAlert('success','The editor will be informed about finishing your review')
+                },
+                error: function() {
+                    addAlert('error', 'There is error while sending the signal of finishing review, please try it again')
+                }
+            })
+            jQuery(this).dialog("close")
+
+        }
+        diaButtons[gettext("Cancel")] = function() {
+  console.log(jQuery('textarea[name=message]'))
+            jQuery(this).dialog("close")
+        }
+        jQuery("#review-message").remove()
+        jQuery(reviewSubmitDialogTemplate()).dialog({
+             autoOpen: true,
+             height: 400,
+             width: 350,
+             modal: true,
+             buttons: diaButtons,
+             create: function() {
+                 let theDialog = jQuery(this).closest(".ui-dialog")
+                 theDialog.find(".ui-button:first-child").addClass(
+                          "fw-button fw-dark")
+                 theDialog.find(".ui-button:last").addClass(
+                     "fw-button fw-orange")
+             },
         })
 }

@@ -298,10 +298,15 @@ export class Editor {
               .documentstyle-menu, .citationstyle-menu').removeClass('disabled')
             }
         }
-        if (REVIEW_ROLES.indexOf(this.docInfo.rights) > -1)
+        console.log(REVIEW_ROLES.indexOf(this.docInfo.rights))
+        if (REVIEW_ROLES.indexOf(this.docInfo.rights) > -1)  {
           jQuery('#reviewed').show()
-        else
+          jQuery('#reviewerOJSReturn').show()
+        }
+        else {
           jQuery('#reviewed').hide()
+          jQuery('#reviewerOJSReturn').hide()
+        }
     }
 
     receiveDocument(data) {

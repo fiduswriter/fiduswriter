@@ -87,6 +87,11 @@ class AccessRight(models.Model):
             }
         )
 
+class submission(models.Model):
+    document = models.ForeignKey(Document)
+    journal_id = models.PositiveIntegerField(default=0)
+    submission_id = models.PositiveIntegerField(default=0)
+    version_id = models.PositiveIntegerField(default=0)
 
 def revision_filename(instance, filename):
     return '/'.join(['revision', str(instance.document.id), filename])

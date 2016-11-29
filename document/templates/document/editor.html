@@ -65,6 +65,8 @@
             <link rel="stylesheet" href="{{ STATIC_URL }}css/texteditor.css" type="text/css">
             <!-- Collaboration mode -->
             <link rel="stylesheet" href="{{ STATIC_URL }}css/carets.css" type="text/css">
+            <!-- Search -->
+            <link rel="stylesheet" href="{{ STATIC_URL }}css/search.css" type="text/css">
             <!-- Comments -->
             <link rel="stylesheet" href="{{ STATIC_URL }}css/comments.css" type="text/css">
             <!-- Footnotes -->
@@ -355,6 +357,15 @@
                             </span>
                         </button>
                     </div>
+                    {% if EXPERIMENTAL %}
+                        <div class="toolbarsearch ui-buttonset">
+                            <button class="fw-button fw-light fw-large fw-square edit-button" id="button-search" title="{% trans "Search" %}">
+                                <span class="ui-button-text">
+                                    <i class="icon-search"></i>
+                                </span>
+                            </button>
+                        </div>
+                    {% endif %}
                     <div class="toolbarmath ui-buttonset">
                         <button class="fw-button fw-light fw-large fw-square edit-button" id="button-math" title="{% trans "Math" %}">
                             <span class="ui-button-text">
@@ -461,6 +472,7 @@
 
             <div id="comment-box-container"></div>
             <div id="tracking-box-container"></div>
+            <div id="search-box-container"></div>
         </div>
         <div id="chat">
             <i class="resize-button icon-angle-double-down"></i>

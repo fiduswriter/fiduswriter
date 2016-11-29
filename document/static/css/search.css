@@ -1,0 +1,22 @@
+/* Comments */
+#search-box-container {
+    width: 500px;
+    padding-left: 20px;
+    background-color:white;
+}
+
+
+
+.pagination-simple + #search-box-container {
+    top: 0px;
+}
+
+.search-box {
+    background-color: #fbfbfb;
+    border: 1px solid #ccc;
+    width: 450px;
+    padding: 9px;
+    margin-top: 10px;
+    position: relative;
+}
+

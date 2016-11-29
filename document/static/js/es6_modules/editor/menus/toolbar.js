@@ -3,6 +3,7 @@ import {FigureDialog} from "./content-dialogs/figure"
 import {linkDialog} from "./content-dialogs/link"
 import {TableDropdown} from "./content-dialogs/table"
 import {MathDialog} from "./content-dialogs/math"
+import {SearchDialog} from "./content-dialogs/search"
 import {commands} from "prosemirror-old/dist/edit/commands"
 
 /* Bindings for the toolbar menu */
@@ -140,6 +141,12 @@ export class ModMenusToolbar {
         jQuery(document).on('mousedown', '#button-table:not(.disabled)', function(event) {
             that.executeAction(event, function(){
                 new TableDropdown(that.mod)
+            })
+        })
+
+        jQuery(document).on('mousedown', '#button-search:not(.disabled)', function(event) {
+            that.executeAction(event, function(){
+                new SearchDialog(that.mod)
             })
         })
     }

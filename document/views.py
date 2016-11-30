@@ -496,6 +496,7 @@ def submit_right_js(request):
         status=status
     )
 
+
 @login_required
 def submission_version_js(request):
     status = 405
@@ -507,7 +508,7 @@ def submission_version_js(request):
         submission_id = request.POST.get('submission_id')
         submissions = Submission.objects.filter(
             submission_id=submission_id)
-        if len(submissions)>0:
+        if len(submissions) > 0:
             version = len(submissions)+1
         submission = Submission.objects.create(
             document_id=document_id,
@@ -521,6 +522,7 @@ def submission_version_js(request):
         response,
         status=status
     )
+
 
 @login_required
 def review_submit_js(request):
@@ -551,6 +553,7 @@ def review_submit_js(request):
         response,
         status=status
     )
+
 
 @login_required
 def import_js(request):
@@ -628,11 +631,13 @@ def profile_js(request):
         status=status
     )
 
+
 @login_required
 def get_user(request):
     id = request.POST["user_id"]
     the_user = User.objects.filter(id=id)
     return the_user
+
 
 # Download a revision that was previously uploaded
 @login_required

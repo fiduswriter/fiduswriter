@@ -298,7 +298,7 @@ export class Editor {
               .documentstyle-menu, .citationstyle-menu').removeClass('disabled')
             }
         }
-        console.log(REVIEW_ROLES.indexOf(this.docInfo.rights))
+
         if (REVIEW_ROLES.indexOf(this.docInfo.rights) > -1)  {
           jQuery('#reviewed').show()
           jQuery('#reviewerOJSReturn').show()

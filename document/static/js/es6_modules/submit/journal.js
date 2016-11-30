@@ -47,7 +47,7 @@ export let selectJournal = function(editor) {
         let diaButtons = {}
         let userProfile = {}
         let data1 = new window.FormData()
-        data1.append('id', editor.user.id)
+        data1.append('user_id', editor.user.id)
         jQuery.ajax({
             url: '/document/profile/',
             data: data1,
@@ -96,8 +96,31 @@ export let selectJournal = function(editor) {
                         beforeSend: function(xhr, settings) {
                             xhr.setRequestHeader("X-CSRFToken", csrfToken)
                         },
-                        success: function() {
-                            addAlert('success','The paper was submitted to ojs')
+                        success: function(response) {
+                            //addAlert('success','The paper was submitted to ojs')
+                            let dataSubmission = new window.FormData()
+                            dataSubmission.append('document_id',doc.id)
+                            dataSubmission.append('journal_id',response.journal_id)
+                            dataSubmission.append('submission_id',response.submission_id)
+                            jQuery.ajax({
+                                url: '/document/submissionversion/',
+                                data: dataSubmission,
+                                type: 'POST',
+                                cache: false,
+                                contentType: false,
+                                processData: false,
+                                crossDomain: false, // obviates need for sameOrigin test
+                                beforeSend: function(xhr, settings) {
+                                    xhr.setRequestHeader("X-CSRFToken", csrfToken)
+                                },
+                                success: function(response) {
+                                    addAlert('success','The paper was submitted to ojs and version of submission has been saved')
+                                    console.log(response)
+                                },
+                                error: function() {
+                                    addAlert('error', 'version of submission has been not saved')
+                                }
+                            })
                         },
                         error: function() {
                             addAlert('error', 'submission was not successful')
@@ -140,12 +163,48 @@ export let selectJournal = function(editor) {
 /*submit the review*/
 export let reviewSubmit = function(editor){
         let diaButtons = {}
+        let submission_info = {}
         let userProfile = {}
-        let data1 = new window.FormData()
-        data1.append('id', editor.user.id)
+        let submissionData = new window.FormData()
+        submissionData.append('document_id', editor.doc.id)
+        submissionData.append('user_id', editor.user.id)
+        jQuery.ajax({
+            url: '/document/reviewsubmit/',
+            data: submissionData,
+            type: 'POST',
+            cache: false,
+            contentType: false,
+            processData: false,
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
+            success: function(result) {
+                submission_info = result['submission']
+                userProfile = result['user']
+            },
+            error: function() {
+                addAlert('error', 'can not get the submission information')
+            }
+        })
+        console.log(submission_info)
+        let dataToOjs = new window.FormData()
+        dataToOjs.append('email', userProfile["email"])
+        dataToOjs.append('doc_id', editor.doc.id)
+        dataToOjs.append('journal_id', submission_info["journal_id"])
+        dataToOjs.append('submission_id', submission_info["submission_id"])
+        dataToOjs.append('review_round', submission_info["version_id"])
+        dataToOjs.append('editor_message',jQuery("#message-editor").val())
+        dataToOjs.append('message_editor_author',jQuery("#message-editor-author").val())
+        /*let diaButtons = {}
+        let submission_info = {}
+        let userProfile = {}
+        let userData = new window.FormData()
+        let submissionData = new window.FormData()
+        userData.append('id', editor.user.id)
         jQuery.ajax({
             url: '/document/profile/',
-            data: data1,
+            data: userData,
             type: 'POST',
             cache: false,
             contentType: false,
@@ -161,14 +220,35 @@ export let reviewSubmit = function(editor){
                 addAlert('error', 'can not get the user information')
             }
         })
+        submissionData.append('document_id', editor.doc.id)
+        submissionData.append('reviewer_user_id', editor.user.id)
+        jQuery.ajax({
+            url: '/document/getsubmissioninfo/',
+            data: submissionData,
+            type: 'POST',
+            cache: false,
+            contentType: false,
+            processData: false,
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
+            success: function(result) {
+                submission_info = result['submission']
+            },
+            error: function() {
+                addAlert('error', 'can not get the submission information')
+            }
+        })
+        console.log(submission_info)
         let dataToOjs = new window.FormData()
         dataToOjs.append('email', userProfile["email"])
         dataToOjs.append('doc_id', editor.doc.id)
-        dataToOjs.append('journal_id', "3")
-        dataToOjs.append('submission_id', "40")
-        dataToOjs.append('review_round', "1")
+        dataToOjs.append('journal_id', submission_info["journal_id"])
+        dataToOjs.append('submission_id', submission_info["submission_id"])
+        dataToOjs.append('review_round', submission_info["version_id"])
         dataToOjs.append('editor_message',jQuery("#message-editor").val())
-        dataToOjs.append('message-editor-author',jQuery("#message-editor").val())
+        dataToOjs.append('message-editor-author',jQuery("#message-editor").val())*/
 
         diaButtons[gettext("Submit")] = function() {
                     console.log(jQuery("#message-editor").val())

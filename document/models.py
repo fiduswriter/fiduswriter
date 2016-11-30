@@ -87,7 +87,7 @@ class AccessRight(models.Model):
             }
         )
 
-class submission(models.Model):
+class Submission(models.Model):
     document = models.ForeignKey(Document)
     journal_id = models.PositiveIntegerField(default=0)
     submission_id = models.PositiveIntegerField(default=0)

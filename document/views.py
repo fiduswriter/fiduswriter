@@ -24,7 +24,7 @@ from avatar.utils import get_primary_avatar, get_default_avatar_url
 from avatar.templatetags.avatar_tags import avatar_url
 
 from document.models import Document, AccessRight, DocumentRevision, \
-    ExportTemplate
+    ExportTemplate, Submission
 
 
 class SimpleSerializer(Serializer):
@@ -496,6 +496,61 @@ def submit_right_js(request):
         status=status
     )
 
+@login_required
+def submission_version_js(request):
+    status = 405
+    response = {}
+    version = 1
+    if request.is_ajax() and request.method == 'POST':
+        document_id = request.POST.get('document_id')
+        journal_id = request.POST.get('journal_id')
+        submission_id = request.POST.get('submission_id')
+        submissions = Submission.objects.filter(
+            submission_id=submission_id)
+        if len(submissions)>0:
+            version = len(submissions)+1
+        submission = Submission.objects.create(
+            document_id=document_id,
+            journal_id=journal_id,
+            submission_id=submission_id,
+            version_id=version
+        )
+        submission.save()
+        status = 201
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+@login_required
+def review_submit_js(request):
+    status = 405
+    response = {}
+    if request.is_ajax() and request.method == 'POST':
+        document_id = request.POST.get('document_id')
+        user_id = request.POST.get('user_id')
+        tgt_right = 'read-without-comments'
+        access_right = AccessRight.objects.get(
+            document_id=document_id, user_id=user_id)
+        if access_right.rights != tgt_right:
+            access_right.rights = tgt_right
+            access_right.save()
+        submission = Submission.objects.get(
+            document_id=document_id)
+        response['submission'] = {}
+        if submission:
+            response["submission"]["submission_id"] = submission.submission_id
+            response["submission"]["version_id"] = submission.version_id
+            response["submission"]["journal_id"] = submission.journal_id
+        the_user = get_user(request)
+        if len(the_user) > 0:
+            response['user'] = {}
+            response['user']['email'] = the_user[0].email
+        status = 201
+    return JsonResponse(
+        response,
+        status=status
+    )
 
 @login_required
 def import_js(request):
@@ -557,8 +612,7 @@ def profile_js(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
-        id = request.POST["id"]
-        the_user = User.objects.filter(id=id)
+        the_user = get_user(request)
         if len(the_user) > 0:
             response['user'] = {}
             response['user']['id'] = the_user[0].id
@@ -574,6 +628,11 @@ def profile_js(request):
         status=status
     )
 
+@login_required
+def get_user(request):
+    id = request.POST["user_id"]
+    the_user = User.objects.filter(id=id)
+    return the_user
 
 # Download a revision that was previously uploaded
 @login_required

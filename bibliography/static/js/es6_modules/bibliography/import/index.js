@@ -84,6 +84,18 @@ export class BibLatexFileImporter {
                 let bibEntry = this.tmpDB[bibKey]
                 // We add an empty category list for all newly imported bib entries.
                 bibEntry.entry_cat = ''
+                // If the entry has no title, add an empty title
+                if (!bibEntry.fields.title) {
+                    bibEntry.fields.title = []
+                }
+                // If the entry has no date, add an uncertain date
+                if (!bibEntry.fields.date) {
+                    bibEntry.fields.date = 'uuuu'
+                }
+                // If the entry has no editor or author, add empty author
+                if (!bibEntry.fields.author && !bibEntry.fields.editor) {
+                    bibEntry.fields.author = [{'literal': []}]
+                }
             })
             bibData.errors.forEach(function(error){
                 let errorMsg = gettext('An error occured while reading the bibtex file')
@@ -113,9 +125,9 @@ export class BibLatexFileImporter {
                         break
                     default:
                         warningMsg = gettext('An warning occured while reading the bibtex file')
-                        errorMsg += `, warning_code: ${warning.type}`
+                        warningMsg += `, warning_code: ${warning.type}`
                         if (warning.key) {
-                            errorMsg += `, key: ${warning.key}`
+                            warningMsg += `, key: ${warning.key}`
                         }
                 }
                 addAlert('warning', warningMsg)
@@ -174,11 +186,6 @@ export class BibLatexFileImporter {
                     that.bibDB.db[bibTrans[1]] = that.tmpDB[bibTrans[0]]
                     ids.push(bibTrans[1])
                 })
-//                let ids = []
-//                response.bibs.forEach(function(bibEntry) {
-//                    that.db.serverBibItemToBibDB(bibEntry)
-//                    ids.push(bibEntry.id)
-//                })
                 if (that.callback) {
                     that.callback(ids)
                 }

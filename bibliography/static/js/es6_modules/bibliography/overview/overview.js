@@ -1,4 +1,4 @@
-import {addRemoveListHandler, dateFormat, plaintextBibLitString} from "../tools"
+import {addRemoveListHandler, dateFormat, litToText, nameToText} from "../tools"
 import {BibEntryForm} from "../form/form"
 import {editCategoriesTemplate, categoryFormsTemplate, bibtableTemplate,
     bibliographyCategoryListItemTemplate} from "./templates"
@@ -172,31 +172,8 @@ export class BibliographyOverview {
      */
     appendToBibTable(pk, bibInfo) {
         let $tr = jQuery('#Entry_' + pk)
-        //reform author field
+
         let bibauthors = bibInfo.fields.author || bibInfo.fields.editor
-        // If neither author nor editor were registered, use an empty string instead of nothing.
-        // TODO: Such entries should likely not be accepted by the importer.
-        let bibauthorString = ''
-
-        if (typeof bibauthors !== 'undefined' && bibauthors.length > 0) {
-            if (bibauthors[0]['family']) {
-                bibauthorString += plaintextBibLitString(bibauthors[0]['family'])
-                if (bibauthors[0]['given']) {
-                    bibauthorString += `, ${plaintextBibLitString(bibauthors[0]['given'])}`
-                }
-            } else if (bibauthors[0]['literal']){
-                bibauthorString += plaintextBibLitString(bibauthors[0]['literal'])
-            }
-
-            if (1 < bibauthors.length) {
-                //if there are more authors, add "and others" behind.
-                bibauthorString += gettext(' and others')
-            }
-        }
-
-        // If title is undefined, set it to an empty string.
-        // TODO: Such entries should likely not be accepted by the importer.
-        let bibtitle = bibInfo.fields.title ? plaintextBibLitString(bibInfo.fields.title) : ''
 
         if (0 < $tr.length) { //if the entry exists, update
 
@@ -205,9 +182,9 @@ export class BibliographyOverview {
                 'cats': bibInfo.entry_cat.split(','),
                 'type': bibInfo.bib_type,
                 'typetitle': BibTypeTitles[bibInfo.bib_type],
-                'title': bibtitle,
-                'author': bibauthorString,
-                'published': bibInfo.fields.date ? bibInfo.fields.date.replace('/', ' ') : ''
+                'title': litToText(bibInfo.fields.title),
+                'author': nameToText(bibauthors),
+                'published': bibInfo.fields.date.replace('/', ' ')
             }))
         } else { //if this is the new entry, append
             jQuery('#bibliography > tbody').append(bibtableTemplate({
@@ -215,9 +192,9 @@ export class BibliographyOverview {
                 'cats': bibInfo.entry_cat.split(','),
                 'type': bibInfo.bib_type,
                 'typetitle': BibTypeTitles[bibInfo.bib_type],
-                'title': bibtitle,
-                'author': bibauthorString,
-                'published': bibInfo.fields.date ? bibInfo.fields.date.replace('/', ' ') : ''
+                'title': litToText(bibInfo.fields.title),
+                'author': nameToText(bibauthors),
+                'published': bibInfo.fields.date.replace('/', ' ')
             }))
         }
     }

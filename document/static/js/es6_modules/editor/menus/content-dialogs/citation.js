@@ -1,6 +1,7 @@
 import {configureCitationTemplate, citationItemTemplate, selectedCitationTemplate} from "./templates"
 import {BibEntryForm} from "../../../bibliography/form/form"
 import {addDropdownBox, setCheckableLabel} from "../../../common/common"
+import {nameToText, litToText} from "../../../bibliography/tools"
 
 // TODO: turn into class (like FigureDialog)
 export let citationDialog = function (mod) {
@@ -77,8 +78,8 @@ export let citationDialog = function (mod) {
         let bibEntry = {
                 'id': index,
                 'type': bib.bib_type,
-                'title': bib.title || '',
-                'author': bib.author || bib.editor || ''
+                'title': litToText(bib.fields.title),
+                'author': nameToText(bib.fields.author || bib.fields.editor)
             },
             cited_id
         bibEntry.author = bibEntry.author.replace(/[{}]/g, '')

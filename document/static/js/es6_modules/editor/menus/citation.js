@@ -2,7 +2,7 @@
  * sources load every time the citation dialog is opened rather than keeping it
  * constantly available.
  */
-
+import {nameToText, litToText} from "../../bibliography/tools"
 import {citationItemTemplate, selectedCitationTemplate} from "./content-dialogs/templates"
 
 /* Functions for the Citation add dialog */
@@ -13,19 +13,11 @@ export class ModMenusCitation {
     }
 
     appendToCitationDialog(pk, bibInfo) {
-        // If neither author nor editor were registered, use an empty string instead of nothing.
-        // TODO: Such entries should likely not be accepted by the importer.
-        let bibauthor = bibInfo.editor || bibInfo.author || ''
-
-        // If title is undefined, set it to an empty string.
-        // TODO: Such entries should likely not be accepted by the importer.
-        if (typeof bibInfo.title === 'undefined') bibInfo.title = ''
-
         let citeItemData = {
             'id': pk,
             'type': bibInfo.bib_type,
-            'title': bibInfo.title.replace(/[{}]/g, ''),
-            'author': bibauthor.replace(/[{}]/g, '')
+            'title': litToText(bibInfo.fields.title),
+            'author': nameToText(bibInfo.fields.editor || bibInfo.fields.author)
         }
 
         jQuery('#cite-source-table > tbody').append(citationItemTemplate(citeItemData))

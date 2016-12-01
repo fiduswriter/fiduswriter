@@ -132,42 +132,6 @@ def biblist_js(request):
         status=status
     )
 
-
-def save_bib_to_db(inserting_obj, suffix):
-    if 'id' in inserting_obj:
-        old_entries = Entry.objects.filter(pk=int(inserting_obj['id']))
-        if len(old_entries) == 0:
-            del inserting_obj['id']
-            return save_bib_to_db(inserting_obj, suffix)
-        else:
-            the_entry = old_entries[0]
-            the_entry.bib_type = inserting_obj['bib_type']
-            the_entry.entry_cat = inserting_obj['entry_cat']
-            the_entry.fields = inserting_obj['fields']
-            the_entry.save()
-            return the_entry
-    try:
-        the_entry = Entry(**inserting_obj)
-        the_entry.save()
-        return the_entry
-    except IntegrityError:
-        similar = Entry.objects.filter(**inserting_obj)
-        if len(similar) == 0:
-            old_entry_key = inserting_obj['entry_key']
-            new_suffix = suffix + 1
-            if suffix == 0:
-                new_entry_key = old_entry_key + '_1'
-            else:
-                new_entry_key = old_entry_key[
-                    :-(len(str(suffix)) + 1)] + '_' + str(new_suffix)
-            inserting_obj['entry_key'] = new_entry_key
-            return save_bib_to_db(inserting_obj, new_suffix)
-        else:
-            # At least one similar entry exists. Return the first match.
-            # This is important for BibTranslationTable on doc import
-            return similar[0]
-
-
 # save bibliography entries from bibtex importer or form
 @login_required
 def save_js(request):
@@ -186,37 +150,21 @@ def save_js(request):
                     document__owner=requested_owner_id,
                     user=request.user.id, rights='w')) > 0:
                 owner_id = requested_owner_id
-        new_bibs = []
-        key_translations = {}
-        for bib in bibs:
+        response['id_translations'] = []
+        for b_id in bibs.keys():
+            bib = bibs[b_id]
             inserting_obj = {
                 'entry_owner_id': owner_id,
+                'entry_key': bib['entry_key'],
                 'entry_cat': bib['entry_cat'],
                 'bib_type': bib['bib_type'],
-                'fields': json.dumps(bib['fields'])
+                'fields': bib['fields']
             }
-            if 'entry_key' in bib:
-                old_entry_key = bib['entry_key']
-                inserting_obj['entry_key'] = old_entry_key
-            else:
-                old_entry_key = False
-            if 'id' in bib:
-                inserting_obj['id'] = bib['id']
-            the_entry = save_bib_to_db(inserting_obj, 0)
-            if the_entry:
-                new_bibs.append(the_entry)
-                if old_entry_key:
-                    key_translations[old_entry_key] = the_entry.entry_key
-        response['bibs'] = serializer.serialize(
-            new_bibs,
-            fields=(
-                'entry_key',
-                'entry_owner',
-                'bib_type',
-                'entry_cat',
-                'fields'))
-        if key_translations != {}:
-            response['key_translations'] = key_translations
+            similar = Entry.objects.filter(**inserting_obj)
+            if len(similar) == 0:
+                the_entry = Entry(**inserting_obj)
+                the_entry.save()
+                response['id_translations'].append([b_id, the_entry.id])
     return JsonResponse(
         response,
         status=status

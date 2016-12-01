@@ -25,6 +25,3 @@ class Entry(models.Model):
 
     def __unicode__(self):
         return self.entry_key
-
-    class Meta:
-        unique_together = (('entry_key', 'entry_owner'),)

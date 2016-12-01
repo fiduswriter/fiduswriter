@@ -103,3 +103,14 @@ export const dateFormat = {
     'mdy': gettext('Month/Day/Year'),
     'mdy/mdy': gettext('M/D/Y - M/D/Y')
 }
+
+// Takes any richtext text field as used in bibliography and returns the text contents
+export function plaintextBibLitString(litStringArray) {
+    let outText = ''
+    litStringArray.forEach((litString) => {
+        if (litString.type==='text') {
+            outText += litString.text
+        }
+    })
+    return outText
+}

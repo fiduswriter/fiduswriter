@@ -119,7 +119,8 @@ export class BibliographyDB {
      */
     serverBibItemToBibDB(item) {
         let id = item['id']
-        let aBibDBEntry = JSON.parse(item['fields'])
+        let aBibDBEntry = {}
+        aBibDBEntry['fields'] = JSON.parse(item['fields'])
         aBibDBEntry['bib_type'] = item['bib_type']
         aBibDBEntry['entry_key'] = item['entry_key']
         aBibDBEntry['entry_cat'] = item['entry_cat']

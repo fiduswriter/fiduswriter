@@ -7,10 +7,11 @@ import {activateWait, deactivateWait, addAlert, csrfToken} from "../../common/co
 
 export class BibLatexFileImporter {
 
-    constructor(db, callback) {
-        this.db = db
+    constructor(bibDB, callback) {
+        this.bibDB = bibDB
         this.callback = callback
         this.openDialog()
+        this.tmpDB = false
     }
 
     openDialog() {
@@ -72,36 +73,54 @@ export class BibLatexFileImporter {
     processFile(fileContents) {
         let that = this
         let bibData = new BibLatexParser(fileContents)
-        this.bibEntries = bibData.output
-        this.bibEntries.forEach((bibEntry) => {
-            // We add an empty category list for all newly imported bib entries.
-            bibEntry.entry_cat = ''
-        })
-        if (_.isEmpty(this.bibEntries)) {
+        this.tmpDB = bibData.output
+        this.bibKeys = Object.keys(this.tmpDB)
+        if (_.isEmpty(this.bibKeys)) {
             deactivateWait()
             addAlert('error', gettext('No bibliography entries could be found in import file.'))
             return
         } else {
+            this.bibKeys.forEach((bibKey) => {
+                let bibEntry = this.tmpDB[bibKey]
+                // We add an empty category list for all newly imported bib entries.
+                bibEntry.entry_cat = ''
+            })
             bibData.errors.forEach(function(error){
-                switch (error.type) {
-                    case 'variable_error':
-                        addAlert('error', gettext('A variable could not be identified. Possible error in bibtex syntax.'))
-                        break
+                let errorMsg = gettext('An error occured while reading the bibtex file')
+                errorMsg += `, error_code: ${error.type}`
+                if (error.key) {
+                    errorMsg += `, key: ${error.key}`
+                }
+                addAlert('error', errorMsg)
+            })
+            bibData.warnings.forEach(function(warning){
+                let warningMsg
+                switch (warning.type) {
                     case 'unknown_field':
-                        addAlert('error', error.field_name + gettext(' of ') +
-                            error.entry +
+                        warningMsg = warning.field_name + gettext(' of ') +
+                            warning.entry +
                             gettext(' cannot not be saved. Fidus Writer does not support the field.')
-                        )
                         break
                     case 'unknown_type':
-                        addAlert('warning', error.type_name + gettext(' of ') +
-                            error.entry +
+                        warningMsg = warning.type_name + gettext(' of ') +
+                            warning.entry +
                             gettext(' is saved as "misc". Fidus Writer does not support the entry type.')
-                        )
                         break
+                    case 'unknown_date':
+                        warningMsg = warning.field_name + gettext(' of ') +
+                            warning.entry +
+                            gettext(' not a valid EDTF string.')
+                        break
+                    default:
+                        warningMsg = gettext('An warning occured while reading the bibtex file')
+                        errorMsg += `, warning_code: ${warning.type}`
+                        if (warning.key) {
+                            errorMsg += `, key: ${warning.key}`
+                        }
                 }
+                addAlert('warning', warningMsg)
             })
-            this.totalChunks = Math.ceil(this.bibEntries.length / 50)
+            this.totalChunks = Math.ceil(this.bibKeys.length / 50)
             this.currentChunkNumber = 0
             this.processChunk()
         }
@@ -113,7 +132,12 @@ export class BibLatexFileImporter {
         if (this.currentChunkNumber < this.totalChunks) {
             let fromNumber = this.currentChunkNumber * 50
             let toNumber = fromNumber + 50
-            let currentChunk = this.bibEntries.slice(fromNumber, toNumber)
+            let currentChunk = {}
+            this.bibKeys.slice(fromNumber, toNumber).forEach((bibKey)=>{
+                let bibObj = Object.assign({}, this.tmpDB[bibKey])
+                bibObj.fields = JSON.stringify(bibObj.fields)
+                currentChunk[bibKey] = bibObj
+            })
             this.sendChunk(currentChunk, function () {
                 that.currentChunkNumber++
                 that.processChunk()
@@ -128,12 +152,13 @@ export class BibLatexFileImporter {
      *
      */
 
-    sendChunk(bibEntries, callback) {
+    sendChunk(bibEntryDB, callback) {
 
         let postData = {
-            'bibs': JSON.stringify(bibEntries)
+            'bibs': JSON.stringify(bibEntryDB)
         }, that = this
 
+        // TODO: replace with functions in database.js
         jQuery.ajax({
             url: '/bibliography/save/',
             type: 'post',
@@ -145,10 +170,15 @@ export class BibLatexFileImporter {
             },
             success: function (response, textStatus, jqXHR) {
                 let ids = []
-                response.bibs.forEach(function(bibEntry) {
-                    that.db.serverBibItemToBibDB(bibEntry)
-                    ids.push(bibEntry.id)
+                response['id_translations'].forEach((bibTrans)=>{
+                    that.bibDB.db[bibTrans[1]] = that.tmpDB[bibTrans[0]]
+                    ids.push(bibTrans[1])
                 })
+//                let ids = []
+//                response.bibs.forEach(function(bibEntry) {
+//                    that.db.serverBibItemToBibDB(bibEntry)
+//                    ids.push(bibEntry.id)
+//                })
                 if (that.callback) {
                     that.callback(ids)
                 }

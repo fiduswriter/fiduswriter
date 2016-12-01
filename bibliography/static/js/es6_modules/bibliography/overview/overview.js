@@ -1,4 +1,4 @@
-import {formatDateString, addRemoveListHandler, dateFormat} from "../tools"
+import {addRemoveListHandler, dateFormat, plaintextBibLitString} from "../tools"
 import {BibEntryForm} from "../form/form"
 import {editCategoriesTemplate, categoryFormsTemplate, bibtableTemplate,
     bibliographyCategoryListItemTemplate} from "./templates"
@@ -173,25 +173,30 @@ export class BibliographyOverview {
     appendToBibTable(pk, bibInfo) {
         let $tr = jQuery('#Entry_' + pk)
         //reform author field
-        let bibauthor = bibInfo.author || bibInfo.editor
+        let bibauthors = bibInfo.fields.author || bibInfo.fields.editor
         // If neither author nor editor were registered, use an empty string instead of nothing.
         // TODO: Such entries should likely not be accepted by the importer.
-        if (typeof bibauthor === 'undefined') bibauthor = ''
-        let bibauthors = bibauthor.split('} and {')
-        //if there are more authors, add "and others" behind.
-        let andOthers = (1 < bibauthors.length) ? gettext(' and others') : ''
-        bibauthor = bibauthors[0]
-        let bibauthorList = bibauthor.split('} {')
-        if (1 < bibauthorList.length) {
-            bibauthor = bibauthorList[1] + ', ' + bibauthorList[0]
-        } else {
-            bibauthor = bibauthorList[0]
+        let bibauthorString = ''
+
+        if (typeof bibauthors !== 'undefined' && bibauthors.length > 0) {
+            if (bibauthors[0]['family']) {
+                bibauthorString += plaintextBibLitString(bibauthors[0]['family'])
+                if (bibauthors[0]['given']) {
+                    bibauthorString += `, ${plaintextBibLitString(bibauthors[0]['given'])}`
+                }
+            } else if (bibauthors[0]['literal']){
+                bibauthorString += plaintextBibLitString(bibauthors[0]['literal'])
+            }
+
+            if (1 < bibauthors.length) {
+                //if there are more authors, add "and others" behind.
+                bibauthorString += gettext(' and others')
+            }
         }
-        bibauthor = bibauthor.replace(/[{}]/g, '')
-        bibauthor += andOthers
+
         // If title is undefined, set it to an empty string.
         // TODO: Such entries should likely not be accepted by the importer.
-        let bibtitle = typeof(bibInfo.title) === 'undefined' ? '' : bibInfo.title
+        let bibtitle = bibInfo.fields.title ? plaintextBibLitString(bibInfo.fields.title) : ''
 
         if (0 < $tr.length) { //if the entry exists, update
 
@@ -201,8 +206,8 @@ export class BibliographyOverview {
                 'type': bibInfo.bib_type,
                 'typetitle': BibTypeTitles[bibInfo.bib_type],
                 'title': bibtitle,
-                'author': bibauthor,
-                'published': formatDateString(bibInfo.date)
+                'author': bibauthorString,
+                'published': bibInfo.fields.date ? bibInfo.fields.date.replace('/', ' ') : ''
             }))
         } else { //if this is the new entry, append
             jQuery('#bibliography > tbody').append(bibtableTemplate({
@@ -211,8 +216,8 @@ export class BibliographyOverview {
                 'type': bibInfo.bib_type,
                 'typetitle': BibTypeTitles[bibInfo.bib_type],
                 'title': bibtitle,
-                'author': bibauthor,
-                'published': formatDateString(bibInfo.date)
+                'author': bibauthorString,
+                'published': bibInfo.fields.date ? bibInfo.fields.date.replace('/', ' ') : ''
             }))
         }
     }

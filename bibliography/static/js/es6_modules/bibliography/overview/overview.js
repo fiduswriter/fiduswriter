@@ -1,5 +1,6 @@
 import {addRemoveListHandler, dateFormat, litToText, nameToText} from "../tools"
-import {BibEntryForm} from "../form/form"
+//import {BibEntryForm} from "../form/form"
+import {BibEntryForm} from "../form"
 import {editCategoriesTemplate, categoryFormsTemplate, bibtableTemplate,
     bibliographyCategoryListItemTemplate} from "./templates"
 import {BibliographyDB} from "../database"
@@ -269,10 +270,12 @@ export class BibliographyOverview {
 
         jQuery(document).on('click', '.edit-bib', function () {
             let eID = jQuery(this).attr('data-id')
-            let eType = jQuery(this).attr('data-type')
-            new BibEntryForm(eID, eType, that.bibDB.db, that.bibDB.cats, false, function(bibEntryData){
-                that.createBibEntry(bibEntryData)
-            })
+            //let eType = jQuery(this).attr('data-type')
+            let form = new BibEntryForm(eID, that.bibDB)
+            form.init()
+            //new BibEntryForm(eID, eType, that.bibDB.db, that.bibDB.cats, false, function(bibEntryData){
+            //    that.createBibEntry(bibEntryData)
+            //})
         })
 
         //open dropdown for bib category

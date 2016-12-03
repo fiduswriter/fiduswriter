@@ -1,11 +1,11 @@
 import {BibFieldTypes, BibTypes} from "biblatex-csl-converter/lib/const"
 import {bibDialog} from "./tmp"
-import {LitFieldForm} from "./fields/literal"
-import {LitListForm} from "./fields/literal-list"
+import {LiteralFieldForm} from "./fields/literal"
+import {LiteralListForm} from "./fields/literal-list"
 
 const FIELD_FORMS = {
-    'f_literal': LitFieldForm,
-    'l_literal': LitListForm
+    'f_literal': LiteralFieldForm,
+    'l_literal': LiteralListForm
 }
 
 export class BibEntryForm {
@@ -77,12 +77,11 @@ export class BibEntryForm {
     // Add a field to required, optional or either-or fields
     addField(fieldName, category, categoryDom) {
         let fieldType = BibFieldTypes[fieldName].type
-        let initialValue = this.values[fieldName] ? this.values[fieldName] : false
         categoryDom.insertAdjacentHTML('beforeend', `<tr><th><h4 class="fw-tablerow-title">${gettext(fieldName)}</h4></th><td class="entry-field"></td></tr>`)
         let fieldDom = categoryDom.lastChild.lastChild
         let FieldClass = FIELD_FORMS[fieldType]
         if (FieldClass) {
-            let fieldHandler = new FieldClass(initialValue, fieldDom)
+            let fieldHandler = new FieldClass(fieldDom, this.values[fieldName])
             fieldHandler.init()
             category[fieldName] = fieldHandler
         }

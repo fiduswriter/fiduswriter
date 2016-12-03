@@ -2,8 +2,9 @@ import {ProseMirror} from "prosemirror-old/dist/edit/main"
 import {Doc, Text, EmMark, LinkMark, StrongMark} from "prosemirror-old/dist/schema-basic"
 import {buildKeymap} from "prosemirror-old/dist/example-setup"
 import {Block, Schema} from "prosemirror-old/dist/model"
-export class LitFieldForm{
-    constructor(initialValue, dom) {
+
+export class LiteralFieldForm{
+    constructor(dom, initialValue) {
         this.initialValue = initialValue
         this.dom = dom
     }

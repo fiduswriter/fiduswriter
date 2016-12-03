@@ -1,30 +1,54 @@
-import {LitFieldForm} from "./literal"
+import {LiteralFieldForm} from "./literal"
 
-export class LitListForm{
-    constructor(initialValue, dom) {
-        this.initialValue = initialValue
+export class LiteralListForm{
+    constructor(dom, initialValue = [[]]) {
+        this.currentValue = initialValue
         this.dom = dom
-        this.fields = []
     }
 
     init() {
-        let that = this
-        this.dom.innerHTML = '<table><tbody></tbody></table>'
-        if (this.initialValue) {
-            this.initialValue.forEach(fieldValue => {
-                that.addField(fieldValue)
-            })
-        } else {
-            this.addField()
-        }
+        this.drawForm()
     }
 
-    addField(fieldValue) {
-        this.dom.firstChild.firstChild.insertAdjacentHTML('beforeend','<tr><td></td><td><span class="icon-minus-circle"></span><span class="icon-plus-circle"></span></td></tr>')
+    drawForm() {
+        let that = this
+        this.fields = []
+        this.dom.innerHTML = '<table><tbody></tbody></table>'
+        this.currentValue.forEach((fieldValue, index) => {
+            that.addField(fieldValue, index)
+        })
+    }
+
+    addField(fieldValue, index) {
+        let that = this
+        this.dom.firstChild.firstChild.insertAdjacentHTML(
+            'beforeend',
+            '<tr><td></td><td><span class="icon-minus-circle"></span>\
+            <span class="icon-plus-circle"></span></td></tr>'
+        )
         let fieldDOM = this.dom.firstChild.firstChild.lastChild
-        let fieldHandler = new LitFieldForm(fieldValue, fieldDOM.firstChild)
+        let fieldHandler = new LiteralFieldForm(fieldDOM.firstChild, fieldValue)
         fieldHandler.init()
         this.fields.push(fieldHandler)
+
+        // click on plus
+        let addItemEl = fieldDOM.querySelector('.icon-plus-circle')
+        addItemEl.addEventListener('click', () => {
+            that.currentValue = that.value
+            that.currentValue.splice(index+1, 0, [])
+            that.drawForm()
+        })
+
+        // Click on minus
+        let removeItemEl = fieldDOM.querySelector('.icon-minus-circle')
+        removeItemEl.addEventListener('click', () => {
+            that.currentValue = that.value
+            that.currentValue.splice(index, 1)
+            if (that.currentValue.length === 0) {
+                that.currentValue = [[]]
+            }
+            that.drawForm()
+        })
     }
 
     get value() {

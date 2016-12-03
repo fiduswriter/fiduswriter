@@ -1,36 +1,46 @@
-#createbook {
+#bib-dialog {
     margin-top: 18px;
-    width: 729px !important;
-    overflow: visible;
+/*    width: 729px !important;
+    overflow: visible;*/
 }
 
-#createbook .ui-dialog-content-table, .name-list-table {
+#bib-dialog .ui-tabs-panel {
+    height: 244px;
+}
+
+#bib-dialog .ui-dialog-content-table, .name-list-table {
     table-layout: fixed;
 }
-#createbook .ui-dialog-content-table th, #createbook .ui-dialog-content-table td {
+#bib-dialog .ui-dialog-content-table th, #bib-dialog .ui-dialog-content-table td {
   vertical-align: top;
 }
-#createbook .ui-dialog-content-table th {
+#bib-dialog .ui-dialog-content-table th {
   padding-left: 10px;
   padding-right: 4px;
   width: 170px;
 }
-#createbook .ui-dialog-content-table td {
+#bib-dialog .ui-dialog-content-table td {
     width: 100%;
 }
-#createbook .ui-dialog-content-table > tbody > tr > th > h4 {
+#bib-dialog .ui-dialog-content-table > tbody > tr > th > h4 {
     height: 36px;
     display: table-cell;
     vertical-align: middle;
 }
-#createbook .list-input-wrapper {
+#bib-dialog .list-input-wrapper {
     white-space: nowrap;
 }
-#createbook .list-input-wrapper > td:first-child {
+#bib-dialog .list-input-wrapper > td:first-child {
     width: 91%;
 }
-#createbook .list-input-wrapper:last-child > td {
+#bib-dialog .list-input-wrapper:last-child > td {
     padding-bottom: 0 !important;
+}
+
+#bib-dialog .fw-dialog-table th {
+    vertical-align: top;
+    padding: 0 6px 0 8px;
+    width: 170px;
 }
 
 .list-input-wrapper .add-remove-list {
@@ -48,22 +58,22 @@
     content: '\2795';
 }
 
-#createbook .date-form input {
+#bib-dialog .date-form input {
     width: 66px;
     margin-right: 1px;
 }
 
-#createbook .date-form .separator {
+#bib-dialog .date-form .separator {
     display: inline-block;
     width: 15px;
     text-align: center;
 }
 
-#createbook td .dk-selected, #createbook td .dk-select-options {
+#bib-dialog td .dk-selected, #bib-dialog td .dk-select-options {
     width: 486px !important;
 }
 
-#createbook th .dk-selected, #createbook th .dk-select-options {
+#bib-dialog th .dk-selected, #bib-dialog th .dk-select-options {
     width: 140px !important;
 }
 

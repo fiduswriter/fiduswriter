@@ -1,9 +1,11 @@
 import {BibFieldTypes, BibTypes} from "biblatex-csl-converter/lib/const"
 import {bibDialog} from "./tmp"
 import {LitFieldForm} from "./fields/literal"
+import {LitListForm} from "./fields/literal-list"
 
 const FIELD_FORMS = {
     'f_literal': LitFieldForm,
+    'l_literal': LitListForm
 }
 
 export class BibEntryForm {
@@ -15,9 +17,9 @@ export class BibEntryForm {
             this.dialogHeader = gettext('Register New Source')
         }
         this.bibDB = bibDB
-        this.required = []
-        this.optional = []
-        this.eitheror = []
+        this.required = {}
+        this.optional = {}
+        this.eitheror = {}
         this.bibType = false
         this.cats = []
         this.values = {}
@@ -50,10 +52,10 @@ export class BibEntryForm {
             jQuery(this).dialog('close')
         }
 
-        jQuery("#bibDialog").dialog({
+        jQuery("#bib-dialog").dialog({
             draggable: false,
             resizable: false,
-            width: 710,
+            width: 730,
             height: 500,
             modal: true,
             buttons: diaButtons,
@@ -64,40 +66,40 @@ export class BibEntryForm {
                 theDialog.find(".ui-button:last").addClass("fw-button fw-orange")
             },
             close: function() {
-                jQuery("#bibDialog").dialog('destroy').remove()
+                jQuery("#bib-dialog").dialog('destroy').remove()
             }
         })
 
         // init ui tabs
-        jQuery('#bibDialogTabs').tabs()
+        jQuery('#bib-dialog-tabs').tabs()
     }
 
     // Add a field to required, optional or either-or fields
     addField(fieldName, category, categoryDom) {
         let fieldType = BibFieldTypes[fieldName].type
         let initialValue = this.values[fieldName] ? this.values[fieldName] : false
-        categoryDom.insertAdjacentHTML('beforeend', `<tr><th><h4 class="fw-tablerow-title">${gettext(fieldName)}</h4></th><td></td></tr>`)
+        categoryDom.insertAdjacentHTML('beforeend', `<tr><th><h4 class="fw-tablerow-title">${gettext(fieldName)}</h4></th><td class="entry-field"></td></tr>`)
         let fieldDom = categoryDom.lastChild.lastChild
         let FieldClass = FIELD_FORMS[fieldType]
         if (FieldClass) {
-            let fieldHandler = new FieldClass(fieldName, initialValue, fieldDom)
+            let fieldHandler = new FieldClass(initialValue, fieldDom)
             fieldHandler.init()
-            category.push(fieldHandler)
+            category[fieldName] = fieldHandler
         }
     }
 
     createForm() {
         let that = this
         this.addDialogToDom()
-        let eitherOrFields = document.getElementById('eoFields')
-        BibTypes[this.bibType].required.forEach(fieldName=>{
+        let eitherOrFields = document.getElementById('eo-fields')
+        BibTypes[this.bibType].eitheror.forEach(fieldName=>{
             that.addField(fieldName, that.eitheror, eitherOrFields)
         })
-        let reqFields = document.getElementById('reqFields')
+        let reqFields = document.getElementById('req-fields')
         BibTypes[this.bibType].required.forEach(fieldName=>{
             that.addField(fieldName, that.required, reqFields)
         })
-        let optFields = document.getElementById('optFields')
+        let optFields = document.getElementById('opt-fields')
         BibTypes[this.bibType].optional.forEach(fieldName=>{
             that.addField(fieldName, that.optional, optFields)
         })

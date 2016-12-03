@@ -41,8 +41,9 @@ textarea:focus {
 /*
  * Bibliography entry input
  */
-#createbook input.entryForm,
-#createbook input.fw-input,
+/*#bib-dialog input.entryForm,
+#bib-dialog input.fw-input,*/
+#bib-dialog .entry-field .ProseMirror,
 #uploadimage input.entryForm,
 #uploadimage input.fw-input,
 #book-dialog input.entryForm,
@@ -164,4 +165,27 @@ tr.fw-checkable.checked:after {
  */
 .fw-button input[type='checkbox'] {
     margin-right: 3px;
+}
+
+/*
+ * bibliography form
+ */
+
+div.literal {
+    font-size: 14px;
+    line-height: 1.33em;
+    border: solid 1px #d3d3d3;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 8px 3px 0px 3px;
+    height: 28px;
+    background-color: #fff;
+}
+
+div.literal strong {
+    font-weight: bold;
+}
+
+div.literal em {
+    font-style: italic;
 }

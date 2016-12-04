@@ -1,4 +1,5 @@
 static-es5/
+static-libs/
 es6-cache/
 node_modules/
 venv/

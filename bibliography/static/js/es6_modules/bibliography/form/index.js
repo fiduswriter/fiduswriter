@@ -49,9 +49,9 @@ export class BibEntryForm {
 
         let diaButtons = {}
         diaButtons[gettext('Submit')] = function() {
-            if (type) {
-                that.onCreateBibEntrySubmitHandler(id)
-            }
+            //if (type) {
+            //    that.onCreateBibEntrySubmitHandler(id)
+            //}
         }
         diaButtons[gettext('Cancel')] = function() {
             jQuery(this).dialog('close')

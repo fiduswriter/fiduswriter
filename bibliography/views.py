@@ -6,7 +6,6 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.template.context_processors import csrf
-from django.db import IntegrityError
 from django.db.models import Max, Count
 from django.core.serializers.python import Serializer
 
@@ -131,6 +130,7 @@ def biblist_js(request):
         response,
         status=status
     )
+
 
 # save bibliography entries from bibtex importer or form
 @login_required

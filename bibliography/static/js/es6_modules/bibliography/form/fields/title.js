@@ -28,7 +28,8 @@ export class TitleFieldForm{
     }
 
     get value() {
-        return this.pm.doc.firstChild.content.toJSON()
+        let titleContents = this.pm.doc.firstChild.content.toJSON()
+        return titleContents ? titleContents : []
     }
 }
 

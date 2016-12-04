@@ -49,34 +49,40 @@ export class NameFieldForm{
         this.fields = {}
         this.dom.innerHTML = noSpaceTmp`
             <div class='person'>
-                ${gettext('First name')}: <div class='given'></div>
-                ${gettext('Prefix')}: <div class='prefix'></div>
-                ${gettext('Last name')}: <div class='family'></div>
-                ${gettext('Suffix')}: <div class='suffix'></div>
-                <input type='checkbox' class='prefixused'
-                    ${this.currentValue.prefixused? 'checked' : ''}>
-                ${gettext('Prefix used')}
-                <button class="switch-type">${gettext('Organization')}</button>
+                <div class='given name-part name-part-long'></div>
+                <div class='prefix name-part name-part-short'></div>
+                <div class='family name-part name-part-long'></div>
+                <div class='suffix name-part name-part-short'></div>
+                <div class='prefixused name-part'>
+                    <input type='checkbox' class='prefixused'
+                        ${this.currentValue.prefixused? 'checked' : ''}>
+                    &nbsp;${gettext('Prefix used')}
+                </div>
+                <button class="switch-type fw-button fw-green">${gettext('Organization')}</button>
             </div>
         `
         this.fields['given'] = new LiteralFieldForm(
             this.dom.querySelector('.given'),
-            this.currentValue.given
+            this.currentValue.given,
+            gettext('First name')
         )
         this.fields.given.init()
         this.fields['prefix'] = new LiteralFieldForm(
             this.dom.querySelector('.prefix'),
-            this.currentValue.prefix
+            this.currentValue.prefix,
+            gettext('Prefix')
         )
         this.fields.prefix.init()
         this.fields['family'] = new LiteralFieldForm(
             this.dom.querySelector('.family'),
-            this.currentValue.family
+            this.currentValue.family,
+            gettext('Last name')
         )
         this.fields.family.init()
         this.fields['suffix'] = new LiteralFieldForm(
             this.dom.querySelector('.suffix'),
-            this.currentValue.suffix
+            this.currentValue.suffix,
+            gettext('Suffix')
         )
         this.fields.suffix.init()
         this.dom.querySelector('.switch-type').addEventListener('click', ()=>{
@@ -95,13 +101,14 @@ export class NameFieldForm{
         this.fields = {}
         this.dom.innerHTML = noSpaceTmp`
             <div class='organization'>
-                ${gettext('Organization name')}: <div class='literal-text'></div>
-                <button class="switch-type">${gettext('Person')}</button>
+                <div class='literal-text name-part'></div>
+                <button class="switch-type fw-button fw-green">${gettext('Person')}</button>
             </div>
         `
         this.fields['literal'] = new LiteralFieldForm(
             this.dom.querySelector('.literal-text'),
-            this.currentValue.literal
+            this.currentValue.literal,
+            gettext('Organization name')
         )
         this.fields.literal.init()
         this.dom.querySelector('.switch-type').addEventListener('click', ()=>{

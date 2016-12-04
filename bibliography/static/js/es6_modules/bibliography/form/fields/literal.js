@@ -4,31 +4,50 @@ import {buildKeymap} from "prosemirror-old/dist/example-setup"
 import {Block, Schema} from "prosemirror-old/dist/model"
 
 export class LiteralFieldForm{
-    constructor(dom, initialValue) {
-        this.initialValue = initialValue
+    constructor(dom, initialValue = [], placeHolder = false) {
         this.dom = dom
+        this.initialValue = initialValue
+        this.placeHolder = placeHolder
+        this.placeHolderSet = false
     }
 
     init() {
+        let that = this
         this.pm = new ProseMirror({
             place: this.dom,
             schema: litSchema
         })
         this.pm.addKeymap(buildKeymap(litSchema))
-        if (this.initialValue) {
-            let pmDoc = litSchema.nodeFromJSON({
-                type: 'doc',
-                content:[{
-                    type: 'literal',
-                    content: this.initialValue
-                }]
-            })
-            this.pm.setDoc(pmDoc)
+        let pmDoc = litSchema.nodeFromJSON({
+            type: 'doc',
+            content:[{
+                type: 'literal',
+                content: this.initialValue
+            }]
+        })
+        this.pm.setDoc(pmDoc)
+        if (this.placeHolder) {
+            this.renderPlaceholder()
+            this.pm.on.change.add(function(){that.renderPlaceholder()})
+            this.pm.on.blur.add(function(){that.renderPlaceholder(false)})
+            this.pm.on.focus.add(function(){that.renderPlaceholder(true)})
         }
     }
 
     get value() {
-        return this.pm.doc.firstChild.content.toJSON()
+        let literalContents = this.pm.doc.firstChild.content.toJSON()
+        return literalContents ? literalContents : []
+    }
+
+    renderPlaceholder(hasFocus = this.pm.hasFocus()) {
+        let value = this.value
+        if (value.length===0 && !this.placeHolderSet && !hasFocus) {
+            this.dom.querySelector('div.literal').setAttribute('data-placeholder', this.placeHolder)
+            this.placeHolderSet = true
+        } else if ((this.placeHolderSet && hasFocus) || value.length > 0) {
+            this.dom.querySelector('div.literal').removeAttribute('data-placeholder')
+            this.placeHolderSet = false
+        }
     }
 }
 

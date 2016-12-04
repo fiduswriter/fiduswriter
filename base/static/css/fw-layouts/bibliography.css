@@ -5,7 +5,7 @@
 }
 
 #bib-dialog .ui-tabs-panel {
-    height: 244px;
+    height: 439px;
 }
 
 #bib-dialog .ui-dialog-content-table, .name-list-table {
@@ -43,15 +43,31 @@
     width: 170px;
 }
 
-#bib-dialog .person .given,
-#bib-dialog .person .family,
-#bib-dialog .person .prefix,
-#bib-dialog .person .suffix {
-    display: inline-block;
+#bib-dialog .person, #bib-dialog .organization {
+    width: 697px;
 }
 
-#bib-dialog .person .ProseMirror {
-    width: 100px;
+#bib-dialog .person .name-part, #bib-dialog .organization .name-part {
+    display: inline-block;
+    margin-right: 18px;
+}
+
+#bib-dialog .person .name-part-long .ProseMirror {
+    width: 130px;
+}
+
+#bib-dialog .person .name-part-short .ProseMirror {
+    width: 58px;
+}
+
+#bib-dialog div.literal::before {
+    content: attr(data-placeholder);
+    color: #cecece;
+}
+
+#bib-dialog .fw-pulldown.fw-center {
+    left: 10px;
+    top: 40px;
 }
 
 .list-input-wrapper .add-remove-list {

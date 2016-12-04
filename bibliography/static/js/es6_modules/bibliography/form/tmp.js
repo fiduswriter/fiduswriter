@@ -1,7 +1,17 @@
 /** A template for the bibliography item edit dialog. */
 export let bibDialog = _.template('\
     <div id="bib-dialog" title="<%- dialogHeader %>">\
-        <%= bibType %>\
+        <div id="source-type-selection" class="fw-button fw-white fw-large">\
+            <span id="selected-source-type-title"><%= sourceTitle %></span>\
+            <span class="icon-down-dir"></span>\
+            <div class="fw-pulldown fw-center">\
+                <ul><% Object.keys(BibTypes).forEach(function(key) { %>\
+                    <li>\
+                        <span class="fw-pulldown-item" data-value="<%- key %>"><%= BibTypeTitles[key] %></span>\
+                    </li>\
+                <% }) %></ul>\
+            </div>\
+        </div>\
         <div id="bib-dialog-tabs">\
             <ul>\
                 <li><a href="#req-fields-tab" class="fw-button fw-large">' + gettext('Required Fields') + '</a></li>\

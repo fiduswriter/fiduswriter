@@ -43,6 +43,17 @@
     width: 170px;
 }
 
+#bib-dialog .person .given,
+#bib-dialog .person .family,
+#bib-dialog .person .prefix,
+#bib-dialog .person .suffix {
+    display: inline-block;
+}
+
+#bib-dialog .person .ProseMirror {
+    width: 100px;
+}
+
 .list-input-wrapper .add-remove-list {
     display: inline-block;
     cursor: pointer;

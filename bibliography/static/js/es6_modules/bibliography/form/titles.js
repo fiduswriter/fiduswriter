@@ -49,6 +49,7 @@ export let BibFieldTitles = {
     'iswc': gettext('ISWC'),
     'journalsubtitle': gettext('Subtitle of publication'),
     'journaltitle': gettext('Title of publication'),
+    'keywords': gettext('Keywords'),
     'label': gettext('Label'),
     'language': gettext('Language(s)'),
     'library': gettext('Library information'),

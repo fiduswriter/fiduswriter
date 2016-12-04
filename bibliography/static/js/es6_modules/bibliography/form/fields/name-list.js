@@ -1,7 +1,7 @@
-import {LiteralFieldForm} from "./literal"
+import {NameFieldForm} from "./name"
 import {noSpaceTmp} from "../../../common/common"
 
-export class LiteralListForm{
+export class NameListForm{
     constructor(dom, initialValue = [[]]) {
         this.currentValue = initialValue
         this.dom = dom
@@ -34,7 +34,7 @@ export class LiteralListForm{
             </tr>`
         )
         let fieldDOM = this.dom.firstChild.firstChild.lastChild
-        let fieldHandler = new LiteralFieldForm(fieldDOM.firstChild, fieldValue)
+        let fieldHandler = new NameFieldForm(fieldDOM.firstChild, fieldValue)
         fieldHandler.init()
         this.fields.push(fieldHandler)
 

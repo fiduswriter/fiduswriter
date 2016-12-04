@@ -1,11 +1,16 @@
 import {BibFieldTypes, BibTypes} from "biblatex-csl-converter/lib/const"
+import {BibFieldTitles} from "./titles"
 import {bibDialog} from "./tmp"
 import {LiteralFieldForm} from "./fields/literal"
 import {LiteralListForm} from "./fields/literal-list"
+import {TitleFieldForm} from "./fields/title"
+import {NameListForm} from "./fields/name-list"
 
 const FIELD_FORMS = {
     'f_literal': LiteralFieldForm,
-    'l_literal': LiteralListForm
+    'l_literal': LiteralListForm,
+    'f_title': TitleFieldForm,
+    'l_name': NameListForm
 }
 
 export class BibEntryForm {
@@ -56,7 +61,7 @@ export class BibEntryForm {
             draggable: false,
             resizable: false,
             width: 730,
-            height: 500,
+            height: 700,
             modal: true,
             buttons: diaButtons,
             create: function() {
@@ -77,7 +82,7 @@ export class BibEntryForm {
     // Add a field to required, optional or either-or fields
     addField(fieldName, category, categoryDom) {
         let fieldType = BibFieldTypes[fieldName].type
-        categoryDom.insertAdjacentHTML('beforeend', `<tr><th><h4 class="fw-tablerow-title">${gettext(fieldName)}</h4></th><td class="entry-field"></td></tr>`)
+        categoryDom.insertAdjacentHTML('beforeend', `<tr><th><h4 class="fw-tablerow-title">${BibFieldTitles[fieldName]}</h4></th><td class="entry-field"></td></tr>`)
         let fieldDom = categoryDom.lastChild.lastChild
         let FieldClass = FIELD_FORMS[fieldType]
         if (FieldClass) {

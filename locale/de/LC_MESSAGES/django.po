@@ -580,6 +580,10 @@ msgstr "Kommentare zeigen/verbergen"
 msgid "Comments"
 msgstr "Anmerkungen"
 
+#: document/templates/document/editor.html:
+msgid "Finish the review"
+msgstr "Review beenden"
+
 #: document/templates/document/editor.html:413
 #: document/templates/document/editor.html:414
 #, fuzzy

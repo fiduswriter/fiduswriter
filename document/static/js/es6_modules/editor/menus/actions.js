@@ -6,6 +6,7 @@ import {EpubExporter} from "../../exporter/epub"
 import {DocxExporter} from "../../exporter/docx"
 import {OdtExporter} from "../../exporter/odt"
 import {selectJournal} from "../../submit/journal"
+import {reviewSubmit} from "../../submit/journal"
 
 export class ModMenusActions {
     constructor(mod) {
@@ -98,9 +99,15 @@ export class ModMenusActions {
 
     submitOjs() {
         let that = this
-        let list = null
         that.mod.editor.save(function () {
             selectJournal(that.mod.editor)
+        })
+    }
+
+    submitReview(){
+        let that = this
+        that.mod.editor.save(function () {
+            reviewSubmit(that.mod.editor)
         })
     }
 

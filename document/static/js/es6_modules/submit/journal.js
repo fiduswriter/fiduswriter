@@ -136,3 +136,49 @@ export let selectJournal = function(editor) {
         })
 
 }
+
+/*submit the review*/
+export let reviewSubmit = function(editor){
+ let userProfile = {}
+        let data1 = new window.FormData()
+        data1.append('id', editor.user.id)
+        jQuery.ajax({
+            url: '/document/profile/',
+            data: data1,
+            type: 'POST',
+            cache: false,
+            contentType: false,
+            processData: false,
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
+            success: function(result) {
+                userProfile = result['user']
+            },
+            error: function() {
+                addAlert('error', 'can not get the user information')
+            }
+        })
+        let dataToOjs = new window.FormData()
+        dataToOjs.append('email', userProfile["email"])
+        dataToOjs.append('doc_id', editor.doc.id)
+        jQuery.ajax({
+            url: window.ojsUrl+'/index.php/index/gateway/plugin/RestApiGatewayPlugin/articles',
+            data: dataToOjs,
+            type: 'POST',
+            cache: false,
+            contentType: false,
+            processData: false,
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+               xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
+            success: function() {
+               addAlert('success','The editor will be informed about finishing your review')
+               },
+            error: function() {
+               addAlert('error', 'There is error while sending the signal of finishing review, please try it again')
+            }
+        })
+}

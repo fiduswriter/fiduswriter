@@ -1,17 +1,19 @@
 import {BibFieldTypes, BibTypes} from "biblatex-csl-converter/lib/const"
-import {BibFieldTitles, BibTypeTitles} from "./titles"
+import {BibFieldTitles, BibTypeTitles, BibKeyOptionsTitles} from "./titles"
 import {bibDialog} from "./tmp"
 import {LiteralFieldForm} from "./fields/literal"
 import {LiteralListForm} from "./fields/literal-list"
 import {TitleFieldForm} from "./fields/title"
 import {NameListForm} from "./fields/name-list"
+import {DateFieldForm} from "./fields/date"
 import {addDropdownBox} from "../../common/common"
 
 const FIELD_FORMS = {
     'f_literal': LiteralFieldForm,
     'l_literal': LiteralListForm,
     'f_title': TitleFieldForm,
-    'l_name': NameListForm
+    'l_name': NameListForm,
+    'f_date': DateFieldForm
 }
 
 export class BibEntryForm {
@@ -93,6 +95,8 @@ export class BibEntryForm {
             let fieldHandler = new FieldClass(fieldDOM, this.values[fieldName])
             fieldHandler.init()
             category[fieldName] = fieldHandler
+        } else {
+            console.warn(`Unknown fieldtype: ${fieldType}`)
         }
     }
 

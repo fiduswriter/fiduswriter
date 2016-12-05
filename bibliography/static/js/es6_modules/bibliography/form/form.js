@@ -25,10 +25,91 @@ import {
 } from "biblatex-csl-converter"
 
 import {
-    LocalizationKeys, BibTypeTitles, BibFieldTitles
+    BibTypeTitles, BibFieldTitles
 } from "./titles"
 
 import {addDropdownBox, setCheckableLabel} from "../../common/common"
+
+/** A list of all the bibliography keys and their full name. */
+let LocalizationKeys = [
+    {
+    type: 'publication_state',
+    name: 'inpreparation',
+    title: 'in\ preparation'
+}, {
+    type: 'publication_state',
+    name: 'submitted',
+    title: 'submitted\ to\ a\ journal\ or\ conference'
+}, {
+    type: 'publication_state',
+    name: 'forthcoming',
+    title: 'forthcoming'
+}, {
+    type: 'publication_state',
+    name: 'inpress',
+    title: 'in\ press'
+}, {
+    type: 'publication_state',
+    name: 'prepublished',
+    title: 'pre\-published'
+}, {
+    type: 'pagination',
+    name: 'page',
+    title: 'page'
+}, {
+    type: 'pagination',
+    name: 'column',
+    title: 'column'
+}, {
+    type: 'pagination',
+    name: 'section',
+    title: 'section'
+}, {
+    type: 'pagination',
+    name: 'paragraph',
+    title: 'paragraph'
+}, {
+    type: 'pagination',
+    name: 'verse',
+    title: 'verse'
+}, {
+    type: 'pagination',
+    name: 'line',
+    title: 'line'
+}, {
+    type: 'types',
+    name: 'mathesis',
+    title: 'master\’s\ thesis'
+}, {
+    type: 'types',
+    name: 'phdthesis',
+    title: 'PhD\ thesis'
+}, {
+    type: 'types',
+    name: 'candthesis',
+    title: 'Candidate\ thesis'
+}, {
+    type: 'types',
+    name: 'techreport',
+    title: 'technical\ report'
+}, {
+    type: 'types',
+    name: 'resreport',
+    title: 'research\ report'
+}, {
+    type: 'types',
+    name: 'software',
+    title: 'computer\ software'
+}, {
+    type: 'types',
+    name: 'datacd',
+    title: 'data\ cd'
+}, {
+    type: 'types',
+    name: 'audiocd',
+    title: 'audio\ cd'
+}]
+
 
 export class BibEntryForm {
     constructor(itemId, sourceType, bibDB, bibCats, ownerId, callback) {

@@ -1,40 +1,9 @@
 #bib-dialog {
     margin-top: 18px;
-/*    width: 729px !important;
-    overflow: visible;*/
 }
 
 #bib-dialog .ui-tabs-panel {
     height: 439px;
-}
-
-#bib-dialog .ui-dialog-content-table, .name-list-table {
-    table-layout: fixed;
-}
-#bib-dialog .ui-dialog-content-table th, #bib-dialog .ui-dialog-content-table td {
-  vertical-align: top;
-}
-#bib-dialog .ui-dialog-content-table th {
-  padding-left: 10px;
-  padding-right: 4px;
-  width: 170px;
-}
-#bib-dialog .ui-dialog-content-table td {
-    width: 100%;
-}
-#bib-dialog .ui-dialog-content-table > tbody > tr > th > h4 {
-    height: 36px;
-    display: table-cell;
-    vertical-align: middle;
-}
-#bib-dialog .list-input-wrapper {
-    white-space: nowrap;
-}
-#bib-dialog .list-input-wrapper > td:first-child {
-    width: 91%;
-}
-#bib-dialog .list-input-wrapper:last-child > td {
-    padding-bottom: 0 !important;
 }
 
 #bib-dialog .fw-dialog-table th {
@@ -43,8 +12,12 @@
     width: 170px;
 }
 
+#bib-dialog .entry-field .ProseMirror, #bib-dialog .entry-field input[type=text] {
+    width: 686px;
+}
+
 #bib-dialog .person, #bib-dialog .organization {
-    width: 697px;
+    width: 686px;
 }
 
 #bib-dialog .person .name-part, #bib-dialog .organization .name-part {
@@ -58,6 +31,14 @@
 
 #bib-dialog .person .name-part-short .ProseMirror {
     width: 58px;
+}
+
+#bib-dialog .organization .ProseMirror {
+    width: 598px;
+}
+
+#bib-dialog .person button, #bib-dialog .organization button {
+    float: right;
 }
 
 #bib-dialog div.literal::before {

@@ -95,121 +95,70 @@ export let BibFieldTitles = {
 }
 
 export let BibTypeTitles = {
-        'article': gettext('Article'),
-        'book': gettext('Book'),
-        'mvbook': gettext('Multi-volume book'),
-        'inbook': gettext('In book'),
-        'bookinbook': gettext('Book in book'),
-        'suppbook': gettext('Supplemental material in a book'),
-        'booklet': gettext('Booklet'),
-        'collection': gettext('Collection'),
-        'mvcollection': gettext('Multi-volume collection'),
-        'incollection': gettext('In collection'),
-        'suppcollection': gettext('Supplemental material in a collection'),
-        'manual': gettext('Manual'),
-        'misc': gettext('Miscellany'),
-        'online': gettext('Online resource'),
-        'patent': gettext('Patent'),
-        'periodical': gettext('Periodical'),
-        'suppperiodical': gettext('Supplemental material in a periodical'),
-        'proceedings': gettext('Proceedings'),
-        'mvproceedings': gettext('Multi-volume proceedings'),
-        'inproceedings': gettext('Article in a proceedings'),
-        'reference': gettext('Reference'),
-        'mvreference': gettext('Multi-volume work of reference'),
-        'inreference': gettext('Article in a work of reference'),
-        'report': gettext('Report'),
-        'thesis': gettext('Thesis'),
-        'unpublished': gettext('Unpublished'),
-        'article-magazine': gettext('Magazine article'),
-        'article-newspaper': gettext('Newspaper article'),
-        'article-journal': gettext('Journal article'),
-        'entry-encyclopedia': gettext('Encyclopedia entry'),
-        'entry-dictionary': gettext('Dictionary entry'),
-        'post-weblog': gettext('Blog post'),
-        'post': gettext('Forum post')
-    }
+    'article': gettext('Article'),
+    'book': gettext('Book'),
+    'mvbook': gettext('Multi-volume book'),
+    'inbook': gettext('In book'),
+    'bookinbook': gettext('Book in book'),
+    'suppbook': gettext('Supplemental material in a book'),
+    'booklet': gettext('Booklet'),
+    'collection': gettext('Collection'),
+    'mvcollection': gettext('Multi-volume collection'),
+    'incollection': gettext('In collection'),
+    'suppcollection': gettext('Supplemental material in a collection'),
+    'manual': gettext('Manual'),
+    'misc': gettext('Miscellany'),
+    'online': gettext('Online resource'),
+    'patent': gettext('Patent'),
+    'periodical': gettext('Periodical'),
+    'suppperiodical': gettext('Supplemental material in a periodical'),
+    'proceedings': gettext('Proceedings'),
+    'mvproceedings': gettext('Multi-volume proceedings'),
+    'inproceedings': gettext('Article in a proceedings'),
+    'reference': gettext('Reference'),
+    'mvreference': gettext('Multi-volume work of reference'),
+    'inreference': gettext('Article in a work of reference'),
+    'report': gettext('Report'),
+    'thesis': gettext('Thesis'),
+    'unpublished': gettext('Unpublished'),
+    'article-magazine': gettext('Magazine article'),
+    'article-newspaper': gettext('Newspaper article'),
+    'article-journal': gettext('Journal article'),
+    'entry-encyclopedia': gettext('Encyclopedia entry'),
+    'entry-dictionary': gettext('Dictionary entry'),
+    'post-weblog': gettext('Blog post'),
+    'post': gettext('Forum post')
+}
 
-/** A list of all the bibliography keys and their full name. */
-export let LocalizationKeys = [
-    {
-    type: 'publication_state',
-    name: 'inpreparation',
-    title: 'in\ preparation'
-}, {
-    type: 'publication_state',
-    name: 'submitted',
-    title: 'submitted\ to\ a\ journal\ or\ conference'
-}, {
-    type: 'publication_state',
-    name: 'forthcoming',
-    title: 'forthcoming'
-}, {
-    type: 'publication_state',
-    name: 'inpress',
-    title: 'in\ press'
-}, {
-    type: 'publication_state',
-    name: 'prepublished',
-    title: 'pre\-published'
-}, {
-    type: 'pagination',
-    name: 'page',
-    title: 'page'
-}, {
-    type: 'pagination',
-    name: 'column',
-    title: 'column'
-}, {
-    type: 'pagination',
-    name: 'section',
-    title: 'section'
-}, {
-    type: 'pagination',
-    name: 'paragraph',
-    title: 'paragraph'
-}, {
-    type: 'pagination',
-    name: 'verse',
-    title: 'verse'
-}, {
-    type: 'pagination',
-    name: 'line',
-    title: 'line'
-}, {
-    type: 'types',
-    name: 'mathesis',
-    title: 'master\’s\ thesis'
-}, {
-    type: 'types',
-    name: 'phdthesis',
-    title: 'PhD\ thesis'
-}, {
-    type: 'types',
-    name: 'candthesis',
-    title: 'Candidate\ thesis'
-}, {
-    type: 'types',
-    name: 'techreport',
-    title: 'technical\ report'
-}, {
-    type: 'types',
-    name: 'resreport',
-    title: 'research\ report'
-}, {
-    type: 'types',
-    name: 'software',
-    title: 'computer\ software'
-}, {
-    type: 'types',
-    name: 'datacd',
-    title: 'data\ cd'
-}, {
-    type: 'types',
-    name: 'audiocd',
-    title: 'audio\ cd'
-}, {
-    type: 'types',
-    name: 'software',
-    title: 'computer\ software'
-}]
+export let BibKeyOptionsTitles = {
+    'manual': gettext('Manual'),
+    'patent': gettext('Patent'),
+    'report': gettext('Report'),
+    'thesis': gettext('Thesis'),
+    'editor': gettext('Editor'),
+    'compiler': gettext('Compiler'),
+    'founder': gettext('Founder'),
+    'continuator': gettext('Continuator'),
+    'redactor': gettext('Redactor'),
+    'reviser': gettext('Reviser'),
+    'collaborator': gettext('Collaborator'),
+    'page': gettext('Page'),
+    'column': gettext('Column'),
+    'section': gettext('Section'),
+    'paragraph': gettext('Paragraph'),
+    'verse': gettext('Verse'),
+    'line': gettext('Line'),
+    'inpreparation': gettext('In preparation'),
+    'submitted': gettext('Submitted'),
+    'forthcoming': gettext('Forthcoming'),
+    'inpress': gettext('In press'),
+    'prepublished': gettext('Pre-published'),
+    'mathesis': gettext('M.A. thesis'),
+    'phdthesis': gettext('Ph.D. thesis'),
+    'candthesis': gettext('Candidate thesis'),
+    'techreport': gettext('Technical report'),
+    'resreport': gettext('Research report'),
+    'software': gettext('Computer software'),
+    'datacd': gettext('Data CD'),
+    'audiocd': gettext('Audio CD'),
+}

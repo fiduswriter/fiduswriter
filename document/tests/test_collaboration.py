@@ -1086,12 +1086,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # fill the values
         title_of_publication = driver.find_element_by_id(
-            'id_eFieldjournaltitle'
+            'id_journaltitle'
         )
         title_of_publication.click()
         title_of_publication.send_keys("My publication title")
 
-        title = driver.find_element_by_id('id_eFieldtitle')
+        title = driver.find_element_by_id('id_title')
         title.click()
         title.send_keys("My title")
 

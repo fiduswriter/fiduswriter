@@ -122,6 +122,14 @@ body {
     color: #ccc;
     background-color: #f2f2f2;
 }
+#reviewed {
+    left: 100%;
+    margin-left: 14px;
+    background-color: #81F781;
+}
+#reviewed:hover {
+    background-color: #c9c9c9;
+}
 .editortoolbar {
     position: relative;
     left: 68px;

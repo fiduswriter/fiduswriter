@@ -10,16 +10,10 @@ from django.db import IntegrityError
 from django.db.models import Max, Count
 from django.core.serializers.python import Serializer
 
-from bibliography.bib import Persons
-from bibliography.bib import BibDate
-
 from bibliography.models import (
     Entry,
     EntryType,
-    EntryField,
-    EntryCategory,
-    EntryTypeAlias,
-    EntryFieldAlias
+    EntryCategory
 )
 
 from document.models import AccessRight
@@ -38,128 +32,6 @@ def index(request):
     response = {}
     response.update(csrf(request))
     return render(request, 'bibliography/index.html', response)
-
-
-def save_bib_to_db(inserting_obj, suffix):
-    try:
-        the_entry = Entry(**inserting_obj)
-        the_entry.save()
-        return the_entry
-    except IntegrityError:
-        similar = Entry.objects.filter(**inserting_obj)
-        if (len(similar) == 0):
-            old_entry_key = inserting_obj['entry_key']
-            new_suffix = suffix + 1
-            if suffix == 0:
-                new_entry_key = old_entry_key + '_1'
-            else:
-                new_entry_key = old_entry_key[
-                    :-(len(str(suffix)) + 1)] + '_' + str(new_suffix)
-            inserting_obj['entry_key'] = new_entry_key
-            return save_bib_to_db(inserting_obj, new_suffix)
-        else:
-            # At least one similar entry exists. Return the first match.
-            # This is important for BibTranslationTable on doc import
-            return similar[0]
-
-# bibtex file import
-
-
-@login_required
-def import_bibtex_js(request):
-    response = {}
-    status = 405
-    if request.is_ajax() and request.method == 'POST':
-        response['errors'] = []
-        response['warning'] = []
-        bibs = json.loads(request.POST['bibs'])
-        status = 200
-        e_types = {}
-        for e_type in EntryType.objects.all():
-            e_types[e_type.type_name] = e_type
-        e_types_alias = {}
-        for e_type in EntryTypeAlias.objects.all():
-            e_types_alias[e_type.type_name] = e_type
-        e_fields = {}
-        for e_field in EntryField.objects.all():
-            e_fields[e_field.field_name] = e_field
-        e_fields_alias = {}
-        for e_field in EntryFieldAlias.objects.all():
-            e_fields_alias[e_field.field_name] = e_field
-        new_bibs = []
-        response['key_translations'] = {}
-        for bib_key in bibs:
-            bib = bibs[bib_key]
-            bib_type_name = bib['bibtype']
-            # the entry type must exists
-            if bib_type_name in e_types:
-                the_type = e_types[bib_type_name]
-            elif bib_type_name in e_types_alias:
-                type_alias = e_types_alias[bib_type_name]
-                the_type = type_alias.type_alias
-            else:
-                the_type = e_types['misc']
-                response['warning'].append(
-                    bib_key +
-                    ' is saved as misc. Fidus Writer does not support "' +
-                    bib_type_name +
-                    '"')
-
-            inserting_obj = {
-                'entry_key': bib_key,
-                'entry_owner': request.user,
-                'entry_type': the_type
-            }
-            the_fields = {}
-            # save the posted values
-            for key, val in bib.iteritems():
-                if key in ['bibtype', 'year', 'month']:
-                    # do not save the value of type, year and month
-                    continue
-                elif key in e_fields:
-                    field_type = e_fields[key]
-                elif key in e_fields_alias:
-                    field_alias = e_fields_alias[key]
-                    field_type = field_alias.field_alias
-                else:
-                    response['errors'].append(
-                        key +
-                        ' of ' +
-                        bib_key +
-                        (' could not be saved. Fidus Writer does not support '
-                         'the field.')
-                    )
-                    continue
-
-                if 'l_name' == field_type.field_type:
-                    # restore name list value like "author"
-                    persons = Persons(val)
-                    val = persons.get_names()
-                elif 'f_date' == field_type.field_type:
-                    # restore date value like "date"
-                    bib_date = BibDate(val)
-                    val = bib_date.date
-                if isinstance(val, list):
-                    val = ' and '.join(val)
-                the_fields[field_type.field_name] = val
-            inserting_obj['fields'] = json.dumps(the_fields)
-            old_key = inserting_obj['entry_key']
-            the_entry = save_bib_to_db(inserting_obj, 0)
-            if the_entry:
-                new_bibs.append(the_entry)
-                response['key_translations'][old_key] = the_entry.entry_key
-            response['bibs'] = serializer.serialize(
-                new_bibs,
-                fields=(
-                    'entry_key',
-                    'entry_owner',
-                    'entry_type',
-                    'entry_cat',
-                    'fields'))
-    return JsonResponse(
-        response,
-        status=status
-    )
 
 
 def check_access_rights(other_user_id, this_user):
@@ -263,13 +135,51 @@ def biblist_js(request):
     )
 
 
-# save changes or create a new entry
+def save_bib_to_db(inserting_obj, suffix):
+    print inserting_obj
+    if 'id' in inserting_obj:
+        old_entries = Entry.objects.filter(pk=int(inserting_obj['id']))
+        print old_entries
+        if len(old_entries) == 0:
+            del inserting_obj['id']
+            return save_bib_to_db(inserting_obj, suffix)
+        else:
+            the_entry = old_entries[0]
+            the_entry.entry_type = inserting_obj['entry_type']
+            the_entry.entry_cat = inserting_obj['entry_cat']
+            the_entry.fields = inserting_obj['fields']
+            the_entry.save()
+            return the_entry
+    try:
+        the_entry = Entry(**inserting_obj)
+        the_entry.save()
+        return the_entry
+    except IntegrityError:
+        similar = Entry.objects.filter(**inserting_obj)
+        if len(similar) == 0:
+            old_entry_key = inserting_obj['entry_key']
+            new_suffix = suffix + 1
+            if suffix == 0:
+                new_entry_key = old_entry_key + '_1'
+            else:
+                new_entry_key = old_entry_key[
+                    :-(len(str(suffix)) + 1)] + '_' + str(new_suffix)
+            inserting_obj['entry_key'] = new_entry_key
+            return save_bib_to_db(inserting_obj, new_suffix)
+        else:
+            # At least one similar entry exists. Return the first match.
+            # This is important for BibTranslationTable on doc import
+            return similar[0]
+
+
+# save bibliography entries from bibtex importer or form
 @login_required
 def save_js(request):
     response = {}
-    response['errormsg'] = {}
-    status = 403
+    status = 405
     if request.is_ajax() and request.method == 'POST':
+        bibs = json.loads(request.POST['bibs'])
+        status = 200
         owner_id = request.user.id
         if 'owner_id' in request.POST:
             requested_owner_id = int(request.POST['owner_id'])
@@ -280,125 +190,53 @@ def save_js(request):
                     document__owner=requested_owner_id,
                     user=request.user.id, rights='w')) > 0:
                 owner_id = requested_owner_id
-        status = 200
-        the_id = int(request.POST['id'])
-        the_type = EntryType.objects.filter(pk=int(request.POST['entrytype']))
-        # the entry type must exists
-        if the_type.exists():
-            the_type = the_type[0]
-            the_fields = {}
-            the_cat = ''
-            # save the posted values
-            for key, val in request.POST.iteritems():
-                if 'id' == key or 'entrytype' == key:
-                    # do nothing, if it is the ID or EntryType
-                    continue
-                elif 'entryCat[]' == key:
-                    # categories are given as Array
-                    # store them with loop
-                    val = request.POST.getlist(key)
-                    the_cat = ','.join(val)
-                else:
-                    # store other values into EntryValues
-                    if 0 < key.find('[]'):
-                        val = request.POST.getlist(key)
-                    key = key[6:]
-                    # key should be formed like "eField" + name of the value
-                    # type
-                    key = key.replace('[]', '')
-                    f_type = EntryField.objects.filter(field_name=key)
-                    if f_type.exists():
-                        f_type = f_type[0]
-                    else:
-                        continue
-
-                    if '' == val:
-                        pass
-                    elif 'null' == val:
-                        # empty value not allowed
-                        response['errormsg'][
-                            'eField' + key] = 'Value must not be empty'
-                        continue
-                    elif f_type.field_type == 'f_date':
-                        # reform date field
-                        dates = val.split('-')
-                        new_value = []
-                        i = 0
-                        for each_date in dates:
-                            date_parts = each_date.split('/')
-                            new_value.append('')
-                            if date_parts[0].isdigit():
-                                new_value[i] += date_parts[0]
-                            else:
-                                new_value[i] += 'AA'
-                            if (2 <= len(date_parts) and
-                                    date_parts[1].isdigit()):
-                                new_value[i] += '-' + date_parts[1]
-                            else:
-                                new_value[i] += '-AA'
-                            if (3 <= len(date_parts) and
-                                    date_parts[2].isdigit()):
-                                new_value[i] += '-' + date_parts[2]
-                            else:
-                                new_value[i] += '-AA'
-                            i += 1
-                        if 1 == len(new_value):
-                            val = new_value[0]
-                        else:
-                            val = new_value[0] + '/' + new_value[1]
-                    elif f_type.field_type == 'f_integer':
-                        # must be int
-                        try:
-                            val = int(val, 10)
-                        except ValueError:
-                            response['errormsg'][
-                                'eField' + key] = 'Value must be number'
-                            continue
-                    elif f_type.field_type in ['l_name', 'l_literal', 'l_key']:
-                        if isinstance(val, list):
-                            val = ' and '.join(val)
-
-                    the_fields[f_type.field_name] = val
-                    # setattr(the_entry, f_type.field_name, val)
-
-            if 0 == len(response['errormsg']):
-                if 0 < the_id:  # saving changes
-                    the_entry = Entry.objects.get(
-                        pk=the_id,
-                        entry_owner=owner_id
-                    )
-                    the_entry.entry_type = the_type
-                else:  # creating a new entry
-                    status = 201
-                    the_entry = Entry(
-                        entry_key='tmp_key',
-                        entry_owner_id=owner_id,
-                        entry_type=the_type
-                    )
-                    the_entry.save()
-                    the_entry.entry_key = 'Fidusbibliography_' + str(
-                        the_entry.id
-                    )
-                # clear categories of the entry to restore them new
-                the_entry.entry_cat = the_cat
-                the_entry.fields = json.dumps(the_fields)
-                the_entry.save()
-                response['values'] = serializer.serialize(
-                    [the_entry],
-                    fields=(
-                        'entry_key',
-                        'entry_owner',
-                        'entry_type',
-                        'entry_cat',
-                        'fields'
-                    )
+        e_types = {}
+        for e_type in EntryType.objects.all():
+            e_types[e_type.type_name] = e_type
+        new_bibs = []
+        key_translations = {}
+        for bib in bibs:
+            entry_type = bib['entry_type']
+            # the entry type must exists
+            if entry_type in e_types:
+                the_type = e_types[entry_type]
+            else:
+                # if the entry type doesn't exist
+                status = 202
+                errormsg = 'this type of entry does not exist.'
+                response['errormsg'].append(errormsg)
+                return JsonResponse(
+                    response,
+                    status=status
                 )
-        else:
-            # if the entry type doesn't exist
-            status = 202
-            errormsg = 'this type of entry does not exist.'
-            response['errormsg']['error'] = errormsg
-
+            inserting_obj = {
+                'entry_owner_id': owner_id,
+                'entry_cat': bib['entry_cat'],
+                'entry_type': the_type,
+                'fields': json.dumps(bib['fields'])
+            }
+            if 'entry_key' in bib:
+                old_entry_key = bib['entry_key']
+                inserting_obj['entry_key'] = old_entry_key
+            else:
+                old_entry_key = False
+            if 'id' in bib:
+                inserting_obj['id'] = bib['id']
+            the_entry = save_bib_to_db(inserting_obj, 0)
+            if the_entry:
+                new_bibs.append(the_entry)
+                if old_entry_key:
+                    key_translations[old_entry_key] = the_entry.entry_key
+        response['bibs'] = serializer.serialize(
+            new_bibs,
+            fields=(
+                'entry_key',
+                'entry_owner',
+                'entry_type',
+                'entry_cat',
+                'fields'))
+        if key_translations != {}:
+            response['key_translations'] = key_translations
     return JsonResponse(
         response,
         status=status

@@ -12,6 +12,7 @@
 
 #action-selection {
     cursor: default;
+    min-width: 38px;
 }
 
 #select-action-dropdown {

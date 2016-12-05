@@ -20,18 +20,18 @@ export class BibLatexImporter {
         diaButtons[gettext('Import')] = function () {
             let bibFile = jQuery('#bib-uploader')[0].files
             if (0 === bibFile.length) {
-                console.log('no file found')
+                console.warn('no file found')
                 return false
             }
             bibFile = bibFile[0]
             if (10485760 < bibFile.size) {
-                console.log('file too big')
+                console.warn('file too big')
                 return false
             }
             activateWait()
             let reader = new window.FileReader()
             reader.onerror = function (e) {
-                console.log('error', e.target.error.code)
+                console.error('error', e.target.error.code)
             }
             reader.onload = function(event){that.processFile(event.target.result)}
             reader.readAsText(bibFile)
@@ -91,10 +91,15 @@ export class BibLatexImporter {
                             gettext(' cannot not be saved. Fidus Writer does not support the field.')
                         )
                         break
+                    case 'unknown_type':
+                        addAlert('warning', error.type_name + gettext(' of ') +
+                            error.entry +
+                            gettext(' is saved as "misc". Fidus Writer does not support the entry type.')
+                        )
+                        break
                 }
             })
-            this.bibKeylist = Object.keys(this.bibEntries)
-            this.totalChunks = Math.ceil(this.bibKeylist.length / 50)
+            this.totalChunks = Math.ceil(this.bibEntries.length / 50)
             this.currentChunkNumber = 0
             this.processChunk()
         }
@@ -104,12 +109,9 @@ export class BibLatexImporter {
     processChunk() {
         let that = this
         if (this.currentChunkNumber < this.totalChunks) {
-            let currentChunk = {}
             let fromNumber = this.currentChunkNumber * 50
             let toNumber = fromNumber + 50
-            for (let i = fromNumber; i < toNumber; i++) {
-                currentChunk[this.bibKeylist[i]] = this.bibEntries[this.bibKeylist[i]]
-            }
+            let currentChunk = this.bibEntries.slice(fromNumber, toNumber)
             this.sendChunk(currentChunk, function () {
                 that.currentChunkNumber++
                 that.processChunk()
@@ -131,7 +133,7 @@ export class BibLatexImporter {
         }, that = this
 
         jQuery.ajax({
-            url: '/bibliography/import_bibtex/',
+            url: '/bibliography/save/',
             type: 'post',
             data: postData,
             dataType: 'json',
@@ -148,23 +150,12 @@ export class BibLatexImporter {
                 if (that.callback) {
                     that.callback(ids)
                 }
-                let errors = response.errors,
-                    warnings = response.warning,
-                    len = errors.length
-
-                for (let i = 0; i < len; i++) {
-                    addAlert('error', errors[i])
-                }
-                len = warnings.length
-                for (let i = 0; i < len; i++) {
-                    addAlert('warning', warnings[i])
-                }
 
                 callback()
 
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                console.log(jqXHR.responseText)
+                console.error(jqXHR.responseText)
             },
             complete: function () {
             }

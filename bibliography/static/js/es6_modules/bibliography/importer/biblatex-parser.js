@@ -1,4 +1,5 @@
-import {TexSpecialChars, BibFieldTypes} from "../statics"
+import {TexSpecialChars, BibFieldTypes, BibFieldAliasTypes, BibEntryTypes, BibEntryAliasTypes} from "../statics"
+import {BibLatexNameStringParser} from "./name-string-parser"
 
 /** Parses files in BibTeX/BibLaTeX format
  * @function bibTexParser
@@ -25,7 +26,7 @@ export class BibLatexParser {
         this.pos = 0
         this.input = ""
 
-        this.entries = {}
+        this.entries = []
         this.strings = {
             JAN: "January",
             FEB: "February",
@@ -41,7 +42,7 @@ export class BibLatexParser {
             DEC: "December"
         }
         this.currentKey = ""
-        this.currentEntry = ""
+        this.currentEntry = false
         this.currentType = ""
         this.errors = []
 
@@ -64,7 +65,7 @@ export class BibLatexParser {
         if (this.input.substring(this.pos, this.pos + s.length) == s) {
             this.pos += s.length
         } else {
-            console.log("Token mismatch, expected " + s +
+            console.warn("Token mismatch, expected " + s +
                 ", found " + this.input
                 .substring(this.pos))
         }
@@ -123,7 +124,7 @@ export class BibLatexParser {
                 '\\') {
                 bracecount++
             } else if (this.pos == this.input.length - 1) {
-                console.log("Unterminated value")
+                console.warn("Unterminated value")
             }
             this.pos++
         }
@@ -139,7 +140,7 @@ export class BibLatexParser {
                 this.match('"')
                 return this.input.substring(start, end)
             } else if (this.pos == this.input.length - 1) {
-                console.log("Unterminated value:" + this.input.substring(
+                console.warn("Unterminated value:" + this.input.substring(
                     start))
             }
             this.pos++
@@ -159,7 +160,7 @@ export class BibLatexParser {
             } else if (k.match("^[0-9]+$")) {
                 return k
             } else {
-                console.log("Value unexpected:" + this.input.substring(
+                console.warn("Value unexpected:" + this.input.substring(
                     start))
             }
         }
@@ -179,7 +180,7 @@ export class BibLatexParser {
         let start = this.pos
         while (true) {
             if (this.pos == this.input.length) {
-                console.log("Runaway key")
+                console.warn("Runaway key")
                 return
             }
             if (this.input[this.pos].match("[a-zA-Z0-9_:;`\\.\\\?+/-]")) {
@@ -197,7 +198,7 @@ export class BibLatexParser {
             let val = this.value()
             return [key, val]
         } else {
-            console.log(
+            console.warn(
                 "... = value expected, equals sign missing: " + this.input
                 .substring(this.pos))
         }
@@ -207,11 +208,16 @@ export class BibLatexParser {
         let kv = this.keyEqualsValue()
         if (_.isUndefined(kv)) {
             // Entry has no fields, so we delete it.
-            delete this.entries[this.currentEntry]
+            // It was the last one pushed, so we remove the last one
+            this.entries.pop()
             return
         }
-        this.entries[this.currentEntry][kv[0]] = this.scanBibtexString(kv[
-            1])
+        this.currentEntry['fields'][kv[0]] = this.scanBibtexString(kv[1])
+        // date may come either as year, year + month or as date field.
+        // We therefore need to catch these hear and transform it to the
+        // date field after evaluating all the fields.
+        // All other date fields only come in the form of a date string.
+        let date = {}
         while (this.tryMatch(",")) {
             this.match(",")
             //fixes problems with commas at the end of a list
@@ -225,95 +231,101 @@ export class BibLatexParser {
             }
             let val = this.scanBibtexString(kv[1])
             switch (kv[0]) {
-            case 'date':
-            case 'month':
-            case 'year':
-                this.entries[this.currentEntry].date[kv[0]] = val
-                break
-            default:
-                this.entries[this.currentEntry][kv[0]] = val
+                case 'date':
+                case 'month':
+                case 'year':
+                    date[kv[0]] = val
+                    break
+                default:
+                    this.currentEntry['fields'][kv[0]] = val
             }
 
         }
-        let issued = this.entries[this.currentEntry].date.date
-        let dateFormat = 'd.m.Y'
-        if ('undefined' === typeof (issued) || '' === issued) {
-            if ('undefined' === typeof (this.entries[this.currentEntry].date
-                .month)) {
-                issued = ''
-                dateFormat = 'Y'
-            } else {
-                issued = '-' + this.entries[this.currentEntry].date.month
-                dateFormat = 'm.Y'
-            }
-            if ('undefined' == typeof (this.entries[this.currentEntry].date
-                .year)) {
-                issued = ''
-                dateFormat = ''
-            } else {
-                issued = this.entries[this.currentEntry].date.year + issued
-            }
-        } else {
-            if (issued.indexOf('/') !== -1) {
-                // TODO: handle dates that have a from/to value
-                issued = issued.split('/')[0]
-            }
-            let dateDividers = issued.match(/-/g)
-            if (!dateDividers) {
-                dateFormat = 'Y'
-            } else if (1 === dateDividers.length) {
-                dateFormat = 'm.Y'
-            }
+        if (date.date) {
+            // date string has precedence.
+            this.currentEntry['fields']['date'] = date.date
+        } else if (date.year && date.month) {
+            this.currentEntry['fields']['date'] = `${date.year}-${date.month}`
+        } else if (date.year) {
+            this.currentEntry['fields']['date'] = `${date.year}`
         }
-        issued = new Date(issued)
-        if ('Invalid Date' == issued) {
-            dateFormat = ''
-        } else {
-            dateFormat = dateFormat.replace('d', issued.getDate())
-            dateFormat = dateFormat.replace('m', MONTH_NAMES[issued.getMonth()])
-            dateFormat = dateFormat.replace('Y', issued.getFullYear())
-        }
-        this.entries[this.currentEntry].date = dateFormat
 
-        for(let fKey in this.entries[this.currentEntry]) {
-            if('bibtype' == fKey)
-                continue
+        let entryType = this.currentEntry['entry_type']
+        if (BibEntryAliasTypes[entryType]) {
+            entryType = BibEntryAliasTypes[entryType]
+            this.currentEntry['entry_type'] = entryType
+        }
+
+        let eType = _.findWhere(BibEntryTypes, {biblatex: entryType})
+        if('undefined' == typeof(eType)) {
+            this.errors.push({
+                type: 'unknown_type',
+                entry: this.currentEntry['entry_key'],
+                type_name: entryType
+            })
+            this.currentEntry['entry_type'] = 'misc'
+        }
+
+        for(let fKey in this.currentEntry['fields']) {
+            // Replace alias fields with their main term.
+            if (BibFieldAliasTypes[fKey]) {
+                let value = this.currentEntry['fields'][fKey]
+                delete this.currentEntry['fields'][fKey]
+                fKey = BibFieldAliasTypes[fKey]
+                this.currentEntry['fields'][fKey] = value
+            }
             let field = BibFieldTypes[fKey]
 
             if('undefined' == typeof(field)) {
                 this.errors.push({
                     type: 'unknown_field',
-                    entry: this.currentEntry,
+                    entry: this.currentEntry['entry_key'],
                     field_name: fKey
                 })
-                delete this.entries[this.currentEntry][fKey]
+                delete this.currentEntry['fields'][fKey]
                 continue
             }
             let fType = field['type']
-            let fValue = this.entries[this.currentEntry][fKey]
+            let fValue = this.currentEntry['fields'][fKey]
             switch(fType) {
                 case 'l_name':
-                    this.entries[this.currentEntry][fKey] = this.reformName(fValue)
+                    this.currentEntry['fields'][fKey] = this.reformNameList(fValue)
                     break
                 case 'f_date':
-                    this.entries[this.currentEntry][fKey] = this.reformDate(fValue)
+                    this.currentEntry['fields'][fKey] = this.reformDate(fValue)
                     break
                 case 'f_literal':
-                    this.entries[this.currentEntry][fKey] = this.reformLiteral(fValue)
+                    this.currentEntry['fields'][fKey] = this.reformLiteral(fValue)
                     break
             }
         }
 
     }
 
-    reformName(name) {
-        //reform name
-        return name
+    reformNameList(nameString) {
+        let nameStringParser = new BibLatexNameStringParser(nameString)
+        return nameStringParser.output.join(' and ')
     }
 
-    reformDate(date) {
-        //reform date
-        return date
+    reformDate(dateStr) {
+        // TODO: handle start/end dates
+        dateStr = dateStr.replace(/-AA/g,'')
+        let dateFormat = '%Y-AA-AA'
+        let dateLen = dateStr.split(/[\s,\./\-]/g).length
+        if (2 < dateLen) {
+            dateFormat = '%Y-%m-%d'
+        } else if (2 === dateLen) {
+            dateFormat = '%Y-%m-AA'
+        }
+        let theDate = new Date(dateStr)
+        if ('Invalid Date' == theDate) {
+            dateFormat = ''
+        } else {
+            dateFormat = dateFormat.replace('%d', ("0" + theDate.getDate()).slice(-2))
+            dateFormat = dateFormat.replace('%m', ("0" + (theDate.getMonth()+1)).slice(-2))
+            dateFormat = dateFormat.replace('%Y', theDate.getFullYear())
+        }
+        return dateFormat
     }
 
 
@@ -424,14 +436,14 @@ export class BibLatexParser {
         }
     }
 
-
-
-    entryBody() {
-        this.currentEntry = this.key()
-
-        this.entries[this.currentEntry] = {}
-        this.entries[this.currentEntry].bibtype = this.currentType
-        this.entries[this.currentEntry].date = {}
+    newEntry() {
+        this.currentEntry = {
+            'entry_type': this.currentType,
+            'entry_cat': '',
+            'entry_key': this.key(),
+            'fields': {}
+        }
+        this.entries.push(this.currentEntry)
         this.match(",")
         this.keyValueList()
     }
@@ -451,9 +463,6 @@ export class BibLatexParser {
         this.value()
     }
 
-    entry() {
-        this.entryBody()
-    }
 
     scanBibtexString(value) {
         let len = TexSpecialChars.length
@@ -464,7 +473,6 @@ export class BibLatexParser {
         }
         // Delete multiple spaces
         value = value.replace(/ +(?= )/g, '')
-        //value = value.replace(/\{(.*?)\}/g, '$1')
         return value
     }
 
@@ -479,7 +487,7 @@ export class BibLatexParser {
             } else if (d == "@comment") {
                 continue
             } else {
-                this.entry()
+                this.newEntry()
             }
             this.match("}")
         }

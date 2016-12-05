@@ -5,7 +5,7 @@ import time
 
 from test.testcases import LiveTornadoTestCase
 from test.selenium_helper import SeleniumHelper
-
+from pyvirtualdisplay import Display
 
 class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
 

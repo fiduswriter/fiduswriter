@@ -14,7 +14,7 @@ from tornado.ioloop import IOLoop
 
 from base.servers.tornado_django_hybrid import make_tornado_server
 
-#from selenium import *
+
 class LiveTornadoThread(threading.Thread):
     """
     Thread for running a live http server while the tests are running.

@@ -1,3 +1,4 @@
+import sys 
 import os
 import time
 import multiprocessing
@@ -7,15 +8,22 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from django.conf import settings
-from test.testcases import LiveTornadoTestCase
+#sys.path.insert(0,'/test/testcases.py')
+#import LiveTornadoTestCase
+from testcases import LiveTornadoTestCase
 from editor_helper import EditorHelper
-
+from pyvirtualdisplay import Display
 
 class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
+
+
     """
     Tests in which collaboration between two browsers with the same user logged
     into both browsers.
     """
+    display = Display(visible = 0, size=(1024,768))
+    display.start()
+
     user = None
     TEST_TEXT = "Lorem ipsum dolor sit amet."
     MULTILINE_TEST_TEXT = "Lorem ipsum\ndolor sit amet."
@@ -1204,3 +1212,6 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             len(self.get_citation_bib(self.driver)),
             len(self.get_citation_bib(self.driver2))
         )
+
+
+	display.stop()

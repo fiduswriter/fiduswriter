@@ -50,13 +50,81 @@
     color: #cecece;
 }
 
-#bib-dialog .ProseMirror-focused div.literal {
+#bib-dialog .ProseMirror-focused div.literal, #bib-dialog .ProseMirror-focused pre.long-literal {
     background-color: #fbf9d2;
 }
 
 #bib-dialog .fw-pulldown.fw-center {
     left: 10px;
     top: 40px;
+}
+
+.tokenfield {
+    width: 678px;
+    position: relative;
+}
+
+.tokenfield:before, .tokenfield:after {
+    content: " ";
+    display: table;
+}
+
+.tokenfield:after {
+    clear: both;
+}
+
+.tokenfield.tokenfield-mode-tokens {
+    display: block;
+    min-height: 34px;
+    padding: 8px 3px 0px 3px;
+    font-size: 14px;
+    line-height: 1.42857;
+    color: #555555;
+    background-color: #fff;
+    border: 1px solid #d3d3d3;
+}
+
+.tokenfield .tokenfield-set > ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.tokenfield .tokenfield-set > ul > li {
+    float: left;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    padding: 0 5px;
+    border-radius: 4px;
+    line-height: 1.5;
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.08);
+}
+
+.tokenfield .tokenfield-set > ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+.tokenfield .tokenfield-set > ul > li {
+    float: left;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    padding: 0 5px;
+    border-radius: 3px;
+    line-height: 1.5;
+    cursor: pointer;
+    color: #fff;
+    background: #76a698;
+    border: 1px solid #7d948e;
+}
+
+.tokenfield .tokenfield-input {
+    margin-bottom: 5px;
+    border: none;
+    outline: none;
+    float: left;
 }
 
 div.literal, pre.long-literal {

@@ -10,14 +10,17 @@ import {NameListForm} from "./fields/name-list"
 import {DateFieldForm} from "./fields/date"
 import {URIFieldForm} from "./fields/uri"
 import {VerbatimFieldForm} from "./fields/verbatim"
+import {TagListForm} from "./fields/tag-list"
 
 const FIELD_FORMS = {
+    'f_date': DateFieldForm,
+    'f_integer': LiteralFieldForm,
     'f_literal': LiteralFieldForm,
     'l_literal': LiteralListForm,
     'f_long_literal': LiteralLongFieldForm,
-    'f_title': TitleFieldForm,
     'l_name': NameListForm,
-    'f_date': DateFieldForm,
+    'l_tag': TagListForm,
+    'f_title': TitleFieldForm,
     'f_uri': URIFieldForm,
     'f_verbatim': VerbatimFieldForm
 }

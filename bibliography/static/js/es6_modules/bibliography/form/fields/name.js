@@ -91,7 +91,10 @@ export class NameFieldForm{
     }
 
     switchMode() {
-        Object.assign(this.currentValue, this.value)
+        let formValue = this.value
+        if (formValue) {
+            Object.assign(this.currentValue, formValue)
+        }
         this.realPerson = !this.realPerson
         this.drawForm()
     }
@@ -118,17 +121,32 @@ export class NameFieldForm{
 
     get value() {
         if (this.realPerson) {
+                if (
+                    !this.fields.family.value &&
+                    !this.fields.given.value &&
+                    !this.fields.prefix.value &&
+                    !this.fields.suffix.value
+                ) {
+                    return false
+                }
             return {
-                family: this.fields.family.value,
-                given: this.fields.given.value,
-                prefix: this.fields.prefix.value,
-                suffix: this.fields.suffix.value,
+                family: this.fields.family.value ? this.fields.family.value : '',
+                given: this.fields.given.value ? this.fields.given.value : '',
+                prefix: this.fields.prefix.value ? this.fields.prefix.value : '',
+                suffix: this.fields.suffix.value ? this.fields.suffix.value : '',
                 prefixused: this.dom.querySelector('.prefixused').checked
             }
         } else {
+            if (!this.fields.literal.value) {
+                return false
+            }
             return {
                 literal: this.fields.literal.value
             }
         }
+    }
+
+    get check() {
+        return true
     }
 }

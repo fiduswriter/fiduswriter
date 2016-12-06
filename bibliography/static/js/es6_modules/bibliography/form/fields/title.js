@@ -29,7 +29,11 @@ export class TitleFieldForm{
 
     get value() {
         let titleContents = this.pm.doc.firstChild.content.toJSON()
-        return titleContents ? titleContents : []
+        return titleContents && titleContents.length ? titleContents : false
+    }
+
+    get check() {
+        return true
     }
 }
 

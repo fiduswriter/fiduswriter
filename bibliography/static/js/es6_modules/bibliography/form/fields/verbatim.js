@@ -1,6 +1,4 @@
-import {edtfCheck} from "biblatex-csl-converter"
-
-export class DateFieldForm{
+export class VerbatimFieldForm{
     constructor(dom, initialValue = '', placeHolder = '') {
         this.dom = dom
         this.initialValue = initialValue
@@ -9,7 +7,7 @@ export class DateFieldForm{
 
     init() {
         let that = this
-        this.dom.innerHTML = `<input class="date" type="text" value="${this.initialValue}" placeholder="${this.placeHolder}">`
+        this.dom.innerHTML = `<input class="verbatim" type="text" value="${this.initialValue}" placeholder="${this.placeHolder}">`
     }
 
     get value() {
@@ -19,10 +17,6 @@ export class DateFieldForm{
     }
 
     get check() {
-        let formValue = this.value
-        if (formValue) {
-            return edtfCheck(formValue)
-        }
         return true
     }
 

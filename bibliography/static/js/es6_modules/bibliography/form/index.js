@@ -1,19 +1,23 @@
 import {BibFieldTypes, BibTypes} from "biblatex-csl-converter/lib/const"
 import {BibFieldTitles, BibTypeTitles, BibKeyOptionsTitles} from "./titles"
 import {bibDialog} from "./tmp"
+import {addDropdownBox} from "../../common/common"
 import {LiteralFieldForm} from "./fields/literal"
 import {LiteralListForm} from "./fields/literal-list"
 import {TitleFieldForm} from "./fields/title"
 import {NameListForm} from "./fields/name-list"
 import {DateFieldForm} from "./fields/date"
-import {addDropdownBox} from "../../common/common"
+import {URIFieldForm} from "./fields/uri"
+import {VerbatimFieldForm} from "./fields/verbatim"
 
 const FIELD_FORMS = {
     'f_literal': LiteralFieldForm,
     'l_literal': LiteralListForm,
     'f_title': TitleFieldForm,
     'l_name': NameListForm,
-    'f_date': DateFieldForm
+    'f_date': DateFieldForm,
+    'f_uri': URIFieldForm,
+    'f_verbatim': VerbatimFieldForm
 }
 
 export class BibEntryForm {

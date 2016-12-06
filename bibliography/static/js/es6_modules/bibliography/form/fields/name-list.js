@@ -59,6 +59,10 @@ export class NameListForm{
     }
 
     get value() {
-        return this.fields.map(field => {return field.value})
+        return this.fields.map(field => {return field.value}).filter(value => {return value !== false})
+    }
+
+    get check() {
+        return true
     }
 }

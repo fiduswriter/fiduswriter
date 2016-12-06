@@ -36,7 +36,11 @@ export class LiteralFieldForm{
 
     get value() {
         let literalContents = this.pm.doc.firstChild.content.toJSON()
-        return literalContents ? literalContents : []
+        return literalContents && literalContents.length ? literalContents : false
+    }
+
+    get check() {
+        return true
     }
 
     renderPlaceholder(hasFocus = this.pm.hasFocus()) {

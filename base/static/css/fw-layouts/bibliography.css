@@ -20,28 +20,32 @@
     width: 678px;
 }
 
-#bib-dialog .person, #bib-dialog .organization {
+#bib-dialog .input-with-button {
     width: 686px;
 }
 
-#bib-dialog .person .name-part, #bib-dialog .organization .name-part {
+#bib-dialog .input-with-button .field-part {
     display: inline-block;
     margin-right: 18px;
 }
 
-#bib-dialog .person .name-part-long .ProseMirror {
+#bib-dialog .input-with-button .field-part-huge .ProseMirror {
+    width: 250px;
+}
+
+#bib-dialog .input-with-button .field-part-long .ProseMirror {
     width: 130px;
 }
 
-#bib-dialog .person .name-part-short .ProseMirror {
+#bib-dialog .input-with-button .field-part-short .ProseMirror {
     width: 58px;
 }
 
-#bib-dialog .organization .ProseMirror {
+#bib-dialog .input-with-button .field-part-single .ProseMirror {
     width: 598px;
 }
 
-#bib-dialog .person button, #bib-dialog .organization button {
+#bib-dialog .input-with-button button {
     float: right;
 }
 

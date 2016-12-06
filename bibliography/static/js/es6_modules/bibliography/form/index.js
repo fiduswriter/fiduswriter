@@ -2,12 +2,13 @@ import {BibFieldTypes, BibTypes} from "biblatex-csl-converter/lib/const"
 import {BibFieldTitles, BibTypeTitles, BibKeyOptionsTitles} from "./titles"
 import {bibDialog} from "./tmp"
 import {addDropdownBox} from "../../common/common"
+import {DateFieldForm} from "./fields/date"
 import {LiteralFieldForm} from "./fields/literal"
 import {LiteralLongFieldForm} from "./fields/literal-long"
 import {LiteralListForm} from "./fields/literal-list"
 import {TitleFieldForm} from "./fields/title"
 import {NameListForm} from "./fields/name-list"
-import {DateFieldForm} from "./fields/date"
+import {RangeListForm} from "./fields/range-list"
 import {URIFieldForm} from "./fields/uri"
 import {VerbatimFieldForm} from "./fields/verbatim"
 import {TagListForm} from "./fields/tag-list"
@@ -19,6 +20,7 @@ const FIELD_FORMS = {
     'l_literal': LiteralListForm,
     'f_long_literal': LiteralLongFieldForm,
     'l_name': NameListForm,
+    'l_range': RangeListForm,
     'l_tag': TagListForm,
     'f_title': TitleFieldForm,
     'f_uri': URIFieldForm,

@@ -17,18 +17,10 @@ export class NameFieldForm{
         this.currentValue = initialValue
         this.dom = dom
         // We set the mode based on whether there was a literal name.
-        // We then add the missing fields, so that we can always depend on
-        // all fields being present, in case the user wants to switch.
         if (initialValue.literal) {
             this.realPerson = false
-            /*this.currentValue['given'] = []
-            this.currentValue['family'] = []
-            this.currentValue['prefix'] = []
-            this.currentValue['suffix'] = []
-            this.currentValue['prefixused'] = false*/
         } else {
             this.realPerson = true
-            //this.currentValue['literal'] = []
         }
     }
 
@@ -48,12 +40,12 @@ export class NameFieldForm{
         let that = this
         this.fields = {}
         this.dom.innerHTML = noSpaceTmp`
-            <div class='person'>
-                <div class='given name-part name-part-long'></div>
-                <div class='prefix name-part name-part-short'></div>
-                <div class='family name-part name-part-long'></div>
-                <div class='suffix name-part name-part-short'></div>
-                <div class='prefixused name-part'>
+            <div class='person input-with-button'>
+                <div class='given field-part field-part-long'></div>
+                <div class='prefix field-part field-part-short'></div>
+                <div class='family field-part field-part-long'></div>
+                <div class='suffix field-part field-part-short'></div>
+                <div class='prefixused field-part'>
                     <input type='checkbox' class='prefixused'
                         ${this.currentValue.prefixused? 'checked' : ''}>
                     &nbsp;${gettext('Prefix used')}
@@ -103,8 +95,8 @@ export class NameFieldForm{
         let that = this
         this.fields = {}
         this.dom.innerHTML = noSpaceTmp`
-            <div class='organization'>
-                <div class='literal-text name-part'></div>
+            <div class='organization input-with-button'>
+                <div class='literal-text field-part field-park-single'></div>
                 <button class="switch-type fw-button fw-green">${gettext('Person')}</button>
             </div>
         `

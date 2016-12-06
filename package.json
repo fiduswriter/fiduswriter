@@ -41,7 +41,8 @@
     "dropkickjs": "2.1.10",
     "texzilla": "0.9.9",
     "napa": "2.3.0",
-    "biblatex-csl-converter": "0.19.3"
+    "biblatex-csl-converter": "0.19.3",
+    "browserkeymap": "^1.0.0"
   },
   "napa": {
     "citeproc": "Juris-M/citeproc-js#1.1.136"

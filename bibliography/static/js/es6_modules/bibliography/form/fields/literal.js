@@ -45,10 +45,10 @@ export class LiteralFieldForm{
 
     renderPlaceholder(hasFocus = this.pm.hasFocus()) {
         let value = this.value
-        if (value.length===0 && !this.placeHolderSet && !hasFocus) {
+        if (value === false && !this.placeHolderSet && !hasFocus) {
             this.dom.querySelector('div.literal').setAttribute('data-placeholder', this.placeHolder)
             this.placeHolderSet = true
-        } else if ((this.placeHolderSet && hasFocus) || value.length > 0) {
+        } else if ((this.placeHolderSet && hasFocus) || value !== false) {
             this.dom.querySelector('div.literal').removeAttribute('data-placeholder')
             this.placeHolderSet = false
         }

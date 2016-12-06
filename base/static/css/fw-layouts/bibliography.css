@@ -16,6 +16,10 @@
     width: 686px;
 }
 
+#bib-dialog .entry-field input[type=text] {
+    width: 678px;
+}
+
 #bib-dialog .person, #bib-dialog .organization {
     width: 686px;
 }
@@ -46,9 +50,37 @@
     color: #cecece;
 }
 
+#bib-dialog .ProseMirror-focused div.literal {
+    background-color: #fbf9d2;
+}
+
 #bib-dialog .fw-pulldown.fw-center {
     left: 10px;
     top: 40px;
+}
+
+div.literal, pre.long-literal {
+    font-size: 14px;
+    line-height: 1.33em;
+    border: solid 1px #d3d3d3;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 8px 3px 0px 3px;
+    height: 28px;
+    background-color: #fff;
+}
+
+pre.long-literal {
+    min-height: 112px;
+    height: auto;
+}
+
+div.literal strong, pre.long-literal strong  {
+    font-weight: bold;
+}
+
+div.literal em, pre.long-literal em {
+    font-style: italic;
 }
 
 .list-input-wrapper .add-remove-list {

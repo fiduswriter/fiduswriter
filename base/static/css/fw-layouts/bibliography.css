@@ -20,6 +20,14 @@
     width: 678px;
 }
 
+#bib-dialog .entry-field select {
+    padding: 8px 3px 0px 3px;
+    border-color: #c9c9c9;
+    background-color: #f9f9f9;
+    height: 38px;
+    width: 568px;
+}
+
 #bib-dialog .input-with-button {
     width: 686px;
 }
@@ -42,7 +50,7 @@
 }
 
 #bib-dialog .input-with-button .field-part-single .ProseMirror {
-    width: 598px;
+    width: 568px;
 }
 
 #bib-dialog .input-with-button button {

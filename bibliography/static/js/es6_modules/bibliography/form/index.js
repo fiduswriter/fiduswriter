@@ -1,5 +1,5 @@
 import {BibFieldTypes, BibTypes} from "biblatex-csl-converter/lib/const"
-import {BibFieldTitles, BibTypeTitles, BibKeyOptionsTitles} from "./titles"
+import {BibFieldTitles, BibTypeTitles} from "./titles"
 import {bibDialog} from "./tmp"
 import {addDropdownBox} from "../../common/common"
 import {DateFieldForm} from "./fields/date"
@@ -12,6 +12,8 @@ import {RangeListForm} from "./fields/range-list"
 import {URIFieldForm} from "./fields/uri"
 import {VerbatimFieldForm} from "./fields/verbatim"
 import {TagListForm} from "./fields/tag-list"
+import {KeyFieldForm} from "./fields/key"
+import {KeyListForm} from "./fields/key-list"
 
 const FIELD_FORMS = {
     'f_date': DateFieldForm,
@@ -19,6 +21,8 @@ const FIELD_FORMS = {
     'f_literal': LiteralFieldForm,
     'l_literal': LiteralListForm,
     'f_long_literal': LiteralLongFieldForm,
+    'f_key': KeyFieldForm,
+    'l_key': KeyListForm,
     'l_name': NameListForm,
     'l_range': RangeListForm,
     'l_tag': TagListForm,
@@ -98,16 +102,16 @@ export class BibEntryForm {
 
     // Add a field to required, optional or either-or fields
     addField(fieldName, category, categoryDOM) {
-        let fieldType = BibFieldTypes[fieldName].type
+        let fieldType = BibFieldTypes[fieldName]
         categoryDOM.insertAdjacentHTML('beforeend', `<tr><th><h4 class="fw-tablerow-title">${BibFieldTitles[fieldName]}</h4></th><td class="entry-field"></td></tr>`)
         let fieldDOM = categoryDOM.lastChild.lastChild
-        let FieldClass = FIELD_FORMS[fieldType]
+        let FieldClass = FIELD_FORMS[fieldType.type]
         if (FieldClass) {
-            let fieldHandler = new FieldClass(fieldDOM, this.values[fieldName])
+            let fieldHandler = new FieldClass(fieldDOM, this.values[fieldName], false, fieldType)
             fieldHandler.init()
             category[fieldName] = fieldHandler
         } else {
-            console.warn(`Unknown fieldtype: ${fieldType}`)
+            console.warn(`Unknown fieldtype: ${fieldType.type}`)
         }
     }
 

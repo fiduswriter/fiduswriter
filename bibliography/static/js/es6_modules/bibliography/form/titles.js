@@ -1,4 +1,4 @@
-export let BibFieldTitles = {
+export const BibFieldTitles = {
     'abstract': gettext('Abstract'),
     'addendum': gettext('Addendum'),
     'afterword': gettext('Afterword'),
@@ -95,7 +95,7 @@ export let BibFieldTitles = {
     'volumes': gettext('Total number of volumes')
 }
 
-export let BibTypeTitles = {
+export const BibTypeTitles = {
     'article': gettext('Article'),
     'book': gettext('Book'),
     'mvbook': gettext('Multi-volume book'),
@@ -131,7 +131,7 @@ export let BibTypeTitles = {
     'post': gettext('Forum post')
 }
 
-export let BibKeyOptionsTitles = {
+export const BibOptionTitles = {
     'manual': gettext('Manual'),
     'patent': gettext('Patent'),
     'report': gettext('Report'),

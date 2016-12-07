@@ -83,7 +83,7 @@ export class BibLatexFileImporter {
             this.bibKeys.forEach((bibKey) => {
                 let bibEntry = this.tmpDB[bibKey]
                 // We add an empty category list for all newly imported bib entries.
-                bibEntry.entry_cat = ''
+                bibEntry.entry_cat = []
                 // If the entry has no title, add an empty title
                 if (!bibEntry.fields.title) {
                     bibEntry.fields.title = []

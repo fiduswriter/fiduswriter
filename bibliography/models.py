@@ -18,7 +18,7 @@ class Entry(models.Model):
     # identifier of the user, who created the entry.
     entry_owner = models.ForeignKey(User)
     # identifier of the entrytype for the entry.
-    entry_cat = models.CharField(max_length=255, default='')
+    entry_cat = models.TextField(default='[]')
     last_modified = models.DateTimeField(auto_now=True)
     bib_type = models.CharField(max_length=30, default='')
     fields = models.TextField(default='{}')  # json object with all the fields

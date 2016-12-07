@@ -123,7 +123,7 @@ export class BibliographyDB {
         aBibDBEntry['fields'] = JSON.parse(item['fields'])
         aBibDBEntry['bib_type'] = item['bib_type']
         aBibDBEntry['entry_key'] = item['entry_key']
-        aBibDBEntry['entry_cat'] = item['entry_cat']
+        aBibDBEntry['entry_cat'] = JSON.parse(item['entry_cat'])
         this.db[id] = aBibDBEntry
         return id
     }
@@ -148,6 +148,7 @@ export class BibliographyDB {
         let dbObject = {}
         Object.keys(tmpDB).forEach((bibKey)=>{
             dbObject[bibKey] =  Object.assign({}, tmpDB[bibKey])
+            dbObject[bibKey].entry_cat = JSON.stringify(tmpDB[bibKey].entry_cat)
             dbObject[bibKey].fields = JSON.stringify(tmpDB[bibKey].fields)
         })
         let sendData = {

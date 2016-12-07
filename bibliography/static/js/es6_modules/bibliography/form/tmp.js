@@ -23,6 +23,10 @@ export let bibDialog = _.template('\
                 <table class="fw-dialog-table"><tbody id="req-fields"></tbody></table>\
             </div>\
             <div id="opt-fields-tab"><table class="fw-dialog-table"><tbody id="opt-fields"></tbody></table></div>\
-            <div id="categories-tab"><table class="fw-dialog-table"><tbody id="categories-field"></tbody></table></div>\
+            <div id="categories-tab"><table class="fw-dialog-table">\
+                <tbody>\
+                    <tr><th><h4 class="fw-tablerow-title">' + gettext('Categories') + '</h4></th><td id="categories-field"></td></tr>\
+                </tbody>\
+            </table></div>\
         </div>\
     </div>')

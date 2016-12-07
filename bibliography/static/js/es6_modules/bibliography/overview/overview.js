@@ -180,7 +180,7 @@ export class BibliographyOverview {
 
             $tr.replaceWith(bibtableTemplate({
                 'id': pk,
-                'cats': bibInfo.entry_cat.split(','),
+                'cats': bibInfo.entry_cat,
                 'type': bibInfo.bib_type,
                 'typetitle': BibTypeTitles[bibInfo.bib_type],
                 'title': litToText(bibInfo.fields.title),
@@ -190,7 +190,7 @@ export class BibliographyOverview {
         } else { //if this is the new entry, append
             jQuery('#bibliography > tbody').append(bibtableTemplate({
                 'id': pk,
-                'cats': bibInfo.entry_cat.split(','),
+                'cats': bibInfo.entry_cat,
                 'type': bibInfo.bib_type,
                 'typetitle': BibTypeTitles[bibInfo.bib_type],
                 'title': litToText(bibInfo.fields.title),

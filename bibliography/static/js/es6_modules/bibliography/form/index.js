@@ -2,6 +2,7 @@ import {BibFieldTypes, BibTypes} from "biblatex-csl-converter/lib/const"
 import {BibFieldTitles, BibTypeTitles} from "./titles"
 import {bibDialog} from "./tmp"
 import {addDropdownBox} from "../../common/common"
+import {EntryCatForm} from "./entry-cat"
 import {DateFieldForm} from "./fields/date"
 import {LiteralFieldForm} from "./fields/literal"
 import {LiteralLongFieldForm} from "./fields/literal-long"
@@ -38,7 +39,6 @@ export class BibEntryForm {
         this.required = {}
         this.optional = {}
         this.eitheror = {}
-        this.cats = []
         this.values = {}
     }
 
@@ -130,6 +130,9 @@ export class BibEntryForm {
         BibTypes[this.bibType].optional.forEach(fieldName=>{
             that.addField(fieldName, that.optional, optFields)
         })
+        let entryCatField = document.getElementById('categories-field')
+        this.entryCatForm = new EntryCatForm(entryCatField, this.bibDB.db[this.itemId].entry_cat, this.bibDB.cats)
+        this.entryCatForm.init()
     }
 
 }

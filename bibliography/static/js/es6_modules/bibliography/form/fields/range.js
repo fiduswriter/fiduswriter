@@ -106,7 +106,7 @@ export class RangeFieldForm{
         }
     }
 
-    get check() {
+    check() {
         return true
     }
 }

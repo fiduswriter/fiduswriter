@@ -24,7 +24,7 @@ export class TagListForm{
         return formValue.length > 0 ? formValue : false
     }
 
-    get check() {
+    check() {
         return true
     }
 

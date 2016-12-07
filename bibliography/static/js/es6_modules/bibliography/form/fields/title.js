@@ -32,7 +32,7 @@ export class TitleFieldForm{
         return titleContents && titleContents.length ? titleContents : false
     }
 
-    get check() {
+    check() {
         return true
     }
 }

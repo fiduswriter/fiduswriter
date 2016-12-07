@@ -16,7 +16,7 @@ export class VerbatimFieldForm{
         return formValue.length > 0 ? formValue : false
     }
 
-    get check() {
+    check() {
         return true
     }
 

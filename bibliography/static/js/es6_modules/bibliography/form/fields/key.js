@@ -35,6 +35,7 @@ export class KeyFieldForm{
             <div class='selection-list input-with-button'>
                 <button class="switch-type fw-button fw-green">${gettext('From list')}</button>
                 <select class='key-selection'><option value=''></option></select>
+                <div class="select-arrow icon-down-dir"></div>
             </div>
         `
         let selectEl = this.dom.querySelector('.key-selection')
@@ -111,7 +112,7 @@ export class KeyFieldForm{
         }
     }
 
-    get check() {
+    check() {
         return true
     }
 }

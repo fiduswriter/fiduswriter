@@ -16,7 +16,7 @@ export class URIFieldForm{
         return formValue.length > 0 ? formValue : false
     }
 
-    get check() {
+    check() {
         let formValue = this.value
         if (formValue) {
             /* Copyright (c) 2010-2013 Diego Perini, MIT licensed

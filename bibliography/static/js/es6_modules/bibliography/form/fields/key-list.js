@@ -63,7 +63,7 @@ export class KeyListForm{
         return this.fields.map(field => {return field.value}).filter(value => {return value !== false})
     }
 
-    get check() {
+    check() {
         return true
     }
 }

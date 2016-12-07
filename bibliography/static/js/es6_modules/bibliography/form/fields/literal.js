@@ -39,7 +39,7 @@ export class LiteralFieldForm{
         return literalContents && literalContents.length ? literalContents : false
     }
 
-    get check() {
+    check() {
         return true
     }
 

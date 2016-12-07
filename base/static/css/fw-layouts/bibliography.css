@@ -2,6 +2,32 @@
     margin-top: 18px;
 }
 
+#bib-dialog .select-container {
+    margin-bottom: 18px;
+    margin-right: 71px;
+    position: relative;
+}
+
+#bib-dialog .select-container select {
+    display: inline-block;
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+}
+
+#bib-dialog .select-container select option.placeholder {
+    display: none;
+}
+
+#bib-dialog .select-container .select-arrow {
+    position: absolute;
+	top: 14px;
+	right: -10px;
+	pointer-events: none;
+}
+
 #bib-dialog .ui-tabs-panel {
     height: 439px;
 }
@@ -20,12 +46,28 @@
     width: 678px;
 }
 
+#bib-dialog .entry-field .selection-list {
+    position: relative
+}
+
 #bib-dialog .entry-field select {
-    padding: 0px 3px 0px 3px;
+    padding: 0px 3px 0px 13px;
     border-color: #c9c9c9;
     background-color: #f9f9f9;
     height: 38px;
     width: 561px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    display: inline-block;
+}
+
+#bib-dialog .entry-field .select-arrow {
+    position: absolute;
+	top: 14px;
+	right: 28px;
+	pointer-events: none;
 }
 
 #bib-dialog .input-with-button {

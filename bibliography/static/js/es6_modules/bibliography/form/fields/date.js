@@ -18,7 +18,7 @@ export class DateFieldForm{
         return formValue.length > 0 ? formValue : false
     }
 
-    get check() {
+    check() {
         let formValue = this.value
         if (formValue) {
             return edtfCheck(formValue)

@@ -1,16 +1,16 @@
 /** A template for the bibliography item edit dialog. */
 export let bibDialog = _.template('\
     <div id="bib-dialog" title="<%- dialogHeader %>">\
-        <div id="source-type-selection" class="fw-button fw-white fw-large">\
-            <span id="selected-source-type-title"><%= sourceTitle %></span>\
-            <span class="icon-down-dir"></span>\
-            <div class="fw-pulldown fw-center">\
-                <ul><% Object.keys(BibTypes).forEach(function(key) { %>\
-                    <li>\
-                        <span class="fw-pulldown-item" data-value="<%- key %>"><%= BibTypeTitles[key] %></span>\
-                    </li>\
-                <% }) %></ul>\
-            </div>\
+        <div class="select-container">\
+            <select id="select-bibtype" class="fw-button fw-white fw-large" required>\
+                <% if (bib_type===false) { %>\
+                    <option class="placeholder" selected disabled value="">' + gettext('Select source type') + '</option>\
+                <% } %>\
+                <% Object.keys(BibTypes).forEach(function(key) { %>\
+                    <option value="<%- key %>" <%= key === bib_type ? "selected" : "" %>><%= BibTypeTitles[key] %></option>\
+                <% }) %>\
+            </select>\
+            <div class="select-arrow icon-down-dir"></div>\
         </div>\
         <div id="bib-dialog-tabs">\
             <ul>\

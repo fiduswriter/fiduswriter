@@ -36,40 +36,44 @@ export class BibEntryForm {
     constructor(itemId, bibDB) {
         this.itemId = itemId
         this.bibDB = bibDB
-        this.required = {}
-        this.optional = {}
-        this.eitheror = {}
-        this.values = {}
+        this.fields = {}
+        this.currentValues = {}
+
     }
 
     init() {
         if (this.itemId) {
             this.dialogHeader = gettext('Edit Source')
             let bibEntry = this.bibDB.db[this.itemId]
-            this.bibType = bibEntry.bib_type
-            this.values = JSON.parse(JSON.stringify(bibEntry.fields)) // copy current values
+            this.currentValues = JSON.parse(JSON.stringify(bibEntry)) // copy current values
         } else {
             this.dialogHeader = gettext('Register New Source')
-            this.bibType = false
+            this.currentValues = {
+                bib_type: false,
+                entry_cat: [],
+                entry_key: 'FW',
+                fields: {}
+            }
         }
         this.createForm()
     }
 
     addDialogToDOM() {
+        let that = this
         // Add form to DOM
-        let dialogBody = bibDialog({
+        let dialogEl = bibDialog({
             'dialogHeader': this.dialogHeader,
-            'sourceTitle': this.bibType ? BibTypeTitles[this.bibType] : gettext('Select source type'),
+            'bib_type': this.currentValues.bib_type,
             BibTypes,
             BibTypeTitles
         })
-        jQuery('body').append(dialogBody)
+        jQuery('body').append(dialogEl)
 
         let diaButtons = {}
         diaButtons[gettext('Submit')] = function() {
-            //if (type) {
-            //    that.onCreateBibEntrySubmitHandler(id)
-            //}
+            if (that.check()) {
+                console.log('Could save')
+            }
         }
         diaButtons[gettext('Cancel')] = function() {
             jQuery(this).dialog('close')
@@ -92,24 +96,24 @@ export class BibEntryForm {
                 jQuery("#bib-dialog").dialog('destroy').remove()
             }
         })
-
-        //open dropdown for selecting source type
-        addDropdownBox(jQuery('#source-type-selection'), jQuery('#source-type-selection > .fw-pulldown'))
-
         // init ui tabs
         jQuery('#bib-dialog-tabs').tabs()
+
+        document.getElementById('select-bibtype').addEventListener('change', () => {
+            that.changeBibType()
+        })
     }
 
-    // Add a field to required, optional or either-or fields
-    addField(fieldName, category, categoryDOM) {
+
+    addField(fieldName, dom) {
         let fieldType = BibFieldTypes[fieldName]
-        categoryDOM.insertAdjacentHTML('beforeend', `<tr><th><h4 class="fw-tablerow-title">${BibFieldTitles[fieldName]}</h4></th><td class="entry-field"></td></tr>`)
-        let fieldDOM = categoryDOM.lastChild.lastChild
+        dom.insertAdjacentHTML('beforeend', `<tr><th><h4 class="fw-tablerow-title">${BibFieldTitles[fieldName]}</h4></th><td class="entry-field"></td></tr>`)
+        let fieldDOM = dom.lastChild.lastChild
         let FieldClass = FIELD_FORMS[fieldType.type]
         if (FieldClass) {
-            let fieldHandler = new FieldClass(fieldDOM, this.values[fieldName], undefined, fieldType)
+            let fieldHandler = new FieldClass(fieldDOM, this.currentValues.fields[fieldName], undefined, fieldType)
             fieldHandler.init()
-            category[fieldName] = fieldHandler
+            this.fields[fieldName] = fieldHandler
         } else {
             console.warn(`Unknown fieldtype: ${fieldType.type}`)
         }
@@ -119,20 +123,63 @@ export class BibEntryForm {
         let that = this
         this.addDialogToDOM()
         let eitherOrFields = document.getElementById('eo-fields')
-        BibTypes[this.bibType].eitheror.forEach(fieldName=>{
-            that.addField(fieldName, that.eitheror, eitherOrFields)
+        BibTypes[this.currentValues.bib_type].eitheror.forEach(fieldName=>{
+            that.addField(fieldName, eitherOrFields)
         })
         let reqFields = document.getElementById('req-fields')
-        BibTypes[this.bibType].required.forEach(fieldName=>{
-            that.addField(fieldName, that.required, reqFields)
+        BibTypes[this.currentValues.bib_type].required.forEach(fieldName=>{
+            that.addField(fieldName, reqFields)
         })
         let optFields = document.getElementById('opt-fields')
-        BibTypes[this.bibType].optional.forEach(fieldName=>{
-            that.addField(fieldName, that.optional, optFields)
+        BibTypes[this.currentValues.bib_type].optional.forEach(fieldName=>{
+            that.addField(fieldName, optFields)
         })
         let entryCatField = document.getElementById('categories-field')
         this.entryCatForm = new EntryCatForm(entryCatField, this.bibDB.db[this.itemId].entry_cat, this.bibDB.cats)
         this.entryCatForm.init()
+    }
+
+    changeBibType() {
+        // Add all current values into temporary currentValues, in case the
+        // user still wants them.
+        let formValue = this.value
+        Object.assign(this.currentValues.fields, formValue.fields)
+        this.currentValues.entry_cat = formValue.entry_cat
+        this.currentValues.bib_type = formValue.bib_type
+        // Reset fields and close dialog.
+        this.fields = {}
+        jQuery('#bib-dialog').dialog('close')
+        this.createForm()
+    }
+
+    get value() {
+        let that = this
+        let returnObj = {
+            bib_type: document.querySelector('#select-bibtype').value,
+            entry_cat: this.entryCatForm.value,
+            entry_key: this.currentValues.entry_key, // is never updated.
+            fields: {}
+        }
+        Object.keys(this.fields).forEach(fieldName=>{
+            let fieldValue = that.fields[fieldName].value
+            if (fieldValue !== false) {
+                returnObj['fields'][fieldName] = fieldValue
+            }
+        })
+        return returnObj
+    }
+
+    check() {
+        let that = this, passed = true
+        if (!this.currentValues.bib_type) {
+            return false
+        }
+        Object.keys(this.fields).forEach(fieldName=>{
+            if(that.fields[fieldName].check() !== true) {
+                passed = false
+            }
+        })
+        return passed
     }
 
 }

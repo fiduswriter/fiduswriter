@@ -156,8 +156,8 @@ def save_js(request):
             inserting_obj = {
                 'entry_owner_id': owner_id,
                 'entry_key': bib['entry_key'],
-                'entry_cat': bib['entry_cat'],
                 'bib_type': bib['bib_type'],
+                'entry_cat': bib['entry_cat'],
                 'fields': bib['fields']
             }
             similar = Entry.objects.filter(**inserting_obj)

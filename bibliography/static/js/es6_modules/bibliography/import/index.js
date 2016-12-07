@@ -146,59 +146,16 @@ export class BibLatexFileImporter {
             let toNumber = fromNumber + 50
             let currentChunk = {}
             this.bibKeys.slice(fromNumber, toNumber).forEach((bibKey)=>{
-                let bibObj = Object.assign({}, this.tmpDB[bibKey])
-                bibObj.fields = JSON.stringify(bibObj.fields)
-                currentChunk[bibKey] = bibObj
+                currentChunk[bibKey] = this.tmpDB[bibKey]
             })
-            this.sendChunk(currentChunk, function () {
+            this.bibDB.createBibEntries(currentChunk, function (ids) {
+                that.callback(ids)
                 that.currentChunkNumber++
                 that.processChunk()
             })
         } else {
             deactivateWait()
         }
-    }
-    /** Third step of the BibTeX file import. Takes lists of bibliography entries and sends them to the server.
-     * @param bibEntries The list of bibEntries received from processFile.
-     * @param callback Function to be called when import to server has finished.
-     *
-     */
-
-    sendChunk(bibEntryDB, callback) {
-
-        let postData = {
-            'bibs': JSON.stringify(bibEntryDB)
-        }, that = this
-
-        // TODO: replace with functions in database.js
-        jQuery.ajax({
-            url: '/bibliography/save/',
-            type: 'post',
-            data: postData,
-            dataType: 'json',
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: function (response, textStatus, jqXHR) {
-                let ids = []
-                response['id_translations'].forEach((bibTrans)=>{
-                    that.bibDB.db[bibTrans[1]] = that.tmpDB[bibTrans[0]]
-                    ids.push(bibTrans[1])
-                })
-                if (that.callback) {
-                    that.callback(ids)
-                }
-
-                callback()
-
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.error(jqXHR.responseText)
-            },
-            complete: function () {
-            }
-        })
     }
 
 }

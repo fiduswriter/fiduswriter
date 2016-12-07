@@ -128,15 +128,30 @@ export class BibliographyDB {
         return id
     }
 
-    /** Saves a bibliography entry to the database on the server.
+    /** Saves single bibliography entry to the database on the server.
      * @function createBibEntry
-     * @param postData The bibliography data to send to the server.
+     * @param bibEntry The bibliography data to send to the server.
      */
-    createBibEntry(bib, callback) {
+    createBibEntry(bibEntry, callback) {
+        this.createBibEntries({0:bibEntry}, callback)
+    }
+
+    /** Saves a bibliography entry to the database on the server.
+     * @function createBibEntries
+     * @param tmpDB The bibliography DB with temporary IDs to be send to the server.
+     */
+    createBibEntries(tmpDB, callback) {
         let that = this
-        activateWait()
+        // Fields field need to be stringified for saving in database.
+        // dbObject is a clone of tmpDB with a stringified fields-field, so
+        // the original tmpDB isn't destroyed.
+        let dbObject = {}
+        Object.keys(tmpDB).forEach((bibKey)=>{
+            dbObject[bibKey] =  Object.assign({}, tmpDB[bibKey])
+            dbObject[bibKey].fields = JSON.stringify(tmpDB[bibKey].fields)
+        })
         let sendData = {
-            bibs: JSON.stringify([bib])
+            bibs: JSON.stringify(dbObject)
         }
         if (this.docOwnerId !== 0) {
             sendData['owner_id'] = this.docOwnerId
@@ -151,46 +166,25 @@ export class BibliographyDB {
                 xhr.setRequestHeader("X-CSRFToken", csrfToken)
             },
             success: function (response, textStatus, jqXHR) {
-                if (that.displayCreateBibEntryError(response.errormsg)) {
-                    addAlert('success', gettext('The bibliography has been updated'))
-                    let newBibPks = []
-                    let bibList = response.bibs
-                    for (let i = 0; i < bibList.length; i++) {
-                        newBibPks.push(that.serverBibItemToBibDB(bibList[i]))
-                    }
-                    if (callback) {
-                        callback(newBibPks)
-                    }
-                } else {
-                    addAlert('error', gettext('Some errors are found. Please examine the form.'))
+                let ids = []
+                response['id_translations'].forEach((bibTrans)=>{
+                    that.db[bibTrans[1]] = tmpDB[bibTrans[0]]
+                    ids.push(bibTrans[1])
+                })
+                addAlert('success', gettext('The bibliography has been updated.'))
+                if (callback) {
+                    callback(ids)
                 }
+
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 addAlert('error', errorThrown)
             },
             complete: function () {
-                deactivateWait()
             }
         })
     }
 
-    /** Displays an error on bibliography entry creation
-     * @function displayCreateBibEntryError
-     * @param errors Errors to be displayed
-     */
-    displayCreateBibEntryError(errors) {
-        let noError = true
-        for (let error in errors) {
-            let eMsg = '<div class="warning">' + error + '</div>'
-            if ('error' == error) {
-                jQuery('#createbook').prepend(eMsg)
-            } else {
-                jQuery('#id_' + error).after(eMsg)
-            }
-            noError = false
-        }
-        return noError
-    }
 
     /** Update or create new category
      * @function createCategory

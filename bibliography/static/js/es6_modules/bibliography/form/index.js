@@ -1,7 +1,7 @@
 import {BibFieldTypes, BibTypes} from "biblatex-csl-converter/lib/const"
 import {BibFieldTitles, BibTypeTitles} from "./titles"
-import {bibDialog} from "./tmp"
-import {addDropdownBox} from "../../common/common"
+import {bibDialog} from "./templates"
+import {addAlert} from "../../common/common"
 import {EntryCatForm} from "./entry-cat"
 import {DateFieldForm} from "./fields/date"
 import {LiteralFieldForm} from "./fields/literal"
@@ -33,12 +33,16 @@ const FIELD_FORMS = {
 }
 
 export class BibEntryForm {
-    constructor(itemId, bibDB) {
-        this.itemId = itemId
+    constructor(itemId, bibDB, callback) {
+        if (itemId === undefined) {
+            this.itemId = false
+        } else {
+            this.itemId = parseInt(itemId)
+        }
         this.bibDB = bibDB
+        this.callback = callback
         this.fields = {}
         this.currentValues = {}
-
     }
 
     init() {
@@ -72,7 +76,8 @@ export class BibEntryForm {
         let diaButtons = {}
         diaButtons[gettext('Submit')] = function() {
             if (that.check()) {
-                console.log('Could save')
+                that.save()
+                jQuery(this).dialog('close')
             }
         }
         diaButtons[gettext('Cancel')] = function() {
@@ -122,21 +127,23 @@ export class BibEntryForm {
     createForm() {
         let that = this
         this.addDialogToDOM()
-        let eitherOrFields = document.getElementById('eo-fields')
-        BibTypes[this.currentValues.bib_type].eitheror.forEach(fieldName=>{
-            that.addField(fieldName, eitherOrFields)
-        })
-        let reqFields = document.getElementById('req-fields')
-        BibTypes[this.currentValues.bib_type].required.forEach(fieldName=>{
-            that.addField(fieldName, reqFields)
-        })
-        let optFields = document.getElementById('opt-fields')
-        BibTypes[this.currentValues.bib_type].optional.forEach(fieldName=>{
-            that.addField(fieldName, optFields)
-        })
-        let entryCatField = document.getElementById('categories-field')
-        this.entryCatForm = new EntryCatForm(entryCatField, this.bibDB.db[this.itemId].entry_cat, this.bibDB.cats)
-        this.entryCatForm.init()
+        if (this.currentValues.bib_type !== false) {
+            let eitherOrFields = document.getElementById('eo-fields')
+            BibTypes[this.currentValues.bib_type].eitheror.forEach(fieldName=>{
+                that.addField(fieldName, eitherOrFields)
+            })
+            let reqFields = document.getElementById('req-fields')
+            BibTypes[this.currentValues.bib_type].required.forEach(fieldName=>{
+                that.addField(fieldName, reqFields)
+            })
+            let optFields = document.getElementById('opt-fields')
+            BibTypes[this.currentValues.bib_type].optional.forEach(fieldName=>{
+                that.addField(fieldName, optFields)
+            })
+            let entryCatField = document.getElementById('categories-field')
+            this.entryCatForm = new EntryCatForm(entryCatField, this.currentValues.entry_cat, this.bibDB.cats)
+            this.entryCatForm.init()
+        }
     }
 
     changeBibType() {
@@ -156,7 +163,7 @@ export class BibEntryForm {
         let that = this
         let returnObj = {
             bib_type: document.querySelector('#select-bibtype').value,
-            entry_cat: this.entryCatForm.value,
+            entry_cat: this.entryCatForm ? this.entryCatForm.value : [],
             entry_key: this.currentValues.entry_key, // is never updated.
             fields: {}
         }
@@ -169,6 +176,18 @@ export class BibEntryForm {
         return returnObj
     }
 
+    save() {
+        let isNew = this.itemId===false ? true : false
+        let itemId = this.itemId===false ? 0 : this.itemId
+        let saveObj = {}
+        saveObj[itemId] = this.value
+        this.bibDB.saveBibEntries(
+            saveObj,
+            isNew,
+            this.callback
+        )
+    }
+
     check() {
         let that = this, passed = true
         if (!this.currentValues.bib_type) {
@@ -179,6 +198,9 @@ export class BibEntryForm {
                 passed = false
             }
         })
+        if (!passed) {
+            addAlert('error', gettext('Error in form, check highlighted values!'))
+        }
         return passed
     }
 

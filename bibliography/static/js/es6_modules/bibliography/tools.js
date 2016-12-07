@@ -1,31 +1,5 @@
 import {addDropdownBox} from "../common/common"
 
-export let formatDateString = function(dateString) {
-    // This mirrors the formatting of the date as returned by Python in bibliography/models.py
-    if ('undefined' == typeof(dateString)) return ''
-    let dates = dateString.split('/')
-    let newValue = []
-    for (let x = 0; x < dates.length; x++) {
-        let dateParts = dates[x].split('-')
-        newValue.push('')
-        for (let i = 0; i < dateParts.length; i++) {
-            if (isNaN(dateParts[i])) {
-                break
-            }
-            if (i > 0) {
-                newValue[x] += '/'
-            }
-            newValue[x] += dateParts[i]
-        }
-    }
-    if (newValue[0] === '') {
-        return ''
-    } else if (newValue.length === 1) {
-        return newValue[0]
-    } else {
-        return newValue[0] + '-' + newValue[1]
-    }
-}
 
 /** Add and remove name list field.
  * @function addRemoveListHandler
@@ -93,16 +67,6 @@ export let addRemoveListHandler = function () {
     jQuery('.dk').dropkick()
 }
 
-/** Dictionary of date selection options for bibliography item editor (localized).
- */
-export const dateFormat = {
-    'y': gettext('Year'),
-    'y/y': gettext('Year - Year'),
-    'my': gettext('Month/Year'),
-    'my/my': gettext('M/Y - M/Y'),
-    'mdy': gettext('Month/Day/Year'),
-    'mdy/mdy': gettext('M/D/Y - M/D/Y')
-}
 
 // Takes any richtext text field as used in bibliography and returns the text contents
 export function litToText(litStringArray) {
@@ -117,7 +81,9 @@ export function litToText(litStringArray) {
 
 export function nameToText(nameList) {
     let nameString = ''
-
+    if (nameList.length===0) {
+        return nameString
+    }
     if (nameList[0]['family']) {
         nameString += litToText(nameList[0]['family'])
         if (nameList[0]['given']) {

@@ -148,7 +148,7 @@ export class BibLatexFileImporter {
             this.bibKeys.slice(fromNumber, toNumber).forEach((bibKey)=>{
                 currentChunk[bibKey] = this.tmpDB[bibKey]
             })
-            this.bibDB.createBibEntries(currentChunk, function (ids) {
+            this.bibDB.saveBibEntries(currentChunk, true, function (ids) {
                 that.callback(ids)
                 that.currentChunkNumber++
                 that.processChunk()

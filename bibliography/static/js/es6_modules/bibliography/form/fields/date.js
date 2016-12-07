@@ -21,7 +21,11 @@ export class DateFieldForm{
     check() {
         let formValue = this.value
         if (formValue) {
-            return edtfCheck(formValue)
+            let checkValue = edtfCheck(formValue)
+            if (!checkValue) {
+                this.dom.classList.add('fw-fomt-error')
+                return false
+            }
         }
         return true
     }

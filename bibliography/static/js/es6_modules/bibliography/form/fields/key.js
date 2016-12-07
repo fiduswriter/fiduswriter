@@ -3,7 +3,7 @@ import {noSpaceTmp} from "../../../common/common"
 import {BibOptionTitles} from "../titles"
 
 export class KeyFieldForm{
-    constructor(dom, initialValue = '', unused, fieldType) {
+    constructor(dom, initialValue, unused, fieldType) {
         this.currentValue = {}
         this.dom = dom
         this.fieldType = fieldType

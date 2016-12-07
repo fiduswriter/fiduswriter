@@ -1,5 +1,5 @@
 import {configureCitationTemplate, citationItemTemplate, selectedCitationTemplate} from "./templates"
-import {BibEntryForm} from "../../../bibliography/form/form"
+import {BibEntryForm} from "../../../bibliography/form"
 import {addDropdownBox, setCheckableLabel} from "../../../common/common"
 import {nameToText, litToText} from "../../../bibliography/tools"
 
@@ -96,16 +96,14 @@ export let citationDialog = function (mod) {
     diaButtons.push({
         text: gettext('Register new source'),
         click: function() {
-            new BibEntryForm(false, '', editor.bibDB.db, editor.bibDB.cats, editor.doc.owner.id,
-                    function(bibEntryData){
-                editor.bibDB.createBibEntry(bibEntryData, function(newBibPks) {
-                    editor.mod.menus.citation.appendManyToCitationDialog(newBibPks)
-                    jQuery('.fw-checkable').unbind('click')
-                    jQuery('.fw-checkable').bind('click', function() {
-                        setCheckableLabel(jQuery(this))
-                    })
+            let form = new BibEntryForm(undefined, editor.bibDB, function(newBibPks) {
+                editor.mod.menus.citation.appendManyToCitationDialog(newBibPks)
+                jQuery('.fw-checkable').unbind('click')
+                jQuery('.fw-checkable').bind('click', function() {
+                    setCheckableLabel(jQuery(this))
                 })
             })
+            form.init()
         },
         class: 'fw-button fw-light fw-add-button register-new-bib-source'
     })

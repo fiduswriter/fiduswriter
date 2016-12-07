@@ -133,14 +133,14 @@ export class BibliographyDB {
      * @param bibEntry The bibliography data to send to the server.
      */
     createBibEntry(bibEntry, callback) {
-        this.createBibEntries({0:bibEntry}, callback)
+        this.saveBibEntries({0:bibEntry}, true, callback)
     }
 
     /** Saves a bibliography entry to the database on the server.
-     * @function createBibEntries
+     * @function saveBibEntries
      * @param tmpDB The bibliography DB with temporary IDs to be send to the server.
      */
-    createBibEntries(tmpDB, callback) {
+    saveBibEntries(tmpDB, isNew, callback) {
         let that = this
         // Fields field need to be stringified for saving in database.
         // dbObject is a clone of tmpDB with a stringified fields-field, so
@@ -152,11 +152,13 @@ export class BibliographyDB {
             dbObject[bibKey].fields = JSON.stringify(tmpDB[bibKey].fields)
         })
         let sendData = {
+            is_new: isNew,
             bibs: JSON.stringify(dbObject)
         }
         if (this.docOwnerId !== 0) {
             sendData['owner_id'] = this.docOwnerId
         }
+
         jQuery.ajax({
             url: '/bibliography/save/',
             data: sendData,

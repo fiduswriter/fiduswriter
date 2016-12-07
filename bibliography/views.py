@@ -153,16 +153,27 @@ def save_js(request):
         response['id_translations'] = []
         for b_id in bibs.keys():
             bib = bibs[b_id]
-            inserting_obj = {
-                'entry_owner_id': owner_id,
-                'entry_key': bib['entry_key'],
-                'bib_type': bib['bib_type'],
-                'entry_cat': bib['entry_cat'],
-                'fields': bib['fields']
-            }
-            similar = Entry.objects.filter(**inserting_obj)
-            if len(similar) == 0:
-                the_entry = Entry(**inserting_obj)
+            if request.POST['is_new'] == 'true':
+                inserting_obj = {
+                    'entry_owner_id': owner_id,
+                    'entry_key': bib['entry_key'],
+                    'bib_type': bib['bib_type'],
+                    'entry_cat': bib['entry_cat'],
+                    'fields': bib['fields']
+                }
+                similar = Entry.objects.filter(**inserting_obj)
+                if len(similar) == 0:
+                    the_entry = Entry(**inserting_obj)
+                    the_entry.save()
+                    response['id_translations'].append([b_id, the_entry.id])
+                else:
+                    response['id_translations'].append([b_id, similar[0].id])
+            else:
+                the_entry = Entry.objects.get(id=b_id)
+                the_entry.key = bib['entry_key']
+                the_entry.bib_type = bib['bib_type']
+                the_entry.entry_cat = bib['entry_cat']
+                the_entry.fields = bib['fields']
                 the_entry.save()
                 response['id_translations'].append([b_id, the_entry.id])
     return JsonResponse(

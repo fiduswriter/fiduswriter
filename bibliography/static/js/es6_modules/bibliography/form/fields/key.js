@@ -13,7 +13,7 @@ export class KeyFieldForm{
             this.currentValue['predefined'] = initialValue
         } else {
             this.predefined = false
-            this.currentValue['costum'] = initialValue
+            this.currentValue['custom'] = initialValue
         }
     }
 
@@ -25,7 +25,7 @@ export class KeyFieldForm{
         if (this.predefined) {
             this.drawSelectionListForm()
         } else {
-            this.drawCostumInputForm()
+            this.drawCustomInputForm()
         }
     }
 
@@ -33,7 +33,7 @@ export class KeyFieldForm{
         let that = this
         this.dom.innerHTML = noSpaceTmp`
             <div class='selection-list input-with-button'>
-                <button class="switch-type fw-button fw-green">${gettext('Predefined')}</button>
+                <button class="switch-type fw-button fw-green">${gettext('From list')}</button>
                 <select class='key-selection'><option value=''></option></select>
             </div>
         `
@@ -53,7 +53,7 @@ export class KeyFieldForm{
         }
 
         if (this.fieldType.strict) {
-            this.dom.querySelector('.switch-type').disabled='disabled'
+            this.dom.querySelector('.switch-type').classList.add('disabled')
         } else {
             this.dom.querySelector('.switch-type').addEventListener('click', ()=>{
                 that.switchMode()
@@ -68,27 +68,27 @@ export class KeyFieldForm{
             if (this.predefined) {
                 this.currentValue['predefined'] = formValue
             } else {
-                this.currentValue['costum'] = formValue
+                this.currentValue['custom'] = formValue
             }
         }
         this.predefined = !this.predefined
         this.drawForm()
     }
 
-    drawCostumInputForm() {
+    drawCustomInputForm() {
         let that = this
         this.fields = {}
         this.dom.innerHTML = noSpaceTmp`
             <div class='key-field input-with-button'>
-                <button class="switch-type fw-button fw-green">${gettext('Costum')}</button>
-                <div class='costum-input field-part field-part-single'></div>
+                <button class="switch-type fw-button fw-green">${gettext('Custom')}</button>
+                <div class='custom-input field-part field-part-single'></div>
             </div>
         `
-        this.fields['costum'] = new LiteralFieldForm(
-            this.dom.querySelector('.costum-input'),
-            this.currentValue['costum']
+        this.fields['custom'] = new LiteralFieldForm(
+            this.dom.querySelector('.custom-input'),
+            this.currentValue['custom']
         )
-        this.fields.costum.init()
+        this.fields.custom.init()
         this.dom.querySelector('.switch-type').addEventListener('click', ()=>{
             that.switchMode()
         })
@@ -104,10 +104,10 @@ export class KeyFieldForm{
                 return selectionValue
             }
         } else {
-            if (!this.fields.costum.value) {
+            if (!this.fields.custom.value) {
                 return false
             }
-            return this.fields.costum.value
+            return this.fields.custom.value
         }
     }
 

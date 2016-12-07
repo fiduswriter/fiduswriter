@@ -78,7 +78,7 @@ export class BibEntryForm {
         jQuery("#bib-dialog").dialog({
             draggable: false,
             resizable: false,
-            width: 930,
+            width: 940,
             height: 700,
             modal: true,
             buttons: diaButtons,
@@ -107,7 +107,7 @@ export class BibEntryForm {
         let fieldDOM = categoryDOM.lastChild.lastChild
         let FieldClass = FIELD_FORMS[fieldType.type]
         if (FieldClass) {
-            let fieldHandler = new FieldClass(fieldDOM, this.values[fieldName], false, fieldType)
+            let fieldHandler = new FieldClass(fieldDOM, this.values[fieldName], undefined, fieldType)
             fieldHandler.init()
             category[fieldName] = fieldHandler
         } else {

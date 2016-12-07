@@ -9,7 +9,7 @@
 #bib-dialog .fw-dialog-table th {
     vertical-align: top;
     padding: 0 6px 0 8px;
-    width: 170px;
+    width: 164px;
 }
 
 #bib-dialog .entry-field .ProseMirror, #bib-dialog .entry-field input[type=text] {
@@ -64,7 +64,10 @@
     color: #cecece;
 }
 
-#bib-dialog .ProseMirror-focused div.literal, #bib-dialog .ProseMirror-focused pre.long-literal {
+#bib-dialog .ProseMirror-focused div.literal,
+#bib-dialog .ProseMirror-focused pre.long-literal,
+#bib-dialog .tokenfield.focused,
+#bib-dialog .tokenfield.focused .tokenfield-input {
     background-color: #fbf9d2;
 }
 

@@ -43,7 +43,7 @@ export class KeyListForm{
         let addItemEl = fieldDOM.querySelector('.icon-plus-circle')
         addItemEl.addEventListener('click', () => {
             that.currentValue = that.value
-            that.currentValue.splice(index+1, 0, [])
+            that.currentValue.splice(index+1, 0, '')
             that.drawForm()
         })
 
@@ -53,7 +53,7 @@ export class KeyListForm{
             that.currentValue = that.value
             that.currentValue.splice(index, 1)
             if (that.currentValue.length === 0) {
-                that.currentValue = [[]]
+                that.currentValue = ['']
             }
             that.drawForm()
         })

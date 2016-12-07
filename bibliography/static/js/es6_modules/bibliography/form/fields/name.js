@@ -41,6 +41,7 @@ export class NameFieldForm{
         this.fields = {}
         this.dom.innerHTML = noSpaceTmp`
             <div class='person input-with-button'>
+                <button class="switch-type fw-button fw-green">${gettext('Person')}</button>
                 <div class='given field-part field-part-long'></div>
                 <div class='prefix field-part field-part-short'></div>
                 <div class='family field-part field-part-long'></div>
@@ -50,7 +51,6 @@ export class NameFieldForm{
                         ${this.currentValue.prefixused? 'checked' : ''}>
                     &nbsp;${gettext('Prefix used')}
                 </div>
-                <button class="switch-type fw-button fw-green">${gettext('Organization')}</button>
             </div>
         `
         this.fields['given'] = new LiteralFieldForm(
@@ -96,8 +96,8 @@ export class NameFieldForm{
         this.fields = {}
         this.dom.innerHTML = noSpaceTmp`
             <div class='organization input-with-button'>
-                <div class='literal-text field-part field-park-single'></div>
-                <button class="switch-type fw-button fw-green">${gettext('Person')}</button>
+                <button class="switch-type fw-button fw-green">${gettext('Organization')}</button>
+                <div class='literal-text field-part field-part-single'></div>
             </div>
         `
         this.fields['literal'] = new LiteralFieldForm(

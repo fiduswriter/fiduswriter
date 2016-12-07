@@ -21,15 +21,21 @@
 }
 
 #bib-dialog .entry-field select {
-    padding: 8px 3px 0px 3px;
+    padding: 0px 3px 0px 3px;
     border-color: #c9c9c9;
     background-color: #f9f9f9;
     height: 38px;
-    width: 568px;
+    width: 561px;
 }
 
 #bib-dialog .input-with-button {
-    width: 686px;
+    width: 705px;
+}
+
+#bib-dialog .input-with-button button {
+    width: 81px;
+    float: left;
+    margin-right: 18px;
 }
 
 #bib-dialog .input-with-button .field-part {
@@ -50,11 +56,7 @@
 }
 
 #bib-dialog .input-with-button .field-part-single .ProseMirror {
-    width: 568px;
-}
-
-#bib-dialog .input-with-button button {
-    float: right;
+    width: 561px;
 }
 
 #bib-dialog div.literal::before {

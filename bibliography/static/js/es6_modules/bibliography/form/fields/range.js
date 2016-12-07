@@ -34,9 +34,9 @@ export class RangeFieldForm{
         this.fields = {}
         this.dom.innerHTML = noSpaceTmp`
             <div class='range-field input-with-button'>
+                <button class="switch-type fw-button fw-green">${gettext('Range')}</button>
                 <div class='range-from field-part field-part-huge'></div>
                 <div class='range-to field-part field-part-huge'></div>
-                <button class="switch-type fw-button fw-green">${gettext('Single value')}</button>
             </div>
         `
         this.fields['from'] = new LiteralFieldForm(
@@ -70,8 +70,8 @@ export class RangeFieldForm{
         this.fields = {}
         this.dom.innerHTML = noSpaceTmp`
             <div class='range-field input-with-button'>
+                <button class="switch-type fw-button fw-green">${gettext('Single value')}</button>
                 <div class='single-value field-part field-part-single'></div>
-                <button class="switch-type fw-button fw-green">${gettext('Range')}</button>
             </div>
         `
         this.fields['single'] = new LiteralFieldForm(

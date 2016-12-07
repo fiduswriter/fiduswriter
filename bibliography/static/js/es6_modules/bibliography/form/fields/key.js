@@ -33,6 +33,7 @@ export class KeyFieldForm{
         let that = this
         this.dom.innerHTML = noSpaceTmp`
             <div class='selection-list input-with-button'>
+                <button class="switch-type fw-button fw-green">${gettext('Predefined')}</button>
                 <select class='key-selection'><option value=''></option></select>
             </div>
         `
@@ -51,11 +52,9 @@ export class KeyFieldForm{
             selectEl.value = this.currentValue['predefined']
         }
 
-        if (!this.fieldType.strict) {
-            this.dom.querySelector('.selection-list').insertAdjacentHTML(
-                'beforeend',
-                `<button class="switch-type fw-button fw-green">${gettext('Costum')}</button>`
-            )
+        if (this.fieldType.strict) {
+            this.dom.querySelector('.switch-type').disabled='disabled'
+        } else {
             this.dom.querySelector('.switch-type').addEventListener('click', ()=>{
                 that.switchMode()
             })
@@ -81,8 +80,8 @@ export class KeyFieldForm{
         this.fields = {}
         this.dom.innerHTML = noSpaceTmp`
             <div class='key-field input-with-button'>
+                <button class="switch-type fw-button fw-green">${gettext('Costum')}</button>
                 <div class='costum-input field-part field-part-single'></div>
-                <button class="switch-type fw-button fw-green">${gettext('Predefined')}</button>
             </div>
         `
         this.fields['costum'] = new LiteralFieldForm(

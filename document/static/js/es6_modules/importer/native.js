@@ -285,7 +285,7 @@ export class ImportNative {
                 for (let importedBib of bibEntries) {
                     let bib = {
                         'bib_type': importedBib['bib_type'],
-                        'entry_cat': '',
+                        'entry_cat': [],
                         'entry_key': importedBib['entry_key'],
                         'fields': {}
                     }
@@ -304,7 +304,8 @@ export class ImportNative {
                 jQuery.ajax({
                     url: '/bibliography/save/',
                     data: {
-                        bibs: JSON.stringify(bibs)
+                        bibs: JSON.stringify(bibs),
+                        is_new: true
                     },
                     type: 'POST',
                     dataType: 'json',

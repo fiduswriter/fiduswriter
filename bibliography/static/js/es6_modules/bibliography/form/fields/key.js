@@ -3,17 +3,17 @@ import {noSpaceTmp} from "../../../common/common"
 import {BibOptionTitles} from "../titles"
 
 export class KeyFieldForm{
-    constructor(dom, initialValue, unused, fieldType) {
+    constructor(dom, initialValue, unused = undefined, fieldType = undefined) {
         this.currentValue = {}
         this.dom = dom
         this.fieldType = fieldType
-        // We set the mode based on the type fo value
-        if (typeof initialValue==='string') {
-            this.predefined = true
-            this.currentValue['predefined'] = initialValue
-        } else {
+        // We set the mode based on the type of value
+        if (typeof initialValue==='object') {
             this.predefined = false
             this.currentValue['custom'] = initialValue
+        } else {
+            this.predefined = true
+            this.currentValue['predefined'] = initialValue
         }
     }
 

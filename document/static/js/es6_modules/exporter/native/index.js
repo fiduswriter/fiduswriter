@@ -66,8 +66,7 @@ export class NativeExporter {
 
 // used in copy
 export let exportNative = function(doc, anImageDB, aBibDB, callback) {
-    let shrunkBibDB = {},
-        shrunkImageDB = {},
+    let shrunkImageDB = {},
         citeList = [],
         imageList = [],
         contents = docSchema.nodeFromJSON(doc.contents).toDOM(),
@@ -123,9 +122,13 @@ export let exportNative = function(doc, anImageDB, aBibDB, callback) {
     // Entries are stored as integers
     citeList = citeList.map(window.Number)
 
-    for (let i in citeList) {
-        shrunkBibDB[citeList[i]] = aBibDB[citeList[i]]
-    }
+    let shrunkBibDB = {}
+    citeList.forEach(itemId => {
+        shrunkBibDB[itemId] = _.clone(aBibDB[itemId])
+        // Remove the entry_cat, as it is only a list of IDs for one
+        // particular user/server.
+        delete shrunkBibDB[itemId].entry_cat
+    })
 
     let docCopy = _.clone(doc)
 
@@ -137,7 +140,6 @@ export let exportNative = function(doc, anImageDB, aBibDB, callback) {
     delete(docCopy.id)
 
     callback(docCopy, shrunkImageDB, shrunkBibDB, httpIncludes)
-
 }
 
 let exportNativeFile = function(doc, shrunkImageDB,

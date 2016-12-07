@@ -121,13 +121,18 @@ export class NameFieldForm{
                 ) {
                     return false
                 }
-            return {
-                family: this.fields.family.value ? this.fields.family.value : '',
-                given: this.fields.given.value ? this.fields.given.value : '',
-                prefix: this.fields.prefix.value ? this.fields.prefix.value : '',
-                suffix: this.fields.suffix.value ? this.fields.suffix.value : '',
-                prefixused: this.dom.querySelector('.prefixused').checked
+            let returnObject = {
+                family: this.fields.family.value ? this.fields.family.value : [],
+                given: this.fields.given.value ? this.fields.given.value : [],
             }
+            if (this.fields.prefix.value) {
+                returnObject['prefix'] = this.fields.prefix.value
+                returnObject['prefixused'] = this.dom.querySelector('.prefixused').checked
+            }
+            if (this.fields.suffix.value) {
+                returnObject['suffix'] = this.fields.suffix.value
+            }
+            return returnObject
         } else {
             if (!this.fields.literal.value) {
                 return false

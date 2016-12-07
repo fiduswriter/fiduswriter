@@ -59,7 +59,13 @@ export class LiteralListForm{
     }
 
     get value() {
-        return this.fields.map(field => {return field.value}).filter(value => {return value !== false})
+        let formValue = this.fields.map(field => {return field.value}).filter(
+            value => {return value !== false}
+        )
+        if (formValue.length === 0) {
+            return false
+        }
+        return formValue
     }
 
     check() {

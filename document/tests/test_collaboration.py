@@ -1080,11 +1080,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
         # click on article
-        Select(driver.find_element_by_id("select-bibtype")).select_by_visible_text("Article")
-
-        #WebDriverWait(driver, self.wait_time).until(
-        #    EC.presence_of_element_located((By.CSS_SELECTOR, '.journaltitle .literal'))
-        #)
+        Select(
+            driver.find_element_by_id("select-bibtype")
+        ).select_by_visible_text("Article")
 
         # fill the values
         title_of_publication = driver.find_element_by_css_selector(
@@ -1093,7 +1091,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         title_of_publication.click()
         title_of_publication.send_keys("My publication title")
 
-        title = driver.find_element_by_css_selector('.title .ProseMirror-content')
+        title = driver.find_element_by_css_selector(
+            '.title .ProseMirror-content')
         title.click()
         title.send_keys("My title")
 

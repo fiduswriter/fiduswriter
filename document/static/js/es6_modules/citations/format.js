@@ -11,7 +11,7 @@ export class FormatCitations {
         this.citationStyle = citationStyle
         this.bibDB = bibDB
         this.cslDB = false
-        this.allowReload = true // We only want to reload once, due to https://github.com/fiduswriter/fiduswriter/issues/284
+//        this.bibDB.allowReload = true // We only want to reload once, due to https://github.com/fiduswriter/fiduswriter/issues/284
         this.callback = callback
     }
 
@@ -48,8 +48,8 @@ export class FormatCitations {
 
             if (missingCitationKey !== false) {
                 // Not all citations could be found in the database.
-                // Reload the database, but only do so once.
-                if (that.allowReload) {
+                // Reload the database, but not more than once every 30 seconds.
+                if (Date.now() - that.bibDB.lastLoadTime > 30000) {
                     that.bibDB.getDB(function(){
                         if (that.bibDB.db.hasOwnProperty(missingCitationKey)) {
                             that.init()
@@ -57,7 +57,7 @@ export class FormatCitations {
                             // The missing key was not in the update from the server
                             // so it seems like this document is containing old
                             // citation keys. Do not attempt further reloads.
-                            that.allowReload = false
+                            that.bibDB.allowReload = false
                         }
                     })
                     return false

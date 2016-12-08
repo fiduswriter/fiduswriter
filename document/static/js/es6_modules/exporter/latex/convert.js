@@ -220,6 +220,7 @@ export class LatexExporterConvert {
                             citationCommand += `[${citationPage[index]}]`
                         }
                         citationCommand += '{'
+                        let bibDBEntry = that.bibDB.db[citationEntry]
                         if (!that.usedBibDB[citationEntry]) {
                             let citationKey = that.createUniqueCitationKey(
                                 bibDBEntry.entry_key

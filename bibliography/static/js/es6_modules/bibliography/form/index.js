@@ -112,7 +112,7 @@ export class BibEntryForm {
 
     addField(fieldName, dom) {
         let fieldType = BibFieldTypes[fieldName]
-        dom.insertAdjacentHTML('beforeend', `<tr><th><h4 class="fw-tablerow-title">${BibFieldTitles[fieldName]}</h4></th><td class="entry-field"></td></tr>`)
+        dom.insertAdjacentHTML('beforeend', `<tr><th><h4 class="fw-tablerow-title">${BibFieldTitles[fieldName]}</h4></th><td class="entry-field ${fieldName}"></td></tr>`)
         let fieldDOM = dom.lastChild.lastChild
         let FieldClass = FIELD_FORMS[fieldType.type]
         if (FieldClass) {

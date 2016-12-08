@@ -152,7 +152,7 @@ export let citationDialog = function (mod) {
         draggable: false,
         resizable: false,
         top: 10,
-        width: 820,
+        width: 836,
         height: 540,
         modal: true,
         buttons: diaButtons,

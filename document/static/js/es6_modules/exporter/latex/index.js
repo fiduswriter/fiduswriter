@@ -2,7 +2,7 @@ import {createSlug, getDatabasesIfNeeded} from "../tools/file"
 import {removeHidden} from "../tools/doc-contents"
 import {LatexExporterConvert} from "./convert"
 import {zipFileCreator} from "../tools/zip"
-import {BibLatexExporter} from "../../bibliography/exporter/biblatex"
+import {BibLatexExporter} from "biblatex-csl-converter"
 /*
  Exporter to LaTeX
 */
@@ -30,8 +30,8 @@ export class LatexExporter {
         this.converter = new LatexExporterConvert(this, this.imageDB, this.bibDB)
         this.conversion = this.converter.init(this.docContents)
         if (this.conversion.bibIds.length > 0) {
-            let bibExport = new BibLatexExporter(this.conversion.bibIds, this.bibDB.db, false)
-            this.textFiles.push({filename: 'bibliography.bib', contents: bibExport.bibtexStr})
+            let bibExport = new BibLatexExporter(this.bibDB.db, this.conversion.bibIds)
+            this.textFiles.push({filename: 'bibliography.bib', contents: bibExport.output})
         }
         this.textFiles.push({filename: 'document.tex', contents: this.conversion.latex})
         this.conversion.imageIds.forEach(function(id){

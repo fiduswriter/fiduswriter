@@ -115,7 +115,7 @@ export class DocumentOverviewActions {
                         function(noErrors, returnValue) {
                             deactivateWait()
                             if (noErrors) {
-                                let doc = returnValue.doc
+                                let doc = returnValue[0]
                                 //let aDocumentValues = returnValue.docInfo
                                 addAlert('info', doc.title + gettext(
                                         ' successfully imported.'))

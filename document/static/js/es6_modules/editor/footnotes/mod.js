@@ -2,6 +2,7 @@ import {ProseMirror} from "prosemirror-old/dist/edit/main"
 import {fnSchema} from "../../schema/footnotes"
 import {collabEditing} from "prosemirror-old/dist/collab"
 import {elt} from "prosemirror-old/dist/util/dom"
+import {buildKeymap} from "prosemirror-old/dist/example-setup"
 
 import {ModFootnoteEditor} from "./editor"
 import {ModFootnoteMarkers} from "./markers"
@@ -28,6 +29,7 @@ export class ModFootnotes {
             doc: this.schema.nodeFromJSON({"type":"doc","content":[{"type": "footnote_end"}]}),
             plugins: [collabEditing.config({version: 0})] // Version doesn't matter, as we don't track it
         })
+        this.fnPm.addKeymap(buildKeymap(this.schema))
         // TODO: get rid of footnote_end once Pm doesn't have a bug that requires it.
 
         // add mod to give us simple access to internals removed in PM 0.8.0

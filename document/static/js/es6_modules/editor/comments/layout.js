@@ -294,7 +294,7 @@ export class ModCommentLayout {
 
         jQuery("#comment-box-container").children().each(function() {
             var userId = parseInt(jQuery(this).attr("data-user-id"), 10)
-            if ($.inArray(userId, idsOfNeededUsers) !== -1) {
+            if (jQuery.inArray(userId, idsOfNeededUsers) !== -1) {
                 jQuery(this).show()
             } else {
                 jQuery(this).hide()

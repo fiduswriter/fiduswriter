@@ -3,6 +3,7 @@ import * as objectHash from "object-hash/dist/object_hash"
 /* Functions for ProseMirror integration.*/
 import {ProseMirror} from "prosemirror-old/dist/edit/main"
 import {collabEditing} from "prosemirror-old/dist/collab"
+import {buildKeymap} from "prosemirror-old/dist/example-setup"
 import {docSchema} from "../schema/document"
 import {ModComments} from "./comments/mod"
 import {ModFootnotes} from "./footnotes/mod"
@@ -116,6 +117,7 @@ export class Editor {
             schema: this.schema,
             plugins: [collabEditing.config({version: 0})]
         })
+        this.pm.addKeymap(buildKeymap(this.schema))
         // add mod to give us simple access to internals removed in PM 0.8.0
         this.pm.mod = {}
         this.pm.mod.collab = collabEditing.get(this.pm)

@@ -60,7 +60,7 @@ export class OdtExporterFootnotes {
             })
         } else {
             // No footnotes were found.
-            return window.Promise.resolve()
+            return Promise.resolve()
         }
     }
 
@@ -72,7 +72,7 @@ export class OdtExporterFootnotes {
             that.addStyle('Footnote_20_anchor', DEFAULT_STYLE_FOOTNOTE_ANCHOR)
             that.addStyle('Footnote_20_Symbol', DEFAULT_STYLE_FOOTNOTE_SYMBOL)
             that.setStyleConfig()
-            return window.Promise.resolve()
+            return Promise.resolve()
         })
     }
 

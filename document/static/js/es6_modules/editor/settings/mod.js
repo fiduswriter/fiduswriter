@@ -40,7 +40,7 @@ export class ModSettings {
         documentStyleLink.parentElement.removeChild(documentStyleLink.previousElementSibling)
 
         let stylesheet = loadCSS(
-            staticUrl + `css/document/${this.editor.doc.settings.documentstyle}.css`,
+            window.staticUrl + `css/document/${this.editor.doc.settings.documentstyle}.css`,
             documentStyleLink
         )
         stylesheet.addEventListener( "load", function() {

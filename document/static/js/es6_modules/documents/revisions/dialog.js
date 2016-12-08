@@ -95,7 +95,7 @@ export class DocumentRevisionsDialog {
                 function(noErrors, returnValue) {
                     deactivateWait()
                     if (noErrors) {
-                        let doc = returnValue.aDocument
+                        let doc = returnValue[0]
                         addAlert('info', doc.title + gettext(
                             ' successfully imported.'))
                         that.callback({

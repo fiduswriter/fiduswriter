@@ -1,16 +1,17 @@
-import {BibLatexParser} from "./biblatex-parser"
+import {BibLatexParser} from "biblatex-csl-converter"
 import {importBibTemplate} from "./templates"
 import {activateWait, deactivateWait, addAlert, csrfToken} from "../../common/common"
 
 /** First step of the BibTeX file import. Creates a dialog box to specify upload file.
  */
 
-export class BibLatexImporter {
+export class BibLatexFileImporter {
 
-    constructor(db, callback) {
-        this.db = db
+    constructor(bibDB, callback) {
+        this.bibDB = bibDB
         this.callback = callback
         this.openDialog()
+        this.tmpDB = false
     }
 
     openDialog() {
@@ -69,37 +70,69 @@ export class BibLatexImporter {
      * processes client side and cuts into chunks to be uploaded to the server.
      * @param e File object that is to be imported.
      */
-    processFile(file) {
+    processFile(fileContents) {
         let that = this
-        let bibData = new BibLatexParser()
-        bibData.setInput(file)
-        bibData.bibtex()
-        this.bibEntries = bibData.getEntries()
-        if (_.isEmpty(this.bibEntries)) {
+        let bibData = new BibLatexParser(fileContents)
+        this.tmpDB = bibData.output
+        this.bibKeys = Object.keys(this.tmpDB)
+        if (_.isEmpty(this.bibKeys)) {
             deactivateWait()
             addAlert('error', gettext('No bibliography entries could be found in import file.'))
             return
         } else {
-            bibData.errors.forEach(function(error){
-                switch (error.type) {
-                    case 'variable_error':
-                        addAlert('error', gettext('A variable could not be identified. Possible error in bibtex syntax.'))
-                        break
-                    case 'unknown_field':
-                        addAlert('error', error.field_name + gettext(' of ') +
-                            error.entry +
-                            gettext(' cannot not be saved. Fidus Writer does not support the field.')
-                        )
-                        break
-                    case 'unknown_type':
-                        addAlert('warning', error.type_name + gettext(' of ') +
-                            error.entry +
-                            gettext(' is saved as "misc". Fidus Writer does not support the entry type.')
-                        )
-                        break
+            this.bibKeys.forEach((bibKey) => {
+                let bibEntry = this.tmpDB[bibKey]
+                // We add an empty category list for all newly imported bib entries.
+                bibEntry.entry_cat = []
+                // If the entry has no title, add an empty title
+                if (!bibEntry.fields.title) {
+                    bibEntry.fields.title = []
+                }
+                // If the entry has no date, add an uncertain date
+                if (!bibEntry.fields.date) {
+                    bibEntry.fields.date = 'uuuu'
+                }
+                // If the entry has no editor or author, add empty author
+                if (!bibEntry.fields.author && !bibEntry.fields.editor) {
+                    bibEntry.fields.author = [{'literal': []}]
                 }
             })
-            this.totalChunks = Math.ceil(this.bibEntries.length / 50)
+            bibData.errors.forEach(function(error){
+                let errorMsg = gettext('An error occured while reading the bibtex file')
+                errorMsg += `, error_code: ${error.type}`
+                if (error.key) {
+                    errorMsg += `, key: ${error.key}`
+                }
+                addAlert('error', errorMsg)
+            })
+            bibData.warnings.forEach(function(warning){
+                let warningMsg
+                switch (warning.type) {
+                    case 'unknown_field':
+                        warningMsg = warning.field_name + gettext(' of ') +
+                            warning.entry +
+                            gettext(' cannot not be saved. Fidus Writer does not support the field.')
+                        break
+                    case 'unknown_type':
+                        warningMsg = warning.type_name + gettext(' of ') +
+                            warning.entry +
+                            gettext(' is saved as "misc". Fidus Writer does not support the entry type.')
+                        break
+                    case 'unknown_date':
+                        warningMsg = warning.field_name + gettext(' of ') +
+                            warning.entry +
+                            gettext(' not a valid EDTF string.')
+                        break
+                    default:
+                        warningMsg = gettext('An warning occured while reading the bibtex file')
+                        warningMsg += `, warning_code: ${warning.type}`
+                        if (warning.key) {
+                            warningMsg += `, key: ${warning.key}`
+                        }
+                }
+                addAlert('warning', warningMsg)
+            })
+            this.totalChunks = Math.ceil(this.bibKeys.length / 50)
             this.currentChunkNumber = 0
             this.processChunk()
         }
@@ -111,55 +144,18 @@ export class BibLatexImporter {
         if (this.currentChunkNumber < this.totalChunks) {
             let fromNumber = this.currentChunkNumber * 50
             let toNumber = fromNumber + 50
-            let currentChunk = this.bibEntries.slice(fromNumber, toNumber)
-            this.sendChunk(currentChunk, function () {
+            let currentChunk = {}
+            this.bibKeys.slice(fromNumber, toNumber).forEach((bibKey)=>{
+                currentChunk[bibKey] = this.tmpDB[bibKey]
+            })
+            this.bibDB.saveBibEntries(currentChunk, true, function (ids) {
+                that.callback(ids)
                 that.currentChunkNumber++
                 that.processChunk()
             })
         } else {
             deactivateWait()
         }
-    }
-    /** Third step of the BibTeX file import. Takes lists of bibliography entries and sends them to the server.
-     * @param bibEntries The list of bibEntries received from processFile.
-     * @param callback Function to be called when import to server has finished.
-     *
-     */
-
-    sendChunk(bibEntries, callback) {
-
-        let postData = {
-            'bibs': JSON.stringify(bibEntries)
-        }, that = this
-
-        jQuery.ajax({
-            url: '/bibliography/save/',
-            type: 'post',
-            data: postData,
-            dataType: 'json',
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: function (response, textStatus, jqXHR) {
-                let ids = []
-                response.bibs.forEach(function(bibEntry) {
-                    that.db.serverBibItemToBibDB(bibEntry)
-                    ids.push(bibEntry.id)
-                })
-                if (that.callback) {
-                    that.callback(ids)
-                }
-
-                callback()
-
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.error(jqXHR.responseText)
-            },
-            complete: function () {
-            }
-        })
     }
 
 }

@@ -14,7 +14,7 @@ export class OdtExporterRender {
         return this.exporter.xml.getXml(this.filePath).then(
             function(xml) {
                 that.xml = xml
-                return window.Promise.resolve()
+                return Promise.resolve()
             }
         )
     }

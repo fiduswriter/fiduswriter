@@ -32,7 +32,7 @@ export let zipFileCreator = function(textFiles, httpFiles, zipFileName,
         }
         let p = []
         for (let i = 0; i < httpFiles.length; i++) {
-            p.push(new window.Promise(
+            p.push(new Promise(
                 function(resolve) {
                     JSZipUtils.getBinaryContent(httpFiles[i].url, function(err, contents) {
                         zipFs.file(httpFiles[i].filename, contents, {binary: true, compression: 'DEFLATE'})
@@ -42,7 +42,7 @@ export let zipFileCreator = function(textFiles, httpFiles, zipFileName,
             ))
 
         }
-        window.Promise.all(p).then(
+        Promise.all(p).then(
             function(){
                 zipFs.generateAsync({type:"blob"})
                     .then(function(blob) {

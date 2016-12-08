@@ -63,13 +63,13 @@ let convertDocV0 = function(doc) {
         abstractNode = doc.metadata.abstract ? obj2Node(doc.metadata.abstract) : document.createElement('div'),
         keywordsNode = doc.metadata.keywords ? obj2Node(doc.metadata.keywords) : document.createElement('div')
 
-    editorNode.class = 'article'
-    titleNode.class = 'article-title'
-    subtitleNode.class = 'article-subtitle'
-    authorsNode.class = 'article-authors'
-    abstractNode.class = 'article-abstract'
-    keywordsNode.class = 'article-keywords'
-    contentsNode.class = 'article-body'
+    editorNode.classList.add('article')
+    titleNode.classList.add('article-title')
+    subtitleNode.classList.add('article-subtitle')
+    authorsNode.classList.add('article-authors')
+    abstractNode.classList.add('article-abstract')
+    keywordsNode.classList.add('article-keywords')
+    contentsNode.classList.add('article-body')
 
     editorNode.appendChild(titleNode)
     editorNode.appendChild(subtitleNode)

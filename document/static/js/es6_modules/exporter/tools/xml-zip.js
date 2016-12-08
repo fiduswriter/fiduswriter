@@ -23,7 +23,7 @@ export class XmlZip {
 
     downloadZip() {
         let that = this
-        return new window.Promise((resolve) => {
+        return new Promise((resolve) => {
             JSZipUtils.getBinaryContent(
                 that.url,
                 function(err, rawFile){
@@ -43,26 +43,26 @@ export class XmlZip {
         let that = this
         if (this.docs[filePath]) {
             // file has been loaded already.
-            return window.Promise.resolve(this.docs[filePath])
+            return Promise.resolve(this.docs[filePath])
         } else if (this.zip.files[filePath]) {
             return this.zip.file(filePath).async('string').then(
                 function(string) {
                     const parser = new window.DOMParser()
                     that.docs[filePath] = parser.parseFromString(string, "text/xml")
-                    return window.Promise.resolve(that.docs[filePath])
+                    return Promise.resolve(that.docs[filePath])
                 }
             )
         } else if (defaultContents) {
-            return window.Promise.resolve(defaultContents).then(
+            return Promise.resolve(defaultContents).then(
                 function(string) {
                     const parser = new window.DOMParser()
                     that.docs[filePath] = parser.parseFromString(string, "text/xml")
-                    return window.Promise.resolve(that.docs[filePath])
+                    return Promise.resolve(that.docs[filePath])
                 }
             )
         } else {
             // File couldn't be found and there was no default value.
-            return window.Promise.reject("File not found")
+            return Promise.reject("File not found")
         }
 
     }

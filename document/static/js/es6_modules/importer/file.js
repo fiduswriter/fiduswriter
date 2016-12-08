@@ -5,7 +5,7 @@ import {FW_FILETYPE_VERSION} from "../exporter/native"
 /** The current Fidus Writer filetype version. The importer will not import from
  * a different version and the exporter will include this number in all exports.
  */
-const MIN_FW_FILETYPE_VERSION = 1.1, MAX_FW_FILETYPE_VERSION = parseFloat(FW_FILETYPE_VERSION)
+const MIN_FW_FILETYPE_VERSION = 1.5, MAX_FW_FILETYPE_VERSION = parseFloat(FW_FILETYPE_VERSION)
 
 const TEXT_FILENAMES = ['mimetype', 'filetype-version', 'document.json', 'images.json', 'bibliography.json']
 
@@ -27,7 +27,66 @@ export function updateFileDoc(doc, filetypeVersion) {
             break
     }
     return doc
+}
 
+export function updateFileBib(bib, filetypeVersion) {
+    switch(filetypeVersion) {
+        case "1.1":
+        case "1.2":
+        case "1.3":
+        case "1.4":
+            bib = updateBib(bib)
+            break
+    }
+    return bib
+}
+
+// entry_type was used instead of bib_type up until file format 1.4 (FW 3.1 pre-release)
+const ENTRY_TYPES = {
+    1: 'article',
+    2: 'book',
+    3: 'mvbook',
+    4: 'inbook',
+    5: 'bookinbook',
+    6: 'suppbook',
+    7: 'booklet',
+    8: 'collection',
+    9: 'mvcollection',
+    10: 'incollection',
+    11: 'suppcollection',
+    12: 'manual',
+    13: 'misc',
+    14: 'online',
+    15: 'patent',
+    16: 'periodical',
+    17: 'suppperiodical',
+    18: 'proceedings',
+    19: 'mvproceedings',
+    20: 'inproceedings',
+    21: 'reference',
+    22: 'mvreference',
+    23: 'inreference',
+    24: 'report',
+    25: 'thesis',
+    26: 'unpublished',
+    27: 'article-magazine',
+    28: 'article-newspaper',
+    29: 'article-journal',
+    30: 'entry-encyclopedia',
+    31: 'entry-dictionary',
+    32: 'post-weblog',
+    33: 'post'
+}
+
+let updateBib = function(bib) {
+    Object.keys(bib).forEach((bibId)=>{
+        let bibEntry = bib[bibId]
+        if (bibEntry['entry_type']) {
+            bibEntry['bib_type'] = ENTRY_TYPES[bibEntry['entry_type']]
+            delete bibEntry['entry_type']
+        }
+    })
+    return bib
 }
 
 export class ImportFidusFile {
@@ -91,7 +150,7 @@ export class ImportFidusFile {
             }
 
             filenames.forEach(function(filename){
-                p.push(new window.Promise(function(resolve){
+                p.push(new Promise(function(resolve){
                     let fileType, fileList
                     if (TEXT_FILENAMES.indexOf(filename) !== -1) {
                         fileType = 'string'
@@ -106,7 +165,7 @@ export class ImportFidusFile {
                     })
                 }))
             })
-            window.Promise.all(p).then(function(){
+            Promise.all(p).then(function(){
                 that.processFidusFile()
             })
         })
@@ -123,11 +182,11 @@ export class ImportFidusFile {
             parseFloat(filetypeVersion) >= MIN_FW_FILETYPE_VERSION &&
             parseFloat(filetypeVersion) <= MAX_FW_FILETYPE_VERSION) {
             // This seems to be a valid fidus file with current version number.
-            let shrunkBibDB = JSON.parse(
+            let shrunkBibDB = updateFileBib(JSON.parse(
                 _.findWhere(
                     this.textFiles, {
                         filename: 'bibliography.json'
-                    }).contents)
+                    }).contents), filetypeVersion)
             let shrunkImageDB = JSON.parse(_.findWhere(this.textFiles, {
                 filename: 'images.json'
             }).contents)

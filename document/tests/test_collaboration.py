@@ -4,7 +4,7 @@ import multiprocessing
 from random import randrange
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 from django.conf import settings
 from test.testcases import LiveTornadoTestCase
@@ -19,7 +19,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
     user = None
     TEST_TEXT = "Lorem ipsum dolor sit amet."
     MULTILINE_TEST_TEXT = "Lorem ipsum\ndolor sit amet."
-    fixtures = ["initial_bib_rules.json", ]
+    fixtures = []
 
     @classmethod
     def setUpClass(cls):
@@ -1075,39 +1075,39 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         register_new_source.click()
 
         # select source
-        select_source = WebDriverWait(driver, self.wait_time).until(
-            EC.presence_of_element_located((By.ID, 'source-type-selection'))
+        WebDriverWait(driver, self.wait_time).until(
+            EC.presence_of_element_located((By.ID, 'select-bibtype'))
         )
-        select_source.click()
 
         # click on article
-        driver.find_element_by_xpath(
-            '//*[@id="source-type-selection"]/div/ul/li[1]/span').click()
+        Select(
+            driver.find_element_by_id("select-bibtype")
+        ).select_by_visible_text("Article")
 
         # fill the values
-        title_of_publication = driver.find_element_by_id(
-            'id_journaltitle'
+        title_of_publication = driver.find_element_by_css_selector(
+            '.journaltitle .ProseMirror-content'
         )
         title_of_publication.click()
         title_of_publication.send_keys("My publication title")
 
-        title = driver.find_element_by_id('id_title')
+        title = driver.find_element_by_css_selector(
+            '.title .ProseMirror-content')
         title.click()
         title.send_keys("My title")
 
-        author_firstName = driver.find_element_by_xpath(
-            '//*[@id="optionTab1"]/table/tbody/tr[3]/td/div/input[1]')
+        author_firstName = driver.find_element_by_css_selector(
+            '.author .given .ProseMirror-content')
         author_firstName.click()
         author_firstName.send_keys("John")
 
-        author_lastName = driver.find_element_by_xpath(
-            '//*[@id="optionTab1"]/table/tbody/tr[3]/td/div/input[2]')
+        author_lastName = driver.find_element_by_css_selector(
+            '.family .ProseMirror-content')
         author_lastName.click()
         author_lastName.send_keys("Doe")
 
-        publication_date = driver.find_element_by_xpath(
-            '//*[@id="optionTab1"]/table/tbody' +
-            '/tr[4]/td/table/tbody/tr/td[3]/input'
+        publication_date = driver.find_element_by_css_selector(
+            '.date .date'
         )
         publication_date.click()
         publication_date.send_keys("2012")

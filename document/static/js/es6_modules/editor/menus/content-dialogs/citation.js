@@ -75,14 +75,15 @@ export let citationDialog = function (mod) {
     }
 
     _.each(editor.bibDB.db, function(bib, index) {
+        let bibauthors = bib.fields.author || bib.fields.editor
         let bibEntry = {
                 'id': index,
                 'type': bib.bib_type,
-                'title': litToText(bib.fields.title),
-                'author': nameToText(bib.fields.author || bib.fields.editor)
+                'title': bib.fields.title ? litToText(bib.fields.title) : gettext('Untitled'),
+                'author': bibauthors? nameToText(bibauthors) : ''
             },
             cited_id
-        bibEntry.author = bibEntry.author.replace(/[{}]/g, '')
+
         citableItemsHTML += citationItemTemplate(bibEntry)
 
         cited_id = _.indexOf(cited_ids, index)

@@ -11,6 +11,7 @@ export class LatexExporterConvert {
         // are present in the file, so that we can assemble an preamble and
         // epilogue based on our findings.
         this.features = {}
+        this.citationKeys = {}
     }
 
     init(docContents) {
@@ -188,7 +189,12 @@ export class LatexExporterConvert {
                     citationEntries.forEach(function(citationEntry) {
                         let bibDBEntry = that.bibDB.db[citationEntry]
                         if (bibDBEntry) {
-                            citationEntryKeys.push(bibDBEntry.entry_key)
+                            if (!that.citationKeys[citationEntry]) {
+                                that.citationKeys[citationEntry] = that.createUniqueCitationKey(
+                                    bibDBEntry.entry_key
+                                )
+                            }
+                            citationEntryKeys.push(that.citationKeys[citationEntry])
                             if (that.bibIds.indexOf(citationEntry) === -1) {
                                 that.bibIds.push(citationEntry)
                             }
@@ -216,8 +222,12 @@ export class LatexExporterConvert {
                             citationCommand += `[${citationPage[index]}]`
                         }
                         citationCommand += '{'
-
-                        citationCommand += that.bibDB.db[citationEntry].entry_key
+                        if (!that.citationKeys[citationEntry]) {
+                            that.citationKeys[citationEntry] = that.createUniqueCitationKey(
+                                that.bibDB.db[citationEntry].entry_key
+                            )
+                        }
+                        citationCommand += that.citationKeys[citationEntry]
                         if (that.bibIds.indexOf(citationEntry) === -1) {
                             that.bibIds.push(citationEntry)
                         }
@@ -296,6 +306,19 @@ export class LatexExporterConvert {
         }
 
         return start + content + end
+    }
+
+    // The database doesn't ensure that citation keys are unique.
+    // So here we need to make sure that the same key is not used twice in one
+    // document.
+    createUniqueCitationKey(suggestedKey) {
+        console.log([suggestedKey,this.citationKeys])
+        if (Object.values(this.citationKeys).includes(suggestedKey)) {
+            suggestedKey += 'X'
+            return this.createUniqueCitationKey(suggestedKey)
+        } else {
+            return suggestedKey
+        }
     }
 
     postProcess(latex) {

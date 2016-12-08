@@ -15,6 +15,7 @@ import {VerbatimFieldForm} from "./fields/verbatim"
 import {TagListForm} from "./fields/tag-list"
 import {KeyFieldForm} from "./fields/key"
 import {KeyListForm} from "./fields/key-list"
+import {nameToText} from "../tools"
 
 const FIELD_FORMS = {
     'f_date': DateFieldForm,
@@ -55,7 +56,7 @@ export class BibEntryForm {
             this.currentValues = {
                 bib_type: false,
                 entry_cat: [],
-                entry_key: 'FW',
+                entry_key: 'FidusWriter',
                 fields: {}
             }
         }
@@ -159,6 +160,23 @@ export class BibEntryForm {
         this.createForm()
     }
 
+    createEntryKey(bibItem) {
+        // We attempt to create a biblatex compatible entry key if there is no entry
+        // key so far.
+        let entryKey = ''
+        if (bibItem.fields.author) {
+            entryKey += nameToText(bibItem.fields.author).replace(/\s|,|=|;|:|{|}/g,'')
+        } else if (bibItem.fields.editor) {
+            entryKey += nameToText(bibItem.fields.editor).replace(/\s|,|=|;|:|{|}/g,'')
+        }
+        if (bibItem.fields.date) {
+            entryKey += bibItem.fields.date.split('/')[0].replace(/\?|\*|u|\~|-/g,'')
+        }
+        if (entryKey.length) {
+            bibItem.entry_key = entryKey
+        }
+    }
+
     get value() {
         let that = this
         let returnObj = {
@@ -181,6 +199,10 @@ export class BibEntryForm {
         let itemId = this.itemId===false ? 0 : this.itemId
         let saveObj = {}
         saveObj[itemId] = this.value
+
+        if (saveObj[itemId].entry_key==='FidusWriter') {
+            this.createEntryKey(saveObj[itemId])
+        }
         this.bibDB.saveBibEntries(
             saveObj,
             isNew,

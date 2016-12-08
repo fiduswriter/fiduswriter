@@ -183,9 +183,9 @@ export class BibliographyOverview {
                 'cats': bibInfo.entry_cat,
                 'type': bibInfo.bib_type,
                 'typetitle': BibTypeTitles[bibInfo.bib_type],
-                'title': litToText(bibInfo.fields.title),
-                'author': nameToText(bibauthors),
-                'published': bibInfo.fields.date.replace('/', ' ')
+                'title': bibInfo.fields.title ? litToText(bibInfo.fields.title) : gettext('Untitled'),
+                'author': bibauthors ? nameToText(bibauthors) : '',
+                'published': bibInfo.fields.date ? bibInfo.fields.date.replace('/', ' ') : ''
             }))
         } else { //if this is the new entry, append
             jQuery('#bibliography > tbody').append(bibtableTemplate({
@@ -193,9 +193,9 @@ export class BibliographyOverview {
                 'cats': bibInfo.entry_cat,
                 'type': bibInfo.bib_type,
                 'typetitle': BibTypeTitles[bibInfo.bib_type],
-                'title': litToText(bibInfo.fields.title),
-                'author': nameToText(bibauthors),
-                'published': bibInfo.fields.date.replace('/', ' ')
+                'title': bibInfo.fields.title ? litToText(bibInfo.fields.title) : gettext('Untitled'),
+                'author': bibauthors ? nameToText(bibauthors) : '',
+                'published': bibInfo.fields.date ? bibInfo.fields.date.replace('/', ' ') : ''
             }))
         }
     }

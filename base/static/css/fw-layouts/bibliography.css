@@ -254,8 +254,22 @@ div.literal em, pre.long-literal em {
     width: 140px !important;
 }
 
-.ui-dialog-buttonpane.createbook {
-    margin-right: 30px;
+#bib-dialog sup {
+    vertical-align: super;
+    font-size: smaller;
+}
+
+#bib-dialog sub {
+    vertical-align: sub;
+    font-size: smaller;
+}
+
+#bib-dialog .smallcaps {
+    font-variant: small-caps;
+}
+
+#bib-dialog .nocase {
+    text-decoration: underline;
 }
 
 .checkable-label {

@@ -74,15 +74,54 @@ export class BibEntryForm {
         })
         jQuery('body').append(dialogEl)
 
-        let diaButtons = {}
-        diaButtons[gettext('Submit')] = function() {
-            if (that.check()) {
-                that.save()
-                jQuery(this).dialog('close')
+        let diaButtons = {
+            submit: {
+                class: "fw-button fw-dark",
+                text: gettext('Submit'),
+                click: function() {
+                    if (that.check()) {
+                        that.save()
+                        jQuery(this).dialog('close')
+                    }
+                }
+            },
+            cancel: {
+                class: "fw-button fw-orange",
+                text: gettext('Cancel'),
+                click: function() {
+                    jQuery(this).dialog('close')
+                }
+            },
+            strong: {
+                class: "fw-button fw-small fw-green fw-left fw-strong fw-edit disabled",
+                text: gettext('Strong'),
+                click: () => {}
+            },
+            em: {
+                class: "fw-button fw-small fw-green fw-left fw-em fw-edit disabled",
+                text: gettext('Emphasis'),
+                click: () => {}
+            },
+            smallcaps: {
+                class: "fw-button fw-small fw-green fw-left fw-smallcaps fw-edit disabled",
+                text: gettext('Small caps'),
+                click: () => {}
+            },
+            sub: {
+                class: "fw-button fw-small fw-green fw-left fw-sub fw-edit disabled",
+                text: gettext('Subscript₊'),
+                click: () => {}
+            },
+            sup: {
+                class: "fw-button fw-small fw-green fw-left fw-sup fw-edit disabled",
+                text: gettext('Supscript²'),
+                click: () => {}
+            },
+            nocase: {
+                class: "fw-button fw-small fw-green fw-left fw-nocase fw-edit disabled",
+                text: gettext('CasE ProTecT'),
+                click: () => {}
             }
-        }
-        diaButtons[gettext('Cancel')] = function() {
-            jQuery(this).dialog('close')
         }
 
         jQuery("#bib-dialog").dialog({
@@ -92,12 +131,6 @@ export class BibEntryForm {
             height: 700,
             modal: true,
             buttons: diaButtons,
-            create: function() {
-                let theDialog = jQuery(this).closest(".ui-dialog")
-                theDialog.find(".ui-dialog-buttonpane").addClass('createbook')
-                theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
-                theDialog.find(".ui-button:last").addClass("fw-button fw-orange")
-            },
             close: function() {
                 jQuery("#bib-dialog").dialog('destroy').remove()
             }

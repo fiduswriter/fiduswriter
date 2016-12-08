@@ -57,7 +57,7 @@ export class GetImages {
                         // Note: .response instead of .responseText
                         that.newImageEntries[that.counter]['file'] = new window.Blob(
                             [that.response],
-                            {type: newImageEntries[that.counter].file_type}
+                            {type: that.newImageEntries[that.counter].file_type}
                         )
                         that.counter++
                         that.getImageUrlEntry().then(()=>{

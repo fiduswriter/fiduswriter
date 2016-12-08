@@ -58,7 +58,7 @@ def reform_f_date(date_string):
     return '/'.join(ref_date_strings)
 
 def reform_l_name(name_string):
-    names = name_string[1:-1].split('} and {')
+    names = sub(r'^{|}$','', name_string).split('} and {')
     names_value = []
     for each_name in names:
         name_parts = each_name.split('} {')
@@ -75,7 +75,7 @@ def reform_f_literal(lit_string):
     return [{'type':'text', 'text': strip_brackets_and_html(lit_string)}]
 
 def reform_l_literal(list_string):
-    in_list = list_string[1:-1].split('} and {')
+    in_list = sub(r'^{|}$','', list_string).split('} and {')
     out_list = []
     for item in in_list:
         out_list.append(reform_f_literal(item))

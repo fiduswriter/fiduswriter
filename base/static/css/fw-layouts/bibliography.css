@@ -46,6 +46,11 @@
     width: 678px;
 }
 
+#bib-dialog :focus {
+  outline-color: transparent;
+  outline: 0;
+}
+
 #bib-dialog .entry-field.fw-fomt-error input[type=text] {
     background-color: #f34141;
 }

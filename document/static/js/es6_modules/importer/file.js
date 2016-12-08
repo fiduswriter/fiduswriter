@@ -110,7 +110,7 @@ const f_integer = ['edition']
 
 const f_verbatim = ['doi', 'eprint', 'file', 'url']
 
-const ignored_fields = ['entry_cat', 'entry_type']
+const ignored_fields = ['entry_cat', 'entry_type', 'entry_key']
 
 function strip_brackets_and_html(string) {
     return string.replace(/<[^<]+?>/g,'').replace(/}|{/g,'')
@@ -139,7 +139,7 @@ function reform_f_date(date_string) {
 
 
 function reform_l_name(name_string) {
-    let names = name_string.substr(1,name_string.length-2).split('} and {')
+    let names = name_string.replace(/^{|}$/g,'').split('} and {')
     let names_value = []
     names.forEach(each_name => {
         let name_parts = each_name.split('} {')
@@ -161,7 +161,7 @@ function reform_f_literal(lit_string) {
 }
 
 function reform_l_literal(list_string) {
-    let in_list = list_string.substr(1,list_string.length-2).split('} and {')
+    let in_list = list_string.replace(/^{|}$/g,'').split('} and {')
     let out_list = []
     in_list.forEach(item => {
         out_list.push(reform_f_literal(item))

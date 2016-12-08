@@ -6,12 +6,11 @@ export class LatexExporterConvert {
         this.imageDB = imageDB
         this.bibDB = bibDB
         this.imageIds = []
-        this.bibIds = []
+        this.usedBibDB = {}
         // While walking the tree, we take note of the kinds of features That
         // are present in the file, so that we can assemble an preamble and
         // epilogue based on our findings.
         this.features = {}
-        this.citationKeys = {}
     }
 
     init(docContents) {
@@ -23,7 +22,7 @@ export class LatexExporterConvert {
         let returnObject = {
             latex,
             imageIds: this.imageIds,
-            bibIds: this.bibIds
+            usedBibDB: this.usedBibDB
         }
         return returnObject
     }
@@ -189,15 +188,14 @@ export class LatexExporterConvert {
                     citationEntries.forEach(function(citationEntry) {
                         let bibDBEntry = that.bibDB.db[citationEntry]
                         if (bibDBEntry) {
-                            if (!that.citationKeys[citationEntry]) {
-                                that.citationKeys[citationEntry] = that.createUniqueCitationKey(
+                            if (!that.usedBibDB[citationEntry]) {
+                                let citationKey = that.createUniqueCitationKey(
                                     bibDBEntry.entry_key
                                 )
+                                that.usedBibDB[citationEntry] = Object.assign({}, bibDBEntry)
+                                that.usedBibDB[citationEntry].entry_key = citationKey
                             }
-                            citationEntryKeys.push(that.citationKeys[citationEntry])
-                            if (that.bibIds.indexOf(citationEntry) === -1) {
-                                that.bibIds.push(citationEntry)
-                            }
+                            citationEntryKeys.push(that.usedBibDB[citationEntry].entry_key)
                         }
                     })
 
@@ -222,15 +220,15 @@ export class LatexExporterConvert {
                             citationCommand += `[${citationPage[index]}]`
                         }
                         citationCommand += '{'
-                        if (!that.citationKeys[citationEntry]) {
-                            that.citationKeys[citationEntry] = that.createUniqueCitationKey(
-                                that.bibDB.db[citationEntry].entry_key
+                        if (!that.usedBibDB[citationEntry]) {
+                            let citationKey = that.createUniqueCitationKey(
+                                bibDBEntry.entry_key
                             )
+                            that.usedBibDB[citationEntry] = Object.assign({}, bibDBEntry)
+                            that.citationKeys.entry_key = citationKey
                         }
-                        citationCommand += that.citationKeys[citationEntry]
-                        if (that.bibIds.indexOf(citationEntry) === -1) {
-                            that.bibIds.push(citationEntry)
-                        }
+                        citationCommand += that.usedBibDB[citationEntry].entry_key
+
                         citationCommand += '}'
                     })
                 }
@@ -312,8 +310,10 @@ export class LatexExporterConvert {
     // So here we need to make sure that the same key is not used twice in one
     // document.
     createUniqueCitationKey(suggestedKey) {
-        console.log([suggestedKey,this.citationKeys])
-        if (Object.values(this.citationKeys).includes(suggestedKey)) {
+        let usedKeys = Object.keys(this.usedBibDB).map(key=>{
+            return this.usedBibDB[key].entry_key
+        })
+        if (usedKeys.includes(suggestedKey)) {
             suggestedKey += 'X'
             return this.createUniqueCitationKey(suggestedKey)
         } else {

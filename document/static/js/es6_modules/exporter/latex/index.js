@@ -29,8 +29,8 @@ export class LatexExporter {
         this.docContents = removeHidden(this.doc.contents)
         this.converter = new LatexExporterConvert(this, this.imageDB, this.bibDB)
         this.conversion = this.converter.init(this.docContents)
-        if (this.conversion.bibIds.length > 0) {
-            let bibExport = new BibLatexExporter(this.bibDB.db, this.conversion.bibIds)
+        if (Object.keys(this.conversion.usedBibDB).length > 0) {
+            let bibExport = new BibLatexExporter(this.conversion.usedBibDB)
             this.textFiles.push({filename: 'bibliography.bib', contents: bibExport.output})
         }
         this.textFiles.push({filename: 'document.tex', contents: this.conversion.latex})

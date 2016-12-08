@@ -12,9 +12,11 @@ l_name = [u'afterword', u'annotator', u'author', u'bookauthor', \
 u'commentator', u'editor', u'editora', u'editorb', u'editorc', u'foreword', \
 u'holder', u'introduction', u'shortauthor', u'shorteditor', u'translator']
 
-#f_key = [u'authortype', u'bookpagination', u'editortype', u'editoratype',\
-#u'editorbtype', u'editorctype', u'origlanguage', u'pagination', u'pubstate',\
-#u'type']
+f_key = [u'authortype', u'bookpagination', u'editortype', u'editoratype',\
+u'editorbtype', u'editorctype', u'origlanguage', u'pagination', u'pubstate',\
+u'type']
+
+l_range = [u'pages',]
 
 l_key = [u'language',]
 
@@ -40,7 +42,7 @@ def strip_brackets_and_html(string):
     return sub('<[^<]+?>', '', string.replace('{','').replace('}',''))
 
 def reform_f_date(date_string):
-    date_string = date_string.replace('-AA','')
+    date_string = date_string.replace('-AA','').replace('A','u')
     ref_date_strings = []
     for date in date_string.split('/'):
         date_parts = date.split('-')
@@ -79,8 +81,18 @@ def reform_l_literal(list_string):
         out_list.append(reform_f_literal(item))
     return out_list
 
-def reform_l_key(list_string):
-    return list_string.split(' and ')
+def reform_l_range(range_string):
+    if len(range_string) == 0:
+        return []
+    range_list = range_string.split(',')
+    out_list = []
+    for range_item in range_list:
+        range_parts = range_item.split('-')
+        if len(range_parts) > 1:
+            out_list.append([range_parts[0], range_parts[-1]])
+        else:
+            out_list.append([range_item])
+    return out_list
 
 def modify_fields(apps, schema_editor):
     # We can't import the model directly as it may be a newer
@@ -94,12 +106,18 @@ def modify_fields(apps, schema_editor):
                 fields[key] = reform_f_date(fields[key])
             elif key in l_name:
                 fields[key] = reform_l_name(fields[key])
-            elif key in l_key:
-                fields[key] = reform_l_key(fields[key])
             elif key in f_literal:
+                fields[key] = reform_f_literal(fields[key])
+            elif key in f_key:
+                fields[key] = reform_f_literal(fields[key])
+            elif key in f_integer:
                 fields[key] = reform_f_literal(fields[key])
             elif key in l_literal:
                 fields[key] = reform_l_literal(fields[key])
+            elif key in l_key:
+                fields[key] = reform_l_literal(fields[key])
+            elif key in l_range:
+                fields[key] = reform_l_range(fields[key])
         entry.fields = json_encode(fields)
         entry.save()
 

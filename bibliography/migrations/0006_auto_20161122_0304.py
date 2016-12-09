@@ -89,7 +89,10 @@ def reform_l_range(range_string):
     for range_item in range_list:
         range_parts = range_item.split('-')
         if len(range_parts) > 1:
-            out_list.append([range_parts[0], range_parts[-1]])
+            out_list.append([
+                reform_f_literal(range_parts[0]),
+                reform_f_literal(range_parts[-1])
+            ])
         else:
             out_list.append([range_item])
     return out_list

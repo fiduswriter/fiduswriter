@@ -48,8 +48,10 @@ export class FormatCitations {
 
             if (missingCitationKey !== false) {
                 // Not all citations could be found in the database.
-                // Reload the database, but not more than once every 30 seconds.
-                if (Date.now() - that.bibDB.lastLoadTime > 30000) {
+                // Reload the database, but not more than twice every 30 seconds.
+                let llt = that.bibDB.lastLoadTimes
+                let lltlen = that.bibDB.lastLoadTimes.length
+                if (lltlen < 2 || Date.now() - llt[lltlen-2] > 30000) {
                     that.bibDB.getDB(function(){
                         if (that.bibDB.db.hasOwnProperty(missingCitationKey)) {
                             that.init()

@@ -234,7 +234,6 @@ export class Editor {
             bibGetter.getDB(function(bibPks, bibCats){
                 that.bibDB = bibGetter
                 that.mod.menus.citation.appendManyToCitationDialog(bibPks)
-                that.mod.citations.layoutCitations()
                 that.mod.menus.header.enableExportMenu()
                 if (callback) {
                     callback()

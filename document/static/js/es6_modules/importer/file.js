@@ -178,9 +178,9 @@ function reform_l_range(range_string) {
     range_list.forEach(range_item => {
         let range_parts = range_item.split('-')
         if (range_parts.length > 1) {
-            out_list.push([range_parts[0], range_parts.pop()])
+            out_list.push([reform_f_literal(range_parts[0]), reform_f_literal(range_parts.pop())])
         } else {
-            out_list.push([range_item])
+            out_list.push([reform_f_literal(range_item)])
         }
     })
     return out_list

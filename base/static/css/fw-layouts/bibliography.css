@@ -46,6 +46,11 @@
     width: 678px;
 }
 
+#bib-dialog :focus {
+  outline-color: transparent;
+  outline: 0;
+}
+
 #bib-dialog .entry-field.fw-fomt-error input[type=text] {
     background-color: #f34141;
 }
@@ -249,8 +254,22 @@ div.literal em, pre.long-literal em {
     width: 140px !important;
 }
 
-.ui-dialog-buttonpane.createbook {
-    margin-right: 30px;
+#bib-dialog sup {
+    vertical-align: super;
+    font-size: smaller;
+}
+
+#bib-dialog sub {
+    vertical-align: sub;
+    font-size: smaller;
+}
+
+#bib-dialog .smallcaps {
+    font-variant: small-caps;
+}
+
+#bib-dialog .nocase {
+    text-decoration: underline;
 }
 
 .checkable-label {

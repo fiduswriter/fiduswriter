@@ -170,7 +170,7 @@ def save_js(request):
                     response['id_translations'].append([b_id, similar[0].id])
             else:
                 the_entry = Entry.objects.get(id=b_id)
-                the_entry.key = bib['entry_key']
+                the_entry.entry_key = bib['entry_key']
                 the_entry.bib_type = bib['bib_type']
                 the_entry.entry_cat = bib['entry_cat']
                 the_entry.fields = bib['fields']

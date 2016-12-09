@@ -13,11 +13,13 @@ export class ModMenusCitation {
     }
 
     appendToCitationDialog(pk, bibInfo) {
+        let bibauthors = bibInfo.fields.author || bibInfo.fields.editor
+
         let citeItemData = {
             'id': pk,
             'type': bibInfo.bib_type,
-            'title': litToText(bibInfo.fields.title),
-            'author': nameToText(bibInfo.fields.editor || bibInfo.fields.author)
+            'title': bibInfo.fields.title ? litToText(bibInfo.fields.title) : gettext('Untitled'),
+            'author': bibauthors ? nameToText(bibauthors) : ''
         }
 
         jQuery('#cite-source-table > tbody').append(citationItemTemplate(citeItemData))

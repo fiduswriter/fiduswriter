@@ -5,7 +5,7 @@ import {FW_FILETYPE_VERSION} from "../exporter/native"
 /** The current Fidus Writer filetype version. The importer will not import from
  * a different version and the exporter will include this number in all exports.
  */
-const MIN_FW_FILETYPE_VERSION = 1.5, MAX_FW_FILETYPE_VERSION = parseFloat(FW_FILETYPE_VERSION)
+const MIN_FW_FILETYPE_VERSION = 1.1, MAX_FW_FILETYPE_VERSION = parseFloat(FW_FILETYPE_VERSION)
 
 const TEXT_FILENAMES = ['mimetype', 'filetype-version', 'document.json', 'images.json', 'bibliography.json']
 
@@ -78,15 +78,156 @@ const ENTRY_TYPES = {
     33: 'post'
 }
 
-let updateBib = function(bib) {
-    Object.keys(bib).forEach((bibId)=>{
-        let bibEntry = bib[bibId]
-        if (bibEntry['entry_type']) {
-            bibEntry['bib_type'] = ENTRY_TYPES[bibEntry['entry_type']]
-            delete bibEntry['entry_type']
+const f_date = ['date', 'urldate', 'eventdate', 'origdate']
+
+const l_name = ['afterword', 'annotator', 'author', 'bookauthor',
+    'commentator', 'editor', 'editora', 'editorb', 'editorc', 'foreword',
+    'holder', 'introduction', 'shortauthor', 'shorteditor', 'translator']
+
+const f_key = ['authortype', 'bookpagination', 'editortype', 'editoratype',
+    'editorbtype', 'editorctype', 'origlanguage', 'pagination', 'pubstate',
+    'type']
+
+const l_range = ['pages']
+
+const l_key = ['language']
+
+const f_literal = ['abstract', 'addendum', 'annotation', 'booksubtitle',
+    'booktitle', 'booktitleaddon', 'chapter', 'eid', 'entrysubtype',
+    'eprinttype', 'eventtitle', 'howpublished', 'indextitle', 'isan',
+    'isbn', 'ismn', 'isrn', 'issn', 'issue', 'issuesubtitle', 'issuetitle',
+    'iswc', 'journalsubtitle', 'journaltitle', 'label', 'library',
+    'mainsubtitle', 'maintitle', 'maintitleaddon', 'nameaddon', 'note',
+    'number', 'origtitle', 'pagetotal', 'part', 'reprinttitle', 'series',
+    'shorthand', 'shorthandintro', 'shortjournal', 'shortseries',
+    'shorttitle', 'subtitle', 'title', 'titleaddon', 'venue', 'version',
+    'volume', 'volumes']
+
+const l_literal = ['eprintclass', 'institution', 'location', 'organization',
+    'origlocation', 'origpublisher', 'publisher']
+
+const f_integer = ['edition']
+
+const f_verbatim = ['doi', 'eprint', 'file', 'url']
+
+const ignored_fields = ['entry_cat', 'entry_type', 'entry_key']
+
+function strip_brackets_and_html(string) {
+    return string.replace(/<[^<]+?>/g,'').replace(/}|{/g,'')
+}
+
+function reform_f_date(date_string) {
+    date_string = date_string.replace(/-AA/g,'').replace(/A/g,'u')
+    let ref_date_strings = []
+    date_string.split('/').forEach(date => {
+        let date_parts = date.split('-')
+        let year = "0000" + date_parts[0]
+        let ref_date_string = year.substr(year.length - 4)
+        if (date_parts.length > 1) {
+            let month = "0" + date_parts[1]
+            ref_date_string += '-' + month.substr(month.length - 2)
+        }
+        if (date_parts.length > 2) {
+            let day = "0" + date_parts[2]
+            ref_date_string += '-' + day.substr(day.length - 2)
+        }
+        ref_date_strings.push(ref_date_string)
+    })
+
+    return ref_date_strings.join('/')
+}
+
+
+function reform_l_name(name_string) {
+    let names = name_string.replace(/^{|}$/g,'').split('} and {')
+    let names_value = []
+    names.forEach(each_name => {
+        let name_parts = each_name.split('} {')
+        let name_value = {}
+        if (name_parts.length > 1) {
+            name_value['family'] = [{'type':'text', 'text': strip_brackets_and_html(name_parts[1])}]
+            name_value['given'] = [{'type':'text', 'text': strip_brackets_and_html(name_parts[0])}]
+        } else {
+            name_value['literal'] = [{'type':'text', 'text': strip_brackets_and_html(name_parts[0])}]
+        }
+        names_value.push(name_value)
+    })
+    return names_value
+}
+
+
+function reform_f_literal(lit_string) {
+    return [{'type':'text', 'text': strip_brackets_and_html(lit_string)}]
+}
+
+function reform_l_literal(list_string) {
+    let in_list = list_string.replace(/^{|}$/g,'').split('} and {')
+    let out_list = []
+    in_list.forEach(item => {
+        out_list.push(reform_f_literal(item))
+    })
+    return out_list
+}
+
+function reform_l_range(range_string) {
+    if (range_string.length === 0) {
+        return []
+    }
+    let range_list = range_string.split(',')
+    let out_list = []
+    range_list.forEach(range_item => {
+        let range_parts = range_item.split('-')
+        if (range_parts.length > 1) {
+            out_list.push([range_parts[0], range_parts.pop()])
+        } else {
+            out_list.push([range_item])
         }
     })
-    return bib
+    return out_list
+}
+
+
+let updateBib = function(bib) {
+    let newBibs = {}
+    Object.keys(bib).forEach(bibId => {
+        let oldBibEntry = bib[bibId]
+        let newBibEntry = {
+            entry_type: 'misc',
+            entry_key: 'FidusWriter',
+            fields: {}
+        }
+        if (oldBibEntry['entry_type']) {
+            newBibEntry['bib_type'] = ENTRY_TYPES[oldBibEntry['entry_type']]
+        }
+        if (oldBibEntry['entry_key']) {
+            newBibEntry['entry_key'] = oldBibEntry['entry_key']
+        }
+        Object.keys(oldBibEntry).forEach(key => {
+            if (f_date.includes(key)) {
+                newBibEntry.fields[key] = reform_f_date(oldBibEntry[key])
+            } else if (l_name.includes(key)) {
+                newBibEntry.fields[key] = reform_l_name(oldBibEntry[key])
+            } else if (f_literal.includes(key)) {
+                newBibEntry.fields[key] = reform_f_literal(oldBibEntry[key])
+            } else if (f_key.includes(key)) {
+                newBibEntry.fields[key] = reform_f_literal(oldBibEntry[key])
+            } else if (f_integer.includes(key)) {
+                newBibEntry.fields[key] = reform_f_literal(oldBibEntry[key])
+            } else if (l_literal.includes(key)) {
+                newBibEntry.fields[key] = reform_l_literal(oldBibEntry[key])
+            } else if (l_key.includes(key)) {
+                newBibEntry.fields[key] = reform_l_literal(oldBibEntry[key])
+            } else if (l_range.includes(key)) {
+                newBibEntry.fields[key] = reform_l_range(oldBibEntry[key])
+            } else if (f_verbatim.includes(key)) {
+                newBibEntry.fields[key] = oldBibEntry[key]
+            } else if (!ignored_fields.includes(key)) {
+                console.warn(`Unknown field type: ${key}`)
+            }
+        })
+        newBibs[bibId] = newBibEntry
+    })
+    return newBibs
 }
 
 export class ImportFidusFile {

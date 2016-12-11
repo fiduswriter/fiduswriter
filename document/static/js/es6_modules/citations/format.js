@@ -13,8 +13,7 @@ export class FormatCitations {
     }
 
     init() {
-        this.bibliographyHTML = ''
-        this.bibliographyCSS = ''
+        this.bibliography = false
         this.citations = []
         this.bibFormats = []
         this.citationTexts = []
@@ -56,34 +55,35 @@ export class FormatCitations {
         })
     }
 
-    formatBibliography(bib) {
+    get bibHTML() {
         // HTML
-        let html = ''
+        let html = '', bib = this.bibliography
         html += '<h1 class="article-bibliography-header"></h1>'
         // Add entries to bibliography
         html += bib[0].bibstart + bib[1].join('') + bib[0].bibend
+        return html
+    }
 
         // CSS
-        let css = '\n'
-        css += `.csl-entry {margin-bottom: ${bib[0].entryspacing}em;}\n`
-        css += `.csl-bib-body {line-height: ${bib[0].linespacing};}\n`
-        if (bib[0].hangingindent) {
-            if (['flush', 'margin'].includes(bib[0]['second-field-align'])) {
-                css += `.csl-right-inline {
-                    text-indent: ${0-bib[0].hangingindent}em;
-                    margin-left: ${bib[0].hangingindent}em;
-                }\n`
-            } else {
-                css += `.csl-entry {
-                    text-indent: ${0-bib[0].hangingindent}em;
-                    margin-left: ${bib[0].hangingindent}em;
-                }\n`
-            }
+    get bibCSS()  {
+        let css = '\n', bib = this.bibliography
+            css += `.csl-entry {margin-bottom: ${bib[0].entryspacing}em;}\n`
+            css += `.csl-bib-body {line-height: ${bib[0].linespacing};}\n`
+            if (bib[0].hangingindent) {
+                if (['flush', 'margin'].includes(bib[0]['second-field-align'])) {
+                    css += `.csl-right-inline {
+                        text-indent: ${0-bib[0].hangingindent}em;
+                        margin-left: ${bib[0].hangingindent}em;
+                    }\n`
+                } else {
+                    css += `.csl-entry {
+                        text-indent: ${0-bib[0].hangingindent}em;
+                        margin-left: ${bib[0].hangingindent}em;
+                    }\n`
+                }
 
-        }
-        this.bibliographyHTML = html
-        this.bibliographyCSS = css
-        this.bibliography = bib
+            }
+        return css
     }
 
     reloadCitations(missingItems) {
@@ -167,7 +167,7 @@ export class FormatCitations {
             this.citationTexts.push(citationText)
         }
         this.citationType = citeprocInstance.cslXml.dataObj.attrs.class
-        this.formatBibliography(citeprocInstance.makeBibliography())
+        this.bibliography = citeprocInstance.makeBibliography()
 
         if (citeprocConnector.missingItems.length > 0) {
             this.reloadCitations(citeprocConnector.missingItems)

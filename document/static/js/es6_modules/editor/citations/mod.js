@@ -78,14 +78,15 @@ export class ModCitations {
         }
         this.citationType = citRenderer.fm.citationType
         // Add the rendered html and css of the bibliography to the DOM.
-        document.querySelector('.article-bibliography').innerHTML = citRenderer.fm.bibliographyHTML
+        document.querySelector('.article-bibliography').innerHTML = citRenderer.fm.bibHTML
         let styleEl = document.querySelector('.article-bibliography-style')
         if (!styleEl) {
             document.head.insertAdjacentHTML('beforeend','<style class="article-bibliography-style"></style>')
             styleEl = document.querySelector('.article-bibliography-style')
         }
-        if (styleEl.innerHTML !== citRenderer.fm.bibliographyCSS) {
-            styleEl.innerHTML = citRenderer.fm.bibliographyCSS
+        let css = citRenderer.fm.bibCSS
+        if (styleEl.innerHTML !== css) {
+            styleEl.innerHTML = css
         }
 
         let citationsContainer = document.getElementById('citation-footnote-box-container')

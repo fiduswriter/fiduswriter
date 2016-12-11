@@ -308,7 +308,9 @@ export class LatexExporterConvert {
             }
         }
 
-        if (placeFootnotesAfterBlock && options.unplacedFootnotes.length) {
+        if (placeFootnotesAfterBlock &&
+            options.unplacedFootnotes &&
+            options.unplacedFootnotes.length) {
             // There are footnotes that needed to be placed behind the node.
             // This happens in the case of headlines and lists.
             if (options.unplacedFootnotes.length > 1) {

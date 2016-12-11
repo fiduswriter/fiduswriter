@@ -127,10 +127,15 @@ export class OdtExporterRichtext {
                     end = noSpaceTmp`
                         </text:note-body>
                     </text:note>` + end
+                    options = _.clone(options)
+                    options.section = 'Footnote'
+                    content += this.transformRichtext({type:'paragraph', content:cit.content}, options)
+                } else {
+                    cit.content.forEach(citContent => {
+                        content += this.transformRichtext(citContent, options)
+                    })
                 }
-                options = _.clone(options)
-                options.section = 'Footnote'
-                content += this.transformRichtext({type:'paragraph', content:cit.content}, options)
+
                 break
             case 'figure':
                 if(node.attrs.image !== 'false') {

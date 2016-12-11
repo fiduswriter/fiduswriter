@@ -185,9 +185,14 @@ export class LatexExporterConvert {
                     // multi source citation without page numbers or text before.
                     let citationEntryKeys = []
 
-                    citationEntries.forEach(function(citationEntry) {
+                    let allCitationItemsPresent = citationEntries.every(function(citationEntry) {
                         let bibDBEntry = that.bibDB.db[citationEntry]
                         if (bibDBEntry) {
+                            if (!bibDBEntry) {
+                                // Not present in bibliography database, skip it.
+                                // TODO: Throw an error?
+                                return false
+                            }
                             if (!that.usedBibDB[citationEntry]) {
                                 let citationKey = that.createUniqueCitationKey(
                                     bibDBEntry.entry_key
@@ -197,17 +202,24 @@ export class LatexExporterConvert {
                             }
                             citationEntryKeys.push(that.usedBibDB[citationEntry].entry_key)
                         }
+                        return true
                     })
-
-                    citationCommand += `{${citationEntryKeys.join(',')}}`
+                    if (allCitationItemsPresent) {
+                        citationCommand += `{${citationEntryKeys.join(',')}}`
+                    } else {
+                        citationCommand = false
+                    }
                 } else {
                     if (citationEntries.length > 1) {
                         citationCommand += 's' // Switching from \autocite to \autocites
                     }
 
-                    citationEntries.forEach(function(citationEntry, index) {
-                        if (!that.bibDB.db[citationEntry]) {
-                            return false // Not present in bibliography database, skip it.
+                    let allCitationItemsPresent = citationEntries.every(function(citationEntry, index) {
+                        let bibDBEntry = that.bibDB.db[citationEntry]
+                        if (!bibDBEntry) {
+                            // Not present in bibliography database, skip it.
+                            // TODO: Throw an error?
+                            return false
                         }
 
                         if (citationBefore[index] && citationBefore[index].length > 0) {
@@ -220,21 +232,28 @@ export class LatexExporterConvert {
                             citationCommand += `[${citationPage[index]}]`
                         }
                         citationCommand += '{'
-                        let bibDBEntry = that.bibDB.db[citationEntry]
+
                         if (!that.usedBibDB[citationEntry]) {
                             let citationKey = that.createUniqueCitationKey(
                                 bibDBEntry.entry_key
                             )
                             that.usedBibDB[citationEntry] = Object.assign({}, bibDBEntry)
-                            that.citationKeys.entry_key = citationKey
+                            that.usedBibDB[citationEntry].entry_key = citationKey
                         }
                         citationCommand += that.usedBibDB[citationEntry].entry_key
-
                         citationCommand += '}'
+
+                        return true
                     })
+
+                    if (!allCitationItemsPresent) {
+                        citationCommand = false
+                    }
                 }
-                content += citationCommand
-                this.features.citations = true
+                if (citationCommand) {
+                    content += citationCommand
+                    this.features.citations = true
+                }
                 break
             case 'figure':
                 let latexPackage

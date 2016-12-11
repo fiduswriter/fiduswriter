@@ -228,9 +228,6 @@ div#statusarea .error {
 #paper-editable .citation:hover, .equation:hover {
     background-color: grey;
 }
-#paper-editable .citation:empty:before {
-    content: '[CITATION]'
-}
 
 #paper-editable {
     display: table;

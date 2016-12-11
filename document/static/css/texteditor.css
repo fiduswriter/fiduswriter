@@ -607,3 +607,56 @@ table.insert-table-selection td.selected {
 table.insert-table-selection td.selected.hover {
     background-color: #585858;
 }
+
+/* CSL */
+
+.csl-bib-body {
+    line-height: 1.30;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    margin-bottom: 1em;
+}
+
+.csl-entry {
+    margin-left: 4em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    clear: left;
+}
+.csl-left-margin {
+    clear: left;
+    float: left;
+    text-indent:1em;
+    width: 102px;
+    padding:0.4em 0px 0.4em 0em;
+}
+.csl-right-inline {
+    padding: 0.4em;
+    margin-left: 80px;
+}
+
+.csl-entry i {
+    font-style: italic;
+}
+
+.csl-entry b {
+    font-weight: bold;
+}
+
+.csl-entry sup {
+    vertical-align: super;
+    font-size: smaller;
+}
+
+.csl-entry sub {
+    vertical-align: sub;
+    font-size: smaller;
+}
+
+.csl-indent {
+  margin-top: 0.5em;
+  margin-left: 2em;
+  padding-bottom: 0.2em;
+  padding-left: 0.5em;
+  border-left: 5px solid #ccc;
+}

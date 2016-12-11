@@ -14,14 +14,13 @@ export class FormatCitations {
 
     init() {
         this.bibliographyHTML = ''
+        this.bibliographyCSS = ''
         this.citations = []
         this.bibFormats = []
         this.citationTexts = []
         this.citationType = ''
-        this.bibliography = ''
         this.formatAllCitations()
         this.getFormattedCitations()
-        this.formatBibliography()
         this.callback()
     }
 
@@ -57,12 +56,34 @@ export class FormatCitations {
         })
     }
 
-    formatBibliography() {
-        this.bibliographyHTML += '<h1 class="article-bibliography-header"></h1>'
-        // Add entry to bibliography
-        for (let j = 0; j < this.bibliography[1].length; j++) {
-            this.bibliographyHTML += this.bibliography[1][j]
+    formatBibliography(bib) {
+        // HTML
+        let html = ''
+        html += '<h1 class="article-bibliography-header"></h1>'
+        // Add entries to bibliography
+        html += bib[0].bibstart + bib[1].join('') + bib[0].bibend
+
+        // CSS
+        let css = '\n'
+        css += `.csl-entry {margin-bottom: ${bib[0].entryspacing}em;}\n`
+        css += `.csl-bib-body {line-height: ${bib[0].linespacing};}\n`
+        if (bib[0].hangingindent) {
+            if (['flush', 'margin'].includes(bib[0]['second-field-align'])) {
+                css += `.csl-right-inline {
+                    text-indent: ${0-bib[0].hangingindent}em;
+                    margin-left: ${bib[0].hangingindent}em;
+                }\n`
+            } else {
+                css += `.csl-entry {
+                    text-indent: ${0-bib[0].hangingindent}em;
+                    margin-left: ${bib[0].hangingindent}em;
+                }\n`
+            }
+
         }
+        this.bibliographyHTML = html
+        this.bibliographyCSS = css
+        this.bibliography = bib
     }
 
     reloadCitations(missingItems) {
@@ -146,7 +167,7 @@ export class FormatCitations {
             this.citationTexts.push(citationText)
         }
         this.citationType = citeprocInstance.cslXml.dataObj.attrs.class
-        this.bibliography = citeprocInstance.makeBibliography()
+        this.formatBibliography(citeprocInstance.makeBibliography())
 
         if (citeprocConnector.missingItems.length > 0) {
             this.reloadCitations(citeprocConnector.missingItems)

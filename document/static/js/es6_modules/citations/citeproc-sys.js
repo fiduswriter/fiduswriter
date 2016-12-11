@@ -16,13 +16,13 @@ export class citeprocSys {
 
     retrieveItem(id) {
         if (!this.items[id]) {
-            //if (this.bibDB.db[id]) {
-            let cslGetter = new CSLExporter(this.bibDB.db, [id])
-            Object.assign(this.items, cslGetter.output)
-            //} else {
-            //    this.missingItems.push(id)
-            //    this.items[id] = {author:{literal:gettext('Loading')}, type: 'misc'}
-            //}
+            if (this.bibDB.db[id]) {
+                let cslGetter = new CSLExporter(this.bibDB.db, [id])
+                Object.assign(this.items, cslGetter.output)
+            } else {
+                this.missingItems.push(id)
+                this.items[id] = {author:{literal:''}, type: 'article', id}
+            }
         }
         return this.items[id]
     }

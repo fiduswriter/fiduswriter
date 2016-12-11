@@ -19,73 +19,42 @@ export class FormatCitations {
         this.citationTexts = []
         this.citationType = ''
         this.bibliography = ''
-        if (this.formatAllCitations()) {
-            this.getFormattedCitations()
-            this.formatBibliography()
-            this.callback()
-        }
+        this.formatAllCitations()
+        this.getFormattedCitations()
+        this.formatBibliography()
+        this.callback()
     }
 
     formatAllCitations() {
         let that = this
-        let foundAll = this.allCitationInfos.every(function(cInfo) {
+        this.allCitationInfos.forEach(function(cInfo) {
             var entries = cInfo.bibEntry ? cInfo.bibEntry.split(',') : []
-            let missingCitationKey = false // Whether all citation entries are in the database
             let len = entries.length
-            for (let j = 0; j < len; j++) {
-                if (that.bibDB.db.hasOwnProperty(entries[j])) {
-                    continue
-                }
-                missingCitationKey = entries[j]
-                break
-            }
 
-            if (missingCitationKey === false) {
-                let pages = cInfo.bibPage ? cInfo.bibPage.split(',,,') : [],
-                    prefixes = cInfo.bibBefore ? cInfo.bibBefore.split(',,,') : [],
-                    citationItem,
-                    citationItems = []
-                for (let j = 0; j < len; j++) {
-                    citationItem = {
-                        id: entries[j]
-                    }
-                    if ('' !== pages[j]) {
-                        citationItem.locator = pages[j]
-                    }
-                    if ('' !== prefixes[j]) {
-                        citationItem.prefix = prefixes[j]
-                    }
-                    citationItems.push(citationItem)
+            let pages = cInfo.bibPage ? cInfo.bibPage.split(',,,') : [],
+                prefixes = cInfo.bibBefore ? cInfo.bibBefore.split(',,,') : [],
+                citationItem,
+                citationItems = []
+            for (let j = 0; j < len; j++) {
+                citationItem = {
+                    id: entries[j]
                 }
-                that.bibFormats.push(cInfo.bibFormat)
-                that.citations.push({
-                    citationItems,
-                    properties: {
-                        noteIndex: that.bibFormats.length
-                    }
-                })
-            } else {
-                // Not all citations could be found in the database.
-                // Reload the database, but not more than twice every 30 seconds.
-                let llt = that.bibDB.lastLoadTimes
-                let lltlen = that.bibDB.lastLoadTimes.length
-                if (lltlen < 2 || Date.now() - llt[lltlen-2] > 30000) {
-                    that.bibDB.getDB(function(){
-                        if (that.bibDB.db.hasOwnProperty(missingCitationKey)) {
-                            that.init()
-                        } else {
-                            // The missing key was not in the update from the server
-                            // so it seems like this document is containing old
-                            // citation keys. Do not attempt further reloads.
-                            that.bibDB.allowReload = false
-                        }
-                    })
-                    return false
+                if ('' !== pages[j]) {
+                    citationItem.locator = pages[j]
                 }
+                if ('' !== prefixes[j]) {
+                    citationItem.prefix = prefixes[j]
+                }
+                citationItems.push(citationItem)
             }
-            return true
+            that.bibFormats.push(cInfo.bibFormat)
+            that.citations.push({
+                citationItems,
+                properties: {
+                    noteIndex: that.bibFormats.length
+                }
+            })
         })
-        return foundAll
     }
 
     formatBibliography() {
@@ -93,6 +62,21 @@ export class FormatCitations {
         // Add entry to bibliography
         for (let j = 0; j < this.bibliography[1].length; j++) {
             this.bibliographyHTML += this.bibliography[1][j]
+        }
+    }
+
+    reloadCitations(missingItems) {
+        let that = this
+        // Not all citations could be found in the database.
+        // Reload the database, but not more than twice every 30 seconds.
+        let llt = this.bibDB.lastLoadTimes
+        let lltlen = this.bibDB.lastLoadTimes.length
+        if (lltlen < 2 || Date.now() - llt[lltlen-2] > 30000) {
+            this.bibDB.getDB(function(){
+                if (missingItems.some(item=>{return that.bibDB.db.hasOwnProperty(item)})) {
+                    that.init()
+                }
+            })
         }
     }
 
@@ -105,11 +89,13 @@ export class FormatCitations {
                 break
             }
         }
-
+        let citeprocConnector = new citeprocSys(this.bibDB)
         let citeprocInstance = new CSL.Engine(
-            new citeprocSys(this.bibDB),
+            citeprocConnector,
             this.citationStyle.definition
         )
+
+
         let inText = citeprocInstance.cslXml.dataObj.attrs.class === 'in-text'
         let len = this.citations.length
 
@@ -161,5 +147,9 @@ export class FormatCitations {
         }
         this.citationType = citeprocInstance.cslXml.dataObj.attrs.class
         this.bibliography = citeprocInstance.makeBibliography()
+
+        if (citeprocConnector.missingItems.length > 0) {
+            this.reloadCitations(citeprocConnector.missingItems)
+        }
     }
 }

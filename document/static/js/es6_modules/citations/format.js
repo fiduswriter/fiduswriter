@@ -1,5 +1,4 @@
 import {citeprocSys} from "./citeproc-sys"
-import {CSLExporter} from "biblatex-csl-converter"
 import {citationDefinitions} from "../style/citation-definitions"
 
 /*
@@ -10,8 +9,6 @@ export class FormatCitations {
         this.allCitationInfos = allCitationInfos
         this.citationStyle = citationStyle
         this.bibDB = bibDB
-        this.cslDB = false
-//        this.bibDB.allowReload = true // We only want to reload once, due to https://github.com/fiduswriter/fiduswriter/issues/284
         this.callback = callback
     }
 
@@ -22,9 +19,6 @@ export class FormatCitations {
         this.citationTexts = []
         this.citationType = ''
         this.bibliography = ''
-        // Convert bibDB to CSL format.
-        let cslGetter = new CSLExporter(this.bibDB.db)
-        this.cslDB = cslGetter.output
         if (this.formatAllCitations()) {
             this.getFormattedCitations()
             this.formatBibliography()
@@ -46,25 +40,7 @@ export class FormatCitations {
                 break
             }
 
-            if (missingCitationKey !== false) {
-                // Not all citations could be found in the database.
-                // Reload the database, but not more than twice every 30 seconds.
-                let llt = that.bibDB.lastLoadTimes
-                let lltlen = that.bibDB.lastLoadTimes.length
-                if (lltlen < 2 || Date.now() - llt[lltlen-2] > 30000) {
-                    that.bibDB.getDB(function(){
-                        if (that.bibDB.db.hasOwnProperty(missingCitationKey)) {
-                            that.init()
-                        } else {
-                            // The missing key was not in the update from the server
-                            // so it seems like this document is containing old
-                            // citation keys. Do not attempt further reloads.
-                            that.bibDB.allowReload = false
-                        }
-                    })
-                    return false
-                }
-            } else {
+            if (missingCitationKey === false) {
                 let pages = cInfo.bibPage ? cInfo.bibPage.split(',,,') : [],
                     prefixes = cInfo.bibBefore ? cInfo.bibBefore.split(',,,') : [],
                     citationItem,
@@ -88,6 +64,24 @@ export class FormatCitations {
                         noteIndex: that.bibFormats.length
                     }
                 })
+            } else {
+                // Not all citations could be found in the database.
+                // Reload the database, but not more than twice every 30 seconds.
+                let llt = that.bibDB.lastLoadTimes
+                let lltlen = that.bibDB.lastLoadTimes.length
+                if (lltlen < 2 || Date.now() - llt[lltlen-2] > 30000) {
+                    that.bibDB.getDB(function(){
+                        if (that.bibDB.db.hasOwnProperty(missingCitationKey)) {
+                            that.init()
+                        } else {
+                            // The missing key was not in the update from the server
+                            // so it seems like this document is containing old
+                            // citation keys. Do not attempt further reloads.
+                            that.bibDB.allowReload = false
+                        }
+                    })
+                    return false
+                }
             }
             return true
         })
@@ -112,7 +106,10 @@ export class FormatCitations {
             }
         }
 
-        let citeprocInstance = new CSL.Engine(new citeprocSys(this.cslDB), this.citationStyle.definition)
+        let citeprocInstance = new CSL.Engine(
+            new citeprocSys(this.bibDB),
+            this.citationStyle.definition
+        )
         let inText = citeprocInstance.cslXml.dataObj.attrs.class === 'in-text'
         let len = this.citations.length
 

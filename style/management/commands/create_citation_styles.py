@@ -8,7 +8,7 @@ from django.core.management.base import BaseCommand
 
 class Command(BaseCommand):
     help = (
-        'Creates CSS files with the style definitions of all the document '
+        'Creates CSS files with the style definitions of all the citation '
         'styles'
     )
 

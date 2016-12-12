@@ -268,6 +268,26 @@ export let reviewSubmit = function(editor){
                 },
                 error: function() {
                     addAlert('error', 'There is error while sending the signal of finishing review, please try it again')
+
+                    jQuery.ajax({
+                        url: '/document/reviewsubmitundo/',
+                        data: submissionData,
+                        type: 'POST',
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        crossDomain: false, // obviates need for sameOrigin test
+                        beforeSend: function(xhr, settings) {
+                            xhr.setRequestHeader("X-CSRFToken", csrfToken)
+                        },
+                        success: function(result) {
+                        submission_info = result['submission']
+                        userProfile = result['user']
+                    },
+                error: function() {
+                    addAlert('error', 'can not give back reiview rights since can not get the submission information')
+                }
+            })
                 }
             })
             jQuery(this).dialog("close")

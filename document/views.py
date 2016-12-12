@@ -610,13 +610,6 @@ def delete_revision_js(request):
     )
 
 
-# For upgrading old docs and to merge outstanding diffs.
-@staff_member_required
-def maintenance(request):
-    response = {}
-    return render(request, 'document/maintenance.html', response)
-
-
 @staff_member_required
 def get_all_docs_js(request):
     response = {}

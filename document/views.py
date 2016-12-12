@@ -514,9 +514,11 @@ def upload_revision_js(request):
 # Download a revision that was previously uploaded
 @login_required
 def get_revision(request, revision_id):
-    if not request.user.is_staff and revision.document.owner != request.user:
+    if not request.user.is_staff:
         return HttpResponse(status=405)
     revision = DocumentRevision.objects.get(pk=int(revision_id))
+    if revision.document.owner != request.user:
+        return HttpResponse(status=405)
     http_response = HttpResponse(
         revision.file_object.file,
         content_type='application/zip; charset=x-user-defined',
@@ -651,7 +653,7 @@ def submit_right_js(request):
     if (
         request.is_ajax() and
         request.method == 'POST' and
-        settings.SERVER_INFO['EXPERIMENTAL'] == True
+        settings.SERVER_INFO['EXPERIMENTAL'] is True
     ):
         tgt_doc = request.POST.get('documentId')
         tgt_users = request.POST.getlist('collaborators[]')
@@ -688,8 +690,8 @@ def submit_right_js(request):
     )
 
 
-# TODO: This seems to give any user with a valid login access to all users email
-# addresses. This will need to be secured in some way.
+# TODO: This seems to give any user with a valid login access to all users
+# email addresses. This will need to be secured in some way.
 @login_required
 def profile_js(request):
     response = {}
@@ -697,7 +699,7 @@ def profile_js(request):
     if (
         request.is_ajax() and
         request.method == 'POST' and
-        settings.SERVER_INFO['EXPERIMENTAL'] == True
+        settings.SERVER_INFO['EXPERIMENTAL'] is True
     ):
         id = request.POST["id"]
         the_user = User.objects.filter(id=id)

@@ -228,9 +228,6 @@ div#statusarea .error {
 #paper-editable .citation:hover, .equation:hover {
     background-color: grey;
 }
-#paper-editable .citation:empty:before {
-    content: '[CITATION]'
-}
 
 #paper-editable {
     display: table;
@@ -611,14 +608,11 @@ table.insert-table-selection td.selected.hover {
 /* CSL */
 
 .csl-bib-body {
-    line-height: 1.30;
     padding-top: 0.5em;
     padding-bottom: 0.5em;
-    margin-bottom: 1em;
 }
 
 .csl-entry {
-    margin-left: 4em;
     margin-top: 0.5em;
     margin-bottom: 0.5em;
     clear: left;
@@ -626,7 +620,6 @@ table.insert-table-selection td.selected.hover {
 .csl-left-margin {
     clear: left;
     float: left;
-    text-indent:1em;
     width: 102px;
     padding:0.4em 0px 0.4em 0em;
 }

@@ -91,8 +91,9 @@ export class HTMLBookExporter extends BaseEpubExporter { // extension is correct
             this.bibDB,
             true,
             function() {
-                if (citRenderer.fm.bibliographyHTML.length > 0) {
-                    that.chapters[chapterNumber].contents.innerHTML += citRenderer.fm.bibliographyHTML
+                let bibHTML = citRenderer.fm.bibHTML
+                if (bibHTML.length > 0) {
+                    that.chapters[chapterNumber].contents.innerHTML += bibHTML
                 }
                 chapterNumber++
                 if (chapterNumber===that.chapters.length) {

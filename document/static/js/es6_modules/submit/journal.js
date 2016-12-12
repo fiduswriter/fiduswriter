@@ -188,14 +188,7 @@ export let reviewSubmit = function(editor){
             }
         })
         console.log(submission_info)
-        let dataToOjs = new window.FormData()
-        dataToOjs.append('email', userProfile["email"])
-        dataToOjs.append('doc_id', editor.doc.id)
-        dataToOjs.append('journal_id', submission_info["journal_id"])
-        dataToOjs.append('submission_id', submission_info["submission_id"])
-        dataToOjs.append('review_round', submission_info["version_id"])
-        dataToOjs.append('editor_message',jQuery("#message-editor").val())
-        dataToOjs.append('message_editor_author',jQuery("#message-editor-author").val())
+        //console.log(message_editor_author)
         /*let diaButtons = {}
         let submission_info = {}
         let userProfile = {}
@@ -249,9 +242,16 @@ export let reviewSubmit = function(editor){
         dataToOjs.append('review_round', submission_info["version_id"])
         dataToOjs.append('editor_message',jQuery("#message-editor").val())
         dataToOjs.append('message-editor-author',jQuery("#message-editor").val())*/
-
         diaButtons[gettext("Submit")] = function() {
-                    console.log(jQuery("#message-editor").val())
+            let dataToOjs = new window.FormData()
+        dataToOjs.append('email', userProfile["email"])
+        dataToOjs.append('doc_id', editor.doc.id)
+        dataToOjs.append('journal_id', submission_info["journal_id"])
+        dataToOjs.append('submission_id', submission_info["submission_id"])
+        dataToOjs.append('review_round', submission_info["version_id"])
+        dataToOjs.append('editor_message',jQuery("#message-editor").val())
+        dataToOjs.append('message_editor_author',jQuery("#message-editor-author").val())
+            console.log(submission_info["submission_id"])
             jQuery.ajax({
                 url: window.ojsUrl+'/index.php/index/gateway/plugin/RestApiGatewayPlugin/articleReviews',
                 data: dataToOjs,

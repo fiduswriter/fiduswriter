@@ -592,6 +592,37 @@ def review_submit_js(request):
         status=status
     )
 
+@login_required
+def review_submit_undo_js(request):
+    status = 405
+    response = {}
+    if request.is_ajax() and request.method == 'POST':
+        document_id = request.POST.get('document_id')
+        user_id = request.POST.get('user_id')
+        tgt_right = 'review'
+        access_right = AccessRight.objects.get(
+            document_id=document_id, user_id=user_id)
+        if access_right.rights != tgt_right:
+            access_right.rights = tgt_right
+            access_right.save()
+        submission = Submission.objects.get(
+            document_id=document_id)
+        response['submission'] = {}
+        if submission:
+            response["submission"]["submission_id"] = submission.submission_id
+            response["submission"]["version_id"] = submission.version_id
+            response["submission"]["journal_id"] = submission.journal_id
+        the_user = get_user(request)
+        if len(the_user) > 0:
+            response['user'] = {}
+            response['user']['email'] = the_user[0].email
+        status = 201
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
 
 @login_required
 def import_js(request):

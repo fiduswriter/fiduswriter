@@ -60,6 +60,13 @@ export class ModCommentStore {
         this.signal("mustSend")
     }
 
+    moveComment(user, userName, userAvatar, date, id, posFrom, posTo) {
+        this.addLocalComment(id, user, userName, userAvatar, date, this.comments[id].comment, [], this.comments[id]['review:isMajor'], true)
+
+        let markType = this.mod.editor.pm.schema.marks.comment.create({id})
+        this.mod.editor.pm.tr.addMark(posFrom, posTo, markType).apply()
+    }
+
     addLocalComment(id, user, userName, userAvatar, date, comment, answers, isMajor, local) {
         if (!this.comments[id]) {
             this.comments[id] = new Comment(id, user, userName, userAvatar, date, comment, answers, isMajor)
@@ -143,7 +150,28 @@ export class ModCommentStore {
         })
         // Remove all the comments that could not be found.
         ids.forEach(function(id) {
-            that.deleteComment(id, false) // Delete comment from store
+            let isReviewer = false
+            that.mod.editor.doc.access_rights.forEach(function(item,index){
+                console.log(that.comments[id])
+                console.log(that.mod.editor.doc)
+                if (item.user_id==that.comments[id].user){
+                    isReviewer = true
+                }
+            })
+            if (isReviewer)
+                that.deleteComment(id, false) // Delete comment from store
+            else {
+                let posFrom = that.mod.editor.pm.selection.from
+                that.moveComment(
+                    that.mod.editor.user.id,
+                    that.mod.editor.user.name,
+                    that.mod.editor.user.avatar,
+                    new Date().getTime(), // We update the time to the time the comment was stored
+                    id,
+                    posFrom-1,
+                    posFrom+1
+                )
+            }
         })
     }
 

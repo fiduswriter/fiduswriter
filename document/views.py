@@ -24,7 +24,7 @@ from avatar.utils import get_primary_avatar, get_default_avatar_url
 from avatar.templatetags.avatar_tags import avatar_url
 
 from document.models import Document, AccessRight, DocumentRevision, \
-    ExportTemplate, Submission
+    ExportTemplate, Submission, SubmittedAccessRight
 
 
 class SimpleSerializer(Serializer):
@@ -52,6 +52,14 @@ def get_accessrights(ars):
             'avatar': the_avatar
         })
     return ret
+
+def doc_mode(document_id):
+    submissions = Submission.objects.filter(
+        document_id=document_id)
+    if (len(submissions)>0 and submissions[0].version_id!=0):
+        return submissions[0]
+    else:
+        return 'unsubmitted'
 
 
 @login_required
@@ -503,14 +511,44 @@ def submission_version_js(request):
     response = {}
     version = 1
     if request.is_ajax() and request.method == 'POST':
+        user_id = request.POST.get('user_id')
         document_id = request.POST.get('document_id')
         journal_id = request.POST.get('journal_id')
         submission_id = request.POST.get('submission_id')
+        pre_document_id = request.POST.get('pre_document_id')
         submissions = Submission.objects.filter(
             submission_id=submission_id)
         if len(submissions) > 0:
-            version = len(submissions)+1
+            version = len(submissions)
+        else:
+            #save the rights of authors in original document
+            submitted_access_right = SubmittedAccessRight.objects.create(
+                document_id=pre_document_id,
+                user_id=user_id,
+                rights='write',
+                submission_id=submission_id
+            )
+            access_rights = AccessRight.objects.filter(
+                document_id=pre_document_id)
+            for access_right in access_rights:
+                submitted_access_right = SubmittedAccessRight.objects.create(
+                    document_id=pre_document_id,
+                    user_id=access_right.user_id,
+                    rights=access_right.rights,
+                    submission_id=submission_id
+                )
+            submitted_access_right.save()
+
+            original_submission = Submission.objects.create(
+                user_id=user_id,
+                document_id=pre_document_id,
+                journal_id=journal_id,
+                submission_id=submission_id,
+                version_id=0
+            )
+            original_submission.save()
         submission = Submission.objects.create(
+            user_id=user_id,
             document_id=document_id,
             journal_id=journal_id,
             submission_id=submission_id,

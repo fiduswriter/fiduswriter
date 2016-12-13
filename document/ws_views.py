@@ -9,7 +9,7 @@ from tornado.escape import json_decode, json_encode
 from tornado.websocket import WebSocketClosedError
 from document.models import AccessRight, COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
     CAN_COMMUNICATE
-from document.views import get_accessrights
+from document.views import get_accessrights, doc_mode
 from avatar.templatetags.avatar_tags import avatar_url
 
 
@@ -62,6 +62,17 @@ class DocumentWS(BaseWebSocketHandler):
         response = dict()
         response['type'] = 'doc_data'
         response['doc'] = dict()
+        submission = doc_mode(self.doc['id'])
+
+        response['doc']['submission'] = dict()
+        if submission == 'unsubmitted':
+            response['doc']['submission']['status'] = 'unsubmitted'
+        else:
+            response['doc']['submission']['status'] = 'submitted'
+            response['doc']['submission']['submission_id'] = submission.submission_id
+            response['doc']['submission']['user_id'] = submission.user_id
+            response['doc']['submission']['version_id'] = submission.version_id
+
         response['doc']['id'] = self.doc['id']
         response['doc']['version'] = self.doc['version']
         if self.doc['diff_version'] < self.doc['version']:

@@ -99,6 +99,9 @@ export let selectJournal = function(editor) {
                         success: function(response) {
                             //addAlert('success','The paper was submitted to ojs')
                             let dataSubmission = new window.FormData()
+                            dataSubmission.append('user_id',editor.user.id)
+                            dataSubmission.append('document_id',doc.id)
+                            dataSubmission.append('pre_document_id',editor.doc.id)
                             dataSubmission.append('document_id',doc.id)
                             dataSubmission.append('journal_id',response.journal_id)
                             dataSubmission.append('submission_id',response.submission_id)

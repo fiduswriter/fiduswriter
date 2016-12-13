@@ -298,7 +298,9 @@ export class Editor {
               .documentstyle-menu, .citationstyle-menu').removeClass('disabled')
             }
         }
-
+                      console.log(this.doc.submission.status)
+            console.log(this.doc.submission.user_id)
+            console.log(this.user.user_id)
         if (REVIEW_ROLES.indexOf(this.docInfo.rights) > -1)  {
           jQuery('#reviewed').show()
           jQuery('#reviewerOJSReturn').show()
@@ -306,7 +308,13 @@ export class Editor {
         else {
           jQuery('#reviewed').hide()
           jQuery('#reviewerOJSReturn').hide()
+          if (this.doc.submission.status == 'submitted' && this.doc.submission.user_id == this.user.id){
+            jQuery('#revision-done').show()
+          }
+          else
+            jQuery('#revision-done').hide()
         }
+
     }
 
     receiveDocument(data) {

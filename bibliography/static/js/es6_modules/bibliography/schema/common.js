@@ -15,6 +15,9 @@ export class SupMark extends MarkType {
     get matchDOMTag() {
         return {"sup": null}
     }
+    get matchDOMStyle() {
+        return {"vertical-align": value => value == "super" && null}
+    }
     toDOM() {
         return ["sup"]
     }
@@ -23,6 +26,9 @@ export class SupMark extends MarkType {
 export class SubMark extends MarkType {
     get matchDOMTag() {
         return {"sub": null}
+    }
+    get matchDOMStyle() {
+        return {"vertical-align": value => value == "sub" && null}
     }
     toDOM() {
         return ["sub"]

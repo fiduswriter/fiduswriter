@@ -3,7 +3,7 @@ import {buildKeymap} from "prosemirror-old/dist/example-setup"
 import {commands} from "prosemirror-old/dist/edit/commands"
 import Keymap from "browserkeymap"
 
-import {longLitSchema} from "../schema/literal-long"
+import {longLitSchema} from "../../schema/literal-long"
 
 export class LiteralLongFieldForm{
     constructor(dom, initialValue = []) {

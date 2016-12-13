@@ -2,7 +2,7 @@ import {ProseMirror} from "prosemirror-old/dist/edit/main"
 import {buildKeymap} from "prosemirror-old/dist/example-setup"
 import {commands} from "prosemirror-old/dist/edit/commands"
 
-import {titleSchema} from "../schema/title"
+import {titleSchema} from "../../schema/title"
 
 export class TitleFieldForm{
     constructor(dom, initialValue) {

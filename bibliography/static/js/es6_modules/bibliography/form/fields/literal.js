@@ -2,7 +2,7 @@ import {ProseMirror} from "prosemirror-old/dist/edit/main"
 import {buildKeymap} from "prosemirror-old/dist/example-setup"
 import {commands} from "prosemirror-old/dist/edit/commands"
 
-import {litSchema} from "../schema/literal"
+import {litSchema} from "../../schema/literal"
 
 export class LiteralFieldForm{
     constructor(dom, initialValue = [], placeHolder = false) {

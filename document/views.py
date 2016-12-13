@@ -53,10 +53,11 @@ def get_accessrights(ars):
         })
     return ret
 
+
 def doc_mode(document_id):
     submissions = Submission.objects.filter(
         document_id=document_id)
-    if (len(submissions)>0 and submissions[0].version_id!=0):
+    if len(submissions) > 0 and submissions[0].version_id != 0:
         return submissions[0]
     else:
         return 'unsubmitted'
@@ -521,7 +522,7 @@ def submission_version_js(request):
         if len(submissions) > 0:
             version = len(submissions)
         else:
-            #save the rights of authors in original document
+            # save the rights of authors in original document
             submitted_access_right = SubmittedAccessRight.objects.create(
                 document_id=pre_document_id,
                 user_id=user_id,
@@ -592,6 +593,7 @@ def review_submit_js(request):
         status=status
     )
 
+
 @login_required
 def review_submit_undo_js(request):
     status = 405
@@ -621,7 +623,6 @@ def review_submit_undo_js(request):
         response,
         status=status
     )
-
 
 
 @login_required

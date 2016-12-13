@@ -69,7 +69,8 @@ class DocumentWS(BaseWebSocketHandler):
             response['doc']['submission']['status'] = 'unsubmitted'
         else:
             response['doc']['submission']['status'] = 'submitted'
-            response['doc']['submission']['submission_id'] = submission.submission_id
+            response['doc']['submission']['submission_id'] = \
+                submission.submission_id
             response['doc']['submission']['user_id'] = submission.user_id
             response['doc']['submission']['version_id'] = submission.version_id
 
@@ -89,9 +90,9 @@ class DocumentWS(BaseWebSocketHandler):
                 document__owner=document_owner))
         response['doc']['access_rights'] = access_rights
 
-        if (self.user_info.access_rights == 'read-without-comments'):
+        if self.user_info.access_rights == 'read-without-comments':
             response['doc']['comments'] = []
-        elif (self.user_info.access_rights == 'review'):
+        elif self.user_info.access_rights == 'review':
             # Reviewer should only get his/her own comments
             filtered_comments = {}
             for key, value in self.doc["comments"].items():

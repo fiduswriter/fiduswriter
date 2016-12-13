@@ -106,7 +106,7 @@ class SubmittedAccessRight(models.Model):
         blank=False)
 
     class Meta:
-        unique_together = (("document", "user","submission_id"),)
+        unique_together = (("document", "user", "submission_id"),)
 
     def __unicode__(self):
         return (

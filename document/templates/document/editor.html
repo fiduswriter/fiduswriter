@@ -158,15 +158,13 @@
                                     LaTeX
                                 </span>
                             </li>
-                            {% if EXPERIMENTAL %}
-                                {% for export_template in export_templates %}
-                                    <li>
-                                        <span class="fw-pulldown-item template-export" data-filetype="{{ export_template.file_type }}" data-template="{{ export_template.template_file.url }}" title="{% trans "Export the document to a template:" %} {{ export_template.file_name }} ({{ export_template.file_type }})">
-                                            {{ export_template.file_name }} ({{ export_template.file_type }})
-                                        </span>
-                                    </li>
-                                {% endfor %}
-                            {% endif %}
+                            {% for export_template in export_templates %}
+                                <li>
+                                    <span class="fw-pulldown-item template-export" data-filetype="{{ export_template.file_type }}" data-template="{{ export_template.template_file.url }}" title="{% trans "Export the document to a template:" %} {{ export_template.file_name }} ({{ export_template.file_type }})">
+                                        {{ export_template.file_name }} ({{ export_template.file_type }})
+                                    </span>
+                                </li>
+                            {% endfor %}
                         </ul>
                     </div>
                 </div>
@@ -369,21 +367,19 @@
                             </span>
                         </button>
                     </div>
-                    {% if EXPERIMENTAL %}
-                        <div class="toolbartable ui-buttonset">
-                            <div id="button-table" class="toolbartable ui-buttonset">
-                                <span class="multibuttonsCover fw-button fw-light fw-large fw-square edit-button" title="{% trans "table" %}" id="block-style-label">
-                                    <span class="ui-button-text">
-                                        <i class="icon-table"></i>
-                                    </span>
+                    <div class="toolbartable ui-buttonset">
+                        <div id="button-table" class="toolbartable ui-buttonset">
+                            <span class="multibuttonsCover fw-button fw-light fw-large fw-square edit-button" title="{% trans "table" %}" id="block-style-label">
+                                <span class="ui-button-text">
+                                    <i class="icon-table"></i>
                                 </span>
-                                <div class="fw-pulldown fw-left" style="display: none;">
-                                    <ul id="table-dialog">
-                                    </ul>
-                                </div>
+                            </span>
+                            <div class="fw-pulldown fw-left" style="display: none;">
+                                <ul id="table-dialog">
+                                </ul>
                             </div>
                         </div>
-                    {% endif %}
+                    </div>
                     <div class="toolbarundoredo ui-buttonset">
                         <button class="fw-button fw-light fw-large fw-square disabled"  id="button-undo" title="{% trans "Undo" %}">
                             <span class="ui-button-text">

@@ -84,12 +84,12 @@ export class OdtExporterRichtext {
                 // Check for hyperlink, bold/strong and italic/em
                 let hyperlink, strong, em, sup, sub, smallcaps
                 if (node.marks) {
-                    strong = _.findWhere(node.marks, {type:'strong'})
+                    hyperlink = _.findWhere(node.marks, {type:'link'})
                     em = _.findWhere(node.marks, {type:'em'})
+                    strong = _.findWhere(node.marks, {type:'strong'})
+                    smallcaps = _.findWhere(node.marks, {type:'smallcaps'})
                     sup = _.findWhere(node.marks, {type:'sup'})
                     sub = _.findWhere(node.marks, {type:'sub'})
-                    smallcaps = _.findWhere(node.marks, {type:'smallcaps'})
-                    hyperlink = _.findWhere(node.marks, {type:'link'})
                 }
 
                 if (hyperlink) {
@@ -97,15 +97,24 @@ export class OdtExporterRichtext {
                     end = '</text:a>' + end
                 }
 
-                if (strong || em) {
-                    let styleId
-                    if (strong && em) {
-                        styleId = this.exporter.styles.getBoldItalicStyleId()
-                    } else if (em) {
-                        styleId = this.exporter.styles.getItalicStyleId()
-                    } else {
-                        styleId = this.exporter.styles.getBoldStyleId()
-                    }
+                let attributes = ''
+                if (em) {
+                    attributes += 'e'
+                }
+                if (strong) {
+                    attributes += 's'
+                }
+                if (smallcaps) {
+                    attributes += 'c'
+                }
+                if (sup) {
+                    attributes += 'p'
+                } else if (sub) {
+                    attributes += 'b'
+                }
+
+                if (attributes.length) {
+                    let styleId = this.exporter.styles.getInlineStyleId(attributes)
                     start += `<text:span text:style-name="T${styleId}">`
                     end = '</text:span>' + end
                 }

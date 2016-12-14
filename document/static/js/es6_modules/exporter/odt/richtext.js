@@ -25,10 +25,6 @@ export class OdtExporterRichtext {
                 options = _.clone(options)
                 options.section = 'Abstract'
                 break
-            case 'bibliography':
-                options = _.clone(options)
-                options.section = 'References'
-                break
             case 'paragraph':
                 this.exporter.styles.checkParStyle(options.section)
                 start += `<text:p text:style-name="${options.section}">`
@@ -86,10 +82,13 @@ export class OdtExporterRichtext {
                 break
             case 'text':
                 // Check for hyperlink, bold/strong and italic/em
-                let hyperlink, strong, em
+                let hyperlink, strong, em, sup, sub, smallcaps
                 if (node.marks) {
                     strong = _.findWhere(node.marks, {type:'strong'})
                     em = _.findWhere(node.marks, {type:'em'})
+                    sup = _.findWhere(node.marks, {type:'sup'})
+                    sub = _.findWhere(node.marks, {type:'sub'})
+                    smallcaps = _.findWhere(node.marks, {type:'smallcaps'})
                     hyperlink = _.findWhere(node.marks, {type:'link'})
                 }
 
@@ -200,6 +199,31 @@ export class OdtExporterRichtext {
                         <draw:object xlink:href="./Object ${objectNumber}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/>
                         <svg:desc>formula</svg:desc>
                     </draw:frame>`
+                break
+            case 'hard_break':
+                content += '<text:line-break/>'
+                break
+            // CSL bib entries
+            case 'cslbib':
+                options = _.clone(options)
+                options.section = 'References'
+                break
+            case 'cslblock':
+                end = '<text:line-break/>' + end
+                break
+            case 'cslleftmargin':
+                end = '<text:tab/>' + end
+                break
+            case 'cslindent':
+                start += '<text:tab/>'
+                end = '<text:line-break/>' + end
+                break
+            case 'cslentry':
+                start += `<text:p text:style-name="${options.section}">`
+                end = '</text:p>' + end
+                break
+            case 'cslinline':
+            case 'cslrightinline':
                 break
             default:
                 console.warn('Unhandled node type:' + node.type)

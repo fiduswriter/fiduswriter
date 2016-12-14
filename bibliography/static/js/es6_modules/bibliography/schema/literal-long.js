@@ -1,5 +1,5 @@
 import {EnquoteMark, SupMark, SubMark, SmallCapsMark, UrlMark, Variable} from "./common"
-import {Doc, EmMark, LinkMark, StrongMark, Text} from "prosemirror-old/dist/schema-basic"
+import {Doc, EmMark, StrongMark, Text} from "prosemirror-old/dist/schema-basic"
 import {Block, Schema} from "prosemirror-old/dist/model"
 
 class LongLiteral extends Block {

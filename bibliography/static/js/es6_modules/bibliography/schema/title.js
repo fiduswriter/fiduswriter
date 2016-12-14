@@ -1,5 +1,5 @@
 import {EnquoteMark, Literal, SupMark, SubMark, SmallCapsMark, UrlMark, Variable} from "./common"
-import {Doc, EmMark, LinkMark, StrongMark, Text} from "prosemirror-old/dist/schema-basic"
+import {Doc, EmMark, StrongMark, Text} from "prosemirror-old/dist/schema-basic"
 import {MarkType, Schema} from "prosemirror-old/dist/model"
 
 class NoCaseMark extends MarkType {

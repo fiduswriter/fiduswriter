@@ -1,4 +1,5 @@
 import {FormatCitations} from "../../citations/format"
+import {cslBibSchema} from "../../bibliography/schema/csl-bib"
 import {docSchema} from "../../schema/document"
 import {descendantNodes} from "../tools/doc-contents"
 
@@ -65,13 +66,14 @@ export class OdtExporterCitations {
         this.pmCits = docSchema.parseDOM(dom, {topNode: bodyNode}).toJSON().content
 
         // Now we do the same for the bibliography.
-        bodyNode = docSchema.nodeFromJSON({type:'body'})
-        dom = bodyNode.toDOM()
-        dom.innerHTML = this.citFm.bibHTML
-        // Remove empty bibliography header (used in web version)
-        dom.removeChild(dom.firstElementChild)
-        this.pmBib = docSchema.parseDOM(dom, {topNode: bodyNode}).toJSON()
-        // use the References style for the paragraphs in the bibliography
-        this.pmBib.type = 'bibliography'
+        let bibNode = cslBibSchema.nodeFromJSON({type:'cslbib'})
+        dom = bibNode.toDOM()
+        dom.innerHTML = this.citFm.bibliography[1].map(
+            // There is a space inserted, apparently at random. We'll remove it.
+            cslHTML => cslHTML.replace(
+                    '<div class="csl-left-margin"> ',
+                    '<div class="csl-left-margin">')
+            ).join('')
+        this.pmBib = cslBibSchema.parseDOM(dom, {topNode: bibNode}).toJSON()
     }
 }

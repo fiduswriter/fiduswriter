@@ -1,6 +1,3 @@
-import {citeprocSys} from "./citeproc-sys"
-import {CSLExporter} from "../bibliography/exporter/csl"
-import {citationDefinitions} from "../style/citation-definitions"
 import {FormatCitations} from "./format"
 /**
  * Render citations into the DOM.
@@ -40,7 +37,7 @@ export class RenderCitations {
         for (let j = 0; j < this.fm.citationTexts.length; j++) {
             let citationText = this.fm.citationTexts[j][0][1]
             if ('note' === this.fm.citationType) {
-                citationText = '<span class="pagination-footnote"><span><span>' + citationText + '</span></span></span>'
+                citationText = `<span class="pagination-footnote"><span><span>${citationText}</span></span></span>`
             }
             this.allCitationNodes[j].innerHTML = citationText
         }

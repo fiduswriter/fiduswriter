@@ -1,11 +1,13 @@
-import {formatDateString, addRemoveListHandler, dateFormat} from "../tools"
-import {BibEntryForm} from "../form/form"
+import {addRemoveListHandler, litToText, nameToText} from "../tools"
+//import {BibEntryForm} from "../form/form"
+import {BibEntryForm} from "../form"
 import {editCategoriesTemplate, categoryFormsTemplate, bibtableTemplate,
     bibliographyCategoryListItemTemplate} from "./templates"
 import {BibliographyDB} from "../database"
-import {BibEntryTypes} from "../statics"
-import {BibLatexImporter} from "../importer/biblatex"
-import {BibLatexExporter} from "../exporter/biblatex"
+import {BibTypes} from "../statics"
+import {BibTypeTitles} from "../titles"
+import {BibLatexFileImporter} from "../import"
+import {BibLatexFileExporter} from "../export"
 import {addDropdownBox} from "../../common/common"
 import {Menu} from "../../menu/menu"
 
@@ -171,47 +173,29 @@ export class BibliographyOverview {
      */
     appendToBibTable(pk, bibInfo) {
         let $tr = jQuery('#Entry_' + pk)
-        //reform author field
-        let bibauthor = bibInfo.author || bibInfo.editor
-        // If neither author nor editor were registered, use an empty string instead of nothing.
-        // TODO: Such entries should likely not be accepted by the importer.
-        if (typeof bibauthor === 'undefined') bibauthor = ''
-        let bibauthors = bibauthor.split('} and {')
-        //if there are more authors, add "and others" behind.
-        let andOthers = (1 < bibauthors.length) ? gettext(' and others') : ''
-        bibauthor = bibauthors[0]
-        let bibauthorList = bibauthor.split('} {')
-        if (1 < bibauthorList.length) {
-            bibauthor = bibauthorList[1] + ', ' + bibauthorList[0]
-        } else {
-            bibauthor = bibauthorList[0]
-        }
-        bibauthor = bibauthor.replace(/[{}]/g, '')
-        bibauthor += andOthers
-        // If title is undefined, set it to an empty string.
-        // TODO: Such entries should likely not be accepted by the importer.
-        let bibtitle = typeof(bibInfo.title) === 'undefined' ? '' : bibInfo.title
+
+        let bibauthors = bibInfo.fields.author || bibInfo.fields.editor
 
         if (0 < $tr.length) { //if the entry exists, update
 
             $tr.replaceWith(bibtableTemplate({
                 'id': pk,
-                'cats': bibInfo.entry_cat.split(','),
-                'type': bibInfo.entry_type,
-                'typetitle': BibEntryTypes[bibInfo.entry_type]['title'],
-                'title': bibtitle,
-                'author': bibauthor,
-                'published': formatDateString(bibInfo.date)
+                'cats': bibInfo.entry_cat,
+                'type': bibInfo.bib_type,
+                'typetitle': BibTypeTitles[bibInfo.bib_type],
+                'title': bibInfo.fields.title ? litToText(bibInfo.fields.title) : gettext('Untitled'),
+                'author': bibauthors ? nameToText(bibauthors) : '',
+                'published': bibInfo.fields.date ? bibInfo.fields.date.replace('/', ' ') : ''
             }))
         } else { //if this is the new entry, append
             jQuery('#bibliography > tbody').append(bibtableTemplate({
                 'id': pk,
-                'cats': bibInfo.entry_cat.split(','),
-                'type': bibInfo.entry_type,
-                'typetitle': BibEntryTypes[bibInfo.entry_type]['title'],
-                'title': bibtitle,
-                'author': bibauthor,
-                'published': formatDateString(bibInfo.date)
+                'cats': bibInfo.entry_cat,
+                'type': bibInfo.bib_type,
+                'typetitle': BibTypeTitles[bibInfo.bib_type],
+                'title': bibInfo.fields.title ? litToText(bibInfo.fields.title) : gettext('Untitled'),
+                'author': bibauthors ? nameToText(bibauthors) : '',
+                'published': bibInfo.fields.date ? bibInfo.fields.date.replace('/', ' ') : ''
             }))
         }
     }
@@ -286,10 +270,11 @@ export class BibliographyOverview {
 
         jQuery(document).on('click', '.edit-bib', function () {
             let eID = jQuery(this).attr('data-id')
-            let eType = jQuery(this).attr('data-type')
-            new BibEntryForm(eID, eType, that.bibDB.db, that.bibDB.cats, false, function(bibEntryData){
-                that.createBibEntry(bibEntryData)
+            let form = new BibEntryForm(eID, that.bibDB, newBibPks => {
+                 that.addBibList(newBibPks)
             })
+            form.init()
+
         })
 
         //open dropdown for bib category
@@ -326,7 +311,7 @@ export class BibliographyOverview {
 
         //import a bib file
         jQuery('.import-bib').bind('click', function () {
-            new BibLatexImporter(that.bibDB, function(bibEntries) {
+            new BibLatexFileImporter(that.bibDB, function(bibEntries) {
                 that.addBibList(bibEntries)
             })
         })
@@ -341,7 +326,7 @@ export class BibliographyOverview {
             }
 
             jQuery('.entry-select:checked').each(function () {
-                ids[ids.length] = jQuery(this).attr('data-id')
+                ids[ids.length] = parseInt(jQuery(this).attr('data-id'))
             })
 
             if (0 === ids.length) {
@@ -353,7 +338,8 @@ export class BibliographyOverview {
                 that.deleteBibEntryDialog(ids)
                 break
             case 'export':
-                new BibLatexExporter(ids, that.bibDB.db, true)
+                let exporter = new BibLatexFileExporter(that.bibDB, ids)
+                exporter.init()
                 break
             }
         })
@@ -378,13 +364,5 @@ export class BibliographyOverview {
             that.startBibliographyTable()
         })
     }
-
-    createBibEntry(bibEntryData) {
-        let that = this
-        this.bibDB.createBibEntry(bibEntryData, function(newBibPks) {
-             that.addBibList(newBibPks)
-        })
-    }
-
 
 }

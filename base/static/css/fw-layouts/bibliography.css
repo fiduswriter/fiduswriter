@@ -1,36 +1,223 @@
-#createbook {
+#bib-dialog {
     margin-top: 18px;
-    width: 729px !important;
-    overflow: visible;
 }
 
-#createbook .ui-dialog-content-table, .name-list-table {
-    table-layout: fixed;
+#bib-dialog .select-container {
+    margin-bottom: 18px;
+    margin-right: 71px;
+    position: relative;
 }
-#createbook .ui-dialog-content-table th, #createbook .ui-dialog-content-table td {
-  vertical-align: top;
-}
-#createbook .ui-dialog-content-table th {
-  padding-left: 10px;
-  padding-right: 4px;
-  width: 170px;
-}
-#createbook .ui-dialog-content-table td {
+
+#bib-dialog .select-container select {
+    display: inline-block;
     width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
 }
-#createbook .ui-dialog-content-table > tbody > tr > th > h4 {
-    height: 36px;
-    display: table-cell;
-    vertical-align: middle;
+
+#bib-dialog .select-container select option.placeholder {
+    display: none;
 }
-#createbook .list-input-wrapper {
-    white-space: nowrap;
+
+#bib-dialog .select-container .select-arrow {
+    position: absolute;
+	top: 14px;
+	right: -10px;
+	pointer-events: none;
 }
-#createbook .list-input-wrapper > td:first-child {
-    width: 91%;
+
+#bib-dialog .ui-tabs-panel {
+    height: 439px;
 }
-#createbook .list-input-wrapper:last-child > td {
-    padding-bottom: 0 !important;
+
+#bib-dialog .fw-dialog-table th {
+    vertical-align: top;
+    padding: 0 6px 0 8px;
+    width: 164px;
+}
+
+#bib-dialog .entry-field .ProseMirror, #bib-dialog .entry-field input[type=text] {
+    width: 686px;
+}
+
+#bib-dialog .entry-field input[type=text] {
+    width: 678px;
+}
+
+#bib-dialog :focus {
+  outline-color: transparent;
+  outline: 0;
+}
+
+#bib-dialog .entry-field.fw-fomt-error input[type=text] {
+    background-color: #f34141;
+}
+
+
+#bib-dialog .entry-field .selection-list {
+    position: relative
+}
+
+#bib-dialog .entry-field select {
+    padding: 0px 3px 0px 13px;
+    border-color: #c9c9c9;
+    background-color: #f9f9f9;
+    height: 38px;
+    width: 561px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    display: inline-block;
+}
+
+#bib-dialog .entry-field .select-arrow {
+    position: absolute;
+	top: 14px;
+	right: 28px;
+	pointer-events: none;
+}
+
+#bib-dialog .input-with-button {
+    width: 705px;
+}
+
+#bib-dialog .input-with-button button {
+    width: 81px;
+    float: left;
+    margin-right: 18px;
+}
+
+#bib-dialog .input-with-button .field-part {
+    display: inline-block;
+    margin-right: 18px;
+}
+
+#bib-dialog .input-with-button .field-part-huge .ProseMirror {
+    width: 250px;
+}
+
+#bib-dialog .input-with-button .field-part-long .ProseMirror {
+    width: 130px;
+}
+
+#bib-dialog .input-with-button .field-part-short .ProseMirror {
+    width: 58px;
+}
+
+#bib-dialog .input-with-button .field-part-single .ProseMirror {
+    width: 561px;
+}
+
+#bib-dialog div.literal::before {
+    content: attr(data-placeholder);
+    color: #cecece;
+}
+
+#bib-dialog .ProseMirror-focused div.literal,
+#bib-dialog .ProseMirror-focused pre.long-literal,
+#bib-dialog .tokenfield.focused,
+#bib-dialog .tokenfield.focused .tokenfield-input {
+    background-color: #fbf9d2;
+}
+
+#bib-dialog .fw-pulldown.fw-center {
+    left: 10px;
+    top: 40px;
+}
+
+.tokenfield {
+    width: 678px;
+    position: relative;
+}
+
+.tokenfield:before, .tokenfield:after {
+    content: " ";
+    display: table;
+}
+
+.tokenfield:after {
+    clear: both;
+}
+
+.tokenfield.tokenfield-mode-tokens {
+    display: block;
+    min-height: 34px;
+    padding: 8px 3px 0px 3px;
+    font-size: 14px;
+    line-height: 1.42857;
+    color: #555555;
+    background-color: #fff;
+    border: 1px solid #d3d3d3;
+}
+
+.tokenfield .tokenfield-set > ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.tokenfield .tokenfield-set > ul > li {
+    float: left;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    padding: 0 5px;
+    border-radius: 4px;
+    line-height: 1.5;
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.08);
+}
+
+.tokenfield .tokenfield-set > ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+.tokenfield .tokenfield-set > ul > li {
+    float: left;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    padding: 0 5px;
+    border-radius: 3px;
+    line-height: 1.5;
+    cursor: pointer;
+    color: #fff;
+    background: #76a698;
+    border: 1px solid #7d948e;
+}
+
+.tokenfield .tokenfield-input {
+    margin-bottom: 5px;
+    border: none;
+    outline: none;
+    float: left;
+}
+
+div.literal, pre.long-literal {
+    font-size: 14px;
+    line-height: 1.33em;
+    border: solid 1px #d3d3d3;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 8px 3px 0px 3px;
+    height: 28px;
+    background-color: #fff;
+}
+
+pre.long-literal {
+    min-height: 112px;
+    height: auto;
+}
+
+div.literal strong, pre.long-literal strong  {
+    font-weight: bold;
+}
+
+div.literal em, pre.long-literal em {
+    font-style: italic;
 }
 
 .list-input-wrapper .add-remove-list {
@@ -48,27 +235,41 @@
     content: '\2795';
 }
 
-#createbook .date-form input {
+#bib-dialog .date-form input {
     width: 66px;
     margin-right: 1px;
 }
 
-#createbook .date-form .separator {
+#bib-dialog .date-form .separator {
     display: inline-block;
     width: 15px;
     text-align: center;
 }
 
-#createbook td .dk-selected, #createbook td .dk-select-options {
+#bib-dialog td .dk-selected, #bib-dialog td .dk-select-options {
     width: 486px !important;
 }
 
-#createbook th .dk-selected, #createbook th .dk-select-options {
+#bib-dialog th .dk-selected, #bib-dialog th .dk-select-options {
     width: 140px !important;
 }
 
-.ui-dialog-buttonpane.createbook {
-    margin-right: 30px;
+#bib-dialog sup {
+    vertical-align: super;
+    font-size: smaller;
+}
+
+#bib-dialog sub {
+    vertical-align: sub;
+    font-size: smaller;
+}
+
+#bib-dialog .smallcaps {
+    font-variant: small-caps;
+}
+
+#bib-dialog .nocase {
+    text-decoration: underline;
 }
 
 .checkable-label {

@@ -6,23 +6,9 @@
 
 {% block title %}{{user.readable_name}}{% endblock %}
 {% block extraheaders %}
-    {% if not can_edit %}
-        <script type="text/javascript">
-            var roleTagList=['{{ role_tag_list|safeseq|join:"', '"}}'];
-        </script>
-        {% compress js %}
-        <script src="{{ STATIC_URL }}js/libs/tag-it.min.js" type="text/javascript" charset="utf-8"></script>
-        {% endcompress %}
-
-        {% compress css %}
-        <link href="{{ STATIC_URL }}css/libs/jquery.tagit.css" rel="stylesheet" type="text/css">
-        {% endcompress %}
-    {% endif %}
-
     <script src="{{ STATIC_URL }}js/profile.es5.js"></script>
-
     {% compress css %}
-    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/profile.css" />
+        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/profile.css" />
     {% endcompress %}
 {% endblock %}
 

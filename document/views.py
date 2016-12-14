@@ -457,47 +457,6 @@ def access_right_save_js(request):
 
 
 @login_required
-@transaction.atomic
-def submit_right_js(request):
-    status = 405
-    response = {}
-    if request.is_ajax() and request.method == 'POST':
-        tgt_doc = request.POST.get('documentId')
-        tgt_users = request.POST.getlist('collaborators[]')
-        doc_id = int(tgt_doc)
-        document = Document.objects.get(id=doc_id)
-        tgt_right = 'read-without-comments'
-        try:
-            the_user = User.objects.filter(is_superuser=1)
-            if len(the_user) > 0:
-                document.owner_id = the_user[0].id
-                document.save()
-        except ObjectDoesNotExist:
-            pass
-        for tgt_user in tgt_users:
-            collaborator_id = int(tgt_user)
-            try:
-                access_right = AccessRight.objects.get(
-                    document_id=doc_id, user_id=collaborator_id)
-                if access_right.rights != tgt_right:
-                    access_right.rights = tgt_right
-            except ObjectDoesNotExist:
-                access_right = AccessRight.objects.create(
-                    document_id=doc_id,
-                    user_id=collaborator_id,
-                    rights=tgt_right,
-                )
-                send_share_notification(
-                    request, doc_id, collaborator_id, tgt_right)
-            access_right.save()
-        status = 201
-    return JsonResponse(
-        response,
-        status=status
-    )
-
-
-@login_required
 def import_js(request):
     response = {}
     status = 405
@@ -552,34 +511,13 @@ def upload_revision_js(request):
     )
 
 
-@login_required
-def profile_js(request):
-    response = {}
-    status = 405
-    if request.is_ajax() and request.method == 'POST':
-        id = request.POST["id"]
-        the_user = User.objects.filter(id=id)
-        if len(the_user) > 0:
-            response['user'] = {}
-            response['user']['id'] = the_user[0].id
-            response['user']['username'] = the_user[0].username
-            response['user']['first_name'] = the_user[0].first_name
-            response['user']['last_name'] = the_user[0].last_name
-            response['user']['email'] = the_user[0].email
-            status = 200
-        else:
-            status = 201
-    return JsonResponse(
-        response,
-        status=status
-    )
-
-
 # Download a revision that was previously uploaded
 @login_required
 def get_revision(request, revision_id):
+    if not request.user.is_staff:
+        return HttpResponse(status=405)
     revision = DocumentRevision.objects.get(pk=int(revision_id))
-    if not request.user.is_staff and revision.document.owner != request.user:
+    if revision.document.owner != request.user:
         return HttpResponse(status=405)
     http_response = HttpResponse(
         revision.file_object.file,
@@ -610,13 +548,7 @@ def delete_revision_js(request):
     )
 
 
-# For upgrading old docs and to merge outstanding diffs.
-@staff_member_required
-def maintenance(request):
-    response = {}
-    return render(request, 'document/maintenance.html', response)
-
-
+# maintenance views
 @staff_member_required
 def get_all_docs_js(request):
     response = {}
@@ -703,6 +635,84 @@ def update_revision_js(request):
         revision.file_object = request.FILES['file']
         revision.file_object.name = file_name
         revision.save()
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+# OJS connected views
+# TODO: This seems to give any user the ability to change the access rights of
+# any document, with no checks whether that user actually was allowed to access
+# the document before.
+@login_required
+@transaction.atomic
+def submit_right_js(request):
+    status = 405
+    response = {}
+    if (
+        request.is_ajax() and
+        request.method == 'POST' and
+        settings.SERVER_INFO['EXPERIMENTAL'] is True
+    ):
+        tgt_doc = request.POST.get('documentId')
+        tgt_users = request.POST.getlist('collaborators[]')
+        doc_id = int(tgt_doc)
+        document = Document.objects.get(id=doc_id)
+        tgt_right = 'read-without-comments'
+        try:
+            the_user = User.objects.filter(is_superuser=1)
+            if len(the_user) > 0:
+                document.owner_id = the_user[0].id
+                document.save()
+        except ObjectDoesNotExist:
+            pass
+        for tgt_user in tgt_users:
+            collaborator_id = int(tgt_user)
+            try:
+                access_right = AccessRight.objects.get(
+                    document_id=doc_id, user_id=collaborator_id)
+                if access_right.rights != tgt_right:
+                    access_right.rights = tgt_right
+            except ObjectDoesNotExist:
+                access_right = AccessRight.objects.create(
+                    document_id=doc_id,
+                    user_id=collaborator_id,
+                    rights=tgt_right,
+                )
+                send_share_notification(
+                    request, doc_id, collaborator_id, tgt_right)
+            access_right.save()
+        status = 201
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+# TODO: This seems to give any user with a valid login access to all users
+# email addresses. This will need to be secured in some way.
+@login_required
+def profile_js(request):
+    response = {}
+    status = 405
+    if (
+        request.is_ajax() and
+        request.method == 'POST' and
+        settings.SERVER_INFO['EXPERIMENTAL'] is True
+    ):
+        id = request.POST["id"]
+        the_user = User.objects.filter(id=id)
+        if len(the_user) > 0:
+            response['user'] = {}
+            response['user']['id'] = the_user[0].id
+            response['user']['username'] = the_user[0].username
+            response['user']['first_name'] = the_user[0].first_name
+            response['user']['last_name'] = the_user[0].last_name
+            response['user']['email'] = the_user[0].email
+            status = 200
+        else:
+            status = 201
     return JsonResponse(
         response,
         status=status

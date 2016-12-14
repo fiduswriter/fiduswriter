@@ -69,8 +69,8 @@ export let selectJournal = function(editor) {
 
 
         diaButtons[gettext("Submit")] = function() {
-            savecopy(editor.doc, editor.bibDB.bibDB, editor.imageDB.db,
-                editor.bibDB.bibDB, editor.imageDB.db, editor.user,
+            savecopy(editor.doc, editor.bibDB.db, editor.imageDB.db,
+                editor.bibDB.db, editor.imageDB.db, editor.user,
                 function(doc, docInfo, newBibEntries){
             		setRights(editor.doc.id,doc.id,editor.user,editor.doc.access_rights)
                     let dataToOjs = new window.FormData()

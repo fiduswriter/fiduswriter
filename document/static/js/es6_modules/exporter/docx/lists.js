@@ -49,7 +49,7 @@ export class DocxExporterLists {
             let p = []
 
             p.push(
-                new window.Promise((resolve) => {
+                new Promise((resolve) => {
                     that.addNumberingXml().then(function(){
                         resolve()
                     })
@@ -58,15 +58,15 @@ export class DocxExporterLists {
 
 
             p.push(
-                new window.Promise((resolve) => {
+                new Promise((resolve) => {
                     that.addListParagraphStyle().then(function(){
                         resolve()
                     })
                 })
             )
-            return window.Promise.all(p)
+            return Promise.all(p)
         } else {
-            return window.Promise.resolve()
+            return Promise.resolve()
         }
     }
 
@@ -89,7 +89,7 @@ export class DocxExporterLists {
             that.numberingXml = numberingXml
             that.rels.addNumberingRel()
             that.addUsedListTypes()
-            return window.Promise.resolve()
+            return Promise.resolve()
         })
     }
 
@@ -101,7 +101,7 @@ export class DocxExporterLists {
                 let stylesEl = that.styleXml.querySelector('styles')
                 stylesEl.insertAdjacentHTML('beforeEnd', DEFAULT_LISTPARAGRAPH_XML)
             }
-            return window.Promise.resolve()
+            return Promise.resolve()
         })
     }
 

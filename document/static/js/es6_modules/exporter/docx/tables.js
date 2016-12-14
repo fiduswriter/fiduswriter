@@ -54,7 +54,7 @@ export class DocxExporterTables {
         let that = this
         return this.exporter.xml.getXml(this.styleFilePath).then(function(styleXml) {
             that.styleXml = styleXml
-            return window.Promise.resolve()
+            return Promise.resolve()
         })
     }
 

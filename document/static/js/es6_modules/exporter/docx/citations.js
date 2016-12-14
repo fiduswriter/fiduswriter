@@ -67,7 +67,7 @@ export class DocxExporterCitations {
         // Now we do the same for the bibliography.
         bodyNode = docSchema.nodeFromJSON({type:'body'})
         dom = bodyNode.toDOM()
-        dom.innerHTML = this.citFm.bibliographyHTML
+        dom.innerHTML = this.citFm.bibHTML
         // Remove empty bibliography header (used in web version)
         dom.removeChild(dom.firstElementChild)
         this.pmBib = docSchema.parseDOM(dom, {topNode: bodyNode}).toJSON()

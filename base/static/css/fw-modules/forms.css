@@ -41,8 +41,8 @@ textarea:focus {
 /*
  * Bibliography entry input
  */
-#createbook input.entryForm,
-#createbook input.fw-input,
+/*#bib-dialog input.entryForm,
+#bib-dialog input.fw-input,*/
 #uploadimage input.entryForm,
 #uploadimage input.fw-input,
 #book-dialog input.entryForm,

@@ -58,11 +58,6 @@ urlpatterns = [
         name='document_review_js'
     ),
     url(
-        '^maintenance/$',
-        views.maintenance,
-        name='update_all_docs'
-    ),
-    url(
         '^maintenance/get_all/$',
         views.get_all_docs_js,
         name='get_all_docs_js'

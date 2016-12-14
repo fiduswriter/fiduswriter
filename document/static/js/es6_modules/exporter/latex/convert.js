@@ -6,7 +6,7 @@ export class LatexExporterConvert {
         this.imageDB = imageDB
         this.bibDB = bibDB
         this.imageIds = []
-        this.bibIds = []
+        this.usedBibDB = {}
         // While walking the tree, we take note of the kinds of features That
         // are present in the file, so that we can assemble an preamble and
         // epilogue based on our findings.
@@ -22,7 +22,7 @@ export class LatexExporterConvert {
         let returnObject = {
             latex,
             imageIds: this.imageIds,
-            bibIds: this.bibIds
+            usedBibDB: this.usedBibDB
         }
         return returnObject
     }
@@ -185,25 +185,41 @@ export class LatexExporterConvert {
                     // multi source citation without page numbers or text before.
                     let citationEntryKeys = []
 
-                    citationEntries.forEach(function(citationEntry) {
+                    let allCitationItemsPresent = citationEntries.every(function(citationEntry) {
                         let bibDBEntry = that.bibDB.db[citationEntry]
                         if (bibDBEntry) {
-                            citationEntryKeys.push(bibDBEntry.entry_key)
-                            if (that.bibIds.indexOf(citationEntry) === -1) {
-                                that.bibIds.push(citationEntry)
+                            if (!bibDBEntry) {
+                                // Not present in bibliography database, skip it.
+                                // TODO: Throw an error?
+                                return false
                             }
+                            if (!that.usedBibDB[citationEntry]) {
+                                let citationKey = that.createUniqueCitationKey(
+                                    bibDBEntry.entry_key
+                                )
+                                that.usedBibDB[citationEntry] = Object.assign({}, bibDBEntry)
+                                that.usedBibDB[citationEntry].entry_key = citationKey
+                            }
+                            citationEntryKeys.push(that.usedBibDB[citationEntry].entry_key)
                         }
+                        return true
                     })
-
-                    citationCommand += `{${citationEntryKeys.join(',')}}`
+                    if (allCitationItemsPresent) {
+                        citationCommand += `{${citationEntryKeys.join(',')}}`
+                    } else {
+                        citationCommand = false
+                    }
                 } else {
                     if (citationEntries.length > 1) {
                         citationCommand += 's' // Switching from \autocite to \autocites
                     }
 
-                    citationEntries.forEach(function(citationEntry, index) {
-                        if (!that.bibDB.db[citationEntry]) {
-                            return false // Not present in bibliography database, skip it.
+                    let allCitationItemsPresent = citationEntries.every(function(citationEntry, index) {
+                        let bibDBEntry = that.bibDB.db[citationEntry]
+                        if (!bibDBEntry) {
+                            // Not present in bibliography database, skip it.
+                            // TODO: Throw an error?
+                            return false
                         }
 
                         if (citationBefore[index] && citationBefore[index].length > 0) {
@@ -217,15 +233,27 @@ export class LatexExporterConvert {
                         }
                         citationCommand += '{'
 
-                        citationCommand += that.bibDB.db[citationEntry].entry_key
-                        if (that.bibIds.indexOf(citationEntry) === -1) {
-                            that.bibIds.push(citationEntry)
+                        if (!that.usedBibDB[citationEntry]) {
+                            let citationKey = that.createUniqueCitationKey(
+                                bibDBEntry.entry_key
+                            )
+                            that.usedBibDB[citationEntry] = Object.assign({}, bibDBEntry)
+                            that.usedBibDB[citationEntry].entry_key = citationKey
                         }
+                        citationCommand += that.usedBibDB[citationEntry].entry_key
                         citationCommand += '}'
+
+                        return true
                     })
+
+                    if (!allCitationItemsPresent) {
+                        citationCommand = false
+                    }
                 }
-                content += citationCommand
-                this.features.citations = true
+                if (citationCommand) {
+                    content += citationCommand
+                    this.features.citations = true
+                }
                 break
             case 'figure':
                 let latexPackage
@@ -280,7 +308,9 @@ export class LatexExporterConvert {
             }
         }
 
-        if (placeFootnotesAfterBlock && options.unplacedFootnotes.length) {
+        if (placeFootnotesAfterBlock &&
+            options.unplacedFootnotes &&
+            options.unplacedFootnotes.length) {
             // There are footnotes that needed to be placed behind the node.
             // This happens in the case of headlines and lists.
             if (options.unplacedFootnotes.length > 1) {
@@ -296,6 +326,21 @@ export class LatexExporterConvert {
         }
 
         return start + content + end
+    }
+
+    // The database doesn't ensure that citation keys are unique.
+    // So here we need to make sure that the same key is not used twice in one
+    // document.
+    createUniqueCitationKey(suggestedKey) {
+        let usedKeys = Object.keys(this.usedBibDB).map(key=>{
+            return this.usedBibDB[key].entry_key
+        })
+        if (usedKeys.includes(suggestedKey)) {
+            suggestedKey += 'X'
+            return this.createUniqueCitationKey(suggestedKey)
+        } else {
+            return suggestedKey
+        }
     }
 
     postProcess(latex) {

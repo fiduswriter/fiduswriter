@@ -28,7 +28,7 @@ export class ModMenusActions {
                 // We are copying from and to the same user. We don't need different databases for this.
                 savecopy(that.mod.editor.doc, that.mod.editor.bibDB.db, that.mod.editor.imageDB.db,
                     that.mod.editor.bibDB.db, that.mod.editor.imageDB.db, that.mod.editor.user,
-                    function(doc, docInfo, newBibEntries){
+                    function(doc, docInfo, savedBibEntries){
                         window.location.href = `/document/${doc.id}/`
                 })
             } else {
@@ -41,7 +41,7 @@ export class ModMenusActions {
                     that.mod.editor.getImageDB(that.mod.editor.user.id, function(){
                         savecopy(that.mod.editor.doc, oldBibDB, oldImageDB, that.mod.editor.bibDB.db,
                                 that.mod.editor.imageDB.db, that.mod.editor.user,
-                                function(doc, docInfo, newBibEntries){
+                                function(doc, docInfo, savedBibEntries){
                             window.location.href = `/document/${doc.id}/`
                         })
                     })

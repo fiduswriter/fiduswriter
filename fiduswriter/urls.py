@@ -1,6 +1,7 @@
 from django.conf.urls import include, url
 from django.http import HttpResponse
 from django.contrib import admin
+from adminplus.sites import AdminSitePlus
 import settings
 from user.views import logout_page
 from django.contrib.flatpages import views as flatpages_views
@@ -9,7 +10,8 @@ from document.views import index as document_index
 from django.views.i18n import javascript_catalog as i18n_javascript_catalog
 from django.contrib.auth.views import login as login_view
 
-
+admin.site = AdminSitePlus()
+admin.sites.site = admin.site
 admin.autodiscover()
 
 js_info_dict = {
@@ -17,7 +19,6 @@ js_info_dict = {
         'django.conf',
     ),
 }
-
 
 urlpatterns = [
     url('^$', document_index, name='index'),

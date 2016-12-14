@@ -110,6 +110,22 @@
     background: #585858;
 }
 
+.fw-button.fw-left {
+    float: left;
+}
+
+.fw-button.fw-strong {
+    font-weight: bold;
+}
+
+.fw-button.fw-em {
+    font-style: italic;
+}
+
+.fw-button.fw-smallcaps {
+    font-variant: small-caps;
+}
+
 .fw-button.fw-socialaccount {
     display: inline-block;
     width: auto;

@@ -131,7 +131,7 @@ export class PrintBook {
 
     fillPrintPageTwo() {
         let bibliography = jQuery('#bibliography')
-        jQuery(bibliography).html(this.citRenderer.fm.bibliographyHTML)
+        jQuery(bibliography).html(this.citRenderer.fm.bibHTML)
 
         if (jQuery(bibliography).text().trim().length===0) {
             jQuery(bibliography).parent().remove()

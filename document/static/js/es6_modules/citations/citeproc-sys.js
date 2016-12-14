@@ -1,21 +1,39 @@
 /* Connects Fidus Writer citation system with citeproc */
 import {citationDefinitions} from "../style/citation-definitions"
+import {CSLExporter} from "biblatex-csl-converter"
 
 export class citeprocSys {
-    constructor(cslDB) {
-        this.cslDB = cslDB
+    constructor(bibDB) {
+        this.bibDB = bibDB
         this.abbreviations = {
             "default": {}
         }
         this.abbrevsname = "default"
+        // We cache values retrieved once.
+        this.items = {}
+        this.missingItems = []
     }
 
     retrieveItem(id) {
-        return this.cslDB[id]
+        if (!this.items[id]) {
+            if (this.bibDB.db[id]) {
+                let cslGetter = new CSLExporter(this.bibDB.db, [id])
+                Object.assign(this.items, cslGetter.output)
+            } else {
+                this.missingItems.push(id)
+                this.items[id] = {author:{literal:''}, type: 'article', id}
+            }
+        }
+        return this.items[id]
     }
 
     retrieveLocale(lang) {
-        return citationDefinitions.locals[lang]
+        if (citationDefinitions.locals[lang]) {
+            return citationDefinitions.locals[lang]
+        } else {
+            return citationDefinitions.locals['en-US']
+        }
+
     }
 
     getAbbreviation(dummy, obj, jurisdiction, vartype, key) {

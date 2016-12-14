@@ -30,7 +30,7 @@ The following are instructions working on Ubuntu 14.04. Make adjustments as need
 1. Install the development packages of libjpeg, gettext, zlib, python, npm and the python virtual environment creator by running:
 
   > `sudo apt-get install libjpeg-dev python-dev python-virtualenv gettext zlib1g-dev git npm nodejs nodejs-legacy`
-  
+
 2. Download the Fidus Writer sources to your computer from github by running:
 
   > `git clone https://github.com/fiduswriter/fiduswriter.git`
@@ -139,7 +139,7 @@ Advanced options
 
 ### Development/upgrade:
 
-  1. Before upgrading, update all your documents to the latest document version. An administrator needs to navigate to `/document/maintenance/` on your server using a browser.
+  1. Before upgrading, update all your documents to the latest document version. An administrator needs to navigate to `/admin/maintenance/` on your server using a browser.
 
   2. Download the updated sources. If you have installed Fidus Writer from github and the upgrade is minor, the command will likely be:
 

@@ -21,7 +21,7 @@ export class BaseHTMLExporter extends BaseDOMExporter {
             this.bibDB,
             true,
             function(){
-                that.addBibliographyHTML(citRenderer.fm.bibliographyHTML)
+                that.addBibliographyHTML(citRenderer.fm.bibHTML)
                 that.contents = that.cleanHTML(that.contents)
                 callback()
             })

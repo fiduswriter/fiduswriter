@@ -58,13 +58,13 @@ export class OdtExporterImages {
             }
         )
 
-        return new window.Promise((resolveExportImages) => {
+        return new Promise((resolveExportImages) => {
             let p = []
 
             usedImgs.forEach((image) => {
                 let imgDBEntry = that.imageDB.db[image]
                 p.push(
-                    new window.Promise((resolve) => {
+                    new Promise((resolve) => {
                         JSZipUtils.getBinaryContent(
                             imgDBEntry.image,
                             function(err, imageFile) {
@@ -80,7 +80,7 @@ export class OdtExporterImages {
                 )
             })
 
-            window.Promise.all(p).then(function(){
+            Promise.all(p).then(function(){
                 resolveExportImages()
             })
         })

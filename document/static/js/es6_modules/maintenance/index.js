@@ -1,12 +1,12 @@
 import {ProseMirror} from "prosemirror-old/dist/edit/main"
 import {Step} from "prosemirror-old/dist/transform"
 import {collabEditing} from "prosemirror-old/dist/collab"
-import {updateFileDoc} from "../../importer/file"
-import {updateDoc, getMetadata, getSettings} from "../../schema/convert"
-import {docSchema} from "../../schema/document"
-import {addAlert, csrfToken} from "../../common/common"
-import {Menu} from "../../menu/menu"
-import {FW_FILETYPE_VERSION} from "../../exporter/native"
+import {updateFileDoc, updateFileBib} from "../importer/file"
+import {updateDoc, getMetadata, getSettings} from "../schema/convert"
+import {docSchema} from "../schema/document"
+import {addAlert, csrfToken} from "../common/common"
+import {Menu} from "../menu/menu"
+import {FW_FILETYPE_VERSION} from "../exporter/native"
 import JSZip from "jszip"
 import JSZipUtils from "jszip-utils"
 
@@ -208,13 +208,16 @@ export class DocMaintenance {
                         openedFiles[fileName] = fileContent
                     }))
                 })
-                window.Promise.all(p).then(function(){
-                    let doc = window.JSON.parse(openedFiles["document.json"])
+                Promise.all(p).then(function(){
                     let filetypeVersion = openedFiles["filetype-version"]
-                    let newDoc = updateFileDoc(doc, filetypeVersion)
-                    if (newDoc !== doc || filetypeVersion !== FW_FILETYPE_VERSION) {
+                    if (filetypeVersion !== FW_FILETYPE_VERSION) {
+                        let doc = window.JSON.parse(openedFiles["document.json"])
+                        let bib = window.JSON.parse(openedFiles["bibliography.json"])
+                        let newDoc = updateFileDoc(doc, filetypeVersion)
+                        let newBib = updateFileBib(bib, filetypeVersion)
                         zipfs.file("filetype-version", FW_FILETYPE_VERSION)
                         zipfs.file("document.json", window.JSON.stringify(newDoc))
+                        zipfs.file("bibliography.json", window.JSON.stringify(newBib))
                         that.saveRevision(id, zipfs)
                     } else {
                         that.revSavesLeft--

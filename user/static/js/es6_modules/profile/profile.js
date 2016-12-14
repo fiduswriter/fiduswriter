@@ -143,8 +143,8 @@ let saveProfile = function() {
         error: function (jqXHR, textStatus, errorThrown) {
             if(422 === jqXHR.status) {
                 jQuery('#edit_user').removeAttr("disabled")
-                let response = $.parseJSON(jqXHR.responseText)
-                $.each(response.errors, function(fieldname, errmsg) {
+                let response = jQuery.parseJSON(jqXHR.responseText)
+                jQuery.each(response.errors, function(fieldname, errmsg) {
                     let firstError = '<span class="form-error-msg">'+errmsg[0]+'</span>'
                     jQuery('#'+fieldname).after(firstError)
                 })

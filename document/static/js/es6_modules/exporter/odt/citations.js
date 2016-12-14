@@ -1,6 +1,6 @@
 import {FormatCitations} from "../../citations/format"
-import {cslBibSchema} from "../../bibliography/schema/csl-bib"
 import {docSchema} from "../../schema/document"
+import {cslBibSchema} from "../../bibliography/schema/csl-bib"
 import {descendantNodes} from "../tools/doc-contents"
 
 export class OdtExporterCitations {
@@ -66,9 +66,10 @@ export class OdtExporterCitations {
         this.pmCits = docSchema.parseDOM(dom, {topNode: bodyNode}).toJSON().content
 
         // Now we do the same for the bibliography.
+        let cslBib = this.citFm.bibliography
         let bibNode = cslBibSchema.nodeFromJSON({type:'cslbib'})
         dom = bibNode.toDOM()
-        dom.innerHTML = this.citFm.bibliography[1].map(
+        dom.innerHTML = cslBib[1].map(
             // There is a space inserted, apparently at random. We'll remove it.
             cslHTML => cslHTML.replace(
                     '<div class="csl-left-margin"> ',

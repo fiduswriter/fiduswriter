@@ -60,10 +60,33 @@ export class ModCommentStore {
         this.signal("mustSend")
     }
 
-    moveComment(user, userName, userAvatar, date, id, posFrom, posTo) {
+    moveComment(user, userName, userAvatar, date, id, pos) {
         this.addLocalComment(id, user, userName, userAvatar, date, this.comments[id].comment, [], this.comments[id]['review:isMajor'], true)
 
         let markType = this.mod.editor.pm.schema.marks.comment.create({id})
+       // while !this.mod.editor.pm.doc.resolve(posFrom+1)
+            let posFrom = pos-1
+            let posTo = pos
+
+            while (this.mod.editor.pm.doc.resolve(posFrom).depth<3 && posFrom>1) {
+                posFrom--
+                posFrom--
+            }
+            /*while (this.mod.editor.pm.doc.resolve(posTo).depth<3 && posTo < this.mod.editor.pm.nodeSize) {
+                posTo++
+                posTo++
+            }*/
+            if (posFrom == 1){
+                posFrom = posTo
+                posTo++
+                while (this.mod.editor.pm.doc.resolve(posTo).depth<3 && posTo < this.mod.editor.pm.doc.content.size) {
+                    posTo = posTo + 2
+                }
+                if (posTo >= this.mod.editor.pm.doc.content.size-2) {
+                    this.mod.editor.pm.tr.insertText(posFrom,' ').apply()
+                    posTo = posFrom + 1
+                }
+            }
         this.mod.editor.pm.tr.addMark(posFrom, posTo, markType).apply()
     }
 
@@ -152,8 +175,6 @@ export class ModCommentStore {
         ids.forEach(function(id) {
             let isReviewer = false
             that.mod.editor.doc.access_rights.forEach(function(item,index){
-                console.log(that.comments[id])
-                console.log(that.mod.editor.doc)
                 if (item.user_id==that.comments[id].user){
                     isReviewer = true
                 }
@@ -161,15 +182,14 @@ export class ModCommentStore {
             if (isReviewer)
                 that.deleteComment(id, false) // Delete comment from store
             else {
-                let posFrom = that.mod.editor.pm.selection.from
+                let pos = that.mod.editor.pm.selection.from
                 that.moveComment(
                     that.mod.editor.user.id,
                     that.mod.editor.user.name,
                     that.mod.editor.user.avatar,
                     new Date().getTime(), // We update the time to the time the comment was stored
                     id,
-                    posFrom-1,
-                    posFrom+1
+                    pos
                 )
             }
         })

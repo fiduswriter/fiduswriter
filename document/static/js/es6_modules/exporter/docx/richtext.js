@@ -24,10 +24,6 @@ export class DocxExporterRichtext {
                 options = _.clone(options)
                 options.section = 'Abstract'
                 break
-            case 'bibliography':
-                options = _.clone(options)
-                options.section = 'References'
-                break
             case 'paragraph':
                 // This should really be something like
                 // '<w:p w:rsidR="A437D321" w:rsidRDefault="2B935ADC">'
@@ -37,26 +33,31 @@ export class DocxExporterRichtext {
                 // We may need to add them later, if it turns out this is a problem
                 // for other versions of Word. In that case we should also add
                 // it to settings.xml as described in above link.
-                start += '<w:p>'
-                start += '<w:pPr><w:pStyle w:val="'+options.section+'"/>'
+                start += noSpaceTmp`
+                    <w:p>
+                        <w:pPr><w:pStyle w:val="${options.section}"/>`
                 if (options.list_type) {
-                    start += '<w:numPr><w:ilvl w:val="'+options.list_depth+'"/>'
-                    start += '<w:numId w:val="'+options.list_type+'"/></w:numPr>'
+                    start += `<w:numPr><w:ilvl w:val="${options.list_depth}"/>`
+                    start += `<w:numId w:val="${options.list_type}"/></w:numPr>`
                 } else {
                     start += '<w:rPr></w:rPr>'
                 }
                 start += '</w:pPr>'
-                end += '</w:p>'
+                end = '</w:p>' + end
                 break
             case 'heading':
-                start += '<w:p>'
-                start += '<w:pPr><w:pStyle w:val="Heading'+node.attrs.level+'"/><w:rPr></w:rPr></w:pPr>'
-                end += '</w:p>'
+                start += noSpaceTmp`
+                    <w:p>
+                        <w:pPr>
+                            <w:pStyle w:val="Heading${node.attrs.level}"/>
+                            <w:rPr></w:rPr>
+                        </w:pPr>`
+                end = '</w:p>' + end
                 break
             case 'code':
                 start += '<w:p>'
                 start += '<w:pPr><w:pStyle w:val="Code"/><w:rPr></w:rPr></w:pPr>'
-                end += '</w:p>'
+                end = '</w:p>' + end
                 break
             case 'blockquote':
                 // This is imperfect, but Word doesn't seem to provide section/quotation nesting
@@ -92,7 +93,7 @@ export class DocxExporterRichtext {
                 options = _.clone(options)
                 options.section = 'Footnote'
                 start += `<w:footnote w:id="${this.fnCounter++}">`
-                end += '</w:footnote>'
+                end = '</w:footnote>' + end
                 options.footnoteRefMissing = true
                 break
             case 'footnote':
@@ -106,33 +107,45 @@ export class DocxExporterRichtext {
                 break
             case 'text':
                 // Check for hyperlink, bold/strong and italic/em
-                let hyperlink, strong, em
+                let hyperlink, em, strong, smallcaps, sup, sub
                 if (node.marks) {
-                    strong = _.findWhere(node.marks, {type:'strong'})
-                    em = _.findWhere(node.marks, {type:'em'})
                     hyperlink = _.findWhere(node.marks, {type:'link'})
+                    em = _.findWhere(node.marks, {type:'em'})
+                    strong = _.findWhere(node.marks, {type:'strong'})
+                    smallcaps = _.findWhere(node.marks, {type:'smallcaps'})
+                    sup = _.findWhere(node.marks, {type:'sup'})
+                    sub = _.findWhere(node.marks, {type:'sub'})
                 }
 
                 if (hyperlink) {
                     let refId = this.rels.addLinkRel(hyperlink.attrs.href)
                     start += `<w:hyperlink r:id="rId${refId}"><w:r>`
-                    end += '</w:t></w:r></w:hyperlink>'
+                    end = '</w:t></w:r></w:hyperlink>' + end
                 } else {
                     start += '<w:r>'
-                    end += '</w:t></w:r>'
+                    end = '</w:t></w:r>' + end
                 }
 
-                if (hyperlink || strong || em) {
+                if (hyperlink || em || strong || smallcaps || sup || sub) {
                     start += '<w:rPr>'
-                    if (strong) {
-                        start += '<w:b/><w:bCs/>'
+                    if (hyperlink) {
+                        start += '<w:rStyle w:val="Hyperlink"/>'
                     }
                     if (em) {
                         start += '<w:i/><w:iCs/>'
                     }
-                    if (hyperlink) {
-                        start += '<w:rStyle w:val="Hyperlink"/>'
+                    if (strong) {
+                        start += '<w:b/><w:bCs/>'
                     }
+                    if (smallcaps) {
+                        start += '<w:smallCaps/>'
+                    }
+                    if (sup) {
+                        start += '<w:vertAlign w:val="superscript"/>'
+                    } else if (sub) {
+                        start += '<w:vertAlign w:val="subscript"/>'
+                    }
+
                     start += '</w:rPr>'
                 }
                 if (options.footnoteRefMissing) {
@@ -264,9 +277,7 @@ export class DocxExporterRichtext {
                       <w:pPr><w:pStyle w:val="Caption"/><w:rPr></w:rPr></w:pPr>`
                       // TODO: Add "Figure X:"/"Table X": before caption.
                       content += this.transformRichtext({type: 'text', text: node.attrs.caption}, options)
-                      end += noSpaceTmp`
-                    </w:p>
-                    `
+                      end = '</w:p>' + end
                 } else {
                     let latex = node.attrs.equation
                     let omml = this.exporter.math.getOmml(latex)
@@ -275,8 +286,7 @@ export class DocxExporterRichtext {
                         <w:p>
                           <w:pPr><w:pStyle w:val="Caption"/><w:rPr></w:rPr></w:pPr>`
                     content += this.transformRichtext({type: 'text', text: node.attrs.caption}, options)
-                    end += noSpaceTmp`
-                        </w:p>`
+                    end =  '</w:p>' + end
                 }
                 break
             case 'table':
@@ -322,6 +332,36 @@ export class DocxExporterRichtext {
             case 'equation':
                 let latex = node.attrs.equation
                 content += this.exporter.math.getOmml(latex)
+                break
+            case 'hard_break':
+                content += '<w:br/>'
+                break
+            // CSL bib entries
+            case 'cslbib':
+                options = _.clone(options)
+                options.section = 'References'
+                break
+            case 'cslblock':
+                end = '<w:r><w:br/></w:r>' + end
+                break
+            case 'cslleftmargin':
+                end = '<w:r><w:tab/></w:r>' + end
+                break
+            case 'cslindent':
+                start += '<w:r><w:tab/></w:r>'
+                end = '<w:r><w:br/></w:r>' + end
+                break
+            case 'cslentry':
+                start += noSpaceTmp`
+                    <w:p>
+                        <w:pPr>
+                            <w:pStyle w:val="${options.section}"/>
+                            <w:rPr></w:rPr>
+                        </w:pPr>`
+                end = '</w:p>' + end
+                break
+            case 'cslinline':
+            case 'cslrightinline':
                 break
             default:
                 console.warn('Unhandled node type:' + node.type)

@@ -1,8 +1,8 @@
 import {ProseMirror} from "prosemirror-old/dist/edit/main"
-import {Doc, Text, EmMark, LinkMark, StrongMark} from "prosemirror-old/dist/schema-basic"
 import {buildKeymap} from "prosemirror-old/dist/example-setup"
-import {Block, Schema, MarkType, Inline, Attribute} from "prosemirror-old/dist/model"
 import {commands} from "prosemirror-old/dist/edit/commands"
+
+import {titleSchema} from "../../schema/title"
 
 export class TitleFieldForm{
     constructor(dom, initialValue) {
@@ -60,79 +60,3 @@ export class TitleFieldForm{
         return true
     }
 }
-
-class Literal extends Block {
-    get matchDOMTag() {
-        return {"div.literal": null}
-    }
-    toDOM(node) {
-        return ["div", {
-            class: 'literal'
-        }, 0]
-    }
-}
-
-class SupMark extends MarkType {
-  get matchDOMTag() { return {"sup": null} }
-  toDOM() { return ["sup"] }
-}
-
-class SubMark extends MarkType {
-  get matchDOMTag() { return {"sub": null} }
-  toDOM() { return ["sub"] }
-}
-
-class SmallCapsMark extends MarkType {
-  get matchDOMTag() { return {"span.smallcaps": null} }
-  toDOM() { return ["span",{class:"smallcaps"}] }
-}
-
-class NoCaseMark extends MarkType {
-    get matchDOMTag() { return {"span.nocase": null} }
-    toDOM() { return ["span",{class:"nocase"}] }
-}
-
-//Currently unsupported
-
-class UrlMark extends MarkType {
-    get matchDOMTag() { return {"span.url": null} }
-    toDOM() { return ["span",{class:"url"}] }
-}
-
-class EnquoteMark extends MarkType {
-    get matchDOMTag() { return {"span.enquote": null} }
-    toDOM() { return ["span",{class:"enquote"}] }
-}
-
-class Variable extends Inline {
-    get attrs() {
-        return {
-            variable: new Attribute({default: ""}),
-        }
-    }
-    get matchDOMTag() {
-        return {"span[data-variable]": dom => ({
-            variable: dom.getAttribute("data-variable"),
-        })}
-    }
-    toDOM(node) { return ["span", {'data-variable':node.attrs.variable}, node.attrs.variable] }
-}
-
-export const titleSchema = new Schema({
-    nodes: {
-        doc: {type: Doc, content: "literal"},
-        literal: {type: Literal, content: "inline<_>*"},
-        text: {type: Text, group: "inline"},
-        variable: {type: Variable, group: "inline"}
-    },
-    marks: {
-        em: EmMark,
-        strong: StrongMark,
-        sup: SupMark,
-        sub: SubMark,
-        smallcaps: SmallCapsMark,
-        nocase: NoCaseMark,
-        url: UrlMark,
-        enquote: EnquoteMark
-    }
-})

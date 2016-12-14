@@ -20,6 +20,7 @@ export class OdtExporterStyles {
         this.boldStyleId = false
         this.italicStyleId = false
         this.boldItalicStyleId = false
+        this.inlineStyleIds = {}
         this.orderedListStyleId = [false, false]
         this.bulletListStyleId = [false, false]
         this.inlineStyleCounter = 0
@@ -64,46 +65,44 @@ export class OdtExporterStyles {
         })
     }
 
-    getBoldStyleId() {
-        if (this.boldStyleId) {
-            return this.boldStyleId
+    /*
+    attributes is a string that consists of these characters (in this order).
+    Only one of super/sub possible.
+    e = italic/em
+    s = bold/strong
+    c = small caps
+    p = super
+    b = sub
+    */
+    getInlineStyleId(attributes) {
+        if (this.inlineStyleIds[attributes]) {
+            return this.inlineStyleIds[attributes]
         }
-        this.boldStyleId = ++this.inlineStyleCounter
-        let autoStylesEl = this.contentXml.querySelector('automatic-styles')
-        autoStylesEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
-            <style:style style:name="T${this.boldStyleId}" style:family="text">
-                <style:text-properties fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
-            </style:style>
-        `)
-        return this.boldStyleId
-    }
 
-    getItalicStyleId() {
-        if (this.italicStyleId) {
-            return this.italicStyleId
+        let styleProperties = ''
+        if (attributes.includes('e')) {
+            styleProperties += ' fo:font-style="italic" style:font-style-asian="italic" style:font-style-complex="italic"'
         }
-        this.italicStyleId = ++this.inlineStyleCounter
+        if (attributes.includes('s')) {
+            styleProperties += ' fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"'
+        }
+        if (attributes.includes('c')) {
+            styleProperties += ' fo:font-variant="small-caps"'
+        }
+        if (attributes.includes('p')) {
+            styleProperties += ' style:text-position="super 58%"'
+        } else if (attributes.includes('b')) {
+            styleProperties += ' style:text-position="sub 58%"'
+        }
+        let styleCounter = ++this.inlineStyleCounter
+        this.inlineStyleIds[attributes] = styleCounter
         let autoStylesEl = this.contentXml.querySelector('automatic-styles')
         autoStylesEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
-            <style:style style:name="T${this.italicStyleId}" style:family="text">
-                <style:text-properties fo:font-style="italic" style:font-style-asian="italic" style:font-style-complex="italic"/>
+            <style:style style:name="T${styleCounter}" style:family="text">
+                <style:text-properties${styleProperties}/>
             </style:style>
         `)
-        return this.italicStyleId
-    }
-
-    getBoldItalicStyleId() {
-        if (this.boldItalicStyleId) {
-            return this.boldItalicStyleId
-        }
-        this.boldItalicStyleId = ++this.inlineStyleCounter
-        let autoStylesEl = this.contentXml.querySelector('automatic-styles')
-        autoStylesEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
-            <style:style style:name="T${this.boldItalicStyleId}" style:family="text">
-                <style:text-properties fo:font-style="italic" style:font-style-asian="italic" style:font-style-complex="italic" fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
-            </style:style>
-        `)
-        return this.boldItalicStyleId
+        return styleCounter
     }
 
     checkParStyle(styleName) {

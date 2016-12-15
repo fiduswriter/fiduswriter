@@ -163,6 +163,36 @@ export let selectJournal = function(editor) {
 
 }
 
+/*send the revision of submitted paper*/
+export let revisionDone = function(editor){
+        let diaButtons = {}
+        let submission_info = {}
+        let userProfile = {}
+        let submissionData = new window.FormData()
+        submissionData.append('document_id', editor.doc.id)
+        submissionData.append('user_id', editor.user.id)
+        submissionData.append('submission_id', '111')
+        jQuery.ajax({
+            url: '/document/newrevision/',
+            data: submissionData,
+            type: 'POST',
+            cache: false,
+            contentType: false,
+            processData: false,
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
+            success: function(result) {
+                addAlert('success', 'new submission')
+            },
+            error: function() {
+                addAlert('error', 'not new submission')
+            }
+        })
+
+}
+
 /*submit the review*/
 export let reviewSubmit = function(editor){
         let diaButtons = {}

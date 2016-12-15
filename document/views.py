@@ -328,6 +328,28 @@ def document_review_js(request):
             return JsonResponse(response, status=status)
 
 
+@csrf_exempt
+def new_revision_js(request):
+    if request.method == 'POST':
+        submission_id = int(request.POST.get('submission_id'))
+        app_key = request.POST.get('key')
+        u_name = request.POST.get('user_name')
+        response = {}
+        if (app_key == settings.SERVER_INFO['OJS_KEY']):
+            editor = login_user(
+                request,
+                u_name)
+            if editor is not None:
+                original_doc = Submission.objects.get(submission_id=submission_id, version_id=0)
+                access_rights = SubmittedAccessRight.objects.filter(submission_id=submission_id,document_id=original_doc.document_id)
+                print original_doc.document_id
+                status = 200
+                return JsonResponse(
+                    response,
+                    status=status
+                )
+
+
 @login_required
 def editor(request):
     response = {}

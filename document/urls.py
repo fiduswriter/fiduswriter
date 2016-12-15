@@ -60,17 +60,20 @@ urlpatterns = [
         views.reviewer_js,
         name='reviewer_js'
     ),
-
     url(
         '^delReviewer/$',
         views.del_reviewer_js,
         name='del_reviewer_js'
     ),
-
     url(
         '^documentReview/$',
         views.document_review_js,
         name='document_review_js'
+    ),
+    url(
+        '^newrevision/$',
+        views.new_revision_js,
+        name='new_revision_js'
     ),
     url(
         '^maintenance/$',

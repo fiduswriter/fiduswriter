@@ -7,6 +7,7 @@ import {DocxExporter} from "../../exporter/docx"
 import {OdtExporter} from "../../exporter/odt"
 import {selectJournal} from "../../submit/journal"
 import {reviewSubmit} from "../../submit/journal"
+import {revisionDone} from "../../submit/journal"
 
 export class ModMenusActions {
     constructor(mod) {
@@ -108,6 +109,13 @@ export class ModMenusActions {
         let that = this
         that.mod.editor.save(function () {
             reviewSubmit(that.mod.editor)
+        })
+    }
+
+    revisionFinished(){
+        let that = this
+        that.mod.editor.save(function () {
+            revisionDone(that.mod.editor)
         })
     }
 

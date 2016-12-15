@@ -58,6 +58,10 @@ export class ModMenusToolbar {
             that.mod.actions.submitReview()
         })
 
+        jQuery(document).on('click', '#revision-done:not(.disabled)', function () {
+              that.mod.actions.revisionFinished()
+        })
+
          //return to OJS
         jQuery(document).on('click', '#reviewerOJSReturn:not(.disabled)', function () {
             that.mod.actions.ReturnToOJS()

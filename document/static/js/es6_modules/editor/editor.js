@@ -269,9 +269,7 @@ export class Editor {
       .citationstyle, .tools-item, .papersize, .metadata-menu-item, \
       #open-close-header').removeClass('disabled')
 
-
-        this.mod.settings.updateDocumentStyleCSS()
-        this.mod.citations.resetCitations()
+        this.mod.settings.check(this.pm.doc.firstChild.attrs)
 
         if (READ_ONLY_ROLES.indexOf(this.docInfo.rights) > -1) {
             jQuery('#editor-navigation').hide()

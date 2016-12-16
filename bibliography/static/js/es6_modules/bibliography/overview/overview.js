@@ -3,7 +3,7 @@ import {BibEntryForm} from "../form"
 import {editCategoriesTemplate, categoryFormsTemplate, bibtableTemplate,
     bibliographyCategoryListItemTemplate} from "./templates"
 import {BibliographyDB} from "../database"
-import {BibTypeTitles} from "../form/titles"
+import {BibTypeTitles} from "../form/strings"
 import {BibLatexFileImporter} from "../import"
 import {BibLatexFileExporter} from "../export"
 import {addDropdownBox} from "../../common/common"

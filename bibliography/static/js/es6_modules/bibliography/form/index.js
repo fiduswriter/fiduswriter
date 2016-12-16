@@ -1,7 +1,7 @@
 import {BibFieldTypes, BibTypes} from "biblatex-csl-converter/lib/const"
-import {BibFieldTitles, BibTypeTitles} from "./titles"
+import {BibFieldTitles, BibTypeTitles, BibFieldHelp} from "./strings"
 import {bibDialog} from "./templates"
-import {addAlert} from "../../common/common"
+import {addAlert, noSpaceTmp} from "../../common/common"
 import {EntryCatForm} from "./entry-cat"
 import {DateFieldForm} from "./fields/date"
 import {LiteralFieldForm} from "./fields/literal"
@@ -146,7 +146,30 @@ export class BibEntryForm {
 
     addField(fieldName, dom) {
         let fieldType = BibFieldTypes[fieldName]
-        dom.insertAdjacentHTML('beforeend', `<tr><th><h4 class="fw-tablerow-title">${BibFieldTitles[fieldName]}</h4></th><td class="entry-field ${fieldName}"></td></tr>`)
+        let fieldTitle
+        if (BibFieldHelp[fieldName]) {
+            fieldTitle = noSpaceTmp`
+                <h4 class="fw-tablerow-title wtooltip">
+                    ${BibFieldTitles[fieldName]}
+                    <span class="tooltip">${BibFieldHelp[fieldName]}</span>
+                </h4>
+            `
+        } else {
+            fieldTitle = noSpaceTmp`
+                <h4 class="fw-tablerow-title">
+                    ${BibFieldTitles[fieldName]}
+                </h4>
+            `
+        }
+
+        dom.insertAdjacentHTML(
+            'beforeend',
+            noSpaceTmp`
+                <tr>
+                    <th>${fieldTitle}</th>
+                    <td class="entry-field ${fieldName}"></td>
+                </tr>`
+        )
         let fieldDOM = dom.lastChild.lastChild
         let FieldClass = FIELD_FORMS[fieldType.type]
         if (FieldClass) {

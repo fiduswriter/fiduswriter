@@ -205,11 +205,9 @@ export class ModMenusHeader {
                       }
                   })
           })
-
           jQuery(document).on('mousedown', '.saverevision:not(.disabled)', function() {
               that.mod.actions.saveRevision()
           })
-
     }
 
     enableExportMenu() {

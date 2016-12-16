@@ -19,7 +19,6 @@ export class BibliographyDB {
         }
     }
 
-    // EXPORT
     /** Get the bibliography from the server and create as this.db.
      * @function getDB
      * @param callback Will be called afterward.
@@ -36,8 +35,8 @@ export class BibliographyDB {
                 localStorageOwnerId = parseInt(window.localStorage.getItem('owner_id'))
                 that = this
 
-            // A dictionary to look up bib fields by their fw type name. Needed for translation to CSL and Biblatex.
-            //jQuery('#bibliography').dataTable().fnDestroy()
+            // A dictionary to look up bib fields by their fw type name.
+            // Needed for translation to CSL and Biblatex.
             //Fill BibDB
 
             if (_.isNaN(lastModified)) {

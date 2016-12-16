@@ -69,12 +69,7 @@ export class DocxExporterCitations {
         let cslBib = this.citFm.bibliography
         let bibNode = cslBibSchema.nodeFromJSON({type:'cslbib'})
         dom = bibNode.toDOM()
-        dom.innerHTML = cslBib[1].map(
-            // There is a space inserted, apparently at random. We'll remove it.
-            cslHTML => cslHTML.replace(
-                    '<div class="csl-left-margin"> ',
-                    '<div class="csl-left-margin">')
-            ).join('')
+        dom.innerHTML = cslBib[1].join('')
         this.pmBib = cslBibSchema.parseDOM(dom, {topNode: bibNode}).toJSON()
     }
 }

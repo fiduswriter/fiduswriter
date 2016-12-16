@@ -612,20 +612,8 @@ table.insert-table-selection td.selected.hover {
     padding-bottom: 0.5em;
 }
 
-.csl-entry {
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-    clear: left;
-}
 .csl-left-margin {
-    clear: left;
-    float: left;
-    width: 102px;
-    padding:0.4em 0px 0.4em 0em;
-}
-.csl-right-inline {
-    padding: 0.4em;
-    margin-left: 80px;
+    padding-right: 1ch;
 }
 
 .csl-entry i {
@@ -647,9 +635,19 @@ table.insert-table-selection td.selected.hover {
 }
 
 .csl-indent {
-  margin-top: 0.5em;
-  margin-left: 2em;
-  padding-bottom: 0.2em;
-  padding-left: 0.5em;
-  border-left: 5px solid #ccc;
+    padding-left: 0.5in;
+}
+
+.csl-entry {
+     clear: left;
+}
+
+.csl-left-margin {
+    clear: left;
+    float: left;
+    white-space: pre;
+}
+
+.csl-right-inline {
+    padding-left: 20px;
 }

@@ -43,20 +43,23 @@ export class OdtExporter {
         this.render = new OdtExporterRender(this, this.docContents)
         this.styles = new OdtExporterStyles(this)
         this.math = new OdtExporterMath(this)
-        this.images = new OdtExporterImages(this, this.imageDB, that.docContents)
-        this.citations = new OdtExporterCitations(this, this.bibDB, that.docContents)
+        this.images = new OdtExporterImages(this, this.imageDB, this.docContents)
+        this.citations = new OdtExporterCitations(this, this.bibDB, this.docContents)
         this.richtext = new OdtExporterRichtext(
             this,
             this.citations,
             this.images
         )
-        this.citations.formatCitations()
-        this.pmBib = this.citations.pmBib
+
         this.xml = new XmlZip(createSlug(this.docTitle)+'.odt', this.templateUrl)
         this.xml.init().then(() => {
                 return that.metadata.init()
             }).then(() => {
                 return that.styles.init()
+            }).then(() => {
+                let returnValue = that.citations.init()
+                that.pmBib = that.citations.pmBib
+                return returnValue
             }).then(() => {
                 return that.math.init()
             }).then(() => {

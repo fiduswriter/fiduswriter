@@ -215,7 +215,7 @@ export class OdtExporterRichtext {
             // CSL bib entries
             case 'cslbib':
                 options = _.clone(options)
-                options.section = 'References'
+                options.section = 'Bibliography_20_1'
                 break
             case 'cslblock':
                 end = '<text:line-break/>' + end
@@ -228,6 +228,7 @@ export class OdtExporterRichtext {
                 end = '<text:line-break/>' + end
                 break
             case 'cslentry':
+                this.exporter.styles.checkParStyle(options.section)
                 start += `<text:p text:style-name="${options.section}">`
                 end = '</text:p>' + end
                 break

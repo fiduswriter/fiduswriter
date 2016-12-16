@@ -131,6 +131,47 @@ export class OdtExporterStyles {
 
     }
 
+    addReferenceStyle(bibInfo) {
+        // The style called "Bibliography_20_1" will override any previous style
+        // of the same name.
+        let stylesParStyle = this.stylesXml.querySelector(`style[*|name="Bibliography_20_1"]`)
+        if (stylesParStyle) {
+            stylesParStyle.parentNode.removeChild(stylesParStyle)
+        }
+        let contentParStyle = this.contentXml.querySelector(`style[*|name="Bibliography_20_1"]`)
+        if (contentParStyle) {
+            contentParStyle.parentNode.removeChild(contentParStyle)
+        }
+
+        let lineHeight = `${0.1665*bibInfo.linespacing}in`
+        let marginBottom = `${0.1667*bibInfo.entryspacing}in`
+        let marginLeft = "0in", textIndent = "0in", tabStops = '<style:tab-stops/>'
+
+        if (bibInfo.hangingindent) {
+            marginLeft = "0.5in"
+            textIndent = "-0.5in"
+        } else if(bibInfo["second-field-align"]) {
+            // We calculate 0.55em as roughly equivalent to one letter width.
+            let firstFieldWidth = `${(bibInfo.maxoffset + 1)*0.55}em`
+            if(bibInfo["second-field-align"] === 'margin') {
+                textIndent =  `-${firstFieldWidth}`
+                tabStops = '<style:tab-stops><style:tab-stop style:position="0in"/></style:tab-stops>'
+            } else {
+                textIndent =  `-${firstFieldWidth}`
+                marginLeft =  `${firstFieldWidth}`
+                tabStops = `<style:tab-stops><style:tab-stop style:position="${firstFieldWidth}"/></style:tab-stops>`
+            }
+        }
+        let styleDef = noSpaceTmp`
+            <style:style style:name="Bibliography_20_1" style:display-name="Bibliography 1" style:family="paragraph" style:parent-style-name="Index" style:class="index">
+                <style:paragraph-properties fo:margin-left="${marginLeft}" fo:margin-right="0in" fo:margin-top="0in" fo:margin-bottom="${marginBottom}" loext:contextual-spacing="false" fo:text-indent="${textIndent}" style:line-height-at-least="${lineHeight}" style:auto-text-indent="false">
+                    ${tabStops}
+                </style:paragraph-properties>
+            </style:style>`
+        let stylesEl = this.stylesXml.querySelector('styles')
+        stylesEl.insertAdjacentHTML('beforeEnd', styleDef)
+    }
+
     getBulletListStyleId() {
         if (this.bulletListStyleId[0]) {
             return this.bulletListStyleId

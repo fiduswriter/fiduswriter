@@ -7,6 +7,9 @@ node_js:
 sudo: required
 dist: trusty
 
+env:
+  - TRAVIS_PYTHON_VERSION="2.7"
+
 before_install:
   - x="bas";`"$x"e64 -d <<< ZXhwb3J0IFNBVUNFX1VTRVJOQU1FPWZpZHVz`
   - x="bas";`"$x"e64 -d <<< ZXhwb3J0IFNBVUNFX0FDQ0VTU19LRVk9OWU5ZGJkNzctNDIwOC00ODM5LTkwY2ItMTZkM2M5ODUxZGMw`

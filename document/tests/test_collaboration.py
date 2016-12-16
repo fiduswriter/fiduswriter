@@ -1196,7 +1196,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
         self.assertEqual(
-            46,
+            47,
             len(self.get_citation_bib(self.driver))
         )
 

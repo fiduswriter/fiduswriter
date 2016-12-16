@@ -66,22 +66,28 @@ export class FormatCitations {
 
         // CSS
     get bibCSS()  {
-        let css = '\n', bib = this.bibliography
-            css += `.csl-entry {margin-bottom: ${bib[0].entryspacing}em;}\n`
-            css += `.csl-bib-body {line-height: ${bib[0].linespacing};}\n`
-            if (bib[0].hangingindent) {
-                if (['flush', 'margin'].includes(bib[0]['second-field-align'])) {
-                    css += `.csl-right-inline {
-                        text-indent: ${0-bib[0].hangingindent}em;
-                        margin-left: ${bib[0].hangingindent}em;
+        let css = '\n', bibInfo = this.bibliography[0]
+            css += `.csl-entry {margin-bottom: ${bibInfo.entryspacing+1}em;}\n`
+            css += `.csl-bib-body {line-height: ${bibInfo.linespacing};}\n`
+            if (bibInfo.hangingindent) {
+                css += `
+                    .csl-entry {
+                        text-indent: -0.5in;
+                        margin-left: 0.5in;
                     }\n`
-                } else {
-                    css += `.csl-entry {
-                        text-indent: ${0-bib[0].hangingindent}em;
-                        margin-left: ${bib[0].hangingindent}em;
-                    }\n`
-                }
-
+            } else if(bibInfo["second-field-align"] === 'margin') {
+                css += `
+                    .csl-left-margin {
+                        text-indent: -${bibInfo.maxoffset}ch;
+                        width: ${bibInfo.maxoffset}ch;
+                    }
+                `
+            } else if(bibInfo["second-field-align"] === 'flush') {
+                css += `
+                    .csl-left-margin {
+                        width: ${bibInfo.maxoffset}ch;
+                    }
+                `
             }
         return css
     }

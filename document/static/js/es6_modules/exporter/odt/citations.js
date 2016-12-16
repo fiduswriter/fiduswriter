@@ -15,6 +15,11 @@ export class OdtExporterCitations {
         this.pmBib = false
     }
 
+    init() {
+        this.formatCitations()
+        return Promise.resolve()
+    }
+
     // Citations are highly interdependent -- so we need to format them all
     // together before laying out the document.
     formatCitations(origCitInfos = []) {
@@ -67,14 +72,12 @@ export class OdtExporterCitations {
 
         // Now we do the same for the bibliography.
         let cslBib = this.citFm.bibliography
-        let bibNode = cslBibSchema.nodeFromJSON({type:'cslbib'})
-        dom = bibNode.toDOM()
-        dom.innerHTML = cslBib[1].map(
-            // There is a space inserted, apparently at random. We'll remove it.
-            cslHTML => cslHTML.replace(
-                    '<div class="csl-left-margin"> ',
-                    '<div class="csl-left-margin">')
-            ).join('')
-        this.pmBib = cslBibSchema.parseDOM(dom, {topNode: bibNode}).toJSON()
+        if (cslBib[1].length > 0) {
+            this.exporter.styles.addReferenceStyle(cslBib[0])
+            let bibNode = cslBibSchema.nodeFromJSON({type:'cslbib'})
+            dom = bibNode.toDOM()
+            dom.innerHTML = cslBib[1].join('')
+            this.pmBib = cslBibSchema.parseDOM(dom, {topNode: bibNode}).toJSON()
+        }
     }
 }

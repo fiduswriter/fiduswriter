@@ -24,6 +24,7 @@ export class OdtExporter {
         this.bibDB = bibDB
         this.imageDB = imageDB
         this.pmBib = false
+        this.pmCits = false
         this.docContents = false
         this.docTitle = false
 
@@ -47,7 +48,7 @@ export class OdtExporter {
         this.citations = new OdtExporterCitations(this, this.bibDB, this.docContents)
         this.richtext = new OdtExporterRichtext(
             this,
-            this.citations,
+//            this.citations,
             this.images
         )
 
@@ -74,7 +75,5 @@ export class OdtExporter {
                 that.xml.prepareAndDownload()
             })
     }
-
-
 
 }

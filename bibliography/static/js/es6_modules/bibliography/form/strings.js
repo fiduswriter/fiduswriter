@@ -67,7 +67,7 @@ export const BibFieldTitles = {
     'origlocation': gettext('Publication location of the original edition'),
     'origpublisher': gettext('Publisher of the original edition'),
     'origtitle': gettext('Title of the original work'),
-    'pages': gettext('Page numbers or page ranges'),
+    'pages': gettext('Pages'),
     'pagetotal': gettext('Total number of pages'),
     'pagination': gettext('Pagination'),
     'part': gettext('Number of a partial volume'),
@@ -93,6 +93,27 @@ export const BibFieldTitles = {
     'version': gettext('Version'),
     'volume': gettext('Volume'),
     'volumes': gettext('Total number of volumes')
+}
+
+let edtfExplanation = gettext(
+    'In <em>Extended Date Time Format</em> (EDTF) 1.0<br>Level 0 or 1'
+)
+let nameExplanation = gettext(
+    'Prefixed is "used" when it is used in cases where only the last name is used. \
+    For example: "Ludwig van Beethoven" turns into "Beethoven", so the prefix "van" \
+    is not used. "Vincent van Gogh" turns into "van Gogh", so the prefix "van" is used.'
+)
+
+export const BibFieldHelp = {
+    'date': edtfExplanation,
+    'origdate': edtfExplanation,
+    'pages': gettext('Range or single page, column, paragraph, section, line'),
+    'author': nameExplanation,
+    'editor': nameExplanation,
+    'editora': nameExplanation,
+    'editorb': nameExplanation,
+    'editorc': nameExplanation,
+    'translator': nameExplanation
 }
 
 export const BibTypeTitles = {

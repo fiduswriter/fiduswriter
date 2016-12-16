@@ -25,6 +25,9 @@ export class DocxExporterRichtext {
                 options.section = 'Abstract'
                 break
             case 'paragraph':
+                if(!options.section) {
+                    options.section = 'Normal'
+                }
                 // This should really be something like
                 // '<w:p w:rsidR="A437D321" w:rsidRDefault="2B935ADC">'
                 // See: https://blogs.msdn.microsoft.com/brian_jones/2006/12/11/whats-up-with-all-those-rsids/
@@ -339,7 +342,7 @@ export class DocxExporterRichtext {
             // CSL bib entries
             case 'cslbib':
                 options = _.clone(options)
-                options.section = 'References'
+                options.section = 'Bibliography1'
                 break
             case 'cslblock':
                 end = '<w:r><w:br/></w:r>' + end

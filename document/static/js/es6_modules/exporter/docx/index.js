@@ -53,11 +53,14 @@ export class DocxExporter {
             this.citations,
             this.images
         )
-        this.citations.formatCitations()
-        this.pmBib = this.citations.pmBib
+        //this.citations.formatCitations()
+        //this.pmBib = this.citations.pmBib
         this.xml = new XmlZip(createSlug(this.docTitle)+'.docx', this.templateUrl)
 
         this.xml.init().then(() => {
+                return that.citations.init()
+            }).then(() => {
+                that.pmBib = that.citations.pmBib
                 return that.metadata.init()
             }).then(() => {
                 return that.tables.init()

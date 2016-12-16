@@ -143,6 +143,8 @@ export class OdtExporterStyles {
             contentParStyle.parentNode.removeChild(contentParStyle)
         }
 
+        this.checkParStyle('Index')
+
         let lineHeight = `${0.1665*bibInfo.linespacing}in`
         let marginBottom = `${0.1667*bibInfo.entryspacing}in`
         let marginLeft = "0in", textIndent = "0in", tabStops = '<style:tab-stops/>'

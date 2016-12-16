@@ -72,10 +72,12 @@ export class OdtExporterCitations {
 
         // Now we do the same for the bibliography.
         let cslBib = this.citFm.bibliography
-        this.exporter.styles.addReferenceStyle(cslBib[0])
-        let bibNode = cslBibSchema.nodeFromJSON({type:'cslbib'})
-        dom = bibNode.toDOM()
-        dom.innerHTML = cslBib[1].join('')
-        this.pmBib = cslBibSchema.parseDOM(dom, {topNode: bibNode}).toJSON()
+        if (cslBib[1].length > 0) {
+            this.exporter.styles.addReferenceStyle(cslBib[0])
+            let bibNode = cslBibSchema.nodeFromJSON({type:'cslbib'})
+            dom = bibNode.toDOM()
+            dom.innerHTML = cslBib[1].join('')
+            this.pmBib = cslBibSchema.parseDOM(dom, {topNode: bibNode}).toJSON()
+        }
     }
 }

@@ -26,6 +26,9 @@ export class OdtExporterRichtext {
                 options.section = 'Abstract'
                 break
             case 'paragraph':
+                if (!options.section) {
+                    options.section = 'Text_20_body'
+                }
                 this.exporter.styles.checkParStyle(options.section)
                 start += `<text:p text:style-name="${options.section}">`
                 end = '</text:p>' + end

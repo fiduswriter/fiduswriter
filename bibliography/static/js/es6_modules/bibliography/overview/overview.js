@@ -1,11 +1,9 @@
 import {addRemoveListHandler, litToText, nameToText} from "../tools"
-//import {BibEntryForm} from "../form/form"
 import {BibEntryForm} from "../form"
 import {editCategoriesTemplate, categoryFormsTemplate, bibtableTemplate,
     bibliographyCategoryListItemTemplate} from "./templates"
 import {BibliographyDB} from "../database"
-import {BibTypes} from "../statics"
-import {BibTypeTitles} from "../titles"
+import {BibTypeTitles} from "../form/titles"
 import {BibLatexFileImporter} from "../import"
 import {BibLatexFileExporter} from "../export"
 import {addDropdownBox} from "../../common/common"

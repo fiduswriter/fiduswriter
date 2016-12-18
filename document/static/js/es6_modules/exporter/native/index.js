@@ -108,9 +108,11 @@ export let exportNative = function(doc, anImageDB, aBibDB, callback) {
         delete shrunkImageDB[itemId].pk
         delete shrunkImageDB[itemId].added
         let imageUrl = shrunkImageDB[itemId].image
+        let filename = imageUrl.split('/').pop()
+        shrunkImageDB[itemId].image = filename
         httpIncludes.push({
             url: imageUrl,
-            filename: imageUrl.split('/').pop()
+            filename: filename
         })
     })
 

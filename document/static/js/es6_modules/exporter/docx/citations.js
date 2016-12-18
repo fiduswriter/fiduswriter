@@ -5,10 +5,11 @@ import {descendantNodes} from "../tools/doc-contents"
 import {noSpaceTmp} from "../../common/common"
 
 export class DocxExporterCitations {
-    constructor(exporter, bibDB, docContents) {
+    constructor(exporter, bibDB, docContents, origCitInfos = []) {
         this.exporter = exporter
         this.bibDB = bibDB
         this.docContents = docContents
+        this.origCitInfos = origCitInfos
         this.citInfos = []
         this.citationTexts = []
         this.pmCits = []
@@ -29,20 +30,20 @@ export class DocxExporterCitations {
 
     // Citations are highly interdependent -- so we need to format them all
     // together before laying out the document.
-    formatCitations(origCitInfos = []) {
+    formatCitations() {
         let that = this
 
-        if (origCitInfos.length) {
+        if (this.origCitInfos.length) {
             // Initial citInfos are taken from a previous run to include in bibliography,
             // and they are removed before spitting out the citation entries for the given document.
             // That way the bibliography should contain information from both.
-            this.citInfos = this.citInfos.concat(origCitInfos)
+            this.citInfos = this.citInfos.concat(this.origCitInfos)
         }
 
         descendantNodes(this.docContents).forEach(
             function(node){
                 if (node.type==='citation') {
-                    that.citInfos.push(node.attrs)
+                    that.citInfos.push(JSON.parse(JSON.stringify(node.attrs)))
                 }
             }
         )
@@ -52,9 +53,9 @@ export class DocxExporterCitations {
             this.bibDB,
             function() {
                 that.citationTexts = that.citFm.citationTexts
-                if (origCitInfos.length) {
+                if (that.origCitInfos.length) {
                     // Remove all citation texts originating from original starting citInfos
-                    that.citationTexts.splice(0, origCitInfos.length)
+                    that.citationTexts.splice(0, that.origCitInfos.length)
                 }
                 that.convertCitations()
             }

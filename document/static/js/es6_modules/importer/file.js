@@ -23,6 +23,8 @@ export function updateFileDoc(doc, filetypeVersion) {
             doc = updateDoc(doc)
             break
         case "1.3":
+        case "1.4":
+        case "1.5":
             doc = updateDoc(doc)
             break
     }

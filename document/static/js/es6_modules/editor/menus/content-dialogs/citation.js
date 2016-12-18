@@ -7,89 +7,75 @@ import {nameToText, litToText} from "../../../bibliography/tools"
 export let citationDialog = function (mod) {
 
     let editor = mod.editor,
-        ids,
-        bibEntryStart,
-        bibFormatStart = 'autocite',
-        bibBeforeStart,
-        bibPageStart,
+        initialReferences = [],
+        initialFormat = 'autocite',
         citableItemsHTML = '',
         citedItemsHTML = '',
-        cited_ids = [],
-        cited_prefixes,
-        cited_pages,
         diaButtons = [],
-        submit_button_text,
         node = editor.currentPm.selection.node
 
 
     if (node && node.type && node.type.name==='citation') {
-        bibFormatStart = node.attrs.bibFormat
-        bibEntryStart = node.attrs.bibEntry
-        bibBeforeStart = node.attrs.bibBefore
-        bibPageStart = node.attrs.bibPage
-        cited_ids = bibEntryStart.split(',')
-        cited_prefixes = bibBeforeStart.split(',,,')
-        cited_pages = bibPageStart.split(',,,')
+        initialFormat = node.attrs.format
+        initialReferences = node.attrs.references
     }
 
     function dialogSubmit() {
-        let cite_items = jQuery('#selected-cite-source-table .fw-cite-parts-table'),
-            cite_ids = [],
-            cite_prefixes = [],
-            cite_pages = [],
-            bibFormat,
-            bibEntry,
-            bibPage,
-            bibBefore,
-            emptySpaceNode
+        let citeItems = [].slice.call(
+                document.querySelectorAll('#selected-cite-source-table .fw-cite-parts-table')
+            ),
+            references = citeItems.map(bibRef => {
+                let returnObj = {
+                    id: jQuery(bibRef).find('.delete').data('id')
+                }
+                let prefix = jQuery(bibRef).find('.fw-cite-text').val()
+                if (prefix.length) {
+                    returnObj['prefix'] = prefix
+                }
+                let locator = jQuery(bibRef).find('.fw-cite-page').val()
+                if (locator.length) {
+                    returnObj['locator'] = locator
+                }
+                return returnObj
+            })
 
-        if (0 === cite_items.length) {
+        if (0 === citeItems.length) {
             window.alert(gettext('Please select at least one citation source!'))
             return false
         }
 
-        cite_items.each(function() {
-            cite_ids.push(jQuery(this).find('.delete').data('id'))
-            cite_pages.push(jQuery(this).find('.fw-cite-page').val())
-            cite_prefixes.push(jQuery(this).find('.fw-cite-text').val())
-        })
+        let format = jQuery('#citation-style-label').data('style')
 
-        bibFormat = jQuery('#citation-style-label').data('style')
-        bibEntry = cite_ids.join(',')
-        bibPage = cite_pages.join(',,,')
-        bibBefore = cite_prefixes.join(',,,')
-
-        if (bibEntry === bibEntryStart && bibBefore === bibBeforeStart &&
-            bibPage == bibPageStart && bibFormat == bibFormatStart) {
+        if (
+            JSON.stringify(references) === JSON.stringify(initialReferences) &&
+            format == initialFormat
+        ) {
             // Nothing has been changed, so we just close the dialog again
             return true
         }
         let nodeType = editor.currentPm.schema.nodes['citation']
-        editor.currentPm.tr.replaceSelection(nodeType.createAndFill({
-            bibFormat,
-            bibEntry,
-            bibBefore,
-            bibPage
-        })).apply()
+        editor.currentPm.tr.replaceSelection(
+            nodeType.createAndFill({format, references})
+        ).apply()
         return true
     }
 
-    _.each(editor.bibDB.db, function(bib, index) {
+    _.each(editor.bibDB.db, function(bib, id) {
         let bibauthors = bib.fields.author || bib.fields.editor
         let bibEntry = {
-                'id': index,
-                'type': bib.bib_type,
-                'title': bib.fields.title ? litToText(bib.fields.title) : gettext('Untitled'),
-                'author': bibauthors? nameToText(bibauthors) : ''
-            },
-            cited_id
+                id: id,
+                bib_type: bib.bib_type,
+                title: bib.fields.title ? litToText(bib.fields.title) : gettext('Untitled'),
+                author: bibauthors? nameToText(bibauthors) : ''
+            }
 
         citableItemsHTML += citationItemTemplate(bibEntry)
 
-        cited_id = _.indexOf(cited_ids, index)
-        if (-1 < cited_id) {
-            bibEntry.prefix = cited_prefixes[cited_id]
-            bibEntry.page = cited_pages[cited_id]
+        let citEntry = initialReferences.find(bibRef => bibRef.id==id)
+
+        if (citEntry) {
+            bibEntry.prefix = citEntry.prefix ?  citEntry.prefix : ''
+            bibEntry.locator = citEntry.locator ? citEntry.locator : ''
             citedItemsHTML += selectedCitationTemplate(bibEntry)
         }
     })
@@ -120,10 +106,10 @@ export let citationDialog = function (mod) {
         })
     }
 
-    submit_button_text = (node && node.type && node.type.name==='citation') ? gettext('Update') : gettext('Insert')
+    let submitButtonText = (node && node.type && node.type.name==='citation') ? gettext('Update') : gettext('Insert')
 
     diaButtons.push({
-        text: submit_button_text,
+        text: submitButtonText,
         click: function() {
             if (dialogSubmit()) {
                 dialog.dialog('close')
@@ -143,9 +129,9 @@ export let citationDialog = function (mod) {
 
     let dialog = jQuery(
         configureCitationTemplate({
-            'citableItemsHTML': citableItemsHTML,
-            'citedItemsHTML': citedItemsHTML,
-            'citeFormat': bibFormatStart
+            citableItemsHTML,
+            citedItemsHTML,
+            citeFormat: initialFormat
         })
     )
 
@@ -188,8 +174,6 @@ export let citationDialog = function (mod) {
                     source: autocomplete_tags
                 })
             })
-
-
 
             jQuery('#cite-source-table').trigger('update')
 

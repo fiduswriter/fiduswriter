@@ -173,78 +173,80 @@ export class LatexExporterConvert {
                 content += escapeLatexText(node.text)
                 break
             case 'citation':
-                let citationEntries = node.attrs.bibEntry.split(','),
-                    citationBefore = node.attrs.bibBefore.split(','),
-                    citationPage = node.attrs.bibPage.split(','),
-                    citationFormat = node.attrs.bibFormat,
-                    citationCommand = '\\' + citationFormat
+                let references = node.attrs.references
+                let format = node.attrs.format
+                let citationCommand = '\\' + format
 
-                if (citationEntries.length > 1 &&
-                    citationBefore.join('').length === 0 &&
-                    citationPage.join('').length === 0) {
+                if (references.length > 1 &&
+                    references.every(ref => !ref.locator && !ref.prefix)
+                ) {
                     // multi source citation without page numbers or text before.
                     let citationEntryKeys = []
 
-                    let allCitationItemsPresent = citationEntries.every(function(citationEntry) {
-                        let bibDBEntry = that.bibDB.db[citationEntry]
-                        if (bibDBEntry) {
-                            if (!bibDBEntry) {
-                                // Not present in bibliography database, skip it.
-                                // TODO: Throw an error?
-                                return false
+                    let allCitationItemsPresent = references.map(ref => ref.id).every(
+                        function(citationEntry) {
+                            let bibDBEntry = that.bibDB.db[citationEntry]
+                            if (bibDBEntry) {
+                                if (!bibDBEntry) {
+                                    // Not present in bibliography database, skip it.
+                                    // TODO: Throw an error?
+                                    return false
+                                }
+                                if (!that.usedBibDB[citationEntry]) {
+                                    let citationKey = that.createUniqueCitationKey(
+                                        bibDBEntry.entry_key
+                                    )
+                                    that.usedBibDB[citationEntry] = Object.assign({}, bibDBEntry)
+                                    that.usedBibDB[citationEntry].entry_key = citationKey
+                                }
+                                citationEntryKeys.push(that.usedBibDB[citationEntry].entry_key)
                             }
-                            if (!that.usedBibDB[citationEntry]) {
-                                let citationKey = that.createUniqueCitationKey(
-                                    bibDBEntry.entry_key
-                                )
-                                that.usedBibDB[citationEntry] = Object.assign({}, bibDBEntry)
-                                that.usedBibDB[citationEntry].entry_key = citationKey
-                            }
-                            citationEntryKeys.push(that.usedBibDB[citationEntry].entry_key)
+                            return true
                         }
-                        return true
-                    })
+                    )
                     if (allCitationItemsPresent) {
                         citationCommand += `{${citationEntryKeys.join(',')}}`
                     } else {
                         citationCommand = false
                     }
                 } else {
-                    if (citationEntries.length > 1) {
+                    if (references.length > 1) {
                         citationCommand += 's' // Switching from \autocite to \autocites
                     }
 
-                    let allCitationItemsPresent = citationEntries.every(function(citationEntry, index) {
-                        let bibDBEntry = that.bibDB.db[citationEntry]
-                        if (!bibDBEntry) {
-                            // Not present in bibliography database, skip it.
-                            // TODO: Throw an error?
-                            return false
-                        }
-
-                        if (citationBefore[index] && citationBefore[index].length > 0) {
-                            citationCommand += `[${citationBefore[index]}]`
-                            if (!citationPage[index] || citationPage[index].length === 0) {
-                                citationCommand += '[]'
+                    let allCitationItemsPresent = references.every(
+                        ref => {
+                            let bibDBEntry = that.bibDB.db[ref.id]
+                            if (!bibDBEntry) {
+                                // Not present in bibliography database, skip it.
+                                // TODO: Throw an error?
+                                return false
                             }
-                        }
-                        if (citationPage[index] && citationPage[index].length > 0) {
-                            citationCommand += `[${citationPage[index]}]`
-                        }
-                        citationCommand += '{'
 
-                        if (!that.usedBibDB[citationEntry]) {
-                            let citationKey = that.createUniqueCitationKey(
-                                bibDBEntry.entry_key
-                            )
-                            that.usedBibDB[citationEntry] = Object.assign({}, bibDBEntry)
-                            that.usedBibDB[citationEntry].entry_key = citationKey
-                        }
-                        citationCommand += that.usedBibDB[citationEntry].entry_key
-                        citationCommand += '}'
+                            if (ref.prefix) {
+                                citationCommand += `[${ref.prefix}]`
+                                if (!ref.locator) {
+                                    citationCommand += '[]'
+                                }
+                            }
+                            if (ref.locator) {
+                                citationCommand += `[${ref.locator}]`
+                            }
+                            citationCommand += '{'
 
-                        return true
-                    })
+                            if (!that.usedBibDB[ref.id]) {
+                                let citationKey = that.createUniqueCitationKey(
+                                    bibDBEntry.entry_key
+                                )
+                                that.usedBibDB[ref.id] = Object.assign({}, bibDBEntry)
+                                that.usedBibDB[ref.id].entry_key = citationKey
+                            }
+                            citationCommand += that.usedBibDB[ref.id].entry_key
+                            citationCommand += '}'
+
+                            return true
+                        }
+                    )
 
                     if (!allCitationItemsPresent) {
                         citationCommand = false

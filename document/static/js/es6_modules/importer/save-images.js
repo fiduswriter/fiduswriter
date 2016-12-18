@@ -37,12 +37,8 @@ export class SaveImages {
                     },
                     success: function(response, textStatus, jqXHR) {
                         that.imageDB[response.values.pk] = response.values
-                        that.ImageTranslationTable.push({
-                            oldUrl: that.newImageEntries[that.counter].oldUrl,
-                            oldId: that.newImageEntries[that.counter].oldId,
-                            newUrl: response.values.image,
-                            newId: response.values.pk
-                        })
+                        let oldId = that.newImageEntries[that.counter].oldId
+                        that.ImageTranslationTable[oldId] = response.values.pk
                         that.counter++
                         that.sendImage().then(()=>{
                             resolve()

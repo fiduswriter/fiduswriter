@@ -2,9 +2,9 @@ import {escapeText} from "../tools/html"
 import {noSpaceTmp} from "../../common/common"
 
 export class OdtExporterRichtext {
-    constructor(exporter, citations, images) {
+    constructor(exporter, images) {
         this.exporter = exporter
-        this.citations = citations
+        //this.citations = citations
         this.images = images
         this.imgCounter = 1
         this.fnCounter = 0 // real footnotes
@@ -70,6 +70,7 @@ export class OdtExporterRichtext {
             case 'footnote':
                 options = _.clone(options)
                 options.section = 'Footnote'
+                options.inFootnote = true
                 content += this.transformRichtext({
                     type: 'footnotecontainer',
                     content: node.attrs.footnote
@@ -127,7 +128,12 @@ export class OdtExporterRichtext {
             case 'citation':
                 let that = this
                 // We take the first citation from the stack and remove it.
-                let cit = this.citations.pmCits.shift()
+                let cit
+                if (options.inFootnote) {
+                    cit = this.exporter.footnotes.citations.pmCits.shift()
+                } else {
+                    cit = this.exporter.citations.pmCits.shift()
+                }
                 if (options.citationType && options.citationType === 'note') {
                     // If the citations are in notes (footnotes), we need to
                     // put the contents of this citation in a footnote.
@@ -149,7 +155,7 @@ export class OdtExporterRichtext {
 
                 break
             case 'figure':
-                if(node.attrs.image !== 'false') {
+                if(node.attrs.image !== false) {
                     let imgDBEntry = this.images.imageDB.db[node.attrs.image]
                     let imgFileName = this.images.imgIdTranslation[node.attrs.image]
                     let height = imgDBEntry.height*3/4 // more or less px to point

@@ -155,7 +155,7 @@ export class OdtExporterRichtext {
 
                 break
             case 'figure':
-                if(node.attrs.image !== 'false') {
+                if(node.attrs.image !== false) {
                     let imgDBEntry = this.images.imageDB.db[node.attrs.image]
                     let imgFileName = this.images.imgIdTranslation[node.attrs.image]
                     let height = imgDBEntry.height*3/4 // more or less px to point

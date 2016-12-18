@@ -75,12 +75,15 @@ export class Figure extends Block {
         }
     }
     get matchDOMTag() {
-        return {"figure": dom => ({
-            equation: dom.getAttribute('data-equation'),
-            image: dom.getAttribute('data-image'),
-            figureCategory: dom.getAttribute('data-figure-category'),
-            caption: dom.getAttribute('data-caption')
-        })}
+        return {"figure": dom => {
+            let image = dom.getAttribute('data-image')
+            return {
+                equation: dom.getAttribute('data-equation'),
+                image: image === 'false' ? false : parseInt(image),
+                figureCategory: dom.getAttribute('data-figure-category'),
+                caption: dom.getAttribute('data-caption')
+            }
+        }}
     }
     toDOM(node) {
         let dom = elt('figure', {
@@ -89,7 +92,7 @@ export class Figure extends Block {
             'data-figure-category': node.attrs.figureCategory,
             'data-caption': node.attrs.caption
         })
-        if (node.attrs.image!=='false') {
+        if (node.attrs.image !== false) {
             dom.appendChild(elt("div"))
             if(node.type.schema.cached.imageDB) {
                 if(node.type.schema.cached.imageDB.db[node.attrs.image] &&
@@ -122,13 +125,13 @@ export class Figure extends Block {
             }
         } else {
             let domEquation = elt('div', {
-                class: 'figure-equation',
-                'data-equation': node.attrs.equation
+               class: 'figure-equation',
+               'data-equation': node.attrs.equation
             })
 
             katexRender(node.attrs.equation, domEquation, {
-                displayMode: true,
-                throwOnError: false
+               displayMode: true,
+               throwOnError: false
             })
             dom.appendChild(domEquation)
         }

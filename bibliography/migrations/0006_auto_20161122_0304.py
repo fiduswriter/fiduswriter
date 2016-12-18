@@ -94,7 +94,7 @@ def reform_l_range(range_string):
                 reform_f_literal(range_parts[-1])
             ])
         else:
-            out_list.append([range_item])
+            out_list.append([reform_f_literal(range_item)])
     return out_list
 
 def modify_fields(apps, schema_editor):

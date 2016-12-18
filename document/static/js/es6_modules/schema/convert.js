@@ -23,7 +23,7 @@ export let getMetadata = function(pmArticle) {
 
 export let getSettings = function(pmArticle) {
     let settings = _.clone(pmArticle.attrs)
-    settings.doc_version = 1
+    settings.doc_version = 1.1
     return settings
 }
 
@@ -46,11 +46,43 @@ export let updateDoc = function(doc) {
         case undefined: // Fidus Writer 1.1-3.0
         case 0: // Fidus Writer 3.1 prerelease
             doc = convertDocV0(doc)
+            break
+        case 1:
+            doc = convertDocV1(doc)
+            break
     }
     return doc
 }
 
 
+let convertCitationsV0 = function(dom) {
+    let citations = [].slice.call(dom.querySelectorAll('span.citation'))
+    citations.forEach(citation => {
+        let prefixes = citation.getAttribute('data-bib-before')
+        prefixes = prefixes ? prefixes.split(',,,') : []
+        let locators = citation.getAttribute('data-bib-page')
+        locators = locators ? locators.split(',,,') : []
+        let ids = citation.getAttribute('data-bib-entry')
+        ids = ids ? ids.split(',') : []
+        let references = ids.map((id, index) => {
+            let returnObj = {id: parseInt(id)}
+            if (prefixes[index] && prefixes[index] !== '') {
+                returnObj['prefix'] = prefixes[index]
+            }
+            if (locators[index] && locators[index] !== '') {
+                returnObj['locator'] = locators[index]
+            }
+            return returnObj
+        })
+        citation.removeAttribute('data-bib-before')
+        citation.removeAttribute('data-bib-page')
+        citation.removeAttribute('data-bib-entry')
+        citation.setAttribute('data-references', JSON.stringify(references))
+        let format = citation.getAttribute('data-bib-format')
+        citation.removeAttribute('data-bib-format')
+        citation.setAttribute('data-format', format)
+    })
+}
 
 let convertDocV0 = function(doc) {
 
@@ -78,22 +110,27 @@ let convertDocV0 = function(doc) {
     editorNode.appendChild(keywordsNode)
     editorNode.appendChild(contentsNode)
 
-
-    // Footnotes FW 1.1-3.0
-    let fw11Footnotes = [].slice.call(editorNode.querySelectorAll('footnote,span.footnote'))
-    fw11Footnotes.forEach(function(footnote){
-        let newFn = document.createElement('span')
-        newFn.classList.add('footnote-marker')
-        newFn.setAttribute('data-footnote',footnote.innerHTML)
-        footnote.parentElement.replaceChild(newFn,footnote)
-    })
+    convertCitationsV0(editorNode)
 
     // Footnotes FW 3.1 pre-release
     let fw31Footnotes = [].slice.call(editorNode.querySelectorAll('footnote-marker'))
-    fw31Footnotes.forEach(function(footnote){
+    fw31Footnotes.forEach(footnote => {
         let contents = footnote.getAttribute('contents')
-        footnote.setAttribute('data-footnote', contents)
+        let tmpNode = document.createElement('div')
+        tmpNode.innerHTML = contents
+        convertCitationsV0(tmpNode)
+        footnote.setAttribute('data-footnote', tmpNode.innerHTML)
         footnote.removeAttribute('contents')
+    })
+
+    // Footnotes FW 1.1-3.0
+    let fw11Footnotes = [].slice.call(editorNode.querySelectorAll('footnote,span.footnote'))
+    fw11Footnotes.forEach(footnote => {
+        let newFn = document.createElement('span')
+        newFn.classList.add('footnote-marker')
+        convertCitationsV0(footnote)
+        newFn.setAttribute('data-footnote', footnote.innerHTML)
+        footnote.parentElement.replaceChild(newFn, footnote)
     })
 
     let pmDoc = docSchema.parseDOM(editorNode, {
@@ -121,4 +158,50 @@ let convertDocV0 = function(doc) {
     doc.metadata = pmMetadata
     doc.settings = pmSettings
     return doc
+}
+
+let convertDocV1 = function(doc) {
+    let returnDoc = Object.assign({}, doc)
+    convertNodeV1(returnDoc.contents)
+    returnDoc.settings.doc_version = 1.1
+    return returnDoc
+}
+
+let convertNodeV1 = function(node) {
+    switch (node.type) {
+        case 'citation':
+            let prefixes = node.attrs.bibBefore
+            prefixes = prefixes ? prefixes.split(',,,') : []
+            let locators = node.attrs.bibPage
+            locators = locators ? locators.split(',,,') : []
+            let ids = node.attrs.bibEntry
+            ids = ids ? ids.split(',') : []
+            let references = ids.map((id, index) => {
+                let returnObj = {id: parseInt(id)}
+                if (prefixes[index] && prefixes[index] !== '') {
+                    returnObj['prefix'] = prefixes[index]
+                }
+                if (locators[index] && locators[index] !== '') {
+                    returnObj['locator'] = locators[index]
+                }
+                return returnObj
+            })
+            node.attrs = {
+                format: node.attrs.bibFormat,
+                references
+            }
+            break
+        case 'footnote':
+            if (node.attrs && node.attrs.footnote) {
+                node.attrs.footnote.forEach(childNode => {
+                    convertNodeV1(childNode)
+                })
+            }
+            break
+    }
+    if (node.content) {
+        node.content.forEach(childNode => {
+            convertNodeV1(childNode)
+        })
+    }
 }

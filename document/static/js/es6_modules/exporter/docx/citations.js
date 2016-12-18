@@ -43,7 +43,7 @@ export class DocxExporterCitations {
         descendantNodes(this.docContents).forEach(
             function(node){
                 if (node.type==='citation') {
-                    that.citInfos.push(node.attrs)
+                    that.citInfos.push(JSON.parse(JSON.stringify(node.attrs)))
                 }
             }
         )

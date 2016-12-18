@@ -157,13 +157,13 @@ export class ImportNative {
             }
         })
         jQuery(contents).find('.citation').each(function() {
-            let citekeys = jQuery(this).attr('data-bib-entry').split(',')
-            for (let i = 0; i < citekeys.length; i++) {
-                if (citekeys[i] in BibTranslationTable) {
-                    citekeys[i] = BibTranslationTable[citekeys[i]]
+            let references = JSON.parse(jQuery(this).attr('data-references'))
+            references.forEach(cit => {
+                if (BibTranslationTable[cit.id]) {
+                    cit.id = BibTranslationTable[cit.id]
                 }
-            }
-            jQuery(this).attr('data-bib-entry', citekeys.join(','))
+            })
+            jQuery(this).attr('data-references', JSON.stringify(references))
         })
         this.aDocument.contents = docSchema.parseDOM(contents).firstChild.toJSON()
     }

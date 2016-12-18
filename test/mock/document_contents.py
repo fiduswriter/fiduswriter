@@ -332,14 +332,19 @@ class Citation(FlatInlineContent):
     """
     template = (
         '{"type":"citation","attrs":{"bibFormat":"autocite",'
-        '"bibEntry":"%(bibliographyId)i","bibBefore":"%(textBefore)s",'
-        '"bibPage":"%(page)s"}}'
+        '"references":'
+        '[{'
+        '"id":%(bibliographyId)i,'
+        '"prefix":"%(prefix)s",'
+        '"locator":"%(locator)s"'
+        '}]'
+        '}}'
     )
 
-    def __init__(self, bibliographyId, textBefore, page):
+    def __init__(self, bibliographyId, prefix, locator):
         self.bibliographyId = bibliographyId
-        self.textBefore = textBefore
-        self.page = page
+        self.prefix = prefix
+        self.locator = locator
 
 
 class Equation(FlatInlineContent):

@@ -25,29 +25,10 @@ export class FormatCitations {
 
     formatAllCitations() {
         let that = this
-        this.allCitationInfos.forEach(function(cInfo) {
-            var entries = cInfo.bibEntry ? cInfo.bibEntry.split(',') : []
-            let len = entries.length
-
-            let pages = cInfo.bibPage ? cInfo.bibPage.split(',,,') : [],
-                prefixes = cInfo.bibBefore ? cInfo.bibBefore.split(',,,') : [],
-                citationItem,
-                citationItems = []
-            for (let j = 0; j < len; j++) {
-                citationItem = {
-                    id: entries[j]
-                }
-                if ('' !== pages[j]) {
-                    citationItem.locator = pages[j]
-                }
-                if ('' !== prefixes[j]) {
-                    citationItem.prefix = prefixes[j]
-                }
-                citationItems.push(citationItem)
-            }
-            that.bibFormats.push(cInfo.bibFormat)
+        this.allCitationInfos.forEach(cInfo => {
+            that.bibFormats.push(cInfo.format)
             that.citations.push({
-                citationItems,
+                citationItems: cInfo.references,
                 properties: {
                     noteIndex: that.bibFormats.length
                 }
@@ -121,15 +102,19 @@ export class FormatCitations {
             citeprocConnector,
             this.citationStyle.definition
         )
-
+        let allIds = []
+        this.citations.forEach(cit => {
+            cit.citationItems.forEach(item => {
+                allIds.push('' + item.id)
+            })
+        })
+        citeprocInstance.updateItems(allIds)
 
         let inText = citeprocInstance.cslXml.dataObj.attrs.class === 'in-text'
         let len = this.citations.length
-
         for (let i = 0; i < len; i++) {
             let citation = this.citations[i],
-                citationText = citeprocInstance.appendCitationCluster(citation)
-
+                citationText = citeprocInstance.appendCitationCluster(citation, true)
             if (inText && 'textcite' == this.bibFormats[i]) {
                 let newCiteText = '',
                     items = citation.citationItems,
@@ -150,16 +135,8 @@ export class FormatCitations {
                         onlyDateOption[0].locator = items[j].locator
                     }
 
-                    if (items[j].label) {
-                        onlyDateOption[0].label = items[j].label
-                    }
-
                     if (items[j].prefix) {
                         onlyDateOption[0].prefix = items[j].prefix
-                    }
-
-                    if (items[j].suffix) {
-                        onlyDateOption[0].suffix = items[j].suffix
                     }
 
                     if (0 < j) {
@@ -168,7 +145,7 @@ export class FormatCitations {
                     newCiteText += citeprocInstance.makeCitationCluster(onlyNameOption)
                     newCiteText += ' ' + citeprocInstance.makeCitationCluster(onlyDateOption)
                 }
-                citationText[0][1] = newCiteText
+                citationText[0].push(newCiteText)
             }
             this.citationTexts.push(citationText)
         }

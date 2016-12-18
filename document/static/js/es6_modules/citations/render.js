@@ -17,30 +17,35 @@ export class RenderCitations {
 
     init() {
         let that = this
-        this.allCitationNodes = [].slice.call(jQuery(this.contentElement).find('.citation'))
+        this.allCitationNodes = [].slice.call(jQuery(this.contentElement).find('span[data-references]'))
         this.allCitationNodes.forEach(function(cElement){
-            that.allCitationInfos.push(cElement.dataset)
+            let citeInfo = Object.assign({},cElement.dataset)
+            citeInfo.references = JSON.parse(citeInfo.references)
+            that.allCitationInfos.push(citeInfo)
         })
-        this.fm = new FormatCitations(this.allCitationInfos, this.citationStyle, this.bibDB, function() {
-            if (that.renderNoteCitations || 'note' !== that.fm.citationType) {
-                that.renderCitations()
-            } else if (that.callback) {
-                that.callback()
+        this.fm = new FormatCitations(
+            this.allCitationInfos,
+            this.citationStyle,
+            this.bibDB,
+            function() {
+                if (that.renderNoteCitations || 'note' !== that.fm.citationType) {
+                    that.renderCitations()
+                } else if (that.callback) {
+                    that.callback()
+                }
             }
-        })
+        )
         this.fm.init()
     }
 
-
-
     renderCitations() {
-        for (let j = 0; j < this.fm.citationTexts.length; j++) {
-            let citationText = this.fm.citationTexts[j][0][1]
+        this.fm.citationTexts.forEach((citText, index) => {
+            let citationText = citText[citText.length - 1][1]
             if ('note' === this.fm.citationType) {
                 citationText = `<span class="pagination-footnote"><span><span>${citationText}</span></span></span>`
             }
-            this.allCitationNodes[j].innerHTML = citationText
-        }
+            this.allCitationNodes[index].innerHTML = citationText
+        })
         if (this.callback) {
             this.callback()
         }

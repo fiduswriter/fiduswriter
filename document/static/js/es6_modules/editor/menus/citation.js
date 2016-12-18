@@ -17,7 +17,7 @@ export class ModMenusCitation {
 
         let citeItemData = {
             'id': pk,
-            'type': bibInfo.bib_type,
+            'bib_type': bibInfo.bib_type,
             'title': bibInfo.fields.title ? litToText(bibInfo.fields.title) : gettext('Untitled'),
             'author': bibauthors ? nameToText(bibauthors) : ''
         }
@@ -38,14 +38,16 @@ export class ModMenusCitation {
         let len = items.length
         for(let i = 0; i < len; i ++) {
             let item = items[i]
-            jQuery('#selected-cite-source-table .fw-document-table-body').append(selectedCitationTemplate({
-                'id': item.id,
-                'type': item.type,
-                'title': item.title,
-                'author': item.author,
-                'page': '',
-                'prefix': ''
-            }))
+            jQuery('#selected-cite-source-table .fw-document-table-body').append(
+                selectedCitationTemplate({
+                    'id': item.id,
+                    'bib_type': item.bib_type,
+                    'title': item.title,
+                    'author': item.author,
+                    'locator': '',
+                    'prefix': ''
+                })
+            )
         }
     }
 

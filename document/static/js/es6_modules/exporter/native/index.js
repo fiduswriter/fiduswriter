@@ -9,7 +9,7 @@ import {docSchema} from "../../schema/document"
  * The importer will not import from a higher version and the exporter
   * will include this number in all exports.
  */
-export let FW_FILETYPE_VERSION = "1.5"
+export let FW_FILETYPE_VERSION = "1.6"
 
 /** Create a Fidus Writer document and upload it to the server as a backup.
  * @function uploadNative
@@ -81,7 +81,9 @@ export let exportNative = function(doc, anImageDB, aBibDB, callback) {
 
 
     jQuery(contents).find('.citation').each(function() {
-        citeList.push(jQuery(this).attr('data-bib-entry'))
+        citeList = citeList.concat(
+            JSON.parse(jQuery(this).attr('data-references')).map(ref => ref.id)
+        )
     })
 
 
@@ -94,7 +96,9 @@ export let exportNative = function(doc, anImageDB, aBibDB, callback) {
         let fnDiv = document.createElement('div')
         fnDiv.innerHTML = footnotesHtml
         jQuery(fnDiv).find('.citation').each(function() {
-            citeList.push(jQuery(this).attr('data-bib-entry'))
+            citeList = citeList.concat(
+                JSON.parse(jQuery(this).attr('data-references')).map(ref => ref.id)
+            )
         })
         jQuery(fnDiv).find('figure').not("[data-image='']").each(function() {
             imageList.push(parseInt(jQuery(this).attr('data-image')))
@@ -112,12 +116,7 @@ export let exportNative = function(doc, anImageDB, aBibDB, callback) {
         })
     }
 
-    citeList = _.uniq(citeList.join(',').split(','))
-    // If the number of cited items is 1 and that one item is an empty string,
-    // there are no cited items at all.
-    if (citeList.length === 1 && citeList[0] === '') {
-        citeList = []
-    }
+    citeList = _.uniq(citeList)
 
     // Entries are stored as integers
     citeList = citeList.map(window.Number)

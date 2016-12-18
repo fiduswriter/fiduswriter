@@ -1,5 +1,4 @@
 import {addAlert, csrfToken} from "../common/common"
-import {docSchema} from "../schema/document"
 import {GetImages} from "./get-images"
 import {SaveImages} from "./save-images"
 import {SaveBibs} from "./save-bibs"
@@ -73,99 +72,63 @@ export class ImportNative {
     }
 
     compareImageDBs() {
-        let shrunkImageDBObject = {},
-        ImageTranslationTable = [],
-        newImageEntries = [],
-        simplifiedShrunkImageDB = []
+        let ImageTranslationTable = {},
+        newImageEntries = []
 
-        // We need to remove the pk from the entry in the this.impImageDB so that
-        // we also get matches with this.entries with other pk values.
-        // We therefore convert to an associative array/object.
-        for (let key in this.impImageDB) {
-            simplifiedShrunkImageDB.push(_.omit(this.impImageDB[key], 'image',
-                'thumbnail', 'cats', 'added'))
-        }
-
-        for (let image in simplifiedShrunkImageDB) {
-            shrunkImageDBObject[simplifiedShrunkImageDB[image].pk] =
-                simplifiedShrunkImageDB[image]
-            delete shrunkImageDBObject[simplifiedShrunkImageDB[image].pk].pk
-        }
-
-        for (let key in shrunkImageDBObject) {
-            let matchEntries = _.where(this.imageDB, shrunkImageDBObject[key])
+        Object.keys(this.impImageDB).map(key => parseInt(key)).forEach(key => {
+            let imageObj = this.impImageDB[key]
+            let matchEntries = _.where(
+                this.imageDB,
+                {checksum: imageObj.checksum}
+            )
             if (0 === matchEntries.length) {
-                //create new
-                let sIDBEntry = _.findWhere(this.impImageDB, {
-                    pk: parseInt(key)
-                })
                 newImageEntries.push({
-                    oldId: parseInt(key),
-                    oldUrl: sIDBEntry.image,
-                    title: sIDBEntry.title,
-                    file_type: sIDBEntry.file_type,
-                    checksum: sIDBEntry.checksum
+                    oldId: key,
+                    oldUrl: imageObj.image,
+                    title: imageObj.title,
+                    file_type: imageObj.file_type,
+                    checksum: imageObj.checksum
                 })
-            } else if (1 === matchEntries.length && parseInt(key) !==
-                matchEntries[0].pk) {
-                ImageTranslationTable.push({
-                    oldId: parseInt(key),
-                    newId: matchEntries[0].pk,
-                    oldUrl: _.findWhere(this.impImageDB, {
-                        pk: parseInt(key)
-                    }).image,
-                    newUrl: matchEntries[0].image
-                })
-            } else if (1 < matchEntries.length) {
-                if (!(_.findWhere(matchEntries, {pk: parseInt(key)}))) {
-                    // There are several matches, and none of the matches have
-                    // the same id as the key in this.impImageDB.
-                    // We now pick the first match.
-                    // TODO: Figure out if this behavior is correct.
-                    ImageTranslationTable.push({
-                        oldId: key,
-                        newId: matchEntries[0].pk,
-                        oldUrl: _.findWhere(this.impImageDB, {
-                            pk: parseInt(key)
-                        }).image,
-                        newUrl: matchEntries[0].image
-                    })
-                }
+            } else if (!(_.findWhere(matchEntries, {pk: key}))) {
+                // There is at least one match, and none of the matches have
+                // the same id as the key in this.impImageDB.
+                // We therefore pick the first match.
+                ImageTranslationTable[key] = matchEntries[0].pk
             }
-        }
+        })
 
         return [ImageTranslationTable, newImageEntries]
     }
 
 
     translateReferenceIds(BibTranslationTable, ImageTranslationTable) {
-        let contents = docSchema.nodeFromJSON(this.aDocument.contents).toDOM()
-        jQuery(contents).find('img').each(function() {
-            let translationEntry = _.findWhere(ImageTranslationTable, {
-                oldUrl: jQuery(this).attr('src')
-            })
-            if (translationEntry) {
-                jQuery(this).attr('src', translationEntry.newUrl)
+        function walkTree(node) {
+            switch (node.type) {
+                case 'citation':
+                    node.attrs.references.forEach(ref => {
+                        ref.id = BibTranslationTable[ref.id]
+                    })
+                    break
+                case 'figure':
+                    if (node.attrs.image !== false) {
+                        node.attrs.image = ImageTranslationTable[node.attrs.image]
+                    }
+                    break
+                case 'footnote':
+                    if (node.attrs && node.attrs.footnote) {
+                        node.attrs.footnote.forEach(childNode => {
+                            walkTree(childNode)
+                        })
+                    }
+                    break
             }
-        })
-        jQuery(contents).find('figure').each(function() {
-            let translationEntry = _.findWhere(ImageTranslationTable, {
-                oldId: parseInt(jQuery(this).attr('data-image'))
-            })
-            if (translationEntry) {
-                jQuery(this).attr('data-image', translationEntry.newId)
+            if (node.content) {
+                node.content.forEach(childNode => {
+                    walkTree(childNode)
+                })
             }
-        })
-        jQuery(contents).find('.citation').each(function() {
-            let references = JSON.parse(jQuery(this).attr('data-references'))
-            references.forEach(cit => {
-                if (BibTranslationTable[cit.id]) {
-                    cit.id = BibTranslationTable[cit.id]
-                }
-            })
-            jQuery(this).attr('data-references', JSON.stringify(references))
-        })
-        this.aDocument.contents = docSchema.parseDOM(contents).firstChild.toJSON()
+        }
+        walkTree(this.aDocument.contents)
     }
 
     createNewDocument() {

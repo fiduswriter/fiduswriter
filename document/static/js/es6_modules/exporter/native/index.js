@@ -1,10 +1,8 @@
 import {createSlug} from "../tools/file"
-//import {findImages} from "../tools/html"
 import {zipFileCreator} from "../tools/zip"
 import {BibliographyDB} from "../../bibliography/database"
 import {ImageDB} from "../../images/database"
 import {addAlert} from "../../common/common"
-import {docSchema} from "../../schema/document"
 /** The current Fidus Writer filetype version.
  * The importer will not import from a higher version and the exporter
   * will include this number in all exports.
@@ -67,69 +65,66 @@ export class NativeExporter {
 // used in copy
 export let exportNative = function(doc, anImageDB, aBibDB, callback) {
     let shrunkImageDB = {},
-        citeList = [],
-        imageList = [],
-        contents = docSchema.nodeFromJSON(doc.contents).toDOM(),
-        footnotesHtml = '',
         httpIncludes = []
 
     addAlert('info', gettext('File export has been initiated.'))
 
-    jQuery(contents).find('figure').not("[data-image='']").each(function() {
-        imageList.push(parseInt(jQuery(this).attr('data-image')))
-    })
+    let imageList = [], citeList = []
 
-
-    jQuery(contents).find('.citation').each(function() {
-        citeList = citeList.concat(
-            JSON.parse(jQuery(this).attr('data-references')).map(ref => ref.id)
-        )
-    })
-
-
-    jQuery(contents).find('.footnote-marker').each(function() {
-        footnotesHtml += jQuery(this).attr('data-footnote')
-    })
-
-
-    if (footnotesHtml.length > 0) {
-        let fnDiv = document.createElement('div')
-        fnDiv.innerHTML = footnotesHtml
-        jQuery(fnDiv).find('.citation').each(function() {
-            citeList = citeList.concat(
-                JSON.parse(jQuery(this).attr('data-references')).map(ref => ref.id)
-            )
-        })
-        jQuery(fnDiv).find('figure').not("[data-image='']").each(function() {
-            imageList.push(parseInt(jQuery(this).attr('data-image')))
-        })
+    function walkTree(node) {
+        switch (node.type) {
+            case 'citation':
+                citeList = citeList.concat(node.attrs.references.map(ref => ref.id))
+                break
+            case 'figure':
+                if (node.attrs.image !== false) {
+                    imageList.push(node.attrs.image)
+                }
+                break
+            case 'footnote':
+                if (node.attrs && node.attrs.footnote) {
+                    node.attrs.footnote.forEach(childNode => {
+                        walkTree(childNode)
+                    })
+                }
+                break
+        }
+        if (node.content) {
+            node.content.forEach(childNode => {
+                walkTree(childNode)
+            })
+        }
     }
+
+    walkTree(doc.contents)
 
     imageList = _.uniq(imageList)
 
-    for (let image in imageList) {
-        let imageDbEntry = anImageDB[imageList[image]]
-        shrunkImageDB[imageList[image]] = imageDbEntry
+    imageList.forEach(itemId => {
+        shrunkImageDB[itemId] = Object.assign({}, anImageDB[itemId])
+        // Remove parts that are connected to a particular user/server
+        delete shrunkImageDB[itemId].cats
+        delete shrunkImageDB[itemId].thumbnail
+        delete shrunkImageDB[itemId].pk
+        delete shrunkImageDB[itemId].added
+        let imageUrl = shrunkImageDB[itemId].image
         httpIncludes.push({
-            url: imageDbEntry.image,
-            filename: imageDbEntry.image.split('/').pop()
+            url: imageUrl,
+            filename: imageUrl.split('/').pop()
         })
-    }
+    })
 
     citeList = _.uniq(citeList)
 
-    // Entries are stored as integers
-    citeList = citeList.map(window.Number)
-
     let shrunkBibDB = {}
     citeList.forEach(itemId => {
-        shrunkBibDB[itemId] = _.clone(aBibDB[itemId])
+        shrunkBibDB[itemId] = Object.assign({}, aBibDB[itemId])
         // Remove the entry_cat, as it is only a list of IDs for one
         // particular user/server.
         delete shrunkBibDB[itemId].entry_cat
     })
 
-    let docCopy = _.clone(doc)
+    let docCopy = Object.assign({}, doc)
 
     // Remove items that aren't needed.
     delete(docCopy.comment_version)

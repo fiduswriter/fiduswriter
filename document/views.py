@@ -514,11 +514,13 @@ def upload_revision_js(request):
 # Download a revision that was previously uploaded
 @login_required
 def get_revision(request, revision_id):
-    if not request.user.is_staff:
-        return HttpResponse(status=405)
-    revision = DocumentRevision.objects.get(pk=int(revision_id))
-    if revision.document.owner != request.user:
-        return HttpResponse(status=405)
+    if request.user.is_staff:
+        revision = DocumentRevision.objects.get(pk=int(revision_id))
+    else:
+        revision = DocumentRevision.objects.get(
+            pk=int(revision_id),
+            document__owner=request.user
+        )
     http_response = HttpResponse(
         revision.file_object.file,
         content_type='application/zip; charset=x-user-defined',

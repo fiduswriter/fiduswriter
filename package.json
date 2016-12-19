@@ -28,6 +28,7 @@
     "browserify-incremental": "3.1.1",
     "browserkeymap": "^1.0.0",
     "datatables": "1.10.12",
+    "downloadjs": "^1.4.6",
     "dropkickjs": "2.1.10",
     "fg-loadcss": "1.2.0",
     "jquery": "3.1.1",

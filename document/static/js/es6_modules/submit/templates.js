@@ -7,6 +7,16 @@ export let journalDialogTemplate = _.template('\
 </div>\
 ')
 
+
+export let reviewSubmitDialogTemplate = _.template('\
+    <div id="review-message" title="'+gettext('Leave your messages for editor and authors')+'">\
+    <label for="editor">Message for editor:</label>\
+    <p><textarea  id="message-editor" name="message-editor" class="message-reviewer" ></textarea></p><br>\
+    <label for="editor-author">Message for editor and authors:</label>\
+    <p><textarea  id="message-editor-author" class="message-reviewer" ></textarea></p>\
+</div>\
+')
+
 //<div title="'+gettext('Select a journal to submit the paper')+'"><p><input type="text" class="revision-note" placeholder="'+gettext('Description (optional)')+'"><%= tt %></p></div>')
 
             /*<input type="radio" id="<%- journal.id %>" name="journalList" value="<%- journal.id %>"\

@@ -564,7 +564,7 @@ def review_submit_js(request):
             response["submission"]["submission_id"] = submission.submission_id
             response["submission"]["version_id"] = submission.version_id
             response["submission"]["journal_id"] = submission.journal_id
-        the_user = get_user(request)
+        the_user = User.objects.filter(id=user_id)
         if len(the_user) > 0:
             response['user'] = {}
             response['user']['email'] = the_user[0].email
@@ -595,7 +595,7 @@ def review_submit_undo_js(request):
             response["submission"]["submission_id"] = submission.submission_id
             response["submission"]["version_id"] = submission.version_id
             response["submission"]["journal_id"] = submission.journal_id
-        the_user = get_user(request)
+        the_user = User.objects.filter(id=user_id)
         if len(the_user) > 0:
             response['user'] = {}
             response['user']['email'] = the_user[0].email
@@ -860,7 +860,7 @@ def profile_js(request):
         request.method == 'POST' and
         settings.SERVER_INFO['EXPERIMENTAL'] is True
     ):
-        id = request.POST["id"]
+        id = request.POST["user_id"]
         the_user = User.objects.filter(id=id)
         if len(the_user) > 0:
             response['user'] = {}

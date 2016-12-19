@@ -58,6 +58,11 @@ export let updateDoc = function(doc) {
 let convertCitationsV0 = function(dom) {
     let citations = [].slice.call(dom.querySelectorAll('span.citation'))
     citations.forEach(citation => {
+        let hasRefs = citation.getAttribute('data-references')
+        if (hasRefs) {
+            // has been updated already. abort.
+            return
+        }
         let prefixes = citation.getAttribute('data-bib-before')
         prefixes = prefixes ? prefixes.split(',,,') : []
         let locators = citation.getAttribute('data-bib-page')
@@ -110,8 +115,6 @@ let convertDocV0 = function(doc) {
     editorNode.appendChild(keywordsNode)
     editorNode.appendChild(contentsNode)
 
-    convertCitationsV0(editorNode)
-
     // Footnotes FW 3.1 pre-release
     let fw31Footnotes = [].slice.call(editorNode.querySelectorAll('footnote-marker'))
     fw31Footnotes.forEach(footnote => {
@@ -132,6 +135,8 @@ let convertDocV0 = function(doc) {
         newFn.setAttribute('data-footnote', footnote.innerHTML)
         footnote.parentElement.replaceChild(newFn, footnote)
     })
+
+    convertCitationsV0(editorNode)
 
     let pmDoc = docSchema.parseDOM(editorNode, {
         preserveWhitespace: true

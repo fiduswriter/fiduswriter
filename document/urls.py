@@ -41,6 +41,21 @@ urlpatterns = [
         name='submit_right_js'
     ),
     url(
+        '^submissionversion/$',
+        views.submission_version_js,
+        name='submission_version_js'
+    ),
+    url(
+        '^reviewsubmit/$',
+        views.review_submit_js,
+        name='review_submit_js'
+    ),
+    url(
+        '^reviewsubmitundo/$',
+        views.review_submit_undo_js,
+        name='review_submit_undo_js'
+    ),
+    url(
         '^reviewer/$',
         views.reviewer_js,
         name='reviewer_js'

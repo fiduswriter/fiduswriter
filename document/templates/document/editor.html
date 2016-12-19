@@ -75,6 +75,8 @@
             <link rel="stylesheet" href="{{ STATIC_URL }}css/access-rights-dialog.css" type="text/css">
             <!-- Citation dialog style -->
             <link rel="stylesheet" href="{{ STATIC_URL }}css/citation-dialog.css" type="text/css">
+            <!-- review style -->
+            <link rel="stylesheet" href="{{ STATIC_URL }}css/review.css" type="text/css">
 
         {% endcompress %}
 
@@ -404,6 +406,15 @@
                     <div id="comments-display" class="fw-button fw-light fw-large comment-only" title="{% trans "Show/hide comments" %}">
                         {% trans "Comments" %}
                     </div>
+                    <div id="revision-done" class="fw-button fw-light fw-large revision-done" title="{% trans "Finish the revision" %}">
+                        {% trans "Finish the revision" %}
+                   </div>
+                    <div id="reviewed" class="fw-button fw-light fw-large reviewed" title="{% trans "Finish the review" %}">
+                        {% trans "Finish the review" %}
+                   </div>
+                    <div id="reviewerOJSReturn" class="fw-button fw-light fw-large reviewed" title="{% trans "Return to OJS" %}">
+                        {% trans "Return to OJS" %}
+                   </div>
                     <!-- <div id="comments-filter" class="ui-buttonset multiButtons" title="{% trans "Filter comments" %}">
                         <span class="multibuttonsCover fw-button fw-light fw-large" title="{% trans "Filter comments" %}" id="comment-filter-dropdown">{% trans "Filter comments" %}</span>
                         <div class="fw-pulldown fw-left">

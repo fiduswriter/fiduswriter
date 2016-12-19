@@ -20,7 +20,7 @@ import {Paste} from "./paste/paste"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']
-
+export const REVIEW_ROLES = ['review']
 
 export class Editor {
     // A class that contains everything that happens on the editor page.
@@ -301,6 +301,24 @@ export class Editor {
               .documentstyle-menu, .citationstyle-menu').removeClass('disabled')
             }
         }
+        jQuery('#revision-done').show()
+        if (REVIEW_ROLES.indexOf(this.docInfo.rights) > -1)  {
+          jQuery('#reviewed').show()
+          jQuery('#reviewerOJSReturn').show()
+          jQuery('#revision-done').hide()
+        }
+        else {
+          jQuery('#reviewed').hide()
+          jQuery('#reviewerOJSReturn').hide()
+          if (this.doc.submission.status == 'submitted'){
+             if (this.doc.submission.user_id == this.user.id)
+                 console.log('kkkkkkkkkkkkkk')
+            console.log(this.user)
+            console.log(this.doc.submission.user_id)
+            jQuery('#revision-done').show()
+          }
+        }
+
     }
 
     receiveDocument(data) {

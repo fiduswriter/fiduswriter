@@ -1,5 +1,6 @@
 import {BibliographyDB} from "../../bibliography/database"
 import {ImageDB} from "../../images/database"
+import download from "downloadjs"
 
 export let createSlug = function(str) {
     if (str==='') {
@@ -17,14 +18,8 @@ export let createSlug = function(str) {
  * @param {blob} blob The contents of the file.
  */
 export let downloadFile = function(zipFilename, blob) {
-    let blobURL = window.URL.createObjectURL(blob)
-    let fakeDownloadLink = document.createElement('a')
-    let clickEvent = document.createEvent("MouseEvent")
-    clickEvent.initMouseEvent("click", true, true, window,
-        0, 0, 0, 0, 0, false, false, false, false, 0, null)
-    fakeDownloadLink.href = blobURL
-    fakeDownloadLink.setAttribute('download', zipFilename)
-    fakeDownloadLink.dispatchEvent(clickEvent)
+    download(blob, zipFilename)
+    // TODO: add mimetype
 }
 
 

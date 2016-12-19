@@ -1,6 +1,6 @@
 import {OdtExporterCitations} from "./citations"
 import {OdtExporterImages} from "./images"
-import {OdtExporterRichtext} from "./richtext"
+//import {OdtExporterRichtext} from "./richtext"
 import {fnSchema} from "../../schema/footnotes"
 import {noSpaceTmp} from "../../common/common"
 import {descendantNodes} from "../tools/doc-contents"
@@ -40,27 +40,39 @@ export class OdtExporterFootnotes {
     init() {
         let that = this
         this.findFootnotes()
-        if (this.footnotes.length || (this.exporter.citations.citFm.citationType==='note' && this.exporter.citations.citInfos.length)) {
+        if (
+            this.footnotes.length ||
+            (
+                this.exporter.citations.citFm.citationType==='note' &&
+                this.exporter.citations.citInfos.length
+            )
+        ) {
             this.convertFootnotes()
-            this.citations = new OdtExporterCitations(this.exporter, this.exporter.bibDB, this.fnPmJSON)
-            // Get the citinfos from the main body document so that they will be
+            // Include the citinfos from the main document so that they will be
             // used for calculating the bibliography as well
-            let origCitInfos = this.exporter.citations.citInfos
-            this.citations.formatCitations(origCitInfos)
-            // Replace the main bibliography with the new one that includes both citations in main document
-            // and in the footnotes.
-            this.exporter.pmBib = this.citations.pmBib
+            this.citations = new OdtExporterCitations(
+                this.exporter,
+                this.exporter.bibDB,
+                this.fnPmJSON,
+                this.exporter.citations.citInfos
+            )
             this.images = new OdtExporterImages(
                 this.exporter,
                 this.exporter.imageDB,
                 this.fnPmJSON
             )
-            return this.images.init().then(function(){
+
+            return this.citations.init().then(function(){
+                // Replace the main bibliography with the new one that includes
+                // both citations in main document and in the footnotes.
+                that.exporter.pmBib = that.citations.pmBib
+                return that.images.init()
+            }).then(function(){
                 return that.addStyles()
             })
         } else {
             // No footnotes were found.
-            return window.Promise.resolve()
+            return Promise.resolve()
         }
     }
 
@@ -72,7 +84,7 @@ export class OdtExporterFootnotes {
             that.addStyle('Footnote_20_anchor', DEFAULT_STYLE_FOOTNOTE_ANCHOR)
             that.addStyle('Footnote_20_Symbol', DEFAULT_STYLE_FOOTNOTE_SYMBOL)
             that.setStyleConfig()
-            return window.Promise.resolve()
+            return Promise.resolve()
         })
     }
 

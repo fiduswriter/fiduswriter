@@ -44,13 +44,14 @@ export class OdtExporterImages {
     }
 
     // Find all images used in file and add these to the export zip.
-    // TODO: This will likely fail on image types odt doesn't support such as SVG. Try out and fix.
+    // TODO: This will likely fail on image types odt doesn't support such as
+    // SVG. Try out and fix.
     exportImages() {
         let that = this, usedImgs = []
 
         descendantNodes(this.docContents).forEach(
             function(node) {
-                if (node.type==='figure' && node.attrs.image !== 'false') {
+                if (node.type==='figure' && node.attrs.image !== false) {
                     if (!(node.attrs.image in usedImgs)) {
                         usedImgs.push(node.attrs.image)
                     }
@@ -58,13 +59,13 @@ export class OdtExporterImages {
             }
         )
 
-        return new window.Promise((resolveExportImages) => {
+        return new Promise((resolveExportImages) => {
             let p = []
 
             usedImgs.forEach((image) => {
                 let imgDBEntry = that.imageDB.db[image]
                 p.push(
-                    new window.Promise((resolve) => {
+                    new Promise((resolve) => {
                         JSZipUtils.getBinaryContent(
                             imgDBEntry.image,
                             function(err, imageFile) {
@@ -80,7 +81,7 @@ export class OdtExporterImages {
                 )
             })
 
-            window.Promise.all(p).then(function(){
+            Promise.all(p).then(function(){
                 resolveExportImages()
             })
         })

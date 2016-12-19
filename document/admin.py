@@ -1,5 +1,5 @@
 from django.contrib import admin
-
+from django.shortcuts import render
 from . import models
 
 
@@ -25,3 +25,10 @@ class ExportTemplateAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(models.ExportTemplate, ExportTemplateAdmin)
+
+
+def maintenance_view(request, *args, **kwargs):
+    response = {}
+    return render(request, 'maintenance/index.html', response)
+
+admin.site.register_view('maintenance/', 'Maintenance', view=maintenance_view)

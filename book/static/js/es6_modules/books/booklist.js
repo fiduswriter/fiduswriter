@@ -97,7 +97,7 @@ export class BookList {
                             let theTitle = jQuery(this).parent().parent().parent()
                                 .find(
                                     '.book-title').text()
-                            theTitle = $.trim(theTitle).replace(/[\t\n]/g, '')
+                            theTitle = jQuery.trim(theTitle).replace(/[\t\n]/g, '')
                             addAlert('error', gettext(
                                 'You cannot delete or share: ') + theTitle)
                             //return true

@@ -1,5 +1,6 @@
 import {BibliographyDB} from "../../bibliography/database"
 import {ImageDB} from "../../images/database"
+import download from "downloadjs"
 
 export let createSlug = function(str) {
     if (str==='') {
@@ -17,14 +18,8 @@ export let createSlug = function(str) {
  * @param {blob} blob The contents of the file.
  */
 export let downloadFile = function(zipFilename, blob) {
-    let blobURL = window.URL.createObjectURL(blob)
-    let fakeDownloadLink = document.createElement('a')
-    let clickEvent = document.createEvent("MouseEvent")
-    clickEvent.initMouseEvent("click", true, true, window,
-        0, 0, 0, 0, 0, false, false, false, false, 0, null)
-    fakeDownloadLink.href = blobURL
-    fakeDownloadLink.setAttribute('download', zipFilename)
-    fakeDownloadLink.dispatchEvent(clickEvent)
+    download(blob, zipFilename)
+    // TODO: add mimetype
 }
 
 
@@ -33,7 +28,7 @@ export let getDatabasesIfNeeded = function(object, doc) {
 
     if (!object.bibDB) {
         p.push(
-            new window.Promise((resolve) => {
+            new Promise((resolve) => {
                 object.bibDB = new BibliographyDB(doc.owner.id, false, false, false)
                 object.bibDB.getDB(resolve)
             })
@@ -41,14 +36,14 @@ export let getDatabasesIfNeeded = function(object, doc) {
     }
     if (!object.imageDB) {
         p.push(
-            new window.Promise((resolve) => {
+            new Promise((resolve) => {
                 object.imageDB = new ImageDB(doc.owner.id)
                 object.imageDB.getDB(resolve)
             })
         )
     }
-    return new window.Promise(function(resolve){
-        window.Promise.all(p).then(function(){
+    return new Promise(function(resolve){
+        Promise.all(p).then(function(){
             resolve()
         })
     })

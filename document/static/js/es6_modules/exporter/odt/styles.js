@@ -20,6 +20,7 @@ export class OdtExporterStyles {
         this.boldStyleId = false
         this.italicStyleId = false
         this.boldItalicStyleId = false
+        this.inlineStyleIds = {}
         this.orderedListStyleId = [false, false]
         this.bulletListStyleId = [false, false]
         this.inlineStyleCounter = 0
@@ -35,7 +36,7 @@ export class OdtExporterStyles {
         }).then(function(contentXml){
             that.contentXml = contentXml
             that.getStyleCounters()
-            return window.Promise.resolve()
+            return Promise.resolve()
         })
     }
 
@@ -64,46 +65,44 @@ export class OdtExporterStyles {
         })
     }
 
-    getBoldStyleId() {
-        if (this.boldStyleId) {
-            return this.boldStyleId
+    /*
+    attributes is a string that consists of these characters (in this order).
+    Only one of super/sub possible.
+    e = italic/em
+    s = bold/strong
+    c = small caps
+    p = super
+    b = sub
+    */
+    getInlineStyleId(attributes) {
+        if (this.inlineStyleIds[attributes]) {
+            return this.inlineStyleIds[attributes]
         }
-        this.boldStyleId = ++this.inlineStyleCounter
-        let autoStylesEl = this.contentXml.querySelector('automatic-styles')
-        autoStylesEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
-            <style:style style:name="T${this.boldStyleId}" style:family="text">
-                <style:text-properties fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
-            </style:style>
-        `)
-        return this.boldStyleId
-    }
 
-    getItalicStyleId() {
-        if (this.italicStyleId) {
-            return this.italicStyleId
+        let styleProperties = ''
+        if (attributes.includes('e')) {
+            styleProperties += ' fo:font-style="italic" style:font-style-asian="italic" style:font-style-complex="italic"'
         }
-        this.italicStyleId = ++this.inlineStyleCounter
+        if (attributes.includes('s')) {
+            styleProperties += ' fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"'
+        }
+        if (attributes.includes('c')) {
+            styleProperties += ' fo:font-variant="small-caps"'
+        }
+        if (attributes.includes('p')) {
+            styleProperties += ' style:text-position="super 58%"'
+        } else if (attributes.includes('b')) {
+            styleProperties += ' style:text-position="sub 58%"'
+        }
+        let styleCounter = ++this.inlineStyleCounter
+        this.inlineStyleIds[attributes] = styleCounter
         let autoStylesEl = this.contentXml.querySelector('automatic-styles')
         autoStylesEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
-            <style:style style:name="T${this.italicStyleId}" style:family="text">
-                <style:text-properties fo:font-style="italic" style:font-style-asian="italic" style:font-style-complex="italic"/>
+            <style:style style:name="T${styleCounter}" style:family="text">
+                <style:text-properties${styleProperties}/>
             </style:style>
         `)
-        return this.italicStyleId
-    }
-
-    getBoldItalicStyleId() {
-        if (this.boldItalicStyleId) {
-            return this.boldItalicStyleId
-        }
-        this.boldItalicStyleId = ++this.inlineStyleCounter
-        let autoStylesEl = this.contentXml.querySelector('automatic-styles')
-        autoStylesEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
-            <style:style style:name="T${this.boldItalicStyleId}" style:family="text">
-                <style:text-properties fo:font-style="italic" style:font-style-asian="italic" style:font-style-complex="italic" fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
-            </style:style>
-        `)
-        return this.boldItalicStyleId
+        return styleCounter
     }
 
     checkParStyle(styleName) {
@@ -130,6 +129,49 @@ export class OdtExporterStyles {
             )
         }
 
+    }
+
+    addReferenceStyle(bibInfo) {
+        // The style called "Bibliography_20_1" will override any previous style
+        // of the same name.
+        let stylesParStyle = this.stylesXml.querySelector(`style[*|name="Bibliography_20_1"]`)
+        if (stylesParStyle) {
+            stylesParStyle.parentNode.removeChild(stylesParStyle)
+        }
+        let contentParStyle = this.contentXml.querySelector(`style[*|name="Bibliography_20_1"]`)
+        if (contentParStyle) {
+            contentParStyle.parentNode.removeChild(contentParStyle)
+        }
+
+        this.checkParStyle('Index')
+
+        let lineHeight = `${0.1665*bibInfo.linespacing}in`
+        let marginBottom = `${0.1667*bibInfo.entryspacing}in`
+        let marginLeft = "0in", textIndent = "0in", tabStops = '<style:tab-stops/>'
+
+        if (bibInfo.hangingindent) {
+            marginLeft = "0.5in"
+            textIndent = "-0.5in"
+        } else if(bibInfo["second-field-align"]) {
+            // We calculate 0.55em as roughly equivalent to one letter width.
+            let firstFieldWidth = `${(bibInfo.maxoffset + 1)*0.55}em`
+            if(bibInfo["second-field-align"] === 'margin') {
+                textIndent =  `-${firstFieldWidth}`
+                tabStops = '<style:tab-stops><style:tab-stop style:position="0in"/></style:tab-stops>'
+            } else {
+                textIndent =  `-${firstFieldWidth}`
+                marginLeft =  `${firstFieldWidth}`
+                tabStops = `<style:tab-stops><style:tab-stop style:position="${firstFieldWidth}"/></style:tab-stops>`
+            }
+        }
+        let styleDef = noSpaceTmp`
+            <style:style style:name="Bibliography_20_1" style:display-name="Bibliography 1" style:family="paragraph" style:parent-style-name="Index" style:class="index">
+                <style:paragraph-properties fo:margin-left="${marginLeft}" fo:margin-right="0in" fo:margin-top="0in" fo:margin-bottom="${marginBottom}" loext:contextual-spacing="false" fo:text-indent="${textIndent}" style:line-height-at-least="${lineHeight}" style:auto-text-indent="false">
+                    ${tabStops}
+                </style:paragraph-properties>
+            </style:style>`
+        let stylesEl = this.stylesXml.querySelector('styles')
+        stylesEl.insertAdjacentHTML('beforeEnd', styleDef)
     }
 
     getBulletListStyleId() {

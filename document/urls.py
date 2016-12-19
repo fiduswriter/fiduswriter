@@ -76,11 +76,6 @@ urlpatterns = [
         name='new_revision_js'
     ),
     url(
-        '^maintenance/$',
-        views.maintenance,
-        name='update_all_docs'
-    ),
-    url(
         '^maintenance/get_all/$',
         views.get_all_docs_js,
         name='get_all_docs_js'

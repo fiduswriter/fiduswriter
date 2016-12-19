@@ -22,13 +22,12 @@ export class ModServerCommunications {
         let websocketProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
 
         try {
-            this.ws = new window.WebSocket(`${websocketProtocol}//${websocketServer}${websocketPort}/ws/doc/${this.editor.doc.id}`)
+            this.ws = new window.WebSocket(`${websocketProtocol}//${window.websocketServer}${window.websocketPort}/ws/doc/${this.editor.doc.id}`)
             this.ws.onopen = function() {
-                console.log('connection open')
                 jQuery('#unobtrusive_messages').html('')
             }
         } catch (err) {
-            console.log(err)
+            console.error(err)
         }
 
 
@@ -42,7 +41,6 @@ export class ModServerCommunications {
             window.setTimeout(function() {
                 that.createWSConnection()
             }, 2000)
-            console.log('attempting to reconnect')
             if (that.editor.pm.mod.collab.hasSendableSteps()) {
                 jQuery('#unobtrusive_messages').html('<span class="warn">'+gettext('Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect...')+'</span>')
             } else {

@@ -45,20 +45,20 @@ export class DocxExporterImages {
 
         descendantNodes(this.docContents).forEach(
             function(node) {
-                if (node.type==='figure' && node.attrs.image !== 'false') {
+                if (node.type==='figure' && node.attrs.image !== false) {
                     if (!(node.attrs.image in usedImgs)) {
                         usedImgs.push(node.attrs.image)
                     }
                 }
             }
         )
-        return new window.Promise((resolveExportImages) => {
+        return new Promise((resolveExportImages) => {
             let p = []
 
             usedImgs.forEach((image) => {
                 let imgDBEntry = that.imageDB.db[image]
                 p.push(
-                    new window.Promise((resolve) => {
+                    new Promise((resolve) => {
                         JSZipUtils.getBinaryContent(
                             imgDBEntry.image,
                             function(err, imageFile) {
@@ -74,7 +74,7 @@ export class DocxExporterImages {
                 )
             })
 
-            window.Promise.all(p).then(function(){
+            Promise.all(p).then(function(){
                 resolveExportImages()
             })
         })

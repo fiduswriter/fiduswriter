@@ -22,6 +22,9 @@ export class ModFootnoteEditor {
         this.mod.fnPm.on.filterTransform.add((transform) => {
             return that.onFilterTransform(transform)
         })
+        this.mod.fnPm.on.transform.add((transform) => {
+            return that.onTransform(transform)
+        })
         this.mod.fnPm.on.transformPastedHTML.add((inHTML) => {
             let ph = new Paste(inHTML, "footnote")
             return ph.getOutput()
@@ -40,6 +43,39 @@ export class ModFootnoteEditor {
             prohibited = true
         }
         return prohibited
+    }
+
+    // Find out if we need to recalculate the bibliography
+    onTransform(transform, local) {
+        let updateBibliography = false, that = this
+            // Check what area is affected
+
+        transform.steps.forEach(function(step, index) {
+            if (step.jsonID === 'replace' || step.jsonID === 'replaceAround') {
+                if (step.from !== step.to) {
+                    transform.docs[index].nodesBetween(
+                        step.from,
+                        step.to,
+                        function(node, pos, parent) {
+                            if (node.type.name === 'citation') {
+                                // A citation was replaced
+                                updateBibliography = true
+                            }
+                        }
+                    )
+                }
+            }
+        })
+
+        if (updateBibliography) {
+            // Recreate the bibliography on next flush.
+            this.mod.editor.pm.scheduleDOMUpdate(
+                () => {
+                    return that.mod.editor.mod.citations.resetCitations()
+                }
+            )
+        }
+
     }
 
     footnoteEdit() {
@@ -89,9 +125,6 @@ export class ModFootnoteEditor {
         collab.unconfirmedMaps = []
         this.bindEvents()
     }
-
-
-
 
     renderFootnote(contents, index = 0) {
         this.rendering = true

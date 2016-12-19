@@ -42,6 +42,10 @@ DATABASES = {
 
 }
 
+# Will let any user not delete more than 5000 bibliography entries
+# simultaneously
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000
+
 # Send emails to console.
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -188,10 +192,11 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.admin',
+    'django.contrib.admin.apps.SimpleAdminConfig',
     'django.contrib.admindocs',
     'django.contrib.flatpages',
     'django_js_error_hook',
+    'adminplus',
     'fixturemedia',
     'menu',
     'document',

@@ -3,6 +3,7 @@ import * as objectHash from "object-hash/dist/object_hash"
 /* Functions for ProseMirror integration.*/
 import {ProseMirror} from "prosemirror-old/dist/edit/main"
 import {collabEditing} from "prosemirror-old/dist/collab"
+import {buildKeymap} from "prosemirror-old/dist/example-setup"
 import {docSchema} from "../schema/document"
 import {ModComments} from "./comments/mod"
 import {ModFootnotes} from "./footnotes/mod"
@@ -116,6 +117,7 @@ export class Editor {
             schema: this.schema,
             plugins: [collabEditing.config({version: 0})]
         })
+        this.pm.addKeymap(buildKeymap(this.schema))
         // add mod to give us simple access to internals removed in PM 0.8.0
         this.pm.mod = {}
         this.pm.mod.collab = collabEditing.get(this.pm)
@@ -179,7 +181,11 @@ export class Editor {
         this.pm.mod.collab.mustSend.add(function() {
             that.mod.collab.docChanges.sendToCollaborators()
         }, 0) // priority : 0 so that other things can be scheduled before this.
-        this.pm.mod.collab.receivedTransform.add((transform, options) => {that.onTransform(transform, false)})
+        this.pm.mod.collab.receivedTransform.add(
+            (transform, options) => {
+                that.onTransform(transform, false)
+            }
+        )
         this.mod.footnotes.fnEditor.renderAllFootnotes()
         _.each(this.doc.comments, function(comment) {
             that.mod.comments.store.addLocalComment(comment.id, comment.user,
@@ -232,7 +238,6 @@ export class Editor {
             bibGetter.getDB(function(bibPks, bibCats){
                 that.bibDB = bibGetter
                 that.mod.menus.citation.appendManyToCitationDialog(bibPks)
-                that.mod.citations.layoutCitations()
                 that.mod.menus.header.enableExportMenu()
                 if (callback) {
                     callback()
@@ -268,9 +273,7 @@ export class Editor {
       .citationstyle, .tools-item, .papersize, .metadata-menu-item, \
       #open-close-header').removeClass('disabled')
 
-
-        this.mod.settings.updateDocumentStyleCSS()
-        this.mod.citations.resetCitations()
+        this.mod.settings.check(this.pm.doc.firstChild.attrs)
 
         if (READ_ONLY_ROLES.indexOf(this.docInfo.rights) > -1) {
             jQuery('#editor-navigation').hide()
@@ -440,19 +443,22 @@ export class Editor {
         transform.steps.forEach(function(step, index) {
             if (step.jsonID === 'replace' || step.jsonID === 'replaceAround') {
                 if (step.from !== step.to) {
-                    transform.docs[index].nodesBetween(step.from, step.to, function(node, pos, parent) {
-                        if (node.type.name === 'citation') {
-                            // A citation was replaced
-                            updateBibliography = true
-                        }
-                        if (local) {
-                            let commentId = that.mod.comments.layout.findCommentId(node)
-                            if (commentId !== false && commentIds.indexOf(commentId)===-1) {
-                                commentIds.push(commentId)
+                    transform.docs[index].nodesBetween(
+                        step.from,
+                        step.to,
+                        function(node, pos, parent) {
+                            if (node.type.name === 'citation') {
+                                // A citation was replaced
+                                updateBibliography = true
+                            }
+                            if (local) {
+                                let commentId = that.mod.comments.layout.findCommentId(node)
+                                if (commentId !== false && commentIds.indexOf(commentId)===-1) {
+                                    commentIds.push(commentId)
+                                }
                             }
                         }
-
-                    })
+                    )
                     if (step.from===0 && step.jsonID === 'replaceAround') {
                         updateSettings = true
                     }

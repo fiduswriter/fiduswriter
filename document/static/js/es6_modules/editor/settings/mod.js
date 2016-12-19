@@ -17,7 +17,7 @@ export class ModSettings {
                 that.settings[key] = newSettings[key]
                 switch(key) {
                     case 'documentstyle':
-                        that.updateDocumentStyleCSS()
+                        that.updateDocStyleCSS()
                         break
                     case 'citationstyle':
                         that.editor.mod.citations.resetCitations()
@@ -28,20 +28,19 @@ export class ModSettings {
     }
 
 
-    /** Update the stylesheet used for the documentstyle
+    /** Update the stylesheet used for the docStyle
      */
-    updateDocumentStyleCSS() {
-
+    updateDocStyleCSS() {
         let that = this
 
-        let documentStyleLink = document.getElementById('document-style-link')
+        let docStyleLink = document.getElementById('document-style-link')
 
         // Remove previous style.
-        documentStyleLink.parentElement.removeChild(documentStyleLink.previousElementSibling)
+        docStyleLink.parentElement.removeChild(docStyleLink.previousElementSibling)
 
         let stylesheet = loadCSS(
-            staticUrl + `css/document/${this.editor.doc.settings.documentstyle}.css`,
-            documentStyleLink
+            window.staticUrl + `css/document/${this.settings.documentstyle}.css`,
+            docStyleLink
         )
         stylesheet.addEventListener( "load", function() {
             // We layout the comments 250 ms after the stylesheet has been loaded.

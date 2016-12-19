@@ -6,7 +6,7 @@ export class LatexExporterConvert {
         this.imageDB = imageDB
         this.bibDB = bibDB
         this.imageIds = []
-        this.bibIds = []
+        this.usedBibDB = {}
         // While walking the tree, we take note of the kinds of features That
         // are present in the file, so that we can assemble an preamble and
         // epilogue based on our findings.
@@ -22,7 +22,7 @@ export class LatexExporterConvert {
         let returnObject = {
             latex,
             imageIds: this.imageIds,
-            bibIds: this.bibIds
+            usedBibDB: this.usedBibDB
         }
         return returnObject
     }
@@ -173,59 +173,89 @@ export class LatexExporterConvert {
                 content += escapeLatexText(node.text)
                 break
             case 'citation':
-                let citationEntries = node.attrs.bibEntry.split(','),
-                    citationBefore = node.attrs.bibBefore.split(','),
-                    citationPage = node.attrs.bibPage.split(','),
-                    citationFormat = node.attrs.bibFormat,
-                    citationCommand = '\\' + citationFormat
+                let references = node.attrs.references
+                let format = node.attrs.format
+                let citationCommand = '\\' + format
 
-                if (citationEntries.length > 1 &&
-                    citationBefore.join('').length === 0 &&
-                    citationPage.join('').length === 0) {
+                if (references.length > 1 &&
+                    references.every(ref => !ref.locator && !ref.prefix)
+                ) {
                     // multi source citation without page numbers or text before.
                     let citationEntryKeys = []
 
-                    citationEntries.forEach(function(citationEntry) {
-                        let bibDBEntry = that.bibDB.db[citationEntry]
-                        if (bibDBEntry) {
-                            citationEntryKeys.push(bibDBEntry.entry_key)
-                            if (that.bibIds.indexOf(citationEntry) === -1) {
-                                that.bibIds.push(citationEntry)
+                    let allCitationItemsPresent = references.map(ref => ref.id).every(
+                        function(citationEntry) {
+                            let bibDBEntry = that.bibDB.db[citationEntry]
+                            if (bibDBEntry) {
+                                if (!bibDBEntry) {
+                                    // Not present in bibliography database, skip it.
+                                    // TODO: Throw an error?
+                                    return false
+                                }
+                                if (!that.usedBibDB[citationEntry]) {
+                                    let citationKey = that.createUniqueCitationKey(
+                                        bibDBEntry.entry_key
+                                    )
+                                    that.usedBibDB[citationEntry] = Object.assign({}, bibDBEntry)
+                                    that.usedBibDB[citationEntry].entry_key = citationKey
+                                }
+                                citationEntryKeys.push(that.usedBibDB[citationEntry].entry_key)
                             }
+                            return true
                         }
-                    })
-
-                    citationCommand += `{${citationEntryKeys.join(',')}}`
+                    )
+                    if (allCitationItemsPresent) {
+                        citationCommand += `{${citationEntryKeys.join(',')}}`
+                    } else {
+                        citationCommand = false
+                    }
                 } else {
-                    if (citationEntries.length > 1) {
+                    if (references.length > 1) {
                         citationCommand += 's' // Switching from \autocite to \autocites
                     }
 
-                    citationEntries.forEach(function(citationEntry, index) {
-                        if (!that.bibDB.db[citationEntry]) {
-                            return false // Not present in bibliography database, skip it.
-                        }
-
-                        if (citationBefore[index] && citationBefore[index].length > 0) {
-                            citationCommand += `[${citationBefore[index]}]`
-                            if (!citationPage[index] || citationPage[index].length === 0) {
-                                citationCommand += '[]'
+                    let allCitationItemsPresent = references.every(
+                        ref => {
+                            let bibDBEntry = that.bibDB.db[ref.id]
+                            if (!bibDBEntry) {
+                                // Not present in bibliography database, skip it.
+                                // TODO: Throw an error?
+                                return false
                             }
-                        }
-                        if (citationPage[index] && citationPage[index].length > 0) {
-                            citationCommand += `[${citationPage[index]}]`
-                        }
-                        citationCommand += '{'
 
-                        citationCommand += that.bibDB.db[citationEntry].entry_key
-                        if (that.bibIds.indexOf(citationEntry) === -1) {
-                            that.bibIds.push(citationEntry)
+                            if (ref.prefix) {
+                                citationCommand += `[${ref.prefix}]`
+                                if (!ref.locator) {
+                                    citationCommand += '[]'
+                                }
+                            }
+                            if (ref.locator) {
+                                citationCommand += `[${ref.locator}]`
+                            }
+                            citationCommand += '{'
+
+                            if (!that.usedBibDB[ref.id]) {
+                                let citationKey = that.createUniqueCitationKey(
+                                    bibDBEntry.entry_key
+                                )
+                                that.usedBibDB[ref.id] = Object.assign({}, bibDBEntry)
+                                that.usedBibDB[ref.id].entry_key = citationKey
+                            }
+                            citationCommand += that.usedBibDB[ref.id].entry_key
+                            citationCommand += '}'
+
+                            return true
                         }
-                        citationCommand += '}'
-                    })
+                    )
+
+                    if (!allCitationItemsPresent) {
+                        citationCommand = false
+                    }
                 }
-                content += citationCommand
-                this.features.citations = true
+                if (citationCommand) {
+                    content += citationCommand
+                    this.features.citations = true
+                }
                 break
             case 'figure':
                 let latexPackage
@@ -280,7 +310,9 @@ export class LatexExporterConvert {
             }
         }
 
-        if (placeFootnotesAfterBlock && options.unplacedFootnotes.length) {
+        if (placeFootnotesAfterBlock &&
+            options.unplacedFootnotes &&
+            options.unplacedFootnotes.length) {
             // There are footnotes that needed to be placed behind the node.
             // This happens in the case of headlines and lists.
             if (options.unplacedFootnotes.length > 1) {
@@ -296,6 +328,21 @@ export class LatexExporterConvert {
         }
 
         return start + content + end
+    }
+
+    // The database doesn't ensure that citation keys are unique.
+    // So here we need to make sure that the same key is not used twice in one
+    // document.
+    createUniqueCitationKey(suggestedKey) {
+        let usedKeys = Object.keys(this.usedBibDB).map(key=>{
+            return this.usedBibDB[key].entry_key
+        })
+        if (usedKeys.includes(suggestedKey)) {
+            suggestedKey += 'X'
+            return this.createUniqueCitationKey(suggestedKey)
+        } else {
+            return suggestedKey
+        }
     }
 
     postProcess(latex) {

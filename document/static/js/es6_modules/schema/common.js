@@ -5,43 +5,28 @@ import {katexRender} from "../katex/katex"
 export class Citation extends Inline {
     get attrs() {
         return {
-            bibFormat: new Attribute({
+            format: new Attribute({
                 default: ""
             }),
-            bibEntry: new Attribute(),
-            bibBefore: new Attribute({
-                default: ""
-            }),
-            bibPage: new Attribute({
-                default: ""
+            references: new Attribute({
+                default: []
             })
         }
     }
     get matchDOMTag() {
         return {
             "span.citation": dom => ({
-                bibFormat: dom.getAttribute('data-bib-format') || '',
-                bibEntry: dom.getAttribute('data-bib-entry') || '',
-                bibBefore: dom.getAttribute('data-bib-before') || '',
-                bibPage: dom.getAttribute('data-bib-page') || ''
-            }),
-            "cite": dom => ({
-                bibFormat: dom.getAttribute('data-bib-format') || '',
-                bibEntry: dom.getAttribute('data-bib-entry') || '',
-                bibBefore: dom.getAttribute('data-bib-before') || '',
-                bibPage: dom.getAttribute('data-bib-page') || ''
+                format: dom.getAttribute('data-format') || '',
+                references: JSON.parse(dom.getAttribute('data-references') || '[]')
             })
         }
     }
     toDOM(node) {
         return ["span", {
             class: 'citation',
-            'data-bib-format': node.attrs.bibFormat,
-            'data-bib-entry': node.attrs.bibEntry,
-            'data-bib-before': node.attrs.bibBefore,
-            'data-bib-page': node.attrs.bibPage
+            'data-format': node.attrs.format,
+            'data-references': JSON.stringify(node.attrs.references)
         }]
-        // TODO: Do the citation formatting here rather than centrally, maybe?
     }
 }
 
@@ -90,12 +75,15 @@ export class Figure extends Block {
         }
     }
     get matchDOMTag() {
-        return {"figure": dom => ({
-            equation: dom.getAttribute('data-equation'),
-            image: dom.getAttribute('data-image'),
-            figureCategory: dom.getAttribute('data-figure-category'),
-            caption: dom.getAttribute('data-caption')
-        })}
+        return {"figure": dom => {
+            let image = dom.getAttribute('data-image')
+            return {
+                equation: dom.getAttribute('data-equation'),
+                image: image === 'false' ? false : parseInt(image),
+                figureCategory: dom.getAttribute('data-figure-category'),
+                caption: dom.getAttribute('data-caption')
+            }
+        }}
     }
     toDOM(node) {
         let dom = elt('figure', {
@@ -104,7 +92,7 @@ export class Figure extends Block {
             'data-figure-category': node.attrs.figureCategory,
             'data-caption': node.attrs.caption
         })
-        if (node.attrs.image!=='false') {
+        if (node.attrs.image !== false) {
             dom.appendChild(elt("div"))
             if(node.type.schema.cached.imageDB) {
                 if(node.type.schema.cached.imageDB.db[node.attrs.image] &&
@@ -137,13 +125,13 @@ export class Figure extends Block {
             }
         } else {
             let domEquation = elt('div', {
-                class: 'figure-equation',
-                'data-equation': node.attrs.equation
+               class: 'figure-equation',
+               'data-equation': node.attrs.equation
             })
 
             katexRender(node.attrs.equation, domEquation, {
-                displayMode: true,
-                throwOnError: false
+               displayMode: true,
+               throwOnError: false
             })
             dom.appendChild(domEquation)
         }

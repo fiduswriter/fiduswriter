@@ -13,7 +13,7 @@ export class OdtExporterMath {
         return this.exporter.xml.getXml("META-INF/manifest.xml").then(function(manifestXml){
             that.manifestXml = manifestXml
             that.checkObjectCounter()
-            return window.Promise.resolve()
+            return Promise.resolve()
         })
     }
 

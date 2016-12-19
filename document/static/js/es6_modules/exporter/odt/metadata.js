@@ -19,7 +19,7 @@ export class OdtExporterMetadata {
         return this.exporter.xml.getXml("meta.xml").then(function(metaXml){
             that.metaXml = metaXml
             that.addMetadata()
-            return window.Promise.resolve()
+            return Promise.resolve()
         })
     }
 

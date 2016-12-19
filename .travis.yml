@@ -1,15 +1,22 @@
-language: python
+language: node_js
 python:
   - "2.7"
+node_js:
+  - "6"
 
 sudo: required
 dist: trusty
+
+env:
+  - TRAVIS_PYTHON_VERSION="2.7"
 
 before_install:
   - x="bas";`"$x"e64 -d <<< ZXhwb3J0IFNBVUNFX1VTRVJOQU1FPWZpZHVz`
   - x="bas";`"$x"e64 -d <<< ZXhwb3J0IFNBVUNFX0FDQ0VTU19LRVk9OWU5ZGJkNzctNDIwOC00ODM5LTkwY2ItMTZkM2M5ODUxZGMw`
   - sudo apt-get -qq update
-  - sudo apt-get install -y libjpeg-dev python-dev gettext zlib1g-dev git npm
+  - sudo apt-get install -y libjpeg-dev python-dev python-pip gettext zlib1g-dev git python-virtualenv
+  - virtualenv venv
+  - source venv/bin/activate
 
 install:
   - pip install -r requirements.txt

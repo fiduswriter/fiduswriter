@@ -703,7 +703,7 @@ def profile_js(request):
         request.method == 'POST' and
         settings.SERVER_INFO['EXPERIMENTAL'] is True
     ):
-        id = request.POST["id"]
+        id = request.POST["user_id"]
         the_user = User.objects.filter(id=id)
         if len(the_user) > 0:
             response['user'] = {}

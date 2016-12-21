@@ -74,6 +74,7 @@
       "window",
       "document",
       "console",
+      "fetch",
       "jQuery",
       "MathQuill",
       "CSL",

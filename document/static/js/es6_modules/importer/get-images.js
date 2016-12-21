@@ -1,4 +1,4 @@
-import 'whatwg-fetch'
+import JSZipUtils from "jszip-utils"
 
 export class GetImages {
     constructor(newImageEntries, entries) {
@@ -50,7 +50,10 @@ export class GetImages {
                     this.entries,
                     {filename: this.newImageEntries[this.counter].oldUrl.split('/').pop()}
                 ).url
-                fetch(getUrl).then(response => response.blob()).then(blob => {
+                let mimeString = this.newImageEntries[this.counter].file_type
+                JSZipUtils.getBinaryContent(getUrl, (err, data) => {
+                    let dataView = new DataView(data)
+                    let blob = new window.Blob([dataView], {type: mimeString});
                     that.newImageEntries[that.counter]['file'] = blob
                     that.counter++
                     that.getImageUrlEntry().then(()=>{

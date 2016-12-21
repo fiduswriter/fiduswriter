@@ -1,6 +1,6 @@
 Django==1.10.4
 django-adminplus==0.5
-Pillow==3.3.1
+Pillow==3.4.2
 django-allauth==0.27.0
 django-avatar==3.1.0
 django-compressor==2.1

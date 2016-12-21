@@ -1,3 +1,5 @@
+import 'whatwg-fetch'
+
 export class GetImages {
     constructor(newImageEntries, entries) {
         this.newImageEntries = newImageEntries
@@ -48,26 +50,13 @@ export class GetImages {
                     this.entries,
                     {filename: this.newImageEntries[this.counter].oldUrl.split('/').pop()}
                 ).url
-                let xhr = new window.XMLHttpRequest()
-                xhr.open('GET', getUrl, true)
-                xhr.responseType = 'blob'
-
-                xhr.onload = function(e) {
-                    if (this.status >= 200 && this.status < 300) {
-                        // Note: .response instead of .responseText
-                        that.newImageEntries[that.counter]['file'] = new window.Blob(
-                            [that.response],
-                            {type: that.newImageEntries[that.counter].file_type}
-                        )
-                        that.counter++
-                        that.getImageUrlEntry().then(()=>{
-                            resolve()
-                        })
-                    } else {
-                        reject()
-                    }
-                }
-                xhr.send()
+                fetch(getUrl).then(response => response.blob()).then(blob => {
+                    that.newImageEntries[that.counter]['file'] = blob
+                    that.counter++
+                    that.getImageUrlEntry().then(()=>{
+                        resolve()
+                    })
+                })
             })
         } else {
             return Promise.resolve()

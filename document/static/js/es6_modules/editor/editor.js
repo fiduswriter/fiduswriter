@@ -258,6 +258,8 @@ export class Editor {
             let imageGetter = new ImageDB(userId)
             imageGetter.getDB(function(){
                 that.imageDB = imageGetter
+                console.log('that.imageDB')
+                console.log(that.imageDB.db)
                 that.schema.cached.imageDB = imageGetter // assign image DB to be used in schema.
                 that.mod.footnotes.schema.cached.imageDB = imageGetter // assign image DB to be used in footnote schema.
                 callback()

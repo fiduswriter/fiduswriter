@@ -69,12 +69,23 @@ export let selectJournal = function(editor) {
 
 
         diaButtons[gettext("Submit")] = function() {
-            savecopy(editor.doc, editor.bibDB.db, editor.imageDB.db,
+            let oldBibDB = editor.bibDB.db
+            let oldImageDB = editor.imageDB.db
+            let owner = {}
+            owner['id'] = 1
+            owner['name'] = 'fidus'
+            editor.save(function() {
+            editor.removeBibDB()
+            editor.removeImageDB()
+            editor.getBibDB(editor.user.id, function(){
+            editor.getImageDB(editor.user.id, function(){
+            savecopy(editor.doc, oldBibDB, oldImageDB,
                 editor.bibDB.db, editor.imageDB.db, editor.user,
                 function(doc, docInfo, newBibEntries){
-            		setRights(editor.doc.id,doc.id,editor.user,editor.doc.access_rights)
+            		//setRights(editor.doc.id,doc.id,editor.user,editor.doc.access_rights)
+            		window.location.href = `/document/${doc.id}/`
                     let dataToOjs = new window.FormData()
-                    dataToOjs.append('username', userProfile["username"])
+                    /*dataToOjs.append('username', userProfile["username"])
                     dataToOjs.append('title', editor.doc.title)
                     dataToOjs.append('first_name', userProfile["first_name"])
                     dataToOjs.append('last_name', userProfile["last_name"])
@@ -118,7 +129,6 @@ export let selectJournal = function(editor) {
                                 },
                                 success: function(response) {
                                     addAlert('success','The paper was submitted to ojs and version of submission has been saved')
-                                    console.log(response)
                                 },
                                 error: function() {
                                     addAlert('error', 'version of submission has been not saved')
@@ -128,8 +138,13 @@ export let selectJournal = function(editor) {
                         error: function() {
                             addAlert('error', 'submission was not successful')
                         }
+                    })*/
+                })
+                })
                     })
                 })
+
+
             jQuery(this).dialog("close")
 
         }

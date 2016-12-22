@@ -329,25 +329,60 @@ def document_review_js(request):
 
 
 @csrf_exempt
-def new_revision_js(request):
+def new_submission_revision_js(request):
     if request.method == 'POST':
         submission_id = int(request.POST.get('submission_id'))
         app_key = request.POST.get('key')
-        u_name = request.POST.get('user_name')
+        ojs_username = request.POST.get('user_name')
+        email = request.POST.get('author_email')
         response = {}
-        if (app_key == settings.SERVER_INFO['OJS_KEY']):
+        data = {}
+        if app_key == settings.SERVER_INFO['OJS_KEY']:
             editor = login_user(
                 request,
-                u_name)
+                ojs_username)
             if editor is not None:
                 original_doc = Submission.objects.get(submission_id=submission_id, version_id=0)
-                access_rights = SubmittedAccessRight.objects.filter(submission_id=submission_id,document_id=original_doc.document_id)
+                last_version = Submission.objects.filter(submission_id=submission_id).latest('version_id')
+                user = User.objects.get(email=email)
+                document = Document.objects.get(pk=last_version.document_id)
+                document.pk = None
+                document.save()
+                data['document_id'] = document.pk
+                data['pre_document_id'] = last_version.document_id
+                data['user_id'] = user.id
+                data['journal_id'] = original_doc.journal_id
+                data['submission_id'] = submission_id
+                submission_access_rights = SubmittedAccessRight.objects.filter(submission_id=submission_id,
+                                                                               document_id=original_doc.document_id)
+                for submission_access_right in submission_access_rights:
+                    try:
+                        access_right = AccessRight.objects.get(
+                            document_id=data['document_id'], user_id=submission_access_right.user_id)
+                        access_right.rights = submission_access_right.rights
+                    except ObjectDoesNotExist:
+                        access_right = AccessRight.objects.create(
+                            document_id=data['document_id'],
+                            user_id=submission_access_right.user_id,
+                            rights=submission_access_right.rights,
+                        )
+                    send_share_notification(
+                        request, data['document_id'], submission_access_right.user_id, submission_access_right.rights)
+                    access_right.save()
+                set_version(request, data)
                 print original_doc.document_id
                 status = 200
                 return JsonResponse(
                     response,
                     status=status
                 )
+        else:
+            response['error'] = "The editor is not valid"
+            status = 404
+            return JsonResponse(
+                response,
+                status=status
+            )
 
 
 @login_required
@@ -491,13 +526,31 @@ def access_right_save_js(request):
 def submission_version_js(request):
     status = 405
     response = {}
-    version = 1
+
     if request.is_ajax() and request.method == 'POST':
-        user_id = request.POST.get('user_id')
-        document_id = request.POST.get('document_id')
-        journal_id = request.POST.get('journal_id')
-        submission_id = request.POST.get('submission_id')
-        pre_document_id = request.POST.get('pre_document_id')
+        data = {}
+        data['user_id'] = request.POST.get('user_id')
+        data['document_id'] = request.POST.get('document_id')
+        data['journal_id'] = request.POST.get('journal_id')
+        data['submission_id'] = request.POST.get('submission_id')
+        data['pre_document_id'] = request.POST.get('pre_document_id')
+        set_version(request, data)
+        status = 201
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@login_required
+def set_version(request, data):
+    user_id = data['user_id']
+    document_id = data['document_id']
+    journal_id = data['journal_id']
+    submission_id = data['submission_id']
+    pre_document_id = data['pre_document_id']
+    version = 1
+    try:
         submissions = Submission.objects.filter(
             submission_id=submission_id)
         if len(submissions) > 0:
@@ -537,11 +590,9 @@ def submission_version_js(request):
             version_id=version
         )
         submission.save()
-        status = 201
-    return JsonResponse(
-        response,
-        status=status
-    )
+        return True
+    except:
+        return False
 
 
 @login_required

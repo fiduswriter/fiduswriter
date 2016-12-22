@@ -44,8 +44,8 @@ let setRights = function(orginalDocId,CopyDocId,user,access_rights){
 
 export let selectJournal = function(editor) {
         let list = null
-        let diaButtons = {}
         let userProfile = {}
+        let diaButtons = {}
         let data1 = new window.FormData()
         data1.append('user_id', editor.user.id)
         jQuery.ajax({
@@ -82,10 +82,10 @@ export let selectJournal = function(editor) {
             savecopy(editor.doc, oldBibDB, oldImageDB,
                 editor.bibDB.db, editor.imageDB.db, editor.user,
                 function(doc, docInfo, newBibEntries){
-            		//setRights(editor.doc.id,doc.id,editor.user,editor.doc.access_rights)
-            		window.location.href = `/document/${doc.id}/`
+            		setRights(editor.doc.id,doc.id,editor.user,editor.doc.access_rights)
+            		//window.location.href = `/document/${doc.id}/`
                     let dataToOjs = new window.FormData()
-                    /*dataToOjs.append('username', userProfile["username"])
+                    dataToOjs.append('username', userProfile["username"])
                     dataToOjs.append('title', editor.doc.title)
                     dataToOjs.append('first_name', userProfile["first_name"])
                     dataToOjs.append('last_name', userProfile["last_name"])
@@ -138,7 +138,7 @@ export let selectJournal = function(editor) {
                         error: function() {
                             addAlert('error', 'submission was not successful')
                         }
-                    })*/
+                    })
                 })
                 })
                     })
@@ -179,16 +179,16 @@ export let selectJournal = function(editor) {
 }
 
 /*send the revision of submitted paper*/
-export let revisionDone = function(editor){
+export let submissionRevisionDone = function(editor){
         let diaButtons = {}
         let submission_info = {}
         let userProfile = {}
         let submissionData = new window.FormData()
         submissionData.append('document_id', editor.doc.id)
         submissionData.append('user_id', editor.user.id)
-        submissionData.append('submission_id', '111')
+        submissionData.append('submission_id', '149')
         jQuery.ajax({
-            url: '/document/newrevision/',
+            //url: '/document/newsumissionrevision/',
             data: submissionData,
             type: 'POST',
             cache: false,
@@ -199,10 +199,10 @@ export let revisionDone = function(editor){
                 xhr.setRequestHeader("X-CSRFToken", csrfToken)
             },
             success: function(result) {
-                addAlert('success', 'new submission')
+                addAlert('success', 'The revision was submitted successfully')
             },
             error: function() {
-                addAlert('error', 'not new submission')
+                addAlert('error', 'The revision was not submitted')
             }
         })
 

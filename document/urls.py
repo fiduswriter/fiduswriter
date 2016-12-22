@@ -71,9 +71,9 @@ urlpatterns = [
         name='document_review_js'
     ),
     url(
-        '^newrevision/$',
-        views.new_revision_js,
-        name='new_revision_js'
+        '^newsumissionrevision/$',
+        views.new_submission_revision_js,
+        name='new_submission_revision_js'
     ),
     url(
         '^maintenance/get_all/$',

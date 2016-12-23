@@ -305,9 +305,9 @@ export class LatexExporterConvert {
         }
 
         if (node.content) {
-            for (let i=0; i < node.content.length; i++) {
-                content += this.walkJson(node.content[i], options)
-            }
+            node.content.forEach(child => {
+                content += this.walkJson(child, options)
+            })
         }
 
         if (placeFootnotesAfterBlock &&
@@ -317,7 +317,7 @@ export class LatexExporterConvert {
             // This happens in the case of headlines and lists.
             if (options.unplacedFootnotes.length > 1) {
                 end += `\\addtocounter{footnote}{-${(options.unplacedFootnotes.length)}}`
-                options.unplacedFootnotes.forEach(function(footnote){
+                options.unplacedFootnotes.forEach(footnote => {
                     end += '\\stepcounter{footnote}\n'
                     end += '\\footnotetext{'
                     end += this.walkJson(footnote, options)

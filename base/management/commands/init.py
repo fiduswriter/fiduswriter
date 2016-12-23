@@ -1,5 +1,9 @@
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
+import os
+import shutil
+
+from fiduswriter.settings import PROJECT_PATH
 
 
 class Command(BaseCommand):
@@ -21,6 +25,9 @@ class Command(BaseCommand):
             "loaddata",
             "document/fixtures/initial_export_templates.json")
         call_command("compilemessages")
+        # Remove the es6 cache if it exists
+        if os.path.exists(os.path.join(PROJECT_PATH, "es6-cache")):
+            shutil.rmtree("es6-cache")
         call_command("transpile")
         try:
             call_command("compress")

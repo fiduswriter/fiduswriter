@@ -210,7 +210,7 @@ def get_reviewer_for_post(request):
             reviewer = reviewers[0]
         return reviewer
     except ObjectDoesNotExist:
-        print ("could not create user for email " + email)
+        print("could not create user for email " + email)
 
 
 def get_existing_reviewer(request):

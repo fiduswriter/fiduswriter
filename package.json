@@ -1,6 +1,6 @@
 {
   "name": "fidus-writer",
-  "version": "3.1.0-dev",
+  "version": "3.1.0-rc.1",
   "description": "Install dependencies for ES6 transpilation",
   "scripts": {
     "get_mml2omml": "mkdir -p ./static-libs/xsl/ && wget https://raw.githubusercontent.com/AbiWord/abiword/14cbf144cb10a5a5ea6ee11275f7178ca4ff055a/plugins/openxml/omml_xslt/mml2omml.xsl -O ./static-libs/xsl/mml2omml.xsl",

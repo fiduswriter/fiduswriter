@@ -3,6 +3,9 @@ from django.core.management import call_command
 import os
 import shutil
 
+from fiduswriter.settings import PROJECT_PATH
+
+
 class Command(BaseCommand):
     args = '[restart]'
     help = ('Initialize Fidus Writer installation. If the argument "reset" is '

@@ -103,6 +103,7 @@ export class LatexExporterConvert {
                     placeFootnotesAfterBlock = true
                     options = _.clone(options)
                     options.onlyFootnoteMarkers = true
+                    options.unplacedFootnotes = []
                 }
                 break
             case 'code':
@@ -120,6 +121,7 @@ export class LatexExporterConvert {
                     placeFootnotesAfterBlock = true
                     options = _.clone(options)
                     options.onlyFootnoteMarkers = true
+                    options.unplacedFootnotes = []
                 }
                 break
             case 'bullet_list':
@@ -354,6 +356,8 @@ export class LatexExporterConvert {
         .replace(/&  \\\\/g, '\\\\')
         // Remove new lines between table cells.
         .replace(/\n & \n\n/g, ' & ')
+        // Remove new lines within itemization
+        .replace(/\\item \n\n/g, '\\item ')
     }
 
     assembleEpilogue() {

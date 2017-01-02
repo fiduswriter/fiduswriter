@@ -25,23 +25,16 @@ export class SearchDialog {
                             let list =result['response']
                             jQuery("#sowoDaraResult").remove()
                             jQuery('#sowidaraSearch').append(sowidaraTemplate({items:list.docs}))
-        				    console.log(list.docs[0])
-        				    console.log(list.docs[0].isbn[0])
-        				    console.log(list.docs[0]._version)
-        				    console.log(list.docs[0].person_author_normalized_str_mv[0])
-                            jQuery('.citing').bind('click', function() {
-                                //alert(jQuery(this).parent().find("a.title").text())
 
+                            jQuery('.citing').bind('click', function() {
                 				var id = jQuery(this).parent().find("a.title").attr('id')
                 				var itemTitle = jQuery(this).parent().find("a.title").attr('itemTitle')
-                				alert(itemTitle)
 				                var author = jQuery(this).parent().find("a.title").attr('itemAuthor')
-				                alert(author)
 				                //var page = jQuery(this).parent().find("a.title").attr('itemPage')
 				                //var bibBefore #
 				                let bib_type = 'article'
                                 let entry_key = 'FidusWriter'
-                                author = 'Niloofar'
+
                                 let date = ' '
 					            let idTmp = 0
 
@@ -52,7 +45,7 @@ export class SearchDialog {
 
     			            	let editor = mod.editor
                     			let nodeType = editor.currentPm.schema.nodes['citation']
-                    			let node = editor.currentPm.selection.node
+
 
 			                	editor.currentPm.tr.replaceSelection(nodeType.createAndFill({
             				        bibFormat,
@@ -61,37 +54,7 @@ export class SearchDialog {
             				        bibPage
         			            })).apply()
 
-                                /* _.each(editor.bibDB.db, function(bib, index) {
 
-                                        let bibauthors = bib.fields.author || bib.fields.editor
-                                        let bibEntry = {
-                                                'id': index,
-                                                'type': bib.bib_type,
-                                                'title':  gettext('Untitled'),
-                                                'author': bibauthors? nameToText(bibauthors) : ''
-                                            },
-                                            cited_id
-
-                                        citableItemsHTML += citationItemTemplate(bibEntry)
-
-                                        cited_id = _.indexOf(id, index)
-                                        console.log("cited_id")
-                                        console.log(cited_id)
-                                        if (-1 < cited_id) {
-                                            console.log("i im hereee")
-                                           // bibEntry.prefix = cited_prefixes[cited_id]
-                                           // bibEntry.page = cited_pages[cited_id]
-                                            citedItemsHTML += selectedCitationTemplate(bibEntry)
-                                        }
-                                    })
-
-                                  /let dialog = jQuery(
-                                    configureCitationTemplate({
-                                        'citableItemsHTML': citableItemsHTML,
-                                        'citedItemsHTML': citedItemsHTML,
-                                        'citeFormat': ''
-                                    })
-                                  )*/
 
 					            that.save(idTmp, bib_type, entry_key, author,date, editor)
                             })
@@ -102,8 +65,7 @@ export class SearchDialog {
 
     save(itemId, bib_type, entry_key, author, date, editor, itemTitle) {
         let that = this
-        let isNew = itemId===undefined ? true : false
-        isNew = true
+        let isNew = itemId===undefined ? false : true
         let Id = itemId===false ? 0 : itemId
         let returnObj = {
                 bib_type: bib_type,
@@ -147,7 +109,8 @@ export class SearchDialog {
                 entryKey += bibItem.date.split('/')[0].replace(/\?|\*|u|\~|-/g,'')
             }
             if (entryKey.length) {
-                bibItem.entry_key = 'FidusWriter'
+
+                bibItem.entry_key = entryKey
             }
         }
 

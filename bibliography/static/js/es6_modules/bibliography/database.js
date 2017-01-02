@@ -19,6 +19,7 @@ export class BibliographyDB {
         }
     }
 
+    // EXPORT
     /** Get the bibliography from the server and create as this.db.
      * @function getDB
      * @param callback Will be called afterward.
@@ -35,8 +36,8 @@ export class BibliographyDB {
                 localStorageOwnerId = parseInt(window.localStorage.getItem('owner_id'))
                 that = this
 
-            // A dictionary to look up bib fields by their fw type name.
-            // Needed for translation to CSL and Biblatex.
+            // A dictionary to look up bib fields by their fw type name. Needed for translation to CSL and Biblatex.
+            //jQuery('#bibliography').dataTable().fnDestroy()
             //Fill BibDB
 
             if (_.isNaN(lastModified)) {
@@ -180,9 +181,12 @@ export class BibliographyDB {
                     that.db[bibTrans[1]] = tmpDB[bibTrans[0]]
                     ids.push(bibTrans[1])
                 })
-
+                console.log("ids")
+                console.log(ids[0])
                 addAlert('success', gettext('The bibliography has been updated.'))
                 if (callback) {
+                    console.log("callback")
+                    console.log(callback)
                     callback(ids)
                 }
 

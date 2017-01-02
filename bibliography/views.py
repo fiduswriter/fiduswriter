@@ -161,8 +161,16 @@ def save_js(request):
                     'entry_cat': bib['entry_cat'],
                     'fields': bib['fields']
                 }
+                print("inserting object")
+                print(inserting_obj)
                 similar = Entry.objects.filter(**inserting_obj)
+                print("similar")
+                print(similar)
+                print("len(similar)")
+                print(len(similar))
+
                 if len(similar) == 0:
+                    print("it is new object")
                     the_entry = Entry(**inserting_obj)
                     the_entry.save()
                     response['id_translations'].append([b_id, the_entry.id])
@@ -176,6 +184,12 @@ def save_js(request):
                 the_entry.fields = bib['fields']
                 the_entry.save()
                 response['id_translations'].append([b_id, the_entry.id])
+
+
+    print("response['id_translations'].append([b_id, the_entry.id])")
+    print(response['id_translations'])
+    print("status")
+    print(status)
     return JsonResponse(
         response,
         status=status

@@ -12,7 +12,7 @@ def modify_fields(apps, schema_editor):
     Entry = apps.get_model("bibliography", "Entry")
     for entry in Entry.objects.all():
         fields = json_decode(entry.fields)
-        # If the entyr has no title, add an empty title
+        # If the entry has no title, add an empty title
         if not "title" in fields:
             fields["title"] = []
         # If the entry has no date, add an uncertain date

@@ -153,13 +153,18 @@ export class BibliographyDB {
             dbObject[bibKey].entry_cat = JSON.stringify(tmpDB[bibKey].entry_cat)
             dbObject[bibKey].fields = JSON.stringify(tmpDB[bibKey].fields)
         })
+
         let sendData = {
             is_new: isNew,
             bibs: JSON.stringify(dbObject)
         }
+
+        console.log(sendData)
         if (this.docOwnerId !== 0) {
+            console.log("this.docOwnerId")
             sendData['owner_id'] = this.docOwnerId
         }
+
 
         jQuery.ajax({
             url: '/bibliography/save/',
@@ -176,6 +181,7 @@ export class BibliographyDB {
                     that.db[bibTrans[1]] = tmpDB[bibTrans[0]]
                     ids.push(bibTrans[1])
                 })
+
                 addAlert('success', gettext('The bibliography has been updated.'))
                 if (callback) {
                     callback(ids)

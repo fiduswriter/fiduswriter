@@ -71,6 +71,10 @@ export let citationDialog = function (mod) {
             bibBefore,
             bibPage
         })).apply()
+	alert(bibFormat)
+	alert(bibEntry)
+	alert(bibBefore)
+	alert(bibPage)
         return true
     }
 

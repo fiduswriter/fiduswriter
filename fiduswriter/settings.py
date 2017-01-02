@@ -78,7 +78,7 @@ LOCALE_PATHS = (
 
 # A list of allowed hostnames of this Fidus Writer installation
 ALLOWED_HOSTS = [
-    'localhost',
+    'localhost', '10.6.13.144'
 ]
 
 # If you set this to False, the server will not format dates, numbers and

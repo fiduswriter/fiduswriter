@@ -70,7 +70,7 @@ let submitDoc = function(editor,userProfile){
                     dataToOjs.append('article_url', window.location.origin+"/document/" + doc.id)
                     if (editor.doc.submission.status == 'submitted') {
                         dataToOjs.append('submission_id', editor.doc.submission.submission_id)
-                        dataToOjs.append('version_id', editor.doc.submission.version_id)
+                        dataToOjs.append('version_id', editor.doc.submission.version_id+1)
                     }
                     jQuery.ajax({
                         url: window.ojsUrl+'/index.php/index/gateway/plugin/RestApiGatewayPlugin/articles',

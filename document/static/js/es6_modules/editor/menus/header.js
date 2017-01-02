@@ -13,8 +13,7 @@ export class ModMenusHeader {
 
     bindEvents() {
           let that = this
-          let documentStyleMenu = document.getElementById("documentstyle-list"),
-              citationStyleMenu = document.getElementById("citationstyle-list")
+
 
           //open dropdown for headermenu
           jQuery('.header-nav-item, .multibuttonsCover').each(function() {
@@ -22,25 +21,29 @@ export class ModMenusHeader {
                   '.fw-pulldown'))
           })
 
-          for (let i = 0; i < documentStyleList.length; i++) {
+          let docStyleMenu = document.getElementById("documentstyle-list")
+          documentStyleList.forEach(docStyle => {
               let newMenuItem = document.createElement("li")
               newMenuItem.innerHTML =
-                "<span class='fw-pulldown-item style' data-style='" +
-                documentStyleList[i].filename + "' title='" +
-                documentStyleList[i].title + "'>" +
-                documentStyleList[i].title + "</span>"
+                "<span class='fw-pulldown-item docstyle' data-docstyle='" +
+                docStyle.filename + "' title='" +
+                docStyle.title + "'>" +
+                docStyle.title + "</span>"
 
-              documentStyleMenu.appendChild(newMenuItem)
-          }
-          for (let j in citationDefinitions.styles) {
+              docStyleMenu.appendChild(newMenuItem)
+          })
+
+          let citationStyleMenu = document.getElementById("citationstyle-list")
+          Object.keys(citationDefinitions.styles).forEach(citDef => {
+              let citDefName = citationDefinitions.styles[citDef].name
               let newMenuItem = document.createElement("li")
               newMenuItem.innerHTML =
                 "<span class='fw-pulldown-item citationstyle' data-citationstyle='" +
-                j + "' title='" + citationDefinitions.styles[j].name + "'>" +
-                citationDefinitions.styles[j].name + "</span>"
+                citDef + "' title='" + citDefName + "'>" +
+                citDefName + "</span>"
 
               citationStyleMenu.appendChild(newMenuItem)
-          }
+          })
 
           jQuery('.metadata-menu-item, #open-close-header, .saverevision, .multibuttonsCover, \
           .savecopy, .download, .template-export, .latex, .epub, .html, .print, .style, .citationstyle, \
@@ -83,16 +86,15 @@ export class ModMenusHeader {
 
           // Document Style switching
           jQuery(document).on('click', '.documentstyle-menu:not(.disabled)', function () {
-              jQuery('span.documentstyle.selected').removeClass('selected')
-              let documentstyle = that.mod.editor.pm.doc.firstChild.attrs.documentstyle
-              jQuery(`span.documentstyle[data-documentstyle="${documentstyle}"]`).addClass('selected')
+              jQuery('span.docstyle.selected').removeClass('selected')
+              let docStyle = that.mod.editor.pm.doc.firstChild.attrs.documentstyle
+              jQuery(`span.docstyle[data-docstyle="${docStyle}"]`).addClass('selected')
           })
-          jQuery(document).on('mousedown', "#header-navigation .style:not(.disabled)", function() {
+          jQuery(document).on('mousedown', "#header-navigation .docstyle:not(.disabled)", function() {
               let article = that.mod.editor.pm.doc.firstChild
               let attrs = _.clone(article.attrs)
-              attrs.documentstyle = jQuery(this).attr('data-style')
+              attrs.documentstyle = jQuery(this).attr('data-docstyle')
               that.mod.editor.pm.tr.setNodeType(0, false, attrs).apply()
-
               return false
           })
 
@@ -205,11 +207,9 @@ export class ModMenusHeader {
                       }
                   })
           })
-
           jQuery(document).on('mousedown', '.saverevision:not(.disabled)', function() {
               that.mod.actions.saveRevision()
           })
-
     }
 
     enableExportMenu() {

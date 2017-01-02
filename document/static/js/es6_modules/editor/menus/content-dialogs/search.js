@@ -34,6 +34,7 @@ export class SearchDialog {
 
                 				var id = jQuery(this).parent().find("a.title").attr('id')
                 				var itemTitle = jQuery(this).parent().find("a.title").attr('itemTitle')
+                				alert(itemTitle)
 				                var author = jQuery(this).parent().find("a.title").attr('itemAuthor')
 				                alert(author)
 				                //var page = jQuery(this).parent().find("a.title").attr('itemPage')
@@ -99,7 +100,7 @@ export class SearchDialog {
         })
     }
 
-    save(itemId, bib_type, entry_key, author, date, editor) {
+    save(itemId, bib_type, entry_key, author, date, editor, itemTitle) {
         let that = this
         let isNew = itemId===undefined ? true : false
         isNew = true
@@ -114,6 +115,7 @@ export class SearchDialog {
 
         returnObj['fields'][author] = author
         returnObj['fields'][date] = date
+        returnObj['fields'][itemTitle] = itemTitle
         let saveObj = {}
         saveObj[Id] = returnObj
 

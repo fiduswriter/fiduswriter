@@ -1,6 +1,6 @@
 {
   "name": "fidus-writer",
-  "version": "3.1.0-dev",
+  "version": "3.1.0-rc.2",
   "description": "Install dependencies for ES6 transpilation",
   "scripts": {
     "get_mml2omml": "mkdir -p ./static-libs/xsl/ && wget https://raw.githubusercontent.com/AbiWord/abiword/14cbf144cb10a5a5ea6ee11275f7178ca4ff055a/plugins/openxml/omml_xslt/mml2omml.xsl -O ./static-libs/xsl/mml2omml.xsl",
@@ -28,6 +28,7 @@
     "browserify-incremental": "3.1.1",
     "browserkeymap": "^1.0.0",
     "datatables": "1.10.12",
+    "downloadjs": "^1.4.6",
     "dropkickjs": "2.1.10",
     "fg-loadcss": "1.2.0",
     "jquery": "3.1.1",
@@ -40,7 +41,7 @@
     "napa": "2.3.0",
     "object-hash": "1.1.4",
     "paginate-for-print": "0.0.6",
-    "prosemirror-old": "0.10.2",
+    "prosemirror-old": "0.10.3",
     "texzilla": "0.9.9",
     "tokenfield": "^0.3.14",
     "underscore": "1.8.3"

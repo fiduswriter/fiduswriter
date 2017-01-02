@@ -29,9 +29,9 @@ u'mainsubtitle', u'maintitle', u'maintitleaddon', u'nameaddon', u'note',\
 u'number', u'origtitle', u'pagetotal', u'part', u'reprinttitle', u'series',\
 u'shorthand', u'shorthandintro', u'shortjournal', u'shortseries', \
 u'shorttitle', u'subtitle', u'title', u'titleaddon', u'venue', u'version',\
-u'volume', u'volumes']
+u'volume', u'volumes', u'eprintclass']
 
-l_literal = [u'eprintclass', u'institution', u'location', u'organization', \
+l_literal = [u'institution', u'location', u'organization', \
 u'origlocation', u'origpublisher', u'publisher']
 
 f_integer = [u'edition',]
@@ -94,7 +94,7 @@ def reform_l_range(range_string):
                 reform_f_literal(range_parts[-1])
             ])
         else:
-            out_list.append([range_item])
+            out_list.append([reform_f_literal(range_item)])
     return out_list
 
 def modify_fields(apps, schema_editor):

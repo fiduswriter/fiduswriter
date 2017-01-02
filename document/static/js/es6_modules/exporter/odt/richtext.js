@@ -2,9 +2,9 @@ import {escapeText} from "../tools/html"
 import {noSpaceTmp} from "../../common/common"
 
 export class OdtExporterRichtext {
-    constructor(exporter, citations, images) {
+    constructor(exporter, images) {
         this.exporter = exporter
-        this.citations = citations
+        //this.citations = citations
         this.images = images
         this.imgCounter = 1
         this.fnCounter = 0 // real footnotes
@@ -25,11 +25,10 @@ export class OdtExporterRichtext {
                 options = _.clone(options)
                 options.section = 'Abstract'
                 break
-            case 'bibliography':
-                options = _.clone(options)
-                options.section = 'References'
-                break
             case 'paragraph':
+                if (!options.section) {
+                    options.section = 'Text_20_body'
+                }
                 this.exporter.styles.checkParStyle(options.section)
                 start += `<text:p text:style-name="${options.section}">`
                 end = '</text:p>' + end
@@ -71,6 +70,7 @@ export class OdtExporterRichtext {
             case 'footnote':
                 options = _.clone(options)
                 options.section = 'Footnote'
+                options.inFootnote = true
                 content += this.transformRichtext({
                     type: 'footnotecontainer',
                     content: node.attrs.footnote
@@ -86,11 +86,14 @@ export class OdtExporterRichtext {
                 break
             case 'text':
                 // Check for hyperlink, bold/strong and italic/em
-                let hyperlink, strong, em
+                let hyperlink, strong, em, sup, sub, smallcaps
                 if (node.marks) {
-                    strong = _.findWhere(node.marks, {type:'strong'})
-                    em = _.findWhere(node.marks, {type:'em'})
                     hyperlink = _.findWhere(node.marks, {type:'link'})
+                    em = _.findWhere(node.marks, {type:'em'})
+                    strong = _.findWhere(node.marks, {type:'strong'})
+                    smallcaps = _.findWhere(node.marks, {type:'smallcaps'})
+                    sup = _.findWhere(node.marks, {type:'sup'})
+                    sub = _.findWhere(node.marks, {type:'sub'})
                 }
 
                 if (hyperlink) {
@@ -98,15 +101,24 @@ export class OdtExporterRichtext {
                     end = '</text:a>' + end
                 }
 
-                if (strong || em) {
-                    let styleId
-                    if (strong && em) {
-                        styleId = this.exporter.styles.getBoldItalicStyleId()
-                    } else if (em) {
-                        styleId = this.exporter.styles.getItalicStyleId()
-                    } else {
-                        styleId = this.exporter.styles.getBoldStyleId()
-                    }
+                let attributes = ''
+                if (em) {
+                    attributes += 'e'
+                }
+                if (strong) {
+                    attributes += 's'
+                }
+                if (smallcaps) {
+                    attributes += 'c'
+                }
+                if (sup) {
+                    attributes += 'p'
+                } else if (sub) {
+                    attributes += 'b'
+                }
+
+                if (attributes.length) {
+                    let styleId = this.exporter.styles.getInlineStyleId(attributes)
                     start += `<text:span text:style-name="T${styleId}">`
                     end = '</text:span>' + end
                 }
@@ -116,7 +128,12 @@ export class OdtExporterRichtext {
             case 'citation':
                 let that = this
                 // We take the first citation from the stack and remove it.
-                let cit = this.citations.pmCits.shift()
+                let cit
+                if (options.inFootnote) {
+                    cit = this.exporter.footnotes.citations.pmCits.shift()
+                } else {
+                    cit = this.exporter.citations.pmCits.shift()
+                }
                 if (options.citationType && options.citationType === 'note') {
                     // If the citations are in notes (footnotes), we need to
                     // put the contents of this citation in a footnote.
@@ -138,7 +155,7 @@ export class OdtExporterRichtext {
 
                 break
             case 'figure':
-                if(node.attrs.image !== 'false') {
+                if(node.attrs.image !== false) {
                     let imgDBEntry = this.images.imageDB.db[node.attrs.image]
                     let imgFileName = this.images.imgIdTranslation[node.attrs.image]
                     let height = imgDBEntry.height*3/4 // more or less px to point
@@ -200,6 +217,32 @@ export class OdtExporterRichtext {
                         <draw:object xlink:href="./Object ${objectNumber}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/>
                         <svg:desc>formula</svg:desc>
                     </draw:frame>`
+                break
+            case 'hard_break':
+                content += '<text:line-break/>'
+                break
+            // CSL bib entries
+            case 'cslbib':
+                options = _.clone(options)
+                options.section = 'Bibliography_20_1'
+                break
+            case 'cslblock':
+                end = '<text:line-break/>' + end
+                break
+            case 'cslleftmargin':
+                end = '<text:tab/>' + end
+                break
+            case 'cslindent':
+                start += '<text:tab/>'
+                end = '<text:line-break/>' + end
+                break
+            case 'cslentry':
+                this.exporter.styles.checkParStyle(options.section)
+                start += `<text:p text:style-name="${options.section}">`
+                end = '</text:p>' + end
+                break
+            case 'cslinline':
+            case 'cslrightinline':
                 break
             default:
                 console.warn('Unhandled node type:' + node.type)

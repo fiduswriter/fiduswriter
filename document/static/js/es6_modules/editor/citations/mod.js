@@ -81,7 +81,7 @@ export class ModCitations {
         document.querySelector('.article-bibliography').innerHTML = citRenderer.fm.bibHTML
         let styleEl = document.querySelector('.article-bibliography-style')
         if (!styleEl) {
-            document.head.insertAdjacentHTML('beforeend','<style class="article-bibliography-style"></style>')
+            document.head.insertAdjacentHTML('beforeend','<style type="text/css" class="article-bibliography-style"></style>')
             styleEl = document.querySelector('.article-bibliography-style')
         }
         let css = citRenderer.fm.bibCSS

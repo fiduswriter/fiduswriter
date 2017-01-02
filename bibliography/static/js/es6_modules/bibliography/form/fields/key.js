@@ -1,6 +1,6 @@
 import {LiteralFieldForm} from "./literal"
 import {noSpaceTmp} from "../../../common/common"
-import {BibOptionTitles} from "../titles"
+import {BibOptionTitles} from "../strings"
 
 export class KeyFieldForm{
     constructor(dom, initialValue, unused = undefined, fieldType = undefined) {

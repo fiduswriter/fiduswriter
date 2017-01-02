@@ -210,7 +210,7 @@ def get_reviewer_for_post(request):
             reviewer = reviewers[0]
         return reviewer
     except ObjectDoesNotExist:
-        print ("could not create user for email " + email)
+        print("could not create user for email " + email)
 
 
 def get_existing_reviewer(request):
@@ -514,11 +514,13 @@ def upload_revision_js(request):
 # Download a revision that was previously uploaded
 @login_required
 def get_revision(request, revision_id):
-    if not request.user.is_staff:
-        return HttpResponse(status=405)
-    revision = DocumentRevision.objects.get(pk=int(revision_id))
-    if revision.document.owner != request.user:
-        return HttpResponse(status=405)
+    if request.user.is_staff:
+        revision = DocumentRevision.objects.get(pk=int(revision_id))
+    else:
+        revision = DocumentRevision.objects.get(
+            pk=int(revision_id),
+            document__owner=request.user
+        )
     http_response = HttpResponse(
         revision.file_object.file,
         content_type='application/zip; charset=x-user-defined',
@@ -701,7 +703,7 @@ def profile_js(request):
         request.method == 'POST' and
         settings.SERVER_INFO['EXPERIMENTAL'] is True
     ):
-        id = request.POST["id"]
+        id = request.POST["user_id"]
         the_user = User.objects.filter(id=id)
         if len(the_user) > 0:
             response['user'] = {}

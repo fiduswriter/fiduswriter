@@ -139,7 +139,10 @@ Advanced options
 
 ### Development/upgrade:
 
-  1. Before upgrading, update all your documents to the latest document version. An administrator needs to navigate to `/admin/maintenance/` on your server using a browser.
+  1. Before upgrading, make a copy of your database and the media folder, then update
+  all your documents to the latest document version. To do that, an administrator needs
+  to navigate to `/admin/maintenance/` on your server using a browser and click the
+  update button.
 
   2. Download the updated sources. If you have installed Fidus Writer from github and the upgrade is minor, the command will likely be:
 

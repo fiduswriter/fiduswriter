@@ -199,7 +199,7 @@ export class FigureDialog {
             }
 
             new ImageSelectionDialog(that.imageDB, that.imageId, that.editor.doc.owner.id, function(newImageId) {
-                if (newImageId && newImageId!=='false') {
+                if (newImageId && newImageId !== false) {
                     that.imageId = newImageId
                     that.layoutImagePreview()
                     jQuery('input[name=figure-math]').attr(

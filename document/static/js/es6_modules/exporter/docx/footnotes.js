@@ -82,14 +82,15 @@ export class DocxExporterFootnotes {
         if (this.footnotes.length || (this.exporter.citations.citFm.citationType==='note' && this.exporter.citations.citInfos.length)) {
             this.convertFootnotes()
             this.rels = new DocxExporterRels(this.exporter, 'footnotes')
-            this.citations = new DocxExporterCitations(this.exporter, this.exporter.bibDB, this.fnPmJSON)
-            // Get the citinfos from the main body document so that they will be
+            // Include the citinfos from the main body document so that they will be
             // used for calculating the bibliography as well
-            let origCitInfos = this.exporter.citations.citInfos
-            this.citations.formatCitations(origCitInfos)
-            // Replace the main bibliography with the new one that includes both citations in main document
-            // and in the footnotes.
-            this.exporter.pmBib = this.citations.pmBib
+            this.citations = new DocxExporterCitations(
+                this.exporter,
+                this.exporter.bibDB,
+                this.fnPmJSON,
+                this.exporter.citations.citInfos
+            )
+
             this.images = new DocxExporterImages(
                 this.exporter,
                 this.exporter.imageDB,
@@ -101,7 +102,13 @@ export class DocxExporterFootnotes {
                 this.rels,
                 this.fnPmJSON
             )
-            return this.rels.init().then(function(){
+
+            return this.citations.init().then(function(){
+                // Replace the main bibliography with the new one that includes both citations in main document
+                // and in the footnotes.
+                that.exporter.pmBib = that.citations.pmBib
+                return that.rels.init()
+            }).then(function(){
                 return that.images.init()
             }).then(function() {
                 return that.lists.init()

@@ -262,7 +262,7 @@ export let configureCitationTemplate = _.template('\
     </div>')
 
 /** A template for each item that can be cited inside the citation configuration dialog of the editor. */
-export let citationItemTemplate = _.template('<tr class="fw-checkable fw-checkable-tr" data-id="<%- id %>" data-type="<%- type %>" data-title="<%- title %>" data-author="<%= author %>">\
+export let citationItemTemplate = _.template('<tr class="fw-checkable fw-checkable-tr" data-id="<%- id %>" data-type="<%- bib_type %>" data-title="<%- title %>" data-author="<%= author %>">\
         <td width="162">\
             <span class="fw-document-table-title fw-inline">\
                 <i class="icon-book"></i>\
@@ -275,13 +275,15 @@ export let citationItemTemplate = _.template('<tr class="fw-checkable fw-checkab
     </tr>')
 
 /** A template for each selected citation item inside the citation configuration dialog of the editor. */
-export let selectedCitationTemplate = _.template('<tr id="selected-source-<%= id %>" class="selected-source"><td colspan="3" width="335">\
+export let selectedCitationTemplate = _.template('\
+<tr id="selected-source-<%= id %>" class="selected-source">\
+    <td colspan="3" width="335">\
       <table class="fw-cite-parts-table">\
           <tr>\
               <td width="135">\
                   <span class="fw-document-table-title fw-inline">\
                       <i class="icon-book"></i>\
-                      <span data-id="<%- id %>" data-type="<%- type %>">\
+                      <span data-id="<%- id %>" data-type="<%- bib_type %>">\
                           <%= title %>\
                       </span>\
                   </span>\
@@ -301,7 +303,7 @@ export let selectedCitationTemplate = _.template('<tr id="selected-source-<%= id
               <td class="cite-extra-fields" colspan="3" width="335">\
                   <div>\
                       <label>' + gettext('Page') + '</label>\
-                      <input class="fw-cite-page" type="text" value="<%= page %>" />\
+                      <input class="fw-cite-page" type="text" value="<%= locator %>" />\
                   </div>\
                   <div>\
                       <label>' + gettext('Text before') + '</label>\
@@ -310,6 +312,7 @@ export let selectedCitationTemplate = _.template('<tr id="selected-source-<%= id
               </td>\
           </tr>\
       </table>\
+
   </td></tr>')
 
   /** A template to search in dara and sowiport */

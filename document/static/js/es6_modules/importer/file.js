@@ -96,17 +96,17 @@ const l_key = ['language']
 
 const f_literal = ['abstract', 'addendum', 'annotation', 'booksubtitle',
     'booktitle', 'booktitleaddon', 'chapter', 'eid', 'entrysubtype',
-    'eprinttype', 'eventtitle', 'howpublished', 'indextitle', 'isan',
-    'isbn', 'ismn', 'isrn', 'issn', 'issue', 'issuesubtitle', 'issuetitle',
-    'iswc', 'journalsubtitle', 'journaltitle', 'label', 'library',
+    'eprinttype', 'eprintclass', 'eventtitle', 'howpublished', 'indextitle',
+    'isan', 'isbn', 'ismn', 'isrn', 'issn', 'issue', 'issuesubtitle',
+    'issuetitle', 'iswc', 'journalsubtitle', 'journaltitle', 'label', 'library',
     'mainsubtitle', 'maintitle', 'maintitleaddon', 'nameaddon', 'note',
     'number', 'origtitle', 'pagetotal', 'part', 'reprinttitle', 'series',
     'shorthand', 'shorthandintro', 'shortjournal', 'shortseries',
     'shorttitle', 'subtitle', 'title', 'titleaddon', 'venue', 'version',
     'volume', 'volumes']
 
-const l_literal = ['eprintclass', 'institution', 'location', 'organization',
-    'origlocation', 'origpublisher', 'publisher']
+const l_literal = ['institution', 'location', 'organization', 'origlocation',
+    'origpublisher', 'publisher']
 
 const f_integer = ['edition']
 
@@ -147,10 +147,22 @@ function reform_l_name(name_string) {
         let name_parts = each_name.split('} {')
         let name_value = {}
         if (name_parts.length > 1) {
-            name_value['family'] = [{'type':'text', 'text': strip_brackets_and_html(name_parts[1])}]
-            name_value['given'] = [{'type':'text', 'text': strip_brackets_and_html(name_parts[0])}]
+            name_value['family'] = []
+            name_value['given'] = []
+            let family_name = strip_brackets_and_html(name_parts[1])
+            if (family_name.length) {
+                name_value['family'].push({'type':'text', 'text': family_name})
+            }
+            let given_name = strip_brackets_and_html(name_parts[0])
+            if (given_name.length) {
+                name_value['given'].push({'type':'text', 'text': given_name})
+            }
         } else {
-            name_value['literal'] = [{'type':'text', 'text': strip_brackets_and_html(name_parts[0])}]
+            name_value['literal'] = []
+            let literal_name = strip_brackets_and_html(name_parts[0])
+            if (literal_name.length) {
+                name_value['literal'].push({'type':'text', 'text': literal_name})
+            }
         }
         names_value.push(name_value)
     })
@@ -159,7 +171,13 @@ function reform_l_name(name_string) {
 
 
 function reform_f_literal(lit_string) {
-    return [{'type':'text', 'text': strip_brackets_and_html(lit_string)}]
+    let cleaned_string = strip_brackets_and_html(lit_string)
+    if (cleaned_string.length) {
+        return [{'type':'text', 'text': cleaned_string}]
+    } else {
+        return []
+    }
+
 }
 
 function reform_l_literal(list_string) {

@@ -9,14 +9,14 @@
 {% block loginbtn %}{% trans "Sign up" %}{% endblock %}
 {% block extraheaders %}
 <script type="text/javascript">
-    $(function() {
+    jQuery(function() {
         var btn_width = 1;
-        $('.fw-button.fw-socialaccount').each(function() {
-            var the_width = $(this).width();
+        jQuery('.fw-button.fw-socialaccount').each(function() {
+            var the_width = jQuery(this).width();
             if(btn_width < the_width)
                 btn_width = the_width;
         });
-        $('.fw-button.fw-socialaccount').css('width', btn_width + 15);
+        jQuery('.fw-button.fw-socialaccount').css('width', btn_width + 15);
     });
 </script>
 {% endblock %}

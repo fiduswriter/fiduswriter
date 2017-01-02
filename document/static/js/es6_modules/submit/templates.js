@@ -17,6 +17,12 @@ export let reviewSubmitDialogTemplate = _.template('\
 </div>\
 ')
 
+
+export let revisionSubmitDialogTemplate = _.template('\
+    <div title="'+gettext('Submitting the revision')+'">\
+    <p>'+gettext('by pressing the submit button your revision will be sent to the editor')+'</p><br>\
+</div>\
+')
 //<div title="'+gettext('Select a journal to submit the paper')+'"><p><input type="text" class="revision-note" placeholder="'+gettext('Description (optional)')+'"><%= tt %></p></div>')
 
             /*<input type="radio" id="<%- journal.id %>" name="journalList" value="<%- journal.id %>"\

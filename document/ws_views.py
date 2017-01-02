@@ -73,6 +73,7 @@ class DocumentWS(BaseWebSocketHandler):
                 submission.submission_id
             response['doc']['submission']['user_id'] = submission.user_id
             response['doc']['submission']['version_id'] = submission.version_id
+            response['doc']['submission']['journal_id'] = submission.journal_id
 
         response['doc']['id'] = self.doc['id']
         response['doc']['version'] = self.doc['version']

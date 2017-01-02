@@ -370,7 +370,6 @@ def new_submission_revision_js(request):
                         request, data['document_id'], submission_access_right.user_id, submission_access_right.rights)
                     access_right.save()
                 set_version(request, data)
-                print original_doc.document_id
                 status = 200
                 return JsonResponse(
                     response,
@@ -383,6 +382,44 @@ def new_submission_revision_js(request):
                 response,
                 status=status
             )
+
+        # data = {}
+        # response = {}
+        # if 1 == 1:
+        #     original_doc = Submission.objects.get(submission_id=submission_id, version_id=0)
+        #     last_version = Submission.objects.filter(submission_id=submission_id).latest('version_id')
+        #     user = User.objects.get(email=email)
+        #     document = Document.objects.get(pk=last_version.document_id)
+        #     document.pk = None
+        #     document.save()
+        #     data['document_id'] = document.pk
+        #     data['pre_document_id'] = last_version.document_id
+        #     data['user_id'] = user.id
+        #     data['journal_id'] = original_doc.journal_id
+        #     data['submission_id'] = submission_id
+        #     submission_access_rights = SubmittedAccessRight.objects.filter(submission_id=submission_id,
+        #                                                         document_id=original_doc.document_id)
+        #     for submission_access_right in submission_access_rights:
+        #        try:
+        #             access_right = AccessRight.objects.get(
+        #                document_id=data['document_id'], user_id=submission_access_right.user_id)
+        #             access_right.rights = submission_access_right.rights
+        #        except ObjectDoesNotExist:
+        #            access_right = AccessRight.objects.create(
+        #                document_id=data['document_id'],
+        #                user_id=submission_access_right.user_id,
+        #                rights=submission_access_right.rights,
+        #            )
+        #        send_share_notification(
+        #                request, data['document_id'], submission_access_right.user_id, submission_access_right.rights)
+        #        access_right.save()
+        #     set_version(request, data)
+        #     print original_doc.document_id
+        #     status = 200
+        #     return JsonResponse(
+        #         response,
+        #         status=status
+        #     )
 
 
 @login_required

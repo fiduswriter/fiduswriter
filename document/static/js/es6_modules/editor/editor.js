@@ -258,8 +258,6 @@ export class Editor {
             let imageGetter = new ImageDB(userId)
             imageGetter.getDB(function(){
                 that.imageDB = imageGetter
-                console.log('that.imageDB')
-                console.log(that.imageDB.db)
                 that.schema.cached.imageDB = imageGetter // assign image DB to be used in schema.
                 that.mod.footnotes.schema.cached.imageDB = imageGetter // assign image DB to be used in footnote schema.
                 callback()
@@ -303,22 +301,16 @@ export class Editor {
               .documentstyle-menu, .citationstyle-menu').removeClass('disabled')
             }
         }
-        jQuery('#revision-done').show()
+        jQuery('#revision-done').hide()
         if (REVIEW_ROLES.indexOf(this.docInfo.rights) > -1)  {
           jQuery('#reviewed').show()
           jQuery('#reviewerOJSReturn').show()
-          jQuery('#revision-done').hide()
         }
         else {
           jQuery('#reviewed').hide()
           jQuery('#reviewerOJSReturn').hide()
-          if (this.doc.submission.status == 'submitted'){
-             if (this.doc.submission.user_id == this.user.id)
-                 console.log('kkkkkkkkkkkkkk')
-            console.log(this.user)
-            console.log(this.doc.submission.user_id)
+          if (this.doc.submission.status == 'submitted' && this.doc.submission.user_id == this.user.id)
             jQuery('#revision-done').show()
-          }
         }
 
     }

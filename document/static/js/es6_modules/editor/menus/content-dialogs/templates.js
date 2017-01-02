@@ -312,7 +312,6 @@ export let selectedCitationTemplate = _.template('\
               </td>\
           </tr>\
       </table>\
-
   </td></tr>')
 
   /** A template to search in dara and sowiport */

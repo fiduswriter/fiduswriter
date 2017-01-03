@@ -6,10 +6,10 @@ export class Citation extends Inline {
     get attrs() {
         return {
             format: new Attribute({
-                default: ""
+                default: "autocite" // "autocite" or "textcite"
             }),
             references: new Attribute({
-                default: []
+                default: [] // array of {id[, locator][, prefix]}
             })
         }
     }

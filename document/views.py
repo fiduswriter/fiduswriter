@@ -334,7 +334,7 @@ def new_submission_revision_js(request):
         submission_id = int(request.POST.get('submission_id'))
         app_key = request.POST.get('key')
         ojs_username = request.POST.get('user_name')
-        email = request.POST.get('author_email')
+        email = request.POST.get('reviewer_email')
         response = {}
         data = {}
         if app_key == settings.SERVER_INFO['OJS_KEY']:
@@ -376,7 +376,7 @@ def new_submission_revision_js(request):
                     status=status
                 )
         else:
-            response['error'] = "The editor is not valid"
+            response['error'] = "The OJS_KEY is not valid"
             status = 404
             return JsonResponse(
                 response,

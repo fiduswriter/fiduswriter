@@ -370,9 +370,9 @@ def new_submission_revision_js(request):
                             user_id=submission_access_right.user_id,
                             rights=submission_access_right.rights,
                         )
-                    send_share_notification(
-                        request, data['document_id'],
-                        submission_access_right.user_id, submission_access_right.rights)
+                    send_share_notification(request, data['document_id'],
+                        submission_access_right.user_id,
+                        submission_access_right.rights)
                     access_right.save()
                 set_version(request, data)
                 status = 200

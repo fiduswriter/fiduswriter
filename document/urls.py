@@ -71,7 +71,7 @@ urlpatterns = [
         name='document_review_js'
     ),
     url(
-        '^newsumissionrevision/$',
+        '^newsubmissionrevision/$',
         views.new_submission_revision_js,
         name='new_submission_revision_js'
     ),

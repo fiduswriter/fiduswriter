@@ -25,18 +25,17 @@ export class SearchDialog {
                             let list =result['response']
                             jQuery("#sowoDaraResult").remove()
                             jQuery('#sowidaraSearch').append(sowidaraTemplate({items:list.docs}))
-
+                            console.log("list.docs[0]")
+                            console.log(list.docs[0])
                             jQuery('.citing').bind('click', function() {
                 				var id = jQuery(this).parent().find("a.title").attr('id')
                 				var itemTitle = jQuery(this).parent().find("a.title").attr('itemTitle')
-				                var author = jQuery(this).parent().find("a.title").attr('itemAuthor')
-				                //var page = jQuery(this).parent().find("a.title").attr('itemPage')
-				                //var bibBefore #
-				                let bib_type = 'article'
-                                let entry_key = 'FidusWriter'
+				                var author    = jQuery(this).parent().find("a.title").attr('itemAuthor')
+    				            //var bibPage      = jQuery(this).parent().find("a.title").attr('itemPage')
+				                var date      = jQuery(this).parent().find("a.title").attr('itemDate')
 
-                                let date = ' '
-					            let idTmp = 0
+				                alert(author)
+				                let bib_type = 'article'
 
 				                var bibFormat = 'autocite'//jQuery('#citation-style-label').data('style')
         			            var bibEntry = id
@@ -46,24 +45,21 @@ export class SearchDialog {
     			            	let editor = mod.editor
                     			let nodeType = editor.currentPm.schema.nodes['citation']
 
+                                editor.currentPm.tr.replaceSelection(nodeType.createAndFill({
+                                    format: bibFormat,
+                                    references: [{id: parseInt(bibEntry), prefix: bibBefore, locator: bibPage}]
+                                })).apply()
 
-			                	editor.currentPm.tr.replaceSelection(nodeType.createAndFill({
-            				        bibFormat,
-            		        		bibEntry,
-           				            bibBefore,
-            				        bibPage
-        			            })).apply()
-
-
-
-					            that.save(idTmp, bib_type, entry_key, author,date, editor)
+					            that.save(parseInt(bibEntry), bib_type, author,date, editor)
                             })
                         }
                     })
         })
     }
 
-    save(itemId, bib_type, entry_key, author, date, editor, itemTitle) {
+
+    save(itemId, bib_type, author, date, editor, itemTitle) {
+        let entry_key = 'FidusWriter'
         let that = this
         let isNew = itemId===undefined ? false : true
         let Id = itemId===false ? 0 : itemId
@@ -75,15 +71,16 @@ export class SearchDialog {
 
             }
 
-        returnObj['fields'][author] = author
-        returnObj['fields'][date] = date
-        returnObj['fields'][itemTitle] = itemTitle
+        returnObj['fields']['author'] = author
+        returnObj['fields']['date'] = date
+        returnObj['fields']['Title'] = itemTitle
         let saveObj = {}
         saveObj[Id] = returnObj
 
         if (saveObj[Id].entry_key==='FidusWriter') {
-            this.createEntryKey(saveObj[itemId])
+            this.createEntryKey(saveObj[itemId],author,date)
         }
+
 
         editor.bibDB.saveBibEntries(
             saveObj,
@@ -94,22 +91,23 @@ export class SearchDialog {
     }
 
 
-    createEntryKey(bibItem) {
+    createEntryKey(bibItem,author,date) {
             // We attempt to create a biblatex compatible entry key if there is no entry
             // key so far.
-            console.log("bibItem")
-            console.log(bibItem)
+            let that = this
             let entryKey = ''
-            if (bibItem.author) {
-                entryKey += nameToText(bibItem.author).replace(/\s|,|=|;|:|{|}/g,'')
+
+
+            if (author.length) {
+                entryKey += nameToText(author).replace(/\s|,|=|;|:|{|}/g,'')
             } /*else if (bibItem.editor) {
                 entryKey += nameToText(bibItem.editor).replace(/\s|,|=|;|:|{|}/g,'')
             }*/
-            if (bibItem.date) {
-                entryKey += bibItem.date.split('/')[0].replace(/\?|\*|u|\~|-/g,'')
+            if (date.length) {
+                entryKey += date.split('-')[0].replace(/\?|\*|u|\~|-/g,'')
             }
-            if (entryKey.length) {
 
+            if (entryKey.length) {
                 bibItem.entry_key = entryKey
             }
         }

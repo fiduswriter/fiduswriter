@@ -172,6 +172,7 @@ def save_js(request):
                 if len(similar) == 0:
                     print("it is new object")
                     the_entry = Entry(**inserting_obj)
+                    print(the_entry)
                     the_entry.save()
                     response['id_translations'].append([b_id, the_entry.id])
                 else:
@@ -186,10 +187,7 @@ def save_js(request):
                 response['id_translations'].append([b_id, the_entry.id])
 
 
-    print("response['id_translations'].append([b_id, the_entry.id])")
-    print(response['id_translations'])
-    print("status")
-    print(status)
+
     return JsonResponse(
         response,
         status=status

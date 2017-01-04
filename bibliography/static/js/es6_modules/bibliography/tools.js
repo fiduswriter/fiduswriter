@@ -80,6 +80,9 @@ export function litToText(litStringArray) {
 }
 
 export function nameToText(nameList) {
+
+
+
     let nameString = ''
     if (nameList.length===0) {
         return nameString
@@ -95,7 +98,8 @@ export function nameToText(nameList) {
 
     if (1 < nameList.length) {
         //if there are more authors, add "and others" behind.
-        nameString += gettext(' and others')
+        nameString = nameList + gettext(' and others')
+
     }
 
     return nameString

@@ -172,27 +172,33 @@ export class ModCommentStore {
             }
         })
         // Remove all the comments that could not be found.
-        ids.forEach(function(id) {
-            let isReviewer = false
-            that.mod.editor.doc.access_rights.forEach(function(item,index){
-                if (item.user_id==that.comments[id].user){
-                    isReviewer = true
+        if (that.mod.editor.doc.submission.status == 'unsubmitted')
+            ids.forEach(function(id) {
+                that.deleteComment(id, false) // Delete comment from store
+            })
+        else {
+            ids.forEach(function(id) {
+                let isReviewer = true
+                that.mod.editor.doc.access_rights.forEach(function(item,index){
+                    if (item.user_id==that.comments[id].user){
+                        isReviewer = false
+                    }
+                })
+                if (!isReviewer)
+                    that.deleteComment(id, false) // Delete comment from store
+                else {
+                    let pos = that.mod.editor.pm.selection.from
+                    that.moveComment(
+                        that.mod.editor.user.id,
+                        that.mod.editor.user.name,
+                        that.mod.editor.user.avatar,
+                        new Date().getTime(), // We update the time to the time the comment was stored
+                        id,
+                        pos
+                    )
                 }
             })
-            if (isReviewer)
-                that.deleteComment(id, false) // Delete comment from store
-            else {
-                let pos = that.mod.editor.pm.selection.from
-                that.moveComment(
-                    that.mod.editor.user.id,
-                    that.mod.editor.user.name,
-                    that.mod.editor.user.avatar,
-                    new Date().getTime(), // We update the time to the time the comment was stored
-                    id,
-                    pos
-                )
-            }
-        })
+        }
     }
 
 

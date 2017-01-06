@@ -91,7 +91,7 @@ let submitDoc = function(editor,userProfile){
                             dataSubmission.append('pre_document_id',editor.doc.id)
                             if (editor.doc.submission.status == 'submitted'){
                                 dataSubmission.append('submission_id',editor.doc.submission.submission_id)
-                                dataSubmission.append('journal_id',editor.doc.submission.submission_id)
+                                dataSubmission.append('journal_id',editor.doc.submission.journal_id)
                             } else {
                                 dataSubmission.append('journal_id',response.journal_id)
                                 dataSubmission.append('submission_id',response.submission_id)

@@ -309,8 +309,9 @@ export class Editor {
         else {
           jQuery('#reviewed').hide()
           jQuery('#reviewerOJSReturn').hide()
-          if (this.doc.submission.status == 'submitted' && this.doc.submission.user_id == this.user.id)
+          if (this.doc.submission.status == 'submitted' && this.doc.submission.user_id == this.user.id){
             jQuery('#revision-done').show()
+          }
         }
 
     }

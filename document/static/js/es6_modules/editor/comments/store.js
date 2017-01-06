@@ -179,9 +179,10 @@ export class ModCommentStore {
         else {
             ids.forEach(function(id) {
                 let isReviewer = true
-                that.mod.editor.doc.access_rights.forEach(function(item,index){
-                    if (item.user_id==that.comments[id].user){
+                that.mod.editor.doc.access_rights.some(function(item,index){
+                    if (item.document_id == that.mod.editor.doc.id && item.user_id == that.comments[id].user) {
                         isReviewer = false
+                        return false
                     }
                 })
                 if (!isReviewer)

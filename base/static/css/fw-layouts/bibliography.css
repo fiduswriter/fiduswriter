@@ -203,7 +203,7 @@ div.literal, pre.long-literal {
     box-shadow: none;
     border-radius: 0;
     padding: 8px 3px 0px 3px;
-    height: 28px;
+    min-height: 28px;
     background-color: #fff;
 }
 

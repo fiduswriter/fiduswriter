@@ -34,6 +34,29 @@ body {
     overflow: hidden;
 }
 
+.fw-contents h1 {
+    font-size: 2em;
+    font-weight: bold;
+    margin-bottom: 0.2em;
+}
+
+.fw-contents .errorlist {
+    border: 2px solid #af3515;
+    background-color: #cc3f1a;
+    color: #fff;
+    margin: 10px 0;
+    display: inline-block;
+    font-size: 1.4em;
+}
+
+.fw-contents label[for="id_password1"], .fw-contents label[for="id_password2"] {
+    display: none;
+}
+
+.fw-contents input#id_password1, .fw-contents input#id_password2 {
+    margin: 10px 0;
+}
+
 table {
     width: 100%;
     text-align: left;
@@ -52,5 +75,5 @@ table .fw-inline {
 
 #cookie-notification{
     text-align: left;
-    margin-top: 6px; 
+    margin-top: 6px;
 }

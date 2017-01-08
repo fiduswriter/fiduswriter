@@ -24,7 +24,7 @@ from avatar.utils import get_primary_avatar, get_default_avatar_url
 from avatar.templatetags.avatar_tags import avatar_url
 
 from document.models import Document, AccessRight, DocumentRevision, \
-    ExportTemplate
+    ExportTemplate, Submission, SubmittedAccessRight
 
 
 class SimpleSerializer(Serializer):
@@ -52,6 +52,15 @@ def get_accessrights(ars):
             'avatar': the_avatar
         })
     return ret
+
+
+def doc_mode(document_id):
+    submissions = Submission.objects.filter(
+        document_id=document_id)
+    if len(submissions) > 0 and submissions[0].version_id != 0:
+        return submissions[0]
+    else:
+        return 'unsubmitted'
 
 
 @login_required
@@ -319,6 +328,69 @@ def document_review_js(request):
             return JsonResponse(response, status=status)
 
 
+@csrf_exempt
+def new_submission_revision_js(request):
+    if request.method == 'POST':
+        submission_id = int(request.POST.get('submission_id'))
+        app_key = request.POST.get('key')
+        # ojs_username = request.POST.get('ojs_user_name')
+        email = request.POST.get('author_email')
+        response = {}
+        data = {}
+        if app_key == settings.SERVER_INFO['OJS_KEY']:
+            #editor = login_user(
+            #    request,
+            #    ojs_username)
+            # TODO get the username or email of the current ojs user to login
+            if 1 == 1:#editor is not None:
+                original_doc = Submission.objects.get(
+                    submission_id=submission_id, version_id=0)
+                last_version = Submission.objects.filter(
+                    submission_id=submission_id).latest('version_id')
+                user = User.objects.get(email=email)
+                document = Document.objects.get(pk=last_version.document_id)
+                document.pk = None
+                document.save()
+                data['document_id'] = document.pk
+                data['pre_document_id'] = last_version.document_id
+                data['user_id'] = user.id
+                data['journal_id'] = original_doc.journal_id
+                data['submission_id'] = submission_id
+                submission_access_rights = SubmittedAccessRight.objects.filter(
+                    submission_id=submission_id,
+                    document_id=original_doc.document_id)
+                for submission_access_right in submission_access_rights:
+                    try:
+                        access_right = AccessRight.objects.get(
+                            document_id=data['document_id'],
+                            user_id=submission_access_right.user_id)
+                        access_right.rights = submission_access_right.rights
+                    except ObjectDoesNotExist:
+                        access_right = AccessRight.objects.create(
+                            document_id=data['document_id'],
+                            user_id=submission_access_right.user_id,
+                            rights=submission_access_right.rights,
+                        )
+                    # TODO sending a relative email to authors and informing them for the new resivion
+                    #send_share_notification(request, data['document_id'],
+                    #    submission_access_right.user_id,
+                    #                        submission_access_right.rights)
+                    access_right.save()
+                set_version(request, data)
+                status = 200
+                return JsonResponse(
+                    response,
+                    status=status
+                )
+        else:
+            response['error'] = "The OJS_KEY is not valid"
+            status = 404
+            return JsonResponse(
+                response,
+                status=status
+            )
+
+
 @login_required
 def editor(request):
     response = {}
@@ -457,6 +529,141 @@ def access_right_save_js(request):
 
 
 @login_required
+def submission_version_js(request):
+    status = 405
+    response = {}
+
+    if request.is_ajax() and request.method == 'POST':
+        data = {}
+        data['user_id'] = request.POST.get('user_id')
+        data['document_id'] = request.POST.get('document_id')
+        data['journal_id'] = request.POST.get('journal_id')
+        data['submission_id'] = request.POST.get('submission_id')
+        data['pre_document_id'] = request.POST.get('pre_document_id')
+        set_version(request, data)
+        status = 201
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+# TODO Afshin should login for ojs user
+# @login_required
+def set_version(request, data):
+    user_id = data['user_id']
+    document_id = data['document_id']
+    journal_id = data['journal_id']
+    submission_id = data['submission_id']
+    pre_document_id = data['pre_document_id']
+    version = 1
+    try:
+        submissions = Submission.objects.filter(
+            submission_id=submission_id)
+        if len(submissions) > 0:
+            version = len(submissions)
+        else:
+            # save the rights of authors in original document
+            submitted_access_right = SubmittedAccessRight.objects.create(
+                document_id=pre_document_id,
+                user_id=user_id,
+                rights='write',
+                submission_id=submission_id
+            )
+            access_rights = AccessRight.objects.filter(
+                document_id=pre_document_id)
+            for access_right in access_rights:
+                submitted_access_right = SubmittedAccessRight.objects.create(
+                    document_id=pre_document_id,
+                    user_id=access_right.user_id,
+                    rights=access_right.rights,
+                    submission_id=submission_id
+                )
+            submitted_access_right.save()
+
+            original_submission = Submission.objects.create(
+                user_id=user_id,
+                document_id=pre_document_id,
+                journal_id=journal_id,
+                submission_id=submission_id,
+                version_id=0
+            )
+            original_submission.save()
+        submission = Submission.objects.create(
+            user_id=user_id,
+            document_id=document_id,
+            journal_id=journal_id,
+            submission_id=submission_id,
+            version_id=version
+        )
+        submission.save()
+        return True
+    except:
+        return False
+
+
+@login_required
+def review_submit_js(request):
+    status = 405
+    response = {}
+    if request.is_ajax() and request.method == 'POST':
+        document_id = request.POST.get('document_id')
+        user_id = request.POST.get('user_id')
+        tgt_right = 'read-without-comments'
+        access_right = AccessRight.objects.get(
+            document_id=document_id, user_id=user_id)
+        if access_right.rights != tgt_right:
+            access_right.rights = tgt_right
+            access_right.save()
+        submission = Submission.objects.get(
+            document_id=document_id)
+        response['submission'] = {}
+        if submission:
+            response["submission"]["submission_id"] = submission.submission_id
+            response["submission"]["version_id"] = submission.version_id
+            response["submission"]["journal_id"] = submission.journal_id
+        the_user = User.objects.filter(id=user_id)
+        if len(the_user) > 0:
+            response['user'] = {}
+            response['user']['email'] = the_user[0].email
+        status = 201
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@login_required
+def review_submit_undo_js(request):
+    status = 405
+    response = {}
+    if request.is_ajax() and request.method == 'POST':
+        document_id = request.POST.get('document_id')
+        user_id = request.POST.get('user_id')
+        tgt_right = 'review'
+        access_right = AccessRight.objects.get(
+            document_id=document_id, user_id=user_id)
+        if access_right.rights != tgt_right:
+            access_right.rights = tgt_right
+            access_right.save()
+        submission = Submission.objects.get(
+            document_id=document_id)
+        response['submission'] = {}
+        if submission:
+            response["submission"]["submission_id"] = submission.submission_id
+            response["submission"]["version_id"] = submission.version_id
+            response["submission"]["journal_id"] = submission.journal_id
+        the_user = User.objects.filter(id=user_id)
+        if len(the_user) > 0:
+            response['user'] = {}
+            response['user']['email'] = the_user[0].email
+        status = 201
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@login_required
 def import_js(request):
     response = {}
     status = 405
@@ -509,6 +716,13 @@ def upload_revision_js(request):
         response,
         status=status
     )
+
+
+@login_required
+def get_user(request):
+    id = request.POST["user_id"]
+    the_user = User.objects.filter(id=id)
+    return the_user
 
 
 # Download a revision that was previously uploaded

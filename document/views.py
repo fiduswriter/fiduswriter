@@ -338,11 +338,11 @@ def new_submission_revision_js(request):
         response = {}
         data = {}
         if app_key == settings.SERVER_INFO['OJS_KEY']:
-            #editor = login_user(
+            # editor = login_user(
             #    request,
             #    ojs_username)
             # TODO get the username or email of the current ojs user to login
-            if 1 == 1:#editor is not None:
+            if 1 == 1:  # editor is not None:
                 original_doc = Submission.objects.get(
                     submission_id=submission_id, version_id=0)
                 last_version = Submission.objects.filter(
@@ -371,8 +371,9 @@ def new_submission_revision_js(request):
                             user_id=submission_access_right.user_id,
                             rights=submission_access_right.rights,
                         )
-                    # TODO sending a relative email to authors and informing them for the new resivion
-                    #send_share_notification(request, data['document_id'],
+                    # TODO sending a relative email to authors and informing
+                    # them for the new resivion
+                    # send_share_notification(request, data['document_id'],
                     #    submission_access_right.user_id,
                     #                        submission_access_right.rights)
                     access_right.save()
@@ -546,6 +547,7 @@ def submission_version_js(request):
         response,
         status=status
     )
+
 
 # TODO Afshin should login for ojs user
 # @login_required

@@ -8,7 +8,6 @@ export class SaveBibs {
     }
 
     init() {
-        let that = this
         if (Object.keys(this.newBibEntries).length > 0) {
 
             // TODO: The following is copied from bibliography/database.js and
@@ -34,17 +33,15 @@ export class SaveBibs {
                     type: 'POST',
                     dataType: 'json',
                     crossDomain: false, // obviates need for sameOrigin test
-                    beforeSend: function(xhr, settings) {
-                        xhr.setRequestHeader("X-CSRFToken", csrfToken)
-                    },
-                    success: function(response, textStatus, jqXHR) {
+                    beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
+                    success: (response, textStatus, jqXHR) => {
                         response.id_translations.forEach(trans=>{
-                            that.bibDB[trans[1]] = that.newBibEntries[trans[0]]
-                            that.BibTranslationTable[trans[0]] = trans[1]
+                            this.bibDB[trans[1]] = this.newBibEntries[trans[0]]
+                            this.BibTranslationTable[trans[0]] = trans[1]
                         })
                         resolve()
                     },
-                    error: function(jqXHR, textStatus, errorThrown) {
+                    error: (jqXHR, textStatus, errorThrown) => {
                         console.error(jqXHR.responseText)
                         reject()
                     }
@@ -53,7 +50,6 @@ export class SaveBibs {
 
         } else {
             return Promise.resolve()
-            //that.translateReferenceIds(BibTranslationTable, ImageTranslationTable)
         }
     }
 }

@@ -148,7 +148,7 @@ let convertDocV0 = function(doc) {
         documentstyle: doc.settings.documentstyle ? doc.settings.documentstyle : defaultDocumentStyle,
         citationstyle: doc.settings.citationstyle ? doc.settings.citationstyle : defaultCitationStyle
     }
-    docContents.content.forEach(function(docSection){
+    docContents.content.forEach(docSection => {
         if (['subtitle', 'abstract', 'authors', 'keywords'].indexOf(docSection.type) !== -1) {
             if (doc.settings[`metadata-${docSection.type}`]) {
                 docSection.attrs.hidden = false

@@ -1,7 +1,7 @@
 
 export let bind = function() {
-    jQuery(document).ready(function(){
-        jQuery('.checker').bind('click',function() {
+    jQuery(document).ready(() => {
+        jQuery('.checker').bind('click', () => {
             let testCheck = false
             if (jQuery('#test-check').length > 0) {
                 if (jQuery('#test-check').is(':checked')) {
@@ -16,7 +16,7 @@ export let bind = function() {
                 jQuery('#submit').attr("disabled", "disabled")
             }
         })
-        jQuery('#submit').bind('click',function() {
+        jQuery('#submit').bind('click', () => {
             window.alert(gettext('Thanks for verifying! You can now log in.'))
         })
     })

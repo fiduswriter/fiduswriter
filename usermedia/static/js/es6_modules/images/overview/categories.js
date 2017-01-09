@@ -12,7 +12,7 @@ export class ImageOverviewCategories {
         let postData = {
             'ids[]': cats.ids,
             'titles[]': cats.titles
-        }, that = this
+        }
         activateWait()
         jQuery.ajax({
             url: '/usermedia/save_category/',
@@ -20,25 +20,22 @@ export class ImageOverviewCategories {
             type: 'POST',
             dataType: 'json',
             crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: function (response, textStatus, jqXHR) {
+            beforeSend: (xhr, settings) =>
+                xhr.setRequestHeader("X-CSRFToken", csrfToken),
+            success: (response, textStatus, jqXHR) => {
                 if (jqXHR.status == 201) {
                     // TODO: Why do we reload the entire list when one new category is created?
-                    that.imageOverview.imageDB.cats = response.entries
+                    this.imageOverview.imageDB.cats = response.entries
                     jQuery('#image-category-list li').not(':first').remove()
-                    that.addImageCategoryList(response.entries)
+                    this.addImageCategoryList(response.entries)
 
                     addAlert('success', gettext('The categories have been updated'))
                 }
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            error: (jqXHR, textStatus, errorThrown) => {
                 addAlert('error', jqXHR.responseText)
             },
-            complete: function () {
-                deactivateWait()
-            }
+            complete: () => deactivateWait()
         })
     }
 
@@ -68,15 +65,13 @@ export class ImageOverviewCategories {
             type: 'POST',
             dataType: 'json',
             crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
+            beforeSend: (xhr, settings) =>
                 xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
         })
     }
 
     //open a dialog for editing categories
     createCategoryDialog() {
-        let that = this
         let dialogHeader = gettext('Edit Categories')
         let dialogBody = usermediaEditcategoriesTemplate({
             'dialogHeader': dialogHeader,
@@ -86,6 +81,7 @@ export class ImageOverviewCategories {
         })
         jQuery('body').append(dialogBody)
         let diaButtons = {}
+        let that = this
         diaButtons[gettext('Submit')] = function () {
             let newCat = {
                 'ids': [],
@@ -123,9 +119,8 @@ export class ImageOverviewCategories {
                 theDialog.find(".ui-button:last").addClass(
                     "fw-button fw-orange")
             },
-            close: function () {
+            close: () =>
                 jQuery("#editCategories").dialog('destroy').remove()
-            },
         })
         this.addRemoveListHandler()
 

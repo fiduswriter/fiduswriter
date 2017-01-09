@@ -270,19 +270,18 @@ export class ImportFidusFile {
 
     init() {
         // Check whether the file is a ZIP-file if check is not disabled.
-        let that = this
         if (this.check === false) {
             this.initZipFileRead()
             return
         }
         // use a BlobReader to read the zip from a Blob object
         let reader = new window.FileReader()
-        reader.onloadend = function() {
+        reader.onloadend = () => {
             if (reader.result.length > 60 && reader.result.substring(0, 2) == 'PK') {
-                that.initZipFileRead()
+                this.initZipFileRead()
             } else {
                 // The file is not a Fidus Writer file.
-                that.callback(false, gettext('The uploaded file does not appear to be a Fidus Writer file.'))
+                this.callback(false, gettext('The uploaded file does not appear to be a Fidus Writer file.'))
                 return
             }
         }
@@ -291,44 +290,42 @@ export class ImportFidusFile {
 
     initZipFileRead() {
         // Extract all the files that can be found in every fidus-file (not images)
-        let that = this
         let zipfs = new JSZip()
-        zipfs.loadAsync(that.file).then(function(){
+        zipfs.loadAsync(this.file).then(() => {
             let filenames = [], p = [], validFile = true
 
-            zipfs.forEach(function(filename){
-                filenames.push(filename)
-            })
+            zipfs.forEach(filename => filenames.push(filename))
 
-            TEXT_FILENAMES.forEach(function(filename){
+            TEXT_FILENAMES.forEach(filename => {
                 if (filenames.indexOf(filename) === -1) {
                     validFile = false
                 }
             })
             if (!validFile) {
-                that.callback(false, gettext('The uploaded file does not appear to be a Fidus Writer file.'))
+                this.callback(
+                    false,
+                    gettext('The uploaded file does not appear to be a Fidus Writer file.')
+                )
                 return false
             }
 
-            filenames.forEach(function(filename){
-                p.push(new Promise(function(resolve){
+            filenames.forEach(filename => {
+                p.push(new Promise(resolve => {
                     let fileType, fileList
                     if (TEXT_FILENAMES.indexOf(filename) !== -1) {
                         fileType = 'string'
-                        fileList = that.textFiles
+                        fileList = this.textFiles
                     } else {
                         fileType = 'blob'
-                        fileList = that.otherFiles
+                        fileList = this.otherFiles
                     }
-                    zipfs.files[filename].async(fileType).then(function(contents){
+                    zipfs.files[filename].async(fileType).then(contents => {
                         fileList.push({filename, contents})
                         resolve()
                     })
                 }))
             })
-            Promise.all(p).then(function(){
-                that.processFidusFile()
-            })
+            Promise.all(p).then(() => this.processFidusFile())
         })
     }
 

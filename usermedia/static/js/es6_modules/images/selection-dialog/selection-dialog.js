@@ -11,7 +11,6 @@ export class ImageSelectionDialog {
     }
 
     createImageSelectionDialog() {
-        let that = this
         this.imageDialog = jQuery(usermediaImageSelectionTemplate({
                 imageDB: this.imageDB.db, usermediaImageItemSelectionTemplate
             })).dialog({
@@ -78,27 +77,27 @@ export class ImageSelectionDialog {
     }
 
     bindEvents() {
-        let that = this
         jQuery('#selectImageSelectionButton').bind('click',
-            function () {
-                that.callback(that.imageId)
-                that.imageDialog.dialog('close')
+            () => {
+                this.callback(this.imageId)
+                this.imageDialog.dialog('close')
             })
 
         jQuery('#cancelImageSelectionButton').bind('click',
-            function () {
-                that.imageDialog.dialog('close')
+            () => {
+                this.imageDialog.dialog('close')
             })
 
-        jQuery('#selectImageUploadButton').bind('click', function() {
-            new ImageUploadDialog(that.imageDB, false, that.ownerId, function(imageId) {
-                that.imageId = imageId
-                that.imageDialog.dialog('close')
-                that.createImageSelectionDialog()
+        jQuery('#selectImageUploadButton').bind('click', () => {
+            new ImageUploadDialog(this.imageDB, false, this.ownerId, function(imageId) {
+                this.imageId = imageId
+                this.imageDialog.dialog('close')
+                this.createImageSelectionDialog()
             })
         })
 
         // functions for the image selection dialog
+        let that = this
         jQuery('#select_imagelist tr').on('click', function () {
             let checkedImage = jQuery('#select_imagelist tr.checked'),
                 selecting = true, elementId = jQuery(this).attr('id')
@@ -116,8 +115,5 @@ export class ImageSelectionDialog {
                 jQuery(this).addClass('checked')
             }
         })
-
     }
-
-
 }

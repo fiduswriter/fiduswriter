@@ -108,7 +108,7 @@ export class Figure extends Block {
                     imageDB, do not attempt at reloading the imageDB if an image cannot be
                     found. */
                     if (!imageDBBroken) {
-                        node.type.schema.cached.imageDB.getDB(function() {
+                        node.type.schema.cached.imageDB.getDB(() => {
                             if (node.type.schema.cached.imageDB.db[node.attrs.image] &&
                                     node.type.schema.cached.imageDB.db[node.attrs.image].image) {
                                 let imgSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image

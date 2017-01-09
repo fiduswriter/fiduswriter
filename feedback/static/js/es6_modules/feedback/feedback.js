@@ -14,51 +14,50 @@ export class FeedbackTab {
     }
 
     bind() {
-        let that = this
         jQuery('a.feedback-tab').css('margin-top', jQuery('a.feedback-tab').outerWidth())
-        jQuery('a.feedback-tab').click(function(event) {
-          if(!jQuery('.feedback-panel').hasClass('open')) {
-            jQuery('.feedback-panel').stop().fadeIn(that.speed, function() { jQuery('.feedback-panel').addClass('open') })
-          }
-          event.preventDefault()
+        jQuery('a.feedback-tab').click(event => {
+        if(!jQuery('.feedback-panel').hasClass('open')) {
+            jQuery('.feedback-panel').stop().fadeIn(
+                this.speed,
+                () => {jQuery('.feedback-panel').addClass('open')}
+            )
+        }
+        event.preventDefault()
         })
-        jQuery('#closeFeedback').click(function() {
-          jQuery('.feedback-panel').stop().fadeOut(that.speed, function() {
-            jQuery('.feedback-panel').removeClass('open')
-            jQuery('#feedback-form').css('visibility', 'visible')
-            jQuery('#response-message').hide()
-          })
+        jQuery('#closeFeedback').click(() => {
+            jQuery('.feedback-panel').stop().fadeOut(this.speed, () => {
+                jQuery('.feedback-panel').removeClass('open')
+                jQuery('#feedback-form').css('visibility', 'visible')
+                jQuery('#response-message').hide()
+            })
         })
 
-        jQuery("#feedbackbutton").click(function(){
-            that.openFeedback()
+        jQuery("#feedbackbutton").click(() => {
+            this.openFeedback()
         })
         this.verifyBrowser()
     }
 
     openFeedback() {
+        let message = jQuery("textarea#message").val()
+        let data = {message}
 
-          let message = jQuery("textarea#message").val()
+        jQuery('#closeFeedback').hide()
+        jQuery('#feedback-form').css('visibility', 'hidden')
 
-          let data = {message}
-
-          jQuery('#closeFeedback').hide()
-          jQuery('#feedback-form').css('visibility', 'hidden')
-
-          jQuery.ajax({
+        jQuery.ajax({
             type : "POST",
             url : "/feedback/feedback/",
             data : data,
             crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success : function() {
-              jQuery('#closeFeedback').show()
-              jQuery('#response-message').show()
+            beforeSend: (xhr, settings) =>
+                xhr.setRequestHeader("X-CSRFToken", csrfToken),
+            success : () => {
+                jQuery('#closeFeedback').show()
+                jQuery('#response-message').show()
             }
-          })
-          return false
+        })
+        return false
     }
 
     // Add a cookie variable with name set to true

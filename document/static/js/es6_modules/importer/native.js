@@ -18,7 +18,6 @@ export class ImportNative {
     }
 
     importNative() {
-
         let [BibTranslationTable, newBibEntries] = this.compareBibDBs()
         let [ImageTranslationTable, newImageEntries] = this.compareImageDBs()
 
@@ -132,7 +131,6 @@ export class ImportNative {
     }
 
     createNewDocument() {
-        let that = this
         let postData = {
             title: this.aDocument.title,
             contents: JSON.stringify(this.aDocument.contents),
@@ -146,10 +144,8 @@ export class ImportNative {
             type: 'POST',
             dataType: 'json',
             crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: function(data, textStatus, jqXHR) {
+            beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
+            success: (data, textStatus, jqXHR) => {
                 let docInfo = {
                     unapplied_diffs: [],
                     is_owner: true,
@@ -157,26 +153,24 @@ export class ImportNative {
                     changed: false,
                     title_changed: false
                 }
-                that.aDocument.owner = {
-                    id: that.user.id,
-                    name: that.user.name,
-                    avatar: that.user.avatar
+                this.aDocument.owner = {
+                    id: this.user.id,
+                    name: this.user.name,
+                    avatar: this.user.avatar
                 }
-                that.aDocument.id = data['document_id']
-                that.aDocument.version = 0
-                that.aDocument.comment_version = 0
-                that.aDocument.added = data['added']
-                that.aDocument.updated = data['updated']
-                that.aDocument.revisions = []
-                that.aDocument.rights = "write"
-                return that.callback(true, [
-                    that.aDocument,
+                this.aDocument.id = data['document_id']
+                this.aDocument.version = 0
+                this.aDocument.comment_version = 0
+                this.aDocument.added = data['added']
+                this.aDocument.updated = data['updated']
+                this.aDocument.revisions = []
+                this.aDocument.rights = "write"
+                return this.callback(true, [
+                    this.aDocument,
                     docInfo
                 ])
             },
-            error: function() {
-                that.callback(false, gettext('Could not save ') + that.aDocument.title)
-            }
+            error: () => this.callback(false, gettext('Could not save ') + this.aDocument.title)
         })
     }
 }

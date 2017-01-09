@@ -13,7 +13,6 @@ export class LiteralFieldForm{
     }
 
     init() {
-        let that = this
         this.pm = new ProseMirror({
             place: this.dom,
             schema: litSchema
@@ -29,9 +28,9 @@ export class LiteralFieldForm{
         this.pm.setDoc(pmDoc)
         if (this.placeHolder) {
             this.renderPlaceholder()
-            this.pm.on.change.add(function(){that.renderPlaceholder()})
-            this.pm.on.blur.add(function(){that.renderPlaceholder(false)})
-            this.pm.on.focus.add(function(){that.renderPlaceholder(true)})
+            this.pm.on.change.add(() => this.renderPlaceholder())
+            this.pm.on.blur.add(() => this.renderPlaceholder(false))
+            this.pm.on.focus.add(() => this.renderPlaceholder(true))
         }
         this.pm.on.blur.add(function(){
             jQuery('.ui-dialog-buttonset .fw-edit').addClass('disabled')

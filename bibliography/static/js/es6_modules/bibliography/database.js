@@ -26,14 +26,13 @@ export class BibliographyDB {
 
     getDB(callback) {
 
-        let lastModified = -1, numberOfEntries = -1, that = this
+        let lastModified = -1, numberOfEntries = -1
 
         if (this.useLocalStorage) {
             let lastModified = parseInt(window.localStorage.getItem('last_modified_biblist')),
                 numberOfEntries = parseInt(window.localStorage.getItem('number_of_entries')),
                 localStorageVersion = window.localStorage.getItem('version'),
                 localStorageOwnerId = parseInt(window.localStorage.getItem('owner_id'))
-                that = this
 
             // A dictionary to look up bib fields by their fw type name.
             // Needed for translation to CSL and Biblatex.
@@ -59,34 +58,33 @@ export class BibliographyDB {
         jQuery.ajax({
             url: '/bibliography/biblist/',
             data: {
-                'owner_id': that.docOwnerId,
+                'owner_id': this.docOwnerId,
                 'last_modified': lastModified,
                 'number_of_entries': numberOfEntries,
             },
             type: 'POST',
             dataType: 'json',
             crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: function (response, textStatus, jqXHR) {
-                that.lastLoadTimes.push(Date.now())
-                that.lastLoadTimes = that.lastLoadTimes.slice(Math.max(that.lastLoadTimes.length - 10, 0))
+            beforeSend: (xhr, settings) =>
+                xhr.setRequestHeader("X-CSRFToken", csrfToken),
+            success: (response, textStatus, jqXHR) => {
+                this.lastLoadTimes.push(Date.now())
+                this.lastLoadTimes = this.lastLoadTimes.slice(Math.max(this.lastLoadTimes.length - 10, 0))
                 let newBibCats = response.bibCategories
-                newBibCats.forEach(function(bibCat) {
-                    that.cats.push(bibCat)
+                newBibCats.forEach(bibCat => {
+                    this.cats.push(bibCat)
                 })
 
                 let bibList = []
 
-                if (that.useLocalStorage) {
+                if (this.useLocalStorage) {
                     if (response.hasOwnProperty('bibList')) {
                         bibList = response.bibList
                         try {
                             window.localStorage.setItem('biblist', JSON.stringify(response.bibList))
                             window.localStorage.setItem('last_modified_biblist', response.last_modified)
                             window.localStorage.setItem('number_of_entries', response.number_of_entries)
-                            window.localStorage.setItem('owner_id', response.that.docOwnerId)
+                            window.localStorage.setItem('owner_id', response.docOwnerId)
                             window.localStorage.setItem('version', FW_LOCALSTORAGE_VERSION)
                         } catch (error) {
                             // The local storage was likely too small
@@ -99,18 +97,14 @@ export class BibliographyDB {
                 }
                 let newBibPks = []
                 for (let i = 0; i < bibList.length; i++) {
-                    newBibPks.push(that.serverBibItemToBibDB(bibList[i]))
+                    newBibPks.push(this.serverBibItemToBibDB(bibList[i]))
                 }
                 if (callback) {
                     callback(newBibPks, newBibCats)
                 }
             },
-            error: function (jqXHR, textStatus, errorThrown) {
-                addAlert('error', jqXHR.responseText)
-            },
-            complete: function () {
-                deactivateWait()
-            }
+            error: (jqXHR, textStatus, errorThrown) => addAlert('error', jqXHR.responseText),
+            complete: () => deactivateWait()
         })
     }
 
@@ -142,7 +136,6 @@ export class BibliographyDB {
      * @param tmpDB The bibliography DB with temporary IDs to be send to the server.
      */
     saveBibEntries(tmpDB, isNew, callback) {
-        let that = this
         // Fields field need to be stringified for saving in database.
         // dbObject is a clone of tmpDB with a stringified fields-field, so
         // the original tmpDB isn't destroyed.
@@ -166,13 +159,12 @@ export class BibliographyDB {
             type: 'POST',
             dataType: 'json',
             crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: function (response, textStatus, jqXHR) {
+            beforeSend: (xhr, settings) =>
+                xhr.setRequestHeader("X-CSRFToken", csrfToken),
+            success: (response, textStatus, jqXHR) => {
                 let ids = []
-                response['id_translations'].forEach((bibTrans)=>{
-                    that.db[bibTrans[1]] = tmpDB[bibTrans[0]]
+                response['id_translations'].forEach(bibTrans => {
+                    this.db[bibTrans[1]] = tmpDB[bibTrans[0]]
                     ids.push(bibTrans[1])
                 })
                 addAlert('success', gettext('The bibliography has been updated.'))
@@ -181,11 +173,9 @@ export class BibliographyDB {
                 }
 
             },
-            error: function (jqXHR, textStatus, errorThrown) {
-                addAlert('error', errorThrown)
-            },
-            complete: function () {
-            }
+            error: (jqXHR, textStatus, errorThrown) =>
+                addAlert('error', errorThrown),
+            complete: () => {}
         })
     }
 
@@ -195,7 +185,6 @@ export class BibliographyDB {
      * @param cats The category objects to add.
      */
     createCategory(cats, callback) {
-        let that = this
         let postData = {
             'ids[]': cats.ids,
             'titles[]': cats.titles
@@ -207,32 +196,29 @@ export class BibliographyDB {
             type: 'POST',
             dataType: 'json',
             crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: function (response, textStatus, jqXHR) {
+            beforeSend: (xhr, settings) =>
+                xhr.setRequestHeader("X-CSRFToken", csrfToken),
+            success: (response, textStatus, jqXHR) => {
                 if (jqXHR.status == 201) {
                     let bibCats = response.entries // We receive both existing and new categories.
                     // Replace the old with the new categories, but don't lose the link to the array (so delete each, then add each).
-                    while(that.cats.length > 0) {
-                        that.cats.pop()
+                    while(this.cats.length > 0) {
+                        this.cats.pop()
                     }
                     while(bibCats.length > 0) {
-                        that.cats.push(bibCats.pop())
+                        this.cats.push(bibCats.pop())
                     }
 
                     addAlert('success', gettext('The categories have been updated'))
                     if (callback) {
-                        callback(that.cats)
+                        callback(this.cats)
                     }
                 }
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            error: (jqXHR, textStatus, errorThrown) => {
                 addAlert('error', jqXHR.responseText)
             },
-            complete: function () {
-                deactivateWait()
-            }
+            complete: () => deactivateWait()
         })
     }
 
@@ -244,27 +230,27 @@ export class BibliographyDB {
 
         let postData = {
             'ids[]': ids
-        }, that = this
+        }
         jQuery.ajax({
             url: '/bibliography/delete_category/',
             data: postData,
             type: 'POST',
             dataType: 'json',
             crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
+            beforeSend: (xhr, settings) => {
                 xhr.setRequestHeader("X-CSRFToken", csrfToken)
             },
-            success: function (response, textStatus, jqXHR) {
+            success: (response, textStatus, jqXHR) => {
                 let deletedPks = ids.slice()
                 let deletedBibCats = []
-                that.cats.forEach(function(bibCat) {
+                this.cats.forEach(bibCat => {
                     if (ids.indexOf(bibCat.id) !== -1) {
                         deletedBibCats.push(bibCat)
                     }
                 })
-                deletedBibCats.forEach(function(bibCat) {
-                    let index = that.cats.indexOf(bibCat)
-                    that.cats.splice(index, 1)
+                deletedBibCats.forEach(bibCat => {
+                    let index = this.cats.indexOf(bibCat)
+                    this.cats.splice(index, 1)
                 })
                 if (callback) {
                     callback(deletedPks)
@@ -278,7 +264,6 @@ export class BibliographyDB {
      * @param ids A list of bibliography item ids that are to be deleted.
      */
     deleteBibEntry(ids, callback) {
-        let that = this
         for (let i = 0; i < ids.length; i++) {
             ids[i] = parseInt(ids[i])
         }
@@ -291,12 +276,11 @@ export class BibliographyDB {
             data: postData,
             type: 'POST',
             crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: function (response, textStatus, jqXHR) {
+            beforeSend: (xhr, settings) =>
+                xhr.setRequestHeader("X-CSRFToken", csrfToken),
+            success: (response, textStatus, jqXHR) => {
                 for (let i = 0; i < ids.length; i++) {
-                    delete that.db[ids[i]]
+                    delete this.db[ids[i]]
                 }
                 addAlert('success', gettext(
                     'The bibliography item(s) have been deleted'))
@@ -304,12 +288,9 @@ export class BibliographyDB {
                     callback(ids)
                 }
             },
-            error: function (jqXHR, textStatus, errorThrown) {
-                addAlert('error', jqXHR.responseText)
-            },
-            complete: function () {
-                deactivateWait()
-            }
+            error: (jqXHR, textStatus, errorThrown) =>
+                addAlert('error', jqXHR.responseText),
+            complete: () => deactivateWait()
         })
     }
 

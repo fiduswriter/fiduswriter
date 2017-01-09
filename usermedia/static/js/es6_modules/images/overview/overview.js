@@ -17,7 +17,6 @@ export class ImageOverview {
 
     //delete image
     deleteImage(ids) {
-        let that = this
         for (let i = 0; i < ids.length; i++) {
             ids[i] = parseInt(ids[i])
         }
@@ -30,19 +29,17 @@ export class ImageOverview {
             data: postData,
             type: 'POST',
             crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: function (response, textStatus, jqXHR) {
-
-                that.stopUsermediaTable()
+            beforeSend: (xhr, settings) =>
+                xhr.setRequestHeader("X-CSRFToken", csrfToken),
+            success: (response, textStatus, jqXHR) => {
+                this.stopUsermediaTable()
                 let len = ids.length
                 for (let i = 0; i < len; i++) {
-                    delete that.imageDB[ids[i]]
+                    delete this.imageDB[ids[i]]
                 }
                 let elementsId = '#Image_' + ids.join(', #Image_')
                 jQuery(elementsId).detach()
-                that.startUsermediaTable()
+                this.startUsermediaTable()
                 addAlert('success', gettext('The image(s) have been deleted'))
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -55,12 +52,12 @@ export class ImageOverview {
     }
 
     deleteImageDialog(ids) {
-        let that = this
         jQuery('body').append('<div id="confirmdeletion" title="' + gettext(
                 'Confirm deletion') + '"><p>' + gettext(
                 'Delete the image(s)') +
             '?</p></div>')
         let diaButtons = {}
+        let that = this
         diaButtons[gettext('Delete')] = function () {
             that.deleteImage(ids)
             jQuery(this).dialog('close')
@@ -91,8 +88,6 @@ export class ImageOverview {
             this.appendToImageTable(imagePks[i])
         }
         this.startUsermediaTable()
-
-
     }
 
     appendToImageTable(pk) {
@@ -136,19 +131,16 @@ export class ImageOverview {
     }
 
     getImageDB(callback) {
-        let that = this
-
         let imageGetter = new ImageDB(0)
-        imageGetter.getDB(function(pks){
-            that.imageDB = imageGetter
-            that.mod.categories.addImageCategoryList(imageGetter.cats)
+        imageGetter.getDB(pks => {
+            this.imageDB = imageGetter
+            this.mod.categories.addImageCategoryList(imageGetter.cats)
 
-            that.addImageDB(pks)
+            this.addImageDB(pks)
             if (callback) {
                 callback()
             }
         })
-
     }
 
     stopUsermediaTable() {
@@ -213,7 +205,9 @@ export class ImageOverview {
             })
 
         })
-        jQuery('#edit-category').bind('click', function(){that.mod.categories.createCategoryDialog()})
+        jQuery('#edit-category').bind('click', () => {
+            this.mod.categories.createCategoryDialog()
+        })
         //open dropdown for image category
         addDropdownBox(jQuery('#image-category-btn'), jQuery(
             '#image-category-pulldown'))
@@ -270,9 +264,8 @@ export class ImageOverview {
     }
 
     bind() {
-        let that = this
-        jQuery(document).ready(function () {
-            that.init()
+        jQuery(document).ready(() => {
+            this.init()
         })
     }
 

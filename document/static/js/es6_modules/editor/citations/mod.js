@@ -25,10 +25,10 @@ export class ModCitations {
     }
 
     bindEvents () {
-        let that = this, pm = this.editor.pm
-        pm.updateScheduler([pm.on.flush], () => {that.layoutCitations()})
+        let pm = this.editor.pm
+        pm.updateScheduler([pm.on.flush], () => this.layoutCitations())
         let fnPm = this.editor.mod.footnotes.fnPm
-        fnPm.updateScheduler([fnPm.on.flush], () => {that.layoutCitations()})
+        fnPm.updateScheduler([fnPm.on.flush], () => this.layoutCitations())
     }
 
     resetCitations() {
@@ -47,7 +47,6 @@ export class ModCitations {
     }
 
     layoutCitations() {
-        let that = this
         if (!this.editor.bibDB) {
             // bibliography hasn't been loaded yet
             return
@@ -59,8 +58,8 @@ export class ModCitations {
                 document.querySelector('div.article').getAttribute('data-citationstyle'),
                 this.editor.bibDB,
                 false,
-                function() {
-                    that.layoutCitationsTwo()
+                () => {
+                    this.layoutCitationsTwo()
                 }
             )
             this.citRenderer.init()

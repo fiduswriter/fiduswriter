@@ -15,17 +15,16 @@ export class ModFootnoteEditor {
     }
 
     bindEvents() {
-        let that = this
-        this.mod.fnPm.mod.collab.mustSend.add(function() {
-            that.footnoteEdit()
+        this.mod.fnPm.mod.collab.mustSend.add(() => {
+            this.footnoteEdit()
         })
-        this.mod.fnPm.on.filterTransform.add((transform) => {
-            return that.onFilterTransform(transform)
-        })
-        this.mod.fnPm.on.transform.add((transform) => {
-            return that.onTransform(transform)
-        })
-        this.mod.fnPm.on.transformPastedHTML.add((inHTML) => {
+        this.mod.fnPm.on.filterTransform.add(transform =>
+            this.onFilterTransform(transform)
+        )
+        this.mod.fnPm.on.transform.add(transform =>
+            this.onTransform(transform)
+        )
+        this.mod.fnPm.on.transformPastedHTML.add(inHTML => {
             let ph = new Paste(inHTML, "footnote")
             return ph.getOutput()
         })
@@ -47,16 +46,16 @@ export class ModFootnoteEditor {
 
     // Find out if we need to recalculate the bibliography
     onTransform(transform, local) {
-        let updateBibliography = false, that = this
+        let updateBibliography = false
             // Check what area is affected
 
-        transform.steps.forEach(function(step, index) {
+        transform.steps.forEach((step, index) => {
             if (step.jsonID === 'replace' || step.jsonID === 'replaceAround') {
                 if (step.from !== step.to) {
                     transform.docs[index].nodesBetween(
                         step.from,
                         step.to,
-                        function(node, pos, parent) {
+                        (node, pos, parent) => {
                             if (node.type.name === 'citation') {
                                 // A citation was replaced
                                 updateBibliography = true
@@ -70,9 +69,7 @@ export class ModFootnoteEditor {
         if (updateBibliography) {
             // Recreate the bibliography on next flush.
             this.mod.editor.pm.scheduleDOMUpdate(
-                () => {
-                    return that.mod.editor.mod.citations.resetCitations()
-                }
+                () => this.mod.editor.mod.citations.resetCitations()
             )
         }
 
@@ -106,18 +103,18 @@ export class ModFootnoteEditor {
     }
 
     renderAllFootnotes() {
-        console.log('renderAllFootnotes')
         if (this.mod.markers.checkFootnoteMarkers()) {
             return false
         }
-        let that = this
         let footnotes = this.mod.markers.findFootnoteMarkers()
 
         this.mod.footnotes = footnotes
-        this.mod.fnPm.setDoc(this.mod.fnPm.schema.nodeFromJSON({"type":"doc","content":[{"type": "footnote_end"}]}))
+        this.mod.fnPm.setDoc(this.mod.fnPm.schema.nodeFromJSON(
+            {"type":"doc","content":[{"type": "footnote_end"}]}
+        ))
         this.mod.footnotes.forEach((footnote, index) => {
-            let node = that.mod.editor.pm.doc.nodeAt(footnote.from)
-            that.renderFootnote(node.attrs.footnote, index)
+            let node = this.mod.editor.pm.doc.nodeAt(footnote.from)
+            this.renderFootnote(node.attrs.footnote, index)
         })
         let collab = this.mod.fnPm.mod.collab
         collab.versionDoc = this.mod.fnPm.doc

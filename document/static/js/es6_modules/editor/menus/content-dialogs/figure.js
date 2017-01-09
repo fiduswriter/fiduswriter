@@ -80,7 +80,7 @@ export class FigureDialog {
 
     createFigureDialog() {
     // toolbar figure
-        let that = this, dialogButtons = []
+        let dialogButtons = []
 
         if (this.node && this.node.type && this.node.type.name==='figure') {
             this.insideFigure = true
@@ -93,9 +93,9 @@ export class FigureDialog {
             dialogButtons.push({
                 text: gettext('Remove'),
                 class: 'fw-button fw-orange',
-                click: function () {
-                    that.editor.currentPm.tr.deleteSelection().apply()
-                    that.dialog.dialog('close')
+                click: () => {
+                    this.editor.currentPm.tr.deleteSelection().apply()
+                    this.dialog.dialog('close')
                 }
             })
 
@@ -110,18 +110,13 @@ export class FigureDialog {
         dialogButtons.push({
             text: this.submitMessage,
             class: 'fw-button fw-dark',
-            mousedown: function (event) {
-                //event.preventDefault()
-                that.submitForm()
-            },
+            mousedown: event => this.submitForm()
         })
 
         dialogButtons.push({
             text: gettext('Cancel'),
             class: 'fw-button fw-orange',
-            click: function (event) {
-                that.dialog.dialog('close')
-            }
+            click: event => this.dialog.dialog('close')
         })
 
 
@@ -134,20 +129,17 @@ export class FigureDialog {
             draggable: false,
             buttons: dialogButtons,
             dialogClass: 'figure-dialog',
-            close: function () {
-                that.dialog.dialog('destroy').remove()
-            },
+            close: event => this.dialog.dialog('destroy').remove()
         }
-
 
         this.dialog.dialog(dialogOpts)
 
-
         let captionInput = jQuery('input[name=figure-caption]', this.dialog)
-            .focus(function (
-                e) {
-                return this.select()
-            })
+            .focus(
+                function (event) {
+                    return this.select()
+                }
+            )
 
         captionInput.focus()
 
@@ -162,16 +154,18 @@ export class FigureDialog {
 
         addDropdownBox(jQuery('#figure-category-btn'), jQuery(
             '#figure-category-pulldown'))
-
+        let that = this
         jQuery('#figure-category-pulldown li span').bind(
-            'mousedown', function (event) {
+            'mousedown',
+            function (event) {
                 event.preventDefault()
                 that.figureCategory = this.id.split('-')[2]
                 that.setFigureLabel()
-            })
+            }
+        )
 
         jQuery('input[name=figure-math]').bind('focus',
-            function () {
+            () => {
                 // If a figure is being entered, disable the image button
                 jQuery('#insertFigureImage').addClass(
                     'disabled').attr(
@@ -193,27 +187,33 @@ export class FigureDialog {
                 }
             })
 
-        jQuery('#insertFigureImage').bind('click', function () {
-            if (jQuery(this).hasClass('disabled')) {
-                return
-            }
-
-            new ImageSelectionDialog(that.imageDB, that.imageId, that.editor.doc.owner.id, function(newImageId) {
-                if (newImageId && newImageId !== false) {
-                    that.imageId = newImageId
-                    that.layoutImagePreview()
-                    jQuery('input[name=figure-math]').attr(
-                        'disabled',
-                        'disabled')
-                } else {
-                    that.imageId = false
-                    jQuery('#inner-figure-preview').html('')
-                    jQuery('input[name=figure-math]').removeAttr(
-                        'disabled')
+        jQuery('#insertFigureImage').bind('click',
+            function () {
+                if (jQuery(this).hasClass('disabled')) {
+                    return
                 }
-            })
 
-        })
+                new ImageSelectionDialog(
+                    that.imageDB,
+                    that.imageId,
+                    that.editor.doc.owner.id,
+                    newImageId => {
+                        if (newImageId && newImageId !== false) {
+                            that.imageId = newImageId
+                            that.layoutImagePreview()
+                            jQuery('input[name=figure-math]').attr(
+                                'disabled',
+                                'disabled')
+                        } else {
+                            that.imageId = false
+                            jQuery('#inner-figure-preview').html('')
+                            jQuery('input[name=figure-math]').removeAttr(
+                                'disabled')
+                        }
+                    }
+                )
+
+            }
+        )
     }
-
 }

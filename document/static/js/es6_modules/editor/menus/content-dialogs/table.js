@@ -55,9 +55,10 @@ export class TableDropdown {
     }
 
     insertTableDialog() {
-        let that = this, rowCount = 1, colCount = 1
+        let rowCount = 1, colCount = 1
         jQuery('#table-dialog').html(tableInsertTemplate({}))
         // manage hovering over table cells
+        let that = this
         jQuery('#table-dialog td').on('mouseenter', function(){
             that.markInsertTable(this, 'hover')
         })
@@ -77,10 +78,12 @@ export class TableDropdown {
             colCount = newCounts.colCount
         })
 
-        jQuery('#table-dialog button.table-insert').on('mousedown', function(){
-            let nodeType = that.editor.currentPm.schema.nodes['table']
-            that.editor.currentPm.tr.replaceSelection(createTable(nodeType, rowCount, colCount)).applyAndScroll()
-            that.editor.currentPm.focus()
+        jQuery('#table-dialog button.table-insert').on('mousedown', () => {
+            let nodeType = this.editor.currentPm.schema.nodes['table']
+            this.editor.currentPm.tr.replaceSelection(
+                createTable(nodeType, rowCount, colCount)
+            ).applyAndScroll()
+            this.editor.currentPm.focus()
         })
 
 
@@ -95,51 +98,49 @@ export class TableDropdown {
     }
 
     editTableDialog() {
-        let that = this
         jQuery('#table-dialog').html(tableEditTemplate({}))
 
         // Table manipulation
 
-        jQuery('#table-dialog .row-after').on('mousedown', function(event) {
-            that.executeAction(event, function(){
-                addRowAfter(that.editor.currentPm,true)
-            })
+        jQuery('#table-dialog .row-after').on('mousedown', event => {
+            this.executeAction(event, () =>
+                addRowAfter(this.editor.currentPm,true)
+            )
         })
-    	jQuery('#table-dialog .row-before').on('mousedown', function(event) {
-            that.executeAction(event, function(){
-                addRowBefore(that.editor.currentPm,true)
-            })
+    	jQuery('#table-dialog .row-before').on('mousedown', event => {
+            this.executeAction(event, () =>
+                addRowBefore(this.editor.currentPm,true)
+            )
         })
-    	jQuery('#table-dialog .col-after').on('mousedown', function(event) {
-            that.executeAction(event, function(){
-                addColumnAfter(that.editor.currentPm,true)
-            })
+    	jQuery('#table-dialog .col-after').on('mousedown', event => {
+            this.executeAction(event, () =>
+                addColumnAfter(this.editor.currentPm,true)
+            )
         })
-    	jQuery('#table-dialog .col-before').on('mousedown', function(event) {
-            that.executeAction(event, function(){
-                addColumnBefore(that.editor.currentPm,true)
-            })
+    	jQuery('#table-dialog .col-before').on('mousedown', event => {
+            this.executeAction(event, () =>
+                addColumnBefore(this.editor.currentPm,true)
+            )
         })
-    	jQuery('#table-dialog .col-remove').on('mousedown', function(event) {
-            that.executeAction(event, function(){
-                removeColumn(that.editor.currentPm,true)
-            })
+    	jQuery('#table-dialog .col-remove').on('mousedown', event => {
+            this.executeAction(event, () =>
+                removeColumn(this.editor.currentPm,true)
+            )
         })
-    	jQuery('#table-dialog .row-remove').on('mousedown', function(event) {
-            that.executeAction(event, function(){
-                removeRow(that.editor.currentPm,true)
-            })
+    	jQuery('#table-dialog .row-remove').on('mousedown', event => {
+            this.executeAction(event, () =>
+                removeRow(this.editor.currentPm,true)
+            )
         })
-        jQuery('#table-dialog .table-remove').on('mousedown', function(event) {
-            that.executeAction(event, function(){
+        jQuery('#table-dialog .table-remove').on('mousedown', event => {
+            this.executeAction(event, () => {
                 // move the selection up until reaching the first level (selecting the table)
-                while(that.editor.currentPm.selection.$from.depth > 1) {
-                    commands.selectParentNode(that.editor.currentPm, true)
+                while(this.editor.currentPm.selection.$from.depth > 1) {
+                    commands.selectParentNode(this.editor.currentPm, true)
                 }
                 // Remove the selection
-                that.editor.currentPm.tr.deleteSelection().apply()
+                this.editor.currentPm.tr.deleteSelection().apply()
             })
         })
     }
-
 }

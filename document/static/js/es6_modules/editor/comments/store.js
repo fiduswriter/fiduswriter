@@ -9,7 +9,8 @@ export class ModCommentStore {
     constructor(mod) {
         mod.store = this
         this.mod = mod
-        this.commentDuringCreation = false // a comment object for a comment that is still udner construction
+        // a comment object for a comment that is still under construction
+        this.commentDuringCreation = false
         this.setVersion(0)
     }
 
@@ -130,21 +131,19 @@ export class ModCommentStore {
     }
 
     checkAndDelete(ids) {
-        let that = this
-        // Check if there is still a node referring to the comment IDs that were in the deleted content.
-        this.mod.editor.pm.doc.descendants(function(node, pos, parent) {
+        // Check if there is still a node referring to the comment IDs that
+        // were in the deleted content.
+        this.mod.editor.pm.doc.descendants((node, pos, parent) => {
             if (!node.isInline) {
                 return
             }
-            let id = that.mod.layout.findCommentId(node)
+            let id = this.mod.layout.findCommentId(node)
             if (id && ids.indexOf(id) !== -1) {
                 ids.splice(ids.indexOf(id),1)
             }
         })
         // Remove all the comments that could not be found.
-        ids.forEach(function(id) {
-            that.deleteComment(id, false) // Delete comment from store
-        })
+        ids.forEach(id => this.deleteComment(id, false))
     }
 
 
@@ -175,9 +174,10 @@ export class ModCommentStore {
 
     deleteLocalAnswer(commentId, answerId, local) {
         if (this.comments[commentId] && this.comments[commentId].answers) {
-            this.comments[commentId].answers = _.reject(this.comments[commentId].answers, function(answer) {
-                return answer.id === answerId
-            })
+            this.comments[commentId].answers = _.reject(
+                this.comments[commentId].answers,
+                answer => answer.id === answerId
+            )
         }
         if (local || (!this.mod.layout.isCurrentlyEditing())) {
             this.mod.layout.layoutComments()

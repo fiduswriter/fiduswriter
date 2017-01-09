@@ -10,11 +10,10 @@ export class ModMenusKeyBindings {
     }
 
     mapKeys() {
-        let that = this
         return new Keymap({
-            "Ctrl-P": function(){that.mod.actions.print()},
-            "Ctrl-S": function(){that.mod.actions.saveRevision()},
-            "Shift-Ctrl-/": function(){that.mod.actions.showKeyBindings()}
+            "Ctrl-P": () => {this.mod.actions.print()},
+            "Ctrl-S": () => {this.mod.actions.saveRevision()},
+            "Shift-Ctrl-/": () => {this.mod.actions.showKeyBindings()}
         })
     }
 
@@ -28,7 +27,6 @@ export class ModMenusKeyBindings {
     }
 
     bind() {
-        let that = this
-        document.addEventListener('keydown',function(event) {that.keydown(event)})
+        document.addEventListener('keydown', event => this.keydown(event))
     }
 }

@@ -51,11 +51,12 @@ export class DocxExporterTables {
     }
 
     init() {
-        let that = this
-        return this.exporter.xml.getXml(this.styleFilePath).then(function(styleXml) {
-            that.styleXml = styleXml
-            return Promise.resolve()
-        })
+        return this.exporter.xml.getXml(this.styleFilePath).then(
+            styleXml => {
+                this.styleXml = styleXml
+                return Promise.resolve()
+            }
+        )
     }
 
     addTableNormalStyle() {

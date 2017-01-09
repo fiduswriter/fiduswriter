@@ -126,7 +126,6 @@ export class OdtExporterRichtext {
                 content += escapeText(node.text)
                 break
             case 'citation':
-                let that = this
                 // We take the first citation from the stack and remove it.
                 let cit
                 if (options.inFootnote) {

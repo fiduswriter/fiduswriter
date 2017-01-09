@@ -22,10 +22,10 @@ export let getMissingDocumentListData = function (ids, documentList, callback) {
             type: 'POST',
             dataType: 'json',
             crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
+            beforeSend: (xhr, settings) => {
                 xhr.setRequestHeader("X-CSRFToken", csrfToken)
             },
-            success: function (response, textStatus, jqXHR) {
+            success: (response, textStatus, jqXHR) => {
                 for (let i = 0; i < response.documents.length; i++) {
                     let aDocument = _.findWhere(documentList, {
                         id: response.documents[i].id
@@ -45,9 +45,7 @@ export let getMissingDocumentListData = function (ids, documentList, callback) {
                     callback()
                 }
             },
-            error: function (jqXHR, textStatus, errorThrown) {
-                addAlert('error', jqXHR.responseText)
-            },
+            error: (jqXHR, textStatus, errorThrown) => addAlert('error', jqXHR.responseText)
         })
     } else {
         callback()

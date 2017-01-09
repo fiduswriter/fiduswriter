@@ -19,7 +19,6 @@ Exporter to Office Open XML docx (Microsoft Word)
 
 export class DocxExporter {
     constructor(doc, templateUrl, bibDB, imageDB) {
-        let that = this
         this.doc = doc
         this.templateUrl = templateUrl
         this.bibDB = bibDB
@@ -28,14 +27,15 @@ export class DocxExporter {
         this.docContents = false
         this.docTitle = false
 
-        getDatabasesIfNeeded(this, doc).then(function(){
-            that.init()
-        })
+        getDatabasesIfNeeded(this, doc).then(
+            () => {
+                this.init()
+            }
+        )
     }
 
 
     init() {
-        let that = this
         this.docContents = removeHidden(this.doc.contents)
         this.docTitle = textContent(this.docContents.content[0])
         this.tables = new DocxExporterTables(this)
@@ -44,8 +44,8 @@ export class DocxExporter {
         this.footnotes = new DocxExporterFootnotes(this, this.docContents)
         this.render = new DocxExporterRender(this, this.docContents)
         this.rels = new DocxExporterRels(this, 'document')
-        this.images = new DocxExporterImages(this, this.imageDB, this.rels, that.docContents)
-        this.lists = new DocxExporterLists(this, this.rels, that.docContents)
+        this.images = new DocxExporterImages(this, this.imageDB, this.rels, this.docContents)
+        this.lists = new DocxExporterLists(this, this.rels, this.docContents)
         this.citations = new DocxExporterCitations(this, this.bibDB, this.docContents)
         this.richtext = new DocxExporterRichtext(
             this,
@@ -57,30 +57,34 @@ export class DocxExporter {
         //this.pmBib = this.citations.pmBib
         this.xml = new XmlZip(createSlug(this.docTitle)+'.docx', this.templateUrl)
 
-        this.xml.init().then(() => {
-                return that.citations.init()
-            }).then(() => {
-                that.pmBib = that.citations.pmBib
-                return that.metadata.init()
-            }).then(() => {
-                return that.tables.init()
-            }).then(() => {
-                return that.math.init()
-            }).then(() => {
-                return that.render.init()
-            }).then(() => {
-                return that.rels.init()
-            }).then(() => {
-                return that.images.init()
-            }).then(() => {
-                return that.lists.init()
-            }).then(() => {
-                return that.footnotes.init()
-            }).then(() => {
-                that.render.getTagData(that.pmBib)
-                that.render.render()
-                that.xml.prepareAndDownload()
-            })
+        this.xml.init().then(
+            () => this.citations.init()
+        ).then(
+            () => {
+                this.pmBib = this.citations.pmBib
+                return this.metadata.init()
+            }
+        ).then(
+            () => this.tables.init()
+        ).then(
+            () => this.math.init()
+        ).then(
+            () => this.render.init()
+        ).then(
+            () => this.rels.init()
+        ).then(
+            () => this.images.init()
+        ).then(
+            () => this.lists.init()
+        ).then(
+            () => this.footnotes.init()
+        ).then(
+            () => {
+                this.render.getTagData(this.pmBib)
+                this.render.render()
+                this.xml.prepareAndDownload()
+            }
+        )
     }
 
 }

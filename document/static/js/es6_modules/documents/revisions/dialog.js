@@ -24,14 +24,13 @@ export class DocumentRevisionsDialog {
      * @param {number}
      */
     createDialog() {
-        let that = this
         let diaButtons = {}
 
         diaButtons[gettext('Close')] = function() {
             jQuery(this).dialog("close")
         }
-        let aDocument = _.findWhere(that.documentList, {
-            id: that.documentId
+        let aDocument = _.findWhere(this.documentList, {
+            id: this.documentId
         })
 
 
@@ -84,80 +83,77 @@ export class DocumentRevisionsDialog {
      */
 
     recreate(id, user) {
-        let that = this
-        JSZipUtils.getBinaryContent(`/document/get_revision/${id}/`, function(err, fidusFile) {
-            new ImportFidusFile(
-                fidusFile,
-                user,
-                false,
-                that.bibDB,
-                that.imageDB,
-                function(noErrors, returnValue) {
-                    deactivateWait()
-                    if (noErrors) {
-                        let doc = returnValue[0]
-                        addAlert('info', doc.title + gettext(
-                            ' successfully imported.'))
-                        that.callback({
-                            action: 'added-document',
-                            doc
-                        })
-                    } else {
-                        addAlert('error', returnValue)
+        JSZipUtils.getBinaryContent(
+            `/document/get_revision/${id}/`,
+            (err, fidusFile) => {
+                new ImportFidusFile(
+                    fidusFile,
+                    user,
+                    false,
+                    this.bibDB,
+                    this.imageDB,
+                    (noErrors, returnValue) => {
+                        deactivateWait()
+                        if (noErrors) {
+                            let doc = returnValue[0]
+                            addAlert('info', doc.title + gettext(
+                                ' successfully imported.'))
+                            this.callback({
+                                action: 'added-document',
+                                doc
+                            })
+                        } else {
+                            addAlert('error', returnValue)
+                        }
                     }
-                }
-            )
-        })
+                )
+            }
+        )
     }
 
     /**
      * Download a revision.
-     * @function download
      * @param {number} id The pk value of the document revision.
      */
 
     download(id, filename) {
-        JSZipUtils.getBinaryContent(`/document/get_revision/${id}/`, function(err, fidusFile) {
-            downloadFile(filename, fidusFile)
-        })
+        JSZipUtils.getBinaryContent(
+            `/document/get_revision/${id}/`,
+            (err, fidusFile) => downloadFile(filename, fidusFile)
+        )
     }
 
     /**
      * Delete a revision.
-     * @function delete
      * @param {number} id The pk value of the document revision.
      */
 
     delete(id) {
-        let that = this
-
         let diaButtons = {},
-            deleteRevision = function() {
+            deleteRevision = () => {
                 jQuery.ajax({
                     url: '/document/delete_revision/',
-                    data: {
-                        id: id
-                    },
+                    data: {id},
                     type: 'POST',
                     crossDomain: false, // obviates need for sameOrigin test
-                    beforeSend: function(xhr, settings) {
+                    beforeSend: (xhr, settings) => {
                         xhr.setRequestHeader("X-CSRFToken", csrfToken)
                     },
-                    success: function() {
-                        let thisTr = jQuery('tr.revision-' + id),
+                    success: () => {
+                        let thisTr = jQuery(`tr.revision-${id}`),
                             documentId = jQuery(thisTr).attr('data-document'),
-                            aDocument = _.findWhere(that.documentList, {
+                            aDocument = _.findWhere(this.documentList, {
                                 id: parseInt(documentId)
                             })
                         jQuery(thisTr).remove()
                         addAlert('success', gettext('Revision deleted'))
-                        that.callback({
+                        this.callback({
                             action: 'deleted-revision',
                             id: id,
                             doc: aDocument
                         })
                     },
-                    error: function() {
+                    error: () => {
                         addAlert('error', gettext('Could not delete revision.'))
                     }
                 })
@@ -170,7 +166,6 @@ export class DocumentRevisionsDialog {
         diaButtons[gettext('Cancel')] = function() {
             jQuery(this).dialog("close")
         }
-
         jQuery(documentrevisionsConfirmDeleteTemplate()).dialog({
             resizable: false,
             height: 180,

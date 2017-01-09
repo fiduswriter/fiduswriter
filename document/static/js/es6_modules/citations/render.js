@@ -16,22 +16,21 @@ export class RenderCitations {
     }
 
     init() {
-        let that = this
         this.allCitationNodes = [].slice.call(jQuery(this.contentElement).find('span.citation'))
-        this.allCitationNodes.forEach(function(cElement){
+        this.allCitationNodes.forEach((cElement) => {
             let citeInfo = Object.assign({},cElement.dataset)
             citeInfo.references = JSON.parse(citeInfo.references)
-            that.allCitationInfos.push(citeInfo)
+            this.allCitationInfos.push(citeInfo)
         })
         this.fm = new FormatCitations(
             this.allCitationInfos,
             this.citationStyle,
             this.bibDB,
-            function() {
-                if (that.renderNoteCitations || 'note' !== that.fm.citationType) {
-                    that.renderCitations()
-                } else if (that.callback) {
-                    that.callback()
+            () => {
+                if (this.renderNoteCitations || 'note' !== this.fm.citationType) {
+                    this.renderCitations()
+                } else if (this.callback) {
+                    this.callback()
                 }
             }
         )

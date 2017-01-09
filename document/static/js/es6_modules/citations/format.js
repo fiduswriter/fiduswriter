@@ -74,15 +74,14 @@ export class FormatCitations {
     }
 
     reloadCitations(missingItems) {
-        let that = this
         // Not all citations could be found in the database.
         // Reload the database, but not more than twice every 30 seconds.
         let llt = this.bibDB.lastLoadTimes
         let lltlen = this.bibDB.lastLoadTimes.length
         if (lltlen < 2 || Date.now() - llt[lltlen-2] > 30000) {
-            this.bibDB.getDB(function(){
-                if (missingItems.some(item=>{return that.bibDB.db.hasOwnProperty(item)})) {
-                    that.init()
+            this.bibDB.getDB(() => {
+                if (missingItems.some(item => this.bibDB.db.hasOwnProperty(item))) {
+                    this.init()
                 }
             })
         }
@@ -103,11 +102,9 @@ export class FormatCitations {
             this.citationStyle.definition
         )
         let allIds = []
-        this.citations.forEach(cit => {
-            cit.citationItems.forEach(item => {
-                allIds.push('' + item.id)
-            })
-        })
+        this.citations.forEach(cit =>
+            cit.citationItems.forEach(item => allIds.push('' + item.id))
+        )
         citeprocInstance.updateItems(allIds)
 
         let inText = citeprocInstance.cslXml.dataObj.attrs.class === 'in-text'

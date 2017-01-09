@@ -38,7 +38,6 @@ export class OdtExporterFootnotes {
     }
 
     init() {
-        let that = this
         this.findFootnotes()
         if (
             this.footnotes.length ||
@@ -62,14 +61,18 @@ export class OdtExporterFootnotes {
                 this.fnPmJSON
             )
 
-            return this.citations.init().then(function(){
-                // Replace the main bibliography with the new one that includes
-                // both citations in main document and in the footnotes.
-                that.exporter.pmBib = that.citations.pmBib
-                return that.images.init()
-            }).then(function(){
-                return that.addStyles()
-            })
+            return this.citations.init().then(
+                () => {
+                    // Replace the main bibliography with the new one that includes
+                    // both citations in main document and in the footnotes.
+                    this.exporter.pmBib = this.citations.pmBib
+                    return this.images.init()
+                }
+            ).then(
+                () => {
+                    return this.addStyles()
+                }
+            )
         } else {
             // No footnotes were found.
             return Promise.resolve()
@@ -77,15 +80,16 @@ export class OdtExporterFootnotes {
     }
 
     addStyles() {
-        let that = this
-        return this.exporter.xml.getXml(this.styleFilePath).then(function(styleXml) {
-            that.styleXml = styleXml
-            that.addStyle('Footnote', DEFAULT_STYLE_FOOTNOTE)
-            that.addStyle('Footnote_20_anchor', DEFAULT_STYLE_FOOTNOTE_ANCHOR)
-            that.addStyle('Footnote_20_Symbol', DEFAULT_STYLE_FOOTNOTE_SYMBOL)
-            that.setStyleConfig()
-            return Promise.resolve()
-        })
+        return this.exporter.xml.getXml(this.styleFilePath).then(
+            styleXml => {
+                this.styleXml = styleXml
+                this.addStyle('Footnote', DEFAULT_STYLE_FOOTNOTE)
+                this.addStyle('Footnote_20_anchor', DEFAULT_STYLE_FOOTNOTE_ANCHOR)
+                this.addStyle('Footnote_20_Symbol', DEFAULT_STYLE_FOOTNOTE_SYMBOL)
+                this.setStyleConfig()
+                return Promise.resolve()
+            }
+        )
     }
 
     addStyle(styleName, xml) {
@@ -105,11 +109,10 @@ export class OdtExporterFootnotes {
     }
 
     findFootnotes() {
-        let that = this
         descendantNodes(this.docContents).forEach(
-            function(node) {
+            node => {
                 if (node.type==='footnote') {
-                    that.footnotes.push(node.attrs.footnote)
+                    this.footnotes.push(node.attrs.footnote)
                 }
             }
         )
@@ -117,16 +120,17 @@ export class OdtExporterFootnotes {
 
     convertFootnotes() {
         let fnContent = []
-        this.footnotes.forEach(function(footnote){
-            fnContent.push({
-                type: 'footnotecontainer',
-                content: footnote
-            })
-        })
+        this.footnotes.forEach(
+            footnote => {
+                fnContent.push({
+                    type: 'footnotecontainer',
+                    content: footnote
+                })
+            }
+        )
         this.fnPmJSON = {
             type: 'doc',
             content: fnContent
         }
     }
-
 }

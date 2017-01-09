@@ -8,31 +8,32 @@ export class OdtExporterMath {
     }
 
     init() {
-        let that = this
-
-        return this.exporter.xml.getXml("META-INF/manifest.xml").then(function(manifestXml){
-            that.manifestXml = manifestXml
-            that.checkObjectCounter()
-            return Promise.resolve()
-        })
+        return this.exporter.xml.getXml("META-INF/manifest.xml").then(
+            manifestXml => {
+                this.manifestXml = manifestXml
+                this.checkObjectCounter()
+                return Promise.resolve()
+            }
+        )
     }
 
     checkObjectCounter() {
-        let that = this
         let manifestEl = this.manifestXml.querySelector('manifest')
         let fileEntries = [].slice.call(manifestEl.querySelectorAll('file-entry'))
 
-        fileEntries.forEach(function(fileEntry) {
-            let fullPath = fileEntry.getAttribute('manifest:full-path')
-            let dir = fullPath.split('/')[0]
-            let dirParts = dir.split(' ')
-            if (dirParts.length===2 && dirParts[0] === 'Object') {
-                let objectNumber =  parseInt(dirParts[1])
-                if (objectNumber >= that.objectCounter) {
-                    that.objectCounter = objectNumber + 1
+        fileEntries.forEach(
+            fileEntry => {
+                let fullPath = fileEntry.getAttribute('manifest:full-path')
+                let dir = fullPath.split('/')[0]
+                let dirParts = dir.split(' ')
+                if (dirParts.length===2 && dirParts[0] === 'Object') {
+                    let objectNumber =  parseInt(dirParts[1])
+                    if (objectNumber >= this.objectCounter) {
+                        this.objectCounter = objectNumber + 1
+                    }
                 }
             }
-        })
+        )
     }
 
     addMath(latex) {

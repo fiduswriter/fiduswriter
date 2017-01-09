@@ -29,38 +29,36 @@ export class OdtExporterStyles {
     }
 
     init() {
-        let that = this
-        return this.exporter.xml.getXml("styles.xml").then(function(stylesXml){
-            that.stylesXml = stylesXml
-            return that.exporter.xml.getXml("content.xml")
-        }).then(function(contentXml){
-            that.contentXml = contentXml
-            that.getStyleCounters()
+        return this.exporter.xml.getXml("styles.xml").then(stylesXml => {
+            this.stylesXml = stylesXml
+            return this.exporter.xml.getXml("content.xml")
+        }).then(contentXml => {
+            this.contentXml = contentXml
+            this.getStyleCounters()
             return Promise.resolve()
         })
     }
 
     getStyleCounters() {
-        let that = this
         let styles = [].slice.call(this.contentXml.querySelectorAll('automatic-styles style'))
-        styles.forEach(function(style){
+        styles.forEach(style => {
             let styleNumber = parseInt(style.getAttribute('style:name').replace(/\D/g,''))
             let styleFamily = style.getAttribute('style:family')
             if (styleFamily==='text') {
-                if (styleNumber>that.inlineStyleCounter) {
-                    that.inlineStyleCounter = styleNumber
+                if (styleNumber>this.inlineStyleCounter) {
+                    this.inlineStyleCounter = styleNumber
                 }
             } else {
-                if (styleNumber>that.blockStyleCounter) {
-                    that.blockStyleCounter = styleNumber
+                if (styleNumber>this.blockStyleCounter) {
+                    this.blockStyleCounter = styleNumber
                 }
             }
         })
         let listStyles = [].slice.call(this.contentXml.querySelectorAll('automatic-styles list-style'))
-        listStyles.forEach(function(style){
+        listStyles.forEach(style => {
             let styleNumber = parseInt(style.getAttribute('style:name').replace(/\D/g,''))
-            if (styleNumber>that.listStyleCounter) {
-                that.listStyleCounter = styleNumber
+            if (styleNumber>this.listStyleCounter) {
+                this.listStyleCounter = styleNumber
             }
         })
     }

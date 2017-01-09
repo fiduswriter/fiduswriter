@@ -15,12 +15,13 @@ export class DocxExporterMetadata {
     }
 
     init() {
-        let that = this
-        return this.exporter.xml.getXml("docProps/core.xml").then(function(coreXml){
-            that.coreXml = coreXml
-            that.addMetadata()
-            return Promise.resolve()
-        })
+        return this.exporter.xml.getXml("docProps/core.xml").then(
+            coreXml => {
+                this.coreXml = coreXml
+                this.addMetadata()
+                return Promise.resolve()
+            }
+        )
     }
 
 

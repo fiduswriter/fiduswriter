@@ -11,7 +11,6 @@ export class ImageDB {
     }
 
     getDB(callback) {
-        let that = this
         this.db = {}
         this.cats = []
 
@@ -25,33 +24,28 @@ export class ImageDB {
             type: 'POST',
             dataType: 'json',
             crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: function (response, textStatus, jqXHR) {
-                that.cats = response.imageCategories
+            beforeSend: (xhr, settings) =>
+                xhr.setRequestHeader("X-CSRFToken", csrfToken),
+            success: (response, textStatus, jqXHR) => {
+                this.cats = response.imageCategories
                 let pks = []
                 for (let i = 0; i < response.images.length; i++) {
                     response.images[i].image = response.images[i].image.split('?')[0]
-                    that.db[response.images[i]['pk']] = response.images[i]
+                    this.db[response.images[i]['pk']] = response.images[i]
                     pks.push(response.images[i]['pk'])
                 }
                 if (callback) {
                     callback(pks)
                 }
             },
-            error: function (jqXHR, textStatus, errorThrown) {
-                addAlert('error', jqXHR.responseText)
-            },
-            complete: function () {
-                deactivateWait()
-            }
+            error: (jqXHR, textStatus, errorThrown) =>
+                addAlert('error', jqXHR.responseText),
+            complete: () => deactivateWait()
         })
 
     }
 
     createImage(postData, callback) {
-        let that = this
         activateWait()
         // Remove old warning messages
         jQuery('#uploadimage .warning').detach()
@@ -62,12 +56,11 @@ export class ImageDB {
             type: 'POST',
             dataType: 'json',
             crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: function (response, textStatus, jqXHR) {
-                if (that.displayCreateImageError(response.errormsg)) {
-                    that.db[response.values.pk] = response.values
+            beforeSend: (xhr, settings) =>
+                xhr.setRequestHeader("X-CSRFToken", csrfToken),
+            success: (response, textStatus, jqXHR) => {
+                if (this.displayCreateImageError(response.errormsg)) {
+                    this.db[response.values.pk] = response.values
                     addAlert('success', gettext('The image has been uploaded'))
                     callback(response.values.pk)
                 } else {
@@ -76,14 +69,12 @@ export class ImageDB {
                     ))
                 }
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            error: (jqXHR, textStatus, errorThrown) => {
                 if (jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.errormsg) {
                     addAlert('error', jqXHR.responseJSON.errormsg)
                 }
             },
-            complete: function () {
-                deactivateWait()
-            },
+            complete: () => deactivateWait(),
             cache: false,
             contentType: false,
             processData: false

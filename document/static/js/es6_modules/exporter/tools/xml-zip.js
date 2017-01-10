@@ -15,19 +15,15 @@ export class XmlZip {
     }
 
     init() {
-        let that = this
-        return this.downloadZip().then(function(){
-            return that.loadZip()
-        })
+        return this.downloadZip().then(() => this.loadZip())
     }
 
     downloadZip() {
-        let that = this
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             JSZipUtils.getBinaryContent(
-                that.url,
-                function(err, rawFile){
-                    that.rawFile = rawFile
+                this.url,
+                (err, rawFile) => {
+                    this.rawFile = rawFile
                     resolve()
                 }
             )
@@ -40,24 +36,23 @@ export class XmlZip {
 
     // Open file at filePath from zip file and parse it as XML.
     getXml(filePath, defaultContents) {
-        let that = this
         if (this.docs[filePath]) {
             // file has been loaded already.
             return Promise.resolve(this.docs[filePath])
         } else if (this.zip.files[filePath]) {
             return this.zip.file(filePath).async('string').then(
-                function(string) {
+                string => {
                     const parser = new window.DOMParser()
-                    that.docs[filePath] = parser.parseFromString(string, "text/xml")
-                    return Promise.resolve(that.docs[filePath])
+                    this.docs[filePath] = parser.parseFromString(string, "text/xml")
+                    return Promise.resolve(this.docs[filePath])
                 }
             )
         } else if (defaultContents) {
             return Promise.resolve(defaultContents).then(
-                function(string) {
+                string => {
                     const parser = new window.DOMParser()
-                    that.docs[filePath] = parser.parseFromString(string, "text/xml")
-                    return Promise.resolve(that.docs[filePath])
+                    this.docs[filePath] = parser.parseFromString(string, "text/xml")
+                    return Promise.resolve(this.docs[filePath])
                 }
             )
         } else {
@@ -100,14 +95,10 @@ export class XmlZip {
     }
 
     prepareAndDownload() {
-        let that = this
-
         this.allXMLToZip()
         this.allExtraToZip()
 
-        this.zip.generateAsync({type:"blob"}).then(function(out){
-            downloadFile(that.fileName, out)
-        })
+        this.zip.generateAsync({type:"blob"}).then(out => downloadFile(this.fileName, out))
     }
 
 }

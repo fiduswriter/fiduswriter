@@ -31,10 +31,8 @@ export class BibLatexFileImporter {
             }
             activateWait()
             let reader = new window.FileReader()
-            reader.onerror = function (e) {
-                console.error('error', e.target.error.code)
-            }
-            reader.onload = function(event){that.processFile(event.target.result)}
+            reader.onerror = error => console.error('error', error.target.error.code)
+            reader.onload = event => that.processFile(event.target.result)
             reader.readAsText(bibFile)
             jQuery(this).dialog('close')
         }
@@ -56,22 +54,19 @@ export class BibLatexFileImporter {
                     jQuery('#import-bib-name').html(jQuery(this).val().replace(
                         /C:\\fakepath\\/i, ''))
                 })
-                jQuery('#import-bib-btn').bind('click', function () {
+                jQuery('#import-bib-btn').bind('click', () =>
                     jQuery('#bib-uploader').trigger('click')
-                })
+                )
             },
-            close: function () {
+            close: () =>
                 jQuery("#importbibtex").dialog('destroy').remove()
-            }
         })
     }
 
     /** Second step of the BibTeX file import. Takes a BibTeX file object,
      * processes client side and cuts into chunks to be uploaded to the server.
-     * @param e File object that is to be imported.
      */
     processFile(fileContents) {
-        let that = this
         let bibData = new BibLatexParser(fileContents)
         this.tmpDB = bibData.output
         this.bibKeys = Object.keys(this.tmpDB)
@@ -97,7 +92,7 @@ export class BibLatexFileImporter {
                     bibEntry.fields.author = [{'literal': []}]
                 }
             })
-            bibData.errors.forEach(function(error){
+            bibData.errors.forEach(error => {
                 let errorMsg = gettext('An error occured while reading the bibtex file')
                 errorMsg += `, error_code: ${error.type}`
                 if (error.key) {
@@ -105,7 +100,7 @@ export class BibLatexFileImporter {
                 }
                 addAlert('error', errorMsg)
             })
-            bibData.warnings.forEach(function(warning){
+            bibData.warnings.forEach(warning => {
                 let warningMsg
                 switch (warning.type) {
                     case 'unknown_field':
@@ -140,7 +135,6 @@ export class BibLatexFileImporter {
     }
 
     processChunk() {
-        let that = this
         if (this.currentChunkNumber < this.totalChunks) {
             let fromNumber = this.currentChunkNumber * 50
             let toNumber = fromNumber + 50
@@ -148,10 +142,10 @@ export class BibLatexFileImporter {
             this.bibKeys.slice(fromNumber, toNumber).forEach((bibKey)=>{
                 currentChunk[bibKey] = this.tmpDB[bibKey]
             })
-            this.bibDB.saveBibEntries(currentChunk, true, function (ids) {
-                that.callback(ids)
-                that.currentChunkNumber++
-                that.processChunk()
+            this.bibDB.saveBibEntries(currentChunk, true, ids => {
+                this.callback(ids)
+                this.currentChunkNumber++
+                this.processChunk()
             })
         } else {
             deactivateWait()

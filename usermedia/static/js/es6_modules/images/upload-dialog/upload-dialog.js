@@ -12,7 +12,6 @@ export class ImageUploadDialog {
 
     //open a dialog for uploading an image
     createImageUploadDialog() {
-        let that = this
         let title, imageCat, thumbnail, image, action, longAction
         if (this.imageId) {
             title = this.imageDB.db[this.imageId].title
@@ -32,7 +31,7 @@ export class ImageUploadDialog {
         }
 
         let iCats = []
-        jQuery.each(this.imageDB.cats, function (i, iCat) {
+        jQuery.each(this.imageDB.cats, (i, iCat) => {
             let len = iCats.length
             iCats[len] = {
                 'id': iCat.id,
@@ -56,12 +55,12 @@ export class ImageUploadDialog {
             })
         }))
         let diaButtons = {}
-        diaButtons[action] = function () {
-            that.onCreateImageSubmitHandler()
-        }
+        diaButtons[action] = () => this.onCreateImageSubmitHandler()
+
         diaButtons[gettext('Cancel')] = function () {
             jQuery(this).dialog('close')
         }
+        let that = this
         jQuery("#uploadimage").dialog({
             resizable: false,
             height: 'auto',
@@ -74,9 +73,8 @@ export class ImageUploadDialog {
                 theDialog.find(".ui-button:last").addClass("fw-button fw-orange")
                 that.setMediaUploadEvents(jQuery('#uploadimage'))
             },
-            close: function () {
-                jQuery("#uploadimage").dialog('destroy').remove()
-            }
+            close: () => jQuery("#uploadimage").dialog('destroy').remove()
+
         })
 
         jQuery('.fw-checkable-label').bind('click', function () {
@@ -90,15 +88,13 @@ export class ImageUploadDialog {
             mediaInput = wrapper.find('.fw-media-file-input'),
             mediaPreviewer = wrapper.find('.figure-preview > div')
 
-        selectButton.bind('click', function() {
-            mediaInput.trigger('click')
-        })
+        selectButton.bind('click', () => mediaInput.trigger('click'))
 
         mediaInput.bind('change', function() {
             let file = jQuery(this).prop('files')[0],
                 fr = new window.FileReader()
 
-            fr.onload = function() {
+            fr.onload = () => {
                 mediaPreviewer.html('<img src="' + fr.result + '" />')
             }
             fr.readAsDataURL(file)
@@ -149,11 +145,10 @@ export class ImageUploadDialog {
     }
 
     createImage(imageData) {
-        let that = this
-        this.imageDB.createImage(imageData, function(imageId){
+        this.imageDB.createImage(imageData, imageId => {
             jQuery("#uploadimage").dialog('close')
-            that.imageId = imageId
-            that.callback(imageId)
+            this.imageId = imageId
+            this.callback(imageId)
         })
     }
 

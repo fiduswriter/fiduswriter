@@ -16,28 +16,24 @@ export class EpubExporter extends BaseEpubExporter {
 
     constructor(doc, bibDB) {
         super()
-        let that = this
         this.doc = doc
         if (bibDB) {
             this.bibDB = bibDB // the bibliography has already been loaded for some other purpose. We reuse it.
             this.exportOne()
         } else {
             this.bibDB = new BibliographyDB(doc.owner.id, false, false, false)
-            this.bibDB.getDB(function() {
-                that.exportOne()
+            this.bibDB.getDB(() => {
+                this.exportOne()
             })
         }
     }
 
     exportOne() {
-        let that = this
         addAlert('info', this.doc.title + ': ' + gettext(
             'Epub export has been initiated.'))
 
 
-        this.joinDocumentParts(function() {
-            that.exportTwo()
-        })
+        this.joinDocumentParts(() => this.exportTwo())
     }
 
     exportTwo() {
@@ -107,9 +103,7 @@ export class EpubExporter extends BaseEpubExporter {
         let docContents = docSchema.nodeFromJSON(this.doc.contents).toDOM()
         // Remove hidden parts
         let hiddenEls = [].slice.call(docContents.querySelectorAll('[data-hidden=true]'))
-        hiddenEls.forEach(function(hiddenEl){
-            hiddenEl.parentElement.removeChild(hiddenEl)
-        })
+        hiddenEls.forEach(hiddenEl => hiddenEl.parentElement.removeChild(hiddenEl))
 
         let authorsEl = docContents.querySelector('.article-authors')
         if (authorsEl && authorsEl.textContent.length > 0) {

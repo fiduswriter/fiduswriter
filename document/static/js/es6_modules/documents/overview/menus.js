@@ -102,8 +102,10 @@ export class DocumentOverviewMenus {
 
                 })
 
-            //import a fidus filw
-            jQuery('.import-fidus').bind('mousedown', function () {that.documentOverview.mod.actions.importFidus() })
+            //import a fidus file
+            jQuery('.import-fidus').bind('mousedown', function () {
+                that.documentOverview.mod.actions.importFidus()
+            })
         })
     }
 

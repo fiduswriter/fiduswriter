@@ -43,8 +43,6 @@ export let getDatabasesIfNeeded = function(object, doc) {
         )
     }
     return new Promise(function(resolve){
-        Promise.all(p).then(function(){
-            resolve()
-        })
+        Promise.all(p).then(() => resolve())
     })
 }

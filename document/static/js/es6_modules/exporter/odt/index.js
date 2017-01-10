@@ -13,12 +13,10 @@ import {OdtExporterMath} from "./math"
 
 /*
 Exporter to Open Document Text (LibreOffice)
-
 */
 
 export class OdtExporter {
     constructor(doc, templateUrl, bibDB, imageDB) {
-        let that = this
         this.doc = doc
         this.templateUrl = templateUrl
         this.bibDB = bibDB
@@ -28,9 +26,9 @@ export class OdtExporter {
         this.docContents = false
         this.docTitle = false
 
-        getDatabasesIfNeeded(this, doc).then(function(){
-            that.init()
-        })
+        getDatabasesIfNeeded(this, doc).then(
+            () => this.init()
+        )
     }
 
 

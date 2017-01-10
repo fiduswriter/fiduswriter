@@ -19,14 +19,12 @@ export class BibliographyOverview {
 
     /* load data from the bibliography */
     getBibDB(callback) {
-        let that = this
         let docOwnerId = 0 // 0 = current user.
         this.bibDB = new BibliographyDB(docOwnerId, true, false, false)
 
-        this.bibDB.getDB(function(bibPks, bibCats){
-
-            that.addBibCategoryList(bibCats)
-            that.addBibList(bibPks)
+        this.bibDB.getDB((bibPks, bibCats) => {
+            this.addBibCategoryList(bibCats)
+            this.addBibList(bibPks)
             if (callback) {
                 callback()
             }
@@ -63,15 +61,12 @@ export class BibliographyOverview {
             this.appendToBibTable(pks[i], this.bibDB.db[pks[i]])
         }
         this.startBibliographyTable()
-        //}
-
     }
 
     /** Opens a dialog for editing categories.
      * @function createCategoryDialog
      */
     createCategoryDialog () {
-        let that = this
         let dialogHeader = gettext('Edit Categories')
         let dialogBody = editCategoriesTemplate({
             'dialogHeader': dialogHeader,
@@ -81,6 +76,7 @@ export class BibliographyOverview {
         })
         jQuery('body').append(dialogBody)
         let diaButtons = {}
+        let that = this
         diaButtons[gettext('Submit')] = function () {
             let newCat = {
                 'ids': [],
@@ -246,11 +242,7 @@ export class BibliographyOverview {
      * @function bind
      */
     bind() {
-        let that = this
-        jQuery(document).ready(function () {
-            that.bindEvents()
-        })
-
+        jQuery(document).ready(() => this.bindEvents())
     }
 
     /** Initialize the bibliography table and bind interactive parts.
@@ -262,9 +254,9 @@ export class BibliographyOverview {
             let BookId = jQuery(this).attr('data-id')
             that.deleteBibEntryDialog([BookId])
         })
-        jQuery('#edit-category').bind('click', function(){
-            that.createCategoryDialog()
-        })
+        jQuery('#edit-category').bind('click', () =>
+            this.createCategoryDialog()
+        )
 
         jQuery(document).on('click', '.edit-bib', function () {
             let eID = jQuery(this).attr('data-id')
@@ -308,9 +300,9 @@ export class BibliographyOverview {
         addDropdownBox(jQuery('#select-action-dropdown'), jQuery('#action-selection-pulldown'))
 
         //import a bib file
-        jQuery('.import-bib').bind('click', function () {
-            new BibLatexFileImporter(that.bibDB, function(bibEntries) {
-                that.addBibList(bibEntries)
+        jQuery('.import-bib').bind('click', () => {
+            new BibLatexFileImporter(this.bibDB, bibEntries => {
+                this.addBibList(bibEntries)
             })
         })
 
@@ -346,20 +338,18 @@ export class BibliographyOverview {
 
 
     createCategory(cats) {
-        let that = this
-        this.bibDB.createCategory(cats, function(bibCats){
+        this.bibDB.createCategory(cats, bibCats => {
             jQuery('#bib-category-list li').not(':first').remove()
-            that.addBibCategoryList(bibCats)
+            this.addBibCategoryList(bibCats)
         })
     }
 
     deleteBibEntry(ids) {
-        let that = this
-        this.bibDB.deleteBibEntry(ids, function(ids){
-            that.stopBibliographyTable()
+        this.bibDB.deleteBibEntry(ids, ids => {
+            this.stopBibliographyTable()
             let elementsId = '#Entry_' + ids.join(', #Entry_')
             jQuery(elementsId).detach()
-            that.startBibliographyTable()
+            this.startBibliographyTable()
         })
     }
 

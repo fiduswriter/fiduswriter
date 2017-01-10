@@ -11,16 +11,15 @@ export class ModSettings {
     }
 
     check(newSettings) {
-        let that = this
-        Object.keys(newSettings).forEach(function(key){
-            if(that.settings[key] !== newSettings[key]) {
-                that.settings[key] = newSettings[key]
+        Object.keys(newSettings).forEach(key => {
+            if(this.settings[key] !== newSettings[key]) {
+                this.settings[key] = newSettings[key]
                 switch(key) {
                     case 'documentstyle':
-                        that.updateDocStyleCSS()
+                        this.updateDocStyleCSS()
                         break
                     case 'citationstyle':
-                        that.editor.mod.citations.resetCitations()
+                        this.editor.mod.citations.resetCitations()
                         break
                 }
             }
@@ -31,8 +30,6 @@ export class ModSettings {
     /** Update the stylesheet used for the docStyle
      */
     updateDocStyleCSS() {
-        let that = this
-
         let docStyleLink = document.getElementById('document-style-link')
 
         // Remove previous style.
@@ -42,15 +39,15 @@ export class ModSettings {
             window.staticUrl + `css/document/${this.settings.documentstyle}.css`,
             docStyleLink
         )
-        stylesheet.addEventListener( "load", function() {
+        stylesheet.addEventListener("load", () => {
             // We layout the comments 250 ms after the stylesheet has been loaded.
             // This should usually be enough to make the layout work correctly.
             //
             // TODO: Find a way that is more reliable than a timeout to check
             // for font loading.
-            window.setTimeout(function() {
-                that.editor.mod.comments.layout.layoutComments()
-                that.editor.mod.footnotes.layout.layoutFootnotes()
+            window.setTimeout(() => {
+                this.editor.mod.comments.layout.layoutComments()
+                this.editor.mod.footnotes.layout.layoutFootnotes()
             }, 250)
         })
 

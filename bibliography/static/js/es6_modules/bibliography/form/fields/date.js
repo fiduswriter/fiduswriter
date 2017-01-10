@@ -8,7 +8,6 @@ export class DateFieldForm{
     }
 
     init() {
-        let that = this
         this.dom.innerHTML = `<input class="date" type="text" value="${this.initialValue}" placeholder="${this.placeHolder}">`
     }
 

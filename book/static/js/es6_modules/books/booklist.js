@@ -25,13 +25,14 @@ export class BookList {
     }
 
     getImageDB(callback) {
-        let that = this
         if (!this.imageDB) {
             let imageGetter = new ImageDB(this.user.id)
-            imageGetter.getDB(function(){
-                that.imageDB = imageGetter
-                callback()
-            })
+            imageGetter.getDB(
+                () => {
+                    this.imageDB = imageGetter
+                    callback()
+                }
+            )
         } else {
             callback()
         }
@@ -39,23 +40,24 @@ export class BookList {
 
     getAnImageDB(userId, callback){
         let imageGetter = new ImageDB(userId)
-        imageGetter.getDB(function(){
+        imageGetter.getDB(() => {
             callback(imageGetter)
         })
     }
 
     bindEvents() {
+        jQuery(document).ready(() => {
+            this.mod.actions.getBookListData()
+        })
+
+        jQuery(document).bind('bookDataLoaded', () => {
+            jQuery('#book-table tbody').html(
+                bookListTemplate({bookList: this.bookList, user: this.user})
+            )
+            this.mod.actions.startBookTable()
+        })
+
         let that = this
-        jQuery(document).ready(function () {
-            that.mod.actions.getBookListData()
-        })
-
-        jQuery(document).bind('bookDataLoaded', function () {
-            jQuery('#book-table tbody').html(bookListTemplate({bookList: that.bookList, user: that.user}))
-            that.mod.actions.startBookTable()
-        })
-
-
         jQuery(document).ready(function () {
             jQuery(document).on('click', '.delete-book', function () {
                 let BookId = jQuery(this).attr('data-id')
@@ -64,9 +66,14 @@ export class BookList {
 
             jQuery(document).on('click', '.owned-by-user .rights', function () {
                 let BookId = parseInt(jQuery(this).attr('data-id'))
-                new BookAccessRightsDialog([BookId], that.teamMembers, that.accessRights, function (accessRights) {
-                    that.accessRights = accessRights
-                })
+                new BookAccessRightsDialog(
+                    [BookId],
+                    that.teamMembers,
+                    that.accessRights,
+                    accessRights => {
+                        that.accessRights = accessRights
+                    }
+                )
             })
 
             //select all entries
@@ -170,9 +177,9 @@ export class BookList {
 
                 })
 
-            jQuery('.create-new-book').bind('click', function () {
-                that.getImageDB(function(){
-                    that.mod.actions.createBookDialog(0, that.imageDB)
+            jQuery('.create-new-book').bind('click', () => {
+                this.getImageDB(() => {
+                    this.mod.actions.createBookDialog(0, this.imageDB)
                 })
             })
 

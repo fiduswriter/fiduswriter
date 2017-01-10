@@ -13,7 +13,6 @@ export class SaveImages {
     }
 
     sendImage() {
-        let that = this
         if (this.counter < this.newImageEntries.length) {
             let formValues = new window.FormData()
             formValues.append('id', 0)
@@ -32,24 +31,20 @@ export class SaveImages {
                     type: 'POST',
                     dataType: 'json',
                     crossDomain: false, // obviates need for sameOrigin test
-                    beforeSend: function(xhr, settings) {
-                        xhr.setRequestHeader("X-CSRFToken", csrfToken)
+                    beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
+                    success: (response, textStatus, jqXHR) => {
+                        this.imageDB[response.values.pk] = response.values
+                        let oldId = this.newImageEntries[this.counter].oldId
+                        this.ImageTranslationTable[oldId] = response.values.pk
+                        this.counter++
+                        this.sendImage().then(() => resolve())
                     },
-                    success: function(response, textStatus, jqXHR) {
-                        that.imageDB[response.values.pk] = response.values
-                        let oldId = that.newImageEntries[that.counter].oldId
-                        that.ImageTranslationTable[oldId] = response.values.pk
-                        that.counter++
-                        that.sendImage().then(()=>{
-                            resolve()
-                        })
-                    },
-                    error: function() {
+                    error: () => {
                         addAlert('error', gettext('Could not save ') +
-                            that.newImageEntries[that.counter].title)
+                            this.newImageEntries[this.counter].title)
                         reject()
                     },
-                    complete: function() {},
+                    complete: () => {},
                     cache: false,
                     contentType: false,
                     processData: false

@@ -23,11 +23,21 @@ let afterCopy = function(noErrors, returnValue, callback) {
   old document was owned by someone else than the current user.
 */
 export let savecopy = function(doc, oldBibDB, oldImageDB, newBibDB, newImageDB, newUser, callback) {
-    exportNative(doc, oldImageDB, oldBibDB, function(doc, shrunkImageDB, shrunkBibDB, images){
-        new ImportNative(doc, shrunkBibDB, shrunkImageDB, images, newUser, newBibDB, newImageDB,
-            function(noErrors, returnValue) {
-                afterCopy(noErrors, returnValue, callback)
-            }
-        )
-    })
+    exportNative(
+        doc,
+        oldImageDB,
+        oldBibDB,
+        (doc, shrunkImageDB, shrunkBibDB, images) => {
+            new ImportNative(
+                doc,
+                shrunkBibDB,
+                shrunkImageDB,
+                images,
+                newUser,
+                newBibDB,
+                newImageDB,
+                (noErrors, returnValue) => afterCopy(noErrors, returnValue, callback)
+            )
+        }
+    )
 }

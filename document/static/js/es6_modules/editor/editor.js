@@ -50,68 +50,75 @@ export class Editor {
     }
 
     init() {
-        let that = this
         new ModSettings(this)
-        jQuery(document).ready(function() {
-            that.startEditor()
+        jQuery(document).ready(() => {
+            this.startEditor()
         })
     }
 
     startEditor() {
-        let that = this
         this.makeEditor()
-        this.currentPm = this.pm // The editor that is currently being edited in -- main or footnote editor
+        // The editor that is currently being edited in -- main or footnote editor
+        this.currentPm = this.pm
         new ModFootnotes(this)
         new ModCitations(this)
         new ModMenus(this)
         new ModCollab(this)
         new ModTools(this)
         new ModComments(this)
-        this.pm.on.change.add(function(){that.docInfo.changed = true})
-        this.pm.on.filterTransform.add((transform) => {return that.onFilterTransform(transform)})
-        this.pm.on.transform.add((transform, options) => {that.onTransform(transform, true)})
-        this.pm.on.transformPastedHTML.add((inHTML) => {
-            let ph = new Paste(inHTML, "main")
-            return ph.getOutput()
-        })
-        this.pm.mod.collab.receivedTransform.add((transform, options) => {that.onTransform(transform, false)})
+        this.pm.on.change.add(
+            () => {this.docInfo.changed = true}
+        )
+        this.pm.on.filterTransform.add(
+            transform => this.onFilterTransform(transform)
+        )
+        this.pm.on.transform.add(
+            (transform, options) => {this.onTransform(transform, true)}
+        )
+        this.pm.on.transformPastedHTML.add(
+            inHTML => {
+                let ph = new Paste(inHTML, "main")
+                return ph.getOutput()
+            }
+        )
+        this.pm.mod.collab.receivedTransform.add(
+            (transform, options) => {this.onTransform(transform, false)}
+        )
         this.mod.serverCommunications.init()
         this.setSaveTimers()
     }
 
     setSaveTimers() {
-        let that = this
         // Set Auto-save to send the document every two minutes, if it has changed.
-        this.sendDocumentTimer = window.setInterval(function() {
-            if (that.docInfo && that.docInfo.changed &&
-                READ_ONLY_ROLES.indexOf(that.docInfo.rights) === -1) {
-                that.save()
+        this.sendDocumentTimer = window.setInterval(() => {
+            if (this.docInfo && this.docInfo.changed &&
+                READ_ONLY_ROLES.indexOf(this.docInfo.rights) === -1) {
+                this.save()
             }
         }, 120000)
 
         // Set Auto-save to send the title every 5 seconds, if it has changed.
-        this.sendDocumentTitleTimer = window.setInterval(function() {
-            if (that.docInfo && that.docInfo.title_changed &&
-                READ_ONLY_ROLES.indexOf(that.docInfo.rights) === -1) {
-                that.docInfo.title_changed = false
-                that.mod.serverCommunications.send({
+        this.sendDocumentTitleTimer = window.setInterval(() => {
+            if (this.docInfo && this.docInfo.title_changed &&
+                READ_ONLY_ROLES.indexOf(this.docInfo.rights) === -1) {
+                this.docInfo.title_changed = false
+                this.mod.serverCommunications.send({
                     type: 'update_title',
-                    title: that.doc.title
+                    title: this.doc.title
                 })
             }
         }, 10000)
 
         // Auto save the document when the user leaves the page.
-        window.addEventListener("beforeunload", function (event) {
-            if (that.docInfo && that.docInfo.changed &&
-                READ_ONLY_ROLES.indexOf(that.docInfo.rights) === -1) {
-                that.save()
+        window.addEventListener("beforeunload", () => {
+            if (this.docInfo && this.docInfo.changed &&
+                READ_ONLY_ROLES.indexOf(this.docInfo.rights) === -1) {
+                this.save()
             }
         })
     }
 
     makeEditor() {
-        let that = this
         this.pm = new ProseMirror({
             place: document.getElementById('document-editable'),
             schema: this.schema,
@@ -123,12 +130,12 @@ export class Editor {
         this.pm.mod.collab = collabEditing.get(this.pm)
         // Ignore setDoc
         this.pm.on.beforeSetDoc.remove(this.pm.mod.collab.onSetDoc)
-        this.pm.mod.collab.onSetDoc = function (){}
+        this.pm.mod.collab.onSetDoc = () => {}
         // Trigger reset on setDoc
-        this.pm.mod.collab.afterSetDoc = function (){
+        this.pm.mod.collab.afterSetDoc = () => {
             // Reset all collab values and set document version
-            let collab = that.pm.mod.collab
-            collab.versionDoc = that.pm.doc
+            let collab = this.pm.mod.collab
+            collab.versionDoc = this.pm.doc
             collab.unconfirmedSteps = []
             collab.unconfirmedMaps = []
         }
@@ -138,7 +145,6 @@ export class Editor {
     // Removes all content from the editor and adds the contents of this.doc.
     update() {
         // Updating editor
-        let that = this
         this.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
         this.mod.collab.docChanges.unconfirmedSteps = {}
         if (this.mod.collab.docChanges.awaitingDiffResponse) {
@@ -165,7 +171,8 @@ export class Editor {
                 // save to the server.
                 this.setPmDoc()
                 console.warn('Diffs could not be applied correctly!')
-                this.pm.mod.collab.version = this.doc.version + this.docInfo.unapplied_diffs.length + 1
+                this.pm.mod.collab.version =
+                    this.doc.version + this.docInfo.unapplied_diffs.length + 1
                 this.docInfo.unapplied_diffs = []
             }
             this.save()
@@ -178,31 +185,30 @@ export class Editor {
         this.mod.footnotes.markers.removeAllMarkers()
         this.docInfo.hash = this.getHash()
         this.mod.comments.store.setVersion(this.doc.comment_version)
-        this.pm.mod.collab.mustSend.add(function() {
-            that.mod.collab.docChanges.sendToCollaborators()
+        this.pm.mod.collab.mustSend.add(() => {
+            this.mod.collab.docChanges.sendToCollaborators()
         }, 0) // priority : 0 so that other things can be scheduled before this.
         this.pm.mod.collab.receivedTransform.add(
             (transform, options) => {
-                that.onTransform(transform, false)
+                this.onTransform(transform, false)
             }
         )
         this.mod.footnotes.fnEditor.renderAllFootnotes()
-        _.each(this.doc.comments, function(comment) {
-            that.mod.comments.store.addLocalComment(comment.id, comment.user,
+        _.each(this.doc.comments, comment => {
+            this.mod.comments.store.addLocalComment(comment.id, comment.user,
                 comment.userName, comment.userAvatar, comment.date, comment.comment,
                 comment.answers, comment['review:isMajor'])
         })
-        this.mod.comments.store.on("mustSend", function() {
-            that.mod.collab.docChanges.sendToCollaborators()
+        this.mod.comments.store.on("mustSend", () => {
+            this.mod.collab.docChanges.sendToCollaborators()
         })
-        this.getBibDB(this.doc.owner.id, function(){
-            that.enableUI()
+        this.getBibDB(this.doc.owner.id, () => {
+            this.enableUI()
         })
         this.waitingForDocument = false
     }
 
     setPmDoc() {
-        let that = this
         // Given that the article node is the second outer-most node, we need
         // to wrap it in a doc node before setting it in PM.
         if (this.doc.contents.type) {
@@ -210,8 +216,10 @@ export class Editor {
             this.pm.setDoc(pmDoc)
         } else{
             // Document is new
-            this.getUpdates(function(){
-                that.setPmDoc() // We need to set the doc so that events such as for ui update are triggered.
+            this.getUpdates(() => {
+                // We need to set the doc so that events such as for ui update
+                // are triggered.
+                this.setPmDoc()
             })
         }
     }
@@ -232,13 +240,12 @@ export class Editor {
     }
 
     getBibDB(userId, callback) {
-        let that = this
         if (!this.bibDB) { // Don't get the bibliography again if we already have it.
             let bibGetter = new BibliographyDB(userId, true, false, false)
-            bibGetter.getDB(function(bibPks, bibCats){
-                that.bibDB = bibGetter
-                that.mod.menus.citation.appendManyToCitationDialog(bibPks)
-                that.mod.menus.header.enableExportMenu()
+            bibGetter.getDB((bibPks, bibCats) => {
+                this.bibDB = bibGetter
+                this.mod.menus.citation.appendManyToCitationDialog(bibPks)
+                this.mod.menus.header.enableExportMenu()
                 if (callback) {
                     callback()
                 }
@@ -253,13 +260,14 @@ export class Editor {
     }
 
     getImageDB(userId, callback) {
-        let that = this
         if (!this.imageDB) {
             let imageGetter = new ImageDB(userId)
-            imageGetter.getDB(function(){
-                that.imageDB = imageGetter
-                that.schema.cached.imageDB = imageGetter // assign image DB to be used in schema.
-                that.mod.footnotes.schema.cached.imageDB = imageGetter // assign image DB to be used in footnote schema.
+            imageGetter.getDB(() => {
+                this.imageDB = imageGetter
+                // assign image DB to be used in schema.
+                this.schema.cached.imageDB = imageGetter
+                // assign image DB to be used in footnote schema.
+                this.mod.footnotes.schema.cached.imageDB = imageGetter
                 callback()
             })
         } else {
@@ -269,7 +277,8 @@ export class Editor {
 
     enableUI() {
 
-        jQuery('.savecopy, .saverevision, .download, .template-export, .latex, .epub, .html, .print, .style, \
+        jQuery('.savecopy, .saverevision, .download, .template-export, \
+        .latex, .epub, .html, .print, .style, \
       .citationstyle, .tools-item, .papersize, .metadata-menu-item, \
       #open-close-header').removeClass('disabled')
 
@@ -304,28 +313,25 @@ export class Editor {
     }
 
     receiveDocument(data) {
-        let that = this
         this.updateData(data.doc, data.doc_info)
         if (data.hasOwnProperty('user')) {
             this.user = data.user
         } else {
             this.user = this.doc.owner
         }
-        this.getImageDB(this.doc.owner.id, function(){
-            that.update()
-            that.mod.serverCommunications.send({
+        this.getImageDB(this.doc.owner.id, () => {
+            this.update()
+            this.mod.serverCommunications.send({
                 type: 'participant_update'
             })
         })
     }
 
     updateData(doc, docInfo) {
-        let that = this
         this.doc = updateDoc(doc)
         this.docInfo = docInfo
         this.docInfo.changed = false
         this.docInfo.title_changed = false
-
 
         if (this.doc.version === 0) {
             // If the document is new, change the url.
@@ -337,17 +343,19 @@ export class Editor {
         this.mod.comments.store.receive(comments, comment_version)
     }
 
-    // Creates a hash value for the entire document so that we can compare with other clients if
-    // we really have the same contents
+    // Creates a hash value for the entire document so that we can compare with
+    // other clients if we really have the same contents.
     getHash() {
-        return objectHash.MD5(this.pm.mod.collab.versionDoc.toJSON(), {unorderedArrays: true})
+        return objectHash.MD5(
+            this.pm.mod.collab.versionDoc.toJSON(),
+            {unorderedArrays: true}
+        )
     }
 
     // Get updates to document and then send updates to the server
     save(callback) {
-        let that = this
-        this.getUpdates(function() {
-            that.sendDocumentUpdate(function(){
+        this.getUpdates(() => {
+            this.sendDocumentUpdate(() => {
                 if (callback) {
                     callback()
                 }
@@ -405,10 +413,11 @@ export class Editor {
             //User has a comment-only role (commentator, editor or reviewer)
 
             //Check all transformation steps. If step type not allowed = prohibit
-            if (!transform.steps.every(function(step) {
-                //check if in allowed array. if false - exit loop
-                return (step.jsonID === 'addMark' || step.jsonID === 'removeMark') && step.mark.type.name === 'comment'
-            })) {
+            //check if in allowed array. if false - exit loop
+            if (!transform.steps.every(step =>
+                (step.jsonID === 'addMark' || step.jsonID === 'removeMark') &&
+                step.mark.type.name === 'comment'
+            )) {
                 prohibited = true
             }
         }
@@ -419,22 +428,22 @@ export class Editor {
     // Things to be executed on every editor transform.
     onTransform(transform, local) {
         let updateBibliography = false, updateTitle = false, updateSettings = false,
-            commentIds = [], that = this
+            commentIds = []
             // Check what area is affected
 
-        transform.steps.forEach(function(step, index) {
+        transform.steps.forEach((step, index) => {
             if (step.jsonID === 'replace' || step.jsonID === 'replaceAround') {
                 if (step.from !== step.to) {
                     transform.docs[index].nodesBetween(
                         step.from,
                         step.to,
-                        function(node, pos, parent) {
+                        (node, pos, parent) => {
                             if (node.type.name === 'citation') {
                                 // A citation was replaced
                                 updateBibliography = true
                             }
                             if (local) {
-                                let commentId = that.mod.comments.layout.findCommentId(node)
+                                let commentId = this.mod.comments.layout.findCommentId(node)
                                 if (commentId !== false && commentIds.indexOf(commentId)===-1) {
                                     commentIds.push(commentId)
                                 }
@@ -445,7 +454,7 @@ export class Editor {
                         updateSettings = true
                     }
                 }
-                let docPart = that.pm.doc.resolve(step.from).node(2)
+                let docPart = this.pm.doc.resolve(step.from).node(2)
                 if (docPart && docPart.type.name === 'title') {
                     updateTitle = true
                 }
@@ -454,7 +463,7 @@ export class Editor {
 
         if (updateBibliography) {
             // Recreate the bibliography on next flush.
-            this.pm.scheduleDOMUpdate(() => {return that.mod.citations.resetCitations()})
+            this.pm.scheduleDOMUpdate(() => this.mod.citations.resetCitations())
         }
 
         if (updateTitle) {
@@ -475,7 +484,9 @@ export class Editor {
             // Check if the deleted comment referrers still are somewhere else in the doc.
             // If not, delete them.
             // TODO: Is a timeout/scheduleDOMUpdate really needed here?
-            this.pm.scheduleDOMUpdate(() => {return that.mod.comments.store.checkAndDelete(commentIds)})
+            this.pm.scheduleDOMUpdate(
+                () => this.mod.comments.store.checkAndDelete(commentIds)
+            )
         }
 
     }

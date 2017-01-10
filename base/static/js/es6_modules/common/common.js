@@ -4,7 +4,7 @@
  */
 
 export let addDropdownBox = function(btn, box) {
-    btn.bind('mousedown', function(event) {
+    btn.bind('mousedown', event => {
         event.preventDefault()
         if(btn.hasClass('disabled')) {
             return
@@ -25,8 +25,8 @@ let openDropdownBox = function(box) {
     // Give that the dropdown menu was opened through a mousedown event, there
     // will be a first click event following it. We will wait for the second
     // click event.
-    jQuery(document).one('click', function() {
-        jQuery(document).one('click', function(event){
+    jQuery(document).one('click', () => {
+        jQuery(document).one('click', event => {
             event.preventDefault()
             box.hide()
         })
@@ -152,7 +152,7 @@ export let csrfToken = getCookie('csrftoken')
      }
 
      let out = ""
-     combined.split('\n').forEach(function(line){
+     combined.split('\n').forEach(line => {
          out += line.replace(/^\s*/g,'')
      })
      return out

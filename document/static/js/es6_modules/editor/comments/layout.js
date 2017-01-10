@@ -25,7 +25,6 @@ export class ModCommentLayout {
     }
 
     bindEvents() {
-        let that = this
 
         // Handle comments show/hide
         jQuery(document).on('click', '#comments-display:not(.disabled)',
@@ -35,28 +34,29 @@ export class ModCommentLayout {
                 jQuery('#flow').toggleClass('comments-enabled')
                 jQuery('.toolbarcomment button').toggleClass('disabled')
             })
+        let that = this
+        jQuery(document).on('mousedown', '#comments-filter label',
+            function(event) {
+                event.preventDefault()
+                let filterType = jQuery(this).attr("data-filter")
 
-        jQuery(document).on('mousedown', '#comments-filter label', function(event) {
-            event.preventDefault()
-            let filterType = jQuery(this).attr("data-filter")
-
-            switch (filterType) {
-                case 'r':
-                case 'w':
-                case 'e':
-                case 'c':
-                    that.filterByUserType(filterType)
-                    break
-                case 'username':
-                    that.filterByUserDialog()
-                    break
+                switch (filterType) {
+                    case 'r':
+                    case 'w':
+                    case 'e':
+                    case 'c':
+                        that.filterByUserType(filterType)
+                        break
+                    case 'username':
+                        that.filterByUserDialog()
+                        break
+                }
             }
-
-        })
+        )
 
         let pm = this.mod.editor.pm
-        pm.updateScheduler([pm.on.change, pm.on.setDoc], () => {return that.onChange()})
-        pm.updateScheduler([pm.on.selectionChange], () => {return that.onSelectionChange()})
+        pm.updateScheduler([pm.on.change, pm.on.setDoc], () => that.onChange())
+        pm.updateScheduler([pm.on.selectionChange], () => that.onSelectionChange())
 
     }
 
@@ -98,8 +98,7 @@ export class ModCommentLayout {
 
 
     layoutComments() {
-        let that = this
-        this.mod.editor.pm.scheduleDOMUpdate(() => {return that.updateDOM()})
+        this.mod.editor.pm.scheduleDOMUpdate(() => this.updateDOM())
     }
 
     isCurrentlyEditing() {
@@ -158,7 +157,7 @@ export class ModCommentLayout {
     // caret is placed, if the editor is in focus.
     activateSelectedComment() {
 
-        let selection = this.mod.editor.pm.selection, comment = false, that = this
+        let selection = this.mod.editor.pm.selection, comment = false
 
         if (selection.empty) {
             let node = this.mod.editor.pm.doc.nodeAt(selection.from)
@@ -166,39 +165,42 @@ export class ModCommentLayout {
                 comment = this.findCommentsAt(node)
             }
         } else {
-            this.mod.editor.pm.doc.nodesBetween(selection.from, selection.to, function(node, pos, parent) {
-                if (!node.isInline) {
-                    return
+            this.mod.editor.pm.doc.nodesBetween(
+                selection.from,
+                selection.to,
+                (node, pos, parent) => {
+                    if (!node.isInline) {
+                        return
+                    }
+                    comment = comment ? comment : this.findCommentsAt(node)
                 }
-                comment = comment ? comment : that.findCommentsAt(node)
-            })
+            )
         }
 
         if (comment) {
             if (this.activeCommentId !== comment.id) {
-              that.activateComment(comment.id)
+              this.activateComment(comment.id)
             }
         } else {
-            that.deactivateAll()
+            this.deactivateAll()
         }
     }
 
     updateDOM() {
         // Handle the layout of the comments on the screen.
         // DOM write phase
-        let that = this
 
         let theComments = [], referrers = [], activeCommentStyle = ''
 
-        this.mod.editor.pm.doc.descendants(function(node, pos, parent) {
+        this.mod.editor.pm.doc.descendants((node, pos, parent) => {
             if (!node.isInline) {
                 return
             }
-            let commentId = that.findCommentId(node)
+            let commentId = this.findCommentId(node)
             if (!commentId) {
                 return
             }
-            let comment = that.findComment(commentId)
+            let comment = this.findComment(commentId)
             if (!comment) {
                 // We have no comment with this ID. Ignore the referrer.
                 return;
@@ -207,10 +209,12 @@ export class ModCommentLayout {
                 // comment already placed
                 return
             }
-            if (comment.id === that.activeCommentId) {
-                activeCommentStyle += '.comments-enabled .comment[data-id="' + comment.id + '"] {background-color: #fffacf;}'
+            if (comment.id === this.activeCommentId) {
+                activeCommentStyle +=
+                    `.comments-enabled .comment[data-id="${comment.id}"] {background-color: #fffacf;}`
             } else {
-                activeCommentStyle += '.comments-enabled .comment[data-id="' + comment.id + '"] {background-color: #f2f2f2;}'
+                activeCommentStyle +=
+                    `.comments-enabled .comment[data-id="${comment.id}"] {background-color: #f2f2f2;}`
             }
             theComments.push(comment)
             referrers.push(pos)
@@ -235,7 +239,7 @@ export class ModCommentLayout {
         let commentsTemplateHTML = commentsTemplate({
             theComments,
             localizeDate,
-            that
+            that: this
         })
         if (document.getElementById('comment-box-container').innerHTML !== commentsTemplateHTML) {
             document.getElementById('comment-box-container').innerHTML = commentsTemplateHTML
@@ -246,19 +250,19 @@ export class ModCommentLayout {
             document.getElementById('active-comment-style').innerHTML = activeCommentStyle
         }
 
-        return function () {
+        return () => {
             // DOM read phase
             let totalOffset = document.getElementById('comment-box-container').getBoundingClientRect().top + 10,
               commentBoxes = document.querySelectorAll('#comment-box-container .comment-box'),
               commentPlacementStyle = ''
-            referrers.forEach(function(referrer, index) {
+            referrers.forEach((referrer, index) => {
                 let commentBox = commentBoxes[index]
                 if (commentBox.classList.contains("hidden")) {
                     return
                 }
                 let commentBoxCoords = commentBox.getBoundingClientRect(),
                   commentBoxHeight = commentBoxCoords.height,
-                  referrerTop = that.mod.editor.pm.coordsAtPos(referrer).top,
+                  referrerTop = this.mod.editor.pm.coordsAtPos(referrer).top,
                   topMargin = 10
 
                 if (referrerTop > totalOffset) {

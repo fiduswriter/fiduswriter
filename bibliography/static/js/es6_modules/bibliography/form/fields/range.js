@@ -30,7 +30,6 @@ export class RangeFieldForm{
     }
 
     drawRangeForm() {
-        let that = this
         this.fields = {}
         this.dom.innerHTML = noSpaceTmp`
             <div class='range-field input-with-button'>
@@ -51,9 +50,10 @@ export class RangeFieldForm{
             gettext('To')
         )
         this.fields.to.init()
-        this.dom.querySelector('.switch-type').addEventListener('click', ()=>{
-            that.switchMode()
-        })
+        this.dom.querySelector('.switch-type').addEventListener(
+            'click',
+            () => this.switchMode()
+        )
     }
 
     switchMode() {
@@ -66,7 +66,6 @@ export class RangeFieldForm{
     }
 
     drawSingleValueForm() {
-        let that = this
         this.fields = {}
         this.dom.innerHTML = noSpaceTmp`
             <div class='range-field input-with-button'>
@@ -79,9 +78,10 @@ export class RangeFieldForm{
             this.currentValue[0]
         )
         this.fields.single.init()
-        this.dom.querySelector('.switch-type').addEventListener('click', ()=>{
-            that.switchMode()
-        })
+        this.dom.querySelector('.switch-type').addEventListener(
+            'click',
+            () => this.switchMode()
+        )
     }
 
     get value() {

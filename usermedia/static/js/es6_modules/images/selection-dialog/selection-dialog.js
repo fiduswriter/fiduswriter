@@ -89,7 +89,7 @@ export class ImageSelectionDialog {
             })
 
         jQuery('#selectImageUploadButton').bind('click', () => {
-            new ImageUploadDialog(this.imageDB, false, this.ownerId, function(imageId) {
+            new ImageUploadDialog(this.imageDB, false, this.ownerId, imageId => {
                 this.imageId = imageId
                 this.imageDialog.dialog('close')
                 this.createImageSelectionDialog()

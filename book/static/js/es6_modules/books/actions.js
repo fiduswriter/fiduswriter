@@ -336,7 +336,6 @@ export class BookActions {
                 that.bookList.imageDB.createImage(formValues, response => callback(response))
             }
         }
-
         xhr.send()
     }
 

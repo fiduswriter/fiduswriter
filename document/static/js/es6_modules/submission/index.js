@@ -35,7 +35,7 @@ let setRights = function(orginalDocId, CopyDocId, user, access_rights) {
  * @function submitDoc
  * @param
  */
-let submitDoc = function(editor, userProfile) {
+let submitDoc = function(editor) {
     let oldBibDB = editor.bibDB.db
     let oldImageDB = editor.imageDB.db
     let owner = {}
@@ -52,11 +52,11 @@ let submitDoc = function(editor, userProfile) {
                         setRights(editor.doc.id, doc.id, editor.user, editor.doc.access_rights)
                         //window.location.href = `/document/${doc.id}/`
                         let dataToOjs = new window.FormData()
-                        dataToOjs.append('username', userProfile["username"])
+                        dataToOjs.append('username', editor.user.username)
                         dataToOjs.append('title', editor.doc.title)
-                        dataToOjs.append('first_name', userProfile["first_name"])
-                        dataToOjs.append('last_name', userProfile["last_name"])
-                        dataToOjs.append('email', userProfile["email"])
+                        dataToOjs.append('first_name', editor.user.first_name)
+                        dataToOjs.append('last_name', editor.user.last_name)
+                        dataToOjs.append('email', editor.user.email)
                         dataToOjs.append('affiliation', "sample affiliation")
                         dataToOjs.append('author_url', "sample author_url")
                         dataToOjs.append('journal_id', jQuery("input[type='radio'][name='journalList']:checked").val())
@@ -121,27 +121,10 @@ let submitDoc = function(editor, userProfile) {
 
 export let selectJournal = function(editor) {
     let list = null
-    let userProfile = {}
     let diaButtons = {}
-    jQuery.ajax({
-        url: '/document/profile/',
-        data: {},
-        type: 'POST',
-        cache: false,
-        contentType: false,
-        processData: false,
-        crossDomain: false, // obviates need for sameOrigin test
-        beforeSend: (xhr, settings) =>
-            xhr.setRequestHeader("X-CSRFToken", csrfToken),
-        success: result => {
-            userProfile = result['user']
-        },
-        error: () =>
-            addAlert('error', 'can not get the user information')
-    })
 
     diaButtons[gettext("Submit")] = function() {
-        submitDoc(editor, userProfile)
+        submitDoc(editor)
         jQuery(this).dialog("close")
 
     }
@@ -181,25 +164,9 @@ export let selectJournal = function(editor) {
 export let submissionRevisionDone = function(editor) {
     let diaButtons = {}
     let submission_info = {}
-    let userProfile = {}
-    jQuery.ajax({
-        url: '/document/profile/',
-        data: {},
-        type: 'POST',
-        cache: false,
-        contentType: false,
-        processData: false,
-        crossDomain: false, // obviates need for sameOrigin test
-        beforeSend: (xhr, settings) =>
-            xhr.setRequestHeader("X-CSRFToken", csrfToken),
-        success: result => {
-            userProfile = result['user']
-        },
-        error: () =>
-            addAlert('error', 'can not get the user information')
-    })
+
     diaButtons[gettext("Submit")] = function() {
-        submitDoc(editor, userProfile)
+        submitDoc(editor)
         jQuery(this).dialog("close")
     }
     diaButtons[gettext("Cancel")] = function() {
@@ -227,7 +194,6 @@ export let submissionRevisionDone = function(editor) {
 export let reviewSubmit = function(editor) {
     let diaButtons = {}
     let submission_info = {}
-    let userProfile = {}
     jQuery.ajax({
         url: '/document/reviewsubmit/',
         data: {
@@ -242,7 +208,6 @@ export let reviewSubmit = function(editor) {
             xhr.setRequestHeader("X-CSRFToken", csrfToken),
         success: result => {
             submission_info = result['submission']
-            userProfile = result['user']
         },
         error: () =>
             addAlert('error', 'can not get the submission information')
@@ -250,7 +215,7 @@ export let reviewSubmit = function(editor) {
 
     diaButtons[gettext("Submit")] = function() {
         let dataToOjs = new window.FormData()
-        dataToOjs.append('email', userProfile["email"])
+        dataToOjs.append('email', editor.user.email)
         dataToOjs.append('doc_id', editor.doc.id)
         dataToOjs.append('journal_id', submission_info["journal_id"])
         dataToOjs.append('submission_id', submission_info["submission_id"])
@@ -286,7 +251,6 @@ export let reviewSubmit = function(editor) {
                         xhr.setRequestHeader("X-CSRFToken", csrfToken),
                     success: result => {
                         submission_info = result['submission']
-                        userProfile = result['user']
                     },
                     error: () =>
                         addAlert('error', 'can not give back review rights since can not get the submission information')

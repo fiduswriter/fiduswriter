@@ -18,7 +18,6 @@ urlpatterns = [
     url('^delete/$', views.delete_js, name='delete_js'),
     url('^import/$', views.import_js, name='import_js'),
     url('^upload/$', views.upload_revision_js, name='upload_revision_js'),
-    url('^profile/$', views.profile_js, name='profile_js'),
     url(
         '^get_revision/(?P<revision_id>[0-9]+)/$',
         views.get_revision,

@@ -88,6 +88,7 @@ class AccessRight(models.Model):
         )
 
 
+# A submission registered with OJS
 class Submission(models.Model):
     document = models.ForeignKey(Document)
     user = models.ForeignKey(User)
@@ -96,6 +97,7 @@ class Submission(models.Model):
     version_id = models.PositiveIntegerField(default=0)
 
 
+# Access rights at the time of submission. To be restored after review is over.
 class SubmittedAccessRight(models.Model):
     document = models.ForeignKey(Document)
     user = models.ForeignKey(User)

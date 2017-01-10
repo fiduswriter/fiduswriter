@@ -166,15 +166,6 @@ def get_documentlist_js(request):
     )
 
 
-def make_user_data(u_name, u_email):
-    u_data = {
-        'username': u_name,
-        'email': u_email
-    }
-
-    return u_data
-
-
 def create_user(request, user_data):
     signup_form = forms.SignupForm(user_data)
     try:
@@ -211,9 +202,10 @@ def get_reviewer_for_post(request):
             reviewer = reviewers[0]
         else:
             # "reviewer with this email does not exist so create it"
-            u_data = make_user_data(
-                u_name,
-                email)
+            u_data = {
+                'username': u_name,
+                'email': email
+            }
             reviewer = create_user(request, u_data)
             reviewers = User.objects.filter(email=email)
             reviewer = reviewers[0]

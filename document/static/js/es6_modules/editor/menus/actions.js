@@ -5,7 +5,7 @@ import {HTMLExporter} from "../../exporter/html"
 import {EpubExporter} from "../../exporter/epub"
 import {DocxExporter} from "../../exporter/docx"
 import {OdtExporter} from "../../exporter/odt"
-import {selectJournal, reviewSubmit, submissionRevisionDone} from "../../ojs"
+import {selectJournal, reviewSubmit, submissionRevisionDone} from "../../submission"
 
 export class ModMenusActions {
     constructor(mod) {

@@ -26,10 +26,10 @@ export class TitleFieldForm{
             })
             this.pm.setDoc(pmDoc)
         }
-        this.pm.on.blur.add(function(){
+        this.pm.on.blur.add(() => {
             jQuery('.ui-dialog-buttonset .fw-edit').addClass('disabled')
         })
-        this.pm.on.focus.add(function(){
+        this.pm.on.focus.add(() => {
             jQuery('.ui-dialog-buttonset .fw-edit').removeClass('disabled')
         })
         let supportedMarks = ['em', 'strong', 'sub', 'sup', 'smallcaps', 'nocase']

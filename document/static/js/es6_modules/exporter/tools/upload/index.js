@@ -25,15 +25,10 @@ export let uploadFile = function(zipFilename, blob, editor) {
             contentType: false,
             processData: false,
             crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: function() {
-                addAlert('success', gettext('Revision saved'))
-            },
-            error: function() {
-                addAlert('error', gettext('Revision could not be saved.'))
-            }
+            beforeSend: (xhr, settings) =>
+                xhr.setRequestHeader("X-CSRFToken", csrfToken),
+            success: () => addAlert('success', gettext('Revision saved')),
+            error: () => addAlert('error', gettext('Revision could not be saved.'))
         })
         jQuery(this).dialog("close")
 

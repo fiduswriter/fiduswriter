@@ -33,8 +33,8 @@ export let zipFileCreator = function(textFiles, httpFiles, zipFileName,
         let p = []
         for (let i = 0; i < httpFiles.length; i++) {
             p.push(new Promise(
-                function(resolve) {
-                    JSZipUtils.getBinaryContent(httpFiles[i].url, function(err, contents) {
+                resolve => {
+                    JSZipUtils.getBinaryContent(httpFiles[i].url, (err, contents) => {
                         zipFs.file(httpFiles[i].filename, contents, {binary: true, compression: 'DEFLATE'})
                         resolve()
                     })
@@ -43,15 +43,16 @@ export let zipFileCreator = function(textFiles, httpFiles, zipFileName,
 
         }
         Promise.all(p).then(
-            function(){
-                zipFs.generateAsync({type:"blob"})
-                    .then(function(blob) {
+            () => {
+                zipFs.generateAsync({type:"blob"}).then(
+                    blob => {
                         if (upload) {
                             uploadFile(zipFileName, blob, editor)
                         } else {
                             downloadFile(zipFileName, blob)
                         }
-                })
+                    }
+                )
             }
 
         )
@@ -59,7 +60,7 @@ export let zipFileCreator = function(textFiles, httpFiles, zipFileName,
 
     if (includeZips) {
         let i = 0
-        let includeZipLoop = function() {
+        let includeZipLoop = () => {
             if (i === includeZips.length) {
                 createZip()
             } else {
@@ -68,8 +69,8 @@ export let zipFileCreator = function(textFiles, httpFiles, zipFileName,
                 } else {
                     zipDir = zipFs.folder(includeZips[i].directory)
                 }
-                JSZipUtils.getBinaryContent(includeZips[i].url, function(err, contents) {
-                    zipDir.loadAsync(contents).then(function (importedZip) {
+                JSZipUtils.getBinaryContent(includeZips[i].url, (err, contents) => {
+                    zipDir.loadAsync(contents).then(importedZip => {
                         i++
                         includeZipLoop()
                     })

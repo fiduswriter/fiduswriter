@@ -16,35 +16,45 @@ export class ModMenusActions {
     }
 
     saveRevision() {
-        let that = this
-        that.mod.editor.save(function() {
-            uploadNative(that.mod.editor)
+        this.mod.editor.save(() => {
+            uploadNative(this.mod.editor)
         })
     }
 
     saveCopy() {
-        let that = this
-        that.mod.editor.save(function() {
-            if (that.mod.editor.doc.owner.id === that.mod.editor.user.id) {
+        this.mod.editor.save(() => {
+            if (this.mod.editor.doc.owner.id === this.mod.editor.user.id) {
                 // We are copying from and to the same user. We don't need different databases for this.
-                savecopy(that.mod.editor.doc, that.mod.editor.bibDB.db, that.mod.editor.imageDB.db,
-                    that.mod.editor.bibDB.db, that.mod.editor.imageDB.db, that.mod.editor.user,
-                    function(doc, docInfo, savedBibEntries){
+                savecopy(
+                    this.mod.editor.doc,
+                    this.mod.editor.bibDB.db,
+                    this.mod.editor.imageDB.db,
+                    this.mod.editor.bibDB.db,
+                    this.mod.editor.imageDB.db,
+                    this.mod.editor.user,
+                    (doc, docInfo, savedBibEntries) => {
                         window.location.href = `/document/${doc.id}/`
                 })
             } else {
-                // We copy from one user to another. So we first load one set of databases, and then the other
-                let oldBibDB = that.mod.editor.bibDB.db
-                let oldImageDB = that.mod.editor.imageDB.db
-                that.mod.editor.removeBibDB()
-                that.mod.editor.removeImageDB()
-                that.mod.editor.getBibDB(that.mod.editor.user.id, function(){
-                    that.mod.editor.getImageDB(that.mod.editor.user.id, function(){
-                        savecopy(that.mod.editor.doc, oldBibDB, oldImageDB, that.mod.editor.bibDB.db,
-                                that.mod.editor.imageDB.db, that.mod.editor.user,
-                                function(doc, docInfo, savedBibEntries){
-                            window.location.href = `/document/${doc.id}/`
-                        })
+                // We copy from one user to another. So we first load one set of
+                // databases, and then the other
+                let oldBibDB = this.mod.editor.bibDB.db
+                let oldImageDB = this.mod.editor.imageDB.db
+                this.mod.editor.removeBibDB()
+                this.mod.editor.removeImageDB()
+                this.mod.editor.getBibDB(this.mod.editor.user.id, () => {
+                    this.mod.editor.getImageDB(this.mod.editor.user.id, () => {
+                        savecopy(
+                            this.mod.editor.doc,
+                            oldBibDB,
+                            oldImageDB,
+                            this.mod.editor.bibDB.db,
+                            this.mod.editor.imageDB.db,
+                            this.mod.editor.user,
+                            (doc, docInfo, savedBibEntries) => {
+                                window.location.href = `/document/${doc.id}/`
+                            }
+                        )
                     })
                 })
             }
@@ -52,56 +62,73 @@ export class ModMenusActions {
     }
 
     download() {
-        let that = this
-        that.mod.editor.save(function (){
-            new NativeExporter(that.mod.editor.doc, that.mod.editor.bibDB, that.mod.editor.imageDB.db)
+        this.mod.editor.save(() => {
+            new NativeExporter(
+                this.mod.editor.doc,
+                this.mod.editor.bibDB,
+                this.mod.editor.imageDB.db
+            )
         })
     }
 
     downloadTemplateExport(templateUrl, templateType) {
-        let that = this
-        that.mod.editor.save(function() {
+        this.mod.editor.save(() => {
             if (templateType ==='docx') {
-                new DocxExporter(that.mod.editor.doc, templateUrl, that.mod.editor.bibDB, that.mod.editor.imageDB)
+                new DocxExporter(
+                    this.mod.editor.doc,
+                    templateUrl,
+                    this.mod.editor.bibDB,
+                    this.mod.editor.imageDB
+                )
             } else {
-                new OdtExporter(that.mod.editor.doc, templateUrl, that.mod.editor.bibDB, that.mod.editor.imageDB)
+                new OdtExporter(
+                    this.mod.editor.doc,
+                    templateUrl,
+                    this.mod.editor.bibDB,
+                    this.mod.editor.imageDB
+                )
             }
 
         })
     }
 
     downloadLatex() {
-        let that = this
-        that.mod.editor.save(function() {
-            new LatexExporter(that.mod.editor.doc, that.mod.editor.bibDB, that.mod.editor.imageDB)
+        this.mod.editor.save(() => {
+            new LatexExporter(
+                this.mod.editor.doc,
+                this.mod.editor.bibDB,
+                this.mod.editor.imageDB
+            )
         })
     }
 
     downloadEpub() {
-        let that = this
-        that.mod.editor.save(function () {
-            new EpubExporter(that.mod.editor.doc, that.mod.editor.bibDB)
+        this.mod.editor.save(() => {
+            new EpubExporter(
+                this.mod.editor.doc,
+                this.mod.editor.bibDB
+            )
         })
     }
 
     downloadHtml() {
-        let that = this
-        that.mod.editor.save(function() {
-            new HTMLExporter(that.mod.editor.doc, that.mod.editor.bibDB)
+        this.mod.editor.save(() => {
+            new HTMLExporter(
+                this.mod.editor.doc,
+                this.mod.editor.bibDB
+            )
         })
     }
 
     close() {
-        let that = this
-        that.mod.editor.save(function () {
+        this.mod.editor.save(() => {
             window.location.href = '/'
         })
     }
 
     submitOjs() {
-        let that = this
-        that.mod.editor.save(function () {
-            selectJournal(that.mod.editor)
+        this.mod.editor.save(() => {
+            selectJournal(this.mod.editor)
         })
     }
 

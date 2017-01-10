@@ -11,7 +11,10 @@ export let linkDialog = function (mod) {
         linkTitle = '',
         defaultLink = 'http://',
         submitButtonText = 'Insert',
-        linkElement = _.find(editor.currentPm.activeMarks(),function(mark){return (mark.type.name==='link')})
+        linkElement = _.find(
+            editor.currentPm.activeMarks(),
+            mark => mark.type.name === 'link'
+        )
 
 
     if (linkElement) {
@@ -23,7 +26,7 @@ export let linkDialog = function (mod) {
     dialogButtons.push({
         text: gettext(submitButtonText),
         class: 'fw-button fw-dark',
-        click: function() {
+        click: () => {
 
             let newLink = dialog.find('input.link').val(),
                 linkTitle = dialog.find('input.linktitle').val(),
@@ -53,7 +56,7 @@ export let linkDialog = function (mod) {
     dialogButtons.push({
         text: gettext('Cancel'),
         class: 'fw-button fw-orange',
-        click: function() {
+        click: () => {
             dialog.dialog('close')
             editor.currentPm.focus()
         }

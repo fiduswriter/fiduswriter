@@ -6,7 +6,6 @@ export class URIFieldForm{
     }
 
     init() {
-        let that = this
         this.dom.innerHTML = `<input class="uri" type="text" value="${this.initialValue}" placeholder="${this.placeHolder}">`
     }
 

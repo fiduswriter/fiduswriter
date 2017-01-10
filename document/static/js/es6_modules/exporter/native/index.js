@@ -14,9 +14,13 @@ export let FW_FILETYPE_VERSION = "1.6"
  * @param aDocument The document to turn into a Fidus Writer document and upload.
  */
 export let uploadNative = function(editor) {
-    exportNative(editor.doc, editor.imageDB.db, editor.bibDB.db, function(doc, shrunkImageDB, shrunkBibDB, images) {
-        exportNativeFile(editor.doc, shrunkImageDB, shrunkBibDB, images, true, editor)
-    })
+    exportNative(
+        editor.doc,
+        editor.imageDB.db,
+        editor.bibDB.db,
+        (doc, shrunkImageDB, shrunkBibDB, images) =>
+            exportNativeFile(editor.doc, shrunkImageDB, shrunkBibDB, images, true, editor)
+    )
 }
 
 export class NativeExporter {
@@ -28,34 +32,35 @@ export class NativeExporter {
     }
 
     init() {
-        let that = this
-        this.getBibDB(function(){
-            that.getImageDB(function(){
-                exportNative(that.doc, that.imageDB, that.bibDB.db, exportNativeFile)
-            })
-        })
+        this.getBibDB(
+            () => {
+                this.getImageDB(
+                    () => {
+                        exportNative(this.doc, this.imageDB, this.bibDB.db, exportNativeFile)
+                    }
+                )
+            }
+        )
     }
 
     getBibDB(callback) {
-        let that = this
         if (!this.bibDB) {
             this.bibDB = new BibliographyDB(this.doc.owner.id, false, false, false)
-            this.bibDB.getDB(function() {
-                callback()
-            })
+            this.bibDB.getDB(() => callback())
         } else {
             callback()
         }
     }
 
     getImageDB(callback) {
-        let that = this
         if (!this.imageDB) {
             let imageGetter = new ImageDB(this.doc.owner.id)
-            imageGetter.getDB(function(){
-                that.imageDB = imageGetter.db
-                callback()
-            })
+            imageGetter.getDB(
+                () => {
+                    this.imageDB = imageGetter.db
+                    callback()
+                }
+            )
         } else {
             callback()
         }
@@ -83,16 +88,12 @@ export let exportNative = function(doc, anImageDB, aBibDB, callback) {
                 break
             case 'footnote':
                 if (node.attrs && node.attrs.footnote) {
-                    node.attrs.footnote.forEach(childNode => {
-                        walkTree(childNode)
-                    })
+                    node.attrs.footnote.forEach(childNode => walkTree(childNode))
                 }
                 break
         }
         if (node.content) {
-            node.content.forEach(childNode => {
-                walkTree(childNode)
-            })
+            node.content.forEach(childNode => walkTree(childNode))
         }
     }
 

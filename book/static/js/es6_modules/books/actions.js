@@ -18,7 +18,6 @@ export class BookActions {
     }
 
     deleteBook(id) {
-        let that = this
         let postData = {}
         postData['id'] = id
         jQuery.ajax({
@@ -27,16 +26,16 @@ export class BookActions {
             type: 'POST',
             dataType: 'json',
             crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: function (data, textStatus, jqXHR) {
-                that.stopBookTable()
+            beforeSend: (xhr, settings) =>
+                xhr.setRequestHeader("X-CSRFToken", csrfToken),
+            success: (data, textStatus, jqXHR) => {
+                this.stopBookTable()
                 jQuery('#Book_' + id).detach()
-                that.bookList.bookList = _.reject(that.bookList.bookList, function (book) {
-                    return book.id == id
-                })
-                that.startBookTable()
+                this.bookList.bookList = _.reject(
+                    this.bookList.bookList,
+                    book => book.id === id
+                )
+                this.startBookTable()
             },
         })
     }
@@ -82,12 +81,12 @@ export class BookActions {
     }
 
     deleteBookDialog(ids) {
-        let that = this
         jQuery('body').append('<div id="confirmdeletion" title="' + gettext(
                 'Confirm deletion') +
             '"><p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>' +
             gettext('Delete the book(s)?') + '</p></div>')
         let diaButtons = {}
+        let that = this
         diaButtons[gettext('Delete')] = function () {
             for (let i = 0; i < ids.length; i++) {
                 that.deleteBook(ids[i])
@@ -104,9 +103,7 @@ export class BookActions {
             resizable: false,
             height: 180,
             modal: true,
-            close: function () {
-                jQuery("#confirmdeletion").detach()
-            },
+            close: () => jQuery("#confirmdeletion").detach(),
             buttons: diaButtons,
             create: function () {
                 let theDialog = jQuery(this).closest(".ui-dialog")
@@ -131,38 +128,33 @@ export class BookActions {
 
 
     getBookListData(id) {
-        let that = this
         jQuery.ajax({
             url: '/book/booklist/',
             data: {},
             type: 'POST',
             dataType: 'json',
             crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: function (response, textStatus, jqXHR) {
-                that.bookList.bookList = that.unpackBooks(response.books)
-                that.bookList.documentList = response.documents
-                that.bookList.teamMembers = response.team_members
-                that.bookList.accessRights = response.access_rights
-                that.bookList.user = response.user
+            beforeSend: (xhr, settings) =>
+                xhr.setRequestHeader("X-CSRFToken", csrfToken),
+            success: (response, textStatus, jqXHR) => {
+                this.bookList.bookList = this.unpackBooks(response.books)
+                this.bookList.documentList = response.documents
+                this.bookList.teamMembers = response.team_members
+                this.bookList.accessRights = response.access_rights
+                this.bookList.user = response.user
                 jQuery.event.trigger({
                     type: "bookDataLoaded",
                 })
             },
-            error: function (jqXHR, textStatus, errorThrown) {
-                addAlert('error', jqXHR.responseText)
-            },
-            complete: function () {
-                deactivateWait()
-            }
+            error: (jqXHR, textStatus, errorThrown) =>
+                addAlert('error', jqXHR.responseText),
+            complete: () => deactivateWait()
         })
     }
 
     editChapterDialog(aChapter, theBook) {
-        let that = this
-        let aDocument = _.findWhere(that.bookList.documentList, {
+
+        let aDocument = _.findWhere(this.bookList.documentList, {
             id: aChapter.text
         }),
             documentTitle = aDocument.title,
@@ -179,6 +171,7 @@ export class BookActions {
 
         jQuery('body').append(dialogBody)
         let diaButtons = {}
+        let that = this
         diaButtons[gettext('Submit')] = function () {
             aChapter.part = jQuery('#book-chapter-part').val()
             jQuery('#book-chapter-list').html(bookChapterListTemplate({
@@ -204,16 +197,14 @@ export class BookActions {
                 theDialog.find(".ui-button:last").addClass(
                     "fw-button fw-orange")
             },
-            close: function () {
+            close: () =>
                 jQuery('#book-chapter-dialog').dialog('destroy').remove()
-            }
         })
 
     }
 
 
     saveBook(theBook, theOldBook, currentDialog) {
-        let that = this
         jQuery.ajax({
             url: '/book/save/',
             data: {
@@ -222,64 +213,66 @@ export class BookActions {
             type: 'POST',
             dataType: 'json',
             crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: function (response, textStatus, jqXHR) {
+            beforeSend: (xhr, settings) =>
+                xhr.setRequestHeader("X-CSRFToken", csrfToken),
+            success: (response, textStatus, jqXHR) => {
                 if (jqXHR.status == 201) {
                     theBook.id = response.id
                     theBook.added = response.added
                 }
                 theBook.updated = response.updated
-                if (typeof (theOldBook) != 'undefined') {
-                    that.bookList.bookList = _.reject(that.bookList.bookList, function (book) {
-                        return (book === theOldBook)
-                    })
+                if (typeof (theOldBook) !== 'undefined') {
+                    this.bookList.bookList = _.reject(
+                        this.bookList.bookList,
+                        book => book = theOldBook
+                    )
                 }
-                that.bookList.bookList.push(theBook)
-                that.stopBookTable()
-                jQuery('#book-table tbody').html(bookListTemplate({bookList: that.bookList.bookList, user: that.bookList.user}))
-                that.startBookTable()
+                this.bookList.bookList.push(theBook)
+                this.stopBookTable()
+                jQuery('#book-table tbody').html(bookListTemplate({
+                    bookList: this.bookList.bookList,
+                    user: this.bookList.user
+                }))
+                this.startBookTable()
                 if ((typeof (currentDialog) != 'undefined')) {
                     jQuery(currentDialog).dialog('close')
                 }
             },
-            error: function (jqXHR, textStatus, errorThrown) {
-                addAlert('error', jqXHR.responseText)
-            },
-            complete: function () {}
+            error: (jqXHR, textStatus, errorThrown) =>
+                addAlert('error', jqXHR.responseText),
+            complete: () => {}
         })
     }
 
     copyBook(theOldBook) {
-        let that = this
         let theBook = jQuery.extend(true, {}, theOldBook)
         theBook.id = 0
         theBook.is_owner = true
-        theBook.owner_avatar = that.bookList.user.avatar
-        theBook.owner_name = that.bookList.user.name
-        theBook.owner = that.bookList.user.id
+        theBook.owner_avatar = this.bookList.user.avatar
+        theBook.owner_name = this.bookList.user.name
+        theBook.owner = this.bookList.user.id
         theBook.rights = 'write'
         if (theOldBook.owner != theBook.owner) {
-            that.prepareCopyCoverImage(theBook.cover_image,
-                theOldBook.owner, function(id) {
+            this.prepareCopyCoverImage(theBook.cover_image,
+                theOldBook.owner, id => {
                     theBook.cover_image = id
-                    that.saveBook(theBook)
+                    this.saveBook(theBook)
                 })
         } else {
-            that.saveBook(theBook)
+            this.saveBook(theBook)
         }
     }
 
     prepareCopyCoverImage(coverImage, userId, callback) {
-        let that = this
 
-        this.bookList.getImageDB(function(){
-            that.getImageDB(userId,function(imageDB){
-                let coverImageImage = imageDB[coverImage]
-                that.copyCoverImage(coverImageImage,
-                    callback)
-            })
+        this.bookList.getImageDB(() => {
+            this.getImageDB(
+                userId,
+                imageDB => {
+                    let coverImageImage = imageDB[coverImage]
+                    this.copyCoverImage(coverImageImage, callback)
+                }
+            )
         })
     }
 
@@ -323,10 +316,10 @@ export class BookActions {
     }
     // TODO: Should we not be able to call a method from
     createNewImage(imageEntry, callback) {
-        let xhr = new window.XMLHttpRequest(), that = this
+        let xhr = new window.XMLHttpRequest()
         xhr.open('GET', imageEntry.oldUrl, true)
         xhr.responseType = 'blob'
-
+        let that = this
         xhr.onload = function (e) {
             if (this.status == 200) {
                 // Note: .response instead of .responseText
@@ -340,18 +333,15 @@ export class BookActions {
                 formValues.append('image', imageFile,
                     imageEntry.oldUrl.split('/').pop())
                 formValues.append('checksum', imageEntry.checksum)
-                that.bookList.imageDB.createImage(formValues, function(response){
-                    callback(response)
-                })
+                that.bookList.imageDB.createImage(formValues, response => callback(response))
             }
         }
-
         xhr.send()
     }
 
 
     createBookDialog(bookId, anImageDB) {
-        let dialogHeader, theBook, theOldBook, that = this
+        let dialogHeader, theBook, theOldBook
 
         if (bookId === 0) {
             dialogHeader = gettext('Create Book')
@@ -360,9 +350,9 @@ export class BookActions {
                 id: 0,
                 chapters: [],
                 is_owner: true,
-                owner_avatar: that.bookList.user.avatar,
-                owner_name: that.bookList.user.name,
-                owner: that.bookList.user.id,
+                owner_avatar: this.bookList.user.avatar,
+                owner_name: this.bookList.user.name,
+                owner: this.bookList.user.id,
                 rights: 'write',
                 metadata: {},
                 settings: {
@@ -372,7 +362,7 @@ export class BookActions {
                 }
             }
         } else {
-            theOldBook = _.findWhere(that.bookList.bookList, {
+            theOldBook = _.findWhere(this.bookList.bookList, {
                 id: bookId
             })
             theBook = jQuery.extend(true, {}, theOldBook)
@@ -388,11 +378,11 @@ export class BookActions {
             chapters: bookDialogChaptersTemplate({
                 theBook: theBook,
                 chapters: bookChapterListTemplate({
-                    theBook, documentList: that.bookList.documentList
+                    theBook, documentList: this.bookList.documentList
                 }),
                 documents: bookDocumentListTemplate({
                     theBook,
-                    documentList: that.bookList.documentList
+                    documentList: this.bookList.documentList
                 })
             }),
             bibliographyData: bookBibliographyDataTemplate({
@@ -413,6 +403,7 @@ export class BookActions {
             })
 
         })
+        let that = this
         jQuery(document).on('click', '.book-sort-up', function () {
             let chapter = _.findWhere(theBook.chapters, {
                 text: parseInt(jQuery(this).attr('data-id'))
@@ -444,15 +435,15 @@ export class BookActions {
             let thisChapter = _.findWhere(theBook.chapters, {
                 text: parseInt(jQuery(this).attr('data-id'))
             })
-            _.each(theBook.chapters, function (chapter) {
+            _.each(theBook.chapters, chapter => {
                 if (chapter.number > thisChapter.number) {
                     chapter.number--
                 }
             })
-            theBook.chapters = _.filter(theBook.chapters, function (
-                chapter) {
-                return (chapter !== thisChapter)
-            })
+            theBook.chapters = _.filter(
+                theBook.chapters,
+                chapter => chapter !== thisChapter
+            )
             jQuery('#book-chapter-list').html(bookChapterListTemplate({
                 theBook, documentList: that.bookList.documentList
             }))
@@ -466,14 +457,14 @@ export class BookActions {
             jQuery(this).toggleClass('checked')
         })
 
-        jQuery(document).on('click', '#add-chapter', function () {
+        jQuery(document).on('click', '#add-chapter', () => {
             jQuery('#book-document-list td.checked').each(function () {
                 let documentId = parseInt(jQuery(this).attr(
                     'data-id')),
-                    lastChapterNumber = _.max(theBook.chapters,
-                        function (chapter) {
-                            return chapter.number
-                        }).number
+                    lastChapterNumber = _.max(
+                        theBook.chapters,
+                        chapter => chapter.number
+                    ).number
                 if (isNaN(lastChapterNumber)) {
                     lastChapterNumber = 0
                 }
@@ -485,10 +476,11 @@ export class BookActions {
                 })
             })
             jQuery('#book-chapter-list').html(bookChapterListTemplate({
-                theBook, documentList: that.bookList.documentList
+                theBook,
+                documentList: this.bookList.documentList
             }))
             jQuery('#book-document-list').html(bookDocumentListTemplate({
-                documentList: that.bookList.documentList,
+                documentList: this.bookList.documentList,
                 theBook
             }))
         })
@@ -501,23 +493,26 @@ export class BookActions {
         })
 
 
-        jQuery(document).on('click', '#select-cover-image-button', function () {
-            new ImageSelectionDialog(anImageDB, theBook.cover_image, theBook.owner, function(imageId){
-                console.log(imageId)
-                console.log(anImageDB)
-                if (!imageId) {
-                    delete theBook.cover_image
-                } else {
-                    theBook.cover_image = imageId
+        jQuery(document).on('click', '#select-cover-image-button', () => {
+            new ImageSelectionDialog(
+                anImageDB,
+                theBook.cover_image,
+                theBook.owner,
+                imageId => {
+                    if (!imageId) {
+                        delete theBook.cover_image
+                    } else {
+                        theBook.cover_image = imageId
+                    }
+                    jQuery('#figure-preview-row').html(bookEpubDataCoverTemplate({
+                        anImageDB,
+                        theBook
+                    }))
                 }
-                jQuery('#figure-preview-row').html(bookEpubDataCoverTemplate({
-                    anImageDB,
-                    theBook
-                }))
-            })
+            )
         })
 
-        jQuery(document).on('click', '#remove-cover-image-button', function () {
+        jQuery(document).on('click', '#remove-cover-image-button', () => {
             delete theBook.cover_image
             jQuery('#figure-preview-row').html(bookEpubDataCoverTemplate({
                 theBook
@@ -538,19 +533,19 @@ export class BookActions {
         jQuery('body').append(dialogBody)
 
         jQuery('#book-settings-citationstyle').dropkick({
-            change: function (value, label) {
+            change: (value, label) => {
                 theBook.settings.citationstyle = value
             }
         })
 
         jQuery('#book-settings-documentstyle').dropkick({
-            change: function (value, label) {
+            change: (value, label) => {
                 theBook.settings.documentstyle = value
             }
         })
 
         jQuery('#book-settings-papersize').dropkick({
-            change: function (value, label) {
+            change: (value, label) => {
                 theBook.settings.papersize = value
             }
         })
@@ -558,7 +553,6 @@ export class BookActions {
         if (theBook.rights === 'write') {
             diaButtons[gettext('Submit')] = function () {
                 getFormData()
-
                 that.saveBook(theBook, theOldBook, this)
 
             }
@@ -585,7 +579,7 @@ export class BookActions {
                 theDialog.find(".ui-button:last").addClass(
                     "fw-button fw-orange")
             },
-            close: function () {
+            close: () => {
                 jQuery(document).off('click', '#add-chapter')
                 jQuery(document).off('click', '.book-sort-up')
                 jQuery(document).off('click', '.book-sort-down')

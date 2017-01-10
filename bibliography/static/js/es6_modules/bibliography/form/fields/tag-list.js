@@ -7,7 +7,6 @@ export class TagListForm{
     }
 
     init() {
-        let that = this
         this.dom.innerHTML = `<input class="tags" type="text">`
         this.tokenInput = new TokenField({
             el: this.dom.querySelector('.tags'),

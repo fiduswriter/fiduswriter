@@ -34,7 +34,7 @@ export class LatexExporterConvert {
 
     walkJson(node, options = {}) {
         let start = '', content = '', end = '',
-            placeFootnotesAfterBlock = false, that = this
+            placeFootnotesAfterBlock = false
 
         switch(node.type) {
             case 'article':
@@ -186,22 +186,22 @@ export class LatexExporterConvert {
                     let citationEntryKeys = []
 
                     let allCitationItemsPresent = references.map(ref => ref.id).every(
-                        function(citationEntry) {
-                            let bibDBEntry = that.bibDB.db[citationEntry]
+                        citationEntry => {
+                            let bibDBEntry = this.bibDB.db[citationEntry]
                             if (bibDBEntry) {
                                 if (!bibDBEntry) {
                                     // Not present in bibliography database, skip it.
                                     // TODO: Throw an error?
                                     return false
                                 }
-                                if (!that.usedBibDB[citationEntry]) {
-                                    let citationKey = that.createUniqueCitationKey(
+                                if (!this.usedBibDB[citationEntry]) {
+                                    let citationKey = this.createUniqueCitationKey(
                                         bibDBEntry.entry_key
                                     )
-                                    that.usedBibDB[citationEntry] = Object.assign({}, bibDBEntry)
-                                    that.usedBibDB[citationEntry].entry_key = citationKey
+                                    this.usedBibDB[citationEntry] = Object.assign({}, bibDBEntry)
+                                    this.usedBibDB[citationEntry].entry_key = citationKey
                                 }
-                                citationEntryKeys.push(that.usedBibDB[citationEntry].entry_key)
+                                citationEntryKeys.push(this.usedBibDB[citationEntry].entry_key)
                             }
                             return true
                         }
@@ -218,7 +218,7 @@ export class LatexExporterConvert {
 
                     let allCitationItemsPresent = references.every(
                         ref => {
-                            let bibDBEntry = that.bibDB.db[ref.id]
+                            let bibDBEntry = this.bibDB.db[ref.id]
                             if (!bibDBEntry) {
                                 // Not present in bibliography database, skip it.
                                 // TODO: Throw an error?
@@ -236,14 +236,14 @@ export class LatexExporterConvert {
                             }
                             citationCommand += '{'
 
-                            if (!that.usedBibDB[ref.id]) {
-                                let citationKey = that.createUniqueCitationKey(
+                            if (!this.usedBibDB[ref.id]) {
+                                let citationKey = this.createUniqueCitationKey(
                                     bibDBEntry.entry_key
                                 )
-                                that.usedBibDB[ref.id] = Object.assign({}, bibDBEntry)
-                                that.usedBibDB[ref.id].entry_key = citationKey
+                                this.usedBibDB[ref.id] = Object.assign({}, bibDBEntry)
+                                this.usedBibDB[ref.id].entry_key = citationKey
                             }
-                            citationCommand += that.usedBibDB[ref.id].entry_key
+                            citationCommand += this.usedBibDB[ref.id].entry_key
                             citationCommand += '}'
 
                             return true

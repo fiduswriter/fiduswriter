@@ -20,7 +20,6 @@ import {addAlert} from "../../../common/common"
 export class EpubBookExporter extends BaseEpubExporter {
     constructor(book, user, docList) {
         super()
-        let that = this
         this.book = book
         this.user = user
         this.docList = docList
@@ -34,12 +33,11 @@ export class EpubBookExporter extends BaseEpubExporter {
             addAlert('error', gettext('Book cannot be exported due to lack of chapters.'))
             return false
         }
-        getMissingChapterData(book, docList, function () {
-            getImageAndBibDB(book, docList, function (imageDB,
-                bibDB) {
-                that.bibDB = bibDB
-                that.imageDB = imageDB
-                that.exportOne()
+        getMissingChapterData(book, docList, () => {
+            getImageAndBibDB(book, docList, (imageDB, bibDB) => {
+                this.bibDB = bibDB
+                this.imageDB = imageDB
+                this.exportOne()
             })
         })
     }
@@ -163,23 +161,22 @@ export class EpubBookExporter extends BaseEpubExporter {
     }
 
     exportTwo(chapterNumber = 0) {
-        let that = this
         // add bibliographies (asynchronously)
         let citRenderer = new RenderCitations(
             this.chapters[chapterNumber].contents,
             this.book.settings.citationstyle,
             this.bibDB,
             true,
-            function() {
+            () => {
                 let bibHTML = citRenderer.fm.bibHTML
                 if (bibHTML.length > 0) {
-                    that.chapters[chapterNumber].contents.innerHTML += bibHTML
+                    this.chapters[chapterNumber].contents.innerHTML += bibHTML
                 }
                 chapterNumber++
-                if (chapterNumber===that.chapters.length) {
-                    that.exportThree()
+                if (chapterNumber===this.chapters.length) {
+                    this.exportThree()
                 } else {
-                    that.exportTwo(chapterNumber)
+                    this.exportTwo(chapterNumber)
                 }
             })
         citRenderer.init()

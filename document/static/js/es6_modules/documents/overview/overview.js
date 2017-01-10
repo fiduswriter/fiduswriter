@@ -24,18 +24,15 @@ export class DocumentOverview {
     }
 
     bind() {
-        let that = this
-        jQuery(document).ready(function () {
-            that.getDocumentListData()
-        })
+        jQuery(document).ready(() => this.getDocumentListData())
 
     }
 
-    getBibDB(callback) { // Get the bibliography database -- only executed if needed (when importing, etc.).
-        let that = this
+    // Get the bibliography database -- only executed if needed (when importing, etc.).
+    getBibDB(callback) {
         if (!this.bibDB) { // Don't get the bibliography again if we already have it.
             this.bibDB = new BibliographyDB(this.user.id, true, false, false)
-            this.bibDB.getDB(function(){
+            this.bibDB.getDB(() => {
                 callback()
             })
         } else {
@@ -44,11 +41,10 @@ export class DocumentOverview {
     }
 
     getImageDB(callback) {
-        let that = this
         if (!this.imageDB) {
             let imageGetter = new ImageDB(this.user.id)
-            imageGetter.getDB(function(){
-                that.imageDB = imageGetter.db
+            imageGetter.getDB(() => {
+                this.imageDB = imageGetter.db
                 callback()
             })
         } else {
@@ -57,7 +53,6 @@ export class DocumentOverview {
     }
 
     getDocumentListData(id) {
-        let that = this
         activateWait()
         jQuery.ajax({
             url: '/document/documentlist/',
@@ -65,22 +60,23 @@ export class DocumentOverview {
             type: 'POST',
             dataType: 'json',
             crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
+            beforeSend: (xhr, settings) => {
                 xhr.setRequestHeader("X-CSRFToken", csrfToken)
             },
-            success: function (response, textStatus, jqXHR) {
-                that.documentList = _.uniq(response.documents, true, function(obj) { return obj.id })
-                that.teamMembers = response.team_members
-                that.accessRights = response.access_rights
-                that.user = response.user
-                that.layoutTable()
+            success: (response, textStatus, jqXHR) => {
+                this.documentList = _.uniq(
+                    response.documents,
+                    true,
+                    obj => obj.id
+                )
+                this.teamMembers = response.team_members
+                this.accessRights = response.access_rights
+                this.user = response.user
+                this.layoutTable()
             },
-            error: function (jqXHR, textStatus, errorThrown) {
-                addAlert('error', jqXHR.responseText)
-            },
-            complete: function () {
-                deactivateWait()
-            }
+            error: (jqXHR, textStatus, errorThrown) => addAlert('error', jqXHR.responseText),
+            complete: () => deactivateWait()
+
         })
     }
 

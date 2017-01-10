@@ -15,7 +15,6 @@ export class BookAccessRightsDialog {
       }
 
       createAccessRightsDialog() {
-          let that = this
           let dialogHeader = gettext('Share your book with others')
           let bookCollaborators = {}
 
@@ -37,21 +36,23 @@ export class BookAccessRightsDialog {
                   }
               }
           }
-          bookCollaborators = _.select(bookCollaborators, function (obj) {
-              return obj.count == that.bookIds.length
-          })
+          bookCollaborators = _.select(
+              bookCollaborators,
+              obj => obj.count === this.bookIds.length
+          )
 
 
 
           let dialogBody = bookAccessRightOverviewTemplate({
               'dialogHeader': dialogHeader,
-              'contacts': that.teamMembers,
+              'contacts': this.teamMembers,
               'collaborators': bookCollaboratorsTemplate({
                   'collaborators': bookCollaborators
               })
           })
           jQuery('body').append(dialogBody)
           let diaButtons = {}
+          let that = this
           diaButtons[gettext('Submit')] = function () {
               //apply the current state to server
               let collaborators = [],
@@ -82,14 +83,13 @@ export class BookAccessRightsDialog {
                   theDialog.find(".ui-button:last").addClass(
                       "fw-button fw-orange")
               },
-              close: function () {
+              close: () =>
                   jQuery('#access-rights-dialog').dialog('destroy').remove()
-              }
           })
           jQuery('.fw-checkable').bind('click', function () {
               setCheckableLabel(jQuery(this))
           })
-          jQuery('#add-share-member').bind('click', function () {
+          jQuery('#add-share-member').bind('click', () => {
               let selectedMembers = jQuery(
                   '#my-contacts .fw-checkable.checked')
               let selectedData = []
@@ -113,9 +113,9 @@ export class BookAccessRightsDialog {
               jQuery('#share-member table tbody').append(bookCollaboratorsTemplate({
                   'collaborators': selectedData
               }))
-              that.collaboratorFunctionsEvent()
+              this.collaboratorFunctionsEvent()
           })
-          that.collaboratorFunctionsEvent()
+          this.collaboratorFunctionsEvent()
       }
 
 
@@ -137,7 +137,6 @@ export class BookAccessRightsDialog {
       }
 
       submitAccessRight(books, collaborators, rights) {
-          let that = this
           let postData = {
               'books[]': books,
               'collaborators[]': collaborators,
@@ -149,17 +148,15 @@ export class BookAccessRightsDialog {
               type: 'POST',
               dataType: 'json',
               crossDomain: false, // obviates need for sameOrigin test
-              beforeSend: function(xhr, settings) {
-                  xhr.setRequestHeader("X-CSRFToken", csrfToken)
-              },
-              success: function (response) {
-                  that.callback(response.access_rights)
+              beforeSend: (xhr, settings) =>
+                  xhr.setRequestHeader("X-CSRFToken", csrfToken),
+              success: response => {
+                  this.callback(response.access_rights)
                   addAlert('success', gettext(
                       'Access rights have been saved'))
               },
-              error: function (jqXHR, textStatus, errorThrown) {
-                  console.log(jqXHR.responseText)
-              }
+              error: (jqXHR, textStatus, errorThrown) =>
+                  console.error(jqXHR.responseText)
           })
       }
 

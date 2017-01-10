@@ -18,58 +18,63 @@ export class DocumentAccessRightsDialog {
     }
 
     createAccessRightsDialog() {
-        let that = this
         let dialogHeader = gettext('Share your document with others')
         let documentCollaborators = {}
         let len = this.accessRights.length
 
         for (let i = 0; i < len; i++) {
-            if (_.include(that.documentIds, that.accessRights[i].document_id)) {
+            if (_.include(this.documentIds, this.accessRights[i].document_id)) {
                 if ('undefined' == typeof (documentCollaborators[
-                    that.accessRights[i].user_id])) {
-                    documentCollaborators[that.accessRights[i].user_id] =
-                        that.accessRights[i]
-                    documentCollaborators[that.accessRights[i].user_id].count =
+                    this.accessRights[i].user_id])) {
+                    documentCollaborators[this.accessRights[i].user_id] =
+                        this.accessRights[i]
+                    documentCollaborators[this.accessRights[i].user_id].count =
                         1
                 } else {
-                    if (documentCollaborators[that.accessRights[i].user_id].rights !=
-                        that.accessRights[i].rights)
-                    documentCollaborators[that.accessRights[i].user_id].rights =
+                    if (documentCollaborators[this.accessRights[i].user_id].rights !=
+                        this.accessRights[i].rights)
+                    documentCollaborators[this.accessRights[i].user_id].rights =
                         'read'
-                    documentCollaborators[that.accessRights[i].user_id].count +=
+                    documentCollaborators[this.accessRights[i].user_id].count +=
                         1
                 }
             }
         }
-        documentCollaborators = _.select(documentCollaborators, function (obj) {
-            return obj.count == that.documentIds.length
-        })
+        documentCollaborators = _.select(
+            documentCollaborators,
+            obj => obj.count === this.documentIds.length
+        )
 
         let dialogBody = accessRightOverviewTemplate({
-            'dialogHeader': dialogHeader,
-            'contacts': accessRightTrTemplate({'contacts': that.teamMembers}),
-            'collaborators': collaboratorsTemplate({
-                'collaborators': documentCollaborators
+            dialogHeader: dialogHeader,
+            contacts: accessRightTrTemplate({contacts: this.teamMembers}),
+            collaborators: collaboratorsTemplate({
+                collaborators: documentCollaborators
             })
         })
         jQuery('body').append(dialogBody)
 
         let diaButtons = {}
-        diaButtons[gettext('Add new contact')] = function () {
-            addMemberDialog(function(memberData){
-                jQuery('#my-contacts .fw-document-table-body').append(accessRightTrTemplate({'contacts': [memberData]}))
-                jQuery('#share-member table tbody').append(collaboratorsTemplate({'collaborators': [{
-                    'user_id': memberData.id,
-                    'user_name': memberData.name,
-                    'avatar': memberData.avatar,
-                    'rights': 'read'
-                }]}))
-                that.collaboratorFunctionsEvent()
-                if (that.createContactCallback) {
-                    that.createContactCallback(memberData)
+        diaButtons[gettext('Add new contact')] = () => {
+            addMemberDialog(memberData => {
+                jQuery('#my-contacts .fw-document-table-body').append(
+                    accessRightTrTemplate({contacts: [memberData]})
+                )
+                jQuery('#share-member table tbody').append(
+                    collaboratorsTemplate({'collaborators': [{
+                        user_id: memberData.id,
+                        user_name: memberData.name,
+                        avatar: memberData.avatar,
+                        rights: 'read'
+                    }]})
+                )
+                this.collaboratorFunctionsEvent()
+                if (this.createContactCallback) {
+                    this.createContactCallback(memberData)
                 }
             })
         }
+        let that = this
         diaButtons[gettext('Submit')] = function () {
             //apply the current state to server
             let collaborators = [],
@@ -159,9 +164,8 @@ export class DocumentAccessRightsDialog {
     }
 
     submitAccessRight(newCollaborators, newAccessRights) {
-        let that = this
         let postData = {
-            'documents[]': that.documentIds,
+            'documents[]': this.documentIds,
             'collaborators[]': newCollaborators,
             'rights[]': newAccessRights
         }
@@ -174,16 +178,15 @@ export class DocumentAccessRightsDialog {
             beforeSend: function(xhr, settings) {
                 xhr.setRequestHeader("X-CSRFToken", csrfToken)
             },
-            success: function (response) {
-                that.accessRights = response.access_rights
-                that.callback(that.accessRights)
+            success: response => {
+                this.accessRights = response.access_rights
+                this.callback(this.accessRights)
                 addAlert('success', gettext(
                     'Access rights have been saved'))
             },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.log(jqXHR.responseText)
+            error: (jqXHR, textStatus, errorThrown) => {
+                console.error(jqXHR.responseText)
             }
         })
     }
-
 }

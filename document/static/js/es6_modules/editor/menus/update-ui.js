@@ -29,28 +29,30 @@ export class ModMenusUpdateUI {
     }
 
     bindEvents() {
-        let that = this, pm = this.mod.editor.pm
-        pm.updateScheduler([
-            pm.on.selectionChange,
-            pm.on.change,
-            pm.on.activeMarkChange,
-            pm.on.blur,
-            pm.on.focus,
-            pm.on.setDoc
-        ], function() {
-            return that.updateUI()
-        })
+        let pm = this.mod.editor.pm
+        pm.updateScheduler(
+            [
+                pm.on.selectionChange,
+                pm.on.change,
+                pm.on.activeMarkChange,
+                pm.on.blur,
+                pm.on.focus,
+                pm.on.setDoc
+            ],
+            () => this.updateUI()
+        )
         let fnPm = this.mod.editor.mod.footnotes.fnPm
-        fnPm.updateScheduler([
-            fnPm.on.selectionChange,
-            fnPm.on.change,
-            fnPm.on.activeMarkChange,
-            fnPm.on.blur,
-            fnPm.on.focus,
-            fnPm.on.setDoc
-        ], function() {
-            return that.updateUI()
-        })
+        fnPm.updateScheduler(
+            [
+                fnPm.on.selectionChange,
+                fnPm.on.change,
+                fnPm.on.activeMarkChange,
+                fnPm.on.blur,
+                fnPm.on.focus,
+                fnPm.on.setDoc
+            ],
+            () => this.updateUI()
+        )
     }
 
     updateUI() {
@@ -68,9 +70,9 @@ export class ModMenusUpdateUI {
         jQuery('#header h1').html(documentTitle)
 
         const marks = currentPm.activeMarks()
-        const strong = marks.some(function(mark) {
-            return (mark.type.name === 'strong')
-        })
+        const strong = marks.some(
+            mark => mark.type.name === 'strong'
+        )
 
         if (strong) {
             jQuery('#button-bold').addClass('ui-state-active')
@@ -78,9 +80,9 @@ export class ModMenusUpdateUI {
             jQuery('#button-bold').removeClass('ui-state-active')
         }
 
-        const em = marks.some(function(mark) {
-            return (mark.type.name === 'em')
-        })
+        const em = marks.some(
+            mark => mark.type.name === 'em'
+        )
 
         if (em) {
             jQuery('#button-italic').addClass('ui-state-active')
@@ -88,9 +90,9 @@ export class ModMenusUpdateUI {
             jQuery('#button-italic').removeClass('ui-state-active')
         }
 
-        const link = marks.some(function(mark) {
-            return (mark.type.name === 'link')
-        })
+        const link = marks.some(
+            mark => mark.type.name === 'link'
+        )
 
         if (link) {
             jQuery('#button-link').addClass('ui-state-active')
@@ -178,20 +180,21 @@ export class ModMenusUpdateUI {
                             jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType])
                         } else {
                             // The selection is crossing several blocks
-                            pm.doc.nodesBetween(rawStart, rawEnd, function(node, pos, parent) {
-                                if (node.isTextblock) {
-                                    let nextBlockNodeType = node.type.name === 'heading' ? node.type.name + '_' + node.attrs.level : node.type.name
-                                    if (blockNodeType === true) {
-                                        blockNodeType = nextBlockNodeType
+                            pm.doc.nodesBetween(
+                                rawStart,
+                                rawEnd,
+                                (node, pos, parent) => {
+                                    if (node.isTextblock) {
+                                        let nextBlockNodeType = node.type.name === 'heading' ? node.type.name + '_' + node.attrs.level : node.type.name
+                                        if (blockNodeType === true) {
+                                            blockNodeType = nextBlockNodeType
+                                        }
+                                        if (blockNodeType !== nextBlockNodeType) {
+                                            blockNodeType = false
+                                        }
                                     }
-                                    if (blockNodeType !== nextBlockNodeType) {
-                                        blockNodeType = false
-                                    }
-
-
                                 }
-                            })
-
+                            )
 
                             if (blockNodeType) {
                                 jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType])
@@ -255,7 +258,7 @@ export class ModMenusUpdateUI {
                 'placeHolder': gettext('Body...')
             }]
 
-        placeHolders.forEach(function(elementType, index) {
+        placeHolders.forEach((elementType, index) => {
             let partElement = pm.doc.firstChild.child(i)
             if (partElement.type.name !== elementType.type) {
                 return false

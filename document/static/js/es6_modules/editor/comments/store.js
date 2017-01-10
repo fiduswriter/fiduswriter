@@ -9,7 +9,8 @@ export class ModCommentStore {
     constructor(mod) {
         mod.store = this
         this.mod = mod
-        this.commentDuringCreation = false // a comment object for a comment that is still udner construction
+        // a comment object for a comment that is still under construction
+        this.commentDuringCreation = false
         this.setVersion(0)
     }
 
@@ -160,39 +161,44 @@ export class ModCommentStore {
     }
 
     checkAndDelete(ids) {
-        let that = this
-        // Check if there is still a node referring to the comment IDs that were in the deleted content.
-        this.mod.editor.pm.doc.descendants(function(node, pos, parent) {
+        // Check if there is still a node referring to the comment IDs that
+        // were in the deleted content.
+        this.mod.editor.pm.doc.descendants((node, pos, parent) => {
             if (!node.isInline) {
                 return
             }
-            let id = that.mod.layout.findCommentId(node)
+            let id = this.mod.layout.findCommentId(node)
             if (id && ids.indexOf(id) !== -1) {
                 ids.splice(ids.indexOf(id),1)
             }
         })
         // Remove all the comments that could not be found.
-        if (that.mod.editor.doc.submission.status == 'unsubmitted')
-            ids.forEach(function(id) {
-                that.deleteComment(id, false) // Delete comment from store
+        if (this.mod.editor.doc.submission.status === 'unsubmitted')
+            ids.forEach(id => {
+                this.deleteComment(id, false) // Delete comment from store
             })
         else {
-            ids.forEach(function(id) {
+            // The document is submitted. Instead of removing the comment,
+            // move it to a piece of text nearby.
+            ids.forEach(id => {
                 let isReviewer = true
-                that.mod.editor.doc.access_rights.some(function(item,index){
-                    if (item.document_id == that.mod.editor.doc.id && item.user_id == that.comments[id].user) {
+                this.mod.editor.doc.access_rights.some((item, index) => {
+                    if (
+                        item.document_id == this.mod.editor.doc.id &&
+                        item.user_id == this.comments[id].user
+                    ) {
                         isReviewer = false
                         return false
                     }
                 })
                 if (!isReviewer)
-                    that.deleteComment(id, false) // Delete comment from store
+                    this.deleteComment(id, false) // Delete comment from store
                 else {
-                    let pos = that.mod.editor.pm.selection.from
-                    that.moveComment(
-                        that.mod.editor.user.id,
-                        that.mod.editor.user.name,
-                        that.mod.editor.user.avatar,
+                    let pos = this.mod.editor.pm.selection.from
+                    this.moveComment(
+                        this.mod.editor.user.id,
+                        this.mod.editor.user.name,
+                        this.mod.editor.user.avatar,
                         new Date().getTime(), // We update the time to the time the comment was stored
                         id,
                         pos
@@ -230,9 +236,10 @@ export class ModCommentStore {
 
     deleteLocalAnswer(commentId, answerId, local) {
         if (this.comments[commentId] && this.comments[commentId].answers) {
-            this.comments[commentId].answers = _.reject(this.comments[commentId].answers, function(answer) {
-                return answer.id === answerId
-            })
+            this.comments[commentId].answers = _.reject(
+                this.comments[commentId].answers,
+                answer => answer.id === answerId
+            )
         }
         if (local || (!this.mod.layout.isCurrentlyEditing())) {
             this.mod.layout.layoutComments()

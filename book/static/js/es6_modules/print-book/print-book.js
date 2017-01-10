@@ -53,8 +53,6 @@ export class PrintBook {
     }
 
     setTheBook(aBook) {
-        let that = this
-
         aBook.settings = JSON.parse(aBook.settings)
         aBook.metadata = JSON.parse(aBook.metadata)
         for (let i = 0; i < aBook.chapters.length; i++) {
@@ -76,40 +74,28 @@ export class PrintBook {
 
         this.bibDB = new BibliographyDB(this.documentOwners.join(','), false, false, false)
 
-        this.bibDB.getDB(function (bibPks, bibCats) {
-                that.fillPrintPage()
-            })
-
+        this.bibDB.getDB((bibPks, bibCats) => this.fillPrintPage())
 
     }
 
     getBookData(id) {
-        let that = this
         jQuery.ajax({
             url: '/book/book/',
-            data: {
-                'id': id
-            },
+            data: {id},
             type: 'POST',
             dataType: 'json',
             crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: function (response, textStatus, jqXHR) {
-                that.setTheBook(response.book)
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                addAlert('error', jqXHR.responseText)
-            },
-            complete: function () {
-                deactivateWait()
-            }
+            beforeSend: (xhr, settings) =>
+                xhr.setRequestHeader("X-CSRFToken", csrfToken),
+            success: (response, textStatus, jqXHR) =>
+                this.setTheBook(response.book),
+            error: (jqXHR, textStatus, errorThrown) =>
+                addAlert('error', jqXHR.responseText),
+            complete: () => deactivateWait()
         })
     }
 
     fillPrintPage() {
-        let that = this
         jQuery(document.body).addClass(this.theBook.settings.documentstyle)
         jQuery('#book')[0].outerHTML = bookPrintTemplate({
             theBook: this.theBook,
@@ -121,9 +107,7 @@ export class PrintBook {
             this.theBook.settings.citationstyle,
             this.bibDB,
             true,
-            function() {
-                that.fillPrintPageTwo()
-            }
+            () => this.fillPrintPageTwo()
         )
         this.citRenderer.init()
     }
@@ -170,13 +154,12 @@ export class PrintBook {
 
 
     bindEvents() {
-        let that = this
-        jQuery(document).ready(function () {
+        jQuery(document).ready(() => {
             let pathnameParts = window.location.pathname.split('/'),
                 bookId = parseInt(pathnameParts[pathnameParts.length -
                     2], 10)
 
-            that.getBookData(bookId)
+            this.getBookData(bookId)
         })
     }
 }

@@ -4,11 +4,10 @@ import {addAlert, csrfToken} from "../common/common"
 
 
 let setRights = function(orginalDocId,CopyDocId,user,access_rights){
-    let that = this
 	let collaborators = [],
     rights = []
-	access_rights.forEach(function(item,index){
-	    if (item.document_id==orginalDocId){
+	access_rights.forEach((item, index) => {
+	    if (item.document_id===orginalDocId){
 	        collaborators[collaborators.length]=item.user_id
 	    }
 

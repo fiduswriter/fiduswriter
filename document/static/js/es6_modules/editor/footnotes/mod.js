@@ -22,7 +22,6 @@ export class ModFootnotes {
     }
 
     init() {
-        let that = this
         this.fnPm = new ProseMirror({
             place: document.getElementById('footnote-box-container'),
             schema: this.schema,
@@ -37,18 +36,17 @@ export class ModFootnotes {
         this.fnPm.mod.collab = collabEditing.get(this.fnPm)
         // Ignore setDoc
         this.fnPm.on.beforeSetDoc.remove(this.fnPm.mod.collab.onSetDoc)
-        this.fnPm.mod.collab.onSetDoc = function (){}
+        this.fnPm.mod.collab.onSetDoc = () => {}
         // Trigger reset on setDoc
     }
 
     bindEvents() {
-        let that = this
         // Set the current editor depending on where the focus currently is.
-        this.fnPm.on.focus.add(function(){
-            that.editor.currentPm = that.fnPm
+        this.fnPm.on.focus.add(() => {
+            this.editor.currentPm = this.fnPm
         })
-        this.editor.pm.on.focus.add(function(){
-            that.editor.currentPm = that.editor.pm
+        this.editor.pm.on.focus.add(() => {
+            this.editor.currentPm = this.editor.pm
         })
     }
 }

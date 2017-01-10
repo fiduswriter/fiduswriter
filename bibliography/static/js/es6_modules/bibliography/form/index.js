@@ -131,9 +131,7 @@ export class BibEntryForm {
             height: 700,
             modal: true,
             buttons: diaButtons,
-            close: function() {
-                jQuery("#bib-dialog").dialog('destroy').remove()
-            }
+            close: () => jQuery("#bib-dialog").dialog('destroy').remove()
         })
         // init ui tabs
         jQuery('#bib-dialog-tabs').tabs()

@@ -127,30 +127,19 @@ export class ModMenusActions {
     }
 
     submitOjs() {
-        this.mod.editor.save(() => {
-            selectJournal(this.mod.editor)
-        })
+        this.mod.editor.save(() => selectJournal(this.mod.editor))
     }
 
     submitReview(){
-        let that = this
-        that.mod.editor.save(function () {
-            reviewSubmit(that.mod.editor)
-        })
+        this.mod.editor.save(() => reviewSubmit(this.mod.editor))
     }
 
     revisionFinished(){
-        let that = this
-        that.mod.editor.save(function () {
-            submissionRevisionDone(that.mod.editor)
-        })
+        this.mod.editor.save(() => submissionRevisionDone(this.mod.editor))
     }
 
-    ReturnToOJS(){
-        let that = this
-        that.mod.editor.save(function () {
-         window.location.href = window.ojsUrl
-        })
+    returnToOJS(){
+        this.mod.editor.save(() => {window.location.href = window.ojsUrl})
     }
 
     showKeyBindings() {

@@ -312,15 +312,18 @@ export class Editor {
         }
         jQuery('#revision-done').hide()
         if (REVIEW_ROLES.indexOf(this.docInfo.rights) > -1)  {
-          jQuery('#reviewed').show()
-          jQuery('#reviewerOJSReturn').show()
+            jQuery('#reviewed').show()
+            jQuery('#reviewerOJSReturn').show()
         }
         else {
-          jQuery('#reviewed').hide()
-          jQuery('#reviewerOJSReturn').hide()
-          if (this.doc.submission.status == 'submitted' && this.doc.submission.user_id == this.user.id){
-            jQuery('#revision-done').show()
-          }
+            jQuery('#reviewed').hide()
+            jQuery('#reviewerOJSReturn').hide()
+            if (
+                this.docInfo.submission.status === 'submitted' &&
+                this.docInfo.submission.user_id === this.user.id
+            ){
+                jQuery('#revision-done').show()
+            }
         }
 
     }

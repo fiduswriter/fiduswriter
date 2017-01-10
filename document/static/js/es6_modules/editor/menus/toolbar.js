@@ -63,7 +63,7 @@ export class ModMenusToolbar {
         jQuery(document).on(
             'click',
             '#reviewerOJSReturn:not(.disabled)',
-            () => this.mod.actions.ReturnToOJS()
+            () => this.mod.actions.returnToOJS()
         )
 
         let that = this

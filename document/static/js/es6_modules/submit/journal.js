@@ -3,7 +3,7 @@ import {journalDialogTemplate,reviewSubmitDialogTemplate,revisionSubmitDialogTem
 import {addAlert, csrfToken} from "../common/common"
 
 
-let setRights = function(orginalDocId,CopyDocId,user,access_rights){
+let setRights = function(orginalDocId, CopyDocId, user, access_rights) {
 	let collaborators = [],
     rights = []
 	access_rights.forEach((item, index) => {
@@ -23,16 +23,13 @@ let setRights = function(orginalDocId,CopyDocId,user,access_rights){
         type: 'POST',
         dataType: 'json',
         crossDomain: false, // obviates need for sameOrigin test
-        beforeSend: function(xhr, settings) {
-            xhr.setRequestHeader("X-CSRFToken", csrfToken)
-        },
-        success: function (response) {
+        beforeSend: (xhr, settings) =>
+            xhr.setRequestHeader("X-CSRFToken", csrfToken),
+        success: response =>
             addAlert('success', gettext(
-                'Access rights have been saved'))
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            console.log(jqXHR.responseText)
-        }
+                'Access rights have been saved')),
+        error: (jqXHR, textStatus, errorThrown) =>
+            console.error(jqXHR.responseText)
     })
 }
 
@@ -46,14 +43,14 @@ let submitDoc = function(editor,userProfile){
     let owner = {}
     owner['id'] = 1
     owner['name'] = 'fidus'
-    editor.save(function() {
+    editor.save(() => {
         editor.removeBibDB()
         editor.removeImageDB()
-        editor.getBibDB(editor.user.id, function(){
-            editor.getImageDB(editor.user.id, function(){
+        editor.getBibDB(editor.user.id, () => {
+            editor.getImageDB(editor.user.id, () => {
                 savecopy(editor.doc, oldBibDB, oldImageDB,
                 editor.bibDB.db, editor.imageDB.db, editor.user,
-                function(doc, docInfo, newBibEntries){
+                (doc, docInfo, newBibEntries) => {
             		setRights(editor.doc.id,doc.id,editor.user,editor.doc.access_rights)
             		//window.location.href = `/document/${doc.id}/`
                     let dataToOjs = new window.FormData()
@@ -67,9 +64,9 @@ let submitDoc = function(editor,userProfile){
                     dataToOjs.append('journal_id', jQuery("input[type='radio'][name='journalList']:checked").val())
                     dataToOjs.append('file_name', editor.doc.title)
                     dataToOjs.append('article_url', window.location.origin+"/document/" + doc.id)
-                    if (editor.doc.submission.status == 'submitted') {
-                        dataToOjs.append('submission_id', editor.doc.submission.submission_id)
-                        dataToOjs.append('version_id', editor.doc.submission.version_id+1)
+                    if (editor.docInfo.submission.status == 'submitted') {
+                        dataToOjs.append('submission_id', editor.docInfo.submission.submission_id)
+                        dataToOjs.append('version_id', editor.docInfo.submission.version_id+1)
                     }
                     jQuery.ajax({
                         url: window.ojsUrl+'/index.php/index/gateway/plugin/RestApiGatewayPlugin/articles',
@@ -79,18 +76,17 @@ let submitDoc = function(editor,userProfile){
                         contentType: false,
                         processData: false,
                         crossDomain: false, // obviates need for sameOrigin test
-                        beforeSend: function(xhr, settings) {
-                            xhr.setRequestHeader("X-CSRFToken", csrfToken)
-                        },
-                        success: function(response) {
+                        beforeSend: (xhr, settings) =>
+                            xhr.setRequestHeader("X-CSRFToken", csrfToken),
+                        success: response => {
                             //addAlert('success','The paper was submitted to ojs')
                             let dataSubmission = new window.FormData()
                             dataSubmission.append('user_id',editor.user.id)
                             dataSubmission.append('document_id',doc.id)
                             dataSubmission.append('pre_document_id',editor.doc.id)
-                            if (editor.doc.submission.status == 'submitted'){
-                                dataSubmission.append('submission_id',editor.doc.submission.submission_id)
-                                dataSubmission.append('journal_id',editor.doc.submission.journal_id)
+                            if (editor.docInfo.submission.status == 'submitted'){
+                                dataSubmission.append('submission_id',editor.docInfo.submission.submission_id)
+                                dataSubmission.append('journal_id',editor.docInfo.submission.journal_id)
                             } else {
                                 dataSubmission.append('journal_id',response.journal_id)
                                 dataSubmission.append('submission_id',response.submission_id)
@@ -103,20 +99,16 @@ let submitDoc = function(editor,userProfile){
                                 contentType: false,
                                 processData: false,
                                 crossDomain: false, // obviates need for sameOrigin test
-                                beforeSend: function(xhr, settings) {
-                                    xhr.setRequestHeader("X-CSRFToken", csrfToken)
-                                },
-                                success: function(response) {
-                                    addAlert('success','The paper was submitted to ojs and version of submission has been saved')
-                                },
-                                error: function() {
+                                beforeSend: (xhr, settings) =>
+                                    xhr.setRequestHeader("X-CSRFToken", csrfToken),
+                                success: response =>
+                                    addAlert('success','The paper was submitted to ojs and version of submission has been saved'),
+                                error: () =>
                                     addAlert('error', 'version of submission has been not saved')
-                                }
                             })
                         },
-                        error: function() {
+                        error: () =>
                             addAlert('error', 'submission was not successful')
-                        }
                     })
                 })
                 })
@@ -144,15 +136,13 @@ export let selectJournal = function(editor) {
             contentType: false,
             processData: false,
             crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: function(result) {
+            beforeSend: (xhr, settings) =>
+                xhr.setRequestHeader("X-CSRFToken", csrfToken),
+            success: result => {
                 userProfile = result['user']
             },
-            error: function() {
+            error: () =>
                 addAlert('error', 'can not get the user information')
-            }
         })
 
         diaButtons[gettext("Submit")] = function() {
@@ -168,7 +158,7 @@ export let selectJournal = function(editor) {
                 type: "GET",
                 dataType: "json",
                 url: window.ojsUrl + '/index.php/index/gateway/plugin/RestApiGatewayPlugin/journals',
-                success: function (result) {
+                success: result => {
                     list =result['journals']
                     let journal = null
                     jQuery(journalDialogTemplate({journals: list})).dialog({
@@ -205,15 +195,13 @@ export let submissionRevisionDone = function(editor){
             contentType: false,
             processData: false,
             crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: function(result) {
+            beforeSend: (xhr, settings) =>
+                xhr.setRequestHeader("X-CSRFToken", csrfToken),
+            success: result => {
                 userProfile = result['user']
             },
-            error: function() {
+            error: () =>
                 addAlert('error', 'can not get the user information')
-            }
         })
         diaButtons[gettext("Submit")] = function() {
             submitDoc(editor,userProfile)
@@ -229,19 +217,19 @@ export let submissionRevisionDone = function(editor){
             modal: true,
             buttons: diaButtons,
             create: function() {
-            let theDialog = jQuery(this).closest(".ui-dialog")
-            theDialog.find(".ui-button:first-child").addClass(
-                "fw-button fw-dark")
-            theDialog.find(".ui-button:last").addClass(
-                "fw-button fw-orange")
-            },
+                let theDialog = jQuery(this).closest(".ui-dialog")
+                theDialog.find(".ui-button:first-child").addClass(
+                    "fw-button fw-dark")
+                theDialog.find(".ui-button:last").addClass(
+                    "fw-button fw-orange")
+            }
         })
 
 
 }
 
 /*submit the review*/
-export let reviewSubmit = function(editor){
+export let reviewSubmit = function(editor) {
         let diaButtons = {}
         let submission_info = {}
         let userProfile = {}
@@ -256,16 +244,14 @@ export let reviewSubmit = function(editor){
             contentType: false,
             processData: false,
             crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: function(result) {
+            beforeSend: (xhr, settings) =>
+                xhr.setRequestHeader("X-CSRFToken", csrfToken),
+            success: result => {
                 submission_info = result['submission']
                 userProfile = result['user']
             },
-            error: function() {
+            error: () =>
                 addAlert('error', 'can not get the submission information')
-            }
         })
 
         diaButtons[gettext("Submit")] = function() {
@@ -285,13 +271,11 @@ export let reviewSubmit = function(editor){
                 contentType: false,
                 processData: false,
                 crossDomain: false, // obviates need for sameOrigin test
-                beforeSend: function(xhr, settings) {
-                    xhr.setRequestHeader("X-CSRFToken", csrfToken)
-                },
-                success: function() {
-                    addAlert('success','The editor will be informed about finishing your review')
-                },
-                error: function() {
+                beforeSend: (xhr, settings) =>
+                    xhr.setRequestHeader("X-CSRFToken", csrfToken),
+                success: () =>
+                    addAlert('success','The editor will be informed about finishing your review'),
+                error: () => {
                     addAlert('error', 'There is error while sending the signal of finishing review, please try it again')
 
                     jQuery.ajax({
@@ -302,16 +286,14 @@ export let reviewSubmit = function(editor){
                         contentType: false,
                         processData: false,
                         crossDomain: false, // obviates need for sameOrigin test
-                        beforeSend: function(xhr, settings) {
-                            xhr.setRequestHeader("X-CSRFToken", csrfToken)
-                        },
-                        success: function(result) {
+                        beforeSend: (xhr, settings) =>
+                            xhr.setRequestHeader("X-CSRFToken", csrfToken),
+                        success: result => {
                         submission_info = result['submission']
                         userProfile = result['user']
                     },
-                error: function() {
-                    addAlert('error', 'can not give back reiview rights since can not get the submission information')
-                }
+                error: () =>
+                    addAlert('error', 'can not give back review rights since can not get the submission information')
             })
                 }
             })
@@ -319,7 +301,6 @@ export let reviewSubmit = function(editor){
 
         }
         diaButtons[gettext("Cancel")] = function() {
-  console.log(jQuery('textarea[name=message]'))
             jQuery(this).dialog("close")
         }
         jQuery("#review-message").remove()

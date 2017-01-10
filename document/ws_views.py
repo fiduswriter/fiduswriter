@@ -62,19 +62,6 @@ class DocumentWS(BaseWebSocketHandler):
         response = dict()
         response['type'] = 'doc_data'
         response['doc'] = dict()
-        submission = doc_mode(self.doc['id'])
-
-        response['doc']['submission'] = dict()
-        if submission == 'unsubmitted':
-            response['doc']['submission']['status'] = 'unsubmitted'
-        else:
-            response['doc']['submission']['status'] = 'submitted'
-            response['doc']['submission']['submission_id'] = \
-                submission.submission_id
-            response['doc']['submission']['user_id'] = submission.user_id
-            response['doc']['submission']['version_id'] = submission.version_id
-            response['doc']['submission']['journal_id'] = submission.journal_id
-
         response['doc']['id'] = self.doc['id']
         response['doc']['version'] = self.doc['version']
         if self.doc['diff_version'] < self.doc['version']:
@@ -132,6 +119,20 @@ class DocumentWS(BaseWebSocketHandler):
                 "last_diffs"][-needed_diffs:]
         else:
             response['doc_info']['unapplied_diffs'] = []
+        # OJS submission related
+        submission = doc_mode(self.doc['id'])
+        response['doc_info']['submission'] = dict()
+        if submission == 'unsubmitted':
+            response['doc_info']['submission']['status'] = 'unsubmitted'
+        else:
+            response['doc_info']['submission']['status'] = 'submitted'
+            response['doc_info']['submission']['submission_id'] = \
+                submission.submission_id
+            response['doc_info']['submission']['user_id'] = submission.user_id
+            response['doc_info']['submission']['version_id'] = \
+                submission.version_id
+            response['doc_info']['submission']['journal_id'] = \
+                submission.journal_id
         if not self.user_info.is_owner:
             response['user'] = dict()
             response['user']['id'] = self.user_info.user.id

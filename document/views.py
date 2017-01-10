@@ -528,7 +528,7 @@ def submission_version_js(request):
 
     if request.is_ajax() and request.method == 'POST':
         data = {}
-        data['user_id'] = request.POST.get('user_id')
+        data['user_id'] = request.user.id
         data['document_id'] = request.POST.get('document_id')
         data['journal_id'] = request.POST.get('journal_id')
         data['submission_id'] = request.POST.get('submission_id')
@@ -601,10 +601,9 @@ def review_submit_js(request):
     response = {}
     if request.is_ajax() and request.method == 'POST':
         document_id = request.POST.get('document_id')
-        user_id = request.POST.get('user_id')
         tgt_right = 'read-without-comments'
         access_right = AccessRight.objects.get(
-            document_id=document_id, user_id=user_id)
+            document_id=document_id, user=request.user)
         if access_right.rights != tgt_right:
             access_right.rights = tgt_right
             access_right.save()
@@ -615,10 +614,8 @@ def review_submit_js(request):
             response["submission"]["submission_id"] = submission.submission_id
             response["submission"]["version_id"] = submission.version_id
             response["submission"]["journal_id"] = submission.journal_id
-        the_user = User.objects.filter(id=user_id)
-        if len(the_user) > 0:
-            response['user'] = {}
-            response['user']['email'] = the_user[0].email
+        response['user'] = {}
+        response['user']['email'] = request.user.email
         status = 201
     return JsonResponse(
         response,
@@ -632,10 +629,9 @@ def review_submit_undo_js(request):
     response = {}
     if request.is_ajax() and request.method == 'POST':
         document_id = request.POST.get('document_id')
-        user_id = request.POST.get('user_id')
         tgt_right = 'review'
         access_right = AccessRight.objects.get(
-            document_id=document_id, user_id=user_id)
+            document_id=document_id, user=request.user)
         if access_right.rights != tgt_right:
             access_right.rights = tgt_right
             access_right.save()
@@ -646,10 +642,8 @@ def review_submit_undo_js(request):
             response["submission"]["submission_id"] = submission.submission_id
             response["submission"]["version_id"] = submission.version_id
             response["submission"]["journal_id"] = submission.journal_id
-        the_user = User.objects.filter(id=user_id)
-        if len(the_user) > 0:
-            response['user'] = {}
-            response['user']['email'] = the_user[0].email
+        response['user'] = {}
+        response['user']['email'] = request.user.email
         status = 201
     return JsonResponse(
         response,
@@ -710,13 +704,6 @@ def upload_revision_js(request):
         response,
         status=status
     )
-
-
-@login_required
-def get_user(request):
-    id = request.POST["user_id"]
-    the_user = User.objects.filter(id=id)
-    return the_user
 
 
 # Download a revision that was previously uploaded
@@ -900,29 +887,22 @@ def submit_right_js(request):
     )
 
 
-# TODO: This seems to give any user with a valid login access to all users
-# email addresses. This will need to be secured in some way.
 @login_required
 def profile_js(request):
     response = {}
     status = 405
     if (
         request.is_ajax() and
-        request.method == 'POST' and
-        settings.SERVER_INFO['EXPERIMENTAL'] is True
+        request.method == 'POST'
     ):
-        id = request.POST["user_id"]
-        the_user = User.objects.filter(id=id)
-        if len(the_user) > 0:
-            response['user'] = {}
-            response['user']['id'] = the_user[0].id
-            response['user']['username'] = the_user[0].username
-            response['user']['first_name'] = the_user[0].first_name
-            response['user']['last_name'] = the_user[0].last_name
-            response['user']['email'] = the_user[0].email
-            status = 200
-        else:
-            status = 201
+        the_user = request.user
+        response['user'] = {}
+        response['user']['id'] = the_user.id
+        response['user']['username'] = the_user.username
+        response['user']['first_name'] = the_user.first_name
+        response['user']['last_name'] = the_user.last_name
+        response['user']['email'] = the_user.email
+        status = 200
     return JsonResponse(
         response,
         status=status

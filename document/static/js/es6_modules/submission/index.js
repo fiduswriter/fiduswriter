@@ -9,7 +9,6 @@ let setRights = function(orginalDocId, CopyDocId, user, access_rights) {
         if (item.document_id === orginalDocId) {
             collaborators[collaborators.length] = item.user_id
         }
-
     })
     collaborators[collaborators.length] = user.id
     let postData = {
@@ -80,7 +79,6 @@ let submitDoc = function(editor, userProfile) {
                             success: response => {
                                 //addAlert('success','The paper was submitted to ojs')
                                 let dataSubmission = new window.FormData()
-                                dataSubmission.append('user_id', editor.user.id)
                                 dataSubmission.append('document_id', doc.id)
                                 dataSubmission.append('pre_document_id', editor.doc.id)
                                 if (editor.docInfo.submission.status == 'submitted') {
@@ -125,11 +123,9 @@ export let selectJournal = function(editor) {
     let list = null
     let userProfile = {}
     let diaButtons = {}
-    let data1 = new window.FormData()
-    data1.append('user_id', editor.user.id)
     jQuery.ajax({
         url: '/document/profile/',
-        data: data1,
+        data: {},
         type: 'POST',
         cache: false,
         contentType: false,
@@ -186,11 +182,9 @@ export let submissionRevisionDone = function(editor) {
     let diaButtons = {}
     let submission_info = {}
     let userProfile = {}
-    let data1 = new window.FormData()
-    data1.append('user_id', editor.user.id)
     jQuery.ajax({
         url: '/document/profile/',
-        data: data1,
+        data: {},
         type: 'POST',
         cache: false,
         contentType: false,
@@ -234,12 +228,11 @@ export let reviewSubmit = function(editor) {
     let diaButtons = {}
     let submission_info = {}
     let userProfile = {}
-    let submissionData = new window.FormData()
-    submissionData.append('document_id', editor.doc.id)
-    submissionData.append('user_id', editor.user.id)
     jQuery.ajax({
         url: '/document/reviewsubmit/',
-        data: submissionData,
+        data: {
+            document_id: editor.doc.id
+        },
         type: 'POST',
         cache: false,
         contentType: false,
@@ -281,7 +274,9 @@ export let reviewSubmit = function(editor) {
 
                 jQuery.ajax({
                     url: '/document/reviewsubmitundo/',
-                    data: submissionData,
+                    data: {
+                        document_id: editor.doc.id
+                    },
                     type: 'POST',
                     cache: false,
                     contentType: false,

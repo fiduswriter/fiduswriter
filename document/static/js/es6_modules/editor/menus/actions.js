@@ -32,7 +32,7 @@ export class ModMenusActions {
                     this.mod.editor.user,
                     (doc, docInfo, savedBibEntries) => {
                         window.location.href = `/document/${doc.id}/`
-                })
+                    })
             } else {
                 // We copy from one user to another. So we first load one set of
                 // databases, and then the other
@@ -71,7 +71,7 @@ export class ModMenusActions {
 
     downloadTemplateExport(templateUrl, templateType) {
         this.mod.editor.save(() => {
-            if (templateType ==='docx') {
+            if (templateType === 'docx') {
                 new DocxExporter(
                     this.mod.editor.doc,
                     templateUrl,
@@ -128,16 +128,18 @@ export class ModMenusActions {
         this.mod.editor.save(() => selectJournal(this.mod.editor))
     }
 
-    submitReview(){
+    submitReview() {
         this.mod.editor.save(() => reviewSubmit(this.mod.editor))
     }
 
-    revisionFinished(){
+    revisionFinished() {
         this.mod.editor.save(() => submissionRevisionDone(this.mod.editor))
     }
 
-    returnToOJS(){
-        this.mod.editor.save(() => {window.location.href = window.ojsUrl})
+    returnToOJS() {
+        this.mod.editor.save(() => {
+            window.location.href = window.ojsUrl
+        })
     }
 
     showKeyBindings() {
@@ -151,6 +153,4 @@ export class ModMenusActions {
     wordCounter() {
         this.mod.editor.mod.tools.wordCount.wordCountDialog()
     }
-
-
 }

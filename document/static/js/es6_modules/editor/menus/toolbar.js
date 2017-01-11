@@ -45,6 +45,27 @@ export class ModMenusToolbar {
                 this.mod.editor.mod.comments.interactions.createNewComment()
             )
         })
+
+        //review finished
+        jQuery(document).on(
+            'click',
+            '#reviewed:not(.disabled)',
+            () => this.mod.actions.submitReview()
+        )
+
+        jQuery(document).on(
+            'click',
+            '#revision-done:not(.disabled)',
+            () => this.mod.actions.revisionFinished()
+        )
+
+         //return to OJS
+        jQuery(document).on(
+            'click',
+            '#reviewerOJSReturn:not(.disabled)',
+            () => this.mod.actions.returnToOJS()
+        )
+
         let that = this
         // blockstyle paragraph, h1 - h3, lists
         jQuery(document).on('mousedown', '.toolbarheadings label', function (event) {

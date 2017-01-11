@@ -5,7 +5,7 @@ import {HTMLExporter} from "../../exporter/html"
 import {EpubExporter} from "../../exporter/epub"
 import {DocxExporter} from "../../exporter/docx"
 import {OdtExporter} from "../../exporter/odt"
-import {selectJournal} from "../../submit/journal"
+import {selectJournal, reviewSubmit, submissionRevisionDone} from "../../submission"
 
 export class ModMenusActions {
     constructor(mod) {
@@ -32,7 +32,7 @@ export class ModMenusActions {
                     this.mod.editor.user,
                     (doc, docInfo, savedBibEntries) => {
                         window.location.href = `/document/${doc.id}/`
-                })
+                    })
             } else {
                 // We copy from one user to another. So we first load one set of
                 // databases, and then the other
@@ -71,7 +71,7 @@ export class ModMenusActions {
 
     downloadTemplateExport(templateUrl, templateType) {
         this.mod.editor.save(() => {
-            if (templateType ==='docx') {
+            if (templateType === 'docx') {
                 new DocxExporter(
                     this.mod.editor.doc,
                     templateUrl,
@@ -125,9 +125,20 @@ export class ModMenusActions {
     }
 
     submitOjs() {
-        let list = null
+        this.mod.editor.save(() => selectJournal(this.mod.editor))
+    }
+
+    submitReview() {
+        this.mod.editor.save(() => reviewSubmit(this.mod.editor))
+    }
+
+    revisionFinished() {
+        this.mod.editor.save(() => submissionRevisionDone(this.mod.editor))
+    }
+
+    returnToOJS() {
         this.mod.editor.save(() => {
-            selectJournal(this.mod.editor)
+            window.location.href = window.ojsUrl
         })
     }
 
@@ -142,6 +153,4 @@ export class ModMenusActions {
     wordCounter() {
         this.mod.editor.mod.tools.wordCount.wordCountDialog()
     }
-
-
 }

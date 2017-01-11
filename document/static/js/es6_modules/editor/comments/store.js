@@ -61,6 +61,62 @@ export class ModCommentStore {
         this.signal("mustSend")
     }
 
+
+    moveComment(user, userName, userAvatar, date, id, pos) {
+        // The content to which a comment was linked has been removed.
+        // We need to find text close to the position to which we ccan link
+        // comment. This is user for reviewer comments that should not be lost.
+        this.addLocalComment(
+            id,
+            user,
+            userName,
+            userAvatar,
+            date,
+            this.comments[id].comment,
+            [],
+            this.comments[id]['review:isMajor'],
+            true
+        )
+
+        let markType = this.mod.editor.pm.schema.marks.comment.create({id})
+        let doc = this.mod.editor.pm.doc
+        let posFrom = pos-1
+        let posTo = pos
+        // We move backward through the document, trying to pick a start position
+        // the depth is 1 between document parts, and comments should be moved
+        // across these.
+        // We decrease the from position until there is some text between posFrom
+        // and posTo or until we hit the start of the document part.
+        while (
+            doc.resolve(posFrom).depth > 1 &&
+            !doc.textBetween(posFrom, posTo).length
+        ) {
+            posFrom--
+        }
+        // If we ended up reaching a document part boundary rather than finding
+        // text, we try again, this time moving in the opposite direction.
+        // We start at the original position and then increase posTo
+        if (doc.resolve(posFrom).depth === 1){
+            posFrom = posTo
+            posTo++
+            while (
+                doc.resolve(posTo).depth > 1 &&
+                !doc.textBetween(posFrom, posTo).length
+            ) {
+                posTo++
+            }
+
+            // If also the increase of posTo only made us reach a document part
+            // boundary, it means all text has been removed. So now we insert a
+            // single space which we can link to.
+            if (doc.resolve(posTo).depth === 1) {
+                this.mod.editor.pm.tr.insertText(posFrom,' ').apply()
+                posTo = posFrom + 1
+            }
+        }
+        this.mod.editor.pm.tr.addMark(posFrom, posTo, markType).apply()
+    }
+
     addLocalComment(id, user, userName, userAvatar, date, comment, answers, isMajor, local) {
         if (!this.comments[id]) {
             this.comments[id] = new Comment(id, user, userName, userAvatar, date, comment, answers, isMajor)
@@ -143,7 +199,29 @@ export class ModCommentStore {
             }
         })
         // Remove all the comments that could not be found.
-        ids.forEach(id => this.deleteComment(id, false))
+        // TODO: Why is the comment deleted if the change is made by a
+        // reviewer? Afshin, any idea?
+        if (
+            this.mod.editor.docInfo.submission.status === 'unsubmitted' ||
+            this.mod.editor.docInfo.rights === 'review'
+        ) {
+                // Delete comment from store
+               ids.forEach(id => this.deleteComment(id, false))
+        } else {
+            // The document is submitted. Instead of removing the comment,
+            // move it to a piece of text nearby, unless the
+            ids.forEach(id => {
+                let pos = this.mod.editor.pm.selection.from
+                this.moveComment(
+                    this.mod.editor.user.id,
+                    this.mod.editor.user.name,
+                    this.mod.editor.user.avatar,
+                    new Date().getTime(), // We update the time to the time the comment was stored
+                    id,
+                    pos
+                )
+            })
+        }
     }
 
 

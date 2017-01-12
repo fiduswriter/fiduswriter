@@ -58,7 +58,8 @@ export let citationDialog = function (mod) {
         editor.currentPm.tr.replaceSelection(
             nodeType.createAndFill({format, references})
         ).apply()
-
+        console.log("format")
+        console.log(references)
         return true
     }
 

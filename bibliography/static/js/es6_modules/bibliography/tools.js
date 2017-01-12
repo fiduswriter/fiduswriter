@@ -76,6 +76,7 @@ export function litToText(litStringArray) {
             outText += litString.text
         }
     })
+
     return outText
 }
 
@@ -98,7 +99,7 @@ export function nameToText(nameList) {
 
     if (1 < nameList.length) {
         //if there are more authors, add "and others" behind.
-        nameString = nameList + gettext(' and others')
+        nameString = nameList// + gettext(' and others')
 
     }
 

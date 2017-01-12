@@ -173,6 +173,8 @@ def save_js(request):
                     print("it is new object")
                     the_entry = Entry(**inserting_obj)
                     print(the_entry)
+                    print("the_entry.fields")
+                    print(the_entry.fields)
                     the_entry.save()
                     response['id_translations'].append([b_id, the_entry.id])
                 else:
@@ -183,6 +185,8 @@ def save_js(request):
                 the_entry.bib_type = bib['bib_type']
                 the_entry.entry_cat = bib['entry_cat']
                 the_entry.fields = bib['fields']
+                print("the_entry.fields")
+                print(the_entry.fields)
                 the_entry.save()
                 response['id_translations'].append([b_id, the_entry.id])
 

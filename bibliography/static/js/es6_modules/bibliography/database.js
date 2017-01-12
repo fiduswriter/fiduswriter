@@ -143,6 +143,9 @@ export class BibliographyDB {
      * @param tmpDB The bibliography DB with temporary IDs to be send to the server.
      */
     saveBibEntries(tmpDB, isNew, callback) {
+
+        console.log("i am in saveBibentries")
+        console.log(tmpDB)
         let that = this
         // Fields field need to be stringified for saving in database.
         // dbObject is a clone of tmpDB with a stringified fields-field, so
@@ -152,14 +155,17 @@ export class BibliographyDB {
             dbObject[bibKey] =  Object.assign({}, tmpDB[bibKey])
             dbObject[bibKey].entry_cat = JSON.stringify(tmpDB[bibKey].entry_cat)
             dbObject[bibKey].fields = JSON.stringify(tmpDB[bibKey].fields)
+            alert(dbObject[bibKey].fields)
         })
 
+        console.log("dbobject")
+        console.log(dbObject)
         let sendData = {
             is_new: isNew,
             bibs: JSON.stringify(dbObject)
         }
 
-        console.log(sendData)
+        console.log(sendData.bibs)
         if (this.docOwnerId !== 0) {
             console.log("this.docOwnerId")
             sendData['owner_id'] = this.docOwnerId

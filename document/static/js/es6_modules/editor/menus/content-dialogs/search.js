@@ -11,6 +11,7 @@ export class SearchDialog {
         this.fields = {}
     }
 
+
     dialog(mod) {
 
 	    let that = this
@@ -40,49 +41,46 @@ export class SearchDialog {
 				                var date      = result.publishDate_date//jQuery(this).parent().find("a.title").attr('itemDate')
 				                let bib_type = 'article'
 
-				                var bibFormat = 'autocite'//jQuery('#citation-style-label').data('style')
-        			            var bibEntry1 = id
-        			            var bibPage = ''
-        			            var bibBefore = ''
+				                var bibFormat = "autocite"//jQuery('#citation-style-label').data('style')
+
+        			            //var bibPage = "19"
+        			            //var bibBefore = "See for example" // Or something like: "See for example"
 
     			            	let editor = mod.editor
                     			let nodeType = editor.currentPm.schema.nodes['citation']
 
-                                let bibEntry = {
-                                    id: id,
-                                    bib_type: bib_type,
-                                    title: [{type: 'text', text: itemTitle}],
-                                    author: [{"family":[{"type":"text","text":author}],"given":[{"type":"text","text":author}]}]
-                                }
+					            that.save((id), bib_type, author,date, editor, itemTitle)
+
+                                //console.log(editor.bibDB.getDB(this.callback))
+                                let bibEntry =  editor.bibDB.getID()//"45"// pk value from backend
+                                alert((bibEntry))
+
                                 editor.currentPm.tr.replaceSelection(nodeType.createAndFill({
                                     format: bibFormat,
                                     references: [{id: (bibEntry)}]
                                 })).apply()
-
-
-					            that.save((id), bib_type, author,date, editor, itemTitle)
                             })
                         },
                 complete:function(){
-                   /* console.log("here1")
-                    jQuery.ajax({
+                    //console.log("here1")
+                    /*jQuery.ajax({
                         url: 'http://sowiport.gesis.org/Record/gesis-solis-00625037/Export?style=BibTeX',
-                        type: 'POST',
-                        dataType: 'jsonp',
+                        type: 'GET',
+                        dataType: 'json',
                         success: function (response, textStatus, jqXHR) {
                                         console.log("success")
                         },
                         error: function (jqXHR, textStatus, errorThrown) {
                             console.log("readyState: " + jqXHR.readyState);
-                            console.log("responseText: "+ jqXHR.responseText);
+                            //console.log("responseText: "+ jqXHR.responseText);
                             console.log("status: " +jqXHR.status);
-                            console.log("text status: " + textStatus);
+                            //console.log("text status: " + textStatus);
 
                             console.log('error', jqXHR.responseText)
                         },
 
-                    });
-                    console.log("here2")*/
+                    });*/
+                    //console.log("here2")
                 },
                     })
 
@@ -97,7 +95,7 @@ export class SearchDialog {
         let Id = itemId===false ? 0 : itemId
         let returnObj = {
                 bib_type: bib_type,
-                date: date,
+
                 entry_cat:  [],
                 entry_key: entry_key, // is never updated.
                 fields: {}
@@ -105,13 +103,9 @@ export class SearchDialog {
             }
 
         returnObj['fields']['author'] =  [{"family":[{"type":"text","text":author}],"given":[{"type":"text","text":author}]}]
-        //returnObj['fields']['date'] = date
+        returnObj['fields']['date'] = date
         returnObj['fields']['title'] =  [{type: 'text', text: itemTitle}]//litToText(itemTitle)
         returnObj['fields']['journaltitle'] =  [{type: 'text', text: "journaltitle"}]
-
-
-
-
 
         let saveObj = {}
         saveObj[Id] = returnObj
@@ -120,16 +114,12 @@ export class SearchDialog {
             this.createEntryKey(saveObj[itemId],author,date)
         }
 
-
-        console.log("saveObj[Id]")
-        console.log(saveObj[Id])
-        editor.bibDB.saveBibEntries(
+         editor.bibDB.saveBibEntries(
             saveObj,
             isNew,
             this.callback
         )
-        console.log("saveObj")
-        console.log(saveObj)
+
     }
 
 
@@ -159,11 +149,29 @@ export class SearchDialog {
         txt= txt.toLowerCase();
         let number = 0
         return txt.split('').map(function(c){
-         number = number + parseInt('abcdefghijklmnopqrstuvwxyz'.indexOf(c))
-         return number;
+         number = parseInt(number) + parseInt('abcdefghijklmnopqrstuvwxyz'.indexOf(c))
+         return parseInt(number);
     });
     }
 
+
+    obj_values(object) {
+      var results = [];
+      for (var property in object)
+        results.push(object[property]);
+      return results;
+    }
+
+    list_sum( list ){
+      return list.reduce(function(previousValue, currentValue, index, array){
+          return previousValue + currentValue;
+      });
+    }
+
+    object_values_sum( obj ){
+      let that = this
+      return that.list_sum(that.obj_values(obj));
+    }
 
 
     getByValue(arr, value) {

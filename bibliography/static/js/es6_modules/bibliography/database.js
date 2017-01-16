@@ -3,6 +3,7 @@ import {activateWait, deactivateWait, addAlert, csrfToken} from "../common/commo
 const FW_LOCALSTORAGE_VERSION = "1.0"
 
 export class BibliographyDB {
+
     constructor(docOwnerId, useLocalStorage, oldDB, oldCats) {
         this.docOwnerId = docOwnerId
         this.useLocalStorage = useLocalStorage // Whether to use local storage to cache result
@@ -17,6 +18,8 @@ export class BibliographyDB {
         } else {
             this.cats = []
         }
+
+        this.tmp_id = 0
     }
 
     // EXPORT
@@ -142,6 +145,8 @@ export class BibliographyDB {
      * @function saveBibEntries
      * @param tmpDB The bibliography DB with temporary IDs to be send to the server.
      */
+
+
     saveBibEntries(tmpDB, isNew, callback) {
 
         console.log("i am in saveBibentries")
@@ -187,24 +192,38 @@ export class BibliographyDB {
                     that.db[bibTrans[1]] = tmpDB[bibTrans[0]]
                     ids.push(bibTrans[1])
                 })
-                console.log("ids")
-                console.log(ids[0])
+
+
+
+
                 addAlert('success', gettext('The bibliography has been updated.'))
                 if (callback) {
-                    console.log("callback")
-                    console.log(callback)
                     callback(ids)
                 }
+
+                (that.setID(ids[0]))
 
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 addAlert('error', errorThrown)
             },
             complete: function () {
+
             }
         })
     }
 
+
+    setID(id){
+
+        this.tmp_id = id;
+    }
+
+
+    getID(){
+
+        return this.tmp_id;
+    }
 
     /** Update or create new category
      * @function createCategory
@@ -251,6 +270,9 @@ export class BibliographyDB {
             }
         })
     }
+
+
+
 
     /** Delete a categories
      * @function deleteCategory
@@ -331,3 +353,4 @@ export class BibliographyDB {
 
 
 }
+

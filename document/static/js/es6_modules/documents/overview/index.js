@@ -32,7 +32,7 @@ export class DocumentOverview {
     getBibDB(callback) {
         if (!this.bibDB) { // Don't get the bibliography again if we already have it.
             this.bibDB = new BibliographyDB(this.user.id, true, false, false)
-            this.bibDB.getDB(() => {
+            this.bibDB.getDB().then(() => {
                 callback()
             })
         } else {
@@ -43,7 +43,7 @@ export class DocumentOverview {
     getImageDB(callback) {
         if (!this.imageDB) {
             let imageGetter = new ImageDB(this.user.id)
-            imageGetter.getDB(() => {
+            imageGetter.getDB().then(() => {
                 this.imageDB = imageGetter.db
                 callback()
             })

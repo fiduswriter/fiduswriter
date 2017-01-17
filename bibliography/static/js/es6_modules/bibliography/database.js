@@ -21,10 +21,9 @@ export class BibliographyDB {
 
     /** Get the bibliography from the server and create as this.db.
      * @function getDB
-     * @param callback Will be called afterward.
      */
 
-    getDB(callback) {
+    getDB() {
 
         let lastModified = -1, numberOfEntries = -1
 
@@ -46,7 +45,10 @@ export class BibliographyDB {
                 numberOfEntries = -1
             }
 
-            if (localStorageVersion != FW_LOCALSTORAGE_VERSION || localStorageOwnerId != this.docOwnerId) {
+            if (
+                localStorageVersion != FW_LOCALSTORAGE_VERSION ||
+                localStorageOwnerId != this.docOwnerId
+            ) {
                 lastModified = -1
                 numberOfEntries = -1
             }
@@ -54,57 +56,61 @@ export class BibliographyDB {
 
 
         activateWait()
+        return new Promise((resolve, reject) => {
+            jQuery.ajax({
+                url: '/bibliography/biblist/',
+                data: {
+                    'owner_id': this.docOwnerId,
+                    'last_modified': lastModified,
+                    'number_of_entries': numberOfEntries,
+                },
+                type: 'POST',
+                dataType: 'json',
+                crossDomain: false, // obviates need for sameOrigin test
+                beforeSend: (xhr, settings) =>
+                    xhr.setRequestHeader("X-CSRFToken", csrfToken),
+                success: (response, textStatus, jqXHR) => {
+                    this.lastLoadTimes.push(Date.now())
+                    this.lastLoadTimes = this.lastLoadTimes.slice(
+                        Math.max(this.lastLoadTimes.length - 10, 0)
+                    )
+                    let bibCats = response.bibCategories
+                    bibCats.forEach(bibCat => {
+                        this.cats.push(bibCat)
+                    })
 
-        jQuery.ajax({
-            url: '/bibliography/biblist/',
-            data: {
-                'owner_id': this.docOwnerId,
-                'last_modified': lastModified,
-                'number_of_entries': numberOfEntries,
-            },
-            type: 'POST',
-            dataType: 'json',
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: (xhr, settings) =>
-                xhr.setRequestHeader("X-CSRFToken", csrfToken),
-            success: (response, textStatus, jqXHR) => {
-                this.lastLoadTimes.push(Date.now())
-                this.lastLoadTimes = this.lastLoadTimes.slice(Math.max(this.lastLoadTimes.length - 10, 0))
-                let newBibCats = response.bibCategories
-                newBibCats.forEach(bibCat => {
-                    this.cats.push(bibCat)
-                })
+                    let bibList = []
 
-                let bibList = []
-
-                if (this.useLocalStorage) {
-                    if (response.hasOwnProperty('bibList')) {
-                        bibList = response.bibList
-                        try {
-                            window.localStorage.setItem('biblist', JSON.stringify(response.bibList))
-                            window.localStorage.setItem('last_modified_biblist', response.last_modified)
-                            window.localStorage.setItem('number_of_entries', response.number_of_entries)
-                            window.localStorage.setItem('owner_id', response.docOwnerId)
-                            window.localStorage.setItem('version', FW_LOCALSTORAGE_VERSION)
-                        } catch (error) {
-                            // The local storage was likely too small
+                    if (this.useLocalStorage) {
+                        if (response.hasOwnProperty('bibList')) {
+                            bibList = response.bibList
+                            try {
+                                window.localStorage.setItem('biblist', JSON.stringify(response.bibList))
+                                window.localStorage.setItem('last_modified_biblist', response.last_modified)
+                                window.localStorage.setItem('number_of_entries', response.number_of_entries)
+                                window.localStorage.setItem('owner_id', response.docOwnerId)
+                                window.localStorage.setItem('version', FW_LOCALSTORAGE_VERSION)
+                            } catch (error) {
+                                // The local storage was likely too small
+                            }
+                        } else {
+                            bibList = JSON.parse(window.localStorage.getItem('biblist'))
                         }
                     } else {
-                        bibList = JSON.parse(window.localStorage.getItem('biblist'))
+                        bibList = response.bibList
                     }
-                } else {
-                    bibList = response.bibList
-                }
-                let newBibPks = []
-                for (let i = 0; i < bibList.length; i++) {
-                    newBibPks.push(this.serverBibItemToBibDB(bibList[i]))
-                }
-                if (callback) {
-                    callback(newBibPks, newBibCats)
-                }
-            },
-            error: (jqXHR, textStatus, errorThrown) => addAlert('error', jqXHR.responseText),
-            complete: () => deactivateWait()
+                    let bibPKs = []
+                    for (let i = 0; i < bibList.length; i++) {
+                        bibPKs.push(this.serverBibItemToBibDB(bibList[i]))
+                    }
+                    resolve({bibPKs, bibCats})
+                },
+                error: (jqXHR, textStatus, errorThrown) => {
+                    addAlert('error', jqXHR.responseText)
+                    reject()
+                },
+                complete: () => deactivateWait()
+            })
         })
     }
 

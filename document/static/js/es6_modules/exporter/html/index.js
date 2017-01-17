@@ -16,7 +16,7 @@ export class HTMLExporter extends BaseHTMLExporter{
             this.exportOne()
         } else {
             this.bibDB = new BibliographyDB(doc.owner.id, false, false, false)
-            this.bibDB.getDB(() => this.exportOne())
+            this.bibDB.getDB().then(() => this.exportOne())
         }
     }
 

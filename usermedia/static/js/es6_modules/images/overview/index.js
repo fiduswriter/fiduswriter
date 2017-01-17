@@ -131,7 +131,7 @@ export class ImageOverview {
 
     getImageDB(callback) {
         let imageGetter = new ImageDB(0)
-        imageGetter.getDB(pks => {
+        imageGetter.getDB().then(pks => {
             this.imageDB = imageGetter
             this.mod.categories.addImageCategoryList(imageGetter.cats)
 

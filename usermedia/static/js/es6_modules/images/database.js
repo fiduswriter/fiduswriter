@@ -10,39 +10,39 @@ export class ImageDB {
         this.cats = []
     }
 
-    getDB(callback) {
+    getDB() {
         this.db = {}
         this.cats = []
 
         activateWait()
-
-        jQuery.ajax({
-            url: '/usermedia/images/',
-            data: {
-                'owner_id': this.userId
-            },
-            type: 'POST',
-            dataType: 'json',
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: (xhr, settings) =>
-                xhr.setRequestHeader("X-CSRFToken", csrfToken),
-            success: (response, textStatus, jqXHR) => {
-                this.cats = response.imageCategories
-                let pks = []
-                for (let i = 0; i < response.images.length; i++) {
-                    response.images[i].image = response.images[i].image.split('?')[0]
-                    this.db[response.images[i]['pk']] = response.images[i]
-                    pks.push(response.images[i]['pk'])
-                }
-                if (callback) {
-                    callback(pks)
-                }
-            },
-            error: (jqXHR, textStatus, errorThrown) =>
-                addAlert('error', jqXHR.responseText),
-            complete: () => deactivateWait()
+        return new Promise((resolve, reject) => {
+            jQuery.ajax({
+                url: '/usermedia/images/',
+                data: {
+                    'owner_id': this.userId
+                },
+                type: 'POST',
+                dataType: 'json',
+                crossDomain: false, // obviates need for sameOrigin test
+                beforeSend: (xhr, settings) =>
+                    xhr.setRequestHeader("X-CSRFToken", csrfToken),
+                success: (response, textStatus, jqXHR) => {
+                    this.cats = response.imageCategories
+                    let pks = []
+                    for (let i = 0; i < response.images.length; i++) {
+                        response.images[i].image = response.images[i].image.split('?')[0]
+                        this.db[response.images[i]['pk']] = response.images[i]
+                        pks.push(response.images[i]['pk'])
+                    }
+                    resolve(pks)
+                },
+                error: (jqXHR, textStatus, errorThrown) => {
+                    addAlert('error', jqXHR.responseText)
+                    reject()
+                },
+                complete: () => deactivateWait()
+            })
         })
-
     }
 
     createImage(postData, callback) {

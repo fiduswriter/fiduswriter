@@ -27,7 +27,7 @@ export class BookList {
     getImageDB(callback) {
         if (!this.imageDB) {
             let imageGetter = new ImageDB(this.user.id)
-            imageGetter.getDB(
+            imageGetter.getDB().then(
                 () => {
                     this.imageDB = imageGetter
                     callback()
@@ -40,7 +40,7 @@ export class BookList {
 
     getAnImageDB(userId, callback){
         let imageGetter = new ImageDB(userId)
-        imageGetter.getDB(() => {
+        imageGetter.getDB().then(() => {
             callback(imageGetter)
         })
     }

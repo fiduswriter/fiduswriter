@@ -79,7 +79,7 @@ export class FormatCitations {
         let llt = this.bibDB.lastLoadTimes
         let lltlen = this.bibDB.lastLoadTimes.length
         if (lltlen < 2 || Date.now() - llt[lltlen-2] > 30000) {
-            this.bibDB.getDB(() => {
+            this.bibDB.getDB().then(() => {
                 if (missingItems.some(item => this.bibDB.db.hasOwnProperty(item))) {
                     this.init()
                 }

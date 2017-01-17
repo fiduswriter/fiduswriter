@@ -242,9 +242,9 @@ export class Editor {
     getBibDB(userId, callback) {
         if (!this.bibDB) { // Don't get the bibliography again if we already have it.
             let bibGetter = new BibliographyDB(userId, true, false, false)
-            bibGetter.getDB((bibPks, bibCats) => {
+            bibGetter.getDB().then(({bibPKs, bibCats}) => {
                 this.bibDB = bibGetter
-                this.mod.menus.citation.appendManyToCitationDialog(bibPks)
+                this.mod.menus.citation.appendManyToCitationDialog(bibPKs)
                 this.mod.menus.header.enableExportMenu()
                 if (callback) {
                     callback()
@@ -262,7 +262,7 @@ export class Editor {
     getImageDB(userId, callback) {
         if (!this.imageDB) {
             let imageGetter = new ImageDB(userId)
-            imageGetter.getDB(() => {
+            imageGetter.getDB().then(() => {
                 this.imageDB = imageGetter
                 // assign image DB to be used in schema.
                 this.schema.cached.imageDB = imageGetter

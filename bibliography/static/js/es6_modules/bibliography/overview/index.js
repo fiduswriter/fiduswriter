@@ -22,9 +22,9 @@ export class BibliographyOverview {
         let docOwnerId = 0 // 0 = current user.
         this.bibDB = new BibliographyDB(docOwnerId, true, false, false)
 
-        this.bibDB.getDB((bibPks, bibCats) => {
+        this.bibDB.getDB().then(({bibPKs, bibCats}) => {
             this.addBibCategoryList(bibCats)
-            this.addBibList(bibPks)
+            this.addBibList(bibPKs)
             if (callback) {
                 callback()
             }

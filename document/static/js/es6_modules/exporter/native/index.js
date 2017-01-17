@@ -46,7 +46,7 @@ export class NativeExporter {
     getBibDB(callback) {
         if (!this.bibDB) {
             this.bibDB = new BibliographyDB(this.doc.owner.id, false, false, false)
-            this.bibDB.getDB(() => callback())
+            this.bibDB.getDB().then(() => callback())
         } else {
             callback()
         }
@@ -55,7 +55,7 @@ export class NativeExporter {
     getImageDB(callback) {
         if (!this.imageDB) {
             let imageGetter = new ImageDB(this.doc.owner.id)
-            imageGetter.getDB(
+            imageGetter.getDB().then(
                 () => {
                     this.imageDB = imageGetter.db
                     callback()

@@ -238,12 +238,12 @@ export class DocumentOverviewActions {
 
     getBibDB(userId, callback) {
         let bibGetter = new BibliographyDB(userId, true, false, false)
-        bibGetter.getDB(() => callback(bibGetter.db))
+        bibGetter.getDB().then(() => callback(bibGetter.db))
     }
 
     getImageDB(userId, callback) {
         let imageGetter = new ImageDB(userId)
-        imageGetter.getDB(() => callback(imageGetter.db))
+        imageGetter.getDB().then(() => callback(imageGetter.db))
     }
 
     downloadNativeFiles(ids) {

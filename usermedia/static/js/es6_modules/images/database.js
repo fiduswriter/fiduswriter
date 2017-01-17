@@ -45,40 +45,46 @@ export class ImageDB {
         })
     }
 
-    createImage(postData, callback) {
+    createImage(postData) {
         activateWait()
         // Remove old warning messages
         jQuery('#uploadimage .warning').detach()
-        // Send to server
-        jQuery.ajax({
-            url: '/usermedia/save/',
-            data: postData,
-            type: 'POST',
-            dataType: 'json',
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: (xhr, settings) =>
-                xhr.setRequestHeader("X-CSRFToken", csrfToken),
-            success: (response, textStatus, jqXHR) => {
-                if (this.displayCreateImageError(response.errormsg)) {
-                    this.db[response.values.pk] = response.values
-                    addAlert('success', gettext('The image has been uploaded'))
-                    callback(response.values.pk)
-                } else {
-                    addAlert('error', gettext(
-                        'Some errors are found. Please examine the form.'
-                    ))
-                }
-            },
-            error: (jqXHR, textStatus, errorThrown) => {
-                if (jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.errormsg) {
-                    addAlert('error', jqXHR.responseJSON.errormsg)
-                }
-            },
-            complete: () => deactivateWait(),
-            cache: false,
-            contentType: false,
-            processData: false
+
+        return new Promise((resolve, reject) => {
+            // Send to server
+            jQuery.ajax({
+                url: '/usermedia/save/',
+                data: postData,
+                type: 'POST',
+                dataType: 'json',
+                crossDomain: false, // obviates need for sameOrigin test
+                beforeSend: (xhr, settings) =>
+                    xhr.setRequestHeader("X-CSRFToken", csrfToken),
+                success: (response, textStatus, jqXHR) => {
+                    if (this.displayCreateImageError(response.errormsg)) {
+                        this.db[response.values.pk] = response.values
+                        addAlert('success', gettext('The image has been uploaded'))
+                        resolve(response.values.pk)
+                    } else {
+                        addAlert('error', gettext(
+                            'Some errors are found. Please examine the form.'
+                        ))
+                        reject()
+                    }
+                },
+                error: (jqXHR, textStatus, errorThrown) => {
+                    if (jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.errormsg) {
+                        addAlert('error', jqXHR.responseJSON.errormsg)
+                    }
+                    reject()
+                },
+                complete: () => deactivateWait(),
+                cache: false,
+                contentType: false,
+                processData: false
+            })
         })
+
     }
 
     displayCreateImageError(errors) {

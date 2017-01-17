@@ -202,7 +202,7 @@ export class Editor {
         this.mod.comments.store.on("mustSend", () => {
             this.mod.collab.docChanges.sendToCollaborators()
         })
-        this.getBibDB(this.doc.owner.id, () => {
+        this.getBibDB(this.doc.owner.id).then(() => {
             this.enableUI()
         })
         this.waitingForDocument = false
@@ -239,19 +239,16 @@ export class Editor {
         // TODO: Need to to remove all entries of citation dialog!
     }
 
-    getBibDB(userId, callback) {
+    getBibDB(userId) {
         if (!this.bibDB) { // Don't get the bibliography again if we already have it.
             let bibGetter = new BibliographyDB(userId, true, false, false)
-            bibGetter.getDB().then(({bibPKs, bibCats}) => {
+            return bibGetter.getDB().then(({bibPKs, bibCats}) => {
                 this.bibDB = bibGetter
                 this.mod.menus.citation.appendManyToCitationDialog(bibPKs)
                 this.mod.menus.header.enableExportMenu()
-                if (callback) {
-                    callback()
-                }
             })
         } else {
-            callback()
+            return Promise.resolve()
         }
     }
 
@@ -259,19 +256,18 @@ export class Editor {
         delete this.imageDB
     }
 
-    getImageDB(userId, callback) {
+    getImageDB(userId) {
         if (!this.imageDB) {
             let imageGetter = new ImageDB(userId)
-            imageGetter.getDB().then(() => {
+            return imageGetter.getDB().then(() => {
                 this.imageDB = imageGetter
                 // assign image DB to be used in schema.
                 this.schema.cached.imageDB = imageGetter
                 // assign image DB to be used in footnote schema.
                 this.mod.footnotes.schema.cached.imageDB = imageGetter
-                callback()
             })
         } else {
-            callback()
+            return Promise.resolve()
         }
     }
 
@@ -335,7 +331,7 @@ export class Editor {
         } else {
             this.user = this.doc.owner
         }
-        this.getImageDB(this.doc.owner.id, () => {
+        this.getImageDB(this.doc.owner.id).then(() => {
             this.update()
             this.mod.serverCommunications.send({
                 type: 'participant_update'

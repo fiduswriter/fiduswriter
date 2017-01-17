@@ -44,8 +44,8 @@ let submitDoc = function(editor) {
     editor.save(() => {
         editor.removeBibDB()
         editor.removeImageDB()
-        editor.getBibDB(editor.user.id, () => {
-            editor.getImageDB(editor.user.id, () => {
+        editor.getBibDB(editor.user.id).then(() => {
+            editor.getImageDB(editor.user.id).then(() => {
                 savecopy(editor.doc, oldBibDB, oldImageDB,
                     editor.bibDB.db, editor.imageDB.db, editor.user,
                     (doc, docInfo, newBibEntries) => {

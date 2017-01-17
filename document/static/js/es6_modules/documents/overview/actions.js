@@ -103,8 +103,10 @@ export class DocumentOverviewActions {
                 console.log('error', e.target.error.code)
             }
 
-            that.documentOverview.getBibDB(() => {
-                that.documentOverview.getImageDB(() => {
+            that.documentOverview.getBibDB().then(
+                () => that.documentOverview.getImageDB()
+            ).then(
+                () => {
                     new ImportFidusFile(
                         fidusFile,
                         that.documentOverview.user,
@@ -132,7 +134,6 @@ export class DocumentOverviewActions {
                             }
                         }
                     )
-                })
             })
 
             //reader.onload = unzip
@@ -173,77 +174,80 @@ export class DocumentOverviewActions {
 
     copyFiles(ids) {
         getMissingDocumentListData(ids, this.documentOverview.documentList, () => {
-            this.documentOverview.getBibDB(() => {
-                this.documentOverview.getImageDB(() => {
-                    for (let i = 0; i < ids.length; i++) {
-                        let doc = _.findWhere(this.documentOverview.documentList, {
-                            id: ids[i]
-                        })
-                        if (doc.owner.id===this.documentOverview.user.id) {
-                            // We are copying from and to the same user.
-                            savecopy(
-                                doc,
-                                this.documentOverview.bibDB.db,
-                                this.documentOverview.imageDB,
-                                this.documentOverview.bibDB.db,
-                                this.documentOverview.imageDB,
-                                this.documentOverview.user,
-                                (doc, docInfo) => {
-                                    this.documentOverview.documentList.push(doc)
-                                    this.documentOverview.stopDocumentTable()
-                                    jQuery('#document-table tbody').append(
-                                        documentsListItemTemplate({
-                                            aDocument: doc,
-                                            user: this.documentOverview.user,
-                                            localizeDate
-                                        }))
-                                    this.documentOverview.startDocumentTable()
-                                }
-                            )
-                        } else {
-                            this.getBibDB(doc.owner.id, oldBibDB => {
-                                this.getImageDB(doc.owner.id, oldImageDB => {
-                                    /* We are copying from another user, so we are first loading
-                                     the databases from that user
-                                    */
-                                    savecopy(
-                                        doc,
-                                        oldBibDB,
-                                        oldImageDB,
-                                        this.documentOverview.bibDB.db,
-                                        this.documentOverview.imageDB,
-                                        this.documentOverview.user,
-                                        (doc, docInfo) => {
-                                            this.documentOverview.documentList.push(doc)
-                                            this.documentOverview.stopDocumentTable()
-                                            jQuery('#document-table tbody').append(
-                                                documentsListItemTemplate({
-                                                    aDocument: doc,
-                                                    user: this.documentOverview.user,
-                                                    localizeDate
-                                                }))
-                                            this.documentOverview.startDocumentTable()
-                                        }
-                                    )
-                                })
+            this.documentOverview.getBibDB().then(
+                () => this.documentOverview.getImageDB()
+            ).then(() => {
+                for (let i = 0; i < ids.length; i++) {
+                    let doc = _.findWhere(this.documentOverview.documentList, {
+                        id: ids[i]
+                    })
+                    if (doc.owner.id===this.documentOverview.user.id) {
+                        // We are copying from and to the same user.
+                        savecopy(
+                            doc,
+                            this.documentOverview.bibDB.db,
+                            this.documentOverview.imageDB,
+                            this.documentOverview.bibDB.db,
+                            this.documentOverview.imageDB,
+                            this.documentOverview.user,
+                            (doc, docInfo) => {
+                                this.documentOverview.documentList.push(doc)
+                                this.documentOverview.stopDocumentTable()
+                                jQuery('#document-table tbody').append(
+                                    documentsListItemTemplate({
+                                        aDocument: doc,
+                                        user: this.documentOverview.user,
+                                        localizeDate
+                                    }))
+                                this.documentOverview.startDocumentTable()
+                            }
+                        )
+                    } else {
+                        this.getBibDB(doc.owner.id).then(oldBibDB => {
+                            this.getImageDB(doc.owner.id).then(oldImageDB => {
+                                /* We are copying from another user, so we are first loading
+                                 the databases from that user
+                                */
+                                savecopy(
+                                    doc,
+                                    oldBibDB,
+                                    oldImageDB,
+                                    this.documentOverview.bibDB.db,
+                                    this.documentOverview.imageDB,
+                                    this.documentOverview.user,
+                                    (doc, docInfo) => {
+                                        this.documentOverview.documentList.push(doc)
+                                        this.documentOverview.stopDocumentTable()
+                                        jQuery('#document-table tbody').append(
+                                            documentsListItemTemplate({
+                                                aDocument: doc,
+                                                user: this.documentOverview.user,
+                                                localizeDate
+                                            }))
+                                        this.documentOverview.startDocumentTable()
+                                    }
+                                )
                             })
-                        }
-
+                        })
                     }
-                })
+                }
             })
-
         })
     }
 
-    getBibDB(userId, callback) {
+    getBibDB(userId) {
         let bibGetter = new BibliographyDB(userId, true, false, false)
-        bibGetter.getDB().then(() => callback(bibGetter.db))
+        return new Promise (resolve => {
+            bibGetter.getDB().then(() => resolve(bibGetter.db))
+        })
+
     }
 
-    getImageDB(userId, callback) {
+    getImageDB(userId) {
         let imageGetter = new ImageDB(userId)
-        imageGetter.getDB().then(() => callback(imageGetter.db))
+        return new Promise (resolve => {
+            imageGetter.getDB().then(() => resolve(imageGetter.db))
+        })
     }
 
     downloadNativeFiles(ids) {
@@ -330,8 +334,10 @@ export class DocumentOverviewActions {
     }
 
     revisionsDialog(documentId) {
-        this.documentOverview.getBibDB(() => {
-            this.documentOverview.getImageDB(() => {
+        this.documentOverview.getBibDB().then(
+            () => this.documentOverview.getImageDB()
+        ).then(
+            () => {
                 new DocumentRevisionsDialog(
                   documentId,
                   this.documentOverview.documentList,
@@ -362,8 +368,7 @@ export class DocumentOverviewActions {
                             break
                     }
                 })
-            })
-        })
+            }
+        )
     }
-
 }

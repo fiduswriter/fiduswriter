@@ -40,20 +40,22 @@ export class ModMenusActions {
                 let oldImageDB = this.mod.editor.imageDB.db
                 this.mod.editor.removeBibDB()
                 this.mod.editor.removeImageDB()
-                this.mod.editor.getBibDB(this.mod.editor.user.id, () => {
-                    this.mod.editor.getImageDB(this.mod.editor.user.id, () => {
-                        savecopy(
-                            this.mod.editor.doc,
-                            oldBibDB,
-                            oldImageDB,
-                            this.mod.editor.bibDB.db,
-                            this.mod.editor.imageDB.db,
-                            this.mod.editor.user,
-                            (doc, docInfo, savedBibEntries) => {
-                                window.location.href = `/document/${doc.id}/`
-                            }
-                        )
-                    })
+                this.mod.editor.getBibDB(
+                    this.mod.editor.user.id
+                ).then(
+                    () => this.mod.editor.getImageDB(this.mod.editor.user.id)
+                ).then(() => {
+                    savecopy(
+                        this.mod.editor.doc,
+                        oldBibDB,
+                        oldImageDB,
+                        this.mod.editor.bibDB.db,
+                        this.mod.editor.imageDB.db,
+                        this.mod.editor.user,
+                        (doc, docInfo, savedBibEntries) => {
+                            window.location.href = `/document/${doc.id}/`
+                        }
+                    )
                 })
             }
         })

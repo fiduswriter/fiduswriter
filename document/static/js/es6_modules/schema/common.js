@@ -1,6 +1,6 @@
 import {Block, Inline, Text, Attribute} from "prosemirror-old/dist/model"
 import {elt} from "prosemirror-old/dist/util/dom"
-import {katexRender} from "../katex/katex"
+import {katexRender} from "../katex"
 
 export class Citation extends Inline {
     get attrs() {

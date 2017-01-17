@@ -1,4 +1,4 @@
-import {noSpaceTmp} from "../../common/common"
+import {noSpaceTmp} from "../../common"
 
 import JSZipUtils from "jszip-utils"
 import TeXZilla from "texzilla"

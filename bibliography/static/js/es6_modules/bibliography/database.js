@@ -1,4 +1,4 @@
-import {activateWait, deactivateWait, addAlert, csrfToken} from "../common/common"
+import {activateWait, deactivateWait, addAlert, csrfToken} from "../common"
 
 const FW_LOCALSTORAGE_VERSION = "1.0"
 

@@ -1,4 +1,4 @@
-import {addAlert, csrfToken} from "../common/common"
+import {addAlert, csrfToken} from "../common"
 
 export class SaveImages {
     constructor(newImageEntries, ImageTranslationTable, imageDB) {

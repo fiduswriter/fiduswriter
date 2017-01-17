@@ -1,5 +1,5 @@
 import {bookCollaboratorsTemplate, bookAccessRightOverviewTemplate} from "./templates"
-import {addDropdownBox, setCheckableLabel, addAlert, csrfToken} from "../../common/common"
+import {addDropdownBox, setCheckableLabel, addAlert, csrfToken} from "../../common"
 
 /**
 * Helper functions to deal with the book access rights dialog.

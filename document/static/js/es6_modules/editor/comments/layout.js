@@ -1,6 +1,6 @@
 import {commentsTemplate, filterByUserBoxTemplate} from "./templates"
 import {Comment} from "./comment"
-import {localizeDate} from "../../common/common"
+import {localizeDate} from "../../common"
 
 /* Functions related to layouting of comments */
 export class ModCommentLayout {

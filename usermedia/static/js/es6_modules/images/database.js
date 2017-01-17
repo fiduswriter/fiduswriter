@@ -1,4 +1,4 @@
-import {activateWait, deactivateWait, addAlert, csrfToken} from "../common/common"
+import {activateWait, deactivateWait, addAlert, csrfToken} from "../common"
 
 
 /* A class that holds information about images uploaded by the user. */

@@ -2,11 +2,11 @@ import {HTMLBookExporter} from "./exporter/html"
 import {LatexBookExporter} from "./exporter/latex"
 import {EpubBookExporter} from "./exporter/epub"
 import {BookActions} from "./actions"
-import {BookAccessRightsDialog} from "./accessrights/dialog"
+import {BookAccessRightsDialog} from "./accessrights"
 import {bookListTemplate} from "./templates"
 import {ImageDB} from "../images/database"
-import {addDropdownBox, addAlert} from "../common/common"
-import {Menu} from "../menu/menu"
+import {addDropdownBox, addAlert} from "../common"
+import {Menu} from "../menu"
 
 export class BookList {
     // A class that contains everything that happens on the books page.

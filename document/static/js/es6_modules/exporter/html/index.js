@@ -3,8 +3,8 @@ import {findImages} from "../tools/html"
 import {zipFileCreator} from "../tools/zip"
 import {htmlExportTemplate} from "./templates"
 import {BibliographyDB} from "../../bibliography/database"
-import {addAlert} from "../../common/common"
-import {katexRender} from "../../katex/katex"
+import {addAlert} from "../../common"
+import {katexRender} from "../../katex"
 import {BaseHTMLExporter} from "./base"
 
 export class HTMLExporter extends BaseHTMLExporter{

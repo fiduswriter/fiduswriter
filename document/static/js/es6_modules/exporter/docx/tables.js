@@ -1,4 +1,4 @@
-import {noSpaceTmp} from "../../common/common"
+import {noSpaceTmp} from "../../common"
 
 let DEFAULT_TABLENORMAL_XML = noSpaceTmp`
     <w:style w:type="table" w:default="1" w:styleId="TableNormal">

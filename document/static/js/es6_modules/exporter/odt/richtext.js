@@ -1,5 +1,5 @@
 import {escapeText} from "../tools/html"
-import {noSpaceTmp} from "../../common/common"
+import {noSpaceTmp} from "../../common"
 
 export class OdtExporterRichtext {
     constructor(exporter, images) {

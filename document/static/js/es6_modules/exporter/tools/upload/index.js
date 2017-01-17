@@ -1,5 +1,5 @@
 import {revisionDialogTemplate} from "./templates"
-import {addAlert, csrfToken} from "../../../common/common"
+import {addAlert, csrfToken} from "../../../common"
 
 /** Uploads a Fidus Writer document to the server.
  * @function uploadFile

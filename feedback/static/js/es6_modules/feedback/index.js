@@ -1,4 +1,4 @@
-import {csrfToken, getCookie} from "../common/common"
+import {csrfToken, getCookie} from "../common"
 import * as bowser from "bowser/bowser"
 
 // Creates the feedback tab. The tab is meant for user feedback to the developers while FW is still in

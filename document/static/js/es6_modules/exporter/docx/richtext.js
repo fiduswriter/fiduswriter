@@ -1,5 +1,5 @@
 import {escapeText} from "../tools/html"
-import {noSpaceTmp} from "../../common/common"
+import {noSpaceTmp} from "../../common"
 
 export class DocxExporterRichtext {
     constructor(exporter, rels, citations, images) {

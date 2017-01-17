@@ -1,4 +1,4 @@
-import {addAlert, csrfToken} from "../common/common"
+import {addAlert, csrfToken} from "../common"
 import {updateDoc} from "../schema/convert"
 
 export let getMissingDocumentListData = function (ids, documentList, callback) {

@@ -1,6 +1,6 @@
 import {savecopy} from "../exporter/native/copy"
 import {journalDialogTemplate,reviewSubmitDialogTemplate,revisionSubmitDialogTemplate} from "./templates"
-import {addAlert, csrfToken} from "../common/common"
+import {addAlert, csrfToken} from "../common"
 
 let setRights = function(orginalDocId, CopyDocId, user, access_rights) {
     let collaborators = [],

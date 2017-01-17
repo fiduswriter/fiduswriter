@@ -1,7 +1,7 @@
 import {BibFieldTypes, BibTypes} from "biblatex-csl-converter/lib/const"
 import {BibFieldTitles, BibTypeTitles, BibFieldHelp} from "./strings"
 import {bibDialog} from "./templates"
-import {addAlert, noSpaceTmp} from "../../common/common"
+import {addAlert, noSpaceTmp} from "../../common"
 import {EntryCatForm} from "./entry-cat"
 import {DateFieldForm} from "./fields/date"
 import {LiteralFieldForm} from "./fields/literal"

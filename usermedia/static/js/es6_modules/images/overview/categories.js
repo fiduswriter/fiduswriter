@@ -1,5 +1,5 @@
 import {usermediaEditcategoriesTemplate, usermediaCategoryformsTemplate, usermediaCategoryListItemTemplate} from "./templates"
-import {activateWait, deactivateWait, addAlert, csrfToken} from "../../common/common"
+import {activateWait, deactivateWait, addAlert, csrfToken} from "../../common"
 
 export class ImageOverviewCategories {
 

@@ -1,9 +1,8 @@
-import {ImageUploadDialog} from "../upload-dialog/upload-dialog"
+import {ImageUploadDialog} from "../upload-dialog"
 import {ImageDB} from "../database"
 import {ImageOverviewCategories} from "./categories"
-import {addDropdownBox, activateWait, deactivateWait, addAlert, localizeDate} from "../../common/common"
-import {csrfToken} from "../../common/common"
-import {Menu} from "../../menu/menu"
+import {addDropdownBox, activateWait, deactivateWait, addAlert, localizeDate, csrfToken} from "../../common"
+import {Menu} from "../../menu"
 import {usermediaCategoryListItem, usermediaTableTemplate} from "./templates"
  /** Helper functions for user added images/SVGs.*/
 

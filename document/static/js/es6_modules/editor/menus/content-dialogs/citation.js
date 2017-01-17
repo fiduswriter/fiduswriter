@@ -1,6 +1,6 @@
 import {configureCitationTemplate, citationItemTemplate, selectedCitationTemplate} from "./templates"
 import {BibEntryForm} from "../../../bibliography/form"
-import {addDropdownBox, setCheckableLabel} from "../../../common/common"
+import {addDropdownBox, setCheckableLabel} from "../../../common"
 import {nameToText, litToText} from "../../../bibliography/tools"
 
 // TODO: turn into class (like FigureDialog)

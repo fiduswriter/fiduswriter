@@ -1,6 +1,6 @@
 import {accessRightOverviewTemplate, accessRightTrTemplate, collaboratorsTemplate} from "./templates"
 import {addMemberDialog} from "../../contacts/manage"
-import {addDropdownBox, setCheckableLabel, addAlert, csrfToken} from "../../common/common"
+import {addDropdownBox, setCheckableLabel, addAlert, csrfToken} from "../../common"
 
 /**
 * Functions for the document access rights dialog.

@@ -1,4 +1,4 @@
-import {noSpaceTmp} from "../../common/common"
+import {noSpaceTmp} from "../../common"
 
 const GRAPHIC_STYLES = {
     Formula: noSpaceTmp`

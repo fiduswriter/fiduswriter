@@ -1,4 +1,4 @@
-import {csrfToken} from "../common/common"
+import {csrfToken} from "../common"
 
 export class SaveBibs {
     constructor(newBibEntries, BibTranslationTable, bibDB) {

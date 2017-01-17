@@ -1,5 +1,5 @@
 import {usermediaImageItemSelectionTemplate, usermediaImageSelectionTemplate} from "./templates"
-import {ImageUploadDialog} from "../upload-dialog/upload-dialog"
+import {ImageUploadDialog} from "../upload-dialog"
 
 export class ImageSelectionDialog {
     constructor(imageDB, imageId, ownerId, callback) {

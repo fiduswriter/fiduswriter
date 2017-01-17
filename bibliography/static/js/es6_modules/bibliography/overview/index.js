@@ -6,8 +6,8 @@ import {BibliographyDB} from "../database"
 import {BibTypeTitles} from "../form/strings"
 import {BibLatexFileImporter} from "../import"
 import {BibLatexFileExporter} from "../export"
-import {addDropdownBox} from "../../common/common"
-import {Menu} from "../../menu/menu"
+import {addDropdownBox} from "../../common"
+import {Menu} from "../../menu"
 
 export class BibliographyOverview {
 

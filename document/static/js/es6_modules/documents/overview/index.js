@@ -3,8 +3,8 @@ import {DocumentOverviewMenus} from "./menus"
 import {documentsListTemplate, documentsListItemTemplate} from "./templates"
 import {BibliographyDB} from "../../bibliography/database"
 import {ImageDB} from "../../images/database"
-import {activateWait, deactivateWait, addAlert, localizeDate, csrfToken} from "../../common/common"
-import {Menu} from "../../menu/menu"
+import {activateWait, deactivateWait, addAlert, localizeDate, csrfToken} from "../../common"
+import {Menu} from "../../menu"
 /*
 * Helper functions for the document overview page.
 */

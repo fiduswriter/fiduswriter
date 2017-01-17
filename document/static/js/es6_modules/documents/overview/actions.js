@@ -8,10 +8,10 @@ import {DocxExporter} from "../../exporter/docx"
 import {OdtExporter} from "../../exporter/odt"
 import {NativeExporter} from "../../exporter/native"
 import {ImportFidusFile} from "../../importer/file"
-import {DocumentRevisionsDialog} from "../revisions/dialog"
+import {DocumentRevisionsDialog} from "../revisions"
 import {BibliographyDB} from "../../bibliography/database"
 import {ImageDB} from "../../images/database"
-import {activateWait, deactivateWait, addAlert, localizeDate, csrfToken} from "../../common/common"
+import {activateWait, deactivateWait, addAlert, localizeDate, csrfToken} from "../../common"
 
 export class DocumentOverviewActions {
     constructor (documentOverview) {

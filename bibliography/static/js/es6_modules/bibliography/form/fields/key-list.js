@@ -1,5 +1,5 @@
 import {KeyFieldForm} from "./key"
-import {noSpaceTmp} from "../../../common/common"
+import {noSpaceTmp} from "../../../common"
 
 export class KeyListForm{
     constructor(dom, initialValue = [''], unused = undefined, fieldType = undefined) {

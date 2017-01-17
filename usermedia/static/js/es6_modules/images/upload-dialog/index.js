@@ -1,5 +1,5 @@
 import {usermediaUploadCategoryTemplate, usermediaUploadTemplate} from "./templates"
-import {setCheckableLabel} from "../../common/common"
+import {setCheckableLabel} from "../../common"
 
 export class ImageUploadDialog {
     constructor(imageDB, imageId, ownerId, callback) {

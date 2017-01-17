@@ -1,4 +1,4 @@
-import {addAlert, csrfToken} from "../common/common"
+import {addAlert, csrfToken} from "../common"
 import {GetImages} from "./get-images"
 import {SaveImages} from "./save-images"
 import {SaveBibs} from "./save-bibs"

@@ -2,7 +2,7 @@ import {FormatCitations} from "../../citations/format"
 import {docSchema} from "../../schema/document"
 import {cslBibSchema} from "../../bibliography/schema/csl-bib"
 import {descendantNodes} from "../tools/doc-contents"
-import {noSpaceTmp} from "../../common/common"
+import {noSpaceTmp} from "../../common"
 
 export class DocxExporterCitations {
     constructor(exporter, bibDB, docContents, origCitInfos = []) {

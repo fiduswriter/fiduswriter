@@ -2,7 +2,7 @@ import {createSlug} from "../tools/file"
 import {zipFileCreator} from "../tools/zip"
 import {BibliographyDB} from "../../bibliography/database"
 import {ImageDB} from "../../images/database"
-import {addAlert} from "../../common/common"
+import {addAlert} from "../../common"
 /** The current Fidus Writer filetype version.
  * The importer will not import from a higher version and the exporter
   * will include this number in all exports.

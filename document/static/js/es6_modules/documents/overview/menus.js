@@ -1,5 +1,5 @@
-import {DocumentAccessRightsDialog} from "../access-rights/dialog"
-import {addDropdownBox, addAlert} from "../../common/common"
+import {DocumentAccessRightsDialog} from "../access-rights"
+import {addDropdownBox, addAlert} from "../../common"
 
 export class DocumentOverviewMenus {
     constructor (documentOverview) {

@@ -1,7 +1,7 @@
-import {DocumentAccessRightsDialog} from "../../documents/access-rights/dialog"
+import {DocumentAccessRightsDialog} from "../../documents/access-rights"
 import {documentStyleList} from "../../style/documentstyle-list"
 import {citationDefinitions} from "../../style/citation-definitions"
-import {addDropdownBox} from "../../common/common"
+import {addDropdownBox} from "../../common"
 
 /* Bindings for the header menu */
 export class ModMenusHeader {

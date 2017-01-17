@@ -1,5 +1,5 @@
 import {LiteralFieldForm} from "./literal"
-import {noSpaceTmp} from "../../../common/common"
+import {noSpaceTmp} from "../../../common"
 
 // There are only range lists, no range fields in the data format. The separation
 // between RangeFieldForm and RangeListForm is for keeping consistency with other fields

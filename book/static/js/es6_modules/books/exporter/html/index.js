@@ -1,4 +1,4 @@
-import {katexRender} from "../../../katex/katex"
+import {katexRender} from "../../../katex"
 
 import {getMissingChapterData, getImageAndBibDB, uniqueObjects} from "../tools"
 import {htmlBookExportTemplate, htmlBookIndexTemplate, htmlBookIndexItemTemplate} from "./templates"
@@ -9,7 +9,7 @@ import {createSlug} from "../../../exporter/tools/file"
 import {findImages} from "../../../exporter/tools/html"
 import {zipFileCreator} from "../../../exporter/tools/zip"
 import {RenderCitations} from "../../../citations/render"
-import {addAlert} from "../../../common/common"
+import {addAlert} from "../../../common"
 
 
 export class HTMLBookExporter extends BaseEpubExporter { // extension is correct. Neds orderLinks/setLinks methods from base epub exporter.

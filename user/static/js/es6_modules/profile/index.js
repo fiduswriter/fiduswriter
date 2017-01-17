@@ -1,8 +1,8 @@
 import {changeAvatarDialogTemplate, confirmDeleteAvatarTemplate,
     deleteUserDialogTemplate, changePwdDialogTemplate, changeEmailDialogTemplate,
 deleteEmailDialogTemplate, } from "./templates"
-import {addDropdownBox, activateWait, deactivateWait, csrfToken} from "../common/common"
-import {Menu} from "../menu/menu"
+import {addDropdownBox, activateWait, deactivateWait, csrfToken} from "../common"
+import {Menu} from "../menu"
 
 let changeAvatarDialog = function() {
     jQuery('body').append(changeAvatarDialogTemplate)

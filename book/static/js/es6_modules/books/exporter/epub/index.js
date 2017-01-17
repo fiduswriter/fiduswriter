@@ -1,4 +1,4 @@
-import {katexRender} from "../../../katex/katex"
+import {katexRender} from "../../../katex"
 
 import {getMissingChapterData, getImageAndBibDB, uniqueObjects} from "../tools"
 import {epubBookOpfTemplate, epubBookCoverTemplate, epubBookTitlepageTemplate,
@@ -14,7 +14,7 @@ import {findImages} from "../../../exporter/tools/html"
 import {createSlug} from "../../../exporter/tools/file"
 import {zipFileCreator} from "../../../exporter/tools/zip"
 import {RenderCitations} from "../../../citations/render"
-import {addAlert} from "../../../common/common"
+import {addAlert} from "../../../common"
 
 
 export class EpubBookExporter extends BaseEpubExporter {

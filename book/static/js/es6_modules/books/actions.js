@@ -4,10 +4,10 @@ import {bookListTemplate, bookBasicInfoTemplate, bookPrintDataTemplate,
     bookBibliographyDataTemplate, bookEpubDataTemplate, bookEpubDataCoverTemplate
   } from "./templates"
 import {ImageDB} from "../images/database"
-import {ImageSelectionDialog} from "../images/selection-dialog/selection-dialog"
+import {ImageSelectionDialog} from "../images/selection-dialog"
 import {defaultDocumentStyle, documentStyleList} from "../style/documentstyle-list"
 import {defaultCitationStyle, citationDefinitions} from "../style/citation-definitions"
-import {deactivateWait, addAlert, csrfToken} from "../common/common"
+import {deactivateWait, addAlert, csrfToken} from "../common"
 
 
 export class BookActions {

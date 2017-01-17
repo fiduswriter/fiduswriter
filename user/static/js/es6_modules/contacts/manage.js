@@ -1,5 +1,5 @@
 import {addTeammemberTemplate, teammemberTemplate} from "./templates"
-import {csrfToken} from "../common/common"
+import {csrfToken} from "../common"
 /**
  * Sets up the contacts management. Helper functions for adding and removing contacts.
  */

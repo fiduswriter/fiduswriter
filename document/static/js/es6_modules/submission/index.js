@@ -1,4 +1,4 @@
-import {savecopy} from "../exporter/native/copy"
+import {saveCopy} from "../exporter/native/copy"
 import {journalDialogTemplate,reviewSubmitDialogTemplate,revisionSubmitDialogTemplate} from "./templates"
 import {addAlert, csrfToken} from "../common"
 
@@ -44,11 +44,17 @@ let submitDoc = function(editor) {
     editor.save(() => {
         editor.removeBibDB()
         editor.removeImageDB()
-        editor.getBibDB(editor.user.id, () => {
-            editor.getImageDB(editor.user.id, () => {
-                savecopy(editor.doc, oldBibDB, oldImageDB,
-                    editor.bibDB.db, editor.imageDB.db, editor.user,
-                    (doc, docInfo, newBibEntries) => {
+        editor.getBibDB(editor.user.id).then(() => {
+            editor.getImageDB(editor.user.id).then(() => {
+                saveCopy(
+                    editor.doc,
+                    oldBibDB,
+                    oldImageDB,
+                    editor.bibDB.db,
+                    editor.imageDB.db,
+                    editor.user
+                ).then(
+                    ({doc, docInfo}) => {
                         setRights(editor.doc.id, doc.id, editor.user, editor.doc.access_rights)
                         //window.location.href = `/document/${doc.id}/`
                         let dataToOjs = new window.FormData()

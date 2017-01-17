@@ -255,43 +255,41 @@ export class ImportFidusFile {
     /* Process a packaged Fidus File, either through user upload, or by reloading
       a saved revision which was saved in the same ZIP-baseformat. */
 
-    constructor(file, user, check, bibDB, imageDB, callback) {
+    constructor(file, user, check, bibDB, imageDB) {
         this.file = file
         this.user = user
-        this.callback = callback
+        this.check = check // Whether the file needs to be checked for compliance with ZIP-format
         this.bibDB = bibDB // the user's current database object.
         this.imageDB = imageDB // the user's imageDB
-        this.check = check // Whether the file needs to be checked for compliance with ZIP-format
 
         this.textFiles = []
         this.otherFiles = []
-        this.init()
     }
 
     init() {
         // Check whether the file is a ZIP-file if check is not disabled.
         if (this.check === false) {
-            this.initZipFileRead()
-            return
+            return this.initZipFileRead()
         }
-        // use a BlobReader to read the zip from a Blob object
-        let reader = new window.FileReader()
-        reader.onloadend = () => {
-            if (reader.result.length > 60 && reader.result.substring(0, 2) == 'PK') {
-                this.initZipFileRead()
-            } else {
-                // The file is not a Fidus Writer file.
-                this.callback(false, gettext('The uploaded file does not appear to be a Fidus Writer file.'))
-                return
+        return new Promise((resolve, reject) => {
+            // use a BlobReader to read the zip from a Blob object
+            let reader = new window.FileReader()
+            reader.onloadend = () => {
+                if (reader.result.length > 60 && reader.result.substring(0, 2) == 'PK') {
+                    resolve()
+                } else {
+                    // The file is not a Fidus Writer file.
+                    reject(gettext('The uploaded file does not appear to be a Fidus Writer file.'))
+                }
             }
-        }
-        reader.readAsText(this.file)
+            reader.readAsText(this.file)
+        }).then(() => this.initZipFileRead())
     }
 
     initZipFileRead() {
         // Extract all the files that can be found in every fidus-file (not images)
         let zipfs = new JSZip()
-        zipfs.loadAsync(this.file).then(() => {
+        return zipfs.loadAsync(this.file).then(() => {
             let filenames = [], p = [], validFile = true
 
             zipfs.forEach(filename => filenames.push(filename))
@@ -302,11 +300,7 @@ export class ImportFidusFile {
                 }
             })
             if (!validFile) {
-                this.callback(
-                    false,
-                    gettext('The uploaded file does not appear to be a Fidus Writer file.')
-                )
-                return false
+                return Promise.reject(gettext('The uploaded file does not appear to be a Fidus Writer file.'))
             }
 
             filenames.forEach(filename => {
@@ -325,7 +319,7 @@ export class ImportFidusFile {
                     })
                 }))
             })
-            Promise.all(p).then(() => this.processFidusFile())
+            return Promise.all(p).then(() => this.processFidusFile())
         })
     }
 
@@ -351,12 +345,23 @@ export class ImportFidusFile {
             let aDocument = updateFileDoc(JSON.parse(_.findWhere(this.textFiles, {
                 filename: 'document.json'
             }).contents), filetypeVersion)
-
-            return new ImportNative(aDocument, shrunkBibDB, shrunkImageDB, this.otherFiles, this.user, this.bibDB, this.imageDB, this.callback)
+            let importer = new ImportNative(
+                aDocument,
+                shrunkBibDB,
+                shrunkImageDB,
+                this.otherFiles,
+                this.user,
+                this.bibDB,
+                this.imageDB
+            )
+            return importer.init()
 
         } else {
             // The file is not a Fidus Writer file.
-            this.callback(false, gettext('The uploaded file does not appear to be of the version used on this server: ') + FW_FILETYPE_VERSION)
+            return Promise.reject(
+                gettext('The uploaded file does not appear to be of the version used on this server: ') +
+                FW_FILETYPE_VERSION
+            )
         }
     }
 

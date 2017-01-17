@@ -1,4 +1,4 @@
-import {savecopy} from "../../exporter/native/copy"
+import {saveCopy} from "../../exporter/native/copy"
 import {NativeExporter, uploadNative} from "../../exporter/native"
 import {LatexExporter} from "../../exporter/latex"
 import {HTMLExporter} from "../../exporter/html"
@@ -23,16 +23,18 @@ export class ModMenusActions {
         this.mod.editor.save(() => {
             if (this.mod.editor.doc.owner.id === this.mod.editor.user.id) {
                 // We are copying from and to the same user. We don't need different databases for this.
-                savecopy(
+                saveCopy(
                     this.mod.editor.doc,
                     this.mod.editor.bibDB.db,
                     this.mod.editor.imageDB.db,
                     this.mod.editor.bibDB.db,
                     this.mod.editor.imageDB.db,
-                    this.mod.editor.user,
-                    (doc, docInfo, savedBibEntries) => {
+                    this.mod.editor.user
+                ).then(
+                    ({doc, docInfo}) => {
                         window.location.href = `/document/${doc.id}/`
-                    })
+                    }
+                )
             } else {
                 // We copy from one user to another. So we first load one set of
                 // databases, and then the other
@@ -40,20 +42,23 @@ export class ModMenusActions {
                 let oldImageDB = this.mod.editor.imageDB.db
                 this.mod.editor.removeBibDB()
                 this.mod.editor.removeImageDB()
-                this.mod.editor.getBibDB(this.mod.editor.user.id, () => {
-                    this.mod.editor.getImageDB(this.mod.editor.user.id, () => {
-                        savecopy(
-                            this.mod.editor.doc,
-                            oldBibDB,
-                            oldImageDB,
-                            this.mod.editor.bibDB.db,
-                            this.mod.editor.imageDB.db,
-                            this.mod.editor.user,
-                            (doc, docInfo, savedBibEntries) => {
-                                window.location.href = `/document/${doc.id}/`
-                            }
-                        )
-                    })
+                this.mod.editor.getBibDB(
+                    this.mod.editor.user.id
+                ).then(
+                    () => this.mod.editor.getImageDB(this.mod.editor.user.id)
+                ).then(() => {
+                    saveCopy(
+                        this.mod.editor.doc,
+                        oldBibDB,
+                        oldImageDB,
+                        this.mod.editor.bibDB.db,
+                        this.mod.editor.imageDB.db,
+                        this.mod.editor.user
+                    ).then(
+                        ({doc, docInfo}) => {
+                            window.location.href = `/document/${doc.id}/`
+                        }
+                    )
                 })
             }
         })

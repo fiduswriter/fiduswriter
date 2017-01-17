@@ -29,26 +29,26 @@ export class DocumentOverview {
     }
 
     // Get the bibliography database -- only executed if needed (when importing, etc.).
-    getBibDB(callback) {
+    getBibDB() {
         if (!this.bibDB) { // Don't get the bibliography again if we already have it.
             this.bibDB = new BibliographyDB(this.user.id, true, false, false)
-            this.bibDB.getDB().then(() => {
-                callback()
-            })
+            return this.bibDB.getDB()
         } else {
-            callback()
+            return Promise.resolve()
         }
     }
 
-    getImageDB(callback) {
+    getImageDB() {
         if (!this.imageDB) {
             let imageGetter = new ImageDB(this.user.id)
-            imageGetter.getDB().then(() => {
-                this.imageDB = imageGetter.db
-                callback()
+            return new Promise((resolve, reject) => {
+                imageGetter.getDB().then(() => {
+                    this.imageDB = imageGetter.db
+                    resolve()
+                })
             })
         } else {
-            callback()
+            return Promise.resolve()
         }
     }
 

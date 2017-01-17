@@ -145,7 +145,7 @@ export class ImageUploadDialog {
     }
 
     createImage(imageData) {
-        this.imageDB.createImage(imageData, imageId => {
+        this.imageDB.createImage(imageData).then(imageId => {
             jQuery("#uploadimage").dialog('close')
             this.imageId = imageId
             this.callback(imageId)

@@ -86,26 +86,29 @@ export class DocumentRevisionsDialog {
         JSZipUtils.getBinaryContent(
             `/document/get_revision/${id}/`,
             (err, fidusFile) => {
-                new ImportFidusFile(
+                let importer = new ImportFidusFile(
                     fidusFile,
                     user,
                     false,
                     this.bibDB,
-                    this.imageDB,
-                    (noErrors, returnValue) => {
+                    this.imageDB
+                )
+                importer.init().then(
+                    ({doc, docInfo}) => {
                         deactivateWait()
-                        if (noErrors) {
-                            let doc = returnValue[0]
-                            addAlert('info', doc.title + gettext(
-                                ' successfully imported.'))
-                            this.callback({
-                                action: 'added-document',
-                                doc
-                            })
-                        } else {
-                            addAlert('error', returnValue)
-                        }
-                    }
+                        //if (noErrors) {
+                        //    let doc = returnValue[0]
+                        addAlert('info', doc.title + gettext(
+                            ' successfully imported.'))
+                        this.callback({
+                            action: 'added-document',
+                            doc
+                        })
+                        //} else {
+                        //    addAlert('error', returnValue)
+                        //S}
+                    },
+                    errorMessage => addAlert('error', errorMessage)
                 )
             }
         )

@@ -24,24 +24,28 @@ export class BookList {
         this.bindEvents()
     }
 
-    getImageDB(callback) {
+    getImageDB() {
         if (!this.imageDB) {
             let imageGetter = new ImageDB(this.user.id)
-            imageGetter.getDB().then(
-                () => {
-                    this.imageDB = imageGetter
-                    callback()
-                }
-            )
+            return new Promise((resolve, reject) => {
+                imageGetter.getDB().then(
+                    () => {
+                        this.imageDB = imageGetter
+                        resolve()
+                    }
+                )
+            })
         } else {
-            callback()
+            return Promise.resolve()
         }
     }
 
-    getAnImageDB(userId, callback){
+    getAnImageDB(userId){
         let imageGetter = new ImageDB(userId)
-        imageGetter.getDB().then(() => {
-            callback(imageGetter)
+        return new Promise(resolve => {
+            imageGetter.getDB().then(() => {
+                resolve(imageGetter)
+            })
         })
     }
 
@@ -178,7 +182,7 @@ export class BookList {
                 })
 
             jQuery('.create-new-book').bind('click', () => {
-                this.getImageDB(() => {
+                this.getImageDB().then(() => {
                     this.mod.actions.createBookDialog(0, this.imageDB)
                 })
             })
@@ -187,11 +191,11 @@ export class BookList {
                 let bookId = parseInt(jQuery(this).attr('data-id'))
                 let book = _.findWhere(that.bookList,{id: bookId})
                 if (book.is_owner) {
-                    that.getImageDB(function(){
+                    that.getImageDB().then(() => {
                         that.mod.actions.createBookDialog(bookId, that.imageDB)
                     })
                 } else {
-                    that.getAnImageDB(book.owner, function(anImageDB){
+                    that.getAnImageDB(book.owner).then(anImageDB => {
                         that.mod.actions.createBookDialog(bookId, anImageDB)
                     })
 

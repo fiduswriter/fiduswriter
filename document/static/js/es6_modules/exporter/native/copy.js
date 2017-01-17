@@ -26,13 +26,14 @@ export let savecopy = function(doc, oldBibDB, oldImageDB, newBibDB, newImageDB, 
     exportNative(
         doc,
         oldImageDB,
-        oldBibDB,
-        (doc, shrunkImageDB, shrunkBibDB, images) => {
+        oldBibDB
+    ).then(
+        ({doc, shrunkImageDB, shrunkBibDB, httpIncludes}) => {
             new ImportNative(
                 doc,
                 shrunkBibDB,
                 shrunkImageDB,
-                images,
+                httpIncludes,
                 newUser,
                 newBibDB,
                 newImageDB,

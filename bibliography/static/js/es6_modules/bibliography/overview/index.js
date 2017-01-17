@@ -18,16 +18,13 @@ export class BibliographyOverview {
     }
 
     /* load data from the bibliography */
-    getBibDB(callback) {
+    getBibDB() {
         let docOwnerId = 0 // 0 = current user.
         this.bibDB = new BibliographyDB(docOwnerId, true, false, false)
 
         this.bibDB.getDB().then(({bibPKs, bibCats}) => {
             this.addBibCategoryList(bibCats)
             this.addBibList(bibPKs)
-            if (callback) {
-                callback()
-            }
         })
     }
 
@@ -301,9 +298,10 @@ export class BibliographyOverview {
 
         //import a bib file
         jQuery('.import-bib').bind('click', () => {
-            new BibLatexFileImporter(this.bibDB, bibEntries => {
-                this.addBibList(bibEntries)
-            })
+            new BibLatexFileImporter(
+                this.bibDB,
+                bibEntries => this.addBibList(bibEntries)
+            )
         })
 
         //submit entry actions

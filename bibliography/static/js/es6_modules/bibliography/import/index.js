@@ -7,9 +7,9 @@ import {activateWait, deactivateWait, addAlert, csrfToken} from "../../common"
 
 export class BibLatexFileImporter {
 
-    constructor(bibDB, callback) {
+    constructor(bibDB, addToListCall) {
         this.bibDB = bibDB
-        this.callback = callback
+        this.addToListCall = addToListCall
         this.openDialog()
         this.tmpDB = false
     }
@@ -143,7 +143,7 @@ export class BibLatexFileImporter {
                 currentChunk[bibKey] = this.tmpDB[bibKey]
             })
             this.bibDB.saveBibEntries(currentChunk, true, ids => {
-                this.callback(ids)
+                this.addToListCall(ids)
                 this.currentChunkNumber++
                 this.processChunk()
             })

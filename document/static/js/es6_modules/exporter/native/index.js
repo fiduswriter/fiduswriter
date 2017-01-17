@@ -17,9 +17,10 @@ export let uploadNative = function(editor) {
     exportNative(
         editor.doc,
         editor.imageDB.db,
-        editor.bibDB.db,
-        (doc, shrunkImageDB, shrunkBibDB, images) =>
-            exportNativeFile(editor.doc, shrunkImageDB, shrunkBibDB, images, true, editor)
+        editor.bibDB.db
+    ).then(
+        ({doc, shrunkImageDB, shrunkBibDB, httpIncludes}) =>
+            exportNativeFile({doc: editor.doc, shrunkImageDB, shrunkBibDB, httpIncludes}, true, editor)
     )
 }
 
@@ -32,43 +33,44 @@ export class NativeExporter {
     }
 
     init() {
-        this.getBibDB(
-            () => {
-                this.getImageDB(
-                    () => {
-                        exportNative(this.doc, this.imageDB, this.bibDB.db, exportNativeFile)
-                    }
-                )
-            }
+        this.getBibDB().then(
+            () => this.getImageDB()
+        ).then(
+            () => exportNative(this.doc, this.imageDB, this.bibDB.db)
+        ).then(
+            ({doc, shrunkImageDB, shrunkBibDB, httpIncludes}) =>
+                exportNativeFile({doc, shrunkImageDB, shrunkBibDB, httpIncludes})
         )
     }
 
-    getBibDB(callback) {
+    getBibDB() {
         if (!this.bibDB) {
             this.bibDB = new BibliographyDB(this.doc.owner.id, false, false, false)
-            this.bibDB.getDB().then(() => callback())
+            return this.bibDB.getDB()
         } else {
-            callback()
+            return Promise.resolve()
         }
     }
 
-    getImageDB(callback) {
+    getImageDB() {
         if (!this.imageDB) {
             let imageGetter = new ImageDB(this.doc.owner.id)
-            imageGetter.getDB().then(
-                () => {
-                    this.imageDB = imageGetter.db
-                    callback()
-                }
-            )
+            return new Promise((resolve, reject) => {
+                imageGetter.getDB().then(
+                    () => {
+                        this.imageDB = imageGetter.db
+                        resolve()
+                    }
+                )
+            })
         } else {
-            callback()
+            return Promise.resolve()
         }
     }
 }
 
 // used in copy
-export let exportNative = function(doc, anImageDB, aBibDB, callback) {
+export let exportNative = function(doc, anImageDB, aBibDB) {
     let shrunkImageDB = {},
         httpIncludes = []
 
@@ -136,13 +138,17 @@ export let exportNative = function(doc, anImageDB, aBibDB, callback) {
     delete(docCopy.owner)
     delete(docCopy.id)
 
-    callback(docCopy, shrunkImageDB, shrunkBibDB, httpIncludes)
+    return new Promise(resolve => resolve({
+        doc: docCopy,
+        shrunkImageDB,
+        shrunkBibDB,
+        httpIncludes
+    }))
+
 }
 
-let exportNativeFile = function(doc, shrunkImageDB,
-    shrunkBibDB, images, upload = false, editor = false) {
-
-    let httpOutputList = images
+let exportNativeFile = function({doc, shrunkImageDB,
+    shrunkBibDB, httpIncludes}, upload = false, editor = false) {
 
     let outputList = [{
         filename: 'document.json',
@@ -158,7 +164,7 @@ let exportNativeFile = function(doc, shrunkImageDB,
         contents: FW_FILETYPE_VERSION
     }]
 
-    zipFileCreator(outputList, httpOutputList, createSlug(
+    zipFileCreator(outputList, httpIncludes, createSlug(
             doc.title) +
         '.fidus', 'application/fidus+zip', false, upload, editor)
 }

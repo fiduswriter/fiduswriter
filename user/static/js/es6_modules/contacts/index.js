@@ -22,7 +22,7 @@ export let contactsOverview = function () {
         })
 
         jQuery('.add-contact').bind('click', function(){
-            addMemberDialog(memberData => {
+            addMemberDialog().then(memberData => {
                 jQuery('#team-table tbody').append(
                     teammemberTemplate({
                         'members': [memberData]

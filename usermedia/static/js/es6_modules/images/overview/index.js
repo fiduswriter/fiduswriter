@@ -129,16 +129,12 @@ export class ImageOverview {
         }
     }
 
-    getImageDB(callback) {
+    getImageDB() {
         let imageGetter = new ImageDB(0)
         imageGetter.getDB().then(pks => {
             this.imageDB = imageGetter
             this.mod.categories.addImageCategoryList(imageGetter.cats)
-
             this.addImageDB(pks)
-            if (callback) {
-                callback()
-            }
         })
     }
 
@@ -257,9 +253,9 @@ export class ImageOverview {
         })
     }
 
-    init(callback) {
+    init() {
         this.bindEvents()
-        this.getImageDB(callback)
+        this.getImageDB()
     }
 
     bind() {

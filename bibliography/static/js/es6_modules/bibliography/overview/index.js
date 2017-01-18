@@ -257,10 +257,10 @@ export class BibliographyOverview {
 
         jQuery(document).on('click', '.edit-bib', function () {
             let eID = jQuery(this).attr('data-id')
-            let form = new BibEntryForm(eID, that.bibDB, newBibPks => {
-                 that.addBibList(newBibPks)
-            })
-            form.init()
+            let form = new BibEntryForm(eID, that.bibDB)
+            form.init().then(
+                newBibPks => that.addBibList(newBibPks)
+            )
 
         })
 

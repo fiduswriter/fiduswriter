@@ -180,10 +180,12 @@ export class DocumentOverviewActions {
     }
 
     copyFiles(ids) {
-        getMissingDocumentListData(ids, this.documentOverview.documentList).then(() => {
-            this.documentOverview.getBibDB().then(
-                () => this.documentOverview.getImageDB()
-            ).then(() => {
+        getMissingDocumentListData(ids, this.documentOverview.documentList).then(
+            () => this.documentOverview.getBibDB()
+        ).then(
+            () => this.documentOverview.getImageDB()
+        ).then(
+            () => {
                 for (let i = 0; i < ids.length; i++) {
                     let doc = _.findWhere(this.documentOverview.documentList, {
                         id: ids[i]
@@ -240,8 +242,8 @@ export class DocumentOverviewActions {
                         })
                     }
                 }
-            })
-        })
+            }
+        )
     }
 
     getBibDB(userId) {

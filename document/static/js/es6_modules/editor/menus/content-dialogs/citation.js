@@ -83,14 +83,16 @@ export let citationDialog = function (mod) {
     diaButtons.push({
         text: gettext('Register new source'),
         click: function() {
-            let form = new BibEntryForm(undefined, editor.bibDB, function(newBibPks) {
-                editor.mod.menus.citation.appendManyToCitationDialog(newBibPks)
-                jQuery('.fw-checkable').unbind('click')
-                jQuery('.fw-checkable').bind('click', function() {
-                    setCheckableLabel(jQuery(this))
-                })
-            })
-            form.init()
+            let form = new BibEntryForm(undefined, editor.bibDB)
+            form.init().then(
+                newBibPks => {
+                    editor.mod.menus.citation.appendManyToCitationDialog(newBibPks)
+                    jQuery('.fw-checkable').unbind('click')
+                    jQuery('.fw-checkable').bind('click', function() {
+                        setCheckableLabel(jQuery(this))
+                    })
+                }
+            )
         },
         class: 'fw-button fw-light fw-add-button register-new-bib-source'
     })

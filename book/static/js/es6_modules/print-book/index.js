@@ -106,10 +106,11 @@ export class PrintBook {
             document.body,
             this.theBook.settings.citationstyle,
             this.bibDB,
-            true,
+            true
+        )
+        this.citRenderer.init().then(
             () => this.fillPrintPageTwo()
         )
-        this.citRenderer.init()
     }
 
     fillPrintPageTwo() {

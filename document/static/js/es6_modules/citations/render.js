@@ -4,7 +4,7 @@ import {FormatCitations} from "./format"
  */
 
 export class RenderCitations {
-    constructor(contentElement, citationStyle, bibDB, renderNoteCitations = true, callback = false) {
+    constructor(contentElement, citationStyle, bibDB, renderNoteCitations = true) {
         this.contentElement = contentElement
         this.citationStyle = citationStyle
         this.bibDB = bibDB
@@ -12,7 +12,6 @@ export class RenderCitations {
         this.allCitationNodes = []
         this.allCitationInfos = []
         this.fm = false
-        this.callback = callback
     }
 
     init() {
@@ -25,16 +24,16 @@ export class RenderCitations {
         this.fm = new FormatCitations(
             this.allCitationInfos,
             this.citationStyle,
-            this.bibDB,
+            this.bibDB
+        )
+        return this.fm.init().then(
             () => {
                 if (this.renderNoteCitations || 'note' !== this.fm.citationType) {
                     this.renderCitations()
-                } else if (this.callback) {
-                    this.callback()
                 }
+                return Promise.resolve()
             }
         )
-        this.fm.init()
     }
 
     renderCitations() {
@@ -45,9 +44,6 @@ export class RenderCitations {
             }
             this.allCitationNodes[index].innerHTML = citationText
         })
-        if (this.callback) {
-            this.callback()
-        }
     }
 
 }

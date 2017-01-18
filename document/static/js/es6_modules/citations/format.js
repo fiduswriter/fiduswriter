@@ -5,11 +5,10 @@ import {citationDefinitions} from "../style/citation-definitions"
 * Use CSL and bibDB to format all citations for the given prosemirror json citation nodes
 */
 export class FormatCitations {
-    constructor(allCitationInfos, citationStyle, bibDB, callback) {
+    constructor(allCitationInfos, citationStyle, bibDB) {
         this.allCitationInfos = allCitationInfos
         this.citationStyle = citationStyle
         this.bibDB = bibDB
-        this.callback = callback
     }
 
     init() {
@@ -20,7 +19,7 @@ export class FormatCitations {
         this.citationType = ''
         this.formatAllCitations()
         this.getFormattedCitations()
-        this.callback()
+        return Promise.resolve()
     }
 
     formatAllCitations() {

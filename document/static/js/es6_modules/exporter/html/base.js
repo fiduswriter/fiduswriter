@@ -17,13 +17,15 @@ export class BaseHTMLExporter extends BaseDOMExporter {
             this.contents,
             this.doc.settings.citationstyle,
             this.bibDB,
-            true,
+            true
+        )
+        citRenderer.init().then(
             () => {
                 this.addBibliographyHTML(citRenderer.fm.bibHTML)
                 this.contents = this.cleanHTML(this.contents)
                 callback()
-            })
-        citRenderer.init()
+            }
+        )
     }
 
     addBibliographyHTML(bibliographyHTML) {

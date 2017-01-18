@@ -86,7 +86,9 @@ export class HTMLBookExporter extends BaseEpubExporter { // extension is correct
             this.chapters[chapterNumber].contents,
             this.book.settings.citationstyle,
             this.bibDB,
-            true,
+            true
+        )
+        citRenderer.init().then(
             () => {
                 let bibHTML = citRenderer.fm.bibHTML
                 if (bibHTML.length > 0) {
@@ -98,8 +100,8 @@ export class HTMLBookExporter extends BaseEpubExporter { // extension is correct
                 } else {
                     this.exportTwo(chapterNumber)
                 }
-            })
-        citRenderer.init()
+            }
+        )
 
     }
 

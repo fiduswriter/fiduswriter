@@ -4,7 +4,6 @@ import {noSpaceTmp} from "../../common"
 export class OdtExporterRichtext {
     constructor(exporter, images) {
         this.exporter = exporter
-        //this.citations = citations
         this.images = images
         this.imgCounter = 1
         this.fnCounter = 0 // real footnotes

@@ -336,14 +336,14 @@ export class BibliographyOverview {
 
 
     createCategory(cats) {
-        this.bibDB.createCategory(cats, bibCats => {
+        this.bibDB.createCategory(cats).then(bibCats => {
             jQuery('#bib-category-list li').not(':first').remove()
             this.addBibCategoryList(bibCats)
         })
     }
 
     deleteBibEntry(ids) {
-        this.bibDB.deleteBibEntry(ids, ids => {
+        this.bibDB.deleteBibEntry(ids).then(ids => {
             this.stopBibliographyTable()
             let elementsId = '#Entry_' + ids.join(', #Entry_')
             jQuery(elementsId).detach()

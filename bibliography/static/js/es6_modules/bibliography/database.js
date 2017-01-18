@@ -129,14 +129,6 @@ export class BibliographyDB {
         return id
     }
 
-    /** Saves single bibliography entry to the database on the server.
-     * @function createBibEntry
-     * @param bibEntry The bibliography data to send to the server.
-     */
-    createBibEntry(bibEntry, callback) {
-        this.saveBibEntries({0:bibEntry}, true).then(callback)
-    }
-
     /** Saves a bibliography entry to the database on the server.
      * @function saveBibEntries
      * @param tmpDB The bibliography DB with temporary IDs to be send to the server.
@@ -191,86 +183,88 @@ export class BibliographyDB {
      * @function createCategory
      * @param cats The category objects to add.
      */
-    createCategory(cats, callback) {
+    createCategory(cats) {
         let postData = {
             'ids[]': cats.ids,
             'titles[]': cats.titles
         }
         activateWait()
-        jQuery.ajax({
-            url: '/bibliography/save_category/',
-            data: postData,
-            type: 'POST',
-            dataType: 'json',
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: (xhr, settings) =>
-                xhr.setRequestHeader("X-CSRFToken", csrfToken),
-            success: (response, textStatus, jqXHR) => {
-                if (jqXHR.status == 201) {
-                    let bibCats = response.entries // We receive both existing and new categories.
-                    // Replace the old with the new categories, but don't lose the link to the array (so delete each, then add each).
-                    while(this.cats.length > 0) {
-                        this.cats.pop()
+        return new Promise((resolve, reject) => {
+            jQuery.ajax({
+                url: '/bibliography/save_category/',
+                data: postData,
+                type: 'POST',
+                dataType: 'json',
+                crossDomain: false, // obviates need for sameOrigin test
+                beforeSend: (xhr, settings) =>
+                    xhr.setRequestHeader("X-CSRFToken", csrfToken),
+                success: (response, textStatus, jqXHR) => {
+                    if (jqXHR.status == 201) {
+                        let bibCats = response.entries // We receive both existing and new categories.
+                        // Replace the old with the new categories, but don't lose the link to the array (so delete each, then add each).
+                        while(this.cats.length > 0) {
+                            this.cats.pop()
+                        }
+                        while(bibCats.length > 0) {
+                            this.cats.push(bibCats.pop())
+                        }
+                        addAlert('success', gettext('The categories have been updated'))
+                        resolve(this.cats)
                     }
-                    while(bibCats.length > 0) {
-                        this.cats.push(bibCats.pop())
-                    }
-
-                    addAlert('success', gettext('The categories have been updated'))
-                    if (callback) {
-                        callback(this.cats)
-                    }
-                }
-            },
-            error: (jqXHR, textStatus, errorThrown) => {
-                addAlert('error', jqXHR.responseText)
-            },
-            complete: () => deactivateWait()
+                },
+                error: (jqXHR, textStatus, errorThrown) => {
+                    addAlert('error', jqXHR.responseText)
+                    reject()
+                },
+                complete: () => deactivateWait()
+            })
         })
+
     }
 
     /** Delete a categories
      * @function deleteCategory
      * @param ids A list of ids to delete.
      */
-    deleteCategory(ids, callback) {
+    deleteCategory(ids) {
 
         let postData = {
             'ids[]': ids
         }
-        jQuery.ajax({
-            url: '/bibliography/delete_category/',
-            data: postData,
-            type: 'POST',
-            dataType: 'json',
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: (xhr, settings) => {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: (response, textStatus, jqXHR) => {
-                let deletedPks = ids.slice()
-                let deletedBibCats = []
-                this.cats.forEach(bibCat => {
-                    if (ids.indexOf(bibCat.id) !== -1) {
-                        deletedBibCats.push(bibCat)
-                    }
-                })
-                deletedBibCats.forEach(bibCat => {
-                    let index = this.cats.indexOf(bibCat)
-                    this.cats.splice(index, 1)
-                })
-                if (callback) {
-                    callback(deletedPks)
+        return new Promise((resolve, reject) => {
+            jQuery.ajax({
+                url: '/bibliography/delete_category/',
+                data: postData,
+                type: 'POST',
+                dataType: 'json',
+                crossDomain: false, // obviates need for sameOrigin test
+                beforeSend: (xhr, settings) => {
+                    xhr.setRequestHeader("X-CSRFToken", csrfToken)
+                },
+                success: (response, textStatus, jqXHR) => {
+                    let deletedPks = ids.slice()
+                    let deletedBibCats = []
+                    this.cats.forEach(bibCat => {
+                        if (ids.indexOf(bibCat.id) !== -1) {
+                            deletedBibCats.push(bibCat)
+                        }
+                    })
+                    deletedBibCats.forEach(bibCat => {
+                        let index = this.cats.indexOf(bibCat)
+                        this.cats.splice(index, 1)
+                    })
+                    resolve(deletedPks)
                 }
-            }
+            })
         })
+
     }
 
     /** Delete a list of bibliography items both locally and on the server.
      * @function deleteBibEntry
      * @param ids A list of bibliography item ids that are to be deleted.
      */
-    deleteBibEntry(ids, callback) {
+    deleteBibEntry(ids) {
         for (let i = 0; i < ids.length; i++) {
             ids[i] = parseInt(ids[i])
         }
@@ -278,27 +272,32 @@ export class BibliographyDB {
             'ids[]': ids
         }
         activateWait()
-        jQuery.ajax({
-            url: '/bibliography/delete/',
-            data: postData,
-            type: 'POST',
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: (xhr, settings) =>
-                xhr.setRequestHeader("X-CSRFToken", csrfToken),
-            success: (response, textStatus, jqXHR) => {
-                for (let i = 0; i < ids.length; i++) {
-                    delete this.db[ids[i]]
-                }
-                addAlert('success', gettext(
-                    'The bibliography item(s) have been deleted'))
-                if (callback) {
-                    callback(ids)
-                }
-            },
-            error: (jqXHR, textStatus, errorThrown) =>
-                addAlert('error', jqXHR.responseText),
-            complete: () => deactivateWait()
-        })
+        return new Promise(
+            (resolve, reject) => {
+                jQuery.ajax({
+                    url: '/bibliography/delete/',
+                    data: postData,
+                    type: 'POST',
+                    crossDomain: false, // obviates need for sameOrigin test
+                    beforeSend: (xhr, settings) =>
+                        xhr.setRequestHeader("X-CSRFToken", csrfToken),
+                    success: (response, textStatus, jqXHR) => {
+                        for (let i = 0; i < ids.length; i++) {
+                            delete this.db[ids[i]]
+                        }
+                        addAlert('success', gettext(
+                            'The bibliography item(s) have been deleted'))
+                        resolve(ids)
+                    },
+                    error: (jqXHR, textStatus, errorThrown) => {
+                        addAlert('error', jqXHR.responseText)
+                        reject()
+                    },
+                    complete: () => deactivateWait()
+                })
+            }
+        )
+
     }
 
 

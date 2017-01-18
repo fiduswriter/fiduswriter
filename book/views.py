@@ -119,7 +119,7 @@ def get_booklist_js(request):
         status = 200
         response['documents'] = documents_list(request)
         books = Book.objects.filter(Q(owner=request.user) | Q(
-            bookaccessright__user=request.user)).order_by('-updated')
+            bookaccessright__user=request.user)).distinct().order_by('-updated')
         response['books'] = []
         for book in books:
             if book.owner == request.user:

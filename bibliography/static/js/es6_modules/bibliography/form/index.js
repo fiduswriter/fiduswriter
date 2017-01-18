@@ -113,14 +113,15 @@ export class BibEntryForm {
             }
         }
 
-        return new Promise((resolve, reject) => {
+        return new Promise(resolve => {
             diaButtons.submit = {
                 class: "fw-button fw-dark",
                 text: gettext('Submit'),
                 click: function() {
                     if (that.check()) {
-                        resolve()
-                        //jQuery(this).dialog('close')
+                        let returnValue = that.save()
+                        jQuery("#bib-dialog").dialog('close')
+                        resolve(returnValue)
                     }
                 }
             }
@@ -137,16 +138,11 @@ export class BibEntryForm {
             // init ui tabs
             jQuery('#bib-dialog-tabs').tabs()
 
-            document.getElementById('select-bibtype').addEventListener('change', () => {
-                this.changeBibType().then(() => resolve())
-            })
-        }).then(
-            () => {
-                let returnValue = this.save()
-                jQuery("#bib-dialog").dialog('close')
-                return returnValue
-            }
-        )
+            document.getElementById('select-bibtype').addEventListener(
+                'change',
+                () => resolve(this.changeBibType())
+            )
+        })
     }
 
 

@@ -70,10 +70,12 @@ export class BookList {
 
             jQuery(document).on('click', '.owned-by-user .rights', function () {
                 let BookId = parseInt(jQuery(this).attr('data-id'))
-                new BookAccessRightsDialog(
+                let accessDialog = new BookAccessRightsDialog(
                     [BookId],
                     that.teamMembers,
-                    that.accessRights,
+                    that.accessRights
+                )
+                accessDialog.init().then(
                     accessRights => {
                         that.accessRights = accessRights
                     }
@@ -124,7 +126,12 @@ export class BookList {
                         that.mod.actions.deleteBookDialog(ids)
                         break
                     case 'share':
-                        new BookAccessRightsDialog(ids, that.teamMembers, that.accessRights, function (accessRights) {
+                        let accessDialog = new BookAccessRightsDialog(
+                            ids,
+                            that.teamMembers,
+                            that.accessRights
+                        )
+                        accessDialog.init().then((accessRights) => {
                             that.accessRights = accessRights
                         })
                         break
@@ -182,8 +189,8 @@ export class BookList {
                 })
 
             jQuery('.create-new-book').bind('click', () => {
-                this.getImageDB().then(() => {
-                    this.mod.actions.createBookDialog(0, this.imageDB)
+                that.getImageDB().then(() => {
+                    that.mod.actions.createBookDialog(0, that.imageDB)
                 })
             })
 

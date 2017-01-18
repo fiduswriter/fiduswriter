@@ -340,8 +340,6 @@ export class BookActions {
                     that.bookList.imageDB.createImage(formValues).then(
                         response => resolve(response)
                     )
-                } else {
-                    reject()
                 }
             }
             xhr.send()

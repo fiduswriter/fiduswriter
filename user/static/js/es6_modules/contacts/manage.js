@@ -1,5 +1,6 @@
 import {addTeammemberTemplate, teammemberTemplate} from "./templates"
-import {csrfToken} from "../common"
+import {csrfToken, cancelPromise} from "../common"
+
 /**
  * Sets up the contacts management. Helper functions for adding and removing contacts.
  */
@@ -7,13 +8,13 @@ import {csrfToken} from "../common"
 //add a user to contact per ajax
 let addMember = function(userString) {
     if (null === userString || 'undefined' == typeof(userString)) {
-        return Promise.reject()
+        return cancelPromise()
     }
 
     userString = jQuery.trim(userString)
     jQuery('#add-new-member .warning').detach()
     if ('' === userString) {
-        return Promise.reject()
+        return cancelPromise()
     }
     return new Promise((resolve, reject) => {
         jQuery.ajax({
@@ -28,8 +29,9 @@ let addMember = function(userString) {
                 xhr.setRequestHeader("X-CSRFToken", csrfToken),
             success: (response, textStatus, jqXHR) => {
                 if (jqXHR.status == 201) { //user added to the contacts
-                    resolve(response.member)
                     jQuery("#add-new-member").dialog('close')
+                    resolve(response.member)
+                    return
                 } else { //user not found
                     let responseHtml
 
@@ -53,7 +55,7 @@ let addMember = function(userString) {
                         responseHtml = gettext('User is not registered.')
                     }
                     jQuery('#add-new-member').append('<div class="warning" style="padding: 8px;">' + responseHtml + '</div>')
-                    resolve(false)
+                    return resolve(cancelPromise())
                 }
             },
             error: (jqXHR, textStatus, errorThrown) => {
@@ -71,11 +73,14 @@ export let addMemberDialog = function() {
         'dialogHeader': dialogHeader
     }))
 
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
         let diaButtons = {}
         diaButtons[gettext('Submit')] = () => {
             addMember(jQuery('#new-member-user-string').val()).then(
-                memberData => resolve(memberData)
+                memberData => {
+                    resolve(memberData)
+                    return
+                }
             )
         }
         diaButtons[gettext('Cancel')] = function() {
@@ -96,7 +101,6 @@ export let addMemberDialog = function() {
             },
             close: () => {
                 jQuery("#add-new-member").dialog('destroy').remove()
-                reject()
             }
         })
     })

@@ -134,14 +134,14 @@ export class BibliographyDB {
      * @param bibEntry The bibliography data to send to the server.
      */
     createBibEntry(bibEntry, callback) {
-        this.saveBibEntries({0:bibEntry}, true, callback)
+        this.saveBibEntries({0:bibEntry}, true).then(callback)
     }
 
     /** Saves a bibliography entry to the database on the server.
      * @function saveBibEntries
      * @param tmpDB The bibliography DB with temporary IDs to be send to the server.
      */
-    saveBibEntries(tmpDB, isNew, callback) {
+    saveBibEntries(tmpDB, isNew) {
         // Fields field need to be stringified for saving in database.
         // dbObject is a clone of tmpDB with a stringified fields-field, so
         // the original tmpDB isn't destroyed.
@@ -158,31 +158,32 @@ export class BibliographyDB {
         if (this.docOwnerId !== 0) {
             sendData['owner_id'] = this.docOwnerId
         }
-
-        jQuery.ajax({
-            url: '/bibliography/save/',
-            data: sendData,
-            type: 'POST',
-            dataType: 'json',
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: (xhr, settings) =>
-                xhr.setRequestHeader("X-CSRFToken", csrfToken),
-            success: (response, textStatus, jqXHR) => {
-                let ids = []
-                response['id_translations'].forEach(bibTrans => {
-                    this.db[bibTrans[1]] = tmpDB[bibTrans[0]]
-                    ids.push(bibTrans[1])
-                })
-                addAlert('success', gettext('The bibliography has been updated.'))
-                if (callback) {
-                    callback(ids)
-                }
-
-            },
-            error: (jqXHR, textStatus, errorThrown) =>
-                addAlert('error', errorThrown),
-            complete: () => {}
+        return new Promise((resolve, reject) => {
+            jQuery.ajax({
+                url: '/bibliography/save/',
+                data: sendData,
+                type: 'POST',
+                dataType: 'json',
+                crossDomain: false, // obviates need for sameOrigin test
+                beforeSend: (xhr, settings) =>
+                    xhr.setRequestHeader("X-CSRFToken", csrfToken),
+                success: (response, textStatus, jqXHR) => {
+                    let ids = []
+                    response['id_translations'].forEach(bibTrans => {
+                        this.db[bibTrans[1]] = tmpDB[bibTrans[0]]
+                        ids.push(bibTrans[1])
+                    })
+                    addAlert('success', gettext('The bibliography has been updated.'))
+                    resolve(ids)
+                },
+                error: (jqXHR, textStatus, errorThrown) => {
+                    addAlert('error', errorThrown)
+                    reject()
+                },
+                complete: () => {}
+            })
         })
+
     }
 
 

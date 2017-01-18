@@ -259,9 +259,8 @@ export class BibEntryForm {
         }
         this.bibDB.saveBibEntries(
             saveObj,
-            isNew,
-            this.callback
-        )
+            isNew
+        ).then(this.callback)
     }
 
     check() {

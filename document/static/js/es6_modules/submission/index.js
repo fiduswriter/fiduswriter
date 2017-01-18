@@ -35,90 +35,93 @@ let setRights = function(orginalDocId, CopyDocId, user, access_rights) {
  * @function submitDoc
  * @param
  */
-let submitDoc = function(editor) {
-    let oldBibDB = editor.bibDB.db
-    let oldImageDB = editor.imageDB.db
-    let owner = {}
-    owner['id'] = 1
-    owner['name'] = 'fidus'
-    editor.save(() => {
-        editor.removeBibDB()
-        editor.removeImageDB()
-        editor.getBibDB(editor.user.id).then(() => {
-            editor.getImageDB(editor.user.id).then(() => {
-                saveCopy(
-                    editor.doc,
-                    oldBibDB,
-                    oldImageDB,
-                    editor.bibDB.db,
-                    editor.imageDB.db,
-                    editor.user
-                ).then(
-                    ({doc, docInfo}) => {
-                        setRights(editor.doc.id, doc.id, editor.user, editor.doc.access_rights)
-                        //window.location.href = `/document/${doc.id}/`
-                        let dataToOjs = new window.FormData()
-                        dataToOjs.append('username', editor.user.username)
-                        dataToOjs.append('title', editor.doc.title)
-                        dataToOjs.append('first_name', editor.user.first_name)
-                        dataToOjs.append('last_name', editor.user.last_name)
-                        dataToOjs.append('email', editor.user.email)
-                        dataToOjs.append('affiliation', "sample affiliation")
-                        dataToOjs.append('author_url', "sample author_url")
-                        dataToOjs.append('journal_id', jQuery("input[type='radio'][name='journalList']:checked").val())
-                        dataToOjs.append('file_name', editor.doc.title)
-                        dataToOjs.append('article_url', window.location.origin + "/document/" + doc.id)
-                        if (editor.docInfo.submission.status == 'submitted') {
-                            dataToOjs.append('submission_id', editor.docInfo.submission.submission_id)
-                            dataToOjs.append('version_id', editor.docInfo.submission.version_id + 1)
-                        }
-                        jQuery.ajax({
-                            url: window.ojsUrl + '/index.php/index/gateway/plugin/RestApiGatewayPlugin/articles',
-                            data: dataToOjs,
-                            type: 'POST',
-                            cache: false,
-                            contentType: false,
-                            processData: false,
-                            crossDomain: false, // obviates need for sameOrigin test
-                            beforeSend: (xhr, settings) =>
-                                xhr.setRequestHeader("X-CSRFToken", csrfToken),
-                            success: response => {
-                                //addAlert('success','The paper was submitted to ojs')
-                                let dataSubmission = new window.FormData()
-                                dataSubmission.append('document_id', doc.id)
-                                dataSubmission.append('pre_document_id', editor.doc.id)
-                                if (editor.docInfo.submission.status == 'submitted') {
-                                    dataSubmission.append('submission_id', editor.docInfo.submission.submission_id)
-                                    dataSubmission.append('journal_id', editor.docInfo.submission.journal_id)
-                                } else {
-                                    dataSubmission.append('journal_id', response.journal_id)
-                                    dataSubmission.append('submission_id', response.submission_id)
-                                }
-                                jQuery.ajax({
-                                    url: '/document/submissionversion/',
-                                    data: dataSubmission,
-                                    type: 'POST',
-                                    cache: false,
-                                    contentType: false,
-                                    processData: false,
-                                    crossDomain: false, // obviates need for sameOrigin test
-                                    beforeSend: (xhr, settings) =>
-                                        xhr.setRequestHeader("X-CSRFToken", csrfToken),
-                                    success: response =>
-                                        addAlert('success', 'The paper was submitted to ojs and version of submission has been saved'),
-                                    error: () =>
-                                        addAlert('error', 'version of submission has been not saved')
-                                })
-                            },
-                            error: () =>
-                                addAlert('error', 'submission was not successful')
-                        })
-                    })
-            })
-        })
-    })
-
-}
+ let submitDoc = function(editor) {
+     let oldBibDB = editor.bibDB.db
+     let oldImageDB = editor.imageDB.db
+     let owner = {}
+     owner['id'] = 1
+     owner['name'] = 'fidus'
+     editor.removeBibDB()
+     editor.removeImageDB()
+     editor.save(
+         () => editor.getBibDB(editor.user.id)
+     ).then(
+         () => editor.getImageDB(editor.user.id)
+     ).then(
+         () => saveCopy(
+             editor.doc,
+             oldBibDB,
+             oldImageDB,
+             editor.bibDB.db,
+             editor.imageDB.db,
+             editor.user
+         )
+     ).then(
+         ({
+             doc,
+             docInfo
+         }) => {
+             setRights(editor.doc.id, doc.id, editor.user, editor.doc.access_rights)
+             //window.location.href = `/document/${doc.id}/`
+             let dataToOjs = new window.FormData()
+             dataToOjs.append('username', editor.user.username)
+             dataToOjs.append('title', editor.doc.title)
+             dataToOjs.append('first_name', editor.user.first_name)
+             dataToOjs.append('last_name', editor.user.last_name)
+             dataToOjs.append('email', editor.user.email)
+             dataToOjs.append('affiliation', "sample affiliation")
+             dataToOjs.append('author_url', "sample author_url")
+             dataToOjs.append('journal_id', jQuery("input[type='radio'][name='journalList']:checked").val())
+             dataToOjs.append('file_name', editor.doc.title)
+             dataToOjs.append('article_url', window.location.origin + "/document/" + doc.id)
+             if (editor.docInfo.submission.status == 'submitted') {
+                 dataToOjs.append('submission_id', editor.docInfo.submission.submission_id)
+                 dataToOjs.append('version_id', editor.docInfo.submission.version_id + 1)
+             }
+             jQuery.ajax({
+                 url: window.ojsUrl + '/index.php/index/gateway/plugin/RestApiGatewayPlugin/articles',
+                 data: dataToOjs,
+                 type: 'POST',
+                 cache: false,
+                 contentType: false,
+                 processData: false,
+                 crossDomain: false, // obviates need for sameOrigin test
+                 beforeSend: (xhr, settings) =>
+                     xhr.setRequestHeader("X-CSRFToken", csrfToken),
+                 success: response => {
+                     //addAlert('success','The paper was submitted to ojs')
+                     let dataSubmission = new window.FormData()
+                     dataSubmission.append('document_id', doc.id)
+                     dataSubmission.append('pre_document_id', editor.doc.id)
+                     if (editor.docInfo.submission.status == 'submitted') {
+                         dataSubmission.append('submission_id', editor.docInfo.submission.submission_id)
+                         dataSubmission.append('journal_id', editor.docInfo.submission.journal_id)
+                     } else {
+                         dataSubmission.append('journal_id', response.journal_id)
+                         dataSubmission.append('submission_id', response.submission_id)
+                     }
+                     jQuery.ajax({
+                         url: '/document/submissionversion/',
+                         data: dataSubmission,
+                         type: 'POST',
+                         cache: false,
+                         contentType: false,
+                         processData: false,
+                         crossDomain: false, // obviates need for sameOrigin test
+                         beforeSend: (xhr, settings) =>
+                             xhr.setRequestHeader("X-CSRFToken", csrfToken),
+                         success: response =>
+                             addAlert('success', 'The paper was submitted to ojs and version of submission has been saved'),
+                         error: () =>
+                             addAlert('error', 'version of submission has been not saved')
+                     })
+                 },
+                 error: () =>
+                     addAlert('error', 'submission was not successful')
+             })
+         )
+     }
+ }
 
 /** get the list of ojournal in ojs.
  * @function selectJournal

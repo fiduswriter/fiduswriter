@@ -33,13 +33,15 @@ export class EpubBookExporter extends BaseEpubExporter {
             addAlert('error', gettext('Book cannot be exported due to lack of chapters.'))
             return false
         }
-        getMissingChapterData(book, docList, () => {
-            getImageAndBibDB(book, docList, (imageDB, bibDB) => {
+        getMissingChapterData(this.book, this.docList).then(
+            () => getImageAndBibDB(this.book, this.docList)
+        ).then(
+            ({imageDB, bibDB}) => {
                 this.bibDB = bibDB
                 this.imageDB = imageDB
                 this.exportOne()
-            })
-        })
+            }
+        )
     }
 
     exportOne() {

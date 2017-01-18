@@ -180,7 +180,7 @@ export class DocumentOverviewActions {
     }
 
     copyFiles(ids) {
-        getMissingDocumentListData(ids, this.documentOverview.documentList, () => {
+        getMissingDocumentListData(ids, this.documentOverview.documentList).then(() => {
             this.documentOverview.getBibDB().then(
                 () => this.documentOverview.getImageDB()
             ).then(() => {
@@ -262,7 +262,8 @@ export class DocumentOverviewActions {
     downloadNativeFiles(ids) {
         getMissingDocumentListData(
             ids,
-            this.documentOverview.documentList,
+            this.documentOverview.documentList
+        ).then(
             () => {
                 for (let i = 0; i < ids.length; i++) {
                     new NativeExporter(_.findWhere(
@@ -277,7 +278,8 @@ export class DocumentOverviewActions {
     downloadHtmlFiles(ids) {
         getMissingDocumentListData(
             ids,
-            this.documentOverview.documentList,
+            this.documentOverview.documentList
+        ).then(
             () => {
                 for (let i = 0; i < ids.length; i++) {
                     new HTMLExporter(_.findWhere(
@@ -292,7 +294,8 @@ export class DocumentOverviewActions {
     downloadTemplateExportFiles(ids, templateUrl, templateType) {
         getMissingDocumentListData(
             ids,
-            this.documentOverview.documentList,
+            this.documentOverview.documentList
+        ).then(
             () => {
                 for (let i = 0; i < ids.length; i++) {
                     if (templateType==='docx') {
@@ -315,7 +318,8 @@ export class DocumentOverviewActions {
     downloadLatexFiles(ids) {
         getMissingDocumentListData(
             ids,
-            this.documentOverview.documentList,
+            this.documentOverview.documentList
+        ).then(
             () => {
                 for (let i = 0; i < ids.length; i++) {
                     new LatexExporter(_.findWhere(
@@ -330,7 +334,8 @@ export class DocumentOverviewActions {
     downloadEpubFiles(ids) {
         getMissingDocumentListData(
             ids,
-            this.documentOverview.documentList,
+            this.documentOverview.documentList
+        ).then(
             () => {
                 for (let i = 0; i < ids.length; i++) {
                     new EpubExporter(_.findWhere(

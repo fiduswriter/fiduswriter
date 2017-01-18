@@ -3,7 +3,7 @@ import {BibliographyDB} from "../../bibliography/database"
 import {ImageDB} from "../../images/database"
 import {addAlert} from "../../common"
 
-export let getMissingChapterData = function (aBook, documentList, callback) {
+export let getMissingChapterData = function (aBook, documentList) {
     let bookDocuments = []
 
     for (let i = 0; i < aBook.chapters.length; i++) {
@@ -13,10 +13,10 @@ export let getMissingChapterData = function (aBook, documentList, callback) {
         }
         bookDocuments.push(aBook.chapters[i].text)
     }
-    getMissingDocumentListData(bookDocuments, documentList, callback)
+    return getMissingDocumentListData(bookDocuments, documentList)
 }
 
-export let getImageAndBibDB = function (aBook, documentList, callback) {
+export let getImageAndBibDB = function (aBook, documentList) {
     let documentOwners = []
     for (let i = 0; i < aBook.chapters.length; i++) {
         documentOwners.push(_.findWhere(documentList, {
@@ -25,13 +25,13 @@ export let getImageAndBibDB = function (aBook, documentList, callback) {
     }
 
     documentOwners = _.unique(documentOwners).join(',')
-    let imageGetter = new ImageDB(documentOwners)
-    imageGetter.getDB().then(() => {
-        let bibGetter = new BibliographyDB(documentOwners, false, false, false)
-        bibGetter.getDB().then(() => {
-            callback(imageGetter, bibGetter)
-        })
-    })
+    let imageDB = new ImageDB(documentOwners)
+    let bibDB = new BibliographyDB(documentOwners, false, false, false)
+    return imageDB.getDB().then(
+        bibDB => bibDB.getDB()
+    ).then(
+        () => Promise.resolve({imageDB, bibDB})
+    )
 }
 
 

@@ -14,13 +14,13 @@ export class ModMenusActions {
     }
 
     saveRevision() {
-        this.mod.editor.save(() => {
+        this.mod.editor.save().then(() => {
             uploadNative(this.mod.editor)
         })
     }
 
     saveCopy() {
-        this.mod.editor.save(() => {
+        this.mod.editor.save().then(() => {
             if (this.mod.editor.doc.owner.id === this.mod.editor.user.id) {
                 // We are copying from and to the same user. We don't need different databases for this.
                 saveCopy(
@@ -65,7 +65,7 @@ export class ModMenusActions {
     }
 
     download() {
-        this.mod.editor.save(() => {
+        this.mod.editor.save().then(() => {
             new NativeExporter(
                 this.mod.editor.doc,
                 this.mod.editor.bibDB,
@@ -75,7 +75,7 @@ export class ModMenusActions {
     }
 
     downloadTemplateExport(templateUrl, templateType) {
-        this.mod.editor.save(() => {
+        this.mod.editor.save().then(() => {
             if (templateType === 'docx') {
                 new DocxExporter(
                     this.mod.editor.doc,
@@ -96,7 +96,7 @@ export class ModMenusActions {
     }
 
     downloadLatex() {
-        this.mod.editor.save(() => {
+        this.mod.editor.save().then(() => {
             new LatexExporter(
                 this.mod.editor.doc,
                 this.mod.editor.bibDB,
@@ -106,7 +106,7 @@ export class ModMenusActions {
     }
 
     downloadEpub() {
-        this.mod.editor.save(() => {
+        this.mod.editor.save().then(() => {
             new EpubExporter(
                 this.mod.editor.doc,
                 this.mod.editor.bibDB
@@ -115,7 +115,7 @@ export class ModMenusActions {
     }
 
     downloadHtml() {
-        this.mod.editor.save(() => {
+        this.mod.editor.save().then(() => {
             new HTMLExporter(
                 this.mod.editor.doc,
                 this.mod.editor.bibDB
@@ -124,25 +124,25 @@ export class ModMenusActions {
     }
 
     close() {
-        this.mod.editor.save(() => {
+        this.mod.editor.save().then(() => {
             window.location.href = '/'
         })
     }
 
     submitOjs() {
-        this.mod.editor.save(() => selectJournal(this.mod.editor))
+        this.mod.editor.save().then(() => selectJournal(this.mod.editor))
     }
 
     submitReview() {
-        this.mod.editor.save(() => reviewSubmit(this.mod.editor))
+        this.mod.editor.save().then(() => reviewSubmit(this.mod.editor))
     }
 
     revisionFinished() {
-        this.mod.editor.save(() => submissionRevisionDone(this.mod.editor))
+        this.mod.editor.save().then(() => submissionRevisionDone(this.mod.editor))
     }
 
     returnToOJS() {
-        this.mod.editor.save(() => {
+        this.mod.editor.save().then(() => {
             window.location.href = window.ojsUrl
         })
     }

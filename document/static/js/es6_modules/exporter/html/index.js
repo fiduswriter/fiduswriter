@@ -24,7 +24,7 @@ export class HTMLExporter extends BaseHTMLExporter{
         addAlert('info', this.doc.title + ': ' + gettext(
             'HTML export has been initiated.'))
 
-        this.joinDocumentParts(() => this.exportTwo())
+        this.joinDocumentParts().then(() => this.exportTwo())
 
     }
 

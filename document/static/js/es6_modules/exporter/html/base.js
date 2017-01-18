@@ -3,8 +3,7 @@ import {RenderCitations} from "../../citations/render"
 import {docSchema} from "../../schema/document"
 
 export class BaseHTMLExporter extends BaseDOMExporter {
-    joinDocumentParts(callback) {
-
+    joinDocumentParts() {
         this.contents = docSchema.nodeFromJSON(this.doc.contents).toDOM()
 
         // Remove hidden parts
@@ -19,11 +18,11 @@ export class BaseHTMLExporter extends BaseDOMExporter {
             this.bibDB,
             true
         )
-        citRenderer.init().then(
+        return citRenderer.init().then(
             () => {
                 this.addBibliographyHTML(citRenderer.fm.bibHTML)
                 this.contents = this.cleanHTML(this.contents)
-                callback()
+                return Promise.resolve()
             }
         )
     }

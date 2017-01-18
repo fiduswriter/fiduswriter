@@ -44,7 +44,7 @@ let submitDoc = function(editor) {
     owner['name'] = 'fidus'
     editor.removeBibDB()
     editor.removeImageDB()
-    editor.save(
+    editor.save().then(
         () => editor.getBibDB(editor.user.id)
     ).then(
         () => editor.getImageDB(editor.user.id)

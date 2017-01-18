@@ -216,11 +216,13 @@ export class Editor {
             this.pm.setDoc(pmDoc)
         } else{
             // Document is new
-            this.getUpdates(() => {
-                // We need to set the doc so that events such as for ui update
-                // are triggered.
-                this.setPmDoc()
-            })
+            this.getUpdates().then(
+                () => {
+                    // We need to set the doc so that events such as for ui update
+                    // are triggered.
+                    this.setPmDoc()
+                }
+            )
         }
     }
 
@@ -365,18 +367,14 @@ export class Editor {
     }
 
     // Get updates to document and then send updates to the server
-    save(callback) {
-        this.getUpdates(() => {
-            this.sendDocumentUpdate(() => {
-                if (callback) {
-                    callback()
-                }
-            })
-        })
+    save() {
+        return this.getUpdates().then(
+            () => this.sendDocumentUpdate()
+        )
     }
 
     // Collects updates of the document from ProseMirror and saves it under this.doc
-    getUpdates(callback) {
+    getUpdates() {
         let pmArticle = this.pm.mod.collab.versionDoc.firstChild
         this.doc.contents = pmArticle.toJSON()
         this.doc.metadata = getMetadata(pmArticle)
@@ -385,13 +383,11 @@ export class Editor {
         this.doc.version = this.pm.mod.collab.version
         this.docInfo.hash = this.getHash()
         this.doc.comments = this.mod.comments.store.comments
-        if (callback) {
-            callback()
-        }
+        return Promise.resolve()
     }
 
     // Send changes to the document to the server
-    sendDocumentUpdate(callback) {
+    sendDocumentUpdate() {
         let doc = {
             title: this.doc.title,
             metadata: this.doc.metadata,
@@ -408,10 +404,7 @@ export class Editor {
 
         this.docInfo.changed = false
 
-        if (callback) {
-            callback()
-        }
-        return true
+        return Promise.resolve()
     }
 
     // filter transformations.

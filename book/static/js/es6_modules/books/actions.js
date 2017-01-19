@@ -502,10 +502,12 @@ export class BookActions {
 
 
         jQuery(document).on('click', '#select-cover-image-button', () => {
-            new ImageSelectionDialog(
+            let imageSelection = new ImageSelectionDialog(
                 anImageDB,
                 theBook.cover_image,
-                theBook.owner,
+                theBook.owner)
+
+            imageSelection.init().then(
                 imageId => {
                     if (!imageId) {
                         delete theBook.cover_image

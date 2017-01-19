@@ -354,12 +354,14 @@ export class DocumentOverviewActions {
             () => this.documentOverview.getImageDB()
         ).then(
             () => {
-                new DocumentRevisionsDialog(
-                  documentId,
-                  this.documentOverview.documentList,
-                  this.documentOverview.user,
-                  this.documentOverview.bibDB,
-                  this.documentOverview.imageDB,
+                let revDialog = new DocumentRevisionsDialog(
+                    documentId,
+                    this.documentOverview.documentList,
+                    this.documentOverview.user,
+                    this.documentOverview.bibDB,
+                    this.documentOverview.imageDB
+                )
+                revDialog.init().then(
                   actionObject => {
                     switch(actionObject.action) {
                         case 'added-document':

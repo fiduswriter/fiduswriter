@@ -1,16 +1,15 @@
 import {usermediaImageItemSelectionTemplate, usermediaImageSelectionTemplate} from "./templates"
 import {ImageUploadDialog} from "../upload-dialog"
+import {cancelPromise} from "../../common"
 
 export class ImageSelectionDialog {
-    constructor(imageDB, imageId, ownerId, callback) {
+    constructor(imageDB, imageId, ownerId) {
         this.imageDB = imageDB
         this.imageId = imageId // a preselected image
         this.ownerId = ownerId
-        this.callback = callback
-        this.createImageSelectionDialog()
     }
 
-    createImageSelectionDialog() {
+    init() {
         this.imageDialog = jQuery(usermediaImageSelectionTemplate({
                 imageDB: this.imageDB.db, usermediaImageItemSelectionTemplate
             })).dialog({
@@ -27,12 +26,11 @@ export class ImageSelectionDialog {
         })
 
         this.startImageTable()
-        this.bindEvents()
         if (this.imageId) {
             jQuery('#Image_' + this.imageId).addClass(
                 'checked')
         }
-
+        return this.bindEvents()
     }
 
     startImageTable() {
@@ -77,24 +75,6 @@ export class ImageSelectionDialog {
     }
 
     bindEvents() {
-        jQuery('#selectImageSelectionButton').bind('click',
-            () => {
-                this.callback(this.imageId)
-                this.imageDialog.dialog('close')
-            })
-
-        jQuery('#cancelImageSelectionButton').bind('click',
-            () => {
-                this.imageDialog.dialog('close')
-            })
-
-        jQuery('#selectImageUploadButton').bind('click', () => {
-            new ImageUploadDialog(this.imageDB, false, this.ownerId, imageId => {
-                this.imageId = imageId
-                this.imageDialog.dialog('close')
-                this.createImageSelectionDialog()
-            })
-        })
 
         // functions for the image selection dialog
         let that = this
@@ -115,5 +95,35 @@ export class ImageSelectionDialog {
                 jQuery(this).addClass('checked')
             }
         })
+        return new Promise (resolve => {
+            jQuery('#selectImageUploadButton').bind('click', () => {
+                let imageUpload = new ImageUploadDialog(
+                    this.imageDB,
+                    false,
+                    this.ownerId
+                )
+                resolve(
+                    imageUpload.init().then(
+                        imageId => {
+                            this.imageId = imageId
+                            this.imageDialog.dialog('close')
+                            return this.init()
+                        }
+                    )
+                )
+            })
+
+            jQuery('#selectImageSelectionButton').bind('click',
+                () => {
+                    this.imageDialog.dialog('close')
+                    resolve(this.imageId)
+                })
+            jQuery('#cancelImageSelectionButton').bind('click',
+                () => {
+                    this.imageDialog.dialog('close')
+                    resolve(cancelPromise())
+                })
+        })
+
     }
 }

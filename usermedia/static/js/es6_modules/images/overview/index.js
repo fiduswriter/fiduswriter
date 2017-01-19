@@ -193,11 +193,18 @@ export class ImageOverview {
         jQuery(document).on('click', '.edit-image', function () {
             let iID = parseInt(jQuery(this).attr('data-id'))
             let iType = jQuery(this).attr('data-type')
-            new ImageUploadDialog(that.imageDB, iID, 0, function(imageId){
-                that.stopUsermediaTable()
-                that.appendToImageTable(imageId)
-                that.startUsermediaTable()
-            })
+            let imageUpload = new ImageUploadDialog(
+                that.imageDB,
+                iID,
+                0
+            )
+            imageUpload.init().then(
+                imageId => {
+                    that.stopUsermediaTable()
+                    that.appendToImageTable(imageId)
+                    that.startUsermediaTable()
+                }
+            )
 
         })
         jQuery('#edit-category').bind('click', () => {

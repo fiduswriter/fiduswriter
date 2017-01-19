@@ -1,7 +1,7 @@
 import {BibFieldTypes, BibTypes} from "biblatex-csl-converter/lib/const"
 import {BibFieldTitles, BibTypeTitles, BibFieldHelp} from "./strings"
 import {bibDialog} from "./templates"
-import {addAlert, noSpaceTmp} from "../../common/common"
+import {addAlert, noSpaceTmp} from "../../common"
 import {EntryCatForm} from "./entry-cat"
 import {DateFieldForm} from "./fields/date"
 import {LiteralFieldForm} from "./fields/literal"
@@ -34,14 +34,13 @@ const FIELD_FORMS = {
 }
 
 export class BibEntryForm {
-    constructor(itemId, bibDB, callback) {
+    constructor(itemId, bibDB) {
         if (itemId === undefined) {
             this.itemId = false
         } else {
             this.itemId = parseInt(itemId)
         }
         this.bibDB = bibDB
-        this.callback = callback
         this.fields = {}
         this.currentValues = {}
     }
@@ -60,7 +59,7 @@ export class BibEntryForm {
                 fields: {}
             }
         }
-        this.createForm()
+        return this.createForm()
     }
 
     addDialogToDOM() {
@@ -75,16 +74,6 @@ export class BibEntryForm {
         jQuery('body').append(dialogEl)
 
         let diaButtons = {
-            submit: {
-                class: "fw-button fw-dark",
-                text: gettext('Submit'),
-                click: function() {
-                    if (that.check()) {
-                        that.save()
-                        jQuery(this).dialog('close')
-                    }
-                }
-            },
             cancel: {
                 class: "fw-button fw-orange",
                 text: gettext('Cancel'),
@@ -124,20 +113,35 @@ export class BibEntryForm {
             }
         }
 
-        jQuery("#bib-dialog").dialog({
-            draggable: false,
-            resizable: false,
-            width: 940,
-            height: 700,
-            modal: true,
-            buttons: diaButtons,
-            close: () => jQuery("#bib-dialog").dialog('destroy').remove()
-        })
-        // init ui tabs
-        jQuery('#bib-dialog-tabs').tabs()
+        return new Promise(resolve => {
+            diaButtons.submit = {
+                class: "fw-button fw-dark",
+                text: gettext('Submit'),
+                click: function() {
+                    if (that.check()) {
+                        let returnValue = that.save()
+                        jQuery("#bib-dialog").dialog('close')
+                        resolve(returnValue)
+                    }
+                }
+            }
 
-        document.getElementById('select-bibtype').addEventListener('change', () => {
-            that.changeBibType()
+            jQuery("#bib-dialog").dialog({
+                draggable: false,
+                resizable: false,
+                width: 940,
+                height: 700,
+                modal: true,
+                buttons: diaButtons,
+                close: () => jQuery("#bib-dialog").dialog('destroy').remove()
+            })
+            // init ui tabs
+            jQuery('#bib-dialog-tabs').tabs()
+
+            document.getElementById('select-bibtype').addEventListener(
+                'change',
+                () => resolve(this.changeBibType())
+            )
         })
     }
 
@@ -180,25 +184,25 @@ export class BibEntryForm {
     }
 
     createForm() {
-        let that = this
-        this.addDialogToDOM()
+        let dialogPromise = this.addDialogToDOM()
         if (this.currentValues.bib_type !== false) {
             let eitherOrFields = document.getElementById('eo-fields')
-            BibTypes[this.currentValues.bib_type].eitheror.forEach(fieldName=>{
-                that.addField(fieldName, eitherOrFields)
+            BibTypes[this.currentValues.bib_type].eitheror.forEach(fieldName => {
+                this.addField(fieldName, eitherOrFields)
             })
             let reqFields = document.getElementById('req-fields')
-            BibTypes[this.currentValues.bib_type].required.forEach(fieldName=>{
-                that.addField(fieldName, reqFields)
+            BibTypes[this.currentValues.bib_type].required.forEach(fieldName => {
+                this.addField(fieldName, reqFields)
             })
             let optFields = document.getElementById('opt-fields')
-            BibTypes[this.currentValues.bib_type].optional.forEach(fieldName=>{
-                that.addField(fieldName, optFields)
+            BibTypes[this.currentValues.bib_type].optional.forEach(fieldName => {
+                this.addField(fieldName, optFields)
             })
             let entryCatField = document.getElementById('categories-field')
             this.entryCatForm = new EntryCatForm(entryCatField, this.currentValues.entry_cat, this.bibDB.cats)
             this.entryCatForm.init()
         }
+        return dialogPromise
     }
 
     changeBibType() {
@@ -211,7 +215,7 @@ export class BibEntryForm {
         // Reset fields and close dialog.
         this.fields = {}
         jQuery('#bib-dialog').dialog('close')
-        this.createForm()
+        return this.createForm()
     }
 
     createEntryKey(bibItem) {
@@ -257,10 +261,9 @@ export class BibEntryForm {
         if (saveObj[itemId].entry_key==='FidusWriter') {
             this.createEntryKey(saveObj[itemId])
         }
-        this.bibDB.saveBibEntries(
+        return this.bibDB.saveBibEntries(
             saveObj,
-            isNew,
-            this.callback
+            isNew
         )
     }
 

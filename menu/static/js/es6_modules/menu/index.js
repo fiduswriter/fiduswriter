@@ -1,4 +1,4 @@
-import {addDropdownBox} from "../common/common"
+import {addDropdownBox} from "../common"
 
 // Bindings for the menu
 

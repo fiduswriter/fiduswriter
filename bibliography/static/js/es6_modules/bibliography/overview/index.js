@@ -6,8 +6,8 @@ import {BibliographyDB} from "../database"
 import {BibTypeTitles} from "../form/strings"
 import {BibLatexFileImporter} from "../import"
 import {BibLatexFileExporter} from "../export"
-import {addDropdownBox} from "../../common/common"
-import {Menu} from "../../menu/menu"
+import {addDropdownBox} from "../../common"
+import {Menu} from "../../menu"
 
 export class BibliographyOverview {
 
@@ -18,16 +18,13 @@ export class BibliographyOverview {
     }
 
     /* load data from the bibliography */
-    getBibDB(callback) {
+    getBibDB() {
         let docOwnerId = 0 // 0 = current user.
         this.bibDB = new BibliographyDB(docOwnerId, true, false, false)
 
-        this.bibDB.getDB((bibPks, bibCats) => {
+        this.bibDB.getDB().then(({bibPKs, bibCats}) => {
             this.addBibCategoryList(bibCats)
-            this.addBibList(bibPks)
-            if (callback) {
-                callback()
-            }
+            this.addBibList(bibPKs)
         })
     }
 
@@ -260,10 +257,10 @@ export class BibliographyOverview {
 
         jQuery(document).on('click', '.edit-bib', function () {
             let eID = jQuery(this).attr('data-id')
-            let form = new BibEntryForm(eID, that.bibDB, newBibPks => {
-                 that.addBibList(newBibPks)
-            })
-            form.init()
+            let form = new BibEntryForm(eID, that.bibDB)
+            form.init().then(
+                newBibPks => that.addBibList(newBibPks)
+            )
 
         })
 
@@ -301,9 +298,10 @@ export class BibliographyOverview {
 
         //import a bib file
         jQuery('.import-bib').bind('click', () => {
-            new BibLatexFileImporter(this.bibDB, bibEntries => {
-                this.addBibList(bibEntries)
-            })
+            new BibLatexFileImporter(
+                this.bibDB,
+                bibEntries => this.addBibList(bibEntries)
+            )
         })
 
         //submit entry actions
@@ -338,14 +336,14 @@ export class BibliographyOverview {
 
 
     createCategory(cats) {
-        this.bibDB.createCategory(cats, bibCats => {
+        this.bibDB.createCategory(cats).then(bibCats => {
             jQuery('#bib-category-list li').not(':first').remove()
             this.addBibCategoryList(bibCats)
         })
     }
 
     deleteBibEntry(ids) {
-        this.bibDB.deleteBibEntry(ids, ids => {
+        this.bibDB.deleteBibEntry(ids).then(ids => {
             this.stopBibliographyTable()
             let elementsId = '#Entry_' + ids.join(', #Entry_')
             jQuery(elementsId).detach()

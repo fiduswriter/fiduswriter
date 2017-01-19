@@ -1,7 +1,7 @@
 import {parseDOM} from "prosemirror-old/dist/model/from_dom"
 import {Step} from "prosemirror-old/dist/transform"
-import {Paste} from "../paste/paste"
-import {COMMENT_ONLY_ROLES} from "../editor"
+import {Paste} from "../paste"
+import {COMMENT_ONLY_ROLES} from ".."
 import {collabEditing} from "prosemirror-old/dist/collab"
 import {fnNodeToPmNode} from "../../schema/footnotes-convert"
 

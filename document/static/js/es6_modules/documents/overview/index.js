@@ -3,8 +3,8 @@ import {DocumentOverviewMenus} from "./menus"
 import {documentsListTemplate, documentsListItemTemplate} from "./templates"
 import {BibliographyDB} from "../../bibliography/database"
 import {ImageDB} from "../../images/database"
-import {activateWait, deactivateWait, addAlert, localizeDate, csrfToken} from "../../common/common"
-import {Menu} from "../../menu/menu"
+import {activateWait, deactivateWait, addAlert, localizeDate, csrfToken} from "../../common"
+import {Menu} from "../../menu"
 /*
 * Helper functions for the document overview page.
 */
@@ -29,26 +29,26 @@ export class DocumentOverview {
     }
 
     // Get the bibliography database -- only executed if needed (when importing, etc.).
-    getBibDB(callback) {
+    getBibDB() {
         if (!this.bibDB) { // Don't get the bibliography again if we already have it.
             this.bibDB = new BibliographyDB(this.user.id, true, false, false)
-            this.bibDB.getDB(() => {
-                callback()
-            })
+            return this.bibDB.getDB()
         } else {
-            callback()
+            return Promise.resolve()
         }
     }
 
-    getImageDB(callback) {
+    getImageDB() {
         if (!this.imageDB) {
             let imageGetter = new ImageDB(this.user.id)
-            imageGetter.getDB(() => {
-                this.imageDB = imageGetter.db
-                callback()
+            return new Promise((resolve, reject) => {
+                imageGetter.getDB().then(() => {
+                    this.imageDB = imageGetter.db
+                    resolve()
+                })
             })
         } else {
-            callback()
+            return Promise.resolve()
         }
     }
 

@@ -15,27 +15,16 @@ export class LatexBookExporter {
         this.docList = docList
         this.textFiles = []
         this.httpFiles = []
-        let p = []
-        p.push(new Promise(
-            resolve =>
-                getMissingChapterData(
-                    book,
-                    docList, () => resolve()
-                )
-            )
+
+        getMissingChapterData(this.book, this.docList).then(
+            () => getImageAndBibDB(this.book, this.docList)
+        ).then(
+            ({imageDB, bibDB}) => {
+                this.bibDB = bibDB
+                this.imageDB = imageDB
+                this.init()
+            }
         )
-        p.push(new Promise(resolve => {
-            getImageAndBibDB(
-                book,
-                docList,
-                (imageDB, bibDB) => {
-                    this.bibDB = bibDB
-                    this.imageDB = imageDB // Apparently not used
-                    resolve()
-                }
-            )
-        }))
-        Promise.all(p).then(() => this.init())
     }
 
     init() {

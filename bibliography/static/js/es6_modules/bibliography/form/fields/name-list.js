@@ -1,5 +1,5 @@
 import {NameFieldForm} from "./name"
-import {noSpaceTmp} from "../../../common/common"
+import {noSpaceTmp} from "../../../common"
 
 export class NameListForm{
     constructor(dom, initialValue = [[]]) {

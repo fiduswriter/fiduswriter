@@ -1,5 +1,5 @@
 import {LiteralFieldForm} from "./literal"
-import {noSpaceTmp} from "../../../common/common"
+import {noSpaceTmp} from "../../../common"
 import {BibOptionTitles} from "../strings"
 
 export class KeyFieldForm{

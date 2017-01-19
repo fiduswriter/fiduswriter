@@ -157,3 +157,10 @@ export let csrfToken = getCookie('csrftoken')
      })
      return out
  }
+
+/**
+ * Return a cancel promise if you need to cancel a promise chain. Import as
+ * ES6 promises are not (yet) cancelable.
+ */
+
+ export let cancelPromise = () => new Promise(()=>{})

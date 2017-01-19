@@ -30,7 +30,7 @@ export let getDatabasesIfNeeded = function(object, doc) {
         p.push(
             new Promise((resolve) => {
                 object.bibDB = new BibliographyDB(doc.owner.id, false, false, false)
-                object.bibDB.getDB(resolve)
+                object.bibDB.getDB().then(resolve)
             })
         )
     }
@@ -38,7 +38,7 @@ export let getDatabasesIfNeeded = function(object, doc) {
         p.push(
             new Promise((resolve) => {
                 object.imageDB = new ImageDB(doc.owner.id)
-                object.imageDB.getDB(resolve)
+                object.imageDB.getDB().then(resolve)
             })
         )
     }

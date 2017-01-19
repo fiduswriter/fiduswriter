@@ -1,9 +1,8 @@
-import {ImageUploadDialog} from "../upload-dialog/upload-dialog"
+import {ImageUploadDialog} from "../upload-dialog"
 import {ImageDB} from "../database"
 import {ImageOverviewCategories} from "./categories"
-import {addDropdownBox, activateWait, deactivateWait, addAlert, localizeDate} from "../../common/common"
-import {csrfToken} from "../../common/common"
-import {Menu} from "../../menu/menu"
+import {addDropdownBox, activateWait, deactivateWait, addAlert, localizeDate, csrfToken} from "../../common"
+import {Menu} from "../../menu"
 import {usermediaCategoryListItem, usermediaTableTemplate} from "./templates"
  /** Helper functions for user added images/SVGs.*/
 
@@ -130,16 +129,12 @@ export class ImageOverview {
         }
     }
 
-    getImageDB(callback) {
+    getImageDB() {
         let imageGetter = new ImageDB(0)
-        imageGetter.getDB(pks => {
+        imageGetter.getDB().then(pks => {
             this.imageDB = imageGetter
             this.mod.categories.addImageCategoryList(imageGetter.cats)
-
             this.addImageDB(pks)
-            if (callback) {
-                callback()
-            }
         })
     }
 
@@ -198,11 +193,18 @@ export class ImageOverview {
         jQuery(document).on('click', '.edit-image', function () {
             let iID = parseInt(jQuery(this).attr('data-id'))
             let iType = jQuery(this).attr('data-type')
-            new ImageUploadDialog(that.imageDB, iID, 0, function(imageId){
-                that.stopUsermediaTable()
-                that.appendToImageTable(imageId)
-                that.startUsermediaTable()
-            })
+            let imageUpload = new ImageUploadDialog(
+                that.imageDB,
+                iID,
+                0
+            )
+            imageUpload.init().then(
+                imageId => {
+                    that.stopUsermediaTable()
+                    that.appendToImageTable(imageId)
+                    that.startUsermediaTable()
+                }
+            )
 
         })
         jQuery('#edit-category').bind('click', () => {
@@ -258,9 +260,9 @@ export class ImageOverview {
         })
     }
 
-    init(callback) {
+    init() {
         this.bindEvents()
-        this.getImageDB(callback)
+        this.getImageDB()
     }
 
     bind() {

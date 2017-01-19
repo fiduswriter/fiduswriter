@@ -57,12 +57,11 @@ export class ModCitations {
                 document.getElementById('paper-editable'), // TODO: Should we point this to somewhere else?
                 document.querySelector('div.article').getAttribute('data-citationstyle'),
                 this.editor.bibDB,
-                false,
-                () => {
-                    this.layoutCitationsTwo()
-                }
+                false
             )
-            this.citRenderer.init()
+            this.citRenderer.init().then(
+                () => this.layoutCitationsTwo()
+            )
 
         }
 

@@ -1,4 +1,4 @@
-import {ImageOverview} from "./es6_modules/images/overview/overview"
+import {ImageOverview} from "./es6_modules/images/overview"
 
 let theImageOverview = new ImageOverview()
 

@@ -5,18 +5,18 @@ import {ProseMirror} from "prosemirror-old/dist/edit/main"
 import {collabEditing} from "prosemirror-old/dist/collab"
 import {buildKeymap} from "prosemirror-old/dist/example-setup"
 import {docSchema} from "../schema/document"
-import {ModComments} from "./comments/mod"
-import {ModFootnotes} from "./footnotes/mod"
-import {ModCitations} from "./citations/mod"
-import {ModCollab} from "./collab/mod"
-import {ModTools} from "./tools/mod"
-import {ModSettings} from "./settings/mod"
-import {ModMenus} from "./menus/mod"
+import {ModComments} from "./comments"
+import {ModFootnotes} from "./footnotes"
+import {ModCitations} from "./citations"
+import {ModCollab} from "./collab"
+import {ModTools} from "./tools"
+import {ModSettings} from "./settings"
+import {ModMenus} from "./menus"
 import {ModServerCommunications} from "./server-communications"
 import {getSettings, getMetadata, updateDoc} from "../schema/convert"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
-import {Paste} from "./paste/paste"
+import {Paste} from "./paste"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']
@@ -202,7 +202,7 @@ export class Editor {
         this.mod.comments.store.on("mustSend", () => {
             this.mod.collab.docChanges.sendToCollaborators()
         })
-        this.getBibDB(this.doc.owner.id, () => {
+        this.getBibDB(this.doc.owner.id).then(() => {
             this.enableUI()
         })
         this.waitingForDocument = false
@@ -216,11 +216,13 @@ export class Editor {
             this.pm.setDoc(pmDoc)
         } else{
             // Document is new
-            this.getUpdates(() => {
-                // We need to set the doc so that events such as for ui update
-                // are triggered.
-                this.setPmDoc()
-            })
+            this.getUpdates().then(
+                () => {
+                    // We need to set the doc so that events such as for ui update
+                    // are triggered.
+                    this.setPmDoc()
+                }
+            )
         }
     }
 
@@ -239,19 +241,16 @@ export class Editor {
         // TODO: Need to to remove all entries of citation dialog!
     }
 
-    getBibDB(userId, callback) {
+    getBibDB(userId) {
         if (!this.bibDB) { // Don't get the bibliography again if we already have it.
             let bibGetter = new BibliographyDB(userId, true, false, false)
-            bibGetter.getDB((bibPks, bibCats) => {
+            return bibGetter.getDB().then(({bibPKs, bibCats}) => {
                 this.bibDB = bibGetter
-                this.mod.menus.citation.appendManyToCitationDialog(bibPks)
+                this.mod.menus.citation.appendManyToCitationDialog(bibPKs)
                 this.mod.menus.header.enableExportMenu()
-                if (callback) {
-                    callback()
-                }
             })
         } else {
-            callback()
+            return Promise.resolve()
         }
     }
 
@@ -259,19 +258,18 @@ export class Editor {
         delete this.imageDB
     }
 
-    getImageDB(userId, callback) {
+    getImageDB(userId) {
         if (!this.imageDB) {
             let imageGetter = new ImageDB(userId)
-            imageGetter.getDB(() => {
+            return imageGetter.getDB().then(() => {
                 this.imageDB = imageGetter
                 // assign image DB to be used in schema.
                 this.schema.cached.imageDB = imageGetter
                 // assign image DB to be used in footnote schema.
                 this.mod.footnotes.schema.cached.imageDB = imageGetter
-                callback()
             })
         } else {
-            callback()
+            return Promise.resolve()
         }
     }
 
@@ -335,7 +333,7 @@ export class Editor {
         } else {
             this.user = this.doc.owner
         }
-        this.getImageDB(this.doc.owner.id, () => {
+        this.getImageDB(this.doc.owner.id).then(() => {
             this.update()
             this.mod.serverCommunications.send({
                 type: 'participant_update'
@@ -369,18 +367,14 @@ export class Editor {
     }
 
     // Get updates to document and then send updates to the server
-    save(callback) {
-        this.getUpdates(() => {
-            this.sendDocumentUpdate(() => {
-                if (callback) {
-                    callback()
-                }
-            })
-        })
+    save() {
+        return this.getUpdates().then(
+            () => this.sendDocumentUpdate()
+        )
     }
 
     // Collects updates of the document from ProseMirror and saves it under this.doc
-    getUpdates(callback) {
+    getUpdates() {
         let pmArticle = this.pm.mod.collab.versionDoc.firstChild
         this.doc.contents = pmArticle.toJSON()
         this.doc.metadata = getMetadata(pmArticle)
@@ -389,13 +383,11 @@ export class Editor {
         this.doc.version = this.pm.mod.collab.version
         this.docInfo.hash = this.getHash()
         this.doc.comments = this.mod.comments.store.comments
-        if (callback) {
-            callback()
-        }
+        return Promise.resolve()
     }
 
     // Send changes to the document to the server
-    sendDocumentUpdate(callback) {
+    sendDocumentUpdate() {
         let doc = {
             title: this.doc.title,
             metadata: this.doc.metadata,
@@ -412,10 +404,7 @@ export class Editor {
 
         this.docInfo.changed = false
 
-        if (callback) {
-            callback()
-        }
-        return true
+        return Promise.resolve()
     }
 
     // filter transformations.

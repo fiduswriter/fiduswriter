@@ -2,11 +2,11 @@ import {HTMLBookExporter} from "./exporter/html"
 import {LatexBookExporter} from "./exporter/latex"
 import {EpubBookExporter} from "./exporter/epub"
 import {BookActions} from "./actions"
-import {BookAccessRightsDialog} from "./accessrights/dialog"
+import {BookAccessRightsDialog} from "./accessrights"
 import {bookListTemplate} from "./templates"
 import {ImageDB} from "../images/database"
-import {addDropdownBox, addAlert} from "../common/common"
-import {Menu} from "../menu/menu"
+import {addDropdownBox, addAlert} from "../common"
+import {Menu} from "../menu"
 
 export class BookList {
     // A class that contains everything that happens on the books page.
@@ -24,24 +24,28 @@ export class BookList {
         this.bindEvents()
     }
 
-    getImageDB(callback) {
+    getImageDB() {
         if (!this.imageDB) {
             let imageGetter = new ImageDB(this.user.id)
-            imageGetter.getDB(
-                () => {
-                    this.imageDB = imageGetter
-                    callback()
-                }
-            )
+            return new Promise((resolve, reject) => {
+                imageGetter.getDB().then(
+                    () => {
+                        this.imageDB = imageGetter
+                        resolve()
+                    }
+                )
+            })
         } else {
-            callback()
+            return Promise.resolve()
         }
     }
 
-    getAnImageDB(userId, callback){
+    getAnImageDB(userId){
         let imageGetter = new ImageDB(userId)
-        imageGetter.getDB(() => {
-            callback(imageGetter)
+        return new Promise(resolve => {
+            imageGetter.getDB().then(() => {
+                resolve(imageGetter)
+            })
         })
     }
 
@@ -66,10 +70,12 @@ export class BookList {
 
             jQuery(document).on('click', '.owned-by-user .rights', function () {
                 let BookId = parseInt(jQuery(this).attr('data-id'))
-                new BookAccessRightsDialog(
+                let accessDialog = new BookAccessRightsDialog(
                     [BookId],
                     that.teamMembers,
-                    that.accessRights,
+                    that.accessRights
+                )
+                accessDialog.init().then(
                     accessRights => {
                         that.accessRights = accessRights
                     }
@@ -120,7 +126,12 @@ export class BookList {
                         that.mod.actions.deleteBookDialog(ids)
                         break
                     case 'share':
-                        new BookAccessRightsDialog(ids, that.teamMembers, that.accessRights, function (accessRights) {
+                        let accessDialog = new BookAccessRightsDialog(
+                            ids,
+                            that.teamMembers,
+                            that.accessRights
+                        )
+                        accessDialog.init().then((accessRights) => {
                             that.accessRights = accessRights
                         })
                         break
@@ -178,8 +189,8 @@ export class BookList {
                 })
 
             jQuery('.create-new-book').bind('click', () => {
-                this.getImageDB(() => {
-                    this.mod.actions.createBookDialog(0, this.imageDB)
+                that.getImageDB().then(() => {
+                    that.mod.actions.createBookDialog(0, that.imageDB)
                 })
             })
 
@@ -187,11 +198,11 @@ export class BookList {
                 let bookId = parseInt(jQuery(this).attr('data-id'))
                 let book = _.findWhere(that.bookList,{id: bookId})
                 if (book.is_owner) {
-                    that.getImageDB(function(){
+                    that.getImageDB().then(() => {
                         that.mod.actions.createBookDialog(bookId, that.imageDB)
                     })
                 } else {
-                    that.getAnImageDB(book.owner, function(anImageDB){
+                    that.getAnImageDB(book.owner).then(anImageDB => {
                         that.mod.actions.createBookDialog(bookId, anImageDB)
                     })
 

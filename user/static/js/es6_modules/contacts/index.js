@@ -1,7 +1,7 @@
 import {teammemberTemplate} from "./templates"
 import {addMemberDialog, deleteMemberDialog} from "./manage"
-import {addDropdownBox} from "../common/common"
-import {Menu} from "../menu/menu"
+import {addDropdownBox} from "../common"
+import {Menu} from "../menu"
 
 export let contactsOverview = function () {
 
@@ -22,7 +22,7 @@ export let contactsOverview = function () {
         })
 
         jQuery('.add-contact').bind('click', function(){
-            addMemberDialog(memberData => {
+            addMemberDialog().then(memberData => {
                 jQuery('#team-table tbody').append(
                     teammemberTemplate({
                         'members': [memberData]

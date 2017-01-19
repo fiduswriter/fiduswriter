@@ -1,17 +1,15 @@
 import {usermediaUploadCategoryTemplate, usermediaUploadTemplate} from "./templates"
-import {setCheckableLabel} from "../../common/common"
+import {setCheckableLabel, cancelPromise} from "../../common"
 
 export class ImageUploadDialog {
-    constructor(imageDB, imageId, ownerId, callback) {
+    constructor(imageDB, imageId, ownerId) {
         this.imageDB = imageDB
         this.imageId = imageId
         this.ownerId = ownerId
-        this.callback = callback
-        this.createImageUploadDialog()
     }
 
     //open a dialog for uploading an image
-    createImageUploadDialog() {
+    init() {
         let title, imageCat, thumbnail, image, action, longAction
         if (this.imageId) {
             title = this.imageDB.db[this.imageId].title
@@ -55,11 +53,16 @@ export class ImageUploadDialog {
             })
         }))
         let diaButtons = {}
-        diaButtons[action] = () => this.onCreateImageSubmitHandler()
 
-        diaButtons[gettext('Cancel')] = function () {
-            jQuery(this).dialog('close')
-        }
+        let returnPromise = new Promise(resolve => {
+            diaButtons[action] = () => resolve(this.onCreateImageSubmitHandler())
+
+            diaButtons[gettext('Cancel')] = function () {
+                jQuery(this).dialog('close')
+                resolve(cancelPromise())
+            }
+        })
+
         let that = this
         jQuery("#uploadimage").dialog({
             resizable: false,
@@ -80,6 +83,7 @@ export class ImageUploadDialog {
         jQuery('.fw-checkable-label').bind('click', function () {
             setCheckableLabel(jQuery(this))
         })
+        return returnPromise
     }
 
     //add image upload events
@@ -141,14 +145,16 @@ export class ImageUploadDialog {
         for (let key in checkboxValues) {
             formValues.append(key, checkboxValues[key].join(','))
         }
-        this.createImage(formValues)
+        return this.createImage(formValues)
     }
 
     createImage(imageData) {
-        this.imageDB.createImage(imageData, imageId => {
-            jQuery("#uploadimage").dialog('close')
-            this.imageId = imageId
-            this.callback(imageId)
+        return new Promise(resolve => {
+            this.imageDB.createImage(imageData).then(imageId => {
+                jQuery("#uploadimage").dialog('close')
+                this.imageId = imageId
+                resolve(imageId)
+            })
         })
     }
 

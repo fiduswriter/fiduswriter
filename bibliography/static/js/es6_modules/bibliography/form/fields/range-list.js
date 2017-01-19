@@ -1,5 +1,5 @@
 import {RangeFieldForm} from "./range"
-import {noSpaceTmp} from "../../../common/common"
+import {noSpaceTmp} from "../../../common"
 
 export class RangeListForm{
     constructor(dom, initialValue = [[]]) {

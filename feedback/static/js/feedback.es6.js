@@ -1,3 +1,3 @@
-import {FeedbackTab} from "./es6_modules/feedback/feedback"
+import {FeedbackTab} from "./es6_modules/feedback"
 
 window.theFeedbackTab = new FeedbackTab()

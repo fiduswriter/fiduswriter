@@ -4,7 +4,7 @@ import {DocxExporterImages} from "./images"
 import {DocxExporterLists} from "./lists"
 import {DocxExporterRichtext} from "./richtext"
 import {fnSchema} from "../../schema/footnotes"
-import {noSpaceTmp} from "../../common/common"
+import {noSpaceTmp} from "../../common"
 import {descendantNodes} from "../tools/doc-contents"
 
 const DEFAULT_XML = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' + noSpaceTmp`

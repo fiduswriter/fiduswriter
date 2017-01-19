@@ -6,8 +6,8 @@ import {zipFileCreator} from "../tools/zip"
 import {opfTemplate, containerTemplate, ncxTemplate, ncxItemTemplate, navTemplate,
   navItemTemplate, xhtmlTemplate} from "./templates"
 import {katexOpfIncludes} from "../../katex/opf-includes"
-import {addAlert} from "../../common/common"
-import {katexRender} from "../../katex/katex"
+import {addAlert} from "../../common"
+import {katexRender} from "../../katex"
 import {BaseEpubExporter} from "./base"
 import {docSchema} from "../../schema/document"
 
@@ -22,7 +22,7 @@ export class EpubExporter extends BaseEpubExporter {
             this.exportOne()
         } else {
             this.bibDB = new BibliographyDB(doc.owner.id, false, false, false)
-            this.bibDB.getDB(() => {
+            this.bibDB.getDB().then(() => {
                 this.exportOne()
             })
         }
@@ -33,7 +33,7 @@ export class EpubExporter extends BaseEpubExporter {
             'Epub export has been initiated.'))
 
 
-        this.joinDocumentParts(() => this.exportTwo())
+        this.joinDocumentParts().then(() => this.exportTwo())
     }
 
     exportTwo() {

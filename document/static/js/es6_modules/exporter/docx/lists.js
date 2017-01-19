@@ -1,4 +1,4 @@
-import {noSpaceTmp} from "../../common/common"
+import {noSpaceTmp} from "../../common"
 import {descendantNodes} from "../tools/doc-contents"
 
 let DEFAULT_LISTPARAGRAPH_XML = noSpaceTmp`

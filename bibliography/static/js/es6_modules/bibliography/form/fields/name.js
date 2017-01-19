@@ -1,5 +1,5 @@
 import {LiteralFieldForm} from "./literal"
-import {noSpaceTmp} from "../../../common/common"
+import {noSpaceTmp} from "../../../common"
 
 // There are only name lists, no name fields in the data format. The separation
 // between NameFieldForm and NameListForm is for keeping consistency with other fields

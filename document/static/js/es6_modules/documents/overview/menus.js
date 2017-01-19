@@ -1,5 +1,5 @@
-import {DocumentAccessRightsDialog} from "../access-rights/dialog"
-import {addDropdownBox, addAlert} from "../../common/common"
+import {DocumentAccessRightsDialog} from "../access-rights"
+import {addDropdownBox, addAlert} from "../../common"
 
 export class DocumentOverviewMenus {
     constructor (documentOverview) {
@@ -18,11 +18,16 @@ export class DocumentOverviewMenus {
 
             jQuery(document).on('mousedown', '.owned-by-user .rights', function () {
                 let documentId = parseInt(jQuery(this).attr('data-id'))
-                new DocumentAccessRightsDialog([documentId], that.documentOverview.accessRights, that.documentOverview.teamMembers, function (newAccessRights) {
-                    that.documentOverview.accessRights = newAccessRights
-                }, function(memberDetails){
-                    that.documentOverview.teamMembers.push(memberDetails)
-                })
+                new DocumentAccessRightsDialog(
+                    [documentId],
+                    that.documentOverview.accessRights,
+                    that.documentOverview.teamMembers,
+                    function (newAccessRights) {
+                        that.documentOverview.accessRights = newAccessRights
+                    }, function(memberDetails){
+                        that.documentOverview.teamMembers.push(memberDetails)
+                    }
+                )
             })
 
             jQuery(document).on('mousedown', '.revisions', function () {

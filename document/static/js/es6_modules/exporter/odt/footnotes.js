@@ -2,7 +2,7 @@ import {OdtExporterCitations} from "./citations"
 import {OdtExporterImages} from "./images"
 //import {OdtExporterRichtext} from "./richtext"
 import {fnSchema} from "../../schema/footnotes"
-import {noSpaceTmp} from "../../common/common"
+import {noSpaceTmp} from "../../common"
 import {descendantNodes} from "../tools/doc-contents"
 
 

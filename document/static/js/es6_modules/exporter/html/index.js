@@ -3,8 +3,8 @@ import {findImages} from "../tools/html"
 import {zipFileCreator} from "../tools/zip"
 import {htmlExportTemplate} from "./templates"
 import {BibliographyDB} from "../../bibliography/database"
-import {addAlert} from "../../common/common"
-import {katexRender} from "../../katex/katex"
+import {addAlert} from "../../common"
+import {katexRender} from "../../katex"
 import {BaseHTMLExporter} from "./base"
 
 export class HTMLExporter extends BaseHTMLExporter{
@@ -16,7 +16,7 @@ export class HTMLExporter extends BaseHTMLExporter{
             this.exportOne()
         } else {
             this.bibDB = new BibliographyDB(doc.owner.id, false, false, false)
-            this.bibDB.getDB(() => this.exportOne())
+            this.bibDB.getDB().then(() => this.exportOne())
         }
     }
 
@@ -24,7 +24,7 @@ export class HTMLExporter extends BaseHTMLExporter{
         addAlert('info', this.doc.title + ': ' + gettext(
             'HTML export has been initiated.'))
 
-        this.joinDocumentParts(() => this.exportTwo())
+        this.joinDocumentParts().then(() => this.exportTwo())
 
     }
 

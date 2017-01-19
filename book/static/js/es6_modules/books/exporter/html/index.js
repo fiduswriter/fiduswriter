@@ -1,4 +1,4 @@
-import {katexRender} from "../../../katex/katex"
+import {katexRender} from "../../../katex"
 
 import {getMissingChapterData, getImageAndBibDB, uniqueObjects} from "../tools"
 import {htmlBookExportTemplate, htmlBookIndexTemplate, htmlBookIndexItemTemplate} from "./templates"
@@ -9,7 +9,7 @@ import {createSlug} from "../../../exporter/tools/file"
 import {findImages} from "../../../exporter/tools/html"
 import {zipFileCreator} from "../../../exporter/tools/zip"
 import {RenderCitations} from "../../../citations/render"
-import {addAlert} from "../../../common/common"
+import {addAlert} from "../../../common"
 
 
 export class HTMLBookExporter extends BaseEpubExporter { // extension is correct. Neds orderLinks/setLinks methods from base epub exporter.
@@ -25,13 +25,15 @@ export class HTMLBookExporter extends BaseEpubExporter { // extension is correct
             return false
         }
 
-        getMissingChapterData(book, docList, () => {
-            getImageAndBibDB(book, docList, (imageDB, bibDB) => {
+        getMissingChapterData(this.book, this.docList).then(
+            () => getImageAndBibDB(this.book, this.docList)
+        ).then(
+            ({imageDB, bibDB}) => {
                 this.bibDB = bibDB
                 this.imageDB = imageDB
                 this.exportOne()
-            })
-        })
+            }
+        )
     }
 
     exportOne() {
@@ -86,7 +88,9 @@ export class HTMLBookExporter extends BaseEpubExporter { // extension is correct
             this.chapters[chapterNumber].contents,
             this.book.settings.citationstyle,
             this.bibDB,
-            true,
+            true
+        )
+        citRenderer.init().then(
             () => {
                 let bibHTML = citRenderer.fm.bibHTML
                 if (bibHTML.length > 0) {
@@ -98,8 +102,8 @@ export class HTMLBookExporter extends BaseEpubExporter { // extension is correct
                 } else {
                     this.exportTwo(chapterNumber)
                 }
-            })
-        citRenderer.init()
+            }
+        )
 
     }
 

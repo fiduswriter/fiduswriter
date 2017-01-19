@@ -19,8 +19,7 @@ export class OdtExporterCitations {
     }
 
     init() {
-        this.formatCitations()
-        return Promise.resolve()
+        return this.formatCitations()
     }
 
     // Citations are highly interdependent -- so we need to format them all
@@ -44,7 +43,9 @@ export class OdtExporterCitations {
         this.citFm = new FormatCitations(
             this.citInfos,
             this.exporter.doc.settings.citationstyle,
-            this.bibDB,
+            this.bibDB
+        )
+        return this.citFm.init().then(
             () => {
                 this.citationTexts = this.citFm.citationTexts
                 if (this.origCitInfos.length) {
@@ -52,9 +53,10 @@ export class OdtExporterCitations {
                     this.citationTexts.splice(0, this.origCitInfos.length)
                 }
                 this.convertCitations()
+                return Promise.resolve()
             }
         )
-        this.citFm.init()
+
     }
 
     convertCitations() {

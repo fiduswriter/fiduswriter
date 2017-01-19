@@ -2,7 +2,7 @@ import {bookPrintStartTemplate, bookPrintTemplate} from "./templates"
 import {docSchema} from "../schema/document"
 import {RenderCitations} from "../citations/render"
 import {BibliographyDB} from "../bibliography/database"
-import {deactivateWait, addAlert, csrfToken} from "../common/common"
+import {deactivateWait, addAlert, csrfToken} from "../common"
 import {PaginateForPrint} from "paginate-for-print/dist/paginate-for-print"
 /**
 * Helper functions for the book print page.
@@ -74,7 +74,7 @@ export class PrintBook {
 
         this.bibDB = new BibliographyDB(this.documentOwners.join(','), false, false, false)
 
-        this.bibDB.getDB((bibPks, bibCats) => this.fillPrintPage())
+        this.bibDB.getDB().then(() => this.fillPrintPage())
 
     }
 
@@ -106,10 +106,11 @@ export class PrintBook {
             document.body,
             this.theBook.settings.citationstyle,
             this.bibDB,
-            true,
+            true
+        )
+        this.citRenderer.init().then(
             () => this.fillPrintPageTwo()
         )
-        this.citRenderer.init()
     }
 
     fillPrintPageTwo() {

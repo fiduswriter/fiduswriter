@@ -1,4 +1,4 @@
-import {katexRender} from "../../../katex/katex"
+import {katexRender} from "../../../katex"
 
 import {getMissingChapterData, getImageAndBibDB, uniqueObjects} from "../tools"
 import {epubBookOpfTemplate, epubBookCoverTemplate, epubBookTitlepageTemplate,
@@ -14,7 +14,7 @@ import {findImages} from "../../../exporter/tools/html"
 import {createSlug} from "../../../exporter/tools/file"
 import {zipFileCreator} from "../../../exporter/tools/zip"
 import {RenderCitations} from "../../../citations/render"
-import {addAlert} from "../../../common/common"
+import {addAlert} from "../../../common"
 
 
 export class EpubBookExporter extends BaseEpubExporter {
@@ -33,13 +33,15 @@ export class EpubBookExporter extends BaseEpubExporter {
             addAlert('error', gettext('Book cannot be exported due to lack of chapters.'))
             return false
         }
-        getMissingChapterData(book, docList, () => {
-            getImageAndBibDB(book, docList, (imageDB, bibDB) => {
+        getMissingChapterData(this.book, this.docList).then(
+            () => getImageAndBibDB(this.book, this.docList)
+        ).then(
+            ({imageDB, bibDB}) => {
                 this.bibDB = bibDB
                 this.imageDB = imageDB
                 this.exportOne()
-            })
-        })
+            }
+        )
     }
 
     exportOne() {
@@ -166,7 +168,9 @@ export class EpubBookExporter extends BaseEpubExporter {
             this.chapters[chapterNumber].contents,
             this.book.settings.citationstyle,
             this.bibDB,
-            true,
+            true
+        )
+        citRenderer.init().then(
             () => {
                 let bibHTML = citRenderer.fm.bibHTML
                 if (bibHTML.length > 0) {
@@ -178,8 +182,8 @@ export class EpubBookExporter extends BaseEpubExporter {
                 } else {
                     this.exportTwo(chapterNumber)
                 }
-            })
-        citRenderer.init()
+            }
+        )
 
     }
 

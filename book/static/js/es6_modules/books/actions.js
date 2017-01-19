@@ -4,10 +4,10 @@ import {bookListTemplate, bookBasicInfoTemplate, bookPrintDataTemplate,
     bookBibliographyDataTemplate, bookEpubDataTemplate, bookEpubDataCoverTemplate
   } from "./templates"
 import {ImageDB} from "../images/database"
-import {ImageSelectionDialog} from "../images/selection-dialog/selection-dialog"
+import {ImageSelectionDialog} from "../images/selection-dialog"
 import {defaultDocumentStyle, documentStyleList} from "../style/documentstyle-list"
 import {defaultCitationStyle, citationDefinitions} from "../style/citation-definitions"
-import {deactivateWait, addAlert, csrfToken} from "../common/common"
+import {deactivateWait, addAlert, csrfToken} from "../common"
 
 
 export class BookActions {
@@ -253,30 +253,34 @@ export class BookActions {
         theBook.owner = this.bookList.user.id
         theBook.rights = 'write'
         if (theOldBook.owner != theBook.owner) {
-            this.prepareCopyCoverImage(theBook.cover_image,
-                theOldBook.owner, id => {
+            this.prepareCopyCoverImage(
+                theBook.cover_image,
+                theOldBook.owner
+            ).then(
+                id => {
                     theBook.cover_image = id
                     this.saveBook(theBook)
-                })
+                }
+            )
         } else {
             this.saveBook(theBook)
         }
     }
 
-    prepareCopyCoverImage(coverImage, userId, callback) {
-
-        this.bookList.getImageDB(() => {
-            this.getImageDB(
-                userId,
-                imageDB => {
-                    let coverImageImage = imageDB[coverImage]
-                    this.copyCoverImage(coverImageImage, callback)
-                }
+    prepareCopyCoverImage(coverImage, userId) {
+        return new Promise (resolve => {
+            this.bookList.getImageDB().then(() =>
+                this.getImageDB(userId).then(
+                    imageDB => {
+                        let coverImageImage = imageDB[coverImage]
+                        this.copyCoverImage(coverImageImage).then(resolve)
+                    }
+                )
             )
         })
     }
 
-    copyCoverImage(oldImageObject, callback) {
+    copyCoverImage(oldImageObject) {
         let newImageEntry = false,
             imageTranslation = false
 
@@ -306,37 +310,41 @@ export class BookActions {
         }
 
         if (imageTranslation) {
-            callback(imageTranslation)
+            return Promise.resolve(imageTranslation)
         } else if (newImageEntry) {
-            this.createNewImage(newImageEntry, callback)
+            return this.createNewImage(newImageEntry)
         } else {
-            callback(oldImageObject.pk)
+            return Promise.resolve(oldImageObject.pk)
         }
 
     }
-    // TODO: Should we not be able to call a method from
-    createNewImage(imageEntry, callback) {
+    createNewImage(imageEntry) {
         let xhr = new window.XMLHttpRequest()
         xhr.open('GET', imageEntry.oldUrl, true)
         xhr.responseType = 'blob'
         let that = this
-        xhr.onload = function (e) {
-            if (this.status == 200) {
-                // Note: .response instead of .responseText
-                let imageFile = new window.Blob([this.response], {
-                    type: imageEntry.file_type
-                })
-                let formValues = new window.FormData()
-                formValues.append('id', 0)
-                formValues.append('title', imageEntry.title)
-                formValues.append('imageCats', '')
-                formValues.append('image', imageFile,
-                    imageEntry.oldUrl.split('/').pop())
-                formValues.append('checksum', imageEntry.checksum)
-                that.bookList.imageDB.createImage(formValues, response => callback(response))
+        return new Promise((resolve, reject) => {
+            xhr.onload = function (e) {
+                if (this.status == 200) {
+                    // Note: .response instead of .responseText
+                    let imageFile = new window.Blob([this.response], {
+                        type: imageEntry.file_type
+                    })
+                    let formValues = new window.FormData()
+                    formValues.append('id', 0)
+                    formValues.append('title', imageEntry.title)
+                    formValues.append('imageCats', '')
+                    formValues.append('image', imageFile,
+                        imageEntry.oldUrl.split('/').pop())
+                    formValues.append('checksum', imageEntry.checksum)
+                    that.bookList.imageDB.createImage(formValues).then(
+                        response => resolve(response)
+                    )
+                }
             }
-        }
-        xhr.send()
+            xhr.send()
+        })
+
     }
 
 
@@ -494,10 +502,12 @@ export class BookActions {
 
 
         jQuery(document).on('click', '#select-cover-image-button', () => {
-            new ImageSelectionDialog(
+            let imageSelection = new ImageSelectionDialog(
                 anImageDB,
                 theBook.cover_image,
-                theBook.owner,
+                theBook.owner)
+
+            imageSelection.init().then(
                 imageId => {
                     if (!imageId) {
                         delete theBook.cover_image

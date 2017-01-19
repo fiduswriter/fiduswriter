@@ -1,7 +1,7 @@
-import {addAlert, csrfToken} from "../common/common"
+import {addAlert, csrfToken} from "../common"
 import {updateDoc} from "../schema/convert"
 
-export let getMissingDocumentListData = function (ids, documentList, callback) {
+export let getMissingDocumentListData = function (ids, documentList) {
     // get extra data for the documents identified by the ids and updates the
     // documentList correspondingly.
     let incompleteIds = []
@@ -14,41 +14,44 @@ export let getMissingDocumentListData = function (ids, documentList, callback) {
         }
     }
     if (incompleteIds.length > 0) {
-        jQuery.ajax({
-            url: '/document/documentlist/extra/',
-            data: {
-                ids: incompleteIds.join(',')
-            },
-            type: 'POST',
-            dataType: 'json',
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: (xhr, settings) => {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: (response, textStatus, jqXHR) => {
-                for (let i = 0; i < response.documents.length; i++) {
-                    let aDocument = _.findWhere(documentList, {
-                        id: response.documents[i].id
-                    })
-                    let newDoc = updateDoc({
-                        contents: JSON.parse(response.documents[i].contents),
-                        metadata: JSON.parse(response.documents[i].metadata),
-                        comments: JSON.parse(response.documents[i].comments),
-                        settings: JSON.parse(response.documents[i].settings)
-                    })
-                    aDocument.contents = newDoc.contents
-                    aDocument.metadata = newDoc.metadata
-                    aDocument.comments = newDoc.comments
-                    aDocument.settings = newDoc.settings
+        return new Promise((resolve, reject) => {
+            jQuery.ajax({
+                url: '/document/documentlist/extra/',
+                data: {
+                    ids: incompleteIds.join(',')
+                },
+                type: 'POST',
+                dataType: 'json',
+                crossDomain: false, // obviates need for sameOrigin test
+                beforeSend: (xhr, settings) =>
+                    xhr.setRequestHeader("X-CSRFToken", csrfToken),
+                success: (response, textStatus, jqXHR) => {
+                    for (let i = 0; i < response.documents.length; i++) {
+                        let aDocument = _.findWhere(documentList, {
+                            id: response.documents[i].id
+                        })
+                        let newDoc = updateDoc({
+                            contents: JSON.parse(response.documents[i].contents),
+                            metadata: JSON.parse(response.documents[i].metadata),
+                            comments: JSON.parse(response.documents[i].comments),
+                            settings: JSON.parse(response.documents[i].settings)
+                        })
+                        aDocument.contents = newDoc.contents
+                        aDocument.metadata = newDoc.metadata
+                        aDocument.comments = newDoc.comments
+                        aDocument.settings = newDoc.settings
+                    }
+                    resolve()
+                },
+                error: (jqXHR, textStatus, errorThrown) => {
+                    addAlert('error', jqXHR.responseText)
+                    reject()
                 }
-                if (callback) {
-                    callback()
-                }
-            },
-            error: (jqXHR, textStatus, errorThrown) => addAlert('error', jqXHR.responseText)
+            })
         })
+
     } else {
-        callback()
+        return Promise.resolve()
     }
 
 }

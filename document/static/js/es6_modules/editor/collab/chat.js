@@ -1,5 +1,5 @@
 import {messageTemplate, participantListTemplate} from "./templates"
-import {localizeDate} from "../../common/common"
+import {localizeDate} from "../../common"
 
 /*
 * Functions for chat between users who access a document simultaneously.

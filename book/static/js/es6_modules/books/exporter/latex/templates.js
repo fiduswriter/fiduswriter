@@ -1,4 +1,4 @@
-import {noSpaceTmp} from "../../../common/common"
+import {noSpaceTmp} from "../../../common"
 
 /** A template to create the latex book.tex file. */
 export let bookTexTemplate = _.template(`

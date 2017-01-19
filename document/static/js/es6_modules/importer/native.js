@@ -1,30 +1,28 @@
-import {addAlert, csrfToken} from "../common/common"
+import {addAlert, csrfToken} from "../common"
 import {GetImages} from "./get-images"
 import {SaveImages} from "./save-images"
 import {SaveBibs} from "./save-bibs"
 
 export class ImportNative {
     /* Save document information into the database */
-    constructor(aDocument, impBibDB, impImageDB, entries, user, bibDB, imageDB, callback) {
-        this.aDocument = aDocument
+    constructor(doc, impBibDB, impImageDB, entries, user, bibDB, imageDB) {
+        this.doc = doc
         this.impBibDB = impBibDB // These are the imported values
         this.impImageDB = impImageDB // These are the imported values
         this.entries = entries
         this.user = user
         this.bibDB = bibDB // These are values stored in the database
         this.imageDB = imageDB // These are values stored in the database
-        this.callback = callback
-        this.importNative()
     }
 
-    importNative() {
+    init() {
         let [BibTranslationTable, newBibEntries] = this.compareBibDBs()
         let [ImageTranslationTable, newImageEntries] = this.compareImageDBs()
 
         // We first create any new entries in the DB for images and/or
         // bibliography items.
         let imageGetter = new GetImages(newImageEntries, this.entries)
-        imageGetter.init().then(() => {
+        return imageGetter.init().then(() => {
             let imageSaver = new SaveImages(newImageEntries, ImageTranslationTable, this.imageDB)
             return imageSaver.init()
         }).then(() => {
@@ -37,7 +35,7 @@ export class ImportNative {
             // exist in the DB for this user with the same numbers.
             // We can go ahead and create the new document entry in the
             // bibliography without any changes.
-            this.createNewDocument()
+            return this.createNewDocument()
         })
 
     }
@@ -127,50 +125,52 @@ export class ImportNative {
                 })
             }
         }
-        walkTree(this.aDocument.contents)
+        walkTree(this.doc.contents)
     }
 
     createNewDocument() {
         let postData = {
-            title: this.aDocument.title,
-            contents: JSON.stringify(this.aDocument.contents),
-            comments: JSON.stringify(this.aDocument.comments),
-            settings: JSON.stringify(this.aDocument.settings),
-            metadata: JSON.stringify(this.aDocument.metadata)
+            title: this.doc.title,
+            contents: JSON.stringify(this.doc.contents),
+            comments: JSON.stringify(this.doc.comments),
+            settings: JSON.stringify(this.doc.settings),
+            metadata: JSON.stringify(this.doc.metadata)
         }
-        jQuery.ajax({
-            url: '/document/import/',
-            data: postData,
-            type: 'POST',
-            dataType: 'json',
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
-            success: (data, textStatus, jqXHR) => {
-                let docInfo = {
-                    unapplied_diffs: [],
-                    is_owner: true,
-                    rights: 'write',
-                    changed: false,
-                    title_changed: false
+        return new Promise((resolve, reject) => {
+            jQuery.ajax({
+                url: '/document/import/',
+                data: postData,
+                type: 'POST',
+                dataType: 'json',
+                crossDomain: false, // obviates need for sameOrigin test
+                beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
+                success: (data, textStatus, jqXHR) => {
+                    let docInfo = {
+                        unapplied_diffs: [],
+                        is_owner: true,
+                        rights: 'write',
+                        changed: false,
+                        title_changed: false
+                    }
+                    this.doc.owner = {
+                        id: this.user.id,
+                        name: this.user.name,
+                        avatar: this.user.avatar
+                    }
+                    this.doc.id = data['document_id']
+                    this.doc.version = 0
+                    this.doc.comment_version = 0
+                    this.doc.added = data['added']
+                    this.doc.updated = data['updated']
+                    this.doc.revisions = []
+                    this.doc.rights = "write"
+                    resolve({doc: this.doc, docInfo})
+                },
+                error: () => {
+                    reject(gettext('Could not save ') + this.doc.title)
                 }
-                this.aDocument.owner = {
-                    id: this.user.id,
-                    name: this.user.name,
-                    avatar: this.user.avatar
-                }
-                this.aDocument.id = data['document_id']
-                this.aDocument.version = 0
-                this.aDocument.comment_version = 0
-                this.aDocument.added = data['added']
-                this.aDocument.updated = data['updated']
-                this.aDocument.revisions = []
-                this.aDocument.rights = "write"
-                return this.callback(true, [
-                    this.aDocument,
-                    docInfo
-                ])
-            },
-            error: () => this.callback(false, gettext('Could not save ') + this.aDocument.title)
+            })
         })
+
     }
 }

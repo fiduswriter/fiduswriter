@@ -168,17 +168,17 @@ export class ModMenusHeader {
           })
 
           jQuery(document).on('mousedown', '.share:not(.disabled)', () => {
-              new DocumentAccessRightsDialog([
-                  this.mod.editor.doc.id
-              ],
-              this.mod.editor.doc.access_rights,
-              this.mod.editor.doc.owner.team_members,
-              newAccessRights => {
-                  this.mod.editor.doc.access_rights = newAccessRights
-              },
-              memberData => {
-                  this.mod.editor.user.team_members.push(memberData)
-              })
+              new DocumentAccessRightsDialog(
+                  [this.mod.editor.doc.id],
+                  this.mod.editor.doc.access_rights,
+                  this.mod.editor.doc.owner.team_members,
+                  newAccessRights => {
+                      this.mod.editor.doc.access_rights = newAccessRights
+                  },
+                  memberData => {
+                      this.mod.editor.user.team_members.push(memberData)
+                  }
+              )
           })
 
           //open and close header

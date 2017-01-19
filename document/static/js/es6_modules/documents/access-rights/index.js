@@ -8,12 +8,12 @@ import {addDropdownBox, setCheckableLabel, addAlert, csrfToken} from "../../comm
 
 export class DocumentAccessRightsDialog {
 
-    constructor(documentIds, accessRights, teamMembers, callback, createContactCallback) {
+    constructor(documentIds, accessRights, contacts, modifiedRightsCall, newContactCall) {
         this.documentIds = documentIds
         this.accessRights = accessRights
-        this.teamMembers = teamMembers
-        this.callback = callback
-        this.createContactCallback = createContactCallback
+        this.contacts = contacts
+        this.modifiedRightsCall = modifiedRightsCall // a function to be called when access rights are modified with the new rights
+        this.newContactCall = newContactCall // a function to be called when a new contact has been added with contact details
         this.createAccessRightsDialog()
     }
 
@@ -47,7 +47,7 @@ export class DocumentAccessRightsDialog {
 
         let dialogBody = accessRightOverviewTemplate({
             dialogHeader: dialogHeader,
-            contacts: accessRightTrTemplate({contacts: this.teamMembers}),
+            contacts: accessRightTrTemplate({contacts: this.contacts}),
             collaborators: collaboratorsTemplate({
                 collaborators: documentCollaborators
             })
@@ -69,9 +69,7 @@ export class DocumentAccessRightsDialog {
                     }]})
                 )
                 this.collaboratorFunctionsEvent()
-                if (this.createContactCallback) {
-                    this.createContactCallback(memberData)
-                }
+                this.newContactCall(memberData)
             })
         }
         let that = this
@@ -180,7 +178,7 @@ export class DocumentAccessRightsDialog {
             },
             success: response => {
                 this.accessRights = response.access_rights
-                this.callback(this.accessRights)
+                this.modifiedRightsCall(this.accessRights)
                 addAlert('success', gettext(
                     'Access rights have been saved'))
             },

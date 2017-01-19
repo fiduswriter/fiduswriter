@@ -118,8 +118,10 @@ def get_booklist_js(request):
     if request.is_ajax() and request.method == 'POST':
         status = 200
         response['documents'] = documents_list(request)
-        books = Book.objects.filter(Q(owner=request.user) | Q(
-            bookaccessright__user=request.user)).distinct().order_by('-updated')
+        books = Book.objects.filter(
+            Q(owner=request.user) |
+            Q(bookaccessright__user=request.user)
+        ).distinct().order_by('-updated')
         response['books'] = []
         for book in books:
             if book.owner == request.user:

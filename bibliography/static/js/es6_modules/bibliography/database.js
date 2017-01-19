@@ -6,7 +6,7 @@ export class BibliographyDB {
     constructor(docOwnerId, useLocalStorage, oldDB, oldCats) {
         this.docOwnerId = docOwnerId
         this.useLocalStorage = useLocalStorage // Whether to use local storage to cache result
-        this.lastLoadTimes = []
+
         if (oldDB) {
             this.db = oldDB
         } else {
@@ -70,10 +70,6 @@ export class BibliographyDB {
                 beforeSend: (xhr, settings) =>
                     xhr.setRequestHeader("X-CSRFToken", csrfToken),
                 success: (response, textStatus, jqXHR) => {
-                    this.lastLoadTimes.push(Date.now())
-                    this.lastLoadTimes = this.lastLoadTimes.slice(
-                        Math.max(this.lastLoadTimes.length - 10, 0)
-                    )
                     let bibCats = response.bibCategories
                     bibCats.forEach(bibCat => {
                         this.cats.push(bibCat)

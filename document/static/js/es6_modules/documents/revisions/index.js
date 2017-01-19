@@ -1,7 +1,7 @@
 import {documentrevisionsTemplate, documentrevisionsConfirmDeleteTemplate} from "./templates"
 import {ImportFidusFile} from "../../importer/file"
 import {downloadFile} from "../../exporter/tools/file"
-import {deactivateWait, addAlert, localizeDate, csrfToken} from "../../common"
+import {deactivateWait, addAlert, localizeDate, csrfToken, cancelPromise} from "../../common"
 import JSZipUtils from "jszip-utils"
 
 /**

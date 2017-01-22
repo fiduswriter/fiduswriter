@@ -16,7 +16,7 @@ let setRights = function(orginalDocId, CopyDocId, user, access_rights) {
         'collaborators[]': collaborators,
     }
     jQuery.ajax({
-        url: '/document/submitright/',
+        url: '/external/ojs/submitright/',
         data: postData,
         type: 'POST',
         dataType: 'json',
@@ -102,7 +102,7 @@ let submitDoc = function(editor) {
                         dataSubmission.append('submission_id', response.submission_id)
                     }
                     jQuery.ajax({
-                        url: '/document/submissionversion/',
+                        url: '/external/ojs/submissionversion/',
                         data: dataSubmission,
                         type: 'POST',
                         cache: false,
@@ -204,7 +204,7 @@ export let reviewSubmit = function(editor) {
     let diaButtons = {}
     let submission_info = {}
     jQuery.ajax({
-        url: '/document/reviewsubmit/',
+        url: '/external/ojs/reviewsubmit/',
         data: {
             document_id: editor.doc.id
         },
@@ -247,7 +247,7 @@ export let reviewSubmit = function(editor) {
                 addAlert('error', 'There is error while sending the signal of finishing review, please try it again')
 
                 jQuery.ajax({
-                    url: '/document/reviewsubmitundo/',
+                    url: '/external/ojs/reviewsubmitundo/',
                     data: {
                         document_id: editor.doc.id
                     },

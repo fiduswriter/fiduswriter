@@ -9,8 +9,9 @@ from tornado.escape import json_decode, json_encode
 from tornado.websocket import WebSocketClosedError
 from document.models import AccessRight, COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
     CAN_COMMUNICATE
-from document.views import get_accessrights, doc_mode
+from document.views import get_accessrights
 from avatar.templatetags.avatar_tags import avatar_url
+from ojs.models import Submission
 
 
 class DocumentWS(BaseWebSocketHandler):
@@ -120,11 +121,12 @@ class DocumentWS(BaseWebSocketHandler):
         else:
             response['doc_info']['unapplied_diffs'] = []
         # OJS submission related
-        submission = doc_mode(self.doc['id'])
         response['doc_info']['submission'] = dict()
-        if submission == 'unsubmitted':
-            response['doc_info']['submission']['status'] = 'unsubmitted'
-        else:
+        submissions = Submission.objects.filter(
+            document_id=self.doc['id']
+        )
+        if len(submissions) > 0 and submissions[0].version_id != 0:
+            submission = submissions[0]
             response['doc_info']['submission']['status'] = 'submitted'
             response['doc_info']['submission']['submission_id'] = \
                 submission.submission_id
@@ -133,6 +135,8 @@ class DocumentWS(BaseWebSocketHandler):
                 submission.version_id
             response['doc_info']['submission']['journal_id'] = \
                 submission.journal_id
+        else:
+            response['doc_info']['submission']['status'] = 'unsubmitted'
         if self.user_info.is_owner:
             the_user = self.user_info.user
             # Data used for OJS submissions

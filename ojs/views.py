@@ -1,18 +1,21 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from django.http import JsonResponse
 from django.db import transaction
 from django.shortcuts import redirect
 from django.core.exceptions import ObjectDoesNotExist
-from document.models import Document, AccessRight
 from django.conf import settings
 from django.contrib.auth.models import User
-from allauth.account import forms
 from django.contrib.auth import login
 from django.apps import apps
+from django.db import IntegrityError
+from allauth.account.models import EmailAddress
+from allauth.account import forms
 
-from .models import Submission, SubmittedAccessRight
+from .models import Submission, SubmittedAccessRight, Journal
 from document.views import send_share_notification
+from document.models import Document, AccessRight
 
 
 def login_user(request, u_name):
@@ -408,6 +411,50 @@ def submission_version_js(request):
         data['user_id'] = request.user.id
         set_version(request, data)
         status = 201
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+# Get a user based on an email address. Used for registration of journal.
+@staff_member_required
+def get_user_js(request):
+    status = 405
+    response = {}
+    if request.is_ajax() and request.method == 'POST':
+        email = request.POST.get('email')
+        try:
+            email_address = EmailAddress.objects.get(
+                email=email
+            )
+            response['user_id'] = email_address.user.id
+            response['user_name'] = email_address.user.username
+            status = 200
+        except EmailAddress.DoesNotExist:
+            status = 204
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+# Save a journal. Used on custom admin page.
+@staff_member_required
+def save_journal_js(request):
+    status = 405
+    response = {}
+    if request.is_ajax() and request.method == 'POST':
+        try:
+            Journal.objects.create(
+                ojs_jid=request.POST.get('ojs_jid'),
+                ojs_key=request.POST.get('ojs_key'),
+                ojs_url=request.POST.get('ojs_url'),
+                name=request.POST.get('name'),
+                editor_id=request.POST.get('editor_id'),
+            )
+            status = 201
+        except IntegrityError:
+            status = 200
     return JsonResponse(
         response,
         status=status

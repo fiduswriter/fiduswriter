@@ -43,4 +43,14 @@ urlpatterns = [
         views.new_submission_revision_js,
         name='new_submission_revision_js'
     ),
+    url(
+        '^getUser/$',
+        views.get_user_js,
+        name='get_user_js'
+    ),
+    url(
+        '^saveJournal/$',
+        views.save_journal_js,
+        name='save_journal_js'
+    )
 ]

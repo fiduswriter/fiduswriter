@@ -4,12 +4,23 @@ from django.contrib.auth.models import User
 
 from document.models import Document, RIGHTS_CHOICES
 
+# A Journal registered with a particular OJS installation
+class Journal(models.Model):
+    ojs_url = models.CharField(max_length=512)
+    ojs_key = models.CharField(max_length=512)
+    ojs_jid = models.PositiveIntegerField()  # _jid as _id is used by foreign keys
+    name = models.CharField(max_length=512)
+    editor = models.ForeignKey(User)
+
+    class Meta:
+        unique_together = (("ojs_url", "ojs_jid"),)
+
 
 # A submission registered with OJS
 class Submission(models.Model):
     document = models.ForeignKey(Document)
     user = models.ForeignKey(User)
-    journal_id = models.PositiveIntegerField(default=0)
+    journal = models.ForeignKey(Journal)
     submission_id = models.PositiveIntegerField(default=0)
     version_id = models.PositiveIntegerField(default=0)
 
@@ -18,7 +29,7 @@ class Submission(models.Model):
 class SubmittedAccessRight(models.Model):
     document = models.ForeignKey(Document)
     user = models.ForeignKey(User)
-    submission_id = models.PositiveIntegerField(default=0)
+    submission_id = models.PositiveIntegerField()
     rights = models.CharField(
         max_length=21,
         choices=RIGHTS_CHOICES,

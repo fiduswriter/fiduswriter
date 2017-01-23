@@ -416,6 +416,26 @@ def submission_version_js(request):
         status=status
     )
 
+# A list of all registered journals to be used in the submit dialog.
+@login_required
+def get_journals_js(request):
+    print "here"
+    status = 405
+    response = {}
+    if request.is_ajax() and request.method == 'POST':
+        journals = []
+        for journal in Journal.objects.all():
+            journals.append({
+                'ojs_jid': journal.ojs_jid,
+                'name': journal.name
+            })
+        response['journals'] = journals
+        status = 200
+    return JsonResponse(
+        response,
+        status=status
+    )
+
 
 # Get a user based on an email address. Used for registration of journal.
 @staff_member_required

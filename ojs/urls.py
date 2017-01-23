@@ -52,5 +52,10 @@ urlpatterns = [
         '^saveJournal/$',
         views.save_journal_js,
         name='save_journal_js'
+    ),
+    url(
+        '^getJournals/$',
+        views.get_journals_js,
+        name='get_journals_js'
     )
 ]

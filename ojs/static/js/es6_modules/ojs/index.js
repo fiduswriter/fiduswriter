@@ -1,5 +1,5 @@
 import {saveCopy} from "../exporter/native/copy"
-import {journalDialogTemplate,reviewSubmitDialogTemplate,revisionSubmitDialogTemplate} from "./templates"
+import {journalDialogTemplate, reviewSubmitDialogTemplate, revisionSubmitDialogTemplate} from "./templates"
 import {addAlert, csrfToken} from "../common"
 
 let setRights = function(orginalDocId, CopyDocId, user, access_rights) {
@@ -16,7 +16,7 @@ let setRights = function(orginalDocId, CopyDocId, user, access_rights) {
         'collaborators[]': collaborators,
     }
     jQuery.ajax({
-        url: '/external/ojs/submitright/',
+        url: '/ojs/submitright/',
         data: postData,
         type: 'POST',
         dataType: 'json',
@@ -102,7 +102,7 @@ let submitDoc = function(editor) {
                         dataSubmission.append('submission_id', response.submission_id)
                     }
                     jQuery.ajax({
-                        url: '/external/ojs/submissionversion/',
+                        url: '/ojs/submissionversion/',
                         data: dataSubmission,
                         type: 'POST',
                         cache: false,
@@ -123,7 +123,7 @@ let submitDoc = function(editor) {
     )
 }
 
-/** get the list of ojournal in ojs.
+/** submit to journal selection dialog
  * @function selectJournal
  * @param
  */
@@ -135,24 +135,25 @@ export let selectJournal = function(editor) {
     diaButtons[gettext("Submit")] = function() {
         submitDoc(editor)
         jQuery(this).dialog("close")
-
     }
 
     diaButtons[gettext("Cancel")] = function() {
         jQuery(this).dialog("close")
     }
     jQuery.ajax({
-        type: "GET",
+        type: "POST",
         dataType: "json",
-        url: window.ojsUrl + '/index.php/index/gateway/plugin/RestApiGatewayPlugin/journals',
-        success: result => {
-            list = result['journals']
-            let journal = null
+        url: '/ojs/getJournals/',
+        crossDomain: false, // obviates need for sameOrigin test
+        beforeSend: (xhr, settings) =>
+            xhr.setRequestHeader("X-CSRFToken", csrfToken),
+        success: response => {
+            let journals = response['journals']
             jQuery(journalDialogTemplate({
-                journals: list
+                journals
             })).dialog({
                 autoOpen: true,
-                height: list.length * 100,
+                height: (journals.length * 45) + 140,
                 width: 300,
                 modal: true,
                 buttons: diaButtons,
@@ -204,7 +205,7 @@ export let reviewSubmit = function(editor) {
     let diaButtons = {}
     let submission_info = {}
     jQuery.ajax({
-        url: '/external/ojs/reviewsubmit/',
+        url: '/ojs/reviewsubmit/',
         data: {
             document_id: editor.doc.id
         },
@@ -247,7 +248,7 @@ export let reviewSubmit = function(editor) {
                 addAlert('error', 'There is error while sending the signal of finishing review, please try it again')
 
                 jQuery.ajax({
-                    url: '/external/ojs/reviewsubmitundo/',
+                    url: '/ojs/reviewsubmitundo/',
                     data: {
                         document_id: editor.doc.id
                     },

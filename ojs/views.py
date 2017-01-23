@@ -438,6 +438,7 @@ def get_user_js(request):
         status=status
     )
 
+
 # Save a journal. Used on custom admin page.
 @staff_member_required
 def save_journal_js(request):

@@ -1,18 +1,23 @@
 from tornado.web import RequestHandler, asynchronous, HTTPError
 from tornado.httpclient import AsyncHTTPClient
-#from tornado.escape import json_decode
 from tornado.httpclient import HTTPRequest
 from tornado.httputil import url_concat
+from base.django_handler_mixin import DjangoHandlerMixin
 
-class OJSProxy(RequestHandler):
+
+class OJSProxy(DjangoHandlerMixin, RequestHandler):
     @asynchronous
     def get(self, relative_url):
-        http = AsyncHTTPClient()
-        plugin_path = '/index.php/index/gateway/plugin/RestApiGatewayPlugin/'
+        user = self.get_current_user()
+        if not user.is_authenticated():
+            self.set_status(401)
+            return
         if relative_url == 'journals':
             base_url = self.get_argument('url')
             key = self.get_argument('key')
+        plugin_path = '/index.php/index/gateway/plugin/RestApiGatewayPlugin/'
         url = base_url + plugin_path + relative_url
+        http = AsyncHTTPClient()
         http.fetch(
             HTTPRequest(
                 url_concat(url, {'key': key}),

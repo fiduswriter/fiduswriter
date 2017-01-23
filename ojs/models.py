@@ -4,11 +4,12 @@ from django.contrib.auth.models import User
 
 from document.models import Document, RIGHTS_CHOICES
 
+
 # A Journal registered with a particular OJS installation
 class Journal(models.Model):
     ojs_url = models.CharField(max_length=512)
     ojs_key = models.CharField(max_length=512)
-    ojs_jid = models.PositiveIntegerField()  # _jid as _id is used by foreign keys
+    ojs_jid = models.PositiveIntegerField()  # _jid as _id is foreign key
     name = models.CharField(max_length=512)
     editor = models.ForeignKey(User)
 

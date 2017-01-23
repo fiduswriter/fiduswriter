@@ -9,10 +9,12 @@ class SubmissionAdmin(admin.ModelAdmin):
 
 admin.site.register(models.Submission, SubmissionAdmin)
 
+
 class JournalAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(models.Journal, JournalAdmin)
+
 
 def register_journal_view(request, *args, **kwargs):
     response = {}

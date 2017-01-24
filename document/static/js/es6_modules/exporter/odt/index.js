@@ -44,7 +44,11 @@ export class OdtExporter {
         this.citations = new OdtExporterCitations(this, this.bibDB, this.docContents)
         this.richtext = new OdtExporterRichtext(this, this.images)
 
-        this.xml = new XmlZip(createSlug(this.docTitle)+'.odt', this.templateUrl)
+        this.xml = new XmlZip(
+            createSlug(this.docTitle)+'.odt',
+            this.templateUrl,
+            'application/vnd.oasis.opendocument.text'
+        )
         this.xml.init().then(
             () => this.metadata.init()
         ).then(

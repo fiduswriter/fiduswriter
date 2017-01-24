@@ -2,7 +2,7 @@ import {obj2Node, node2Obj} from "../tools/json"
 import {BibliographyDB} from "../../bibliography/database"
 import {createSlug} from "../tools/file"
 import {findImages} from "../tools/html"
-import {zipFileCreator} from "../tools/zip"
+import {ZipFileCreator} from "../tools/zip"
 import {opfTemplate, containerTemplate, ncxTemplate, ncxItemTemplate, navTemplate,
   navItemTemplate, xhtmlTemplate} from "./templates"
 import {katexOpfIncludes} from "../../katex/opf-includes"
@@ -10,6 +10,7 @@ import {addAlert} from "../../common"
 import {katexRender} from "../../katex"
 import {BaseEpubExporter} from "./base"
 import {docSchema} from "../../schema/document"
+import download from "downloadjs"
 
 
 export class EpubExporter extends BaseEpubExporter {
@@ -187,9 +188,16 @@ export class EpubExporter extends BaseEpubExporter {
                 'url': window.staticUrl + 'zip/katex-style.zip'
             })
         }
+        let zipper = new ZipFileCreator(
+            outputList,
+            httpOutputList,
+            includeZips,
+            'application/epub+zip'
+        )
 
-        zipFileCreator(outputList, httpOutputList, createSlug(
-                title) +
-            '.epub', 'application/epub+zip', includeZips)
+        zipper.init().then(
+            blob => download(blob, createSlug(title) + '.epub', 'application/epub+zip')
+        )
+
     }
 }

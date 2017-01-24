@@ -12,16 +12,6 @@ export let createSlug = function(str) {
     return str
 }
 
-/** Offers a file to the user as if it were downloaded.
- * @function downloadFile
- * @param {string} zipFileName The name of the file.
- * @param {blob} blob The contents of the file.
- */
-export let downloadFile = function(zipFilename, blob) {
-    download(blob, zipFilename)
-    // TODO: add mimetype
-}
-
 
 export let getDatabasesIfNeeded = function(object, doc) {
     let p = []

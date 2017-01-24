@@ -1,8 +1,11 @@
 import {createSlug} from "../tools/file"
-import {zipFileCreator} from "../tools/zip"
+import {ZipFileCreator} from "../tools/zip"
+import {uploadFile} from "../tools/upload"
 import {BibliographyDB} from "../../bibliography/database"
 import {ImageDB} from "../../images/database"
 import {addAlert} from "../../common"
+import download from "downloadjs"
+
 /** The current Fidus Writer filetype version.
  * The importer will not import from a higher version and the exporter
   * will include this number in all exports.
@@ -147,9 +150,11 @@ export let exportNative = function(doc, anImageDB, aBibDB) {
 
 }
 
-let exportNativeFile = function({doc, shrunkImageDB,
-    shrunkBibDB, httpIncludes}, upload = false, editor = false) {
-
+let exportNativeFile = function(
+    {doc, shrunkImageDB, shrunkBibDB, httpIncludes},
+    upload = false,
+    editor = false
+) {
     let outputList = [{
         filename: 'document.json',
         contents: JSON.stringify(doc),
@@ -164,7 +169,22 @@ let exportNativeFile = function({doc, shrunkImageDB,
         contents: FW_FILETYPE_VERSION
     }]
 
-    zipFileCreator(outputList, httpIncludes, createSlug(
-            doc.title) +
-        '.fidus', 'application/fidus+zip', false, upload, editor)
+    let zipper = new ZipFileCreator(
+        outputList,
+        httpIncludes,
+        [],
+        'application/fidus+zip'
+    )
+
+    zipper.init().then(
+        blob => {
+            if (upload) {
+                uploadFile(createSlug(doc.title) + '.fidus', blob, editor)
+            } else {
+                download(blob, createSlug(doc.title) + '.fidus', 'application/fidus+zip')
+            }
+
+        }
+    )
+
 }

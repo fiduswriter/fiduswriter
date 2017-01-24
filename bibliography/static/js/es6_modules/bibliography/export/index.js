@@ -1,5 +1,6 @@
 import {BibLatexExporter} from "biblatex-csl-converter"
-import {zipFileCreator} from "../../exporter/tools/zip"
+import {ZipFileCreator} from "../../exporter/tools/zip"
+import download from "downloadjs"
 
 export class BibLatexFileExporter {
 
@@ -10,11 +11,17 @@ export class BibLatexFileExporter {
 
     init() {
         let exporter = new BibLatexExporter(this.bibDB.db, this.pks)
-        let exportObj = [{
+
+        let zipper = new ZipFileCreator(
+            [{
                 'filename': 'bibliography.bib',
                 'contents': exporter.output
             }]
-        zipFileCreator(exportObj, [], 'bibliography.zip')
+        )
+
+        zipper.init().then(
+            blob => download(blob, 'bibliography.zip', 'application/zip')
+        )
 
     }
 

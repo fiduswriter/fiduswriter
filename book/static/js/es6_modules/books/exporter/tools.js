@@ -9,7 +9,7 @@ export let getMissingChapterData = function (aBook, documentList) {
     for (let i = 0; i < aBook.chapters.length; i++) {
         if (!_.findWhere(documentList, {id: aBook.chapters[i].text})) {
             addAlert('error', "Cannot produce book as you lack access rights to its chapters.")
-            return
+            return Promise.reject()
         }
         bookDocuments.push(aBook.chapters[i].text)
     }

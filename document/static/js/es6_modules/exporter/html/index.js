@@ -1,11 +1,12 @@
 import {createSlug} from "../tools/file"
 import {findImages} from "../tools/html"
-import {zipFileCreator} from "../tools/zip"
+import {ZipFileCreator} from "../tools/zip"
 import {htmlExportTemplate} from "./templates"
 import {BibliographyDB} from "../../bibliography/database"
 import {addAlert} from "../../common"
 import {katexRender} from "../../katex"
 import {BaseHTMLExporter} from "./base"
+import download from "downloadjs"
 
 export class HTMLExporter extends BaseHTMLExporter{
     constructor(doc, bibDB) {
@@ -94,9 +95,16 @@ export class HTMLExporter extends BaseHTMLExporter{
                 'url': window.staticUrl + 'zip/katex-style.zip',
             })
         }
-        zipFileCreator(outputList, httpOutputList, createSlug(
-                title) +
-            '.html.zip', false, includeZips)
+
+        let zipper = new ZipFileCreator(
+            outputList,
+            httpOutputList,
+            includeZips
+        )
+
+        zipper.init().then(
+            blob => download(blob, createSlug(title) + '.html.zip', 'application/zip')
+        )
     }
 
 }

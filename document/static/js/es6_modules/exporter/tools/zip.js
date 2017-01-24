@@ -43,18 +43,15 @@ export let zipFileCreator = function(textFiles, httpFiles, zipFileName,
 
         }
         Promise.all(p).then(
-            () => {
-                zipFs.generateAsync({type:"blob"}).then(
-                    blob => {
-                        if (upload) {
-                            uploadFile(zipFileName, blob, editor)
-                        } else {
-                            downloadFile(zipFileName, blob)
-                        }
-                    }
-                )
+            () => zipFs.generateAsync({type:"blob"})
+        ).then(
+            blob => {
+                if (upload) {
+                    uploadFile(zipFileName, blob, editor)
+                } else {
+                    downloadFile(zipFileName, blob)
+                }
             }
-
         )
     }
 

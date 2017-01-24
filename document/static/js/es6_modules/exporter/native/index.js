@@ -11,7 +11,7 @@ export let FW_FILETYPE_VERSION = "1.6"
 
 /** Create a Fidus Writer document and upload it to the server as a backup.
  * @function uploadNative
- * @param aDocument The document to turn into a Fidus Writer document and upload.
+ * @param editor The editor from which to upload the document.
  */
 export let uploadNative = function(editor) {
     exportNative(

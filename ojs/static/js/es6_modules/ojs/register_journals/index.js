@@ -21,7 +21,7 @@ export class RegisterJournals {
             var event = jQuery.Event('django:lookup-related')
             jQuery(this).trigger(event)
             if (!event.isDefaultPrevented()) {
-                showRelatedObjectLookupPopup(this)
+                window.showRelatedObjectLookupPopup(this)
             }
         })
         let that = this

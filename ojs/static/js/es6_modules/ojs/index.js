@@ -37,18 +37,29 @@ let setRights = function(orginalDocId, CopyDocId, user, access_rights) {
  */
 
 let submitDoc = function(editor) {
+    let journalId = jQuery("input[type='radio'][name='journalList']:checked").val()
+
+    if (!journalId) {
+        addAlert('error', gettext('Select a journal before submitting!'))
+        return
+    }
+    journalId = parseInt(journalId)
+    editor.save().then(
+
+    )
+
     let oldBibDB = editor.bibDB.db
     let oldImageDB = editor.imageDB.db
-    let owner = {}
-    owner['id'] = 1
-    owner['name'] = 'fidus'
-    editor.removeBibDB()
-    editor.removeImageDB()
+//    let owner = {}
+//    owner['id'] = 1
+//    owner['name'] = 'fidus'
+//    editor.removeBibDB()
+//    editor.removeImageDB()
     editor.save().then(
-        () => editor.getBibDB(editor.user.id)
-    ).then(
-        () => editor.getImageDB(editor.user.id)
-    ).then(
+//        () => editor.getBibDB(editor.user.id)
+//    ).then(
+//        () => editor.getImageDB(editor.user.id)
+//    ).then(
         () => saveCopy(
             editor.doc,
             oldBibDB,
@@ -122,6 +133,8 @@ let submitDoc = function(editor) {
         }
     )
 }
+
+
 
 /** submit to journal selection dialog
  * @function selectJournal

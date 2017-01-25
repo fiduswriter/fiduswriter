@@ -7,7 +7,7 @@ export class ImportNative {
         this.doc = doc
         this.impBibDB = impBibDB // These are the imported values
         this.impImageDB = impImageDB // These are the imported values
-        this.images = images
+        this.images = images // Images at URLs or in Zip files.
         this.user = user
         this.bibDB = bibDB // These are values stored in the database (data in bibDB.db)
         this.imageDB = imageDB // These are values stored in the database (data in imageDB.db)

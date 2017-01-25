@@ -5,7 +5,7 @@ export class SaveImages {
         this.newImageEntries = newImageEntries
         this.ImageTranslationTable = ImageTranslationTable
         this.imageDB = imageDB
-        this.counter = 0
+        this.counter = 0 
     }
 
     init() {

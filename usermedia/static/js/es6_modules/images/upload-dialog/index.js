@@ -1,5 +1,5 @@
 import {usermediaUploadCategoryTemplate, usermediaUploadTemplate} from "./templates"
-import {setCheckableLabel, cancelPromise} from "../../common"
+import {setCheckableLabel, cancelPromise, addAlert} from "../../common"
 
 export class ImageUploadDialog {
     constructor(imageDB, imageId, ownerId) {
@@ -148,13 +148,36 @@ export class ImageUploadDialog {
         return this.createImage(formValues)
     }
 
+    displayCreateImageError(errors) {
+        Object.keys(errors).forEach(
+            eKey => {
+                let eMsg = `<div class="warning">${errors[eKey]}</div>`
+                if ('error' == eKey) {
+                    jQuery('#uploadimage').prepend(eMsg)
+                } else {
+                    jQuery(`#id_${eKey}`).after(eMsg)
+                }
+            }
+        )
+    }
+
     createImage(imageData) {
+        // Remove old warning messages
+        jQuery('#uploadimage .warning').detach()
+        
         return new Promise(resolve => {
-            this.imageDB.createImage(imageData).then(imageId => {
-                jQuery("#uploadimage").dialog('close')
-                this.imageId = imageId
-                resolve(imageId)
-            })
+            this.imageDB.createImage(imageData).then(
+                imageId => {
+                    jQuery("#uploadimage").dialog('close')
+                    addAlert('success', gettext('The image has been uploaded.'))
+                    this.imageId = imageId
+                    resolve(imageId)
+                },
+                errors => {
+                    this.displayCreateImageError(errors)
+                    addAlert('error', gettext('Some errors were found. Please examine the form.'))
+                }
+            )
         })
     }
 

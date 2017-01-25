@@ -337,14 +337,36 @@ export class BookActions {
                     formValues.append('image', imageFile,
                         imageEntry.oldUrl.split('/').pop())
                     formValues.append('checksum', imageEntry.checksum)
+                    // Remove old warning messages
+                    jQuery('#uploadimage .warning').detach()
                     that.bookList.imageDB.createImage(formValues).then(
-                        response => resolve(response)
+                        response => {
+                            addAlert('success', gettext('The image has been uploaded.'))
+                            return resolve(response)
+                        },
+                        errors => {
+                            that.displayCreateImageError(errors)
+                            addAlert('error', gettext('Some errors were found. Please examine the form.'))
+                        }
                     )
                 }
             }
             xhr.send()
         })
 
+    }
+
+    displayCreateImageError(errors) {
+        Object.keys(errors).forEach(
+            eKey => {
+                let eMsg = `<div class="warning">${errors[eKey]}</div>`
+                if ('error' == eKey) {
+                    jQuery('#uploadimage').prepend(eMsg)
+                } else {
+                    jQuery(`#id_${eKey}`).after(eMsg)
+                }
+            }
+        )
     }
 
 

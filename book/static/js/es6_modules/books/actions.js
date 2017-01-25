@@ -339,7 +339,7 @@ export class BookActions {
                     formValues.append('checksum', imageEntry.checksum)
                     // Remove old warning messages
                     jQuery('#uploadimage .warning').detach()
-                    that.bookList.imageDB.createImage(formValues).then(
+                    that.bookList.imageDB.saveImage(formValues).then(
                         response => {
                             addAlert('success', gettext('The image has been uploaded.'))
                             return resolve(response)

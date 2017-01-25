@@ -1,6 +1,5 @@
 import {addAlert, csrfToken} from "../common"
 import {GetImages} from "./get-images"
-import {SaveImages} from "./save-images"
 
 export class ImportNative {
     /* Save document information into the database */
@@ -21,10 +20,9 @@ export class ImportNative {
         // We first create any new entries in the DB for images and/or
         // bibliography items.
         let imageGetter = new GetImages(newImageEntries, this.entries)
-        return imageGetter.init().then(() => {
-            let imageSaver = new SaveImages(newImageEntries, ImageTranslationTable, this.imageDB)
-            return imageSaver.init()
-        }).then(
+        return imageGetter.init().then(
+            () => this.saveImages(newImageEntries, ImageTranslationTable)
+        ).then(
             () => this.bibDB.saveBibEntries(newBibEntries, true)
         ).then(
             idTranslations => idTranslations.forEach(idTrans => {BibTranslationTable[idTrans[0]] = idTrans[1]})
@@ -38,6 +36,25 @@ export class ImportNative {
             return this.createNewDocument()
         })
 
+    }
+
+    saveImages(newImageEntries, ImageTranslationTable) {
+        let sendPromises = newImageEntries.map(
+            imageEntry => {
+                let formValues = new window.FormData()
+                formValues.append('id', 0)
+                formValues.append('title', imageEntry.title)
+                formValues.append('imageCats', '')
+                formValues.append('image', imageEntry.file, imageEntry.oldUrl.split('/').pop())
+                formValues.append('checksum', imageEntry.checksum)
+                return this.imageDB.saveImage(formValues).then(
+                    newId => {
+                        ImageTranslationTable[imageEntry.oldId] = newId
+                    }
+                )
+            }
+        )
+        return Promise.all(sendPromises)
     }
 
     compareBibDBs() {

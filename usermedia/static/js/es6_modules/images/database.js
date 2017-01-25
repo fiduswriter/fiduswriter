@@ -43,7 +43,7 @@ export class ImageDB {
         })
     }
 
-    createImage(postData) {
+    saveImage(postData) {
         activateWait()
 
         return new Promise((resolve, reject) => {

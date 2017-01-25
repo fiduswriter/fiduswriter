@@ -164,9 +164,9 @@ export class ImageUploadDialog {
     createImage(imageData) {
         // Remove old warning messages
         jQuery('#uploadimage .warning').detach()
-        
+
         return new Promise(resolve => {
-            this.imageDB.createImage(imageData).then(
+            this.imageDB.saveImage(imageData).then(
                 imageId => {
                     jQuery("#uploadimage").dialog('close')
                     addAlert('success', gettext('The image has been uploaded.'))

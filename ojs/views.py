@@ -427,7 +427,8 @@ def get_journals_js(request):
         for journal in Journal.objects.all():
             journals.append({
                 'ojs_jid': journal.ojs_jid,
-                'name': journal.name
+                'name': journal.name,
+                'editor_id': journal.editor_id
             })
         response['journals'] = journals
         status = 200

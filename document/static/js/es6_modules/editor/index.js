@@ -17,6 +17,7 @@ import {getSettings, getMetadata, updateDoc} from "../schema/convert"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
 import {Paste} from "./paste"
+import {OJSSubmit} from "../ojs"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']
@@ -66,6 +67,8 @@ export class Editor {
         new ModCollab(this)
         new ModTools(this)
         new ModComments(this)
+        let submitter = new OJSSubmit(this)
+        submitter.init()
         this.pm.on.change.add(
             () => {this.docInfo.changed = true}
         )

@@ -1,190 +1,203 @@
 import {SaveCopy} from "../exporter/native"
 import {journalDialogTemplate, reviewSubmitDialogTemplate, revisionSubmitDialogTemplate} from "./templates"
 import {addAlert, csrfToken} from "../common"
+import {BibliographyDB} from "../bibliography/database"
+import {ImageDB} from "../images/database"
 
-let setRights = function(orginalDocId, CopyDocId, user, access_rights) {
-    let collaborators = [],
-        rights = []
-    access_rights.forEach((item, index) => {
-        if (item.document_id === orginalDocId) {
-            collaborators[collaborators.length] = item.user_id
-        }
-    })
-    collaborators[collaborators.length] = user.id
-    let postData = {
-        'documentId': CopyDocId,
-        'collaborators[]': collaborators,
+
+export class OJSSubmit {
+    constructor(editor) {
+        this.editor = editor
+        this.journals = []
     }
-    jQuery.ajax({
-        url: '/ojs/submitright/',
-        data: postData,
-        type: 'POST',
-        dataType: 'json',
-        crossDomain: false, // obviates need for sameOrigin test
-        beforeSend: (xhr, settings) =>
-            xhr.setRequestHeader("X-CSRFToken", csrfToken),
-        success: response =>
-            addAlert('success', gettext(
-                'Access rights have been saved')),
-        error: (jqXHR, textStatus, errorThrown) =>
-            console.error(jqXHR.responseText)
-    })
-}
 
-/** submit a document to ojs
- * @function submitDoc
- * @param
- */
-
-let submitDoc = function(editor) {
-    let journalId = jQuery("input[type='radio'][name='journalList']:checked").val()
-
-    if (!journalId) {
-        addAlert('error', gettext('Select a journal before submitting!'))
-        return
-    }
-    journalId = parseInt(journalId)
-    editor.save().then(
-
-    )
-
-    let oldBibDB = editor.bibDB
-    let oldImageDB = editor.imageDB
-//    let owner = {}
-//    owner['id'] = 1
-//    owner['name'] = 'fidus'
-//    editor.removeBibDB()
-//    editor.removeImageDB()
-    editor.save().then(
-//        () => editor.getBibDB(editor.user.id)
-//    ).then(
-//        () => editor.getImageDB(editor.user.id)
-//    ).then(
-        () => {
-            let copier = new SaveCopy(
-                editor.doc,
-                oldBibDB,
-                oldImageDB,
-                editor.bibDB,
-                editor.imageDB,
-                editor.user
-            )
-            return copier.init()
-        }
-    ).then(
-        ({
-            doc,
-            docInfo
-        }) => {
-            setRights(editor.doc.id, doc.id, editor.user, editor.doc.access_rights)
-            //window.location.href = `/document/${doc.id}/`
-            let dataToOjs = new window.FormData()
-            dataToOjs.append('username', editor.user.username)
-            dataToOjs.append('title', editor.doc.title)
-            dataToOjs.append('first_name', editor.user.first_name)
-            dataToOjs.append('last_name', editor.user.last_name)
-            dataToOjs.append('email', editor.user.email)
-            dataToOjs.append('affiliation', "sample affiliation")
-            dataToOjs.append('author_url', "sample author_url")
-            dataToOjs.append('journal_id', jQuery("input[type='radio'][name='journalList']:checked").val())
-            dataToOjs.append('file_name', editor.doc.title)
-            dataToOjs.append('article_url', window.location.origin + "/document/" + doc.id)
-            if (editor.docInfo.submission.status == 'submitted') {
-                dataToOjs.append('submission_id', editor.docInfo.submission.submission_id)
-                dataToOjs.append('version_id', editor.docInfo.submission.version_id + 1)
-            }
+    init() {
+        return new Promise(resolve => {
             jQuery.ajax({
-                url: window.ojsUrl + '/index.php/index/gateway/plugin/RestApiGatewayPlugin/articles',
-                data: dataToOjs,
-                type: 'POST',
-                cache: false,
-                contentType: false,
-                processData: false,
+                type: "POST",
+                dataType: "json",
+                url: '/ojs/getJournals/',
                 crossDomain: false, // obviates need for sameOrigin test
                 beforeSend: (xhr, settings) =>
                     xhr.setRequestHeader("X-CSRFToken", csrfToken),
                 success: response => {
-                    //addAlert('success','The paper was submitted to ojs')
-                    let dataSubmission = new window.FormData()
-                    dataSubmission.append('document_id', doc.id)
-                    dataSubmission.append('pre_document_id', editor.doc.id)
-                    if (editor.docInfo.submission.status == 'submitted') {
-                        dataSubmission.append('submission_id', editor.docInfo.submission.submission_id)
-                        dataSubmission.append('journal_id', editor.docInfo.submission.journal_id)
-                    } else {
-                        dataSubmission.append('journal_id', response.journal_id)
-                        dataSubmission.append('submission_id', response.submission_id)
-                    }
-                    jQuery.ajax({
-                        url: '/ojs/submissionversion/',
-                        data: dataSubmission,
-                        type: 'POST',
-                        cache: false,
-                        contentType: false,
-                        processData: false,
-                        crossDomain: false, // obviates need for sameOrigin test
-                        beforeSend: (xhr, settings) =>
-                            xhr.setRequestHeader("X-CSRFToken", csrfToken),
-                        success: response =>
-                            addAlert('success', 'The paper was submitted to ojs and version of submission has been saved'),
-                        error: () =>
-                            addAlert('error', 'version of submission has been not saved')
-                    })
-                },
-                error: () => addAlert('error', 'submission was not successful')
+                    this.journals = response['journals']
+                    resolve()
+                }
             })
+        }).then(
+            () => this.setupUI()
+        )
+
+    }
+
+    setupUI() {
+        if (this.journals.length === 0) {
+            return Promise.resolve()
         }
-    )
+        jQuery('#file-menu').append(`
+            <li>
+                <span class="fw-pulldown-item submit-ojs icon-search" title="${gettext("submit the paper to ojs")}"> ${gettext("Submit paper")} </span>
+            </li>
+        `)
+        jQuery(document).on('mousedown', '.submit-ojs:not(.disabled)', () => {
+            this.openDialog()
+        })
+        return Promise.resolve()
+    }
+
+    openDialog() {
+        let diaButtons = {}, that = this
+
+        diaButtons[gettext("Submit")] = function() {
+            let journalId = jQuery("input[type='radio'][name='journalList']:checked").val()
+            if (!journalId) {
+                addAlert('error', gettext('Select a journal before submitting!'))
+                return
+            }
+            journalId = parseInt(journalId)
+            that.submitDoc(journalId)
+            jQuery(this).dialog("close")
+        }
+
+        diaButtons[gettext("Cancel")] = function() {
+            jQuery(this).dialog("close")
+        }
+
+        jQuery(journalDialogTemplate({
+            journals: this.journals
+        })).dialog({
+            autoOpen: true,
+            height: (this.journals.length * 45) + 140,
+            width: 300,
+            modal: true,
+            buttons: diaButtons,
+            create: function() {
+                let theDialog = jQuery(this).closest(".ui-dialog")
+                theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
+                theDialog.find(".ui-button:last").addClass("fw-button fw-orange")
+            }
+        })
+    }
+
+    submitDoc(journalId) {
+        let journal = this.journals.find(journal => journal.ojs_jid === journalId)
+        let journalBibDB = new BibliographyDB(journal.editor_id)
+        let journalImageDB = new ImageDB(journal.editor_id)
+        this.editor.save().then(
+            () => journalBibDB.getDB()
+        ).then(
+            () => journalImageDB.getDB()
+        ).then(
+            () => {
+                let copier = new SaveCopy(
+                    this.editor.doc,
+                    this.editor.bibDB,
+                    this.editor.imageDB,
+                    journalBibDB,
+                    journalImageDB,
+                    this.editor.user
+                )
+                return copier.init()
+            }
+        ).then(
+            ({doc,docInfo}) => {
+                this.setRights(this.editor.doc.id, doc.id, this.editor.user, this.editor.doc.access_rights)
+                //window.location.href = `/document/${doc.id}/`
+                let dataToOjs = new window.FormData()
+                dataToOjs.append('username', this.editor.user.username)
+                dataToOjs.append('title', doc.title)
+                dataToOjs.append('first_name', this.editor.user.first_name)
+                dataToOjs.append('last_name', this.editor.user.last_name)
+                dataToOjs.append('email', this.editor.user.email)
+                dataToOjs.append('affiliation', "sample affiliation")
+                dataToOjs.append('author_url', "sample author_url")
+                dataToOjs.append('journal_id', journalId)
+                dataToOjs.append('file_name', doc.title)
+                dataToOjs.append('article_url', window.location.origin + "/document/" + doc.id)
+                if (this.editor.docInfo.submission.status === 'submitted') {
+                    // How can it already be submitted ??? I thought this was only for newly submitted documents.
+                    dataToOjs.append('submission_id', this.editor.docInfo.submission.submission_id)
+                    dataToOjs.append('version_id', this.editor.docInfo.submission.version_id + 1)
+                }
+                jQuery.ajax({
+                    url: '/proxy/ojs/articles',
+                    data: dataToOjs,
+                    type: 'POST',
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    crossDomain: false, // obviates need for sameOrigin test
+                    beforeSend: (xhr, settings) =>
+                        xhr.setRequestHeader("X-CSRFToken", csrfToken),
+                    success: response => {
+                        //addAlert('success','The paper was submitted to ojs')
+                        let dataSubmission = new window.FormData()
+                        dataSubmission.append('document_id', doc.id)
+                        dataSubmission.append('pre_document_id', this/editor.doc.id)
+                        if (editor.docInfo.submission.status == 'submitted') {
+                            dataSubmission.append('submission_id', editor.docInfo.submission.submission_id)
+                            dataSubmission.append('journal_id', editor.docInfo.submission.journal_id)
+                        } else {
+                            dataSubmission.append('journal_id', response.journal_id)
+                            dataSubmission.append('submission_id', response.submission_id)
+                        }
+                        jQuery.ajax({
+                            url: '/ojs/submissionversion/',
+                            data: dataSubmission,
+                            type: 'POST',
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            crossDomain: false, // obviates need for sameOrigin test
+                            beforeSend: (xhr, settings) =>
+                                xhr.setRequestHeader("X-CSRFToken", csrfToken),
+                            success: response =>
+                                addAlert('success', 'The paper was submitted to ojs and version of submission has been saved'),
+                            error: () =>
+                                addAlert('error', 'version of submission has been not saved')
+                        })
+                    },
+                    error: () => addAlert('error', 'submission was not successful')
+                })
+            }
+        )
+    }
+
+    // What is this doing???
+    setRights (orginalDocId, copyDocId, user, access_rights) {
+        let collaborators = [],
+            rights = []
+        access_rights.forEach((item, index) => {
+            if (item.document_id === orginalDocId) {
+                collaborators[collaborators.length] = item.user_id
+            }
+        })
+        collaborators[collaborators.length] = user.id
+        let postData = {
+            'documentId': copyDocId,
+            'collaborators[]': collaborators,
+        }
+        jQuery.ajax({
+            url: '/ojs/submitright/',
+            data: postData,
+            type: 'POST',
+            dataType: 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: (xhr, settings) =>
+                xhr.setRequestHeader("X-CSRFToken", csrfToken),
+            success: response =>
+                addAlert('success', gettext(
+                    'Access rights have been saved')),
+            error: (jqXHR, textStatus, errorThrown) =>
+                console.error(jqXHR.responseText)
+        })
+    }
+
 }
 
 
 
-/** submit to journal selection dialog
- * @function selectJournal
- * @param
- */
-
-export let selectJournal = function(editor) {
-    let list = null
-    let diaButtons = {}
-
-    diaButtons[gettext("Submit")] = function() {
-        submitDoc(editor)
-        jQuery(this).dialog("close")
-    }
-
-    diaButtons[gettext("Cancel")] = function() {
-        jQuery(this).dialog("close")
-    }
-    jQuery.ajax({
-        type: "POST",
-        dataType: "json",
-        url: '/ojs/getJournals/',
-        crossDomain: false, // obviates need for sameOrigin test
-        beforeSend: (xhr, settings) =>
-            xhr.setRequestHeader("X-CSRFToken", csrfToken),
-        success: response => {
-            let journals = response['journals']
-            jQuery(journalDialogTemplate({
-                journals
-            })).dialog({
-                autoOpen: true,
-                height: (journals.length * 45) + 140,
-                width: 300,
-                modal: true,
-                buttons: diaButtons,
-                create: function() {
-                    let theDialog = jQuery(this).closest(".ui-dialog")
-                    theDialog.find(".ui-button:first-child").addClass(
-                        "fw-button fw-dark")
-                    theDialog.find(".ui-button:last").addClass(
-                        "fw-button fw-orange")
-                },
-            })
-        }
-    })
-
-}
 
 /*send the revision of submitted paper*/
 export let submissionRevisionDone = function(editor) {

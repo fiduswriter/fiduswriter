@@ -5,7 +5,7 @@ import {HTMLExporter} from "../../exporter/html"
 import {EpubExporter} from "../../exporter/epub"
 import {DocxExporter} from "../../exporter/docx"
 import {OdtExporter} from "../../exporter/odt"
-import {selectJournal, reviewSubmit, submissionRevisionDone} from "../../ojs"
+import {reviewSubmit, submissionRevisionDone} from "../../ojs"
 import {revisionDialog} from "./dialogs"
 import {BibliographyDB} from "../../bibliography/database"
 import {ImageDB} from "../../images/database"
@@ -131,10 +131,6 @@ export class ModMenusActions {
         this.mod.editor.save().then(() => {
             window.location.href = '/'
         })
-    }
-
-    submitOjs() {
-        this.mod.editor.save().then(() => selectJournal(this.mod.editor))
     }
 
     submitReview() {

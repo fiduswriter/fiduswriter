@@ -1,12 +1,11 @@
 import {getMissingDocumentListData} from "../tools"
 import {importFidusTemplate, documentsListItemTemplate} from "./templates"
-import {saveCopy} from "../../exporter/native/copy"
+import {saveCopy, ExportFidusFile} from "../../exporter/native"
 import {EpubExporter} from "../../exporter/epub"
 import {HTMLExporter} from "../../exporter/html"
 import {LatexExporter} from "../../exporter/latex"
 import {DocxExporter} from "../../exporter/docx"
 import {OdtExporter} from "../../exporter/odt"
-import {NativeExporter} from "../../exporter/native"
 import {ImportFidusFile} from "../../importer/file"
 import {DocumentRevisionsDialog} from "../revisions"
 import {BibliographyDB} from "../../bibliography/database"
@@ -268,7 +267,7 @@ export class DocumentOverviewActions {
         ).then(
             () => {
                 for (let i = 0; i < ids.length; i++) {
-                    new NativeExporter(_.findWhere(
+                    new ExportFidusFile(_.findWhere(
                         this.documentOverview.documentList, {
                             id: ids[i]
                         }), false, false)

@@ -1,4 +1,4 @@
-import {saveCopy} from "../exporter/native/copy"
+import {saveCopy} from "../exporter/native"
 import {journalDialogTemplate, reviewSubmitDialogTemplate, revisionSubmitDialogTemplate} from "./templates"
 import {addAlert, csrfToken} from "../common"
 

@@ -1,20 +1,7 @@
-import {exportNative} from "./index"
 import {ImportNative} from "../../importer/native"
 import {deactivateWait, addAlert} from "../../common"
+import {ShrinkFidus} from "./shrink"
 
-
-//let afterCopy = function({doc, docInfo}) {
-//    deactivateWait()
-    //if (noErrors) {
-    //    let [doc, docInfo] = returnValue
-
-//    addAlert('info', doc.title + gettext(' successfully copied.'))
-//    return Promise.resolve({doc, docInfo})
-    //} else {
-    //    addAlert('error', returnValue)
-    //    return Promise.reject()
-    //}
-//}
 
 /* Saves a copy of the document. The owner may change in that process, if the
   old document was owned by someone else than the current user.
@@ -27,12 +14,11 @@ export let saveCopy = function(
     newImageDB,
     newUser
 ) {
-    return exportNative(
-        doc,
-        oldImageDB,
-        oldBibDB
-    ).then(
+    let shrinker = new ShrinkFidus(doc, oldImageDB, oldBibDB)
+    return shrinker.init().then(
         ({doc, shrunkImageDB, shrunkBibDB, httpIncludes}) => {
+            console.log([doc, shrunkImageDB, newUser])
+
             let importer = new ImportNative(
                 doc,
                 shrunkBibDB,

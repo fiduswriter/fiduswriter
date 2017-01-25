@@ -288,7 +288,7 @@ def get_reviewer_for_post(request):
             reviewer = reviewers[0]
         return reviewer
     except ObjectDoesNotExist:
-        print("could not create user for email " + email)
+        print("could not create user for email: " + email)
 
 
 def get_existing_reviewer(request):
@@ -416,10 +416,10 @@ def submission_version_js(request):
         status=status
     )
 
+
 # A list of all registered journals to be used in the submit dialog.
 @login_required
 def get_journals_js(request):
-    print "here"
     status = 405
     response = {}
     if request.is_ajax() and request.method == 'POST':

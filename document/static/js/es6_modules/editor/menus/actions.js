@@ -1,11 +1,12 @@
-import {saveCopy} from "../../exporter/native/copy"
-import {NativeExporter, uploadNative} from "../../exporter/native"
+import {SaveRevision, saveCopy} from "../../exporter/native"
+import {ExportFidusFile} from "../../exporter/native/file"
 import {LatexExporter} from "../../exporter/latex"
 import {HTMLExporter} from "../../exporter/html"
 import {EpubExporter} from "../../exporter/epub"
 import {DocxExporter} from "../../exporter/docx"
 import {OdtExporter} from "../../exporter/odt"
 import {selectJournal, reviewSubmit, submissionRevisionDone} from "../../ojs"
+import {revisionDialog} from "./dialogs"
 
 export class ModMenusActions {
     constructor(mod) {
@@ -14,9 +15,19 @@ export class ModMenusActions {
     }
 
     saveRevision() {
-        this.mod.editor.save().then(() => {
-            uploadNative(this.mod.editor)
-        })
+        this.mod.editor.save().then(
+            () => revisionDialog()
+        ).then(
+            note => {
+                let saver = new SaveRevision(
+                    this.mod.editor.doc,
+                    this.mod.editor.imageDB,
+                    this.mod.editor.bibDB,
+                    note
+                )
+                return saver.init()
+            }
+        )
     }
 
     saveCopy() {
@@ -66,7 +77,7 @@ export class ModMenusActions {
 
     download() {
         this.mod.editor.save().then(() => {
-            new NativeExporter(
+            new ExportFidusFile(
                 this.mod.editor.doc,
                 this.mod.editor.bibDB,
                 this.mod.editor.imageDB.db

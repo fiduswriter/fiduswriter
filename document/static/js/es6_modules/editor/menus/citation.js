@@ -1,9 +1,9 @@
-/* TODO: merge this into content-dialogs/citation and make the list of citation
+/* TODO: merge this into dialogs/citation and make the list of citation
  * sources load every time the citation dialog is opened rather than keeping it
  * constantly available.
  */
 import {nameToText, litToText} from "../../bibliography/tools"
-import {citationItemTemplate, selectedCitationTemplate} from "./content-dialogs/templates"
+import {citationItemTemplate, selectedCitationTemplate} from "./dialogs/templates"
 
 /* Functions for the Citation add dialog */
 export class ModMenusCitation {

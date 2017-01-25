@@ -36,10 +36,10 @@ export class ModMenusActions {
                 // We are copying from and to the same user. We don't need different databases for this.
                 let copier = new SaveCopy(
                     this.mod.editor.doc,
-                    this.mod.editor.bibDB.db,
-                    this.mod.editor.imageDB.db,
-                    this.mod.editor.bibDB.db,
-                    this.mod.editor.imageDB.db,
+                    this.mod.editor.bibDB,
+                    this.mod.editor.imageDB,
+                    this.mod.editor.bibDB,
+                    this.mod.editor.imageDB,
                     this.mod.editor.user
                 )
                 copier.init().then(
@@ -50,8 +50,8 @@ export class ModMenusActions {
             } else {
                 // We copy from one user to another. So we first load one set of
                 // databases, and then the other
-                let oldBibDB = this.mod.editor.bibDB.db
-                let oldImageDB = this.mod.editor.imageDB.db
+                let oldBibDB = this.mod.editor.bibDB
+                let oldImageDB = this.mod.editor.imageDB
                 this.mod.editor.removeBibDB()
                 this.mod.editor.removeImageDB()
                 this.mod.editor.getBibDB(
@@ -63,8 +63,8 @@ export class ModMenusActions {
                         this.mod.editor.doc,
                         oldBibDB,
                         oldImageDB,
-                        this.mod.editor.bibDB.db,
-                        this.mod.editor.imageDB.db,
+                        this.mod.editor.bibDB,
+                        this.mod.editor.imageDB,
                         this.mod.editor.user
                     )
                     copier.init().then(
@@ -82,7 +82,7 @@ export class ModMenusActions {
             new ExportFidusFile(
                 this.mod.editor.doc,
                 this.mod.editor.bibDB,
-                this.mod.editor.imageDB.db
+                this.mod.editor.imageDB
             )
         })
     }

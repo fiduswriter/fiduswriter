@@ -18,7 +18,7 @@ export class ExportFidusFile {
             () => this.getImageDB()
         ).then(
             () => {
-                let shrinker = new ShrinkFidus(this.doc, this.imageDB, this.bibDB.db)
+                let shrinker = new ShrinkFidus(this.doc, this.imageDB, this.bibDB)
                 return shrinker.init()
             }
         ).then(
@@ -33,7 +33,7 @@ export class ExportFidusFile {
 
     getBibDB() {
         if (!this.bibDB) {
-            this.bibDB = new BibliographyDB(this.doc.owner.id, false, false, false)
+            this.bibDB = new BibliographyDB(this.doc.owner.id)
             return this.bibDB.getDB()
         } else {
             return Promise.resolve()
@@ -42,15 +42,8 @@ export class ExportFidusFile {
 
     getImageDB() {
         if (!this.imageDB) {
-            let imageGetter = new ImageDB(this.doc.owner.id)
-            return new Promise((resolve, reject) => {
-                imageGetter.getDB().then(
-                    () => {
-                        this.imageDB = imageGetter.db
-                        resolve()
-                    }
-                )
-            })
+            this.imageDB = new ImageDB(this.doc.owner.id)
+            return this.imageDB.getDB()
         } else {
             return Promise.resolve()
         }

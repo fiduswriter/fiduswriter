@@ -26,7 +26,7 @@ export let getImageAndBibDB = function (aBook, documentList) {
 
     documentOwners = _.unique(documentOwners).join(',')
     let imageDB = new ImageDB(documentOwners)
-    let bibDB = new BibliographyDB(documentOwners, false, false, false)
+    let bibDB = new BibliographyDB(documentOwners)
     return imageDB.getDB().then(
         bibDB => bibDB.getDB()
     ).then(

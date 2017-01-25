@@ -48,8 +48,8 @@ let submitDoc = function(editor) {
 
     )
 
-    let oldBibDB = editor.bibDB.db
-    let oldImageDB = editor.imageDB.db
+    let oldBibDB = editor.bibDB
+    let oldImageDB = editor.imageDB
 //    let owner = {}
 //    owner['id'] = 1
 //    owner['name'] = 'fidus'
@@ -65,8 +65,8 @@ let submitDoc = function(editor) {
                 editor.doc,
                 oldBibDB,
                 oldImageDB,
-                editor.bibDB.db,
-                editor.imageDB.db,
+                editor.bibDB,
+                editor.imageDB,
                 editor.user
             )
             return copier.init()

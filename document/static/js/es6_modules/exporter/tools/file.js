@@ -19,7 +19,7 @@ export let getDatabasesIfNeeded = function(object, doc) {
     if (!object.bibDB) {
         p.push(
             new Promise((resolve) => {
-                object.bibDB = new BibliographyDB(doc.owner.id, false, false, false)
+                object.bibDB = new BibliographyDB(doc.owner.id)
                 object.bibDB.getDB().then(resolve)
             })
         )

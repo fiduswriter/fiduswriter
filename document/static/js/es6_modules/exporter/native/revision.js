@@ -19,8 +19,8 @@ export class SaveRevision {
     init() {
         let shrinker = new ShrinkFidus(
             this.doc,
-            this.imageDB.db,
-            this.bibDB.db
+            this.imageDB,
+            this.bibDB
         )
 
         shrinker.init().then(

@@ -20,7 +20,7 @@ export class BibliographyOverview {
     /* load data from the bibliography */
     getBibDB() {
         let docOwnerId = 0 // 0 = current user.
-        this.bibDB = new BibliographyDB(docOwnerId, true, false, false)
+        this.bibDB = new BibliographyDB(docOwnerId, true)
 
         this.bibDB.getDB().then(({bibPKs, bibCats}) => {
             this.addBibCategoryList(bibCats)

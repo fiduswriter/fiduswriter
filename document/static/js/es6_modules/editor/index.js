@@ -243,7 +243,7 @@ export class Editor {
 
     getBibDB(userId) {
         if (!this.bibDB) { // Don't get the bibliography again if we already have it.
-            let bibGetter = new BibliographyDB(userId, true, false, false)
+            let bibGetter = new BibliographyDB(userId, true)
             return bibGetter.getDB().then(({bibPKs, bibCats}) => {
                 this.bibDB = bibGetter
                 this.mod.menus.citation.appendManyToCitationDialog(bibPKs)

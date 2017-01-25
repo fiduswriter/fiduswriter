@@ -21,7 +21,7 @@ export class ShrinkFidus {
         this.imageList = _.uniq(this.imageList)
 
         this.imageList.forEach(itemId => {
-            shrunkImageDB[itemId] = Object.assign({}, this.imageDB[itemId])
+            shrunkImageDB[itemId] = Object.assign({}, this.imageDB.db[itemId])
             // Remove parts that are connected to a particular user/server
             delete shrunkImageDB[itemId].cats
             delete shrunkImageDB[itemId].thumbnail
@@ -40,7 +40,7 @@ export class ShrinkFidus {
 
         let shrunkBibDB = {}
         this.citeList.forEach(itemId => {
-            shrunkBibDB[itemId] = Object.assign({}, this.bibDB[itemId])
+            shrunkBibDB[itemId] = Object.assign({}, this.bibDB.db[itemId])
             // Remove the entry_cat, as it is only a list of IDs for one
             // particular user/server.
             delete shrunkBibDB[itemId].entry_cat

@@ -193,9 +193,9 @@ export class DocumentOverviewActions {
                         // We are copying from and to the same user.
                         let copier = new SaveCopy(
                             doc,
-                            this.documentOverview.bibDB.db,
+                            this.documentOverview.bibDB,
                             this.documentOverview.imageDB,
-                            this.documentOverview.bibDB.db,
+                            this.documentOverview.bibDB,
                             this.documentOverview.imageDB,
                             this.documentOverview.user
                         )
@@ -223,7 +223,7 @@ export class DocumentOverviewActions {
                                     doc,
                                     oldBibDB,
                                     oldImageDB,
-                                    this.documentOverview.bibDB.db,
+                                    this.documentOverview.bibDB,
                                     this.documentOverview.imageDB,
                                     this.documentOverview.user
                                 )
@@ -250,7 +250,7 @@ export class DocumentOverviewActions {
     }
 
     getBibDB(userId) {
-        let bibGetter = new BibliographyDB(userId, true, false, false)
+        let bibGetter = new BibliographyDB(userId, true)
         return new Promise (resolve => {
             bibGetter.getDB().then(() => resolve(bibGetter.db))
         })
@@ -271,10 +271,11 @@ export class DocumentOverviewActions {
         ).then(
             () => {
                 for (let i = 0; i < ids.length; i++) {
-                    new ExportFidusFile(_.findWhere(
-                        this.documentOverview.documentList, {
-                            id: ids[i]
-                        }), false, false)
+                    new ExportFidusFile(
+                        _.findWhere(this.documentOverview.documentList, {id: ids[i]}),
+                        false, // no bibDB or imageDB present
+                        false
+                    )
                 }
             }
         )

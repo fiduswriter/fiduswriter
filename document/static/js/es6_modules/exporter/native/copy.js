@@ -26,8 +26,8 @@ export class SaveCopy {
                     shrunkImageDB,
                     httpIncludes,
                     this.newUser,
-                    this.newBibDB,
-                    this.newImageDB
+                    this.newBibDB.db,
+                    this.newImageDB.db
                 )
                 return importer.init()
         }).then(

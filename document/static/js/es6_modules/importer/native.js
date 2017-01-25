@@ -3,14 +3,14 @@ import {GetImages} from "./get-images"
 
 export class ImportNative {
     /* Save document information into the database */
-    constructor(doc, impBibDB, impImageDB, entries, user, bibDB, imageDB) {
+    constructor(doc, impBibDB, impImageDB, images, user, bibDB, imageDB) {
         this.doc = doc
         this.impBibDB = impBibDB // These are the imported values
         this.impImageDB = impImageDB // These are the imported values
-        this.entries = entries
+        this.images = images
         this.user = user
-        this.bibDB = bibDB // These are values stored in the database
-        this.imageDB = imageDB // These are values stored in the database
+        this.bibDB = bibDB // These are values stored in the database (data in bibDB.db)
+        this.imageDB = imageDB // These are values stored in the database (data in imageDB.db)
     }
 
     init() {
@@ -19,7 +19,7 @@ export class ImportNative {
 
         // We first create any new entries in the DB for images and/or
         // bibliography items.
-        let imageGetter = new GetImages(newImageEntries, this.entries)
+        let imageGetter = new GetImages(newImageEntries, this.images)
         return imageGetter.init().then(
             () => this.saveImages(newImageEntries, ImageTranslationTable)
         ).then(

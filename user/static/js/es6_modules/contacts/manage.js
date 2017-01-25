@@ -30,8 +30,7 @@ let addMember = function(userString) {
             success: (response, textStatus, jqXHR) => {
                 if (jqXHR.status == 201) { //user added to the contacts
                     jQuery("#add-new-member").dialog('close')
-                    resolve(response.member)
-                    return
+                    return resolve(response.member)
                 } else { //user not found
                     let responseHtml
 

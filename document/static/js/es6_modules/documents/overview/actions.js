@@ -1,6 +1,6 @@
 import {getMissingDocumentListData} from "../tools"
 import {importFidusTemplate, documentsListItemTemplate} from "./templates"
-import {saveCopy, ExportFidusFile} from "../../exporter/native"
+import {SaveCopy, ExportFidusFile} from "../../exporter/native"
 import {EpubExporter} from "../../exporter/epub"
 import {HTMLExporter} from "../../exporter/html"
 import {LatexExporter} from "../../exporter/latex"
@@ -191,14 +191,16 @@ export class DocumentOverviewActions {
                     })
                     if (doc.owner.id===this.documentOverview.user.id) {
                         // We are copying from and to the same user.
-                        saveCopy(
+                        let copier = new SaveCopy(
                             doc,
                             this.documentOverview.bibDB.db,
                             this.documentOverview.imageDB,
                             this.documentOverview.bibDB.db,
                             this.documentOverview.imageDB,
                             this.documentOverview.user
-                        ).then(
+                        )
+
+                        copier.init().then(
                             ({doc, docInfo}) => {
                                 this.documentOverview.documentList.push(doc)
                                 this.documentOverview.stopDocumentTable()
@@ -217,14 +219,16 @@ export class DocumentOverviewActions {
                                 /* We are copying from another user, so we are first loading
                                  the databases from that user
                                 */
-                                saveCopy(
+                                let copier = new SaveCopy(
                                     doc,
                                     oldBibDB,
                                     oldImageDB,
                                     this.documentOverview.bibDB.db,
                                     this.documentOverview.imageDB,
                                     this.documentOverview.user
-                                ).then(
+                                )
+
+                                copier.init().then(
                                     ({doc, docInfo}) => {
                                         this.documentOverview.documentList.push(doc)
                                         this.documentOverview.stopDocumentTable()

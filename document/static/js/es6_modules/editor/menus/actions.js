@@ -1,4 +1,4 @@
-import {SaveRevision, saveCopy} from "../../exporter/native"
+import {SaveRevision, SaveCopy} from "../../exporter/native"
 import {ExportFidusFile} from "../../exporter/native/file"
 import {LatexExporter} from "../../exporter/latex"
 import {HTMLExporter} from "../../exporter/html"
@@ -34,14 +34,15 @@ export class ModMenusActions {
         this.mod.editor.save().then(() => {
             if (this.mod.editor.doc.owner.id === this.mod.editor.user.id) {
                 // We are copying from and to the same user. We don't need different databases for this.
-                saveCopy(
+                let copier = new SaveCopy(
                     this.mod.editor.doc,
                     this.mod.editor.bibDB.db,
                     this.mod.editor.imageDB.db,
                     this.mod.editor.bibDB.db,
                     this.mod.editor.imageDB.db,
                     this.mod.editor.user
-                ).then(
+                )
+                copier.init().then(
                     ({doc, docInfo}) => {
                         window.location.href = `/document/${doc.id}/`
                     }
@@ -58,14 +59,15 @@ export class ModMenusActions {
                 ).then(
                     () => this.mod.editor.getImageDB(this.mod.editor.user.id)
                 ).then(() => {
-                    saveCopy(
+                    let copier = new SaveCopy(
                         this.mod.editor.doc,
                         oldBibDB,
                         oldImageDB,
                         this.mod.editor.bibDB.db,
                         this.mod.editor.imageDB.db,
                         this.mod.editor.user
-                    ).then(
+                    )
+                    copier.init().then(
                         ({doc, docInfo}) => {
                             window.location.href = `/document/${doc.id}/`
                         }

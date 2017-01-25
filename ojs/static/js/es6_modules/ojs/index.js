@@ -1,4 +1,4 @@
-import {saveCopy} from "../exporter/native"
+import {SaveCopy} from "../exporter/native"
 import {journalDialogTemplate, reviewSubmitDialogTemplate, revisionSubmitDialogTemplate} from "./templates"
 import {addAlert, csrfToken} from "../common"
 
@@ -60,14 +60,17 @@ let submitDoc = function(editor) {
 //    ).then(
 //        () => editor.getImageDB(editor.user.id)
 //    ).then(
-        () => saveCopy(
-            editor.doc,
-            oldBibDB,
-            oldImageDB,
-            editor.bibDB.db,
-            editor.imageDB.db,
-            editor.user
-        )
+        () => {
+            let copier = new SaveCopy(
+                editor.doc,
+                oldBibDB,
+                oldImageDB,
+                editor.bibDB.db,
+                editor.imageDB.db,
+                editor.user
+            )
+            return copier.init()
+        }
     ).then(
         ({
             doc,

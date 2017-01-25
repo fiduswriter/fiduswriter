@@ -19,15 +19,14 @@ export class SaveCopy {
         let shrinker = new ShrinkFidus(this.doc, this.oldImageDB, this.oldBibDB)
         return shrinker.init().then(
             ({doc, shrunkImageDB, shrunkBibDB, httpIncludes}) => {
-
                 let importer = new ImportNative(
                     doc,
                     shrunkBibDB,
                     shrunkImageDB,
                     httpIncludes,
                     this.newUser,
-                    this.newBibDB.db,
-                    this.newImageDB.db
+                    this.newBibDB,
+                    this.newImageDB
                 )
                 return importer.init()
         }).then(

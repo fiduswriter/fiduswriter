@@ -33,7 +33,7 @@ export class SaveImages {
                     crossDomain: false, // obviates need for sameOrigin test
                     beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
                     success: (response, textStatus, jqXHR) => {
-                        this.imageDB[response.values.pk] = response.values
+                        this.imageDB.db[response.values.pk] = response.values
                         let oldId = this.newImageEntries[this.counter].oldId
                         this.ImageTranslationTable[oldId] = response.values.pk
                         this.counter++

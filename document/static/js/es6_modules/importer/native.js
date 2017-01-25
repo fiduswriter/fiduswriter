@@ -16,8 +16,8 @@ export class ImportNative {
     }
 
     init() {
-        let [BibTranslationTable, newBibEntries] = this.compareBibDBs()
-        let [ImageTranslationTable, newImageEntries] = this.compareImageDBs()
+        let {BibTranslationTable, newBibEntries} = this.compareBibDBs()
+        let {ImageTranslationTable, newImageEntries} = this.compareImageDBs()
 
         // We first create any new entries in the DB for images and/or
         // bibliography items.
@@ -47,8 +47,8 @@ export class ImportNative {
         Object.keys(this.impBibDB).forEach(impKey => {
             let impEntry = this.impBibDB[impKey]
             let matchEntries = []
-            Object.keys(this.bibDB).forEach(key => {
-                let bibEntry = this.bibDB[key]
+            Object.keys(this.bibDB.db).forEach(key => {
+                let bibEntry = this.bibDB.db[key]
                 if(
                     impEntry.bib_type === bibEntry.bib_type &&
                     _.isEqual(impEntry.fields, bibEntry.fields)
@@ -65,7 +65,7 @@ export class ImportNative {
             }
         })
 
-        return [BibTranslationTable, newBibEntries]
+        return {BibTranslationTable, newBibEntries}
     }
 
     compareImageDBs() {
@@ -75,7 +75,7 @@ export class ImportNative {
         Object.keys(this.impImageDB).map(key => parseInt(key)).forEach(key => {
             let imageObj = this.impImageDB[key]
             let matchEntries = _.where(
-                this.imageDB,
+                this.imageDB.db,
                 {checksum: imageObj.checksum}
             )
             if (0 === matchEntries.length) {
@@ -86,15 +86,13 @@ export class ImportNative {
                     file_type: imageObj.file_type,
                     checksum: imageObj.checksum
                 })
-            } else if (!(_.findWhere(matchEntries, {pk: key}))) {
-                // There is at least one match, and none of the matches have
-                // the same id as the key in this.impImageDB.
-                // We therefore pick the first match.
+            } else {
+                // There is at least one match.
+                // We pick the first.
                 ImageTranslationTable[key] = matchEntries[0].pk
             }
         })
-
-        return [ImageTranslationTable, newImageEntries]
+        return {ImageTranslationTable, newImageEntries}
     }
 
 

@@ -36,7 +36,7 @@ export class SaveBibs {
                     beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
                     success: (response, textStatus, jqXHR) => {
                         response.id_translations.forEach(trans=>{
-                            this.bibDB[trans[1]] = this.newBibEntries[trans[0]]
+                            this.bibDB.db[trans[1]] = this.newBibEntries[trans[0]]
                             this.BibTranslationTable[trans[0]] = trans[1]
                         })
                         resolve()

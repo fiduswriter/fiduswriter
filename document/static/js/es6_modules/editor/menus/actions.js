@@ -7,6 +7,8 @@ import {DocxExporter} from "../../exporter/docx"
 import {OdtExporter} from "../../exporter/odt"
 import {selectJournal, reviewSubmit, submissionRevisionDone} from "../../ojs"
 import {revisionDialog} from "./dialogs"
+import {BibliographyDB} from "../../bibliography/database"
+import {ImageDB} from "../../images/database"
 
 export class ModMenusActions {
     constructor(mod) {
@@ -31,50 +33,39 @@ export class ModMenusActions {
     }
 
     saveCopy() {
-        this.mod.editor.save().then(() => {
-            if (this.mod.editor.doc.owner.id === this.mod.editor.user.id) {
-                // We are copying from and to the same user. We don't need different databases for this.
-                let copier = new SaveCopy(
-                    this.mod.editor.doc,
-                    this.mod.editor.bibDB,
-                    this.mod.editor.imageDB,
-                    this.mod.editor.bibDB,
-                    this.mod.editor.imageDB,
-                    this.mod.editor.user
-                )
-                copier.init().then(
-                    ({doc, docInfo}) => {
-                        window.location.href = `/document/${doc.id}/`
-                    }
-                )
-            } else {
-                // We copy from one user to another. So we first load one set of
-                // databases, and then the other
-                let oldBibDB = this.mod.editor.bibDB
-                let oldImageDB = this.mod.editor.imageDB
-                this.mod.editor.removeBibDB()
-                this.mod.editor.removeImageDB()
-                this.mod.editor.getBibDB(
-                    this.mod.editor.user.id
-                ).then(
-                    () => this.mod.editor.getImageDB(this.mod.editor.user.id)
-                ).then(() => {
-                    let copier = new SaveCopy(
-                        this.mod.editor.doc,
-                        oldBibDB,
-                        oldImageDB,
-                        this.mod.editor.bibDB,
-                        this.mod.editor.imageDB,
-                        this.mod.editor.user
+        this.mod.editor.save().then(
+            () => {
+                let newBibDB, newImageDB
+                if (this.mod.editor.doc.owner.id === this.mod.editor.user.id) {
+                    // We are copying from and to the same user.
+                    // We don't need different databases for this.
+                    newBibDB = this.mod.editor.bibDB
+                    newImageDB = this.mod.editor.imageDB
+                    return Promise.resolve({newBibDB, newImageDB})
+                } else {
+                    newBibDB = new BibliographyDB(this.mod.editor.user.id)
+                    newImageDB = new ImageDB(this.mod.editor.user.id)
+                    return newBibDB.getDB().then(
+                        () => newImageDB.getDB()
+                    ).then(
+                        () => Promise.resolve({newBibDB, newImageDB})
                     )
-                    copier.init().then(
-                        ({doc, docInfo}) => {
-                            window.location.href = `/document/${doc.id}/`
-                        }
-                    )
-                })
+                }
             }
-        })
+        ).then(({newBibDB, newImageDB}) => {
+            let copier = new SaveCopy(
+                this.mod.editor.doc,
+                this.mod.editor.bibDB,
+                this.mod.editor.imageDB,
+                newBibDB,
+                newImageDB,
+                this.mod.editor.user
+            )
+            return copier.init()
+        }).then(({doc, docInfo}) => {
+                window.location.href = `/document/${doc.id}/`
+            }
+        )
     }
 
     download() {

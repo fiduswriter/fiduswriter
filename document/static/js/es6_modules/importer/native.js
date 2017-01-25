@@ -1,7 +1,6 @@
 import {addAlert, csrfToken} from "../common"
 import {GetImages} from "./get-images"
 import {SaveImages} from "./save-images"
-import {SaveBibs} from "./save-bibs"
 
 export class ImportNative {
     /* Save document information into the database */
@@ -25,10 +24,11 @@ export class ImportNative {
         return imageGetter.init().then(() => {
             let imageSaver = new SaveImages(newImageEntries, ImageTranslationTable, this.imageDB)
             return imageSaver.init()
-        }).then(() => {
-            let bibSaver = new SaveBibs(newBibEntries, BibTranslationTable, this.bibDB)
-            return bibSaver.init()
-        }).then(() => {
+        }).then(
+            () => this.bibDB.saveBibEntries(newBibEntries, true)
+        ).then(
+            idTranslations => idTranslations.forEach(idTrans => {BibTranslationTable[idTrans[0]] = idTrans[1]})
+        ).then(() => {
             // We need to change some reference numbers in the document contents
             this.translateReferenceIds(BibTranslationTable, ImageTranslationTable)
             // We are good to go. All the used images and bibliography entries

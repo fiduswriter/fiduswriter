@@ -259,9 +259,11 @@ export class BibliographyOverview {
             let eID = jQuery(this).attr('data-id')
             let form = new BibEntryForm(eID, that.bibDB)
             form.init().then(
-                newBibPks => that.addBibList(newBibPks)
+                idTranslations => {
+                    let ids = idTranslations.map(idTrans => idTrans[1])
+                    return that.addBibList(ids)
+                }
             )
-
         })
 
         //open dropdown for bib category

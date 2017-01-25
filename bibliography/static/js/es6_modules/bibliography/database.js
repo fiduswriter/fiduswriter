@@ -147,13 +147,12 @@ export class BibliographyDB {
                 beforeSend: (xhr, settings) =>
                     xhr.setRequestHeader("X-CSRFToken", csrfToken),
                 success: (response, textStatus, jqXHR) => {
-                    let ids = []
-                    response['id_translations'].forEach(bibTrans => {
+                    let idTranslations = response['id_translations']
+                    idTranslations.forEach(bibTrans => {
                         this.db[bibTrans[1]] = tmpDB[bibTrans[0]]
-                        ids.push(bibTrans[1])
                     })
                     addAlert('success', gettext('The bibliography has been updated.'))
-                    resolve(ids)
+                    resolve(idTranslations)
                 },
                 error: (jqXHR, textStatus, errorThrown) => {
                     addAlert('error', errorThrown)

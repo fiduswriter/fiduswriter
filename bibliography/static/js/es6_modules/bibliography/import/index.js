@@ -142,8 +142,9 @@ export class BibLatexFileImporter {
             this.bibKeys.slice(fromNumber, toNumber).forEach((bibKey)=>{
                 currentChunk[bibKey] = this.tmpDB[bibKey]
             })
-            this.bibDB.saveBibEntries(currentChunk, true).then(ids => {
-                this.addToListCall(ids)
+            this.bibDB.saveBibEntries(currentChunk, true).then(idTranslations => {
+                let newIds = idTranslations.map(idTrans => idTrans[1])
+                this.addToListCall(newIds)
                 this.currentChunkNumber++
                 this.processChunk()
             })

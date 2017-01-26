@@ -134,10 +134,10 @@ export class OJSSubmit {
                         //addAlert('success','The paper was submitted to ojs')
                         let dataSubmission = new window.FormData()
                         dataSubmission.append('document_id', doc.id)
-                        dataSubmission.append('pre_document_id', this/editor.doc.id)
-                        if (editor.docInfo.submission.status == 'submitted') {
-                            dataSubmission.append('submission_id', editor.docInfo.submission.submission_id)
-                            dataSubmission.append('journal_id', editor.docInfo.submission.journal_id)
+                        dataSubmission.append('pre_document_id', this.editor.doc.id)
+                        if (this.editor.docInfo.submission.status == 'submitted') {
+                            dataSubmission.append('submission_id', this.editor.docInfo.submission.submission_id)
+                            dataSubmission.append('journal_id', this.editor.docInfo.submission.journal_id)
                         } else {
                             dataSubmission.append('journal_id', response.journal_id)
                             dataSubmission.append('submission_id', response.submission_id)

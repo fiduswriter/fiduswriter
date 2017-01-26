@@ -1,5 +1,4 @@
 import {searchTemplate,sowidaraTemplate, citationItemTemplate, selectedCitationTemplate} from "./templates"
-//import {nameToText} from "../../../bibliography/tools"
 import {nameToText, litToText} from "../../../bibliography/tools"
 /**
  * Class to search in dara and sowiport
@@ -9,6 +8,7 @@ export class SearchDialog {
         this.editor = mod.editor
         this.dialog(mod)
         this.fields = {}
+
     }
 
 
@@ -34,26 +34,17 @@ export class SearchDialog {
                 				var id = jQuery(this).parent().find("a.title").attr('id')
                                 var result = that.getByValue(list.docs, id)
                 				var itemTitle = result.title_full
-
 				                var author    = jQuery(this).parent().find("a.title").attr('itemAuthor')
 
-    				            //var bibPage      = jQuery(this).parent().find("a.title").attr('itemPage')
-				                var date      = result.publishDate_date//jQuery(this).parent().find("a.title").attr('itemDate')
+				                var date      = result.publishDate_date
 				                let bib_type = 'article'
-
-				                var bibFormat = "autocite"//jQuery('#citation-style-label').data('style')
-
-        			            //var bibPage = "19"
-        			            //var bibBefore = "See for example" // Or something like: "See for example"
-
+				                var bibFormat = "autocite"
     			            	let editor = mod.editor
                     			let nodeType = editor.currentPm.schema.nodes['citation']
 
 					            that.save((id), bib_type, author,date, editor, itemTitle)
 
-                                //console.log(editor.bibDB.getDB(this.callback))
-                                let bibEntry =  editor.bibDB.getID()//"45"// pk value from backend
-                                alert((bibEntry))
+                                let bibEntry =  editor.bibDB.getID()
 
                                 editor.currentPm.tr.replaceSelection(nodeType.createAndFill({
                                     format: bibFormat,
@@ -104,8 +95,8 @@ export class SearchDialog {
 
         returnObj['fields']['author'] =  [{"family":[{"type":"text","text":author}],"given":[{"type":"text","text":author}]}]
         returnObj['fields']['date'] = date
-        returnObj['fields']['title'] =  [{type: 'text', text: itemTitle}]//litToText(itemTitle)
-        returnObj['fields']['journaltitle'] =  [{type: 'text', text: "journaltitle"}]
+        returnObj['fields']['title'] =  [{type: 'text', text: itemTitle}]
+        //returnObj['fields']['journaltitle'] =  [{type: 'text', text: "journal"}]
 
         let saveObj = {}
         saveObj[Id] = returnObj
@@ -119,6 +110,8 @@ export class SearchDialog {
             isNew,
             this.callback
         )
+
+
 
     }
 

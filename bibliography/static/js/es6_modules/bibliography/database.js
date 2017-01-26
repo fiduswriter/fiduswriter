@@ -149,8 +149,8 @@ export class BibliographyDB {
 
     saveBibEntries(tmpDB, isNew, callback) {
 
-        console.log("i am in saveBibentries")
-        console.log(tmpDB)
+        //console.log("i am in saveBibentries")
+       // console.log(tmpDB)
         let that = this
         // Fields field need to be stringified for saving in database.
         // dbObject is a clone of tmpDB with a stringified fields-field, so
@@ -160,7 +160,7 @@ export class BibliographyDB {
             dbObject[bibKey] =  Object.assign({}, tmpDB[bibKey])
             dbObject[bibKey].entry_cat = JSON.stringify(tmpDB[bibKey].entry_cat)
             dbObject[bibKey].fields = JSON.stringify(tmpDB[bibKey].fields)
-            alert(dbObject[bibKey].fields)
+            //alert(dbObject[bibKey].fields)
         })
 
         console.log("dbobject")
@@ -215,13 +215,14 @@ export class BibliographyDB {
 
 
     setID(id){
-
+        //alert("setid")
+        //console.log(id)
         this.tmp_id = id;
     }
 
 
     getID(){
-
+        alert("getid")
         return this.tmp_id;
     }
 

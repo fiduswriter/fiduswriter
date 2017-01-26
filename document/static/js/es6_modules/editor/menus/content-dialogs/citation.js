@@ -1,5 +1,6 @@
 import {configureCitationTemplate, citationItemTemplate, selectedCitationTemplate} from "./templates"
 import {BibEntryForm} from "../../../bibliography/form"
+import {SearchDialog, CiteForm} from "../../../bibliography/form"
 import {addDropdownBox, setCheckableLabel} from "../../../common/common"
 import {nameToText, litToText} from "../../../bibliography/tools"
 
@@ -94,6 +95,25 @@ export let citationDialog = function (mod) {
                 })
             })
             form.init()
+        },
+        class: 'fw-button fw-light fw-add-button register-new-bib-source'
+    })
+
+
+    diaButtons.push({
+        text: gettext('Import new source from database'),
+        click: function() {
+             let form = new CiteForm(mod, undefined, editor.bibDB, function(newBibPks) {
+                editor.mod.menus.citation.appendManyToCitationDialog(newBibPks)
+                jQuery('.fw-checkable').unbind('click')
+                jQuery('.fw-checkable').bind('click', function() {
+                    setCheckableLabel(jQuery(this))
+                })
+            })
+            form.init()
+            //let form = new SearchDialog(mod)
+            //form.init()
+
         },
         class: 'fw-button fw-light fw-add-button register-new-bib-source'
     })

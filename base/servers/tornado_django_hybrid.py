@@ -10,7 +10,7 @@ from base.handlers import DjangoStaticFilesHandler, HelloHandler, RobotsHandler
 
 from document.ws_views import DocumentWS
 from ojs.proxy_views import OJSProxy
-
+from base.proxy_views import Proxy
 
 def make_tornado_server():
     wsgi_app = WSGIContainer(get_wsgi_application())
@@ -22,6 +22,7 @@ def make_tornado_server():
         ('/robots.txt', RobotsHandler),
         ('/ws/doc/(\w+)', DocumentWS),
         ('/proxy/ojs/(\w+)', OJSProxy),
+        ('/proxy/([^?]*)', Proxy),
         ('.*', FallbackHandler, dict(fallback=wsgi_app))
     ])
 

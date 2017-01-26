@@ -9,7 +9,6 @@ export class BibLatexApiImporter {
         this.tmpDB = false
     }
 
-
     init() {
         // Add form to DOM
         let dialogEl = searchApiTemplate({})
@@ -17,9 +16,9 @@ export class BibLatexApiImporter {
         jQuery('body').append(dialogEl)
 
         let diaButtons = {
-            cancel: {
+            close: {
                 class: "fw-button fw-orange",
-                text: gettext('Cancel'),
+                text: gettext('Close'),
                 click: function() {
                     jQuery(this).dialog('close')
                 }
@@ -38,10 +37,8 @@ export class BibLatexApiImporter {
                 jQuery("#import-api-search").dialog('destroy').remove()
             }
         })
-        // init ui tabs
-        //jQuery('#bib-dialog-tabs').tabs()
 
-        document.getElementById('text-search').addEventListener('change', () => {
+        document.getElementById('text-search').addEventListener('input', () => {
             let searchTerm = jQuery("#text-search").val()
             jQuery("#import-api-search-result").empty()
             // Only search for queries with at least four letters
@@ -57,11 +54,15 @@ export class BibLatexApiImporter {
         jQuery.ajax({
             data: {
                 'wt': 'json',
-                'q': searchTerm
+                'q': searchTerm,
+                'qf': 'title_full title_sub title_de_txt title_en_txt title_es_txt Satit_str Sseries_str_mv journal_title_txt_mv zsabk_str^200 publications_str conf_str_mv description_de_txt_mv description_en_txt_mv description_es_txt_mv person_author_txtP_mv person_editor_txtP_mv person_supervisor_txtP_mv person_projectmanager_txtP_mv person_other_txtP_mv Shrsg_str_mv proj_editor_txtP_mv proj_supervisor_txtP_mv proj_tutor_txtP_mv proj_other_txtP_mv corp_research_isn_str_mv id entryId_str anum_no_str isbn zsissn_str_mv issn recorddoi_str_mv recordurn_str_mv recordurl_str_mv classification_no_str_mv topic_no_str_mv classification_txtP_mv meth_str_mv topic topic_free_str_mv topic_geogr_str topic_de_str_mv topic_en_str_mv search_schlagwoerter_txtP_mv corp_research_txtP_mv corp_funder_txtP_mv corp_author_txtP_mv corp_editor_txtP_mv corp_other_txtP_mv proj_editor_affil_str_mv proj_projectmanager_affil_str_mv proj_supervisor_affil_str_mv proj_tutor_affil_str_mv proj_other_affil_str_mv person_author_affil_str_mv person_editor_affil_str_mv person_other_affil_str_mv search_date_str_mv Sverl_str approach_str dataaquisition_str search_nummern_txt_mv duplicate_id_link_str_mv',
+                'rows': 5,
+                'defType': 'edismax',
+                'fl': 'id title doi description'
             },
             dataType: "jsonp",
             jsonp: 'json.wrf',
-            url: 'http://sowiportbeta.gesis.org/solr/select/?rows=50&start=51&indent=false&qf=title_full^700+title_sub^700+title_de_txt^450+title_en_txt^450+title_es_txt^450+Satit_str^500+Sseries_str_mv^300+journal_title_txt_mv^150+zsabk_str^200+publications_str^400+conf_str_mv+description_de_txt_mv^450+description_en_txt_mv^450+description_es_txt_mv^450+person_author_txtP_mv^700+person_editor_txtP_mv^600+person_supervisor_txtP_mv^450+person_projectmanager_txtP_mv^450+person_other_txtP_mv^450+Shrsg_str_mv^650+proj_editor_txtP_mv^700+proj_supervisor_txtP_mv^450+proj_tutor_txtP_mv^450+proj_other_txtP_mv^450+corp_research_isn_str_mv^450+id^450+entryId_str^450+anum_no_str^250+isbn^450+zsissn_str_mv^450+issn^450+recorddoi_str_mv^450+recordurn_str_mv^450+recordurl_str_mv^450+classification_no_str_mv^450+topic_no_str_mv^250+classification_txtP_mv^400+meth_str_mv^300+topic^650+topic_free_str_mv^650+topic_geogr_str^650+topic_de_str_mv^650+topic_en_str_mv^650+search_schlagwoerter_txtP_mv^300+corp_research_txtP_mv^500+corp_funder_txtP_mv^150+corp_author_txtP_mv^700+corp_editor_txtP_mv^600+corp_other_txtP_mv^150+proj_editor_affil_str_mv+proj_projectmanager_affil_str_mv+proj_supervisor_affil_str_mv+proj_tutor_affil_str_mv+proj_other_affil_str_mv+person_author_affil_str_mv+person_editor_affil_str_mv+person_other_affil_str_mv+search_date_str_mv+Sverl_str^300+approach_str^300+dataaquisition_str^300+search_nummern_txt_mv^650+duplicate_id_link_str_mv^650&defType=edismax&boost=recip(ms(NOW%2CpublishDate_date)%2C3.16e-11%2C1%2C1)&mm=4<-1+7<80%25&fl=*%2Cscore&fq=informationtype_str%3A"literature"&spellcheck=true&spellcheck.q=armut&spellcheck.dictionary=basicSpell&hl=true&hl.fl=*&hl.simple.pre={{{{START_HILITE}}}}&hl.simple.post={{{{END_HILITE}}}}&wt=json&json.nl=arrarr',
+            url: '/proxy/http://sowiportbeta.gesis.org/solr/select/',
 
             success: function(result) {
                 let list = result['response']
@@ -72,13 +73,51 @@ export class BibLatexApiImporter {
 
                 jQuery('#import-api-search-result .api-import').bind('click', function() {
                     let id = jQuery(this).attr('data-id')
-                    console.log(id)
-
+                    that.downloadBibtex(id)
                 })
             }
         })
     }
 
+    downloadBibtex(id) {
+        jQuery.ajax({
+            dataType: 'text',
+            method: 'GET',
+            url: `/proxy/http://sowiportbeta.gesis.org/Record/${id}/Export?style=BibTeX`,
+            success: response => {
+                this.importBibtex(response)
+            }
+        })
+    }
 
+    importBibtex(bibtex) {
+        // Mostly copied from ./file.js
+        let bibData = new BibLatexParser(bibtex)
+        let tmpDB = bibData.output
+        let bibKeys = Object.keys(tmpDB)
+        // There should only be one bibkey
+        // We iterate anyway, just in case there is more than one.
+        bibKeys.forEach(bibKey => {
+            let bibEntry = tmpDB[bibKey]
+            // We add an empty category list for all newly imported bib entries.
+            bibEntry.entry_cat = []
+            // If the entry has no title, add an empty title
+            if (!bibEntry.fields.title) {
+                bibEntry.fields.title = []
+            }
+            // If the entry has no date, add an uncertain date
+            if (!bibEntry.fields.date) {
+                bibEntry.fields.date = 'uuuu'
+            }
+            // If the entry has no editor or author, add empty author
+            if (!bibEntry.fields.author && !bibEntry.fields.editor) {
+                bibEntry.fields.author = [{'literal': []}]
+            }
+        })
+        this.bibDB.saveBibEntries(tmpDB, true).then(idTranslations => {
+            let newIds = idTranslations.map(idTrans => idTrans[1])
+            this.addToListCall(newIds)
+        })
+    }
 
 }

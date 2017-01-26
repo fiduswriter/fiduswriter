@@ -37,10 +37,9 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
             self.set_status(401)
             return
         if relative_url == 'articles':
-            form_values = json_decode(self.request.body)
-            journal_id = form_values['journal_id']
-            journal = Journal.objects.get(id=journal_id)
-            form_values['key'] = journal.ojs_key
+            journal_id = self.get_argument('journal_id')
+            journal = Journal.objects.get(ojs_jid=journal_id)
+            key = journal.ojs_key
             base_url = journal.ojs_url
         else:
             return
@@ -48,10 +47,12 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
         url = base_url + plugin_path + relative_url
         http = AsyncHTTPClient()
         http.fetch(
-            url,
-            method='POST',
+            HTTPRequest(
+                url_concat(url, {'key': key}),
+                'POST'
+            ),
             callback=self.on_response,
-            body=json_encode(form_values)
+            body = self.request.body
         )
 
     # The response is asynchronous so that the getting of the data from the OJS

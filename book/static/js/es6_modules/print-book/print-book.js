@@ -122,7 +122,6 @@ export class PrintBook {
             this.bibDB,
             true,
             function() {
-                console.log('there')
                 that.fillPrintPageTwo()
             }
         )

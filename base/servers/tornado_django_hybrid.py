@@ -12,6 +12,7 @@ from document.ws_views import DocumentWS
 from ojs.proxy_views import OJSProxy
 from base.proxy_views import Proxy
 
+
 def make_tornado_server():
     wsgi_app = WSGIContainer(get_wsgi_application())
     tornado_app = Application([

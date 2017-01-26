@@ -1,7 +1,5 @@
 from tornado.web import RequestHandler, asynchronous, HTTPError
 from tornado.httpclient import AsyncHTTPClient
-from tornado.httpclient import HTTPRequest
-from tornado.httputil import url_concat
 from base.django_handler_mixin import DjangoHandlerMixin
 
 
@@ -22,8 +20,8 @@ class Proxy(DjangoHandlerMixin, RequestHandler):
             callback=self.on_response
         )
 
-    # The response is asynchronous so that the getting of the data from the remote
-    # server doesn't block the server connection.
+    # The response is asynchronous so that the getting of the data from the
+    # remote server doesn't block the server connection.
     def on_response(self, response):
         if response.error:
             raise HTTPError(500)

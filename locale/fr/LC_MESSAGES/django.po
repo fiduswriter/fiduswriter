@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-08 17:01-0600\n"
+"POT-Creation-Date: 2017-01-22 12:14-0600\n"
 "PO-Revision-Date: 2016-06-17 15:21+0200\n"
 "Last-Translator: Nicolas Rochard <nrochard@gmail.com>\n"
 "Language-Team: français <nrochard@gmail.com>\n"
@@ -229,15 +229,15 @@ msgstr "Propriétaire"
 msgid "Rights"
 msgstr "Droits"
 
-#: book/views.py:317 document/views.py:425
+#: book/views.py:319 document/views.py:186
 msgid "Untitled"
 msgstr "Sans Titre"
 
-#: book/views.py:333
+#: book/views.py:335
 msgid "Book shared:"
 msgstr "Livre partagé:"
 
-#: book/views.py:362
+#: book/views.py:364
 msgid "Fidus Writer book write access"
 msgstr "Accès en écriture du Livre Fidus Writer"
 
@@ -662,11 +662,11 @@ msgstr ""
 msgid "Update all documents (DANGER!)"
 msgstr ""
 
-#: document/views.py:439
+#: document/views.py:200
 msgid "Document shared:"
 msgstr "Document partagé:"
 
-#: document/views.py:465
+#: document/views.py:226
 msgid "Fidus Writer document write access"
 msgstr "Droits d'écriture du document Fidus Writer"
 
@@ -684,29 +684,62 @@ msgstr "soumettre"
 msgid "Thank you for your comment!"
 msgstr "Merci pour votre commentaire!"
 
-#: fiduswriter/settings.py:245
+#: fiduswriter/settings.py:246
 msgid "English"
 msgstr "Anglais"
 
-#: fiduswriter/settings.py:246
+#: fiduswriter/settings.py:247
 msgid "Bulgarian"
 msgstr "Bulgare"
 
-#: fiduswriter/settings.py:247
+#: fiduswriter/settings.py:248
 msgid "German"
 msgstr "Allemand"
 
-#: fiduswriter/settings.py:248
+#: fiduswriter/settings.py:249
 msgid "French"
 msgstr ""
 
-#: fiduswriter/settings.py:249
+#: fiduswriter/settings.py:250
 msgid "Italian"
 msgstr "Italien"
 
-#: fiduswriter/settings.py:250
+#: fiduswriter/settings.py:251
 msgid "Spanish"
 msgstr "Espagnol"
+
+#: ojs/templates/ojs/register_journals.html:3
+#: ojs/templates/ojs/register_journals.html:18
+#, fuzzy
+#| msgid "Register new source"
+msgid "Register journals"
+msgstr "Enregistrer une nouvelle source"
+
+#: ojs/templates/ojs/register_journals.html:20
+msgid ""
+"\n"
+"            Register the journals from a particular OJS instance. Insert "
+"first the\n"
+"            URL and Key of the OJS installation. Decide then for each "
+"journal you\n"
+"            want to connect with Fidus Writer which user should be "
+"registered as\n"
+"            their editor.\n"
+"            </thead>\n"
+"            "
+msgstr ""
+
+#: ojs/templates/ojs/register_journals.html:29
+msgid "URL"
+msgstr ""
+
+#: ojs/templates/ojs/register_journals.html:30
+msgid "Key"
+msgstr ""
+
+#: ojs/templates/ojs/register_journals.html:31
+msgid "Query available journals"
+msgstr ""
 
 #: user/templates/account/base.html:52 user/templates/account/login.html:6
 #: user/templates/account/signup.html:9

@@ -4,6 +4,14 @@ export let linkDialogTemplate = _.template('\
         <p><input class="link" type="text" value="<%- link  %>" placeholder="' + gettext("Link") + '"/></p>\
     </div>\
 ')
+/** Dialog to add a note to a revision before saving. */
+export let revisionDialogTemplate = _.template('\
+<div title="'+gettext('Revision description')+'">\
+  <p>\
+    <input type="text" class="revision-note" placeholder="'+gettext('Description (optional)')+'">\
+  </p>\
+</div>')
+
 export let tableInsertTemplate = _.template(`
     <li>
         <table class="insert-table-selection">

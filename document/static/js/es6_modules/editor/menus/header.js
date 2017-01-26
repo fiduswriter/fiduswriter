@@ -78,10 +78,6 @@ export class ModMenusHeader {
               this.mod.actions.close()
           })
 
-          jQuery(document).on('mousedown', '.submit-ojs:not(.disabled)', () => {
-              this.mod.actions.submitOjs()
-          })
-
           // Document Style switching
           jQuery(document).on('click', '.documentstyle-menu:not(.disabled)', () => {
               jQuery('span.docstyle.selected').removeClass('selected')

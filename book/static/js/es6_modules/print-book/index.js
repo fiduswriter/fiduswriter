@@ -72,7 +72,7 @@ export class PrintBook {
         this.printConfig['pageHeight'] = this.pageSizes[this.theBook.settings.papersize].height
         this.printConfig['pageWidth'] = this.pageSizes[this.theBook.settings.papersize].width
 
-        this.bibDB = new BibliographyDB(this.documentOwners.join(','), false, false, false)
+        this.bibDB = new BibliographyDB(this.documentOwners.join(','))
 
         this.bibDB.getDB().then(() => this.fillPrintPage())
 

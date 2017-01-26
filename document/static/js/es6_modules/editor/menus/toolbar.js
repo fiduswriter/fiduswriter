@@ -1,8 +1,4 @@
-import {citationDialog} from "./content-dialogs/citation"
-import {FigureDialog} from "./content-dialogs/figure"
-import {linkDialog} from "./content-dialogs/link"
-import {TableDropdown} from "./content-dialogs/table"
-import {MathDialog} from "./content-dialogs/math"
+import {citationDialog, FigureDialog, linkDialog, TableDropdown, MathDialog} from "./dialogs"
 import {commands} from "prosemirror-old/dist/edit/commands"
 
 /* Bindings for the toolbar menu */
@@ -45,13 +41,6 @@ export class ModMenusToolbar {
                 this.mod.editor.mod.comments.interactions.createNewComment()
             )
         })
-
-        //review finished
-        jQuery(document).on(
-            'click',
-            '#reviewed:not(.disabled)',
-            () => this.mod.actions.submitReview()
-        )
 
         jQuery(document).on(
             'click',

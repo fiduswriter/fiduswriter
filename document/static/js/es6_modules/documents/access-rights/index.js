@@ -56,21 +56,23 @@ export class DocumentAccessRightsDialog {
 
         let diaButtons = {}
         diaButtons[gettext('Add new contact')] = () => {
-            addMemberDialog(memberData => {
-                jQuery('#my-contacts .fw-document-table-body').append(
-                    accessRightTrTemplate({contacts: [memberData]})
-                )
-                jQuery('#share-member table tbody').append(
-                    collaboratorsTemplate({'collaborators': [{
-                        user_id: memberData.id,
-                        user_name: memberData.name,
-                        avatar: memberData.avatar,
-                        rights: 'read'
-                    }]})
-                )
-                this.collaboratorFunctionsEvent()
-                this.newContactCall(memberData)
-            })
+            addMemberDialog().then(
+                memberData => {
+                    jQuery('#my-contacts .fw-document-table-body').append(
+                        accessRightTrTemplate({contacts: [memberData]})
+                    )
+                    jQuery('#share-member table tbody').append(
+                        collaboratorsTemplate({'collaborators': [{
+                            user_id: memberData.id,
+                            user_name: memberData.name,
+                            avatar: memberData.avatar,
+                            rights: 'read'
+                        }]})
+                    )
+                    this.collaboratorFunctionsEvent()
+                    this.newContactCall(memberData)
+                }
+            )
         }
         let that = this
         diaButtons[gettext('Submit')] = function () {

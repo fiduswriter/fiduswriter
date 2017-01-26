@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-08 17:01-0600\n"
+"POT-Creation-Date: 2017-01-22 12:14-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -216,15 +216,15 @@ msgstr ""
 msgid "Rights"
 msgstr ""
 
-#: book/views.py:317 document/views.py:425
+#: book/views.py:319 document/views.py:186
 msgid "Untitled"
 msgstr ""
 
-#: book/views.py:333
+#: book/views.py:335
 msgid "Book shared:"
 msgstr ""
 
-#: book/views.py:362
+#: book/views.py:364
 msgid "Fidus Writer book write access"
 msgstr ""
 
@@ -635,11 +635,11 @@ msgstr ""
 msgid "Update all documents (DANGER!)"
 msgstr ""
 
-#: document/views.py:439
+#: document/views.py:200
 msgid "Document shared:"
 msgstr ""
 
-#: document/views.py:465
+#: document/views.py:226
 msgid "Fidus Writer document write access"
 msgstr ""
 
@@ -657,28 +657,59 @@ msgstr ""
 msgid "Thank you for your comment!"
 msgstr ""
 
-#: fiduswriter/settings.py:245
+#: fiduswriter/settings.py:246
 msgid "English"
 msgstr ""
 
-#: fiduswriter/settings.py:246
+#: fiduswriter/settings.py:247
 msgid "Bulgarian"
 msgstr ""
 
-#: fiduswriter/settings.py:247
+#: fiduswriter/settings.py:248
 msgid "German"
 msgstr ""
 
-#: fiduswriter/settings.py:248
+#: fiduswriter/settings.py:249
 msgid "French"
 msgstr ""
 
-#: fiduswriter/settings.py:249
+#: fiduswriter/settings.py:250
 msgid "Italian"
 msgstr ""
 
-#: fiduswriter/settings.py:250
+#: fiduswriter/settings.py:251
 msgid "Spanish"
+msgstr ""
+
+#: ojs/templates/ojs/register_journals.html:3
+#: ojs/templates/ojs/register_journals.html:18
+msgid "Register journals"
+msgstr ""
+
+#: ojs/templates/ojs/register_journals.html:20
+msgid ""
+"\n"
+"            Register the journals from a particular OJS instance. Insert "
+"first the\n"
+"            URL and Key of the OJS installation. Decide then for each "
+"journal you\n"
+"            want to connect with Fidus Writer which user should be "
+"registered as\n"
+"            their editor.\n"
+"            </thead>\n"
+"            "
+msgstr ""
+
+#: ojs/templates/ojs/register_journals.html:29
+msgid "URL"
+msgstr ""
+
+#: ojs/templates/ojs/register_journals.html:30
+msgid "Key"
+msgstr ""
+
+#: ojs/templates/ojs/register_journals.html:31
+msgid "Query available journals"
 msgstr ""
 
 #: user/templates/account/base.html:52 user/templates/account/login.html:6

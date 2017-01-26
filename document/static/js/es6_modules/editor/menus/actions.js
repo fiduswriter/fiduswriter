@@ -5,7 +5,7 @@ import {HTMLExporter} from "../../exporter/html"
 import {EpubExporter} from "../../exporter/epub"
 import {DocxExporter} from "../../exporter/docx"
 import {OdtExporter} from "../../exporter/odt"
-import {reviewSubmit, submissionRevisionDone} from "../../ojs"
+import {reviewSubmit} from "../../ojs"
 import {revisionDialog} from "./dialogs"
 import {BibliographyDB} from "../../bibliography/database"
 import {ImageDB} from "../../images/database"
@@ -135,10 +135,6 @@ export class ModMenusActions {
 
     submitReview() {
         this.mod.editor.save().then(() => reviewSubmit(this.mod.editor))
-    }
-
-    revisionFinished() {
-        this.mod.editor.save().then(() => submissionRevisionDone(this.mod.editor))
     }
 
     returnToOJS() {

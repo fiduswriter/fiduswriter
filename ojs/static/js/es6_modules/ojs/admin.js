@@ -1,6 +1,8 @@
-import {noSpaceTmp, csrfToken, addAlert} from "../../common"
+import {noSpaceTmp, csrfToken, addAlert} from "../common"
 
-export class RegisterJournals {
+// Adds capabilities for admins to register journals
+
+export class AdminRegisterJournals {
     constructor() {
         this.journals = []
         this.ojsUrl = ''

@@ -42,13 +42,6 @@ export class ModMenusToolbar {
             )
         })
 
-        //review finished
-        jQuery(document).on(
-            'click',
-            '#reviewed:not(.disabled)',
-            () => this.mod.actions.submitReview()
-        )
-
         jQuery(document).on(
             'click',
             '#revision-done:not(.disabled)',

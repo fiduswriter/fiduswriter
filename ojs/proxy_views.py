@@ -3,9 +3,9 @@ from tornado.httpclient import AsyncHTTPClient
 from tornado.httpclient import HTTPRequest
 from tornado.httputil import url_concat
 from base.django_handler_mixin import DjangoHandlerMixin
-from tornado.escape import json_decode, json_encode
 
 from .models import Journal
+
 
 class OJSProxy(DjangoHandlerMixin, RequestHandler):
     @asynchronous
@@ -37,7 +37,7 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
             self.set_status(401)
             return
         if relative_url == 'articles':
-            journal_id = self.get_argument('journal_id')
+            journal_id = self.get_argument('j_id')
             journal = Journal.objects.get(ojs_jid=journal_id)
             key = journal.ojs_key
             base_url = journal.ojs_url
@@ -52,7 +52,7 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
                 'POST'
             ),
             callback=self.on_response,
-            body = self.request.body
+            body=self.request.body
         )
 
     # The response is asynchronous so that the getting of the data from the OJS

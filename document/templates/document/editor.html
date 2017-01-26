@@ -160,6 +160,11 @@
                                     LaTeX
                                 </span>
                             </li>
+			    <li>
+                                <span class="fw-pulldown-item compiled_latex" title="{% trans "Export the document to a Latex file compiled as a PDF." %}">
+                                    LaTeX(compiled)
+                                </span>
+                            </li>
                             {% for export_template in export_templates %}
                                 <li>
                                     <span class="fw-pulldown-item template-export" data-filetype="{{ export_template.file_type }}" data-template="{{ export_template.template_file.url }}" title="{% trans "Export the document to a template:" %} {{ export_template.file_name }} ({{ export_template.file_type }})">

@@ -18,17 +18,17 @@ export class ModMenusHeader {
                   '.fw-pulldown'))
           })
 
-          let docStyleMenu = document.getElementById("documentstyle-list")
-          documentStyleList.forEach(docStyle => {
-              let newMenuItem = document.createElement("li")
-              newMenuItem.innerHTML =
-                "<span class='fw-pulldown-item docstyle' data-docstyle='" +
-                docStyle.filename + "' title='" +
-                docStyle.title + "'>" +
-                docStyle.title + "</span>"
-
-              docStyleMenu.appendChild(newMenuItem)
-          })
+//          let docStyleMenu = document.getElementById("documentstyle-list")
+//          documentStyleList.forEach(docStyle => {
+//              let newMenuItem = document.createElement("li")
+//              newMenuItem.innerHTML =
+//                "<span class='fw-pulldown-item docstyle' data-docstyle='" +
+//                docStyle.filename + "' title='" +
+//                docStyle.title + "'>" +
+//                docStyle.title + "</span>"
+//
+//              docStyleMenu.appendChild(newMenuItem)
+//          })
 
           let citationStyleMenu = document.getElementById("citationstyle-list")
           Object.keys(citationDefinitions.styles).forEach(citDef => {
@@ -63,7 +63,10 @@ export class ModMenusHeader {
               that.mod.actions.downloadTemplateExport(templateUrl, fileType)
           })
           jQuery(document).on('mousedown', '.latex:not(.disabled)', () => {
-              this.mod.actions.downloadLatex()
+              this.mod.actions.downloadLatex(false)
+          })
+	  jQuery(document).on('mousedown', '.compiled_latex:not(.disabled)', () => {
+              this.mod.actions.downloadLatex(true)
           })
           jQuery(document).on('mousedown', '.epub:not(.disabled)', () => {
               this.mod.actions.downloadEpub()

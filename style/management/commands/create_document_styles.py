@@ -8,6 +8,9 @@ from django.core.management.base import BaseCommand
 class Command(BaseCommand):
     help = ('Creates CSS files with the style definitions of all the document '
             'styles')
+   # def filebasename(self,url):
+    #    basename, extension = os.path.splitext(os.path.basename(url))
+     #   return basename
 
     def handle(self, *args, **options):
 
@@ -25,9 +28,12 @@ class Command(BaseCommand):
 
             if not default_document_style:
                 default_document_style = ds.filename
-
-            output_js += u'{filename: "' + ds.filename + \
-                '", title: "' + ds.title + '"},\n'
+      #      if ds.latexcls:
+       #         output_js += u'{filename: "' + ds.filename + \
+        #                     '", title: "' + ds.title + '", latexCls: "' + self.filebasename(ds.latexcls.url) + '"},\n'
+         #   else:
+          #      output_js += u'{filename: "' + ds.filename + \
+           #                  '", title: "' + ds.title + '"},\n'
             output_css = (
                 u'/** @file A document style definition. \n This file is '
                 'automatically created using ./manage.py '
@@ -76,3 +82,4 @@ class Command(BaseCommand):
         js_file.write(output_js.encode('utf8'))
 
         js_file.close()
+

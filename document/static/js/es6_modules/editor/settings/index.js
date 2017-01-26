@@ -30,15 +30,32 @@ export class ModSettings {
     /** Update the stylesheet used for the docStyle
      */
     updateDocStyleCSS() {
-        let docStyleLink = document.getElementById('document-style-link')
+	
+	if(!this.editor.styleDB.db[this.settings.documentstyle.split('_')[1]]){
+            this.settings.documentstyle='style_1'
+        }        
 
+	let docStyleLink = document.getElementById('document-style-link')
+	let stylesheet
         // Remove previous style.
         docStyleLink.parentElement.removeChild(docStyleLink.previousElementSibling)
+	// Aquire Current DBstyle
+	let style = this.editor.styleDB.db[this.settings.documentstyle.split('_')[1]]
+        this.editor.currentStyle=style
 
-        let stylesheet = loadCSS(
-            window.staticUrl + `css/document/${this.settings.documentstyle}.css`,
-            docStyleLink
-        )
+	 if(style && style.css && style.css!="Undefined"){
+            stylesheet = loadCSS(
+                style.css,
+                docStyleLink
+            )
+        }else{
+            if(style)
+            stylesheet = loadCSS(
+                window.staticUrl + 'css/document/' + style.filename + '.css',
+                docStyleLink
+            )
+        }
+
         stylesheet.addEventListener("load", () => {
             // We layout the comments 250 ms after the stylesheet has been loaded.
             // This should usually be enough to make the layout work correctly.

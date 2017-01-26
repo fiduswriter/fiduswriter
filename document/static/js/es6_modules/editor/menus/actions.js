@@ -95,13 +95,15 @@ export class ModMenusActions {
         })
     }
 
-    downloadLatex() {
+    downloadLatex(compiled) {
         this.mod.editor.save().then(() => {
-            new LatexExporter(
-                this.mod.editor.doc,
-                this.mod.editor.bibDB,
-                this.mod.editor.imageDB
-            )
+		new LatexExporter(
+		this.mod.editor.doc,
+		this.mod.editor.bibDB,
+		this.mod.editor.imageDB,
+		this.mod.editor.currentStyle,
+		compiled
+		)
         })
     }
 

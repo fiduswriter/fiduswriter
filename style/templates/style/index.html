@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load compress %}
+
+{% block title %}{% trans "Style Manager" %}{% endblock %}
+
+{% block extraheaders %}
+
+<!-- jQuery tablesorter -->
+<script type="text/javascript" src="{{ DATATABLES_URL }}"></script>
+<!-- Dropkick JS -->
+<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/libs/dropkick.css" />
+<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/dropkick.css" />
+<script type="text/javascript" src="{{ STATIC_URL }}js/libs/dropkick.min.js"></script>
+
+<script type="text/javascript" src="{{ STATIC_URL }}js/style-overview.es5.js"></script>
+
+
+{% endblock %}
+
+{% block contents %}
+<ul class="fw-document-menu">
+    <li class="fw-document-menu-item">
+        <div id="action-selection" class="fw-button fw-light fw-large">
+            <input type="checkbox" id="select-all-entry" />
+            <span id="select-action-dropdown" class="icon-down-dir"></span>
+        </div>
+        <div id="action-selection-pulldown" class="fw-pulldown fw-left">
+            <ul>
+                <li>
+                    <span class="fw-pulldown-item" data-action="delete">
+                        {% trans "Delete selected" %}
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </li>
+    <li class="fw-document-menu-item">
+        <span class="edit-style createNew fw-button fw-light fw-large">
+            {% trans "Upload new style" %}
+            <span class="icon-plus-circle"></span>
+        </span>
+    </li>
+</ul>
+<div class="fw-table-wrapper">
+    <table id="stylelist" class="tablesorter fw-document-table">
+        <thead class="fw-document-table-header">
+            <tr>
+                <td width="30"></td>
+                <th width="160">{% trans "Style" %}</th>
+                <th width="160">{% trans "CSS" %}</th>
+                <th width="160">{% trans "latex_cls" %}</th>
+                <th width="160">{% trans "word_cls" %}</th>
+                <th width="160">{% trans "Updated" %}</th>
+                <td width="25">{% trans "Delete" %}</td>
+            </tr>
+        </thead>
+        <tbody class="fw-document-table-body fw-large">
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

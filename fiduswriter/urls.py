@@ -32,6 +32,7 @@ urlpatterns = [
     url('^js_error_hook/', include('django_js_error_hook.urls')),
     url('^document/', include('document.urls')),
     url('^bibliography/', include('bibliography.urls')),
+    url('^style/', include('style.urls')),
 
     # I18n manual language switcher
     url('^i18n/', include('django.conf.urls.i18n')),

@@ -1,12 +1,14 @@
 import {escapeLatexText} from "./escape-latex"
 
 export class LatexExporterConvert {
-    constructor(exporter, imageDB, bibDB) {
+    constructor(exporter, imageDB, bibDB, compiled, docClass ='article') {
         this.exporter = exporter
         this.imageDB = imageDB
+        this.docClass=docClass
         this.bibDB = bibDB
+        this.compiled=compiled
         this.imageIds = []
-        this.usedBibDB = {}
+        this.bibIds = []
         // While walking the tree, we take note of the kinds of features That
         // are present in the file, so that we can assemble an preamble and
         // epilogue based on our findings.
@@ -22,19 +24,19 @@ export class LatexExporterConvert {
         let returnObject = {
             latex,
             imageIds: this.imageIds,
-            usedBibDB: this.usedBibDB
+            bibIds: this.bibIds
         }
         return returnObject
     }
 
     get docDeclaration() {
-        return '\\documentclass{article}\n'
+        return '\\documentclass{'+this.docClass+'}\n'
     }
 
 
     walkJson(node, options = {}) {
         let start = '', content = '', end = '',
-            placeFootnotesAfterBlock = false
+            placeFootnotesAfterBlock = false, that = this
 
         switch(node.type) {
             case 'article':
@@ -103,7 +105,6 @@ export class LatexExporterConvert {
                     placeFootnotesAfterBlock = true
                     options = _.clone(options)
                     options.onlyFootnoteMarkers = true
-                    options.unplacedFootnotes = []
                 }
                 break
             case 'code':
@@ -121,7 +122,6 @@ export class LatexExporterConvert {
                     placeFootnotesAfterBlock = true
                     options = _.clone(options)
                     options.onlyFootnoteMarkers = true
-                    options.unplacedFootnotes = []
                 }
                 break
             case 'bullet_list':
@@ -175,89 +175,59 @@ export class LatexExporterConvert {
                 content += escapeLatexText(node.text)
                 break
             case 'citation':
-                let references = node.attrs.references
-                let format = node.attrs.format
-                let citationCommand = '\\' + format
+                let citationEntries = node.attrs.bibEntry.split(','),
+                    citationBefore = node.attrs.bibBefore.split(','),
+                    citationPage = node.attrs.bibPage.split(','),
+                    citationFormat = node.attrs.bibFormat,
+                    citationCommand = '\\' + citationFormat
 
-                if (references.length > 1 &&
-                    references.every(ref => !ref.locator && !ref.prefix)
-                ) {
+                if (citationEntries.length > 1 &&
+                    citationBefore.join('').length === 0 &&
+                    citationPage.join('').length === 0) {
                     // multi source citation without page numbers or text before.
                     let citationEntryKeys = []
 
-                    let allCitationItemsPresent = references.map(ref => ref.id).every(
-                        citationEntry => {
-                            let bibDBEntry = this.bibDB.db[citationEntry]
-                            if (bibDBEntry) {
-                                if (!bibDBEntry) {
-                                    // Not present in bibliography database, skip it.
-                                    // TODO: Throw an error?
-                                    return false
-                                }
-                                if (!this.usedBibDB[citationEntry]) {
-                                    let citationKey = this.createUniqueCitationKey(
-                                        bibDBEntry.entry_key
-                                    )
-                                    this.usedBibDB[citationEntry] = Object.assign({}, bibDBEntry)
-                                    this.usedBibDB[citationEntry].entry_key = citationKey
-                                }
-                                citationEntryKeys.push(this.usedBibDB[citationEntry].entry_key)
+                    citationEntries.forEach(function(citationEntry) {
+                        let bibDBEntry = that.bibDB.db[citationEntry]
+                        if (bibDBEntry) {
+                            citationEntryKeys.push(bibDBEntry.entry_key)
+                            if (that.bibIds.indexOf(citationEntry) === -1) {
+                                that.bibIds.push(citationEntry)
                             }
-                            return true
                         }
-                    )
-                    if (allCitationItemsPresent) {
-                        citationCommand += `{${citationEntryKeys.join(',')}}`
-                    } else {
-                        citationCommand = false
-                    }
+                    })
+
+                    citationCommand += `{${citationEntryKeys.join(',')}}`
                 } else {
-                    if (references.length > 1) {
+                    if (citationEntries.length > 1) {
                         citationCommand += 's' // Switching from \autocite to \autocites
                     }
 
-                    let allCitationItemsPresent = references.every(
-                        ref => {
-                            let bibDBEntry = this.bibDB.db[ref.id]
-                            if (!bibDBEntry) {
-                                // Not present in bibliography database, skip it.
-                                // TODO: Throw an error?
-                                return false
-                            }
-
-                            if (ref.prefix) {
-                                citationCommand += `[${ref.prefix}]`
-                                if (!ref.locator) {
-                                    citationCommand += '[]'
-                                }
-                            }
-                            if (ref.locator) {
-                                citationCommand += `[${ref.locator}]`
-                            }
-                            citationCommand += '{'
-
-                            if (!this.usedBibDB[ref.id]) {
-                                let citationKey = this.createUniqueCitationKey(
-                                    bibDBEntry.entry_key
-                                )
-                                this.usedBibDB[ref.id] = Object.assign({}, bibDBEntry)
-                                this.usedBibDB[ref.id].entry_key = citationKey
-                            }
-                            citationCommand += this.usedBibDB[ref.id].entry_key
-                            citationCommand += '}'
-
-                            return true
+                    citationEntries.forEach(function(citationEntry, index) {
+                        if (!that.bibDB.db[citationEntry]) {
+                            return false // Not present in bibliography database, skip it.
                         }
-                    )
 
-                    if (!allCitationItemsPresent) {
-                        citationCommand = false
-                    }
+                        if (citationBefore[index] && citationBefore[index].length > 0) {
+                            citationCommand += `[${citationBefore[index]}]`
+                            if (!citationPage[index] || citationPage[index].length === 0) {
+                                citationCommand += '[]'
+                            }
+                        }
+                        if (citationPage[index] && citationPage[index].length > 0) {
+                            citationCommand += `[${citationPage[index]}]`
+                        }
+                        citationCommand += '{'
+
+                        citationCommand += that.bibDB.db[citationEntry].entry_key
+                        if (that.bibIds.indexOf(citationEntry) === -1) {
+                            that.bibIds.push(citationEntry)
+                        }
+                        citationCommand += '}'
+                    })
                 }
-                if (citationCommand) {
-                    content += citationCommand
-                    this.features.citations = true
-                }
+                content += citationCommand
+                this.features.citations = true
                 break
             case 'figure':
                 let latexPackage
@@ -276,7 +246,12 @@ export class LatexExporterConvert {
                         latexPackage = 'scaledgraphics'
                         this.features.images = true
                     }
-                    innerFigure += `\\${latexPackage}{${filename}}\n`
+                    if(this.compiled){
+                        innerFigure += `\\${latexPackage}{/images/${filename}}\n`
+                    }else{
+                        innerFigure += `\\${latexPackage}{${filename}}\n`
+                    }
+
                 } else {
                     let equation = node.attrs.equation
                     innerFigure += `\\begin{displaymath}\n${equation}\n\\end{displaymath}\n`
@@ -307,19 +282,17 @@ export class LatexExporterConvert {
         }
 
         if (node.content) {
-            node.content.forEach(child => {
-                content += this.walkJson(child, options)
-            })
+            for (let i=0; i < node.content.length; i++) {
+                content += this.walkJson(node.content[i], options)
+            }
         }
 
-        if (placeFootnotesAfterBlock &&
-            options.unplacedFootnotes &&
-            options.unplacedFootnotes.length) {
+        if (placeFootnotesAfterBlock && options.unplacedFootnotes.length) {
             // There are footnotes that needed to be placed behind the node.
             // This happens in the case of headlines and lists.
             if (options.unplacedFootnotes.length > 1) {
                 end += `\\addtocounter{footnote}{-${(options.unplacedFootnotes.length)}}`
-                options.unplacedFootnotes.forEach(footnote => {
+                options.unplacedFootnotes.forEach(function(footnote){
                     end += '\\stepcounter{footnote}\n'
                     end += '\\footnotetext{'
                     end += this.walkJson(footnote, options)
@@ -332,21 +305,6 @@ export class LatexExporterConvert {
         return start + content + end
     }
 
-    // The database doesn't ensure that citation keys are unique.
-    // So here we need to make sure that the same key is not used twice in one
-    // document.
-    createUniqueCitationKey(suggestedKey) {
-        let usedKeys = Object.keys(this.usedBibDB).map(key=>{
-            return this.usedBibDB[key].entry_key
-        })
-        if (usedKeys.includes(suggestedKey)) {
-            suggestedKey += 'X'
-            return this.createUniqueCitationKey(suggestedKey)
-        } else {
-            return suggestedKey
-        }
-    }
-
     postProcess(latex) {
         return latex
         // join blocks of the same type that follow oneanother.
@@ -356,8 +314,6 @@ export class LatexExporterConvert {
         .replace(/&  \\\\/g, '\\\\')
         // Remove new lines between table cells.
         .replace(/\n & \n\n/g, ' & ')
-        // Remove new lines within itemization
-        .replace(/\\item \n\n/g, '\\item ')
     }
 
     assembleEpilogue() {
@@ -369,7 +325,7 @@ export class LatexExporterConvert {
     }
 
     assemblePreamble() {
-        let preamble = '\n\\usepackage[utf8]{luainputenc}'
+        let preamble = ''//\n\\usepackage[utf8]{luainputenc}'
 
         if (this.features.subtitle) {
             preamble += `

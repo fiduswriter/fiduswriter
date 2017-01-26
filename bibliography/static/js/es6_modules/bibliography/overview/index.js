@@ -4,7 +4,7 @@ import {editCategoriesTemplate, categoryFormsTemplate, bibtableTemplate,
     bibliographyCategoryListItemTemplate} from "./templates"
 import {BibliographyDB} from "../database"
 import {BibTypeTitles} from "../form/strings"
-import {BibLatexFileImporter} from "../import"
+import {BibLatexFileImporter, BibLatexApiImporter} from "../import"
 import {BibLatexFileExporter} from "../export"
 import {addDropdownBox} from "../../common"
 import {Menu} from "../../menu"
@@ -300,10 +300,20 @@ export class BibliographyOverview {
 
         //import a bib file
         jQuery('.import-bib').bind('click', () => {
-            new BibLatexFileImporter(
+            let fileImporter = new BibLatexFileImporter(
                 this.bibDB,
                 bibEntries => this.addBibList(bibEntries)
             )
+            fileImporter.init()
+        })
+
+        //import via web api file
+        jQuery('.import-api').bind('click', () => {
+            let apiImporter = new BibLatexApiImporter(
+                this.bibDB,
+                bibEntries => this.addBibList(bibEntries)
+            )
+            apiImporter.init()
         })
 
         //submit entry actions

@@ -1,50 +1,22 @@
+import {BibLatexParser} from "biblatex-csl-converter"
+import {searchApiTemplate, searchApiResultTemplate} from "./templates"
+import {activateWait, deactivateWait, addAlert, csrfToken} from "../../common"
+
 export class BibLatexApiImporter {
-    constructor(mod, itemId, bibDB, callback) {
-        if (itemId === undefined) {
-            this.itemId = false
-        } else {
-            this.itemId = parseInt(itemId)
-        }
+    constructor(bibDB, addToListCall) {
         this.bibDB = bibDB
-        this.callback = callback
-        this.fields = {}
-        this.currentValues = {}
-        this.editor = mod.editor
-        this.mod = mod
+        this.addToListCall = addToListCall
+        this.tmpDB = false
     }
+
 
     init() {
-        if (this.itemId) {
-            this.dialogHeader = gettext('Edit Source')
-            let bibEntry = this.bibDB.db[this.itemId]
-            this.currentValues = JSON.parse(JSON.stringify(bibEntry)) // copy current values
-        } else {
-
-            this.dialogHeader = gettext('Import New Source from Database')
-            this.currentValues = {
-                bib_type: false,
-                entry_cat: [],
-                entry_key: 'FidusWriter',
-                fields: {}
-            }
-        }
-        this.addDialogToDOM()
-    }
-
-    addDialogToDOM() {
-        let that = this
         // Add form to DOM
-        let dialogEl = searchApiTemplate({
-            'dialogHeader': this.dialogHeader,
-            'bib_type': this.currentValues.bib_type,
-            BibTypes,
-            BibTypeTitles
-        })
+        let dialogEl = searchApiTemplate({})
 
         jQuery('body').append(dialogEl)
 
         let diaButtons = {
-
             cancel: {
                 class: "fw-button fw-orange",
                 text: gettext('Cancel'),
@@ -52,11 +24,10 @@ export class BibLatexApiImporter {
                     jQuery(this).dialog('close')
                 }
             }
-
         }
 
 
-        jQuery("#sowidaraSearch").dialog({
+        jQuery("#import-api-search").dialog({
             draggable: false,
             resizable: false,
             width: 940,
@@ -64,25 +35,29 @@ export class BibLatexApiImporter {
             modal: true,
             buttons: diaButtons,
             close: function() {
-                jQuery("#sowidaraSearch").dialog('destroy').remove()
+                jQuery("#import-api-search").dialog('destroy').remove()
             }
         })
         // init ui tabs
         //jQuery('#bib-dialog-tabs').tabs()
 
         document.getElementById('text-search').addEventListener('change', () => {
-            that.searching()
+            let searchTerm = jQuery("#text-search").val()
+            jQuery("#import-api-search-result").empty()
+            // Only search for queries with at least four letters
+            if (searchTerm.length > 3) {
+                jQuery("#import-api-search-result").html('Looking...')
+                this.search(searchTerm)
+            }
         })
     }
 
-
-
-    searching() {
+    search(searchTerm) {
         let that = this
         jQuery.ajax({
             data: {
                 'wt': 'json',
-                'q': jQuery("#text-search").val()
+                'q': searchTerm
             },
             dataType: "jsonp",
             jsonp: 'json.wrf',
@@ -90,127 +65,17 @@ export class BibLatexApiImporter {
 
             success: function(result) {
                 let list = result['response']
-                jQuery("#sowoDaraResult").remove()
-                jQuery('#sowidaraSearch').append(sowidaraTemplate({
-                    items: list.docs
-                }))
-                console.log("list.docs[0]")
-                console.log(list.docs[0])
-                jQuery('.citing').bind('click', function() {
-                    var id = jQuery(this).parent().find("a.title").attr('id')
-                    var result = that.getByValue(list.docs, id)
-                    var itemTitle = result.title_full
-                    var author = jQuery(this).parent().find("a.title").attr('itemAuthor')
+                jQuery("#import-api-search-result").empty()
+                jQuery('#import-api-search-result').append(
+                    searchApiResultTemplate({items: list.docs})
+                )
 
-                    var date = result.publishDate_date
-                    let bib_type = 'article'
-                    var bibFormat = "autocite"
-                    let editor = that.mod.editor
-                    let nodeType = editor.currentPm.schema.nodes['citation']
+                jQuery('#import-api-search-result .api-import').bind('click', function() {
+                    let id = jQuery(this).attr('data-id')
+                    console.log(id)
 
-                    that.save((id), bib_type, author, date, editor, itemTitle)
-
-                    let bibEntry = editor.bibDB.getID()
-
-                    editor.currentPm.tr.replaceSelection(nodeType.createAndFill({
-                        format: bibFormat,
-                        references: [{
-                            id: (bibEntry)
-                        }]
-                    })).apply()
                 })
-            },
-        })
-    }
-
-
-    getByValue(arr, value) {
-
-        for (var i = 0, iLen = arr.length; i < iLen; i++) {
-
-            if (arr[i].id == value) {
-                return arr[i]
             }
-        }
-    }
-
-
-    save(itemId, bib_type, author, date, editor, itemTitle) {
-        let entry_key = 'FidusWriter'
-        let that = this
-        let isNew = itemId === undefined ? false : true
-        let Id = itemId === false ? 0 : itemId
-        let returnObj = {
-            bib_type: bib_type,
-
-            entry_cat: [],
-            entry_key: entry_key, // is never updated.
-            fields: {}
-
-        }
-
-        returnObj['fields']['author'] = [{
-            "family": [{
-                "type": "text",
-                "text": author
-            }],
-            "given": [{
-                "type": "text",
-                "text": author
-            }]
-        }]
-        returnObj['fields']['date'] = date
-        returnObj['fields']['title'] = [{
-            type: 'text',
-            text: itemTitle
-        }]
-        //returnObj['fields']['journaltitle'] =  [{type: 'text', text: "journal"}]
-
-        let saveObj = {}
-        saveObj[Id] = returnObj
-
-        if (saveObj[Id].entry_key === 'FidusWriter') {
-            this.createEntryKey(saveObj[itemId], author, date)
-        }
-
-        editor.bibDB.saveBibEntries(
-            saveObj,
-            isNew,
-            this.callback
-        )
-
-    }
-
-
-    createEntryKey(bibItem, author, date) {
-        // We attempt to create a biblatex compatible entry key if there is no entry
-        // key so far.
-        let that = this
-        let entryKey = ''
-
-
-        if (author.length) {
-            entryKey += nameToText(author).replace(/\s|,|=|;|:|{|}/g, '')
-        }
-        /*else if (bibItem.editor) {
-                       entryKey += nameToText(bibItem.editor).replace(/\s|,|=|;|:|{|}/g,'')
-                   }*/
-        if (date.length) {
-            entryKey += date.split('-')[0].replace(/\?|\*|u|\~|-/g, '')
-        }
-
-        if (entryKey.length) {
-            bibItem.entry_key = entryKey
-        }
-    }
-
-
-    textToInt(txt) {
-        txt = txt.toLowerCase()
-        let number = 0
-        return txt.split('').map(function(c) {
-            number = parseInt(number) + parseInt('abcdefghijklmnopqrstuvwxyz'.indexOf(c))
-            return parseInt(number)
         })
     }
 

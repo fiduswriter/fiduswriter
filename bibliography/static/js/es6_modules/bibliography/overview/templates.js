@@ -29,7 +29,7 @@ export let bibtableTemplate = _.template('\
         <td width="30">\
             <span class="fw-inline"><input type="checkbox" class="entry-select" data-id="<%- id %>" /></span>\
         </td>\
-        <td width="235">\
+        <td width="285">\
             <span class="fw-document-table-title fw-inline">\
                 <i class="icon-book"></i>\
                 <span class="edit-bib fw-link-text fw-searchable" data-id="<%- id %>" data-type="<%- type %>">\
@@ -41,10 +41,10 @@ export let bibtableTemplate = _.template('\
                 </span>\
             </span>\
         </td>\
-        <td width="170" class="type"><span class="fw-inline"><%- gettext(typetitle) %></span></td>\
-        <td width="175" class="author"><span class="fw-inline fw-searchable"><%- author %></span></td>\
-        <td width="100" class="publised"><span class="fw-inline"><%- published %></span></td>\
-        <td width="50" align="center">\
+        <td width="205" class="type"><span class="fw-inline"><%- gettext(typetitle) %></span></td>\
+        <td width="215" class="author"><span class="fw-inline fw-searchable"><%- author %></span></td>\
+        <td width="120" class="publised"><span class="fw-inline"><%- published %></span></td>\
+        <td width="70" align="center">\
             <span class="delete-bib fw-inline fw-link-text" data-id="<%- id %>" data-title="<%- title %>">\
                 <i class="icon-trash"></i>\
             </span>\

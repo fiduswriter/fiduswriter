@@ -9,20 +9,19 @@ export let importBibFileTemplate = _.template('<div id="importbibtex" title="' +
 
 
 export let searchApiTemplate = _.template('\
-<div id="sowidaraSearch" title="' + gettext("Link") + '">\
+<div id="import-api-search" title="' + gettext("Link") + '">\
         <p><input id="text-search" class="linktitle" type="text" value="" placeholder="' + gettext("give the text to search") + '"/></p>\
-        <p><button id="search" type="button">search</button></p><br>\
+        <div id="import-api-search-result"></div>\
     </div>\
 ')
 
-export let sowidaraTemplate = _.template('\
-    <div  id="sowoDaraResult" title="'+gettext("Result")+'"><%  _.each(items, function(item) {%>\
+export let searchApiResultTemplate = _.template('\
+    <%  _.each(items, function(item) {%>\
     <div class="item">\
-        <h3 style="border-top: 1px solid #d3d3d3;margin-bottom:5px;margin-top:5px;" ><a class="title" id = <%=item.id %> itemTitle = <%=item.title %>  itemAuthor = <%=(item.person_author_normalized_str_mv) %>  itemDate = <%= item.date_imported_str %>  target="_blank" href="http://www.da-ra.de/dara/search/search_show?res_id=<%=item.id %>&lang=de&mdlang=de&detail=true"><%= item.title %></a></h3>\
-        <p   style="margin-top:5px;margin-bottom:5px"><b>DOI: </b><a target="_blank" style="color:blue" href="http://dx.doi.org/<%= item.doi %>"><%= item.doi %></a></p>\
+        <h3><a class="title api-import" data-id="<%= item.id %>"><%= item.title %></a></h3>\
+        <p><b>DOI: <%= item.doi %></p>\
         <p><b>Description: </b><%= item.description %></p>\
-        <button type="button" class="citing" >citing the article</button>\
+        <button type="button" class="api-import" data-id="<%= item.id %>">Import</button>\
     </div>\
    <% })  %> \
-</div>\
 ')

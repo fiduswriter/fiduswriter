@@ -1,5 +1,5 @@
 import {BibLatexParser} from "biblatex-csl-converter"
-import {importBibTemplate} from "./templates"
+import {importBibFileTemplate} from "./templates"
 import {activateWait, deactivateWait, addAlert, csrfToken} from "../../common"
 
 /** First step of the BibTeX file import. Creates a dialog box to specify upload file.
@@ -10,13 +10,12 @@ export class BibLatexFileImporter {
     constructor(bibDB, addToListCall) {
         this.bibDB = bibDB
         this.addToListCall = addToListCall
-        this.openDialog()
         this.tmpDB = false
     }
 
-    openDialog() {
+    init() {
         let that = this
-        jQuery('body').append(importBibTemplate())
+        jQuery('body').append(importBibFileTemplate())
         let diaButtons = {}
         diaButtons[gettext('Import')] = function () {
             let bibFile = jQuery('#bib-uploader')[0].files

@@ -1,9 +1,10 @@
 import {createSlug, getDatabasesIfNeeded} from "../tools/file"
 import {removeHidden} from "../tools/doc-contents"
 import {LatexExporterConvert} from "./convert"
-import {zipFileCreator} from "../tools/zip"
+import {ZipFileCreator} from "../tools/zip"
 import {BibLatexExporter} from "biblatex-csl-converter"
 import {PDFFileCreator} from "../tools/pdftex"
+import download from "downloadjs"
 /*
  Exporter to LaTeX
 */
@@ -49,7 +50,14 @@ export class LatexExporter {
             })
         })
 
-        zipFileCreator(this.textFiles, this.httpFiles, this.zipFileName)
+        let zipper = new ZipFileCreator(
+            this.textFiles,
+            this.httpFiles
+        )
+
+        zipper.init().then(
+            blob => download(blob, this.zipFileName, 'application/zip')
+        )
     }
 
     init2() {

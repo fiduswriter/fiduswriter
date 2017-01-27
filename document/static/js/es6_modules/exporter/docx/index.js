@@ -1,4 +1,4 @@
-import {createSlug, getDatabasesIfNeeded, downloadFile} from "../tools/file"
+import {createSlug, getDatabasesIfNeeded} from "../tools/file"
 import {XmlZip} from "../tools/xml-zip"
 import {textContent, removeHidden} from "../tools/doc-contents"
 
@@ -53,9 +53,12 @@ export class DocxExporter {
             this.citations,
             this.images
         )
-        //this.citations.formatCitations()
-        //this.pmBib = this.citations.pmBib
-        this.xml = new XmlZip(createSlug(this.docTitle)+'.docx', this.templateUrl)
+
+        this.xml = new XmlZip(
+            createSlug(this.docTitle)+'.docx',
+            this.templateUrl,
+            'application/msword'
+        )
 
         this.xml.init().then(
             () => this.citations.init()

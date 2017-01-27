@@ -18,6 +18,7 @@ import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
 import {StyleDB} from "../style/database"
 import {Paste} from "./paste"
+import {AuthorOJS} from "../ojs"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']
@@ -206,7 +207,16 @@ export class Editor {
         this.getBibDB(this.doc.owner.id).then(() => {
             this.enableUI()
         })
+        this.activateOJS()
         this.waitingForDocument = false
+    }
+
+    activateOJS() {
+        // Add OJS menus, but only once.
+        if (!this.ojs) {
+            this.ojs = new AuthorOJS(this)
+            this.ojs.init()
+        }
     }
 
     setPmDoc() {
@@ -244,7 +254,7 @@ export class Editor {
 
     getBibDB(userId) {
         if (!this.bibDB) { // Don't get the bibliography again if we already have it.
-            let bibGetter = new BibliographyDB(userId, true, false, false)
+            let bibGetter = new BibliographyDB(userId, true)
             return bibGetter.getDB().then(({bibPKs, bibCats}) => {
                 this.bibDB = bibGetter
                 this.mod.menus.citation.appendManyToCitationDialog(bibPKs)
@@ -334,11 +344,9 @@ export class Editor {
         }
         jQuery('#revision-done').hide()
         if (REVIEW_ROLES.indexOf(this.docInfo.rights) > -1)  {
-            jQuery('#reviewed').show()
             jQuery('#reviewerOJSReturn').show()
         }
         else {
-            jQuery('#reviewed').hide()
             jQuery('#reviewerOJSReturn').hide()
             if (
                 this.docInfo.submission.status === 'submitted' &&

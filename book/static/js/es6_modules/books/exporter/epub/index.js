@@ -12,9 +12,10 @@ import {docSchema} from "../../../schema/document"
 import {removeHidden} from "../../../exporter/tools/doc-contents"
 import {findImages} from "../../../exporter/tools/html"
 import {createSlug} from "../../../exporter/tools/file"
-import {zipFileCreator} from "../../../exporter/tools/zip"
+import {ZipFileCreator} from "../../../exporter/tools/zip"
 import {RenderCitations} from "../../../citations/render"
 import {addAlert} from "../../../common"
+import download from "downloadjs"
 
 
 export class EpubBookExporter extends BaseEpubExporter {
@@ -41,6 +42,8 @@ export class EpubBookExporter extends BaseEpubExporter {
                 this.imageDB = imageDB
                 this.exportOne()
             }
+        ).catch(
+            () => {}
         )
     }
 
@@ -319,9 +322,21 @@ export class EpubBookExporter extends BaseEpubExporter {
             })
         }
 
-        zipFileCreator(this.outputList, httpOutputList, createSlug(
-                this.book.title) +
-            '.epub', 'application/epub+zip', includeZips)
+        let zipper = new ZipFileCreator(
+            this.outputList,
+            httpOutputList,
+            includeZips,
+            'application/epub+zip'
+        )
+
+        zipper.init().then(
+            blob => download(
+                blob,
+                createSlug(this.book.title) + '.epub',
+                'application/epub+zip'
+            )
+        )
+
     }
 
 }

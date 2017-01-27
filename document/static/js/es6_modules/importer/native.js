@@ -1,34 +1,32 @@
 import {addAlert, csrfToken} from "../common"
 import {GetImages} from "./get-images"
-import {SaveImages} from "./save-images"
-import {SaveBibs} from "./save-bibs"
 
 export class ImportNative {
     /* Save document information into the database */
-    constructor(doc, impBibDB, impImageDB, entries, user, bibDB, imageDB) {
+    constructor(doc, impBibDB, impImageDB, images, user, bibDB, imageDB) {
         this.doc = doc
         this.impBibDB = impBibDB // These are the imported values
         this.impImageDB = impImageDB // These are the imported values
-        this.entries = entries
+        this.images = images // Images at URLs or in Zip files.
         this.user = user
-        this.bibDB = bibDB // These are values stored in the database
-        this.imageDB = imageDB // These are values stored in the database
+        this.bibDB = bibDB // These are values stored in the database (data in bibDB.db)
+        this.imageDB = imageDB // These are values stored in the database (data in imageDB.db)
     }
 
     init() {
-        let [BibTranslationTable, newBibEntries] = this.compareBibDBs()
-        let [ImageTranslationTable, newImageEntries] = this.compareImageDBs()
+        let {BibTranslationTable, newBibEntries} = this.compareBibDBs()
+        let {ImageTranslationTable, newImageEntries} = this.compareImageDBs()
 
         // We first create any new entries in the DB for images and/or
         // bibliography items.
-        let imageGetter = new GetImages(newImageEntries, this.entries)
-        return imageGetter.init().then(() => {
-            let imageSaver = new SaveImages(newImageEntries, ImageTranslationTable, this.imageDB)
-            return imageSaver.init()
-        }).then(() => {
-            let bibSaver = new SaveBibs(newBibEntries, BibTranslationTable, this.bibDB)
-            return bibSaver.init()
-        }).then(() => {
+        let imageGetter = new GetImages(newImageEntries, this.images)
+        return imageGetter.init().then(
+            () => this.saveImages(newImageEntries, ImageTranslationTable)
+        ).then(
+            () => this.bibDB.saveBibEntries(newBibEntries, true)
+        ).then(
+            idTranslations => idTranslations.forEach(idTrans => {BibTranslationTable[idTrans[0]] = idTrans[1]})
+        ).then(() => {
             // We need to change some reference numbers in the document contents
             this.translateReferenceIds(BibTranslationTable, ImageTranslationTable)
             // We are good to go. All the used images and bibliography entries
@@ -40,6 +38,25 @@ export class ImportNative {
 
     }
 
+    saveImages(newImageEntries, ImageTranslationTable) {
+        let sendPromises = newImageEntries.map(
+            imageEntry => {
+                let formValues = new window.FormData()
+                formValues.append('id', 0)
+                formValues.append('title', imageEntry.title)
+                formValues.append('imageCats', '')
+                formValues.append('image', imageEntry.file, imageEntry.oldUrl.split('/').pop())
+                formValues.append('checksum', imageEntry.checksum)
+                return this.imageDB.saveImage(formValues).then(
+                    newId => {
+                        ImageTranslationTable[imageEntry.oldId] = newId
+                    }
+                )
+            }
+        )
+        return Promise.all(sendPromises)
+    }
+
     compareBibDBs() {
         let BibTranslationTable = {},
             newBibEntries = {}
@@ -47,8 +64,8 @@ export class ImportNative {
         Object.keys(this.impBibDB).forEach(impKey => {
             let impEntry = this.impBibDB[impKey]
             let matchEntries = []
-            Object.keys(this.bibDB).forEach(key => {
-                let bibEntry = this.bibDB[key]
+            Object.keys(this.bibDB.db).forEach(key => {
+                let bibEntry = this.bibDB.db[key]
                 if(
                     impEntry.bib_type === bibEntry.bib_type &&
                     _.isEqual(impEntry.fields, bibEntry.fields)
@@ -65,7 +82,7 @@ export class ImportNative {
             }
         })
 
-        return [BibTranslationTable, newBibEntries]
+        return {BibTranslationTable, newBibEntries}
     }
 
     compareImageDBs() {
@@ -75,7 +92,7 @@ export class ImportNative {
         Object.keys(this.impImageDB).map(key => parseInt(key)).forEach(key => {
             let imageObj = this.impImageDB[key]
             let matchEntries = _.where(
-                this.imageDB,
+                this.imageDB.db,
                 {checksum: imageObj.checksum}
             )
             if (0 === matchEntries.length) {
@@ -86,15 +103,13 @@ export class ImportNative {
                     file_type: imageObj.file_type,
                     checksum: imageObj.checksum
                 })
-            } else if (!(_.findWhere(matchEntries, {pk: key}))) {
-                // There is at least one match, and none of the matches have
-                // the same id as the key in this.impImageDB.
-                // We therefore pick the first match.
+            } else {
+                // There is at least one match.
+                // We pick the first.
                 ImageTranslationTable[key] = matchEntries[0].pk
             }
         })
-
-        return [ImageTranslationTable, newImageEntries]
+        return {ImageTranslationTable, newImageEntries}
     }
 
 

@@ -1,5 +1,4 @@
-import {activateWait, deactivateWait, addAlert, csrfToken} from "../common"
-
+import {activateWait, deactivateWait, csrfToken} from "../common"
 
 /* A class that holds information about images uploaded by the user. */
 
@@ -37,18 +36,15 @@ export class ImageDB {
                     resolve(pks)
                 },
                 error: (jqXHR, textStatus, errorThrown) => {
-                    addAlert('error', jqXHR.responseText)
-                    reject()
+                    reject(jqXHR.responseText)
                 },
                 complete: () => deactivateWait()
             })
         })
     }
 
-    createImage(postData) {
+    saveImage(postData) {
         activateWait()
-        // Remove old warning messages
-        jQuery('#uploadimage .warning').detach()
 
         return new Promise((resolve, reject) => {
             // Send to server
@@ -61,22 +57,19 @@ export class ImageDB {
                 beforeSend: (xhr, settings) =>
                     xhr.setRequestHeader("X-CSRFToken", csrfToken),
                 success: (response, textStatus, jqXHR) => {
-                    if (this.displayCreateImageError(response.errormsg)) {
-                        this.db[response.values.pk] = response.values
-                        addAlert('success', gettext('The image has been uploaded'))
-                        resolve(response.values.pk)
+                    if (Object.keys(response.errormsg).length) {
+                        reject(response.errormsg)
                     } else {
-                        addAlert('error', gettext(
-                            'Some errors are found. Please examine the form.'
-                        ))
-                        reject()
+                        this.db[response.values.pk] = response.values
+                        resolve(response.values.pk)
                     }
                 },
                 error: (jqXHR, textStatus, errorThrown) => {
+                    let error = '' // Fallback -- if we get don't have an error message, we show an empty error.
                     if (jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.errormsg) {
-                        addAlert('error', jqXHR.responseJSON.errormsg)
+                        error = jqXHR.responseJSON.errormsg
                     }
-                    reject()
+                    reject({error})
                 },
                 complete: () => deactivateWait(),
                 cache: false,
@@ -84,21 +77,6 @@ export class ImageDB {
                 processData: false
             })
         })
-
-    }
-
-    displayCreateImageError(errors) {
-        let noError = true
-        for (let eKey in errors) {
-            let eMsg = '<div class="warning">' + errors[eKey] + '</div>'
-            if ('error' == eKey) {
-                jQuery('#uploadimage').prepend(eMsg)
-            } else {
-                jQuery('#id_' + eKey).after(eMsg)
-            }
-            noError = false
-        }
-        return noError
     }
 
 }

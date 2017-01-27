@@ -55,8 +55,11 @@ urlpatterns = [
     # Media manager
     url('^usermedia/', include('usermedia.urls')),
 
-    # Media manager
+    # Book manager
     url('^book/', include('book.urls')),
+
+    # OJS integration
+    url('^ojs/', include('ojs.urls')),
 
     # Feedback
     url('^feedback/', include('feedback.urls')),
@@ -64,6 +67,7 @@ urlpatterns = [
     # Terms and conditions
     url('^terms/$', flatpages_views.flatpage,
         {'url': '/terms/'}, name='terms'),
+
 ]
 
 if settings.DEBUG:

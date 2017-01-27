@@ -7,10 +7,10 @@ import {removeHidden} from "../../../exporter/tools/doc-contents"
 import {BaseEpubExporter} from "../../../exporter/epub/base"
 import {createSlug} from "../../../exporter/tools/file"
 import {findImages} from "../../../exporter/tools/html"
-import {zipFileCreator} from "../../../exporter/tools/zip"
+import {ZipFileCreator} from "../../../exporter/tools/zip"
 import {RenderCitations} from "../../../citations/render"
 import {addAlert} from "../../../common"
-
+import download from "downloadjs"
 
 export class HTMLBookExporter extends BaseEpubExporter { // extension is correct. Neds orderLinks/setLinks methods from base epub exporter.
     constructor(book, user, docList) {
@@ -33,6 +33,8 @@ export class HTMLBookExporter extends BaseEpubExporter { // extension is correct
                 this.imageDB = imageDB
                 this.exportOne()
             }
+        ).catch(
+            () => {}
         )
     }
 
@@ -196,9 +198,15 @@ export class HTMLBookExporter extends BaseEpubExporter { // extension is correct
 
         images = uniqueObjects(images)
 
-        zipFileCreator(outputList, images, createSlug(
-                this.book.title) +
-            '.html.zip', false, includeZips)
+        let zipper = new ZipFileCreator(
+            outputList,
+            images,
+            includeZips
+        )
+
+        zipper.init().then(
+            blob => download(blob, createSlug(this.book.title) + '.html.zip', 'application/zip')
+        )
     }
 
 

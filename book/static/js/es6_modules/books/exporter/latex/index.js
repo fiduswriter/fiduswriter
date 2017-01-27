@@ -4,7 +4,8 @@ import {bookTexTemplate} from "./templates"
 import {createSlug} from "../../../exporter/tools/file"
 import {removeHidden} from "../../../exporter/tools/doc-contents"
 import {BibLatexExporter} from "biblatex-csl-converter"
-import {zipFileCreator} from "../../../exporter/tools/zip"
+import {ZipFileCreator} from "../../../exporter/tools/zip"
+import download from "downloadjs"
 
 export class LatexBookExporter {
 
@@ -24,6 +25,8 @@ export class LatexBookExporter {
                 this.imageDB = imageDB
                 this.init()
             }
+        ).catch(
+            () => {}
         )
     }
 
@@ -68,6 +71,13 @@ export class LatexBookExporter {
             })
         })
 
-        zipFileCreator(this.textFiles, this.httpFiles, this.zipFileName)
+        let zipper = new ZipFileCreator(
+            this.textFiles,
+            this.httpFiles
+        )
+
+        zipper.init().then(
+            blob => download(blob, this.zipFileName, 'application/zip')
+        )
     }
 }

@@ -4,7 +4,7 @@ import {editCategoriesTemplate, categoryFormsTemplate, bibtableTemplate,
     bibliographyCategoryListItemTemplate} from "./templates"
 import {BibliographyDB} from "../database"
 import {BibTypeTitles} from "../form/strings"
-import {BibLatexFileImporter} from "../import"
+import {BibLatexFileImporter, BibLatexApiImporter} from "../import"
 import {BibLatexFileExporter} from "../export"
 import {addDropdownBox} from "../../common"
 import {Menu} from "../../menu"
@@ -20,7 +20,7 @@ export class BibliographyOverview {
     /* load data from the bibliography */
     getBibDB() {
         let docOwnerId = 0 // 0 = current user.
-        this.bibDB = new BibliographyDB(docOwnerId, true, false, false)
+        this.bibDB = new BibliographyDB(docOwnerId, true)
 
         this.bibDB.getDB().then(({bibPKs, bibCats}) => {
             this.addBibCategoryList(bibCats)
@@ -259,9 +259,11 @@ export class BibliographyOverview {
             let eID = jQuery(this).attr('data-id')
             let form = new BibEntryForm(eID, that.bibDB)
             form.init().then(
-                newBibPks => that.addBibList(newBibPks)
+                idTranslations => {
+                    let ids = idTranslations.map(idTrans => idTrans[1])
+                    return that.addBibList(ids)
+                }
             )
-
         })
 
         //open dropdown for bib category
@@ -298,10 +300,20 @@ export class BibliographyOverview {
 
         //import a bib file
         jQuery('.import-bib').bind('click', () => {
-            new BibLatexFileImporter(
+            let fileImporter = new BibLatexFileImporter(
                 this.bibDB,
                 bibEntries => this.addBibList(bibEntries)
             )
+            fileImporter.init()
+        })
+
+        //import via web api file
+        jQuery('.import-api').bind('click', () => {
+            let apiImporter = new BibLatexApiImporter(
+                this.bibDB,
+                bibEntries => this.addBibList(bibEntries)
+            )
+            apiImporter.init()
         })
 
         //submit entry actions

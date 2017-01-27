@@ -1,5 +1,6 @@
 import {configureCitationTemplate, citationItemTemplate, selectedCitationTemplate} from "./templates"
 import {BibEntryForm} from "../../../bibliography/form"
+import {BibLatexApiImporter} from "../../../bibliography/import"
 import {addDropdownBox, setCheckableLabel} from "../../../common"
 import {nameToText, litToText} from "../../../bibliography/tools"
 
@@ -24,6 +25,12 @@ export class CitationDialog {
         this.diaButtons.push({
             text: gettext('Register new source'),
             click: () => this.registerNewSource(),
+            class: 'fw-button fw-light fw-add-button register-new-bib-source'
+        })
+
+        this.diaButtons.push({
+            text: gettext('Import from database'),
+            click: () => this.importFromDatabase(),
             class: 'fw-button fw-light fw-add-button register-new-bib-source'
         })
 
@@ -107,7 +114,7 @@ export class CitationDialog {
     }
 
     registerNewSource() {
-        let form = new BibEntryForm(undefined,  this.editor.bibDB)
+        let form = new BibEntryForm(this.editor.bibDB)
         form.init().then(
             idTranslations => {
                 let ids = idTranslations.map(idTrans => idTrans[1])
@@ -118,6 +125,19 @@ export class CitationDialog {
                 })
             }
         )
+    }
+
+    importFromDatabase() {
+        let form = new BibLatexApiImporter(this.editor.bibDB,
+            ids => {
+                this.addToCitableItems(ids)
+                jQuery('.fw-checkable').unbind('click')
+                jQuery('.fw-checkable').bind('click', function() {
+                    setCheckableLabel(jQuery(this))
+                })
+            }
+        )
+        form.init()
     }
 
     bibDBToBibEntry(id) {

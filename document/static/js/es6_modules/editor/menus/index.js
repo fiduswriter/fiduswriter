@@ -1,6 +1,5 @@
 import {ModMenusHeader} from "./header"
 import {ModMenusToolbar} from "./toolbar"
-import {ModMenusCitation} from "./citation"
 import {ModMenusKeyBindings} from "./key-bindings"
 import {ModMenusActions} from "./actions"
 import {ModMenusUpdateUI} from "./update-ui"
@@ -13,7 +12,6 @@ export class ModMenus {
         this.editor = editor
         new ModMenusHeader(this)
         new ModMenusToolbar(this)
-        new ModMenusCitation(this)
         new ModMenusActions(this)
         new ModMenusKeyBindings(this)
         new ModMenusUpdateUI(this)

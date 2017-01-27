@@ -1,4 +1,4 @@
-export {citationDialog} from "./citation"
+export {CitationDialog} from "./citation"
 export {FigureDialog} from "./figure"
 export {linkDialog} from "./link"
 export {TableDropdown} from "./table"

@@ -31,7 +31,7 @@ export class DocumentOverview {
     // Get the bibliography database -- only executed if needed (when importing, etc.).
     getBibDB() {
         if (!this.bibDB) { // Don't get the bibliography again if we already have it.
-            this.bibDB = new BibliographyDB(this.user.id, true, false, false)
+            this.bibDB = new BibliographyDB(this.user.id, true)
             return this.bibDB.getDB()
         } else {
             return Promise.resolve()

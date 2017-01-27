@@ -114,7 +114,7 @@
                 <div>
                     <span class="header-nav-item" title="{% trans "File handling" %}">{% trans "File" %}</span>
                     <div class="fw-pulldown fw-left">
-                        <ul>
+                        <ul id="file-menu">
                             <li>
                                 <span class="fw-pulldown-item share icon-export" title="{% trans "Share the document with other users." %}"> {% trans "Share" %} </span>
                             </li>
@@ -133,11 +133,6 @@
                             <li>
                                 <span class="fw-pulldown-item print icon-print" title="{% trans "Either print or create a PDF using your browser print dialog" %}"> {% trans "Print/PDF" %} </span>
                             </li>
-                            {% if EXPERIMENTAL and OJS_URL %}
-                                <li>
-                                    <span class="fw-pulldown-item submit-ojs icon-search" title="{% trans "submit the paper to ojs" %}"> {% trans "Submit paper" %} </span>
-                                </li>
-                            {% endif %}
                         </ul>
                     </div>
                 </div>
@@ -408,9 +403,6 @@
                     </div>
                     <div id="revision-done" class="fw-button fw-light fw-large revision-done" title="{% trans "Finish the revision" %}">
                         {% trans "Finish the revision" %}
-                   </div>
-                    <div id="reviewed" class="fw-button fw-light fw-large reviewed" title="{% trans "Finish the review" %}">
-                        {% trans "Finish the review" %}
                    </div>
                     <div id="reviewerOJSReturn" class="fw-button fw-light fw-large reviewed" title="{% trans "Return to OJS" %}">
                         {% trans "Return to OJS" %}

@@ -85,8 +85,9 @@ export let citationDialog = function (mod) {
         click: function() {
             let form = new BibEntryForm(undefined, editor.bibDB)
             form.init().then(
-                newBibPks => {
-                    editor.mod.menus.citation.appendManyToCitationDialog(newBibPks)
+                idTranslations => {
+                    let ids = idTranslations.map(idTrans => idTrans[1])
+                    editor.mod.menus.citation.appendManyToCitationDialog(ids)
                     jQuery('.fw-checkable').unbind('click')
                     jQuery('.fw-checkable').bind('click', function() {
                         setCheckableLabel(jQuery(this))

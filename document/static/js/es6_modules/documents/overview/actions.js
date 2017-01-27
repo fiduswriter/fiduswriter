@@ -1,12 +1,11 @@
 import {getMissingDocumentListData} from "../tools"
 import {importFidusTemplate, documentsListItemTemplate} from "./templates"
-import {saveCopy} from "../../exporter/native/copy"
+import {SaveCopy, ExportFidusFile} from "../../exporter/native"
 import {EpubExporter} from "../../exporter/epub"
 import {HTMLExporter} from "../../exporter/html"
 import {LatexExporter} from "../../exporter/latex"
 import {DocxExporter} from "../../exporter/docx"
 import {OdtExporter} from "../../exporter/odt"
-import {NativeExporter} from "../../exporter/native"
 import {ImportFidusFile} from "../../importer/file"
 import {DocumentRevisionsDialog} from "../revisions"
 import {BibliographyDB} from "../../bibliography/database"
@@ -192,14 +191,16 @@ export class DocumentOverviewActions {
                     })
                     if (doc.owner.id===this.documentOverview.user.id) {
                         // We are copying from and to the same user.
-                        saveCopy(
+                        let copier = new SaveCopy(
                             doc,
-                            this.documentOverview.bibDB.db,
+                            this.documentOverview.bibDB,
                             this.documentOverview.imageDB,
-                            this.documentOverview.bibDB.db,
+                            this.documentOverview.bibDB,
                             this.documentOverview.imageDB,
                             this.documentOverview.user
-                        ).then(
+                        )
+
+                        copier.init().then(
                             ({doc, docInfo}) => {
                                 this.documentOverview.documentList.push(doc)
                                 this.documentOverview.stopDocumentTable()
@@ -218,14 +219,16 @@ export class DocumentOverviewActions {
                                 /* We are copying from another user, so we are first loading
                                  the databases from that user
                                 */
-                                saveCopy(
+                                let copier = new SaveCopy(
                                     doc,
                                     oldBibDB,
                                     oldImageDB,
-                                    this.documentOverview.bibDB.db,
+                                    this.documentOverview.bibDB,
                                     this.documentOverview.imageDB,
                                     this.documentOverview.user
-                                ).then(
+                                )
+
+                                copier.init().then(
                                     ({doc, docInfo}) => {
                                         this.documentOverview.documentList.push(doc)
                                         this.documentOverview.stopDocumentTable()
@@ -247,7 +250,7 @@ export class DocumentOverviewActions {
     }
 
     getBibDB(userId) {
-        let bibGetter = new BibliographyDB(userId, true, false, false)
+        let bibGetter = new BibliographyDB(userId, true)
         return new Promise (resolve => {
             bibGetter.getDB().then(() => resolve(bibGetter.db))
         })
@@ -268,10 +271,11 @@ export class DocumentOverviewActions {
         ).then(
             () => {
                 for (let i = 0; i < ids.length; i++) {
-                    new NativeExporter(_.findWhere(
-                        this.documentOverview.documentList, {
-                            id: ids[i]
-                        }), false, false)
+                    new ExportFidusFile(
+                        _.findWhere(this.documentOverview.documentList, {id: ids[i]}),
+                        false, // no bibDB or imageDB present
+                        false
+                    )
                 }
             }
         )

@@ -1,8 +1,8 @@
 import {documentrevisionsTemplate, documentrevisionsConfirmDeleteTemplate} from "./templates"
 import {ImportFidusFile} from "../../importer/file"
-import {downloadFile} from "../../exporter/tools/file"
 import {deactivateWait, addAlert, localizeDate, csrfToken, cancelPromise} from "../../common"
 import JSZipUtils from "jszip-utils"
+import download from "downloadjs"
 
 /**
  * Functions for the recovering previously created document revisions.
@@ -120,7 +120,7 @@ export class DocumentRevisionsDialog {
     download(id, filename) {
         JSZipUtils.getBinaryContent(
             `/document/get_revision/${id}/`,
-            (err, fidusFile) => downloadFile(filename, fidusFile)
+            (err, fidusFile) => download(fidusFile, filename, 'application/fidus+zip')
         )
     }
 

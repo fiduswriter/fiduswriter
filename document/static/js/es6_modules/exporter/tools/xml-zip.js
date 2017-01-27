@@ -1,13 +1,14 @@
 import JSZip from "jszip"
 import JSZipUtils from "jszip-utils"
-import {downloadFile} from "./file"
+import download from "downloadjs"
 // Handle a zip file containing XML files. Make sure files are only opened once,
 // and provide a mechanism to save the file.
 
 export class XmlZip {
-    constructor(fileName, url) {
+    constructor(fileName, url, mimeType) {
         this.fileName = fileName
         this.url = url
+        this.mimeType = mimeType
         this.zip = new JSZip()
         this.docs = {}
         this.extraFiles = {}
@@ -98,7 +99,7 @@ export class XmlZip {
         this.allXMLToZip()
         this.allExtraToZip()
 
-        this.zip.generateAsync({type:"blob"}).then(out => downloadFile(this.fileName, out))
+        this.zip.generateAsync({type:"blob"}).then(out => download(out, this.fileName, this.mimeType))
     }
 
 }

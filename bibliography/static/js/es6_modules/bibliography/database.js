@@ -3,20 +3,11 @@ import {activateWait, deactivateWait, addAlert, csrfToken} from "../common"
 const FW_LOCALSTORAGE_VERSION = "1.0"
 
 export class BibliographyDB {
-    constructor(docOwnerId, useLocalStorage, oldDB, oldCats) {
+    constructor(docOwnerId, useLocalStorage = false, db = {}, cats = []) {
         this.docOwnerId = docOwnerId
         this.useLocalStorage = useLocalStorage // Whether to use local storage to cache result
-
-        if (oldDB) {
-            this.db = oldDB
-        } else {
-            this.db = {}
-        }
-        if (oldCats) {
-            this.cats = oldCats
-        } else {
-            this.cats = []
-        }
+        this.db = db
+        this.cats = cats
     }
 
     /** Get the bibliography from the server and create as this.db.
@@ -156,13 +147,12 @@ export class BibliographyDB {
                 beforeSend: (xhr, settings) =>
                     xhr.setRequestHeader("X-CSRFToken", csrfToken),
                 success: (response, textStatus, jqXHR) => {
-                    let ids = []
-                    response['id_translations'].forEach(bibTrans => {
+                    let idTranslations = response['id_translations']
+                    idTranslations.forEach(bibTrans => {
                         this.db[bibTrans[1]] = tmpDB[bibTrans[0]]
-                        ids.push(bibTrans[1])
                     })
                     addAlert('success', gettext('The bibliography has been updated.'))
-                    resolve(ids)
+                    resolve(idTranslations)
                 },
                 error: (jqXHR, textStatus, errorThrown) => {
                     addAlert('error', errorThrown)

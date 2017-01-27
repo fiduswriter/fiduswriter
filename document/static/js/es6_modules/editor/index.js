@@ -256,7 +256,6 @@ export class Editor {
             let bibGetter = new BibliographyDB(userId, true)
             return bibGetter.getDB().then(({bibPKs, bibCats}) => {
                 this.bibDB = bibGetter
-                this.mod.menus.citation.appendManyToCitationDialog(bibPKs)
                 this.mod.menus.header.enableExportMenu()
             })
         } else {

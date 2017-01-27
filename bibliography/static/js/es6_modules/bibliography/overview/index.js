@@ -257,7 +257,10 @@ export class BibliographyOverview {
 
         jQuery(document).on('click', '.edit-bib', function () {
             let eID = jQuery(this).attr('data-id')
-            let form = new BibEntryForm(eID, that.bibDB)
+            if (eID) {
+                eID = parseInt(eID)
+            }
+            let form = new BibEntryForm(that.bibDB, eID)
             form.init().then(
                 idTranslations => {
                     let ids = idTranslations.map(idTrans => idTrans[1])

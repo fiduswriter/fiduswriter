@@ -24,12 +24,12 @@ export let usermediaCategoryformsTemplate = _.template('\
 /** A template for image overview list. */
 export let usermediaTableTemplate = _.template('\
                 <tr id="Image_<%- pk %>" class="<% _.each(cats, function(cat) { %>cat_<%- cat %> <% }) %>">\
-                    <td width="30">\
+                    <td width="40">\
                         <span class="fw-inline">\
                             <input type="checkbox" class="entry-select" data-id="<%- pk %>">\
                         </span>\
                     </td>\
-                    <td width="350" class="title">\
+                    <td width="430" class="title">\
                         <span class="fw-usermedia-image">\
                             <img src="<% if(thumbnail) { %><%- thumbnail %><% } else { %><%- image %><% } %>">\
                         </span>\
@@ -40,13 +40,13 @@ export let usermediaTableTemplate = _.template('\
                             <span class="fw-usermedia-type"><%- fileType %></span>\
                         </span>\
                     </td>\
-                    <td width="170" class="type ">\
+                    <td width="205" class="type ">\
                         <span class="fw-inline"><%- width %> x <%- height %></span>\
                     </td>\
-                    <td width="170" class="file_type ">\
+                    <td width="190" class="file_type ">\
                         <span class="fw-inline"><%= localizeDate(added, true) %></span>\
                     </td>\
-                    <td width="50" align="center">\
+                    <td width="75" align="center">\
                         <span class="delete-image fw-inline fw-link-text" data-id="<%- pk %>" data-title="<%- title %>">\
                             <i class="icon-trash"></i>\
                         </span>\

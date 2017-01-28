@@ -1,5 +1,5 @@
 import {downloadFile} from "./file"
-import {uploadFile} from "./upload"
+
 
 
 export let PDFFileCreator = function(latexCode, bibfile, ImagesList,externalClass, title) {

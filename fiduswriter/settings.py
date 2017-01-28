@@ -330,7 +330,9 @@ JS_LOCATIONS = {
     'JQUERYUI_URL': STATIC_URL + 'js/libs/jquery-ui.min.js',
     'UNDERSCOREJS_URL': STATIC_URL + 'js/libs/underscore-min.js',
     'DATATABLES_URL': STATIC_URL + 'js/libs/jquery.dataTables.min.js',
-    'CITEPROC_URL': STATIC_URL + 'js/libs/citeproc.js'
+    'CITEPROC_URL': STATIC_URL + 'js/libs/citeproc.js',
+    'TEXLIVE_URL': STATIC_URL + 'js/libs/texlive/pdftex.js',
+    'PROMISE_URL': STATIC_URL + 'js/libs/texlive/promisejs/promise.js'
 }
 
 CSS_LOCATIONS = {}

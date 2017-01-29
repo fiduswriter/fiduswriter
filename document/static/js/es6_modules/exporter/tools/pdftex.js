@@ -1,4 +1,4 @@
-import {downloadFile} from "./file"
+import {download} from "downloadjs"
 
 
 
@@ -51,7 +51,7 @@ var compile = function(source_code, bibfile, ImagesList, externalClass, pdfFilet
                         pdftex.FS_createLazyFile('/', 'xkeyval.sty', 'xkeyval.sty', true, true);
                         console.log("compile")
                         pdftex.compile(source_code).then(function(pdf_dataurl) {
-                            downloadFile(pdfFiletitle,dataURItoBlob(pdf_dataurl) )
+                            download(dataURItoBlob(pdf_dataurl),pdfFiletitle,'application/pdf')
                         });
                     });
 
@@ -63,7 +63,7 @@ var compile = function(source_code, bibfile, ImagesList, externalClass, pdfFilet
                     }
                     console.log("compile")
                     pdftex.compile(source_code).then(function(pdf_dataurl) {
-                        downloadFile(pdfFiletitle,dataURItoBlob(pdf_dataurl) )
+                        download(dataURItoBlob(pdf_dataurl),pdfFiletitle,'application/pdf')
                     });
                 });
             }

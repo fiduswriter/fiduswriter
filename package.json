@@ -12,7 +12,8 @@
     "copy_dropkickjs_css": "mkdir -p ./static-libs/css/libs/ && cp node_modules/dropkickjs/build/css/dropkick.css ./static-libs/css/libs/",
     "copy_citeproc": "mkdir -p ./static-libs/js/libs/ && cp node_modules/citeproc/citeproc.js ./static-libs/js/libs/",
     "copy_texlive": "mkdir -p ./static-libs/js/libs/texlive && cp -r node_modules/texlive/* ./static-libs/js/libs/texlive",
-    "postinstall": "npm run get_mml2omml && npm run copy_jquery && npm run copy_jquery-ui && npm run copy_underscore && npm run copy_datatables && npm run copy_dropkickjs && npm run copy_dropkickjs_css && npm run copy_citeproc && npm run copy_texlive",
+    "copy_promisejs": "mkdir -p ./static-libs/js/libs/texlive/promisejs && cp -r node_modules/promisejs/* ./static-libs/js/libs/texlive/promisejs",
+    "postinstall": "npm run get_mml2omml && npm run copy_jquery && npm run copy_jquery-ui && npm run copy_underscore && npm run copy_datatables && npm run copy_dropkickjs && npm run copy_dropkickjs_css && npm run copy_citeproc && npm run copy_texlive && npm run copy_promisejs",
     "check_js": "jshint .",
     "check_py": "flake8 ./",
     "install": "napa"
@@ -49,7 +50,8 @@
   },
   "napa": {
     "citeproc": "Juris-M/citeproc-js#1.1.142",
-    "texlive" : "manuels/texlive.js#master"  
+    "texlive" : "manuels/texlive.js#master",
+    "promisejs":"stackp/promisejs#master"
   },
   "browserify": {
     "transform": [

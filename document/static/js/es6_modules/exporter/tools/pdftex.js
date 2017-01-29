@@ -1,4 +1,4 @@
-import {download} from "downloadjs"
+import download from "downloadjs"
 
 
 
@@ -62,6 +62,7 @@ var compile = function(source_code, bibfile, ImagesList, externalClass, pdfFilet
                         pdftex.FS_createLazyFile('/images', ImagesList[i].filename, ImagesList[i].url, true, true);
                     }
                     console.log("compile")
+                    pdftex.FS_createLazyFile('/', 'luainputenc.sty', 'luainputenc.sty', true, true);
                     pdftex.compile(source_code).then(function(pdf_dataurl) {
                         download(dataURItoBlob(pdf_dataurl),pdfFiletitle,'application/pdf')
                     });

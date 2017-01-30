@@ -12,7 +12,7 @@ export let documentsListItemTemplate = _.template('\
                             data-owner="<%- aDocument.owner.id %>"/>\
                     </span>\
                 </td>\
-                <td width="220">\
+                <td width="240">\
                     <span class="fw-document-table-title fw-inline">\
                         <i class="icon-doc"></i>\
                         <a class="doc-title fw-link-text fw-searchable" href="/document/<%- aDocument.id %>/">\
@@ -20,26 +20,26 @@ export let documentsListItemTemplate = _.template('\
                         </a>\
                     </span>\
                 </td>\
-                <td width="80" class="td-icon">\
+                <td width="140" class="td-icon">\
                     <% if (aDocument.revisions.length > 0) { %>\
                         <span class="fw-inline revisions" data-id="<%- aDocument.id %>">\
                             <i class="icon-clock"></i>\
                         </span>\
                     <% } %>\
                 </td>\
-                <td width="80">\
+                <td width="100">\
                     <span class="fw-inline"><%- localizeDate(aDocument.added*1000, true) %></span>\
                 </td>\
-                <td width="80">\
+                <td width="100">\
                     <span class="fw-inline"><%- localizeDate(aDocument.updated*1000, true) %></span>\
                 </td>\
-                <td width="170">\
+                <td width="200">\
                     <span>\
                         <img class="fw-avatar" src="<%- aDocument.owner.avatar %>" />\
                     </span>\
                     <span class="fw-inline fw-searchable"><%- aDocument.owner.name %></span>\
                 </td>\
-                <td width="60"  class="td-icon">\
+                <td width="70"  class="td-icon">\
                     <span class="rights fw-inline" data-id="<%- aDocument.id %>" title="<%- aDocument.rights %>">\
                         <i data-id="<%- aDocument.id %>" class="icon-access-right icon-access-<%- aDocument.rights %>"></i>\
                     </span>\

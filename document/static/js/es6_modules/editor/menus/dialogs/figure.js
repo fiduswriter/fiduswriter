@@ -17,7 +17,6 @@ export class FigureDialog {
         this.node = this.editor.currentPm.selection.node
         this.submitMessage = gettext('Insert')
         this.dialog = false
-        this.createFigureDialog()
     }
 
     layoutMathPreview() {
@@ -78,7 +77,7 @@ export class FigureDialog {
         this.dialog.dialog('close')
     }
 
-    createFigureDialog() {
+    init() {
     // toolbar figure
         let dialogButtons = []
 

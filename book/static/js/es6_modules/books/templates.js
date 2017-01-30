@@ -9,7 +9,7 @@ export let bookListTemplate = _.template('\
                    data-owner="<%- aBook.owner %>"/>\
            </span>\
        </td>\
-       <td width="225">\
+       <td width="280">\
            <span class="fw-document-table-title fw-inline">\
                <i class="icon-book"></i>\
                <span class="book-title fw-link-text fw-searchable" data-id="<%- aBook.id %>">\
@@ -21,19 +21,19 @@ export let bookListTemplate = _.template('\
                </span>\
            </span>\
        </td>\
-       <td width="115">\
+       <td width="150">\
            <span class="fw-inline"><%- aBook.added %></span>\
        </td>\
-       <td width="115">\
+       <td width="140">\
            <span class="fw-inline"><%- aBook.updated %></span>\
        </td>\
-       <td width="170">\
+       <td width="210">\
            <span>\
                <img class="fw-avatar" src="<%- aBook.owner_avatar %>" />\
            </span>\
            <span class="fw-inline fw-searchable"><%- aBook.owner_name %></span>\
        </td>\
-       <td width="60" align="center">\
+       <td width="80" align="center">\
            <span class="rights fw-inline" data-id="<%- aBook.id %>">\
                <i data-id="<%- aBook.id %>" class="icon-access-right icon-access-<%- aBook.rights %>"></i>\
            </span>\

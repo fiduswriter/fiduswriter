@@ -34,13 +34,9 @@ const FIELD_FORMS = {
 }
 
 export class BibEntryForm {
-    constructor(itemId, bibDB) {
-        if (itemId === undefined) {
-            this.itemId = false
-        } else {
-            this.itemId = parseInt(itemId)
-        }
+    constructor(bibDB, itemId = false) {
         this.bibDB = bibDB
+        this.itemId = itemId
         this.fields = {}
         this.currentValues = {}
     }

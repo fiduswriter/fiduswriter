@@ -36,14 +36,14 @@ export class ModCollabDocChanges {
     }
 
     checkDiffVersion() {
-        let that = this
         if (this.currentlyCheckingVersion) {
             return
         }
         this.currentlyCheckingVersion = true
-        this.enableCheckDiffVersion = window.setTimeout(function() {
-            that.currentlyCheckingVersion = false
-        }, 1000)
+        this.enableCheckDiffVersion = window.setTimeout(
+            () => {this.currentlyCheckingVersion = false},
+            1000
+        )
         if (this.mod.editor.mod.serverCommunications.connected) {
             this.disableDiffSending()
         }
@@ -54,14 +54,16 @@ export class ModCollabDocChanges {
     }
 
     disableDiffSending() {
-        let that = this
         this.awaitingDiffResponse = true
             // If no answer has been received from the server within 2 seconds, check the version
-        this.checkDiffVersionTimer = window.setTimeout(function() {
-            that.awaitingDiffResponse = false
-            that.sendToCollaborators()
-            that.checkDiffVersion()
-        }, 2000)
+        this.checkDiffVersionTimer = window.setTimeout(
+            () => {
+                this.awaitingDiffResponse = false
+                this.sendToCollaborators()
+                this.checkDiffVersion()
+            },
+            2000
+        )
     }
 
     enableDiffSending() {
@@ -110,7 +112,6 @@ export class ModCollabDocChanges {
     }
 
     receiveFromCollaborators(data) {
-        let that = this
         if (this.mod.editor.waitingForDocument) {
             // We are currently waiting for a complete editor update, so
             // don't deal with incoming diffs.
@@ -134,9 +135,7 @@ export class ModCollabDocChanges {
             this.mod.editor.updateComments(data.comments, data.comments_version)
         }
         if (data.diff && data.diff.length) {
-            data.diff.forEach(function(diff) {
-                that.applyDiff(diff)
-            })
+            data.diff.forEach(diff => this.applyDiff(diff))
         }
         if (data.footnote_diff && data.footnote_diff.length) {
             this.mod.editor.mod.footnotes.fnEditor.applyDiffs(data.footnote_diff)
@@ -156,17 +155,17 @@ export class ModCollabDocChanges {
     }
 
     confirmDiff(request_id) {
-        let that = this
         console.log('confirming steps')
         let sentSteps = this.unconfirmedSteps[request_id]["diffs"]
-        this.mod.editor.pm.mod.collab.receive(sentSteps, sentSteps.map(function(step){
-            return that.mod.editor.pm.mod.collab.clientID
-        }))
+        this.mod.editor.pm.mod.collab.receive(sentSteps, sentSteps.map(
+            step => this.mod.editor.pm.mod.collab.clientID
+        ))
 
         let sentFnSteps = this.unconfirmedSteps[request_id]["footnote_diffs"]
-        this.mod.editor.mod.footnotes.fnPm.mod.collab.receive(sentFnSteps, sentFnSteps.map(function(step){
-            return that.mod.editor.mod.footnotes.fnPm.mod.collab.clientID
-        }))
+        this.mod.editor.mod.footnotes.fnPm.mod.collab.receive(
+            sentFnSteps,
+            sentFnSteps.map(step => this.mod.editor.mod.footnotes.fnPm.mod.collab.clientID)
+        )
 
         let sentComments = this.unconfirmedSteps[request_id]["comments"]
         this.mod.editor.mod.comments.store.eventsSent(sentComments)

@@ -41,13 +41,13 @@
     "napa": "2.3.0",
     "object-hash": "1.1.4",
     "paginate-for-print": "0.0.6",
-    "prosemirror-old": "0.10.4",
+    "prosemirror-old": "0.10.6",
     "texzilla": "0.9.9",
     "tokenfield": "^0.3.14",
     "underscore": "1.8.3"
   },
   "napa": {
-    "citeproc": "Juris-M/citeproc-js#1.1.142"
+    "citeproc": "Juris-M/citeproc-js#1.1.149"
   },
   "browserify": {
     "transform": [

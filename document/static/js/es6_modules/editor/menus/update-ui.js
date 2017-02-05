@@ -276,7 +276,4 @@ export class ModMenusUpdateUI {
         }
 
     }
-
-
-
 }

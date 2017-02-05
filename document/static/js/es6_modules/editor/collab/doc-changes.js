@@ -150,13 +150,16 @@ export class ModCollabDocChanges {
             if ('reject_request_id' in data) {
                 console.log('rejecting steps')
                 delete this.unconfirmedSteps[data.reject_request_id]
+            } else {
+                this.cancelCurrentlyCheckingVersion()
             }
-            this.cancelCurrentlyCheckingVersion()
             this.enableDiffSending()
             // Because the update came directly from the server, we may
             // also have lost some collab updates to the footnote table.
             // Re-render the footnote table if needed.
             this.mod.editor.mod.footnotes.fnEditor.renderAllFootnotes()
+            // There may be unsent local changes. Send them now.
+            this.sendToCollaborators()
         }
     }
 
@@ -180,7 +183,6 @@ export class ModCollabDocChanges {
         this.enableDiffSending()
     }
 
-
     applyDiff(diff) {
         this.receiving = true
         let steps = [diff].map(j => Step.fromJSON(docSchema, j))
@@ -188,6 +190,4 @@ export class ModCollabDocChanges {
         this.mod.editor.pmCollab.receive(steps, client_ids)
         this.receiving = false
     }
-
-
 }

@@ -331,6 +331,8 @@ class DocumentWS(BaseWebSocketHandler):
                     "diff": self.doc["last_diffs"][number_diffs:],
                     "reject_request_id": parsed["request_id"],
                 }
+                print(self.doc['diff_version'])
+                print(response)
                 self.write_message(response)
             else:
                 print('unfixable')

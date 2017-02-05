@@ -84,7 +84,6 @@ export class ModCollabDocChanges {
             // send anything now, or there is nothing to send.
             return
         }
-        console.log('send to collabs')
         let toSend = this.mod.editor.pmCollab.sendableSteps()
         let fnToSend = this.mod.editor.mod.footnotes.fnPmCollab.sendableSteps()
         let request_id = this.confirmStepsRequestCounter++
@@ -137,7 +136,7 @@ export class ModCollabDocChanges {
         }
         if (data.hash && data.hash !== editorHash) {
             console.warn('Something is not correct. The local and remote hash values do not match.')
-            return false
+            return
         }
         if (data.comments && data.comments.length) {
             this.mod.editor.updateComments(data.comments, data.comments_version)
@@ -153,9 +152,9 @@ export class ModCollabDocChanges {
             // Diff must is a fix created by server due to missing diffs.
             if ('reject_request_id' in data) {
                 delete this.unconfirmedSteps[data.reject_request_id]
-            } //else {
-                this.cancelCurrentlyCheckingVersion()
-            //}
+            }
+            this.cancelCurrentlyCheckingVersion()
+
             // Because the update came directly from the server, we may
             // also have lost some collab updates to the footnote table.
             // Re-render the footnote table if needed.

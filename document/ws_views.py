@@ -290,8 +290,6 @@ class DocumentWS(BaseWebSocketHandler):
         return only_comment
 
     def handle_diff(self, parsed):
-        if len(parsed["diff"]) > 0:
-            print(parsed["diff"][0]["client_id"])
         pdv = parsed["diff_version"]
         ddv = self.doc['diff_version']
         pcv = parsed["comment_version"]
@@ -334,9 +332,6 @@ class DocumentWS(BaseWebSocketHandler):
                     "diff": self.doc["last_diffs"][number_diffs:],
                     "reject_request_id": parsed["request_id"],
                 }
-                print(parsed)
-                print(self.doc['diff_version'])
-                print(response)
                 self.write_message(response)
             else:
                 print('unfixable')

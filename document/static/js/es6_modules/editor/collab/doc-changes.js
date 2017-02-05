@@ -73,9 +73,13 @@ export class ModCollabDocChanges {
     }
 
     sendToCollaborators() {
-        if (this.awaitingDiffResponse ||
-            !this.mod.editor.pmCollab.hasSendableSteps() &&
-            this.mod.editor.mod.comments.store.unsentEvents().length === 0) {
+        if (
+            this.awaitingDiffResponse ||
+            (
+                !this.mod.editor.pmCollab.hasSendableSteps() &&
+                this.mod.editor.mod.comments.store.unsentEvents().length === 0
+            )
+        ) {
             // We are waiting for the confirmation of previous steps, so don't
             // send anything now, or there is nothing to send.
             return
@@ -84,31 +88,31 @@ export class ModCollabDocChanges {
         let toSend = this.mod.editor.pmCollab.sendableSteps()
         let fnToSend = this.mod.editor.mod.footnotes.fnPmCollab.sendableSteps()
         let request_id = this.confirmStepsRequestCounter++
-            let aPackage = {
-                type: 'diff',
-                diff_version: this.mod.editor.pmCollab.version,
-                diff: toSend.steps.map(s => {
-                    let step = s.toJSON()
-                    step.client_id = this.mod.editor.pmCollab.clientID
-                    return step
-                }),
-                footnote_diff: fnToSend.steps.map(s => {
-                    let step = s.toJSON()
-                    step.client_id = this.mod.editor.mod.footnotes.fnPmCollab.clientID
-                    return step
-                }),
-                comments: this.mod.editor.mod.comments.store.unsentEvents(),
-                comment_version: this.mod.editor.mod.comments.store.version,
-                request_id: request_id,
-                hash: this.mod.editor.getHash()
-            }
+        let aPackage = {
+            type: 'diff',
+            diff_version: this.mod.editor.pmCollab.version,
+            diff: toSend.steps.map(s => {
+                let step = s.toJSON()
+                step.client_id = this.mod.editor.pmCollab.clientID
+                return step
+            }),
+            footnote_diff: fnToSend.steps.map(s => {
+                let step = s.toJSON()
+                step.client_id = this.mod.editor.mod.footnotes.fnPmCollab.clientID
+                return step
+            }),
+            comments: this.mod.editor.mod.comments.store.unsentEvents(),
+            comment_version: this.mod.editor.mod.comments.store.version,
+            request_id: request_id,
+            hash: this.mod.editor.getHash()
+        }
+        this.disableDiffSending()
         this.mod.editor.mod.serverCommunications.send(aPackage)
         this.unconfirmedSteps[request_id] = {
             diffs: toSend.steps,
             footnote_diffs: fnToSend.steps,
             comments: this.mod.editor.mod.comments.store.hasUnsentEvents()
         }
-        this.disableDiffSending()
     }
 
     receiveFromCollaborators(data) {
@@ -146,20 +150,21 @@ export class ModCollabDocChanges {
         }
 
         if (data.server_fix) {
-            // Diff must be a fix created by server.
+            // Diff must is a fix created by server due to missing diffs.
             if ('reject_request_id' in data) {
-                console.log('rejecting steps')
                 delete this.unconfirmedSteps[data.reject_request_id]
-            } else {
+            } //else {
                 this.cancelCurrentlyCheckingVersion()
-            }
-            this.enableDiffSending()
+            //}
             // Because the update came directly from the server, we may
             // also have lost some collab updates to the footnote table.
             // Re-render the footnote table if needed.
             this.mod.editor.mod.footnotes.fnEditor.renderAllFootnotes()
-            // There may be unsent local changes. Send them now.
-            this.sendToCollaborators()
+            // There may be unsent local changes. Send them now after .5 seconds,
+            // in case collaborators want to send something first.
+            this.enableDiffSending()
+            window.setTimeout(() => this.sendToCollaborators(), 500)
+
         }
     }
 

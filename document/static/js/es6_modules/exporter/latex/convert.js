@@ -406,7 +406,7 @@ export class LatexExporterConvert {
         if (this.features.citations) {
             preamble += `
                 \n\\usepackage[backend=biber,hyperref=false,citestyle=authoryear,bibstyle=authoryear]{biblatex}
-                \n\\bibliography{bibliography}
+                \n\\addbibresource{bibliography.bib}
             `
         }
 

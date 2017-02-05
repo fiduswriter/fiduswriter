@@ -1,0 +1,35 @@
+% $Id: logreq.def,v 1.0 2010/08/04 16:12:57 lehman stable $
+
+\renewcommand*{\LogreqDTDVersion}{1.0}
+\ProvidesFile{logreq.def}
+[\lrq@rcsid $Id: logreq.def,v 1.0 2010/08/04 16:12:57 lehman stable $
+ logreq spec v\LogreqDTDVersion]
+
+\DeclareLogreqContainer{requests}{(internal | external)*}
+\DeclareLogreqContainer{internal}{(generic, (provides | requires)*)}
+\DeclareLogreqContainer{external}{(generic, cmdline?, input?, output?, (provides | requires)*)}
+\DeclareLogreqContainer{cmdline}{(binary, (option | infile | outfile)*)}
+\DeclareLogreqContainer{input}{(file)+}
+\DeclareLogreqContainer{output}{(file)+}
+\DeclareLogreqContainer{provides}{(file)+}
+\DeclareLogreqContainer{requires}{(file)+}
+
+\DeclareLogreqElement{generic}{(#PCDATA)}
+\DeclareLogreqElement{binary}{(#PCDATA)}
+\DeclareLogreqElement{option}{(#PCDATA)}
+\DeclareLogreqElement{infile}{(#PCDATA)}
+\DeclareLogreqElement{outfile}{(#PCDATA)}
+\DeclareLogreqElement{file}{(#PCDATA)}
+
+\DeclareLogreqAttribute{requests}{version}{CDATA #REQUIRED}
+\DeclareLogreqAttribute{internal}{package}{CDATA #REQUIRED}
+\DeclareLogreqAttribute{internal}{priority}{(9) #REQUIRED}
+\DeclareLogreqAttribute{internal}[1]{active}{(0 | 1) #REQUIRED}
+\DeclareLogreqAttribute{external}{package}{CDATA #REQUIRED}
+\DeclareLogreqAttribute{external}{priority}{(1 | 2 | 3 | 4 | 5 | 6 | 7 | 8) #REQUIRED}
+\DeclareLogreqAttribute{external}[1]{active}{(0 | 1) #REQUIRED}
+\DeclareLogreqAttribute{provides}{type}{(static | dynamic | editable) #REQUIRED}
+\DeclareLogreqAttribute{requires}{type}{(static | dynamic | editable) #REQUIRED}
+\DeclareLogreqAttribute{file}{type}{CDATA #IMPLIED}
+
+\endinput

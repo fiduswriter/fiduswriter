@@ -39,6 +39,7 @@ export class LatexExporter {
         this.conversion = this.converter.init(this.docContents)
         if (Object.keys(this.conversion.usedBibDB).length > 0) {
             let bibExport = new BibLatexExporter(this.conversion.usedBibDB)
+            let x = bibExport.output
             this.textFiles.push({filename: 'bibliography.bib', contents: bibExport.output})
         }
         this.textFiles.push({filename: 'document.tex', contents: this.conversion.latex})

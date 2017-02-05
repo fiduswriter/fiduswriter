@@ -290,6 +290,8 @@ class DocumentWS(BaseWebSocketHandler):
         return only_comment
 
     def handle_diff(self, parsed):
+        if len(parsed["diff"]) > 0:
+            print(parsed["diff"][0]["client_id"])
         pdv = parsed["diff_version"]
         ddv = self.doc['diff_version']
         pcv = parsed["comment_version"]

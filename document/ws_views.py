@@ -327,6 +327,7 @@ class DocumentWS(BaseWebSocketHandler):
                     parsed["diff_version"] - self.doc['diff_version']
                 response = {
                     "type": "diff",
+                    "server_fix": True,
                     "diff_version": parsed["diff_version"],
                     "diff": self.doc["last_diffs"][number_diffs:],
                     "reject_request_id": parsed["request_id"],
@@ -356,6 +357,7 @@ class DocumentWS(BaseWebSocketHandler):
             number_diffs = pdv - ddv
             response = {
                 "type": "diff",
+                "server_fix": True,
                 "diff_version": pdv,
                 "diff": self.doc["last_diffs"][number_diffs:],
             }

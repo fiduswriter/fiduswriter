@@ -22,7 +22,7 @@ export class ModCollabDocChanges {
             }
             console.log('Hash could not be verified, requesting document.')
             this.disableDiffSending()
-            this.mod.editor.askForDocument();
+            this.mod.editor.askForDocument()
             return false
         } else {
             this.checkDiffVersion()
@@ -145,8 +145,8 @@ export class ModCollabDocChanges {
             this.mod.editor.mod.footnotes.fnEditor.applyDiffs(data.footnote_diff)
         }
 
-        if (!data.hash) {
-            // No hash means this must have been created server side.
+        if (data.server_fix) {
+            // Diff must be a fix created by server.
             if ('reject_request_id' in data) {
                 console.log('rejecting steps')
                 delete this.unconfirmedSteps[data.reject_request_id]

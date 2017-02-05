@@ -123,10 +123,11 @@ export class Editor {
             schema: this.schema
         })
         this.pm.addKeymap(buildKeymap(this.schema))
+        this.pmCollab = collabEditing.config().attach(this.pm)
     }
 
     // Removes all content from the editor and adds the contents of this.doc.
-    update() {
+    prepareUpdate() {
         // Updating editor
         this.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
         this.mod.collab.docChanges.unconfirmedSteps = {}
@@ -134,10 +135,14 @@ export class Editor {
             this.mod.collab.docChanges.enableDiffSending()
         }
 
-        this.setPmDoc()
+        return this.setPmDoc().then(
+            () => this.update()
+        )
+    }
 
+    update() {
         if (this.docInfo.unapplied_diffs.length > 0) {
-            // We have unapplied diffs -- this hsould only happen if the last disconnect
+            // We have unapplied diffs -- this should only happen if the last disconnect
             // happened before we could save. We try to apply the diffs and then save
             // immediately.
             try {
@@ -147,16 +152,21 @@ export class Editor {
                     let diff = this.docInfo.unapplied_diffs.shift()
                     this.mod.collab.docChanges.applyDiff(diff)
                 }
+                return this.save()
             } catch (error) {
                 // We couldn't apply the diffs. They are likely corrupted.
                 // We set the original document, increase the version by one and
                 // save to the server.
                 this.doc.version += this.docInfo.unapplied_diffs.length + 1
-                this.setPmDoc()
+
                 console.warn('Diffs could not be applied correctly!')
-                this.docInfo.unapplied_diffs = []
+                return this.setPmDoc().then(
+                    () => {
+                        this.docInfo.unapplied_diffs = []
+                        this.save()
+                    }
+                )
             }
-            this.save()
         }
 
         // Applying diffs through the receiving mechanism has also added all the
@@ -209,11 +219,8 @@ export class Editor {
         // Given that the article node is the second outer-most node, we need
         // to wrap it in a doc node before setting it in PM.
         if (this.doc.contents.type) {
-            // Detach collaboration module if there is one.
-            if (this.pmCollab) {
-                collabEditing.detach(this.pm)
-                delete this.pmCollab
-            }
+            // Detach collaboration module.
+            collabEditing.detach(this.pm)
 
             // Set document in prosemirror
             this.pm.setDoc(
@@ -221,13 +228,14 @@ export class Editor {
             )
             // Reattach collaboration module
             this.pmCollab = collabEditing.config({version: this.doc.version}).attach(this.pm)
-        } else{
+            return Promise.resolve()
+        } else {
             // Document is new
-            this.getUpdates().then(
+            return this.getUpdates().then(
                 () => {
                     // We need to set the doc so that events such as for ui update
                     // are triggered.
-                    this.setPmDoc()
+                    return this.setPmDoc()
                 }
             )
         }
@@ -338,7 +346,7 @@ export class Editor {
             this.user = this.doc.owner
         }
         this.getImageDB(this.doc.owner.id).then(() => {
-            this.update()
+            this.prepareUpdate()
             this.mod.serverCommunications.send({
                 type: 'participant_update'
             })

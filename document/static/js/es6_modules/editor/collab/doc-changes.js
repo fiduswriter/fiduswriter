@@ -120,7 +120,11 @@ export class ModCollabDocChanges {
         let editorHash = this.mod.editor.getHash()
         console.log(`Incoming diff: version: ${data.diff_version}, hash: ${data.hash}`)
         console.log(`Editor: version: ${this.mod.editor.pmCollab.version}, hash: ${editorHash}`)
-        if (data.diff_version !== this.mod.editor.pmCollab.version) {
+        if (data.diff_version < this.mod.editor.pmCollab.version) {
+            console.log('Removing excessive diffs')
+            let outdatedDiffs = this.mod.editor.pmCollab.version - data.diff_version
+            data.diff = data.diff.slice(outdatedDiffs)
+        } else if (data.diff_version > this.mod.editor.pmCollab.version) {
             console.warn('Something is not correct. The local and remote versions do not match.')
             this.checkDiffVersion()
             return
@@ -140,14 +144,16 @@ export class ModCollabDocChanges {
         if (data.footnote_diff && data.footnote_diff.length) {
             this.mod.editor.mod.footnotes.fnEditor.applyDiffs(data.footnote_diff)
         }
-        if (data.reject_request_id) {
-            this.rejectDiff(data.reject_request_id)
-        }
+
         if (!data.hash) {
             // No hash means this must have been created server side.
+            if (data.reject_request_id) {
+                console.log('rejecting steps')
+                delete this.unconfirmedSteps[data.reject_request_id]
+            }
             this.cancelCurrentlyCheckingVersion()
             this.enableDiffSending()
-            // Because the uypdate came directly from the sevrer, we may
+            // Because the update came directly from the server, we may
             // also have lost some collab updates to the footnote table.
             // Re-render the footnote table if needed.
             this.mod.editor.mod.footnotes.fnEditor.renderAllFootnotes()
@@ -174,12 +180,6 @@ export class ModCollabDocChanges {
         this.enableDiffSending()
     }
 
-    rejectDiff(request_id) {
-        console.log('rejecting steps')
-        this.enableDiffSending()
-        delete this.unconfirmedSteps[request_id]
-        this.sendToCollaborators()
-    }
 
     applyDiff(diff) {
         this.receiving = true

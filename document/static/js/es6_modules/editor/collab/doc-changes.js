@@ -147,7 +147,7 @@ export class ModCollabDocChanges {
 
         if (!data.hash) {
             // No hash means this must have been created server side.
-            if (data.reject_request_id) {
+            if ('reject_request_id' in data) {
                 console.log('rejecting steps')
                 delete this.unconfirmedSteps[data.reject_request_id]
             }

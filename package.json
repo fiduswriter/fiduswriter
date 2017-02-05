@@ -47,7 +47,7 @@
     "underscore": "1.8.3"
   },
   "napa": {
-    "citeproc": "Juris-M/citeproc-js#1.1.142"
+    "citeproc": "Juris-M/citeproc-js#1.1.149"
   },
   "browserify": {
     "transform": [

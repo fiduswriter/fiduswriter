@@ -15,32 +15,29 @@ export class ModFootnotes {
         this.schema = fnSchema
         this.footnotes = []
         this.init()
-        this.bindEvents()
         new ModFootnoteEditor(this)
         new ModFootnoteMarkers(this)
         new ModFootnoteLayout(this)
+        this.bindEvents()
     }
 
     init() {
         this.fnPm = new ProseMirror({
             place: document.getElementById('footnote-box-container'),
             schema: this.schema,
-            doc: this.schema.nodeFromJSON({"type":"doc","content":[{"type": "footnote_end"}]}),
-            plugins: [collabEditing.config({version: 0})] // Version doesn't matter, as we don't track it
+            doc: this.schema.nodeFromJSON({"type":"doc","content":[{"type": "footnote_end"}]})//,
+            //plugins: [collabEditing.config({version: 0})] // Version doesn't matter, as we don't track it
         })
+
+        //this.fnPmCollab = collabEditing.get(this.fnPm)
         this.fnPm.addKeymap(buildKeymap(this.schema))
+
         // TODO: get rid of footnote_end once Pm doesn't have a bug that requires it.
 
-        // add mod to give us simple access to internals removed in PM 0.8.0
-        this.fnPm.mod = {}
-        this.fnPm.mod.collab = collabEditing.get(this.fnPm)
-        // Ignore setDoc
-        this.fnPm.on.beforeSetDoc.remove(this.fnPm.mod.collab.onSetDoc)
-        this.fnPm.mod.collab.onSetDoc = () => {}
-        // Trigger reset on setDoc
     }
 
     bindEvents() {
+        this.attachCollab()
         // Set the current editor depending on where the focus currently is.
         this.fnPm.on.focus.add(() => {
             this.editor.currentPm = this.fnPm
@@ -48,5 +45,25 @@ export class ModFootnotes {
         this.editor.pm.on.focus.add(() => {
             this.editor.currentPm = this.editor.pm
         })
+    }
+
+    attachCollab() {
+        if (this.fnPmCollab) {
+            // plugin already present
+            return
+        }
+        // Attach collaboration module
+        // Version doesn't matter, as we don't track it
+        this.fnPmCollab = collabEditing.config({version: 0}).attach(this.fnPm)
+        this.fnPmCollab.mustSend.add(() => {
+            this.fnEditor.footnoteEdit()
+        })
+    }
+
+    detachCollab() {
+        if (this.fnPmCollab) {
+            collabEditing.detach(this.fnPm)
+            delete this.fnPmCollab
+        }
     }
 }

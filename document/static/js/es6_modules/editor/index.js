@@ -82,9 +82,7 @@ export class Editor {
                 return ph.getOutput()
             }
         )
-        this.pm.mod.collab.receivedTransform.add(
-            (transform, options) => {this.onTransform(transform, false)}
-        )
+
         this.mod.serverCommunications.init()
         this.setSaveTimers()
     }
@@ -122,25 +120,9 @@ export class Editor {
     makeEditor() {
         this.pm = new ProseMirror({
             place: document.getElementById('document-editable'),
-            schema: this.schema,
-            plugins: [collabEditing.config({version: 0})]
+            schema: this.schema
         })
         this.pm.addKeymap(buildKeymap(this.schema))
-        // add mod to give us simple access to internals removed in PM 0.8.0
-        this.pm.mod = {}
-        this.pm.mod.collab = collabEditing.get(this.pm)
-        // Ignore setDoc
-        this.pm.on.beforeSetDoc.remove(this.pm.mod.collab.onSetDoc)
-        this.pm.mod.collab.onSetDoc = () => {}
-        // Trigger reset on setDoc
-        this.pm.mod.collab.afterSetDoc = () => {
-            // Reset all collab values and set document version
-            let collab = this.pm.mod.collab
-            collab.versionDoc = this.pm.doc
-            collab.unconfirmedSteps = []
-            collab.unconfirmedMaps = []
-        }
-        this.pm.on.setDoc.add(this.pm.mod.collab.afterSetDoc)
     }
 
     // Removes all content from the editor and adds the contents of this.doc.
@@ -151,9 +133,8 @@ export class Editor {
         if (this.mod.collab.docChanges.awaitingDiffResponse) {
             this.mod.collab.docChanges.enableDiffSending()
         }
-        this.setPmDoc()
-        this.pm.mod.collab.version = this.doc.version
 
+        this.setPmDoc()
 
         if (this.docInfo.unapplied_diffs.length > 0) {
             // We have unapplied diffs -- this hsould only happen if the last disconnect
@@ -170,10 +151,9 @@ export class Editor {
                 // We couldn't apply the diffs. They are likely corrupted.
                 // We set the original document, increase the version by one and
                 // save to the server.
+                this.doc.version += this.docInfo.unapplied_diffs.length + 1
                 this.setPmDoc()
                 console.warn('Diffs could not be applied correctly!')
-                this.pm.mod.collab.version =
-                    this.doc.version + this.docInfo.unapplied_diffs.length + 1
                 this.docInfo.unapplied_diffs = []
             }
             this.save()
@@ -186,14 +166,20 @@ export class Editor {
         this.mod.footnotes.markers.removeAllMarkers()
         this.docInfo.hash = this.getHash()
         this.mod.comments.store.setVersion(this.doc.comment_version)
-        this.pm.mod.collab.mustSend.add(() => {
+        this.pmCollab.mustSend.add(() => {
             this.mod.collab.docChanges.sendToCollaborators()
         }, 0) // priority : 0 so that other things can be scheduled before this.
-        this.pm.mod.collab.receivedTransform.add(
+        this.pmCollab.receivedTransform.add(
             (transform, options) => {
                 this.onTransform(transform, false)
             }
         )
+        this.pmCollab.receivedTransform.add(
+            (transform, object) => {
+                this.mod.footnotes.markers.remoteScanForFootnoteMarkers(transform, false)
+            }
+        )
+
         this.mod.footnotes.fnEditor.renderAllFootnotes()
         _.each(this.doc.comments, comment => {
             this.mod.comments.store.addLocalComment(comment.id, comment.user,
@@ -219,11 +205,22 @@ export class Editor {
     }
 
     setPmDoc() {
+
         // Given that the article node is the second outer-most node, we need
         // to wrap it in a doc node before setting it in PM.
         if (this.doc.contents.type) {
-            let pmDoc = docSchema.nodeFromJSON({type:'doc',content:[this.doc.contents]})
-            this.pm.setDoc(pmDoc)
+            // Detach collaboration module if there is one.
+            if (this.pmCollab) {
+                collabEditing.detach(this.pm)
+                delete this.pmCollab
+            }
+
+            // Set document in prosemirror
+            this.pm.setDoc(
+                docSchema.nodeFromJSON({type:'doc',content:[this.doc.contents]})
+            )
+            // Reattach collaboration module
+            this.pmCollab = collabEditing.config({version: this.doc.version}).attach(this.pm)
         } else{
             // Document is new
             this.getUpdates().then(
@@ -368,7 +365,7 @@ export class Editor {
     // other clients if we really have the same contents.
     getHash() {
         return objectHash.MD5(
-            this.pm.mod.collab.versionDoc.toJSON(),
+            this.pmCollab.versionDoc.toJSON(),
             {unorderedArrays: true}
         )
     }
@@ -382,12 +379,12 @@ export class Editor {
 
     // Collects updates of the document from ProseMirror and saves it under this.doc
     getUpdates() {
-        let pmArticle = this.pm.mod.collab.versionDoc.firstChild
+        let pmArticle = this.pmCollab.versionDoc.firstChild
         this.doc.contents = pmArticle.toJSON()
         this.doc.metadata = getMetadata(pmArticle)
         this.doc.settings = getSettings(pmArticle)
         this.doc.title = pmArticle.firstChild.textContent
-        this.doc.version = this.pm.mod.collab.version
+        this.doc.version = this.pmCollab.version
         this.docInfo.hash = this.getHash()
         this.doc.comments = this.mod.comments.store.comments
         return Promise.resolve()

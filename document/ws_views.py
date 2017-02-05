@@ -332,6 +332,7 @@ class DocumentWS(BaseWebSocketHandler):
                     "diff": self.doc["last_diffs"][number_diffs:],
                     "reject_request_id": parsed["request_id"],
                 }
+                print(parsed["diff"])
                 print(self.doc['diff_version'])
                 print(response)
                 self.write_message(response)
@@ -425,7 +426,7 @@ class DocumentWS(BaseWebSocketHandler):
                     if access_rights == 'read-without-comments':
                         # The reader should not receive the comments update, so
                         # we remove the comments from the copy of the message
-                        # sent to the reviewer. We still need to sned the rest
+                        # sent to the reviewer. We still need to send the rest
                         # of the message as it may contain other diff
                         # information.
                         message = deepcopy(message)

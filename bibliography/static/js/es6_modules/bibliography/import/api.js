@@ -1,5 +1,5 @@
 import {BibLatexParser} from "biblatex-csl-converter"
-import {searchApiTemplate, searchApiResultTemplate} from "./templates"
+import {searchApiTemplate, searchApiResultTemplate, searchApiResultTemplateDara, searchApiResultTemplateCrossref} from "./templates"
 import {activateWait, deactivateWait, addAlert, csrfToken} from "../../common"
 
 export class BibLatexApiImporter {
@@ -11,8 +11,8 @@ export class BibLatexApiImporter {
 
     init() {
         // Add form to DOM
+        let that = this
         this.dialog = jQuery(searchApiTemplate({}))
-
         this.dialog.dialog({
             draggable: false,
             resizable: false,
@@ -34,18 +34,51 @@ export class BibLatexApiImporter {
         })
 
         document.getElementById('text-search').addEventListener('input', () => {
+
             let searchTerm = jQuery("#text-search").val()
             jQuery("#import-api-search-result").empty()
-            // Only search for queries with at least four letters
-            if (searchTerm.length > 3) {
+            jQuery('.api-search').bind('click', function() {
+                if(searchTerm.length == 2 && searchTerm != ''){
+                    jQuery("#import-api-search-result").html('Looking...')
+                    that.search(searchTerm)
+                }
+        })
+
+        if (searchTerm.length > 3 ) {
                 jQuery("#import-api-search-result").html('Looking...')
-                this.search(searchTerm)
+                that.search(searchTerm)
             }
         })
     }
 
     search(searchTerm) {
         let that = this
+        //Dara
+        jQuery.ajax({
+                data: {
+                    'query': searchTerm,
+                    'member-id' : 'gesis',
+                },
+                dataType: "json",
+                url: 'https://api.datacite.org/works?/select',
+                success: function(result) {
+
+                    let list = result['data']
+                    jQuery("#import-api-search-result-dara").empty()
+                    jQuery("#import-api-search-result-dara").html('Dara')
+                    jQuery('#import-api-search-result-dara').append(
+                        searchApiResultTemplateDara({items: list})
+                    )
+                jQuery('#import-api-search-result-dara .api-import').on('click', function() {
+                    let doi = jQuery(this).attr('data-doi')
+                    that.downloadBibtexDara(doi)
+                    that.dialog.dialog('close')
+                })
+
+
+                }
+        })
+        //sowiport
         jQuery.ajax({
             data: {
                 'wt': 'json',
@@ -62,17 +95,45 @@ export class BibLatexApiImporter {
             success: function(result) {
                 let list = result['response']
                 jQuery("#import-api-search-result").empty()
+                jQuery("#import-api-search-result").html('Sowiport')
                 jQuery('#import-api-search-result').append(
                     searchApiResultTemplate({items: list.docs})
                 )
-
-                jQuery('#import-api-search-result .api-import').bind('click', function() {
+                jQuery('#import-api-search-result .api-import').on('click', function() {
                     let id = jQuery(this).attr('data-id')
                     that.downloadBibtex(id)
                     that.dialog.dialog('close')
                 })
             }
         })
+
+    //http://search.crossref.org/help/api
+        jQuery.ajax({
+            data: {
+                'q': searchTerm,
+                "startPage": 1
+            },
+            "itemsPerPage": 5,
+            dataType: "json",
+            url: 'http://search.crossref.org/dois?q=q&header=true',
+
+            success: function(result) {
+                let list = result['items']
+                jQuery("#import-api-search-result-crossref").empty()
+                jQuery("#import-api-search-result-crossref").html('Crossref')
+
+                jQuery('#import-api-search-result-crossref').append(
+                    searchApiResultTemplateCrossref({items: list})
+                )
+               jQuery('#import-api-search-result-crossref .api-import').on('click', function() {
+                    let doi = jQuery(this).attr('data-doi')
+                    alert(doi)
+                    that.downloadBibtexCrossref(doi)
+                    that.dialog.dialog('close')
+                })
+            }
+        })
+
     }
 
     downloadBibtex(id) {
@@ -81,16 +142,55 @@ export class BibLatexApiImporter {
             method: 'GET',
             url: `/proxy/http://sowiportbeta.gesis.org/Record/${id}/Export?style=BibTeX`,
             success: response => {
+                console.log(response)
                 this.importBibtex(response)
 
             }
         })
     }
 
+    downloadBibtexDara(doi) {
+        jQuery.ajax({
+            dataType: 'text',
+            method: 'GET',
+            url: 'https://search.datacite.org/citation?format=bibtex&doi=10.14469%2FCH%2F193083',
+
+            success: response => {
+                console.log(response)
+                this.importBibtex(response)
+
+            }
+
+        })
+    }
+
+
+    downloadBibtexCrossref(doi1){
+        let doi = doi1.replace('http://dx.doi.org/','')
+        alert(doi)
+        jQuery.ajax({
+            dataType: 'text',
+            method: 'GET',
+            url: 'http://api.crossref.org/works/10.5555/12345678/transform/application/x-bibtex',
+
+            success: response => {
+                console.log(response)
+                this.importBibtex(response)
+
+            },
+            error: function (request, status, error) {
+                alert(request.responseText);
+            }
+
+        })
+    }
+
     importBibtex(bibtex) {
         // Mostly copied from ./file.js
         let bibData = new BibLatexParser(bibtex)
+
         let tmpDB = bibData.output
+
         let bibKeys = Object.keys(tmpDB)
         // There should only be one bibkey
         // We iterate anyway, just in case there is more than one.
@@ -104,7 +204,12 @@ export class BibLatexApiImporter {
             }
             // If the entry has no date, add an uncertain date
             if (!bibEntry.fields.date) {
-                bibEntry.fields.date = 'uuuu'
+
+                if(bibEntry.fields.year)
+                    bibEntry.fields.date = bibEntry.fields.year
+                else
+                    bibEntry.fields.date = 'uuuu'
+
             }
             // If the entry has no editor or author, add empty author
             if (!bibEntry.fields.author && !bibEntry.fields.editor) {
@@ -118,3 +223,4 @@ export class BibLatexApiImporter {
     }
 
 }
+

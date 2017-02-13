@@ -1,3 +1,6 @@
+import {collabEditing} from "prosemirror-old/dist/collab"
+
+
 export class ModCollabCarets {
     constructor(mod) {
         mod.carets = this
@@ -53,7 +56,8 @@ export class ModCollabCarets {
     }
 
     sendSelectionChange() {
-        if (this.mod.editor.currentPm.mod.collab.unconfirmedMaps.length > 0) {
+        let pmCollab = collabEditing.get(this.mod.editor.currentPm)
+        if (pmCollab.unconfirmedMaps.length > 0) {
             // TODO: Positions really need to be reverse-mapped through all
             // unconfirmed maps. As long as we don't do this, we just don't send
             // anything if there are unconfirmed maps to avoid potential problems.
@@ -63,7 +67,7 @@ export class ModCollabCarets {
         this.mod.editor.mod.serverCommunications.send({
             type: 'selection_change',
             caret_position: this.getCaretPosition(),
-            diff_version: this.mod.editor.pm.mod.collab.version
+            diff_version: this.mod.editor.pmCollab.version
         })
     }
 
@@ -86,7 +90,8 @@ export class ModCollabCarets {
         let posHead = caretPosition.head
         let pm = caretPosition.pm === 'pm' ? this.mod.editor.pm : this.mod.editor.mod.footnotes.fnPm
         // Map the positions through all still unconfirmed changes
-        pm.mod.collab.unconfirmedMaps.forEach(map => {
+        let pmCollab = collabEditing.get(pm)
+        pmCollab.unconfirmedMaps.forEach(map => {
             posFrom = map.map(posFrom)
             posTo = map.map(posTo)
             posHead = map.map(posHead)

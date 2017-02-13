@@ -290,6 +290,10 @@ class DocumentWS(BaseWebSocketHandler):
         return only_comment
 
     def handle_diff(self, parsed):
+        pdv = parsed["diff_version"]
+        ddv = self.doc['diff_version']
+        pcv = parsed["comment_version"]
+        dcv = self.doc['comment_version']
         if (
             self.user_info.access_rights in COMMENT_ONLY and
             not self.only_comments(parsed['diff'])
@@ -301,8 +305,7 @@ class DocumentWS(BaseWebSocketHandler):
                 )
             )
             return
-        if parsed["diff_version"] == self.doc['diff_version'] and parsed[
-                "comment_version"] == self.doc['comment_version']:
+        if pdv == ddv and pcv == dcv:
             self.doc["last_diffs"].extend(parsed["diff"])
             self.doc['diff_version'] += len(parsed["diff"])
             self.update_comments(parsed["comments"])
@@ -313,26 +316,26 @@ class DocumentWS(BaseWebSocketHandler):
                 self.id,
                 self.user_info.user.id
             )
-        elif parsed["diff_version"] != self.doc['diff_version']:
-            if parsed["diff_version"] < (
-                    self.doc['diff_version'] - len(self.doc["last_diffs"])):
-                print('unfixable')
-                # Client has a version that is too old
-                self.send_document()
-            elif parsed["diff_version"] < self.doc['diff_version']:
+        elif pdv > ddv:
+            # Client has a higher version than server. Something is fishy!
+            print('unfixable')
+        elif pdv < ddv:
+            if pdv + len(self.doc["last_diffs"]) >= ddv:
+                # We have enough last_diffs stored to fix it.
                 print("can fix it")
-                number_requested_diffs = self.doc[
-                    'diff_version'] - parsed["diff_version"]
+                number_diffs = \
+                    parsed["diff_version"] - self.doc['diff_version']
                 response = {
                     "type": "diff",
+                    "server_fix": True,
                     "diff_version": parsed["diff_version"],
-                    "diff": self.doc["last_diffs"][-number_requested_diffs:],
+                    "diff": self.doc["last_diffs"][number_diffs:],
                     "reject_request_id": parsed["request_id"],
                 }
                 self.write_message(response)
             else:
                 print('unfixable')
-                # Client has a version that is too old
+                # Client has a version that is too old to be fixed
                 self.send_document()
         else:
             print('comment_version incorrect!')
@@ -348,11 +351,13 @@ class DocumentWS(BaseWebSocketHandler):
             self.write_message(response)
             return
         elif pdv + len(self.doc["last_diffs"]) >= ddv:
-            number_requested_diffs = ddv - pdv
+            print("can fix it")
+            number_diffs = pdv - ddv
             response = {
                 "type": "diff",
-                "diff_version": parsed["diff_version"],
-                "diff": self.doc["last_diffs"][-number_requested_diffs:],
+                "server_fix": True,
+                "diff_version": pdv,
+                "diff": self.doc["last_diffs"][number_diffs:],
             }
             self.write_message(response)
             return
@@ -418,7 +423,7 @@ class DocumentWS(BaseWebSocketHandler):
                     if access_rights == 'read-without-comments':
                         # The reader should not receive the comments update, so
                         # we remove the comments from the copy of the message
-                        # sent to the reviewer. We still need to sned the rest
+                        # sent to the reviewer. We still need to send the rest
                         # of the message as it may contain other diff
                         # information.
                         message = deepcopy(message)

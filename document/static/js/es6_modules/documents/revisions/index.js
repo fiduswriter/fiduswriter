@@ -14,6 +14,7 @@ export class DocumentRevisionsDialog {
         this.user = user
         this.bibDB = bibDB
         this.imageDB = imageDB
+        this.dialog = false
     }
 
     /**
@@ -22,34 +23,32 @@ export class DocumentRevisionsDialog {
      * @param {number}
      */
     init() {
-        let diaButtons = {}
 
-        diaButtons[gettext('Close')] = function() {
-            jQuery(this).dialog("close")
-        }
         let doc = _.findWhere(this.documentList, {
             id: this.documentId
         })
 
+        let buttons = [
+            {
+                text: gettext('Close'),
+                class: "fw-button fw-dark",
+                click: () => this.dialog.dialog("close")
+            }
+        ]
 
-
-        jQuery(documentrevisionsTemplate({
+        this.dialog = jQuery(documentrevisionsTemplate({
             doc, localizeDate
-        })).dialog({
+        }))
+
+        this.dialog.dialog({
             draggable: false,
             resizable: false,
             top: 10,
             width: 620,
             height: 480,
             modal: true,
-            buttons: diaButtons,
-            create: function() {
-                let theDialog = jQuery(this).closest(".ui-dialog")
-                theDialog.find(".ui-dialog-buttonset .ui-button:eq(0)").addClass("fw-button fw-dark")
-            },
-            close: function() {
-                jQuery(this).dialog('destroy').remove()
-            }
+            buttons,
+            close: () => this.dialog.dialog('destroy').remove()
         })
         return this.bind()
     }

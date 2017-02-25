@@ -1,4 +1,4 @@
-import {CitationDialog, FigureDialog, linkDialog, TableDropdown, MathDialog} from "./dialogs"
+import {CitationDialog, FigureDialog, LinkDialog, TableDropdown, MathDialog} from "./dialogs"
 import {commands} from "prosemirror-old/dist/edit/commands"
 
 /* Bindings for the toolbar menu */
@@ -27,7 +27,10 @@ export class ModMenusToolbar {
         })
 
         jQuery(document).on('mousedown', '#button-link:not(.disabled)', event =>
-            this.executeAction(event, () => linkDialog(this.mod))
+            this.executeAction(event, () => {
+                let dialog = new LinkDialog(this.mod)
+                return dialog.init()
+            })
         )
 
         jQuery(document).on('mousedown', '#button-cite:not(.disabled)', event => {

@@ -30,25 +30,20 @@ function dataURItoBlob(dataURI) {
     return new Blob([ia], {type:mimeString});
 }
 function add_bibtex(pdftex){
-   // pdftex.FS_createLazyFile('/', 'biblatex.sty', 'biblatex.sty', true, true);
     pdftex.FS_createLazyFile('/', 'etoolbox.sty', 'etoolbox.sty', true, true);
     pdftex.FS_createLazyFile('/', 'logreq.sty', 'logreq.sty', true, true);
     pdftex.FS_createLazyFile('/', 'logreq.def', 'logreq.def', true, true);
     pdftex.FS_createLazyFile('/', 'xstring.sty', 'xstring.sty', true, true);
     pdftex.FS_createLazyFile('/', 'xstring.tex', 'xstring.tex', true, true);
-   // pdftex.FS_createLazyFile('/', 'authoryear.bbx', 'authoryear.bbx', true, true);
-   // pdftex.FS_createLazyFile('/', 'standard.bbx', 'standard.bbx', true, true);
-   // pdftex.FS_createLazyFile('/', 'authoryear.cbx', 'authoryear.cbx', true, true);
 
 }
 var compile = function(source_code, bibfile, ImagesList, externalClass, pdfFiletitle) {
-    console.log(source_code)
-    console.log("---------------------")
+    
         var pdf_dataurl = undefined;
 
         var pdftex = new PDFTeX("/static/js/libs/texlive/pdftex-worker.js");
 
-    pdftex.set_TOTAL_MEMORY(160*4048*4048).then(function() {
+    pdftex.set_TOTAL_MEMORY("-s").then(function() {
             pdftex.on_stdout = appendOutput;
             pdftex.on_stderr = appendOutput;
             if(externalClass){
@@ -58,12 +53,12 @@ var compile = function(source_code, bibfile, ImagesList, externalClass, pdfFilet
                         for (let i = 0; i < ImagesList.length; i++) {
                             pdftex.FS_createLazyFile('/images', ImagesList[i].filename, ImagesList[i].url, true, true);
                         }
-                        pdftex.FS_createLazyFile('/', 'comment.sty', 'comment.sty', true, true);
-                        pdftex.FS_createLazyFile('/', 'acmcopyright.sty', 'acmcopyright.sty', true, true);
-                        pdftex.FS_createLazyFile('/', 'xkeyval.sty', 'xkeyval.sty', true, true);
+                     //   pdftex.FS_createLazyFile('/', 'comment.sty', 'comment.sty', true, true);
+                     //   pdftex.FS_createLazyFile('/', 'acmcopyright.sty', 'acmcopyright.sty', true, true);
+                     //   pdftex.FS_createLazyFile('/', 'xkeyval.sty', 'xkeyval.sty', true, true);
                         console.log("compile")
                         pdftex.compile(source_code).then(function(pdf_dataurl) {
-                            download(dataURItoBlob(pdf_dataurl),pdfFiletitle,'application/pdf')
+                           download(dataURItoBlob(pdf_dataurl),pdfFiletitle,'application/pdf')
                         });
                     });
 
@@ -76,7 +71,7 @@ var compile = function(source_code, bibfile, ImagesList, externalClass, pdfFilet
                     pdftex.FS_createLazyFile('/', 'luainputenc.sty', 'luainputenc.sty', true, true);
                    //Adding requirements for Bibtex
                     if(bibfile.length  > 1){
-                        add_bibtex(pdftex)
+                    	add_bibtex(pdftex)
                         bibfile.forEach(textFile => {
                             if(textFile.filename.includes(".bib")){
                             pdftex.FS_createDataFile('/',textFile.filename, textFile.contents,true,true)
@@ -86,7 +81,7 @@ var compile = function(source_code, bibfile, ImagesList, externalClass, pdfFilet
                     }
 
                     pdftex.compile(source_code).then(function(pdf_dataurl) {
-                        download(dataURItoBlob(pdf_dataurl),pdfFiletitle+'.pdf','application/pdf')
+                       download(dataURItoBlob(pdf_dataurl),pdfFiletitle+'.pdf','application/pdf')
                     });
                 });
             }

@@ -51,7 +51,7 @@
   },
   "napa": {
     "citeproc": "Juris-M/citeproc-js#1.1.142",
-    "texlive" : "manuels/texlive.js#master",
+    "texlive" : "fiduswriter/texlive.js#master",
     "promisejs":"stackp/promisejs#master"
   },
   "browserify": {

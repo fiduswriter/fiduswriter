@@ -1,5 +1,5 @@
 import {BibLatexParser} from "biblatex-csl-converter"
-import {searchApiTemplate, searchApiResultTemplate, searchApiResultTemplateDara, searchApiResultTemplateCrossref} from "./templates"
+import {searchApiTemplate, searchApiResultTemplate, searchApiResultTemplateDara, searchApiResultTemplateCrossref, searchApiResultTemplateWorldCat} from "./templates"
 import {activateWait, deactivateWait, addAlert, csrfToken} from "../../common"
 
 export class BibLatexApiImporter {
@@ -62,7 +62,6 @@ export class BibLatexApiImporter {
                 dataType: "json",
                 url: 'https://api.datacite.org/works?/select',
                 success: function(result) {
-
                     let list = result['data']
                     jQuery("#import-api-search-result-dara").empty()
                     jQuery("#import-api-search-result-dara").html('Dara')
@@ -71,10 +70,10 @@ export class BibLatexApiImporter {
                     )
                 jQuery('#import-api-search-result-dara .api-import').on('click', function() {
                     let doi = jQuery(this).attr('data-doi')
+                    doi = encodeURIComponent(doi)
                     that.downloadBibtexDara(doi)
                     that.dialog.dialog('close')
                 })
-
 
                 }
         })
@@ -134,6 +133,59 @@ export class BibLatexApiImporter {
             }
         })
 
+    //worldcat
+        jQuery.ajax({
+            data: {
+                'q': searchTerm,
+                wskey : '2RasCcWIc9xSPR02RgNKfs6VXBoq7Oi579XWZTNFhDEd8cZlFDg8Yp7at1OTMXVBo6coPbvjJGmnHEQU'
+            },
+            dataType: "xml",
+            url: '/proxy/http://www.worldcat.org/webservices/catalog/search/opensearch?/select/',//q=civil&,
+            success: function(result) {
+                let jsonResult = xmlToJson(result)
+                console.log("jsonResult")
+                console.log(jsonResult.feed.entry[0]['dcIdentifier'])
+
+                let list = $(result).find("entry")//.find("title")
+                let isbn = $('dc\\:identifier, identifier', (list))
+                //console.log(isbn[0].innerHTML)
+                jQuery("#import-api-search-result-worldcat").empty()
+                jQuery("#import-api-search-result-worldcat").html('Worldcat')
+                jQuery('#import-api-search-result-worldcat').append(
+                    searchApiResultTemplateWorldCat({items: jsonResult.feed.entry })//
+                )
+
+               jQuery('#import-api-search-result-worldcat .api-import').on('click', function() {
+                    let isbn = jQuery(this).attr('data-isbn')
+                    //isbn = isbn[0].innerHTML.replace('urn:ISBN:','')
+                    alert(isbn)
+                    that.downloadBibtexWorldCat(isbn)
+                    that.dialog.dialog('close')
+               })
+
+            },
+
+            error : function formatErrorMessage(jqXHR, exception) {
+                console.log((JSON.stringify(jqXHR)))
+                if (jqXHR.status === 0) {
+                    return ('Not connected.\nPlease verify your network connection.');
+                } else if (jqXHR.status == 404) {
+                    return ('The requested page not found. [404]');
+                } else if (jqXHR.status == 500) {
+                    return ('Internal Server Error [500].');
+                } else if (exception === 'parsererror') {
+                    return ('Requested JSON parse failed.');
+                } else if (exception === 'timeout') {
+                    return ('Time out error.');
+                } else if (exception === 'abort') {
+                    return ('Ajax request aborted.');
+                } else {
+                    return ('Uncaught Error.\n' + jqXHR.responseText);
+                }
+            }
+        })
+
+
     }
 
     downloadBibtex(id) {
@@ -142,7 +194,7 @@ export class BibLatexApiImporter {
             method: 'GET',
             url: `/proxy/http://sowiportbeta.gesis.org/Record/${id}/Export?style=BibTeX`,
             success: response => {
-                console.log(response)
+                //console.log(response)
                 this.importBibtex(response)
 
             }
@@ -153,10 +205,10 @@ export class BibLatexApiImporter {
         jQuery.ajax({
             dataType: 'text',
             method: 'GET',
-            url: 'https://search.datacite.org/citation?format=bibtex&doi=10.14469%2FCH%2F193083',
+            url: 'https://search.datacite.org/citation?format=bibtex&doi='+doi,//10.14469%2FCH%2F193083',
 
             success: response => {
-                console.log(response)
+                //console.log(response)
                 this.importBibtex(response)
 
             }
@@ -171,10 +223,10 @@ export class BibLatexApiImporter {
         jQuery.ajax({
             dataType: 'text',
             method: 'GET',
-            url: 'http://api.crossref.org/works/10.5555/12345678/transform/application/x-bibtex',
+            url: 'http://api.crossref.org/works/'+doi+'/transform/application/x-bibtex',
 
             success: response => {
-                console.log(response)
+                //console.log(response)
                 this.importBibtex(response)
 
             },
@@ -185,10 +237,35 @@ export class BibLatexApiImporter {
         })
     }
 
+    downloadBibtexWorldCat(isbn){
+        isbn = isbn.replace('urn:ISBN:','')
+        jQuery.ajax({
+                dataType: 'text',
+                method: 'GET',
+
+                url: '/proxy/http://xisbn.worldcat.org/webservices/xid/isbn/'+isbn+'?method=getMetadata&format=json&fl=*',
+
+                success: response => {
+                    console.log(response)
+                    let bibStr = this.isbnToBibtex(response)
+                    this.importBibtex(bibStr)
+
+                },
+
+                error: function (xhr) {
+                    alert(xhr.status)
+
+                    //The message added to Response object in Controller can be retrieved as following.
+                    console.log(xhr.responseText)
+                }
+
+            })
+
+    }
+
     importBibtex(bibtex) {
         // Mostly copied from ./file.js
         let bibData = new BibLatexParser(bibtex)
-
         let tmpDB = bibData.output
 
         let bibKeys = Object.keys(tmpDB)
@@ -222,5 +299,82 @@ export class BibLatexApiImporter {
         })
     }
 
+    isbnToBibtex(results){
+
+        let temp = JSON.parse(JSON.stringify(results))
+        var objJSON = eval("(function(){return " + temp + ";})()");
+
+
+        let oclcnum = objJSON.list[0].oclcnum
+        let title = objJSON.list[0].title
+        let isbn = objJSON.list[0].isbn
+        let year = objJSON.list[0].year
+        let ed = objJSON.list[0].ed
+        let author = objJSON.list[0].author
+        let city = objJSON.list[0].city
+        let lang = objJSON.list[0].lang
+        let lccn = objJSON.list[0].lccn
+        let form = objJSON.list[0].form
+        let publisher = objJSON.list[0].publisher
+        let url = objJSON.list[0].url[0]
+        let bibStr = "@book{,"
+        bibStr = bibStr.concat("oclcnum={",oclcnum,"},",
+                                "title={",title,"},",
+                                "isbn={",isbn,"},",
+                                "year={",year,"},",
+                                "ed={",ed,"},",
+                                "author={",author,"},",
+                                "city={",city,"},",
+                                "lang={",lang,"},",
+                                "lccn={",lccn,"},",
+                                "form={",form,"},",
+                                "publisher={",publisher,"},",
+                                "url={",url,"}")
+        return bibStr
+
+    }
+
 }
+
+
+function    xmlToJson(xml) {
+
+        // Create the return object
+        var obj = {};
+
+        if (xml.nodeType == 1) { // element
+            // do attributes
+            if (xml.attributes.length > 0) {
+            obj["@attributes"] = {};
+                for (var j = 0; j < xml.attributes.length; j++) {
+                    var attribute = xml.attributes.item(j);
+                    obj["@attributes"][attribute.nodeName] = attribute.nodeValue;
+                }
+            }
+        } else if (xml.nodeType == 3) { // text
+            obj = xml.nodeValue;
+        }
+
+        // do children
+        if (xml.hasChildNodes()) {
+            for(var i = 0; i < xml.childNodes.length; i++) {
+                var item = xml.childNodes.item(i);
+                var nodeName = item.nodeName;
+                if(nodeName == 'dc:identifier'){
+                    nodeName = 'dcIdentifier'
+                }
+                if (typeof(obj[nodeName]) == "undefined") {
+                    obj[nodeName] = xmlToJson(item);
+                } else {
+                    if (typeof(obj[nodeName].push) == "undefined") {
+                        var old = obj[nodeName];
+                        obj[nodeName] = [];
+                        obj[nodeName].push(old);
+                    }
+                    obj[nodeName].push(xmlToJson(item));
+                }
+            }
+        }
+        return obj;
+    }
 

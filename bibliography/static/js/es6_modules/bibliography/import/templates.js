@@ -52,3 +52,13 @@ export let searchApiResultTemplateCrossref = _.template('\
     </div>\
    <% })  %> \
 ')
+
+
+export let searchApiResultTemplateWorldCat = _.template('\
+    <%  _.each(items, function(item) {%>\
+    <div class="item">\
+        <h3><a class="title api-import" data-id="<%= item.id %>"><%= _.values(item.title) %></a></h3>\
+        <button type="button" class="api-import"   author=<%= _.values(item.author.name) %> data-isbn=<%= (_.values(_.first(item.dcIdentifier))) %>>Import</button>\
+    </div>\
+   <% })  %> \
+')

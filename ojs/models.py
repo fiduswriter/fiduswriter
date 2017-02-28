@@ -16,11 +16,19 @@ class Journal(models.Model):
     class Meta:
         unique_together = (("ojs_url", "ojs_jid"),)
 
+def submission_filename(instance, filename):
+    return '/'.join([
+        'submission',
+        str(instance.journal.id),
+        str(instance.submitter.id),
+        filename
+    ])
 
 # A submission registered with OJS
 class Submission(models.Model):
-    document = models.ForeignKey(Document)
-    user = models.ForeignKey(User)
+    file_object = models.FileField(upload_to=submission_filename)
+    document = models.ForeignKey(Document, null=True, blank=True)
+    submitter = models.ForeignKey(User)
     journal = models.ForeignKey(Journal)
     submission_id = models.PositiveIntegerField(default=0)
     version_id = models.PositiveIntegerField(default=0)

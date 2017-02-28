@@ -6,7 +6,7 @@ import {EpubExporter} from "../../exporter/epub"
 import {DocxExporter} from "../../exporter/docx"
 import {OdtExporter} from "../../exporter/odt"
 import {reviewSubmit} from "../../ojs"
-import {revisionDialog} from "./dialogs"
+import {RevisionDialog} from "./dialogs"
 import {BibliographyDB} from "../../bibliography/database"
 import {ImageDB} from "../../images/database"
 
@@ -18,7 +18,10 @@ export class ModMenusActions {
 
     saveRevision() {
         this.mod.editor.save().then(
-            () => revisionDialog()
+            () => {
+                let dialog = new RevisionDialog()
+                return dialog.init()
+            }
         ).then(
             note => {
                 let saver = new SaveRevision(

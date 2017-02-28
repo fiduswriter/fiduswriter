@@ -12,16 +12,13 @@ export class ModFootnoteMarkers {
         this.mod.editor.pm.on.transform.add((transform, object) => {
             this.scanForFootnoteMarkers(transform, true)
         }, 1) // priority 1 to be triggered before collab related functions
-        this.mod.editor.pm.mod.collab.receivedTransform.add((transform, object) => {
-            this.remoteScanForFootnoteMarkers(transform, false)
-        })
     }
 
     remoteScanForFootnoteMarkers(transform) {
         // We add unconfirmed local steps to the remote steps to make sure we map the ranges to current ranges.
-        let unconfirmedMaps = this.mod.editor.pm.mod.collab.unconfirmedMaps
-        let unconfirmedSteps = this.mod.editor.pm.mod.collab.unconfirmedSteps
-        let doc = this.mod.editor.pm.mod.collab.versionDoc
+        let unconfirmedMaps = this.mod.editor.pmCollab.unconfirmedMaps
+        let unconfirmedSteps = this.mod.editor.pmCollab.unconfirmedSteps
+        let doc = this.mod.editor.pmCollab.versionDoc
         transform.maps = transform.maps.concat(unconfirmedMaps)
         unconfirmedSteps.forEach(step => {
             // We add pseudo steps for all the unconfirmed steps so that the

@@ -94,26 +94,14 @@ export class DocMaintenance {
     applyDiffs(doc) {
         let pm = new ProseMirror({
             place: null,
-            schema: docSchema,
-            plugins: [collabEditing.config({version: 0})]
+            schema: docSchema
         })
-        // add mod to give us simple access to internals removed in PM 0.8.0
-        pm.mod = {}
-        pm.mod.collab = collabEditing.get(pm)
-        // Ignore setDoc
-        pm.on.beforeSetDoc.remove(pm.mod.collab.onSetDoc)
-        pm.mod.collab.onSetDoc = () => {}
-        // Trigger reset on setDoc
-        pm.mod.collab.afterSetDoc = () => {
-            // Reset all collab values and set document version
-            let collab = pm.mod.collab
-            collab.versionDoc = pm.doc
-            collab.unconfirmedSteps = []
-            collab.unconfirmedMaps = []
-        }
-        pm.on.setDoc.add(pm.mod.collab.afterSetDoc)
-        let pmDoc = docSchema.nodeFromJSON({type:'doc',content:[doc.contents]})
-        pm.setDoc(pmDoc)
+
+        pm.setDoc(
+            docSchema.nodeFromJSON({type:'doc', content:[doc.contents]})
+        )
+        let pmCollab = collabEditing.config({version: 0})
+        pmCollab.attach(pm)
         let unappliedDiffs = doc.diff_version - doc.version
 
         doc.last_diffs = doc.last_diffs.slice(doc.last_diffs.length - unappliedDiffs)
@@ -122,7 +110,7 @@ export class DocMaintenance {
                 let diff = doc.last_diffs.shift()
                 let steps = [diff].map(j => Step.fromJSON(docSchema, j))
                 let client_ids = [diff].map(j => j.client_id)
-                pm.mod.collab.receive(steps, client_ids)
+                pmCollab.receive(steps, client_ids)
             } catch (error) {
                 addAlert('error', gettext('Discarded useless diffs for: ') + doc.id)
                 doc.last_diffs = []

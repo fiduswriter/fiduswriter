@@ -1,5 +1,5 @@
 export let searchApiTemplate = _.template('\
-<div id="bibimport-api-search" title="' + gettext("Link") + '">\
+<div id="bibimport-api-search" title="' + gettext("Search bibliography databases") + '">\
         <p>\
             <input id="bibimport-search-text" class="linktitle" type="text" value="" placeholder="' + gettext("Title, Author, DOI, etc.") + '"/>\
             <button id="bibimport-search-button" class="fw-button fw-dark" type="button">' + gettext("search") + '</button>\

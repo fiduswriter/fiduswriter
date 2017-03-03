@@ -29,7 +29,7 @@ export class WorldcatSearcher {
                     jQuery("#bibimport-search-result-worldcat").empty()
                     jQuery("#bibimport-search-result-worldcat").html('Worldcat')
                     jQuery('#bibimport-search-result-worldcat').append(
-                        searchApiResultTemplateWorldCat({
+                        searchApiResultWorldCatTemplate({
                             items: jsonResult.feed.entry
                         }) //
                     )
@@ -59,8 +59,8 @@ export class WorldcatSearcher {
     }
 
     isbnToBibtex(results) {
-        let temp = JSON.parse(JSON.stringify(results))
-        var objJSON = eval(`(function(){return ${temp};})()`);
+        let objJSON = JSON.parse(JSON.stringify(results))
+        //var objJSON = eval(`(function(){return ${temp};})()`);
 
         let title = objJSON.list[0].title
         let isbn = objJSON.list[0].isbn
@@ -73,7 +73,7 @@ export class WorldcatSearcher {
         let url = objJSON.list[0].url[0]
         let bibStr = ''
         bibStr = bibStr.concat(
-            `@book{worldcat,`
+            `@book{worldcat,`,
             `title={${title}},`,
             `isbn={${isbn}},`,
             `year={${year}},`,

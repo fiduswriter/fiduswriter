@@ -375,3 +375,26 @@ div.literal em, pre.long-literal em {
     width: 26px;
     text-align: center;
 }
+
+/* api search */
+
+#bibimport-api-search button.api-import {
+    float: left;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+#bibimport-api-search div.item {
+    margin-bottom: 10px;
+}
+
+
+#bibimport-api-search h3 {
+    font-weight: 700;
+    margin: 10px 0px 10px 20px;
+    font-size: 1.1em;
+}
+
+#bibimport-api-search .bibimport-search-result, #bibimport-api-search div.item {
+    clear: left;
+}

@@ -23,6 +23,10 @@ SERVER_INFO = {
     'WS_PORT': False,
 }
 
+# An API key to allow searching in Worldcat's opensearch. If False, will
+# disable searches on worldcat.
+WORLDCAT_KEY = False
+
 ADMINS = (
     ('Your Name', 'your_email@example.com'),
 )

@@ -28,14 +28,13 @@ export class WorldcatSearcher {
                         return
                     }
                     let jsonResult = this.xmlToJson(result)
-                    let list = jQuery(result).find("entry")
-                    let isbn = jQuery('dc\\:identifier, identifier', (list))
+                    let items = jsonResult.feed.entry
                     jQuery("#bibimport-search-result-worldcat").empty()
-                    jQuery("#bibimport-search-result-worldcat").html('Worldcat')
+                    if (items.length) {
+                        jQuery("#bibimport-search-result-worldcat").html('<h3>Worldcat</h3>')
+                    }
                     jQuery('#bibimport-search-result-worldcat').append(
-                        searchApiResultWorldCatTemplate({
-                            items: jsonResult.feed.entry
-                        })
+                        searchApiResultWorldCatTemplate({items})
                     )
                     this.bind()
                     resolve()

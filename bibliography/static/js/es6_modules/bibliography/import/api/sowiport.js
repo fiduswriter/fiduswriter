@@ -33,7 +33,9 @@ export class SowiportSearcher {
                     let list = result['response']
                     let items = list.docs
                     jQuery("#bibimport-search-result-sowiport").empty()
-                    jQuery("#bibimport-search-result-sowiport").html('Sowiport')
+                    if (items.length) {
+                        jQuery("#bibimport-search-result-sowiport").html('<h3>Sowiport</h3>')
+                    }
                     jQuery('#bibimport-search-result-sowiport').append(
                         searchApiResultSowiportTemplate({items})
                     )

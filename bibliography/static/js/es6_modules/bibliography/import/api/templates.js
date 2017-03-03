@@ -1,5 +1,5 @@
 export let searchApiTemplate = _.template('\
-<div id="import-api-search" title="' + gettext("Link") + '">\
+<div id="bibimport-api-search" title="' + gettext("Link") + '">\
         <p>\
             <input id="bibimport-search-text" class="linktitle" type="text" value="" placeholder="' + gettext("Title, Author, DOI, etc.") + '"/>\
             <button id="bibimport-search-button" type="button">search</button>\
@@ -16,10 +16,12 @@ export let searchApiTemplate = _.template('\
 export let searchApiResultSowiportTemplate = _.template('\
     <%  _.each(items, function(item) {%>\
     <div class="item">\
-        <h3><a class="title api-import"   data-id="<%= item.id %>"><%= item.title %></a></h3>\
+        <button type="button" class="api-import fw-button fw-orange fw-small" data-id="<%= item.id %>">' + gettext('Import') + '</button>\
+        <h3>\
+            <%= item.title %>\
+        </h3>\
         <% if (item.doi) { %><p><b>DOI: <%= item.doi %></p><% } %>\
         <% if (item.description) { %><p><b>Description: </b><%= item.description %></p><% } %>\
-        <button type="button" class="api-import" data-id="<%= item.id %>">Import</button>\
     </div>\
    <% })  %> \
 ')
@@ -27,10 +29,12 @@ export let searchApiResultSowiportTemplate = _.template('\
 export let searchApiResultDataciteTemplate = _.template('\
     <%  _.each(items, function(item) {%>\
     <div class="item">\
-        <h3><a class="title api-import"   data-id="<%= item.id %>" ><%= item.attributes.title %></a></h3>\
+        <button type="button" class="api-import fw-button fw-orange fw-small" data-id="<%= item.id %>" data-doi="<%=item.attributes.doi%>">' + gettext('Import') + '</button>\
+        <h3>\
+            <%= item.attributes.title %>\
+        </h3>\
         <% if (item.attributes.doi) { %><p><b>DOI: <%= item.attributes.doi %></p><% } %>\
         <% if (item.description) { %><p><b>Description: </b><%= item.description %></p><% } %>\
-        <button type="button" class="api-import" data-id="<%= item.id %>" data-doi="<%=item.attributes.doi%>">Import</button>\
     </div>\
    <% })  %> \
 ')
@@ -38,10 +42,12 @@ export let searchApiResultDataciteTemplate = _.template('\
 export let searchApiResultCrossrefTemplate = _.template('\
     <%  _.each(items, function(item) {%>\
     <div class="item">\
-        <h3><a class="title api-import"   data-doi="<%= item.doi %>" ><%= item.title %></a></h3>\
-        <% if (item.doi) { %><p><b>DOI: <%= item.doi %></p><% } %>\
+        <button type="button" class="api-import fw-button fw-orange fw-small" data-doi="<%=item.doi%>">' + gettext('Import') + '</button>\
+        <h3>\
+            <%= item.fullCitation ? item.fullCitation : item.title + " " + item.year %>\
+        </h3>\
+        <% if (item.doi) { %><p><b>DOI:</b> <%= item.doi %></p><% } %>\
         <% if (item.description) { %><p><b>Description: </b><%= item.description %></p><% } %>\
-        <button type="button" class="api-import"  data-doi="<%=item.doi%>">Import</button>\
     </div>\
    <% })  %> \
 ')
@@ -50,8 +56,10 @@ export let searchApiResultCrossrefTemplate = _.template('\
 export let searchApiResultWorldCatTemplate = _.template('\
     <%  _.each(items, function(item) {%>\
     <div class="item">\
-        <h3><a class="title api-import" data-id="<%= item.id %>"><%= _.values(item.title) %></a></h3>\
-        <button type="button" class="api-import"   author=<%= _.values(item.author.name) %> data-isbn=<%= (_.values(_.first(item.dcIdentifier))) %>>Import</button>\
+        <button type="button" class="api-import fw-button fw-orange fw-small" data-isbn=<%= (_.values(_.first(item.dcIdentifier))) %>>' + gettext('Import') + '</button>\
+        <h3>\
+            <%= _.values(item.title) %>\
+        </h3>\
     </div>\
    <% })  %> \
 ')

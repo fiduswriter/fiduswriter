@@ -27,7 +27,9 @@ export class DataciteSearcher {
                 success: result => {
                     let items = result['data']
                     jQuery("#bibimport-search-result-datacite").empty()
-                    jQuery("#bibimport-search-result-datacite").html(gettext('Dara'))
+                    if (items.length) {
+                        jQuery("#bibimport-search-result-datacite").html(gettext('<h3>Dara</h3>'))
+                    }
                     jQuery('#bibimport-search-result-datacite').append(
                         searchApiResultDataciteTemplate({items})
                     )

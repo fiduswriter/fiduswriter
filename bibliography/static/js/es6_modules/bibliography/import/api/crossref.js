@@ -19,17 +19,16 @@ export class CrossrefSearcher {
             jQuery.ajax({
                 data: {
                     'q': searchTerm,
-                    "startPage": 1
                 },
-                "itemsPerPage": 5,
                 dataType: "json",
-                url: 'http://search.crossref.org/dois?q=q&header=true',
+                url: 'http://search.crossref.org/dois',
 
-                success: result => {
-                    let items = result['items']
+                success: items => {
+
                     jQuery("#bibimport-search-result-crossref").empty()
-                    jQuery("#bibimport-search-result-crossref").html('Crossref')
-
+                    if (items.length) {
+                        jQuery("#bibimport-search-result-crossref").html('<h3>Crossref</h3>')
+                    }
                     jQuery('#bibimport-search-result-crossref').append(
                         searchApiResultCrossrefTemplate({items})
                     )

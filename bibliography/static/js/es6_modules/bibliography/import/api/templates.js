@@ -2,7 +2,7 @@ export let searchApiTemplate = _.template('\
 <div id="bibimport-api-search" title="' + gettext("Link") + '">\
         <p>\
             <input id="bibimport-search-text" class="linktitle" type="text" value="" placeholder="' + gettext("Title, Author, DOI, etc.") + '"/>\
-            <button id="bibimport-search-button" type="button">search</button>\
+            <button id="bibimport-search-button" class="fw-button fw-dark" type="button">' + gettext("search") + '</button>\
         </p>\
         <div id="bibimport-search-header"></div>\
         <div id="bibimport-search-result-sowiport" class="bibimport-search-result"></div>\
@@ -20,8 +20,8 @@ export let searchApiResultSowiportTemplate = _.template('\
         <h3>\
             <%= item.title %>\
         </h3>\
-        <% if (item.doi) { %><p><b>DOI: <%= item.doi %></p><% } %>\
-        <% if (item.description) { %><p><b>Description: </b><%= item.description %></p><% } %>\
+        <% if (item.doi) { %><p><b>DOI:</b> <%= item.doi %></p><% } %>\
+        <% if (item.description) { %><p><%= item.description %></p><% } %>\
     </div>\
    <% })  %> \
 ')
@@ -33,8 +33,8 @@ export let searchApiResultDataciteTemplate = _.template('\
         <h3>\
             <%= item.attributes.title %>\
         </h3>\
-        <% if (item.attributes.doi) { %><p><b>DOI: <%= item.attributes.doi %></p><% } %>\
-        <% if (item.description) { %><p><b>Description: </b><%= item.description %></p><% } %>\
+        <% if (item.attributes.doi) { %><p><b>DOI:</b> <%= item.attributes.doi %></p><% } %>\
+        <% if (item.description) { %><p><%= item.description %></p><% } %>\
     </div>\
    <% })  %> \
 ')
@@ -47,7 +47,7 @@ export let searchApiResultCrossrefTemplate = _.template('\
             <%= item.fullCitation ? item.fullCitation : item.title + " " + item.year %>\
         </h3>\
         <% if (item.doi) { %><p><b>DOI:</b> <%= item.doi %></p><% } %>\
-        <% if (item.description) { %><p><b>Description: </b><%= item.description %></p><% } %>\
+        <% if (item.description) { %><p><%= item.description %></p><% } %>\
     </div>\
    <% })  %> \
 ')

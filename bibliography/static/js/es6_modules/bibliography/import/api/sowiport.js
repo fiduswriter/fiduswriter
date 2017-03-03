@@ -27,7 +27,7 @@ export class SowiportSearcher {
                 },
                 dataType: "jsonp",
                 jsonp: 'json.wrf',
-                url: '/proxy/http://sowiportbeta.gesis.org/solr/select/',
+                url: 'http://sowiportbeta.gesis.org/solr/select/',
 
                 success: result => {
                     let list = result['response']

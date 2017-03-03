@@ -17,12 +17,16 @@ export class WorldcatSearcher {
         return new Promise(resolve => {
             jQuery.ajax({
                 data: {
-                    'q': searchTerm,
-                    wskey: '2RasCcWIc9xSPR02RgNKfs6VXBoq7Oi579XWZTNFhDEd8cZlFDg8Yp7at1OTMXVBo6coPbvjJGmnHEQU'
+                    'q': searchTerm
                 },
                 dataType: "xml",
-                url: '/proxy/http://www.worldcat.org/webservices/catalog/search/opensearch?/select/', //q=civil&,
+                url: '/proxy/http://www.worldcat.org/webservices/catalog/search/opensearch?/select/',
                 success: result => {
+                    if (result === null) {
+                        // No result -- likely due to missing API key.
+                        resolve()
+                        return
+                    }
                     let jsonResult = this.xmlToJson(result)
                     let list = jQuery(result).find("entry")
                     let isbn = jQuery('dc\\:identifier, identifier', (list))
@@ -31,7 +35,7 @@ export class WorldcatSearcher {
                     jQuery('#bibimport-search-result-worldcat').append(
                         searchApiResultWorldCatTemplate({
                             items: jsonResult.feed.entry
-                        }) //
+                        })
                     )
                     this.bind()
                     resolve()
@@ -129,5 +133,4 @@ export class WorldcatSearcher {
         }
         return obj
     }
-
 }

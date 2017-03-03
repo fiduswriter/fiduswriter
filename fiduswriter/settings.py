@@ -27,6 +27,10 @@ SERVER_INFO = {
 # disable searches on worldcat.
 WORLDCAT_KEY = False
 
+# An API key to allow searching in Sowiport (http://sowiport.gesis.org/)
+# If False, will disable searches on Sowiport.
+SOWIPORT_KEY = False
+
 ADMINS = (
     ('Your Name', 'your_email@example.com'),
 )

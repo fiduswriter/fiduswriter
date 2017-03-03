@@ -23,7 +23,7 @@ export class DataciteSearcher {
                     'member-id' : 'gesis'
                 },
                 dataType: "json",
-                url: '/proxy/https://api.datacite.org/works?/select',
+                url: 'https://api.datacite.org/works?/select',
                 success: result => {
                     let items = result['data']
                     jQuery("#bibimport-search-result-datacite").empty()
@@ -45,7 +45,7 @@ export class DataciteSearcher {
         jQuery.ajax({
             dataType: 'text',
             method: 'GET',
-            url: 'https://search.datacite.org/citation?format=bibtex&doi='+doi,
+            url: `https://search.datacite.org/citation?format=bibtex&doi=${doi}`,
             success: response => {
                 this.importer.importBibtex(response)
             }

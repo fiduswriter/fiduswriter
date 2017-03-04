@@ -4,8 +4,8 @@ from base.django_handler_mixin import DjangoHandlerMixin
 from django.conf import settings
 
 ALLOWED_DOMAINS = {
-    'api.datacite.org': False,
-    'sowiportbeta.gesis.org': False,
+    'sowiportbeta.gesis.org':
+        'api_key=' + settings.SOWIPORT_KEY if settings.SOWIPORT_KEY else True,
     'xisbn.worldcat.org': False,
     'www.worldcat.org':
         'wskey=' + settings.WORLDCAT_KEY if settings.WORLDCAT_KEY else True

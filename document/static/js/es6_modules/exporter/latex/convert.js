@@ -56,7 +56,7 @@ export class LatexExporterConvert {
             case 'authors':
                 if (node.content) {
                     start += '\n\\author{'+node.content[0].text +'}'
-                    
+
                 }
                 // We add the maketitle command here. TODO: This relies on the
                 // existence of a subtitle node, even if it has no content.
@@ -264,11 +264,11 @@ export class LatexExporterConvert {
                 let latexPackage
                 let figureType = node.attrs.figureCategory
                 let caption = node.attrs.caption
-                let imageDBEntry = this.imageDB.db[node.attrs.image]
-                this.imageIds.push(node.attrs.image)
-                let filePathName = imageDBEntry.image
                 let innerFigure = ''
-                if (filePathName) {
+                let imageDBEntry = this.imageDB.db[node.attrs.image]
+                if (imageDBEntry) {
+                    this.imageIds.push(node.attrs.image)
+                    let filePathName = imageDBEntry.image
                     let filename = filePathName.split('/').pop()
                     if (filename.split('.').pop() === 'svg') {
                         latexPackage = 'includesvg'
@@ -279,7 +279,7 @@ export class LatexExporterConvert {
                     }
                     if(this.compiled){
                         innerFigure += `\\${latexPackage}{/images/${filename}}\n`
-                    }else{
+                    } else {
                         innerFigure += `\\${latexPackage}{${filename}}\n`
                     }
 
@@ -373,7 +373,7 @@ export class LatexExporterConvert {
         	epilogue +='\n\n\\end{document}\n'
         }
         else{
-        	epilogue += '\n\\end{document}\n'        
+        	epilogue += '\n\\end{document}\n'
         }
         return epilogue
     }

@@ -379,7 +379,7 @@ export class LatexExporterConvert {
     }
 
     assemblePreamble() {
-        let preamble ='\n\\usepackage{csquotes}'//\n\\usepackage[utf8]{luainputenc}
+        let preamble =''//\n\\usepackage[utf8]{luainputenc}
 
         if (this.features.subtitle) {
             preamble += `

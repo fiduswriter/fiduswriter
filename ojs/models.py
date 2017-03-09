@@ -24,14 +24,25 @@ def submission_filename(instance, filename):
         filename
     ])
 
+
 # A submission registered with OJS
 class Submission(models.Model):
-    file_object = models.FileField(upload_to=submission_filename)
-    document = models.ForeignKey(Document, null=True, blank=True)
     submitter = models.ForeignKey(User)
     journal = models.ForeignKey(Journal)
-    submission_id = models.PositiveIntegerField(default=0)
-    version_id = models.PositiveIntegerField(default=0)
+    ojs_jid = models.PositiveIntegerField(default=0) # ID in OJS
+
+
+# Within each submission, there is a new file upload for each revision
+class SubmissionRevision(models.Model):
+    submission = models.ForeignKey(Submission)
+    version = models.PositiveIntegerField(default=0)
+    file_object = models.FileField(upload_to=submission_filename)
+    # The document is the opened file_object. Until it is opened for the first
+    # time, there is no document.
+    document = models.ForeignKey(Document, null=True, blank=True)
+
+    class Meta:
+        unique_together = (("version", "submission"))
 
 
 # Access rights at the time of submission. To be restored after review is over.

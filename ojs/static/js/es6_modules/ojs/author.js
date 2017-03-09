@@ -3,6 +3,7 @@ import {ImageDB} from "../images/database"
 import {addAlert, csrfToken} from "../common"
 import {SaveCopy} from "../exporter/native"
 import {journalDialogTemplate, revisionSubmitDialogTemplate} from "./templates"
+import {SendSubmission} from "./submission"
 
 // Adds functions for authors to submit to OJS
 export class AuthorOJS {
@@ -115,7 +116,23 @@ export class AuthorOJS {
             }
         })
     }
+    submitDoc(journalId) {
+        return this.editor.save().then(
+            () => {
+                let submitter = new SendSubmission(
+                    this.editor.doc,
+                    this.editor.imageDB,
+                    this.editor.bibDB,
+                    journalId,
+                    this.editor.docInfo.submission.version,
+                    this.editor.docInfo.submission_id
+                )
+                return submitter.init()
+            }
+        )
+    }
 
+    /*
     // All the steps for submission of a document to oJS:
     // 1. copy,
     // 2. submission to OJS,
@@ -269,5 +286,7 @@ export class AuthorOJS {
                 console.error(jqXHR.responseText)
         })
     }
+
+    */
 
 }

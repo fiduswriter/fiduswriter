@@ -8,11 +8,11 @@ urlpatterns = [
         views.submit_right_js,
         name='submit_right_js'
     ),
-    url(
-        '^submissionversion/$',
-        views.submission_version_js,
-        name='submission_version_js'
-    ),
+    # url(
+    #    '^submissionversion/$',
+    #    views.submission_version_js,
+    #    name='submission_version_js'
+    # ),
     url(
         '^reviewsubmit/$',
         views.review_submit_js,
@@ -29,14 +29,14 @@ urlpatterns = [
         name='reviewer_js'
     ),
     url(
-        '^delReviewer/$',  # not mentioned in JS
+        '^reviewer/del/$',  # not mentioned in JS
         views.del_reviewer_js,
         name='del_reviewer_js'
     ),
     url(
-        '^documentReview/$',  # not mentioned in JS
-        views.document_review_js,
-        name='document_review_js'
+        '^revision/^\d+/$',
+        views.revision,
+        name='revision'
     ),
     url(
         '^newsubmissionrevision/$',

@@ -371,50 +371,58 @@ def del_reviewer_js(request):
 
 
 @csrf_exempt
-def document_review_js(request):
-    if request.method == 'POST':
-        doc_id = int(request.POST.get('doc_id', "0"))
-        app_key = request.POST.get('key')
-        # email = request.POST.get('email')
-        u_name = request.POST.get('user_name')
-        response = {}
-        if (app_key == settings.SERVER_INFO['OJS_KEY']):
-            reviewer = login_user(
-                request,
-                u_name)
-            if reviewer is not None:
-                return redirect(
-                    '/document/' + str(doc_id) + '/', permanent=True
-                )
-            else:
-                response['error'] = "The reviewer is not valid"
-                status = 404
-                return JsonResponse(response, status=status)
-        else:
-            response['error'] = \
-              "Reviewing the document is not defined for this reviewer"
-            status = 404
-            return JsonResponse(response, status=status)
-
-
-@login_required
-def submission_version_js(request):
-    status = 405
+def revision(request, rev_id):
     response = {}
+    if request.method != 'POST':
+        response['error'] = "Expect post"
+        status = 404
+        return JsonResponse(response, status=status)
+    app_key = request.POST.get('key')
+    rev = SubmissionRevision.objects.get(id=rev_id)
+    journal_key = rev.submission.journal.ojs_key
+    # TODO: This could allow editors to login users who work on other journals.
+    # We need to make sure this cannot happen.
+    if (journal_key != app_key):
+        response['error'] = "Wrong app_key"
+        status = 404
+        return JsonResponse(response, status=status)
+    # email = request.POST.get('email')
+    u_name = request.POST.get('user_name')
+    reviewer = login_user(
+        request,
+        u_name)
+    if reviewer is None:
+        response['error'] = "The reviewer is not valid"
+        status = 404
+        return JsonResponse(response, status=status)
 
-    if request.is_ajax() and request.method == 'POST':
-        data = {}
-        data['document_id'] = request.POST.get('document_id')
-        data['journal_id'] = request.POST.get('journal_id')
-        data['submission_id'] = request.POST.get('submission_id')
-        data['pre_document_id'] = request.POST.get('pre_document_id')
-        data['user_id'] = request.user.id
-        set_version(request, data)
-        status = 201
-    return JsonResponse(
-        response,
-        status=status
+    if not rev.document:
+        pass
+        # TODO: Create document.
+    return redirect(
+        '/document/' + str(rev.document.id) + '/', permanent=True
     )
+
+
+
+# @login_required
+# def submission_version_js(request):
+#     status = 405
+#     response = {}
+#
+#     if request.is_ajax() and request.method == 'POST':
+#         data = {}
+#         data['document_id'] = request.POST.get('document_id')
+#         data['journal_id'] = request.POST.get('journal_id')
+#         data['submission_id'] = request.POST.get('submission_id')
+#         data['pre_document_id'] = request.POST.get('pre_document_id')
+#         data['user_id'] = request.user.id
+#         set_version(request, data)
+#         status = 201
+#     return JsonResponse(
+#         response,
+#         status=status
+#     )
 
 
 # A list of all registered journals to be used in the submit dialog.

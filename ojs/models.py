@@ -16,6 +16,9 @@ class Journal(models.Model):
     class Meta:
         unique_together = (("ojs_url", "ojs_jid"),)
 
+    def __unicode__(self):
+        return self.name
+
 def submission_filename(instance, filename):
     return '/'.join([
         'submission',
@@ -31,6 +34,12 @@ class Submission(models.Model):
     journal = models.ForeignKey(Journal)
     ojs_jid = models.PositiveIntegerField(default=0) # ID in OJS
 
+    def __unicode__(self):
+        return u'{ojs_jid} in {journal} by {submitter}'.format(
+            ojs_jid=self.ojs_jid,
+            journal=self.journal.name,
+            submitter=self.submitter.username
+        )
 
 # Within each submission, there is a new file upload for each revision
 class SubmissionRevision(models.Model):
@@ -44,6 +53,13 @@ class SubmissionRevision(models.Model):
     class Meta:
         unique_together = (("version", "submission"))
 
+    def __unicode__(self):
+        return u'{ojs_jid} (v{version}) in {journal} by {submitter}'.format(
+            ojs_jid=self.submission.ojs_jid,
+            version=self.version,
+            journal=self.submission.journal.name,
+            submitter=self.submission.submitter.username
+        )
 
 # Access rights at the time of submission. To be restored after review is over.
 class SubmittedAccessRight(models.Model):

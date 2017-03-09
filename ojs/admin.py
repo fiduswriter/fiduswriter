@@ -9,6 +9,10 @@ class SubmissionAdmin(admin.ModelAdmin):
 
 admin.site.register(models.Submission, SubmissionAdmin)
 
+class SubmissionRevisionAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(models.SubmissionRevision, SubmissionRevisionAdmin)
 
 class JournalAdmin(admin.ModelAdmin):
     pass

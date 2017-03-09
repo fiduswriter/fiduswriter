@@ -45,7 +45,9 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
         user = self.get_current_user()
         if not user.is_authenticated():
             self.set_status(401)
+            self.finish()
             return
+        plugin_path = '/index.php/index/gateway/plugin/RestApiGatewayPlugin/'
         if relative_url == 'submit':
             journal_id = self.get_argument('journal_id')
             journal = Journal.objects.get(id=journal_id)
@@ -102,28 +104,31 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
             body = urlencode(post_data)
             key = journal.ojs_key
             base_url = journal.ojs_url
+            url = base_url + plugin_path + 'articles'
+            http = AsyncHTTPClient()
+            http.fetch(
+                HTTPRequest(
+                    url_concat(url, {'key': key}),
+                    'POST',
+                    None,
+                    body
+                ),
+                callback=self.on_submission_response
+            )
         else:
+            self.set_status(401)
+            self.finish()
             return
-        plugin_path = '/index.php/index/gateway/plugin/RestApiGatewayPlugin/'
-        url = base_url + plugin_path + relative_url
-        http = AsyncHTTPClient()
-        http.fetch(
-            HTTPRequest(
-                url_concat(url, {'key': key}),
-                'POST',
-                None,
-                body
-            ),
-            callback=self.on_post_response
-        )
+
 
     # The response is asynchronous so that the getting of the data from the OJS
     # server doesn't block the FW server connection.
-    def on_post_response(self, response):
+    def on_submission_response(self, response):
         if response.error:
             raise HTTPError(500)
         if self.s_revision.version == 0:
             json = json_decode(response.body)
-            self.submission.ojs_jid = json.submission_id
+            self.submission.ojs_jid = json['submission_id']
+            self.submission.save()
         self.write(response.body)
         self.finish()

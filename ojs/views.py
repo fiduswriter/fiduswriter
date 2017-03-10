@@ -397,12 +397,24 @@ def revision(request, rev_id):
         return JsonResponse(response, status=status)
 
     if not rev.document:
-        pass
-        # TODO: Create document.
+        # There is no document, so we create a new empty document and share it
+        # with all registered reviewers. Then we let the current user load the
+        # file object into this document on the client side and save it.
+        # This will increase the version number of the doc from 0 to 1.
+        # If the version number still is zero when the next user enters, we
+        # redo only the loading process, assuming something went wrong.
+        document = Document()
+        document.owner = rev.submission.journal.editor
+        document.save()
+        rev.document = document
+        rev.save()
+        response['doc_id'] = document.id
+        response['rev_id'] = rev.id
+        return render(request, 'ojs/import_document.html',
+                      response)
     return redirect(
         '/document/' + str(rev.document.id) + '/', permanent=True
     )
-
 
 
 # @login_required

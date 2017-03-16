@@ -200,11 +200,11 @@ export const docSchema = new Schema({
   nodes: {
     doc: {type: Doc, content: "article"}, // Transformations don't work well on the top most element
     article: {type: Article, content: "title subtitle authors abstract keywords body"},
-    title: {type: Title, content: "text*", group: "part"},
-    subtitle: {type: Subtitle, content: "text*", group: "part"},
-    authors: {type: Authors, content: "text*", group: "part"},
+    title: {type: Title, content: "text<comment>*", group: "part"},
+    subtitle: {type: Subtitle, content: "text<comment>*", group: "part"},
+    authors: {type: Authors, content: "text<comment>*", group: "part"},
     abstract: {type: Abstract, content: "(block | table_block)+", group: "part"},
-    keywords: {type: Keywords, content: "text*", group: "part"},
+    keywords: {type: Keywords, content: "text<comment>*", group: "part"},
     body: {type: Body, content: "(block | table_block)+", group: "part"},
 
     paragraph: {type: Paragraph, content: "inline<_>*", group: "block"},
@@ -216,7 +216,7 @@ export const docSchema = new Schema({
     figure: {type: Figure, group: "block"},
 
     heading: {type: Heading, content: "inline<_>*", group: "block"},
-    code_block: {type: CodeBlock, content: "text*", group: "block"},
+    code_block: {type: CodeBlock, content: "text<comment>*", group: "block"},
 
     text: {type: Text, group: "inline"},
     hard_break: {type: HardBreak, group: "inline"},

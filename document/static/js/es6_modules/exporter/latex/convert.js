@@ -143,11 +143,13 @@ export class LatexExporterConvert {
                     // We are inside a headline or a list and can only place a
                     // footnote marker here. The footnote will have to be put
                     // beyond the block node instead.
-                    start += '\\protect\\footnotemark'
+                    start += '\\protect\\footnotemark{}'
                     options.unplacedFootnotes.push(node.attrs.footnote)
                 } else {
                     start += '\\footnote{'
-                    content += this.walkJson(node.attrs.footnote, options)
+                    node.attrs.footnote.forEach(footPar => {
+                        content += this.walkJson(footPar, options).replace(/^\s+|\s+$/g, '')
+                    })
                     end = '}' + end
                 }
                 break
@@ -301,6 +303,9 @@ export class LatexExporterConvert {
             case 'equation':
                 content += `$${node.attrs.equation}$`
                 break
+            case 'hard_break':
+                content += '\n\n'
+                break
             default:
                 console.warn('Unhandled node type:' + node.type)
                 break
@@ -322,7 +327,9 @@ export class LatexExporterConvert {
                 options.unplacedFootnotes.forEach(footnote => {
                     end += '\\stepcounter{footnote}\n'
                     end += '\\footnotetext{'
-                    end += this.walkJson(footnote, options)
+                    footnote.forEach(footPar => {
+                        end += this.walkJson(footPar, options).replace(/^\s+|\s+$/g, '')
+                    })
                     end += '}'
                 })
                 options.unplacedFootnotes = []

@@ -5,6 +5,10 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 
+from PIL import Image as PilImage
+from cStringIO import StringIO
+from django.core.files.uploadedfile import SimpleUploadedFile
+
 ALLOWED_FILETYPES = ['image/jpeg', 'image/png', 'image/svg+xml']
 ALLOWED_EXTENSIONS = ['jpeg', 'jpg', 'png', 'svg']
 
@@ -74,11 +78,6 @@ class Image(models.Model):
             return
         if not hasattr(self.image.file, 'content_type'):
             return
-
-        from PIL import Image as PilImage
-        from cStringIO import StringIO
-        from django.core.files.uploadedfile import SimpleUploadedFile
-        import os
 
         # Set our max thumbnail size in a tuple (max width, max height)
         # THUMBNAIL_SIZE = (170,200)

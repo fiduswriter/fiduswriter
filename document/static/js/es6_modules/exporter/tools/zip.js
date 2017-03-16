@@ -1,5 +1,3 @@
-import {downloadFile} from "./file"
-import {uploadFile} from "./upload"
 import JSZip from "jszip"
 import JSZipUtils from "jszip-utils"
 
@@ -7,78 +5,66 @@ import JSZipUtils from "jszip-utils"
  * @function zipFileCreator
  * @param {list} textFiles A list of files in plain text format.
  * @param {list} httpFiles A list fo files that have to be downloaded from the internet before being included.
- * @param {string} zipFileName The name of the zip file to be created
- * @param {string} [mimeType=application/zip] The mimetype of the file that is to be created.
  * @param {list} includeZips A list of zip files to be merged into the output zip file.
- * @param {boolean} [upload=false] Whether to upload rather than downloading the Zip file once finished.
- * @param {object} editor An editor instance (only for upload=true).
+ * @param {string} [mimeType=application/zip] The mimetype of the file that is to be created.
  */
 
-export let zipFileCreator = function(textFiles, httpFiles, zipFileName,
-    mimeType, includeZips, upload, editor) {
-    let zipFs = new JSZip(),
-        zipDir
-
-    if (mimeType) {
-        zipFs.file('mimetype', mimeType, {compression: 'STORE'})
-    } else {
-        mimeType = 'application/zip'
+export class ZipFileCreator {
+    constructor(textFiles = [], httpFiles = [], zipFiles = [], mimeType = 'application/zip') {
+        this.textFiles = textFiles
+        this.httpFiles = httpFiles
+        this.zipFiles = zipFiles
+        this.mimeType = mimeType
     }
 
-
-    let createZip = function() {
-        for (let i = 0; i < textFiles.length; i++) {
-            zipFs.file(textFiles[i].filename, textFiles[i].contents, {compression: 'DEFLATE'})
+    init() {
+        this.zipFs = new JSZip()
+        if (this.mimeType !== 'application/zip') {
+            this.zipFs.file('mimetype', this.mimeType, {compression: 'STORE'})
         }
-        let p = []
-        for (let i = 0; i < httpFiles.length; i++) {
-            p.push(new Promise(
-                function(resolve) {
-                    JSZipUtils.getBinaryContent(httpFiles[i].url, function(err, contents) {
-                        zipFs.file(httpFiles[i].filename, contents, {binary: true, compression: 'DEFLATE'})
+
+        return this.includeZips()
+    }
+
+    includeZips() {
+        let includePromises = this.zipFiles.map(zipFile => {
+            let zipDir
+            if (zipFile.directory === '') {
+                zipDir = this.zipFs
+            } else {
+                zipDir = this.zipFs.folder(zipFile.directory)
+            }
+            return new Promise(
+                resolve => JSZipUtils.getBinaryContent(zipFile.url, (err, contents) => {
+                    zipDir.loadAsync(contents).then(importedZip => {
+                        resolve()
+                    })
+                })
+            )
+        })
+        return Promise.all(includePromises).then(
+            () => this.createZip()
+        )
+
+    }
+
+    createZip() {
+        this.textFiles.forEach(textFile => {
+            this.zipFs.file(textFile.filename, textFile.contents, {compression: 'DEFLATE'})
+        })
+        let httpPromises = this.httpFiles.map(httpFile =>
+            new Promise(
+                resolve => {
+                    JSZipUtils.getBinaryContent(httpFile.url, (err, contents) => {
+                        this.zipFs.file(httpFile.filename, contents, {binary: true, compression: 'DEFLATE'})
                         resolve()
                     })
                 }
-            ))
-
-        }
-        Promise.all(p).then(
-            function(){
-                zipFs.generateAsync({type:"blob"})
-                    .then(function(blob) {
-                        if (upload) {
-                            uploadFile(zipFileName, blob, editor)
-                        } else {
-                            downloadFile(zipFileName, blob)
-                        }
-                })
-            }
-
+            )
+        )
+        return Promise.all(httpPromises).then(
+            () => this.zipFs.generateAsync({type:"blob"})
         )
     }
 
-    if (includeZips) {
-        let i = 0
-        let includeZipLoop = function() {
-            if (i === includeZips.length) {
-                createZip()
-            } else {
-                if (includeZips[i].directory === '') {
-                    zipDir = zipFs
-                } else {
-                    zipDir = zipFs.folder(includeZips[i].directory)
-                }
-                JSZipUtils.getBinaryContent(includeZips[i].url, function(err, contents) {
-                    zipDir.loadAsync(contents).then(function (importedZip) {
-                        i++
-                        includeZipLoop()
-                    })
-                })
-            }
-
-        }
-        includeZipLoop()
-    } else {
-        createZip()
-    }
 }

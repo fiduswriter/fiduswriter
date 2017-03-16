@@ -17,31 +17,29 @@ export class ModFootnoteLayout {
     }
 
     bindEvents() {
-        let that = this, pm = this.mod.editor.pm
-        pm.updateScheduler([pm.on.change, pm.on.setDoc], () => {return that.updateDOM()})
+        let pm = this.mod.editor.pm
+        pm.updateScheduler([pm.on.change, pm.on.setDoc], () => this.updateDOM())
         let fnPm = this.mod.fnPm
-        fnPm.updateScheduler([fnPm.on.change, fnPm.on.setDoc], () => {return that.updateDOM()})
+        fnPm.updateScheduler([fnPm.on.change, fnPm.on.setDoc], () => this.updateDOM())
     }
 
     layoutFootnotes() {
-        let that = this
-        this.mod.editor.pm.scheduleDOMUpdate(() => {return that.updateDOM()})
+        this.mod.editor.pm.scheduleDOMUpdate(() => this.updateDOM())
     }
 
     updateDOM() {
         // Handle the CSS layout of the footnotes on the screen.
         // DOM write phase - nothing to do.
-        let that = this
-        return function () {
+        return () => {
             // DOM read phase
             let totalOffset = document.getElementById('footnote-box-container').getBoundingClientRect().top + 10,
               footnoteBoxes = document.querySelectorAll('#footnote-box-container .footnote-container'),
-              footnotePlacementStyle = '', referrers = that.mod.footnotes
+              footnotePlacementStyle = '', referrers = this.mod.footnotes
             if (referrers.length !== footnoteBoxes.length) {
                 // Apparently not all footnote boxes have been drawn. Abort for now.
                 return
             }
-            if (that.mod.editor.mod.citations.citationType==='note') {
+            if (this.mod.editor.mod.citations.citationType==='note') {
                 /* Citations are also in footnotes, so both citation footnotes
                  * and editor footnotes have to be placed. They should be placed
                  * in the order the markers appear in the content, even though
@@ -50,7 +48,7 @@ export class ModFootnoteLayout {
                 let citationFootnotes = document.querySelectorAll('#citation-footnote-box-container .footnote-citation'),
                 editorFootnoteIndex = 0, citationFootnoteIndex = 0, totalEditorOffset = totalOffset,
                 totalCitationOffset = totalOffset
-                that.mod.editor.pm.doc.descendants(function(node, pos){
+                this.mod.editor.pm.doc.descendants((node, pos) => {
                     if (node.isInline && (node.type.name === 'footnote' || node.type.name === 'citation')) {
                         let topMargin = 10
                         if (node.type.name === 'footnote') {
@@ -58,7 +56,7 @@ export class ModFootnoteLayout {
                                 selector = '.footnote-container:nth-of-type('+(editorFootnoteIndex+1)+')',
                                 footnoteBoxCoords = footnoteBox.getBoundingClientRect(),
                                 footnoteBoxHeight = footnoteBoxCoords.height,
-                                referrerTop = that.mod.editor.pm.coordsAtPos(pos).top
+                                referrerTop = this.mod.editor.pm.coordsAtPos(pos).top
                             editorFootnoteIndex++
                             if (referrerTop > totalEditorOffset || totalEditorOffset < (totalCitationOffset + topMargin)) {
                                 topMargin = parseInt(Math.max(referrerTop - totalEditorOffset, totalCitationOffset - totalEditorOffset + topMargin))
@@ -71,7 +69,7 @@ export class ModFootnoteLayout {
                                     selector = '.footnote-citation:nth-of-type('+(citationFootnoteIndex+1)+')',
                                     footnoteBoxCoords = footnoteBox.getBoundingClientRect(),
                                     footnoteBoxHeight = footnoteBoxCoords.height,
-                                    referrerTop = that.mod.editor.pm.coordsAtPos(pos).top
+                                    referrerTop = this.mod.editor.pm.coordsAtPos(pos).top
                                 citationFootnoteIndex++
                                 if (referrerTop > totalCitationOffset || totalCitationOffset < (totalEditorOffset + topMargin)) {
                                     topMargin = parseInt(Math.max(referrerTop - totalCitationOffset, totalEditorOffset - totalCitationOffset + topMargin))
@@ -88,12 +86,12 @@ export class ModFootnoteLayout {
                  * We use the existing footnote markers referrers to find the
                  * placement.
                  */
-                referrers.forEach(function(referrer, index) {
+                referrers.forEach((referrer, index) => {
                     let footnoteBox = footnoteBoxes[index]
 
                     let footnoteBoxCoords = footnoteBox.getBoundingClientRect(),
                       footnoteBoxHeight = footnoteBoxCoords.height,
-                      referrerTop = that.mod.editor.pm.coordsAtPos(referrer.from).top,
+                      referrerTop = this.mod.editor.pm.coordsAtPos(referrer.from).top,
                       topMargin = 10
 
                     if (referrerTop > totalOffset) {
@@ -105,7 +103,7 @@ export class ModFootnoteLayout {
             }
 
 
-            return function () {
+            return () => {
                 //DOM write phase
                 if (document.getElementById('footnote-placement-style').innerHTML != footnotePlacementStyle) {
                     document.getElementById('footnote-placement-style').innerHTML = footnotePlacementStyle

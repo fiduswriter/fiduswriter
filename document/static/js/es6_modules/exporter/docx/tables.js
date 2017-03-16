@@ -1,4 +1,4 @@
-import {noSpaceTmp} from "../../common/common"
+import {noSpaceTmp} from "../../common"
 
 let DEFAULT_TABLENORMAL_XML = noSpaceTmp`
     <w:style w:type="table" w:default="1" w:styleId="TableNormal">
@@ -51,11 +51,12 @@ export class DocxExporterTables {
     }
 
     init() {
-        let that = this
-        return this.exporter.xml.getXml(this.styleFilePath).then(function(styleXml) {
-            that.styleXml = styleXml
-            return Promise.resolve()
-        })
+        return this.exporter.xml.getXml(this.styleFilePath).then(
+            styleXml => {
+                this.styleXml = styleXml
+                return Promise.resolve()
+            }
+        )
     }
 
     addTableNormalStyle() {

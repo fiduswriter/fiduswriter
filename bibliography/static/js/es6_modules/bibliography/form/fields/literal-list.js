@@ -1,5 +1,5 @@
 import {LiteralFieldForm} from "./literal"
-import {noSpaceTmp} from "../../../common/common"
+import {noSpaceTmp} from "../../../common"
 
 export class LiteralListForm{
     constructor(dom, initialValue = [[]]) {
@@ -12,16 +12,14 @@ export class LiteralListForm{
     }
 
     drawForm() {
-        let that = this
         this.fields = []
         this.dom.innerHTML = '<table><tbody></tbody></table>'
         this.currentValue.forEach((fieldValue, index) => {
-            that.addField(fieldValue, index)
+            this.addField(fieldValue, index)
         })
     }
 
     addField(fieldValue, index) {
-        let that = this
         this.dom.firstChild.firstChild.insertAdjacentHTML(
             'beforeend',
             noSpaceTmp`
@@ -41,20 +39,20 @@ export class LiteralListForm{
         // click on plus
         let addItemEl = fieldDOM.querySelector('.icon-plus-circle')
         addItemEl.addEventListener('click', () => {
-            that.currentValue = that.value
-            that.currentValue.splice(index+1, 0, [])
-            that.drawForm()
+            this.currentValue = this.value
+            this.currentValue.splice(index+1, 0, [])
+            this.drawForm()
         })
 
         // Click on minus
         let removeItemEl = fieldDOM.querySelector('.icon-minus-circle')
         removeItemEl.addEventListener('click', () => {
-            that.currentValue = that.value
-            that.currentValue.splice(index, 1)
-            if (that.currentValue.length === 0) {
-                that.currentValue = [[]]
+            this.currentValue = this.value
+            this.currentValue.splice(index, 1)
+            if (this.currentValue.length === 0) {
+                this.currentValue = [[]]
             }
-            that.drawForm()
+            this.drawForm()
         })
     }
 

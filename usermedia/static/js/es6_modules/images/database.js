@@ -1,5 +1,4 @@
-import {activateWait, deactivateWait, addAlert, csrfToken} from "../common/common"
-
+import {activateWait, deactivateWait, csrfToken} from "../common"
 
 /* A class that holds information about images uploaded by the user. */
 
@@ -10,98 +9,74 @@ export class ImageDB {
         this.cats = []
     }
 
-    getDB(callback) {
-        let that = this
+    getDB() {
         this.db = {}
         this.cats = []
 
         activateWait()
-
-        jQuery.ajax({
-            url: '/usermedia/images/',
-            data: {
-                'owner_id': this.userId
-            },
-            type: 'POST',
-            dataType: 'json',
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: function (response, textStatus, jqXHR) {
-                that.cats = response.imageCategories
-                let pks = []
-                for (let i = 0; i < response.images.length; i++) {
-                    response.images[i].image = response.images[i].image.split('?')[0]
-                    that.db[response.images[i]['pk']] = response.images[i]
-                    pks.push(response.images[i]['pk'])
-                }
-                if (callback) {
-                    callback(pks)
-                }
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                addAlert('error', jqXHR.responseText)
-            },
-            complete: function () {
-                deactivateWait()
-            }
+        return new Promise((resolve, reject) => {
+            jQuery.ajax({
+                url: '/usermedia/images/',
+                data: {
+                    'owner_id': this.userId
+                },
+                type: 'POST',
+                dataType: 'json',
+                crossDomain: false, // obviates need for sameOrigin test
+                beforeSend: (xhr, settings) =>
+                    xhr.setRequestHeader("X-CSRFToken", csrfToken),
+                success: (response, textStatus, jqXHR) => {
+                    this.cats = response.imageCategories
+                    let pks = []
+                    for (let i = 0; i < response.images.length; i++) {
+                        response.images[i].image = response.images[i].image.split('?')[0]
+                        this.db[response.images[i]['pk']] = response.images[i]
+                        pks.push(response.images[i]['pk'])
+                    }
+                    resolve(pks)
+                },
+                error: (jqXHR, textStatus, errorThrown) => {
+                    reject(jqXHR.responseText)
+                },
+                complete: () => deactivateWait()
+            })
         })
-
     }
 
-    createImage(postData, callback) {
-        let that = this
+    saveImage(postData) {
         activateWait()
-        // Remove old warning messages
-        jQuery('#uploadimage .warning').detach()
-        // Send to server
-        jQuery.ajax({
-            url: '/usermedia/save/',
-            data: postData,
-            type: 'POST',
-            dataType: 'json',
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: function (response, textStatus, jqXHR) {
-                if (that.displayCreateImageError(response.errormsg)) {
-                    that.db[response.values.pk] = response.values
-                    addAlert('success', gettext('The image has been uploaded'))
-                    callback(response.values.pk)
-                } else {
-                    addAlert('error', gettext(
-                        'Some errors are found. Please examine the form.'
-                    ))
-                }
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                if (jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.errormsg) {
-                    addAlert('error', jqXHR.responseJSON.errormsg)
-                }
-            },
-            complete: function () {
-                deactivateWait()
-            },
-            cache: false,
-            contentType: false,
-            processData: false
-        })
-    }
 
-    displayCreateImageError(errors) {
-        let noError = true
-        for (let eKey in errors) {
-            let eMsg = '<div class="warning">' + errors[eKey] + '</div>'
-            if ('error' == eKey) {
-                jQuery('#uploadimage').prepend(eMsg)
-            } else {
-                jQuery('#id_' + eKey).after(eMsg)
-            }
-            noError = false
-        }
-        return noError
+        return new Promise((resolve, reject) => {
+            // Send to server
+            jQuery.ajax({
+                url: '/usermedia/save/',
+                data: postData,
+                type: 'POST',
+                dataType: 'json',
+                crossDomain: false, // obviates need for sameOrigin test
+                beforeSend: (xhr, settings) =>
+                    xhr.setRequestHeader("X-CSRFToken", csrfToken),
+                success: (response, textStatus, jqXHR) => {
+                    if (Object.keys(response.errormsg).length) {
+                        reject(response.errormsg)
+                    } else {
+                        this.db[response.values.pk] = response.values
+                        resolve(response.values.pk)
+                    }
+                },
+                error: (jqXHR, textStatus, errorThrown) => {
+                    let error = '' // Fallback -- if we get don't have an error message, we show an empty error.
+                    if (jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.errormsg) {
+                        error = jqXHR.responseJSON.errormsg
+                    }
+                    reject({error})
+                },
+                complete: () => deactivateWait(),
+                cache: false,
+                contentType: false,
+                processData: false
+            })
+        })
     }
 
 }

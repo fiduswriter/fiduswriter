@@ -23,6 +23,14 @@ SERVER_INFO = {
     'WS_PORT': False,
 }
 
+# An API key to allow searching in Worldcat's opensearch. If False, will
+# disable searches on worldcat.
+WORLDCAT_KEY = False
+
+# An API key to allow searching in Sowiport (http://sowiport.gesis.org/)
+# If False, will disable searches on Sowiport.
+SOWIPORT_KEY = False
+
 ADMINS = (
     ('Your Name', 'your_email@example.com'),
 )
@@ -210,7 +218,8 @@ INSTALLED_APPS = (
     'avatar',
     'compressor',
     'feedback',
-    'style'
+    'style',
+    'ojs',
     # If you want to enable one or several of the social network login options
     # below, make sure you add the authorization keys at:
     # http://SERVER.COM/admin/socialaccount/socialapp/

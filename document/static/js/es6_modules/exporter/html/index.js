@@ -1,36 +1,31 @@
 import {createSlug} from "../tools/file"
 import {findImages} from "../tools/html"
-import {zipFileCreator} from "../tools/zip"
+import {ZipFileCreator} from "../tools/zip"
 import {htmlExportTemplate} from "./templates"
 import {BibliographyDB} from "../../bibliography/database"
-import {addAlert} from "../../common/common"
-import {katexRender} from "../../katex/katex"
+import {addAlert} from "../../common"
+import {katexRender} from "../../katex"
 import {BaseHTMLExporter} from "./base"
+import download from "downloadjs"
 
 export class HTMLExporter extends BaseHTMLExporter{
     constructor(doc, bibDB) {
         super()
-        let that = this
         this.doc = doc
         if (bibDB) {
             this.bibDB = bibDB // the bibliography has already been loaded for some other purpose. We reuse it.
             this.exportOne()
         } else {
-            this.bibDB = new BibliographyDB(doc.owner.id, false, false, false)
-            this.bibDB.getDB(function() {
-                that.exportOne()
-            })
+            this.bibDB = new BibliographyDB(doc.owner.id)
+            this.bibDB.getDB().then(() => this.exportOne())
         }
     }
 
     exportOne() {
-        let that = this
         addAlert('info', this.doc.title + ': ' + gettext(
             'HTML export has been initiated.'))
 
-        this.joinDocumentParts(function(){
-            that.exportTwo()
-        })
+        this.joinDocumentParts().then(() => this.exportTwo())
 
     }
 
@@ -100,9 +95,16 @@ export class HTMLExporter extends BaseHTMLExporter{
                 'url': window.staticUrl + 'zip/katex-style.zip',
             })
         }
-        zipFileCreator(outputList, httpOutputList, createSlug(
-                title) +
-            '.html.zip', false, includeZips)
+
+        let zipper = new ZipFileCreator(
+            outputList,
+            httpOutputList,
+            includeZips
+        )
+
+        zipper.init().then(
+            blob => download(blob, createSlug(title) + '.html.zip', 'application/zip')
+        )
     }
 
 }

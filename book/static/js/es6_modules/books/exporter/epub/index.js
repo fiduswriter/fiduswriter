@@ -1,4 +1,4 @@
-import {katexRender} from "../../../katex/katex"
+import {katexRender} from "../../../katex"
 
 import {getMissingChapterData, getImageAndBibDB, uniqueObjects} from "../tools"
 import {epubBookOpfTemplate, epubBookCoverTemplate, epubBookTitlepageTemplate,
@@ -12,15 +12,15 @@ import {docSchema} from "../../../schema/document"
 import {removeHidden} from "../../../exporter/tools/doc-contents"
 import {findImages} from "../../../exporter/tools/html"
 import {createSlug} from "../../../exporter/tools/file"
-import {zipFileCreator} from "../../../exporter/tools/zip"
+import {ZipFileCreator} from "../../../exporter/tools/zip"
 import {RenderCitations} from "../../../citations/render"
-import {addAlert} from "../../../common/common"
+import {addAlert} from "../../../common"
+import download from "downloadjs"
 
 
 export class EpubBookExporter extends BaseEpubExporter {
     constructor(book, user, docList) {
         super()
-        let that = this
         this.book = book
         this.user = user
         this.docList = docList
@@ -34,14 +34,17 @@ export class EpubBookExporter extends BaseEpubExporter {
             addAlert('error', gettext('Book cannot be exported due to lack of chapters.'))
             return false
         }
-        getMissingChapterData(book, docList, function () {
-            getImageAndBibDB(book, docList, function (imageDB,
-                bibDB) {
-                that.bibDB = bibDB
-                that.imageDB = imageDB
-                that.exportOne()
-            })
-        })
+        getMissingChapterData(this.book, this.docList).then(
+            () => getImageAndBibDB(this.book, this.docList)
+        ).then(
+            ({imageDB, bibDB}) => {
+                this.bibDB = bibDB
+                this.imageDB = imageDB
+                this.exportOne()
+            }
+        ).catch(
+            () => {}
+        )
     }
 
     exportOne() {
@@ -163,26 +166,27 @@ export class EpubBookExporter extends BaseEpubExporter {
     }
 
     exportTwo(chapterNumber = 0) {
-        let that = this
         // add bibliographies (asynchronously)
         let citRenderer = new RenderCitations(
             this.chapters[chapterNumber].contents,
             this.book.settings.citationstyle,
             this.bibDB,
-            true,
-            function() {
+            true
+        )
+        citRenderer.init().then(
+            () => {
                 let bibHTML = citRenderer.fm.bibHTML
                 if (bibHTML.length > 0) {
-                    that.chapters[chapterNumber].contents.innerHTML += bibHTML
+                    this.chapters[chapterNumber].contents.innerHTML += bibHTML
                 }
                 chapterNumber++
-                if (chapterNumber===that.chapters.length) {
-                    that.exportThree()
+                if (chapterNumber===this.chapters.length) {
+                    this.exportThree()
                 } else {
-                    that.exportTwo(chapterNumber)
+                    this.exportTwo(chapterNumber)
                 }
-            })
-        citRenderer.init()
+            }
+        )
 
     }
 
@@ -318,9 +322,21 @@ export class EpubBookExporter extends BaseEpubExporter {
             })
         }
 
-        zipFileCreator(this.outputList, httpOutputList, createSlug(
-                this.book.title) +
-            '.epub', 'application/epub+zip', includeZips)
+        let zipper = new ZipFileCreator(
+            this.outputList,
+            httpOutputList,
+            includeZips,
+            'application/epub+zip'
+        )
+
+        zipper.init().then(
+            blob => download(
+                blob,
+                createSlug(this.book.title) + '.epub',
+                'application/epub+zip'
+            )
+        )
+
     }
 
 }

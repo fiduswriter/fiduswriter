@@ -10,10 +10,9 @@ export class OdtExporterRender {
     }
 
     init() {
-        let that = this
         return this.exporter.xml.getXml(this.filePath).then(
-            function(xml) {
-                that.xml = xml
+            xml => {
+                this.xml = xml
                 return Promise.resolve()
             }
         )
@@ -58,21 +57,20 @@ export class OdtExporterRender {
     // replacements.
     render() {
 
-        let pars = [].slice.call(this.xml.querySelectorAll('p')) // Including global page definition at end
-        let that = this
+        let pars = [].slice.call(this.xml.querySelectorAll('p'))
 
-        pars.forEach(function(par){
-            domDescendantTexNodes(par).forEach(function(textNode){
+        pars.forEach(par => {
+            domDescendantTexNodes(par).forEach(textNode => {
                 let text = textNode.data
-                that.tags.forEach(function(tag){
+                this.tags.forEach(tag => {
                     let tagString = tag.title
                     if(text.indexOf('{'+tagString+'}') !== -1) {
                         if(tag.title[0]==='@') {
                             tag.par = par
-                            that.parRender(tag)
+                            this.parRender(tag)
                         } else {
                             tag.textNode = textNode
-                            that.inlineRender(tag)
+                            this.inlineRender(tag)
                         }
                     }
                 })

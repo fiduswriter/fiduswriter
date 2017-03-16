@@ -3,7 +3,7 @@ import atexit
 from copy import deepcopy
 
 from document.helpers.session_user_info import SessionUserInfo
-from ws.base import BaseWebSocketHandler
+from base.ws_handler import BaseWebSocketHandler
 from logging import info, error
 from tornado.escape import json_decode, json_encode
 from tornado.websocket import WebSocketClosedError
@@ -11,6 +11,7 @@ from document.models import AccessRight, COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
     CAN_COMMUNICATE
 from document.views import get_accessrights
 from avatar.templatetags.avatar_tags import avatar_url
+from ojs.models import Submission
 
 
 class DocumentWS(BaseWebSocketHandler):
@@ -72,15 +73,15 @@ class DocumentWS(BaseWebSocketHandler):
         response['doc']['contents'] = self.doc['contents']
         response['doc']['metadata'] = self.doc['metadata']
         response['doc']['settings'] = self.doc['settings']
-        document_owner = self.doc['db'].owner
+        doc_owner = self.doc['db'].owner
         access_rights = get_accessrights(
             AccessRight.objects.filter(
-                document__owner=document_owner))
+                document__owner=doc_owner))
         response['doc']['access_rights'] = access_rights
 
-        if (self.user_info.access_rights == 'read-without-comments'):
+        if self.user_info.access_rights == 'read-without-comments':
             response['doc']['comments'] = []
-        elif (self.user_info.access_rights == 'review'):
+        elif self.user_info.access_rights == 'review':
             # Reviewer should only get his/her own comments
             filtered_comments = {}
             for key, value in self.doc["comments"].items():
@@ -91,15 +92,15 @@ class DocumentWS(BaseWebSocketHandler):
             response['doc']['comments'] = self.doc["comments"]
         response['doc']['comment_version'] = self.doc["comment_version"]
         response['doc']['access_rights'] = get_accessrights(
-            AccessRight.objects.filter(document__owner=document_owner))
+            AccessRight.objects.filter(document__owner=doc_owner))
         response['doc']['owner'] = dict()
-        response['doc']['owner']['id'] = document_owner.id
-        response['doc']['owner']['name'] = document_owner.readable_name
+        response['doc']['owner']['id'] = doc_owner.id
+        response['doc']['owner']['name'] = doc_owner.readable_name
         response['doc']['owner'][
-            'avatar'] = avatar_url(document_owner, 80)
+            'avatar'] = avatar_url(doc_owner, 80)
         response['doc']['owner']['team_members'] = []
 
-        for team_member in document_owner.leader.all():
+        for team_member in doc_owner.leader.all():
             tm_object = dict()
             tm_object['id'] = team_member.member.id
             tm_object['name'] = team_member.member.readable_name
@@ -119,11 +120,43 @@ class DocumentWS(BaseWebSocketHandler):
                 "last_diffs"][-needed_diffs:]
         else:
             response['doc_info']['unapplied_diffs'] = []
-        if not self.user_info.is_owner:
+        # OJS submission related
+        response['doc_info']['submission'] = dict()
+        submissions = Submission.objects.filter(
+            document_id=self.doc['id']
+        )
+        if len(submissions) > 0 and submissions[0].version_id != 0:
+            submission = submissions[0]
+            response['doc_info']['submission']['status'] = 'submitted'
+            response['doc_info']['submission']['submission_id'] = \
+                submission.submission_id
+            response['doc_info']['submission']['user_id'] = submission.user_id
+            response['doc_info']['submission']['version_id'] = \
+                submission.version_id
+            response['doc_info']['submission']['journal_id'] = \
+                submission.journal_id
+        else:
+            response['doc_info']['submission']['status'] = 'unsubmitted'
+        if self.user_info.is_owner:
+            the_user = self.user_info.user
+            # Data used for OJS submissions
+            response['doc']['owner']['email'] = the_user.email
+            response['doc']['owner']['username'] = the_user.username
+            response['doc']['owner']['first_name'] = the_user.first_name
+            response['doc']['owner']['last_name'] = the_user.last_name
+            response['doc']['owner']['email'] = the_user.email
+        else:
+            the_user = self.user_info.user
             response['user'] = dict()
-            response['user']['id'] = self.user_info.user.id
-            response['user']['name'] = self.user_info.user.readable_name
-            response['user']['avatar'] = avatar_url(self.user_info.user, 80)
+            response['user']['id'] = the_user.id
+            response['user']['name'] = the_user.readable_name
+            response['user']['avatar'] = avatar_url(the_user, 80)
+            # Data used for OJS submissions
+            response['user']['email'] = the_user.email
+            response['user']['username'] = the_user.username
+            response['user']['first_name'] = the_user.first_name
+            response['user']['last_name'] = the_user.last_name
+            response['user']['email'] = the_user.email
         response['doc_info']['session_id'] = self.id
         self.write_message(response)
 
@@ -257,6 +290,10 @@ class DocumentWS(BaseWebSocketHandler):
         return only_comment
 
     def handle_diff(self, parsed):
+        pdv = parsed["diff_version"]
+        ddv = self.doc['diff_version']
+        pcv = parsed["comment_version"]
+        dcv = self.doc['comment_version']
         if (
             self.user_info.access_rights in COMMENT_ONLY and
             not self.only_comments(parsed['diff'])
@@ -268,8 +305,7 @@ class DocumentWS(BaseWebSocketHandler):
                 )
             )
             return
-        if parsed["diff_version"] == self.doc['diff_version'] and parsed[
-                "comment_version"] == self.doc['comment_version']:
+        if pdv == ddv and pcv == dcv:
             self.doc["last_diffs"].extend(parsed["diff"])
             self.doc['diff_version'] += len(parsed["diff"])
             self.update_comments(parsed["comments"])
@@ -280,26 +316,26 @@ class DocumentWS(BaseWebSocketHandler):
                 self.id,
                 self.user_info.user.id
             )
-        elif parsed["diff_version"] != self.doc['diff_version']:
-            if parsed["diff_version"] < (
-                    self.doc['diff_version'] - len(self.doc["last_diffs"])):
-                print('unfixable')
-                # Client has a version that is too old
-                self.send_document()
-            elif parsed["diff_version"] < self.doc['diff_version']:
+        elif pdv > ddv:
+            # Client has a higher version than server. Something is fishy!
+            print('unfixable')
+        elif pdv < ddv:
+            if pdv + len(self.doc["last_diffs"]) >= ddv:
+                # We have enough last_diffs stored to fix it.
                 print("can fix it")
-                number_requested_diffs = self.doc[
-                    'diff_version'] - parsed["diff_version"]
+                number_diffs = \
+                    parsed["diff_version"] - self.doc['diff_version']
                 response = {
                     "type": "diff",
+                    "server_fix": True,
                     "diff_version": parsed["diff_version"],
-                    "diff": self.doc["last_diffs"][-number_requested_diffs:],
+                    "diff": self.doc["last_diffs"][number_diffs:],
                     "reject_request_id": parsed["request_id"],
                 }
                 self.write_message(response)
             else:
                 print('unfixable')
-                # Client has a version that is too old
+                # Client has a version that is too old to be fixed
                 self.send_document()
         else:
             print('comment_version incorrect!')
@@ -315,11 +351,13 @@ class DocumentWS(BaseWebSocketHandler):
             self.write_message(response)
             return
         elif pdv + len(self.doc["last_diffs"]) >= ddv:
-            number_requested_diffs = ddv - pdv
+            print("can fix it")
+            number_diffs = pdv - ddv
             response = {
                 "type": "diff",
-                "diff_version": parsed["diff_version"],
-                "diff": self.doc["last_diffs"][-number_requested_diffs:],
+                "server_fix": True,
+                "diff_version": pdv,
+                "diff": self.doc["last_diffs"][number_diffs:],
             }
             self.write_message(response)
             return
@@ -385,7 +423,7 @@ class DocumentWS(BaseWebSocketHandler):
                     if access_rights == 'read-without-comments':
                         # The reader should not receive the comments update, so
                         # we remove the comments from the copy of the message
-                        # sent to the reviewer. We still need to sned the rest
+                        # sent to the reviewer. We still need to send the rest
                         # of the message as it may contain other diff
                         # information.
                         message = deepcopy(message)

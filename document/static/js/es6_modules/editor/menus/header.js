@@ -1,7 +1,7 @@
-import {DocumentAccessRightsDialog} from "../../documents/access-rights/dialog"
+import {DocumentAccessRightsDialog} from "../../documents/access-rights"
 import {documentStyleList} from "../../style/documentstyle-list"
 import {citationDefinitions} from "../../style/citation-definitions"
-import {addDropdownBox} from "../../common/common"
+import {addDropdownBox} from "../../common"
 
 /* Bindings for the header menu */
 export class ModMenusHeader {
@@ -12,9 +12,6 @@ export class ModMenusHeader {
     }
 
     bindEvents() {
-          let that = this
-
-
           //open dropdown for headermenu
           jQuery('.header-nav-item, .multibuttonsCover').each(function() {
               addDropdownBox(jQuery(this), jQuery(this).siblings(
@@ -53,41 +50,38 @@ export class ModMenusHeader {
 
           jQuery('#editor-navigation').hide()
 
-          jQuery(document).on('mousedown', '.savecopy:not(.disabled)', function() {
-              that.mod.actions.saveCopy()
+          jQuery(document).on('mousedown', '.savecopy:not(.disabled)', () => {
+              this.mod.actions.saveCopy()
           })
-          jQuery(document).on('mousedown', '.download:not(.disabled)', function() {
-              that.mod.actions.download()
+          jQuery(document).on('mousedown', '.download:not(.disabled)', () => {
+              this.mod.actions.download()
           })
+          let that = this
           jQuery(document).on('mousedown', '.template-export:not(.disabled)', function() {
               let fileType = jQuery(this).attr('data-filetype')
               let templateUrl = jQuery(this).attr('data-template')
               that.mod.actions.downloadTemplateExport(templateUrl, fileType)
           })
-          jQuery(document).on('mousedown', '.latex:not(.disabled)', function() {
-              that.mod.actions.downloadLatex()
+          jQuery(document).on('mousedown', '.latex:not(.disabled)', () => {
+              this.mod.actions.downloadLatex()
           })
-          jQuery(document).on('mousedown', '.epub:not(.disabled)', function() {
-              that.mod.actions.downloadEpub()
+          jQuery(document).on('mousedown', '.epub:not(.disabled)', () => {
+              this.mod.actions.downloadEpub()
           })
-          jQuery(document).on('mousedown', '.html:not(.disabled)', function() {
-              that.mod.actions.downloadHtml()
+          jQuery(document).on('mousedown', '.html:not(.disabled)', () => {
+              this.mod.actions.downloadHtml()
           })
-          jQuery(document).on('mousedown', '.print:not(.disabled)', function() {
-              that.mod.actions.print()
+          jQuery(document).on('mousedown', '.print:not(.disabled)', () => {
+              this.mod.actions.print()
           })
-          jQuery(document).on('mousedown', '.close:not(.disabled)', function() {
-              that.mod.actions.close()
-          })
-
-          jQuery(document).on('mousedown', '.submit-ojs:not(.disabled)', function() {
-              that.mod.actions.submitOjs()
+          jQuery(document).on('mousedown', '.close:not(.disabled)', () => {
+              this.mod.actions.close()
           })
 
           // Document Style switching
-          jQuery(document).on('click', '.documentstyle-menu:not(.disabled)', function () {
+          jQuery(document).on('click', '.documentstyle-menu:not(.disabled)', () => {
               jQuery('span.docstyle.selected').removeClass('selected')
-              let docStyle = that.mod.editor.pm.doc.firstChild.attrs.documentstyle
+              let docStyle = this.mod.editor.pm.doc.firstChild.attrs.documentstyle
               jQuery(`span.docstyle[data-docstyle="${docStyle}"]`).addClass('selected')
           })
           jQuery(document).on('mousedown', "#header-navigation .docstyle:not(.disabled)", function() {
@@ -99,9 +93,9 @@ export class ModMenusHeader {
           })
 
           // Citation Style switching
-          jQuery(document).on('click', '.citationstyle-menu:not(.disabled)', function () {
+          jQuery(document).on('click', '.citationstyle-menu:not(.disabled)', () => {
               jQuery('span.citationstyle.selected').removeClass('selected')
-              let citationstyle = that.mod.editor.pm.doc.firstChild.attrs.citationstyle
+              let citationstyle = this.mod.editor.pm.doc.firstChild.attrs.citationstyle
               jQuery(`span.citationstyle[data-citationstyle="${citationstyle}"]`).addClass('selected')
           })
           jQuery(document).on('mousedown', "#header-navigation .citationstyle:not(.disabled)", function() {
@@ -128,9 +122,9 @@ export class ModMenusHeader {
           })
 
           // Paper size switching
-          jQuery(document).on('click', '.papersize-menu:not(.disabled)', function () {
+          jQuery(document).on('click', '.papersize-menu:not(.disabled)', () => {
               jQuery('span.papersize.selected').removeClass('selected')
-              let papersize = that.mod.editor.pm.doc.firstChild.attrs.papersize
+              let papersize = this.mod.editor.pm.doc.firstChild.attrs.papersize
               jQuery(`span.papersize[data-papersize="${papersize}"]`).addClass('selected')
           })
           jQuery(document).on('mousedown', "#header-navigation .papersize:not(.disabled)", function() {
@@ -142,9 +136,9 @@ export class ModMenusHeader {
               return false
           })
 
-          jQuery(document).on('click', '.metadata-menu:not(.disabled)', function () {
+          jQuery(document).on('click', '.metadata-menu:not(.disabled)', () => {
               jQuery('span.metadata-menu-item.selected').removeClass('selected')
-              that.mod.editor.pm.doc.firstChild.forEach(function(node){
+              this.mod.editor.pm.doc.firstChild.forEach(node => {
                   if (node.type.isMetadata && !node.attrs.hidden) {
                       jQuery(`span.metadata-menu-item.metadata-${node.type.name}`).addClass('selected')
                   }
@@ -169,14 +163,18 @@ export class ModMenusHeader {
 
           })
 
-          jQuery(document).on('mousedown', '.share:not(.disabled)', function() {
-              new DocumentAccessRightsDialog([
-                  that.mod.editor.doc.id
-              ], that.mod.editor.doc.access_rights, that.mod.editor.doc.owner.team_members, function(newAccessRights) {
-                  that.mod.editor.doc.access_rights = newAccessRights
-              }, function(memberData) {
-                  that.mod.editor.user.team_members.push(memberData)
-              })
+          jQuery(document).on('mousedown', '.share:not(.disabled)', () => {
+              new DocumentAccessRightsDialog(
+                  [this.mod.editor.doc.id],
+                  this.mod.editor.doc.access_rights,
+                  this.mod.editor.doc.owner.team_members,
+                  newAccessRights => {
+                      this.mod.editor.doc.access_rights = newAccessRights
+                  },
+                  memberData => {
+                      this.mod.editor.user.team_members.push(memberData)
+                  }
+              )
           })
 
           //open and close header
@@ -207,8 +205,8 @@ export class ModMenusHeader {
                       }
                   })
           })
-          jQuery(document).on('mousedown', '.saverevision:not(.disabled)', function() {
-              that.mod.actions.saveRevision()
+          jQuery(document).on('mousedown', '.saverevision:not(.disabled)', () => {
+              this.mod.actions.saveRevision()
           })
     }
 

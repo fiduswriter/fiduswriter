@@ -1,4 +1,4 @@
-import {BookList} from "./es6_modules/books/booklist"
+import {BookList} from "./es6_modules/books"
 
 /* Create theBooks and make it available to the general namespace for debugging
 purposes.*/

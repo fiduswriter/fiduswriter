@@ -1,5 +1,5 @@
 import {LiteralFieldForm} from "./literal"
-import {noSpaceTmp} from "../../../common/common"
+import {noSpaceTmp} from "../../../common"
 
 // There are only name lists, no name fields in the data format. The separation
 // between NameFieldForm and NameListForm is for keeping consistency with other fields
@@ -37,7 +37,6 @@ export class NameFieldForm{
     }
 
     drawPersonForm() {
-        let that = this
         this.fields = {}
         this.dom.innerHTML = noSpaceTmp`
             <div class='person input-with-button'>
@@ -77,9 +76,10 @@ export class NameFieldForm{
             gettext('Suffix')
         )
         this.fields.suffix.init()
-        this.dom.querySelector('.switch-type').addEventListener('click', ()=>{
-            that.switchMode()
-        })
+        this.dom.querySelector('.switch-type').addEventListener(
+            'click',
+            () => this.switchMode()
+        )
     }
 
     switchMode() {
@@ -92,7 +92,6 @@ export class NameFieldForm{
     }
 
     drawOrganizationForm() {
-        let that = this
         this.fields = {}
         this.dom.innerHTML = noSpaceTmp`
             <div class='organization input-with-button'>
@@ -106,9 +105,11 @@ export class NameFieldForm{
             gettext('Organization name')
         )
         this.fields.literal.init()
-        this.dom.querySelector('.switch-type').addEventListener('click', ()=>{
-            that.switchMode()
-        })
+        this.dom.querySelector('.switch-type').addEventListener(
+            'click',
+            () => this.switchMode()
+
+        )
     }
 
     get value() {

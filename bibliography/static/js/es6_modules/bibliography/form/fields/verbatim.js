@@ -6,7 +6,6 @@ export class VerbatimFieldForm{
     }
 
     init() {
-        let that = this
         this.dom.innerHTML = `<input class="verbatim" type="text" value="${this.initialValue}" placeholder="${this.placeHolder}">`
     }
 

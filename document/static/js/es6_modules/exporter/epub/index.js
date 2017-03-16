@@ -2,42 +2,39 @@ import {obj2Node, node2Obj} from "../tools/json"
 import {BibliographyDB} from "../../bibliography/database"
 import {createSlug} from "../tools/file"
 import {findImages} from "../tools/html"
-import {zipFileCreator} from "../tools/zip"
+import {ZipFileCreator} from "../tools/zip"
 import {opfTemplate, containerTemplate, ncxTemplate, ncxItemTemplate, navTemplate,
   navItemTemplate, xhtmlTemplate} from "./templates"
 import {katexOpfIncludes} from "../../katex/opf-includes"
-import {addAlert} from "../../common/common"
-import {katexRender} from "../../katex/katex"
+import {addAlert} from "../../common"
+import {katexRender} from "../../katex"
 import {BaseEpubExporter} from "./base"
 import {docSchema} from "../../schema/document"
+import download from "downloadjs"
 
 
 export class EpubExporter extends BaseEpubExporter {
 
     constructor(doc, bibDB) {
         super()
-        let that = this
         this.doc = doc
         if (bibDB) {
             this.bibDB = bibDB // the bibliography has already been loaded for some other purpose. We reuse it.
             this.exportOne()
         } else {
-            this.bibDB = new BibliographyDB(doc.owner.id, false, false, false)
-            this.bibDB.getDB(function() {
-                that.exportOne()
+            this.bibDB = new BibliographyDB(doc.owner.id)
+            this.bibDB.getDB().then(() => {
+                this.exportOne()
             })
         }
     }
 
     exportOne() {
-        let that = this
         addAlert('info', this.doc.title + ': ' + gettext(
             'Epub export has been initiated.'))
 
 
-        this.joinDocumentParts(function() {
-            that.exportTwo()
-        })
+        this.joinDocumentParts().then(() => this.exportTwo())
     }
 
     exportTwo() {
@@ -107,9 +104,7 @@ export class EpubExporter extends BaseEpubExporter {
         let docContents = docSchema.nodeFromJSON(this.doc.contents).toDOM()
         // Remove hidden parts
         let hiddenEls = [].slice.call(docContents.querySelectorAll('[data-hidden=true]'))
-        hiddenEls.forEach(function(hiddenEl){
-            hiddenEl.parentElement.removeChild(hiddenEl)
-        })
+        hiddenEls.forEach(hiddenEl => hiddenEl.parentElement.removeChild(hiddenEl))
 
         let authorsEl = docContents.querySelector('.article-authors')
         if (authorsEl && authorsEl.textContent.length > 0) {
@@ -193,9 +188,16 @@ export class EpubExporter extends BaseEpubExporter {
                 'url': window.staticUrl + 'zip/katex-style.zip'
             })
         }
+        let zipper = new ZipFileCreator(
+            outputList,
+            httpOutputList,
+            includeZips,
+            'application/epub+zip'
+        )
 
-        zipFileCreator(outputList, httpOutputList, createSlug(
-                title) +
-            '.epub', 'application/epub+zip', includeZips)
+        zipper.init().then(
+            blob => download(blob, createSlug(title) + '.epub', 'application/epub+zip')
+        )
+
     }
 }

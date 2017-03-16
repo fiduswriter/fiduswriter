@@ -4,49 +4,41 @@ import {bookTexTemplate} from "./templates"
 import {createSlug} from "../../../exporter/tools/file"
 import {removeHidden} from "../../../exporter/tools/doc-contents"
 import {BibLatexExporter} from "biblatex-csl-converter"
-import {zipFileCreator} from "../../../exporter/tools/zip"
+import {ZipFileCreator} from "../../../exporter/tools/zip"
+import download from "downloadjs"
 
 export class LatexBookExporter {
 
     constructor(book, user, docList) {
-        let that = this
         this.book = book
-        this.book.chapters = _.sortBy(this.book.chapters, function (chapter) {
-            return chapter.number
-        })
+        this.book.chapters = _.sortBy(this.book.chapters, chapter => chapter.number)
         this.user = user // Not used, but we keep it for consistency
         this.docList = docList
         this.textFiles = []
         this.httpFiles = []
-        let p = []
-        p.push(new Promise((resolve) => {
-            getMissingChapterData(book, docList, function () {
-                resolve()
-            })
-        }))
-        p.push(new Promise((resolve) => {
-            getImageAndBibDB(book, docList, function (imageDB,
-                bibDB) {
-                that.bibDB = bibDB
-                that.imageDB = imageDB // Apparently not used
-                resolve()
-            })
-        }))
-        Promise.all(p).then(() => {
-            that.init()
-        })
+
+        getMissingChapterData(this.book, this.docList).then(
+            () => getImageAndBibDB(this.book, this.docList)
+        ).then(
+            ({imageDB, bibDB}) => {
+                this.bibDB = bibDB
+                this.imageDB = imageDB
+                this.init()
+            }
+        ).catch(
+            () => {}
+        )
     }
 
     init() {
-        let that = this
         this.zipFileName = `${createSlug(this.book.title)}.latex.zip`
         let bibIds = [], imageIds = [], features = {}
         this.book.chapters.forEach((chapter, index) => {
-            let converter = new LatexExporterConvert(that, that.imageDB, that.bibDB)
-            let doc = _.findWhere(that.docList, {id: chapter.text})
+            let converter = new LatexExporterConvert(this, this.imageDB, this.bibDB)
+            let doc = _.findWhere(this.docList, {id: chapter.text})
             let chapterContents = removeHidden(doc.contents)
             let convertedDoc = converter.init(chapterContents)
-            that.textFiles.push({
+            this.textFiles.push({
                 filename: `chapter-${index+1}.tex`,
                 contents: convertedDoc.latex
             })
@@ -58,15 +50,15 @@ export class LatexBookExporter {
             let bibExport = new BibLatexExporter(this.bibDB.db, bibIds)
             this.textFiles.push({filename: 'bibliography.bib', contents: bibExport.output})
         }
-        imageIds.forEach(function(id){
-            that.httpFiles.push({
-                filename: that.imageDB.db[id].image.split('/').pop(),
-                url: that.imageDB.db[id].image
+        imageIds.forEach(id => {
+            this.httpFiles.push({
+                filename: this.imageDB.db[id].image.split('/').pop(),
+                url: this.imageDB.db[id].image
             })
         })
         // Start a converter, only for creating a preamble/epilogue that combines
         // the features of all of the contained chapters.
-        let bookConverter = new LatexExporterConvert(that, that.imageDB, that.bibDB)
+        let bookConverter = new LatexExporterConvert(this, this.imageDB, this.bibDB)
         bookConverter.features = features
         let preamble = bookConverter.assemblePreamble()
         let epilogue = bookConverter.assembleEpilogue()
@@ -79,6 +71,13 @@ export class LatexBookExporter {
             })
         })
 
-        zipFileCreator(this.textFiles, this.httpFiles, this.zipFileName)
+        let zipper = new ZipFileCreator(
+            this.textFiles,
+            this.httpFiles
+        )
+
+        zipper.init().then(
+            blob => download(blob, this.zipFileName, 'application/zip')
+        )
     }
 }

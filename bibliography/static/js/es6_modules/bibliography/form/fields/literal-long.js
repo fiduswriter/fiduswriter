@@ -12,14 +12,13 @@ export class LiteralLongFieldForm{
     }
 
     init() {
-        let that = this
         this.pm = new ProseMirror({
             place: this.dom,
             schema: longLitSchema
         })
         this.pm.addKeymap(buildKeymap(longLitSchema), 0)
         this.pm.addKeymap(new Keymap({
-            'Enter': function(pm, apply) {
+            'Enter': (pm, apply) => {
                   if (apply !== false) pm.tr.typeText("\n").applyAndScroll()
                   return true
             }
@@ -32,10 +31,10 @@ export class LiteralLongFieldForm{
             }]
         })
         this.pm.setDoc(pmDoc)
-        this.pm.on.blur.add(function(){
+        this.pm.on.blur.add(() => {
             jQuery('.ui-dialog-buttonset .fw-edit').addClass('disabled')
         })
-        this.pm.on.focus.add(function(){
+        this.pm.on.focus.add(() => {
             jQuery('.ui-dialog-buttonset .fw-edit').removeClass('disabled')
             jQuery('.ui-dialog-buttonset .fw-nocase').addClass('disabled')
         })

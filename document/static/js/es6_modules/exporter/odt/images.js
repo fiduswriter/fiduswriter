@@ -11,11 +11,12 @@ export class OdtExporterImages {
     }
 
     init() {
-        let that = this
-        return this.exporter.xml.getXml("META-INF/manifest.xml").then(function(manifestXml){
-            that.manifestXml = manifestXml
-            return that.exportImages()
-        })
+        return this.exporter.xml.getXml("META-INF/manifest.xml").then(
+            manifestXml => {
+                this.manifestXml = manifestXml
+                return this.exportImages()
+            }
+        )
     }
 
     // add an image to the list of files
@@ -47,10 +48,10 @@ export class OdtExporterImages {
     // TODO: This will likely fail on image types odt doesn't support such as
     // SVG. Try out and fix.
     exportImages() {
-        let that = this, usedImgs = []
+        let usedImgs = []
 
         descendantNodes(this.docContents).forEach(
-            function(node) {
+            node => {
                 if (node.type==='figure' && node.attrs.image !== false) {
                     if (!(node.attrs.image in usedImgs)) {
                         usedImgs.push(node.attrs.image)
@@ -62,28 +63,30 @@ export class OdtExporterImages {
         return new Promise((resolveExportImages) => {
             let p = []
 
-            usedImgs.forEach((image) => {
-                let imgDBEntry = that.imageDB.db[image]
+            usedImgs.forEach(image => {
+                let imgDBEntry = this.imageDB.db[image]
                 p.push(
-                    new Promise((resolve) => {
-                        JSZipUtils.getBinaryContent(
-                            imgDBEntry.image,
-                            function(err, imageFile) {
-                                let wImgId = that.addImage(
-                                    imgDBEntry.image.split('/').pop(),
-                                    imageFile
-                                )
-                                that.imgIdTranslation[image] = wImgId
-                                resolve()
-                            }
-                        )
-                    })
+                    new Promise(
+                        resolve => {
+                            JSZipUtils.getBinaryContent(
+                                imgDBEntry.image,
+                                (err, imageFile) => {
+                                    let wImgId = this.addImage(
+                                        imgDBEntry.image.split('/').pop(),
+                                        imageFile
+                                    )
+                                    this.imgIdTranslation[image] = wImgId
+                                    resolve()
+                                }
+                            )
+                        }
+                    )
                 )
             })
 
-            Promise.all(p).then(function(){
-                resolveExportImages()
-            })
+            Promise.all(p).then(
+                () => resolveExportImages()
+            )
         })
     }
 

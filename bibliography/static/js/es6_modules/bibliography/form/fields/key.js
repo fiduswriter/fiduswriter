@@ -1,5 +1,5 @@
 import {LiteralFieldForm} from "./literal"
-import {noSpaceTmp} from "../../../common/common"
+import {noSpaceTmp} from "../../../common"
 import {BibOptionTitles} from "../strings"
 
 export class KeyFieldForm{
@@ -30,7 +30,6 @@ export class KeyFieldForm{
     }
 
     drawSelectionListForm() {
-        let that = this
         this.dom.innerHTML = noSpaceTmp`
             <div class='selection-list input-with-button'>
                 <button class="switch-type fw-button fw-green">${gettext('From list')}</button>
@@ -56,9 +55,10 @@ export class KeyFieldForm{
         if (this.fieldType.strict) {
             this.dom.querySelector('.switch-type').classList.add('disabled')
         } else {
-            this.dom.querySelector('.switch-type').addEventListener('click', ()=>{
-                that.switchMode()
-            })
+            this.dom.querySelector('.switch-type').addEventListener(
+                'click',
+                () => this.switchMode()
+            )
         }
 
     }
@@ -77,7 +77,6 @@ export class KeyFieldForm{
     }
 
     drawCustomInputForm() {
-        let that = this
         this.fields = {}
         this.dom.innerHTML = noSpaceTmp`
             <div class='key-field input-with-button'>
@@ -90,9 +89,10 @@ export class KeyFieldForm{
             this.currentValue['custom']
         )
         this.fields.custom.init()
-        this.dom.querySelector('.switch-type').addEventListener('click', ()=>{
-            that.switchMode()
-        })
+        this.dom.querySelector('.switch-type').addEventListener(
+            'click',
+            () => this.switchMode()
+        )
     }
 
     get value() {

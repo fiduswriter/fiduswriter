@@ -1,5 +1,5 @@
 import {messageTemplate, participantListTemplate} from "./templates"
-import {localizeDate} from "../../common/common"
+import {localizeDate} from "../../common"
 
 /*
 * Functions for chat between users who access a document simultaneously.
@@ -23,15 +23,15 @@ export class ModCollabChat {
         if (this.currentlyFlashing) {
             return false
         }
-        let origTitle = document.title, that = this
+        let origTitle = document.title
 
         this.currentlyFlashing = true
 
-        let changeDocumentTitle = window.setInterval(function () {
+        let changeDocumentTitle = window.setInterval(() => {
             if (this.focus) {
                 window.clearInterval(changeDocumentTitle)
                 document.title = origTitle
-                that.currentlyFlashing = false
+                this.currentlyFlashing = false
             }
             else {
                 document.title = (document.title === origTitle) ?
@@ -89,17 +89,16 @@ export class ModCollabChat {
     }
 
     init() {
-        let that = this
 
         jQuery(document.head).append(
             '<style>\n#messageform.empty:before{content:"' + gettext(
                 'Send a message...') + '"}\n</style>')
-
+        let that = this
         jQuery(document).ready(function () {
             jQuery('#chat-container').css('max-height', jQuery(window).height() -
                 200 + 'px')
 
-            jQuery('#chat .resize-button').on("click", function () {
+            jQuery('#chat .resize-button').on("click", function (event) {
                 if (jQuery(this).hasClass('icon-angle-double-down')) {
                     jQuery(this).removeClass(
                         'icon-angle-double-down')
@@ -134,8 +133,8 @@ export class ModCollabChat {
             })
 
 
-            jQuery("#messageform").on("keypress", function (e) {
-                if (e.keyCode == 13) {
+            jQuery("#messageform").on("keypress", function (event) {
+                if (event.keyCode == 13) {
                     that.sendMessage(jQuery(this).text())
                     jQuery(this).empty()
                     return false
@@ -145,11 +144,11 @@ export class ModCollabChat {
 
         })
 
-        jQuery(window).on("blur focus", function (e) {
+        jQuery(window).on("blur focus", function (event) {
             let prevType = jQuery(this).data("prevType");
 
-            if (prevType != e.type) { //  reduce double fire issues
-                switch (e.type) {
+            if (prevType != event.type) { //  reduce double fire issues
+                switch (event.type) {
                 case "blur":
                     that.focus = false;
                     break
@@ -159,7 +158,7 @@ export class ModCollabChat {
                 }
             }
 
-            jQuery(this).data("prevType", e.type)
+            jQuery(this).data("prevType", event.type)
 
         })
     }

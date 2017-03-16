@@ -3,15 +3,12 @@ import {RenderCitations} from "../../citations/render"
 import {docSchema} from "../../schema/document"
 
 export class BaseHTMLExporter extends BaseDOMExporter {
-    joinDocumentParts(callback) {
-
-        let that = this
-
+    joinDocumentParts() {
         this.contents = docSchema.nodeFromJSON(this.doc.contents).toDOM()
 
         // Remove hidden parts
         let hiddenEls = [].slice.call(this.contents.querySelectorAll('[data-hidden=true]'))
-        hiddenEls.forEach(function(hiddenEl){
+        hiddenEls.forEach(hiddenEl => {
             hiddenEl.parentElement.removeChild(hiddenEl)
         })
 
@@ -19,13 +16,15 @@ export class BaseHTMLExporter extends BaseDOMExporter {
             this.contents,
             this.doc.settings.citationstyle,
             this.bibDB,
-            true,
-            function(){
-                that.addBibliographyHTML(citRenderer.fm.bibHTML)
-                that.contents = that.cleanHTML(that.contents)
-                callback()
-            })
-        citRenderer.init()
+            true
+        )
+        return citRenderer.init().then(
+            () => {
+                this.addBibliographyHTML(citRenderer.fm.bibHTML)
+                this.contents = this.cleanHTML(this.contents)
+                return Promise.resolve()
+            }
+        )
     }
 
     addBibliographyHTML(bibliographyHTML) {

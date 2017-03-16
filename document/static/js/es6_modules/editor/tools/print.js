@@ -32,7 +32,6 @@ export class ModToolsPrint {
     }
 
     print() {
-        let that = this
         let flowTo = document.getElementById('print')
 
         // This is a quick and dirty way of creating a cloned version of the node.
@@ -48,7 +47,7 @@ export class ModToolsPrint {
         let footnotes = footnoteBox.querySelectorAll('.footnote-container')
         let footnoteMarkers = [].slice.call(flowCopy.querySelectorAll('.footnote-marker'))
 
-        footnoteMarkers.forEach(function(fnMarker, index) {
+        footnoteMarkers.forEach((fnMarker, index) => {
             while (fnMarker.firstChild) {
                 fnMarker.removeChild(fnMarker.firstChild)
             }
@@ -59,7 +58,7 @@ export class ModToolsPrint {
         let footnoteCitations = footnoteBox.querySelectorAll('.footnote-citation')
         let footnoteCitationMarkers = [].slice.call(flowCopy.querySelectorAll('.citation-footnote-marker'))
 
-        footnoteCitationMarkers.forEach(function(fnCitationMarker, index) {
+        footnoteCitationMarkers.forEach((fnCitationMarker, index) => {
             let fnCitation = footnoteCitations[index]
             fnCitation.classList.remove('footnote-citation')
             fnCitationMarker.appendChild(fnCitation)
@@ -85,8 +84,8 @@ export class ModToolsPrint {
             'footnoteSelector': '.footnote-marker',
             'lengthUnit': 'px',
             'flowToElement': document.getElementById("print"),
-            'callback': function() {
-                that.printReady()
+            'callback': () => {
+                this.printReady()
             }
         })
         this.paginator.initiate()

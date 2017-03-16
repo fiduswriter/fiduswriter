@@ -10,7 +10,6 @@ export class EntryCatForm{
     }
 
     drawForm() {
-        let that = this
         this.options.forEach(option => {
             this.dom.insertAdjacentHTML('beforeend',`<div class="fw-checkable fw-checkable-label${this.currentValue.includes(option.id) ? ' checked' : ''}" data-id="${option.id}">${option.category_title}</div>`)
             this.dom.lastChild.addEventListener('click', event => {

@@ -1,4 +1,4 @@
-import {noSpaceTmp} from "../../common/common"
+import {noSpaceTmp} from "../../common"
 
 import JSZipUtils from "jszip-utils"
 import TeXZilla from "texzilla"
@@ -23,29 +23,30 @@ export class DocxExporterMath {
     }
 
     init() {
-        let that = this
-
-        return this.exporter.xml.getXml("word/fontTable.xml").then(function(fontTableXml){
-            that.fontTableXml = fontTableXml
-            return that.setupXslt()
-        })
+        return this.exporter.xml.getXml("word/fontTable.xml").then(
+            fontTableXml => {
+                this.fontTableXml = fontTableXml
+                return this.setupXslt()
+            }
+        )
     }
 
     setupXslt() {
-        let that = this
-        return new Promise((resolve) => {
-            jQuery.ajax({
-                type: 'GET',
-                url: window.staticUrl + 'xsl/mml2omml.xsl',
-                dataType: 'text',
-                success: function(xslFile) {
-                    const parser = new window.DOMParser()
-                    let xsl = parser.parseFromString(xslFile, "text/xml").querySelector('stylesheet')
-                    that.processor.importStylesheet(xsl)
-                    resolve()
-                }
-            })
-        })
+        return new Promise(
+            resolve => {
+                jQuery.ajax({
+                    type: 'GET',
+                    url: window.staticUrl + 'xsl/mml2omml.xsl',
+                    dataType: 'text',
+                    success: xslFile => {
+                        const parser = new window.DOMParser()
+                        let xsl = parser.parseFromString(xslFile, "text/xml").querySelector('stylesheet')
+                        this.processor.importStylesheet(xsl)
+                        resolve()
+                    }
+                })
+            }
+        )
     }
 
 

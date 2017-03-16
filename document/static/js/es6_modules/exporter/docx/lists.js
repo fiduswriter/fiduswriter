@@ -1,4 +1,4 @@
-import {noSpaceTmp} from "../../common/common"
+import {noSpaceTmp} from "../../common"
 import {descendantNodes} from "../tools/doc-contents"
 
 let DEFAULT_LISTPARAGRAPH_XML = noSpaceTmp`
@@ -43,25 +43,24 @@ export class DocxExporterLists {
     }
 
     init() {
-        let that = this
         this.findLists()
         if (this.usedNumberedList > 0 || this.useBulletList) {
             let p = []
 
             p.push(
-                new Promise((resolve) => {
-                    that.addNumberingXml().then(function(){
-                        resolve()
-                    })
+                new Promise(resolve => {
+                    this.addNumberingXml().then(
+                        () => resolve()
+                    )
                 })
             )
 
 
             p.push(
                 new Promise((resolve) => {
-                    that.addListParagraphStyle().then(function(){
-                        resolve()
-                    })
+                    this.addListParagraphStyle().then(
+                        () => resolve()
+                    )
                 })
             )
             return Promise.all(p)
@@ -71,66 +70,70 @@ export class DocxExporterLists {
     }
 
     findLists() {
-        let that = this
         descendantNodes(this.docContents).forEach(
-            function(node) {
+            node => {
                 if (node.type==='bullet_list') {
-                    that.useBulletList = true
+                    this.useBulletList = true
                 } else if (node.type==='ordered_list') {
-                    that.usedNumberedList += 1
+                    this.usedNumberedList += 1
                 }
             }
         )
     }
 
     addNumberingXml() {
-        let that = this
-        return this.exporter.xml.getXml(this.numberingFilePath, DEFAULT_NUMBERING_XML).then(function(numberingXml) {
-            that.numberingXml = numberingXml
-            that.rels.addNumberingRel()
-            that.addUsedListTypes()
-            return Promise.resolve()
-        })
+        return this.exporter.xml.getXml(this.numberingFilePath, DEFAULT_NUMBERING_XML).then(
+            numberingXml => {
+                this.numberingXml = numberingXml
+                this.rels.addNumberingRel()
+                this.addUsedListTypes()
+                return Promise.resolve()
+            }
+        )
     }
 
     addListParagraphStyle() {
-        let that = this
-        return this.exporter.xml.getXml(this.styleFilePath).then(function(styleXml) {
-            that.styleXml = styleXml
-            if (!that.styleXml.querySelector(`style[*|styleId="ListParagraph"]`)) {
-                let stylesEl = that.styleXml.querySelector('styles')
-                stylesEl.insertAdjacentHTML('beforeEnd', DEFAULT_LISTPARAGRAPH_XML)
+        return this.exporter.xml.getXml(this.styleFilePath).then(
+            styleXml => {
+                this.styleXml = styleXml
+                if (!this.styleXml.querySelector(`style[*|styleId="ListParagraph"]`)) {
+                    let stylesEl = this.styleXml.querySelector('styles')
+                    stylesEl.insertAdjacentHTML('beforeEnd', DEFAULT_LISTPARAGRAPH_XML)
+                }
+                return Promise.resolve()
             }
-            return Promise.resolve()
-        })
+        )
     }
 
     addUsedListTypes() {
-        let that = this
         let allAbstractNum = [].slice.call(this.numberingXml.querySelectorAll('abstractNum'))
-        allAbstractNum.forEach((abstractNum) => {
-            // We check the format for the lowest level list and use the first one we find  for 'bullet' or 'not bullet'
-            // This means that if a list is defined using anything else than bullets, it will be accepted as the format of
-            // the numeric list.
-            let levelZeroFormat = abstractNum.querySelector('lvl[*|ilvl="0"] numFmt').getAttribute('w:val')
-            let abstractNumId = parseInt(abstractNum.getAttribute('w:abstractNumId'))
-            if(levelZeroFormat==='bullet' && !(that.bulletAbstractType)) {
-                let numEl = that.numberingXml.querySelector(`abstractNumId[*|val="${abstractNumId}"]`).parentElement
-                let numId = parseInt(numEl.getAttribute('w:numId'))
-                that.bulletType = numId
-            } else if(levelZeroFormat!=='bullet' && !(that.numberedAbstractType)) {
-                that.numberedAbstractType = abstractNumId
-            }
-            if(that.maxAbstractNumId < abstractNumId) {
-                that.maxAbstractNumId = abstractNumId
-            }
+        allAbstractNum.forEach(
+            abstractNum => {
+                // We check the format for the lowest level list and use the first
+                // one we find  for 'bullet' or 'not bullet'
+                // This means that if a list is defined using anything else than
+                // bullets, it will be accepted as the format of
+                // the numeric list.
+                let levelZeroFormat = abstractNum.querySelector('lvl[*|ilvl="0"] numFmt').getAttribute('w:val')
+                let abstractNumId = parseInt(abstractNum.getAttribute('w:abstractNumId'))
+                if(levelZeroFormat==='bullet' && !(this.bulletAbstractType)) {
+                    let numEl = this.numberingXml.querySelector(`abstractNumId[*|val="${abstractNumId}"]`).parentElement
+                    let numId = parseInt(numEl.getAttribute('w:numId'))
+                    this.bulletType = numId
+                } else if(levelZeroFormat!=='bullet' && !(this.numberedAbstractType)) {
+                    this.numberedAbstractType = abstractNumId
+                }
+                if(this.maxAbstractNumId < abstractNumId) {
+                    this.maxAbstractNumId = abstractNumId
+                }
 
-        })
+            }
+        )
         let allNum = [].slice.call(this.numberingXml.querySelectorAll('num'))
-        allNum.forEach((numEl) => {
+        allNum.forEach(numEl => {
             let numId = parseInt(numEl.getAttribute('w:val'))
-            if(that.maxNumId < numId) {
-                that.maxNumId = numId
+            if(this.maxNumId < numId) {
+                this.maxNumId = numId
             }
         })
 

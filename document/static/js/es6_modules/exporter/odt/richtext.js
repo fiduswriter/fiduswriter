@@ -1,10 +1,9 @@
 import {escapeText} from "../tools/html"
-import {noSpaceTmp} from "../../common/common"
+import {noSpaceTmp} from "../../common"
 
 export class OdtExporterRichtext {
     constructor(exporter, images) {
         this.exporter = exporter
-        //this.citations = citations
         this.images = images
         this.imgCounter = 1
         this.fnCounter = 0 // real footnotes
@@ -126,7 +125,6 @@ export class OdtExporterRichtext {
                 content += escapeText(node.text)
                 break
             case 'citation':
-                let that = this
                 // We take the first citation from the stack and remove it.
                 let cit
                 if (options.inFootnote) {

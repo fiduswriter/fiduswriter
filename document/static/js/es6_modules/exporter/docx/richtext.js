@@ -1,5 +1,5 @@
 import {escapeText} from "../tools/html"
-import {noSpaceTmp} from "../../common/common"
+import {noSpaceTmp} from "../../common"
 
 export class DocxExporterRichtext {
     constructor(exporter, rels, citations, images) {
@@ -164,7 +164,6 @@ export class DocxExporterRichtext {
                 content += escapeText(node.text)
                 break
             case 'citation':
-                let that = this
                 // We take the first citation from the stack and remove it.
                 let cit = this.citations.pmCits.shift()
                 if (options.citationType && options.citationType === 'note') {
@@ -188,15 +187,17 @@ export class DocxExporterRichtext {
                     let xml = this.exporter.footnotes.xml
                     let lastId = this.fnCounter - 1
                     let footnotes = [].slice.call(xml.querySelectorAll('footnote'))
-                    footnotes.forEach(function(footnote){
-                        let id = parseInt(footnote.getAttribute('w:id'))
-                        if (id >= that.fnCounter) {
-                            footnote.setAttribute('w:id', id+1)
+                    footnotes.forEach(
+                        footnote => {
+                            let id = parseInt(footnote.getAttribute('w:id'))
+                            if (id >= this.fnCounter) {
+                                footnote.setAttribute('w:id', id+1)
+                            }
+                            if (id===lastId) {
+                                footnote.insertAdjacentHTML('afterend', fnXml)
+                            }
                         }
-                        if (id===lastId) {
-                            footnote.insertAdjacentHTML('afterend', fnXml)
-                        }
-                    })
+                    )
                     this.fnCounter++
                 } else {
                     for (let i=0; i < cit.content.length; i++) {

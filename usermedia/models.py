@@ -97,11 +97,7 @@ class Image(models.Model):
             return
 
         # Open original photo which we want to thumbnail using PIL's Image
-        try:
-            image = PilImage.open(StringIO(self.image.read()))
-        except IOError:
-            # PIL could not read the image file. We skip creating a thumbnail.
-            return
+        image = PilImage.open(StringIO(self.image.read()))
 
         self.width, self.height = image.size
 

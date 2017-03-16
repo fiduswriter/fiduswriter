@@ -147,9 +147,11 @@ export class LatexExporterConvert {
                     options.unplacedFootnotes.push(node.attrs.footnote)
                 } else {
                     start += '\\footnote{'
+                    let fnContent = ''
                     node.attrs.footnote.forEach(footPar => {
-                        content += this.walkJson(footPar, options).replace(/^\s+|\s+$/g, '')
+                        fnContent += this.walkJson(footPar, options)
                     })
+                    content += fnContent.replace(/^\s+|\s+$/g, '')
                     end = '}' + end
                 }
                 break
@@ -316,24 +318,25 @@ export class LatexExporterConvert {
                 content += this.walkJson(child, options)
             })
         }
-
-        if (placeFootnotesAfterBlock &&
+        if (
+            placeFootnotesAfterBlock &&
             options.unplacedFootnotes &&
-            options.unplacedFootnotes.length) {
+            options.unplacedFootnotes.length
+        ) {
             // There are footnotes that needed to be placed behind the node.
             // This happens in the case of headlines and lists.
-            if (options.unplacedFootnotes.length > 1) {
-                end += `\\addtocounter{footnote}{-${(options.unplacedFootnotes.length)}}`
-                options.unplacedFootnotes.forEach(footnote => {
-                    end += '\\stepcounter{footnote}\n'
-                    end += '\\footnotetext{'
-                    footnote.forEach(footPar => {
-                        end += this.walkJson(footPar, options).replace(/^\s+|\s+$/g, '')
-                    })
-                    end += '}'
+            end += `\\addtocounter{footnote}{-${(options.unplacedFootnotes.length)}}`
+            options.unplacedFootnotes.forEach(footnote => {
+                end += '\\stepcounter{footnote}\n'
+                end += '\\footnotetext{'
+                let fnContent = ''
+                footnote.forEach(footPar => {
+                    fnContent += this.walkJson(footPar, options)
                 })
-                options.unplacedFootnotes = []
-            }
+                end += fnContent.replace(/^\s+|\s+$/g, '')
+                end += '}'
+            })
+            options.unplacedFootnotes = []
         }
 
         return start + content + end

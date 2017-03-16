@@ -227,6 +227,8 @@ export class DocxExporterRichtext {
                             cx = cy * rel
                         }
                     }
+                    cy = Math.round(cy)
+                    cx = Math.round(cx)
                     let rId = this.images.imgIdTranslation[node.attrs.image]
                     start += noSpaceTmp`
                     <w:p>

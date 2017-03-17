@@ -56,7 +56,7 @@ export class StyleUploadDialog {
         let diaButtons = {}
         diaButtons[action] = function () {
 
-            if(jQuery("input[name='title']").val()==""){
+            if(jQuery("input[name='title']").val()===""){
             addAlert('error', gettext(
                         'Please insert a Title'
                     ))
@@ -169,7 +169,7 @@ export class StyleUploadDialog {
                     break
                 default:
                     theValue = $this.val()
-                    
+
             }
 
             formValues.append(theName, theValue)

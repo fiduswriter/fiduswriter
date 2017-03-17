@@ -22,7 +22,7 @@ export class LatexExporter {
         if(styleDB.latexcls && styleDB.latexcls != 'Undefined'){
             this.docClass=styleDB.latexcls
         }
-        
+
         getDatabasesIfNeeded(this, doc).then(
             () => {
             if(compiled)
@@ -66,7 +66,7 @@ export class LatexExporter {
 
         let that = this
         this.PDFFileName =  this.doc.title
-        let docCls = undefined
+        let docCls
         this.docContents = removeHidden(this.doc.contents)
         if(this.docClass){
           docCls='/class/'+this.docClass.split('/')[4].split('.')[0]

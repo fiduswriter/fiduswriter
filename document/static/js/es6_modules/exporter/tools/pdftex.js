@@ -14,9 +14,9 @@ function dataURItoBlob(dataURI) {
     // convert base64/URLEncoded data component to raw binary data held in a string
     var byteString;
     if (dataURI.split(',')[0].indexOf('base64') >= 0)
-        byteString = atob(dataURI.split(',')[1]);
+        byteString = window.atob(dataURI.split(',')[1]);
     else
-        byteString = unescape(dataURI.split(',')[1]);
+        byteString = window.unescape(dataURI.split(',')[1]);
 
     // separate out the mime component
     var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
@@ -27,7 +27,7 @@ function dataURItoBlob(dataURI) {
         ia[i] = byteString.charCodeAt(i);
     }
 
-    return new Blob([ia], {type:mimeString});
+    return new window.Blob([ia], {type:mimeString});
 }
 function add_bibtex(pdftex){
     pdftex.FS_createLazyFile('/', 'etoolbox.sty', 'etoolbox.sty', true, true);
@@ -38,10 +38,10 @@ function add_bibtex(pdftex){
 
 }
 var compile = function(source_code, bibfile, ImagesList, externalClass, pdfFiletitle) {
-    
+
         var pdf_dataurl = undefined;
 
-        var pdftex = new PDFTeX("/static/js/libs/texlive/pdftex-worker.js");
+        var pdftex = new window.PDFTeX("/static/js/libs/texlive/pdftex-worker.js");
 
     pdftex.set_TOTAL_MEMORY("-s").then(function() {
             pdftex.on_stdout = appendOutput;

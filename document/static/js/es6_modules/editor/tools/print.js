@@ -85,6 +85,7 @@ export class ModToolsPrint {
             'pagenumberBottomMargin': 50,
             'footnoteSelector': '.footnote-marker',
             'lengthUnit': 'px',
+            'topfloatSelector': 'table,figure',
             'flowToElement': document.getElementById("print"),
             'callback': () => {
                 this.printReady()

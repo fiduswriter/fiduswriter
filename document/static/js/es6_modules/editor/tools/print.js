@@ -70,6 +70,8 @@ export class ModToolsPrint {
         jQuery(flowTo).show()
 
         this.paginator = new PaginateForPrint({
+            'sectionStartSelector': 'none',
+            'chapterStartSelector': 'none',
             'flowFromElement' : flowCopy,
             'enableFrontmatter' : false,
             'alwaysEven' : false,

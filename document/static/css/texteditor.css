@@ -287,6 +287,9 @@ input.required, error {
     background-color: rgba(234,234,234,0.5);
     display: none;
 }
+#print table, #print figure {
+    width: 100%;
+}
 /* Overwrite color changes through font in editor. Webkit bug */
 
 font {
@@ -370,9 +373,12 @@ figure {
     border: 1px solid black;
     padding: 5px;
     text-align: center;
-    margin: 10%;
     -webkit-region-break-inside: avoid;
     cursor: pointer;
+}
+
+#flow figure {
+    margin: 10%;
 }
 
 figure figcaption {
@@ -384,7 +390,8 @@ figure img {
     max-width: 100%
 }
 
-#paper-editable {
+div#print,
+div#flow {
     counter-reset: figure-cat-0 figure-cat-1 figure-cat-2;
 }
 

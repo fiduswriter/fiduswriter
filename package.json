@@ -40,7 +40,7 @@
     "mathquill": "0.10.1-b",
     "napa": "2.3.0",
     "object-hash": "1.1.4",
-    "paginate-for-print": "0.0.6",
+    "paginate-for-print": "0.0.7",
     "prosemirror-old": "0.10.4",
     "texzilla": "0.9.9",
     "tokenfield": "^0.3.14",

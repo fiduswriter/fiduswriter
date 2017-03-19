@@ -7,7 +7,7 @@ from base.django_handler_mixin import DjangoHandlerMixin
 from urllib import urlencode
 from .models import Journal, Submission, SubmissionRevision
 from django.core.files.base import ContentFile
-from django.contrib.sites.shortcuts import get_current_site
+
 
 class OJSProxy(DjangoHandlerMixin, RequestHandler):
     @asynchronous
@@ -119,7 +119,6 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
             self.set_status(401)
             self.finish()
             return
-
 
     # The response is asynchronous so that the getting of the data from the OJS
     # server doesn't block the FW server connection.

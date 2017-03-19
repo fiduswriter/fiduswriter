@@ -130,7 +130,8 @@ class DocumentWS(BaseWebSocketHandler):
             response['doc_info']['submission']['status'] = 'submitted'
             response['doc_info']['submission']['submission_id'] = \
                 s_revision.submission.id
-            # response['doc_info']['submission']['user_id'] = s_revision.submission.user_id
+            # response['doc_info']['submission']['user_id']
+            #     = s_revision.submission.user_id
             response['doc_info']['submission']['version'] = \
                 s_revision.version
             response['doc_info']['submission']['journal_id'] = \

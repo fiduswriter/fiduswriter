@@ -19,6 +19,7 @@ class Journal(models.Model):
     def __unicode__(self):
         return self.name
 
+
 def submission_filename(instance, filename):
     return '/'.join([
         'submission',
@@ -32,7 +33,7 @@ def submission_filename(instance, filename):
 class Submission(models.Model):
     submitter = models.ForeignKey(User)
     journal = models.ForeignKey(Journal)
-    ojs_jid = models.PositiveIntegerField(default=0) # ID in OJS
+    ojs_jid = models.PositiveIntegerField(default=0)  # ID in OJS
 
     def __unicode__(self):
         return u'{ojs_jid} in {journal} by {submitter}'.format(
@@ -40,6 +41,7 @@ class Submission(models.Model):
             journal=self.journal.name,
             submitter=self.submitter.username
         )
+
 
 # Within each submission, there is a new file upload for each revision
 class SubmissionRevision(models.Model):
@@ -60,6 +62,7 @@ class SubmissionRevision(models.Model):
             journal=self.submission.journal.name,
             submitter=self.submission.submitter.username
         )
+
 
 # Access rights at the time of submission. To be restored after review is over.
 class SubmittedAccessRight(models.Model):

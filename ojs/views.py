@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import JsonResponse
 from django.db import transaction
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -13,7 +13,7 @@ from django.db import IntegrityError
 from allauth.account.models import EmailAddress
 from allauth.account import forms
 
-from .models import Submission, SubmittedAccessRight, Journal
+from . import models
 from document.views import send_share_notification
 from document.models import Document, AccessRight
 
@@ -60,9 +60,9 @@ def new_submission_revision_js(request):
             # editor = login_user(
             #    request,
             #    ojs_username)
-            original_doc = Submission.objects.get(
+            original_doc = models.Submission.objects.get(
                 submission_id=submission_id, version_id=0)
-            last_version = Submission.objects.filter(
+            last_version = models.Submission.objects.filter(
                 submission_id=submission_id).latest('version_id')
             user = User.objects.get(email=email)
             document = Document.objects.get(pk=last_version.document_id)
@@ -74,10 +74,10 @@ def new_submission_revision_js(request):
             data['journal_id'] = original_doc.journal_id
             data['submission_id'] = submission_id
             data['user_id'] = request.user.id
-            submission_access_rights = SubmittedAccessRight.objects.filter(
+            sub_access_rights = models.SubmittedAccessRight.objects.filter(
                 submission_id=submission_id,
                 document_id=original_doc.document_id)
-            for submission_access_right in submission_access_rights:
+            for submission_access_right in sub_access_rights:
                 try:
                     access_right = AccessRight.objects.get(
                         document_id=data['document_id'],
@@ -121,13 +121,13 @@ def set_version(data):
     version = 1
     # TODO Afshin: Is the version number always 1?
     try:
-        submissions = Submission.objects.filter(
+        submissions = models.Submission.objects.filter(
             submission_id=submission_id)
         if len(submissions) > 0:
             version = len(submissions)
         else:
             # save the rights of authors in original document
-            submitted_access_right = SubmittedAccessRight.objects.create(
+            sub_access_right = models.SubmittedAccessRight.objects.create(
                 document_id=pre_document_id,
                 user_id=user_id,
                 rights='write',
@@ -136,15 +136,15 @@ def set_version(data):
             access_rights = AccessRight.objects.filter(
                 document_id=pre_document_id)
             for access_right in access_rights:
-                submitted_access_right = SubmittedAccessRight.objects.create(
+                sub_access_right = models.SubmittedAccessRight.objects.create(
                     document_id=pre_document_id,
                     user_id=access_right.user_id,
                     rights=access_right.rights,
                     submission_id=submission_id
                 )
-            submitted_access_right.save()
+            sub_access_right.save()
 
-            original_submission = Submission.objects.create(
+            original_submission = models.Submission.objects.create(
                 user_id=user_id,
                 document_id=pre_document_id,
                 journal_id=journal_id,
@@ -152,7 +152,7 @@ def set_version(data):
                 version_id=0
             )
             original_submission.save()
-        submission = Submission.objects.create(
+        submission = models.Submission.objects.create(
             user_id=user_id,
             document_id=document_id,
             journal_id=journal_id,
@@ -181,7 +181,7 @@ def review_submit_js(request):
         if access_right.rights != tgt_right:
             access_right.rights = tgt_right
             access_right.save()
-        submission = Submission.objects.get(
+        submission = models.Submission.objects.get(
             document_id=document_id)
         response['submission'] = {}
         if submission:
@@ -207,7 +207,7 @@ def review_submit_undo_js(request):
         if access_right.rights != tgt_right:
             access_right.rights = tgt_right
             access_right.save()
-        submission = Submission.objects.get(
+        submission = models.Submission.objects.get(
             document_id=document_id)
         response['submission'] = {}
         if submission:
@@ -378,7 +378,7 @@ def revision(request, rev_id):
         status = 404
         return JsonResponse(response, status=status)
     app_key = request.POST.get('key')
-    rev = SubmissionRevision.objects.get(id=rev_id)
+    rev = models.SubmissionRevision.objects.get(id=rev_id)
     journal_key = rev.submission.journal.ojs_key
     # TODO: This could allow editors to login users who work on other journals.
     # We need to make sure this cannot happen.
@@ -413,8 +413,8 @@ def revision(request, rev_id):
         # wrong.
         response['doc_id'] = document.id
         response['rev_id'] = rev.id
-        # Loading the document and saving it will increase the version number of
-        # the doc from 0 to 1.
+        # Loading the document and saving it will increase the version number
+        # of the doc from 0 to 1.
         return render(request, 'ojs/import_document.html',
                       response)
     return redirect(
@@ -449,7 +449,7 @@ def get_journals_js(request):
     response = {}
     if request.is_ajax() and request.method == 'POST':
         journals = []
-        for journal in Journal.objects.all():
+        for journal in models.Journal.objects.all():
             journals.append({
                 'id': journal.id,
                 'name': journal.name,
@@ -493,7 +493,7 @@ def save_journal_js(request):
     response = {}
     if request.is_ajax() and request.method == 'POST':
         try:
-            Journal.objects.create(
+            models.Journal.objects.create(
                 ojs_jid=request.POST.get('ojs_jid'),
                 ojs_key=request.POST.get('ojs_key'),
                 ojs_url=request.POST.get('ojs_url'),

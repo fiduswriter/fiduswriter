@@ -10,8 +10,7 @@
     "copy_datatables": "mkdir -p ./static-libs/js/libs/ && cp node_modules/datatables/media/js/jquery.dataTables.min.js ./static-libs/js/libs/",
     "copy_dropkickjs": "mkdir -p ./static-libs/js/libs/ && cp node_modules/dropkickjs/build/js/dropkick.min.js ./static-libs/js/libs/",
     "copy_dropkickjs_css": "mkdir -p ./static-libs/css/libs/ && cp node_modules/dropkickjs/build/css/dropkick.css ./static-libs/css/libs/",
-    "copy_citeproc": "mkdir -p ./static-libs/js/libs/ && cp node_modules/citeproc/citeproc.js ./static-libs/js/libs/",
-    "postinstall": "npm run get_mml2omml && npm run copy_jquery && npm run copy_jquery-ui && npm run copy_underscore && npm run copy_datatables && npm run copy_dropkickjs && npm run copy_dropkickjs_css && npm run copy_citeproc",
+    "postinstall": "npm run get_mml2omml && npm run copy_jquery && npm run copy_jquery-ui && npm run copy_underscore && npm run copy_datatables && npm run copy_dropkickjs && npm run copy_dropkickjs_css",
     "check_js": "jshint .",
     "check_py": "flake8 ./",
     "install": "napa"
@@ -27,6 +26,7 @@
     "browserify": "13.1.0",
     "browserify-incremental": "3.1.1",
     "browserkeymap": "^1.0.0",
+    "citeproc": "2.0.0",
     "datatables": "1.10.12",
     "downloadjs": "^1.4.6",
     "dropkickjs": "2.1.10",
@@ -47,7 +47,6 @@
     "underscore": "1.8.3"
   },
   "napa": {
-    "citeproc": "Juris-M/citeproc-js#1.1.149"
   },
   "browserify": {
     "transform": [
@@ -75,7 +74,6 @@
       "console",
       "jQuery",
       "MathQuill",
-      "CSL",
       "gettext",
       "_"
     ]

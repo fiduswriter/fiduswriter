@@ -219,7 +219,7 @@ export class StyleOverview {
                 that.deleteStyleDialog(ids)
                 break
             case 'export':
-                new StyleExporter(ids, that.style.db, true)
+                //new StyleExporter(ids, that.style.db, true)
                 break
             }
         })

@@ -1,7 +1,7 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.db import transaction
 from django.shortcuts import redirect, render
 from django.core.exceptions import ObjectDoesNotExist
@@ -26,24 +26,19 @@ def login_user(request, user):
 
 @csrf_exempt
 def open_revision_doc(request, rev_id):
-    response = {}
     if request.method != 'POST':
-        response['error'] = "Expect post"
-        status = 404
-        return JsonResponse(response, status=status)
+        # Method not allowed
+        return HttpResponse('Expected post', status=405)
     api_key = request.POST.get('key')
     rev = models.SubmissionRevision.objects.get(id=rev_id)
     journal_key = rev.submission.journal.ojs_key
     if (journal_key != api_key):
-        response['error'] = "Wrong key"
-        status = 404
-        return JsonResponse(response, status=status)
+        # Access forbidden
+        return HttpResponse('Wrong key', status=403)
     u_name = request.POST.get('user_name')
     reviewer = User.objects.get(username=u_name, is_active=True)
     if reviewer is None:
-        response['error'] = "The reviewer is not valid"
-        status = 404
-        return JsonResponse(response, status=status)
+        return HttpResponse('Invalid user', status=404)
     if (
         rev.doc.owner != reviewer and
         len(
@@ -56,15 +51,16 @@ def open_revision_doc(request, rev_id):
     ):
         # The user to be logged in is neither the editor (owner of doc) or a
         # reviewer. We prohibit access.
-        response['error'] = 'Access forbidden'
-        status = 403
-        return JsonResponse(response, status=status)
+
+        # Access forbidden
+        return HttpResponse('Missing access rights', status=403)
     login_user(request, reviewer)
 
     if rev.document.version == 0:
         # The document with version == 0 is still empty as it hasn't loaded the
         # zipped document yet. Send the user to first load the zip file into
         # the document. This will also import included images and citations.
+        response = {}
         response['doc_id'] = rev.document.id
         response['rev_id'] = rev.id
         # Loading the document and saving it will increase the version number

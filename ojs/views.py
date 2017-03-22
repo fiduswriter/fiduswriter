@@ -14,7 +14,7 @@ from allauth.account import forms
 
 from . import models
 from document.views import send_share_notification
-from document.models import Document, AccessRight
+from document.models import Document, AccessRight, CAN_UPDATE_DOCUMENT
 
 
 # logs a user in
@@ -24,6 +24,8 @@ def login_user(request, user):
     login(request, user)
 
 
+# Open a revision doc. This is where the reviewers/editor arrive when trying to
+# enter the submission doc on OJS.
 @csrf_exempt
 def open_revision_doc(request, rev_id):
     if request.method != 'POST':
@@ -40,14 +42,12 @@ def open_revision_doc(request, rev_id):
     if reviewer is None:
         return HttpResponse('Invalid user', status=404)
     if (
-        rev.doc.owner != reviewer and
-        len(
-            AccessRight.objects.filter(
-                document=rev.doc,
+        rev.document.owner != reviewer and
+        AccessRight.objects.filter(
+                document=rev.document,
                 user=reviewer,
-                rights='review'
-            )
-        ) == 0
+                rights__in=CAN_UPDATE_DOCUMENT
+        ).count() == 0
     ):
         # The user to be logged in is neither the editor (owner of doc) or a
         # reviewer. We prohibit access.
@@ -63,6 +63,7 @@ def open_revision_doc(request, rev_id):
         response = {}
         response['doc_id'] = rev.document.id
         response['rev_id'] = rev.id
+        response['owner_id'] = rev.document.owner.id
         # Loading the document and saving it will increase the version number
         # of the doc from 0 to 1.
         return render(request, 'ojs/import_document.html',
@@ -72,7 +73,31 @@ def open_revision_doc(request, rev_id):
     )
 
 
-# A list of all registered journals to be used in the submit dialog.
+# Download the zipped file_object of a submission revision
+@login_required
+def get_revision_file(request, revision_id):
+    rev = models.SubmissionRevision.objects.get(pk=int(revision_id))
+    if (
+        rev.document.owner != request.user and
+        AccessRight.objects.filter(
+                document=rev.document,
+                user=request.user,
+                rights__in=CAN_UPDATE_DOCUMENT
+        ).count() == 0
+    ):
+        # Access forbidden
+        return HttpResponse('Missing access rights', status=403)
+    http_response = HttpResponse(
+        rev.file_object.file,
+        content_type='application/zip; charset=x-user-defined',
+        status=200
+    )
+    http_response[
+        'Content-Disposition'] = 'attachment; filename=some_name.zip'
+    return http_response
+
+
+# A list of all registered journals -- to be used in the article submit dialog.
 @login_required
 def get_journals_js(request):
     status = 405
@@ -433,10 +458,9 @@ def get_existing_reviewer(request):
 def reviewer_js(request):
     response = {}
     if request.method == 'POST':
-        doc_id = int(request.POST.get('doc_id', "0"))
-        if doc_id == 0:
-            response['error'] = 'doc_id with value: ' + str(doc_id) \
-              + ' does not exist'
+        doc_id = int(request.POST.get('doc_id', -1))
+        if doc_id == -1:
+            response['error'] = 'No doc id'
             status = 404
             return JsonResponse(response, status=status)
         reviewer = get_reviewer_for_post(request)

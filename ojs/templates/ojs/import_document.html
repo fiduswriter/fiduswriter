@@ -1,0 +1,30 @@
+{% load i18n %}
+{% load compress %}
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.png" type="image/png">
+        <title> Fidus Writer </title>
+        <meta name="description" content="{% trans "The all in one solution for collaborative academic writing." %}">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/alerts.css" />
+        <script type="text/javascript">
+            var staticUrl = '{{ STATIC_URL }}';
+            var docId = {{ doc_id }};
+            var revId = {{ rev_id }};
+            var ownerId = {{ owner_id }};
+        </script>
+        <!--  Translations -->
+        <script type="text/javascript" src="/jsi18n/"></script>
+        <!-- JS error handling -->
+        <script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>
+        <!-- Underscore.js -->
+        <script type="text/javascript" src="{{ UNDERSCOREJS_URL }}"></script>
+        <!-- jQuery -->
+        <script type="text/javascript" src="{{ JQUERY_URL }}"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/ojs_import_document.es5.js"></script>
+    </head>
+    <body>
+    </body>
+</html>

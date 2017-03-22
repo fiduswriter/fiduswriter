@@ -255,12 +255,19 @@ export class ImportFidusFile {
     /* Process a packaged Fidus File, either through user upload, or by reloading
       a saved revision which was saved in the same ZIP-baseformat. */
 
-    constructor(file, user, check, bibDB, imageDB) {
+    constructor(file, user, check, bibDB, imageDB, docId) {
         this.file = file
         this.user = user
         this.check = check // Whether the file needs to be checked for compliance with ZIP-format
-        this.bibDB = bibDB // the user's current database object.
+        this.bibDB = bibDB // the user's bibDB
         this.imageDB = imageDB // the user's imageDB
+        // The ID of an existing doc which will be overwritten with the imported zip
+        // file's contents. This doc has to have version==0 for the server to accept
+        // the import. This is used by the OJS system when an editor/reviewer is
+        // importing a file into a doc as an empty doc is initialized with a any new revision
+        // so that access rights can be set on it before the doc import from the zubmission
+        // revision zip file_object has not taken place yet.
+        this.docId = docId
 
         this.textFiles = []
         this.otherFiles = []
@@ -352,7 +359,8 @@ export class ImportFidusFile {
                 this.otherFiles,
                 this.user,
                 this.bibDB,
-                this.imageDB
+                this.imageDB,
+                this.docId
             )
             return importer.init()
 

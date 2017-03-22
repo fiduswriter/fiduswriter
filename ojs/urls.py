@@ -34,9 +34,14 @@ urlpatterns = [
         name='del_reviewer_js'
     ),
     url(
-        '^revision/^\d+/$',
+        '^revision/(?P<rev_id>[0-9]+)$',
         views.open_revision_doc,
-        name='revision'
+        name='open_revision_doc'
+    ),
+    url(
+        '^get_revision_file/(?P<revision_id>[0-9]+)/$',
+        views.get_revision_file,
+        name='get_revision_file'
     ),
     url(
         '^newsubmissionrevision/$',

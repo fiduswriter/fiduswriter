@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.core.serializers.python import Serializer
 from django.utils.translation import ugettext as _
 
-from document.models import AccessRight
+from document.models import AccessRight, CAN_UPDATE_DOCUMENT
 from usermedia.models import Image, ImageCategory
 
 from .models import ALLOWED_FILETYPES
@@ -114,7 +114,8 @@ def check_access_rights(other_user_id, this_user):
         has_access = True
     elif AccessRight.objects.filter(
         document__owner=other_user_id,
-        user=this_user
+        user=this_user,
+        rights__in=CAN_UPDATE_DOCUMENT
     ).count() > 0:
         has_access = True
     return has_access

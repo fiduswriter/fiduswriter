@@ -7,6 +7,7 @@ from base.django_handler_mixin import DjangoHandlerMixin
 from urllib import urlencode
 from .models import Journal, Submission, SubmissionRevision
 from django.core.files.base import ContentFile
+from document.models import Document
 
 
 class OJSProxy(DjangoHandlerMixin, RequestHandler):
@@ -49,6 +50,7 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
             return
         plugin_path = '/index.php/index/gateway/plugin/RestApiGatewayPlugin/'
         if relative_url == 'submit':
+            # Submitting a new submission revision.
             journal_id = self.get_argument('journal_id')
             journal = Journal.objects.get(id=journal_id)
             submission_id = self.get_argument('submission_id', -1)
@@ -72,12 +74,24 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
                     submission_id=submission_id,
                     version=version
                 )
-            file_object = self.request.files['file'][0]
             version = version + 1
             self.s_revision = SubmissionRevision()
             self.s_revision.submission = self.submission
             self.s_revision.version = version
-            self.s_revision.file_object = ContentFile(file_object.body)
+            # Save the attached file as the revision file, transforming it
+            # from the python file_object format Tornado provides it in to the
+            # format used by Django.
+            file_object = self.request.files['file'][0]
+            self.s_revision.file_object.save(
+                file_object.filename,
+                ContentFile(file_object.body),
+                save=False
+            )
+            # Connect a new, empty document (version==0) to the submission.
+            document = Document()
+            document.owner = journal.editor
+            document.save()
+            self.s_revision.document = document
             self.s_revision.save()
             article_url = '{protocol}://{host}/ojs/revision/{rev_id}'.format(
                 protocol=self.request.protocol,
@@ -125,6 +139,8 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
     def on_submission_response(self, response):
         if response.error:
             raise HTTPError(500)
+        # If this is the first revision (version==0), then set the submission
+        # ID from the response from the OJS server.
         if self.s_revision.version == 0:
             json = json_decode(response.body)
             self.submission.ojs_jid = json['submission_id']

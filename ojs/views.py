@@ -371,7 +371,7 @@ def del_reviewer_js(request):
 
 
 @csrf_exempt
-def revision(request, rev_id):
+def open_revision_doc(request, rev_id):
     response = {}
     if request.method != 'POST':
         response['error'] = "Expect post"
@@ -396,22 +396,11 @@ def revision(request, rev_id):
         status = 404
         return JsonResponse(response, status=status)
 
-    if not rev.document:
-        # There is no document, so we create a new empty document and share it
-        # with all registered reviewers. Then we let the current user load the
-        # file object into this document on the client side and save it.
-        document = Document()
-        document.owner = rev.submission.journal.editor
-        document.save()
-        rev.document = document
-        rev.save()
     if rev.document.version == 0:
-        # This will usually only be executed right after attaching a new
-        # document to the rev.
-        # However, if the version number still is zero when the next user
-        # enters, we redo only the loading process, assuming something went
-        # wrong.
-        response['doc_id'] = document.id
+        # The document with version == 0 is still empty as it hasn't loaded the
+        # zipped document yet. Send the user to first load the zip file into
+        # the document. This will also import included images and citations.
+        response['doc_id'] = rev.document.id
         response['rev_id'] = rev.id
         # Loading the document and saving it will increase the version number
         # of the doc from 0 to 1.

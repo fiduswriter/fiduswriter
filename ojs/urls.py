@@ -35,7 +35,7 @@ urlpatterns = [
     ),
     url(
         '^revision/^\d+/$',
-        views.revision,
+        views.open_revision_doc,
         name='revision'
     ),
     url(

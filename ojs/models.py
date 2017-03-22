@@ -23,8 +23,8 @@ class Journal(models.Model):
 def submission_filename(instance, filename):
     return '/'.join([
         'submission',
-        str(instance.journal.id),
-        str(instance.submitter.id),
+        str(instance.submission.journal.id),
+        str(instance.submission.submitter.id),
         filename
     ])
 
@@ -50,7 +50,7 @@ class SubmissionRevision(models.Model):
     file_object = models.FileField(upload_to=submission_filename)
     # The document is the opened file_object. Until it is opened for the first
     # time, there is no document.
-    document = models.ForeignKey(Document, null=True, blank=True)
+    document = models.ForeignKey(Document)
 
     class Meta:
         unique_together = (("version", "submission"))

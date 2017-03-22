@@ -8,7 +8,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth import login
-from django.apps import apps
 from django.db import IntegrityError
 from allauth.account.models import EmailAddress
 from allauth.account import forms
@@ -18,21 +17,135 @@ from document.views import send_share_notification
 from document.models import Document, AccessRight
 
 
-def login_user(request, u_name):
-    try:
-        user = User.objects.get(username=u_name)
-        if (user and user.is_active and apps.is_installed(
-              'django.contrib.sessions')):
-            user.backend = settings.AUTHENTICATION_BACKENDS[0]
-            login(request, user)
-            return user
-        else:
-            return False
-
-    except ObjectDoesNotExist:
-        return False
+# logs a user in
+def login_user(request, user):
+    # TODO: Is next line really needed?
+    user.backend = settings.AUTHENTICATION_BACKENDS[0]
+    login(request, user)
 
 
+@csrf_exempt
+def open_revision_doc(request, rev_id):
+    response = {}
+    if request.method != 'POST':
+        response['error'] = "Expect post"
+        status = 404
+        return JsonResponse(response, status=status)
+    api_key = request.POST.get('key')
+    rev = models.SubmissionRevision.objects.get(id=rev_id)
+    journal_key = rev.submission.journal.ojs_key
+    if (journal_key != api_key):
+        response['error'] = "Wrong key"
+        status = 404
+        return JsonResponse(response, status=status)
+    u_name = request.POST.get('user_name')
+    reviewer = User.objects.get(username=u_name, is_active=True)
+    if reviewer is None:
+        response['error'] = "The reviewer is not valid"
+        status = 404
+        return JsonResponse(response, status=status)
+    if (
+        rev.doc.owner != reviewer and
+        len(
+            AccessRight.objects.filter(
+                document=rev.doc,
+                user=reviewer,
+                rights='review'
+            )
+        ) == 0
+    ):
+        # The user to be logged in is neither the editor (owner of doc) or a
+        # reviewer. We prohibit access.
+        response['error'] = 'Access forbidden'
+        status = 403
+        return JsonResponse(response, status=status)
+    login_user(request, reviewer)
+
+    if rev.document.version == 0:
+        # The document with version == 0 is still empty as it hasn't loaded the
+        # zipped document yet. Send the user to first load the zip file into
+        # the document. This will also import included images and citations.
+        response['doc_id'] = rev.document.id
+        response['rev_id'] = rev.id
+        # Loading the document and saving it will increase the version number
+        # of the doc from 0 to 1.
+        return render(request, 'ojs/import_document.html',
+                      response)
+    return redirect(
+        '/document/' + str(rev.document.id) + '/', permanent=True
+    )
+
+
+# A list of all registered journals to be used in the submit dialog.
+@login_required
+def get_journals_js(request):
+    status = 405
+    response = {}
+    if request.is_ajax() and request.method == 'POST':
+        journals = []
+        for journal in models.Journal.objects.all():
+            journals.append({
+                'id': journal.id,
+                'name': journal.name,
+                'editor_id': journal.editor_id,
+                'ojs_jid': journal.ojs_jid
+            })
+        response['journals'] = journals
+        status = 200
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+# Get a user based on an email address. Used for registration of journal.
+@staff_member_required
+def get_user_js(request):
+    status = 405
+    response = {}
+    if request.is_ajax() and request.method == 'POST':
+        email = request.POST.get('email')
+        try:
+            email_address = EmailAddress.objects.get(
+                email=email
+            )
+            response['user_id'] = email_address.user.id
+            response['user_name'] = email_address.user.username
+            status = 200
+        except EmailAddress.DoesNotExist:
+            status = 204
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+# Save a journal. Used on custom admin page.
+@staff_member_required
+def save_journal_js(request):
+    status = 405
+    response = {}
+    if request.is_ajax() and request.method == 'POST':
+        try:
+            models.Journal.objects.create(
+                ojs_jid=request.POST.get('ojs_jid'),
+                ojs_key=request.POST.get('ojs_key'),
+                ojs_url=request.POST.get('ojs_url'),
+                name=request.POST.get('name'),
+                editor_id=request.POST.get('editor_id'),
+            )
+            status = 201
+        except IntegrityError:
+            status = 200
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+# TODO: CONVERT!
+# The below functions have not yet been converted to the new OJS/FW
+# collaboration structure
 def create_user(request, user_data):
     signup_form = forms.SignupForm(user_data)
     try:
@@ -43,6 +156,26 @@ def create_user(request, user_data):
         return user
     except:
         return False
+
+
+# @login_required
+# def submission_version_js(request):
+#     status = 405
+#     response = {}
+#
+#     if request.is_ajax() and request.method == 'POST':
+#         data = {}
+#         data['document_id'] = request.POST.get('document_id')
+#         data['journal_id'] = request.POST.get('journal_id')
+#         data['submission_id'] = request.POST.get('submission_id')
+#         data['pre_document_id'] = request.POST.get('pre_document_id')
+#         data['user_id'] = request.user.id
+#         set_version(request, data)
+#         status = 201
+#     return JsonResponse(
+#         response,
+#         status=status
+#     )
 
 
 @csrf_exempt
@@ -57,9 +190,13 @@ def new_submission_revision_js(request):
         if app_key == settings.SERVER_INFO['OJS_KEY']:
             # TODO Afshin: get the username or email of the current ojs user to
             # login
+            # user = User.objects.get(
+            #     username=request.POST.get('username')
+            #     is_active=True
+            # )
             # editor = login_user(
             #    request,
-            #    ojs_username)
+            #    user)
             original_doc = models.Submission.objects.get(
                 submission_id=submission_id, version_id=0)
             last_version = models.Submission.objects.filter(
@@ -368,131 +505,3 @@ def del_reviewer_js(request):
             status = 404
             response['error'] = "reviewer with this reviewer_id does not exist"
             return JsonResponse(response, status=status)
-
-
-@csrf_exempt
-def open_revision_doc(request, rev_id):
-    response = {}
-    if request.method != 'POST':
-        response['error'] = "Expect post"
-        status = 404
-        return JsonResponse(response, status=status)
-    app_key = request.POST.get('key')
-    rev = models.SubmissionRevision.objects.get(id=rev_id)
-    journal_key = rev.submission.journal.ojs_key
-    # TODO: This could allow editors to login users who work on other journals.
-    # We need to make sure this cannot happen.
-    if (journal_key != app_key):
-        response['error'] = "Wrong app_key"
-        status = 404
-        return JsonResponse(response, status=status)
-    # email = request.POST.get('email')
-    u_name = request.POST.get('user_name')
-    reviewer = login_user(
-        request,
-        u_name)
-    if reviewer is None:
-        response['error'] = "The reviewer is not valid"
-        status = 404
-        return JsonResponse(response, status=status)
-
-    if rev.document.version == 0:
-        # The document with version == 0 is still empty as it hasn't loaded the
-        # zipped document yet. Send the user to first load the zip file into
-        # the document. This will also import included images and citations.
-        response['doc_id'] = rev.document.id
-        response['rev_id'] = rev.id
-        # Loading the document and saving it will increase the version number
-        # of the doc from 0 to 1.
-        return render(request, 'ojs/import_document.html',
-                      response)
-    return redirect(
-        '/document/' + str(rev.document.id) + '/', permanent=True
-    )
-
-
-# @login_required
-# def submission_version_js(request):
-#     status = 405
-#     response = {}
-#
-#     if request.is_ajax() and request.method == 'POST':
-#         data = {}
-#         data['document_id'] = request.POST.get('document_id')
-#         data['journal_id'] = request.POST.get('journal_id')
-#         data['submission_id'] = request.POST.get('submission_id')
-#         data['pre_document_id'] = request.POST.get('pre_document_id')
-#         data['user_id'] = request.user.id
-#         set_version(request, data)
-#         status = 201
-#     return JsonResponse(
-#         response,
-#         status=status
-#     )
-
-
-# A list of all registered journals to be used in the submit dialog.
-@login_required
-def get_journals_js(request):
-    status = 405
-    response = {}
-    if request.is_ajax() and request.method == 'POST':
-        journals = []
-        for journal in models.Journal.objects.all():
-            journals.append({
-                'id': journal.id,
-                'name': journal.name,
-                'editor_id': journal.editor_id,
-                'ojs_jid': journal.ojs_jid
-            })
-        response['journals'] = journals
-        status = 200
-    return JsonResponse(
-        response,
-        status=status
-    )
-
-
-# Get a user based on an email address. Used for registration of journal.
-@staff_member_required
-def get_user_js(request):
-    status = 405
-    response = {}
-    if request.is_ajax() and request.method == 'POST':
-        email = request.POST.get('email')
-        try:
-            email_address = EmailAddress.objects.get(
-                email=email
-            )
-            response['user_id'] = email_address.user.id
-            response['user_name'] = email_address.user.username
-            status = 200
-        except EmailAddress.DoesNotExist:
-            status = 204
-    return JsonResponse(
-        response,
-        status=status
-    )
-
-
-# Save a journal. Used on custom admin page.
-@staff_member_required
-def save_journal_js(request):
-    status = 405
-    response = {}
-    if request.is_ajax() and request.method == 'POST':
-        try:
-            models.Journal.objects.create(
-                ojs_jid=request.POST.get('ojs_jid'),
-                ojs_key=request.POST.get('ojs_key'),
-                ojs_url=request.POST.get('ojs_url'),
-                name=request.POST.get('name'),
-                editor_id=request.POST.get('editor_id'),
-            )
-            status = 201
-        except IntegrityError:
-            status = 200
-    return JsonResponse(
-        response,
-        status=status
-    )

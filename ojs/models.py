@@ -35,11 +35,32 @@ class Submission(models.Model):
     journal = models.ForeignKey(Journal)
     ojs_jid = models.PositiveIntegerField(default=0)  # ID in OJS
 
+    class Meta:
+        unique_together = (("journal", "ojs_jid"))
+
     def __unicode__(self):
         return u'{ojs_jid} in {journal} by {submitter}'.format(
             ojs_jid=self.ojs_jid,
             journal=self.journal.name,
             submitter=self.submitter.username
+        )
+
+
+# A user registered on OJS that is also registered here.
+# Used to make sure reviewers are always logging in with the same account.
+class OJSUSer(models.Model):
+    user = models.ForeignKey(User)
+    role = models.CharField(max_length=8)
+    journal = models.ForeignKey(Journal)
+    ojs_jid = models.PositiveIntegerField(default=0)  # ID in OJS
+
+    class Meta:
+        unique_together = (("journal", "ojs_jid"))
+
+    def __unicode__(self):
+        return u'{username} ({ojs_jid})'.format(
+            username=self.user.username,
+            ojs_jid=self.ojs_jid
         )
 
 

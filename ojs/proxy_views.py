@@ -74,6 +74,9 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
                     submission_id=submission_id,
                     version=version
                 )
+            # The version of the coming submission revision must be 1 higher
+            # than the submission revision that we have been working on. If
+            # this is a new submission, the version will be 0.
             version = version + 1
             self.s_revision = SubmissionRevision()
             self.s_revision.submission = self.submission
@@ -93,11 +96,11 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
             document.save()
             self.s_revision.document = document
             self.s_revision.save()
-            article_url = '{protocol}://{host}/ojs/revision/{rev_id}'.format(
+            editor_url = '{protocol}://{host}'.format(
                 protocol=self.request.protocol,
-                host=self.request.host,
-                rev_id=self.s_revision.id
+                host=self.request.host
             )
+
             title = journal_id = self.get_argument('title')
             post_data = {
                 'username': user.username,
@@ -109,16 +112,17 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
                 'author_url': 'some author_url',
                 'journal_id': journal.ojs_jid,
                 'file_name': file_object.filename,
-                'article_url': article_url
+                'editor_url': editor_url,
+                'editor_revision_id': self.s_revision.id,
+                'version': version
             }
 
             if version > 0:
-                post_data['version_id'] = version
                 post_data['submission_id'] = self.submission.ojs_jid
             body = urlencode(post_data)
             key = journal.ojs_key
             base_url = journal.ojs_url
-            url = base_url + plugin_path + 'articles'
+            url = base_url + plugin_path + 'submit'
             http = AsyncHTTPClient()
             http.fetch(
                 HTTPRequest(

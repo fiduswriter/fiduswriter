@@ -13,6 +13,7 @@ from allauth.account.models import EmailAddress
 from allauth.account import forms
 
 from . import models
+from . import token
 from document.views import send_share_notification
 from document.models import Document, AccessRight, CAN_UPDATE_DOCUMENT
 
@@ -24,6 +25,69 @@ def login_user(request, user):
     login(request, user)
 
 
+# Find a user -- If the role is 'editor', the journal's owner user is taken.
+# If the role is 'author', return the user who submitted the article.
+# If the role is 'reviewer', log in as the user that was created for that
+# reviewer.
+# If the role is anything else, do not return any user
+def find_user(
+    journal,
+    submission_id,
+    user_role,
+    user_id
+):
+    if user_role == 'editor':
+        return journal.editor
+    elif user_role == 'author':
+        submission = models.Submission.objects.get(
+            journal=journal,
+            ojs_jid=submission_id
+        )
+        return submission.submitter
+    elif user_role == 'reviewer':
+        ojs_user = models.OJSUsers.objects.get(ojs_jid=user_id)
+        return ojs_user.user
+    else:
+        return False
+
+
+# To login from OJS, the OJS server first gets a temporary login token from the
+# Django server for a specific user and journal using the api key on the server
+# side. It then logs the user in using the login token on the client side. This
+# way, the api key is not exposed to the client.
+@csrf_exempt
+def get_login_token_js(request):
+    response = {}
+    if request.method != 'GET':
+        # Method not allowed
+        response['error'] = 'Expected GET'
+        return JsonResponse(response, status=405)
+    api_key = request.GET.get('key')
+    journal_id = request.GET.get('journal_id')
+    journal = models.Journal.objects.get(ojs_jid=int(journal_id))
+    journal_key = journal.ojs_key
+    if (journal_key != api_key):
+        # Access forbidden
+        response['error'] = 'Wrong key'
+        return JsonResponse(response, status=403)
+    submission_id = request.GET.get('submission_id')
+
+    user_role = request.GET.get('user_role')
+    user_id = request.GET.get('user_id')
+
+    user = find_user(
+        journal,
+        submission_id,
+        user_role,
+        user_id
+    )
+    if not user:
+        response['error'] = 'User not accessible'
+        return JsonResponse(response, status=403)
+    response['token'] = token.create_token(user, journal_key)
+    return JsonResponse(response, status=200)
+
+
 # Open a revision doc. This is where the reviewers/editor arrive when trying to
 # enter the submission doc on OJS.
 @csrf_exempt
@@ -31,30 +95,30 @@ def open_revision_doc(request, rev_id):
     if request.method != 'POST':
         # Method not allowed
         return HttpResponse('Expected post', status=405)
-    api_key = request.POST.get('key')
-    rev = models.SubmissionRevision.objects.get(id=rev_id)
-    journal_key = rev.submission.journal.ojs_key
-    if (journal_key != api_key):
-        # Access forbidden
-        return HttpResponse('Wrong key', status=403)
-    u_name = request.POST.get('user_name')
-    reviewer = User.objects.get(username=u_name, is_active=True)
-    if reviewer is None:
+    login_token = request.POST.get('token')
+    user_id = int(login_token.split("-")[0])
+    user = User.objects.get(id=user_id)
+    if user is None:
         return HttpResponse('Invalid user', status=404)
+    rev = models.SubmissionRevision.objects.get(id=rev_id)
+    key = rev.submission.journal.ojs_key
+
+    if not token.check_token(user, key, login_token):
+        return HttpResponse('No access', status=403)
     if (
-        rev.document.owner != reviewer and
+        rev.document.owner != user and
         AccessRight.objects.filter(
                 document=rev.document,
-                user=reviewer,
+                user=user,
                 rights__in=CAN_UPDATE_DOCUMENT
         ).count() == 0
     ):
-        # The user to be logged in is neither the editor (owner of doc) or a
-        # reviewer. We prohibit access.
+        # The user to be logged in is neither the editor (owner of doc), a
+        # reviewer or the author. We prohibit access.
 
         # Access forbidden
         return HttpResponse('Missing access rights', status=403)
-    login_user(request, reviewer)
+    login_user(request, user)
 
     if rev.document.version == 0:
         # The document with version == 0 is still empty as it hasn't loaded the
@@ -248,7 +312,7 @@ def new_submission_revision_js(request):
                         rights=submission_access_right.rights,
                     )
                 # TODO sending a relative email to authors and informing
-                # them for the new resivion
+                # them about the new revision
                 # send_share_notification(request, data['document_id'],
                 #    submission_access_right.user_id,
                 #                        submission_access_right.rights)

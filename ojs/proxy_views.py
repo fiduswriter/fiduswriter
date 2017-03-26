@@ -22,7 +22,7 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
             key = self.get_argument('key')
         else:
             return
-        plugin_path = '/index.php/index/gateway/plugin/RestApiGatewayPlugin/'
+        plugin_path = '/index.php/index/gateway/plugin/FidusWriterGatewayPlugin/'
         url = base_url + plugin_path + relative_url
         http = AsyncHTTPClient()
         http.fetch(
@@ -48,7 +48,7 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
             self.set_status(401)
             self.finish()
             return
-        plugin_path = '/index.php/index/gateway/plugin/RestApiGatewayPlugin/'
+        plugin_path = '/index.php/index/gateway/plugin/FidusWriterGatewayPlugin/'
         if relative_url == 'submit':
             # Submitting a new submission revision.
             journal_id = self.get_argument('journal_id')

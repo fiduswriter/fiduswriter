@@ -35,8 +35,8 @@ class Submission(models.Model):
     journal = models.ForeignKey(Journal)
     ojs_jid = models.PositiveIntegerField(default=0)  # ID in OJS
 
-    class Meta:
-        unique_together = (("journal", "ojs_jid"))
+#    class Meta:
+#        unique_together = (("journal", "ojs_jid"))
 
     def __unicode__(self):
         return u'{ojs_jid} in {journal} by {submitter}'.format(
@@ -73,8 +73,8 @@ class SubmissionRevision(models.Model):
     # time, there is no document.
     document = models.ForeignKey(Document)
 
-    class Meta:
-        unique_together = (("version", "submission"))
+#    class Meta:
+#        unique_together = (("version", "submission"))
 
     def __unicode__(self):
         return u'{ojs_jid} (v{version}) in {journal} by {submitter}'.format(

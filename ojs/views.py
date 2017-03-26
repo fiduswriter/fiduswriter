@@ -138,6 +138,7 @@ def open_revision_doc(request, rev_id):
 
 
 # Download the zipped file_object of a submission revision
+# This is used when importing a submitted file.
 @login_required
 def get_revision_file(request, revision_id):
     rev = models.SubmissionRevision.objects.get(pk=int(revision_id))

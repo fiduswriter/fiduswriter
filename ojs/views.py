@@ -45,7 +45,7 @@ def find_user(
         )
         return submission.submitter
     elif user_role == 'reviewer':
-        ojs_user = models.OJSUsers.objects.get(ojs_jid=user_id)
+        ojs_user = models.OJSUser.objects.get(ojs_jid=user_id)
         return ojs_user.user
     else:
         return False

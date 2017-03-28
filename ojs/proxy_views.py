@@ -98,7 +98,7 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
             document.save()
             self.s_revision.document = document
             self.s_revision.save()
-            editor_url = '{protocol}://{host}'.format(
+            fidus_url = '{protocol}://{host}'.format(
                 protocol=self.request.protocol,
                 host=self.request.host
             )
@@ -113,10 +113,8 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
                 'affiliation': 'some affiliation',
                 'author_url': 'some author_url',
                 'journal_id': journal.ojs_jid,
-                'file_name': file_object.filename,
-                'editor_url': editor_url,
-                'editor_revision_id': self.s_revision.id,
-                'version': version
+                'fidus_url': fidus_url,
+                'fidus_revision_id': self.s_revision.id
             }
 
             if version > 0:

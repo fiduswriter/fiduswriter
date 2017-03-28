@@ -229,6 +229,130 @@ def save_journal_js(request):
     )
 
 
+# Return an existing user or create a new one. The email/username come from
+# OJS. We return an existing user if it has the same email as the OJS user
+# as we expect OJS to have checked whether the user actually has access to the
+# email. We do not automatically connect to a user with the same username,
+# as this may be purely coincidental.
+# TODO: Check if OJS actually verifies the email account of the reviewer.
+def get_or_create_user(email, username):
+    users_with_email = User.objects.filter(email=email)
+    if len(users_with_email) > 0:
+        return users_with_email[0]
+    # try to find an unused username, starting with the username used in OJS
+    counter = 0
+    usernamebase = username
+    while len(User.objects.filter(username=username)) > 0:
+        username = usernamebase + str(counter)
+        counter += 1
+    return User.objects.create_user(username, email)
+
+
+# Add a reviewer to the document connected to a SubmissionRevision as a
+# reviewer.
+# Also ensure that there is an OJSUser set up for the account to allow for
+# password-less login from OJS.
+@csrf_exempt
+def add_reviewer_js(request, revision_id):
+    response = {}
+    status = 200
+    if request.method != 'POST':
+        # Method not allowed
+        response['error'] = 'Expected post'
+        status = 405
+        return JsonResponse(response, status=status)
+    api_key = request.POST.get('key')
+    revision = models.SubmissionRevision.objects.get(id=revision_id)
+    journal_key = revision.submission.journal.ojs_key
+    if (journal_key != api_key):
+        # Access forbidden
+        response['error'] = 'Wrong key'
+        status = 403
+        return JsonResponse(response, status=status)
+
+    submission_id = revision.submission.id
+    ojs_jid = int(request.POST.get('user_id'))
+
+    # Make sure there is an ojs_user/user registered for the reviewer.
+    ojs_user = models.OJSUser.objects.filter(
+        submission_id=submission_id,
+        ojs_jid=ojs_jid
+    )
+    if len(ojs_user) > 0:
+        ojs_user = ojs_user[0]
+        ojs_user.role = 'reviewer'
+        ojs_user.save()
+    else:
+        email = request.POST.get('email')
+        username = request.POST.get('username')
+        user = get_or_create_user(email, username)
+        ojs_user = models.OJSUser.objects.create(
+            submission_id=submission_id,
+            ojs_jid=ojs_jid,
+            role='reviewer',
+            user=user
+        )
+        status = 201
+    # Make sure the connect document has reviewer access rights set for the
+    # user.
+    access_right = AccessRight.objects.filter(
+        document=revision.document,
+        user=ojs_user.user
+    )
+    if (len(access_right)) > 0:
+        access_right = access_right[0]
+    else:
+        access_right = AccessRight(
+            document=revision.document,
+            user=ojs_user.user
+        )
+        status = 201
+    access_right.rights = 'review'
+    access_right.save()
+    return JsonResponse(response, status=status)
+
+
+@csrf_exempt
+def remove_reviewer_js(request, revision_id):
+    response = {}
+    status = 200
+    if request.method != 'POST':
+        # Method not allowed
+        response['error'] = 'Expected post'
+        status = 405
+        return JsonResponse(response, status=status)
+    api_key = request.POST.get('key')
+    revision = models.SubmissionRevision.objects.get(id=revision_id)
+    journal_key = revision.submission.journal.ojs_key
+    if (journal_key != api_key):
+        # Access forbidden
+        response['error'] = 'Wrong key'
+        status = 403
+        return JsonResponse(response, status=status)
+
+    submission_id = revision.submission.id
+    ojs_jid = int(request.POST.get('user_id'))
+    # Delete reviewer access rights set for the corresponding user,
+    # if there are any.
+    ojs_user = models.OJSUser.objects.filter(
+        submission_id=submission_id,
+        ojs_jid=ojs_jid
+    )
+    if len(ojs_user) > 0:
+        ojs_user = ojs_user[0]
+        AccessRight.objects.filter(
+            document=revision.document,
+            user=ojs_user.user
+        ).delete()
+
+    # Remove the OJSUser from the submission, if there is one.
+    models.OJSUser.objects.filter(
+        submission_id=submission_id,
+        ojs_jid=ojs_jid
+    ).delete()
+    return JsonResponse(response, status=status)
+
+
 # TODO: CONVERT!
 # The below functions have not yet been converted to the new OJS/FW
 # collaboration structure
@@ -517,76 +641,3 @@ def get_reviewer_for_post(request):
 def get_existing_reviewer(request):
     reviewer = User.objects.get(email=request.POST.get('email'))
     return reviewer
-
-
-@csrf_exempt
-def reviewer_js(request):
-    response = {}
-    if request.method == 'POST':
-        doc_id = int(request.POST.get('doc_id', -1))
-        if doc_id == -1:
-            response['error'] = 'No doc id'
-            status = 404
-            return JsonResponse(response, status=status)
-        reviewer = get_reviewer_for_post(request)
-        try:
-            access_right = AccessRight.objects.get(
-                document_id=doc_id, user_id=reviewer.id)
-            if access_right.rights != 'review':
-                access_right.rights = 'review'
-                access_right.save()
-                response['email'] = request.POST.get('email')
-                response['msg'] = 'comment rights given to the user'
-                response['reviewer_id'] = reviewer.id
-            else:
-                response['email'] = request.POST.get('email')
-                response[
-                    'msg'
-                ] = 'User has already comment access right on the document'
-                response['reviewer_id'] = reviewer.id
-            response['document_id'] = str(doc_id)
-            status = 200
-            return JsonResponse(response, status=status)
-        except ObjectDoesNotExist:
-            access_right = AccessRight.objects.create(
-                document_id=doc_id,
-                user_id=reviewer.id, rights='review', )
-            access_right.save()
-            status = 200
-            response['email'] = request.POST.get('email')
-            response['msg'] = 'user created and comment rights given'
-            response['reviewer_id'] = reviewer.id
-            response['document_id'] = str(doc_id)
-            return JsonResponse(response, status=status)
-
-
-@csrf_exempt
-def del_reviewer_js(request):
-    response = {}
-    if request.method == 'POST':
-        # u_name = request.POST.get('user_name')
-        try:
-            doc_id = int(request.POST.get('doc_id', "0"))
-            if doc_id == 0:
-                response['msg'] = 'doc_id with value: ' \
-                  + str(doc_id) + ' does not exist'
-                status = 500
-                return JsonResponse(response, status=status)
-            reviewer = get_existing_reviewer(request)
-            try:
-                access_right = AccessRight.objects.get(
-                    document_id=doc_id, user_id=reviewer.id)
-                if access_right.rights == 'review':
-                    access_right.delete()
-                    status = 200
-                    response['msg'] = 'user updated and comment rights removed'
-                    response['document_id'] = str(doc_id)
-                    return JsonResponse(response, status=status)
-            except ObjectDoesNotExist:
-                status = 404
-                return JsonResponse(response, status=status)
-
-        except ObjectDoesNotExist:
-            status = 404
-            response['error'] = "reviewer with this reviewer_id does not exist"
-            return JsonResponse(response, status=status)

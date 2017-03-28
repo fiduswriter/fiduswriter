@@ -24,14 +24,14 @@ urlpatterns = [
         name='review_submit_undo_js'
     ),
     url(
-        '^reviewer/$',  # not mentioned in JS
-        views.reviewer_js,
-        name='reviewer_js'
+        '^add_reviewer/(?P<revision_id>[0-9]+)/$',
+        views.add_reviewer_js,
+        name='add_reviewer_js'
     ),
     url(
-        '^reviewer/del/$',  # not mentioned in JS
-        views.del_reviewer_js,
-        name='del_reviewer_js'
+        '^remove_reviewer/(?P<revision_id>[0-9]+)/$',
+        views.remove_reviewer_js,
+        name='remove_reviewer_js'
     ),
     url(
         '^revision/(?P<rev_id>[0-9]+)/$',

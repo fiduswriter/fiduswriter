@@ -47,15 +47,16 @@ class Submission(models.Model):
 
 
 # A user registered on OJS that is also registered here.
-# Used to make sure reviewers are always logging in with the same account.
-class OJSUSer(models.Model):
+# Used to make sure reviewers are always logging in with the same account when
+# coming from OJS.
+class OJSUser(models.Model):
     user = models.ForeignKey(User)
     role = models.CharField(max_length=8)
-    journal = models.ForeignKey(Journal)
+    submission = models.ForeignKey(Submission)
     ojs_jid = models.PositiveIntegerField(default=0)  # ID in OJS
 
     class Meta:
-        unique_together = (("journal", "ojs_jid"))
+        unique_together = (("submission", "ojs_jid"))
 
     def __unicode__(self):
         return u'{username} ({ojs_jid})'.format(

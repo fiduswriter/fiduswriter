@@ -5,7 +5,7 @@ from tornado.httputil import url_concat
 from tornado.escape import json_decode
 from base.django_handler_mixin import DjangoHandlerMixin
 from urllib import urlencode
-from .models import Journal, Submission, SubmissionRevision
+from .models import Journal, Submission, SubmissionRevision, OJSUser
 from django.core.files.base import ContentFile
 from document.models import Document
 
@@ -44,8 +44,8 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
 
     @asynchronous
     def post(self, relative_url):
-        user = self.get_current_user()
-        if not user.is_authenticated():
+        self.user = self.get_current_user()
+        if not self.user.is_authenticated():
             self.set_status(401)
             self.finish()
             return
@@ -58,13 +58,13 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
             submission_id = self.get_argument('submission_id', -1)
             if submission_id < 0:
                 self.submission = Submission()
-                self.submission.submitter = user
+                self.submission.submitter = self.user
                 self.submission.journal = journal
                 self.submission.save()
                 submission_id = self.submission.id
             else:
                 self.submission = Submission.objects.get(id=submission_id)
-                if self.submission.submitter != user:
+                if self.submission.submitter != self.user:
                     # Trying to submit revision for submission of other user
                     self.set_status(401)
                     self.finish()
@@ -105,11 +105,11 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
 
             title = journal_id = self.get_argument('title')
             post_data = {
-                'username': user.username,
+                'username': self.user.username,
                 'title': title,
-                'first_name': user.first_name,
-                'last_name': user.last_name,
-                'email': user.email,
+                'first_name': self.user.first_name,
+                'last_name': self.user.last_name,
+                'email': self.user.email,
                 'affiliation': 'some affiliation',
                 'author_url': 'some author_url',
                 'journal_id': journal.ojs_jid,
@@ -149,5 +149,14 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
             json = json_decode(response.body)
             self.submission.ojs_jid = json['submission_id']
             self.submission.save()
+            # We save the author ID on the OJS site. Currently we are NOT using
+            # this information for login purposes.
+            OJSUser.objects.create(
+                user=self.user,
+                role='author',
+                submission=self.submission,
+                ojs_jid=json['user_id']
+            )
+
         self.write(response.body)
         self.finish()

@@ -24,17 +24,17 @@ urlpatterns = [
         name='review_submit_undo_js'
     ),
     url(
-        '^add_reviewer/(?P<revision_id>[0-9]+)/$',
+        '^add_reviewer/(?P<submission_id>[0-9]+)/(?P<version>[0-9\.]+)/$',
         views.add_reviewer_js,
         name='add_reviewer_js'
     ),
     url(
-        '^remove_reviewer/(?P<revision_id>[0-9]+)/$',
+        '^remove_reviewer/(?P<submission_id>[0-9]+)/(?P<version>[0-9\.]+)/$',
         views.remove_reviewer_js,
         name='remove_reviewer_js'
     ),
     url(
-        '^revision/(?P<rev_id>[0-9]+)/$',
+        '^revision/(?P<submission_id>[0-9]+)/(?P<version>[0-9\.]+)/$',
         views.open_revision_doc,
         name='open_revision_doc'
     ),

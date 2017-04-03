@@ -16,10 +16,16 @@ class SubmissionRevisionAdmin(admin.ModelAdmin):
 admin.site.register(models.SubmissionRevision, SubmissionRevisionAdmin)
 
 
-class OJSUserAdmin(admin.ModelAdmin):
+class AuthorAdmin(admin.ModelAdmin):
     pass
 
-admin.site.register(models.OJSUser, OJSUserAdmin)
+admin.site.register(models.Author, AuthorAdmin)
+
+
+class ReviewerAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(models.Reviewer, ReviewerAdmin)
 
 
 class JournalAdmin(admin.ModelAdmin):

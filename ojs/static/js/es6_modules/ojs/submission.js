@@ -5,7 +5,7 @@ import {addAlert, csrfToken} from "../common"
 
 // Send an article submission to FW and OJS servers.
 
-export class SendSubmission {
+export class SendAuthorSubmission {
     constructor(doc, imageDB, bibDB, journalId, version, submissionId) {
         this.doc = doc
         this.imageDB = imageDB
@@ -35,6 +35,7 @@ export class SendSubmission {
     uploadRevision(blob) {
         let data = new window.FormData()
         data.append('journal_id', this.journalId)
+        data.append('doc_id', this.doc.id)
         data.append('title', this.doc.title)
         data.append('file', blob, createSlug(this.doc.title) + '.fidus')
 
@@ -46,7 +47,7 @@ export class SendSubmission {
         }
 
         jQuery.ajax({
-            url: '/proxy/ojs/submit',
+            url: '/proxy/ojs/authorSubmit',
             data: data,
             type: 'POST',
             cache: false,

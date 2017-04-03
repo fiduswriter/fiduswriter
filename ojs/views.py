@@ -25,28 +25,41 @@ def login_user(request, user):
     login(request, user)
 
 
-# Find a user -- If the role is 'editor', the journal's owner user is taken.
-# If the role is 'author', return the user who submitted the article.
-# If the role is 'reviewer', log in as the user that was created for that
-# reviewer.
-# If the role is anything else, do not return any user
+# Find a user -- First check if it is an author, then a reviewer.
+# If it's none of the two, check if there is authorization to login as an
+# editor and if this is the case, log the user in as the journal's owner.
+# Under all other circumstances, return False.
 def find_user(
-    journal,
+    journal_id,
     submission_id,
-    user_role,
-    user_id
+    version,
+    user_id,
+    is_editor
 ):
-    if user_role == 'editor':
-        return journal.editor
-    elif user_role == 'author':
-        submission = models.Submission.objects.get(
-            journal=journal,
-            ojs_jid=submission_id
+    authors = models.Author.objects.filter(
+        submission_id=submission_id,
+        ojs_jid=user_id
+    )
+    if len(authors) > 0:
+        # It's an author
+        return authors[0].user
+    revisions = models.SubmissionRevision.objects.filter(
+        submission_id=submission_id,
+        version=version
+    )
+    if len(revisions) > 0:
+        revision_id = revisions[0].id
+        reviewers = models.Reviewer.objects.filter(
+            revision_id=revision_id,
+            ojs_jid=user_id
         )
-        return submission.submitter
-    elif user_role == 'reviewer':
-        ojs_user = models.OJSUser.objects.get(ojs_jid=user_id)
-        return ojs_user.user
+        if len(reviewers) > 0:
+            return reviewers[0].user
+    if is_editor:
+        journal = models.Journal.objects.get(
+            id=journal_id
+        )
+        return journal.editor
     else:
         return False
 
@@ -63,23 +76,24 @@ def get_login_token_js(request):
         response['error'] = 'Expected GET'
         return JsonResponse(response, status=405)
     api_key = request.GET.get('key')
-    journal_id = request.GET.get('journal_id')
-    journal = models.Journal.objects.get(ojs_jid=int(journal_id))
-    journal_key = journal.ojs_key
+    submission_id = request.GET.get('fidus_id')
+    submission = models.Submission.objects.get(id=submission_id)
+    journal_key = submission.journal.ojs_key
+    journal_id = submission.journal_id
     if (journal_key != api_key):
         # Access forbidden
         response['error'] = 'Wrong key'
         return JsonResponse(response, status=403)
-    submission_id = request.GET.get('submission_id')
 
-    user_role = request.GET.get('user_role')
     user_id = request.GET.get('user_id')
-
+    is_editor = request.GET.get('is_editor')
+    version = request.GET.get('version')
     user = find_user(
-        journal,
+        journal_id,
         submission_id,
-        user_role,
-        user_id
+        version,
+        user_id,
+        is_editor
     )
     if not user:
         response['error'] = 'User not accessible'
@@ -91,7 +105,7 @@ def get_login_token_js(request):
 # Open a revision doc. This is where the reviewers/editor arrive when trying to
 # enter the submission doc on OJS.
 @csrf_exempt
-def open_revision_doc(request, rev_id):
+def open_revision_doc(request, submission_id, version):
     if request.method != 'POST':
         # Method not allowed
         return HttpResponse('Expected post', status=405)
@@ -100,7 +114,10 @@ def open_revision_doc(request, rev_id):
     user = User.objects.get(id=user_id)
     if user is None:
         return HttpResponse('Invalid user', status=404)
-    rev = models.SubmissionRevision.objects.get(id=rev_id)
+    rev = models.SubmissionRevision.objects.get(
+        submission_id=submission_id,
+        version=version
+    )
     key = rev.submission.journal.ojs_key
 
     if not token.check_token(user, key, login_token):
@@ -153,7 +170,7 @@ def get_revision_file(request, revision_id):
         # Access forbidden
         return HttpResponse('Missing access rights', status=403)
     http_response = HttpResponse(
-        rev.file_object.file,
+        rev.submission.file_object.file,
         content_type='application/zip; charset=x-user-defined',
         status=200
     )
@@ -250,10 +267,10 @@ def get_or_create_user(email, username):
 
 # Add a reviewer to the document connected to a SubmissionRevision as a
 # reviewer.
-# Also ensure that there is an OJSUser set up for the account to allow for
+# Also ensure that there is an Reviewer set up for the account to allow for
 # password-less login from OJS.
 @csrf_exempt
-def add_reviewer_js(request, revision_id):
+def add_reviewer_js(request, submission_id, version):
     response = {}
     status = 200
     if request.method != 'POST':
@@ -262,7 +279,10 @@ def add_reviewer_js(request, revision_id):
         status = 405
         return JsonResponse(response, status=status)
     api_key = request.POST.get('key')
-    revision = models.SubmissionRevision.objects.get(id=revision_id)
+    revision = models.SubmissionRevision.objects.get(
+        submission_id=submission_id,
+        version=version
+    )
     journal_key = revision.submission.journal.ojs_key
     if (journal_key != api_key):
         # Access forbidden
@@ -270,41 +290,37 @@ def add_reviewer_js(request, revision_id):
         status = 403
         return JsonResponse(response, status=status)
 
-    submission_id = revision.submission.id
     ojs_jid = int(request.POST.get('user_id'))
 
-    # Make sure there is an ojs_user/user registered for the reviewer.
-    ojs_user = models.OJSUser.objects.filter(
-        submission_id=submission_id,
+    # Make sure there is an Reviewer/user registered for the reviewer.
+    reviewers = models.Reviewer.objects.filter(
+        revision=revision,
         ojs_jid=ojs_jid
     )
-    if len(ojs_user) > 0:
-        ojs_user = ojs_user[0]
-        ojs_user.role = 'reviewer'
-        ojs_user.save()
+    if len(reviewers) > 0:
+        reviewer = reviewers[0]
     else:
         email = request.POST.get('email')
         username = request.POST.get('username')
         user = get_or_create_user(email, username)
-        ojs_user = models.OJSUser.objects.create(
-            submission_id=submission_id,
+        reviewer = models.Reviewer.objects.create(
+            revision=revision,
             ojs_jid=ojs_jid,
-            role='reviewer',
             user=user
         )
         status = 201
     # Make sure the connect document has reviewer access rights set for the
     # user.
-    access_right = AccessRight.objects.filter(
+    access_rights = AccessRight.objects.filter(
         document=revision.document,
-        user=ojs_user.user
+        user=reviewer.user
     )
-    if (len(access_right)) > 0:
-        access_right = access_right[0]
+    if (len(access_rights)) > 0:
+        access_right = access_rights[0]
     else:
         access_right = AccessRight(
             document=revision.document,
-            user=ojs_user.user
+            user=reviewer.user
         )
         status = 201
     access_right.rights = 'review'
@@ -313,7 +329,7 @@ def add_reviewer_js(request, revision_id):
 
 
 @csrf_exempt
-def remove_reviewer_js(request, revision_id):
+def remove_reviewer_js(request, submission_id, version):
     response = {}
     status = 200
     if request.method != 'POST':
@@ -322,7 +338,10 @@ def remove_reviewer_js(request, revision_id):
         status = 405
         return JsonResponse(response, status=status)
     api_key = request.POST.get('key')
-    revision = models.SubmissionRevision.objects.get(id=revision_id)
+    revision = models.SubmissionRevision.objects.get(
+        submission_id=submission_id,
+        version=version
+    )
     journal_key = revision.submission.journal.ojs_key
     if (journal_key != api_key):
         # Access forbidden
@@ -330,26 +349,21 @@ def remove_reviewer_js(request, revision_id):
         status = 403
         return JsonResponse(response, status=status)
 
-    submission_id = revision.submission.id
     ojs_jid = int(request.POST.get('user_id'))
     # Delete reviewer access rights set for the corresponding user,
-    # if there are any.
-    ojs_user = models.OJSUser.objects.filter(
-        submission_id=submission_id,
+    # if there are any. Thereafter delete the Reviewer.
+    reviewers = models.Reviewer.objects.filter(
+        revision=revision,
         ojs_jid=ojs_jid
     )
-    if len(ojs_user) > 0:
-        ojs_user = ojs_user[0]
+    if len(reviewers) > 0:
+        reviewer = reviewers[0]
         AccessRight.objects.filter(
             document=revision.document,
-            user=ojs_user.user
+            user=reviewer.user
         ).delete()
+        reviewer.delete()
 
-    # Remove the OJSUser from the submission, if there is one.
-    models.OJSUser.objects.filter(
-        submission_id=submission_id,
-        ojs_jid=ojs_jid
-    ).delete()
     return JsonResponse(response, status=status)
 
 

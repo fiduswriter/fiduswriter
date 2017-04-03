@@ -23,8 +23,8 @@ class Journal(models.Model):
 def submission_filename(instance, filename):
     return '/'.join([
         'submission',
-        str(instance.submission.journal.id),
-        str(instance.submission.submitter.id),
+        str(instance.journal.id),
+        str(instance.submitter.id),
         filename
     ])
 
@@ -34,6 +34,12 @@ class Submission(models.Model):
     submitter = models.ForeignKey(User)
     journal = models.ForeignKey(Journal)
     ojs_jid = models.PositiveIntegerField(default=0)  # ID in OJS
+    # The submission is uploaded from FW client to server as a zip file. This
+    # zip file is imported into the editor's account the first time an editor
+    # or reviewer is opening a document of a revision with version==0.
+    # We do this, as the submitter won't have access rights to the media
+    # library of the editor.
+    file_object = models.FileField(upload_to=submission_filename)
 
 #    class Meta:
 #        unique_together = (("journal", "ojs_jid"))
@@ -46,12 +52,10 @@ class Submission(models.Model):
         )
 
 
-# A user registered on OJS that is also registered here.
-# Used to make sure reviewers are always logging in with the same account when
-# coming from OJS.
-class OJSUser(models.Model):
+# An author registered with OJS and also registered here
+# Authors are the same for an entire submission.
+class Author(models.Model):
     user = models.ForeignKey(User)
-    role = models.CharField(max_length=8)
     submission = models.ForeignKey(Submission)
     ojs_jid = models.PositiveIntegerField(default=0)  # ID in OJS
 
@@ -68,10 +72,14 @@ class OJSUser(models.Model):
 # Within each submission, there is a new file upload for each revision
 class SubmissionRevision(models.Model):
     submission = models.ForeignKey(Submission)
-    version = models.PositiveIntegerField(default=0)
-    file_object = models.FileField(upload_to=submission_filename)
-    # The document is the opened file_object. Until it is opened for the first
-    # time, there is no document.
+    # version = stage ID + "." + round + "." + (0 for reviewer or 5 for author)
+    # version)
+    # For example:
+    # submission version: "1.0.0"
+    # Author version of 5th external review (stage ID=3): "3.5.5"
+    # The version should increase like a computer version number. Not all
+    # numbers are included.
+    version = models.CharField(max_length=8, default='1.0.0')
     document = models.ForeignKey(Document)
 
 #    class Meta:
@@ -83,6 +91,23 @@ class SubmissionRevision(models.Model):
             version=self.version,
             journal=self.submission.journal.name,
             submitter=self.submission.submitter.username
+        )
+
+
+# A reviewer registered with OJS and also registered here
+# Reviewers can differ from revision to revision.
+class Reviewer(models.Model):
+    user = models.ForeignKey(User)
+    revision = models.ForeignKey(SubmissionRevision)
+    ojs_jid = models.PositiveIntegerField(default=0)  # ID in OJS
+
+    class Meta:
+        unique_together = (("revision", "ojs_jid"))
+
+    def __unicode__(self):
+        return u'{username} ({ojs_jid})'.format(
+            username=self.user.username,
+            ojs_jid=self.ojs_jid
         )
 
 

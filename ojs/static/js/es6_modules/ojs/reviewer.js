@@ -32,7 +32,7 @@ export let reviewSubmit = function(editor) {
         dataToOjs.append('submission_id', submission_info["submission_id"])
         dataToOjs.append('review_round', submission_info["version_id"])
         dataToOjs.append('editor_message', jQuery("#message-editor").val())
-        dataToOjs.append('message_editor_author', jQuery("#message-editor-author").val())
+        dataToOjs.append('editor_author_message', jQuery("#message-editor-author").val())
         jQuery.ajax({
             url: window.ojsUrl + '/index.php/index/gateway/plugin/RestApiGatewayPlugin/articleReviews',
             data: dataToOjs,
@@ -44,7 +44,7 @@ export let reviewSubmit = function(editor) {
             beforeSend: (xhr, settings) =>
                 xhr.setRequestHeader("X-CSRFToken", csrfToken),
             success: () =>
-                addAlert('success', 'The editor will be informed about finishing your review'),
+                addAlert('success', 'The editor will be informed that finished your review'),
             error: () => {
                 addAlert('error', 'There is error while sending the signal of finishing review, please try it again')
 

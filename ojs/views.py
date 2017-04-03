@@ -367,6 +367,48 @@ def remove_reviewer_js(request, submission_id, version):
     return JsonResponse(response, status=status)
 
 
+@csrf_exempt
+def create_copy_js(request, submission_id):
+    response = {}
+    status = 200
+    if request.method != 'POST':
+        # Method not allowed
+        response['error'] = 'Expected post'
+        status = 405
+        return JsonResponse(response, status=status)
+
+    api_key = request.POST.get('key')
+    old_version = request.POST.get('old_version')
+    revision = models.SubmissionRevision.objects.get(
+        submission_id=submission_id,
+        version=old_version
+    )
+    journal_key = revision.submission.journal.ojs_key
+    if (journal_key != api_key):
+        # Access forbidden
+        response['error'] = 'Wrong key'
+        status = 403
+        return JsonResponse(response, status=status)
+
+    # Copy the document
+    # TODO: Add author access rights
+    document = revision.document
+    # This saves the document with a new pk
+    document.pk = None
+    document.save()
+
+    # Copy revision
+    new_version = request.POST.get('new_version')
+    revision.pk = None
+    revision.document = document
+    revision.version = new_version
+    revision.save()
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
 # TODO: CONVERT!
 # The below functions have not yet been converted to the new OJS/FW
 # collaboration structure
@@ -378,150 +420,6 @@ def create_user(request, user_data):
         user.set_unusable_password()
         user.save()
         return user
-    except:
-        return False
-
-
-# @login_required
-# def submission_version_js(request):
-#     status = 405
-#     response = {}
-#
-#     if request.is_ajax() and request.method == 'POST':
-#         data = {}
-#         data['document_id'] = request.POST.get('document_id')
-#         data['journal_id'] = request.POST.get('journal_id')
-#         data['submission_id'] = request.POST.get('submission_id')
-#         data['pre_document_id'] = request.POST.get('pre_document_id')
-#         data['user_id'] = request.user.id
-#         set_version(request, data)
-#         status = 201
-#     return JsonResponse(
-#         response,
-#         status=status
-#     )
-
-
-@csrf_exempt
-def new_submission_revision_js(request):
-    if request.method == 'POST':
-        submission_id = int(request.POST.get('submission_id'))
-        app_key = request.POST.get('key')
-        # ojs_username = request.POST.get('ojs_user_name')
-        email = request.POST.get('author_email')
-        response = {}
-        data = {}
-        if app_key == settings.SERVER_INFO['OJS_KEY']:
-            # TODO Afshin: get the username or email of the current ojs user to
-            # login
-            # user = User.objects.get(
-            #     username=request.POST.get('username')
-            #     is_active=True
-            # )
-            # editor = login_user(
-            #    request,
-            #    user)
-            original_doc = models.Submission.objects.get(
-                submission_id=submission_id, version_id=0)
-            last_version = models.Submission.objects.filter(
-                submission_id=submission_id).latest('version_id')
-            user = User.objects.get(email=email)
-            document = Document.objects.get(pk=last_version.document_id)
-            document.pk = None
-            document.save()
-            data['document_id'] = document.pk
-            data['pre_document_id'] = last_version.document_id
-            data['user_id'] = user.id
-            data['journal_id'] = original_doc.journal_id
-            data['submission_id'] = submission_id
-            data['user_id'] = request.user.id
-            sub_access_rights = models.SubmittedAccessRight.objects.filter(
-                submission_id=submission_id,
-                document_id=original_doc.document_id)
-            for submission_access_right in sub_access_rights:
-                try:
-                    access_right = AccessRight.objects.get(
-                        document_id=data['document_id'],
-                        user_id=submission_access_right.user_id)
-                    access_right.rights = submission_access_right.rights
-                except ObjectDoesNotExist:
-                    access_right = AccessRight.objects.create(
-                        document_id=data['document_id'],
-                        user_id=submission_access_right.user_id,
-                        rights=submission_access_right.rights,
-                    )
-                # TODO sending a relative email to authors and informing
-                # them about the new revision
-                # send_share_notification(request, data['document_id'],
-                #    submission_access_right.user_id,
-                #                        submission_access_right.rights)
-                access_right.save()
-            set_version(data)
-            status = 200
-            return JsonResponse(
-                response,
-                status=status
-            )
-        else:
-            response['error'] = "The OJS_KEY is not valid"
-            status = 404
-            return JsonResponse(
-                response,
-                status=status
-            )
-
-
-# TODO Afshin should login for ojs user
-# @login_required
-def set_version(data):
-    user_id = data['user_id']
-    document_id = data['document_id']
-    journal_id = data['journal_id']
-    submission_id = data['submission_id']
-    pre_document_id = data['pre_document_id']
-    version = 1
-    # TODO Afshin: Is the version number always 1?
-    try:
-        submissions = models.Submission.objects.filter(
-            submission_id=submission_id)
-        if len(submissions) > 0:
-            version = len(submissions)
-        else:
-            # save the rights of authors in original document
-            sub_access_right = models.SubmittedAccessRight.objects.create(
-                document_id=pre_document_id,
-                user_id=user_id,
-                rights='write',
-                submission_id=submission_id
-            )
-            access_rights = AccessRight.objects.filter(
-                document_id=pre_document_id)
-            for access_right in access_rights:
-                sub_access_right = models.SubmittedAccessRight.objects.create(
-                    document_id=pre_document_id,
-                    user_id=access_right.user_id,
-                    rights=access_right.rights,
-                    submission_id=submission_id
-                )
-            sub_access_right.save()
-
-            original_submission = models.Submission.objects.create(
-                user_id=user_id,
-                document_id=pre_document_id,
-                journal_id=journal_id,
-                submission_id=submission_id,
-                version_id=0
-            )
-            original_submission.save()
-        submission = models.Submission.objects.create(
-            user_id=user_id,
-            document_id=document_id,
-            journal_id=journal_id,
-            submission_id=submission_id,
-            version_id=version
-        )
-        submission.save()
-        return True
     except:
         return False
 

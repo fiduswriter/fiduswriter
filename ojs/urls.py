@@ -49,9 +49,9 @@ urlpatterns = [
         name='get_login_token_js'
     ),
     url(
-        '^newsubmissionrevision/$',
-        views.new_submission_revision_js,
-        name='new_submission_revision_js'
+        '^create_copy/(?P<submission_id>[0-9]+)/$',
+        views.create_copy_js,
+        name='create_copy_js'
     ),
     url(
         '^getUser/$',

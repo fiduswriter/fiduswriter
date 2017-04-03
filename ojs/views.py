@@ -2,19 +2,15 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import JsonResponse, HttpResponse
-from django.db import transaction
 from django.shortcuts import redirect, render
-from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth import login
 from django.db import IntegrityError
 from allauth.account.models import EmailAddress
-from allauth.account import forms
 
 from . import models
 from . import token
-from document.views import send_share_notification
 from document.models import Document, AccessRight, CAN_UPDATE_DOCUMENT
 
 
@@ -179,12 +175,41 @@ def get_revision_file(request, revision_id):
     return http_response
 
 
-# A list of all registered journals -- to be used in the article submit dialog.
+# Send basic information about the current document and the journals that can
+# be submitted to. This information is used as a starting point to decide what
+# OJS-related UI elements to add on the editor page.
 @login_required
-def get_journals_js(request):
+def get_doc_info_js(request):
     status = 405
     response = {}
     if request.is_ajax() and request.method == 'POST':
+        document_id = request.POST.get('doc_id')
+        document = Document.objects.get(id=document_id)
+        if (
+            document.owner != request.user and
+            AccessRight.objects.filter(
+                    document=document,
+                    user=request.user
+            ).count() == 0
+        ):
+            # Access forbidden
+            return HttpResponse('Missing access rights', status=403)
+        # OJS submission related
+        response['submission'] = dict()
+        revisions = models.SubmissionRevision.objects.filter(
+            document_id=document_id
+        )
+        if len(revisions) > 0:
+            revision = revisions[0]
+            response['submission']['status'] = 'submitted'
+            response['submission']['submission_id'] = \
+                revision.submission.id
+            response['submission']['version'] = \
+                revision.version
+            response['submission']['journal_id'] = \
+                revision.submission.journal_id
+        else:
+            response['submission']['status'] = 'unsubmitted'
         journals = []
         for journal in models.Journal.objects.all():
             journals.append({
@@ -251,7 +276,8 @@ def save_journal_js(request):
 # as we expect OJS to have checked whether the user actually has access to the
 # email. We do not automatically connect to a user with the same username,
 # as this may be purely coincidental.
-# TODO: Check if OJS actually verifies the email account of the reviewer.
+# NOTE: An evil OJS editor can get access to accounts that he does not have
+# email access for this way.
 def get_or_create_user(email, username):
     users_with_email = User.objects.filter(email=email)
     if len(users_with_email) > 0:
@@ -407,149 +433,3 @@ def create_copy_js(request, submission_id):
         response,
         status=status
     )
-
-
-# TODO: CONVERT!
-# The below functions have not yet been converted to the new OJS/FW
-# collaboration structure
-def create_user(request, user_data):
-    signup_form = forms.SignupForm(user_data)
-    try:
-        signup_form.is_valid()
-        user = signup_form.save(request)
-        user.set_unusable_password()
-        user.save()
-        return user
-    except:
-        return False
-
-
-# TODO: Security review. Afshin, it seems like this allows any user with some
-# type of access right to a doc to give themselves tgt_right
-@login_required
-def review_submit_js(request):
-    status = 405
-    response = {}
-    if request.is_ajax() and request.method == 'POST':
-        document_id = request.POST.get('document_id')
-        tgt_right = 'read-without-comments'
-        access_right = AccessRight.objects.get(
-            document_id=document_id,
-            user=request.user
-        )
-        if access_right.rights != tgt_right:
-            access_right.rights = tgt_right
-            access_right.save()
-        submission = models.Submission.objects.get(
-            document_id=document_id)
-        response['submission'] = {}
-        if submission:
-            response["submission"]["submission_id"] = submission.submission_id
-            response["submission"]["version_id"] = submission.version_id
-            response["submission"]["journal_id"] = submission.journal_id
-        status = 201
-    return JsonResponse(
-        response,
-        status=status
-    )
-
-
-@login_required
-def review_submit_undo_js(request):
-    status = 405
-    response = {}
-    if request.is_ajax() and request.method == 'POST':
-        document_id = request.POST.get('document_id')
-        tgt_right = 'review'
-        access_right = AccessRight.objects.get(
-            document_id=document_id, user=request.user)
-        if access_right.rights != tgt_right:
-            access_right.rights = tgt_right
-            access_right.save()
-        submission = models.Submission.objects.get(
-            document_id=document_id)
-        response['submission'] = {}
-        if submission:
-            response["submission"]["submission_id"] = submission.submission_id
-            response["submission"]["version_id"] = submission.version_id
-            response["submission"]["journal_id"] = submission.journal_id
-        status = 201
-    return JsonResponse(
-        response,
-        status=status
-    )
-
-
-# OJS connected views
-# TODO: This seems to give any user the ability to change the access rights of
-# any document, with no checks whether that user actually was allowed to access
-# the document before.
-@login_required
-@transaction.atomic
-def submit_right_js(request):
-    status = 405
-    response = {}
-    if (
-        request.is_ajax() and
-        request.method == 'POST' and
-        settings.SERVER_INFO['EXPERIMENTAL'] is True
-    ):
-        tgt_doc = request.POST.get('documentId')
-        tgt_users = request.POST.getlist('collaborators[]')
-        doc_id = int(tgt_doc)
-        document = Document.objects.get(id=doc_id)
-        tgt_right = 'read-without-comments'
-        try:
-            the_user = User.objects.filter(is_superuser=1)
-            if len(the_user) > 0:
-                document.owner_id = the_user[0].id
-                document.save()
-        except ObjectDoesNotExist:
-            pass
-        for tgt_user in tgt_users:
-            collaborator_id = int(tgt_user)
-            try:
-                access_right = AccessRight.objects.get(
-                    document_id=doc_id, user_id=collaborator_id)
-                if access_right.rights != tgt_right:
-                    access_right.rights = tgt_right
-            except ObjectDoesNotExist:
-                access_right = AccessRight.objects.create(
-                    document_id=doc_id,
-                    user_id=collaborator_id,
-                    rights=tgt_right,
-                )
-                send_share_notification(
-                    request, doc_id, collaborator_id, tgt_right)
-            access_right.save()
-        status = 201
-    return JsonResponse(
-        response,
-        status=status
-    )
-
-
-def get_reviewer_for_post(request):
-    email = request.POST.get('email')
-    u_name = request.POST.get('user_name')
-    try:
-        reviewers = User.objects.filter(email=email)
-        if len(reviewers) > 0:
-            reviewer = reviewers[0]
-        else:
-            # "reviewer with this email does not exist so create it"
-            u_data = {
-                'username': u_name,
-                'email': email
-            }
-            reviewer = create_user(request, u_data)
-            reviewers = User.objects.filter(email=email)
-            reviewer = reviewers[0]
-        return reviewer
-    except ObjectDoesNotExist:
-        print("could not create user for email: " + email)
-
-
-def get_existing_reviewer(request):
-    reviewer = User.objects.get(email=request.POST.get('email'))
-    return reviewer

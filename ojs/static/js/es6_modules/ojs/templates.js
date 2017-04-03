@@ -13,7 +13,7 @@ export let journalDialogTemplate = _.template('\
 
 export let revisionSubmitDialogTemplate = _.template('\
     <div title="'+gettext('Submitting the revision')+'">\
-    <p>'+gettext('by pressing the submit button your revision will be sent to the editor')+'</p><br>\
+    <p>'+gettext('By pressing the submit button your revision will be sent to the editor')+'</p><br>\
 </div>\
 ')
 

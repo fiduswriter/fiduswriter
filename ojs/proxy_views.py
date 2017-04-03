@@ -5,7 +5,7 @@ from tornado.httputil import url_concat
 from tornado.escape import json_decode
 from base.django_handler_mixin import DjangoHandlerMixin
 from urllib import urlencode
-from .models import Journal, Submission, SubmissionRevision, Author
+from .models import Journal, Submission, SubmissionRevision, Author, Reviewer
 from django.core.files.base import ContentFile
 from document.models import Document
 
@@ -51,9 +51,9 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
             return
         self.plugin_path = \
             '/index.php/index/gateway/plugin/FidusWriterGatewayPlugin/'
-        if relative_url == 'authorSubmit':
+        if relative_url == 'author_submit':
             self.author_submit()
-        elif relative_url == 'reviewerSubmit':
+        elif relative_url == 'reviewer_submit':
             self.reviewer_submit()
         else:
             self.set_status(401)
@@ -112,7 +112,7 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
             host=self.request.host
         )
 
-        title = journal_id = self.get_argument('title')
+        title = self.get_argument('title')
         post_data = {
             'username': self.user.username,
             'title': title,
@@ -144,20 +144,6 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
             callback=self.on_author_submit_response
         )
 
-    # def reviewer_submit(self):
-    #     # Submitting a new submission revision.
-    #     doc_id = self.get_argument('doc_id')
-    #     #document = Document.objects.get(id=doc_id)
-    #     reviewers = Reviewer.objects.filter(
-    #         revision__document_id=doc_id,
-    #         user=self.user
-    #     )
-    #     if len(reviewers) == 0:
-    #         # Trying to submit review without access rights.
-    #         self.set_status(401)
-    #         self.finish()
-    #     reviewer = reviewers[0]
-
     # The response is asynchronous so that the getting of the data from the OJS
     # server doesn't block the FW server connection.
     def on_author_submit_response(self, response):
@@ -178,6 +164,52 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
                 submission=self.submission,
                 ojs_jid=json['user_id']
             )
+
+        self.write(response.body)
+        self.finish()
+
+    def reviewer_submit(self):
+        # Submitting a new submission revision.
+        document_id = self.get_argument('doc_id')
+        reviewers = Reviewer.objects.filter(
+            revision__document_id=document_id,
+            user=self.user
+        )
+        if len(reviewers) == 0:
+            # Trying to submit review without access rights.
+            self.set_status(401)
+            self.finish()
+        reviewer = reviewers[0]
+        post_data = {
+            'submission_id': reviewer.revision.submission.ojs_jid,
+            'version': reviewer.revision.version,
+            'user_id': reviewer.ojs_jid,
+            'editor_message': self.get_argument('editor_message'),
+            'editor_author_message': self.get_argument('editor_author_message')
+        }
+
+        body = urlencode(post_data)
+        key = reviewer.revision.submission.journal.ojs_key
+        base_url = reviewer.revision.submission.journal.ojs_url
+        url = base_url + self.plugin_path + 'reviewerSubmit'
+        http = AsyncHTTPClient()
+        http.fetch(
+            HTTPRequest(
+                url_concat(url, {'key': key}),
+                'POST',
+                None,
+                body
+            ),
+            callback=self.on_reviewer_submit_response
+        )
+
+    # The response is asynchronous so that the getting of the data from the OJS
+    # server doesn't block the FW server connection.
+    def on_reviewer_submit_response(self, response):
+        if response.error:
+            self.revision.document.delete()
+            self.revision.delete()
+            raise HTTPError(500)
 
         self.write(response.body)
         self.finish()

@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import User
 
-from document.models import Document, RIGHTS_CHOICES
+from document.models import Document
 
 
 # A Journal registered with a particular OJS installation
@@ -40,9 +40,6 @@ class Submission(models.Model):
     # We do this, as the submitter won't have access rights to the media
     # library of the editor.
     file_object = models.FileField(upload_to=submission_filename)
-
-#    class Meta:
-#        unique_together = (("journal", "ojs_jid"))
 
     def __unicode__(self):
         return u'{ojs_jid} in {journal} by {submitter}'.format(
@@ -82,9 +79,6 @@ class SubmissionRevision(models.Model):
     version = models.CharField(max_length=8, default='1.0.0')
     document = models.ForeignKey(Document)
 
-#    class Meta:
-#        unique_together = (("version", "submission"))
-
     def __unicode__(self):
         return u'{ojs_jid} (v{version}) in {journal} by {submitter}'.format(
             ojs_jid=self.submission.ojs_jid,
@@ -108,28 +102,4 @@ class Reviewer(models.Model):
         return u'{username} ({ojs_jid})'.format(
             username=self.user.username,
             ojs_jid=self.ojs_jid
-        )
-
-
-# Access rights at the time of submission. To be restored after review is over.
-class SubmittedAccessRight(models.Model):
-    document = models.ForeignKey(Document)
-    user = models.ForeignKey(User)
-    submission_id = models.PositiveIntegerField()
-    rights = models.CharField(
-        max_length=21,
-        choices=RIGHTS_CHOICES,
-        blank=False)
-
-    class Meta:
-        unique_together = (("document", "user", "submission_id"),)
-
-    def __unicode__(self):
-        return (
-            '%(name)s %(rights)s on %(doc_id)d' %
-            {
-                'name': self.user.readable_name,
-                'rights': self.rights,
-                'doc_id': self.document.id
-            }
         )

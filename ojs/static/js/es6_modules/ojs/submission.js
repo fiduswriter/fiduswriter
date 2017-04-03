@@ -5,7 +5,7 @@ import {addAlert, csrfToken} from "../common"
 
 // Send an article submission to FW and OJS servers.
 
-export class SendAuthorSubmission {
+export class SendDocSubmission {
     constructor(doc, imageDB, bibDB, journalId, version, submissionId) {
         this.doc = doc
         this.imageDB = imageDB
@@ -47,8 +47,8 @@ export class SendAuthorSubmission {
         }
 
         jQuery.ajax({
-            url: '/proxy/ojs/authorSubmit',
-            data: data,
+            url: '/proxy/ojs/author_submit',
+            data,
             type: 'POST',
             cache: false,
             contentType: false,

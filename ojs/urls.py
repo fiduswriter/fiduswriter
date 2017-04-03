@@ -4,26 +4,6 @@ from . import views
 
 urlpatterns = [
     url(
-        '^submitright/$',
-        views.submit_right_js,
-        name='submit_right_js'
-    ),
-    # url(
-    #    '^submissionversion/$',
-    #    views.submission_version_js,
-    #    name='submission_version_js'
-    # ),
-    url(
-        '^reviewsubmit/$',
-        views.review_submit_js,
-        name='review_submit_js'
-    ),
-    url(
-        '^reviewsubmitundo/$',
-        views.review_submit_undo_js,
-        name='review_submit_undo_js'
-    ),
-    url(
         '^add_reviewer/(?P<submission_id>[0-9]+)/(?P<version>[0-9\.]+)/$',
         views.add_reviewer_js,
         name='add_reviewer_js'
@@ -54,18 +34,18 @@ urlpatterns = [
         name='create_copy_js'
     ),
     url(
-        '^getUser/$',
+        '^get_user/$',
         views.get_user_js,
         name='get_user_js'
     ),
     url(
-        '^saveJournal/$',
+        '^save_journal/$',
         views.save_journal_js,
         name='save_journal_js'
     ),
     url(
-        '^getJournals/$',
-        views.get_journals_js,
-        name='get_journals_js'
+        '^get_doc_info/$',
+        views.get_doc_info_js,
+        name='get_doc_info_js'
     )
 ]

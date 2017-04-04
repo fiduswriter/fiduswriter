@@ -70,7 +70,7 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
             self.author_first_submit()
         else:
             self.revision = revisions[0]
-            self.author._resubmit()
+            self.author_resubmit()
 
     def author_first_submit(self):
         # The document is not part of an existing submission.
@@ -199,8 +199,6 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
     # server doesn't block the FW server connection.
     def on_author_resubmit_response(self, response):
         if response.error:
-            self.revision.document.delete()
-            self.revision.delete()
             raise HTTPError(500)
         self.write(response.body)
         self.finish()

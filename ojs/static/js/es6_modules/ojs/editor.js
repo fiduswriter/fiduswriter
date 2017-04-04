@@ -140,7 +140,6 @@ export class EditorOJS {
     /* Dialog for submission of all subsequent revisions */
     resubmissionDialog() {
         let buttons = [], dialog
-        let submission_info = {}
         buttons.push({
             text: gettext('Cancel'),
             click: () => {
@@ -156,7 +155,7 @@ export class EditorOJS {
             },
             class: 'fw-button fw-dark'
         })
-        jQuery(resubmissionDialogTemplate()).dialog({
+        dialog = jQuery(resubmissionDialogTemplate()).dialog({
             autoOpen: true,
             height: 100,
             width: 300,

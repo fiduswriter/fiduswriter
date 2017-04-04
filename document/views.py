@@ -19,7 +19,7 @@ from avatar.utils import get_primary_avatar, get_default_avatar_url
 from avatar.templatetags.avatar_tags import avatar_url
 
 from document.models import Document, AccessRight, DocumentRevision, \
-    ExportTemplate
+    ExportTemplate, CAN_UPDATE_DOCUMENT
 
 
 class SimpleSerializer(Serializer):
@@ -304,7 +304,7 @@ def import_js(request):
                 len(AccessRight.objects.filter(
                     document_id=doc_id,
                     user_id=request.user.id,
-                    rights='review'
+                    rights__in=CAN_UPDATE_DOCUMENT
                 )) == 0
             ):
                 response['error'] = 'No access to file'

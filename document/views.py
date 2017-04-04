@@ -19,7 +19,7 @@ from avatar.utils import get_primary_avatar, get_default_avatar_url
 from avatar.templatetags.avatar_tags import avatar_url
 
 from document.models import Document, AccessRight, DocumentRevision, \
-    ExportTemplate
+    ExportTemplate, CAN_UPDATE_DOCUMENT
 
 
 class SimpleSerializer(Serializer):
@@ -294,7 +294,46 @@ def import_js(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
-        document = Document.objects.create(owner_id=request.user.pk)
+        if 'doc_id' in request.POST:
+            doc_id = request.POST['doc_id']
+            # There is a doc_id, so we overwrite an existing doc rather than
+            # creating a new one.
+            document = Document.objects.get(id=int(doc_id))
+            if (
+                document.owner != request.user and
+                len(AccessRight.objects.filter(
+                    document_id=doc_id,
+                    user_id=request.user.id,
+                    rights__in=CAN_UPDATE_DOCUMENT
+                )) == 0
+            ):
+                response['error'] = 'No access to file'
+                status = 403
+                return JsonResponse(
+                    response,
+                    status=status
+                )
+            if document.version > 0:
+                # The file has been initialized already. Do not do this again.
+                # This could happen if two users click on the link almost at
+                # the same time.
+                response['document_id'] = document.id
+                response['added'] = time.mktime(document.added.utctimetuple())
+                response['updated'] = time.mktime(
+                    document.updated.utctimetuple()
+                )
+                status = 200
+                return JsonResponse(
+                    response,
+                    status=status
+                )
+            else:
+                # We increase the version to 1 to mark that the file now
+                # contains imported contents.
+                document.version = 1
+                document.diff_version = 1
+        else:
+            document = Document.objects.create(owner_id=request.user.pk)
         document.title = request.POST['title']
         document.contents = request.POST['contents']
         document.comments = request.POST['comments']

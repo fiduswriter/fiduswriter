@@ -295,6 +295,9 @@ input.required, error {
     background-color: rgba(234,234,234,0.5);
     display: none;
 }
+#print table, #print figure {
+    width: 100%;
+}
 /* Overwrite color changes through font in editor. Webkit bug */
 
 font {
@@ -378,9 +381,12 @@ figure {
     border: 1px solid black;
     padding: 5px;
     text-align: center;
-    margin: 10%;
     -webkit-region-break-inside: avoid;
     cursor: pointer;
+}
+
+#flow figure {
+    margin: 10%;
 }
 
 figure figcaption {
@@ -392,7 +398,8 @@ figure img {
     max-width: 100%
 }
 
-#paper-editable {
+div#print,
+div#flow {
     counter-reset: figure-cat-0 figure-cat-1 figure-cat-2;
 }
 
@@ -658,4 +665,16 @@ table.insert-table-selection td.selected.hover {
 
 .csl-right-inline {
     padding-left: 20px;
+}
+
+/* Wide table: used for submission dialog */
+
+.fw-dialog-table-wide .entry-field input[type=text] {
+    width: 678px;
+}
+
+.fw-dialog-table-wide th {
+    vertical-align: top;
+    padding: 0 6px 0 8px;
+    width: 164px;
 }

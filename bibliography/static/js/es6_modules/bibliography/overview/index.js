@@ -72,9 +72,9 @@ export class BibliographyOverview {
             })
         })
         jQuery('body').append(dialogBody)
-        let diaButtons = {}
+        let buttons = {}
         let that = this
-        diaButtons[gettext('Submit')] = function () {
+        buttons[gettext('Submit')] = function () {
             let newCat = {
                 'ids': [],
                 'titles': []
@@ -95,7 +95,7 @@ export class BibliographyOverview {
             that.createCategory(newCat)
             jQuery(this).dialog('close')
         }
-        diaButtons[gettext('Cancel')] = function () {
+        buttons[gettext('Cancel')] = function () {
             jQuery(this).dialog('close')
         }
 
@@ -104,7 +104,7 @@ export class BibliographyOverview {
             width: 350,
             height: 350,
             modal: true,
-            buttons: diaButtons,
+            buttons,
             create: function () {
                 let theDialog = jQuery(this).closest(".ui-dialog")
                 theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark")

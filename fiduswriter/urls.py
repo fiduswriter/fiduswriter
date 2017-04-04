@@ -7,18 +7,12 @@ from user.views import logout_page
 from django.contrib.flatpages import views as flatpages_views
 from document.views import index as document_index
 
-from django.views.i18n import javascript_catalog as i18n_javascript_catalog
+from django.views.i18n import JavaScriptCatalog
 from django.contrib.auth.views import login as login_view
 
 admin.site = AdminSitePlus()
 admin.sites.site = admin.site
 admin.autodiscover()
-
-js_info_dict = {
-    'packages': (
-        'django.conf',
-    ),
-}
 
 urlpatterns = [
     url('^$', document_index, name='index'),
@@ -38,8 +32,7 @@ urlpatterns = [
     url('^i18n/', include('django.conf.urls.i18n')),
 
     # I18n Javascript translations
-    url('^jsi18n/$', i18n_javascript_catalog, js_info_dict),
-
+    url(r'^jsi18n/$', JavaScriptCatalog.as_view(), name='javascript-catalog'),
 
     # Login / logout.
     url('^login/$', login_view),

@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.core.serializers.python import Serializer
 from django.utils.translation import ugettext as _
 
-from document.models import AccessRight
+from document.models import AccessRight, CAN_UPDATE_DOCUMENT
 from usermedia.models import Image, ImageCategory
 
 from .models import ALLOWED_FILETYPES
@@ -40,7 +40,7 @@ def save_js(request):
         if 'owner_id' in request.POST:
             owner_id = int(request.POST['owner_id'])
             if owner_id != request.user.id:
-                if not check_access_rights(owner_id, request.user):
+                if not check_write_access_rights(owner_id, request.user):
                     return False
         else:
             owner_id = request.user.id
@@ -105,7 +105,7 @@ def delete_js(request):
     )
 
 
-def check_access_rights(other_user_id, this_user):
+def check_read_access_rights(other_user_id, this_user):
     other_user_id = int(other_user_id)
     has_access = False
     if other_user_id == 0:
@@ -115,6 +115,22 @@ def check_access_rights(other_user_id, this_user):
     elif AccessRight.objects.filter(
         document__owner=other_user_id,
         user=this_user
+    ).count() > 0:
+        has_access = True
+    return has_access
+
+
+def check_write_access_rights(other_user_id, this_user):
+    other_user_id = int(other_user_id)
+    has_access = False
+    if other_user_id == 0:
+        has_access = True
+    elif other_user_id == this_user.id:
+        has_access = True
+    elif AccessRight.objects.filter(
+        document__owner=other_user_id,
+        user=this_user,
+        rights__in=CAN_UPDATE_DOCUMENT
     ).count() > 0:
         has_access = True
     return has_access
@@ -131,14 +147,14 @@ def images_js(request):
             user_ids = user_id.split(',')
             status = 200
             for user_id in user_ids:
-                if check_access_rights(user_id, request.user) is False:
+                if check_read_access_rights(user_id, request.user) is False:
                     status = 403
             if status == 200:
                 images = Image.objects.filter(owner__in=user_ids)
                 response['imageCategories'] = serializer.serialize(
                     ImageCategory.objects.filter(category_owner__in=user_ids))
         else:
-            if check_access_rights(user_id, request.user):
+            if check_read_access_rights(user_id, request.user):
                 if int(user_id) == 0:
                     user_id = request.user.id
                 images = Image.objects.filter(owner=user_id)

@@ -92,7 +92,7 @@ export class AdminRegisterJournals {
                 type: "POST",
                 dataType: "json",
                 data: {email},
-                url: '/ojs/getUser/',
+                url: '/ojs/get_user/',
                 crossDomain: false, // obviates need for sameOrigin test
                 beforeSend: (xhr, settings) =>
                     xhr.setRequestHeader("X-CSRFToken", csrfToken),
@@ -132,7 +132,7 @@ export class AdminRegisterJournals {
                 ojs_key: this.ojsKey,
                 ojs_url: this.ojsUrl
             },
-            url: '/ojs/saveJournal/',
+            url: '/ojs/save_journal/',
             crossDomain: false, // obviates need for sameOrigin test
             beforeSend: (xhr, settings) =>
                 xhr.setRequestHeader("X-CSRFToken", csrfToken),

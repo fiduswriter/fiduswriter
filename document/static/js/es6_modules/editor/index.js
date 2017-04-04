@@ -17,7 +17,7 @@ import {getSettings, getMetadata, updateDoc} from "../schema/convert"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
 import {Paste} from "./paste"
-import {AuthorOJS} from "../ojs"
+import {EditorOJS} from "../ojs"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']
@@ -209,7 +209,7 @@ export class Editor {
     activateOJS() {
         // Add OJS menus, but only once.
         if (!this.ojs) {
-            this.ojs = new AuthorOJS(this)
+            this.ojs = new EditorOJS(this)
             this.ojs.init()
         }
     }
@@ -322,20 +322,6 @@ export class Editor {
               .documentstyle-menu, .citationstyle-menu').removeClass('disabled')
             }
         }
-        jQuery('#revision-done').hide()
-        if (REVIEW_ROLES.indexOf(this.docInfo.rights) > -1)  {
-            jQuery('#reviewerOJSReturn').show()
-        }
-        else {
-            jQuery('#reviewerOJSReturn').hide()
-            if (
-                this.docInfo.submission.status === 'submitted' &&
-                this.docInfo.submission.user_id === this.user.id
-            ){
-                jQuery('#revision-done').show()
-            }
-        }
-
     }
 
     receiveDocument(data) {

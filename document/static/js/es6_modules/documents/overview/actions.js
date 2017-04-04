@@ -110,7 +110,7 @@ export class DocumentOverviewActions {
                         fidusFile,
                         that.documentOverview.user,
                         true,
-                        that.documentOverview.bibDB.db,
+                        that.documentOverview.bibDB,
                         that.documentOverview.imageDB
                     )
 

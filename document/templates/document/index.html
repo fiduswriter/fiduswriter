@@ -16,13 +16,9 @@
     <script type="text/javascript" src="{{ STATIC_URL }}js/document-overview.es5.js"></script>
 
     {% compress js %}
-        <!-- citeproc -->
-        <script type="text/javascript" src="{{ CITEPROC_URL }}"></script>
-
         <script type="text/javascript">
             var staticUrl = '{{ STATIC_URL }}';
         </script>
-
     {% endcompress %}
 {% endblock %}
 

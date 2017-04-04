@@ -11,7 +11,6 @@ from document.models import AccessRight, COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
     CAN_COMMUNICATE
 from document.views import get_accessrights
 from avatar.templatetags.avatar_tags import avatar_url
-from ojs.models import Submission
 
 
 class DocumentWS(BaseWebSocketHandler):
@@ -120,26 +119,8 @@ class DocumentWS(BaseWebSocketHandler):
                 "last_diffs"][-needed_diffs:]
         else:
             response['doc_info']['unapplied_diffs'] = []
-        # OJS submission related
-        response['doc_info']['submission'] = dict()
-        submissions = Submission.objects.filter(
-            document_id=self.doc['id']
-        )
-        if len(submissions) > 0 and submissions[0].version_id != 0:
-            submission = submissions[0]
-            response['doc_info']['submission']['status'] = 'submitted'
-            response['doc_info']['submission']['submission_id'] = \
-                submission.submission_id
-            response['doc_info']['submission']['user_id'] = submission.user_id
-            response['doc_info']['submission']['version_id'] = \
-                submission.version_id
-            response['doc_info']['submission']['journal_id'] = \
-                submission.journal_id
-        else:
-            response['doc_info']['submission']['status'] = 'unsubmitted'
         if self.user_info.is_owner:
             the_user = self.user_info.user
-            # Data used for OJS submissions
             response['doc']['owner']['email'] = the_user.email
             response['doc']['owner']['username'] = the_user.username
             response['doc']['owner']['first_name'] = the_user.first_name
@@ -151,7 +132,6 @@ class DocumentWS(BaseWebSocketHandler):
             response['user']['id'] = the_user.id
             response['user']['name'] = the_user.readable_name
             response['user']['avatar'] = avatar_url(the_user, 80)
-            # Data used for OJS submissions
             response['user']['email'] = the_user.email
             response['user']['username'] = the_user.username
             response['user']['first_name'] = the_user.first_name

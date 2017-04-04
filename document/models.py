@@ -40,7 +40,10 @@ class Document(models.Model):
     comment_version = models.PositiveIntegerField(default=0)
 
     def __unicode__(self):
-        return self.title
+        if len(self.title) > 0:
+            return self.title + ' (' + str(self.id) + ')'
+        else:
+            return str(self.id)
 
     def get_absolute_url(self):
         return "/document/%i/" % self.id
@@ -99,6 +102,12 @@ class DocumentRevision(models.Model):
     file_object = models.FileField(upload_to=revision_filename)
     file_name = models.CharField(max_length=255, default='', blank=True)
 
+    def __unicode__(self):
+        if len(self.note) > 0:
+            return self.note + ' (' + str(self.id) + ') of ' + \
+                str(self.document.id)
+        else:
+            return str(self.id) + ' of ' + self.document.id
 
 TEMPLATE_CHOICES = (
     ('docx', 'Docx'),

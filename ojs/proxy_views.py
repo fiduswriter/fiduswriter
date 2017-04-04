@@ -111,15 +111,14 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
             host=self.request.host
         )
 
-        title = self.get_argument('title')
         post_data = {
-            'username': self.user.username,
-            'title': title,
-            'first_name': self.user.first_name,
-            'last_name': self.user.last_name,
-            'email': self.user.email,
-            'affiliation': 'some affiliation',
-            'author_url': 'some author_url',
+            'username': self.user.username.encode('utf8'),
+            'title': title.encode('utf8'),
+            'first_name': self.get_argument('firstname').encode('utf8'),
+            'last_name': self.get_argument('lastname').encode('utf8'),
+            'email': self.user.email.encode('utf8'),
+            'affiliation': self.get_argument('affiliation').encode('utf8'),
+            'author_url': self.get_argument('webpage').encode('utf8'),
             'journal_id': journal.ojs_jid,
             'fidus_url': fidus_url,
             'fidus_id': self.submission.id,

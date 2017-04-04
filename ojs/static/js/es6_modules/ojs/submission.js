@@ -6,13 +6,25 @@ import {addAlert, csrfToken} from "../common"
 // Send an article submission to FW and OJS servers.
 
 export class SendDocSubmission {
-    constructor(doc, imageDB, bibDB, journalId, version, submissionId) {
+    constructor(
+        doc,
+        imageDB,
+        bibDB,
+        journalId,
+        firstname,
+        lastname,
+        email,
+        affiliation,
+        webpage
+    ) {
         this.doc = doc
         this.imageDB = imageDB
         this.bibDB = bibDB
         this.journalId = journalId
-        this.version = version
-        this.submissionId = submissionId
+        this.firstname = firstname
+        this.lastname = lastname
+        this.affiliation = affiliation
+        this.webpage = webpage
     }
 
     init() {
@@ -35,16 +47,14 @@ export class SendDocSubmission {
     uploadRevision(blob) {
         let data = new window.FormData()
         data.append('journal_id', this.journalId)
+        data.append('firstname', this.firstname)
+        data.append('lastname', this.lastname)
+        data.append('affiliation', this.affiliation)
+        data.append('webpage', this.webpage)
         data.append('doc_id', this.doc.id)
         data.append('title', this.doc.title)
         data.append('file', blob, createSlug(this.doc.title) + '.fidus')
 
-        if (this.submissionId) {
-            // The submission already has an id, so it must be a higher version
-            // of an existing submission.
-            data.append('submission_id', this.submissionId)
-            data.append('version', this.version)
-        }
 
         jQuery.ajax({
             url: '/proxy/ojs/author_submit',

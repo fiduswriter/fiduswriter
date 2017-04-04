@@ -666,3 +666,15 @@ table.insert-table-selection td.selected.hover {
 .csl-right-inline {
     padding-left: 20px;
 }
+
+/* Wide table: used for submission dialog */
+
+.fw-dialog-table-wide .entry-field input[type=text] {
+    width: 678px;
+}
+
+.fw-dialog-table-wide th {
+    vertical-align: top;
+    padding: 0 6px 0 8px;
+    width: 164px;
+}

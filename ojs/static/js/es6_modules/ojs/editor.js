@@ -2,7 +2,7 @@ import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
 import {addAlert, csrfToken} from "../common"
 import {SaveCopy} from "../exporter/native"
-import {journalDialogTemplate, resubmissionDialogTemplate, reviewSubmitDialogTemplate} from "./templates"
+import {firstSubmissionDialogTemplate, resubmissionDialogTemplate, reviewSubmitDialogTemplate} from "./templates"
 import {SendDocSubmission} from "./submission"
 
 // Adds functions for OJS to the editor
@@ -113,7 +113,15 @@ export class EditorOJS {
                 return
             }
             journalId = parseInt(journalId)
-            that.submitDoc(journalId)
+            let firstname = jQuery("#submission-firstname").val()
+            let lastname = jQuery("#submission-lastname").val()
+            let affiliation = jQuery("#submission-affiliation").val()
+            let webpage = jQuery("#submission-webpage").val()
+            if (firstname==="" || lastname==="" || affiliation==="" || webpage==="") {
+                addAlert('error', gettext('Fill out all fields before submitting!'))
+                return
+            }
+            that.submitDoc(journalId, firstname, lastname, affiliation, webpage)
             jQuery(this).dialog("close")
         }
 
@@ -121,12 +129,14 @@ export class EditorOJS {
             jQuery(this).dialog("close")
         }
 
-        jQuery(journalDialogTemplate({
-            journals: this.journals
+        jQuery(firstSubmissionDialogTemplate({
+            journals: this.journals,
+            first_name: this.editor.user.first_name,
+            last_name: this.editor.user.last_name,
         })).dialog({
             autoOpen: true,
-            height: (this.journals.length * 45) + 140,
-            width: 300,
+            height: (this.journals.length * 45) + 400,
+            width: 940,
             modal: true,
             buttons: diaButtons,
             create: function() {
@@ -183,7 +193,7 @@ export class EditorOJS {
         })
     }
 
-    submitDoc(journalId) {
+    submitDoc(journalId, firstname, lastname, affiliation, webpage) {
         return this.editor.save().then(
             () => {
                 let submitter = new SendDocSubmission(
@@ -191,8 +201,10 @@ export class EditorOJS {
                     this.editor.imageDB,
                     this.editor.bibDB,
                     journalId,
-                    this.submission.version,
-                    this.submission_id
+                    firstname,
+                    lastname,
+                    affiliation,
+                    webpage
                 )
                 return submitter.init()
             }

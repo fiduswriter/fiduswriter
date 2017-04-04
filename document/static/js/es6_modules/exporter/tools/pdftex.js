@@ -39,7 +39,7 @@ function add_bibtex(pdftex){
 }
 var compile = function(source_code, bibfile, ImagesList, externalClass, pdfFiletitle) {
 
-        var pdf_dataurl = undefined;
+        var pdf_dataurl;
 
         var pdftex = new window.PDFTeX("/static/js/libs/texlive/pdftex-worker.js");
 

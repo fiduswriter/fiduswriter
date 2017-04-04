@@ -2,7 +2,7 @@ import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
 import {addAlert, csrfToken} from "../common"
 import {SaveCopy} from "../exporter/native"
-import {journalDialogTemplate, revisionSubmitDialogTemplate, reviewSubmitDialogTemplate} from "./templates"
+import {journalDialogTemplate, resubmissionDialogTemplate, reviewSubmitDialogTemplate} from "./templates"
 import {SendDocSubmission} from "./submission"
 
 // Adds functions for OJS to the editor
@@ -33,9 +33,30 @@ export class EditorOJS {
                 }
             })
         }).then(
+            () => this.checkDoc()
+        ).then(
             () => this.setupUI()
         )
 
+    }
+
+    // The submission process does that we need to import revision docs the
+    // first time. This doesn't happen if users enter directly. So we need to
+    // redirect manually.
+    checkDoc() {
+        if (this.editor.doc.version===0 && this.submission.status==='submitted') {
+            if (['read','read-without-comments'].includes(this.editor.docInfo.rights)) {
+                // Won't be able to update the document anyway.
+                window.alert(gettext('Document not yet ready. Please come back later.'))
+                window.location.replace('/')
+            } else {
+                window.location.replace(
+                    '/ojs/import_doc/' + this.submission.submission_id +
+                    '/' + this.submission.version + '/'
+                )
+            }
+        }
+        return Promise.resolve()
     }
 
     setupUI() {
@@ -71,7 +92,7 @@ export class EditorOJS {
                 if (this.editor.docInfo.rights==='review') {
                     this.reviewerDialog()
                 } else {
-                    this.revisionSubmissionDialog()
+                    this.resubmissionDialog()
                 }
             } else {
                 this.firstSubmissionDialog()
@@ -117,30 +138,49 @@ export class EditorOJS {
     }
 
     /* Dialog for submission of all subsequent revisions */
-    revisionSubmissionDialog() {
-        let diaButtons = {}
+    resubmissionDialog() {
+        let buttons = [], dialog
         let submission_info = {}
-
-        diaButtons[gettext("Submit")] = function() {
-            this.submitDoc(this.submission.journal_id)
-            jQuery(this).dialog("close")
-        }
-        diaButtons[gettext("Cancel")] = function() {
-            jQuery(this).dialog("close")
-        }
-        jQuery(revisionSubmitDialogTemplate()).dialog({
+        buttons.push({
+            text: gettext('Cancel'),
+            click: () => {
+                dialog.dialog('close')
+            },
+            class: 'fw-button fw-orange'
+        })
+        buttons.push({
+            text: gettext('Send'),
+            click: () => {
+                this.submitResubmission()
+                dialog.dialog('close')
+            },
+            class: 'fw-button fw-dark'
+        })
+        jQuery(resubmissionDialogTemplate()).dialog({
             autoOpen: true,
             height: 100,
             width: 300,
             modal: true,
-            buttons: diaButtons,
-            create: function() {
-                let theDialog = jQuery(this).closest(".ui-dialog")
-                theDialog.find(".ui-button:first-child").addClass(
-                    "fw-button fw-dark")
-                theDialog.find(".ui-button:last").addClass(
-                    "fw-button fw-orange")
-            }
+            buttons
+        })
+    }
+
+    submitResubmission() {
+        let data = new window.FormData()
+        data.append('doc_id', this.editor.doc.id)
+
+        jQuery.ajax({
+            url: '/proxy/ojs/author_submit',
+            data,
+            type: 'POST',
+            cache: false,
+            contentType: false,
+            processData: false,
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: (xhr, settings) =>
+                xhr.setRequestHeader("X-CSRFToken", csrfToken),
+            success: () => addAlert('success', gettext('Review submitted')),
+            error: () => addAlert('error', gettext('Review could not be submitted.'))
         })
     }
 

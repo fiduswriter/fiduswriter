@@ -134,20 +134,52 @@ def open_revision_doc(request, submission_id, version):
     login_user(request, user)
 
     if rev.document.version == 0:
+        return redirect(
+            '/ojs/import_doc/' + str(rev.submission.id) + '/' +
+            str(rev.version) + '/', permanent=True
+        )
+
+    return redirect(
+        '/document/' + str(rev.document.id) + '/', permanent=True
+    )
+
+
+@login_required
+def import_doc(request, submission_id, version):
+    revision = models.SubmissionRevision.objects.get(
+        submission_id=submission_id,
+        version=version
+    )
+    document = revision.document
+    if (
+        document.owner != request.user and
+        AccessRight.objects.filter(
+                document=document,
+                user=request.user,
+                rights__in=CAN_UPDATE_DOCUMENT
+        ).count() == 0
+    ):
+        # The user to be logged in is neither the editor (owner of doc), a
+        # reviewer or the author. We prohibit access.
+
+        # Access forbidden
+        return HttpResponse('Missing access rights', status=403)
+    if document.version == 0:
         # The document with version == 0 is still empty as it hasn't loaded the
         # zipped document yet. Send the user to first load the zip file into
         # the document. This will also import included images and citations.
         response = {}
-        response['doc_id'] = rev.document.id
-        response['rev_id'] = rev.id
-        response['owner_id'] = rev.document.owner.id
+        response['doc_id'] = document.id
+        response['rev_id'] = revision.id
+        response['owner_id'] = document.owner.id
         # Loading the document and saving it will increase the version number
         # of the doc from 0 to 1.
         return render(request, 'ojs/import_document.html',
                       response)
-    return redirect(
-        '/document/' + str(rev.document.id) + '/', permanent=True
-    )
+    else:
+        redirect(
+            '/document/' + str(document.id) + '/', permanent=True
+        )
 
 
 # Download the zipped file_object of a submission revision
@@ -417,7 +449,6 @@ def create_copy_js(request, submission_id):
         return JsonResponse(response, status=status)
 
     # Copy the document
-    # TODO: Add author access rights
     document = revision.document
     # This saves the document with a new pk
     document.pk = None
@@ -429,6 +460,24 @@ def create_copy_js(request, submission_id):
     revision.document = document
     revision.version = new_version
     revision.save()
+
+    # Add user rights
+    if new_version.split('.')[-1] == '5':
+        # We have an author version and we give the author write access.
+        access_right = 'write'
+    else:
+        # This is a reviewer version. We give the author limited read access.
+        access_right = 'read-without-comments'
+    authors = models.Author.objects.filter(
+        submission=revision.submission
+    )
+    for author in authors:
+        AccessRight.objects.create(
+            document=document,
+            user=author.user,
+            rights=access_right
+        )
+
     return JsonResponse(
         response,
         status=status

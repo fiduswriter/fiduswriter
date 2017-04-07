@@ -95,9 +95,7 @@ export class ModMenusToolbar {
             let blockId = randomInt(0, 100000000)
             let h_id = this.id.replace("_button","")
  	        unsentInternal = addValueToKey(h_id, blockId, that.InternalHeadings)
-            //this.bool = true
-            console.log("that.mod.editor", that.mod.editor.mod.collab)
-            that.mod.editor.mod.collab.docChanges.sendToCollaboratorsInternalHeading()
+//            that.mod.editor.mod.collab.docChanges.sendToCollaboratorsInternalHeading()
             that.executeAction(event, function(){
                 let block = that.mod.editor.currentPm.schema.nodes[blockType[0]]
                 let command = commands.setBlockType(block, blockType[1])

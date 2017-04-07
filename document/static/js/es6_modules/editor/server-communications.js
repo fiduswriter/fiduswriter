@@ -22,6 +22,7 @@ export class ModServerCommunications {
 
         try {
             this.ws = new window.WebSocket(`${websocketProtocol}//${window.websocketServer}${window.websocketPort}/ws/doc/${this.editor.doc.id}`)
+	    console.log("this.ws", this.ws)
             this.ws.onopen = () => {
                 jQuery('#unobtrusive_messages').html('')
             }

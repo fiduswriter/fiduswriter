@@ -204,10 +204,9 @@ export class Editor {
             this.mod.collab.docChanges.sendToCollaborators()
         })
 	
-	//this.mod.menus.toolbar.on("mustSend", ()=> {	
-	if(true){
-//	    this.mod.collab.docChanges.sendToCollaboratorsInternalHeading()
-	}//)
+	this.mod.menus.toolbar.on("mustSend", ()=> {	
+	    this.mod.collab.docChanges.sendToCollaboratorsInternalHeading()
+	})
 
         this.getBibDB(this.doc.owner.id).then(() => {
             this.enableUI()

@@ -1,5 +1,4 @@
 import * as objectHash from "object-hash/dist/object_hash"
-
 /* Functions for ProseMirror integration.*/
 import {ProseMirror} from "prosemirror-old/dist/edit/main"
 import {collabEditing} from "prosemirror-old/dist/collab"

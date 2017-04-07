@@ -26,7 +26,7 @@ export class SowiportSearcher {
                     'fl': 'id title doi description'
                 },
                 dataType: "text", // DataType is an empty text string in case there is no api key.
-                url: '/proxy/http://sowiportbeta.gesis.org/devwork/service/solr/solr_query.php',
+                url: '/proxy/bibliography/http://sowiportbeta.gesis.org/devwork/service/solr/solr_query.php',
                 success: result => {
                     if (result === '') {
                         // No result -- likely due to missing API key.
@@ -53,7 +53,7 @@ export class SowiportSearcher {
         jQuery.ajax({
             dataType: 'text',
             method: 'GET',
-            url: `/proxy/http://sowiportbeta.gesis.org/Record/${id}/Export?style=BibTeX`,
+            url: `/proxy/bibliography/http://sowiportbeta.gesis.org/Record/${id}/Export?style=BibTeX`,
             success: response => {
                 this.importer.importBibtex(response)
             }

@@ -10,7 +10,7 @@ from django.core.files.base import ContentFile
 from document.models import Document, AccessRight
 
 
-class OJSProxy(DjangoHandlerMixin, RequestHandler):
+class Proxy(DjangoHandlerMixin, RequestHandler):
     @asynchronous
     def get(self, relative_url):
         user = self.get_current_user()

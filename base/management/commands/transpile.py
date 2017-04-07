@@ -110,7 +110,7 @@ class Command(BaseCommand):
                     'These files have been automatically generated. '
                     'DO NOT EDIT THEM! \n Changes will be overwritten. Edit '
                     'the original files in one of the django apps, and run '
-                    'manage.py transpile.'
+                    './manage.py transpile.'
                 )
             )
 

@@ -69,6 +69,8 @@ export class ModToolsPrint {
         jQuery(flowTo).show()
 
         this.paginator = new PaginateForPrint({
+            'sectionStartSelector': 'none',
+            'chapterStartSelector': 'none',
             'flowFromElement' : flowCopy,
             'enableFrontmatter' : false,
             'alwaysEven' : false,
@@ -83,6 +85,7 @@ export class ModToolsPrint {
             'pagenumberBottomMargin': 50,
             'footnoteSelector': '.footnote-marker',
             'lengthUnit': 'px',
+            'topfloatSelector': 'table,figure',
             'flowToElement': document.getElementById("print"),
             'callback': () => {
                 this.printReady()

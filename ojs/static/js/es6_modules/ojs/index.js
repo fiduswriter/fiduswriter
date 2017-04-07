@@ -1,3 +1,3 @@
-export {AuthorOJS} from "./author"
-export {reviewSubmit} from "./reviewer"
+export {EditorOJS} from "./editor"
 export {AdminRegisterJournals} from "./admin"
+export {ImportSubmissionRevisionDoc} from "./import"

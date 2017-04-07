@@ -1,7 +1,6 @@
 import {CitationDialog, FigureDialog, LinkDialog, TableDropdown, MathDialog} from "./dialogs"
 import {commands} from "prosemirror-old/dist/edit/commands"
 import "../comments/event"
-
 //var InternalHeadings = new Map();
 var unsentInternal = false
 /* Bindings for the toolbar menu */
@@ -13,7 +12,7 @@ export class ModMenusToolbar {
         this.bindEvents()
     }
 
-    setInternalHeadings(){
+    setInternalHeadings() {
         this.InternalHeadings = new Map()
 
     }
@@ -43,7 +42,7 @@ export class ModMenusToolbar {
 
         jQuery(document).on('mousedown', '#button-cite:not(.disabled)', event => {
             this.executeAction(event, () => {
-                let dialog = new CitationDialog(this.mod,0)
+                let dialog = new CitationDialog(this.mod, 0)
                 return dialog.init()
             })
 
@@ -56,47 +55,48 @@ export class ModMenusToolbar {
             )
         })
 
+
         //internal link -- changing
         jQuery(document).on('mousedown', '#button-internal-link:not(.disabled)', event => {
-            this.executeAction(event, () =>{
-		    let dialog = new LinkDialog(this.mod, 1, this.InternalHeadings)
-		    return dialog.init()
-		})
+            this.executeAction(event, () => {
+                let dialog = new LinkDialog(this.mod, 1, this.InternalHeadings)
+                return dialog.init()
+            })
         })
 
-        jQuery(document).on(
-            'click',
-            '#revision-done:not(.disabled)',
-            () => this.mod.actions.revisionFinished()
-        )
-
-         //return to OJS
-        jQuery(document).on(
-            'click',
-            '#reviewerOJSReturn:not(.disabled)',
-            () => this.mod.actions.returnToOJS()
-        )
 
         let that = this
         // blockstyle paragraph, h1 - h3, lists
-        jQuery(document).on('mousedown', '.toolbarheadings label', function (event) {
+        jQuery(document).on('mousedown', '.toolbarheadings label', function(event) {
 
             const blockTypes = {
-              'p': ['paragraph'],
-              'h1': ['heading',{level: 1}],
-              'h2': ['heading',{level: 2}],
-              'h3': ['heading',{level: 3}],
-              'h4': ['heading',{level: 4}],
-              'h5': ['heading',{level: 5}],
-              'h6': ['heading',{level: 6}],
-              'code': ['code_block']
-            },
-            blockType = blockTypes[this.id.split('_')[0]]
+                    'p': ['paragraph'],
+                    'h1': ['heading', {
+                        level: 1
+                    }],
+                    'h2': ['heading', {
+                        level: 2
+                    }],
+                    'h3': ['heading', {
+                        level: 3
+                    }],
+                    'h4': ['heading', {
+                        level: 4
+                    }],
+                    'h5': ['heading', {
+                        level: 5
+                    }],
+                    'h6': ['heading', {
+                        level: 6
+                    }],
+                    'code': ['code_block']
+                },
+                blockType = blockTypes[this.id.split('_')[0]]
             let blockId = randomInt(0, 100000000)
-            let h_id = this.id.replace("_button","")
- 	        unsentInternal = addValueToKey(h_id, blockId, that.InternalHeadings)
-//            that.mod.editor.mod.collab.docChanges.sendToCollaboratorsInternalHeading()
-            that.executeAction(event, function(){
+            let h_id = this.id.replace("_button", "")
+            unsentInternal = addValueToKey(h_id, blockId, that.InternalHeadings)
+            //            that.mod.editor.mod.collab.docChanges.sendToCollaboratorsInternalHeading()
+            that.executeAction(event, function() {
                 let block = that.mod.editor.currentPm.schema.nodes[blockType[0]]
                 let command = commands.setBlockType(block, blockType[1])
                 command(that.mod.editor.currentPm, true)
@@ -191,14 +191,14 @@ export class ModMenusToolbar {
         })
     }
 
-    unsentInternalHeadings(){
-       // this.InternalHeadings["h1"] = 1111111
+    unsentInternalHeadings() {
+        // this.InternalHeadings["h1"] = 1111111
         return this.InternalHeadings
     }
 
-    hasUnsentInternalHeadings(){
+    hasUnsentInternalHeadings() {
         //console.log("this.InternalHeadings", this.InternalHeadings)
-        if(unsentInternal){
+        if (unsentInternal) {
 
             unsentInternal = false
             return true
@@ -212,13 +212,11 @@ export class ModMenusToolbar {
 
 function addValueToKey(key, value, aMap) {
 
-    aMap[key] =  []
+    aMap[key] = []
     aMap[key].push(value)
     return 1
 }
 
 function randomInt(min, max) {
-    return Math.round(min + Math.random()*(max-min));
+    return Math.round(min + Math.random() * (max - min));
 }
-
-

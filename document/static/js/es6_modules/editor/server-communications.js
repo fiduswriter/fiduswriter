@@ -5,11 +5,11 @@ export class ModServerCommunications {
     constructor(editor) {
         editor.mod.serverCommunications = this
         this.editor = editor
-            /* A list of messages to be sent. Only used when temporarily offline.
-            Messages will be sent when returning back online. */
+        /* A list of messages to be sent. Only used when temporarily offline.
+        Messages will be sent when returning back online. */
         this.messagesToSend = []
         this.connected = false
-            /* Whether the connection is established for the first time. */
+        /* Whether the connection is established for the first time. */
         this.firstTimeConnection = true
     }
 
@@ -21,8 +21,9 @@ export class ModServerCommunications {
         let websocketProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
 
         try {
-            this.ws = new window.WebSocket(`${websocketProtocol}//${window.websocketServer}${window.websocketPort}/ws/doc/${this.editor.doc.id}`)
-	    console.log("this.ws", this.ws)
+
+            this.ws = new window.WebSocket(`${websocketProtocol}//${window.websocketServer}${window.websocketPort}/ws/document/${this.editor.doc.id}`)
+            console.log("this.ws", this.ws)
             this.ws.onopen = () => {
                 jQuery('#unobtrusive_messages').html('')
             }
@@ -42,7 +43,7 @@ export class ModServerCommunications {
                 this.createWSConnection()
             }, 2000)
             if (this.editor.pmCollab.hasSendableSteps()) {
-                jQuery('#unobtrusive_messages').html('<span class="warn">'+gettext('Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect...')+'</span>')
+                jQuery('#unobtrusive_messages').html('<span class="warn">' + gettext('Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect...') + '</span>')
             } else {
                 jQuery('#unobtrusive_messages').html(gettext('Disconnected. Attempting to reconnect...'))
             }
@@ -75,17 +76,17 @@ export class ModServerCommunications {
 
     /** Sends data to server or keeps it in a list if currently offline. */
     send(data) {
-	console.log("send", data)
+        console.log("send", data)
         if (this.connected) {
             let a = this.ws.send(JSON.stringify(data))
-	    console.log("this connected", a)
+            console.log("this connected", a)
         } else if (data.type !== 'diff') {
             this.messagesToSend.push(data)
         }
     }
 
     receive(data) {
-	//console.log("recieve", data)
+        //console.log("recieve", data)
         switch (data.type) {
             case 'chat':
                 this.editor.mod.collab.chat.newMessage(data)

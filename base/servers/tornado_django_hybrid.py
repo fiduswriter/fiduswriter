@@ -1,3 +1,5 @@
+from importlib import import_module
+
 from django.conf import settings
 from django.core.wsgi import get_wsgi_application
 
@@ -8,24 +10,41 @@ from tornado.wsgi import WSGIContainer
 
 from base.handlers import DjangoStaticFilesHandler, HelloHandler, RobotsHandler
 
-from document.ws_views import DocumentWS
-from ojs.proxy_views import OJSProxy
-from base.proxy_views import Proxy
-
 
 def make_tornado_server():
     wsgi_app = WSGIContainer(get_wsgi_application())
-    tornado_app = Application([
+    tornado_url_list = [
         (r'/static/(.*)', DjangoStaticFilesHandler, {'default_filename':
                                                      'none.img'}),
         (r'/media/(.*)', StaticFileHandler, {'path': settings.MEDIA_ROOT}),
         ('/hello-tornado', HelloHandler),
         ('/robots.txt', RobotsHandler),
-        ('/ws/doc/(\w+)', DocumentWS),
-        ('/proxy/ojs/(\w+)', OJSProxy),
-        ('/proxy/([^?]*)', Proxy),
+    ]
+
+    for app in settings.INSTALLED_APPS:
+        app_name = app.rsplit('.', 1).pop()
+        # add proxy views
+        try:
+            proxy_module = import_module('%s.proxy_views' % app)
+        except ImportError:
+            pass
+        else:
+            tornado_url_list += [
+                ('/proxy/%s/([^?]*)' % app_name, proxy_module.Proxy)
+            ]
+        # add ws views
+        try:
+            ws_module = import_module('%s.ws_views' % app)
+        except ImportError:
+            pass
+        else:
+            tornado_url_list += [
+                ('/ws/%s/([^?]*)' % app_name, ws_module.WebSocket)
+            ]
+    tornado_url_list += [
         ('.*', FallbackHandler, dict(fallback=wsgi_app))
-    ])
+    ]
+    tornado_app = Application(tornado_url_list)
 
     return HTTPServer(tornado_app)
 

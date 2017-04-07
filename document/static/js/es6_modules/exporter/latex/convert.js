@@ -143,11 +143,15 @@ export class LatexExporterConvert {
                     // We are inside a headline or a list and can only place a
                     // footnote marker here. The footnote will have to be put
                     // beyond the block node instead.
-                    start += '\\protect\\footnotemark'
+                    start += '\\protect\\footnotemark{}'
                     options.unplacedFootnotes.push(node.attrs.footnote)
                 } else {
                     start += '\\footnote{'
-                    content += this.walkJson(node.attrs.footnote, options)
+                    let fnContent = ''
+                    node.attrs.footnote.forEach(footPar => {
+                        fnContent += this.walkJson(footPar, options)
+                    })
+                    content += fnContent.replace(/^\s+|\s+$/g, '')
                     end = '}' + end
                 }
                 break
@@ -301,6 +305,9 @@ export class LatexExporterConvert {
             case 'equation':
                 content += `$${node.attrs.equation}$`
                 break
+            case 'hard_break':
+                content += '\n\n'
+                break
             default:
                 console.warn('Unhandled node type:' + node.type)
                 break
@@ -311,22 +318,25 @@ export class LatexExporterConvert {
                 content += this.walkJson(child, options)
             })
         }
-
-        if (placeFootnotesAfterBlock &&
+        if (
+            placeFootnotesAfterBlock &&
             options.unplacedFootnotes &&
-            options.unplacedFootnotes.length) {
+            options.unplacedFootnotes.length
+        ) {
             // There are footnotes that needed to be placed behind the node.
             // This happens in the case of headlines and lists.
-            if (options.unplacedFootnotes.length > 1) {
-                end += `\\addtocounter{footnote}{-${(options.unplacedFootnotes.length)}}`
-                options.unplacedFootnotes.forEach(footnote => {
-                    end += '\\stepcounter{footnote}\n'
-                    end += '\\footnotetext{'
-                    end += this.walkJson(footnote, options)
-                    end += '}'
+            end += `\\addtocounter{footnote}{-${(options.unplacedFootnotes.length)}}`
+            options.unplacedFootnotes.forEach(footnote => {
+                end += '\\stepcounter{footnote}\n'
+                end += '\\footnotetext{'
+                let fnContent = ''
+                footnote.forEach(footPar => {
+                    fnContent += this.walkJson(footPar, options)
                 })
-                options.unplacedFootnotes = []
-            }
+                end += fnContent.replace(/^\s+|\s+$/g, '')
+                end += '}'
+            })
+            options.unplacedFootnotes = []
         }
 
         return start + content + end

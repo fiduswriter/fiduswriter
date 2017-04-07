@@ -14,14 +14,17 @@ SERVER_INFO = {
     # This is the contact email that will be shown in various places all over
     # the site.
     'CONTACT_EMAIL': 'mail@email.com',
-    # If the FW instance is connected to an Open Journal System's instance,
-    # add the url here.
-    'OJS_URL': False,
-    # An app key for OJS to connect with. Change it to a secret value.
-    'OJS_KEY': 'S5cr4T',
     # If websockets is running on a non-standard port, add it here:
     'WS_PORT': False,
 }
+
+# An API key to allow searching in Worldcat's opensearch. If False, will
+# disable searches on worldcat.
+WORLDCAT_KEY = False
+
+# An API key to allow searching in Sowiport (http://sowiport.gesis.org/)
+# If False, will disable searches on Sowiport.
+SOWIPORT_KEY = False
 
 ADMINS = (
     ('Your Name', 'your_email@example.com'),
@@ -58,11 +61,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # EMAIL_SUBJECT_PREFIX = '[Fidus Writer]'
 
 
-# Local time zone for this installation. Choices can be found here:
-# http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
-# although not all choices may be available on all operating systems.
-# In a Windows environment this must be set to your system time zone.
-TIME_ZONE = 'America/Chicago'
+# Local time zone for this installation. Keep UTC here, the frontend will
+# translate this to the correct local time.
+TIME_ZONE = 'UTC'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html

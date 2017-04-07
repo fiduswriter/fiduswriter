@@ -1383,7 +1383,7 @@ msgstr "Table"
 
 #: document/static/js/figure-citation-templates.js:161
 msgid "Insert caption"
-msgstr "Bilduntrtext einfügen"
+msgstr "Bilduntertext einfügen"
 
 #: document/static/js/importer.js:58
 msgid ""

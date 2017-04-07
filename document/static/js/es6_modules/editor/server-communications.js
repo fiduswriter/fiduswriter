@@ -74,14 +74,17 @@ export class ModServerCommunications {
 
     /** Sends data to server or keeps it in a list if currently offline. */
     send(data) {
+	console.log("send", data)
         if (this.connected) {
-            this.ws.send(JSON.stringify(data))
+            let a = this.ws.send(JSON.stringify(data))
+	    console.log("this connected", a)
         } else if (data.type !== 'diff') {
             this.messagesToSend.push(data)
         }
     }
 
     receive(data) {
+	//console.log("recieve", data)
         switch (data.type) {
             case 'chat':
                 this.editor.mod.collab.chat.newMessage(data)

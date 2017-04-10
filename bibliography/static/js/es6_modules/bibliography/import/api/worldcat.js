@@ -20,7 +20,7 @@ export class WorldcatSearcher {
                     'q': searchTerm
                 },
                 dataType: "xml",
-                url: '/proxy/http://www.worldcat.org/webservices/catalog/search/opensearch?/select/',
+                url: '/proxy/bibliography/http://www.worldcat.org/webservices/catalog/search/opensearch?/select/',
                 success: result => {
                     if (result === null) {
                         // No result -- likely due to missing API key.
@@ -49,7 +49,7 @@ export class WorldcatSearcher {
             dataType: 'text',
             method: 'GET',
 
-            url: `/proxy/http://xisbn.worldcat.org/webservices/xid/isbn/${isbn}?method=getMetadata&format=json&fl=*`,
+            url: `/proxy/bibliography/http://xisbn.worldcat.org/webservices/xid/isbn/${isbn}?method=getMetadata&format=json&fl=*`,
 
             success: response => {
                 let bibStr = this.isbnToBibtex(response)

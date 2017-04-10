@@ -10,7 +10,7 @@ from django.core.files.base import ContentFile
 from document.models import Document, AccessRight
 
 
-class OJSProxy(DjangoHandlerMixin, RequestHandler):
+class Proxy(DjangoHandlerMixin, RequestHandler):
     @asynchronous
     def get(self, relative_url):
         user = self.get_current_user()
@@ -199,6 +199,14 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
     def on_author_resubmit_response(self, response):
         if response.error:
             raise HTTPError(500)
+        # submission was successful, so we replace the user's write access
+        # rights with read rights.
+        right = AccessRight.objects.get(
+            user=self.user,
+            document=self.revision.document
+        )
+        right.rights = 'read'
+        right.save()
         self.write(response.body)
         self.finish()
 
@@ -213,18 +221,20 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
             # Trying to submit review without access rights.
             self.set_status(401)
             self.finish()
-        reviewer = reviewers[0]
+        self.reviewer = reviewers[0]
         post_data = {
-            'submission_id': reviewer.revision.submission.ojs_jid,
-            'version': reviewer.revision.version,
-            'user_id': reviewer.ojs_jid,
+            'submission_id': self.reviewer.revision.submission.ojs_jid,
+            'version': self.reviewer.revision.version,
+            'user_id': self.reviewer.ojs_jid,
             'editor_message': self.get_argument('editor_message'),
-            'editor_author_message': self.get_argument('editor_author_message')
+            'editor_author_message':
+                self.get_argument('editor_author_message'),
+            'recommendation': self.get_argument('recommendation')
         }
 
         body = urlencode(post_data)
-        key = reviewer.revision.submission.journal.ojs_key
-        base_url = reviewer.revision.submission.journal.ojs_url
+        key = self.reviewer.revision.submission.journal.ojs_key
+        base_url = self.reviewer.revision.submission.journal.ojs_url
         url = base_url + self.plugin_path + 'reviewerSubmit'
         http = AsyncHTTPClient()
         http.fetch(
@@ -241,9 +251,14 @@ class OJSProxy(DjangoHandlerMixin, RequestHandler):
     # server doesn't block the FW server connection.
     def on_reviewer_submit_response(self, response):
         if response.error:
-            self.revision.document.delete()
-            self.revision.delete()
             raise HTTPError(500)
-
+        # submission was successful, so we replace the user's write access
+        # rights with read rights.
+        right = AccessRight.objects.get(
+            user=self.user,
+            document=self.reviewer.revision.document
+        )
+        right.rights = 'read'
+        right.save()
         self.write(response.body)
         self.finish()

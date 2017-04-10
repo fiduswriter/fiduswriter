@@ -34,6 +34,7 @@ export let firstSubmissionDialogTemplate = _.template('\
 export let resubmissionDialogTemplate = _.template('\
     <div title="'+gettext('Resubmit')+'">\
     <p>'+gettext('By pressing the submit button your resubmission will be sent to the journal')+'</p><br>\
+    <p><b>'+gettext('Be aware that this action cannot be undone!')+'</b></p>\
 </div>\
 ')
 
@@ -44,5 +45,6 @@ export let reviewSubmitDialogTemplate = _.template('\
     <p><textarea  id="message-editor" name="message-editor" class="message-reviewer" ></textarea></p><br>\
     <label for="editor-author">Message for editor and authors:</label>\
     <p><textarea  id="message-editor-author" class="message-reviewer" ></textarea></p>\
+    <p><b>'+gettext('Be aware that this action cannot be undone!')+'</b></p>\
 </div>\
 ')

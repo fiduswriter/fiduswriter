@@ -3,13 +3,12 @@ import {ImageDB} from "../images/database"
 import {addAlert, csrfToken} from "../common"
 import {SaveCopy} from "../exporter/native"
 import {firstSubmissionDialogTemplate, resubmissionDialogTemplate, reviewSubmitDialogTemplate} from "./templates"
-import {SendDocSubmission} from "./submission"
+import {SendDocSubmission} from "./submit-doc"
 
 // Adds functions for OJS to the editor
 export class EditorOJS {
     constructor(editor) {
         this.editor = editor
-        this.editor.ojs = this
         this.submission = false
         this.journals = false
     }
@@ -188,7 +187,10 @@ export class EditorOJS {
             crossDomain: false, // obviates need for sameOrigin test
             beforeSend: (xhr, settings) =>
                 xhr.setRequestHeader("X-CSRFToken", csrfToken),
-            success: () => addAlert('success', gettext('Review submitted')),
+            success: () => {
+                addAlert('success', gettext('Resubmission successful'))
+                window.setTimeout(() => window.location.reload(), 2000)
+            },
             error: () => addAlert('error', gettext('Review could not be submitted.'))
         })
     }
@@ -256,7 +258,10 @@ export class EditorOJS {
             crossDomain: false, // obviates need for sameOrigin test
             beforeSend: (xhr, settings) =>
                 xhr.setRequestHeader("X-CSRFToken", csrfToken),
-            success: () => addAlert('success', gettext('Review submitted')),
+            success: () => {
+                addAlert('success', gettext('Review submitted'))
+                window.setTimeout(() => window.location.reload(), 2000)
+            },
             error: () => addAlert('error', gettext('Review could not be submitted.'))
         })
     }

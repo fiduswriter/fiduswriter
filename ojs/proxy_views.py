@@ -199,6 +199,14 @@ class Proxy(DjangoHandlerMixin, RequestHandler):
     def on_author_resubmit_response(self, response):
         if response.error:
             raise HTTPError(500)
+        # submission was successful, so we replace the user's write access
+        # rights with read rights.
+        right = AccessRight.objects.get(
+            user=self.user,
+            document=self.revision.document
+        )
+        right.rights = 'read'
+        right.save()
         self.write(response.body)
         self.finish()
 
@@ -244,6 +252,13 @@ class Proxy(DjangoHandlerMixin, RequestHandler):
             self.revision.document.delete()
             self.revision.delete()
             raise HTTPError(500)
-
+        # submission was successful, so we replace the user's write access
+        # rights with read rights.
+        right = AccessRight.objects.get(
+            user=self.user,
+            document=self.revision.document
+        )
+        right.rights = 'read'
+        right.save()
         self.write(response.body)
         self.finish()

@@ -130,10 +130,11 @@ export class TableDropdown {
                 removeRow(that.editor.currentPm,true)
             })
         })
+
         jQuery('#table-dialog .table-remove').on('mousedown', function(event) {
             that.executeAction(event, function(){
-                // move the selection up until reaching the first level (selecting the table)
-                while(that.editor.currentPm.selection.$from.depth > 1) {
+                // move the selection up until reaching the second level (selecting the table)
+                while(that.editor.currentPm.selection.$from.depth > 2) {
                     commands.selectParentNode(that.editor.currentPm, true)
                 }
                 // Remove the selection

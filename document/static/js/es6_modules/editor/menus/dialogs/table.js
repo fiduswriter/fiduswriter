@@ -134,8 +134,8 @@ export class TableDropdown {
         })
         jQuery('#table-dialog .table-remove').on('mousedown', event => {
             this.executeAction(event, () => {
-                // move the selection up until reaching the first level (selecting the table)
-                while(this.editor.currentPm.selection.$from.depth > 1) {
+                // move the selection up until reaching the second level (selecting the table)
+                while(this.editor.currentPm.selection.$from.depth > 2) {
                     commands.selectParentNode(this.editor.currentPm, true)
                 }
                 // Remove the selection

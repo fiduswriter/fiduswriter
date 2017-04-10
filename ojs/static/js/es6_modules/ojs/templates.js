@@ -34,15 +34,27 @@ export let firstSubmissionDialogTemplate = _.template('\
 export let resubmissionDialogTemplate = _.template('\
     <div title="'+gettext('Resubmit')+'">\
     <p>'+gettext('By pressing the submit button your resubmission will be sent to the journal')+'</p><br>\
+    <p><b>'+gettext('Be aware that this action cannot be undone!')+'</b></p>\
 </div>\
 ')
 
 
 export let reviewSubmitDialogTemplate = _.template('\
     <div id="review-message" title="'+gettext('Leave your messages for editor and authors')+'">\
-    <label for="editor">Message for editor:</label>\
+    <label for="editor">'+gettext('Message for editor')+':</label>\
     <p><textarea  id="message-editor" name="message-editor" class="message-reviewer" ></textarea></p><br>\
-    <label for="editor-author">Message for editor and authors:</label>\
-    <p><textarea  id="message-editor-author" class="message-reviewer" ></textarea></p>\
+    <label for="editor-author">'+gettext('Message for editor and authors')+':</label>\
+    <p><textarea  id="message-editor-author" class="message-reviewer" ></textarea></p><br>\
+    <label for="recommendation">'+gettext('Recommendation')+':</label>\
+    <p><select id="recommendation" class="fw-button fw-white fw-large" name="recommendation">\
+		<option label="'+gettext('Choose One')+'" value="">'+gettext('Choose One')+'</option>\
+        <option label="'+gettext('Accept Submission')+'" value="1">'+gettext('Accept Submission')+'</option>\
+        <option label="'+gettext('Revisions Required')+'" value="2">'+gettext('Revisions Required')+'</option>\
+        <option label="'+gettext('Resubmit for Review')+'" value="3">'+gettext('Resubmit for Review')+'</option>\
+        <option label="'+gettext('Resubmit Elsewhere')+'" value="4">'+gettext('Resubmit Elsewhere')+'</option>\
+        <option label="'+gettext('Decline Submission')+'" value="5">'+gettext('Decline Submission')+'</option>\
+        <option label="'+gettext('See Comments')+'" value="6">'+gettext('See Comments')+'</option>\
+    </select></p><br>\
+    <p><strong>'+gettext('Be aware that this action cannot be undone!')+'</strong></p>\
 </div>\
 ')

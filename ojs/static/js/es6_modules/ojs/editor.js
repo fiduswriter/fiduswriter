@@ -3,13 +3,12 @@ import {ImageDB} from "../images/database"
 import {addAlert, csrfToken} from "../common"
 import {SaveCopy} from "../exporter/native"
 import {firstSubmissionDialogTemplate, resubmissionDialogTemplate, reviewSubmitDialogTemplate} from "./templates"
-import {SendDocSubmission} from "./submission"
+import {SendDocSubmission} from "./submit-doc"
 
 // Adds functions for OJS to the editor
 export class EditorOJS {
     constructor(editor) {
         this.editor = editor
-        this.editor.ojs = this
         this.submission = false
         this.journals = false
     }
@@ -188,7 +187,10 @@ export class EditorOJS {
             crossDomain: false, // obviates need for sameOrigin test
             beforeSend: (xhr, settings) =>
                 xhr.setRequestHeader("X-CSRFToken", csrfToken),
-            success: () => addAlert('success', gettext('Review submitted')),
+            success: () => {
+                addAlert('success', gettext('Resubmission successful'))
+                window.setTimeout(() => window.location.reload(), 2000)
+            },
             error: () => addAlert('error', gettext('Review could not be submitted.'))
         })
     }
@@ -224,15 +226,16 @@ export class EditorOJS {
         buttons.push({
             text: gettext('Send'),
             click: () => {
-                this.submitReview()
-                dialog.dialog('close')
+                if (this.submitReview()) {
+                    dialog.dialog('close')
+                }
             },
             class: 'fw-button fw-dark'
         })
         jQuery("#review-message").remove()
         dialog = jQuery(reviewSubmitDialogTemplate()).dialog({
             autoOpen: true,
-            height: 400,
+            height: 490,
             width: 350,
             modal: true,
             buttons
@@ -243,9 +246,16 @@ export class EditorOJS {
     submitReview() {
         let data = new window.FormData()
         data.append('doc_id', this.editor.doc.id)
-        data.append('editor_message', jQuery("#message-editor").val())
-        data.append('editor_author_message', jQuery("#message-editor-author").val())
-
+        let editorMessage = jQuery("#message-editor").val()
+        let editorAuthorMessage = jQuery("#message-editor-author").val()
+        let recommendation = jQuery("#recommendation").val()
+        if (editorMessage === '' || editorAuthorMessage === '' || recommendation === '') {
+            addAlert('error', gettext('Fill out all fields before submitting!'))
+            return false
+        }
+        data.append('editor_message', editorMessage)
+        data.append('editor_author_message', editorAuthorMessage)
+        data.append('recommendation', recommendation)
         jQuery.ajax({
             url: '/proxy/ojs/reviewer_submit',
             data,
@@ -256,9 +266,13 @@ export class EditorOJS {
             crossDomain: false, // obviates need for sameOrigin test
             beforeSend: (xhr, settings) =>
                 xhr.setRequestHeader("X-CSRFToken", csrfToken),
-            success: () => addAlert('success', gettext('Review submitted')),
+            success: () => {
+                addAlert('success', gettext('Review submitted'))
+                window.setTimeout(() => window.location.reload(), 2000)
+            },
             error: () => addAlert('error', gettext('Review could not be submitted.'))
         })
+        return true;
     }
 
 }

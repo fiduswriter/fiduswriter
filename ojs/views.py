@@ -465,18 +465,15 @@ def create_copy_js(request, submission_id):
     if new_version.split('.')[-1] == '5':
         # We have an author version and we give the author write access.
         access_right = 'write'
-    else:
-        # This is a reviewer version. We give the author limited read access.
-        access_right = 'read-without-comments'
-    authors = models.Author.objects.filter(
-        submission=revision.submission
-    )
-    for author in authors:
-        AccessRight.objects.create(
-            document=document,
-            user=author.user,
-            rights=access_right
-        )
+        authors = models.Author.objects.filter(
+            submission=revision.submission
+            )
+        for author in authors:
+            AccessRight.objects.create(
+                document=document,
+                user=author.user,
+                rights=access_right
+            )
 
     return JsonResponse(
         response,

@@ -158,7 +158,7 @@ def save_js(request):
             if request.POST['is_new'] == 'true':
                 inserting_obj = {
                     'entry_owner_id': owner_id,
-                    'entry_key': bib['entry_key'],
+                    'entry_key': bib['entry_key'][-64:],
                     'bib_type': bib['bib_type'],
                     'entry_cat': bib['entry_cat'],
                     'fields': bib['fields']
@@ -172,7 +172,7 @@ def save_js(request):
                     response['id_translations'].append([b_id, similar[0].id])
             else:
                 the_entry = Entry.objects.get(id=b_id)
-                the_entry.entry_key = bib['entry_key']
+                the_entry.entry_key = bib['entry_key'][-64:]
                 the_entry.bib_type = bib['bib_type']
                 the_entry.entry_cat = bib['entry_cat']
                 the_entry.fields = bib['fields']

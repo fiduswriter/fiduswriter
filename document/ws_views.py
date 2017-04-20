@@ -440,7 +440,7 @@ class WebSocket(BaseWebSocketHandler):
     def save_document(cls, document_id, all_have_left):
         doc = cls.sessions[document_id]
         doc_db = doc['db']
-        doc_db.title = doc['title']
+        doc_db.title = doc['title'][-255:]
         doc_db.version = doc['version']
         doc_db.diff_version = doc['diff_version']
         doc_db.comment_version = doc['comment_version']

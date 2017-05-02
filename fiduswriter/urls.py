@@ -2,7 +2,7 @@ from django.conf.urls import include, url
 from django.http import HttpResponse
 from django.contrib import admin
 from adminplus.sites import AdminSitePlus
-import settings
+from . import settings
 from user.views import logout_page
 from django.contrib.flatpages import views as flatpages_views
 from document.views import index as document_index

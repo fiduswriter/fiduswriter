@@ -26,6 +26,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         start = time.time()
         shutil.os.chdir(PROJECT_PATH)
+        call_command("create_package_json")
         if not (
             os.path.exists(
                 os.path.join(
@@ -128,7 +129,6 @@ class Command(BaseCommand):
             ).split("\n")[:-1]:
                 if 'static/js' in sourcefile:
                     sourcefiles.append(sourcefile)
-
 
         for sourcefile in sourcefiles:
             relative_path = sourcefile.split('static/js/')[1]

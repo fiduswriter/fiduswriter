@@ -7,6 +7,7 @@ import json
 import shutil
 import time
 
+from django.contrib.staticfiles import finders
 from fiduswriter.settings import PROJECT_PATH
 
 # Temporary conversion of JavaScript ES6 to ES5. Once
@@ -114,17 +115,20 @@ class Command(BaseCommand):
                 )
             )
 
-        mainfiles = check_output(
-            ["find", ".", "-type", "f", "-name", "*.es6.js", "-print"]
-        ).split("\n")[:-1]
-        mainfiles = [item for item in mainfiles if not (
-            "node_modules" in item or "es6-cache" in item)]
+        js_paths = finders.find('js/', True)
+        mainfiles = []
+        sourcefiles = []
+        for path in js_paths:
+            for mainfile in check_output(
+                ["find", path, "-type", "f", "-name", "*.es6.js", "-print"]
+            ).split("\n")[:-1]:
+                mainfiles.append(mainfile)
+            for sourcefile in check_output(
+                ["find", path, "-type", "f", "-wholename", "*js"]
+            ).split("\n")[:-1]:
+                if 'static/js' in sourcefile:
+                    sourcefiles.append(sourcefile)
 
-        sourcefiles = check_output(
-            ["find", ".", "-type", "f", "-wholename", "*static/js/*js"]
-        ).split("\n")[:-1]
-        sourcefiles = [item for item in sourcefiles if not (
-            "node_modules" in item or "es6-cache" in item)]
 
         for sourcefile in sourcefiles:
             relative_path = sourcefile.split('static/js/')[1]
@@ -138,16 +142,16 @@ class Command(BaseCommand):
             elif os.path.getmtime(outfile) < os.path.getmtime(sourcefile):
                 shutil.copyfile(sourcefile, outfile)
 
-        for sourcefile in mainfiles:
-            dirname = os.path.dirname(sourcefile)
-            basename = os.path.basename(sourcefile)
+        for mainfile in mainfiles:
+            dirname = os.path.dirname(mainfile)
+            basename = os.path.basename(mainfile)
             outfilename = basename.split('.')[0] + ".es5.js"
             cachefile = os.path.join(
                 cache_dir, basename.split('.')[0] + ".cache.json")
             relative_dir = dirname.split('static/js')[1]
             infile = os.path.join(cache_dir, relative_dir, basename)
             outfile = os.path.join(out_dir, relative_dir, outfilename)
-            print("Transpiling " + sourcefile + " to " + outfile)
+            print("Transpiling " + basename + " to " + outfile)
             call(["node_modules/.bin/browserifyinc", "--ignore-missing",
                   "--cachefile", cachefile, "--outfile", outfile, "-t",
                   "babelify", infile])

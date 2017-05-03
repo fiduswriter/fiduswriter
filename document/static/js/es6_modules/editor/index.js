@@ -211,8 +211,10 @@ export class Editor {
             this.plugins = {}
 
             Object.keys(editorPlugins).forEach(ePlugin => {
-                this.plugins[ePlugin] = new editorPlugins[ePlugin](this)
-                this.plugins[ePlugin].init()
+                if (typeof editorPlugins[ePlugin] === 'function') {
+                    this.plugins[ePlugin] = new editorPlugins[ePlugin](this)
+                    this.plugins[ePlugin].init()
+                }
             })
 
         }

@@ -22,15 +22,15 @@ install:
   - pip install -r requirements.txt
   - pip install -r dev-requirements.txt
   - flake8 ./
+  - ./manage.py check_js
   - pip install coverage
   - pip install coveralls
   - pip install selenium
-  - npm install
-  - npm run check_js
-  - ./travis/sauce-connect.sh
+  - coverage run manage.py init
 
 script:
-  - coverage run manage.py init
+
+  - ./travis/sauce-connect.sh
   - travis_retry coverage run manage.py test
 
 after_success:

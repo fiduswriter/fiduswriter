@@ -1,6 +1,8 @@
+// Fidus Writer will combine this file with package.json files in other installed
+// apps before executing npm commands. Different from a regular package.json, comments
+// are allowed in this file.
 {
   "name": "fidus-writer",
-  "version": "3.2.0-dev",
   "description": "Install dependencies for ES6 transpilation",
   "scripts": {
     "get_mml2omml": "mkdir -p ./static-libs/xsl/ && wget https://raw.githubusercontent.com/AbiWord/abiword/14cbf144cb10a5a5ea6ee11275f7178ca4ff055a/plugins/openxml/omml_xslt/mml2omml.xsl -O ./static-libs/xsl/mml2omml.xsl",
@@ -11,9 +13,7 @@
     "copy_dropkickjs": "mkdir -p ./static-libs/js/libs/ && cp node_modules/dropkickjs/build/js/dropkick.min.js ./static-libs/js/libs/",
     "copy_dropkickjs_css": "mkdir -p ./static-libs/css/libs/ && cp node_modules/dropkickjs/build/css/dropkick.css ./static-libs/css/libs/",
     "postinstall": "npm run get_mml2omml && npm run copy_jquery && npm run copy_jquery-ui && npm run copy_underscore && npm run copy_datatables && npm run copy_dropkickjs && npm run copy_dropkickjs_css",
-    "check_js": "jshint .",
-    "check_py": "flake8 ./",
-    "install": "napa"
+    "jshint": "jshint ."
   },
   "author": "Johannes Wilm",
   "license": "AGPL",
@@ -38,15 +38,12 @@
     "jszip-utils": "0.0.2",
     "katex": "0.6.0",
     "mathquill": "0.10.1-b",
-    "napa": "2.3.0",
     "object-hash": "1.1.4",
     "paginate-for-print": "0.0.7",
     "prosemirror-old": "0.10.6",
     "texzilla": "0.9.9",
     "tokenfield": "^0.3.14",
     "underscore": "1.8.3"
-  },
-  "napa": {
   },
   "browserify": {
     "transform": [

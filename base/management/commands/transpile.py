@@ -156,7 +156,8 @@ class Command(BaseCommand):
                 module_name = os.path.splitext(
                     os.path.basename(relative_path)
                 )[0]
-                plugin_dirs[dirname].append(module_name)
+                if module_name != 'init':
+                    plugin_dirs[dirname].append(module_name)
 
         # Write an index.js file for every plugin dir
         for plugin_dir in plugin_dirs:

@@ -7,7 +7,7 @@ from django.apps import apps as django_apps
 from fiduswriter.settings import PROJECT_PATH
 
 
-def deep_merge_dicts(old_dict, merge_dict, scripts = False):
+def deep_merge_dicts(old_dict, merge_dict, scripts=False):
     for key in merge_dict:
         if key in old_dict:
             if (

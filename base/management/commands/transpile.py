@@ -130,9 +130,17 @@ class Command(BaseCommand):
                 if 'static/js' in sourcefile:
                     sourcefiles.append(sourcefile)
 
+        # Note all cache files so that we can remove outdated files that no
+        # longer are in the prject.
+        cache_files = []
+        # Note all plugin dirs and the modules inside of them to crate index.js
+        # files inside of them.
+        plugin_dirs = {}
+
         for sourcefile in sourcefiles:
             relative_path = sourcefile.split('static/js/')[1]
             outfile = os.path.join(cache_dir, relative_path)
+            cache_files.append(outfile)
             dirname = os.path.dirname(outfile)
             if not os.path.exists(dirname):
                 os.makedirs(dirname)
@@ -141,6 +149,47 @@ class Command(BaseCommand):
                 shutil.copyfile(sourcefile, outfile)
             elif os.path.getmtime(outfile) < os.path.getmtime(sourcefile):
                 shutil.copyfile(sourcefile, outfile)
+            # Check for plugin connectors
+            if relative_path[:20] == 'es6_modules/plugins/':
+                if dirname not in plugin_dirs:
+                    plugin_dirs[dirname] = []
+                module_name = os.path.splitext(
+                    os.path.basename(relative_path)
+                )[0]
+                plugin_dirs[dirname].append(module_name)
+
+        # Write an index.js file for every plugin dir
+        for plugin_dir in plugin_dirs:
+            index_js = ""
+            for module_name in plugin_dirs[plugin_dir]:
+                index_js += 'export * from "./%s"\n' % module_name
+            outfile = os.path.join(plugin_dir, 'index.js')
+            cache_files.append(outfile)
+            if not os.path.isfile(outfile):
+                index_file = open(outfile, 'w')
+                index_file.write(index_js)
+                index_file.close()
+            else:
+                index_file = open(outfile, 'r')
+                old_index_js = index_file.read()
+                index_file.close()
+                if old_index_js != index_js:
+                    index_file = open(outfile, 'w')
+                    index_file.write(index_js)
+                    index_file.close()
+
+        # Check for outdated files that should be removed
+        for existing_file in check_output(
+            ["find", './es6-cache', "-type", "f"]
+        ).split("\n")[:-1]:
+            if existing_file not in cache_files:
+                if existing_file[-10:] == "cache.json":
+                    if not existing_file[:-10] + "es6.js" in cache_files:
+                        print("Removing %s" % existing_file)
+                        os.remove(existing_file)
+                else:
+                    print("Removing %s" % existing_file)
+                    os.remove(existing_file)
 
         for mainfile in mainfiles:
             dirname = os.path.dirname(mainfile)
@@ -151,7 +200,7 @@ class Command(BaseCommand):
             relative_dir = dirname.split('static/js')[1]
             infile = os.path.join(cache_dir, relative_dir, basename)
             outfile = os.path.join(out_dir, relative_dir, outfilename)
-            print("Transpiling " + basename + " to " + outfile)
+            print("Transpiling %s to %s." % (basename, outfile))
             call(["node_modules/.bin/browserifyinc", "--ignore-missing",
                   "--cachefile", cachefile, "--outfile", outfile, "-t",
                   "babelify", infile])

@@ -7,16 +7,24 @@ from django.apps import apps as django_apps
 from fiduswriter.settings import PROJECT_PATH
 
 
-def deep_merge_dicts(old_dict, merge_dict):
+def deep_merge_dicts(old_dict, merge_dict, scripts = False):
     for key in merge_dict:
         if key in old_dict:
             if (
                 isinstance(old_dict[key], dict) and
                 isinstance(merge_dict[key], dict)
             ):
-                deep_merge_dicts(old_dict[key], merge_dict[key])
+                if key == 'scripts':
+                    deep_merge_dicts(old_dict[key], merge_dict[key], True)
+                else:
+                    deep_merge_dicts(old_dict[key], merge_dict[key])
             else:
-                old_dict[key] = merge_dict[key]
+                # In the scripts section, allow adding to hooks such as
+                # "preinstall" and "postinstall"
+                if scripts and key in old_dict:
+                    old_dict[key] += ' & %s' % merge_dict[key]
+                else:
+                    old_dict[key] = merge_dict[key]
         else:
             old_dict[key] = merge_dict[key]
 

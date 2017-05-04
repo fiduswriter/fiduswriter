@@ -8,7 +8,7 @@ import {BibLatexFileImporter, BibLatexApiImporter} from "../import"
 import {BibLatexFileExporter} from "../export"
 import {addDropdownBox} from "../../common"
 import {Menu} from "../../menu"
-import * as bibliographyOverviewPlugins from "../../plugins/bibliography-overview"
+import * as plugins from "../../plugins/bibliography-overview"
 
 export class BibliographyOverview {
 
@@ -241,10 +241,10 @@ export class BibliographyOverview {
         // Add plugins
         this.plugins = {}
 
-        Object.keys(bibliographyOverviewPlugins).forEach(bPlugin => {
-            if (typeof bibliographyOverviewPlugins[bPlugin] === 'function') {
-                this.plugins[bPlugin] = new bibliographyOverviewPlugins[bPlugin](this)
-                this.plugins[bPlugin].init()
+        Object.keys(plugins).forEach(plugin => {
+            if (typeof plugins[plugin] === 'function') {
+                this.plugins[plugin] = new plugins[plugin](this)
+                this.plugins[plugin].init()
             }
         })
     }

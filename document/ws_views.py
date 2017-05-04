@@ -13,7 +13,7 @@ from document.views import get_accessrights
 from avatar.templatetags.avatar_tags import avatar_url
 
 
-class DocumentWS(BaseWebSocketHandler):
+class WebSocket(BaseWebSocketHandler):
     sessions = dict()
 
     def open(self, document_id):
@@ -28,8 +28,8 @@ class DocumentWS(BaseWebSocketHandler):
         doc_db, can_access = self.user_info.init_access(
             document_id, current_user)
         if can_access:
-            if doc_db.id in DocumentWS.sessions:
-                self.doc = DocumentWS.sessions[doc_db.id]
+            if doc_db.id in WebSocket.sessions:
+                self.doc = WebSocket.sessions[doc_db.id]
                 self.id = max(self.doc['participants']) + 1
                 print("id when opened %s" % self.id)
             else:
@@ -47,7 +47,7 @@ class DocumentWS(BaseWebSocketHandler):
                 self.doc['comment_version'] = doc_db.comment_version
                 self.doc['title'] = doc_db.title
                 self.doc['id'] = doc_db.id
-                DocumentWS.sessions[doc_db.id] = self.doc
+                WebSocket.sessions[doc_db.id] = self.doc
             self.doc['participants'][self.id] = self
             response['type'] = 'welcome'
             self.write_message(response)
@@ -141,7 +141,7 @@ class DocumentWS(BaseWebSocketHandler):
         self.write_message(response)
 
     def on_message(self, message):
-        if self.user_info.document_id not in DocumentWS.sessions:
+        if self.user_info.document_id not in WebSocket.sessions:
             print('receiving message for closed document')
             return
         parsed = json_decode(message)
@@ -228,21 +228,21 @@ class DocumentWS(BaseWebSocketHandler):
             self.doc['comment_version'] += 1
 
     def handle_participant_update(self):
-        DocumentWS.send_participant_list(self.user_info.document_id)
+        WebSocket.send_participant_list(self.user_info.document_id)
 
     def handle_document_update(self, parsed):
         self.update_document(parsed["doc"])
-        DocumentWS.save_document(self.user_info.document_id, False)
+        WebSocket.save_document(self.user_info.document_id, False)
         message = {
             "type": 'check_hash',
             "diff_version": parsed["doc"]["version"],
             "hash": parsed["hash"]
         }
-        DocumentWS.send_updates(message, self.user_info.document_id, self.id)
+        WebSocket.send_updates(message, self.user_info.document_id, self.id)
 
     def handle_title_update(self, parsed):
         self.update_title(parsed["title"])
-        DocumentWS.save_document(self.user_info.document_id, False)
+        WebSocket.save_document(self.user_info.document_id, False)
 
     def handle_chat(self, parsed):
         chat = {
@@ -251,12 +251,12 @@ class DocumentWS(BaseWebSocketHandler):
             "from": self.user_info.user.id,
             "type": 'chat'
         }
-        DocumentWS.send_updates(chat, self.user_info.document_id)
+        WebSocket.send_updates(chat, self.user_info.document_id)
 
     def handle_selection_change(self, parsed):
-        if self.user_info.document_id in DocumentWS.sessions and parsed[
+        if self.user_info.document_id in WebSocket.sessions and parsed[
                 "diff_version"] == self.doc['diff_version']:
-            DocumentWS.send_updates(
+            WebSocket.send_updates(
                 parsed, self.user_info.document_id, self.id)
 
     # Checks if the diff only contains changes to comments.
@@ -290,7 +290,7 @@ class DocumentWS(BaseWebSocketHandler):
             self.doc['diff_version'] += len(parsed["diff"])
             self.update_comments(parsed["comments"])
             self.confirm_diff(parsed["request_id"])
-            DocumentWS.send_updates(
+            WebSocket.send_updates(
                 parsed,
                 self.user_info.document_id,
                 self.id,
@@ -358,21 +358,21 @@ class DocumentWS(BaseWebSocketHandler):
         if (
             hasattr(self, 'user_info') and
             hasattr(self.user_info, 'document_id') and
-            self.user_info.document_id in DocumentWS.sessions and
+            self.user_info.document_id in WebSocket.sessions and
             hasattr(self, 'id') and
-            self.id in DocumentWS.sessions[
+            self.id in WebSocket.sessions[
                 self.user_info.document_id
             ]['participants']
         ):
             del self.doc['participants'][self.id]
             if len(self.doc['participants'].keys()) == 0:
-                DocumentWS.save_document(self.user_info.document_id, True)
-                del DocumentWS.sessions[self.user_info.document_id]
+                WebSocket.save_document(self.user_info.document_id, True)
+                del WebSocket.sessions[self.user_info.document_id]
                 print("noone left")
 
     @classmethod
     def send_participant_list(cls, document_id):
-        if document_id in DocumentWS.sessions:
+        if document_id in WebSocket.sessions:
             participant_list = []
             for session_id, waiter in cls.sessions[
                 document_id
@@ -390,7 +390,7 @@ class DocumentWS(BaseWebSocketHandler):
                 "participant_list": participant_list,
                 "type": 'connections'
             }
-            DocumentWS.send_updates(message, document_id)
+            WebSocket.send_updates(message, document_id)
 
     @classmethod
     def send_updates(cls, message, document_id, sender_id=None, user_id=None):
@@ -440,7 +440,7 @@ class DocumentWS(BaseWebSocketHandler):
     def save_document(cls, document_id, all_have_left):
         doc = cls.sessions[document_id]
         doc_db = doc['db']
-        doc_db.title = doc['title']
+        doc_db.title = doc['title'][-255:]
         doc_db.version = doc['version']
         doc_db.diff_version = doc['diff_version']
         doc_db.comment_version = doc['comment_version']
@@ -464,4 +464,4 @@ class DocumentWS(BaseWebSocketHandler):
         for document_id in cls.sessions:
             cls.save_document(document_id, True)
 
-atexit.register(DocumentWS.save_all_docs)
+atexit.register(WebSocket.save_all_docs)

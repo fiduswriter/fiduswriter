@@ -67,13 +67,17 @@ export class Editor {
         new ModTools(this)
         new ModComments(this)
         this.pm.on.change.add(
-            () => {this.docInfo.changed = true}
+            () => {
+                this.docInfo.changed = true
+            }
         )
         this.pm.on.filterTransform.add(
             transform => this.onFilterTransform(transform)
         )
         this.pm.on.transform.add(
-            (transform, options) => {this.onTransform(transform, true)}
+            (transform, options) => {
+                this.onTransform(transform, true)
+            }
         )
         this.pm.on.transformPastedHTML.add(
             inHTML => {
@@ -175,9 +179,13 @@ export class Editor {
         this.mod.footnotes.markers.removeAllMarkers()
         this.docInfo.hash = this.getHash()
         this.mod.comments.store.setVersion(this.doc.comment_version)
+        this.mod.menus.toolbar.setInternalHeadings()
+
         this.pmCollab.mustSend.add(() => {
             this.mod.collab.docChanges.sendToCollaborators()
+            //	    this.mod.collab.docChanges.sendToCollaboratorsInternalHeading()
         }, 0) // priority : 0 so that other things can be scheduled before this.
+
         this.pmCollab.receivedTransform.add(
             (transform, options) => {
                 this.onTransform(transform, false)
@@ -198,6 +206,11 @@ export class Editor {
         this.mod.comments.store.on("mustSend", () => {
             this.mod.collab.docChanges.sendToCollaborators()
         })
+
+        this.mod.menus.toolbar.on("mustSend", () => {
+            this.mod.collab.docChanges.sendToCollaboratorsInternalHeading()
+        })
+
         this.getBibDB(this.doc.owner.id).then(() => {
             this.enableUI()
         })
@@ -230,10 +243,15 @@ export class Editor {
 
             // Set document in prosemirror
             this.pm.setDoc(
-                docSchema.nodeFromJSON({type:'doc',content:[this.doc.contents]})
+                docSchema.nodeFromJSON({
+                    type: 'doc',
+                    content: [this.doc.contents]
+                })
             )
             // Reattach collaboration module
-            this.pmCollab = collabEditing.config({version: this.doc.version}).attach(this.pm)
+            this.pmCollab = collabEditing.config({
+                version: this.doc.version
+            }).attach(this.pm)
             return Promise.resolve()
         } else {
             // Document is new
@@ -265,7 +283,10 @@ export class Editor {
     getBibDB(userId) {
         if (!this.bibDB) { // Don't get the bibliography again if we already have it.
             let bibGetter = new BibliographyDB(userId, true)
-            return bibGetter.getDB().then(({bibPKs, bibCats}) => {
+            return bibGetter.getDB().then(({
+                bibPKs,
+                bibCats
+            }) => {
                 this.bibDB = bibGetter
                 this.mod.menus.header.enableExportMenu()
             })
@@ -321,8 +342,7 @@ export class Editor {
                 let toolbar = jQuery('.editortoolbar')
                 toolbar.find('.ui-buttonset').hide()
                 toolbar.find('.comment-only').show()
-            }
-            else {
+            } else {
                 jQuery('.metadata-menu-item, #open-close-header, .save, \
               .papersize-menu, .metadata-menu, \
               .documentstyle-menu, .citationstyle-menu').removeClass('disabled')
@@ -365,8 +385,9 @@ export class Editor {
     // other clients if we really have the same contents.
     getHash() {
         return objectHash.MD5(
-            this.pmCollab.versionDoc.toJSON(),
-            {unorderedArrays: true}
+            this.pmCollab.versionDoc.toJSON(), {
+                unorderedArrays: true
+            }
         )
     }
 
@@ -387,8 +408,13 @@ export class Editor {
         this.doc.version = this.pmCollab.version
         this.docInfo.hash = this.getHash()
         this.doc.comments = this.mod.comments.store.comments
+        this.doc.InternalLinks = this.mod.menus.toolbar.InternalHeadings
+        console.log("getUpdates", this.doc.settings, this.doc.contents, this.doc.InternalLinks, this.doc.comments, this.doc.title, this.doc.version)
         return Promise.resolve()
     }
+
+
+
 
     // Send changes to the document to the server
     sendDocumentUpdate() {
@@ -406,6 +432,8 @@ export class Editor {
             hash: this.docInfo.hash
         })
 
+        //let InternalHeading = this.mod.menus.toolbar.unsentInternalHeadings()
+        //console.log("InternalHeadingssend server", InternalHeading)
         this.docInfo.changed = false
 
         return Promise.resolve()
@@ -424,9 +452,9 @@ export class Editor {
             //Check all transformation steps. If step type not allowed = prohibit
             //check if in allowed array. if false - exit loop
             if (!transform.steps.every(step =>
-                (step.jsonID === 'addMark' || step.jsonID === 'removeMark') &&
-                step.mark.type.name === 'comment'
-            )) {
+                    (step.jsonID === 'addMark' || step.jsonID === 'removeMark') &&
+                    step.mark.type.name === 'comment'
+                )) {
                 prohibited = true
             }
         }
@@ -436,9 +464,11 @@ export class Editor {
 
     // Things to be executed on every editor transform.
     onTransform(transform, local) {
-        let updateBibliography = false, updateTitle = false, updateSettings = false,
+        let updateBibliography = false,
+            updateTitle = false,
+            updateSettings = false,
             commentIds = []
-            // Check what area is affected
+        // Check what area is affected
 
         transform.steps.forEach((step, index) => {
             if (step.jsonID === 'replace' || step.jsonID === 'replaceAround') {
@@ -453,13 +483,13 @@ export class Editor {
                             }
                             if (local) {
                                 let commentId = this.mod.comments.layout.findCommentId(node)
-                                if (commentId !== false && commentIds.indexOf(commentId)===-1) {
+                                if (commentId !== false && commentIds.indexOf(commentId) === -1) {
                                     commentIds.push(commentId)
                                 }
                             }
                         }
                     )
-                    if (step.from===0 && step.jsonID === 'replaceAround') {
+                    if (step.from === 0 && step.jsonID === 'replaceAround') {
                         updateSettings = true
                     }
                 }
@@ -469,6 +499,7 @@ export class Editor {
                 }
             }
         })
+
 
         if (updateBibliography) {
             // Recreate the bibliography on next flush.
@@ -497,7 +528,5 @@ export class Editor {
                 () => this.mod.comments.store.checkAndDelete(commentIds)
             )
         }
-
     }
-
 }

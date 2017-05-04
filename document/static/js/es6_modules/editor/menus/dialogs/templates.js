@@ -1,9 +1,17 @@
 export let linkDialogTemplate = _.template('\
-    <div title="' + gettext("Link") + '">\
+    <div id="head-item" title="' + gettext("Link") + '">\
         <p><input class="linktitle" type="text" value="<%- linkTitle %>" placeholder="' + gettext("Link text (optional") + '"/></p>\
-        <p><input class="link" type="text" value="<%- link  %>" placeholder="' + gettext("Link") + '"/></p>\
+        <p><input class="link" type="text" value="<%- link  %>" placeholder="' + gettext("Link") + '"/></p><br> \
+	<p><select name="list_of_headings">\
+	<option value="select_heading">Select Heading</option>\
+	<% _.each(array, function(val, key){ %>\
+		<option class="heading-item" type="text"  value="<%= val %>" ><%= key %> </option>\
+	<% }); %>\
+	</select></p>\
     </div>\
 ')
+
+
 /** Dialog to add a note to a revision before saving. */
 export let revisionDialogTemplate = _.template('\
 <div title="'+gettext('Revision description')+'">\

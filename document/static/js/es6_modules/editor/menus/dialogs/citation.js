@@ -1,9 +1,8 @@
 import {configureCitationTemplate, citationItemTemplate, selectedCitationTemplate} from "./templates"
 import {BibEntryForm} from "../../../bibliography/form"
-import {BibLatexApiImporter} from "../../../bibliography/import"
 import {addDropdownBox, setCheckableLabel} from "../../../common"
 import {nameToText, litToText} from "../../../bibliography/tools"
-
+import * as plugins from "../../../plugins/citation-dialog"
 
 export class CitationDialog {
     constructor(mod) {
@@ -25,12 +24,6 @@ export class CitationDialog {
         this.diaButtons.push({
             text: gettext('Register new source'),
             click: () => this.registerNewSource(),
-            class: 'fw-button fw-light fw-add-button register-new-bib-source'
-        })
-
-        this.diaButtons.push({
-            text: gettext('Import from database'),
-            click: () => this.importFromDatabase(),
             class: 'fw-button fw-light fw-add-button register-new-bib-source'
         })
 
@@ -85,6 +78,20 @@ export class CitationDialog {
         jQuery('.fw-checkable').bind('click', function() {
             setCheckableLabel(jQuery(this))
         })
+
+        this.activatePlugins()
+    }
+
+    activatePlugins() {
+        // Add plugins
+        this.plugins = {}
+
+        Object.keys(plugins).forEach(plugin => {
+            if (typeof plugins[plugin] === 'function') {
+                this.plugins[plugin] = new plugins[plugin](this)
+                this.plugins[plugin].init()
+            }
+        })
     }
 
     citationDialogHTML() {
@@ -125,19 +132,6 @@ export class CitationDialog {
                 })
             }
         )
-    }
-
-    importFromDatabase() {
-        let form = new BibLatexApiImporter(this.editor.bibDB,
-            ids => {
-                this.addToCitableItems(ids)
-                jQuery('.fw-checkable').unbind('click')
-                jQuery('.fw-checkable').bind('click', function() {
-                    setCheckableLabel(jQuery(this))
-                })
-            }
-        )
-        form.init()
     }
 
     bibDBToBibEntry(id) {

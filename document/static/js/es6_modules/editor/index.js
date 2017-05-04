@@ -1,5 +1,5 @@
 import * as objectHash from "object-hash/dist/object_hash"
-import * as editorPlugins from "../plugins/editor"
+import * as plugins from "../plugins/editor"
 /* Functions for ProseMirror integration.*/
 import {ProseMirror} from "prosemirror-old/dist/edit/main"
 import {collabEditing} from "prosemirror-old/dist/collab"
@@ -210,10 +210,10 @@ export class Editor {
         if (!this.plugins) {
             this.plugins = {}
 
-            Object.keys(editorPlugins).forEach(ePlugin => {
-                if (typeof editorPlugins[ePlugin] === 'function') {
-                    this.plugins[ePlugin] = new editorPlugins[ePlugin](this)
-                    this.plugins[ePlugin].init()
+            Object.keys(plugins).forEach(plugin => {
+                if (typeof plugins[plugin] === 'function') {
+                    this.plugins[plugin] = new plugins[plugin](this)
+                    this.plugins[plugin].init()
                 }
             })
 

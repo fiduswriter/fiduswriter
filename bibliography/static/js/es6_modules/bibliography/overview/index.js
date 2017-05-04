@@ -8,6 +8,7 @@ import {BibLatexFileImporter, BibLatexApiImporter} from "../import"
 import {BibLatexFileExporter} from "../export"
 import {addDropdownBox} from "../../common"
 import {Menu} from "../../menu"
+import * as plugins from "../../plugins/bibliography-overview"
 
 export class BibliographyOverview {
 
@@ -235,6 +236,19 @@ export class BibliographyOverview {
             source: autocompleteTags
         })
     }
+
+    activatePlugins() {
+        // Add plugins
+        this.plugins = {}
+
+        Object.keys(plugins).forEach(plugin => {
+            if (typeof plugins[plugin] === 'function') {
+                this.plugins[plugin] = new plugins[plugin](this)
+                this.plugins[plugin].init()
+            }
+        })
+    }
+
     /** Bind the init function to jQuery(document).ready.
      * @function bind
      */
@@ -310,14 +324,6 @@ export class BibliographyOverview {
             fileImporter.init()
         })
 
-        //import via web api file
-        jQuery('.import-api').bind('click', () => {
-            let apiImporter = new BibLatexApiImporter(
-                this.bibDB,
-                bibEntries => this.addBibList(bibEntries)
-            )
-            apiImporter.init()
-        })
 
         //submit entry actions
         jQuery('#action-selection-pulldown li > span').bind('mousedown', function () {
@@ -337,16 +343,17 @@ export class BibliographyOverview {
             }
 
             switch (actionName) {
-            case 'delete':
-                that.deleteBibEntryDialog(ids)
-                break
-            case 'export':
-                let exporter = new BibLatexFileExporter(that.bibDB, ids)
-                exporter.init()
-                break
+                case 'delete':
+                    that.deleteBibEntryDialog(ids)
+                    break
+                case 'export':
+                    let exporter = new BibLatexFileExporter(that.bibDB, ids)
+                    exporter.init()
+                    break
             }
         })
 
+        this.activatePlugins()
     }
 
 

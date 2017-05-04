@@ -15,7 +15,7 @@
     "copy_texlive": "mkdir -p ./static-libs/js/libs/texlive && cp -r node_modules/texlive/* ./static-libs/js/libs/texlive",
     "copy_texlive_req": "mkdir -p ./static-libs/js/libs/texlive && cp -r style/static/export_requirements/* ./static-libs/js/libs/texlive",
     "copy_promisejs": "mkdir -p ./static-libs/js/libs/texlive/promisejs && cp -r node_modules/promisejs/* ./static-libs/js/libs/texlive/promisejs",
-    "install": "napa"
+    "install": "napa",
     "postinstall": "npm run get_mml2omml && npm run copy_jquery && npm run copy_jquery-ui && npm run copy_underscore && npm run copy_datatables && npm run copy_dropkickjs && npm run copy_dropkickjs_css && npm run copy_texlive && npm run copy_promisejs && npm run copy_texlive_req",
     "jshint": "jshint ."
   },

@@ -1,0 +1,163 @@
+\ProvidesFile{authoryear.cbx}
+[\abx@cbxid]
+
+\ExecuteBibliographyOptions{labeldateparts,uniquename,uniquelist,autocite=inline}
+
+\renewcommand*{\iffinalcitedelim}{\iflastcitekey}
+
+\newbool{cbx:parens}
+
+\newbibmacro*{cite}{%
+  \iffieldundef{shorthand}
+    {\ifthenelse{\ifnameundef{labelname}\OR\iffieldundef{labelyear}}
+       {\usebibmacro{cite:label}%
+        \setunit{\printdelim{nonameyeardelim}}}
+       {\printnames{labelname}%
+        \setunit{\printdelim{nameyeardelim}}}%
+     \usebibmacro{cite:labelyear+extrayear}}
+    {\usebibmacro{cite:shorthand}}}
+
+\newbibmacro*{citeyear}{%
+  \iffieldundef{shorthand}
+    {\iffieldundef{labelyear}
+       {\usebibmacro{cite:label}}
+       {\usebibmacro{cite:labelyear+extrayear}}}
+    {\usebibmacro{cite:shorthand}}}
+
+\newbibmacro*{textcite}{%
+  \ifnameundef{labelname}
+    {\iffieldundef{shorthand}
+       {\usebibmacro{cite:label}%
+        \setunit{%
+          \global\booltrue{cbx:parens}%
+          \printdelim{nonameyeardelim}\bibopenparen}%
+        \ifnumequal{\value{citecount}}{1}
+          {\usebibmacro{prenote}}
+          {}%
+        \usebibmacro{cite:labelyear+extrayear}}
+       {\usebibmacro{cite:shorthand}}}
+    {\printnames{labelname}%
+     \setunit{%
+       \global\booltrue{cbx:parens}%
+       \printdelim{nameyeardelim}\bibopenparen}%
+     \ifnumequal{\value{citecount}}{1}
+       {\usebibmacro{prenote}}
+       {}%
+     \usebibmacro{citeyear}}}
+
+\newbibmacro*{cite:shorthand}{%
+  \printtext[bibhyperref]{\printfield{shorthand}}}
+
+\newbibmacro*{cite:label}{%
+  \iffieldundef{label}
+    {\printtext[bibhyperref]{\printfield[citetitle]{labeltitle}}}
+    {\printtext[bibhyperref]{\printfield{label}}}}
+
+% Inside \printtext, argumentless macros also need '%' afterwards
+% otherwise the newlines are spaces
+\newbibmacro*{cite:labelyear+extrayear}{%
+  \iffieldundef{labelyear}
+    {}
+    {\printtext[bibhyperref]{%
+     \ifdefstring\blx@dateformat@labeldate{edtf}
+       {}
+       {\datecircaprint}%
+     \dateeraprintpre{labelyear}%
+     \printfield{labelyear}%
+     \printfield{extrayear}%
+     \dateuncertainprint%
+     \iffieldsequal{labeldateera}{labelenddateera}{}
+       {\dateeraprint{labelyear}}%
+     \ifdefstring\blx@dateformat@labeldate{edtf}
+       {\datecircaprintedtf}
+       {}%
+     \iffieldundef{labelendyear}
+       {}
+       {\iffieldsequal{labelyear}{labelendyear}{}
+        {\ifdefstring\blx@dateformat@labeldate{edtf}
+          {\slash}% strict EDTF
+          {\bibdaterangesep
+           \enddatecircaprint}%
+         \dateeraprintpre{labelendyear}%
+         \printfield{labelendyear}%
+         \enddateuncertainprint
+         \ifdefstring\blx@dateformat@labeldate{edtf}
+           {\enddatecircaprintedtf}
+           {}%
+         \dateeraprint{labelendyear}}}}}}
+
+\newbibmacro*{textcite:postnote}{%
+  \iffieldundef{postnote}
+    {\ifbool{cbx:parens}
+       {\bibcloseparen}
+       {}}
+    {\ifbool{cbx:parens}
+       {\setunit{\postnotedelim}}
+       {\setunit{\extpostnotedelim\bibopenparen}}%
+     \printfield{postnote}\bibcloseparen}}
+
+\DeclareCiteCommand{\cite}
+  {\usebibmacro{prenote}}%
+  {\usebibmacro{citeindex}%
+   \usebibmacro{cite}}
+  {\multicitedelim}
+  {\usebibmacro{postnote}}
+
+\DeclareCiteCommand*{\cite}
+  {\usebibmacro{prenote}}%
+  {\usebibmacro{citeindex}%
+   \usebibmacro{citeyear}}
+  {\multicitedelim}
+  {\usebibmacro{postnote}}
+
+\DeclareCiteCommand{\parencite}[\mkbibparens]
+  {\usebibmacro{prenote}}%
+  {\usebibmacro{citeindex}%
+   \usebibmacro{cite}}
+  {\multicitedelim}
+  {\usebibmacro{postnote}}
+
+\DeclareCiteCommand*{\parencite}[\mkbibparens]
+  {\usebibmacro{prenote}}
+  {\usebibmacro{citeindex}%
+   \usebibmacro{citeyear}}
+  {\multicitedelim}
+  {\usebibmacro{postnote}}
+
+\DeclareCiteCommand{\footcite}[\mkbibfootnote]
+  {\usebibmacro{prenote}}
+  {\usebibmacro{citeindex}%
+   \usebibmacro{cite}}
+  {\multicitedelim}
+  {\usebibmacro{postnote}}
+
+\DeclareCiteCommand{\footcitetext}[\mkbibfootnotetext]
+  {\usebibmacro{prenote}}
+  {\usebibmacro{citeindex}%
+   \usebibmacro{cite}}
+  {\multicitedelim}
+  {\usebibmacro{postnote}}
+
+\DeclareCiteCommand{\smartcite}[\iffootnote\mkbibparens\mkbibfootnote]
+  {\usebibmacro{prenote}}
+  {\usebibmacro{citeindex}%
+   \usebibmacro{cite}}
+  {\multicitedelim}
+  {\usebibmacro{postnote}}
+
+\DeclareCiteCommand{\textcite}
+  {\boolfalse{cbx:parens}}
+  {\usebibmacro{citeindex}%
+   \iffirstcitekey
+     {\setcounter{textcitetotal}{1}}
+     {\stepcounter{textcitetotal}%
+      \textcitedelim}%
+   \usebibmacro{textcite}}
+  {\ifbool{cbx:parens}
+     {\bibcloseparen\global\boolfalse{cbx:parens}}
+     {}}
+  {\usebibmacro{textcite:postnote}}
+
+\DeclareMultiCiteCommand{\textcites}{\textcite}{}
+
+\endinput

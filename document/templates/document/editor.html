@@ -91,6 +91,9 @@
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/dropkick.css" />
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/dropkick.min.js"></script>
         {% compress js %}
+            <!-- texlive & Promise -->
+	    <script type="text/javascript" src="{{ TEXLIVE_URL }}"></script>
+	    <script type="text/javascript" src="{{ PROMISE_URL }}"></script>
             <!-- Editor  -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/editor.es5.js"></script>
         {% endcompress %}
@@ -146,6 +149,11 @@
                             <li>
                                 <span class="fw-pulldown-item latex" title="{% trans "Export the document to a Latex file. This will also attach a BibTex file if you are using citations." %}">
                                     LaTeX
+                                </span>
+                            </li>
+			    <li>
+                                <span class="fw-pulldown-item compiled_latex" title="{% trans "Export the document to a Latex file compiled as a PDF." %}">
+                                    PDF
                                 </span>
                             </li>
                             {% for export_template in export_templates %}

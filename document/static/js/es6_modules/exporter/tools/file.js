@@ -12,7 +12,6 @@ export let createSlug = function(str) {
     return str
 }
 
-
 export let getDatabasesIfNeeded = function(object, doc) {
     let p = []
 

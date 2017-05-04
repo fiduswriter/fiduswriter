@@ -1,10 +1,12 @@
 import {escapeLatexText} from "./escape-latex"
 
 export class LatexExporterConvert {
-    constructor(exporter, imageDB, bibDB) {
+    constructor(exporter, imageDB, bibDB, compiled, docClass ='article') {
         this.exporter = exporter
         this.imageDB = imageDB
+        this.docClass=docClass
         this.bibDB = bibDB
+        this.compiled=compiled
         this.imageIds = []
         this.usedBibDB = {}
         // While walking the tree, we take note of the kinds of features That
@@ -28,7 +30,7 @@ export class LatexExporterConvert {
     }
 
     get docDeclaration() {
-        return '\\documentclass{article}\n'
+        return '\\documentclass[english]{'+this.docClass+'}\n'
     }
 
 
@@ -39,7 +41,6 @@ export class LatexExporterConvert {
         switch(node.type) {
             case 'article':
                 start += '\n\\begin{document}\n'
-                end = '\n\\end{document}\n' + end
                 break
             case 'title':
                 start += '\n\\title{'
@@ -54,8 +55,8 @@ export class LatexExporterConvert {
                 break
             case 'authors':
                 if (node.content) {
-                    start += '\n\\author{'
-                    end = '}' + end
+                    start += '\n\\author{'+node.content[0].text +'}'
+
                 }
                 // We add the maketitle command here. TODO: This relies on the
                 // existence of a subtitle node, even if it has no content.
@@ -267,11 +268,11 @@ export class LatexExporterConvert {
                 let latexPackage
                 let figureType = node.attrs.figureCategory
                 let caption = node.attrs.caption
-                let imageDBEntry = this.imageDB.db[node.attrs.image]
-                this.imageIds.push(node.attrs.image)
-                let filePathName = imageDBEntry.image
                 let innerFigure = ''
-                if (filePathName) {
+                let imageDBEntry = this.imageDB.db[node.attrs.image]
+                if (imageDBEntry) {
+                    this.imageIds.push(node.attrs.image)
+                    let filePathName = imageDBEntry.image
                     let filename = filePathName.split('/').pop()
                     if (filename.split('.').pop() === 'svg') {
                         latexPackage = 'includesvg'
@@ -280,7 +281,12 @@ export class LatexExporterConvert {
                         latexPackage = 'scaledgraphics'
                         this.features.images = true
                     }
-                    innerFigure += `\\${latexPackage}{${filename}}\n`
+                    if(this.compiled){
+                        innerFigure += `\\${latexPackage}{/images/${filename}}\n`
+                    } else {
+                        innerFigure += `\\${latexPackage}{${filename}}\n`
+                    }
+
                 } else {
                     let equation = node.attrs.equation
                     innerFigure += `\\begin{displaymath}\n${equation}\n\\end{displaymath}\n`
@@ -373,13 +379,17 @@ export class LatexExporterConvert {
     assembleEpilogue() {
         let epilogue = ''
         if (this.features.citations) {
-            epilogue += '\n\n\\printbibliography'
+        	epilogue += '\n\n\\printbibliography'
+        	epilogue +='\n\n\\end{document}\n'
+        }
+        else{
+        	epilogue += '\n\\end{document}\n'
         }
         return epilogue
     }
 
     assemblePreamble() {
-        let preamble = '\n\\usepackage[utf8]{luainputenc}'
+        let preamble =''//\n\\usepackage[utf8]{luainputenc}
 
         if (this.features.subtitle) {
             preamble += `
@@ -409,7 +419,7 @@ export class LatexExporterConvert {
         if (this.features.citations) {
             preamble += `
                 \n\\usepackage[backend=biber,hyperref=false,citestyle=authoryear,bibstyle=authoryear]{biblatex}
-                \n\\bibliography{bibliography}
+                \n\\addbibresource{bibliography.bib}
             `
         }
 

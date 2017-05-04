@@ -16,6 +16,7 @@ import {ModServerCommunications} from "./server-communications"
 import {getSettings, getMetadata, updateDoc} from "../schema/convert"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
+import {StyleDB} from "../style/database"
 import {Paste} from "./paste"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
@@ -292,6 +293,29 @@ export class Editor {
             return Promise.resolve()
         }
     }
+    
+    getStyleDB(userId) {
+        if (!this.styleDB) {
+            let styleGetter = new StyleDB(userId)
+            return styleGetter.getDB(true).then(pks => {
+                this.styleDB = styleGetter
+                this.schema.cached.styleDB = styleGetter // assign style DB to be used in schema.
+                this.mod.footnotes.schema.cached.styleDB = styleGetter // assign style DB to be used in footnote schema.
+                
+                let documentStyleMenu = document.getElementById("documentstyle-list")
+                for (let i = 0; i < pks.length; i++) {
+                    let newMenuItem = document.createElement("li")
+                    newMenuItem.innerHTML = "<span class='fw-pulldown-item docstyle' data-docstyle='style_"+ pks[i]+"' title='" +
+                        this.styleDB.db[pks[i]].title + "'>" +
+                        this.styleDB.db[pks[i]].title + "</span>"
+                    documentStyleMenu.appendChild(newMenuItem)
+                }
+
+            })
+        } else {
+		return Promise.resolve()
+        }
+    }
 
     enableUI() {
 
@@ -342,6 +366,13 @@ export class Editor {
             this.mod.serverCommunications.send({
                 type: 'participant_update'
             })
+        })
+        this.getStyleDB(this.doc.owner.id).then(() => {
+           this.update()
+           this.mod.serverCommunications.send({
+               type: 'participant_update'
+           })
+
         })
     }
 

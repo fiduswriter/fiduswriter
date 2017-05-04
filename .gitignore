@@ -12,7 +12,8 @@ local_settings.py
 .elasticbeanstalk/
 *.mo
 node_modules/
-style/static/
+/style/static/css/
+/style/static/js/style/
 venv/
 .idea/
 configuration.py

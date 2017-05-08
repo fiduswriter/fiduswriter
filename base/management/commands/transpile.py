@@ -8,7 +8,7 @@ import shutil
 import time
 
 from django.contrib.staticfiles import finders
-from fiduswriter.settings import PROJECT_PATH
+from fiduswriter.settings import PROJECT_PATH, STATIC_ROOT
 
 # Temporary conversion of JavaScript ES6 to ES5. Once
 # all supported browsers support ES6 sufficiently ('class' in particular,
@@ -119,6 +119,8 @@ class Command(BaseCommand):
         js_paths = finders.find('js/', True)
         mainfiles = []
         sourcefiles = []
+        # Remove paths inside of collection dir
+        js_paths = [x for x in js_paths if not x.startswith(STATIC_ROOT)]
         for path in js_paths:
             for mainfile in check_output(
                 ["find", path, "-type", "f", "-name", "*.es6.js", "-print"]
@@ -136,7 +138,6 @@ class Command(BaseCommand):
         # Note all plugin dirs and the modules inside of them to crate index.js
         # files inside of them.
         plugin_dirs = {}
-
         for sourcefile in sourcefiles:
             relative_path = sourcefile.split('static/js/')[1]
             outfile = os.path.join(cache_dir, relative_path)
@@ -156,7 +157,10 @@ class Command(BaseCommand):
                 module_name = os.path.splitext(
                     os.path.basename(relative_path)
                 )[0]
-                if module_name != 'init':
+                if (
+                    module_name != 'init' and
+                    module_name not in plugin_dirs[dirname]
+                ):
                     plugin_dirs[dirname].append(module_name)
 
         # Write an index.js file for every plugin dir

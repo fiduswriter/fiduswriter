@@ -1,6 +1,6 @@
 import {addDropdownBox} from "../common"
 
-// Bindings for the menu
+// Bindings for the top menu on overview pages
 
 export class Menu {
     constructor(activeItem) {

@@ -30,3 +30,4 @@ static-libs/
 base/static/css/libs/
 .coverage
 /npm-debug.log
+/package.json

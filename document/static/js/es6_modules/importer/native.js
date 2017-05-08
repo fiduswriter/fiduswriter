@@ -3,7 +3,7 @@ import {GetImages} from "./get-images"
 
 export class ImportNative {
     /* Save document information into the database */
-    constructor(doc, impBibDB, impImageDB, images, user, bibDB, imageDB) {
+    constructor(doc, impBibDB, impImageDB, images, user, bibDB, imageDB, docId) {
         this.doc = doc
         this.impBibDB = impBibDB // These are the imported values
         this.impImageDB = impImageDB // These are the imported values
@@ -11,12 +11,12 @@ export class ImportNative {
         this.user = user
         this.bibDB = bibDB // These are values stored in the database (data in bibDB.db)
         this.imageDB = imageDB // These are values stored in the database (data in imageDB.db)
+        this.docId = docId // The id of an existing doc to be overwritten. Used by OJS. See file.js
     }
 
     init() {
         let {BibTranslationTable, newBibEntries} = this.compareBibDBs()
         let {ImageTranslationTable, newImageEntries} = this.compareImageDBs()
-
         // We first create any new entries in the DB for images and/or
         // bibliography items.
         let imageGetter = new GetImages(newImageEntries, this.images)
@@ -33,7 +33,7 @@ export class ImportNative {
             // exist in the DB for this user with the same numbers.
             // We can go ahead and create the new document entry in the
             // bibliography without any changes.
-            return this.createNewDocument()
+            return this.saveDocument()
         })
 
     }
@@ -60,7 +60,6 @@ export class ImportNative {
     compareBibDBs() {
         let BibTranslationTable = {},
             newBibEntries = {}
-
         Object.keys(this.impBibDB).forEach(impKey => {
             let impEntry = this.impBibDB[impKey]
             let matchEntries = []
@@ -143,13 +142,18 @@ export class ImportNative {
         walkTree(this.doc.contents)
     }
 
-    createNewDocument() {
+    saveDocument() {
         let postData = {
             title: this.doc.title,
             contents: JSON.stringify(this.doc.contents),
             comments: JSON.stringify(this.doc.comments),
             settings: JSON.stringify(this.doc.settings),
             metadata: JSON.stringify(this.doc.metadata)
+        }
+        if (typeof this.docId !== 'undefined') {
+            // There is a docId, so we overwrite this doc rather than creating
+            // a new one. Used in connection with OJS. See docId in file.js.
+            postData.doc_id = this.docId
         }
         return new Promise((resolve, reject) => {
             jQuery.ajax({

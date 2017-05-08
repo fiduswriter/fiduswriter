@@ -53,26 +53,24 @@ export class ModMenusToolbar {
             )
         })
 
-        //internal link -- changing
 
-        let that = this
+        //internal link -- changing
         jQuery(document).on('mousedown', '#button-internal-link:not(.disabled)', event => {
             this.executeAction(event, () =>{
-            var temp_ids=new Map()
-            that.mod.editor.pm.doc.descendants((node) => {
-               if (node.type.name==='heading' ){
-                    temp_ids['h'+node.attrs.level]= node.attrs.id
-
-              }
-            })
-            console.log('temp_ids', temp_ids)
-		    let dialog = new LinkDialog(this.mod, 1, temp_ids)
-		    return dialog.init()
-		})
+                var temp_ids=new Map()
+                this.mod.editor.pm.doc.descendants(node => {
+                    if (node.type.name==='heading') {
+                        temp_ids['h'+node.attrs.level] = node.attrs.id
+                    }
+                })
+                console.log('temp_ids', temp_ids)
+		        let dialog = new LinkDialog(this.mod, 1, temp_ids)
+		        return dialog.init()
+		    })
         })
 
 
-
+        let that = this
         jQuery(document).on('click', 'a' , function (event) {
 
             let url =  $(this).attr('href')
@@ -81,56 +79,36 @@ export class ModMenusToolbar {
             let id = split_url[1]
 
             if (!id){
-                 window.open(url, '_blank')
-                 return
+                window.open(url, '_blank')
+                return
             }
 
             that.executeAction(event, () => {
-
-
-              that.mod.editor.pm.doc.descendants((node,pos) => {
-
-               if (node.type.name==='heading' && node.attrs.id == id){
-                    console.log('id', id, node.attrs.level)
-                    console.log('pos', pos)
-                    that.mod.editor.pm.scrollIntoView(pos)
-
-              }
-
+                that.mod.editor.pm.doc.descendants((node, pos) => {
+                    if (node.type.name==='heading' && node.attrs.id == id){
+                        console.log('id', id, node.attrs.level)
+                        console.log('pos', pos)
+                        that.mod.editor.pm.scrollIntoView(pos)
+                    }
+                })
             })
-
-            })
-
         })
-
-        jQuery(document).on(
-            'click',
-            '#revision-done:not(.disabled)',
-            () => this.mod.actions.revisionFinished()
-        )
-
-         //return to OJS
-        jQuery(document).on(
-            'click',
-            '#reviewerOJSReturn:not(.disabled)',
-            () => this.mod.actions.returnToOJS()
-        )
 
 
         // blockstyle paragraph, h1 - h3, lists
         jQuery(document).on('mousedown', '.toolbarheadings label', function (event) {
 
-             var temp_ids=[]
+            var temp_ids=[]
             that.mod.editor.pm.doc.descendants((node) => {
-               if (node.type.name==='heading' ){
+                if (node.type.name==='heading' ){
                     temp_ids.push(node.attrs.id)
 
-              }
+                }
             })
 
             let temp = randomInt(0, 100000000)
             let blockId = temp_ids.indexOf(blockId)
-            while (blockId != -1){
+            while (blockId != -1) {
                 let temp = randomInt(0, 100000000)
                 let blockId = temp_ids.indexOf(blockId)
             }
@@ -257,5 +235,3 @@ function randomInt(min, max) {
 
 
 }
-
-

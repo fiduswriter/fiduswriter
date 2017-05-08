@@ -14,7 +14,7 @@ from bibliography.models import (
     EntryCategory
 )
 
-from document.models import AccessRight
+from document.models import AccessRight, CAN_UPDATE_DOCUMENT
 
 
 class SimpleSerializer(Serializer):
@@ -143,12 +143,14 @@ def save_js(request):
         owner_id = request.user.id
         if 'owner_id' in request.POST:
             requested_owner_id = int(request.POST['owner_id'])
-            # If the user has write access to at least one document of another
-            # user, we allow him to add new and edit bibliography entries of
-            # this user.
-            if len(AccessRight.objects.filter(
-                    document__owner=requested_owner_id,
-                    user=request.user.id, rights='w')) > 0:
+            # If the user has write access to at least one document of the
+            # document owning user, we allow him to add new and edit
+            # bibliography entries of the document owner.
+            if AccessRight.objects.filter(
+                document__owner_id=requested_owner_id,
+                user_id=request.user.id,
+                rights__in=CAN_UPDATE_DOCUMENT
+            ).count() > 0:
                 owner_id = requested_owner_id
         response['id_translations'] = []
         for b_id in bibs.keys():
@@ -156,7 +158,7 @@ def save_js(request):
             if request.POST['is_new'] == 'true':
                 inserting_obj = {
                     'entry_owner_id': owner_id,
-                    'entry_key': bib['entry_key'],
+                    'entry_key': bib['entry_key'][-64:],
                     'bib_type': bib['bib_type'],
                     'entry_cat': bib['entry_cat'],
                     'fields': bib['fields']
@@ -170,7 +172,7 @@ def save_js(request):
                     response['id_translations'].append([b_id, similar[0].id])
             else:
                 the_entry = Entry.objects.get(id=b_id)
-                the_entry.entry_key = bib['entry_key']
+                the_entry.entry_key = bib['entry_key'][-64:]
                 the_entry.bib_type = bib['bib_type']
                 the_entry.entry_cat = bib['entry_cat']
                 the_entry.fields = bib['fields']

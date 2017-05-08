@@ -8,6 +8,7 @@ import {BibLatexFileImporter, BibLatexApiImporter} from "../import"
 import {BibLatexFileExporter} from "../export"
 import {addDropdownBox} from "../../common"
 import {Menu} from "../../menu"
+import * as plugins from "../../plugins/bibliography-overview"
 
 export class BibliographyOverview {
 
@@ -72,9 +73,9 @@ export class BibliographyOverview {
             })
         })
         jQuery('body').append(dialogBody)
-        let diaButtons = {}
+        let buttons = {}
         let that = this
-        diaButtons[gettext('Submit')] = function () {
+        buttons[gettext('Submit')] = function () {
             let newCat = {
                 'ids': [],
                 'titles': []
@@ -95,7 +96,7 @@ export class BibliographyOverview {
             that.createCategory(newCat)
             jQuery(this).dialog('close')
         }
-        diaButtons[gettext('Cancel')] = function () {
+        buttons[gettext('Cancel')] = function () {
             jQuery(this).dialog('close')
         }
 
@@ -104,7 +105,7 @@ export class BibliographyOverview {
             width: 350,
             height: 350,
             modal: true,
-            buttons: diaButtons,
+            buttons,
             create: function () {
                 let theDialog = jQuery(this).closest(".ui-dialog")
                 theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
@@ -235,6 +236,19 @@ export class BibliographyOverview {
             source: autocompleteTags
         })
     }
+
+    activatePlugins() {
+        // Add plugins
+        this.plugins = {}
+
+        Object.keys(plugins).forEach(plugin => {
+            if (typeof plugins[plugin] === 'function') {
+                this.plugins[plugin] = new plugins[plugin](this)
+                this.plugins[plugin].init()
+            }
+        })
+    }
+
     /** Bind the init function to jQuery(document).ready.
      * @function bind
      */
@@ -310,14 +324,6 @@ export class BibliographyOverview {
             fileImporter.init()
         })
 
-        //import via web api file
-        jQuery('.import-api').bind('click', () => {
-            let apiImporter = new BibLatexApiImporter(
-                this.bibDB,
-                bibEntries => this.addBibList(bibEntries)
-            )
-            apiImporter.init()
-        })
 
         //submit entry actions
         jQuery('#action-selection-pulldown li > span').bind('mousedown', function () {
@@ -337,16 +343,17 @@ export class BibliographyOverview {
             }
 
             switch (actionName) {
-            case 'delete':
-                that.deleteBibEntryDialog(ids)
-                break
-            case 'export':
-                let exporter = new BibLatexFileExporter(that.bibDB, ids)
-                exporter.init()
-                break
+                case 'delete':
+                    that.deleteBibEntryDialog(ids)
+                    break
+                case 'export':
+                    let exporter = new BibLatexFileExporter(that.bibDB, ids)
+                    exporter.init()
+                    break
             }
         })
 
+        this.activatePlugins()
     }
 
 

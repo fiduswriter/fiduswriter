@@ -11,8 +11,8 @@ export class TableDropdown {
     // Check if caret is inside a table
     inTable() {
         const currentPm = this.editor.currentPm
-        const fromEl = currentPm.doc.resolve(currentPm.selection.from).node(2)
-        const toEl = currentPm.doc.resolve(currentPm.selection.to).node(2)
+        const fromEl = currentPm.doc.resolve(currentPm.selection.from).node(3)
+        const toEl = currentPm.doc.resolve(currentPm.selection.to).node(3)
         if (fromEl===toEl && fromEl.type.name === 'table') {
             return true
         } else {
@@ -134,8 +134,8 @@ export class TableDropdown {
         })
         jQuery('#table-dialog .table-remove').on('mousedown', event => {
             this.executeAction(event, () => {
-                // move the selection up until reaching the first level (selecting the table)
-                while(this.editor.currentPm.selection.$from.depth > 1) {
+                // move the selection up until reaching the second level (selecting the table)
+                while(this.editor.currentPm.selection.$from.depth > 2) {
                     commands.selectParentNode(this.editor.currentPm, true)
                 }
                 // Remove the selection

@@ -40,13 +40,8 @@ export class DocumentOverview {
 
     getImageDB() {
         if (!this.imageDB) {
-            let imageGetter = new ImageDB(this.user.id)
-            return new Promise((resolve, reject) => {
-                imageGetter.getDB().then(() => {
-                    this.imageDB = imageGetter.db
-                    resolve()
-                })
-            })
+            this.imageDB = new ImageDB(this.user.id)
+            return this.imageDB.getDB()
         } else {
             return Promise.resolve()
         }

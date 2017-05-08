@@ -2,24 +2,21 @@ from django.conf.urls import include, url
 from django.http import HttpResponse
 from django.contrib import admin
 from adminplus.sites import AdminSitePlus
-import settings
+from . import settings
 from user.views import logout_page
 from django.contrib.flatpages import views as flatpages_views
 from document.views import index as document_index
 
-from django.views.i18n import javascript_catalog as i18n_javascript_catalog
+from django.views.i18n import JavaScriptCatalog
 from django.contrib.auth.views import login as login_view
+from importlib import import_module
 
 admin.site = AdminSitePlus()
 admin.sites.site = admin.site
 admin.autodiscover()
 
-js_info_dict = {
-    'packages': (
-        'django.conf',
-    ),
-}
-
+# Django URLs -- Notice that these are only consulted after the
+# tornado_url_list found in base/servers/tornado_django_hybrid.py
 urlpatterns = [
     url('^$', document_index, name='index'),
     url(
@@ -29,16 +26,12 @@ urlpatterns = [
             mimetype="text/plain"
         )
     ),
-    url('^js_error_hook/', include('django_js_error_hook.urls')),
-    url('^document/', include('document.urls')),
-    url('^bibliography/', include('bibliography.urls')),
 
     # I18n manual language switcher
     url('^i18n/', include('django.conf.urls.i18n')),
 
     # I18n Javascript translations
-    url('^jsi18n/$', i18n_javascript_catalog, js_info_dict),
-
+    url(r'^jsi18n/$', JavaScriptCatalog.as_view(), name='javascript-catalog'),
 
     # Login / logout.
     url('^login/$', login_view),
@@ -51,23 +44,20 @@ urlpatterns = [
     # Account management
     url('^account/', include('user.urls')),
 
-    # Media manager
-    url('^usermedia/', include('usermedia.urls')),
-
-    # Book manager
-    url('^book/', include('book.urls')),
-
-    # OJS integration
-    url('^ojs/', include('ojs.urls')),
-
-    # Feedback
-    url('^feedback/', include('feedback.urls')),
-
     # Terms and conditions
     url('^terms/$', flatpages_views.flatpage,
         {'url': '/terms/'}, name='terms'),
 
 ]
+
+for app in settings.INSTALLED_APPS:
+    try:
+        _module = import_module('%s.urls' % app)
+    except ImportError:
+        pass
+    else:
+        app_name = app.rsplit('.', 1).pop()
+        urlpatterns += [url('^%s/' % app_name, include('%s.urls' % app))]
 
 if settings.DEBUG:
     from django.views.static import serve as static_serve
@@ -76,7 +66,6 @@ if settings.DEBUG:
             'document_root': settings.MEDIA_ROOT,
         }),
     ]
-
 
 if hasattr(settings, 'EXTRA_URLS'):
     for extra_url in settings.EXTRA_URLS:

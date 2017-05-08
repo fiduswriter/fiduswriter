@@ -115,8 +115,8 @@ export class ModCollabDocChanges {
         }
     }
 
-    sendToCollaboratorsInternalHeading() {
-      /*  if (
+    /*sendToCollaboratorsInternalHeading() {
+        if (
             this.awaitingDiffResponse ||
             (
                 !this.mod.editor.pmCollab.hasSendableSteps() &&
@@ -127,7 +127,7 @@ export class ModCollabDocChanges {
             // send anything now, or there is nothing to send.
 	    console.log("returning")
             return
-        }*/
+        }
 	console.log("not returning")
         let toSend = this.mod.editor.pmCollab.sendableSteps()
         let fnToSend = this.mod.editor.mod.footnotes.fnPmCollab.sendableSteps()
@@ -161,7 +161,7 @@ export class ModCollabDocChanges {
 
 	console.log( "this.unconfirmedSteps[request_id] ",  this.unconfirmedSteps[request_id] )
     }
-
+*/
 
     receiveFromCollaborators(data) {
         if (this.mod.editor.waitingForDocument) {

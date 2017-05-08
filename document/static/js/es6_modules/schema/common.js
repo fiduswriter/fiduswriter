@@ -162,3 +162,29 @@ export class Figure extends Block {
         return dom
     }
 }
+
+
+
+export class Heading extends Block {
+  get attrs() { return {level: new Attribute({default: 1}), id: new Attribute({default:1}) } }
+  // :: number
+  // Controls the maximum heading level. Has the value 6 in the
+  // `Heading` class, but you can override it in a subclass.
+  get maxLevel() { return 6 }
+  get matchDOMTag() {
+    return {
+	"h1":  {level: 1},
+	"h2": { level: 2 },
+        "h3": { level: 3 },
+        "h4": { level: 4},
+	"h5": {level: 5 }, 
+       "h6":  { level: 6 }
+    }
+  }
+  toDOM(node) { 
+		console.log(node.attrs.id)
+		return ["h" + node.attrs.level,{'id':node.attrs.id}, 0] 	
+
+	}
+}
+

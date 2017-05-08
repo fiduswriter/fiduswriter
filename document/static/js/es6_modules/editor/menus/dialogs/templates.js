@@ -1,13 +1,21 @@
 export let linkDialogTemplate = _.template('\
-    <div id="head-item" title="' + gettext("Link") + '">\
-        <p><input class="linktitle" type="text" value="<%- linkTitle %>" placeholder="' + gettext("Link text (optional") + '"/></p>\
+    <div  title="' + gettext("Link") + '">\
+        <p><input class="linktitle" type="text" value="<%- linkTitle %>" placeholder="' + gettext("Link") + '"/></p>\
         <p><input class="link" type="text" value="<%- link  %>" placeholder="' + gettext("Link") + '"/></p><br> \
-	<p><select name="list_of_headings">\
-	<option value="select_heading">Select Heading</option>\
-	<% _.each(array, function(val, key){ %>\
-		<option class="heading-item" type="text"  value="<%= val %>" ><%= key %> </option>\
-	<% }); %>\
-	</select></p>\
+    </div>\
+')
+
+
+export let InternalLinkDialogTemplate = _.template('\
+    <div id="head-item" class="internal" title="' + gettext("Link") + '">\
+        <p><input class="linktitle" type="text" value="<%- linkTitle %>" placeholder="' + gettext("Link") + '"/></p>\
+        <p><input class="link" type="text" value="<%- link  %>" placeholder="' + gettext("Link") + '"/></p><br> \
+        <p><select name="list_of_headings">\
+        <option value="select_heading">Select Heading</option>\
+        <% _.each(array, function(val, key){ %>\
+                <option class="heading-item" type="text"  value="<%= val %>" ><%= key %> </option>\
+        <% }); %>\
+        </select></p>\
     </div>\
 ')
 

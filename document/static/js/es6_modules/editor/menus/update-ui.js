@@ -22,6 +22,7 @@ const PART_LABELS = {
 export class ModMenusUpdateUI {
 
     constructor(mod) {
+
         mod.updateUI = this
         this.mod = mod
         this.placeHolderCss = ''

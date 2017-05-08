@@ -122,7 +122,9 @@ export class Editor {
             place: document.getElementById('document-editable'),
             schema: this.schema
         })
-        this.pm.addKeymap(buildKeymap(this.schema))
+        
+	console.log("this.schema",this.schema)
+	this.pm.addKeymap(buildKeymap(this.schema))
         this.pmCollab = collabEditing.config().attach(this.pm)
     }
 
@@ -176,7 +178,7 @@ export class Editor {
         this.mod.footnotes.markers.removeAllMarkers()
         this.docInfo.hash = this.getHash()
         this.mod.comments.store.setVersion(this.doc.comment_version)
-        this.mod.menus.toolbar.setInternalHeadings()
+       // this.mod.menus.toolbar.setInternalHeadings()
 	
 	this.pmCollab.mustSend.add(() => {
             this.mod.collab.docChanges.sendToCollaborators()
@@ -204,9 +206,9 @@ export class Editor {
             this.mod.collab.docChanges.sendToCollaborators()
         })
 	
-	this.mod.menus.toolbar.on("mustSend", ()=> {	
-	    this.mod.collab.docChanges.sendToCollaboratorsInternalHeading()
-	})
+	//this.mod.menus.toolbar.hasUnsentInternalHeadings( ()=> {	
+	 //   this.mod.collab.docChanges.sendToCollaboratorsInternalHeading()
+	//})
 
         this.getBibDB(this.doc.owner.id).then(() => {
             this.enableUI()
@@ -404,7 +406,7 @@ export class Editor {
         this.doc.version = this.pmCollab.version
         this.docInfo.hash = this.getHash()
         this.doc.comments = this.mod.comments.store.comments
-	this.doc.InternalLinks = this.mod.menus.toolbar.InternalHeadings
+	//this.doc.InternalLinks = this.mod.menus.toolbar.InternalHeadings
 	console.log("getUpdates",this.doc.settings, this.doc.contents,  this.doc.InternalLinks, this.doc.comments, this.doc.title, this.doc.version)
         return Promise.resolve()
     }

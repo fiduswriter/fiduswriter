@@ -1,9 +1,10 @@
-import {CitationDialog, FigureDialog, LinkDialog, TableDropdown, MathDialog} from "./dialogs"
+import {CitationDialog, FigureDialog, LinkDialog, TableDropdown, MathDialog,InternalLinkDialogTemplate } from "./dialogs"
 import {commands} from "prosemirror-old/dist/edit/commands"
-import "../comments/event"
+
 
 //var InternalHeadings = new Map();
-var unsentInternal = false
+
+//var unsentInternal = false
 /* Bindings for the toolbar menu */
 export class ModMenusToolbar {
     constructor(mod) {
@@ -11,11 +12,7 @@ export class ModMenusToolbar {
         this.mathDialog = new MathDialog(mod)
         this.mod = mod
         this.bindEvents()
-    }
-
-    setInternalHeadings(){
-        this.InternalHeadings = new Map()
-
+  //      this.InternalHeadings = new Map()
     }
 
     executeAction(event, editFunction) {
@@ -57,11 +54,53 @@ export class ModMenusToolbar {
         })
 
         //internal link -- changing
+
+        let that = this
         jQuery(document).on('mousedown', '#button-internal-link:not(.disabled)', event => {
             this.executeAction(event, () =>{
-		    let dialog = new LinkDialog(this.mod, 1, this.InternalHeadings)
+            var temp_ids=new Map()
+            that.mod.editor.pm.doc.descendants((node) => {
+               if (node.type.name==='heading' ){
+                    temp_ids['h'+node.attrs.level]= node.attrs.id
+
+              }
+            })
+            console.log('temp_ids', temp_ids)
+		    let dialog = new LinkDialog(this.mod, 1, temp_ids)
 		    return dialog.init()
 		})
+        })
+
+
+
+        jQuery(document).on('click', 'a' , function (event) {
+
+            let url =  $(this).attr('href')
+            let split_url = url.split('#')
+
+            let id = split_url[1]
+
+            if (!id){
+                 window.open(url, '_blank')
+                 return
+            }
+
+            that.executeAction(event, () => {
+
+
+              that.mod.editor.pm.doc.descendants((node,pos) => {
+
+               if (node.type.name==='heading' && node.attrs.id == id){
+                    console.log('id', id, node.attrs.level)
+                    console.log('pos', pos)
+                    that.mod.editor.pm.scrollIntoView(pos)
+
+              }
+
+            })
+
+            })
+
         })
 
         jQuery(document).on(
@@ -77,29 +116,46 @@ export class ModMenusToolbar {
             () => this.mod.actions.returnToOJS()
         )
 
-        let that = this
+
         // blockstyle paragraph, h1 - h3, lists
         jQuery(document).on('mousedown', '.toolbarheadings label', function (event) {
 
+             var temp_ids=[]
+            that.mod.editor.pm.doc.descendants((node) => {
+               if (node.type.name==='heading' ){
+                    temp_ids.push(node.attrs.id)
+
+              }
+            })
+
+            let temp = randomInt(0, 100000000)
+            let blockId = temp_ids.indexOf(blockId)
+            while (blockId != -1){
+                let temp = randomInt(0, 100000000)
+                let blockId = temp_ids.indexOf(blockId)
+            }
+            blockId = temp
             const blockTypes = {
               'p': ['paragraph'],
-              'h1': ['heading',{level: 1}],
-              'h2': ['heading',{level: 2}],
-              'h3': ['heading',{level: 3}],
-              'h4': ['heading',{level: 4}],
-              'h5': ['heading',{level: 5}],
-              'h6': ['heading',{level: 6}],
+              'h1': ['heading',{level: 1, id: blockId}],
+              'h2': ['heading',{level: 2, id: blockId}],
+              'h3': ['heading',{level: 3, id: blockId}],
+              'h4': ['heading',{level: 4, id: blockId}],
+              'h5': ['heading',{level: 5, id: blockId}],
+              'h6': ['heading',{level: 6, id: blockId}],
               'code': ['code_block']
             },
+
+
             blockType = blockTypes[this.id.split('_')[0]]
-            let blockId = randomInt(0, 100000000)
-            let h_id = this.id.replace("_button","")
- 	        unsentInternal = addValueToKey(h_id, blockId, that.InternalHeadings)
-//            that.mod.editor.mod.collab.docChanges.sendToCollaboratorsInternalHeading()
+
             that.executeAction(event, function(){
+
                 let block = that.mod.editor.currentPm.schema.nodes[blockType[0]]
+
                 let command = commands.setBlockType(block, blockType[1])
                 command(that.mod.editor.currentPm, true)
+
             })
 
 
@@ -191,34 +247,15 @@ export class ModMenusToolbar {
         })
     }
 
-    unsentInternalHeadings(){
-       // this.InternalHeadings["h1"] = 1111111
-        return this.InternalHeadings
-    }
 
-    hasUnsentInternalHeadings(){
-        //console.log("this.InternalHeadings", this.InternalHeadings)
-        if(unsentInternal){
-
-            unsentInternal = false
-            return true
-
-        }
-
-        return false
-    }
 }
 
-
-function addValueToKey(key, value, aMap) {
-
-    aMap[key] =  []
-    aMap[key].push(value)
-    return 1
-}
 
 function randomInt(min, max) {
+
     return Math.round(min + Math.random()*(max-min));
+
+
 }
 
 

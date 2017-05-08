@@ -1,11 +1,11 @@
 import {Doc, BlockQuote, OrderedList, BulletList, ListItem, HorizontalRule,
-        Paragraph, Heading, CodeBlock, Image, HardBreak, CodeMark, EmMark,
+        Paragraph, CodeBlock, Image, HardBreak, CodeMark, EmMark,
         StrongMark, LinkMark} from "prosemirror-old/dist/schema-basic"
 import {Table, TableRow, TableCell} from "prosemirror-old/dist/schema-table"
 import {Schema, Block, Inline, Text, Attribute, MarkType} from "prosemirror-old/dist/model"
 import {elt} from "prosemirror-old/dist/util/dom"
 import {htmlToFnNode, fnNodeToHtml} from "./footnotes-convert"
-import {Figure, Citation, Equation} from "./common"
+import {Figure, Citation, Equation, Heading} from "./common"
 import {defaultDocumentStyle} from "../style/documentstyle-list"
 import {defaultCitationStyle} from "../style/citation-definitions"
 
@@ -92,7 +92,7 @@ class Authors extends Metadata {
         })}
     }
     toDOM(node) {
-	//console.log("Authors")
+
         return ["div", {
             class: 'article-part metadata article-authors',
             'data-hidden': node.attrs.hidden
@@ -208,7 +208,7 @@ class InternalMark extends MarkType {
 
     get attrs() {
         return {
-            id: new Attribute({default: 1}),
+            id: new Attribute(),
             href: new Attribute,
             title: new Attribute({default: ""})
 
@@ -218,8 +218,9 @@ class InternalMark extends MarkType {
         return false
     }
     get matchDOMTag() {
-    return {"a[href]": dom => ({
-      href: dom.getAttribute("href"), title: dom.getAttribute("title")
+
+    return {"a.internal[href]": dom => ({
+      href: dom.getAttribute("href"), title: dom.getAttribute("title"), id: dom.getAttribute("id")
     })}
     }
     toDOM(node) {
@@ -228,6 +229,7 @@ class InternalMark extends MarkType {
                 }
 
 }
+
 
 export const docSchema = new Schema({
   nodes: {

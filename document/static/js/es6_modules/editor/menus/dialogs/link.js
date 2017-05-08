@@ -1,4 +1,4 @@
-import {linkDialogTemplate, InternalHeadingsTemplate} from "./templates"
+import {InternalLinkDialogTemplate, linkDialogTemplate, InternalHeadingsTemplate} from "./templates"
 
 export class LinkDialog {
     constructor(mod, internal, InternalHeadings) {
@@ -91,19 +91,21 @@ export class LinkDialog {
 		else{
 		
 			let posFrom = pm.selection.from
-			console.log("posFrom", posFrom)
+			//console.log("posFrom", posFrom)
 			let posTo = posFrom + linkTitle.length
-			console.log("posTo", posTo)
- 			console.log("this.headings", this.dialog.find('select').val())
-			
+			//console.log("posTo", posTo)
+ 			//console.log("this.headings", this.dialog.find('select').val())
+			//console.log("aTemp", aTemp)
                         let markType = pm.schema.marks.internal_link.create({
                         id: this.dialog.find('select').val(),
 			href: newLink,
                         title: linkTitle
 			//word: linkTitle
                         })
-                        console.log("markType",markType)
-			pm.tr.insertText(posFrom, linkTitle)
+                        
+			//let temp = pm.tr.insertText(linkTitle, posFrom)
+			
+			
 			pm.tr.addMark(
                         posFrom,
                         posTo,
@@ -125,13 +127,25 @@ export class LinkDialog {
         })
 
 
+	let temp = this.internal
+	if(!temp ){
+	
         this.dialog = jQuery(linkDialogTemplate({
             linkTitle: this.linkTitle,
+            link: this.link
+        }))
+	}
+	else{
+	    this.dialog = jQuery(InternalLinkDialogTemplate({
+            linkTitle: this.linkTitle,
             link: this.link,
-	    array: this.InternalHeadings,
-	    internal: this.internal
+            array: this.InternalHeadings,
         }))
 
+
+
+	
+	}
         this.dialog.dialog({
             buttons,
             modal: true,
@@ -142,22 +156,4 @@ export class LinkDialog {
     }
 }
 
-function getKey(value, myMap){
-    console.log("value", value)
-    console.log("myMap", myMap)
-    var flag=false;
-    var keyVal;
-    for (key in myMap){
-         if (myMap[key] == value){
-             flag=true;
-             keyVal=key;
-             break;
-         }
-    }
-    if(flag){
-         return keyVal;
-    }
-    else{
-         return false;
-    }
-}
+

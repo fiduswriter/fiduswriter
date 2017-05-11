@@ -9,9 +9,7 @@ import {Figure, Citation, Equation, Heading} from "./common"
 import {defaultDocumentStyle} from "../style/documentstyle-list"
 import {defaultCitationStyle} from "../style/citation-definitions"
 
-
 class Article extends Block {
-
     get attrs() {
         return {
             papersize: new Attribute({
@@ -92,7 +90,6 @@ class Authors extends Metadata {
         })}
     }
     toDOM(node) {
-
         return ["div", {
             class: 'article-part metadata article-authors',
             'data-hidden': node.attrs.hidden
@@ -114,7 +111,6 @@ class Abstract extends Metadata {
         })}
     }
     toDOM(node) {
-	//console.log("Abstract")
         return ["div", {
             class: 'article-part metadata article-abstract',
             'data-hidden': node.attrs.hidden
@@ -136,7 +132,6 @@ class Keywords extends Metadata {
         })}
     }
     toDOM(node) {
-	//console.log("keywords")
         return ["div", {
             class: 'article-part metadata article-keywords',
             'data-hidden': node.attrs.hidden
@@ -149,7 +144,6 @@ class Body extends Block {
         return {"div.article-body": null}
     }
     toDOM(node) {
-	//console.log("Body")
         return ["div", {
             class: 'article-part article-body'
         }, 0]
@@ -178,7 +172,6 @@ class Footnote extends Inline {
             'data-footnote': fnNodeToHtml(node.attrs.footnote)
         })
         dom.innerHTML = '&nbsp;'
-	//console.log("Footnote")
         return dom
     }
 }
@@ -186,7 +179,6 @@ class Footnote extends Inline {
 
 class CommentMark extends MarkType {
     get attrs() {
-	
         return {
             id: new Attribute()
         }
@@ -205,28 +197,30 @@ class CommentMark extends MarkType {
 }
 
 class InternalMark extends MarkType {
-
     get attrs() {
         return {
             id: new Attribute(),
             href: new Attribute,
-            title: new Attribute({default: ""})
-
+            title: new Attribute({
+                default: ""
+            })
         }
     }
     get inclusiveRight() {
         return false
     }
     get matchDOMTag() {
-
-    return {"a.internal[href]": dom => ({
-      href: dom.getAttribute("href"), title: dom.getAttribute("title"), id: dom.getAttribute("id")
-    })}
+        return {
+            "a.internal[href]": dom => ({
+                href: dom.getAttribute("href"),
+                title: dom.getAttribute("title"),
+                id: dom.getAttribute("id")
+            })
+        }
     }
     toDOM(node) {
-
-                  return ["a", node.attrs]
-                }
+        return ["a", node.attrs]
+    }
 
 }
 

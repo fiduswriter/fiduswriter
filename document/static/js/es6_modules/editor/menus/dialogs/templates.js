@@ -1,5 +1,5 @@
 export let linkDialogTemplate = _.template('\
-    <div  title="' + gettext("Link") + '">\
+    <div title="' + gettext("Link") + '">\
         <p><input class="linktitle" type="text" value="<%- linkTitle %>" placeholder="' + gettext("Link") + '"/></p>\
         <p><input class="link" type="text" value="<%- link  %>" placeholder="' + gettext("Link") + '"/></p><br> \
     </div>\

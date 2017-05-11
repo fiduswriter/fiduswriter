@@ -40,16 +40,20 @@ export class Equation extends Inline {
         }
     }
     get matchDOMTag() {
-        return {"span.equation": dom => ({
-            equation: dom.getAttribute('data-equation')
-        })}
+        return {
+            "span.equation": dom => ({
+                equation: dom.getAttribute('data-equation')
+            })
+        }
     }
     toDOM(node) {
         let dom = elt('span', {
             class: 'equation',
             'data-equation': node.attrs.equation
         })
-        katexRender(node.attrs.equation, dom, {throwOnError: false})
+        katexRender(node.attrs.equation, dom, {
+            throwOnError: false
+        })
         dom.setAttribute('contenteditable', 'false')
         return dom
     }
@@ -75,15 +79,17 @@ export class Figure extends Block {
         }
     }
     get matchDOMTag() {
-        return {"figure": dom => {
-            let image = dom.getAttribute('data-image')
-            return {
-                equation: dom.getAttribute('data-equation'),
-                image: image === 'false' ? false : parseInt(image),
-                figureCategory: dom.getAttribute('data-figure-category'),
-                caption: dom.getAttribute('data-caption')
+        return {
+            "figure": dom => {
+                let image = dom.getAttribute('data-image')
+                return {
+                    equation: dom.getAttribute('data-equation'),
+                    image: image === 'false' ? false : parseInt(image),
+                    figureCategory: dom.getAttribute('data-figure-category'),
+                    caption: dom.getAttribute('data-caption')
+                }
             }
-        }}
+        }
     }
     toDOM(node) {
         let dom = elt('figure', {
@@ -94,10 +100,10 @@ export class Figure extends Block {
         })
         if (node.attrs.image !== false) {
             dom.appendChild(elt("div"))
-            if(node.type.schema.cached.imageDB) {
-                if(node.type.schema.cached.imageDB.db[node.attrs.image] &&
+            if (node.type.schema.cached.imageDB) {
+                if (node.type.schema.cached.imageDB.db[node.attrs.image] &&
                     node.type.schema.cached.imageDB.db[node.attrs.image].image) {
-                        let imgSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
+                    let imgSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
                     dom.firstChild.appendChild(elt("img", {
                         "src": node.type.schema.cached.imageDB.db[node.attrs.image].image
                     }))
@@ -110,7 +116,7 @@ export class Figure extends Block {
                     if (!imageDBBroken) {
                         node.type.schema.cached.imageDB.getDB().then(() => {
                             if (node.type.schema.cached.imageDB.db[node.attrs.image] &&
-                                    node.type.schema.cached.imageDB.db[node.attrs.image].image) {
+                                node.type.schema.cached.imageDB.db[node.attrs.image].image) {
                                 let imgSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
                                 dom.firstChild.appendChild(elt("img", {
                                     "src": imgSrc
@@ -125,13 +131,13 @@ export class Figure extends Block {
             }
         } else {
             let domEquation = elt('div', {
-               class: 'figure-equation',
-               'data-equation': node.attrs.equation
+                class: 'figure-equation',
+                'data-equation': node.attrs.equation
             })
 
             katexRender(node.attrs.equation, domEquation, {
-               displayMode: true,
-               throwOnError: false
+                displayMode: true,
+                throwOnError: false
             })
             dom.appendChild(domEquation)
         }
@@ -166,25 +172,45 @@ export class Figure extends Block {
 
 
 export class Heading extends Block {
-  get attrs() { return {level: new Attribute({default: 1}), id: new Attribute({default:1}) } }
-  // :: number
-  // Controls the maximum heading level. Has the value 6 in the
-  // `Heading` class, but you can override it in a subclass.
-  get maxLevel() { return 6 }
-  get matchDOMTag() {
-    return {
-	"h1":  {level: 1},
-	"h2": { level: 2 },
-        "h3": { level: 3 },
-        "h4": { level: 4},
-	"h5": {level: 5 }, 
-       "h6":  { level: 6 }
+    get attrs() {
+        return {
+            level: new Attribute({
+                default: 1
+            }),
+            id: new Attribute({
+                default: 1
+            })
+        }
     }
-  }
-  toDOM(node) { 
-		console.log(node.attrs.id)
-		return ["h" + node.attrs.level,{'id':node.attrs.id}, 0] 	
+    get maxLevel() {
+        return 6
+    }
+    get matchDOMTag() {
+        return {
+            "h1": {
+                level: 1
+            },
+            "h2": {
+                level: 2
+            },
+            "h3": {
+                level: 3
+            },
+            "h4": {
+                level: 4
+            },
+            "h5": {
+                level: 5
+            },
+            "h6": {
+                level: 6
+            }
+        }
+    }
+    toDOM(node) {
+        return ["h" + node.attrs.level, {
+            'id': node.attrs.id
+        }, 0]
 
-	}
+    }
 }
-

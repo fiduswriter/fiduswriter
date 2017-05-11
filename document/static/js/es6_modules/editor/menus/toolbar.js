@@ -1,10 +1,6 @@
-import {CitationDialog, FigureDialog, LinkDialog, TableDropdown, MathDialog,InternalLinkDialogTemplate } from "./dialogs"
+import {CitationDialog, FigureDialog, LinkDialog, TableDropdown, MathDialog, InternalLinkDialogTemplate} from "./dialogs"
 import {commands} from "prosemirror-old/dist/edit/commands"
 
-
-//var InternalHeadings = new Map();
-
-//var unsentInternal = false
 /* Bindings for the toolbar menu */
 export class ModMenusToolbar {
     constructor(mod) {
@@ -12,7 +8,6 @@ export class ModMenusToolbar {
         this.mathDialog = new MathDialog(mod)
         this.mod = mod
         this.bindEvents()
-  //      this.InternalHeadings = new Map()
     }
 
     executeAction(event, editFunction) {
@@ -40,7 +35,7 @@ export class ModMenusToolbar {
 
         jQuery(document).on('mousedown', '#button-cite:not(.disabled)', event => {
             this.executeAction(event, () => {
-                let dialog = new CitationDialog(this.mod,0)
+                let dialog = new CitationDialog(this.mod, 0)
                 return dialog.init()
             })
 
@@ -56,36 +51,36 @@ export class ModMenusToolbar {
 
         //internal link -- changing
         jQuery(document).on('mousedown', '#button-internal-link:not(.disabled)', event => {
-            this.executeAction(event, () =>{
-                var temp_ids=new Map()
+            this.executeAction(event, () => {
+                var temp_ids = new Map()
                 this.mod.editor.pm.doc.descendants(node => {
-                    if (node.type.name==='heading') {
-                        temp_ids['h'+node.attrs.level] = node.attrs.id
+                    if (node.type.name === 'heading') {
+                        temp_ids['h' + node.attrs.level] = node.attrs.id
                     }
                 })
                 console.log('temp_ids', temp_ids)
-		        let dialog = new LinkDialog(this.mod, 1, temp_ids)
-		        return dialog.init()
-		    })
+                let dialog = new LinkDialog(this.mod, 1, temp_ids)
+                return dialog.init()
+            })
         })
 
 
         let that = this
-        jQuery(document).on('click', 'a' , function (event) {
+        jQuery(document).on('click', 'a', function(event) {
 
-            let url =  $(this).attr('href')
+            let url = $(this).attr('href')
             let split_url = url.split('#')
 
             let id = split_url[1]
 
-            if (!id){
+            if (!id) {
                 window.open(url, '_blank')
                 return
             }
 
             that.executeAction(event, () => {
                 that.mod.editor.pm.doc.descendants((node, pos) => {
-                    if (node.type.name==='heading' && node.attrs.id == id){
+                    if (node.type.name === 'heading' && node.attrs.id == id) {
                         console.log('id', id, node.attrs.level)
                         console.log('pos', pos)
                         that.mod.editor.pm.scrollIntoView(pos)
@@ -96,11 +91,11 @@ export class ModMenusToolbar {
 
 
         // blockstyle paragraph, h1 - h3, lists
-        jQuery(document).on('mousedown', '.toolbarheadings label', function (event) {
+        jQuery(document).on('mousedown', '.toolbarheadings label', function(event) {
 
-            var temp_ids=[]
+            var temp_ids = []
             that.mod.editor.pm.doc.descendants((node) => {
-                if (node.type.name==='heading' ){
+                if (node.type.name === 'heading') {
                     temp_ids.push(node.attrs.id)
 
                 }
@@ -114,20 +109,38 @@ export class ModMenusToolbar {
             }
             blockId = temp
             const blockTypes = {
-              'p': ['paragraph'],
-              'h1': ['heading',{level: 1, id: blockId}],
-              'h2': ['heading',{level: 2, id: blockId}],
-              'h3': ['heading',{level: 3, id: blockId}],
-              'h4': ['heading',{level: 4, id: blockId}],
-              'h5': ['heading',{level: 5, id: blockId}],
-              'h6': ['heading',{level: 6, id: blockId}],
-              'code': ['code_block']
-            },
+                    'p': ['paragraph'],
+                    'h1': ['heading', {
+                        level: 1,
+                        id: blockId
+                    }],
+                    'h2': ['heading', {
+                        level: 2,
+                        id: blockId
+                    }],
+                    'h3': ['heading', {
+                        level: 3,
+                        id: blockId
+                    }],
+                    'h4': ['heading', {
+                        level: 4,
+                        id: blockId
+                    }],
+                    'h5': ['heading', {
+                        level: 5,
+                        id: blockId
+                    }],
+                    'h6': ['heading', {
+                        level: 6,
+                        id: blockId
+                    }],
+                    'code': ['code_block']
+                },
 
 
-            blockType = blockTypes[this.id.split('_')[0]]
+                blockType = blockTypes[this.id.split('_')[0]]
 
-            that.executeAction(event, function(){
+            that.executeAction(event, function() {
 
                 let block = that.mod.editor.currentPm.schema.nodes[blockType[0]]
 
@@ -224,14 +237,9 @@ export class ModMenusToolbar {
             )
         })
     }
-
-
 }
 
 
 function randomInt(min, max) {
-
-    return Math.round(min + Math.random()*(max-min));
-
-
+    return Math.round(min + Math.random() * (max - min));
 }

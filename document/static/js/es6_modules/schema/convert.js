@@ -18,7 +18,6 @@ export let getMetadata = function(pmArticle) {
             }
         }
     }
-    console.log("metadata", metadata)
     return metadata
 }
 

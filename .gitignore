@@ -31,3 +31,5 @@ base/static/css/libs/
 .coverage
 /npm-debug.log
 /package.json
+*.swp
+*.swo

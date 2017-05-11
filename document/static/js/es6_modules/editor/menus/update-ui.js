@@ -22,7 +22,6 @@ const PART_LABELS = {
 export class ModMenusUpdateUI {
 
     constructor(mod) {
-
         mod.updateUI = this
         this.mod = mod
         this.placeHolderCss = ''
@@ -74,14 +73,12 @@ export class ModMenusUpdateUI {
         const strong = marks.some(
             mark => mark.type.name === 'strong'
         )
-	
+
         if (strong) {
-	    
             jQuery('#button-bold').addClass('ui-state-active')
         } else {
             jQuery('#button-bold').removeClass('ui-state-active')
         }
-	
 
         const em = marks.some(
             mark => mark.type.name === 'em'

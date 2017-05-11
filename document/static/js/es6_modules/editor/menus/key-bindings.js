@@ -19,8 +19,8 @@ export class ModMenusKeyBindings {
 
     keydown(event) {
         let name = Keymap.keyName(event)
-        let action = this.keymap.lookup(name) 
-       if (action) {
+        let action = this.keymap.lookup(name)
+        if (action) {
             event.preventDefault()
             action()
         }

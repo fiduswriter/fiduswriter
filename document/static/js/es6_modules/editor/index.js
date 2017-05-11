@@ -121,9 +121,7 @@ export class Editor {
             place: document.getElementById('document-editable'),
             schema: this.schema
         })
-        
-	console.log("this.schema",this.schema)
-	this.pm.addKeymap(buildKeymap(this.schema))
+        this.pm.addKeymap(buildKeymap(this.schema))
         this.pmCollab = collabEditing.config().attach(this.pm)
     }
 
@@ -177,13 +175,9 @@ export class Editor {
         this.mod.footnotes.markers.removeAllMarkers()
         this.docInfo.hash = this.getHash()
         this.mod.comments.store.setVersion(this.doc.comment_version)
-       // this.mod.menus.toolbar.setInternalHeadings()
-	
-	this.pmCollab.mustSend.add(() => {
+        this.pmCollab.mustSend.add(() => {
             this.mod.collab.docChanges.sendToCollaborators()
-//	    this.mod.collab.docChanges.sendToCollaboratorsInternalHeading()
         }, 0) // priority : 0 so that other things can be scheduled before this.
-
         this.pmCollab.receivedTransform.add(
             (transform, options) => {
                 this.onTransform(transform, false)
@@ -204,11 +198,6 @@ export class Editor {
         this.mod.comments.store.on("mustSend", () => {
             this.mod.collab.docChanges.sendToCollaborators()
         })
-	
-	//this.mod.menus.toolbar.hasUnsentInternalHeadings( ()=> {	
-	 //   this.mod.collab.docChanges.sendToCollaboratorsInternalHeading()
-	//})
-
         this.getBibDB(this.doc.owner.id).then(() => {
             this.enableUI()
         })
@@ -398,14 +387,9 @@ export class Editor {
         this.doc.version = this.pmCollab.version
         this.docInfo.hash = this.getHash()
         this.doc.comments = this.mod.comments.store.comments
-	//this.doc.InternalLinks = this.mod.menus.toolbar.InternalHeadings
-	console.log("getUpdates",this.doc.settings, this.doc.contents,  this.doc.InternalLinks, this.doc.comments, this.doc.title, this.doc.version)
         return Promise.resolve()
     }
 
-    
-    
-    
     // Send changes to the document to the server
     sendDocumentUpdate() {
         let doc = {
@@ -421,9 +405,7 @@ export class Editor {
             doc,
             hash: this.docInfo.hash
         })
- 
-	//let InternalHeading = this.mod.menus.toolbar.unsentInternalHeadings()
-	//console.log("InternalHeadingssend server", InternalHeading)
+
         this.docInfo.changed = false
 
         return Promise.resolve()
@@ -488,7 +470,6 @@ export class Editor {
             }
         })
 
-
         if (updateBibliography) {
             // Recreate the bibliography on next flush.
             this.pm.scheduleDOMUpdate(() => this.mod.citations.resetCitations())
@@ -516,8 +497,6 @@ export class Editor {
                 () => this.mod.comments.store.checkAndDelete(commentIds)
             )
         }
-
-	        
 
     }
 

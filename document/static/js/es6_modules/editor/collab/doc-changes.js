@@ -77,7 +77,7 @@ export class ModCollabDocChanges {
             this.awaitingDiffResponse ||
             (
                 !this.mod.editor.pmCollab.hasSendableSteps() &&
-                this.mod.editor.mod.comments.store.unsentEvents().length === 0  
+                this.mod.editor.mod.comments.store.unsentEvents().length === 0
             )
         ) {
             // We are waiting for the confirmation of previous steps, so don't
@@ -102,7 +102,6 @@ export class ModCollabDocChanges {
             }),
             comments: this.mod.editor.mod.comments.store.unsentEvents(),
             comment_version: this.mod.editor.mod.comments.store.version,
-	    
             request_id: request_id,
             hash: this.mod.editor.getHash()
         }
@@ -114,54 +113,6 @@ export class ModCollabDocChanges {
             comments: this.mod.editor.mod.comments.store.hasUnsentEvents()
         }
     }
-
-    /*sendToCollaboratorsInternalHeading() {
-        if (
-            this.awaitingDiffResponse ||
-            (
-                !this.mod.editor.pmCollab.hasSendableSteps() &&
-                this.mod.editor.mod.menus.toolbar.hasUnsentInternalHeadings()
-            )
-        ) {
-            // We are waiting for the confirmation of previous steps, so don't
-            // send anything now, or there is nothing to send.
-	    console.log("returning")
-            return
-        }
-	console.log("not returning")
-        let toSend = this.mod.editor.pmCollab.sendableSteps()
-        let fnToSend = this.mod.editor.mod.footnotes.fnPmCollab.sendableSteps()
-        let request_id = this.confirmStepsRequestCounter++
-	console.log("toSend, fnToSend, request_id", toSend, fnToSend, request_id )
-        let aPackage = {
-            type: 'diff',
-            diff_version: this.mod.editor.pmCollab.version,
-            diff: toSend.steps.map(s => {
-                let step = s.toJSON()
-                step.client_id = this.mod.editor.pmCollab.clientID
-                return step
-            }),
-            footnote_diff: fnToSend.steps.map(s => {
-                let step = s.toJSON()
-                step.client_id = this.mod.editor.mod.footnotes.fnPmCollab.clientID
-                return step
-            }),
-            InternalHeading: this.mod.editor.mod.menus.toolbar.unsentInternalHeadings(),
-            request_id: request_id,
-            hash: this.mod.editor.getHash()
-        }
-        this.disableDiffSending()
-        let logg = this.mod.editor.mod.serverCommunications.send(aPackage)
-	console.log("logg", logg, aPackage)
-        this.unconfirmedSteps[request_id] = {
-            diffs: toSend.steps,
-            footnote_diffs: fnToSend.steps,
-            InternalHeading: this.mod.editor.mod.menus.toolbar.hasUnsentInternalHeadings()
-        }
-
-	console.log( "this.unconfirmedSteps[request_id] ",  this.unconfirmedSteps[request_id] )
-    }
-*/
 
     receiveFromCollaborators(data) {
         if (this.mod.editor.waitingForDocument) {

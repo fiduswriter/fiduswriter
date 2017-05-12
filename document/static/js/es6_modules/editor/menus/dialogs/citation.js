@@ -1,6 +1,6 @@
 import {configureCitationTemplate, citationItemTemplate, selectedCitationTemplate} from "./templates"
 import {BibEntryForm} from "../../../bibliography/form"
-import {addDropdownBox, setCheckableLabel} from "../../../common"
+import {setCheckableLabel} from "../../../common"
 import {nameToText, litToText} from "../../../bibliography/tools"
 import * as plugins from "../../../plugins/citation-dialog"
 
@@ -31,7 +31,7 @@ export class CitationDialog {
             this.diaButtons.push({
                 text: gettext('Remove'),
                 click: () => {
-                     this.editor.currentPm.tr.deleteSelection().apply()
+                    this.editor.currentPm.tr.deleteSelection().apply()
                     this.dialog.dialog('close')
                 },
                 class: 'fw-button fw-orange'
@@ -208,12 +208,6 @@ export class CitationDialog {
 
         jQuery('#cite-source-table').trigger('update')
 
-        addDropdownBox(jQuery('#citation-style-label'), jQuery('#citation-style-pulldown'))
-        jQuery('#citation-style-pulldown .fw-pulldown-item').bind('mousedown', function() {
-            jQuery('#citation-style-label label').html(jQuery(this).html())
-            jQuery('#citation-style-label').attr('data-style', jQuery(this).data('style'))
-        })
-
         jQuery('#add-cite-book').bind('click', () => {
             let checkedElements = jQuery('#cite-source-table .fw-checkable.checked'),
                 selectedItems = []
@@ -263,7 +257,7 @@ export class CitationDialog {
             return false
         }
 
-        let format = jQuery('#citation-style-label').data('style')
+        let format = jQuery('#citation-style-selector').val()
 
         if (
             JSON.stringify(references) === JSON.stringify(this.initialReferences) &&

@@ -1,6 +1,5 @@
-#cite-source-table_wrapper, #cite-source-table,
-#citation-style-selector, #selected-cite-source-table {
-    margin-top: 15px;
+#cite-books h3, #my-sources h3 {
+    margin-bottom: 15px;
 }
 
 #cite-source-table_filter {

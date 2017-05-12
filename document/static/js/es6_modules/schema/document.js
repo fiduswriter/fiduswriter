@@ -196,35 +196,6 @@ class CommentMark extends MarkType {
     }
 }
 
-class InternalMark extends MarkType {
-    get attrs() {
-        return {
-            id: new Attribute(),
-            href: new Attribute,
-            title: new Attribute({
-                default: ""
-            })
-        }
-    }
-    get inclusiveRight() {
-        return false
-    }
-    get matchDOMTag() {
-        return {
-            "a.internal[href]": dom => ({
-                href: dom.getAttribute("href"),
-                title: dom.getAttribute("title"),
-                id: dom.getAttribute("id")
-            })
-        }
-    }
-    toDOM(node) {
-        return ["a", node.attrs]
-    }
-
-}
-
-
 export const docSchema = new Schema({
   nodes: {
     doc: {type: Doc, content: "article"}, // Transformations don't work well on the top most element
@@ -263,7 +234,6 @@ export const docSchema = new Schema({
     strong: StrongMark,
     link: LinkMark,
     code: CodeMark,
-    comment: CommentMark,
-    internal_link: InternalMark
+    comment: CommentMark
   }
 })

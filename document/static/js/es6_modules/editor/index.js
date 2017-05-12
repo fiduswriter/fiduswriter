@@ -4,6 +4,8 @@ import * as plugins from "../plugins/editor"
 import {ProseMirror} from "prosemirror-old/dist/edit/main"
 import {collabEditing} from "prosemirror-old/dist/collab"
 import {buildKeymap} from "prosemirror-old/dist/example-setup"
+import {Slice, Fragment} from "prosemirror-old/dist/model"
+import {ReplaceAroundStep} from "prosemirror-old/dist/transform"
 import {docSchema} from "../schema/document"
 import {ModComments} from "./comments"
 import {ModFootnotes} from "./footnotes"
@@ -71,6 +73,9 @@ export class Editor {
         )
         this.pm.on.filterTransform.add(
             transform => this.onFilterTransform(transform)
+        )
+        this.pm.on.beforeTransform.add(
+            (transform, options) => {this.onBeforeTransform(this.pm, transform)}
         )
         this.pm.on.transform.add(
             (transform, options) => {this.onTransform(transform, true)}
@@ -432,6 +437,105 @@ export class Editor {
         }
 
         return prohibited
+    }
+
+    // Use PMs scrollIntoView function and adjust for top menu
+    scrollIntoView(pm, pos) {
+        pm.scrollIntoView(pos)
+        let topMenuHeight = jQuery('#editor-tools-wrapper').outerHeight() + jQuery('#header').outerHeight() + 10
+        let distanceFromTop = pm.coordsAtPos(pos).top - topMenuHeight
+        if (distanceFromTop < 0) {
+            window.scrollBy(0, distanceFromTop)
+        }
+    }
+
+    // Things to execute before every editor transform
+    onBeforeTransform(pm, transform) {
+        //Check if there are any headings in the affaceted area. Otherwise, skip.
+        let foundHeading = false
+
+        transform.steps.forEach((step, index) => {
+            if (step.jsonID === 'replace' || step.jsonID === 'replaceAround') {
+                transform.docs[index].nodesBetween(
+                    step.from,
+                    step.to,
+                    (node, pos, parent) => {
+                        if (node.type.name === 'heading') {
+                            foundHeading = true
+                        }
+                    }
+                )
+            }
+        })
+
+        if (!foundHeading) {
+            return
+        }
+
+        // Check that unique IDs only exist once in the document
+        // If an ID is used more than once, add steps to change the ID of all
+        // but the first occurence.
+        let linkIds = [], doubleIds = []
+
+        // ID should not be found in the other pm either. So we look through
+        // those as well.
+        let otherPm = pm === this.pm ? this.mod.footnotes.fnPm : this.pm
+
+        otherPm.doc.descendants(node => {
+            if (node.type.name === 'heading') {
+                linkIds.push(node.attrs.id)
+            }
+        })
+
+        transform.doc.descendants((node, pos) => {
+            if (node.type.name === 'heading') {
+                if (linkIds.includes(node.attrs.id)) {
+                    doubleIds.push({
+                        node,
+                        pos
+                    })
+                }
+                linkIds.push(node.attrs.id)
+            }
+        })
+
+        // Change the IDs of the nodes that having an ID that was used previously
+        // already.
+        doubleIds.forEach(doubleId => {
+            let node = doubleId.node,
+                posFrom = doubleId.pos,
+                posTo = posFrom + node.nodeSize,
+                blockId
+
+            while (!blockId || linkIds.includes(blockId)) {
+                blockId = 'H' + Math.round(Math.random()*10000000) + 1
+            }
+
+            let attrs = {
+                level: node.attrs.level,
+                id: blockId
+            }
+
+            // Because we only change attributes, positions should stay the
+            // the same throughout all our extra steps. We therefore do no
+            // mapping of positions through these steps.
+            // This works for headlines, which are block nodes with text inside
+            // (which should stay the same). Figures and inline content will
+            // likely need to use ReplaceStep instead.
+            transform.step(
+                new ReplaceAroundStep(
+                    posFrom,
+                    posTo,
+                    posFrom + 1,
+                    posTo - 1,
+                    new Slice(Fragment.from(node.type.create(attrs)), 0, 0),
+                    1,
+                    true
+                )
+            )
+
+            linkIds.push(blockId)
+        })
     }
 
     // Things to be executed on every editor transform.

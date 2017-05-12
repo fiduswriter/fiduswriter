@@ -9,7 +9,7 @@ import {defaultCitationStyle} from "../style/citation-definitions"
 
 export let getMetadata = function(pmArticle) {
     let metadata = {}
-    for (let i=0;i<pmArticle.childCount;i++) {
+    for (let i=0; i < pmArticle.childCount; i++) {
         let pmNode = pmArticle.child(i)
         if (pmNode.type.isMetadata || !pmNode.attrs.hidden) {
             let value = pmNode.toDOM().innerHTML

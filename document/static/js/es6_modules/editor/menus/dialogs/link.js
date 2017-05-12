@@ -1,33 +1,39 @@
 import {InternalLinkDialogTemplate, linkDialogTemplate, InternalHeadingsTemplate} from "./templates"
 
 export class LinkDialog {
-    constructor(mod, internal, InternalHeadings) {
-
+    constructor(mod) {
         this.editor = mod.editor
-        this.internal = internal
-        if (internal == 0) {
-            this.link = 'http://'
-            this.defaultLink = this.link
-        } else {
-            this.link = window.location.href
-            this.defaultLink = this.link
-            this.InternalHeadings = InternalHeadings
-        }
+        this.link = ''
+        this.defaultLink = 'https://'
         this.linkTitle = ''
         this.submitButtonText = gettext('Insert')
         this.dialog = false
+        this.internalTargets = []
     }
 
     init() {
-
         this.checkLink()
+        this.findInternalTargets()
         this.createDialog()
+    }
+
+    findInternalTargets() {
+        let docs = [this.editor.pm.doc, this.editor.mod.footnotes.fnPm.doc]
+
+        docs.forEach(doc => doc.descendants(node => {
+            if (node.type.name === 'heading') {
+                this.internalTargets.push({
+                    id: node.attrs.id,
+                    text: node.textContent
+                })
+            }
+        }))
+
     }
 
     // Check if there is an existing link at the selection. If this is the case
     // use its values in dialog.
     checkLink() {
-
         let linkElement = _.find(
             this.editor.currentPm.activeMarks(),
             mark => mark.type.name === 'link'
@@ -41,17 +47,23 @@ export class LinkDialog {
 
     createDialog() {
         let buttons = []
-
         buttons.push({
             text: this.submitButtonText,
             class: 'fw-button fw-dark',
             click: () => {
+                let linkType = this.dialog.find('input[name=link-type]:checked').val(),
+                    newLink = '', linkTitle = ''
+                if (linkType === 'internal') {
+                    let targetId = this.dialog.find('select.internal-link-selector').val()
+                    if (targetId) {
+                        newLink = `#${targetId}`
+                        linkTitle = this.internalTargets.find(target => target.id === targetId).text
+                    }
+                } else {
+                    newLink = this.dialog.find('input.link').val()
+                    linkTitle = this.dialog.find('input.link-title').val()
+                }
 
-                let heading = this.dialog.find('select').val(),
-                    newLink = this.dialog.find('input.link').val() + '#' + heading,
-                    linkTitle = this.dialog.find('input.linktitle').val()
-                //TODO check if the heading before is not assigned, if it was the case
-                // remove it and add the new one
                 if ((new RegExp(/^\s*$/)).test(newLink) || newLink === this.defaultLink) {
                     // The link input is empty or hasn't been changed from the default value.
                     // Just close the dialog.
@@ -66,39 +78,20 @@ export class LinkDialog {
                 }
 
                 this.dialog.dialog('close')
-                let pm = this.editor.currentPm
-                if (!this.internal) {
-                    let posFrom = pm.selection.from
-                    let posTo = pm.selection.to
-                    let markType = pm.schema.marks.link.create({
+                let pm = this.editor.currentPm,
+                    posFrom = pm.selection.from,
+                    posTo = pm.selection.to,
+                    markType = pm.schema.marks.link.create({
                         href: newLink,
                         title: linkTitle
                     })
-                    pm.tr.addMark(
-                        posFrom,
-                        posTo,
-                        markType
-                    ).apply()
-                    pm.focus()
-                    return
-                } else {
-
-                    let posFrom = pm.selection.from,
-                        posTo = posFrom + linkTitle.length
-                    let markType = pm.schema.marks.internal_link.create({
-                        id: this.dialog.find('select').val(),
-                        href: newLink,
-                        title: linkTitle
-                    })
-
-                    pm.tr.addMark(
-                        posFrom,
-                        posTo,
-                        markType
-                    ).apply()
-                    pm.focus()
-                    return
-                }
+                pm.tr.addMark(
+                    posFrom,
+                    posTo,
+                    markType
+                ).apply()
+                pm.focus()
+                return
             }
         })
 
@@ -111,31 +104,52 @@ export class LinkDialog {
             }
         })
 
+        this.dialog = jQuery(linkDialogTemplate({
+            linkTitle: this.linkTitle,
+            link: this.link,
+            defaultLink: this.defaultLink,
+            internalTargets: this.internalTargets
+        }))
 
-        let temp = this.internal
-        if (!temp) {
+        this.dialog.dialog({
+            draggable: false,
+            resizable: false,
+            top: 10,
+            width: 836,
+            height: 360,
+            modal: true,
+            buttons,
+            close: () => this.dialog.dialog('destroy').remove()
+        })
 
-            this.dialog = jQuery(linkDialogTemplate({
-                linkTitle: this.linkTitle,
-                link: this.link
-            }))
-        } else {
-            this.dialog = jQuery(InternalLinkDialogTemplate({
-                linkTitle: this.linkTitle,
-                link: this.link,
-                array: this.InternalHeadings,
-            }))
+        if (this.internalTargets.length) {
+            let externalEls = this.dialog.find('input.link, input.link-title'),
+                internalEls = this.dialog.find('select.internal-link-selector'),
+                externalSwitchers = this.dialog.find('input.link, input.link-title, label.link-external-label, input.link-external-check'),
+                internalSwitchers = this.dialog.find('select.internal-link-selector, label.link-internal-label, input.link-internal-check'),
+                radioInternal = this.dialog.find('input.link-internal-check'),
+                radioExternal = this.dialog.find('input.link-external-check')
 
+            if (this.link[0] === '#') {
+                externalEls.addClass("disabled")
+                radioInternal.prop("checked", true)
+            } else {
+                internalEls.addClass("disabled")
+                radioExternal.prop("checked", true)
+            }
 
+            internalSwitchers.on('mousedown', () => {
+                externalEls.addClass("disabled")
+                internalEls.removeClass("disabled")
+                radioInternal.prop("checked", true)
+            })
 
+            externalSwitchers.on('mousedown', () => {
+                internalEls.addClass("disabled")
+                externalEls.removeClass("disabled")
+                radioExternal.prop("checked", true)
+            })
 
         }
-        this.dialog.dialog({
-            buttons,
-            modal: true,
-            close: () => {
-                this.dialog.dialog('destroy').remove()
-            }
-        })
     }
 }

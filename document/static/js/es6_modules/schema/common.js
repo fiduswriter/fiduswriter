@@ -177,33 +177,50 @@ export class Heading extends Block {
             level: new Attribute({
                 default: 1
             }),
-            id: new Attribute({
-                default: 1
-            })
+            id: new Attribute()
         }
     }
     get maxLevel() {
         return 6
     }
+
     get matchDOMTag() {
         return {
-            "h1": {
-                level: 1
+            "h1": dom => {
+                return {
+                    level: 1,
+                    id: dom.getAttribute('id')
+                }
             },
-            "h2": {
-                level: 2
+            "h2": dom => {
+                return {
+                    level: 2,
+                    id: dom.getAttribute('id')
+                }
             },
-            "h3": {
-                level: 3
+            "h3": dom => {
+                return {
+                    level: 3,
+                    id: dom.getAttribute('id')
+                }
             },
-            "h4": {
-                level: 4
+            "h4": dom => {
+                return {
+                    level: 4,
+                    id: dom.getAttribute('id')
+                }
             },
-            "h5": {
-                level: 5
+            "h5": dom => {
+                return {
+                    level: 5,
+                    id: dom.getAttribute('id')
+                }
             },
-            "h6": {
-                level: 6
+            "h6": dom => {
+                return {
+                    level: 6,
+                    id: dom.getAttribute('id')
+                }
             }
         }
     }

@@ -161,7 +161,6 @@ export class ModMenusUpdateUI {
                         jQuery('.edit-button').removeClass('disabled')
 
                         if (pm.selection.empty) {
-                            jQuery('#button-link').addClass('disabled')
                             jQuery('#button-comment').addClass('disabled')
                         } else {
                             jQuery('#button-comment').removeClass('disabled')

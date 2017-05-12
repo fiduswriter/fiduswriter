@@ -72,7 +72,7 @@ export class ModMenusToolbar {
             if (stillLooking) {
                 that.mod.editor.mod.footnotes.fnPm.doc.descendants((node, pos) => {
                     if (stillLooking && node.type.name === 'heading' && node.attrs.id === id) {
-                        that.mod.editor.scrollIntoView(that.mod.footnotes.fnPm, pos)
+                        that.mod.editor.scrollIntoView(that.mod.editor.mod.footnotes.fnPm, pos)
                         stillLooking = false
                     }
                 })

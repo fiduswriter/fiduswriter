@@ -34,15 +34,43 @@ export class LinkDialog {
     // Check if there is an existing link at the selection. If this is the case
     // use its values in dialog.
     checkLink() {
-        let linkElement = _.find(
-            this.editor.currentPm.activeMarks(),
-            mark => mark.type.name === 'link'
-        )
-        if (linkElement) {
+        let pm = this.editor.currentPm,
+            from = pm.selection.from,
+            linkMark = pm.doc.marksAt(from).find(
+                mark => mark.type.name === 'link'
+            )
+        if (linkMark) {
+            this.extendSelectionToMark(from, linkMark)
             this.submitButtonText = gettext('Update')
-            this.linkTitle = linkElement.attrs.title
-            this.link = linkElement.attrs.href
+            this.linkTitle = linkMark.attrs.title
+            this.link = linkMark.attrs.href
         }
+    }
+
+    // Find the start and end of the link currently selected.
+    extendSelectionToMark(pos, mark) {
+        let pm = this.editor.currentPm,
+            $pos = pm.doc.resolve(pos),
+            startIndex = $pos.index(),
+            endIndex = $pos.indexAfter()
+
+        while (startIndex > 0 && mark.isInSet($pos.parent.child(startIndex - 1).marks)) {
+            startIndex--
+        }
+        while (endIndex < $pos.parent.childCount && mark.isInSet($pos.parent.child(endIndex).marks)) {
+            endIndex++
+        }
+        let startPos = $pos.start(),
+            endPos = startPos
+
+        for (let i = 0; i < endIndex; i++) {
+            let size = $pos.parent.child(i).nodeSize
+            if (i < startIndex) {
+                startPos += size
+            }
+            endPos += size
+        }
+        pm.setTextSelection(startPos, endPos)
     }
 
     createDialog() {
@@ -85,6 +113,13 @@ export class LinkDialog {
                         href: newLink,
                         title: linkTitle
                     })
+                // There is an empty selection. We insert the link title into the editor
+                // and then add the link to that.
+                if (posFrom===posTo) {
+                    pm.tr.insertText(posFrom, linkTitle).apply()
+                    posTo = posFrom + linkTitle.length
+                    pm.setTextSelection(posFrom, posTo)
+                }
                 pm.tr.addMark(
                     posFrom,
                     posTo,

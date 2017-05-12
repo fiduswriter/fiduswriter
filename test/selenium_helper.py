@@ -53,7 +53,7 @@ class SeleniumHelper(object):
         for driver in drivers:
             # Set sizes of browsers so that all buttons are visible.
             driver.set_window_position(0, 0)
-            driver.set_window_size(1024, 768)
+            driver.set_window_size(1366, 768)
         return {
             "clients": clients,
             "drivers": drivers,

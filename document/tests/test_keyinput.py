@@ -369,7 +369,7 @@ class MovementInSingleChildParagraph(CaretPositionTest):
             givenContents=Contents(Paragraph(
                 Link(
                     SHORT_LOREM,
-                    'http://www.example.com',
+                    'https://www.example.com',
                     'LinkTitle'
                 )
             )),
@@ -390,7 +390,7 @@ class InsertionOfLink(LiveTornadoTestCase, Manipulator):
     __metaclass__ = DataCasesToTestMethodsMeta
     linkTitle = 'all the ipsums'
     linkAddressWithoutHTTP = 'www.example.com'
-    linkAddress = 'http://' + linkAddressWithoutHTTP
+    linkAddress = 'https://' + linkAddressWithoutHTTP
     expectedLink = Link('', linkAddress, linkTitle)
 
     cases = [
@@ -455,7 +455,7 @@ class InsertionOfLink(LiveTornadoTestCase, Manipulator):
                                             ))
         )
 
-        (DRIVER.find_element_by_css_selector('input.linktitle')
+        (DRIVER.find_element_by_css_selector('input.link-title')
                .send_keys(self.linkTitle))
         (DRIVER.find_element_by_css_selector('input.link')
                .send_keys(self.linkAddressWithoutHTTP))

@@ -35,6 +35,9 @@ class SeleniumHelper(object):
                 ]
 
             capabilities["browserName"] = "chrome"
+            capabilities["platform"] = "Windows 10"
+            capabilities["version"] = "58.0"
+            capabilities["screenResolution"] = "1920x1080"
             hub_url = "%s:%s@localhost:4445" % (username, access_key)
             for i in range(number):
                 drivers.append(

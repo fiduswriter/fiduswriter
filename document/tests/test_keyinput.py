@@ -46,6 +46,9 @@ if os.getenv("SAUCE_USERNAME"):
     capabilities["tags"] = [os.environ["TRAVIS_PYTHON_VERSION"], "CI"]
     capabilities["tunnel-identifier"] = os.environ["TRAVIS_JOB_NUMBER"]
     capabilities["browserName"] = "chrome"
+    capabilities["platform"] = "Windows 10"
+    capabilities["version"] = "58.0"
+    capabilities["screenResolution"] = "1920x1080"
     hub_url = "%s:%s@localhost:4445" % (username, access_key)
     DRIVER = webdriver.Remote(
         desired_capabilities=capabilities,

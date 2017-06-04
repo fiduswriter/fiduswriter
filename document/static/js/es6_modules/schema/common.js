@@ -177,7 +177,9 @@ export class Heading extends Block {
             level: new Attribute({
                 default: 1
             }),
-            id: new Attribute()
+            id: new Attribute({
+                default: undefined
+            })
         }
     }
     get maxLevel() {

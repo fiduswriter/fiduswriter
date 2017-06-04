@@ -25,6 +25,7 @@ export function updateFileDoc(doc, filetypeVersion) {
         case "1.3":
         case "1.4":
         case "1.5":
+        case "1.6":
             doc = updateDoc(doc)
             break
     }

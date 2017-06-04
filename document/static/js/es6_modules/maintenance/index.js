@@ -2,7 +2,7 @@ import {ProseMirror} from "prosemirror-old/dist/edit/main"
 import {Step} from "prosemirror-old/dist/transform"
 import {collabEditing} from "prosemirror-old/dist/collab"
 import {updateFileDoc, updateFileBib} from "../importer/file"
-import {updateDoc, getMetadata, getSettings} from "../schema/convert"
+import {updateDoc, getMetadata} from "../schema/convert"
 import {docSchema} from "../schema/document"
 import {addAlert, csrfToken} from "../common"
 import {Menu} from "../menu"
@@ -119,7 +119,6 @@ export class DocMaintenance {
         let pmArticle = pm.doc.firstChild
         doc.contents = pmArticle.toJSON()
         doc.metadata = getMetadata(pmArticle)
-        doc.settings = getSettings(pmArticle)
         doc.version = doc.diff_version
     }
 

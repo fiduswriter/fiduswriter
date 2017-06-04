@@ -15,7 +15,7 @@ import {ModTools} from "./tools"
 import {ModSettings} from "./settings"
 import {ModMenus} from "./menus"
 import {ModServerCommunications} from "./server-communications"
-import {getSettings, getMetadata, updateDoc} from "../schema/convert"
+import {getMetadata, updateDoc} from "../schema/convert"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
 import {Paste} from "./paste"
@@ -355,7 +355,6 @@ export class Editor {
         this.docInfo = docInfo
         this.docInfo.changed = false
         this.docInfo.title_changed = false
-
         if (this.doc.version === 0) {
             // If the document is new, change the url.
             window.history.replaceState("", "", `/document/${this.doc.id}/`)
@@ -387,7 +386,6 @@ export class Editor {
         let pmArticle = this.pmCollab.versionDoc.firstChild
         this.doc.contents = pmArticle.toJSON()
         this.doc.metadata = getMetadata(pmArticle)
-        this.doc.settings = getSettings(pmArticle)
         this.doc.title = pmArticle.firstChild.textContent
         this.doc.version = this.pmCollab.version
         this.docInfo.hash = this.getHash()

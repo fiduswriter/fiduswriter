@@ -4,6 +4,7 @@ import {ImageOverviewCategories} from "./categories"
 import {addDropdownBox, activateWait, deactivateWait, addAlert, localizeDate, csrfToken} from "../../common"
 import {Menu} from "../../menu"
 import {usermediaCategoryListItem, usermediaTableTemplate} from "./templates"
+import * as plugins from "../../plugins/images-overview"
  /** Helper functions for user added images/SVGs.*/
 
 export class ImageOverview {
@@ -12,6 +13,18 @@ export class ImageOverview {
         new ImageOverviewCategories(this)
         new Menu("images")
         this.bind()
+    }
+
+    activatePlugins() {
+        // Add plugins
+        this.plugins = {}
+
+        Object.keys(plugins).forEach(plugin => {
+            if (typeof plugins[plugin] === 'function') {
+                this.plugins[plugin] = new plugins[plugin](this)
+                this.plugins[plugin].init()
+            }
+        })
     }
 
     //delete image
@@ -261,6 +274,7 @@ export class ImageOverview {
     }
 
     init() {
+        this.activatePlugins()
         this.bindEvents()
         this.getImageDB()
     }

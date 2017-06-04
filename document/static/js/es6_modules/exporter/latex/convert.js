@@ -41,9 +41,11 @@ export class LatexExporterConvert {
             case 'text':
                 if (node.marks) {
                     let hyperlink = _.findWhere(node.marks, {type:'link'})
-                    let href = hyperlink.attrs.href
-                    if (href[0] === '#' && !this.internalLinks.includes(href)) {
-                        this.internalLinks.push(href.slice(1))
+                    if (hyperlink) {
+                        let href = hyperlink.attrs.href
+                        if (href[0] === '#' && !this.internalLinks.includes(href)) {
+                            this.internalLinks.push(href.slice(1))
+                        }
                     }
                 }
                 break

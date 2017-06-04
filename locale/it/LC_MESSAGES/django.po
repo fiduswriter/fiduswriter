@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-22 12:14-0600\n"
+"POT-Creation-Date: 2017-06-04 20:33+0000\n"
 "PO-Revision-Date: 2013-10-08 04:30-0500\n"
 "Last-Translator: Eugenio Battaglia <contafinoasette@gmail.com>\n"
 "Language-Team: Italian <contafinoasette@gmail.com>\n"
@@ -46,24 +46,16 @@ msgstr "gestisci i file immagine"
 msgid "Images"
 msgstr "Immagini"
 
-#: base/templates/base.html:84
-msgid "compose books"
-msgstr "componi libri"
-
-#: base/templates/base.html:85
-msgid "Books"
-msgstr "Libri"
-
-#: base/templates/base.html:100
+#: base/templates/base.html:95
 msgid "Edit profile"
 msgstr "Modifica profilo"
 
-#: base/templates/base.html:105
+#: base/templates/base.html:100
 #: user/templates/account/list_team_members.html:60
 msgid "Contacts"
 msgstr "Contatti"
 
-#: base/templates/base.html:111
+#: base/templates/base.html:106
 msgid "Log out"
 msgstr "Esci"
 
@@ -105,7 +97,7 @@ msgid "Bibliography Manager"
 msgstr "Gestisci Bibliografia"
 
 #: bibliography/templates/bibliography/index.html:36
-#: book/templates/book/index.html:50 document/templates/document/index.html:40
+#: document/templates/document/index.html:36
 #: user/templates/account/list_team_members.html:42
 #: usermedia/templates/usermedia/index.html:32
 msgid "Delete selected"
@@ -136,8 +128,7 @@ msgid "Import Bibtex Library"
 msgstr "Importa Libreria Bibtex"
 
 #: bibliography/templates/bibliography/index.html:87
-#: book/templates/book/index.html:104
-#: document/templates/document/index.html:101
+#: document/templates/document/index.html:97
 msgid "Title"
 msgstr "Titolo"
 
@@ -154,175 +145,97 @@ msgid "Published"
 msgstr "Pubblicato"
 
 #: bibliography/templates/bibliography/index.html:91
-#: book/templates/book/index.html:109
-#: document/templates/document/index.html:107
+#: document/templates/document/index.html:103
 #: user/templates/account/list_team_members.html:62
 #: user/templates/account/show_profile.html:70
 #: usermedia/templates/usermedia/index.html:75
 msgid "Delete"
 msgstr "Cancella"
 
-#: book/templates/book/index.html:6
-msgid "Book Overview"
-msgstr "Panoramica del Libro"
-
-#: book/templates/book/index.html:55 document/templates/document/index.html:45
-msgid "Share selected"
-msgstr "Condividi selezionati"
-
-#: book/templates/book/index.html:60 document/templates/document/index.html:50
-msgid "Copy selected"
-msgstr "Copia selezionati"
-
-#: book/templates/book/index.html:65 document/templates/document/index.html:55
-msgid "Export selected as Epub"
-msgstr "Esporta selezionati in Epub"
-
-#: book/templates/book/index.html:70 document/templates/document/index.html:60
-msgid "Export selected as HTML"
-msgstr "Esporta selezionati in HTML"
-
-#: book/templates/book/index.html:75 document/templates/document/index.html:65
-msgid "Export selected as LaTeX"
-msgstr "Esporta selezionati in LaTeX"
-
-#: book/templates/book/index.html:80
-msgid "Export selected for Print/PDF"
-msgstr "Esporta selezionati per la stampa o PDF"
-
-#: book/templates/book/index.html:88
-msgid "Create New Book"
-msgstr "Crea Nuovo Libro"
-
-#: book/templates/book/index.html:94
-msgid "Upload Fidus Book"
-msgstr "Carica un Libro Fidus"
-
-#: book/templates/book/index.html:105
-#: document/templates/document/index.html:103
-msgid "Created"
-msgstr "Creato"
-
-#: book/templates/book/index.html:106
-#: document/templates/document/index.html:104
-msgid "Last changed"
-msgstr "Ultimi cambiamenti"
-
-#: book/templates/book/index.html:107
-#: document/templates/document/index.html:105
-msgid "Owner"
-msgstr "Proprietario"
-
-#: book/templates/book/index.html:108
-#: document/templates/document/index.html:106
-msgid "Rights"
-msgstr "Diritti"
-
-#: book/views.py:319 document/views.py:186
-#, fuzzy
-msgid "Untitled"
-msgstr "Sottotitolo"
-
-#: book/views.py:335
-msgid "Book shared:"
-msgstr ""
-
-#: book/views.py:364
-msgid "Fidus Writer book write access"
-msgstr ""
-
-#: document/templates/document/editor.html:105
+#: document/templates/document/editor.html:98
 msgid "en"
 msgstr "en"
 
-#: document/templates/document/editor.html:110
-#: document/templates/document/editor.html:122
+#: document/templates/document/editor.html:103
+#: document/templates/document/editor.html:115
 msgid "Close the document and return to the document overview menu."
 msgstr "Chiudi il documento e torna alla panoramica del documento"
 
-#: document/templates/document/editor.html:115
+#: document/templates/document/editor.html:108
 msgid "File handling"
 msgstr "Gestione File"
 
-#: document/templates/document/editor.html:115
+#: document/templates/document/editor.html:108
 #: usermedia/templates/usermedia/index.html:72
 msgid "File"
 msgstr "File"
 
-#: document/templates/document/editor.html:119
+#: document/templates/document/editor.html:112
 msgid "Share the document with other users."
 msgstr "Condividi il documento con altri utenti."
 
-#: document/templates/document/editor.html:119
+#: document/templates/document/editor.html:112
 msgid "Share"
 msgstr "Condividi"
 
-#: document/templates/document/editor.html:122
+#: document/templates/document/editor.html:115
 msgid "Close"
 msgstr "Chiudi"
 
-#: document/templates/document/editor.html:125
+#: document/templates/document/editor.html:118
 #, fuzzy
 msgid "Save a revision of the current document"
 msgstr "Salva una copira del documento corrente"
 
-#: document/templates/document/editor.html:125
+#: document/templates/document/editor.html:118
 msgid "Save revision"
 msgstr ""
 
-#: document/templates/document/editor.html:128
+#: document/templates/document/editor.html:121
 #, fuzzy
 msgid "Create copy of the current document"
 msgstr "Salva una copira del documento corrente"
 
-#: document/templates/document/editor.html:128
+#: document/templates/document/editor.html:121
 #, fuzzy
 msgid "Create copy"
 msgstr "Salva copia"
 
-#: document/templates/document/editor.html:131
+#: document/templates/document/editor.html:124
 msgid "Download the current document"
 msgstr "Scarica il docuemnto corrente"
 
-#: document/templates/document/editor.html:131
+#: document/templates/document/editor.html:124
 msgid "Download"
 msgstr "Scarica"
 
-#: document/templates/document/editor.html:134
+#: document/templates/document/editor.html:127
 #, fuzzy
 #| msgid "Either print or create a PDF using your browser's print dialog"
 msgid "Either print or create a PDF using your browser print dialog"
 msgstr "Stampa o crea PDF usando la finestra di dialogo del tuo browser"
 
-#: document/templates/document/editor.html:134
+#: document/templates/document/editor.html:127
 msgid "Print/PDF"
 msgstr "Stampa/PDF"
 
-#: document/templates/document/editor.html:138
-msgid "submit the paper to ojs"
-msgstr ""
-
-#: document/templates/document/editor.html:138
-msgid "Submit paper"
-msgstr ""
-
-#: document/templates/document/editor.html:145
+#: document/templates/document/editor.html:133
 msgid "Export of the document contents"
 msgstr "Esporta i contenuti del documento"
 
-#: document/templates/document/editor.html:145
+#: document/templates/document/editor.html:133
 msgid "Export"
 msgstr "Esporta"
 
-#: document/templates/document/editor.html:149
+#: document/templates/document/editor.html:137
 msgid "Export the document to an HTML file"
 msgstr "Esporta il documento in un file HTML"
 
-#: document/templates/document/editor.html:154
+#: document/templates/document/editor.html:142
 msgid "Export the document to an Epub electronic reader file."
 msgstr "Esporta il documento in un file Epub electronic reader file."
 
-#: document/templates/document/editor.html:159
+#: document/templates/document/editor.html:147
 msgid ""
 "Export the document to a Latex file. This will also attach a BibTex file if "
 "you are using citations."
@@ -330,283 +243,272 @@ msgstr ""
 "Esporta il documento in un file Latex. Questo sarà allegato ad un file "
 "BibTex sestai usando citazioni."
 
-#: document/templates/document/editor.html:165
+#: document/templates/document/editor.html:153
 #, fuzzy
 #| msgid "Export the document to an HTML file"
 msgid "Export the document to a template:"
 msgstr "Esporta il documento in un file HTML"
 
-#: document/templates/document/editor.html:174
+#: document/templates/document/editor.html:162
 msgid "Choose your preferred citation style."
 msgstr "Seleziona lo stile di citazione che preferisci"
 
-#: document/templates/document/editor.html:174
+#: document/templates/document/editor.html:162
 msgid "Citation Style"
 msgstr "Stile di Citazione"
 
-#: document/templates/document/editor.html:181
+#: document/templates/document/editor.html:169
 msgid "Choose a document style"
 msgstr "Seleziona uno stile di documento"
 
-#: document/templates/document/editor.html:181
+#: document/templates/document/editor.html:169
 msgid "Document Style"
 msgstr "Stile Documento"
 
-#: document/templates/document/editor.html:188
+#: document/templates/document/editor.html:176
 msgid "Choose a papersize for printing and PDF generation."
 msgstr "Seleziona un formato di stampa e generazione di PDF"
 
-#: document/templates/document/editor.html:188
+#: document/templates/document/editor.html:176
 msgid "Paper Size"
 msgstr "Dimensione Carta"
 
-#: document/templates/document/editor.html:192
+#: document/templates/document/editor.html:180
 msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
 msgstr "A4 (DIN A4/ISO 216) usato nella maggior parte del mondo."
 
-#: document/templates/document/editor.html:192
+#: document/templates/document/editor.html:180
 msgid "DIN A4"
 msgstr "DIN A4"
 
-#: document/templates/document/editor.html:195
+#: document/templates/document/editor.html:183
 msgid "The format used by the USA and some other American countries."
 msgstr "Il formato usato negli USA e in altri paesi Americani."
 
-#: document/templates/document/editor.html:195
+#: document/templates/document/editor.html:183
 msgid "US Letter"
 msgstr "US Letter"
 
-#: document/templates/document/editor.html:201
+#: document/templates/document/editor.html:189
 msgid "Choose which metadata to enable."
 msgstr "Seleziona i metadati da attivare."
 
-#: document/templates/document/editor.html:201
+#: document/templates/document/editor.html:189
 msgid "Metadata"
 msgstr "Metadati"
 
-#: document/templates/document/editor.html:205
+#: document/templates/document/editor.html:193
 msgid "Define a subtitle in addition to the title of the document."
 msgstr "Definisci un sottotitolo in aggiunta al titolo del documento."
 
-#: document/templates/document/editor.html:205
+#: document/templates/document/editor.html:193
 msgid "Subtitle"
 msgstr "Sottotitolo"
 
-#: document/templates/document/editor.html:208
+#: document/templates/document/editor.html:196
 msgid "Add an abstract to the document."
 msgstr "Aggiungi un abstract al docuemnto."
 
-#: document/templates/document/editor.html:208
+#: document/templates/document/editor.html:196
 msgid "Abstract"
 msgstr "Abstract"
 
-#: document/templates/document/editor.html:211
+#: document/templates/document/editor.html:199
 #, fuzzy
 msgid "Specify the authors of the document."
 msgstr "Il titolo del docuemnto"
 
-#: document/templates/document/editor.html:211
+#: document/templates/document/editor.html:199
 #, fuzzy
 msgid "Author(s)"
 msgstr "Autore"
 
-#: document/templates/document/editor.html:214
+#: document/templates/document/editor.html:202
 msgid "Add keywords to facilitate categorization."
 msgstr ""
 
-#: document/templates/document/editor.html:214
+#: document/templates/document/editor.html:202
 msgid "Keywords"
 msgstr ""
 
-#: document/templates/document/editor.html:220
+#: document/templates/document/editor.html:208
 msgid "Tools"
 msgstr "Strumenti"
 
-#: document/templates/document/editor.html:224
-#: document/templates/document/editor.html:225
+#: document/templates/document/editor.html:212
+#: document/templates/document/editor.html:213
 msgid "Word counter"
 msgstr "Conteggio parole"
 
-#: document/templates/document/editor.html:229
-#: document/templates/document/editor.html:230
+#: document/templates/document/editor.html:217
+#: document/templates/document/editor.html:218
 msgid "Keyboard shortcuts"
 msgstr ""
 
-#: document/templates/document/editor.html:241
+#: document/templates/document/editor.html:229
 msgid "Show/hide the top menu."
 msgstr "Mostra/Nascondi il menu superiore."
 
-#: document/templates/document/editor.html:248
-#: document/templates/document/editor.html:252
+#: document/templates/document/editor.html:236
+#: document/templates/document/editor.html:240
 msgid "Text that is part of a standard paragraph."
 msgstr ""
 
-#: document/templates/document/editor.html:248
-#: document/templates/document/editor.html:254
+#: document/templates/document/editor.html:236
+#: document/templates/document/editor.html:242
 msgid "Normal Text"
 msgstr ""
 
-#: document/templates/document/editor.html:258
+#: document/templates/document/editor.html:246
 msgid "A headline of the highest level (under title)."
 msgstr ""
 
-#: document/templates/document/editor.html:260
+#: document/templates/document/editor.html:248
 msgid "1st Headline"
 msgstr ""
 
-#: document/templates/document/editor.html:264
+#: document/templates/document/editor.html:252
 msgid "A headline of the 2nd highest level."
 msgstr ""
 
-#: document/templates/document/editor.html:266
+#: document/templates/document/editor.html:254
 msgid "2nd Headline"
 msgstr ""
 
-#: document/templates/document/editor.html:270
+#: document/templates/document/editor.html:258
 msgid "A headline of the 3rd highest level."
 msgstr ""
 
-#: document/templates/document/editor.html:272
+#: document/templates/document/editor.html:260
 msgid "3rd Headline"
 msgstr ""
 
-#: document/templates/document/editor.html:276
+#: document/templates/document/editor.html:264
 msgid "A headline of the 4th highest level."
 msgstr ""
 
-#: document/templates/document/editor.html:278
+#: document/templates/document/editor.html:266
 msgid "4th Headline"
 msgstr ""
 
-#: document/templates/document/editor.html:282
+#: document/templates/document/editor.html:270
 msgid "A headline of the 5th highest level."
 msgstr ""
 
-#: document/templates/document/editor.html:284
+#: document/templates/document/editor.html:272
 msgid "5th Headline"
 msgstr ""
 
-#: document/templates/document/editor.html:288
+#: document/templates/document/editor.html:276
 msgid "A headline of the 6th highest level."
 msgstr ""
 
-#: document/templates/document/editor.html:290
+#: document/templates/document/editor.html:278
 msgid "6th Headline"
 msgstr ""
 
-#: document/templates/document/editor.html:294
+#: document/templates/document/editor.html:282
 msgid "Computer Code."
 msgstr ""
 
-#: document/templates/document/editor.html:296
+#: document/templates/document/editor.html:284
 msgid "Code"
 msgstr ""
 
-#: document/templates/document/editor.html:303
+#: document/templates/document/editor.html:291
 msgid "Bold"
 msgstr ""
 
-#: document/templates/document/editor.html:310
+#: document/templates/document/editor.html:298
 msgid "Italic"
 msgstr ""
 
-#: document/templates/document/editor.html:317
+#: document/templates/document/editor.html:305
 msgid "Numbered list"
 msgstr ""
 
-#: document/templates/document/editor.html:324
+#: document/templates/document/editor.html:312
 msgid "Bulleted list"
 msgstr ""
 
-#: document/templates/document/editor.html:331
+#: document/templates/document/editor.html:319
 msgid "Blockquote"
 msgstr ""
 
-#: document/templates/document/editor.html:338
+#: document/templates/document/editor.html:326
 msgid "Link"
 msgstr ""
 
-#: document/templates/document/editor.html:345
+#: document/templates/document/editor.html:333
 msgid "Footnote"
 msgstr ""
 
-#: document/templates/document/editor.html:352
+#: document/templates/document/editor.html:340
 msgid "Cite"
 msgstr ""
 
-#: document/templates/document/editor.html:359
+#: document/templates/document/editor.html:347
+msgid "Horizontal Line"
+msgstr ""
+
+#: document/templates/document/editor.html:354
 msgid "Math"
 msgstr ""
 
-#: document/templates/document/editor.html:366
+#: document/templates/document/editor.html:361
 msgid "Figure"
 msgstr ""
 
-#: document/templates/document/editor.html:374
+#: document/templates/document/editor.html:369
 msgid "table"
 msgstr ""
 
-#: document/templates/document/editor.html:386
+#: document/templates/document/editor.html:381
 msgid "Undo"
 msgstr ""
 
-#: document/templates/document/editor.html:393
+#: document/templates/document/editor.html:388
 msgid "Redo"
 msgstr ""
 
-#: document/templates/document/editor.html:400
+#: document/templates/document/editor.html:395
 #, fuzzy
 msgid "Comment"
 msgstr "Commenti"
 
-#: document/templates/document/editor.html:406
+#: document/templates/document/editor.html:401
 msgid "Show/hide comments"
 msgstr "Mostra/Nascondi i commenti"
 
-#: document/templates/document/editor.html:407
+#: document/templates/document/editor.html:402
 msgid "Comments"
 msgstr "Commenti"
 
-#: document/templates/document/editor.html:409
-#: document/templates/document/editor.html:410
-msgid "Finish the revision"
-msgstr ""
-
-#: document/templates/document/editor.html:412
-#: document/templates/document/editor.html:413
-msgid "Finish the review"
-msgstr ""
-
-#: document/templates/document/editor.html:415
-#: document/templates/document/editor.html:416
-msgid "Return to OJS"
-msgstr ""
-
-#: document/templates/document/editor.html:418
-#: document/templates/document/editor.html:419
+#: document/templates/document/editor.html:404
+#: document/templates/document/editor.html:405
 #, fuzzy
 #| msgid "Show/hide comments"
 msgid "Filter comments"
 msgstr "Mostra/Nascondi i commenti"
 
-#: document/templates/document/editor.html:425
+#: document/templates/document/editor.html:411
 msgid "By readers"
 msgstr ""
 
-#: document/templates/document/editor.html:431
+#: document/templates/document/editor.html:417
 msgid "By reviewers"
 msgstr ""
 
-#: document/templates/document/editor.html:437
+#: document/templates/document/editor.html:423
 #, fuzzy
 msgid "By authors"
 msgstr "Autore"
 
-#: document/templates/document/editor.html:443
+#: document/templates/document/editor.html:429
 msgid "By editors"
 msgstr ""
 
-#: document/templates/document/editor.html:449
+#: document/templates/document/editor.html:435
 #, fuzzy
 #| msgid "Username"
 msgid "By username"
@@ -616,21 +518,57 @@ msgstr "Nome Utente"
 msgid "Document Overview"
 msgstr "Panoramica Documento"
 
-#: document/templates/document/index.html:77
+#: document/templates/document/index.html:41
+msgid "Share selected"
+msgstr "Condividi selezionati"
+
+#: document/templates/document/index.html:46
+msgid "Copy selected"
+msgstr "Copia selezionati"
+
+#: document/templates/document/index.html:51
+msgid "Export selected as Epub"
+msgstr "Esporta selezionati in Epub"
+
+#: document/templates/document/index.html:56
+msgid "Export selected as HTML"
+msgstr "Esporta selezionati in HTML"
+
+#: document/templates/document/index.html:61
+msgid "Export selected as LaTeX"
+msgstr "Esporta selezionati in LaTeX"
+
+#: document/templates/document/index.html:73
 msgid "Download selected as Fidus Document"
 msgstr "Scarica i selezionati come Documenti Fidus"
 
-#: document/templates/document/index.html:85
+#: document/templates/document/index.html:81
 msgid "Create New Document"
 msgstr "Crea Nuovo Documento"
 
-#: document/templates/document/index.html:91
+#: document/templates/document/index.html:87
 msgid "Upload Fidus Document"
 msgstr "Carica Documento Fidus"
 
-#: document/templates/document/index.html:102
+#: document/templates/document/index.html:98
 msgid "Revisions"
 msgstr ""
+
+#: document/templates/document/index.html:99
+msgid "Created"
+msgstr "Creato"
+
+#: document/templates/document/index.html:100
+msgid "Last changed"
+msgstr "Ultimi cambiamenti"
+
+#: document/templates/document/index.html:101
+msgid "Owner"
+msgstr "Proprietario"
+
+#: document/templates/document/index.html:102
+msgid "Rights"
+msgstr "Diritti"
 
 #: document/templates/maintenance/index.html:3
 msgid "Maintenance"
@@ -656,6 +594,11 @@ msgstr ""
 #: document/templates/maintenance/index.html:28
 msgid "Update all documents (DANGER!)"
 msgstr ""
+
+#: document/views.py:186
+#, fuzzy
+msgid "Untitled"
+msgstr "Sottotitolo"
 
 #: document/views.py:200
 #, fuzzy
@@ -703,39 +646,6 @@ msgstr ""
 #: fiduswriter/settings.py:251
 msgid "Spanish"
 msgstr "Spagnolo"
-
-#: ojs/templates/ojs/register_journals.html:3
-#: ojs/templates/ojs/register_journals.html:18
-#, fuzzy
-#| msgid "Register new source"
-msgid "Register journals"
-msgstr "Registra una nuova fonte"
-
-#: ojs/templates/ojs/register_journals.html:20
-msgid ""
-"\n"
-"            Register the journals from a particular OJS instance. Insert "
-"first the\n"
-"            URL and Key of the OJS installation. Decide then for each "
-"journal you\n"
-"            want to connect with Fidus Writer which user should be "
-"registered as\n"
-"            their editor.\n"
-"            </thead>\n"
-"            "
-msgstr ""
-
-#: ojs/templates/ojs/register_journals.html:29
-msgid "URL"
-msgstr ""
-
-#: ojs/templates/ojs/register_journals.html:30
-msgid "Key"
-msgstr ""
-
-#: ojs/templates/ojs/register_journals.html:31
-msgid "Query available journals"
-msgstr ""
 
 #: user/templates/account/base.html:52 user/templates/account/login.html:6
 #: user/templates/account/signup.html:9
@@ -1073,6 +983,29 @@ msgstr ""
 #: usermedia/views.py:71
 msgid "No file uploaded"
 msgstr ""
+
+#~ msgid "compose books"
+#~ msgstr "componi libri"
+
+#~ msgid "Books"
+#~ msgstr "Libri"
+
+#~ msgid "Book Overview"
+#~ msgstr "Panoramica del Libro"
+
+#~ msgid "Export selected for Print/PDF"
+#~ msgstr "Esporta selezionati per la stampa o PDF"
+
+#~ msgid "Create New Book"
+#~ msgstr "Crea Nuovo Libro"
+
+#~ msgid "Upload Fidus Book"
+#~ msgstr "Carica un Libro Fidus"
+
+#, fuzzy
+#~| msgid "Register new source"
+#~ msgid "Register journals"
+#~ msgstr "Registra una nuova fonte"
 
 #, fuzzy
 #~| msgid "edit documents"

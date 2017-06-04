@@ -1,3 +1,4 @@
+import * as plugins from "../plugins/menu"
 import {addDropdownBox} from "../common"
 
 // Bindings for the top menu on overview pages
@@ -10,6 +11,7 @@ export class Menu {
 
     bind() {
         jQuery(document).ready(() => {
+            this.activatePlugins()
             this.markCurrentlyActive()
             this.bindPreferencePullDown()
         })
@@ -46,5 +48,20 @@ export class Menu {
             event.preventDefault()
             jQuery(this).closest('form').submit()
         })
+    }
+
+    activatePlugins() {
+        // Add plugins, but only once.
+        if (!this.plugins) {
+            this.plugins = {}
+
+            Object.keys(plugins).forEach(plugin => {
+                if (typeof plugins[plugin] === 'function') {
+                    this.plugins[plugin] = new plugins[plugin](this)
+                    this.plugins[plugin].init()
+                }
+            })
+
+        }
     }
 }

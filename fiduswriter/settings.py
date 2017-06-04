@@ -201,7 +201,6 @@ INSTALLED_APPS = (
     'fixturemedia',
     'menu',
     'document',
-    'book',
     'bibliography',
     'usermedia',
     'user',

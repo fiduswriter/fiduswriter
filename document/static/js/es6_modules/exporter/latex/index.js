@@ -3,6 +3,7 @@ import {removeHidden} from "../tools/doc-contents"
 import {LatexExporterConvert} from "./convert"
 import {ZipFileCreator} from "../tools/zip"
 import {BibLatexExporter} from "biblatex-csl-converter"
+import {readMe} from "./readme"
 import download from "downloadjs"
 /*
  Exporter to LaTeX
@@ -35,6 +36,7 @@ export class LatexExporter {
             this.textFiles.push({filename: 'bibliography.bib', contents: bibExport.output})
         }
         this.textFiles.push({filename: 'document.tex', contents: this.conversion.latex})
+        this.textFiles.push({filename: 'README.txt', contents: readMe})
         this.conversion.imageIds.forEach(
             id => {
                 this.httpFiles.push({

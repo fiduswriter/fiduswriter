@@ -44,9 +44,7 @@ textarea:focus {
  * Bibliography entry input
  */
 #uploadimage input.entryForm,
-#uploadimage input.fw-input,
-#book-dialog input.entryForm,
-#book-dialog input.fw-input {
+#uploadimage input.fw-input {
     width: 486px;
 }
 

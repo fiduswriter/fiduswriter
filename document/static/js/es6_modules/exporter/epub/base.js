@@ -71,7 +71,7 @@ export class BaseEpubExporter extends BaseHTMLExporter {
     setLinks(htmlCode, docNum) {
         let contentItems = [], title
 
-        jQuery(htmlCode).find('h1,h2,h3').each(function() {
+        jQuery(htmlCode).find('h1,h2,h3,h4,h5,h6').each(function() {
             title = jQuery.trim(this.textContent)
             if (title !== '') {
                 let contentItem = {}
@@ -84,7 +84,6 @@ export class BaseEpubExporter extends BaseHTMLExporter {
                 if (this.classList.contains('title')) {
                     contentItem.level = 0
                 }
-                this.id = 'id' + contentItems.length
 
                 contentItem.id = this.id
                 contentItems.push(contentItem)

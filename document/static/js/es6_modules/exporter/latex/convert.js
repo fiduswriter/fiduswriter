@@ -11,9 +11,11 @@ export class LatexExporterConvert {
         // are present in the file, so that we can assemble an preamble and
         // epilogue based on our findings.
         this.features = {}
+        this.internalLinks = []
     }
 
     init(docContents) {
+        this.preWalkJson(docContents)
         let rawTransformation = this.walkJson(docContents)
         let body = this.postProcess(rawTransformation)
         let preamble = this.assemblePreamble()
@@ -29,6 +31,26 @@ export class LatexExporterConvert {
 
     get docDeclaration() {
         return '\\documentclass{article}\n'
+    }
+
+    // Check for things needed before creating raw transofrm
+    preWalkJson(node) {
+        switch(node.type) {
+            // Collect all internal links so that we only set the anchors for those
+            // that are being linked to.
+            case 'text':
+                if (node.marks) {
+                    let hyperlink = _.findWhere(node.marks, {type:'link'})
+                    let href = hyperlink.attrs.href
+                    if (href[0] === '#' && !this.internalLinks.includes(href)) {
+                        this.internalLinks.push(href.slice(1))
+                    }
+                }
+                break
+        }
+        if (node.content) {
+            node.content.forEach(child => this.preWalkJson(child))
+        }
     }
 
 
@@ -98,7 +120,14 @@ export class LatexExporterConvert {
                         start += '\n\n\\subsubsection{'
                         break;
                 }
+                // Check if this heading is being linked to. If this is the case,
+                // place a protected hypertarget here that does not add an extra
+                // entry into the PDF TOC.
                 end = '}\n\n' + end
+                if (this.internalLinks.includes(node.attrs.id)) {
+                    // Add a link target
+                    end = `\\texorpdfstring{\\protect\\hypertarget{${node.attrs.id}}{}}{}` + end
+                }
                 if(!options.onlyFootnoteMarkers) {
                     placeFootnotesAfterBlock = true
                     options = _.clone(options)
@@ -172,7 +201,14 @@ export class LatexExporterConvert {
                     end = '}' + end
                 }
                 if (hyperlink) {
-                    start += `\\href{${hyperlink.attrs.href}}{`
+                    let href = hyperlink.attrs.href
+                    if (href[0] === '#') {
+                        // Internal link
+                        start += `\\hyperlink{${href.slice(1)}}{`
+                    } else {
+                        // External link
+                        start += `\\href{${href}}{`
+                    }
                     end = '}' + end
                     this.features.hyperlinks = true
                 }

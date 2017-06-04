@@ -1,9 +1,35 @@
 export let linkDialogTemplate = _.template('\
     <div title="' + gettext("Link") + '">\
-        <p><input class="linktitle" type="text" value="<%- linkTitle %>" placeholder="' + gettext("Link text (optional") + '"/></p>\
-        <p><input class="link" type="text" value="<%- link  %>" placeholder="' + gettext("Link") + '"/></p>\
+    <% if (internalTargets.length) { %>\
+        <div class="fw-radio">\
+            <input type="radio" name="link-type" value="internal" class="link-internal-check">\
+            <label class="link-internal-label">' + gettext("Internal") + '</label>\
+        </div>\
+        <div class="fw-select-container">\
+            <select class="internal-link-selector fw-button fw-white fw-large" required="">\
+                <option class="placeholder" selected="" disabled="" value="">\
+                    ' + gettext("Select Target") + '\
+                </option>\
+                <% internalTargets.forEach(target => { %>\
+                    <option class="link-item" type="text" value="<%= target.id %>" <%= link === "#"+target.id ? "selected" : "" %>>\
+                        <%= target.text %>\
+                    </option>\
+                <% }); %>\
+            </select>\
+            <div class="fw-select-arrow icon-down-dir"></div>\
+        </div>\
+        <p></p>\
+        <div class="fw-radio">\
+            <input type="radio" name="link-type" value="external" class="link-external-check">\
+            <label class="link-external-label">' + gettext("External") + '</label>\
+        </div>\
+    <% } %>\
+        <input class="link-title" type="text" value="<%- linkTitle  %>" placeholder="' + gettext("Link title") + '"/>\
+        <p></p>\
+        <input class="link" type="text" value="<%- ["#", undefined].includes(link[0]) ? defaultLink : link %>" placeholder="' + gettext("URL") + '"/>\
     </div>\
 ')
+
 /** Dialog to add a note to a revision before saving. */
 export let revisionDialogTemplate = _.template('\
 <div title="'+gettext('Revision description')+'">\
@@ -233,28 +259,12 @@ export let configureCitationTemplate = _.template('\
         <span id="add-cite-book" class="fw-button fw-large fw-square fw-light fw-ar-button"><i class="icon-right"></i></span>\
         <div id="cite-books" class="fw-ar-container">\
             <h3 class="fw-green-title">' + gettext("Citation format") + '</h3>\
-            <div id="citation-style-selector" class="fw-pulldown-select">\
-                <div id="citation-style-label" class="fw-pulldown-select-label" data-style="<%= citeFormat %>"><label>\
-                <% if("textcite" == citeFormat){ %>' +
-                    gettext("Author (1998)") +
-                '<% } else { %>' +
-                    gettext("(Author, 1998)") +
-                '<% } %>\
-                </label></div>\
-                <div id="citation-style-pulldown" class="fw-pulldown fw-left">\
-                    <ul>\
-                        <li>\
-                            <span class="fw-pulldown-item" data-style="autocite">' +
-                                gettext("(Author, 1998)") +
-                            '</span>\
-                        </li>\
-                        <li>\
-                            <span class="fw-pulldown-item" data-style="textcite">' +
-                                gettext("Author (1998)") +
-                            '</span>\
-                        </li>\
-                    </ul>\
-                </div>\
+            <div class="fw-select-container">\
+                <select id="citation-style-selector" class="fw-button fw-white fw-large" required="">\
+                    <option value="autocite" <%= citeFormat==="autocite" ? "selected" : "" %>>' + gettext("(Author, 1998)") + '\
+                    <option value="textcite" <%= citeFormat==="textcite" ? "selected" : "" %>>' + gettext("Author (1998)") + '\
+                </select>\
+                <div class="fw-select-arrow icon-down-dir"></div>\
             </div>\
             <table id="selected-cite-source-table" class="fw-document-table tablesorter">\
                 <thead class="fw-document-table-header"><tr>\

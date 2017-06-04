@@ -35,6 +35,9 @@ class SeleniumHelper(object):
                 ]
 
             capabilities["browserName"] = "chrome"
+            capabilities["platform"] = "Windows 10"
+            capabilities["version"] = "58.0"
+            capabilities["screenResolution"] = "1920x1080"
             hub_url = "%s:%s@localhost:4445" % (username, access_key)
             for i in range(number):
                 drivers.append(
@@ -53,7 +56,7 @@ class SeleniumHelper(object):
         for driver in drivers:
             # Set sizes of browsers so that all buttons are visible.
             driver.set_window_position(0, 0)
-            driver.set_window_size(1024, 768)
+            driver.set_window_size(1366, 768)
         return {
             "clients": clients,
             "drivers": drivers,

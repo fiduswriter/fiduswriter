@@ -8,6 +8,7 @@ export class DocxExporterRichtext {
         this.citations = citations
         this.images = images
         this.fnCounter = 2 // footnotes 0 and 1 are occupied by separators by default.
+        this.bookmarkCounter = 0
     }
 
     transformRichtext(node, options = {}) {
@@ -54,7 +55,9 @@ export class DocxExporterRichtext {
                         <w:pPr>
                             <w:pStyle w:val="Heading${node.attrs.level}"/>
                             <w:rPr></w:rPr>
-                        </w:pPr>`
+                        </w:pPr>
+                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
+                        <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
                 end = '</w:p>' + end
                 break
             case 'code':
@@ -121,8 +124,16 @@ export class DocxExporterRichtext {
                 }
 
                 if (hyperlink) {
-                    let refId = this.rels.addLinkRel(hyperlink.attrs.href)
-                    start += `<w:hyperlink r:id="rId${refId}"><w:r>`
+                    let href = hyperlink.attrs.href
+                    if (href[0] === '#') {
+                        // Internal link
+                        start += `<w:hyperlink w:anchor="${href.slice(1)}">`
+                    } else {
+                        // External link
+                        let refId = this.rels.addLinkRel(href)
+                        start += `<w:hyperlink r:id="rId${refId}">`
+                    }
+                    start += '<w:r>'
                     end = '</w:t></w:r></w:hyperlink>' + end
                 } else {
                     start += '<w:r>'
@@ -340,7 +351,7 @@ export class DocxExporterRichtext {
                 content += this.exporter.math.getOmml(latex)
                 break
             case 'hard_break':
-                content += '<w:br/>'
+                content += '<w:r><w:br/></w:r>'
                 break
             // CSL bib entries
             case 'cslbib':

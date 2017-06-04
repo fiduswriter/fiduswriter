@@ -1,7 +1,7 @@
 /** A template for the bibliography item edit dialog. */
 export let bibDialog = _.template('\
     <div id="bib-dialog" title="<%- dialogHeader %>">\
-        <div class="select-container">\
+        <div class="fw-select-container">\
             <select id="select-bibtype" class="fw-button fw-white fw-large" required>\
                 <% if (bib_type===false) { %>\
                     <option class="placeholder" selected disabled value="">' + gettext('Select source type') + '</option>\
@@ -10,7 +10,7 @@ export let bibDialog = _.template('\
                     <option value="<%- key %>" <%= key === bib_type ? "selected" : "" %>><%= BibTypeTitles[key] %></option>\
                 <% }) %>\
             </select>\
-            <div class="select-arrow icon-down-dir"></div>\
+            <div class="fw-select-arrow icon-down-dir"></div>\
         </div>\
         <div id="bib-dialog-tabs">\
             <ul>\

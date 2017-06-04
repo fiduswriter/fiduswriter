@@ -40,16 +40,20 @@ export class Equation extends Inline {
         }
     }
     get matchDOMTag() {
-        return {"span.equation": dom => ({
-            equation: dom.getAttribute('data-equation')
-        })}
+        return {
+            "span.equation": dom => ({
+                equation: dom.getAttribute('data-equation')
+            })
+        }
     }
     toDOM(node) {
         let dom = elt('span', {
             class: 'equation',
             'data-equation': node.attrs.equation
         })
-        katexRender(node.attrs.equation, dom, {throwOnError: false})
+        katexRender(node.attrs.equation, dom, {
+            throwOnError: false
+        })
         dom.setAttribute('contenteditable', 'false')
         return dom
     }
@@ -75,15 +79,17 @@ export class Figure extends Block {
         }
     }
     get matchDOMTag() {
-        return {"figure": dom => {
-            let image = dom.getAttribute('data-image')
-            return {
-                equation: dom.getAttribute('data-equation'),
-                image: image === 'false' ? false : parseInt(image),
-                figureCategory: dom.getAttribute('data-figure-category'),
-                caption: dom.getAttribute('data-caption')
+        return {
+            "figure": dom => {
+                let image = dom.getAttribute('data-image')
+                return {
+                    equation: dom.getAttribute('data-equation'),
+                    image: image === 'false' ? false : parseInt(image),
+                    figureCategory: dom.getAttribute('data-figure-category'),
+                    caption: dom.getAttribute('data-caption')
+                }
             }
-        }}
+        }
     }
     toDOM(node) {
         let dom = elt('figure', {
@@ -94,10 +100,10 @@ export class Figure extends Block {
         })
         if (node.attrs.image !== false) {
             dom.appendChild(elt("div"))
-            if(node.type.schema.cached.imageDB) {
-                if(node.type.schema.cached.imageDB.db[node.attrs.image] &&
+            if (node.type.schema.cached.imageDB) {
+                if (node.type.schema.cached.imageDB.db[node.attrs.image] &&
                     node.type.schema.cached.imageDB.db[node.attrs.image].image) {
-                        let imgSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
+                    let imgSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
                     dom.firstChild.appendChild(elt("img", {
                         "src": node.type.schema.cached.imageDB.db[node.attrs.image].image
                     }))
@@ -110,7 +116,7 @@ export class Figure extends Block {
                     if (!imageDBBroken) {
                         node.type.schema.cached.imageDB.getDB().then(() => {
                             if (node.type.schema.cached.imageDB.db[node.attrs.image] &&
-                                    node.type.schema.cached.imageDB.db[node.attrs.image].image) {
+                                node.type.schema.cached.imageDB.db[node.attrs.image].image) {
                                 let imgSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
                                 dom.firstChild.appendChild(elt("img", {
                                     "src": imgSrc
@@ -125,13 +131,13 @@ export class Figure extends Block {
             }
         } else {
             let domEquation = elt('div', {
-               class: 'figure-equation',
-               'data-equation': node.attrs.equation
+                class: 'figure-equation',
+                'data-equation': node.attrs.equation
             })
 
             katexRender(node.attrs.equation, domEquation, {
-               displayMode: true,
-               throwOnError: false
+                displayMode: true,
+                throwOnError: false
             })
             dom.appendChild(domEquation)
         }
@@ -160,5 +166,70 @@ export class Figure extends Block {
         }
 
         return dom
+    }
+}
+
+
+
+export class Heading extends Block {
+    get attrs() {
+        return {
+            level: new Attribute({
+                default: 1
+            }),
+            id: new Attribute({
+                default: undefined
+            })
+        }
+    }
+    get maxLevel() {
+        return 6
+    }
+
+    get matchDOMTag() {
+        return {
+            "h1": dom => {
+                return {
+                    level: 1,
+                    id: dom.getAttribute('id')
+                }
+            },
+            "h2": dom => {
+                return {
+                    level: 2,
+                    id: dom.getAttribute('id')
+                }
+            },
+            "h3": dom => {
+                return {
+                    level: 3,
+                    id: dom.getAttribute('id')
+                }
+            },
+            "h4": dom => {
+                return {
+                    level: 4,
+                    id: dom.getAttribute('id')
+                }
+            },
+            "h5": dom => {
+                return {
+                    level: 5,
+                    id: dom.getAttribute('id')
+                }
+            },
+            "h6": dom => {
+                return {
+                    level: 6,
+                    id: dom.getAttribute('id')
+                }
+            }
+        }
+    }
+    toDOM(node) {
+        return ["h" + node.attrs.level, {
+            'id': node.attrs.id
+        }, 0]
+
     }
 }

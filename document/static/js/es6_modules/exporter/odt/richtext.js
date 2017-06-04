@@ -33,7 +33,9 @@ export class OdtExporterRichtext {
                 end = '</text:p>' + end
                 break
             case 'heading':
-                start += `<text:h text:outline-level="${node.attrs.level}">`
+                start += `
+                    <text:h text:outline-level="${node.attrs.level}">
+                    <text:bookmark text:name="${node.attrs.id}"/>`
                 end = '</text:h>' + end
                 break
             case 'code':

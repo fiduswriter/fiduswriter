@@ -18,6 +18,9 @@ export class ModFootnoteEditor {
         this.mod.fnPm.on.filterTransform.add(transform =>
             this.onFilterTransform(transform)
         )
+        this.mod.fnPm.on.beforeTransform.add(
+            (transform, options) => {this.mod.editor.onBeforeTransform(this.mod.fnPm, transform)}
+        )
         this.mod.fnPm.on.transform.add(transform =>
             this.onTransform(transform)
         )

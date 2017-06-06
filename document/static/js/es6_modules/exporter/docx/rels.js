@@ -1,5 +1,5 @@
 // manages the .rels files. Need to initialize one for each of document.xml and footnotes.xml
-
+import {escapeText} from "../tools/html"
 
 const DEFAULT_XML = `<?xml version="1.0" encoding="UTF-8"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>`
@@ -58,7 +58,7 @@ export class DocxExporterRels {
     addLinkRel(link) {
         let rels = this.xml.querySelector('Relationships')
         let rId = this.maxRelId + 1
-        let string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="${link}" TargetMode="External"/>`
+        let string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="${escapeText(link)}" TargetMode="External"/>`
         rels.insertAdjacentHTML('beforeEnd', string)
         this.maxRelId = rId
         return rId
@@ -68,7 +68,7 @@ export class DocxExporterRels {
     addImageRel(imgFileName) {
         let rels = this.xml.querySelector('Relationships')
         let rId = this.maxRelId + 1
-        let string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${imgFileName}"/>`
+        let string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${escapeText(imgFileName)}"/>`
         rels.insertAdjacentHTML('beforeEnd', string)
         this.maxRelId = rId
         return rId

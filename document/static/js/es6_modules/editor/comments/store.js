@@ -198,30 +198,19 @@ export class ModCommentStore {
                 ids.splice(ids.indexOf(id),1)
             }
         })
-        // Remove all the comments that could not be found.
-        // TODO: Why is the comment deleted if the change is made by a
-        // reviewer? Afshin, any idea?
-        if (
-            this.mod.editor.docInfo.submission.status === 'unsubmitted' ||
-            this.mod.editor.docInfo.rights === 'review'
-        ) {
-                // Delete comment from store
-               ids.forEach(id => this.deleteComment(id, false))
-        } else {
-            // The document is submitted. Instead of removing the comment,
-            // move it to a piece of text nearby, unless the
-            ids.forEach(id => {
-                let pos = this.mod.editor.pm.selection.from
-                this.moveComment(
-                    this.mod.editor.user.id,
-                    this.mod.editor.user.name,
-                    this.mod.editor.user.avatar,
-                    new Date().getTime(), // We update the time to the time the comment was stored
-                    id,
-                    pos
-                )
-            })
-        }
+
+        // Move the comment to a piece of text nearby, unless the
+        ids.forEach(id => {
+            let pos = this.mod.editor.pm.selection.from
+            this.moveComment(
+                this.mod.editor.user.id,
+                this.mod.editor.user.name,
+                this.mod.editor.user.avatar,
+                new Date().getTime(), // We update the time to the time the comment was stored
+                id,
+                pos
+            )
+        })
     }
 
 

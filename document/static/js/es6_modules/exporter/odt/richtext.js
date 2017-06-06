@@ -98,7 +98,7 @@ export class OdtExporterRichtext {
                 }
 
                 if (hyperlink) {
-                    start += `<text:a xlink:type="simple" xlink:href="${hyperlink.attrs.href}">`
+                    start += `<text:a xlink:type="simple" xlink:href="${escapeText(hyperlink.attrs.href)}">`
                     end = '</text:a>' + end
                 }
 

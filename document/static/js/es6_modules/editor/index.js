@@ -594,11 +594,7 @@ export class Editor {
         if (local && commentIds.length > 0) {
             // Check if the deleted comment referrers still are somewhere else in the doc.
             // If not, move them.
-            () => this.mod.comments.store.checkAndMove(commentIds)
-            // TODO: Is a timeout/scheduleDOMUpdate really needed here?
-            //this.pm.scheduleDOMUpdate(
-            //
-            //)
+            this.mod.comments.store.checkAndMove(commentIds)
         }
 
     }

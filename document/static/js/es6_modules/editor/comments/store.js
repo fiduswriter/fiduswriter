@@ -62,21 +62,10 @@ export class ModCommentStore {
     }
 
 
-    moveComment(user, userName, userAvatar, date, id, pos) {
+    moveComment(id, pos) {
         // The content to which a comment was linked has been removed.
-        // We need to find text close to the position to which we ccan link
+        // We need to find text close to the position to which we can link
         // comment. This is user for reviewer comments that should not be lost.
-        this.addLocalComment(
-            id,
-            user,
-            userName,
-            userAvatar,
-            date,
-            this.comments[id].comment,
-            [],
-            this.comments[id]['review:isMajor'],
-            true
-        )
 
         let markType = this.mod.editor.pm.schema.marks.comment.create({id})
         let doc = this.mod.editor.pm.doc
@@ -186,7 +175,7 @@ export class ModCommentStore {
         }
     }
 
-    checkAndDelete(ids) {
+    checkAndMove(ids) {
         // Check if there is still a node referring to the comment IDs that
         // were in the deleted content.
         this.mod.editor.pm.doc.descendants((node, pos, parent) => {
@@ -203,10 +192,6 @@ export class ModCommentStore {
         ids.forEach(id => {
             let pos = this.mod.editor.pm.selection.from
             this.moveComment(
-                this.mod.editor.user.id,
-                this.mod.editor.user.name,
-                this.mod.editor.user.avatar,
-                new Date().getTime(), // We update the time to the time the comment was stored
                 id,
                 pos
             )

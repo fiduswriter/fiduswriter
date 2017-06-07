@@ -45,8 +45,9 @@ def make_tornado_server():
         ('.*', FallbackHandler, dict(fallback=wsgi_app))
     ]
     tornado_app = Application(tornado_url_list)
-
-    return HTTPServer(tornado_app)
+    server = HTTPServer(tornado_app)
+    server.xheaders = True
+    return server
 
 
 def run(port):

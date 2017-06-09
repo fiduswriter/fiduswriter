@@ -58,12 +58,15 @@ export class DocxExporterMetadata {
         lastAuthorEl.innerHTML = lastAuthor
 
         // Keywords
-        let keywordsEl = this.coreXml.querySelector('keywords')
-        if (!keywordsEl) {
-            corePropertiesEl.insertAdjacentHTML('beforeEnd', '<dc:keywords></dc:keywords>')
-            keywordsEl = this.coreXml.querySelector('keywords')
+        let keywordsString = escapeText(this.metadata.keywords)
+        if (keywordsString.length) {
+            let keywordsEl = this.coreXml.querySelector('keywords')
+            if (!keywordsEl) {
+                corePropertiesEl.insertAdjacentHTML('beforeEnd', '<cp:keywords></cp:keywords>')
+                keywordsEl = this.coreXml.querySelector('keywords')
+            }
+            keywordsEl.innerHTML = keywordsString
         }
-        keywordsEl.innerHTML = escapeText(this.metadata.keywords)
 
         // time
         let date = new Date()

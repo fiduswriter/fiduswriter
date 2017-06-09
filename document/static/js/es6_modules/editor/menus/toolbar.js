@@ -150,12 +150,12 @@ export class ModMenusToolbar {
             })
         })
 
-        jQuery(document).on('mousedown', '#button-h-line', event => {
+        jQuery(document).on('mousedown', '#button-h-line:not(.disabled)', event => {
             let pm = this.mod.editor.currentPm
             pm.tr.replaceSelection(pm.schema.node("horizontal_rule")).apply()
         })
 
-        jQuery(document).on('mousedown', '#button-ul', event => {
+        jQuery(document).on('mousedown', '#button-ul:not(.disabled)', event => {
             this.executeAction(event, () => {
                 let node = this.mod.editor.currentPm.schema.nodes['bullet_list']
                 let command = commands.wrapInList(node)
@@ -163,7 +163,7 @@ export class ModMenusToolbar {
             })
         })
 
-        jQuery(document).on('mousedown', '#button-blockquote', event => {
+        jQuery(document).on('mousedown', '#button-blockquote:not(.disabled)', event => {
             this.executeAction(event, () => {
                 let node = this.mod.editor.currentPm.schema.nodes['blockquote']
                 let command = commands.wrapIn(node)
@@ -217,7 +217,7 @@ export class ModMenusToolbar {
             )
         })
 
-        jQuery(document).on('mousedown', '#button-table:not(.disabled)', event => {
+        jQuery(document).on('mousedown', '#button-table .multibuttonsCover:not(.disabled)', event => {
             this.executeAction(
                 event,
                 () => new TableDropdown(this.mod)

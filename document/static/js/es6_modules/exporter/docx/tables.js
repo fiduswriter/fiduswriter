@@ -1,6 +1,6 @@
 import {noSpaceTmp} from "../../common"
 
-let DEFAULT_TABLENORMAL_XML = noSpaceTmp`
+const DEFAULT_TABLENORMAL_XML = noSpaceTmp`
     <w:style w:type="table" w:default="1" w:styleId="TableNormal">
         <w:name w:val="Normal Table"/>
         <w:uiPriority w:val="99"/>
@@ -18,10 +18,10 @@ let DEFAULT_TABLENORMAL_XML = noSpaceTmp`
     </w:style>
     `
 
-let DEFAULT_TABLEGRID_XML = noSpaceTmp`
+const DEFAULT_TABLEGRID_XML = tableNormalStyle => noSpaceTmp`
     <w:style w:type="table" w:styleId="TableGrid">
         <w:name w:val="Table Grid"/>
-        <w:basedOn w:val="TableNormal"/>
+        <w:basedOn w:val="${tableNormalStyle}"/>
         <w:uiPriority w:val="39"/>
         <w:pPr>
             <w:spacing w:after="0" w:line="240" w:lineRule="auto"/>
@@ -44,8 +44,8 @@ export class DocxExporterTables {
     constructor(exporter) {
         this.exporter = exporter
         this.sideMargins = false
-        this.addedTableGridStyle = false
-        this.addedTableNormalStyle = false
+        this.tableGridStyle = false
+        this.tableNormalStyle = false
         this.styleXml = false
         this.styleFilePath = 'word/styles.xml'
     }
@@ -60,37 +60,39 @@ export class DocxExporterTables {
     }
 
     addTableNormalStyle() {
-        if (this.addTableNormalStyle) {
+        if (this.tableNormalStyle) {
             // already added
             return
         }
-        if (!this.styleXml.querySelector(`style[*|styleId="TableNormal"]`)) {
+        let tableNormalEl = this.styleXml.querySelector(`style[*|type="table"][*|default="1"]`)
+        if (tableNormalEl) {
+            this.tableNormalStyle = tableNormalEl.getAttribute('w:styleId')
+        } else {
             let stylesEl = this.styleXml.querySelector('styles')
             stylesEl.insertAdjacentHTML('beforeEnd', DEFAULT_TABLENORMAL_XML)
+            this.tableNormalStyle = 'TableNormal'
         }
-        this.addTableNormalStyle = true
     }
 
     addTableGridStyle() {
-        this.addTableNormalStyle()
-
-        if (this.addTableGridStyle) {
+        if (this.tableGridStyle) {
             // already added
             return
         }
-        if (!this.styleXml.querySelector('style[*|styleId="TableGrid"]')) {
+        this.addTableNormalStyle()
+        let tableGridEl = this.styleXml.querySelector('style[*|type="table"][*|customStyle="1"]')
+        if (tableGridEl) {
+            this.tableGridStyle = tableGridEl.getAttribute('w:styleId')
+        } else {
             let stylesEl = this.styleXml.querySelector('styles')
-            stylesEl.insertAdjacentHTML('beforeEnd', DEFAULT_TABLEGRID_XML)
+            stylesEl.insertAdjacentHTML('beforeEnd', DEFAULT_TABLEGRID_XML(this.tableNormalStyle))
+            this.tableGridStyle = 'TableGrid'
         }
-        this.addTableGridStyle = true
     }
 
     getSideMargins() {
         if (!this.sideMargins) {
-            let marginsEl = this.styleXml.querySelector('style[*|styleId="TableGrid"]')
-            if (!marginsEl) {
-                marginsEl = this.styleXml.querySelector('style[*|styleId="TableNormal"] tblCellMar')
-            }
+            let marginsEl = this.styleXml.querySelector(`style[*|styleId="${this.tableGridStyle}"]`)
             let leftEl = marginsEl.querySelector('left')
             let rightEl = marginsEl.querySelector('right')
             let left = parseInt(leftEl.getAttribute('w:w'))

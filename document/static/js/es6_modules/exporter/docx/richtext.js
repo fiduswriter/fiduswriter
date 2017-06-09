@@ -37,17 +37,21 @@ export class DocxExporterRichtext {
                 // We may need to add them later, if it turns out this is a problem
                 // for other versions of Word. In that case we should also add
                 // it to settings.xml as described in above link.
-                start += noSpaceTmp`
-                    <w:p>
-                        <w:pPr><w:pStyle w:val="${options.section}"/>`
-                if (options.list_type) {
-                    start += `<w:numPr><w:ilvl w:val="${options.list_depth}"/>`
-                    start += `<w:numId w:val="${options.list_type}"/></w:numPr>`
+                if (options.section === 'Normal' && !options.list_type && !(node.content && node.content.length)) {
+                    start += '<w:p/>'
                 } else {
-                    start += '<w:rPr></w:rPr>'
+                    start += noSpaceTmp`
+                        <w:p>
+                            <w:pPr><w:pStyle w:val="${options.section}"/>`
+                    if (options.list_type) {
+                        start += `<w:numPr><w:ilvl w:val="${options.list_depth}"/>`
+                        start += `<w:numId w:val="${options.list_type}"/></w:numPr>`
+                    } else {
+                        start += '<w:rPr></w:rPr>'
+                    }
+                    start += '</w:pPr>'
+                    end = '</w:p>' + end
                 }
-                start += '</w:pPr>'
-                end = '</w:p>' + end
                 break
             case 'heading':
                 start += noSpaceTmp`
@@ -311,7 +315,7 @@ export class DocxExporterRichtext {
                 start += noSpaceTmp`
                     <w:tbl>
                         <w:tblPr>
-                            <w:tblStyle w:val="TableGrid" />
+                            <w:tblStyle w:val="${this.exporter.tables.tableGridStyle}" />
                             <w:tblW w:w="0" w:type="auto" />
                             <w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1" />
                         </w:tblPr>

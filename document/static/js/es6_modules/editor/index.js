@@ -14,6 +14,7 @@ import {ModCollab} from "./collab"
 import {ModTools} from "./tools"
 import {ModSettings} from "./settings"
 import {ModMenus} from "./menus"
+import {randomHeadingId} from "../schema/common"
 import {ModServerCommunications} from "./server-communications"
 import {getMetadata, updateDoc} from "../schema/convert"
 import {BibliographyDB} from "../bibliography/database"
@@ -506,7 +507,7 @@ export class Editor {
                 blockId
 
             while (!blockId || linkIds.includes(blockId)) {
-                blockId = 'H' + Math.round(Math.random()*10000000) + 1
+                blockId = randomHeadingId()
             }
 
             let attrs = {
@@ -565,7 +566,7 @@ export class Editor {
                         updateSettings = true
                     }
                 }
-                let docPart = this.pm.doc.resolve(step.from).node(2)
+                let docPart = transform.docs[index].resolve(step.from).node(2)
                 if (docPart && docPart.type.name === 'title') {
                     updateTitle = true
                 }

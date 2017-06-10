@@ -3,6 +3,7 @@
 */
 import {obj2Node} from "../exporter/tools/json"
 import {docSchema} from "./document"
+import {randomHeadingId} from "./common"
 
 import {defaultDocumentStyle} from "../style/documentstyle-list"
 import {defaultCitationStyle} from "../style/citation-definitions"
@@ -175,7 +176,7 @@ let convertNodeV11 = function(node, ids = []) {
         case 'heading':
             let blockId = node.attrs.id
             while (!blockId || ids.includes(blockId)) {
-                blockId = 'H' + Math.round(Math.random()*10000000) + 1
+                blockId = randomHeadingId()
             }
             node.attrs.id = blockId
             ids.push(blockId)

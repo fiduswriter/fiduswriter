@@ -169,7 +169,9 @@ export class Figure extends Block {
     }
 }
 
-
+export function randomHeadingId() {
+    return 'H' + Math.round(Math.random()*10000000) + 1
+}
 
 export class Heading extends Block {
     get attrs() {
@@ -178,7 +180,7 @@ export class Heading extends Block {
                 default: 1
             }),
             id: new Attribute({
-                default: undefined
+                compute: randomHeadingId
             })
         }
     }

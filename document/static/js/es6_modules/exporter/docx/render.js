@@ -129,8 +129,7 @@ export class DocxExporterRender {
             if (fullText[0] === ' ' || fullText[fullText.length-1] === ' ') {
                 textAttr += 'xml:space="preserve"'
             }
-            r.innerHTML = `<w:t ${textAttr}>`
-            + fullText + '</w:t>'
+            r.innerHTML = `<w:t ${textAttr}>` + fullText + '</w:t>'
         } else {
             r.parentNode.removeChild(r)
         }

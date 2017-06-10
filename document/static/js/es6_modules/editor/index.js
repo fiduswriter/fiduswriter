@@ -566,7 +566,7 @@ export class Editor {
                         updateSettings = true
                     }
                 }
-                let docPart = this.pm.doc.resolve(step.from).node(2)
+                let docPart = transform.docs[index].resolve(step.from).node(2)
                 if (docPart && docPart.type.name === 'title') {
                     updateTitle = true
                 }

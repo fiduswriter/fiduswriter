@@ -601,9 +601,6 @@ export class Editor {
             figureIds.push(blockId)
         })
 
-
-
-
     }
 
     // Things to be executed on every editor transform.

@@ -59,6 +59,10 @@ export class Equation extends Inline {
     }
 }
 
+export function randomFigureId() {
+    return 'F' + Math.round(Math.random()*10000000) + 1
+}
+
 let imageDBBroken = false
 
 export class Figure extends Block {
@@ -74,10 +78,10 @@ export class Figure extends Block {
                 default: ""
             }),
             caption: new Attribute({
-                default: "caption"
+                default: ""
             }),
             id: new Attribute({
-                default: ""
+                compute: randomFigureId()
             })
         }
     }

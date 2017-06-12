@@ -74,6 +74,9 @@ export class Figure extends Block {
                 default: ""
             }),
             caption: new Attribute({
+                default: "caption"
+            }),
+            id: new Attribute({
                 default: ""
             })
         }
@@ -86,7 +89,8 @@ export class Figure extends Block {
                     equation: dom.getAttribute('data-equation'),
                     image: image === 'false' ? false : parseInt(image),
                     figureCategory: dom.getAttribute('data-figure-category'),
-                    caption: dom.getAttribute('data-caption')
+                    caption: dom.getAttribute('data-caption'),
+                    id: dom.getAttribute('data-id')
                 }
             }
         }
@@ -96,7 +100,8 @@ export class Figure extends Block {
             'data-equation': node.attrs.equation,
             'data-image': node.attrs.image,
             'data-figure-category': node.attrs.figureCategory,
-            'data-caption': node.attrs.caption
+            'data-caption': node.attrs.caption,
+            'data-id': node.attrs.id
         })
         if (node.attrs.image !== false) {
             dom.appendChild(elt("div"))

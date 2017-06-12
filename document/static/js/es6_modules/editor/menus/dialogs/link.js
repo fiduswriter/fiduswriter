@@ -2,6 +2,7 @@ import {InternalLinkDialogTemplate, linkDialogTemplate, InternalHeadingsTemplate
 
 export class LinkDialog {
     constructor(mod) {
+
         this.editor = mod.editor
         this.link = ''
         this.defaultLink = 'https://'
@@ -25,6 +26,13 @@ export class LinkDialog {
                 this.internalTargets.push({
                     id: node.attrs.id,
                     text: node.textContent
+                })
+            }
+
+            if (node.type.name === 'figure') {
+                this.internalTargets.push({
+                    id: node.attrs.id,
+                    text: gettext('figure')+ node.attrs.id
                 })
             }
         }))
@@ -85,7 +93,7 @@ export class LinkDialog {
                     let targetId = this.dialog.find('select.internal-link-selector').val()
                     if (targetId) {
                         newLink = `#${targetId}`
-                        linkTitle = this.internalTargets.find(target => target.id === targetId).text
+                        linkTitle = gettext('figure') + targetId//this.internalTargets.find(target => target.id === targetId).text
                     }
                 } else {
                     newLink = this.dialog.find('input.link').val()

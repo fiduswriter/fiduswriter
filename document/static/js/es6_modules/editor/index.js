@@ -453,32 +453,39 @@ export class Editor {
 
 
         //Check if there are any headings in the affaceted area. Otherwise, skip.
-        let found = false //foundHeading or foundFigure
 
+        let ranges = []
         transform.steps.forEach((step, index) => {
             if (step.jsonID === 'replace' || step.jsonID === 'replaceAround') {
-                transform.docs[index].nodesBetween(
-                    step.from,
-                    step.to,
-                    (node, pos, parent) => {
-
-                        if (node.type.name === 'heading' || node.type.name === 'figure') {
-                            found = true
-
-                        }
-                    }
-                )
+                ranges.push([step.from, step.to])
             }
+            ranges = ranges.map(range => {
+                return [
+                    transform.maps[index].map(range[0], -1),
+                    transform.maps[index].map(range[1], 1)
+                ]
+            })
         })
 
-        if (!found) {
+        let foundIdElement = false //found Heading or Figure
+        ranges.forEach(range => transform.doc.nodesBetween(
+            range[0],
+            range[1],
+            (node, pos, parent) => {
+                if (node.type.name === 'heading' || node.type.name='figure') {
+                    foundIdElement = true
+                }
+            }
+        ))
+
+        if (!foundIdElement) {
             return
         }
 
         // Check that unique IDs only exist once in the document
         // If an ID is used more than once, add steps to change the ID of all
         // but the first occurence.
-        let linkIds = [], doubleIds = []
+        let headingIds = [], doubleHeadingIds = []
         let figureIds = [], doubleFigureIds = []
 
         // ID should not be found in the other pm either. So we look through
@@ -487,22 +494,21 @@ export class Editor {
 
         otherPm.doc.descendants(node => {
             if (node.type.name === 'heading') {
-                linkIds.push(node.attrs.id)
-            }
-            else if (node.type.name === 'figure') {
+                headingIds.push(node.attrs.id)
+            } else if (node.type.name === 'figure') {
                 figureIds.push(node.attrs.id)
             }
         })
 
         transform.doc.descendants((node, pos) => {
             if (node.type.name === 'heading') {
-                if (linkIds.includes(node.attrs.id)) {
-                    doubleIds.push({
+                if (headingIds.includes(node.attrs.id)) {
+                    doubleHeadingIds.push({
                         node,
                         pos
                     })
                 }
-                linkIds.push(node.attrs.id)
+                headingIds.push(node.attrs.id)
             }
 
             if (node.type.name === 'figure') {
@@ -519,13 +525,13 @@ export class Editor {
 
         // Change the IDs of the nodes that having an ID that was used previously
         // already.
-        doubleIds.forEach(doubleId => {
+        doubleHeadingIds.forEach(doubleId => {
             let node = doubleId.node,
                 posFrom = doubleId.pos,
                 posTo = posFrom + node.nodeSize,
                 blockId
 
-            while (!blockId || linkIds.includes(blockId)) {
+            while (!blockId || headingIds.includes(blockId)) {
                 blockId = randomHeadingId()
             }
 
@@ -552,7 +558,7 @@ export class Editor {
                 )
             )
 
-            linkIds.push(blockId)
+            headingIds.push(blockId)
         })
 
 
@@ -563,7 +569,7 @@ export class Editor {
                 blockId
 
             while (!blockId || figureIds.includes(blockId)) {
-                blockId = 'F' + Math.round(Math.random()*10000000) + 1
+                blockId = randomFigureId()
             }
 
             let attrs = {
@@ -619,7 +625,7 @@ export class Editor {
                             }
                             if (local) {
                                 let commentId = this.mod.comments.layout.findCommentId(node)
-                                if (commentId !== false && commentIds.indexOf(commentId)===-1) {
+                                if (commentId !== false && !commentIds.includes(commentId)) {
                                     commentIds.push(commentId)
                                 }
                             }

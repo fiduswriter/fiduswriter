@@ -3,7 +3,7 @@
 */
 import {obj2Node} from "../exporter/tools/json"
 import {docSchema} from "./document"
-import {randomHeadingId} from "./common"
+import {randomHeadingId, randomFigureId} from "./common"
 
 import {defaultDocumentStyle} from "../style/documentstyle-list"
 import {defaultCitationStyle} from "../style/citation-definitions"

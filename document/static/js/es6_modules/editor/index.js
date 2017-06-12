@@ -453,19 +453,27 @@ export class Editor {
         //Check if there are any headings in the affaceted area. Otherwise, skip.
         let foundHeading = false
 
+        let ranges = []
         transform.steps.forEach((step, index) => {
             if (step.jsonID === 'replace' || step.jsonID === 'replaceAround') {
-                transform.docs[index].nodesBetween(
-                    step.from,
-                    step.to,
-                    (node, pos, parent) => {
-                        if (node.type.name === 'heading') {
-                            foundHeading = true
-                        }
-                    }
-                )
+                ranges.push([step.from, step.to])
             }
+            ranges = ranges.map(range => {
+                return [
+                    transform.maps[index].map(range[0], -1),
+                    transform.maps[index].map(range[1], 1)
+                ]
+            })
         })
+        ranges.forEach(range => transform.doc.nodesBetween(
+            range[0],
+            range[1],
+            (node, pos, parent) => {
+                if (node.type.name === 'heading') {
+                    foundHeading = true
+                }
+            }
+        ))
 
         if (!foundHeading) {
             return
@@ -556,7 +564,7 @@ export class Editor {
                             }
                             if (local) {
                                 let commentId = this.mod.comments.layout.findCommentId(node)
-                                if (commentId !== false && commentIds.indexOf(commentId)===-1) {
+                                if (commentId !== false && !commentIds.includes(commentId)) {
                                     commentIds.push(commentId)
                                 }
                             }

@@ -19,7 +19,8 @@ export class LinkDialog {
     }
 
     findInternalTargets() {
-        let docs = [this.editor.pm.doc, this.editor.mod.footnotes.fnPm.doc]
+        let docs = [this.editor.pm.doc, this.editor.mod.footnotes.fnPm.doc],
+        figures = {}
 
         docs.forEach(doc => doc.descendants(node => {
             if (node.type.name === 'heading') {
@@ -30,9 +31,14 @@ export class LinkDialog {
             }
 
             if (node.type.name === 'figure') {
+                if (!figures[node.attrs.figureCategory]) {
+                    figures[node.attrs.figureCategory] = 0
+                }
+                figures[node.attrs.figureCategory]++
+
                 this.internalTargets.push({
                     id: node.attrs.id,
-                    text: gettext('figure')+ node.attrs.id
+                    text: `${gettext(node.attrs.figureCategory)} ${figures[node.attrs.figureCategory]}: ${node.attrs.caption}`
                 })
             }
         }))
@@ -93,7 +99,7 @@ export class LinkDialog {
                     let targetId = this.dialog.find('select.internal-link-selector').val()
                     if (targetId) {
                         newLink = `#${targetId}`
-                        linkTitle = gettext('figure') + targetId//this.internalTargets.find(target => target.id === targetId).text
+                        linkTitle = this.internalTargets.find(target => target.id === targetId).text
                     }
                 } else {
                     newLink = this.dialog.find('input.link').val()

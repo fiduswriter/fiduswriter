@@ -450,10 +450,8 @@ export class Editor {
 
     // Things to execute before every editor transform
     onBeforeTransform(pm, transform) {
-
-
-        //Check if there are any headings in the affaceted area. Otherwise, skip.
-
+        // Check if there are any headings or figures in the affected range.
+        // Otherwise, skip.
         let ranges = []
         transform.steps.forEach((step, index) => {
             if (step.jsonID === 'replace' || step.jsonID === 'replaceAround') {
@@ -472,7 +470,7 @@ export class Editor {
             range[0],
             range[1],
             (node, pos, parent) => {
-                if (node.type.name === 'heading' || node.type.name='figure') {
+                if (node.type.name === 'heading' || node.type.name === 'figure') {
                     foundIdElement = true
                 }
             }

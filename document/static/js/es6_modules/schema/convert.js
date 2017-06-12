@@ -42,13 +42,19 @@ export let updateDoc = function(doc) {
         case 0: // Fidus Writer 3.1 prerelease
             doc = convertDocV0(doc)
             doc = convertDocV11(doc)
+            doc = convertDocV12(doc)
             break
         case 1: // Fidus Writer 3.1 prerelease
             doc = convertDocV1(doc)
             doc = convertDocV11(doc)
+            doc = convertDocV12(doc)
             break
         case 1.1: // Fidus Writer 3.1
             doc = convertDocV11(doc)
+            doc = convertDocV12(doc)
+            break
+        case 1.2: // Fidus Writer 3.2
+            doc = convertDocV12(doc)
             break
     }
     return doc
@@ -164,31 +170,6 @@ let convertDocV0 = function(doc) {
     return doc
 }
 
-let convertDocV11 = function(doc) {
-    let returnDoc = Object.assign({}, doc)
-    convertNodeV11(returnDoc.contents)
-    returnDoc.settings = {doc_version: 1.2}
-    return returnDoc
-}
-
-let convertNodeV11 = function(node, ids = []) {
-    switch (node.type) {
-        case 'heading':
-            let blockId = node.attrs.id
-            while (!blockId || ids.includes(blockId)) {
-                blockId = randomHeadingId()
-            }
-            node.attrs.id = blockId
-            ids.push(blockId)
-            break
-    }
-    if (node.content) {
-        node.content.forEach(childNode => {
-            convertNodeV11(childNode, ids)
-        })
-    }
-}
-
 let convertDocV1 = function(doc) {
     let returnDoc = Object.assign({}, doc)
     convertNodeV1(returnDoc.contents)
@@ -231,6 +212,56 @@ let convertNodeV1 = function(node) {
     if (node.content) {
         node.content.forEach(childNode => {
             convertNodeV1(childNode)
+        })
+    }
+}
+
+let convertDocV11 = function(doc) {
+    let returnDoc = Object.assign({}, doc)
+    convertNodeV11(returnDoc.contents)
+    returnDoc.settings = {doc_version: 1.2}
+    return returnDoc
+}
+
+let convertNodeV11 = function(node, ids = []) {
+    switch (node.type) {
+        case 'heading':
+            let blockId = node.attrs.id
+            while (!blockId || ids.includes(blockId)) {
+                blockId = randomHeadingId()
+            }
+            node.attrs.id = blockId
+            ids.push(blockId)
+            break
+    }
+    if (node.content) {
+        node.content.forEach(childNode => {
+            convertNodeV11(childNode, ids)
+        })
+    }
+}
+
+let convertDocV12 = function(doc) {
+    let returnDoc = Object.assign({}, doc)
+    convertNodeV12(returnDoc.contents)
+    returnDoc.settings = {doc_version: 1.3}
+    return returnDoc
+}
+
+let convertNodeV12 = function(node, ids = []) {
+    switch (node.type) {
+        case 'figure':
+            let blockId = node.attrs.id
+            while (!blockId || ids.includes(blockId)) {
+                blockId = randomFigureId()
+            }
+            node.attrs.id = blockId
+            ids.push(blockId)
+            break
+    }
+    if (node.content) {
+        node.content.forEach(childNode => {
+            convertNodeV11(childNode, ids)
         })
     }
 }

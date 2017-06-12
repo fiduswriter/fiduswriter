@@ -5,7 +5,6 @@ import {katexRender} from "../../../katex"
 
 export class FigureDialog {
     constructor(mod) {
-
         this.editor = mod.editor
         this.imageDB = this.editor.imageDB
         this.imageId = false
@@ -21,7 +20,6 @@ export class FigureDialog {
     }
 
     layoutMathPreview() {
-
         let previewNode = document.getElementById('inner-figure-preview')
         katexRender(this.equation, previewNode, {
             displayMode: true,
@@ -30,7 +28,6 @@ export class FigureDialog {
     }
 
     layoutImagePreview() {
-
         //TODO: Figure out what to do if the image has been deleted from imageDB.db in the meantime.
         if (this.imageId && this.imageDB.db[this.imageId]) {
             document.getElementById('inner-figure-preview').innerHTML =
@@ -41,14 +38,12 @@ export class FigureDialog {
     }
 
     setFigureLabel() {
-
         jQuery(
             '#figure-category-btn label',
             this.dialog).html(jQuery('#figure-category-' + this.figureCategory).text())
     }
 
     submitForm() {
-
         let mathInput = jQuery('input[name=figure-math]', this.dialog)
         let captionInput = jQuery('input[name=figure-caption]', this.dialog)
         this.equation = mathInput.val()
@@ -71,39 +66,19 @@ export class FigureDialog {
             this.dialog.dialog('close')
             return false
         }
-
         let nodeType = this.editor.currentPm.schema.nodes['figure']
-
-
-        let existingIds = []
-        this.editor.currentPm.doc.descendants(node => {
-            if (node.type.name === 'figure') {
-                existingIds.push(node.attrs.id)
-
-            }
-        })
-
-        let blockId
-        while (!blockId || existingIds.includes(blockId)) {
-            blockId = 'F' + Math.round(Math.random()*10000000) + 1
-        }
-
-
-
         this.editor.currentPm.tr.replaceSelection(nodeType.createAndFill({
             equation: this.equation,
             image: this.imageId,
             figureCategory: this.figureCategory,
-            caption: this.caption,
-            id: blockId
+            caption: this.caption
         })).apply()
-        console.log((this))
+
         this.dialog.dialog('close')
     }
 
     init() {
     // toolbar figure
-
         let dialogButtons = []
 
         if (this.node && this.node.type && this.node.type.name==='figure') {
@@ -213,7 +188,6 @@ export class FigureDialog {
 
         jQuery('#insertFigureImage').bind('click',
             function () {
-
                 if (jQuery(this).hasClass('disabled')) {
                     return
                 }
@@ -222,7 +196,6 @@ export class FigureDialog {
                     that.imageDB,
                     that.imageId,
                     that.editor.doc.owner.id)
-
                 imageSelection.init().then(
                     newImageId => {
                         if (newImageId && newImageId !== false) {

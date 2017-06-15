@@ -1,84 +1,78 @@
-import {Block, MarkType, Inline, Attribute} from "prosemirror-old/dist/model"
+export let text = {
+    group: "inline"
+}
 
-export class Literal extends Block {
-    get matchDOMTag() {
-        return {"div.literal": null}
-    }
-    toDOM(node) {
+export let literal = {
+    content: "inline<_>*",
+    parseDOM: [{tag: 'div.literal'}],
+    toDOM() {
         return ["div", {
             class: 'literal'
         }, 0]
     }
 }
 
-export class SupMark extends MarkType {
-    get matchDOMTag() {
-        return {"sup": null}
+export let variable = {
+    inline: true,
+    group: "inline",
+    attrs: {
+        variable: {default:""}
+    },
+    parseDOM: [{
+        tag: 'span[data-variable]',
+        getAttrs(dom) {
+            return {
+                variable: dom.getAttribute("data-variable"),
+            }
+        }
+    }],
+    toDOM(node) {
+        return ["span", {'data-variable':node.attrs.variable}, node.attrs.variable]
     }
-    get matchDOMStyle() {
-        return {"vertical-align": value => value == "super" && null}
-    }
+}
+
+export let sup = {
+    parseDOM: [
+        {tag: 'sup'},
+        {style: "vertical-align", getAttrs: value => value == "super" && null}
+    ],
     toDOM() {
         return ["sup"]
     }
 }
 
-export class SubMark extends MarkType {
-    get matchDOMTag() {
-        return {"sub": null}
-    }
-    get matchDOMStyle() {
-        return {"vertical-align": value => value == "sub" && null}
-    }
+export let sub = {
+    parseDOM: [
+        {tag: 'sub'},
+        {style: "vertical-align", getAttrs: value => value == "sub" && null}
+    ],
     toDOM() {
         return ["sub"]
     }
 }
 
-export class SmallCapsMark extends MarkType {
-    get matchDOMTag() {
-        return {"span.smallcaps": null}
-    }
-    get matchDOMStyle() {
-        return {"font-variant": value => value == "small-caps" && null}
-    }
+export let smallcaps = {
+    parseDOM: [
+        {tag: 'span.smallcaps'},
+        {style: "font-variant", getAttrs: value => value == "small-caps" && null}
+    ],
     toDOM() {
-        return ["span",{class:"smallcaps"}]
+        return ["span", {class:"smallcaps"}]
     }
 }
 
 //Currently unsupported
 
-export class UrlMark extends MarkType {
-    get matchDOMTag() {
-        return {"span.url": null}
-    }
+export let url = {
+    parseDOM: [{tag: 'span.url'}],
     toDOM() {
         return ["span",{class:"url"}]
     }
 }
 
-export class EnquoteMark extends MarkType {
-    get matchDOMTag() {
-        return {"span.enquote": null}
-    }
+export let enquote = {
+    parseDOM: [{tag: 'span.enquote'}],
     toDOM() {
-        return ["span",{class:"enquote"}]
-    }
-}
-
-export class Variable extends Inline {
-    get attrs() {
-        return {
-            variable: new Attribute({default: ""}),
-        }
-    }
-    get matchDOMTag() {
-        return {"span[data-variable]": dom => ({
-            variable: dom.getAttribute("data-variable"),
-        })}
-    }
-    toDOM(node) {
-        return ["span", {'data-variable':node.attrs.variable}, node.attrs.variable]
+        return ["span", {class:"enquote"}]
     }
 }

@@ -12,7 +12,8 @@
     "copy_datatables": "mkdir -p ./static-libs/js/libs/ && cp node_modules/datatables/media/js/jquery.dataTables.min.js ./static-libs/js/libs/",
     "copy_dropkickjs": "mkdir -p ./static-libs/js/libs/ && cp node_modules/dropkickjs/build/js/dropkick.min.js ./static-libs/js/libs/",
     "copy_dropkickjs_css": "mkdir -p ./static-libs/css/libs/ && cp node_modules/dropkickjs/build/css/dropkick.css ./static-libs/css/libs/",
-    "postinstall": "npm run get_mml2omml && npm run copy_jquery && npm run copy_jquery-ui && npm run copy_underscore && npm run copy_datatables && npm run copy_dropkickjs && npm run copy_dropkickjs_css",
+    "copy_prosemirror_css": "mkdir -p ./static-libs/css/libs/ && cp node_modules/prosemirror-view/style/prosemirror.css ./static-libs/css/libs/",
+    "postinstall": "npm run get_mml2omml && npm run copy_jquery && npm run copy_jquery-ui && npm run copy_underscore && npm run copy_datatables && npm run copy_dropkickjs && npm run copy_dropkickjs_css && npm run copy_prosemirror_css",
     "jshint": "jshint ."
   },
   "author": "Johannes Wilm",
@@ -41,6 +42,13 @@
     "object-hash": "1.1.4",
     "paginate-for-print": "0.0.7",
     "prosemirror-old": "0.10.6",
+    "prosemirror-state": "0.21.0",
+    "prosemirror-view": "0.21.1",
+    "prosemirror-model": "0.21.0",
+    "prosemirror-keymap": "0.21.0",
+    "prosemirror-schema-basic": "0.21.0",
+    "prosemirror-history": "0.21.0",
+    "prosemirror-commands": "0.21.0",
     "texzilla": "0.9.9",
     "tokenfield": "^0.3.14",
     "underscore": "1.8.3"

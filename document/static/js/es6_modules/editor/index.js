@@ -16,7 +16,7 @@ import {ModSettings} from "./settings"
 import {ModMenus} from "./menus"
 import {randomHeadingId, randomFigureId} from "../schema/common"
 import {ModServerCommunications} from "./server-communications"
-import {getMetadata, updateDoc} from "../schema/convert"
+import {getMetadata, getSettings, updateDoc} from "../schema/convert"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
 import {Paste} from "./paste"
@@ -387,6 +387,7 @@ export class Editor {
         let pmArticle = this.pmCollab.versionDoc.firstChild
         this.doc.contents = pmArticle.toJSON()
         this.doc.metadata = getMetadata(pmArticle)
+        Object.assign(this.doc.settings, getSettings(pmArticle))
         this.doc.title = pmArticle.firstChild.textContent
         this.doc.version = this.pmCollab.version
         this.docInfo.hash = this.getHash()

@@ -22,6 +22,11 @@ export let getMetadata = function(pmArticle) {
     return metadata
 }
 
+export let getSettings = function(pmArticle) {
+    let settings = _.clone(pmArticle.attrs)
+    return settings
+}
+
 export let updateDoc = function(doc) {
     /* This is to clean documents taking all the accepted formatting from older
        versions and outputting the current version of the doc format.

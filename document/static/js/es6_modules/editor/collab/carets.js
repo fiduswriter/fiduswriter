@@ -1,3 +1,6 @@
+import {collabEditing} from "prosemirror-old/dist/collab"
+
+
 export class ModCollabCarets {
     constructor(mod) {
         mod.carets = this
@@ -24,14 +27,15 @@ export class ModCollabCarets {
     }
 
     bindEvents() {
-        let that = this, pm = this.mod.editor.pm
-        pm.updateScheduler([pm.on.change], () => {return that.updatePositionCSS()})
+        let pm = this.mod.editor.pm
+        pm.updateScheduler([pm.on.change], () => this.updatePositionCSS())
         let fnPm = this.mod.editor.mod.footnotes.fnPm
-        fnPm.updateScheduler([fnPm.on.change], () => {return that.updatePositionCSS()})
-        // Limit sending of selection to once every 250 ms. This is also important to work correctly
-        // with editing, which otherwise triggers three selection changes that result in an incorrect caret placement
-        let sendSelection = _.debounce(function(){
-            that.sendSelectionChange()
+        fnPm.updateScheduler([fnPm.on.change], () => this.updatePositionCSS())
+        // Limit sending of selection to once every 250 ms. This is also
+        // important to work correctly with editing, which otherwise triggers
+        // three selection changes that result in an incorrect caret placement.
+        let sendSelection = _.debounce(() => {
+            this.sendSelectionChange()
         }, 250)
         pm.on.selectionChange.add(sendSelection)
         fnPm.on.selectionChange.add(sendSelection)
@@ -52,26 +56,25 @@ export class ModCollabCarets {
     }
 
     sendSelectionChange() {
-        let that = this
-        if (this.mod.editor.currentPm.mod.collab.unconfirmedMaps.length > 0) {
+        let pmCollab = collabEditing.get(this.mod.editor.currentPm)
+        if (pmCollab.unconfirmedMaps.length > 0) {
             // TODO: Positions really need to be reverse-mapped through all
             // unconfirmed maps. As long as we don't do this, we just don't send
             // anything if there are unconfirmed maps to avoid potential problems.
-            window.setTimeout(function(){that.sendSelectionChange()},500)
+            window.setTimeout(() => {this.sendSelectionChange()},500)
             return
         }
         this.mod.editor.mod.serverCommunications.send({
             type: 'selection_change',
             caret_position: this.getCaretPosition(),
-            diff_version: this.mod.editor.pm.mod.collab.version
+            diff_version: this.mod.editor.pmCollab.version
         })
     }
 
     receiveSelectionChange(data) {
-        let that = this
         this.updateCaret(data.caret_position)
         let pm = data.caret_position.pm === 'pm' ? this.mod.editor.pm : this.mod.editor.mod.footnotes.fnPm
-        pm.scheduleDOMUpdate(function(){return that.updatePositionCSS()})
+        pm.scheduleDOMUpdate(() => this.updatePositionCSS())
     }
 
     // Update the position of a collaborator's caret
@@ -87,7 +90,8 @@ export class ModCollabCarets {
         let posHead = caretPosition.head
         let pm = caretPosition.pm === 'pm' ? this.mod.editor.pm : this.mod.editor.mod.footnotes.fnPm
         // Map the positions through all still unconfirmed changes
-        pm.mod.collab.unconfirmedMaps.forEach(function(map){
+        let pmCollab = collabEditing.get(pm)
+        pmCollab.unconfirmedMaps.forEach(map => {
             posFrom = map.map(posFrom)
             posTo = map.map(posTo)
             posHead = map.map(posHead)
@@ -148,31 +152,29 @@ export class ModCollabCarets {
 
     updatePositionCSS() {
         // 1st write phase
-        let that = this
-
-        return function () {
+        return () => {
             // 1st read phase
             // This phase + next write pahse are used for footnote placement,
             // so we cannot find carets in the footnotes before the next read
             // phase
-            return function () {
+            return () => {
                 // 2nd write phase
-                return function () {
+                return () => {
                     // 2nd read phase
                     let positionCSS = ''
-                    for (let sessionId in that.caretPositions) {
-                        let caretPosition = that.caretPositions[sessionId]
+                    for (let sessionId in this.caretPositions) {
+                        let caretPosition = this.caretPositions[sessionId]
                         let coords = caretPosition.pm.coordsAtPos(caretPosition.headRange.from)
-                        let offsets = that.caretContainer.getBoundingClientRect()
+                        let offsets = this.caretContainer.getBoundingClientRect()
                         let height = coords.bottom - coords.top
                         let top = coords.top - offsets.top
                         let left = coords.left - offsets.left
                         positionCSS += `#caret-${sessionId} {top: ${top}px; left: ${left}px; height: ${height}px;}`
                     }
-                    return function () {
+                    return () => {
                         // 3rd write phase
-                        if (that.caretPlacementStyle.innerHTML !== positionCSS) {
-                            that.caretPlacementStyle.innerHTML = positionCSS
+                        if (this.caretPlacementStyle.innerHTML !== positionCSS) {
+                            this.caretPlacementStyle.innerHTML = positionCSS
                         }
                     }
                 }

@@ -4,7 +4,7 @@ import {FormatCitations} from "./format"
  */
 
 export class RenderCitations {
-    constructor(contentElement, citationStyle, bibDB, renderNoteCitations = true, callback = false) {
+    constructor(contentElement, citationStyle, bibDB, renderNoteCitations = true) {
         this.contentElement = contentElement
         this.citationStyle = citationStyle
         this.bibDB = bibDB
@@ -12,30 +12,28 @@ export class RenderCitations {
         this.allCitationNodes = []
         this.allCitationInfos = []
         this.fm = false
-        this.callback = callback
     }
 
     init() {
-        let that = this
         this.allCitationNodes = [].slice.call(jQuery(this.contentElement).find('span.citation'))
-        this.allCitationNodes.forEach(function(cElement){
+        this.allCitationNodes.forEach((cElement) => {
             let citeInfo = Object.assign({},cElement.dataset)
             citeInfo.references = JSON.parse(citeInfo.references)
-            that.allCitationInfos.push(citeInfo)
+            this.allCitationInfos.push(citeInfo)
         })
         this.fm = new FormatCitations(
             this.allCitationInfos,
             this.citationStyle,
-            this.bibDB,
-            function() {
-                if (that.renderNoteCitations || 'note' !== that.fm.citationType) {
-                    that.renderCitations()
-                } else if (that.callback) {
-                    that.callback()
+            this.bibDB
+        )
+        return this.fm.init().then(
+            () => {
+                if (this.renderNoteCitations || 'note' !== this.fm.citationType) {
+                    this.renderCitations()
                 }
+                return Promise.resolve()
             }
         )
-        this.fm.init()
     }
 
     renderCitations() {
@@ -46,9 +44,6 @@ export class RenderCitations {
             }
             this.allCitationNodes[index].innerHTML = citationText
         })
-        if (this.callback) {
-            this.callback()
-        }
     }
 
 }

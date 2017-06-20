@@ -1,3 +1,3 @@
-import {contactsOverview} from "./es6_modules/contacts/overview"
+import {contactsOverview} from "./es6_modules/contacts"
 
 contactsOverview()

@@ -2,7 +2,7 @@ import {FormatCitations} from "../../citations/format"
 import {docSchema} from "../../schema/document"
 import {cslBibSchema} from "../../bibliography/schema/csl-bib"
 import {descendantNodes} from "../tools/doc-contents"
-import {noSpaceTmp} from "../../common/common"
+import {noSpaceTmp} from "../../common"
 
 export class DocxExporterCitations {
     constructor(exporter, bibDB, docContents, origCitInfos = []) {
@@ -20,19 +20,19 @@ export class DocxExporterCitations {
     }
 
     init() {
-        let that = this
-        return this.exporter.xml.getXml(this.styleFilePath).then(function(styleXml) {
-            that.styleXml = styleXml
-            that.formatCitations()
-            return Promise.resolve()
-        })
+        return this.exporter.xml.getXml(this.styleFilePath).then(
+            styleXml => {
+                this.styleXml = styleXml
+                return Promise.resolve()
+            }
+        ).then(
+            () => this.formatCitations()
+        )
     }
 
     // Citations are highly interdependent -- so we need to format them all
     // together before laying out the document.
     formatCitations() {
-        let that = this
-
         if (this.origCitInfos.length) {
             // Initial citInfos are taken from a previous run to include in bibliography,
             // and they are removed before spitting out the citation entries for the given document.
@@ -41,26 +41,28 @@ export class DocxExporterCitations {
         }
 
         descendantNodes(this.docContents).forEach(
-            function(node){
+            node => {
                 if (node.type==='citation') {
-                    that.citInfos.push(JSON.parse(JSON.stringify(node.attrs)))
+                    this.citInfos.push(JSON.parse(JSON.stringify(node.attrs)))
                 }
             }
         )
         this.citFm = new FormatCitations(
             this.citInfos,
             this.exporter.doc.settings.citationstyle,
-            this.bibDB,
-            function() {
-                that.citationTexts = that.citFm.citationTexts
-                if (that.origCitInfos.length) {
+            this.bibDB
+        )
+        return this.citFm.init().then(
+            () => {
+                this.citationTexts = this.citFm.citationTexts
+                if (this.origCitInfos.length) {
                     // Remove all citation texts originating from original starting citInfos
-                    that.citationTexts.splice(0, that.origCitInfos.length)
+                    this.citationTexts.splice(0, this.origCitInfos.length)
                 }
-                that.convertCitations()
+                this.convertCitations()
+                return Promise.resolve()
             }
         )
-        this.citFm.init()
     }
 
     convertCitations() {
@@ -68,7 +70,7 @@ export class DocxExporterCitations {
         // We need to put the citations each in a paragraph so that it works with
         // the fiduswriter schema and so that the converter doesn't mash them together.
         let citationsHTML = ''
-        this.citationTexts.forEach(function(ct){
+        this.citationTexts.forEach(ct => {
             citationsHTML += `<p>${ct[0][1]}</p>`
         })
 

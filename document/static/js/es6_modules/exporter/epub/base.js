@@ -34,7 +34,7 @@ export class BaseEpubExporter extends BaseHTMLExporter {
         // Converts RASH style footnotes into epub footnotes.
         let footnotes = [].slice.call(htmlCode.querySelectorAll('section#fnlist section[role=doc-footnote]'))
         let footnoteCounter = 1
-        footnotes.forEach(function(footnote){
+        footnotes.forEach(footnote => {
             let newFootnote = document.createElement('aside')
             newFootnote.setAttribute('epub:type', 'footnote')
             newFootnote.id = footnote.id
@@ -52,7 +52,7 @@ export class BaseEpubExporter extends BaseHTMLExporter {
         })
         let footnoteMarkers = [].slice.call(htmlCode.querySelectorAll('a.fn'))
         let footnoteMarkerCounter = 1
-        footnoteMarkers.forEach(function(fnMarker){
+        footnoteMarkers.forEach(fnMarker => {
             let newFnMarker = document.createElement('sup')
             let newFnMarkerLink = document.createElement('a')
             newFnMarkerLink.setAttribute('epub:type', 'noteref')
@@ -71,7 +71,7 @@ export class BaseEpubExporter extends BaseHTMLExporter {
     setLinks(htmlCode, docNum) {
         let contentItems = [], title
 
-        jQuery(htmlCode).find('h1,h2,h3').each(function() {
+        jQuery(htmlCode).find('h1,h2,h3,h4,h5,h6').each(function() {
             title = jQuery.trim(this.textContent)
             if (title !== '') {
                 let contentItem = {}
@@ -84,7 +84,6 @@ export class BaseEpubExporter extends BaseHTMLExporter {
                 if (this.classList.contains('title')) {
                     contentItem.level = 0
                 }
-                this.id = 'id' + contentItems.length
 
                 contentItem.id = this.id
                 contentItems.push(contentItem)

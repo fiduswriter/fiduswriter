@@ -43,7 +43,7 @@ export class citeprocSys {
             } else {
                 obj["default"][vartype][key] = ""
             }
-        } catch (e) {
+        } catch (error) {
             // There is breakage here that needs investigating.
         }
     }

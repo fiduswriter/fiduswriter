@@ -11,9 +11,11 @@ export class LatexExporterConvert {
         // are present in the file, so that we can assemble an preamble and
         // epilogue based on our findings.
         this.features = {}
+        this.internalLinks = []
     }
 
     init(docContents) {
+        this.preWalkJson(docContents)
         let rawTransformation = this.walkJson(docContents)
         let body = this.postProcess(rawTransformation)
         let preamble = this.assemblePreamble()
@@ -31,10 +33,32 @@ export class LatexExporterConvert {
         return '\\documentclass{article}\n'
     }
 
+    // Check for things needed before creating raw transofrm
+    preWalkJson(node) {
+        switch(node.type) {
+            // Collect all internal links so that we only set the anchors for those
+            // that are being linked to.
+            case 'text':
+                if (node.marks) {
+                    let hyperlink = _.findWhere(node.marks, {type:'link'})
+                    if (hyperlink) {
+                        let href = hyperlink.attrs.href
+                        if (href[0] === '#' && !this.internalLinks.includes(href)) {
+                            this.internalLinks.push(href.slice(1))
+                        }
+                    }
+                }
+                break
+        }
+        if (node.content) {
+            node.content.forEach(child => this.preWalkJson(child))
+        }
+    }
+
 
     walkJson(node, options = {}) {
         let start = '', content = '', end = '',
-            placeFootnotesAfterBlock = false, that = this
+            placeFootnotesAfterBlock = false
 
         switch(node.type) {
             case 'article':
@@ -98,7 +122,14 @@ export class LatexExporterConvert {
                         start += '\n\n\\subsubsection{'
                         break;
                 }
+                // Check if this heading is being linked to. If this is the case,
+                // place a protected hypertarget here that does not add an extra
+                // entry into the PDF TOC.
                 end = '}\n\n' + end
+                if (this.internalLinks.includes(node.attrs.id)) {
+                    // Add a link target
+                    end = `\\texorpdfstring{\\protect\\hypertarget{${node.attrs.id}}{}}{}` + end
+                }
                 if(!options.onlyFootnoteMarkers) {
                     placeFootnotesAfterBlock = true
                     options = _.clone(options)
@@ -172,7 +203,14 @@ export class LatexExporterConvert {
                     end = '}' + end
                 }
                 if (hyperlink) {
-                    start += `\\href{${hyperlink.attrs.href}}{`
+                    let href = hyperlink.attrs.href
+                    if (href[0] === '#') {
+                        // Internal link
+                        start += `\\hyperlink{${href.slice(1)}}{`
+                    } else {
+                        // External link
+                        start += `\\href{${href}}{`
+                    }
                     end = '}' + end
                     this.features.hyperlinks = true
                 }
@@ -190,22 +228,22 @@ export class LatexExporterConvert {
                     let citationEntryKeys = []
 
                     let allCitationItemsPresent = references.map(ref => ref.id).every(
-                        function(citationEntry) {
-                            let bibDBEntry = that.bibDB.db[citationEntry]
+                        citationEntry => {
+                            let bibDBEntry = this.bibDB.db[citationEntry]
                             if (bibDBEntry) {
                                 if (!bibDBEntry) {
                                     // Not present in bibliography database, skip it.
                                     // TODO: Throw an error?
                                     return false
                                 }
-                                if (!that.usedBibDB[citationEntry]) {
-                                    let citationKey = that.createUniqueCitationKey(
+                                if (!this.usedBibDB[citationEntry]) {
+                                    let citationKey = this.createUniqueCitationKey(
                                         bibDBEntry.entry_key
                                     )
-                                    that.usedBibDB[citationEntry] = Object.assign({}, bibDBEntry)
-                                    that.usedBibDB[citationEntry].entry_key = citationKey
+                                    this.usedBibDB[citationEntry] = Object.assign({}, bibDBEntry)
+                                    this.usedBibDB[citationEntry].entry_key = citationKey
                                 }
-                                citationEntryKeys.push(that.usedBibDB[citationEntry].entry_key)
+                                citationEntryKeys.push(this.usedBibDB[citationEntry].entry_key)
                             }
                             return true
                         }
@@ -222,7 +260,7 @@ export class LatexExporterConvert {
 
                     let allCitationItemsPresent = references.every(
                         ref => {
-                            let bibDBEntry = that.bibDB.db[ref.id]
+                            let bibDBEntry = this.bibDB.db[ref.id]
                             if (!bibDBEntry) {
                                 // Not present in bibliography database, skip it.
                                 // TODO: Throw an error?
@@ -240,14 +278,14 @@ export class LatexExporterConvert {
                             }
                             citationCommand += '{'
 
-                            if (!that.usedBibDB[ref.id]) {
-                                let citationKey = that.createUniqueCitationKey(
+                            if (!this.usedBibDB[ref.id]) {
+                                let citationKey = this.createUniqueCitationKey(
                                     bibDBEntry.entry_key
                                 )
-                                that.usedBibDB[ref.id] = Object.assign({}, bibDBEntry)
-                                that.usedBibDB[ref.id].entry_key = citationKey
+                                this.usedBibDB[ref.id] = Object.assign({}, bibDBEntry)
+                                this.usedBibDB[ref.id].entry_key = citationKey
                             }
-                            citationCommand += that.usedBibDB[ref.id].entry_key
+                            citationCommand += this.usedBibDB[ref.id].entry_key
                             citationCommand += '}'
 
                             return true

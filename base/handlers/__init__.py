@@ -22,8 +22,7 @@ class RobotsHandler(RequestHandler):
     def get(self):
         self.write(
             (
-                'User-agent: *\nDisallow: /document/\nDisallow: /bibliography/'
-                '\nDisallow: /usermedia/\nDisallow: /book/'
+                'User-agent: *\nDisallow: /*\nAllow: /$'
             )
         )
 

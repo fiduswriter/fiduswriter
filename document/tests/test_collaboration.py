@@ -566,7 +566,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # wait to load popup
         linktitle = WebDriverWait(driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "linktitle"))
+            EC.presence_of_element_located((By.CLASS_NAME, "link-title"))
         )
         linktitle.click()
         self.input_text(linktitle, "Test link")

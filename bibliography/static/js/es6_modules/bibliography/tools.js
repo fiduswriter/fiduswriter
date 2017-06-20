@@ -1,4 +1,4 @@
-import {addDropdownBox} from "../common/common"
+import {addDropdownBox} from "../common"
 
 
 /** Add and remove name list field.

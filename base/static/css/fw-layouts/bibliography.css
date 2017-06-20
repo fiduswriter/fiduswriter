@@ -2,32 +2,6 @@
     margin-top: 18px;
 }
 
-#bib-dialog .select-container {
-    margin-bottom: 18px;
-    margin-right: 71px;
-    position: relative;
-}
-
-#bib-dialog .select-container select {
-    display: inline-block;
-    width: 100%;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    cursor: pointer;
-}
-
-#bib-dialog .select-container select option.placeholder {
-    display: none;
-}
-
-#bib-dialog .select-container .select-arrow {
-    position: absolute;
-	top: 14px;
-	right: -10px;
-	pointer-events: none;
-}
-
 #bib-dialog .ui-tabs-panel {
     height: 439px;
 }
@@ -73,7 +47,7 @@
     display: inline-block;
 }
 
-#bib-dialog .entry-field .select-arrow {
+#bib-dialog .entry-field .fw-select-arrow {
     position: absolute;
 	top: 14px;
 	right: 28px;
@@ -374,4 +348,27 @@ div.literal em, pre.long-literal em {
 .fw-date-separator {
     width: 26px;
     text-align: center;
+}
+
+/* api search */
+
+#bibimport-api-search button.api-import {
+    float: left;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+#bibimport-api-search div.item {
+    margin-bottom: 10px;
+}
+
+
+#bibimport-api-search h3 {
+    font-weight: 700;
+    margin: 10px 0px 10px 20px;
+    font-size: 1.1em;
+}
+
+#bibimport-api-search .bibimport-search-result, #bibimport-api-search div.item {
+    clear: left;
 }

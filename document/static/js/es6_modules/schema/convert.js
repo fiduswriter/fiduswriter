@@ -3,13 +3,14 @@
 */
 import {obj2Node} from "../exporter/tools/json"
 import {docSchema} from "./document"
+import {randomHeadingId} from "./common"
 
 import {defaultDocumentStyle} from "../style/documentstyle-list"
 import {defaultCitationStyle} from "../style/citation-definitions"
 
 export let getMetadata = function(pmArticle) {
     let metadata = {}
-    for (let i=0;i<pmArticle.childCount;i++) {
+    for (let i=0; i < pmArticle.childCount; i++) {
         let pmNode = pmArticle.child(i)
         if (pmNode.type.isMetadata || !pmNode.attrs.hidden) {
             let value = pmNode.toDOM().innerHTML
@@ -23,7 +24,6 @@ export let getMetadata = function(pmArticle) {
 
 export let getSettings = function(pmArticle) {
     let settings = _.clone(pmArticle.attrs)
-    settings.doc_version = 1.1
     return settings
 }
 
@@ -46,9 +46,14 @@ export let updateDoc = function(doc) {
         case undefined: // Fidus Writer 1.1-3.0
         case 0: // Fidus Writer 3.1 prerelease
             doc = convertDocV0(doc)
+            doc = convertDocV11(doc)
             break
-        case 1:
+        case 1: // Fidus Writer 3.1 prerelease
             doc = convertDocV1(doc)
+            doc = convertDocV11(doc)
+            break
+        case 1.1: // Fidus Writer 3.1
+            doc = convertDocV11(doc)
             break
     }
     return doc
@@ -148,7 +153,7 @@ let convertDocV0 = function(doc) {
         documentstyle: doc.settings.documentstyle ? doc.settings.documentstyle : defaultDocumentStyle,
         citationstyle: doc.settings.citationstyle ? doc.settings.citationstyle : defaultCitationStyle
     }
-    docContents.content.forEach(function(docSection){
+    docContents.content.forEach(docSection => {
         if (['subtitle', 'abstract', 'authors', 'keywords'].indexOf(docSection.type) !== -1) {
             if (doc.settings[`metadata-${docSection.type}`]) {
                 docSection.attrs.hidden = false
@@ -157,12 +162,36 @@ let convertDocV0 = function(doc) {
     })
     let pmArticle = docSchema.nodeFromJSON(docContents)
     let pmMetadata = getMetadata(pmArticle)
-    let pmSettings = getSettings(pmArticle)
     doc = JSON.parse(JSON.stringify(doc))
     doc.contents = docContents
     doc.metadata = pmMetadata
-    doc.settings = pmSettings
+    doc.settings = {doc_version: 1.1}
     return doc
+}
+
+let convertDocV11 = function(doc) {
+    let returnDoc = Object.assign({}, doc)
+    convertNodeV11(returnDoc.contents)
+    returnDoc.settings = {doc_version: 1.2}
+    return returnDoc
+}
+
+let convertNodeV11 = function(node, ids = []) {
+    switch (node.type) {
+        case 'heading':
+            let blockId = node.attrs.id
+            while (!blockId || ids.includes(blockId)) {
+                blockId = randomHeadingId()
+            }
+            node.attrs.id = blockId
+            ids.push(blockId)
+            break
+    }
+    if (node.content) {
+        node.content.forEach(childNode => {
+            convertNodeV11(childNode, ids)
+        })
+    }
 }
 
 let convertDocV1 = function(doc) {

@@ -18,12 +18,11 @@ export class ModServerCommunications {
     }
 
     createWSConnection() {
-        let that = this
         let websocketProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
 
         try {
-            this.ws = new window.WebSocket(`${websocketProtocol}//${window.websocketServer}${window.websocketPort}/ws/doc/${this.editor.doc.id}`)
-            this.ws.onopen = function() {
+            this.ws = new window.WebSocket(`${websocketProtocol}//${window.websocketServer}${window.websocketPort}/ws/document/${this.editor.doc.id}`)
+            this.ws.onopen = () => {
                 jQuery('#unobtrusive_messages').html('')
             }
         } catch (err) {
@@ -31,25 +30,25 @@ export class ModServerCommunications {
         }
 
 
-        this.ws.onmessage = function(event) {
+        this.ws.onmessage = event => {
             let data = JSON.parse(event.data)
-            that.receive(data)
+            this.receive(data)
         }
-        this.ws.onclose = function(event) {
-            that.connected = false
-            window.clearInterval(that.wsPinger)
-            window.setTimeout(function() {
-                that.createWSConnection()
+        this.ws.onclose = event => {
+            this.connected = false
+            window.clearInterval(this.wsPinger)
+            window.setTimeout(() => {
+                this.createWSConnection()
             }, 2000)
-            if (that.editor.pm.mod.collab.hasSendableSteps()) {
+            if (this.editor.pmCollab.hasSendableSteps()) {
                 jQuery('#unobtrusive_messages').html('<span class="warn">'+gettext('Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect...')+'</span>')
             } else {
                 jQuery('#unobtrusive_messages').html(gettext('Disconnected. Attempting to reconnect...'))
             }
 
         }
-        this.wsPinger = window.setInterval(function() {
-            that.send({
+        this.wsPinger = window.setInterval(() => {
+            this.send({
                 'type': 'ping'
             })
         }, 50000)
@@ -98,7 +97,7 @@ export class ModServerCommunications {
                 break
             case 'confirm_diff_version':
                 this.editor.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
-                if (data.diff_version !== this.editor.pm.mod.collab.version) {
+                if (data.diff_version !== this.editor.pmCollab.version) {
                     this.editor.mod.collab.docChanges.checkDiffVersion()
                     return
                 }
@@ -106,7 +105,7 @@ export class ModServerCommunications {
                 break
             case 'selection_change':
                 this.editor.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
-                if (data.diff_version !== this.editor.pm.mod.collab.version) {
+                if (data.diff_version !== this.editor.pmCollab.version) {
                     this.editor.mod.collab.docChanges.checkDiffVersion()
                     return
                 }

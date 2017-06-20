@@ -25,6 +25,7 @@ export function updateFileDoc(doc, filetypeVersion) {
         case "1.3":
         case "1.4":
         case "1.5":
+        case "1.6":
             doc = updateDoc(doc)
             break
     }
@@ -255,80 +256,78 @@ export class ImportFidusFile {
     /* Process a packaged Fidus File, either through user upload, or by reloading
       a saved revision which was saved in the same ZIP-baseformat. */
 
-    constructor(file, user, check, bibDB, imageDB, callback) {
+    constructor(file, user, check, bibDB, imageDB, docId) {
         this.file = file
         this.user = user
-        this.callback = callback
-        this.bibDB = bibDB // the user's current database object.
-        this.imageDB = imageDB // the user's imageDB
         this.check = check // Whether the file needs to be checked for compliance with ZIP-format
+        this.bibDB = bibDB // the user's bibDB
+        this.imageDB = imageDB // the user's imageDB
+        // The ID of an existing doc which will be overwritten with the imported zip
+        // file's contents. This doc has to have version==0 for the server to accept
+        // the import. This is used by the OJS system when an editor/reviewer is
+        // importing a file into a doc as an empty doc is initialized with a any new revision
+        // so that access rights can be set on it before the doc import from the zubmission
+        // revision zip file_object has not taken place yet.
+        this.docId = docId
 
         this.textFiles = []
         this.otherFiles = []
-        this.init()
     }
 
     init() {
         // Check whether the file is a ZIP-file if check is not disabled.
-        let that = this
         if (this.check === false) {
-            this.initZipFileRead()
-            return
+            return this.initZipFileRead()
         }
-        // use a BlobReader to read the zip from a Blob object
-        let reader = new window.FileReader()
-        reader.onloadend = function() {
-            if (reader.result.length > 60 && reader.result.substring(0, 2) == 'PK') {
-                that.initZipFileRead()
-            } else {
-                // The file is not a Fidus Writer file.
-                that.callback(false, gettext('The uploaded file does not appear to be a Fidus Writer file.'))
-                return
+        return new Promise((resolve, reject) => {
+            // use a BlobReader to read the zip from a Blob object
+            let reader = new window.FileReader()
+            reader.onloadend = () => {
+                if (reader.result.length > 60 && reader.result.substring(0, 2) == 'PK') {
+                    resolve()
+                } else {
+                    // The file is not a Fidus Writer file.
+                    reject(gettext('The uploaded file does not appear to be a Fidus Writer file.'))
+                }
             }
-        }
-        reader.readAsText(this.file)
+            reader.readAsText(this.file)
+        }).then(() => this.initZipFileRead())
     }
 
     initZipFileRead() {
         // Extract all the files that can be found in every fidus-file (not images)
-        let that = this
         let zipfs = new JSZip()
-        zipfs.loadAsync(that.file).then(function(){
+        return zipfs.loadAsync(this.file).then(() => {
             let filenames = [], p = [], validFile = true
 
-            zipfs.forEach(function(filename){
-                filenames.push(filename)
-            })
+            zipfs.forEach(filename => filenames.push(filename))
 
-            TEXT_FILENAMES.forEach(function(filename){
+            TEXT_FILENAMES.forEach(filename => {
                 if (filenames.indexOf(filename) === -1) {
                     validFile = false
                 }
             })
             if (!validFile) {
-                that.callback(false, gettext('The uploaded file does not appear to be a Fidus Writer file.'))
-                return false
+                return Promise.reject(gettext('The uploaded file does not appear to be a Fidus Writer file.'))
             }
 
-            filenames.forEach(function(filename){
-                p.push(new Promise(function(resolve){
+            filenames.forEach(filename => {
+                p.push(new Promise(resolve => {
                     let fileType, fileList
                     if (TEXT_FILENAMES.indexOf(filename) !== -1) {
                         fileType = 'string'
-                        fileList = that.textFiles
+                        fileList = this.textFiles
                     } else {
                         fileType = 'blob'
-                        fileList = that.otherFiles
+                        fileList = this.otherFiles
                     }
-                    zipfs.files[filename].async(fileType).then(function(contents){
+                    zipfs.files[filename].async(fileType).then(contents => {
                         fileList.push({filename, contents})
                         resolve()
                     })
                 }))
             })
-            Promise.all(p).then(function(){
-                that.processFidusFile()
-            })
+            return Promise.all(p).then(() => this.processFidusFile())
         })
     }
 
@@ -354,12 +353,24 @@ export class ImportFidusFile {
             let aDocument = updateFileDoc(JSON.parse(_.findWhere(this.textFiles, {
                 filename: 'document.json'
             }).contents), filetypeVersion)
-
-            return new ImportNative(aDocument, shrunkBibDB, shrunkImageDB, this.otherFiles, this.user, this.bibDB, this.imageDB, this.callback)
+            let importer = new ImportNative(
+                aDocument,
+                shrunkBibDB,
+                shrunkImageDB,
+                this.otherFiles,
+                this.user,
+                this.bibDB,
+                this.imageDB,
+                this.docId
+            )
+            return importer.init()
 
         } else {
             // The file is not a Fidus Writer file.
-            this.callback(false, gettext('The uploaded file does not appear to be of the version used on this server: ') + FW_FILETYPE_VERSION)
+            return Promise.reject(
+                gettext('The uploaded file does not appear to be of the version used on this server: ') +
+                FW_FILETYPE_VERSION
+            )
         }
     }
 

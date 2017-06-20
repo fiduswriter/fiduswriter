@@ -1,14 +1,9 @@
 import time
 from django.shortcuts import render
-from django.apps import apps
-from django.shortcuts import redirect
 from django.core import serializers
 from django.http import HttpResponse, JsonResponse, HttpRequest
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login
-from allauth.account import forms
 from django.template.context_processors import csrf
-from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
@@ -24,7 +19,7 @@ from avatar.utils import get_primary_avatar, get_default_avatar_url
 from avatar.templatetags.avatar_tags import avatar_url
 
 from document.models import Document, AccessRight, DocumentRevision, \
-    ExportTemplate
+    ExportTemplate, CAN_UPDATE_DOCUMENT
 
 
 class SimpleSerializer(Serializer):
@@ -155,168 +150,6 @@ def get_documentlist_js(request):
         response,
         status=status
     )
-
-
-def make_user_data(u_name, u_email):
-    u_data = {
-        'username': u_name,
-        'email': u_email
-    }
-
-    return u_data
-
-
-def create_user(request, user_data):
-    signup_form = forms.SignupForm(user_data)
-    try:
-        signup_form.is_valid()
-        user = signup_form.save(request)
-        user.set_unusable_password()
-        user.save()
-        return user
-    except:
-        return False
-
-
-def login_user(request, u_name):
-    try:
-        user = User.objects.get(username=u_name)
-        if (user and user.is_active and apps.is_installed(
-              'django.contrib.sessions')):
-            user.backend = settings.AUTHENTICATION_BACKENDS[0]
-            login(request, user)
-            return user
-        else:
-            return False
-
-    except ObjectDoesNotExist:
-        return False
-
-
-def get_reviewer_for_post(request):
-    email = request.POST.get('email')
-    u_name = request.POST.get('user_name')
-    try:
-        reviewers = User.objects.filter(email=email)
-        if len(reviewers) > 0:
-            reviewer = reviewers[0]
-        else:
-            # "reviewer with this email does not exist so create it"
-            u_data = make_user_data(
-                u_name,
-                email)
-            reviewer = create_user(request, u_data)
-            reviewers = User.objects.filter(email=email)
-            reviewer = reviewers[0]
-        return reviewer
-    except ObjectDoesNotExist:
-        print("could not create user for email " + email)
-
-
-def get_existing_reviewer(request):
-    reviewer = User.objects.get(email=request.POST.get('email'))
-    return reviewer
-
-
-@csrf_exempt
-def reviewer_js(request):
-    response = {}
-    if request.method == 'POST':
-        doc_id = int(request.POST.get('doc_id', "0"))
-        if doc_id == 0:
-            response['error'] = 'doc_id with value: ' + str(doc_id) \
-              + ' does not exist'
-            status = 404
-            return JsonResponse(response, status=status)
-        reviewer = get_reviewer_for_post(request)
-        try:
-            access_right = AccessRight.objects.get(
-                document_id=doc_id, user_id=reviewer.id)
-            if access_right.rights != 'review':
-                access_right.rights = 'review'
-                access_right.save()
-                response['email'] = request.POST.get('email')
-                response['msg'] = 'comment rights given to the user'
-                response['reviewer_id'] = reviewer.id
-            else:
-                response['email'] = request.POST.get('email')
-                response[
-                    'msg'
-                ] = 'User has already comment access right on the document'
-                response['reviewer_id'] = reviewer.id
-            response['document_id'] = str(doc_id)
-            status = 200
-            return JsonResponse(response, status=status)
-        except ObjectDoesNotExist:
-            access_right = AccessRight.objects.create(
-                document_id=doc_id,
-                user_id=reviewer.id, rights='review', )
-            access_right.save()
-            status = 200
-            response['email'] = request.POST.get('email')
-            response['msg'] = 'user created and comment rights given'
-            response['reviewer_id'] = reviewer.id
-            response['document_id'] = str(doc_id)
-            return JsonResponse(response, status=status)
-
-
-@csrf_exempt
-def del_reviewer_js(request):
-    response = {}
-    if request.method == 'POST':
-        # u_name = request.POST.get('user_name')
-        try:
-            doc_id = int(request.POST.get('doc_id', "0"))
-            if doc_id == 0:
-                response['msg'] = 'doc_id with value: ' \
-                  + str(doc_id) + ' does not exist'
-                status = 500
-                return JsonResponse(response, status=status)
-            reviewer = get_existing_reviewer(request)
-            try:
-                access_right = AccessRight.objects.get(
-                    document_id=doc_id, user_id=reviewer.id)
-                if access_right.rights == 'review':
-                    access_right.delete()
-                    status = 200
-                    response['msg'] = 'user updated and comment rights removed'
-                    response['document_id'] = str(doc_id)
-                    return JsonResponse(response, status=status)
-            except ObjectDoesNotExist:
-                status = 404
-                return JsonResponse(response, status=status)
-
-        except ObjectDoesNotExist:
-            status = 404
-            response['error'] = "reviewer with this reviewer_id does not exist"
-            return JsonResponse(response, status=status)
-
-
-@csrf_exempt
-def document_review_js(request):
-    if request.method == 'POST':
-        doc_id = int(request.POST.get('doc_id', "0"))
-        app_key = request.POST.get('key')
-        # email = request.POST.get('email')
-        u_name = request.POST.get('user_name')
-        response = {}
-        if (app_key == settings.SERVER_INFO['OJS_KEY']):
-            reviewer = login_user(
-                request,
-                u_name)
-            if reviewer is not None:
-                return redirect(
-                    '/document/' + str(doc_id) + '/', permanent=True
-                )
-            else:
-                response['error'] = "The reviewer is not valid"
-                status = 404
-                return JsonResponse(response, status=status)
-        else:
-            response['error'] = \
-              "Reviewing the document is not defined for this reviewer"
-            status = 404
-            return JsonResponse(response, status=status)
 
 
 @login_required
@@ -461,7 +294,46 @@ def import_js(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
-        document = Document.objects.create(owner_id=request.user.pk)
+        if 'doc_id' in request.POST:
+            doc_id = request.POST['doc_id']
+            # There is a doc_id, so we overwrite an existing doc rather than
+            # creating a new one.
+            document = Document.objects.get(id=int(doc_id))
+            if (
+                document.owner != request.user and
+                len(AccessRight.objects.filter(
+                    document_id=doc_id,
+                    user_id=request.user.id,
+                    rights__in=CAN_UPDATE_DOCUMENT
+                )) == 0
+            ):
+                response['error'] = 'No access to file'
+                status = 403
+                return JsonResponse(
+                    response,
+                    status=status
+                )
+            if document.version > 0:
+                # The file has been initialized already. Do not do this again.
+                # This could happen if two users click on the link almost at
+                # the same time.
+                response['document_id'] = document.id
+                response['added'] = time.mktime(document.added.utctimetuple())
+                response['updated'] = time.mktime(
+                    document.updated.utctimetuple()
+                )
+                status = 200
+                return JsonResponse(
+                    response,
+                    status=status
+                )
+            else:
+                # We increase the version to 1 to mark that the file now
+                # contains imported contents.
+                document.version = 1
+                document.diff_version = 1
+        else:
+            document = Document.objects.create(owner_id=request.user.pk)
         document.title = request.POST['title']
         document.contents = request.POST['contents']
         document.comments = request.POST['comments']
@@ -637,84 +509,6 @@ def update_revision_js(request):
         revision.file_object = request.FILES['file']
         revision.file_object.name = file_name
         revision.save()
-    return JsonResponse(
-        response,
-        status=status
-    )
-
-
-# OJS connected views
-# TODO: This seems to give any user the ability to change the access rights of
-# any document, with no checks whether that user actually was allowed to access
-# the document before.
-@login_required
-@transaction.atomic
-def submit_right_js(request):
-    status = 405
-    response = {}
-    if (
-        request.is_ajax() and
-        request.method == 'POST' and
-        settings.SERVER_INFO['EXPERIMENTAL'] is True
-    ):
-        tgt_doc = request.POST.get('documentId')
-        tgt_users = request.POST.getlist('collaborators[]')
-        doc_id = int(tgt_doc)
-        document = Document.objects.get(id=doc_id)
-        tgt_right = 'read-without-comments'
-        try:
-            the_user = User.objects.filter(is_superuser=1)
-            if len(the_user) > 0:
-                document.owner_id = the_user[0].id
-                document.save()
-        except ObjectDoesNotExist:
-            pass
-        for tgt_user in tgt_users:
-            collaborator_id = int(tgt_user)
-            try:
-                access_right = AccessRight.objects.get(
-                    document_id=doc_id, user_id=collaborator_id)
-                if access_right.rights != tgt_right:
-                    access_right.rights = tgt_right
-            except ObjectDoesNotExist:
-                access_right = AccessRight.objects.create(
-                    document_id=doc_id,
-                    user_id=collaborator_id,
-                    rights=tgt_right,
-                )
-                send_share_notification(
-                    request, doc_id, collaborator_id, tgt_right)
-            access_right.save()
-        status = 201
-    return JsonResponse(
-        response,
-        status=status
-    )
-
-
-# TODO: This seems to give any user with a valid login access to all users
-# email addresses. This will need to be secured in some way.
-@login_required
-def profile_js(request):
-    response = {}
-    status = 405
-    if (
-        request.is_ajax() and
-        request.method == 'POST' and
-        settings.SERVER_INFO['EXPERIMENTAL'] is True
-    ):
-        id = request.POST["user_id"]
-        the_user = User.objects.filter(id=id)
-        if len(the_user) > 0:
-            response['user'] = {}
-            response['user']['id'] = the_user[0].id
-            response['user']['username'] = the_user[0].username
-            response['user']['first_name'] = the_user[0].first_name
-            response['user']['last_name'] = the_user[0].last_name
-            response['user']['email'] = the_user[0].email
-            status = 200
-        else:
-            status = 201
     return JsonResponse(
         response,
         status=status

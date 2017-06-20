@@ -1,4 +1,4 @@
-import {Editor} from "./es6_modules/editor/editor"
+import {Editor} from "./es6_modules/editor"
 
 /* Create theEditor and make it available to the general namespace.
 */

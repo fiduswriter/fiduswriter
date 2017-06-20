@@ -3,7 +3,7 @@ import atexit
 from copy import deepcopy
 
 from document.helpers.session_user_info import SessionUserInfo
-from ws.base import BaseWebSocketHandler
+from base.ws_handler import BaseWebSocketHandler
 from logging import info, error
 from tornado.escape import json_decode, json_encode
 from tornado.websocket import WebSocketClosedError
@@ -13,7 +13,7 @@ from document.views import get_accessrights
 from avatar.templatetags.avatar_tags import avatar_url
 
 
-class DocumentWS(BaseWebSocketHandler):
+class WebSocket(BaseWebSocketHandler):
     sessions = dict()
 
     def open(self, document_id):
@@ -28,8 +28,8 @@ class DocumentWS(BaseWebSocketHandler):
         doc_db, can_access = self.user_info.init_access(
             document_id, current_user)
         if can_access:
-            if doc_db.id in DocumentWS.sessions:
-                self.doc = DocumentWS.sessions[doc_db.id]
+            if doc_db.id in WebSocket.sessions:
+                self.doc = WebSocket.sessions[doc_db.id]
                 self.id = max(self.doc['participants']) + 1
                 print("id when opened %s" % self.id)
             else:
@@ -47,7 +47,7 @@ class DocumentWS(BaseWebSocketHandler):
                 self.doc['comment_version'] = doc_db.comment_version
                 self.doc['title'] = doc_db.title
                 self.doc['id'] = doc_db.id
-                DocumentWS.sessions[doc_db.id] = self.doc
+                WebSocket.sessions[doc_db.id] = self.doc
             self.doc['participants'][self.id] = self
             response['type'] = 'welcome'
             self.write_message(response)
@@ -72,15 +72,15 @@ class DocumentWS(BaseWebSocketHandler):
         response['doc']['contents'] = self.doc['contents']
         response['doc']['metadata'] = self.doc['metadata']
         response['doc']['settings'] = self.doc['settings']
-        document_owner = self.doc['db'].owner
+        doc_owner = self.doc['db'].owner
         access_rights = get_accessrights(
             AccessRight.objects.filter(
-                document__owner=document_owner))
+                document__owner=doc_owner))
         response['doc']['access_rights'] = access_rights
 
-        if (self.user_info.access_rights == 'read-without-comments'):
+        if self.user_info.access_rights == 'read-without-comments':
             response['doc']['comments'] = []
-        elif (self.user_info.access_rights == 'review'):
+        elif self.user_info.access_rights == 'review':
             # Reviewer should only get his/her own comments
             filtered_comments = {}
             for key, value in self.doc["comments"].items():
@@ -91,15 +91,15 @@ class DocumentWS(BaseWebSocketHandler):
             response['doc']['comments'] = self.doc["comments"]
         response['doc']['comment_version'] = self.doc["comment_version"]
         response['doc']['access_rights'] = get_accessrights(
-            AccessRight.objects.filter(document__owner=document_owner))
+            AccessRight.objects.filter(document__owner=doc_owner))
         response['doc']['owner'] = dict()
-        response['doc']['owner']['id'] = document_owner.id
-        response['doc']['owner']['name'] = document_owner.readable_name
+        response['doc']['owner']['id'] = doc_owner.id
+        response['doc']['owner']['name'] = doc_owner.readable_name
         response['doc']['owner'][
-            'avatar'] = avatar_url(document_owner, 80)
+            'avatar'] = avatar_url(doc_owner, 80)
         response['doc']['owner']['team_members'] = []
 
-        for team_member in document_owner.leader.all():
+        for team_member in doc_owner.leader.all():
             tm_object = dict()
             tm_object['id'] = team_member.member.id
             tm_object['name'] = team_member.member.readable_name
@@ -119,16 +119,29 @@ class DocumentWS(BaseWebSocketHandler):
                 "last_diffs"][-needed_diffs:]
         else:
             response['doc_info']['unapplied_diffs'] = []
-        if not self.user_info.is_owner:
+        if self.user_info.is_owner:
+            the_user = self.user_info.user
+            response['doc']['owner']['email'] = the_user.email
+            response['doc']['owner']['username'] = the_user.username
+            response['doc']['owner']['first_name'] = the_user.first_name
+            response['doc']['owner']['last_name'] = the_user.last_name
+            response['doc']['owner']['email'] = the_user.email
+        else:
+            the_user = self.user_info.user
             response['user'] = dict()
-            response['user']['id'] = self.user_info.user.id
-            response['user']['name'] = self.user_info.user.readable_name
-            response['user']['avatar'] = avatar_url(self.user_info.user, 80)
+            response['user']['id'] = the_user.id
+            response['user']['name'] = the_user.readable_name
+            response['user']['avatar'] = avatar_url(the_user, 80)
+            response['user']['email'] = the_user.email
+            response['user']['username'] = the_user.username
+            response['user']['first_name'] = the_user.first_name
+            response['user']['last_name'] = the_user.last_name
+            response['user']['email'] = the_user.email
         response['doc_info']['session_id'] = self.id
         self.write_message(response)
 
     def on_message(self, message):
-        if self.user_info.document_id not in DocumentWS.sessions:
+        if self.user_info.document_id not in WebSocket.sessions:
             print('receiving message for closed document')
             return
         parsed = json_decode(message)
@@ -215,21 +228,21 @@ class DocumentWS(BaseWebSocketHandler):
             self.doc['comment_version'] += 1
 
     def handle_participant_update(self):
-        DocumentWS.send_participant_list(self.user_info.document_id)
+        WebSocket.send_participant_list(self.user_info.document_id)
 
     def handle_document_update(self, parsed):
         self.update_document(parsed["doc"])
-        DocumentWS.save_document(self.user_info.document_id, False)
+        WebSocket.save_document(self.user_info.document_id, False)
         message = {
             "type": 'check_hash',
             "diff_version": parsed["doc"]["version"],
             "hash": parsed["hash"]
         }
-        DocumentWS.send_updates(message, self.user_info.document_id, self.id)
+        WebSocket.send_updates(message, self.user_info.document_id, self.id)
 
     def handle_title_update(self, parsed):
         self.update_title(parsed["title"])
-        DocumentWS.save_document(self.user_info.document_id, False)
+        WebSocket.save_document(self.user_info.document_id, False)
 
     def handle_chat(self, parsed):
         chat = {
@@ -238,12 +251,12 @@ class DocumentWS(BaseWebSocketHandler):
             "from": self.user_info.user.id,
             "type": 'chat'
         }
-        DocumentWS.send_updates(chat, self.user_info.document_id)
+        WebSocket.send_updates(chat, self.user_info.document_id)
 
     def handle_selection_change(self, parsed):
-        if self.user_info.document_id in DocumentWS.sessions and parsed[
+        if self.user_info.document_id in WebSocket.sessions and parsed[
                 "diff_version"] == self.doc['diff_version']:
-            DocumentWS.send_updates(
+            WebSocket.send_updates(
                 parsed, self.user_info.document_id, self.id)
 
     # Checks if the diff only contains changes to comments.
@@ -257,6 +270,10 @@ class DocumentWS(BaseWebSocketHandler):
         return only_comment
 
     def handle_diff(self, parsed):
+        pdv = parsed["diff_version"]
+        ddv = self.doc['diff_version']
+        pcv = parsed["comment_version"]
+        dcv = self.doc['comment_version']
         if (
             self.user_info.access_rights in COMMENT_ONLY and
             not self.only_comments(parsed['diff'])
@@ -268,38 +285,37 @@ class DocumentWS(BaseWebSocketHandler):
                 )
             )
             return
-        if parsed["diff_version"] == self.doc['diff_version'] and parsed[
-                "comment_version"] == self.doc['comment_version']:
+        if pdv == ddv and pcv == dcv:
             self.doc["last_diffs"].extend(parsed["diff"])
             self.doc['diff_version'] += len(parsed["diff"])
             self.update_comments(parsed["comments"])
             self.confirm_diff(parsed["request_id"])
-            DocumentWS.send_updates(
+            WebSocket.send_updates(
                 parsed,
                 self.user_info.document_id,
                 self.id,
                 self.user_info.user.id
             )
-        elif parsed["diff_version"] != self.doc['diff_version']:
-            if parsed["diff_version"] < (
-                    self.doc['diff_version'] - len(self.doc["last_diffs"])):
-                print('unfixable')
-                # Client has a version that is too old
-                self.send_document()
-            elif parsed["diff_version"] < self.doc['diff_version']:
+        elif pdv > ddv:
+            # Client has a higher version than server. Something is fishy!
+            print('unfixable')
+        elif pdv < ddv:
+            if pdv + len(self.doc["last_diffs"]) >= ddv:
+                # We have enough last_diffs stored to fix it.
                 print("can fix it")
-                number_requested_diffs = self.doc[
-                    'diff_version'] - parsed["diff_version"]
+                number_diffs = \
+                    parsed["diff_version"] - self.doc['diff_version']
                 response = {
                     "type": "diff",
+                    "server_fix": True,
                     "diff_version": parsed["diff_version"],
-                    "diff": self.doc["last_diffs"][-number_requested_diffs:],
+                    "diff": self.doc["last_diffs"][number_diffs:],
                     "reject_request_id": parsed["request_id"],
                 }
                 self.write_message(response)
             else:
                 print('unfixable')
-                # Client has a version that is too old
+                # Client has a version that is too old to be fixed
                 self.send_document()
         else:
             print('comment_version incorrect!')
@@ -315,11 +331,13 @@ class DocumentWS(BaseWebSocketHandler):
             self.write_message(response)
             return
         elif pdv + len(self.doc["last_diffs"]) >= ddv:
-            number_requested_diffs = ddv - pdv
+            print("can fix it")
+            number_diffs = pdv - ddv
             response = {
                 "type": "diff",
-                "diff_version": parsed["diff_version"],
-                "diff": self.doc["last_diffs"][-number_requested_diffs:],
+                "server_fix": True,
+                "diff_version": pdv,
+                "diff": self.doc["last_diffs"][number_diffs:],
             }
             self.write_message(response)
             return
@@ -340,21 +358,21 @@ class DocumentWS(BaseWebSocketHandler):
         if (
             hasattr(self, 'user_info') and
             hasattr(self.user_info, 'document_id') and
-            self.user_info.document_id in DocumentWS.sessions and
+            self.user_info.document_id in WebSocket.sessions and
             hasattr(self, 'id') and
-            self.id in DocumentWS.sessions[
+            self.id in WebSocket.sessions[
                 self.user_info.document_id
             ]['participants']
         ):
             del self.doc['participants'][self.id]
             if len(self.doc['participants'].keys()) == 0:
-                DocumentWS.save_document(self.user_info.document_id, True)
-                del DocumentWS.sessions[self.user_info.document_id]
+                WebSocket.save_document(self.user_info.document_id, True)
+                del WebSocket.sessions[self.user_info.document_id]
                 print("noone left")
 
     @classmethod
     def send_participant_list(cls, document_id):
-        if document_id in DocumentWS.sessions:
+        if document_id in WebSocket.sessions:
             participant_list = []
             for session_id, waiter in cls.sessions[
                 document_id
@@ -372,7 +390,7 @@ class DocumentWS(BaseWebSocketHandler):
                 "participant_list": participant_list,
                 "type": 'connections'
             }
-            DocumentWS.send_updates(message, document_id)
+            WebSocket.send_updates(message, document_id)
 
     @classmethod
     def send_updates(cls, message, document_id, sender_id=None, user_id=None):
@@ -385,7 +403,7 @@ class DocumentWS(BaseWebSocketHandler):
                     if access_rights == 'read-without-comments':
                         # The reader should not receive the comments update, so
                         # we remove the comments from the copy of the message
-                        # sent to the reviewer. We still need to sned the rest
+                        # sent to the reviewer. We still need to send the rest
                         # of the message as it may contain other diff
                         # information.
                         message = deepcopy(message)
@@ -446,4 +464,4 @@ class DocumentWS(BaseWebSocketHandler):
         for document_id in cls.sessions:
             cls.save_document(document_id, True)
 
-atexit.register(DocumentWS.save_all_docs)
+atexit.register(WebSocket.save_all_docs)

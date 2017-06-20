@@ -1,11 +1,11 @@
 import {Doc, BlockQuote, OrderedList, BulletList, ListItem, HorizontalRule,
-        Paragraph, Heading, CodeBlock, Image, HardBreak, CodeMark, EmMark,
+        Paragraph, CodeBlock, Image, HardBreak, CodeMark, EmMark,
         StrongMark, LinkMark} from "prosemirror-old/dist/schema-basic"
 import {Table, TableRow, TableCell} from "prosemirror-old/dist/schema-table"
 import {Schema, Block, Inline, Text, Attribute, MarkType} from "prosemirror-old/dist/model"
 import {elt} from "prosemirror-old/dist/util/dom"
 import {htmlToFnNode, fnNodeToHtml} from "./footnotes-convert"
-import {Figure, Citation, Equation} from "./common"
+import {Figure, Citation, Equation, Heading} from "./common"
 import {defaultDocumentStyle} from "../style/documentstyle-list"
 import {defaultCitationStyle} from "../style/citation-definitions"
 

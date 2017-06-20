@@ -19,8 +19,6 @@ export class GeneralPasteHandler {
         this.cleanDOM()
         this.convertFootnotes()
         this.outHTML = this.dom.innerHTML
-        //console.log(this.inHTML)
-        //console.log(this.outHTML)
         return this.outHTML
     }
 
@@ -60,9 +58,8 @@ export class GeneralPasteHandler {
     // Move footnotes into their markers and turn footnote markers into the
     // required format.
     convertFootnotes() {
-        let that = this
-        this.footnoteMarkers.forEach(function(fnM, index) {
-            let footnote = that.footnotes[index]
+        this.footnoteMarkers.forEach((fnM, index) => {
+            let footnote = this.footnotes[index]
             let newFnM = document.createElement('span')
             newFnM.classList.add('footnote-marker')
             let footnoteContents = footnote.innerHTML
@@ -75,7 +72,7 @@ export class GeneralPasteHandler {
         })
         // Remove all footnotes from document. Some footnotes may have several
         // markers, so only remove each footnote once.
-        this.footnotes.forEach(function(fn) {
+        this.footnotes.forEach(fn => {
             if (fn.parentNode) {
                 fn.parentNode.removeChild(fn)
             }

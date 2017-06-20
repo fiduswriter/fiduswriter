@@ -1,5 +1,5 @@
 import {escapeText} from "../tools/html"
-import {noSpaceTmp} from "../../common/common"
+import {noSpaceTmp} from "../../common"
 
 export class DocxExporterRichtext {
     constructor(exporter, rels, citations, images) {
@@ -8,6 +8,7 @@ export class DocxExporterRichtext {
         this.citations = citations
         this.images = images
         this.fnCounter = 2 // footnotes 0 and 1 are occupied by separators by default.
+        this.bookmarkCounter = 0
     }
 
     transformRichtext(node, options = {}) {
@@ -36,17 +37,21 @@ export class DocxExporterRichtext {
                 // We may need to add them later, if it turns out this is a problem
                 // for other versions of Word. In that case we should also add
                 // it to settings.xml as described in above link.
-                start += noSpaceTmp`
-                    <w:p>
-                        <w:pPr><w:pStyle w:val="${options.section}"/>`
-                if (options.list_type) {
-                    start += `<w:numPr><w:ilvl w:val="${options.list_depth}"/>`
-                    start += `<w:numId w:val="${options.list_type}"/></w:numPr>`
+                if (options.section === 'Normal' && !options.list_type && !(node.content && node.content.length)) {
+                    start += '<w:p/>'
                 } else {
-                    start += '<w:rPr></w:rPr>'
+                    start += noSpaceTmp`
+                        <w:p>
+                            <w:pPr><w:pStyle w:val="${options.section}"/>`
+                    if (options.list_type) {
+                        start += `<w:numPr><w:ilvl w:val="${options.list_depth}"/>`
+                        start += `<w:numId w:val="${options.list_type}"/></w:numPr>`
+                    } else {
+                        start += '<w:rPr></w:rPr>'
+                    }
+                    start += '</w:pPr>'
+                    end = '</w:p>' + end
                 }
-                start += '</w:pPr>'
-                end = '</w:p>' + end
                 break
             case 'heading':
                 start += noSpaceTmp`
@@ -54,7 +59,9 @@ export class DocxExporterRichtext {
                         <w:pPr>
                             <w:pStyle w:val="Heading${node.attrs.level}"/>
                             <w:rPr></w:rPr>
-                        </w:pPr>`
+                        </w:pPr>
+                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
+                        <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
                 end = '</w:p>' + end
                 break
             case 'code':
@@ -121,8 +128,16 @@ export class DocxExporterRichtext {
                 }
 
                 if (hyperlink) {
-                    let refId = this.rels.addLinkRel(hyperlink.attrs.href)
-                    start += `<w:hyperlink r:id="rId${refId}"><w:r>`
+                    let href = hyperlink.attrs.href
+                    if (href[0] === '#') {
+                        // Internal link
+                        start += `<w:hyperlink w:anchor="${href.slice(1)}">`
+                    } else {
+                        // External link
+                        let refId = this.rels.addLinkRel(href)
+                        start += `<w:hyperlink r:id="rId${refId}">`
+                    }
+                    start += '<w:r>'
                     end = '</w:t></w:r></w:hyperlink>' + end
                 } else {
                     start += '<w:r>'
@@ -164,7 +179,6 @@ export class DocxExporterRichtext {
                 content += escapeText(node.text)
                 break
             case 'citation':
-                let that = this
                 // We take the first citation from the stack and remove it.
                 let cit = this.citations.pmCits.shift()
                 if (options.citationType && options.citationType === 'note') {
@@ -188,15 +202,17 @@ export class DocxExporterRichtext {
                     let xml = this.exporter.footnotes.xml
                     let lastId = this.fnCounter - 1
                     let footnotes = [].slice.call(xml.querySelectorAll('footnote'))
-                    footnotes.forEach(function(footnote){
-                        let id = parseInt(footnote.getAttribute('w:id'))
-                        if (id >= that.fnCounter) {
-                            footnote.setAttribute('w:id', id+1)
+                    footnotes.forEach(
+                        footnote => {
+                            let id = parseInt(footnote.getAttribute('w:id'))
+                            if (id >= this.fnCounter) {
+                                footnote.setAttribute('w:id', id+1)
+                            }
+                            if (id===lastId) {
+                                footnote.insertAdjacentHTML('afterend', fnXml)
+                            }
                         }
-                        if (id===lastId) {
-                            footnote.insertAdjacentHTML('afterend', fnXml)
-                        }
-                    })
+                    )
                     this.fnCounter++
                 } else {
                     for (let i=0; i < cit.content.length; i++) {
@@ -299,7 +315,7 @@ export class DocxExporterRichtext {
                 start += noSpaceTmp`
                     <w:tbl>
                         <w:tblPr>
-                            <w:tblStyle w:val="TableGrid" />
+                            <w:tblStyle w:val="${this.exporter.tables.tableGridStyle}" />
                             <w:tblW w:w="0" w:type="auto" />
                             <w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1" />
                         </w:tblPr>
@@ -339,7 +355,7 @@ export class DocxExporterRichtext {
                 content += this.exporter.math.getOmml(latex)
                 break
             case 'hard_break':
-                content += '<w:br/>'
+                content += '<w:r><w:br/></w:r>'
                 break
             // CSL bib entries
             case 'cslbib':

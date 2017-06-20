@@ -1,5 +1,5 @@
 from django.conf.urls import include, url
-import views
+from . import views
 
 urlpatterns = [
     url('^save/$', views.save_profile_js, name='save_profile_js'),

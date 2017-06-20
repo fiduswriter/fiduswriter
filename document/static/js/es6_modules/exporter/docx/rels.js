@@ -1,5 +1,5 @@
 // manages the .rels files. Need to initialize one for each of document.xml and footnotes.xml
-
+import {escapeText} from "../tools/html"
 
 const DEFAULT_XML = `<?xml version="1.0" encoding="UTF-8"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>`
@@ -16,34 +16,35 @@ export class DocxExporterRels {
     }
 
     init() {
-        let that = this
-        return this.initCt().then(function(){
-            return that.exporter.xml.getXml(that.filePath, DEFAULT_XML)}).then(function(xml){
-            that.xml = xml
-            that.findMaxRelId()
+        return this.initCt().then(() => {
+            return this.exporter.xml.getXml(this.filePath, DEFAULT_XML)}).then(xml => {
+            this.xml = xml
+            this.findMaxRelId()
         })
     }
 
     initCt() {
-        let that = this
-        return this.exporter.xml.getXml(this.ctFilePath).then(function(ctXml) {
-            that.ctXml = ctXml
-            that.addRelsToCt()
-            return Promise.resolve()
-        })
+        return this.exporter.xml.getXml(this.ctFilePath).then(
+            ctXml => {
+                this.ctXml = ctXml
+                this.addRelsToCt()
+                return Promise.resolve()
+            }
+        )
     }
 
     // Go through a rels xml file and file all the listed relations
     findMaxRelId() {
-        let rels = [].slice.call(this.xml.querySelectorAll('Relationship')),
-        that = this
+        let rels = [].slice.call(this.xml.querySelectorAll('Relationship'))
 
-        rels.forEach(function(rel){
-            let id = parseInt(rel.getAttribute("Id").replace(/\D/g,''))
-            if (id > that.maxRelId) {
-                that.maxRelId = id
+        rels.forEach(
+            rel => {
+                let id = parseInt(rel.getAttribute("Id").replace(/\D/g,''))
+                if (id > this.maxRelId) {
+                    this.maxRelId = id
+                }
             }
-        })
+        )
     }
 
     addRelsToCt() {
@@ -57,7 +58,7 @@ export class DocxExporterRels {
     addLinkRel(link) {
         let rels = this.xml.querySelector('Relationships')
         let rId = this.maxRelId + 1
-        let string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="${link}" TargetMode="External"/>`
+        let string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="${escapeText(link)}" TargetMode="External"/>`
         rels.insertAdjacentHTML('beforeEnd', string)
         this.maxRelId = rId
         return rId
@@ -67,7 +68,7 @@ export class DocxExporterRels {
     addImageRel(imgFileName) {
         let rels = this.xml.querySelector('Relationships')
         let rId = this.maxRelId + 1
-        let string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${imgFileName}"/>`
+        let string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${escapeText(imgFileName)}"/>`
         rels.insertAdjacentHTML('beforeEnd', string)
         this.maxRelId = rId
         return rId

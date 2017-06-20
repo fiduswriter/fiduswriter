@@ -12,11 +12,12 @@ export class DocxExporterImages {
     }
 
     init() {
-        let that = this
-        return this.exporter.xml.getXml("[Content_Types].xml").then(function(ctXml){
-            that.ctXml = ctXml
-            return that.exportImages()
-        })
+        return this.exporter.xml.getXml("[Content_Types].xml").then(
+            ctXml => {
+                this.ctXml = ctXml
+                return this.exportImages()
+            }
+        )
     }
 
     // add an image to the list of files
@@ -40,11 +41,9 @@ export class DocxExporterImages {
     // Find all images used in file and add these to the export zip.
     // TODO: This will likely fail on image types docx doesn't support such as SVG. Try out and fix.
     exportImages() {
-        let that = this, usedImgs = []
-
-
+        let usedImgs = []
         descendantNodes(this.docContents).forEach(
-            function(node) {
+            node => {
                 if (node.type==='figure' && node.attrs.image !== false) {
                     if (!(node.attrs.image in usedImgs)) {
                         usedImgs.push(node.attrs.image)
@@ -52,21 +51,20 @@ export class DocxExporterImages {
                 }
             }
         )
-        return new Promise((resolveExportImages) => {
+        return new Promise(resolveExportImages => {
             let p = []
-
             usedImgs.forEach((image) => {
-                let imgDBEntry = that.imageDB.db[image]
+                let imgDBEntry = this.imageDB.db[image]
                 p.push(
-                    new Promise((resolve) => {
+                    new Promise(resolve => {
                         JSZipUtils.getBinaryContent(
                             imgDBEntry.image,
-                            function(err, imageFile) {
-                                let wImgId = that.addImage(
+                            (err, imageFile) => {
+                                let wImgId = this.addImage(
                                     imgDBEntry.image.split('/').pop(),
                                     imageFile
                                 )
-                                that.imgIdTranslation[image] = wImgId
+                                this.imgIdTranslation[image] = wImgId
                                 resolve()
                             }
                         )
@@ -74,7 +72,7 @@ export class DocxExporterImages {
                 )
             })
 
-            Promise.all(p).then(function(){
+            Promise.all(p).then(() => {
                 resolveExportImages()
             })
         })

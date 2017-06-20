@@ -1,7 +1,7 @@
 import {parseDOM} from "prosemirror-old/dist/model/from_dom"
 import {Step} from "prosemirror-old/dist/transform"
-import {Paste} from "../paste/paste"
-import {COMMENT_ONLY_ROLES} from "../editor"
+import {Paste} from "../paste"
+import {COMMENT_ONLY_ROLES} from ".."
 import {collabEditing} from "prosemirror-old/dist/collab"
 import {fnNodeToPmNode} from "../../schema/footnotes-convert"
 
@@ -15,20 +15,20 @@ export class ModFootnoteEditor {
     }
 
     bindEvents() {
-        let that = this
-        this.mod.fnPm.mod.collab.mustSend.add(function() {
-            that.footnoteEdit()
-        })
-        this.mod.fnPm.on.filterTransform.add((transform) => {
-            return that.onFilterTransform(transform)
-        })
-        this.mod.fnPm.on.transform.add((transform) => {
-            return that.onTransform(transform)
-        })
-        this.mod.fnPm.on.transformPastedHTML.add((inHTML) => {
+        this.mod.fnPm.on.filterTransform.add(transform =>
+            this.onFilterTransform(transform)
+        )
+        this.mod.fnPm.on.beforeTransform.add(
+            (transform, options) => {this.mod.editor.onBeforeTransform(this.mod.fnPm, transform)}
+        )
+        this.mod.fnPm.on.transform.add(transform =>
+            this.onTransform(transform)
+        )
+        this.mod.fnPm.on.transformPastedHTML.add(inHTML => {
             let ph = new Paste(inHTML, "footnote")
             return ph.getOutput()
         })
+
     }
 
     // filter transformations, disallowing all transformations going across document parts/footnotes.
@@ -47,16 +47,16 @@ export class ModFootnoteEditor {
 
     // Find out if we need to recalculate the bibliography
     onTransform(transform, local) {
-        let updateBibliography = false, that = this
+        let updateBibliography = false
             // Check what area is affected
 
-        transform.steps.forEach(function(step, index) {
+        transform.steps.forEach((step, index) => {
             if (step.jsonID === 'replace' || step.jsonID === 'replaceAround') {
                 if (step.from !== step.to) {
                     transform.docs[index].nodesBetween(
                         step.from,
                         step.to,
-                        function(node, pos, parent) {
+                        (node, pos, parent) => {
                             if (node.type.name === 'citation') {
                                 // A citation was replaced
                                 updateBibliography = true
@@ -70,9 +70,7 @@ export class ModFootnoteEditor {
         if (updateBibliography) {
             // Recreate the bibliography on next flush.
             this.mod.editor.pm.scheduleDOMUpdate(
-                () => {
-                    return that.mod.editor.mod.citations.resetCitations()
-                }
+                () => this.mod.editor.mod.citations.resetCitations()
             )
         }
 
@@ -86,8 +84,8 @@ export class ModFootnoteEditor {
             return false
         }
         console.log('footnote update')
-        let length = this.mod.fnPm.mod.collab.unconfirmedSteps.length
-        let lastStep = this.mod.fnPm.mod.collab.unconfirmedSteps[length - 1]
+        let length = this.mod.fnPmCollab.unconfirmedSteps.length
+        let lastStep = this.mod.fnPmCollab.unconfirmedSteps[length - 1]
         if (lastStep.hasOwnProperty('from')) {
             // We find the number of the last footnote that was updated by
             // looking at the last step and seeing footnote number that change referred to.
@@ -102,28 +100,29 @@ export class ModFootnoteEditor {
         console.log('applying footnote diff')
         let steps = diffs.map(j => Step.fromJSON(this.mod.schema, j))
         let client_ids = diffs.map(j => j.client_id)
-        this.mod.fnPm.mod.collab.receive(steps, client_ids)
+        this.mod.fnPmCollab.receive(steps, client_ids)
     }
 
     renderAllFootnotes() {
-        console.log('renderAllFootnotes')
         if (this.mod.markers.checkFootnoteMarkers()) {
             return false
         }
-        let that = this
         let footnotes = this.mod.markers.findFootnoteMarkers()
 
         this.mod.footnotes = footnotes
-        this.mod.fnPm.setDoc(this.mod.fnPm.schema.nodeFromJSON({"type":"doc","content":[{"type": "footnote_end"}]}))
+        // Detach collab module, as it cannot be attached when setting doc.
+        this.mod.detachCollab()
+
+        this.mod.fnPm.setDoc(this.mod.fnPm.schema.nodeFromJSON(
+            {"type":"doc","content":[{"type": "footnote_end"}]}
+        ))
+
         this.mod.footnotes.forEach((footnote, index) => {
-            let node = that.mod.editor.pm.doc.nodeAt(footnote.from)
-            that.renderFootnote(node.attrs.footnote, index)
+            let node = this.mod.editor.pm.doc.nodeAt(footnote.from)
+            this.renderFootnote(node.attrs.footnote, index)
         })
-        let collab = this.mod.fnPm.mod.collab
-        collab.versionDoc = this.mod.fnPm.doc
-        collab.unconfirmedSteps = []
-        collab.unconfirmedMaps = []
-        this.bindEvents()
+        this.mod.attachCollab()
+        //this.bindEvents()
     }
 
     renderFootnote(contents, index = 0) {
@@ -134,7 +133,7 @@ export class ModFootnoteEditor {
             pos += this.mod.fnPm.doc.child(i).nodeSize
         }
 
-        this.mod.fnPm.tr.insert(pos, node).apply({filter:false})
+        this.mod.fnPm.tr.insert(pos, node).apply({filter: false})
         // Most changes to the footnotes are followed by a change to the main editor,
         // so changes are sent to collaborators automatically. When footnotes are added/deleted,
         // the change is reversed, so we need to inform collabs manually.

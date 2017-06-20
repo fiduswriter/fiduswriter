@@ -4,7 +4,7 @@ import {DocxExporterImages} from "./images"
 import {DocxExporterLists} from "./lists"
 import {DocxExporterRichtext} from "./richtext"
 import {fnSchema} from "../../schema/footnotes"
-import {noSpaceTmp} from "../../common/common"
+import {noSpaceTmp} from "../../common"
 import {descendantNodes} from "../tools/doc-contents"
 
 const DEFAULT_XML = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' + noSpaceTmp`
@@ -77,7 +77,6 @@ export class DocxExporterFootnotes {
     }
 
     init() {
-        let that = this
         this.findFootnotes()
         if (this.footnotes.length || (this.exporter.citations.citFm.citationType==='note' && this.exporter.citations.citInfos.length)) {
             this.convertFootnotes()
@@ -103,24 +102,27 @@ export class DocxExporterFootnotes {
                 this.fnPmJSON
             )
 
-            return this.citations.init().then(function(){
-                // Replace the main bibliography with the new one that includes both citations in main document
-                // and in the footnotes.
-                that.exporter.pmBib = that.citations.pmBib
-                return that.rels.init()
-            }).then(function(){
-                return that.images.init()
-            }).then(function() {
-                return that.lists.init()
-            }).then(function() {
-                return that.initCt()
-            }).then(function() {
-                return that.setSettings()
-            }).then(function() {
-                    return that.addStyles()
-            }).then(function() {
-                return that.createXml()
-            })
+            return this.citations.init().then(
+                () => {
+                    // Replace the main bibliography with the new one that
+                    // includes both citations in main document
+                    // and in the footnotes.
+                    this.exporter.pmBib = this.citations.pmBib
+                    return this.rels.init()
+                }
+            ).then(
+                () => this.images.init()
+            ).then(
+                () => this.lists.init()
+            ).then(
+                () => this.initCt()
+            ).then(
+                () => this.setSettings()
+            ).then(
+                () => this.addStyles()
+            ).then(
+                () => this.createXml()
+            )
         } else {
             // No footnotes were found.
             return Promise.resolve()
@@ -128,10 +130,9 @@ export class DocxExporterFootnotes {
     }
 
     initCt() {
-        let that = this
-        return this.exporter.xml.getXml(this.ctFilePath).then(function(ctXml) {
-            that.ctXml = ctXml
-            that.addRelsToCt()
+        return this.exporter.xml.getXml(this.ctFilePath).then(ctXml => {
+            this.ctXml = ctXml
+            this.addRelsToCt()
             return Promise.resolve()
         })
     }
@@ -145,13 +146,14 @@ export class DocxExporterFootnotes {
     }
 
     addStyles() {
-        let that = this
-        return this.exporter.xml.getXml(this.styleFilePath).then(function(styleXml) {
-            that.styleXml = styleXml
-            that.addStyle('Footnote', DEFAULT_STYLE_FOOTNOTE)
-            that.addStyle('FootnoteAnchor', DEFAULT_STYLE_FOOTNOTE_ANCHOR)
-            return Promise.resolve()
-        })
+        return this.exporter.xml.getXml(this.styleFilePath).then(
+            styleXml => {
+                this.styleXml = styleXml
+                this.addStyle('Footnote', DEFAULT_STYLE_FOOTNOTE)
+                this.addStyle('FootnoteAnchor', DEFAULT_STYLE_FOOTNOTE_ANCHOR)
+                return Promise.resolve()
+            }
+        )
     }
 
     addStyle(styleName, xml) {
@@ -162,11 +164,10 @@ export class DocxExporterFootnotes {
     }
 
     findFootnotes() {
-        let that = this
         descendantNodes(this.docContents).forEach(
-            function(node) {
+            node => {
                 if (node.type==='footnote') {
-                    that.footnotes.push(node.attrs.footnote)
+                    this.footnotes.push(node.attrs.footnote)
                 }
             }
         )
@@ -174,12 +175,14 @@ export class DocxExporterFootnotes {
 
     convertFootnotes() {
         let fnContent = []
-        this.footnotes.forEach(function(footnote){
-            fnContent.push({
-                type: 'footnotecontainer',
-                content: footnote
-            })
-        })
+        this.footnotes.forEach(
+            footnote =>{
+                fnContent.push({
+                    type: 'footnotecontainer',
+                    content: footnote
+                })
+            }
+        )
         this.fnPmJSON = {
             type: 'doc',
             content: fnContent
@@ -187,28 +190,36 @@ export class DocxExporterFootnotes {
     }
 
     createXml() {
-        let that = this
-        this.richtext = new DocxExporterRichtext(this.exporter, this.rels, this.citations, this.images)
-        this.fnXml = this.richtext.transformRichtext(this.fnPmJSON) // TODO: add max dimensions
+        this.richtext = new DocxExporterRichtext(
+            this.exporter,
+            this.rels,
+            this.citations,
+            this.images
+        )
+        this.fnXml = this.richtext.transformRichtext(this.fnPmJSON)
+        // TODO: add max dimensions
         this.exporter.rels.addFootnoteRel()
-        return this.exporter.xml.getXml(this.filePath, DEFAULT_XML).then(function(xml){
-            let footnotesEl = xml.querySelector('footnotes')
-            footnotesEl.insertAdjacentHTML('beforeEnd', that.fnXml)
-            that.xml = xml
-        })
+        return this.exporter.xml.getXml(this.filePath, DEFAULT_XML).then(
+            xml => {
+                let footnotesEl = xml.querySelector('footnotes')
+                footnotesEl.insertAdjacentHTML('beforeEnd', this.fnXml)
+                this.xml = xml
+            }
+        )
     }
 
     setSettings() {
-        let that = this
-        return this.exporter.xml.getXml(this.settingsFilePath).then(function(settingsXml){
-            let footnotePr = settingsXml.querySelector('footnotePr')
-            if (!footnotePr) {
-                let settingsEl = settingsXml.querySelector('settings')
-                settingsEl.insertAdjacentHTML('beforeEnd', DEFAULT_SETTINGS_XML)
+        return this.exporter.xml.getXml(this.settingsFilePath).then(
+            settingsXml => {
+                let footnotePr = settingsXml.querySelector('footnotePr')
+                if (!footnotePr) {
+                    let settingsEl = settingsXml.querySelector('settings')
+                    settingsEl.insertAdjacentHTML('beforeEnd', DEFAULT_SETTINGS_XML)
+                }
+                this.settingsXml = settingsXml
+                return Promise.resolve()
             }
-            that.settingsXml = settingsXml
-            return Promise.resolve()
-        })
+        )
     }
 
 }

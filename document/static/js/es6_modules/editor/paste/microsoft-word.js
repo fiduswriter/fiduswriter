@@ -14,9 +14,7 @@ export class MicrosoftWordPasteHandler extends GeneralPasteHandler {
             'div[style*="mso-element:footnote-list"]'
         ))
 
-        removableElements.forEach(function(el){
-            el.parentNode.removeChild(el)
-        })
+        removableElements.forEach(el => el.parentNode.removeChild(el))
     }
 
     // Iterate over pasted nodes and their children

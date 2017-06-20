@@ -9,23 +9,18 @@ export class ModFootnoteMarkers {
     }
 
     bindEvents() {
-        let that = this
-
-        this.mod.editor.pm.on.transform.add(function(transform, object) {
-            that.scanForFootnoteMarkers(transform, true)
+        this.mod.editor.pm.on.transform.add((transform, object) => {
+            this.scanForFootnoteMarkers(transform, true)
         }, 1) // priority 1 to be triggered before collab related functions
-        this.mod.editor.pm.mod.collab.receivedTransform.add(function(transform, object) {
-            that.remoteScanForFootnoteMarkers(transform, false)
-        })
     }
 
     remoteScanForFootnoteMarkers(transform) {
         // We add unconfirmed local steps to the remote steps to make sure we map the ranges to current ranges.
-        let unconfirmedMaps = this.mod.editor.pm.mod.collab.unconfirmedMaps
-        let unconfirmedSteps = this.mod.editor.pm.mod.collab.unconfirmedSteps
-        let doc = this.mod.editor.pm.mod.collab.versionDoc
+        let unconfirmedMaps = this.mod.editor.pmCollab.unconfirmedMaps
+        let unconfirmedSteps = this.mod.editor.pmCollab.unconfirmedSteps
+        let doc = this.mod.editor.pmCollab.versionDoc
         transform.maps = transform.maps.concat(unconfirmedMaps)
-        unconfirmedSteps.forEach(function(step) {
+        unconfirmedSteps.forEach(step => {
             // We add pseudo steps for all the unconfirmed steps so that the
             // unconfirmed maps will be applied when handling the transform
             transform.steps.push({
@@ -43,25 +38,24 @@ export class ModFootnoteMarkers {
         /* Look through the ranges added through a transform for the presence of
          * one or more footnote markers.
         */
-        let that = this
         if (this.updating) {
             return false
         }
         let ranges = this.getAddedRanges(transform)
-        ranges.forEach(function(range) {
-            let newFootnotes = that.findFootnoteMarkers(range.from, range.to)
+        ranges.forEach(range => {
+            let newFootnotes = this.findFootnoteMarkers(range.from, range.to)
             if (newFootnotes.length > 0) {
                 let firstFootNoteStart = newFootnotes[0].from
                 let index = 0
-                while (that.mod.footnotes.length > index &&
-                    firstFootNoteStart > that.mod.footnotes[index].from) {
+                while (this.mod.footnotes.length > index &&
+                    firstFootNoteStart > this.mod.footnotes[index].from) {
                     index++
                 }
-                newFootnotes.forEach(function(footnote) {
-                    that.mod.footnotes.splice(index, 0, footnote)
+                newFootnotes.forEach(footnote => {
+                    this.mod.footnotes.splice(index, 0, footnote)
                     if (renderFootnote) {
-                        let node = that.mod.editor.pm.doc.nodeAt(footnote.from)
-                        that.mod.fnEditor.renderFootnote(node.attrs.footnote, index)
+                        let node = this.mod.editor.pm.doc.nodeAt(footnote.from)
+                        this.mod.fnEditor.renderFootnote(node.attrs.footnote, index)
                     }
                     index++
                 })
@@ -128,18 +122,17 @@ export class ModFootnoteMarkers {
 
 
     findFootnoteMarkers(fromPos = 0, toPos = this.mod.editor.pm.doc.content.size) {
-        let footnoteMarkers = [],
-            that = this
-        this.mod.editor.pm.doc.nodesBetween(fromPos, toPos, function(node, pos, parent) {
+        let footnoteMarkers = []
+        this.mod.editor.pm.doc.nodesBetween(fromPos, toPos, (node, pos, parent) => {
             if (!node.isInline) {
                 return
             }
             if (node.type.name === 'footnote') {
                 let startPos = pos
                 let endPos = pos + node.nodeSize
-                let footnoteMarker = that.mod.editor.pm.markRange(startPos, endPos, {
-                    onRemove: function() {
-                        that.mod.fnEditor.removeFootnote(footnoteMarker)
+                let footnoteMarker = this.mod.editor.pm.markRange(startPos, endPos, {
+                    onRemove: () => {
+                        this.mod.fnEditor.removeFootnote(footnoteMarker)
                     }
                 })
                 footnoteMarkers.push(footnoteMarker)
@@ -153,30 +146,29 @@ export class ModFootnoteMarkers {
     // corresponds to the footnotes as they can be found in the document.
     checkFootnoteMarkers() {
         let count = 0,
-            passed = true,
-            that = this
-        this.mod.editor.pm.doc.descendants(function(node, pos, parent) {
+            passed = true
+        this.mod.editor.pm.doc.descendants((node, pos, parent) => {
 
             if (!node.isInline || node.type.name !== 'footnote') {
                 return
             }
 
-            if (that.mod.footnotes.length <= count) {
+            if (this.mod.footnotes.length <= count) {
                 passed = false
             } else {
                 let startPos = pos
-                if (startPos !== that.mod.footnotes[count].from) {
+                if (startPos !== this.mod.footnotes[count].from) {
                     passed = false
                 }
                 let endPos = pos + node.nodeSize
-                if (endPos !== that.mod.footnotes[count].to) {
+                if (endPos !== this.mod.footnotes[count].to) {
                     passed = false
                 }
             }
             count++
         })
 
-        if (count !== that.mod.footnotes.length) {
+        if (count !== this.mod.footnotes.length) {
             passed = false
         }
         return passed
@@ -198,6 +190,6 @@ export class ModFootnoteMarkers {
 
     // Reset the list of footnotes.
     removeAllMarkers() {
-        this.mod.footnotes.forEach(function(footnote){footnote.remove()})
+        this.mod.footnotes.forEach(footnote => {footnote.remove()})
     }
 }

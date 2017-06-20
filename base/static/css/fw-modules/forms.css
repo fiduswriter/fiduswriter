@@ -12,6 +12,7 @@ input[type='search'],
 input[type='email'] {
     padding: 0 3px;
     height: 36px;
+    width: calc(100% - 8px);
 }
 
 textarea {
@@ -28,6 +29,7 @@ textarea {
     border: solid 1px #d3d3d3;
     box-shadow: none;
     border-radius: 0;
+    margin: 5px 0 5px 0;
 }
 
 input[type='text']:focus,
@@ -41,12 +43,8 @@ textarea:focus {
 /*
  * Bibliography entry input
  */
-/*#bib-dialog input.entryForm,
-#bib-dialog input.fw-input,*/
 #uploadimage input.entryForm,
-#uploadimage input.fw-input,
-#book-dialog input.entryForm,
-#book-dialog input.fw-input {
+#uploadimage input.fw-input {
     width: 486px;
 }
 
@@ -164,4 +162,39 @@ tr.fw-checkable.checked:after {
  */
 .fw-button input[type='checkbox'] {
     margin-right: 3px;
+}
+
+/*
+ * radio buttons
+ */
+.fw-radio input[type=radio] {
+     display: inline-block;
+     width: 40px;
+     margin-bottom: 20px;
+}
+
+
+.fw-select-container {
+    margin-bottom: 18px;
+    position: relative;
+}
+
+.fw-select-container select {
+    display: inline-block;
+    width: calc(100% - 22px);
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+}
+
+.fw-select-container select option.placeholder {
+    display: none;
+}
+
+.fw-select-container .fw-select-arrow {
+    position: absolute;
+	top: 14px;
+	right: 5px;
+	pointer-events: none;
 }

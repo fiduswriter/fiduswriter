@@ -15,12 +15,13 @@ export class OdtExporterMetadata {
     }
 
     init() {
-        let that = this
-        return this.exporter.xml.getXml("meta.xml").then(function(metaXml){
-            that.metaXml = metaXml
-            that.addMetadata()
-            return Promise.resolve()
-        })
+        return this.exporter.xml.getXml("meta.xml").then(
+            metaXml => {
+                this.metaXml = metaXml
+                this.addMetadata()
+                return Promise.resolve()
+            }
+        )
     }
 
 
@@ -59,14 +60,14 @@ export class OdtExporterMetadata {
         // Keywords
         // Remove all existing keywords
         let keywordEls = [].slice.call(this.metaXml.querySelectorAll('keywords'))
-        keywordEls.forEach(function(keywordEl){
-            keywordEl.parentNode.removeChild(keywordEl)
-        })
+        keywordEls.forEach(
+            keywordEl => keywordEl.parentNode.removeChild(keywordEl)
+        )
         // Add new keywords
         let keywords = this.metadata.keywords.split(/[,;]/).map(entry => entry.trim()).filter(entry => entry.length)
-        keywords.forEach(function(keyword){
-            metaEl.insertAdjacentHTML('beforeEnd', `<meta:keyword>${keyword}</meta:keyword>`)
-        })
+        keywords.forEach(
+            keyword => metaEl.insertAdjacentHTML('beforeEnd', `<meta:keyword>${keyword}</meta:keyword>`)
+        )
 
         // time
         let date = new Date()

@@ -1,15 +1,15 @@
 import {citeprocSys} from "./citeproc-sys"
 import {citationDefinitions} from "../style/citation-definitions"
+import CSL from "citeproc"
 
 /*
 * Use CSL and bibDB to format all citations for the given prosemirror json citation nodes
 */
 export class FormatCitations {
-    constructor(allCitationInfos, citationStyle, bibDB, callback) {
+    constructor(allCitationInfos, citationStyle, bibDB) {
         this.allCitationInfos = allCitationInfos
         this.citationStyle = citationStyle
         this.bibDB = bibDB
-        this.callback = callback
     }
 
     init() {
@@ -19,8 +19,7 @@ export class FormatCitations {
         this.citationTexts = []
         this.citationType = ''
         this.formatAllCitations()
-        this.getFormattedCitations()
-        this.callback()
+        return this.getFormattedCitations()
     }
 
     formatAllCitations() {
@@ -74,18 +73,15 @@ export class FormatCitations {
     }
 
     reloadCitations(missingItems) {
-        let that = this
         // Not all citations could be found in the database.
-        // Reload the database, but not more than twice every 30 seconds.
-        let llt = this.bibDB.lastLoadTimes
-        let lltlen = this.bibDB.lastLoadTimes.length
-        if (lltlen < 2 || Date.now() - llt[lltlen-2] > 30000) {
-            this.bibDB.getDB(function(){
-                if (missingItems.some(item=>{return that.bibDB.db.hasOwnProperty(item)})) {
-                    that.init()
-                }
-            })
-        }
+        // Reload the database, but don't cycle if no new matches are found.
+        return this.bibDB.getDB().then(() => {
+            if (missingItems.some(item => this.bibDB.db.hasOwnProperty(item))) {
+                return this.init()
+            } else {
+                return Promise.resolve()
+            }
+        })
     }
 
     getFormattedCitations() {
@@ -103,11 +99,9 @@ export class FormatCitations {
             this.citationStyle.definition
         )
         let allIds = []
-        this.citations.forEach(cit => {
-            cit.citationItems.forEach(item => {
-                allIds.push('' + item.id)
-            })
-        })
+        this.citations.forEach(cit =>
+            cit.citationItems.forEach(item => allIds.push('' + item.id))
+        )
         citeprocInstance.updateItems(allIds)
 
         let inText = citeprocInstance.cslXml.dataObj.attrs.class === 'in-text'
@@ -153,7 +147,10 @@ export class FormatCitations {
         this.bibliography = citeprocInstance.makeBibliography()
 
         if (citeprocConnector.missingItems.length > 0) {
-            this.reloadCitations(citeprocConnector.missingItems)
+            return this.reloadCitations(citeprocConnector.missingItems)
+        } else {
+            return Promise.resolve()
         }
+
     }
 }

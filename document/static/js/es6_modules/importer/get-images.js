@@ -8,8 +8,6 @@ export class GetImages {
     }
 
     init() {
-        let that = this
-
         if (this.entries.length > 0) {
             if (this.entries[0].hasOwnProperty('url')) {
                 return this.getImageUrlEntry()
@@ -43,7 +41,6 @@ export class GetImages {
     }
 
     getImageUrlEntry() {
-        let that = this
         if (this.counter < this.newImageEntries.length) {
             return new Promise((resolve, reject) => {
                 let getUrl = _.findWhere(
@@ -54,9 +51,9 @@ export class GetImages {
                 JSZipUtils.getBinaryContent(getUrl, (err, data) => {
                     let dataView = new DataView(data)
                     let blob = new window.Blob([dataView], {type: mimeString});
-                    that.newImageEntries[that.counter]['file'] = blob
-                    that.counter++
-                    that.getImageUrlEntry().then(()=>{
+                    this.newImageEntries[this.counter]['file'] = blob
+                    this.counter++
+                    this.getImageUrlEntry().then(()=>{
                         resolve()
                     })
                 })

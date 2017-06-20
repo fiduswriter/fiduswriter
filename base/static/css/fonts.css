@@ -94,6 +94,7 @@
 .icon-search:before { content: '\e800'; }
 .icon-clock:before { content: '\e807'; } /* '' */
 .icon-table:before { content: '\f0ce'; } /* '' */
+.icon-h-line:before { content: '\48'; } /* 'H' */
 
 /* Fidus Writer specific */
 .icon-footnote:before { content: '\46'; } /* 'F' */

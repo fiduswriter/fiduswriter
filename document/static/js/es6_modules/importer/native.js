@@ -1,57 +1,70 @@
-import {addAlert, csrfToken} from "../common/common"
+import {addAlert, csrfToken} from "../common"
 import {GetImages} from "./get-images"
-import {SaveImages} from "./save-images"
-import {SaveBibs} from "./save-bibs"
 
 export class ImportNative {
     /* Save document information into the database */
-    constructor(aDocument, impBibDB, impImageDB, entries, user, bibDB, imageDB, callback) {
-        this.aDocument = aDocument
+    constructor(doc, impBibDB, impImageDB, images, user, bibDB, imageDB, docId) {
+        this.doc = doc
         this.impBibDB = impBibDB // These are the imported values
         this.impImageDB = impImageDB // These are the imported values
-        this.entries = entries
+        this.images = images // Images at URLs or in Zip files.
         this.user = user
-        this.bibDB = bibDB // These are values stored in the database
-        this.imageDB = imageDB // These are values stored in the database
-        this.callback = callback
-        this.importNative()
+        this.bibDB = bibDB // These are values stored in the database (data in bibDB.db)
+        this.imageDB = imageDB // These are values stored in the database (data in imageDB.db)
+        this.docId = docId // The id of an existing doc to be overwritten. Used by OJS. See file.js
     }
 
-    importNative() {
-
-        let [BibTranslationTable, newBibEntries] = this.compareBibDBs()
-        let [ImageTranslationTable, newImageEntries] = this.compareImageDBs()
-
+    init() {
+        let {BibTranslationTable, newBibEntries} = this.compareBibDBs()
+        let {ImageTranslationTable, newImageEntries} = this.compareImageDBs()
         // We first create any new entries in the DB for images and/or
         // bibliography items.
-        let imageGetter = new GetImages(newImageEntries, this.entries)
-        imageGetter.init().then(() => {
-            let imageSaver = new SaveImages(newImageEntries, ImageTranslationTable, this.imageDB)
-            return imageSaver.init()
-        }).then(() => {
-            let bibSaver = new SaveBibs(newBibEntries, BibTranslationTable, this.bibDB)
-            return bibSaver.init()
-        }).then(() => {
+        let imageGetter = new GetImages(newImageEntries, this.images)
+        return imageGetter.init().then(
+            () => this.saveImages(newImageEntries, ImageTranslationTable)
+        ).then(
+            () => this.bibDB.saveBibEntries(newBibEntries, true)
+        ).then(
+            idTranslations => idTranslations.forEach(idTrans => {BibTranslationTable[idTrans[0]] = idTrans[1]})
+        ).then(() => {
             // We need to change some reference numbers in the document contents
             this.translateReferenceIds(BibTranslationTable, ImageTranslationTable)
             // We are good to go. All the used images and bibliography entries
             // exist in the DB for this user with the same numbers.
             // We can go ahead and create the new document entry in the
             // bibliography without any changes.
-            this.createNewDocument()
+            return this.saveDocument()
         })
 
+    }
+
+    saveImages(newImageEntries, ImageTranslationTable) {
+        let sendPromises = newImageEntries.map(
+            imageEntry => {
+                let formValues = new window.FormData()
+                formValues.append('id', 0)
+                formValues.append('title', imageEntry.title)
+                formValues.append('imageCats', '')
+                formValues.append('image', imageEntry.file, imageEntry.oldUrl.split('/').pop())
+                formValues.append('checksum', imageEntry.checksum)
+                return this.imageDB.saveImage(formValues).then(
+                    newId => {
+                        ImageTranslationTable[imageEntry.oldId] = newId
+                    }
+                )
+            }
+        )
+        return Promise.all(sendPromises)
     }
 
     compareBibDBs() {
         let BibTranslationTable = {},
             newBibEntries = {}
-
         Object.keys(this.impBibDB).forEach(impKey => {
             let impEntry = this.impBibDB[impKey]
             let matchEntries = []
-            Object.keys(this.bibDB).forEach(key => {
-                let bibEntry = this.bibDB[key]
+            Object.keys(this.bibDB.db).forEach(key => {
+                let bibEntry = this.bibDB.db[key]
                 if(
                     impEntry.bib_type === bibEntry.bib_type &&
                     _.isEqual(impEntry.fields, bibEntry.fields)
@@ -68,7 +81,7 @@ export class ImportNative {
             }
         })
 
-        return [BibTranslationTable, newBibEntries]
+        return {BibTranslationTable, newBibEntries}
     }
 
     compareImageDBs() {
@@ -78,7 +91,7 @@ export class ImportNative {
         Object.keys(this.impImageDB).map(key => parseInt(key)).forEach(key => {
             let imageObj = this.impImageDB[key]
             let matchEntries = _.where(
-                this.imageDB,
+                this.imageDB.db,
                 {checksum: imageObj.checksum}
             )
             if (0 === matchEntries.length) {
@@ -89,15 +102,13 @@ export class ImportNative {
                     file_type: imageObj.file_type,
                     checksum: imageObj.checksum
                 })
-            } else if (!(_.findWhere(matchEntries, {pk: key}))) {
-                // There is at least one match, and none of the matches have
-                // the same id as the key in this.impImageDB.
-                // We therefore pick the first match.
+            } else {
+                // There is at least one match.
+                // We pick the first.
                 ImageTranslationTable[key] = matchEntries[0].pk
             }
         })
-
-        return [ImageTranslationTable, newImageEntries]
+        return {ImageTranslationTable, newImageEntries}
     }
 
 
@@ -128,55 +139,57 @@ export class ImportNative {
                 })
             }
         }
-        walkTree(this.aDocument.contents)
+        walkTree(this.doc.contents)
     }
 
-    createNewDocument() {
-        let that = this
+    saveDocument() {
         let postData = {
-            title: this.aDocument.title,
-            contents: JSON.stringify(this.aDocument.contents),
-            comments: JSON.stringify(this.aDocument.comments),
-            settings: JSON.stringify(this.aDocument.settings),
-            metadata: JSON.stringify(this.aDocument.metadata)
+            title: this.doc.title,
+            contents: JSON.stringify(this.doc.contents),
+            comments: JSON.stringify(this.doc.comments),
+            settings: JSON.stringify(this.doc.settings),
+            metadata: JSON.stringify(this.doc.metadata)
         }
-        jQuery.ajax({
-            url: '/document/import/',
-            data: postData,
-            type: 'POST',
-            dataType: 'json',
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: function(data, textStatus, jqXHR) {
-                let docInfo = {
-                    unapplied_diffs: [],
-                    is_owner: true,
-                    rights: 'write',
-                    changed: false,
-                    title_changed: false
+        if (typeof this.docId !== 'undefined') {
+            // There is a docId, so we overwrite this doc rather than creating
+            // a new one. Used in connection with OJS. See docId in file.js.
+            postData.doc_id = this.docId
+        }
+        return new Promise((resolve, reject) => {
+            jQuery.ajax({
+                url: '/document/import/',
+                data: postData,
+                type: 'POST',
+                dataType: 'json',
+                crossDomain: false, // obviates need for sameOrigin test
+                beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
+                success: (data, textStatus, jqXHR) => {
+                    let docInfo = {
+                        unapplied_diffs: [],
+                        is_owner: true,
+                        rights: 'write',
+                        changed: false,
+                        title_changed: false
+                    }
+                    this.doc.owner = {
+                        id: this.user.id,
+                        name: this.user.name,
+                        avatar: this.user.avatar
+                    }
+                    this.doc.id = data['document_id']
+                    this.doc.version = 0
+                    this.doc.comment_version = 0
+                    this.doc.added = data['added']
+                    this.doc.updated = data['updated']
+                    this.doc.revisions = []
+                    this.doc.rights = "write"
+                    resolve({doc: this.doc, docInfo})
+                },
+                error: () => {
+                    reject(gettext('Could not save ') + this.doc.title)
                 }
-                that.aDocument.owner = {
-                    id: that.user.id,
-                    name: that.user.name,
-                    avatar: that.user.avatar
-                }
-                that.aDocument.id = data['document_id']
-                that.aDocument.version = 0
-                that.aDocument.comment_version = 0
-                that.aDocument.added = data['added']
-                that.aDocument.updated = data['updated']
-                that.aDocument.revisions = []
-                that.aDocument.rights = "write"
-                return that.callback(true, [
-                    that.aDocument,
-                    docInfo
-                ])
-            },
-            error: function() {
-                that.callback(false, gettext('Could not save ') + that.aDocument.title)
-            }
+            })
         })
+
     }
 }

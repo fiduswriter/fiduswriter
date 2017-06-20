@@ -8,8 +8,8 @@ export class ModCommentInteractions {
     }
 
     bindEvents() {
+        // Bind all the click events related to comments
         let that = this
-            // Bind all the click events related to comments
         jQuery(document).on("click", ".submitComment", function() {
             that.submitComment(this)
         })
@@ -50,9 +50,11 @@ export class ModCommentInteractions {
                 that.submitAnswerEdit(jQuery(this).prev())
             })
 
-        jQuery(document).on("click", ".comment-answer-submit", function() {
-            that.submitAnswer()
-        })
+        jQuery(document).on(
+            "click",
+            ".comment-answer-submit",
+            () => this.submitAnswer()
+        )
 
         jQuery(document).on('click', '.delete-comment', function() {
             that.deleteComment(parseInt(jQuery(this).attr(

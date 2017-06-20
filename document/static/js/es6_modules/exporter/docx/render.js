@@ -10,17 +10,13 @@ export class DocxExporterRender {
     }
 
     init() {
-        let that = this
         return this.exporter.xml.getXml(this.filePath).then(
-            function(xml) {
-                that.xml = xml
-            }
+            xml => this.xml = xml
         )
     }
 
     // Define the tags that are to be looked for in the document
     getTagData(pmBib) {
-
         this.tags = [
             {
                 title: 'title',
@@ -56,59 +52,66 @@ export class DocxExporterRender {
     // go through document.xml looking for tags and replace them with the given
     // replacements.
     render() {
+        // Including global page definition at end
+        let pars = [].slice.call(this.xml.querySelectorAll('p,sectPr'))
+        let currentTags = []
 
-        let pars = [].slice.call(this.xml.querySelectorAll('p,sectPr')) // Including global page definition at end
-        let currentTags = [], that = this
-
-        pars.forEach(function(par){
-            let text = par.textContent // Assuming there is nothing outside of <w:t>...</w:t>
-            that.tags.forEach(function(tag){
-                let tagString = tag.title
-                if(text.indexOf('{'+tagString+'}') !== -1) {
-                    currentTags.push(tag)
-                    tag.par = par
-                    // We don't worry about the same tag appearing twice in the document,
-                    // as that would make no sense.
-                }
-            })
-
-            let pageSize = par.querySelector('pgSz')
-            let pageMargins = par.querySelector('pgMar')
-            let cols = par.querySelector('cols')
-            if (pageSize && pageMargins && cols) { // Not sure if these all need to come together
-                let width = parseInt(pageSize.getAttribute('w:w')) -
-                parseInt(pageMargins.getAttribute('w:right')) -
-                parseInt(pageMargins.getAttribute('w:left'))
-                let height = parseInt(pageSize.getAttribute('w:h')) -
-                parseInt(pageMargins.getAttribute('w:bottom')) -
-                parseInt(pageMargins.getAttribute('w:top')) -
-                parseInt(pageMargins.getAttribute('w:header')) -
-                parseInt(pageMargins.getAttribute('w:footer'))
-
-                let colCount = parseInt(cols.getAttribute('w:num'))
-                if (colCount > 1) {
-                    let colSpace = parseInt(cols.getAttribute('w:space'))
-                    width = width - (colSpace * (colCount-1))
-                    width = width / colCount
-                }
-                while (currentTags.length) {
-                    let tag = currentTags.pop()
-                    tag.dimensions = {
-                        width: width * 635, // convert to EMU
-                        height: height * 635 // convert to EMU
+        pars.forEach(
+            par => {
+                // Assuming there is nothing outside of <w:t>...</w:t>
+                let text = par.textContent
+                this.tags.forEach(
+                    tag => {
+                        let tagString = tag.title
+                        if(text.indexOf('{'+tagString+'}') !== -1) {
+                            currentTags.push(tag)
+                            tag.par = par
+                            // We don't worry about the same tag appearing twice in the document,
+                            // as that would make no sense.
+                        }
                     }
+                )
+
+                let pageSize = par.querySelector('pgSz')
+                let pageMargins = par.querySelector('pgMar')
+                let cols = par.querySelector('cols')
+                if (pageSize && pageMargins && cols) { // Not sure if these all need to come together
+                    let width = parseInt(pageSize.getAttribute('w:w')) -
+                    parseInt(pageMargins.getAttribute('w:right')) -
+                    parseInt(pageMargins.getAttribute('w:left'))
+                    let height = parseInt(pageSize.getAttribute('w:h')) -
+                    parseInt(pageMargins.getAttribute('w:bottom')) -
+                    parseInt(pageMargins.getAttribute('w:top')) -
+                    parseInt(pageMargins.getAttribute('w:header')) -
+                    parseInt(pageMargins.getAttribute('w:footer'))
+
+                    let colCount = parseInt(cols.getAttribute('w:num'))
+                    if (colCount > 1) {
+                        let colSpace = parseInt(cols.getAttribute('w:space'))
+                        width = width - (colSpace * (colCount-1))
+                        width = width / colCount
+                    }
+                    while (currentTags.length) {
+                        let tag = currentTags.pop()
+                        tag.dimensions = {
+                            width: width * 635, // convert to EMU
+                            height: height * 635 // convert to EMU
+                        }
+                    }
+
                 }
 
             }
-
-        })
-        this.tags.forEach(function(tag){
-            if(tag.title[0]==='@') {
-                that.parRender(tag)
-            } else {
-                that.inlineRender(tag)
+        )
+        this.tags.forEach(
+            tag => {
+                if(tag.title[0]==='@') {
+                    this.parRender(tag)
+                } else {
+                    this.inlineRender(tag)
+                }
             }
-        })
+        )
     }
 
     // Render Tags that only exchange inline content
@@ -121,7 +124,15 @@ export class DocxExporterRender {
             rs.shift()
         }
         let r = rs[0]
-        r.innerHTML = '<w:t>' + fullText + '</w:t>'
+        if (fullText.length) {
+            let textAttr = ''
+            if (fullText[0] === ' ' || fullText[fullText.length-1] === ' ') {
+                textAttr += 'xml:space="preserve"'
+            }
+            r.innerHTML = `<w:t ${textAttr}>` + fullText + '</w:t>'
+        } else {
+            r.parentNode.removeChild(r)
+        }
     }
 
     // Render tags that exchange paragraphs

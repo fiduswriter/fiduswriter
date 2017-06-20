@@ -6,7 +6,12 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 
 from PIL import Image as PilImage
-from cStringIO import StringIO
+try:
+    # Python 2
+    from StringIO import StringIO
+except ImportError:
+    # Python 3
+    from io import StringIO
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 ALLOWED_FILETYPES = ['image/jpeg', 'image/png', 'image/svg+xml']

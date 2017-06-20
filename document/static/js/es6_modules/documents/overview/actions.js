@@ -1,17 +1,16 @@
 import {getMissingDocumentListData} from "../tools"
 import {importFidusTemplate, documentsListItemTemplate} from "./templates"
-import {savecopy} from "../../exporter/native/copy"
+import {SaveCopy, ExportFidusFile} from "../../exporter/native"
 import {EpubExporter} from "../../exporter/epub"
 import {HTMLExporter} from "../../exporter/html"
 import {LatexExporter} from "../../exporter/latex"
 import {DocxExporter} from "../../exporter/docx"
 import {OdtExporter} from "../../exporter/odt"
-import {NativeExporter} from "../../exporter/native"
 import {ImportFidusFile} from "../../importer/file"
-import {DocumentRevisionsDialog} from "../revisions/dialog"
+import {DocumentRevisionsDialog} from "../revisions"
 import {BibliographyDB} from "../../bibliography/database"
 import {ImageDB} from "../../images/database"
-import {activateWait, deactivateWait, addAlert, localizeDate, csrfToken} from "../../common/common"
+import {activateWait, deactivateWait, addAlert, localizeDate, csrfToken} from "../../common"
 
 export class DocumentOverviewActions {
     constructor (documentOverview) {
@@ -20,7 +19,6 @@ export class DocumentOverviewActions {
     }
 
     deleteDocument(id) {
-        let that = this
         let postData = {id}
 
         jQuery.ajax({
@@ -29,17 +27,17 @@ export class DocumentOverviewActions {
             type: 'POST',
             dataType: 'json',
             crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
+            beforeSend: (xhr, settings) => {
                 xhr.setRequestHeader("X-CSRFToken", csrfToken)
             },
-            success: function (data, textStatus, jqXHR) {
-                that.documentOverview.stopDocumentTable()
+            success: (data, textStatus, jqXHR) => {
+                this.documentOverview.stopDocumentTable()
                 jQuery('#Text_' + id).detach()
-                that.documentOverview.documentList = _.reject(that.documentOverview.documentList, function (
-                    document) {
-                    return document.id == id
-                })
-                that.documentOverview.startDocumentTable()
+                this.documentOverview.documentList = _.reject(
+                    this.documentOverview.documentList,
+                    document => document.id === id
+                )
+                this.documentOverview.startDocumentTable()
             }
         })
     }
@@ -104,36 +102,44 @@ export class DocumentOverviewActions {
                 console.log('error', e.target.error.code)
             }
 
-            that.documentOverview.getBibDB(function(){
-                that.documentOverview.getImageDB(function(){
-                    new ImportFidusFile(
+            that.documentOverview.getBibDB().then(
+                () => that.documentOverview.getImageDB()
+            ).then(
+                () => {
+                    let importer = new ImportFidusFile(
                         fidusFile,
                         that.documentOverview.user,
                         true,
-                        that.documentOverview.bibDB.db,
-                        that.documentOverview.imageDB,
-                        function(noErrors, returnValue) {
+                        that.documentOverview.bibDB,
+                        that.documentOverview.imageDB
+                    )
+
+                    importer.init().then(
+                        ({doc, docInfo}) => {
                             deactivateWait()
-                            if (noErrors) {
-                                let doc = returnValue[0]
+                            //if (noErrors) {
+                                //let doc = returnValue[0]
                                 //let aDocumentValues = returnValue.docInfo
-                                addAlert('info', doc.title + gettext(
-                                        ' successfully imported.'))
-                                that.documentOverview.documentList.push(doc)
-                                that.documentOverview.stopDocumentTable()
-                                jQuery('#document-table tbody').append(
-                                    documentsListItemTemplate({
-                                            aDocument: doc,
-                                            user: that.documentOverview.user,
-                                            localizeDate
-                                        }))
-                                that.documentOverview.startDocumentTable()
-                            } else {
-                                addAlert('error', returnValue)
-                            }
+                            addAlert('info', doc.title + gettext(
+                                    ' successfully imported.'))
+                            that.documentOverview.documentList.push(doc)
+                            that.documentOverview.stopDocumentTable()
+                            jQuery('#document-table tbody').append(
+                                documentsListItemTemplate({
+                                        aDocument: doc,
+                                        user: that.documentOverview.user,
+                                        localizeDate
+                                    }))
+                            that.documentOverview.startDocumentTable()
+                            //} else {
+                            //    addAlert('error', returnValue)
+                            //}
+                        },
+                        errorMessage => {
+                            addAlert('error', errorMessage)
+                            deactivateWait()
                         }
                     )
-                })
             })
 
             //reader.onload = unzip
@@ -164,7 +170,7 @@ export class DocumentOverviewActions {
                     event.preventDefault()
                 })
             },
-            close: function () {
+            close: () => {
                 jQuery("#importfidus").dialog('destroy').remove()
             }
         })
@@ -173,176 +179,218 @@ export class DocumentOverviewActions {
     }
 
     copyFiles(ids) {
-        let that = this
-        getMissingDocumentListData(ids, that.documentOverview.documentList, function () {
-            that.documentOverview.getBibDB(function(){
-                that.documentOverview.getImageDB(function(){
-                    for (let i = 0; i < ids.length; i++) {
-                        let doc = _.findWhere(that.documentOverview.documentList, {
-                            id: ids[i]
-                        })
-                        if (doc.owner.id===that.documentOverview.user.id) {
-                            // We are copying from and to the same user.
-                            savecopy(doc, that.documentOverview.bibDB.db, that.documentOverview.imageDB,
-                            that.documentOverview.bibDB.db, that.documentOverview.imageDB,
-                            that.documentOverview.user, function (doc, docInfo) {
-                                that.documentOverview.documentList.push(doc)
-                                that.documentOverview.stopDocumentTable()
+        getMissingDocumentListData(ids, this.documentOverview.documentList).then(
+            () => this.documentOverview.getBibDB()
+        ).then(
+            () => this.documentOverview.getImageDB()
+        ).then(
+            () => {
+                for (let i = 0; i < ids.length; i++) {
+                    let doc = _.findWhere(this.documentOverview.documentList, {
+                        id: ids[i]
+                    })
+                    if (doc.owner.id===this.documentOverview.user.id) {
+                        // We are copying from and to the same user.
+                        let copier = new SaveCopy(
+                            doc,
+                            this.documentOverview.bibDB,
+                            this.documentOverview.imageDB,
+                            this.documentOverview.bibDB,
+                            this.documentOverview.imageDB,
+                            this.documentOverview.user
+                        )
+
+                        copier.init().then(
+                            ({doc, docInfo}) => {
+                                this.documentOverview.documentList.push(doc)
+                                this.documentOverview.stopDocumentTable()
                                 jQuery('#document-table tbody').append(
                                     documentsListItemTemplate({
                                         aDocument: doc,
-                                        user: that.documentOverview.user,
+                                        user: this.documentOverview.user,
                                         localizeDate
                                     }))
-                                that.documentOverview.startDocumentTable()
-                            })
-                        } else {
-                            that.getBibDB(doc.owner.id, function(oldBibDB){
-                                that.getImageDB(doc.owner.id, function(oldImageDB){
-                                    /* We are copying from another user, so we are first loading
-                                     the databases from that user
-                                    */
-                                    savecopy(doc, oldBibDB, oldImageDB,
-                                    that.documentOverview.bibDB.db, that.documentOverview.imageDB,
-                                    that.documentOverview.user, function (doc, docInfo) {
-                                        that.documentOverview.documentList.push(doc)
-                                        that.documentOverview.stopDocumentTable()
+                                this.documentOverview.startDocumentTable()
+                            }
+                        )
+                    } else {
+                        this.getBibDB(doc.owner.id).then(oldBibDB => {
+                            this.getImageDB(doc.owner.id).then(oldImageDB => {
+                                /* We are copying from another user, so we are first loading
+                                 the databases from that user
+                                */
+                                let copier = new SaveCopy(
+                                    doc,
+                                    oldBibDB,
+                                    oldImageDB,
+                                    this.documentOverview.bibDB,
+                                    this.documentOverview.imageDB,
+                                    this.documentOverview.user
+                                )
+
+                                copier.init().then(
+                                    ({doc, docInfo}) => {
+                                        this.documentOverview.documentList.push(doc)
+                                        this.documentOverview.stopDocumentTable()
                                         jQuery('#document-table tbody').append(
                                             documentsListItemTemplate({
                                                 aDocument: doc,
-                                                user: that.documentOverview.user,
+                                                user: this.documentOverview.user,
                                                 localizeDate
                                             }))
-                                        that.documentOverview.startDocumentTable()
-                                    })
-                                })
+                                        this.documentOverview.startDocumentTable()
+                                    }
+                                )
                             })
-                        }
-
+                        })
                     }
-                })
-            })
-
-        })
+                }
+            }
+        )
     }
 
-    getBibDB(userId, callback) {
-        let bibGetter = new BibliographyDB(userId, true, false, false)
-        bibGetter.getDB(function(){
-            callback(bibGetter.db)
+    getBibDB(userId) {
+        let bibGetter = new BibliographyDB(userId, true)
+        return new Promise (resolve => {
+            bibGetter.getDB().then(() => resolve(bibGetter.db))
         })
+
     }
 
-    getImageDB(userId, callback) {
+    getImageDB(userId) {
         let imageGetter = new ImageDB(userId)
-        imageGetter.getDB(function(){
-            callback(imageGetter.db)
+        return new Promise (resolve => {
+            imageGetter.getDB().then(() => resolve(imageGetter.db))
         })
     }
 
     downloadNativeFiles(ids) {
-        let that = this
-        getMissingDocumentListData(ids, that.documentOverview.documentList, function () {
-            for (let i = 0; i < ids.length; i++) {
-                new NativeExporter(_.findWhere(
-                    that.documentOverview.documentList, {
-                        id: ids[i]
-                    }), false, false)
+        getMissingDocumentListData(
+            ids,
+            this.documentOverview.documentList
+        ).then(
+            () => {
+                for (let i = 0; i < ids.length; i++) {
+                    new ExportFidusFile(
+                        _.findWhere(this.documentOverview.documentList, {id: ids[i]}),
+                        false, // no bibDB or imageDB present
+                        false
+                    )
+                }
             }
-        })
+        )
     }
 
     downloadHtmlFiles(ids) {
-        let that = this
-        getMissingDocumentListData(ids, that.documentOverview.documentList, function () {
-            for (let i = 0; i < ids.length; i++) {
-                new HTMLExporter(_.findWhere(
-                    that.documentOverview.documentList, {
-                        id: ids[i]
-                    }), false)
+        getMissingDocumentListData(
+            ids,
+            this.documentOverview.documentList
+        ).then(
+            () => {
+                for (let i = 0; i < ids.length; i++) {
+                    new HTMLExporter(_.findWhere(
+                        this.documentOverview.documentList, {
+                            id: ids[i]
+                        }), false)
+                }
             }
-        })
+        )
     }
 
     downloadTemplateExportFiles(ids, templateUrl, templateType) {
-        let that = this
-        getMissingDocumentListData(ids, that.documentOverview.documentList, function () {
-            for (let i = 0; i < ids.length; i++) {
-                if (templateType==='docx') {
-                    new DocxExporter(_.findWhere(
-                        that.documentOverview.documentList, {
-                            id: ids[i]
-                        }), templateUrl, false, false)
-                } else {
-                    new OdtExporter(_.findWhere(
-                        that.documentOverview.documentList, {
-                            id: ids[i]
-                        }), templateUrl, false, false)
-                }
+        getMissingDocumentListData(
+            ids,
+            this.documentOverview.documentList
+        ).then(
+            () => {
+                for (let i = 0; i < ids.length; i++) {
+                    if (templateType==='docx') {
+                        new DocxExporter(_.findWhere(
+                            this.documentOverview.documentList, {
+                                id: ids[i]
+                            }), templateUrl, false, false)
+                    } else {
+                        new OdtExporter(_.findWhere(
+                            this.documentOverview.documentList, {
+                                id: ids[i]
+                            }), templateUrl, false, false)
+                    }
 
+                }
             }
-        })
+        )
     }
 
     downloadLatexFiles(ids) {
-        let that = this
-        getMissingDocumentListData(ids, that.documentOverview.documentList, function () {
-            for (let i = 0; i < ids.length; i++) {
-                new LatexExporter(_.findWhere(
-                    that.documentOverview.documentList, {
-                        id: ids[i]
-                    }), false)
+        getMissingDocumentListData(
+            ids,
+            this.documentOverview.documentList
+        ).then(
+            () => {
+                for (let i = 0; i < ids.length; i++) {
+                    new LatexExporter(_.findWhere(
+                        this.documentOverview.documentList, {
+                            id: ids[i]
+                        }), false)
+                }
             }
-        })
+        )
     }
 
     downloadEpubFiles(ids) {
-        let that = this
-        getMissingDocumentListData(ids, that.documentOverview.documentList, function () {
-            for (let i = 0; i < ids.length; i++) {
-                new EpubExporter(_.findWhere(
-                    that.documentOverview.documentList, {
-                        id: ids[i]
-                    }), false)
+        getMissingDocumentListData(
+            ids,
+            this.documentOverview.documentList
+        ).then(
+            () => {
+                for (let i = 0; i < ids.length; i++) {
+                    new EpubExporter(_.findWhere(
+                        this.documentOverview.documentList, {
+                            id: ids[i]
+                        }), false)
+                }
             }
-        })
+        )
     }
 
     revisionsDialog(documentId) {
-        let that = this
-        that.documentOverview.getBibDB(function(){
-            that.documentOverview.getImageDB(function(){
-                new DocumentRevisionsDialog(
-                  documentId,
-                  that.documentOverview.documentList,
-                  that.documentOverview.user,
-                  that.documentOverview.bibDB,
-                  that.documentOverview.imageDB,
-                  function (actionObject) {
+        this.documentOverview.getBibDB().then(
+            () => this.documentOverview.getImageDB()
+        ).then(
+            () => {
+                let revDialog = new DocumentRevisionsDialog(
+                    documentId,
+                    this.documentOverview.documentList,
+                    this.documentOverview.user,
+                    this.documentOverview.bibDB,
+                    this.documentOverview.imageDB
+                )
+                revDialog.init().then(
+                  actionObject => {
                     switch(actionObject.action) {
                         case 'added-document':
-                            that.documentOverview.documentList.push(actionObject.doc)
-                            that.documentOverview.stopDocumentTable()
+                            this.documentOverview.documentList.push(actionObject.doc)
+                            this.documentOverview.stopDocumentTable()
                             jQuery('#document-table tbody').append(
                                 documentsListItemTemplate({
                                     aDocument: actionObject.doc,
-                                    user: that.documentOverview.user,
+                                    user: this.documentOverview.user,
                                     localizeDate
                                 }))
-                            that.documentOverview.startDocumentTable()
+                            this.documentOverview.startDocumentTable()
                             break
                         case 'deleted-revision':
-                            actionObject.doc.revisions = _.reject(actionObject.doc.revisions, function(revision) {
-                                return (revision.pk == actionObject.id)
-                            })
+                            actionObject.doc.revisions = _.reject(
+                                actionObject.doc.revisions,
+                                revision => revision.pk === actionObject.id
+                            )
                             if (actionObject.doc.revisions.length === 0) {
                                 jQuery('#Text_' + actionObject.doc.id + ' .revisions').detach()
                             }
                             break
                     }
                 })
-            })
-        })
+            }
+        )
     }
-
 }

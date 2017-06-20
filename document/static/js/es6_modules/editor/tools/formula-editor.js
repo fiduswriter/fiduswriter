@@ -3,7 +3,7 @@
  */
 
 import "mathquill/build/mathquill"
-import {katexRender} from "../../katex/katex"
+import {katexRender} from "../../katex"
 
 /**
  * Class to initialize and manage MathQuill library inside editor dialog (math.js)

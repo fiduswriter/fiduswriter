@@ -13,30 +13,26 @@ import {OdtExporterMath} from "./math"
 
 /*
 Exporter to Open Document Text (LibreOffice)
-
 */
 
 export class OdtExporter {
     constructor(doc, templateUrl, bibDB, imageDB) {
-        let that = this
         this.doc = doc
         this.templateUrl = templateUrl
         this.bibDB = bibDB
         this.imageDB = imageDB
-        this.pmBib = false
         this.pmCits = false
         this.docContents = false
         this.docTitle = false
 
-        getDatabasesIfNeeded(this, doc).then(function(){
-            that.init()
-        })
+        getDatabasesIfNeeded(this, doc).then(
+            () => this.init()
+        )
     }
 
 
 
     init() {
-        let that = this
         this.docContents = removeHidden(this.doc.contents)
         this.docTitle = textContent(this.docContents.content[0])
         this.metadata = new OdtExporterMetadata(this, this.docContents)
@@ -46,34 +42,34 @@ export class OdtExporter {
         this.math = new OdtExporterMath(this)
         this.images = new OdtExporterImages(this, this.imageDB, this.docContents)
         this.citations = new OdtExporterCitations(this, this.bibDB, this.docContents)
-        this.richtext = new OdtExporterRichtext(
-            this,
-//            this.citations,
-            this.images
-        )
+        this.richtext = new OdtExporterRichtext(this, this.images)
 
-        this.xml = new XmlZip(createSlug(this.docTitle)+'.odt', this.templateUrl)
-        this.xml.init().then(() => {
-                return that.metadata.init()
-            }).then(() => {
-                return that.styles.init()
-            }).then(() => {
-                let returnValue = that.citations.init()
-                that.pmBib = that.citations.pmBib
-                return returnValue
-            }).then(() => {
-                return that.math.init()
-            }).then(() => {
-                return that.render.init()
-            }).then(() => {
-                return that.images.init()
-            }).then(() => {
-                return that.footnotes.init()
-            }).then(() => {
-                that.render.getTagData(that.pmBib)
-                that.render.render()
-                that.xml.prepareAndDownload()
-            })
+        this.xml = new XmlZip(
+            createSlug(this.docTitle)+'.odt',
+            this.templateUrl,
+            'application/vnd.oasis.opendocument.text'
+        )
+        this.xml.init().then(
+            () => this.metadata.init()
+        ).then(
+            () => this.styles.init()
+        ).then(
+            () => this.citations.init()
+        ).then(
+            () => this.math.init()
+        ).then(
+            () => this.render.init()
+        ).then(
+            () => this.images.init()
+        ).then(
+            () => this.footnotes.init()
+        ).then(
+            () => {
+                this.render.getTagData(this.citations.pmBib)
+                this.render.render()
+                this.xml.prepareAndDownload()
+            }
+        )
     }
 
 }

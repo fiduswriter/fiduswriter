@@ -122,6 +122,14 @@ body {
     color: #ccc;
     background-color: #f2f2f2;
 }
+#reviewed {
+    left: 100%;
+    margin-left: 14px;
+    background-color: #81F781;
+}
+#reviewed:hover {
+    background-color: #c9c9c9;
+}
 .editortoolbar {
     position: relative;
     left: 68px;
@@ -657,4 +665,16 @@ table.insert-table-selection td.selected.hover {
 
 .csl-right-inline {
     padding-left: 20px;
+}
+
+/* Wide table: used for submission dialog */
+
+.fw-dialog-table-wide .entry-field input[type=text] {
+    width: 678px;
+}
+
+.fw-dialog-table-wide th {
+    vertical-align: top;
+    padding: 0 6px 0 8px;
+    width: 164px;
 }

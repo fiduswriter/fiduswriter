@@ -33,19 +33,21 @@ export class BaseDOMExporter {
         footnotesContainer.id = 'fnlist'
         footnotesContainer.setAttribute('role', 'doc-footnotes')
 
-        footnotes.forEach(function(footnote, index) {
-            let footnoteAnchor = document.createElement('a')
-            let counter = index + 1
-            footnoteAnchor.setAttribute('href','#fn'+counter)
-            // RASH 0.5 doesn't mark the footnote anchors, so we add this class
-            footnoteAnchor.classList.add('fn')
-            footnote.parentNode.replaceChild(footnoteAnchor, footnote)
-            let newFootnote = document.createElement('section')
-            newFootnote.id = 'fn' + counter
-            newFootnote.setAttribute('role','doc-footnote')
-            newFootnote.innerHTML = footnote.getAttribute('data-footnote')
-            footnotesContainer.appendChild(newFootnote)
-        })
+        footnotes.forEach(
+            (footnote, index) => {
+                let footnoteAnchor = document.createElement('a')
+                let counter = index + 1
+                footnoteAnchor.setAttribute('href','#fn'+counter)
+                // RASH 0.5 doesn't mark the footnote anchors, so we add this class
+                footnoteAnchor.classList.add('fn')
+                footnote.parentNode.replaceChild(footnoteAnchor, footnote)
+                let newFootnote = document.createElement('section')
+                newFootnote.id = 'fn' + counter
+                newFootnote.setAttribute('role','doc-footnote')
+                newFootnote.innerHTML = footnote.getAttribute('data-footnote')
+                footnotesContainer.appendChild(newFootnote)
+            }
+        )
         htmlCode.appendChild(footnotesContainer)
 
         // Replace nbsp spaces with normal ones

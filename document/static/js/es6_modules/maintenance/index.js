@@ -4,8 +4,8 @@ import {collabEditing} from "prosemirror-old/dist/collab"
 import {updateFileDoc, updateFileBib} from "../importer/file"
 import {updateDoc, getMetadata, getSettings} from "../schema/convert"
 import {docSchema} from "../schema/document"
-import {addAlert, csrfToken} from "../common/common"
-import {Menu} from "../menu/menu"
+import {addAlert, csrfToken} from "../common"
+import {Menu} from "../menu"
 import {FW_FILETYPE_VERSION} from "../exporter/native"
 import JSZip from "jszip"
 import JSZipUtils from "jszip-utils"
@@ -23,13 +23,12 @@ export class DocMaintenance {
     }
 
     bind() {
-        let that = this
-        jQuery(document).on('click', 'button#update:not(.disabled)', function(){
-            that.button = this
-            jQuery(that.button).addClass('disabled fw-dark')
-            jQuery(that.button).removeClass('fw-orange')
-            jQuery(that.button).html(gettext('Updating'))
-            that.init()
+        jQuery(document).on('click', 'button#update:not(.disabled)', () => {
+            this.button = this
+            jQuery(this.button).addClass('disabled fw-dark')
+            jQuery(this.button).removeClass('fw-orange')
+            jQuery(this.button).html(gettext('Updating'))
+            this.init()
         })
     }
 
@@ -38,30 +37,26 @@ export class DocMaintenance {
     }
 
     getDocBatch() {
-        let that = this
         jQuery.ajax({
           url: "/document/maintenance/get_all/",
           type: 'POST',
           dataType: 'json',
           crossDomain: false, // obviates need for sameOrigin test
-          beforeSend: function(xhr, settings) {
-              xhr.setRequestHeader("X-CSRFToken", csrfToken)
-          },
+          beforeSend: (xhr, settings) =>
+              xhr.setRequestHeader("X-CSRFToken", csrfToken),
           data: {
               batch: this.batch++
           },
-          success: function(data) {
+          success: data => {
               let docs = window.JSON.parse(data.docs)
               if (docs.length) {
-                  addAlert('info', gettext('Downloaded batch: ') + that.batch)
-                  docs.forEach(function(doc){
-                      that.fixDoc(doc)
-                  })
-                  that.getDocBatch()
+                  addAlert('info', gettext('Downloaded batch: ') + this.batch)
+                  docs.forEach(doc => this.fixDoc(doc))
+                  this.getDocBatch()
               } else {
-                  that.batchesDone = true
-                  if (that.docSavesLeft===0) {
-                      that.updateRevisions()
+                  this.batchesDone = true
+                  if (this.docSavesLeft===0) {
+                      this.updateRevisions()
                   }
               }
           }
@@ -99,26 +94,14 @@ export class DocMaintenance {
     applyDiffs(doc) {
         let pm = new ProseMirror({
             place: null,
-            schema: docSchema,
-            plugins: [collabEditing.config({version: 0})]
+            schema: docSchema
         })
-        // add mod to give us simple access to internals removed in PM 0.8.0
-        pm.mod = {}
-        pm.mod.collab = collabEditing.get(pm)
-        // Ignore setDoc
-        pm.on.beforeSetDoc.remove(pm.mod.collab.onSetDoc)
-        pm.mod.collab.onSetDoc = function (){}
-        // Trigger reset on setDoc
-        pm.mod.collab.afterSetDoc = function (){
-            // Reset all collab values and set document version
-            let collab = pm.mod.collab
-            collab.versionDoc = pm.doc
-            collab.unconfirmedSteps = []
-            collab.unconfirmedMaps = []
-        }
-        pm.on.setDoc.add(pm.mod.collab.afterSetDoc)
-        let pmDoc = docSchema.nodeFromJSON({type:'doc',content:[doc.contents]})
-        pm.setDoc(pmDoc)
+
+        pm.setDoc(
+            docSchema.nodeFromJSON({type:'doc', content:[doc.contents]})
+        )
+        let pmCollab = collabEditing.config({version: 0})
+        pmCollab.attach(pm)
         let unappliedDiffs = doc.diff_version - doc.version
 
         doc.last_diffs = doc.last_diffs.slice(doc.last_diffs.length - unappliedDiffs)
@@ -127,7 +110,7 @@ export class DocMaintenance {
                 let diff = doc.last_diffs.shift()
                 let steps = [diff].map(j => Step.fromJSON(docSchema, j))
                 let client_ids = [diff].map(j => j.client_id)
-                pm.mod.collab.receive(steps, client_ids)
+                pmCollab.receive(steps, client_ids)
             } catch (error) {
                 addAlert('error', gettext('Discarded useless diffs for: ') + doc.id)
                 doc.last_diffs = []
@@ -136,14 +119,12 @@ export class DocMaintenance {
         let pmArticle = pm.doc.firstChild
         doc.contents = pmArticle.toJSON()
         doc.metadata = getMetadata(pmArticle)
-        doc.settings = getSettings(pmArticle)
+        Object.assign(doc.settings, getSettings(pmArticle))
         doc.version = doc.diff_version
     }
 
 
     saveDoc(doc) {
-        let that = this
-
         doc.contents = window.JSON.stringify(doc.contents)
         doc.metadata = window.JSON.stringify(doc.metadata)
         doc.settings = window.JSON.stringify(doc.settings)
@@ -154,61 +135,55 @@ export class DocMaintenance {
             type: 'POST',
             dataType: 'json',
             crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
+            beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
             data: doc,
-            success: function(data) {
+            success: data => {
                 addAlert('success', gettext('The document has been updated: ') + doc.id)
-                that.docSavesLeft--
-                if (that.docSavesLeft===0 && that.batchesDone) {
+                this.docSavesLeft--
+                if (this.docSavesLeft===0 && this.batchesDone) {
                     addAlert('success', gettext('All documents updated!'))
-                    that.updateRevisions()
+                    this.updateRevisions()
                 }
             }
         })
     }
 
     updateRevisions() {
-        let that = this
         addAlert('info', gettext('Updating saved revisions.'))
         jQuery.ajax({
             url: "/document/maintenance/get_all_revision_ids/",
             type: 'POST',
             dataType: 'json',
             crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
+            beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
             data: {},
-            success: function(data) {
-                that.revSavesLeft = data.revision_ids.length
-                if (that.revSavesLeft) {
-                    data.revision_ids.forEach(function(revId){
-                        that.updateRevision(revId)
-                    })
+            success: data => {
+                this.revSavesLeft = data.revision_ids.length
+                if (this.revSavesLeft) {
+                    data.revision_ids.forEach(revId => this.updateRevision(revId))
                 } else {
-                    that.done()
+                    this.done()
                 }
             }
         })
     }
 
     updateRevision(id) {
-        let that = this
-        JSZipUtils.getBinaryContent(`/document/get_revision/${id}/`, function(err, fidusFile) {
+        JSZipUtils.getBinaryContent(
+            `/document/get_revision/${id}/`,
+            (err, fidusFile) => {
             let zipfs = new JSZip()
-            zipfs.loadAsync(fidusFile).then(function(){
+            zipfs.loadAsync(fidusFile).then(() => {
                 let openedFiles = {}, p = []
                 // We don't open other files as they currently don't need to be changed.
                 let fileNames = ["filetype-version","document.json","bibliography.json"]
 
-                fileNames.forEach((fileName) => {
+                fileNames.forEach(fileName => {
                     p.push(zipfs.files[fileName].async("text").then((fileContent) => {
                         openedFiles[fileName] = fileContent
                     }))
                 })
-                Promise.all(p).then(function(){
+                Promise.all(p).then(() => {
                     let filetypeVersion = openedFiles["filetype-version"]
                     if (filetypeVersion !== FW_FILETYPE_VERSION) {
                         let doc = window.JSON.parse(openedFiles["document.json"])
@@ -218,11 +193,11 @@ export class DocMaintenance {
                         zipfs.file("filetype-version", FW_FILETYPE_VERSION)
                         zipfs.file("document.json", window.JSON.stringify(newDoc))
                         zipfs.file("bibliography.json", window.JSON.stringify(newBib))
-                        that.saveRevision(id, zipfs)
+                        this.saveRevision(id, zipfs)
                     } else {
-                        that.revSavesLeft--
-                        if (that.revSavesLeft===0) {
-                            that.done()
+                        this.revSavesLeft--
+                        if (this.revSavesLeft===0) {
+                            this.done()
                         }
                     }
 
@@ -232,28 +207,25 @@ export class DocMaintenance {
     }
 
     saveRevision(id, zipfs) {
-        let that = this
-        zipfs.generateAsync({type:"blob"}).then(function(blob) {
+        zipfs.generateAsync({type:"blob"}).then(blob => {
             let data = new window.FormData()
             data.append('file', blob, 'some_file.fidus')
             data.append('id', id)
 
             jQuery.ajax({
                 url: '/document/maintenance/update_revision/',
-                data: data,
+                data,
                 type: 'POST',
                 cache: false,
                 contentType: false,
                 processData: false,
                 crossDomain: false, // obviates need for sameOrigin test
-                beforeSend: function(xhr, settings) {
-                    xhr.setRequestHeader("X-CSRFToken", csrfToken)
-                },
-                success: function() {
+                beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
+                success: () => {
                     addAlert('success', gettext('The revision has been updated: ') + id)
-                    that.revSavesLeft--
-                    if (that.revSavesLeft===0) {
-                        that.done()
+                    this.revSavesLeft--
+                    if (this.revSavesLeft===0) {
+                        this.done()
                     }
                 }
             })

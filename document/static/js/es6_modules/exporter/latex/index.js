@@ -1,15 +1,16 @@
 import {createSlug, getDatabasesIfNeeded} from "../tools/file"
 import {removeHidden} from "../tools/doc-contents"
 import {LatexExporterConvert} from "./convert"
-import {zipFileCreator} from "../tools/zip"
+import {ZipFileCreator} from "../tools/zip"
 import {BibLatexExporter} from "biblatex-csl-converter"
+import {readMe} from "./readme"
+import download from "downloadjs"
 /*
  Exporter to LaTeX
 */
 
 export class LatexExporter {
     constructor(doc, bibDB, imageDB) {
-        let that = this
         this.doc = doc
         this.bibDB = bibDB
         this.imageDB = imageDB
@@ -18,13 +19,14 @@ export class LatexExporter {
         this.textFiles = []
         this.httpFiles = []
 
-        getDatabasesIfNeeded(this, doc).then(function(){
-            that.init()
-        })
+        getDatabasesIfNeeded(this, doc).then(
+            () => {
+                this.init()
+            }
+        )
     }
 
     init() {
-        let that = this
         this.zipFileName = `${createSlug(this.doc.title)}.latex.zip`
         this.docContents = removeHidden(this.doc.contents)
         this.converter = new LatexExporterConvert(this, this.imageDB, this.bibDB)
@@ -34,14 +36,24 @@ export class LatexExporter {
             this.textFiles.push({filename: 'bibliography.bib', contents: bibExport.output})
         }
         this.textFiles.push({filename: 'document.tex', contents: this.conversion.latex})
-        this.conversion.imageIds.forEach(function(id){
-            that.httpFiles.push({
-                filename: that.imageDB.db[id].image.split('/').pop(),
-                url: that.imageDB.db[id].image
-            })
-        })
+        this.textFiles.push({filename: 'README.txt', contents: readMe})
+        this.conversion.imageIds.forEach(
+            id => {
+                this.httpFiles.push({
+                    filename: this.imageDB.db[id].image.split('/').pop(),
+                    url: this.imageDB.db[id].image
+                })
+            }
+        )
 
-        zipFileCreator(this.textFiles, this.httpFiles, this.zipFileName)
+        let zipper = new ZipFileCreator(
+            this.textFiles,
+            this.httpFiles
+        )
+
+        zipper.init().then(
+            blob => download(blob, this.zipFileName, 'application/zip')
+        )
     }
 
 

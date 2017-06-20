@@ -23,7 +23,7 @@ All of Fidus Writer's original code is licensed under the GNU AFFERO GENERAL PUB
 Simple install
 ----
 
-The following are instructions working on Ubuntu 14.04. Make adjustments as needed for other systems.
+The following are instructions working on Ubuntu 16.04. Make adjustments as needed for other systems.
 
 **Please make sure, that you only use root permissions where advised. Otherwise, the installation will fail!**
 
@@ -165,3 +165,7 @@ Advanced options
   > `./manage.py collectstatic`  
 
   7. Update all the documents again to the latest document version. An administrator needs to navigate to `/document/maintenance/` on your server using a browser.
+
+### More configurations options
+
+Check the Wiki: https://github.com/fiduswriter/fiduswriter/wiki/Advanced-Configuration-on-Ubuntu

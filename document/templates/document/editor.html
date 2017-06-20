@@ -10,11 +10,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script type="text/javascript">
             var staticUrl = '{{ STATIC_URL }}';
-            {% if OJS_URL %}
-                var ojsUrl = '{{ OJS_URL }}';
-            {% else %}
-                var ojsUrl = false;
-            {% endif %}
             {% if WS_PORT %}
                 var websocketPort = ':'+{{WS_PORT}};
             {% else %}
@@ -75,6 +70,8 @@
             <link rel="stylesheet" href="{{ STATIC_URL }}css/access-rights-dialog.css" type="text/css">
             <!-- Citation dialog style -->
             <link rel="stylesheet" href="{{ STATIC_URL }}css/citation-dialog.css" type="text/css">
+            <!-- review style -->
+            <link rel="stylesheet" href="{{ STATIC_URL }}css/review.css" type="text/css">
 
         {% endcompress %}
 
@@ -94,8 +91,6 @@
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/dropkick.css" />
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/dropkick.min.js"></script>
         {% compress js %}
-            <!-- citeproc -->
-            <script type="text/javascript" src="{{ CITEPROC_URL }}"></script>
             <!-- Editor  -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/editor.es5.js"></script>
         {% endcompress %}
@@ -112,7 +107,7 @@
                 <div>
                     <span class="header-nav-item" title="{% trans "File handling" %}">{% trans "File" %}</span>
                     <div class="fw-pulldown fw-left">
-                        <ul>
+                        <ul id="file-menu">
                             <li>
                                 <span class="fw-pulldown-item share icon-export" title="{% trans "Share the document with other users." %}"> {% trans "Share" %} </span>
                             </li>
@@ -131,11 +126,6 @@
                             <li>
                                 <span class="fw-pulldown-item print icon-print" title="{% trans "Either print or create a PDF using your browser print dialog" %}"> {% trans "Print/PDF" %} </span>
                             </li>
-                            {% if EXPERIMENTAL and OJS_URL %}
-                                <li>
-                                    <span class="fw-pulldown-item submit-ojs icon-search" title="{% trans "submit the paper to ojs" %}"> {% trans "Submit paper" %} </span>
-                                </li>
-                            {% endif %}
                         </ul>
                     </div>
                 </div>
@@ -350,6 +340,13 @@
                         <button class="fw-button fw-light fw-large fw-square edit-button" id="button-cite" title="{% trans "Cite" %}">
                             <span class="ui-button-text">
                                 <i class="icon-book"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="toolbarh-line ui-buttonset">
+                        <button class="fw-button fw-light fw-large fw-square edit-button" id="button-h-line" title="{% trans "Horizontal Line" %}">
+                            <span class="ui-button-text">
+                                <i class="icon-h-line"></i>
                             </span>
                         </button>
                     </div>

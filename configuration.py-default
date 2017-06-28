@@ -99,7 +99,7 @@ VISIBILITY = {
 # )
 
 # A list of allowed hostnames of this Fidus Writer installation
-ALLOWED_HOSTS = os.environ['HOSTNAME']
+ALLOWED_HOSTS = ['*']
 
 
 # Location of commonly used Js libraries. Here the local version is given.

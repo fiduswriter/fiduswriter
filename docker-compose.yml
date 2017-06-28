@@ -1,0 +1,38 @@
+version: '3'
+services:
+    db:
+        image: postgres
+        ports:
+            - 6432:6432
+        volumes:
+            - db-data:/var/lib/postgresql/data
+        environment:
+            POSTGRES_PASSWORD: password
+            POSTGRES_USER: user
+            POSTGRES_DB: name
+    
+    fiduswriter:
+        image: dalareo/fiduswriter
+        #build: .
+        ports:
+            - 8000:8000
+        links:
+            - db
+        volumes:
+            - data:/data
+        environment:
+            # TEST_SERVER: True
+            CONTACT_MAIL: user@example.com
+            DB_NAME: name
+            DB_USER: user
+            DB_PASS: password
+            SMTP_HOST: ***REMOVED***
+            SMTP_USER: ***REMOVED***
+            SMTP_PASS: ***REMOVED***
+            SMTP_PORT: 587
+            # TLS_TRUE: 'False'
+            EMAIL_FROM: ***REMOVED***
+
+volumes:
+    data:
+    db-data:

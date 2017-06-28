@@ -26,12 +26,12 @@ services:
             DB_NAME: name
             DB_USER: user
             DB_PASS: password
-            SMTP_HOST: smtp.zoho.com
-            SMTP_USER: david@educaas.io
-            SMTP_PASS: 28Jl2012
-            SMTP_PORT: 587
+            SMTP_HOST: smtp.example.com
+            SMTP_USER: user@example.com
+            SMTP_PASS: password
+            SMTP_PORT: 25
             # TLS_TRUE: 'False'
-            EMAIL_FROM: david@educaas.io
+            EMAIL_FROM: user@example.com
 
 volumes:
     data:

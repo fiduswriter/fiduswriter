@@ -32,6 +32,7 @@ services:
             SMTP_PORT: 25
             # TLS_TRUE: 'False'
             EMAIL_FROM: user@example.com
+            HOSTNAME: fidus.example.com
 
 volumes:
     data:

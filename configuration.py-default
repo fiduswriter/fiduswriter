@@ -18,7 +18,7 @@ SERVER_INFO = {
     'EXPERIMENTAL': False,
     # This is the contact email that will be shown in various places all over
     # the site.
-    'CONTACT_EMAIL': 'mail@email.com',
+    'CONTACT_EMAIL': os.environ['CONTACT_EMAIL'],
     # If websockets is running on a non-standard port, add it here:
     'WS_PORT': False,
 }
@@ -36,21 +36,20 @@ ADMINS = (
 )
 
 MANAGERS = ADMINS
-
-# DATABASES = {
-#    'default': {
+DATABASES = {
+   'default': {
 # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-#        'ENGINE': 'django.db.backends.',
+       'ENGINE': 'django.db.backends.postgresql_psycopg2',
 # Or path to database file if using sqlite3.
-#        'NAME': '',
+       'NAME': os.environ['DB_NAME'],
 # Not used with sqlite3.
-#        'USER': '',
+       'USER': os.environ['DB_USER'],
 # Not used with sqlite3.
-#        'PASSWORD': '',
+       'PASSWORD': os.environ['DB_PASS'],
 # Set to empty string for localhost. Not used with sqlite3.
-#        'HOST': '',
+       'HOST': 'db',
 # Set to empty string for default. Not used with sqlite3.
-#        'PORT': '',
+       'PORT': '5432',
 # The max time in seconds a database connection should wait for a subsequent
 # request.
 #        'CONN_MAX_AGE': 15
@@ -58,14 +57,14 @@ MANAGERS = ADMINS
 # }
 
 # Send emails using an SMTP server
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'localhost'
-# EMAIL_HOST_USER = ''
-# EMAIL_HOST_PASSWORD = ''
-# EMAIL_PORT = 25
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend',
+EMAIL_HOST = os.environ['SMTP_HOST'],
+EMAIL_HOST_USER = os.environ['SMTP_USER'],
+EMAIL_HOST_PASSWORD = os.environ['SMTP_PASS'],
+EMAIL_PORT = os.environ['SMTP_PORT'],
 # EMAIL_SUBJECT_PREFIX = '[Fidus Writer]'
-# EMAIL_USE_TLS = False
-# DEFAULT_FROM_EMAIL = 'mail@email.com' # For messages to end users
+EMAIL_USE_TLS = os.environ['TLS_TRUE'],
+DEFAULT_FROM_EMAIL = os.environ['EMAIL_FROM'], # For messages to end users
 # SERVER_EMAIL = 'mail@email.com' # For messages to server administrators
 
 

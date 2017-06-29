@@ -1,28 +1,28 @@
-import {Keymap} from "prosemirror-old/dist/edit"
+import {keyName} from "w3c-keyname"
 
 export class ModMenusKeyBindings {
     constructor(mod) {
         mod.keyBindings = this
         this.mod = mod
-
-        this.keymap = this.mapKeys()
         this.bind()
     }
 
-    mapKeys() {
-        return new Keymap({
-            "Ctrl-P": () => {this.mod.actions.print()},
-            "Ctrl-S": () => {this.mod.actions.saveRevision()},
-            "Shift-Ctrl-/": () => {this.mod.actions.showKeyBindings()}
-        })
-    }
-
     keydown(event) {
-        let name = Keymap.keyName(event)
-        let action = this.keymap.lookup(name)
-        if (action) {
-            event.preventDefault()
-            action()
+        let name = keyName(event)
+
+        switch(name) {
+            case "Ctrl-P":
+                this.mod.actions.print()
+                event.preventDefault()
+                break
+            case "Ctrl-S":
+                this.mod.actions.saveRevision()
+                event.preventDefault()
+                break
+            case "Shift-Ctrl-/":
+                this.mod.actions.showKeyBindings()
+                event.preventDefault()
+                break
         }
     }
 

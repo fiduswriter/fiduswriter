@@ -9,7 +9,7 @@ export class CitationDialog {
         this.editor = mod.editor
         this.initialReferences = []
         this.initialFormat = 'autocite'
-        this.node = this.editor.currentPm.selection.node
+        this.node = this.editor.currentView.state.selection.node
         this.dialog = false
         this.diaButtons = []
         this.submitButtonText = gettext('Insert')
@@ -31,7 +31,8 @@ export class CitationDialog {
             this.diaButtons.push({
                 text: gettext('Remove'),
                 click: () => {
-                    this.editor.currentPm.tr.deleteSelection().apply()
+                    let transaction = this.editor.currentView.state.tr.deleteSelection()
+                    this.editor.currentView.dispatch(transaction)
                     this.dialog.dialog('close')
                 },
                 class: 'fw-button fw-orange'
@@ -266,10 +267,11 @@ export class CitationDialog {
             // Nothing has been changed, so we just close the dialog again
             return true
         }
-        let nodeType =  this.editor.currentPm.schema.nodes['citation']
-         this.editor.currentPm.tr.replaceSelection(
+        let nodeType =  this.editor.currentView.state.schema.nodes['citation']
+        let transaction = this.editor.currentView.state.tr.replaceSelection(
             nodeType.createAndFill({format, references})
-        ).apply()
+        )
+        this.editor.currentView.dispatch(transaction)
         return true
     }
 }

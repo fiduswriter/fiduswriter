@@ -1,5 +1,7 @@
 import {CitationDialog, FigureDialog, LinkDialog, TableDropdown, MathDialog} from "./dialogs"
-import {commands} from "prosemirror-old/dist/edit/commands"
+import {setBlockType, wrapIn, toggleMark} from "prosemirror-commands"
+import {wrapInList} from "prosemirror-schema-list"
+import {undo, redo} from "prosemirror-history"
 
 /* Bindings for the toolbar menu */
 export class ModMenusToolbar {
@@ -12,7 +14,7 @@ export class ModMenusToolbar {
 
     executeAction(event, editFunction) {
         event.preventDefault()
-        if (this.mod.editor.currentPm.hasFocus()) {
+        if (this.mod.editor.currentView.hasFocus()) {
             editFunction()
         }
     }
@@ -63,16 +65,16 @@ export class ModMenusToolbar {
             }
 
             let stillLooking = true
-            that.mod.editor.pm.doc.descendants((node, pos) => {
+            that.mod.editor.view.state.doc.descendants((node, pos) => {
                 if (stillLooking && node.type.name === 'heading' && node.attrs.id === id) {
-                    that.mod.editor.scrollIntoView(that.mod.editor.pm, pos)
+                    that.mod.editor.scrollIntoView(that.mod.editor.view, pos)
                     stillLooking = false
                 }
             })
             if (stillLooking) {
-                that.mod.editor.mod.footnotes.fnPm.doc.descendants((node, pos) => {
+                that.mod.editor.mod.footnotes.fnView.state.doc.descendants((node, pos) => {
                     if (stillLooking && node.type.name === 'heading' && node.attrs.id === id) {
-                        that.mod.editor.scrollIntoView(that.mod.editor.mod.footnotes.fnPm, pos)
+                        that.mod.editor.scrollIntoView(that.mod.editor.mod.footnotes.fnView, pos)
                         stillLooking = false
                     }
                 })
@@ -84,7 +86,7 @@ export class ModMenusToolbar {
         jQuery(document).on('mousedown', '.toolbarheadings label', function(event) {
 
             let existingIds = []
-            that.mod.editor.pm.doc.descendants(node => {
+            that.mod.editor.view.state.doc.descendants(node => {
                 if (node.type.name === 'heading') {
                     existingIds.push(node.attrs.id)
 
@@ -118,10 +120,10 @@ export class ModMenusToolbar {
 
             that.executeAction(event, () => {
 
-                let block = that.mod.editor.currentPm.schema.nodes[blockType[0]]
+                let block = that.mod.editor.currentView.state.schema.nodes[blockType[0]]
 
-                let command = commands.setBlockType(block, blockType[1])
-                command(that.mod.editor.currentPm, true)
+                let command = setBlockType(block, blockType[1])
+                command(that.mod.editor.currentView.state, tr => this.mod.editor.currentView.dispatch(tr))
 
             })
 
@@ -131,69 +133,73 @@ export class ModMenusToolbar {
         jQuery(document).on('mousedown', '#button-ol', event => {
             this.executeAction(event, () => {
 
-                let node = this.mod.editor.currentPm.schema.nodes['ordered_list']
+                let node = this.mod.editor.currentView.state.schema.nodes['ordered_list']
 
-                let command = commands.wrapInList(node)
-                command(this.mod.editor.currentPm, true)
+                let command = wrapInList(node)
+                command(that.mod.editor.currentView.state, tr => this.mod.editor.currentView.dispatch(tr))
 
             })
         })
 
         jQuery(document).on('mousedown', '#button-h-line:not(.disabled)', event => {
-            let pm = this.mod.editor.currentPm
-            pm.tr.replaceSelection(pm.schema.node("horizontal_rule")).apply()
+            let view = this.mod.editor.currentView,
+                state = view.state
+            view.dispatch(
+                state.tr.replaceSelection(state.schema.node("horizontal_rule"))
+            )
         })
 
         jQuery(document).on('mousedown', '#button-ul:not(.disabled)', event => {
             this.executeAction(event, () => {
-                let node = this.mod.editor.currentPm.schema.nodes['bullet_list']
-                let command = commands.wrapInList(node)
-                command(this.mod.editor.currentPm, true)
+                let node = this.mod.editor.currentView.state.schema.nodes['bullet_list']
+                let command = wrapInList(node)
+                command(that.mod.editor.currentView.state, tr => this.mod.editor.currentView.dispatch(tr))
             })
         })
 
         jQuery(document).on('mousedown', '#button-blockquote:not(.disabled)', event => {
             this.executeAction(event, () => {
-                let node = this.mod.editor.currentPm.schema.nodes['blockquote']
-                let command = commands.wrapIn(node)
-                command(this.mod.editor.currentPm, true)
+                let node = this.mod.editor.currentView.state.schema.nodes['blockquote']
+                let command = wrapIn(node)
+                command(that.mod.editor.currentView.state, tr => this.mod.editor.currentView.dispatch(tr))
             })
         })
 
         jQuery(document).on('mousedown', '#button-footnote:not(.disabled)', event => {
             this.executeAction(event, () => {
-                let nodeType = this.mod.editor.currentPm.schema.nodes['footnote']
-                this.mod.editor.pm.tr.replaceSelection(nodeType.createAndFill()).apply()
+                let nodeType = this.mod.editor.view.state.schema.nodes['footnote']
+                let transaction = this.mod.editor.view.state.tr.replaceSelection(nodeType.createAndFill())
+                this.mod.editor.view.dispatch(transaction)
             })
         })
         // strong/bold
         jQuery(document).on('mousedown', '#button-bold:not(.disabled)', event => {
             this.executeAction(event, () => {
-                let mark = this.mod.editor.currentPm.schema.marks['strong']
-                let command = commands.toggleMark(mark)
-                command(this.mod.editor.currentPm, true)
+                let mark = this.mod.editor.currentView.state.schema.marks['strong']
+                let command = toggleMark(mark)
+                command(that.mod.editor.currentView.state, tr => this.mod.editor.currentView.dispatch(tr))
             })
         })
         // emph/italics
         jQuery(document).on('mousedown', '#button-italic:not(.disabled)', event => {
             this.executeAction(event, () => {
-                let mark = this.mod.editor.currentPm.schema.marks['em']
-                let command = commands.toggleMark(mark)
-                command(this.mod.editor.currentPm, true)
+                let mark = this.mod.editor.currentView.state.schema.marks['em']
+                let command = toggleMark(mark)
+                command(that.mod.editor.currentView.state, tr => this.mod.editor.currentView.dispatch(tr))
             })
         })
 
         jQuery(document).on('mousedown', '#button-undo:not(.disabled)', event => {
             this.executeAction(
                 event,
-                () => commands.undo(this.mod.editor.currentPm, true)
+                () => undo(this.mod.editor.currentView.state, tr => this.mod.editor.currentView.dispatch(tr))
             )
         })
 
         jQuery(document).on('mousedown', '#button-redo:not(.disabled)', event => {
             this.executeAction(
                 event,
-                () => commands.redo(this.mod.editor.currentPm, true)
+                () => redo(this.mod.editor.currentView.state, tr => this.mod.editor.currentView.dispatch(tr))
             )
         })
         jQuery(document).on('mousedown', '#button-figure:not(.disabled)', event => {

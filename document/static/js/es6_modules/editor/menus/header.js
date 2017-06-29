@@ -81,28 +81,32 @@ export class ModMenusHeader {
           // Document Style switching
           jQuery(document).on('click', '.documentstyle-menu:not(.disabled)', () => {
               jQuery('span.docstyle.selected').removeClass('selected')
-              let docStyle = this.mod.editor.pm.doc.firstChild.attrs.documentstyle
+              let docStyle = this.mod.editor.view.state.doc.firstChild.attrs.documentstyle
               jQuery(`span.docstyle[data-docstyle="${docStyle}"]`).addClass('selected')
           })
           jQuery(document).on('mousedown', "#header-navigation .docstyle:not(.disabled)", function() {
-              let article = that.mod.editor.pm.doc.firstChild
+              let article = that.mod.editor.view.state.doc.firstChild
               let attrs = _.clone(article.attrs)
               attrs.documentstyle = jQuery(this).attr('data-docstyle')
-              that.mod.editor.pm.tr.setNodeType(0, false, attrs).apply()
+              that.mod.editor.view.dispatch(
+                  that.mod.editor.view.state.tr.setNodeType(0, false, attrs)
+              )
               return false
           })
 
           // Citation Style switching
           jQuery(document).on('click', '.citationstyle-menu:not(.disabled)', () => {
               jQuery('span.citationstyle.selected').removeClass('selected')
-              let citationstyle = this.mod.editor.pm.doc.firstChild.attrs.citationstyle
+              let citationstyle = this.mod.editor.view.state.doc.firstChild.attrs.citationstyle
               jQuery(`span.citationstyle[data-citationstyle="${citationstyle}"]`).addClass('selected')
           })
           jQuery(document).on('mousedown', "#header-navigation .citationstyle:not(.disabled)", function() {
-              let article = that.mod.editor.pm.doc.firstChild
+              let article = that.mod.editor.view.state.doc.firstChild
               let attrs = _.clone(article.attrs)
               attrs.citationstyle = jQuery(this).attr('data-citationstyle')
-              that.mod.editor.pm.tr.setNodeType(0, false, attrs).apply()
+              that.mod.editor.view.dispatch(
+                  that.mod.editor.view.state.tr.setNodeType(0, false, attrs)
+              )
 
               return false
           })
@@ -124,21 +128,23 @@ export class ModMenusHeader {
           // Paper size switching
           jQuery(document).on('click', '.papersize-menu:not(.disabled)', () => {
               jQuery('span.papersize.selected').removeClass('selected')
-              let papersize = this.mod.editor.pm.doc.firstChild.attrs.papersize
+              let papersize = this.mod.editor.view.state.doc.firstChild.attrs.papersize
               jQuery(`span.papersize[data-papersize="${papersize}"]`).addClass('selected')
           })
           jQuery(document).on('mousedown', "#header-navigation .papersize:not(.disabled)", function() {
-              let article = that.mod.editor.pm.doc.firstChild
+              let article = that.mod.editor.view.state.doc.firstChild
               let attrs = _.clone(article.attrs)
               attrs.papersize = jQuery(this).attr('data-papersize')
-              that.mod.editor.pm.tr.setNodeType(0, false, attrs).apply()
+              that.mod.editor.view.dispatch(
+                  that.mod.editor.view.state.tr.setNodeType(0, false, attrs)
+              )
 
               return false
           })
 
           jQuery(document).on('click', '.metadata-menu:not(.disabled)', () => {
               jQuery('span.metadata-menu-item.selected').removeClass('selected')
-              this.mod.editor.pm.doc.firstChild.forEach(node => {
+              this.mod.editor.view.state.doc.firstChild.forEach(node => {
                   if (node.type.isMetadata && !node.attrs.hidden) {
                       jQuery(`span.metadata-menu-item.metadata-${node.type.name}`).addClass('selected')
                   }
@@ -151,16 +157,16 @@ export class ModMenusHeader {
           jQuery(document).on('click', '.metadata-menu-item:not(.disabled)', function () {
               let theMetadata = jQuery(this).attr('data-metadata')
               let offset, attrs
-              that.mod.editor.pm.doc.firstChild.forEach(function(node, nodeOffset){
+              that.mod.editor.view.state.doc.firstChild.forEach(function(node, nodeOffset){
                   if (node.type.name===theMetadata) {
                       offset = nodeOffset + 1 // We need to add one as we are looking at offset values within the firstChild
                       attrs = _.clone(node.attrs)
                       attrs.hidden = (!attrs.hidden)
                   }
               })
-
-              that.mod.editor.pm.tr.setNodeType(offset, false, attrs).apply()
-
+              that.mod.editor.view.dispatch(
+                  that.mod.editor.view.state.tr.setNodeType(offset, false, attrs)
+              )
           })
 
           jQuery(document).on('mousedown', '.share:not(.disabled)', () => {

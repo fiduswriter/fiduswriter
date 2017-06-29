@@ -51,6 +51,8 @@ export class MathDialog {
             text: this.submitMessage,
             class: 'fw-button fw-dark insert-math',
             click: (event) => {
+                let view = this.editor.currentView,
+                    state = view.state
                 event.preventDefault()
 
                 if (!this.isDialogInitialized) {
@@ -62,7 +64,7 @@ export class MathDialog {
                 if ((new RegExp(/^\s*$/)).test(this.equation)) {
                     // The math input is empty. Delete a math node if it exist. Then close the dialog.
                     if (this.isMathInside) {
-                        this.editor.currentPm.tr.deleteSelection().apply()
+                        view.dispatch(state.tr.deleteSelection())
                     }
                     this.dialog.dialog('close')
                     return
@@ -70,10 +72,12 @@ export class MathDialog {
                     this.dialog.dialog('close')
                     return
                 }
-                let nodeType = this.editor.currentPm.schema.nodes['equation']
-                this.editor.currentPm.tr.replaceSelection(nodeType.createAndFill({
-                    equation: this.equation,
-                })).apply()
+                let nodeType = state.schema.nodes['equation']
+                view.dispatch(
+                    state.tr.replaceSelection(nodeType.createAndFill({
+                        equation: this.equation
+                    }))
+                )
 
                 this.dialog.dialog('close')
             }
@@ -122,7 +126,7 @@ export class MathDialog {
 
     show() {
         //get selected node
-        this.node = this.editor.currentPm.selection.node
+        this.node = this.editor.currentView.state.selection.node
         //if dialog is initialized destroy
         this.destroy()
         this.initializeButtons()

@@ -91,7 +91,7 @@ export class LiteralFieldForm{
             props: {
                 decorations: (state) => {
                     let doc = state.doc
-                    if (doc.childCount == 1 && doc.firstChild.isTextblock && doc.firstChild.content.size == 0) {
+                    if (doc.childCount === 1 && doc.firstChild.isTextblock && doc.firstChild.content.size === 0) {
                         let placeHolder = document.createElement('span')
                         placeHolder.classList.add('placeholder')
                         placeHolder.setAttribute('data-placeholder', this.placeHolder)

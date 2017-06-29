@@ -14,7 +14,7 @@ export class ModMenus {
         new ModMenusToolbar(this)
         new ModMenusActions(this)
         new ModMenusKeyBindings(this)
-        new ModMenusUpdateUI(this)
+        //new ModMenusUpdateUI(this)
     }
 
 }

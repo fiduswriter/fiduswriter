@@ -1,5 +1,5 @@
-import {collabEditing} from "prosemirror-old/dist/collab"
-
+import {getVersion, sendableSteps} from "prosemirror-collab"
+import fastdom from "fastdom"
 
 export class ModCollabCarets {
     constructor(mod) {
@@ -46,18 +46,18 @@ export class ModCollabCarets {
         return {
             id: this.mod.editor.user.id,
             sessionId: this.mod.editor.docInfo.session_id,
-            from: this.mod.editor.currentPm.selection.from,
-            to: this.mod.editor.currentPm.selection.to,
-            head: _.isFinite(this.mod.editor.currentPm.selection.head) ?
-                this.mod.editor.currentPm.selection.head : this.mod.editor.currentPm.selection.to,
+            from: this.mod.editor.currentView.state.selection.from,
+            to: this.mod.editor.currentView.state.selection.to,
+            head: _.isFinite(this.mod.editor.currentView.state.selection.head) ?
+                this.mod.editor.currentView.state.selection.head : this.mod.editor.currentView.state.selection.to,
             // Whether the selection is in the footnote or the main editor
-            pm: this.mod.editor.currentPm === this.mod.editor.pm ? 'pm' : 'fnPm'
+            view: this.mod.editor.currentView === this.mod.editor.view ? 'view' : 'fnView'
         }
     }
 
     sendSelectionChange() {
-        let pmCollab = collabEditing.get(this.mod.editor.currentPm)
-        if (pmCollab.unconfirmedMaps.length > 0) {
+        let toSend = sendableSteps(this.mod.editor.currentView.state)
+        if (toSend) {
             // TODO: Positions really need to be reverse-mapped through all
             // unconfirmed maps. As long as we don't do this, we just don't send
             // anything if there are unconfirmed maps to avoid potential problems.
@@ -67,31 +67,32 @@ export class ModCollabCarets {
         this.mod.editor.mod.serverCommunications.send({
             type: 'selection_change',
             caret_position: this.getCaretPosition(),
-            diff_version: this.mod.editor.pmCollab.version
+            diff_version: getVersion(this.mod.editor.view.state)
         })
     }
 
     receiveSelectionChange(data) {
         this.updateCaret(data.caret_position)
-        let pm = data.caret_position.pm === 'pm' ? this.mod.editor.pm : this.mod.editor.mod.footnotes.fnPm
-        pm.scheduleDOMUpdate(() => this.updatePositionCSS())
+        let pm = data.caret_position.view === 'view' ? this.mod.editor.view : this.mod.editor.mod.footnotes.fnView
+        this.updatePositionCSS()
     }
 
     // Update the position of a collaborator's caret
     updateCaret(caretPosition){
-        let participant = _.findWhere(this.mod.participants,{id:caretPosition.id})
+        let participant = _.findWhere(this.mod.participants, {id:caretPosition.id})
         if (!participant) {
-            // participant (still unknown). Ignore.
+            // participant (still) unknown. Ignore.
             return
         }
         let colorId = this.mod.colorIds[caretPosition.id]
         let posFrom = caretPosition.from
         let posTo = caretPosition.to
         let posHead = caretPosition.head
-        let pm = caretPosition.pm === 'pm' ? this.mod.editor.pm : this.mod.editor.mod.footnotes.fnPm
+        let view = caretPosition.view === 'view' ? this.mod.editor.view : this.mod.editor.mod.footnotes.fnView
         // Map the positions through all still unconfirmed changes
-        let pmCollab = collabEditing.get(pm)
-        pmCollab.unconfirmedMaps.forEach(map => {
+        let toSend = sendableSteps(view.state)
+        toSend.steps.forEach(step => {
+            let map = step.getMap()
             posFrom = map.map(posFrom)
             posTo = map.map(posTo)
             posHead = map.map(posHead)
@@ -152,33 +153,33 @@ export class ModCollabCarets {
 
     updatePositionCSS() {
         // 1st write phase
-        return () => {
+        fastdom.measure(() => {
             // 1st read phase
             // This phase + next write pahse are used for footnote placement,
             // so we cannot find carets in the footnotes before the next read
             // phase
-            return () => {
+            fastdom.mutate(() => {
                 // 2nd write phase
-                return () => {
+                fastdom.measure(() => {
                     // 2nd read phase
                     let positionCSS = ''
                     for (let sessionId in this.caretPositions) {
                         let caretPosition = this.caretPositions[sessionId]
-                        let coords = caretPosition.pm.coordsAtPos(caretPosition.headRange.from)
+                        let coords = caretPosition.view.coordsAtPos(caretPosition.headRange.from)
                         let offsets = this.caretContainer.getBoundingClientRect()
                         let height = coords.bottom - coords.top
                         let top = coords.top - offsets.top
                         let left = coords.left - offsets.left
                         positionCSS += `#caret-${sessionId} {top: ${top}px; left: ${left}px; height: ${height}px;}`
                     }
-                    return () => {
+                    fastdom.mutate(() => {
                         // 3rd write phase
                         if (this.caretPlacementStyle.innerHTML !== positionCSS) {
                             this.caretPlacementStyle.innerHTML = positionCSS
                         }
-                    }
-                }
-            }
-        }
+                    })
+                })
+            })
+        })
     }
 }

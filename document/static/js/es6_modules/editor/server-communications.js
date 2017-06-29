@@ -1,3 +1,5 @@
+import {sendableSteps, getVersion} from "prosemirror-collab"
+
 /* Sets up communicating with server (retrieving document,
   saving, collaboration, etc.).
  */
@@ -40,7 +42,8 @@ export class ModServerCommunications {
             window.setTimeout(() => {
                 this.createWSConnection()
             }, 2000)
-            if (this.editor.pmCollab.hasSendableSteps()) {
+            let toSend = sendableSteps(this.editor.view.state)
+            if (toSend) {
                 jQuery('#unobtrusive_messages').html('<span class="warn">'+gettext('Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect...')+'</span>')
             } else {
                 jQuery('#unobtrusive_messages').html(gettext('Disconnected. Attempting to reconnect...'))
@@ -97,7 +100,7 @@ export class ModServerCommunications {
                 break
             case 'confirm_diff_version':
                 this.editor.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
-                if (data.diff_version !== this.editor.pmCollab.version) {
+                if (data.diff_version !== getVersion(this.editor.view.state)) {
                     this.editor.mod.collab.docChanges.checkDiffVersion()
                     return
                 }
@@ -105,11 +108,11 @@ export class ModServerCommunications {
                 break
             case 'selection_change':
                 this.editor.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
-                if (data.diff_version !== this.editor.pmCollab.version) {
+                if (data.diff_version !== getVersion(this.editor.view.state)) {
                     this.editor.mod.collab.docChanges.checkDiffVersion()
                     return
                 }
-                this.editor.mod.collab.carets.receiveSelectionChange(data)
+                //this.editor.mod.collab.carets.receiveSelectionChange(data)
                 break
             case 'diff':
                 this.editor.mod.collab.docChanges.receiveFromCollaborators(data)

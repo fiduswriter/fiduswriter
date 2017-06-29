@@ -56,10 +56,10 @@ export class ModMenusUpdateUI {
     }
 
     updateUI() {
-        let pm = this.mod.editor.pm, fnPm = this.mod.editor.mod.footnotes.fnPm,
-          currentPm = this.mod.editor.currentPm
+        let view = this.mod.editor.view, fnView = this.mod.editor.mod.footnotes.fnView,
+          currentView = this.mod.editor.currentView
 
-        const article = pm.doc.firstChild
+        const article = view.state.doc.firstChild
         // We count on the the title node being the first one in the article
         const documentTitle = article.firstChild.type.name === 'title' &&
             article.firstChild.textContent.length > 0 ?
@@ -69,7 +69,7 @@ export class ModMenusUpdateUI {
         jQuery('title').html('Fidus Writer - ' + documentTitle)
         jQuery('#header h1').html(documentTitle)
 
-        const marks = currentPm.activeMarks()
+        const marks = currentView.state.storedMarks
         const strong = marks.some(
             mark => mark.type.name === 'strong'
         )

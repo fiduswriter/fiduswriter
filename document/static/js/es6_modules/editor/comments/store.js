@@ -32,18 +32,18 @@ export class ModCommentStore {
                 this.mod.editor.user.avatar,
                 new Date().getTime(),
                 ''),
-            referrer: this.mod.editor.pm.markRange(
-                this.mod.editor.pm.selection.from,
-                this.mod.editor.pm.selection.to,
+            /*referrer: this.mod.editor.pm.markRange(
+                this.mod.editor.view.state.selection.from,
+                this.mod.editor.view.state.selection.to,
                 {className: 'active-comment'}
-            ),
+            ),*/
             inDOM: false
         }
     }
 
     removeCommentDuringCreation() {
         if (this.commentDuringCreation) {
-            this.mod.editor.pm.removeRange(this.commentDuringCreation.referrer)
+            //this.mod.editor.pm.removeRange(this.commentDuringCreation.referrer)
             this.commentDuringCreation = false
         }
     }
@@ -56,8 +56,8 @@ export class ModCommentStore {
             type: "create",
             id: id
         })
-        let markType = this.mod.editor.pm.schema.marks.comment.create({id})
-        this.mod.editor.pm.tr.addMark(posFrom, posTo, markType).apply()
+        let markType = this.mod.editor.view.state.schema.marks.comment.create({id})
+        this.mod.editor.view.state.tr.addMark(posFrom, posTo, markType).apply()
         this.signal("mustSend")
     }
 
@@ -67,8 +67,8 @@ export class ModCommentStore {
         // We need to find text close to the position to which we can link
         // comment. This is user for reviewer comments that should not be lost.
 
-        let markType = this.mod.editor.pm.schema.marks.comment.create({id})
-        let doc = this.mod.editor.pm.doc
+        let markType = this.mod.editor.view.state.schema.marks.comment.create({id})
+        let doc = this.mod.editor.view.state.doc
         let posFrom = pos-1
         let posTo = pos
         // We move backward through the document, trying to pick a start position
@@ -99,11 +99,11 @@ export class ModCommentStore {
             // boundary, it means all text has been removed. So now we insert a
             // single space which we can link to.
             if (doc.resolve(posTo).depth === 1) {
-                this.mod.editor.pm.tr.insertText(posFrom,' ').apply()
+                this.mod.editor.view.state.tr.insertText(posFrom,' ').apply()
                 posTo = posFrom + 1
             }
         }
-        this.mod.editor.pm.tr.addMark(posFrom, posTo, markType).apply()
+        this.mod.editor.view.state.tr.addMark(posFrom, posTo, markType).apply()
     }
 
     addLocalComment(id, user, userName, userAvatar, date, comment, answers, isMajor, local) {
@@ -135,15 +135,15 @@ export class ModCommentStore {
     }
 
     removeCommentMarks(id) {
-        this.mod.editor.pm.doc.descendants((node, pos, parent) => {
+        this.mod.editor.view.state.doc.descendants((node, pos, parent) => {
             let nodeStart = pos
             let nodeEnd = pos + node.nodeSize
             for (let i =0; i < node.marks.length; i++) {
                 let mark = node.marks[i]
                 if (mark.type.name === 'comment' && parseInt(mark.attrs.id) === id) {
-                    let markType = this.mod.editor.pm.schema.marks.comment.create({id})
-                    this.mod.editor.pm.apply(
-                        this.mod.editor.pm.tr.removeMark(nodeStart, nodeEnd, markType)
+                    let markType = this.mod.editor.view.state.schema.marks.comment.create({id})
+                    this.mod.editor.view.dispatch(
+                        this.mod.editor.view.state.tr.removeMark(nodeStart, nodeEnd, markType)
                     )
                 }
             }
@@ -178,7 +178,7 @@ export class ModCommentStore {
     checkAndMove(ids) {
         // Check if there is still a node referring to the comment IDs that
         // were in the deleted content.
-        this.mod.editor.pm.doc.descendants((node, pos, parent) => {
+        this.mod.editor.view.state.doc.descendants((node, pos, parent) => {
             if (!node.isInline) {
                 return
             }
@@ -190,7 +190,7 @@ export class ModCommentStore {
 
         // Move the comment to a piece of text nearby, unless the
         ids.forEach(id => {
-            let pos = this.mod.editor.pm.selection.from
+            let pos = this.mod.editor.view.state.selection.from
             this.moveComment(
                 id,
                 pos

@@ -13,7 +13,7 @@ export class ModCollab {
         this.collaborativeMode = false
         new ModCollabDocChanges(this)
         new ModCollabChat(this)
-        new ModCollabCarets(this)
+        //new ModCollabCarets(this)
         new ModCollabColors(this)
     }
 
@@ -37,7 +37,7 @@ export class ModCollab {
         // If not, remove the corresponding marked range, if any.
         this.sessionIds.forEach(function(sessionId) {
             if (allSessionIds.indexOf(sessionId) === -1) {
-                that.carets.removeSelection(sessionId)
+            //    that.carets.removeSelection(sessionId)
             }
         })
         this.sessionIds = allSessionIds

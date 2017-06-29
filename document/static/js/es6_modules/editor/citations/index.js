@@ -7,7 +7,6 @@ export class ModCitations {
         this.citationType = ''
         this.fnOverrideElement =  false
         this.setup()
-        this.bindEvents()
     }
 
     setup() {
@@ -22,13 +21,6 @@ export class ModCitations {
             document.head.appendChild(styleContainers.firstElementChild)
         }
         this.fnOverrideElement = document.getElementById('footnote-numbering-override')
-    }
-
-    bindEvents () {
-        let pm = this.editor.pm
-        pm.updateScheduler([pm.on.flush], () => this.layoutCitations())
-        let fnPm = this.editor.mod.footnotes.fnPm
-        fnPm.updateScheduler([fnPm.on.flush], () => this.layoutCitations())
     }
 
     resetCitations() {
@@ -135,7 +127,7 @@ export class ModCitations {
              citationFootnoteCounter = 1,
              footnoteCounter = 1
 
-             this.editor.pm.doc.descendants(function(node){
+             this.editor.view.state.doc.descendants(function(node){
                  if (node.isInline && (node.type.name==='footnote' || node.type.name==='citation')) {
                      if (node.type.name==='footnote') {
                          outputCSS += '#footnote-box-container .footnote-container:nth-of-type('+editorFootnoteCounter+') > *:first-child::before {content: "' + footnoteCounter + ' ";}\n'

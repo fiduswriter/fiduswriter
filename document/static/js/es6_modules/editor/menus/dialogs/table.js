@@ -1,6 +1,6 @@
-import {commands} from "prosemirror-old/dist/edit/commands"
+import {selectParentNode} from "prosemirror-commands"
 import {tableInsertTemplate, tableEditTemplate} from "./templates"
-import {createTable, addColumnAfter, addColumnBefore, removeColumn, addRowBefore, addRowAfter, removeRow} from "prosemirror-old/dist/schema-table"
+import {addColumnAfter, addColumnBefore, removeColumn, addRowBefore, addRowAfter, removeRow} from "prosemirror-tables"
 
 export class TableDropdown {
     constructor(mod) {
@@ -10,9 +10,9 @@ export class TableDropdown {
 
     // Check if caret is inside a table
     inTable() {
-        const currentPm = this.editor.currentPm
-        const fromEl = currentPm.doc.resolve(currentPm.selection.from).node(3)
-        const toEl = currentPm.doc.resolve(currentPm.selection.to).node(3)
+        const currentState = this.editor.currentView.state
+        const fromEl = currentState.doc.resolve(currentState.selection.from).node(3)
+        const toEl = currentState.doc.resolve(currentState.selection.to).node(3)
         if (fromEl===toEl && fromEl.type.name === 'table') {
             return true
         } else {
@@ -79,11 +79,23 @@ export class TableDropdown {
         })
 
         jQuery('#table-dialog button.table-insert').on('mousedown', () => {
-            let nodeType = this.editor.currentPm.schema.nodes['table']
-            this.editor.currentPm.tr.replaceSelection(
-                createTable(nodeType, rowCount, colCount)
-            ).applyAndScroll()
-            this.editor.currentPm.focus()
+
+            let table = {type: 'table', content: []}
+
+            for (let i=0;i<rowCount;i++) {
+                let row = {type: 'table_row', content: []}
+                for (let j=0;i<colCount;j++) {
+                    row.content.push({type: 'table_cell', content: []})
+                }
+                table.content.push(row)
+            }
+            let schema = this.editor.currentView.state.schema
+            this.editor.currentView.dispatch(
+                this.editor.currentView.state.tr.replaceSelection(
+                    schema.nodeFromJSON(table)
+                )
+            )
+            this.editor.currentView.focus()
         })
 
 
@@ -92,7 +104,7 @@ export class TableDropdown {
     executeAction(event, editFunction) {
         event.preventDefault()
         event.stopImmediatePropagation()
-        if (this.editor.currentPm.hasFocus()) {
+        if (this.editor.currentView.hasFocus()) {
             editFunction()
         }
     }
@@ -104,42 +116,44 @@ export class TableDropdown {
 
         jQuery('#table-dialog .row-after').on('mousedown', event => {
             this.executeAction(event, () =>
-                addRowAfter(this.editor.currentPm,true)
+                addRowAfter(this.editor.currentView.state,true)
             )
         })
     	jQuery('#table-dialog .row-before').on('mousedown', event => {
             this.executeAction(event, () =>
-                addRowBefore(this.editor.currentPm,true)
+                addRowBefore(this.editor.currentView.state,true)
             )
         })
     	jQuery('#table-dialog .col-after').on('mousedown', event => {
             this.executeAction(event, () =>
-                addColumnAfter(this.editor.currentPm,true)
+                addColumnAfter(this.editor.currentView.state,true)
             )
         })
     	jQuery('#table-dialog .col-before').on('mousedown', event => {
             this.executeAction(event, () =>
-                addColumnBefore(this.editor.currentPm,true)
+                addColumnBefore(this.editor.currentView.state,true)
             )
         })
     	jQuery('#table-dialog .col-remove').on('mousedown', event => {
             this.executeAction(event, () =>
-                removeColumn(this.editor.currentPm,true)
+                removeColumn(this.editor.currentView.state,true)
             )
         })
     	jQuery('#table-dialog .row-remove').on('mousedown', event => {
             this.executeAction(event, () =>
-                removeRow(this.editor.currentPm,true)
+                removeRow(this.editor.currentView.state,true)
             )
         })
         jQuery('#table-dialog .table-remove').on('mousedown', event => {
             this.executeAction(event, () => {
                 // move the selection up until reaching the second level (selecting the table)
-                while(this.editor.currentPm.selection.$from.depth > 2) {
-                    commands.selectParentNode(this.editor.currentPm, true)
+                while(this.editor.currentView.state.selection.$from.depth > 2) {
+                    selectParentNode(this.editor.currentView.state, tr => this.editor.currentView.dispatch(tr))
                 }
                 // Remove the selection
-                this.editor.currentPm.tr.deleteSelection().apply()
+                this.editor.currentView.dispatch(
+                    this.editor.currentView.state.tr.deleteSelection()
+                )
             })
         })
     }

@@ -1,4 +1,4 @@
-import {TextSelection} from "prosemirror-old/dist/edit/selection"
+import {TextSelection} from "prosemirror-state"
 /**
  * Helper functions for testing FidusWriter with Selenium.
  * @namespace testCaret
@@ -13,7 +13,7 @@ let testCaret = {}
  * @returns {Caret}
  */
 testCaret.getCaret = function getCaret() {
-    return window.theEditor.pm.selection.from
+    return window.theEditor.view.state.selection.from
 }
 
 /**

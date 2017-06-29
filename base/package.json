@@ -41,17 +41,23 @@
     "mathquill": "0.10.1-b",
     "object-hash": "1.1.4",
     "paginate-for-print": "0.0.7",
-    "prosemirror-old": "0.10.6",
     "prosemirror-state": "0.21.0",
     "prosemirror-view": "0.21.1",
     "prosemirror-model": "0.21.0",
     "prosemirror-keymap": "0.21.0",
     "prosemirror-schema-basic": "0.21.0",
     "prosemirror-history": "0.21.0",
+    "prosemirror-schema-list": "0.21.0",
     "prosemirror-commands": "0.21.0",
+    "prosemirror-tables": "0.0.3",
+    "prosemirror-collab": "0.21.0",
+    "prosemirror-example-setup": "0.21.0",
     "texzilla": "0.9.9",
     "tokenfield": "^0.3.14",
-    "underscore": "1.8.3"
+    "underscore": "1.8.3",
+    "w3c-keyname": "1.1.6",
+    "fastdom": "1.0.6",
+    "orderedmap": "1.0.0"
   },
   "browserify": {
     "transform": [

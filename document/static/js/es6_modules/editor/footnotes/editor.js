@@ -1,5 +1,5 @@
 import {Step} from "prosemirror-transform"
-import {sendableSteps, collab} from "prosemirror-collab"
+import {sendableSteps, collab, receiveTransaction} from "prosemirror-collab"
 import {COMMENT_ONLY_ROLES} from ".."
 import {fnNodeToPmNode} from "../../schema/footnotes-convert"
 import {buildKeymap} from "prosemirror-example-setup"
@@ -25,7 +25,7 @@ export class ModFootnoteEditor {
             prohibited = true
         }
 
-        if (transaction.docs[0].childCount !== transaction.doc.childCount) {
+        if (transaction.docs.length && transaction.docs[0].childCount !== transaction.doc.childCount) {
             prohibited = true
         }
         return prohibited
@@ -72,16 +72,17 @@ export class ModFootnoteEditor {
         }
         console.log('footnote update')
         let toSend = sendableSteps(this.mod.fnView.state)
-
-        let length = toSend.steps.length
-        let lastStep = toSend.steps[length - 1]
-        if (lastStep.hasOwnProperty('from')) {
-            // We find the number of the last footnote that was updated by
-            // looking at the last step and seeing footnote number that change referred to.
-            let updatedFootnote = this.mod.fnView.state.doc.resolve(lastStep.from).index(0)
-            this.mod.markers.updateFootnoteMarker(updatedFootnote)
-        } else {
-            // TODO: Figure out if there are cases where this is really needed.
+        if (toSend) {
+            let length = toSend.steps.length
+            let lastStep = toSend.steps[length - 1]
+            if (lastStep.hasOwnProperty('from')) {
+                // We find the number of the last footnote that was updated by
+                // looking at the last step and seeing footnote number that change referred to.
+                let updatedFootnote = this.mod.fnView.state.doc.resolve(lastStep.from).index(0)
+                this.mod.markers.updateFootnoteMarker(updatedFootnote)
+            } else {
+                // TODO: Figure out if there are cases where this is really needed.
+            }
         }
     }
 
@@ -89,7 +90,15 @@ export class ModFootnoteEditor {
         console.log('applying footnote diff')
         let steps = diffs.map(j => Step.fromJSON(this.modtransaction, j))
         let client_ids = diffs.map(j => j.client_id)
-        this.mod.fnPmCollab.receive(steps, client_ids)
+        this.mod.fnView.dispatch(
+            receiveTransaction(
+                this.mod.fnView.state,
+                steps,
+                steps.map(
+                    step => step.client_id
+                )
+            )
+        )
     }
 
     renderAllFootnotes() {

@@ -1,3 +1,5 @@
+import {sendableSteps} from "prosemirror-collab"
+
 /* Functions related to footnote markers in the main editor */
 export class ModFootnoteMarkers {
     constructor(mod) {
@@ -10,26 +12,32 @@ export class ModFootnoteMarkers {
 
 
     scanForFootnoteMarkers(transaction, remote) {
-        /* Look through the ranges added through a transform for the presence of
+        /* Look through the ranges added through a transaction for the presence of
          * one or more footnote markers.
         */
         /*if (remote) {
             // We add unconfirmed local steps to the remote steps to make sure we map
             // the ranges to current ranges.
-            let unconfirmedMaps = this.mod.editor.pmCollab.unconfirmedMaps
-            let unconfirmedSteps = this.mod.editor.pmCollab.unconfirmedSteps
+            let toSend = sendableSteps(this.mod.editor.view.state)
+
+            if (!toSend) {
+                return
+            }
+
+            let unconfirmedMaps = toSend.maps
+            let unconfirmedSteps = toSend.steps
             let doc = this.mod.editor.confirmedDoc
-            transform.maps = transform.maps.concat(unconfirmedMaps)
+            transaction.mapping.maps = transaction.mapping.maps.concat(unconfirmedMaps)
             unconfirmedSteps.forEach(step => {
                 // We add pseudo steps for all the unconfirmed steps so that the
-                // unconfirmed maps will be applied when handling the transform
-                transform.steps.push({
+                // unconfirmed maps will be applied when handling the transaction
+                transaction.steps.push({
                     type: 'unconfirmed'
                 })
                 // We add real docs
                 let result = step.apply(doc)
                 doc = result.doc
-                transform.docs.push(doc)
+                transaction.docs.push(doc)
             })
         }*/
 
@@ -59,14 +67,14 @@ export class ModFootnoteMarkers {
 
     }
 
-    getAddedRanges(transform) {
+    getAddedRanges(transaction) {
         /* find ranges of the current document that have been added by means of
-         * a transformation.
+         * a transaction.
          */
         let ranges = []
-        for (let i = 0; i < transform.steps.length; i++) {
-            let step = transform.steps[i],
-                map = transform.maps[i]
+        for (let i = 0; i < transaction.steps.length; i++) {
+            let step = transaction.steps[i],
+                map = transaction.mapping.maps[i]
             if (step.jsonID === "replace" || step.jsonID === "replaceWrap") {
                 let index = 0
 

@@ -72,7 +72,10 @@ export class Editor {
                 schema: this.schema
             }),
             onFocus: () => {
-                this.currentView = this.view
+                if (this.currentView != this.view) {
+                    this.currentView = this.view
+
+                }
             },
             onBlur: () => {
 
@@ -82,7 +85,6 @@ export class Editor {
                 return ph.getOutput()
             },
             dispatchTransaction: (transaction) => {
-
                 let remote = transaction.getMeta('remote')
                 if (!remote) {
                     if (this.onFilterTransaction(transaction)) {
@@ -427,7 +429,7 @@ export class Editor {
 
     // Things to execute before every editor transaction
     onBeforeTransaction(view, transaction) {
-        //Check if there are any headings in the affaceted area. Otherwise, skip.
+        //Check if there are any headings in the affected area. Otherwise, skip.
         let foundHeading = false
 
         let ranges = []
@@ -437,8 +439,8 @@ export class Editor {
             }
             ranges = ranges.map(range => {
                 return [
-                    transaction.maps[index].map(range[0], -1),
-                    transaction.maps[index].map(range[1], 1)
+                    transaction.mapping.maps[index].map(range[0], -1),
+                    transaction.mapping.maps[index].map(range[1], 1)
                 ]
             })
         })

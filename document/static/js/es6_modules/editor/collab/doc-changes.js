@@ -90,16 +90,16 @@ export class ModCollabDocChanges {
         let fnToSend = sendableSteps(this.mod.editor.mod.footnotes.fnView.state)
         let request_id = this.confirmStepsRequestCounter++
         // We add the client ID to every single step
-        let toSendSteps = toSend.steps.map(s => {
+        let toSendSteps = toSend ? toSend.steps.map(s => {
             let step = s.toJSON()
             step.client_id = toSend.clientID
             return step
-        })
-        let fnToSendSteps = fnToSend.steps.map(s => {
+        }) : []
+        let fnToSendSteps = fnToSend ? fnToSend.steps.map(s => {
             let step = s.toJSON()
             step.client_id = fnToSend.clientID
             return step
-        })
+        }) : []
 
         let aPackage = {
             type: 'diff',
@@ -190,7 +190,7 @@ export class ModCollabDocChanges {
             )
         )
         this.setConfirmedDoc(transaction)
-
+        this.mod.editor.view.dispatch(transaction)
         let sentFnSteps = this.unconfirmedSteps[request_id]["footnote_diffs"]
         this.mod.editor.mod.footnotes.fnView.dispatch(
             receiveTransaction(
@@ -200,10 +200,6 @@ export class ModCollabDocChanges {
                     step => step.client_id
                 )
             )
-        )
-        this.mod.editor.mod.footnotes.fnPmCollab.receive(
-            sentFnSteps,
-            sentFnSteps.map(step => this.mod.editor.mod.footnotes.fnPmCollab.clientID)
         )
 
         let sentComments = this.unconfirmedSteps[request_id]["comments"]

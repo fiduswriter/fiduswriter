@@ -53,11 +53,11 @@ export class ModFootnotes {
                     if (!filterFree & this.fnEditor.onFilterTransaction(transaction)) {
                         return
                     }
-                    this.editor.onBeforeTransform(this.fnView, transaction)
+                    this.editor.onBeforeTransaction(this.fnView, transaction)
                 }
 
-                let newState = this.view.state.apply(transaction)
-                this.view.updateState(newState)
+                let newState = this.fnView.state.apply(transaction)
+                this.fnView.updateState(newState)
 
                 if (!remote) {
                     this.fnEditor.footnoteEdit()

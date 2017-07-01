@@ -91,12 +91,15 @@ export class ModCollabCarets {
         let view = caretPosition.view === 'view' ? this.mod.editor.view : this.mod.editor.mod.footnotes.fnView
         // Map the positions through all still unconfirmed changes
         let toSend = sendableSteps(view.state)
-        toSend.steps.forEach(step => {
-            let map = step.getMap()
-            posFrom = map.map(posFrom)
-            posTo = map.map(posTo)
-            posHead = map.map(posHead)
-        })
+
+        if (toSend) {
+            toSend.steps.forEach(step => {
+                let map = step.getMap()
+                posFrom = map.map(posFrom)
+                posTo = map.map(posTo)
+                posHead = map.map(posHead)
+            })
+        }
 
         // Delete an old marked range for the same session, if there is one.
         this.removeSelection(caretPosition.sessionId)

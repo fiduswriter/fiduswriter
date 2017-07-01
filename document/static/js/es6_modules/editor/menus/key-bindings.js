@@ -1,4 +1,4 @@
-import {keyName} from "w3c-keyname"
+import keyName from "w3c-keyname"
 
 export class ModMenusKeyBindings {
     constructor(mod) {

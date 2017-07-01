@@ -248,8 +248,6 @@ export class ModCommentLayout {
             document.getElementById('active-comment-style').innerHTML = activeCommentStyle
         }
 
-        console.log(fastdom)
-
         fastdom.measure(() => {
             // DOM read phase
             let totalOffset = document.getElementById('comment-box-container').getBoundingClientRect().top + 10,

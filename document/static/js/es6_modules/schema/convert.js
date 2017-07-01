@@ -4,16 +4,18 @@
 import {obj2Node} from "../exporter/tools/json"
 import {docSchema} from "./document"
 import {randomHeadingId} from "./common"
+import {DOMSerializer} from "prosemirror-model"
 
 import {defaultDocumentStyle} from "../style/documentstyle-list"
 import {defaultCitationStyle} from "../style/citation-definitions"
 
 export let getMetadata = function(pmArticle) {
     let metadata = {}
+    let serializer = DOMSerializer.fromSchema(docSchema)
     for (let i=0; i < pmArticle.childCount; i++) {
         let pmNode = pmArticle.child(i)
         if (pmNode.type.isMetadata || !pmNode.attrs.hidden) {
-            let value = pmNode.toDOM().innerHTML
+            let value = serializer.serializeNode(pmNode).innerHTML
             if (value.length > 0 && value !== "<p></p>") {
                 metadata[pmNode.type.name] = value
             }

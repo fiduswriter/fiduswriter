@@ -79,10 +79,13 @@ let subtitle = {
         }
     }],
     toDOM(node) {
-        return ["div", {
-            class: 'article-part metadata article-subtitle',
-            'data-hidden': node.attrs.hidden
-        }, 0]
+        let attrs = {
+            class: 'article-part metadata article-subtitle'
+        }
+        if (node.attrs.hidden) {
+            attrs['data-hidden'] = 'true'
+        }
+        return ["div", attrs, 0]
     }
 }
 
@@ -107,10 +110,13 @@ let authors = {
         }
     }],
     toDOM(node) {
-        return ["div", {
-            class: 'article-part metadata article-authors',
-            'data-hidden': node.attrs.hidden
-        }, 0]
+        let attrs = {
+            class: 'article-part metadata article-authors'
+        }
+        if (node.attrs.hidden) {
+            attrs['data-hidden'] = 'true'
+        }
+        return ["div", attrs, 0]
     }
 }
 
@@ -135,10 +141,13 @@ let abstract = {
         }
     }],
     toDOM(node) {
-        return ["div", {
-            class: 'article-part metadata article-abstract',
-            'data-hidden': node.attrs.hidden
-        }, 0]
+        let attrs = {
+            class: 'article-part metadata article-abstract'
+        }
+        if (node.attrs.hidden) {
+            attrs['data-hidden'] = 'true'
+        }
+        return ["div", attrs, 0]
     }
 }
 
@@ -163,10 +172,13 @@ let keywords = {
         }
     }],
     toDOM(node) {
-        return ["div", {
-            class: 'article-part metadata article-keywords',
-            'data-hidden': node.attrs.hidden
-        }, 0]
+        let attrs = {
+            class: 'article-part metadata article-keywords'
+        }
+        if (node.attrs.hidden) {
+            attrs['data-hidden'] = 'true'
+        }
+        return ["div", attrs, 0]
     }
 }
 

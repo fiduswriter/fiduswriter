@@ -3,13 +3,16 @@ import * as plugins from "../plugins/editor"
 /* Functions for ProseMirror integration.*/
 import {Slice, Fragment} from "prosemirror-model"
 import {ReplaceAroundStep} from "prosemirror-transform"
-import {EditorState, Plugin, TextSelection} from "prosemirror-state"
+import {EditorState, Plugin} from "prosemirror-state"
 import {EditorView, Decoration, DecorationSet} from "prosemirror-view"
 import {history, redo, undo} from "prosemirror-history"
 import {toggleMark, baseKeymap} from "prosemirror-commands"
 import {keymap} from "prosemirror-keymap/dist/keymap"
 import {buildKeymap} from "prosemirror-example-setup"
 import {collab, getVersion} from "prosemirror-collab"
+import {tableEditing} from "prosemirror-tables"
+import {dropCursor} from "prosemirror-dropcursor"
+
 import {docSchema} from "../schema/document"
 import {ModComments} from "./comments"
 import {ModFootnotes} from "./footnotes"
@@ -77,9 +80,6 @@ export class Editor {
                 }
             },
             onBlur: (view) => {
-                let state = view.state
-                let transaction = state.tr.setSelection(TextSelection.create(state.doc, 0, 0))
-                view.dispatch(transaction)
             },
             transformPastedHTML: inHTML => {
                 let ph = new Paste(inHTML, "main")
@@ -292,9 +292,10 @@ export class Editor {
                     keymap(baseKeymap),
                     keymap(buildKeymap(this.schema)),
                     collab({version: this.doc.version}),
+                    dropCursor(),
+                    tableEditing(),
                     placeholdersPlugin()
-                ],
-                selection: TextSelection.create(doc, 0, 0)
+                ]
             }
 
             // Set document in prosemirror

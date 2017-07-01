@@ -18,10 +18,13 @@ export let placeholdersPlugin = function() {
         let decorations = []
 
         articleNode.forEach((partElement, offset, index) => {
-            if (partElement.textContent.length === 0 && (selectedPart != partElement)) {
+            if (partElement.textContent.length === 0) {
                 let placeHolder = document.createElement('span')
                 placeHolder.classList.add('placeholder')
                 placeHolder.setAttribute('data-placeholder', placeHolderTexts[index])
+                if (selectedPart===partElement) {
+                    placeHolder.classList.add('selected')
+                }
                 let position = 2 + offset
                 // position of decorator: 2 to get inside (doc (1) + article (1))
                 if (!partElement.isTextblock) {
@@ -37,7 +40,6 @@ export let placeholdersPlugin = function() {
 
     }
 
-
     return new Plugin({
         key: placeholdersKey,
         props: {
@@ -45,7 +47,7 @@ export let placeholdersPlugin = function() {
 
                 const anchorPart = state.selection.$anchor.node(2)
                 const headPart = state.selection.$head.node(2)
-                const currentBlock = state.selection.$head.node(3)
+
                 let currentPart = anchorPart === headPart ? anchorPart : false
 
                 let articleNode = state.doc.firstChild
@@ -55,6 +57,6 @@ export let placeholdersPlugin = function() {
                     return DecorationSet.create(state.doc, decorations)
                 }
             }
-        },
+        }
     })
 }

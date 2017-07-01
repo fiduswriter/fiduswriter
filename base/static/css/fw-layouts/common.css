@@ -83,3 +83,7 @@ table .fw-inline {
     content: attr(data-placeholder);
     cursor: text;
 }
+
+.ProseMirror-focused span.placeholder.selected {
+    display: none;
+}

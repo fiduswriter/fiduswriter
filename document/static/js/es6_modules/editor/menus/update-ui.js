@@ -129,7 +129,6 @@ export class ModMenusUpdateUI {
 
         if (startElement !== endElement) {
             /* Selection goes across document parts or across footnotes */
-            this.calculatePlaceHolderCss(pm)
             jQuery('.editortoolbar button').addClass('disabled')
             jQuery('#block-style-label').html('')
             jQuery('#current-position').html('')
@@ -140,7 +139,6 @@ export class ModMenusUpdateUI {
             }
         } else {
             if (currentPm === pm) {
-                this.calculatePlaceHolderCss(pm, startElement)
                 jQuery('#current-position').html(PART_LABELS[startElement.type.name])
                 switch (startElement.type.name) {
                     case 'title':
@@ -222,57 +220,4 @@ export class ModMenusUpdateUI {
     }
 
 
-    /** Show or hide placeHolders ('Contents...', 'Title...', etc.) depending on
-    whether these elements are empty or not.
-    TODO: placeholder calculation should probably be somewhere else, not in the
-    updating procedures of the menus.
-    */
-
-    calculatePlaceHolderCss(pm, selectedElement) {
-        let newPlaceHolderCss = '',
-            i = 0,
-            placeHolders = [{
-                'type': 'title',
-                'selector': '.article-title',
-                'placeHolder': gettext('Title...')
-            }, {
-                'type': 'subtitle',
-                'selector': '.article-subtitle',
-                'placeHolder': gettext('Subtitle...')
-            }, {
-                'type': 'authors',
-                'selector': '.article-authors',
-                'placeHolder': gettext('Authors...')
-            }, {
-                'type': 'abstract',
-                'selector': '.article-abstract',
-                'placeHolder': gettext('Abstract...')
-            }, {
-                'type': 'keywords',
-                'selector': '.article-keywords',
-                'placeHolder': gettext('Keywords...')
-            }, {
-                'type': 'body',
-                'selector': '.article-body',
-                'placeHolder': gettext('Body...')
-            }]
-
-        placeHolders.forEach((elementType, index) => {
-            let partElement = pm.doc.firstChild.child(i)
-            if (partElement.type.name !== elementType.type) {
-                return false
-            }
-            if (partElement.textContent.length === 0 &&
-                (selectedElement != partElement || !pm.hasFocus())) {
-                newPlaceHolderCss += elementType.selector + ':before {content: "' +
-                    elementType.placeHolder + '"}\n'
-            }
-            i++
-        })
-        if (this.placeHolderCss !== newPlaceHolderCss) {
-            this.placeHolderCss = newPlaceHolderCss
-            document.getElementById('placeholder-styles').innerHTML = newPlaceHolderCss
-        }
-
-    }
 }

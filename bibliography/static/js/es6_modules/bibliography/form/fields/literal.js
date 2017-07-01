@@ -1,4 +1,4 @@
-import {EditorState, Plugin} from "prosemirror-state"
+import {EditorState, Plugin, TextSelection} from "prosemirror-state"
 import {EditorView, Decoration, DecorationSet} from "prosemirror-view"
 import {history, redo, undo} from "prosemirror-history"
 import {toggleMark, baseKeymap} from "prosemirror-commands"
@@ -15,16 +15,20 @@ export class LiteralFieldForm{
     }
 
     init() {
+
+        let doc = litSchema.nodeFromJSON({
+            type: 'doc',
+            content:[{
+                type: 'literal',
+                content: this.initialValue
+            }]
+        })
+
         this.view = new EditorView(this.dom, {
             state: EditorState.create({
                 schema: litSchema,
-                doc: litSchema.nodeFromJSON({
-                    type: 'doc',
-                    content:[{
-                        type: 'literal',
-                        content: this.initialValue
-                    }]
-                }),
+                doc,
+                selection: TextSelection.create(doc, 0, 0),
                 plugins: [
                     history(),
                     keymap(baseKeymap),
@@ -50,8 +54,11 @@ export class LiteralFieldForm{
                 jQuery('.ui-dialog-buttonset .fw-edit').removeClass('disabled')
                 jQuery('.ui-dialog-buttonset .fw-nocase').addClass('disabled')
             },
-            onBlur: () => {
+            onBlur: (view) => {
                 jQuery('.ui-dialog-buttonset .fw-edit').addClass('disabled')
+                let state = view.state
+                let transaction = state.tr.setSelection(TextSelection.create(state.doc, 0, 0))
+                view.dispatch(transaction)
             },
             dispatchTransaction: (transaction) => {
                 let newState = this.view.state.apply(transaction)
@@ -90,6 +97,10 @@ export class LiteralFieldForm{
         return new Plugin({
             props: {
                 decorations: (state) => {
+                    if (state.selection.anchor && state.selection.head) {
+                        // If the selection is anything but 0, the editor field is selected
+                        return
+                    }
                     let doc = state.doc
                     if (doc.childCount === 1 && doc.firstChild.isTextblock && doc.firstChild.content.size === 0) {
                         let placeHolder = document.createElement('span')

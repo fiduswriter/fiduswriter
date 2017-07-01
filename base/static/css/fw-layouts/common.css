@@ -77,3 +77,9 @@ table .fw-inline {
     text-align: left;
     margin-top: 6px;
 }
+
+.ProseMirror span.placeholder::before {
+    color: #cecece;
+    content: attr(data-placeholder);
+    cursor: text;
+}

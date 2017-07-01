@@ -3,14 +3,13 @@ import * as plugins from "../plugins/editor"
 /* Functions for ProseMirror integration.*/
 import {Slice, Fragment} from "prosemirror-model"
 import {ReplaceAroundStep} from "prosemirror-transform"
-import {EditorState, Plugin} from "prosemirror-state"
+import {EditorState, Plugin, TextSelection} from "prosemirror-state"
 import {EditorView, Decoration, DecorationSet} from "prosemirror-view"
 import {history, redo, undo} from "prosemirror-history"
 import {toggleMark, baseKeymap} from "prosemirror-commands"
 import {keymap} from "prosemirror-keymap/dist/keymap"
 import {buildKeymap} from "prosemirror-example-setup"
 import {collab, getVersion} from "prosemirror-collab"
-
 import {docSchema} from "../schema/document"
 import {ModComments} from "./comments"
 import {ModFootnotes} from "./footnotes"
@@ -25,6 +24,7 @@ import {getMetadata, getSettings, updateDoc} from "../schema/convert"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
 import {Paste} from "./paste"
+import {placeholdersPlugin} from "./plugins/placeholders"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']
@@ -74,11 +74,12 @@ export class Editor {
             onFocus: () => {
                 if (this.currentView != this.view) {
                     this.currentView = this.view
-
                 }
             },
-            onBlur: () => {
-
+            onBlur: (view) => {
+                let state = view.state
+                let transaction = state.tr.setSelection(TextSelection.create(state.doc, 0, 0))
+                view.dispatch(transaction)
             },
             transformPastedHTML: inHTML => {
                 let ph = new Paste(inHTML, "main")
@@ -276,18 +277,26 @@ export class Editor {
         })
         return this.getImageDB(this.doc.owner.id).then(() => {
 
+            let doc
+            if (this.doc.contents.type) {
+                doc = docSchema.nodeFromJSON({type:'doc', content:[this.doc.contents]})
+            } else {
+                doc = this.schema.topNodeType.createAndFill()
+            }
+
             let stateConfig = {
                 schema: this.schema,
+                doc,
                 plugins: [
                     history(),
                     keymap(baseKeymap),
                     keymap(buildKeymap(this.schema)),
-                    collab({version: this.doc.version})
-                ]
+                    collab({version: this.doc.version}),
+                    placeholdersPlugin()
+                ],
+                selection: TextSelection.create(doc, 0, 0)
             }
-            if (this.doc.contents.type) {
-                stateConfig.doc = docSchema.nodeFromJSON({type:'doc',content:[this.doc.contents]})
-            }
+
             // Set document in prosemirror
             this.view.updateState(EditorState.create(stateConfig))
 

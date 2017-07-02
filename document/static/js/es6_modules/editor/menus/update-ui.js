@@ -67,7 +67,7 @@ export class ModMenusUpdateUI {
 
 
         jQuery('title').html('Fidus Writer - ' + documentTitle)
-        jQuery('#header h1').html(documentTitle)
+        jQuery('#document-top h1').html(documentTitle)
 
         const marks = currentView.state.storedMarks
         const strong = marks.some(

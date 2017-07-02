@@ -1,5 +1,6 @@
 import * as objectHash from "object-hash/dist/object_hash"
 import * as plugins from "../plugins/editor"
+
 /* Functions for ProseMirror integration.*/
 import {Slice, Fragment} from "prosemirror-model"
 import {ReplaceAroundStep} from "prosemirror-transform"
@@ -432,7 +433,7 @@ export class Editor {
 
     // Use PMs scrollIntoView function and adjust for top menu
     scrollIntoView(view, pos) {
-        let topMenuHeight = jQuery('#editor-tools-wrapper').outerHeight() + jQuery('#header').outerHeight() + 10
+        let topMenuHeight = jQuery('#editor-tools-wrapper').outerHeight() + jQuery('#document-top').outerHeight() + 10
         let distanceFromTop = view.coordsAtPos(pos).top - topMenuHeight
         window.scrollBy(0, distanceFromTop)
     }

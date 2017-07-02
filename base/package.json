@@ -58,7 +58,8 @@
     "underscore": "1.8.3",
     "w3c-keyname": "1.1.6",
     "fastdom": "1.0.6",
-    "orderedmap": "1.0.0"
+    "orderedmap": "1.0.0",
+    "diff-dom": "2.2.1"
   },
   "browserify": {
     "transform": [

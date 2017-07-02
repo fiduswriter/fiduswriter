@@ -16,7 +16,7 @@ body {
     cursor: pointer;
 }
 
-#header {
+#document-top {
     position: fixed;
     padding: 16px 0;
     background-color: #84b4a7;
@@ -24,7 +24,7 @@ body {
     width: 100%;
     top:0;
 }
-#header > h1 {
+#document-top > h1 {
     font-size: 22px;
     color: #fff;
     font-style: italic;
@@ -111,6 +111,7 @@ body {
     left: 100%;
     margin-left: 14px;
     background-color: #fbf9d2;
+    vertical-align: top;
 }
 #comments-display.selected {
     background-color: #f2f2f2;

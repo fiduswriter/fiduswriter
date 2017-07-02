@@ -196,7 +196,7 @@ export class ModMenusHeader {
               } else {
                   jQuery(this).addClass('header-closed')
               }
-              jQuery('#header').stop().animate({
+              jQuery('#document-top').stop().animate({
                   'top': headerTop
               })
               jQuery('#editor-navigation').stop().animate({

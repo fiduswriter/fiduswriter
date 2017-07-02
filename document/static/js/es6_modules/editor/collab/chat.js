@@ -70,14 +70,14 @@ export class ModCollabChat {
         if (participants.length === 1 && jQuery(
             '#chat-container .message').length === 0) {
             jQuery('#chat').css('display', 'none');
-            jQuery('#current-editors').css('display', 'none')
+            jQuery('#connected-collaborators').css('display', 'none')
         }
         else {
-            jQuery('#current-editors').html(participantListTemplate({
+            jQuery('#connected-collaborators').html(participantListTemplate({
                 participants: this.mod.participants
             }))
             jQuery('#chat').css('display', 'block')
-            jQuery('#current-editors').css('display', 'block')
+            jQuery('#connected-collaborators').css('display', 'block')
         }
     }
 

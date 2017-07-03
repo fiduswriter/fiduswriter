@@ -7,12 +7,12 @@
 
 # If you don't want to show debug messages, set DEBUG to False.
 
-DEBUG = True
+DEBUG = False
 
 SERVER_INFO = {
     # This determines whether the server is used for testing and will let the
     # users know upon signup know that their documents may disappear.
-    'TEST_SERVER': True,
+    'TEST_SERVER': False,
     # This determines whether experimental or unfinished features will be
     # enabled.
     'EXPERIMENTAL': False,
@@ -62,7 +62,7 @@ EMAIL_HOST = os.environ['SMTP_HOST'],
 EMAIL_HOST_USER = os.environ['SMTP_USER'],
 EMAIL_HOST_PASSWORD = os.environ['SMTP_PASS'],
 EMAIL_PORT = os.environ['SMTP_PORT'],
-# EMAIL_SUBJECT_PREFIX = '[Fidus Writer]'
+EMAIL_SUBJECT_PREFIX = '[Fidus Writer]'
 EMAIL_USE_TLS = os.environ['TLS_TRUE'],
 DEFAULT_FROM_EMAIL = os.environ['EMAIL_FROM'], # For messages to end users
 # SERVER_EMAIL = 'mail@email.com' # For messages to server administrators

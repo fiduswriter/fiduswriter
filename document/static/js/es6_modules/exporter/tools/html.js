@@ -32,13 +32,6 @@ export let findImages = function(htmlCode) {
     return images
 }
 
-export let escapeText = function(text) {
-    return text
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-}
-
 // all descendant text nodes for dom nodes
 export let domDescendantTexNodes = function(node) {
     let returnValue = []

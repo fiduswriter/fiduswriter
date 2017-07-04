@@ -1,5 +1,5 @@
 // manages the .rels files. Need to initialize one for each of document.xml and footnotes.xml
-import {escapeText} from "../tools/html"
+import {escapeText} from "../../common"
 
 const DEFAULT_XML = `<?xml version="1.0" encoding="UTF-8"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>`

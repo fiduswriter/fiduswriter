@@ -29,6 +29,8 @@ import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
 import {Paste} from "./paste"
 import {placeholdersPlugin} from "./plugins/placeholders"
+import {headerPlugin} from "./plugins/header"
+import {headerModel} from "./menus/header-model"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']
@@ -60,6 +62,9 @@ export class Editor {
         this.user = false
         // The latest doc as confirmed by the server.
         this.confirmedDoc = false
+        this.menu = {
+            headerModel
+        }
         new ModServerCommunications(this)
     }
 
@@ -185,7 +190,7 @@ export class Editor {
             let bibGetter = new BibliographyDB(userId, true)
             return bibGetter.getDB().then(({bibPKs, bibCats}) => {
                 this.bibDB = bibGetter
-                this.mod.menus.header.enableExportMenu()
+                //this.mod.menus.header.enableExportMenu()
             })
         } else {
             return Promise.resolve()
@@ -213,37 +218,22 @@ export class Editor {
 
     enableUI() {
 
-        jQuery('.savecopy, .saverevision, .download, .template-export, \
-        .latex, .epub, .html, .print, .style, \
-      .citationstyle, .tools-item, .papersize, .metadata-menu-item, \
-      #open-close-header').removeClass('disabled')
-
         this.mod.settings.check(this.view.state.doc.firstChild.attrs)
 
         if (READ_ONLY_ROLES.indexOf(this.docInfo.rights) > -1) {
             jQuery('#editor-navigation').hide()
-            jQuery('.metadata-menu-item, #open-close-header, .save, \
-          .multibuttonsCover, .papersize-menu, .metadata-menu, \
-          .documentstyle-menu, .citationstyle-menu').addClass('disabled')
+            jQuery('#open-close-header, \
+          .multibuttonsCover').addClass('disabled')
         } else {
             jQuery('#editor-navigation').show()
-            jQuery('.metadata-menu-item, #open-close-header, .save, \
-          .papersize-menu, .metadata-menu, \
-          .documentstyle-menu, .citationstyle-menu').removeClass('disabled')
-            if (this.docInfo.is_owner) {
-                // bind the share dialog to the button if the user is the document owner
-                jQuery('.share').removeClass('disabled')
-                jQuery('.submit-ojs').removeClass('disabled')
-            }
+            jQuery('#open-close-header').removeClass('disabled')
             if (COMMENT_ONLY_ROLES.indexOf(this.docInfo.rights) > -1) {
                 let toolbar = jQuery('.editortoolbar')
                 toolbar.find('.ui-buttonset').hide()
                 toolbar.find('.comment-only').show()
             }
             else {
-                jQuery('.metadata-menu-item, #open-close-header, .save, \
-              .papersize-menu, .metadata-menu, \
-              .documentstyle-menu, .citationstyle-menu').removeClass('disabled')
+                jQuery('#open-close-header').removeClass('disabled')
             }
         }
     }
@@ -295,7 +285,8 @@ export class Editor {
                     collab({version: this.doc.version}),
                     dropCursor(),
                     tableEditing(),
-                    placeholdersPlugin()
+                    placeholdersPlugin(),
+                    headerPlugin({editor: this})
                 ]
             }
 

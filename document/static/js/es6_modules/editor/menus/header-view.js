@@ -105,7 +105,7 @@ export class HeaderView {
         if (event.shiftKey) {
             name = "Shift-" + name
         }
-        console.log(name)
+
         this.editor.menu.headerModel.forEach(menu => {
             menu.content.forEach(menuItem => {
                 if (menuItem.keys && menuItem.keys===name) {
@@ -128,7 +128,7 @@ export class HeaderView {
         return `
             <div id="close-document-top" class="close icon-cancel-circle" title="${gettext("Close the document and return to the document overview menu.")}"></div>
             <div id="document-top">
-                <h1>${escapeText(doc.firstChild.textContent)}</h1>
+                <h1>${doc.firstChild.textContent.length ? escapeText(doc.firstChild.textContent) : gettext('Untitled Document')}</h1>
                 <nav id="header-navigation">
                     ${this.getHeaderNavHTML()}
                 </nav>

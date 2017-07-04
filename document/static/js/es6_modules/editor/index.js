@@ -190,7 +190,6 @@ export class Editor {
             let bibGetter = new BibliographyDB(userId, true)
             return bibGetter.getDB().then(({bibPKs, bibCats}) => {
                 this.bibDB = bibGetter
-                //this.mod.menus.header.enableExportMenu()
             })
         } else {
             return Promise.resolve()
@@ -218,12 +217,9 @@ export class Editor {
 
     enableUI() {
 
-        this.mod.settings.check(this.view.state.doc.firstChild.attrs)
-
         if (READ_ONLY_ROLES.indexOf(this.docInfo.rights) > -1) {
             jQuery('#editor-navigation').hide()
-            jQuery('#open-close-header, \
-          .multibuttonsCover').addClass('disabled')
+            jQuery('#open-close-header, .multibuttonsCover').addClass('disabled')
         } else {
             jQuery('#editor-navigation').show()
             jQuery('#open-close-header').removeClass('disabled')
@@ -319,13 +315,16 @@ export class Editor {
                 }
             }
 
+            // Get document settings
+            this.mod.settings.check(this.view.state.doc.firstChild.attrs)
+
             // Set document hash
             this.docInfo.hash = this.getHash()
 
             // Render footnotes based on main doc
             this.mod.footnotes.fnEditor.renderAllFootnotes()
 
-            //  Steup comemtn handling
+            //  Steup comment handling
             this.mod.comments.store.setVersion(this.doc.comment_version)
             _.each(this.doc.comments, comment => {
                 this.mod.comments.store.addLocalComment(comment.id, comment.user,

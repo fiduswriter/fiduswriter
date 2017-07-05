@@ -22,6 +22,7 @@ import {ModCollab} from "./collab"
 import {ModTools} from "./tools"
 import {ModSettings} from "./settings"
 import {ModMenus} from "./menus"
+import {ModStyles} from "./styles"
 import {randomHeadingId} from "../schema/common"
 import {ModServerCommunications} from "./server-communications"
 import {getMetadata, getSettings, updateDoc} from "../schema/convert"
@@ -119,6 +120,7 @@ export class Editor {
         new ModCollab(this)
         new ModTools(this)
         new ModComments(this)
+        new ModStyles(this)
 
         this.mod.serverCommunications.init()
         this.setSaveTimers()

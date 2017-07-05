@@ -131,7 +131,7 @@ export let figure = {
         let captionNode = document.createElement("figcaption")
         if (node.attrs.figureCategory !== 'none') {
             let figureCatNode = document.createElement('span')
-            figureCatNode.classList.add('figure-cat-' + node.attrs.figureCategory)
+            figureCatNode.classList.add(`figure-cat-${node.attrs.figureCategory}`)
             figureCatNode.setAttribute('data-figure-category', node.attrs.figureCategory)
             figureCatNode.innerHTML = node.attrs.figureCategory
             captionNode.appendChild(figureCatNode)
@@ -155,7 +155,7 @@ export let figure = {
 }
 
 export let randomHeadingId = () => {
-    return 'H' + Math.round(Math.random()*10000000) + 1
+    return `H${Math.round(Math.random()*10000000) + 1}`
 }
 
 export let heading = {
@@ -176,5 +176,5 @@ export let heading = {
                {tag: "h4", getAttrs(dom) {return {level: 4, id: dom.getAttribute('id')}}},
                {tag: "h5", getAttrs(dom) {return {level: 5, id: dom.getAttribute('id')}}},
                {tag: "h6", getAttrs(dom) {return {level: 6, id: dom.getAttribute('id')}}},],
-    toDOM(node) { return ["h" + node.attrs.level, {id: node.attrs.id}, 0] }
+    toDOM(node) { return [`h${node.attrs.level}`, {id: node.attrs.id}, 0] }
 }

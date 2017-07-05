@@ -8,10 +8,23 @@ from logging import info, error
 from tornado.escape import json_decode, json_encode
 from tornado.websocket import WebSocketClosedError
 from document.models import AccessRight, COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
-    CAN_COMMUNICATE
+    CAN_COMMUNICATE, ExportTemplate
 from document.views import get_accessrights
+from django.core import serializers
+from django.db import models
 from avatar.templatetags.avatar_tags import avatar_url
 
+from style.models import DocumentStyle, CitationStyle
+
+PythonSerializer = serializers.get_serializer("python")
+
+class PythonWithURLSerializer(PythonSerializer):
+    def handle_field(self, obj, field):
+        value = field.value_from_object(obj)
+        if isinstance(field, models.FileField) and hasattr(value, 'url'):
+            self._current[field.name] = value.url
+        else:
+            return super(PythonWithURLSerializer, self).handle_field(obj, field)
 
 class WebSocket(BaseWebSocketHandler):
     sessions = dict()
@@ -50,6 +63,15 @@ class WebSocket(BaseWebSocketHandler):
                 WebSocket.sessions[doc_db.id] = self.doc
             self.doc['participants'][self.id] = self
             response['type'] = 'welcome'
+            serializer = PythonWithURLSerializer()
+            export_templates = serializer.serialize(ExportTemplate.objects.all())
+            document_styles = serializer.serialize(DocumentStyle.objects.all())
+            citation_styles = serializer.serialize(CitationStyle.objects.all())
+            response['styles'] = {
+                'export_templates': [obj['fields'] for obj in export_templates],
+                'document_styles': [obj['fields'] for obj in document_styles],
+                'citation_styles': [obj['fields'] for obj in citation_styles],
+            }
             self.write_message(response)
 
     def confirm_diff(self, request_id):

@@ -1,10 +1,12 @@
 import {BaseDOMExporter} from "../tools/dom-export"
 import {RenderCitations} from "../../citations/render"
 import {docSchema} from "../../schema/document"
+import {DOMSerializer} from "prosemirror-model"
 
 export class BaseHTMLExporter extends BaseDOMExporter {
     joinDocumentParts() {
-        this.contents = docSchema.nodeFromJSON(this.doc.contents).toDOM()
+        let serializer = DOMSerializer.fromSchema(docSchema)
+        this.contents = serializer.serializeNode(docSchema.nodeFromJSON(this.doc.contents))
 
         // Remove hidden parts
         let hiddenEls = [].slice.call(this.contents.querySelectorAll('[data-hidden=true]'))

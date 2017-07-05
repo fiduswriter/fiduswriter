@@ -2,6 +2,7 @@ import {FormatCitations} from "../../citations/format"
 import {docSchema} from "../../schema/document"
 import {cslBibSchema} from "../../bibliography/schema/csl-bib"
 import {descendantNodes} from "../tools/doc-contents"
+import {DOMSerializer, DOMParser} from "prosemirror-model"
 
 export class OdtExporterCitations {
     constructor(exporter, bibDB, docContents, origCitInfos = []) {
@@ -73,9 +74,10 @@ export class OdtExporterCitations {
 
             // We create a standard body DOM node, add the citations into it, and parse it back.
             let bodyNode = docSchema.nodeFromJSON({type:'body'})
-            let dom = bodyNode.toDOM()
+            let serializer = DOMSerializer.fromSchema(docSchema)
+            let dom = serializer.serializeNode(bodyNode)
             dom.innerHTML = citationsHTML
-            this.pmCits = docSchema.parseDOM(dom, {topNode: bodyNode}).toJSON().content
+            this.pmCits = DOMParser.fromSchema(docSchema).parse(dom, {topNode: bodyNode}).toJSON().content
         } else {
             this.pmCits = []
         }
@@ -85,9 +87,10 @@ export class OdtExporterCitations {
         if (cslBib[1].length > 0) {
             this.exporter.styles.addReferenceStyle(cslBib[0])
             let bibNode = cslBibSchema.nodeFromJSON({type:'cslbib'})
-            let dom = bibNode.toDOM()
+            let serializer = DOMSerializer.fromSchema(cslBibSchema)
+            let dom = serializer.serializeNode(bibNode)
             dom.innerHTML = cslBib[1].join('')
-            this.pmBib = cslBibSchema.parseDOM(dom, {topNode: bibNode}).toJSON()
+            this.pmBib = DOMParser.fromSchema(cslBibSchema).parse(dom, {topNode: bibNode}).toJSON()
         }
     }
 }

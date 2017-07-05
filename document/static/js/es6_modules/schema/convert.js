@@ -4,7 +4,7 @@
 import {obj2Node} from "../exporter/tools/json"
 import {docSchema} from "./document"
 import {randomHeadingId} from "./common"
-import {DOMSerializer} from "prosemirror-model"
+import {DOMSerializer, DOMParser} from "prosemirror-model"
 
 import {defaultDocumentStyle} from "../style/documentstyle-list"
 import {defaultCitationStyle} from "../style/citation-definitions"
@@ -145,7 +145,7 @@ let convertDocV0 = function(doc) {
 
     convertCitationsV0(editorNode)
 
-    let pmDoc = docSchema.parseDOM(editorNode, {
+    let pmDoc = DOMParser.fromSchema(docSchema).parse(editorNode, {
         preserveWhitespace: true
     })
 

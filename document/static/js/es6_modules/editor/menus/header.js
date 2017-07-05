@@ -39,11 +39,6 @@ export class ModMenusHeader {
           jQuery('#editor-navigation').hide()
 
           let that = this
-          jQuery(document).on('mousedown', '.template-export:not(.disabled)', function() {
-              let fileType = jQuery(this).attr('data-filetype')
-              let templateUrl = jQuery(this).attr('data-template')
-              that.mod.actions.downloadTemplateExport(templateUrl, fileType)
-          })
 
           // Document Style switching
           jQuery(document).on('click', '.documentstyle-menu:not(.disabled)', () => {

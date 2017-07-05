@@ -155,7 +155,6 @@ def get_documentlist_js(request):
 @login_required
 def editor(request):
     response = {}
-    response['export_templates'] = ExportTemplate.objects.all()
     return render(request, 'document/editor.html',
                   response)
 

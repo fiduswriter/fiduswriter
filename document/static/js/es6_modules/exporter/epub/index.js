@@ -11,6 +11,7 @@ import {katexRender} from "../../katex"
 import {BaseEpubExporter} from "./base"
 import {docSchema} from "../../schema/document"
 import download from "downloadjs"
+import {DOMSerializer} from "prosemirror-model"
 
 
 export class EpubExporter extends BaseEpubExporter {
@@ -100,8 +101,8 @@ export class EpubExporter extends BaseEpubExporter {
         let timestamp = this.getTimestamp()
 
         let authors = [this.doc.owner.name]
-
-        let docContents = docSchema.nodeFromJSON(this.doc.contents).toDOM()
+        let serializer = DOMSerializer.fromSchema(docSchema)
+        let docContents = serializer.serializeNode(this.doc.contents)
         // Remove hidden parts
         let hiddenEls = [].slice.call(docContents.querySelectorAll('[data-hidden=true]'))
         hiddenEls.forEach(hiddenEl => hiddenEl.parentElement.removeChild(hiddenEl))

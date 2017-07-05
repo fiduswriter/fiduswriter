@@ -5,12 +5,9 @@ import {addListNodes} from "prosemirror-schema-list"
 import {tableNodes} from "prosemirror-tables"
 import {htmlToFnNode, fnNodeToHtml} from "./footnotes-convert"
 import {figure, citation, equation, heading} from "./common"
-import {defaultDocumentStyle} from "../style/documentstyle-list"
-import {defaultCitationStyle} from "../style/citation-definitions"
 
 
 let article = {
-//    group: "article",
     defining: true,
     content: "title subtitle authors abstract keywords body",
     attrs: {
@@ -18,10 +15,10 @@ let article = {
             default: 'A4'
         },
         citationstyle: {
-            default: defaultCitationStyle
+            default: ''
         },
         documentstyle: {
-            default: defaultDocumentStyle
+            default: ''
         }
     },
     parseDOM: [{

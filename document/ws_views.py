@@ -65,7 +65,7 @@ class WebSocket(BaseWebSocketHandler):
             response['type'] = 'welcome'
             serializer = PythonWithURLSerializer()
             export_templates = serializer.serialize(ExportTemplate.objects.all())
-            document_styles = serializer.serialize(DocumentStyle.objects.all())
+            document_styles = serializer.serialize(DocumentStyle.objects.all(),use_natural_foreign_keys=True)
             citation_styles = serializer.serialize(CitationStyle.objects.all())
             response['styles'] = {
                 'export_templates': [obj['fields'] for obj in export_templates],

@@ -6,9 +6,6 @@ import {docSchema} from "./document"
 import {randomHeadingId} from "./common"
 import {DOMSerializer, DOMParser} from "prosemirror-model"
 
-import {defaultDocumentStyle} from "../style/documentstyle-list"
-import {defaultCitationStyle} from "../style/citation-definitions"
-
 export let getMetadata = function(pmArticle) {
     let metadata = {}
     let serializer = DOMSerializer.fromSchema(docSchema)
@@ -152,8 +149,8 @@ let convertDocV0 = function(doc) {
     let docContents = pmDoc.firstChild.toJSON()
     docContents.attrs = {
         papersize: doc.settings.papersize === 1020 ? 'US Letter': 'A4',
-        documentstyle: doc.settings.documentstyle ? doc.settings.documentstyle : defaultDocumentStyle,
-        citationstyle: doc.settings.citationstyle ? doc.settings.citationstyle : defaultCitationStyle
+        documentstyle: doc.settings.documentstyle ? doc.settings.documentstyle : '',
+        citationstyle: doc.settings.citationstyle ? doc.settings.citationstyle : ''
     }
     docContents.content.forEach(docSection => {
         if (['subtitle', 'abstract', 'authors', 'keywords'].indexOf(docSection.type) !== -1) {

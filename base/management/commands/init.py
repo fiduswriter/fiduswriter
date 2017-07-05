@@ -18,7 +18,6 @@ class Command(BaseCommand):
         else:
             call_command("migrate")
         call_command("loaddata", "style/fixtures/initial_styles.json")
-        call_command("create_document_styles")
         call_command("create_citation_styles")
         call_command("loaddata", "base/fixtures/initial_terms.json")
         call_command(

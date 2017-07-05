@@ -16,6 +16,8 @@ export class ModStyles {
         this.document_styles = styles.document_styles
         this.citation_styles = styles.citation_styles
         this.addExportTemplateMenuEntries()
+        this.addDocumentStylesMenuEntries()
+        this.addCitationStylesMenuEntries()
         if (this.editor.menu.headerView) {
             this.editor.menu.headerView.update()
         }
@@ -62,6 +64,49 @@ export class ModStyles {
         })
         exportMenu.content = exportMenu.content.concat(exportMenuEntries)
     }
+
+    addDocumentStylesMenuEntries() {
+        let documentStyleMenu = this.editor.menu.headerModel.find(menu => menu.id==='document_style')
+
+        documentStyleMenu.content = this.document_styles.map(doc_style => {
+            return {
+                title: doc_style.title,
+                action: editor => {
+                    let article = editor.view.state.doc.firstChild
+                    let attrs = _.clone(article.attrs)
+                    attrs.documentstyle = doc_style.filename
+                    editor.view.dispatch(
+                        editor.view.state.tr.setNodeType(0, false, attrs)
+                    )
+                },
+                selected: editor => {
+                    return editor.view.state.doc.firstChild.attrs.documentstyle === doc_style.filename
+                }
+            }
+        })
+    }
+
+    addCitationStylesMenuEntries() {
+        let citationStyleMenu = this.editor.menu.headerModel.find(menu => menu.id==='citation_style')
+
+        citationStyleMenu.content = this.citation_styles.map(cite_style => {
+            return {
+                title: cite_style.title,
+                action: editor => {
+                    let article = editor.view.state.doc.firstChild
+                    let attrs = _.clone(article.attrs)
+                    attrs.citationstyle = cite_style.short_title
+                    editor.view.dispatch(
+                        editor.view.state.tr.setNodeType(0, false, attrs)
+                    )
+                },
+                selected: editor => {
+                    return editor.view.state.doc.firstChild.attrs.citationstyle === cite_style.short_title
+                }
+            }
+        })
+    }
+
 
 
 }

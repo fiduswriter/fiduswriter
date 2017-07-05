@@ -1,4 +1,3 @@
-import {ModMenusHeader} from "./header"
 import {ModMenusToolbar} from "./toolbar"
 import {ModMenusUpdateUI} from "./update-ui"
 
@@ -8,7 +7,6 @@ export class ModMenus {
     constructor(editor) {
         editor.mod.menus = this
         this.editor = editor
-        //new ModMenusHeader(this)
         new ModMenusToolbar(this)
         //new ModMenusUpdateUI(this)
     }

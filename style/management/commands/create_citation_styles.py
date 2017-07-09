@@ -21,17 +21,17 @@ class Command(BaseCommand):
         )
         output_js += u'export let citationDefinitions = {\n'
 
-        output_js += u'    locals: {\n'
+        output_js += u'    locales: [\n'
         for cl in CitationLocale.objects.order_by('language_code'):
-            output_js += '        "' + cl.display_language_code() + '": "' + \
+            output_js += '        {language_code: "' + cl.language_code + '", contents:"' + \
                 cl.contents.replace(
                     '\r', ''
                 ).replace(
                     '\n', ''
                 ).replace(
                     '"', '\\"'
-                ) + '",\n'
-        output_js += '    },'
+                ) + '"},\n'
+        output_js += '    ],'
         output_js += '\n'
 
         output_js += '    styles: [\n'

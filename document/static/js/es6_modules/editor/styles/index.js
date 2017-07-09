@@ -8,6 +8,7 @@ export class ModStyles {
         this.export_templates = []
         this.document_styles = []
         this.citation_styles = []
+        this.citation_locales = []
     }
 
 
@@ -15,6 +16,7 @@ export class ModStyles {
         this.export_templates = styles.export_templates
         this.document_styles = styles.document_styles
         this.citation_styles = styles.citation_styles
+        this.citation_locales = styles.citation_locales
         this.addExportTemplateMenuEntries()
         this.addDocumentStylesMenuEntries()
         this.addCitationStylesMenuEntries()

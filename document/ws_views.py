@@ -14,7 +14,7 @@ from django.core import serializers
 from django.db import models
 from avatar.templatetags.avatar_tags import avatar_url
 
-from style.models import DocumentStyle, CitationStyle
+from style.models import DocumentStyle, CitationStyle, CitationLocale
 
 PythonSerializer = serializers.get_serializer("python")
 
@@ -67,10 +67,12 @@ class WebSocket(BaseWebSocketHandler):
             export_templates = serializer.serialize(ExportTemplate.objects.all())
             document_styles = serializer.serialize(DocumentStyle.objects.all(),use_natural_foreign_keys=True)
             citation_styles = serializer.serialize(CitationStyle.objects.all())
+            citation_locales = serializer.serialize(CitationLocale.objects.all())
             response['styles'] = {
                 'export_templates': [obj['fields'] for obj in export_templates],
                 'document_styles': [obj['fields'] for obj in document_styles],
                 'citation_styles': [obj['fields'] for obj in citation_styles],
+                'citation_locales': [obj['fields'] for obj in citation_locales],
             }
             self.write_message(response)
 

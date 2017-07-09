@@ -28,11 +28,12 @@ export class citeprocSys {
     }
 
     retrieveLocale(lang) {
-        if (citationDefinitions.locals[lang]) {
-            return citationDefinitions.locals[lang]
-        } else {
-            return citationDefinitions.locals['en-US']
+        let language_code = lang.replace('-','')
+        let citDef = citationDefinitions.find(citDef => citDef.language_code===language_code)
+        if (!citDef) {
+            citDef = citationDefinitions.find(citDef => citDef.language_code==='enUS')
         }
+        return citDef
 
     }
 

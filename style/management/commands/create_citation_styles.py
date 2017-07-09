@@ -34,11 +34,11 @@ class Command(BaseCommand):
         output_js += '    },'
         output_js += '\n'
 
-        output_js += '    styles: {\n'
+        output_js += '    styles: [\n'
 
         for cs in CitationStyle.objects.order_by('short_title'):
-            output_js += '        "' + cs.short_title + '": {\n'
-            output_js += '            definition: "' + \
+            output_js += '        {short_title: "' + cs.short_title + '",\n'
+            output_js += '            contents: "' + \
                 cs.contents.replace(
                     '\r', ''
                 ).replace(
@@ -46,8 +46,8 @@ class Command(BaseCommand):
                 ).replace(
                     '"', '\\"'
                 ) + '",\n'
-            output_js += '            name: "' + cs.title + '"},\n'
-        output_js += '    }\n'
+            output_js += '            title: "' + cs.title + '"},\n'
+        output_js += '    ]\n'
         output_js += '}'
         output_js += '\n'
 

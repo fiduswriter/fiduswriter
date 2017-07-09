@@ -10,6 +10,7 @@ export class FormatCitations {
         this.allCitationInfos = allCitationInfos
         this.citationStyle = citationStyle
         this.bibDB = bibDB
+        this.citationStyleDef = false
     }
 
     init() {
@@ -85,18 +86,14 @@ export class FormatCitations {
     }
 
     getFormattedCitations() {
-        if (citationDefinitions.styles.hasOwnProperty(this.citationStyle)) {
-            this.citationStyle = citationDefinitions.styles[this.citationStyle]
-        } else {
-            for (let styleName in citationDefinitions.styles) {
-                this.citationStyle = citationDefinitions.styles[styleName]
-                break
-            }
+        this.citationStyleDef = citationDefinitions.styles.find(style => style.short_title === this.citationStyle)
+        if (!this.citationStyleDef && citationDefinitions.styles.length) {
+            this.citationStyleDef = citationDefinitions.styles[0]
         }
         let citeprocConnector = new citeprocSys(this.bibDB)
         let citeprocInstance = new CSL.Engine(
             citeprocConnector,
-            this.citationStyle.definition
+            this.citationStyleDef.contents
         )
         let allIds = []
         this.citations.forEach(cit =>

@@ -90,7 +90,7 @@ export class FormatCitations {
         if (!this.citationStyleDef && citationDefinitions.styles.length) {
             this.citationStyleDef = citationDefinitions.styles[0]
         }
-        let citeprocConnector = new citeprocSys(this.bibDB)
+        let citeprocConnector = new citeprocSys(this.bibDB, citationDefinitions.locales)
         let citeprocInstance = new CSL.Engine(
             citeprocConnector,
             this.citationStyleDef.contents

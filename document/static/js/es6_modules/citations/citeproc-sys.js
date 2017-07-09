@@ -1,10 +1,10 @@
 /* Connects Fidus Writer citation system with citeproc */
-import {citationDefinitions} from "../style/citation-definitions"
 import {CSLExporter} from "biblatex-csl-converter"
 
 export class citeprocSys {
-    constructor(bibDB) {
+    constructor(bibDB, citationLocales) {
         this.bibDB = bibDB
+        this.citationLocales = citationLocales
         this.abbreviations = {
             "default": {}
         }
@@ -12,6 +12,7 @@ export class citeprocSys {
         // We cache values retrieved once.
         this.items = {}
         this.missingItems = []
+
     }
 
     retrieveItem(id) {
@@ -28,12 +29,12 @@ export class citeprocSys {
     }
 
     retrieveLocale(lang) {
-        let language_code = lang.replace('-','')
-        let citDef = citationDefinitions.find(citDef => citDef.language_code===language_code)
-        if (!citDef) {
-            citDef = citationDefinitions.find(citDef => citDef.language_code==='enUS')
+        let langCode = lang.replace('-','')
+        let locale = this.citationLocales.find(locale => locale.language_code===langCode)
+        if (!locale) {
+            locale = this.citationLocales.find(locale => locale.language_code==='enUS')
         }
-        return citDef
+        return locale
 
     }
 

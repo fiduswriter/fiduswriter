@@ -132,9 +132,24 @@ export class HeaderView {
                 <nav id="header-navigation">
                     ${this.getHeaderNavHTML()}
                 </nav>
-                <div id="connected-collaborators"></div>
+                ${this.getParticipantListHTML()}
             </div>
         `
+    }
+
+    getParticipantListHTML() {
+        let participants = this.editor.mod.collab.participants
+        if (participants.length > 1) {
+            return `
+                <div id="connected-collaborators">
+                    ${participants.map(participant =>
+                        `<img src="${participant.avatar}" alt="${escapeText(participant.name)}" title="${escapeText(participant.name)}" class="avatar user-${participant.colorId}">`).join('')
+                    }
+                </div>
+            `
+        } else {
+            return ''
+        }
     }
 
     getHeaderNavHTML() {

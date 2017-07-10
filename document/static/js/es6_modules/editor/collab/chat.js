@@ -1,4 +1,4 @@
-import {messageTemplate, participantListTemplate} from "./templates"
+import {messageTemplate} from "./templates"
 import {localizeDate} from "../../common"
 
 /*
@@ -64,20 +64,15 @@ export class ModCollabChat {
 
     }
 
-    updateParticipantList(participants) {
+    showChat(participants) {
 
         // If only one machine is connected and nothing has been chatted, don't show chat
         if (participants.length === 1 && jQuery(
             '#chat-container .message').length === 0) {
             jQuery('#chat').css('display', 'none');
-            jQuery('#connected-collaborators').css('display', 'none')
         }
         else {
-            jQuery('#connected-collaborators').html(participantListTemplate({
-                participants: this.mod.participants
-            }))
             jQuery('#chat').css('display', 'block')
-            jQuery('#connected-collaborators').css('display', 'block')
         }
     }
 

@@ -36,7 +36,7 @@ export class ModCollab {
         // Check if each of the old session IDs is still present in last update.
         // If not, remove the corresponding marked range, if any.
         this.sessionIds.forEach(function(sessionId) {
-            if (allSessionIds.indexOf(sessionId) === -1) {
+            if (!allSessionIds.includes(sessionId)) {
             //    that.carets.removeSelection(sessionId)
             }
         })
@@ -46,17 +46,20 @@ export class ModCollab {
         } else if (participants.length === 1) {
             this.collaborativeMode = false
         }
-        this.participants.forEach(function(participant) {
+        this.participants.forEach(participant => {
             /* We assign a color to each user. This color stays even if the user
             * disconnects or the participant list is being updated.
             */
-            if (!(participant.id in that.colorIds)) {
-                that.colorIds[participant.id] = that.newColor
-                that.newColor++
+            if (!(participant.id in this.colorIds)) {
+                this.colorIds[participant.id] = this.newColor
+                this.newColor++
             }
-            participant.colorId = that.colorIds[participant.id]
+            participant.colorId = this.colorIds[participant.id]
         })
         this.colors.provideUserColorStyles(this.newColor)
-        this.chat.updateParticipantList(participants)
+        if (this.editor.menu.headerView) {
+            this.editor.menu.headerView.update()
+        }
+        this.chat.showChat(participants)
     }
 }

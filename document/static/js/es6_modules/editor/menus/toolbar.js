@@ -123,18 +123,17 @@ export class ModMenusToolbar {
                 let block = that.mod.editor.currentView.state.schema.nodes[blockType[0]]
 
                 let command = setBlockType(block, blockType[1])
-                command(that.mod.editor.currentView.state, tr => this.mod.editor.currentView.dispatch(tr))
+                command(that.mod.editor.currentView.state, tr => that.mod.editor.currentView.dispatch(tr))
 
             })
 
 
         })
 
-        jQuery(document).on('mousedown', '#button-ol', event => {
+        jQuery(document).on('mousedown', '#button-ol:not(.disabled)', event => {
             this.executeAction(event, () => {
 
                 let node = this.mod.editor.currentView.state.schema.nodes['ordered_list']
-
                 let command = wrapInList(node)
                 command(that.mod.editor.currentView.state, tr => this.mod.editor.currentView.dispatch(tr))
 
@@ -145,7 +144,7 @@ export class ModMenusToolbar {
             let view = this.mod.editor.currentView,
                 state = view.state
             view.dispatch(
-                state.tr.replaceSelection(state.schema.node("horizontal_rule"))
+                state.tr.replaceSelectionWith(state.schema.node("horizontal_rule"))
             )
         })
 
@@ -168,7 +167,7 @@ export class ModMenusToolbar {
         jQuery(document).on('mousedown', '#button-footnote:not(.disabled)', event => {
             this.executeAction(event, () => {
                 let nodeType = this.mod.editor.view.state.schema.nodes['footnote']
-                let transaction = this.mod.editor.view.state.tr.replaceSelection(nodeType.createAndFill())
+                let transaction = this.mod.editor.view.state.tr.replaceSelectionWith(nodeType.createAndFill())
                 this.mod.editor.view.dispatch(transaction)
             })
         })

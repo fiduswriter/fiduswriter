@@ -219,6 +219,9 @@ export class ModCommentLayout {
         })
 
         // Add a comment that is currently under construction to the list.
+
+        /* PM-UPDATE: temporarily disabled
+
         if(this.mod.store.commentDuringCreation) {
             let pos = this.mod.store.commentDuringCreation.referrer.from
             let comment = this.mod.store.commentDuringCreation.comment
@@ -232,7 +235,7 @@ export class ModCommentLayout {
             referrers.splice(index, 0, pos)
             activeCommentStyle += '.comments-enabled .active-comment {background-color: #fffacf;}'
             this.mod.store.commentDuringCreation.inDOM = true
-        }
+        }*/
 
         let commentsTemplateHTML = commentsTemplate({
             theComments,

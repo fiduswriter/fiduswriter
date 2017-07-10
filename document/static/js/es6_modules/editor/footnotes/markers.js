@@ -185,9 +185,10 @@ export class ModFootnoteMarkers {
         let footnote = this.mod.footnotes[index]
         if (footnote) {
             let node = this.mod.editor.view.state.doc.nodeAt(footnote.from)
-            this.mod.editor.view.state.tr.setNodeType(footnote.from, node.type, {
+            let transaction = this.mod.editor.view.state.tr.setNodeType(footnote.from, node.type, {
                 footnote: fnContents
-            }).apply()
+            })
+            this.mod.editor.view.dispatch(transaction)
         }
         this.updating = false
     }

@@ -68,7 +68,7 @@ export class FigureDialog {
             return false
         }
         let nodeType = this.editor.currentView.state.schema.nodes['figure']
-        let transaction = this.editor.currentView.state.tr.replaceSelection(nodeType.createAndFill({
+        let transaction = this.editor.currentView.state.tr.replaceSelectionWith(nodeType.createAndFill({
             equation: this.equation,
             image: this.imageId,
             figureCategory: this.figureCategory,

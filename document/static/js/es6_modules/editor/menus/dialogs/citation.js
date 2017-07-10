@@ -267,10 +267,9 @@ export class CitationDialog {
             // Nothing has been changed, so we just close the dialog again
             return true
         }
-        let nodeType =  this.editor.currentView.state.schema.nodes['citation']
-        let transaction = this.editor.currentView.state.tr.replaceSelection(
-            nodeType.createAndFill({format, references})
-        )
+
+        let citationNode =  this.editor.currentView.state.schema.nodes['citation'].create({format, references})
+        let transaction = this.editor.currentView.state.tr.replaceSelectionWith(citationNode, true)
         this.editor.currentView.dispatch(transaction)
         return true
     }

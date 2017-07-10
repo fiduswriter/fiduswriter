@@ -34,7 +34,12 @@ export class citeprocSys {
         if (!locale) {
             locale = this.citationLocales.find(locale => locale.language_code==='enUS')
         }
-        return locale
+        if (locale) {
+            return locale.contents
+        } else {
+          console.error(`Missing locale: ${lang}`)
+        }
+
 
     }
 

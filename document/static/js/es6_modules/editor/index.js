@@ -32,6 +32,7 @@ import {Paste} from "./paste"
 import {placeholdersPlugin} from "./plugins/placeholders"
 import {headerPlugin} from "./plugins/header"
 import {headerModel} from "./menus/header-model"
+import {addDropdownBox} from "../common"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']
@@ -234,6 +235,10 @@ export class Editor {
                 jQuery('#open-close-header').removeClass('disabled')
             }
         }
+        jQuery('.multibuttonsCover').each(function() {
+              addDropdownBox(jQuery(this), jQuery(this).siblings(
+                  '.fw-pulldown'))
+        })
     }
 
     receiveDocument(data) {
@@ -326,7 +331,7 @@ export class Editor {
             // Render footnotes based on main doc
             this.mod.footnotes.fnEditor.renderAllFootnotes()
 
-            //  Steup comment handling
+            //  Setup comment handling
             this.mod.comments.store.setVersion(this.doc.comment_version)
             _.each(this.doc.comments, comment => {
                 this.mod.comments.store.addLocalComment(comment.id, comment.user,
@@ -341,6 +346,7 @@ export class Editor {
             return this.getBibDB(this.doc.owner.id).then(() => {
                 this.activatePlugins()
                 this.enableUI()
+                this.mod.citations.layoutCitations()
                 this.waitingForDocument = false
             })
         })
@@ -447,7 +453,8 @@ export class Editor {
                 ]
             })
         })
-        ranges.forEach(range => transaction.doc.nodesBetween(
+        ranges.forEach(range => {
+          transaction.doc.nodesBetween(
             range[0],
             range[1],
             (node, pos, parent) => {
@@ -455,7 +462,7 @@ export class Editor {
                     foundHeading = true
                 }
             }
-        ))
+        )})
 
         if (!foundHeading) {
             return
@@ -504,7 +511,6 @@ export class Editor {
                 level: node.attrs.level,
                 id: blockId
             }
-
             // Because we only change attributes, positions should stay the
             // the same throughout all our extra steps. We therefore do no
             // mapping of positions through these steps.

@@ -126,7 +126,6 @@ export class ModFootnoteEditor {
             let node = this.mod.editor.view.state.doc.nodeAt(footnote.from)
             this.renderFootnote(node.attrs.footnote, index)
         })
-        this.mod.attachCollab()
         //this.bindEvents()
     }
 

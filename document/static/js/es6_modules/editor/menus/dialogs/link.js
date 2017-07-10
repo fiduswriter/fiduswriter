@@ -37,7 +37,7 @@ export class LinkDialog {
     checkLink() {
         let state = this.editor.currentView.state,
             from = state.selection.from,
-            linkMark = state.doc.marksAt(from).find(
+            linkMark = state.selection.$from.marks().find(
                 mark => mark.type.name === 'link'
             )
         if (linkMark) {
@@ -110,20 +110,19 @@ export class LinkDialog {
 
                 this.dialog.dialog('close')
                 let view = this.editor.currentView,
-                    state = view.state,
-                    posFrom = state.selection.from,
-                    posTo = state.selection.to,
-                    markType = state.schema.marks.link.create({
+                    posFrom = view.state.selection.from,
+                    posTo = view.state.selection.to,
+                    markType = view.state.schema.marks.link.create({
                         href: newLink,
                         title: linkTitle
                     })
                 // There is an empty selection. We insert the link title into the editor
                 // and then add the link to that.
                 if (posFrom===posTo) {
-                    view.dispatch(state.tr.insertText(posFrom, linkTitle))
+                    view.dispatch(view.state.tr.insertText(linkTitle, posFrom, posTo))
                     posTo = posFrom + linkTitle.length
                 }
-                view.dispatch(state.tr.addMark(
+                view.dispatch(view.state.tr.addMark(
                     posFrom,
                     posTo,
                     markType

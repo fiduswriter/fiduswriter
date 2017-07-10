@@ -32,7 +32,8 @@ export class ModCommentStore {
                 this.mod.editor.user.avatar,
                 new Date().getTime(),
                 ''),
-            /*referrer: this.mod.editor.pm.markRange(
+            /* PM-UPDATE: temporarily disabled
+            referrer: this.mod.editor.pm.markRange(
                 this.mod.editor.view.state.selection.from,
                 this.mod.editor.view.state.selection.to,
                 {className: 'active-comment'}

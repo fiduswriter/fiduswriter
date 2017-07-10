@@ -74,7 +74,7 @@ export class MathDialog {
                 }
                 let nodeType = state.schema.nodes['equation']
                 view.dispatch(
-                    state.tr.replaceSelection(nodeType.createAndFill({
+                    state.tr.replaceSelectionWith(nodeType.createAndFill({
                         equation: this.equation
                     }))
                 )

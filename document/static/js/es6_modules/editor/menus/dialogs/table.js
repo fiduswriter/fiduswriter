@@ -79,19 +79,19 @@ export class TableDropdown {
         })
 
         jQuery('#table-dialog button.table-insert').on('mousedown', () => {
-
             let table = {type: 'table', content: []}
 
             for (let i=0;i<rowCount;i++) {
                 let row = {type: 'table_row', content: []}
-                for (let j=0;i<colCount;j++) {
-                    row.content.push({type: 'table_cell', content: []})
+                for (let j=0;j<colCount;j++) {
+                    row.content.push({type: 'table_cell', content: [{type: 'paragraph'}]})
                 }
                 table.content.push(row)
+
             }
             let schema = this.editor.currentView.state.schema
             this.editor.currentView.dispatch(
-                this.editor.currentView.state.tr.replaceSelection(
+                this.editor.currentView.state.tr.replaceSelectionWith(
                     schema.nodeFromJSON(table)
                 )
             )

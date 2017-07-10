@@ -454,15 +454,15 @@ body {counter-reset: pagination-footnote pagination-footnote-reference;}
   border: none !important;
 }
 
-.ProseMirror-content {
+.ProseMirror {
   padding: 0 !important;
   line-height: inherit !important;
 }
-.ProseMirror-content table {
+.ProseMirror table {
   border-collapse: collapse;
   margin: 10px 0 10px 0;
 }
-.ProseMirror-content td {
+.ProseMirror td {
   vertical-align: top;
   border: 1px solid #ddd;
   padding: 3px 5px;
@@ -619,6 +619,10 @@ table.insert-table-selection td.selected {
 
 table.insert-table-selection td.selected.hover {
     background-color: #585858;
+}
+
+.ProseMirror td.selectedCell {
+    background-color: #8cf;
 }
 
 /* CSL */

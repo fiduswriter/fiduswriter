@@ -67,6 +67,8 @@ export class DocumentOverview {
                 this.teamMembers = response.team_members
                 this.accessRights = response.access_rights
                 this.user = response.user
+                this.citationStyles = response.citation_styles
+                this.citationLocales = response.citation_locales
                 this.layoutTable()
             },
             error: (jqXHR, textStatus, errorThrown) => addAlert('error', jqXHR.responseText),

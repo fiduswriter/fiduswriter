@@ -18,6 +18,8 @@ export class BaseHTMLExporter extends BaseDOMExporter {
             this.contents,
             this.doc.settings.citationstyle,
             this.bibDB,
+            this.citationStyles,
+            this.citationLocales,
             true
         )
         return citRenderer.init().then(

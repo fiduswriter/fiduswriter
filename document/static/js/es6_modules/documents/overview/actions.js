@@ -117,9 +117,6 @@ export class DocumentOverviewActions {
                     importer.init().then(
                         ({doc, docInfo}) => {
                             deactivateWait()
-                            //if (noErrors) {
-                                //let doc = returnValue[0]
-                                //let aDocumentValues = returnValue.docInfo
                             addAlert('info', doc.title + gettext(
                                     ' successfully imported.'))
                             that.documentOverview.documentList.push(doc)
@@ -131,9 +128,7 @@ export class DocumentOverviewActions {
                                         localizeDate
                                     }))
                             that.documentOverview.startDocumentTable()
-                            //} else {
-                            //    addAlert('error', returnValue)
-                            //}
+
                         },
                         errorMessage => {
                             addAlert('error', errorMessage)
@@ -142,8 +137,7 @@ export class DocumentOverviewActions {
                     )
             })
 
-            //reader.onload = unzip
-            //reader.readAsText(fidusFile)
+
             jQuery(this).dialog('close')
         }
         diaButtons[gettext('Cancel')] = function () {
@@ -272,7 +266,7 @@ export class DocumentOverviewActions {
             () => {
                 for (let i = 0; i < ids.length; i++) {
                     new ExportFidusFile(
-                        _.findWhere(this.documentOverview.documentList, {id: ids[i]}),
+                        this.documentOverview.documentList.find(doc => doc.id===ids[i]),
                         false, // no bibDB or imageDB present
                         false
                     )
@@ -288,10 +282,12 @@ export class DocumentOverviewActions {
         ).then(
             () => {
                 for (let i = 0; i < ids.length; i++) {
-                    new HTMLExporter(_.findWhere(
-                        this.documentOverview.documentList, {
-                            id: ids[i]
-                        }), false)
+                    new HTMLExporter(
+                        this.documentOverview.documentList.find(doc => doc.id===ids[i]),
+                        false,
+                        this.documentOverview.citationStyles,
+                        this.documentOverview.citationLocales
+                    )
                 }
             }
         )
@@ -305,15 +301,23 @@ export class DocumentOverviewActions {
             () => {
                 for (let i = 0; i < ids.length; i++) {
                     if (templateType==='docx') {
-                        new DocxExporter(_.findWhere(
-                            this.documentOverview.documentList, {
-                                id: ids[i]
-                            }), templateUrl, false, false)
+                        new DocxExporter(
+                            this.documentOverview.documentList.find(doc => doc.id===ids[i]),
+                            templateUrl,
+                            false,
+                            false,
+                            this.documentOverview.citationStyles,
+                            this.documentOverview.citationLocales
+                        )
                     } else {
-                        new OdtExporter(_.findWhere(
-                            this.documentOverview.documentList, {
-                                id: ids[i]
-                            }), templateUrl, false, false)
+                        new OdtExporter(
+                            this.documentOverview.documentList.find(doc => doc.id===ids[i]),
+                            templateUrl,
+                            false,
+                            false,
+                            this.documentOverview.citationStyles,
+                            this.documentOverview.citationLocales
+                        )
                     }
 
                 }
@@ -328,10 +332,10 @@ export class DocumentOverviewActions {
         ).then(
             () => {
                 for (let i = 0; i < ids.length; i++) {
-                    new LatexExporter(_.findWhere(
-                        this.documentOverview.documentList, {
-                            id: ids[i]
-                        }), false)
+                    new LatexExporter(
+                        this.documentOverview.documentList.find(doc => doc.id===ids[i]),
+                        false
+                    )
                 }
             }
         )
@@ -344,10 +348,12 @@ export class DocumentOverviewActions {
         ).then(
             () => {
                 for (let i = 0; i < ids.length; i++) {
-                    new EpubExporter(_.findWhere(
-                        this.documentOverview.documentList, {
-                            id: ids[i]
-                        }), false)
+                  new EpubExporter(
+                      this.documentOverview.documentList.find(doc => doc.id===ids[i]),
+                      false,
+                      this.documentOverview.citationStyles,
+                      this.documentOverview.citationLocales
+                  )
                 }
             }
         )

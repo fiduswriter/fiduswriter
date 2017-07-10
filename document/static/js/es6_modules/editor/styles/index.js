@@ -5,18 +5,18 @@ export class ModStyles {
     constructor(editor) {
         editor.mod.styles = this
         this.editor = editor
-        this.export_templates = []
-        this.document_styles = []
-        this.citation_styles = []
-        this.citation_locales = []
+        this.exportTemplates = []
+        this.documentStyles = []
+        this.citationStyles = []
+        this.citationLocales = []
     }
 
 
     setStyles(styles) {
-        this.export_templates = styles.export_templates
-        this.document_styles = styles.document_styles
-        this.citation_styles = styles.citation_styles
-        this.citation_locales = styles.citation_locales
+        this.exportTemplates = styles.export_templates
+        this.documentStyles = styles.document_styles
+        this.citationStyles = styles.citation_styles
+        this.citationLocales = styles.citation_locales
         this.addExportTemplateMenuEntries()
         this.addDocumentStylesMenuEntries()
         this.addCitationStylesMenuEntries()
@@ -29,7 +29,7 @@ export class ModStyles {
         let exportMenu = this.editor.menu.headerModel.find(menu => menu.id==='export')
         // Remove any previous entries in case we run this a second time
         exportMenu.content = exportMenu.content.filter(menuItem => menuItem.type!=='export_template')
-        let exportMenuEntries = this.export_templates.map(template => {
+        let exportMenuEntries = this.exportTemplates.map(template => {
             if(template.file_type==='docx') {
                 return {
                     type: 'export_template',
@@ -41,7 +41,9 @@ export class ModStyles {
                                 editor.doc,
                                 template.template_file,
                                 editor.bibDB,
-                                editor.imageDB
+                                editor.imageDB,
+                                editor.mod.styles.citationStyles,
+                                editor.mod.styles.citationLocales
                             )
                         })
                     }
@@ -57,7 +59,9 @@ export class ModStyles {
                                 editor.doc,
                                 template.template_file,
                                 editor.bibDB,
-                                editor.imageDB
+                                editor.imageDB,
+                                editor.mod.styles.citationStyles,
+                                editor.mod.styles.citationLocales
                             )
                         })
                     }
@@ -70,19 +74,19 @@ export class ModStyles {
     addDocumentStylesMenuEntries() {
         let documentStyleMenu = this.editor.menu.headerModel.find(menu => menu.id==='document_style')
 
-        documentStyleMenu.content = this.document_styles.map(doc_style => {
+        documentStyleMenu.content = this.documentStyles.map(docStyle => {
             return {
-                title: doc_style.title,
+                title: docStyle.title,
                 action: editor => {
                     let article = editor.view.state.doc.firstChild
                     let attrs = _.clone(article.attrs)
-                    attrs.documentstyle = doc_style.filename
+                    attrs.documentstyle = docStyle.filename
                     editor.view.dispatch(
                         editor.view.state.tr.setNodeType(0, false, attrs)
                     )
                 },
                 selected: editor => {
-                    return editor.view.state.doc.firstChild.attrs.documentstyle === doc_style.filename
+                    return editor.view.state.doc.firstChild.attrs.documentstyle === docStyle.filename
                 }
             }
         })
@@ -91,19 +95,19 @@ export class ModStyles {
     addCitationStylesMenuEntries() {
         let citationStyleMenu = this.editor.menu.headerModel.find(menu => menu.id==='citation_style')
 
-        citationStyleMenu.content = this.citation_styles.map(cite_style => {
+        citationStyleMenu.content = this.citationStyles.map(citeStyle => {
             return {
-                title: cite_style.title,
+                title: citeStyle.title,
                 action: editor => {
                     let article = editor.view.state.doc.firstChild
                     let attrs = _.clone(article.attrs)
-                    attrs.citationstyle = cite_style.short_title
+                    attrs.citationstyle = citeStyle.short_title
                     editor.view.dispatch(
                         editor.view.state.tr.setNodeType(0, false, attrs)
                     )
                 },
                 selected: editor => {
-                    return editor.view.state.doc.firstChild.attrs.citationstyle === cite_style.short_title
+                    return editor.view.state.doc.firstChild.attrs.citationstyle === citeStyle.short_title
                 }
             }
         })

@@ -21,6 +21,8 @@ from avatar.templatetags.avatar_tags import avatar_url
 from document.models import Document, AccessRight, DocumentRevision, \
     ExportTemplate, CAN_UPDATE_DOCUMENT
 
+from style.models import CitationStyle, CitationLocale
+
 
 class SimpleSerializer(Serializer):
     def end_object(self, obj):
@@ -140,6 +142,12 @@ def get_documentlist_js(request):
             tm_object['name'] = team_member.member.readable_name
             tm_object['avatar'] = avatar_url(team_member.member, 80)
             response['team_members'].append(tm_object)
+        citation_styles = serializer.serialize(
+            CitationStyle.objects.all()
+        )
+        response['citation_styles'] = [obj['fields'] for obj in citation_styles]
+        cit_locales = serializer.serialize(CitationLocale.objects.all())
+        response['citation_locales'] = [obj['fields'] for obj in cit_locales]
         response['user'] = {}
         response['user']['id'] = request.user.id
         response['user']['name'] = request.user.readable_name

@@ -5,9 +5,11 @@ import {descendantNodes} from "../tools/doc-contents"
 import {DOMSerializer, DOMParser} from "prosemirror-model"
 
 export class OdtExporterCitations {
-    constructor(exporter, bibDB, docContents, origCitInfos = []) {
+    constructor(exporter, bibDB, citationStyles, citationLocales, docContents, origCitInfos = []) {
         this.exporter = exporter
         this.bibDB = bibDB
+        this.citationStyles = citationStyles
+        this.citationLocales = citationLocales
         this.docContents = docContents
         // If citInfos were found in a previous run, they are stored here
         // (for example: first citations in main document, then in footnotes)
@@ -44,7 +46,9 @@ export class OdtExporterCitations {
         this.citFm = new FormatCitations(
             this.citInfos,
             this.exporter.doc.settings.citationstyle,
-            this.bibDB
+            this.bibDB,
+            this.citationStyles,
+            this.citationLocales
         )
         return this.citFm.init().then(
             () => {

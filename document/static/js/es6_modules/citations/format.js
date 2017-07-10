@@ -1,15 +1,16 @@
 import {citeprocSys} from "./citeproc-sys"
-import {citationDefinitions} from "../style/citation-definitions"
 import CSL from "citeproc"
 
 /*
 * Use CSL and bibDB to format all citations for the given prosemirror json citation nodes
 */
 export class FormatCitations {
-    constructor(allCitationInfos, citationStyle, bibDB) {
+    constructor(allCitationInfos, citationStyle, bibDB, citationStyles, citationLocales) {
         this.allCitationInfos = allCitationInfos
         this.citationStyle = citationStyle
         this.bibDB = bibDB
+        this.citationStyles = citationStyles
+        this.citationLocales = citationLocales
         this.citationStyleDef = false
     }
 
@@ -86,11 +87,12 @@ export class FormatCitations {
     }
 
     getFormattedCitations() {
-        this.citationStyleDef = citationDefinitions.styles.find(style => style.short_title === this.citationStyle)
-        if (!this.citationStyleDef && citationDefinitions.styles.length) {
-            this.citationStyleDef = citationDefinitions.styles[0]
+
+        this.citationStyleDef = this.citationStyles.find(style => style.short_title === this.citationStyle)
+        if (!this.citationStyleDef && this.citationStyles.length) {
+            this.citationStyleDef = this.citationStyles[0]
         }
-        let citeprocConnector = new citeprocSys(this.bibDB, citationDefinitions.locales)
+        let citeprocConnector = new citeprocSys(this.bibDB, this.citationLocales)
         let citeprocInstance = new CSL.Engine(
             citeprocConnector,
             this.citationStyleDef.contents

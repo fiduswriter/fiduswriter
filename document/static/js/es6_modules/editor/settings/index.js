@@ -17,7 +17,7 @@ export class ModSettings {
                 switch(key) {
                     case 'documentstyle':
                         // Check if doc style is valid. Otherwise pick first possible style
-                        if (this.editor.mod.styles.document_styles.map(d => d.filename).includes(newSettings[key])) {
+                        if (this.editor.mod.styles.documentStyles.map(d => d.filename).includes(newSettings[key])) {
                             this.updateDocStyleCSS(newSettings[key])
                         } else {
                             let documentStyleMenu = this.editor.menu.headerModel.find(menu => menu.id==='document_style')
@@ -28,7 +28,7 @@ export class ModSettings {
                         break
                     case 'citationstyle':
                         // Check if cite style is valid. Otherwise pick first possible style
-                        if (this.editor.mod.styles.citation_styles.map(d => d.short_title).includes(newSettings[key])) {
+                        if (this.editor.mod.styles.citationStyles.map(d => d.short_title).includes(newSettings[key])) {
                             this.editor.mod.citations.resetCitations()
                         } else {
                             let citationStyleMenu = this.editor.menu.headerModel.find(menu => menu.id==='citation_style')
@@ -47,7 +47,7 @@ export class ModSettings {
      */
     updateDocStyleCSS(docStyleId) {
 
-        let docStyle = this.editor.mod.styles.document_styles.find(doc_style => doc_style.filename===docStyleId)
+        let docStyle = this.editor.mod.styles.documentStyles.find(doc_style => doc_style.filename===docStyleId)
 
         let docStyleCSS = `
         ${docStyle.fonts.map(font => {

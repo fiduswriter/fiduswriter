@@ -49,6 +49,8 @@ export class ModCitations {
                 document.getElementById('paper-editable'), // TODO: Should we point this to somewhere else?
                 this.editor.view.state.doc.firstChild.attrs.citationstyle,
                 this.editor.bibDB,
+                this.editor.mod.style.citationStyles,
+                this.editor.mod.style.citationLocales,
                 false
             )
             this.citRenderer.init().then(

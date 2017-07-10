@@ -150,7 +150,9 @@ export let headerModel = [
                     editor.save().then(() => {
                         new HTMLExporter(
                             editor.doc,
-                            editor.bibDB
+                            editor.bibDB,
+                            editor.mod.styles.citationStyles,
+                            editor.mod.styles.citationLocales
                         )
                     })
                 }
@@ -162,7 +164,9 @@ export let headerModel = [
                     editor.save().then(() => {
                         new EpubExporter(
                             editor.doc,
-                            editor.bibDB
+                            editor.bibDB,
+                            editor.mod.styles.citationStyles,
+                            editor.mod.styles.citationLocales
                         )
                     })
                 }

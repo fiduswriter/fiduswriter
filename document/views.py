@@ -20,6 +20,7 @@ from avatar.templatetags.avatar_tags import avatar_url
 
 from document.models import Document, AccessRight, DocumentRevision, \
     ExportTemplate, CAN_UPDATE_DOCUMENT
+from document.helpers.serializers import PythonWithURLSerializer
 
 from style.models import CitationStyle, CitationLocale
 
@@ -28,9 +29,6 @@ class SimpleSerializer(Serializer):
     def end_object(self, obj):
         self._current['id'] = obj._get_pk_val()
         self.objects.append(self._current)
-
-
-serializer = SimpleSerializer()
 
 
 def get_accessrights(ars):
@@ -69,6 +67,7 @@ def get_documentlist_extra_js(request):
         ids = request.POST['ids'].split(',')
         documents = Document.objects.filter(Q(owner=request.user) | Q(
             accessright__user=request.user)).filter(id__in=ids)
+        serializer = SimpleSerializer()
         response['documents'] = serializer.serialize(
             documents, fields=(
                 'contents',
@@ -142,10 +141,11 @@ def get_documentlist_js(request):
             tm_object['name'] = team_member.member.readable_name
             tm_object['avatar'] = avatar_url(team_member.member, 80)
             response['team_members'].append(tm_object)
-        citation_styles = serializer.serialize(
+        serializer = PythonWithURLSerializer()
+        cit_styles = serializer.serialize(
             CitationStyle.objects.all()
         )
-        response['citation_styles'] = [obj['fields'] for obj in citation_styles]
+        response['citation_styles'] = [obj['fields'] for obj in cit_styles]
         cit_locales = serializer.serialize(CitationLocale.objects.all())
         response['citation_locales'] = [obj['fields'] for obj in cit_locales]
         response['user'] = {}

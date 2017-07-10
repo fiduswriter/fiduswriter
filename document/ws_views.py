@@ -3,6 +3,7 @@ import atexit
 from copy import deepcopy
 
 from document.helpers.session_user_info import SessionUserInfo
+from document.helpers.serializers import PythonWithURLSerializer
 from base.ws_handler import BaseWebSocketHandler
 from logging import info, error
 from tornado.escape import json_decode, json_encode
@@ -10,21 +11,10 @@ from tornado.websocket import WebSocketClosedError
 from document.models import AccessRight, COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
     CAN_COMMUNICATE, ExportTemplate
 from document.views import get_accessrights
-from django.core import serializers
-from django.db import models
 from avatar.templatetags.avatar_tags import avatar_url
 
 from style.models import DocumentStyle, CitationStyle, CitationLocale
 
-PythonSerializer = serializers.get_serializer("python")
-
-class PythonWithURLSerializer(PythonSerializer):
-    def handle_field(self, obj, field):
-        value = field.value_from_object(obj)
-        if isinstance(field, models.FileField) and hasattr(value, 'url'):
-            self._current[field.name] = value.url
-        else:
-            return super(PythonWithURLSerializer, self).handle_field(obj, field)
 
 class WebSocket(BaseWebSocketHandler):
     sessions = dict()
@@ -64,15 +54,24 @@ class WebSocket(BaseWebSocketHandler):
             self.doc['participants'][self.id] = self
             response['type'] = 'welcome'
             serializer = PythonWithURLSerializer()
-            export_templates = serializer.serialize(ExportTemplate.objects.all())
-            document_styles = serializer.serialize(DocumentStyle.objects.all(),use_natural_foreign_keys=True)
-            citation_styles = serializer.serialize(CitationStyle.objects.all())
-            citation_locales = serializer.serialize(CitationLocale.objects.all())
+            export_temps = serializer.serialize(
+                ExportTemplate.objects.all()
+            )
+            document_styles = serializer.serialize(
+                DocumentStyle.objects.all(),
+                use_natural_foreign_keys=True
+            )
+            cite_styles = serializer.serialize(
+                CitationStyle.objects.all()
+            )
+            cite_locales = serializer.serialize(
+                CitationLocale.objects.all()
+            )
             response['styles'] = {
-                'export_templates': [obj['fields'] for obj in export_templates],
+                'export_templates': [obj['fields'] for obj in export_temps],
                 'document_styles': [obj['fields'] for obj in document_styles],
-                'citation_styles': [obj['fields'] for obj in citation_styles],
-                'citation_locales': [obj['fields'] for obj in citation_locales],
+                'citation_styles': [obj['fields'] for obj in cite_styles],
+                'citation_locales': [obj['fields'] for obj in cite_locales],
             }
             self.write_message(response)
 

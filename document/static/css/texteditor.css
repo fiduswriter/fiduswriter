@@ -623,6 +623,7 @@ table.insert-table-selection td.selected.hover {
 
 .ProseMirror td.selectedCell {
     background-color: #8cf;
+    caret-color: transparent;
 }
 
 /* CSL */

@@ -21,7 +21,7 @@ import {ModCitations} from "./citations"
 import {ModCollab} from "./collab"
 import {ModTools} from "./tools"
 import {ModSettings} from "./settings"
-import {headerModel, toolbarModel} from "./menus"
+import {headerbarModel, toolbarModel} from "./menus"
 import {ModStyles} from "./styles"
 import {randomHeadingId} from "../schema/common"
 import {ModServerCommunications} from "./server-communications"
@@ -65,7 +65,7 @@ export class Editor {
         // The latest doc as confirmed by the server.
         this.confirmedDoc = false
         this.menu = {
-            headerModel,
+            headerbarModel,
             toolbarModel
         }
         new ModServerCommunications(this)
@@ -253,29 +253,6 @@ export class Editor {
         }
     }
 
-    enableUI() {
-
-        if (READ_ONLY_ROLES.indexOf(this.docInfo.rights) > -1) {
-            jQuery('#editor-navigation').hide()
-            jQuery('#open-close-header, .multibuttonsCover').addClass('disabled')
-        } else {
-            jQuery('#editor-navigation').show()
-            jQuery('#open-close-header').removeClass('disabled')
-            if (COMMENT_ONLY_ROLES.indexOf(this.docInfo.rights) > -1) {
-                let toolbar = jQuery('.editortoolbar')
-                toolbar.find('.ui-buttonset').hide()
-                toolbar.find('.comment-only').show()
-            }
-            else {
-                jQuery('#open-close-header').removeClass('disabled')
-            }
-        }
-        jQuery('.multibuttonsCover').each(function() {
-              addDropdownBox(jQuery(this), jQuery(this).siblings(
-                  '.fw-pulldown'))
-        })
-    }
-
     receiveDocument(data) {
         // Remove footnote markers
         this.mod.footnotes.markers.removeAllMarkers()
@@ -381,7 +358,6 @@ export class Editor {
 
             return this.getBibDB(this.doc.owner.id).then(() => {
                 this.activatePlugins()
-                this.enableUI()
                 this.mod.citations.layoutCitations()
                 this.waitingForDocument = false
             })
@@ -467,7 +443,7 @@ export class Editor {
 
     // Use PMs scrollIntoView function and adjust for top menu
     scrollIntoView(view, pos) {
-        let topMenuHeight = jQuery('#editor-tools-wrapper').outerHeight() + jQuery('#document-top').outerHeight() + 10
+        let topMenuHeight = jQuery('header').outerHeight() + 10
         let distanceFromTop = view.coordsAtPos(pos).top - topMenuHeight
         window.scrollBy(0, distanceFromTop)
     }

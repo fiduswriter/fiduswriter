@@ -20,7 +20,7 @@ export class ModSettings {
                         if (this.editor.mod.styles.documentStyles.map(d => d.filename).includes(newSettings[key])) {
                             this.updateDocStyleCSS(newSettings[key])
                         } else {
-                            let documentStyleMenu = this.editor.menu.headerModel.find(menu => menu.id==='document_style')
+                            let documentStyleMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='document_style')
                             if (documentStyleMenu.content.length) {
                                 documentStyleMenu.content[0].action(this.editor)
                             }
@@ -31,7 +31,7 @@ export class ModSettings {
                         if (this.editor.mod.styles.citationStyles.map(d => d.short_title).includes(newSettings[key])) {
                             this.editor.mod.citations.resetCitations()
                         } else {
-                            let citationStyleMenu = this.editor.menu.headerModel.find(menu => menu.id==='citation_style')
+                            let citationStyleMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='citation_style')
                             if (citationStyleMenu.content.length) {
                                 citationStyleMenu.content[0].action(this.editor)
                             }

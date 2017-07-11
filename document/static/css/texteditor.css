@@ -8,6 +8,12 @@ body {
     background-color: #f2f2f2;
 }
 
+header {
+    position: fixed;
+    width: 100%;
+    z-index: 100;
+}
+
 #close-document-top {
     position: fixed;
     right: 30px;
@@ -17,12 +23,9 @@ body {
 }
 
 #document-top {
-    position: fixed;
     padding: 16px 0;
     background-color: #84b4a7;
-    z-index: 99;
     width: 100%;
-    top:0;
 }
 #document-top > h1 {
     font-size: 22px;
@@ -54,7 +57,7 @@ body {
     color: #fff;
     text-shadow: none;
 }
-#header-navigation span.selected, #editor-navigation span.selected {
+#header-navigation span.selected, #toolbar span.selected {
     background-color: black;
     color: white;
 }
@@ -62,47 +65,24 @@ body {
 #header-navigation span.deactivated {
     text-decoration: line-through;
 }
-#header-navigation span.disabled, #editor-navigation span.disabled {
+#header-navigation span.disabled, #toolbar span.disabled {
     color: #ccc !important;
     text-shadow: none;
 }
-#header-navigation span.selected.disabled, #editor-navigation span.selected.disabled {
+#header-navigation span.selected.disabled, #toolbar span.selected.disabled {
     background-color: #ccc;
     color: white !important;
 }
 /*
  * Toolbar Style
  */
-#editor-navigation {
-    position: fixed;
+#toolbar {
     display: block;
     background-color: #f9f9f9;
     z-index: 88;
     width: 100%;
-    top: 92px;
     -webkit-user-select: none;
-}
-#editor-tools-wrapper {
-    position: relative;
     padding: 12px 0;
-    width: 1250px;
-}
-#open-close-header {
-    position: absolute;
-    z-index: 100;
-}
-#open-close-header {
-    left: 14px;
-    top: 12px;
-    background: transparent;
-    border-color: #f9f9f9;
-}
-#open-close-header:hover {
-    background: #c9c9c9;
-    border-color: #c9c9c9;
-}
-#open-close-header.header-closed .icon-angle-double-up:before {
-    content: '\f103';
 }
 #ice-control {
     right: 0;
@@ -133,7 +113,7 @@ body {
 }
 .editortoolbar {
     position: relative;
-    left: 68px;
+    left: 14px;
     width: auto !important;
 }
 .editortoolbar div.ui-buttonset {
@@ -191,6 +171,15 @@ body {
     text-align: right;
     margin-top: 0;
     content: '\25be';
+}
+
+.editortoolbar .fw-button.no-border {
+    background: transparent;
+    border-color: transparent;
+}
+
+.editortoolbar .header-closed .icon-angle-double-up:before {
+    content: '\f103';
 }
 
 .ui-dialog-content-table .dk_toggle {

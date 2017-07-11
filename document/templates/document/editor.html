@@ -94,39 +94,36 @@
     </head>
     <body class="{% trans "en" %} tex2jax_ignore">
         <div id="editor">
-        <div id="wait">
-            <i class="icon-spin2 animate-spin"></i>
-        </div>
-        <header></header>
-
-        <nav id="editor-navigation">
-            <span id="open-close-header" class="fw-button fw-light fw-large" title="{% trans "Show/hide the top menu." %}">
-                <i class="icon-angle-double-up"></i>
-            </span>
-            <div id="editor-tools-wrapper"><div></div></div>
-        </nav>
-        <div id="editor-content">
-            <div id="flow" class="comments-enabled CT-hide">
-                <div id="paper-editable">
-                    <div id="document-editable" class="user-contents"></div>
-                    <div id="footnote-box-container">
-                        <div id="citation-footnote-box-container"></div>
+            <div id="wait"><i class="icon-spin2 animate-spin"></i></div>
+            <header>
+                <nav id="headerbar">
+                    <div></div>
+                </nav>
+                <nav id="toolbar">
+                    <div></div>
+                </nav>
+            </header>
+            <div id="editor-content">
+                <div id="flow" class="comments-enabled CT-hide">
+                    <div id="paper-editable">
+                        <div id="document-editable" class="user-contents"></div>
+                        <div id="footnote-box-container">
+                            <div id="citation-footnote-box-container"></div>
+                        </div>
                     </div>
+                    <div class="article-bibliography user-contents"></div>
                 </div>
-                <div class="article-bibliography user-contents"></div>
+                <div id="comment-box-container"></div>
+                <div id="tracking-box-container"></div>
             </div>
-
-            <div id="comment-box-container"></div>
-            <div id="tracking-box-container"></div>
-        </div>
-        <div id="chat">
-            <i class="resize-button icon-angle-double-down"></i>
-            <div id="chat-container"></div>
-            <div id="messageform" contentEditable="true" class="empty"></div>
-            <audio id="chat-notification">
-                <source src="{{ STATIC_URL }}ogg/chat-notification.ogg" type="audio/ogg">
-            </audio>
-        </div>
+            <div id="chat">
+                <i class="resize-button icon-angle-double-down"></i>
+                <div id="chat-container"></div>
+                <div id="messageform" contentEditable="true" class="empty"></div>
+                <audio id="chat-notification">
+                    <source src="{{ STATIC_URL }}ogg/chat-notification.ogg" type="audio/ogg">
+                </audio>
+            </div>
         </div>
         <div id="print"></div>
         <div id="unobtrusive_messages"></div>

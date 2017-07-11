@@ -9,23 +9,68 @@ export class ToolbarView {
         this.options = options
 
         this.editor = this.options.editor
-        this.editor.menu.toolbarView = this
+        if (!this.editor.menu.toolbarViews) {
+            this.editor.menu.toolbarViews = []
+        }
+        this.editor.menu.toolbarViews.push(this)
 
         this.dd = new diffDOM()
-        this.toolbarEl = document.querySelector('#editor-tools-wrapper').firstElementChild
+        this.toolbarEl = document.querySelector('#toolbar').firstElementChild
+        this.sideMargins = 14 + 14 + 42 // CSS sets left margin to 14px + 42 px for left most button and we want the same margin on both sides
+        this.availableWidth = window.innerWidth - this.sideMargins
         this.openedMenu = false
         this.bindEvents()
         this.update()
     }
 
     bindEvents() {
+        window.addEventListener('resize', event => {
+            // recalculate menu if needed
+            this.availableWidth = window.innerWidth - this.sideMargins
+            this.update()
+        })
+
         document.body.addEventListener('click', event => {
             if (this.editorView !== this.editor.currentView) {
                 // the other editor must be active
                 return
             }
             let target = event.target
-            if(target.matches('.editortoolbar li:not(.disabled), .editortoolbar li:not(.disabled) *')) {
+            if(target.matches('.editortoolbar .more-button li:not(.disabled), .editortoolbar .more-button li:not(.disabled) *')) {
+                let menuNumber = 0
+                let seekItem = target.closest('li')
+                while (seekItem.previousElementSibling) {
+                    menuNumber++
+                    seekItem = seekItem.previousElementSibling
+                }
+                seekItem = seekItem.parentElement.parentElement.parentElement.parentElement
+                while (seekItem.previousElementSibling) {
+                    menuNumber++
+                    seekItem = seekItem.previousElementSibling
+                }
+                let menuItem = this.editor.menu.toolbarModel.content[menuNumber]
+                // if it is a dropdown menu, open it. Otherwise execute an
+                // associated action.
+                if (menuItem.type==='dropdown') {
+                    menuItem.open = true
+                    this.openedMenu = menuNumber
+                    event.preventDefault()
+                    this.update()
+                } else if (menuItem.action) {
+                    event.preventDefault()
+                    menuItem.action(this.editor)
+                    this.editor.menu.toolbarModel.openMore = false
+                    this.update()
+                    this.editor.currentView.focus()
+                }
+
+            } else if(target.matches('.editortoolbar .more-button, .editortoolbar .more-button *')) {
+                this.editor.menu.toolbarModel.openMore = true
+                if (this.openedMenu) {
+                    this.editor.menu.toolbarModel.content[this.openedMenu].open = false
+                }
+                this.update()
+            } else if(target.matches('.editortoolbar li:not(.disabled), .editortoolbar li:not(.disabled) *')) {
                 // A toolbar dropdown menu item was clicked. We just need to
                 // find out which one
                 let itemNumber = 0
@@ -41,8 +86,8 @@ export class ToolbarView {
                     seekItem = seekItem.previousElementSibling
                 }
                 event.preventDefault()
-                this.editor.menu.toolbarModel[menuNumber].content[itemNumber].action(this.editor)
-                this.editor.menu.toolbarModel[menuNumber].open = false
+                this.editor.menu.toolbarModel.content[menuNumber].content[itemNumber].action(this.editor)
+                this.editor.menu.toolbarModel.content[menuNumber].open = false
                 this.openedMenu = false
                 this.update()
                 this.editor.currentView.focus()
@@ -54,21 +99,26 @@ export class ToolbarView {
                     menuNumber++
                     seekItem = seekItem.previousElementSibling
                 }
-                let menuItem = this.editor.menu.toolbarModel[menuNumber]
+                let menuItem = this.editor.menu.toolbarModel.content[menuNumber]
                 // if it is a dropdown menu, open it. Otherwise execute an
                 // associated action.
                 if (menuItem.type==='dropdown') {
                     menuItem.open = true
                     this.openedMenu = menuNumber
+                    this.editor.menu.toolbarModel.openMore = false
                     event.preventDefault()
                     this.update()
                 } else if (menuItem.action) {
                     event.preventDefault()
                     menuItem.action(this.editor)
+                    this.update()
                     this.editor.currentView.focus()
                 }
-            } else if (this.openedMenu !== false) {
-                this.editor.menu.toolbarModel[this.openedMenu].open = false
+            } else if (this.openedMenu !== false || this.editor.menu.toolbarModel.openMore) {
+                if (this.openedMenu !== false) {
+                    this.editor.menu.toolbarModel.content[this.openedMenu].open = false
+                }
+                this.editor.menu.toolbarModel.openMore = false
                 this.openedMenu = false
                 this.update()
             }
@@ -81,26 +131,50 @@ export class ToolbarView {
             // the other editor must be active
             return
         }
+        let spaceCounter = this.availableWidth
+        let menuIndexToDrop = false
+        this.editor.menu.toolbarModel.content.some((menuItem, index) => {
+            switch (menuItem.type) {
+                case 'info':
+                    spaceCounter -= 98
+                    break
+                case 'dropdown':
+                    spaceCounter -= 109
+                    break
+                default:
+                    spaceCounter -= 49
+            }
+            if (spaceCounter < 0) {
+                menuIndexToDrop = index - 2 // We need the space of two buttons for the more button
+                return true
+            }
+        })
         let newToolbar = document.createElement('div')
-        newToolbar.innerHTML = this.getToolbarHTML()
+        newToolbar.innerHTML = this.getToolbarHTML(menuIndexToDrop)
         let diff = this.dd.diff(this.toolbarEl, newToolbar)
         this.dd.apply(this.toolbarEl, diff)
     }
 
-    getToolbarHTML() {
-        let doc = this.editor.view.state.doc
+    getToolbarHTML(menuIndexToDrop) {
         return `
             <div class="editortoolbar">
-                ${this.editor.menu.toolbarModel.map(menuItem =>
-                    `<div class="ui-buttonset">
-                        ${this.getToolbarMenuItemHTML(menuItem)}
-                    </div>`
-                ).join('')}
+                ${this.editor.menu.toolbarModel.content.map((menuItem, index) => {
+                    if (!menuIndexToDrop || index < menuIndexToDrop) {
+                        return `
+                            <div class="ui-buttonset">
+                                ${this.getToolbarMenuItemHTML(menuItem, index)}
+                            </div>
+                        `
+                    } else {
+                        return ''
+                    }
+                }).join('')}
+                ${this.getMoreButtonHTML(menuIndexToDrop)}
             </div>
         `
     }
 
-    getToolbarMenuItemHTML(menuItem) {
+    getToolbarMenuItemHTML(menuItem, index) {
         switch(menuItem.type) {
             case 'info':
                 return this.getInfoHTML(menuItem)
@@ -114,6 +188,36 @@ export class ToolbarView {
             default:
                 return ''
                 break
+        }
+    }
+
+    getMoreButtonHTML(menuIndexToDrop) {
+        if (menuIndexToDrop) {
+            return `
+                <div class="ui-buttonset more-button">
+                    <div class="multiButtons">
+                        <span class="multibuttonsCover fw-button fw-light fw-large edit-button">
+                            ${gettext('More')}
+                        </span>
+                        ${this.getMoreButtonListHTML(menuIndexToDrop)}
+                    </div>
+                </div>
+            `
+        } else {
+            return ''
+        }
+    }
+
+    getMoreButtonListHTML(menuIndexToDrop) {
+        if (this.editor.menu.toolbarModel.openMore) {
+            let remainingItems = this.editor.menu.toolbarModel.content.slice(menuIndexToDrop)
+            return `
+                <div class="fw-pulldown fw-left" style="display: block;">
+                    <ul>${remainingItems.map(menuOption => this.getDropdownOptionHTML(menuOption)).join('')}</ul>
+                </div>
+            `
+        } else {
+            return ''
         }
     }
 
@@ -142,7 +246,7 @@ export class ToolbarView {
 
     getDropdownOptionHTML(menuOption) {
         return `
-        <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+        <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only${menuOption.disabled && menuOption.disabled(this.editor) ? ' disabled' : ''}" role="button" aria-disabled="false">
             <span class="ui-button-text">
                 <input type="radio" >
                 <label class="fw-pulldown-item">${menuOption.title}</label>
@@ -153,7 +257,7 @@ export class ToolbarView {
 
     getButtonHTML(menuItem) {
         return `
-        <button class="fw-button fw-light fw-large fw-square edit-button${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}${menuItem.selected && menuItem.selected(this.editor) ? ' ui-state-active' : ''}" title="${menuItem.title}">
+        <button class="fw-button fw-light fw-large fw-square edit-button${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}${menuItem.selected && menuItem.selected(this.editor) ? ' ui-state-active' : ''}${menuItem.class ? ` ${menuItem.class(this.editor)}` : ''}" title="${menuItem.title}">
             <span class="ui-button-text">
                 <i class="icon-${menuItem.icon}"></i>
             </span>

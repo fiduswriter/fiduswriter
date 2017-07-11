@@ -12,7 +12,7 @@ export class HeaderView {
         this.editor.menu.headerView = this
 
         this.dd = new diffDOM()
-        this.headerEl = document.querySelector('header')
+        this.headerEl = document.querySelector('#headerbar').firstElementChild
         this.openedMenu = false
         this.bindEvents()
         this.update()
@@ -21,13 +21,13 @@ export class HeaderView {
     bindEvents() {
         document.body.addEventListener('click', event => {
             if (this.openedMenu !== false) {
-                this.editor.menu.headerModel[this.openedMenu].open = false
+                this.editor.menu.headerbarModel.content[this.openedMenu].open = false
                 this.openedMenu = false
                 this.update()
             }
             let target = event.target
 
-            if(target.matches('header #header-navigation .fw-pulldown-item:not(.disabled)')) {
+            if(target.matches('#headerbar #header-navigation .fw-pulldown-item:not(.disabled)')) {
                 // A header nav menu item was clicked. Now we just need to find
                 // which one and execute the corresponding action.
                 let itemNumber = 0
@@ -42,11 +42,11 @@ export class HeaderView {
                     menuNumber++
                     seekItem = seekItem.previousElementSibling
                 }
-                this.editor.menu.headerModel[menuNumber].content[itemNumber].action(this.editor)
-                this.editor.menu.headerModel[menuNumber].open = false
+                this.editor.menu.headerbarModel.content[menuNumber].content[itemNumber].action(this.editor)
+                this.editor.menu.headerbarModel.content[menuNumber].open = false
                 this.openedMenu = false
                 this.update()
-            } else if (target.matches('header #header-navigation .header-nav-item:not(.disabled)')) {
+            } else if (target.matches('#headerbar #header-navigation .header-nav-item:not(.disabled)')) {
                 // A menu has been clicked, lets find out which one.
                 let menuNumber = 0
                 let seekItem = target.parentElement
@@ -54,35 +54,9 @@ export class HeaderView {
                     menuNumber++
                     seekItem = seekItem.previousElementSibling
                 }
-                this.editor.menu.headerModel[menuNumber].open = true
+                this.editor.menu.headerbarModel.content[menuNumber].open = true
                 this.openedMenu = menuNumber
                 this.update()
-            } else if (target.matches('#open-close-header, #open-close-header *')) {
-                let headerTop = -92,
-                    toolnavTop = 0,
-                    contentTop = 108
-                if (target.classList.contains('header-closed')) {
-                    target.classList.remove('header-closed')
-                    headerTop = 0
-                    toolnavTop = 92
-                    contentTop = 200
-                } else {
-                    target.classList.add('header-closed')
-                }
-                jQuery('#document-top').stop().animate({
-                    'top': headerTop
-                })
-                jQuery('#editor-navigation').stop().animate({
-                    'top': toolnavTop
-                })
-                jQuery('#pagination-layout').stop()
-                .animate({
-                    'top': contentTop
-                }, {
-                    'complete': function() {
-                        this.editor.mod.comments.layout.layoutComments()
-                    }
-                })
             }
 
         })
@@ -106,7 +80,7 @@ export class HeaderView {
             name = "Shift-" + name
         }
 
-        this.editor.menu.headerModel.forEach(menu => {
+        this.editor.menu.headerbarModel.content.forEach(menu => {
             menu.content.forEach(menuItem => {
                 if (menuItem.keys && menuItem.keys===name) {
                     event.preventDefault()
@@ -117,7 +91,7 @@ export class HeaderView {
     }
 
     update() {
-        let newHeader = document.createElement('header')
+        let newHeader = document.createElement('div')
         newHeader.innerHTML = this.getHeaderHTML()
         let diff = this.dd.diff(this.headerEl, newHeader)
         this.dd.apply(this.headerEl, diff)
@@ -125,6 +99,11 @@ export class HeaderView {
 
     getHeaderHTML() {
         let doc = this.editor.view.state.doc
+        if (!this.editor.menu.headerbarModel.open) {
+            // header is closed
+            console.log('closed')
+            return ''
+        }
         return `
             <div id="close-document-top" class="close icon-cancel-circle" title="${gettext("Close the document and return to the document overview menu.")}"></div>
             <div id="document-top">
@@ -153,7 +132,7 @@ export class HeaderView {
     }
 
     getHeaderNavHTML() {
-        return this.editor.menu.headerModel.map(menu =>
+        return this.editor.menu.headerbarModel.content.map(menu =>
             `
                 <div class="header-menu">
                     <span class="header-nav-item${menu.disabled && menu.disabled(this.editor) ? ' disabled' : ''}" title="${menu.tooltip}">

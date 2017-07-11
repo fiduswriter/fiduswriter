@@ -1,4 +1,4 @@
-export {headerModel} from "./header-model"
-export {HeaderView} from "./header-view"
+export {headerbarModel} from "./headerbar-model"
+export {HeaderView} from "./headerbar-view"
 export {toolbarModel} from "./toolbar-model"
 export {ToolbarView} from "./toolbar-view"

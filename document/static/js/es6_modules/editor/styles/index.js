@@ -26,7 +26,7 @@ export class ModStyles {
     }
 
     addExportTemplateMenuEntries() {
-        let exportMenu = this.editor.menu.headerModel.find(menu => menu.id==='export')
+        let exportMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='export')
         // Remove any previous entries in case we run this a second time
         exportMenu.content = exportMenu.content.filter(menuItem => menuItem.type!=='export_template')
         let exportMenuEntries = this.exportTemplates.map(template => {
@@ -72,7 +72,7 @@ export class ModStyles {
     }
 
     addDocumentStylesMenuEntries() {
-        let documentStyleMenu = this.editor.menu.headerModel.find(menu => menu.id==='document_style')
+        let documentStyleMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='document_style')
 
         documentStyleMenu.content = this.documentStyles.map(docStyle => {
             return {
@@ -93,7 +93,7 @@ export class ModStyles {
     }
 
     addCitationStylesMenuEntries() {
-        let citationStyleMenu = this.editor.menu.headerModel.find(menu => menu.id==='citation_style')
+        let citationStyleMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='citation_style')
 
         citationStyleMenu.content = this.citationStyles.map(citeStyle => {
             return {

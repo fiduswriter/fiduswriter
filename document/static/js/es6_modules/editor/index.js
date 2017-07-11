@@ -21,7 +21,7 @@ import {ModCitations} from "./citations"
 import {ModCollab} from "./collab"
 import {ModTools} from "./tools"
 import {ModSettings} from "./settings"
-import {ModMenus} from "./menus"
+import {headerModel, toolbarModel} from "./menus"
 import {ModStyles} from "./styles"
 import {randomHeadingId} from "../schema/common"
 import {ModServerCommunications} from "./server-communications"
@@ -32,8 +32,6 @@ import {Paste} from "./paste"
 import {placeholdersPlugin} from "./plugins/placeholders"
 import {headerPlugin} from "./plugins/header"
 import {toolbarPlugin} from "./plugins/toolbar"
-import {headerModel} from "./menus/header-model"
-import {toolbarModel} from "./menus/toolbar-model"
 import {addDropdownBox} from "../common"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
@@ -123,7 +121,6 @@ export class Editor {
         this.currentView = this.view
         new ModFootnotes(this)
         new ModCitations(this)
-        new ModMenus(this)
         new ModCollab(this)
         new ModTools(this)
         new ModComments(this)

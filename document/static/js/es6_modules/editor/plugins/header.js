@@ -1,5 +1,5 @@
 import {Plugin, PluginKey} from "prosemirror-state"
-import {HeaderView} from "../menus/header-view"
+import {HeaderView} from "../menus"
 
 const headerKey = new PluginKey('header')
 export let headerPlugin = function(options) {

@@ -1,14 +1,4 @@
-import {ModMenusToolbar} from "./toolbar"
-import {ModMenusUpdateUI} from "./update-ui"
-
-/* Bindings for menus. */
-
-export class ModMenus {
-    constructor(editor) {
-        editor.mod.menus = this
-        this.editor = editor
-        //new ModMenusToolbar(this)
-        //new ModMenusUpdateUI(this)
-    }
-
-}
+export {headerModel} from "./header-model"
+export {HeaderView} from "./header-view"
+export {toolbarModel} from "./toolbar-model"
+export {ToolbarView} from "./toolbar-view"

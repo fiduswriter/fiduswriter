@@ -31,7 +31,9 @@ import {ImageDB} from "../images/database"
 import {Paste} from "./paste"
 import {placeholdersPlugin} from "./plugins/placeholders"
 import {headerPlugin} from "./plugins/header"
+import {toolbarPlugin} from "./plugins/toolbar"
 import {headerModel} from "./menus/header-model"
+import {toolbarModel} from "./menus/toolbar-model"
 import {addDropdownBox} from "../common"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
@@ -65,7 +67,8 @@ export class Editor {
         // The latest doc as confirmed by the server.
         this.confirmedDoc = false
         this.menu = {
-            headerModel
+            headerModel,
+            toolbarModel
         }
         new ModServerCommunications(this)
     }
@@ -78,6 +81,9 @@ export class Editor {
     }
 
     initEditor() {
+
+        this.bindEvents()
+
         this.view = new EditorView(document.getElementById('document-editable'), {
             state: EditorState.create({
                 schema: this.schema
@@ -125,6 +131,38 @@ export class Editor {
 
         this.mod.serverCommunications.init()
         this.setSaveTimers()
+    }
+
+    bindEvents() {
+        let that = this
+        jQuery(document).on('dblclick', 'a', function(event) {
+
+            let url = jQuery(this).attr('href'),
+                splitUrl = url.split('#'),
+                baseUrl = splitUrl[0],
+                id = splitUrl[1]
+
+            if (!id || (baseUrl !== '' &!(baseUrl.includes(window.location.host)))) {
+                window.open(url, '_blank')
+                return
+            }
+
+            let stillLooking = true
+            that.view.state.doc.descendants((node, pos) => {
+                if (stillLooking && node.type.name === 'heading' && node.attrs.id === id) {
+                    that.scrollIntoView(that.view, pos)
+                    stillLooking = false
+                }
+            })
+            if (stillLooking) {
+                that.mod.footnotes.fnView.state.doc.descendants((node, pos) => {
+                    if (stillLooking && node.type.name === 'heading' && node.attrs.id === id) {
+                        that.scrollIntoView(that.mod.footnotes.fnView, pos)
+                        stillLooking = false
+                    }
+                })
+            }
+        })
     }
 
     setSaveTimers() {
@@ -289,7 +327,8 @@ export class Editor {
                     dropCursor(),
                     tableEditing(),
                     placeholdersPlugin(),
-                    headerPlugin({editor: this})
+                    headerPlugin({editor: this}),
+                    toolbarPlugin({editor: this})
                 ]
             }
 

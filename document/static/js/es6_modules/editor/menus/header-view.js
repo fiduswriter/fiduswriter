@@ -153,9 +153,8 @@ export class HeaderView {
     }
 
     getHeaderNavHTML() {
-        let headerNavHTML = ''
-        this.editor.menu.headerModel.forEach(menu => {
-            headerNavHTML += `
+        return this.editor.menu.headerModel.map(menu =>
+            `
                 <div class="header-menu">
                     <span class="header-nav-item${menu.disabled && menu.disabled(this.editor) ? ' disabled' : ''}" title="${menu.tooltip}">
                         ${menu.title}
@@ -167,20 +166,17 @@ export class HeaderView {
                     </div>
                 </div>
             `
-        })
-        return headerNavHTML
+        ).join('')
     }
 
     getHeaderMenuHTML(menu) {
-        let menuHTML = ''
-        menu.content.forEach(menuItem => {
-            menuHTML += `
+        return menu.content.map(menuItem =>
+            `
                 <li>
                     <span class="fw-pulldown-item${menuItem.icon ? ' icon-' + menuItem.icon : ''}${menuItem.selected && menuItem.selected(this.editor) ? ' selected' : ''}${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}" title="${menuItem.tooltip}"> ${menuItem.title} </span>
                 </li>
             `
-        })
-        return menuHTML
+        ).join('')
     }
 
 }

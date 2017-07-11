@@ -4,8 +4,8 @@ import {addDropdownBox} from "../../../common"
 import {katexRender} from "../../../katex"
 
 export class FigureDialog {
-    constructor(mod) {
-        this.editor = mod.editor
+    constructor(editor) {
+        this.editor = editor
         this.imageDB = this.editor.imageDB
         this.imageId = false
         this.insideFigure = false

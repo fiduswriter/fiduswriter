@@ -27,7 +27,7 @@ export class ModCommentLayout {
     }
 
     bindEvents() {
-
+        /*TODO: use it or remote it
         // Handle comments show/hide
         jQuery(document).on('click', '#comments-display:not(.disabled)',
             function() {
@@ -36,6 +36,7 @@ export class ModCommentLayout {
                 jQuery('#flow').toggleClass('comments-enabled')
                 jQuery('.toolbarcomment button').toggleClass('disabled')
             })
+
         let that = this
         jQuery(document).on('mousedown', '#comments-filter label',
             function(event) {
@@ -54,7 +55,7 @@ export class ModCommentLayout {
                         break
                 }
             }
-        )
+        )*/
 
     }
 
@@ -285,7 +286,8 @@ export class ModCommentLayout {
     /**
      * Filtering part. akorovin
      */
-    filterByUserType(userType) {
+     // TODO:Use it or get rid of it!
+    /*filterByUserType(userType) {
         //filter by user role (reader, editor, reviewer etc)
         let userRoles = this.mod.editor.doc.access_rights
         let idsOfNeededUsers = []
@@ -351,7 +353,7 @@ export class ModCommentLayout {
                 theDialog.find(".ui-button:last").addClass("fw-button fw-orange")
             }
         })
-    }
+    }*/
 
 
 }

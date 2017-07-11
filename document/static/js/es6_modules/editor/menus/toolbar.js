@@ -7,7 +7,6 @@ import {undo, redo} from "prosemirror-history"
 export class ModMenusToolbar {
     constructor(mod) {
         mod.toolbar = this
-        this.mathDialog = new MathDialog(mod)
         this.mod = mod
         this.bindEvents()
     }
@@ -23,21 +22,21 @@ export class ModMenusToolbar {
         // toolbar math
         jQuery(document).on('mousedown', '#button-math:not(.disabled)', event => {
             this.executeAction(event, () => {
-                event.preventDefault()
-                this.mathDialog.show()
+                let dialog = new MathDialog(this.mod.editor)
+                dialog.init()
             })
         })
 
         jQuery(document).on('mousedown', '#button-link:not(.disabled)', event =>
             this.executeAction(event, () => {
-                let dialog = new LinkDialog(this.mod, 0)
+                let dialog = new LinkDialog(this.mod.editor)
                 return dialog.init()
             })
         )
 
         jQuery(document).on('mousedown', '#button-cite:not(.disabled)', event => {
             this.executeAction(event, () => {
-                let dialog = new CitationDialog(this.mod)
+                let dialog = new CitationDialog(this.mod.editor)
                 return dialog.init()
             })
 
@@ -51,35 +50,7 @@ export class ModMenusToolbar {
         })
 
 
-        let that = this
-        jQuery(document).on('dblclick', 'a', function(event) {
 
-            let url = jQuery(this).attr('href'),
-                splitUrl = url.split('#'),
-                baseUrl = splitUrl[0],
-                id = splitUrl[1]
-
-            if (!id || (baseUrl !== '' &!(baseUrl.includes(window.location.host)))) {
-                window.open(url, '_blank')
-                return
-            }
-
-            let stillLooking = true
-            that.mod.editor.view.state.doc.descendants((node, pos) => {
-                if (stillLooking && node.type.name === 'heading' && node.attrs.id === id) {
-                    that.mod.editor.scrollIntoView(that.mod.editor.view, pos)
-                    stillLooking = false
-                }
-            })
-            if (stillLooking) {
-                that.mod.editor.mod.footnotes.fnView.state.doc.descendants((node, pos) => {
-                    if (stillLooking && node.type.name === 'heading' && node.attrs.id === id) {
-                        that.mod.editor.scrollIntoView(that.mod.editor.mod.footnotes.fnView, pos)
-                        stillLooking = false
-                    }
-                })
-            }
-        })
 
 
         // blockstyle paragraph, h1 - h3, lists
@@ -205,7 +176,7 @@ export class ModMenusToolbar {
             this.executeAction(
                 event,
                 () => {
-                    let dialog = new FigureDialog(this.mod)
+                    let dialog = new FigureDialog(this.mod.editor)
                     return dialog.init()
                 }
             )
@@ -214,7 +185,10 @@ export class ModMenusToolbar {
         jQuery(document).on('mousedown', '#button-table .multibuttonsCover:not(.disabled)', event => {
             this.executeAction(
                 event,
-                () => new TableDropdown(this.mod)
+                () => {
+                    let dialog = new TableDropdown(this.mod.editor)
+                    dialog.init()
+                }
             )
         })
     }

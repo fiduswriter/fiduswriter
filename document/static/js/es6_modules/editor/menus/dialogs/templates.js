@@ -39,107 +39,103 @@ export let revisionDialogTemplate = _.template('\
 </div>')
 
 export let tableInsertTemplate = _.template(`
-    <li>
-        <table class="insert-table-selection">
-            <tr>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-            </tr>
-            <tr>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-            </tr>
-            <tr>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-            </tr>
-            <tr>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-            </tr>
-            <tr>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-            </tr>
-            <tr>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-            </tr>
-            <tr>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-            </tr>
-        </table>
-        <div class="ui-dialog-buttonset">
-            <button class="ui-button fw-button fw-dark table-insert">` + gettext("Insert") + `</button>
-        </div>
-    </li>
+    <table class="insert-table-selection">
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+    </table>
 `)
 
 export let tableEditTemplate = _.template(`
-    <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-        <span class="ui-button-text" title="` + gettext("Insert row after")+ `">
-            <input type="radio" >
-            <label class="fw-pulldown-item row-after">` + gettext("Insert row after")+ `</label>
-        </span>
-    </li>
-    <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-        <span class="ui-button-text" title="` + gettext("Insert row before")+ `">
-            <input type="radio" >
-            <label class="fw-pulldown-item row-before">` + gettext("Insert row before")+ `</label>
-        </span>
-    </li>
-    <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-        <span class="ui-button-text" title="` + gettext("Insert column after")+ `">
-            <input type="radio" >
-            <label class="fw-pulldown-item col-after">` + gettext("Insert column after")+ `</label>
-        </span>
-    </li>
-    <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-        <span class="ui-button-text" title="` + gettext("Insert column before")+ `">
-            <input type="radio" >
-            <label class="fw-pulldown-item col-before">` + gettext("Insert column before")+ `</label>
-        </span>
-    </li>
-    <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-        <span class="ui-button-text" title="` + gettext("Remove column")+ `">
-            <input type="radio" >
-            <label class="fw-pulldown-item col-remove">` + gettext("Remove column")+ `</label>
-        </span>
-    </li>
-    <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-        <span class="ui-button-text" title="` + gettext("Remove row")+ `">
-            <input type="radio" >
-            <label class="fw-pulldown-item row-remove">` + gettext("Remove row")+ `</label>
-        </span>
-    </li>
-    <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-        <span class="ui-button-text" title="` + gettext("Remove table")+ `">
-            <input type="radio" >
-            <label class="fw-pulldown-item table-remove">` + gettext("Remove table")+ `</label>
-        </span>
-    </li>
+    <div>
+        <div class="table-edit-button-group">
+            <div class="fw-button fw-dark ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                <span class="ui-button-text" title="` + gettext("Insert row before")+ `">
+                    <label class="row-before">` + gettext("Insert row before")+ `</label>
+                </span>
+            </div>
+            <div class="fw-button fw-dark ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                <span class="ui-button-text" title="` + gettext("Insert row after")+ `">
+                    <label class="row-after">` + gettext("Insert row after")+ `</label>
+                </span>
+            </div>
+        </div>
+        <div class="table-edit-button-group">
+            <div class="fw-button fw-dark ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                <span class="ui-button-text" title="` + gettext("Insert column before")+ `">
+                    <label class="col-before">` + gettext("Insert column before")+ `</label>
+                </span>
+            </div>
+            <div class="fw-button fw-dark ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                <span class="ui-button-text" title="` + gettext("Insert column after")+ `">
+                    <label class="col-after">` + gettext("Insert column after")+ `</label>
+                </span>
+            </div>
+        </div>
+        <div class="table-edit-button-group">
+            <div class="fw-button fw-dark ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                <span class="ui-button-text" title="` + gettext("Remove row")+ `">
+                    <label class="row-remove">` + gettext("Remove row")+ `</label>
+                </span>
+            </div>
+            <div class="fw-button fw-dark ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                <span class="ui-button-text" title="` + gettext("Remove column")+ `">
+                    <label class="col-remove">` + gettext("Remove column")+ `</label>
+                </span>
+            </div>
+            <div class="fw-button fw-dark ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                <span class="ui-button-text" title="` + gettext("Remove table")+ `">
+                    <label class="table-remove">` + gettext("Remove table")+ `</label>
+                </span>
+            </div>
+        </div>
+    </div>
 `)
 
 export let mathDialogTemplate = _.template('\

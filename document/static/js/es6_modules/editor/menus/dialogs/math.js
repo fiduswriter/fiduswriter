@@ -5,8 +5,8 @@ import {FormulaEditor} from '../../tools/formula-editor'
  * Class to work with formula dialog
  */
 export class MathDialog {
-    constructor(mod) {
-        this.editor = mod.editor
+    constructor(editor) {
+        this.editor = editor
         this.dialogButtons = []
         this.defaultEquation = '\\$x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}'
 
@@ -124,7 +124,7 @@ export class MathDialog {
         this.dialogButtons = []
     }
 
-    show() {
+    init() {
         //get selected node
         this.node = this.editor.currentView.state.selection.node
         //if dialog is initialized destroy

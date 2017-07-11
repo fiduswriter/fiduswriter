@@ -5,8 +5,8 @@ import {nameToText, litToText} from "../../../bibliography/tools"
 import * as plugins from "../../../plugins/citation-dialog"
 
 export class CitationDialog {
-    constructor(mod) {
-        this.editor = mod.editor
+    constructor(editor) {
+        this.editor = editor
         this.initialReferences = []
         this.initialFormat = 'autocite'
         this.node = this.editor.currentView.state.selection.node

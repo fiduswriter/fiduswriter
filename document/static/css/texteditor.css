@@ -144,7 +144,7 @@ body {
     margin-right: 7px;
 }
 
-.editortoolbar #current-position {
+.editortoolbar div.info {
   /*max-width: 90px;*/
   min-width: 62px;
   color: #000;
@@ -592,8 +592,9 @@ margin-left: 1em;
     display: none;
 }
 
-#table-dialog li {
-    padding: 0 11px;
+div.table-edit-button-group {
+    margin-bottom: 10px;
+    text-align: left;
 }
 
 table.insert-table-selection {

@@ -2,8 +2,8 @@ import {TextSelection} from "prosemirror-state"
 import {InternalLinkDialogTemplate, linkDialogTemplate, InternalHeadingsTemplate} from "./templates"
 
 export class LinkDialog {
-    constructor(mod) {
-        this.editor = mod.editor
+    constructor(editor) {
+        this.editor = editor
         this.link = ''
         this.defaultLink = 'https://'
         this.linkTitle = ''

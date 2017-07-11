@@ -7,7 +7,7 @@ export class ModMenus {
     constructor(editor) {
         editor.mod.menus = this
         this.editor = editor
-        new ModMenusToolbar(this)
+        //new ModMenusToolbar(this)
         //new ModMenusUpdateUI(this)
     }
 

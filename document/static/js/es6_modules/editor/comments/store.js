@@ -227,10 +227,7 @@ export class ModCommentStore {
 
     deleteLocalAnswer(commentId, answerId, local) {
         if (this.comments[commentId] && this.comments[commentId].answers) {
-            this.comments[commentId].answers = _.reject(
-                this.comments[commentId].answers,
-                answer => answer.id === answerId
-            )
+            this.comments[commentId].answers = this.comments[commentId].answers.filter(answer => answer.id !== answerId)
         }
         if (local || (!this.mod.layout.isCurrentlyEditing())) {
             this.mod.layout.layoutComments()
@@ -249,9 +246,7 @@ export class ModCommentStore {
 
     updateLocalAnswer(commentId, answerId, answerText, local) {
         if (this.comments[commentId] && this.comments[commentId].answers) {
-            let answer = _.findWhere(this.comments[commentId].answers, {
-                id: answerId
-            })
+            let answer = this.comments[commentId].answers.find(answer => answer.id === answerId)
             answer.answer = answerText
         }
         if (local || (!this.mod.layout.isCurrentlyEditing())) {
@@ -308,9 +303,8 @@ export class ModCommentStore {
             } else if (event.type == "add_answer") {
                 let found = this.comments[event.id]
                 if (!found || !found.id || !found.answers) continue
-                let foundAnswer = _.findWhere(found.answers, {
-                    id: event.answerId
-                })
+                let foundAnswer = found.answers.find(answer => answer.id === event.answerId)
+
                 result.push({
                     type: "add_answer",
                     id: foundAnswer.id,
@@ -330,9 +324,7 @@ export class ModCommentStore {
             } else if (event.type == "update_answer") {
                 let found = this.comments[event.commentId]
                 if (!found || !found.id || !found.answers) continue
-                let foundAnswer = _.findWhere(found.answers, {
-                    id: event.answerId
-                })
+                let foundAnswer = found.answers.find(answer => answer.id === event.answerId)
                 result.push({
                     type: "update_answer",
                     id: foundAnswer.id,

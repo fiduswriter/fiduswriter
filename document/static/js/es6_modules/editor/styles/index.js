@@ -79,7 +79,7 @@ export class ModStyles {
                 title: docStyle.title,
                 action: editor => {
                     let article = editor.view.state.doc.firstChild
-                    let attrs = _.clone(article.attrs)
+                    let attrs = Object.assign({}, article.attrs)
                     attrs.documentstyle = docStyle.filename
                     editor.view.dispatch(
                         editor.view.state.tr.setNodeType(0, false, attrs)
@@ -100,7 +100,7 @@ export class ModStyles {
                 title: citeStyle.title,
                 action: editor => {
                     let article = editor.view.state.doc.firstChild
-                    let attrs = _.clone(article.attrs)
+                    let attrs = Object.assign({}, article.attrs)
                     attrs.citationstyle = citeStyle.short_title
                     editor.view.dispatch(
                         editor.view.state.tr.setNodeType(0, false, attrs)

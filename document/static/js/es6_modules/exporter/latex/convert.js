@@ -40,7 +40,7 @@ export class LatexExporterConvert {
             // that are being linked to.
             case 'text':
                 if (node.marks) {
-                    let hyperlink = _.findWhere(node.marks, {type:'link'})
+                    let hyperlink = node.marks.find(mark => mark.type === 'link')
                     if (hyperlink) {
                         let href = hyperlink.attrs.href
                         if (href[0] === '#' && !this.internalLinks.includes(href)) {
@@ -132,7 +132,7 @@ export class LatexExporterConvert {
                 }
                 if(!options.onlyFootnoteMarkers) {
                     placeFootnotesAfterBlock = true
-                    options = _.clone(options)
+                    options = Object.assign({}, options)
                     options.onlyFootnoteMarkers = true
                     options.unplacedFootnotes = []
                 }
@@ -150,7 +150,7 @@ export class LatexExporterConvert {
                 end = '\n\\end{enumerated}' + end
                 if(!options.onlyFootnoteMarkers) {
                     placeFootnotesAfterBlock = true
-                    options = _.clone(options)
+                    options = Object.assign({}, options)
                     options.onlyFootnoteMarkers = true
                     options.unplacedFootnotes = []
                 }
@@ -160,7 +160,7 @@ export class LatexExporterConvert {
                 end = '\n\\end{itemize}' + end
                 if(!options.onlyFootnoteMarkers) {
                     placeFootnotesAfterBlock = true
-                    options = _.clone(options)
+                    options = Object.assign({}, options)
                     options.onlyFootnoteMarkers = true
                     options.unplacedFootnotes = []
                 }
@@ -190,9 +190,9 @@ export class LatexExporterConvert {
                 // Check for hyperlink, bold/strong and italic/em
                 let hyperlink, strong, em
                 if (node.marks) {
-                    strong = _.findWhere(node.marks, {type:'strong'})
-                    em = _.findWhere(node.marks, {type:'em'})
-                    hyperlink = _.findWhere(node.marks, {type:'link'})
+                    strong = node.marks.find(mark => mark.type === 'strong')
+                    em = node.marks.find(mark => mark.type === 'em')
+                    hyperlink = node.marks.find(mark => mark.type === 'link')
                 }
                 if (em) {
                     start += '\\emph{'

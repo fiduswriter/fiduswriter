@@ -18,7 +18,7 @@ export class ShrinkFidus {
 
         this.walkTree(this.doc.contents)
 
-        this.imageList = _.uniq(this.imageList)
+        this.imageList = [...new Set(this.imageList)] // unique values
 
         this.imageList.forEach(itemId => {
             shrunkImageDB[itemId] = Object.assign({}, this.imageDB.db[itemId])
@@ -36,7 +36,7 @@ export class ShrinkFidus {
             })
         })
 
-        this.citeList = _.uniq(this.citeList)
+        this.citeList = [...new Set(this.citeList)] // unique values
 
         let shrunkBibDB = {}
         this.citeList.forEach(itemId => {

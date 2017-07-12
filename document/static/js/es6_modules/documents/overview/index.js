@@ -59,11 +59,13 @@ export class DocumentOverview {
                 xhr.setRequestHeader("X-CSRFToken", csrfToken)
             },
             success: (response, textStatus, jqXHR) => {
-                this.documentList = _.uniq(
-                    response.documents,
-                    true,
-                    obj => obj.id
-                )
+                let ids = new Set()
+                this.documentList = response.documents.filter(doc => {
+                    if (ids.has(doc.id)) {return false}
+                    ids.add(doc.id)
+                    return true
+                })
+
                 this.teamMembers = response.team_members
                 this.accessRights = response.access_rights
                 this.user = response.user
@@ -118,7 +120,7 @@ export class DocumentOverview {
         jQuery('#document-table .fw-searchable').each(function() {
             autocompleteTags.push(this.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''))
         })
-        autocompleteTags = _.uniq(autocompleteTags)
+        autocompleteTags = [...new Set(autocompleteTags)] // only unique values
         jQuery("#document-table_wrapper .dataTables_filter input").autocomplete({
             source: autocompleteTags
         })

@@ -23,7 +23,7 @@ export class DocumentAccessRightsDialog {
         let len = this.accessRights.length
 
         for (let i = 0; i < len; i++) {
-            if (_.include(this.documentIds, this.accessRights[i].document_id)) {
+            if (this.documentIds.includes(this.accessRights[i].document_id)) {
                 if ('undefined' == typeof (documentCollaborators[
                     this.accessRights[i].user_id])) {
                     documentCollaborators[this.accessRights[i].user_id] =
@@ -40,10 +40,7 @@ export class DocumentAccessRightsDialog {
                 }
             }
         }
-        documentCollaborators = _.select(
-            documentCollaborators,
-            obj => obj.count === this.documentIds.length
-        )
+        documentCollaborators = documentCollaborators.find(obj => obj.count === this.documentIds.length)
 
         let dialogBody = accessRightOverviewTemplate({
             dialogHeader: dialogHeader,

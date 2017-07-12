@@ -64,13 +64,13 @@ export class ImageSelectionDialog {
             jQuery(this).parent().removeClass('focus')
         })
 
-        let autocomplete_tags = []
+        let autocompleteTags = []
         jQuery('#imagelist .fw-searchable').each(function() {
-            autocomplete_tags.push(this.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''))
+            autocompleteTags.push(this.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''))
         })
-        autocomplete_tags = _.uniq(autocomplete_tags)
+        autocompleteTags = [...new Set(autocompleteTags)] // unique values
         jQuery("#select_imagelist_filter input").autocomplete({
-            source: autocomplete_tags
+            source: autocompleteTags
         })
     }
 

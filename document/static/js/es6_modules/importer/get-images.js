@@ -22,10 +22,7 @@ export class GetImages {
     getImageZipEntry() {
         if (this.counter < this.newImageEntries.length) {
             return new Promise((resolve, reject) => {
-                let fc = _.findWhere(
-                    this.entries,
-                    {filename: this.newImageEntries[this.counter].oldUrl.split('/').pop()}
-                ).contents
+                let fc = this.entries.find(entry => entry.filename === this.newImageEntries[this.counter].oldUrl.split('/').pop()).contents
                 this.newImageEntries[this.counter]['file'] = new window.Blob(
                     [fc],
                     {type: this.newImageEntries[this.counter].file_type}
@@ -43,10 +40,7 @@ export class GetImages {
     getImageUrlEntry() {
         if (this.counter < this.newImageEntries.length) {
             return new Promise((resolve, reject) => {
-                let getUrl = _.findWhere(
-                    this.entries,
-                    {filename: this.newImageEntries[this.counter].oldUrl.split('/').pop()}
-                ).url
+                let getUrl = this.entries.find(entry => entry.filename === this.newImageEntries[this.counter].oldUrl.split('/').pop()).url
                 let mimeString = this.newImageEntries[this.counter].file_type
                 JSZipUtils.getBinaryContent(getUrl, (err, data) => {
                     let dataView = new DataView(data)

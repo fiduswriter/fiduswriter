@@ -43,7 +43,7 @@ export class ModCollabChat {
     newMessage(message) {
         let existing = jQuery("#m" + message.id)
         if (existing.length > 0) return
-        let theChatter = _.findWhere(this.mod.participants, {id:message.from})
+        let theChatter = this.mod.participants.find(participant => participant.id === message.from)
         let node = jQuery(messageTemplate({message, theChatter, localizeDate}))
         node.hide()
 

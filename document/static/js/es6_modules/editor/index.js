@@ -346,7 +346,7 @@ export class Editor {
 
             //  Setup comment handling
             this.mod.comments.store.setVersion(this.doc.comment_version)
-            _.each(this.doc.comments, comment => {
+            Object.values(this.doc.comments).forEach(comment => {
                 this.mod.comments.store.addLocalComment(comment.id, comment.user,
                     comment.userName, comment.userAvatar, comment.date, comment.comment,
                     comment.answers, comment['review:isMajor'])

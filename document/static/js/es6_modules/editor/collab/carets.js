@@ -48,7 +48,7 @@ export class ModCollabCarets {
             sessionId: this.mod.editor.docInfo.session_id,
             from: this.mod.editor.currentView.state.selection.from,
             to: this.mod.editor.currentView.state.selection.to,
-            head: _.isFinite(this.mod.editor.currentView.state.selection.head) ?
+            head: Number.isFinite(this.mod.editor.currentView.state.selection.head) ?
                 this.mod.editor.currentView.state.selection.head : this.mod.editor.currentView.state.selection.to,
             // Whether the selection is in the footnote or the main editor
             view: this.mod.editor.currentView === this.mod.editor.view ? 'view' : 'fnView'
@@ -79,7 +79,7 @@ export class ModCollabCarets {
 
     // Update the position of a collaborator's caret
     updateCaret(caretPosition){
-        let participant = _.findWhere(this.mod.participants, {id:caretPosition.id})
+        let participant = this.mod.participants.find(participant => participant.id === caretPosition.id)
         if (!participant) {
             // participant (still) unknown. Ignore.
             return
@@ -143,10 +143,10 @@ export class ModCollabCarets {
     removeSelection(sessionId) {
         if (sessionId in this.caretPositions) {
             let caretPosition = this.caretPositions[sessionId]
-            if (_.isFinite(caretPosition.range.from)) {
+            if (Number.isFinite(caretPosition.range.from)) {
                 caretPosition.pm.removeRange(caretPosition.range)
             }
-            if (_.isFinite(caretPosition.headRange.from)) {
+            if (Number.isFinite(caretPosition.headRange.from)) {
                 caretPosition.pm.removeRange(caretPosition.headRange)
             }
             caretPosition.headNode.parentNode.removeChild(caretPosition.headNode)

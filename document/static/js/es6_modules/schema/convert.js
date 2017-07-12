@@ -22,7 +22,7 @@ export let getMetadata = function(pmArticle) {
 }
 
 export let getSettings = function(pmArticle) {
-    let settings = _.clone(pmArticle.attrs)
+    let settings = Object.assign({}, pmArticle.attrs)
     return settings
 }
 

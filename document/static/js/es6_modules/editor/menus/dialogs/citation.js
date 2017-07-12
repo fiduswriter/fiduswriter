@@ -201,7 +201,7 @@ export class CitationDialog {
             jQuery('#cite-source-table .fw-searchable').each(function() {
                 autocomplete_tags.push(this.textContent)
             })
-            autocomplete_tags = _.uniq(autocomplete_tags)
+            autocomplete_tags = [...new Set(autocomplete_tags)] // unique values
             jQuery("#cite-source-table_filter input").autocomplete({
                 source: autocomplete_tags
             })

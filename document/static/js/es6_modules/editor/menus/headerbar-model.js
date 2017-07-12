@@ -217,7 +217,7 @@ export let headerbarModel = {
                     tooltip: gettext('A4 (DIN A4/ISO 216) which is used in most of the world.'),
                     action: editor => {
                         let article = editor.view.state.doc.firstChild
-                        let attrs = _.clone(article.attrs)
+                        let attrs = Object.assign({}, article.attrs)
                         attrs.papersize = 'A4'
                         editor.view.dispatch(
                             editor.view.state.tr.setNodeType(0, false, attrs)
@@ -232,7 +232,7 @@ export let headerbarModel = {
                     tooltip: gettext('The format used by the USA and some other American countries.'),
                     action: editor => {
                         let article = editor.view.state.doc.firstChild
-                        let attrs = _.clone(article.attrs)
+                        let attrs = Object.assign({}, article.attrs)
                         attrs.papersize = 'US Letter'
                         editor.view.dispatch(
                             editor.view.state.tr.setNodeType(0, false, attrs)
@@ -261,7 +261,7 @@ export let headerbarModel = {
                         editor.view.state.doc.firstChild.forEach((node, nodeOffset) => {
                             if (node.type.name==='subtitle') {
                                 offset += nodeOffset
-                                attrs = _.clone(node.attrs)
+                                attrs = Object.assign({}, node.attrs)
                                 attrs.hidden = (!attrs.hidden)
                             }
                         })
@@ -282,7 +282,7 @@ export let headerbarModel = {
                         editor.view.state.doc.firstChild.forEach((node, nodeOffset) => {
                             if (node.type.name==='authors') {
                                 offset += nodeOffset
-                                attrs = _.clone(node.attrs)
+                                attrs = Object.assign({}, node.attrs)
                                 attrs.hidden = (!attrs.hidden)
                             }
                         })
@@ -303,7 +303,7 @@ export let headerbarModel = {
                         editor.view.state.doc.firstChild.forEach((node, nodeOffset) => {
                             if (node.type.name==='abstract') {
                                 offset += nodeOffset
-                                attrs = _.clone(node.attrs)
+                                attrs = Object.assign({}, node.attrs)
                                 attrs.hidden = (!attrs.hidden)
                             }
                         })
@@ -324,7 +324,7 @@ export let headerbarModel = {
                         editor.view.state.doc.firstChild.forEach((node, nodeOffset) => {
                             if (node.type.name==='keywords') {
                                 offset += nodeOffset
-                                attrs = _.clone(node.attrs)
+                                attrs = Object.assign({}, node.attrs)
                                 attrs.hidden = (!attrs.hidden)
                             }
                         })

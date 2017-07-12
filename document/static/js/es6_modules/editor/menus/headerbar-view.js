@@ -3,7 +3,7 @@ import keyName from "w3c-keyname"
 import {keydownHandler} from "prosemirror-keymap"
 import {escapeText} from "../../common"
 
-export class HeaderView {
+export class HeaderbarView {
     constructor(editorView, options) {
         this.editorView = editorView
         this.options = options

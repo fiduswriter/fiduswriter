@@ -30,7 +30,7 @@ import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
 import {Paste} from "./paste"
 import {placeholdersPlugin} from "./plugins/placeholders"
-import {headerPlugin} from "./plugins/header"
+import {headerbarPlugin} from "./plugins/headerbar"
 import {toolbarPlugin} from "./plugins/toolbar"
 import {addDropdownBox} from "../common"
 
@@ -301,7 +301,7 @@ export class Editor {
                     dropCursor(),
                     tableEditing(),
                     placeholdersPlugin(),
-                    headerPlugin({editor: this}),
+                    headerbarPlugin({editor: this}),
                     toolbarPlugin({editor: this})
                 ]
             }

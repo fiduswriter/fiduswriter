@@ -50,8 +50,10 @@ export let toolbarModel = {
         {
             type: 'info',
             show: editor => {
-                if (editor.view.state.selection.$from.node(2) === editor.view.state.selection.$to.node(2)) {
-                    return PART_LABELS[editor.view.state.selection.$from.node(2).type.name]
+                if (editor.currentView !== editor.view) {
+                    return gettext('Footnote')
+                } else if (editor.currentView.state.selection.$from.node(2) === editor.currentView.state.selection.$to.node(2)) {
+                    return PART_LABELS[editor.currentView.state.selection.$from.node(2).type.name]
                 } else {
                     return ''
                 }
@@ -61,7 +63,7 @@ export let toolbarModel = {
         {
             type: 'dropdown',
             show: editor => {
-                if (!editor.view.state.selection.$from.node(3)) {
+                if (!editor.currentView.state.selection.$from.node(3)) {
                     return ''
                 }
                 let startElement = editor.currentView.state.selection.$from.parent,
@@ -97,7 +99,7 @@ export let toolbarModel = {
                 }
 
             },
-            disabled: editor => READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights) || !editor.view.state.selection.$from.node(3),
+            disabled: editor => READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights) || !editor.currentView.state.selection.$from.node(3),
             content: [
                 {
                     title: BLOCK_LABELS['paragraph'],
@@ -187,8 +189,8 @@ export let toolbarModel = {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
                     return true
                 } else if (
-                    editor.view.state.selection.$from.node(2) === editor.view.state.selection.$to.node(2) &&
-                    editor.view.state.selection.$from.node(3)
+                    editor.currentView.state.selection.$from.node(2) === editor.currentView.state.selection.$to.node(2) &&
+                    editor.currentView.state.selection.$from.node(3)
                 ) {
                     return false
                 } else {
@@ -221,8 +223,8 @@ export let toolbarModel = {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
                     return true
                 } else if (
-                    editor.view.state.selection.$from.node(2) === editor.view.state.selection.$to.node(2) &&
-                    editor.view.state.selection.$from.node(3)
+                    editor.currentView.state.selection.$from.node(2) === editor.currentView.state.selection.$to.node(2) &&
+                    editor.currentView.state.selection.$from.node(3)
                 ) {
                     return false
                 } else {
@@ -255,9 +257,9 @@ export let toolbarModel = {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
                     return true
                 } else if (
-                    editor.view.state.selection.$from.node(2) === editor.view.state.selection.$to.node(2) &&
-                    editor.view.state.selection.$from.node(3) &&
-                    editor.view.state.selection.jsonID === 'text'
+                    editor.currentView.state.selection.$from.node(2) === editor.currentView.state.selection.$to.node(2) &&
+                    editor.currentView.state.selection.$from.node(3) &&
+                    editor.currentView.state.selection.jsonID === 'text'
                 ) {
                     return false
                 } else {
@@ -278,9 +280,9 @@ export let toolbarModel = {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
                     return true
                 } else if (
-                    editor.view.state.selection.$from.node(2) === editor.view.state.selection.$to.node(2) &&
-                    editor.view.state.selection.$from.node(3) &&
-                    editor.view.state.selection.jsonID === 'text'
+                    editor.currentView.state.selection.$from.node(2) === editor.currentView.state.selection.$to.node(2) &&
+                    editor.currentView.state.selection.$from.node(3) &&
+                    editor.currentView.state.selection.jsonID === 'text'
                 ) {
                     return false
                 } else {
@@ -301,9 +303,9 @@ export let toolbarModel = {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
                     return true
                 } else if (
-                    editor.view.state.selection.$from.node(2) === editor.view.state.selection.$to.node(2) &&
-                    editor.view.state.selection.$from.node(3) &&
-                    editor.view.state.selection.jsonID === 'text'
+                    editor.currentView.state.selection.$from.node(2) === editor.currentView.state.selection.$to.node(2) &&
+                    editor.currentView.state.selection.$from.node(3) &&
+                    editor.currentView.state.selection.jsonID === 'text'
                 ) {
                     return false
                 } else {
@@ -323,9 +325,9 @@ export let toolbarModel = {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
                     return true
                 } else if (
-                    editor.view.state.selection.$from.node(2) === editor.view.state.selection.$to.node(2) &&
-                    editor.view.state.selection.$from.node(3) &&
-                    editor.view.state.selection.jsonID === 'text'
+                    editor.currentView.state.selection.$from.node(2) === editor.currentView.state.selection.$to.node(2) &&
+                    editor.currentView.state.selection.$from.node(3) &&
+                    editor.currentView.state.selection.jsonID === 'text'
                 ) {
                     return false
                 } else {
@@ -349,9 +351,9 @@ export let toolbarModel = {
                 } else if (editor.view !== editor.currentView) {
                     return true
                 } else if (
-                    editor.view.state.selection.$from.node(2) === editor.view.state.selection.$to.node(2) &&
-                    editor.view.state.selection.$from.node(3) &&
-                    editor.view.state.selection.jsonID === 'text'
+                    editor.currentView.state.selection.$from.node(2) === editor.currentView.state.selection.$to.node(2) &&
+                    editor.currentView.state.selection.$from.node(3) &&
+                    editor.currentView.state.selection.jsonID === 'text'
                 ) {
                     return false
                 } else {
@@ -371,9 +373,9 @@ export let toolbarModel = {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
                     return true
                 } else if (
-                    editor.view.state.selection.$from.node(2) === editor.view.state.selection.$to.node(2) &&
-                    editor.view.state.selection.$from.node(3) &&
-                    editor.view.state.selection.jsonID === 'text'
+                    editor.currentView.state.selection.$from.node(2) === editor.currentView.state.selection.$to.node(2) &&
+                    editor.currentView.state.selection.$from.node(3) &&
+                    editor.currentView.state.selection.jsonID === 'text'
                 ) {
                     return false
                 } else {
@@ -396,9 +398,9 @@ export let toolbarModel = {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
                     return true
                 } else if (
-                    editor.view.state.selection.$from.node(2) === editor.view.state.selection.$to.node(2) &&
-                    editor.view.state.selection.$from.node(3) &&
-                    editor.view.state.selection.jsonID === 'text'
+                    editor.currentView.state.selection.$from.node(2) === editor.currentView.state.selection.$to.node(2) &&
+                    editor.currentView.state.selection.$from.node(3) &&
+                    editor.currentView.state.selection.jsonID === 'text'
                 ) {
                     return false
                 } else {
@@ -418,9 +420,9 @@ export let toolbarModel = {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
                     return true
                 } else if (
-                    editor.view.state.selection.$from.node(2) === editor.view.state.selection.$to.node(2) &&
-                    editor.view.state.selection.$from.node(3) &&
-                    editor.view.state.selection.jsonID === 'text'
+                    editor.currentView.state.selection.$from.node(2) === editor.currentView.state.selection.$to.node(2) &&
+                    editor.currentView.state.selection.$from.node(3) &&
+                    editor.currentView.state.selection.jsonID === 'text'
                 ) {
                     return false
                 } else {
@@ -440,8 +442,8 @@ export let toolbarModel = {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
                     return true
                 } else if (
-                    editor.view.state.selection.$from.node(2) === editor.view.state.selection.$to.node(2) &&
-                    editor.view.state.selection.$from.node(2).type.name === 'body'
+                    editor.currentView.state.selection.$from.node(2) === editor.currentView.state.selection.$to.node(2) &&
+                    editor.currentView.state.selection.$from.node(2).type.name === 'body'
                 ) {
                     return false
                 } else {
@@ -461,9 +463,9 @@ export let toolbarModel = {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
                     return true
                 } else if (
-                    editor.view.state.selection.$from.node(2) === editor.view.state.selection.$to.node(2) &&
-                    editor.view.state.selection.$from.node(3) &&
-                    editor.view.state.selection.jsonID === 'text'
+                    editor.currentView.state.selection.$from.node(2) === editor.currentView.state.selection.$to.node(2) &&
+                    editor.currentView.state.selection.$from.node(3) &&
+                    editor.currentView.state.selection.jsonID === 'text'
                 ) {
                     return false
                 } else {
@@ -493,7 +495,7 @@ export let toolbarModel = {
             disabled: editor => {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.rights)) {
                     return true
-                } else if (editor.view !== editor.currentView || editor.view.state.selection.empty) {
+                } else if (editor.view !== editor.currentView || editor.currentView.state.selection.empty) {
                     return true
                 }
             }

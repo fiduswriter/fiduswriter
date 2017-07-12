@@ -151,8 +151,9 @@ export class ToolbarView {
         })
         let newToolbar = document.createElement('div')
         newToolbar.innerHTML = this.getToolbarHTML(menuIndexToDrop)
-        let diff = this.dd.diff(this.toolbarEl, newToolbar)
-        this.dd.apply(this.toolbarEl, diff)
+        let toolbarEl = document.querySelector('#toolbar').firstElementChild
+        let diff = this.dd.diff(toolbarEl, newToolbar)
+        this.dd.apply(toolbarEl, diff)
     }
 
     getToolbarHTML(menuIndexToDrop) {

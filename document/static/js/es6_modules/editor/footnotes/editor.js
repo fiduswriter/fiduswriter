@@ -1,13 +1,15 @@
 import {Step} from "prosemirror-transform"
 import {sendableSteps, collab, receiveTransaction} from "prosemirror-collab"
-import {COMMENT_ONLY_ROLES} from ".."
-import {fnNodeToPmNode} from "../../schema/footnotes-convert"
 import {buildKeymap} from "prosemirror-example-setup"
 import {EditorState} from "prosemirror-state"
 import {EditorView} from "prosemirror-view"
 import {history} from "prosemirror-history"
 import {baseKeymap} from "prosemirror-commands"
 import {keymap} from "prosemirror-keymap/dist/keymap"
+
+import {toolbarPlugin} from "../plugins/toolbar"
+import {COMMENT_ONLY_ROLES} from ".."
+import {fnNodeToPmNode} from "../../schema/footnotes-convert"
 
 /* Functions related to the footnote editor instance */
 export class ModFootnoteEditor {
@@ -116,7 +118,8 @@ export class ModFootnoteEditor {
                 history(),
                 keymap(baseKeymap),
                 keymap(buildKeymap(this.mod.schema)),
-                collab()
+                collab(),
+                toolbarPlugin({editor: this.mod.editor})
             ]
         })
 

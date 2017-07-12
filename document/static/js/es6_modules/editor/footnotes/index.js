@@ -7,6 +7,7 @@ import {baseKeymap} from "prosemirror-commands"
 import {keymap} from "prosemirror-keymap/dist/keymap"
 import {collab} from "prosemirror-collab"
 
+import {toolbarPlugin} from "../plugins/toolbar"
 import {Paste} from "../paste"
 import {ModFootnoteEditor} from "./editor"
 import {ModFootnoteMarkers} from "./markers"
@@ -33,7 +34,8 @@ export class ModFootnotes {
                     history(),
                     keymap(baseKeymap),
                     keymap(buildKeymap(this.schema)),
-                    collab()
+                    collab(),
+                    toolbarPlugin({editor: this.editor})
                 ]
             }),
             onFocus: () => {

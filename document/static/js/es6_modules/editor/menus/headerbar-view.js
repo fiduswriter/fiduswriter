@@ -14,57 +14,68 @@ export class HeaderbarView {
         this.dd = new diffDOM()
         this.headerEl = document.querySelector('#headerbar').firstElementChild
         this.openedMenu = false
+        this.listeners = {}
+
+
         this.bindEvents()
         this.update()
     }
 
     bindEvents() {
-        document.body.addEventListener('click', event => {
-            if (this.openedMenu !== false) {
-                this.editor.menu.headerbarModel.content[this.openedMenu].open = false
-                this.openedMenu = false
-                this.update()
-            }
-            let target = event.target
-
-            if(target.matches('#headerbar #header-navigation .fw-pulldown-item:not(.disabled)')) {
-                // A header nav menu item was clicked. Now we just need to find
-                // which one and execute the corresponding action.
-                let itemNumber = 0
-                let seekItem = target.parentElement
-                while (seekItem.previousElementSibling) {
-                    itemNumber++
-                    seekItem = seekItem.previousElementSibling
-                }
-                seekItem = seekItem.parentElement.parentElement.parentElement
-                let menuNumber = 0
-                while (seekItem.previousElementSibling) {
-                    menuNumber++
-                    seekItem = seekItem.previousElementSibling
-                }
-                this.editor.menu.headerbarModel.content[menuNumber].content[itemNumber].action(this.editor)
-                this.editor.menu.headerbarModel.content[menuNumber].open = false
-                this.openedMenu = false
-                this.update()
-            } else if (target.matches('#headerbar #header-navigation .header-nav-item:not(.disabled)')) {
-                // A menu has been clicked, lets find out which one.
-                let menuNumber = 0
-                let seekItem = target.parentElement
-                while (seekItem.previousElementSibling) {
-                    menuNumber++
-                    seekItem = seekItem.previousElementSibling
-                }
-                this.editor.menu.headerbarModel.content[menuNumber].open = true
-                this.openedMenu = menuNumber
-                this.update()
-            }
-
-        })
-        document.addEventListener('keydown', event => this.keydown(event))
+        this.listeners.onclick = event => this.onclick(event)
+        document.body.addEventListener('click', this.listeners.onclick)
+        this.listeners.onkeydown = event => this.onkeydown(event)
+        document.addEventListener('keydown', this.listeners.onkeydown)
 
     }
 
-    keydown(event) {
+    destroy() {
+        document.body.removeEventListener('click', this.listeners.onclick)
+        document.removeEventListener('keydown', this.listeners.onkeydown)
+    }
+
+    onclick(event) {
+        if (this.openedMenu !== false) {
+            this.editor.menu.headerbarModel.content[this.openedMenu].open = false
+            this.openedMenu = false
+            this.update()
+        }
+        let target = event.target
+
+        if(target.matches('#headerbar #header-navigation .fw-pulldown-item:not(.disabled)')) {
+            // A header nav menu item was clicked. Now we just need to find
+            // which one and execute the corresponding action.
+            let itemNumber = 0
+            let seekItem = target.parentElement
+            while (seekItem.previousElementSibling) {
+                itemNumber++
+                seekItem = seekItem.previousElementSibling
+            }
+            seekItem = seekItem.parentElement.parentElement.parentElement
+            let menuNumber = 0
+            while (seekItem.previousElementSibling) {
+                menuNumber++
+                seekItem = seekItem.previousElementSibling
+            }
+            this.editor.menu.headerbarModel.content[menuNumber].content[itemNumber].action(this.editor)
+            this.editor.menu.headerbarModel.content[menuNumber].open = false
+            this.openedMenu = false
+            this.update()
+        } else if (target.matches('#headerbar #header-navigation .header-nav-item:not(.disabled)')) {
+            // A menu has been clicked, lets find out which one.
+            let menuNumber = 0
+            let seekItem = target.parentElement
+            while (seekItem.previousElementSibling) {
+                menuNumber++
+                seekItem = seekItem.previousElementSibling
+            }
+            this.editor.menu.headerbarModel.content[menuNumber].open = true
+            this.openedMenu = menuNumber
+            this.update()
+        }
+    }
+
+    onkeydown(event) {
 
         let name = keyName(event)
         if (event.altKey) {
@@ -101,7 +112,6 @@ export class HeaderbarView {
         let doc = this.editor.view.state.doc
         if (!this.editor.menu.headerbarModel.open) {
             // header is closed
-            console.log('closed')
             return ''
         }
         return `

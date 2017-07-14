@@ -23,13 +23,12 @@ export class FormatCitations {
     }
 
     formatAllCitations() {
-        let that = this
         this.allCitationInfos.forEach(cInfo => {
-            that.bibFormats.push(cInfo.format)
-            that.citations.push({
+            this.bibFormats.push(cInfo.format)
+            this.citations.push({
                 citationItems: cInfo.references,
                 properties: {
-                    noteIndex: that.bibFormats.length
+                    noteIndex: this.bibFormats.length
                 }
             })
         })
@@ -136,10 +135,9 @@ export class FormatCitations {
                     if (0 < j) {
                         newCiteText += '; '
                     }
-                    newCiteText += citeprocInstance.makeCitationCluster(onlyNameOption)
-                    newCiteText += ' ' + citeprocInstance.makeCitationCluster(onlyDateOption)
+                    newCiteText += `${citeprocInstance.makeCitationCluster(onlyNameOption)} ${citeprocInstance.makeCitationCluster(onlyDateOption)}`
                 }
-                citationText[0].push(newCiteText)
+                citationText[0][1] = newCiteText
             }
             this.citationTexts.push(citationText)
         }

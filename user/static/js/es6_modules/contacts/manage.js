@@ -42,14 +42,11 @@ let addMember = function(userString) {
                         responseHtml = gettext('No user is registered with the given email address.') +
                             '<br />' +
                             gettext('Please invite him/her ') +
-                            '<a target="_blank" href="mailto:' + userString + '?subject=' +
-                            encodeURIComponent(gettext('Fidus Writer')) + '&body=' +
-                            encodeURIComponent(gettext('Hey, I would like you to sign up for a Fidus Writer account.') +
-                                "\n" + gettext('Please register at')) + ' ' +
-                            window.location.origin +
-                            '">' +
-                            gettext('by sending an email') +
-                            '</a>!'
+                            `<a href="mailto:${userString}?subject=` +
+                                `${encodeURIComponent(gettext('Fidus Writer'))}&body=` +
+                                `${encodeURIComponent(gettext('Hey, I would like you to sign up for a Fidus Writer account.'))} ` +
+                                `${encodeURIComponent(gettext('Please register at'))} ${window.location.origin}">` +
+                            `${gettext('by sending an email')}</a>!`
                     } else {
                         responseHtml = gettext('User is not registered.')
                     }

@@ -164,6 +164,7 @@ export class OdtExporterRichtext {
                     this.exporter.styles.checkGraphicStyle('Graphics')
                     start += noSpaceTmp`
                     <text:p>
+                        <text:bookmark text:name="${node.attrs.id}"/>
                         <draw:frame draw:style-name="Graphics" draw:name="Image${this.imgCounter++}" text:anchor-type="paragraph" style:rel-width="100%" style:rel-height="scale" svg:width="${width}pt" svg:height="${height}pt" draw:z-index="0">
                             <draw:image xlink:href="Pictures/${imgFileName}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/>
                         </draw:frame>
@@ -181,6 +182,7 @@ export class OdtExporterRichtext {
                     this.exporter.styles.checkGraphicStyle('Formula')
                     start += noSpaceTmp`
                     <text:p>
+                        <text:bookmark text:name="${node.attrs.id}"/>
                         <draw:frame draw:style-name="Formula" draw:name="Object${objectNumber}" text:anchor-type="as-char" draw:z-index="1">
                             <draw:object xlink:href="./Object ${objectNumber}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/>
                             <svg:desc>formula</svg:desc>

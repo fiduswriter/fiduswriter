@@ -24,7 +24,6 @@ export class OdtExporter {
         this.pmCits = false
         this.docContents = false
         this.docTitle = false
-
         getDatabasesIfNeeded(this, doc).then(
             () => this.init()
         )

@@ -583,7 +583,7 @@ export class Editor {
             // This works for headlines, which are block nodes with text inside
             // (which should stay the same). Figures and inline content will
             // likely need to use ReplaceStep instead.
-            transform.step(
+            transaction.step(
                 new ReplaceAroundStep(
                     posFrom,
                     posTo,

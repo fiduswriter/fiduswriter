@@ -25,7 +25,7 @@ export let getMissingDocumentListData = function (ids, documentList) {
                     xhr.setRequestHeader("X-CSRFToken", csrfToken),
                 success: (response, textStatus, jqXHR) => {
                     for (let i = 0; i < response.documents.length; i++) {
-                        let aDocument = documentList.find(doc => id === response.documents[i].id)
+                        let aDocument = documentList.find(doc => doc.id === response.documents[i].id)
                         let newDoc = updateDoc({
                             contents: JSON.parse(response.documents[i].contents),
                             metadata: JSON.parse(response.documents[i].metadata),

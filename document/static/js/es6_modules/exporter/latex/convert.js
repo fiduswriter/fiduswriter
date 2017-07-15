@@ -324,9 +324,17 @@ export class LatexExporterConvert {
                     innerFigure += `\\begin{displaymath}\n${equation}\n\\end{displaymath}\n`
                 }
                 if (figureType==='table') {
-                    content += `\n\\begin{table}\n\\caption{${caption}}\n${innerFigure}\\end{table}\n`
+                    start += `\n\\begin{table}\n`
+                    content += `\\caption{${caption}}\n${innerFigure}`
+                    end += `\\end{table}\n`
                 } else { // TODO: handle photo figure types in a special way
-                    content += `\n\\begin{figure}\n${innerFigure}\\caption{${caption}}\n\\end{figure}\n`
+                    start += `\n\\begin{figure}\n`
+                    content += `${innerFigure}\\caption{${caption}}\n`
+                    end += `\\end{figure}\n`
+                }
+                if (this.internalLinks.includes(node.attrs.id)) {
+                    // Add a link target
+                    end = `\\texorpdfstring{\\protect\\hypertarget{${node.attrs.id}}{}}{}\n` + end
                 }
                 break
             case 'table':

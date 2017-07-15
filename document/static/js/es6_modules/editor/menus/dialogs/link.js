@@ -19,13 +19,27 @@ export class LinkDialog {
     }
 
     findInternalTargets() {
-        let docs = [this.editor.view.state.doc, this.editor.mod.footnotes.fnView.state.doc]
+
+        let docs = [this.editor.view.state.doc, this.editor.mod.footnotes.fnView.state.doc],
+        figures = {}
 
         docs.forEach(doc => doc.descendants(node => {
             if (node.type.name === 'heading') {
                 this.internalTargets.push({
                     id: node.attrs.id,
                     text: node.textContent
+                })
+            }
+
+            if (node.type.name === 'figure') {
+                if (!figures[node.attrs.figureCategory]) {
+                    figures[node.attrs.figureCategory] = 0
+                }
+                figures[node.attrs.figureCategory]++
+
+                this.internalTargets.push({
+                    id: node.attrs.id,
+                    text: `${gettext(node.attrs.figureCategory)} ${figures[node.attrs.figureCategory]}: ${node.attrs.caption}`
                 })
             }
         }))

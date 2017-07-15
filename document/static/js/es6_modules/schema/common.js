@@ -58,6 +58,10 @@ export let equation = {
     }
 }
 
+export function randomFigureId() {
+    return 'F' + Math.round(Math.random()*10000000) + 1
+}
+
 let imageDBBroken = false
 
 export let figure = {
@@ -66,7 +70,8 @@ export let figure = {
         equation: {default: ""},
         image: {default: ""},
         figureCategory: {default: ""},
-        caption: {default: ""}
+        caption: {default: ""},
+        id: {compute: randomFigureId}
     },
     parseDOM: [{
         tag: 'figure',
@@ -76,7 +81,8 @@ export let figure = {
                 equation: dom.getAttribute('data-equation'),
                 image: image === 'false' ? false : parseInt(image),
                 figureCategory: dom.getAttribute('data-figure-category'),
-                caption: dom.getAttribute('data-caption')
+                caption: dom.getAttribute('data-caption'),
+                id: dom.getAttribute('id')
             }
         }
     }],
@@ -86,6 +92,7 @@ export let figure = {
         dom.setAttribute('data-image', node.attrs.image)
         dom.setAttribute('data-figure-category', node.attrs.figureCategory)
         dom.setAttribute('data-caption', node.attrs.caption)
+        dom.setAttribute('id', node.attrs.id)
         if (node.attrs.image !== false) {
             dom.appendChild(document.createElement("div"))
             if (node.type.schema.cached.imageDB) {

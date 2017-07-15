@@ -2,6 +2,7 @@ import {InternalLinkDialogTemplate, linkDialogTemplate, InternalHeadingsTemplate
 
 export class LinkDialog {
     constructor(mod) {
+
         this.editor = mod.editor
         this.link = ''
         this.defaultLink = 'https://'
@@ -18,13 +19,26 @@ export class LinkDialog {
     }
 
     findInternalTargets() {
-        let docs = [this.editor.pm.doc, this.editor.mod.footnotes.fnPm.doc]
+        let docs = [this.editor.pm.doc, this.editor.mod.footnotes.fnPm.doc],
+        figures = {}
 
         docs.forEach(doc => doc.descendants(node => {
             if (node.type.name === 'heading') {
                 this.internalTargets.push({
                     id: node.attrs.id,
                     text: node.textContent
+                })
+            }
+
+            if (node.type.name === 'figure') {
+                if (!figures[node.attrs.figureCategory]) {
+                    figures[node.attrs.figureCategory] = 0
+                }
+                figures[node.attrs.figureCategory]++
+
+                this.internalTargets.push({
+                    id: node.attrs.id,
+                    text: `${gettext(node.attrs.figureCategory)} ${figures[node.attrs.figureCategory]}: ${node.attrs.caption}`
                 })
             }
         }))

@@ -12,7 +12,7 @@ class Document(models.Model):
     title = models.CharField(max_length=255, default='', blank=True)
     contents = models.TextField(default='{}')  # json object of content
     metadata = models.TextField(default='{}')  # json object of metadata
-    settings = models.TextField(default='{"doc_version":1.2}')
+    settings = models.TextField(default='{"doc_version":1.3}')
     # json object of settings
     # The doc_version is the version of the data format in the other fields
     # (mainly metadata and contents).

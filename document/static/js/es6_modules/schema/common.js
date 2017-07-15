@@ -59,6 +59,10 @@ export class Equation extends Inline {
     }
 }
 
+export function randomFigureId() {
+    return 'F' + Math.round(Math.random()*10000000) + 1
+}
+
 let imageDBBroken = false
 
 export class Figure extends Block {
@@ -75,6 +79,9 @@ export class Figure extends Block {
             }),
             caption: new Attribute({
                 default: ""
+            }),
+            id: new Attribute({
+                compute: randomFigureId
             })
         }
     }
@@ -86,7 +93,8 @@ export class Figure extends Block {
                     equation: dom.getAttribute('data-equation'),
                     image: image === 'false' ? false : parseInt(image),
                     figureCategory: dom.getAttribute('data-figure-category'),
-                    caption: dom.getAttribute('data-caption')
+                    caption: dom.getAttribute('data-caption'),
+                    id: dom.getAttribute('id')
                 }
             }
         }
@@ -96,7 +104,8 @@ export class Figure extends Block {
             'data-equation': node.attrs.equation,
             'data-image': node.attrs.image,
             'data-figure-category': node.attrs.figureCategory,
-            'data-caption': node.attrs.caption
+            'data-caption': node.attrs.caption,
+            'id': node.attrs.id
         })
         if (node.attrs.image !== false) {
             dom.appendChild(elt("div"))

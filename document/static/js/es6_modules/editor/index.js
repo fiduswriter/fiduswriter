@@ -14,7 +14,7 @@ import {ModCollab} from "./collab"
 import {ModTools} from "./tools"
 import {ModSettings} from "./settings"
 import {ModMenus} from "./menus"
-import {randomHeadingId} from "../schema/common"
+import {randomHeadingId, randomFigureId} from "../schema/common"
 import {ModServerCommunications} from "./server-communications"
 import {getMetadata, getSettings, updateDoc} from "../schema/convert"
 import {BibliographyDB} from "../bibliography/database"
@@ -451,9 +451,8 @@ export class Editor {
 
     // Things to execute before every editor transform
     onBeforeTransform(pm, transform) {
-        //Check if there are any headings in the affaceted area. Otherwise, skip.
-        let foundHeading = false
-
+        // Check if there are any headings or figures in the affected range.
+        // Otherwise, skip.
         let ranges = []
         transform.steps.forEach((step, index) => {
             if (step.jsonID === 'replace' || step.jsonID === 'replaceAround') {
@@ -466,24 +465,27 @@ export class Editor {
                 ]
             })
         })
+
+        let foundIdElement = false //found Heading or Figure
         ranges.forEach(range => transform.doc.nodesBetween(
             range[0],
             range[1],
             (node, pos, parent) => {
-                if (node.type.name === 'heading') {
-                    foundHeading = true
+                if (node.type.name === 'heading' || node.type.name === 'figure') {
+                    foundIdElement = true
                 }
             }
         ))
 
-        if (!foundHeading) {
+        if (!foundIdElement) {
             return
         }
 
         // Check that unique IDs only exist once in the document
         // If an ID is used more than once, add steps to change the ID of all
         // but the first occurence.
-        let linkIds = [], doubleIds = []
+        let headingIds = [], doubleHeadingIds = []
+        let figureIds = [], doubleFigureIds = []
 
         // ID should not be found in the other pm either. So we look through
         // those as well.
@@ -491,31 +493,44 @@ export class Editor {
 
         otherPm.doc.descendants(node => {
             if (node.type.name === 'heading') {
-                linkIds.push(node.attrs.id)
+                headingIds.push(node.attrs.id)
+            } else if (node.type.name === 'figure') {
+                figureIds.push(node.attrs.id)
             }
         })
 
         transform.doc.descendants((node, pos) => {
             if (node.type.name === 'heading') {
-                if (linkIds.includes(node.attrs.id)) {
-                    doubleIds.push({
+                if (headingIds.includes(node.attrs.id)) {
+                    doubleHeadingIds.push({
                         node,
                         pos
                     })
                 }
-                linkIds.push(node.attrs.id)
+                headingIds.push(node.attrs.id)
             }
+
+            if (node.type.name === 'figure') {
+                if (figureIds.includes(node.attrs.id)) {
+                    doubleFigureIds.push({
+                        node,
+                        pos
+                    })
+                }
+                figureIds.push(node.attrs.id)
+            }
+
         })
 
         // Change the IDs of the nodes that having an ID that was used previously
         // already.
-        doubleIds.forEach(doubleId => {
+        doubleHeadingIds.forEach(doubleId => {
             let node = doubleId.node,
                 posFrom = doubleId.pos,
                 posTo = posFrom + node.nodeSize,
                 blockId
 
-            while (!blockId || linkIds.includes(blockId)) {
+            while (!blockId || headingIds.includes(blockId)) {
                 blockId = randomHeadingId()
             }
 
@@ -542,8 +557,49 @@ export class Editor {
                 )
             )
 
-            linkIds.push(blockId)
+            headingIds.push(blockId)
         })
+
+
+        doubleFigureIds.forEach(doubleId => {
+            let node = doubleId.node,
+                posFrom = doubleId.pos,
+                posTo = posFrom + node.nodeSize,
+                blockId
+
+            while (!blockId || figureIds.includes(blockId)) {
+                blockId = randomFigureId()
+            }
+
+            let attrs = {
+                    equation: node.attrs.equation,
+                    image: node.attrs.image,
+                    figureCategory: node.attrs.figureCategory,
+                    caption: node.attrs.caption,
+                    id: blockId
+            }
+
+            // Because we only change attributes, positions should stay the
+            // the same throughout all our extra steps. We therefore do no
+            // mapping of positions through these steps.
+            // This works for headlines, which are block nodes with text inside
+            // (which should stay the same). Figures and inline content will
+            // likely need to use ReplaceStep instead.
+            transform.step(
+                new ReplaceAroundStep(
+                    posFrom,
+                    posTo,
+                    posFrom + 1,
+                    posTo - 1,
+                    new Slice(Fragment.from(node.type.create(attrs)), 0, 0),
+                    1,
+                    true
+                )
+            )
+
+            figureIds.push(blockId)
+        })
+
     }
 
     // Things to be executed on every editor transform.

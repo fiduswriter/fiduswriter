@@ -250,6 +250,8 @@ export class DocxExporterRichtext {
                       <w:pPr>
                         <w:jc w:val="center"/>
                       </w:pPr>
+                      <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
+                      <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>
                       <w:r>
                         <w:rPr/>
                         <w:drawing>

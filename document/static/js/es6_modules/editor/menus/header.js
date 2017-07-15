@@ -6,6 +6,7 @@ import {addDropdownBox} from "../../common"
 /* Bindings for the header menu */
 export class ModMenusHeader {
     constructor(mod) {
+
         mod.header = this
         this.mod = mod
         this.bindEvents()

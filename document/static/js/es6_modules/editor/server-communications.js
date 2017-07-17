@@ -113,7 +113,7 @@ export class ModServerCommunications {
                     this.editor.mod.collab.docChanges.checkDiffVersion()
                     return
                 }
-                //this.editor.mod.collab.carets.receiveSelectionChange(data)
+                this.editor.mod.collab.docChanges.receiveSelectionChange(data)
                 break
             case 'diff':
                 this.editor.mod.collab.docChanges.receiveFromCollaborators(data)

@@ -2,6 +2,7 @@ import {sendableSteps, receiveTransaction, getVersion} from "prosemirror-collab"
 import {Step} from "prosemirror-transform"
 
 import {docSchema} from "../../schema/document"
+import {getSelectionUpdate, removeCollaboratorSelection, updateCollaboratorSelection} from "../plugins/collab-carets"
 
 export class ModCollabDocChanges {
     constructor(mod) {
@@ -75,48 +76,94 @@ export class ModCollabDocChanges {
     }
 
     sendToCollaborators() {
-        let toSend = sendableSteps(this.mod.editor.view.state)
-        if (
-            this.awaitingDiffResponse ||
-            (
-                !toSend &&
-                this.mod.editor.mod.comments.store.unsentEvents().length === 0
-            )
-        ) {
+        if (this.awaitingDiffResponse) {
             // We are waiting for the confirmation of previous steps, so don't
-            // send anything now, or there is nothing to send.
+            // send anything now.
             return
         }
-        let fnToSend = sendableSteps(this.mod.editor.mod.footnotes.fnView.state)
-        let request_id = this.confirmStepsRequestCounter++
-        // We add the client ID to every single step
-        let toSendSteps = toSend ? toSend.steps.map(s => {
-            let step = s.toJSON()
-            step.client_id = toSend.clientID
-            return step
-        }) : []
-        let fnToSendSteps = fnToSend ? fnToSend.steps.map(s => {
-            let step = s.toJSON()
-            step.client_id = fnToSend.clientID
-            return step
-        }) : []
+        let stepsToSend = sendableSteps(this.mod.editor.view.state)
+        let selectionUpdate = getSelectionUpdate(this.mod.editor.currentView.state)
+        let comments = this.mod.editor.mod.comments.store.unsentEvents()
 
-        let aPackage = {
-            type: 'diff',
-            diff_version: getVersion(this.mod.editor.view.state),
-            diff: toSendSteps,
-            footnote_diff: fnToSendSteps,
-            comments: this.mod.editor.mod.comments.store.unsentEvents(),
-            comment_version: this.mod.editor.mod.comments.store.version,
-            request_id,
-            hash: this.mod.editor.getHash()
+        // Handle either doc change and comment updates OR caret update. Priority
+        // for doc change/comment update.
+        if (stepsToSend || comments.length) {
+            let fnStepsToSend = sendableSteps(this.mod.editor.mod.footnotes.fnView.state)
+            let request_id = this.confirmStepsRequestCounter++
+            // We add the client ID to every single step
+            let diff = stepsToSend ? stepsToSend.steps.map(s => {
+                let step = s.toJSON()
+                step.client_id = stepsToSend.clientID
+                return step
+            }) : []
+            let footnote_diff = fnStepsToSend ? fnStepsToSend.steps.map(s => {
+                let step = s.toJSON()
+                step.client_id = fnStepsToSend.clientID
+                return step
+            }) : []
+            this.disableDiffSending()
+
+            this.mod.editor.mod.serverCommunications.send({
+                type: 'diff',
+                diff_version: getVersion(this.mod.editor.view.state),
+                diff,
+                footnote_diff,
+                comments,
+                comment_version: this.mod.editor.mod.comments.store.version,
+                request_id,
+                hash: this.mod.editor.getHash()
+            })
+
+            this.unconfirmedSteps[request_id] = {
+                diff,
+                footnote_diff,
+                comments: this.mod.editor.mod.comments.store.hasUnsentEvents()
+            }
+        } else if (selectionUpdate) {
+            // Create a new caret as the current user
+            this.mod.editor.mod.serverCommunications.send({
+                type: 'selection_change',
+                id: this.mod.editor.user.id,
+                diff_version: getVersion(this.mod.editor.view.state),
+                session_id: this.mod.editor.docInfo.session_id,
+                anchor: selectionUpdate.anchor,
+                head: selectionUpdate.head,
+                // Whether the selection is in the footnote or the main editor
+                view: this.mod.editor.currentView === this.mod.editor.view ? 'view' : 'fnView'
+            })
         }
-        this.disableDiffSending()
-        this.mod.editor.mod.serverCommunications.send(aPackage)
-        this.unconfirmedSteps[request_id] = {
-            diffs: toSendSteps,
-            footnote_diffs: fnToSendSteps,
-            comments: this.mod.editor.mod.comments.store.hasUnsentEvents()
+
+    }
+
+    receiveSelectionChange(data) {
+        let transaction, fnTransaction
+        if (data.view === 'fnView') {
+            fnTransaction = updateCollaboratorSelection(
+                this.mod.editor.mod.footnotes.fnView.state,
+                this.mod.participants.find(par  => par.id === data.id),
+                data
+            )
+            transaction = removeCollaboratorSelection(
+                this.mod.editor.view.state,
+                data
+            )
+        } else {
+            transaction = updateCollaboratorSelection(
+                this.mod.editor.view.state,
+                this.mod.participants.find(par  => par.id === data.id),
+                data
+            )
+            fnTransaction = removeCollaboratorSelection(
+                this.mod.editor.mod.footnotes.fnView.state,
+                data
+            )
+        }
+        console.log(['transactions', transaction, fnTransaction])
+        if (transaction) {
+            this.mod.editor.view.dispatch(transaction)
+        }
+        if (fnTransaction) {
+            this.mod.editor.mod.footnotes.fnView.dispatch(fnTransaction)
         }
     }
 
@@ -181,7 +228,7 @@ export class ModCollabDocChanges {
 
     confirmDiff(request_id) {
         console.log('confirming steps')
-        let sentSteps = this.unconfirmedSteps[request_id]["diffs"]
+        let sentSteps = this.unconfirmedSteps[request_id]["diff"]
         let transaction = receiveTransaction(
             this.mod.editor.view.state,
             sentSteps,
@@ -191,7 +238,7 @@ export class ModCollabDocChanges {
         )
         this.setConfirmedDoc(transaction)
         this.mod.editor.view.dispatch(transaction)
-        let sentFnSteps = this.unconfirmedSteps[request_id]["footnote_diffs"]
+        let sentFnSteps = this.unconfirmedSteps[request_id]["footnote_diff"]
         this.mod.editor.mod.footnotes.fnView.dispatch(
             receiveTransaction(
                 this.mod.editor.mod.footnotes.fnView.state,

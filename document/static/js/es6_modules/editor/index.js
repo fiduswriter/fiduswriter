@@ -32,6 +32,7 @@ import {Paste} from "./paste"
 import {placeholdersPlugin} from "./plugins/placeholders"
 import {headerbarPlugin} from "./plugins/headerbar"
 import {toolbarPlugin} from "./plugins/toolbar"
+import {collabCaretsPlugin} from "./plugins/collab-carets"
 import {addDropdownBox} from "../common"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
@@ -302,7 +303,8 @@ export class Editor {
                     tableEditing(),
                     placeholdersPlugin(),
                     headerbarPlugin({editor: this}),
-                    toolbarPlugin({editor: this})
+                    toolbarPlugin({editor: this}),
+                    collabCaretsPlugin()
                 ]
             }
 
@@ -449,7 +451,7 @@ export class Editor {
     }
 
     // Things to execute before every editor transaction
-    onBeforeTransform(view, transaction) {
+    onBeforeTransaction(view, transaction) {
         // Check if there are any headings or figures in the affected range.
         // Otherwise, skip.
         let ranges = []

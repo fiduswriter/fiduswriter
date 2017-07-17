@@ -158,7 +158,6 @@ export class ModCollabDocChanges {
                 data
             )
         }
-        console.log(['transactions', transaction, fnTransaction])
         if (transaction) {
             this.mod.editor.view.dispatch(transaction)
         }

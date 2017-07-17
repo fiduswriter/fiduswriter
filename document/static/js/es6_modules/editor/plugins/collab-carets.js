@@ -6,7 +6,6 @@ const collabCaretsKey = new PluginKey('collabCarets')
 
 export let getSelectionUpdate = function(state) {
      let {caretUpdate} = collabCaretsKey.getState(state)
-     console.log(['getting sel update', caretUpdate])
      return caretUpdate
 }
 
@@ -56,7 +55,6 @@ export let updateCollaboratorSelection = function(state, collaborator, data) {
         addDecos.push(inlineDeco)
     }
     caretPositions.push(newCarPos)
-    console.log(['addDecos', addDecos, newCarPos])
     decos = decos.add(state.doc, addDecos)
 
     let transaction = state.tr.setMeta(collabCaretsKey, {
@@ -64,8 +62,6 @@ export let updateCollaboratorSelection = function(state, collaborator, data) {
         caretPositions,
         caretUpdate: false
     })
-    console.log(decos)
-    console.log(['getMeta',transaction.getMeta(collabCaretsKey)])
     return transaction
 }
 
@@ -107,13 +103,11 @@ export let collabCaretsPlugin = function(options) {
             },
             apply(tr, prev, oldState, state) {
                 let meta = tr.getMeta(collabCaretsKey)
-                console.log(['META',meta])
                 if (meta) {
                     // There has been an update, return values from meta instead
                     // of previous values
                     return meta
                 }
-                console.log("NOT MEAT")
                 let {
                     decos,
                     caretPositions
@@ -129,7 +123,6 @@ export let collabCaretsPlugin = function(options) {
 
                 if (tr.selectionSet && !sendableSteps(state)) {
                     caretUpdate = {anchor: tr.selection.anchor, head: tr.selection.head}
-                    console.log(['setting selection', tr])
                 }
 
                 return {
@@ -144,7 +137,6 @@ export let collabCaretsPlugin = function(options) {
 				let {
 					decos
 				} = this.getState(state)
-                console.log(['sel decos', decos])
 				return decos
 			}
         }

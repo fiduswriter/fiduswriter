@@ -1,4 +1,5 @@
 import fastdom from "fastdom"
+import {getFootnoteMarkers} from "../plugins/footnote-markers"
 
 /* A class to make footnotes appear correctly off the side of their referrer. */
 export class ModFootnoteLayout {
@@ -6,7 +7,6 @@ export class ModFootnoteLayout {
         mod.layout = this
         this.mod = mod
         this.setup()
-        this.bindEvents()
     }
 
     setup() {
@@ -16,13 +16,6 @@ export class ModFootnoteLayout {
         while (styleContainers.firstElementChild) {
             document.head.appendChild(styleContainers.firstElementChild)
         }
-    }
-
-    bindEvents() {
-        /*let pm = this.mod.editor.pm
-        pm.updateScheduler([pm.on.change, pm.on.setDoc], () => this.updateDOM())
-        let fnPm = this.mod.fnPm
-        fnPm.updateScheduler([fnPm.on.change, fnPm.on.setDoc], () => this.updateDOM())*/
     }
 
     layoutFootnotes() {
@@ -36,7 +29,7 @@ export class ModFootnoteLayout {
             // DOM read phase
             let totalOffset = document.getElementById('footnote-box-container').getBoundingClientRect().top + 10,
               footnoteBoxes = document.querySelectorAll('#footnote-box-container .footnote-container'),
-              footnotePlacementStyle = '', referrers = this.mod.footnotes
+              footnotePlacementStyle = '', referrers = getFootnoteMarkers(this.mod.editor.view.state)
             if (referrers.length !== footnoteBoxes.length) {
                 // Apparently not all footnote boxes have been drawn. Abort for now.
                 return

@@ -390,7 +390,7 @@ figure img {
 
 div#print,
 div#flow {
-    counter-reset: figure-cat-0 figure-cat-1 figure-cat-2;
+    counter-reset: figure-cat-0 figure-cat-1 figure-cat-2 footnote-counter footnote-marker-counter;
 }
 
 #flow {

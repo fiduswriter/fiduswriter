@@ -35,7 +35,7 @@ export let updateCollaboratorSelection = function(state, collaborator, data) {
     let tooltip = collaborator.name
     widgetDom.title = tooltip
     widgetDom.firstChild.title = tooltip
-    let widgetDeco = Decoration.widget(data.head, widgetDom)
+    let widgetDeco = Decoration.widget(data.head, widgetDom, {id: `${Date.now()}-${data.head}`})
     let newCarPos = {
         sessionId: data.session_id,
         userId: collaborator.id,
@@ -50,7 +50,7 @@ export let updateCollaboratorSelection = function(state, collaborator, data) {
         let to = data.anchor > data.head ? data.anchor : data.head
         let inlineDeco = Decoration.inline(from, to, {
             class: `user-bg-${collaborator.colorId}`
-        })
+        }, {id: `${Date.now()}-${from}`})
         newCarPos.inlineDeco = inlineDeco
         addDecos.push(inlineDeco)
     }
@@ -114,9 +114,13 @@ export let collabCaretsPlugin = function(options) {
                 } = this.getState(oldState),
                 caretUpdate = false
 
-                decos = decos.map(tr.mapping, tr.doc, {onRemove: deco => {
+                decos = decos.map(tr.mapping, tr.doc, {onRemove: decoSpec => {
                     caretPositions = caretPositions.filter(
-                        carPos => carPos.widgetDeco !== deco && carPos.inlineDeco !== deco
+                        carPos => carPos.widgetDeco.spec.id !== decoSpec.id &&
+                        (
+                            !carPos.inlineDeco ||
+                            carPos.inlineDeco.spec.id !== decoSpec.id
+                        )
                     )
                 }})
 

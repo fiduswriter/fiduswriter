@@ -11,7 +11,6 @@ import {toolbarPlugin} from "../plugins/toolbar"
 import {collabCaretsPlugin} from "../plugins/collab-carets"
 import {Paste} from "../paste"
 import {ModFootnoteEditor} from "./editor"
-import {ModFootnoteMarkers} from "./markers"
 import {ModFootnoteLayout} from "./layout"
 
 export class ModFootnotes {
@@ -19,10 +18,8 @@ export class ModFootnotes {
         editor.mod.footnotes = this
         this.editor = editor
         this.schema = fnSchema
-        this.footnotes = []
         new ModFootnoteEditor(this)
         this.init()
-        new ModFootnoteMarkers(this)
         new ModFootnoteLayout(this)
     }
 
@@ -63,11 +60,8 @@ export class ModFootnotes {
                 let newState = this.fnView.state.apply(transaction)
                 this.fnView.updateState(newState)
 
-                if (!remote) {
-                    this.fnEditor.footnoteEdit()
-                }
-
                 this.fnEditor.onTransaction(transaction, remote)
+                this.layout.updateDOM()
             }
         })
 

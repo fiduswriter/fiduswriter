@@ -54,7 +54,10 @@ export let toolbarModel = {
             show: editor => {
                 if (editor.currentView !== editor.view) {
                     return gettext('Footnote')
-                } else if (editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2)) {
+                } else if (
+                    editor.currentView.state.selection.$anchor.node(2) &&
+                    editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2)
+                ) {
                     return PART_LABELS[editor.currentView.state.selection.$anchor.node(2).type.name]
                 } else {
                     return ''
@@ -65,7 +68,10 @@ export let toolbarModel = {
         {
             type: 'dropdown',
             show: editor => {
-                if (TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name)) {
+                if (
+                    editor.currentView.state.selection.$anchor.node(2) &&
+                    TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name)
+                ) {
                     return ''
                 }
                 let startElement = editor.currentView.state.selection.$anchor.parent,
@@ -101,9 +107,13 @@ export let toolbarModel = {
                 }
 
             },
-            disabled: editor => READ_ONLY_ROLES.includes(editor.docInfo.rights) ||
-                                COMMENT_ONLY_ROLES.includes(editor.docInfo.rights) ||
-                                TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name),
+            disabled: editor =>
+                    READ_ONLY_ROLES.includes(editor.docInfo.rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.rights) ||
+                    (
+                        editor.currentView.state.selection.$anchor.node(2) &&
+                        TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name)
+                    ),
             content: [
                 {
                     title: BLOCK_LABELS['paragraph'],
@@ -192,6 +202,7 @@ export let toolbarModel = {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
                     return true
                 } else if (
+                    editor.currentView.state.selection.$anchor.node(2) &&
                     editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
                     !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name)
                 ) {
@@ -226,6 +237,7 @@ export let toolbarModel = {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
                     return true
                 } else if (
+                    editor.currentView.state.selection.$anchor.node(2) &&
                     editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
                     !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name)
                 ) {
@@ -260,6 +272,7 @@ export let toolbarModel = {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
                     return true
                 } else if (
+                    editor.currentView.state.selection.$anchor.node(2) &&
                     editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
                     !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
                     editor.currentView.state.selection.jsonID === 'text'
@@ -283,6 +296,7 @@ export let toolbarModel = {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
                     return true
                 } else if (
+                    editor.currentView.state.selection.$anchor.node(2) &&
                     editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
                     !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
                     editor.currentView.state.selection.jsonID === 'text'
@@ -306,6 +320,7 @@ export let toolbarModel = {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
                     return true
                 } else if (
+                    editor.currentView.state.selection.$anchor.node(2) &&
                     editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
                     !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
                     editor.currentView.state.selection.jsonID === 'text'
@@ -328,6 +343,7 @@ export let toolbarModel = {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
                     return true
                 } else if (
+                    editor.currentView.state.selection.$anchor.node(2) &&
                     editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
                     !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
                     editor.currentView.state.selection.jsonID === 'text'
@@ -354,6 +370,7 @@ export let toolbarModel = {
                 } else if (editor.view !== editor.currentView) {
                     return true
                 } else if (
+                    editor.currentView.state.selection.$anchor.node(2) &&
                     editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
                     !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
                     editor.currentView.state.selection.jsonID === 'text'
@@ -376,6 +393,7 @@ export let toolbarModel = {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
                     return true
                 } else if (
+                    editor.currentView.state.selection.$anchor.node(2) &&
                     editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
                     !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
                     editor.currentView.state.selection.jsonID === 'text'
@@ -401,6 +419,7 @@ export let toolbarModel = {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
                     return true
                 } else if (
+                    editor.currentView.state.selection.$anchor.node(2) &&
                     editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
                     !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
                     editor.currentView.state.selection.jsonID === 'text'
@@ -423,6 +442,7 @@ export let toolbarModel = {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
                     return true
                 } else if (
+                    editor.currentView.state.selection.$anchor.node(2) &&
                     editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
                     !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
                     editor.currentView.state.selection.jsonID === 'text'
@@ -445,6 +465,7 @@ export let toolbarModel = {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
                     return true
                 } else if (
+                    editor.currentView.state.selection.$anchor.node(2) &&
                     editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
                     !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
                     editor.currentView.state.selection.$anchor.node(2).type.name !== 'abstract'
@@ -467,6 +488,7 @@ export let toolbarModel = {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
                     return true
                 } else if (
+                    editor.currentView.state.selection.$anchor.node(2) &&
                     editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
                     !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
                     editor.currentView.state.selection.jsonID === 'text'

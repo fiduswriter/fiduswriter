@@ -33,6 +33,7 @@ import {placeholdersPlugin} from "./plugins/placeholders"
 import {headerbarPlugin} from "./plugins/headerbar"
 import {toolbarPlugin} from "./plugins/toolbar"
 import {collabCaretsPlugin} from "./plugins/collab-carets"
+import {footnoteMarkersPlugin} from "./plugins/footnote-markers"
 import {addDropdownBox} from "../common"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
@@ -110,7 +111,7 @@ export class Editor {
                 let newState = this.view.state.apply(transaction)
                 this.view.updateState(newState)
 
-                this.mod.footnotes.markers.scanForFootnoteMarkers(transaction, remote)
+                this.mod.footnotes.layout.updateDOM()
 
                 this.mod.collab.docChanges.sendToCollaborators()
 
@@ -255,8 +256,7 @@ export class Editor {
     }
 
     receiveDocument(data) {
-        // Remove footnote markers
-        this.mod.footnotes.markers.removeAllMarkers()
+
         // Reset collaboration
         this.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
         this.mod.collab.docChanges.unconfirmedSteps = {}
@@ -304,7 +304,8 @@ export class Editor {
                     placeholdersPlugin(),
                     headerbarPlugin({editor: this}),
                     toolbarPlugin({editor: this}),
-                    collabCaretsPlugin()
+                    collabCaretsPlugin(),
+                    footnoteMarkersPlugin({footnotes: this.mod.footnotes})
                 ]
             }
 

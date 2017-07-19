@@ -21,10 +21,6 @@ because PM needs some content. */
   content: counter(footnote-counter) ' ';
 }
 
-#flow, #print {
-  counter-reset: footnote-counter footnote-marker-counter;
-}
-
 /* footnotes in main editor */
 
 .footnote-marker::before, .citation-footnote-marker::before {

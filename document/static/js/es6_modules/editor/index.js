@@ -319,16 +319,17 @@ export class Editor {
 
             if (this.docInfo.unapplied_diffs.length > 0) {
                 // We have unapplied diffs -- this should only happen if the last disconnect
-                // happened before we could save. We try to apply the diffs and then save
-                // immediately.
-                try {
+                // happened before we could save or because we are connecting to a document
+                // in the process of being edited by another client. We try to apply the
+                // diffs and then save immediately.
+                //try {
                     // We only try because this fails if the PM diff format has changed.
-                    while (this.docInfo.unapplied_diffs.length > 0) {
-                        let diff = this.docInfo.unapplied_diffs.shift()
-                        this.mod.collab.docChanges.applyDiff(diff)
-                    }
-                    return this.save()
-                } catch (error) {
+                while (this.docInfo.unapplied_diffs.length > 0) {
+                    let diff = this.docInfo.unapplied_diffs.shift()
+                    this.mod.collab.docChanges.applyDiff(diff)
+                }
+                this.save()
+                /*} catch (error) {
                     // We couldn't apply the diffs. They are likely corrupted.
                     // We remove remaining diffs, increase the version by one and
                     // save to the server.
@@ -337,7 +338,7 @@ export class Editor {
                     console.warn('Diffs could not be applied correctly!')
 
                     return this.save()
-                }
+                }*/
             }
 
             // Get document settings

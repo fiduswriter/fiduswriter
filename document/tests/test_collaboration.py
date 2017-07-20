@@ -797,7 +797,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
     def get_mathequation(self, driver):
         math = driver.find_element_by_xpath(
-            '//*[contains(@class, "article-body")]/p[1]/span[2]'
+            '//*[contains(@class, "article-body")]/p[1]/span[1]'
             # OR '//*[@class="equation"]'
         )
 
@@ -1131,7 +1131,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
     def get_citation_within_text(self, driver):
         cite_within_doc = driver.find_element_by_xpath(
-            '//*[contains(@class, "article-body")]/p[1]/span[2]'
+            '//*[contains(@class, "article-body")]/p[1]/span[1]'
         )
         return cite_within_doc.text
 
@@ -1185,7 +1185,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_sync(self.driver, self.driver2)
 
         self.assertEqual(
-            10,
+            18,
             len(self.get_citation_within_text(self.driver2))
         )
 
@@ -1195,7 +1195,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
         self.assertEqual(
-            47,
+            39,
             len(self.get_citation_bib(self.driver))
         )
 

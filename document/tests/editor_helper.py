@@ -27,6 +27,9 @@ class EditorHelper(SeleniumHelper):
         WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'article-body'))
         )
+        driver.execute_script(
+            open('static-es5/js/test-caret.es5.js', 'r').read()
+        )
 
     def input_text(self, document_input, text):
         for char in text:
@@ -36,7 +39,7 @@ class EditorHelper(SeleniumHelper):
     def add_title(self, driver):
         title = "My title"
         driver.execute_script(
-            'window.theEditor.pm.setTextSelection(2,2)')
+            'window.testCaret.setSelection(2,2)')
         document_input = self.driver.find_element_by_class_name(
             'ProseMirror-content'
         )

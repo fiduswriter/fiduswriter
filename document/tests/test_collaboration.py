@@ -46,15 +46,15 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
     def get_title(self, driver):
         # Title is child 0.
         return driver.execute_script(
-            'return window.theEditor.pm.doc.firstChild'
-            '.content.content[0].textContent;'
+            'return window.theEditor.view.state.doc.firstChild'
+            '.firstChild.textContent;'
         )
 
     def get_contents(self, driver):
         # Contents is child 5.
         return driver.execute_script(
-            'return window.theEditor.pm.doc.firstChild'
-            '.content.content[5].textContent;'
+            'return window.theEditor.view.state.doc.firstChild'
+            '.child(5).textContent;'
         )
 
     def test_typing(self):
@@ -77,9 +77,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         # First start tag is length 1, so placing after first start tag is
         # position 1
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(2,2)')
+            'window.testCaret.setSelection(2,2)')
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(2,2)')
+            'window.testCaret.setSelection(2,2)')
 
         first_part = "Here is "
         second_part = "my title"
@@ -108,9 +108,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         # Added content is 16 characters long, so + 16.
         # Total: 30.
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(31,31)')
+            'window.testCaret.setSelection(31,31)')
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(31,31)')
+            'window.testCaret.setSelection(31,31)')
 
         for char in self.TEST_TEXT:
             document_input.send_keys(char)
@@ -147,9 +147,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         # First start tag is length 1, so placing after first start tag is
         # position 1
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(2,2)')
+            'window.testCaret.setSelection(2,2)')
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(2,2)')
+            'window.testCaret.setSelection(2,2)')
 
         first_part = "Here is "
         second_part = "my title"
@@ -188,9 +188,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         # Added content is 16 characters long, so + 16.
         # Total: 30.
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(31,31)')
+            'window.testCaret.setSelection(31,31)')
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(31,31)')
+            'window.testCaret.setSelection(31,31)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -243,7 +243,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -261,7 +261,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(23,28)')
+            'window.testCaret.setSelection(23,28)')
 
         p2 = multiprocessing.Process(
             target=self.make_bold,
@@ -306,7 +306,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # Total: 23
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -324,7 +324,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(23,28)')
+            'window.testCaret.setSelection(23,28)')
 
         p2 = multiprocessing.Process(
             target=self.make_italic,
@@ -368,7 +368,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # Total: 23
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -386,7 +386,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p2 = multiprocessing.Process(
             target=self.make_numberedlist,
@@ -399,7 +399,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_size(self.driver2, 47)
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(41,41)')
+            'window.testCaret.setSelection(41,41)')
 
         p2 = multiprocessing.Process(
             target=self.make_numberedlist,
@@ -445,7 +445,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # Total: 23
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -463,7 +463,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p2 = multiprocessing.Process(
             target=self.make_bulletlist,
@@ -476,7 +476,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_size(self.driver2, 47)
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(41,41)')
+            'window.testCaret.setSelection(41,41)')
 
         p2 = multiprocessing.Process(
             target=self.make_bulletlist,
@@ -522,7 +522,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -540,7 +540,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p2 = multiprocessing.Process(
             target=self.make_blockquote,
@@ -599,7 +599,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # Total: 23
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -617,7 +617,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(23,28)')
+            'window.testCaret.setSelection(23,28)')
 
         p2 = multiprocessing.Process(
             target=self.addlink,
@@ -678,7 +678,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -696,7 +696,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(28,28)')
+            'window.testCaret.setSelection(28,28)')
 
         p2 = multiprocessing.Process(
             target=self.make_footnote,
@@ -747,7 +747,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -765,7 +765,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(23,28)')
+            'window.testCaret.setSelection(23,28)')
 
         p2 = multiprocessing.Process(
             target=self.perform_delete_undo,
@@ -820,7 +820,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # Total: 23
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -838,7 +838,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(28,28)')
+            'window.testCaret.setSelection(28,28)')
 
         p2 = multiprocessing.Process(
             target=self.make_mathequation,
@@ -893,7 +893,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -911,7 +911,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(23,28)')
+            'window.testCaret.setSelection(23,28)')
 
         p2 = multiprocessing.Process(
             target=self.add_comment,
@@ -1015,7 +1015,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # Total: 23
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -1033,7 +1033,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(28,28)')
+            'window.testCaret.setSelection(28,28)')
 
         p2 = multiprocessing.Process(
             target=self.add_figure,
@@ -1155,7 +1155,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -1173,7 +1173,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(28,28)')
+            'window.testCaret.setSelection(28,28)')
 
         p2 = multiprocessing.Process(
             target=self.add_citation,

@@ -47,10 +47,16 @@ export let placeholdersPlugin = function() {
         key: placeholdersKey,
         props: {
             decorations: (state) => {
-
-                const anchorPart = state.selection.$anchor.node(2)
-                const headPart = state.selection.$head.node(2)
-
+                const anchor = state.selection.$anchor
+                const head = state.selection.$head
+                if (!anchor || !head) {
+                    return
+                }
+                const anchorPart = anchor.node(2)
+                const headPart = head.node(2)
+                if (!anchorPart || !headPart) {
+                    return
+                }
                 let currentPart = anchorPart === headPart ? anchorPart : false
 
                 let articleNode = state.doc.firstChild

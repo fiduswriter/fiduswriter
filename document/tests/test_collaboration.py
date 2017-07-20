@@ -19,7 +19,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
     user = None
     TEST_TEXT = "Lorem ipsum dolor sit amet."
     MULTILINE_TEST_TEXT = "Lorem ipsum\ndolor sit amet."
-    fixtures = ['initial_styles.json',]
+    fixtures = ['initial_styles.json', ]
 
     @classmethod
     def setUpClass(cls):
@@ -658,7 +658,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
     def get_footnote(self, driver):
         atag = driver.find_element_by_xpath(
-            '//*[@id="footnote-box-container"]/div[2]/div/div[1]/p/span'
+            '//*[@id="footnote-box-container"]/div[2]/div[1]/p[1]'
         )
         return atag.text
 
@@ -727,8 +727,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
     def get_undo(self, driver):
         content = driver.find_element_by_class_name('article-body')
-
-        return content.text
+        return content.get_attribute("innerText").rstrip('\n')
 
     def test_delete_undo(self):
         """

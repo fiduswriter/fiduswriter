@@ -1,5 +1,8 @@
-import {Step} from "prosemirror-old/dist/transform"
+import {sendableSteps, receiveTransaction, getVersion} from "prosemirror-collab"
+import {Step} from "prosemirror-transform"
+
 import {docSchema} from "../../schema/document"
+import {getSelectionUpdate, removeCollaboratorSelection, updateCollaboratorSelection} from "../plugins/collab-carets"
 
 export class ModCollabDocChanges {
     constructor(mod) {
@@ -15,7 +18,7 @@ export class ModCollabDocChanges {
 
     checkHash(version, hash) {
         console.log('Verifying hash')
-        if (version === this.mod.editor.pmCollab.version) {
+        if (version === getVersion(this.mod.editor.view.state)) {
             if (hash === this.mod.editor.getHash()) {
                 console.log('Hash could be verified')
                 return true
@@ -49,7 +52,7 @@ export class ModCollabDocChanges {
         }
         this.mod.editor.mod.serverCommunications.send({
             type: 'check_diff_version',
-            diff_version: this.mod.editor.pmCollab.version
+            diff_version: getVersion(this.mod.editor.view.state)
         })
     }
 
@@ -73,44 +76,93 @@ export class ModCollabDocChanges {
     }
 
     sendToCollaborators() {
-        if (
-            this.awaitingDiffResponse ||
-            (
-                !this.mod.editor.pmCollab.hasSendableSteps() &&
-                this.mod.editor.mod.comments.store.unsentEvents().length === 0
-            )
-        ) {
+        if (this.awaitingDiffResponse) {
             // We are waiting for the confirmation of previous steps, so don't
-            // send anything now, or there is nothing to send.
+            // send anything now.
             return
         }
-        let toSend = this.mod.editor.pmCollab.sendableSteps()
-        let fnToSend = this.mod.editor.mod.footnotes.fnPmCollab.sendableSteps()
-        let request_id = this.confirmStepsRequestCounter++
-        let aPackage = {
-            type: 'diff',
-            diff_version: this.mod.editor.pmCollab.version,
-            diff: toSend.steps.map(s => {
+        let stepsToSend = sendableSteps(this.mod.editor.view.state)
+        let selectionUpdate = getSelectionUpdate(this.mod.editor.currentView.state)
+        let comments = this.mod.editor.mod.comments.store.unsentEvents()
+
+        // Handle either doc change and comment updates OR caret update. Priority
+        // for doc change/comment update.
+        if (stepsToSend || comments.length) {
+            let fnStepsToSend = sendableSteps(this.mod.editor.mod.footnotes.fnView.state)
+            let request_id = this.confirmStepsRequestCounter++
+            // We add the client ID to every single step
+            let diff = stepsToSend ? stepsToSend.steps.map(s => {
                 let step = s.toJSON()
-                step.client_id = this.mod.editor.pmCollab.clientID
+                step.client_id = stepsToSend.clientID
                 return step
-            }),
-            footnote_diff: fnToSend.steps.map(s => {
+            }) : []
+            let footnote_diff = fnStepsToSend ? fnStepsToSend.steps.map(s => {
                 let step = s.toJSON()
-                step.client_id = this.mod.editor.mod.footnotes.fnPmCollab.clientID
+                step.client_id = fnStepsToSend.clientID
                 return step
-            }),
-            comments: this.mod.editor.mod.comments.store.unsentEvents(),
-            comment_version: this.mod.editor.mod.comments.store.version,
-            request_id: request_id,
-            hash: this.mod.editor.getHash()
+            }) : []
+            this.disableDiffSending()
+
+            this.mod.editor.mod.serverCommunications.send({
+                type: 'diff',
+                diff_version: getVersion(this.mod.editor.view.state),
+                diff,
+                footnote_diff,
+                comments,
+                comment_version: this.mod.editor.mod.comments.store.version,
+                request_id,
+                hash: this.mod.editor.getHash()
+            })
+
+            this.unconfirmedSteps[request_id] = {
+                diff,
+                footnote_diff,
+                comments: this.mod.editor.mod.comments.store.hasUnsentEvents()
+            }
+        } else if (selectionUpdate) {
+            // Create a new caret as the current user
+            this.mod.editor.mod.serverCommunications.send({
+                type: 'selection_change',
+                id: this.mod.editor.user.id,
+                diff_version: getVersion(this.mod.editor.view.state),
+                session_id: this.mod.editor.docInfo.session_id,
+                anchor: selectionUpdate.anchor,
+                head: selectionUpdate.head,
+                // Whether the selection is in the footnote or the main editor
+                view: this.mod.editor.currentView === this.mod.editor.view ? 'view' : 'fnView'
+            })
         }
-        this.disableDiffSending()
-        this.mod.editor.mod.serverCommunications.send(aPackage)
-        this.unconfirmedSteps[request_id] = {
-            diffs: toSend.steps,
-            footnote_diffs: fnToSend.steps,
-            comments: this.mod.editor.mod.comments.store.hasUnsentEvents()
+
+    }
+
+    receiveSelectionChange(data) {
+        let transaction, fnTransaction
+        if (data.view === 'fnView') {
+            fnTransaction = updateCollaboratorSelection(
+                this.mod.editor.mod.footnotes.fnView.state,
+                this.mod.participants.find(par  => par.id === data.id),
+                data
+            )
+            transaction = removeCollaboratorSelection(
+                this.mod.editor.view.state,
+                data
+            )
+        } else {
+            transaction = updateCollaboratorSelection(
+                this.mod.editor.view.state,
+                this.mod.participants.find(par  => par.id === data.id),
+                data
+            )
+            fnTransaction = removeCollaboratorSelection(
+                this.mod.editor.mod.footnotes.fnView.state,
+                data
+            )
+        }
+        if (transaction) {
+            this.mod.editor.view.dispatch(transaction)
+        }
+        if (fnTransaction) {
+            this.mod.editor.mod.footnotes.fnView.dispatch(fnTransaction)
         }
     }
 
@@ -122,12 +174,12 @@ export class ModCollabDocChanges {
         }
         let editorHash = this.mod.editor.getHash()
         console.log(`Incoming diff: version: ${data.diff_version}, hash: ${data.hash}`)
-        console.log(`Editor: version: ${this.mod.editor.pmCollab.version}, hash: ${editorHash}`)
-        if (data.diff_version < this.mod.editor.pmCollab.version) {
+        console.log(`Editor: version: ${getVersion(this.mod.editor.view.state)}, hash: ${editorHash}`)
+        if (data.diff_version < getVersion(this.mod.editor.view.state)) {
             console.log('Removing excessive diffs')
-            let outdatedDiffs = this.mod.editor.pmCollab.version - data.diff_version
+            let outdatedDiffs = getVersion(this.mod.editor.view.state) - data.diff_version
             data.diff = data.diff.slice(outdatedDiffs)
-        } else if (data.diff_version > this.mod.editor.pmCollab.version) {
+        } else if (data.diff_version > getVersion(this.mod.editor.view.state)) {
             console.warn('Something is not correct. The local and remote versions do not match.')
             this.checkDiffVersion()
             return
@@ -167,17 +219,33 @@ export class ModCollabDocChanges {
         }
     }
 
+    setConfirmedDoc(transaction) {
+        // Find the latest version of the doc without any unconfirmed local changes
+        let rebased = transaction.getMeta("rebased")
+        this.mod.editor.confirmedDoc = rebased > 0 ? transaction.docs[transaction.steps.length - rebased] : transaction.doc
+    }
+
     confirmDiff(request_id) {
         console.log('confirming steps')
-        let sentSteps = this.unconfirmedSteps[request_id]["diffs"]
-        this.mod.editor.pmCollab.receive(sentSteps, sentSteps.map(
-            step => this.mod.editor.pmCollab.clientID
-        ))
-
-        let sentFnSteps = this.unconfirmedSteps[request_id]["footnote_diffs"]
-        this.mod.editor.mod.footnotes.fnPmCollab.receive(
-            sentFnSteps,
-            sentFnSteps.map(step => this.mod.editor.mod.footnotes.fnPmCollab.clientID)
+        let sentSteps = this.unconfirmedSteps[request_id]["diff"]
+        let transaction = receiveTransaction(
+            this.mod.editor.view.state,
+            sentSteps,
+            sentSteps.map(
+                step => step.client_id
+            )
+        )
+        this.setConfirmedDoc(transaction)
+        this.mod.editor.view.dispatch(transaction)
+        let sentFnSteps = this.unconfirmedSteps[request_id]["footnote_diff"]
+        this.mod.editor.mod.footnotes.fnView.dispatch(
+            receiveTransaction(
+                this.mod.editor.mod.footnotes.fnView.state,
+                sentFnSteps,
+                sentFnSteps.map(
+                    step => step.client_id
+                )
+            )
         )
 
         let sentComments = this.unconfirmedSteps[request_id]["comments"]
@@ -190,8 +258,16 @@ export class ModCollabDocChanges {
     applyDiff(diff) {
         this.receiving = true
         let steps = [diff].map(j => Step.fromJSON(docSchema, j))
-        let client_ids = [diff].map(j => j.client_id)
-        this.mod.editor.pmCollab.receive(steps, client_ids)
+        let transaction = receiveTransaction(
+            this.mod.editor.view.state,
+            steps,
+            steps.map(
+                step => step.client_id
+            )
+        )
+        transaction.setMeta('remote', true)
+        this.mod.editor.view.dispatch(transaction)
+        this.setConfirmedDoc(transaction)
         this.receiving = false
     }
 }

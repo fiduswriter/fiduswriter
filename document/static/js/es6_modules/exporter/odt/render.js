@@ -1,5 +1,6 @@
 import {textContent} from "../tools/doc-contents"
-import {escapeText, domDescendantTexNodes} from "../tools/html"
+import {domDescendantTexNodes} from "../tools/html"
+import {escapeText} from "../../common"
 
 export class OdtExporterRender {
     constructor(exporter, docContents) {

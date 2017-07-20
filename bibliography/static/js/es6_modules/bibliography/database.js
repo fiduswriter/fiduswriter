@@ -28,11 +28,11 @@ export class BibliographyDB {
             // Needed for translation to CSL and Biblatex.
             //Fill BibDB
 
-            if (_.isNaN(lastModified)) {
+            if (Number.isNaN(lastModified)) {
                 lastModified = -1
             }
 
-            if (_.isNaN(numberOfEntries)) {
+            if (Number.isNaN(numberOfEntries)) {
                 numberOfEntries = -1
             }
 

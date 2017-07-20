@@ -3,14 +3,17 @@ import atexit
 from copy import deepcopy
 
 from document.helpers.session_user_info import SessionUserInfo
+from document.helpers.serializers import PythonWithURLSerializer
 from base.ws_handler import BaseWebSocketHandler
 from logging import info, error
 from tornado.escape import json_decode, json_encode
 from tornado.websocket import WebSocketClosedError
 from document.models import AccessRight, COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
-    CAN_COMMUNICATE
+    CAN_COMMUNICATE, ExportTemplate
 from document.views import get_accessrights
 from avatar.templatetags.avatar_tags import avatar_url
+
+from style.models import DocumentStyle, CitationStyle, CitationLocale
 
 
 class WebSocket(BaseWebSocketHandler):
@@ -29,10 +32,12 @@ class WebSocket(BaseWebSocketHandler):
             document_id, current_user)
         if can_access:
             if doc_db.id in WebSocket.sessions:
+                print("Serving already opened file")
                 self.doc = WebSocket.sessions[doc_db.id]
                 self.id = max(self.doc['participants']) + 1
                 print("id when opened %s" % self.id)
             else:
+                print("Opening file")
                 self.id = 0
                 self.doc = dict()
                 self.doc['db'] = doc_db
@@ -50,6 +55,26 @@ class WebSocket(BaseWebSocketHandler):
                 WebSocket.sessions[doc_db.id] = self.doc
             self.doc['participants'][self.id] = self
             response['type'] = 'welcome'
+            serializer = PythonWithURLSerializer()
+            export_temps = serializer.serialize(
+                ExportTemplate.objects.all()
+            )
+            document_styles = serializer.serialize(
+                DocumentStyle.objects.all(),
+                use_natural_foreign_keys=True
+            )
+            cite_styles = serializer.serialize(
+                CitationStyle.objects.all()
+            )
+            cite_locales = serializer.serialize(
+                CitationLocale.objects.all()
+            )
+            response['styles'] = {
+                'export_templates': [obj['fields'] for obj in export_temps],
+                'document_styles': [obj['fields'] for obj in document_styles],
+                'citation_styles': [obj['fields'] for obj in cite_styles],
+                'citation_locales': [obj['fields'] for obj in cite_locales],
+            }
             self.write_message(response)
 
     def confirm_diff(self, request_id):

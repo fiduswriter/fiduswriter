@@ -5,11 +5,11 @@ import {nameToText, litToText} from "../../../bibliography/tools"
 import * as plugins from "../../../plugins/citation-dialog"
 
 export class CitationDialog {
-    constructor(mod) {
-        this.editor = mod.editor
+    constructor(editor) {
+        this.editor = editor
         this.initialReferences = []
         this.initialFormat = 'autocite'
-        this.node = this.editor.currentPm.selection.node
+        this.node = this.editor.currentView.state.selection.node
         this.dialog = false
         this.diaButtons = []
         this.submitButtonText = gettext('Insert')
@@ -31,7 +31,8 @@ export class CitationDialog {
             this.diaButtons.push({
                 text: gettext('Remove'),
                 click: () => {
-                    this.editor.currentPm.tr.deleteSelection().apply()
+                    let transaction = this.editor.currentView.state.tr.deleteSelection()
+                    this.editor.currentView.dispatch(transaction)
                     this.dialog.dialog('close')
                 },
                 class: 'fw-button fw-orange'
@@ -200,7 +201,7 @@ export class CitationDialog {
             jQuery('#cite-source-table .fw-searchable').each(function() {
                 autocomplete_tags.push(this.textContent)
             })
-            autocomplete_tags = _.uniq(autocomplete_tags)
+            autocomplete_tags = [...new Set(autocomplete_tags)] // unique values
             jQuery("#cite-source-table_filter input").autocomplete({
                 source: autocomplete_tags
             })
@@ -266,10 +267,10 @@ export class CitationDialog {
             // Nothing has been changed, so we just close the dialog again
             return true
         }
-        let nodeType =  this.editor.currentPm.schema.nodes['citation']
-         this.editor.currentPm.tr.replaceSelection(
-            nodeType.createAndFill({format, references})
-        ).apply()
+
+        let citationNode =  this.editor.currentView.state.schema.nodes['citation'].create({format, references})
+        let transaction = this.editor.currentView.state.tr.replaceSelectionWith(citationNode, true)
+        this.editor.currentView.dispatch(transaction)
         return true
     }
 }

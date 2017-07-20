@@ -3,11 +3,14 @@ import {docSchema} from "../../schema/document"
 import {cslBibSchema} from "../../bibliography/schema/csl-bib"
 import {descendantNodes} from "../tools/doc-contents"
 import {noSpaceTmp} from "../../common"
+import {DOMSerializer, DOMParser} from "prosemirror-model"
 
 export class DocxExporterCitations {
-    constructor(exporter, bibDB, docContents, origCitInfos = []) {
+    constructor(exporter, bibDB, citationStyles, citationLocales, docContents, origCitInfos = []) {
         this.exporter = exporter
         this.bibDB = bibDB
+        this.citationStyles = citationStyles
+        this.citationLocales = citationLocales
         this.docContents = docContents
         this.origCitInfos = origCitInfos
         this.citInfos = []
@@ -50,7 +53,9 @@ export class DocxExporterCitations {
         this.citFm = new FormatCitations(
             this.citInfos,
             this.exporter.doc.settings.citationstyle,
-            this.bibDB
+            this.bibDB,
+            this.citationStyles,
+            this.citationLocales
         )
         return this.citFm.init().then(
             () => {
@@ -76,18 +81,21 @@ export class DocxExporterCitations {
 
         // We create a standard body DOM node, add the citations into it, and parse it back.
         let bodyNode = docSchema.nodeFromJSON({type:'body'})
-        let dom = bodyNode.toDOM()
+
+        let serializer = DOMSerializer.fromSchema(docSchema)
+        let dom = serializer.serializeNode(bodyNode)
         dom.innerHTML = citationsHTML
-        this.pmCits = docSchema.parseDOM(dom, {topNode: bodyNode}).toJSON().content
+        this.pmCits = DOMParser.fromSchema(docSchema).parse(dom, {topNode: bodyNode}).toJSON().content
 
         // Now we do the same for the bibliography.
         let cslBib = this.citFm.bibliography
         if (cslBib[1].length > 0) {
             this.addReferenceStyle(cslBib[0])
             let bibNode = cslBibSchema.nodeFromJSON({type:'cslbib'})
-            dom = bibNode.toDOM()
+            let cslSerializer = DOMSerializer.fromSchema(cslBibSchema)
+            dom = serializer.serializeNode(bibNode)
             dom.innerHTML = cslBib[1].join('')
-            this.pmBib = cslBibSchema.parseDOM(dom, {topNode: bibNode}).toJSON()
+            this.pmBib = DOMParser.fromSchema(cslBibSchema).parse(dom, {topNode: bibNode}).toJSON()
         }
     }
 

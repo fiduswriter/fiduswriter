@@ -4,8 +4,8 @@ import {addDropdownBox} from "../../../common"
 import {katexRender} from "../../../katex"
 
 export class FigureDialog {
-    constructor(mod) {
-        this.editor = mod.editor
+    constructor(editor) {
+        this.editor = editor
         this.imageDB = this.editor.imageDB
         this.imageId = false
         this.insideFigure = false
@@ -14,7 +14,7 @@ export class FigureDialog {
         this.caption = ''
         this.figureCategory = 'figure'
         this.equation = ''
-        this.node = this.editor.currentPm.selection.node
+        this.node = this.editor.currentView.state.selection.node
         this.submitMessage = gettext('Insert')
         this.dialog = false
     }
@@ -52,7 +52,8 @@ export class FigureDialog {
         if ((new RegExp(/^\s*$/)).test(this.equation) && (!this.imageId)) {
             // The math input is empty. Delete a math node if it exist. Then close the dialog.
             if (this.insideFigure) {
-                this.editor.currentPm.tr.deleteSelection().apply()
+                let transaction = this.editor.currentView.state.tr.deleteSelection()
+                this.editor.currentView.dispatch(transaction)
             }
             this.dialog.dialog('close')
             return false
@@ -66,13 +67,14 @@ export class FigureDialog {
             this.dialog.dialog('close')
             return false
         }
-        let nodeType = this.editor.currentPm.schema.nodes['figure']
-        this.editor.currentPm.tr.replaceSelection(nodeType.createAndFill({
+        let nodeType = this.editor.currentView.state.schema.nodes['figure']
+        let transaction = this.editor.currentView.state.tr.replaceSelectionWith(nodeType.createAndFill({
             equation: this.equation,
             image: this.imageId,
             figureCategory: this.figureCategory,
             caption: this.caption
-        })).apply()
+        }))
+        this.editor.currentView.dispatch(transaction)
 
         this.dialog.dialog('close')
     }
@@ -93,7 +95,8 @@ export class FigureDialog {
                 text: gettext('Remove'),
                 class: 'fw-button fw-orange',
                 click: () => {
-                    this.editor.currentPm.tr.deleteSelection().apply()
+                    let transaction = this.editor.currentView.state.tr.deleteSelection()
+                    this.editor.currentView.dispatch(transaction)
                     this.dialog.dialog('close')
                 }
             })

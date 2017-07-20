@@ -7,8 +7,8 @@ export class ModToolsWordCount {
     }
 
     countWords() {
-        let textContent = this.mod.editor.pm.doc.textContent,
-            footnoteContent = this.mod.editor.mod.footnotes.fnPm.doc.textContent,
+        let textContent = this.mod.editor.view.state.doc.textContent,
+            footnoteContent = this.mod.editor.mod.footnotes.fnView.state.doc.textContent,
             bibliographyContent = document.querySelector('.article-bibliography').textContent,
             wholeContent = textContent + ' ' + footnoteContent + ' ' + bibliographyContent,
             numChars = wholeContent.length - 2 // Subtract two for added spaces

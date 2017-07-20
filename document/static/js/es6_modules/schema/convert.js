@@ -3,17 +3,18 @@
 */
 import {obj2Node} from "../exporter/tools/json"
 import {docSchema} from "./document"
-import {randomHeadingId, randomFigureId} from "./common"
 
-import {defaultDocumentStyle} from "../style/documentstyle-list"
-import {defaultCitationStyle} from "../style/citation-definitions"
+import {randomHeadingId, randomFigureId} from "./common"
+import {DOMSerializer, DOMParser} from "prosemirror-model"
+
 
 export let getMetadata = function(pmArticle) {
     let metadata = {}
+    let serializer = DOMSerializer.fromSchema(docSchema)
     for (let i=0; i < pmArticle.childCount; i++) {
         let pmNode = pmArticle.child(i)
         if (pmNode.type.isMetadata || !pmNode.attrs.hidden) {
-            let value = pmNode.toDOM().innerHTML
+            let value = serializer.serializeNode(pmNode).innerHTML
             if (value.length > 0 && value !== "<p></p>") {
                 metadata[pmNode.type.name] = value
             }
@@ -23,7 +24,7 @@ export let getMetadata = function(pmArticle) {
 }
 
 export let getSettings = function(pmArticle) {
-    let settings = _.clone(pmArticle.attrs)
+    let settings = Object.assign({}, pmArticle.attrs)
     return settings
 }
 
@@ -149,15 +150,15 @@ let convertDocV0 = function(doc) {
 
     convertCitationsV0(editorNode)
 
-    let pmDoc = docSchema.parseDOM(editorNode, {
+    let pmDoc = DOMParser.fromSchema(docSchema).parse(editorNode, {
         preserveWhitespace: true
     })
 
     let docContents = pmDoc.firstChild.toJSON()
     docContents.attrs = {
         papersize: doc.settings.papersize === 1020 ? 'US Letter': 'A4',
-        documentstyle: doc.settings.documentstyle ? doc.settings.documentstyle : defaultDocumentStyle,
-        citationstyle: doc.settings.citationstyle ? doc.settings.citationstyle : defaultCitationStyle
+        documentstyle: doc.settings.documentstyle ? doc.settings.documentstyle : '',
+        citationstyle: doc.settings.citationstyle ? doc.settings.citationstyle : ''
     }
     docContents.content.forEach(docSection => {
         if (['subtitle', 'abstract', 'authors', 'keywords'].indexOf(docSection.type) !== -1) {

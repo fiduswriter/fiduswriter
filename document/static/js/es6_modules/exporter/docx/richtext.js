@@ -1,5 +1,4 @@
-import {escapeText} from "../tools/html"
-import {noSpaceTmp} from "../../common"
+import {noSpaceTmp, escapeText} from "../../common"
 
 export class DocxExporterRichtext {
     constructor(exporter, rels, citations, images) {
@@ -18,11 +17,11 @@ export class DocxExporterRichtext {
             case 'article':
                 break
             case 'body':
-                options = _.clone(options)
+                options = Object.assign({}, options)
                 options.section = 'Normal'
                 break
             case 'abstract':
-                options = _.clone(options)
+                options = Object.assign({}, options)
                 options.section = 'Abstract'
                 break
             case 'paragraph':
@@ -71,11 +70,11 @@ export class DocxExporterRichtext {
                 break
             case 'blockquote':
                 // This is imperfect, but Word doesn't seem to provide section/quotation nesting
-                options = _.clone(options)
+                options = Object.assign({}, options)
                 options.section = 'Quote'
                 break
             case 'ordered_list':
-                options = _.clone(options)
+                options = Object.assign({}, options)
                 options.section = 'ListParagraph'
                 options.list_type = this.exporter.lists.getNumberedType()
                 if (options.list_depth === undefined) {
@@ -85,7 +84,7 @@ export class DocxExporterRichtext {
                 }
                 break
             case 'bullet_list':
-                options = _.clone(options)
+                options = Object.assign({}, options)
                 options.section = 'ListParagraph'
                 options.list_type = this.exporter.lists.getBulletType()
                 if (options.list_depth === undefined) {
@@ -100,7 +99,7 @@ export class DocxExporterRichtext {
                 // cases.
                 break
             case 'footnotecontainer':
-                options = _.clone(options)
+                options = Object.assign({}, options)
                 options.section = 'Footnote'
                 start += `<w:footnote w:id="${this.fnCounter++}">`
                 end = '</w:footnote>' + end
@@ -119,12 +118,12 @@ export class DocxExporterRichtext {
                 // Check for hyperlink, bold/strong and italic/em
                 let hyperlink, em, strong, smallcaps, sup, sub
                 if (node.marks) {
-                    hyperlink = _.findWhere(node.marks, {type:'link'})
-                    em = _.findWhere(node.marks, {type:'em'})
-                    strong = _.findWhere(node.marks, {type:'strong'})
-                    smallcaps = _.findWhere(node.marks, {type:'smallcaps'})
-                    sup = _.findWhere(node.marks, {type:'sup'})
-                    sub = _.findWhere(node.marks, {type:'sub'})
+                    hyperlink = node.marks.find(mark => mark.type === 'link')
+                    em = node.marks.find(mark => mark.type === 'em')
+                    strong = node.marks.find(mark => mark.type === 'strong')
+                    smallcaps = node.marks.find(mark => mark.type === 'smallcaps')
+                    sup = node.marks.find(mark => mark.type === 'sup')
+                    sub = node.marks.find(mark => mark.type === 'sub')
                 }
 
                 if (hyperlink) {
@@ -324,13 +323,13 @@ export class DocxExporterRichtext {
                         <w:tblGrid>`
                 let cellWidth = 63500 // standard width
                 let columns = node.content[0].content.length
-                options = _.clone(options)
+                options = Object.assign({}, options)
                 if (options.dimensions && options.dimensions.width) {
                     cellWidth = parseInt(options.dimensions.width / columns) - 2540 // subtracting for border width
                 } else if (!options.dimensions) {
                     options.dimensions = {}
                 }
-                options.dimensions =  _.clone(options.dimensions)
+                options.dimensions = Object.assign({}, options.dimensions)
                 options.dimensions.width = cellWidth
                 options.tableSideMargins = this.exporter.tables.getSideMargins()
                 for (let i=0;i<columns;i++) {
@@ -361,7 +360,7 @@ export class DocxExporterRichtext {
                 break
             // CSL bib entries
             case 'cslbib':
-                options = _.clone(options)
+                options = Object.assign({}, options)
                 options.section = 'Bibliography1'
                 break
             case 'cslblock':

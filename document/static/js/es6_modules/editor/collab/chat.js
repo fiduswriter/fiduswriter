@@ -1,4 +1,4 @@
-import {messageTemplate, participantListTemplate} from "./templates"
+import {messageTemplate} from "./templates"
 import {localizeDate} from "../../common"
 
 /*
@@ -43,7 +43,7 @@ export class ModCollabChat {
     newMessage(message) {
         let existing = jQuery("#m" + message.id)
         if (existing.length > 0) return
-        let theChatter = _.findWhere(this.mod.participants, {id:message.from})
+        let theChatter = this.mod.participants.find(participant => participant.id === message.from)
         let node = jQuery(messageTemplate({message, theChatter, localizeDate}))
         node.hide()
 
@@ -64,20 +64,15 @@ export class ModCollabChat {
 
     }
 
-    updateParticipantList(participants) {
+    showChat(participants) {
 
         // If only one machine is connected and nothing has been chatted, don't show chat
         if (participants.length === 1 && jQuery(
             '#chat-container .message').length === 0) {
             jQuery('#chat').css('display', 'none');
-            jQuery('#current-editors').css('display', 'none')
         }
         else {
-            jQuery('#current-editors').html(participantListTemplate({
-                participants: this.mod.participants
-            }))
             jQuery('#chat').css('display', 'block')
-            jQuery('#current-editors').css('display', 'block')
         }
     }
 

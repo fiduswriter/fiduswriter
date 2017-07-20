@@ -1,6 +1,10 @@
 import {commentsTemplate, filterByUserBoxTemplate} from "./templates"
 import {Comment} from "./comment"
 import {localizeDate} from "../../common"
+import {getCommentDuringCreationDecoration} from "../plugins/comments"
+
+import fastdom from "fastdom"
+
 
 /* Functions related to layouting of comments */
 export class ModCommentLayout {
@@ -25,7 +29,7 @@ export class ModCommentLayout {
     }
 
     bindEvents() {
-
+        /*TODO: use it or remote it
         // Handle comments show/hide
         jQuery(document).on('click', '#comments-display:not(.disabled)',
             function() {
@@ -34,6 +38,7 @@ export class ModCommentLayout {
                 jQuery('#flow').toggleClass('comments-enabled')
                 jQuery('.toolbarcomment button').toggleClass('disabled')
             })
+
         let that = this
         jQuery(document).on('mousedown', '#comments-filter label',
             function(event) {
@@ -52,11 +57,7 @@ export class ModCommentLayout {
                         break
                 }
             }
-        )
-
-        let pm = this.mod.editor.pm
-        pm.updateScheduler([pm.on.change, pm.on.setDoc], () => that.onChange())
-        pm.updateScheduler([pm.on.selectionChange], () => that.onSelectionChange())
+        )*/
 
     }
 
@@ -98,7 +99,7 @@ export class ModCommentLayout {
 
 
     layoutComments() {
-        this.mod.editor.pm.scheduleDOMUpdate(() => this.updateDOM())
+        this.updateDOM()
     }
 
     isCurrentlyEditing() {
@@ -157,15 +158,15 @@ export class ModCommentLayout {
     // caret is placed, if the editor is in focus.
     activateSelectedComment() {
 
-        let selection = this.mod.editor.pm.selection, comment = false
+        let selection = this.mod.editor.view.state.selection, comment = false
 
         if (selection.empty) {
-            let node = this.mod.editor.pm.doc.nodeAt(selection.from)
+            let node = this.mod.editor.view.state.doc.nodeAt(selection.from)
             if (node) {
                 comment = this.findCommentsAt(node)
             }
         } else {
-            this.mod.editor.pm.doc.nodesBetween(
+            this.mod.editor.view.state.doc.nodesBetween(
                 selection.from,
                 selection.to,
                 (node, pos, parent) => {
@@ -192,7 +193,7 @@ export class ModCommentLayout {
 
         let theComments = [], referrers = [], activeCommentStyle = ''
 
-        this.mod.editor.pm.doc.descendants((node, pos, parent) => {
+        this.mod.editor.view.state.doc.descendants((node, pos, parent) => {
             if (!node.isInline) {
                 return
             }
@@ -221,8 +222,11 @@ export class ModCommentLayout {
         })
 
         // Add a comment that is currently under construction to the list.
+
+
+
         if(this.mod.store.commentDuringCreation) {
-            let pos = this.mod.store.commentDuringCreation.referrer.from
+            let pos = getCommentDuringCreationDecoration(this.mod.editor.view.state).from
             let comment = this.mod.store.commentDuringCreation.comment
             let index = 0
             // We need the position of the new comment in relation to the other
@@ -250,7 +254,7 @@ export class ModCommentLayout {
             document.getElementById('active-comment-style').innerHTML = activeCommentStyle
         }
 
-        return () => {
+        fastdom.measure(() => {
             // DOM read phase
             let totalOffset = document.getElementById('comment-box-container').getBoundingClientRect().top + 10,
               commentBoxes = document.querySelectorAll('#comment-box-container .comment-box'),
@@ -262,7 +266,7 @@ export class ModCommentLayout {
                 }
                 let commentBoxCoords = commentBox.getBoundingClientRect(),
                   commentBoxHeight = commentBoxCoords.height,
-                  referrerTop = this.mod.editor.pm.coordsAtPos(referrer).top,
+                  referrerTop = this.mod.editor.view.coordsAtPos(referrer).top,
                   topMargin = 10
 
                 if (referrerTop > totalOffset) {
@@ -271,21 +275,21 @@ export class ModCommentLayout {
                 }
                 totalOffset += commentBoxHeight + topMargin
             })
-            return function () {
+            fastdom.mutate(() => {
                 //DOM write phase
                 if (document.getElementById('comment-placement-style').innerHTML != commentPlacementStyle) {
                     document.getElementById('comment-placement-style').innerHTML = commentPlacementStyle
                 }
-            }
-
-        }
+            })
+        })
 
     }
 
     /**
      * Filtering part. akorovin
      */
-    filterByUserType(userType) {
+     // TODO:Use it or get rid of it!
+    /*filterByUserType(userType) {
         //filter by user role (reader, editor, reviewer etc)
         let userRoles = this.mod.editor.doc.access_rights
         let idsOfNeededUsers = []
@@ -351,7 +355,7 @@ export class ModCommentLayout {
                 theDialog.find(".ui-button:last").addClass("fw-button fw-orange")
             }
         })
-    }
+    }*/
 
 
 }

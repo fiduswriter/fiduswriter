@@ -1,6 +1,8 @@
-import {ProseMirror} from "prosemirror-old/dist/edit/main"
-import {buildKeymap} from "prosemirror-old/dist/example-setup"
-import {commands} from "prosemirror-old/dist/edit/commands"
+import {EditorState, Plugin} from "prosemirror-state"
+import {EditorView, Decoration, DecorationSet} from "prosemirror-view"
+import {history, redo, undo} from "prosemirror-history"
+import {toggleMark, baseKeymap} from "prosemirror-commands"
+import {keymap} from "prosemirror-keymap/dist/keymap"
 
 import {litSchema} from "../../schema/literal"
 
@@ -13,31 +15,51 @@ export class LiteralFieldForm{
     }
 
     init() {
-        this.pm = new ProseMirror({
-            place: this.dom,
-            schema: litSchema
-        })
-        this.pm.addKeymap(buildKeymap(litSchema))
-        let pmDoc = litSchema.nodeFromJSON({
+
+        let doc = litSchema.nodeFromJSON({
             type: 'doc',
             content:[{
                 type: 'literal',
                 content: this.initialValue
             }]
         })
-        this.pm.setDoc(pmDoc)
-        if (this.placeHolder) {
-            this.renderPlaceholder()
-            this.pm.on.change.add(() => this.renderPlaceholder())
-            this.pm.on.blur.add(() => this.renderPlaceholder(false))
-            this.pm.on.focus.add(() => this.renderPlaceholder(true))
-        }
-        this.pm.on.blur.add(function(){
-            jQuery('.ui-dialog-buttonset .fw-edit').addClass('disabled')
-        })
-        this.pm.on.focus.add(function(){
-            jQuery('.ui-dialog-buttonset .fw-edit').removeClass('disabled')
-            jQuery('.ui-dialog-buttonset .fw-nocase').addClass('disabled')
+
+        this.view = new EditorView(this.dom, {
+            state: EditorState.create({
+                schema: litSchema,
+                doc,
+                plugins: [
+                    history(),
+                    keymap(baseKeymap),
+                    keymap({
+                        "Mod-z": undo,
+                        "Mod-shift-z": undo,
+                        "Mod-y": redo,
+                        "Mod-b": () => {
+                            let sMark = this.view.state.schema.marks['strong']
+                            let command = toggleMark(sMark)
+                            command(this.view.state, tr => this.view.dispatch(tr))
+                        },
+                        "Mod-i": () => {
+                            let sMark = this.view.state.schema.marks['em']
+                            let command = toggleMark(sMark)
+                            command(this.view.state, tr => this.view.dispatch(tr))
+                        }
+                    }),
+                    this.placeholderPlugin()
+                ]
+            }),
+            onFocus: () => {
+                jQuery('.ui-dialog-buttonset .fw-edit').removeClass('disabled')
+                jQuery('.ui-dialog-buttonset .fw-nocase').addClass('disabled')
+            },
+            onBlur: (view) => {
+                jQuery('.ui-dialog-buttonset .fw-edit').addClass('disabled')
+            },
+            dispatchTransaction: (transaction) => {
+                let newState = this.view.state.apply(transaction)
+                this.view.updateState(newState)
+            }
         })
         let supportedMarks = ['em', 'strong', 'sub', 'sup', 'smallcaps']
         supportedMarks.forEach(mark =>{
@@ -49,17 +71,17 @@ export class LiteralFieldForm{
         jQuery(`.ui-dialog-buttonset .fw-${mark}`).on("mousedown", (event)=>{
             event.preventDefault()
             event.stopPropagation()
-            if (!this.pm.hasFocus()) {
+            if (!this.view.hasFocus()) {
                 return
             }
-            let sMark = this.pm.schema.marks[mark]
-            let command = commands.toggleMark(sMark)
-            command(this.pm, true)
+            let sMark = this.view.state.schema.marks[mark]
+            let command = toggleMark(sMark)
+            command(this.view.state, tr => this.view.dispatch(tr))
         })
     }
 
     get value() {
-        let literalContents = this.pm.doc.firstChild.content.toJSON()
+        let literalContents = this.view.state.doc.firstChild.content.toJSON()
         return literalContents && literalContents.length ? literalContents : false
     }
 
@@ -67,14 +89,22 @@ export class LiteralFieldForm{
         return true
     }
 
-    renderPlaceholder(hasFocus = this.pm.hasFocus()) {
-        let value = this.value
-        if (value === false && !this.placeHolderSet && !hasFocus) {
-            this.dom.querySelector('div.literal').setAttribute('data-placeholder', this.placeHolder)
-            this.placeHolderSet = true
-        } else if ((this.placeHolderSet && hasFocus) || value !== false) {
-            this.dom.querySelector('div.literal').removeAttribute('data-placeholder')
-            this.placeHolderSet = false
-        }
+    placeholderPlugin() {
+        return new Plugin({
+            props: {
+                decorations: (state) => {
+                    let doc = state.doc
+                    if (doc.childCount === 1 && doc.firstChild.isTextblock && doc.firstChild.content.size === 0) {
+                        let placeHolder = document.createElement('span')
+                        placeHolder.classList.add('placeholder')
+                        // There is only one field, so we know the selection is there
+                        placeHolder.classList.add('selected')
+                        placeHolder.setAttribute('data-placeholder', this.placeHolder)
+                        return DecorationSet.create(doc, [Decoration.widget(1, placeHolder)])
+                    }
+                }
+            }
+        })
     }
+
 }

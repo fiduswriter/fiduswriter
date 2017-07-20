@@ -1,11 +1,12 @@
-import {EnquoteMark, SupMark, SubMark, SmallCapsMark, UrlMark, Variable} from "./common"
-import {Doc, EmMark, StrongMark, Text} from "prosemirror-old/dist/schema-basic"
-import {Block, Schema} from "prosemirror-old/dist/model"
+import {enquote, sup, sub, smallcaps, url, text, variable} from "./common"
+import {marks} from "prosemirror-schema-basic"
+import {Schema} from "prosemirror-model"
 
-class LongLiteral extends Block {
-    get matchDOMTag() {
-        return {"pre.long-literal": null}
-    }
+let longliteral = {
+    content: 'inline<_>*',
+    code: true,
+    defining: true,
+    parseDOM: [{tag: 'pre.long-literal'}],
     toDOM(node) {
         return ["pre", {
             class: 'long-literal'
@@ -13,20 +14,24 @@ class LongLiteral extends Block {
     }
 }
 
+let doc = {
+    content: 'longliteral'
+}
+
 export const longLitSchema = new Schema({
     nodes: {
-        doc: {type: Doc, content: "longliteral"},
-        longliteral: {type: LongLiteral, content: "inline<_>*"},
-        text: {type: Text, group: "inline"},
-        variable: {type: Variable, group: "inline"}
+        doc,
+        longliteral,
+        text,
+        variable
     },
     marks: {
-        em: EmMark,
-        enquote: EnquoteMark,
-        smallcaps: SmallCapsMark,
-        strong: StrongMark,
-        sup: SupMark,
-        sub: SubMark,
-        url: UrlMark
+        em: marks.em,
+        enquote,
+        smallcaps,
+        strong: marks.strong,
+        sup,
+        sub,
+        url
     }
 })

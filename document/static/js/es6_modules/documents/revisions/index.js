@@ -24,9 +24,7 @@ export class DocumentRevisionsDialog {
      */
     init() {
 
-        let doc = _.findWhere(this.documentList, {
-            id: this.documentId
-        })
+        let doc = this.documentList.find(doc => doc.id === this.documentId)
 
         let buttons = [
             {
@@ -177,9 +175,7 @@ export class DocumentRevisionsDialog {
                 success: () => {
                     let thisTr = jQuery(`tr.revision-${id}`),
                         documentId = jQuery(thisTr).attr('data-document'),
-                        doc = _.findWhere(this.documentList, {
-                            id: parseInt(documentId)
-                        })
+                        doc = this.documentList.find(doc => doc.id === parseInt(documentId))
                     jQuery(thisTr).remove()
                     addAlert('success', gettext('Revision deleted'))
                     resolve({

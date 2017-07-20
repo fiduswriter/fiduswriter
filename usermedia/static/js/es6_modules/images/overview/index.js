@@ -188,7 +188,7 @@ export class ImageOverview {
         jQuery('#imagelist .fw-searchable').each(function() {
             autocompleteTags.push(this.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''))
         })
-        autocompleteTags = _.uniq(autocompleteTags)
+        autocompleteTags = [...new Set(autocompleteTags)] // unique values
         jQuery("#imagelist_filter input").autocomplete({
             source: autocompleteTags
         })

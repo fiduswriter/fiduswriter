@@ -40,6 +40,10 @@
     color: #2c2723;
 }
 
+.disabled .fw-pulldown-item {
+    color: #cccccc;
+}
+
 .fw-pulldown-icon {
     margin-left: 0;
 }

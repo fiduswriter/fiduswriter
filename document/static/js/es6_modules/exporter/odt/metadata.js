@@ -1,5 +1,5 @@
 import {textContent} from "../tools/doc-contents"
-import {escapeText} from "../tools/html"
+import {escapeText} from "../../common"
 
 
 export class OdtExporterMetadata {

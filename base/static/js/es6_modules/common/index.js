@@ -158,6 +158,12 @@ export let csrfToken = getCookie('csrftoken')
      return out
  }
 
+ export let escapeText = function(text) {
+     return text
+         .replace(/&/g, '&amp;')
+         .replace(/</g, '&lt;')
+         .replace(/>/g, '&gt;')
+ }
 /**
  * Return a cancel promise if you need to cancel a promise chain. Import as
  * ES6 promises are not (yet) cancelable.

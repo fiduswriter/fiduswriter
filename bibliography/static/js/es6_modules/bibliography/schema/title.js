@@ -1,27 +1,31 @@
-import {EnquoteMark, Literal, SupMark, SubMark, SmallCapsMark, UrlMark, Variable} from "./common"
-import {Doc, EmMark, StrongMark, Text} from "prosemirror-old/dist/schema-basic"
-import {MarkType, Schema} from "prosemirror-old/dist/model"
+import {enquote, literal, sup, sub, smallcaps, url, text, variable} from "./common"
+import {marks} from "prosemirror-schema-basic"
+import {Schema} from "prosemirror-model"
 
-class NoCaseMark extends MarkType {
-    get matchDOMTag() { return {"span.nocase": null} }
+let nocase = {
+    parseDOM: [{tag: 'span.nocase'}],
     toDOM() { return ["span",{class:"nocase"}] }
+}
+
+let doc = {
+    content: 'literal'
 }
 
 export const titleSchema = new Schema({
     nodes: {
-        doc: {type: Doc, content: "literal"},
-        literal: {type: Literal, content: "inline<_>*"},
-        text: {type: Text, group: "inline"},
-        variable: {type: Variable, group: "inline"}
+        doc,
+        literal,
+        text,
+        variable
     },
     marks: {
-        em: EmMark,
-        enquote: EnquoteMark,
-        nocase: NoCaseMark,
-        smallcaps: SmallCapsMark,
-        strong: StrongMark,
-        sup: SupMark,
-        sub: SubMark,
-        url: UrlMark
+        em: marks.em,
+        enquote,
+        nocase,
+        smallcaps,
+        strong: marks.strong,
+        sup,
+        sub,
+        url
     }
 })

@@ -19,7 +19,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
     user = None
     TEST_TEXT = "Lorem ipsum dolor sit amet."
     MULTILINE_TEST_TEXT = "Lorem ipsum\ndolor sit amet."
-    fixtures = []
+    fixtures = ['initial_styles.json',]
 
     @classmethod
     def setUpClass(cls):
@@ -66,10 +66,10 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         document_input2 = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
 
         # Chrome with selenium has problem with focusing elements, so we use
@@ -137,10 +137,10 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         document_input2 = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         # Chrome with selenium has problem with focusing elements, so we use
         # the ProseMirror internal methods for this.
@@ -219,7 +219,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def make_bold(self, driver):
-        button = driver.find_element_by_id('button-bold')
+        button = driver.find_element_by_xpath('//*[@title="Bold"]')
         button.click()
 
     def get_boldtext(self, driver):
@@ -238,7 +238,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.add_title(self.driver)
 
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
 
         # Total: 22
@@ -256,7 +256,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         content.click()
 
@@ -282,7 +282,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def make_italic(self, driver):
-        button = driver.find_element_by_id('button-italic')
+        button = driver.find_element_by_xpath('//*[@title="Italic"]')
         button.click()
 
     def get_italictext(self, driver):
@@ -301,7 +301,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.add_title(self.driver)
 
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
 
         # Total: 23
@@ -319,7 +319,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         content.click()
 
@@ -345,7 +345,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def make_numberedlist(self, driver):
-        button = driver.find_element_by_id('button-ol')
+        button = driver.find_element_by_xpath('//*[@title="Numbered list"]')
         button.click()
 
     def get_numberedlist(self, driver):
@@ -363,7 +363,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.add_title(self.driver)
 
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
 
         # Total: 23
@@ -381,7 +381,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         content.click()
 
@@ -421,7 +421,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def make_bulletlist(self, driver):
-        button = driver.find_element_by_id('button-ul')
+        button = driver.find_element_by_xpath('//*[@title="Bullet list"]')
         button.click()
 
     def get_bulletlist(self, driver):
@@ -440,7 +440,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.add_title(self.driver)
 
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
 
         # Total: 23
@@ -458,7 +458,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         content.click()
 
@@ -498,7 +498,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def make_blockquote(self, driver):
-        button = driver.find_element_by_id('button-blockquote')
+        button = driver.find_element_by_xpath('//*[@title="Blockquote"]')
         button.click()
 
     def get_blockquote(self, driver):
@@ -517,7 +517,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.add_title(self.driver)
 
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
 
         # Total: 22
@@ -535,7 +535,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         content.click()
 
@@ -561,7 +561,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def addlink(self, driver):
-        button = driver.find_element_by_id('button-link')
+        button = driver.find_element_by_xpath('//*[@title="Link"]')
         button.click()
 
         # wait to load popup
@@ -594,7 +594,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.add_title(self.driver)
 
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
 
         # Total: 23
@@ -612,7 +612,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         content.click()
 
@@ -638,7 +638,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def make_footnote(self, driver):
-        button = driver.find_element_by_id('button-footnote')
+        button = driver.find_element_by_xpath('//*[@title="Footnote"]')
         button.click()
 
         # wait for footnote to be created
@@ -651,7 +651,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         footnote_box = driver.find_element_by_id(
             'footnote-box-container')
         footnote_editor = footnote_box.find_element_by_class_name(
-            'ProseMirror-content')
+            'ProseMirror')
         footnote_editor.click()
 
         self.input_text(footnote_editor, "footnote Text")
@@ -673,7 +673,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.add_title(self.driver)
 
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
 
         # Total: 22
@@ -691,7 +691,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         content.click()
 
@@ -719,10 +719,10 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def perform_delete_undo(self, driver):
-        element = driver.find_element_by_class_name('ProseMirror-content')
+        element = driver.find_element_by_class_name('ProseMirror')
         element.send_keys(Keys.BACKSPACE)
 
-        button = driver.find_element_by_id('button-undo')
+        button = driver.find_element_by_xpath('//*[@title="Undo"]')
         button.click()
 
     def get_undo(self, driver):
@@ -742,7 +742,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.add_title(self.driver)
 
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
 
         # Total: 22
@@ -760,7 +760,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         content.click()
 
@@ -786,7 +786,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def make_mathequation(self, driver):
-        button = driver.find_element_by_id('button-math')
+        button = driver.find_element_by_xpath('//*[@title="Math"]')
         button.click()
 
         # wait to load popup
@@ -815,7 +815,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.add_title(self.driver)
 
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
 
         # Total: 23
@@ -833,7 +833,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         content.click()
 
@@ -859,7 +859,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def add_comment(self, driver):
-        button = driver.find_element_by_id('button-comment')
+        button = driver.find_element_by_xpath('//*[@title="Comment"]')
         button.click()
 
         textArea = WebDriverWait(driver, self.wait_time).until(
@@ -888,7 +888,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.add_title(self.driver)
 
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
 
         # Total: 22
@@ -906,7 +906,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         content.click()
 
@@ -934,7 +934,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def add_figure(self, driver):
-        button = driver.find_element_by_id('button-figure')
+        button = driver.find_element_by_xpath('//*[@title="Figure"]')
         button.click()
 
         caption = WebDriverWait(driver, self.wait_time).until(
@@ -1010,7 +1010,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.add_title(self.driver)
 
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
 
         # Total: 23
@@ -1028,7 +1028,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         content.click()
 
@@ -1063,7 +1063,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def add_citation(self, driver):
-        button = driver.find_element_by_id('button-cite')
+        button = driver.find_element_by_xpath('//*[@title="Cite"]')
         button.click()
 
         # click on 'Register new source' button
@@ -1086,23 +1086,23 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # fill the values
         title_of_publication = driver.find_element_by_css_selector(
-            '.journaltitle .ProseMirror-content'
+            '.journaltitle .ProseMirror'
         )
         title_of_publication.click()
         title_of_publication.send_keys("My publication title")
 
         title = driver.find_element_by_css_selector(
-            '.title .ProseMirror-content')
+            '.title .ProseMirror')
         title.click()
         title.send_keys("My title")
 
         author_firstName = driver.find_element_by_css_selector(
-            '.author .given .ProseMirror-content')
+            '.author .given .ProseMirror')
         author_firstName.click()
         author_firstName.send_keys("John")
 
         author_lastName = driver.find_element_by_css_selector(
-            '.family .ProseMirror-content')
+            '.family .ProseMirror')
         author_lastName.click()
         author_lastName.send_keys("Doe")
 
@@ -1148,9 +1148,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
 
         # Total: 22
@@ -1168,7 +1167,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         content.click()
 

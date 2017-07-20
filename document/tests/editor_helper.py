@@ -25,10 +25,14 @@ class EditorHelper(SeleniumHelper):
             doc.get_absolute_url()
         ))
         WebDriverWait(driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CLASS_NAME, 'article-body'))
+            EC.presence_of_element_located((By.CLASS_NAME, 'editortoolbar'))
         )
+        self.inject_helpers(driver)
+
+    def inject_helpers(self, driver):
+        test_caret_script = open('static-es5/js/test-caret.es5.js', 'r').read()
         driver.execute_script(
-            open('static-es5/js/test-caret.es5.js', 'r').read()
+            test_caret_script
         )
 
     def input_text(self, document_input, text):
@@ -41,7 +45,7 @@ class EditorHelper(SeleniumHelper):
         driver.execute_script(
             'window.testCaret.setSelection(2,2)')
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         self.input_text(document_input, title)
 
@@ -49,7 +53,7 @@ class EditorHelper(SeleniumHelper):
         if seconds is False:
             seconds = self.wait_time
         doc_size = driver.execute_script(
-            'return window.theEditor.pm.doc.content.size')
+            'return window.theEditor.view.state.doc.content.size')
         if doc_size < size and seconds > 0:
             time.sleep(0.1)
             self.wait_for_doc_size(driver, size, seconds - 0.1)
@@ -58,9 +62,9 @@ class EditorHelper(SeleniumHelper):
         if seconds is False:
             seconds = self.wait_time
         doc_str = driver.execute_script(
-            'return window.theEditor.pm.doc.toString()')
+            'return window.theEditor.view.state.doc.toString()')
         doc2_str = driver2.execute_script(
-            'return window.theEditor.pm.doc.toString()')
+            'return window.theEditor.view.state.doc.toString()')
         if (doc_str != doc2_str):
             # The strings don't match.
             time.sleep(0.1)

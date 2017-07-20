@@ -5,9 +5,9 @@ import {TextSelection} from "prosemirror-state"
  */
 let testCaret = {}
 
-testCaret.setSelection = function setSelection(selectFrom, selectTo) {
-    let caretOneRes = window.theEditor.pm.doc.resolve(selectFrom)
-    let caretTwoRes = window.theEditor.pm.doc.resolve(selectTo)
+testCaret.setSelection = function(selectFrom, selectTo) {
+    let caretOneRes = window.theEditor.view.state.doc.resolve(selectFrom)
+    let caretTwoRes = window.theEditor.view.state.doc.resolve(selectTo)
     let selection = new TextSelection(caretOneRes, caretTwoRes)
 
     window.theEditor.view.dispatch(
@@ -17,3 +17,5 @@ testCaret.setSelection = function setSelection(selectFrom, selectTo) {
 
     return selection
 }
+
+window.testCaret = testCaret

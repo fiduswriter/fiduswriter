@@ -32,10 +32,12 @@ class WebSocket(BaseWebSocketHandler):
             document_id, current_user)
         if can_access:
             if doc_db.id in WebSocket.sessions:
+                print("Serving already opened file")
                 self.doc = WebSocket.sessions[doc_db.id]
                 self.id = max(self.doc['participants']) + 1
                 print("id when opened %s" % self.id)
             else:
+                print("Opening file")
                 self.id = 0
                 self.doc = dict()
                 self.doc['db'] = doc_db

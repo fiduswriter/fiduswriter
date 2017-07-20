@@ -4,6 +4,7 @@ based on https://github.com/ProseMirror/website/blob/master/src/client/collab/co
 */
 import {eventMixin} from "./event"
 import {Comment} from "./comment"
+import {addCommentDuringCreationDecoration, removeCommentDuringCreationDecoration} from "../plugins/comments"
 
 export class ModCommentStore {
     constructor(mod) {
@@ -32,20 +33,22 @@ export class ModCommentStore {
                 this.mod.editor.user.avatar,
                 new Date().getTime(),
                 ''),
-            /* PM-UPDATE: temporarily disabled
-            referrer: this.mod.editor.pm.markRange(
-                this.mod.editor.view.state.selection.from,
-                this.mod.editor.view.state.selection.to,
-                {className: 'active-comment'}
-            ),*/
             inDOM: false
         }
+        let transaction = addCommentDuringCreationDecoration(this.mod.editor.view.state)
+        if (transaction) {
+            this.mod.editor.view.dispatch(transaction)
+        }
+
     }
 
     removeCommentDuringCreation() {
         if (this.commentDuringCreation) {
-            //this.mod.editor.pm.removeRange(this.commentDuringCreation.referrer)
             this.commentDuringCreation = false
+            let transaction = removeCommentDuringCreationDecoration(this.mod.editor.view.state)
+            if (transaction) {
+                this.mod.editor.view.dispatch(transaction)
+            }
         }
     }
 
@@ -58,7 +61,9 @@ export class ModCommentStore {
             id: id
         })
         let markType = this.mod.editor.view.state.schema.marks.comment.create({id})
-        this.mod.editor.view.state.tr.addMark(posFrom, posTo, markType).apply()
+        this.mod.editor.view.dispatch(
+            this.mod.editor.view.state.tr.addMark(posFrom, posTo, markType)
+        )
         this.signal("mustSend")
     }
 
@@ -100,11 +105,15 @@ export class ModCommentStore {
             // boundary, it means all text has been removed. So now we insert a
             // single space which we can link to.
             if (doc.resolve(posTo).depth === 1) {
-                this.mod.editor.view.state.tr.insertText(posFrom,' ').apply()
+                this.mod.editor.view.dispatch(
+                    this.mod.editor.view.state.tr.insertText(posFrom,' ')
+                )
                 posTo = posFrom + 1
             }
         }
-        this.mod.editor.view.state.tr.addMark(posFrom, posTo, markType).apply()
+        this.mod.editor.view.dispatch(
+            this.mod.editor.view.state.tr.addMark(posFrom, posTo, markType)
+        )
     }
 
     addLocalComment(id, user, userName, userAvatar, date, comment, answers, isMajor, local) {

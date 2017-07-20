@@ -1,8 +1,10 @@
 import {commentsTemplate, filterByUserBoxTemplate} from "./templates"
 import {Comment} from "./comment"
 import {localizeDate} from "../../common"
+import {getCommentDuringCreationDecoration} from "../plugins/comments"
 
 import fastdom from "fastdom"
+
 
 /* Functions related to layouting of comments */
 export class ModCommentLayout {
@@ -221,10 +223,10 @@ export class ModCommentLayout {
 
         // Add a comment that is currently under construction to the list.
 
-        /* PM-UPDATE: temporarily disabled
+
 
         if(this.mod.store.commentDuringCreation) {
-            let pos = this.mod.store.commentDuringCreation.referrer.from
+            let pos = getCommentDuringCreationDecoration(this.mod.editor.view.state).from
             let comment = this.mod.store.commentDuringCreation.comment
             let index = 0
             // We need the position of the new comment in relation to the other
@@ -236,7 +238,7 @@ export class ModCommentLayout {
             referrers.splice(index, 0, pos)
             activeCommentStyle += '.comments-enabled .active-comment {background-color: #fffacf;}'
             this.mod.store.commentDuringCreation.inDOM = true
-        }*/
+        }
 
         let commentsTemplateHTML = commentsTemplate({
             theComments,

@@ -19,10 +19,7 @@ export let updateCollaboratorSelection = function(state, collaborator, data) {
 
     if (oldCarPos) {
         caretPositions = caretPositions.filter(carPos => carPos !== oldCarPos)
-        let removeDecos = [oldCarPos.widgetDeco]
-        if (oldCarPos.inlineDeco) {
-            removeDecos.push(oldCarPos.inlineDeco)
-        }
+        let removeDecos = decos.find().filter(deco => deco.spec === oldCarPos.decoSpec)
         decos = decos.remove(removeDecos)
     }
 
@@ -35,26 +32,27 @@ export let updateCollaboratorSelection = function(state, collaborator, data) {
     let tooltip = collaborator.name
     widgetDom.title = tooltip
     widgetDom.firstChild.title = tooltip
-    let widgetDeco = Decoration.widget(data.head, widgetDom, {id: `${Date.now()}-${data.head}`})
+    let decoSpec = {id: data.session_id} // We will compare the decoSpec object. Id not really needed.
     let newCarPos = {
         sessionId: data.session_id,
         userId: collaborator.id,
-        widgetDeco,
+        decoSpec,
         anchor: data.anchor,
         head: data.head
     }
-    let addDecos = [widgetDeco]
+    caretPositions.push(newCarPos)
+
+    let widgetDeco = Decoration.widget(data.head, widgetDom, decoSpec),
+        addDecos = [widgetDeco]
 
     if (data.anchor !== data.head) {
-        let from = data.head > data.anchor ? data.anchor : data.head
-        let to = data.anchor > data.head ? data.anchor : data.head
-        let inlineDeco = Decoration.inline(from, to, {
-            class: `user-bg-${collaborator.colorId}`
-        }, {id: `${Date.now()}-${from}`})
-        newCarPos.inlineDeco = inlineDeco
+        let from = data.head > data.anchor ? data.anchor : data.head,
+            to = data.anchor > data.head ? data.anchor : data.head,
+            inlineDeco = Decoration.inline(from, to, {
+                class: `user-bg-${collaborator.colorId}`
+            }, decoSpec)
         addDecos.push(inlineDeco)
     }
-    caretPositions.push(newCarPos)
     decos = decos.add(state.doc, addDecos)
 
     let transaction = state.tr.setMeta(collabCaretsKey, {
@@ -75,10 +73,7 @@ export let removeCollaboratorSelection = function(state, data) {
 
     if (caretPosition) {
         caretPositions = caretPositions.filter(carPos => carPos !== caretPosition)
-        let removeDecos = [caretPosition.widgetDeco]
-        if (caretPosition.inlineDeco) {
-            removeDecos.push(caretPosition.inlineDeco)
-        }
+        let removeDecos = decos.find().filter(deco => deco.spec === caretPosition.decoSpec)
         decos = decos.remove(removeDecos)
         let transaction = state.tr.setMeta(collabCaretsKey, {
             decos,
@@ -116,11 +111,7 @@ export let collabCaretsPlugin = function(options) {
 
                 decos = decos.map(tr.mapping, tr.doc, {onRemove: decoSpec => {
                     caretPositions = caretPositions.filter(
-                        carPos => carPos.widgetDeco.spec.id !== decoSpec.id &&
-                        (
-                            !carPos.inlineDeco ||
-                            carPos.inlineDeco.spec.id !== decoSpec.id
-                        )
+                        carPos => carPos.decoSpec !== decoSpec
                     )
                 }})
 

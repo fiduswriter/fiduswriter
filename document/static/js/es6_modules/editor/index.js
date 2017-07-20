@@ -34,6 +34,7 @@ import {headerbarPlugin} from "./plugins/headerbar"
 import {toolbarPlugin} from "./plugins/toolbar"
 import {collabCaretsPlugin} from "./plugins/collab-carets"
 import {footnoteMarkersPlugin} from "./plugins/footnote-markers"
+import {commentsPlugin} from "./plugins/comments"
 import {addDropdownBox} from "../common"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
@@ -305,7 +306,8 @@ export class Editor {
                     headerbarPlugin({editor: this}),
                     toolbarPlugin({editor: this}),
                     collabCaretsPlugin(),
-                    footnoteMarkersPlugin({footnotes: this.mod.footnotes})
+                    footnoteMarkersPlugin({editor: this}),
+                    commentsPlugin({editor: this})
                 ]
             }
 

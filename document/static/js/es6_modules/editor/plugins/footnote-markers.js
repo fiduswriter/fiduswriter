@@ -15,7 +15,6 @@ let findFootnoteMarkers = function(fromPos, toPos, doc) {
             let to = pos + node.nodeSize
             let footnoteMarker = Decoration.inline(from, to, {}, {id: `${Date.now()}-${from}`})
             footnoteMarkers.push(footnoteMarker)
-
         }
     })
     return footnoteMarkers
@@ -144,11 +143,11 @@ export let footnoteMarkersPlugin = function(options) {
                     } = this.getState(oldState),
                     ranges = getAddedRanges(tr)
                 let newDecos = decos.map(tr.mapping, tr.doc, {onRemove: decoSpec => {
-                    let index = decos.find().findIndex(deco => deco.spec.id === decoSpec.id)
+                    let index = decos.find().findIndex(deco => deco.spec === decoSpec)
                     if (index < 0) {
                         return
                     }
-                    options.footnotes.fnEditor.removeFootnote(index)
+                    options.editor.mod.footnotes.fnEditor.removeFootnote(index)
                 }})
                 decos = newDecos
                 ranges.forEach(range => {
@@ -159,7 +158,7 @@ export let footnoteMarkersPlugin = function(options) {
                         newFootnotes.forEach((footnote, index) => {
                             if (!remote) {
                                 let fnContent = state.doc.nodeAt(footnote.from).attrs.footnote
-                                options.footnotes.fnEditor.renderFootnote(fnContent, offset + index)
+                                options.editor.mod.footnotes.fnEditor.renderFootnote(fnContent, offset + index)
                             }
                             index++
                         })
@@ -167,7 +166,7 @@ export let footnoteMarkersPlugin = function(options) {
                     }
                 })
 
-                options.footnotes.layout.layoutFootnotes()
+                options.editor.mod.footnotes.layout.layoutFootnotes()
                 return {
                     decos
                 }

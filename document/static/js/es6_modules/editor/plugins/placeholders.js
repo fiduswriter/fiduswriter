@@ -18,7 +18,10 @@ export let placeholdersPlugin = function() {
         let decorations = []
 
         articleNode.forEach((partElement, offset, index) => {
-            if (partElement.textContent.length === 0) {
+            if (
+                (partElement.isTextblock && partElement.nodeSize === 2) ||
+                (!partElement.isTextblock && partElement.nodeSize === 4)
+            ) {
                 let placeHolder = document.createElement('span')
                 placeHolder.classList.add('placeholder')
                 placeHolder.setAttribute('data-placeholder', placeHolderTexts[index])

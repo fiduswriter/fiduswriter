@@ -6,10 +6,9 @@ export class ModFootnoteLayout {
     constructor(mod) {
         mod.layout = this
         this.mod = mod
-        this.setup()
     }
 
-    setup() {
+    init() {
         // Add two elements to hold dynamic CSS info about comments.
         let styleContainers = document.createElement('temp')
         styleContainers.innerHTML = `<style type="text/css" id="footnote-placement-style"></style>`

@@ -7,6 +7,8 @@ import {history} from "prosemirror-history"
 import {baseKeymap} from "prosemirror-commands"
 import {keymap} from "prosemirror-keymap/dist/keymap"
 
+import {Paste} from "../paste"
+import {fnSchema} from "../../schema/footnotes"
 import {toolbarPlugin} from "../plugins/toolbar"
 import {collabCaretsPlugin} from "../plugins/collab-carets"
 import {getFootnoteMarkerContents, updateFootnoteMarker} from "../plugins/footnote-markers"
@@ -19,6 +21,62 @@ export class ModFootnoteEditor {
         mod.fnEditor = this
         this.mod = mod
         this.rendering = false
+        this.schema = fnSchema
+        this.fnStatePlugins = [
+            [history],
+            [keymap, () => baseKeymap],
+            [keymap, () => buildKeymap(this.schema)],
+            [collab],
+            [toolbarPlugin, () => ({editor: this.mod.editor})],
+            [collabCaretsPlugin]
+        ]
+    }
+
+    init() {
+        let plugins = this.fnStatePlugins.map(plugin => {
+            if (plugin[1]) {
+                return plugin[0](plugin[1]())
+            } else {
+                return plugin[0]()
+            }
+        })
+
+        this.view = new EditorView(document.getElementById('footnote-box-container'), {
+            state: EditorState.create({
+                schema: this.schema,
+                doc: this.schema.nodeFromJSON({"type":"doc","content":[{"type": "footnote_end"}]}),
+                plugins
+            }),
+            onFocus: () => {
+                this.mod.editor.currentView = this.view
+            },
+            onBlur: () => {
+
+            },
+            transformPastedHTML: inHTML => {
+                let ph = new Paste(inHTML, "footnote")
+                return ph.getOutput()
+            },
+            dispatchTransaction: (transaction) => {
+                let remote = transaction.getMeta('remote')
+                if (!remote) {
+                    let filterFree = transaction.getMeta('filterFree')
+                    if (!filterFree & this.onFilterTransaction(transaction)) {
+                        return
+                    }
+                    this.mod.editor.onBeforeTransaction(this.view, transaction)
+                }
+
+                let newState = this.view.state.apply(transaction)
+                this.view.updateState(newState)
+
+                this.onTransaction(transaction, remote)
+                this.mod.layout.updateDOM()
+            }
+        })
+
+        // TODO: get rid of footnote_end once Pm doesn't have a bug that requires it.
+
     }
 
     // filter transactions, disallowing all transactions going across document parts/footnotes.
@@ -85,8 +143,8 @@ export class ModFootnoteEditor {
             if (lastStep.hasOwnProperty('from')) {
                 // We find the number of the last footnote that was updated by
                 // looking at the last step and seeing footnote number that change referred to.
-                let fnIndex = this.mod.fnView.state.doc.resolve(lastStep.from).index(0)
-                let fnContent = this.mod.fnView.state.doc.child(fnIndex).toJSON().content
+                let fnIndex = this.view.state.doc.resolve(lastStep.from).index(0)
+                let fnContent = this.view.state.doc.child(fnIndex).toJSON().content
                 let transaction = updateFootnoteMarker(this.mod.editor.view.state, fnIndex, fnContent)
                 if (transaction) {
                     this.mod.editor.view.dispatch(transaction)
@@ -98,34 +156,35 @@ export class ModFootnoteEditor {
     }
 
     applyDiffs(diffs) {
-        let steps = diffs.map(j => Step.fromJSON(this.mod.fnView.state.schema, j))
+        let steps = diffs.map(j => Step.fromJSON(this.view.state.schema, j))
         let clientIds = diffs.map(j => j.client_id)
         let transaction = receiveTransaction(
-            this.mod.fnView.state,
+            this.view.state,
             steps,
             clientIds
         )
         transaction.setMeta('remote', true)
-        this.mod.fnView.dispatch(transaction)
+        this.view.dispatch(transaction)
     }
 
     renderAllFootnotes() {
         let fnContents = getFootnoteMarkerContents(this.mod.editor.view.state)
 
-        let newState = EditorState.create({
-            schema: this.mod.schema,
-            doc: this.mod.schema.nodeFromJSON({"type":"doc","content":[{"type": "footnote_end"}]}),
-            plugins: [
-                history(),
-                keymap(baseKeymap),
-                keymap(buildKeymap(this.mod.schema)),
-                collab(),
-                toolbarPlugin({editor: this.mod.editor}),
-                collabCaretsPlugin()
-            ]
+        let plugins = this.fnStatePlugins.map(plugin => {
+            if (plugin[1]) {
+                return plugin[0](plugin[1]())
+            } else {
+                return plugin[0]()
+            }
         })
 
-        this.mod.fnView.updateState(newState)
+        let newState = EditorState.create({
+            schema: this.schema,
+            doc: this.schema.nodeFromJSON({"type":"doc","content":[{"type": "footnote_end"}]}),
+            plugins
+        })
+
+        this.view.updateState(newState)
 
         fnContents.forEach((fnContent, index) => {
             this.renderFootnote(fnContent, index, true)
@@ -137,18 +196,18 @@ export class ModFootnoteEditor {
         let node = fnNodeToPmNode(contents)
         let pos = 0
         for (let i=0; i<index;i++) {
-            pos += this.mod.fnView.state.doc.child(i).nodeSize
+            pos += this.view.state.doc.child(i).nodeSize
         }
 
-        let transaction = this.mod.fnView.state.tr.insert(pos, node)
+        let transaction = this.view.state.tr.insert(pos, node)
 
         transaction.setMeta('filterFree', true)
 
-        this.mod.fnView.dispatch(transaction)
+        this.view.dispatch(transaction)
         if (setDoc) {
-            let initialSteps = sendableSteps(this.mod.fnView.state)
-            this.mod.fnView.dispatch(receiveTransaction(
-                this.mod.fnView.state,
+            let initialSteps = sendableSteps(this.view.state)
+            this.view.dispatch(receiveTransaction(
+                this.view.state,
                 initialSteps.steps,
                 initialSteps.steps.map(
                     step => initialSteps.clientID
@@ -168,12 +227,12 @@ export class ModFootnoteEditor {
             this.rendering = true
             let startPos = 0
             for (let i=0;i<index;i++) {
-                startPos += this.mod.fnView.state.doc.child(i).nodeSize
+                startPos += this.view.state.doc.child(i).nodeSize
             }
-            let endPos = startPos + this.mod.fnView.state.doc.child(index).nodeSize
-            let transaction = this.mod.fnView.state.tr.delete(startPos, endPos)
+            let endPos = startPos + this.view.state.doc.child(index).nodeSize
+            let transaction = this.view.state.tr.delete(startPos, endPos)
             transaction.setMeta('filterFree', true)
-            this.mod.fnView.dispatch(transaction)
+            this.view.dispatch(transaction)
             // Most changes to the footnotes are followed by a change to the main editor,
             // so changes are sent to collaborators automatically. When footnotes are added/deleted,
             // the change is reverse, so we need to inform collabs manually.

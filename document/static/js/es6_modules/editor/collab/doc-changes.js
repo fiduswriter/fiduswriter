@@ -88,7 +88,7 @@ export class ModCollabDocChanges {
         // Handle either doc change and comment updates OR caret update. Priority
         // for doc change/comment update.
         if (stepsToSend || comments.length) {
-            let fnStepsToSend = sendableSteps(this.mod.editor.mod.footnotes.fnView.state)
+            let fnStepsToSend = sendableSteps(this.mod.editor.mod.footnotes.fnEditor.view.state)
             let request_id = this.confirmStepsRequestCounter++
             // We add the client ID to every single step
             let diff = stepsToSend ? stepsToSend.steps.map(s => {
@@ -129,7 +129,7 @@ export class ModCollabDocChanges {
                 anchor: selectionUpdate.anchor,
                 head: selectionUpdate.head,
                 // Whether the selection is in the footnote or the main editor
-                view: this.mod.editor.currentView === this.mod.editor.view ? 'view' : 'fnView'
+                editor: this.mod.editor.currentView === this.mod.editor.view ? 'main' : 'footnotes'
             })
         }
 
@@ -137,9 +137,9 @@ export class ModCollabDocChanges {
 
     receiveSelectionChange(data) {
         let transaction, fnTransaction
-        if (data.view === 'fnView') {
+        if (data.editor === 'footnotes') {
             fnTransaction = updateCollaboratorSelection(
-                this.mod.editor.mod.footnotes.fnView.state,
+                this.mod.editor.mod.footnotes.fnEditor.view.state,
                 this.mod.participants.find(par  => par.id === data.id),
                 data
             )
@@ -154,7 +154,7 @@ export class ModCollabDocChanges {
                 data
             )
             fnTransaction = removeCollaboratorSelection(
-                this.mod.editor.mod.footnotes.fnView.state,
+                this.mod.editor.mod.footnotes.fnEditor.view.state,
                 data
             )
         }
@@ -162,7 +162,7 @@ export class ModCollabDocChanges {
             this.mod.editor.view.dispatch(transaction)
         }
         if (fnTransaction) {
-            this.mod.editor.mod.footnotes.fnView.dispatch(fnTransaction)
+            this.mod.editor.mod.footnotes.fnEditor.view.dispatch(fnTransaction)
         }
     }
 
@@ -238,9 +238,9 @@ export class ModCollabDocChanges {
         this.setConfirmedDoc(transaction)
         this.mod.editor.view.dispatch(transaction)
         let sentFnSteps = this.unconfirmedSteps[request_id]["footnote_diff"]
-        this.mod.editor.mod.footnotes.fnView.dispatch(
+        this.mod.editor.mod.footnotes.fnEditor.view.dispatch(
             receiveTransaction(
-                this.mod.editor.mod.footnotes.fnView.state,
+                this.mod.editor.mod.footnotes.fnEditor.view.state,
                 sentFnSteps,
                 sentFnSteps.map(
                     step => step.client_id

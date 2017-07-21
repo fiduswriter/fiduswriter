@@ -71,6 +71,21 @@ export class Editor {
             headerbarModel,
             toolbarModel
         }
+        this.statePlugins = [
+            [history],
+            [keymap, () => baseKeymap],
+            [keymap, () => buildKeymap(this.schema)],
+            [collab, () => ({version: this.doc.version})],
+            [dropCursor],
+            [tableEditing],
+            [placeholdersPlugin],
+            [headerbarPlugin, () => ({editor: this})],
+            [toolbarPlugin, () => ({editor: this})],
+            [collabCaretsPlugin],
+            [footnoteMarkersPlugin, () => ({editor: this})],
+            [commentsPlugin, () => ({editor: this})]
+        ]
+        new ModFootnotes(this)
         new ModServerCommunications(this)
     }
 
@@ -122,13 +137,13 @@ export class Editor {
         })
         // The editor that is currently being edited in -- main or footnote editor
         this.currentView = this.view
-        new ModFootnotes(this)
+        this.mod.footnotes.init()
         new ModCitations(this)
         new ModCollab(this)
         new ModTools(this)
         new ModComments(this)
         new ModStyles(this)
-
+        this.activateFidusPlugins()
         this.mod.serverCommunications.init()
         this.setSaveTimers()
     }
@@ -155,9 +170,9 @@ export class Editor {
                 }
             })
             if (stillLooking) {
-                that.mod.footnotes.fnView.state.doc.descendants((node, pos) => {
+                that.mod.footnotes.fnEditor.view.state.doc.descendants((node, pos) => {
                     if (stillLooking && (node.type.name === 'heading' || node.type.name === 'figure') && node.attrs.id === id) {
-                        that.scrollIntoView(that.mod.footnotes.fnView, pos)
+                        that.scrollIntoView(that.mod.footnotes.fnEditor.view, pos)
                         stillLooking = false
                     }
                 })
@@ -196,19 +211,16 @@ export class Editor {
     }
 
 
-    activatePlugins() {
-        // Add plugins, but only once.
-        if (!this.plugins) {
-            this.plugins = {}
+    activateFidusPlugins() {
+        // Add plugins.
+        this.plugins = {}
 
-            Object.keys(plugins).forEach(plugin => {
-                if (typeof plugins[plugin] === 'function') {
-                    this.plugins[plugin] = new plugins[plugin](this)
-                    this.plugins[plugin].init()
-                }
-            })
-
-        }
+        Object.keys(plugins).forEach(plugin => {
+            if (typeof plugins[plugin] === 'function') {
+                this.plugins[plugin] = new plugins[plugin](this)
+                this.plugins[plugin].init()
+            }
+        })
     }
 
     askForDocument() {
@@ -249,7 +261,7 @@ export class Editor {
                 // assign image DB to be used in schema.
                 this.schema.cached.imageDB = imageGetter
                 // assign image DB to be used in footnote schema.
-                this.mod.footnotes.schema.cached.imageDB = imageGetter
+                this.mod.footnotes.fnEditor.schema.cached.imageDB = imageGetter
             })
         } else {
             return Promise.resolve()
@@ -291,24 +303,19 @@ export class Editor {
             } else {
                 doc = this.schema.topNodeType.createAndFill()
             }
+            let plugins = this.statePlugins.map(plugin => {
+                if (plugin[1]) {
+                    return plugin[0](plugin[1]())
+                } else {
+                    return plugin[0]()
+                }
+            })
+
 
             let stateConfig = {
                 schema: this.schema,
                 doc,
-                plugins: [
-                    history(),
-                    keymap(baseKeymap),
-                    keymap(buildKeymap(this.schema)),
-                    collab({version: this.doc.version}),
-                    dropCursor(),
-                    tableEditing(),
-                    placeholdersPlugin(),
-                    headerbarPlugin({editor: this}),
-                    toolbarPlugin({editor: this}),
-                    collabCaretsPlugin(),
-                    footnoteMarkersPlugin({editor: this}),
-                    commentsPlugin({editor: this})
-                ]
+                plugins
             }
 
             // Set document in prosemirror
@@ -363,7 +370,6 @@ export class Editor {
             this.mod.comments.layout.onChange()
 
             return this.getBibDB(this.doc.owner.id).then(() => {
-                this.activatePlugins()
                 this.mod.citations.layoutCitations()
                 this.waitingForDocument = false
             })
@@ -494,7 +500,7 @@ export class Editor {
 
         // ID should not be found in the other pm either. So we look through
         // those as well.
-        let otherView = view === this.view ? this.mod.footnotes.fnView : this.view
+        let otherView = view === this.view ? this.mod.footnotes.fnEditor.view : this.view
 
         otherView.state.doc.descendants(node => {
             if (node.type.name === 'heading') {

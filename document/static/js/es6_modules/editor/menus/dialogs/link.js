@@ -20,7 +20,7 @@ export class LinkDialog {
 
     findInternalTargets() {
 
-        let docs = [this.editor.view.state.doc, this.editor.mod.footnotes.fnView.state.doc],
+        let docs = [this.editor.view.state.doc, this.editor.mod.footnotes.fnEditor.view.state.doc],
         figures = {}
 
         docs.forEach(doc => doc.descendants(node => {

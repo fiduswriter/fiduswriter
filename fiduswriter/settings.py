@@ -225,6 +225,19 @@ INSTALLED_APPS = (
     # 'allauth.socialaccount.providers.stackexchange',
 )
 
+# TODO: use it or remove it
+# VISIBILITY = {
+#    'author': {'author': ['always']},
+#    'reviewer': {'author': ['revision', 'publication'],
+#                 'reviewer': ['always'],
+#                 'all_rev': ['discussion, revision, publication'],
+#                 'editor': ['always']},
+#    'editor': {'author': ['revision', 'publication'],
+#               'reviewer': ['always'],
+#               'all_rev': ['always'],
+#               'editor': ['always']}
+# }
+
 
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`

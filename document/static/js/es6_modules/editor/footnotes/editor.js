@@ -33,18 +33,19 @@ export class ModFootnoteEditor {
     }
 
     init() {
-        let plugins = this.fnStatePlugins.map(plugin => {
-            if (plugin[1]) {
-                return plugin[0](plugin[1]())
-            } else {
-                return plugin[0]()
-            }
-        })
+        let doc = this.schema.nodeFromJSON({"type":"doc","content":[{"type": "footnote_end"}]}),
+            plugins = this.fnStatePlugins.map(plugin => {
+                if (plugin[1]) {
+                    return plugin[0](plugin[1](doc))
+                } else {
+                    return plugin[0](doc)
+                }
+            })
 
         this.view = new EditorView(document.getElementById('footnote-box-container'), {
             state: EditorState.create({
                 schema: this.schema,
-                doc: this.schema.nodeFromJSON({"type":"doc","content":[{"type": "footnote_end"}]}),
+                doc,
                 plugins
             }),
             onFocus: () => {
@@ -169,18 +170,18 @@ export class ModFootnoteEditor {
 
     renderAllFootnotes() {
         let fnContents = getFootnoteMarkerContents(this.mod.editor.view.state)
-
-        let plugins = this.fnStatePlugins.map(plugin => {
-            if (plugin[1]) {
-                return plugin[0](plugin[1]())
-            } else {
-                return plugin[0]()
-            }
-        })
+        let doc = this.schema.nodeFromJSON({"type":"doc","content":[{"type": "footnote_end"}]}),
+            plugins = this.fnStatePlugins.map(plugin => {
+                if (plugin[1]) {
+                    return plugin[0](plugin[1](doc))
+                } else {
+                    return plugin[0]()
+                }
+            })
 
         let newState = EditorState.create({
             schema: this.schema,
-            doc: this.schema.nodeFromJSON({"type":"doc","content":[{"type": "footnote_end"}]}),
+            doc,
             plugins
         })
 

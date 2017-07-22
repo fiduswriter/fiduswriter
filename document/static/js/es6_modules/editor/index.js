@@ -73,7 +73,7 @@ export class Editor {
             [history],
             [keymap, () => baseKeymap],
             [keymap, () => buildKeymap(this.schema)],
-            [collab, () => ({version: this.docInfo.version})],
+            [collab, doc => ({version: doc.version})],
             [dropCursor],
             [tableEditing],
             [placeholdersPlugin],
@@ -306,7 +306,7 @@ export class Editor {
             }
             let plugins = this.statePlugins.map(plugin => {
                 if (plugin[1]) {
-                    return plugin[0](plugin[1]())
+                    return plugin[0](plugin[1](doc))
                 } else {
                     return plugin[0]()
                 }

@@ -318,6 +318,7 @@ class WebSocket(BaseWebSocketHandler):
         elif pdv > ddv:
             # Client has a higher version than server. Something is fishy!
             print('unfixable')
+            print("PDV: %d, DDV: %d" % (pdv, ddv))
         elif pdv < ddv:
             if pdv + len(self.doc["last_diffs"]) >= ddv:
                 # We have enough last_diffs stored to fix it.
@@ -334,6 +335,7 @@ class WebSocket(BaseWebSocketHandler):
                 self.write_message(response)
             else:
                 print('unfixable')
+                print("PDV: %d, DDV: %d" % (pdv, ddv))
                 # Client has a version that is too old to be fixed
                 self.send_document()
         else:
@@ -342,6 +344,7 @@ class WebSocket(BaseWebSocketHandler):
     def check_diff_version(self, parsed):
         pdv = parsed["diff_version"]
         ddv = self.doc['diff_version']
+        print("PDV: %d, DDV: %d" % (pdv, ddv))
         if pdv == ddv:
             response = {
                 "type": "confirm_diff_version",
@@ -474,8 +477,8 @@ class WebSocket(BaseWebSocketHandler):
                 doc['last_diffs'] = []
         doc_db.last_diffs = json_encode(doc['last_diffs'])
         doc_db.comments = json_encode(doc['comments'])
-        print('saving document #' + str(doc_db.id))
-        print('version ' + str(doc_db.version))
+        print('saving document # %d' % doc_db.id)
+        print('version %d' % doc_db.version)
         doc_db.save()
 
     @classmethod

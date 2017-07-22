@@ -1,4 +1,4 @@
-Django==1.11
+Django==1.11.3
 django-adminplus==0.5
 Pillow==4.1.1
 django-allauth==0.32.0

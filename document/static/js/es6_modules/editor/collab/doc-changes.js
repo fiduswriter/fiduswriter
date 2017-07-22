@@ -191,7 +191,7 @@ export class ModCollabDocChanges {
             return
         }
         if (data.comments && data.comments.length) {
-            this.mod.editor.updateComments(data.comments, data.comments_version)
+            this.mod.editor.mod.comments.store.receive(data.comments, data.comment_version)
         }
         if (data.diff && data.diff.length) {
             data.diff.forEach(diff => this.applyDiff(diff))
@@ -201,13 +201,13 @@ export class ModCollabDocChanges {
         }
 
         if (data.server_fix) {
-            // Diff must is a fix created by server due to missing diffs.
+            // Diff is a fix created by server due to missing diffs.
             if ('reject_request_id' in data) {
                 delete this.unconfirmedSteps[data.reject_request_id]
             }
             this.cancelCurrentlyCheckingVersion()
 
-            // Because the update came directly from the server, we may
+            // The update came directly from the server, so we may
             // also have lost some collab updates to the footnote table.
             // Re-render the footnote table if needed.
             this.mod.editor.mod.footnotes.fnEditor.renderAllFootnotes()

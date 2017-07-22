@@ -36,16 +36,14 @@ export class ModStyles {
                     title: `${template.file_name} (DOCX)`,
                     tooltip: gettext('Export the document to a DOCX file with the given template.'),
                     action: editor => {
-                        editor.save().then(() => {
-                            new DocxExporter(
-                                editor.doc,
-                                template.template_file,
-                                editor.bibDB,
-                                editor.imageDB,
-                                editor.mod.styles.citationStyles,
-                                editor.mod.styles.citationLocales
-                            )
-                        })
+                        new DocxExporter(
+                            editor.getDoc(),
+                            template.template_file,
+                            editor.bibDB,
+                            editor.imageDB,
+                            editor.mod.styles.citationStyles,
+                            editor.mod.styles.citationLocales
+                        )
                     }
                 }
             } else {
@@ -54,16 +52,14 @@ export class ModStyles {
                     title: `${template.file_name} (ODT)`,
                     tooltip: gettext('Export the document to an ODT file with the given template.'),
                     action: editor => {
-                        editor.save().then(() => {
-                            new OdtExporter(
-                                editor.doc,
-                                template.template_file,
-                                editor.bibDB,
-                                editor.imageDB,
-                                editor.mod.styles.citationStyles,
-                                editor.mod.styles.citationLocales
-                            )
-                        })
+                        new OdtExporter(
+                            editor.getDoc(),
+                            template.template_file,
+                            editor.bibDB,
+                            editor.imageDB,
+                            editor.mod.styles.citationStyles,
+                            editor.mod.styles.citationLocales
+                        )
                     }
                 }
             }

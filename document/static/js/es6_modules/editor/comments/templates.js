@@ -125,7 +125,7 @@ export let commentsTemplate = _.template(`
                 </div>
                 <% } %>
                 <% if(comment.id===that.activeCommentId && (comment.user===that.mod.editor.user.id
-                  || that.mod.editor.docInfo.rights==="write")) { %>
+                  || that.mod.editor.docInfo.access_rights==="write")) { %>
                     <span class="delete-comment-all delete-comment icon-cancel-circle" data-id="<%= comment.id %>"></span>
                 <% } %>
             </div>

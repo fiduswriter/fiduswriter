@@ -108,8 +108,8 @@ export let toolbarModel = {
 
             },
             disabled: editor =>
-                    READ_ONLY_ROLES.includes(editor.docInfo.rights) ||
-                    COMMENT_ONLY_ROLES.includes(editor.docInfo.rights) ||
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
                     (
                         editor.currentView.state.selection.$anchor.node(2) &&
                         TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name)
@@ -199,7 +199,7 @@ export let toolbarModel = {
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
+                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
                     return true
                 } else if (
                     editor.currentView.state.selection.$anchor.node(2) &&
@@ -234,7 +234,7 @@ export let toolbarModel = {
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
+                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
                     return true
                 } else if (
                     editor.currentView.state.selection.$anchor.node(2) &&
@@ -269,7 +269,7 @@ export let toolbarModel = {
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
+                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
                     return true
                 } else if (
                     editor.currentView.state.selection.$anchor.node(2) &&
@@ -293,7 +293,7 @@ export let toolbarModel = {
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
+                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
                     return true
                 } else if (
                     editor.currentView.state.selection.$anchor.node(2) &&
@@ -317,7 +317,7 @@ export let toolbarModel = {
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
+                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
                     return true
                 } else if (
                     editor.currentView.state.selection.$anchor.node(2) &&
@@ -340,7 +340,7 @@ export let toolbarModel = {
                 dialog.init()
             },
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
+                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
                     return true
                 } else if (
                     editor.currentView.state.selection.$anchor.node(2) &&
@@ -365,7 +365,7 @@ export let toolbarModel = {
                 editor.view.dispatch(transaction)
             },
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
+                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
                     return true
                 } else if (editor.view !== editor.currentView) {
                     return true
@@ -390,7 +390,7 @@ export let toolbarModel = {
                 dialog.init()
             },
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
+                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
                     return true
                 } else if (
                     editor.currentView.state.selection.$anchor.node(2) &&
@@ -416,7 +416,7 @@ export let toolbarModel = {
                 )
             },
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
+                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
                     return true
                 } else if (
                     editor.currentView.state.selection.$anchor.node(2) &&
@@ -439,7 +439,7 @@ export let toolbarModel = {
                 dialog.init()
             },
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
+                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
                     return true
                 } else if (
                     editor.currentView.state.selection.$anchor.node(2) &&
@@ -462,7 +462,7 @@ export let toolbarModel = {
                 dialog.init()
             },
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
+                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
                     return true
                 } else if (
                     editor.currentView.state.selection.$anchor.node(2) &&
@@ -485,7 +485,7 @@ export let toolbarModel = {
                 dialog.init()
             },
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.rights)) {
+                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
                     return true
                 } else if (
                     editor.currentView.state.selection.$anchor.node(2) &&
@@ -519,7 +519,7 @@ export let toolbarModel = {
             icon: 'comment-empty',
             action: editor => editor.mod.comments.interactions.createNewComment(),
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.rights)) {
+                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
                     return true
                 } else if (editor.view !== editor.currentView || editor.currentView.state.selection.empty) {
                     return true

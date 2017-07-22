@@ -26,54 +26,35 @@ let getAddedRanges = function(transaction) {
      * a transaction.
      */
     let ranges = []
-    for (let i = 0; i < transaction.steps.length; i++) {
-        let step = transaction.steps[i],
-            map = transaction.mapping.maps[i]
+    transaction.steps.forEach((step, index) => {
         if (step.jsonID === "replace" || step.jsonID === "replaceWrap") {
-            let index = 0
+            ranges.push({from: step.from, to: step.to})
+        }
+        let map = transaction.mapping.maps[index]
+        ranges = ranges.map(range => ({from: map.map(range.from, -1), to: map.map(range.to, 1)}))
+    })
 
-            while (index < (ranges.length - 1) && step.from < ranges[index].from) {
-                index++
+    let nonOverlappingRanges = []
+
+    ranges.forEach(range => {
+        let addedRange = false
+        nonOverlappingRanges.forEach(noRange => {
+            if (!addedRange && range.from <= noRange.from && range.to >= noRange.from) {
+                noRange.from = range.from
+                noRange.to = noRange.to > range.to ? noRange.to : range.to
+                addedRange = true
+            } else if (!addedRange && range.from <= noRange.to && range.to >= noRange.to) {
+                noRange.from = noRange.from < range.from ? noRange.from : range.from
+                noRange.to = range.to
+                addedRange = true
             }
-            if (ranges.length === 0) {
-                ranges = [{
-                    from: step.from,
-                    to: step.to
-                }]
-            } else {
-                if (step.from === ranges[index].from) {
-                    if (step.to > ranges[index].to) {
-                        // This range has an endpoint further down than the
-                        // range that was found previously.
-                        // We replace the old range with the newly found
-                        // range.
-                        ranges[index] = {
-                            from: step.from,
-                            to: step.to
-                        }
-                    }
-                } else {
-                    if (step.to >= ranges[index].from) {
-                        ranges[index] = {
-                            from: step.from,
-                            to: ranges[index].to
-                        }
-                    } else {
-                        ranges.splice(index, 0, {
-                            from: step.from,
-                            to: step.to
-                        })
-                    }
-                }
-            }
+        })
+        if (!addedRange) {
+            nonOverlappingRanges.push(range)
         }
-        for (let j = 0; j < ranges.length; j++) {
-            let range = ranges[j]
-            range.from = map.map(range.from, -1)
-            range.to = map.map(range.from, 1)
-        }
-    }
-    return ranges
+    })
+
+    return nonOverlappingRanges
 }
 
 export let getFootnoteMarkerContents = function(state) {
@@ -142,14 +123,11 @@ export let footnoteMarkersPlugin = function(options) {
                         decos
                     } = this.getState(oldState),
                     ranges = getAddedRanges(tr)
-                let newDecos = decos.map(tr.mapping, tr.doc, {onRemove: decoSpec => {
+                decos = decos.map(tr.mapping, tr.doc, {onRemove: decoSpec => {
                     let index = decos.find().findIndex(deco => deco.spec === decoSpec)
-                    if (index < 0) {
-                        return
-                    }
                     options.editor.mod.footnotes.fnEditor.removeFootnote(index)
                 }})
-                decos = newDecos
+
                 ranges.forEach(range => {
                     let newFootnotes = findFootnoteMarkers(range.from, range.to, tr.doc)
                     if (newFootnotes.length) {

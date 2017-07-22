@@ -53,17 +53,15 @@ export class Editor {
         this.waitingForDocument = true
 
         this.docInfo = {
+            id,
             rights: '',
             unapplied_diffs: [],
+            owner: undefined,
             is_owner: false,
             title_changed: false,
             changed: false,
         }
         this.schema = docSchema
-        this.doc = {
-            // Initially we only have the id.
-            id
-        }
         this.user = false
         // The latest doc as confirmed by the server.
         this.confirmedDoc = false
@@ -75,7 +73,7 @@ export class Editor {
             [history],
             [keymap, () => baseKeymap],
             [keymap, () => buildKeymap(this.schema)],
-            [collab, () => ({version: this.doc.version})],
+            [collab, () => ({version: this.docInfo.version})],
             [dropCursor],
             [tableEditing],
             [placeholdersPlugin],
@@ -184,19 +182,19 @@ export class Editor {
         // Set Auto-save to send the document every two minutes, if it has changed.
         this.sendDocumentTimer = window.setInterval(() => {
             if (this.docInfo && this.docInfo.changed &&
-                READ_ONLY_ROLES.indexOf(this.docInfo.rights) === -1) {
+                READ_ONLY_ROLES.indexOf(this.docInfo.access_rights) === -1) {
                 this.save()
             }
         }, 120000)
 
         // Set Auto-save to send the title every 5 seconds, if it has changed.
         this.sendDocumentTitleTimer = window.setInterval(() => {
-            if (this.docInfo && this.docInfo.title_changed &&
-                READ_ONLY_ROLES.indexOf(this.docInfo.rights) === -1) {
+            if (this.docInfo.title_changed &&
+                READ_ONLY_ROLES.indexOf(this.docInfo.access_rights) === -1) {
                 this.docInfo.title_changed = false
                 this.mod.serverCommunications.send({
                     type: 'update_title',
-                    title: this.doc.title
+                    title: this.getDoc().title
                 })
             }
         }, 10000)
@@ -204,7 +202,7 @@ export class Editor {
         // Auto save the document when the user leaves the page.
         window.addEventListener("beforeunload", () => {
             if (this.docInfo && this.docInfo.changed &&
-                READ_ONLY_ROLES.indexOf(this.docInfo.rights) === -1) {
+                READ_ONLY_ROLES.indexOf(this.docInfo.access_rights) === -1) {
                 this.save()
             }
         })
@@ -277,31 +275,34 @@ export class Editor {
             this.mod.collab.docChanges.enableDiffSending()
         }
         // Update document to newest document version
-        this.doc = updateDoc(data.doc)
+        let doc = updateDoc(data.doc)
 
         this.docInfo = data.doc_info
+        this.docInfo.doc_version = doc.settings['doc_version']
         this.docInfo.changed = false
         this.docInfo.title_changed = false
-        if (this.doc.version === 0) {
+
+        if (doc.version === 0) {
             // If the document is new, change the url.
-            window.history.replaceState("", "", `/document/${this.doc.id}/`)
+            window.history.replaceState("", "", `/document/${this.docInfo.id}/`)
         }
+
         if (data.hasOwnProperty('user')) {
             this.user = data.user
         } else {
-            this.user = this.doc.owner
+            this.user = this.docInfo.owner
         }
 
         this.mod.serverCommunications.send({
             type: 'participant_update'
         })
-        return this.getImageDB(this.doc.owner.id).then(() => {
+        return this.getImageDB(this.docInfo.owner.id).then(() => {
 
-            let doc
-            if (this.doc.contents.type) {
-                doc = docSchema.nodeFromJSON({type:'doc', content:[this.doc.contents]})
+            let stateDoc
+            if (doc.contents.type) {
+                stateDoc = docSchema.nodeFromJSON({type:'doc', content:[doc.contents]})
             } else {
-                doc = this.schema.topNodeType.createAndFill()
+                stateDoc = this.schema.topNodeType.createAndFill()
             }
             let plugins = this.statePlugins.map(plugin => {
                 if (plugin[1]) {
@@ -311,10 +312,9 @@ export class Editor {
                 }
             })
 
-
             let stateConfig = {
                 schema: this.schema,
-                doc,
+                doc: stateDoc,
                 plugins
             }
 
@@ -343,23 +343,20 @@ export class Editor {
                     this.doc.version += this.docInfo.unapplied_diffs.length + 1
                     this.docInfo.unapplied_diffs = []
                     console.warn('Diffs could not be applied correctly!')
-
-                    return this.save()
                 }*/
             }
 
+
+
             // Get document settings
             this.mod.settings.check(this.view.state.doc.firstChild.attrs)
-
-            // Set document hash
-            this.docInfo.hash = this.getHash()
 
             // Render footnotes based on main doc
             this.mod.footnotes.fnEditor.renderAllFootnotes()
 
             //  Setup comment handling
-            this.mod.comments.store.setVersion(this.doc.comment_version)
-            Object.values(this.doc.comments).forEach(comment => {
+            this.mod.comments.store.setVersion(doc.comment_version)
+            Object.values(doc.comments).forEach(comment => {
                 this.mod.comments.store.addLocalComment(comment.id, comment.user,
                     comment.userName, comment.userAvatar, comment.date, comment.comment,
                     comment.answers, comment['review:isMajor'])
@@ -369,15 +366,11 @@ export class Editor {
             })
             this.mod.comments.layout.onChange()
 
-            return this.getBibDB(this.doc.owner.id).then(() => {
+            return this.getBibDB(this.docInfo.owner.id).then(() => {
                 this.mod.citations.layoutCitations()
                 this.waitingForDocument = false
             })
         })
-    }
-
-    updateComments(comments, comment_version) {
-        this.mod.comments.store.receive(comments, comment_version)
     }
 
     // Creates a hash value for the entire document so that we can compare with
@@ -389,40 +382,33 @@ export class Editor {
         )
     }
 
-    // Get updates to document and then send updates to the server
-    save() {
-        return this.getUpdates().then(
-            () => this.sendDocumentUpdate()
-        )
-    }
 
-    // Collects updates of the document from ProseMirror and saves it under this.doc
-    getUpdates() {
+    // Collect all components of the current doc. Needed for saving and export
+    // filters
+    getDoc() {
         let pmArticle = this.confirmedDoc.firstChild
-        this.doc.contents = pmArticle.toJSON()
-        this.doc.metadata = getMetadata(pmArticle)
-        Object.assign(this.doc.settings, getSettings(pmArticle))
-        this.doc.title = pmArticle.firstChild.textContent
-        this.doc.version = getVersion(this.view.state)
-        this.docInfo.hash = this.getHash()
-        this.doc.comments = this.mod.comments.store.comments
-        return Promise.resolve()
+        return {
+            contents: pmArticle.toJSON(),
+            metadata: getMetadata(pmArticle),
+            settings: Object.assign(
+                {doc_version: this.docInfo.doc_version},
+                getSettings(pmArticle)
+            ),
+            title: pmArticle.firstChild.textContent.substring(0, 255),
+            version: getVersion(this.view.state),
+            comments: this.mod.comments.store.comments
+        }
     }
 
     // Send changes to the document to the server
-    sendDocumentUpdate() {
-        let doc = {
-            title: this.doc.title,
-            metadata: this.doc.metadata,
-            settings: this.doc.settings,
-            contents: this.doc.contents,
-            version: this.doc.version,
-        }
+    save() {
+        let doc = this.getDoc()
+        delete doc.comments
 
         this.mod.serverCommunications.send({
             type: 'update_doc',
             doc,
-            hash: this.docInfo.hash
+            hash: this.getHash()
         })
 
         this.docInfo.changed = false
@@ -434,10 +420,10 @@ export class Editor {
     onFilterTransaction(transaction) {
         let prohibited = false
 
-        if (READ_ONLY_ROLES.indexOf(this.docInfo.rights) > -1) {
+        if (READ_ONLY_ROLES.indexOf(this.docInfo.access_rights) > -1) {
             // User only has read access. Don't allow anything.
             prohibited = true
-        } else if (COMMENT_ONLY_ROLES.indexOf(this.docInfo.rights) > -1) {
+        } else if (COMMENT_ONLY_ROLES.indexOf(this.docInfo.access_rights) > -1) {
             //User has a comment-only role (commentator, editor or reviewer)
 
             //Check all transaction steps. If step type not allowed = prohibit
@@ -655,16 +641,8 @@ export class Editor {
             this.mod.citations.layoutCitations()
         }
 
-        if (updateTitle) {
-            let documentTitle = this.view.state.doc.firstChild.firstChild.textContent
-            // The title has changed. We will update our document. Mark it as changed so
-            // that an update may be sent to the server.
-            if (documentTitle.substring(0, 255) !== this.doc.title) {
-                this.doc.title = documentTitle.substring(0, 255)
-                if (!remote) {
-                    this.docInfo.title_changed = true
-                }
-            }
+        if (updateTitle && !remote) {
+            this.docInfo.title_changed = true
         }
         if (updateSettings) {
             this.mod.settings.check(this.view.state.doc.firstChild.attrs)

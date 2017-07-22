@@ -93,7 +93,7 @@ export class DocxExporterCitations {
             this.addReferenceStyle(cslBib[0])
             let bibNode = cslBibSchema.nodeFromJSON({type:'cslbib'})
             let cslSerializer = DOMSerializer.fromSchema(cslBibSchema)
-            dom = serializer.serializeNode(bibNode)
+            dom = cslSerializer.serializeNode(bibNode)
             dom.innerHTML = cslBib[1].join('')
             this.pmBib = DOMParser.fromSchema(cslBibSchema).parse(dom, {topNode: bibNode}).toJSON()
         }

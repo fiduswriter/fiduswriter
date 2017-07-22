@@ -24,26 +24,30 @@ export class DocumentAccessRightsDialog {
 
         for (let i = 0; i < len; i++) {
             if (this.documentIds.includes(this.accessRights[i].document_id)) {
-                if ('undefined' == typeof (documentCollaborators[
-                    this.accessRights[i].user_id])) {
+                if ('undefined' == typeof (
+                    documentCollaborators[this.accessRights[i].user_id]
+                )) {
                     documentCollaborators[this.accessRights[i].user_id] =
                         this.accessRights[i]
-                    documentCollaborators[this.accessRights[i].user_id].count =
-                        1
+                    documentCollaborators[this.accessRights[i].user_id].count = 1
                 } else {
-                    if (documentCollaborators[this.accessRights[i].user_id].rights !=
-                        this.accessRights[i].rights)
-                    documentCollaborators[this.accessRights[i].user_id].rights =
-                        'read'
-                    documentCollaborators[this.accessRights[i].user_id].count +=
-                        1
+                    if (
+                        documentCollaborators[this.accessRights[i].user_id].rights !=
+                        this.accessRights[i].rights
+                    )
+                    documentCollaborators[this.accessRights[i].user_id].rights ='read'
+                    documentCollaborators[this.accessRights[i].user_id].count +=1
                 }
             }
         }
-        documentCollaborators = documentCollaborators.find(obj => obj.count === this.documentIds.length)
+
+        documentCollaborators = _.select(
+            documentCollaborators,
+            obj => obj.count === this.documentIds.length
+        )
 
         let dialogBody = accessRightOverviewTemplate({
-            dialogHeader: dialogHeader,
+            dialogHeader,
             contacts: accessRightTrTemplate({contacts: this.contacts}),
             collaborators: collaboratorsTemplate({
                 collaborators: documentCollaborators

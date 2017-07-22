@@ -198,7 +198,7 @@ export class FigureDialog {
                 let imageSelection = new ImageSelectionDialog(
                     that.imageDB,
                     that.imageId,
-                    that.editor.doc.owner.id)
+                    that.editor.docInfo.owner.id)
                 imageSelection.init().then(
                     newImageId => {
                         if (newImageId && newImageId !== false) {

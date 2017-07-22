@@ -87,7 +87,6 @@ class WebSocket(BaseWebSocketHandler):
         response = dict()
         response['type'] = 'doc_data'
         response['doc'] = dict()
-        response['doc']['id'] = self.doc['id']
         response['doc']['version'] = self.doc['version']
         if self.doc['diff_version'] < self.doc['version']:
             print('!!!diff version issue!!!')
@@ -98,11 +97,6 @@ class WebSocket(BaseWebSocketHandler):
         response['doc']['metadata'] = self.doc['metadata']
         response['doc']['settings'] = self.doc['settings']
         doc_owner = self.doc['db'].owner
-        access_rights = get_accessrights(
-            AccessRight.objects.filter(
-                document__owner=doc_owner))
-        response['doc']['access_rights'] = access_rights
-
         if self.user_info.access_rights == 'read-without-comments':
             response['doc']['comments'] = []
         elif self.user_info.access_rights == 'review':
@@ -115,24 +109,26 @@ class WebSocket(BaseWebSocketHandler):
         else:
             response['doc']['comments'] = self.doc["comments"]
         response['doc']['comment_version'] = self.doc["comment_version"]
-        response['doc']['access_rights'] = get_accessrights(
-            AccessRight.objects.filter(document__owner=doc_owner))
-        response['doc']['owner'] = dict()
-        response['doc']['owner']['id'] = doc_owner.id
-        response['doc']['owner']['name'] = doc_owner.readable_name
-        response['doc']['owner'][
+        response['doc_info'] = dict()
+        response['doc_info']['id'] = self.doc['id']
+        response['doc_info']['is_owner'] = self.user_info.is_owner
+        response['doc_info']['access_rights'] = self.user_info.access_rights
+        response['doc_info']['owner'] = dict()
+        response['doc_info']['owner']['id'] = doc_owner.id
+        response['doc_info']['owner']['name'] = doc_owner.readable_name
+        response['doc_info']['owner'][
             'avatar'] = avatar_url(doc_owner, 80)
-        response['doc']['owner']['team_members'] = []
-
+        response['doc_info']['owner']['team_members'] = []
         for team_member in doc_owner.leader.all():
             tm_object = dict()
             tm_object['id'] = team_member.member.id
             tm_object['name'] = team_member.member.readable_name
             tm_object['avatar'] = avatar_url(team_member.member, 80)
-            response['doc']['owner']['team_members'].append(tm_object)
-        response['doc_info'] = dict()
-        response['doc_info']['is_owner'] = self.user_info.is_owner
-        response['doc_info']['rights'] = self.user_info.access_rights
+            response['doc_info']['owner']['team_members'].append(tm_object)
+        collaborators = get_accessrights(
+            AccessRight.objects.filter(document__owner=doc_owner)
+        )
+        response['doc_info']['collaborators'] = collaborators
         if self.doc['version'] > self.doc['diff_version']:
             print('!!!diff version issue!!!')
             self.doc['diff_version'] = self.doc['version']
@@ -146,11 +142,10 @@ class WebSocket(BaseWebSocketHandler):
             response['doc_info']['unapplied_diffs'] = []
         if self.user_info.is_owner:
             the_user = self.user_info.user
-            response['doc']['owner']['email'] = the_user.email
-            response['doc']['owner']['username'] = the_user.username
-            response['doc']['owner']['first_name'] = the_user.first_name
-            response['doc']['owner']['last_name'] = the_user.last_name
-            response['doc']['owner']['email'] = the_user.email
+            response['doc_info']['owner']['email'] = the_user.email
+            response['doc_info']['owner']['username'] = the_user.username
+            response['doc_info']['owner']['first_name'] = the_user.first_name
+            response['doc_info']['owner']['last_name'] = the_user.last_name
         else:
             the_user = self.user_info.user
             response['user'] = dict()
@@ -161,7 +156,6 @@ class WebSocket(BaseWebSocketHandler):
             response['user']['username'] = the_user.username
             response['user']['first_name'] = the_user.first_name
             response['user']['last_name'] = the_user.last_name
-            response['user']['email'] = the_user.email
         response['doc_info']['session_id'] = self.id
         self.write_message(response)
 

@@ -23,11 +23,11 @@ export let headerbarModel = {
                     tooltip: gettext('Share the document with other users.'),
                     action: editor => {
                         new DocumentAccessRightsDialog(
-                            [editor.doc.id],
-                            editor.doc.access_rights,
-                            editor.doc.owner.team_members,
-                            newAccessRights => {
-                                editor.doc.access_rights = newAccessRights
+                            [editor.docInfo.id],
+                            editor.docInfo.collaborators,
+                            editor.docInfo.owner.team_members,
+                            newCollaborators => {
+                                editor.docInfo.collaborators = newCollaborators
                             },
                             memberData => {
                                 editor.user.team_members.push(memberData)
@@ -54,15 +54,11 @@ export let headerbarModel = {
                     tooltip: gettext('Save a revision of the current document.'),
                     keys: 'Ctrl-s',
                     action: editor => {
-                        editor.save().then(
-                            () => {
-                                let dialog = new RevisionDialog()
-                                return dialog.init()
-                            }
-                        ).then(
+                        let dialog = new RevisionDialog()
+                        dialog.init().then(
                             note => {
                                 let saver = new SaveRevision(
-                                    editor.doc,
+                                    editor.getDoc(),
                                     editor.imageDB,
                                     editor.bibDB,
                                     note
@@ -71,35 +67,34 @@ export let headerbarModel = {
                             }
                         )
                     },
-                    disabled: editor => READ_ONLY_ROLES.includes(editor.docInfo.rights)
+                    disabled: editor => READ_ONLY_ROLES.includes(editor.docInfo.access_rights)
                 },
                 {
                     title: gettext('Create Copy'),
                     icon: 'floppy',
                     tooltip: gettext('Create copy of the current document.'),
                     action: editor => {
-                        editor.save().then(
-                            () => {
-                                let newBibDB, newImageDB
-                                if (editor.doc.owner.id === editor.user.id) {
-                                    // We are copying from and to the same user.
-                                    // We don't need different databases for this.
-                                    newBibDB = editor.bibDB
-                                    newImageDB = editor.imageDB
-                                    return Promise.resolve({newBibDB, newImageDB})
-                                } else {
-                                    newBibDB = new BibliographyDB(editor.user.id)
-                                    newImageDB = new ImageDB(editor.user.id)
-                                    return newBibDB.getDB().then(
-                                        () => newImageDB.getDB()
-                                    ).then(
-                                        () => Promise.resolve({newBibDB, newImageDB})
-                                    )
-                                }
+                        let getDataBases = new Promise((resolve, reject) => {
+                            let newBibDB, newImageDB
+                            if (editor.docInfo.owner.id === editor.user.id) {
+                                // We are copying from and to the same user.
+                                // We don't need different databases for this.
+                                newBibDB = editor.bibDB
+                                newImageDB = editor.imageDB
+                                return resolve({newBibDB, newImageDB})
+                            } else {
+                                newBibDB = new BibliographyDB(editor.user.id)
+                                newImageDB = new ImageDB(editor.user.id)
+                                return newBibDB.getDB().then(
+                                    () => newImageDB.getDB()
+                                ).then(
+                                    () => resolve({newBibDB, newImageDB})
+                                )
                             }
-                        ).then(({newBibDB, newImageDB}) => {
+                        })
+                        getDataBases().then(({newBibDB, newImageDB}) => {
                             let copier = new SaveCopy(
-                                editor.doc,
+                                editor.getDoc(),
                                 editor.bibDB,
                                 editor.imageDB,
                                 newBibDB,
@@ -118,13 +113,11 @@ export let headerbarModel = {
                     icon: 'download',
                     tooltip: gettext('Download the current document.'),
                     action: editor => {
-                        editor.save().then(() => {
-                            new ExportFidusFile(
-                                editor.doc,
-                                editor.bibDB,
-                                editor.imageDB
-                            )
-                        })
+                        new ExportFidusFile(
+                            editor.getDoc(),
+                            editor.bibDB,
+                            editor.imageDB
+                        )
                     }
                 },
                 {
@@ -147,41 +140,35 @@ export let headerbarModel = {
                     title: gettext('HTML'),
                     tooltip: gettext('Export the document to an HTML file.'),
                     action: editor => {
-                        editor.save().then(() => {
-                            new HTMLExporter(
-                                editor.doc,
-                                editor.bibDB,
-                                editor.mod.styles.citationStyles,
-                                editor.mod.styles.citationLocales
-                            )
-                        })
+                        new HTMLExporter(
+                            editor.getDoc(),
+                            editor.bibDB,
+                            editor.mod.styles.citationStyles,
+                            editor.mod.styles.citationLocales
+                        )
                     }
                 },
                 {
                     title: gettext('Epub'),
                     tooltip: gettext('Export the document to an Epub electronic reader file.'),
                     action: editor => {
-                        editor.save().then(() => {
-                            new EpubExporter(
-                                editor.doc,
-                                editor.bibDB,
-                                editor.mod.styles.citationStyles,
-                                editor.mod.styles.citationLocales
-                            )
-                        })
+                        new EpubExporter(
+                            editor.getDoc(),
+                            editor.bibDB,
+                            editor.mod.styles.citationStyles,
+                            editor.mod.styles.citationLocales
+                        )
                     }
                 },
                 {
                     title: gettext('LaTeX'),
                     tooltip: gettext('Export the document to an LaTeX file.'),
                     action: editor => {
-                        editor.save().then(() => {
-                            new LatexExporter(
-                                editor.doc,
-                                editor.bibDB,
-                                editor.imageDB
-                            )
-                        })
+                        new LatexExporter(
+                            editor.getDoc(),
+                            editor.bibDB,
+                            editor.imageDB
+                        )
                     }
                 }
             ]
@@ -191,7 +178,7 @@ export let headerbarModel = {
             title: gettext('Citation Style'),
             tooltip: gettext('Choose your preferred citation style.'),
             disabled: editor => {
-                return READ_ONLY_ROLES.includes(editor.docInfo.rights)
+                return READ_ONLY_ROLES.includes(editor.docInfo.access_rights)
             },
             content: []
         },
@@ -200,7 +187,7 @@ export let headerbarModel = {
             title: gettext('Document Style'),
             tooltip: gettext('Choose your preferred document style.'),
             disabled: editor => {
-                return READ_ONLY_ROLES.includes(editor.docInfo.rights)
+                return READ_ONLY_ROLES.includes(editor.docInfo.access_rights)
             },
             content: []
         },
@@ -209,7 +196,7 @@ export let headerbarModel = {
             title: gettext('Paper Size'),
             tooltip: gettext('Choose a papersize for printing and PDF generation.'),
             disabled: editor => {
-                return READ_ONLY_ROLES.includes(editor.docInfo.rights)
+                return READ_ONLY_ROLES.includes(editor.docInfo.access_rights)
             },
             content: [
                 {
@@ -249,7 +236,7 @@ export let headerbarModel = {
             title: gettext('Metadata'),
             tooltip: gettext('Choose which metadata to enable.'),
             disabled: editor => {
-                return READ_ONLY_ROLES.includes(editor.docInfo.rights)
+                return READ_ONLY_ROLES.includes(editor.docInfo.access_rights)
             },
             content: [
                 {

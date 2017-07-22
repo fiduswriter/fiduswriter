@@ -191,7 +191,7 @@ export class ModCollabDocChanges {
             return
         }
         if (data.comments && data.comments.length) {
-            this.mod.editor.updateComments(data.comments, data.comments_version)
+            this.mod.editor.mod.comments.store.receive(data.comments, data.comment_version)
         }
         if (data.diff && data.diff.length) {
             data.diff.forEach(diff => this.applyDiff(diff))

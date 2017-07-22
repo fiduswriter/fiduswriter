@@ -119,6 +119,7 @@ export let footnoteMarkersPlugin = function(options) {
 
 
                 let remote = tr.getMeta('remote'),
+                    fromFootnote = tr.getMeta('fromFootnote'),
                     {
                         decos
                     } = this.getState(oldState),
@@ -134,7 +135,7 @@ export let footnoteMarkersPlugin = function(options) {
                         let firstFootNoteStart = newFootnotes[0].from
                         let offset = decos.find().findIndex(fn => fn.from > firstFootNoteStart)
                         newFootnotes.forEach((footnote, index) => {
-                            if (!remote) {
+                            if (!remote && !fromFootnote) {
                                 let fnContent = state.doc.nodeAt(footnote.from).attrs.footnote
                                 options.editor.mod.footnotes.fnEditor.renderFootnote(fnContent, offset + index)
                             }

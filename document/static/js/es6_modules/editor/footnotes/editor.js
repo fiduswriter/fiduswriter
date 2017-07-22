@@ -148,6 +148,8 @@ export class ModFootnoteEditor {
                 let fnContent = this.view.state.doc.child(fnIndex).toJSON().content
                 let transaction = updateFootnoteMarker(this.mod.editor.view.state, fnIndex, fnContent)
                 if (transaction) {
+                    // Mark this change as originating from footnote to prevent circularity
+                    transaction.setMeta('fromFootnote', true)
                     this.mod.editor.view.dispatch(transaction)
                 }
             } else {

@@ -332,6 +332,7 @@ class WebSocket(BaseWebSocketHandler):
                     "diff": self.doc["last_diffs"][number_diffs:],
                     "reject_request_id": parsed["request_id"],
                 }
+                print(response)
                 self.write_message(response)
             else:
                 print('unfixable')
@@ -361,6 +362,7 @@ class WebSocket(BaseWebSocketHandler):
                 "diff_version": pdv,
                 "diff": self.doc["last_diffs"][number_diffs:],
             }
+            print(response)
             self.write_message(response)
             return
         else:

@@ -57,7 +57,7 @@ class Command(django.core.management.commands.loaddata.Command):
                 filepath = join(fixture_path, path.name)
                 if isfile(filepath):
                     find_file = filepath
-            if find_file == False:
+            if find_file is False:
                 self.stderr.write(
                     (
                         "Expected file {} doesn't exist, skipping"
@@ -66,7 +66,6 @@ class Command(django.core.management.commands.loaddata.Command):
                 continue
             with open(find_file, 'rb') as f:
                 default_storage.save(path.name, f)
-
 
     def handle(self, *fixture_labels, **options):
         # Hook up pre_save events for all the apps' models that have

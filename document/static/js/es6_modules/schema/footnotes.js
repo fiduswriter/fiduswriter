@@ -6,7 +6,6 @@ import {tableNodes} from "prosemirror-tables"
 
 import {figure, citation, equation, heading} from "./common"
 
-
 let footnotecontainer = {
     group: "part",
     content: "(block|table_block)+",
@@ -16,22 +15,13 @@ let footnotecontainer = {
     }
 }
 
-let footnote_end = {
-    group: "part",
-    parseDOM: [{tag: "hr"}],
-    toDOM(node) {
-        return ['hr']
-    }
-}
-
 let doc = {
-    content: "part+"
+    content: "part*"
 }
 
 let spec = {
   nodes: from({
     doc,
-    footnote_end,
     footnotecontainer,
 
     paragraph: nodes.paragraph,

@@ -88,10 +88,19 @@ class WebSocket(BaseWebSocketHandler):
         response['type'] = 'doc_data'
         response['doc'] = dict()
         response['doc']['version'] = self.doc['version']
+        response['doc_info'] = dict()
         if self.doc['diff_version'] < self.doc['version']:
             print('!!!diff version issue!!!')
             self.doc['diff_version'] = self.doc['version']
             self.doc["last_diffs"] = []
+        elif self.doc['diff_version'] > self.doc['version']:
+            needed_diffs = self.doc['diff_version'] - self.doc['version']
+            # We only send those diffs needed by the receiver.
+            response['doc_info']['unapplied_diffs'] = self.doc[
+                "last_diffs"][-needed_diffs:]
+            print('Adding %d diffs' % needed_diffs)
+        else:
+            response['doc_info']['unapplied_diffs'] = []
         response['doc']['title'] = self.doc['title']
         response['doc']['contents'] = self.doc['contents']
         response['doc']['metadata'] = self.doc['metadata']
@@ -109,7 +118,6 @@ class WebSocket(BaseWebSocketHandler):
         else:
             response['doc']['comments'] = self.doc["comments"]
         response['doc']['comment_version'] = self.doc["comment_version"]
-        response['doc_info'] = dict()
         response['doc_info']['id'] = self.doc['id']
         response['doc_info']['is_owner'] = self.user_info.is_owner
         response['doc_info']['access_rights'] = self.user_info.access_rights
@@ -129,17 +137,6 @@ class WebSocket(BaseWebSocketHandler):
             AccessRight.objects.filter(document__owner=doc_owner)
         )
         response['doc_info']['collaborators'] = collaborators
-        if self.doc['version'] > self.doc['diff_version']:
-            print('!!!diff version issue!!!')
-            self.doc['diff_version'] = self.doc['version']
-            self.doc["last_diffs"] = []
-        elif self.doc['diff_version'] > self.doc['version']:
-            needed_diffs = self.doc['diff_version'] - self.doc['version']
-            # We only send those diffs needed by the receiver.
-            response['doc_info']['unapplied_diffs'] = self.doc[
-                "last_diffs"][-needed_diffs:]
-        else:
-            response['doc_info']['unapplied_diffs'] = []
         if self.user_info.is_owner:
             the_user = self.user_info.user
             response['doc_info']['owner']['email'] = the_user.email
@@ -323,6 +320,7 @@ class WebSocket(BaseWebSocketHandler):
             if pdv + len(self.doc["last_diffs"]) >= ddv:
                 # We have enough last_diffs stored to fix it.
                 print("can fix it")
+                print("PDV: %d, DDV: %d" % (pdv, ddv))
                 number_diffs = \
                     parsed["diff_version"] - self.doc['diff_version']
                 response = {
@@ -332,7 +330,6 @@ class WebSocket(BaseWebSocketHandler):
                     "diff": self.doc["last_diffs"][number_diffs:],
                     "reject_request_id": parsed["request_id"],
                 }
-                print(response)
                 self.write_message(response)
             else:
                 print('unfixable')

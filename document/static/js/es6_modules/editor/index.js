@@ -121,16 +121,9 @@ export class Editor {
                     }
                     this.onBeforeTransaction(this.view, transaction)
                 }
-
                 let newState = this.view.state.apply(transaction)
                 this.view.updateState(newState)
-
-                this.mod.footnotes.layout.updateDOM()
-
-                this.mod.collab.docChanges.sendToCollaborators()
-
                 this.onTransaction(transaction, remote)
-                this.docInfo.changed = true
             }
         })
         // The editor that is currently being edited in -- main or footnote editor
@@ -331,11 +324,12 @@ export class Editor {
                 // diffs and then save immediately.
                 //try {
                     // We only try because this fails if the PM diff format has changed.
+
                 while (this.docInfo.unapplied_diffs.length > 0) {
                     let diff = this.docInfo.unapplied_diffs.shift()
                     this.mod.collab.docChanges.applyDiff(diff)
                 }
-                this.save()
+                //this.save()
                 /*} catch (error) {
                     // We couldn't apply the diffs. They are likely corrupted.
                     // We remove remaining diffs, increase the version by one and
@@ -346,10 +340,6 @@ export class Editor {
                 }*/
             }
 
-
-
-            // Get document settings
-            this.mod.settings.check(this.view.state.doc.firstChild.attrs)
 
             // Render footnotes based on main doc
             this.mod.footnotes.fnEditor.renderAllFootnotes()
@@ -367,8 +357,12 @@ export class Editor {
             this.mod.comments.layout.onChange()
 
             return this.getBibDB(this.docInfo.owner.id).then(() => {
-                this.mod.citations.layoutCitations()
                 this.waitingForDocument = false
+                // Get document settings
+                this.mod.settings.check(this.view.state.doc.firstChild.attrs)
+
+                this.mod.citations.layoutCitations()
+
             })
         })
     }
@@ -604,6 +598,10 @@ export class Editor {
             commentIds = []
             // Check what area is affected
 
+        this.mod.footnotes.layout.updateDOM()
+
+        this.mod.collab.docChanges.sendToCollaborators()
+
         transaction.steps.forEach((step, index) => {
             if (step.jsonID === 'replace' || step.jsonID === 'replaceAround') {
                 if (step.from !== step.to) {
@@ -658,6 +656,7 @@ export class Editor {
             this.mod.comments.layout.onChange()
         }
 
+        this.docInfo.changed = true
     }
 
 }

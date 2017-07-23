@@ -76,7 +76,7 @@ export class ModCollabDocChanges {
     }
 
     sendToCollaborators() {
-        if (this.awaitingDiffResponse) {
+        if (this.awaitingDiffResponse || this.mod.editor.waitingForDocument) {
             // We are waiting for the confirmation of previous steps, so don't
             // send anything now.
             return
@@ -270,4 +270,5 @@ export class ModCollabDocChanges {
         this.setConfirmedDoc(transaction)
         this.receiving = false
     }
+
 }

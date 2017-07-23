@@ -7,9 +7,7 @@ export let getMissingDocumentListData = function (ids, documentList) {
     let incompleteIds = []
 
     for (let i = 0; i < ids.length; i++) {
-        if (!(_.findWhere(documentList, {
-            id: parseInt(ids[i])
-        }).hasOwnProperty('contents'))) {
+        if (!documentList.find(doc => doc.id === parseInt(ids[i])).hasOwnProperty('contents')) {
             incompleteIds.push(parseInt(ids[i]))
         }
     }
@@ -27,9 +25,7 @@ export let getMissingDocumentListData = function (ids, documentList) {
                     xhr.setRequestHeader("X-CSRFToken", csrfToken),
                 success: (response, textStatus, jqXHR) => {
                     for (let i = 0; i < response.documents.length; i++) {
-                        let aDocument = _.findWhere(documentList, {
-                            id: response.documents[i].id
-                        })
+                        let aDocument = documentList.find(doc => doc.id === response.documents[i].id)
                         let newDoc = updateDoc({
                             contents: JSON.parse(response.documents[i].contents),
                             metadata: JSON.parse(response.documents[i].metadata),

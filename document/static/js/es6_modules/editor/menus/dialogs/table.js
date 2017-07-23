@@ -1,23 +1,11 @@
-import {commands} from "prosemirror-old/dist/edit/commands"
+import {selectParentNode} from "prosemirror-commands"
 import {tableInsertTemplate, tableEditTemplate} from "./templates"
-import {createTable, addColumnAfter, addColumnBefore, removeColumn, addRowBefore, addRowAfter, removeRow} from "prosemirror-old/dist/schema-table"
+import {addColumnAfter, addColumnBefore, deleteColumn, addRowBefore, addRowAfter, deleteRow, deleteTable} from "prosemirror-tables"
 
-export class TableDropdown {
-    constructor(mod) {
-        this.editor = mod.editor
-        this.init()
-    }
-
-    // Check if caret is inside a table
-    inTable() {
-        const currentPm = this.editor.currentPm
-        const fromEl = currentPm.doc.resolve(currentPm.selection.from).node(3)
-        const toEl = currentPm.doc.resolve(currentPm.selection.to).node(3)
-        if (fromEl===toEl && fromEl.type.name === 'table') {
-            return true
-        } else {
-            return false
-        }
+export class TableDialog {
+    constructor(editor) {
+        this.editor = editor
+        this.dialogEl = false
     }
 
     init() {
@@ -28,8 +16,22 @@ export class TableDropdown {
         }
     }
 
+    // Check if caret is inside a table
+    inTable() {
+        const currentState = this.editor.currentView.state
+        const fromEl = currentState.doc.resolve(currentState.selection.from).node(3)
+        const toEl = currentState.doc.resolve(currentState.selection.to).node(3)
+        if (fromEl===toEl && fromEl.type.name === 'table') {
+            return true
+        } else {
+            return false
+        }
+    }
+
+
+
     markInsertTable(cell, className) {
-        jQuery(`#table-dialog td.${className}`).removeClass(className)
+        this.dialog.find(`td.${className}`).removeClass(className)
         let colCount = 1
         let countElement = cell
         while(countElement.previousElementSibling) {
@@ -43,7 +45,7 @@ export class TableDropdown {
             rowCount += 1
         }
         // add hover class.
-        let rows = jQuery('#table-dialog tr')
+        let rows = this.dialog.find('tr')
         for(let i=0;i<rowCount;i++) {
             let row = rows[i]
             let cols = jQuery(rows[i]).find('td')
@@ -56,20 +58,66 @@ export class TableDropdown {
 
     insertTableDialog() {
         let rowCount = 1, colCount = 1
-        jQuery('#table-dialog').html(tableInsertTemplate({}))
+        let buttons = []
+        buttons.push({
+            text: gettext('Insert'),
+            class: 'fw-button fw-dark',
+            click: () => {
+                let table = {type: 'table', content: []}
+
+                for (let i=0;i<rowCount;i++) {
+                    let row = {type: 'table_row', content: []}
+                    for (let j=0;j<colCount;j++) {
+                        row.content.push({type: 'table_cell', content: [{type: 'paragraph'}]})
+                    }
+                    table.content.push(row)
+
+                }
+                let schema = this.editor.currentView.state.schema
+                this.editor.currentView.dispatch(
+                    this.editor.currentView.state.tr.replaceSelectionWith(
+                        schema.nodeFromJSON(table)
+                    )
+                )
+                this.dialog.dialog('close')
+                this.editor.currentView.focus()
+            }
+        })
+        buttons.push({
+            text: gettext('Cancel'),
+            class: 'fw-button fw-orange',
+            click: () => {
+                this.dialog.dialog('close')
+                this.editor.currentView.focus()
+            }
+        })
+
+        this.dialog = jQuery(tableInsertTemplate({}))
+
+        this.dialog.dialog({
+            draggable: false,
+            resizable: false,
+            top: 10,
+            width: 360,
+            height: 360,
+            modal: true,
+            buttons,
+            close: () => this.dialog.dialog('destroy').remove()
+        })
+
         // manage hovering over table cells
         let that = this
-        jQuery('#table-dialog td').on('mouseenter', function(){
+        this.dialog.find('td').on('mouseenter', function(){
             that.markInsertTable(this, 'hover')
         })
-        jQuery('#table-dialog td').on('mouseleave', function(){
-            jQuery('#table-dialog td.hover').removeClass('hover')
+        this.dialog.find('td').on('mouseleave', function(){
+            that.dialog.find('td.hover').removeClass('hover')
         })
-        jQuery('#table-dialog td').on('mousedown', function(event) {
+        this.dialog.find('td').on('mousedown', function(event) {
             // Prevent dialog from opening a second time.
             event.stopImmediatePropagation()
         })
-        jQuery('#table-dialog td').on('click', function(event){
+        this.dialog.find('td').on('click', function(event){
             // Prevent dialog from closing.
             event.preventDefault()
             event.stopImmediatePropagation()
@@ -78,68 +126,78 @@ export class TableDropdown {
             colCount = newCounts.colCount
         })
 
-        jQuery('#table-dialog button.table-insert').on('mousedown', () => {
-            let nodeType = this.editor.currentPm.schema.nodes['table']
-            this.editor.currentPm.tr.replaceSelection(
-                createTable(nodeType, rowCount, colCount)
-            ).applyAndScroll()
-            this.editor.currentPm.focus()
-        })
-
 
     }
 
     executeAction(event, editFunction) {
         event.preventDefault()
         event.stopImmediatePropagation()
-        if (this.editor.currentPm.hasFocus()) {
+        if (this.editor.currentView.hasFocus()) {
             editFunction()
         }
+        this.dialog.dialog('close')
+        this.editor.currentView.focus()
     }
 
     editTableDialog() {
-        jQuery('#table-dialog').html(tableEditTemplate({}))
+        let buttons = []
+        buttons.push({
+            text: gettext('Cancel'),
+            class: 'fw-button fw-orange',
+            click: () => {
+                this.dialog.dialog('close')
+                this.editor.currentView.focus()
+            }
+        })
+
+        this.dialog = jQuery(tableEditTemplate({}))
+
+        this.dialog.dialog({
+            draggable: false,
+            resizable: false,
+            top: 10,
+            width: 360,
+            height: 360,
+            modal: true,
+            buttons,
+            close: () => this.dialog.dialog('destroy').remove()
+        })
 
         // Table manipulation
 
-        jQuery('#table-dialog .row-after').on('mousedown', event => {
+        this.dialog.find('.row-after').on('mousedown', event => {
             this.executeAction(event, () =>
-                addRowAfter(this.editor.currentPm,true)
+                addRowAfter(this.editor.currentView.state, this.editor.currentView.dispatch)
             )
         })
-    	jQuery('#table-dialog .row-before').on('mousedown', event => {
+    	this.dialog.find('.row-before').on('mousedown', event => {
             this.executeAction(event, () =>
-                addRowBefore(this.editor.currentPm,true)
+                addRowBefore(this.editor.currentView.state, this.editor.currentView.dispatch)
             )
         })
-    	jQuery('#table-dialog .col-after').on('mousedown', event => {
+    	this.dialog.find('.col-after').on('mousedown', event => {
             this.executeAction(event, () =>
-                addColumnAfter(this.editor.currentPm,true)
+                addColumnAfter(this.editor.currentView.state, this.editor.currentView.dispatch)
             )
         })
-    	jQuery('#table-dialog .col-before').on('mousedown', event => {
+    	this.dialog.find('.col-before').on('mousedown', event => {
             this.executeAction(event, () =>
-                addColumnBefore(this.editor.currentPm,true)
+                addColumnBefore(this.editor.currentView.state, this.editor.currentView.dispatch)
             )
         })
-    	jQuery('#table-dialog .col-remove').on('mousedown', event => {
+    	this.dialog.find('.col-remove').on('mousedown', event => {
             this.executeAction(event, () =>
-                removeColumn(this.editor.currentPm,true)
+                deleteColumn(this.editor.currentView.state, this.editor.currentView.dispatch)
             )
         })
-    	jQuery('#table-dialog .row-remove').on('mousedown', event => {
+    	this.dialog.find('.row-remove').on('mousedown', event => {
             this.executeAction(event, () =>
-                removeRow(this.editor.currentPm,true)
+                deleteRow(this.editor.currentView.state, this.editor.currentView.dispatch)
             )
         })
-        jQuery('#table-dialog .table-remove').on('mousedown', event => {
+        this.dialog.find('.table-remove').on('mousedown', event => {
             this.executeAction(event, () => {
-                // move the selection up until reaching the second level (selecting the table)
-                while(this.editor.currentPm.selection.$from.depth > 2) {
-                    commands.selectParentNode(this.editor.currentPm, true)
-                }
-                // Remove the selection
-                this.editor.currentPm.tr.deleteSelection().apply()
+                deleteTable(this.editor.currentView.state, this.editor.currentView.dispatch)
             })
         })
     }

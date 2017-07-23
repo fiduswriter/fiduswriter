@@ -35,7 +35,6 @@ export class FeedbackTab {
         jQuery("#feedbackbutton").click(() => {
             this.openFeedback()
         })
-        this.verifyBrowser()
     }
 
     openFeedback() {
@@ -65,29 +64,4 @@ export class FeedbackTab {
         document.cookie = `${name}=true`
     }
 
-    // Verify that we are running one of the (semi)-verified browser.
-    verifyBrowser() {
-        if ((!(bowser.chrome||bowser.firefox||bowser.msedge||bowser.safari) || bowser.mobile || bowser.tablet) &! getCookie('browsercheck')) {
-            this.setCookie('browsercheck')
-            let warning = gettext(`<p>Please be aware that you are running a browser
-                that has not yet been tested with Fidus Writer, so your mileage may vary.
-                Fidus Writer will currently not run on mobile platforms or Internet Explorer.</p>
-                <p>We recommend using Google Chrome on a desktop computer. </p>`)
-            let diaButtons = {}
-            diaButtons[gettext("OK")] = function() {
-                jQuery(this).dialog("close")
-            }
-            jQuery(`<div>${warning}</div>`).dialog({
-                modal: true,
-                title: gettext("Warning"),
-                minHeight: 250,
-                buttons: diaButtons,
-                create:function () {
-                    jQuery(this).closest(".ui-dialog")
-                    .find(".ui-dialog-buttonpane .ui-button:first")
-                    .addClass("fw-button fw-orange")
-                }
-            })
-        }
-    }
 }

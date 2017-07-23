@@ -33,10 +33,7 @@ export class DocumentOverviewActions {
             success: (data, textStatus, jqXHR) => {
                 this.documentOverview.stopDocumentTable()
                 jQuery('#Text_' + id).detach()
-                this.documentOverview.documentList = _.reject(
-                    this.documentOverview.documentList,
-                    document => document.id === id
-                )
+                this.documentOverview.documentList = this.documentOverview.documentList.filter(doc => doc.id !== id)
                 this.documentOverview.startDocumentTable()
             }
         })
@@ -117,9 +114,6 @@ export class DocumentOverviewActions {
                     importer.init().then(
                         ({doc, docInfo}) => {
                             deactivateWait()
-                            //if (noErrors) {
-                                //let doc = returnValue[0]
-                                //let aDocumentValues = returnValue.docInfo
                             addAlert('info', doc.title + gettext(
                                     ' successfully imported.'))
                             that.documentOverview.documentList.push(doc)
@@ -131,9 +125,7 @@ export class DocumentOverviewActions {
                                         localizeDate
                                     }))
                             that.documentOverview.startDocumentTable()
-                            //} else {
-                            //    addAlert('error', returnValue)
-                            //}
+
                         },
                         errorMessage => {
                             addAlert('error', errorMessage)
@@ -142,8 +134,7 @@ export class DocumentOverviewActions {
                     )
             })
 
-            //reader.onload = unzip
-            //reader.readAsText(fidusFile)
+
             jQuery(this).dialog('close')
         }
         diaButtons[gettext('Cancel')] = function () {
@@ -186,9 +177,7 @@ export class DocumentOverviewActions {
         ).then(
             () => {
                 for (let i = 0; i < ids.length; i++) {
-                    let doc = _.findWhere(this.documentOverview.documentList, {
-                        id: ids[i]
-                    })
+                    let doc = this.documentOverview.documentList.find(doc => doc.id === ids[i])
                     if (doc.owner.id===this.documentOverview.user.id) {
                         // We are copying from and to the same user.
                         let copier = new SaveCopy(
@@ -272,7 +261,7 @@ export class DocumentOverviewActions {
             () => {
                 for (let i = 0; i < ids.length; i++) {
                     new ExportFidusFile(
-                        _.findWhere(this.documentOverview.documentList, {id: ids[i]}),
+                        this.documentOverview.documentList.find(doc => doc.id===ids[i]),
                         false, // no bibDB or imageDB present
                         false
                     )
@@ -288,10 +277,12 @@ export class DocumentOverviewActions {
         ).then(
             () => {
                 for (let i = 0; i < ids.length; i++) {
-                    new HTMLExporter(_.findWhere(
-                        this.documentOverview.documentList, {
-                            id: ids[i]
-                        }), false)
+                    new HTMLExporter(
+                        this.documentOverview.documentList.find(doc => doc.id===ids[i]),
+                        false,
+                        this.documentOverview.citationStyles,
+                        this.documentOverview.citationLocales
+                    )
                 }
             }
         )
@@ -305,15 +296,23 @@ export class DocumentOverviewActions {
             () => {
                 for (let i = 0; i < ids.length; i++) {
                     if (templateType==='docx') {
-                        new DocxExporter(_.findWhere(
-                            this.documentOverview.documentList, {
-                                id: ids[i]
-                            }), templateUrl, false, false)
+                        new DocxExporter(
+                            this.documentOverview.documentList.find(doc => doc.id===ids[i]),
+                            templateUrl,
+                            false,
+                            false,
+                            this.documentOverview.citationStyles,
+                            this.documentOverview.citationLocales
+                        )
                     } else {
-                        new OdtExporter(_.findWhere(
-                            this.documentOverview.documentList, {
-                                id: ids[i]
-                            }), templateUrl, false, false)
+                        new OdtExporter(
+                            this.documentOverview.documentList.find(doc => doc.id===ids[i]),
+                            templateUrl,
+                            false,
+                            false,
+                            this.documentOverview.citationStyles,
+                            this.documentOverview.citationLocales
+                        )
                     }
 
                 }
@@ -328,10 +327,10 @@ export class DocumentOverviewActions {
         ).then(
             () => {
                 for (let i = 0; i < ids.length; i++) {
-                    new LatexExporter(_.findWhere(
-                        this.documentOverview.documentList, {
-                            id: ids[i]
-                        }), false)
+                    new LatexExporter(
+                        this.documentOverview.documentList.find(doc => doc.id===ids[i]),
+                        false
+                    )
                 }
             }
         )
@@ -344,10 +343,12 @@ export class DocumentOverviewActions {
         ).then(
             () => {
                 for (let i = 0; i < ids.length; i++) {
-                    new EpubExporter(_.findWhere(
-                        this.documentOverview.documentList, {
-                            id: ids[i]
-                        }), false)
+                  new EpubExporter(
+                      this.documentOverview.documentList.find(doc => doc.id===ids[i]),
+                      false,
+                      this.documentOverview.citationStyles,
+                      this.documentOverview.citationLocales
+                  )
                 }
             }
         )
@@ -380,10 +381,7 @@ export class DocumentOverviewActions {
                             this.documentOverview.startDocumentTable()
                             break
                         case 'deleted-revision':
-                            actionObject.doc.revisions = _.reject(
-                                actionObject.doc.revisions,
-                                revision => revision.pk === actionObject.id
-                            )
+                            actionObject.doc.revisions = actionObject.doc.revisions.filter(rev => rev.pk !== actionObject.id)
                             if (actionObject.doc.revisions.length === 0) {
                                 jQuery('#Text_' + actionObject.doc.id + ' .revisions').detach()
                             }

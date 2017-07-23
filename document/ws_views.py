@@ -3,14 +3,17 @@ import atexit
 from copy import deepcopy
 
 from document.helpers.session_user_info import SessionUserInfo
+from document.helpers.serializers import PythonWithURLSerializer
 from base.ws_handler import BaseWebSocketHandler
 from logging import info, error
 from tornado.escape import json_decode, json_encode
 from tornado.websocket import WebSocketClosedError
 from document.models import AccessRight, COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
-    CAN_COMMUNICATE
+    CAN_COMMUNICATE, ExportTemplate
 from document.views import get_accessrights
 from avatar.templatetags.avatar_tags import avatar_url
+
+from style.models import DocumentStyle, CitationStyle, CitationLocale
 
 
 class WebSocket(BaseWebSocketHandler):
@@ -29,10 +32,12 @@ class WebSocket(BaseWebSocketHandler):
             document_id, current_user)
         if can_access:
             if doc_db.id in WebSocket.sessions:
+                print("Serving already opened file")
                 self.doc = WebSocket.sessions[doc_db.id]
                 self.id = max(self.doc['participants']) + 1
                 print("id when opened %s" % self.id)
             else:
+                print("Opening file")
                 self.id = 0
                 self.doc = dict()
                 self.doc['db'] = doc_db
@@ -50,6 +55,26 @@ class WebSocket(BaseWebSocketHandler):
                 WebSocket.sessions[doc_db.id] = self.doc
             self.doc['participants'][self.id] = self
             response['type'] = 'welcome'
+            serializer = PythonWithURLSerializer()
+            export_temps = serializer.serialize(
+                ExportTemplate.objects.all()
+            )
+            document_styles = serializer.serialize(
+                DocumentStyle.objects.all(),
+                use_natural_foreign_keys=True
+            )
+            cite_styles = serializer.serialize(
+                CitationStyle.objects.all()
+            )
+            cite_locales = serializer.serialize(
+                CitationLocale.objects.all()
+            )
+            response['styles'] = {
+                'export_templates': [obj['fields'] for obj in export_temps],
+                'document_styles': [obj['fields'] for obj in document_styles],
+                'citation_styles': [obj['fields'] for obj in cite_styles],
+                'citation_locales': [obj['fields'] for obj in cite_locales],
+            }
             self.write_message(response)
 
     def confirm_diff(self, request_id):
@@ -62,22 +87,25 @@ class WebSocket(BaseWebSocketHandler):
         response = dict()
         response['type'] = 'doc_data'
         response['doc'] = dict()
-        response['doc']['id'] = self.doc['id']
         response['doc']['version'] = self.doc['version']
+        response['doc_info'] = dict()
         if self.doc['diff_version'] < self.doc['version']:
             print('!!!diff version issue!!!')
             self.doc['diff_version'] = self.doc['version']
             self.doc["last_diffs"] = []
+        elif self.doc['diff_version'] > self.doc['version']:
+            needed_diffs = self.doc['diff_version'] - self.doc['version']
+            # We only send those diffs needed by the receiver.
+            response['doc_info']['unapplied_diffs'] = self.doc[
+                "last_diffs"][-needed_diffs:]
+            print('Adding %d diffs' % needed_diffs)
+        else:
+            response['doc_info']['unapplied_diffs'] = []
         response['doc']['title'] = self.doc['title']
         response['doc']['contents'] = self.doc['contents']
         response['doc']['metadata'] = self.doc['metadata']
         response['doc']['settings'] = self.doc['settings']
         doc_owner = self.doc['db'].owner
-        access_rights = get_accessrights(
-            AccessRight.objects.filter(
-                document__owner=doc_owner))
-        response['doc']['access_rights'] = access_rights
-
         if self.user_info.access_rights == 'read-without-comments':
             response['doc']['comments'] = []
         elif self.user_info.access_rights == 'review':
@@ -90,42 +118,31 @@ class WebSocket(BaseWebSocketHandler):
         else:
             response['doc']['comments'] = self.doc["comments"]
         response['doc']['comment_version'] = self.doc["comment_version"]
-        response['doc']['access_rights'] = get_accessrights(
-            AccessRight.objects.filter(document__owner=doc_owner))
-        response['doc']['owner'] = dict()
-        response['doc']['owner']['id'] = doc_owner.id
-        response['doc']['owner']['name'] = doc_owner.readable_name
-        response['doc']['owner'][
+        response['doc_info']['id'] = self.doc['id']
+        response['doc_info']['is_owner'] = self.user_info.is_owner
+        response['doc_info']['access_rights'] = self.user_info.access_rights
+        response['doc_info']['owner'] = dict()
+        response['doc_info']['owner']['id'] = doc_owner.id
+        response['doc_info']['owner']['name'] = doc_owner.readable_name
+        response['doc_info']['owner'][
             'avatar'] = avatar_url(doc_owner, 80)
-        response['doc']['owner']['team_members'] = []
-
+        response['doc_info']['owner']['team_members'] = []
         for team_member in doc_owner.leader.all():
             tm_object = dict()
             tm_object['id'] = team_member.member.id
             tm_object['name'] = team_member.member.readable_name
             tm_object['avatar'] = avatar_url(team_member.member, 80)
-            response['doc']['owner']['team_members'].append(tm_object)
-        response['doc_info'] = dict()
-        response['doc_info']['is_owner'] = self.user_info.is_owner
-        response['doc_info']['rights'] = self.user_info.access_rights
-        if self.doc['version'] > self.doc['diff_version']:
-            print('!!!diff version issue!!!')
-            self.doc['diff_version'] = self.doc['version']
-            self.doc["last_diffs"] = []
-        elif self.doc['diff_version'] > self.doc['version']:
-            needed_diffs = self.doc['diff_version'] - self.doc['version']
-            # We only send those diffs needed by the receiver.
-            response['doc_info']['unapplied_diffs'] = self.doc[
-                "last_diffs"][-needed_diffs:]
-        else:
-            response['doc_info']['unapplied_diffs'] = []
+            response['doc_info']['owner']['team_members'].append(tm_object)
+        collaborators = get_accessrights(
+            AccessRight.objects.filter(document__owner=doc_owner)
+        )
+        response['doc_info']['collaborators'] = collaborators
         if self.user_info.is_owner:
             the_user = self.user_info.user
-            response['doc']['owner']['email'] = the_user.email
-            response['doc']['owner']['username'] = the_user.username
-            response['doc']['owner']['first_name'] = the_user.first_name
-            response['doc']['owner']['last_name'] = the_user.last_name
-            response['doc']['owner']['email'] = the_user.email
+            response['doc_info']['owner']['email'] = the_user.email
+            response['doc_info']['owner']['username'] = the_user.username
+            response['doc_info']['owner']['first_name'] = the_user.first_name
+            response['doc_info']['owner']['last_name'] = the_user.last_name
         else:
             the_user = self.user_info.user
             response['user'] = dict()
@@ -136,7 +153,6 @@ class WebSocket(BaseWebSocketHandler):
             response['user']['username'] = the_user.username
             response['user']['first_name'] = the_user.first_name
             response['user']['last_name'] = the_user.last_name
-            response['user']['email'] = the_user.email
         response['doc_info']['session_id'] = self.id
         self.write_message(response)
 
@@ -299,10 +315,12 @@ class WebSocket(BaseWebSocketHandler):
         elif pdv > ddv:
             # Client has a higher version than server. Something is fishy!
             print('unfixable')
+            print("PDV: %d, DDV: %d" % (pdv, ddv))
         elif pdv < ddv:
             if pdv + len(self.doc["last_diffs"]) >= ddv:
                 # We have enough last_diffs stored to fix it.
                 print("can fix it")
+                print("PDV: %d, DDV: %d" % (pdv, ddv))
                 number_diffs = \
                     parsed["diff_version"] - self.doc['diff_version']
                 response = {
@@ -315,6 +333,7 @@ class WebSocket(BaseWebSocketHandler):
                 self.write_message(response)
             else:
                 print('unfixable')
+                print("PDV: %d, DDV: %d" % (pdv, ddv))
                 # Client has a version that is too old to be fixed
                 self.send_document()
         else:
@@ -323,6 +342,7 @@ class WebSocket(BaseWebSocketHandler):
     def check_diff_version(self, parsed):
         pdv = parsed["diff_version"]
         ddv = self.doc['diff_version']
+        print("PDV: %d, DDV: %d" % (pdv, ddv))
         if pdv == ddv:
             response = {
                 "type": "confirm_diff_version",
@@ -339,6 +359,7 @@ class WebSocket(BaseWebSocketHandler):
                 "diff_version": pdv,
                 "diff": self.doc["last_diffs"][number_diffs:],
             }
+            print(response)
             self.write_message(response)
             return
         else:
@@ -455,8 +476,8 @@ class WebSocket(BaseWebSocketHandler):
                 doc['last_diffs'] = []
         doc_db.last_diffs = json_encode(doc['last_diffs'])
         doc_db.comments = json_encode(doc['comments'])
-        print('saving document #' + str(doc_db.id))
-        print('version ' + str(doc_db.version))
+        print('saving document # %d' % doc_db.id)
+        print('version %d' % doc_db.version)
         doc_db.save()
 
     @classmethod

@@ -16,15 +16,16 @@ Exporter to Open Document Text (LibreOffice)
 */
 
 export class OdtExporter {
-    constructor(doc, templateUrl, bibDB, imageDB) {
+    constructor(doc, templateUrl, bibDB, imageDB, citationStyles, citationLocales) {
         this.doc = doc
         this.templateUrl = templateUrl
         this.bibDB = bibDB
         this.imageDB = imageDB
+        this.citationStyles = citationStyles
+        this.citationLocales = citationLocales
         this.pmCits = false
         this.docContents = false
         this.docTitle = false
-
         getDatabasesIfNeeded(this, doc).then(
             () => this.init()
         )
@@ -41,7 +42,7 @@ export class OdtExporter {
         this.styles = new OdtExporterStyles(this)
         this.math = new OdtExporterMath(this)
         this.images = new OdtExporterImages(this, this.imageDB, this.docContents)
-        this.citations = new OdtExporterCitations(this, this.bibDB, this.docContents)
+        this.citations = new OdtExporterCitations(this, this.bibDB, this.citationStyles, this.citationLocales, this.docContents)
         this.richtext = new OdtExporterRichtext(this, this.images)
 
         this.xml = new XmlZip(

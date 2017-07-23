@@ -90,10 +90,7 @@ export class ImportNative {
 
         Object.keys(this.impImageDB).map(key => parseInt(key)).forEach(key => {
             let imageObj = this.impImageDB[key]
-            let matchEntries = _.where(
-                this.imageDB.db,
-                {checksum: imageObj.checksum}
-            )
+            let matchEntries = this.imageDB.db.filter(image => image.checksum === imageObj.checksum)
             if (0 === matchEntries.length) {
                 newImageEntries.push({
                     oldId: key,

@@ -1,3 +1,4 @@
+import {getCommentDuringCreationDecoration} from "../plugins/comments"
 /* Functions related to user interactions with comments */
 
 export class ModCommentInteractions {
@@ -100,6 +101,7 @@ export class ModCommentInteractions {
     updateComment(id, commentText, commentIsMajor) {
         // Save the change to a comment and mark that the document has been changed
         if (id===-1) {
+            let referrer = getCommentDuringCreationDecoration(this.mod.editor.view.state)
             // This is a new comment. We need to get an ID for it if it has contents.
             this.mod.store.addComment(
                 this.mod.editor.user.id,
@@ -108,8 +110,8 @@ export class ModCommentInteractions {
                 new Date().getTime(), // We update the time to the time the comment was stored
                 commentText,
                 commentIsMajor,
-                this.mod.store.commentDuringCreation.referrer.from,
-                this.mod.store.commentDuringCreation.referrer.to
+                referrer.from,
+                referrer.to
             )
         } else {
             this.mod.store.updateComment(id, commentText, commentIsMajor)

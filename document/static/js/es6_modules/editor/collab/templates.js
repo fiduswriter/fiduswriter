@@ -8,7 +8,3 @@ export let messageTemplate = _.template(
         <%- message.body %>
     </div>
 `)
-
-export let participantListTemplate = _.template(
-    '<% _.each(participants, function(participant) { %><img src="<%= participant.avatar %>" alt="<%- participant.name %>" title="<%- participant.name %>" class="avatar user-<%- participant.colorId %>"><% }); %>'
-)

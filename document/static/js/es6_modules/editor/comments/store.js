@@ -4,6 +4,7 @@ based on https://github.com/ProseMirror/website/blob/master/src/client/collab/co
 */
 import {eventMixin} from "./event"
 import {Comment} from "./comment"
+import {addCommentDuringCreationDecoration, removeCommentDuringCreationDecoration} from "../plugins/comments"
 
 export class ModCommentStore {
     constructor(mod) {
@@ -32,19 +33,22 @@ export class ModCommentStore {
                 this.mod.editor.user.avatar,
                 new Date().getTime(),
                 ''),
-            referrer: this.mod.editor.pm.markRange(
-                this.mod.editor.pm.selection.from,
-                this.mod.editor.pm.selection.to,
-                {className: 'active-comment'}
-            ),
             inDOM: false
         }
+        let transaction = addCommentDuringCreationDecoration(this.mod.editor.view.state)
+        if (transaction) {
+            this.mod.editor.view.dispatch(transaction)
+        }
+
     }
 
     removeCommentDuringCreation() {
         if (this.commentDuringCreation) {
-            this.mod.editor.pm.removeRange(this.commentDuringCreation.referrer)
             this.commentDuringCreation = false
+            let transaction = removeCommentDuringCreationDecoration(this.mod.editor.view.state)
+            if (transaction) {
+                this.mod.editor.view.dispatch(transaction)
+            }
         }
     }
 
@@ -56,8 +60,10 @@ export class ModCommentStore {
             type: "create",
             id: id
         })
-        let markType = this.mod.editor.pm.schema.marks.comment.create({id})
-        this.mod.editor.pm.tr.addMark(posFrom, posTo, markType).apply()
+        let markType = this.mod.editor.view.state.schema.marks.comment.create({id})
+        this.mod.editor.view.dispatch(
+            this.mod.editor.view.state.tr.addMark(posFrom, posTo, markType)
+        )
         this.signal("mustSend")
     }
 
@@ -67,8 +73,8 @@ export class ModCommentStore {
         // We need to find text close to the position to which we can link
         // comment. This is user for reviewer comments that should not be lost.
 
-        let markType = this.mod.editor.pm.schema.marks.comment.create({id})
-        let doc = this.mod.editor.pm.doc
+        let markType = this.mod.editor.view.state.schema.marks.comment.create({id})
+        let doc = this.mod.editor.view.state.doc
         let posFrom = pos-1
         let posTo = pos
         // We move backward through the document, trying to pick a start position
@@ -99,11 +105,15 @@ export class ModCommentStore {
             // boundary, it means all text has been removed. So now we insert a
             // single space which we can link to.
             if (doc.resolve(posTo).depth === 1) {
-                this.mod.editor.pm.tr.insertText(posFrom,' ').apply()
+                this.mod.editor.view.dispatch(
+                    this.mod.editor.view.state.tr.insertText(posFrom,' ')
+                )
                 posTo = posFrom + 1
             }
         }
-        this.mod.editor.pm.tr.addMark(posFrom, posTo, markType).apply()
+        this.mod.editor.view.dispatch(
+            this.mod.editor.view.state.tr.addMark(posFrom, posTo, markType)
+        )
     }
 
     addLocalComment(id, user, userName, userAvatar, date, comment, answers, isMajor, local) {
@@ -135,15 +145,15 @@ export class ModCommentStore {
     }
 
     removeCommentMarks(id) {
-        this.mod.editor.pm.doc.descendants((node, pos, parent) => {
+        this.mod.editor.view.state.doc.descendants((node, pos, parent) => {
             let nodeStart = pos
             let nodeEnd = pos + node.nodeSize
             for (let i =0; i < node.marks.length; i++) {
                 let mark = node.marks[i]
                 if (mark.type.name === 'comment' && parseInt(mark.attrs.id) === id) {
-                    let markType = this.mod.editor.pm.schema.marks.comment.create({id})
-                    this.mod.editor.pm.apply(
-                        this.mod.editor.pm.tr.removeMark(nodeStart, nodeEnd, markType)
+                    let markType = this.mod.editor.view.state.schema.marks.comment.create({id})
+                    this.mod.editor.view.dispatch(
+                        this.mod.editor.view.state.tr.removeMark(nodeStart, nodeEnd, markType)
                     )
                 }
             }
@@ -178,7 +188,7 @@ export class ModCommentStore {
     checkAndMove(ids) {
         // Check if there is still a node referring to the comment IDs that
         // were in the deleted content.
-        this.mod.editor.pm.doc.descendants((node, pos, parent) => {
+        this.mod.editor.view.state.doc.descendants((node, pos, parent) => {
             if (!node.isInline) {
                 return
             }
@@ -190,7 +200,7 @@ export class ModCommentStore {
 
         // Move the comment to a piece of text nearby, unless the
         ids.forEach(id => {
-            let pos = this.mod.editor.pm.selection.from
+            let pos = this.mod.editor.view.state.selection.from
             this.moveComment(
                 id,
                 pos
@@ -226,10 +236,7 @@ export class ModCommentStore {
 
     deleteLocalAnswer(commentId, answerId, local) {
         if (this.comments[commentId] && this.comments[commentId].answers) {
-            this.comments[commentId].answers = _.reject(
-                this.comments[commentId].answers,
-                answer => answer.id === answerId
-            )
+            this.comments[commentId].answers = this.comments[commentId].answers.filter(answer => answer.id !== answerId)
         }
         if (local || (!this.mod.layout.isCurrentlyEditing())) {
             this.mod.layout.layoutComments()
@@ -248,9 +255,7 @@ export class ModCommentStore {
 
     updateLocalAnswer(commentId, answerId, answerText, local) {
         if (this.comments[commentId] && this.comments[commentId].answers) {
-            let answer = _.findWhere(this.comments[commentId].answers, {
-                id: answerId
-            })
+            let answer = this.comments[commentId].answers.find(answer => answer.id === answerId)
             answer.answer = answerText
         }
         if (local || (!this.mod.layout.isCurrentlyEditing())) {
@@ -307,9 +312,8 @@ export class ModCommentStore {
             } else if (event.type == "add_answer") {
                 let found = this.comments[event.id]
                 if (!found || !found.id || !found.answers) continue
-                let foundAnswer = _.findWhere(found.answers, {
-                    id: event.answerId
-                })
+                let foundAnswer = found.answers.find(answer => answer.id === event.answerId)
+
                 result.push({
                     type: "add_answer",
                     id: foundAnswer.id,
@@ -329,9 +333,7 @@ export class ModCommentStore {
             } else if (event.type == "update_answer") {
                 let found = this.comments[event.commentId]
                 if (!found || !found.id || !found.answers) continue
-                let foundAnswer = _.findWhere(found.answers, {
-                    id: event.answerId
-                })
+                let foundAnswer = found.answers.find(answer => answer.id === event.answerId)
                 result.push({
                     type: "update_answer",
                     id: foundAnswer.id,

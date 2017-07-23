@@ -19,7 +19,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
     user = None
     TEST_TEXT = "Lorem ipsum dolor sit amet."
     MULTILINE_TEST_TEXT = "Lorem ipsum\ndolor sit amet."
-    fixtures = []
+    fixtures = ['initial_styles.json', ]
 
     @classmethod
     def setUpClass(cls):
@@ -46,15 +46,15 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
     def get_title(self, driver):
         # Title is child 0.
         return driver.execute_script(
-            'return window.theEditor.pm.doc.firstChild'
-            '.content.content[0].textContent;'
+            'return window.theEditor.view.state.doc.firstChild'
+            '.firstChild.textContent;'
         )
 
     def get_contents(self, driver):
         # Contents is child 5.
         return driver.execute_script(
-            'return window.theEditor.pm.doc.firstChild'
-            '.content.content[5].textContent;'
+            'return window.theEditor.view.state.doc.firstChild'
+            '.child(5).textContent;'
         )
 
     def test_typing(self):
@@ -66,10 +66,10 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         document_input2 = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
 
         # Chrome with selenium has problem with focusing elements, so we use
@@ -77,9 +77,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         # First start tag is length 1, so placing after first start tag is
         # position 1
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(2,2)')
+            'window.testCaret.setSelection(2,2)')
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(2,2)')
+            'window.testCaret.setSelection(2,2)')
 
         first_part = "Here is "
         second_part = "my title"
@@ -108,9 +108,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         # Added content is 16 characters long, so + 16.
         # Total: 30.
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(31,31)')
+            'window.testCaret.setSelection(31,31)')
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(31,31)')
+            'window.testCaret.setSelection(31,31)')
 
         for char in self.TEST_TEXT:
             document_input.send_keys(char)
@@ -137,19 +137,19 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         document_input2 = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         # Chrome with selenium has problem with focusing elements, so we use
         # the ProseMirror internal methods for this.
         # First start tag is length 1, so placing after first start tag is
         # position 1
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(2,2)')
+            'window.testCaret.setSelection(2,2)')
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(2,2)')
+            'window.testCaret.setSelection(2,2)')
 
         first_part = "Here is "
         second_part = "my title"
@@ -188,9 +188,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         # Added content is 16 characters long, so + 16.
         # Total: 30.
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(31,31)')
+            'window.testCaret.setSelection(31,31)')
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(31,31)')
+            'window.testCaret.setSelection(31,31)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -219,7 +219,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def make_bold(self, driver):
-        button = driver.find_element_by_id('button-bold')
+        button = driver.find_element_by_xpath('//*[@title="Bold"]')
         button.click()
 
     def get_boldtext(self, driver):
@@ -238,12 +238,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.add_title(self.driver)
 
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -256,12 +256,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(23,28)')
+            'window.testCaret.setSelection(23,28)')
 
         p2 = multiprocessing.Process(
             target=self.make_bold,
@@ -282,7 +282,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def make_italic(self, driver):
-        button = driver.find_element_by_id('button-italic')
+        button = driver.find_element_by_xpath('//*[@title="Italic"]')
         button.click()
 
     def get_italictext(self, driver):
@@ -301,12 +301,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.add_title(self.driver)
 
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
 
         # Total: 23
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -319,12 +319,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(23,28)')
+            'window.testCaret.setSelection(23,28)')
 
         p2 = multiprocessing.Process(
             target=self.make_italic,
@@ -345,7 +345,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def make_numberedlist(self, driver):
-        button = driver.find_element_by_id('button-ol')
+        button = driver.find_element_by_xpath('//*[@title="Numbered list"]')
         button.click()
 
     def get_numberedlist(self, driver):
@@ -363,12 +363,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.add_title(self.driver)
 
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
 
         # Total: 23
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -381,12 +381,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p2 = multiprocessing.Process(
             target=self.make_numberedlist,
@@ -399,7 +399,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_size(self.driver2, 47)
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(41,41)')
+            'window.testCaret.setSelection(41,41)')
 
         p2 = multiprocessing.Process(
             target=self.make_numberedlist,
@@ -421,7 +421,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def make_bulletlist(self, driver):
-        button = driver.find_element_by_id('button-ul')
+        button = driver.find_element_by_xpath('//*[@title="Bullet list"]')
         button.click()
 
     def get_bulletlist(self, driver):
@@ -440,12 +440,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.add_title(self.driver)
 
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
 
         # Total: 23
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -458,12 +458,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p2 = multiprocessing.Process(
             target=self.make_bulletlist,
@@ -476,7 +476,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_size(self.driver2, 47)
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(41,41)')
+            'window.testCaret.setSelection(41,41)')
 
         p2 = multiprocessing.Process(
             target=self.make_bulletlist,
@@ -498,7 +498,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def make_blockquote(self, driver):
-        button = driver.find_element_by_id('button-blockquote')
+        button = driver.find_element_by_xpath('//*[@title="Blockquote"]')
         button.click()
 
     def get_blockquote(self, driver):
@@ -517,12 +517,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.add_title(self.driver)
 
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -535,12 +535,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p2 = multiprocessing.Process(
             target=self.make_blockquote,
@@ -561,7 +561,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def addlink(self, driver):
-        button = driver.find_element_by_id('button-link')
+        button = driver.find_element_by_xpath('//*[@title="Link"]')
         button.click()
 
         # wait to load popup
@@ -594,12 +594,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.add_title(self.driver)
 
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
 
         # Total: 23
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -612,12 +612,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(23,28)')
+            'window.testCaret.setSelection(23,28)')
 
         p2 = multiprocessing.Process(
             target=self.addlink,
@@ -638,7 +638,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def make_footnote(self, driver):
-        button = driver.find_element_by_id('button-footnote')
+        button = driver.find_element_by_xpath('//*[@title="Footnote"]')
         button.click()
 
         # wait for footnote to be created
@@ -651,14 +651,14 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         footnote_box = driver.find_element_by_id(
             'footnote-box-container')
         footnote_editor = footnote_box.find_element_by_class_name(
-            'ProseMirror-content')
+            'ProseMirror')
         footnote_editor.click()
 
         self.input_text(footnote_editor, "footnote Text")
 
     def get_footnote(self, driver):
         atag = driver.find_element_by_xpath(
-            '//*[@id="footnote-box-container"]/div[2]/div/div[1]/p/span'
+            '//*[@id="footnote-box-container"]/div[2]/div[1]/p[1]'
         )
         return atag.text
 
@@ -673,12 +673,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.add_title(self.driver)
 
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -691,12 +691,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(28,28)')
+            'window.testCaret.setSelection(28,28)')
 
         p2 = multiprocessing.Process(
             target=self.make_footnote,
@@ -719,16 +719,15 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def perform_delete_undo(self, driver):
-        element = driver.find_element_by_class_name('ProseMirror-content')
+        element = driver.find_element_by_class_name('ProseMirror')
         element.send_keys(Keys.BACKSPACE)
 
-        button = driver.find_element_by_id('button-undo')
+        button = driver.find_element_by_xpath('//*[@title="Undo"]')
         button.click()
 
     def get_undo(self, driver):
         content = driver.find_element_by_class_name('article-body')
-
-        return content.text
+        return content.get_attribute("innerText").rstrip('\n')
 
     def test_delete_undo(self):
         """
@@ -742,12 +741,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.add_title(self.driver)
 
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -760,12 +759,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(23,28)')
+            'window.testCaret.setSelection(23,28)')
 
         p2 = multiprocessing.Process(
             target=self.perform_delete_undo,
@@ -786,7 +785,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def make_mathequation(self, driver):
-        button = driver.find_element_by_id('button-math')
+        button = driver.find_element_by_xpath('//*[@title="Math"]')
         button.click()
 
         # wait to load popup
@@ -797,7 +796,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
     def get_mathequation(self, driver):
         math = driver.find_element_by_xpath(
-            '//*[contains(@class, "article-body")]/p[1]/span[2]'
+            '//*[contains(@class, "article-body")]/p[1]/span[1]'
             # OR '//*[@class="equation"]'
         )
 
@@ -815,12 +814,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.add_title(self.driver)
 
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
 
         # Total: 23
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -833,12 +832,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(28,28)')
+            'window.testCaret.setSelection(28,28)')
 
         p2 = multiprocessing.Process(
             target=self.make_mathequation,
@@ -859,7 +858,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def add_comment(self, driver):
-        button = driver.find_element_by_id('button-comment')
+        button = driver.find_element_by_xpath('//*[@title="Comment"]')
         button.click()
 
         textArea = WebDriverWait(driver, self.wait_time).until(
@@ -888,12 +887,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.add_title(self.driver)
 
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -906,12 +905,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(23,28)')
+            'window.testCaret.setSelection(23,28)')
 
         p2 = multiprocessing.Process(
             target=self.add_comment,
@@ -934,7 +933,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def add_figure(self, driver):
-        button = driver.find_element_by_id('button-figure')
+        button = driver.find_element_by_xpath('//*[@title="Figure"]')
         button.click()
 
         caption = WebDriverWait(driver, self.wait_time).until(
@@ -1010,12 +1009,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.add_title(self.driver)
 
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
 
         # Total: 23
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -1028,12 +1027,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(28,28)')
+            'window.testCaret.setSelection(28,28)')
 
         p2 = multiprocessing.Process(
             target=self.add_figure,
@@ -1063,7 +1062,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def add_citation(self, driver):
-        button = driver.find_element_by_id('button-cite')
+        button = driver.find_element_by_xpath('//*[@title="Cite"]')
         button.click()
 
         # click on 'Register new source' button
@@ -1086,23 +1085,23 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # fill the values
         title_of_publication = driver.find_element_by_css_selector(
-            '.journaltitle .ProseMirror-content'
+            '.journaltitle .ProseMirror'
         )
         title_of_publication.click()
         title_of_publication.send_keys("My publication title")
 
         title = driver.find_element_by_css_selector(
-            '.title .ProseMirror-content')
+            '.title .ProseMirror')
         title.click()
         title.send_keys("My title")
 
         author_firstName = driver.find_element_by_css_selector(
-            '.author .given .ProseMirror-content')
+            '.author .given .ProseMirror')
         author_firstName.click()
         author_firstName.send_keys("John")
 
         author_lastName = driver.find_element_by_css_selector(
-            '.family .ProseMirror-content')
+            '.family .ProseMirror')
         author_lastName.click()
         author_lastName.send_keys("Doe")
 
@@ -1131,7 +1130,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
     def get_citation_within_text(self, driver):
         cite_within_doc = driver.find_element_by_xpath(
-            '//*[contains(@class, "article-body")]/p[1]/span[2]'
+            '//*[contains(@class, "article-body")]/p[1]/span[1]'
         )
         return cite_within_doc.text
 
@@ -1148,14 +1147,13 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-
         document_input = self.driver.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
 
         # Total: 22
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(23,23)')
+            'window.testCaret.setSelection(23,23)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -1168,12 +1166,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
-            'ProseMirror-content'
+            'ProseMirror'
         )
         content.click()
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(28,28)')
+            'window.testCaret.setSelection(28,28)')
 
         p2 = multiprocessing.Process(
             target=self.add_citation,
@@ -1186,7 +1184,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_sync(self.driver, self.driver2)
 
         self.assertEqual(
-            10,
+            18,
             len(self.get_citation_within_text(self.driver2))
         )
 
@@ -1196,7 +1194,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
         self.assertEqual(
-            47,
+            39,
             len(self.get_citation_bib(self.driver))
         )
 

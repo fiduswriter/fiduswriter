@@ -1,5 +1,4 @@
-import {escapeText} from "../tools/html"
-import {noSpaceTmp} from "../../common"
+import {noSpaceTmp, escapeText} from "../../common"
 
 export class OdtExporterRichtext {
     constructor(exporter, images) {
@@ -17,11 +16,11 @@ export class OdtExporterRichtext {
             case 'article':
                 break
             case 'body':
-                options = _.clone(options)
+                options = Object.assign({}, options)
                 options.section = 'Text_20_body'
                 break
             case 'abstract':
-                options = _.clone(options)
+                options = Object.assign({}, options)
                 options.section = 'Abstract'
                 break
             case 'paragraph':
@@ -45,21 +44,21 @@ export class OdtExporterRichtext {
                 break
             case 'blockquote':
                 // This is imperfect, but Word doesn't seem to provide section/quotation nesting
-                options = _.clone(options)
+                options = Object.assign({}, options)
                 options.section = 'Quote'
                 break
             case 'ordered_list':
                 let olId = this.exporter.styles.getOrderedListStyleId()
                 start += `<text:list text:style-name="L${olId[0]}">`
                 end = '</text:list>' + end
-                options = _.clone(options)
+                options = Object.assign({}, options)
                 options.section = `P${olId[1]}`
                 break
             case 'bullet_list':
                 let ulId = this.exporter.styles.getBulletListStyleId()
                 start += `<text:list text:style-name="L${ulId[0]}">`
                 end = '</text:list>' + end
-                options = _.clone(options)
+                options = Object.assign({}, options)
                 options.section = `P${ulId[1]}`
                 break
             case 'list_item':
@@ -69,7 +68,7 @@ export class OdtExporterRichtext {
             case 'footnotecontainer':
                 break
             case 'footnote':
-                options = _.clone(options)
+                options = Object.assign({}, options)
                 options.section = 'Footnote'
                 options.inFootnote = true
                 content += this.transformRichtext({
@@ -89,12 +88,12 @@ export class OdtExporterRichtext {
                 // Check for hyperlink, bold/strong and italic/em
                 let hyperlink, strong, em, sup, sub, smallcaps
                 if (node.marks) {
-                    hyperlink = _.findWhere(node.marks, {type:'link'})
-                    em = _.findWhere(node.marks, {type:'em'})
-                    strong = _.findWhere(node.marks, {type:'strong'})
-                    smallcaps = _.findWhere(node.marks, {type:'smallcaps'})
-                    sup = _.findWhere(node.marks, {type:'sup'})
-                    sub = _.findWhere(node.marks, {type:'sub'})
+                    hyperlink = node.marks.find(mark => mark.type === 'link')
+                    em = node.marks.find(mark => mark.type === 'em')
+                    strong = node.marks.find(mark => mark.type === 'strong')
+                    smallcaps = node.marks.find(mark => mark.type === 'smallcaps')
+                    sup = node.marks.find(mark => mark.type === 'sup')
+                    sub = node.marks.find(mark => mark.type === 'sub')
                 }
 
                 if (hyperlink) {
@@ -144,7 +143,7 @@ export class OdtExporterRichtext {
                     end = noSpaceTmp`
                         </text:note-body>
                     </text:note>` + end
-                    options = _.clone(options)
+                    options = Object.assign({}, options)
                     options.section = 'Footnote'
                     content += this.transformRichtext({type:'paragraph', content:cit.content}, options)
                 } else {
@@ -164,6 +163,7 @@ export class OdtExporterRichtext {
                     this.exporter.styles.checkGraphicStyle('Graphics')
                     start += noSpaceTmp`
                     <text:p>
+                        <text:bookmark text:name="${node.attrs.id}"/>
                         <draw:frame draw:style-name="Graphics" draw:name="Image${this.imgCounter++}" text:anchor-type="paragraph" style:rel-width="100%" style:rel-height="scale" svg:width="${width}pt" svg:height="${height}pt" draw:z-index="0">
                             <draw:image xlink:href="Pictures/${imgFileName}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/>
                         </draw:frame>
@@ -181,6 +181,7 @@ export class OdtExporterRichtext {
                     this.exporter.styles.checkGraphicStyle('Formula')
                     start += noSpaceTmp`
                     <text:p>
+                        <text:bookmark text:name="${node.attrs.id}"/>
                         <draw:frame draw:style-name="Formula" draw:name="Object${objectNumber}" text:anchor-type="as-char" draw:z-index="1">
                             <draw:object xlink:href="./Object ${objectNumber}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/>
                             <svg:desc>formula</svg:desc>
@@ -223,7 +224,7 @@ export class OdtExporterRichtext {
                 break
             // CSL bib entries
             case 'cslbib':
-                options = _.clone(options)
+                options = Object.assign({}, options)
                 options.section = 'Bibliography_20_1'
                 break
             case 'cslblock':

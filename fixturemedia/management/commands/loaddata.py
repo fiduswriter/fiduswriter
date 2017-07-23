@@ -1,4 +1,4 @@
-from os.path import dirname, isdir, join
+from os.path import dirname, isdir, join, isfile
 
 from django.conf import settings
 import django.core.management.commands.loaddata
@@ -51,18 +51,21 @@ class Command(django.core.management.commands.loaddata.Command):
             path = getattr(instance, field.attname)
             if path is None or not path.name:
                 continue
+            find_file = False
             for fixture_path in self.fixture_media_paths:
+
                 filepath = join(fixture_path, path.name)
-                try:
-                    with open(filepath, 'rb') as f:
-                        default_storage.save(path.name, f)
-                except file_not_found_error:
-                    self.stderr.write(
-                        (
-                            "Expected file at {} doesn't exist, skipping"
-                        ).format(filepath)
-                    )
-                    continue
+                if isfile(filepath):
+                    find_file = filepath
+            if find_file is False:
+                self.stderr.write(
+                    (
+                        "Expected file {} doesn't exist, skipping"
+                    ).format(path.name)
+                )
+                continue
+            with open(find_file, 'rb') as f:
+                default_storage.save(path.name, f)
 
     def handle(self, *fixture_labels, **options):
         # Hook up pre_save events for all the apps' models that have
@@ -71,13 +74,17 @@ class Command(django.core.management.commands.loaddata.Command):
             signals.pre_save.connect(
                 self.load_images_for_signal,
                 sender=modelclass)
-
         fixture_paths = self.find_fixture_paths()
         fixture_paths = (join(path, 'media') for path in fixture_paths)
         fixture_paths = [path for path in fixture_paths if isdir(path)]
         self.fixture_media_paths = fixture_paths
-
-        return super(Command, self).handle(*fixture_labels, **options)
+        return_value = super(Command, self).handle(*fixture_labels, **options)
+        # Disconnect signal listeners
+        for modelclass in models_with_filefields():
+            signals.pre_save.disconnect(
+                self.load_images_for_signal,
+                sender=modelclass)
+        return return_value
 
     def find_fixture_paths(self):
         """Return the full paths to all possible fixture directories."""

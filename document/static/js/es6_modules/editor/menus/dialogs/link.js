@@ -1,8 +1,9 @@
+import {TextSelection} from "prosemirror-state"
 import {InternalLinkDialogTemplate, linkDialogTemplate, InternalHeadingsTemplate} from "./templates"
 
 export class LinkDialog {
-    constructor(mod) {
-        this.editor = mod.editor
+    constructor(editor) {
+        this.editor = editor
         this.link = ''
         this.defaultLink = 'https://'
         this.linkTitle = ''
@@ -18,13 +19,27 @@ export class LinkDialog {
     }
 
     findInternalTargets() {
-        let docs = [this.editor.pm.doc, this.editor.mod.footnotes.fnPm.doc]
+
+        let docs = [this.editor.view.state.doc, this.editor.mod.footnotes.fnEditor.view.state.doc],
+        figures = {}
 
         docs.forEach(doc => doc.descendants(node => {
             if (node.type.name === 'heading') {
                 this.internalTargets.push({
                     id: node.attrs.id,
                     text: node.textContent
+                })
+            }
+
+            if (node.type.name === 'figure') {
+                if (!figures[node.attrs.figureCategory]) {
+                    figures[node.attrs.figureCategory] = 0
+                }
+                figures[node.attrs.figureCategory]++
+
+                this.internalTargets.push({
+                    id: node.attrs.id,
+                    text: `${gettext(node.attrs.figureCategory)} ${figures[node.attrs.figureCategory]}: ${node.attrs.caption}`
                 })
             }
         }))
@@ -34,9 +49,9 @@ export class LinkDialog {
     // Check if there is an existing link at the selection. If this is the case
     // use its values in dialog.
     checkLink() {
-        let pm = this.editor.currentPm,
-            from = pm.selection.from,
-            linkMark = pm.doc.marksAt(from).find(
+        let state = this.editor.currentView.state,
+            from = state.selection.from,
+            linkMark = state.selection.$from.marks().find(
                 mark => mark.type.name === 'link'
             )
         if (linkMark) {
@@ -49,8 +64,9 @@ export class LinkDialog {
 
     // Find the start and end of the link currently selected.
     extendSelectionToMark(pos, mark) {
-        let pm = this.editor.currentPm,
-            $pos = pm.doc.resolve(pos),
+        let view = this.editor.currentView,
+            state = view.state,
+            $pos = state.doc.resolve(pos),
             startIndex = $pos.index(),
             endIndex = $pos.indexAfter()
 
@@ -70,7 +86,8 @@ export class LinkDialog {
             }
             endPos += size
         }
-        pm.setTextSelection(startPos, endPos)
+        let transaction = state.tr.setSelection(TextSelection.create(state.doc, startPos, endPos))
+        view.dispatch(transaction)
     }
 
     createDialog() {
@@ -96,7 +113,7 @@ export class LinkDialog {
                     // The link input is empty or hasn't been changed from the default value.
                     // Just close the dialog.
                     this.dialog.dialog('close')
-                    this.editor.currentPm.focus()
+                    this.editor.currentView.focus()
                     return
                 }
 
@@ -106,26 +123,25 @@ export class LinkDialog {
                 }
 
                 this.dialog.dialog('close')
-                let pm = this.editor.currentPm,
-                    posFrom = pm.selection.from,
-                    posTo = pm.selection.to,
-                    markType = pm.schema.marks.link.create({
+                let view = this.editor.currentView,
+                    posFrom = view.state.selection.from,
+                    posTo = view.state.selection.to,
+                    markType = view.state.schema.marks.link.create({
                         href: newLink,
                         title: linkTitle
                     })
                 // There is an empty selection. We insert the link title into the editor
                 // and then add the link to that.
                 if (posFrom===posTo) {
-                    pm.tr.insertText(posFrom, linkTitle).apply()
+                    view.dispatch(view.state.tr.insertText(linkTitle, posFrom, posTo))
                     posTo = posFrom + linkTitle.length
-                    pm.setTextSelection(posFrom, posTo)
                 }
-                pm.tr.addMark(
+                view.dispatch(view.state.tr.addMark(
                     posFrom,
                     posTo,
                     markType
-                ).apply()
-                pm.focus()
+                ))
+                view.focus()
                 return
             }
         })
@@ -135,7 +151,7 @@ export class LinkDialog {
             class: 'fw-button fw-orange',
             click: () => {
                 this.dialog.dialog('close')
-                this.editor.currentPm.focus()
+                this.editor.currentView.focus()
             }
         })
 

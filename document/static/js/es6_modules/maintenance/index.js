@@ -1,6 +1,5 @@
-import {ProseMirror} from "prosemirror-old/dist/edit/main"
-import {Step} from "prosemirror-old/dist/transform"
-import {collabEditing} from "prosemirror-old/dist/collab"
+import {Step} from "prosemirror-transform"
+
 import {updateFileDoc, updateFileBib} from "../importer/file"
 import {updateDoc, getMetadata, getSettings} from "../schema/convert"
 import {docSchema} from "../schema/document"
@@ -92,31 +91,29 @@ export class DocMaintenance {
     }
 
     applyDiffs(doc) {
-        let pm = new ProseMirror({
-            place: null,
-            schema: docSchema
-        })
 
-        pm.setDoc(
-            docSchema.nodeFromJSON({type:'doc', content:[doc.contents]})
-        )
-        let pmCollab = collabEditing.config({version: 0})
-        pmCollab.attach(pm)
+        let pmDoc = docSchema.nodeFromJSON({type:'doc', content:[doc.contents]})
+        /*let state = EditorState.create({
+            schema: docSchema,
+            doc:
+        })*/
+
         let unappliedDiffs = doc.diff_version - doc.version
 
         doc.last_diffs = doc.last_diffs.slice(doc.last_diffs.length - unappliedDiffs)
         while (doc.last_diffs.length > 0) {
-            try {
-                let diff = doc.last_diffs.shift()
-                let steps = [diff].map(j => Step.fromJSON(docSchema, j))
-                let client_ids = [diff].map(j => j.client_id)
-                pmCollab.receive(steps, client_ids)
-            } catch (error) {
-                addAlert('error', gettext('Discarded useless diffs for: ') + doc.id)
-                doc.last_diffs = []
-            }
+            let diff = doc.last_diffs.shift()
+            let steps = [diff].map(j => {
+                let step = Step.fromJSON(docSchema, j)
+                let result = step.apply(pmDoc)
+                if (result.doc) {
+                    pmDoc = result.doc
+                } else {
+                    addAlert('error', gettext('Discarded useless diff for: ') + doc.id)
+                }
+            })
         }
-        let pmArticle = pm.doc.firstChild
+        let pmArticle = pmDoc.firstChild
         doc.contents = pmArticle.toJSON()
         doc.metadata = getMetadata(pmArticle)
         Object.assign(doc.settings, getSettings(pmArticle))

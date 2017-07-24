@@ -20,6 +20,7 @@ before_install:
   - source venv/bin/activate
 
 install:
+  - mv travis/configuration.py ./
   - pip install -r requirements.txt
   - pip install -r dev-requirements.txt
   - flake8 ./

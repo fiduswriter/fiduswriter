@@ -33,7 +33,7 @@ export class ModFootnoteEditor {
     }
 
     init() {
-        let doc = this.schema.nodeFromJSON({"type":"doc","content":[{"type": "footnote_end"}]}),
+        let doc = this.schema.nodeFromJSON({"type":"doc","content":[]}),
             plugins = this.fnStatePlugins.map(plugin => {
                 if (plugin[1]) {
                     return plugin[0](plugin[1](doc))
@@ -75,8 +75,6 @@ export class ModFootnoteEditor {
                 this.mod.layout.updateDOM()
             }
         })
-
-        // TODO: get rid of footnote_end once Pm doesn't have a bug that requires it.
 
     }
 
@@ -172,7 +170,7 @@ export class ModFootnoteEditor {
 
     renderAllFootnotes() {
         let fnContents = getFootnoteMarkerContents(this.mod.editor.view.state)
-        let doc = this.schema.nodeFromJSON({"type":"doc","content":[{"type": "footnote_end"}]}),
+        let doc = this.schema.nodeFromJSON({"type":"doc","content":[]}),
             plugins = this.fnStatePlugins.map(plugin => {
                 if (plugin[1]) {
                     return plugin[0](plugin[1](doc))
@@ -209,6 +207,7 @@ export class ModFootnoteEditor {
         this.view.dispatch(transaction)
         if (setDoc) {
             let initialSteps = sendableSteps(this.view.state)
+
             this.view.dispatch(receiveTransaction(
                 this.view.state,
                 initialSteps.steps,

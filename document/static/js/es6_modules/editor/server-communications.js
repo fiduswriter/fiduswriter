@@ -10,6 +10,7 @@ export class ModServerCommunications {
             /* A list of messages to be sent. Only used when temporarily offline.
             Messages will be sent when returning back online. */
         this.messagesToSend = []
+
         this.connected = false
             /* Whether the connection is established for the first time. */
         this.firstTimeConnection = true
@@ -21,7 +22,12 @@ export class ModServerCommunications {
 
     createWSConnection() {
         let websocketProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-
+        // Messages object used to ensure that data is received in right order.
+        this.messages = {
+            server: 0,
+            client: 0,
+            lastTen: []
+        }
         try {
             this.ws = new window.WebSocket(`${websocketProtocol}//${window.websocketServer}${window.websocketPort}/ws/document/${this.editor.docInfo.id}`)
             this.ws.onopen = () => {
@@ -34,8 +40,47 @@ export class ModServerCommunications {
 
         this.ws.onmessage = event => {
             let data = JSON.parse(event.data)
-            this.receive(data)
+            let expectedServer = this.messages.server + 1
+            if (data.type === 'request_resend') {
+                this.resend_messages(data.from)
+            } else if (data.s < expectedServer) {
+                // Receive a message already received at least once. Ignore.
+                return
+            } else if (data.s > expectedServer) {
+                // Messages from the server have been lost.
+                // Request resend.
+                this.ws.send(JSON.stringify({
+                    type: 'request_resend',
+                    from: this.messages.server
+                }))
+            } else {
+                this.messages.server = expectedServer
+                if (data.c === this.messages.client) {
+                    this.receive(data)
+                } else if (data.c < this.messages.client) {
+                    // We have received all server messages, but the server seems
+                    // to have missed some of the client's messages. They could
+                    // have been sent simultaneously.
+                    // The server wins over the client in this case.
+                    let clientDifference = this.messages.client - data.c
+                    this.messages.client = data.c
+                    if (clientDifference > this.messages.lastTen.length) {
+                        // We cannot fix the situation
+                        this.send(() =>({type: 'get_document'}))
+                        return
+                    }
+                    this.messages['lastTen'].slice(0-clientDifference).forEach(getData => {
+                        let data = getData()
+                        this.messages.client += 1
+                        data.c = this.messages.client
+                        data.s = this.messages.server
+                        this.ws.send(JSON.stringify(data))
+                    })
+                    this.receive(data)
+                }
+            }
         }
+
         this.ws.onclose = event => {
             this.connected = false
             window.clearInterval(this.wsPinger)
@@ -51,9 +96,9 @@ export class ModServerCommunications {
 
         }
         this.wsPinger = window.setInterval(() => {
-            this.send({
+            this.send(() => ({
                 'type': 'ping'
-            })
+            }))
         }, 50000)
     }
 
@@ -65,9 +110,9 @@ export class ModServerCommunications {
         } else {
             this.editor.mod.footnotes.fnEditor.renderAllFootnotes()
             this.editor.mod.collab.docChanges.checkDiffVersion()
-            this.send({
+            this.send(() => ({
                 type: 'participant_update'
-            })
+            }))
             while (this.messagesToSend.length > 0) {
                 this.send(this.messagesToSend.shift());
             }
@@ -76,12 +121,35 @@ export class ModServerCommunications {
     }
 
     /** Sends data to server or keeps it in a list if currently offline. */
-    send(data) {
+    send(getData) {
         if (this.connected) {
+            this.messages.client += 1
+            let data = getData()
+            data.c = this.messages.client
+            data.s = this.messages.server
+            this.messages.lastTen.push(getData)
+            this.messages.lastTen = this.messages['lastTen'].slice(-10)
             this.ws.send(JSON.stringify(data))
-        } else if (data.type !== 'diff') {
-            this.messagesToSend.push(data)
+        } else {
+            this.messagesToSend.push(getData)
         }
+    }
+
+    resend_messages(from) {
+        let toSend = this.messages.client - from
+        this.messages.client = from
+        if (toSend > this.messages.lastTen.length) {
+            // Too many messages requested. Abort.
+            this.send(() => ({type: 'get_document'}))
+            return
+        }
+        this.messages.lastTen.slice(0-toSend).forEach(getData => {
+            this.messages.client += 1
+            let data = getData()
+            data.c = this.messages.client
+            data.s = this.messages.server
+            this.ws.send(JSON.stringify(data))
+        })
     }
 
     receive(data) {
@@ -120,6 +188,9 @@ export class ModServerCommunications {
                 break
             case 'confirm_diff':
                 this.editor.mod.collab.docChanges.confirmDiff(data.request_id)
+                break
+            case 'reject_diff':
+                this.editor.mod.collab.docChanges.rejectDiff(data.request_id)
                 break
             case 'check_hash':
                 this.editor.mod.collab.docChanges.checkHash(data.diff_version, data.hash)

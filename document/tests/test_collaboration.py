@@ -1042,6 +1042,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.join()
         p2.join()
 
+        # Wait for the two editors to be synched
+        self.wait_for_doc_sync(self.driver, self.driver2)
+
         self.assertEqual(
             1,
             len(self.get_image(self.driver2))

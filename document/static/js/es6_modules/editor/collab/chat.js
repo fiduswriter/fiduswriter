@@ -77,10 +77,10 @@ export class ModCollabChat {
     }
 
     sendMessage(messageText) {
-        this.mod.editor.mod.serverCommunications.send({
+        this.mod.editor.mod.serverCommunications.send(() => ({
             type: 'chat',
             body: messageText
-        })
+        }))
     }
 
     init() {

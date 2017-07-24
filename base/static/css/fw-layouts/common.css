@@ -73,11 +73,6 @@ table .fw-inline {
     border: solid 1px #c9c9c9;
 }
 
-#cookie-notification{
-    text-align: left;
-    margin-top: 6px;
-}
-
 .ProseMirror span.placeholder::before {
     color: #cecece;
     content: attr(data-placeholder);

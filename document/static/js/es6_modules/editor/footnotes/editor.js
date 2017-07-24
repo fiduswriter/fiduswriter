@@ -207,6 +207,7 @@ export class ModFootnoteEditor {
         this.view.dispatch(transaction)
         if (setDoc) {
             let initialSteps = sendableSteps(this.view.state)
+
             this.view.dispatch(receiveTransaction(
                 this.view.state,
                 initialSteps.steps,

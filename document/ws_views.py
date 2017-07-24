@@ -171,8 +171,11 @@ class WebSocket(BaseWebSocketHandler):
             print('receiving message for closed document')
             return
         parsed = json_decode(message)
-        print(parsed["type"])
+        if 'type' not in parsed:
+            print(parsed)
+        print("Type %s, server %d, client %d, id %d" % (parsed["type"], parsed["s"], parsed["c"], self.id))
         if parsed["type"] == 'request_resend':
+            print('CLIENT WANTS RESEND')
             self.resend_messages(parsed["from"])
             return
         if parsed["c"] < (self.messages["client"] + 1):
@@ -180,6 +183,7 @@ class WebSocket(BaseWebSocketHandler):
             return
         elif parsed["c"] > (self.messages["client"] + 1):
             # Messages from the client have been lost.
+            print('REQUEST RESEND FROM CLIENT')
             self.write_message({
                 'type': 'request_resend',
                 'from': self.messages["client"]
@@ -189,6 +193,8 @@ class WebSocket(BaseWebSocketHandler):
             # Message was sent either simultaneously with message from server
             # or a message from the server previously sent never arrived.
             # Resend the messages the client missed.
+            print('SIMULTANEOUS')
+            self.messages["client"] += 1
             self.resend_messages(parsed["s"])
             return
         # Message order is correct. We continue processing the data.
@@ -217,12 +223,15 @@ class WebSocket(BaseWebSocketHandler):
     def resend_messages(self, from_no):
         to_send = self.messages["server"] - from_no
         print ('resending messages: %d' % to_send)
+        print('Server: %d, from: %d' % (self.messages["server"], from_no))
         if to_send > len(self.messages['last_ten']):
             # Too many messages requested. We have to abort.
             print ('cannot fix it')
             self.send_document()
             return
         for message in self.messages['last_ten'][0-to_send:]:
+            message['c'] = self.messages['client']
+            print(message)
             self.write_message(message)
 
     def update_document(self, changes):
@@ -331,6 +340,7 @@ class WebSocket(BaseWebSocketHandler):
     def handle_diff(self, parsed):
         pdv = parsed["diff_version"]
         ddv = self.doc['diff_version']
+        print("PDV: %d, DDV: %d" % (pdv, ddv))
         pcv = parsed["comment_version"]
         dcv = self.doc['comment_version']
         if (
@@ -358,12 +368,10 @@ class WebSocket(BaseWebSocketHandler):
         elif pdv > ddv:
             # Client has a higher version than server. Something is fishy!
             print('unfixable')
-            print("PDV: %d, DDV: %d" % (pdv, ddv))
         elif pdv < ddv:
             if pdv + len(self.doc["last_diffs"]) >= ddv:
                 # We have enough last_diffs stored to fix it.
                 print("can fix it")
-                print("PDV: %d, DDV: %d" % (pdv, ddv))
                 number_diffs = \
                     parsed["diff_version"] - self.doc['diff_version']
                 response = {
@@ -376,7 +384,6 @@ class WebSocket(BaseWebSocketHandler):
                 self.send_message(response)
             else:
                 print('unfixable')
-                print("PDV: %d, DDV: %d" % (pdv, ddv))
                 # Client has a version that is too old to be fixed
                 self.send_document()
         else:
@@ -440,6 +447,9 @@ class WebSocket(BaseWebSocketHandler):
         message['s'] = self.messages['server']
         self.messages['last_ten'].append(message)
         self.messages['last_ten'] = self.messages['last_ten'][-10:]
+        print("Sending: Type %s, Server: %d, Client: %d, id: %d" % (message["type"], message['s'], message['c'], self.id))
+        if message["type"] == 'diff':
+            print ("Diff version: %d" % message["diff_version"])
         self.write_message(message)
 
     @classmethod

@@ -185,10 +185,10 @@ export class Editor {
             if (this.docInfo.title_changed &&
                 READ_ONLY_ROLES.indexOf(this.docInfo.access_rights) === -1) {
                 this.docInfo.title_changed = false
-                this.mod.serverCommunications.send({
+                this.mod.serverCommunications.send(()=>({
                     type: 'update_title',
                     title: this.getDoc().title
-                })
+                }))
             }
         }, 10000)
 
@@ -219,9 +219,9 @@ export class Editor {
             return
         }
         this.waitingForDocument = true
-        this.mod.serverCommunications.send({
+        this.mod.serverCommunications.send(()=>({
             type: 'get_document'
-        })
+        }))
     }
 
     removeBibDB() {
@@ -286,9 +286,9 @@ export class Editor {
             this.user = this.docInfo.owner
         }
 
-        this.mod.serverCommunications.send({
+        this.mod.serverCommunications.send(() => ({
             type: 'participant_update'
-        })
+        }))
         return this.getImageDB(this.docInfo.owner.id).then(() => {
 
             let stateDoc
@@ -396,13 +396,14 @@ export class Editor {
 
     // Send changes to the document to the server
     save() {
-        let doc = this.getDoc()
-        delete doc.comments
-
-        this.mod.serverCommunications.send({
-            type: 'update_doc',
-            doc,
-            hash: this.getHash()
+        this.mod.serverCommunications.send(() => {
+            let doc = this.getDoc()
+            delete doc.comments
+            return {
+                type: 'update_doc',
+                doc,
+                hash: this.getHash()
+            }
         })
 
         this.docInfo.changed = false

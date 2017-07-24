@@ -40,12 +40,13 @@ export class ModServerCommunications {
 
         this.ws.onmessage = event => {
             let data = JSON.parse(event.data)
+            let expectedServer = this.messages.server + 1
             if (data.type === 'request_resend') {
                 this.resend_messages(data.from)
-            } else if (data.s < (this.messages.server + 1)) {
+            } else if (data.s < expectedServer) {
                 // Receive a message already received at least once. Ignore.
                 return
-            } else if (data.s > (this.messages.server + 1)) {
+            } else if (data.s > expectedServer) {
                 // Messages from the server have been lost.
                 // Request resend.
                 this.ws.send(JSON.stringify({
@@ -53,9 +54,10 @@ export class ModServerCommunications {
                     from: this.messages.server
                 }))
             } else {
-                this.messages.server += 1
-                this.receive(data)
-                if (data.c < this.messages.client) {
+                this.messages.server = expectedServer
+                if (data.c === this.messages.client) {
+                    this.receive(data)
+                } else if (data.c < this.messages.client) {
                     // We have received all server messages, but the server seems
                     // to have missed some of the client's messages. They could
                     // have been sent simultaneously.
@@ -64,20 +66,17 @@ export class ModServerCommunications {
                     this.messages.client = data.c
                     if (clientDifference > this.messages.lastTen.length) {
                         // We cannot fix the situation
-                        this.send({type: 'get_document'})
+                        this.send(() =>({type: 'get_document'}))
                         return
                     }
-                    this.messages['lastTen'].slice(0-clientDifference).forEach(message => {
-                        if (message.type === 'diff') {
-                            // Remove diffs as they may be outdated due to the
-                            // server message that just arrived
-                            this.messages['lastTen'] = this.messages['lastTen'].filter(m => m !== message)
-                        } else {
-                            this.messages.client += 1
-                            message.c = this.messages.client
-                            this.ws.send(JSON.stringify(message))
-                        }
+                    this.messages['lastTen'].slice(0-clientDifference).forEach(getData => {
+                        let data = getData()
+                        this.messages.client += 1
+                        data.c = this.messages.client
+                        data.s = this.messages.server
+                        this.ws.send(JSON.stringify(data))
                     })
+                    this.receive(data)
                 }
             }
         }
@@ -97,9 +96,9 @@ export class ModServerCommunications {
 
         }
         this.wsPinger = window.setInterval(() => {
-            this.send({
+            this.send(() => ({
                 'type': 'ping'
-            })
+            }))
         }, 50000)
     }
 
@@ -111,9 +110,9 @@ export class ModServerCommunications {
         } else {
             this.editor.mod.footnotes.fnEditor.renderAllFootnotes()
             this.editor.mod.collab.docChanges.checkDiffVersion()
-            this.send({
+            this.send(() => ({
                 type: 'participant_update'
-            })
+            }))
             while (this.messagesToSend.length > 0) {
                 this.send(this.messagesToSend.shift());
             }
@@ -122,29 +121,34 @@ export class ModServerCommunications {
     }
 
     /** Sends data to server or keeps it in a list if currently offline. */
-    send(data) {
+    send(getData) {
         if (this.connected) {
-            this.messages['client'] += 1
-            data['c'] = this.messages['client']
-            data['s'] = this.messages['server']
-            this.messages['lastTen'].push(data)
-            this.messages['lastTen'] = this.messages['lastTen'].slice(-10)
+            this.messages.client += 1
+            let data = getData()
+            data.c = this.messages.client
+            data.s = this.messages.server
+            this.messages.lastTen.push(getData)
+            this.messages.lastTen = this.messages['lastTen'].slice(-10)
             this.ws.send(JSON.stringify(data))
-        } else if (data.type !== 'diff') {
-            this.messagesToSend.push(data)
+        } else {
+            this.messagesToSend.push(getData)
         }
     }
 
     resend_messages(from) {
         let toSend = this.messages.client - from
+        this.messages.client = from
         if (toSend > this.messages.lastTen.length) {
             // Too many messages requested. Abort.
-            this.messages['client'] = from
-            this.send({type: 'get_document'})
+            this.send(() => ({type: 'get_document'}))
             return
         }
-        this.messages.lastTen.slice(0-toSend).forEach(message => {
-            this.ws.send(JSON.stringify(message))
+        this.messages.lastTen.slice(0-toSend).forEach(getData => {
+            this.messages.client += 1
+            let data = getData()
+            data.c = this.messages.client
+            data.s = this.messages.server
+            this.ws.send(JSON.stringify(data))
         })
     }
 

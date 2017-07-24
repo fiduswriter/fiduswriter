@@ -171,9 +171,9 @@ class WebSocket(BaseWebSocketHandler):
             print('receiving message for closed document')
             return
         parsed = json_decode(message)
-        if 'type' not in parsed:
-            print(parsed)
-        print("Type %s, server %d, client %d, id %d" % (parsed["type"], parsed["s"], parsed["c"], self.id))
+        print("Type %s, server %d, client %d, id %d" % (
+            parsed["type"], parsed["s"], parsed["c"], self.id
+        ))
         if parsed["type"] == 'request_resend':
             print('CLIENT WANTS RESEND')
             self.resend_messages(parsed["from"])
@@ -447,7 +447,12 @@ class WebSocket(BaseWebSocketHandler):
         message['s'] = self.messages['server']
         self.messages['last_ten'].append(message)
         self.messages['last_ten'] = self.messages['last_ten'][-10:]
-        print("Sending: Type %s, Server: %d, Client: %d, id: %d" % (message["type"], message['s'], message['c'], self.id))
+        print("Sending: Type %s, Server: %d, Client: %d, id: %d" % (
+            message["type"],
+            message['s'],
+            message['c'],
+            self.id
+        ))
         if message["type"] == 'diff':
             print ("Diff version: %d" % message["diff_version"])
         self.write_message(message)

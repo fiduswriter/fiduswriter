@@ -30,6 +30,7 @@ class WebSocket(BaseWebSocketHandler):
         current_user = self.get_current_user()
         if current_user is None:
             response['type'] = 'access_denied'
+            self.id = 0
             self.send_message(response)
             return
         self.user_info = SessionUserInfo()

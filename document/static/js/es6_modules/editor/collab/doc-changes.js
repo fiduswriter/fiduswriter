@@ -58,19 +58,19 @@ export class ModCollabDocChanges {
 
     disableDiffSending() {
         this.awaitingDiffResponse = true
-            // If no answer has been received from the server within 2 seconds, check the version
-        this.checkDiffVersionTimer = window.setTimeout(
+            // If no answer has been received from the server within 2 seconds,
+            // check the version
+        this.sendNextDiffTimer = window.setTimeout(
             () => {
                 this.awaitingDiffResponse = false
                 this.sendToCollaborators()
-                this.checkDiffVersion()
             },
             2000
         )
     }
 
     enableDiffSending() {
-        window.clearTimeout(this.checkDiffVersionTimer)
+        window.clearTimeout(this.sendNextDiffTimer)
         this.awaitingDiffResponse = false
         this.sendToCollaborators()
     }
@@ -88,7 +88,6 @@ export class ModCollabDocChanges {
             sendableSteps(this.mod.editor.view.state) ||
             this.mod.editor.mod.comments.store.unsentEvents().length
         ) {
-            this.disableDiffSending()
             this.mod.editor.mod.serverCommunications.send(() => {
                 let stepsToSend = sendableSteps(this.mod.editor.view.state)
                 let comments = this.mod.editor.mod.comments.store.unsentEvents()
@@ -119,10 +118,10 @@ export class ModCollabDocChanges {
                     footnote_diff,
                     comments,
                     comment_version: this.mod.editor.mod.comments.store.version,
-                    request_id,
-                    hash: this.mod.editor.getHash()
+                    request_id
                 }
             })
+            this.disableDiffSending()
 
         } else if (getSelectionUpdate(this.mod.editor.currentView.state)) {
             let currentView = this.mod.editor.currentView
@@ -176,29 +175,6 @@ export class ModCollabDocChanges {
     }
 
     receiveFromCollaborators(data) {
-        /*if (this.mod.editor.waitingForDocument) {
-            // We are currently waiting for a complete editor update, so
-            // don't deal with incoming diffs.
-            return
-        }
-        let editorHash = this.mod.editor.getHash()
-        console.log(`Incoming diff: version: ${data.diff_version}, hash: ${data.hash}`)
-        console.log(`Editor: version: ${getVersion(this.mod.editor.view.state)}, hash: ${editorHash}`)
-        if (data.diff_version < getVersion(this.mod.editor.view.state)) {
-            console.log('Removing excessive diffs')
-            let outdatedDiffs = getVersion(this.mod.editor.view.state) - data.diff_version
-            data.diff = data.diff.slice(outdatedDiffs)
-        } else if (data.diff_version > getVersion(this.mod.editor.view.state)) {
-            console.warn('Something is not correct. The local and remote versions do not match.')
-            this.checkDiffVersion()
-            return
-        } else {
-            console.log('version OK')
-        }
-        if (data.hash && data.hash !== editorHash) {
-            console.warn('Something is not correct. The local and remote hash values do not match.')
-            return
-        }*/
         if (data.comments && data.comments.length) {
             this.mod.editor.mod.comments.store.receive(data.comments, data.comment_version)
         }
@@ -235,7 +211,6 @@ export class ModCollabDocChanges {
     }
 
     confirmDiff(request_id) {
-        console.log('confirming steps')
         let sentSteps = this.unconfirmedSteps[request_id]["diff"]
         let transaction = receiveTransaction(
             this.mod.editor.view.state,
@@ -260,6 +235,11 @@ export class ModCollabDocChanges {
         let sentComments = this.unconfirmedSteps[request_id]["comments"]
         this.mod.editor.mod.comments.store.eventsSent(sentComments)
 
+        delete this.unconfirmedSteps[request_id]
+        this.enableDiffSending()
+    }
+
+    rejectDiff(request_id) {
         delete this.unconfirmedSteps[request_id]
         this.enableDiffSending()
     }

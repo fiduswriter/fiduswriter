@@ -87,9 +87,10 @@ class WebSocket(BaseWebSocketHandler):
             self.send_message(response)
 
     def confirm_diff(self, request_id):
-        response = dict()
-        response['type'] = 'confirm_diff'
-        response['request_id'] = request_id
+        response = {
+            'type': 'confirm_diff',
+            'request_id': request_id
+        }
         self.send_message(response)
 
     def send_document(self):
@@ -197,6 +198,11 @@ class WebSocket(BaseWebSocketHandler):
             print('SIMULTANEOUS')
             self.messages["client"] += 1
             self.resend_messages(parsed["s"])
+            if (parsed["type"] == "diff"):
+                self.send_message({
+                    'type': 'reject_diff',
+                    'request_id': parsed['request_id']
+                })
             return
         # Message order is correct. We continue processing the data.
         self.messages["client"] += 1

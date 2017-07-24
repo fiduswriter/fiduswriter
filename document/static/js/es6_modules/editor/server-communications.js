@@ -189,6 +189,9 @@ export class ModServerCommunications {
             case 'confirm_diff':
                 this.editor.mod.collab.docChanges.confirmDiff(data.request_id)
                 break
+            case 'reject_diff':
+                this.editor.mod.collab.docChanges.rejectDiff(data.request_id)
+                break
             case 'check_hash':
                 this.editor.mod.collab.docChanges.checkHash(data.diff_version, data.hash)
                 break

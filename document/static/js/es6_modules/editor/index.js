@@ -2,7 +2,7 @@ import * as objectHash from "object-hash/dist/object_hash"
 import * as plugins from "../plugins/editor"
 
 /* Functions for ProseMirror integration.*/
-import {EditorState, Plugin} from "prosemirror-state"
+import {EditorState, Plugin, TextSelection} from "prosemirror-state"
 import {EditorView, Decoration, DecorationSet} from "prosemirror-view"
 import {history, redo, undo} from "prosemirror-history"
 import {toggleMark, baseKeymap} from "prosemirror-commands"
@@ -94,9 +94,6 @@ export class Editor {
     }
 
     initEditor() {
-
-        //this.bindEvents()
-
         this.view = new EditorView(document.getElementById('document-editable'), {
             state: EditorState.create({
                 schema: this.schema
@@ -136,38 +133,6 @@ export class Editor {
         this.mod.serverCommunications.init()
         this.setSaveTimers()
     }
-
-    /*bindEvents() {
-        let that = this
-        jQuery(document).on('dblclick', 'a', function(event) {
-
-            let url = jQuery(this).attr('href'),
-                splitUrl = url.split('#'),
-                baseUrl = splitUrl[0],
-                id = splitUrl[1]
-
-            if (!id || (baseUrl !== '' &!(baseUrl.includes(window.location.host)))) {
-                window.open(url, '_blank')
-                return
-            }
-
-            let stillLooking = true
-            that.view.state.doc.descendants((node, pos) => {
-                if (stillLooking && (node.type.name === 'heading' || node.type.name === 'figure') && node.attrs.id === id) {
-                    that.scrollIntoView(that.view, pos)
-                    stillLooking = false
-                }
-            })
-            if (stillLooking) {
-                that.mod.footnotes.fnEditor.view.state.doc.descendants((node, pos) => {
-                    if (stillLooking && (node.type.name === 'heading' || node.type.name === 'figure') && node.attrs.id === id) {
-                        that.scrollIntoView(that.mod.footnotes.fnEditor.view, pos)
-                        stillLooking = false
-                    }
-                })
-            }
-        })
-    } */
 
     setSaveTimers() {
         // Set Auto-save to send the document every two minutes, if it has changed.
@@ -437,6 +402,9 @@ export class Editor {
         let topMenuHeight = jQuery('header').outerHeight() + 10
         let distanceFromTop = view.coordsAtPos(pos).top - topMenuHeight
         window.scrollBy(0, distanceFromTop)
+        let $pos = view.state.doc.resolve(pos)
+        view.dispatch(view.state.tr.setSelection(new TextSelection($pos, $pos)))
+        view.focus()
     }
 
     // Things to be executed on every editor transaction.

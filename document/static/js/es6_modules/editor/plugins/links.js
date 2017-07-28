@@ -195,14 +195,21 @@ export let linksPlugin = function(options) {
                     startPos += $head.parent.child(i).nodeSize
                 }
 
-                let linkDropUp = document.createElement('span')
+                let linkDropUp = document.createElement('span'),
+                    anchorType = 'external',
+                    href = linkMark.attrs.href
 
                 linkDropUp.classList.add('link-drop-up-outer')
 
+                if(href.length && href[0] === '#') {
+                    anchorType = 'internal'
+                    href = window.location.href.split('#')[0] + href
+                }
+
                 linkDropUp.innerHTML = noSpaceTmp`
                     <div class="link-drop-up-inner">
-                        ${gettext('Link')}:&nbsp;<a class="href" target="_blank" href="${linkMark.attrs.href}">
-                            ${linkMark.attrs.href}
+                        ${gettext('Link')}:&nbsp;<a class="href" ${anchorType === 'external' ? 'target="_blank"' : ''} href="${href}">
+                            ${href}
                         </a><br>
                         ${gettext('Title')}:&nbsp;${linkMark.attrs.title}
                         <div class="edit">
@@ -210,6 +217,29 @@ export let linksPlugin = function(options) {
                         </div>
                     </div>
                 `
+                if (anchorType==='internal') {
+                    linkDropUp.querySelector('a.href').addEventListener('click', event => {
+                        event.preventDefault()
+                        let id = linkMark.attrs.href.slice(1),
+                            stillLooking = true,
+                            editor = options.editor
+
+                        editor.view.state.doc.descendants((node, pos) => {
+                            if (stillLooking && (node.type.name === 'heading' || node.type.name === 'figure') && node.attrs.id === id) {
+                                editor.scrollIntoView(editor.view, pos)
+                                stillLooking = false
+                            }
+                        })
+                        if (stillLooking) {
+                            editor.mod.footnotes.fnEditor.view.state.doc.descendants((node, pos) => {
+                                if (stillLooking && (node.type.name === 'heading' || node.type.name === 'figure') && node.attrs.id === id) {
+                                    editor.scrollIntoView(editor.mod.footnotes.fnEditor.view, pos)
+                                    stillLooking = false
+                                }
+                            })
+                        }
+                    })
+                }
 
                 linkDropUp.querySelector('.edit-link').addEventListener('click', () => {
                     let toolbarLink = options.editor.menu.toolbarModel.content.find(item => item.id==='link')

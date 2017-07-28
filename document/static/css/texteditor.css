@@ -687,6 +687,8 @@ table.insert-table-selection td.selected.hover {
     background-color: white;
     border: 1px solid grey;
     padding: 2px;
+    z-index: 1;
+    font-weight: normal;
 }
 
 .link-drop-up-inner .edit {

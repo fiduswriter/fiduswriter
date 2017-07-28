@@ -57,7 +57,7 @@ export class Editor {
             owner: undefined,
             is_owner: false,
             title_changed: false,
-            changed: false,
+            changed: false
         }
         this.schema = docSchema
         this.user = false
@@ -230,6 +230,8 @@ export class Editor {
         if (this.mod.collab.docChanges.awaitingDiffResponse) {
             this.mod.collab.docChanges.enableDiffSending()
         }
+        // Remember location hash to scroll there subsequently.
+        let locationHash = window.location.hash
         // Update document to newest document version
         let doc = updateDoc(data.doc)
 
@@ -323,8 +325,10 @@ export class Editor {
                 this.waitingForDocument = false
                 // Get document settings
                 this.mod.settings.check(this.view.state.doc.firstChild.attrs)
-
                 this.mod.citations.layoutCitations()
+                if (locationHash.length) {
+                    this.scrollIdIntoView(locationHash.slice(1))
+                }
 
             })
         })
@@ -398,7 +402,33 @@ export class Editor {
     }
 
     // Use PMs scrollIntoView function and adjust for top menu
-    scrollIntoView(view, pos) {
+    scrollIdIntoView(id) {
+
+        let foundPos = false,
+            view
+
+        this.view.state.doc.descendants((node, pos) => {
+            if (!foundPos && (node.type.name === 'heading' || node.type.name === 'figure') && node.attrs.id === id) {
+                foundPos = pos + 1
+                view = this.view
+            }
+        })
+        if (!foundPos) {
+            this.mod.footnotes.fnEditor.view.state.doc.descendants((node, pos) => {
+                if (!foundPos && (node.type.name === 'heading' || node.type.name === 'figure') && node.attrs.id === id) {
+                    foundPos = pos + 1
+                    view = this.mod.footnotes.fnEditor.view
+                }
+            })
+        }
+
+        if (foundPos) {
+            this.scrollPosIntoView(foundPos, view)
+        }
+
+    }
+
+    scrollPosIntoView(pos, view) {
         let topMenuHeight = jQuery('header').outerHeight() + 10
         let distanceFromTop = view.coordsAtPos(pos).top - topMenuHeight
         window.scrollBy(0, distanceFromTop)

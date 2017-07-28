@@ -10,6 +10,32 @@ export let linksPlugin = function(options) {
 
     return new Plugin({
         key: linksKey,
+        state: {
+            init() {
+                return {
+                    url: window.location.href
+                }
+            },
+            apply(tr, prev, oldState, state) {
+                let {
+                    url
+                } = this.getState(oldState)
+                let id = state.selection.$from.parent.attrs.id,
+                    newUrl = url.split('#')[0]
+                if (id) {
+                    newUrl += `#${id}`
+                }
+                let changed = url === newUrl ? false : true
+                // TODO: Should the following be moved to a view?
+                // Not sure if this counts as a DOM update.
+                if (changed && options.editor.currentView.state === oldState) {
+                    window.history.replaceState("", "", newUrl)
+                }
+                return {
+                    url: newUrl
+                }
+            }
+        },
         appendTransaction: (transactions, oldState, state) => {
             // Check if any of the transactions are local.
             if(transactions.every(transaction => transaction.getMeta('remote'))) {
@@ -172,6 +198,12 @@ export let linksPlugin = function(options) {
             return newTransaction
         },
         props: {
+            onFocus: editorView => {
+                let {
+					url
+				} = linksKey.getState(editorView.state)
+                window.history.replaceState("", "", url)
+            },
             decorations: (state) => {
                 const $head = state.selection.$head
                 let linkMark = $head.marks().find(
@@ -197,7 +229,16 @@ export let linksPlugin = function(options) {
 
                 let linkDropUp = document.createElement('span'),
                     anchorType = 'external',
-                    href = linkMark.attrs.href
+                    href = linkMark.attrs.href,
+                    editor = options.editor,
+                    toolbarLink = editor.menu.toolbarModel.content.find(item => item.id==='link')
+
+                if (!toolbarLink) {
+                    // No link in toolbar to edit link. Disable all editing.
+                    // This should not ever happen unless someone messes with
+                    // the toolbar.
+                    toolbarLink = {disabled: () => false}
+                }
 
                 linkDropUp.classList.add('link-drop-up-outer')
 
@@ -212,52 +253,28 @@ export let linksPlugin = function(options) {
                             ${href}
                         </a><br>
                         ${gettext('Title')}:&nbsp;${linkMark.attrs.title}
-                        <div class="edit">
-                            [<a href="#" class="edit-link">${gettext('Edit')}</a> | <a href="#" class="remove-link">${gettext('Remove')}</a>]
-                        </div>
+                        ${toolbarLink.disabled(editor) ? '' : noSpaceTmp`
+                            <div class="edit">
+                                [<a href="#" class="edit-link">${gettext('Edit')}</a> | <a href="#" class="remove-link">${gettext('Remove')}</a>]
+                            </div>
+                        `}
                     </div>
                 `
                 if (anchorType==='internal') {
                     linkDropUp.querySelector('a.href').addEventListener('click', event => {
                         event.preventDefault()
-                        let id = linkMark.attrs.href.slice(1),
-                            stillLooking = true,
-                            editor = options.editor
-
-                        editor.view.state.doc.descendants((node, pos) => {
-                            if (stillLooking && (node.type.name === 'heading' || node.type.name === 'figure') && node.attrs.id === id) {
-                                editor.scrollIntoView(editor.view, pos)
-                                stillLooking = false
-                            }
-                        })
-                        if (stillLooking) {
-                            editor.mod.footnotes.fnEditor.view.state.doc.descendants((node, pos) => {
-                                if (stillLooking && (node.type.name === 'heading' || node.type.name === 'figure') && node.attrs.id === id) {
-                                    editor.scrollIntoView(editor.mod.footnotes.fnEditor.view, pos)
-                                    stillLooking = false
-                                }
-                            })
-                        }
+                        let id = linkMark.attrs.href.slice(1)
+                        editor.scrollIdIntoView(id)
                     })
                 }
 
                 linkDropUp.querySelector('.edit-link').addEventListener('click', () => {
-                    let toolbarLink = options.editor.menu.toolbarModel.content.find(item => item.id==='link')
-                    if (toolbarLink) {
-                        if (!toolbarLink.disabled(options.editor)) {
-                            toolbarLink.action(options.editor)
-                        }
-                    }
+                    toolbarLink.action(options.editor)
                 })
                 linkDropUp.querySelector('.remove-link').addEventListener('click', () => {
-                    let toolbarLink = options.editor.menu.toolbarModel.content.find(item => item.id==='link')
-                    if (toolbarLink) {
-                        if (!toolbarLink.disabled(options.editor)) {
-                            options.editor.view.dispatch(
-                                options.editor.view.state.tr.removeMark($head.start(), $head.end(), linkMark)
-                            )
-                        }
-                    }
+                    editor.view.dispatch(
+                        editor.view.state.tr.removeMark($head.start(), $head.end(), linkMark)
+                    )
                 })
 
                 let deco = Decoration.widget(startPos, linkDropUp)

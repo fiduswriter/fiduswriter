@@ -1,12 +1,176 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
+import {ReplaceAroundStep} from "prosemirror-transform"
+import {Slice, Fragment} from "prosemirror-model"
 import {noSpaceTmp} from "../../common"
+import {randomHeadingId, randomFigureId} from "../../schema/common"
 
 const linksKey = new PluginKey('links')
 export let linksPlugin = function(options) {
 
     return new Plugin({
         key: linksKey,
+        appendTransaction: (transactions, oldState, state) => {
+            // Check if any of the transactions are local.
+            if(transactions.every(transaction => transaction.getMeta('remote'))) {
+                // All transactions are remote. Give up.
+                return
+            }
+            // Check if there are any headings or figures in the affected range.
+            // Otherwise, skip.
+            let ranges = []
+            transactions.forEach(transaction => {
+                transaction.steps.forEach((step, index) => {
+                    if (step.jsonID === 'replace' || step.jsonID === 'replaceAround') {
+                        ranges.push([step.from, step.to])
+                    }
+                    ranges = ranges.map(range => {
+                        return [
+                            transaction.mapping.maps[index].map(range[0], -1),
+                            transaction.mapping.maps[index].map(range[1], 1)
+                        ]
+                    })
+                })
+            })
+            let transaction = transactions.slice(-1)[0],
+                foundIdElement = false //found heading or figure
+            ranges.forEach(range => {
+                transaction.doc.nodesBetween(
+                    range[0],
+                    range[1],
+                    (node, pos, parent) => {
+                        if (node.type.name === 'heading' || node.type.name === 'figure') {
+                            foundIdElement = true
+                        }
+                    }
+                )
+            })
+
+            if (!foundIdElement) {
+                return
+            }
+
+            // Check that unique IDs only exist once in the document
+            // If an ID is used more than once, add steps to change the ID of all
+            // but the first occurence.
+            let headingIds = [], doubleHeadingIds = []
+            let figureIds = [], doubleFigureIds = []
+
+            // ID should not be found in the other pm either. So we look through
+            // those as well.
+            let otherState = oldState === options.editor.view.state ?
+                options.editor.mod.footnotes.fnEditor.view.state : options.editor.view.state
+
+            otherState.doc.descendants(node => {
+                if (node.type.name === 'heading') {
+                    headingIds.push(node.attrs.id)
+                } else if (node.type.name === 'figure') {
+                    figureIds.push(node.attrs.id)
+                }
+            })
+
+            transaction.doc.descendants((node, pos) => {
+                if (node.type.name === 'heading') {
+                    if (headingIds.includes(node.attrs.id)) {
+                        doubleHeadingIds.push({
+                            node,
+                            pos
+                        })
+                    }
+                    headingIds.push(node.attrs.id)
+                }
+
+                if (node.type.name === 'figure') {
+                    if (figureIds.includes(node.attrs.id)) {
+                        doubleFigureIds.push({
+                            node,
+                            pos
+                        })
+                    }
+                    figureIds.push(node.attrs.id)
+                }
+
+            })
+
+            if (!doubleHeadingIds.length && !doubleFigureIds.length) {
+                return
+            }
+
+            let newTransaction = state.tr
+            // Change the IDs of the nodes that having an ID that was used previously
+            // already.
+            doubleHeadingIds.forEach(doubleId => {
+                let node = doubleId.node,
+                    posFrom = doubleId.pos,
+                    posTo = posFrom + node.nodeSize,
+                    blockId
+
+                while (!blockId || headingIds.includes(blockId)) {
+                    blockId = randomHeadingId()
+                }
+
+                let attrs = {
+                    level: node.attrs.level,
+                    id: blockId
+                }
+                // Because we only change attributes, positions should stay the
+                // the same throughout all our extra steps. We therefore do no
+                // mapping of positions through these steps.
+
+                newTransaction.step(
+                    new ReplaceAroundStep(
+                        posFrom,
+                        posTo,
+                        posFrom + 1,
+                        posTo - 1,
+                        new Slice(Fragment.from(node.type.create(attrs)), 0, 0),
+                        1,
+                        true
+                    )
+                )
+
+                headingIds.push(blockId)
+            })
+
+
+            doubleFigureIds.forEach(doubleId => {
+                let node = doubleId.node,
+                    posFrom = doubleId.pos,
+                    posTo = posFrom + node.nodeSize,
+                    blockId
+
+                while (!blockId || figureIds.includes(blockId)) {
+                    blockId = randomFigureId()
+                }
+
+                let attrs = {
+                    equation: node.attrs.equation,
+                    image: node.attrs.image,
+                    figureCategory: node.attrs.figureCategory,
+                    caption: node.attrs.caption,
+                    id: blockId
+                }
+
+                // Because we only change attributes, positions should stay the
+                // the same throughout all our extra steps. We therefore do no
+                // mapping of positions through these steps.
+                newTransaction.step(
+                    new ReplaceAroundStep(
+                        posFrom,
+                        posTo,
+                        posFrom + 1,
+                        posTo - 1,
+                        new Slice(Fragment.from(node.type.create(attrs)), 0, 0),
+                        1,
+                        true
+                    )
+                )
+
+                figureIds.push(blockId)
+            })
+
+            return newTransaction
+        },
         props: {
             decorations: (state) => {
                 const $head = state.selection.$head

@@ -2,8 +2,6 @@ import * as objectHash from "object-hash/dist/object_hash"
 import * as plugins from "../plugins/editor"
 
 /* Functions for ProseMirror integration.*/
-import {Slice, Fragment} from "prosemirror-model"
-import {ReplaceAroundStep} from "prosemirror-transform"
 import {EditorState, Plugin} from "prosemirror-state"
 import {EditorView, Decoration, DecorationSet} from "prosemirror-view"
 import {history, redo, undo} from "prosemirror-history"
@@ -23,7 +21,6 @@ import {ModTools} from "./tools"
 import {ModSettings} from "./settings"
 import {headerbarModel, toolbarModel} from "./menus"
 import {ModStyles} from "./styles"
-import {randomHeadingId, randomFigureId} from "../schema/common"
 import {ModServerCommunications} from "./server-communications"
 import {getMetadata, getSettings, updateDoc} from "../schema/convert"
 import {BibliographyDB} from "../bibliography/database"
@@ -71,6 +68,7 @@ export class Editor {
             toolbarModel
         }
         this.statePlugins = [
+            [linksPlugin, () => ({editor: this})],
             [history],
             [keymap, () => baseKeymap],
             [keymap, () => buildKeymap(this.schema)],
@@ -82,8 +80,7 @@ export class Editor {
             [toolbarPlugin, () => ({editor: this})],
             [collabCaretsPlugin],
             [footnoteMarkersPlugin, () => ({editor: this})],
-            [commentsPlugin, () => ({editor: this})],
-            [linksPlugin, () => ({editor: this})]
+            [commentsPlugin, () => ({editor: this})]
         ]
         new ModFootnotes(this)
         new ModServerCommunications(this)
@@ -121,7 +118,6 @@ export class Editor {
                     if (this.onFilterTransaction(transaction)) {
                         return
                     }
-                    this.onBeforeTransaction(this.view, transaction)
                 }
                 let newState = this.view.state.apply(transaction)
                 this.view.updateState(newState)
@@ -441,158 +437,6 @@ export class Editor {
         let topMenuHeight = jQuery('header').outerHeight() + 10
         let distanceFromTop = view.coordsAtPos(pos).top - topMenuHeight
         window.scrollBy(0, distanceFromTop)
-    }
-
-    // Things to execute before every editor transaction
-    onBeforeTransaction(view, transaction) {
-        // Check if there are any headings or figures in the affected range.
-        // Otherwise, skip.
-        let ranges = []
-        transaction.steps.forEach((step, index) => {
-            if (step.jsonID === 'replace' || step.jsonID === 'replaceAround') {
-                ranges.push([step.from, step.to])
-            }
-            ranges = ranges.map(range => {
-                return [
-                    transaction.mapping.maps[index].map(range[0], -1),
-                    transaction.mapping.maps[index].map(range[1], 1)
-                ]
-            })
-        })
-        let foundIdElement = false //found heading or figure
-        ranges.forEach(range => {
-          transaction.doc.nodesBetween(
-            range[0],
-            range[1],
-            (node, pos, parent) => {
-                if (node.type.name === 'heading' || node.type.name === 'figure') {
-                    foundIdElement = true
-                }
-            }
-        )})
-
-        if (!foundIdElement) {
-            return
-        }
-
-        // Check that unique IDs only exist once in the document
-        // If an ID is used more than once, add steps to change the ID of all
-        // but the first occurence.
-        let headingIds = [], doubleHeadingIds = []
-        let figureIds = [], doubleFigureIds = []
-
-        // ID should not be found in the other pm either. So we look through
-        // those as well.
-        let otherView = view === this.view ? this.mod.footnotes.fnEditor.view : this.view
-
-        otherView.state.doc.descendants(node => {
-            if (node.type.name === 'heading') {
-                headingIds.push(node.attrs.id)
-            } else if (node.type.name === 'figure') {
-                figureIds.push(node.attrs.id)
-            }
-        })
-
-        transaction.doc.descendants((node, pos) => {
-            if (node.type.name === 'heading') {
-                if (headingIds.includes(node.attrs.id)) {
-                    doubleHeadingIds.push({
-                        node,
-                        pos
-                    })
-                }
-                headingIds.push(node.attrs.id)
-            }
-
-            if (node.type.name === 'figure') {
-                if (figureIds.includes(node.attrs.id)) {
-                    doubleFigureIds.push({
-                        node,
-                        pos
-                    })
-                }
-                figureIds.push(node.attrs.id)
-            }
-
-        })
-
-        // Change the IDs of the nodes that having an ID that was used previously
-        // already.
-        doubleHeadingIds.forEach(doubleId => {
-            let node = doubleId.node,
-                posFrom = doubleId.pos,
-                posTo = posFrom + node.nodeSize,
-                blockId
-
-            while (!blockId || headingIds.includes(blockId)) {
-                blockId = randomHeadingId()
-            }
-
-            let attrs = {
-                level: node.attrs.level,
-                id: blockId
-            }
-            // Because we only change attributes, positions should stay the
-            // the same throughout all our extra steps. We therefore do no
-            // mapping of positions through these steps.
-            // This works for headlines, which are block nodes with text inside
-            // (which should stay the same). Figures and inline content will
-            // likely need to use ReplaceStep instead.
-            transaction.step(
-                new ReplaceAroundStep(
-                    posFrom,
-                    posTo,
-                    posFrom + 1,
-                    posTo - 1,
-                    new Slice(Fragment.from(node.type.create(attrs)), 0, 0),
-                    1,
-                    true
-                )
-            )
-
-            headingIds.push(blockId)
-        })
-
-
-        doubleFigureIds.forEach(doubleId => {
-            let node = doubleId.node,
-                posFrom = doubleId.pos,
-                posTo = posFrom + node.nodeSize,
-                blockId
-
-            while (!blockId || figureIds.includes(blockId)) {
-                blockId = randomFigureId()
-            }
-
-            let attrs = {
-                    equation: node.attrs.equation,
-                    image: node.attrs.image,
-                    figureCategory: node.attrs.figureCategory,
-                    caption: node.attrs.caption,
-                    id: blockId
-            }
-
-            // Because we only change attributes, positions should stay the
-            // the same throughout all our extra steps. We therefore do no
-            // mapping of positions through these steps.
-            // This works for headlines, which are block nodes with text inside
-            // (which should stay the same). Figures and inline content will
-            // likely need to use ReplaceStep instead.
-            transaction.step(
-                new ReplaceAroundStep(
-                    posFrom,
-                    posTo,
-                    posFrom + 1,
-                    posTo - 1,
-                    new Slice(Fragment.from(node.type.create(attrs)), 0, 0),
-                    1,
-                    true
-                )
-            )
-
-            figureIds.push(blockId)
-        })
-
     }
 
     // Things to be executed on every editor transaction.

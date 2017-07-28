@@ -332,6 +332,7 @@ export let toolbarModel = {
             }
         },
         {
+            id: 'link',
             type: 'button',
             title: gettext('Link'),
             icon: 'link',

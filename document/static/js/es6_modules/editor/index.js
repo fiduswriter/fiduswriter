@@ -29,13 +29,14 @@ import {getMetadata, getSettings, updateDoc} from "../schema/convert"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
 import {Paste} from "./paste"
+import {addDropdownBox} from "../common"
 import {placeholdersPlugin} from "./plugins/placeholders"
 import {headerbarPlugin} from "./plugins/headerbar"
 import {toolbarPlugin} from "./plugins/toolbar"
 import {collabCaretsPlugin} from "./plugins/collab-carets"
 import {footnoteMarkersPlugin} from "./plugins/footnote-markers"
 import {commentsPlugin} from "./plugins/comments"
-import {addDropdownBox} from "../common"
+import {linksPlugin} from "./plugins/links"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']
@@ -81,7 +82,8 @@ export class Editor {
             [toolbarPlugin, () => ({editor: this})],
             [collabCaretsPlugin],
             [footnoteMarkersPlugin, () => ({editor: this})],
-            [commentsPlugin, () => ({editor: this})]
+            [commentsPlugin, () => ({editor: this})],
+            [linksPlugin, () => ({editor: this})]
         ]
         new ModFootnotes(this)
         new ModServerCommunications(this)
@@ -96,7 +98,7 @@ export class Editor {
 
     initEditor() {
 
-        this.bindEvents()
+        //this.bindEvents()
 
         this.view = new EditorView(document.getElementById('document-editable'), {
             state: EditorState.create({
@@ -139,7 +141,7 @@ export class Editor {
         this.setSaveTimers()
     }
 
-    bindEvents() {
+    /*bindEvents() {
         let that = this
         jQuery(document).on('dblclick', 'a', function(event) {
 
@@ -169,7 +171,7 @@ export class Editor {
                 })
             }
         })
-    }
+    } */
 
     setSaveTimers() {
         // Set Auto-save to send the document every two minutes, if it has changed.

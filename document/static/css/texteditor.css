@@ -674,3 +674,30 @@ table.insert-table-selection td.selected.hover {
     padding: 0 6px 0 8px;
     width: 164px;
 }
+
+/* Links */
+
+.link-drop-up-outer {
+    position: absolute;
+}
+
+.link-drop-up-inner {
+    position: relative;
+    top: -88px;
+    background-color: white;
+    border: 1px solid grey;
+    padding: 2px;
+}
+
+.link-drop-up-inner .edit {
+    font-size: 0.8em;
+    text-align: right;
+}
+
+.link-drop-up-inner a.href {
+    color: #0000EE;
+}
+
+.link-drop-up-inner a.href:visited {
+    color: #551A8B;
+}

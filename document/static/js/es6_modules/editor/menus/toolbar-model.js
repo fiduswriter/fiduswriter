@@ -5,6 +5,24 @@ import {undo, redo, undoDepth, redoDepth} from "prosemirror-history"
 import {CitationDialog, FigureDialog, LinkDialog, TableDialog, MathDialog} from "./dialogs"
 import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from ".."
 
+let setHeadlineBlock = function(editor, level) {
+    let block = editor.currentView.state.schema.nodes['heading'],
+        attrs = {level}
+
+    if (
+        editor.currentView.state.selection.$from.parent &&
+        editor.currentView.state.selection.$from.parent.attrs &&
+        editor.currentView.state.selection.$from.parent.attrs.id &&
+        editor.currentView.state.selection.$from.parent.attrs.id.length
+    ) {
+        attrs.id = editor.currentView.state.selection.$from.parent.attrs.id
+    }
+
+    let command = setBlockType(block, attrs)
+    command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
+}
+
+
 const PART_LABELS = {
     'title': gettext('Title'),
     'subtitle': gettext('Subtitle'),
@@ -126,56 +144,27 @@ export let toolbarModel = {
                 },
                 {
                     title: BLOCK_LABELS['heading_1'],
-                    action: editor => {
-                        let block = editor.currentView.state.schema.nodes['heading']
-
-                        let command = setBlockType(block, {level: 1})
-                        command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
-                    }
+                    action: editor => setHeadlineBlock(editor, 1)
                 },
                 {
                     title: BLOCK_LABELS['heading_2'],
-                    action: editor => {
-                        let block = editor.currentView.state.schema.nodes['heading']
-
-                        let command = setBlockType(block, {level: 2})
-                        command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
-                    }
+                    action: editor => setHeadlineBlock(editor, 2)
                 },
                 {
                     title: BLOCK_LABELS['heading_3'],
-                    action: editor => {
-                        let block = editor.currentView.state.schema.nodes['heading']
-
-                        let command = setBlockType(block, {level: 3})
-                        command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
-                    }
+                    action: editor => setHeadlineBlock(editor, 3)
                 },
                 {
                     title: BLOCK_LABELS['heading_4'],
-                    action: editor => {
-                        let block = editor.currentView.state.schema.nodes['heading']
-                        let command = setBlockType(block, {level: 4})
-                        command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
-                    }
+                    action: editor => setHeadlineBlock(editor, 4)
                 },
                 {
                     title: BLOCK_LABELS['heading_5'],
-                    action: editor => {
-                        let block = editor.currentView.state.schema.nodes['heading']
-
-                        let command = setBlockType(block, {level: 5})
-                        command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
-                    }
+                    action: editor => setHeadlineBlock(editor, 5)
                 },
                 {
                     title: BLOCK_LABELS['heading_6'],
-                    action: editor => {
-                        let block = editor.currentView.state.schema.nodes['heading']
-
-                        let command = setBlockType(block, {level: 6})
-                        command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
-                    }
+                    action: editor => setHeadlineBlock(editor, 6)
                 },
                 {
                     title: BLOCK_LABELS['code_block'],
@@ -332,6 +321,7 @@ export let toolbarModel = {
             }
         },
         {
+            id: 'link',
             type: 'button',
             title: gettext('Link'),
             icon: 'link',

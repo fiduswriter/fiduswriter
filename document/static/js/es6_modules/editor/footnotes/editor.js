@@ -11,6 +11,7 @@ import {Paste} from "../paste"
 import {fnSchema} from "../../schema/footnotes"
 import {toolbarPlugin} from "../plugins/toolbar"
 import {collabCaretsPlugin} from "../plugins/collab-carets"
+import {linksPlugin} from "../plugins/links"
 import {getFootnoteMarkerContents, updateFootnoteMarker} from "../plugins/footnote-markers"
 import {COMMENT_ONLY_ROLES} from ".."
 import {fnNodeToPmNode} from "../../schema/footnotes-convert"
@@ -23,6 +24,7 @@ export class ModFootnoteEditor {
         this.rendering = false
         this.schema = fnSchema
         this.fnStatePlugins = [
+            [linksPlugin, () => ({editor: this.mod.editor})],
             [history],
             [keymap, () => baseKeymap],
             [keymap, () => buildKeymap(this.schema)],
@@ -65,7 +67,6 @@ export class ModFootnoteEditor {
                     if (!filterFree & this.onFilterTransaction(transaction)) {
                         return
                     }
-                    this.mod.editor.onBeforeTransaction(this.view, transaction)
                 }
 
                 let newState = this.view.state.apply(transaction)

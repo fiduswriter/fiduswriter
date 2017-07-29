@@ -35,7 +35,6 @@ export let keywordInputPlugin = function(options) {
                     pos = deco.from,
                     $pos = state.doc.resolve(pos),
                     tr = state.tr.setSelection(new TextSelection($pos, $pos))
-                tr.setMeta('exitInput', true)
                 options.editor.view.focus()
                 options.editor.view.dispatch(tr)
             } else if (
@@ -48,7 +47,6 @@ export let keywordInputPlugin = function(options) {
                     pos = deco.from + 3, // +3 to get into body element
                     $pos = state.doc.resolve(pos),
                     tr = state.tr.setSelection(new TextSelection($pos, $pos))
-                tr.setMeta('exitInput', true)
                 options.editor.view.focus()
                 options.editor.view.dispatch(tr)
             }
@@ -122,40 +120,37 @@ export let keywordInputPlugin = function(options) {
 					decos
 				} = this.getState(state)
 				return decos
-			}
-        },
-        filterTransaction(tr, state) {
-            let {
-                decos
-            } = this.getState(state)
-
-            if (tr.selectionSet && !tr.getMeta('exitInput')) {
-                let decoPos = decos.find()[0].from
+			},
+            handleKeyDown(view, event) {
                 if (
-                    state.selection.from === state.selection.to &&
-                    tr.selection.from === tr.selection.to
+                    view.state.selection.from === view.state.selection.to &&
+                    ['ArrowLeft', 'ArrowRight'].includes(event.key)
                 ) {
+                    let {decos} = this.getState(view.state),
+                        decoPos = decos.find()[0].from
+
                     if (
-                        state.selection.from === decoPos &&
-                        tr.selection.from === decoPos + 3
+                        event.key === 'ArrowLeft' &&
+                        view.state.selection.from === decoPos + 3
                     ) {
-                        keywordInput.select()
-                        keywordInput.setSelectionRange(0,0)
-                        // Prohibit transaction
-                        return false
-                    } else if (
-                        state.selection.from === decoPos + 3 &&
-                        tr.selection.from === decoPos
-                    ) {
+                        let $decoPos = view.state.doc.resolve(decoPos)
+                        view.dispatch(
+                            view.state.tr.setSelection(new TextSelection($decoPos, $decoPos))
+                        )
                         let len = keywordInput.value.length
                         keywordInput.select()
                         keywordInput.setSelectionRange(len, len)
+                        return true
+                    } else if (
+                        event.key === 'ArrowRight' &&
+                        view.state.selection.from === decoPos
+                    ) {
+                        keywordInput.select()
+                        keywordInput.setSelectionRange(0, 0)
+                        return true
                     }
                 }
-                console.log([state.selection.from, tr.selection.from, decoPos])
             }
-
-            return true
         }
     })
 }

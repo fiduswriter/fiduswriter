@@ -703,3 +703,30 @@ table.insert-table-selection td.selected.hover {
 .link-drop-up-inner a.href:visited {
     color: #551A8B;
 }
+
+/* Keywords */
+
+.keyword-input {
+    display: inline-block;
+}
+
+.keyword-input input {
+    border: 0;
+    background-color: white;
+}
+
+.keyword-input input:focus {
+    background-color: white;
+}
+
+.article-keywords .keyword {
+    margin-right: 5px;
+    margin-bottom: 5px;
+    padding: 0 5px;
+    border-radius: 3px;
+    line-height: 1.5;
+    cursor: pointer;
+    color: #fff;
+    background: #76a698;
+    border: 1px solid #7d948e;
+}

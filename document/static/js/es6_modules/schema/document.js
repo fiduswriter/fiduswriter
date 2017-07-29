@@ -148,8 +148,28 @@ let abstract = {
     }
 }
 
+let keyword = {
+    inline: true,
+    attrs: {
+        keyword: {
+            default: ''
+        }
+    },
+    parseDOM: [{
+        tag: 'span.keyword',
+        getAttrs(dom) {
+            return {
+                keyword: dom.innerText
+            }
+        }
+    }],
+    toDOM(node) {
+        return ["span", {class: 'keyword'}, node.attrs.keyword]
+    }
+}
+
 let keywords = {
-    content: "text<comment>*",
+    content: "keyword<comment>*",
     group: "part",
     defining: true,
     isMetadata() {
@@ -272,6 +292,7 @@ let spec = {
         authors,
         abstract,
         keywords,
+        keyword,
         body,
         paragraph: nodes.paragraph,
         blockquote: nodes.blockquote,

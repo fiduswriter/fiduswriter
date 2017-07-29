@@ -204,7 +204,7 @@ export let linksPlugin = function(options) {
 				} = linksKey.getState(editorView.state)
                 window.history.replaceState("", "", url)
             },
-            decorations: (state) => {
+            decorations(state) {
                 const $head = state.selection.$head
                 let linkMark = $head.marks().find(
                     mark => mark.type.name === 'link'

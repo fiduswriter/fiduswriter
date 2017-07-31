@@ -97,6 +97,9 @@ export class DocumentOverviewMenus {
                     case 'html':
                         that.documentOverview.mod.actions.downloadHtmlFiles(ids)
                         break
+                    case 'htmlrdfa':
+                        that.documentOverview.mod.actions.downloadHtmlRDFaFiles(ids)
+                        break
                     case 'native':
                         that.documentOverview.mod.actions.downloadNativeFiles(ids)
                         break

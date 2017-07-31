@@ -3,6 +3,7 @@ import {SaveRevision, SaveCopy} from "../../exporter/native"
 import {ExportFidusFile} from "../../exporter/native/file"
 import {LatexExporter} from "../../exporter/latex"
 import {HTMLExporter} from "../../exporter/html"
+import {HTMLRDFaExporter} from "../../exporter/htmlrdfa"
 import {EpubExporter} from "../../exporter/epub"
 import {RevisionDialog} from "./dialogs"
 import {BibliographyDB} from "../../bibliography/database"
@@ -138,9 +139,21 @@ export let headerbarModel = {
             content: [
                 {
                     title: gettext('HTML'),
-                    tooltip: gettext('Export the document to an HTML file.'),
+                    tooltip: gettext('Export the document to a HTML file.'),
                     action: editor => {
                         new HTMLExporter(
+                            editor.getDoc(),
+                            editor.bibDB,
+                            editor.mod.styles.citationStyles,
+                            editor.mod.styles.citationLocales
+                        )
+                    }
+                },
+		{
+                    title: gettext('HTML+RDFa'),
+                    tooltip: gettext('Export the document to a HTML+RDFa file. They Can get imported by Dokieli'),
+                    action: editor => {
+                        new HTMLRDFaExporter(
                             editor.getDoc(),
                             editor.bibDB,
                             editor.mod.styles.citationStyles,

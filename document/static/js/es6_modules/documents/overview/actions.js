@@ -3,6 +3,7 @@ import {importFidusTemplate, documentsListItemTemplate} from "./templates"
 import {SaveCopy, ExportFidusFile} from "../../exporter/native"
 import {EpubExporter} from "../../exporter/epub"
 import {HTMLExporter} from "../../exporter/html"
+import {HTMLRDFaExporter} from "../../exporter/htmlrdfa"
 import {LatexExporter} from "../../exporter/latex"
 import {DocxExporter} from "../../exporter/docx"
 import {OdtExporter} from "../../exporter/odt"
@@ -278,6 +279,24 @@ export class DocumentOverviewActions {
             () => {
                 for (let i = 0; i < ids.length; i++) {
                     new HTMLExporter(
+                        this.documentOverview.documentList.find(doc => doc.id===ids[i]),
+                        false,
+                        this.documentOverview.citationStyles,
+                        this.documentOverview.citationLocales
+                    )
+                }
+            }
+        )
+    }
+
+    downloadHtmlRDFaFiles(ids) {
+        getMissingDocumentListData(
+            ids,
+            this.documentOverview.documentList
+        ).then(
+            () => {
+                for (let i = 0; i < ids.length; i++) {
+                    new HTMLRDFaExporter(
                         this.documentOverview.documentList.find(doc => doc.id===ids[i]),
                         false,
                         this.documentOverview.citationStyles,

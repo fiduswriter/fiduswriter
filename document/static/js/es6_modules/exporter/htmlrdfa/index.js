@@ -66,7 +66,9 @@ export class HTMLRDFaExporter extends BaseHTMLExporter{
 
         let httpOutputList = findImages(contents)
 
-        contents = this.addFigureNumbers(contents)
+        contents = this.addFigureNumbers(contents) 
+
+	//contents = this.addArticleRDFa(contents)  parts related to body tag is added in template.js but I keep it for later use in other tags.
 
         let contentsCode = this.replaceImgSrc(contents.innerHTML)
 

@@ -151,7 +151,7 @@ export let headerbarModel = {
                 },
 		{
                     title: gettext('HTML+RDFa'),
-                    tooltip: gettext('Export the document to a HTML+RDFa file. They Can get imported by Dokieli'),
+                    tooltip: gettext('Export the document to a HTML+RDFa file. It can be imported by dokieli'),
                     action: editor => {
                         new HTMLRDFaExporter(
                             editor.getDoc(),

@@ -185,3 +185,31 @@ export let heading = {
                {tag: "h6", getAttrs(dom) {return {level: 6, id: dom.getAttribute('id')}}},],
     toDOM(node) { return [`h${node.attrs.level}`, {id: node.attrs.id}, 0] }
 }
+
+export let randomAnchorId = () => {
+    return `A${Math.round(Math.random()*10000000) + 1}`
+}
+
+export let anchor = {
+    attrs: {
+        id: {
+            compute: randomAnchorId
+        }
+    },
+    inclusive: false,
+    group: "annotation",
+    parseDOM: [{
+        tag: "span.anchor[data-id]",
+        getAttrs(dom) {
+            return {
+                id: dom.getAttribute("data-id")
+            }
+        }
+    }],
+    toDOM(node) {
+        return ['span', {
+            class: 'anchor',
+            'data-id': node.attrs.id
+        }]
+    }
+}

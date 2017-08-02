@@ -514,6 +514,47 @@ export let toolbarModel = {
                 } else if (editor.view !== editor.currentView || editor.currentView.state.selection.empty) {
                     return true
                 }
+            },
+            selected: editor => {
+                if (
+                    editor.currentView.state.selection.$head.marks().some(
+                        mark => mark.type.name === 'comment'
+                    )
+                ) {
+                    return true
+                } else {
+                    return false
+                }
+
+            }
+        },
+        {
+            type: 'button',
+            title: gettext('Anchor'),
+            icon: 'comment-empty',
+            action: editor => {
+                let mark = editor.currentView.state.schema.marks['anchor']
+                let command = toggleMark(mark)
+                command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
+            },
+            disabled: editor => {
+                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
+                    return true
+                } else if (editor.currentView.state.selection.empty) {
+                    return true
+                }
+            },
+            selected: editor => {
+                if (
+                    editor.currentView.state.selection.$head.marks().some(
+                        mark => mark.type.name === 'anchor'
+                    )
+                ) {
+                    return true
+                } else {
+                    return false
+                }
+
             }
         }
     ]

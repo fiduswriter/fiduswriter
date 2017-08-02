@@ -408,16 +408,32 @@ export class Editor {
             view
 
         this.view.state.doc.descendants((node, pos) => {
-            if (!foundPos && (node.type.name === 'heading' || node.type.name === 'figure') && node.attrs.id === id) {
+            if (foundPos) {
+                return
+            } else if ((node.type.name === 'heading' || node.type.name === 'figure') && node.attrs.id === id) {
                 foundPos = pos + 1
                 view = this.view
+            } else {
+                let anchorMark = node.marks.find(mark => mark.type.name === 'anchor')
+                if (anchorMark && anchorMark.attrs.id === id) {
+                    foundPos = pos + 1
+                    view = this.view
+                }
             }
         })
         if (!foundPos) {
             this.mod.footnotes.fnEditor.view.state.doc.descendants((node, pos) => {
-                if (!foundPos && (node.type.name === 'heading' || node.type.name === 'figure') && node.attrs.id === id) {
+                if (foundPos) {
+                    return
+                } else if ((node.type.name === 'heading' || node.type.name === 'figure') && node.attrs.id === id) {
                     foundPos = pos + 1
                     view = this.mod.footnotes.fnEditor.view
+                } else {
+                    let anchorMark = node.marks.find(mark => mark.type.name === 'anchor')
+                    if (anchorMark && anchorMark.attrs.id === id) {
+                        foundPos = pos + 1
+                        view = this.mod.footnotes.fnEditor.view
+                    }
                 }
             })
         }

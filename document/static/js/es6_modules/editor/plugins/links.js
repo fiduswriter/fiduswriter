@@ -8,6 +8,61 @@ import {randomHeadingId, randomFigureId} from "../../schema/common"
 const linksKey = new PluginKey('links')
 export let linksPlugin = function(options) {
 
+
+    function createLinkDropUp(linkMark) {
+        let linkDropUp = document.createElement('span'),
+            anchorType = 'external',
+            href = linkMark.attrs.href,
+            editor = options.editor,
+            toolbarLink = editor.menu.toolbarModel.content.find(item => item.id==='link')
+
+        if (!toolbarLink) {
+            // No link in toolbar to edit link. Disable all editing.
+            // This should not ever happen unless someone messes with
+            // the toolbar.
+            toolbarLink = {disabled: () => false}
+        }
+        linkDropUp.classList.add('link')
+        linkDropUp.classList.add('drop-up-outer')
+
+        if(href.length && href[0] === '#') {
+            anchorType = 'internal'
+            href = window.location.href.split('#')[0] + href
+        }
+
+        linkDropUp.innerHTML = noSpaceTmp`
+            <div class="link drop-up-inner">
+                ${gettext('Link')}:&nbsp;<a class="href" ${anchorType === 'external' ? 'target="_blank"' : ''} href="${href}">
+                    ${href}
+                </a><br>
+                ${gettext('Title')}:&nbsp;${linkMark.attrs.title}
+                ${toolbarLink.disabled(editor) ? '' : noSpaceTmp`
+                    <div class="edit">
+                        [<a href="#" class="edit-link">${gettext('Edit')}</a> | <a href="#" class="remove-link">${gettext('Remove')}</a>]
+                    </div>
+                `}
+            </div>
+        `
+        if (anchorType === 'internal') {
+            linkDropUp.querySelector('a.href').addEventListener('click', event => {
+                event.preventDefault()
+                let id = linkMark.attrs.href.slice(1)
+                editor.scrollIdIntoView(id)
+            })
+        }
+
+
+        linkDropUp.querySelector('.edit-link').addEventListener('click', () => {
+            toolbarLink.action(options.editor)
+        })
+        linkDropUp.querySelector('.remove-link').addEventListener('click', () => {
+            editor.view.dispatch(
+                editor.view.state.tr.removeMark($head.start(), $head.end(), linkMark)
+            )
+        })
+        return linkDropUp
+    }
+
     return new Plugin({
         key: linksKey,
         state: {
@@ -20,9 +75,12 @@ export let linksPlugin = function(options) {
                 let {
                     url
                 } = this.getState(oldState)
-                let id = state.selection.$from.parent.attrs.id,
+                let id = state.selection.$head.parent.attrs.id,
+                    mark = state.selection.$head.marks().find(mark => mark.type.name === 'anchor'),
                     newUrl = url.split('#')[0]
-                if (id) {
+                if (mark) {
+                    newUrl += `#${mark.attrs.id}`
+                } else if (id) {
                     newUrl += `#${id}`
                 }
                 let changed = url === newUrl ? false : true
@@ -59,7 +117,8 @@ export let linksPlugin = function(options) {
                 })
             })
             let transaction = transactions.slice(-1)[0],
-                foundIdElement = false //found heading or figure
+                foundIdElement = false // found heading or figure, anchor marks
+                // are allowed to be duplicated
             ranges.forEach(range => {
                 transaction.doc.nodesBetween(
                     range[0],
@@ -212,8 +271,8 @@ export let linksPlugin = function(options) {
                 if (!linkMark) {
                     return
                 }
-                let startIndex = $head.index()
 
+                let startIndex = $head.index()
                 while (
                     startIndex > 0 &&
                     linkMark.isInSet($head.parent.child(startIndex - 1).marks)
@@ -227,58 +286,9 @@ export let linksPlugin = function(options) {
                     startPos += $head.parent.child(i).nodeSize
                 }
 
-                let linkDropUp = document.createElement('span'),
-                    anchorType = 'external',
-                    href = linkMark.attrs.href,
-                    editor = options.editor,
-                    toolbarLink = editor.menu.toolbarModel.content.find(item => item.id==='link')
+                let dom = createLinkDropUp(linkMark)
 
-                if (!toolbarLink) {
-                    // No link in toolbar to edit link. Disable all editing.
-                    // This should not ever happen unless someone messes with
-                    // the toolbar.
-                    toolbarLink = {disabled: () => false}
-                }
-
-                linkDropUp.classList.add('link-drop-up-outer')
-
-                if(href.length && href[0] === '#') {
-                    anchorType = 'internal'
-                    href = window.location.href.split('#')[0] + href
-                }
-
-                linkDropUp.innerHTML = noSpaceTmp`
-                    <div class="link-drop-up-inner">
-                        ${gettext('Link')}:&nbsp;<a class="href" ${anchorType === 'external' ? 'target="_blank"' : ''} href="${href}">
-                            ${href}
-                        </a><br>
-                        ${gettext('Title')}:&nbsp;${linkMark.attrs.title}
-                        ${toolbarLink.disabled(editor) ? '' : noSpaceTmp`
-                            <div class="edit">
-                                [<a href="#" class="edit-link">${gettext('Edit')}</a> | <a href="#" class="remove-link">${gettext('Remove')}</a>]
-                            </div>
-                        `}
-                    </div>
-                `
-                if (anchorType==='internal') {
-                    linkDropUp.querySelector('a.href').addEventListener('click', event => {
-                        event.preventDefault()
-                        let id = linkMark.attrs.href.slice(1)
-                        editor.scrollIdIntoView(id)
-                    })
-                }
-
-                linkDropUp.querySelector('.edit-link').addEventListener('click', () => {
-                    toolbarLink.action(options.editor)
-                })
-                linkDropUp.querySelector('.remove-link').addEventListener('click', () => {
-                    editor.view.dispatch(
-                        editor.view.state.tr.removeMark($head.start(), $head.end(), linkMark)
-                    )
-                })
-
-                let deco = Decoration.widget(startPos, linkDropUp)
-
+                let deco = Decoration.widget(startPos, dom)
                 return DecorationSet.create(state.doc, [deco])
 
             }

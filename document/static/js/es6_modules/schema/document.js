@@ -4,7 +4,7 @@ import {nodes, marks} from "prosemirror-schema-basic"
 import {addListNodes} from "prosemirror-schema-list"
 import {tableNodes} from "prosemirror-tables"
 import {htmlToFnNode, fnNodeToHtml} from "./footnotes-convert"
-import {figure, citation, equation, heading} from "./common"
+import {figure, citation, equation, heading, anchor} from "./common"
 
 
 let article = {
@@ -42,7 +42,7 @@ let article = {
 }
 
 let title = {
-    content: "text<comment>*",
+    content: "text<annotation>*",
     group: "part",
     defining: true,
     parseDOM: [{
@@ -56,7 +56,7 @@ let title = {
 }
 
 let subtitle = {
-    content: "text<comment>*",
+    content: "text<annotation>*",
     group: "part",
     defining: true,
     isMetadata() {
@@ -87,7 +87,7 @@ let subtitle = {
 }
 
 let authors = {
-    content: "text<comment>*",
+    content: "text<annotation>*",
     group: "part",
     defining: true,
     isMetadata() {
@@ -149,7 +149,7 @@ let abstract = {
 }
 
 let keywords = {
-    content: "text<comment>*",
+    content: "text<annotation>*",
     group: "part",
     defining: true,
     isMetadata() {
@@ -224,7 +224,7 @@ let footnote = {
 }
 
 let code_block = {
-    content: "text<comment>*",
+    content: "text<annotation>*",
     group: "block",
     code: true,
     defining: true,
@@ -243,6 +243,7 @@ let comment = {
         id: {}
     },
     inclusive: false,
+    group: "annotation",
     parseDOM: [{
         tag: "span.comment[data-id]",
         getAttrs(dom) {
@@ -290,7 +291,8 @@ let spec = {
         strong: marks.strong,
         link: marks.link,
         code: marks.code,
-        comment
+        comment,
+        anchor
     })
 }
 

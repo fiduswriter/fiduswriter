@@ -76,7 +76,6 @@ export let keywordInputPlugin = function(options) {
                                 event.key==='ArrowRight' &&
                                 keywordInput.selectionStart === keywordInput.value.length
                             ) {
-                                rightExitKeywordInput = true
                                 window.getSelection().removeAllRanges()
                                 options.editor.view.focus()
                                 return false
@@ -87,7 +86,7 @@ export let keywordInputPlugin = function(options) {
                             ) {
                                 window.getSelection().removeAllRanges()
                                 options.editor.view.focus()
-                                return true
+                                return false
                             }
                             return true
                         }
@@ -105,19 +104,18 @@ export let keywordInputPlugin = function(options) {
                 } = this.getState(oldState)
 
                 decos = decos.map(tr.mapping, tr.doc)
-                if (tr.setSelection) {
-                    if (lastKeyArrowLeft) {
-                        let decoPos= decos.find()[0].from
-                        if (
-                            tr.selection.from === tr.selection.to &&
-                            decoPos === tr.selection.from
-                        ) {
-                            let len = keywordInput.value.length
-                            keywordInput.select()
-                            keywordInput.setSelectionRange(len, len)
-                        }
+                let decoPos= decos.find()[0].from
+                if (
+                    tr.selection.from === tr.selection.to &&
+                    decoPos === tr.selection.from
+                ) {
+                    keywordInput.select()
+                    if (oldState.selection.from > decoPos) {
+                        let len = keywordInput.value.length
+                        keywordInput.setSelectionRange(len, len)
+                    } else {
+                        keywordInput.setSelectionRange(0, 0)
                     }
-                    lastKeyArrowLeft = false
                 }
 
                 return {
@@ -131,33 +129,7 @@ export let keywordInputPlugin = function(options) {
 					decos
 				} = this.getState(state)
 				return decos
-			},
-            handleKeyDown(view, event) {
-                if (
-                    view.state.selection.from === view.state.selection.to &&
-                    ['ArrowLeft', 'ArrowRight'].includes(event.key)
-                ) {
-                    if (
-                        event.key === 'ArrowLeft'
-                    ) {
-                        lastKeyArrowLeft = true
-                    } else if (
-                        event.key === 'ArrowRight'
-                    ) {
-                        if (rightExitKeywordInput) {
-                            rightExitKeywordInput = false
-                            return false
-                        }
-                        let {decos} = this.getState(view.state),
-                            decoPos = decos.find()[0].from
-                        if (view.state.selection.from === decoPos) {
-                            keywordInput.select()
-                            keywordInput.setSelectionRange(0, 0)
-                            return true
-                        }
-                    }
-                }
-            }
+			}
         }
     })
 }

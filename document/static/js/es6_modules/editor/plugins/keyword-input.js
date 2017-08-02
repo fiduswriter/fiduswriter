@@ -1,5 +1,6 @@
 import {Plugin, PluginKey, TextSelection} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
+import browser from "prosemirror-view/dist/browser"
 
 const key = new PluginKey('keywordInput')
 export let keywordInputPlugin = function(options) {
@@ -25,8 +26,32 @@ export let keywordInputPlugin = function(options) {
                 options.editor.view.dispatch(
                     options.editor.view.state.tr.insert(pos, node)
                 )
+            } else if (
+                browser.gecko &&
+                keywordInput.selectionEnd === keywordInput.selectionStart
+            ) {
+                // Firefox has issues with the arrow keys of an <input type="text">
+                // element inside of a contenteditable element.
+                // https://github.com/yabwe/medium-editor/issues/1197
+                // So we need to handle arrow keys ourselves.
+                let selection = keywordInput.selectionStart
+                if (
+                    event.key === 'ArrowLeft' &&
+                    selection !== 0
+                ) {
+                    selection--
+                    keywordInput.setSelectionRange(selection, selection)
+                    event.stopPropagation()
+                } else if (
+                    event.key === 'ArrowRight' &&
+                    selection !== keywordInput.value.length
+                ) {
+                    selection++
+                    keywordInput.setSelectionRange(selection, selection)
+                    event.stopPropagation()
+                }
+
             }
-            return false
         })
 
         keywordInput.addEventListener('click', event => {
@@ -50,8 +75,6 @@ export let keywordInputPlugin = function(options) {
 
         return dom
     }
-
-
 
     return new Plugin({
         key,
@@ -104,7 +127,7 @@ export let keywordInputPlugin = function(options) {
                 } = this.getState(oldState)
 
                 decos = decos.map(tr.mapping, tr.doc)
-                let decoPos= decos.find()[0].from
+                let decoPos = decos.find()[0].from
                 if (
                     tr.selection.from === tr.selection.to &&
                     decoPos === tr.selection.from

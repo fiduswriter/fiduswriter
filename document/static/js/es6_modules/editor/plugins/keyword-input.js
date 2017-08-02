@@ -3,19 +3,20 @@ import {Decoration, DecorationSet} from "prosemirror-view"
 
 const key = new PluginKey('keywordInput')
 export let keywordInputPlugin = function(options) {
-    let keywordInput
-    let createKeywordInputWidget = function() {
-        let widget = document.createElement('div')
-        widget.classList.add('keyword-input')
-        widget.innerHTML = `<input type="text" placeholder="${gettext("Add keyword...")}">`
+    let lastKeyArrowLeft = false, // whether or not the last selection change event was caused by an arrow left key
+        rightExitKeywordInput = false, // whether the user tries to exit keyword input to the right
+        keywordInput // The input element for keywords
+    let createKeywordInputDom = function() {
+        let dom = document.createElement('div')
+        dom.classList.add('keyword-input')
+        dom.innerHTML = `<input type="text" placeholder="${gettext("Add keyword...")}">`
 
-        keywordInput = widget.querySelector('input')
+        keywordInput = dom.querySelector('input')
         keywordInput.addEventListener('keydown', event => {
-            event.stopPropagation()
             if (['Enter', ';', ','].includes(event.key)) {
                 event.preventDefault()
                 let keyword = keywordInput.value,
-                    state = options.editor.view.state, // TODO: This does not look right.
+                    state = options.editor.view.state,
                     {decos} = key.getState(state),
                     deco = decos.find()[0],
                     pos = deco.from,
@@ -24,35 +25,8 @@ export let keywordInputPlugin = function(options) {
                 options.editor.view.dispatch(
                     options.editor.view.state.tr.insert(pos, node)
                 )
-            } else if (
-                event.key === 'ArrowLeft' &&
-                keywordInput.selectionEnd === 0
-            ) {
-                event.preventDefault()
-                let state = options.editor.view.state,
-                    {decos} = key.getState(state),
-                    deco = decos.find()[0],
-                    pos = deco.from,
-                    $pos = state.doc.resolve(pos),
-                    tr = state.tr.setSelection(new TextSelection($pos, $pos))
-                options.editor.view.focus()
-                options.editor.view.dispatch(tr)
-            } else if (
-                event.key === 'ArrowRight' &&
-                keywordInput.selectionStart === keywordInput.value.length
-            ) {
-                let state = options.editor.view.state,
-                    {decos} = key.getState(state),
-                    deco = decos.find()[0],
-                    pos = deco.from + 3, // +3 to get into body element
-                    $pos = state.doc.resolve(pos),
-                    tr = state.tr.setSelection(new TextSelection($pos, $pos))
-                options.editor.view.focus()
-                options.editor.view.dispatch(tr)
             }
-        })
-        keywordInput.addEventListener('input', event => {
-            event.stopPropagation()
+            return false
         })
 
         keywordInput.addEventListener('click', event => {
@@ -64,6 +38,7 @@ export let keywordInputPlugin = function(options) {
                 state.selection.from !== pos ||
                 state.selection.to !== pos
             ) {
+                window.getSelection().removeAllRanges()
                 options.editor.view.focus()
                 let $pos = state.doc.resolve(pos)
                 options.editor.view.dispatch(
@@ -73,7 +48,7 @@ export let keywordInputPlugin = function(options) {
             }
         })
 
-        return widget
+        return dom
     }
 
 
@@ -82,7 +57,6 @@ export let keywordInputPlugin = function(options) {
         key,
         state: {
             init(config, state) {
-
                 let pos = 1, // enter article
                     child = 0,
                     decos = DecorationSet.empty
@@ -93,10 +67,31 @@ export let keywordInputPlugin = function(options) {
                 // Put decoration at end within keywords element
                 pos += state.doc.firstChild.child(child).nodeSize - 1
 
-                let widget = createKeywordInputWidget(),
-                    deco = Decoration.widget(pos, widget)
-
-                keywordInput = widget.querySelector('input')
+                let dom = createKeywordInputDom(),
+                    deco = Decoration.widget(pos, dom, {
+                        side: 1,
+                        stopEvent: event => {
+                            if (
+                                event.type==='keydown' &&
+                                event.key==='ArrowRight' &&
+                                keywordInput.selectionStart === keywordInput.value.length
+                            ) {
+                                rightExitKeywordInput = true
+                                window.getSelection().removeAllRanges()
+                                options.editor.view.focus()
+                                return false
+                            } else if (
+                                event.type==='keydown' &&
+                                event.key==='ArrowLeft' &&
+                                keywordInput.selectionEnd === 0
+                            ) {
+                                window.getSelection().removeAllRanges()
+                                options.editor.view.focus()
+                                return true
+                            }
+                            return true
+                        }
+                    })
 
                 decos = decos.add(state.doc, [deco])
 
@@ -108,7 +103,23 @@ export let keywordInputPlugin = function(options) {
                 let {
                     decos
                 } = this.getState(oldState)
+
                 decos = decos.map(tr.mapping, tr.doc)
+                if (tr.setSelection) {
+                    if (lastKeyArrowLeft) {
+                        let decoPos= decos.find()[0].from
+                        if (
+                            tr.selection.from === tr.selection.to &&
+                            decoPos === tr.selection.from
+                        ) {
+                            let len = keywordInput.value.length
+                            keywordInput.select()
+                            keywordInput.setSelectionRange(len, len)
+                        }
+                    }
+                    lastKeyArrowLeft = false
+                }
+
                 return {
                     decos
                 }
@@ -126,28 +137,24 @@ export let keywordInputPlugin = function(options) {
                     view.state.selection.from === view.state.selection.to &&
                     ['ArrowLeft', 'ArrowRight'].includes(event.key)
                 ) {
-                    let {decos} = this.getState(view.state),
-                        decoPos = decos.find()[0].from
-
                     if (
-                        event.key === 'ArrowLeft' &&
-                        view.state.selection.from === decoPos + 3
+                        event.key === 'ArrowLeft'
                     ) {
-                        let $decoPos = view.state.doc.resolve(decoPos)
-                        view.dispatch(
-                            view.state.tr.setSelection(new TextSelection($decoPos, $decoPos))
-                        )
-                        let len = keywordInput.value.length
-                        keywordInput.select()
-                        keywordInput.setSelectionRange(len, len)
-                        return true
+                        lastKeyArrowLeft = true
                     } else if (
-                        event.key === 'ArrowRight' &&
-                        view.state.selection.from === decoPos
+                        event.key === 'ArrowRight'
                     ) {
-                        keywordInput.select()
-                        keywordInput.setSelectionRange(0, 0)
-                        return true
+                        if (rightExitKeywordInput) {
+                            rightExitKeywordInput = false
+                            return false
+                        }
+                        let {decos} = this.getState(view.state),
+                            decoPos = decos.find()[0].from
+                        if (view.state.selection.from === decoPos) {
+                            keywordInput.select()
+                            keywordInput.setSelectionRange(0, 0)
+                            return true
+                        }
                     }
                 }
             }

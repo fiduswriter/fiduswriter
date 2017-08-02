@@ -39,7 +39,13 @@ export let placeholdersPlugin = function() {
                     // place inside the first child node (a paragraph).
                     position += 1
                 }
-                decorations.push(Decoration.widget(position, placeHolder))
+                decorations.push(Decoration.widget(
+                    position,
+                    placeHolder,
+                    {
+                        side: 1
+                    }
+                ))
             }
         })
 
@@ -62,7 +68,6 @@ export let placeholdersPlugin = function() {
                     return
                 }
                 let currentPart = anchorPart === headPart ? anchorPart : false
-                //currentPart = false
                 let articleNode = state.doc.firstChild
                 let decorations = calculatePlaceHolderDecorations(articleNode, currentPart)
 

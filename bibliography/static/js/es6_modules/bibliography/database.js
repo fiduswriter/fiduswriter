@@ -126,7 +126,7 @@ export class BibliographyDB {
         // the original tmpDB isn't destroyed.
         let dbObject = {}
         Object.keys(tmpDB).forEach((bibKey)=>{
-            dbObject[bibKey] =  Object.assign({}, tmpDB[bibKey])
+            dbObject[bibKey] = Object.assign({}, tmpDB[bibKey])
             dbObject[bibKey].entry_cat = JSON.stringify(tmpDB[bibKey].entry_cat)
             dbObject[bibKey].fields = JSON.stringify(tmpDB[bibKey].fields)
         })

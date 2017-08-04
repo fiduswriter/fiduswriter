@@ -274,9 +274,6 @@ ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 
 AUTH_PROFILE_MODULE = "account.UserProfile"
 
-# locking
-LOCK_TIMEOUT = 600
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

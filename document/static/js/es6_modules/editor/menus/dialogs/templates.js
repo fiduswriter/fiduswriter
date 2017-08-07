@@ -120,6 +120,30 @@ export let tableEditTemplate = _.template(`
         </div>
         <div class="table-edit-button-group">
             <div class="fw-button fw-dark ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                <span class="ui-button-text" title="` + gettext("Merge Cells")+ `">
+                    <label class="merge-cells">` + gettext("Merge Cells")+ `</label>
+                </span>
+            </div>
+            <div class="fw-button fw-dark ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                <span class="ui-button-text" title="` + gettext("Split Cell")+ `">
+                    <label class="split-cell">` + gettext("Split Cell")+ `</label>
+                </span>
+            </div>
+        </div>
+        <div class="table-edit-button-group">
+            <div class="fw-button fw-dark ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                <span class="ui-button-text" title="` + gettext("Attribute Cell")+ `">
+                    <label class="attr-cell">` + gettext("Attribute Cell")+ `</label>
+                </span>
+            </div>
+            <div class="fw-button fw-dark ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                <span class="ui-button-text" title="` + gettext("Go Next to Cell")+ `">
+                    <label class="go-next-cell">` + gettext("Go Next to Cell")+ `</label>
+                </span>
+            </div>
+        </div>
+        <div class="table-edit-button-group">
+            <div class="fw-button fw-dark ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
                 <span class="ui-button-text" title="` + gettext("Remove row")+ `">
                     <label class="row-remove">` + gettext("Remove row")+ `</label>
                 </span>
@@ -132,6 +156,23 @@ export let tableEditTemplate = _.template(`
             <div class="fw-button fw-dark ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
                 <span class="ui-button-text" title="` + gettext("Remove table")+ `">
                     <label class="table-remove">` + gettext("Remove table")+ `</label>
+                </span>
+            </div>
+        </div>
+        <div class="table-edit-button-group">
+            <div class="fw-button fw-dark ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                <span class="ui-button-text" title="` + gettext("Toggle Header Row")+ `">
+                    <label class="toggle-header-row">` + gettext("Toggle Header Row")+ `</label>
+                </span>
+            </div>
+            <div class="fw-button fw-dark ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                <span class="ui-button-text" title="` + gettext("Toggle Header column")+ `">
+                    <label class="toggle-header-column">` + gettext("Toggle Header column")+ `</label>
+                </span>
+            </div>
+            <div class="fw-button fw-dark ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                <span class="ui-button-text" title="` + gettext("Toggle Header cell")+ `">
+                    <label class="toggle-header-cell">` + gettext("Toggle Header cell")+ `</label>
                 </span>
             </div>
         </div>

@@ -26,8 +26,8 @@ import {getMetadata, getSettings, updateDoc} from "../schema/convert"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
 import {Paste} from "./paste"
-import {addDropdownBox} from "../common"
 import {placeholdersPlugin} from "./plugins/placeholders"
+import {tablesPlugin} from "./plugins/tables"
 import {headerbarPlugin} from "./plugins/headerbar"
 import {toolbarPlugin} from "./plugins/toolbar"
 import {collabCaretsPlugin} from "./plugins/collab-carets"
@@ -76,6 +76,7 @@ export class Editor {
             [dropCursor],
             [tableEditing],
             [placeholdersPlugin],
+            [tablesPlugin, () => ({editor: this})],
             [headerbarPlugin, () => ({editor: this})],
             [toolbarPlugin, () => ({editor: this})],
             [collabCaretsPlugin],

@@ -1,6 +1,19 @@
 import {selectParentNode} from "prosemirror-commands"
 import {tableInsertTemplate, tableEditTemplate} from "./templates"
-import {addColumnAfter, addColumnBefore, deleteColumn, addRowBefore, addRowAfter, deleteRow, deleteTable} from "prosemirror-tables"
+import {addColumnAfter, addColumnBefore, deleteColumn, addRowBefore, addRowAfter, deleteRow, deleteTable,
+        mergeCells, splitCell, setCellAttr, toggleHeaderRow, toggleHeaderColumn, toggleHeaderCell,
+        goToNextCell} from "prosemirror-tables"
+
+import {DOMParser, Schema}  from "prosemirror-model"
+import {schema as baseSchema}  from "prosemirror-schema-basic"
+import {tableEditing, tableNodes}  from "prosemirror-tables"
+import {baseKeymap}  from "prosemirror-commands"
+import {EditorState} from "prosemirror-state"
+import {keymap}  from "prosemirror-keymap"
+import {exampleSetup, buildMenuItems}  from "prosemirror-example-setup"
+
+import {Plugin, PluginKey} from "prosemirror-state"
+import {Decoration, DecorationSet} from "prosemirror-view"
 
 export class TableDialog {
     constructor(editor) {
@@ -27,7 +40,6 @@ export class TableDialog {
             return false
         }
     }
-
 
 
     markInsertTable(cell, className) {
@@ -200,5 +212,50 @@ export class TableDialog {
                 deleteTable(this.editor.currentView.state, this.editor.currentView.dispatch)
             })
         })
+        this.dialog.find('.merge-cells').on('mousedown', event => {
+            this.executeAction(event, () => {
+                mergeCells(this.editor.currentView.state, this.editor.currentView.dispatch)
+            })
+        })
+
+        this.dialog.find('.split-cell').on('mousedown', event => {
+            this.executeAction(event, () => {
+                splitCell(this.editor.currentView.state, this.editor.currentView.dispatch)
+            })
+        })
+
+        this.dialog.find('.attr-cell').on('mousedown', event => {
+            this.executeAction(event, () => {
+                var c = setCellAttr("background", "#dfd")
+                c(this.editor.currentView.state, this.editor.currentView.dispatch)
+            })
+        })
+
+        this.dialog.find('.toggle-header-row').on('mousedown', event => {
+            this.executeAction(event, () => {
+                toggleHeaderRow(this.editor.currentView.state, this.editor.currentView.dispatch)
+            })
+        })
+
+        this.dialog.find('.toggle-header-column').on('mousedown', event => {
+            this.executeAction(event, () => {
+                toggleHeaderColumn(this.editor.currentView.state, this.editor.currentView.dispatch)
+            })
+        })
+
+        this.dialog.find('.toggle-header-cell').on('mousedown', event => {
+            this.executeAction(event, () => {
+                 toggleHeaderCell(this.editor.currentView.state, this.editor.currentView.dispatch)
+            })
+        })
+
+        this.dialog.find('.go-next-cell').on('mousedown', event => {
+
+            var g = goToNextCell(1)
+            g(this.editor.currentView.state, this.editor.currentView.dispatch)
+            return
+        })
+
+
     }
 }

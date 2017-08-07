@@ -98,9 +98,12 @@ export class ModCollabDocChanges {
                         return step
                     })
                     // We add a json diff in a format understandable by the
-                    // server
+                    // server. If the version is zero, we need to send a diff
+                    // starting from an empty document.
+                    let confirmedJson = this.mod.editor.docInfo.version ?
+                        this.mod.editor.docInfo.confirmedDoc.firstChild.toJSON() : {}
                     unconfirmedDiff['jd'] = compare(
-                        this.mod.editor.docInfo.confirmedDoc.firstChild.toJSON(),
+                        confirmedJson,
                         this.mod.editor.view.state.doc.firstChild.toJSON()
                     )
                     // In case the title changed, we also add a title field to

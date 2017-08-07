@@ -2,6 +2,8 @@ import uuid
 import atexit
 from copy import deepcopy
 
+import jsonpatch
+
 from document.helpers.session_user_info import SessionUserInfo
 from document.helpers.serializers import PythonWithURLSerializer
 from base.ws_handler import BaseWebSocketHandler
@@ -57,10 +59,7 @@ class WebSocket(BaseWebSocketHandler):
                     'comments': json_decode(doc_db.comments),
                     'settings': json_decode(doc_db.settings),
                     'contents': json_decode(doc_db.contents),
-                    'metadata': json_decode(doc_db.metadata),
                     'version': doc_db.version,
-                    'diff_version': doc_db.diff_version,
-                    'comment_version': doc_db.comment_version,
                     'title': doc_db.title,
                     'id': doc_db.id
                 }
@@ -88,10 +87,10 @@ class WebSocket(BaseWebSocketHandler):
             }
             self.send_message(response)
 
-    def confirm_diff(self, request_id):
+    def confirm_diff(self, rid):
         response = {
             'type': 'confirm_diff',
-            'request_id': request_id
+            'rid': rid
         }
         self.send_message(response)
 
@@ -110,23 +109,9 @@ class WebSocket(BaseWebSocketHandler):
                 'team_members': []
             }
         }
-        if self.doc['diff_version'] < self.doc['version']:
-            logger.error('!!!diff version issue!!!')
-            self.doc['diff_version'] = self.doc['version']
-            self.doc["last_diffs"] = []
-        elif self.doc['diff_version'] > self.doc['version']:
-            needed_diffs = self.doc['diff_version'] - self.doc['version']
-            # We only send those diffs needed by the receiver.
-            response['doc_info']['unapplied_diffs'] = self.doc[
-                "last_diffs"][-needed_diffs:]
-            logger.debug('Adding %d diffs' % needed_diffs)
-        else:
-            response['doc_info']['unapplied_diffs'] = []
         response['doc'] = {
-            'version': self.doc['version'],
-            'title': self.doc['title'],
+            'v': self.doc['version'],
             'contents': self.doc['contents'],
-            'metadata': self.doc['metadata'],
             'settings': self.doc['settings']
         }
         if self.user_info.access_rights == 'read-without-comments':
@@ -140,7 +125,6 @@ class WebSocket(BaseWebSocketHandler):
             response['doc']['comments'] = filtered_comments
         else:
             response['doc']['comments'] = self.doc["comments"]
-        response['doc']['comment_version'] = self.doc["comment_version"]
         for team_member in doc_owner.leader.all():
             tm_object = dict()
             tm_object['id'] = team_member.member.id
@@ -202,7 +186,7 @@ class WebSocket(BaseWebSocketHandler):
             if (parsed["type"] == "diff"):
                 self.send_message({
                     'type': 'reject_diff',
-                    'request_id': parsed['request_id']
+                    'rid': parsed['rid']
                 })
             return
         # Message order is correct. We continue processing the data.
@@ -214,17 +198,10 @@ class WebSocket(BaseWebSocketHandler):
             self.handle_participant_update()
         elif parsed["type"] == 'chat' and self.can_communicate():
             self.handle_chat(parsed)
-        elif parsed["type"] == 'check_diff_version':
-            self.check_diff_version(parsed)
+        elif parsed["type"] == 'check_version':
+            self.check_version(parsed)
         elif parsed["type"] == 'selection_change':
             self.handle_selection_change(parsed)
-        elif (
-            parsed["type"] == 'update_doc' and
-            self.can_update_document()
-        ):
-            self.handle_document_update(parsed)
-        elif parsed["type"] == 'update_title' and self.can_update_document():
-            self.handle_title_update(parsed)
         elif parsed["type"] == 'diff' and self.can_update_document():
             self.handle_diff(parsed)
 
@@ -246,34 +223,6 @@ class WebSocket(BaseWebSocketHandler):
             message['c'] = self.messages['client']
             logger.debug(message)
             self.write_message(message)
-
-    def update_document(self, changes):
-        if changes['version'] == self.doc['version']:
-            # Document hasn't changed, return.
-            return
-        elif (
-            changes['version'] > self.doc['diff_version'] or
-            changes['version'] < self.doc['version']
-        ):
-            # The version number is too high. Possibly due to server restart.
-            # Do not accept it, and send a document instead.
-            self.send_document()
-            return
-        else:
-            # The saved version does not contain all accepted diffs, so we keep
-            # the remaining ones + 1000 in case a client needs to reconnect and
-            # is missing some.
-            remaining_diffs = 1000 + \
-                self.doc['diff_version'] - changes['version']
-            self.doc['last_diffs'] = self.doc['last_diffs'][-remaining_diffs:]
-        self.doc['title'] = changes['title']
-        self.doc['contents'] = changes['contents']
-        self.doc['metadata'] = changes['metadata']
-        self.doc['settings'] = changes['settings']
-        self.doc['version'] = changes['version']
-
-    def update_title(self, title):
-        self.doc['title'] = title
 
     def update_comments(self, comments_updates):
         comments_updates = deepcopy(comments_updates)
@@ -306,24 +255,9 @@ class WebSocket(BaseWebSocketHandler):
                 for answer in self.doc["comments"][comment_id]["answers"]:
                     if answer["id"] == cd["id"]:
                         answer["answer"] = cd["answer"]
-            self.doc['comment_version'] += 1
 
     def handle_participant_update(self):
         WebSocket.send_participant_list(self.user_info.document_id)
-
-    def handle_document_update(self, parsed):
-        self.update_document(parsed["doc"])
-        WebSocket.save_document(self.user_info.document_id, False)
-        message = {
-            "type": 'check_hash',
-            "diff_version": parsed["doc"]["version"],
-            "hash": parsed["hash"]
-        }
-        WebSocket.send_updates(message, self.user_info.document_id, self.id)
-
-    def handle_title_update(self, parsed):
-        self.update_title(parsed["title"])
-        WebSocket.save_document(self.user_info.document_id, False)
 
     def handle_chat(self, parsed):
         chat = {
@@ -336,29 +270,28 @@ class WebSocket(BaseWebSocketHandler):
 
     def handle_selection_change(self, parsed):
         if self.user_info.document_id in WebSocket.sessions and parsed[
-                "diff_version"] == self.doc['diff_version']:
+                "v"] == self.doc['version']:
             WebSocket.send_updates(
                 parsed, self.user_info.document_id, self.id)
 
     # Checks if the diff only contains changes to comments.
-    def only_comments(self, parsed_diffs):
+    def only_comments(self, parsed):
         allowed_operations = ['addMark', 'removeMark']
         only_comment = True
-        for diff in parsed_diffs:
-            if not (diff['stepType'] in allowed_operations and diff[
-                    'mark']['type'] == 'comment'):
-                only_comment = False
+        if "ds" in parsed:  # ds = document steps
+            for step in parsed["ds"]:
+                if not (step['stepType'] in allowed_operations and step[
+                        'mark']['type'] == 'comment'):
+                    only_comment = False
         return only_comment
 
     def handle_diff(self, parsed):
-        pdv = parsed["diff_version"]
-        ddv = self.doc['diff_version']
-        logger.debug("PDV: %d, DDV: %d" % (pdv, ddv))
-        pcv = parsed["comment_version"]
-        dcv = self.doc['comment_version']
+        pv = parsed["v"]
+        dv = self.doc['version']
+        logger.debug("PV: %d, DV: %d" % (pv, dv))
         if (
             self.user_info.access_rights in COMMENT_ONLY and
-            not self.only_comments(parsed['diff'])
+            not self.only_comments(parsed)
         ):
             logger.error(
                 (
@@ -367,63 +300,70 @@ class WebSocket(BaseWebSocketHandler):
                 )
             )
             return
-        if pdv == ddv and pcv == dcv:
-            self.doc["last_diffs"].extend(parsed["diff"])
-            self.doc['diff_version'] += len(parsed["diff"])
-            self.update_comments(parsed["comments"])
-            self.confirm_diff(parsed["request_id"])
+        if pv == dv:
+            self.doc["last_diffs"].append(parsed)
+            # Only keep the last 1000 diffs
+            self.doc["last_diffs"] = self.doc["last_diffs"][-1000:]
+            self.doc['version'] += 1
+            if "jd" in parsed:  # jd = json diff
+                jsonpatch.apply_patch(
+                   self.doc['contents'],
+                   parsed["jd"],
+                   True
+                )
+                # The json diff is only needed by the python backend which does
+                # not understand the steps. It can therefore be removed before
+                # broadcast to other clients.
+                del parsed["jd"]
+            if "ti" in parsed:  # ti = title
+                self.doc["title"] = parsed["ti"]
+            if "co" in parsed:  # co = comments
+                self.update_comments(parsed["co"])
+            WebSocket.save_document(self.user_info.document_id)
+            self.confirm_diff(parsed["rid"])
             WebSocket.send_updates(
                 parsed,
                 self.user_info.document_id,
                 self.id,
                 self.user_info.user.id
             )
-        elif pdv > ddv:
-            # Client has a higher version than server. Something is fishy!
-            logger.debug('unfixable')
-        elif pdv < ddv:
-            if pdv + len(self.doc["last_diffs"]) >= ddv:
+        elif pv < dv:
+            if pv + len(self.doc["last_diffs"]) >= dv:
                 # We have enough last_diffs stored to fix it.
                 logger.debug("can fix it")
-                number_diffs = \
-                    parsed["diff_version"] - self.doc['diff_version']
-                response = {
-                    "type": "diff",
-                    "server_fix": True,
-                    "diff_version": parsed["diff_version"],
-                    "diff": self.doc["last_diffs"][number_diffs:],
-                    "reject_request_id": parsed["request_id"],
-                }
-                self.send_message(response)
+                number_diffs = pv - dv
+                messages = self.doc["last_diffs"][number_diffs:]
+                for message in messages:
+                    new_message = message.copy()
+                    new_message["server_fix"] = True
+                    self.send_message(new_message)
             else:
                 logger.debug('unfixable')
                 # Client has a version that is too old to be fixed
                 self.send_document()
         else:
-            logger.error('comment_version incorrect!')
+            # Client has a higher version than server. Something is fishy!
+            logger.debug('unfixable')
 
-    def check_diff_version(self, parsed):
-        pdv = parsed["diff_version"]
-        ddv = self.doc['diff_version']
-        logger.debug("PDV: %d, DDV: %d" % (pdv, ddv))
-        if pdv == ddv:
+    def check_version(self, parsed):
+        pv = parsed["v"]
+        dv = self.doc['version']
+        logger.debug("PV: %d, DV: %d" % (pv, dv))
+        if pv == dv:
             response = {
-                "type": "confirm_diff_version",
-                "diff_version": pdv,
+                "type": "confirm_version",
+                "v": pv,
             }
             self.send_message(response)
             return
-        elif pdv + len(self.doc["last_diffs"]) >= ddv:
+        elif pv + len(self.doc["last_diffs"]) >= dv:
             logger.debug("can fix it")
-            number_diffs = pdv - ddv
-            response = {
-                "type": "diff",
-                "server_fix": True,
-                "diff_version": pdv,
-                "diff": self.doc["last_diffs"][number_diffs:],
-            }
-            logger.debug(response)
-            self.send_message(response)
+            number_diffs = pv - dv
+            messages = self.doc["last_diffs"][number_diffs:]
+            for message in messages:
+                new_message = message.copy()
+                new_message["server_fix"] = True
+                self.send_message(new_message)
             return
         else:
             logger.debug('unfixable')
@@ -450,7 +390,7 @@ class WebSocket(BaseWebSocketHandler):
         ):
             del self.doc['participants'][self.id]
             if len(self.doc['participants'].keys()) == 0:
-                WebSocket.save_document(self.user_info.document_id, True)
+                WebSocket.save_document(self.user_info.document_id)
                 del WebSocket.sessions[self.user_info.document_id]
                 logger.debug("noone left")
 
@@ -467,7 +407,7 @@ class WebSocket(BaseWebSocketHandler):
             self.id
         ))
         if message["type"] == 'diff':
-            logger.debug("Diff version: %d" % message["diff_version"])
+            logger.debug("Diff version: %d" % message["v"])
         self.write_message(message)
 
     @classmethod
@@ -540,22 +480,13 @@ class WebSocket(BaseWebSocketHandler):
                     logger.error("Error sending message", exc_info=True)
 
     @classmethod
-    def save_document(cls, document_id, all_have_left):
+    def save_document(cls, document_id):
         doc = cls.sessions[document_id]
         doc_db = doc['db']
         doc_db.title = doc['title'][-255:]
         doc_db.version = doc['version']
-        doc_db.diff_version = doc['diff_version']
-        doc_db.comment_version = doc['comment_version']
         doc_db.contents = json_encode(doc['contents'])
-        doc_db.metadata = json_encode(doc['metadata'])
         doc_db.settings = json_encode(doc['settings'])
-        if all_have_left:
-            remaining_diffs = doc['diff_version'] - doc['version']
-            if remaining_diffs > 0:
-                doc['last_diffs'] = doc['last_diffs'][-remaining_diffs:]
-            else:
-                doc['last_diffs'] = []
         doc_db.last_diffs = json_encode(doc['last_diffs'])
         doc_db.comments = json_encode(doc['comments'])
         logger.debug('saving document # %d' % doc_db.id)
@@ -565,6 +496,6 @@ class WebSocket(BaseWebSocketHandler):
     @classmethod
     def save_all_docs(cls):
         for document_id in cls.sessions:
-            cls.save_document(document_id, True)
+            cls.save_document(document_id)
 
 atexit.register(WebSocket.save_all_docs)

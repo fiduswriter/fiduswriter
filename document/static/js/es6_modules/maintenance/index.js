@@ -1,7 +1,7 @@
 import {Step} from "prosemirror-transform"
 
 import {updateFileDoc, updateFileBib} from "../importer/file"
-import {updateDoc, getMetadata, getSettings} from "../schema/convert"
+import {updateDoc, getSettings} from "../schema/convert"
 import {docSchema} from "../schema/document"
 import {addAlert, csrfToken} from "../common"
 import {Menu} from "../menu"
@@ -67,7 +67,6 @@ export class DocMaintenance {
             contents: window.JSON.parse(doc.fields.contents),
             diff_version: doc.fields.diff_version,
             last_diffs: window.JSON.parse(doc.fields.last_diffs),
-            metadata: window.JSON.parse(doc.fields.metadata),
             settings: window.JSON.parse(doc.fields.settings),
             title: doc.fields.title,
             version: doc.fields.version,
@@ -77,12 +76,8 @@ export class DocMaintenance {
         // updates doc to the newest version
         doc = updateDoc(oldDoc)
 
-        // only proceed with saving if the doc update has changed something or there
-        // are last diffs
-        if (doc !== oldDoc || doc.last_diffs.length > 0) {
-            if (doc.last_diffs.length > 0) {
-                this.applyDiffs(doc)
-            }
+        // only proceed with saving if the doc update has changed something
+        if (doc !== oldDoc) {
             this.saveDoc(doc)
         }
 
@@ -90,40 +85,9 @@ export class DocMaintenance {
 
     }
 
-    applyDiffs(doc) {
-
-        let pmDoc = docSchema.nodeFromJSON({type:'doc', content:[doc.contents]})
-        /*let state = EditorState.create({
-            schema: docSchema,
-            doc:
-        })*/
-
-        let unappliedDiffs = doc.diff_version - doc.version
-
-        doc.last_diffs = doc.last_diffs.slice(doc.last_diffs.length - unappliedDiffs)
-        while (doc.last_diffs.length > 0) {
-            let diff = doc.last_diffs.shift()
-            let steps = [diff].map(j => {
-                let step = Step.fromJSON(docSchema, j)
-                let result = step.apply(pmDoc)
-                if (result.doc) {
-                    pmDoc = result.doc
-                } else {
-                    addAlert('error', gettext('Discarded useless diff for: ') + doc.id)
-                }
-            })
-        }
-        let pmArticle = pmDoc.firstChild
-        doc.contents = pmArticle.toJSON()
-        doc.metadata = getMetadata(pmArticle)
-        Object.assign(doc.settings, getSettings(pmArticle))
-        doc.version = doc.diff_version
-    }
-
 
     saveDoc(doc) {
         doc.contents = window.JSON.stringify(doc.contents)
-        doc.metadata = window.JSON.stringify(doc.metadata)
         doc.settings = window.JSON.stringify(doc.settings)
         doc.last_diffs = window.JSON.stringify(doc.last_diffs)
         this.docSavesLeft++

@@ -162,11 +162,8 @@ export class ImportNative {
                 beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
                 success: (data, textStatus, jqXHR) => {
                     let docInfo = {
-                        unapplied_diffs: [],
                         is_owner: true,
-                        rights: 'write',
-                        changed: false,
-                        title_changed: false
+                        rights: 'write'
                     }
                     this.doc.owner = {
                         id: this.user.id,

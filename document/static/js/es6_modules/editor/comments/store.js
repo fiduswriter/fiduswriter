@@ -12,11 +12,10 @@ export class ModCommentStore {
         this.mod = mod
         // a comment object for a comment that is still under construction
         this.commentDuringCreation = false
-        this.setVersion(0)
+        this.reset()
     }
 
-    setVersion(version) {
-        this.version = version
+    reset() {
         this.comments = Object.create(null)
         this.unsent = []
     }
@@ -346,11 +345,10 @@ export class ModCommentStore {
     }
 
     eventsSent(n) {
-        this.unsent = this.unsent.slice(n)
-        this.version += n
+        this.unsent = this.unsent.slice(n.length)
     }
 
-    receive(events, version) {
+    receive(events) {
         events.forEach(event => {
             if (event.type == "delete") {
                 this.deleteLocalComment(event.id, false)
@@ -365,7 +363,6 @@ export class ModCommentStore {
             } else if (event.type == "update_answer") {
                 this.updateLocalAnswer(event.commentId, event.id, event.answer, false)
             }
-            this.version++
         })
 
     }

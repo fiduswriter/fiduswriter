@@ -8,21 +8,6 @@ import {randomHeadingId, randomFigureId} from "./common"
 import {DOMSerializer, DOMParser} from "prosemirror-model"
 
 
-export let getMetadata = function(pmArticle) {
-    let metadata = {}
-    let serializer = DOMSerializer.fromSchema(docSchema)
-    for (let i=0; i < pmArticle.childCount; i++) {
-        let pmNode = pmArticle.child(i)
-        if (pmNode.type.isMetadata || !pmNode.attrs.hidden) {
-            let value = serializer.serializeNode(pmNode).innerHTML
-            if (value.length > 0 && value !== "<p></p>") {
-                metadata[pmNode.type.name] = value
-            }
-        }
-    }
-    return metadata
-}
-
 export let getSettings = function(pmArticle) {
     let settings = Object.assign({}, pmArticle.attrs)
     return settings
@@ -168,10 +153,8 @@ let convertDocV0 = function(doc) {
         }
     })
     let pmArticle = docSchema.nodeFromJSON(docContents)
-    let pmMetadata = getMetadata(pmArticle)
     doc = JSON.parse(JSON.stringify(doc))
     doc.contents = docContents
-    doc.metadata = pmMetadata
     doc.settings = {doc_version: 1.1}
     return doc
 }

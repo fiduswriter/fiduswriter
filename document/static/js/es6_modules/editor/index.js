@@ -1,4 +1,3 @@
-import * as objectHash from "object-hash/dist/object_hash"
 import * as plugins from "../plugins/editor"
 
 /* Functions for ProseMirror integration.*/
@@ -8,7 +7,7 @@ import {history, redo, undo} from "prosemirror-history"
 import {toggleMark, baseKeymap} from "prosemirror-commands"
 import {keymap} from "prosemirror-keymap/dist/keymap"
 import {buildKeymap} from "prosemirror-example-setup"
-import {collab, getVersion} from "prosemirror-collab"
+import {collab} from "prosemirror-collab"
 import {tableEditing} from "prosemirror-tables"
 import {dropCursor} from "prosemirror-dropcursor"
 
@@ -22,7 +21,7 @@ import {ModSettings} from "./settings"
 import {headerbarModel, toolbarModel} from "./menus"
 import {ModStyles} from "./styles"
 import {ModServerCommunications} from "./server-communications"
-import {getMetadata, getSettings, updateDoc} from "../schema/convert"
+import {getSettings, updateDoc} from "../schema/convert"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
 import {Paste} from "./paste"
@@ -53,16 +52,13 @@ export class Editor {
         this.docInfo = {
             id,
             rights: '',
-            unapplied_diffs: [],
             owner: undefined,
             is_owner: false,
-            title_changed: false,
-            changed: false
+            confirmedDoc: false // The latest doc as confirmed by the server.
         }
         this.schema = docSchema
         this.user = false
-        // The latest doc as confirmed by the server.
-        this.confirmedDoc = false
+
         this.menu = {
             headerbarModel,
             toolbarModel
@@ -72,7 +68,7 @@ export class Editor {
             [history],
             [keymap, () => baseKeymap],
             [keymap, () => buildKeymap(this.schema)],
-            [collab, doc => ({version: doc.version})],
+            [collab],
             [dropCursor],
             [tableEditing],
             [placeholdersPlugin],
@@ -131,39 +127,7 @@ export class Editor {
         new ModStyles(this)
         this.activateFidusPlugins()
         this.mod.serverCommunications.init()
-        this.setSaveTimers()
     }
-
-    setSaveTimers() {
-        // Set Auto-save to send the document every two minutes, if it has changed.
-        this.sendDocumentTimer = window.setInterval(() => {
-            if (this.docInfo && this.docInfo.changed &&
-                READ_ONLY_ROLES.indexOf(this.docInfo.access_rights) === -1) {
-                this.save()
-            }
-        }, 120000)
-
-        // Set Auto-save to send the title every 5 seconds, if it has changed.
-        this.sendDocumentTitleTimer = window.setInterval(() => {
-            if (this.docInfo.title_changed &&
-                READ_ONLY_ROLES.indexOf(this.docInfo.access_rights) === -1) {
-                this.docInfo.title_changed = false
-                this.mod.serverCommunications.send(()=>({
-                    type: 'update_title',
-                    title: this.getDoc().title
-                }))
-            }
-        }, 10000)
-
-        // Auto save the document when the user leaves the page.
-        window.addEventListener("beforeunload", () => {
-            if (this.docInfo && this.docInfo.changed &&
-                READ_ONLY_ROLES.indexOf(this.docInfo.access_rights) === -1) {
-                this.save()
-            }
-        })
-    }
-
 
     activateFidusPlugins() {
         // Add plugins.
@@ -226,7 +190,7 @@ export class Editor {
 
         // Reset collaboration
         this.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
-        this.mod.collab.docChanges.unconfirmedSteps = {}
+        this.mod.collab.docChanges.unconfirmedDiffs = {}
         if (this.mod.collab.docChanges.awaitingDiffResponse) {
             this.mod.collab.docChanges.enableDiffSending()
         }
@@ -237,10 +201,9 @@ export class Editor {
 
         this.docInfo = data.doc_info
         this.docInfo.doc_version = doc.settings['doc_version']
-        this.docInfo.changed = false
-        this.docInfo.title_changed = false
+        this.docInfo.version = doc["v"]
 
-        if (doc.version === 0) {
+        if (this.docInfo.version === 0) {
             // If the document is new, change the url.
             window.history.replaceState("", "", `/document/${this.docInfo.id}/`)
         }
@@ -280,37 +243,13 @@ export class Editor {
             this.view.updateState(EditorState.create(stateConfig))
 
             // Set initial confirmed doc
-            this.confirmedDoc = this.view.state.doc
-
-            if (this.docInfo.unapplied_diffs.length > 0) {
-                // We have unapplied diffs -- this should only happen if the last disconnect
-                // happened before we could save or because we are connecting to a document
-                // in the process of being edited by another client. We try to apply the
-                // diffs and then save immediately.
-                //try {
-                    // We only try because this fails if the PM diff format has changed.
-
-                while (this.docInfo.unapplied_diffs.length > 0) {
-                    let diff = this.docInfo.unapplied_diffs.shift()
-                    this.mod.collab.docChanges.applyDiff(diff)
-                }
-                //this.save()
-                /*} catch (error) {
-                    // We couldn't apply the diffs. They are likely corrupted.
-                    // We remove remaining diffs, increase the version by one and
-                    // save to the server.
-                    this.doc.version += this.docInfo.unapplied_diffs.length + 1
-                    this.docInfo.unapplied_diffs = []
-                    console.warn('Diffs could not be applied correctly!')
-                }*/
-            }
-
+            this.docInfo.confirmedDoc = this.view.state.doc
 
             // Render footnotes based on main doc
             this.mod.footnotes.fnEditor.renderAllFootnotes()
 
             //  Setup comment handling
-            this.mod.comments.store.setVersion(doc.comment_version)
+            this.mod.comments.store.reset()
             Object.values(doc.comments).forEach(comment => {
                 this.mod.comments.store.addLocalComment(comment.id, comment.user,
                     comment.userName, comment.userAvatar, comment.date, comment.comment,
@@ -334,48 +273,20 @@ export class Editor {
         })
     }
 
-    // Creates a hash value for the entire document so that we can compare with
-    // other clients if we really have the same contents.
-    getHash() {
-        return objectHash.MD5(
-            this.confirmedDoc.toJSON(),
-            {unorderedArrays: true}
-        )
-    }
-
-
     // Collect all components of the current doc. Needed for saving and export
     // filters
     getDoc() {
-        let pmArticle = this.confirmedDoc.firstChild
+        let pmArticle = this.docInfo.confirmedDoc.firstChild
         return {
             contents: pmArticle.toJSON(),
-            metadata: getMetadata(pmArticle),
             settings: Object.assign(
                 {doc_version: this.docInfo.doc_version},
                 getSettings(pmArticle)
             ),
             title: pmArticle.firstChild.textContent.substring(0, 255),
-            version: getVersion(this.view.state),
+            version: this.docInfo.version,
             comments: this.mod.comments.store.comments
         }
-    }
-
-    // Send changes to the document to the server
-    save() {
-        this.mod.serverCommunications.send(() => {
-            let doc = this.getDoc()
-            delete doc.comments
-            return {
-                type: 'update_doc',
-                doc,
-                hash: this.getHash()
-            }
-        })
-
-        this.docInfo.changed = false
-
-        return Promise.resolve()
     }
 
     // filter transactions.
@@ -439,7 +350,7 @@ export class Editor {
 
     // Things to be executed on every editor transaction.
     onTransaction(transaction, remote) {
-        let updateBibliography = false, updateTitle = false, updateSettings = false,
+        let updateBibliography = false, updateSettings = false,
             commentIds = []
             // Check what area is affected
 
@@ -470,10 +381,6 @@ export class Editor {
                         updateSettings = true
                     }
                 }
-                let docPart = transaction.docs[index].resolve(step.from).node(2)
-                if (docPart && docPart.type.name === 'title') {
-                    updateTitle = true
-                }
             }
         })
 
@@ -484,9 +391,6 @@ export class Editor {
             this.mod.citations.layoutCitations()
         }
 
-        if (updateTitle && !remote) {
-            this.docInfo.title_changed = true
-        }
         if (updateSettings) {
             this.mod.settings.check(this.view.state.doc.firstChild.attrs)
         }

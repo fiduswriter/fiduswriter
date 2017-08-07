@@ -338,7 +338,6 @@ def import_js(request):
                 # We increase the version to 1 to mark that the file now
                 # contains imported contents.
                 document.version = 1
-                document.diff_version = 1
         else:
             document = Document.objects.create(owner_id=request.user.pk)
         document.title = request.POST['title']
@@ -466,7 +465,6 @@ def save_doc_js(request):
         metadata = request.POST.get('metadata', False)
         settings = request.POST.get('settings', False)
         last_diffs = request.POST.get('last_diffs', False)
-        diff_version = request.POST.get('diff_version', False)
         version = request.POST.get('version', False)
         if contents:
             doc.contents = contents
@@ -478,8 +476,6 @@ def save_doc_js(request):
             doc.version = version
         if last_diffs:
             doc.last_diffs = last_diffs
-        if diff_version:
-            doc.diff_version = diff_version
         doc.save()
     return JsonResponse(
         response,

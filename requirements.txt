@@ -11,3 +11,4 @@ python-magic==0.4.13
 setuptools==35.0.2
 future==0.16.0
 commentjson==0.6
+jsonpatch==1.16

@@ -221,7 +221,6 @@ class WebSocket(BaseWebSocketHandler):
             return
         for message in self.messages['last_ten'][0-to_send:]:
             message['c'] = self.messages['client']
-            logger.debug(message)
             self.write_message(message)
 
     def update_comments(self, comments_updates):
@@ -436,7 +435,7 @@ class WebSocket(BaseWebSocketHandler):
     def send_updates(cls, message, document_id, sender_id=None, user_id=None):
         logger.debug(
             "Sending message to %d waiters",
-            len(cls.sessions[document_id])
+            len(cls.sessions[document_id]['participants'])
         )
         for waiter in cls.sessions[document_id]['participants'].values():
             if waiter.id != sender_id:

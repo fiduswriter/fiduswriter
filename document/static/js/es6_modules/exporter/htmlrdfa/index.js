@@ -68,10 +68,16 @@ export class HTMLRDFaExporter extends BaseHTMLExporter{
 
         contents = this.addFigureNumbers(contents) 
 
-	//contents = this.addArticleRDFa(contents)  parts related to body tag is added in template.js but I keep it for later use in other tags.
+	contents = this.converTitleToRDFa(contents) 
+
+	contents = this.convertAbstractToRDF(contents)
+
+	contents = this.converAuthorsToRDFa(contents)
+	
+	contents = this.addSectionsTag(contents)
 
         let contentsCode = this.replaceImgSrc(contents.innerHTML)
-
+	
         let htmlCode = htmlExportTemplate({
             part: false,
             title,

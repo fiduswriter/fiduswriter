@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.utils import OperationalError
 from django.contrib.auth.models import User
 from django.core import checks
 
@@ -53,16 +54,20 @@ class Document(models.Model):
 
     @classmethod
     def _check_doc_versions(cls, **kwargs):
-        if len(cls.objects.filter(doc_version__lt=FW_DOCUMENT_VERSION)):
-            return [
-                checks.Warning(
-                    'Documents need to be upgraded. Please navigate to '
-                    '/admin/maintenance/ with a browser as a superuser and '
-                    'upgrade all documents on this server.',
-                    obj=cls
-                )
-            ]
-        else:
+        try:
+            if len(cls.objects.filter(doc_version__lt=FW_DOCUMENT_VERSION)):
+                return [
+                    checks.Warning(
+                        'Documents need to be upgraded. Please navigate to '
+                        '/admin/maintenance/ with a browser as a superuser '
+                        'and upgrade all documents on this server.',
+                        obj=cls
+                    )
+                ]
+            else:
+                return []
+        except OperationalError:
+            # Database has not yet been initialized, so don't throw any error.
             return []
 
 RIGHTS_CHOICES = (

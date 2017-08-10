@@ -144,8 +144,6 @@ export class ImportNative {
             title: this.doc.title,
             contents: JSON.stringify(this.doc.contents),
             comments: JSON.stringify(this.doc.comments),
-            settings: JSON.stringify(this.doc.settings),
-            metadata: JSON.stringify(this.doc.metadata)
         }
         if (typeof this.docId !== 'undefined') {
             // There is a docId, so we overwrite this doc rather than creating

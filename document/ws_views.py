@@ -11,7 +11,7 @@ import logging
 from tornado.escape import json_decode, json_encode
 from tornado.websocket import WebSocketClosedError
 from document.models import AccessRight, COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
-    CAN_COMMUNICATE, ExportTemplate
+    CAN_COMMUNICATE, ExportTemplate, FW_DOCUMENT_VERSION
 from document.views import get_accessrights
 from avatar.templatetags.avatar_tags import avatar_url
 
@@ -40,52 +40,55 @@ class WebSocket(BaseWebSocketHandler):
         self.user_info = SessionUserInfo()
         doc_db, can_access = self.user_info.init_access(
             document_id, current_user)
-        if can_access:
-            if doc_db.id in WebSocket.sessions:
-                logger.debug("Serving already opened file")
-                self.doc = WebSocket.sessions[doc_db.id]
-                self.id = max(self.doc['participants']) + 1
-                self.doc['participants'][self.id] = self
-                logger.debug("id when opened %s" % self.id)
-            else:
-                logger.debug("Opening file")
-                self.id = 0
-                self.doc = {
-                    'db': doc_db,
-                    'participants': {
-                        0: self
-                    },
-                    'last_diffs': json_decode(doc_db.last_diffs),
-                    'comments': json_decode(doc_db.comments),
-                    'settings': json_decode(doc_db.settings),
-                    'contents': json_decode(doc_db.contents),
-                    'version': doc_db.version,
-                    'title': doc_db.title,
-                    'id': doc_db.id
-                }
-                WebSocket.sessions[doc_db.id] = self.doc
-            response['type'] = 'welcome'
-            serializer = PythonWithURLSerializer()
-            export_temps = serializer.serialize(
-                ExportTemplate.objects.all()
-            )
-            document_styles = serializer.serialize(
-                DocumentStyle.objects.all(),
-                use_natural_foreign_keys=True
-            )
-            cite_styles = serializer.serialize(
-                CitationStyle.objects.all()
-            )
-            cite_locales = serializer.serialize(
-                CitationLocale.objects.all()
-            )
-            response['styles'] = {
-                'export_templates': [obj['fields'] for obj in export_temps],
-                'document_styles': [obj['fields'] for obj in document_styles],
-                'citation_styles': [obj['fields'] for obj in cite_styles],
-                'citation_locales': [obj['fields'] for obj in cite_locales],
-            }
+        if doc_db.doc_version != FW_DOCUMENT_VERSION or not can_access:
+            response['type'] = 'access_denied'
+            self.id = 0
             self.send_message(response)
+            return
+        if doc_db.id in WebSocket.sessions:
+            logger.debug("Serving already opened file")
+            self.doc = WebSocket.sessions[doc_db.id]
+            self.id = max(self.doc['participants']) + 1
+            self.doc['participants'][self.id] = self
+            logger.debug("id when opened %s" % self.id)
+        else:
+            logger.debug("Opening file")
+            self.id = 0
+            self.doc = {
+                'db': doc_db,
+                'participants': {
+                    0: self
+                },
+                'last_diffs': json_decode(doc_db.last_diffs),
+                'comments': json_decode(doc_db.comments),
+                'contents': json_decode(doc_db.contents),
+                'version': doc_db.version,
+                'title': doc_db.title,
+                'id': doc_db.id
+            }
+            WebSocket.sessions[doc_db.id] = self.doc
+        response['type'] = 'welcome'
+        serializer = PythonWithURLSerializer()
+        export_temps = serializer.serialize(
+            ExportTemplate.objects.all()
+        )
+        document_styles = serializer.serialize(
+            DocumentStyle.objects.all(),
+            use_natural_foreign_keys=True
+        )
+        cite_styles = serializer.serialize(
+            CitationStyle.objects.all()
+        )
+        cite_locales = serializer.serialize(
+            CitationLocale.objects.all()
+        )
+        response['styles'] = {
+            'export_templates': [obj['fields'] for obj in export_temps],
+            'document_styles': [obj['fields'] for obj in document_styles],
+            'citation_styles': [obj['fields'] for obj in cite_styles],
+            'citation_locales': [obj['fields'] for obj in cite_locales],
+        }
+        self.send_message(response)
 
     def confirm_diff(self, rid):
         response = {
@@ -111,8 +114,7 @@ class WebSocket(BaseWebSocketHandler):
         }
         response['doc'] = {
             'v': self.doc['version'],
-            'contents': self.doc['contents'],
-            'settings': self.doc['settings']
+            'contents': self.doc['contents']
         }
         if self.user_info.access_rights == 'read-without-comments':
             response['doc']['comments'] = []
@@ -485,7 +487,6 @@ class WebSocket(BaseWebSocketHandler):
         doc_db.title = doc['title'][-255:]
         doc_db.version = doc['version']
         doc_db.contents = json_encode(doc['contents'])
-        doc_db.settings = json_encode(doc['settings'])
         doc_db.last_diffs = json_encode(doc['last_diffs'])
         doc_db.comments = json_encode(doc['comments'])
         logger.debug('saving document # %d' % doc_db.id)

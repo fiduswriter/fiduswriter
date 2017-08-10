@@ -72,9 +72,7 @@ def get_documentlist_extra_js(request):
             documents, fields=(
                 'contents',
                 'comments',
-                'id',
-                'settings',
-                'metadata'
+                'id'
             )
         )
     return JsonResponse(
@@ -343,8 +341,8 @@ def import_js(request):
         document.title = request.POST['title']
         document.contents = request.POST['contents']
         document.comments = request.POST['comments']
-        document.metadata = request.POST['metadata']
-        document.settings = request.POST['settings']
+        # document.doc_version should always be the current version, so don't
+        # bother about it.
         document.save()
         response['document_id'] = document.id
         response['added'] = time.mktime(document.added.utctimetuple())
@@ -462,16 +460,13 @@ def save_doc_js(request):
         doc = Document.objects.get(pk=int(doc_id))
         # Only looking at fields that may have changed.
         contents = request.POST.get('contents', False)
-        metadata = request.POST.get('metadata', False)
-        settings = request.POST.get('settings', False)
+        doc_version = request.POST.get('doc_version', False)
         last_diffs = request.POST.get('last_diffs', False)
         version = request.POST.get('version', False)
         if contents:
             doc.contents = contents
-        if metadata:
-            doc.metadata = metadata
-        if settings:
-            doc.settings = settings
+        if doc_version:
+            doc.doc_version = doc_version
         if version:
             doc.version = version
         if last_diffs:

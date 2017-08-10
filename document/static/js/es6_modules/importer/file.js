@@ -20,13 +20,14 @@ export function updateFileDoc(doc, filetypeVersion) {
             delete(doc.owner)
             delete(doc.id)
             delete(doc.hash)
-            doc = updateDoc(doc)
+            doc = updateDoc(doc, doc.settings['doc_version'])
             break
         case "1.3":
         case "1.4":
         case "1.5":
         case "1.6":
-            doc = updateDoc(doc)
+        case "1.7":
+            doc = updateDoc(doc, doc.settings['doc_version'])
             break
     }
     return doc

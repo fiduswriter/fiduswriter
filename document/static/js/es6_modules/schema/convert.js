@@ -13,10 +13,11 @@ export let getSettings = function(pmArticle) {
     return settings
 }
 
-export let updateDoc = function(doc) {
+export let updateDoc = function(doc, docVersion) {
     /* This is to clean documents taking all the accepted formatting from older
        versions and outputting the current version of the doc format.
-       Notice that this isn't the same as the version of the FW export file.
+       Notice that the docVersion isn't the same as the version of the FW export
+       file in Fidus Writer 3.0-3.2 (docVersion/FW file versions versions 0-1.X).
        While the FW file version also says something about what files could be
        available inside the FW zip, the doc_version refers to how the data is
        stored in those files.
@@ -25,20 +26,19 @@ export let updateDoc = function(doc) {
        true.
     */
 
-
-    let docVersion = doc.settings['doc_version']
-
     switch(docVersion) {
         case undefined: // Fidus Writer 1.1-3.0
         case 0: // Fidus Writer 3.1 prerelease
             doc = convertDocV0(doc)
             doc = convertDocV11(doc)
             doc = convertDocV12(doc)
+            doc = convertDocV13(doc)
             break
         case 1: // Fidus Writer 3.1 prerelease
             doc = convertDocV1(doc)
             doc = convertDocV11(doc)
             doc = convertDocV12(doc)
+            doc = convertDocV13(doc)
             break
         case 1.1: // Fidus Writer 3.1
             doc = convertDocV11(doc)
@@ -46,6 +46,9 @@ export let updateDoc = function(doc) {
             break
         case 1.2: // Fidus Writer 3.2
             doc = convertDocV12(doc)
+            break
+        case 1.3: // Fidus Writer 3.3 prerelease
+            doc = convertDocV13(doc)
             break
     }
     return doc
@@ -155,14 +158,12 @@ let convertDocV0 = function(doc) {
     let pmArticle = docSchema.nodeFromJSON(docContents)
     doc = JSON.parse(JSON.stringify(doc))
     doc.contents = docContents
-    doc.settings = {doc_version: 1.1}
     return doc
 }
 
 let convertDocV1 = function(doc) {
     let returnDoc = Object.assign({}, doc)
     convertNodeV1(returnDoc.contents)
-    returnDoc.settings.doc_version = 1.1
     return returnDoc
 }
 
@@ -208,7 +209,6 @@ let convertNodeV1 = function(node) {
 let convertDocV11 = function(doc) {
     let returnDoc = Object.assign({}, doc)
     convertNodeV11(returnDoc.contents)
-    returnDoc.settings = {doc_version: 1.2}
     return returnDoc
 }
 
@@ -233,7 +233,6 @@ let convertNodeV11 = function(node, ids = []) {
 let convertDocV12 = function(doc) {
     let returnDoc = Object.assign({}, doc)
     convertNodeV12(returnDoc.contents)
-    returnDoc.settings = {doc_version: 1.3}
     return returnDoc
 }
 
@@ -253,4 +252,11 @@ let convertNodeV12 = function(node, ids = []) {
             convertNodeV11(childNode, ids)
         })
     }
+}
+
+let convertDocV13 = function(doc) {
+    let returnDoc = Object.assign({}, doc)
+    delete returnDoc.settings
+    delete returnDoc.metadata
+    return returnDoc
 }

@@ -9,11 +9,11 @@ import {FW_FILETYPE_VERSION} from "../exporter/native"
 import JSZip from "jszip"
 import JSZipUtils from "jszip-utils"
 
-// To apply all diffs to documents.
+// To upgrade all docs and document revions to the newest version
 
 export class DocMaintenance {
     constructor() {
-        this.batch = 1
+        this.batch = 0
         this.button = false
         this.batchesDone = false
         this.docSavesLeft = 0
@@ -36,6 +36,7 @@ export class DocMaintenance {
     }
 
     getDocBatch() {
+        this.batch++
         jQuery.ajax({
           url: "/document/maintenance/get_all/",
           type: 'POST',
@@ -44,7 +45,7 @@ export class DocMaintenance {
           beforeSend: (xhr, settings) =>
               xhr.setRequestHeader("X-CSRFToken", csrfToken),
           data: {
-              batch: this.batch++
+              batch: this.batch
           },
           success: data => {
               let docs = window.JSON.parse(data.docs)
@@ -65,30 +66,24 @@ export class DocMaintenance {
     fixDoc(doc) {
         let oldDoc = {
             contents: window.JSON.parse(doc.fields.contents),
-            diff_version: doc.fields.diff_version,
             last_diffs: window.JSON.parse(doc.fields.last_diffs),
-            settings: window.JSON.parse(doc.fields.settings),
             title: doc.fields.title,
             version: doc.fields.version,
             id: doc.pk
         }
-
         // updates doc to the newest version
-        doc = updateDoc(oldDoc)
+        doc = updateDoc(oldDoc, parseFloat(doc.fields.doc_version))
 
         // only proceed with saving if the doc update has changed something
         if (doc !== oldDoc) {
             this.saveDoc(doc)
         }
-
-
-
     }
 
 
     saveDoc(doc) {
         doc.contents = window.JSON.stringify(doc.contents)
-        doc.settings = window.JSON.stringify(doc.settings)
+        doc.doc_version = parseFloat(FW_FILETYPE_VERSION)
         doc.last_diffs = window.JSON.stringify(doc.last_diffs)
         this.docSavesLeft++
         jQuery.ajax({
@@ -103,7 +98,6 @@ export class DocMaintenance {
                 this.docSavesLeft--
                 if (this.docSavesLeft===0 && this.batchesDone) {
                     addAlert('success', gettext('All documents updated!'))
-                    this.updateRevisions()
                 }
             }
         })
@@ -196,6 +190,5 @@ export class DocMaintenance {
     done() {
         jQuery(this.button).html(gettext('All documents and revisions updated!'))
     }
-
 
 }

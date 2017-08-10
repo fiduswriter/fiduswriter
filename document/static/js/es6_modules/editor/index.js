@@ -21,7 +21,7 @@ import {ModSettings} from "./settings"
 import {headerbarModel, toolbarModel} from "./menus"
 import {ModStyles} from "./styles"
 import {ModServerCommunications} from "./server-communications"
-import {getSettings, updateDoc} from "../schema/convert"
+import {getSettings} from "../schema/convert"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
 import {Paste} from "./paste"
@@ -196,11 +196,9 @@ export class Editor {
         }
         // Remember location hash to scroll there subsequently.
         let locationHash = window.location.hash
-        // Update document to newest document version
-        let doc = updateDoc(data.doc)
+        let doc = data.doc
 
         this.docInfo = data.doc_info
-        this.docInfo.doc_version = doc.settings['doc_version']
         this.docInfo.version = doc["v"]
 
         if (this.docInfo.version === 0) {
@@ -224,6 +222,7 @@ export class Editor {
                 stateDoc = docSchema.nodeFromJSON({type:'doc', content:[doc.contents]})
             } else {
                 stateDoc = this.schema.topNodeType.createAndFill()
+
             }
             let plugins = this.statePlugins.map(plugin => {
                 if (plugin[1]) {
@@ -279,10 +278,7 @@ export class Editor {
         let pmArticle = this.docInfo.confirmedDoc.firstChild
         return {
             contents: pmArticle.toJSON(),
-            settings: Object.assign(
-                {doc_version: this.docInfo.doc_version},
-                getSettings(pmArticle)
-            ),
+            settings: getSettings(pmArticle),
             title: pmArticle.firstChild.textContent.substring(0, 255),
             version: this.docInfo.version,
             comments: this.mod.comments.store.comments

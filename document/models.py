@@ -1,37 +1,37 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core import checks
+
+# FW_DOCUMENT_VERSION: See also FW_FILETYPE_VERSION specified in export
+# (same value from >= 2.0) in
+# document/static/js/es6_modules/documents/exporter/native/zip.js
+
+FW_DOCUMENT_VERSION = 2.0
 
 
 class Document(models.Model):
     title = models.CharField(max_length=255, default='', blank=True)
     contents = models.TextField(default='{}')  # json object of content
-    metadata = models.TextField(default='{}')  # json object of metadata
-    settings = models.TextField(default='{"doc_version":1.3}')
+    doc_version = models.DecimalField(
+        max_digits=3,
+        decimal_places=1,
+        default=FW_DOCUMENT_VERSION
+    )
     # json object of settings
-    # The doc_version is the version of the data format in the other fields
-    # (mainly metadata and contents).
+    # The doc_version is the version of the data format in the contents field.
+    # We upgrade the contents field in JavaScript and not migrations so that
+    # the same code can be used for migrations and for importing old fidus
+    # files that are being uploaded. This field is only used for upgrading data
+    # and is therefore not handed to the editor or document overview page.
     version = models.PositiveIntegerField(default=0)
-    # The version number corresponds to the last full HTML/JSON copy of the
-    # document that was sent in by a browser. Such full copies are sent in
-    # every 2 minutes automatically or when specific actions are executed by
-    # the user (such as exporting the document).
     last_diffs = models.TextField(default='[]')
     # The last few diffs that were received and approved. The number of stored
     # diffs should always be equivalent to or more than all the diffs since the
     # last full save of the document.
-    diff_version = models.PositiveIntegerField(default=0)
-    # The diff version is the latest version for which diffs have been
-    # accepted. This version should always be the same or higher than the
-    # version attribute.
-    # To obtain the very last approved version of the document, one needs to
-    # take the HTML/JSON version of the document (in the fields title,
-    # contents, metadata and version) and apply N of the last last_diffs, where
-    # N is diff_version - version.
     owner = models.ForeignKey(User, related_name='owner')
     added = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     comments = models.TextField(default='{}')
-    comment_version = models.PositiveIntegerField(default=0)
 
     def __unicode__(self):
         if len(self.title) > 0:
@@ -39,8 +39,31 @@ class Document(models.Model):
         else:
             return str(self.id)
 
+    class Meta:
+        ordering = ['-id']
+
     def get_absolute_url(self):
         return "/document/%i/" % self.id
+
+    @classmethod
+    def check(cls, **kwargs):
+        errors = super(Document, cls).check(**kwargs)
+        errors.extend(cls._check_doc_versions(**kwargs))
+        return errors
+
+    @classmethod
+    def _check_doc_versions(cls, **kwargs):
+        if len(cls.objects.filter(doc_version__lt=FW_DOCUMENT_VERSION)):
+            return [
+                checks.Warning(
+                    'Documents need to be upgraded. Please navigate to '
+                    '/admin/maintenance/ with a browser as a superuser and '
+                    'upgrade all documents on this server.',
+                    obj=cls
+                )
+            ]
+        else:
+            return []
 
 RIGHTS_CHOICES = (
     ('read', 'Reader'),

@@ -1,5 +1,5 @@
 import {addAlert, csrfToken} from "../common"
-import {updateDoc} from "../schema/convert"
+import {getSettings} from "../schema/convert"
 
 export let getMissingDocumentListData = function (ids, documentList) {
     // get extra data for the documents identified by the ids and updates the
@@ -26,16 +26,9 @@ export let getMissingDocumentListData = function (ids, documentList) {
                 success: (response, textStatus, jqXHR) => {
                     for (let i = 0; i < response.documents.length; i++) {
                         let aDocument = documentList.find(doc => doc.id === response.documents[i].id)
-                        let newDoc = updateDoc({
-                            contents: JSON.parse(response.documents[i].contents),
-                            metadata: JSON.parse(response.documents[i].metadata),
-                            comments: JSON.parse(response.documents[i].comments),
-                            settings: JSON.parse(response.documents[i].settings)
-                        })
-                        aDocument.contents = newDoc.contents
-                        aDocument.metadata = newDoc.metadata
-                        aDocument.comments = newDoc.comments
-                        aDocument.settings = newDoc.settings
+                        aDocument.contents = JSON.parse(response.documents[i].contents)
+                        aDocument.comments = JSON.parse(response.documents[i].comments)
+                        aDocument.settings = getSettings(aDocument.contents)
                     }
                     resolve()
                 },

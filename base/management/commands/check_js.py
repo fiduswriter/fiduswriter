@@ -9,6 +9,7 @@ from fiduswriter.settings import PROJECT_PATH
 
 class Command(BaseCommand):
     help = 'Check JavaScript files with JSHint'
+    requires_system_checks = False
 
     def handle(self, *args, **options):
         shutil.os.chdir(PROJECT_PATH)

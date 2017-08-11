@@ -243,9 +243,6 @@ export class Editor {
                     comment.userName, comment.userAvatar, comment.date, comment.comment,
                     comment.answers, comment['review:isMajor'])
             })
-            this.mod.comments.store.on("mustSend", () => {
-                this.mod.collab.docChanges.sendToCollaborators()
-            })
             this.mod.comments.layout.onChange()
             this.waitingForDocument = false
             // Get document settings

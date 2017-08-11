@@ -22,7 +22,6 @@ export class ModBibliographyDB {
             () => this.mod.editor.mod.collab.docChanges.sendToCollaborators(),
             100
         )
-
     }
 
     // function saveBibEntries is the same as in user's individual BibliographyDB.

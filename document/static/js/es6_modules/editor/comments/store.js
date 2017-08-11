@@ -1,8 +1,3 @@
-/*
-Functions related to the editing and sharing of comments.
-based on https://github.com/ProseMirror/website/blob/master/src/client/collab/comment.js
-*/
-import {eventMixin} from "./event"
 import {Comment} from "./comment"
 import {addCommentDuringCreationDecoration, removeCommentDuringCreationDecoration} from "../plugins/comments"
 
@@ -18,6 +13,15 @@ export class ModCommentStore {
     reset() {
         this.comments = Object.create(null)
         this.unsent = []
+    }
+
+    mustSend() {
+        // Set a timeout so that the update can be combines with other updates
+        // if they happen more or less simultaneously.
+        window.setTimeout(
+            () => this.mod.editor.mod.collab.docChanges.sendToCollaborators(),
+            100
+        )
     }
     // Create a new temporary comment. This one is not going into the store yet,
     // as it is empty, shouldn't be shared and if canceled, it should go away
@@ -63,7 +67,7 @@ export class ModCommentStore {
         this.mod.editor.view.dispatch(
             this.mod.editor.view.state.tr.addMark(posFrom, posTo, markType)
         )
-        this.signal("mustSend")
+        this.mustSend()
     }
 
 
@@ -130,7 +134,7 @@ export class ModCommentStore {
             type: "update",
             id: id
         })
-        this.signal("mustSend")
+        this.mustSend()
     }
 
     updateLocalComment(id, comment, commentIsMajor, local) {
@@ -180,7 +184,7 @@ export class ModCommentStore {
             if (removeMarks) {
                 this.removeCommentMarks(id)
             }
-            this.signal("mustSend")
+            this.mustSend()
         }
     }
 
@@ -230,7 +234,7 @@ export class ModCommentStore {
             id: id,
             answerId: answer.id
         })
-        this.signal("mustSend")
+        this.mustSend()
     }
 
     deleteLocalAnswer(commentId, answerId, local) {
@@ -249,7 +253,7 @@ export class ModCommentStore {
             commentId: commentId,
             answerId: answerId
         })
-        this.signal("mustSend")
+        this.mustSend()
     }
 
     updateLocalAnswer(commentId, answerId, answerText, local) {
@@ -269,7 +273,7 @@ export class ModCommentStore {
             commentId: commentId,
             answerId: answerId
         })
-        this.signal("mustSend")
+        this.mustSend()
     }
 
     hasUnsentEvents() {
@@ -368,8 +372,6 @@ export class ModCommentStore {
     }
 
 }
-
-eventMixin(ModCommentStore)
 
 function randomID() {
     return Math.floor(Math.random() * 0xffffffff)

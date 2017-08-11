@@ -39,7 +39,7 @@ export class ModStyles {
                         new DocxExporter(
                             editor.getDoc(),
                             template.template_file,
-                            editor.bibDB,
+                            editor.mod.citations.bibDB,
                             editor.imageDB,
                             editor.mod.styles.citationStyles,
                             editor.mod.styles.citationLocales
@@ -55,7 +55,7 @@ export class ModStyles {
                         new OdtExporter(
                             editor.getDoc(),
                             template.template_file,
-                            editor.bibDB,
+                            editor.mod.citations.bibDB,
                             editor.imageDB,
                             editor.mod.styles.citationStyles,
                             editor.mod.styles.citationLocales

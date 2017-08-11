@@ -41,7 +41,7 @@ export class ModCitations {
     }
 
     layoutCitations() {
-        if (!this.editor.bibDB) {
+        if (!this.bibDB.db) {
             // bibliography hasn't been loaded yet
             return
         }
@@ -50,7 +50,7 @@ export class ModCitations {
             this.citRenderer = new RenderCitations(
                 document.getElementById('paper-editable'), // TODO: Should we point this to somewhere else?
                 this.editor.view.state.doc.firstChild.attrs.citationstyle,
-                this.editor.bibDB,
+                this.bibDB,
                 this.editor.mod.styles.citationStyles,
                 this.editor.mod.styles.citationLocales,
                 false

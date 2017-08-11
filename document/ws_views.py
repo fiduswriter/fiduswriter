@@ -501,6 +501,7 @@ class WebSocket(BaseWebSocketHandler):
         doc_db.contents = json_encode(doc['contents'])
         doc_db.last_diffs = json_encode(doc['last_diffs'])
         doc_db.comments = json_encode(doc['comments'])
+        doc_db.bibliography = json_encode(doc['bibliography'])
         logger.debug('saving document # %d' % doc_db.id)
         logger.debug('version %d' % doc_db.version)
         doc_db.save()

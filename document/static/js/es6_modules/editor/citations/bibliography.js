@@ -6,7 +6,7 @@ export class ModBibliographyDB {
     constructor(mod) {
         mod.bibDB = this
         this.mod = mod
-        this.db = {}
+        this.db = false
         this.unsent = []
     }
 
@@ -51,6 +51,17 @@ export class ModBibliographyDB {
     deleteBibEntries(ids) {
         ids.forEach(id => this.deleteReference(id))
         return Promise.resolve(ids)
+    }
+
+    // This function only makes real sense in the user's bibDB. It is kept here
+    // for comaptibility reasons.
+    getDB() {
+        return new Promise(resolve => {
+            window.setTimeout(
+                () => resolve({bibPks: [], bibCats: []}),
+                100
+            )
+        })
     }
 
     addReference(id, reference) {

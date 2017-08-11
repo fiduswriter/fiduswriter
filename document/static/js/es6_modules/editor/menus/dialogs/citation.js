@@ -100,7 +100,7 @@ export class CitationDialog {
         // and return the templated dialog HTML.
         let citableItemsHTML = '', citedItemsHTML = ''
 
-        Object.keys(this.editor.bibDB.db).forEach(id => {
+        Object.keys(this.editor.mod.citations.bibDB.db).forEach(id => {
 
             let bibEntry = this.bibDBToBibEntry(id)
             citableItemsHTML += citationItemTemplate(bibEntry)
@@ -122,7 +122,7 @@ export class CitationDialog {
     }
 
     registerNewSource() {
-        let form = new BibEntryForm(this.editor.bibDB)
+        let form = new BibEntryForm(this.editor.mod.citations.bibDB)
         form.init().then(
             idTranslations => {
                 let ids = idTranslations.map(idTrans => idTrans[1])
@@ -136,7 +136,7 @@ export class CitationDialog {
     }
 
     bibDBToBibEntry(id) {
-        let bib =  this.editor.bibDB.db[id]
+        let bib =  this.editor.mod.citations.bibDB.db[id]
         let bibauthors = bib.fields.author || bib.fields.editor
         return {
             id,

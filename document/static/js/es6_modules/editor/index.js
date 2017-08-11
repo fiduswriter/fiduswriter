@@ -151,22 +151,6 @@ export class Editor {
         }))
     }
 
-    removeBibDB() {
-        delete this.bibDB
-        // TODO: Need to to remove all entries of citation dialog!
-    }
-
-    getBibDB(userId) {
-        if (!this.bibDB) { // Don't get the bibliography again if we already have it.
-            let bibGetter = new BibliographyDB(userId, true)
-            return bibGetter.getDB().then(({bibPKs, bibCats}) => {
-                this.bibDB = bibGetter
-            })
-        } else {
-            return Promise.resolve()
-        }
-    }
-
     removeImageDB() {
         delete this.imageDB
     }
@@ -217,6 +201,8 @@ export class Editor {
         }))
 
         this.mod.citations.bibDB.setDB(data.doc.bibliography)
+        this.user.bibDB = new BibliographyDB(this.user.id, true)
+        this.user.bibDB.getDB()
 
         return this.getImageDB(this.docInfo.owner.id).then(() => {
 
@@ -261,17 +247,14 @@ export class Editor {
                 this.mod.collab.docChanges.sendToCollaborators()
             })
             this.mod.comments.layout.onChange()
+            this.waitingForDocument = false
+            // Get document settings
+            this.mod.settings.check(this.view.state.doc.firstChild.attrs)
+            this.mod.citations.layoutCitations()
+            if (locationHash.length) {
+                this.scrollIdIntoView(locationHash.slice(1))
+            }
 
-            return this.getBibDB(this.docInfo.owner.id).then(() => {
-                this.waitingForDocument = false
-                // Get document settings
-                this.mod.settings.check(this.view.state.doc.firstChild.attrs)
-                this.mod.citations.layoutCitations()
-                if (locationHash.length) {
-                    this.scrollIdIntoView(locationHash.slice(1))
-                }
-
-            })
         })
     }
 

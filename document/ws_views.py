@@ -61,6 +61,7 @@ class WebSocket(BaseWebSocketHandler):
                 },
                 'last_diffs': json_decode(doc_db.last_diffs),
                 'comments': json_decode(doc_db.comments),
+                'bibliography': json_decode(doc_db.bibliography),
                 'contents': json_decode(doc_db.contents),
                 'version': doc_db.version,
                 'title': doc_db.title,
@@ -114,7 +115,8 @@ class WebSocket(BaseWebSocketHandler):
         }
         response['doc'] = {
             'v': self.doc['version'],
-            'contents': self.doc['contents']
+            'contents': self.doc['contents'],
+            'bibliography': self.doc['bibliography']
         }
         if self.user_info.access_rights == 'read-without-comments':
             response['doc']['comments'] = []
@@ -225,6 +227,14 @@ class WebSocket(BaseWebSocketHandler):
             message['c'] = self.messages['client']
             self.write_message(message)
 
+    def update_bibliography(self, bibliography_updates):
+        for bu in bibliography_updates:
+            id = bu["id"]
+            if bu["type"] == "update":
+                self.doc["bibliography"][id] = bu["reference"]
+            elif bu["type"] == "delete":
+                del self.doc["bibliography"][id]
+
     def update_comments(self, comments_updates):
         comments_updates = deepcopy(comments_updates)
         for cd in comments_updates:
@@ -318,8 +328,10 @@ class WebSocket(BaseWebSocketHandler):
                 del parsed["jd"]
             if "ti" in parsed:  # ti = title
                 self.doc["title"] = parsed["ti"]
-            if "co" in parsed:  # co = comments
-                self.update_comments(parsed["co"])
+            if "cu" in parsed:  # cu = comment updates
+                self.update_comments(parsed["cu"])
+            if "bu"in parsed:  # bu = bibliography updates
+                self.update_bibliography(parsed["bu"])
             WebSocket.save_document(self.user_info.document_id)
             self.confirm_diff(parsed["rid"])
             WebSocket.send_updates(

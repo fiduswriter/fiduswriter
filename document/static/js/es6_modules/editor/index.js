@@ -215,6 +215,9 @@ export class Editor {
         this.mod.serverCommunications.send(() => ({
             type: 'participant_update'
         }))
+
+        this.mod.citations.bibDB.setDB(data.doc.bibliography)
+
         return this.getImageDB(this.docInfo.owner.id).then(() => {
 
             let stateDoc

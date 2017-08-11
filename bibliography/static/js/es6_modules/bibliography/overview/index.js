@@ -133,7 +133,7 @@ export class BibliographyOverview {
             'Delete the bibliography item(s)') + '?</p></div>')
         let diaButtons = {}
         diaButtons[gettext('Delete')] = function () {
-            that.deleteBibEntry(ids)
+            that.deleteBibEntries(ids)
             jQuery(this).dialog('close')
         }
         diaButtons[gettext('Cancel')] = function () {
@@ -364,8 +364,8 @@ export class BibliographyOverview {
         })
     }
 
-    deleteBibEntry(ids) {
-        this.bibDB.deleteBibEntry(ids).then(ids => {
+    deleteBibEntries(ids) {
+        this.bibDB.deleteBibEntries(ids).then(ids => {
             this.stopBibliographyTable()
             let elementsId = '#Entry_' + ids.join(', #Entry_')
             jQuery(elementsId).detach()

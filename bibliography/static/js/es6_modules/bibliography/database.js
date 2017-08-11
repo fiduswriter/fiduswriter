@@ -247,10 +247,10 @@ export class BibliographyDB {
     }
 
     /** Delete a list of bibliography items both locally and on the server.
-     * @function deleteBibEntry
+     * @function deleteBibEntries
      * @param ids A list of bibliography item ids that are to be deleted.
      */
-    deleteBibEntry(ids) {
+    deleteBibEntries(ids) {
         for (let i = 0; i < ids.length; i++) {
             ids[i] = parseInt(ids[i])
         }

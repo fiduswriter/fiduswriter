@@ -1,4 +1,5 @@
 import {RenderCitations} from "../../citations/render"
+import {ModBibliographyDB} from "./bibliography"
 
 export class ModCitations {
     constructor(editor) {
@@ -6,6 +7,7 @@ export class ModCitations {
         this.editor = editor
         this.citationType = ''
         this.fnOverrideElement =  false
+        new ModBibliographyDB(this)
         this.setup()
     }
 

@@ -71,14 +71,16 @@ export class ModCollabDocChanges {
         // for doc change/comment update.
         if (
             sendableSteps(this.mod.editor.view.state) ||
-            this.mod.editor.mod.comments.store.unsentEvents().length
+            this.mod.editor.mod.comments.store.unsentEvents().length ||
+            this.mod.editor.mod.citations.bibDB.unsentEvents().length
         ) {
             this.mod.editor.mod.serverCommunications.send(() => {
                 let stepsToSend = sendableSteps(this.mod.editor.view.state),
                     fnStepsToSend = sendableSteps(this.mod.editor.mod.footnotes.fnEditor.view.state),
-                    comments = this.mod.editor.mod.comments.store.unsentEvents()
+                    commentUpdates = this.mod.editor.mod.comments.store.unsentEvents(),
+                    bibliographyUpdates = this.mod.editor.mod.citations.bibDB.unsentEvents()
 
-                if (!stepsToSend && !fnStepsToSend && !comments.length) {
+                if (!stepsToSend && !fnStepsToSend && !commentUpdates.length && !bibliographyUpdates.length) {
                     // no diff. abandon operation
                     return
                 }
@@ -126,8 +128,11 @@ export class ModCollabDocChanges {
                         return step
                     })
                 }
-                if (comments.length) {
-                    unconfirmedDiff['co'] = comments
+                if (commentUpdates.length) {
+                    unconfirmedDiff['cu'] = commentUpdates
+                }
+                if (bibliographyUpdates.length) {
+                    unconfirmedDiff['bu'] = bibliographyUpdates
                 }
 
                 this.unconfirmedDiffs[rid] = unconfirmedDiff
@@ -188,8 +193,11 @@ export class ModCollabDocChanges {
 
     receiveFromCollaborators(data) {
         this.mod.editor.docInfo.version++
-        if (data["co"]) { // comments
-            this.mod.editor.mod.comments.store.receive(data["co"])
+        if (data["bu"]) { // bibliography updates
+            this.mod.editor.mod.citations.bibDB.receive(data["bu"])
+        }
+        if (data["cu"]) { // comment updates
+            this.mod.editor.mod.comments.store.receive(data["cu"])
         }
         if (data["ds"]) { // document steps
             data["ds"].forEach(diff => this.applyDiff(diff))
@@ -247,7 +255,7 @@ export class ModCollabDocChanges {
             )
         }
 
-        let sentComments = this.unconfirmedDiffs[request_id]["co"] // comments
+        let sentComments = this.unconfirmedDiffs[request_id]["cu"] // comment updates
         if(sentComments) {
             this.mod.editor.mod.comments.store.eventsSent(sentComments)
         }

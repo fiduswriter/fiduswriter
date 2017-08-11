@@ -6,6 +6,7 @@ import {docSchema} from "../schema/document"
 import {addAlert, csrfToken} from "../common"
 import {Menu} from "../menu"
 import {FW_FILETYPE_VERSION} from "../exporter/native"
+import {BibliographyDB} from "../bibliography/database"
 import JSZip from "jszip"
 import JSZipUtils from "jszip-utils"
 
@@ -14,7 +15,7 @@ import JSZipUtils from "jszip-utils"
 export class DocMaintenance {
     constructor() {
         this.batch = 0
-        this.button = false
+        this.button = document.querySelector('button#update')
         this.batchesDone = false
         this.docSavesLeft = 0
         this.revSavesLeft = 0
@@ -23,10 +24,8 @@ export class DocMaintenance {
 
     bind() {
         jQuery(document).on('click', 'button#update:not(.disabled)', () => {
-            this.button = this
-            jQuery(this.button).addClass('disabled fw-dark')
-            jQuery(this.button).removeClass('fw-orange')
-            jQuery(this.button).html(gettext('Updating'))
+            jQuery(this.button).addClass('disabled')
+            jQuery(this.button).html(gettext('Updating...'))
             this.init()
         })
     }
@@ -71,18 +70,35 @@ export class DocMaintenance {
             version: doc.fields.version,
             id: doc.pk
         }
-        // updates doc to the newest version
-        doc = updateDoc(oldDoc, parseFloat(doc.fields.doc_version))
-
-        // only proceed with saving if the doc update has changed something
-        if (doc !== oldDoc) {
-            this.saveDoc(doc)
-        }
+        let docVersion = parseFloat(doc.fields.doc_version)
+        return new Promise((resolve, reject) => {
+            if (docVersion < 2) {
+                // In version 0 - 1.x, the bibliography had to be loaded from
+                // the document user.
+                let bibGetter = new BibliographyDB(doc.fields.owner)
+                bibGetter.getDB().then(({bibPKs, bibCats}) => {
+                    resolve(bibGetter.db)
+                })
+            } else {
+                resolve(doc.bibliography)
+            }
+        }).then(bibliography => {
+            // updates doc to the newest version
+            doc = updateDoc(oldDoc, bibliography, docVersion)
+            if (Object.keys(doc.bibliography).length) {
+                console.log(doc.bibliography)
+            }
+            // only proceed with saving if the doc update has changed something
+            if (doc !== oldDoc) {
+                this.saveDoc(doc)
+            }
+        })
     }
 
 
     saveDoc(doc) {
         doc.contents = window.JSON.stringify(doc.contents)
+        doc.bibliography = window.JSON.stringify(doc.bibliography)
         doc.doc_version = parseFloat(FW_FILETYPE_VERSION)
         doc.last_diffs = window.JSON.stringify(doc.last_diffs)
         this.docSavesLeft++
@@ -143,8 +159,8 @@ export class DocMaintenance {
                     if (filetypeVersion !== FW_FILETYPE_VERSION) {
                         let doc = window.JSON.parse(openedFiles["document.json"])
                         let bib = window.JSON.parse(openedFiles["bibliography.json"])
-                        let newDoc = updateFileDoc(doc, filetypeVersion)
                         let newBib = updateFileBib(bib, filetypeVersion)
+                        let newDoc = updateFileDoc(doc, newBib, filetypeVersion)
                         zipfs.file("filetype-version", FW_FILETYPE_VERSION)
                         zipfs.file("document.json", window.JSON.stringify(newDoc))
                         zipfs.file("bibliography.json", window.JSON.stringify(newBib))

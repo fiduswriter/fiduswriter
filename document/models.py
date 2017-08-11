@@ -18,7 +18,6 @@ class Document(models.Model):
         decimal_places=1,
         default=FW_DOCUMENT_VERSION
     )
-    # json object of settings
     # The doc_version is the version of the data format in the contents field.
     # We upgrade the contents field in JavaScript and not migrations so that
     # the same code can be used for migrations and for importing old fidus
@@ -33,6 +32,7 @@ class Document(models.Model):
     added = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     comments = models.TextField(default='{}')
+    bibliography = models.TextField(default='{}')
 
     def __unicode__(self):
         if len(self.title) > 0:

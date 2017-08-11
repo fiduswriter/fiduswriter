@@ -35,9 +35,9 @@ def index(request):
 def check_access_rights(other_user_id, this_user):
     other_user_id = int(other_user_id)
     has_access = False
-    if other_user_id == 0:
+    if other_user_id == this_user.id:
         has_access = True
-    elif other_user_id == this_user.id:
+    elif this_user.is_staff:
         has_access = True
     elif AccessRight.objects.filter(
         document__owner=other_user_id,
@@ -74,9 +74,9 @@ def biblist_js(request):
                 response['bibCategories'] = serializer.serialize(
                     EntryCategory.objects.filter(category_owner__in=user_ids))
         else:
+            if int(user_id) == 0:
+                user_id = request.user.id
             if check_access_rights(user_id, request.user):
-                if int(user_id) == 0:
-                    user_id = request.user.id
                 if user_id == request.user.id and request.POST.__contains__(
                         'last_modified'):
                     last_modified_onclient = int(request.POST['last_modified'])

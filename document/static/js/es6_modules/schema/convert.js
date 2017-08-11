@@ -13,7 +13,7 @@ export let getSettings = function(pmArticle) {
     return settings
 }
 
-export let updateDoc = function(doc, docVersion) {
+export let updateDoc = function(doc, bibliography, docVersion) {
     /* This is to clean documents taking all the accepted formatting from older
        versions and outputting the current version of the doc format.
        Notice that the docVersion isn't the same as the version of the FW export
@@ -32,23 +32,25 @@ export let updateDoc = function(doc, docVersion) {
             doc = convertDocV0(doc)
             doc = convertDocV11(doc)
             doc = convertDocV12(doc)
-            doc = convertDocV13(doc)
+            doc = convertDocV13(doc, bibliography)
             break
         case 1: // Fidus Writer 3.1 prerelease
             doc = convertDocV1(doc)
             doc = convertDocV11(doc)
             doc = convertDocV12(doc)
-            doc = convertDocV13(doc)
+            doc = convertDocV13(doc, bibliography)
             break
         case 1.1: // Fidus Writer 3.1
             doc = convertDocV11(doc)
             doc = convertDocV12(doc)
+            doc = convertDocV13(doc, bibliography)
             break
         case 1.2: // Fidus Writer 3.2
             doc = convertDocV12(doc)
+            doc = convertDocV13(doc, bibliography)
             break
         case 1.3: // Fidus Writer 3.3 prerelease
-            doc = convertDocV13(doc)
+            doc = convertDocV13(doc, bibliography)
             break
     }
     return doc
@@ -249,14 +251,41 @@ let convertNodeV12 = function(node, ids = []) {
     }
     if (node.content) {
         node.content.forEach(childNode => {
-            convertNodeV11(childNode, ids)
+            convertNodeV12(childNode, ids)
         })
     }
 }
 
-let convertDocV13 = function(doc) {
+let convertDocV13 = function(doc, bibliography) {
     let returnDoc = Object.assign({}, doc)
     delete returnDoc.settings
     delete returnDoc.metadata
+    returnDoc.bibliography = {}
+    convertNodeV13(returnDoc.contents, returnDoc.bibliography, bibliography)
     return returnDoc
+}
+
+let convertNodeV13 = function(node, shrunkBib, fullBib) {
+    switch (node.type) {
+        case 'citation':
+            node.attrs.references.forEach(ref => {
+                let item = fullBib[ref.id]
+                if (!item) {
+                    item = {
+                        fields: {"title":[{"type":"text","text":"Deleted"}]},
+                        bib_type: "misc",
+                        entry_key: "FidusWriter"
+                    }
+                }
+                item = Object.assign({}, item)
+                delete item.entry_cat
+                shrunkBib[ref.id] = item
+            })
+            break
+    }
+    if (node.content) {
+        node.content.forEach(childNode => {
+            convertNodeV13(childNode, shrunkBib, fullBib)
+        })
+    }
 }

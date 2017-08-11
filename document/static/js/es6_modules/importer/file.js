@@ -9,7 +9,7 @@ const MIN_FW_FILETYPE_VERSION = 1.1, MAX_FW_FILETYPE_VERSION = parseFloat(FW_FIL
 
 const TEXT_FILENAMES = ['mimetype', 'filetype-version', 'document.json', 'images.json', 'bibliography.json']
 
-export function updateFileDoc(doc, filetypeVersion) {
+export function updateFileDoc(doc, bibliography, filetypeVersion) {
     switch(filetypeVersion) {
         case "1.1":
         case "1.2":
@@ -20,14 +20,14 @@ export function updateFileDoc(doc, filetypeVersion) {
             delete(doc.owner)
             delete(doc.id)
             delete(doc.hash)
-            doc = updateDoc(doc, doc.settings['doc_version'])
+            doc = updateDoc(doc, bibliography, doc.settings['doc_version'])
             break
         case "1.3":
         case "1.4":
         case "1.5":
         case "1.6":
         case "1.7":
-            doc = updateDoc(doc, doc.settings['doc_version'])
+            doc = updateDoc(doc, bibliography, doc.settings['doc_version'])
             break
     }
     return doc
@@ -339,15 +339,19 @@ export class ImportFidusFile {
             parseFloat(filetypeVersion) >= MIN_FW_FILETYPE_VERSION &&
             parseFloat(filetypeVersion) <= MAX_FW_FILETYPE_VERSION) {
             // This seems to be a valid fidus file with current version number.
-            let shrunkBibDB = updateFileBib(JSON.parse(
+            let bibliography = updateFileBib(JSON.parse(
                 this.textFiles.find(file => file.filename === 'bibliography.json').contents
             ), filetypeVersion)
-            let shrunkImageDB = JSON.parse(this.textFiles.find(file => file.filename === 'images.json').contents)
-            let aDocument = updateFileDoc(JSON.parse(this.textFiles.find(file => file.filename === 'document.json').contents), filetypeVersion)
+            let images = JSON.parse(this.textFiles.find(file => file.filename === 'images.json').contents)
+            let aDocument = updateFileDoc(
+                JSON.parse(this.textFiles.find(file => file.filename === 'document.json').contents),
+                bibliography,
+                filetypeVersion
+            )
             let importer = new ImportNative(
                 aDocument,
-                shrunkBibDB,
-                shrunkImageDB,
+                bibliography,
+                images,
                 this.otherFiles,
                 this.user,
                 this.bibDB,

@@ -28,6 +28,7 @@ export let getMissingDocumentListData = function (ids, documentList) {
                         let aDocument = documentList.find(doc => doc.id === response.documents[i].id)
                         aDocument.contents = JSON.parse(response.documents[i].contents)
                         aDocument.comments = JSON.parse(response.documents[i].comments)
+                        aDocument.bibliography = JSON.parse(response.documents[i].bibliography)
                         aDocument.settings = getSettings(aDocument.contents)
                     }
                     resolve()

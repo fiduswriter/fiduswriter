@@ -101,8 +101,7 @@ export class CitationDialog {
         let citableItemsHTML = '', citedItemsHTML = ''
 
         Object.keys(this.editor.mod.citations.bibDB.db).forEach(id => {
-
-            let bibEntry = this.bibDBToBibEntry(id)
+            let bibEntry = this.bibDBToBibEntry(this.editor.mod.citations.bibDB.db[id], id, 'document')
             citableItemsHTML += citationItemTemplate(bibEntry)
 
             let citEntry = this.initialReferences.find(bibRef => bibRef.id==id)
@@ -111,6 +110,13 @@ export class CitationDialog {
                 bibEntry.prefix = citEntry.prefix ?  citEntry.prefix : ''
                 bibEntry.locator = citEntry.locator ? citEntry.locator : ''
                 citedItemsHTML += selectedCitationTemplate(bibEntry)
+            }
+        })
+        Object.keys(this.editor.user.bibDB.db).forEach(id => {
+            let bib = this.editor.user.bibDB.db[id]
+            if (!this.editor.mod.citations.bibDB.hasReference(bib)) {
+                let bibEntry = this.bibDBToBibEntry(bib, id, 'user')
+                citableItemsHTML += citationItemTemplate(bibEntry)
             }
         })
 
@@ -135,11 +141,11 @@ export class CitationDialog {
         )
     }
 
-    bibDBToBibEntry(id) {
-        let bib =  this.editor.mod.citations.bibDB.db[id]
+    bibDBToBibEntry(bib, id, db) {
         let bibauthors = bib.fields.author || bib.fields.editor
         return {
             id,
+            db,
             bib_type: bib.bib_type,
             title: bib.fields.title ? litToText(bib.fields.title) : gettext('Untitled'),
             author: bibauthors ? nameToText(bibauthors) : ''
@@ -150,7 +156,7 @@ export class CitationDialog {
     // Not when dialog is first opened.
     addToCitableItems(ids) {
         ids.forEach(id => {
-            let citeItemData = this.bibDBToBibEntry(id)
+            let citeItemData = this.bibDBToBibEntry(this.editor.mod.citations.bibDB.db[id], id, 'document')
             jQuery('#cite-source-table > tbody').append(citationItemTemplate(citeItemData))
             this.addToCitedItems([citeItemData])
         })
@@ -165,12 +171,13 @@ export class CitationDialog {
             let item = items[i]
             jQuery('#selected-cite-source-table .fw-document-table-body').append(
                 selectedCitationTemplate({
-                    'id': item.id,
-                    'bib_type': item.bib_type,
-                    'title': item.title,
-                    'author': item.author,
-                    'locator': '',
-                    'prefix': ''
+                    id: item.id,
+                    db: item.db,
+                    bib_type: item.bib_type,
+                    title: item.title,
+                    author: item.author,
+                    locator: '',
+                    prefix: ''
                 })
             )
         }
@@ -209,19 +216,21 @@ export class CitationDialog {
 
         jQuery('#cite-source-table').trigger('update')
 
-        jQuery('#add-cite-book').bind('click', () => {
+        jQuery('#add-cite-source').bind('click', () => {
             let checkedElements = jQuery('#cite-source-table .fw-checkable.checked'),
                 selectedItems = []
             checkedElements.each(function() {
-                let id = jQuery(this).data('id')
-                if (jQuery('#selected-source-' + id).length) {
+                let id = jQuery(this).data('id'),
+                    db = jQuery(this).data('db')
+                if (jQuery(`#selected-source-${db}-${id}`).length) {
                     return
                 }
                 selectedItems.push({
-                    'id': id,
-                    'type': jQuery(this).data('type'),
-                    'title': jQuery(this).data('title'),
-                    'author': jQuery(this).data('author')
+                    id,
+                    db,
+                    type: jQuery(this).data('type'),
+                    title: jQuery(this).data('title'),
+                    author: jQuery(this).data('author')
                 })
             })
             checkedElements.removeClass('checked')
@@ -239,8 +248,17 @@ export class CitationDialog {
                 document.querySelectorAll('#selected-cite-source-table .fw-cite-parts-table')
             ),
             references = citeItems.map(bibRef => {
+                let deleteButton = bibRef.querySelector('.delete'),
+                    id = parseInt(deleteButton.dataset.id),
+                    db = deleteButton.dataset.db
+                if (db === 'user') {
+                    // entry is from user's bibDB. We need to import it into the
+                    // document's bibDB.
+                    let bib = this.editor.user.bibDB.db[id]
+                    id = this.editor.mod.citations.bibDB.addReference(bib, id)
+                }
                 let returnObj = {
-                    id: jQuery(bibRef).find('.delete').data('id')
+                    id
                 }
                 let prefix = jQuery(bibRef).find('.fw-cite-text').val()
                 if (prefix.length) {

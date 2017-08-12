@@ -72,6 +72,7 @@ def get_documentlist_extra_js(request):
             documents, fields=(
                 'contents',
                 'comments',
+                'bibliography',
                 'id'
             )
         )
@@ -341,6 +342,7 @@ def import_js(request):
         document.title = request.POST['title']
         document.contents = request.POST['contents']
         document.comments = request.POST['comments']
+        document.bibliography = request.POST['bibliography']
         # document.doc_version should always be the current version, so don't
         # bother about it.
         document.save()

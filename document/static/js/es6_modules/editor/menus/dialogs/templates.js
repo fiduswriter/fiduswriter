@@ -1,44 +1,50 @@
-export let linkDialogTemplate = _.template('\
-    <div title="' + gettext("Link") + '">\
-    <% if (internalTargets.length) { %>\
-        <div class="fw-radio">\
-            <input type="radio" name="link-type" value="internal" class="link-internal-check">\
-            <label class="link-internal-label">' + gettext("Internal") + '</label>\
-        </div>\
-        <div class="fw-select-container">\
-            <select class="internal-link-selector fw-button fw-white fw-large" required="">\
-                <option class="placeholder" selected="" disabled="" value="">\
-                    ' + gettext("Select Target") + '\
-                </option>\
-                <% internalTargets.forEach(target => { %>\
-                    <option class="link-item" type="text" value="<%= target.id %>" <%= link === "#"+target.id ? "selected" : "" %>>\
-                        <%= target.text %>\
-                    </option>\
-                <% }); %>\
-            </select>\
-            <div class="fw-select-arrow icon-down-dir"></div>\
-        </div>\
-        <p></p>\
-        <div class="fw-radio">\
-            <input type="radio" name="link-type" value="external" class="link-external-check">\
-            <label class="link-external-label">' + gettext("External") + '</label>\
-        </div>\
-    <% } %>\
-        <input class="link-title" type="text" value="<%- linkTitle  %>" placeholder="' + gettext("Link title") + '"/>\
-        <p></p>\
-        <input class="link" type="text" value="<%- ["#", undefined].includes(link[0]) ? defaultLink : link %>" placeholder="' + gettext("URL") + '"/>\
-    </div>\
-')
+import {escapeText} from "../../../common"
+
+export let linkDialogTemplate = ({defaultLink, internalTargets, link, linkTitle}) =>
+    `<div title="${gettext("Link")}">
+        ${
+            internalTargets.length ?
+            `<div class="fw-radio">
+                <input type="radio" name="link-type" value="internal" class="link-internal-check">
+                <label class="link-internal-label">${gettext("Internal")}</label>
+            </div>
+            <div class="fw-select-container">
+                <select class="internal-link-selector fw-button fw-white fw-large" required="">
+                    <option class="placeholder" selected="" disabled="" value="">
+                        ${gettext("Select Target")}
+                    </option>
+                    ${
+                        internalTargets.map(target =>
+                            `<option class="link-item" type="text" value="${target.id}" ${link === `#${target.id}` ? "selected" : ""}>
+                                ${target.text}
+                            </option>`
+                        )
+                    }
+                </select>
+                <div class="fw-select-arrow icon-down-dir"></div>
+            </div>
+            <p></p>
+            <div class="fw-radio">
+                <input type="radio" name="link-type" value="external" class="link-external-check">
+                <label class="link-external-label">${gettext("External")}</label>
+            </div>`
+            :
+            ''
+        }
+        <input class="link-title" type="text" value="${escapeText(linkTitle)}" placeholder="${gettext("Link title")}"/>
+        <p></p>
+        <input class="link" type="text" value="${["#", undefined].includes(link[0]) ? defaultLink : link}" placeholder="${gettext("URL")}"/>
+    </div>`
 
 /** Dialog to add a note to a revision before saving. */
-export let revisionDialogTemplate = _.template('\
-<div title="'+gettext('Revision description')+'">\
-  <p>\
-    <input type="text" class="revision-note" placeholder="'+gettext('Description (optional)')+'">\
-  </p>\
-</div>')
+export let revisionDialogTemplate = () =>
+    `<div title="${gettext('Revision description')}">
+        <p>
+            <input type="text" class="revision-note" placeholder="${gettext('Description (optional)')}">
+        </p>
+    </div>`
 
-export let tableInsertTemplate = _.template(`
+export let tableInsertTemplate = () => `
     <table class="insert-table-selection">
         <tr>
             <td>&nbsp;</td>
@@ -90,7 +96,7 @@ export let tableInsertTemplate = _.template(`
             <td>&nbsp;</td>
         </tr>
     </table>
-`)
+`
 
 export let tableEditTemplate = _.template(`
     <div>
@@ -138,13 +144,12 @@ export let tableEditTemplate = _.template(`
     </div>
 `)
 
-export let mathDialogTemplate = _.template('\
-    <div title="' + gettext("Math") + '">\
-        <p><span class="math-field-header">Type formula here: </span><span class="math-field" type="text" name="math" ></span></p>\
-        <p><span class="math-field-header">LATEX result: </span><span class="math-latex"></span></p>\
-        <div class="math-error"></div>\
-    </div>\
-')
+export let mathDialogTemplate = () =>
+    `<div title="${gettext("Math")}">\
+        <p><span class="math-field-header">${gettext("Type formula here")}: </span><span class="math-field" type="text" name="math" ></span></p>
+        <p><span class="math-field-header">${gettext("LaTeX result")}: </span><span class="math-latex"></span></p>
+        <div class="math-error"></div>
+    </div>`
 
 export let figureImageItemTemplate =  _.template('\
 <tr id="Image_<%- pk %>" class="<% _.each(cats, function(cat) { %>cat_<%- cat %> <% }) %>" >\
@@ -238,93 +243,95 @@ export let configureFigureTemplate = _.template('\
         </div>')
 
 /** A template to configure citations in the editor */
-export let configureCitationTemplate = _.template('\
-    <div title="' + gettext('Configure Citation') + '">\
-        <div id="my-sources" class="fw-ar-container">\
-            <h3 class="fw-green-title">' + gettext("My sources") + '</h3>\
-            <table id="cite-source-table" class="fw-document-table">\
-                <thead class="fw-document-table-header"><tr>\
-                    <th width="161">' + gettext("Title") + '</th>\
-                    <th width="161">' + gettext("Author") + '</th>\
-                </tr></thead>\
-                <tbody class="fw-document-table-body fw-min">\
-                    <%= citableItemsHTML %>\
-                </tbody>\
-            </table>\
-        </div>\
-        <span id="add-cite-book" class="fw-button fw-large fw-square fw-light fw-ar-button"><i class="icon-right"></i></span>\
-        <div id="cite-books" class="fw-ar-container">\
-            <h3 class="fw-green-title">' + gettext("Citation format") + '</h3>\
-            <div class="fw-select-container">\
-                <select id="citation-style-selector" class="fw-button fw-white fw-large" required="">\
-                    <option value="autocite" <%= citeFormat==="autocite" ? "selected" : "" %>>' + gettext("(Author, 1998)") + '\
-                    <option value="textcite" <%= citeFormat==="textcite" ? "selected" : "" %>>' + gettext("Author (1998)") + '\
-                </select>\
-                <div class="fw-select-arrow icon-down-dir"></div>\
-            </div>\
-            <table id="selected-cite-source-table" class="fw-document-table tablesorter">\
-                <thead class="fw-document-table-header"><tr>\
-                    <th width="135">' + gettext("Title") + '</th>\
-                    <th width="135">' + gettext("Author") + '</th>\
-                    <td width="50" align="center">' + gettext("Remove") + '</td>\
-                </tr></thead>\
-                <tbody class="fw-document-table-body fw-min">\
-                  <%= citedItemsHTML %>\
-                </tbody>\
-            </table>\
-        </div>\
-    </div>')
+export let configureCitationTemplate = ({citableItemsHTML, citedItemsHTML, citeFormat}) =>
+    `<div title="${gettext('Configure Citation')}">
+        <div id="my-sources" class="fw-ar-container">
+            <h3 class="fw-green-title">${gettext("My sources")}</h3>
+            <table id="cite-source-table" class="fw-document-table">
+                <thead class="fw-document-table-header"><tr>
+                    <th width="161">${gettext("Title")}</th>
+                    <th width="161">${gettext("Author")}</th>
+                </tr></thead>
+                <tbody class="fw-document-table-body fw-min">
+                    ${citableItemsHTML}
+                </tbody>
+            </table>
+        </div>
+        <span id="add-cite-source" class="fw-button fw-large fw-square fw-light fw-ar-button"><i class="icon-right"></i></span>
+        <div id="cite-books" class="fw-ar-container">
+            <h3 class="fw-green-title">${gettext("Citation format")}</h3>
+            <div class="fw-select-container">
+                <select id="citation-style-selector" class="fw-button fw-white fw-large" required="">
+                    <option value="autocite" ${citeFormat==="autocite" ? "selected" : ""}>${gettext("(Author, 1998)")}</option>
+                    <option value="textcite" ${citeFormat==="textcite" ? "selected" : ""}>${gettext("Author (1998)")}</option>
+                </select>
+                <div class="fw-select-arrow icon-down-dir"></div>
+            </div>
+            <table id="selected-cite-source-table" class="fw-document-table tablesorter">
+                <thead class="fw-document-table-header"><tr>
+                    <th width="135">${gettext("Title")}</th>
+                    <th width="135">${gettext("Author")}</th>
+                    <td width="50" align="center">${gettext("Remove")}</td>
+                </tr></thead>
+                <tbody class="fw-document-table-body fw-min">
+                  ${citedItemsHTML}
+                </tbody>
+            </table>
+        </div>
+    </div>`
 
 /** A template for each item that can be cited inside the citation configuration dialog of the editor. */
-export let citationItemTemplate = _.template('<tr class="fw-checkable fw-checkable-tr" data-id="<%- id %>" data-type="<%- bib_type %>" data-title="<%- title %>" data-author="<%= author %>">\
-        <td width="162">\
-            <span class="fw-document-table-title fw-inline">\
-                <i class="icon-book"></i>\
-                <span class="fw-searchable"><%= title %></span>\
-            </span>\
-        </td>\
-        <td width="163">\
-            <span class="fw-inline fw-searchable"><%- author %></span>\
-        </td>\
-    </tr>')
+export let citationItemTemplate = ({bib_type, title, author, id, db}) =>
+    `<tr class="fw-checkable fw-checkable-tr" data-id="${id}" data-db="${db}" data-type="${bib_type}" data-title="${escapeText(title)}" data-author="${escapeText(author)}">
+        <td width="162">
+            <span class="fw-document-table-title fw-inline">
+                <i class="icon-book"></i>
+                <span class="fw-searchable">${escapeText(title)}</span>
+            </span>
+        </td>
+        <td width="163">
+            <span class="fw-inline fw-searchable">${escapeText(author)}</span>
+        </td>
+    </tr>`
 
-/** A template for each selected citation item inside the citation configuration dialog of the editor. */
-export let selectedCitationTemplate = _.template('\
-<tr id="selected-source-<%= id %>" class="selected-source">\
-    <td colspan="3" width="335">\
-      <table class="fw-cite-parts-table">\
-          <tr>\
-              <td width="135">\
-                  <span class="fw-document-table-title fw-inline">\
-                      <i class="icon-book"></i>\
-                      <span data-id="<%- id %>" data-type="<%- bib_type %>">\
-                          <%= title %>\
-                      </span>\
-                  </span>\
-              </td>\
-              <td width="135">\
-                  <span class="fw-inline">\
-                      <%- author %>\
-                  </span>\
-              </td>\
-              <td width="50" align="center">\
-                  <span class="delete fw-inline fw-link-text" data-id="<%- id %>">\
-                      <i class="icon-trash"></i>\
-                  </span>\
-              </td>\
-          </tr>\
-          <tr>\
-              <td class="cite-extra-fields" colspan="3" width="335">\
-                  <div>\
-                      <label>' + gettext('Page') + '</label>\
-                      <input class="fw-cite-page" type="text" value="<%= locator %>" />\
-                  </div>\
-                  <div>\
-                      <label>' + gettext('Text before') + '</label>\
-                      <input class="fw-cite-text" type="text" value="<%= prefix %>" />\
-                  </div>\
-              </td>\
-          </tr>\
-      </table>\
-  </td>\
-</tr>')
+/** A template for each selected citation item inside the citation configuration
+    dialog of the editor. */
+export let selectedCitationTemplate = ({title, bib_type, author, id, db, prefix, locator}) =>
+    `<tr id="selected-source-${db}-${id}" class="selected-source">
+        <td colspan="3" width="335">
+          <table class="fw-cite-parts-table">
+              <tr>
+                  <td width="135">
+                      <span class="fw-document-table-title fw-inline">
+                          <i class="icon-book"></i>
+                          <span data-id="${id}" data-type="${bib_type}">\
+                              ${escapeText(title)}
+                          </span>
+                      </span>
+                  </td>
+                  <td width="135">
+                      <span class="fw-inline">
+                          ${escapeText(author)}
+                      </span>
+                  </td>
+                  <td width="50" align="center">
+                      <span class="delete fw-inline fw-link-text" data-id="${id}" data-db="${db}">
+                          <i class="icon-trash"></i>
+                      </span>
+                  </td>
+              </tr>
+              <tr>
+                  <td class="cite-extra-fields" colspan="3" width="335">
+                      <div>
+                          <label>${gettext('Page')}</label>
+                          <input class="fw-cite-page" type="text" value="${escapeText(locator)}" />
+                      </div>
+                      <div>
+                          <label>${gettext('Text before')}</label>
+                          <input class="fw-cite-text" type="text" value="${escapeText(prefix)}" />
+                      </div>
+                  </td>
+              </tr>
+          </table>
+      </td>
+    </tr>`

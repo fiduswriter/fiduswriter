@@ -33,7 +33,7 @@ export class ModBibliographyDB {
             let reference = tmpDB[bibKey]
             delete reference.entry_cat
             if (isNew) {
-                let id = this.addReference(bibKey, reference)
+                let id = this.addReference(reference, bibKey)
                 idTranslations.push([bibKey, id])
             } else {
                 this.updateReference(bibKey, reference)
@@ -63,7 +63,7 @@ export class ModBibliographyDB {
         })
     }
 
-    addReference(id, reference) {
+    addReference(reference, id) {
         while(!id || this.db[id]) {
             id = randomID()
         }
@@ -122,6 +122,24 @@ export class ModBibliographyDB {
             }
         })
 
+    }
+
+    findReference(ref) {
+        return Object.keys(this.db).find(id => {
+            let bib = this.db[id]
+            return (
+                bib.bib_type === ref.bib_type &&
+                JSON.stringify(bib.fields) === JSON.stringify(ref.fields)
+            )
+        })
+    }
+
+    hasReference(ref) {
+        if (this.findReference(ref) !== undefined) {
+            return true
+        } else {
+            return false
+        }
     }
 
 }

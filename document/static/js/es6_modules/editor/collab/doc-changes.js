@@ -260,6 +260,11 @@ export class ModCollabDocChanges {
             this.mod.editor.mod.comments.store.eventsSent(sentComments)
         }
 
+        let sentBibliographyUpdates = this.unconfirmedDiffs[request_id]["bu"] // bibliography updates
+        if(sentBibliographyUpdates) {
+            this.mod.editor.mod.citations.bibDB.eventsSent(sentBibliographyUpdates)
+        }
+
         delete this.unconfirmedDiffs[request_id]
         this.enableDiffSending()
     }

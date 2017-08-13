@@ -239,7 +239,6 @@ export class ModCollabDocChanges {
                 )
             )
             this.setConfirmedDoc(transaction)
-            this.mod.editor.docInfo.version++
             this.mod.editor.view.dispatch(transaction)
         }
 

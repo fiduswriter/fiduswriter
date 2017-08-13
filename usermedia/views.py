@@ -62,7 +62,6 @@ def save_js(request):
                 image.uploader = request.user
                 image.owner_id = owner_id
                 user_image = UserImage()
-                user_image.image = image
                 status = 201
                 if 'checksum' in request.POST:
                     image.checksum = request.POST['checksum']
@@ -76,6 +75,7 @@ def save_js(request):
                 response['errormsg']['error'] = _('No file uploaded')
             else:
                 image.save()
+                user_image.image = image
                 user_image.save()
                 response['values'] = {
                     'pk': image.pk,

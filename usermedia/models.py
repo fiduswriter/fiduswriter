@@ -27,13 +27,7 @@ def get_file_path(instance, filename):
 
 
 class Image(models.Model):
-    title = models.CharField(max_length=128)
     uploader = models.ForeignKey(User, related_name='image_uploader')
-    owner = models.ForeignKey(
-        User,
-        related_name='image_owner',
-        blank=True,
-        null=True)
     added = models.DateTimeField(auto_now_add=True)
     image = models.FileField(upload_to=get_file_path)
     thumbnail = models.ImageField(
@@ -41,17 +35,13 @@ class Image(models.Model):
         max_length=500,
         blank=True,
         null=True)
-    image_cat = models.CharField(max_length=255, default='')
     file_type = models.CharField(max_length=20, blank=True, null=True)
     height = models.IntegerField(blank=True, null=True)
     width = models.IntegerField(blank=True, null=True)
     checksum = models.BigIntegerField(default=0)
 
     def __unicode__(self):
-        if len(self.title) > 0:
-            return self.title
-        else:
-            return str(self.pk)
+        return str(self.pk)
 
     def create_checksum(self):
         if not self.image:
@@ -167,6 +157,24 @@ class Image(models.Model):
         self.create_thumbnail()
 
         super(Image, self).save()
+
+
+# Image linked to a particular User.
+class UserImage(models.Model):
+    title = models.CharField(max_length=128)
+    owner = models.ForeignKey(
+        User,
+        related_name='image_owner',
+        blank=True,
+        null=True)
+    image_cat = models.CharField(max_length=255, default='')
+    image = models.ForeignKey(Image)
+
+    def __unicode__(self):
+        if len(self.title) > 0:
+            return self.title
+        else:
+            return str(self.pk)
 
 
 # category

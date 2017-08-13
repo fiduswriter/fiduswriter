@@ -8,7 +8,7 @@ from django.core.serializers.python import Serializer
 from django.utils.translation import ugettext as _
 
 from document.models import AccessRight, CAN_UPDATE_DOCUMENT
-from usermedia.models import Image, ImageCategory
+from usermedia.models import Image, ImageCategory, UserImage
 
 from .models import ALLOWED_FILETYPES
 
@@ -24,7 +24,6 @@ serializer = SimpleSerializer()
 @login_required
 def index(request):
     response = {}
-
     response.update(csrf(request))
     return render(request, 'usermedia/index.html', response)
 
@@ -50,20 +49,26 @@ def save_js(request):
             response['errormsg']['error'] = _('Filetype not supported')
         else:
             # We only allow owners to change their images.
-            image = Image.objects.filter(pk=the_id, owner=request.user)
-            if image.exists():
-                image = image[0]
+            user_image = UserImage.objects.filter(
+                pk=the_id,
+                owner=request.user
+            )
+            if user_image.exists():
+                user_image = user_image[0]
+                image = user_image.image
                 status = 200
             else:
                 image = Image()
                 image.uploader = request.user
                 image.owner_id = owner_id
+                user_image = UserImage()
+                user_image.image = image
                 status = 201
                 if 'checksum' in request.POST:
                     image.checksum = request.POST['checksum']
-            image.title = request.POST['title']
+            user_image.title = request.POST['title']
             if 'imageCat' in request.POST:
-                image.image_cat = request.POST['imageCat']
+                user_image.image_cat = request.POST['imageCat']
             if 'image' in request.FILES:
                 image.image = request.FILES['image']
             if status == 201 and 'image' not in request.FILES:
@@ -71,14 +76,15 @@ def save_js(request):
                 response['errormsg']['error'] = _('No file uploaded')
             else:
                 image.save()
+                user_image.save()
                 response['values'] = {
                     'pk': image.pk,
-                    'title': image.title,
+                    'title': user_image.title,
                     'image': image.image.url,
                     'file_type': image.file_type,
                     'added': mktime(image.added.timetuple()) * 1000,
                     'checksum': image.checksum,
-                    'cats': image.image_cat.split(',')
+                    'cats': user_image.image_cat.split(',')
                 }
                 if image.thumbnail:
                     response['values']['thumbnail'] = image.thumbnail.url
@@ -98,7 +104,12 @@ def delete_js(request):
     if request.is_ajax() and request.method == 'POST':
         status = 201
         ids = request.POST.getlist('ids[]')
-        Image.objects.filter(pk__in=ids, owner=request.user).delete()
+        user_image = UserImage.objects.filter(pk__in=ids, owner=request.user)
+        image = user_image.image
+        user_image.delete()
+        if len(image.userimage_set.all()) == 0:
+            # There are no more links from user images to image, so delete it.
+            image.delete()
     return JsonResponse(
         response,
         status=status
@@ -150,29 +161,30 @@ def images_js(request):
                 if check_read_access_rights(user_id, request.user) is False:
                     status = 403
             if status == 200:
-                images = Image.objects.filter(owner__in=user_ids)
+                user_images = UserImage.objects.filter(owner__in=user_ids)
                 response['imageCategories'] = serializer.serialize(
                     ImageCategory.objects.filter(category_owner__in=user_ids))
         else:
             if check_read_access_rights(user_id, request.user):
                 if int(user_id) == 0:
                     user_id = request.user.id
-                images = Image.objects.filter(owner=user_id)
+                user_images = UserImage.objects.filter(owner=user_id)
                 status = 200
                 response['imageCategories'] = serializer.serialize(
                     ImageCategory.objects.filter(category_owner=user_id))
         if status == 200:
             response['images'] = []
-            for image in images:
+            for user_image in user_images:
+                image = user_image.image
                 if image.image:
                     field_obj = {
                         'pk': image.pk,
-                        'title': image.title,
+                        'title': user_image.title,
                         'image': image.image.url,
                         'file_type': image.file_type,
                         'added': mktime(image.added.timetuple()) * 1000,
                         'checksum': image.checksum,
-                        'cats': image.image_cat.split(',')
+                        'cats': user_image.image_cat.split(',')
                     }
                     if image.thumbnail:
                         field_obj['thumbnail'] = image.thumbnail.url

@@ -9,12 +9,14 @@ const linksKey = new PluginKey('links')
 export let linksPlugin = function(options) {
 
 
-    function createLinkDropUp(linkMark) {
+    function createLinkDropUp(linkMark,anchor=false, doubleDropUp=false) {
         let linkDropUp = document.createElement('span'),
             anchorType = 'external',
             href = linkMark.attrs.href,
             editor = options.editor,
-            toolbarLink = editor.menu.toolbarModel.content.find(item => item.id==='link')
+            toolbarLink = editor.menu.toolbarModel.content.find(item => item.id==='link'),
+            anchor_href
+            
 
         if (!toolbarLink) {
             // No link in toolbar to edit link. Disable all editing.
@@ -22,44 +24,113 @@ export let linksPlugin = function(options) {
             // the toolbar.
             toolbarLink = {disabled: () => false}
         }
+        if (anchor == 'true') {
+        	anchor_href='#'+linkMark.attrs.id
+        	anchor_href= window.location.href.split('#')[0] + href
+         linkDropUp.classList.add('active-anchor')
+        }
+        
         linkDropUp.classList.add('link')
+        
         linkDropUp.classList.add('drop-up-outer')
 
-        if(href.length && href[0] === '#') {
-            anchorType = 'internal'
-            href = window.location.href.split('#')[0] + href
-        }
-
-        linkDropUp.innerHTML = noSpaceTmp`
+        
+        if(anchor && !doubleDropUp){
+        	anchorType = 'internal'
+        	linkDropUp.innerHTML = noSpaceTmp`
             <div class="link drop-up-inner">
-                ${gettext('Link')}:&nbsp;<a class="href" ${anchorType === 'external' ? 'target="_blank"' : ''} href="${href}">
-                    ${href}
+                ${gettext('Link')}:&nbsp;<a class="href" ${anchorType === 'external' ? 'target="_blank"' : ''} href="${anchor_href}">
+                    ${anchor_href}
                 </a><br>
-                ${gettext('Title')}:&nbsp;${linkMark.attrs.title}
                 ${toolbarLink.disabled(editor) ? '' : noSpaceTmp`
                     <div class="edit">
-                        [<a href="#" class="edit-link">${gettext('Edit')}</a> | <a href="#" class="remove-link">${gettext('Remove')}</a>]
+                        [<a href="#" class="copy-link">${gettext('Copy Url')}</a> | <a href="#" class="remove-anchor">${gettext('Remove')}</a>]
                     </div>
                 `}
             </div>
         `
-        if (anchorType === 'internal') {
-            linkDropUp.querySelector('a.href').addEventListener('click', event => {
-                event.preventDefault()
-                let id = linkMark.attrs.href.slice(1)
-                editor.scrollIdIntoView(id)
-            })
-        }
-
-
+        
+        linkDropUp.querySelector('.copy-url').addEventListener('click', () => {
+        	
+        	var text = anchor_href
+        	var textarea = document.createElement("textarea");
+        	textarea.textContent = text;
+        	textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in MS Edge.
+    		document.body.appendChild(textarea);
+		   textarea.select();
+		   try {
+		   	var successful = document.execCommand("copy");  // Security exception may be thrown by some browsers.
+		   	var msg = successful ? 'successful' : 'unsuccessful';
+		   	} 
+		   catch (ex) {
+		   	addAlert('error','Copy to clipboard failed.');
+		   	console.warn("Copy to clipboard failed.", ex);            
+		    } finally {
+		 	document.body.removeChild(textarea);		 	
+		 	addAlert('success',parseInt(jQuery(this).attr('data-id')) + 'was copied');
+         }   
+        })
+        
+        linkDropUp.querySelector('.remove-anchor').addEventListener('click', () => {
+            editor.view.dispatch ( editor.view.state.tr.removeMark($head.start(), $head.end(), linkMark) )
+                })
+        }else{
+        	if(href.length && href[0] === '#') {
+        		anchorType = 'internal'
+        		href = window.location.href.split('#')[0] + href            
+        		}
+        		linkDropUp.innerHTML = noSpaceTmp`
+        		<div class="link drop-up-inner">
+        		${gettext('Link')}:&nbsp;<a class="href" ${anchorType === 'external' ? 'target="_blank"' : ''} href="${href}">
+        		${href}
+        		</a><br>
+        		${gettext('Title')}:&nbsp;${linkMark.attrs.title}
+        		${toolbarLink.disabled(editor) ? '' : noSpaceTmp`
+                    <div class="edit">
+                        [<a href="#" class="edit-link">${gettext('Edit')}</a> | <a href="#" class="remove-link">${gettext('Remove')}</a
+                    </div>
+                `}>]
+            </div>
+        `
         linkDropUp.querySelector('.edit-link').addEventListener('click', () => {
             toolbarLink.action(options.editor)
         })
+        
         linkDropUp.querySelector('.remove-link').addEventListener('click', () => {
             editor.view.dispatch(
                 editor.view.state.tr.removeMark($head.start(), $head.end(), linkMark)
             )
-        })
+        		})
+        
+        }
+        if (doubleDropUp) {
+        	linkDropUp.innerHTML += noSpaceTmp`
+            <div class="link drop-up-inner">
+                ${gettext('Link')}:&nbsp;<a class="href" ${anchorType === 'external' ? 'target="_blank"' : ''} href="${anchor_href}">
+                    ${anchor_href}
+                </a><br>
+                ${toolbarLink.disabled(editor) ? '' : noSpaceTmp`
+                    <div class="edit">
+                        [<a href="#" class="copy-url">${gettext('Copy Url')}</a> | <a href="#" class="remove-anchor">${gettext('Remove')}</a>]
+                    </div>
+                `}
+            </div>
+        `
+        }
+
+        if (anchorType === 'internal') {
+            linkDropUp.querySelector('a.href').addEventListener('click', event => {
+                event.preventDefault()
+                if (href) {
+                	let id = linkMark.attrs.href.slice(1)
+                	editor.scrollIdIntoView(id)                
+                }else {
+                	let id = linkMark.attrs.id
+                	editor.scrollIdIntoView(id)          
+                }
+                })
+            }
+
         return linkDropUp
     }
 
@@ -86,9 +157,7 @@ export let linksPlugin = function(options) {
                 let changed = url === newUrl ? false : true
                 // TODO: Should the following be moved to a view?
                 // Not sure if this counts as a DOM update.
-                if (changed && options.editor.currentView.state === oldState) {
-                    window.history.replaceState("", "", newUrl)
-                }
+               
                 return {
                     url: newUrl
                 }
@@ -268,7 +337,37 @@ export let linksPlugin = function(options) {
                 let linkMark = $head.marks().find(
                     mark => mark.type.name === 'link'
                 )
+                let anchorMark = $head.marks().find(
+                    mark => mark.type.name === 'anchor'
+                )
+                if (anchorMark && !linkMark) {
+                	let startIndex = $head.index()
+                	while (
+                	startIndex > 0 &&
+                	anchorMark.isInSet($head.parent.child(startIndex - 1).marks)
+                	)
+                	{
+                	 	startIndex--
+                	 	}
+                 let startPos = $head.start() // position of block start.
+                	for (let i = 0; i < startIndex; i++) {
+                		startPos += $head.parent.child(i).nodeSize
+                		}
+                	//if (linkMark) 
+                	//{
+                		let dom = createLinkDropUp(anchorMark,true)
+                		let deco = Decoration.widget(startPos, dom) 
+                		                	
+                //	}else {
+                //	let dom = createLinkDropUp(anchorMark)
+                //	let deco = Decoration.widget(startPos, dom)                	
+                //	}	
+                
+                return DecorationSet.create(state.doc, [deco])
+                }
+                
                 if (!linkMark) {
+                	
                     return
                 }
 
@@ -286,7 +385,14 @@ export let linksPlugin = function(options) {
                     startPos += $head.parent.child(i).nodeSize
                 }
 
-                let dom = createLinkDropUp(linkMark)
+                let dom
+                
+                if (anchorMark) {
+                	dom = createLinkDropUp(linkMark,true,true)	                
+                }else{
+                	dom = createLinkDropUp(linkMark)
+                }
+
 
                 let deco = Decoration.widget(startPos, dom)
                 return DecorationSet.create(state.doc, [deco])

@@ -73,6 +73,7 @@
 .icon-sort-down:before { content: '\f0dd'; } /* '' */
 .icon-sort-up:before { content: '\f0de'; } /* '' */
 .icon-comment-empty:before { content: '\f0e5'; } /* '' */
+.icon-flag:before { content: '\1F3F4'; } /* '' */
 .icon-angle-double-left:before { content: '\f100'; } /* '' */
 .icon-angle-double-right:before { content: '\f101'; } /* '' */
 .icon-angle-double-up:before { content: '\f102'; } /* '' */

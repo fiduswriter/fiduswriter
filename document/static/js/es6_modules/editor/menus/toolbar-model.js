@@ -531,7 +531,7 @@ export let toolbarModel = {
         {
             type: 'button',
             title: gettext('Anchor'),
-            icon: 'comment-empty',
+            icon: 'icon-flag',
             action: editor => {
                 let mark = editor.currentView.state.schema.marks['anchor']
                 let command = toggleMark(mark)

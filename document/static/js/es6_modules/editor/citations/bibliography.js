@@ -121,7 +121,6 @@ export class ModBibliographyDB {
                 this.updateLocalReference(event.id, event.reference)
             }
         })
-
     }
 
     findReference(ref) {

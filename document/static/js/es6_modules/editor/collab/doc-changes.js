@@ -228,6 +228,7 @@ export class ModCollabDocChanges {
     }
 
     confirmDiff(request_id) {
+        this.mod.editor.docInfo.version++
         let sentSteps = this.unconfirmedDiffs[request_id]["ds"] // document steps
         if (sentSteps) {
             let transaction = receiveTransaction(

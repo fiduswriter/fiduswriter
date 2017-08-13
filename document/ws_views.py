@@ -238,6 +238,9 @@ class WebSocket(BaseWebSocketHandler):
     def update_comments(self, comments_updates):
         comments_updates = deepcopy(comments_updates)
         for cd in comments_updates:
+            if "id" not in cd:
+                # ignore
+                continue
             id = str(cd["id"])
             if cd["type"] == "create":
                 del cd["type"]
@@ -250,21 +253,19 @@ class WebSocket(BaseWebSocketHandler):
                     self.doc["comments"][id][
                         "review:isMajor"] = cd["review:isMajor"]
             elif cd["type"] == "add_answer":
-                comment_id = str(cd["commentId"])
-                if "answers" not in self.doc["comments"][comment_id]:
-                    self.doc["comments"][comment_id]["answers"] = []
+                if "answers" not in self.doc["comments"][id]:
+                    self.doc["comments"][id]["answers"] = []
                 del cd["type"]
-                self.doc["comments"][comment_id]["answers"].append(cd)
+                self.doc["comments"][id]["answers"].append(cd)
             elif cd["type"] == "delete_answer":
-                comment_id = str(cd["commentId"])
-                for answer in self.doc["comments"][comment_id]["answers"]:
-                    if answer["id"] == cd["id"]:
-                        self.doc["comments"][comment_id][
-                            "answers"].remove(answer)
+                answer_id = str(cd["answerId"])
+                for answer in self.doc["comments"][id]["answers"]:
+                    if answer["id"] == answer_id:
+                        self.doc["comments"][id]["answers"].remove(answer)
             elif cd["type"] == "update_answer":
-                comment_id = str(cd["commentId"])
-                for answer in self.doc["comments"][comment_id]["answers"]:
-                    if answer["id"] == cd["id"]:
+                answer_id = str(cd["answerId"])
+                for answer in self.doc["comments"][id]["answers"]:
+                    if answer["id"] == answer_id:
                         answer["answer"] = cd["answer"]
 
     def handle_participant_update(self):

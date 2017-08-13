@@ -213,7 +213,6 @@ export class ModCommentStore {
 
 
     addLocalAnswer(id, answer, local) {
-
         if (this.comments[id]) {
             if (!this.comments[id].answers) {
                 this.comments[id].answers = []
@@ -231,53 +230,51 @@ export class ModCommentStore {
         this.addLocalAnswer(id, answer, true)
         this.unsent.push({
             type: "add_answer",
-            id: id,
+            id,
             answerId: answer.id
         })
         this.mustSend()
     }
 
-    deleteLocalAnswer(commentId, answerId, local) {
-        if (this.comments[commentId] && this.comments[commentId].answers) {
-            this.comments[commentId].answers = this.comments[commentId].answers.filter(answer => answer.id !== answerId)
+    deleteLocalAnswer(id, answerId, local) {
+        if (this.comments[id] && this.comments[id].answers) {
+            this.comments[id].answers = this.comments[id].answers.filter(answer => answer.id !== answerId)
         }
         if (local || (!this.mod.layout.isCurrentlyEditing())) {
             this.mod.layout.layoutComments()
         }
     }
 
-    deleteAnswer(commentId, answerId) {
-        this.deleteLocalAnswer(commentId, answerId, true)
+    deleteAnswer(id, answerId) {
+        this.deleteLocalAnswer(id, answerId, true)
         this.unsent.push({
             type: "delete_answer",
-            commentId: commentId,
-            answerId: answerId
+            id,
+            answerId
         })
         this.mustSend()
     }
 
-    updateLocalAnswer(commentId, answerId, answerText, local) {
-        if (this.comments[commentId] && this.comments[commentId].answers) {
-            let answer = this.comments[commentId].answers.find(answer => answer.id === answerId)
-            answer.answer = answerText
+    updateLocalAnswer(id, answerId, answerText, local) {
+        if (this.comments[id] && this.comments[id].answers) {
+            let answer = this.comments[id].answers.find(answer => answer.id === answerId)
+            if (answer) {
+                answer.answer = answerText
+            }
         }
         if (local || (!this.mod.layout.isCurrentlyEditing())) {
             this.mod.layout.layoutComments()
         }
     }
 
-    updateAnswer(commentId, answerId, answerText) {
-        this.updateLocalAnswer(commentId, answerId, answerText, true)
+    updateAnswer(id, answerId, answerText) {
+        this.updateLocalAnswer(id, answerId, answerText, true)
         this.unsent.push({
             type: "update_answer",
-            commentId: commentId,
-            answerId: answerId
+            id,
+            answerId
         })
         this.mustSend()
-    }
-
-    hasUnsentEvents() {
-        return this.unsent.length
     }
 
     unsentEvents() {
@@ -291,58 +288,88 @@ export class ModCommentStore {
                 })
             } else if (event.type == "update") {
                 let found = this.comments[event.id]
-                if (!found || !found.id) continue
-                result.push({
-                    type: "update",
-                    id: found.id,
-                    comment: found.comment,
-                    'review:isMajor': found['review:isMajor']
-                })
+                if (found && found.id) {
+                    result.push({
+                        type: "update",
+                        id: found.id,
+                        comment: found.comment,
+                        'review:isMajor': found['review:isMajor']
+                    })
+                } else {
+                    result.push({
+                        type: "ignore"
+                    })
+                }
             } else if (event.type == "create") {
                 let found = this.comments[event.id]
-                if (!found || !found.id) continue
-                result.push({
-                    type: "create",
-                    id: found.id,
-                    user: found.user,
-                    userName: found.userName,
-                    userAvatar: found.userAvatar,
-                    date: found.date,
-                    comment: found.comment,
-                    answers: found.answers,
-                    'review:isMajor': found['review:isMajor']
-                })
+                if (found && found.id) {
+                    result.push({
+                        type: "create",
+                        id: found.id,
+                        user: found.user,
+                        userName: found.userName,
+                        userAvatar: found.userAvatar,
+                        date: found.date,
+                        comment: found.comment,
+                        answers: found.answers,
+                        'review:isMajor': found['review:isMajor']
+                    })
+                } else {
+                    result.push({
+                        type: "ignore"
+                    })
+                }
             } else if (event.type == "add_answer") {
-                let found = this.comments[event.id]
-                if (!found || !found.id || !found.answers) continue
-                let foundAnswer = found.answers.find(answer => answer.id === event.answerId)
-
-                result.push({
-                    type: "add_answer",
-                    id: foundAnswer.id,
-                    commentId: foundAnswer.commentId,
-                    user: foundAnswer.user,
-                    userName: foundAnswer.userName,
-                    userAvatar: foundAnswer.userAvatar,
-                    date: foundAnswer.date,
-                    answer: foundAnswer.answer
-                })
+                let found = this.comments[event.id], foundAnswer
+                if (found && found.id && found.answers) {
+                    foundAnswer = found.answers.find(answer => answer.id === event.answerId)
+                }
+                if (foundAnswer) {
+                    result.push({
+                        type: "add_answer",
+                        answerId: foundAnswer.id,
+                        id: event.id,
+                        user: foundAnswer.user,
+                        userName: foundAnswer.userName,
+                        userAvatar: foundAnswer.userAvatar,
+                        date: foundAnswer.date,
+                        answer: foundAnswer.answer
+                    })
+                } else {
+                    result.push({
+                        type: "ignore"
+                    })
+                }
             } else if (event.type == "delete_answer") {
-                result.push({
-                    type: "delete_answer",
-                    commentId: event.commentId,
-                    id: event.answerId
-                })
+                let found = this.comments[event.id]
+                if (found && found.id && found.answers) {
+                    result.push({
+                        type: "delete_answer",
+                        id: event.id,
+                        answerId: event.answerId
+                    })
+                } else {
+                    result.push({
+                        type: "ignore"
+                    })
+                }
             } else if (event.type == "update_answer") {
-                let found = this.comments[event.commentId]
-                if (!found || !found.id || !found.answers) continue
-                let foundAnswer = found.answers.find(answer => answer.id === event.answerId)
-                result.push({
-                    type: "update_answer",
-                    id: foundAnswer.id,
-                    commentId: foundAnswer.commentId,
-                    answer: foundAnswer.answer
-                })
+                let found = this.comments[event.id], foundAnswer
+                if (found && found.id && found.answers) {
+                    foundAnswer = found.answers.find(answer => answer.id === event.answerId)
+                }
+                if (foundAnswer) {
+                    result.push({
+                        type: "update_answer",
+                        id: event.id,
+                        answerId: event.answerId,
+                        answer: foundAnswer.answer
+                    })
+                } else {
+                    result.push({
+                        type: "ignore"
+                    })
+                }
             }
         }
         return result
@@ -361,11 +388,11 @@ export class ModCommentStore {
             } else if (event.type == "update") {
                 this.updateLocalComment(event.id, event.comment, event['review:isMajor'], false)
             } else if (event.type == "add_answer") {
-                this.addLocalAnswer(event.commentId, event, false)
+                this.addLocalAnswer(event.id, event, false)
             } else if (event.type == "delete_answer") {
-                this.deleteLocalAnswer(event.commentId, event.id, false)
+                this.deleteLocalAnswer(event.id, event.answerId, false)
             } else if (event.type == "update_answer") {
-                this.updateLocalAnswer(event.commentId, event.id, event.answer, false)
+                this.updateLocalAnswer(event.id, event.answerId, event.answer, false)
             }
         })
 

@@ -229,6 +229,8 @@ class WebSocket(BaseWebSocketHandler):
 
     def update_bibliography(self, bibliography_updates):
         for bu in bibliography_updates:
+            if "id" not in bu:
+                continue
             id = bu["id"]
             if bu["type"] == "update":
                 self.doc["bibliography"][id] = bu["reference"]

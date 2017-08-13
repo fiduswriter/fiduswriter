@@ -76,8 +76,7 @@ export class ModBibliographyDB {
         this.updateLocalReference(id, reference)
         this.unsent.push({
             type: "update",
-            id,
-            reference
+            id
         })
         this.mustSend()
     }
@@ -106,7 +105,28 @@ export class ModBibliographyDB {
     }
 
     unsentEvents() {
-        return this.unsent
+        return this.unsent.map(
+            event => {
+                if (event.type === 'delete') {
+                    return event
+                } else if (event.type === 'update') {
+                    // Check bib entry still exists. Otherwise ignore.
+                    let reference = this.db[event.id]
+                    if (reference) {
+                        return {
+                            type: 'update',
+                            id: event.id,
+                            reference
+                        }
+                    } else {
+                        return {
+                            type: 'ignore'
+                        }
+                    }
+
+                }
+            }
+        )
     }
 
     eventsSent(n) {

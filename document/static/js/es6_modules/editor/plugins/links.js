@@ -9,7 +9,7 @@ const linksKey = new PluginKey('links')
 export let linksPlugin = function(options) {
 
 
-    function createLinkDropUp(linkMark,anchor=false, doubleDropUp=false) {
+    function createLinkDropUp(linkMark,$head,anchorMark ='undefined' , anchor=false, doubleDropUp=false) {
         let linkDropUp = document.createElement('span'),
             anchorType = 'external',
             href = linkMark.attrs.href,
@@ -24,9 +24,9 @@ export let linksPlugin = function(options) {
             // the toolbar.
             toolbarLink = {disabled: () => false}
         }
-        if (anchor == 'true') {
-        	anchor_href='#'+linkMark.attrs.id
-        	anchor_href= window.location.href.split('#')[0] + href
+        if (anchor == true) {
+        	anchor_href='#'+anchorMark.attrs.id
+        	anchor_href= window.location.href.split('#')[0] + anchor_href
          linkDropUp.classList.add('active-anchor')
         }
         
@@ -44,7 +44,7 @@ export let linksPlugin = function(options) {
                 </a><br>
                 ${toolbarLink.disabled(editor) ? '' : noSpaceTmp`
                     <div class="edit">
-                        [<a href="#" class="copy-link">${gettext('Copy Url')}</a> | <a href="#" class="remove-anchor">${gettext('Remove')}</a>]
+                        [<a href="#" class="copy-url">${gettext('Copy Url')}</a> | <a href="#" class="remove-anchor">${gettext('Remove')}</a>]
                     </div>
                 `}
             </div>
@@ -63,11 +63,11 @@ export let linksPlugin = function(options) {
 		   	var msg = successful ? 'successful' : 'unsuccessful';
 		   	} 
 		   catch (ex) {
-		   	addAlert('error','Copy to clipboard failed.');
+		   //	addAlert('error','Copy to clipboard failed.');
 		   	console.warn("Copy to clipboard failed.", ex);            
 		    } finally {
 		 	document.body.removeChild(textarea);		 	
-		 	addAlert('success',parseInt(jQuery(this).attr('data-id')) + 'was copied');
+		// 	addAlert('success',parseInt(jQuery(this).attr('data-id')) + 'was copied');
          }   
         })
         
@@ -116,6 +116,30 @@ export let linksPlugin = function(options) {
                 `}
             </div>
         `
+        linkDropUp.querySelector('.copy-url').addEventListener('click', () => {
+        	
+        	var text = anchor_href
+        	var textarea = document.createElement("textarea");
+        	textarea.textContent = text;
+        	textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in MS Edge.
+    		document.body.appendChild(textarea);
+		   textarea.select();
+		   try {
+		   	var successful = document.execCommand("copy");  // Security exception may be thrown by some browsers.
+		   	var msg = successful ? 'successful' : 'unsuccessful';
+		   	} 
+		   catch (ex) {
+		   //	addAlert('error','Copy to clipboard failed.');
+		   	console.warn("Copy to clipboard failed.", ex);            
+		    } finally {
+		 	document.body.removeChild(textarea);		 	
+		// 	addAlert('success',parseInt(jQuery(this).attr('data-id')) + 'was copied');
+         }   
+        })
+        
+        linkDropUp.querySelector('.remove-anchor').addEventListener('click', () => {
+            editor.view.dispatch ( editor.view.state.tr.removeMark($head.start(), $head.end(), linkMark) )
+                })
         }
 
         if (anchorType === 'internal') {
@@ -353,15 +377,10 @@ export let linksPlugin = function(options) {
                 	for (let i = 0; i < startIndex; i++) {
                 		startPos += $head.parent.child(i).nodeSize
                 		}
-                	//if (linkMark) 
-                	//{
-                		let dom = createLinkDropUp(anchorMark,true)
+                	
+                		let dom = createLinkDropUp(anchorMark,$head,anchorMark,true)
                 		let deco = Decoration.widget(startPos, dom) 
                 		                	
-                //	}else {
-                //	let dom = createLinkDropUp(anchorMark)
-                //	let deco = Decoration.widget(startPos, dom)                	
-                //	}	
                 
                 return DecorationSet.create(state.doc, [deco])
                 }
@@ -388,9 +407,9 @@ export let linksPlugin = function(options) {
                 let dom
                 
                 if (anchorMark) {
-                	dom = createLinkDropUp(linkMark,true,true)	                
+                	dom = createLinkDropUp(linkMark,$head,anchorMark,true,true)	                
                 }else{
-                	dom = createLinkDropUp(linkMark)
+                	dom = createLinkDropUp(linkMark,$head)
                 }
 
 

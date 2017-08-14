@@ -68,7 +68,7 @@ export let figure = {
     group: "block",
     attrs: {
         equation: {default: ""},
-        image: {default: ""},
+        image: {default: false},
         figureCategory: {default: ""},
         caption: {default: ""},
         id: {compute: randomFigureId}
@@ -76,10 +76,10 @@ export let figure = {
     parseDOM: [{
         tag: 'figure',
         getAttrs(dom) {
-            let image = dom.getAttribute('data-image')
+            let image = parseInt(dom.getAttribute('data-image'))
             return {
                 equation: dom.getAttribute('data-equation'),
-                image: image === 'false' ? false : parseInt(image),
+                image: isNaN(image) ? false : image,
                 figureCategory: dom.getAttribute('data-figure-category'),
                 caption: dom.getAttribute('data-caption'),
                 id: dom.getAttribute('id')

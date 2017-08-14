@@ -207,7 +207,7 @@ export let configureFigureTemplate = ({image, equation, caption}) =>
                     placeholder="${gettext('Insert formula')}" value="${escapeText(equation)}"
                     ${image ? 'disabled="disabled"' : ''}>
                 <button type="button" id="insertFigureImage" class="fw-button fw-light
-                        ${equation === '' ? 'disabled' : ''}>
+                        ${equation === '' ? '' : 'disabled'}">
                     ${gettext('Insert image')} <i class="icon-figure"></i>
                 </button>
             </div>

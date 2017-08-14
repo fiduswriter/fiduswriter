@@ -27,13 +27,13 @@ export class ImageDB {
                     xhr.setRequestHeader("X-CSRFToken", csrfToken),
                 success: (response, textStatus, jqXHR) => {
                     this.cats = response.imageCategories
-                    let pks = []
+                    let ids = []
                     for (let i = 0; i < response.images.length; i++) {
                         response.images[i].image = response.images[i].image.split('?')[0]
-                        this.db[response.images[i]['pk']] = response.images[i]
-                        pks.push(response.images[i]['pk'])
+                        this.db[response.images[i]['id']] = response.images[i]
+                        ids.push(response.images[i]['id'])
                     }
-                    resolve(pks)
+                    resolve(ids)
                 },
                 error: (jqXHR, textStatus, errorThrown) => {
                     reject(jqXHR.responseText)
@@ -60,8 +60,8 @@ export class ImageDB {
                     if (Object.keys(response.errormsg).length) {
                         reject(response.errormsg)
                     } else {
-                        this.db[response.values.pk] = response.values
-                        resolve(response.values.pk)
+                        this.db[response.values.id] = response.values
+                        resolve(response.values.id)
                     }
                 },
                 error: (jqXHR, textStatus, errorThrown) => {

@@ -45,6 +45,11 @@ urlpatterns = [
         name='save_doc_js'
     ),
     url(
+        '^maintenance/add_images_to_doc/$',
+        views.add_images_to_doc_js,
+        name='add_images_to_doc_js'
+    ),
+    url(
         '^maintenance/get_all_revision_ids/$',
         views.get_all_revision_ids_js,
         name='get_all_revision_ids_js'

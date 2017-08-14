@@ -15,7 +15,6 @@ import JSZipUtils from "jszip-utils"
 export class DocMaintenance {
     constructor() {
         this.batch = 0
-        this.button = document.querySelector('button#update')
         this.batchesDone = false
         this.docSavesLeft = 0
         this.revSavesLeft = 0
@@ -24,8 +23,8 @@ export class DocMaintenance {
 
     bind() {
         jQuery(document).on('click', 'button#update:not(.disabled)', () => {
-            jQuery(this.button).addClass('disabled')
-            jQuery(this.button).html(gettext('Updating...'))
+            jQuery('button#update').prop('disabled', true)
+            jQuery('button#update').html(gettext('Updating...'))
             this.init()
         })
     }
@@ -85,9 +84,6 @@ export class DocMaintenance {
         }).then(bibliography => {
             // updates doc to the newest version
             doc = updateDoc(oldDoc, bibliography, docVersion)
-            if (Object.keys(doc.bibliography).length) {
-                console.log(doc.bibliography)
-            }
             // only proceed with saving if the doc update has changed something
             if (doc !== oldDoc) {
                 this.saveDoc(doc)
@@ -97,24 +93,41 @@ export class DocMaintenance {
 
 
     saveDoc(doc) {
-        doc.contents = window.JSON.stringify(doc.contents)
-        doc.bibliography = window.JSON.stringify(doc.bibliography)
-        doc.doc_version = parseFloat(FW_FILETYPE_VERSION)
-        doc.last_diffs = window.JSON.stringify(doc.last_diffs)
         this.docSavesLeft++
-        jQuery.ajax({
+        let p1 = new Promise(resolve => jQuery.ajax({
             url: "/document/maintenance/save_doc/",
             type: 'POST',
             dataType: 'json',
             crossDomain: false, // obviates need for sameOrigin test
             beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
-            data: doc,
-            success: data => {
-                addAlert('success', gettext('The document has been updated: ') + doc.id)
-                this.docSavesLeft--
-                if (this.docSavesLeft===0 && this.batchesDone) {
-                    addAlert('success', gettext('All documents updated!'))
-                }
+            data: {
+                id: doc.id,
+                contents: window.JSON.stringify(doc.contents),
+                bibliography: window.JSON.stringify(doc.bibliography),
+                doc_version: parseFloat(FW_FILETYPE_VERSION),
+                version: doc.version,
+                last_diffs: window.JSON.stringify(doc.last_diffs)
+            },
+            success: () => resolve()
+        })),
+            p2 = new Promise(resolve => jQuery.ajax({
+            url: "/document/maintenance/add_images_to_doc/",
+            type: 'POST',
+            dataType: 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
+            data: {
+                doc_id: doc.id,
+                ids: doc.imageIds
+            },
+            success: () => resolve()
+        }))
+        Promise.all([p1, p2]).then(() => {
+            addAlert('success', `${gettext('The document has been updated')}: ${doc.id}`)
+            this.docSavesLeft--
+            if (this.docSavesLeft===0 && this.batchesDone) {
+                addAlert('success', gettext('All documents updated!'))
+                this.done()
             }
         })
     }
@@ -204,7 +217,7 @@ export class DocMaintenance {
     }
 
     done() {
-        jQuery(this.button).html(gettext('All documents and revisions updated!'))
+        jQuery('button#update').html(gettext('All documents and revisions updated!'))
     }
 
 }

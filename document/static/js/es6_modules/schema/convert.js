@@ -261,11 +261,12 @@ let convertDocV13 = function(doc, bibliography) {
     delete returnDoc.settings
     delete returnDoc.metadata
     returnDoc.bibliography = {}
-    convertNodeV13(returnDoc.contents, returnDoc.bibliography, bibliography)
+    returnDoc.imageIds = []
+    convertNodeV13(returnDoc.contents, returnDoc.bibliography, bibliography, returnDoc.imageIds)
     return returnDoc
 }
 
-let convertNodeV13 = function(node, shrunkBib, fullBib) {
+let convertNodeV13 = function(node, shrunkBib, fullBib, imageIds) {
     switch (node.type) {
         case 'citation':
             node.attrs.references.forEach(ref => {
@@ -282,10 +283,17 @@ let convertNodeV13 = function(node, shrunkBib, fullBib) {
                 shrunkBib[ref.id] = item
             })
             break
+        case 'figure':
+            if (isNaN(parseInt(node.attrs.image))) {
+                node.attrs.image = false
+            } else {
+                imageIds.push(parseInt(node.attrs.image))
+            }
+            break
     }
     if (node.content) {
         node.content.forEach(childNode => {
-            convertNodeV13(childNode, shrunkBib, fullBib)
+            convertNodeV13(childNode, shrunkBib, fullBib, imageIds)
         })
     }
 }

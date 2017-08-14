@@ -13,6 +13,7 @@ except ImportError:
     # Python 3
     from io import StringIO
 from django.core.files.uploadedfile import SimpleUploadedFile
+from document.models import Document
 
 ALLOWED_FILETYPES = ['image/jpeg', 'image/png', 'image/svg+xml']
 ALLOWED_EXTENSIONS = ['jpeg', 'jpg', 'png', 'svg']
@@ -168,6 +169,19 @@ class UserImage(models.Model):
         blank=True,
         null=True)
     image_cat = models.CharField(max_length=255, default='')
+    image = models.ForeignKey(Image)
+
+    def __unicode__(self):
+        if len(self.title) > 0:
+            return self.title
+        else:
+            return str(self.pk)
+
+
+# Image linked to a document
+class DocumentImage(models.Model):
+    title = models.CharField(max_length=128)
+    document = models.ForeignKey(Document)
     image = models.ForeignKey(Image)
 
     def __unicode__(self):

@@ -1,4 +1,5 @@
 import time
+import os
 from django.shortcuts import render
 from django.core import serializers
 from django.http import HttpResponse, JsonResponse, HttpRequest
@@ -6,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.template.context_processors import csrf
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.files import File
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.conf import settings
@@ -20,6 +22,7 @@ from avatar.templatetags.avatar_tags import avatar_url
 
 from document.models import Document, AccessRight, DocumentRevision, \
     ExportTemplate, CAN_UPDATE_DOCUMENT
+from usermedia.models import DocumentImage, Image
 from document.helpers.serializers import PythonWithURLSerializer
 
 from style.models import CitationStyle, CitationLocale
@@ -512,6 +515,49 @@ def update_revision_js(request):
         revision.file_object = request.FILES['file']
         revision.file_object.name = file_name
         revision.save()
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@staff_member_required
+def add_images_to_doc_js(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 201
+        doc_id = request.POST['doc_id']
+        doc = Document.objects.get(id=doc_id)
+        # Delete all existing image links
+        DocumentImage.objects.filter(
+            document_id=doc_id
+        ).delete()
+        ids = request.POST.getlist('ids[]')
+        for id in ids:
+            title = 'Deleted'
+            image = Image.objects.filter(id=id)
+            if image.exists():
+                image = image[0]
+                user_image = image.userimage_set.all()
+                if user_image.exists():
+                    user_image = user_image[0]
+                    title = user_image.title
+            else:
+                image = Image()
+                image.pk = id
+                image.uploader = doc.owner
+                f = open(os.path.join(
+                    settings.PROJECT_PATH, "base/static/img/error.png"
+                ))
+                image.image.save('error.png', File(f))
+                image.save()
+            DocumentImage.objects.create(
+                document=doc,
+                image=image,
+                title=title
+            )
+
     return JsonResponse(
         response,
         status=status

@@ -60,8 +60,8 @@ def save_js(request):
             else:
                 image = Image()
                 image.uploader = request.user
-                image.owner_id = owner_id
                 user_image = UserImage()
+                user_image.owner_id = owner_id
                 status = 201
                 if 'checksum' in request.POST:
                     image.checksum = request.POST['checksum']
@@ -78,7 +78,7 @@ def save_js(request):
                 user_image.image = image
                 user_image.save()
                 response['values'] = {
-                    'pk': image.pk,
+                    'pk': user_image.pk,
                     'title': user_image.title,
                     'image': image.image.url,
                     'file_type': image.file_type,

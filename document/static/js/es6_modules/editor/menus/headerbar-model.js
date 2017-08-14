@@ -60,7 +60,7 @@ export let headerbarModel = {
                                 let saver = new SaveRevision(
                                     editor.getDoc(),
                                     editor.imageDB,
-                                    editor.mod.citations.bibDB,
+                                    editor.mod.db.bibDB,
                                     note
                                 )
                                 return saver.init()
@@ -79,7 +79,7 @@ export let headerbarModel = {
                             if (editor.docInfo.owner.id === editor.user.id) {
                                 // We are copying from and to the same user.
                                 // We don't need different databases for this.
-                                newBibDB = editor.mod.citations.bibDB
+                                newBibDB = editor.mod.db.bibDB
                                 newImageDB = editor.imageDB
                                 return resolve({newBibDB, newImageDB})
                             } else {
@@ -95,7 +95,7 @@ export let headerbarModel = {
                         getDataBases().then(({newBibDB, newImageDB}) => {
                             let copier = new SaveCopy(
                                 editor.getDoc(),
-                                editor.mod.citations.bibDB,
+                                editor.mod.db.bibDB,
                                 editor.imageDB,
                                 newBibDB,
                                 newImageDB,
@@ -115,7 +115,7 @@ export let headerbarModel = {
                     action: editor => {
                         new ExportFidusFile(
                             editor.getDoc(),
-                            editor.mod.citations.bibDB,
+                            editor.mod.db.bibDB,
                             editor.imageDB
                         )
                     }
@@ -142,7 +142,7 @@ export let headerbarModel = {
                     action: editor => {
                         new HTMLExporter(
                             editor.getDoc(),
-                            editor.mod.citations.bibDB,
+                            editor.mod.db.bibDB,
                             editor.mod.styles.citationStyles,
                             editor.mod.styles.citationLocales
                         )
@@ -154,7 +154,7 @@ export let headerbarModel = {
                     action: editor => {
                         new EpubExporter(
                             editor.getDoc(),
-                            editor.mod.citations.bibDB,
+                            editor.mod.db.bibDB,
                             editor.mod.styles.citationStyles,
                             editor.mod.styles.citationLocales
                         )
@@ -166,7 +166,7 @@ export let headerbarModel = {
                     action: editor => {
                         new LatexExporter(
                             editor.getDoc(),
-                            editor.mod.citations.bibDB,
+                            editor.mod.db.bibDB,
                             editor.imageDB
                         )
                     }

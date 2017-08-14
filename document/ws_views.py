@@ -14,7 +14,7 @@ from tornado.websocket import WebSocketClosedError
 from document.models import AccessRight, COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
     CAN_COMMUNICATE, ExportTemplate, FW_DOCUMENT_VERSION
 from document.views import get_accessrights
-from usermedia.models import DocumentImage
+from usermedia.models import DocumentImage, UserImage
 from avatar.templatetags.avatar_tags import avatar_url
 
 from style.models import DocumentStyle, CitationStyle, CitationLocale
@@ -255,6 +255,37 @@ class WebSocket(BaseWebSocketHandler):
             elif bu["type"] == "delete":
                 del self.doc["bibliography"][id]
 
+    def update_images(self, image_updates):
+        for iu in image_updates:
+            if "id" not in iu:
+                continue
+            id = iu["id"]
+            if iu["type"] == "update":
+                # Ensure that access rights exist
+                if not UserImage.objects.filter(
+                    image__id=id,
+                    owner=self.user_info.user
+                ).exists():
+                    continue
+                doc_image = DocumentImage.objects.filter(
+                    document_id=self.doc["id"],
+                    image_id=id
+                )
+                if doc_image.exists():
+                    doc_image.title = iu["image"]["title"]
+                    doc_image.save()
+                else:
+                    DocumentImage.objects.create(
+                        document_id=self.doc["id"],
+                        image_id=id,
+                        title=iu["image"]["title"]
+                    )
+            elif iu["type"] == "delete":
+                DocumentImage.objects.filter(
+                    document_id=self.doc["id"],
+                    image_id=id
+                ).delete()
+
     def update_comments(self, comments_updates):
         comments_updates = deepcopy(comments_updates)
         for cd in comments_updates:
@@ -351,8 +382,10 @@ class WebSocket(BaseWebSocketHandler):
                 self.doc["title"] = parsed["ti"]
             if "cu" in parsed:  # cu = comment updates
                 self.update_comments(parsed["cu"])
-            if "bu"in parsed:  # bu = bibliography updates
+            if "bu" in parsed:  # bu = bibliography updates
                 self.update_bibliography(parsed["bu"])
+            if "iu" in parsed:  # iu = image updates
+                self.update_images(parsed["iu"])
             WebSocket.save_document(self.user_info.document_id)
             self.confirm_diff(parsed["rid"])
             WebSocket.send_updates(

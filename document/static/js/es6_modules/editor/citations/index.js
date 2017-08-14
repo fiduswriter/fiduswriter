@@ -1,5 +1,4 @@
 import {RenderCitations} from "../../citations/render"
-import {ModBibliographyDB} from "./bibliography"
 
 export class ModCitations {
     constructor(editor) {
@@ -7,7 +6,6 @@ export class ModCitations {
         this.editor = editor
         this.citationType = ''
         this.fnOverrideElement =  false
-        new ModBibliographyDB(this)
         this.setup()
     }
 
@@ -41,7 +39,7 @@ export class ModCitations {
     }
 
     layoutCitations() {
-        if (!this.bibDB.db) {
+        if (!this.editor.mod.db.bibDB.db) {
             // bibliography hasn't been loaded yet
             return
         }
@@ -50,7 +48,7 @@ export class ModCitations {
             this.citRenderer = new RenderCitations(
                 document.getElementById('paper-editable'), // TODO: Should we point this to somewhere else?
                 this.editor.view.state.doc.firstChild.attrs.citationstyle,
-                this.bibDB,
+                this.editor.mod.db.bibDB,
                 this.editor.mod.styles.citationStyles,
                 this.editor.mod.styles.citationLocales,
                 false

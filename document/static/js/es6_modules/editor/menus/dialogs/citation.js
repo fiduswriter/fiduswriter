@@ -100,8 +100,8 @@ export class CitationDialog {
         // and return the templated dialog HTML.
         let citableItemsHTML = '', citedItemsHTML = ''
 
-        Object.keys(this.editor.mod.citations.bibDB.db).forEach(id => {
-            let bibEntry = this.bibDBToBibEntry(this.editor.mod.citations.bibDB.db[id], id, 'document')
+        Object.keys(this.editor.mod.db.bibDB.db).forEach(id => {
+            let bibEntry = this.bibDBToBibEntry(this.editor.mod.db.bibDB.db[id], id, 'document')
             citableItemsHTML += citationItemTemplate(bibEntry)
 
             let citEntry = this.initialReferences.find(bibRef => bibRef.id==id)
@@ -114,7 +114,7 @@ export class CitationDialog {
         })
         Object.keys(this.editor.user.bibDB.db).forEach(id => {
             let bib = this.editor.user.bibDB.db[id]
-            if (!this.editor.mod.citations.bibDB.hasReference(bib)) {
+            if (!this.editor.mod.db.bibDB.hasReference(bib)) {
                 let bibEntry = this.bibDBToBibEntry(bib, id, 'user')
                 citableItemsHTML += citationItemTemplate(bibEntry)
             }
@@ -128,7 +128,7 @@ export class CitationDialog {
     }
 
     registerNewSource() {
-        let form = new BibEntryForm(this.editor.mod.citations.bibDB)
+        let form = new BibEntryForm(this.editor.mod.db.bibDB)
         form.init().then(
             idTranslations => {
                 let ids = idTranslations.map(idTrans => idTrans[1])
@@ -156,7 +156,7 @@ export class CitationDialog {
     // Not when dialog is first opened.
     addToCitableItems(ids) {
         ids.forEach(id => {
-            let citeItemData = this.bibDBToBibEntry(this.editor.mod.citations.bibDB.db[id], id, 'document')
+            let citeItemData = this.bibDBToBibEntry(this.editor.mod.db.bibDB.db[id], id, 'document')
             jQuery('#cite-source-table > tbody').append(citationItemTemplate(citeItemData))
             this.addToCitedItems([citeItemData])
         })
@@ -255,7 +255,7 @@ export class CitationDialog {
                     // entry is from user's bibDB. We need to import it into the
                     // document's bibDB.
                     let bib = this.editor.user.bibDB.db[id]
-                    id = this.editor.mod.citations.bibDB.addReference(bib, id)
+                    id = this.editor.mod.db.bibDB.addReference(bib, id)
                 }
                 let returnObj = {
                     id

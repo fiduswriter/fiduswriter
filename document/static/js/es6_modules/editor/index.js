@@ -15,6 +15,7 @@ import {docSchema} from "../schema/document"
 import {ModComments} from "./comments"
 import {ModFootnotes} from "./footnotes"
 import {ModCitations} from "./citations"
+import {ModDB} from "./databases"
 import {ModCollab} from "./collab"
 import {ModTools} from "./tools"
 import {ModSettings} from "./settings"
@@ -80,6 +81,7 @@ export class Editor {
         ]
         new ModFootnotes(this)
         new ModServerCommunications(this)
+        new ModDB(this)
     }
 
     init() {
@@ -200,9 +202,12 @@ export class Editor {
             type: 'participant_update'
         }))
 
-        this.mod.citations.bibDB.setDB(data.doc.bibliography)
+        this.mod.db.bibDB.setDB(data.doc.bibliography)
+        this.mod.db.imageDB.setDB(data.doc.images)
         this.user.bibDB = new BibliographyDB(this.user.id, true)
         this.user.bibDB.getDB()
+        this.user.imageDB = new ImageDB(this.user.id, true)
+        this.user.imageDB.getDB()
 
         return this.getImageDB(this.docInfo.owner.id).then(() => {
 

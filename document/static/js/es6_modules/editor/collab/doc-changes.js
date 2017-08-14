@@ -72,15 +72,22 @@ export class ModCollabDocChanges {
         if (
             sendableSteps(this.mod.editor.view.state) ||
             this.mod.editor.mod.comments.store.unsentEvents().length ||
-            this.mod.editor.mod.citations.bibDB.unsentEvents().length
+            this.mod.editor.mod.db.bibDB.unsentEvents().length
         ) {
             this.mod.editor.mod.serverCommunications.send(() => {
                 let stepsToSend = sendableSteps(this.mod.editor.view.state),
                     fnStepsToSend = sendableSteps(this.mod.editor.mod.footnotes.fnEditor.view.state),
                     commentUpdates = this.mod.editor.mod.comments.store.unsentEvents(),
-                    bibliographyUpdates = this.mod.editor.mod.citations.bibDB.unsentEvents()
+                    bibliographyUpdates = this.mod.editor.mod.db.bibDB.unsentEvents(),
+                    imageUpdates = this.mod.editor.mod.db.imageDB.unsentEvents()
 
-                if (!stepsToSend && !fnStepsToSend && !commentUpdates.length && !bibliographyUpdates.length) {
+                if (
+                    !stepsToSend &&
+                    !fnStepsToSend &&
+                    !commentUpdates.length &&
+                    !bibliographyUpdates.length &&
+                    !imageUpdates.length
+                ) {
                     // no diff. abandon operation
                     return
                 }
@@ -129,10 +136,13 @@ export class ModCollabDocChanges {
                     })
                 }
                 if (commentUpdates.length) {
-                    unconfirmedDiff['cu'] = commentUpdates
+                    unconfirmedDiff["cu"] = commentUpdates
                 }
                 if (bibliographyUpdates.length) {
-                    unconfirmedDiff['bu'] = bibliographyUpdates
+                    unconfirmedDiff["bu"] = bibliographyUpdates
+                }
+                if (imageUpdates.length) {
+                    unconfirmedDiff["iu"] = imageUpdates
                 }
 
                 this.unconfirmedDiffs[rid] = unconfirmedDiff
@@ -194,7 +204,10 @@ export class ModCollabDocChanges {
     receiveFromCollaborators(data) {
         this.mod.editor.docInfo.version++
         if (data["bu"]) { // bibliography updates
-            this.mod.editor.mod.citations.bibDB.receive(data["bu"])
+            this.mod.editor.mod.db.bibDB.receive(data["bu"])
+        }
+        if (data["iu"]) { // images updates
+            this.mod.editor.mod.db.imageDB.receive(data["iu"])
         }
         if (data["cu"]) { // comment updates
             this.mod.editor.mod.comments.store.receive(data["cu"])
@@ -262,7 +275,12 @@ export class ModCollabDocChanges {
 
         let sentBibliographyUpdates = this.unconfirmedDiffs[request_id]["bu"] // bibliography updates
         if(sentBibliographyUpdates) {
-            this.mod.editor.mod.citations.bibDB.eventsSent(sentBibliographyUpdates)
+            this.mod.editor.mod.db.bibDB.eventsSent(sentBibliographyUpdates)
+        }
+
+        let sentImageUpdates = this.unconfirmedDiffs[request_id]["iu"] // bibliography updates
+        if(sentImageUpdates) {
+            this.mod.editor.mod.db.imageDB.eventsSent(sentImageUpdates)
         }
 
         delete this.unconfirmedDiffs[request_id]

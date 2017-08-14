@@ -78,7 +78,7 @@ def save_js(request):
                 user_image.image = image
                 user_image.save()
                 response['values'] = {
-                    'pk': user_image.pk,
+                    'id': image.id,
                     'title': user_image.title,
                     'image': image.image.url,
                     'file_type': image.file_type,
@@ -104,7 +104,10 @@ def delete_js(request):
     if request.is_ajax() and request.method == 'POST':
         status = 201
         ids = request.POST.getlist('ids[]')
-        user_image = UserImage.objects.filter(pk__in=ids, owner=request.user)
+        user_image = UserImage.objects.filter(
+            image_id__in=ids,
+            owner=request.user
+        )
         image = user_image.image
         user_image.delete()
         if len(image.userimage_set.all()) == 0:
@@ -178,7 +181,7 @@ def images_js(request):
                 image = user_image.image
                 if image.image:
                     field_obj = {
-                        'pk': image.pk,
+                        'id': image.id,
                         'title': user_image.title,
                         'image': image.image.url,
                         'file_type': image.file_type,

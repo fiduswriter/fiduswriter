@@ -145,102 +145,106 @@ export let tableEditTemplate = _.template(`
 `)
 
 export let mathDialogTemplate = () =>
-    `<div title="${gettext("Math")}">\
+    `<div title="${gettext("Math")}">
         <p><span class="math-field-header">${gettext("Type formula here")}: </span><span class="math-field" type="text" name="math" ></span></p>
         <p><span class="math-field-header">${gettext("LaTeX result")}: </span><span class="math-latex"></span></p>
         <div class="math-error"></div>
     </div>`
 
-export let figureImageItemTemplate =  _.template('\
-<tr id="Image_<%- pk %>" class="<% _.each(cats, function(cat) { %>cat_<%- cat %> <% }) %>" >\
-     <td class="type" style="width:100px;">\
-        <% if (typeof thumbnail !== "undefined") { %>\
-            <img src="<%- thumbnail %>" style="max-heigth:30px;max-width:30px;">\
-        <% } else { %>\
-            <img src="<%- image %>" style="max-heigth:30px;max-width:30px;">\
-        <% } %>\
-    </td>\
-    <td class="title" style="width:212px;">\
-        <span class="fw-inline">\
-            <span class="edit-image fw-link-text icon-figure" data-id="<%- pk %>">\
-                <%- title %>\
-            </span>\
-        </span>\
-    </td>\
-    <td class="checkable" style="width:30px;">\
-    </td>\
-</tr>')
+export let figureImageItemTemplate =  ({id, cats, image, thumbnail, title}) =>
+    `<tr id="Image_${id}" class="${cats.map(cat => `cat_${escapeText(cat)} `)}" >
+         <td class="type" style="width:100px;">
+            ${
+                thumbnail === undefined ?
+                `<img src="${image}" style="max-heigth:30px;max-width:30px;">` :
+                `<img src="${thumbnail}" style="max-heigth:30px;max-width:30px;">`
+            }
+        </td>
+        <td class="title" style="width:212px;">
+            <span class="fw-inline">
+                <span class="edit-image fw-link-text icon-figure" data-id="${id}">
+                    ${escapeText(title)}
+                </span>
+            </span>
+        </td>
+        <td class="checkable" style="width:30px;">
+        </td>
+    </tr>`
 
 /** A template to select images inside the figure configuration dialog in the editor. */
-export let figureImageTemplate = _.template('\
-    <div>\
-        <table id="imagelist" class="tablesorter fw-document-table" style="width:342px;">\
-            <thead class="fw-document-table-header">\
-                <tr>\
-                    <th width="50">'+gettext('Image')+'</th>\
-                    <th width="150">'+gettext('Title')+'</th>\
-                </tr>\
-            </thead>\
-            <tbody class="fw-document-table-body fw-small">\
-                <% _.each(imageDB, function (anImage) { %> <%= figureImageItemTemplate(anImage) %> <% }); %>\
-            </tbody>\
-        </table>\
-        <div class="dialogSubmit">\
-            <button class="edit-image createNew fw-button fw-light">' +
-                gettext('Upload') +
-                '<span class="icon-plus-circle"></span>\
-            </button>\
-            <button type="button" id="selectImageFigureButton" class="fw-button fw-dark">' +
-                gettext('Insert') +
-            '</button>\
-             <button type="button" id="cancelImageFigureButton" class="fw-button fw-orange">' +
-                gettext('Cancel') +
-            '</button>\
-        </div>\
-    </div>\
-')
+export let figureImageTemplate = ({imageDB}) =>
+    `<div>
+        <table id="imagelist" class="tablesorter fw-document-table" style="width:342px;">
+            <thead class="fw-document-table-header">
+                <tr>
+                    <th width="50">${gettext('Image')}</th>
+                    <th width="150">${gettext('Title')}</th>
+                </tr>
+            </thead>
+            <tbody class="fw-document-table-body fw-small">
+                ${Object.values(imageDB).map(image => figureImageItemTemplate(image))}
+            </tbody>
+        </table>
+        <div class="dialogSubmit">
+            <button class="edit-image createNew fw-button fw-light">
+                ${gettext('Upload')}
+                <span class="icon-plus-circle"></span>
+            </button>
+            <button type="button" id="selectImageFigureButton" class="fw-button fw-dark">
+                ${gettext('Insert')}
+            </button>
+            <button type="button" id="cancelImageFigureButton" class="fw-button fw-orange">
+                ${gettext('Cancel')}
+            </button>
+        </div>
+    </div>`
 
     /** A template to configure the display of a figure in the editor. */
-export let configureFigureTemplate = _.template('\
-    <div class="fw-media-uploader">\
-            <div>\
-                <input class="fw-media-title figure-math" type="text" name="figure-math" placeholder="' +
-                    gettext('Insert formula') + '" value="<%- equation %>" <%if (image && image !== "false") {%>disabled=disabled<%} %>/>\
-                <button type="button" id="insertFigureImage" class="fw-button fw-light<%if (equation!=="") {%> disabled<%} %>">' +
-                    gettext('Insert image') + ' <i class="icon-figure"></i>\
-                </button>\
-            </div>\
-            <input type="hidden" id="figure-category">\
-            <div style="margin-top: 10px;">\
-                <div id="figure-category-btn" class="fw-button fw-light fw-large">\
-                    <input type="hidden" id="figure-category" />\
-                    <label></label>\
-                    <span class="icon-down-dir"></span>\
-                </div>\
-                <div id="figure-category-pulldown" class="fw-pulldown fw-left" style="left: 10px;">\
-                    <ul id="figure-category-list">\
-                        <li><span class="fw-pulldown-item" id="figure-category-none">' +
-        gettext('None') +
-        '</span></li>\
-                        <li><span class="fw-pulldown-item" id="figure-category-figure">' +
-        gettext('Figure') +
-        '</span></li>\
-                        <li><span class="fw-pulldown-item" id="figure-category-photo">' +
-        gettext('Photo') +
-        '</span></li>\
-                        <li><span class="fw-pulldown-item" id="figure-category-table">' +
-        gettext('Table') +
-        '</span></li>\
-                    </ul>\
-                </div>\
-            </div>\
-            <div class="figure-preview">\
-                <div id="inner-figure-preview"></div>\
-            </div>\
-            <div style="margin-top: 10px;"><input style="width: 402px;" class="caption" type="text" name="figure-caption" value="<%- caption %>" placeholder="' +
-        gettext('Insert caption') +
-        '" /></div>\
-        </div>')
+export let configureFigureTemplate = ({image, equation, caption}) =>
+    `<div class="fw-media-uploader">
+            <div>
+                <input class="fw-media-title figure-math" type="text" name="figure-math"
+                    placeholder="${gettext('Insert formula')}" value="${escapeText(equation)}"
+                    ${image ? 'disabled="disabled"' : ''}>
+                <button type="button" id="insertFigureImage" class="fw-button fw-light
+                        ${equation === '' ? 'disabled' : ''}>
+                    ${gettext('Insert image')} <i class="icon-figure"></i>
+                </button>
+            </div>
+            <input type="hidden" id="figure-category">
+            <div style="margin-top: 10px;">
+                <div id="figure-category-btn" class="fw-button fw-light fw-large">
+                    <input type="hidden" id="figure-category" />
+                    <label></label>
+                    <span class="icon-down-dir"></span>
+                </div>
+                <div id="figure-category-pulldown" class="fw-pulldown fw-left"
+                        style="left: 10px;">
+                    <ul id="figure-category-list">
+                        <li><span class="fw-pulldown-item" id="figure-category-none">
+                            ${gettext('None')}
+                        </span></li>
+                        <li><span class="fw-pulldown-item" id="figure-category-figure">
+                            ${gettext('Figure')}
+                        </span></li>
+                        <li><span class="fw-pulldown-item" id="figure-category-photo">
+                            ${gettext('Photo')}
+                        </span></li>
+                        <li><span class="fw-pulldown-item" id="figure-category-table">
+                            ${gettext('Table')}
+                        </span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="figure-preview">
+                <div id="inner-figure-preview"></div>
+            </div>
+            <div style="margin-top: 10px;">
+                <input style="width: 402px;" class="caption"
+                        type="text" name="figure-caption" value="${escapeText(caption)}"
+                        placeholder="${gettext('Insert caption')}" />
+            </div>
+        </div>`
 
 /** A template to configure citations in the editor */
 export let configureCitationTemplate = ({citableItemsHTML, citedItemsHTML, citeFormat}) =>
@@ -304,7 +308,7 @@ export let selectedCitationTemplate = ({title, bib_type, author, id, db, prefix,
                   <td width="135">
                       <span class="fw-document-table-title fw-inline">
                           <i class="icon-book"></i>
-                          <span data-id="${id}" data-type="${bib_type}">\
+                          <span data-id="${id}" data-type="${bib_type}">
                               ${escapeText(title)}
                           </span>
                       </span>

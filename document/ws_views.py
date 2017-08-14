@@ -1,5 +1,6 @@
 import uuid
 import atexit
+from time import mktime
 from copy import deepcopy
 
 import jsonpatch
@@ -13,6 +14,7 @@ from tornado.websocket import WebSocketClosedError
 from document.models import AccessRight, COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
     CAN_COMMUNICATE, ExportTemplate, FW_DOCUMENT_VERSION
 from document.views import get_accessrights
+from usermedia.models import DocumentImage
 from avatar.templatetags.avatar_tags import avatar_url
 
 from style.models import DocumentStyle, CitationStyle, CitationLocale
@@ -116,8 +118,24 @@ class WebSocket(BaseWebSocketHandler):
         response['doc'] = {
             'v': self.doc['version'],
             'contents': self.doc['contents'],
-            'bibliography': self.doc['bibliography']
+            'bibliography': self.doc['bibliography'],
+            'images': {}
         }
+        for dimage in DocumentImage.objects.filter(document_id=self.doc['id']):
+            image = dimage.image
+            field_obj = {
+                'id': image.id,
+                'title': dimage.title,
+                'image': image.image.url,
+                'file_type': image.file_type,
+                'added': mktime(image.added.timetuple()) * 1000,
+                'checksum': image.checksum
+            }
+            if image.thumbnail:
+                field_obj['thumbnail'] = image.thumbnail.url
+                field_obj['height'] = image.height
+                field_obj['width'] = image.width
+            response['doc']['images'][image.id] = field_obj
         if self.user_info.access_rights == 'read-without-comments':
             response['doc']['comments'] = []
         elif self.user_info.access_rights == 'review':

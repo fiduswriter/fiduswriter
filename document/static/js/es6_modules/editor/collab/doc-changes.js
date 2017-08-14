@@ -72,7 +72,8 @@ export class ModCollabDocChanges {
         if (
             sendableSteps(this.mod.editor.view.state) ||
             this.mod.editor.mod.comments.store.unsentEvents().length ||
-            this.mod.editor.mod.db.bibDB.unsentEvents().length
+            this.mod.editor.mod.db.bibDB.unsentEvents().length ||
+            this.mod.editor.mod.db.imageDB.unsentEvents().length
         ) {
             this.mod.editor.mod.serverCommunications.send(() => {
                 let stepsToSend = sendableSteps(this.mod.editor.view.state),

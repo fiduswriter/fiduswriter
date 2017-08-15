@@ -18,6 +18,8 @@ export class ModImageDB {
         this.mod = mod
         this.db = false
         this.unsent = []
+        // cats always remain empty, as we don't use categories in doc images
+        this.cats = []
     }
 
     setDB(db) {
@@ -29,7 +31,7 @@ export class ModImageDB {
         // Set a timeout so that the update can be combines with other updates
         // if they happen more or less simultaneously.
         window.setTimeout(
-            () => this.editor.mod.collab.docChanges.sendToCollaborators(),
+            () => this.mod.editor.mod.collab.docChanges.sendToCollaborators(),
             100
         )
     }
@@ -55,7 +57,7 @@ export class ModImageDB {
 
     // Add or update an in the image database both remotely and locally.
     updateImage(id, imageData) {
-        this.updateLocalReference(id, imageData)
+        this.updateLocalImage(id, imageData)
         this.unsent.push({
             type: "update",
             id

@@ -1,19 +1,20 @@
 import {escapeText} from "../../common"
 
 /** Simpler image overview table for use in editor. */
-export let usermediaImageItemSelectionTemplate =  ({id, cats, image, thumbnail, title}) =>
-    `<tr id="Image_${id}" class="${cats.map(cat =>`cat_${cat} `)}" >
+let usermediaImageItemSelectionTemplate =  ({image, db}) =>
+    `<tr id="Image_${db}_${image.id}" class="${image.cats.map(cat =>`cat_${cat} `)}" >
          <td class="type" style="width:100px;">
             ${
-                thumbnail === undefined ?
-                `<img src="${image}" style="max-heigth:30px;max-width:30px;">` :
-                `<img src="${thumbnail}" style="max-heigth:30px;max-width:30px;">`
+                image.thumbnail === undefined ?
+                `<img src="${image.image}" style="max-heigth:30px;max-width:30px;">` :
+                `<img src="${image.thumbnail}" style="max-heigth:30px;max-width:30px;">`
             }
         </td>
         <td class="title" style="width:212px;">
             <span class="fw-inline">
-                <span class="edit-image fw-link-text icon-figure" data-id="${id}">
-                    ${escapeText(title)}
+                <span class="edit-image fw-link-text icon-figure" data-id="${image.id}"
+                        data-db="${db}">
+                    ${escapeText(image.title)}
                 </span>
             </span>
         </td>
@@ -22,7 +23,7 @@ export let usermediaImageItemSelectionTemplate =  ({id, cats, image, thumbnail, 
     </tr>`
 
 /** A template to select images. */
-export let usermediaImageSelectionTemplate = ({imageDB}) =>
+export let usermediaImageSelectionTemplate = ({images}) =>
     `<div>
         <table id="select_imagelist" class="tablesorter fw-document-table" style="width:342px;">
             <thead class="fw-document-table-header">
@@ -32,7 +33,7 @@ export let usermediaImageSelectionTemplate = ({imageDB}) =>
                 </tr>
             </thead>
             <tbody class="fw-document-table-body fw-small">
-                ${Object.values(imageDB).map(image => usermediaImageItemSelectionTemplate(image))}
+                ${images.map(imageData => usermediaImageItemSelectionTemplate(imageData))}
             </tbody>
         </table>
         <div class="dialogSubmit">

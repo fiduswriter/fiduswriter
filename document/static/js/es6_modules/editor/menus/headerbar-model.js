@@ -59,7 +59,7 @@ export let headerbarModel = {
                             note => {
                                 let saver = new SaveRevision(
                                     editor.getDoc(),
-                                    editor.imageDB,
+                                    editor.mod.db.imageDB,
                                     editor.mod.db.bibDB,
                                     note
                                 )
@@ -80,7 +80,7 @@ export let headerbarModel = {
                                 // We are copying from and to the same user.
                                 // We don't need different databases for this.
                                 newBibDB = editor.mod.db.bibDB
-                                newImageDB = editor.imageDB
+                                newImageDB = editor.mod.db.imageDB
                                 return resolve({newBibDB, newImageDB})
                             } else {
                                 newBibDB = new BibliographyDB(editor.user.id)
@@ -96,7 +96,7 @@ export let headerbarModel = {
                             let copier = new SaveCopy(
                                 editor.getDoc(),
                                 editor.mod.db.bibDB,
-                                editor.imageDB,
+                                editor.mod.db.imageDB,
                                 newBibDB,
                                 newImageDB,
                                 editor.user
@@ -116,7 +116,7 @@ export let headerbarModel = {
                         new ExportFidusFile(
                             editor.getDoc(),
                             editor.mod.db.bibDB,
-                            editor.imageDB
+                            editor.mod.db.imageDB
                         )
                     }
                 },
@@ -167,7 +167,7 @@ export let headerbarModel = {
                         new LatexExporter(
                             editor.getDoc(),
                             editor.mod.db.bibDB,
-                            editor.imageDB
+                            editor.mod.db.imageDB
                         )
                     }
                 }

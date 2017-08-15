@@ -40,7 +40,7 @@ export class ModStyles {
                             editor.getDoc(),
                             template.template_file,
                             editor.mod.db.bibDB,
-                            editor.imageDB,
+                            editor.mod.db.imageDB,
                             editor.mod.styles.citationStyles,
                             editor.mod.styles.citationLocales
                         )
@@ -56,7 +56,7 @@ export class ModStyles {
                             editor.getDoc(),
                             template.template_file,
                             editor.mod.db.bibDB,
-                            editor.imageDB,
+                            editor.mod.db.imageDB,
                             editor.mod.styles.citationStyles,
                             editor.mod.styles.citationLocales
                         )

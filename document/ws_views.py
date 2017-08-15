@@ -129,7 +129,8 @@ class WebSocket(BaseWebSocketHandler):
                 'image': image.image.url,
                 'file_type': image.file_type,
                 'added': mktime(image.added.timetuple()) * 1000,
-                'checksum': image.checksum
+                'checksum': image.checksum,
+                'cats': []
             }
             if image.thumbnail:
                 field_obj['thumbnail'] = image.thumbnail.url

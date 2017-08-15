@@ -153,25 +153,6 @@ export class Editor {
         }))
     }
 
-    removeImageDB() {
-        delete this.imageDB
-    }
-
-    getImageDB(userId) {
-        if (!this.imageDB) {
-            let imageGetter = new ImageDB(userId)
-            return imageGetter.getDB().then(() => {
-                this.imageDB = imageGetter
-                // assign image DB to be used in schema.
-                this.schema.cached.imageDB = imageGetter
-                // assign image DB to be used in footnote schema.
-                this.mod.footnotes.fnEditor.schema.cached.imageDB = imageGetter
-            })
-        } else {
-            return Promise.resolve()
-        }
-    }
-
     receiveDocument(data) {
 
         // Reset collaboration
@@ -204,60 +185,60 @@ export class Editor {
 
         this.mod.db.bibDB.setDB(data.doc.bibliography)
         this.mod.db.imageDB.setDB(data.doc.images)
+        // assign image DB to be used in document schema.
+        this.schema.cached.imageDB = this.mod.db.imageDB
+        // assign image DB to be used in footnote schema.
+        this.mod.footnotes.fnEditor.schema.cached.imageDB = this.mod.db.imageDB
         this.user.bibDB = new BibliographyDB(this.user.id, true)
         this.user.bibDB.getDB()
         this.user.imageDB = new ImageDB(this.user.id, true)
         this.user.imageDB.getDB()
 
-        return this.getImageDB(this.docInfo.owner.id).then(() => {
+        let stateDoc
+        if (doc.contents.type) {
+            stateDoc = docSchema.nodeFromJSON({type:'doc', content:[doc.contents]})
+        } else {
+            stateDoc = this.schema.topNodeType.createAndFill()
 
-            let stateDoc
-            if (doc.contents.type) {
-                stateDoc = docSchema.nodeFromJSON({type:'doc', content:[doc.contents]})
+        }
+        let plugins = this.statePlugins.map(plugin => {
+            if (plugin[1]) {
+                return plugin[0](plugin[1](doc))
             } else {
-                stateDoc = this.schema.topNodeType.createAndFill()
-
+                return plugin[0]()
             }
-            let plugins = this.statePlugins.map(plugin => {
-                if (plugin[1]) {
-                    return plugin[0](plugin[1](doc))
-                } else {
-                    return plugin[0]()
-                }
-            })
-
-            let stateConfig = {
-                schema: this.schema,
-                doc: stateDoc,
-                plugins
-            }
-
-            // Set document in prosemirror
-            this.view.updateState(EditorState.create(stateConfig))
-
-            // Set initial confirmed doc
-            this.docInfo.confirmedDoc = this.view.state.doc
-
-            // Render footnotes based on main doc
-            this.mod.footnotes.fnEditor.renderAllFootnotes()
-
-            //  Setup comment handling
-            this.mod.comments.store.reset()
-            Object.values(doc.comments).forEach(comment => {
-                this.mod.comments.store.addLocalComment(comment.id, comment.user,
-                    comment.userName, comment.userAvatar, comment.date, comment.comment,
-                    comment.answers, comment['review:isMajor'])
-            })
-            this.mod.comments.layout.onChange()
-            this.waitingForDocument = false
-            // Get document settings
-            this.mod.settings.check(this.view.state.doc.firstChild.attrs)
-            this.mod.citations.layoutCitations()
-            if (locationHash.length) {
-                this.scrollIdIntoView(locationHash.slice(1))
-            }
-
         })
+
+        let stateConfig = {
+            schema: this.schema,
+            doc: stateDoc,
+            plugins
+        }
+
+        // Set document in prosemirror
+        this.view.updateState(EditorState.create(stateConfig))
+
+        // Set initial confirmed doc
+        this.docInfo.confirmedDoc = this.view.state.doc
+
+        // Render footnotes based on main doc
+        this.mod.footnotes.fnEditor.renderAllFootnotes()
+
+        //  Setup comment handling
+        this.mod.comments.store.reset()
+        Object.values(doc.comments).forEach(comment => {
+            this.mod.comments.store.addLocalComment(comment.id, comment.user,
+                comment.userName, comment.userAvatar, comment.date, comment.comment,
+                comment.answers, comment['review:isMajor'])
+        })
+        this.mod.comments.layout.onChange()
+        this.waitingForDocument = false
+        // Get document settings
+        this.mod.settings.check(this.view.state.doc.firstChild.attrs)
+        this.mod.citations.layoutCitations()
+        if (locationHash.length) {
+            this.scrollIdIntoView(locationHash.slice(1))
+        }
     }
 
     // Collect all components of the current doc. Needed for saving and export

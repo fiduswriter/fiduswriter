@@ -27,7 +27,6 @@ export class ImageUploadDialog {
             action = gettext('Upload')
             longAction = gettext('Upload image')
         }
-
         let iCats = []
         jQuery.each(this.imageDB.cats, (i, iCat) => {
             let len = iCats.length
@@ -41,6 +40,7 @@ export class ImageUploadDialog {
                 iCats[len].checked = ''
             }
         })
+
 
         jQuery('body').append(usermediaUploadTemplate({
             'action': longAction,

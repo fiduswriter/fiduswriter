@@ -72,7 +72,7 @@ export class FigureDialog {
         if (this.imgDb==='user') {
             // add image to document db.
             let imageEntry = this.userImageDB.db[this.imgId]
-            this.imgId = this.imageDB.addImage(imageEntry, this.imgId)
+            this.imgId = this.imageDB.setImage(this.imgId, imageEntry)
             this.imgDb = 'document'
         }
 

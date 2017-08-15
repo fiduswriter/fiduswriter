@@ -1,7 +1,3 @@
-function randomID() {
-    return Math.floor(Math.random() * 0xffffffff)
-}
-
 /*
  Class to provide similar functionality for the document's imageDB to what the
  user's imageDb provides but using the document's websocket connection.
@@ -47,17 +43,9 @@ export class ModImageDB {
         })
     }
 
-    addImage(imageData, id) {
-        while(!id || this.db[id]) {
-            id = randomID()
-        }
-        this.updateImage(id, imageData)
-        return id
-    }
-
     // Add or update an in the image database both remotely and locally.
-    updateImage(id, imageData) {
-        this.updateLocalImage(id, imageData)
+    setImage(id, imageData) {
+        this.setLocalImage(id, imageData)
         this.unsent.push({
             type: "update",
             id
@@ -66,7 +54,7 @@ export class ModImageDB {
     }
 
     // Add or update an image only locally.
-    updateLocalImage(id, imageData) {
+    setLocalImage(id, imageData) {
         this.db[id] = imageData
     }
 
@@ -122,7 +110,7 @@ export class ModImageDB {
             if (event.type == "delete") {
                 this.deleteLocalImage(event.id)
             } else if (event.type == "update") {
-                this.updateLocalImage(event.id, event.image)
+                this.setLocalImage(event.id, event.image)
             }
         })
     }

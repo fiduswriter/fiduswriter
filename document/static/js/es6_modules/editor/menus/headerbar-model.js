@@ -43,9 +43,7 @@ export let headerbarModel = {
                     icon: 'cancel-circle',
                     tooltip: gettext('Close the document and return to the document overview menu.'),
                     action: editor => {
-                        editor.save().then(() => {
-                            window.location.href = '/'
-                        })
+                        window.location.href = '/'
                     }
                 },
                 {

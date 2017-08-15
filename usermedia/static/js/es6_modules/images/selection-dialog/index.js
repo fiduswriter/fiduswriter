@@ -19,7 +19,7 @@ export class ImageSelectionDialog {
             }
         })
         Object.values(this.userImageDB.db).forEach(image => {
-            if (this.imageDB.hasImage(image)) {
+            if (this.imageDB.db[image.id]) {
                 return
             }
             images.push({

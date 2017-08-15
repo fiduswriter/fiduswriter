@@ -286,6 +286,11 @@ class WebSocket(BaseWebSocketHandler):
                     document_id=self.doc["id"],
                     image_id=id
                 ).delete()
+                if not (
+                    DocumentImage.objects.filter(image_id=id).exists() or
+                    UserImage.objects.filter(image_id=id).exists()
+                ):
+                    Image.objects.filter(id=id).delete()
 
     def update_comments(self, comments_updates):
         comments_updates = deepcopy(comments_updates)

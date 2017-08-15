@@ -8,7 +8,7 @@ from django.core.serializers.python import Serializer
 from django.utils.translation import ugettext as _
 
 from document.models import AccessRight, CAN_UPDATE_DOCUMENT
-from usermedia.models import Image, ImageCategory, UserImage
+from usermedia.models import Image, ImageCategory, UserImage, DocumentImage
 
 from .models import ALLOWED_FILETYPES
 
@@ -104,15 +104,16 @@ def delete_js(request):
     if request.is_ajax() and request.method == 'POST':
         status = 201
         ids = request.POST.getlist('ids[]')
-        user_image = UserImage.objects.filter(
+        UserImage.objects.filter(
             image_id__in=ids,
             owner=request.user
-        )
-        image = user_image.image
-        user_image.delete()
-        if len(image.userimage_set.all()) == 0:
-            # There are no more links from user images to image, so delete it.
-            image.delete()
+        ).delete()
+        for id in ids:
+            if not (
+                DocumentImage.objects.filter(image_id=id).exists() or
+                UserImage.objects.filter(image_id=id).exists()
+            ):
+                Image.objects.filter(id=id).delete()
     return JsonResponse(
         response,
         status=status

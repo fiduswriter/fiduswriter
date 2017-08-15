@@ -22,7 +22,7 @@ from avatar.templatetags.avatar_tags import avatar_url
 
 from document.models import Document, AccessRight, DocumentRevision, \
     ExportTemplate, CAN_UPDATE_DOCUMENT
-from usermedia.models import DocumentImage, Image
+from usermedia.models import DocumentImage, UserImage, Image
 from document.helpers.serializers import PythonWithURLSerializer
 
 from style.models import CitationStyle, CitationLocale
@@ -175,8 +175,19 @@ def delete_js(request):
     status = 405
     if request.is_ajax() and request.method == 'POST':
         doc_id = int(request.POST['id'])
+        image_ids = list(
+            DocumentImage.objects.filter(document_id=doc_id)
+            .values_list('image_id', flat=True)
+        )
         document = Document.objects.get(pk=doc_id, owner=request.user)
         document.delete()
+        for id in image_ids:
+            if not (
+                DocumentImage.objects.filter(image_id=id).exists() or
+                UserImage.objects.filter(image_id=id).exists()
+            ):
+                Image.objects.filter(id=id).delete()
+
         status = 200
     return JsonResponse(
         response,

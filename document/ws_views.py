@@ -14,7 +14,7 @@ from tornado.websocket import WebSocketClosedError
 from document.models import AccessRight, COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
     CAN_COMMUNICATE, ExportTemplate, FW_DOCUMENT_VERSION
 from document.views import get_accessrights
-from usermedia.models import DocumentImage, UserImage
+from usermedia.models import Image, DocumentImage, UserImage
 from avatar.templatetags.avatar_tags import avatar_url
 
 from style.models import DocumentStyle, CitationStyle, CitationLocale

@@ -13,7 +13,6 @@ from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.core.mail import send_mail
 from django.db.models import Q
-from django.core.serializers.python import Serializer
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.paginator import Paginator, EmptyPage
 
@@ -26,12 +25,6 @@ from usermedia.models import DocumentImage, UserImage, Image
 from document.helpers.serializers import PythonWithURLSerializer
 
 from style.models import CitationStyle, CitationLocale
-
-
-class SimpleSerializer(Serializer):
-    def end_object(self, obj):
-        self._current['id'] = obj._get_pk_val()
-        self.objects.append(self._current)
 
 
 def get_accessrights(ars):
@@ -68,17 +61,30 @@ def get_documentlist_extra_js(request):
     if request.is_ajax() and request.method == 'POST':
         status = 200
         ids = request.POST['ids'].split(',')
-        documents = Document.objects.filter(Q(owner=request.user) | Q(
+        docs = Document.objects.filter(Q(owner=request.user) | Q(
             accessright__user=request.user)).filter(id__in=ids)
-        serializer = SimpleSerializer()
-        response['documents'] = serializer.serialize(
-            documents, fields=(
-                'contents',
-                'comments',
-                'bibliography',
-                'id'
-            )
-        )
+        response['documents'] = []
+        for doc in docs:
+            images = {}
+            for image in doc.documentimage_set.all():
+                images[image.image.id] = {
+                    'added': image.image.added,
+                    'checksum': image.image.checksum,
+                    'file_type': image.image.file_type,
+                    'height': image.image.height,
+                    'id': image.image.id,
+                    'image': image.image.image.url,
+                    'thumbnail': image.image.thumbnail.url,
+                    'title': image.title,
+                    'width': image.image.width
+                }
+            response['documents'].append({
+                'images': images,
+                'contents': doc.contents,
+                'comments': doc.comments,
+                'bibliography': doc.bibliography,
+                'id': doc.id
+            })
     return JsonResponse(
         response,
         status=status
@@ -310,49 +316,84 @@ def access_right_save_js(request):
 
 
 @login_required
+def import_create_js(request):
+    # First step of import: Create a document and return the id of it
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 201
+        document = Document.objects.create(owner_id=request.user.pk)
+        response['id'] = document.id
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@login_required
+def import_image_js(request):
+    # create an image for a document
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        document = Document.objects.filter(
+            owner_id=request.user.pk,
+            id=int(request.POST['doc_id'])
+        )
+        if document.exists():
+            status = 201
+        else:
+            status = 401
+            return JsonResponse(
+                response,
+                status=status
+            )
+        document = document[0]
+        checksum = request.POST['checksum']
+        image = Image.objects.filter(checksum=checksum)
+        if image.exists():
+            image = image[0]
+        else:
+            image = Image.objects.create(
+                uploader=request.user,
+                image=request.FILES['image'],
+                checksum=checksum
+            )
+        doc_image = DocumentImage.objects.create(
+            image=image,
+            title=request.POST['title'],
+            document=document
+        )
+        response['id'] = doc_image.image.id
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@login_required
 def import_js(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
-        if 'doc_id' in request.POST:
-            doc_id = request.POST['doc_id']
-            # There is a doc_id, so we overwrite an existing doc rather than
-            # creating a new one.
-            document = Document.objects.get(id=int(doc_id))
-            if (
-                document.owner != request.user and
-                len(AccessRight.objects.filter(
-                    document_id=doc_id,
-                    user_id=request.user.id,
-                    rights__in=CAN_UPDATE_DOCUMENT
-                )) == 0
-            ):
-                response['error'] = 'No access to file'
-                status = 403
-                return JsonResponse(
-                    response,
-                    status=status
-                )
-            if document.version > 0:
-                # The file has been initialized already. Do not do this again.
-                # This could happen if two users click on the link almost at
-                # the same time.
-                response['document_id'] = document.id
-                response['added'] = time.mktime(document.added.utctimetuple())
-                response['updated'] = time.mktime(
-                    document.updated.utctimetuple()
-                )
-                status = 200
-                return JsonResponse(
-                    response,
-                    status=status
-                )
-            else:
-                # We increase the version to 1 to mark that the file now
-                # contains imported contents.
-                document.version = 1
-        else:
-            document = Document.objects.create(owner_id=request.user.pk)
+        doc_id = request.POST['id']
+        # There is a doc_id, so we overwrite an existing doc rather than
+        # creating a new one.
+        document = Document.objects.get(id=int(doc_id))
+        if (
+            document.owner != request.user and
+            len(AccessRight.objects.filter(
+                document_id=doc_id,
+                user_id=request.user.id,
+                rights__in=CAN_UPDATE_DOCUMENT
+            )) == 0
+        ):
+            response['error'] = 'No access to file'
+            status = 403
+            return JsonResponse(
+                response,
+                status=status
+            )
         document.title = request.POST['title']
         document.contents = request.POST['contents']
         document.comments = request.POST['comments']
@@ -363,7 +404,7 @@ def import_js(request):
         response['document_id'] = document.id
         response['added'] = time.mktime(document.added.utctimetuple())
         response['updated'] = time.mktime(document.updated.utctimetuple())
-        status = 201
+        status = 200
     return JsonResponse(
         response,
         status=status

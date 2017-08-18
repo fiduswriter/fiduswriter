@@ -51,7 +51,6 @@ export class BibliographyDB {
             jQuery.ajax({
                 url: '/bibliography/biblist/',
                 data: {
-                    'owner_id': this.ownerId,
                     'last_modified': lastModified,
                     'number_of_entries': numberOfEntries,
                 },
@@ -75,7 +74,7 @@ export class BibliographyDB {
                                 window.localStorage.setItem('biblist', JSON.stringify(response.bibList))
                                 window.localStorage.setItem('last_modified_biblist', response.last_modified)
                                 window.localStorage.setItem('number_of_entries', response.number_of_entries)
-                                window.localStorage.setItem('owner_id', response.ownerId)
+                                window.localStorage.setItem('owner_id', this.ownerId)
                                 window.localStorage.setItem('version', FW_LOCALSTORAGE_VERSION)
                             } catch (error) {
                                 // The local storage was likely too small
@@ -133,9 +132,6 @@ export class BibliographyDB {
         let sendData = {
             is_new: isNew,
             bibs: JSON.stringify(dbObject)
-        }
-        if (this.ownerId !== 0) {
-            sendData['owner_id'] = this.ownerId
         }
         return new Promise((resolve, reject) => {
             jQuery.ajax({

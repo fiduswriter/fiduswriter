@@ -5,8 +5,6 @@ import {LatexExporter} from "../../exporter/latex"
 import {HTMLExporter} from "../../exporter/html"
 import {EpubExporter} from "../../exporter/epub"
 import {RevisionDialog} from "./dialogs"
-import {BibliographyDB} from "../../bibliography/database"
-import {ImageDB} from "../../images/database"
 import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from ".."
 
 export let headerbarModel = {
@@ -72,37 +70,15 @@ export let headerbarModel = {
                     icon: 'floppy',
                     tooltip: gettext('Create copy of the current document.'),
                     action: editor => {
-                        let getDataBases = new Promise((resolve, reject) => {
-                            let newBibDB, newImageDB
-                            if (editor.docInfo.owner.id === editor.user.id) {
-                                // We are copying from and to the same user.
-                                // We don't need different databases for this.
-                                newBibDB = editor.mod.db.bibDB
-                                newImageDB = editor.mod.db.imageDB
-                                return resolve({newBibDB, newImageDB})
-                            } else {
-                                newBibDB = new BibliographyDB(editor.user.id)
-                                newImageDB = new ImageDB(editor.user.id)
-                                return newBibDB.getDB().then(
-                                    () => newImageDB.getDB()
-                                ).then(
-                                    () => resolve({newBibDB, newImageDB})
-                                )
-                            }
-                        })
-                        getDataBases().then(({newBibDB, newImageDB}) => {
-                            let copier = new SaveCopy(
-                                editor.getDoc(),
+                        let doc = editor.getDoc(),
+                            copier = new SaveCopy(
+                                doc,
                                 editor.mod.db.bibDB,
                                 editor.mod.db.imageDB,
-                                newBibDB,
-                                newImageDB,
                                 editor.user
                             )
-                            return copier.init()
-                        }).then(({doc, docInfo}) => {
-                                window.location.href = `/document/${doc.id}/`
-                            }
+                        copier.init().then(({doc, docInfo}) =>
+                            window.location.href = `/document/${docInfo.id}/`
                         )
                     }
                 },

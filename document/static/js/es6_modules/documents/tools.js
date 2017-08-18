@@ -24,13 +24,16 @@ export let getMissingDocumentListData = function (ids, documentList) {
                 beforeSend: (xhr, settings) =>
                     xhr.setRequestHeader("X-CSRFToken", csrfToken),
                 success: (response, textStatus, jqXHR) => {
-                    for (let i = 0; i < response.documents.length; i++) {
-                        let aDocument = documentList.find(doc => doc.id === response.documents[i].id)
-                        aDocument.contents = JSON.parse(response.documents[i].contents)
-                        aDocument.comments = JSON.parse(response.documents[i].comments)
-                        aDocument.bibliography = JSON.parse(response.documents[i].bibliography)
-                        aDocument.settings = getSettings(aDocument.contents)
-                    }
+                    response.documents.forEach(
+                        extraValues => {
+                            let doc = documentList.find(entry => entry.id === extraValues.id)
+                            doc.contents = JSON.parse(extraValues.contents)
+                            doc.comments = JSON.parse(extraValues.comments)
+                            doc.bibliography = JSON.parse(extraValues.bibliography)
+                            doc.images = extraValues.images
+                            doc.settings = getSettings(doc.contents)
+                        }
+                    )
                     resolve()
                 },
                 error: (jqXHR, textStatus, errorThrown) => {

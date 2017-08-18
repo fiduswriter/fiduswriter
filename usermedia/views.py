@@ -7,9 +7,7 @@ from django.http import JsonResponse
 from django.core.serializers.python import Serializer
 from django.utils.translation import ugettext as _
 
-from document.models import AccessRight, CAN_UPDATE_DOCUMENT
 from usermedia.models import Image, ImageCategory, UserImage, DocumentImage
-
 from .models import ALLOWED_FILETYPES
 
 
@@ -36,13 +34,6 @@ def save_js(request):
     status = 403
     if request.is_ajax() and request.method == 'POST':
         the_id = int(request.POST['id'])
-        if 'owner_id' in request.POST:
-            owner_id = int(request.POST['owner_id'])
-            if owner_id != request.user.id:
-                if not check_write_access_rights(owner_id, request.user):
-                    return False
-        else:
-            owner_id = request.user.id
         if 'image' in request.FILES and \
                 request.FILES['image'].content_type not in ALLOWED_FILETYPES:
             status = 200  # Not implemented
@@ -61,7 +52,7 @@ def save_js(request):
                 image = Image()
                 image.uploader = request.user
                 user_image = UserImage()
-                user_image.owner_id = owner_id
+                user_image.owner = request.user
                 status = 201
                 if 'checksum' in request.POST:
                     image.checksum = request.POST['checksum']
@@ -120,81 +111,34 @@ def delete_js(request):
     )
 
 
-def check_read_access_rights(other_user_id, this_user):
-    other_user_id = int(other_user_id)
-    has_access = False
-    if other_user_id == 0:
-        has_access = True
-    elif other_user_id == this_user.id:
-        has_access = True
-    elif AccessRight.objects.filter(
-        document__owner=other_user_id,
-        user=this_user
-    ).count() > 0:
-        has_access = True
-    return has_access
-
-
-def check_write_access_rights(other_user_id, this_user):
-    other_user_id = int(other_user_id)
-    has_access = False
-    if other_user_id == 0:
-        has_access = True
-    elif other_user_id == this_user.id:
-        has_access = True
-    elif AccessRight.objects.filter(
-        document__owner=other_user_id,
-        user=this_user,
-        rights__in=CAN_UPDATE_DOCUMENT
-    ).count() > 0:
-        has_access = True
-    return has_access
-
-
 # returns list of images
 @login_required
 def images_js(request):
     response = {}
     status = 403
     if request.is_ajax() and request.method == 'POST':
-        user_id = request.POST['owner_id']
-        if len(user_id.split(',')) > 1:
-            user_ids = user_id.split(',')
-            status = 200
-            for user_id in user_ids:
-                if check_read_access_rights(user_id, request.user) is False:
-                    status = 403
-            if status == 200:
-                user_images = UserImage.objects.filter(owner__in=user_ids)
-                response['imageCategories'] = serializer.serialize(
-                    ImageCategory.objects.filter(category_owner__in=user_ids))
-        else:
-            if check_read_access_rights(user_id, request.user):
-                if int(user_id) == 0:
-                    user_id = request.user.id
-                user_images = UserImage.objects.filter(owner=user_id)
-                status = 200
-                response['imageCategories'] = serializer.serialize(
-                    ImageCategory.objects.filter(category_owner=user_id))
-        if status == 200:
-            response['images'] = []
-            for user_image in user_images:
-                image = user_image.image
-                if image.image:
-                    field_obj = {
-                        'id': image.id,
-                        'title': user_image.title,
-                        'image': image.image.url,
-                        'file_type': image.file_type,
-                        'added': mktime(image.added.timetuple()) * 1000,
-                        'checksum': image.checksum,
-                        'cats': user_image.image_cat.split(',')
-                    }
-                    if image.thumbnail:
-                        field_obj['thumbnail'] = image.thumbnail.url
-                        field_obj['height'] = image.height
-                        field_obj['width'] = image.width
-                    response['images'].append(field_obj)
+        status = 200
+        response['imageCategories'] = serializer.serialize(
+            ImageCategory.objects.filter(category_owner=request.user))
+        response['images'] = []
+        user_images = UserImage.objects.filter(owner=request.user)
+        for user_image in user_images:
+            image = user_image.image
+            if image.image:
+                field_obj = {
+                    'id': image.id,
+                    'title': user_image.title,
+                    'image': image.image.url,
+                    'file_type': image.file_type,
+                    'added': mktime(image.added.timetuple()) * 1000,
+                    'checksum': image.checksum,
+                    'cats': user_image.image_cat.split(',')
+                }
+                if image.thumbnail:
+                    field_obj['thumbnail'] = image.thumbnail.url
+                    field_obj['height'] = image.height
+                    field_obj['width'] = image.width
+                response['images'].append(field_obj)
     return JsonResponse(
         response,
         status=status

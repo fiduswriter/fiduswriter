@@ -1,4 +1,4 @@
-import {createSlug, getDatabasesIfNeeded} from "../tools/file"
+import {createSlug} from "../tools/file"
 import {XmlZip} from "../tools/xml-zip"
 import {textContent, removeHidden} from "../tools/doc-contents"
 
@@ -26,9 +26,7 @@ export class OdtExporter {
         this.pmCits = false
         this.docContents = false
         this.docTitle = false
-        getDatabasesIfNeeded(this, doc).then(
-            () => this.init()
-        )
+        this.init()
     }
 
 

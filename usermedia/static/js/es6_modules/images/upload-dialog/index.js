@@ -1,4 +1,4 @@
-import {usermediaUploadCategoryTemplate, usermediaUploadTemplate} from "./templates"
+import {usermediaUploadTemplate} from "./templates"
 import {setCheckableLabel, cancelPromise, addAlert} from "../../common"
 
 export class ImageUploadDialog {
@@ -47,10 +47,7 @@ export class ImageUploadDialog {
             'title': title,
             'thumbnail': thumbnail,
             'image': image,
-            'categories': usermediaUploadCategoryTemplate({
-                'categories': iCats,
-                'fieldTitle': gettext('Select categories')
-            })
+            'categories': iCats
         }))
         let diaButtons = {}
 

@@ -151,13 +151,13 @@ class Image(models.Model):
             suf,
             save=False)
 
-    def save(self):
+    def save(self, *args, **kwargs):
         # create a thumbnail
         self.create_checksum()
         self.check_filetype()
         self.create_thumbnail()
 
-        super(Image, self).save()
+        super(Image, self).save(*args, **kwargs)
 
 
 # Image linked to a particular User.

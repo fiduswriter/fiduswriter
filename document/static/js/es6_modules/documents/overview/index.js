@@ -1,9 +1,7 @@
 import {DocumentOverviewActions} from "./actions"
 import {DocumentOverviewMenus} from "./menus"
-import {documentsListTemplate, documentsListItemTemplate} from "./templates"
-import {BibliographyDB} from "../../bibliography/database"
-import {ImageDB} from "../../images/database"
-import {activateWait, deactivateWait, addAlert, localizeDate, csrfToken} from "../../common"
+import {documentsListTemplate} from "./templates"
+import {activateWait, deactivateWait, addAlert, csrfToken} from "../../common"
 import {Menu} from "../../menu"
 /*
 * Helper functions for the document overview page.
@@ -26,25 +24,6 @@ export class DocumentOverview {
     bind() {
         jQuery(document).ready(() => this.getDocumentListData())
 
-    }
-
-    // Get the bibliography database -- only executed if needed (when importing, etc.).
-    getBibDB() {
-        if (!this.bibDB) { // Don't get the bibliography again if we already have it.
-            this.bibDB = new BibliographyDB(this.user.id, true)
-            return this.bibDB.getDB()
-        } else {
-            return Promise.resolve()
-        }
-    }
-
-    getImageDB() {
-        if (!this.imageDB) {
-            this.imageDB = new ImageDB(this.user.id)
-            return this.imageDB.getDB()
-        } else {
-            return Promise.resolve()
-        }
     }
 
     getDocumentListData(id) {
@@ -82,9 +61,7 @@ export class DocumentOverview {
     layoutTable() {
         jQuery('#document-table tbody').html(documentsListTemplate({
             documentList: this.documentList,
-            user: this.user,
-            documentsListItemTemplate,
-            localizeDate
+            user: this.user
         }))
         this.startDocumentTable()
     }

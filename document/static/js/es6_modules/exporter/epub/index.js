@@ -1,5 +1,4 @@
 import {obj2Node, node2Obj} from "../tools/json"
-import {BibliographyDB} from "../../bibliography/database"
 import {createSlug} from "../tools/file"
 import {findImages} from "../tools/html"
 import {ZipFileCreator} from "../tools/zip"
@@ -21,15 +20,8 @@ export class EpubExporter extends BaseEpubExporter {
         this.doc = doc
         this.citationStyles = citationStyles
         this.citationLocales = citationLocales
-        if (bibDB) {
-            this.bibDB = bibDB // the bibliography has already been loaded for some other purpose. We reuse it.
-            this.exportOne()
-        } else {
-            this.bibDB = new BibliographyDB(doc.owner.id)
-            this.bibDB.getDB().then(() => {
-                this.exportOne()
-            })
-        }
+        this.bibDB = bibDB
+        this.exportOne()
     }
 
     exportOne() {

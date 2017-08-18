@@ -250,7 +250,8 @@ export class Editor {
             settings: getSettings(pmArticle),
             title: pmArticle.firstChild.textContent.substring(0, 255),
             version: this.docInfo.version,
-            comments: this.mod.comments.store.comments
+            comments: this.mod.comments.store.comments,
+            id: this.docInfo.id
         }
     }
 

@@ -1,5 +1,23 @@
 import {escapeText} from "../../common"
 
+/* A template for the image category selection of the image selection dialog. */
+let usermediaUploadCategoryTemplate = ({categories}) => {
+    if (!categories.length) {
+        return ''
+    }
+    return `<div class="fw-media-category">
+            <div>${gettext('Select categories')}</div>
+            ${categories.map(cat =>
+                `<label class="fw-checkable fw-checkable-label${cat.checked}"
+                        for="imageCat${cat.id}">
+                    ${escapeText(cat.category_title)}
+                </label>
+                <input class="fw-checkable-input fw-media-form entry-cat" type="checkbox"
+                        id="imageCat${cat.id}" name="imageCat" value="${cat.id}"${cat.checked}>`
+            ).join('')}
+        </div>`
+}
+
 /* A template for the form for the image upload dialog. */
 export let usermediaUploadTemplate = ({action, image, categories, title}) =>
     `<div id="uploadimage" class="fw-media-uploader" title="${action}">
@@ -15,24 +33,6 @@ export let usermediaUploadTemplate = ({action, image, categories, title}) =>
             <div class="figure-preview"><div>
                 ${image ? `<img src="${image}" />` : ''}
             </div></div>
-            ${categories}
+            ${usermediaUploadCategoryTemplate({categories})}
         </form>
     </div>`
-
-/* A template for the image category selection of the image selection dialog. */
-export let usermediaUploadCategoryTemplate = ({categories, fieldTitle}) => {
-    if (!categories.length) {
-        return ''
-    }
-    return `<div class="fw-media-category">
-            <div>${escapeText(fieldTitle)}</div>
-            ${categories.map(cat =>
-                `<label class="fw-checkable fw-checkable-label${cat.checked}"
-                        for="imageCat${cat.id}">
-                    ${escapeText(cat.category_title)}
-                </label>
-                <input class="fw-checkable-input fw-media-form entry-cat" type="checkbox"
-                        id="imageCat${cat.id}" name="imageCat" value="${cat.id}"${cat.checked}>`
-            )}
-        </div>`
-}

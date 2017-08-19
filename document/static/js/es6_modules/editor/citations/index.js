@@ -1,4 +1,5 @@
 import {RenderCitations} from "../../citations/render"
+import {BibEntryForm} from "../../bibliography/form"
 
 export class ModCitations {
     constructor(editor) {
@@ -61,9 +62,19 @@ export class ModCitations {
 
     }
 
+    bindBibliographyClicks() {
+        document.querySelectorAll('div.csl-entry').forEach((el, index) => {
+            el.addEventListener('click', event => {
+                let eID = this.citRenderer.fm.bibliography[0].entry_ids[index],
+                    form = new BibEntryForm(this.editor.mod.db.bibDB, eID)
+                form.init()
+            })
+        })
+    }
+
     layoutCitationsTwo() {
-        let citRenderer = this.citRenderer
-        let needFootnoteLayout = false
+        let citRenderer = this.citRenderer,
+            needFootnoteLayout = false
         if (this.citationType !== citRenderer.fm.citationType) {
             // The citation format has changed, so we need to relayout the footnotes as well
             needFootnoteLayout = true
@@ -77,6 +88,16 @@ export class ModCitations {
             styleEl = document.querySelector('.article-bibliography-style')
         }
         let css = citRenderer.fm.bibCSS
+        if (this.editor.docInfo.access_rights === 'write') {
+            this.bindBibliographyClicks()
+            css += `
+                div.csl-entry {
+                    cursor: pointer;
+                }
+                div.csl-entry:hover {
+                    background-color: grey;
+                }`
+        }
         if (styleEl.innerHTML !== css) {
             styleEl.innerHTML = css
         }
@@ -89,19 +110,26 @@ export class ModCitations {
 
             if (emptyBodyCitation) {
                 // Find all the citations in the main body text (not footnotes)
-                let citationNodes = [].slice.call(document.querySelectorAll('#document-editable span.citation'))
+                let citationNodes = [].slice.call(document.querySelectorAll('#document-editable span.citation')),
+                    citations = []
 
-                let citationsHTML = ''
-                // The citations have not been filled, so we do so manually.
-                citationNodes.forEach(function(citationNode, index) {
-                    citationNode.innerHTML = '<span class="citation-footnote-marker"></span>'
-                    let citationText = citRenderer.fm.citationTexts[index][0][1]
-                    citationsHTML += '<div class="footnote-citation">'+citationText+'</div>'
+                citRenderer.fm.citationTexts.forEach(citText => {
+                    citText.forEach(entry => {
+                        let index = entry[0],
+                            citationText =
+                                `<div class="footnote-citation">${entry[1]}</div>`
+                        citations[index] = citationText
+                    })
                 })
 
+                let citationsHTML = citations.join('')
                 if (citationsContainer.innerHTML !== citationsHTML) {
                     citationsContainer.innerHTML = citationsHTML
                 }
+                // The citations have not been filled, so we do so manually.
+                citationNodes.forEach(citationNode => {
+                    citationNode.innerHTML = '<span class="citation-footnote-marker"></span>'
+                })
             }
 
         } else {

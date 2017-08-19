@@ -83,7 +83,14 @@ export class ModBibliographyDB {
 
     // Add or update a reference only locally.
     updateLocalReference(id, reference) {
+        let preExisting = this.db[id] ? true : false
         this.db[id] = reference
+        if (preExisting) {
+            this.mod.editor.mod.citations.resetCitations()
+        } else {
+            this.mod.editor.mod.citations.layoutCitations()
+        }
+
     }
 
     deleteReference(id) {

@@ -48,13 +48,13 @@ export class FormatCitations {
         // CSS
     get bibCSS()  {
         let css = '\n', bibInfo = this.bibliography[0]
-            css += `.csl-entry {margin-bottom: ${bibInfo.entryspacing+1}em;}\n`
+            css += `.csl-entry {padding-bottom: ${bibInfo.entryspacing+1}em;}\n`
             css += `.csl-bib-body {line-height: ${bibInfo.linespacing};}\n`
             if (bibInfo.hangingindent) {
                 css += `
                     .csl-entry {
                         text-indent: -0.5in;
-                        margin-left: 0.5in;
+                        padding-left: 0.5in;
                     }\n`
             } else if(bibInfo["second-field-align"] === 'margin') {
                 css += `

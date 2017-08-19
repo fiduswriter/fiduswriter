@@ -337,7 +337,6 @@ AVATAR_MAX_AVATARS_PER_USER = 1
 JS_LOCATIONS = {
     'JQUERY_URL': STATIC_URL + 'js/libs/jquery.min.js',
     'JQUERYUI_URL': STATIC_URL + 'js/libs/jquery-ui.min.js',
-    'UNDERSCOREJS_URL': STATIC_URL + 'js/libs/underscore-min.js',
     'DATATABLES_URL': STATIC_URL + 'js/libs/jquery.dataTables.min.js'
 }
 

@@ -41,10 +41,10 @@ export class DocumentAccessRightsDialog {
             }
         }
 
-        documentCollaborators = _.select(
-            documentCollaborators,
-            obj => obj.count === this.documentIds.length
+        documentCollaborators = documentCollaborators.filter(
+            col => col.count === this.documentIds.length
         )
+
 
         let dialogBody = accessRightOverviewTemplate({
             dialogHeader,

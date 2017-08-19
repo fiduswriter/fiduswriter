@@ -4,7 +4,6 @@ import {findImages} from "../tools/html"
 import {ZipFileCreator} from "../tools/zip"
 import {opfTemplate, containerTemplate, ncxTemplate, ncxItemTemplate, navTemplate,
   navItemTemplate, xhtmlTemplate} from "./templates"
-import {katexOpfIncludes} from "../../katex/opf-includes"
 import {addAlert} from "../../common"
 import {katexRender} from "../../katex"
 import {BaseEpubExporter} from "./base"
@@ -96,8 +95,12 @@ export class EpubExporter extends BaseEpubExporter {
         let timestamp = this.getTimestamp()
 
         let authors = [this.doc.owner.name]
-        let serializer = DOMSerializer.fromSchema(docSchema)
-        let docContents = serializer.serializeNode(this.doc.contents)
+
+        let schema = docSchema
+        schema.cached.imageDB = this.imageDB
+        let serializer = DOMSerializer.fromSchema(schema)
+        let docContents = serializer.serializeNode(schema.nodeFromJSON(this.doc.contents))
+
         // Remove hidden parts
         let hiddenEls = [].slice.call(docContents.querySelectorAll('[data-hidden=true]'))
         hiddenEls.forEach(hiddenEl => hiddenEl.parentElement.removeChild(hiddenEl))
@@ -125,8 +128,7 @@ export class EpubExporter extends BaseEpubExporter {
             modified: timestamp,
             styleSheets,
             math,
-            images,
-            katexOpfIncludes
+            images
         })
 
         let ncxCode = ncxTemplate({
@@ -134,14 +136,12 @@ export class EpubExporter extends BaseEpubExporter {
             title,
             idType: 'fidus',
             id: this.doc.id,
-            contentItems,
-            templates: {ncxTemplate, ncxItemTemplate}
+            contentItems
         })
 
         let navCode = navTemplate({
             shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
-            contentItems,
-            templates: {navTemplate, navItemTemplate}
+            contentItems
         })
 
         let outputList = [{

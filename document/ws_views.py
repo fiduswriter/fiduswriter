@@ -47,6 +47,7 @@ class WebSocket(BaseWebSocketHandler):
             self.id = 0
             self.send_message(response)
             return
+        response['type'] = 'welcome'
         if doc_db.id in WebSocket.sessions:
             logger.debug("Serving already opened file")
             self.doc = WebSocket.sessions[doc_db.id]
@@ -70,7 +71,6 @@ class WebSocket(BaseWebSocketHandler):
                 'id': doc_db.id
             }
             WebSocket.sessions[doc_db.id] = self.doc
-        response['type'] = 'welcome'
         serializer = PythonWithURLSerializer()
         export_temps = serializer.serialize(
             ExportTemplate.objects.all()
@@ -466,6 +466,8 @@ class WebSocket(BaseWebSocketHandler):
                 WebSocket.save_document(self.user_info.document_id)
                 del WebSocket.sessions[self.user_info.document_id]
                 logger.debug("noone left")
+            else:
+                WebSocket.send_participant_list(self.user_info.document_id)
 
     def send_message(self, message):
         self.messages['server'] += 1

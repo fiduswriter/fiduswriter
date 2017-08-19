@@ -112,7 +112,15 @@ export let commentsTemplate = ({
         }
         ${
             comment.answers ?
-            comment.answers.map(answer => answerCommentTemplate({answer, commentId: comment.id, active: (comment.id===activeCommentId), activeCommentAnswerId, editor})) :
+            comment.answers.map(answer =>
+                answerCommentTemplate({
+                    answer,
+                    commentId: comment.id,
+                    active: (comment.id===activeCommentId),
+                    activeCommentAnswerId,
+                    editor
+                })
+            ).join('') :
             ''
         }
         ${
@@ -135,7 +143,9 @@ export let commentsTemplate = ({
                 comment.user===editor.user.id ||
                 editor.docInfo.access_rights==="write"
             ) ?
-            `<span class="delete-comment-all delete-comment icon-cancel-circle" data-id="${comment.id}"></span>` :
+            `<span class="delete-comment-all delete-comment icon-cancel-circle"
+                    data-id="${comment.id}">
+            </span>` :
             ''
         }
         </div>`
@@ -148,7 +158,9 @@ export let filterByUserBoxTemplate = ({
         <select>
             ${
                 users.map(
-                    user => `<option value="${user.user_id}">${escapeText(user.user_name)}</option>`
+                    user => `<option value="${user.user_id}">
+                                ${escapeText(user.user_name)}
+                            </option>`
                 )
             }
         </select>

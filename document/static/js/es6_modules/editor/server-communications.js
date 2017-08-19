@@ -122,7 +122,7 @@ export class ModServerCommunications {
                 type: 'participant_update'
             }))
             while (this.messagesToSend.length > 0) {
-                this.send(this.messagesToSend.shift());
+                this.send(this.messagesToSend.shift())
             }
         }
         this.firstTimeConnection = false

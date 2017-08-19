@@ -8,12 +8,13 @@ import {BaseHTMLExporter} from "./base"
 import download from "downloadjs"
 
 export class HTMLExporter extends BaseHTMLExporter{
-    constructor(doc, bibDB, citationStyles, citationLocales) {
+    constructor(doc, bibDB, imageDB, citationStyles, citationLocales) {
         super()
         this.doc = doc
         this.citationStyles = citationStyles
         this.citationLocales = citationLocales
         this.bibDB = bibDB
+        this.imageDB = imageDB
         this.exportOne()
     }
 
@@ -67,7 +68,6 @@ export class HTMLExporter extends BaseHTMLExporter{
         let htmlCode = htmlExportTemplate({
             part: false,
             title,
-            metadata: this.doc.metadata,
             settings: this.doc.settings,
             styleSheets,
             contents: contentsCode

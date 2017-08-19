@@ -15,12 +15,13 @@ import {DOMSerializer} from "prosemirror-model"
 
 export class EpubExporter extends BaseEpubExporter {
 
-    constructor(doc, bibDB, citationStyles, citationLocales) {
+    constructor(doc, bibDB, imageDB, citationStyles, citationLocales) {
         super()
         this.doc = doc
         this.citationStyles = citationStyles
         this.citationLocales = citationLocales
         this.bibDB = bibDB
+        this.imageDB = imageDB
         this.exportOne()
     }
 

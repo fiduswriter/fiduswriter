@@ -117,6 +117,7 @@ export let headerbarModel = {
                         new HTMLExporter(
                             editor.getDoc(),
                             editor.mod.db.bibDB,
+                            editor.mod.db.imageDB,
                             editor.mod.styles.citationStyles,
                             editor.mod.styles.citationLocales
                         )
@@ -129,6 +130,7 @@ export let headerbarModel = {
                         new EpubExporter(
                             editor.getDoc(),
                             editor.mod.db.bibDB,
+                            editor.mod.db.imageDB,
                             editor.mod.styles.citationStyles,
                             editor.mod.styles.citationLocales
                         )

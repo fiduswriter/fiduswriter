@@ -214,6 +214,7 @@ export class DocumentOverviewActions {
                 new HTMLExporter(
                     doc,
                     {db:doc.bibliography},
+                    {db:doc.images},
                     this.documentOverview.citationStyles,
                     this.documentOverview.citationLocales
                 )
@@ -281,6 +282,7 @@ export class DocumentOverviewActions {
                     new EpubExporter(
                         doc,
                         {db:doc.bibliography},
+                        {db:doc.images},
                         this.documentOverview.citationStyles,
                         this.documentOverview.citationLocales
                     )

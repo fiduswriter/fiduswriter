@@ -338,8 +338,6 @@
 }
 
 .fw-add-button:after {
-    font-family: 'fontello';
-    content: '\2795';
     margin-left: 10px;
 }
 

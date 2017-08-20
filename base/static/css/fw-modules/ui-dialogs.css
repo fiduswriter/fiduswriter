@@ -87,13 +87,9 @@
 }
 
 .ui-icon-closethick:before {
-    display: inline-block;
     width: 0.7em;
     height: 1em;
-    font-family: 'fontello';
-    speak: none;
     padding-top: 5px;
-    content: '\2715';
 }
 
 .ui-dialog-content {

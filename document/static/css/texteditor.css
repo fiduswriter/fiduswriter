@@ -163,14 +163,8 @@ header {
     position: absolute;
     right: 10px;
     top: 0px;
-    font-family: 'fontello';
-    font-style: normal;
-    font-weight: normal;
-    font-size: 14px;
-    speak: none;
     text-align: right;
     margin-top: 0;
-    content: '\25be';
 }
 
 .editortoolbar .fw-button.no-border {

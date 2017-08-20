@@ -140,8 +140,6 @@
 }
 
 .fw-table-wrapper .dataTables_filter label:after {
-    font-family: 'fontello';
-    content: '\e800';
     margin-left: 5px;
     font-size: 16px;
 }
@@ -163,22 +161,9 @@ table.dataTable thead th {
     cursor: pointer;
 }
 table.dataTable thead th:after {
-    display: inline;
     margin-left: 8px;
-    font-family: "fontello";
     line-height: 0;
 }
-table.dataTable thead th.sorting:after {
-    content: '\f0dc';
-}
-
-table.dataTable thead th.sorting_asc:after {
-    content: '\f0de';
-}
-table.dataTable thead th.sorting_desc:after {
-    content: '\f0dd';
-}
-
 /* the usermedia table */
 .fw-usermedia-title {
     display: inline-block;
@@ -211,14 +196,10 @@ table.dataTable thead th.sorting_desc:after {
     position: relative;
 }
 .fw-document-table-body tr.checked td.checkable:after {
-    display: block;
     width: 1em;
     height: 1em;
     position: absolute;
     right: 12px;
-    font-family: 'fontello';
-    content: '\2713';
-    speak: none;
     top: 12px;
 }
 

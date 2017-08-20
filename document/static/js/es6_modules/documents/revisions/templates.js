@@ -24,16 +24,16 @@ export let documentrevisionsTemplate = ({doc}) =>
                             </span></td>
                             <td width="300"><span class="fw-inline">${rev.note}</span></td>
                             <td width="50"><span class="fw-inline recreate-revision" data-id="
-                                    ${rev.pk}"><i class="icon-download"></i></span></td>
+                                    ${rev.pk}"><i class="fa fa-download"></i></span></td>
                             <td width="50"><span class="fw-inline download-revision" data-id="
                                     ${rev.pk}" data-filename="${escapeText(rev.file_name)}">
-                                <i class="icon-download"></i>
+                                <i class="fa fa-download"></i>
                             </span></td>
                             ${
                                 doc.is_owner ?
                                 `<td width="50">
                                     <span class="fw-inline delete-revision" data-id="${rev.pk}">
-                                        <i class="icon-trash"></i>
+                                        <i class="fa fa-trash"></i>
                                     </span>
                                 </td>` :
                                 ''

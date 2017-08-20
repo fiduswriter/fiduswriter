@@ -41,17 +41,15 @@ export class DocumentAccessRightsDialog {
             }
         }
 
-        documentCollaborators = documentCollaborators.filter(
+        let collaborators = Object.values(documentCollaborators).filter(
             col => col.count === this.documentIds.length
         )
 
 
         let dialogBody = accessRightOverviewTemplate({
             dialogHeader,
-            contacts: accessRightTrTemplate({contacts: this.contacts}),
-            collaborators: collaboratorsTemplate({
-                collaborators: documentCollaborators
-            })
+            contacts: this.contacts,
+            collaborators
         })
         jQuery('body').append(dialogBody)
 

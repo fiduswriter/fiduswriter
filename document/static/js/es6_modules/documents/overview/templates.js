@@ -17,7 +17,7 @@ export let documentsListItemTemplate = ({doc, user}) =>
         </td>
         <td width="240">
             <span class="fw-document-table-title fw-inline">
-                <i class="icon-doc"></i>
+                <i class="fa fa-file-text-o"></i>
                 <a class="doc-title fw-link-text fw-searchable" href="/document/${doc.id}/">
                     ${doc.title.length ? doc.title : gettext('Untitled')}
                 </a>
@@ -27,7 +27,7 @@ export let documentsListItemTemplate = ({doc, user}) =>
             ${
                 doc.revisions.length ?
                 `<span class="fw-inline revisions" data-id="${doc.id}">
-                    <i class="icon-clock"></i>
+                    <i class="fa fa-clock-o"></i>
                 </span>` :
                 ''
             }
@@ -54,7 +54,7 @@ export let documentsListItemTemplate = ({doc, user}) =>
                     data-title="${escapeText(doc.title)}">
                 ${
                     user.id === doc.owner.id ?
-                    '<i class="icon-trash"></i>' :
+                    '<i class="fa fa-trash-o"></i>' :
                     ''
                 }
             </span>

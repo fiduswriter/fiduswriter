@@ -35,7 +35,7 @@ body > header > .container {
 #user-preferences #preferences-btn:hover {
     background-color: #96c6b8;
 }
-#preferences-btn .icon-cog {
+#preferences-btn .fa-cog {
     margin-right: -5px;
 }
 #user-preferences > ul {

@@ -54,7 +54,7 @@ export let usermediaTableTemplate = ({id, cats, title, width, height, fileType, 
         <td width="75" align="center">
             <span class="delete-image fw-inline fw-link-text" data-id="${id}"
                     data-title="${escapeText(title)}">
-                <i class="icon-trash"></i>
+                <i class="fa fa-trash-o"></i>
             </span>
         </td>
     </tr>`

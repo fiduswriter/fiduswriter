@@ -178,10 +178,6 @@ header {
     border-color: transparent;
 }
 
-.editortoolbar .header-closed .icon-angle-double-up:before {
-    content: '\f103';
-}
-
 .ui-dialog-content-table .dk_toggle {
     width: 533px !important;
 }
@@ -675,33 +671,39 @@ table.insert-table-selection td.selected.hover {
     width: 164px;
 }
 
-/* Links */
+/* Links  & Anchors */
 
-.link-drop-up-outer {
+.drop-up-outer {
     position: absolute;
 }
 
-.link-drop-up-inner {
+.drop-up-inner {
     position: relative;
-    top: -88px;
     background-color: white;
-    border: 1px solid grey;
-    padding: 2px;
+    border: 1px solid #ccc;
+    padding: 10px;
     z-index: 1;
     font-weight: normal;
+    color: black;
 }
 
-.link-drop-up-inner .edit {
+
+.drop-up-inner .edit {
     font-size: 0.8em;
     text-align: right;
 }
 
-.link-drop-up-inner a.href {
+.drop-up-inner a.href {
     color: #0000EE;
 }
 
-.link-drop-up-inner a.href:visited {
+.drop-up-inner a.href:visited {
     color: #551A8B;
+}
+
+span.anchor {
+    text-decoration: underline;
+    color: green;
 }
 
 /* Keywords */

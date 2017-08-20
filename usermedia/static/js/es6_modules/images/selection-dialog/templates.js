@@ -12,7 +12,7 @@ let usermediaImageItemSelectionTemplate =  ({image, db}) =>
         </td>
         <td class="title" style="width:212px;">
             <span class="fw-inline">
-                <span class="edit-image fw-link-text icon-figure" data-id="${image.id}"
+                <span class="edit-image fw-link-text fa fa-picture-o" data-id="${image.id}"
                         data-db="${db}">
                     ${escapeText(image.title)}
                 </span>
@@ -39,7 +39,7 @@ export let usermediaImageSelectionTemplate = ({images}) =>
         <div class="dialogSubmit">
             <button id="selectImageUploadButton" class="fw-button fw-light">
                 ${gettext('Upload')}
-                <span class="icon-plus-circle"></span>
+                <span class="fa fa-plus-circle"></span>
             </button>
             <button type="button" id="selectImageSelectionButton" class="fw-button fw-dark">
                 ${gettext('Use image')}

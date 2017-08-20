@@ -12,12 +12,12 @@
     <!-- jQuery tablesorter -->
     <script type="text/javascript" src="{{ DATATABLES_URL }}"></script>
     <!-- Dropkick JS -->
-    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/libs/dropkick.css" />
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/dropkick.css" />
     <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/dropkick.css" />
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/dropkick.min.js"></script>
     <!-- ProseMirror CSS -->
-    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/libs/prosemirror.css" />
-    
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/prosemirror.css" />
+
     <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-overview.es5.js"></script>
 
 
@@ -30,7 +30,7 @@
         <li class="fw-document-menu-item">
             <div id="action-selection" class="fw-button fw-light fw-large">
                 <input type="checkbox" id="select-all-entry" />
-                <span id="select-action-dropdown" class="icon-down-dir"></span>
+                <span id="select-action-dropdown" class="fa fa-caret-down"></span>
             </div>
             <div id="action-selection-pulldown" class="fw-pulldown fw-left">
                 <ul>
@@ -51,7 +51,7 @@
             <div id="bib-category-btn" class="fw-button fw-light fw-large">
                 <input type="hidden" id="bib-category" value="0" />
                 <label>{% trans "All categories" %}</label>
-                <span class="icon-down-dir"></span>
+                <span class="fa fa-caret-down"></span>
             </div>
             <div id="bib-category-pulldown" class="fw-pulldown fw-left">
                 <ul id="bib-category-list">
@@ -66,19 +66,19 @@
         <li class="fw-document-menu-item">
             <span id="edit-category" class="fw-button fw-light fw-large">
                 {% trans "Edit categories" %}
-                <span class="icon-edit"></span>
+                <span class="fa fa-pencil"></span>
             </span>
         </li>
         <li class="fw-document-menu-item">
             <span class="edit-bib createNew fw-button fw-light fw-large">
                 {% trans "Register new source" %}
-                <span class="icon-plus-circle"></span>
+                <span class="fa fa-plus-circle"></span>
             </span>
         </li>
         <li class="fw-document-menu-item">
             <span class="import-bib fw-button fw-light fw-large">
                 {% trans "Import Bibtex Library" %}
-                <span class="icon-download"></span>
+                <span class="fa fa-download"></span>
             </span>
         </li>
     </ul>

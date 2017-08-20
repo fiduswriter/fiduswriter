@@ -7,10 +7,14 @@ export let accessRightOverviewTemplate = ({dialogHeader, contacts, collaborators
             <h3 class="fw-green-title">${gettext("My contacts")}</h3>
             <table class="fw-document-table">
                 <thead class="fw-document-table-header"><tr><th width="337">${gettext("Contacts")}</th></tr></thead>
-                <tbody class="fw-document-table-body fw-small">${contacts}</tbody>
+                <tbody class="fw-document-table-body fw-small">
+                    ${accessRightTrTemplate({contacts})}
+                </tbody>
             </table>
         </div>
-        <span id="add-share-member" class="fw-button fw-large fw-square fw-light fw-ar-button"><i class="icon-right"></i></span>
+        <span id="add-share-member" class="fw-button fw-large fw-square fw-light fw-ar-button">
+            <i class="fa fa-caret-right"></i>
+        </span>
         <div id="share-member" class="fw-ar-container">
             <h3 class="fw-green-title">${gettext("My collaborators")}</h3>
             <table class="fw-document-table tablesorter">
@@ -19,7 +23,9 @@ export let accessRightOverviewTemplate = ({dialogHeader, contacts, collaborators
                         <th width="50" align="center">${gettext("Rights")}</th>
                         <th width="50" align="center">${gettext("Delete")}</th>
                 </tr></thead>
-                <tbody class="fw-document-table-body fw-small">${collaborators}</tbody>
+                <tbody class="fw-document-table-body fw-small">
+                    ${collaboratorsTemplate({collaborators})}
+                </tbody>
             </table>
         </div>
     </div>`
@@ -28,7 +34,7 @@ export let accessRightOverviewTemplate = ({dialogHeader, contacts, collaborators
 export let accessRightTrTemplate = ({contacts}) =>
     contacts.map(contact =>
         `<tr>
-            <td width="337" data-id="<%- contact.id %>" data-avatar="${contact.avatar}" data-name="<%- contact.name %>" class="fw-checkable fw-checkable-td">
+            <td width="337" data-id="${contact.id}" data-avatar="${contact.avatar}" data-name="${escapeText(contact.name)}" class="fw-checkable fw-checkable-td">
                 <span><img class="fw-avatar" src="${contact.avatar}" /></span>
                 <span class="fw-inline">${escapeText(contact.name)}</span>
             </td>
@@ -47,7 +53,7 @@ export let collaboratorsTemplate = ({collaborators}) =>
             <td width="50" align="center">
                 <div class="fw-inline edit-right-wrapper">
                     <i class="icon-access-right icon-access-${collaborator.rights}"></i>
-                    <i class="icon-down-dir edit-right"></i>
+                    <i class="fa fa-caret-down edit-right"></i>
                     <div class="fw-pulldown fw-left">
                         <ul>
                             <li>
@@ -57,17 +63,17 @@ export let collaboratorsTemplate = ({collaborators}) =>
                             </li>
                             <li>
                                 <span class="fw-pulldown-item" data-right="write" title="${gettext("Write")}">
-                                    <i class="icon-access-write" >${gettext("Write")}</i>
+                                    <i class="icon-access-write" ></i>&nbsp;${gettext("Write")}
                                 </span>
                             </li>
                             <li>
                                 <span class="fw-pulldown-item" data-right="comment" title="${gettext("Comment")}">
-                                    <i class="icon-access-comment">${gettext("Comment")}</i>
+                                    <i class="icon-access-comment"></i>&nbsp;${gettext("Comment")}
                                 </span>
                             </li>
                             <li>
                                 <span class="fw-pulldown-item" data-right="read" title="${gettext("Read")}">
-                                    <i class="icon-access-read">${gettext("Read")}</i>
+                                    <i class="icon-access-read"></i>&nbsp;${gettext("Read")}
                                 </span>
                             </li>
                             <li>
@@ -81,14 +87,14 @@ export let collaboratorsTemplate = ({collaborators}) =>
                                 <span class="fw-pulldown-item" data-right="read-without-comments" title="${
                                         gettext("Read document but not see comments and chats of others")
                                     }">
-                                    <i class="icon-access-read-without-comments">${gettext("No comments")}</i>
+                                    <i class="icon-access-read-without-comments"></i>&nbsp;${gettext("No comments")}
                                 </span>
                             </li>
                             <li>
                                 <span class="fw-pulldown-item" data-right="review" title="${
                                         gettext("Comment, but not see comments and chats of others")
                                     }">
-                                    <i class="icon-access-review">${gettext("Review")}</i>
+                                    <i class="icon-access-review"></i>&nbsp;${gettext("Review")}
                                 </span>
                             </li>
                         </ul>
@@ -97,7 +103,7 @@ export let collaboratorsTemplate = ({collaborators}) =>
             </td>
             <td width="50" align="center">
                 <span class="delete-collaborator fw-inline" data-right="delete">
-                    <i class="icon-trash fw-link-text"></i>
+                    <i class="fa fa-trash-o fw-link-text"></i>
                 </span>
             </td>
         </tr>`

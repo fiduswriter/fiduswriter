@@ -288,20 +288,36 @@ export class Editor {
             view
 
         this.view.state.doc.descendants((node, pos) => {
-            if (!foundPos && (node.type.name === 'heading' || node.type.name === 'figure') && node.attrs.id === id) {
+            if (foundPos) {
+                return
+            } else if ((node.type.name === 'heading' || node.type.name === 'figure') && node.attrs.id === id) {
                 foundPos = pos + 1
                 view = this.view
+            } else {
+                let anchorMark = node.marks.find(mark => mark.type.name === 'anchor')
+                if (anchorMark && anchorMark.attrs.id === id) {
+                    foundPos = pos + 1
+                    view = this.view
+                }
             }
         })
+
         if (!foundPos) {
             this.mod.footnotes.fnEditor.view.state.doc.descendants((node, pos) => {
-                if (!foundPos && (node.type.name === 'heading' || node.type.name === 'figure') && node.attrs.id === id) {
+                if (foundPos) {
+                    return
+                } else if ((node.type.name === 'heading' || node.type.name === 'figure') && node.attrs.id === id) {
                     foundPos = pos + 1
                     view = this.mod.footnotes.fnEditor.view
+                } else {
+                    let anchorMark = node.marks.find(mark => mark.type.name === 'anchor')
+                    if (anchorMark && anchorMark.attrs.id === id) {
+                        foundPos = pos + 1
+                        view = this.mod.footnotes.fnEditor.view
+                    }
                 }
             })
         }
-
         if (foundPos) {
             this.scrollPosIntoView(foundPos, view)
         }
@@ -310,11 +326,12 @@ export class Editor {
 
     scrollPosIntoView(pos, view) {
         let topMenuHeight = jQuery('header').outerHeight() + 10
-        let distanceFromTop = view.coordsAtPos(pos).top - topMenuHeight
-        window.scrollBy(0, distanceFromTop)
         let $pos = view.state.doc.resolve(pos)
         view.dispatch(view.state.tr.setSelection(new TextSelection($pos, $pos)))
         view.focus()
+        let distanceFromTop = view.coordsAtPos(pos).top - topMenuHeight
+        window.scrollBy(0, distanceFromTop)
+        return
     }
 
     // Things to be executed on every editor transaction.

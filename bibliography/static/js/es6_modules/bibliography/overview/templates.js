@@ -37,7 +37,7 @@ export let bibtableTemplate = ({id, cats, title, type, typetitle, published, aut
         </td>
         <td width="285">
             <span class="fw-document-table-title fw-inline">
-                <i class="icon-book"></i>
+                <i class="fa fa-book"></i>
                 <span class="edit-bib fw-link-text fw-searchable" data-id="${id}"
                         data-type="${type}">
                     ${title.length ? escapeText(title) : `<i>${gettext('Untitled')}</i>`}
@@ -50,7 +50,7 @@ export let bibtableTemplate = ({id, cats, title, type, typetitle, published, aut
         <td width="70" align="center">
             <span class="delete-bib fw-inline fw-link-text" data-id="${id}"
                     data-title="${escapeText(title)}">
-                <i class="icon-trash"></i>
+                <i class="fa fa-trash-o"></i>
             </span>
         </td>
     </tr>`

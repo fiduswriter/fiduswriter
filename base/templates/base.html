@@ -29,7 +29,8 @@
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/dropkick.css" />
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/ui-tabs.css" />
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/figure.css" />
-
+        <!-- Font Awesome -->
+        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/font-awesome.css" />
         <!-- layout styles -->
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/common.css" />
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/header-menu.css" />
@@ -45,7 +46,7 @@
     </head>
     <body{% block isRegistration %}{% endblock %}>
         <div id="wait">
-            <i class="icon-spin2 animate-spin"></i>
+            <i class="fa fa-spinner fa-pulse"></i>
         </div>
         <header class="fw-header">
 
@@ -56,8 +57,8 @@
                 <div id="user-preferences" class="fw-user-preferences fw-header-text">
                     <h3 class="fw-name">{{request.user.username}}</h3>
                     <div id="preferences-btn" class="fw-button fw-small fw-green">
-                        <span class="icon-cog fw-button-icon"></span>
-                        <span class="icon-down-dir fw-button-icon"></span>
+                        <span class="fa fa-cog fw-button-icon"></span>
+                        <span class="fa fa-caret-down fw-button-icon"></span>
                     </div>
                 </div><!-- end user preference -->
             </div><!-- end container -->

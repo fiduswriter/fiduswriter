@@ -21,7 +21,7 @@ export let bibDialog = ({dialogHeader, bib_type, BibTypes, BibTypeTitles}) =>
                     ).join('')
                 }
             </select>
-            <div class="fw-select-arrow icon-down-dir"></div>
+            <div class="fw-select-arrow fa fa-caret-down"></div>
         </div>
         <div id="bib-dialog-tabs">
             <ul>

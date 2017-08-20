@@ -14,7 +14,7 @@ ${
     </head>
     <body>
 ${
-    part && part !== '' ? `\t\t<h1 class="part"><%= part %></h1>\n` : ''
+    part && part.length ? `\t\t<h1 class="part">${escapeText(part)}</h1>\n` : ''
 }
         ${contents}
     </body>

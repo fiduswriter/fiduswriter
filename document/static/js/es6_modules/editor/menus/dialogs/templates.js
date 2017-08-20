@@ -21,7 +21,7 @@ export let linkDialogTemplate = ({defaultLink, internalTargets, link, linkTitle}
                         )
                     }
                 </select>
-                <div class="fw-select-arrow icon-down-dir"></div>
+                <div class="fw-select-arrow fa fa-caret-down"></div>
             </div>
             <p></p>
             <div class="fw-radio">
@@ -161,7 +161,7 @@ export let figureImageItemTemplate =  ({id, cats, image, thumbnail, title}) =>
         </td>
         <td class="title" style="width:212px;">
             <span class="fw-inline">
-                <span class="edit-image fw-link-text icon-figure" data-id="${id}">
+                <span class="edit-image fw-link-text fa fa-picture-o" data-id="${id}">
                     ${escapeText(title)}
                 </span>
             </span>
@@ -187,7 +187,7 @@ export let figureImageTemplate = ({imageDB}) =>
         <div class="dialogSubmit">
             <button class="edit-image createNew fw-button fw-light">
                 ${gettext('Upload')}
-                <span class="icon-plus-circle"></span>
+                <span class="fa fa-plus-circle"></span>
             </button>
             <button type="button" id="selectImageFigureButton" class="fw-button fw-dark">
                 ${gettext('Insert')}
@@ -207,7 +207,7 @@ export let configureFigureTemplate = ({image, equation, caption}) =>
                     ${image ? 'disabled="disabled"' : ''}>
                 <button type="button" id="insertFigureImage" class="fw-button fw-light
                         ${equation === '' ? '' : 'disabled'}">
-                    ${gettext('Insert image')} <i class="icon-figure"></i>
+                    ${gettext('Insert image')} <i class="fa fa-picture-o"></i>
                 </button>
             </div>
             <input type="hidden" id="figure-category">
@@ -215,7 +215,7 @@ export let configureFigureTemplate = ({image, equation, caption}) =>
                 <div id="figure-category-btn" class="fw-button fw-light fw-large">
                     <input type="hidden" id="figure-category" />
                     <label></label>
-                    <span class="icon-down-dir"></span>
+                    <span class="fa fa-caret-down"></span>
                 </div>
                 <div id="figure-category-pulldown" class="fw-pulldown fw-left"
                         style="left: 10px;">
@@ -260,7 +260,7 @@ export let configureCitationTemplate = ({citableItemsHTML, citedItemsHTML, citeF
                 </tbody>
             </table>
         </div>
-        <span id="add-cite-source" class="fw-button fw-large fw-square fw-light fw-ar-button"><i class="icon-right"></i></span>
+        <span id="add-cite-source" class="fw-button fw-large fw-square fw-light fw-ar-button"><i class="fa fa-caret-right"></i></span>
         <div id="cite-books" class="fw-ar-container">
             <h3 class="fw-green-title">${gettext("Citation format")}</h3>
             <div class="fw-select-container">
@@ -268,7 +268,7 @@ export let configureCitationTemplate = ({citableItemsHTML, citedItemsHTML, citeF
                     <option value="autocite" ${citeFormat==="autocite" ? "selected" : ""}>${gettext("(Author, 1998)")}</option>
                     <option value="textcite" ${citeFormat==="textcite" ? "selected" : ""}>${gettext("Author (1998)")}</option>
                 </select>
-                <div class="fw-select-arrow icon-down-dir"></div>
+                <div class="fw-select-arrow fa fa-caret-down"></div>
             </div>
             <table id="selected-cite-source-table" class="fw-document-table tablesorter">
                 <thead class="fw-document-table-header"><tr>
@@ -288,7 +288,7 @@ export let citationItemTemplate = ({bib_type, title, author, id, db}) =>
     `<tr class="fw-checkable fw-checkable-tr" data-id="${id}" data-db="${db}" data-type="${bib_type}" data-title="${escapeText(title)}" data-author="${escapeText(author)}">
         <td width="162">
             <span class="fw-document-table-title fw-inline">
-                <i class="icon-book"></i>
+                <i class="fa fa-book"></i>
                 <span class="fw-searchable">${escapeText(title)}</span>
             </span>
         </td>
@@ -306,7 +306,7 @@ export let selectedCitationTemplate = ({title, bib_type, author, id, db, prefix,
               <tr>
                   <td width="135">
                       <span class="fw-document-table-title fw-inline">
-                          <i class="icon-book"></i>
+                          <i class="fa fa-book"></i>
                           <span data-id="${id}" data-type="${bib_type}">
                               ${escapeText(title)}
                           </span>
@@ -319,7 +319,7 @@ export let selectedCitationTemplate = ({title, bib_type, author, id, db, prefix,
                   </td>
                   <td width="50" align="center">
                       <span class="delete fw-inline fw-link-text" data-id="${id}" data-db="${db}">
-                          <i class="icon-trash"></i>
+                          <i class="fa fa-trash-o"></i>
                       </span>
                   </td>
               </tr>

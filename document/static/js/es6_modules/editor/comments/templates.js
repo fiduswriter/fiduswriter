@@ -143,7 +143,7 @@ export let commentsTemplate = ({
                 comment.user===editor.user.id ||
                 editor.docInfo.access_rights==="write"
             ) ?
-            `<span class="delete-comment-all delete-comment icon-cancel-circle"
+            `<span class="delete-comment-all delete-comment fa fa-times-circle"
                     data-id="${comment.id}">
             </span>` :
             ''

@@ -17,7 +17,7 @@ export let headerbarModel = {
             content: [
                 {
                     title: gettext('Share'),
-                    icon: 'export',
+                    icon: 'share',
                     tooltip: gettext('Share the document with other users.'),
                     action: editor => {
                         new DocumentAccessRightsDialog(
@@ -38,7 +38,7 @@ export let headerbarModel = {
                 },
                 {
                     title: gettext('Close'),
-                    icon: 'cancel-circle',
+                    icon: 'times-circle',
                     tooltip: gettext('Close the document and return to the document overview menu.'),
                     action: editor => {
                         window.location.href = '/'
@@ -46,7 +46,7 @@ export let headerbarModel = {
                 },
                 {
                     title: gettext('Save revision'),
-                    icon: 'export',
+                    icon: 'floppy-o',
                     tooltip: gettext('Save a revision of the current document.'),
                     keys: 'Ctrl-s',
                     action: editor => {
@@ -67,7 +67,7 @@ export let headerbarModel = {
                 },
                 {
                     title: gettext('Create Copy'),
-                    icon: 'floppy',
+                    icon: 'files-o',
                     tooltip: gettext('Create copy of the current document.'),
                     action: editor => {
                         let doc = editor.getDoc(),

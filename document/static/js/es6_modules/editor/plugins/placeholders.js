@@ -11,7 +11,7 @@ export let placeholdersPlugin = function() {
             gettext('Subtitle...'),
             gettext('Authors...'),
             gettext('Abstract...'),
-            gettext('Keywords...'),
+            false,
             gettext('Body...')
         ]
 
@@ -22,9 +22,13 @@ export let placeholdersPlugin = function() {
                 (partElement.isTextblock && partElement.nodeSize === 2) ||
                 (!partElement.isTextblock && partElement.nodeSize === 4)
             ) {
+                let text = placeHolderTexts[index]
+                if (!text) {
+                    return
+                }
                 let placeHolder = document.createElement('span')
                 placeHolder.classList.add('placeholder')
-                placeHolder.setAttribute('data-placeholder', placeHolderTexts[index])
+                placeHolder.setAttribute('data-placeholder', text)
                 if (selectedPart===partElement) {
                     placeHolder.classList.add('selected')
                 }
@@ -35,7 +39,13 @@ export let placeholdersPlugin = function() {
                     // place inside the first child node (a paragraph).
                     position += 1
                 }
-                decorations.push(Decoration.widget(position, placeHolder))
+                decorations.push(Decoration.widget(
+                    position,
+                    placeHolder,
+                    {
+                        side: 1
+                    }
+                ))
             }
         })
 
@@ -46,7 +56,7 @@ export let placeholdersPlugin = function() {
     return new Plugin({
         key: placeholdersKey,
         props: {
-            decorations: (state) => {
+            decorations(state) {
                 const anchor = state.selection.$anchor
                 const head = state.selection.$head
                 if (!anchor || !head) {
@@ -58,7 +68,6 @@ export let placeholdersPlugin = function() {
                     return
                 }
                 let currentPart = anchorPart === headPart ? anchorPart : false
-
                 let articleNode = state.doc.firstChild
                 let decorations = calculatePlaceHolderDecorations(articleNode, currentPart)
 

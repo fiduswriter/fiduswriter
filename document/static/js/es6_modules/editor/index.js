@@ -27,6 +27,7 @@ import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
 import {Paste} from "./paste"
 import {addDropdownBox} from "../common"
+
 import {placeholdersPlugin} from "./plugins/placeholders"
 import {headerbarPlugin} from "./plugins/headerbar"
 import {toolbarPlugin} from "./plugins/toolbar"
@@ -34,6 +35,7 @@ import {collabCaretsPlugin} from "./plugins/collab-carets"
 import {footnoteMarkersPlugin} from "./plugins/footnote-markers"
 import {commentsPlugin} from "./plugins/comments"
 import {linksPlugin} from "./plugins/links"
+import {keywordInputPlugin} from "./plugins/keyword-input"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']
@@ -77,7 +79,8 @@ export class Editor {
             [toolbarPlugin, () => ({editor: this})],
             [collabCaretsPlugin],
             [footnoteMarkersPlugin, () => ({editor: this})],
-            [commentsPlugin, () => ({editor: this})]
+            [commentsPlugin, () => ({editor: this})],
+            [keywordInputPlugin, () => ({editor: this})]
         ]
         new ModFootnotes(this)
         new ModServerCommunications(this)

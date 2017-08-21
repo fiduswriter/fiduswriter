@@ -1,60 +1,112 @@
-import {Plugin, PluginKey, TextSelection} from "prosemirror-state"
-import {Decoration, DecorationSet} from "prosemirror-view"
-import browser from "prosemirror-view/dist/browser"
+import {Schema} from "prosemirror-model"
+import {EditorState, Plugin, PluginKey, TextSelection} from "prosemirror-state"
+import {EditorView, Decoration, DecorationSet} from "prosemirror-view"
+import {history, redo, undo} from "prosemirror-history"
+import {keymap} from "prosemirror-keymap/dist/keymap"
+
+
 
 const key = new PluginKey('keywordInput')
+
+let doc = {content: 'keyword'},
+    keyword = {
+        content: 'inline*',
+        parseDOM: [{tag: 'div.keyword-input-editor'}],
+        toDOM() {
+            return ["div", {
+                class: 'keyword-input-editor'
+            }, 0]
+        }
+    },
+    text = {group: 'inline'}
+
+const schema = new Schema({
+    nodes: {doc, keyword, text},
+    marks: {}
+})
+
+
+let placeholderPlugin = function() {
+    return new Plugin({
+        props: {
+            decorations: (state) => {
+                let doc = state.doc
+                if (
+                    doc.childCount === 1 &&
+                    doc.firstChild.isTextblock &&
+                    doc.firstChild.content.size === 0
+                ) {
+                    let placeHolder = document.createElement('span')
+                    placeHolder.classList.add('placeholder')
+                    // There is only one field, so we know the selection is there
+                    placeHolder.classList.add('selected')
+                    placeHolder.setAttribute('data-placeholder', gettext('New keyword...'))
+                    return DecorationSet.create(doc, [Decoration.widget(1, placeHolder)])
+                }
+            }
+        }
+    })
+}
+
 export let keywordInputPlugin = function(options) {
-    let lastKeyArrowLeft = false, // whether or not the last selection change event was caused by an arrow left key
-        rightExitKeywordInput = false, // whether the user tries to exit keyword input to the right
-        keywordInput // The input element for keywords
+    let keywordView // The input element for keywords
+
+    let submitKeyword = (state, dispatch, view) => {
+        let keyword = state.doc.textContent
+        if (keyword.length) {
+            let eState = options.editor.view.state,
+                {decos} = key.getState(eState),
+                deco = decos.find()[0],
+                pos = deco.from,
+                node = eState.schema.nodes.keyword.create({keyword})
+            options.editor.view.dispatch(
+                options.editor.view.state.tr.insert(pos, node)
+            )
+            view.dispatch(
+                state.tr.delete(1, state.doc.nodeSize - 3)
+            )
+        }
+        return true
+    }
+
     let createKeywordInputDom = function() {
         let dom = document.createElement('div')
         dom.classList.add('keyword-input')
-        dom.innerHTML = `<input type="text" placeholder="${gettext("Add keyword...")}">`
 
-        keywordInput = dom.querySelector('input')
-        keywordInput.addEventListener('keydown', event => {
-            if (['Enter', ';', ','].includes(event.key)) {
-                event.preventDefault()
-                let keyword = keywordInput.value,
-                    state = options.editor.view.state,
-                    {decos} = key.getState(state),
-                    deco = decos.find()[0],
-                    pos = deco.from,
-                    node = state.schema.nodes.keyword.create({keyword})
-                keywordInput.value = ''
-                options.editor.view.dispatch(
-                    options.editor.view.state.tr.insert(pos, node)
-                )
-            } else if (
-                browser.gecko &&
-                keywordInput.selectionEnd === keywordInput.selectionStart
-            ) {
-                // Firefox has issues with the arrow keys of an <input type="text">
-                // element inside of a contenteditable element.
-                // https://github.com/yabwe/medium-editor/issues/1197
-                // So we need to handle arrow keys ourselves.
-                let selection = keywordInput.selectionStart
-                if (
-                    event.key === 'ArrowLeft' &&
-                    selection !== 0
-                ) {
-                    selection--
-                    keywordInput.setSelectionRange(selection, selection)
-                    event.stopPropagation()
-                } else if (
-                    event.key === 'ArrowRight' &&
-                    selection !== keywordInput.value.length
-                ) {
-                    selection++
-                    keywordInput.setSelectionRange(selection, selection)
-                    event.stopPropagation()
-                }
-
+        keywordView = new EditorView(dom, {
+            state: EditorState.create({
+                schema,
+                doc: schema.nodeFromJSON({
+                    type: 'doc',
+                    content:[{
+                        type: 'keyword',
+                        content: []
+                    }]
+                }),
+                plugins: [
+                    history(),
+                    placeholderPlugin(),
+                    keymap({
+                        "Mod-z": undo,
+                        "Mod-shift-z": undo,
+                        "Mod-y": redo,
+                        "Enter": submitKeyword,
+                        ",": submitKeyword,
+                        ";": submitKeyword
+                    })
+                ]
+            }),
+            onFocus: () => {
+            },
+            onBlur: (view) => {
+            },
+            dispatchTransaction: (transaction) => {
+                let newState = keywordView.state.apply(transaction)
+                keywordView.updateState(newState)
             }
         })
 
-        keywordInput.addEventListener('click', event => {
+        dom.addEventListener('click', event => {
             let state = options.editor.view.state,
                 {decos} = key.getState(state),
                 deco = decos.find()[0],
@@ -63,16 +115,14 @@ export let keywordInputPlugin = function(options) {
                 state.selection.from !== pos ||
                 state.selection.to !== pos
             ) {
-                window.getSelection().removeAllRanges()
-                options.editor.view.focus()
                 let $pos = state.doc.resolve(pos)
                 options.editor.view.dispatch(
                     state.tr.setSelection(new TextSelection($pos, $pos))
                 )
-                keywordInput.select()
+                keywordView.focus()
             }
-        })
 
+        })
         return dom
     }
 
@@ -97,7 +147,8 @@ export let keywordInputPlugin = function(options) {
                             if (
                                 event.type==='keydown' &&
                                 event.key==='ArrowRight' &&
-                                keywordInput.selectionStart === keywordInput.value.length
+                                keywordView.state.selection.from ===
+                                    keywordView.state.doc.nodeSize -3
                             ) {
                                 window.getSelection().removeAllRanges()
                                 options.editor.view.focus()
@@ -105,7 +156,7 @@ export let keywordInputPlugin = function(options) {
                             } else if (
                                 event.type==='keydown' &&
                                 event.key==='ArrowLeft' &&
-                                keywordInput.selectionEnd === 0
+                                keywordView.state.selection.to === 1
                             ) {
                                 window.getSelection().removeAllRanges()
                                 options.editor.view.focus()
@@ -130,15 +181,20 @@ export let keywordInputPlugin = function(options) {
                 let decoPos = decos.find()[0].from
                 if (
                     tr.selection.from === tr.selection.to &&
-                    decoPos === tr.selection.from
+                    decoPos === tr.selection.from &&
+                    !keywordView.hasFocus()
                 ) {
-                    keywordInput.select()
-                    if (oldState.selection.from > decoPos) {
-                        let len = keywordInput.value.length
-                        keywordInput.setSelectionRange(len, len)
+                    keywordView.focus()
+                    let pos
+                    if (oldState.selection.from < decoPos) {
+                        pos = 1
                     } else {
-                        keywordInput.setSelectionRange(0, 0)
+                        pos = keywordView.state.doc.nodeSize - 3
                     }
+                    let $pos = keywordView.state.doc.resolve(pos)
+                    keywordView.dispatch(
+                        keywordView.state.tr.setSelection(new TextSelection($pos, $pos))
+                    )
                 }
 
                 return {

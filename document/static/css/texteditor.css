@@ -704,6 +704,7 @@ span.anchor {
 
 .keyword-input {
     display: inline-block;
+    min-width: 200px;
 }
 
 .keyword-input input {

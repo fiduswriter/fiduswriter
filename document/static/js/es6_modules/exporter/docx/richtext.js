@@ -312,6 +312,8 @@ export class DocxExporterRichtext {
                 }
                 break
             case 'table':
+                 console.log("options", options)
+                 console.log("node", node.content[0].content[0].attrs)
                 this.exporter.tables.addTableGridStyle()
                 start += noSpaceTmp`
                     <w:tbl>
@@ -329,6 +331,7 @@ export class DocxExporterRichtext {
                 } else if (!options.dimensions) {
                     options.dimensions = {}
                 }
+
                 options.dimensions = Object.assign({}, options.dimensions)
                 options.dimensions.width = cellWidth
                 options.tableSideMargins = this.exporter.tables.getSideMargins()
@@ -348,9 +351,20 @@ export class DocxExporterRichtext {
                     <w:tc>
                         <w:tcPr>
                             <w:tcW w:w="${parseInt(options.dimensions.width  / 635)}" w:type="dxa" />
+                            let columns = node.content[0].content.length
+                            let num_rows = node.content.length
+                            for  (let i=0;i<num_rows;i++) {
+                                let columns = node.content[i].content.length
+                                for (let j=0;j<columns;j++) {
+                                   console.log("node.content[i]", node.content[i].content[j].attrs)
+                                   <w:vMerge />
+                                   <w:hMerge />
+                               }
+                            }
                         </w:tcPr>`
                 end = '</w:tc>' + end
                 break
+
             case 'equation':
                 let latex = node.attrs.equation
                 content += this.exporter.math.getOmml(latex)

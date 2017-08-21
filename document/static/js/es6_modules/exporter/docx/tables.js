@@ -27,6 +27,8 @@ const DEFAULT_TABLEGRID_XML = tableNormalStyle => noSpaceTmp`
             <w:spacing w:after="0" w:line="240" w:lineRule="auto"/>
         </w:pPr>
         <w:tblPr>
+            <w:hMerge/>
+            <w:vMerge/>
             <w:tblBorders>
                 <w:top w:val="single" w:sz="4" w:space="0" w:color="auto"/>
                 <w:left w:val="single" w:sz="4" w:space="0" w:color="auto"/>
@@ -34,11 +36,13 @@ const DEFAULT_TABLEGRID_XML = tableNormalStyle => noSpaceTmp`
                 <w:right w:val="single" w:sz="4" w:space="0" w:color="auto"/>
                 <w:insideH w:val="single" w:sz="4" w:space="0" w:color="auto"/>
                 <w:insideV w:val="single" w:sz="4" w:space="0" w:color="auto"/>
+
             </w:tblBorders>
         </w:tblPr>
+
+
     </w:style>
     `
-
 
 export class DocxExporterTables {
     constructor(exporter) {

@@ -115,7 +115,7 @@ let author = {
         dom.innerHTML = `
             ${node.attrs.firstname ? `${node.attrs.firstname} `: ''}
             ${node.attrs.lastname ? `${node.attrs.lastname} ` : ''}
-            ${node.attrs.email ? `${gettext(Email)}: ${node.attrs.email} ` : ''}
+            ${node.attrs.email ? `${gettext('Email')}: ${node.attrs.email} ` : ''}
             ${node.attrs.institution ? `(${node.attrs.institution})` : ''}
             `
         return dom

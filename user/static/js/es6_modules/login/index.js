@@ -1,14 +1,21 @@
 let loginPage = function() {
-    let btnWidth = 1
-    [].slice.call(document.querySelectorAll('.fw-button.fw-socialaccount')).forEach(
-        element => {
-            let theWidth = jQuery(element).width()
+    let btnWidth = 1,
+    socialButtons = [].slice.call(document.querySelectorAll('.fw-button.fw-socialaccount'))
+
+    socialButtons.forEach(
+        button => {
+            let theWidth = jQuery(button).width()
             if (btnWidth < theWidth) {
                 btnWidth = theWidth
             }
         }
     )
-    jQuery('.fw-button.fw-socialaccount').css('width', btnWidth + 15)
+    btnWidth += 15
+    socialButtons.forEach(
+        button => {
+            button.style.width = `${btnWidth}px;`
+        }
+    )
 }
 
 export let bind = function() {

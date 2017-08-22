@@ -86,8 +86,44 @@ let subtitle = {
     }
 }
 
+let author = {
+    inline: true,
+    attrs: {
+        firstname: {default: false},
+        lastname: {default: false},
+        email: {default: false},
+        institution: {default: false}
+    },
+    parseDOM: [{
+        tag: 'span.author',
+        getAttrs(dom) {
+            return {
+                firstname: dom.getAttribute('data-firstname'),
+                lastname: dom.getAttribute('data-lastname'),
+                email: dom.getAttribute('data-email'),
+                institution: dom.getAttribute('data-institution')
+            }
+        }
+    }],
+    toDOM(node) {
+        let dom = document.createElement('span')
+        dom.classList.add('author')
+        dom.setAttribute('data-firstname', node.attrs.firstname)
+        dom.setAttribute('data-lastname', node.attrs.lastname)
+        dom.setAttribute('data-email', node.attrs.email)
+        dom.setAttribute('data-institution', node.attrs.institution)
+        dom.innerHTML = `
+            ${node.attrs.firstname ? `${node.attrs.firstname} `: ''}
+            ${node.attrs.lastname ? `${node.attrs.lastname} ` : ''}
+            ${node.attrs.email ? `${gettext(Email)}: ${node.attrs.email} ` : ''}
+            ${node.attrs.institution ? `(${node.attrs.institution})` : ''}
+            `
+        return dom
+    }
+}
+
 let authors = {
-    content: "text<annotation>*",
+    content: "author<annotation>*",
     group: "part",
     defining: true,
     isMetadata() {
@@ -291,6 +327,7 @@ let spec = {
         title,
         subtitle,
         authors,
+        author,
         abstract,
         keywords,
         keyword,

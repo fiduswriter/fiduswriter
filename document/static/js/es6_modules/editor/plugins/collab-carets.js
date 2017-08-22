@@ -2,10 +2,10 @@ import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
 import {sendableSteps} from "prosemirror-collab"
 
-const collabCaretsKey = new PluginKey('collabCarets')
+const key = new PluginKey('collabCarets')
 
 export let getSelectionUpdate = function(state) {
-     let {caretUpdate} = collabCaretsKey.getState(state)
+     let {caretUpdate} = key.getState(state)
      return caretUpdate
 }
 
@@ -13,7 +13,7 @@ export let updateCollaboratorSelection = function(state, collaborator, data) {
     let {
         decos,
         caretPositions
-    } = collabCaretsKey.getState(state)
+    } = key.getState(state)
 
     let oldCarPos = caretPositions.find(carPos => carPos.sessionId === data.session_id)
 
@@ -55,7 +55,7 @@ export let updateCollaboratorSelection = function(state, collaborator, data) {
     }
     decos = decos.add(state.doc, addDecos)
 
-    let transaction = state.tr.setMeta(collabCaretsKey, {
+    let transaction = state.tr.setMeta(key, {
         decos,
         caretPositions,
         caretUpdate: false
@@ -67,7 +67,7 @@ export let removeCollaboratorSelection = function(state, data) {
     let {
         decos,
         caretPositions
-    } = collabCaretsKey.getState(state)
+    } = key.getState(state)
 
     let caretPosition = caretPositions.find(carPos => carPos.sessionId === data.session_id)
 
@@ -75,7 +75,7 @@ export let removeCollaboratorSelection = function(state, data) {
         caretPositions = caretPositions.filter(carPos => carPos !== caretPosition)
         let removeDecos = decos.find().filter(deco => deco.spec === caretPosition.decoSpec)
         decos = decos.remove(removeDecos)
-        let transaction = state.tr.setMeta(collabCaretsKey, {
+        let transaction = state.tr.setMeta(key, {
             decos,
             caretPositions,
             caretUpdate: false
@@ -87,7 +87,7 @@ export let removeCollaboratorSelection = function(state, data) {
 
 export let collabCaretsPlugin = function(options) {
     return new Plugin({
-        key: collabCaretsKey,
+        key,
         state: {
             init() {
                 return {
@@ -97,7 +97,7 @@ export let collabCaretsPlugin = function(options) {
                 }
             },
             apply(tr, prev, oldState, state) {
-                let meta = tr.getMeta(collabCaretsKey)
+                let meta = tr.getMeta(key)
                 if (meta) {
                     // There has been an update, return values from meta instead
                     // of previous values

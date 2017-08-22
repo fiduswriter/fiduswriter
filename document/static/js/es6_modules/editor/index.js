@@ -36,6 +36,7 @@ import {footnoteMarkersPlugin} from "./plugins/footnote-markers"
 import {commentsPlugin} from "./plugins/comments"
 import {linksPlugin} from "./plugins/links"
 import {keywordInputPlugin} from "./plugins/keyword-input"
+import {authorInputPlugin} from "./plugins/author-input"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']
@@ -80,7 +81,8 @@ export class Editor {
             [collabCaretsPlugin],
             [footnoteMarkersPlugin, () => ({editor: this})],
             [commentsPlugin, () => ({editor: this})],
-            [keywordInputPlugin, () => ({editor: this})]
+            [keywordInputPlugin, () => ({editor: this})],
+            [authorInputPlugin, () => ({editor: this})]
         ]
         new ModFootnotes(this)
         new ModServerCommunications(this)

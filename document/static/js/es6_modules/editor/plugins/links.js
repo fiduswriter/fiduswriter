@@ -5,7 +5,7 @@ import {Slice, Fragment} from "prosemirror-model"
 import {noSpaceTmp, addAlert} from "../../common"
 import {randomHeadingId, randomFigureId} from "../../schema/common"
 
-const linksKey = new PluginKey('links')
+const key = new PluginKey('links')
 
 let copyLink = function(href) {
     let textarea = document.createElement("textarea")
@@ -157,7 +157,7 @@ export let linksPlugin = function(options) {
     }
 
     return new Plugin({
-        key: linksKey,
+        key,
         state: {
             init() {
                 return {
@@ -386,7 +386,7 @@ export let linksPlugin = function(options) {
             onFocus: editorView => {
                 let {
                     url
-                } = linksKey.getState(editorView.state)
+                } = key.getState(editorView.state)
                 window.history.replaceState("", "", url)
             },
             decorations(state) {

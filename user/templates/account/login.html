@@ -8,17 +8,7 @@
 {% block loginhref %}{{signup_url}}{% endblock %}
 {% block loginbtn %}{% trans "Sign up" %}{% endblock %}
 {% block extraheaders %}
-<script type="text/javascript">
-    jQuery(function() {
-        var btn_width = 1;
-        jQuery('.fw-button.fw-socialaccount').each(function() {
-            var the_width = jQuery(this).width();
-            if(btn_width < the_width)
-                btn_width = the_width;
-        });
-        jQuery('.fw-button.fw-socialaccount').css('width', btn_width + 15);
-    });
-</script>
+    <script src="{{ STATIC_URL }}js/login.es5.js"></script>
 {% endblock %}
 
 {% block body %}

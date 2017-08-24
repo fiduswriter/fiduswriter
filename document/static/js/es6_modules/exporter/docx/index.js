@@ -17,6 +17,13 @@ import {DocxExporterLists} from "./lists"
 Exporter to Office Open XML docx (Microsoft Word)
 */
 
+/*
+TODO:
+* - Export comments
+* - Export document language
+* - Templating of keywords/authors output
+*/
+
 export class DocxExporter {
     constructor(doc, templateUrl, bibDB, imageDB, citationStyles, citationLocales) {
         this.doc = doc

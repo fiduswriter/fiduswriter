@@ -21,6 +21,8 @@ export class EpubExporter extends BaseEpubExporter {
         this.citationLocales = citationLocales
         this.bibDB = bibDB
         this.imageDB = imageDB
+        this.shortLang = this.doc.settings.language.split['-'][0]
+        this.lang = this.doc.settings.language
         this.exportOne()
     }
 
@@ -81,7 +83,7 @@ export class EpubExporter extends BaseEpubExporter {
 
         let xhtmlCode = xhtmlTemplate({
             part: false,
-            shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
+            shortLang: this.shortLang,
             title,
             styleSheets,
             math,
@@ -94,8 +96,6 @@ export class EpubExporter extends BaseEpubExporter {
 
         let timestamp = this.getTimestamp()
 
-        let authors = [this.doc.owner.name]
-
         let schema = docSchema
         schema.cached.imageDB = this.imageDB
         let serializer = DOMSerializer.fromSchema(schema)
@@ -105,20 +105,16 @@ export class EpubExporter extends BaseEpubExporter {
         let hiddenEls = [].slice.call(docContents.querySelectorAll('[data-hidden=true]'))
         hiddenEls.forEach(hiddenEl => hiddenEl.parentElement.removeChild(hiddenEl))
 
-        let authorsEl = docContents.querySelector('.article-authors')
-        if (authorsEl && authorsEl.textContent.length > 0) {
-            authors = jQuery.map(authorsEl.textContent.split(","), jQuery.trim)
-        }
+        let authors = [].slice.call(docContents.querySelectorAll('.article-authors .author')).map(
+            authorEl => authorEl.textContent
+        )
 
-        let keywords = []
-        let keywordsEl = docContents.querySelector('.article-keywords')
-        if (keywordsEl && keywordsEl.textContent.length > 0) {
-            keywords = jQuery.map(keywordsEl.textContent.split(","), jQuery.trim)
-        }
-
+        let keywords = [].slice.call(docContents.querySelectorAll('.article-keywords .keyword')).map(
+            keywordEl => keywordEl.textContent
+        )
 
         let opfCode = opfTemplate({
-            language: gettext('en-US'), // TODO: specify a document language rather than using the current users UI language
+            language: this.lang,
             title,
             authors,
             keywords,
@@ -132,7 +128,7 @@ export class EpubExporter extends BaseEpubExporter {
         })
 
         let ncxCode = ncxTemplate({
-            shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
+            shortLang: this.shortLang,
             title,
             idType: 'fidus',
             id: this.doc.id,
@@ -140,7 +136,7 @@ export class EpubExporter extends BaseEpubExporter {
         })
 
         let navCode = navTemplate({
-            shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
+            shortLang: this.shortLang,
             contentItems
         })
 

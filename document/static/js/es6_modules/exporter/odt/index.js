@@ -15,6 +15,12 @@ import {OdtExporterMath} from "./math"
 Exporter to Open Document Text (LibreOffice)
 */
 
+/*
+TODO:
+* - Export comments
+* - Templating of keywords/authors output
+*/
+
 export class OdtExporter {
     constructor(doc, templateUrl, bibDB, imageDB, citationStyles, citationLocales) {
         this.doc = doc
@@ -49,9 +55,9 @@ export class OdtExporter {
             'application/vnd.oasis.opendocument.text'
         )
         this.xml.init().then(
-            () => this.metadata.init()
-        ).then(
             () => this.styles.init()
+        ).then(
+            () => this.metadata.init()
         ).then(
             () => this.citations.init()
         ).then(

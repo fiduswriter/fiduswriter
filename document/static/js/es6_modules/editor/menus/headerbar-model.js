@@ -4,8 +4,25 @@ import {ExportFidusFile} from "../../exporter/native/file"
 import {LatexExporter} from "../../exporter/latex"
 import {HTMLExporter} from "../../exporter/html"
 import {EpubExporter} from "../../exporter/epub"
-import {RevisionDialog} from "./dialogs"
-import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from ".."
+import {RevisionDialog, LanguageDialog} from "./dialogs"
+
+let languageItem = function(code, name) {
+    return {
+        title: name,
+        action: editor => {
+            let article = editor.view.state.doc.firstChild
+            let attrs = Object.assign({}, article.attrs)
+            attrs.language = code
+            editor.view.dispatch(
+                editor.view.state.tr.setNodeType(0, false, attrs)
+            )
+        },
+        selected: editor => {
+            return editor.view.state.doc.firstChild.attrs.language === code
+        }
+    }
+}
+
 
 export let headerbarModel = {
     open: true, // Whether the menu is shown at all.
@@ -63,7 +80,7 @@ export let headerbarModel = {
                             }
                         )
                     },
-                    disabled: editor => READ_ONLY_ROLES.includes(editor.docInfo.access_rights)
+                    disabled: editor => editor.docInfo.access_rights !== 'write'
                 },
                 {
                     title: gettext('Create Copy'),
@@ -154,7 +171,7 @@ export let headerbarModel = {
             title: gettext('Citation Style'),
             tooltip: gettext('Choose your preferred citation style.'),
             disabled: editor => {
-                return READ_ONLY_ROLES.includes(editor.docInfo.access_rights)
+                return editor.docInfo.access_rights !== 'write'
             },
             content: []
         },
@@ -163,7 +180,7 @@ export let headerbarModel = {
             title: gettext('Document Style'),
             tooltip: gettext('Choose your preferred document style.'),
             disabled: editor => {
-                return READ_ONLY_ROLES.includes(editor.docInfo.access_rights)
+                return editor.docInfo.access_rights !== 'write'
             },
             content: []
         },
@@ -172,7 +189,7 @@ export let headerbarModel = {
             title: gettext('Paper Size'),
             tooltip: gettext('Choose a papersize for printing and PDF generation.'),
             disabled: editor => {
-                return READ_ONLY_ROLES.includes(editor.docInfo.access_rights)
+                return editor.docInfo.access_rights !== 'write'
             },
             content: [
                 {
@@ -208,11 +225,59 @@ export let headerbarModel = {
             ]
         },
         {
+            id: 'language',
+            title: gettext('Document language'),
+            tooltip: gettext('Choose the language of the document.'),
+            disabled: editor => {
+                return editor.docInfo.access_rights !== 'write'
+            },
+            content: [
+                languageItem('en-US', gettext('English (United States)')),
+                languageItem('en-GB', gettext('English (United Kingdom)')),
+                languageItem('de-DE', gettext('German (Germany)')),
+                languageItem('zh-CN', gettext('Chinese (Simplified)')),
+                languageItem('es', gettext('Spanish')),
+                languageItem('fr', gettext('French')),
+                languageItem('ja', gettext('Japanese')),
+                languageItem('it', gettext('Italian')),
+                languageItem('pl', gettext('Polish')),
+                languageItem('pt-BR', gettext('Portuguese (Brazil)')),
+                languageItem('nl', gettext('Dutch')),
+                languageItem('ru', gettext('Russian')),
+                {
+                    title: gettext('Other'),
+                    action: editor => {
+                        let language = editor.view.state.doc.firstChild.attrs.language,
+                            dialog = new LanguageDialog(editor, language)
+                        dialog.init()
+                    },
+                    selected: editor => {
+                        return ![
+                            'en-US',
+                            'en-GB',
+                            'de-DE',
+                            'zh-CN',
+                            'es',
+                            'fr',
+                            'ja',
+                            'it',
+                            'pl',
+                            'pt-BR',
+                            'nl',
+                            'ru'
+                        ].includes(
+                            editor.view.state.doc.firstChild.attrs.language
+                        )
+                    }
+                }
+            ]
+        },
+        {
             id: 'metadata',
             title: gettext('Metadata'),
             tooltip: gettext('Choose which metadata to enable.'),
             disabled: editor => {
-                return READ_ONLY_ROLES.includes(editor.docInfo.access_rights)
+                return editor.docInfo.access_rights !== 'write'
             },
             content: [
                 {

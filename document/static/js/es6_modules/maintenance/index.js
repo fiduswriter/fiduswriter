@@ -1,6 +1,6 @@
 import {Step} from "prosemirror-transform"
 
-import {updateFileDoc, updateFileBib} from "../importer/file/update"
+import {updateFileDoc, updateFileBib} from "../importer/update"
 import {updateDoc, getSettings} from "../schema/convert"
 import {docSchema} from "../schema/document"
 import {addAlert, csrfToken} from "../common"

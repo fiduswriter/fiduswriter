@@ -1,10 +1,13 @@
-import {TextSelection} from "prosemirror-state"
 import {authorTemplate} from "./templates"
 import {authorsEndPos} from "../../plugins/author-input"
+import {addAlert} from "../../../common"
 /*
-Source: https://html.spec.whatwg.org/multipage/input.html#e-mail-state-(type%3Demail)
+    Source for email regexp:
+    https://html.spec.whatwg.org/multipage/input.html#e-mail-state-(type%3Demail)
 */
-const emailRegExp = new RegExp(/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/)
+const emailRegExp = new RegExp(
+    /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+)
 
 export class AuthorDialog {
     constructor(editor, author = false) {
@@ -12,7 +15,6 @@ export class AuthorDialog {
         this.author = author
         this.dialog = false
     }
-
 
     init() {
         let buttons = []
@@ -34,7 +36,7 @@ export class AuthorDialog {
                     email &&
                     !emailRegExp.test(email)
                 ) {
-                    console.log('email incorrect!')
+                    addAlert('error', gettext('Email is in incorrect format!'))
                     return
                 }
 

@@ -162,7 +162,7 @@ export class HeaderbarView {
         return menu.content.map(menuItem =>
             `
                 <li>
-                    <span class="fw-pulldown-item${menuItem.selected && menuItem.selected(this.editor) ? ' selected' : ''}${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}" title="${menuItem.tooltip}">
+                    <span class="fw-pulldown-item${menuItem.selected && menuItem.selected(this.editor) ? ' selected' : ''}${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}" ${menuItem.tooltip ? `title="${menuItem.tooltip}"` : ''}>
                         ${menuItem.icon ? `<i class="fa fa-${menuItem.icon}"></i>` : ''}
                         ${menuItem.title}
                     </span>

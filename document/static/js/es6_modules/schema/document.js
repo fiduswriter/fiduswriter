@@ -19,6 +19,9 @@ let article = {
         },
         documentstyle: {
             default: ''
+        },
+        language: {
+            default: 'en-US'
         }
     },
     parseDOM: [{

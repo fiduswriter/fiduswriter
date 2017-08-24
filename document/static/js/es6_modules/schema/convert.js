@@ -268,6 +268,31 @@ let convertDocV13 = function(doc, bibliography) {
 
 let convertNodeV13 = function(node, shrunkBib, fullBib, imageIds) {
     switch (node.type) {
+        case 'article':
+            node.attrs.language = 'en-US'
+            break
+        case 'authors':
+            let authorsText = node.content.reduce(
+                    (text, item) => item.type === 'text' ? text + item.text : text,
+                    ''
+                )
+            node.content = authorsText.split(/[,;]/g).map(authorString => {
+                let author = authorString.trim()
+                if (!author.length) {
+                    return false
+                }
+                let authorParts = author.split(' ')
+                return {
+                    type: 'author',
+                    attrs: {
+                        firstname: authorParts.length > 1 ? authorParts.shift() : false,
+                        lastname: authorParts.join(' '),
+                        institution: false,
+                        email: false
+                    }
+                }
+            }).filter(authorObj => authorObj)
+            break
         case 'citation':
             node.attrs.references.forEach(ref => {
                 let item = fullBib[ref.id]
@@ -283,6 +308,24 @@ let convertNodeV13 = function(node, shrunkBib, fullBib, imageIds) {
                 shrunkBib[ref.id] = item
             })
             break
+        case 'keywords':
+                let keywordsText = node.content.reduce(
+                        (text, item) => item.type === 'text' ? text + item.text : text,
+                        ''
+                    )
+                node.content = keywordsText.split(/[,;]/g).map(keywordString => {
+                    let keyword = keywordString.trim()
+                    if (!keyword.length) {
+                        return false
+                    }
+                    return {
+                        type: 'keyword',
+                        attrs: {
+                            keyword
+                        }
+                    }
+                }).filter(keywordObj => keywordObj)
+                break
         case 'figure':
             if (isNaN(parseInt(node.attrs.image))) {
                 node.attrs.image = false

@@ -347,3 +347,16 @@ export let authorTemplate = ({author, isNew}) =>
         <input type="text" name="email" value="${author.email ? author.email : ''}" placeholder="${gettext("Email")}"/>
         <input type="text" name="institution" value="${author.institution ? author.institution : ''}" placeholder="${gettext("Institution")}"/>
     </div>`
+
+export let languageTemplate = ({currentLanguage, languages}) =>
+    `<div title="${gettext('Change language of the document')}">
+        <select class="fw-button fw-white fw-large">
+        ${
+            languages.map(language =>
+                `<option value="${language[0]}" ${language[0]===currentLanguage ? 'selected' : ''}>
+                    ${language[1]}
+                </option>`
+            ).join('')
+        }
+        </select>
+    </div>`

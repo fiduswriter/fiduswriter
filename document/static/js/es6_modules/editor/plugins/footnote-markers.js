@@ -2,7 +2,7 @@ import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
 import {sendableSteps} from "prosemirror-collab"
 
-const footnoteMarkersKey = new PluginKey('footnoteMarkers')
+const key = new PluginKey('footnoteMarkers')
 
 let findFootnoteMarkers = function(fromPos, toPos, doc) {
     let footnoteMarkers = []
@@ -60,14 +60,14 @@ let getAddedRanges = function(transaction) {
 export let getFootnoteMarkerContents = function(state) {
     let {
         decos
-    } = footnoteMarkersKey.getState(state)
+    } = key.getState(state)
     return decos.find().map(fnMarker => state.doc.nodeAt(fnMarker.from).attrs.footnote)
 }
 
 export let updateFootnoteMarker = function(state, index, content) {
     let {
         decos
-    } = footnoteMarkersKey.getState(state)
+    } = key.getState(state)
 
     let footnote = decos.find()[index]
     let node = state.doc.nodeAt(footnote.from)
@@ -83,13 +83,13 @@ export let updateFootnoteMarker = function(state, index, content) {
 export let getFootnoteMarkers = function(state) {
     let {
         decos
-    } = footnoteMarkersKey.getState(state)
+    } = key.getState(state)
     return decos.find()
 }
 
 export let footnoteMarkersPlugin = function(options) {
     return new Plugin({
-        key: footnoteMarkersKey,
+        key,
         state: {
             init(state) {
                 let decos = DecorationSet.empty,
@@ -109,7 +109,7 @@ export let footnoteMarkersPlugin = function(options) {
                 }
             },
             apply(tr, prev, oldState, state) {
-                let meta = tr.getMeta(footnoteMarkersKey)
+                let meta = tr.getMeta(key)
                 if (meta) {
                     // There has been an update of a footnote marker,
                     // return values from meta instead of previous values

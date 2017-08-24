@@ -65,12 +65,12 @@ export let deactivateWait = function() {
 export let addAlert = function(alertType, alertMsg) {
     let fadeSpeed = 300
     let iconNames = {
-        'error': 'icon-attention-circle',
-        'warning': 'icon-attention-circle',
-        'info': 'icon-info-circle',
-        'success': 'icon-ok'
+        'error': 'exclamation-circle',
+        'warning': 'exclamation-circle',
+        'info': 'info-circle',
+        'success': 'check-circle'
     }
-    let alertBox = jQuery('<li class="alerts-' + alertType + ' ' + iconNames[alertType] + '">' + alertMsg + '</li>')
+    let alertBox = jQuery(`<li class="alerts-${alertType} fa fa-${iconNames[alertType]}">${alertMsg}</li>`)
     if(0 === jQuery('#alerts-outer-wrapper').length)
         jQuery('body').append('<div id="alerts-outer-wrapper"><ul id="alerts-wrapper"></ul></div>')
     jQuery('#alerts-wrapper').append(alertBox)

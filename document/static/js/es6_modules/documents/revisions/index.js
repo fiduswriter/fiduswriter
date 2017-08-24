@@ -1,6 +1,6 @@
 import {documentrevisionsTemplate, documentrevisionsConfirmDeleteTemplate} from "./templates"
 import {ImportFidusFile} from "../../importer/file"
-import {deactivateWait, addAlert, localizeDate, csrfToken, cancelPromise} from "../../common"
+import {deactivateWait, addAlert, csrfToken, cancelPromise} from "../../common"
 import JSZipUtils from "jszip-utils"
 import download from "downloadjs"
 
@@ -8,12 +8,10 @@ import download from "downloadjs"
  * Functions for the recovering previously created document revisions.
  */
 export class DocumentRevisionsDialog {
-    constructor(documentId, documentList, user, bibDB, imageDB) {
+    constructor(documentId, documentList, user) {
         this.documentId = documentId // documentId The id in documentList.
         this.documentList = documentList
         this.user = user
-        this.bibDB = bibDB
-        this.imageDB = imageDB
         this.dialog = false
     }
 
@@ -35,7 +33,7 @@ export class DocumentRevisionsDialog {
         ]
 
         this.dialog = jQuery(documentrevisionsTemplate({
-            doc, localizeDate
+            doc
         }))
 
         this.dialog.dialog({
@@ -86,16 +84,13 @@ export class DocumentRevisionsDialog {
                     let importer = new ImportFidusFile(
                         fidusFile,
                         user,
-                        false,
-                        this.bibDB,
-                        this.imageDB
+                        false
                     )
                     resolve(
                         importer.init().then(
                             ({doc, docInfo}) => {
                                 deactivateWait()
-                                addAlert('info', doc.title + gettext(
-                                    ' successfully imported.'))
+                                addAlert('info', `${doc.title} ${gettext('successfully imported.')}`)
                                 return Promise.resolve({
                                     action: 'added-document',
                                     doc

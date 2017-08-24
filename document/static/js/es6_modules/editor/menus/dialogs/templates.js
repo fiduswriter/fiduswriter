@@ -338,3 +338,12 @@ export let selectedCitationTemplate = ({title, bib_type, author, id, db, prefix,
           </table>
       </td>
     </tr>`
+
+
+export let authorTemplate = ({author, isNew}) =>
+    `<div title="${isNew ? gettext('Add author') : gettext('Update author')}">
+        <input type="text" name="firstname" value="${author.firstname ? author.firstname : ''}" placeholder="${gettext("Firstname")}"/>
+        <input type="text" name="lastname" value="${author.lastname ? author.lastname : ''}" placeholder="${gettext("Lastname")}"/>
+        <input type="text" name="email" value="${author.email ? author.email : ''}" placeholder="${gettext("Email")}"/>
+        <input type="text" name="institution" value="${author.institution ? author.institution : ''}" placeholder="${gettext("Institution")}"/>
+    </div>`

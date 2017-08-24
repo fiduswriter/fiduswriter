@@ -4,6 +4,7 @@ import {ReplaceAroundStep} from "prosemirror-transform"
 import {Slice, Fragment} from "prosemirror-model"
 import {noSpaceTmp, addAlert} from "../../common"
 import {randomHeadingId, randomFigureId} from "../../schema/common"
+import {LinkDialog} from "../menus/dialogs"
 
 const key = new PluginKey('links')
 
@@ -31,18 +32,8 @@ export let linksPlugin = function(options) {
     function createDropUp(linkMark, anchorMark, $head) {
         let dropUp = document.createElement('span'),
             editor = options.editor,
-            toolbarLink = editor.menu.toolbarModel.content.find(item =>
-                item.id === 'link'),
+            writeAccess = editor.docInfo.access_rights === 'write' ? true : false,
             linkType, linkHref, anchorHref, requiredPx = 10
-
-        if (!toolbarLink) {
-            // No link in toolbar to edit link. Disable all editing.
-            // This should not ever happen unless someone messes with
-            // the toolbar.
-            toolbarLink = {
-                disabled: () => false
-            }
-        }
 
         if (linkMark) {
             linkType = linkMark.attrs.href[0] === '#' ? 'internal' : 'external'
@@ -74,12 +65,12 @@ export let linksPlugin = function(options) {
                         </span>
                     </button><br>
             		${gettext('Title')}:&nbsp;${linkMark.attrs.title}
-            		${toolbarLink.disabled(editor) ? '' : noSpaceTmp`
+            		${writeAccess ? noSpaceTmp`
                         <div class="edit">
                             [ <a href="#" class="edit-link">${gettext('Edit')}</a> |
                             <a href="#" class="remove-link">${gettext('Remove')}</a>]
                         </div>
-                    `}
+                    ` : ''}
                     ` :
                     ''
                 }
@@ -94,11 +85,11 @@ export let linksPlugin = function(options) {
                             <i class="fa fa-clipboard"></i>
                         </span>
                     </button><br>
-            		${toolbarLink.disabled(editor) ? '' : noSpaceTmp`
+            		${writeAccess ? noSpaceTmp`
                         <div class="edit">
                             [<a href="#" class="remove-anchor">${gettext('Remove')}</a>]
                         </div>
-                    `}
+                    ` : ''}
                     ` :
                     ''
                 }
@@ -126,7 +117,8 @@ export let linksPlugin = function(options) {
             editLink.addEventListener('click',
                 event => {
                     event.preventDefault()
-                    toolbarLink.action(editor)
+                    let dialog = new LinkDialog(editor)
+                    dialog.init()
                 }
             )
         }

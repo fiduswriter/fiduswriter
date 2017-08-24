@@ -40,7 +40,7 @@ let placeholderPlugin = function() {
                     placeHolder.classList.add('placeholder')
                     // There is only one field, so we know the selection is there
                     placeHolder.classList.add('selected')
-                    placeHolder.setAttribute('data-placeholder', gettext('New keyword...'))
+                    placeHolder.setAttribute('data-placeholder', gettext('Add keyword...'))
                     return DecorationSet.create(doc, [Decoration.widget(1, placeHolder)])
                 }
             }
@@ -133,6 +133,11 @@ export let keywordInputPlugin = function(options) {
                 let pos = 1, // enter article
                     child = 0,
                     decos = DecorationSet.empty
+
+                if (options.editor.docInfo.access_rights !== 'write') {
+                    return {decos}
+                }
+
                 while(state.doc.firstChild.child(child).type.name !== 'keywords') {
                     pos += state.doc.firstChild.child(child).nodeSize
                     child++

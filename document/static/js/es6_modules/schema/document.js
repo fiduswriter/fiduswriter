@@ -88,6 +88,7 @@ let subtitle = {
 
 let author = {
     inline: true,
+    draggable: true,
     attrs: {
         firstname: {default: false},
         lastname: {default: false},
@@ -112,12 +113,22 @@ let author = {
         dom.setAttribute('data-lastname', node.attrs.lastname)
         dom.setAttribute('data-email', node.attrs.email)
         dom.setAttribute('data-institution', node.attrs.institution)
-        dom.innerHTML = `
-            ${node.attrs.firstname ? `${node.attrs.firstname} `: ''}
-            ${node.attrs.lastname ? `${node.attrs.lastname} ` : ''}
-            ${node.attrs.email ? `${gettext('Email')}: ${node.attrs.email} ` : ''}
-            ${node.attrs.institution ? `(${node.attrs.institution})` : ''}
-            `
+        let content = []
+        if (node.attrs.firstname) {
+            content.push(node.attrs.firstname)
+        }
+        if (node.attrs.lastname) {
+            content.push(node.attrs.lastname)
+        }
+        if (node.attrs.email) {
+            content.push(`<i>${gettext('Email')}: ${node.attrs.email}</i>`)
+        }
+        if (node.attrs.institution) {
+            content.push(`(${node.attrs.institution})`)
+        }
+
+        dom.innerHTML = content.join(' ')
+
         return dom
     }
 }
@@ -186,6 +197,7 @@ let abstract = {
 
 let keyword = {
     inline: true,
+    draggable: true,
     attrs: {
         keyword: {
             default: ''

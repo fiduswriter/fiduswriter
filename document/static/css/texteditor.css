@@ -721,7 +721,21 @@ span.anchor {
     margin-bottom: 5px;
     padding: 0 5px;
     border-radius: 3px;
-    line-height: 1.5;
+    line-height: 2em;
+    cursor: pointer;
+    color: #fff;
+    background: #76a698;
+    border: 1px solid #7d948e;
+}
+
+.article-authors .author {
+    margin-right: 5px;
+    margin-bottom: 5px;
+    padding: 0 12px;
+    height: 34px;
+    display: inline-block;
+    border-radius: 3px;
+    line-height: 34px;
     cursor: pointer;
     color: #fff;
     background: #76a698;

@@ -2,16 +2,16 @@ import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
 
 const key = new PluginKey('placeholders')
-export let placeholdersPlugin = function() {
+export let placeholdersPlugin = function(options) {
 
     function calculatePlaceHolderDecorations(articleNode, selectedPart) {
 
         const placeHolderTexts = [
             gettext('Title...'),
             gettext('Subtitle...'),
-            false,
+            options.editor.docInfo.access_rights === 'write' ? false : gettext('Authors...'),
             gettext('Abstract...'),
-            false,
+            options.editor.docInfo.access_rights === 'write' ? false : gettext('Keywords...'),
             gettext('Body...')
         ]
 

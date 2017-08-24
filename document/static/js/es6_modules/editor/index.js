@@ -75,7 +75,7 @@ export class Editor {
             [collab],
             [dropCursor],
             [tableEditing],
-            [placeholdersPlugin],
+            [placeholdersPlugin, () => ({editor: this})],
             [headerbarPlugin, () => ({editor: this})],
             [toolbarPlugin, () => ({editor: this})],
             [collabCaretsPlugin],

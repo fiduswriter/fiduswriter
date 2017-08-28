@@ -10,7 +10,6 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
         let serializer = DOMSerializer.fromSchema(schema)
         this.contents = serializer.serializeNode(docSchema.nodeFromJSON(
             this.doc.contents))
-
         // Remove hidden parts
         let hiddenEls = [].slice.call(this.contents.querySelectorAll(
             '[data-hidden=true]'))
@@ -29,7 +28,6 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
         return citRenderer.init().then(
             () => {
                 this.addBibliographyHTML(citRenderer.fm.bibHTML)
-                this.contents = this.cleanHTML(this.contents)
                 return Promise.resolve()
             }
         )
@@ -45,82 +43,82 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
         }
     }
 
-    addFigureNumbers(htmlCode) {
+    addFigureNumbers(dom) {
 
-        jQuery(htmlCode).find('figcaption .figure-cat-figure').each(
+        jQuery(dom).find('figcaption .figure-cat-figure').each(
             function(index) {
                 this.innerHTML += ' ' + (index + 1) + ': '
             })
 
-        jQuery(htmlCode).find('figcaption .figure-cat-photo').each(function(
+        jQuery(dom).find('figcaption .figure-cat-photo').each(function(
             index) {
             this.innerHTML += ' ' + (index + 1) + ': '
         })
 
-        jQuery(htmlCode).find('figcaption .figure-cat-table').each(function(
+        jQuery(dom).find('figcaption .figure-cat-table').each(function(
             index) {
             this.innerHTML += ' ' + (index + 1) + ': '
         })
-        return htmlCode
+        return dom
 
     }
 
 
-    converTitleToRDFa(htmlCode) {
+    converTitleToRDFa(dom) {
 
-        jQuery(htmlCode).find('div.article-title').attr({
+        jQuery(dom).find('div.article-title').attr({
             "property": "schema:name"
         })
-        let titleTag = jQuery(htmlCode).find('div.article-title').wrap(
+        let titleTag = jQuery(dom).find('div.article-title').wrap(
             '<p/>').parent().html()
         titleTag = titleTag
             .replace(/<div/g, '<h1')
             .replace(/<\/div>/g, '</h1>')
-        jQuery(htmlCode).find('div.article-title').html(titleTag)
-        jQuery(htmlCode).find('h1.article-title').unwrap()
+        jQuery(dom).find('div.article-title').html(titleTag)
+        jQuery(dom).find('h1.article-title').unwrap()
 
 
-        return htmlCode
+        return dom
     }
 
-    converAuthorsToRDFa(htmlCode) {
+    converAuthorsToRDFa(dom) {
 
-        jQuery(htmlCode).find('div.article-authors').attr({
+        jQuery(dom).find('div.article-authors').attr({
             "id": "authors"
         })
-        return htmlCode
+        return dom
     }
 
-    convertAbstractToRDF(htmlCode) {
-        //jQuery(htmlCode).find('div.article-abstract').parent().before('<div calss="article-content" id="content">')
-        jQuery(htmlCode).find('div.article-abstract')
-            .attr({
+    convertAbstractToRDF(dom) {
+        //jQuery(dom).find('div.article-abstract').parent().before('<div calss="article-content" id="content">')
+        let abstractEl = jQuery(dom).find('div.article-abstract')
+        if (!abstractEl.length) {
+            return dom
+        }
+        abstractEl.attr({
                 "datatype": "rdf:HTML",
                 "property": "schema:abstract"
             })
-        let abstractSection = jQuery(htmlCode).find('div.article-abstract')
-            .wrap('<p/>').parent().html()
+        let abstractSection = abstractEl.wrap('<p/>').parent().html()
         abstractSection = abstractSection
             //.replace(/<div/g,'<div calss="article-content" id="content"> <section id="abstract"> <div')
             .replace(/<div/g, '<section id="Abstract"')
             .replace(/<\/div>/g, '</section>')
-        jQuery(htmlCode).find('div.article-abstract').parent().html(
+        jQuery(dom).find('div.article-abstract').parent().html(
             abstractSection)
-        jQuery(htmlCode).find('div.article-abstract').unwrap()
-        jQuery(htmlCode).find('div.article-content').unwrap()
-        return htmlCode
+        jQuery(dom).find('div.article-abstract').unwrap()
+        jQuery(dom).find('div.article-content').unwrap()
+        return dom
     }
 
 
-    addSectionsTag(htmlCode) {
+    addSectionsTag(dom) {
         let className
-        console.log(jQuery(htmlCode).find('div.article-content').html())
-        jQuery(htmlCode).find('h2').each(function(
+        jQuery(dom).find('h2').each(function(
             index) {
             if (this.classList !== null && this.innerHTML !== null) {
                 className = this.innerHTML
                 className = className.replace(/\s+/g, '')
-                console.log(className)
                 this.classList.add(className)
                 this.id = className
                 this.outerHTML =
@@ -130,7 +128,7 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
                 console.log(this.outerHTML)
             }
         })
-        return htmlCode
+        return dom
     }
 
     replaceImgSrc(htmlString) {

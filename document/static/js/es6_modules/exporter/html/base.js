@@ -9,7 +9,7 @@ export class BaseHTMLExporter extends BaseDOMExporter {
         schema.cached.imageDB = this.imageDB
         let serializer = DOMSerializer.fromSchema(schema)
         this.contents = serializer.serializeNode(schema.nodeFromJSON(this.doc.contents))
-
+        
         // Remove hidden parts
         let hiddenEls = [].slice.call(this.contents.querySelectorAll('[data-hidden=true]'))
         hiddenEls.forEach(hiddenEl => {

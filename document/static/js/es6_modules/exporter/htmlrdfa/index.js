@@ -79,7 +79,7 @@ export class HTMLRDFaExporter extends BaseHTMLRDFaExporter {
 
         let contentsCode = this.replaceImgSrc(contents.innerHTML)
 
-        let htmlCode = htmlExportTemplate({
+        let dom = htmlExportTemplate({
             part: false,
             title,
             metadata: this.doc.metadata,
@@ -90,7 +90,7 @@ export class HTMLRDFaExporter extends BaseHTMLRDFaExporter {
 
         let outputList = [{
             filename: 'document.html',
-            contents: htmlCode
+            contents: dom
         }]
 
         for (let i = 0; i < styleSheets.length; i++) {

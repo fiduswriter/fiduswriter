@@ -35,7 +35,7 @@ body > header > .container {
 #user-preferences #preferences-btn:hover {
     background-color: #96c6b8;
 }
-#preferences-btn .icon-cog {
+#preferences-btn .fa-cog {
     margin-right: -5px;
 }
 #user-preferences > ul {
@@ -76,9 +76,6 @@ body > header > .container {
     position: absolute;
     left: 50%;
     top: 42px;
-    display: block;
-    font-family: 'fontello';
-    content: '\25be';
     line-height: 100%;
     font-size: 38px;
     margin-left: -13px;

@@ -1,6 +1,5 @@
 import {commentsTemplate, filterByUserBoxTemplate} from "./templates"
 import {Comment} from "./comment"
-import {localizeDate} from "../../common"
 import {getCommentDuringCreationDecoration} from "../plugins/comments"
 
 import fastdom from "fastdom"
@@ -242,8 +241,9 @@ export class ModCommentLayout {
 
         let commentsTemplateHTML = commentsTemplate({
             theComments,
-            localizeDate,
-            that: this
+            editor: this.mod.editor,
+            activeCommentId: this.activeCommentId,
+            activeCommentAnswerId: this.activeCommentAnswerId
         })
         if (document.getElementById('comment-box-container').innerHTML !== commentsTemplateHTML) {
             document.getElementById('comment-box-container').innerHTML = commentsTemplateHTML

@@ -11,7 +11,7 @@ from base.servers.tornado_django_hybrid import run as run_server
 class Command(BaseCommand):
     help = 'Run django using the tornado server'
     requires_migrations_checks = True
-    requires_system_checks = False
+    requires_system_checks = True
     leave_locale_alone = True
     default_port = '8000'
 

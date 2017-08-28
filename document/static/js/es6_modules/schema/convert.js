@@ -8,30 +8,16 @@ import {randomHeadingId, randomFigureId} from "./common"
 import {DOMSerializer, DOMParser} from "prosemirror-model"
 
 
-export let getMetadata = function(pmArticle) {
-    let metadata = {}
-    let serializer = DOMSerializer.fromSchema(docSchema)
-    for (let i=0; i < pmArticle.childCount; i++) {
-        let pmNode = pmArticle.child(i)
-        if (pmNode.type.isMetadata || !pmNode.attrs.hidden) {
-            let value = serializer.serializeNode(pmNode).innerHTML
-            if (value.length > 0 && value !== "<p></p>") {
-                metadata[pmNode.type.name] = value
-            }
-        }
-    }
-    return metadata
-}
-
 export let getSettings = function(pmArticle) {
     let settings = Object.assign({}, pmArticle.attrs)
     return settings
 }
 
-export let updateDoc = function(doc) {
+export let updateDoc = function(doc, bibliography, docVersion) {
     /* This is to clean documents taking all the accepted formatting from older
        versions and outputting the current version of the doc format.
-       Notice that this isn't the same as the version of the FW export file.
+       Notice that the docVersion isn't the same as the version of the FW export
+       file in Fidus Writer 3.0-3.2 (docVersion/FW file versions versions 0-1.X).
        While the FW file version also says something about what files could be
        available inside the FW zip, the doc_version refers to how the data is
        stored in those files.
@@ -40,27 +26,31 @@ export let updateDoc = function(doc) {
        true.
     */
 
-
-    let docVersion = doc.settings['doc_version']
-
     switch(docVersion) {
         case undefined: // Fidus Writer 1.1-3.0
         case 0: // Fidus Writer 3.1 prerelease
             doc = convertDocV0(doc)
             doc = convertDocV11(doc)
             doc = convertDocV12(doc)
+            doc = convertDocV13(doc, bibliography)
             break
         case 1: // Fidus Writer 3.1 prerelease
             doc = convertDocV1(doc)
             doc = convertDocV11(doc)
             doc = convertDocV12(doc)
+            doc = convertDocV13(doc, bibliography)
             break
         case 1.1: // Fidus Writer 3.1
             doc = convertDocV11(doc)
             doc = convertDocV12(doc)
+            doc = convertDocV13(doc, bibliography)
             break
         case 1.2: // Fidus Writer 3.2
             doc = convertDocV12(doc)
+            doc = convertDocV13(doc, bibliography)
+            break
+        case 1.3: // Fidus Writer 3.3 prerelease
+            doc = convertDocV13(doc, bibliography)
             break
     }
     return doc
@@ -168,18 +158,14 @@ let convertDocV0 = function(doc) {
         }
     })
     let pmArticle = docSchema.nodeFromJSON(docContents)
-    let pmMetadata = getMetadata(pmArticle)
     doc = JSON.parse(JSON.stringify(doc))
     doc.contents = docContents
-    doc.metadata = pmMetadata
-    doc.settings = {doc_version: 1.1}
     return doc
 }
 
 let convertDocV1 = function(doc) {
     let returnDoc = Object.assign({}, doc)
     convertNodeV1(returnDoc.contents)
-    returnDoc.settings.doc_version = 1.1
     return returnDoc
 }
 
@@ -225,7 +211,6 @@ let convertNodeV1 = function(node) {
 let convertDocV11 = function(doc) {
     let returnDoc = Object.assign({}, doc)
     convertNodeV11(returnDoc.contents)
-    returnDoc.settings = {doc_version: 1.2}
     return returnDoc
 }
 
@@ -250,7 +235,6 @@ let convertNodeV11 = function(node, ids = []) {
 let convertDocV12 = function(doc) {
     let returnDoc = Object.assign({}, doc)
     convertNodeV12(returnDoc.contents)
-    returnDoc.settings = {doc_version: 1.3}
     return returnDoc
 }
 
@@ -267,7 +251,92 @@ let convertNodeV12 = function(node, ids = []) {
     }
     if (node.content) {
         node.content.forEach(childNode => {
-            convertNodeV11(childNode, ids)
+            convertNodeV12(childNode, ids)
+        })
+    }
+}
+
+let convertDocV13 = function(doc, bibliography) {
+    let returnDoc = Object.assign({}, doc)
+    delete returnDoc.settings
+    delete returnDoc.metadata
+    returnDoc.bibliography = {}
+    returnDoc.imageIds = []
+    convertNodeV13(returnDoc.contents, returnDoc.bibliography, bibliography, returnDoc.imageIds)
+    return returnDoc
+}
+
+let convertNodeV13 = function(node, shrunkBib, fullBib, imageIds) {
+    switch (node.type) {
+        case 'article':
+            node.attrs.language = 'en-US'
+            break
+        case 'authors':
+            let authorsText = node.content.reduce(
+                    (text, item) => item.type === 'text' ? text + item.text : text,
+                    ''
+                )
+            node.content = authorsText.split(/[,;]/g).map(authorString => {
+                let author = authorString.trim()
+                if (!author.length) {
+                    return false
+                }
+                let authorParts = author.split(' ')
+                return {
+                    type: 'author',
+                    attrs: {
+                        firstname: authorParts.length > 1 ? authorParts.shift() : false,
+                        lastname: authorParts.join(' '),
+                        institution: false,
+                        email: false
+                    }
+                }
+            }).filter(authorObj => authorObj)
+            break
+        case 'citation':
+            node.attrs.references.forEach(ref => {
+                let item = fullBib[ref.id]
+                if (!item) {
+                    item = {
+                        fields: {"title":[{"type":"text","text":"Deleted"}]},
+                        bib_type: "misc",
+                        entry_key: "FidusWriter"
+                    }
+                }
+                item = Object.assign({}, item)
+                delete item.entry_cat
+                shrunkBib[ref.id] = item
+            })
+            break
+        case 'keywords':
+                let keywordsText = node.content.reduce(
+                        (text, item) => item.type === 'text' ? text + item.text : text,
+                        ''
+                    )
+                node.content = keywordsText.split(/[,;]/g).map(keywordString => {
+                    let keyword = keywordString.trim()
+                    if (!keyword.length) {
+                        return false
+                    }
+                    return {
+                        type: 'keyword',
+                        attrs: {
+                            keyword
+                        }
+                    }
+                }).filter(keywordObj => keywordObj)
+                break
+        case 'figure':
+            if (isNaN(parseInt(node.attrs.image))) {
+                node.attrs.image = false
+            } else {
+                imageIds.push(parseInt(node.attrs.image))
+            }
+            break
+    }
+    if (node.content) {
+        node.content.forEach(childNode => {
+            convertNodeV13(childNode, shrunkBib, fullBib, imageIds)
         })
     }
 }

@@ -1,4 +1,4 @@
-import {usermediaUploadCategoryTemplate, usermediaUploadTemplate} from "./templates"
+import {usermediaUploadTemplate} from "./templates"
 import {setCheckableLabel, cancelPromise, addAlert} from "../../common"
 
 export class ImageUploadDialog {
@@ -27,7 +27,6 @@ export class ImageUploadDialog {
             action = gettext('Upload')
             longAction = gettext('Upload image')
         }
-
         let iCats = []
         jQuery.each(this.imageDB.cats, (i, iCat) => {
             let len = iCats.length
@@ -42,15 +41,13 @@ export class ImageUploadDialog {
             }
         })
 
+
         jQuery('body').append(usermediaUploadTemplate({
             'action': longAction,
             'title': title,
             'thumbnail': thumbnail,
             'image': image,
-            'categories': usermediaUploadCategoryTemplate({
-                'categories': iCats,
-                'fieldTitle': gettext('Select categories')
-            })
+            'categories': iCats
         }))
         let diaButtons = {}
 

@@ -41,12 +41,18 @@ export class RenderCitations {
     }
 
     renderCitations() {
-        this.fm.citationTexts.forEach((citText, index) => {
-            let citationText = citText[citText.length - 1][1]
-            if ('note' === this.fm.citationType) {
-                citationText = `<span class="pagination-footnote"><span><span>${citationText}</span></span></span>`
-            }
-            this.allCitationNodes[index].innerHTML = citationText
+        this.fm.citationTexts.forEach(citText => {
+            citText.forEach(entry => {
+                let index = entry[0],
+                    citationText = entry[1]
+                if ('note' === this.fm.citationType) {
+                    citationText =
+                        `<span class="pagination-footnote"><span><span>
+                            ${citationText}
+                        </span></span></span>`
+                }
+                this.allCitationNodes[index].innerHTML = citationText
+            })
         })
     }
 

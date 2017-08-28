@@ -4,10 +4,11 @@ Pillow==4.1.1
 django-allauth==0.32.0
 django-avatar==3.1.0
 django-compressor==2.1
-git+git://github.com/fiduswriter/django-js-error-hook.git@0a282b11ee1052696f87885c220720c93b61336a#egg=django-js-error-hook
+git+git://github.com/jojax/django-js-error-hook.git@4c7ac5cdab7f2c8911bfe1c466a03b70e384c936#egg=django-js-error-hook
 tornado==4.5.1
 python-dateutil==2.6.0
 python-magic==0.4.13
 setuptools==35.0.2
 future==0.16.0
 commentjson==0.6
+jsonpatch==1.16

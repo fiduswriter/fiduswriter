@@ -163,23 +163,13 @@ header {
     position: absolute;
     right: 10px;
     top: 0px;
-    font-family: 'fontello';
-    font-style: normal;
-    font-weight: normal;
-    font-size: 14px;
-    speak: none;
     text-align: right;
     margin-top: 0;
-    content: '\25be';
 }
 
 .editortoolbar .fw-button.no-border {
     background: transparent;
     border-color: transparent;
-}
-
-.editortoolbar .header-closed .icon-angle-double-up:before {
-    content: '\f103';
 }
 
 .ui-dialog-content-table .dk_toggle {
@@ -675,31 +665,79 @@ table.insert-table-selection td.selected.hover {
     width: 164px;
 }
 
-/* Links */
+/* Links  & Anchors */
 
-.link-drop-up-outer {
+.drop-up-outer {
     position: absolute;
 }
 
-.link-drop-up-inner {
+.drop-up-inner {
     position: relative;
-    top: -88px;
     background-color: white;
-    border: 1px solid grey;
-    padding: 2px;
+    border: 1px solid #ccc;
+    padding: 10px;
     z-index: 1;
     font-weight: normal;
+    color: black;
 }
 
-.link-drop-up-inner .edit {
+
+.drop-up-inner .edit {
     font-size: 0.8em;
     text-align: right;
 }
 
-.link-drop-up-inner a.href {
+.drop-up-inner a.href {
     color: #0000EE;
 }
 
-.link-drop-up-inner a.href:visited {
+.drop-up-inner a.href:visited {
     color: #551A8B;
+}
+
+span.anchor {
+    text-decoration: underline;
+    color: green;
+}
+
+/* Keywords */
+
+.keyword-input {
+    display: inline-block;
+    min-width: 200px;
+}
+
+.keyword-input input {
+    border: 0;
+    background-color: white;
+}
+
+.keyword-input input:focus {
+    background-color: white;
+}
+
+.article-keywords .keyword {
+    margin-right: 5px;
+    margin-bottom: 5px;
+    padding: 0 5px;
+    border-radius: 3px;
+    line-height: 2em;
+    cursor: pointer;
+    color: #fff;
+    background: #76a698;
+    border: 1px solid #7d948e;
+}
+
+.article-authors .author {
+    margin-right: 5px;
+    margin-bottom: 5px;
+    padding: 0 12px;
+    height: 34px;
+    display: inline-block;
+    border-radius: 3px;
+    line-height: 34px;
+    cursor: pointer;
+    color: #fff;
+    background: #76a698;
+    border: 1px solid #7d948e;
 }

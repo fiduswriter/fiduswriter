@@ -26,8 +26,8 @@ export class LiteralListForm{
             <tr>
                 <td></td>
                 <td>
-                    <span class="icon-minus-circle"></span>
-                    <span class="icon-plus-circle"></span>
+                    <span class="fa fa-minus-circle"></span>&nbsp;
+                    <span class="fa fa-plus-circle"></span>
                 </td>
             </tr>`
         )
@@ -37,16 +37,22 @@ export class LiteralListForm{
         this.fields.push(fieldHandler)
 
         // click on plus
-        let addItemEl = fieldDOM.querySelector('.icon-plus-circle')
+        let addItemEl = fieldDOM.querySelector('.fa-plus-circle')
         addItemEl.addEventListener('click', () => {
+            if (!this.value) {
+                return
+            }
             this.currentValue = this.value
             this.currentValue.splice(index+1, 0, [])
             this.drawForm()
         })
 
         // Click on minus
-        let removeItemEl = fieldDOM.querySelector('.icon-minus-circle')
+        let removeItemEl = fieldDOM.querySelector('.fa-minus-circle')
         removeItemEl.addEventListener('click', () => {
+            if (!this.value) {
+                return
+            }
             this.currentValue = this.value
             this.currentValue.splice(index, 1)
             if (this.currentValue.length === 0) {

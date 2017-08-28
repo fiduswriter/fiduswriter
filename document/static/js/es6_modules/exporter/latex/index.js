@@ -1,4 +1,4 @@
-import {createSlug, getDatabasesIfNeeded} from "../tools/file"
+import {createSlug} from "../tools/file"
 import {removeHidden} from "../tools/doc-contents"
 import {LatexExporterConvert} from "./convert"
 import {ZipFileCreator} from "../tools/zip"
@@ -18,12 +18,7 @@ export class LatexExporter {
         this.zipFileName = false
         this.textFiles = []
         this.httpFiles = []
-
-        getDatabasesIfNeeded(this, doc).then(
-            () => {
-                this.init()
-            }
-        )
+        this.init()
     }
 
     init() {

@@ -71,17 +71,6 @@ textarea:focus {
     background-color: #fbf9d2;
 }
 
-.fw-checkable.checked:after, tr.fw-checkable.checked > td:last-child:after {
-    display: block;
-    width: 1em;
-    height: 1em;
-    position: absolute;
-    right: 12px;
-    font-family: 'fontello';
-    content: '\2713';
-    speak: none;
-}
-
 tr.fw-checkable.checked:after {
     display: none;
     content: '';
@@ -122,8 +111,7 @@ tr.fw-checkable.checked:after {
     margin-left: 14px;
 }
 
-.fw-add-input:before {
-    content: '\2796';
+.fw-add-input::before {
     width: 0.7em;
 }
 
@@ -133,10 +121,6 @@ tr.fw-checkable.checked:after {
 
 .fw-list-input:first-child {
     margin-top: 0;
-}
-
-.fw-list-input:last-child .fw-add-input:before {
-    content: '\2795';
 }
 
 /*

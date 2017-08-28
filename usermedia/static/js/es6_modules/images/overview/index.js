@@ -1,7 +1,7 @@
 import {ImageUploadDialog} from "../upload-dialog"
 import {ImageDB} from "../database"
 import {ImageOverviewCategories} from "./categories"
-import {addDropdownBox, activateWait, deactivateWait, addAlert, localizeDate, csrfToken} from "../../common"
+import {addDropdownBox, activateWait, deactivateWait, addAlert, csrfToken} from "../../common"
 import {Menu} from "../../menu"
 import {usermediaCategoryListItem, usermediaTableTemplate} from "./templates"
 import * as plugins from "../../plugins/images-overview"
@@ -102,9 +102,9 @@ export class ImageOverview {
         this.startUsermediaTable()
     }
 
-    appendToImageTable(pk) {
-        let imageInfo = this.imageDB.db[pk]
-        let $tr = jQuery('#Image_' + pk)
+    appendToImageTable(id) {
+        let imageInfo = this.imageDB.db[id]
+        let $tr = jQuery(`#Image_${id}`)
         let fileType = imageInfo.file_type.split('/')
 
         if(1 < fileType.length) {
@@ -115,7 +115,7 @@ export class ImageOverview {
 
         if (0 < $tr.length) { //if the image entry exists, update
             $tr.replaceWith(usermediaTableTemplate({
-                pk,
+                id,
                 'cats': imageInfo.cats,
                 fileType,
                 'title': imageInfo.title,
@@ -123,12 +123,11 @@ export class ImageOverview {
                 'image': imageInfo.image,
                 'height': imageInfo.height,
                 'width': imageInfo.width,
-                'added': imageInfo.added,
-                localizeDate
+                'added': imageInfo.added
             }))
         } else { //if this is the new image, append
             jQuery('#imagelist > tbody').append(usermediaTableTemplate({
-                pk,
+                id,
                 'cats': imageInfo.cats,
                 fileType,
                 'title': imageInfo.title,
@@ -136,18 +135,17 @@ export class ImageOverview {
                 'image': imageInfo.image,
                 'height': imageInfo.height,
                 'width': imageInfo.width,
-                'added': imageInfo.added,
-                localizeDate
+                'added': imageInfo.added
             }))
         }
     }
 
     getImageDB() {
         let imageGetter = new ImageDB(0)
-        imageGetter.getDB().then(pks => {
+        imageGetter.getDB().then(ids => {
             this.imageDB = imageGetter
             this.mod.categories.addImageCategoryList(imageGetter.cats)
-            this.addImageDB(pks)
+            this.addImageDB(ids)
         })
     }
 

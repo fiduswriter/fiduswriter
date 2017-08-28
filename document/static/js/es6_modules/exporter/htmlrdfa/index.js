@@ -2,25 +2,20 @@ import {createSlug} from "../tools/file"
 import {findImages} from "../tools/html"
 import {ZipFileCreator} from "../tools/zip"
 import {htmlExportTemplate} from "./templates"
-import {BibliographyDB} from "../../bibliography/database"
 import {addAlert} from "../../common"
 import {katexRender} from "../../katex"
-import {BaseHTMLExporter} from "./base"
+import {BaseHTMLRDFaExporter} from "./base"
 import download from "downloadjs"
 
-export class HTMLRDFaExporter extends BaseHTMLExporter{
-    constructor(doc, bibDB, citationStyles, citationLocales) {
+export class HTMLRDFaExporter extends BaseHTMLRDFaExporter {
+    constructor(doc, bibDB, imageDB, citationStyles, citationLocales) {
         super()
         this.doc = doc
         this.citationStyles = citationStyles
         this.citationLocales = citationLocales
-        if (bibDB) {
-            this.bibDB = bibDB // the bibliography has already been loaded for some other purpose. We reuse it.
-            this.exportOne()
-        } else {
-            this.bibDB = new BibliographyDB(doc.owner.id)
-            this.bibDB.getDB().then(() => this.exportOne())
-        }
+        this.bibDB = bibDB
+        this.imageDB = imageDB
+        this.exportOne()
     }
 
     exportOne() {
@@ -33,11 +28,13 @@ export class HTMLRDFaExporter extends BaseHTMLExporter{
 
     exportTwo() {
 
-        let styleSheets = [], math = false
+        let styleSheets = [],
+            math = false
 
         let title = this.doc.title
 
         let contents = this.contents
+        console.log(contents)
 
         let equations = contents.querySelectorAll('.equation')
 
@@ -45,13 +42,17 @@ export class HTMLRDFaExporter extends BaseHTMLExporter{
 
         if (equations.length > 0 || figureEquations.length > 0) {
             math = true
-            styleSheets.push({filename: 'katex.min.css'})
+            styleSheets.push({
+                filename: 'katex.min.css'
+            })
         }
 
         for (let i = 0; i < equations.length; i++) {
             let node = equations[i]
             let formula = node.getAttribute('data-equation')
-            katexRender(formula, node, {throwOnError: false})
+            katexRender(formula, node, {
+                throwOnError: false
+            })
         }
         for (let i = 0; i < figureEquations.length; i++) {
             let node = figureEquations[i]
@@ -66,18 +67,18 @@ export class HTMLRDFaExporter extends BaseHTMLExporter{
 
         let httpOutputList = findImages(contents)
 
-        contents = this.addFigureNumbers(contents) 
+        contents = this.addFigureNumbers(contents)
 
-	contents = this.converTitleToRDFa(contents) 
+        contents = this.converTitleToRDFa(contents)
 
-	contents = this.convertAbstractToRDF(contents)
+        contents = this.convertAbstractToRDF(contents)
 
-	contents = this.converAuthorsToRDFa(contents)
-	
-	contents = this.addSectionsTag(contents)
+        contents = this.converAuthorsToRDFa(contents)
+
+        contents = this.addSectionsTag(contents)
 
         let contentsCode = this.replaceImgSrc(contents.innerHTML)
-	
+
         let htmlCode = htmlExportTemplate({
             part: false,
             title,
@@ -113,7 +114,8 @@ export class HTMLRDFaExporter extends BaseHTMLExporter{
         )
 
         zipper.init().then(
-            blob => download(blob, createSlug(title) + '.html.zip', 'application/zip')
+            blob => download(blob, createSlug(title) + '.html.zip',
+                'application/zip')
         )
     }
 

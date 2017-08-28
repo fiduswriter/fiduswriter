@@ -147,7 +147,8 @@ export let headerbarModel = {
                     action: editor => {
                         new HTMLRDFaExporter(
                             editor.getDoc(),
-                            editor.bibDB,
+                            editor.mod.db.bibDB,
+                            editor.mod.db.imageDB,
                             editor.mod.styles.citationStyles,
                             editor.mod.styles.citationLocales
                         )

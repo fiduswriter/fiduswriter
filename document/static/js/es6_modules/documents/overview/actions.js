@@ -228,16 +228,16 @@ export class DocumentOverviewActions {
             ids,
             this.documentOverview.documentList
         ).then(
-            () => {
-                for (let i = 0; i < ids.length; i++) {
-                    new HTMLRDFaExporter(
-                        this.documentOverview.documentList.find(doc => doc.id===ids[i]),
-                        false,
-                        this.documentOverview.citationStyles,
-                        this.documentOverview.citationLocales
-                    )
-                }
-            }
+            () => ids.forEach(id => {
+                let doc = this.documentOverview.documentList.find(entry => entry.id===id)
+                new HTMLRDFaExporter(
+                    doc,
+                    {db:doc.bibliography},
+                    {db:doc.images},
+                    this.documentOverview.citationStyles,
+                    this.documentOverview.citationLocales
+                )
+            })
         )
     }
 

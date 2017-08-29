@@ -42,7 +42,12 @@ export class HTMLRDFaExporter extends BaseHTMLExporter{
         let equations = contents.querySelectorAll('.equation')
 
         let figureEquations = contents.querySelectorAll('.figure-equation')
-
+        
+        let comments = []
+        for (let comment in this.doc.comments) {
+        	comments.push(this.doc.comments[comment])
+        }
+        
         if (equations.length > 0 || figureEquations.length > 0) {
             math = true
             styleSheets.push({filename: 'katex.min.css'})
@@ -74,6 +79,8 @@ export class HTMLRDFaExporter extends BaseHTMLExporter{
 
 	contents = this.converAuthorsToRDFa(contents)
 	
+	contents = this.convertCommentsToRDFa(contents)
+	
 	contents = this.addSectionsTag(contents)
 
         let contentsCode = this.replaceImgSrc(contents.innerHTML)
@@ -91,6 +98,13 @@ export class HTMLRDFaExporter extends BaseHTMLExporter{
             filename: 'document.html',
             contents: htmlCode
         }]
+        if (comments.length>0) {
+        	for (let i = 0; i < comments.length; i++) {
+            let node = comments[i]
+            outputList.push(this.createComment(node))
+        }
+        	        	       
+        }
 
         for (let i = 0; i < styleSheets.length; i++) {
             let styleSheet = styleSheets[i]

@@ -1,3 +1,5 @@
+import deepEqual from "fast-deep-equal"
+
 function randomID() {
     return Math.floor(Math.random() * 0xffffffff)
 }
@@ -32,7 +34,10 @@ export class ModBibliographyDB {
         Object.keys(tmpDB).forEach(bibKey => {
             let reference = tmpDB[bibKey]
             delete reference.entry_cat
-            if (isNew) {
+            let oldRef = this.findReference(reference)
+            if (oldRef) {
+                idTranslations.push([bibKey, oldRef])
+            } else if (isNew) {
                 let id = this.addReference(reference, bibKey)
                 idTranslations.push([bibKey, id])
             } else {
@@ -155,7 +160,7 @@ export class ModBibliographyDB {
             let bib = this.db[id]
             return (
                 bib.bib_type === ref.bib_type &&
-                JSON.stringify(bib.fields) === JSON.stringify(ref.fields)
+                deepEqual(bib.fields, ref.fields)
             )
         })
     }

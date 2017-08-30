@@ -286,7 +286,7 @@ export class CitationDialog {
             return true
         }
 
-        let citationNode =  this.editor.currentView.state.schema.nodes['citation'].create({format, references})
+        let citationNode = this.editor.currentView.state.schema.nodes['citation'].create({format, references})
         let transaction = this.editor.currentView.state.tr.replaceSelectionWith(citationNode, true)
         this.editor.currentView.dispatch(transaction)
         return true

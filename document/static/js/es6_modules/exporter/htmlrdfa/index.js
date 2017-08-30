@@ -29,6 +29,9 @@ export class HTMLRDFaExporter extends BaseHTMLExporter{
 
         this.joinDocumentParts().then(() => this.exportTwo())
 
+
+
+
     }
 
     exportTwo() {

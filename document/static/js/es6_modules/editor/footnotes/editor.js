@@ -7,7 +7,7 @@ import {history} from "prosemirror-history"
 import {baseKeymap} from "prosemirror-commands"
 import {keymap} from "prosemirror-keymap/dist/keymap"
 
-import {HTMLPaste, TEXTPaste} from "../paste"
+import {HTMLPaste, TextPaste} from "../paste"
 import {fnSchema} from "../../schema/footnotes"
 import {toolbarPlugin} from "../plugins/toolbar"
 import {collabCaretsPlugin} from "../plugins/collab-carets"

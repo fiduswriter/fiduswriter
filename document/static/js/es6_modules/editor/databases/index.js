@@ -15,15 +15,26 @@ export class ModDB {
             usedBibs = []
         this.editor.view.state.doc.descendants(node => {
             if (node.type.name==='citation') {
-                node.attrs.references.forEach(ref => usedBibs.push(ref.id))
+                node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
             } else if (node.type.name==='figure' && node.attrs.image) {
                 usedImages.push(parseInt(node.attrs.image))
             }
         })
 
-        let unusedImages = Object.keys(this.imageDB.db).filter(value => !usedImages.includes(parseInt(value))),
-            unusedBibs = Object.keys(this.bibDB.db).filter(value => !usedBibs.includes(parseInt(value)))
+        this.editor.mod.footnotes.fnEditor.view.state.doc.descendants(node => {
+            if (node.type.name==='citation') {
+                node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
+            } else if (node.type.name==='figure' && node.attrs.image) {
+                usedImages.push(parseInt(node.attrs.image))
+            }
+        })
 
+        let unusedImages = Object.keys(this.imageDB.db).filter(value =>
+                !usedImages.includes(parseInt(value))
+            ),
+            unusedBibs = Object.keys(this.bibDB.db).filter(value =>
+                !usedBibs.includes(parseInt(value))
+            )
         unusedImages.forEach(id => this.imageDB.deleteImage(id))
         unusedBibs.forEach(id => this.bibDB.deleteReference(id))
     }

@@ -7,7 +7,7 @@ import {history} from "prosemirror-history"
 import {baseKeymap} from "prosemirror-commands"
 import {keymap} from "prosemirror-keymap/dist/keymap"
 
-import {Paste} from "../paste"
+import {HTMLPaste, TEXTPaste} from "../paste"
 import {fnSchema} from "../../schema/footnotes"
 import {toolbarPlugin} from "../plugins/toolbar"
 import {collabCaretsPlugin} from "../plugins/collab-carets"
@@ -57,7 +57,11 @@ export class ModFootnoteEditor {
 
             },
             transformPastedHTML: inHTML => {
-                let ph = new Paste(inHTML, "footnote")
+                let ph = new HTMLPaste(inHTML, "footnote")
+                return ph.getOutput()
+            },
+            transformPastedText: inHTML => {
+                let ph = new TextPaste(this.mod.editor, inHTML, "footnote")
                 return ph.getOutput()
             },
             dispatchTransaction: (transaction) => {

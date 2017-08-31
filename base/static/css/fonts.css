@@ -75,15 +75,6 @@
     content: '\f0d9';
 }
 
-#header-nav p.active-menu-wrapper:after {
-    display: block;
-    font: normal normal normal 14px/1 FontAwesome;
-    font-size: inherit;
-    text-rendering: auto;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    content: 'f0d7';
-}
 .fw-nav-item.active-menu-wrapper:after {
     display: block;
     font: normal normal normal 14px/1 FontAwesome;

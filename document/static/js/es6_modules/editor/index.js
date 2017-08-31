@@ -25,7 +25,7 @@ import {ModServerCommunications} from "./server-communications"
 import {getSettings} from "../schema/convert"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
-import {Paste} from "./paste"
+import {HTMLPaste, TextPaste} from "./paste"
 import {addDropdownBox} from "../common"
 
 import {placeholdersPlugin} from "./plugins/placeholders"
@@ -109,7 +109,11 @@ export class Editor {
             onBlur: (view) => {
             },
             transformPastedHTML: inHTML => {
-                let ph = new Paste(inHTML, "main")
+                let ph = new HTMLPaste(inHTML, "main")
+                return ph.getOutput()
+            },
+            transformPastedText: inText => {
+                let ph = new TextPaste(this, inText, "main")
                 return ph.getOutput()
             },
             dispatchTransaction: (transaction) => {

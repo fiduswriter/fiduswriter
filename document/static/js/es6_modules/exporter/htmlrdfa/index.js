@@ -24,6 +24,9 @@ export class HTMLRDFaExporter extends BaseHTMLRDFaExporter {
 
         this.joinDocumentParts().then(() => this.exportTwo())
 
+
+
+
     }
 
     exportTwo() {
@@ -39,7 +42,12 @@ export class HTMLRDFaExporter extends BaseHTMLRDFaExporter {
         let equations = contents.querySelectorAll('.equation')
 
         let figureEquations = contents.querySelectorAll('.figure-equation')
-
+        
+        let comments = []
+        for (let comment in this.doc.comments) {
+        	comments.push(this.doc.comments[comment])
+        }
+        
         if (equations.length > 0 || figureEquations.length > 0) {
             math = true
             styleSheets.push({
@@ -75,7 +83,11 @@ export class HTMLRDFaExporter extends BaseHTMLRDFaExporter {
 
         contents = this.converAuthorsToRDFa(contents)
 
-        contents = this.addSectionsTag(contents)
+	      contents = this.converAuthorsToRDFa(contents)
+	
+	      contents = this.convertCommentsToRDFa(contents)
+	
+	      contents = this.addSectionsTag(contents)
 
         let contentsCode = this.replaceImgSrc(contents.innerHTML)
 
@@ -92,6 +104,13 @@ export class HTMLRDFaExporter extends BaseHTMLRDFaExporter {
             filename: 'document.html',
             contents: dom
         }]
+        if (comments.length>0) {
+        	for (let i = 0; i < comments.length; i++) {
+            let node = comments[i]
+            outputList.push(this.createComment(node))
+        }
+        	        	       
+        }
 
         for (let i = 0; i < styleSheets.length; i++) {
             let styleSheet = styleSheets[i]

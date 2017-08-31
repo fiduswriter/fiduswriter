@@ -126,7 +126,7 @@ export let commentsTemplate = ({
         ${
             comment.id===activeCommentId && 0 < comment.comment.length ?
             `<div class="comment-answer">
-                <textarea class="comment-answer-text" rows="1"></textarea>
+                <textarea class="comment-answer-text" rows="3"></textarea>
                 <div class="comment-answer-btns">
                     <button class="comment-answer-submit fw-button fw-dark" type="submit">
                         ${gettext("Submit")}

@@ -59,7 +59,9 @@
     "prosemirror-dropcursor": "0.22.0",
     "texzilla": "0.9.9",
     "tokenfield": "^0.3.14",
-    "w3c-keyname": "1.1.6"
+    "w3c-keyname": "1.1.6",
+    "fix-utf8": "1.0.3",
+    "fast-deep-equal": "1.0.0"
   },
   "browserify": {
     "transform": [

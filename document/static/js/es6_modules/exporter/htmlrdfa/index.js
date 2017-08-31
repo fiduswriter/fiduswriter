@@ -20,11 +20,10 @@ export class HTMLRDFaExporter extends BaseHTMLRDFaExporter {
 
     exportOne() {
         addAlert('info', this.doc.title + ': ' + gettext(
-            'HTML export has been initiated.'))
+                'HTML export has been initiated.'))
 
-        this.joinDocumentParts().then(() => this.exportTwo())
-
-
+        this.joinDocumentParts().then(() = > this.exportTwo()
+    )
 
 
     }
@@ -41,12 +40,12 @@ export class HTMLRDFaExporter extends BaseHTMLRDFaExporter {
         let equations = contents.querySelectorAll('.equation')
 
         let figureEquations = contents.querySelectorAll('.figure-equation')
-        
+
         let comments = []
         for (let comment in this.doc.comments) {
-        	comments.push(this.doc.comments[comment])
+            comments.push(this.doc.comments[comment])
         }
-        
+
         if (equations.length > 0 || figureEquations.length > 0) {
             math = true
             styleSheets.push({
@@ -74,6 +73,8 @@ export class HTMLRDFaExporter extends BaseHTMLRDFaExporter {
 
         let httpOutputList = findImages(contents)
 
+        contents = this.addSectionsTag(contents)
+
         contents = this.addFigureNumbers(contents)
 
         contents = this.converTitleToRDFa(contents)
@@ -81,10 +82,8 @@ export class HTMLRDFaExporter extends BaseHTMLRDFaExporter {
         contents = this.convertAbstractToRDF(contents)
 
         contents = this.converAuthorsToRDFa(contents)
-	
-	      contents = this.convertCommentsToRDFa(contents)
-	
-	      contents = this.addSectionsTag(contents)
+
+        contents = this.convertCommentsToRDFa(contents)
 
         let contentsCode = this.replaceImgSrc(contents.innerHTML)
 
@@ -101,12 +100,12 @@ export class HTMLRDFaExporter extends BaseHTMLRDFaExporter {
             filename: 'document.html',
             contents: dom
         }]
-        if (comments.length>0) {
-        	for (let i = 0; i < comments.length; i++) {
-            let node = comments[i]
-            outputList.push(this.createComment(node))
-        }
-        	        	       
+        if (comments.length > 0) {
+            for (let i = 0; i < comments.length; i++) {
+                let node = comments[i]
+                outputList.push(this.createComment(node))
+            }
+
         }
 
         for (let i = 0; i < styleSheets.length; i++) {
@@ -130,9 +129,9 @@ export class HTMLRDFaExporter extends BaseHTMLRDFaExporter {
         )
 
         zipper.init().then(
-            blob => download(blob, createSlug(title) + '.html.zip',
-                'application/zip')
-        )
+            blob = > download(blob, createSlug(title) + '.html.zip',
+            'application/zip')
+    )
     }
 
 }

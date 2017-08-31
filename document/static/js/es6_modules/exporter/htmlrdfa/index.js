@@ -37,7 +37,6 @@ export class HTMLRDFaExporter extends BaseHTMLRDFaExporter {
         let title = this.doc.title
 
         let contents = this.contents
-        console.log(contents)
 
         let equations = contents.querySelectorAll('.equation')
 
@@ -82,8 +81,6 @@ export class HTMLRDFaExporter extends BaseHTMLRDFaExporter {
         contents = this.convertAbstractToRDF(contents)
 
         contents = this.converAuthorsToRDFa(contents)
-
-	      contents = this.converAuthorsToRDFa(contents)
 	
 	      contents = this.convertCommentsToRDFa(contents)
 	

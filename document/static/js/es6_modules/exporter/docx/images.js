@@ -39,7 +39,8 @@ export class DocxExporterImages {
     }
 
     // Find all images used in file and add these to the export zip.
-    // TODO: This will likely fail on image types docx doesn't support such as SVG. Try out and fix.
+    // TODO: This will likely fail on image types docx doesn't support such as SVG.
+    // Try out and fix.
     exportImages() {
         let usedImgs = []
         descendantNodes(this.docContents).forEach(

@@ -1,7 +1,7 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
 
-const commentsKey = new PluginKey('comments')
+const key = new PluginKey('comments')
 
 export let addCommentDuringCreationDecoration = function(state) {
     let decos = DecorationSet.empty
@@ -12,21 +12,21 @@ export let addCommentDuringCreationDecoration = function(state) {
     let deco = Decoration.inline(state.selection.from, state.selection.to, {class: 'active-comment'})
     decos = decos.add(state.doc, [deco])
 
-    let transaction = state.tr.setMeta(commentsKey, {decos})
+    let transaction = state.tr.setMeta(key, {decos})
     return transaction
 }
 
 export let removeCommentDuringCreationDecoration = function(state) {
     let {
         decos
-    } = commentsKey.getState(state)
+    } = key.getState(state)
 
     if (decos.find().length === 0) {
         return
     }
     decos = DecorationSet.empty
 
-    let transaction = state.tr.setMeta(commentsKey, {decos})
+    let transaction = state.tr.setMeta(key, {decos})
     return transaction
 
 }
@@ -34,14 +34,14 @@ export let removeCommentDuringCreationDecoration = function(state) {
 export let getCommentDuringCreationDecoration = function(state) {
     let {
         decos
-    } = commentsKey.getState(state)
+    } = key.getState(state)
 
     return decos.find()[0]
 }
 
 export let commentsPlugin = function(options) {
     return new Plugin({
-        key: commentsKey,
+        key,
         state: {
             init() {
                 return {
@@ -49,7 +49,7 @@ export let commentsPlugin = function(options) {
                 }
             },
             apply(tr, prev, oldState, state) {
-                let meta = tr.getMeta(commentsKey)
+                let meta = tr.getMeta(key)
                 if (meta) {
                     // There has been an update, return values from meta instead
                     // of previous values

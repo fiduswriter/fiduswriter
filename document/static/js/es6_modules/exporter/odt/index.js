@@ -1,4 +1,4 @@
-import {createSlug, getDatabasesIfNeeded} from "../tools/file"
+import {createSlug} from "../tools/file"
 import {XmlZip} from "../tools/xml-zip"
 import {textContent, removeHidden} from "../tools/doc-contents"
 
@@ -15,6 +15,12 @@ import {OdtExporterMath} from "./math"
 Exporter to Open Document Text (LibreOffice)
 */
 
+/*
+TODO:
+* - Export comments
+* - Templating of keywords/authors output
+*/
+
 export class OdtExporter {
     constructor(doc, templateUrl, bibDB, imageDB, citationStyles, citationLocales) {
         this.doc = doc
@@ -26,9 +32,7 @@ export class OdtExporter {
         this.pmCits = false
         this.docContents = false
         this.docTitle = false
-        getDatabasesIfNeeded(this, doc).then(
-            () => this.init()
-        )
+        this.init()
     }
 
 
@@ -51,9 +55,9 @@ export class OdtExporter {
             'application/vnd.oasis.opendocument.text'
         )
         this.xml.init().then(
-            () => this.metadata.init()
-        ).then(
             () => this.styles.init()
+        ).then(
+            () => this.metadata.init()
         ).then(
             () => this.citations.init()
         ).then(

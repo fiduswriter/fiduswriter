@@ -27,13 +27,14 @@ export let descendantNodes = function(node) {
 }
 
 export let textContent = function(node) {
-    let returnString = ""
-    descendantNodes(node).forEach(
-        subNode => {
+    return descendantNodes(node).reduce(
+        (returnString, subNode) => {
             if(subNode.text){
                 returnString += subNode.text
             }
-        }
+            return returnString
+        },
+        ''
     )
-    return returnString
+
 }

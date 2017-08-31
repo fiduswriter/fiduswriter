@@ -4,7 +4,7 @@ import {nodes, marks} from "prosemirror-schema-basic"
 import {addListNodes} from "prosemirror-schema-list"
 import {tableNodes} from "prosemirror-tables"
 
-import {figure, citation, equation, heading} from "./common"
+import {figure, citation, equation, heading, anchor} from "./common"
 
 let footnotecontainer = {
     group: "part",
@@ -39,7 +39,8 @@ let spec = {
       em: marks.em,
       strong: marks.strong,
       link: marks.link,
-      code: marks.code
+      code: marks.code,
+      anchor
   })
 }
 

@@ -3,8 +3,8 @@ import {activateWait, deactivateWait, addAlert, csrfToken} from "../common"
 const FW_LOCALSTORAGE_VERSION = "1.0"
 
 export class BibliographyDB {
-    constructor(docOwnerId, useLocalStorage = false, db = {}, cats = []) {
-        this.docOwnerId = docOwnerId
+    constructor(ownerId, useLocalStorage = false, db = {}, cats = []) {
+        this.ownerId = ownerId
         this.useLocalStorage = useLocalStorage // Whether to use local storage to cache result
         this.db = db
         this.cats = cats
@@ -38,7 +38,7 @@ export class BibliographyDB {
 
             if (
                 localStorageVersion != FW_LOCALSTORAGE_VERSION ||
-                localStorageOwnerId != this.docOwnerId
+                localStorageOwnerId != this.ownerId
             ) {
                 lastModified = -1
                 numberOfEntries = -1
@@ -51,7 +51,6 @@ export class BibliographyDB {
             jQuery.ajax({
                 url: '/bibliography/biblist/',
                 data: {
-                    'owner_id': this.docOwnerId,
                     'last_modified': lastModified,
                     'number_of_entries': numberOfEntries,
                 },
@@ -75,7 +74,7 @@ export class BibliographyDB {
                                 window.localStorage.setItem('biblist', JSON.stringify(response.bibList))
                                 window.localStorage.setItem('last_modified_biblist', response.last_modified)
                                 window.localStorage.setItem('number_of_entries', response.number_of_entries)
-                                window.localStorage.setItem('owner_id', response.docOwnerId)
+                                window.localStorage.setItem('owner_id', this.ownerId)
                                 window.localStorage.setItem('version', FW_LOCALSTORAGE_VERSION)
                             } catch (error) {
                                 // The local storage was likely too small
@@ -126,16 +125,13 @@ export class BibliographyDB {
         // the original tmpDB isn't destroyed.
         let dbObject = {}
         Object.keys(tmpDB).forEach((bibKey)=>{
-            dbObject[bibKey] =  Object.assign({}, tmpDB[bibKey])
+            dbObject[bibKey] = Object.assign({}, tmpDB[bibKey])
             dbObject[bibKey].entry_cat = JSON.stringify(tmpDB[bibKey].entry_cat)
             dbObject[bibKey].fields = JSON.stringify(tmpDB[bibKey].fields)
         })
         let sendData = {
             is_new: isNew,
             bibs: JSON.stringify(dbObject)
-        }
-        if (this.docOwnerId !== 0) {
-            sendData['owner_id'] = this.docOwnerId
         }
         return new Promise((resolve, reject) => {
             jQuery.ajax({
@@ -247,10 +243,10 @@ export class BibliographyDB {
     }
 
     /** Delete a list of bibliography items both locally and on the server.
-     * @function deleteBibEntry
+     * @function deleteBibEntries
      * @param ids A list of bibliography item ids that are to be deleted.
      */
-    deleteBibEntry(ids) {
+    deleteBibEntries(ids) {
         for (let i = 0; i < ids.length; i++) {
             ids[i] = parseInt(ids[i])
         }

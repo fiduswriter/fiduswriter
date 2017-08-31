@@ -1,4 +1,4 @@
-import {figureImageTemplate, figureImageItemTemplate, configureFigureTemplate} from "./templates"
+import {figureImageTemplate, configureFigureTemplate} from "./templates"
 import {ImageSelectionDialog} from "../../../images/selection-dialog"
 import {addDropdownBox} from "../../../common"
 import {katexRender} from "../../../katex"
@@ -6,8 +6,10 @@ import {katexRender} from "../../../katex"
 export class FigureDialog {
     constructor(editor) {
         this.editor = editor
-        this.imageDB = this.editor.imageDB
-        this.imageId = false
+        this.imageDB = this.editor.mod.db.imageDB
+        this.userImageDB = this.editor.user.imageDB
+        this.imgId = false
+        this.imgDb = false
         this.insideFigure = false
         this.figureNode = false
         this.contentNode = false
@@ -28,19 +30,18 @@ export class FigureDialog {
     }
 
     layoutImagePreview() {
-        //TODO: Figure out what to do if the image has been deleted from imageDB.db in the meantime.
-        if (this.imageId && this.imageDB.db[this.imageId]) {
+        if (this.imgId) {
+            let db = this.imgDb === 'document' ? this.imageDB.db : this.userImageDB.db
             document.getElementById('inner-figure-preview').innerHTML =
-                '<img src="' +
-                this.imageDB.db[this.imageId].image +
-                '" style="max-width: 400px;max-height:220px">'
+                `<img src="${db[this.imgId].image}"
+                        style="max-width: 400px;max-height:220px">`
         }
     }
 
     setFigureLabel() {
         jQuery(
             '#figure-category-btn label',
-            this.dialog).html(jQuery('#figure-category-' + this.figureCategory).text())
+            this.dialog).html(jQuery(`#figure-category-${this.figureCategory}`).text())
     }
 
     submitForm() {
@@ -49,7 +50,7 @@ export class FigureDialog {
         this.equation = mathInput.val()
         this.caption = captionInput.val()
 
-        if ((new RegExp(/^\s*$/)).test(this.equation) && (!this.imageId)) {
+        if ((new RegExp(/^\s*$/)).test(this.equation) && (!this.imgId)) {
             // The math input is empty. Delete a math node if it exist. Then close the dialog.
             if (this.insideFigure) {
                 let transaction = this.editor.currentView.state.tr.deleteSelection()
@@ -60,20 +61,30 @@ export class FigureDialog {
         }
 
         if (this.insideFigure && this.equation === this.node.attrs.equation &&
-            (this.imageId === this.node.attrs.image) &&
+            (this.imgId === this.node.attrs.image) &&
+            this.imgDb === 'document' &&
             this.caption === this.node.attrs.caption &&
             this.figureCategory === this.node.attrs.figureCategory) {
             // the figure has not been changed, just close the dialog
             this.dialog.dialog('close')
             return false
         }
+        if (this.imgDb==='user') {
+            // add image to document db.
+            let imageEntry = this.userImageDB.db[this.imgId]
+            this.imageDB.setImage(this.imgId, imageEntry)
+            this.imgDb = 'document'
+        }
+
         let nodeType = this.editor.currentView.state.schema.nodes['figure']
-        let transaction = this.editor.currentView.state.tr.replaceSelectionWith(nodeType.createAndFill({
-            equation: this.equation,
-            image: this.imageId,
-            figureCategory: this.figureCategory,
-            caption: this.caption
-        }))
+        let transaction = this.editor.currentView.state.tr.replaceSelectionWith(
+            nodeType.createAndFill({
+                equation: this.equation,
+                image: this.imgId,
+                figureCategory: this.figureCategory,
+                caption: this.caption
+            })
+        )
         this.editor.currentView.dispatch(transaction)
 
         this.dialog.dialog('close')
@@ -87,7 +98,7 @@ export class FigureDialog {
             this.insideFigure = true
             this.submitMessage = gettext('Update')
             this.equation = this.node.attrs.equation
-            this.imageId = this.node.attrs.image
+            this.imgId = this.node.attrs.image
             this.figureCategory = this.node.attrs.figureCategory
             this.caption = this.node.attrs.caption
 
@@ -106,7 +117,7 @@ export class FigureDialog {
         this.dialog = jQuery(configureFigureTemplate({
             equation: this.equation,
             caption: this.caption,
-            image: this.imageId
+            image: this.imgId
         }))
 
         dialogButtons.push({
@@ -150,7 +161,7 @@ export class FigureDialog {
 
         if (this.equation) {
             this.layoutMathPreview()
-        } else if (this.imageId) {
+        } else if (this.imgId) {
             this.layoutImagePreview()
         }
 
@@ -197,18 +208,22 @@ export class FigureDialog {
 
                 let imageSelection = new ImageSelectionDialog(
                     that.imageDB,
-                    that.imageId,
-                    that.editor.docInfo.owner.id)
+                    that.userImageDB,
+                    that.imgId,
+                    that.editor.docInfo.owner.id
+                )
                 imageSelection.init().then(
-                    newImageId => {
-                        if (newImageId && newImageId !== false) {
-                            that.imageId = newImageId
+                    ({id, db}) => {
+                        if (id) {
+                            that.imgId = id
+                            that.imgDb = db
                             that.layoutImagePreview()
                             jQuery('input[name=figure-math]').attr(
                                 'disabled',
                                 'disabled')
                         } else {
-                            that.imageId = false
+                            that.imgId = false
+                            that.imgDb = false
                             jQuery('#inner-figure-preview').html('')
                             jQuery('input[name=figure-math]').removeAttr(
                                 'disabled')

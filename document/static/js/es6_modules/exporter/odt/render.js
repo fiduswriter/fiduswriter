@@ -33,7 +33,40 @@ export class OdtExporterRender {
             },
             {
                 title: 'authors',
-                content: textContent(this.docContents.content[2])
+                // TODO: This is a very basic reduction of the author info into
+                // a simple string. We should expand the templating system so
+                // that one can specify more about the output.
+                content: this.docContents.content[2].content ?
+                    this.docContents.content[2].content.map(
+                        node => {
+                            let author = node.attrs,
+                                nameParts = [],
+                                affiliation = false
+                            if (author.firstname) {
+                                nameParts.push(author.firstname)
+                            }
+                            if (author.lastname) {
+                                nameParts.push(author.lastname)
+                            }
+                            if (author.institution) {
+                                if (nameParts.length) {
+                                    affiliation = author.institution
+                                } else {
+                                    // We have an institution but no names. Use institution as name.
+                                    nameParts.push(author.institution)
+                                }
+                            }
+                            let parts = [nameParts.join(' ')]
+                            if (affiliation) {
+                                parts.push(affiliation)
+                            }
+                            if (author.email) {
+                                parts.push(author.email)
+                            }
+                            return parts.join(', ')
+                        }
+                    ).join('; ') :
+                    ''
             },
             {
                 title: '@abstract', // The '@' triggers handling as block
@@ -41,7 +74,9 @@ export class OdtExporterRender {
             },
             {
                 title: 'keywords',
-                content: textContent(this.docContents.content[4])
+                content: this.docContents.content[4].content ?
+                    this.docContents.content[4].content.map(node => node.attrs.keyword).join(', ') :
+                    ''
             },
             {
                 title: '@body', // The '@' triggers handling as block

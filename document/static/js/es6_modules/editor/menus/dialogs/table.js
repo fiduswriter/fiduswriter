@@ -92,7 +92,7 @@ export class TableDialog {
             }
         })
 
-        this.dialog = jQuery(tableInsertTemplate({}))
+        this.dialog = jQuery(tableInsertTemplate())
 
         this.dialog.dialog({
             draggable: false,

@@ -5,9 +5,11 @@ import {DOMSerializer} from "prosemirror-model"
 
 export class BaseHTMLExporter extends BaseDOMExporter {
     joinDocumentParts() {
-        let serializer = DOMSerializer.fromSchema(docSchema)
-        this.contents = serializer.serializeNode(docSchema.nodeFromJSON(this.doc.contents))
-
+        let schema = docSchema
+        schema.cached.imageDB = this.imageDB
+        let serializer = DOMSerializer.fromSchema(schema)
+        this.contents = serializer.serializeNode(schema.nodeFromJSON(this.doc.contents))
+        
         // Remove hidden parts
         let hiddenEls = [].slice.call(this.contents.querySelectorAll('[data-hidden=true]'))
         hiddenEls.forEach(hiddenEl => {

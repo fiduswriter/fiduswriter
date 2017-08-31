@@ -76,24 +76,83 @@ export class LatexExporterConvert {
                     this.features.subtitle = true
                 }
                 break
+            case 'author':
+                // Ignore - we deal with authors instead.
+                break
             case 'authors':
                 if (node.content) {
-                    start += '\n\\author{'
-                    end = '}' + end
+                    let authorsPerAffil = node.content.map(node => {
+                        let author = node.attrs,
+                            nameParts = [],
+                            affiliation = false
+                        if (author.firstname) {
+                            nameParts.push(author.firstname)
+                        }
+                        if (author.lastname) {
+                            nameParts.push(author.lastname)
+                        }
+                        if (nameParts.length && author.institution) {
+                            affiliation = author.institution
+                        } else if (author.institution) {
+                            // We have an institution but no names. Use institution as name.
+                            nameParts.push(author.institution)
+                        }
+                        return {
+                            name: nameParts.join(' '),
+                            affiliation,
+                            email: author.email
+                        }
+                    }).reduce((affils, author) => {
+                        let affil = author.affiliation
+                        affils[affil] = affils[affil] || []
+                        affils[affil].push(author)
+                        return affils
+                    }, {})
+
+                    Object.values(authorsPerAffil).forEach(
+                        affil => {
+                            affil.forEach(
+                                author => {
+                                    content +=
+                                        `\n\\author{${escapeLatexText(author.name)}${
+                                            author.email ?
+                                            `\\thanks{${
+                                                escapeLatexText(author.email)
+                                            }}` :
+                                            ''
+                                        }}`
+                                }
+                            )
+
+                            content += `\n\\affil{${
+                                affil[0].affiliation ?
+                                escapeLatexText(affil[0].affiliation) :
+                                ''
+                            }}`
+                        }
+                    )
+                    this.features.authors = true
+                    content += "\n\n"
                 }
-                // We add the maketitle command here. TODO: This relies on the
-                // existence of a subtitle node, even if it has no content.
-                // It would be better if it wouldn't have to rely on this.
-                start += '\n\n\\maketitle\n'
                 break
             case 'keywords':
                 if (node.content) {
                     start += '\n\\keywords{'
+                    start += node.content.map(
+                        keyword => escapeLatexText(keyword.attrs.keyword)
+                    ).join('\\sep ')
                     end = '}' + end
                     this.features.keywords = true
                 }
                 break
+            case 'keyword':
+                // Ignore - we already took all the keywords from the keywords node.
+                break
             case 'abstract':
+                // We add the maketitle command here. TODO: This relies on the
+                // existence of a abstract node, even if it has no content.
+                // It would be better if it wouldn't have to rely on this.
+                start += '\n\n\\maketitle\n'
                 if (node.content) {
                     start += '\n\\begin{abstract}\n'
                     end = '\n\\end{abstract}\n' + end
@@ -438,6 +497,14 @@ export class LatexExporterConvert {
                 }
             `
         }
+        if (this.features.authors) {
+            preamble += `
+                \n\\usepackage{authblk}
+                \n\\makeatletter
+                \n\\let\\@fnsymbol\\@alph
+                \n\\makeatother
+            `
+        }
 
         if (this.features.keywords) {
             preamble += `
@@ -445,6 +512,7 @@ export class LatexExporterConvert {
                 \n{\\textit{Keywords}:\\,\\relax%
                 \n}}
                 \n\\def\\endkeywords{\\par}
+                \n\\newcommand{\\sep}{, }
             `
         }
 

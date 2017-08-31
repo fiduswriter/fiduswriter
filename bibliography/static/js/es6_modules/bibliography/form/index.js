@@ -197,6 +197,13 @@ export class BibEntryForm {
             let entryCatField = document.getElementById('categories-field')
             this.entryCatForm = new EntryCatForm(entryCatField, this.currentValues.entry_cat, this.bibDB.cats)
             this.entryCatForm.init()
+
+            if (!this.bibDB.cats.length) {
+                // There are no ctaegories to select from, so remove the categories tab.
+                [].slice.call(document.querySelectorAll('#categories-tab, #categories-link')).forEach(
+                    el => el.parentElement.removeChild(el)
+                )
+            }
         }
         return dialogPromise
     }

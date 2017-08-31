@@ -10,6 +10,8 @@ export class ModBibliographyDB {
         this.mod = mod
         this.db = false
         this.unsent = []
+        // cats aren't used, but we keep this for consistency
+        this.cats = []
     }
 
     setDB(db) {

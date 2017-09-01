@@ -21,7 +21,7 @@ from avatar.templatetags.avatar_tags import avatar_url
 
 from document.models import Document, AccessRight, DocumentRevision, \
     ExportTemplate, CAN_UPDATE_DOCUMENT
-from usermedia.models import DocumentImage, UserImage, Image
+from usermedia.models import DocumentImage, Image
 from document.helpers.serializers import PythonWithURLSerializer
 
 from style.models import CitationStyle, CitationLocale
@@ -187,13 +187,9 @@ def delete_js(request):
         )
         document = Document.objects.get(pk=doc_id, owner=request.user)
         document.delete()
-        for id in image_ids:
-            if not (
-                DocumentImage.objects.filter(image_id=id).exists() or
-                UserImage.objects.filter(image_id=id).exists()
-            ):
-                Image.objects.filter(id=id).delete()
-
+        for image in Image.objects.filter(id__in=image_ids):
+            if image.is_deletable():
+                image.delete()
         status = 200
     return JsonResponse(
         response,

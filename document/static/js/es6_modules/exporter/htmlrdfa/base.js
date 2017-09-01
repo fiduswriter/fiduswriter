@@ -13,7 +13,7 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
         // Remove hidden parts
         let hiddenEls = [].slice.call(this.contents.querySelectorAll(
             '[data-hidden=true]'))
-        hiddenEls.forEach(hiddenEl = > {
+        hiddenEls.forEach(hiddenEl => {
             hiddenEl.parentElement.removeChild(hiddenEl)
     })
 
@@ -26,7 +26,7 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
             true
         )
         return citRenderer.init().then(
-                () = > {
+                () => {
                 this.addBibliographyHTML(citRenderer.fm.bibHTML)
         return Promise.resolve()
     }

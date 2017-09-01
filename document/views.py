@@ -22,8 +22,9 @@ from avatar.templatetags.avatar_tags import avatar_url
 from document.models import Document, AccessRight, DocumentRevision, \
     ExportTemplate, CAN_UPDATE_DOCUMENT
 from usermedia.models import DocumentImage, Image
+from bibliography.models import Entry
 from document.helpers.serializers import PythonWithURLSerializer
-
+from bibliography.views import serializer
 from style.models import CitationStyle, CitationLocale
 
 
@@ -528,6 +529,29 @@ def save_doc_js(request):
         if last_diffs:
             doc.last_diffs = last_diffs
         doc.save()
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@staff_member_required
+def get_user_biblist_js(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 200
+        user_id = request.POST['user_id']
+        response['bibList'] = serializer.serialize(
+            Entry.objects.filter(
+                entry_owner_id=user_id
+            ), fields=(
+                    'entry_key',
+                    'entry_owner',
+                    'bib_type',
+                    'fields'
+            )
+        )
     return JsonResponse(
         response,
         status=status

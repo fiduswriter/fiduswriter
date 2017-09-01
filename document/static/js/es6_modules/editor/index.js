@@ -198,9 +198,9 @@ export class Editor {
         this.schema.cached.imageDB = this.mod.db.imageDB
         // assign image DB to be used in footnote schema.
         this.mod.footnotes.fnEditor.schema.cached.imageDB = this.mod.db.imageDB
-        this.user.bibDB = new BibliographyDB(this.user.id, true)
+        this.user.bibDB = new BibliographyDB()
         this.user.bibDB.getDB()
-        this.user.imageDB = new ImageDB(this.user.id, true)
+        this.user.imageDB = new ImageDB()
         this.user.imageDB.getDB()
 
         let stateDoc

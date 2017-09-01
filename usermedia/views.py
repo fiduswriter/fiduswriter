@@ -175,17 +175,18 @@ def save_category_js(request):
         status=status
     )
 
+
 # delete a category
-
-
 @login_required
 def delete_category_js(request):
     status = 405
     response = {}
     if request.is_ajax() and request.method == 'POST':
         ids = request.POST.getlist('ids[]')
-        for id in ids:
-            ImageCategory.objects.get(pk=int(id)).delete()
+        ImageCategory.objects.filter(
+            id__in=ids,
+            category_owner=request.user
+        ).delete()
         status = 201
 
     return JsonResponse(

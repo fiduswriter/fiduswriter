@@ -22,7 +22,7 @@ export class HTMLRDFaExporter extends BaseHTMLRDFaExporter {
         addAlert('info', this.doc.title + ': ' + gettext(
                 'HTML export has been initiated.'))
 
-        this.joinDocumentParts().then(() = > this.exportTwo()
+        this.joinDocumentParts().then(() => this.exportTwo()
     )
 
 
@@ -71,6 +71,7 @@ export class HTMLRDFaExporter extends BaseHTMLRDFaExporter {
 
         let includeZips = []
 
+        console.log("in rdfa export index")
         let httpOutputList = findImages(contents)
 
         contents = this.addSectionsTag(contents)
@@ -129,7 +130,7 @@ export class HTMLRDFaExporter extends BaseHTMLRDFaExporter {
         )
 
         zipper.init().then(
-            blob = > download(blob, createSlug(title) + '.html.zip',
+            blob => download(blob, createSlug(title) + '.html.zip',
             'application/zip')
     )
     }

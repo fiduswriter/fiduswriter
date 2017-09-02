@@ -46,15 +46,15 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
     addFigureNumbers(dom) {
 
         jQuery(dom).find('figcaption .figure-cat-figure').each(
-            function (index) {
+            function(index) {
                 this.innerHTML += ' ' + (index + 1) + ': '
             })
 
-        jQuery(dom).find('figcaption .figure-cat-photo').each(function (index) {
+        jQuery(dom).find('figcaption .figure-cat-photo').each(function(index) {
             this.innerHTML += ' ' + (index + 1) + ': '
         })
 
-        jQuery(dom).find('figcaption .figure-cat-table').each(function (index) {
+        jQuery(dom).find('figcaption .figure-cat-table').each(function(index) {
             this.innerHTML += ' ' + (index + 1) + ': '
         })
         return dom
@@ -80,7 +80,8 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
     }
 
     convertCommentsToRDFa(htmlCode) {
-        jQuery(htmlCode).find('span.comment').each(function () {
+
+       jQuery(htmlCode).find('span.comment').each(function() {
             let id = jQuery(this).attr('data-id')
             jQuery(this).attr({"rel": "schema:hasPart", "typeof": "dctypes:Text", "resource": "r-" + id})
             let commentDescription = this.innerHTML,
@@ -92,13 +93,11 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
             jQuery(this).addClass("ref do")
 
         })
-
-
         return htmlCode
     }
 
-    createComment(commentNode) {
-        let commentHeader = '<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head>\
+    createComment(commentNode){
+    let commentHeader = '<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head>\
     	<meta http-equiv="content-type" content="text/html; charset=UTF-8">\<meta charset="utf-8">\
     	<title>' + window.location.href + '#' + commentNode.id + '</title></head><body><main>\
     	<article id="' + commentNode.id + '" about="i:" typeof="oa:Annotation" prefix="rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns# schema: http://schema.org/ dcterms: http://purl.org/dc/terms/ oa: http://www.w3.org/ns/oa# as: https://www.w3.org/ns/activitystreams#\
@@ -167,49 +166,52 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
 
     addSectionsTag(dom) {
         var className
-        jQuery(dom).find('h2').each(function (index) {
+        jQuery(dom).find('h2').each(function(index) {
             if (this.classList !== null && this.innerHTML !== null) {
                 className = this.innerHTML
                 className = className.replace(/\s+/g, '')
                 this.classList.add(className)
                 this.id = className
                 this.outerHTML =
-                    `<section id="${className }" resource="#${className}">
+                    `<section id="${className}" resource="#${className}">
+                        <h3 property="schema:name">${this.innerHTML}</h3>
+                    </section>`
+		 console.log("converting h2")
+                //console.log(this.outerHTML)
+            }
+        })
+
+	var className
+        jQuery(dom).find('h1').each(function(index) {
+            if (this.classList !== null && this.innerHTML !== null) {
+                className = this.innerHTML
+                className = className.replace(/\s+/g, '')
+		//Titles are also H1 in FW, which have not class names
+		if(className){
+		    this.classList.add(className)
+                    this.id = className
+                    this.outerHTML =
+                    `<section id="${className}" resource="#${className}">
                         <h2 property="schema:name">${this.innerHTML}</h2>
                     </section>`
-                //console.log(this.outerHTML)
+		}
             }
         })
 
         var className
-        jQuery(dom).find('h3').each(function (index) {
+        jQuery(dom).find('h3').each(function(index) {
             if (this.classList !== null && this.innerHTML !== null) {
                 className = this.innerHTML
                 className = className.replace(/\s+/g, '')
                 this.classList.add(className)
                 this.id = className
                 this.outerHTML =
-                    `<section id="${className }" resource="#${className}">
-                        <h3 property="schema:name">${this.innerHTML}</h3>
+                    `<section id="${className}" inlist="" " resource="#${className}">
+                        <h4 property="schema:name">${this.innerHTML}</h4>
                     </section>`
-                //console.log(this.outerHTML)
             }
         })
-
-        var className
-        jQuery(dom).find('h3').each(function (index) {
-            if (this.classList !== null && this.innerHTML !== null) {
-                className = this.innerHTML
-                className = className.replace(/\s+/g, '')
-                this.classList.add(className)
-                this.id = className
-                this.outerHTML =
-                    `<section id="${className }" resource="#${className}">
-                        <h3 property="schema:name">${this.innerHTML}</h3>
-                    </section>`
-                //console.log(this.outerHTML)
-            }
-        })
+        
         return dom
     }
 

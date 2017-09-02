@@ -138,6 +138,22 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
         jQuery(dom).find('div.article-authors').attr({
             "id": "authors"
         })
+
+
+   var className
+        jQuery(dom).find('span.author').each(function(index) {
+            if (this.classList !== null && this.innerHTML !== null) {
+                className = this.innerHTML
+                className = className.replace(/\s+/g, '')
+                this.classList.add(className)
+                this.id = className
+                this.outerHTML =
+                    `<dd id="${className}" rel="bibo:authorList"  resource="#${className}">
+                        <span rel="schema:creator schema:publisher schema:author" typeof="schema:person">${this.innerHTML}</span>
+                    </dd>`
+            }
+        })
+
         return dom
     }
 
@@ -153,7 +169,6 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
         })
         var abstractSection = abstractEl.wrap('<p/>').parent().html()
         abstractSection = abstractSection
-        //.replace(/<div/g,'<div calss="article-content" id="content"> <section id="abstract"> <div')
             .replace(/<div/g, '<section id="Abstract"')
             .replace(/<\/div>/g, '</section>')
         jQuery(dom).find('div.article-abstract').parent().html(
@@ -176,8 +191,6 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
                     `<section id="${className}" resource="#${className}">
                         <h3 property="schema:name">${this.innerHTML}</h3>
                     </section>`
-		 console.log("converting h2")
-                //console.log(this.outerHTML)
             }
         })
 

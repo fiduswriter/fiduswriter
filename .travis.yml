@@ -4,18 +4,26 @@ python:
 node_js:
   - "6"
 
-sudo: required
 dist: trusty
-group: deprecated-2017Q3
 
 env:
   - TRAVIS_PYTHON_VERSION="2.7"
 
+addons:
+  sauce_connect: true
+  apt:
+    packages:
+      - libjpeg-dev
+      - python-dev
+      - python-pip
+      - gettext
+      - zlib1g-dev
+      - git
+      - python-virtualenv
+
 before_install:
   - x="bas";`"$x"e64 -d <<< ZXhwb3J0IFNBVUNFX1VTRVJOQU1FPWZpZHVz`
   - x="bas";`"$x"e64 -d <<< ZXhwb3J0IFNBVUNFX0FDQ0VTU19LRVk9OWU5ZGJkNzctNDIwOC00ODM5LTkwY2ItMTZkM2M5ODUxZGMw`
-  - sudo apt-get -qq update
-  - sudo apt-get install -y libjpeg-dev python-dev python-pip gettext zlib1g-dev git python-virtualenv
   - virtualenv venv
   - source venv/bin/activate
 
@@ -31,8 +39,6 @@ install:
   - coverage run manage.py init
 
 script:
-
-  - ./travis/sauce-connect.sh
   - travis_retry coverage run manage.py test
 
 after_success:

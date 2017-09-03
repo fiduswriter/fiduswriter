@@ -2,9 +2,9 @@
 // marked as hidden removed.
 
 export let removeHidden = function(node) {
-    let keys = Object.keys(node), returnNode = {}
+    let returnNode = {}
 
-    keys.forEach(key => {
+    Object.keys(node).forEach(key => {
         if (key !== 'content') {
             returnNode[key] = node[key]
         }

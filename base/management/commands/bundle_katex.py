@@ -56,6 +56,8 @@ class Command(BaseCommand):
               "base/static/css/libs/katex"])
         call(["cp", "-R", "node_modules/katex/dist/fonts",
               "base/static/css/libs/katex"])
+        call(["cp", "-R", "node_modules/katex/dist/images",
+              "base/static/css/libs/katex"])
         zip_file_path = os.path.join(
             PROJECT_PATH, 'base/static/zip/katex-style.zip')
         zip_dir = os.path.dirname(zip_file_path)

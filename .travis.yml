@@ -22,11 +22,11 @@ install:
   - pip install -r requirements.txt
   - pip install -r dev-requirements.txt
   - flake8 ./
-  - ./manage.py check_js
   - pip install coverage
   - pip install coveralls
   - pip install selenium
-  - coverage run manage.py init
+  - coverage run manage.py init --no-static --no-compress
+  - ./manage.py check_js
 
 script:
   - travis_retry coverage run manage.py test

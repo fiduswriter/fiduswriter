@@ -32,7 +32,6 @@ class Command(BaseCommand):
             help='Do not attempt to compress static files.',
         )
 
-
     def handle(self, *args, **options):
         if options["restart"]:
             call_command("flush")

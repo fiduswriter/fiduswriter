@@ -12,21 +12,10 @@ env:
 addons:
   sauce_connect:
     no_ssl_bump_domains: all
-  apt:
-    packages:
-      - libjpeg-dev
-      - python-dev
-      - python-pip
-      - gettext
-      - zlib1g-dev
-      - git
-      - python-virtualenv
 
 before_install:
   - x="bas";`"$x"e64 -d <<< ZXhwb3J0IFNBVUNFX1VTRVJOQU1FPWZpZHVz`
   - x="bas";`"$x"e64 -d <<< ZXhwb3J0IFNBVUNFX0FDQ0VTU19LRVk9OWU5ZGJkNzctNDIwOC00ODM5LTkwY2ItMTZkM2M5ODUxZGMw`
-  - virtualenv venv
-  - source venv/bin/activate
 
 install:
   - mv travis/configuration.py ./

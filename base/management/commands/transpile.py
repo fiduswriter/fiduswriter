@@ -92,7 +92,6 @@ class Command(BaseCommand):
         # ./manage.py collectstatic).
         # This allows for the modules to import from oneanother, across Django
         # Apps.
-
         # Create a cache dir for collecting JavaScript files
         cache_path = os.path.join(PROJECT_PATH, "es6-cache")
         if not os.path.exists(cache_path):

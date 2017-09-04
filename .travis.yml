@@ -21,6 +21,9 @@ cache:
   directories:
     - node_modules
     - es6-cache
+    - $HOME/.cache/pip
+before_cache:
+  - rm -f $HOME/.cache/pip/log/debug.log
 
 install:
   - mv travis/configuration.py ./

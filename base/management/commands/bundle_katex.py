@@ -49,15 +49,15 @@ class Command(BaseCommand):
         print("Bundling KaTeX")
         # Copy KaTeX CSS
         katex_css_path = os.path.join(
-            PROJECT_PATH, "base/static/css/libs/katex/")
+            PROJECT_PATH, "static-libs/css/libs/katex/")
         if not os.path.exists(katex_css_path):
             os.makedirs(katex_css_path)
         call(["cp", "node_modules/katex/dist/katex.min.css",
-              "base/static/css/libs/katex"])
+              "static-libs/css/libs/katex"])
         call(["cp", "-R", "node_modules/katex/dist/fonts",
-              "base/static/css/libs/katex"])
+              "static-libs/css/libs/katex"])
         zip_file_path = os.path.join(
-            PROJECT_PATH, 'base/static/zip/katex-style.zip')
+            PROJECT_PATH, 'static-libs/zip/katex-style.zip')
         zip_dir = os.path.dirname(zip_file_path)
         if not os.path.exists(zip_dir):
             os.makedirs(zip_dir)
@@ -70,7 +70,7 @@ class Command(BaseCommand):
 
         opf_file_contents = opf_entries(file_paths)
         opf_file_path = os.path.join(
-            PROJECT_PATH, 'base/static/js/es6_modules/katex/opf-includes.js')
+            PROJECT_PATH, 'static-libs/js/es6_modules/katex/opf-includes.js')
         opf_dir = os.path.dirname(opf_file_path)
         if not os.path.exists(opf_dir):
             os.makedirs(opf_dir)

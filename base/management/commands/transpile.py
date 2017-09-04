@@ -38,6 +38,11 @@ class Command(BaseCommand):
                     PROJECT_PATH,
                     "node_modules/package.json"
                 )
+            ) and os.path.exists(
+                os.path.join(
+                    PROJECT_PATH,
+                    "static-libs/"
+                )
             ) and filecmp.cmp(
                 os.path.join(
                     PROJECT_PATH,
@@ -92,7 +97,7 @@ class Command(BaseCommand):
         # ./manage.py collectstatic).
         # This allows for the modules to import from oneanother, across Django
         # Apps.
-
+        #
         # Create a cache dir for collecting JavaScript files
         cache_path = os.path.join(PROJECT_PATH, "es6-cache")
         if not os.path.exists(cache_path):
@@ -133,7 +138,7 @@ class Command(BaseCommand):
                     sourcefiles.append(sourcefile)
 
         # Note all cache files so that we can remove outdated files that no
-        # longer are in the prject.
+        # longer are in the project.
         cache_files = []
         # Note all plugin dirs and the modules inside of them to crate index.js
         # files inside of them.

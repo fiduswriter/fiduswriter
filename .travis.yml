@@ -22,6 +22,8 @@ cache:
     - node_modules
     - es6-cache
     - $HOME/.cache/pip
+    - static-libs
+    - statis-es5
 before_cache:
   - rm -f $HOME/.cache/pip/log/debug.log
 

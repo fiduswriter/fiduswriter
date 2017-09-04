@@ -65,7 +65,7 @@ export class BibliographyDB {
 
                     let bibList = []
 
-                    if (response.hasOwnProperty('bibList')) {
+                    if (response.hasOwnProperty('bib_list')) {
                         bibList = response['bib_list']
                         try {
                             window.localStorage.setItem('biblist', JSON.stringify(bibList))
@@ -79,10 +79,9 @@ export class BibliographyDB {
                     } else {
                         bibList = JSON.parse(window.localStorage.getItem('biblist'))
                     }
-                    let bibPKs = []
-                    for (let i = 0; i < bibList.length; i++) {
-                        bibPKs.push(this.serverBibItemToBibDB(bibList[i]))
-                    }
+
+                    let bibPKs = bibList.map(bibItem => this.serverBibItemToBibDB(bibItem))
+
                     resolve({bibPKs, bibCats})
                 },
                 error: (jqXHR, textStatus, errorThrown) => {

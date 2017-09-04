@@ -1,0 +1,17 @@
+{
+    "esversion": 6,
+    "loopfunc": true,
+    "asi": true,
+    "multistr": true,
+    "sub": true,
+    "undef": true,
+    "predef": [
+      "window",
+      "document",
+      "console",
+      "jQuery",
+      "MathQuill",
+      "gettext",
+      "_"
+    ]
+}

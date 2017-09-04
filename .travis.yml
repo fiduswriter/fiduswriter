@@ -17,6 +17,11 @@ before_install:
   - x="bas";`"$x"e64 -d <<< ZXhwb3J0IFNBVUNFX1VTRVJOQU1FPWZpZHVz`
   - x="bas";`"$x"e64 -d <<< ZXhwb3J0IFNBVUNFX0FDQ0VTU19LRVk9OWU5ZGJkNzctNDIwOC00ODM5LTkwY2ItMTZkM2M5ODUxZGMw`
 
+cache:
+  directories:
+    - node_modules
+    - es6-cache
+
 install:
   - mv travis/configuration.py ./
   - pip install -r requirements.txt
@@ -25,7 +30,7 @@ install:
   - pip install coverage
   - pip install coveralls
   - pip install selenium
-  - coverage run manage.py init --no-static --no-compress
+  - coverage run manage.py init --no-static --no-compress --keep-cache
   - ./manage.py check_js
 
 script:

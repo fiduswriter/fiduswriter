@@ -77,7 +77,6 @@ class Command(BaseCommand):
             call(["cp", "package.json", "node_modules"])
 
         if bundle_katex:
-            print("Bundling Katex")
             call_command("bundle_katex")
         # Collect all javascript in a temporary dir (similar to
         # ./manage.py collectstatic).

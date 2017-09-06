@@ -3,7 +3,6 @@ from django.core.management import call_command
 from subprocess import call, check_output
 import os
 import filecmp
-import json
 import shutil
 import time
 
@@ -66,7 +65,7 @@ class Command(BaseCommand):
                 ):
                     bundle_katex = False
 
-        if npm_install == True:
+        if npm_install:
             if os.path.exists(os.path.join(PROJECT_PATH, "node_modules")):
                 shutil.rmtree("node_modules")
             print("Cleaning npm cache")
@@ -77,7 +76,7 @@ class Command(BaseCommand):
             # to the current version next time we run it.
             call(["cp", "package.json", "node_modules"])
 
-        if bundle_katex == True:
+        if bundle_katex:
             print("Bundling Katex")
             call_command("bundle_katex")
         # Collect all javascript in a temporary dir (similar to

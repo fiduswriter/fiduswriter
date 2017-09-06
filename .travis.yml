@@ -36,8 +36,8 @@ after_success:
   - coveralls
 
 cache:
-   directories:
-     - node_modules
-     - $HOME/.cache/pip
- before_cache:
-   - rm -f $HOME/.cache/pip/log/debug.log
+  directories:
+    - node_modules
+    - $HOME/.cache/pip
+before_cache:
+  - rm -f $HOME/.cache/pip/log/debug.log

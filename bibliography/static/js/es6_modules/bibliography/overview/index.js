@@ -33,9 +33,9 @@ export class BibliographyOverview {
      * @param newBibCategories The new categories which will be added to the existing ones.
      */
     addBibCategoryList(newBibCategories) {
-        for (let i = 0; i < newBibCategories.length; i++) {
-            this.appendToBibCatList(newBibCategories[i])
-        }
+        newBibCategories.forEach(bibCat =>
+            this.appendToBibCatList(bibCat)
+        )
     }
 
     /** Add an item to the HTML list of bibliography categories.

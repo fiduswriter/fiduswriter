@@ -27,7 +27,9 @@ class Command(BaseCommand):
         start = time.time()
         shutil.os.chdir(PROJECT_PATH)
         call_command("create_package_json")
-        if not (
+        npm_install = True
+        bundle_katex = True
+        if (
             os.path.exists(
                 os.path.join(
                     PROJECT_PATH,
@@ -38,7 +40,9 @@ class Command(BaseCommand):
                     PROJECT_PATH,
                     "node_modules/package.json"
                 )
-            ) and filecmp.cmp(
+            )
+        ):
+            if filecmp.cmp(
                 os.path.join(
                     PROJECT_PATH,
                     "package.json"
@@ -47,21 +51,22 @@ class Command(BaseCommand):
                     PROJECT_PATH,
                     "node_modules/package.json"
                 )
-            )
-        ):
-            # Find the old katex version to determine if bundle_katex needs to
-            # be run
-            old_katex_version = False
-            if os.path.exists(
-                os.path.join(
-                    PROJECT_PATH,
-                    "node_modules/package.json")):
-                old_package_contents = open(
+            ):
+                npm_install = False
+                if os.path.exists(
                     os.path.join(
                         PROJECT_PATH,
-                        "node_modules/package.json"))
-                old_package_json = json.load(old_package_contents)
-                old_katex_version = old_package_json["dependencies"]["katex"]
+                        "base/static/zip/katex-style.zip"
+                    )
+                ) and os.path.exists(
+                    os.path.join(
+                        PROJECT_PATH,
+                        "base/static/js/es6_modules/katex/opf-includes.js"
+                    )
+                ):
+                    bundle_katex = False
+
+        if npm_install == True:
             if os.path.exists(os.path.join(PROJECT_PATH, "node_modules")):
                 shutil.rmtree("node_modules")
             print("Cleaning npm cache")
@@ -71,28 +76,14 @@ class Command(BaseCommand):
             # Copy the package.json file to node_modules, so we can compare it
             # to the current version next time we run it.
             call(["cp", "package.json", "node_modules"])
-            package_contents = open(os.path.join(PROJECT_PATH, "package.json"))
-            package_json = json.load(package_contents)
-            # Check if we have a git version of prosemirror. In that case,
-            # transpile it.
-            # if package_json["dependencies"]["prosemirror"][:3] == "git":
-            #    print("Installing ProseMirror dependencies")
-            #    shutil.os.chdir(
-            #        os.path.join(
-            #            PROJECT_PATH,
-            #            "node_modules/prosemirror"))
-            #    call(["npm", "install"])
-            #    call(["npm", "run", "dist"])
-            #    shutil.os.chdir(os.path.join(PROJECT_PATH))
 
-            if package_json["dependencies"]["katex"] != old_katex_version:
-                # Katex has been updated!
-                call_command("bundle_katex")
+        if bundle_katex == True:
+            print("Bundling Katex")
+            call_command("bundle_katex")
         # Collect all javascript in a temporary dir (similar to
         # ./manage.py collectstatic).
         # This allows for the modules to import from oneanother, across Django
         # Apps.
-
         # Create a cache dir for collecting JavaScript files
         cache_path = os.path.join(PROJECT_PATH, "es6-cache")
         if not os.path.exists(cache_path):

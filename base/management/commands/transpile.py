@@ -39,6 +39,11 @@ class Command(BaseCommand):
                     PROJECT_PATH,
                     "node_modules/package.json"
                 )
+            ) and os.path.exists(
+                os.path.join(
+                    PROJECT_PATH,
+                    "node_modules/static-libs/"
+                )
             )
         ):
             if filecmp.cmp(

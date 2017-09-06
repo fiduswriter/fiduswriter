@@ -42,7 +42,7 @@ class Command(BaseCommand):
             ) and os.path.exists(
                 os.path.join(
                     PROJECT_PATH,
-                    "node_modules/static-libs/"
+                    "static-libs"
                 )
             )
         ):

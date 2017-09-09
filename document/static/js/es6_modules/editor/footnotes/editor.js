@@ -7,11 +7,11 @@ import {history} from "prosemirror-history"
 import {baseKeymap} from "prosemirror-commands"
 import {keymap} from "prosemirror-keymap/dist/keymap"
 
-import {HTMLPaste, TextPaste} from "../paste"
 import {fnSchema} from "../../schema/footnotes"
 import {toolbarPlugin} from "../plugins/toolbar"
 import {collabCaretsPlugin} from "../plugins/collab-carets"
 import {linksPlugin} from "../plugins/links"
+import {pastePlugin} from "../plugins/paste"
 import {getFootnoteMarkerContents, updateFootnoteMarker} from "../plugins/footnote-markers"
 import {COMMENT_ONLY_ROLES} from ".."
 import {fnNodeToPmNode} from "../../schema/footnotes-convert"
@@ -30,7 +30,8 @@ export class ModFootnoteEditor {
             [keymap, () => buildKeymap(this.schema)],
             [collab],
             [toolbarPlugin, () => ({editor: this.mod.editor})],
-            [collabCaretsPlugin]
+            [collabCaretsPlugin],
+            [pastePlugin, () => ({editor: this.mod.editor})]
         ]
     }
 
@@ -55,14 +56,6 @@ export class ModFootnoteEditor {
             },
             onBlur: () => {
 
-            },
-            transformPastedHTML: inHTML => {
-                let ph = new HTMLPaste(inHTML, "footnote")
-                return ph.getOutput()
-            },
-            transformPastedText: inHTML => {
-                let ph = new TextPaste(this.mod.editor, inHTML, "footnote")
-                return ph.getOutput()
             },
             dispatchTransaction: (transaction) => {
                 let remote = transaction.getMeta('remote')

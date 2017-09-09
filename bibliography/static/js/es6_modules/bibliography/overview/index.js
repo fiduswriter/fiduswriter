@@ -1,6 +1,9 @@
+import fixUTF8 from "fix-utf8"
+import {BibLatexParser} from "biblatex-csl-converter"
+
 import {addRemoveListHandler, litToText, nameToText} from "../tools"
 import {BibEntryForm} from "../form"
-import {editCategoriesTemplate, categoryFormsTemplate, bibtableTemplate,
+import {editCategoriesTemplate, bibtableTemplate,
     bibliographyCategoryListItemTemplate} from "./templates"
 import {BibliographyDB} from "../database"
 import {BibTypeTitles} from "../form/strings"
@@ -44,7 +47,7 @@ export class BibliographyOverview {
      */
     appendToBibCatList(bCat) {
         jQuery('#bib-category-list').append(bibliographyCategoryListItemTemplate({
-            'bCat': bCat
+            bCat
         }))
     }
 
@@ -52,11 +55,10 @@ export class BibliographyOverview {
      * @function addBibList
      */
     addBibList(pks) {
-        //if (jQuery('#bibliography').length > 0) {
         this.stopBibliographyTable()
-        for (let i = 0; i < pks.length; i++) {
-            this.appendToBibTable(pks[i], this.bibDB.db[pks[i]])
-        }
+        pks.forEach(pk =>
+            this.appendToBibTable(pk, this.bibDB.db[pk])
+        )
         this.startBibliographyTable()
     }
 
@@ -66,10 +68,8 @@ export class BibliographyOverview {
     createCategoryDialog () {
         let dialogHeader = gettext('Edit Categories')
         let dialogBody = editCategoriesTemplate({
-            'dialogHeader': dialogHeader,
-            'categories': categoryFormsTemplate({
-                'categories': this.bibDB.cats
-            })
+            dialogHeader,
+            categories: this.bibDB.cats
         })
         jQuery('body').append(dialogBody)
         let buttons = {}
@@ -352,7 +352,75 @@ export class BibliographyOverview {
             }
         })
 
+        // Allow pasting of bibtex data.
+        document.body.addEventListener('paste', event => {
+            if (event.target.nodeName === 'INPUT') {
+                // We are inside of an input element, cancel.
+                return false
+            }
+            let text = event.clipboardData.getData('text')
+            return this.getBibtex(text)
+        })
+
+        // The two drag events are needed to allow dropping
+        document.body.addEventListener('dragover', event => {
+            if (event.dataTransfer.types.includes('text/plain')) {
+                event.preventDefault()
+            }
+        })
+
+        document.body.addEventListener('dragenter', event => {
+            if (event.dataTransfer.types.includes('text/plain')) {
+                event.preventDefault()
+            }
+        })
+
+        // Allow dropping of bibtex data
+        document.body.addEventListener('drop', event => {
+            if (event.target.nodeName === 'INPUT') {
+                // We are inside of an input element, cancel.
+                return false
+            }
+            let text = fixUTF8(event.dataTransfer.getData('text'))
+            return this.getBibtex(text)
+        })
+
         this.activatePlugins()
+    }
+
+    // find bibtex in pasted or dropped data.
+    getBibtex(text) {
+        let bibData = new BibLatexParser(text)
+        let tmpDB = bibData.output
+        if (!Object.keys(tmpDB).length) {
+            // No entries have been found. skip
+            return false
+        }
+
+        // Add missing data to entries.
+        Object.values(tmpDB).forEach(bibEntry => {
+            // We add an empty category list for all newly imported bib entries.
+            bibEntry.entry_cat = []
+            // If the entry has no title, add an empty title
+            if (!bibEntry.fields.title) {
+                bibEntry.fields.title = []
+            }
+            // If the entry has no date, add an uncertain date
+            if (!bibEntry.fields.date) {
+                bibEntry.fields.date = 'uuuu'
+            }
+            // If the entry has no editor or author, add empty author
+            if (!bibEntry.fields.author && !bibEntry.fields.editor) {
+                bibEntry.fields.author = [{'literal': []}]
+            }
+        })
+
+        this.bibDB.saveBibEntries(tmpDB, true).then(idTranslations => {
+            this.addBibList(
+                idTranslations.map(trans => trans[1])
+            )
+        })
+        return true
     }
 
 

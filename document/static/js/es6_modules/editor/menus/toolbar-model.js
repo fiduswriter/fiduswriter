@@ -447,7 +447,13 @@ export let toolbarModel = {
                     editor.currentView.state.selection.$anchor.node(2) &&
                     editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
                     !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
-                    editor.currentView.state.selection.jsonID === 'text'
+                    (
+                        editor.currentView.state.selection.jsonID === 'text' ||
+                        (
+                            editor.currentView.state.selection.jsonID === 'node' &&
+                            editor.currentView.state.selection.node.type.name === 'equation'
+                        )
+                    )
                 ) {
                     return false
                 } else {

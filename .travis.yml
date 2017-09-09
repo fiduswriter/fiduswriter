@@ -19,6 +19,7 @@ before_install:
 
 install:
   - mv travis/configuration.py ./
+  - pip install pyOpenSSL ndg-httpsclient pyasn1
   - pip install -r requirements.txt
   - pip install -r dev-requirements.txt
   - flake8 ./

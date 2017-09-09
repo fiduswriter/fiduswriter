@@ -16,11 +16,11 @@ export class TextPaste {
         // solution for western European languages.
         // https://bugs.chromium.org/p/chromium/issues/detail?id=760613
         this.text = fixUTF8(this.inText)
-        this.checkBibtex()
+        this.getBibtex()
         return this.text
     }
 
-    checkBibtex() {
+    getBibtex() {
         let bibData = new BibLatexParser(this.text)
         let tmpDB = bibData.output
         if (!Object.keys(tmpDB).length) {

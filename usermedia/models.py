@@ -194,7 +194,7 @@ class UserImage(models.Model):
 
 # Image linked to a document
 class DocumentImage(models.Model):
-    title = models.CharField(max_length=128)
+    title = models.CharField(max_length=128, default='')
     document = models.ForeignKey(Document)
     image = models.ForeignKey(Image)
 

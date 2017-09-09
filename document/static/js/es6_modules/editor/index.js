@@ -25,9 +25,8 @@ import {ModServerCommunications} from "./server-communications"
 import {getSettings} from "../schema/convert"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
-import {HTMLPaste, TextPaste} from "./paste"
 import {addDropdownBox} from "../common"
-
+import {pastePlugin} from "./plugins/paste"
 import {placeholdersPlugin} from "./plugins/placeholders"
 import {headerbarPlugin} from "./plugins/headerbar"
 import {toolbarPlugin} from "./plugins/toolbar"
@@ -82,7 +81,8 @@ export class Editor {
             [footnoteMarkersPlugin, () => ({editor: this})],
             [commentsPlugin, () => ({editor: this})],
             [keywordInputPlugin, () => ({editor: this})],
-            [authorInputPlugin, () => ({editor: this})]
+            [authorInputPlugin, () => ({editor: this})],
+            [pastePlugin, () => ({editor: this})]
         ]
         new ModFootnotes(this)
         new ModServerCommunications(this)
@@ -107,14 +107,6 @@ export class Editor {
                 }
             },
             onBlur: (view) => {
-            },
-            transformPastedHTML: inHTML => {
-                let ph = new HTMLPaste(inHTML, "main")
-                return ph.getOutput()
-            },
-            transformPastedText: inText => {
-                let ph = new TextPaste(this, inText, "main")
-                return ph.getOutput()
             },
             dispatchTransaction: (transaction) => {
                 let remote = transaction.getMeta('remote')

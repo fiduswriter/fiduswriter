@@ -4,7 +4,7 @@ import {ExportFidusFile} from "../../exporter/native/file"
 import {LatexExporter} from "../../exporter/latex"
 import {HTMLExporter} from "../../exporter/html"
 import {EpubExporter} from "../../exporter/epub"
-import {RevisionDialog, LanguageDialog} from "./dialogs"
+import {RevisionDialog, LanguageDialog} from "../dialogs"
 
 let languageItem = function(code, name) {
     return {

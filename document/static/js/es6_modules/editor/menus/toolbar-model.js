@@ -2,7 +2,7 @@ import {setBlockType, wrapIn, toggleMark} from "prosemirror-commands"
 import {wrapInList} from "prosemirror-schema-list"
 import {undo, redo, undoDepth, redoDepth} from "prosemirror-history"
 
-import {CitationDialog, FigureDialog, LinkDialog, TableDialog, MathDialog} from "./dialogs"
+import {CitationDialog, FigureDialog, LinkDialog, TableDialog, MathDialog} from "../dialogs"
 import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from ".."
 
 let setHeadlineBlock = function(editor, level) {

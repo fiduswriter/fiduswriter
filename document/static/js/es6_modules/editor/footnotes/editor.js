@@ -8,11 +8,14 @@ import {baseKeymap} from "prosemirror-commands"
 import {keymap} from "prosemirror-keymap/dist/keymap"
 
 import {fnSchema} from "../../schema/footnotes"
-import {toolbarPlugin} from "../plugins/toolbar"
-import {collabCaretsPlugin} from "../plugins/collab-carets"
-import {linksPlugin} from "../plugins/links"
-import {pastePlugin} from "../plugins/paste"
-import {getFootnoteMarkerContents, updateFootnoteMarker} from "../plugins/footnote-markers"
+import {
+    pastePlugin,
+    toolbarPlugin,
+    collabCaretsPlugin,
+    linksPlugin,
+    getFootnoteMarkerContents,
+    updateFootnoteMarker
+} from "../statePlugins"
 import {COMMENT_ONLY_ROLES} from ".."
 import {fnNodeToPmNode} from "../../schema/footnotes-convert"
 

@@ -1,10 +1,23 @@
-import {compare} from "fast-json-patch"
+import {
+    compare
+} from "fast-json-patch"
 
-import {sendableSteps, receiveTransaction} from "prosemirror-collab"
-import {Step} from "prosemirror-transform"
+import {
+    sendableSteps,
+    receiveTransaction
+} from "prosemirror-collab"
+import {
+    Step
+} from "prosemirror-transform"
 
-import {docSchema} from "../../schema/document"
-import {getSelectionUpdate, removeCollaboratorSelection, updateCollaboratorSelection} from "../plugins/collab-carets"
+import {
+    docSchema
+} from "../../schema/document"
+import {
+    getSelectionUpdate,
+    removeCollaboratorSelection,
+    updateCollaboratorSelection
+} from "../statePlugins"
 
 export class ModCollabDocChanges {
     constructor(mod) {

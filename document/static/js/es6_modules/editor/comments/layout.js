@@ -1,6 +1,6 @@
 import {commentsTemplate, filterByUserBoxTemplate} from "./templates"
 import {Comment} from "./comment"
-import {getCommentDuringCreationDecoration} from "../plugins/comments"
+import {getCommentDuringCreationDecoration} from "../statePlugins"
 
 import fastdom from "fastdom"
 

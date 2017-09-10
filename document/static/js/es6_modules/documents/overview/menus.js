@@ -46,7 +46,7 @@ export class DocumentOverviewMenus {
             })
 
             //open dropdown for selecting action
-            addDropdownBox(jQuery('#select-action-dropdown-documents'), jQuery(
+            addDropdownBox(jQuery('#select-action-dropdown'), jQuery(
                 '#action-selection-pulldown-documents'))
 
             //submit action for selected document

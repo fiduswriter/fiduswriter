@@ -16,7 +16,8 @@ import * as plugins from "../../plugins/bibliography-overview"
 export class BibliographyOverview {
 
     constructor() {
-        new Menu("bibliography")
+        let menu = new Menu("bibliography")
+        menu.init()
         this.getBibDB()
         this.bind()
     }

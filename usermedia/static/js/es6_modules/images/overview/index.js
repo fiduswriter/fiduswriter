@@ -11,7 +11,8 @@ export class ImageOverview {
     constructor() {
         this.mod = {}
         new ImageOverviewCategories(this)
-        new Menu("images")
+        let menu = new Menu("images")
+        menu.init()
         this.bind()
     }
 

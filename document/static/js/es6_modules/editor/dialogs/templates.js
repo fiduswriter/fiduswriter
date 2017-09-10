@@ -1,4 +1,4 @@
-import {escapeText} from "../../../common"
+import {escapeText} from "../../common"
 
 export let linkDialogTemplate = ({defaultLink, internalTargets, link, linkTitle}) =>
     `<div title="${gettext("Link")}">

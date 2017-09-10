@@ -44,7 +44,7 @@ from "./paste"
 export {
     placeholdersPlugin
 }
-from "./placeholder"
+from "./placeholders"
 export {
     toolbarPlugin
 }

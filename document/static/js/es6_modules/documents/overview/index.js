@@ -17,7 +17,8 @@ export class DocumentOverview {
         this.mod = {}
         new DocumentOverviewActions(this)
         new DocumentOverviewMenus(this)
-        new Menu("documents")
+        let menu = new Menu("documents")
+        menu.init()
         this.bind()
     }
 

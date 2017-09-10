@@ -1,7 +1,7 @@
 import {figureImageTemplate, configureFigureTemplate} from "./templates"
-import {ImageSelectionDialog} from "../../../images/selection-dialog"
-import {addDropdownBox} from "../../../common"
-import {katexRender} from "../../../katex"
+import {ImageSelectionDialog} from "../../images/selection-dialog"
+import {addDropdownBox} from "../../common"
+import {katexRender} from "../../katex"
 
 export class FigureDialog {
     constructor(editor) {

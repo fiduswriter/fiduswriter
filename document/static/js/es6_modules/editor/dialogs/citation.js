@@ -1,8 +1,8 @@
 import {configureCitationTemplate, citationItemTemplate, selectedCitationTemplate} from "./templates"
-import {BibEntryForm} from "../../../bibliography/form"
-import {setCheckableLabel} from "../../../common"
-import {nameToText, litToText} from "../../../bibliography/tools"
-import * as plugins from "../../../plugins/citation-dialog"
+import {BibEntryForm} from "../../bibliography/form"
+import {setCheckableLabel} from "../../common"
+import {nameToText, litToText} from "../../bibliography/tools"
+import * as plugins from "../../plugins/citation-dialog"
 
 export class CitationDialog {
     constructor(editor) {
@@ -11,7 +11,7 @@ export class CitationDialog {
         this.initialFormat = 'autocite'
         this.node = this.editor.currentView.state.selection.node
         this.dialog = false
-        this.diaButtons = []
+        this.buttons = []
         this.submitButtonText = gettext('Insert')
     }
 
@@ -21,14 +21,14 @@ export class CitationDialog {
             this.initialReferences = this.node.attrs.references
         }
 
-        this.diaButtons.push({
+        this.buttons.push({
             text: gettext('Register new source'),
             click: () => this.registerNewSource(),
             class: 'fw-button fw-light fw-add-button register-new-bib-source'
         })
 
         if (this.node && this.node.type && this.node.type.name==='citation') {
-            this.diaButtons.push({
+            this.buttons.push({
                 text: gettext('Remove'),
                 click: () => {
                     let transaction = this.editor.currentView.state.tr.deleteSelection()
@@ -40,7 +40,7 @@ export class CitationDialog {
             this.submitButtonText = gettext('Update')
         }
 
-        this.diaButtons.push({
+        this.buttons.push({
             text: this.submitButtonText,
             click: () => {
                 if (this.dialogSubmit()) {
@@ -50,13 +50,15 @@ export class CitationDialog {
             class: "fw-button fw-dark insert-citation"
         })
 
-        this.diaButtons.push({
+        this.buttons.push({
             text: gettext('Cancel'),
             click: () => {
                 this.dialog.dialog('close')
             },
             class: 'fw-button fw-orange'
         })
+
+        this.activatePlugins()
 
         this.dialog = jQuery(this.citationDialogHTML())
 
@@ -67,7 +69,7 @@ export class CitationDialog {
             width: 836,
             height: 540,
             modal: true,
-            buttons: this.diaButtons,
+            buttons: this.buttons,
             create: () => this.dialogCreate(),
             close: () => {
                 this.dialog.dialog('destroy').remove()
@@ -79,8 +81,6 @@ export class CitationDialog {
         jQuery('.fw-checkable').bind('click', function() {
             setCheckableLabel(jQuery(this))
         })
-
-        this.activatePlugins()
     }
 
     activatePlugins() {

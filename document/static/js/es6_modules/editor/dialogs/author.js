@@ -1,6 +1,6 @@
 import {authorTemplate} from "./templates"
-import {authorsEndPos} from "../../statePlugins"
-import {addAlert} from "../../../common"
+import {authorsEndPos} from "../statePlugins"
+import {addAlert} from "../../common"
 /*
     Source for email regexp:
     https://html.spec.whatwg.org/multipage/input.html#e-mail-state-(type%3Demail)

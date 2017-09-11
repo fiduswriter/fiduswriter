@@ -318,6 +318,7 @@ def list_team_members(request):
     response = {}
     return render(request, 'account/list_team_members.html', response)
 
+
 @login_required
 def list_team_members_js(request):
     response = {}
@@ -338,6 +339,7 @@ def list_team_members_js(request):
         response,
         status=status
     )
+
 
 @login_required
 def add_team_member_js(request):

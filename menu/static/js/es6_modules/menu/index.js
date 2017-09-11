@@ -4,7 +4,7 @@ import {headerNavTemplate} from "./templates"
 
 // Bindings for the top menu on overview pages
 
-export class Menu {
+export class SiteMenu {
     constructor(activeItem) {
         this.activeItem = activeItem
         this.navItems = [

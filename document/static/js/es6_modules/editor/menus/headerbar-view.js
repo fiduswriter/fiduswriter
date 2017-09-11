@@ -26,7 +26,6 @@ export class HeaderbarView {
         document.body.addEventListener('click', this.listeners.onclick)
         this.listeners.onkeydown = event => this.onkeydown(event)
         document.addEventListener('keydown', this.listeners.onkeydown)
-
     }
 
     destroy() {

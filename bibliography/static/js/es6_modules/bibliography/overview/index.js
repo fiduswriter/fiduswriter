@@ -10,14 +10,14 @@ import {BibTypeTitles} from "../form/strings"
 import {BibLatexFileImporter, BibLatexApiImporter} from "../import"
 import {BibLatexFileExporter} from "../export"
 import {addDropdownBox} from "../../common"
-import {Menu} from "../../menu"
+import {SiteMenu} from "../../menu"
 import * as plugins from "../../plugins/bibliography-overview"
 
 export class BibliographyOverview {
 
     constructor() {
-        let menu = new Menu("bibliography")
-        menu.init()
+        let smenu = new SiteMenu("bibliography")
+        smenu.init()
         this.getBibDB()
         this.bind()
     }

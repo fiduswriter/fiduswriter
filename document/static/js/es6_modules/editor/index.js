@@ -79,9 +79,6 @@ import {
 import {
     ImageDB
 } from "../images/database"
-import {
-    addDropdownBox
-} from "../common"
 
 import {
     pastePlugin,

@@ -49,7 +49,6 @@ def get_accessrights(ars):
 @login_required
 def index(request):
     response = {}
-    response['export_templates'] = ExportTemplate.objects.all()
     response.update(csrf(request))
     return render(request, 'document/index.html',
                   response)
@@ -151,6 +150,10 @@ def get_documentlist_js(request):
             tm_object['avatar'] = avatar_url(team_member.member, 80)
             response['team_members'].append(tm_object)
         serializer = PythonWithURLSerializer()
+        export_temps = serializer.serialize(
+            ExportTemplate.objects.all()
+        )
+        response['export_templates'] = [obj['fields'] for obj in export_temps]
         cit_styles = serializer.serialize(
             CitationStyle.objects.all()
         )

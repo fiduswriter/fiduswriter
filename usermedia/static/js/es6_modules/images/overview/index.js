@@ -2,7 +2,7 @@ import {ImageUploadDialog} from "../upload-dialog"
 import {ImageDB} from "../database"
 import {ImageOverviewCategories} from "./categories"
 import {addDropdownBox, activateWait, deactivateWait, addAlert, csrfToken} from "../../common"
-import {Menu} from "../../menu"
+import {SiteMenu} from "../../menu"
 import {usermediaCategoryListItem, usermediaTableTemplate} from "./templates"
 import * as plugins from "../../plugins/images-overview"
  /** Helper functions for user added images/SVGs.*/
@@ -11,8 +11,8 @@ export class ImageOverview {
     constructor() {
         this.mod = {}
         new ImageOverviewCategories(this)
-        let menu = new Menu("images")
-        menu.init()
+        let smenu = new SiteMenu("images")
+        smenu.init()
         this.bind()
     }
 

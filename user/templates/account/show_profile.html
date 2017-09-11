@@ -18,19 +18,19 @@
         <div id="profile-avatar">
             {% avatar user %}
             <div id="avatar-pulldown-wrapper">
-                <span id="edit-avatar-btn" class="fa fa-pencil">
-                    {% trans 'Edit profile picture' %}
+                <span id="edit-avatar-btn">
+                    <i class="fa fa-pencil"></i> {% trans 'Edit profile picture' %}
                 </span>
                 <div id="edit-avatar-pulldown" class="fw-pulldown fw-left">
                     <ul>
                         <li>
-                            <span class="fw-pulldown-item change-avatar fa fa-file-image-o">
-                                {% trans "Change picture" %}
+                            <span class="fw-pulldown-item change-avatar">
+                                <i class="fa fa-file-image-o"></i> {% trans "Change picture" %}
                             </span>
                         </li>
                         <li>
-                            <span class="fw-pulldown-item delete-avatar fa fa-times-circle">
-                                {% trans "Delete picture" %}
+                            <span class="fw-pulldown-item delete-avatar">
+                                <i class="fa fa-times-circle"></i> {% trans "Delete picture" %}
                             </span>
                         </li>
                     </ul>
@@ -55,7 +55,7 @@
                     <th>{% trans 'Password' %}:</th>
                     <td>
                         <input type="password" value="******" readonly disabled />
-                        <span id="fw-edit-profile-pwd" class="fw-link-text  fa fa-pencil"></span>
+                        <span id="fw-edit-profile-pwd" class="fw-link-text"><i class="fa fa-pencil"></i></span>
                     </td>
                 </tr>
                 <tr>

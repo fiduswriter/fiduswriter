@@ -133,12 +133,14 @@ export class ImageSelectionDialog {
                 () => {
                     this.imageDialog.dialog('close')
                     resolve({id: this.imgId, db: this.imgDb})
-                })
+                }
+            )
             jQuery('#cancelImageSelectionButton').bind('click',
                 () => {
                     this.imageDialog.dialog('close')
                     resolve(cancelPromise())
-                })
+                }
+            )
         })
 
     }

@@ -1,4 +1,4 @@
-import {getCommentDuringCreationDecoration} from "../plugins/comments"
+import {getCommentDuringCreationDecoration} from "../statePlugins"
 /* Functions related to user interactions with comments */
 
 export class ModCommentInteractions {

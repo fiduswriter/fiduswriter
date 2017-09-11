@@ -1,7 +1,7 @@
 import {figureImageTemplate, configureFigureTemplate} from "./templates"
-import {ImageSelectionDialog} from "../../../images/selection-dialog"
-import {addDropdownBox} from "../../../common"
-import {katexRender} from "../../../katex"
+import {ImageSelectionDialog} from "../../images/selection-dialog"
+import {addDropdownBox} from "../../common"
+import {katexRender} from "../../katex"
 
 export class FigureDialog {
     constructor(editor) {
@@ -209,8 +209,7 @@ export class FigureDialog {
                 let imageSelection = new ImageSelectionDialog(
                     that.imageDB,
                     that.userImageDB,
-                    that.imgId,
-                    that.editor.docInfo.owner.id
+                    that.imgId
                 )
                 imageSelection.init().then(
                     ({id, db}) => {

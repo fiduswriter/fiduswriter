@@ -1,41 +1,97 @@
 import * as plugins from "../plugins/editor"
 
 /* Functions for ProseMirror integration.*/
-import {EditorState, Plugin, TextSelection} from "prosemirror-state"
-import {EditorView, Decoration, DecorationSet} from "prosemirror-view"
-import {history, redo, undo} from "prosemirror-history"
-import {toggleMark, baseKeymap} from "prosemirror-commands"
-import {keymap} from "prosemirror-keymap/dist/keymap"
-import {buildKeymap} from "prosemirror-example-setup"
-import {collab} from "prosemirror-collab"
-import {tableEditing} from "prosemirror-tables"
-import {dropCursor} from "prosemirror-dropcursor"
+import {
+    EditorState,
+    Plugin,
+    TextSelection
+} from "prosemirror-state"
+import {
+    EditorView,
+    Decoration,
+    DecorationSet
+} from "prosemirror-view"
+import {
+    history,
+    redo,
+    undo
+} from "prosemirror-history"
+import {
+    toggleMark,
+    baseKeymap
+} from "prosemirror-commands"
+import {
+    keymap
+} from "prosemirror-keymap/dist/keymap"
+import {
+    buildKeymap
+} from "prosemirror-example-setup"
+import {
+    collab
+} from "prosemirror-collab"
+import {
+    tableEditing
+} from "prosemirror-tables"
+import {
+    dropCursor
+} from "prosemirror-dropcursor"
 
-import {docSchema} from "../schema/document"
-import {ModComments} from "./comments"
-import {ModFootnotes} from "./footnotes"
-import {ModCitations} from "./citations"
-import {ModDB} from "./databases"
-import {ModCollab} from "./collab"
-import {ModTools} from "./tools"
-import {ModSettings} from "./settings"
-import {headerbarModel, toolbarModel} from "./menus"
-import {ModStyles} from "./styles"
-import {ModServerCommunications} from "./server-communications"
-import {getSettings} from "../schema/convert"
-import {BibliographyDB} from "../bibliography/database"
-import {ImageDB} from "../images/database"
-import {addDropdownBox} from "../common"
-import {pastePlugin} from "./plugins/paste"
-import {placeholdersPlugin} from "./plugins/placeholders"
-import {headerbarPlugin} from "./plugins/headerbar"
-import {toolbarPlugin} from "./plugins/toolbar"
-import {collabCaretsPlugin} from "./plugins/collab-carets"
-import {footnoteMarkersPlugin} from "./plugins/footnote-markers"
-import {commentsPlugin} from "./plugins/comments"
-import {linksPlugin} from "./plugins/links"
-import {keywordInputPlugin} from "./plugins/keyword-input"
-import {authorInputPlugin} from "./plugins/author-input"
+import {
+    docSchema
+} from "../schema/document"
+import {
+    ModComments
+} from "./comments"
+import {
+    ModFootnotes
+} from "./footnotes"
+import {
+    ModCitations
+} from "./citations"
+import {
+    ModDB
+} from "./databases"
+import {
+    ModCollab
+} from "./collab"
+import {
+    ModTools
+} from "./tools"
+import {
+    ModSettings
+} from "./settings"
+import {
+    headerbarModel,
+    toolbarModel
+} from "./menus"
+import {
+    ModStyles
+} from "./styles"
+import {
+    ModServerCommunications
+} from "./server-communications"
+import {
+    getSettings
+} from "../schema/convert"
+import {
+    BibliographyDB
+} from "../bibliography/database"
+import {
+    ImageDB
+} from "../images/database"
+
+import {
+    pastePlugin,
+    placeholdersPlugin,
+    headerbarPlugin,
+    toolbarPlugin,
+    collabCaretsPlugin,
+    footnoteMarkersPlugin,
+    commentsPlugin,
+    linksPlugin,
+    keywordInputPlugin,
+    authorInputPlugin
+} from "./statePlugins"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']

@@ -1,23 +1,24 @@
 import fixUTF8 from "fix-utf8"
 import {BibLatexParser} from "biblatex-csl-converter"
-
 import {addRemoveListHandler, litToText, nameToText} from "../tools"
 import {BibEntryForm} from "../form"
-import {editCategoriesTemplate, bibtableTemplate,
-    bibliographyCategoryListItemTemplate} from "./templates"
+import {editCategoriesTemplate, bibtableTemplate} from "./templates"
 import {BibliographyDB} from "../database"
 import {BibTypeTitles} from "../form/strings"
-import {BibLatexFileImporter, BibLatexApiImporter} from "../import"
-import {BibLatexFileExporter} from "../export"
-import {addDropdownBox} from "../../common"
-import {Menu} from "../../menu"
+import {SiteMenu} from "../../menu"
+import {OverviewMenuView} from "../../common"
+import {menuModel} from "./menu"
 import * as plugins from "../../plugins/bibliography-overview"
 
 export class BibliographyOverview {
 
     constructor() {
-        new Menu("bibliography")
+        let smenu = new SiteMenu("bibliography")
+        smenu.init()
+        this.menu = new OverviewMenuView(this, menuModel)
+        this.menu.init()
         this.getBibDB()
+        this.activatePlugins()
         this.bind()
     }
 
@@ -26,29 +27,34 @@ export class BibliographyOverview {
         this.bibDB = new BibliographyDB()
 
         this.bibDB.getDB().then(({bibPKs, bibCats}) => {
-            this.addBibCategoryList(bibCats)
+            this.setBibCategoryList(bibCats)
             this.addBibList(bibPKs)
         })
     }
 
     /** Adds a list of bibliography categories to current list of bibliography categories.
-     * @function addBibCategoryList
+     * @function setBibCategoryList
      * @param newBibCategories The new categories which will be added to the existing ones.
      */
-    addBibCategoryList(newBibCategories) {
-        newBibCategories.forEach(bibCat =>
-            this.appendToBibCatList(bibCat)
-        )
-    }
+    setBibCategoryList(bibCategories) {
+        let catSelector = this.menu.model.content.find(menuItem => menuItem.id==='cat_selector')
+        catSelector.content = catSelector.content.filter(cat => cat.type !== 'category')
 
-    /** Add an item to the HTML list of bibliography categories.
-     * @function appendToBibCatList
-     * @param bCat Category to be appended.
-     */
-    appendToBibCatList(bCat) {
-        jQuery('#bib-category-list').append(bibliographyCategoryListItemTemplate({
-            bCat
-        }))
+        catSelector.content = catSelector.content.concat(bibCategories.forEach(cat => ({
+            title: cat.category_title,
+            type: 'category',
+            action: overview => {
+                let trs = [].slice.call(document.querySelectorAll('#bibliography > tbody > tr'))
+                trs.forEach(tr => {
+                    if (tr.classList.contains(`cat_${cat.id}`)) {
+                        tr.style.display = ''
+                    } else {
+                        tr.style.display = 'none'
+                    }
+                })
+            }
+        })))
+        this.menu.update()
     }
 
     /** This takes a list of new bib entries and adds them to BibDB and the bibliography table
@@ -75,7 +81,7 @@ export class BibliographyOverview {
         let buttons = {}
         let that = this
         buttons[gettext('Submit')] = function () {
-            let newCat = {
+            let cats = {
                 'ids': [],
                 'titles': []
             }
@@ -84,15 +90,11 @@ export class BibliographyOverview {
                 let thisId = jQuery(this).attr('data-id')
                 if ('undefined' == typeof (thisId)) thisId = 0
                 if ('' !== thisVal) {
-                    newCat.ids.push(thisId)
-                    newCat.titles.push(thisVal)
-                } else if ('' === thisVal && 0 < thisId) {
-                    that.deletedCat[that.deletedCat
-                        .length] = thisId
+                    cats.ids.push(thisId)
+                    cats.titles.push(thisVal)
                 }
             })
-            that.bibDB.deleteCategory(that.deletedCat)
-            that.createCategory(newCat)
+            that.createCategory(cats)
             jQuery(this).dialog('close')
         }
         buttons[gettext('Cancel')] = function () {
@@ -115,7 +117,6 @@ export class BibliographyOverview {
             },
         })
 
-        this.deletedCat = []
         addRemoveListHandler()
 
     }
@@ -156,6 +157,13 @@ export class BibliographyOverview {
         })
     }
 
+    // get IDs of selected bib entries
+    getSelected() {
+        return [].slice.call(
+            document.querySelectorAll('.entry-select:checked:not(:disabled)')
+        ).map(el => parseInt(el.getAttribute('data-id')))
+    }
+
 
     /** Add or update an item in the bibliography table (HTML).
      * @function appendToBibTable
@@ -163,7 +171,7 @@ export class BibliographyOverview {
      * @param bibInfo An object with the current information about the bibliography item.
      */
     appendToBibTable(pk, bibInfo) {
-        let $tr = jQuery('#Entry_' + pk)
+        let $tr = jQuery(`#Entry_${pk}`)
 
         let bibauthors = bibInfo.fields.author || bibInfo.fields.editor
 
@@ -261,95 +269,19 @@ export class BibliographyOverview {
     bindEvents() {
         let that = this
         jQuery(document).on('click', '.delete-bib', function () {
-            let BookId = jQuery(this).attr('data-id')
-            that.deleteBibEntryDialog([BookId])
+            let bookId = parseInt(jQuery(this).attr('data-id'))
+            that.deleteBibEntryDialog([bookId])
         })
-        jQuery('#edit-category').bind('click', () =>
-            this.createCategoryDialog()
-        )
 
         jQuery(document).on('click', '.edit-bib', function () {
-            let eID = jQuery(this).attr('data-id')
-            if (eID) {
-                eID = parseInt(eID)
-            }
-            let form = new BibEntryForm(that.bibDB, eID)
+            let bookId = parseInt(jQuery(this).attr('data-id'))
+            let form = new BibEntryForm(that.bibDB, bookId)
             form.init().then(
                 idTranslations => {
                     let ids = idTranslations.map(idTrans => idTrans[1])
                     return that.addBibList(ids)
                 }
             )
-        })
-
-        //open dropdown for bib category
-        addDropdownBox(jQuery('#bib-category-btn'), jQuery('#bib-category-pulldown'))
-        jQuery(document).on('mousedown', '#bib-category-pulldown li > span', function () {
-            jQuery('#bib-category-btn > label').html(jQuery(this).html())
-            jQuery('#bib-category').val(jQuery(this).attr('data-id'))
-            jQuery('#bib-category').trigger('change')
-        })
-
-        //filtering function for the list of bib entries
-        jQuery('#bib-category').bind('change', function () {
-            let catVal = jQuery(this).val()
-            if ('0' === catVal) {
-                jQuery('#bibliography > tbody > tr').show()
-            } else {
-                jQuery('#bibliography > tbody > tr').hide()
-                jQuery('#bibliography > tbody > tr.cat_' + catVal).show()
-            }
-        })
-
-        //select all entries
-        jQuery('#select-all-entry').bind('change', function () {
-            let newBool = false
-            if (jQuery(this).prop("checked"))
-                newBool = true
-            jQuery('.entry-select').each(function () {
-                this.checked = newBool
-            })
-        })
-
-        //open dropdown for selecting action
-        addDropdownBox(jQuery('#select-action-dropdown'), jQuery('#action-selection-pulldown'))
-
-        //import a bib file
-        jQuery('.import-bib').bind('click', () => {
-            let fileImporter = new BibLatexFileImporter(
-                this.bibDB,
-                bibEntries => this.addBibList(bibEntries)
-            )
-            fileImporter.init()
-        })
-
-
-        //submit entry actions
-        jQuery('#action-selection-pulldown li > span').bind('mousedown', function () {
-            let actionName = jQuery(this).attr('data-action'),
-                ids = []
-
-            if ('' === actionName || 'undefined' == typeof (actionName)) {
-                return
-            }
-
-            jQuery('.entry-select:checked').each(function () {
-                ids[ids.length] = parseInt(jQuery(this).attr('data-id'))
-            })
-
-            if (0 === ids.length) {
-                return
-            }
-
-            switch (actionName) {
-                case 'delete':
-                    that.deleteBibEntryDialog(ids)
-                    break
-                case 'export':
-                    let exporter = new BibLatexFileExporter(that.bibDB, ids)
-                    exporter.init()
-                    break
-            }
         })
 
         // Allow pasting of bibtex data.
@@ -384,8 +316,6 @@ export class BibliographyOverview {
             let text = fixUTF8(event.dataTransfer.getData('text'))
             return this.getBibtex(text)
         })
-
-        this.activatePlugins()
     }
 
     // find bibtex in pasted or dropped data.
@@ -425,17 +355,18 @@ export class BibliographyOverview {
 
 
     createCategory(cats) {
-        this.bibDB.createCategory(cats).then(bibCats => {
-            jQuery('#bib-category-list li').not(':first').remove()
-            this.addBibCategoryList(bibCats)
-        })
+        this.bibDB.createCategory(cats).then(bibCats => this.setBibCategoryList(bibCats))
     }
 
     deleteBibEntries(ids) {
         this.bibDB.deleteBibEntries(ids).then(ids => {
             this.stopBibliographyTable()
-            let elementsId = '#Entry_' + ids.join(', #Entry_')
-            jQuery(elementsId).detach()
+            ids.forEach(id => {
+                let el = document.querySelector(`#Entry_${id}`)
+                if (el) {
+                    el.parentElement.removeChild(el)
+                }
+            })
             this.startBibliographyTable()
         })
     }

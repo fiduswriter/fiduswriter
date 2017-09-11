@@ -151,6 +151,9 @@ def save_category_js(request):
     if request.is_ajax() and request.method == 'POST':
         ids = request.POST.getlist('ids[]')
         titles = request.POST.getlist('titles[]')
+        ImageCategory.objects.filter(
+            category_owner=request.user
+        ).exclude(id__in=ids).delete()
         x = 0
         for the_id in ids:
             the_id = int(the_id)
@@ -168,25 +171,6 @@ def save_category_js(request):
             the_cat.save()
             response['entries'].append(
                 {'id': the_cat.id, 'category_title': the_cat.category_title})
-        status = 201
-
-    return JsonResponse(
-        response,
-        status=status
-    )
-
-
-# delete a category
-@login_required
-def delete_category_js(request):
-    status = 405
-    response = {}
-    if request.is_ajax() and request.method == 'POST':
-        ids = request.POST.getlist('ids[]')
-        ImageCategory.objects.filter(
-            id__in=ids,
-            category_owner=request.user
-        ).delete()
         status = 201
 
     return JsonResponse(

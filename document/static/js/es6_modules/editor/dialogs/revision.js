@@ -1,5 +1,5 @@
 import {revisionDialogTemplate} from "./templates"
-import {cancelPromise} from "../../../common"
+import {cancelPromise} from "../../common"
 
 export class RevisionDialog {
     constructor() {

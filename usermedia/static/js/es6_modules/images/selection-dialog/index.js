@@ -3,12 +3,11 @@ import {ImageUploadDialog} from "../upload-dialog"
 import {cancelPromise} from "../../common"
 
 export class ImageSelectionDialog {
-    constructor(imageDB, userImageDB, imgId, ownerId) {
+    constructor(imageDB, userImageDB, imgId) {
         this.imageDB = imageDB
         this.userImageDB = userImageDB
         this.imgId = imgId // a preselected image
         this.imgDb = 'document' // the preselection image will always come from the document
-        this.ownerId = ownerId
     }
 
     init() {
@@ -116,9 +115,7 @@ export class ImageSelectionDialog {
         return new Promise (resolve => {
             jQuery('#selectImageUploadButton').bind('click', () => {
                 let imageUpload = new ImageUploadDialog(
-                    this.userImageDB, // We can only upload to the user's image db
-                    false,
-                    this.ownerId
+                    this.userImageDB // We can only upload to the user's image db
                 )
                 resolve(
                     imageUpload.init().then(
@@ -136,12 +133,14 @@ export class ImageSelectionDialog {
                 () => {
                     this.imageDialog.dialog('close')
                     resolve({id: this.imgId, db: this.imgDb})
-                })
+                }
+            )
             jQuery('#cancelImageSelectionButton').bind('click',
                 () => {
                     this.imageDialog.dialog('close')
                     resolve(cancelPromise())
-                })
+                }
+            )
         })
 
     }

@@ -116,12 +116,7 @@ export class DocumentOverviewActions {
                                 user: that.documentOverview.user
                             }))
                     that.documentOverview.startDocumentTable()
-                }/*,
-                errorMessage => {
-                    addAlert('error', errorMessage)
-                    deactivateWait()
-
-                }*/
+                }
             )
 
 
@@ -223,6 +218,7 @@ export class DocumentOverviewActions {
     }
 
     downloadTemplateExportFiles(ids, templateUrl, templateType) {
+        console.log(ids, templateUrl, templateType)
         getMissingDocumentListData(
             ids,
             this.documentOverview.documentList

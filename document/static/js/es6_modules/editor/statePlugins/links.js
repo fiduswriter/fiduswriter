@@ -4,7 +4,7 @@ import {ReplaceAroundStep} from "prosemirror-transform"
 import {Slice, Fragment} from "prosemirror-model"
 import {noSpaceTmp, addAlert} from "../../common"
 import {randomHeadingId, randomFigureId} from "../../schema/common"
-import {LinkDialog} from "../menus/dialogs"
+import {LinkDialog} from "../dialogs"
 
 const key = new PluginKey('links')
 

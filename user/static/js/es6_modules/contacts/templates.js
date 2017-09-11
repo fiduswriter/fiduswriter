@@ -1,8 +1,9 @@
 import {escapeText} from "../common"
 
 //template for the list of teammembers
-export let teammemberTemplate = ({members}) =>
-    members.map(member =>
+export let teammemberTemplate = ({members}) => {
+    console.log(members)
+    return members.map(member =>
         `<tr id="user-${member.id}">
             <td width="30">
                 <span class="fw-inline">
@@ -24,6 +25,7 @@ export let teammemberTemplate = ({members}) =>
             </td>
         </tr>`
     ).join('')
+}
 
 //template for member adding dialog
 export let addTeammemberTemplate = ({dialogHeader}) =>

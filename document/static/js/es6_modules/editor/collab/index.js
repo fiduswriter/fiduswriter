@@ -1,7 +1,7 @@
 import {ModCollabDocChanges} from "./doc-changes"
 import {ModCollabChat} from "./chat"
 import {ModCollabColors} from "./colors"
-import {removeCollaboratorSelection} from "../plugins/collab-carets"
+import {removeCollaboratorSelection} from "../statePlugins"
 
 
 export class ModCollab {

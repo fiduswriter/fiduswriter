@@ -6,13 +6,17 @@ button {
     outline-width: 0;
 }
 
-input[type='text'],
-input[type='password'],
-input[type='search'],
-input[type='email'] {
+input[type=text],
+input[type=password],
+input[type=search],
+input[type=email] {
     padding: 0 3px;
     height: 36px;
     width: calc(100% - 8px);
+}
+
+input[type=text].category-form {
+    width: calc(100% - 38px);
 }
 
 textarea {

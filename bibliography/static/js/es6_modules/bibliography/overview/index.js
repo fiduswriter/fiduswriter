@@ -5,8 +5,8 @@ import {BibEntryForm} from "../form"
 import {editCategoriesTemplate, bibtableTemplate} from "./templates"
 import {BibliographyDB} from "../database"
 import {BibTypeTitles} from "../form/strings"
-import {OverviewMenuView} from "../../common"
 import {SiteMenu} from "../../menu"
+import {OverviewMenuView} from "../../common"
 import {menuModel} from "./menu"
 import * as plugins from "../../plugins/bibliography-overview"
 
@@ -27,42 +27,33 @@ export class BibliographyOverview {
         this.bibDB = new BibliographyDB()
 
         this.bibDB.getDB().then(({bibPKs, bibCats}) => {
-            this.addBibCategoryList(bibCats)
+            this.setBibCategoryList(bibCats)
             this.addBibList(bibPKs)
         })
     }
 
     /** Adds a list of bibliography categories to current list of bibliography categories.
-     * @function addBibCategoryList
+     * @function setBibCategoryList
      * @param newBibCategories The new categories which will be added to the existing ones.
      */
-    addBibCategoryList(newBibCategories) {
-        newBibCategories.forEach(bibCat =>
-            this.appendToBibCatList(bibCat)
-        )
-    }
-
-    /** Add an item to the HTML list of bibliography categories.
-     * @function appendToBibCatList
-     * @param bCat Category to be appended.
-     */
-    appendToBibCatList(bCat) {
-
+    setBibCategoryList(bibCategories) {
         let catSelector = this.menu.model.content.find(menuItem => menuItem.id==='cat_selector')
+        catSelector.content = catSelector.content.filter(cat => cat.type !== 'category')
 
-        catSelector.content.push({
-            title: bCat.category_title,
+        catSelector.content = catSelector.content.concat(bibCategories.forEach(cat => ({
+            title: cat.category_title,
+            type: 'category',
             action: overview => {
                 let trs = [].slice.call(document.querySelectorAll('#bibliography > tbody > tr'))
                 trs.forEach(tr => {
-                    if (tr.classList.contains(`cat_${bCat.id}`)) {
+                    if (tr.classList.contains(`cat_${cat.id}`)) {
                         tr.style.display = ''
                     } else {
                         tr.style.display = 'none'
                     }
                 })
             }
-        })
+        })))
         this.menu.update()
     }
 
@@ -90,7 +81,7 @@ export class BibliographyOverview {
         let buttons = {}
         let that = this
         buttons[gettext('Submit')] = function () {
-            let newCat = {
+            let cats = {
                 'ids': [],
                 'titles': []
             }
@@ -99,15 +90,11 @@ export class BibliographyOverview {
                 let thisId = jQuery(this).attr('data-id')
                 if ('undefined' == typeof (thisId)) thisId = 0
                 if ('' !== thisVal) {
-                    newCat.ids.push(thisId)
-                    newCat.titles.push(thisVal)
-                } else if ('' === thisVal && 0 < thisId) {
-                    that.deletedCat[that.deletedCat
-                        .length] = thisId
+                    cats.ids.push(thisId)
+                    cats.titles.push(thisVal)
                 }
             })
-            that.bibDB.deleteCategory(that.deletedCat)
-            that.createCategory(newCat)
+            that.createCategory(cats)
             jQuery(this).dialog('close')
         }
         buttons[gettext('Cancel')] = function () {
@@ -130,7 +117,6 @@ export class BibliographyOverview {
             },
         })
 
-        this.deletedCat = []
         addRemoveListHandler()
 
     }
@@ -369,7 +355,7 @@ export class BibliographyOverview {
 
 
     createCategory(cats) {
-        this.bibDB.createCategory(cats).then(bibCats => this.addBibCategoryList(bibCats))
+        this.bibDB.createCategory(cats).then(bibCats => this.setBibCategoryList(bibCats))
     }
 
     deleteBibEntries(ids) {

@@ -1,4 +1,4 @@
-import {usermediaEditcategoriesTemplate, usermediaCategoryformsTemplate, usermediaCategoryListItemTemplate} from "./templates"
+import {usermediaEditcategoriesTemplate, usermediaCategoryListItemTemplate} from "./templates"
 import {activateWait, deactivateWait, addAlert, csrfToken} from "../../common"
 
 export class ImageOverviewCategories {
@@ -7,8 +7,9 @@ export class ImageOverviewCategories {
         this.imageOverview = imageOverview
         imageOverview.mod.categories = this
     }
+
     //save changes or create a new category
-    createCategory(cats) {
+    saveCategories(cats) {
         let postData = {
             'ids[]': cats.ids,
             'titles[]': cats.titles
@@ -24,11 +25,8 @@ export class ImageOverviewCategories {
                 xhr.setRequestHeader("X-CSRFToken", csrfToken),
             success: (response, textStatus, jqXHR) => {
                 if (jqXHR.status == 201) {
-                    // TODO: Why do we reload the entire list when one new category is created?
                     this.imageOverview.imageDB.cats = response.entries
-                    jQuery('#image-category-list li').not(':first').remove()
-                    this.addImageCategoryList(response.entries)
-
+                    this.setImageCategoryList(response.entries)
                     addAlert('success', gettext('The categories have been updated'))
                 }
             },
@@ -39,68 +37,53 @@ export class ImageOverviewCategories {
         })
     }
 
-    addImageCategoryList(newimageCategories) {
-        //imageCategories = imageCategories.concat(newimageCategories)
-        for (let i = 0; i < newimageCategories.length; i++) {
-            this.appendToImageCatList(newimageCategories[i])
-        }
-    }
-
-    appendToImageCatList(iCat) {
-        jQuery('#image-category-list').append(
-            usermediaCategoryListItemTemplate({
-                'iCat': iCat
+    setImageCategoryList(imageCategories) {
+        let catSelector = this.imageOverview.menu.model.content.find(menuItem => menuItem.id === 'cat_selector')
+        catSelector.content = catSelector.content.filter(cat => cat.type !== 'category')
+        catSelector.content = catSelector.content.concat(
+            imageCategories.map(cat => ({
+                type: 'category',
+                title: cat.category_title,
+                action: overview => {
+                    let trs = [].slice.call(document.querySelectorAll('#bibliography > tbody > tr'))
+                    trs.forEach(tr => {
+                        if (tr.classList.contains(`cat_${cat.id}`)) {
+                            tr.style.display = ''
+                        } else {
+                            tr.style.display = 'none'
+                        }
+                    })
+                }
             }))
-    }
-
-    //delete an image category
-
-    deleteCategory(ids) {
-        let postData = {
-            'ids[]': ids
-        }
-        jQuery.ajax({
-            url: '/usermedia/delete_category/',
-            data: postData,
-            type: 'POST',
-            dataType: 'json',
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: (xhr, settings) =>
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-        })
+        )
+        this.imageOverview.menu.update()
     }
 
     //open a dialog for editing categories
-    createCategoryDialog() {
+    editCategoryDialog() {
         let dialogHeader = gettext('Edit Categories')
         let dialogBody = usermediaEditcategoriesTemplate({
-            'dialogHeader': dialogHeader,
-            'categories': usermediaCategoryformsTemplate({
-                'categories': this.imageOverview.imageDB.cats
-            })
+            dialogHeader,
+            categories: this.imageOverview.imageDB.cats
         })
         jQuery('body').append(dialogBody)
         let diaButtons = {}
         let that = this
         diaButtons[gettext('Submit')] = function () {
-            let newCat = {
+            let cats = {
                 'ids': [],
                 'titles': []
             }
-            let deletedCats = []
             jQuery('#editCategories .category-form').each(function () {
                 let thisVal = jQuery.trim(jQuery(this).val())
                 let thisId = jQuery(this).attr('data-id')
                 if ('undefined' == typeof (thisId)) thisId = 0
                 if ('' !== thisVal) {
-                    newCat.ids.push(thisId)
-                    newCat.titles.push(thisVal)
-                } else if ('' === thisVal && 0 < thisId) {
-                    deletedCats.push(thisId)
+                    cats.ids.push(thisId)
+                    cats.titles.push(thisVal)
                 }
             })
-            that.deleteCategory(deletedCats)
-            that.createCategory(newCat)
+            that.saveCategories(cats)
             jQuery(this).dialog('close')
         }
         diaButtons[gettext('Cancel')] = function () {
@@ -136,13 +119,6 @@ export class ImageOverviewCategories {
                     'data-id')
                 parentClone.insertAfter(parent)
             } else {
-                let thePrev = jQuery(this).prev()
-                if (thePrev.hasClass("category-form")) {
-                    // TODO: Figure out what this was about
-                    //let thisId = thePrev.attr('data-id')
-                    //if (undefined !== thisId)
-                    //    deleted_cat[deleted_cat.length] = thisId
-                }
                 parent.remove()
             }
         })

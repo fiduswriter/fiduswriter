@@ -1,9 +1,9 @@
 import {DocumentOverviewActions} from "./actions"
+import {DocumentAccessRightsDialog} from "../access-rights"
 import {menuModel} from "./menu"
 import {documentsListTemplate} from "./templates"
-import {activateWait, deactivateWait, addAlert, csrfToken} from "../../common"
+import {activateWait, deactivateWait, addAlert, csrfToken, OverviewMenuView} from "../../common"
 import {SiteMenu} from "../../menu"
-import {OverviewMenuView} from "../../common"
 /*
 * Helper functions for the document overview page.
 */

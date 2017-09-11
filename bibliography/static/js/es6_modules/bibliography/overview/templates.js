@@ -19,7 +19,7 @@ let categoryFormsTemplate = ({categories}) =>
             <span class="fw-add-input icon-addremove"></span>
         </td>
     </tr>`
-    
+
 /** A template for the editing of bibliography categories list. */
 export let editCategoriesTemplate = ({categories, dialogHeader}) =>
     `<div id="editCategories" title="${dialogHeader}">
@@ -57,11 +57,3 @@ export let bibtableTemplate = ({id, cats, title, type, typetitle, published, aut
             </span>
         </td>
     </tr>`
-
-/** A template of a bibliography category list item. */
-export let bibliographyCategoryListItemTemplate = ({bCat}) =>
-    `<li>
-        <span class="fw-pulldown-item" data-id="${bCat.id}">
-            ${escapeText(bCat.category_title)}
-        </span>
-    </li>`

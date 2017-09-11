@@ -51,13 +51,19 @@ export let setCheckableLabel = function(label) {
 /** Cover the page signaling to the user to wait.
  */
 export let activateWait = function() {
-    document.getElementById('wait').classList.add('active')
+    let waitEl = document.getElementById('wait')
+    if (waitEl) {
+        waitEl.classList.add('active')
+    }
 }
 
 /** Remove the wait cover.
  */
 export let deactivateWait = function() {
-    document.getElementById('wait').classList.remove('active')
+    let waitEl = document.getElementById('wait')
+    if (waitEl) {
+        waitEl.classList.remove('active')
+    }
 }
 
 /** Show a message to the user.

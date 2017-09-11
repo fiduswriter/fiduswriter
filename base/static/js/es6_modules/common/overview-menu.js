@@ -40,13 +40,18 @@ export class OverviewMenuView {
                 seekItem = seekItem.previousElementSibling
             }
             let menuNumber = 0
-            seekItem = seekItem.parentElement.parentElement.parentElement.parentElement
+            seekItem = seekItem.parentElement.parentElement.parentElement
             while (seekItem.previousElementSibling) {
                 menuNumber++
                 seekItem = seekItem.previousElementSibling
             }
             this.model.content[menuNumber].content[itemNumber].action(this.overview)
             this.model.content[menuNumber].open = false
+
+            if (this.model.content[menuNumber].type==='dropdown') {
+                this.model.content[menuNumber].title =
+                    this.model.content[menuNumber].content[itemNumber].title
+            }
             return false
         } else if(target.matches('#fw-overview-menu li .select-action input[type=checkbox]')) {
             event.preventDefault()
@@ -85,8 +90,17 @@ export class OverviewMenuView {
             // if it is a dropdown menu, open it. Otherwise execute an
             // associated action.
             if (['dropdown', 'select-action-dropdown'].includes(menuItem.type)) {
-                menuItem.open = true
-                this.openedMenu = menuNumber
+                if (this.openedMenu === menuNumber) {
+                    this.model.content[this.openedMenu].open = false
+                    this.openedMenu = false
+                } else {
+                    if (this.openedMenu !== false) {
+                        this.model.content[this.openedMenu].open = false
+                    }
+                    menuItem.open = true
+                    this.openedMenu = menuNumber
+                }
+
             } else if (menuItem.action) {
                 menuItem.action(this.overview)
                 if (this.openedMenu !== false) {
@@ -104,6 +118,10 @@ export class OverviewMenuView {
     }
 
     update() {
+        if (!this.menuEl) {
+            // page has not yet been loaded. abort
+            return
+        }
         let tempEl = document.createElement('div')
         tempEl.innerHTML = this.getMenuHTML()
         let newMenuEl = tempEl.firstElementChild
@@ -123,6 +141,9 @@ export class OverviewMenuView {
 
     getMenuItemHTML(menuItem) {
         switch(menuItem.type) {
+            case 'dropdown':
+                return this.getDropdownHTML(menuItem)
+                break
             case 'select-action-dropdown':
                 return this.getSelectionActionDropdownHTML(menuItem)
                 break
@@ -150,6 +171,22 @@ export class OverviewMenuView {
         `
     }
 
+    getDropdownHTML(menuItem) {
+        return `
+        <div class="dropdown fw-button fw-light fw-large">
+            <label>${
+                menuItem.title ?
+                escapeText(menuItem.title) :
+                menuItem.content.length ?
+                escapeText(menuItem.content[0].title) :
+                ''
+            }</label>
+            <span class="dropdown"><i class="fa fa-caret-down"></i></span>
+        </div>
+        ${this.getDropdownListHTML(menuItem)}
+        `
+    }
+
     getDropdownListHTML(menuItem) {
         if (menuItem.open) {
             return `<div class="fw-pulldown fw-left" style="display: block;"><ul>${
@@ -164,7 +201,7 @@ export class OverviewMenuView {
         return `
         <li>
             <span class="fw-pulldown-item">
-                ${menuOption.title}
+                ${escapeText(menuOption.title)}
             </span>
         </li>
         `

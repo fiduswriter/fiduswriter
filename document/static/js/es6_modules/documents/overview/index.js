@@ -1,3 +1,4 @@
+import * as plugins from "../../plugins/documents-overview"
 import {DocumentOverviewActions} from "./actions"
 import {DocumentAccessRightsDialog} from "../access-rights"
 import {menuModel} from "./menu"
@@ -21,6 +22,7 @@ export class DocumentOverview {
         new DocumentOverviewActions(this)
         this.menu = new OverviewMenuView(this, menuModel)
         this.menu.init()
+        this.activateFidusPlugins()
         this.bind()
     }
 
@@ -45,6 +47,18 @@ export class DocumentOverview {
                 newAccessRights => that.accessRights = newAccessRights,
                 memberDetails => that.teamMembers.push(memberDetails)
             )
+        })
+    }
+
+    activateFidusPlugins() {
+        // Add plugins.
+        this.plugins = {}
+
+        Object.keys(plugins).forEach(plugin => {
+            if (typeof plugins[plugin] === 'function') {
+                this.plugins[plugin] = new plugins[plugin](this)
+                this.plugins[plugin].init()
+            }
         })
     }
 

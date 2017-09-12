@@ -410,10 +410,11 @@ export class Editor {
                                 updateBibliography = true
                             }
                             if (!remote) {
-                                let commentId = this.mod.comments.layout.findCommentId(node)
-                                if (commentId !== false && !commentIds.includes(commentId)) {
-                                    commentIds.push(commentId)
-                                }
+                                this.mod.comments.layout.findCommentIds(node).forEach(commentId => {
+                                    if (!commentIds.includes(commentId)) {
+                                        commentIds.push(commentId)
+                                    }
+                                })
                             }
                         }
                     )

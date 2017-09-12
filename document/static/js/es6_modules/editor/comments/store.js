@@ -219,13 +219,14 @@ export class ModCommentStore {
             if (!node.isInline) {
                 return
             }
-            let id = this.mod.layout.findCommentId(node)
-            if (id && ids.indexOf(id) !== -1) {
-                ids.splice(ids.indexOf(id),1)
-            }
+            this.mod.layout.findCommentIds(node).forEach(id => {
+                if (ids.includes(id)) {
+                    ids.splice(ids.indexOf(id), 1)
+                }
+            })
         })
 
-        // Move the comment to a piece of text nearby, unless the
+        // Move the comment to a piece of text nearby
         ids.forEach(id => {
             let pos = this.mod.editor.view.state.selection.from
             this.moveComment(

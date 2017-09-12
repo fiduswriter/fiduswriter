@@ -133,7 +133,7 @@ export class Editor {
             [placeholdersPlugin, () => ({editor: this})],
             [headerbarPlugin, () => ({editor: this})],
             [toolbarPlugin, () => ({editor: this})],
-            [collabCaretsPlugin],
+            [collabCaretsPlugin, () => ({editor: this})],
             [footnoteMarkersPlugin, () => ({editor: this})],
             [commentsPlugin, () => ({editor: this})],
             [keywordInputPlugin, () => ({editor: this})],

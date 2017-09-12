@@ -556,7 +556,7 @@ export let toolbarModel = {
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
+                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
                     return true
                 } else if (editor.currentView.state.selection.empty) {
                     return true

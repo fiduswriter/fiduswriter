@@ -72,14 +72,10 @@ export class ModCommentLayout {
         this.mod.store.removeCommentDuringCreation()
     }
 
-    findCommentId(node) {
-        let found = false
-        for (let i = 0; i < node.marks.length; i++) {
-            let mark = node.marks[i]
-            if (mark.type.name === 'comment' && mark.attrs.id)
-                found = mark.attrs.id
-        }
-        return found
+    findCommentIds(node) {
+        return node.marks.filter(
+            mark => mark.type.name === 'comment' && mark.attrs.id
+        ).map(mark => mark.attrs.id)
     }
 
     findComment(id) {
@@ -91,9 +87,8 @@ export class ModCommentLayout {
     }
 
     findCommentsAt(node) {
-        let found = false
-        let id = this.findCommentId(node)
-        return this.findComment(id)
+        let ids = this.findCommentIds(node)
+        return ids.map(id => this.findComment(id))
     }
 
 
@@ -157,12 +152,12 @@ export class ModCommentLayout {
     // caret is placed, if the editor is in focus.
     activateSelectedComment() {
 
-        let selection = this.mod.editor.view.state.selection, comment = false
+        let selection = this.mod.editor.view.state.selection, comments = []
 
         if (selection.empty) {
             let node = this.mod.editor.view.state.doc.nodeAt(selection.from)
             if (node) {
-                comment = this.findCommentsAt(node)
+                comments = this.findCommentsAt(node)
             }
         } else {
             this.mod.editor.view.state.doc.nodesBetween(
@@ -172,14 +167,14 @@ export class ModCommentLayout {
                     if (!node.isInline) {
                         return
                     }
-                    comment = comment ? comment : this.findCommentsAt(node)
+                    comments = comments.concat(this.findCommentsAt(node))
                 }
             )
         }
 
-        if (comment) {
-            if (this.activeCommentId !== comment.id) {
-              this.activateComment(comment.id)
+        if (comments.length) {
+            if (this.activeCommentId !== comments[0].id) {
+              this.activateComment(comments[0].id)
             }
         } else {
             this.deactivateAll()
@@ -196,34 +191,32 @@ export class ModCommentLayout {
             if (!node.isInline) {
                 return
             }
-            let commentId = this.findCommentId(node)
-            if (!commentId) {
+            let commentIds = this.findCommentIds(node)
+            if (!commentIds.length) {
                 return
             }
-            let comment = this.findComment(commentId)
-            if (!comment) {
-                // We have no comment with this ID. Ignore the referrer.
-                return;
-            }
-            if (theComments.indexOf(comment) !== -1) {
-                // comment already placed
-                return
-            }
-            if (comment.id === this.activeCommentId) {
-                activeCommentStyle +=
-                    `.comments-enabled .comment[data-id="${comment.id}"] {background-color: #fffacf;}`
-            } else {
-                activeCommentStyle +=
-                    `.comments-enabled .comment[data-id="${comment.id}"] {background-color: #f2f2f2;}`
-            }
-            theComments.push(comment)
-            referrers.push(pos)
+            commentIds.forEach(commentId => {
+                let comment = this.findComment(commentId)
+                if (!comment) {
+                    // We have no comment with this ID. Ignore the referrer.
+                    return;
+                }
+                if (theComments.includes(comment)) {
+                    // comment already placed
+                    return
+                }
+                if (comment.id === this.activeCommentId) {
+                    activeCommentStyle +=
+                        `.comments-enabled .comment[data-id="${comment.id}"], .comments-enabled .comment[data-id="${comment.id}"] .comment {background-color: #fffacf !important;}`
+                } else {
+                    activeCommentStyle +=
+                        `.comments-enabled .comment[data-id="${comment.id}"] {background-color: #f2f2f2;}`
+                }
+                theComments.push(comment)
+                referrers.push(pos)
+            })
         })
-
         // Add a comment that is currently under construction to the list.
-
-
-
         if(this.mod.store.commentDuringCreation) {
             let pos = getCommentDuringCreationDecoration(this.mod.editor.view.state).from
             let comment = this.mod.store.commentDuringCreation.comment
@@ -235,7 +228,7 @@ export class ModCommentLayout {
             }
             theComments.splice(index, 0, comment)
             referrers.splice(index, 0, pos)
-            activeCommentStyle += '.comments-enabled .active-comment {background-color: #fffacf;}'
+            activeCommentStyle += '.comments-enabled .active-comment, .comments-enabled .active-comment .comment {background-color: #fffacf !important;}'
             this.mod.store.commentDuringCreation.inDOM = true
         }
 

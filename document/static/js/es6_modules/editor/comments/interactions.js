@@ -191,11 +191,22 @@ export class ModCommentInteractions {
 
     createNewAnswer(id, answerText) {
         // Create a new answer to add to the comment store
+
+        let userName, userAvatar
+
+        if(REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
+            userName = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
+            userAvatar = `${window.staticUrl}img/default_avatar.png`
+        } else {
+            userName = this.mod.editor.user.name
+            userAvatar = this.mod.editor.user.avatar
+        }
+
         let answer = {
             answer: answerText,
             user: this.mod.editor.user.id,
-            userName: this.mod.editor.user.name,
-            userAvatar: this.mod.editor.user.avatar,
+            userName,
+            userAvatar,
             date: new Date().getTime()
         }
 

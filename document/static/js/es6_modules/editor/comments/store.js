@@ -1,4 +1,5 @@
 import {Comment} from "./comment"
+import {REVIEW_ROLES} from ".."
 import {
     addCommentDuringCreationDecoration,
     removeCommentDuringCreationDecoration
@@ -30,13 +31,23 @@ export class ModCommentStore {
     // as it is empty, shouldn't be shared and if canceled, it should go away
     // entirely.
     addCommentDuringCreation() {
-        let id = -1
+        let id = -1, userName, userAvatar
+
+        if(REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
+            userName = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
+            userAvatar = `${window.staticUrl}img/default_avatar.png`
+        } else {
+            userName = this.mod.editor.user.name
+            userAvatar = this.mod.editor.user.avatar
+        }
+
+
         this.commentDuringCreation = {
             comment: new Comment(
                 id,
                 this.mod.editor.user.id,
-                this.mod.editor.user.name,
-                this.mod.editor.user.avatar,
+                userName,
+                userAvatar,
                 new Date().getTime(),
                 ''),
             inDOM: false
@@ -61,10 +72,11 @@ export class ModCommentStore {
     // Add a new comment to the comment database both remotely and locally.
     addComment(user, userName, userAvatar, date, comment, isMajor, posFrom, posTo) {
         let id = randomID()
+
         this.addLocalComment(id, user, userName, userAvatar, date, comment, [], isMajor, true)
         this.unsent.push({
             type: "create",
-            id: id
+            id
         })
         let markType = this.mod.editor.view.state.schema.marks.comment.create({id})
         this.mod.editor.view.dispatch(
@@ -124,7 +136,16 @@ export class ModCommentStore {
 
     addLocalComment(id, user, userName, userAvatar, date, comment, answers, isMajor, local) {
         if (!this.comments[id]) {
-            this.comments[id] = new Comment(id, user, userName, userAvatar, date, comment, answers, isMajor)
+            this.comments[id] = new Comment(
+                id,
+                user,
+                userName,
+                userAvatar,
+                date,
+                comment,
+                answers,
+                isMajor
+            )
         }
         if (local || (!this.mod.layout.isCurrentlyEditing())) {
             this.mod.layout.layoutComments()
@@ -198,13 +219,14 @@ export class ModCommentStore {
             if (!node.isInline) {
                 return
             }
-            let id = this.mod.layout.findCommentId(node)
-            if (id && ids.indexOf(id) !== -1) {
-                ids.splice(ids.indexOf(id),1)
-            }
+            this.mod.layout.findCommentIds(node).forEach(id => {
+                if (ids.includes(id)) {
+                    ids.splice(ids.indexOf(id), 1)
+                }
+            })
         })
 
-        // Move the comment to a piece of text nearby, unless the
+        // Move the comment to a piece of text nearby
         ids.forEach(id => {
             let pos = this.mod.editor.view.state.selection.from
             this.moveComment(

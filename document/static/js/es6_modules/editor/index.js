@@ -133,7 +133,7 @@ export class Editor {
             [placeholdersPlugin, () => ({editor: this})],
             [headerbarPlugin, () => ({editor: this})],
             [toolbarPlugin, () => ({editor: this})],
-            [collabCaretsPlugin],
+            [collabCaretsPlugin, () => ({editor: this})],
             [footnoteMarkersPlugin, () => ({editor: this})],
             [commentsPlugin, () => ({editor: this})],
             [keywordInputPlugin, () => ({editor: this})],
@@ -410,10 +410,11 @@ export class Editor {
                                 updateBibliography = true
                             }
                             if (!remote) {
-                                let commentId = this.mod.comments.layout.findCommentId(node)
-                                if (commentId !== false && !commentIds.includes(commentId)) {
-                                    commentIds.push(commentId)
-                                }
+                                this.mod.comments.layout.findCommentIds(node).forEach(commentId => {
+                                    if (!commentIds.includes(commentId)) {
+                                        commentIds.push(commentId)
+                                    }
+                                })
                             }
                         }
                     )

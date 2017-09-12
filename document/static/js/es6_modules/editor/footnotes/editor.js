@@ -33,7 +33,7 @@ export class ModFootnoteEditor {
             [keymap, () => buildKeymap(this.schema)],
             [collab],
             [toolbarPlugin, () => ({editor: this.mod.editor})],
-            [collabCaretsPlugin],
+            [collabCaretsPlugin, () => ({editor: this.mod.editor})],
             [pastePlugin, () => ({editor: this.mod.editor})]
         ]
     }

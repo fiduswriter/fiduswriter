@@ -19,13 +19,13 @@ before_install:
 
 install:
   - mv travis/configuration.py ./
-  - pip install pyOpenSSL ndg-httpsclient pyasn1
-  - pip install -r requirements.txt
-  - pip install -r dev-requirements.txt
+  - pip install --user requests[security]
+  - pip install --user -r requirements.txt
+  - pip install --user -r dev-requirements.txt
   - flake8 ./
-  - pip install coverage
-  - pip install coveralls
-  - pip install selenium
+  - pip install --user coverage
+  - pip install --user coveralls
+  - pip install --user selenium
   - coverage run manage.py init --no-static --no-compress
   - ./manage.py check_js
 

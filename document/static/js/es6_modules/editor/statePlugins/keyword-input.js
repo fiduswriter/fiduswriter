@@ -183,6 +183,9 @@ export let keywordInputPlugin = function(options) {
                 } = this.getState(oldState)
 
                 decos = decos.map(tr.mapping, tr.doc)
+                if (options.editor.docInfo.access_rights !== 'write') {
+                    return {decos}
+                }
                 let decoPos = decos.find()[0].from
                 if (
                     tr.selection.from === tr.selection.to &&

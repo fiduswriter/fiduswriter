@@ -314,6 +314,7 @@ let comment = {
         id: {}
     },
     inclusive: false,
+    excludes: "",
     group: "annotation",
     parseDOM: [{
         tag: "span.comment[data-id]",

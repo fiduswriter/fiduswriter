@@ -98,13 +98,13 @@ export let menuModel = {
         {
             type: 'button',
             icon: 'plus-circle',
-            title: gettext('Create New Document'),
+            title: gettext('Create new document'),
             action: overview => window.location.href = '/document/new/'
         },
         {
             type: 'button',
             icon: 'upload',
-            title: gettext('Upload Fidus Document'),
+            title: gettext('Upload Fidus document'),
             action: overview => overview.mod.actions.importFidus()
         }
     ]

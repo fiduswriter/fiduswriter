@@ -73,7 +73,7 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
             .replace(/<div/g, '<h1')
             .replace(/<\/div>/g, '</h1>')
         jQuery(dom).find('div.article-title').html(titleTag)
-        jQuery(dom).find('h1.article-title').unwrap()
+        jQuery(dom).find('p.h1.article-title').unwrap()
 
 
         return dom
@@ -207,9 +207,8 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
 
             }
         }
-        let commentEnd = '</article>'
         sidetags = commentHeader+commentBody
-    	this.outerHTML=this.outerHTML+'<aside class="note do"> <blockquote cite="'+commentNode.id+'">'+sidetags+'</blockquote></aside>'
+    	this.outerHTML=this.outerHTML + '<aside class="note do"> <blockquote cite="'+commentNode.id+'">'+sidetags+'</blockquote></aside>'
     	})
     return htmlCode
     }
@@ -226,7 +225,7 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
                 this.classList.add(className)
                 this.id = className
                 this.outerHTML =
-                    `<section id="${className}" inlist="" " resource="#${className}">
+                    `<section id="${className}" inlist="" resource="#${className}">
                         <h3 property="schema:name">${this.innerHTML}</h3>
                     </section>`
             }

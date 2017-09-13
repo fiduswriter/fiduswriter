@@ -131,7 +131,6 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
             commentFile = {
                 filename: 'comment#' + commentNode.id + '.html',
                 contents: commentHeader + commentBody + commentEnd
-            }
         return commentFile
     }
 
@@ -249,7 +248,7 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
         })
 
    
-        jQuery(dom).find('h3').each(function(index) {
+        jQuery(dom).find</img>('h3').each(function(index) {
             if (this.classList !== null && this.innerHTML !== null) {
                 className = this.innerHTML
                 className = className.replace(/\s+/g, '')

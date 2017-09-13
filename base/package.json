@@ -46,6 +46,7 @@
     "orderedmap": "1.0.0",
     "paginate-for-print": "0.0.7",
     "prosemirror-state": "0.22.0",
+    "prosemirror-transform": "0.22.2",
     "prosemirror-view": "0.22.1",
     "prosemirror-model": "0.22.0",
     "prosemirror-keymap": "0.22.1",
@@ -99,7 +100,9 @@
       "jQuery",
       "MathQuill",
       "gettext",
-      "_"
+      "_",
+      "fetch",
+      "URLSearchParams"
     ]
   }
 }

@@ -207,6 +207,7 @@ export class OdtExporterRichtext {
                 break
             case 'table_cell':
                 start += '<table:table-cell>'
+                `<table:style-name="Table1.A2" table:number-rows-spanned="2" office:value-type="string"> />`
                 end = '</table:table-cell>' + end
                 break
             case 'equation':

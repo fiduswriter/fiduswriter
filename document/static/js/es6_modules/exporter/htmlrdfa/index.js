@@ -88,6 +88,9 @@ export class HTMLRDFaExporter extends BaseHTMLRDFaExporter {
         
         contents = this.convertSideCommentsToRDFa(contents,this.doc.comments)
 
+ 	contents = this.addRefeneceRDFa(contents)
+ 	contents = this.addRefeneces(contents)
+
         let contentsCode = this.replaceImgSrc(contents.innerHTML)
 
         let dom = htmlExportTemplate({

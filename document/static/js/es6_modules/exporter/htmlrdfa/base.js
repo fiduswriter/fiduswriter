@@ -240,57 +240,57 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
 	let tag = ""
 	var entry1 = ['ACKNOWLEDGMENTS', 'ACKNOWLEDGMENT', 'Acknowledgement', 'Acknowledgements']; 
         if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:acknowledgements"
+	   tag = "deo:Acknowledgements"
         }
 
 	entry1 = ['Outlook', 'OUTLOOK', 'FUTURE WORK', 'ROADMAP','PLAN']; 
         if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:futureWork"
+	   tag = "deo:FutureWork"
         }
 
 	entry1 = ['CONCLUSION', 'Conclusion', 'CONCLUSIONS', 'Conclusions']; 
         if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:conclusion"
+	   tag = "deo:Conclusion"
         }
 
 	entry1 = ['Results', 'RESULTS']; 
         if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:results"
+	   tag = "deo:Results"
         }
 	
 	entry1 = ['Analysis', 'Discussion', 'DISCUSSIONS']; 
         if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:discussion"
+	   tag = "deo:Discussion"
         }
 
 	entry1 = ['RELATEDWORK', 'LITERATUREREVIEW']; 
         if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:relatedWork"
+	   tag = "deo:RelatedWork"
         }
 
 	entry1 = ['VALIDATION', 'Evaluation', 'Experiments', 'EXPERIMENTAL','Comparison', 'EVALUATION' , 'Experimental']; 
         if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:evaluation"
+	   tag = "deo:Evaluation"
         }
 
 	entry1 = ['MOTIVATION', 'Motivation', 'Motivation', 'Case study']; 
         if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:motivation"
+	   tag = "deo:Motivation"
         }
 
 	entry1 = ['Problem', 'PROBLEM',, 'Approach', 'APPROACH', 'Case Description']; 
         if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:problemStatement"
+	   tag = "deo:ProblemStatement"
         }
 
 	entry1 = ['Abstract', 'ABSTRACT', 'Summary']; 
         if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:abstract"
+	   tag = "deo:Abstract"
         }
 
 	entry1 = ['INTRODUCTION', 'Introduction']; 
         if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:introduction"
+	   tag = "deo:Introduction"
         }
 
 	entry1 = ['APPROACH', 'METHODOLOGY', 'Methods', 'METHODS', 'PROPOSEDSOLUTION' , 'PROPOSEDAPPROACH']; 
@@ -300,33 +300,33 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
 	
 	entry1 = ['FRAMEWORK', 'Structure', 'SYSTEM', 'Architecture', 'IMPLEMENTATION', 'Implementing', 'schema']; 
         if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "ssn:system"
+	   tag = "ssn:System"
         }
 
 	entry1 = ['Keywords', 'KEYWORDS']; 
         if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "swrc:keywords"
+	   tag = "swrc:Keywords"
         }
 
 	entry1 = ['background', 'Concepts', 'BACKGROUND']; 
         if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:background"
+	   tag = "deo:Background"
         }
 
 	entry1 = ['MODELING', 'Model', 'Representation', 'Modelling']; 
         if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:model"
+	   tag = "deo:Model"
         }
 	entry1 = ['REFERENCE', 'REFERENCES' , 'Reference']; 
         if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:reference"
+	   tag = "deo:Reference"
         }
 	this.outerHTML =
-                    `<div datatype="rdf:HTML" property="schema:description" resource="#${className}" typeof="${tag}">
-			<section id="${className}" resource="#${className}">
+                    `<section id="${className}" inlist="" resource="#${className}">
                         <h2 property="schema:name">${this.innerHTML}</h2>
-                    	</section>
-		     </div>`
+			<div datatype="rdf:HTML" property="schema:description" resource="#${className}" typeof="${tag}">
+			</div>
+                    	</section>`
             }
         })
 
@@ -350,6 +350,45 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
         
         return dom
     }
+
+
+    addRefeneceRDFa(dom){
+	jQuery(dom).find('div.csl-bib-body').each(function(index) {
+            if (this.innerHTML !== null) {
+                    this.outerHTML =
+                    `<section id="references">
+			<h2>References</h2>
+                        <div>
+                            <ol>${this.innerHTML}</ol>
+			</div>
+                    </section>`
+            }
+        })
+	return dom
+    }
+
+	addRefeneces(htmlString){
+
+ 	var referenceEl = jQuery(htmlString).find('div.csl-entry')
+        if (!referenceEl.length) {
+            return htmlString
+        }
+        referenceEl.attr({
+            "typeof": "deo:Reference"
+        })
+	jQuery(htmlString).find('div.csl-entry').each(function(index) {
+            if (this.innerHTML !== null) {
+                    this.outerHTML =
+                    `<li>
+                        <cite>
+                            ${this.innerHTML}
+			</cite>
+                    </li>`
+            }
+        })
+	return htmlString
+    }
+
 
     replaceImgSrc(htmlString) {
         htmlString = htmlString.replace(/<(img|IMG) data-src([^>]+)>/gm,

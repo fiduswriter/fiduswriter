@@ -131,6 +131,7 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
             commentFile = {
                 filename: 'comment#' + commentNode.id + '.html',
                 contents: commentHeader + commentBody + commentEnd
+            }
         return commentFile
     }
 
@@ -159,7 +160,6 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
     }
 
     convertAbstractToRDF(dom) {
-        //jQuery(dom).find('div.article-abstract').parent().before('<div calss="article-content" id="content">')
         var abstractEl = jQuery(dom).find('div.article-abstract')
         if (!abstractEl.length) {
             return dom
@@ -178,6 +178,7 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
         jQuery(dom).find('div.article-content').unwrap()
         return dom
     }
+
     convertSideCommentsToRDFa(htmlCode,comments){
     	jQuery(htmlCode).find('.comment').each(function () {
     		let sidetags,
@@ -197,7 +198,7 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
         if (commentNode.answers.length > 0) {
             for (let i = 0; i < commentNode.answers.length; i++) {
                 commentBody += '<h3 property="schema:name" style="display:none">Answers</h2></br>/br><dl class="author-name"><dt>Authors</dt><dd><span rel="schema:creator"><span about="userURI#' + commentNode.answers[i].user + '" typeof="schema:Person">\
-    	<img alt="" rel="schema:image" src="' + commentNode.answers[i].userAvatar + '" width="48" height="48"> <a href="#">\
+    	<img alt="" rel="schema:image" src="' + commentNode.answers[i].userAvatar + '" width="48" height="48"> </img><a href="#">\
     	<span about="userURI#' + commentNode.answers[i].user + '" property="schema:name">' + commentNode.answers[i].userName + '</span></a></span></span></dd></dl>\
     	<dl class="published"><dt>Published</dt><dd><a href="' + window.location.href + '#' + commentNode.answers[i].id + '"><time datetime="' + commentNode.answers[i].date + '" datatype="xsd:dateTime" property="schema:datePublished" content="' + commentNode.answers[i].date + '">' + commentNode.answers[i].date + '</time></a></dd>\
     	<section id="answer-' + commentNode.answers[i].id + '" rel="oa:hasBody" resource="i:#answer-' + commentNode.answers[i].id + '">\
@@ -215,18 +216,118 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
 
 
     addSectionsTag(dom) {
-        let className        
-        jQuery(dom).find('h2').each(function(index) {
+        let className
+	let rdfaType
+
+        jQuery(dom).find('h3').each(function(index) {
             if (this.classList !== null && this.innerHTML !== null) {
                 className = this.innerHTML
                 className = className.replace(/\s+/g, '')
                 this.classList.add(className)
                 this.id = className
                 this.outerHTML =
-                    `<section id="${className}" resource="#${className}">
+                    `<section id="${className}" inlist="" " resource="#${className}">
                         <h3 property="schema:name">${this.innerHTML}</h3>
                     </section>`
-                
+            }
+        })        
+        jQuery(dom).find('h2').each(function(index) {
+            if (this.classList !== null && this.innerHTML !== null) {
+                className = this.innerHTML
+                className = className.replace(/\s+/g, '')
+                this.classList.add(className)
+                this.id = className
+         
+	let tag = ""
+	var entry1 = ['ACKNOWLEDGMENTS', 'ACKNOWLEDGMENT', 'Acknowledgement', 'Acknowledgements']; 
+        if (new RegExp(entry1.join("|")).test(className)) {
+	   tag = "deo:acknowledgements"
+        }
+
+	entry1 = ['Outlook', 'OUTLOOK', 'FUTURE WORK', 'ROADMAP','PLAN']; 
+        if (new RegExp(entry1.join("|")).test(className)) {
+	   tag = "deo:futureWork"
+        }
+
+	entry1 = ['CONCLUSION', 'Conclusion', 'CONCLUSIONS', 'Conclusions']; 
+        if (new RegExp(entry1.join("|")).test(className)) {
+	   tag = "deo:conclusion"
+        }
+
+	entry1 = ['Results', 'RESULTS']; 
+        if (new RegExp(entry1.join("|")).test(className)) {
+	   tag = "deo:results"
+        }
+	
+	entry1 = ['Analysis', 'Discussion', 'DISCUSSIONS']; 
+        if (new RegExp(entry1.join("|")).test(className)) {
+	   tag = "deo:discussion"
+        }
+
+	entry1 = ['RELATEDWORK', 'LITERATUREREVIEW']; 
+        if (new RegExp(entry1.join("|")).test(className)) {
+	   tag = "deo:relatedWork"
+        }
+
+	entry1 = ['VALIDATION', 'Evaluation', 'Experiments', 'EXPERIMENTAL','Comparison', 'EVALUATION' , 'Experimental']; 
+        if (new RegExp(entry1.join("|")).test(className)) {
+	   tag = "deo:evaluation"
+        }
+
+	entry1 = ['MOTIVATION', 'Motivation', 'Motivation', 'Case study']; 
+        if (new RegExp(entry1.join("|")).test(className)) {
+	   tag = "deo:motivation"
+        }
+
+	entry1 = ['Problem', 'PROBLEM',, 'Approach', 'APPROACH', 'Case Description']; 
+        if (new RegExp(entry1.join("|")).test(className)) {
+	   tag = "deo:problemStatement"
+        }
+
+	entry1 = ['Abstract', 'ABSTRACT', 'Summary']; 
+        if (new RegExp(entry1.join("|")).test(className)) {
+	   tag = "deo:abstract"
+        }
+
+	entry1 = ['INTRODUCTION', 'Introduction']; 
+        if (new RegExp(entry1.join("|")).test(className)) {
+	   tag = "deo:introduction"
+        }
+
+	entry1 = ['APPROACH', 'METHODOLOGY', 'Methods', 'METHODS', 'PROPOSEDSOLUTION' , 'PROPOSEDAPPROACH']; 
+        if (new RegExp(entry1.join("|")).test(className)) {
+	   tag = "deo:methods"
+        }
+	
+	entry1 = ['FRAMEWORK', 'Structure', 'SYSTEM', 'Architecture', 'IMPLEMENTATION', 'Implementing', 'schema']; 
+        if (new RegExp(entry1.join("|")).test(className)) {
+	   tag = "ssn:system"
+        }
+
+	entry1 = ['Keywords', 'KEYWORDS']; 
+        if (new RegExp(entry1.join("|")).test(className)) {
+	   tag = "swrc:keywords"
+        }
+
+	entry1 = ['background', 'Concepts', 'BACKGROUND']; 
+        if (new RegExp(entry1.join("|")).test(className)) {
+	   tag = "deo:background"
+        }
+
+	entry1 = ['MODELING', 'Model', 'Representation', 'Modelling']; 
+        if (new RegExp(entry1.join("|")).test(className)) {
+	   tag = "deo:model"
+        }
+	entry1 = ['REFERENCE', 'REFERENCES' , 'Reference']; 
+        if (new RegExp(entry1.join("|")).test(className)) {
+	   tag = "deo:reference"
+        }
+	this.outerHTML =
+                    `<div datatype="rdf:HTML" property="schema:description" resource="#${className}" typeof="${tag}">
+			<section id="${className}" resource="#${className}">
+                        <h2 property="schema:name">${this.innerHTML}</h2>
+                    	</section>
+		     </div>`
             }
         })
 
@@ -241,25 +342,12 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
                     this.id = className
                     this.outerHTML =
                     `<section id="${className}" resource="#${className}">
-                        <h2 property="schema:name">${this.innerHTML}</h2>
+                        <h1 property="schema:name">${this.innerHTML}</h1>
                     </section>`
 		}
             }
         })
 
-   
-        jQuery(dom).find</img>('h3').each(function(index) {
-            if (this.classList !== null && this.innerHTML !== null) {
-                className = this.innerHTML
-                className = className.replace(/\s+/g, '')
-                this.classList.add(className)
-                this.id = className
-                this.outerHTML =
-                    `<section id="${className}" inlist="" " resource="#${className}">
-                        <h4 property="schema:name">${this.innerHTML}</h4>
-                    </section>`
-            }
-        })
         
         return dom
     }

@@ -54,11 +54,10 @@ export class ModFootnoteEditor {
                 doc,
                 plugins
             }),
-            onFocus: () => {
-                this.mod.editor.currentView = this.view
-            },
-            onBlur: () => {
-
+            handleDOMEvents : {
+                focus: (view, event) => {
+                    this.mod.editor.currentView = this.view
+                }
             },
             dispatchTransaction: (transaction) => {
                 let remote = transaction.getMeta('remote')

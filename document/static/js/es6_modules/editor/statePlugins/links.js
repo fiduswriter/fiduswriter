@@ -396,11 +396,13 @@ export let linksPlugin = function(options) {
             return newTransaction
         },
         props: {
-            onFocus: editorView => {
-                let {
-                    url
-                } = key.getState(editorView.state)
-                window.history.replaceState("", "", url)
+            handleDOMEvents: {
+                focus: (view, event) => {
+                    let {
+                        url
+                    } = key.getState(view.state)
+                    window.history.replaceState("", "", url)
+                }
             },
             decorations(state) {
                 const $head = state.selection.$head

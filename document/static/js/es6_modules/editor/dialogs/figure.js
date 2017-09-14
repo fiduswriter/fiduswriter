@@ -2,6 +2,7 @@ import {figureImageTemplate, configureFigureTemplate} from "./templates"
 import {ImageSelectionDialog} from "../../images/selection-dialog"
 import {addDropdownBox} from "../../common"
 import {katexRender} from "../../katex"
+import {randomFigureId} from "../../schema/common"
 
 export class FigureDialog {
     constructor(editor) {
@@ -82,7 +83,8 @@ export class FigureDialog {
                 equation: this.equation,
                 image: this.imgId,
                 figureCategory: this.figureCategory,
-                caption: this.caption
+                caption: this.caption,
+                id: randomFigureId()
             })
         )
         this.editor.currentView.dispatch(transaction)

@@ -1,6 +1,6 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
-import {ReplaceAroundStep} from "prosemirror-transform"
+import {ReplaceAroundStep, RemoveMarkStep} from "prosemirror-transform"
 import {Slice, Fragment} from "prosemirror-model"
 import {noSpaceTmp, addAlert} from "../../common"
 import {randomHeadingId, randomFigureId} from "../../schema/common"
@@ -224,8 +224,8 @@ export let linksPlugin = function(options) {
                 })
             })
             let transaction = transactions.slice(-1)[0],
-                foundIdElement = false // found heading or figure, anchor marks
-            // are allowed to be duplicated
+                foundIdElement = false, // found heading or figure
+                foundAnchorWithoutId = false // found an anchor without an ID
             ranges.forEach(range => {
                 transaction.doc.nodesBetween(
                     range[0],
@@ -236,11 +236,16 @@ export let linksPlugin = function(options) {
                             'figure') {
                             foundIdElement = true
                         }
+                        node.marks.forEach(mark => {
+                            if (mark.type.name === 'anchor' && !mark.attrs.id) {
+                                foundAnchorWithoutId = true
+                            }
+                        })
                     }
                 )
             })
 
-            if (!foundIdElement) {
+            if (!foundIdElement && !foundAnchorWithoutId) {
                 return
             }
 
@@ -268,7 +273,8 @@ export let linksPlugin = function(options) {
 
             transaction.doc.descendants((node, pos) => {
                 if (node.type.name === 'heading') {
-                    if (headingIds.includes(node.attrs.id)) {
+                    if (headingIds.includes(node.attrs.id) || !node.attrs.id) {
+                        // Add node if the id is false (default) or it is present twice
                         doubleHeadingIds.push({
                             node,
                             pos
@@ -278,7 +284,8 @@ export let linksPlugin = function(options) {
                 }
 
                 if (node.type.name === 'figure') {
-                    if (figureIds.includes(node.attrs.id)) {
+                    // Add node if the id is false (default) or it is present twice
+                    if (figureIds.includes(node.attrs.id) || !node.attrs.id) {
                         doubleFigureIds.push({
                             node,
                             pos
@@ -292,6 +299,7 @@ export let linksPlugin = function(options) {
             if (!doubleHeadingIds.length && !doubleFigureIds.length) {
                 return
             }
+
 
             let newTransaction = state.tr
             // Change the IDs of the nodes that having an ID that was used previously
@@ -371,6 +379,19 @@ export let linksPlugin = function(options) {
 
                 figureIds.push(blockId)
             })
+
+            // Remove anchor marks without ID
+            if (foundAnchorWithoutId) {
+                let markType = state.schema.marks.anchor.create({id : false})
+                newTransaction.step(
+                    new RemoveMarkStep(
+                        0,
+                        state.doc.nodeSize-2, // TODO: find out why it needs to be 2 smaller
+                        markType
+                    )
+                )
+            }
+
 
             return newTransaction
         },

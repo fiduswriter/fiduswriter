@@ -5,6 +5,7 @@ import {EditorView} from "prosemirror-view"
 import {history} from "prosemirror-history"
 import {baseKeymap} from "prosemirror-commands"
 import {keymap} from "prosemirror-keymap"
+import {buildKeymap} from "prosemirror-example-setup"
 
 import {fnSchema} from "../../schema/footnotes"
 import {
@@ -29,6 +30,7 @@ export class ModFootnoteEditor {
             [linksPlugin, () => ({editor: this.mod.editor})],
             [history],
             [keymap, () => baseKeymap],
+            [keymap, () => buildKeymap(this.schema)],
             [collab],
             [toolbarPlugin, () => ({editor: this.mod.editor})],
             [collabCaretsPlugin, () => ({editor: this.mod.editor})],

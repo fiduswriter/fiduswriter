@@ -32,7 +32,9 @@ import {
 import {
     dropCursor
 } from "prosemirror-dropcursor"
-
+import {
+    buildKeymap
+} from "prosemirror-example-setup"
 import {
     docSchema
 } from "../schema/document"
@@ -123,6 +125,7 @@ export class Editor {
             [linksPlugin, () => ({editor: this})],
             [history],
             [keymap, () => baseKeymap],
+            [keymap, () => buildKeymap(this.schema)],
             [collab],
             [dropCursor],
             [tableEditing],

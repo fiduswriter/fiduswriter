@@ -386,7 +386,7 @@ export let linksPlugin = function(options) {
                 newTransaction.step(
                     new RemoveMarkStep(
                         0,
-                        state.doc.nodeSize-2, // TODO: find out why it needs to be 2 smaller
+                        state.doc.content.size,
                         markType
                     )
                 )

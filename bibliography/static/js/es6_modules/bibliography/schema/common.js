@@ -3,7 +3,8 @@ export let text = {
 }
 
 export let literal = {
-    content: "inline<_>*",
+    content: "inline*",
+    marks: "_",
     parseDOM: [{tag: 'div.literal'}],
     toDOM() {
         return ["div", {

@@ -45,7 +45,8 @@ let article = {
 }
 
 let title = {
-    content: "text<annotation>*",
+    content: "text*",
+    marks: "annotation",
     group: "part",
     defining: true,
     parseDOM: [{
@@ -59,7 +60,8 @@ let title = {
 }
 
 let subtitle = {
-    content: "text<annotation>*",
+    content: "text*",
+    marks: "annotation",
     group: "part",
     defining: true,
     isMetadata() {
@@ -137,7 +139,8 @@ let author = {
 }
 
 let authors = {
-    content: "author<annotation>*",
+    content: "author*",
+    marks: "annotation",
     group: "part",
     defining: true,
     isMetadata() {
@@ -220,7 +223,8 @@ let keyword = {
 }
 
 let keywords = {
-    content: "keyword<annotation>*",
+    content: "keyword*",
+    marks: "annotation",
     group: "part",
     defining: true,
     isMetadata() {
@@ -295,7 +299,8 @@ let footnote = {
 }
 
 let code_block = {
-    content: "text<annotation>*",
+    content: "text*",
+    marks: "annotation",
     group: "block",
     code: true,
     defining: true,

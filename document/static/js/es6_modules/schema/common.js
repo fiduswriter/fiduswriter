@@ -167,7 +167,8 @@ export let randomHeadingId = () => {
 
 export let heading = {
     group: "block",
-    content: "inline<_>*",
+    content: "inline*",
+    marks: "_",
     defining: true,
     attrs: {
         level: {

@@ -6,6 +6,7 @@ node_js:
 
 dist: trusty
 sudo: required
+group: deprecated-2017Q3
 
 env:
   - TRAVIS_PYTHON_VERSION="2.7"

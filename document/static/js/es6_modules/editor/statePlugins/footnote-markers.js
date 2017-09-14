@@ -1,5 +1,4 @@
 import {Plugin, PluginKey} from "prosemirror-state"
-import {Decoration, DecorationSet} from "prosemirror-view"
 import {sendableSteps} from "prosemirror-collab"
 
 const key = new PluginKey('footnoteMarkers')

@@ -40,7 +40,7 @@ export class BibliographyOverview {
         let catSelector = this.menu.model.content.find(menuItem => menuItem.id==='cat_selector')
         catSelector.content = catSelector.content.filter(cat => cat.type !== 'category')
 
-        catSelector.content = catSelector.content.concat(bibCategories.forEach(cat => ({
+        catSelector.content = catSelector.content.concat(bibCategories.map(cat => ({
             title: cat.category_title,
             type: 'category',
             action: overview => {

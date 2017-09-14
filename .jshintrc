@@ -12,6 +12,8 @@
       "jQuery",
       "MathQuill",
       "gettext",
-      "_"
+      "_",
+      "fetch",
+      "URLSearchParams"
     ]
 }

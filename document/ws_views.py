@@ -373,11 +373,15 @@ class WebSocket(BaseWebSocketHandler):
             self.doc["last_diffs"] = self.doc["last_diffs"][-1000:]
             self.doc['version'] += 1
             if "jd" in parsed:  # jd = json diff
-                jsonpatch.apply_patch(
-                   self.doc['contents'],
-                   parsed["jd"],
-                   True
-                )
+                try:
+                    jsonpatch.apply_patch(
+                       self.doc['contents'],
+                       parsed["jd"],
+                       True
+                    )
+                except:
+                    logger.debug("Cannot apply json diff.")
+                    self.send_document()
                 # The json diff is only needed by the python backend which does
                 # not understand the steps. It can therefore be removed before
                 # broadcast to other clients.

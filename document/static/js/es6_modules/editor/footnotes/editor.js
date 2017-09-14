@@ -1,11 +1,10 @@
 import {Step} from "prosemirror-transform"
 import {collab, receiveTransaction, sendableSteps} from "prosemirror-collab"
-import {buildKeymap} from "prosemirror-example-setup"
 import {EditorState} from "prosemirror-state"
 import {EditorView} from "prosemirror-view"
 import {history} from "prosemirror-history"
 import {baseKeymap} from "prosemirror-commands"
-import {keymap} from "prosemirror-keymap/dist/keymap"
+import {keymap} from "prosemirror-keymap"
 
 import {fnSchema} from "../../schema/footnotes"
 import {
@@ -16,7 +15,7 @@ import {
     getFootnoteMarkerContents,
     updateFootnoteMarker
 } from "../statePlugins"
-import {COMMENT_ONLY_ROLES} from ".."
+import {COMMENT_ONLY_ROLES, REVIEW_ROLES} from ".."
 import {fnNodeToPmNode} from "../../schema/footnotes-convert"
 
 /* Functions related to the footnote editor instance */
@@ -30,7 +29,6 @@ export class ModFootnoteEditor {
             [linksPlugin, () => ({editor: this.mod.editor})],
             [history],
             [keymap, () => baseKeymap],
-            [keymap, () => buildKeymap(this.schema)],
             [collab],
             [toolbarPlugin, () => ({editor: this.mod.editor})],
             [collabCaretsPlugin, () => ({editor: this.mod.editor})],
@@ -68,7 +66,6 @@ export class ModFootnoteEditor {
                         return
                     }
                 }
-
                 let newState = this.view.state.apply(transaction)
                 this.view.updateState(newState)
 
@@ -83,7 +80,10 @@ export class ModFootnoteEditor {
     onFilterTransaction(transaction) {
         let prohibited = false
 
-        if (COMMENT_ONLY_ROLES.indexOf(this.mod.editor.docInfo.right) > -1) {
+        if (
+            COMMENT_ONLY_ROLES.includes(this.mod.editor.docInfo.access_rights) ||
+            REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)
+        ) {
             prohibited = true
         }
 
@@ -147,8 +147,6 @@ export class ModFootnoteEditor {
                 let fnContent = this.view.state.doc.child(fnIndex).toJSON().content
                 let transaction = updateFootnoteMarker(this.mod.editor.view.state, fnIndex, fnContent)
                 if (transaction) {
-                    // Mark this change as originating from footnote to prevent circularity
-                    transaction.setMeta('fromFootnote', true)
                     this.mod.editor.view.dispatch(transaction)
                 }
             } else {
@@ -208,14 +206,16 @@ export class ModFootnoteEditor {
         this.view.dispatch(transaction)
         if (setDoc) {
             let initialSteps = sendableSteps(this.view.state)
-
-            this.view.dispatch(receiveTransaction(
+            let rTransaction = receiveTransaction(
                 this.view.state,
                 initialSteps.steps,
                 initialSteps.steps.map(
                     step => initialSteps.clientID
                 )
-            ))
+            )
+            this.view.updateState(
+                this.view.state.apply(rTransaction)
+            )
         } else {
             // Most changes to the footnotes are followed by a change to the main editor,
             // so changes are sent to collaborators automatically. When footnotes are added/deleted,

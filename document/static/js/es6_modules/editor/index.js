@@ -22,10 +22,7 @@ import {
 } from "prosemirror-commands"
 import {
     keymap
-} from "prosemirror-keymap/dist/keymap"
-import {
-    buildKeymap
-} from "prosemirror-example-setup"
+} from "prosemirror-keymap"
 import {
     collab
 } from "prosemirror-collab"
@@ -126,7 +123,6 @@ export class Editor {
             [linksPlugin, () => ({editor: this})],
             [history],
             [keymap, () => baseKeymap],
-            [keymap, () => buildKeymap(this.schema)],
             [collab],
             [dropCursor],
             [tableEditing],

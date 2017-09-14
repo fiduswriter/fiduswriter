@@ -5,6 +5,8 @@ node_js:
   - "6"
 
 dist: trusty
+sudo: required
+group: deprecated-2017Q3
 
 env:
   - TRAVIS_PYTHON_VERSION="2.7"
@@ -19,13 +21,13 @@ before_install:
 
 install:
   - mv travis/configuration.py ./
-  - pip install --user requests[security]
-  - pip install --user -r requirements.txt
-  - pip install --user -r dev-requirements.txt
+  - pip install requests[security]
+  - pip install -r requirements.txt
+  - pip install -r dev-requirements.txt
   - flake8 ./
-  - pip install --user coverage
-  - pip install --user coveralls
-  - pip install --user selenium
+  - pip install coverage
+  - pip install coveralls
+  - pip install selenium
   - coverage run manage.py init --no-static --no-compress
   - ./manage.py check_js
 

@@ -3,7 +3,8 @@ import {marks} from "prosemirror-schema-basic"
 import {Schema} from "prosemirror-model"
 
 let longliteral = {
-    content: 'inline<_>*',
+    content: 'inline*',
+    marks: "_",
     code: true,
     defining: true,
     parseDOM: [{tag: 'pre.long-literal'}],

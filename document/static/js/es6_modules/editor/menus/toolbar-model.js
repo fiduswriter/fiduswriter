@@ -4,6 +4,8 @@ import {undo, redo, undoDepth, redoDepth} from "prosemirror-history"
 
 import {CitationDialog, FigureDialog, LinkDialog, TableDialog, MathDialog} from "../dialogs"
 import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from ".."
+import {randomHeadingId, randomAnchorId} from "../../schema/common"
+
 
 let setHeadlineBlock = function(editor, level) {
     let block = editor.currentView.state.schema.nodes['heading'],
@@ -16,6 +18,8 @@ let setHeadlineBlock = function(editor, level) {
         editor.currentView.state.selection.$from.parent.attrs.id.length
     ) {
         attrs.id = editor.currentView.state.selection.$from.parent.attrs.id
+    } else {
+        attrs.id = randomHeadingId()
     }
 
     let command = setBlockType(block, attrs)
@@ -552,7 +556,7 @@ export let toolbarModel = {
             icon: 'anchor',
             action: editor => {
                 let mark = editor.currentView.state.schema.marks['anchor']
-                let command = toggleMark(mark)
+                let command = toggleMark(mark, {id: randomAnchorId()})
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
             disabled: editor => {

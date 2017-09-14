@@ -1,5 +1,4 @@
 import {Plugin, PluginKey} from "prosemirror-state"
-import {Decoration, DecorationSet} from "prosemirror-view"
 import {sendableSteps} from "prosemirror-collab"
 
 const key = new PluginKey('footnoteMarkers')
@@ -13,7 +12,7 @@ let findFootnoteMarkers = function(fromPos, toPos, doc) {
         if (node.type.name === 'footnote') {
             let from = pos
             let to = pos + node.nodeSize
-            let footnoteMarker = Decoration.inline(from, to, {}, {id: `${Date.now()}-${from}`})
+            let footnoteMarker = {from, to}
             footnoteMarkers.push(footnoteMarker)
         }
     })
@@ -59,17 +58,17 @@ let getAddedRanges = function(transaction) {
 
 export let getFootnoteMarkerContents = function(state) {
     let {
-        decos
+        fnMarkers
     } = key.getState(state)
-    return decos.find().map(fnMarker => state.doc.nodeAt(fnMarker.from).attrs.footnote)
+    return fnMarkers.map(fnMarker => state.doc.nodeAt(fnMarker.from).attrs.footnote)
 }
 
 export let updateFootnoteMarker = function(state, index, content) {
     let {
-        decos
+        fnMarkers
     } = key.getState(state)
 
-    let footnote = decos.find()[index]
+    let footnote = fnMarkers[index]
     let node = state.doc.nodeAt(footnote.from)
     if (node.attrs.footnote === content) {
         return
@@ -77,14 +76,15 @@ export let updateFootnoteMarker = function(state, index, content) {
     let transaction = state.tr.setNodeType(footnote.from, node.type, {
         footnote: content
     })
+    transaction.setMeta('fromFootnote', true)
     return transaction
 }
 
 export let getFootnoteMarkers = function(state) {
     let {
-        decos
+        fnMarkers
     } = key.getState(state)
-    return decos.find()
+    return fnMarkers
 }
 
 export let footnoteMarkersPlugin = function(options) {
@@ -92,20 +92,18 @@ export let footnoteMarkersPlugin = function(options) {
         key,
         state: {
             init(state) {
-                let decos = DecorationSet.empty,
-                    newDecos = []
+                let fnMarkers = []
                 state.doc.descendants((node, pos, parent) => {
                     if (node.type.name==='footnote') {
-                        let from = pos
-                        let to = pos + node.nodeSize
-                        let deco = Decoration.inline(from, to, {}, {id: `${Date.now()}-${from}`})
-                        newDecos.push(deco)
+                        fnMarkers.push({
+                            from: pos,
+                            to: pos + node.nodeSize
+                        })
                     }
                 })
-                decos = decos.add(state.doc, newDecos)
 
                 return {
-                    decos
+                    fnMarkers
                 }
             },
             apply(tr, prev, oldState, state) {
@@ -121,43 +119,58 @@ export let footnoteMarkersPlugin = function(options) {
                 let remote = tr.getMeta('remote'),
                     fromFootnote = tr.getMeta('fromFootnote'),
                     {
-                        decos
+                        fnMarkers
                     } = this.getState(oldState),
                     ranges = getAddedRanges(tr)
-                decos = decos.map(tr.mapping, tr.doc, {onRemove: decoSpec => {
-                    let index = decos.find().findIndex(deco => deco.spec === decoSpec)
-                    options.editor.mod.footnotes.fnEditor.removeFootnote(index)
-                }})
-
-                ranges.forEach(range => {
-                    let newFootnotes = findFootnoteMarkers(range.from, range.to, tr.doc)
-                    if (newFootnotes.length) {
-                        let firstFootNoteStart = newFootnotes[0].from
-                        let offset = decos.find().findIndex(fn => fn.from > firstFootNoteStart)
-                        newFootnotes.forEach((footnote, index) => {
-                            if (!remote && !fromFootnote) {
-                                let fnContent = state.doc.nodeAt(footnote.from).attrs.footnote
-                                options.editor.mod.footnotes.fnEditor.renderFootnote(fnContent, offset + index)
-                            }
-                            index++
-                        })
-                        decos = decos.add(state.doc, newFootnotes)
+                fnMarkers = fnMarkers.map(marker => ({
+                    from: tr.mapping.map(marker.from, 1),
+                    to: tr.mapping.map(marker.to, -1)
+                })).filter((marker, index) => {
+                    if (marker.from !== (marker.to - 1)) {
+                        options.editor.mod.footnotes.fnEditor.removeFootnote(index)
+                        return false
                     }
+                    return true
                 })
+
+                if (!fromFootnote) {
+                    ranges.forEach(range => {
+                        let newFootnotes = findFootnoteMarkers(range.from, range.to, tr.doc)
+                        if (newFootnotes.length) {
+
+                            let firstFn = newFootnotes[0]
+                            let offset = fnMarkers.findIndex(marker => marker.from > firstFn.from)
+                            if (offset < 0) {
+                                offset = fnMarkers.length
+                            }
+                            if (remote) {
+                                newFootnotes = newFootnotes.filter(
+                                    // In case of remote trasnactions, we cannot mark them as coming from footnote, so we
+                                    // will need to remove duplicates instead.
+                                    newMarker =>
+                                        fnMarkers.find(oldMarker => oldMarker.from === newMarker.from) ?
+                                        false :
+                                        true
+                                )
+                            } else {
+                                newFootnotes.forEach((footnote, index) => {
+                                    let fnContent = state.doc.nodeAt(footnote.from).attrs.footnote
+                                    options.editor.mod.footnotes.fnEditor.renderFootnote(
+                                        fnContent,
+                                        offset + index
+                                    )
+                                })
+                            }
+                            fnMarkers = fnMarkers.concat(newFootnotes).sort((a,b) => a.from > b.from)
+                        }
+                    })
+                }
 
                 options.editor.mod.footnotes.layout.layoutFootnotes()
                 return {
-                    decos
+                    fnMarkers
                 }
             }
-        },
-        props: {
-            decorations(state) {
-				let {
-					decos
-				} = this.getState(state)
-				return decos
-			}
         }
     })
 }

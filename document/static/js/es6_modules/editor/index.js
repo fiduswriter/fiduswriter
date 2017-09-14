@@ -156,12 +156,10 @@ export class Editor {
             state: EditorState.create({
                 schema: this.schema
             }),
-            onFocus: () => {
-                if (this.currentView != this.view) {
+            handleDOMEvents: {
+                focus: (view, event) => {
                     this.currentView = this.view
                 }
-            },
-            onBlur: (view) => {
             },
             dispatchTransaction: (transaction) => {
                 let remote = transaction.getMeta('remote')
@@ -173,7 +171,8 @@ export class Editor {
                 let newState = this.view.state.apply(transaction)
                 this.view.updateState(newState)
                 this.onTransaction(transaction, remote)
-            }
+            },
+
         })
         // The editor that is currently being edited in -- main or footnote editor
         this.currentView = this.view

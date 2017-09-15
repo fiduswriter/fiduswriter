@@ -86,7 +86,10 @@ export class HTMLRDFaExporter extends BaseHTMLRDFaExporter {
 
         contents = this.convertCommentsToRDFa(contents)
         
-        contents = this.convertSideCommentsToRDFa(contents,this.doc.comments)
+        let sidetagList = []
+        contents = this.convertSideCommentsToRDFa(contents,this.doc.comments, sidetagList)
+
+        contents = this.adjustSections(contents,sidetagList)
 
         let contentsCode = this.replaceImgSrc(contents.innerHTML)
 

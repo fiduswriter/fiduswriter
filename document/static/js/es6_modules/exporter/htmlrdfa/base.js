@@ -179,7 +179,7 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
         return dom
     }
 
-    convertSideCommentsToRDFa(htmlCode,comments){
+    convertSideCommentsToRDFa(htmlCode,comments,sidetagList ){
     	jQuery(htmlCode).find('.comment').each(function () {
     		let sidetags,
     		id = jQuery(this).attr('data-id'),
@@ -208,15 +208,34 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
             }
         }
         sidetags = commentHeader+commentBody
-    	this.outerHTML=this.outerHTML + '<aside class="note do"> <blockquote cite="'+commentNode.id+'">'+sidetags+'</blockquote></aside>'
+        sidetagList.push('<aside class="note do"> <blockquote cite="'+commentNode.id+'">'+sidetags+'</blockquote></aside>')
     	})
     return htmlCode
     }
-
+    
+    adjustSections(htmlCode,sidetagList){
+    	
+    	let sections = jQuery(htmlCode).find('section'),
+    	sectionsSize=sections.length
+    	
+    	jQuery(htmlCode).find('section').each(function(index){    		
+    		this.outerHTML=this.outerHTML.replace(/<\/section>/g, "")
+    		if (index!=0) 
+    		{
+    			let x= this.outerHTML.replace(/<section/g, '</section> <section')
+    			this.outerHTML=x
+    		}
+    	
+    	})
+    	htmlCode.outerHTML= htmlCode.outerHTML.replace(/<\/div><\/div>/g,'</div></section></div>')
+    	for (let i=0; i<sidetaglist.length;i++ ) {
+    	htmlCode.outerHTML= htmlCode.outerHTML.replace(/<\/div><\/section><\/div>/g,sidetaglist[i])
+    	}
+    return htmlCode
+    }
 
     addSectionsTag(dom) {
-        let className
-	let rdfaType
+        let className, rdfaType
 
         jQuery(dom).find('h3').each(function(index) {
             if (this.classList !== null && this.innerHTML !== null) {

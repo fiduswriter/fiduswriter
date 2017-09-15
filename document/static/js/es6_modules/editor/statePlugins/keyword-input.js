@@ -96,10 +96,6 @@ export let keywordInputPlugin = function(options) {
                     })
                 ]
             }),
-            onFocus: () => {
-            },
-            onBlur: (view) => {
-            },
             dispatchTransaction: (transaction) => {
                 let newState = keywordView.state.apply(transaction)
                 keywordView.updateState(newState)

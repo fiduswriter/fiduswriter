@@ -11,9 +11,9 @@
         <script type="text/javascript">
             var staticUrl = '{{ STATIC_URL }}';
             {% if WS_PORT %}
-                var websocketPort = ':'+{{WS_PORT}};
+                var websocketPort = ':' + {{WS_PORT}};
             {% else %}
-                var websocketPort = location.port.length>0?':'+location.port:'';
+                var websocketPort = location.port.length ? ':' + location.port : '';
             {% endif %}
             {% if WS_SERVER %}
                 var websocketServer = '{{ WS_SERVER }}';
@@ -45,7 +45,8 @@
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/ui-tabs.css" />
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/add-remove-dialog.css" />
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/figure.css" />
-
+            <!-- Font Awesome -->
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/font-awesome.css" />
             <!-- layout styles -->
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/common.css" />
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/header-menu.css" />
@@ -67,7 +68,6 @@
             <link rel="stylesheet" href="{{ STATIC_URL }}css/citation-dialog.css" type="text/css">
             <!-- review style -->
             <link rel="stylesheet" href="{{ STATIC_URL }}css/review.css" type="text/css">
-
         {% endcompress %}
 
         <!-- jQuery -->
@@ -76,17 +76,14 @@
         <script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>
         <!-- jQuery UI -->
         <script type="text/javascript" src="{{ JQUERYUI_URL }}"></script>
-        <!-- Underscore -->
-        <script type="text/javascript" src="{{ UNDERSCOREJS_URL }}"></script>
-
         <!-- jQuery tablesorter -->
         <script type="text/javascript" src="{{ DATATABLES_URL }}"></script>
         <!-- Dropkick JS -->
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/libs/dropkick.css" />
+        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/dropkick.css" />
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/dropkick.css" />
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/dropkick.min.js"></script>
         <!-- ProseMirror CSS -->
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/libs/prosemirror.css" />
+        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/prosemirror.css" />
         {% compress js %}
             <!-- Editor  -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/editor.es5.js"></script>
@@ -94,7 +91,7 @@
     </head>
     <body class="{% trans "en" %} tex2jax_ignore">
         <div id="editor">
-            <div id="wait" class="active"><i class="icon-spin2 animate-spin"></i></div>
+            <div id="wait" class="active"><i class="fa fa-spinner fa-pulse"></i></div>
             <header>
                 <nav id="headerbar">
                     <div></div>
@@ -117,7 +114,7 @@
                 <div id="tracking-box-container"></div>
             </div>
             <div id="chat">
-                <i class="resize-button icon-angle-double-down"></i>
+                <i class="resize-button fa fa-angle-double-down"></i>
                 <div id="chat-container"></div>
                 <div id="messageform" contentEditable="true" class="empty"></div>
                 <audio id="chat-notification">

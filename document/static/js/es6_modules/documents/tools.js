@@ -1,16 +1,17 @@
 import {addAlert, csrfToken} from "../common"
-import {updateDoc} from "../schema/convert"
+import {getSettings} from "../schema/convert"
 
 export let getMissingDocumentListData = function (ids, documentList) {
     // get extra data for the documents identified by the ids and updates the
     // documentList correspondingly.
     let incompleteIds = []
 
-    for (let i = 0; i < ids.length; i++) {
-        if (!documentList.find(doc => doc.id === parseInt(ids[i])).hasOwnProperty('contents')) {
-            incompleteIds.push(parseInt(ids[i]))
+    ids.forEach(id => {
+        if (!documentList.find(doc => doc.id === parseInt(id)).hasOwnProperty('contents')) {
+            incompleteIds.push(parseInt(id))
         }
-    }
+    })
+
     if (incompleteIds.length > 0) {
         return new Promise((resolve, reject) => {
             jQuery.ajax({
@@ -24,19 +25,16 @@ export let getMissingDocumentListData = function (ids, documentList) {
                 beforeSend: (xhr, settings) =>
                     xhr.setRequestHeader("X-CSRFToken", csrfToken),
                 success: (response, textStatus, jqXHR) => {
-                    for (let i = 0; i < response.documents.length; i++) {
-                        let aDocument = documentList.find(doc => doc.id === response.documents[i].id)
-                        let newDoc = updateDoc({
-                            contents: JSON.parse(response.documents[i].contents),
-                            metadata: JSON.parse(response.documents[i].metadata),
-                            comments: JSON.parse(response.documents[i].comments),
-                            settings: JSON.parse(response.documents[i].settings)
-                        })
-                        aDocument.contents = newDoc.contents
-                        aDocument.metadata = newDoc.metadata
-                        aDocument.comments = newDoc.comments
-                        aDocument.settings = newDoc.settings
-                    }
+                    response.documents.forEach(
+                        extraValues => {
+                            let doc = documentList.find(entry => entry.id === extraValues.id)
+                            doc.contents = JSON.parse(extraValues.contents)
+                            doc.comments = JSON.parse(extraValues.comments)
+                            doc.bibliography = JSON.parse(extraValues.bibliography)
+                            doc.images = extraValues.images
+                            doc.settings = getSettings(doc.contents)
+                        }
+                    )
                     resolve()
                 },
                 error: (jqXHR, textStatus, errorThrown) => {

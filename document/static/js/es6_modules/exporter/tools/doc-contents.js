@@ -2,9 +2,9 @@
 // marked as hidden removed.
 
 export let removeHidden = function(node) {
-    let keys = Object.keys(node), returnNode = {}
+    let returnNode = {}
 
-    keys.forEach(key => {
+    Object.keys(node).forEach(key => {
         if (key !== 'content') {
             returnNode[key] = node[key]
         }
@@ -27,13 +27,14 @@ export let descendantNodes = function(node) {
 }
 
 export let textContent = function(node) {
-    let returnString = ""
-    descendantNodes(node).forEach(
-        subNode => {
+    return descendantNodes(node).reduce(
+        (returnString, subNode) => {
             if(subNode.text){
                 returnString += subNode.text
             }
-        }
+            return returnString
+        },
+        ''
     )
-    return returnString
+
 }

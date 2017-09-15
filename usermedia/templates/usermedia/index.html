@@ -9,7 +9,7 @@
 <!-- jQuery tablesorter -->
 <script type="text/javascript" src="{{ DATATABLES_URL }}"></script>
 <!-- Dropkick JS -->
-<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/libs/dropkick.css" />
+<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/dropkick.css" />
 <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/dropkick.css" />
 <script type="text/javascript" src="{{ STATIC_URL }}js/libs/dropkick.min.js"></script>
 
@@ -19,51 +19,7 @@
 {% endblock %}
 
 {% block contents %}
-<ul class="fw-document-menu">
-    <li class="fw-document-menu-item">
-        <div id="action-selection" class="fw-button fw-light fw-large">
-            <input type="checkbox" id="select-all-entry" />
-            <span id="select-action-dropdown" class="icon-down-dir"></span>
-        </div>
-        <div id="action-selection-pulldown" class="fw-pulldown fw-left">
-            <ul>
-                <li>
-                    <span class="fw-pulldown-item" data-action="delete">
-                        {% trans "Delete selected" %}
-                    </span>
-                </li>
-            </ul>
-        </div>
-    </li>
-    <li class="fw-document-menu-item">
-        <div id="image-category-btn" class="fw-button fw-light fw-large">
-            <input type="hidden" id="image-category" value="0" />
-            <label>{% trans "All categories" %}</label>
-            <span class="icon-down-dir"></span>
-        </div>
-        <div id="image-category-pulldown" class="fw-pulldown fw-left">
-            <ul id="image-category-list">
-                <li>
-                    <span class="fw-pulldown-item" data-id="0">
-                        {% trans "All categories" %}
-                    </span>
-                </li>
-            </ul>
-        </div>
-    </li>
-    <li class="fw-document-menu-item">
-        <span id="edit-category" class="fw-button fw-light fw-large">
-            {% trans "Edit categories" %}
-            <span class="icon-edit"></span>
-        </span>
-    </li>
-    <li class="fw-document-menu-item">
-        <span class="edit-image createNew fw-button fw-light fw-large">
-            {% trans "Upload new image" %}
-            <span class="icon-plus-circle"></span>
-        </span>
-    </li>
-</ul>
+<ul id="fw-overview-menu"></ul>
 <div class="fw-table-wrapper">
     <table id="imagelist" class="tablesorter fw-document-table">
         <thead class="fw-document-table-header">

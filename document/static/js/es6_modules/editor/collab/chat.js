@@ -94,15 +94,15 @@ export class ModCollabChat {
                 200 + 'px')
 
             jQuery('#chat .resize-button').on("click", function (event) {
-                if (jQuery(this).hasClass('icon-angle-double-down')) {
+                if (jQuery(this).hasClass('fa-angle-double-down')) {
                     jQuery(this).removeClass(
-                        'icon-angle-double-down')
-                    jQuery(this).addClass('icon-angle-double-up');
+                        'fa-angle-double-down')
+                    jQuery(this).addClass('fa-angle-double-up')
                     jQuery('#chat-container,#messageform').slideUp()
                 }
                 else {
-                    jQuery(this).removeClass('icon-angle-double-up');
-                    jQuery(this).addClass('icon-angle-double-down');
+                    jQuery(this).removeClass('fa-angle-double-up')
+                    jQuery(this).addClass('fa-angle-double-down')
                     jQuery('#chat-container,#messageform').slideDown()
                     if (jQuery(this).parent().hasClass(
                         'highlighted')) {

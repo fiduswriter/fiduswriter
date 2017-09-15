@@ -1,4 +1,4 @@
-import {sendableSteps, getVersion} from "prosemirror-collab"
+import {sendableSteps} from "prosemirror-collab"
 
 /* Sets up communicating with server (retrieving document,
   saving, collaboration, etc.).
@@ -71,6 +71,10 @@ export class ModServerCommunications {
                     }
                     this.messages['lastTen'].slice(0-clientDifference).forEach(getData => {
                         let data = getData()
+                        if (!data) {
+                            // message is empty
+                            return
+                        }
                         this.messages.client += 1
                         data.c = this.messages.client
                         data.s = this.messages.server
@@ -87,6 +91,10 @@ export class ModServerCommunications {
             window.setTimeout(() => {
                 this.createWSConnection()
             }, 2000)
+            if(!this.editor.view.state.plugins.length) {
+                console.log('doc not initiated')
+                return
+            }
             let toSend = sendableSteps(this.editor.view.state)
             if (toSend) {
                 jQuery('#unobtrusive_messages').html('<span class="warn">'+gettext('Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect...')+'</span>')
@@ -109,12 +117,12 @@ export class ModServerCommunications {
             this.editor.askForDocument()
         } else {
             this.editor.mod.footnotes.fnEditor.renderAllFootnotes()
-            this.editor.mod.collab.docChanges.checkDiffVersion()
+            this.editor.mod.collab.docChanges.checkVersion()
             this.send(() => ({
                 type: 'participant_update'
             }))
             while (this.messagesToSend.length > 0) {
-                this.send(this.messagesToSend.shift());
+                this.send(this.messagesToSend.shift())
             }
         }
         this.firstTimeConnection = false
@@ -125,6 +133,10 @@ export class ModServerCommunications {
         if (this.connected) {
             this.messages.client += 1
             let data = getData()
+            if (!data) {
+                // message is empty
+                return
+            }
             data.c = this.messages.client
             data.s = this.messages.server
             this.messages.lastTen.push(getData)
@@ -146,6 +158,10 @@ export class ModServerCommunications {
         this.messages.lastTen.slice(0-toSend).forEach(getData => {
             this.messages.client += 1
             let data = getData()
+            if (!data) {
+                // message is empty
+                return
+            }
             data.c = this.messages.client
             data.s = this.messages.server
             this.ws.send(JSON.stringify(data))
@@ -167,33 +183,34 @@ export class ModServerCommunications {
             case 'doc_data':
                 this.editor.receiveDocument(data)
                 break
-            case 'confirm_diff_version':
+            case 'confirm_version':
                 this.editor.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
-                if (data.diff_version !== getVersion(this.editor.view.state)) {
-                    this.editor.mod.collab.docChanges.checkDiffVersion()
+                if (data["v"] !== this.editor.docInfo.version) {
+                    this.editor.mod.collab.docChanges.checkVersion()
                     return
                 }
                 this.editor.mod.collab.docChanges.enableDiffSending()
                 break
             case 'selection_change':
                 this.editor.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
-                if (data.diff_version !== getVersion(this.editor.view.state)) {
-                    this.editor.mod.collab.docChanges.checkDiffVersion()
+                if (data["v"] !== this.editor.docInfo.version) {
+                    this.editor.mod.collab.docChanges.checkVersion()
                     return
                 }
                 this.editor.mod.collab.docChanges.receiveSelectionChange(data)
                 break
             case 'diff':
+                if (data["v"] !== this.editor.docInfo.version) {
+                    this.editor.mod.collab.docChanges.checkVersion()
+                    return
+                }
                 this.editor.mod.collab.docChanges.receiveFromCollaborators(data)
                 break
             case 'confirm_diff':
-                this.editor.mod.collab.docChanges.confirmDiff(data.request_id)
+                this.editor.mod.collab.docChanges.confirmDiff(data["rid"])
                 break
             case 'reject_diff':
-                this.editor.mod.collab.docChanges.rejectDiff(data.request_id)
-                break
-            case 'check_hash':
-                this.editor.mod.collab.docChanges.checkHash(data.diff_version, data.hash)
+                this.editor.mod.collab.docChanges.rejectDiff(data["rid"])
                 break
             case 'access_denied':
                 window.location.href = '/'

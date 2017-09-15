@@ -4,37 +4,44 @@ python:
 node_js:
   - "6"
 
-sudo: required
 dist: trusty
+sudo: required
 group: deprecated-2017Q3
 
 env:
   - TRAVIS_PYTHON_VERSION="2.7"
 
+addons:
+  sauce_connect:
+    no_ssl_bump_domains: all
+
 before_install:
   - x="bas";`"$x"e64 -d <<< ZXhwb3J0IFNBVUNFX1VTRVJOQU1FPWZpZHVz`
   - x="bas";`"$x"e64 -d <<< ZXhwb3J0IFNBVUNFX0FDQ0VTU19LRVk9OWU5ZGJkNzctNDIwOC00ODM5LTkwY2ItMTZkM2M5ODUxZGMw`
-  - sudo apt-get -qq update
-  - sudo apt-get install -y libjpeg-dev python-dev python-pip gettext zlib1g-dev git python-virtualenv
-  - virtualenv venv
-  - source venv/bin/activate
 
 install:
   - mv travis/configuration.py ./
+  - pip install requests[security]
   - pip install -r requirements.txt
   - pip install -r dev-requirements.txt
   - flake8 ./
-  - ./manage.py check_js
   - pip install coverage
   - pip install coveralls
   - pip install selenium
-  - coverage run manage.py init
+  - coverage run manage.py init --no-static --no-compress
+  - ./manage.py check_js
 
 script:
-
-  - ./travis/sauce-connect.sh
   - travis_retry coverage run manage.py test
 
 after_success:
   - coverage report
   - coveralls
+
+cache:
+  directories:
+    - node_modules
+    - $HOME/.cache/pip
+    - static-libs
+before_cache:
+  - rm -f $HOME/.cache/pip/log/debug.log

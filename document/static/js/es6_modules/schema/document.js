@@ -4,7 +4,7 @@ import {nodes, marks} from "prosemirror-schema-basic"
 import {addListNodes} from "prosemirror-schema-list"
 import {tableNodes} from "prosemirror-tables"
 import {htmlToFnNode, fnNodeToHtml} from "./footnotes-convert"
-import {figure, citation, equation, heading} from "./common"
+import {figure, citation, equation, heading, anchor} from "./common"
 
 
 let article = {
@@ -19,6 +19,9 @@ let article = {
         },
         documentstyle: {
             default: ''
+        },
+        language: {
+            default: 'en-US'
         }
     },
     parseDOM: [{
@@ -42,7 +45,8 @@ let article = {
 }
 
 let title = {
-    content: "text<comment>*",
+    content: "text*",
+    marks: "annotation",
     group: "part",
     defining: true,
     parseDOM: [{
@@ -56,7 +60,8 @@ let title = {
 }
 
 let subtitle = {
-    content: "text<comment>*",
+    content: "text*",
+    marks: "annotation",
     group: "part",
     defining: true,
     isMetadata() {
@@ -86,8 +91,56 @@ let subtitle = {
     }
 }
 
+let author = {
+    inline: true,
+    draggable: true,
+    attrs: {
+        firstname: {default: false},
+        lastname: {default: false},
+        email: {default: false},
+        institution: {default: false}
+    },
+    parseDOM: [{
+        tag: 'span.author',
+        getAttrs(dom) {
+            return {
+                firstname: dom.getAttribute('data-firstname'),
+                lastname: dom.getAttribute('data-lastname'),
+                email: dom.getAttribute('data-email'),
+                institution: dom.getAttribute('data-institution')
+            }
+        }
+    }],
+    toDOM(node) {
+        let dom = document.createElement('span')
+        dom.classList.add('author')
+        dom.setAttribute('data-firstname', node.attrs.firstname)
+        dom.setAttribute('data-lastname', node.attrs.lastname)
+        dom.setAttribute('data-email', node.attrs.email)
+        dom.setAttribute('data-institution', node.attrs.institution)
+        let content = []
+        if (node.attrs.firstname) {
+            content.push(node.attrs.firstname)
+        }
+        if (node.attrs.lastname) {
+            content.push(node.attrs.lastname)
+        }
+        if (node.attrs.email) {
+            content.push(`<i>${gettext('Email')}: ${node.attrs.email}</i>`)
+        }
+        if (node.attrs.institution) {
+            content.push(`(${node.attrs.institution})`)
+        }
+
+        dom.innerHTML = content.join(' ')
+
+        return dom
+    }
+}
+
 let authors = {
-    content: "text<comment>*",
+    content: "author*",
+    marks: "annotation",
     group: "part",
     defining: true,
     isMetadata() {
@@ -148,8 +201,30 @@ let abstract = {
     }
 }
 
+let keyword = {
+    inline: true,
+    draggable: true,
+    attrs: {
+        keyword: {
+            default: ''
+        }
+    },
+    parseDOM: [{
+        tag: 'span.keyword',
+        getAttrs(dom) {
+            return {
+                keyword: dom.innerText
+            }
+        }
+    }],
+    toDOM(node) {
+        return ["span", {class: 'keyword'}, node.attrs.keyword]
+    }
+}
+
 let keywords = {
-    content: "text<comment>*",
+    content: "keyword*",
+    marks: "annotation",
     group: "part",
     defining: true,
     isMetadata() {
@@ -224,7 +299,8 @@ let footnote = {
 }
 
 let code_block = {
-    content: "text<comment>*",
+    content: "text*",
+    marks: "annotation",
     group: "block",
     code: true,
     defining: true,
@@ -243,6 +319,8 @@ let comment = {
         id: {}
     },
     inclusive: false,
+    excludes: "",
+    group: "annotation",
     parseDOM: [{
         tag: "span.comment[data-id]",
         getAttrs(dom) {
@@ -270,8 +348,10 @@ let spec = {
         title,
         subtitle,
         authors,
+        author,
         abstract,
         keywords,
+        keyword,
         body,
         paragraph: nodes.paragraph,
         blockquote: nodes.blockquote,
@@ -290,7 +370,8 @@ let spec = {
         strong: marks.strong,
         link: marks.link,
         code: marks.code,
-        comment
+        comment,
+        anchor
     })
 }
 

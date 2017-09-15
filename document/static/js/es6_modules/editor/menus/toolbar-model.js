@@ -2,8 +2,10 @@ import {setBlockType, wrapIn, toggleMark} from "prosemirror-commands"
 import {wrapInList} from "prosemirror-schema-list"
 import {undo, redo, undoDepth, redoDepth} from "prosemirror-history"
 
-import {CitationDialog, FigureDialog, LinkDialog, TableDialog, MathDialog} from "./dialogs"
+import {CitationDialog, FigureDialog, LinkDialog, TableDialog, MathDialog} from "../dialogs"
 import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from ".."
+import {randomHeadingId, randomAnchorId} from "../../schema/common"
+
 
 let setHeadlineBlock = function(editor, level) {
     let block = editor.currentView.state.schema.nodes['heading'],
@@ -16,6 +18,8 @@ let setHeadlineBlock = function(editor, level) {
         editor.currentView.state.selection.$from.parent.attrs.id.length
     ) {
         attrs.id = editor.currentView.state.selection.$from.parent.attrs.id
+    } else {
+        attrs.id = randomHeadingId()
     }
 
     let command = setBlockType(block, attrs)
@@ -52,7 +56,13 @@ export let toolbarModel = {
         {
             type: 'button',
             title: gettext('Open/close header menu'),
-            icon: 'angle-double-up',
+            icon: editor => {
+                if (editor.menu.headerbarModel.open) {
+                    return 'angle-double-up'
+                } else {
+                    return 'angle-double-down'
+                }
+            },
             action: editor => {
                 editor.menu.headerbarModel.open = !editor.menu.headerbarModel.open
                 if (editor.menu.headerView) {
@@ -251,7 +261,7 @@ export let toolbarModel = {
         {
             type: 'button',
             title: gettext('Numbered list'),
-            icon: 'list-numbered',
+            icon: 'list-ol',
             action: editor => {
                 let node = editor.currentView.state.schema.nodes['ordered_list']
                 let command = wrapInList(node)
@@ -275,7 +285,7 @@ export let toolbarModel = {
         {
             type: 'button',
             title: gettext('Bullet list'),
-            icon: 'list-bullet',
+            icon: 'list-ul',
             action: editor => {
                 let node = editor.currentView.state.schema.nodes['bullet_list']
                 let command = wrapInList(node)
@@ -348,7 +358,7 @@ export let toolbarModel = {
         {
             type: 'button',
             title: gettext('Footnote'),
-            icon: 'footnote',
+            icon: 'asterisk',
             action: editor => {
                 let node = editor.view.state.schema.nodes['footnote']
                 let transaction = editor.view.state.tr.replaceSelectionWith(node.createAndFill())
@@ -386,7 +396,13 @@ export let toolbarModel = {
                     editor.currentView.state.selection.$anchor.node(2) &&
                     editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
                     !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
-                    editor.currentView.state.selection.jsonID === 'text'
+                    (
+                        editor.currentView.state.selection.jsonID === 'text' ||
+                        (
+                            editor.currentView.state.selection.jsonID === 'node' &&
+                            editor.currentView.state.selection.node.type.name === 'citation'
+                        )
+                    )
                 ) {
                     return false
                 } else {
@@ -397,7 +413,7 @@ export let toolbarModel = {
         {
             type: 'button',
             title: gettext('Horizontal line'),
-            icon: 'h-line',
+            icon: 'minus',
             action: editor => {
                 let view = editor.currentView,
                     state = view.state
@@ -423,7 +439,7 @@ export let toolbarModel = {
         {
             type: 'button',
             title: gettext('Math'),
-            icon: 'math',
+            icon: 'percent',
             action: editor => {
                 let dialog = new MathDialog(editor)
                 dialog.init()
@@ -435,7 +451,13 @@ export let toolbarModel = {
                     editor.currentView.state.selection.$anchor.node(2) &&
                     editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
                     !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
-                    editor.currentView.state.selection.jsonID === 'text'
+                    (
+                        editor.currentView.state.selection.jsonID === 'text' ||
+                        (
+                            editor.currentView.state.selection.jsonID === 'node' &&
+                            editor.currentView.state.selection.node.type.name === 'equation'
+                        )
+                    )
                 ) {
                     return false
                 } else {
@@ -446,7 +468,7 @@ export let toolbarModel = {
         {
             type: 'button',
             title: gettext('Figure'),
-            icon: 'figure',
+            icon: 'picture-o',
             action: editor => {
                 let dialog = new FigureDialog(editor)
                 dialog.init()
@@ -492,21 +514,21 @@ export let toolbarModel = {
         {
             type: 'button',
             title: gettext('Undo'),
-            icon: 'ccw',
+            icon: 'undo',
             action: editor => undo(editor.currentView.state, tr => editor.currentView.dispatch(tr)),
             disabled: editor => undoDepth(editor.currentView.state) === 0
         },
         {
             type: 'button',
             title: gettext('Redo'),
-            icon: 'cw',
+            icon: 'repeat',
             action: editor => redo(editor.currentView.state, tr => editor.currentView.dispatch(tr)),
             disabled: editor => redoDepth(editor.currentView.state) === 0
         },
         {
             type: 'button',
             title: gettext('Comment'),
-            icon: 'comment-empty',
+            icon: 'comment-o',
             action: editor => editor.mod.comments.interactions.createNewComment(),
             disabled: editor => {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
@@ -514,6 +536,47 @@ export let toolbarModel = {
                 } else if (editor.view !== editor.currentView || editor.currentView.state.selection.empty) {
                     return true
                 }
+            },
+            selected: editor => {
+                if (
+                    editor.currentView.state.selection.$head.marks().some(
+                        mark => mark.type.name === 'comment'
+                    )
+                ) {
+                    return true
+                } else {
+                    return false
+                }
+
+            }
+        },
+        {
+            type: 'button',
+            title: gettext('Anchor'),
+            icon: 'anchor',
+            action: editor => {
+                let mark = editor.currentView.state.schema.marks['anchor']
+                let command = toggleMark(mark, {id: randomAnchorId()})
+                command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
+            },
+            disabled: editor => {
+                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
+                    return true
+                } else if (editor.currentView.state.selection.empty) {
+                    return true
+                }
+            },
+            selected: editor => {
+                if (
+                    editor.currentView.state.selection.$head.marks().some(
+                        mark => mark.type.name === 'anchor'
+                    )
+                ) {
+                    return true
+                } else {
+                    return false
+                }
+
             }
         }
     ]

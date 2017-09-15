@@ -1,11 +1,10 @@
-import {usermediaUploadCategoryTemplate, usermediaUploadTemplate} from "./templates"
+import {usermediaUploadTemplate} from "./templates"
 import {setCheckableLabel, cancelPromise, addAlert} from "../../common"
 
 export class ImageUploadDialog {
-    constructor(imageDB, imageId, ownerId) {
+    constructor(imageDB, imageId = false) {
         this.imageDB = imageDB
         this.imageId = imageId
-        this.ownerId = ownerId
     }
 
     //open a dialog for uploading an image
@@ -27,7 +26,6 @@ export class ImageUploadDialog {
             action = gettext('Upload')
             longAction = gettext('Upload image')
         }
-
         let iCats = []
         jQuery.each(this.imageDB.cats, (i, iCat) => {
             let len = iCats.length
@@ -42,15 +40,13 @@ export class ImageUploadDialog {
             }
         })
 
+
         jQuery('body').append(usermediaUploadTemplate({
             'action': longAction,
             'title': title,
             'thumbnail': thumbnail,
             'image': image,
-            'categories': usermediaUploadCategoryTemplate({
-                'categories': iCats,
-                'fieldTitle': gettext('Select categories')
-            })
+            'categories': iCats
         }))
         let diaButtons = {}
 
@@ -111,10 +107,6 @@ export class ImageUploadDialog {
             checkboxValues = {}
 
         formValues.append('id', this.imageId)
-
-        if(this.ownerId) {
-            formValues.append('owner_id', this.ownerId)
-        }
 
         jQuery('.fw-media-form').each(function () {
             let $this = jQuery(this)

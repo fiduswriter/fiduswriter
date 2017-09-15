@@ -18,9 +18,7 @@ export let findImages = function(htmlCode) {
         newImg.setAttribute('data-src', name)
         this.parentNode.replaceChild(newImg, this)
 
-        if (!_.findWhere(images, {
-                'filename': name
-            })) {
+        if(!images.find(image => image.filename === name)) {
 
             images.push({
                 'filename': name,

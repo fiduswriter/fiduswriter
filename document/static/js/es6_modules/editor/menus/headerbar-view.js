@@ -26,7 +26,6 @@ export class HeaderbarView {
         document.body.addEventListener('click', this.listeners.onclick)
         this.listeners.onkeydown = event => this.onkeydown(event)
         document.addEventListener('keydown', this.listeners.onkeydown)
-
     }
 
     destroy() {
@@ -115,7 +114,7 @@ export class HeaderbarView {
             return ''
         }
         return `
-            <div id="close-document-top" class="close icon-cancel-circle" title="${gettext("Close the document and return to the document overview menu.")}"></div>
+            <div id="close-document-top" class="close fa fa-times-circle" title="${gettext("Close the document and return to the document overview menu.")}"></div>
             <div id="document-top">
                 <h1>${doc.firstChild.firstChild.textContent.length ? escapeText(doc.firstChild.firstChild.textContent) : gettext('Untitled Document')}</h1>
                 <nav id="header-navigation">
@@ -162,7 +161,10 @@ export class HeaderbarView {
         return menu.content.map(menuItem =>
             `
                 <li>
-                    <span class="fw-pulldown-item${menuItem.icon ? ' icon-' + menuItem.icon : ''}${menuItem.selected && menuItem.selected(this.editor) ? ' selected' : ''}${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}" title="${menuItem.tooltip}"> ${menuItem.title} </span>
+                    <span class="fw-pulldown-item${menuItem.selected && menuItem.selected(this.editor) ? ' selected' : ''}${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}" ${menuItem.tooltip ? `title="${menuItem.tooltip}"` : ''}>
+                        ${menuItem.icon ? `<i class="fa fa-${menuItem.icon}"></i>` : ''}
+                        ${menuItem.title}
+                    </span>
                 </li>
             `
         ).join('')

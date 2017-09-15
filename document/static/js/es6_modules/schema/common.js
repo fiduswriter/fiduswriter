@@ -68,18 +68,18 @@ export let figure = {
     group: "block",
     attrs: {
         equation: {default: ""},
-        image: {default: ""},
+        image: {default: false},
         figureCategory: {default: ""},
         caption: {default: ""},
-        id: {compute: randomFigureId}
+        id: {default: false}
     },
     parseDOM: [{
         tag: 'figure',
         getAttrs(dom) {
-            let image = dom.getAttribute('data-image')
+            let image = parseInt(dom.getAttribute('data-image'))
             return {
                 equation: dom.getAttribute('data-equation'),
-                image: image === 'false' ? false : parseInt(image),
+                image: isNaN(image) ? false : image,
                 figureCategory: dom.getAttribute('data-figure-category'),
                 caption: dom.getAttribute('data-caption'),
                 id: dom.getAttribute('id')
@@ -167,14 +167,15 @@ export let randomHeadingId = () => {
 
 export let heading = {
     group: "block",
-    content: "inline<_>*",
+    content: "inline*",
+    marks: "_",
     defining: true,
     attrs: {
         level: {
             default: 1
         },
         id: {
-            compute: randomHeadingId
+            default: false
         }
     },
     parseDOM: [{tag: "h1", getAttrs(dom) {return {level: 1, id: dom.getAttribute('id')}}},
@@ -184,4 +185,32 @@ export let heading = {
                {tag: "h5", getAttrs(dom) {return {level: 5, id: dom.getAttribute('id')}}},
                {tag: "h6", getAttrs(dom) {return {level: 6, id: dom.getAttribute('id')}}},],
     toDOM(node) { return [`h${node.attrs.level}`, {id: node.attrs.id}, 0] }
+}
+
+export let randomAnchorId = () => {
+    return `A${Math.round(Math.random()*10000000) + 1}`
+}
+
+export let anchor = {
+    attrs: {
+        id: {
+            default: false
+        }
+    },
+    inclusive: false,
+    group: "annotation",
+    parseDOM: [{
+        tag: "span.anchor[data-id]",
+        getAttrs(dom) {
+            return {
+                id: dom.getAttribute("data-id")
+            }
+        }
+    }],
+    toDOM(node) {
+        return ['span', {
+            class: 'anchor',
+            'data-id': node.attrs.id
+        }]
+    }
 }

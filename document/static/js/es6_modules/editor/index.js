@@ -1,39 +1,97 @@
-import * as objectHash from "object-hash/dist/object_hash"
 import * as plugins from "../plugins/editor"
 
 /* Functions for ProseMirror integration.*/
-import {EditorState, Plugin, TextSelection} from "prosemirror-state"
-import {EditorView, Decoration, DecorationSet} from "prosemirror-view"
-import {history, redo, undo} from "prosemirror-history"
-import {toggleMark, baseKeymap} from "prosemirror-commands"
-import {keymap} from "prosemirror-keymap/dist/keymap"
-import {buildKeymap} from "prosemirror-example-setup"
-import {collab, getVersion} from "prosemirror-collab"
-import {tableEditing} from "prosemirror-tables"
-import {dropCursor} from "prosemirror-dropcursor"
+import {
+    EditorState,
+    Plugin,
+    TextSelection
+} from "prosemirror-state"
+import {
+    EditorView,
+    Decoration,
+    DecorationSet
+} from "prosemirror-view"
+import {
+    history,
+    redo,
+    undo
+} from "prosemirror-history"
+import {
+    toggleMark,
+    baseKeymap
+} from "prosemirror-commands"
+import {
+    keymap
+} from "prosemirror-keymap"
+import {
+    collab
+} from "prosemirror-collab"
+import {
+    tableEditing
+} from "prosemirror-tables"
+import {
+    dropCursor
+} from "prosemirror-dropcursor"
+import {
+    buildKeymap
+} from "prosemirror-example-setup"
+import {
+    docSchema
+} from "../schema/document"
+import {
+    ModComments
+} from "./comments"
+import {
+    ModFootnotes
+} from "./footnotes"
+import {
+    ModCitations
+} from "./citations"
+import {
+    ModDB
+} from "./databases"
+import {
+    ModCollab
+} from "./collab"
+import {
+    ModTools
+} from "./tools"
+import {
+    ModSettings
+} from "./settings"
+import {
+    headerbarModel,
+    toolbarModel
+} from "./menus"
+import {
+    ModStyles
+} from "./styles"
+import {
+    ModServerCommunications
+} from "./server-communications"
+import {
+    getSettings
+} from "../schema/convert"
+import {
+    BibliographyDB
+} from "../bibliography/database"
+import {
+    ImageDB
+} from "../images/database"
 
-import {docSchema} from "../schema/document"
-import {ModComments} from "./comments"
-import {ModFootnotes} from "./footnotes"
-import {ModCitations} from "./citations"
-import {ModCollab} from "./collab"
-import {ModTools} from "./tools"
-import {ModSettings} from "./settings"
-import {headerbarModel, toolbarModel} from "./menus"
-import {ModStyles} from "./styles"
-import {ModServerCommunications} from "./server-communications"
-import {getMetadata, getSettings, updateDoc} from "../schema/convert"
-import {BibliographyDB} from "../bibliography/database"
-import {ImageDB} from "../images/database"
-import {Paste} from "./paste"
-import {placeholdersPlugin} from "./plugins/placeholders"
-import {tablesPlugin} from "./plugins/tables"
-import {headerbarPlugin} from "./plugins/headerbar"
-import {toolbarPlugin} from "./plugins/toolbar"
-import {collabCaretsPlugin} from "./plugins/collab-carets"
-import {footnoteMarkersPlugin} from "./plugins/footnote-markers"
-import {commentsPlugin} from "./plugins/comments"
-import {linksPlugin} from "./plugins/links"
+import {
+    pastePlugin,
+    placeholdersPlugin,
+    headerbarPlugin,
+    toolbarPlugin,
+    collabCaretsPlugin,
+    footnoteMarkersPlugin,
+    commentsPlugin,
+    linksPlugin,
+    keywordInputPlugin,
+    authorInputPlugin,
+    tablesPlugin
+} from "./statePlugins"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']
@@ -53,16 +111,13 @@ export class Editor {
         this.docInfo = {
             id,
             rights: '',
-            unapplied_diffs: [],
             owner: undefined,
             is_owner: false,
-            title_changed: false,
-            changed: false
+            confirmedDoc: false // The latest doc as confirmed by the server.
         }
         this.schema = docSchema
         this.user = false
-        // The latest doc as confirmed by the server.
-        this.confirmedDoc = false
+
         this.menu = {
             headerbarModel,
             toolbarModel
@@ -72,19 +127,23 @@ export class Editor {
             [history],
             [keymap, () => baseKeymap],
             [keymap, () => buildKeymap(this.schema)],
-            [collab, doc => ({version: doc.version})],
+            [collab],
             [dropCursor],
             [tableEditing],
-            [placeholdersPlugin],
+            [placeholdersPlugin, () => ({editor: this})],
             [tablesPlugin, () => ({editor: this})],
             [headerbarPlugin, () => ({editor: this})],
             [toolbarPlugin, () => ({editor: this})],
-            [collabCaretsPlugin],
+            [collabCaretsPlugin, () => ({editor: this})],
             [footnoteMarkersPlugin, () => ({editor: this})],
-            [commentsPlugin, () => ({editor: this})]
+            [commentsPlugin, () => ({editor: this})],
+            [keywordInputPlugin, () => ({editor: this})],
+            [authorInputPlugin, () => ({editor: this})],
+            [pastePlugin, () => ({editor: this})]
         ]
         new ModFootnotes(this)
         new ModServerCommunications(this)
+        new ModDB(this)
     }
 
     init() {
@@ -99,16 +158,10 @@ export class Editor {
             state: EditorState.create({
                 schema: this.schema
             }),
-            onFocus: () => {
-                if (this.currentView != this.view) {
+            handleDOMEvents: {
+                focus: (view, event) => {
                     this.currentView = this.view
                 }
-            },
-            onBlur: (view) => {
-            },
-            transformPastedHTML: inHTML => {
-                let ph = new Paste(inHTML, "main")
-                return ph.getOutput()
             },
             dispatchTransaction: (transaction) => {
                 let remote = transaction.getMeta('remote')
@@ -120,7 +173,8 @@ export class Editor {
                 let newState = this.view.state.apply(transaction)
                 this.view.updateState(newState)
                 this.onTransaction(transaction, remote)
-            }
+            },
+
         })
         // The editor that is currently being edited in -- main or footnote editor
         this.currentView = this.view
@@ -132,39 +186,7 @@ export class Editor {
         new ModStyles(this)
         this.activateFidusPlugins()
         this.mod.serverCommunications.init()
-        this.setSaveTimers()
     }
-
-    setSaveTimers() {
-        // Set Auto-save to send the document every two minutes, if it has changed.
-        this.sendDocumentTimer = window.setInterval(() => {
-            if (this.docInfo && this.docInfo.changed &&
-                READ_ONLY_ROLES.indexOf(this.docInfo.access_rights) === -1) {
-                this.save()
-            }
-        }, 120000)
-
-        // Set Auto-save to send the title every 5 seconds, if it has changed.
-        this.sendDocumentTitleTimer = window.setInterval(() => {
-            if (this.docInfo.title_changed &&
-                READ_ONLY_ROLES.indexOf(this.docInfo.access_rights) === -1) {
-                this.docInfo.title_changed = false
-                this.mod.serverCommunications.send(()=>({
-                    type: 'update_title',
-                    title: this.getDoc().title
-                }))
-            }
-        }, 10000)
-
-        // Auto save the document when the user leaves the page.
-        window.addEventListener("beforeunload", () => {
-            if (this.docInfo && this.docInfo.changed &&
-                READ_ONLY_ROLES.indexOf(this.docInfo.access_rights) === -1) {
-                this.save()
-            }
-        })
-    }
-
 
     activateFidusPlugins() {
         // Add plugins.
@@ -188,60 +210,22 @@ export class Editor {
         }))
     }
 
-    removeBibDB() {
-        delete this.bibDB
-        // TODO: Need to to remove all entries of citation dialog!
-    }
-
-    getBibDB(userId) {
-        if (!this.bibDB) { // Don't get the bibliography again if we already have it.
-            let bibGetter = new BibliographyDB(userId, true)
-            return bibGetter.getDB().then(({bibPKs, bibCats}) => {
-                this.bibDB = bibGetter
-            })
-        } else {
-            return Promise.resolve()
-        }
-    }
-
-    removeImageDB() {
-        delete this.imageDB
-    }
-
-    getImageDB(userId) {
-        if (!this.imageDB) {
-            let imageGetter = new ImageDB(userId)
-            return imageGetter.getDB().then(() => {
-                this.imageDB = imageGetter
-                // assign image DB to be used in schema.
-                this.schema.cached.imageDB = imageGetter
-                // assign image DB to be used in footnote schema.
-                this.mod.footnotes.fnEditor.schema.cached.imageDB = imageGetter
-            })
-        } else {
-            return Promise.resolve()
-        }
-    }
-
     receiveDocument(data) {
 
         // Reset collaboration
         this.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
-        this.mod.collab.docChanges.unconfirmedSteps = {}
+        this.mod.collab.docChanges.unconfirmedDiffs = {}
         if (this.mod.collab.docChanges.awaitingDiffResponse) {
             this.mod.collab.docChanges.enableDiffSending()
         }
         // Remember location hash to scroll there subsequently.
         let locationHash = window.location.hash
-        // Update document to newest document version
-        let doc = updateDoc(data.doc)
+        let doc = data.doc
 
         this.docInfo = data.doc_info
-        this.docInfo.doc_version = doc.settings['doc_version']
-        this.docInfo.changed = false
-        this.docInfo.title_changed = false
+        this.docInfo.version = doc["v"]
 
-        if (doc.version === 0) {
+        if (this.docInfo.version === 0) {
             // If the document is new, change the url.
             window.history.replaceState("", "", `/document/${this.docInfo.id}/`)
         }
@@ -255,128 +239,77 @@ export class Editor {
         this.mod.serverCommunications.send(() => ({
             type: 'participant_update'
         }))
-        return this.getImageDB(this.docInfo.owner.id).then(() => {
 
-            let stateDoc
-            if (doc.contents.type) {
-                stateDoc = docSchema.nodeFromJSON({type:'doc', content:[doc.contents]})
+        this.mod.db.bibDB.setDB(data.doc.bibliography)
+        this.mod.db.imageDB.setDB(data.doc.images)
+        // assign image DB to be used in document schema.
+        this.schema.cached.imageDB = this.mod.db.imageDB
+        // assign image DB to be used in footnote schema.
+        this.mod.footnotes.fnEditor.schema.cached.imageDB = this.mod.db.imageDB
+        this.user.bibDB = new BibliographyDB()
+        this.user.bibDB.getDB()
+        this.user.imageDB = new ImageDB()
+        this.user.imageDB.getDB()
+
+        let stateDoc
+        if (doc.contents.type) {
+            stateDoc = docSchema.nodeFromJSON({type:'doc', content:[doc.contents]})
+        } else {
+            stateDoc = this.schema.topNodeType.createAndFill()
+
+        }
+        let plugins = this.statePlugins.map(plugin => {
+            if (plugin[1]) {
+                return plugin[0](plugin[1](doc))
             } else {
-                stateDoc = this.schema.topNodeType.createAndFill()
+                return plugin[0]()
             }
-            let plugins = this.statePlugins.map(plugin => {
-                if (plugin[1]) {
-                    return plugin[0](plugin[1](doc))
-                } else {
-                    return plugin[0]()
-                }
-            })
-
-            let stateConfig = {
-                schema: this.schema,
-                doc: stateDoc,
-                plugins
-            }
-
-            // Set document in prosemirror
-            this.view.updateState(EditorState.create(stateConfig))
-
-            // Set initial confirmed doc
-            this.confirmedDoc = this.view.state.doc
-
-            if (this.docInfo.unapplied_diffs.length > 0) {
-                // We have unapplied diffs -- this should only happen if the last disconnect
-                // happened before we could save or because we are connecting to a document
-                // in the process of being edited by another client. We try to apply the
-                // diffs and then save immediately.
-                //try {
-                    // We only try because this fails if the PM diff format has changed.
-
-                while (this.docInfo.unapplied_diffs.length > 0) {
-                    let diff = this.docInfo.unapplied_diffs.shift()
-                    this.mod.collab.docChanges.applyDiff(diff)
-                }
-                //this.save()
-                /*} catch (error) {
-                    // We couldn't apply the diffs. They are likely corrupted.
-                    // We remove remaining diffs, increase the version by one and
-                    // save to the server.
-                    this.doc.version += this.docInfo.unapplied_diffs.length + 1
-                    this.docInfo.unapplied_diffs = []
-                    console.warn('Diffs could not be applied correctly!')
-                }*/
-            }
-
-
-            // Render footnotes based on main doc
-            this.mod.footnotes.fnEditor.renderAllFootnotes()
-
-            //  Setup comment handling
-            this.mod.comments.store.setVersion(doc.comment_version)
-            Object.values(doc.comments).forEach(comment => {
-                this.mod.comments.store.addLocalComment(comment.id, comment.user,
-                    comment.userName, comment.userAvatar, comment.date, comment.comment,
-                    comment.answers, comment['review:isMajor'])
-            })
-            this.mod.comments.store.on("mustSend", () => {
-                this.mod.collab.docChanges.sendToCollaborators()
-            })
-            this.mod.comments.layout.onChange()
-
-            return this.getBibDB(this.docInfo.owner.id).then(() => {
-                this.waitingForDocument = false
-                // Get document settings
-                this.mod.settings.check(this.view.state.doc.firstChild.attrs)
-                this.mod.citations.layoutCitations()
-                if (locationHash.length) {
-                    this.scrollIdIntoView(locationHash.slice(1))
-                }
-
-            })
         })
-    }
 
-    // Creates a hash value for the entire document so that we can compare with
-    // other clients if we really have the same contents.
-    getHash() {
-        return objectHash.MD5(
-            this.confirmedDoc.toJSON(),
-            {unorderedArrays: true}
-        )
-    }
+        let stateConfig = {
+            schema: this.schema,
+            doc: stateDoc,
+            plugins
+        }
 
+        // Set document in prosemirror
+        this.view.updateState(EditorState.create(stateConfig))
+
+        // Set initial confirmed doc
+        this.docInfo.confirmedDoc = this.view.state.doc
+
+        // Render footnotes based on main doc
+        this.mod.footnotes.fnEditor.renderAllFootnotes()
+
+        //  Setup comment handling
+        this.mod.comments.store.reset()
+        Object.values(doc.comments).forEach(comment => {
+            this.mod.comments.store.addLocalComment(comment.id, comment.user,
+                comment.userName, comment.userAvatar, comment.date, comment.comment,
+                comment.answers, comment['review:isMajor'])
+        })
+        this.mod.comments.layout.onChange()
+        this.waitingForDocument = false
+        // Get document settings
+        this.mod.settings.check(this.view.state.doc.firstChild.attrs)
+        this.mod.citations.layoutCitations()
+        if (locationHash.length) {
+            this.scrollIdIntoView(locationHash.slice(1))
+        }
+    }
 
     // Collect all components of the current doc. Needed for saving and export
     // filters
     getDoc() {
-        let pmArticle = this.confirmedDoc.firstChild
+        let pmArticle = this.docInfo.confirmedDoc.firstChild
         return {
             contents: pmArticle.toJSON(),
-            metadata: getMetadata(pmArticle),
-            settings: Object.assign(
-                {doc_version: this.docInfo.doc_version},
-                getSettings(pmArticle)
-            ),
+            settings: getSettings(pmArticle),
             title: pmArticle.firstChild.textContent.substring(0, 255),
-            version: getVersion(this.view.state),
-            comments: this.mod.comments.store.comments
+            version: this.docInfo.version,
+            comments: this.mod.comments.store.comments,
+            id: this.docInfo.id
         }
-    }
-
-    // Send changes to the document to the server
-    save() {
-        this.mod.serverCommunications.send(() => {
-            let doc = this.getDoc()
-            delete doc.comments
-            return {
-                type: 'update_doc',
-                doc,
-                hash: this.getHash()
-            }
-        })
-
-        this.docInfo.changed = false
-
-        return Promise.resolve()
     }
 
     // filter transactions.
@@ -409,20 +342,36 @@ export class Editor {
             view
 
         this.view.state.doc.descendants((node, pos) => {
-            if (!foundPos && (node.type.name === 'heading' || node.type.name === 'figure') && node.attrs.id === id) {
+            if (foundPos) {
+                return
+            } else if ((node.type.name === 'heading' || node.type.name === 'figure') && node.attrs.id === id) {
                 foundPos = pos + 1
                 view = this.view
+            } else {
+                let anchorMark = node.marks.find(mark => mark.type.name === 'anchor')
+                if (anchorMark && anchorMark.attrs.id === id) {
+                    foundPos = pos + 1
+                    view = this.view
+                }
             }
         })
+
         if (!foundPos) {
             this.mod.footnotes.fnEditor.view.state.doc.descendants((node, pos) => {
-                if (!foundPos && (node.type.name === 'heading' || node.type.name === 'figure') && node.attrs.id === id) {
+                if (foundPos) {
+                    return
+                } else if ((node.type.name === 'heading' || node.type.name === 'figure') && node.attrs.id === id) {
                     foundPos = pos + 1
                     view = this.mod.footnotes.fnEditor.view
+                } else {
+                    let anchorMark = node.marks.find(mark => mark.type.name === 'anchor')
+                    if (anchorMark && anchorMark.attrs.id === id) {
+                        foundPos = pos + 1
+                        view = this.mod.footnotes.fnEditor.view
+                    }
                 }
             })
         }
-
         if (foundPos) {
             this.scrollPosIntoView(foundPos, view)
         }
@@ -431,16 +380,17 @@ export class Editor {
 
     scrollPosIntoView(pos, view) {
         let topMenuHeight = jQuery('header').outerHeight() + 10
-        let distanceFromTop = view.coordsAtPos(pos).top - topMenuHeight
-        window.scrollBy(0, distanceFromTop)
         let $pos = view.state.doc.resolve(pos)
         view.dispatch(view.state.tr.setSelection(new TextSelection($pos, $pos)))
         view.focus()
+        let distanceFromTop = view.coordsAtPos(pos).top - topMenuHeight
+        window.scrollBy(0, distanceFromTop)
+        return
     }
 
     // Things to be executed on every editor transaction.
     onTransaction(transaction, remote) {
-        let updateBibliography = false, updateTitle = false, updateSettings = false,
+        let updateBibliography = false, updateSettings = false,
             commentIds = []
             // Check what area is affected
 
@@ -460,20 +410,17 @@ export class Editor {
                                 updateBibliography = true
                             }
                             if (!remote) {
-                                let commentId = this.mod.comments.layout.findCommentId(node)
-                                if (commentId !== false && !commentIds.includes(commentId)) {
-                                    commentIds.push(commentId)
-                                }
+                                this.mod.comments.layout.findCommentIds(node).forEach(commentId => {
+                                    if (!commentIds.includes(commentId)) {
+                                        commentIds.push(commentId)
+                                    }
+                                })
                             }
                         }
                     )
                     if (step.from===0 && step.jsonID === 'replaceAround') {
                         updateSettings = true
                     }
-                }
-                let docPart = transaction.docs[index].resolve(step.from).node(2)
-                if (docPart && docPart.type.name === 'title') {
-                    updateTitle = true
                 }
             }
         })
@@ -485,9 +432,6 @@ export class Editor {
             this.mod.citations.layoutCitations()
         }
 
-        if (updateTitle && !remote) {
-            this.docInfo.title_changed = true
-        }
         if (updateSettings) {
             this.mod.settings.check(this.view.state.doc.firstChild.attrs)
         }

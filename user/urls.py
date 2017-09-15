@@ -7,6 +7,11 @@ urlpatterns = [
     # Show user profiles
     url('^team/$', views.list_team_members, name='list_team_members'),
     url(
+        '^team/list/$',
+        views.list_team_members_js,
+        name='list_team_members_js'
+    ),
+    url(
         '^profile/(?P<username>[\w\d\.\-_\@]{1,30})$',
         views.show_profile,
         name='show_userprofile'

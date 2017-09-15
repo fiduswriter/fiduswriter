@@ -3,11 +3,9 @@ import {activateWait, deactivateWait, addAlert, csrfToken} from "../common"
 const FW_LOCALSTORAGE_VERSION = "1.0"
 
 export class BibliographyDB {
-    constructor(docOwnerId, useLocalStorage = false, db = {}, cats = []) {
-        this.docOwnerId = docOwnerId
-        this.useLocalStorage = useLocalStorage // Whether to use local storage to cache result
-        this.db = db
-        this.cats = cats
+    constructor() {
+        this.db = {}
+        this.cats = []
     }
 
     /** Get the bibliography from the server and create as this.db.
@@ -16,44 +14,43 @@ export class BibliographyDB {
 
     getDB() {
 
-        let lastModified = -1, numberOfEntries = -1
+        let lastModified = parseInt(window.localStorage.getItem('last_modified_biblist')),
+            numberOfEntries = parseInt(window.localStorage.getItem('number_of_entries')),
+            localStorageVersion = window.localStorage.getItem('version'),
+            localStorageOwnerId = parseInt(window.localStorage.getItem('owner_id'))
 
-        if (this.useLocalStorage) {
-            let lastModified = parseInt(window.localStorage.getItem('last_modified_biblist')),
-                numberOfEntries = parseInt(window.localStorage.getItem('number_of_entries')),
-                localStorageVersion = window.localStorage.getItem('version'),
-                localStorageOwnerId = parseInt(window.localStorage.getItem('owner_id'))
+        // A dictionary to look up bib fields by their fw type name.
+        // Needed for translation to CSL and Biblatex.
+        //Fill BibDB
 
-            // A dictionary to look up bib fields by their fw type name.
-            // Needed for translation to CSL and Biblatex.
-            //Fill BibDB
-
-            if (Number.isNaN(lastModified)) {
-                lastModified = -1
-            }
-
-            if (Number.isNaN(numberOfEntries)) {
-                numberOfEntries = -1
-            }
-
-            if (
-                localStorageVersion != FW_LOCALSTORAGE_VERSION ||
-                localStorageOwnerId != this.docOwnerId
-            ) {
-                lastModified = -1
-                numberOfEntries = -1
-            }
+        if (Number.isNaN(lastModified)) {
+            lastModified = -1
         }
 
+        if (Number.isNaN(numberOfEntries)) {
+            numberOfEntries = -1
+        }
+
+        if (Number.isNaN(localStorageOwnerId)) {
+            numberOfEntries = -1
+        }
+
+        if (
+            localStorageVersion != FW_LOCALSTORAGE_VERSION
+        ) {
+            lastModified = -1
+            numberOfEntries = -1
+            localStorageOwnerId = -1
+        }
 
         activateWait()
         return new Promise((resolve, reject) => {
             jQuery.ajax({
                 url: '/bibliography/biblist/',
                 data: {
-                    'owner_id': this.docOwnerId,
                     'last_modified': lastModified,
                     'number_of_entries': numberOfEntries,
+                    'user_id': localStorageOwnerId
                 },
                 type: 'POST',
                 dataType: 'json',
@@ -61,35 +58,30 @@ export class BibliographyDB {
                 beforeSend: (xhr, settings) =>
                     xhr.setRequestHeader("X-CSRFToken", csrfToken),
                 success: (response, textStatus, jqXHR) => {
-                    let bibCats = response.bibCategories
+                    let bibCats = response['bib_categories']
                     bibCats.forEach(bibCat => {
                         this.cats.push(bibCat)
                     })
 
                     let bibList = []
 
-                    if (this.useLocalStorage) {
-                        if (response.hasOwnProperty('bibList')) {
-                            bibList = response.bibList
-                            try {
-                                window.localStorage.setItem('biblist', JSON.stringify(response.bibList))
-                                window.localStorage.setItem('last_modified_biblist', response.last_modified)
-                                window.localStorage.setItem('number_of_entries', response.number_of_entries)
-                                window.localStorage.setItem('owner_id', response.docOwnerId)
-                                window.localStorage.setItem('version', FW_LOCALSTORAGE_VERSION)
-                            } catch (error) {
-                                // The local storage was likely too small
-                            }
-                        } else {
-                            bibList = JSON.parse(window.localStorage.getItem('biblist'))
+                    if (response.hasOwnProperty('bib_list')) {
+                        bibList = response['bib_list']
+                        try {
+                            window.localStorage.setItem('biblist', JSON.stringify(bibList))
+                            window.localStorage.setItem('last_modified_biblist', response['last_modified'])
+                            window.localStorage.setItem('number_of_entries', response['number_of_entries'])
+                            window.localStorage.setItem('owner_id', response['user_id'])
+                            window.localStorage.setItem('version', FW_LOCALSTORAGE_VERSION)
+                        } catch (error) {
+                            // The local storage was likely too small
                         }
                     } else {
-                        bibList = response.bibList
+                        bibList = JSON.parse(window.localStorage.getItem('biblist'))
                     }
-                    let bibPKs = []
-                    for (let i = 0; i < bibList.length; i++) {
-                        bibPKs.push(this.serverBibItemToBibDB(bibList[i]))
-                    }
+
+                    let bibPKs = bibList.map(bibItem => this.serverBibItemToBibDB(bibItem))
+
                     resolve({bibPKs, bibCats})
                 },
                 error: (jqXHR, textStatus, errorThrown) => {
@@ -107,12 +99,12 @@ export class BibliographyDB {
      */
     serverBibItemToBibDB(item) {
         let id = item['id']
-        let aBibDBEntry = {}
-        aBibDBEntry['fields'] = JSON.parse(item['fields'])
-        aBibDBEntry['bib_type'] = item['bib_type']
-        aBibDBEntry['entry_key'] = item['entry_key']
-        aBibDBEntry['entry_cat'] = JSON.parse(item['entry_cat'])
-        this.db[id] = aBibDBEntry
+        let bibDBEntry = {}
+        bibDBEntry['fields'] = JSON.parse(item['fields'])
+        bibDBEntry['bib_type'] = item['bib_type']
+        bibDBEntry['entry_key'] = item['entry_key']
+        bibDBEntry['entry_cat'] = JSON.parse(item['entry_cat'])
+        this.db[id] = bibDBEntry
         return id
     }
 
@@ -126,16 +118,13 @@ export class BibliographyDB {
         // the original tmpDB isn't destroyed.
         let dbObject = {}
         Object.keys(tmpDB).forEach((bibKey)=>{
-            dbObject[bibKey] =  Object.assign({}, tmpDB[bibKey])
+            dbObject[bibKey] = Object.assign({}, tmpDB[bibKey])
             dbObject[bibKey].entry_cat = JSON.stringify(tmpDB[bibKey].entry_cat)
             dbObject[bibKey].fields = JSON.stringify(tmpDB[bibKey].fields)
         })
         let sendData = {
             is_new: isNew,
             bibs: JSON.stringify(dbObject)
-        }
-        if (this.docOwnerId !== 0) {
-            sendData['owner_id'] = this.docOwnerId
         }
         return new Promise((resolve, reject) => {
             jQuery.ajax({
@@ -247,10 +236,10 @@ export class BibliographyDB {
     }
 
     /** Delete a list of bibliography items both locally and on the server.
-     * @function deleteBibEntry
+     * @function deleteBibEntries
      * @param ids A list of bibliography item ids that are to be deleted.
      */
-    deleteBibEntry(ids) {
+    deleteBibEntries(ids) {
         for (let i = 0; i < ids.length; i++) {
             ids[i] = parseInt(ids[i])
         }

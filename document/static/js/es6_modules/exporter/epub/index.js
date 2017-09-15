@@ -1,11 +1,9 @@
 import {obj2Node, node2Obj} from "../tools/json"
-import {BibliographyDB} from "../../bibliography/database"
 import {createSlug} from "../tools/file"
 import {findImages} from "../tools/html"
 import {ZipFileCreator} from "../tools/zip"
 import {opfTemplate, containerTemplate, ncxTemplate, ncxItemTemplate, navTemplate,
   navItemTemplate, xhtmlTemplate} from "./templates"
-import {katexOpfIncludes} from "../../katex/opf-includes"
 import {addAlert} from "../../common"
 import {katexRender} from "../../katex"
 import {BaseEpubExporter} from "./base"
@@ -16,20 +14,16 @@ import {DOMSerializer} from "prosemirror-model"
 
 export class EpubExporter extends BaseEpubExporter {
 
-    constructor(doc, bibDB, citationStyles, citationLocales) {
+    constructor(doc, bibDB, imageDB, citationStyles, citationLocales) {
         super()
         this.doc = doc
         this.citationStyles = citationStyles
         this.citationLocales = citationLocales
-        if (bibDB) {
-            this.bibDB = bibDB // the bibliography has already been loaded for some other purpose. We reuse it.
-            this.exportOne()
-        } else {
-            this.bibDB = new BibliographyDB(doc.owner.id)
-            this.bibDB.getDB().then(() => {
-                this.exportOne()
-            })
-        }
+        this.bibDB = bibDB
+        this.imageDB = imageDB
+        this.shortLang = this.doc.settings.language.split['-'][0]
+        this.lang = this.doc.settings.language
+        this.exportOne()
     }
 
     exportOne() {
@@ -89,7 +83,7 @@ export class EpubExporter extends BaseEpubExporter {
 
         let xhtmlCode = xhtmlTemplate({
             part: false,
-            shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
+            shortLang: this.shortLang,
             title,
             styleSheets,
             math,
@@ -102,27 +96,25 @@ export class EpubExporter extends BaseEpubExporter {
 
         let timestamp = this.getTimestamp()
 
-        let authors = [this.doc.owner.name]
-        let serializer = DOMSerializer.fromSchema(docSchema)
-        let docContents = serializer.serializeNode(this.doc.contents)
+        let schema = docSchema
+        schema.cached.imageDB = this.imageDB
+        let serializer = DOMSerializer.fromSchema(schema)
+        let docContents = serializer.serializeNode(schema.nodeFromJSON(this.doc.contents))
+
         // Remove hidden parts
         let hiddenEls = [].slice.call(docContents.querySelectorAll('[data-hidden=true]'))
         hiddenEls.forEach(hiddenEl => hiddenEl.parentElement.removeChild(hiddenEl))
 
-        let authorsEl = docContents.querySelector('.article-authors')
-        if (authorsEl && authorsEl.textContent.length > 0) {
-            authors = jQuery.map(authorsEl.textContent.split(","), jQuery.trim)
-        }
+        let authors = [].slice.call(docContents.querySelectorAll('.article-authors .author')).map(
+            authorEl => authorEl.textContent
+        )
 
-        let keywords = []
-        let keywordsEl = docContents.querySelector('.article-keywords')
-        if (keywordsEl && keywordsEl.textContent.length > 0) {
-            keywords = jQuery.map(keywordsEl.textContent.split(","), jQuery.trim)
-        }
-
+        let keywords = [].slice.call(docContents.querySelectorAll('.article-keywords .keyword')).map(
+            keywordEl => keywordEl.textContent
+        )
 
         let opfCode = opfTemplate({
-            language: gettext('en-US'), // TODO: specify a document language rather than using the current users UI language
+            language: this.lang,
             title,
             authors,
             keywords,
@@ -132,23 +124,20 @@ export class EpubExporter extends BaseEpubExporter {
             modified: timestamp,
             styleSheets,
             math,
-            images,
-            katexOpfIncludes
+            images
         })
 
         let ncxCode = ncxTemplate({
-            shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
+            shortLang: this.shortLang,
             title,
             idType: 'fidus',
             id: this.doc.id,
-            contentItems,
-            templates: {ncxTemplate, ncxItemTemplate}
+            contentItems
         })
 
         let navCode = navTemplate({
-            shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
-            contentItems,
-            templates: {navTemplate, navItemTemplate}
+            shortLang: this.shortLang,
+            contentItems
         })
 
         let outputList = [{

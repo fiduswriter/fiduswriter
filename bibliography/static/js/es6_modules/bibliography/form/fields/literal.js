@@ -2,7 +2,7 @@ import {EditorState, Plugin} from "prosemirror-state"
 import {EditorView, Decoration, DecorationSet} from "prosemirror-view"
 import {history, redo, undo} from "prosemirror-history"
 import {toggleMark, baseKeymap} from "prosemirror-commands"
-import {keymap} from "prosemirror-keymap/dist/keymap"
+import {keymap} from "prosemirror-keymap"
 
 import {litSchema} from "../../schema/literal"
 
@@ -94,7 +94,12 @@ export class LiteralFieldForm{
             props: {
                 decorations: (state) => {
                     let doc = state.doc
-                    if (doc.childCount === 1 && doc.firstChild.isTextblock && doc.firstChild.content.size === 0) {
+                    if (
+                        doc.childCount === 1 &&
+                        doc.firstChild.isTextblock &&
+                        doc.firstChild.content.size === 0 &&
+                        this.placeHolder
+                    ) {
                         let placeHolder = document.createElement('span')
                         placeHolder.classList.add('placeholder')
                         // There is only one field, so we know the selection is there

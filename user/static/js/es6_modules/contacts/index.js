@@ -1,51 +1,56 @@
 import {teammemberTemplate} from "./templates"
-import {addMemberDialog, deleteMemberDialog} from "./manage"
-import {addDropdownBox} from "../common"
-import {Menu} from "../menu"
+import {deleteMemberDialog} from "./manage"
+import {addDropdownBox, csrfToken, addAlert, OverviewMenuView} from "../common"
+import {SiteMenu} from "../menu"
+import {menuModel} from "./menu"
 
-export let contactsOverview = function () {
+export class ContactsOverview {
+    constructor() {
+        let smenu = new SiteMenu("") // Nothing highlighted.
+        smenu.init()
+        this.menu = new OverviewMenuView(this, menuModel)
+        this.menu.init()
+        this.bind()
+        this.getList()
+    }
 
-    jQuery(document).ready(function() {
-        new Menu("") // Nothing highlighted.
+    getList() {
+        jQuery.ajax({
+            url: '/user/team/list/',
+            data: {},
+            type: 'POST',
+            dataType: 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: (xhr, settings) =>
+                xhr.setRequestHeader("X-CSRFToken", csrfToken),
+            success: (response, textStatus, jqXHR) => {
+                //intialize the teammember table
+                jQuery('#team-table tbody').append(teammemberTemplate({members: response.team_members}))
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+                addAlert('error', errorThrown)
+            },
+            complete: () => {}
+        })
+    }
 
-        //intialize the teammember table
-        jQuery('#team-table tbody').append(teammemberTemplate({'members': window.teammembers}))
+    bind() {
+        jQuery(document).ready(function() {
 
-        //select all members
-        jQuery('#select-all-entry').bind('change', function() {
-            let new_bool = false
-            if(jQuery(this).prop("checked"))
-                new_bool = true
-            jQuery('.entry-select').not(':disabled').each(function() {
-                this.checked = new_bool
+            //delete single user
+            jQuery(document).on('click', '.delete-single-member', function() {
+                deleteMemberDialog([jQuery(this).attr('data-id')])
             })
-        })
 
-        jQuery('.add-contact').bind('click', function(){
-            addMemberDialog().then(memberData => {
-                jQuery('#team-table tbody').append(
-                    teammemberTemplate({
-                        'members': [memberData]
-                    })
-                )
-            })
         })
+    }
 
-        addDropdownBox(jQuery('#select-action-dropdown'), jQuery('#action-selection-pulldown'))
-        jQuery('#action-selection-pulldown span').bind('mousedown', function() {
-            let ids = [], action_name = jQuery(this).attr('data-action')
-            if('' === action_name || 'undefined' == typeof(action_name))
-                return
-            jQuery('.entry-select:checked').each(function() {
-                ids[ids.length] = parseInt(jQuery(this).attr('data-id'))
-            })
-            deleteMemberDialog(ids)
-        })
+    // get IDs of selected contacts
+    getSelected() {
+        return [].slice.call(
+            document.querySelectorAll('.entry-select:checked:not(:disabled)')
+        ).map(el => parseInt(el.getAttribute('data-id')))
+    }
 
-        //delete single user
-        jQuery(document).on('click', '.delete-single-member', function() {
-            deleteMemberDialog([jQuery(this).attr('data-id')])
-        })
 
-    })
 }

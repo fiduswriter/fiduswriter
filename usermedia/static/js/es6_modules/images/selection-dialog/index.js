@@ -1,17 +1,33 @@
-import {usermediaImageItemSelectionTemplate, usermediaImageSelectionTemplate} from "./templates"
+import {usermediaImageSelectionTemplate} from "./templates"
 import {ImageUploadDialog} from "../upload-dialog"
 import {cancelPromise} from "../../common"
 
 export class ImageSelectionDialog {
-    constructor(imageDB, imageId, ownerId) {
+    constructor(imageDB, userImageDB, imgId) {
         this.imageDB = imageDB
-        this.imageId = imageId // a preselected image
-        this.ownerId = ownerId
+        this.userImageDB = userImageDB
+        this.imgId = imgId // a preselected image
+        this.imgDb = 'document' // the preselection image will always come from the document
     }
 
     init() {
+        let images = Object.values(this.imageDB.db).map(image => {
+            return {
+                image,
+                db: 'document'
+            }
+        })
+        Object.values(this.userImageDB.db).forEach(image => {
+            if (this.imageDB.db[image.id]) {
+                return
+            }
+            images.push({
+                image,
+                db: 'user'
+            })
+        })
         this.imageDialog = jQuery(usermediaImageSelectionTemplate({
-                imageDB: this.imageDB.db, usermediaImageItemSelectionTemplate
+                images
             })).dialog({
             width: 'auto',
             height: 'auto',
@@ -26,9 +42,8 @@ export class ImageSelectionDialog {
         })
 
         this.startImageTable()
-        if (this.imageId) {
-            jQuery('#Image_' + this.imageId).addClass(
-                'checked')
+        if (this.imgId) {
+            jQuery(`#Image_${this.imgDb}_${this.imgId}`).addClass('checked')
         }
         return this.bindEvents()
     }
@@ -54,7 +69,8 @@ export class ImageSelectionDialog {
                 "aTargets": nonSortable
             }],
         })
-        jQuery('#select_imagelist_filter input').attr('placeholder', gettext('Search for Filename'))
+        jQuery('#select_imagelist_filter input').attr(
+            'placeholder', gettext('Search for Filename'))
 
         jQuery('#select_imagelist_filter input').unbind('focus, blur')
         jQuery('#select_imagelist_filter input').bind('focus', function() {
@@ -91,21 +107,21 @@ export class ImageSelectionDialog {
             }
             checkedImage.removeClass('checked')
             if (selecting) {
-                that.imageId = parseInt(elementId.split('_')[1])
+                that.imgId = parseInt(elementId.split('_')[2])
+                that.imgDb = elementId.split('_')[1]
                 jQuery(this).addClass('checked')
             }
         })
         return new Promise (resolve => {
             jQuery('#selectImageUploadButton').bind('click', () => {
                 let imageUpload = new ImageUploadDialog(
-                    this.imageDB,
-                    false,
-                    this.ownerId
+                    this.userImageDB // We can only upload to the user's image db
                 )
                 resolve(
                     imageUpload.init().then(
                         imageId => {
-                            this.imageId = imageId
+                            this.imgId = imageId
+                            this.imgDb = 'user'
                             this.imageDialog.dialog('close')
                             return this.init()
                         }
@@ -116,13 +132,15 @@ export class ImageSelectionDialog {
             jQuery('#selectImageSelectionButton').bind('click',
                 () => {
                     this.imageDialog.dialog('close')
-                    resolve(this.imageId)
-                })
+                    resolve({id: this.imgId, db: this.imgDb})
+                }
+            )
             jQuery('#cancelImageSelectionButton').bind('click',
                 () => {
                     this.imageDialog.dialog('close')
                     resolve(cancelPromise())
-                })
+                }
+            )
         })
 
     }

@@ -102,6 +102,17 @@ export let toolbarModel = {
                 ) {
                     return ''
                 }
+                if (
+                    editor.currentView.state.selection.jsonID === 'node' &&
+                    editor.currentView.state.selection.node.isBlock
+                ) {
+                    let selectedNode = editor.currentView.state.selection.node
+                    return BLOCK_LABELS[
+                        selectedNode.type.name === 'heading' ?
+                        `${selectedNode.type.name}_${selectedNode.attrs.level}` :
+                        selectedNode.type.name
+                    ]
+                }
                 let startElement = editor.currentView.state.selection.$anchor.parent,
                     endElement = editor.currentView.state.selection.$head.parent
                 if (!startElement || !endElement) {
@@ -140,7 +151,13 @@ export let toolbarModel = {
                     COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
                     (
                         editor.currentView.state.selection.$anchor.node(2) &&
-                        TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name)
+                        TEXT_ONLY_PARTS.includes(
+                            editor.currentView.state.selection.$anchor.node(2).type.name
+                        )
+                    ) || (
+                        editor.currentView.state.selection.jsonID === 'node' &&
+                        editor.currentView.state.selection.node.isBlock &&
+                        !editor.currentView.state.selection.node.isTextblock
                     ),
             content: [
                 {
@@ -480,7 +497,14 @@ export let toolbarModel = {
                     editor.currentView.state.selection.$anchor.node(2) &&
                     editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
                     !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
-                    editor.currentView.state.selection.$anchor.node(2).type.name !== 'abstract'
+                    editor.currentView.state.selection.$anchor.node(2).type.name !== 'abstract' &&
+                    (
+                        editor.currentView.state.selection.jsonID === 'text' ||
+                        (
+                            editor.currentView.state.selection.jsonID === 'node' &&
+                            editor.currentView.state.selection.node.type.name === 'figure'
+                        )
+                    )
                 ) {
                     return false
                 } else {

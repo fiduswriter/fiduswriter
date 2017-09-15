@@ -238,7 +238,7 @@ export class CitationDialog {
         })
 
         jQuery(this.dialog).on('click', '.selected-source .delete', function() {
-            let sourceWrapperId = '#selected-source-' + jQuery(this).data('id')
+            let sourceWrapperId = '#selected-source-document-' + jQuery(this).data('id')
             jQuery(sourceWrapperId).remove()
         })
     }

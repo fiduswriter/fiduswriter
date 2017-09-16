@@ -131,7 +131,7 @@ export class Editor {
             [dropCursor],
             [tableEditing],
             [placeholdersPlugin, () => ({editor: this})],
-            [tablesPlugin, () => ({editor: this})],
+            //[tablesPlugin, () => ({editor: this})],
             [headerbarPlugin, () => ({editor: this})],
             [toolbarPlugin, () => ({editor: this})],
             [collabCaretsPlugin, () => ({editor: this})],

@@ -440,6 +440,7 @@ body {counter-reset: pagination-footnote pagination-footnote-reference;}
 .ProseMirror table {
   border-collapse: collapse;
   margin: 10px 0 10px 0;
+  table-layout: fixed;
 }
 .ProseMirror td {
   vertical-align: top;

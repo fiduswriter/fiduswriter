@@ -2,7 +2,7 @@ import {setBlockType, wrapIn, toggleMark} from "prosemirror-commands"
 import {wrapInList} from "prosemirror-schema-list"
 import {undo, redo, undoDepth, redoDepth} from "prosemirror-history"
 
-import {CitationDialog, FigureDialog, LinkDialog, TableDialog, MathDialog} from "../dialogs"
+import {CitationDialog, FigureDialog, LinkDialog, MathDialog} from "../dialogs"
 import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from ".."
 import {randomHeadingId, randomAnchorId} from "../../schema/common"
 
@@ -48,7 +48,7 @@ const BLOCK_LABELS = {
     'figure': gettext('Figure')
 }
 
-const TEXT_ONLY_PARTS = ['title', 'subtitle', 'authors', 'keywords']
+export const TEXT_ONLY_PARTS = ['title', 'subtitle', 'authors', 'keywords']
 
 export let toolbarModel = {
     openMore: false, // whether 'more' menu is opened.
@@ -505,29 +505,6 @@ export let toolbarModel = {
                             editor.currentView.state.selection.node.type.name === 'figure'
                         )
                     )
-                ) {
-                    return false
-                } else {
-                    return true
-                }
-            }
-        },
-        {
-            type: 'button',
-            title: gettext('Table'),
-            icon: 'table',
-            action: editor => {
-                let dialog = new TableDialog(editor)
-                dialog.init()
-            },
-            disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
-                    return true
-                } else if (
-                    editor.currentView.state.selection.$anchor.node(2) &&
-                    editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
-                    !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
-                    editor.currentView.state.selection.jsonID === 'text'
                 ) {
                     return false
                 } else {

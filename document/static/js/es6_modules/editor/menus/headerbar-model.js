@@ -4,7 +4,20 @@ import {ExportFidusFile} from "../../exporter/native/file"
 import {LatexExporter} from "../../exporter/latex"
 import {HTMLExporter} from "../../exporter/html"
 import {EpubExporter} from "../../exporter/epub"
-import {RevisionDialog, LanguageDialog} from "../dialogs"
+import {RevisionDialog, LanguageDialog, TableDialog} from "../dialogs"
+
+import {addColumnAfter, addColumnBefore, deleteColumn, addRowBefore, addRowAfter, deleteRow, deleteTable,
+        mergeCells, splitCell, setCellAttr, toggleHeaderRow, toggleHeaderColumn, toggleHeaderCell}
+from "prosemirror-tables"
+
+import {TEXT_ONLY_PARTS} from "./toolbar-model"
+
+// from https://github.com/ProseMirror/prosemirror-tables/blob/master/src/util.js
+let isInTable = function(state) {
+  let $head = state.selection.$head
+  for (let d = $head.depth; d > 0; d--) if ($head.node(d).type.spec.tableRole == "row") return true
+  return false
+}
 
 let languageItem = function(code, name) {
     return {
@@ -385,6 +398,146 @@ export let headerbarModel = {
                     action: editor => {
                         editor.mod.tools.showKeyBindings.show()
                     }
+                }
+            ]
+        },
+        {
+            id: 'table',
+            title: gettext('Table'),
+            tooltip: gettext('Add and edit tables.'),
+            disabled: editor => {
+                return editor.docInfo.access_rights !== 'write'
+            },
+            content: [
+                {
+                    title: gettext('Insert table'),
+                    tooltip: gettext('Insert a table into the document.'),
+                    icon: 'table',
+                    action: editor => {
+                        let dialog = new TableDialog(editor)
+                        dialog.init()
+                    },
+                    disabled: editor => {
+                        if (
+                            !isInTable(editor.currentView.state) &&
+                            editor.currentView.state.selection.$anchor.node(2) &&
+                            editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
+                            !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
+                            editor.currentView.state.selection.jsonID === 'text'
+                        ) {
+                            return false
+                        } else {
+                            return true
+                        }
+                    }
+                },
+                {
+                    title: gettext('Add row above'),
+                    tooltip: gettext('Add a row above the current row'),
+                    action: editor => {
+                        addRowBefore(editor.currentView.state, editor.currentView.dispatch)
+                    },
+                    disabled: editor => !isInTable(editor.currentView.state)
+                },
+                {
+                    title: gettext('Add row below'),
+                    tooltip: gettext('Add a row below the current row'),
+                    action: editor => {
+                        addRowAfter(editor.currentView.state, editor.currentView.dispatch)
+                    },
+                    disabled: editor => !isInTable(editor.currentView.state)
+                },
+                {
+                    title: gettext('Add column left'),
+                    tooltip: gettext('Add a column to the left of the current column'),
+                    action: editor => {
+                        addColumnBefore(editor.currentView.state, editor.currentView.dispatch)
+                    },
+                    disabled: editor => !isInTable(editor.currentView.state)
+                },
+                {
+                    title: gettext('Add column right'),
+                    tooltip: gettext('Add a column to the right of the current column'),
+                    action: editor => {
+                        addColumnAfter(editor.currentView.state, editor.currentView.dispatch)
+                    },
+                    disabled: editor => !isInTable(editor.currentView.state)
+                },
+                {
+                    title: gettext('Delete row'),
+                    tooltip: gettext('Delete current row'),
+                    action: editor => {
+                        deleteRow(editor.currentView.state, editor.currentView.dispatch)
+                    },
+                    disabled: editor => !isInTable(editor.currentView.state)
+                },
+                {
+                    title: gettext('Delete column'),
+                    tooltip: gettext('Delete current column'),
+                    action: editor => {
+                        deleteColumn(editor.currentView.state, editor.currentView.dispatch)
+                    },
+                    disabled: editor => !isInTable(editor.currentView.state)
+                },
+                {
+                    title: gettext('Merge cells'),
+                    tooltip: gettext('Merge selected cells'),
+                    action: editor => {
+                        mergeCells(editor.currentView.state, editor.currentView.dispatch)
+                    },
+                    disabled: editor =>
+                        !isInTable(editor.currentView.state) ||
+                        editor.currentView.state.selection.jsonID !== 'cell' ||
+                        editor.currentView.state.selection.$headCell.pos ===
+                        editor.currentView.state.selection.$anchorCell.pos
+                },
+                {
+                    title: gettext('Split cell'),
+                    tooltip: gettext('Split selected cell'),
+                    action: editor => {
+                        splitCell(editor.currentView.state, editor.currentView.dispatch)
+                    },
+                    disabled: editor =>
+                        !isInTable(editor.currentView.state) ||
+                        editor.currentView.state.selection.jsonID !== 'cell' ||
+                        editor.currentView.state.selection.$headCell.pos !==
+                        editor.currentView.state.selection.$anchorCell.pos ||
+                        (
+                            editor.currentView.state.selection.$headCell.nodeAfter.attrs.colspan === 1 &&
+                            editor.currentView.state.selection.$headCell.nodeAfter.attrs.rowspan === 1
+                        )
+                },
+                {
+                    title: gettext('Toggle header row'),
+                    tooltip: gettext('Toggle header-status of currently selected row'),
+                    action: editor => {
+                        toggleHeaderRow(editor.currentView.state, editor.currentView.dispatch)
+                    },
+                    disabled: editor => !isInTable(editor.currentView.state)
+                },
+                {
+                    title: gettext('Toggle header column'),
+                    tooltip: gettext('Toggle header-status of currently selected column'),
+                    action: editor => {
+                        toggleHeaderColumn(editor.currentView.state, editor.currentView.dispatch)
+                    },
+                    disabled: editor => !isInTable(editor.currentView.state)
+                },
+                {
+                    title: gettext('Toggle header cell'),
+                    tooltip: gettext('Toggle header-status of currently selected cells'),
+                    action: editor => {
+                        toggleHeaderCell(editor.currentView.state, editor.currentView.dispatch)
+                    },
+                    disabled: editor => !isInTable(editor.currentView.state)
+                },
+                {
+                    title: gettext('Delete table'),
+                    tooltip: gettext('Delete currently selected table'),
+                    action: editor => {
+                        deleteTable(editor.currentView.state, editor.currentView.dispatch)
+                    },
+                    disabled: editor => !isInTable(editor.currentView.state)
                 }
             ]
         }

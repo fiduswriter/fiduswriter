@@ -4,7 +4,6 @@ import {Decoration, DecorationSet} from "prosemirror-view"
 const key = new PluginKey('placeholders')
 export let placeholdersPlugin = function(options) {
 
-
     function calculatePlaceHolderDecorations(articleNode, selectedPart) {
 
         const placeHolderTexts = [

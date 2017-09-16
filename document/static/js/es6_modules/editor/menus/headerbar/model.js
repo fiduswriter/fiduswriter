@@ -1,16 +1,15 @@
-import {DocumentAccessRightsDialog} from "../../documents/access-rights"
-import {SaveRevision, SaveCopy} from "../../exporter/native"
-import {ExportFidusFile} from "../../exporter/native/file"
-import {LatexExporter} from "../../exporter/latex"
-import {HTMLExporter} from "../../exporter/html"
-import {EpubExporter} from "../../exporter/epub"
-import {RevisionDialog, LanguageDialog, TableDialog} from "../dialogs"
-
 import {addColumnAfter, addColumnBefore, deleteColumn, addRowBefore, addRowAfter, deleteRow, deleteTable,
         mergeCells, splitCell, setCellAttr, toggleHeaderRow, toggleHeaderColumn, toggleHeaderCell}
 from "prosemirror-tables"
 
-import {TEXT_ONLY_PARTS} from "./toolbar-model"
+import {DocumentAccessRightsDialog} from "../../../documents/access-rights"
+import {SaveRevision, SaveCopy} from "../../../exporter/native"
+import {ExportFidusFile} from "../../../exporter/native/file"
+import {LatexExporter} from "../../../exporter/latex"
+import {HTMLExporter} from "../../../exporter/html"
+import {EpubExporter} from "../../../exporter/epub"
+import {RevisionDialog, LanguageDialog, TableDialog} from "../../dialogs"
+import {TEXT_ONLY_PARTS} from "../toolbar/model"
 
 // from https://github.com/ProseMirror/prosemirror-tables/blob/master/src/util.js
 let isInTable = function(state) {

@@ -239,7 +239,7 @@ export let headerbarModel = {
         },
         {
             id: 'language',
-            title: gettext('Document language'),
+            title: gettext('Text Language'),
             tooltip: gettext('Choose the language of the document.'),
             disabled: editor => {
                 return editor.docInfo.access_rights !== 'write'

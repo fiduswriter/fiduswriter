@@ -49,7 +49,3 @@ export {
     toolbarPlugin
 }
 from "./toolbar"
-export {
-    tablesPlugin
-}
-from "./tables"

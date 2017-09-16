@@ -89,8 +89,7 @@ import {
     commentsPlugin,
     linksPlugin,
     keywordInputPlugin,
-    authorInputPlugin,
-    tablesPlugin
+    authorInputPlugin
 } from "./statePlugins"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
@@ -131,7 +130,6 @@ export class Editor {
             [dropCursor],
             [tableEditing],
             [placeholdersPlugin, () => ({editor: this})],
-            //[tablesPlugin, () => ({editor: this})],
             [headerbarPlugin, () => ({editor: this})],
             [toolbarPlugin, () => ({editor: this})],
             [collabCaretsPlugin, () => ({editor: this})],

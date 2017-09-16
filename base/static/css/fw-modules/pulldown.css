@@ -5,6 +5,9 @@
     margin-top: 11px;
     z-index: 100;
 }
+.fw-pulldown.fw-open {
+    display: block;
+}
 .fw-pulldown.fw-left, .fw-pulldown.fw-center {
     left: -10px
 }
@@ -38,6 +41,14 @@
     text-decoration: none;
     cursor: pointer;
     color: #2c2723;
+}
+
+.fw-pulldown hr {
+    width: 80%;
+    display: block;
+    height: 1px;
+    border: 0;
+    background-color: #ccc;
 }
 
 .disabled .fw-pulldown-item {

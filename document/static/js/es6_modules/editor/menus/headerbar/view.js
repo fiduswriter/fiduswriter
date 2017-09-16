@@ -35,11 +35,6 @@ export class HeaderbarView {
     }
 
     onclick(event) {
-        if (this.openedMenu !== false) {
-            this.editor.menu.headerbarModel.content[this.openedMenu].open = false
-            this.openedMenu = false
-            this.update()
-        }
         let target = event.target
 
         if(target.matches('#headerbar #header-navigation .fw-pulldown-item:not(.disabled)')) {
@@ -57,10 +52,18 @@ export class HeaderbarView {
                 menuNumber++
                 seekItem = seekItem.previousElementSibling
             }
-            this.editor.menu.headerbarModel.content[menuNumber].content[itemNumber].action(this.editor)
-            this.editor.menu.headerbarModel.content[menuNumber].open = false
-            this.openedMenu = false
-            this.update()
+            switch (this.editor.menu.headerbarModel.content[menuNumber].content[itemNumber].type) {
+                case 'action':
+                    this.editor.menu.headerbarModel.content[menuNumber].content[itemNumber].action(
+                        this.editor
+                    )
+                    this.editor.menu.headerbarModel.content[menuNumber].open = false
+                    this.openedMenu = false;
+                    this.update()
+                    break;
+                default:
+                    break;
+            }
         } else if (target.matches('#headerbar #header-navigation .header-nav-item:not(.disabled)')) {
             // A menu has been clicked, lets find out which one.
             let menuNumber = 0
@@ -69,9 +72,18 @@ export class HeaderbarView {
                 menuNumber++
                 seekItem = seekItem.previousElementSibling
             }
+            if (this.openedMenu !== false) {
+                this.editor.menu.headerbarModel.content[this.openedMenu].open = false
+            }
             this.editor.menu.headerbarModel.content[menuNumber].open = true
             this.openedMenu = menuNumber
             this.update()
+        } else {
+            if (this.openedMenu !== false) {
+                this.editor.menu.headerbarModel.content[this.openedMenu].open = false
+                this.openedMenu = false
+                this.update()
+            }
         }
     }
 
@@ -148,11 +160,15 @@ export class HeaderbarView {
                     <span class="header-nav-item${menu.disabled && menu.disabled(this.editor) ? ' disabled' : ''}" title="${menu.tooltip}">
                         ${menu.title}
                     </span>
-                    <div class="fw-pulldown fw-left"${menu.open ? ' style="display:block"': ''}>
-                        <ul>
-                            ${this.getHeaderMenuHTML(menu)}
-                        </ul>
-                    </div>
+                    ${
+                        menu.open ?
+                        `<div class="fw-pulldown fw-left fw-open">
+                            <ul>
+                                ${this.getHeaderMenuHTML(menu)}
+                            </ul>
+                        </div>` :
+                        ''
+                    }
                 </div>
             `
         ).join('')
@@ -160,15 +176,45 @@ export class HeaderbarView {
 
     getHeaderMenuHTML(menu) {
         return menu.content.map(menuItem =>
-            `
-                <li>
-                    <span class="fw-pulldown-item${menuItem.selected && menuItem.selected(this.editor) ? ' selected' : ''}${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}" ${menuItem.tooltip ? `title="${menuItem.tooltip}"` : ''}>
-                        ${menuItem.icon ? `<i class="fa fa-${menuItem.icon}"></i>` : ''}
-                        ${menuItem.title}
-                    </span>
-                </li>
-            `
+            `<li>
+                ${this.getMenuItemHTML(menuItem)}
+            </li>`
         ).join('')
+    }
+
+    getMenuItemHTML(menuItem) {
+        switch(menuItem.type) {
+            case 'action':
+                return this.getActionMenuItemHTML(menuItem)
+                break;
+            case 'separator':
+                return '<hr>'
+            default:
+                break;
+        }
+    }
+
+    getActionMenuItemHTML(menuItem) {
+        return `<span class="fw-pulldown-item${
+            menuItem.selected && menuItem.selected(this.editor) ?
+            ' selected' :
+            ''
+        }${
+            menuItem.disabled && menuItem.disabled(this.editor) ?
+            ' disabled' :
+            ''
+        }" ${
+            menuItem.tooltip ?
+            `title="${menuItem.tooltip}"` :
+            ''
+        }>
+            ${
+                menuItem.icon ?
+                `<i class="fa fa-${menuItem.icon}"></i>` :
+                ''
+            }
+            ${menuItem.title}
+        </span>`
     }
 
 }

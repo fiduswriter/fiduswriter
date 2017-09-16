@@ -28,12 +28,13 @@ export class ModStyles {
     addExportTemplateMenuEntries() {
         let exportMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='export')
         // Remove any previous entries in case we run this a second time
-        exportMenu.content = exportMenu.content.filter(menuItem => menuItem.type!=='export_template')
+        exportMenu.content = exportMenu.content.filter(menuItem => menuItem.class!=='export_template')
         let exportMenuEntries = this.exportTemplates.map(template => {
             if(template.file_type==='docx') {
                 return {
-                    type: 'export_template',
+                    class: 'export_template',
                     title: `${template.file_name} (DOCX)`,
+                    type: 'action',
                     tooltip: gettext('Export the document to a DOCX file with the given template.'),
                     action: editor => {
                         new DocxExporter(
@@ -48,8 +49,9 @@ export class ModStyles {
                 }
             } else {
                 return {
-                    type: 'export_template',
+                    class: 'export_template',
                     title: `${template.file_name} (ODT)`,
+                    type: 'action',
                     tooltip: gettext('Export the document to an ODT file with the given template.'),
                     action: editor => {
                         new OdtExporter(
@@ -73,6 +75,7 @@ export class ModStyles {
         documentStyleMenu.content = this.documentStyles.map(docStyle => {
             return {
                 title: docStyle.title,
+                type: 'action',
                 action: editor => {
                     let article = editor.view.state.doc.firstChild
                     let attrs = Object.assign({}, article.attrs)
@@ -94,6 +97,7 @@ export class ModStyles {
         citationStyleMenu.content = this.citationStyles.map(citeStyle => {
             return {
                 title: citeStyle.title,
+                type: 'action',
                 action: editor => {
                     let article = editor.view.state.doc.firstChild
                     let attrs = Object.assign({}, article.attrs)
@@ -108,7 +112,5 @@ export class ModStyles {
             }
         })
     }
-
-
 
 }

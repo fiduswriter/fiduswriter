@@ -321,45 +321,7 @@ export class DocxExporterRichtext {
                             <w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1" />
                         </w:tblPr>
                         <w:tblGrid>`
-                let columns = node.content[0].content.reduce((columns, cell) => columns + cell.attrs.colspan, 0)
-                let rows = node.content.length
-                // Add empty cells for col/rowspan
-                let fixedTableMatrix = Array.apply(0, {length: rows}).map(
-                    item => ({type: 'table_row', content: Array.apply(0, {length: columns})})
-                )
-                let rowIndex = -1
-                node.content.forEach(row => {
-                    let columnIndex = 0
-                    rowIndex++
-                    if (!row.content) {
-                        return
-                    }
-                    row.content.forEach(cell => {
-                        while (
-                            fixedTableMatrix[rowIndex].content[columnIndex]
-                        ) {
-                            columnIndex++
-                        }
-                        for (let i=0; i < cell.attrs.rowspan; i++) {
-                            for (let j=0; j < cell.attrs.colspan; j++) {
-                                let fixedCell
-                                if (i===0 && j===0) {
-                                    fixedCell = cell
-                                } else {
-                                    fixedCell = {
-                                        type: 'table_cell',
-                                        attrs: {
-                                            rowspan: cell.attrs.rowspan > 1 ? 0 : 1,
-                                            colspan: cell.attrs.colspan > 1 ? 0 : 1
-                                        }
-                                    }
-                                }
-                                fixedTableMatrix[rowIndex+i].content[columnIndex+j] = fixedCell
-                            }
-                        }
-                    })
-                })
-                node.content = fixedTableMatrix
+                let columns = node.content[0].content.length
                 let cellWidth = 63500 // standard width
                 options = Object.assign({}, options)
                 if (options.dimensions && options.dimensions.width) {

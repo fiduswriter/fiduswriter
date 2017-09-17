@@ -206,9 +206,20 @@ export class OdtExporterRichtext {
                 end = '</table:table-row>' + end
                 break
             case 'table_cell':
-                start += '<table:table-cell>'
-                `<table:style-name="Table1.A2" table:number-rows-spanned="2" office:value-type="string"> />`
-                end = '</table:table-cell>' + end
+                if (node.attrs.rowspan && node.attrs.colspan) {
+                    start += `<table:table-cell${
+                            node.attrs.rowspan > 1 ?
+                            ` table:number-rows-spanned="${node.attrs.rowspan}"` :
+                            ''
+                        }${
+                            node.attrs.colspan > 1 ?
+                            ` table:number-columns-spanned="${node.attrs.colspan}"` :
+                            ''
+                        }>`
+                    end = '</table:table-cell>' + end
+                } else {
+                    start += '<table:covered-table-cell/>'
+                }
                 break
             case 'equation':
                 let latex = node.attrs.equation

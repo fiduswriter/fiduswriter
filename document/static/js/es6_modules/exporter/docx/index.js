@@ -1,6 +1,6 @@
 import {createSlug} from "../tools/file"
 import {XmlZip} from "../tools/xml-zip"
-import {textContent, removeHidden} from "../tools/doc-contents"
+import {textContent, removeHidden, fixTables} from "../tools/doc-contents"
 
 import {DocxExporterCitations} from "./citations"
 import {DocxExporterImages} from "./images"
@@ -41,7 +41,7 @@ export class DocxExporter {
 
 
     init() {
-        this.docContents = removeHidden(this.doc.contents)
+        this.docContents = fixTables(removeHidden(this.doc.contents))
         this.docTitle = textContent(this.docContents.content[0])
         this.tables = new DocxExporterTables(this)
         this.math = new DocxExporterMath(this)

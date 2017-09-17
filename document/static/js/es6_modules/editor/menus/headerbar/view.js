@@ -14,7 +14,6 @@ export class HeaderbarView {
 
         this.dd = new diffDOM()
         this.headerEl = document.querySelector('#headerbar').firstElementChild
-        this.openedMenu = false
         this.listeners = {}
 
 
@@ -37,28 +36,48 @@ export class HeaderbarView {
     onclick(event) {
         let target = event.target
 
-        if(target.matches('#headerbar #header-navigation .fw-pulldown-item:not(.disabled)')) {
+        if(target.matches('#headerbar #header-navigation .fw-pulldown-item')) {
             // A header nav menu item was clicked. Now we just need to find
             // which one and execute the corresponding action.
-            let itemNumber = 0
-            let seekItem = target.parentElement
-            while (seekItem.previousElementSibling) {
-                itemNumber++
-                seekItem = seekItem.previousElementSibling
+            let searchPath = [], seekItem = target
+            while(seekItem.closest('li')) {
+                let itemNumber = 0
+                seekItem = seekItem.closest('li')
+                while (seekItem.previousElementSibling) {
+                    itemNumber++
+                    seekItem = seekItem.previousElementSibling
+                }
+                searchPath.push(itemNumber)
+                seekItem = seekItem.parentElement
             }
-            seekItem = seekItem.parentElement.parentElement.parentElement
+
+            seekItem = seekItem.closest('div.header-menu')
             let menuNumber = 0
             while (seekItem.previousElementSibling) {
                 menuNumber++
                 seekItem = seekItem.previousElementSibling
             }
-            switch (this.editor.menu.headerbarModel.content[menuNumber].content[itemNumber].type) {
+            let menu = this.editor.menu.headerbarModel.content[menuNumber]
+
+            let menuItem = menu
+
+            while(searchPath.length) {
+                menuItem = menuItem.content[searchPath.pop()]
+            }
+
+            switch (menuItem.type) {
                 case 'action':
-                    this.editor.menu.headerbarModel.content[menuNumber].content[itemNumber].action(
-                        this.editor
-                    )
-                    this.editor.menu.headerbarModel.content[menuNumber].open = false
-                    this.openedMenu = false;
+                    if (menuItem.disabled && menuItem.disabled(this.editor)) {
+                        return
+                    }
+                    menuItem.action(this.editor)
+                    menu.open = false
+                    this.closeMenu(menu)
+                    this.update()
+                    break;
+                case 'menu':
+                    this.closeMenu(menu)
+                    menuItem.open = true
                     this.update()
                     break;
                 default:
@@ -72,19 +91,37 @@ export class HeaderbarView {
                 menuNumber++
                 seekItem = seekItem.previousElementSibling
             }
-            if (this.openedMenu !== false) {
-                this.editor.menu.headerbarModel.content[this.openedMenu].open = false
-            }
-            this.editor.menu.headerbarModel.content[menuNumber].open = true
-            this.openedMenu = menuNumber
+            this.editor.menu.headerbarModel.content.forEach((menu, index) => {
+                if (index===menuNumber) {
+                    menu.open = true
+                } else if (menu.open) {
+                    menu.open = false
+                    this.closeMenu(menu)
+                }
+            })
             this.update()
         } else {
-            if (this.openedMenu !== false) {
-                this.editor.menu.headerbarModel.content[this.openedMenu].open = false
-                this.openedMenu = false
+            let needUpdate = false
+            this.editor.menu.headerbarModel.content.forEach(menu => {
+                if (menu.open) {
+                    needUpdate = true
+                    menu.open = false
+                    this.closeMenu(menu)
+                }
+            })
+            if (needUpdate) {
                 this.update()
             }
         }
+    }
+
+    closeMenu(menu) {
+        menu.content.forEach(menuItem => {
+            if (menuItem.type === 'menu' && menuItem.open) {
+                menuItem.open = false
+                this.closeMenu(menuItem)
+            }
+        })
     }
 
     onkeydown(event) {
@@ -162,11 +199,7 @@ export class HeaderbarView {
                     </span>
                     ${
                         menu.open ?
-                        `<div class="fw-pulldown fw-left fw-open">
-                            <ul>
-                                ${this.getHeaderMenuHTML(menu)}
-                            </ul>
-                        </div>` :
+                        this.getMenuHTML(menu) :
                         ''
                     }
                 </div>
@@ -174,18 +207,25 @@ export class HeaderbarView {
         ).join('')
     }
 
-    getHeaderMenuHTML(menu) {
-        return menu.content.map(menuItem =>
-            `<li>
-                ${this.getMenuItemHTML(menuItem)}
-            </li>`
-        ).join('')
+    getMenuHTML(menu) {
+        return `<div class="fw-pulldown fw-left fw-open">
+            <ul>
+                ${
+                    menu.content.map(menuItem =>
+                        `<li>${this.getMenuItemHTML(menuItem)}</li>`
+                    ).join('')
+                }
+            </ul>
+        </div>`
     }
 
     getMenuItemHTML(menuItem) {
         switch(menuItem.type) {
             case 'action':
                 return this.getActionMenuItemHTML(menuItem)
+                break;
+            case 'menu':
+                return this.getMenuMenuItemHTML(menuItem)
                 break;
             case 'separator':
                 return '<hr>'
@@ -215,6 +255,30 @@ export class HeaderbarView {
             }
             ${menuItem.title}
         </span>`
+    }
+
+    getMenuMenuItemHTML(menuItem) {
+        return `<span class="fw-pulldown-item${
+            menuItem.disabled && menuItem.disabled(this.editor) ?
+            ' disabled' :
+            ''
+        }" ${
+            menuItem.tooltip ?
+            `title="${menuItem.tooltip}"` :
+            ''
+        }>
+            ${
+                menuItem.icon ?
+                `<i class="fa fa-${menuItem.icon}"></i>` :
+                ''
+            }
+            ${menuItem.title} <span class="fw-icon-right"><i class="fa fa-caret-right"></i></span>
+        </span>
+        ${
+            menuItem.open ?
+            this.getMenuHTML(menuItem) :
+            ''
+        }`
     }
 
 }

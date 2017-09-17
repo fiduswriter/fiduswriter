@@ -70,7 +70,8 @@ export class ModStyles {
     }
 
     addDocumentStylesMenuEntries() {
-        let documentStyleMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='document_style')
+        let settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='settings'),
+            documentStyleMenu = settingsMenu.content.find(menu => menu.id==='document_style')
 
         documentStyleMenu.content = this.documentStyles.map(docStyle => {
             return {
@@ -92,7 +93,8 @@ export class ModStyles {
     }
 
     addCitationStylesMenuEntries() {
-        let citationStyleMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='citation_style')
+        let settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='settings'),
+            citationStyleMenu = settingsMenu.content.find(menu => menu.id==='citation_style')
 
         citationStyleMenu.content = this.citationStyles.map(citeStyle => {
             return {

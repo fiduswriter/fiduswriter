@@ -189,212 +189,224 @@ export let headerbarModel = {
             ]
         },
         {
-            id: 'citation_style',
-            title: gettext('Citation Style'),
-            tooltip: gettext('Choose your preferred citation style.'),
-            disabled: editor => {
-                return editor.docInfo.access_rights !== 'write'
-            },
-            content: []
-        },
-        {
-            id: 'document_style',
-            title: gettext('Document Style'),
-            tooltip: gettext('Choose your preferred document style.'),
-            disabled: editor => {
-                return editor.docInfo.access_rights !== 'write'
-            },
-            content: []
-        },
-        {
-            id: 'paper_size',
-            title: gettext('Paper Size'),
-            tooltip: gettext('Choose a papersize for printing and PDF generation.'),
-            disabled: editor => {
-                return editor.docInfo.access_rights !== 'write'
-            },
+            id: 'settings',
+            title: gettext('Settings'),
+            tooltip: gettext('Configure settings of this document.'),
             content: [
                 {
-                    title: gettext('DIN A4'),
-                    type: 'action',
-                    tooltip: gettext('A4 (DIN A4/ISO 216) which is used in most of the world.'),
-                    action: editor => {
-                        let article = editor.view.state.doc.firstChild
-                        let attrs = Object.assign({}, article.attrs)
-                        attrs.papersize = 'A4'
-                        editor.view.dispatch(
-                            editor.view.state.tr.setNodeType(0, false, attrs)
-                        )
+                    id: 'metadata',
+                    title: gettext('Metadata'),
+                    type: 'menu',
+                    tooltip: gettext('Choose which metadata to enable.'),
+                    disabled: editor => {
+                        return editor.docInfo.access_rights !== 'write'
                     },
-                    selected: editor => {
-                        return editor.view.state.doc.firstChild.attrs.papersize === 'A4'
-                    }
-                },
-                {
-                    title: gettext('US Letter'),
-                    type: 'action',
-                    tooltip: gettext('The format used by the USA and some other American countries.'),
-                    action: editor => {
-                        let article = editor.view.state.doc.firstChild
-                        let attrs = Object.assign({}, article.attrs)
-                        attrs.papersize = 'US Letter'
-                        editor.view.dispatch(
-                            editor.view.state.tr.setNodeType(0, false, attrs)
-                        )
-                    },
-                    selected: editor => {
-                        return editor.view.state.doc.firstChild.attrs.papersize === 'US Letter'
-                    }
-                }
-            ]
-        },
-        {
-            id: 'language',
-            title: gettext('Text Language'),
-            tooltip: gettext('Choose the language of the document.'),
-            disabled: editor => {
-                return editor.docInfo.access_rights !== 'write'
-            },
-            content: [
-                languageItem('en-US', gettext('English (United States)')),
-                languageItem('en-GB', gettext('English (United Kingdom)')),
-                languageItem('de-DE', gettext('German (Germany)')),
-                languageItem('zh-CN', gettext('Chinese (Simplified)')),
-                languageItem('es', gettext('Spanish')),
-                languageItem('fr', gettext('French')),
-                languageItem('ja', gettext('Japanese')),
-                languageItem('it', gettext('Italian')),
-                languageItem('pl', gettext('Polish')),
-                languageItem('pt-BR', gettext('Portuguese (Brazil)')),
-                languageItem('nl', gettext('Dutch')),
-                languageItem('ru', gettext('Russian')),
-                {
-                    type: 'separator'
-                },
-                {
-                    title: gettext('Other'),
-                    type: 'action',
-                    action: editor => {
-                        let language = editor.view.state.doc.firstChild.attrs.language,
-                            dialog = new LanguageDialog(editor, language)
-                        dialog.init()
-                    },
-                    selected: editor => {
-                        return ![
-                            'en-US',
-                            'en-GB',
-                            'de-DE',
-                            'zh-CN',
-                            'es',
-                            'fr',
-                            'ja',
-                            'it',
-                            'pl',
-                            'pt-BR',
-                            'nl',
-                            'ru'
-                        ].includes(
-                            editor.view.state.doc.firstChild.attrs.language
-                        )
-                    }
-                }
-            ]
-        },
-        {
-            id: 'metadata',
-            title: gettext('Metadata'),
-            tooltip: gettext('Choose which metadata to enable.'),
-            disabled: editor => {
-                return editor.docInfo.access_rights !== 'write'
-            },
-            content: [
-                {
-                    title: gettext('Subtitle'),
-                    type: 'action',
-                    tooltip: gettext('Define a subtitle in addition to the title of the document.'),
-                    action: editor => {
-                        let offset = 1, // We need to add one as we are looking at offset values within the firstChild
-                            attrs
-                        editor.view.state.doc.firstChild.forEach((node, nodeOffset) => {
-                            if (node.type.name==='subtitle') {
-                                offset += nodeOffset
-                                attrs = Object.assign({}, node.attrs)
-                                attrs.hidden = (!attrs.hidden)
+                    content: [
+                        {
+                            title: gettext('Subtitle'),
+                            type: 'action',
+                            tooltip: gettext('Define a subtitle in addition to the title of the document.'),
+                            action: editor => {
+                                let offset = 1, // We need to add one as we are looking at offset values within the firstChild
+                                    attrs
+                                editor.view.state.doc.firstChild.forEach((node, nodeOffset) => {
+                                    if (node.type.name==='subtitle') {
+                                        offset += nodeOffset
+                                        attrs = Object.assign({}, node.attrs)
+                                        attrs.hidden = (!attrs.hidden)
+                                    }
+                                })
+                                editor.view.dispatch(
+                                    editor.view.state.tr.setNodeType(offset, false, attrs)
+                                )
+                            },
+                            selected: editor => {
+                                return !editor.view.state.doc.firstChild.child(1).attrs.hidden
                             }
-                        })
-                        editor.view.dispatch(
-                            editor.view.state.tr.setNodeType(offset, false, attrs)
-                        )
-                    },
-                    selected: editor => {
-                        return !editor.view.state.doc.firstChild.child(1).attrs.hidden
-                    }
+                        },
+                        {
+                            title: gettext('Author(s)'),
+                            type: 'action',
+                            tooltip: gettext('Specify the authors of the document.'),
+                            action: editor => {
+                                let offset = 1, // We need to add one as we are looking at offset values within the firstChild
+                                    attrs
+                                editor.view.state.doc.firstChild.forEach((node, nodeOffset) => {
+                                    if (node.type.name==='authors') {
+                                        offset += nodeOffset
+                                        attrs = Object.assign({}, node.attrs)
+                                        attrs.hidden = (!attrs.hidden)
+                                    }
+                                })
+                                editor.view.dispatch(
+                                    editor.view.state.tr.setNodeType(offset, false, attrs)
+                                )
+                            },
+                            selected: editor => {
+                                return !editor.view.state.doc.firstChild.child(2).attrs.hidden
+                            }
+                        },
+                        {
+                            title: gettext('Abstract'),
+                            type: 'action',
+                            tooltip: gettext('Add an abstract to the document.'),
+                            action: editor => {
+                                let offset = 1, // We need to add one as we are looking at offset values within the firstChild
+                                    attrs
+                                editor.view.state.doc.firstChild.forEach((node, nodeOffset) => {
+                                    if (node.type.name==='abstract') {
+                                        offset += nodeOffset
+                                        attrs = Object.assign({}, node.attrs)
+                                        attrs.hidden = (!attrs.hidden)
+                                    }
+                                })
+                                editor.view.dispatch(
+                                    editor.view.state.tr.setNodeType(offset, false, attrs)
+                                )
+                            },
+                            selected: editor => {
+                                return !editor.view.state.doc.firstChild.child(3).attrs.hidden
+                            }
+                        },
+                        {
+                            title: gettext('Keywords'),
+                            type: 'action',
+                            tooltip: gettext('Add keywords to facilitate categorization.'),
+                            action: editor => {
+                                let offset = 1, // We need to add one as we are looking at offset values within the firstChild
+                                    attrs
+                                editor.view.state.doc.firstChild.forEach((node, nodeOffset) => {
+                                    if (node.type.name==='keywords') {
+                                        offset += nodeOffset
+                                        attrs = Object.assign({}, node.attrs)
+                                        attrs.hidden = (!attrs.hidden)
+                                    }
+                                })
+                                editor.view.dispatch(
+                                    editor.view.state.tr.setNodeType(offset, false, attrs)
+                                )
+                            },
+                            selected: editor => {
+                                return !editor.view.state.doc.firstChild.child(4).attrs.hidden
+                            }
+                        }
+                    ]
                 },
                 {
-                    title: gettext('Author(s)'),
-                    type: 'action',
-                    tooltip: gettext('Specify the authors of the document.'),
-                    action: editor => {
-                        let offset = 1, // We need to add one as we are looking at offset values within the firstChild
-                            attrs
-                        editor.view.state.doc.firstChild.forEach((node, nodeOffset) => {
-                            if (node.type.name==='authors') {
-                                offset += nodeOffset
-                                attrs = Object.assign({}, node.attrs)
-                                attrs.hidden = (!attrs.hidden)
-                            }
-                        })
-                        editor.view.dispatch(
-                            editor.view.state.tr.setNodeType(offset, false, attrs)
-                        )
+                    id: 'citation_style',
+                    title: gettext('Citation Style'),
+                    type: 'menu',
+                    tooltip: gettext('Choose your preferred citation style.'),
+                    disabled: editor => {
+                        return editor.docInfo.access_rights !== 'write'
                     },
-                    selected: editor => {
-                        return !editor.view.state.doc.firstChild.child(2).attrs.hidden
-                    }
+                    content: []
                 },
                 {
-                    title: gettext('Abstract'),
-                    type: 'action',
-                    tooltip: gettext('Add an abstract to the document.'),
-                    action: editor => {
-                        let offset = 1, // We need to add one as we are looking at offset values within the firstChild
-                            attrs
-                        editor.view.state.doc.firstChild.forEach((node, nodeOffset) => {
-                            if (node.type.name==='abstract') {
-                                offset += nodeOffset
-                                attrs = Object.assign({}, node.attrs)
-                                attrs.hidden = (!attrs.hidden)
-                            }
-                        })
-                        editor.view.dispatch(
-                            editor.view.state.tr.setNodeType(offset, false, attrs)
-                        )
+                    id: 'document_style',
+                    title: gettext('Document Style'),
+                    type: 'menu',
+                    tooltip: gettext('Choose your preferred document style.'),
+                    disabled: editor => {
+                        return editor.docInfo.access_rights !== 'write'
                     },
-                    selected: editor => {
-                        return !editor.view.state.doc.firstChild.child(3).attrs.hidden
-                    }
+                    content: []
                 },
                 {
-                    title: gettext('Keywords'),
-                    type: 'action',
-                    tooltip: gettext('Add keywords to facilitate categorization.'),
-                    action: editor => {
-                        let offset = 1, // We need to add one as we are looking at offset values within the firstChild
-                            attrs
-                        editor.view.state.doc.firstChild.forEach((node, nodeOffset) => {
-                            if (node.type.name==='keywords') {
-                                offset += nodeOffset
-                                attrs = Object.assign({}, node.attrs)
-                                attrs.hidden = (!attrs.hidden)
-                            }
-                        })
-                        editor.view.dispatch(
-                            editor.view.state.tr.setNodeType(offset, false, attrs)
-                        )
+                    id: 'language',
+                    title: gettext('Text Language'),
+                    type: 'menu',
+                    tooltip: gettext('Choose the language of the document.'),
+                    disabled: editor => {
+                        return editor.docInfo.access_rights !== 'write'
                     },
-                    selected: editor => {
-                        return !editor.view.state.doc.firstChild.child(4).attrs.hidden
-                    }
+                    content: [
+                        languageItem('en-US', gettext('English (United States)')),
+                        languageItem('en-GB', gettext('English (United Kingdom)')),
+                        languageItem('de-DE', gettext('German (Germany)')),
+                        languageItem('zh-CN', gettext('Chinese (Simplified)')),
+                        languageItem('es', gettext('Spanish')),
+                        languageItem('fr', gettext('French')),
+                        languageItem('ja', gettext('Japanese')),
+                        languageItem('it', gettext('Italian')),
+                        languageItem('pl', gettext('Polish')),
+                        languageItem('pt-BR', gettext('Portuguese (Brazil)')),
+                        languageItem('nl', gettext('Dutch')),
+                        languageItem('ru', gettext('Russian')),
+                        {
+                            type: 'separator'
+                        },
+                        {
+                            title: gettext('Other'),
+                            type: 'action',
+                            action: editor => {
+                                let language = editor.view.state.doc.firstChild.attrs.language,
+                                    dialog = new LanguageDialog(editor, language)
+                                dialog.init()
+                            },
+                            selected: editor => {
+                                return ![
+                                    'en-US',
+                                    'en-GB',
+                                    'de-DE',
+                                    'zh-CN',
+                                    'es',
+                                    'fr',
+                                    'ja',
+                                    'it',
+                                    'pl',
+                                    'pt-BR',
+                                    'nl',
+                                    'ru'
+                                ].includes(
+                                    editor.view.state.doc.firstChild.attrs.language
+                                )
+                            }
+                        }
+                    ]
+                },
+                {
+                    id: 'paper_size',
+                    title: gettext('Paper Size'),
+                    type: 'menu',
+                    tooltip: gettext('Choose a papersize for print and PDF generation.'),
+                    disabled: editor => {
+                        return editor.docInfo.access_rights !== 'write'
+                    },
+                    content: [
+                        {
+                            title: gettext('DIN A4'),
+                            type: 'action',
+                            tooltip: gettext('A4 (DIN A4/ISO 216) which is used in most of the world.'),
+                            action: editor => {
+                                let article = editor.view.state.doc.firstChild
+                                let attrs = Object.assign({}, article.attrs)
+                                attrs.papersize = 'A4'
+                                editor.view.dispatch(
+                                    editor.view.state.tr.setNodeType(0, false, attrs)
+                                )
+                            },
+                            selected: editor => {
+                                return editor.view.state.doc.firstChild.attrs.papersize === 'A4'
+                            }
+                        },
+                        {
+                            title: gettext('US Letter'),
+                            type: 'action',
+                            tooltip: gettext('The format used by the USA and some other American countries.'),
+                            action: editor => {
+                                let article = editor.view.state.doc.firstChild
+                                let attrs = Object.assign({}, article.attrs)
+                                attrs.papersize = 'US Letter'
+                                editor.view.dispatch(
+                                    editor.view.state.tr.setNodeType(0, false, attrs)
+                                )
+                            },
+                            selected: editor => {
+                                return editor.view.state.doc.firstChild.attrs.papersize === 'US Letter'
+                            }
+                        }
+                    ]
                 }
             ]
         },

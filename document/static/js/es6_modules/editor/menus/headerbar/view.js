@@ -75,6 +75,14 @@ export class HeaderbarView {
                     this.closeMenu(menu)
                     this.update()
                     break;
+                case 'setting':
+                    // Similar to 'action' but not closing menu.
+                    if (menuItem.disabled && menuItem.disabled(this.editor)) {
+                        return
+                    }
+                    menuItem.action(this.editor)
+                    this.update()
+                    break;
                 case 'menu':
                     this.closeMenu(menu)
                     menuItem.open = true
@@ -140,13 +148,17 @@ export class HeaderbarView {
             name = "Shift-" + name
         }
 
-        this.editor.menu.headerbarModel.content.forEach(menu => {
-            menu.content.forEach(menuItem => {
-                if (menuItem.keys && menuItem.keys===name) {
-                    event.preventDefault()
-                    menuItem.action(this.editor)
-                }
-            })
+        this.editor.menu.headerbarModel.content.forEach(menu => this.checkKeys(event, menu, name))
+    }
+
+    checkKeys(event, menu, nameKey) {
+        menu.content.forEach(menuItem => {
+            if (menuItem.keys && menuItem.keys===nameKey) {
+                event.preventDefault()
+                menuItem.action(this.editor)
+            } else if (menuItem.content) {
+                this.checkKeys(event, menuItem, nameKey)
+            }
         })
     }
 
@@ -222,6 +234,7 @@ export class HeaderbarView {
     getMenuItemHTML(menuItem) {
         switch(menuItem.type) {
             case 'action':
+            case 'setting':
                 return this.getActionMenuItemHTML(menuItem)
                 break;
             case 'menu':

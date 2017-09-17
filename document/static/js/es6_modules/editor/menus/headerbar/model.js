@@ -21,7 +21,7 @@ let isInTable = function(state) {
 let languageItem = function(code, name) {
     return {
         title: name,
-        type: 'action',
+        type: 'setting',
         action: editor => {
             let article = editor.view.state.doc.firstChild
             let attrs = Object.assign({}, article.attrs)
@@ -204,7 +204,7 @@ export let headerbarModel = {
                     content: [
                         {
                             title: gettext('Subtitle'),
-                            type: 'action',
+                            type: 'setting',
                             tooltip: gettext('Define a subtitle in addition to the title of the document.'),
                             action: editor => {
                                 let offset = 1, // We need to add one as we are looking at offset values within the firstChild
@@ -226,7 +226,7 @@ export let headerbarModel = {
                         },
                         {
                             title: gettext('Author(s)'),
-                            type: 'action',
+                            type: 'setting',
                             tooltip: gettext('Specify the authors of the document.'),
                             action: editor => {
                                 let offset = 1, // We need to add one as we are looking at offset values within the firstChild
@@ -248,7 +248,7 @@ export let headerbarModel = {
                         },
                         {
                             title: gettext('Abstract'),
-                            type: 'action',
+                            type: 'setting',
                             tooltip: gettext('Add an abstract to the document.'),
                             action: editor => {
                                 let offset = 1, // We need to add one as we are looking at offset values within the firstChild
@@ -270,7 +270,7 @@ export let headerbarModel = {
                         },
                         {
                             title: gettext('Keywords'),
-                            type: 'action',
+                            type: 'setting',
                             tooltip: gettext('Add keywords to facilitate categorization.'),
                             action: editor => {
                                 let offset = 1, // We need to add one as we are looking at offset values within the firstChild
@@ -338,7 +338,7 @@ export let headerbarModel = {
                         },
                         {
                             title: gettext('Other'),
-                            type: 'action',
+                            type: 'setting',
                             action: editor => {
                                 let language = editor.view.state.doc.firstChild.attrs.language,
                                     dialog = new LanguageDialog(editor, language)
@@ -376,7 +376,7 @@ export let headerbarModel = {
                     content: [
                         {
                             title: gettext('DIN A4'),
-                            type: 'action',
+                            type: 'setting',
                             tooltip: gettext('A4 (DIN A4/ISO 216) which is used in most of the world.'),
                             action: editor => {
                                 let article = editor.view.state.doc.firstChild
@@ -392,7 +392,7 @@ export let headerbarModel = {
                         },
                         {
                             title: gettext('US Letter'),
-                            type: 'action',
+                            type: 'setting',
                             tooltip: gettext('The format used by the USA and some other American countries.'),
                             action: editor => {
                                 let article = editor.view.state.doc.firstChild

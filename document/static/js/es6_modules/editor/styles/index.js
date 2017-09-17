@@ -76,7 +76,7 @@ export class ModStyles {
         documentStyleMenu.content = this.documentStyles.map(docStyle => {
             return {
                 title: docStyle.title,
-                type: 'action',
+                type: 'setting',
                 action: editor => {
                     let article = editor.view.state.doc.firstChild
                     let attrs = Object.assign({}, article.attrs)
@@ -99,7 +99,7 @@ export class ModStyles {
         citationStyleMenu.content = this.citationStyles.map(citeStyle => {
             return {
                 title: citeStyle.title,
-                type: 'action',
+                type: 'setting',
                 action: editor => {
                     let article = editor.view.state.doc.firstChild
                     let attrs = Object.assign({}, article.attrs)

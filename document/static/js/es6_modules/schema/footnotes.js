@@ -48,18 +48,7 @@ addListNodes(spec.nodes, "block+", "block")
 
 spec.nodes = spec.nodes.append(tableNodes({
     tableGroup: "table_block",
-    cellContent: "block+",
-    cellAttributes: {
-        background: {
-            default: null,
-            getFromDOM(dom) {
-                return dom.style.backgroundColor || null
-            },
-            setDOMAttr(value, attrs) {
-                if (value) attrs.style = (attrs.style || "") + `background-color: ${value};`
-            }
-        }
-    }
+    cellContent: "block+"
 }))
 
 export const fnSchema = new Schema(spec)

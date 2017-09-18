@@ -1,5 +1,5 @@
 import {createSlug} from "../tools/file"
-import {removeHidden} from "../tools/doc-contents"
+import {removeHidden, fixTables} from "../tools/doc-contents"
 import {LatexExporterConvert} from "./convert"
 import {ZipFileCreator} from "../tools/zip"
 import {BibLatexExporter} from "biblatex-csl-converter"
@@ -23,7 +23,7 @@ export class LatexExporter {
 
     init() {
         this.zipFileName = `${createSlug(this.doc.title)}.latex.zip`
-        this.docContents = removeHidden(this.doc.contents)
+        this.docContents = fixTables(removeHidden(this.doc.contents))
         this.converter = new LatexExporterConvert(this, this.imageDB, this.bibDB)
         this.conversion = this.converter.init(this.docContents)
         if (Object.keys(this.conversion.usedBibDB).length > 0) {

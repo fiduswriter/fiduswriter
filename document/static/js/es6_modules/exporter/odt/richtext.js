@@ -206,6 +206,7 @@ export class OdtExporterRichtext {
                 end = '</table:table-row>' + end
                 break
             case 'table_cell':
+            case 'table_header':
                 if (node.attrs.rowspan && node.attrs.colspan) {
                     start += `<table:table-cell${
                             node.attrs.rowspan > 1 ?

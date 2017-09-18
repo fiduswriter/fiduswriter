@@ -345,6 +345,7 @@ export class DocxExporterRichtext {
                 end = '</w:tr>' + end
                 break
             case 'table_cell':
+            case 'table_header':
                 start += noSpaceTmp`
                     <w:tc>
                         <w:tcPr>

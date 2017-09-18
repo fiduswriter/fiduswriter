@@ -442,11 +442,15 @@ body {counter-reset: pagination-footnote pagination-footnote-reference;}
   margin: 10px 0 10px 0;
   table-layout: fixed;
 }
-.ProseMirror td {
+.ProseMirror td, .ProseMirror th {
   vertical-align: top;
   border: 1px solid #ddd;
   padding: 3px 5px;
 }
+.ProseMirror th {
+  background-color: #76a698;
+  color: #fff;
+ }
 #comments-filter {
     margin-left: 7px;
 }

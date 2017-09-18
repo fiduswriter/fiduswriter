@@ -411,6 +411,7 @@ export class LatexExporterConvert {
                 end += ' \\\\\n'
                 break
             case 'table_cell':
+            case 'table_header':
                 if (node.attrs.colspan > 1) {
                     start += `\\multicolumn{${node.attrs.colspan}}{c}{`
                     end += '}'
@@ -460,7 +461,7 @@ export class LatexExporterConvert {
             })
             options.unplacedFootnotes = []
         }
-        if (node.type==='table_cell' && node.attrs.rowspan > 1) {
+        if (['table_cell', 'table_header'].includes(node.type) && node.attrs.rowspan > 1) {
             // \multirow doesn't allow multiple paragraphs.
             content = content.trim().replace(/\n\n/g, ' \\\\ ')
         }

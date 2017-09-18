@@ -1,42 +1,96 @@
 import * as plugins from "../plugins/editor"
 
 /* Functions for ProseMirror integration.*/
-import {EditorState, Plugin, TextSelection} from "prosemirror-state"
-import {EditorView, Decoration, DecorationSet} from "prosemirror-view"
-import {history, redo, undo} from "prosemirror-history"
-import {toggleMark, baseKeymap} from "prosemirror-commands"
-import {keymap} from "prosemirror-keymap/dist/keymap"
-import {buildKeymap} from "prosemirror-example-setup"
-import {collab} from "prosemirror-collab"
-import {tableEditing} from "prosemirror-tables"
-import {dropCursor} from "prosemirror-dropcursor"
+import {
+    EditorState,
+    Plugin,
+    TextSelection
+} from "prosemirror-state"
+import {
+    EditorView,
+    Decoration,
+    DecorationSet
+} from "prosemirror-view"
+import {
+    history,
+    redo,
+    undo
+} from "prosemirror-history"
+import {
+    toggleMark,
+    baseKeymap
+} from "prosemirror-commands"
+import {
+    keymap
+} from "prosemirror-keymap"
+import {
+    collab
+} from "prosemirror-collab"
+import {
+    tableEditing
+} from "prosemirror-tables"
+import {
+    dropCursor
+} from "prosemirror-dropcursor"
+import {
+    buildKeymap
+} from "prosemirror-example-setup"
+import {
+    docSchema
+} from "../schema/document"
+import {
+    ModComments
+} from "./comments"
+import {
+    ModFootnotes
+} from "./footnotes"
+import {
+    ModCitations
+} from "./citations"
+import {
+    ModDB
+} from "./databases"
+import {
+    ModCollab
+} from "./collab"
+import {
+    ModTools
+} from "./tools"
+import {
+    ModSettings
+} from "./settings"
+import {
+    headerbarModel,
+    toolbarModel
+} from "./menus"
+import {
+    ModStyles
+} from "./styles"
+import {
+    ModServerCommunications
+} from "./server-communications"
+import {
+    getSettings
+} from "../schema/convert"
+import {
+    BibliographyDB
+} from "../bibliography/database"
+import {
+    ImageDB
+} from "../images/database"
 
-import {docSchema} from "../schema/document"
-import {ModComments} from "./comments"
-import {ModFootnotes} from "./footnotes"
-import {ModCitations} from "./citations"
-import {ModDB} from "./databases"
-import {ModCollab} from "./collab"
-import {ModTools} from "./tools"
-import {ModSettings} from "./settings"
-import {headerbarModel, toolbarModel} from "./menus"
-import {ModStyles} from "./styles"
-import {ModServerCommunications} from "./server-communications"
-import {getSettings} from "../schema/convert"
-import {BibliographyDB} from "../bibliography/database"
-import {ImageDB} from "../images/database"
-import {HTMLPaste, TextPaste} from "./paste"
-import {addDropdownBox} from "../common"
-
-import {placeholdersPlugin} from "./plugins/placeholders"
-import {headerbarPlugin} from "./plugins/headerbar"
-import {toolbarPlugin} from "./plugins/toolbar"
-import {collabCaretsPlugin} from "./plugins/collab-carets"
-import {footnoteMarkersPlugin} from "./plugins/footnote-markers"
-import {commentsPlugin} from "./plugins/comments"
-import {linksPlugin} from "./plugins/links"
-import {keywordInputPlugin} from "./plugins/keyword-input"
-import {authorInputPlugin} from "./plugins/author-input"
+import {
+    pastePlugin,
+    placeholdersPlugin,
+    headerbarPlugin,
+    toolbarPlugin,
+    collabCaretsPlugin,
+    footnoteMarkersPlugin,
+    commentsPlugin,
+    linksPlugin,
+    keywordInputPlugin,
+    authorInputPlugin
+} from "./statePlugins"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']
@@ -78,11 +132,12 @@ export class Editor {
             [placeholdersPlugin, () => ({editor: this})],
             [headerbarPlugin, () => ({editor: this})],
             [toolbarPlugin, () => ({editor: this})],
-            [collabCaretsPlugin],
+            [collabCaretsPlugin, () => ({editor: this})],
             [footnoteMarkersPlugin, () => ({editor: this})],
             [commentsPlugin, () => ({editor: this})],
             [keywordInputPlugin, () => ({editor: this})],
-            [authorInputPlugin, () => ({editor: this})]
+            [authorInputPlugin, () => ({editor: this})],
+            [pastePlugin, () => ({editor: this})]
         ]
         new ModFootnotes(this)
         new ModServerCommunications(this)
@@ -101,20 +156,10 @@ export class Editor {
             state: EditorState.create({
                 schema: this.schema
             }),
-            onFocus: () => {
-                if (this.currentView != this.view) {
+            handleDOMEvents: {
+                focus: (view, event) => {
                     this.currentView = this.view
                 }
-            },
-            onBlur: (view) => {
-            },
-            transformPastedHTML: inHTML => {
-                let ph = new HTMLPaste(inHTML, "main")
-                return ph.getOutput()
-            },
-            transformPastedText: inText => {
-                let ph = new TextPaste(this, inText, "main")
-                return ph.getOutput()
             },
             dispatchTransaction: (transaction) => {
                 let remote = transaction.getMeta('remote')
@@ -126,7 +171,8 @@ export class Editor {
                 let newState = this.view.state.apply(transaction)
                 this.view.updateState(newState)
                 this.onTransaction(transaction, remote)
-            }
+            },
+
         })
         // The editor that is currently being edited in -- main or footnote editor
         this.currentView = this.view
@@ -198,9 +244,9 @@ export class Editor {
         this.schema.cached.imageDB = this.mod.db.imageDB
         // assign image DB to be used in footnote schema.
         this.mod.footnotes.fnEditor.schema.cached.imageDB = this.mod.db.imageDB
-        this.user.bibDB = new BibliographyDB(this.user.id, true)
+        this.user.bibDB = new BibliographyDB()
         this.user.bibDB.getDB()
-        this.user.imageDB = new ImageDB(this.user.id, true)
+        this.user.imageDB = new ImageDB()
         this.user.imageDB.getDB()
 
         let stateDoc
@@ -362,10 +408,11 @@ export class Editor {
                                 updateBibliography = true
                             }
                             if (!remote) {
-                                let commentId = this.mod.comments.layout.findCommentId(node)
-                                if (commentId !== false && !commentIds.includes(commentId)) {
-                                    commentIds.push(commentId)
-                                }
+                                this.mod.comments.layout.findCommentIds(node).forEach(commentId => {
+                                    if (!commentIds.includes(commentId)) {
+                                        commentIds.push(commentId)
+                                    }
+                                })
                             }
                         }
                     )

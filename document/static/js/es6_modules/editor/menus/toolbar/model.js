@@ -2,8 +2,10 @@ import {setBlockType, wrapIn, toggleMark} from "prosemirror-commands"
 import {wrapInList} from "prosemirror-schema-list"
 import {undo, redo, undoDepth, redoDepth} from "prosemirror-history"
 
-import {CitationDialog, FigureDialog, LinkDialog, TableDialog, MathDialog} from "./dialogs"
-import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from ".."
+import {CitationDialog, FigureDialog, LinkDialog, MathDialog} from "../../dialogs"
+import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from "../.."
+import {randomHeadingId, randomAnchorId} from "../../../schema/common"
+
 
 let setHeadlineBlock = function(editor, level) {
     let block = editor.currentView.state.schema.nodes['heading'],
@@ -16,6 +18,8 @@ let setHeadlineBlock = function(editor, level) {
         editor.currentView.state.selection.$from.parent.attrs.id.length
     ) {
         attrs.id = editor.currentView.state.selection.$from.parent.attrs.id
+    } else {
+        attrs.id = randomHeadingId()
     }
 
     let command = setBlockType(block, attrs)
@@ -44,7 +48,7 @@ const BLOCK_LABELS = {
     'figure': gettext('Figure')
 }
 
-const TEXT_ONLY_PARTS = ['title', 'subtitle', 'authors', 'keywords']
+export const TEXT_ONLY_PARTS = ['title', 'subtitle', 'authors', 'keywords']
 
 export let toolbarModel = {
     openMore: false, // whether 'more' menu is opened.
@@ -98,6 +102,17 @@ export let toolbarModel = {
                 ) {
                     return ''
                 }
+                if (
+                    editor.currentView.state.selection.jsonID === 'node' &&
+                    editor.currentView.state.selection.node.isBlock
+                ) {
+                    let selectedNode = editor.currentView.state.selection.node
+                    return BLOCK_LABELS[
+                        selectedNode.type.name === 'heading' ?
+                        `${selectedNode.type.name}_${selectedNode.attrs.level}` :
+                        selectedNode.type.name
+                    ]
+                }
                 let startElement = editor.currentView.state.selection.$anchor.parent,
                     endElement = editor.currentView.state.selection.$head.parent
                 if (!startElement || !endElement) {
@@ -136,7 +151,13 @@ export let toolbarModel = {
                     COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
                     (
                         editor.currentView.state.selection.$anchor.node(2) &&
-                        TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name)
+                        TEXT_ONLY_PARTS.includes(
+                            editor.currentView.state.selection.$anchor.node(2).type.name
+                        )
+                    ) || (
+                        editor.currentView.state.selection.jsonID === 'node' &&
+                        editor.currentView.state.selection.node.isBlock &&
+                        !editor.currentView.state.selection.node.isTextblock
                     ),
             content: [
                 {
@@ -447,7 +468,13 @@ export let toolbarModel = {
                     editor.currentView.state.selection.$anchor.node(2) &&
                     editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
                     !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
-                    editor.currentView.state.selection.jsonID === 'text'
+                    (
+                        editor.currentView.state.selection.jsonID === 'text' ||
+                        (
+                            editor.currentView.state.selection.jsonID === 'node' &&
+                            editor.currentView.state.selection.node.type.name === 'equation'
+                        )
+                    )
                 ) {
                     return false
                 } else {
@@ -470,30 +497,14 @@ export let toolbarModel = {
                     editor.currentView.state.selection.$anchor.node(2) &&
                     editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
                     !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
-                    editor.currentView.state.selection.$anchor.node(2).type.name !== 'abstract'
-                ) {
-                    return false
-                } else {
-                    return true
-                }
-            }
-        },
-        {
-            type: 'button',
-            title: gettext('Table'),
-            icon: 'table',
-            action: editor => {
-                let dialog = new TableDialog(editor)
-                dialog.init()
-            },
-            disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
-                    return true
-                } else if (
-                    editor.currentView.state.selection.$anchor.node(2) &&
-                    editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
-                    !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
-                    editor.currentView.state.selection.jsonID === 'text'
+                    editor.currentView.state.selection.$anchor.node(2).type.name !== 'abstract' &&
+                    (
+                        editor.currentView.state.selection.jsonID === 'text' ||
+                        (
+                            editor.currentView.state.selection.jsonID === 'node' &&
+                            editor.currentView.state.selection.node.type.name === 'figure'
+                        )
+                    )
                 ) {
                     return false
                 } else {
@@ -546,11 +557,11 @@ export let toolbarModel = {
             icon: 'anchor',
             action: editor => {
                 let mark = editor.currentView.state.schema.marks['anchor']
-                let command = toggleMark(mark)
+                let command = toggleMark(mark, {id: randomAnchorId()})
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
+                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
                     return true
                 } else if (editor.currentView.state.selection.empty) {
                     return true

@@ -57,6 +57,11 @@ urlpatterns = [
         name='get_all_revision_ids_js'
     ),
     url(
+        '^maintenance/get_user_biblist/$',
+        views.get_user_biblist_js,
+        name='get_user_biblist_js'
+    ),
+    url(
         '^maintenance/update_revision/$',
         views.update_revision_js,
         name='update_revision_js'

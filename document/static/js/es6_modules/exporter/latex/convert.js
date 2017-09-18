@@ -397,14 +397,32 @@ export class LatexExporterConvert {
                 }
                 break
             case 'table':
-                start += `\n\n\\begin{tabularx}{\\textwidth}{ |${'X|'.repeat(node.attrs.columns)} }\n\\hline\n\n`
-                end += `\n\n\\end{tabularx}`
-                this.features.tables = true
+                if(node.content && node.content.length) {
+                    let columns = node.content[0].content.reduce(
+                        (columns, node) => columns + node.attrs.colspan,
+                        0
+                    )
+                    start += `\n\n\\begin{tabularx}{\\textwidth}{ |${'X|'.repeat(columns)} }\n\\hline\n\n`
+                    end += `\\hline\n\n\\end{tabularx}`
+                    this.features.tables = true
+                }
                 break
             case 'table_row':
-                end += ' \\\\ \\hline\n'
+                end += ' \\\\\n'
                 break
             case 'table_cell':
+            case 'table_header':
+                if (node.attrs.colspan > 1) {
+                    start += `\\multicolumn{${node.attrs.colspan}}{c}{`
+                    end += '}'
+                }
+                // TODO: these multirow outputs don't work very well with longer text.
+                // If there is another alternative, please change!
+                if (node.attrs.rowspan > 1) {
+                    start += `\\multirow{${node.attrs.rowspan}}{*}{`
+                    end += '}'
+                    this.features.rowspan = true
+                }
                 end += ' & '
                 break
             case 'equation':
@@ -442,6 +460,10 @@ export class LatexExporterConvert {
                 end += '}'
             })
             options.unplacedFootnotes = []
+        }
+        if (['table_cell', 'table_header'].includes(node.type) && node.attrs.rowspan > 1) {
+            // \multirow doesn't allow multiple paragraphs.
+            content = content.trim().replace(/\n\n/g, ' \\\\ ')
         }
 
         return start + content + end
@@ -548,6 +570,10 @@ export class LatexExporterConvert {
         if (this.features.tables) {
             preamble += '\n\\usepackage{tabularx}'
         }
+        if (this.features.rowspan) {
+            preamble += '\n\\usepackage{multirow}'
+        }
+
 
         return preamble
 

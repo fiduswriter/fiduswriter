@@ -1,6 +1,6 @@
 import {createSlug} from "../tools/file"
 import {XmlZip} from "../tools/xml-zip"
-import {textContent, removeHidden} from "../tools/doc-contents"
+import {textContent, removeHidden, fixTables} from "../tools/doc-contents"
 
 import {OdtExporterCitations} from "./citations"
 import {OdtExporterImages} from "./images"
@@ -38,7 +38,7 @@ export class OdtExporter {
 
 
     init() {
-        this.docContents = removeHidden(this.doc.contents)
+        this.docContents = fixTables(removeHidden(this.doc.contents))
         this.docTitle = textContent(this.docContents.content[0])
         this.metadata = new OdtExporterMetadata(this, this.docContents)
         this.footnotes = new OdtExporterFootnotes(this, this.docContents)

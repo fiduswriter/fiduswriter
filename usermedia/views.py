@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.core.serializers.python import Serializer
 from django.utils.translation import ugettext as _
 
-from usermedia.models import Image, ImageCategory, UserImage, DocumentImage
+from usermedia.models import Image, ImageCategory, UserImage
 from .models import ALLOWED_FILETYPES
 
 
@@ -99,12 +99,9 @@ def delete_js(request):
             image_id__in=ids,
             owner=request.user
         ).delete()
-        for id in ids:
-            if not (
-                DocumentImage.objects.filter(image_id=id).exists() or
-                UserImage.objects.filter(image_id=id).exists()
-            ):
-                Image.objects.filter(id=id).delete()
+        for image in Image.objects.filter(id__in=ids):
+            if image.is_deletable():
+                image.delete()
     return JsonResponse(
         response,
         status=status
@@ -154,6 +151,9 @@ def save_category_js(request):
     if request.is_ajax() and request.method == 'POST':
         ids = request.POST.getlist('ids[]')
         titles = request.POST.getlist('titles[]')
+        ImageCategory.objects.filter(
+            category_owner=request.user
+        ).exclude(id__in=ids).delete()
         x = 0
         for the_id in ids:
             the_id = int(the_id)
@@ -171,24 +171,6 @@ def save_category_js(request):
             the_cat.save()
             response['entries'].append(
                 {'id': the_cat.id, 'category_title': the_cat.category_title})
-        status = 201
-
-    return JsonResponse(
-        response,
-        status=status
-    )
-
-# delete a category
-
-
-@login_required
-def delete_category_js(request):
-    status = 405
-    response = {}
-    if request.is_ajax() and request.method == 'POST':
-        ids = request.POST.getlist('ids[]')
-        for id in ids:
-            ImageCategory.objects.get(pk=int(id)).delete()
         status = 201
 
     return JsonResponse(

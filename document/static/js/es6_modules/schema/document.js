@@ -45,7 +45,8 @@ let article = {
 }
 
 let title = {
-    content: "text<annotation>*",
+    content: "text*",
+    marks: "annotation",
     group: "part",
     defining: true,
     parseDOM: [{
@@ -59,7 +60,8 @@ let title = {
 }
 
 let subtitle = {
-    content: "text<annotation>*",
+    content: "text*",
+    marks: "annotation",
     group: "part",
     defining: true,
     isMetadata() {
@@ -137,7 +139,8 @@ let author = {
 }
 
 let authors = {
-    content: "author<annotation>*",
+    content: "author*",
+    marks: "annotation",
     group: "part",
     defining: true,
     isMetadata() {
@@ -220,7 +223,8 @@ let keyword = {
 }
 
 let keywords = {
-    content: "keyword<annotation>*",
+    content: "keyword*",
+    marks: "annotation",
     group: "part",
     defining: true,
     isMetadata() {
@@ -295,7 +299,8 @@ let footnote = {
 }
 
 let code_block = {
-    content: "text<annotation>*",
+    content: "text*",
+    marks: "annotation",
     group: "block",
     code: true,
     defining: true,
@@ -314,6 +319,7 @@ let comment = {
         id: {}
     },
     inclusive: false,
+    excludes: "",
     group: "annotation",
     parseDOM: [{
         tag: "span.comment[data-id]",
@@ -373,18 +379,7 @@ spec.nodes = addListNodes(spec.nodes, "block+", "block")
 
 spec.nodes = spec.nodes.append(tableNodes({
     tableGroup: "table_block",
-    cellContent: "block+",
-    cellAttributes: {
-        background: {
-            default: null,
-            getFromDOM(dom) {
-                return dom.style.backgroundColor || null
-            },
-            setDOMAttr(value, attrs) {
-                if (value) attrs.style = (attrs.style || "") + `background-color: ${value};`
-            }
-        }
-    }
+    cellContent: "block+"
 }))
 
 export const docSchema = new Schema(spec)

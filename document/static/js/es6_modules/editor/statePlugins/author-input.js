@@ -4,7 +4,7 @@ import {ReplaceAroundStep} from "prosemirror-transform"
 import {Slice, Fragment} from "prosemirror-model"
 import {noSpaceTmp, addAlert} from "../../common"
 import {randomHeadingId, randomFigureId} from "../../schema/common"
-import {AuthorDialog} from "../menus/dialogs"
+import {AuthorDialog} from "../dialogs"
 
 const key = new PluginKey('authorInput')
 

@@ -2,7 +2,7 @@ import {Schema} from "prosemirror-model"
 import {EditorState, Plugin, PluginKey, TextSelection} from "prosemirror-state"
 import {EditorView, Decoration, DecorationSet} from "prosemirror-view"
 import {history, redo, undo} from "prosemirror-history"
-import {keymap} from "prosemirror-keymap/dist/keymap"
+import {keymap} from "prosemirror-keymap"
 
 
 
@@ -96,10 +96,6 @@ export let keywordInputPlugin = function(options) {
                     })
                 ]
             }),
-            onFocus: () => {
-            },
-            onBlur: (view) => {
-            },
             dispatchTransaction: (transaction) => {
                 let newState = keywordView.state.apply(transaction)
                 keywordView.updateState(newState)
@@ -183,6 +179,9 @@ export let keywordInputPlugin = function(options) {
                 } = this.getState(oldState)
 
                 decos = decos.map(tr.mapping, tr.doc)
+                if (options.editor.docInfo.access_rights !== 'write') {
+                    return {decos}
+                }
                 let decoPos = decos.find()[0].from
                 if (
                     tr.selection.from === tr.selection.to &&

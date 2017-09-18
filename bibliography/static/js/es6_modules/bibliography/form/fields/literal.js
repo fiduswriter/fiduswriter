@@ -2,7 +2,7 @@ import {EditorState, Plugin} from "prosemirror-state"
 import {EditorView, Decoration, DecorationSet} from "prosemirror-view"
 import {history, redo, undo} from "prosemirror-history"
 import {toggleMark, baseKeymap} from "prosemirror-commands"
-import {keymap} from "prosemirror-keymap/dist/keymap"
+import {keymap} from "prosemirror-keymap"
 
 import {litSchema} from "../../schema/literal"
 

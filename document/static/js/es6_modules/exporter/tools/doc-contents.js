@@ -2,9 +2,9 @@
 // marked as hidden removed.
 
 export let removeHidden = function(node) {
-    let keys = Object.keys(node), returnNode = {}
+    let returnNode = {}
 
-    keys.forEach(key => {
+    Object.keys(node).forEach(key => {
         if (key !== 'content') {
             returnNode[key] = node[key]
         }
@@ -37,4 +37,59 @@ export let textContent = function(node) {
         ''
     )
 
+}
+
+// PM/HTML don't have cells that have been covered, but in ODT/DOCX, these cells
+// need to be present. So we add them.
+
+let addCoveredTableCells = function(node) {
+    let columns = node.content[0].content.reduce((columns, cell) => columns + cell.attrs.colspan, 0)
+    let rows = node.content.length
+    // Add empty cells for col/rowspan
+    let fixedTableMatrix = Array.apply(0, {length: rows}).map(
+        item => ({type: 'table_row', content: Array.apply(0, {length: columns})})
+    )
+    let rowIndex = -1
+    node.content.forEach(row => {
+        let columnIndex = 0
+        rowIndex++
+        if (!row.content) {
+            return
+        }
+        row.content.forEach(cell => {
+            while (
+                fixedTableMatrix[rowIndex].content[columnIndex]
+            ) {
+                columnIndex++
+            }
+            for (let i=0; i < cell.attrs.rowspan; i++) {
+                for (let j=0; j < cell.attrs.colspan; j++) {
+                    let fixedCell
+                    if (i===0 && j===0) {
+                        fixedCell = cell
+                    } else {
+                        fixedCell = {
+                            type: 'table_cell',
+                            attrs: {
+                                rowspan: cell.attrs.rowspan > 1 ? 0 : 1,
+                                colspan: cell.attrs.colspan > 1 ? 0 : 1
+                            }
+                        }
+                    }
+                    fixedTableMatrix[rowIndex+i].content[columnIndex+j] = fixedCell
+                }
+            }
+        })
+    })
+    node.content = fixedTableMatrix
+}
+
+export let fixTables = function(node) {
+    if (node.type==='table') {
+        addCoveredTableCells(node)
+    }
+    if (node.content) {
+        node.content.forEach(child => fixTables(child))
+    }
+    return node
 }

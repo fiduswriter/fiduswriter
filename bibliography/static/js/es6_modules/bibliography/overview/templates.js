@@ -1,13 +1,7 @@
 import {escapeText} from "../../common"
 
-/** A template for the editing of bibliography categories list. */
-export let editCategoriesTemplate = ({categories, dialogHeader}) =>
-    `<div id="editCategories" title="${dialogHeader}">
-        <table id="editCategoryList" class="fw-dialog-table"><tbody>${categories}</tbody></table>
-    </div>`
-
 /** A template for each category in the category list edit of the bibliography categories list. */
-export let categoryFormsTemplate = ({categories}) =>
+let categoryFormsTemplate = ({categories}) =>
     `${
         categories.map(cat =>
             `<tr id="categoryTr_${cat.id}" class="fw-list-input">
@@ -26,6 +20,15 @@ export let categoryFormsTemplate = ({categories}) =>
         </td>
     </tr>`
 
+/** A template for the editing of bibliography categories list. */
+export let editCategoriesTemplate = ({categories, dialogHeader}) =>
+    `<div id="editCategories" title="${dialogHeader}">
+        <table id="editCategoryList" class="fw-dialog-table">
+            <tbody>
+                ${categoryFormsTemplate({categories})}
+            </tbody>
+        </table>
+    </div>`
 
 /* A template for the overview list of bibliography items. */
 export let bibtableTemplate = ({id, cats, title, type, typetitle, published, author}) =>
@@ -54,11 +57,3 @@ export let bibtableTemplate = ({id, cats, title, type, typetitle, published, aut
             </span>
         </td>
     </tr>`
-
-/** A template of a bibliography category list item. */
-export let bibliographyCategoryListItemTemplate = ({bCat}) =>
-    `<li>
-        <span class="fw-pulldown-item" data-id="${bCat.id}">
-            ${escapeText(bCat.category_title)}
-        </span>
-    </li>`

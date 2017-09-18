@@ -2,10 +2,9 @@ import {usermediaUploadTemplate} from "./templates"
 import {setCheckableLabel, cancelPromise, addAlert} from "../../common"
 
 export class ImageUploadDialog {
-    constructor(imageDB, imageId, ownerId) {
+    constructor(imageDB, imageId = false) {
         this.imageDB = imageDB
         this.imageId = imageId
-        this.ownerId = ownerId
     }
 
     //open a dialog for uploading an image
@@ -108,10 +107,6 @@ export class ImageUploadDialog {
             checkboxValues = {}
 
         formValues.append('id', this.imageId)
-
-        if(this.ownerId) {
-            formValues.append('owner_id', this.ownerId)
-        }
 
         jQuery('.fw-media-form').each(function () {
             let $this = jQuery(this)

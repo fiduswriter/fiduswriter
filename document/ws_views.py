@@ -286,11 +286,9 @@ class WebSocket(BaseWebSocketHandler):
                     document_id=self.doc["id"],
                     image_id=id
                 ).delete()
-                if not (
-                    DocumentImage.objects.filter(image_id=id).exists() or
-                    UserImage.objects.filter(image_id=id).exists()
-                ):
-                    Image.objects.filter(id=id).delete()
+                for image in Image.objects.filter(id=id):
+                    if image.is_deletable():
+                        image.delete()
 
     def update_comments(self, comments_updates):
         comments_updates = deepcopy(comments_updates)
@@ -375,11 +373,15 @@ class WebSocket(BaseWebSocketHandler):
             self.doc["last_diffs"] = self.doc["last_diffs"][-1000:]
             self.doc['version'] += 1
             if "jd" in parsed:  # jd = json diff
-                jsonpatch.apply_patch(
-                   self.doc['contents'],
-                   parsed["jd"],
-                   True
-                )
+                try:
+                    jsonpatch.apply_patch(
+                       self.doc['contents'],
+                       parsed["jd"],
+                       True
+                    )
+                except:
+                    logger.debug("Cannot apply json diff.")
+                    self.send_document()
                 # The json diff is only needed by the python backend which does
                 # not understand the steps. It can therefore be removed before
                 # broadcast to other clients.

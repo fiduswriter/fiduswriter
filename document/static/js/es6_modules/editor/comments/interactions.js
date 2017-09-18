@@ -1,6 +1,7 @@
-import {getCommentDuringCreationDecoration} from "../plugins/comments"
-/* Functions related to user interactions with comments */
+import {getCommentDuringCreationDecoration} from "../statePlugins"
+import {REVIEW_ROLES} from ".."
 
+/* Functions related to user interactions with comments */
 export class ModCommentInteractions {
     constructor(mod) {
         mod.interactions = this
@@ -103,10 +104,22 @@ export class ModCommentInteractions {
         if (id===-1) {
             let referrer = getCommentDuringCreationDecoration(this.mod.editor.view.state)
             // This is a new comment. We need to get an ID for it if it has contents.
+
+            let userName, userAvatar
+
+            if(REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
+                userName = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
+                userAvatar = `${window.staticUrl}img/default_avatar.png`
+            } else {
+                userName = this.mod.editor.user.name
+                userAvatar = this.mod.editor.user.avatar
+            }
+
+
             this.mod.store.addComment(
                 this.mod.editor.user.id,
-                this.mod.editor.user.name,
-                this.mod.editor.user.avatar,
+                userName,
+                userAvatar,
                 new Date().getTime(), // We update the time to the time the comment was stored
                 commentText,
                 commentIsMajor,
@@ -178,11 +191,22 @@ export class ModCommentInteractions {
 
     createNewAnswer(id, answerText) {
         // Create a new answer to add to the comment store
+
+        let userName, userAvatar
+
+        if(REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
+            userName = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
+            userAvatar = `${window.staticUrl}img/default_avatar.png`
+        } else {
+            userName = this.mod.editor.user.name
+            userAvatar = this.mod.editor.user.avatar
+        }
+
         let answer = {
             answer: answerText,
             user: this.mod.editor.user.id,
-            userName: this.mod.editor.user.name,
-            userAvatar: this.mod.editor.user.avatar,
+            userName,
+            userAvatar,
             date: new Date().getTime()
         }
 

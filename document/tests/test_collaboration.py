@@ -796,8 +796,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
     def get_mathequation(self, driver):
         math = driver.find_element_by_xpath(
-            '//*[contains(@class, "article-body")]/p[1]/span[1]'
-            # OR '//*[@class="equation"]'
+            # '//*[contains(@class, "article-body")]/p[1]/span[1]'
+            '//*[@class="equation"]'
         )
 
         return math.text
@@ -848,7 +848,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p2.join()
 
         self.assertEqual(
-            55,
+            54,
             len(self.get_mathequation(self.driver2))
         )
 

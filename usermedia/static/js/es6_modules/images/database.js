@@ -3,8 +3,7 @@ import {activateWait, deactivateWait, csrfToken} from "../common"
 /* A class that holds information about images uploaded by the user. */
 
 export class ImageDB {
-    constructor(userId) {
-        this.userId = userId
+    constructor() {
         this.db = {}
         this.cats = []
     }
@@ -17,9 +16,6 @@ export class ImageDB {
         return new Promise((resolve, reject) => {
             jQuery.ajax({
                 url: '/usermedia/images/',
-                data: {
-                    'owner_id': this.userId
-                },
                 type: 'POST',
                 dataType: 'json',
                 crossDomain: false, // obviates need for sameOrigin test

@@ -30,7 +30,8 @@ let cslentry = {
 // it's the first in the list.
 let cslinline = {
     group: "block",
-    content: "text<_>*",
+    content: "text*",
+    marks: "_",
     parseDOM: [{tag: 'div.csl-inline'}],
     toDOM(node) {
         return ["div", {
@@ -41,7 +42,8 @@ let cslinline = {
 
 let cslblock = {
     group: "block",
-    content: "text<_>*",
+    content: "text*",
+    marks: "_",
     parseDOM: [{tag: 'div.csl-block'}],
     toDOM(node) {
         return ["div", {
@@ -52,7 +54,8 @@ let cslblock = {
 
 let cslleftmargin = {
     group: "block",
-    content: "text<_>*",
+    content: "text*",
+    marks: "_",
     parseDOM: [{tag: 'div.csl-left-margin'}],
     toDOM(node) {
         return ["div", {
@@ -63,7 +66,8 @@ let cslleftmargin = {
 
 let cslrightinline = {
     group: "block",
-    content: "text<_>*",
+    content: "text*",
+    marks: "_",
     parseDOM: [{tag: 'div.csl-right-inline'}],
     toDOM(node) {
         return ["div", {
@@ -75,7 +79,8 @@ let cslrightinline = {
 
 let cslindent = {
     group: "block",
-    content: "text<_>*",
+    content: "text*",
+    marks: "_",
     parseDOM: [{tag: 'div.csl-indent'}],
     toDOM(node) {
         return ["div", {

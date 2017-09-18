@@ -6,11 +6,12 @@ export let getMissingDocumentListData = function (ids, documentList) {
     // documentList correspondingly.
     let incompleteIds = []
 
-    for (let i = 0; i < ids.length; i++) {
-        if (!documentList.find(doc => doc.id === parseInt(ids[i])).hasOwnProperty('contents')) {
-            incompleteIds.push(parseInt(ids[i]))
+    ids.forEach(id => {
+        if (!documentList.find(doc => doc.id === parseInt(id)).hasOwnProperty('contents')) {
+            incompleteIds.push(parseInt(id))
         }
-    }
+    })
+
     if (incompleteIds.length > 0) {
         return new Promise((resolve, reject) => {
             jQuery.ajax({

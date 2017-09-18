@@ -36,53 +36,42 @@ def biblist_js(request):
     response = {}
     status = 403
     if request.is_ajax() and request.method == 'POST':
-        if request.POST.__contains__('last_modified'):
-            last_modified_onclient = int(request.POST['last_modified'])
-            number_of_entries_onclient = int(
-                request.POST['number_of_entries'])
-            aggregation_values = Entry.objects.filter(
-                entry_owner=request.user.id).aggregate(
-                Max('last_modified'), Count('id'))
-            last_modified__max = aggregation_values[
-                'last_modified__max']
-            number_of_entries_onserver = aggregation_values[
-                'id__count']
-            if last_modified__max:
-                last_modified_onserver = int(
-                    time.mktime(last_modified__max.timetuple()))
-            else:
-                last_modified_onserver = 0
-            if (
-                last_modified_onclient < last_modified_onserver or
-                number_of_entries_onclient > number_of_entries_onserver
-            ):
-                response['bibList'] = serializer.serialize(
-                    Entry.objects.filter(
-                        entry_owner=request.user), fields=(
-                            'entry_key',
-                            'entry_owner',
-                            'bib_type',
-                            'entry_cat',
-                            'fields'
-                        )
-                    )
-                response['last_modified'] = last_modified_onserver
-                response[
-                    'number_of_entries'] = number_of_entries_onserver
+        last_modified_onclient = int(request.POST['last_modified'])
+        number_of_entries_onclient = int(
+            request.POST['number_of_entries'])
+        aggregation_values = Entry.objects.filter(
+            entry_owner=request.user.id).aggregate(
+            Max('last_modified'), Count('id'))
+        last_modified__max = aggregation_values[
+            'last_modified__max']
+        number_of_entries_onserver = aggregation_values[
+            'id__count']
+        if last_modified__max:
+            last_modified_onserver = int(
+                time.mktime(last_modified__max.timetuple()))
         else:
-            response['bibList'] = serializer.serialize(
+            last_modified_onserver = 0
+        if (
+            last_modified_onclient < last_modified_onserver or
+            number_of_entries_onclient > number_of_entries_onserver or
+            request.user.id != int(request.POST['user_id'])
+        ):
+            response['bib_list'] = serializer.serialize(
                 Entry.objects.filter(
-                    entry_owner=request.user
-                ), fields=(
-                    'entry_key',
-                    'entry_owner',
-                    'bib_type',
-                    'entry_cat',
-                    'fields'
+                    entry_owner=request.user), fields=(
+                        'entry_key',
+                        'entry_owner',
+                        'bib_type',
+                        'entry_cat',
+                        'fields'
+                    )
                 )
-            )
-        response['bibCategories'] = serializer.serialize(
+            response['last_modified'] = last_modified_onserver
+            response[
+                'number_of_entries'] = number_of_entries_onserver
+        response['bib_categories'] = serializer.serialize(
             EntryCategory.objects.filter(category_owner=request.user))
+        response['user_id'] = request.user.id
         status = 200
     return JsonResponse(
         response,
@@ -159,6 +148,9 @@ def save_category_js(request):
     if request.is_ajax() and request.method == 'POST':
         ids = request.POST.getlist('ids[]')
         titles = request.POST.getlist('titles[]')
+        EntryCategory.objects.filter(
+            category_owner=request.user
+        ).exclude(id__in=ids).delete()
         x = 0
         for the_id in ids:
             the_id = int(the_id)
@@ -178,23 +170,6 @@ def save_category_js(request):
             response['entries'].append(
                 {'id': the_cat.id, 'category_title': the_cat.category_title}
             )
-        status = 201
-
-    return JsonResponse(
-        response,
-        status=status
-    )
-
-
-# delete a category
-@login_required
-def delete_category_js(request):
-    status = 405
-    response = {}
-    if request.is_ajax() and request.method == 'POST':
-        ids = request.POST.getlist('ids[]')
-        for id in ids:
-            EntryCategory.objects.get(pk=int(id)).delete()
         status = 201
 
     return JsonResponse(

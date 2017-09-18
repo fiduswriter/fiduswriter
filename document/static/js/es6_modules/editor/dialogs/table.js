@@ -1,6 +1,4 @@
-import {selectParentNode} from "prosemirror-commands"
-import {tableInsertTemplate, tableEditTemplate} from "./templates"
-import {addColumnAfter, addColumnBefore, deleteColumn, addRowBefore, addRowAfter, deleteRow, deleteTable} from "prosemirror-tables"
+import {tableInsertTemplate} from "./templates"
 
 export class TableDialog {
     constructor(editor) {
@@ -9,26 +7,8 @@ export class TableDialog {
     }
 
     init() {
-        if (this.inTable()) {
-            this.editTableDialog()
-        } else {
-            this.insertTableDialog()
-        }
+        this.insertTableDialog()
     }
-
-    // Check if caret is inside a table
-    inTable() {
-        const currentState = this.editor.currentView.state
-        const fromEl = currentState.doc.resolve(currentState.selection.from).node(3)
-        const toEl = currentState.doc.resolve(currentState.selection.to).node(3)
-        if (fromEl===toEl && fromEl.type.name === 'table') {
-            return true
-        } else {
-            return false
-        }
-    }
-
-
 
     markInsertTable(cell, className) {
         this.dialog.find(`td.${className}`).removeClass(className)
@@ -126,79 +106,5 @@ export class TableDialog {
             colCount = newCounts.colCount
         })
 
-
-    }
-
-    executeAction(event, editFunction) {
-        event.preventDefault()
-        event.stopImmediatePropagation()
-        if (this.editor.currentView.hasFocus()) {
-            editFunction()
-        }
-        this.dialog.dialog('close')
-        this.editor.currentView.focus()
-    }
-
-    editTableDialog() {
-        let buttons = []
-        buttons.push({
-            text: gettext('Cancel'),
-            class: 'fw-button fw-orange',
-            click: () => {
-                this.dialog.dialog('close')
-                this.editor.currentView.focus()
-            }
-        })
-
-        this.dialog = jQuery(tableEditTemplate({}))
-
-        this.dialog.dialog({
-            draggable: false,
-            resizable: false,
-            top: 10,
-            width: 360,
-            height: 360,
-            modal: true,
-            buttons,
-            close: () => this.dialog.dialog('destroy').remove()
-        })
-
-        // Table manipulation
-
-        this.dialog.find('.row-after').on('mousedown', event => {
-            this.executeAction(event, () =>
-                addRowAfter(this.editor.currentView.state, this.editor.currentView.dispatch)
-            )
-        })
-    	this.dialog.find('.row-before').on('mousedown', event => {
-            this.executeAction(event, () =>
-                addRowBefore(this.editor.currentView.state, this.editor.currentView.dispatch)
-            )
-        })
-    	this.dialog.find('.col-after').on('mousedown', event => {
-            this.executeAction(event, () =>
-                addColumnAfter(this.editor.currentView.state, this.editor.currentView.dispatch)
-            )
-        })
-    	this.dialog.find('.col-before').on('mousedown', event => {
-            this.executeAction(event, () =>
-                addColumnBefore(this.editor.currentView.state, this.editor.currentView.dispatch)
-            )
-        })
-    	this.dialog.find('.col-remove').on('mousedown', event => {
-            this.executeAction(event, () =>
-                deleteColumn(this.editor.currentView.state, this.editor.currentView.dispatch)
-            )
-        })
-    	this.dialog.find('.row-remove').on('mousedown', event => {
-            this.executeAction(event, () =>
-                deleteRow(this.editor.currentView.state, this.editor.currentView.dispatch)
-            )
-        })
-        this.dialog.find('.table-remove').on('mousedown', event => {
-            this.executeAction(event, () => {
-                deleteTable(this.editor.currentView.state, this.editor.currentView.dispatch)
-            })
-        })
     }
 }

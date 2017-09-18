@@ -5,18 +5,31 @@
     margin-top: 11px;
     z-index: 100;
 }
+.fw-pulldown.fw-open {
+    display: block;
+}
 .fw-pulldown.fw-left, .fw-pulldown.fw-center {
     left: -10px
 }
 .fw-pulldown.fw-right {
     right: 0
 }
+/* sub menu */
+.fw-pulldown .fw-pulldown {
+    top: 0;
+    left: 100%;
+    margin-top: 0;
+}
+
+.fw-pulldown .fw-pulldown:after {
+    content: '';
+}
 
 .fw-pulldown > ul {
     position: relative;
     background-color: #fff;
     padding: 6px 0;
-    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    box-shadow: 3px 3px 5px rgba(0,0,0,0.5);
 }
 
 .fw-pulldown-header {
@@ -31,13 +44,31 @@
     display: block;
     width: auto;
     height: auto;
-    padding: 0 11px;
+    padding: 0 21px 0 11px;
     font-size: 11px;
     line-height: 24px;
     text-align: left;
     text-decoration: none;
     cursor: pointer;
     color: #2c2723;
+    position: relative;
+}
+
+.fw-pulldown-item .fw-icon-right {
+    position: absolute;
+    right: 10px;
+}
+
+.fw-pulldown li {
+    position: relative;
+}
+
+.fw-pulldown hr {
+    width: 80%;
+    display: block;
+    height: 1px;
+    border: 0;
+    background-color: #ccc;
 }
 
 .disabled .fw-pulldown-item {

@@ -321,14 +321,15 @@ export class DocxExporterRichtext {
                             <w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1" />
                         </w:tblPr>
                         <w:tblGrid>`
-                let cellWidth = 63500 // standard width
                 let columns = node.content[0].content.length
+                let cellWidth = 63500 // standard width
                 options = Object.assign({}, options)
                 if (options.dimensions && options.dimensions.width) {
                     cellWidth = parseInt(options.dimensions.width / columns) - 2540 // subtracting for border width
                 } else if (!options.dimensions) {
                     options.dimensions = {}
                 }
+
                 options.dimensions = Object.assign({}, options.dimensions)
                 options.dimensions.width = cellWidth
                 options.tableSideMargins = this.exporter.tables.getSideMargins()
@@ -344,12 +345,37 @@ export class DocxExporterRichtext {
                 end = '</w:tr>' + end
                 break
             case 'table_cell':
+            case 'table_header':
                 start += noSpaceTmp`
                     <w:tc>
                         <w:tcPr>
-                            <w:tcW w:w="${parseInt(options.dimensions.width  / 635)}" w:type="dxa" />
-                        </w:tcPr>`
+                            ${
+                                node.attrs.rowspan && node.attrs.colspan ?
+                                `<w:tcW w:w="${parseInt(options.dimensions.width  / 635)}" w:type="dxa" />` :
+                                '<w:tcW w:w="0" w:type="auto" />'
+                            }
+                            ${
+                                node.attrs.rowspan ?
+                                node.attrs.rowspan > 1 ?
+                                '<w:vMerge w:val="restart" />' :
+                                '' :
+                                '<w:vMerge/>'
+                            }
+                            ${
+                                node.attrs.colspan ?
+                                node.attrs.colspan > 1 ?
+                                '<w:hMerge w:val="restart" />' :
+                                '' :
+                                '<w:hMerge/>'
+                            }
+                        </w:tcPr>
+                        ${
+                            node.content ?
+                            '' :
+                            '<w:p/>'
+                        }`
                 end = '</w:tc>' + end
+
                 break
             case 'equation':
                 let latex = node.attrs.equation
@@ -395,8 +421,6 @@ export class DocxExporterRichtext {
                 content += this.transformRichtext(node.content[i], options)
             }
         }
-
         return start + content + end
     }
-
 }

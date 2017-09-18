@@ -95,53 +95,7 @@ export let tableInsertTemplate = () => `
             <td>&nbsp;</td>
             <td>&nbsp;</td>
         </tr>
-    </table>
-`
-
-export let tableEditTemplate = () =>
-    `<div>
-        <div class="table-edit-button-group">
-            <div class="fw-button fw-dark ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-                <span class="ui-button-text" title="${gettext("Insert row before")}">
-                    <label class="row-before">${gettext("Insert row before")}</label>
-                </span>
-            </div>
-            <div class="fw-button fw-dark ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-                <span class="ui-button-text" title="${gettext("Insert row after")}">
-                    <label class="row-after">${gettext("Insert row after")}</label>
-                </span>
-            </div>
-        </div>
-        <div class="table-edit-button-group">
-            <div class="fw-button fw-dark ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-                <span class="ui-button-text" title="${gettext("Insert column before")}">
-                    <label class="col-before">${gettext("Insert column before")}</label>
-                </span>
-            </div>
-            <div class="fw-button fw-dark ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-                <span class="ui-button-text" title="${gettext("Insert column after")}">
-                    <label class="col-after">${gettext("Insert column after")}</label>
-                </span>
-            </div>
-        </div>
-        <div class="table-edit-button-group">
-            <div class="fw-button fw-dark ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-                <span class="ui-button-text" title="${gettext("Remove row")}">
-                    <label class="row-remove">${gettext("Remove row")}</label>
-                </span>
-            </div>
-            <div class="fw-button fw-dark ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-                <span class="ui-button-text" title="${gettext("Remove column")}">
-                    <label class="col-remove">${gettext("Remove column")}</label>
-                </span>
-            </div>
-            <div class="fw-button fw-dark ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-                <span class="ui-button-text" title="${gettext("Remove table")}">
-                    <label class="table-remove">${gettext("Remove table")}</label>
-                </span>
-            </div>
-        </div>
-    </div>`
+    </table>`
 
 export let mathDialogTemplate = () =>
     `<div title="${gettext("Math")}">

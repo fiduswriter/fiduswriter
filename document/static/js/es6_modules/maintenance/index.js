@@ -113,6 +113,7 @@ export class DocMaintenance {
                 doc.last_diffs = []
             }
         }
+        
         let pmArticle = pm.doc.firstChild
         doc.contents = pmArticle.toJSON()
         doc.metadata = getMetadata(pmArticle)

@@ -4,7 +4,7 @@ import {GeneralPasteHandler} from "./general"
 export class LibreOfficeWriterPasteHandler extends GeneralPasteHandler {
 
     outputHandlerType() {
-        console.log('LibreOffice Writer paste handler')
+        console.info('LibreOffice Writer paste handler')
     }
 
     // Convert an existing node to a different node, if needed.

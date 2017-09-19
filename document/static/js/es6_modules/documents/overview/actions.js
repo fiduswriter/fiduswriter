@@ -83,13 +83,13 @@ export class DocumentOverviewActions {
         diaButtons[gettext('Import')] = function () {
             let fidusFile = jQuery('#fidus-uploader')[0].files
             if (0 === fidusFile.length) {
-                console.log('no file found')
+                console.warn('no file found')
                 return false
             }
             fidusFile = fidusFile[0]
             if (104857600 < fidusFile.size) {
                 //TODO: This is an arbitrary size. What should be done with huge import files?
-                console.log('file too big')
+                console.warn('file too big')
                 return false
             }
             activateWait()
@@ -237,7 +237,6 @@ export class DocumentOverviewActions {
     }
 
     downloadTemplateExportFiles(ids, templateUrl, templateType) {
-        console.log(ids, templateUrl, templateType)
         getMissingDocumentListData(
             ids,
             this.documentOverview.documentList

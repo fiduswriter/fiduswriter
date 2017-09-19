@@ -92,7 +92,7 @@ export class ModServerCommunications {
                 this.createWSConnection()
             }, 2000)
             if(!this.editor.view.state.plugins.length) {
-                console.log('doc not initiated')
+                console.warn('doc not initiated')
                 return
             }
             let toSend = sendableSteps(this.editor.view.state)

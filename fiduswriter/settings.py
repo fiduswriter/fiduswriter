@@ -347,4 +347,4 @@ try:
 except IOError:
     pass
 else:
-    exec(local_config, globals())
+    exec(local_config.read(), globals())

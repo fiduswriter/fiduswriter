@@ -193,7 +193,6 @@ def upload_avatar_js(request):
             request.FILES,
             user=request.user
         )
-        print upload_avatar_form
         if upload_avatar_form.is_valid():
             avatar = Avatar(
                 user=request.user,

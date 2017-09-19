@@ -74,6 +74,6 @@ class Command(BaseCommand):
         opf_dir = os.path.dirname(opf_file_path)
         if not os.path.exists(opf_dir):
             os.makedirs(opf_dir)
-        opf_file = open(opf_file_path, "w")
+        opf_file = open(opf_file_path, "wb")
         opf_file.write(opf_file_contents.encode('utf8'))
         opf_file.close()

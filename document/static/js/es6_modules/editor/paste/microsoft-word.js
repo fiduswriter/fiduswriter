@@ -4,7 +4,7 @@ import {GeneralPasteHandler} from "./general"
 export class MicrosoftWordPasteHandler extends GeneralPasteHandler {
 
     outputHandlerType() {
-        console.log('word paste handler')
+        console.info('word paste handler')
     }
 
     // Remove unused content

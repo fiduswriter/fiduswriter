@@ -118,11 +118,11 @@ class Command(BaseCommand):
         for path in js_paths:
             for mainfile in check_output(
                 ["find", path, "-type", "f", "-name", "*.es6.js", "-print"]
-            ).split("\n")[:-1]:
+            ).decode('utf-8').split("\n")[:-1]:
                 mainfiles.append(mainfile)
             for sourcefile in check_output(
                 ["find", path, "-type", "f", "-wholename", "*js"]
-            ).split("\n")[:-1]:
+            ).decode('utf-8').split("\n")[:-1]:
                 if 'static/js' in sourcefile:
                     sourcefiles.append(sourcefile)
 
@@ -180,7 +180,7 @@ class Command(BaseCommand):
         # Check for outdated files that should be removed
         for existing_file in check_output(
             ["find", './es6-cache', "-type", "f"]
-        ).split("\n")[:-1]:
+        ).decode('utf-8').split("\n")[:-1]:
             if existing_file not in cache_files:
                 if existing_file[-10:] == "cache.json":
                     if not existing_file[:-10] + "es6.js" in cache_files:

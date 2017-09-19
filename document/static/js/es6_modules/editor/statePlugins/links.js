@@ -100,7 +100,6 @@ export let linksPlugin = function(options) {
             copyLinkHref.addEventListener('click',
                 event => {
                     event.preventDefault()
-                    console.log('clcicke')
                     copyLink(linkHref)
                 }
             )

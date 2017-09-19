@@ -28,7 +28,7 @@ let changeAvatarDialog = function() {
                         jQuery('#profile-avatar > img').attr('src', response.avatar)
                     },
                     error: (jqXHR, textStatus, errorThrown) => {
-                        console.log(jqXHR.responseText)
+                        console.error(jqXHR.responseText)
                     },
                     complete: () => deactivateWait()
                 })
@@ -75,7 +75,7 @@ let deleteCurrentUser = function() {
             window.location = '/logout/'
         },
         error: (jqXHR, textStatus, errorThrown) => {
-            console.log(jqXHR.responseText)
+            console.error(jqXHR.responseText)
         },
         complete: () => deactivateWait()
     })
@@ -154,7 +154,7 @@ let saveProfile = function() {
                 let eMsg = gettext("Please check the above errors")
                 jQuery('#emsg').text( eMsg ).fadeIn('slow')
             } else {
-                console.log(jqXHR.responseText)
+                console.error(jqXHR.responseText)
             }
         },
         complete: () => deactivateWait()

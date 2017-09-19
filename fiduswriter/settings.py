@@ -343,6 +343,8 @@ JS_LOCATIONS = {
 CSS_LOCATIONS = {}
 
 try:
-    exec(open(os.path.join(PROJECT_PATH, 'configuration.py')), globals())
-except:
+    local_config = open(os.path.join(PROJECT_PATH, 'configuration.py'))
+except IOError:
     pass
+else:
+    exec(local_config.read(), globals())

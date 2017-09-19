@@ -86,9 +86,6 @@ export class DocMaintenance {
             }
             this.saveDoc(doc)
         }
-
-
-
     }
 
     applyDiffs(doc) {
@@ -96,12 +93,12 @@ export class DocMaintenance {
             place: null,
             schema: docSchema
         })
-
-        pm.setDoc(
-            docSchema.nodeFromJSON({type:'doc', content:[doc.contents]})
-        )
-        let pmCollab = collabEditing.config({version: 0})
-        pmCollab.attach(pm)
+        if(doc.contents.type) {
+            pm.setDoc(
+                docSchema.nodeFromJSON({type:'doc', content:[doc.contents]})
+            )
+        }
+        let pmCollab = collabEditing.config({version: 0}).attach(pm)
         let unappliedDiffs = doc.diff_version - doc.version
 
         doc.last_diffs = doc.last_diffs.slice(doc.last_diffs.length - unappliedDiffs)

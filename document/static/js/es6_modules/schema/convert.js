@@ -272,10 +272,10 @@ let convertNodeV13 = function(node, shrunkBib, fullBib, imageIds) {
             node.attrs.language = 'en-US'
             break
         case 'authors':
-            let authorsText = node.content.reduce(
+            let authorsText = node.content ? node.content.reduce(
                     (text, item) => item.type === 'text' ? text + item.text : text,
                     ''
-                )
+                ) : ''
             node.content = authorsText.split(/[,;]/g).map(authorString => {
                 let author = authorString.trim()
                 if (!author.length) {
@@ -292,6 +292,9 @@ let convertNodeV13 = function(node, shrunkBib, fullBib, imageIds) {
                     }
                 }
             }).filter(authorObj => authorObj)
+            if (!node.content.length) {
+                delete node.content
+            }
             break
         case 'citation':
             node.attrs.references.forEach(ref => {
@@ -309,10 +312,10 @@ let convertNodeV13 = function(node, shrunkBib, fullBib, imageIds) {
             })
             break
         case 'keywords':
-                let keywordsText = node.content.reduce(
+                let keywordsText = node.content ? node.content.reduce(
                         (text, item) => item.type === 'text' ? text + item.text : text,
                         ''
-                    )
+                    ) : ''
                 node.content = keywordsText.split(/[,;]/g).map(keywordString => {
                     let keyword = keywordString.trim()
                     if (!keyword.length) {
@@ -325,6 +328,9 @@ let convertNodeV13 = function(node, shrunkBib, fullBib, imageIds) {
                         }
                     }
                 }).filter(keywordObj => keywordObj)
+                if (!node.content.length) {
+                    delete node.content
+                }
                 break
         case 'figure':
             if (isNaN(parseInt(node.attrs.image))) {

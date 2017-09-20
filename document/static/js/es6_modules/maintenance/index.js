@@ -24,10 +24,8 @@ export class DocMaintenance {
 
     bind() {
         jQuery(document).on('click', 'button#update:not(.disabled)', () => {
-            this.button = this
-            jQuery(this.button).addClass('disabled fw-dark')
-            jQuery(this.button).removeClass('fw-orange')
-            jQuery(this.button).html(gettext('Updating'))
+            jQuery('button#update').prop('disabled', true)
+            jQuery('button#update').html(gettext('Updating...'))
             this.init()
         })
     }
@@ -86,9 +84,6 @@ export class DocMaintenance {
             }
             this.saveDoc(doc)
         }
-
-
-
     }
 
     applyDiffs(doc) {
@@ -96,12 +91,12 @@ export class DocMaintenance {
             place: null,
             schema: docSchema
         })
-
-        pm.setDoc(
-            docSchema.nodeFromJSON({type:'doc', content:[doc.contents]})
-        )
-        let pmCollab = collabEditing.config({version: 0})
-        pmCollab.attach(pm)
+        if(doc.contents.type) {
+            pm.setDoc(
+                docSchema.nodeFromJSON({type:'doc', content:[doc.contents]})
+            )
+        }
+        let pmCollab = collabEditing.config({version: 0}).attach(pm)
         let unappliedDiffs = doc.diff_version - doc.version
 
         doc.last_diffs = doc.last_diffs.slice(doc.last_diffs.length - unappliedDiffs)
@@ -116,6 +111,7 @@ export class DocMaintenance {
                 doc.last_diffs = []
             }
         }
+
         let pmArticle = pm.doc.firstChild
         doc.contents = pmArticle.toJSON()
         doc.metadata = getMetadata(pmArticle)
@@ -233,7 +229,7 @@ export class DocMaintenance {
     }
 
     done() {
-        jQuery(this.button).html(gettext('All documents and revisions updated!'))
+        jQuery('button#update').html(gettext('All documents and revisions updated!'))
     }
 
 

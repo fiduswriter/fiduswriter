@@ -490,7 +490,7 @@ def get_all_docs_js(request):
     status = 405
     if request.is_ajax() and request.method == 'POST':
         status = 200
-        doc_list = Document.objects.all()
+        doc_list = Document.objects.all().order_by('id')
         paginator = Paginator(doc_list, 10)  # Get 10 docs per page
 
         batch = request.POST['batch']

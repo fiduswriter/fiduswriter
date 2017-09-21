@@ -1,7 +1,7 @@
 import {escapeText} from "../../common"
 
 /** Simpler image overview table for use in editor. */
-let usermediaImageItemSelectionTemplate =  ({image, db}) =>
+let imageItemSelectionTemplate =  ({image, db}) =>
     `<tr id="Image_${db}_${image.id}" class="${image.cats.map(cat =>`cat_${cat} `)}" >
          <td class="type" style="width:100px;">
             ${
@@ -23,7 +23,7 @@ let usermediaImageItemSelectionTemplate =  ({image, db}) =>
     </tr>`
 
 /** A template to select images. */
-export let usermediaImageSelectionTemplate = ({images}) =>
+export let imageSelectionTemplate = ({images}) =>
     `<div>
         <table id="select_imagelist" class="tablesorter fw-document-table" style="width:342px;">
             <thead class="fw-document-table-header">
@@ -33,7 +33,7 @@ export let usermediaImageSelectionTemplate = ({images}) =>
                 </tr>
             </thead>
             <tbody class="fw-document-table-body fw-small">
-                ${images.map(imageData => usermediaImageItemSelectionTemplate(imageData))}
+                ${images.map(imageData => imageItemSelectionTemplate(imageData))}
             </tbody>
         </table>
         <div class="dialogSubmit">

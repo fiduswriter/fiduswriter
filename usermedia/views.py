@@ -33,22 +33,22 @@ def save_js(request):
     response['errormsg'] = {}
     status = 403
     if request.is_ajax() and request.method == 'POST':
-        the_id = int(request.POST['id'])
         if 'image' in request.FILES and \
                 request.FILES['image'].content_type not in ALLOWED_FILETYPES:
             status = 200  # Not implemented
             response['errormsg']['error'] = _('Filetype not supported')
         else:
-            # We only allow owners to change their images.
-            user_image = UserImage.objects.filter(
-                pk=the_id,
-                owner=request.user
-            )
-            if user_image.exists():
-                user_image = user_image[0]
-                image = user_image.image
-                status = 200
-            else:
+            image = False
+            if 'id' in request.POST and 'image' not in request.FILES:
+                user_image = UserImage.objects.filter(
+                    image_id=int(request.POST['id']),
+                    owner=request.user
+                )
+                if user_image.exists():
+                    user_image = user_image[0]
+                    image = user_image.image
+                    status = 200
+            if image is False:
                 image = Image()
                 image.uploader = request.user
                 user_image = UserImage()
@@ -57,8 +57,8 @@ def save_js(request):
                 if 'checksum' in request.POST:
                     image.checksum = request.POST['checksum']
             user_image.title = request.POST['title']
-            if 'imageCat' in request.POST:
-                user_image.image_cat = request.POST['imageCat']
+            if 'cats' in request.POST:
+                user_image.image_cat = request.POST['cats']
             if 'image' in request.FILES:
                 image.image = request.FILES['image']
             if status == 201 and 'image' not in request.FILES:
@@ -75,7 +75,9 @@ def save_js(request):
                     'file_type': image.file_type,
                     'added': mktime(image.added.timetuple()) * 1000,
                     'checksum': image.checksum,
-                    'cats': user_image.image_cat.split(',')
+                    'cats': list(
+                        map(int, filter(bool, user_image.image_cat.split(',')))
+                    )
                 }
                 if image.thumbnail:
                     response['values']['thumbnail'] = image.thumbnail.url
@@ -129,7 +131,9 @@ def images_js(request):
                     'file_type': image.file_type,
                     'added': mktime(image.added.timetuple()) * 1000,
                     'checksum': image.checksum,
-                    'cats': user_image.image_cat.split(',')
+                    'cats': list(
+                        map(int, filter(bool, user_image.image_cat.split(',')))
+                    )
                 }
                 if image.thumbnail:
                     field_obj['thumbnail'] = image.thumbnail.url

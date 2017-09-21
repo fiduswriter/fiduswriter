@@ -253,100 +253,103 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
             if (this.classList !== null && this.innerHTML !== null) {
                 className = this.innerHTML
                 className = className.replace(/\s+/g, '')
+		if(className == !null){
+ 
                 this.classList.add(className)
                 this.id = className
          
-	let tag = ""
-	var entry1 = ['ACKNOWLEDGMENTS', 'ACKNOWLEDGMENT', 'Acknowledgement', 'Acknowledgements']; 
-        if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:Acknowledgements"
-        }
+		let tag = ""
+		var entry1 = ['ACKNOWLEDGMENTS', 'ACKNOWLEDGMENT', 'Acknowledgement', 'Acknowledgements']; 
+	        if (new RegExp(entry1.join("|")).test(className)) {
+		   tag = "deo:Acknowledgements"
+	        }
 
-	entry1 = ['Outlook', 'OUTLOOK', 'FUTURE WORK', 'ROADMAP','PLAN']; 
-        if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:FutureWork"
-        }
+		entry1 = ['Outlook', 'OUTLOOK', 'FUTURE WORK', 'ROADMAP','PLAN']; 
+	        if (new RegExp(entry1.join("|")).test(className)) {
+		   tag = "deo:FutureWork"
+        	}
 
-	entry1 = ['CONCLUSION', 'Conclusion', 'CONCLUSIONS', 'Conclusions']; 
-        if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:Conclusion"
-        }
+		entry1 = ['CONCLUSION', 'Conclusion', 'CONCLUSIONS', 'Conclusions']; 
+        	if (new RegExp(entry1.join("|")).test(className)) {
+		   tag = "deo:Conclusion"
+        	}
 
-	entry1 = ['Results', 'RESULTS']; 
-        if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:Results"
-        }
+		entry1 = ['Results', 'RESULTS']; 
+        	if (new RegExp(entry1.join("|")).test(className)) {
+		   tag = "deo:Results"
+        	}
 	
-	entry1 = ['Analysis', 'Discussion', 'DISCUSSIONS']; 
-        if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:Discussion"
-        }
+		entry1 = ['Analysis', 'Discussion', 'DISCUSSIONS']; 
+        	if (new RegExp(entry1.join("|")).test(className)) {
+		   tag = "deo:Discussion"
+        	}
 
-	entry1 = ['RELATEDWORK', 'LITERATUREREVIEW']; 
-        if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:RelatedWork"
-        }
+		entry1 = ['RELATEDWORK', 'LITERATUREREVIEW']; 
+        	if (new RegExp(entry1.join("|")).test(className)) {
+		   tag = "deo:RelatedWork"
+        	}
 
-	entry1 = ['VALIDATION', 'Evaluation', 'Experiments', 'EXPERIMENTAL','Comparison', 'EVALUATION' , 'Experimental']; 
-        if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:Evaluation"
-        }
+		entry1 = ['VALIDATION', 'Evaluation', 'Experiments', 'EXPERIMENTAL','Comparison', 'EVALUATION', 'Experimental']; 
+	        if (new RegExp(entry1.join("|")).test(className)) {
+		   tag = "deo:Evaluation"
+        	}
 
-	entry1 = ['MOTIVATION', 'Motivation', 'Motivation', 'Case study']; 
-        if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:Motivation"
-        }
+		entry1 = ['MOTIVATION', 'Motivation', 'Motivation', 'Case study']; 
+        	if (new RegExp(entry1.join("|")).test(className)) {
+		   tag = "deo:Motivation"
+        	}
 
-	entry1 = ['Problem', 'PROBLEM',, 'Approach', 'APPROACH', 'Case Description']; 
-        if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:ProblemStatement"
-        }
+		entry1 = ['Problem', 'PROBLEM',, 'Approach', 'APPROACH', 'Case Description']; 
+        	if (new RegExp(entry1.join("|")).test(className)) {
+		   tag = "deo:ProblemStatement"
+        	}
 
-	entry1 = ['Abstract', 'ABSTRACT', 'Summary']; 
-        if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:Abstract"
-        }
+		entry1 = ['Abstract', 'ABSTRACT', 'Summary']; 
+        	if (new RegExp(entry1.join("|")).test(className)) {
+		   tag = "deo:Abstract"
+        	}
 
-	entry1 = ['INTRODUCTION', 'Introduction']; 
-        if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:Introduction"
-        }
+		entry1 = ['INTRODUCTION', 'Introduction']; 
+        	if (new RegExp(entry1.join("|")).test(className)) {
+		   tag = "deo:Introduction"
+        	}
 
-	entry1 = ['APPROACH', 'METHODOLOGY', 'Methods', 'METHODS', 'PROPOSEDSOLUTION' , 'PROPOSEDAPPROACH']; 
-        if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:methods"
-        }
+		entry1 = ['APPROACH', 'METHODOLOGY', 'Methods', 'METHODS', 'PROPOSED SOLUTION' , 'PROPOSED APPROACH']; 
+	        if (new RegExp(entry1.join("|")).test(className)) {
+		   tag = "deo:methods"
+        	}
 	
-	entry1 = ['FRAMEWORK', 'Structure', 'SYSTEM', 'Architecture', 'IMPLEMENTATION', 'Implementing', 'schema']; 
-        if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "ssn:System"
-        }
+		entry1 = ['FRAMEWORK', 'Structure', 'SYSTEM', 'Architecture', 'IMPLEMENTATION', 'Implementing', 'schema']; 
+        	if (new RegExp(entry1.join("|")).test(className)) {
+		   tag = "ssn:System"
+        	}
 
-	entry1 = ['Keywords', 'KEYWORDS']; 
-        if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "swrc:Keywords"
-        }
+		entry1 = ['Keywords', 'KEYWORDS']; 
+        	if (new RegExp(entry1.join("|")).test(className)) {
+		   tag = "swrc:Keywords"
+        	}
 
-	entry1 = ['background', 'Concepts', 'BACKGROUND']; 
-        if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:Background"
-        }
+		entry1 = ['background', 'Concepts', 'BACKGROUND']; 
+        	if (new RegExp(entry1.join("|")).test(className)) {
+		   tag = "deo:Background"
+        	}
 
-	entry1 = ['MODELING', 'Model', 'Representation', 'Modelling']; 
-        if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:Model"
-        }
-	entry1 = ['REFERENCE', 'REFERENCES' , 'Reference']; 
-        if (new RegExp(entry1.join("|")).test(className)) {
-	   tag = "deo:Reference"
-        }
-	this.outerHTML =
+		entry1 = ['MODELING', 'Model', 'Representation', 'Modelling']; 
+        	if (new RegExp(entry1.join("|")).test(className)) {
+		   tag = "deo:Model"
+        	}
+		entry1 = ['REFERENCE', 'REFERENCES' , 'Reference']; 
+        	if (new RegExp(entry1.join("|")).test(className)) {
+		   tag = "deo:Reference"
+        	}
+		this.outerHTML =
                     `<section id="${className}" inlist="" resource="#${className}">
                         <h2 property="schema:name">${this.innerHTML}</h2>
 			<div datatype="rdf:HTML" property="schema:description" resource="#${className}" typeof="${tag}">
 			</div>
                     	</section>`
-            }
+        	    }
+		}
         })
 
 	

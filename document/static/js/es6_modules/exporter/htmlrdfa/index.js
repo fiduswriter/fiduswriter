@@ -89,7 +89,7 @@ export class HTMLRDFaExporter extends BaseHTMLRDFaExporter {
         let sidetagList = []
         contents = this.convertSideCommentsToRDFa(contents,this.doc.comments, sidetagList)
 
-        contents = this.adjustSections(contents,sidetagList)
+        //contents = this.adjustSections(contents,sidetagList)
 
  	contents = this.addRefeneceRDFa(contents)
  	contents = this.addRefeneces(contents)

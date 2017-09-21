@@ -1,4 +1,4 @@
-import {ImageUploadDialog} from "../upload-dialog"
+import {ImageEditDialog} from "../edit-dialog"
 
 export let menuModel = {
     content: [
@@ -51,7 +51,7 @@ export let menuModel = {
             icon: 'plus-circle',
             title: gettext('Upload new image'),
             action: overview => {
-                let imageUpload = new ImageUploadDialog(
+                let imageUpload = new ImageEditDialog(
                     overview.imageDB
                 )
                 imageUpload.init().then(

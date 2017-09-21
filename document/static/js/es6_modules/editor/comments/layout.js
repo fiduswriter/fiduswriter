@@ -254,7 +254,7 @@ export class ModCommentLayout {
               commentPlacementStyle = ''
             referrers.forEach((referrer, index) => {
                 let commentBox = commentBoxes[index]
-                if (commentBox.classList.contains("hidden")) {
+                if (!commentBox || commentBox.classList.contains("hidden")) {
                     return
                 }
                 let commentBoxCoords = commentBox.getBoundingClientRect(),

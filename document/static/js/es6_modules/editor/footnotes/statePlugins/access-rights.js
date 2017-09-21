@@ -15,8 +15,8 @@ export let accessRightsPlugin = function(options) {
             }
 
             if (
-                COMMENT_ONLY_ROLES.includes(this.mod.editor.docInfo.access_rights) ||
-                READ_ONLY_ROLES.includes(this.mod.editor.docInfo.access_rights)
+                COMMENT_ONLY_ROLES.includes(options.editor.docInfo.access_rights) ||
+                READ_ONLY_ROLES.includes(options.editor.docInfo.access_rights)
             ) {
                 allowed = false
             }

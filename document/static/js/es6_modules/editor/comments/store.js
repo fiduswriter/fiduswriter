@@ -41,7 +41,10 @@ export class ModCommentStore {
             userAvatar = this.mod.editor.user.avatar
         }
 
-
+        let transaction = addCommentDuringCreationDecoration(this.mod.editor.view.state)
+        if (transaction) {
+            this.mod.editor.view.dispatch(transaction)
+        }
         this.commentDuringCreation = {
             comment: new Comment(
                 id,
@@ -52,11 +55,6 @@ export class ModCommentStore {
                 ''),
             inDOM: false
         }
-        let transaction = addCommentDuringCreationDecoration(this.mod.editor.view.state)
-        if (transaction) {
-            this.mod.editor.view.dispatch(transaction)
-        }
-
     }
 
     removeCommentDuringCreation() {

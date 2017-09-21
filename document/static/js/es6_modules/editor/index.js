@@ -283,7 +283,7 @@ export class Editor {
                 comment.userName, comment.userAvatar, comment.date, comment.comment,
                 comment.answers, comment['review:isMajor'])
         })
-        this.mod.comments.layout.onChange()
+        this.mod.comments.layout.view()
         this.waitingForDocument = false
         // Get document settings
         this.mod.settings.check(this.view.state.doc.firstChild.attrs)

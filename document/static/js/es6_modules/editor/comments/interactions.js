@@ -78,7 +78,15 @@ export class ModCommentInteractions {
         this.mod.layout.deactivateAll()
         this.mod.store.addCommentDuringCreation()
         this.mod.layout.activeCommentId = -1
-        this.mod.layout.layoutComments()
+        this.mod.layout.layoutComments().then(
+            () => {
+                let commentBox = document.querySelector('.comment-box.active .commentText')
+                if (commentBox) {
+                    commentBox.focus()
+                }
+            }
+        )
+
     }
 
     getCommentId(node) {

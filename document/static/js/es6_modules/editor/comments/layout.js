@@ -131,20 +131,12 @@ export class ModCommentLayout {
         return false
     }
 
-    onSelectionChange() {
+    view() {
         // Give up if the user is currently editing a comment.
         if (this.isCurrentlyEditing()) {
             return false
         }
         this.activateSelectedComment()
-        return this.updateDOM()
-    }
-
-    onChange() {
-        // Give up if the user is currently editing a comment.
-        if (this.isCurrentlyEditing()) {
-            return false
-        }
         return this.updateDOM()
     }
 
@@ -254,7 +246,7 @@ export class ModCommentLayout {
               commentPlacementStyle = ''
             referrers.forEach((referrer, index) => {
                 let commentBox = commentBoxes[index]
-                if (!commentBox || commentBox.classList.contains("hidden")) {
+                if (commentBox.classList.contains("hidden")) {
                     return
                 }
                 let commentBoxCoords = commentBox.getBoundingClientRect(),

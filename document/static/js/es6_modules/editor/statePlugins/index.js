@@ -49,3 +49,7 @@ export {
     toolbarPlugin
 }
 from "./toolbar"
+export {
+    accessRightsPlugin
+}
+from "./access-rights"

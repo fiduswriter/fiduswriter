@@ -171,6 +171,13 @@ export let footnoteMarkersPlugin = function(options) {
                     fnMarkers
                 }
             }
-        }
+        },
+        view(editorState) {
+            return {
+                update: (view, prevState) => {
+                    options.editor.mod.footnotes.layout.updateDOM()
+                }
+            }
+        },
     })
 }

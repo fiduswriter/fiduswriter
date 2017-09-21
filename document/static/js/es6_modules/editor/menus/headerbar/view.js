@@ -192,8 +192,15 @@ export class HeaderbarView {
         if (participants.length > 1) {
             return `
                 <div id="connected-collaborators">
-                    ${participants.map(participant =>
-                        `<img src="${participant.avatar}" alt="${escapeText(participant.name)}" title="${escapeText(participant.name)}" class="avatar user-${participant.colorId}">`).join('')
+                    ${
+                        participants.map(participant =>
+                            `<img src="${participant.avatar}" alt="${
+                                escapeText(participant.name)
+                            }" title="${
+                                escapeText(participant.name)
+                            }" class="avatar user-${
+                                participant.colorId
+                            }">`).join('')
                     }
                 </div>
             `

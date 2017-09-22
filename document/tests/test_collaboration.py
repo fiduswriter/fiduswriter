@@ -961,7 +961,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         # LOCAL MACHINE to the input tag
         upload_image_url = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located(
-                (By.XPATH, '//*[@id="uploadimage"]/div[1]/input[2]')
+                (By.XPATH, '//*[@id="editimage"]/div[1]/input[2]')
             )
         )
         upload_image_url.send_keys(imagePath)

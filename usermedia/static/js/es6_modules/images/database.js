@@ -40,13 +40,17 @@ export class ImageDB {
     }
 
     saveImage(postData) {
+
+        const data = new window.FormData()
+        Object.entries(postData).forEach(entry => data.append(entry[0], entry[1]))
+
         activateWait()
 
         return new Promise((resolve, reject) => {
             // Send to server
             jQuery.ajax({
                 url: '/usermedia/save/',
-                data: postData,
+                data,
                 type: 'POST',
                 dataType: 'json',
                 crossDomain: false, // obviates need for sameOrigin test

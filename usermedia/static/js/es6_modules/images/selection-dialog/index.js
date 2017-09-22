@@ -1,5 +1,5 @@
-import {usermediaImageSelectionTemplate} from "./templates"
-import {ImageUploadDialog} from "../upload-dialog"
+import {imageSelectionTemplate} from "./templates"
+import {ImageEditDialog} from "../edit-dialog"
 import {cancelPromise} from "../../common"
 
 export class ImageSelectionDialog {
@@ -26,7 +26,7 @@ export class ImageSelectionDialog {
                 db: 'user'
             })
         })
-        this.imageDialog = jQuery(usermediaImageSelectionTemplate({
+        this.imageDialog = jQuery(imageSelectionTemplate({
                 images
             })).dialog({
             width: 'auto',
@@ -114,7 +114,7 @@ export class ImageSelectionDialog {
         })
         return new Promise (resolve => {
             jQuery('#selectImageUploadButton').bind('click', () => {
-                let imageUpload = new ImageUploadDialog(
+                let imageUpload = new ImageEditDialog(
                     this.userImageDB // We can only upload to the user's image db
                 )
                 resolve(

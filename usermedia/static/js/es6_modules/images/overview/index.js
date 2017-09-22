@@ -1,10 +1,10 @@
-import {ImageUploadDialog} from "../upload-dialog"
 import {ImageDB} from "../database"
 import {ImageOverviewCategories} from "./categories"
 import {addDropdownBox, activateWait, deactivateWait, addAlert, csrfToken} from "../../common"
 import {SiteMenu} from "../../menu"
 import {OverviewMenuView} from "../../common"
 import {menuModel} from "./menu"
+import {ImageEditDialog} from "../edit-dialog"
 import {usermediaCategoryListItem, usermediaTableTemplate} from "./templates"
 import * as plugins from "../../plugins/images-overview"
  /** Helper functions for user added images/SVGs.*/
@@ -34,9 +34,8 @@ export class ImageOverview {
 
     //delete image
     deleteImage(ids) {
-        for (let i = 0; i < ids.length; i++) {
-            ids[i] = parseInt(ids[i])
-        }
+        ids = ids.map(id => parseInt(id))
+
         let postData = {
             'ids[]': ids
         }
@@ -209,24 +208,20 @@ export class ImageOverview {
     bindEvents() {
         let that = this
         jQuery(document).on('click', '.delete-image', function () {
-            let ImageId = jQuery(this).attr('data-id')
-            that.deleteImageDialog([ImageId])
+            let imageId = jQuery(this).attr('data-id')
+            that.deleteImageDialog([imageId])
         })
 
         jQuery(document).on('click', '.edit-image', function () {
-            let id = parseInt(jQuery(this).attr('data-id'))
-            let imageUpload = new ImageUploadDialog(
-                that.imageDB,
-                id
-            )
-            imageUpload.init().then(
+            let imageId = jQuery(this).attr('data-id')
+            let dialog = new ImageEditDialog(that.imageDB, imageId)
+            dialog.init().then(
                 imageId => {
                     that.stopUsermediaTable()
                     that.appendToImageTable(imageId)
                     that.startUsermediaTable()
                 }
             )
-
         })
 
     }

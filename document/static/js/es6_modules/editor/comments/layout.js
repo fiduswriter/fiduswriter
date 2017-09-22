@@ -13,7 +13,6 @@ export class ModCommentLayout {
         this.activeCommentId = false
         this.activeCommentAnswerId = false
         this.setup()
-        this.bindEvents()
     }
 
     setup() {
@@ -27,38 +26,6 @@ export class ModCommentLayout {
         }
     }
 
-    bindEvents() {
-        /*TODO: use it or remote it
-        // Handle comments show/hide
-        jQuery(document).on('click', '#comments-display:not(.disabled)',
-            function() {
-                jQuery(this).toggleClass('selected') // what should this look like? CSS needs to be defined
-                jQuery('#comment-box-container').toggleClass('hide')
-                jQuery('#flow').toggleClass('comments-enabled')
-                jQuery('.toolbarcomment button').toggleClass('disabled')
-            })
-
-        let that = this
-        jQuery(document).on('mousedown', '#comments-filter label',
-            function(event) {
-                event.preventDefault()
-                let filterType = jQuery(this).attr("data-filter")
-
-                switch (filterType) {
-                    case 'r':
-                    case 'w':
-                    case 'e':
-                    case 'c':
-                        that.filterByUserType(filterType)
-                        break
-                    case 'username':
-                        that.filterByUserDialog()
-                        break
-                }
-            }
-        )*/
-
-    }
 
     activateComment(id) {
         this.deactivateAll()
@@ -93,7 +60,7 @@ export class ModCommentLayout {
 
 
     layoutComments() {
-        this.updateDOM()
+        return this.updateDOM()
     }
 
     isCurrentlyEditing() {
@@ -131,20 +98,12 @@ export class ModCommentLayout {
         return false
     }
 
-    onSelectionChange() {
+    view() {
         // Give up if the user is currently editing a comment.
         if (this.isCurrentlyEditing()) {
             return false
         }
         this.activateSelectedComment()
-        return this.updateDOM()
-    }
-
-    onChange() {
-        // Give up if the user is currently editing a comment.
-        if (this.isCurrentlyEditing()) {
-            return false
-        }
         return this.updateDOM()
     }
 
@@ -229,7 +188,6 @@ export class ModCommentLayout {
             theComments.splice(index, 0, comment)
             referrers.splice(index, 0, pos)
             activeCommentStyle += '.comments-enabled .active-comment, .comments-enabled .active-comment .comment {background-color: #fffacf !important;}'
-            this.mod.store.commentDuringCreation.inDOM = true
         }
 
         let commentsTemplateHTML = commentsTemplate({
@@ -247,108 +205,43 @@ export class ModCommentLayout {
             document.getElementById('active-comment-style').innerHTML = activeCommentStyle
         }
 
-        fastdom.measure(() => {
-            // DOM read phase
-            let totalOffset = document.getElementById('comment-box-container').getBoundingClientRect().top + 10,
-              commentBoxes = document.querySelectorAll('#comment-box-container .comment-box'),
-              commentPlacementStyle = ''
-            referrers.forEach((referrer, index) => {
-                let commentBox = commentBoxes[index]
-                if (commentBox.classList.contains("hidden")) {
-                    return
-                }
-                let commentBoxCoords = commentBox.getBoundingClientRect(),
-                  commentBoxHeight = commentBoxCoords.height,
-                  referrerTop = this.mod.editor.view.coordsAtPos(referrer).top,
-                  topMargin = 10
+        return new Promise(resolve => {
 
-                if (referrerTop > totalOffset) {
-                    topMargin = parseInt(referrerTop - totalOffset)
-                    commentPlacementStyle += '.comment-box:nth-of-type('+(index+1)+') {margin-top: ' + topMargin + 'px;}\n'
-                }
-                totalOffset += commentBoxHeight + topMargin
+            fastdom.measure(() => {
+                // DOM read phase
+                let totalOffset = document.getElementById('comment-box-container').getBoundingClientRect().top + 10,
+                  commentBoxes = document.querySelectorAll('#comment-box-container .comment-box'),
+                  commentPlacementStyle = ''
+                referrers.forEach((referrer, index) => {
+                    let commentBox = commentBoxes[index]
+                    if (commentBox.classList.contains("hidden")) {
+                        return
+                    }
+                    let commentBoxCoords = commentBox.getBoundingClientRect(),
+                      commentBoxHeight = commentBoxCoords.height,
+                      referrerTop = this.mod.editor.view.coordsAtPos(referrer).top,
+                      topMargin = 10
+
+                    if (referrerTop > totalOffset) {
+                        topMargin = parseInt(referrerTop - totalOffset)
+                        commentPlacementStyle += '.comment-box:nth-of-type('+(index+1)+') {margin-top: ' + topMargin + 'px;}\n'
+                    }
+                    totalOffset += commentBoxHeight + topMargin
+                })
+                fastdom.mutate(() => {
+                    //DOM write phase
+                    if (document.getElementById('comment-placement-style').innerHTML != commentPlacementStyle) {
+                        document.getElementById('comment-placement-style').innerHTML = commentPlacementStyle
+                    }
+                    if(this.mod.store.commentDuringCreation) {
+                        this.mod.store.commentDuringCreation.inDOM = true
+                    }
+                    resolve()
+                })
             })
-            fastdom.mutate(() => {
-                //DOM write phase
-                if (document.getElementById('comment-placement-style').innerHTML != commentPlacementStyle) {
-                    document.getElementById('comment-placement-style').innerHTML = commentPlacementStyle
-                }
-            })
+
         })
 
     }
-
-    /**
-     * Filtering part. akorovin
-     */
-     // TODO:Use it or get rid of it!
-    /*filterByUserType(userType) {
-        //filter by user role (reader, editor, reviewer etc)
-        let userRoles = this.mod.editor.docInfo.collaborators
-        let idsOfNeededUsers = []
-
-        jQuery.each(userRoles, function(index, user) {
-            if (user.rights == userType) {
-                idsOfNeededUsers.push(user.user_id)
-            }
-        })
-
-        jQuery("#comment-box-container").children().each(function() {
-            var userId = parseInt(jQuery(this).attr("data-user-id"), 10)
-            if (jQuery.inArray(userId, idsOfNeededUsers) !== -1) {
-                jQuery(this).show()
-            } else {
-                jQuery(this).hide()
-            }
-        })
-    }
-
-    filterByUserDialog() {
-        //create array of roles + owner role
-        let rolesCopy = this.mod.editor.docInfo.collaborators.slice()
-        rolesCopy.push({
-            user_name: this.mod.editor.docInfo.owner.name,
-            user_id: this.mod.editor.docInfo.owner.id
-        })
-
-        let users = {
-            users: rolesCopy
-        }
-
-        jQuery('body').append(filterByUserBoxTemplate(users))
-        let diaButtons = {}
-        diaButtons[gettext('Filter')] = function() {
-            let id = jQuery(this).children("select").val()
-            if (id === undefined) {
-                return
-            }
-
-            let boxesToHide = jQuery("#comment-box-container").children("[data-user-id!='" + id + "']").hide()
-                //let boxesToHide = jQuery("#comment-box-container").children("[data-user-id='" + id + "']").show()
-
-            //TODO: filtering
-            jQuery(this).dialog("close")
-        }
-
-        diaButtons[gettext('Cancel')] = function() {
-            jQuery(this).dialog("close")
-        }
-
-        jQuery("#comment-filter-byuser-box").dialog({
-            resizable: false,
-            height: 180,
-            modal: true,
-            close: function() {
-                jQuery("#comment-filter-byuser-box").detach()
-            },
-            buttons: diaButtons,
-            create: function() {
-                let theDialog = jQuery(this).closest(".ui-dialog");
-                theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
-                theDialog.find(".ui-button:last").addClass("fw-button fw-orange")
-            }
-        })
-    }*/
-
 
 }

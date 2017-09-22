@@ -99,12 +99,10 @@ export class ModCommentLayout {
     }
 
     view() {
-        console.log('VIW')
         // Give up if the user is currently editing a comment.
         if (this.isCurrentlyEditing()) {
             return false
         }
-        console.log('here')
         this.activateSelectedComment()
         return this.updateDOM()
     }

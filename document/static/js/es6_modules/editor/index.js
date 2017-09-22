@@ -89,7 +89,8 @@ import {
     commentsPlugin,
     linksPlugin,
     keywordInputPlugin,
-    authorInputPlugin
+    authorInputPlugin,
+    accessRightsPlugin
 } from "./statePlugins"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
@@ -137,7 +138,8 @@ export class Editor {
             [commentsPlugin, () => ({editor: this})],
             [keywordInputPlugin, () => ({editor: this})],
             [authorInputPlugin, () => ({editor: this})],
-            [pastePlugin, () => ({editor: this})]
+            [pastePlugin, () => ({editor: this})],
+            [accessRightsPlugin, () => ({editor: this})]
         ]
         new ModFootnotes(this)
         new ModServerCommunications(this)
@@ -162,16 +164,11 @@ export class Editor {
                 }
             },
             dispatchTransaction: (transaction) => {
-                let remote = transaction.getMeta('remote')
-                if (!remote) {
-                    if (this.onFilterTransaction(transaction)) {
-                        return
-                    }
-                }
                 let newState = this.view.state.apply(transaction)
                 this.view.updateState(newState)
+                let remote = transaction.getMeta('remote')
                 this.onTransaction(transaction, remote)
-            },
+            }
 
         })
         // The editor that is currently being edited in -- main or footnote editor
@@ -286,7 +283,7 @@ export class Editor {
                 comment.userName, comment.userAvatar, comment.date, comment.comment,
                 comment.answers, comment['review:isMajor'])
         })
-        this.mod.comments.layout.onChange()
+        this.mod.comments.layout.view()
         this.waitingForDocument = false
         // Get document settings
         this.mod.settings.check(this.view.state.doc.firstChild.attrs)
@@ -308,29 +305,6 @@ export class Editor {
             comments: this.mod.comments.store.comments,
             id: this.docInfo.id
         }
-    }
-
-    // filter transactions.
-    onFilterTransaction(transaction) {
-        let prohibited = false
-
-        if (READ_ONLY_ROLES.indexOf(this.docInfo.access_rights) > -1) {
-            // User only has read access. Don't allow anything.
-            prohibited = true
-        } else if (COMMENT_ONLY_ROLES.indexOf(this.docInfo.access_rights) > -1) {
-            //User has a comment-only role (commentator, editor or reviewer)
-
-            //Check all transaction steps. If step type not allowed = prohibit
-            //check if in allowed array. if false - exit loop
-            if (!transaction.steps.every(step =>
-                (step.jsonID === 'addMark' || step.jsonID === 'removeMark') &&
-                step.mark.type.name === 'comment'
-            )) {
-                prohibited = true
-            }
-        }
-
-        return prohibited
     }
 
     // Use PMs scrollIntoView function and adjust for top menu
@@ -388,11 +362,8 @@ export class Editor {
 
     // Things to be executed on every editor transaction.
     onTransaction(transaction, remote) {
-        let updateBibliography = false, updateSettings = false,
-            commentIds = []
+        let updateBibliography = false, updateSettings = false
             // Check what area is affected
-
-        this.mod.footnotes.layout.updateDOM()
 
         this.mod.collab.docChanges.sendToCollaborators()
 
@@ -406,13 +377,6 @@ export class Editor {
                             if (node.type.name === 'citation') {
                                 // A citation was replaced
                                 updateBibliography = true
-                            }
-                            if (!remote) {
-                                this.mod.comments.layout.findCommentIds(node).forEach(commentId => {
-                                    if (!commentIds.includes(commentId)) {
-                                        commentIds.push(commentId)
-                                    }
-                                })
                             }
                         }
                     )
@@ -433,18 +397,6 @@ export class Editor {
         if (updateSettings) {
             this.mod.settings.check(this.view.state.doc.firstChild.attrs)
         }
-        if (!remote && commentIds.length > 0) {
-            // Check if the deleted comment referrers still are somewhere else in the doc.
-            // If not, move them.
-            this.mod.comments.store.checkAndMove(commentIds)
-        }
-        if (transaction.selectionSet) {
-            this.mod.comments.layout.onSelectionChange()
-        } else {
-            this.mod.comments.layout.onChange()
-        }
-
-        this.docInfo.changed = true
     }
 
 }

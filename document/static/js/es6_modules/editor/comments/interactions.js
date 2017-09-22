@@ -78,7 +78,15 @@ export class ModCommentInteractions {
         this.mod.layout.deactivateAll()
         this.mod.store.addCommentDuringCreation()
         this.mod.layout.activeCommentId = -1
-        this.mod.layout.layoutComments()
+        this.mod.layout.layoutComments().then(
+            () => {
+                let commentBox = document.querySelector('.comment-box.active .commentText')
+                if (commentBox) {
+                    commentBox.focus()
+                }
+            }
+        )
+
     }
 
     getCommentId(node) {
@@ -93,7 +101,6 @@ export class ModCommentInteractions {
         } else {
             // Handle the deletion of a comment.
             this.mod.store.deleteComment(id, true)
-            this.mod.editor.docInfo.changed = true
         }
         this.mod.layout.layoutComments()
     }
@@ -168,7 +175,6 @@ export class ModCommentInteractions {
         // Handle the deletion of a comment answer.
         this.mod.store.deleteAnswer(id, answerId)
         this.mod.layout.deactivateAll()
-        this.mod.editor.docInfo.changed = true
         this.mod.layout.layoutComments()
     }
 
@@ -214,7 +220,6 @@ export class ModCommentInteractions {
 
         this.mod.layout.deactivateAll()
         this.mod.layout.layoutComments()
-        this.mod.editor.docInfo.changed = true
     }
 
     submitAnswerEdit(textArea) {
@@ -228,7 +233,6 @@ export class ModCommentInteractions {
     submitAnswerUpdate(id, answerId, commentText) {
         this.mod.store.updateAnswer(id, answerId, commentText)
         this.mod.layout.deactivateAll()
-        this.mod.editor.docInfo.changed = true
         this.mod.layout.layoutComments()
     }
 }

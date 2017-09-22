@@ -41,7 +41,10 @@ export class ModCommentStore {
             userAvatar = this.mod.editor.user.avatar
         }
 
-
+        let transaction = addCommentDuringCreationDecoration(this.mod.editor.view.state)
+        if (transaction) {
+            this.mod.editor.view.dispatch(transaction)
+        }
         this.commentDuringCreation = {
             comment: new Comment(
                 id,
@@ -52,11 +55,6 @@ export class ModCommentStore {
                 ''),
             inDOM: false
         }
-        let transaction = addCommentDuringCreationDecoration(this.mod.editor.view.state)
-        if (transaction) {
-            this.mod.editor.view.dispatch(transaction)
-        }
-
     }
 
     removeCommentDuringCreation() {
@@ -85,54 +83,6 @@ export class ModCommentStore {
         this.mustSend()
     }
 
-
-    moveComment(id, pos) {
-        // The content to which a comment was linked has been removed.
-        // We need to find text close to the position to which we can link
-        // comment. This is user for reviewer comments that should not be lost.
-
-        let markType = this.mod.editor.view.state.schema.marks.comment.create({id})
-        let doc = this.mod.editor.view.state.doc
-        let posFrom = pos-1
-        let posTo = pos
-        // We move backward through the document, trying to pick a start position
-        // the depth is 1 between document parts, and comments should be moved
-        // across these.
-        // We decrease the from position until there is some text between posFrom
-        // and posTo or until we hit the start of the document part.
-        while (
-            doc.resolve(posFrom).depth > 1 &&
-            !doc.textBetween(posFrom, posTo).length
-        ) {
-            posFrom--
-        }
-        // If we ended up reaching a document part boundary rather than finding
-        // text, we try again, this time moving in the opposite direction.
-        // We start at the original position and then increase posTo
-        if (doc.resolve(posFrom).depth === 1){
-            posFrom = posTo
-            posTo++
-            while (
-                doc.resolve(posTo).depth > 1 &&
-                !doc.textBetween(posFrom, posTo).length
-            ) {
-                posTo++
-            }
-
-            // If also the increase of posTo only made us reach a document part
-            // boundary, it means all text has been removed. So now we insert a
-            // single space which we can link to.
-            if (doc.resolve(posTo).depth === 1) {
-                this.mod.editor.view.dispatch(
-                    this.mod.editor.view.state.tr.insertText(posFrom,' ')
-                )
-                posTo = posFrom + 1
-            }
-        }
-        this.mod.editor.view.dispatch(
-            this.mod.editor.view.state.tr.addMark(posFrom, posTo, markType)
-        )
-    }
 
     addLocalComment(id, user, userName, userAvatar, date, comment, answers, isMajor, local) {
         if (!this.comments[id]) {
@@ -211,31 +161,6 @@ export class ModCommentStore {
             this.mustSend()
         }
     }
-
-    checkAndMove(ids) {
-        // Check if there is still a node referring to the comment IDs that
-        // were in the deleted content.
-        this.mod.editor.view.state.doc.descendants((node, pos, parent) => {
-            if (!node.isInline) {
-                return
-            }
-            this.mod.layout.findCommentIds(node).forEach(id => {
-                if (ids.includes(id)) {
-                    ids.splice(ids.indexOf(id), 1)
-                }
-            })
-        })
-
-        // Move the comment to a piece of text nearby
-        ids.forEach(id => {
-            let pos = this.mod.editor.view.state.selection.from
-            this.moveComment(
-                id,
-                pos
-            )
-        })
-    }
-
 
     addLocalAnswer(id, answer, local) {
         if (this.comments[id]) {

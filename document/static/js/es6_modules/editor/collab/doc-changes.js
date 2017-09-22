@@ -185,11 +185,17 @@ export class ModCollabDocChanges {
     }
 
     receiveSelectionChange(data) {
-        let transaction, fnTransaction
+        let participant = this.mod.participants.find(par  => par.id === data.id),
+            transaction, fnTransaction
+
+        if (!participant) {
+            // participant is still unknown to us. Ignore
+            return
+        }
         if (data.editor === 'footnotes') {
             fnTransaction = updateCollaboratorSelection(
                 this.mod.editor.mod.footnotes.fnEditor.view.state,
-                this.mod.participants.find(par  => par.id === data.id),
+                participant,
                 data
             )
             transaction = removeCollaboratorSelection(
@@ -199,7 +205,7 @@ export class ModCollabDocChanges {
         } else {
             transaction = updateCollaboratorSelection(
                 this.mod.editor.view.state,
-                this.mod.participants.find(par  => par.id === data.id),
+                participant,
                 data
             )
             fnTransaction = removeCollaboratorSelection(

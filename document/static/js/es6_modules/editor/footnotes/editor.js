@@ -16,7 +16,9 @@ import {
     getFootnoteMarkerContents,
     updateFootnoteMarker
 } from "../statePlugins"
-import {COMMENT_ONLY_ROLES, REVIEW_ROLES} from ".."
+import {
+    accessRightsPlugin
+} from "./statePlugins"
 import {fnNodeToPmNode} from "../../schema/footnotes-convert"
 
 /* Functions related to the footnote editor instance */
@@ -34,7 +36,8 @@ export class ModFootnoteEditor {
             [collab],
             [toolbarPlugin, () => ({editor: this.mod.editor})],
             [collabCaretsPlugin, () => ({editor: this.mod.editor})],
-            [pastePlugin, () => ({editor: this.mod.editor})]
+            [pastePlugin, () => ({editor: this.mod.editor})],
+            [accessRightsPlugin, () => ({editor: this.mod.editor})]
         ]
     }
 
@@ -61,12 +64,6 @@ export class ModFootnoteEditor {
             },
             dispatchTransaction: (transaction) => {
                 let remote = transaction.getMeta('remote')
-                if (!remote) {
-                    let filterFree = transaction.getMeta('filterFree')
-                    if (!filterFree & this.onFilterTransaction(transaction)) {
-                        return
-                    }
-                }
                 let newState = this.view.state.apply(transaction)
                 this.view.updateState(newState)
 
@@ -75,23 +72,6 @@ export class ModFootnoteEditor {
             }
         })
 
-    }
-
-    // filter transactions, disallowing all transactions going across document parts/footnotes.
-    onFilterTransaction(transaction) {
-        let prohibited = false
-
-        if (
-            COMMENT_ONLY_ROLES.includes(this.mod.editor.docInfo.access_rights) ||
-            REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)
-        ) {
-            prohibited = true
-        }
-
-        if (transaction.docs.length && transaction.docs[0].childCount !== transaction.doc.childCount) {
-            prohibited = true
-        }
-        return prohibited
     }
 
     // Find out if we need to recalculate the bibliography

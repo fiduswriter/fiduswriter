@@ -82,6 +82,8 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
     convertCommentsToRDFa(htmlCode) {
 
        jQuery(htmlCode).find('span.comment').each(function() {
+       	var rect = this.getBoundingClientRect()
+       	console.log(rect.top, rect.right, rect.bottom, rect.left)
             let id = jQuery(this).attr('data-id')
             jQuery(this).attr({"rel": "schema:hasPart", "typeof": "dctypes:Text", "resource": "r-" + id})
             let commentDescription = this.innerHTML,
@@ -182,10 +184,10 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
     convertSideCommentsToRDFa(htmlCode,comments,sidetagList ){
     	jQuery(htmlCode).find('.comment').each(function () {
     		let sidetags,
-    		id = jQuery(this).attr('data-id'),
-    		commentNode = comments[id],
+    		id = jQuery(this).attr('data-id'),    		
+    		commentNode = comments[id],    	
     		commentHeader = '<article id="' + commentNode.id + '" about="i:" typeof="oa:Annotation" prefix="rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns# schema: http://schema.org/ dcterms: http://purl.org/dc/terms/ oa: http://www.w3.org/ns/oa# as: https://www.w3.org/ns/activitystreams#\
-    	 i: ' + window.location.href + '#' + commentNode.id + '" style="top:'+this.top+'">',
+    	 i: ' + window.location.href + '#' + commentNode.id + '" >',
             commentBody = '<h3 property="schema:name" style="display:none">' + commentNode.userName + '   <span rel="oa:motivatedBy" resource="oa:replying">replies</span></h1>\
     	<dl class="author-name"><dt>Authors</dt><dd><span rel="schema:creator"><span about="userURI#' + commentNode.user + '" typeof="schema:Person">\
     	<img alt="" rel="schema:image" src="' + commentNode.userAvatar + '" width="48" height="48"> <a href="#">\
@@ -193,11 +195,11 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
     	<dl class="published"><dt>Published</dt><dd><a href="' + window.location.href + '#' + commentNode.id + '"><time datetime="' + commentNode.date + '" datatype="xsd:dateTime" property="schema:datePublished" content="' + commentNode.date + '">' + commentNode.date + '</time></a></dd>\
     	<section id="comment-' + commentNode.id + '" rel="oa:hasBody" resource="i:#comment-' + commentNode.id + '">\
     	<h2 property="schema:name">Comment</h2>\
-    	<div datatype="rdf:HTML" property="rdf:value schema:description" resource="i:#comment-' + commentNode.id + '" typeof="oa:TextualBody">' + commentNode.comment + '</div></section></br></br>'
+    	<div datatype="rdf:HTML" property="rdf:value schema:description" resource="i:#comment-' + commentNode.id + '" typeof="oa:TextualBody">' + commentNode.comment + '</div></section>'
 
         if (commentNode.answers.length > 0) {
             for (let i = 0; i < commentNode.answers.length; i++) {
-                commentBody += '<h3 property="schema:name" style="display:none">Answers</h2></br>/br><dl class="author-name"><dt>Authors</dt><dd><span rel="schema:creator"><span about="userURI#' + commentNode.answers[i].user + '" typeof="schema:Person">\
+                commentBody += '<h3 property="schema:name" style="display:none">Answers</h2><dl class="author-name"><dt>Authors</dt><dd><span rel="schema:creator"><span about="userURI#' + commentNode.answers[i].user + '" typeof="schema:Person">\
     	<img alt="" rel="schema:image" src="' + commentNode.answers[i].userAvatar + '" width="48" height="48"> </img><a href="#">\
     	<span about="userURI#' + commentNode.answers[i].user + '" property="schema:name">' + commentNode.answers[i].userName + '</span></a></span></span></dd></dl>\
     	<dl class="published"><dt>Published</dt><dd><a href="' + window.location.href + '#' + commentNode.answers[i].id + '"><time datetime="' + commentNode.answers[i].date + '" datatype="xsd:dateTime" property="schema:datePublished" content="' + commentNode.answers[i].date + '">' + commentNode.answers[i].date + '</time></a></dd>\
@@ -208,28 +210,45 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
             }
         }
         sidetags = commentHeader+commentBody
-        sidetagList.push('<aside class="note do"> <blockquote cite="'+commentNode.id+'">'+sidetags+'</blockquote></aside>')
+        let sideTagNode=document.createElement('aside')
+        sideTagNode.classList.add('note')
+        sideTagNode.classList.add('do')
+        sideTagNode.innerHTML='<blockquote cite="'+commentNode.id+'">'+sidetags+'</blockquote>'      
+        sidetagList.push(sideTagNode)
     	})
     return htmlCode
     }
     
     adjustSections(htmlCode,sidetagList){
-    	
-    	let sections = jQuery(htmlCode).find('section'),
-    	sectionsSize=sections.length
-    	
-    	jQuery(htmlCode).find('section').each(function(index){    		
-    		this.outerHTML=this.outerHTML.replace(/<\/section>/g, "")
-    		if (index!=0) 
-    		{
-    			let x= this.outerHTML.replace(/<section/g, '</section> <section')
-    			this.outerHTML=x
-    		}
-    	
+    	    	
+    	jQuery(htmlCode).find('section').each(function(index){
+    		
+    		let next = this.nextSibling    	    			
+    		while (next && next.localName!='section'){
+    			this.parentNode.removeChild(next)
+    			this.appendChild(next)    				
+    			next=this.nextSibling
+    			if (!next) {break}
+    			}    			
     	})
-    	htmlCode.outerHTML= htmlCode.outerHTML.replace(/<\/div><\/div>/g,'</div></section></div>')
-    	for (let i=0; i<sidetaglist.length;i++ ) {
-    	htmlCode.outerHTML= htmlCode.outerHTML.replace(/<\/div><\/section><\/div>/g,sidetaglist[i])
+    	if (sidetagList.length > 0) {
+    		jQuery(htmlCode).find('section').each(function()
+    		{
+    			let tags=[]
+    			jQuery(this).find('span.comment').each(function(){    				
+    				for (let i=0; i<sidetagList.length;i++ ){
+    					if (sidetagList[i].innerHTML.includes(jQuery(this).attr('data-id')) ) {
+    						tags.push(sidetagList[i])
+    						}    			
+    						}
+    					})
+    			if (tags.length>0) {
+    				for (let i=0;i<tags.length;i++) {
+    					this.appendChild(tags[i])
+    					}    				
+    			}
+    		})
+    		
     	}
     return htmlCode
     }

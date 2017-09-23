@@ -100,7 +100,7 @@ export let keywordInputPlugin = function(options) {
                 blur: (view, event) => {
                     event.preventDefault()
                     // Set a timeout so that change of focus can take place first
-                    setTimeout(() => {submitKeyword(view.state, undefined, view)},0)
+                    window.setTimeout(() => {submitKeyword(view.state, undefined, view)},1)
                 }
             },
             dispatchTransaction: (transaction) => {

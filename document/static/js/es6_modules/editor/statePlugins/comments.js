@@ -9,6 +9,10 @@ let moveComment = function(doc, id, pos) {
     // The content to which a comment was linked has been removed.
     // We need to find text close to the position to which we can link
     // comment. This is user for reviewer comments that should not be lost.
+    if (!pos) {
+        // The position is linked to the start of the document.
+        pos = 1
+    }
     let posFrom = pos-1
     let posTo = pos
     // We move backward through the document, trying to pick a start position
@@ -18,7 +22,8 @@ let moveComment = function(doc, id, pos) {
     // and posTo or until we hit the start of the document part.
     while (
         doc.resolve(posFrom).depth > 1 &&
-        !doc.textBetween(posFrom, posTo).length
+        !doc.textBetween(posFrom, posTo).length &&
+        posFrom
     ) {
         posFrom--
     }

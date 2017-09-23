@@ -5,7 +5,7 @@ body {
     font-size: 13px;
     color: #2c2723;
     width: 100%;
-    background-color: #fff;
+    background-color: #f2f2f2;
 }
 
 header {
@@ -204,6 +204,7 @@ div#statusarea .error {
     bottom: 50px;
     position: relative;
     max-width: 1600px;
+    padding: .5in 68px 0 68px;
 }
 #flow .article-bibliography {
     background-color: lightgrey;
@@ -348,6 +349,7 @@ span.delete {
     position: relative;
     width: 100%;
     bottom: 50px;
+    border: 1px solid #ccc;
 }
 
 figure {
@@ -380,25 +382,6 @@ div#flow {
 #flow {
     background-color: white;
 }
-/*
-body {counter-reset: pagination-footnote pagination-footnote-reference;}
-#flow .pagination-footnote::before {
-    counter-increment: pagination-footnote-reference;
-    content: counter(pagination-footnote-reference);
-}
-
-#flow .pagination-footnote > * > *:first-child::before {
-    counter-increment: pagination-footnote;
-    content: counter(pagination-footnote);}
-#flow .pagination-footnote > * > * {display: block;}
-#flow .pagination-footnote > * > * {font-size: 0.7em; margin:.25em;}
-#flow .pagination-footnote > * > *::before, .pagination-footnote::before {position: relative; top: -0.5em; font-size: 80%;}
-#flow .pagination-footnote > span {
-    position: absolute;
-    right: calc(-20vw - 10px);
-    width: 20vw;
-}
-*/
 
 .figure-cat-figure::after {
     counter-increment: figure-cat-0;
@@ -736,19 +719,19 @@ span.anchor {
     background: #76a698;
     border: 1px solid #7d948e;
 }
+*:focus {
+    outline: none;
+}
 
-/* Additions for desktop */
-@media screen and (min-width: 1025px) {
+/* Additions for tablets + mobile */
+@media screen and (max-width: 1024px) {
     #editor-content {
-        padding: .5in 68px 0 68px;
+        padding: 0;
     }
     #flow {
-        border: 1px solid #ccc;
+        border-width: 0;
     }
     body {
-        background-color: #f2f2f2;
-    }
-    *:focus {
-        outline: none;
+        background-color: #fff;
     }
 }

@@ -96,6 +96,13 @@ export let keywordInputPlugin = function(options) {
                     })
                 ]
             }),
+            handleDOMEvents: {
+                blur: (view, event) => {
+                    event.preventDefault()
+                    // Set a timeout so that change of focus can take place first
+                    setTimeout(() => {submitKeyword(view.state, undefined, view)},0)
+                }
+            },
             dispatchTransaction: (transaction) => {
                 let newState = keywordView.state.apply(transaction)
                 keywordView.updateState(newState)

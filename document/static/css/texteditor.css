@@ -5,7 +5,7 @@ body {
     font-size: 13px;
     color: #2c2723;
     width: 100%;
-    background-color: #f2f2f2;
+    background-color: #fff;
 }
 
 header {
@@ -202,7 +202,6 @@ div#statusarea .error {
     display: flex;
     top: 200px;
     bottom: 50px;
-    padding: .5in 68px 0 68px !important;
     position: relative;
     max-width: 1600px;
 }
@@ -339,11 +338,6 @@ span.delete {
 .pagination-footnote-item-container > div {
     margin-left: 15px;
 }
-
-#flow {
-    border: 1px solid #ccc;
-}
-
 .article-body, .pagination-footnote > * > * {
     font-size: 12pt;
 }
@@ -419,10 +413,6 @@ body {counter-reset: pagination-footnote pagination-footnote-reference;}
 .figure-cat-table::after {
     counter-increment: figure-cat-2;
     content: ' ' counter(figure-cat-2) ': ';
-}
-
-*:focus {
-    outline: none;
 }
 
 #document-editable {
@@ -745,4 +735,20 @@ span.anchor {
     color: #fff;
     background: #76a698;
     border: 1px solid #7d948e;
+}
+
+/* Additions for desktop */
+@media screen and (min-width: 1025px) {
+    #editor-content {
+        padding: .5in 68px 0 68px;
+    }
+    #flow {
+        border: 1px solid #ccc;
+    }
+    body {
+        background-color: #f2f2f2;
+    }
+    *:focus {
+        outline: none;
+    }
 }

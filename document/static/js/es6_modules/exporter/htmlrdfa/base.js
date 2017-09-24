@@ -184,6 +184,7 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
     convertSideCommentsToRDFa(htmlCode,comments,sidetagList ){
     	jQuery(htmlCode).find('.comment').each(function () {
     		let sidetags
+		let id
     		id = jQuery(this).attr('data-id')
 		if(id !== null && id !== "" ){    		
     		  commentNode = comments[id]    	

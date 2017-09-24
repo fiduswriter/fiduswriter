@@ -202,9 +202,9 @@ div#statusarea .error {
     display: flex;
     top: 200px;
     bottom: 50px;
-    padding: .5in 68px 0 68px !important;
     position: relative;
     max-width: 1600px;
+    padding: .5in 68px 0 68px;
 }
 #flow .article-bibliography {
     background-color: lightgrey;
@@ -339,11 +339,6 @@ span.delete {
 .pagination-footnote-item-container > div {
     margin-left: 15px;
 }
-
-#flow {
-    border: 1px solid #ccc;
-}
-
 .article-body, .pagination-footnote > * > * {
     font-size: 12pt;
 }
@@ -354,6 +349,7 @@ span.delete {
     position: relative;
     width: 100%;
     bottom: 50px;
+    border: 1px solid #ccc;
 }
 
 figure {
@@ -386,25 +382,6 @@ div#flow {
 #flow {
     background-color: white;
 }
-/*
-body {counter-reset: pagination-footnote pagination-footnote-reference;}
-#flow .pagination-footnote::before {
-    counter-increment: pagination-footnote-reference;
-    content: counter(pagination-footnote-reference);
-}
-
-#flow .pagination-footnote > * > *:first-child::before {
-    counter-increment: pagination-footnote;
-    content: counter(pagination-footnote);}
-#flow .pagination-footnote > * > * {display: block;}
-#flow .pagination-footnote > * > * {font-size: 0.7em; margin:.25em;}
-#flow .pagination-footnote > * > *::before, .pagination-footnote::before {position: relative; top: -0.5em; font-size: 80%;}
-#flow .pagination-footnote > span {
-    position: absolute;
-    right: calc(-20vw - 10px);
-    width: 20vw;
-}
-*/
 
 .figure-cat-figure::after {
     counter-increment: figure-cat-0;
@@ -419,10 +396,6 @@ body {counter-reset: pagination-footnote pagination-footnote-reference;}
 .figure-cat-table::after {
     counter-increment: figure-cat-2;
     content: ' ' counter(figure-cat-2) ': ';
-}
-
-*:focus {
-    outline: none;
 }
 
 #document-editable {
@@ -745,4 +718,20 @@ span.anchor {
     color: #fff;
     background: #76a698;
     border: 1px solid #7d948e;
+}
+*:focus {
+    outline: none;
+}
+
+/* Additions for tablets + mobile */
+@media screen and (max-width: 1024px) {
+    #editor-content {
+        padding: 0;
+    }
+    #flow {
+        border-width: 0;
+    }
+    body {
+        background-color: #fff;
+    }
 }

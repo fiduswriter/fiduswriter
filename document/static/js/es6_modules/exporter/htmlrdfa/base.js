@@ -279,16 +279,28 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
             if (this.classList !== null && this.innerHTML !== null) {
                 className = this.innerHTML
                 className = className.replace(/\s+/g, '')
-		if(className !== null && className !== "" ){
+		    if(className !== null && className !== "" ){
                 this.classList.add(className)
                 this.id = className
+			if(className == "references"){
+				let tag = "deo:Reference"
+				this.outerHTML =
+                    `<section id="${className}" inlist="" resource="#${className}">
+                        <h2 property="schema:name">${this.innerHTML}</h2>
+			<div datatype="rdf:HTML" property="schema:description" resource="#${className}" typeof="${tag}">
+			</div>
+                    	</section>`
+			}else{
                 this.outerHTML =
                     `<section id="${className}" inlist="" resource="#${className}">
                         <h3 property="schema:name">${this.innerHTML}</h3>
                     </section>`
-            }
+                       }
+	    }
 	  }
-        })        
+        }) 
+
+        
         jQuery(dom).find('h1').each(function(index) {
             if (this.classList !== null && this.innerHTML !== null) {
                 className = this.innerHTML

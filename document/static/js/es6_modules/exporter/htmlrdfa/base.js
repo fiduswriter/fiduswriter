@@ -262,7 +262,7 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
             if (this.classList !== null && this.innerHTML !== null) {
                 className = this.innerHTML
                 className = className.replace(/\s+/g, '')
-
+		if(className !== null && className !== "" ){
 		if(className){
 		    this.classList.add(className)
                     this.id = className
@@ -278,6 +278,7 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
             if (this.classList !== null && this.innerHTML !== null) {
                 className = this.innerHTML
                 className = className.replace(/\s+/g, '')
+		if(className !== null && className !== "" ){
                 this.classList.add(className)
                 this.id = className
                 this.outerHTML =

@@ -421,9 +421,9 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
             return htmlString
         }
         referenceEl.attr({
-            "typeof": "deo:Reference"
+            "typeof": "deo:BibliographicReference"
         })
-	jQuery(htmlString).find('div.csl-entry').each(function(index) {
+	jQuery(htmlString).find('div.div.csl-entry').each(function(index) {
             if (this.innerHTML !== null) {
                     this.outerHTML =
                     `<li>

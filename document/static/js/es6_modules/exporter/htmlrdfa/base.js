@@ -181,16 +181,15 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
         return dom
     }
 
-    convertSideCommentsToRDFa(htmlCode, comments, sidetagList){
+    convertSideCommentsToRDFa(htmlCode,comments,sidetagList ){
     	jQuery(htmlCode).find('.comment').each(function () {
     		let sidetags
-		let id
-    		id = jQuery(this).attr('data-id')
-		if(id !== null && id !== ""&& comments !== null && comments.constructor === Array && sidetagList !== null && sidetagList.constructor === Array ){    		
-    		  commentNode = comments[id]    	
-    		  commentHeader = '<article id="' + commentNode.id + '" about="i:" typeof="oa:Annotation" prefix="rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns# schema: http://schema.org/ dcterms: http://purl.org/dc/terms/ oa: http://www.w3.org/ns/oa# as: https://www.w3.org/ns/activitystreams#\
+    		let id = jQuery(this).attr('data-id')    		
+		if(id !== null && id !== "" && comments !== null  && comments.constructor === Array && sidetagList !== null && sidetagList.constructor === Array ){    		    		
+		commentNode = comments[id]    	
+    		commentHeader = '<article id="' + commentNode.id + '" about="i:" typeof="oa:Annotation" prefix="rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns# schema: http://schema.org/ dcterms: http://purl.org/dc/terms/ oa: http://www.w3.org/ns/oa# as: https://www.w3.org/ns/activitystreams#\
     	 i: ' + window.location.href + '#' + commentNode.id + '" >',
-            	  commentBody = '<h3 property="schema:name" style="display:none">' + commentNode.userName + '   <span rel="oa:motivatedBy" resource="oa:replying">replies</span></h1>\
+            commentBody = '<h3 property="schema:name" style="display:none">' + commentNode.userName + '   <span rel="oa:motivatedBy" resource="oa:replying">replies</span></h1>\
     	<dl class="author-name"><dt>Authors</dt><dd><span rel="schema:creator"><span about="userURI#' + commentNode.user + '" typeof="schema:Person">\
     	<img alt="" rel="schema:image" src="' + commentNode.userAvatar + '" width="48" height="48"> <a href="#">\
     	<span about="userURI#' + commentNode.user + '" property="schema:name">' + commentNode.userName + '</span></a></span></span></dd></dl>\
@@ -199,9 +198,9 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
     	<h2 property="schema:name">Comment</h2>\
     	<div datatype="rdf:HTML" property="rdf:value schema:description" resource="i:#comment-' + commentNode.id + '" typeof="oa:TextualBody">' + commentNode.comment + '</div></section>'
 
-        	  if (commentNode.answers.length > 0) {
-		     for (let i = 0; i < commentNode.answers.length; i++) {
-                	commentBody += '<h3 property="schema:name" style="display:none">Answers</h2><dl class="author-name"><dt>Authors</dt><dd><span rel="schema:creator"><span about="userURI#' + commentNode.answers[i].user + '" typeof="schema:Person">\
+        if (commentNode.answers.length > 0) {
+            for (let i = 0; i < commentNode.answers.length; i++) {
+                commentBody += '<h3 property="schema:name" style="display:none">Answers</h2><dl class="author-name"><dt>Authors</dt><dd><span rel="schema:creator"><span about="userURI#' + commentNode.answers[i].user + '" typeof="schema:Person">\
     	<img alt="" rel="schema:image" src="' + commentNode.answers[i].userAvatar + '" width="48" height="48"> </img><a href="#">\
     	<span about="userURI#' + commentNode.answers[i].user + '" property="schema:name">' + commentNode.answers[i].userName + '</span></a></span></span></dd></dl>\
     	<dl class="published"><dt>Published</dt><dd><a href="' + window.location.href + '#' + commentNode.answers[i].id + '"><time datetime="' + commentNode.answers[i].date + '" datatype="xsd:dateTime" property="schema:datePublished" content="' + commentNode.answers[i].date + '">' + commentNode.answers[i].date + '</time></a></dd>\
@@ -209,17 +208,17 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
     	<h2 property="schema:name">Answer</h2>\
     	<div datatype="rdf:HTML" property="rdf:value schema:description" resource="i:#answer-' + commentNode.answers[i].id + '" typeof="oa:TextualBody">' + commentNode.answers[i].comment + '</div></section>'
 
-            	    }
-        	}
-        	sidetags = commentHeader+commentBody
-        	let sideTagNode=document.createElement('aside')
-        	sideTagNode.classList.add('note')
-        	sideTagNode.classList.add('do')
-        	sideTagNode.innerHTML='<blockquote cite="'+commentNode.id+'">'+sidetags+'</blockquote>'      
-        	sidetagList.push(sideTagNode)
-	      }
+            }
+        }
+        sidetags = commentHeader+commentBody
+        let sideTagNode=document.createElement('aside')
+        sideTagNode.classList.add('note')
+        sideTagNode.classList.add('do')
+        sideTagNode.innerHTML='<blockquote cite="'+commentNode.id+'">'+sidetags+'</blockquote>'      
+        sidetagList.push(sideTagNode)
+	}
     	})
-     return htmlCode
+    return htmlCode
     }
     
     adjustSections(htmlCode,sidetagList){

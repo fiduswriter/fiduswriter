@@ -282,25 +282,14 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
 		    if(className !== null && className !== "" ){
                 this.classList.add(className)
                 this.id = className
-			if(className == "references"){
-				let tag = "deo:Reference"
-				this.outerHTML =
-                    `<section id="${className}" inlist="" resource="#${className}">
-                        <h2 property="schema:name">${this.innerHTML}</h2>
-			<div datatype="rdf:HTML" property="schema:description" resource="#${className}" typeof="${tag}">
-			</div>
-                    	</section>`
-			}else{
                 this.outerHTML =
                     `<section id="${className}" inlist="" resource="#${className}">
                         <h3 property="schema:name">${this.innerHTML}</h3>
                     </section>`
-                       }
 	    }
 	  }
         }) 
 
-        
         jQuery(dom).find('h1').each(function(index) {
             if (this.classList !== null && this.innerHTML !== null) {
                 className = this.innerHTML
@@ -397,7 +386,7 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
 		console.log(className)
 		console.log(tag)
 		this.outerHTML =
-                    `<section id="${className}" inlist="" resource="#${className}">
+                    `<section id="${className}" inlist="" rel="schema:hasPart" resource="#${className}">
                         <h2 property="schema:name">${this.innerHTML}</h2>
 			<div datatype="rdf:HTML" property="schema:description" resource="#${className}" typeof="${tag}">
 			</div>
@@ -416,7 +405,7 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
                     this.outerHTML =
                     `<section id="references">
 			<h2>References</h2>
-                        <div>
+                        <div datatype="rdf:HTML rel="schema:hasPart" typeof="deo:Reference">
                             <ol>${this.innerHTML}</ol>
 			</div>
                     </section>`

@@ -263,7 +263,6 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
                 className = this.innerHTML
                 className = className.replace(/\s+/g, '')
 		if(className !== null && className !== "" ){
-		if(className){
 		    this.classList.add(className)
                     this.id = className
                     this.outerHTML =
@@ -286,6 +285,7 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
                         <h3 property="schema:name">${this.innerHTML}</h3>
                     </section>`
             }
+	  }
         })        
         jQuery(dom).find('h1').each(function(index) {
             if (this.classList !== null && this.innerHTML !== null) {

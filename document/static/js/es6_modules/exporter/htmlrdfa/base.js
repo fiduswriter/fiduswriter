@@ -405,7 +405,7 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
                     this.outerHTML =
                     `<section id="references">
 			<h2>References</h2>
-                        <div datatype="rdf:HTML rel="schema:hasPart" typeof="deo:Reference">
+                        <div datatype="rdf:HTML" rel="schema:hasPart" typeof="deo:Reference">
                             <ol>${this.innerHTML}</ol>
 			</div>
                     </section>`

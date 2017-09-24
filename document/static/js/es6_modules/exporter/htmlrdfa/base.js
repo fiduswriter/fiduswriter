@@ -416,7 +416,7 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
 
 	addRefeneces(htmlString){
 
- 	var referenceEl = jQuery(htmlString).find('div.csl-entry')
+ 	var referenceEl = jQuery(htmlString).find('div.div.csl-entry')
         if (!referenceEl.length) {
             return htmlString
         }

@@ -91,8 +91,10 @@ export class HTMLRDFaExporter extends BaseHTMLRDFaExporter {
 
         contents = this.adjustSections(contents,sidetagList)
 
- 	contents = this.addRefeneceRDFa(contents)
  	contents = this.addRefeneces(contents)
+
+ 	contents = this.addRefeneceRDFa(contents)
+
 
         let contentsCode = this.replaceImgSrc(contents.innerHTML)
 

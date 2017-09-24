@@ -256,7 +256,25 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
     addSectionsTag(dom) {
         let className, rdfaType
 
-        jQuery(dom).find('h3').each(function(index) {
+
+
+      jQuery(dom).find('h3').each(function(index) {
+            if (this.classList !== null && this.innerHTML !== null) {
+                className = this.innerHTML
+                className = className.replace(/\s+/g, '')
+
+		if(className){
+		    this.classList.add(className)
+                    this.id = className
+                    this.outerHTML =
+                    `<section id="${className}" resource="#${className}">
+                        <h4 property="schema:name">${this.innerHTML}</h4>
+                    </section>`
+		}
+            }
+        })
+
+        jQuery(dom).find('h2').each(function(index) {
             if (this.classList !== null && this.innerHTML !== null) {
                 className = this.innerHTML
                 className = className.replace(/\s+/g, '')
@@ -268,12 +286,12 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
                     </section>`
             }
         })        
-        jQuery(dom).find('h2').each(function(index) {
+        jQuery(dom).find('h1').each(function(index) {
             if (this.classList !== null && this.innerHTML !== null) {
                 className = this.innerHTML
                 className = className.replace(/\s+/g, '')
-		if(className == !null){
- 
+		if(className !== null && className !== "" ){
+ 		//Titles are also H1 in FW, which have not class names
                 this.classList.add(className)
                 this.id = className
          
@@ -361,6 +379,8 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
         	if (new RegExp(entry1.join("|")).test(className)) {
 		   tag = "deo:Reference"
         	}
+		console.log(className)
+		console.log(tag)
 		this.outerHTML =
                     `<section id="${className}" inlist="" resource="#${className}">
                         <h2 property="schema:name">${this.innerHTML}</h2>
@@ -370,24 +390,6 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
         	    }
 		}
         })
-
-	
-        jQuery(dom).find('h1').each(function(index) {
-            if (this.classList !== null && this.innerHTML !== null) {
-                className = this.innerHTML
-                className = className.replace(/\s+/g, '')
-		//Titles are also H1 in FW, which have not class names
-		if(className){
-		    this.classList.add(className)
-                    this.id = className
-                    this.outerHTML =
-                    `<section id="${className}" resource="#${className}">
-                        <h1 property="schema:name">${this.innerHTML}</h1>
-                    </section>`
-		}
-            }
-        })
-
         
         return dom
     }

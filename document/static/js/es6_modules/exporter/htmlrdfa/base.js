@@ -181,12 +181,12 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
         return dom
     }
 
-    convertSideCommentsToRDFa(htmlCode,comments,sidetagList ){
+    convertSideCommentsToRDFa(htmlCode, comments, sidetagList){
     	jQuery(htmlCode).find('.comment').each(function () {
     		let sidetags
 		let id
     		id = jQuery(this).attr('data-id')
-		if(id !== null && id !== "" ){    		
+		if(id !== null && id !== ""&& comments !== null && comments.constructor === Array && sidetagList !== null && sidetagList.constructor === Array ){    		
     		  commentNode = comments[id]    	
     		  commentHeader = '<article id="' + commentNode.id + '" about="i:" typeof="oa:Annotation" prefix="rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns# schema: http://schema.org/ dcterms: http://purl.org/dc/terms/ oa: http://www.w3.org/ns/oa# as: https://www.w3.org/ns/activitystreams#\
     	 i: ' + window.location.href + '#' + commentNode.id + '" >',

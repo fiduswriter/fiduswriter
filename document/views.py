@@ -21,9 +21,10 @@ from avatar.templatetags.avatar_tags import avatar_url
 
 from document.models import Document, AccessRight, DocumentRevision, \
     ExportTemplate, CAN_UPDATE_DOCUMENT
-from usermedia.models import DocumentImage, UserImage, Image
+from usermedia.models import DocumentImage, Image
+from bibliography.models import Entry
 from document.helpers.serializers import PythonWithURLSerializer
-
+from bibliography.views import serializer
 from style.models import CitationStyle, CitationLocale
 
 
@@ -48,7 +49,6 @@ def get_accessrights(ars):
 @login_required
 def index(request):
     response = {}
-    response['export_templates'] = ExportTemplate.objects.all()
     response.update(csrf(request))
     return render(request, 'document/index.html',
                   response)
@@ -150,6 +150,10 @@ def get_documentlist_js(request):
             tm_object['avatar'] = avatar_url(team_member.member, 80)
             response['team_members'].append(tm_object)
         serializer = PythonWithURLSerializer()
+        export_temps = serializer.serialize(
+            ExportTemplate.objects.all()
+        )
+        response['export_templates'] = [obj['fields'] for obj in export_temps]
         cit_styles = serializer.serialize(
             CitationStyle.objects.all()
         )
@@ -187,13 +191,9 @@ def delete_js(request):
         )
         document = Document.objects.get(pk=doc_id, owner=request.user)
         document.delete()
-        for id in image_ids:
-            if not (
-                DocumentImage.objects.filter(image_id=id).exists() or
-                UserImage.objects.filter(image_id=id).exists()
-            ):
-                Image.objects.filter(id=id).delete()
-
+        for image in Image.objects.filter(id__in=image_ids):
+            if image.is_deletable():
+                image.delete()
         status = 200
     return JsonResponse(
         response,
@@ -532,6 +532,29 @@ def save_doc_js(request):
         if last_diffs:
             doc.last_diffs = last_diffs
         doc.save()
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@staff_member_required
+def get_user_biblist_js(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 200
+        user_id = request.POST['user_id']
+        response['bibList'] = serializer.serialize(
+            Entry.objects.filter(
+                entry_owner_id=user_id
+            ), fields=(
+                    'entry_key',
+                    'entry_owner',
+                    'bib_type',
+                    'fields'
+            )
+        )
     return JsonResponse(
         response,
         status=status

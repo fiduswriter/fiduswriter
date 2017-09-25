@@ -1,5 +1,9 @@
 import {Comment} from "./comment"
-import {addCommentDuringCreationDecoration, removeCommentDuringCreationDecoration} from "../plugins/comments"
+import {REVIEW_ROLES} from ".."
+import {
+    addCommentDuringCreationDecoration,
+    removeCommentDuringCreationDecoration
+} from "../statePlugins"
 
 export class ModCommentStore {
     constructor(mod) {
@@ -27,22 +31,30 @@ export class ModCommentStore {
     // as it is empty, shouldn't be shared and if canceled, it should go away
     // entirely.
     addCommentDuringCreation() {
-        let id = -1
-        this.commentDuringCreation = {
-            comment: new Comment(
-                id,
-                this.mod.editor.user.id,
-                this.mod.editor.user.name,
-                this.mod.editor.user.avatar,
-                new Date().getTime(),
-                ''),
-            inDOM: false
+        let id = -1, userName, userAvatar
+
+        if(REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
+            userName = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
+            userAvatar = `${window.staticUrl}img/default_avatar.png`
+        } else {
+            userName = this.mod.editor.user.name
+            userAvatar = this.mod.editor.user.avatar
         }
+
         let transaction = addCommentDuringCreationDecoration(this.mod.editor.view.state)
         if (transaction) {
             this.mod.editor.view.dispatch(transaction)
         }
-
+        this.commentDuringCreation = {
+            comment: new Comment(
+                id,
+                this.mod.editor.user.id,
+                userName,
+                userAvatar,
+                new Date().getTime(),
+                ''),
+            inDOM: false
+        }
     }
 
     removeCommentDuringCreation() {
@@ -58,10 +70,11 @@ export class ModCommentStore {
     // Add a new comment to the comment database both remotely and locally.
     addComment(user, userName, userAvatar, date, comment, isMajor, posFrom, posTo) {
         let id = randomID()
+
         this.addLocalComment(id, user, userName, userAvatar, date, comment, [], isMajor, true)
         this.unsent.push({
             type: "create",
-            id: id
+            id
         })
         let markType = this.mod.editor.view.state.schema.marks.comment.create({id})
         this.mod.editor.view.dispatch(
@@ -71,57 +84,18 @@ export class ModCommentStore {
     }
 
 
-    moveComment(id, pos) {
-        // The content to which a comment was linked has been removed.
-        // We need to find text close to the position to which we can link
-        // comment. This is user for reviewer comments that should not be lost.
-
-        let markType = this.mod.editor.view.state.schema.marks.comment.create({id})
-        let doc = this.mod.editor.view.state.doc
-        let posFrom = pos-1
-        let posTo = pos
-        // We move backward through the document, trying to pick a start position
-        // the depth is 1 between document parts, and comments should be moved
-        // across these.
-        // We decrease the from position until there is some text between posFrom
-        // and posTo or until we hit the start of the document part.
-        while (
-            doc.resolve(posFrom).depth > 1 &&
-            !doc.textBetween(posFrom, posTo).length
-        ) {
-            posFrom--
-        }
-        // If we ended up reaching a document part boundary rather than finding
-        // text, we try again, this time moving in the opposite direction.
-        // We start at the original position and then increase posTo
-        if (doc.resolve(posFrom).depth === 1){
-            posFrom = posTo
-            posTo++
-            while (
-                doc.resolve(posTo).depth > 1 &&
-                !doc.textBetween(posFrom, posTo).length
-            ) {
-                posTo++
-            }
-
-            // If also the increase of posTo only made us reach a document part
-            // boundary, it means all text has been removed. So now we insert a
-            // single space which we can link to.
-            if (doc.resolve(posTo).depth === 1) {
-                this.mod.editor.view.dispatch(
-                    this.mod.editor.view.state.tr.insertText(posFrom,' ')
-                )
-                posTo = posFrom + 1
-            }
-        }
-        this.mod.editor.view.dispatch(
-            this.mod.editor.view.state.tr.addMark(posFrom, posTo, markType)
-        )
-    }
-
     addLocalComment(id, user, userName, userAvatar, date, comment, answers, isMajor, local) {
         if (!this.comments[id]) {
-            this.comments[id] = new Comment(id, user, userName, userAvatar, date, comment, answers, isMajor)
+            this.comments[id] = new Comment(
+                id,
+                user,
+                userName,
+                userAvatar,
+                date,
+                comment,
+                answers,
+                isMajor
+            )
         }
         if (local || (!this.mod.layout.isCurrentlyEditing())) {
             this.mod.layout.layoutComments()
@@ -187,30 +161,6 @@ export class ModCommentStore {
             this.mustSend()
         }
     }
-
-    checkAndMove(ids) {
-        // Check if there is still a node referring to the comment IDs that
-        // were in the deleted content.
-        this.mod.editor.view.state.doc.descendants((node, pos, parent) => {
-            if (!node.isInline) {
-                return
-            }
-            let id = this.mod.layout.findCommentId(node)
-            if (id && ids.indexOf(id) !== -1) {
-                ids.splice(ids.indexOf(id),1)
-            }
-        })
-
-        // Move the comment to a piece of text nearby, unless the
-        ids.forEach(id => {
-            let pos = this.mod.editor.view.state.selection.from
-            this.moveComment(
-                id,
-                pos
-            )
-        })
-    }
-
 
     addLocalAnswer(id, answer, local) {
         if (this.comments[id]) {

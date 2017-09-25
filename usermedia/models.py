@@ -44,6 +44,20 @@ class Image(models.Model):
     def __unicode__(self):
         return str(self.pk)
 
+    def is_deletable(self):
+        reverse_relations = [
+            f for f in self._meta.model._meta.get_fields()
+            if (f.one_to_many or f.one_to_one) and
+            f.auto_created and not f.concrete
+        ]
+
+        for r in reverse_relations:
+            if r.remote_field.model.objects.filter(
+                **{r.field.name: self}
+            ).exists():
+                return False
+        return True
+
     def create_checksum(self):
         if not self.image:
             return
@@ -180,7 +194,7 @@ class UserImage(models.Model):
 
 # Image linked to a document
 class DocumentImage(models.Model):
-    title = models.CharField(max_length=128)
+    title = models.CharField(max_length=128, default='')
     document = models.ForeignKey(Document)
     image = models.ForeignKey(Image)
 

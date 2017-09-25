@@ -23,72 +23,7 @@
 {% endblock %}
 
 {% block contents %}
-<ul class="fw-document-menu">
-    <li class="fw-document-menu-item">
-        <div id="action-selection" class="fw-button fw-light fw-large">
-            <input type="checkbox" id="select-all-entry" />
-            <span id="select-action-dropdown-documents" class="fa fa-caret-down"></span>
-        </div>
-        <div id="action-selection-pulldown-documents" class="fw-pulldown fw-left">
-            <ul>
-                <li>
-                    <span class="fw-pulldown-item" data-action="delete">
-                        {% trans "Delete selected" %}
-                    </span>
-                </li>
-                <li>
-                    <span class="fw-pulldown-item" data-action="share">
-                        {% trans "Share selected" %}
-                    </span>
-                </li>
-                <li>
-                    <span class="fw-pulldown-item" data-action="copy">
-                        {% trans "Copy selected" %}
-                    </span>
-                </li>
-                <li>
-                    <span class="fw-pulldown-item" data-action="epub">
-                        {% trans "Export selected as Epub" %}
-                    </span>
-                </li>
-                <li>
-                    <span class="fw-pulldown-item" data-action="html">
-                        {% trans "Export selected as HTML" %}
-                    </span>
-                </li>
-                <li>
-                    <span class="fw-pulldown-item" data-action="latex">
-                        {% trans "Export selected as LaTeX" %}
-                    </span>
-                </li>
-                {% for export_template in export_templates %}
-                    <li>
-                        <span class="fw-pulldown-item" data-action="template-export" data-filetype="{{ export_template.file_type }}" data-template="{{ export_template.template_file.url }}">
-                            {{ export_template.file_name }} ({{ export_template.file_type }})
-                        </span>
-                    </li>
-                {% endfor %}
-                <li>
-                    <span class="fw-pulldown-item" data-action="native">
-                        {% trans "Download selected as Fidus Document" %}
-                    </span>
-                </li>
-            </ul>
-        </div>
-    </li>
-    <li class="fw-document-menu-item">
-        <a href="/document/new/" class="createNew fw-button fw-light fw-large">
-            {% trans "Create New Document" %}
-            <span class="fa fa-plus-circle"></span>
-        </a>
-    </li>
-    <li class="fw-document-menu-item">
-        <button class="import-fidus fw-button fw-light fw-large">
-            {% trans "Upload Fidus Document" %}
-            <span class="fa fa-download"></span>
-        </button>
-    </li>
-</ul>
+<ul id="fw-overview-menu"></ul>
 <div class="fw-table-wrapper">
     <table id="document-table" class="tablesorter fw-document-table">
         <thead class="fw-document-table-header">

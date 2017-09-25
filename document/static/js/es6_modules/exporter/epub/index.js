@@ -21,7 +21,7 @@ export class EpubExporter extends BaseEpubExporter {
         this.citationLocales = citationLocales
         this.bibDB = bibDB
         this.imageDB = imageDB
-        this.shortLang = this.doc.settings.language.split['-'][0]
+        this.shortLang = this.doc.settings.language.split('-')[0]
         this.lang = this.doc.settings.language
         this.exportOne()
     }

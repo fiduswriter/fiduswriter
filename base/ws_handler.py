@@ -1,4 +1,4 @@
-from urlparse import urlparse
+from future.moves.urllib.parse import urlparse
 from tornado.websocket import WebSocketHandler
 from django.db import connection
 from logging import info, debug

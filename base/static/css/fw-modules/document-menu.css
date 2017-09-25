@@ -1,21 +1,24 @@
-.fw-document-menu {
+#fw-overview-menu {
     position: relative;
     height: 40px;
     margin-bottom: 40px;
 }
 
-.fw-document-menu-item {
+.fw-overview-menu-item {
     position: relative;
     float: left;
     margin-right: 5px;
 }
 
-#action-selection {
-    cursor: default;
+div.select-action {
+    cursor: pointer;
     min-width: 38px;
 }
 
-#select-action-dropdown {
-    cursor: pointer;
-    margin: 0 -3px 0 -5px;
+div.select-action input[type=checkbox] {
+    cursor: default;
+}
+
+span.select-action-dropdown {
+    margin-left: 5px;
 }

@@ -1,10 +1,23 @@
-import {compare} from "fast-json-patch"
+import {
+    compare
+} from "fast-json-patch"
 
-import {sendableSteps, receiveTransaction} from "prosemirror-collab"
-import {Step} from "prosemirror-transform"
+import {
+    sendableSteps,
+    receiveTransaction
+} from "prosemirror-collab"
+import {
+    Step
+} from "prosemirror-transform"
 
-import {docSchema} from "../../schema/document"
-import {getSelectionUpdate, removeCollaboratorSelection, updateCollaboratorSelection} from "../plugins/collab-carets"
+import {
+    docSchema
+} from "../../schema/document"
+import {
+    getSelectionUpdate,
+    removeCollaboratorSelection,
+    updateCollaboratorSelection
+} from "../statePlugins"
 
 export class ModCollabDocChanges {
     constructor(mod) {
@@ -172,11 +185,16 @@ export class ModCollabDocChanges {
     }
 
     receiveSelectionChange(data) {
-        let transaction, fnTransaction
+        let participant = this.mod.participants.find(par  => par.id === data.id),
+            transaction, fnTransaction
+        if (!participant) {
+            // participant is still unknown to us. Ignore
+            return
+        }
         if (data.editor === 'footnotes') {
             fnTransaction = updateCollaboratorSelection(
                 this.mod.editor.mod.footnotes.fnEditor.view.state,
-                this.mod.participants.find(par  => par.id === data.id),
+                participant,
                 data
             )
             transaction = removeCollaboratorSelection(
@@ -186,7 +204,7 @@ export class ModCollabDocChanges {
         } else {
             transaction = updateCollaboratorSelection(
                 this.mod.editor.view.state,
-                this.mod.participants.find(par  => par.id === data.id),
+                participant,
                 data
             )
             fnTransaction = removeCollaboratorSelection(
@@ -242,8 +260,13 @@ export class ModCollabDocChanges {
     }
 
     confirmDiff(request_id) {
+        let unconfirmedDiffs = this.unconfirmedDiffs[request_id]
+        if (!unconfirmedDiffs) {
+            return
+        }
         this.mod.editor.docInfo.version++
-        let sentSteps = this.unconfirmedDiffs[request_id]["ds"] // document steps
+
+        let sentSteps = unconfirmedDiffs["ds"] // document steps
         if (sentSteps) {
             let transaction = receiveTransaction(
                 this.mod.editor.view.state,
@@ -256,7 +279,7 @@ export class ModCollabDocChanges {
             this.mod.editor.view.dispatch(transaction)
         }
 
-        let sentFnSteps = this.unconfirmedDiffs[request_id]["fs"] // footnote steps
+        let sentFnSteps = unconfirmedDiffs["fs"] // footnote steps
         if (sentFnSteps) {
             this.mod.editor.mod.footnotes.fnEditor.view.dispatch(
                 receiveTransaction(
@@ -269,17 +292,17 @@ export class ModCollabDocChanges {
             )
         }
 
-        let sentComments = this.unconfirmedDiffs[request_id]["cu"] // comment updates
+        let sentComments = unconfirmedDiffs["cu"] // comment updates
         if(sentComments) {
             this.mod.editor.mod.comments.store.eventsSent(sentComments)
         }
 
-        let sentBibliographyUpdates = this.unconfirmedDiffs[request_id]["bu"] // bibliography updates
+        let sentBibliographyUpdates = unconfirmedDiffs["bu"] // bibliography updates
         if(sentBibliographyUpdates) {
             this.mod.editor.mod.db.bibDB.eventsSent(sentBibliographyUpdates)
         }
 
-        let sentImageUpdates = this.unconfirmedDiffs[request_id]["iu"] // bibliography updates
+        let sentImageUpdates = unconfirmedDiffs["iu"] // image updates
         if(sentImageUpdates) {
             this.mod.editor.mod.db.imageDB.eventsSent(sentImageUpdates)
         }

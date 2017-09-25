@@ -41,7 +41,6 @@
         <!-- JS error handling -->
         <script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>
         <script type="text/javascript" src="{{ JQUERYUI_URL }}"></script>
-
         {% block extraheaders %}{% endblock %}
     </head>
     <body{% block isRegistration %}{% endblock %}>
@@ -63,25 +62,7 @@
                 </div><!-- end user preference -->
             </div><!-- end container -->
 
-            <nav id="header-nav">
-                <div class="fw-container fw-nav-container">
-                    <p class="fw-nav-item">
-                        <a class="fw-header-navigation-text" href="/" title="{% trans 'edit documents' %}" data-item="documents">
-                            {% trans "Documents" %}
-                        </a>
-                    </p>
-                    <p class="fw-nav-item">
-                        <a class="fw-header-navigation-text" href="/bibliography/" title="{% trans 'manage bibliography library' %}" data-item="bibliography">
-                            {% trans "Bibliography" %}
-                        </a>
-                    </p>
-                    <p class="fw-nav-item">
-                        <a class="fw-header-navigation-text" href="/usermedia/" title="{% trans 'manage image files' %}" data-item="images">
-                            {% trans "Images" %}
-                        </a>
-                    </p>
-                </div>
-            </nav>
+            <nav id="header-nav"></nav>
          </header>
 
         <div class="fw-contents">

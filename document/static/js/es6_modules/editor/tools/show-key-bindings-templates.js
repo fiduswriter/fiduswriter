@@ -14,6 +14,22 @@ export let showKeyBindingsTemplate = () =>
                 <kbd class="help-key"><span>Shift+CTRL+/</span></kbd>
                 <span class="help-key-def">${gettext('Show keyboard shortcuts')}</span>
               </li>
+              <li class="help-key-unit">
+                <kbd class="help-key"><span>CTRL+V</span></kbd>
+                <span class="help-key-def">${gettext('Paste with content detection')}</span>
+              </li>
+              <li class="help-key-unit">
+                <kbd class="help-key"><span>Shift+CTRL+V</span></kbd>
+                <span class="help-key-def">${gettext('Paste without content detection')}</span>
+              </li>
+              <li class="help-key-unit">
+                <kbd class="help-key"><span>Drop (from drag)</span></kbd>
+                <span class="help-key-def">${gettext('Paste with content detection')}</span>
+              </li>
+              <li class="help-key-unit">
+                <kbd class="help-key"><span>Shift+Drop (from drag)</span></kbd>
+                <span class="help-key-def">${gettext('Paste without content detection')}</span>
+              </li>
             </ul><!-- .help-list -->
             <ul class="help-list">
               <li class="help-key-unit">

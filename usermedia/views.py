@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.core.serializers.python import Serializer
 from django.utils.translation import ugettext as _
 
-from usermedia.models import Image, ImageCategory, UserImage, DocumentImage
+from usermedia.models import Image, ImageCategory, UserImage
 from .models import ALLOWED_FILETYPES
 
 
@@ -33,22 +33,22 @@ def save_js(request):
     response['errormsg'] = {}
     status = 403
     if request.is_ajax() and request.method == 'POST':
-        the_id = int(request.POST['id'])
         if 'image' in request.FILES and \
                 request.FILES['image'].content_type not in ALLOWED_FILETYPES:
             status = 200  # Not implemented
             response['errormsg']['error'] = _('Filetype not supported')
         else:
-            # We only allow owners to change their images.
-            user_image = UserImage.objects.filter(
-                pk=the_id,
-                owner=request.user
-            )
-            if user_image.exists():
-                user_image = user_image[0]
-                image = user_image.image
-                status = 200
-            else:
+            image = False
+            if 'id' in request.POST and 'image' not in request.FILES:
+                user_image = UserImage.objects.filter(
+                    image_id=int(request.POST['id']),
+                    owner=request.user
+                )
+                if user_image.exists():
+                    user_image = user_image[0]
+                    image = user_image.image
+                    status = 200
+            if image is False:
                 image = Image()
                 image.uploader = request.user
                 user_image = UserImage()
@@ -57,8 +57,8 @@ def save_js(request):
                 if 'checksum' in request.POST:
                     image.checksum = request.POST['checksum']
             user_image.title = request.POST['title']
-            if 'imageCat' in request.POST:
-                user_image.image_cat = request.POST['imageCat']
+            if 'cats' in request.POST:
+                user_image.image_cat = request.POST['cats']
             if 'image' in request.FILES:
                 image.image = request.FILES['image']
             if status == 201 and 'image' not in request.FILES:
@@ -75,7 +75,9 @@ def save_js(request):
                     'file_type': image.file_type,
                     'added': mktime(image.added.timetuple()) * 1000,
                     'checksum': image.checksum,
-                    'cats': user_image.image_cat.split(',')
+                    'cats': list(
+                        map(int, filter(bool, user_image.image_cat.split(',')))
+                    )
                 }
                 if image.thumbnail:
                     response['values']['thumbnail'] = image.thumbnail.url
@@ -99,12 +101,9 @@ def delete_js(request):
             image_id__in=ids,
             owner=request.user
         ).delete()
-        for id in ids:
-            if not (
-                DocumentImage.objects.filter(image_id=id).exists() or
-                UserImage.objects.filter(image_id=id).exists()
-            ):
-                Image.objects.filter(id=id).delete()
+        for image in Image.objects.filter(id__in=ids):
+            if image.is_deletable():
+                image.delete()
     return JsonResponse(
         response,
         status=status
@@ -132,7 +131,9 @@ def images_js(request):
                     'file_type': image.file_type,
                     'added': mktime(image.added.timetuple()) * 1000,
                     'checksum': image.checksum,
-                    'cats': user_image.image_cat.split(',')
+                    'cats': list(
+                        map(int, filter(bool, user_image.image_cat.split(',')))
+                    )
                 }
                 if image.thumbnail:
                     field_obj['thumbnail'] = image.thumbnail.url
@@ -154,6 +155,9 @@ def save_category_js(request):
     if request.is_ajax() and request.method == 'POST':
         ids = request.POST.getlist('ids[]')
         titles = request.POST.getlist('titles[]')
+        ImageCategory.objects.filter(
+            category_owner=request.user
+        ).exclude(id__in=ids).delete()
         x = 0
         for the_id in ids:
             the_id = int(the_id)
@@ -171,24 +175,6 @@ def save_category_js(request):
             the_cat.save()
             response['entries'].append(
                 {'id': the_cat.id, 'category_title': the_cat.category_title})
-        status = 201
-
-    return JsonResponse(
-        response,
-        status=status
-    )
-
-# delete a category
-
-
-@login_required
-def delete_category_js(request):
-    status = 405
-    response = {}
-    if request.is_ajax() and request.method == 'POST':
-        ids = request.POST.getlist('ids[]')
-        for id in ids:
-            ImageCategory.objects.get(pk=int(id)).delete()
         status = 201
 
     return JsonResponse(

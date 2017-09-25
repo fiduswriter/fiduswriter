@@ -4,7 +4,7 @@ import {GeneralPasteHandler} from "./general"
 export class GoogleDocsPasteHandler extends GeneralPasteHandler {
 
     outputHandlerType() {
-        console.log('google docs paste handler')
+        console.info('google docs paste handler')
     }
 
     // Convert an existing node to a different node, if needed.

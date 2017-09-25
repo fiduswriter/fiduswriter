@@ -1,42 +1,97 @@
 import * as plugins from "../plugins/editor"
 
 /* Functions for ProseMirror integration.*/
-import {EditorState, Plugin, TextSelection} from "prosemirror-state"
-import {EditorView, Decoration, DecorationSet} from "prosemirror-view"
-import {history, redo, undo} from "prosemirror-history"
-import {toggleMark, baseKeymap} from "prosemirror-commands"
-import {keymap} from "prosemirror-keymap/dist/keymap"
-import {buildKeymap} from "prosemirror-example-setup"
-import {collab} from "prosemirror-collab"
-import {tableEditing} from "prosemirror-tables"
-import {dropCursor} from "prosemirror-dropcursor"
+import {
+    EditorState,
+    Plugin,
+    TextSelection
+} from "prosemirror-state"
+import {
+    EditorView,
+    Decoration,
+    DecorationSet
+} from "prosemirror-view"
+import {
+    history,
+    redo,
+    undo
+} from "prosemirror-history"
+import {
+    toggleMark,
+    baseKeymap
+} from "prosemirror-commands"
+import {
+    keymap
+} from "prosemirror-keymap"
+import {
+    collab
+} from "prosemirror-collab"
+import {
+    tableEditing
+} from "prosemirror-tables"
+import {
+    dropCursor
+} from "prosemirror-dropcursor"
+import {
+    buildKeymap
+} from "prosemirror-example-setup"
+import {
+    docSchema
+} from "../schema/document"
+import {
+    ModComments
+} from "./comments"
+import {
+    ModFootnotes
+} from "./footnotes"
+import {
+    ModCitations
+} from "./citations"
+import {
+    ModDB
+} from "./databases"
+import {
+    ModCollab
+} from "./collab"
+import {
+    ModTools
+} from "./tools"
+import {
+    ModSettings
+} from "./settings"
+import {
+    headerbarModel,
+    toolbarModel
+} from "./menus"
+import {
+    ModStyles
+} from "./styles"
+import {
+    ModServerCommunications
+} from "./server-communications"
+import {
+    getSettings
+} from "../schema/convert"
+import {
+    BibliographyDB
+} from "../bibliography/database"
+import {
+    ImageDB
+} from "../images/database"
 
-import {docSchema} from "../schema/document"
-import {ModComments} from "./comments"
-import {ModFootnotes} from "./footnotes"
-import {ModCitations} from "./citations"
-import {ModDB} from "./databases"
-import {ModCollab} from "./collab"
-import {ModTools} from "./tools"
-import {ModSettings} from "./settings"
-import {headerbarModel, toolbarModel} from "./menus"
-import {ModStyles} from "./styles"
-import {ModServerCommunications} from "./server-communications"
-import {getSettings} from "../schema/convert"
-import {BibliographyDB} from "../bibliography/database"
-import {ImageDB} from "../images/database"
-import {HTMLPaste, TextPaste} from "./paste"
-import {addDropdownBox} from "../common"
-
-import {placeholdersPlugin} from "./plugins/placeholders"
-import {headerbarPlugin} from "./plugins/headerbar"
-import {toolbarPlugin} from "./plugins/toolbar"
-import {collabCaretsPlugin} from "./plugins/collab-carets"
-import {footnoteMarkersPlugin} from "./plugins/footnote-markers"
-import {commentsPlugin} from "./plugins/comments"
-import {linksPlugin} from "./plugins/links"
-import {keywordInputPlugin} from "./plugins/keyword-input"
-import {authorInputPlugin} from "./plugins/author-input"
+import {
+    pastePlugin,
+    placeholdersPlugin,
+    headerbarPlugin,
+    toolbarPlugin,
+    collabCaretsPlugin,
+    footnoteMarkersPlugin,
+    commentsPlugin,
+    linksPlugin,
+    keywordInputPlugin,
+    authorInputPlugin,
+    accessRightsPlugin
+} from "./statePlugins"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']
@@ -78,11 +133,13 @@ export class Editor {
             [placeholdersPlugin, () => ({editor: this})],
             [headerbarPlugin, () => ({editor: this})],
             [toolbarPlugin, () => ({editor: this})],
-            [collabCaretsPlugin],
+            [collabCaretsPlugin, () => ({editor: this})],
             [footnoteMarkersPlugin, () => ({editor: this})],
             [commentsPlugin, () => ({editor: this})],
             [keywordInputPlugin, () => ({editor: this})],
-            [authorInputPlugin, () => ({editor: this})]
+            [authorInputPlugin, () => ({editor: this})],
+            [pastePlugin, () => ({editor: this})],
+            [accessRightsPlugin, () => ({editor: this})]
         ]
         new ModFootnotes(this)
         new ModServerCommunications(this)
@@ -101,32 +158,18 @@ export class Editor {
             state: EditorState.create({
                 schema: this.schema
             }),
-            onFocus: () => {
-                if (this.currentView != this.view) {
+            handleDOMEvents: {
+                focus: (view, event) => {
                     this.currentView = this.view
                 }
             },
-            onBlur: (view) => {
-            },
-            transformPastedHTML: inHTML => {
-                let ph = new HTMLPaste(inHTML, "main")
-                return ph.getOutput()
-            },
-            transformPastedText: inText => {
-                let ph = new TextPaste(this, inText, "main")
-                return ph.getOutput()
-            },
             dispatchTransaction: (transaction) => {
-                let remote = transaction.getMeta('remote')
-                if (!remote) {
-                    if (this.onFilterTransaction(transaction)) {
-                        return
-                    }
-                }
                 let newState = this.view.state.apply(transaction)
                 this.view.updateState(newState)
+                let remote = transaction.getMeta('remote')
                 this.onTransaction(transaction, remote)
             }
+
         })
         // The editor that is currently being edited in -- main or footnote editor
         this.currentView = this.view
@@ -198,9 +241,9 @@ export class Editor {
         this.schema.cached.imageDB = this.mod.db.imageDB
         // assign image DB to be used in footnote schema.
         this.mod.footnotes.fnEditor.schema.cached.imageDB = this.mod.db.imageDB
-        this.user.bibDB = new BibliographyDB(this.user.id, true)
+        this.user.bibDB = new BibliographyDB()
         this.user.bibDB.getDB()
-        this.user.imageDB = new ImageDB(this.user.id, true)
+        this.user.imageDB = new ImageDB()
         this.user.imageDB.getDB()
 
         let stateDoc
@@ -240,7 +283,7 @@ export class Editor {
                 comment.userName, comment.userAvatar, comment.date, comment.comment,
                 comment.answers, comment['review:isMajor'])
         })
-        this.mod.comments.layout.onChange()
+        this.mod.comments.layout.view()
         this.waitingForDocument = false
         // Get document settings
         this.mod.settings.check(this.view.state.doc.firstChild.attrs)
@@ -262,29 +305,6 @@ export class Editor {
             comments: this.mod.comments.store.comments,
             id: this.docInfo.id
         }
-    }
-
-    // filter transactions.
-    onFilterTransaction(transaction) {
-        let prohibited = false
-
-        if (READ_ONLY_ROLES.indexOf(this.docInfo.access_rights) > -1) {
-            // User only has read access. Don't allow anything.
-            prohibited = true
-        } else if (COMMENT_ONLY_ROLES.indexOf(this.docInfo.access_rights) > -1) {
-            //User has a comment-only role (commentator, editor or reviewer)
-
-            //Check all transaction steps. If step type not allowed = prohibit
-            //check if in allowed array. if false - exit loop
-            if (!transaction.steps.every(step =>
-                (step.jsonID === 'addMark' || step.jsonID === 'removeMark') &&
-                step.mark.type.name === 'comment'
-            )) {
-                prohibited = true
-            }
-        }
-
-        return prohibited
     }
 
     // Use PMs scrollIntoView function and adjust for top menu
@@ -342,11 +362,8 @@ export class Editor {
 
     // Things to be executed on every editor transaction.
     onTransaction(transaction, remote) {
-        let updateBibliography = false, updateSettings = false,
-            commentIds = []
+        let updateBibliography = false, updateSettings = false
             // Check what area is affected
-
-        this.mod.footnotes.layout.updateDOM()
 
         this.mod.collab.docChanges.sendToCollaborators()
 
@@ -360,12 +377,6 @@ export class Editor {
                             if (node.type.name === 'citation') {
                                 // A citation was replaced
                                 updateBibliography = true
-                            }
-                            if (!remote) {
-                                let commentId = this.mod.comments.layout.findCommentId(node)
-                                if (commentId !== false && !commentIds.includes(commentId)) {
-                                    commentIds.push(commentId)
-                                }
                             }
                         }
                     )
@@ -386,18 +397,6 @@ export class Editor {
         if (updateSettings) {
             this.mod.settings.check(this.view.state.doc.firstChild.attrs)
         }
-        if (!remote && commentIds.length > 0) {
-            // Check if the deleted comment referrers still are somewhere else in the doc.
-            // If not, move them.
-            this.mod.comments.store.checkAndMove(commentIds)
-        }
-        if (transaction.selectionSet) {
-            this.mod.comments.layout.onSelectionChange()
-        } else {
-            this.mod.comments.layout.onChange()
-        }
-
-        this.docInfo.changed = true
     }
 
 }

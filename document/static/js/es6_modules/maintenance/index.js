@@ -4,9 +4,7 @@ import {updateFileDoc, updateFileBib} from "../importer/update"
 import {updateDoc, getSettings} from "../schema/convert"
 import {docSchema} from "../schema/document"
 import {addAlert, csrfToken} from "../common"
-import {Menu} from "../menu"
 import {FW_FILETYPE_VERSION} from "../exporter/native"
-import {BibliographyDB} from "../bibliography/database"
 import JSZip from "jszip"
 import JSZipUtils from "jszip-utils"
 
@@ -18,7 +16,6 @@ export class DocMaintenance {
         this.batchesDone = false
         this.docSavesLeft = 0
         this.revSavesLeft = 0
-        new Menu('maintenance')
     }
 
     bind() {
@@ -74,9 +71,32 @@ export class DocMaintenance {
             if (docVersion < 2) {
                 // In version 0 - 1.x, the bibliography had to be loaded from
                 // the document user.
-                let bibGetter = new BibliographyDB(doc.fields.owner)
-                bibGetter.getDB().then(({bibPKs, bibCats}) => {
-                    resolve(bibGetter.db)
+                jQuery.ajax({
+                    url: '/document/maintenance/get_user_biblist/',
+                    data: {
+                        'user_id': doc.fields.owner
+                    },
+                    type: 'POST',
+                    dataType: 'json',
+                    crossDomain: false, // obviates need for sameOrigin test
+                    beforeSend: (xhr, settings) =>
+                        xhr.setRequestHeader("X-CSRFToken", csrfToken),
+                    success: (response, textStatus, jqXHR) => {
+                        let bibDB = response.bibList.reduce((db, item) => {
+                            let id = item['id']
+                            let bibDBEntry = {}
+                            bibDBEntry['fields'] = JSON.parse(item['fields'])
+                            bibDBEntry['bib_type'] = item['bib_type']
+                            bibDBEntry['entry_key'] = item['entry_key']
+                            db[id] = bibDBEntry
+                            return db
+                        }, {})
+                        resolve(bibDB)
+                    },
+                    error: (jqXHR, textStatus, errorThrown) => {
+                        addAlert('error', jqXHR.responseText)
+                        reject()
+                    }
                 })
             } else {
                 resolve(doc.bibliography)

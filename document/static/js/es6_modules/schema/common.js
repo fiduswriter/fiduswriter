@@ -71,7 +71,7 @@ export let figure = {
         image: {default: false},
         figureCategory: {default: ""},
         caption: {default: ""},
-        id: {compute: randomFigureId}
+        id: {default: false}
     },
     parseDOM: [{
         tag: 'figure',
@@ -167,14 +167,15 @@ export let randomHeadingId = () => {
 
 export let heading = {
     group: "block",
-    content: "inline<_>*",
+    content: "inline*",
+    marks: "_",
     defining: true,
     attrs: {
         level: {
             default: 1
         },
         id: {
-            compute: randomHeadingId
+            default: false
         }
     },
     parseDOM: [{tag: "h1", getAttrs(dom) {return {level: 1, id: dom.getAttribute('id')}}},
@@ -193,7 +194,7 @@ export let randomAnchorId = () => {
 export let anchor = {
     attrs: {
         id: {
-            compute: randomAnchorId
+            default: false
         }
     },
     inclusive: false,

@@ -1,6 +1,7 @@
-import {getCommentDuringCreationDecoration} from "../plugins/comments"
-/* Functions related to user interactions with comments */
+import {getCommentDuringCreationDecoration} from "../statePlugins"
+import {REVIEW_ROLES} from ".."
 
+/* Functions related to user interactions with comments */
 export class ModCommentInteractions {
     constructor(mod) {
         mod.interactions = this
@@ -77,7 +78,15 @@ export class ModCommentInteractions {
         this.mod.layout.deactivateAll()
         this.mod.store.addCommentDuringCreation()
         this.mod.layout.activeCommentId = -1
-        this.mod.layout.layoutComments()
+        this.mod.layout.layoutComments().then(
+            () => {
+                let commentBox = document.querySelector('.comment-box.active .commentText')
+                if (commentBox) {
+                    commentBox.focus()
+                }
+            }
+        )
+
     }
 
     getCommentId(node) {
@@ -92,7 +101,6 @@ export class ModCommentInteractions {
         } else {
             // Handle the deletion of a comment.
             this.mod.store.deleteComment(id, true)
-            this.mod.editor.docInfo.changed = true
         }
         this.mod.layout.layoutComments()
     }
@@ -103,10 +111,22 @@ export class ModCommentInteractions {
         if (id===-1) {
             let referrer = getCommentDuringCreationDecoration(this.mod.editor.view.state)
             // This is a new comment. We need to get an ID for it if it has contents.
+
+            let userName, userAvatar
+
+            if(REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
+                userName = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
+                userAvatar = `${window.staticUrl}img/default_avatar.png`
+            } else {
+                userName = this.mod.editor.user.name
+                userAvatar = this.mod.editor.user.avatar
+            }
+
+
             this.mod.store.addComment(
                 this.mod.editor.user.id,
-                this.mod.editor.user.name,
-                this.mod.editor.user.avatar,
+                userName,
+                userAvatar,
                 new Date().getTime(), // We update the time to the time the comment was stored
                 commentText,
                 commentIsMajor,
@@ -155,7 +175,6 @@ export class ModCommentInteractions {
         // Handle the deletion of a comment answer.
         this.mod.store.deleteAnswer(id, answerId)
         this.mod.layout.deactivateAll()
-        this.mod.editor.docInfo.changed = true
         this.mod.layout.layoutComments()
     }
 
@@ -178,11 +197,22 @@ export class ModCommentInteractions {
 
     createNewAnswer(id, answerText) {
         // Create a new answer to add to the comment store
+
+        let userName, userAvatar
+
+        if(REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
+            userName = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
+            userAvatar = `${window.staticUrl}img/default_avatar.png`
+        } else {
+            userName = this.mod.editor.user.name
+            userAvatar = this.mod.editor.user.avatar
+        }
+
         let answer = {
             answer: answerText,
             user: this.mod.editor.user.id,
-            userName: this.mod.editor.user.name,
-            userAvatar: this.mod.editor.user.avatar,
+            userName,
+            userAvatar,
             date: new Date().getTime()
         }
 
@@ -190,7 +220,6 @@ export class ModCommentInteractions {
 
         this.mod.layout.deactivateAll()
         this.mod.layout.layoutComments()
-        this.mod.editor.docInfo.changed = true
     }
 
     submitAnswerEdit(textArea) {
@@ -204,7 +233,6 @@ export class ModCommentInteractions {
     submitAnswerUpdate(id, answerId, commentText) {
         this.mod.store.updateAnswer(id, answerId, commentText)
         this.mod.layout.deactivateAll()
-        this.mod.editor.docInfo.changed = true
         this.mod.layout.layoutComments()
     }
 }

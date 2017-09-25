@@ -1,13 +1,7 @@
 import {escapeText, localizeDate} from "../../common"
 
-/** A template to edit image categories. */
-export let usermediaEditcategoriesTemplate = ({dialogHeader, categories}) =>
-    `<div id="editCategories" title="${dialogHeader}">
-        <table id="editCategoryList" class="fw-dialog-table"><tbody>${categories}</tbody></table>
-    </div>`
-
 /** A template for the image category edit form. */
-export let usermediaCategoryformsTemplate = ({categories}) =>
+let usermediaCategoryformsTemplate = ({categories}) =>
     `${
         categories.map(cat =>
             `<tr id="categoryTr_${cat.id}" class="fw-list-input">
@@ -17,7 +11,7 @@ export let usermediaCategoryformsTemplate = ({categories}) =>
                     <span class="fw-add-input icon-addremove"></span>
                 </td>
             </tr>`
-        )
+        ).join('')
     }
     <tr class="fw-list-input">
         <td>
@@ -25,6 +19,16 @@ export let usermediaCategoryformsTemplate = ({categories}) =>
             <span class="fw-add-input icon-addremove"></span>
         </td>
     </tr>`
+
+/** A template to edit image categories. */
+export let usermediaEditcategoriesTemplate = ({dialogHeader, categories}) =>
+    `<div id="editCategories" title="${dialogHeader}">
+        <table id="editCategoryList" class="fw-dialog-table">
+            <tbody>
+                ${usermediaCategoryformsTemplate({categories})}
+            </tbody>
+        </table>
+    </div>`
 
 /** A template for image overview list. */
 export let usermediaTableTemplate = ({id, cats, title, width, height, fileType, added, thumbnail, image}) =>

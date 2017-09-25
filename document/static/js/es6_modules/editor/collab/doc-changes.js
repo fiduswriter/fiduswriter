@@ -187,7 +187,6 @@ export class ModCollabDocChanges {
     receiveSelectionChange(data) {
         let participant = this.mod.participants.find(par  => par.id === data.id),
             transaction, fnTransaction
-
         if (!participant) {
             // participant is still unknown to us. Ignore
             return

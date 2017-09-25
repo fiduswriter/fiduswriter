@@ -325,7 +325,7 @@ let comment = {
         tag: "span.comment[data-id]",
         getAttrs(dom) {
             return {
-                id: dom.getAttribute("data-id")
+                id: parseInt(dom.getAttribute("data-id"))
             }
         }
     }],

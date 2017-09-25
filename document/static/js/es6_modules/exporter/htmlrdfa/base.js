@@ -183,10 +183,10 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
 
     convertSideCommentsToRDFa(htmlCode,comments,sidetagList ){
     	jQuery(htmlCode).find('.comment').each(function () {
-    		let sidetags
-    		let id = jQuery(this).attr('data-id')    		
-		if(id !== null && id !== "" && comments !== null  && comments.constructor === Array && sidetagList !== null && sidetagList.constructor === Array ){    		    		
-		commentNode = comments[id]    	
+    		let sidetags,
+    		    id = jQuery(this).attr('data-id')
+		if(id != null && id != "" && comments != null  && sidetagList != null && sidetagList.constructor == Array ){
+            let commentNode = comments[id],
     		commentHeader = '<article id="' + commentNode.id + '" about="i:" typeof="oa:Annotation" prefix="rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns# schema: http://schema.org/ dcterms: http://purl.org/dc/terms/ oa: http://www.w3.org/ns/oa# as: https://www.w3.org/ns/activitystreams#\
     	 i: ' + window.location.href + '#' + commentNode.id + '" >',
             commentBody = '<h3 property="schema:name" style="display:none">' + commentNode.userName + '   <span rel="oa:motivatedBy" resource="oa:replying">replies</span></h1>\
@@ -214,7 +214,7 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
         let sideTagNode=document.createElement('aside')
         sideTagNode.classList.add('note')
         sideTagNode.classList.add('do')
-        sideTagNode.innerHTML='<blockquote cite="'+commentNode.id+'">'+sidetags+'</blockquote>'      
+        sideTagNode.innerHTML='<blockquote cite="'+commentNode.id+'">'+sidetags+'</br></br></blockquote>'
         sidetagList.push(sideTagNode)
 	}
     	})
@@ -225,10 +225,11 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
     	    	
     	jQuery(htmlCode).find('section').each(function(index){
     		
-    		let next = this.nextSibling    	    			
+    		let next = this.nextSibling,
+            divNode=jQuery(this).find('div[datatype="rdf:HTML"]')[0]
     		while (next && next.localName!='section'){
     			this.parentNode.removeChild(next)
-    			this.appendChild(next)    				
+    			divNode.appendChild(next)
     			next=this.nextSibling
     			if (!next) {break}
     			}    			
@@ -249,6 +250,19 @@ export class BaseHTMLRDFaExporter extends BaseDOMExporter {
     					this.appendChild(tags[i])
     					}    				
     			}
+    		})
+    		
+    		jQuery(htmlCode).each(function()
+    		{
+    			let script = document.createElement('script')
+    			script.innerHTML=`jQuery( document ).ready(function() {
+    			jQuery(this).find('span.comment').each(function () {
+                        var id=jQuery(this).attr('data-id');
+                        var top=jQuery(this).offset().top - 40;
+                        jQuery(document).find('article[id="'+id+'"]').each(function () {
+                            jQuery(this).css('top',top);
+                        });});});`
+    			this.appendChild(script)
     		})
     		
     	}

@@ -8,6 +8,7 @@ export class DocxExporterRichtext {
         this.images = images
         this.fnCounter = 2 // footnotes 0 and 1 are occupied by separators by default.
         this.bookmarkCounter = 0
+        this.figureCounter = {} // counters for each type of figure (figure/table/photo)
     }
 
     transformRichtext(node, options = {}) {
@@ -220,6 +221,19 @@ export class DocxExporterRichtext {
                 }
                 break
             case 'figure':
+                let caption = node.attrs.caption
+                let figCat = node.attrs.figureCategory
+                if (figCat !== 'none') {
+                    if (!this.figureCounter[figCat]) {
+                        this.figureCounter[figCat] = 1
+                    }
+                    let figCount = this.figureCounter[figCat]++
+                    if (caption.length) {
+                        caption = `${figCat} ${figCount}: ${caption}`
+                    } else {
+                        caption = `${figCat} ${figCount}`
+                    }
+                }
                 if(node.attrs.image !== false) {
                     let imgDBEntry = this.images.imageDB.db[node.attrs.image]
                     let cx = imgDBEntry.width * 9525 // width in EMU
@@ -297,8 +311,7 @@ export class DocxExporterRichtext {
                     </w:p>
                     <w:p>
                       <w:pPr><w:pStyle w:val="Caption"/><w:rPr></w:rPr></w:pPr>`
-                      // TODO: Add "Figure X:"/"Table X": before caption.
-                      content += this.transformRichtext({type: 'text', text: node.attrs.caption}, options)
+                      content += this.transformRichtext({type: 'text', text: caption}, options)
                       end = '</w:p>' + end
                 } else {
                     let latex = node.attrs.equation
@@ -307,7 +320,7 @@ export class DocxExporterRichtext {
                         <w:p>${omml}</w:p>
                         <w:p>
                           <w:pPr><w:pStyle w:val="Caption"/><w:rPr></w:rPr></w:pPr>`
-                    content += this.transformRichtext({type: 'text', text: node.attrs.caption}, options)
+                    content += this.transformRichtext({type: 'text', text: caption}, options)
                     end =  '</w:p>' + end
                 }
                 break

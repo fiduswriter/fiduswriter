@@ -44,7 +44,7 @@ let spec = {
   })
 }
 
-addListNodes(spec.nodes, "block+", "block")
+spec.nodes = addListNodes(spec.nodes, "block+", "block")
 
 spec.nodes = spec.nodes.append(tableNodes({
     tableGroup: "table_block",

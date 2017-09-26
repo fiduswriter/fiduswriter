@@ -129,7 +129,7 @@ class DocumentRevision(models.Model):
             return self.note + ' (' + str(self.id) + ') of ' + \
                 str(self.document.id)
         else:
-            return str(self.id) + ' of ' + self.document.id
+            return str(self.id) + ' of ' + str(self.document.id)
 
 TEMPLATE_CHOICES = (
     ('docx', 'Docx'),

@@ -22,7 +22,7 @@
   "dependencies": {
     "babel-preset-env": "^1.6.0",
     "babelify": "7.3.0",
-    "biblatex-csl-converter": "1.1.1",
+    "biblatex-csl-converter": "1.1.2",
     "bowser": "1.7.3",
     "browserify": "14.4.0",
     "browserify-incremental": "3.1.1",

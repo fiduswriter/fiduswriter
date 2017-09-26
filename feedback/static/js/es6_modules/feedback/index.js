@@ -1,67 +1,91 @@
 import {csrfToken, getCookie} from "../common"
 import * as bowser from "bowser/bowser"
 
-// Creates the feedback tab. The tab is meant for user feedback to the developers while FW is still in
-// a somewhat early stage. It is therefore included in a way so it's easy to remove from all the
-// templates.
+const MINIMUM_BROWSER_VERSIONS = {
+    msedge: '15',
+    msie: '15', // effectively none
+    firefox: '52',
+    chrome: '59',
+    safari: '11'
+}
 
-// This is therefore also where browser sniffing happens to prevent still unsupported browsers from logging in.
+// Creates the feedback tab. The tab is meant for user feedback to the developers while FW is still in
+// a somewhat early stage. It is included in a way so it's easy to remove from all the templates.
+// This is also where browser sniffing happens to prevent still unsupported browsers from logging in.
 
 export class FeedbackTab {
     constructor() {
-        this.speed = 300
+        this.verifyBrowser()
         this.bind()
     }
 
     bind() {
-        jQuery('a.feedback-tab').css('margin-top', jQuery('a.feedback-tab').outerWidth())
-        jQuery('a.feedback-tab').click(event => {
-        if(!jQuery('.feedback-panel').hasClass('open')) {
-            jQuery('.feedback-panel').stop().fadeIn(
-                this.speed,
-                () => {jQuery('.feedback-panel').addClass('open')}
-            )
-        }
-        event.preventDefault()
-        })
-        jQuery('#closeFeedback').click(() => {
-            jQuery('.feedback-panel').stop().fadeOut(this.speed, () => {
-                jQuery('.feedback-panel').removeClass('open')
-                jQuery('#feedback-form').css('visibility', 'visible')
-                jQuery('#response-message').hide()
-            })
+        document.querySelector('a.feedback-tab').style.marginTop = document.querySelector('a.feedback-tab').clientWidth
+
+        document.querySelector('a.feedback-tab').addEventListener('click', event => {
+            document.querySelector('.feedback-panel').style.display = 'block'
+            event.preventDefault()
         })
 
-        jQuery("#feedbackbutton").click(() => {
-            this.openFeedback()
+        document.querySelector('#closeFeedback').addEventListener('click', event => {
+            document.querySelector('.feedback-panel').style.display = 'none'
+            document.querySelector('#feedback-form').style.visibility = 'visible'
+            document.querySelector('#response-message').style.display = 'none'
+            event.preventDefault()
         })
+
+        document.querySelector('#feedbackbutton').addEventListener('click', event => this.openFeedback())
     }
 
     openFeedback() {
-        let message = jQuery("textarea#message").val()
-        let data = {message}
+        let messageEl = document.querySelector("textarea#message"),
+            closeFeedbackEl = document.querySelector('#closeFeedback'),
+            feedbackFormEl = document.querySelector('#feedback-form'),
+            responseEl = document.querySelector('#response-message'),
+            data = {message: messageEl.value}
 
-        jQuery('#closeFeedback').hide()
-        jQuery('#feedback-form').css('visibility', 'hidden')
+        closeFeedbackEl.style.display = 'none'
+        feedbackFormEl.style.visibility = 'hidden'
 
         jQuery.ajax({
-            type : "POST",
-            url : "/feedback/feedback/",
-            data : data,
+            type: "POST",
+            url: "/feedback/feedback/",
+            data,
             crossDomain: false, // obviates need for sameOrigin test
             beforeSend: (xhr, settings) =>
                 xhr.setRequestHeader("X-CSRFToken", csrfToken),
             success : () => {
-                jQuery('#closeFeedback').show()
-                jQuery('#response-message').show()
+                messageEl.value = ''
+                closeFeedbackEl.style.display = 'block'
+                responseEl.style.display = 'block'
             }
         })
         return false
     }
 
-    // Add a cookie variable with name set to true
-    setCookie(name) {
-        document.cookie = `${name}=true`
+    // Verify that we are running on a current browser.
+    verifyBrowser() {
+        if (bowser.isUnsupportedBrowser(MINIMUM_BROWSER_VERSIONS, window.navigator.userAgent)) {
+            let warning =
+                `<div>
+                    <p>
+                        ${
+                            gettext(
+                                "Your browser is not supported by Fidus Writer. \
+                                Please update! We recommend using a current \
+                                version of Chrome/Chromium or Firefox on a \
+                                desktop computer."
+                            )
+                        }
+                    </p>
+                </div>`
+            jQuery(warning).dialog({
+                modal: true,
+                title: gettext("Warning"),
+                minHeight: 200,
+                minWidth: 300
+            })
+        }
     }
 
 }

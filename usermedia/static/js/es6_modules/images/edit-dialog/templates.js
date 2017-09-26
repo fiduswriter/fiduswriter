@@ -30,7 +30,7 @@ let imageEditCategoryTemplate = ({image, cats}) => {
 export let imageEditTemplate = ({image, cats}) =>
     `<div id="editimage" class="fw-media-uploader" title="${
             image ?
-            escapeText('Update Image') :
+            escapeText('Update Image Information') :
             gettext('Upload Image')
         }">
         <div>

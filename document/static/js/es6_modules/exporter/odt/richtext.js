@@ -7,6 +7,7 @@ export class OdtExporterRichtext {
         this.imgCounter = 1
         this.fnCounter = 0 // real footnotes
         this.fnAlikeCounter = 0 // real footnotes and citations as footnotes
+        this.figureCounter = {} // counters for each type of figure (figure/table/photo)
     }
 
     transformRichtext(node, options = {}) {
@@ -154,6 +155,19 @@ export class OdtExporterRichtext {
 
                 break
             case 'figure':
+                let caption = node.attrs.caption
+                let figCat = node.attrs.figureCategory
+                if (figCat !== 'none') {
+                    if (!this.figureCounter[figCat]) {
+                        this.figureCounter[figCat] = 1
+                    }
+                    let figCount = this.figureCounter[figCat]++
+                    if (caption.length) {
+                        caption = `${figCat} ${figCount}: ${caption}`
+                    } else {
+                        caption = `${figCat} ${figCount}`
+                    }
+                }
                 if(node.attrs.image !== false) {
                     let imgDBEntry = this.images.imageDB.db[node.attrs.image]
                     let imgFileName = this.images.imgIdTranslation[node.attrs.image]
@@ -170,7 +184,7 @@ export class OdtExporterRichtext {
                     </text:p>
                     <text:p text:style-name="Caption">`
                       // TODO: Add "Figure X:"/"Table X": before caption.
-                      content += this.transformRichtext({type: 'text', text: node.attrs.caption}, options)
+                      content += this.transformRichtext({type: 'text', text: caption}, options)
                       end = noSpaceTmp`
                     </text:p>
                     ` + end
@@ -189,7 +203,7 @@ export class OdtExporterRichtext {
                     </text:p>
                     <text:p text:style-name="Caption">`
                       // TODO: Add "Figure X:"/"Table X": before caption.
-                      content += this.transformRichtext({type: 'text', text: node.attrs.caption}, options)
+                      content += this.transformRichtext({type: 'text', text: caption}, options)
                       end = noSpaceTmp`
                     </text:p>
                     ` + end

@@ -18,9 +18,7 @@ export let findImages = function(htmlCode) {
         newImg.setAttribute('data-src', name)
         this.parentNode.replaceChild(newImg, this)
 
-        if (!_.findWhere(images, {
-                'filename': name
-            })) {
+        if(!images.find(image => image.filename === name)) {
 
             images.push({
                 'filename': name,
@@ -30,13 +28,6 @@ export let findImages = function(htmlCode) {
     })
 
     return images
-}
-
-export let escapeText = function(text) {
-    return text
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
 }
 
 // all descendant text nodes for dom nodes

@@ -6,12 +6,6 @@
     text-align: left;
 }
 
-#cite-source-table_filter label:after {
-    font-family: 'fontello';
-    content: '\e800';
-    margin-left: -25px;
-}
-
 #cite-source-table_filter input[type="text"] {
     width: 332px;
     height: 33px;

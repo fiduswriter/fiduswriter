@@ -225,6 +225,19 @@ INSTALLED_APPS = (
     # 'allauth.socialaccount.providers.stackexchange',
 )
 
+# TODO: use it or remove it
+# VISIBILITY = {
+#    'author': {'author': ['always']},
+#    'reviewer': {'author': ['revision', 'publication'],
+#                 'reviewer': ['always'],
+#                 'all_rev': ['discussion, revision, publication'],
+#                 'editor': ['always']},
+#    'editor': {'author': ['revision', 'publication'],
+#               'reviewer': ['always'],
+#               'all_rev': ['always'],
+#               'editor': ['always']}
+# }
+
 
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`
@@ -260,9 +273,6 @@ ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 
 AUTH_PROFILE_MODULE = "account.UserProfile"
-
-# locking
-LOCK_TIMEOUT = 600
 
 LOGGING = {
     'version': 1,
@@ -327,13 +337,14 @@ AVATAR_MAX_AVATARS_PER_USER = 1
 JS_LOCATIONS = {
     'JQUERY_URL': STATIC_URL + 'js/libs/jquery.min.js',
     'JQUERYUI_URL': STATIC_URL + 'js/libs/jquery-ui.min.js',
-    'UNDERSCOREJS_URL': STATIC_URL + 'js/libs/underscore-min.js',
     'DATATABLES_URL': STATIC_URL + 'js/libs/jquery.dataTables.min.js'
 }
 
 CSS_LOCATIONS = {}
 
 try:
-    exec(open(os.path.join(PROJECT_PATH, 'configuration.py')), globals())
-except:
+    local_config = open(os.path.join(PROJECT_PATH, 'configuration.py'))
+except IOError:
     pass
+else:
+    exec(local_config.read(), globals())

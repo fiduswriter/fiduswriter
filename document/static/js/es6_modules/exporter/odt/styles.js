@@ -233,4 +233,19 @@ export class OdtExporterStyles {
         return parStyleId
     }
 
+    setLanguage(langCode) {
+        let [language, country] = langCode.split('-')
+
+        if (!country) {
+            country = 'none'
+        }
+        [].slice.call(
+            this.stylesXml.querySelectorAll('styles default-style text-properties')
+        ).forEach(el => {
+            el.setAttribute('fo:language', language)
+            el.setAttribute('fo:country', country)
+        })
+
+    }
+
 }

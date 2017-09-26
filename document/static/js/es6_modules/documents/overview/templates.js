@@ -1,62 +1,75 @@
-export let documentsListTemplate = _.template('\
-<% _.each(documentList,function(aDocument,key,list){%><%= documentsListItemTemplate({aDocument:aDocument, user:user, localizeDate:localizeDate})%><% }); %>')
+import {escapeText, localizeDate} from "../../common"
+
+export let documentsListTemplate = ({documentList, user}) =>
+    Object.values(documentList).map(doc =>
+        documentsListItemTemplate({doc, user})
+    ).join('')
 
 /** A template for each document overview list item. */
-export let documentsListItemTemplate = _.template('\
- <% var documentTitle; if (0===aDocument.title.length) {documentTitle="'+gettext('Untitled')+'";} else {documentTitle=aDocument.title;} %>\
- <tr id="Text_<%- aDocument.id %>" <% if (user.id == aDocument.owner.id) { %>class="owned-by-user"<% } %> >\
-                <td width="20">\
-                    <span class="fw-inline">\
-                        <input type="checkbox" class="entry-select"\
-                            data-id="<%- aDocument.id %>"\
-                            data-owner="<%- aDocument.owner.id %>"/>\
-                    </span>\
-                </td>\
-                <td width="240">\
-                    <span class="fw-document-table-title fw-inline">\
-                        <i class="icon-doc"></i>\
-                        <a class="doc-title fw-link-text fw-searchable" href="/document/<%- aDocument.id %>/">\
-                            <%- documentTitle %>\
-                        </a>\
-                    </span>\
-                </td>\
-                <td width="140" class="td-icon">\
-                    <% if (aDocument.revisions.length > 0) { %>\
-                        <span class="fw-inline revisions" data-id="<%- aDocument.id %>">\
-                            <i class="icon-clock"></i>\
-                        </span>\
-                    <% } %>\
-                </td>\
-                <td width="100">\
-                    <span class="fw-inline"><%- localizeDate(aDocument.added*1000, true) %></span>\
-                </td>\
-                <td width="100">\
-                    <span class="fw-inline"><%- localizeDate(aDocument.updated*1000, true) %></span>\
-                </td>\
-                <td width="200">\
-                    <span>\
-                        <img class="fw-avatar" src="<%- aDocument.owner.avatar %>" />\
-                    </span>\
-                    <span class="fw-inline fw-searchable"><%- aDocument.owner.name %></span>\
-                </td>\
-                <td width="70"  class="td-icon">\
-                    <span class="rights fw-inline" data-id="<%- aDocument.id %>" title="<%- aDocument.rights %>">\
-                        <i data-id="<%- aDocument.id %>" class="icon-access-right icon-access-<%- aDocument.rights %>"></i>\
-                    </span>\
-                </td>\
-                 <td width="40"  class="td-icon">\
-                    <span class="delete-document fw-inline fw-link-text" data-id="<%- aDocument.id %>" data-title="<%- aDocument.title %>">\
-                        <% if (user.id === aDocument.owner.id) { %><i class="icon-trash"></i><% } %>\
-                    </span>\
-                </td>\
-            </tr>\
-')
+export let documentsListItemTemplate = ({doc, user}) =>
+    `<tr id="Text_${doc.id}" ${user.id === doc.owner.id ? 'class="owned-by-user"' : ''} >
+        <td width="20">
+            <span class="fw-inline">
+                <input type="checkbox" class="entry-select"
+                    data-id="${doc.id}"
+                    data-owner="${doc.owner.id}"/>
+            </span>
+        </td>
+        <td width="240">
+            <span class="fw-document-table-title fw-inline">
+                <i class="fa fa-file-text-o"></i>
+                <a class="doc-title fw-link-text fw-searchable" href="/document/${doc.id}/">
+                    ${doc.title.length ? doc.title : gettext('Untitled')}
+                </a>
+            </span>
+        </td>
+        <td width="140" class="td-icon">
+            ${
+                doc.revisions.length ?
+                `<span class="fw-inline revisions" data-id="${doc.id}">
+                    <i class="fa fa-clock-o"></i>
+                </span>` :
+                ''
+            }
+        </td>
+        <td width="100">
+            <span class="fw-inline">${localizeDate(doc.added*1000, true)}</span>
+        </td>
+        <td width="100">
+            <span class="fw-inline">${localizeDate(doc.updated*1000, true)}</span>
+        </td>
+        <td width="200">
+            <span>
+                <img class="fw-avatar" src="${doc.owner.avatar}" />
+            </span>
+            <span class="fw-inline fw-searchable">${escapeText(doc.owner.name)}</span>
+        </td>
+        <td width="70"  class="td-icon">
+            <span class="rights fw-inline" data-id="${doc.id}" title="${doc.rights}">
+                <i data-id="${doc.id}" class="icon-access-right icon-access-${doc.rights}"></i>
+            </span>
+        </td>
+         <td width="40"  class="td-icon">
+            <span class="delete-document fw-inline fw-link-text" data-id="${doc.id}"
+                    data-title="${escapeText(doc.title)}">
+                ${
+                    user.id === doc.owner.id ?
+                    '<i class="fa fa-trash-o"></i>' :
+                    ''
+                }
+            </span>
+        </td>
+    </tr>
+    `
 
 /** A template for the Fidus Writer document import dialog */
-export let importFidusTemplate = _.template('<div id="importfidus" title="' + gettext('Import a Fidus file') + '">\
-        <form id="import-fidus-form" method="post" enctype="multipart/form-data" class="ajax-upload">\
-            <input type="file" id="fidus-uploader" name="fidus" accept=".fidus" required />\
-            <button id="import-fidus-btn" class="fw-button fw-white fw-large">' + gettext('Select a file') + '</button>\
-            <label id="import-fidus-name" class="ajax-upload-label"></label>\
-        </form>\
-    </div>')
+export let importFidusTemplate = () =>
+    `<div id="importfidus" title="${gettext('Import a Fidus file')}">
+        <form id="import-fidus-form" method="post" enctype="multipart/form-data" class="ajax-upload">
+            <input type="file" id="fidus-uploader" name="fidus" accept=".fidus" required />
+            <button id="import-fidus-btn" class="fw-button fw-white fw-large">
+                ${gettext('Select a file')}
+            </button>
+            <label id="import-fidus-name" class="ajax-upload-label"></label>
+        </form>
+    </div>`

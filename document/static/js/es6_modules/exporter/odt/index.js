@@ -1,6 +1,6 @@
-import {createSlug, getDatabasesIfNeeded} from "../tools/file"
+import {createSlug} from "../tools/file"
 import {XmlZip} from "../tools/xml-zip"
-import {textContent, removeHidden} from "../tools/doc-contents"
+import {textContent, removeHidden, fixTables} from "../tools/doc-contents"
 
 import {OdtExporterCitations} from "./citations"
 import {OdtExporterImages} from "./images"
@@ -15,25 +15,30 @@ import {OdtExporterMath} from "./math"
 Exporter to Open Document Text (LibreOffice)
 */
 
+/*
+TODO:
+* - Export comments
+* - Templating of keywords/authors output
+*/
+
 export class OdtExporter {
-    constructor(doc, templateUrl, bibDB, imageDB) {
+    constructor(doc, templateUrl, bibDB, imageDB, citationStyles, citationLocales) {
         this.doc = doc
         this.templateUrl = templateUrl
         this.bibDB = bibDB
         this.imageDB = imageDB
+        this.citationStyles = citationStyles
+        this.citationLocales = citationLocales
         this.pmCits = false
         this.docContents = false
         this.docTitle = false
-
-        getDatabasesIfNeeded(this, doc).then(
-            () => this.init()
-        )
+        this.init()
     }
 
 
 
     init() {
-        this.docContents = removeHidden(this.doc.contents)
+        this.docContents = fixTables(removeHidden(this.doc.contents))
         this.docTitle = textContent(this.docContents.content[0])
         this.metadata = new OdtExporterMetadata(this, this.docContents)
         this.footnotes = new OdtExporterFootnotes(this, this.docContents)
@@ -41,7 +46,7 @@ export class OdtExporter {
         this.styles = new OdtExporterStyles(this)
         this.math = new OdtExporterMath(this)
         this.images = new OdtExporterImages(this, this.imageDB, this.docContents)
-        this.citations = new OdtExporterCitations(this, this.bibDB, this.docContents)
+        this.citations = new OdtExporterCitations(this, this.bibDB, this.citationStyles, this.citationLocales, this.docContents)
         this.richtext = new OdtExporterRichtext(this, this.images)
 
         this.xml = new XmlZip(
@@ -50,9 +55,9 @@ export class OdtExporter {
             'application/vnd.oasis.opendocument.text'
         )
         this.xml.init().then(
-            () => this.metadata.init()
-        ).then(
             () => this.styles.init()
+        ).then(
+            () => this.metadata.init()
         ).then(
             () => this.citations.init()
         ).then(

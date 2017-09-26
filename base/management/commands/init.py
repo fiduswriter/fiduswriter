@@ -7,19 +7,38 @@ from fiduswriter.settings import PROJECT_PATH
 
 
 class Command(BaseCommand):
-    args = '[restart]'
-    help = ('Initialize Fidus Writer installation. If the argument "reset" is '
-            'given, the database is flushed before initializing.')
+    help = ('Initialize Fidus Writer installation.')
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--restart',
+            action='store_true',
+            dest='restart',
+            default=False,
+            help='Flush database before initialization.',
+        )
+        parser.add_argument(
+            '--no-static',
+            action='store_true',
+            dest='no-static',
+            default=False,
+            help='Do not collect static files.',
+        )
+        parser.add_argument(
+            '--no-compress',
+            action='store_true',
+            dest='no-compress',
+            default=False,
+            help='Do not attempt to compress static files.',
+        )
 
     def handle(self, *args, **options):
-        if "restart" in args:
+        if options["restart"]:
             call_command("flush")
             call_command("migrate", fake=True)
         else:
             call_command("migrate")
         call_command("loaddata", "style/fixtures/initial_styles.json")
-        call_command("create_document_styles")
-        call_command("create_citation_styles")
         call_command("loaddata", "base/fixtures/initial_terms.json")
         call_command(
             "loaddata",
@@ -29,8 +48,10 @@ class Command(BaseCommand):
         if os.path.exists(os.path.join(PROJECT_PATH, "es6-cache")):
             shutil.rmtree("es6-cache")
         call_command("transpile")
-        try:
-            call_command("compress")
-        except:
-            pass
-        call_command("collectstatic", interactive=False)
+        if not options["no-compress"]:
+            try:
+                call_command("compress")
+            except:
+                pass
+        if not options["no-static"]:
+            call_command("collectstatic", interactive=False)

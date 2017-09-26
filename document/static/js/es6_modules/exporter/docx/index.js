@@ -1,6 +1,6 @@
-import {createSlug, getDatabasesIfNeeded} from "../tools/file"
+import {createSlug} from "../tools/file"
 import {XmlZip} from "../tools/xml-zip"
-import {textContent, removeHidden} from "../tools/doc-contents"
+import {textContent, removeHidden, fixTables} from "../tools/doc-contents"
 
 import {DocxExporterCitations} from "./citations"
 import {DocxExporterImages} from "./images"
@@ -17,26 +17,31 @@ import {DocxExporterLists} from "./lists"
 Exporter to Office Open XML docx (Microsoft Word)
 */
 
+/*
+TODO:
+* - Export comments
+* - Export document language
+* - Templating of keywords/authors output
+*/
+
 export class DocxExporter {
-    constructor(doc, templateUrl, bibDB, imageDB) {
+    constructor(doc, templateUrl, bibDB, imageDB, citationStyles, citationLocales) {
         this.doc = doc
         this.templateUrl = templateUrl
         this.bibDB = bibDB
         this.imageDB = imageDB
+        this.citationStyles = citationStyles
+        this.citationLocales = citationLocales
         this.pmBib = false
         this.docContents = false
         this.docTitle = false
 
-        getDatabasesIfNeeded(this, doc).then(
-            () => {
-                this.init()
-            }
-        )
+        this.init()
     }
 
 
     init() {
-        this.docContents = removeHidden(this.doc.contents)
+        this.docContents = fixTables(removeHidden(this.doc.contents))
         this.docTitle = textContent(this.docContents.content[0])
         this.tables = new DocxExporterTables(this)
         this.math = new DocxExporterMath(this)
@@ -46,7 +51,7 @@ export class DocxExporter {
         this.rels = new DocxExporterRels(this, 'document')
         this.images = new DocxExporterImages(this, this.imageDB, this.rels, this.docContents)
         this.lists = new DocxExporterLists(this, this.rels, this.docContents)
-        this.citations = new DocxExporterCitations(this, this.bibDB, this.docContents)
+        this.citations = new DocxExporterCitations(this, this.bibDB, this.citationStyles, this.citationLocales, this.docContents)
         this.richtext = new DocxExporterRichtext(
             this,
             this.rels,

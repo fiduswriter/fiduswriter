@@ -1,15 +1,17 @@
 import {citeprocSys} from "./citeproc-sys"
-import {citationDefinitions} from "../style/citation-definitions"
 import CSL from "citeproc"
 
 /*
 * Use CSL and bibDB to format all citations for the given prosemirror json citation nodes
 */
 export class FormatCitations {
-    constructor(allCitationInfos, citationStyle, bibDB) {
+    constructor(allCitationInfos, citationStyle, bibDB, citationStyles, citationLocales) {
         this.allCitationInfos = allCitationInfos
         this.citationStyle = citationStyle
         this.bibDB = bibDB
+        this.citationStyles = citationStyles
+        this.citationLocales = citationLocales
+        this.citationStyleDef = false
     }
 
     init() {
@@ -46,13 +48,13 @@ export class FormatCitations {
         // CSS
     get bibCSS()  {
         let css = '\n', bibInfo = this.bibliography[0]
-            css += `.csl-entry {margin-bottom: ${bibInfo.entryspacing+1}em;}\n`
+            css += `.csl-entry {padding-bottom: ${bibInfo.entryspacing+1}em;}\n`
             css += `.csl-bib-body {line-height: ${bibInfo.linespacing};}\n`
             if (bibInfo.hangingindent) {
                 css += `
                     .csl-entry {
                         text-indent: -0.5in;
-                        margin-left: 0.5in;
+                        padding-left: 0.5in;
                     }\n`
             } else if(bibInfo["second-field-align"] === 'margin') {
                 css += `
@@ -84,18 +86,15 @@ export class FormatCitations {
     }
 
     getFormattedCitations() {
-        if (citationDefinitions.styles.hasOwnProperty(this.citationStyle)) {
-            this.citationStyle = citationDefinitions.styles[this.citationStyle]
-        } else {
-            for (let styleName in citationDefinitions.styles) {
-                this.citationStyle = citationDefinitions.styles[styleName]
-                break
-            }
+
+        this.citationStyleDef = this.citationStyles.find(style => style.short_title === this.citationStyle)
+        if (!this.citationStyleDef && this.citationStyles.length) {
+            this.citationStyleDef = this.citationStyles[0]
         }
-        let citeprocConnector = new citeprocSys(this.bibDB)
+        let citeprocConnector = new citeprocSys(this.bibDB, this.citationLocales)
         let citeprocInstance = new CSL.Engine(
             citeprocConnector,
-            this.citationStyle.definition
+            this.citationStyleDef.contents
         )
         let allIds = []
         this.citations.forEach(cit =>

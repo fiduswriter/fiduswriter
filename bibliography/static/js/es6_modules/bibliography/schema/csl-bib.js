@@ -1,11 +1,12 @@
-import {Literal, SupMark, SubMark, SmallCapsMark} from "./common"
-import {Doc, EmMark, StrongMark, Text} from "prosemirror-old/dist/schema-basic"
-import {Block, Schema} from "prosemirror-old/dist/model"
+import {sup, sub, smallcaps, text} from "./common"
+import {marks} from "prosemirror-schema-basic"
+import {Schema} from "prosemirror-model"
 
-class CSLBib extends Block {
-    get matchDOMTag() {
-        return {"div.csl-bib-body": null}
-    }
+let doc = {content: "cslbib"}
+
+let cslbib = {
+    content: "cslentry*",
+    parseDOM: [{tag: 'div.csl-bib-body'}],
     toDOM(node) {
         return ["div", {
             class: 'csl-bib-body'
@@ -13,10 +14,9 @@ class CSLBib extends Block {
     }
 }
 
-class CSLEntry extends Block {
-    get matchDOMTag() {
-        return {"div.csl-entry": null}
-    }
+let cslentry = {
+    content: "block*",
+    parseDOM: [{tag: 'div.csl-entry'}],
     toDOM(node) {
         return ["div", {
             class: 'csl-entry'
@@ -28,10 +28,11 @@ class CSLEntry extends Block {
 // system doesn't allow for the mixing of inline and block content, it "imagines"
 // that this block exists. This---rather than other blocks---is chosen, because
 // it's the first in the list.
-class CSLInline extends Block {
-    get matchDOMTag() {
-        return {"div.csl-inline": null}
-    }
+let cslinline = {
+    group: "block",
+    content: "text*",
+    marks: "_",
+    parseDOM: [{tag: 'div.csl-inline'}],
     toDOM(node) {
         return ["div", {
             class: 'csl-inline'
@@ -39,10 +40,11 @@ class CSLInline extends Block {
     }
 }
 
-class CSLBlock extends Block {
-    get matchDOMTag() {
-        return {"div.csl-block": null}
-    }
+let cslblock = {
+    group: "block",
+    content: "text*",
+    marks: "_",
+    parseDOM: [{tag: 'div.csl-block'}],
     toDOM(node) {
         return ["div", {
             class: 'csl-block'
@@ -50,10 +52,11 @@ class CSLBlock extends Block {
     }
 }
 
-class CSLLeftMargin extends Block {
-    get matchDOMTag() {
-        return {"div.csl-left-margin": null}
-    }
+let cslleftmargin = {
+    group: "block",
+    content: "text*",
+    marks: "_",
+    parseDOM: [{tag: 'div.csl-left-margin'}],
     toDOM(node) {
         return ["div", {
             class: 'csl-left-margin'
@@ -61,10 +64,11 @@ class CSLLeftMargin extends Block {
     }
 }
 
-class CSLRightInline extends Block {
-    get matchDOMTag() {
-        return {"div.csl-right-inline": null}
-    }
+let cslrightinline = {
+    group: "block",
+    content: "text*",
+    marks: "_",
+    parseDOM: [{tag: 'div.csl-right-inline'}],
     toDOM(node) {
         return ["div", {
             class: 'csl-right-inline'
@@ -72,10 +76,12 @@ class CSLRightInline extends Block {
     }
 }
 
-class CSLIndent extends Block {
-    get matchDOMTag() {
-        return {"div.csl-indent": null}
-    }
+
+let cslindent = {
+    group: "block",
+    content: "text*",
+    marks: "_",
+    parseDOM: [{tag: 'div.csl-indent'}],
     toDOM(node) {
         return ["div", {
             class: 'csl-indent'
@@ -86,21 +92,21 @@ class CSLIndent extends Block {
 // A schema to express the citeproc HTML bibliography output
 export const cslBibSchema = new Schema({
     nodes: {
-        doc: {type: Doc, content: "cslbib"},
-        cslbib: {type: CSLBib, content: "cslentry*"},
-        cslentry: {type: CSLEntry, content: "block*"},
-        cslinline: {type: CSLInline, group: "block", content: "text<_>*"},
-        cslblock: {type: CSLBlock, group: "block", content: "text<_>*"},
-        cslleftmargin: {type: CSLLeftMargin, group: "block", content: "text<_>*"},
-        cslrightinline: {type: CSLRightInline, group: "block", content: "text<_>*"},
-        cslindent: {type: CSLIndent, group: "block", content: "text<_>*"},
-        text: {type: Text}
+        doc,
+        cslbib,
+        cslentry,
+        cslinline,
+        cslblock,
+        cslleftmargin,
+        cslrightinline,
+        cslindent,
+        text
     },
     marks: {
-        em: EmMark,
-        strong: StrongMark,
-        smallcaps: SmallCapsMark,
-        sup: SupMark,
-        sub: SubMark
+        em: marks.em,
+        strong: marks.strong,
+        smallcaps,
+        sup,
+        sub
     }
 })

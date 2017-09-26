@@ -29,24 +29,23 @@
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/dropkick.css" />
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/ui-tabs.css" />
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/figure.css" />
-
+        <!-- Font Awesome -->
+        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/font-awesome.css" />
         <!-- layout styles -->
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/common.css" />
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/header-menu.css" />
         {% endcompress %}
 
         <script type="text/javascript" src="/jsi18n/"></script>
-        <script type="text/javascript" src="{{ UNDERSCOREJS_URL }}"></script>
         <script type="text/javascript" src="{{ JQUERY_URL }}"></script>
         <!-- JS error handling -->
         <script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>
         <script type="text/javascript" src="{{ JQUERYUI_URL }}"></script>
-
         {% block extraheaders %}{% endblock %}
     </head>
     <body{% block isRegistration %}{% endblock %}>
         <div id="wait">
-            <i class="icon-spin2 animate-spin"></i>
+            <i class="fa fa-spinner fa-pulse"></i>
         </div>
         <header class="fw-header">
 
@@ -57,31 +56,13 @@
                 <div id="user-preferences" class="fw-user-preferences fw-header-text">
                     <h3 class="fw-name">{{request.user.username}}</h3>
                     <div id="preferences-btn" class="fw-button fw-small fw-green">
-                        <span class="icon-cog fw-button-icon"></span>
-                        <span class="icon-down-dir fw-button-icon"></span>
+                        <span class="fa fa-cog fw-button-icon"></span>
+                        <span class="fa fa-caret-down fw-button-icon"></span>
                     </div>
                 </div><!-- end user preference -->
             </div><!-- end container -->
 
-            <nav id="header-nav">
-                <div class="fw-container fw-nav-container">
-                    <p class="fw-nav-item">
-                        <a class="fw-header-navigation-text" href="/" title="{% trans 'edit documents' %}" data-item="documents">
-                            {% trans "Documents" %}
-                        </a>
-                    </p>
-                    <p class="fw-nav-item">
-                        <a class="fw-header-navigation-text" href="/bibliography/" title="{% trans 'manage bibliography library' %}" data-item="bibliography">
-                            {% trans "Bibliography" %}
-                        </a>
-                    </p>
-                    <p class="fw-nav-item">
-                        <a class="fw-header-navigation-text" href="/usermedia/" title="{% trans 'manage image files' %}" data-item="images">
-                            {% trans "Images" %}
-                        </a>
-                    </p>
-                </div>
-            </nav>
+            <nav id="header-nav"></nav>
          </header>
 
         <div class="fw-contents">

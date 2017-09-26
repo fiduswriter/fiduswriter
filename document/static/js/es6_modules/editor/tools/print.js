@@ -76,7 +76,7 @@ export class ModToolsPrint {
             'alwaysEven' : false,
             'autoStart': false,
             'pageWidth': 790,
-            'pageHeight': PAPER_HEIGHTS[this.mod.editor.doc.settings.papersize],
+            'pageHeight': PAPER_HEIGHTS[this.mod.editor.view.state.doc.firstChild.attrs.papersize],
             'outerMargin': 90,
             'innerMargin': 90,
             'contentsTopMargin': 80,

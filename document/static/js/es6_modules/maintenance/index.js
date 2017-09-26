@@ -1,25 +1,21 @@
-import {ProseMirror} from "prosemirror-old/dist/edit/main"
-import {Step} from "prosemirror-old/dist/transform"
-import {collabEditing} from "prosemirror-old/dist/collab"
-import {updateFileDoc, updateFileBib} from "../importer/file"
-import {updateDoc, getMetadata, getSettings} from "../schema/convert"
+import {Step} from "prosemirror-transform"
+
+import {updateFileDoc, updateFileBib} from "../importer/update"
+import {updateDoc, getSettings} from "../schema/convert"
 import {docSchema} from "../schema/document"
 import {addAlert, csrfToken} from "../common"
-import {Menu} from "../menu"
 import {FW_FILETYPE_VERSION} from "../exporter/native"
 import JSZip from "jszip"
 import JSZipUtils from "jszip-utils"
 
-// To apply all diffs to documents.
+// To upgrade all docs and document revions to the newest version
 
 export class DocMaintenance {
     constructor() {
-        this.batch = 1
-        this.button = false
+        this.batch = 0
         this.batchesDone = false
         this.docSavesLeft = 0
         this.revSavesLeft = 0
-        new Menu('maintenance')
     }
 
     bind() {
@@ -35,6 +31,7 @@ export class DocMaintenance {
     }
 
     getDocBatch() {
+        this.batch++
         jQuery.ajax({
           url: "/document/maintenance/get_all/",
           type: 'POST',
@@ -43,7 +40,7 @@ export class DocMaintenance {
           beforeSend: (xhr, settings) =>
               xhr.setRequestHeader("X-CSRFToken", csrfToken),
           data: {
-              batch: this.batch++
+              batch: this.batch
           },
           success: data => {
               let docs = window.JSON.parse(data.docs)
@@ -64,82 +61,93 @@ export class DocMaintenance {
     fixDoc(doc) {
         let oldDoc = {
             contents: window.JSON.parse(doc.fields.contents),
-            diff_version: doc.fields.diff_version,
             last_diffs: window.JSON.parse(doc.fields.last_diffs),
-            metadata: window.JSON.parse(doc.fields.metadata),
-            settings: window.JSON.parse(doc.fields.settings),
             title: doc.fields.title,
             version: doc.fields.version,
             id: doc.pk
         }
-
-        // updates doc to the newest version
-        doc = updateDoc(oldDoc)
-
-        // only proceed with saving if the doc update has changed something or there
-        // are last diffs
-        if (doc !== oldDoc || doc.last_diffs.length > 0) {
-            if (doc.last_diffs.length > 0) {
-                this.applyDiffs(doc)
+        let docVersion = parseFloat(doc.fields.doc_version)
+        return new Promise((resolve, reject) => {
+            if (docVersion < 2) {
+                // In version 0 - 1.x, the bibliography had to be loaded from
+                // the document user.
+                jQuery.ajax({
+                    url: '/document/maintenance/get_user_biblist/',
+                    data: {
+                        'user_id': doc.fields.owner
+                    },
+                    type: 'POST',
+                    dataType: 'json',
+                    crossDomain: false, // obviates need for sameOrigin test
+                    beforeSend: (xhr, settings) =>
+                        xhr.setRequestHeader("X-CSRFToken", csrfToken),
+                    success: (response, textStatus, jqXHR) => {
+                        let bibDB = response.bibList.reduce((db, item) => {
+                            let id = item['id']
+                            let bibDBEntry = {}
+                            bibDBEntry['fields'] = JSON.parse(item['fields'])
+                            bibDBEntry['bib_type'] = item['bib_type']
+                            bibDBEntry['entry_key'] = item['entry_key']
+                            db[id] = bibDBEntry
+                            return db
+                        }, {})
+                        resolve(bibDB)
+                    },
+                    error: (jqXHR, textStatus, errorThrown) => {
+                        addAlert('error', jqXHR.responseText)
+                        reject()
+                    }
+                })
+            } else {
+                resolve(doc.bibliography)
             }
-            this.saveDoc(doc)
-        }
-    }
-
-    applyDiffs(doc) {
-        let pm = new ProseMirror({
-            place: null,
-            schema: docSchema
+        }).then(bibliography => {
+            // updates doc to the newest version
+            doc = updateDoc(oldDoc, bibliography, docVersion)
+            // only proceed with saving if the doc update has changed something
+            if (doc !== oldDoc) {
+                this.saveDoc(doc)
+            }
         })
-        if(doc.contents.type) {
-            pm.setDoc(
-                docSchema.nodeFromJSON({type:'doc', content:[doc.contents]})
-            )
-        }
-        let pmCollab = collabEditing.config({version: 0}).attach(pm)
-        let unappliedDiffs = doc.diff_version - doc.version
-
-        doc.last_diffs = doc.last_diffs.slice(doc.last_diffs.length - unappliedDiffs)
-        while (doc.last_diffs.length > 0) {
-            try {
-                let diff = doc.last_diffs.shift()
-                let steps = [diff].map(j => Step.fromJSON(docSchema, j))
-                let client_ids = [diff].map(j => j.client_id)
-                pmCollab.receive(steps, client_ids)
-            } catch (error) {
-                addAlert('error', gettext('Discarded useless diffs for: ') + doc.id)
-                doc.last_diffs = []
-            }
-        }
-
-        let pmArticle = pm.doc.firstChild
-        doc.contents = pmArticle.toJSON()
-        doc.metadata = getMetadata(pmArticle)
-        Object.assign(doc.settings, getSettings(pmArticle))
-        doc.version = doc.diff_version
     }
 
 
     saveDoc(doc) {
-        doc.contents = window.JSON.stringify(doc.contents)
-        doc.metadata = window.JSON.stringify(doc.metadata)
-        doc.settings = window.JSON.stringify(doc.settings)
-        doc.last_diffs = window.JSON.stringify(doc.last_diffs)
         this.docSavesLeft++
-        jQuery.ajax({
+        let p1 = new Promise(resolve => jQuery.ajax({
             url: "/document/maintenance/save_doc/",
             type: 'POST',
             dataType: 'json',
             crossDomain: false, // obviates need for sameOrigin test
             beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
-            data: doc,
-            success: data => {
-                addAlert('success', gettext('The document has been updated: ') + doc.id)
-                this.docSavesLeft--
-                if (this.docSavesLeft===0 && this.batchesDone) {
-                    addAlert('success', gettext('All documents updated!'))
-                    this.updateRevisions()
-                }
+            data: {
+                id: doc.id,
+                contents: window.JSON.stringify(doc.contents),
+                bibliography: window.JSON.stringify(doc.bibliography),
+                doc_version: parseFloat(FW_FILETYPE_VERSION),
+                version: doc.version,
+                last_diffs: window.JSON.stringify(doc.last_diffs)
+            },
+            success: () => resolve()
+        })),
+            p2 = new Promise(resolve => jQuery.ajax({
+            url: "/document/maintenance/add_images_to_doc/",
+            type: 'POST',
+            dataType: 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
+            data: {
+                doc_id: doc.id,
+                ids: doc.imageIds
+            },
+            success: () => resolve()
+        }))
+        Promise.all([p1, p2]).then(() => {
+            addAlert('success', `${gettext('The document has been updated')}: ${doc.id}`)
+            this.docSavesLeft--
+            if (this.docSavesLeft===0 && this.batchesDone) {
+                addAlert('success', gettext('All documents updated!'))
+                this.done()
             }
         })
     }
@@ -184,8 +192,8 @@ export class DocMaintenance {
                     if (filetypeVersion !== FW_FILETYPE_VERSION) {
                         let doc = window.JSON.parse(openedFiles["document.json"])
                         let bib = window.JSON.parse(openedFiles["bibliography.json"])
-                        let newDoc = updateFileDoc(doc, filetypeVersion)
                         let newBib = updateFileBib(bib, filetypeVersion)
+                        let newDoc = updateFileDoc(doc, newBib, filetypeVersion)
                         zipfs.file("filetype-version", FW_FILETYPE_VERSION)
                         zipfs.file("document.json", window.JSON.stringify(newDoc))
                         zipfs.file("bibliography.json", window.JSON.stringify(newBib))
@@ -231,6 +239,5 @@ export class DocMaintenance {
     done() {
         jQuery('button#update').html(gettext('All documents and revisions updated!'))
     }
-
 
 }

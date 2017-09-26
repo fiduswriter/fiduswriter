@@ -1,4 +1,4 @@
-import {render} from "katex"
+import {render} from "katex/dist/katex"
 
 export function katexRender (formula, node, options) {
     try {

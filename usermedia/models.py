@@ -13,6 +13,7 @@ except ImportError:
     # Python 3
     from io import StringIO
 from django.core.files.uploadedfile import SimpleUploadedFile
+from document.models import Document
 
 ALLOWED_FILETYPES = ['image/jpeg', 'image/png', 'image/svg+xml']
 ALLOWED_EXTENSIONS = ['jpeg', 'jpg', 'png', 'svg']
@@ -27,13 +28,7 @@ def get_file_path(instance, filename):
 
 
 class Image(models.Model):
-    title = models.CharField(max_length=128)
     uploader = models.ForeignKey(User, related_name='image_uploader')
-    owner = models.ForeignKey(
-        User,
-        related_name='image_owner',
-        blank=True,
-        null=True)
     added = models.DateTimeField(auto_now_add=True)
     image = models.FileField(upload_to=get_file_path)
     thumbnail = models.ImageField(
@@ -41,17 +36,27 @@ class Image(models.Model):
         max_length=500,
         blank=True,
         null=True)
-    image_cat = models.CharField(max_length=255, default='')
     file_type = models.CharField(max_length=20, blank=True, null=True)
     height = models.IntegerField(blank=True, null=True)
     width = models.IntegerField(blank=True, null=True)
     checksum = models.BigIntegerField(default=0)
 
     def __unicode__(self):
-        if len(self.title) > 0:
-            return self.title
-        else:
-            return str(self.pk)
+        return str(self.pk)
+
+    def is_deletable(self):
+        reverse_relations = [
+            f for f in self._meta.model._meta.get_fields()
+            if (f.one_to_many or f.one_to_one) and
+            f.auto_created and not f.concrete
+        ]
+
+        for r in reverse_relations:
+            if r.remote_field.model.objects.filter(
+                **{r.field.name: self}
+            ).exists():
+                return False
+        return True
 
     def create_checksum(self):
         if not self.image:
@@ -160,13 +165,44 @@ class Image(models.Model):
             suf,
             save=False)
 
-    def save(self):
+    def save(self, *args, **kwargs):
         # create a thumbnail
         self.create_checksum()
         self.check_filetype()
         self.create_thumbnail()
 
-        super(Image, self).save()
+        super(Image, self).save(*args, **kwargs)
+
+
+# Image linked to a particular User.
+class UserImage(models.Model):
+    title = models.CharField(max_length=128)
+    owner = models.ForeignKey(
+        User,
+        related_name='image_owner',
+        blank=True,
+        null=True)
+    image_cat = models.CharField(max_length=255, default='')
+    image = models.ForeignKey(Image)
+
+    def __unicode__(self):
+        if len(self.title) > 0:
+            return self.title
+        else:
+            return str(self.pk)
+
+
+# Image linked to a document
+class DocumentImage(models.Model):
+    title = models.CharField(max_length=128, default='')
+    document = models.ForeignKey(Document)
+    image = models.ForeignKey(Image)
+
+    def __unicode__(self):
+        if len(self.title) > 0:
+            return self.title
+        else:
+            return str(self.pk)
 
 
 # category

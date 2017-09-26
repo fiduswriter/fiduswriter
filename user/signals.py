@@ -24,6 +24,7 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 
 import urllib2
+from future.moves.urllib.parse import urlparse
 
 from django.template.defaultfilters import slugify
 from django.core.files.base import ContentFile
@@ -50,10 +51,6 @@ def name_from_url(url):
     >>> name_from_url('http://google.com/dir/subdir/file..ext')
     u'file.ext'
     """
-    try:
-        from urllib.parse import urlparse
-    except ImportError:
-        from urlparse import urlparse
     p = urlparse(url)
     for base in (p.path.split('/')[-1],
                  p.path,

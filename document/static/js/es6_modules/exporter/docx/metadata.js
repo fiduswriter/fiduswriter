@@ -1,5 +1,5 @@
 import {textContent} from "../tools/doc-contents"
-import {escapeText} from "../tools/html"
+import {escapeText} from "../../common"
 
 
 export class DocxExporterMetadata {
@@ -8,8 +8,12 @@ export class DocxExporterMetadata {
         this.docContents = docContents
         this.coreXml = false
         this.metadata = {
-            authors: textContent(this.docContents.content[2]),
-            keywords: textContent(this.docContents.content[4]),
+            authors: this.docContents.content[2].content ?
+                this.docContents.content[2].content.map(authorNode => authorNode.attrs) :
+                [],
+            keywords: this.docContents.content[4].content ?
+                this.docContents.content[4].content.map(keywordNode => keywordNode.attrs.keyword) :
+                [],
             title: textContent(this.docContents.content[0])
         }
     }
@@ -37,13 +41,24 @@ export class DocxExporterMetadata {
         titleEl.innerHTML = escapeText(this.metadata.title)
 
         // Authors
-        let lastAuthor = 'Unknown'
-        let allAuthors = 'Unknown'
-        let authors = this.metadata.authors.split(/[,;]/).map(entry => entry.trim()).filter(entry => entry.length)
-        if (authors.length > 0) {
-            lastAuthor = escapeText(authors[0])
-            allAuthors = escapeText(authors.join(';'))
-        }
+
+        let authors = this.metadata.authors.map(author => {
+            let nameParts = []
+            if (author.firstname) {
+                nameParts.push(author.firstname)
+            }
+            if (author.lastname) {
+                nameParts.push(author.lastname)
+            }
+            if (!nameParts.length && author.institution) {
+                // We have an institution but no names. Use institution as name.
+                nameParts.push(author.institution)
+            }
+            return nameParts.join(' ')
+        })
+        let lastAuthor = authors.length ? escapeText(authors[0]) : gettext('Unknown')
+        let allAuthors = authors.length ? escapeText(authors.join(';')): gettext('Unknown')
+
         let allAuthorsEl = this.coreXml.querySelector('creator')
         if (!allAuthorsEl) {
             corePropertiesEl.insertAdjacentHTML('beforeEnd', '<dc:creator></dc:creator>')
@@ -58,8 +73,11 @@ export class DocxExporterMetadata {
         lastAuthorEl.innerHTML = lastAuthor
 
         // Keywords
-        let keywordsString = escapeText(this.metadata.keywords)
-        if (keywordsString.length) {
+        if (this.metadata.keywords.length) {
+            // It is not really clear how keywords should be separated in DOCX files,
+            // so we use ", ".
+            let keywordsString = escapeText(this.metadata.keywords.join(', '))
+
             let keywordsEl = this.coreXml.querySelector('keywords')
             if (!keywordsEl) {
                 corePropertiesEl.insertAdjacentHTML('beforeEnd', '<cp:keywords></cp:keywords>')
@@ -67,6 +85,8 @@ export class DocxExporterMetadata {
             }
             keywordsEl.innerHTML = keywordsString
         }
+
+
 
         // time
         let date = new Date()

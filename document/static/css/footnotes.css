@@ -8,7 +8,7 @@
 /* Make the <hr> at the end of the footnote editor not show. It is only there
 because PM needs some content. */
 
-#footnote-box-container > div.ProseMirror > div.ProseMirror-content > div:last-child > hr {
+#footnote-box-container > div.ProseMirror > div:last-child > hr {
     display: none
 }
 
@@ -19,10 +19,6 @@ because PM needs some content. */
 #footnote-box-container .footnote-container > *:first-child::before {
   counter-increment: footnote-counter;
   content: counter(footnote-counter) ' ';
-}
-
-#flow, #print {
-  counter-reset: footnote-counter footnote-marker-counter;
 }
 
 /* footnotes in main editor */

@@ -85,10 +85,6 @@
     width: 561px;
 }
 
-#bib-dialog div.literal::before {
-    content: attr(data-placeholder);
-    color: #cecece;
-}
 
 #bib-dialog .ProseMirror-focused div.literal,
 #bib-dialog .ProseMirror-focused pre.long-literal,

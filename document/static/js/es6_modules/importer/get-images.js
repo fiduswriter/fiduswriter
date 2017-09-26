@@ -1,8 +1,9 @@
 import JSZipUtils from "jszip-utils"
 
 export class GetImages {
-    constructor(newImageEntries, entries) {
-        this.newImageEntries = newImageEntries
+    constructor(images, entries) {
+        this.images = images
+        this.imageEntries = Object.values(this.images)
         this.entries = entries
         this.counter = 0
     }
@@ -20,15 +21,14 @@ export class GetImages {
     }
 
     getImageZipEntry() {
-        if (this.counter < this.newImageEntries.length) {
+        if (this.counter < this.imageEntries.length) {
             return new Promise((resolve, reject) => {
-                let fc = _.findWhere(
-                    this.entries,
-                    {filename: this.newImageEntries[this.counter].oldUrl.split('/').pop()}
-                ).contents
-                this.newImageEntries[this.counter]['file'] = new window.Blob(
+                let fc = this.entries.find(entry => entry.filename === this.imageEntries[
+                    this.counter
+                ].image.split('/').pop()).contents
+                this.imageEntries[this.counter]['file'] = new window.Blob(
                     [fc],
-                    {type: this.newImageEntries[this.counter].file_type}
+                    {type: this.imageEntries[this.counter].file_type}
                 )
                 this.counter++
                 this.getImageZipEntry().then(()=>{
@@ -41,17 +41,14 @@ export class GetImages {
     }
 
     getImageUrlEntry() {
-        if (this.counter < this.newImageEntries.length) {
+        if (this.counter < this.imageEntries.length) {
             return new Promise((resolve, reject) => {
-                let getUrl = _.findWhere(
-                    this.entries,
-                    {filename: this.newImageEntries[this.counter].oldUrl.split('/').pop()}
-                ).url
-                let mimeString = this.newImageEntries[this.counter].file_type
+                let getUrl = this.entries.find(entry => entry.filename === this.imageEntries[this.counter].image.split('/').pop()).url
+                let mimeString = this.imageEntries[this.counter].file_type
                 JSZipUtils.getBinaryContent(getUrl, (err, data) => {
                     let dataView = new DataView(data)
                     let blob = new window.Blob([dataView], {type: mimeString});
-                    this.newImageEntries[this.counter]['file'] = blob
+                    this.imageEntries[this.counter]['file'] = blob
                     this.counter++
                     this.getImageUrlEntry().then(()=>{
                         resolve()

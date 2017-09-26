@@ -1,5 +1,7 @@
-/* Functions related to user interactions with comments */
+import {getCommentDuringCreationDecoration} from "../statePlugins"
+import {REVIEW_ROLES} from ".."
 
+/* Functions related to user interactions with comments */
 export class ModCommentInteractions {
     constructor(mod) {
         mod.interactions = this
@@ -17,8 +19,8 @@ export class ModCommentInteractions {
             that.cancelSubmitComment(this)
         })
         jQuery(document).on("click", ".comment-box.inactive", function() {
-            let commentId = that.getCommentId(this)
-            that.mod.layout.activateComment(commentId)
+            let id = that.getCommentId(this)
+            that.mod.layout.activateComment(id)
             that.mod.layout.layoutComments()
         })
 
@@ -76,7 +78,15 @@ export class ModCommentInteractions {
         this.mod.layout.deactivateAll()
         this.mod.store.addCommentDuringCreation()
         this.mod.layout.activeCommentId = -1
-        this.mod.layout.layoutComments()
+        this.mod.layout.layoutComments().then(
+            () => {
+                let commentBox = document.querySelector('.comment-box.active .commentText')
+                if (commentBox) {
+                    commentBox.focus()
+                }
+            }
+        )
+
     }
 
     getCommentId(node) {
@@ -91,7 +101,6 @@ export class ModCommentInteractions {
         } else {
             // Handle the deletion of a comment.
             this.mod.store.deleteComment(id, true)
-            this.mod.editor.docInfo.changed = true
         }
         this.mod.layout.layoutComments()
     }
@@ -100,16 +109,29 @@ export class ModCommentInteractions {
     updateComment(id, commentText, commentIsMajor) {
         // Save the change to a comment and mark that the document has been changed
         if (id===-1) {
+            let referrer = getCommentDuringCreationDecoration(this.mod.editor.view.state)
             // This is a new comment. We need to get an ID for it if it has contents.
+
+            let userName, userAvatar
+
+            if(REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
+                userName = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
+                userAvatar = `${window.staticUrl}img/default_avatar.png`
+            } else {
+                userName = this.mod.editor.user.name
+                userAvatar = this.mod.editor.user.avatar
+            }
+
+
             this.mod.store.addComment(
                 this.mod.editor.user.id,
-                this.mod.editor.user.name,
-                this.mod.editor.user.avatar,
+                userName,
+                userAvatar,
                 new Date().getTime(), // We update the time to the time the comment was stored
                 commentText,
                 commentIsMajor,
-                this.mod.store.commentDuringCreation.referrer.from,
-                this.mod.store.commentDuringCreation.referrer.to
+                referrer.from,
+                referrer.to
             )
         } else {
             this.mod.store.updateComment(id, commentText, commentIsMajor)
@@ -121,14 +143,14 @@ export class ModCommentInteractions {
 
     submitComment(submitButton) {
         // Handle a click on the submit button of the comment submit form.
-        let commentTextBox = jQuery(submitButton).siblings('.commentText')[0]
-        let commentText = commentTextBox.value
-        let commentIsMajor = jQuery(submitButton).siblings('.comment-is-major').prop('checked')
-        let commentId = this.getCommentId(commentTextBox)
+        let commentTextBox = jQuery(submitButton).siblings('.commentText')[0],
+            commentText = commentTextBox.value,
+            commentIsMajor = jQuery(submitButton).siblings('.comment-is-major').prop('checked'),
+            id = this.getCommentId(commentTextBox)
         if (commentText.length > 0) {
-            this.updateComment(commentId, commentText, commentIsMajor)
+            this.updateComment(id, commentText, commentIsMajor)
         } else {
-            this.deleteComment(commentId)
+            this.deleteComment(id)
         }
 
     }
@@ -149,21 +171,20 @@ export class ModCommentInteractions {
         this.mod.layout.layoutComments()
     }
 
-    deleteCommentAnswer(commentId, answerId) {
+    deleteCommentAnswer(id, answerId) {
         // Handle the deletion of a comment answer.
-        this.mod.store.deleteAnswer(commentId, answerId)
+        this.mod.store.deleteAnswer(id, answerId)
         this.mod.layout.deactivateAll()
-        this.mod.editor.docInfo.changed = true
         this.mod.layout.layoutComments()
     }
 
     submitAnswer() {
         // Submit the answer to a comment
-        let commentWrapper = jQuery('.comment-box.active')
-        let answerTextBox = commentWrapper.find('.comment-answer-text')[0]
-        let answerText = answerTextBox.value
-        let commentId = parseInt(commentWrapper.attr('data-id'))
-        this.createNewAnswer(commentId, answerText)
+        let commentWrapper = jQuery('.comment-box.active'),
+            answerTextBox = commentWrapper.find('.comment-answer-text')[0],
+            answerText = answerTextBox.value,
+            id = parseInt(commentWrapper.attr('data-id'))
+        this.createNewAnswer(id, answerText)
     }
 
     editAnswer(id, answerId) {
@@ -174,36 +195,44 @@ export class ModCommentInteractions {
         this.mod.layout.layoutComments()
     }
 
-    createNewAnswer(commentId, answerText) {
+    createNewAnswer(id, answerText) {
         // Create a new answer to add to the comment store
+
+        let userName, userAvatar
+
+        if(REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
+            userName = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
+            userAvatar = `${window.staticUrl}img/default_avatar.png`
+        } else {
+            userName = this.mod.editor.user.name
+            userAvatar = this.mod.editor.user.avatar
+        }
+
         let answer = {
-            commentId: commentId,
             answer: answerText,
             user: this.mod.editor.user.id,
-            userName: this.mod.editor.user.name,
-            userAvatar: this.mod.editor.user.avatar,
+            userName,
+            userAvatar,
             date: new Date().getTime()
         }
 
-        this.mod.store.addAnswer(commentId, answer)
+        this.mod.store.addAnswer(id, answer)
 
         this.mod.layout.deactivateAll()
         this.mod.layout.layoutComments()
-        this.mod.editor.docInfo.changed = true
     }
 
     submitAnswerEdit(textArea) {
-        let commentId = parseInt(textArea.attr('data-id'))
-        let answerId = parseInt(textArea.attr('data-answer'))
-        let theValue = textArea.val()
+        let id = parseInt(textArea.attr('data-id')),
+            answerId = parseInt(textArea.attr('data-answer')),
+            theValue = textArea.val()
 
-        this.submitAnswerUpdate(commentId, answerId, theValue)
+        this.submitAnswerUpdate(id, answerId, theValue)
     }
 
-    submitAnswerUpdate(commentId, answerId, commentText) {
-        this.mod.store.updateAnswer(commentId, answerId, commentText)
+    submitAnswerUpdate(id, answerId, commentText) {
+        this.mod.store.updateAnswer(id, answerId, commentText)
         this.mod.layout.deactivateAll()
-        this.mod.editor.docInfo.changed = true
         this.mod.layout.layoutComments()
     }
 }

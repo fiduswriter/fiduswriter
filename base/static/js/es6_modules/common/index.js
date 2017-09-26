@@ -101,11 +101,7 @@ export let localizeDate = function (milliseconds, sortable) {
                 mm = theDate.getMonth() + 1,
                 dd = theDate.getDate()
 
-            if (10 > mm) {
-                mm = '0' + mm
-            }
-
-            return yyyy + '/' + mm + '/' + dd
+            return `${yyyy}-${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`
         }
         else {
             return theDate.toLocaleString()

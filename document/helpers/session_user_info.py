@@ -33,7 +33,9 @@ class SessionUserInfo():
             self.document_id = document.id
         else:
             document = Document.objects.filter(id=int(document_id))
-            if len(document) > 0:
+            if len(document) == 0:
+                return (False, False)
+            else:
                 document = document[0]
                 self.document_id = document.id
                 if document.owner == self.user:
@@ -49,5 +51,4 @@ class SessionUserInfo():
                     if len(access_rights) > 0:
                         self.access_rights = access_rights[0].rights
                         can_access = True
-
         return (document, can_access)

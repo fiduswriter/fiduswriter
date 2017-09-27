@@ -182,12 +182,12 @@ class WebSocket(BaseWebSocketHandler):
             logger.debug('receiving message for closed document')
             return
         parsed = json_decode(message)
-        logger.debug("Type %s, server %d, client %d, id %d" % (
-            parsed["type"], parsed["s"], parsed["c"], self.id
-        ))
         if parsed["type"] == 'request_resend':
             self.resend_messages(parsed["from"])
             return
+        logger.debug("Type %s, server %d, client %d, id %d" % (
+            parsed["type"], parsed["s"], parsed["c"], self.id
+        ))
         if parsed["c"] < (self.messages["client"] + 1):
             # Receive a message already received at least once. Ignore.
             return
@@ -560,7 +560,7 @@ class WebSocket(BaseWebSocketHandler):
     def save_document(cls, document_id):
         doc = cls.sessions[document_id]
         doc_db = doc['db']
-        doc_db.title = json_decode(json_encode(doc['title'][-255:]))
+        doc_db.title = json_decode(json_encode(doc['title']))[-255:]
         doc_db.version = doc['version']
         doc_db.contents = json_encode(doc['contents'])
         doc_db.last_diffs = json_encode(doc['last_diffs'])

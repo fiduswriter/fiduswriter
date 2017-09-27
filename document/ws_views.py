@@ -185,6 +185,12 @@ class WebSocket(BaseWebSocketHandler):
         if parsed["type"] == 'request_resend':
             self.resend_messages(parsed["from"])
             return
+        if 'c' not in parsed and 's' not in parsed:
+            self.write_message({
+                'type': 'access_denied'
+            })
+            # Message doesn't contain needed client/server info. Ignore.
+            return
         logger.debug("Type %s, server %d, client %d, id %d" % (
             parsed["type"], parsed["s"], parsed["c"], self.id
         ))

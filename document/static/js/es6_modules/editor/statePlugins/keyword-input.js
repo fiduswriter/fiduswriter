@@ -48,6 +48,18 @@ let placeholderPlugin = function() {
     })
 }
 
+let findKeywordsEndPos = function(state) {
+    let pos = 1, // enter article
+        child = 0
+    while(state.doc.firstChild.child(child).type.name !== 'keywords') {
+        pos += state.doc.firstChild.child(child).nodeSize
+        child++
+    }
+    // Put decoration at end within authors element
+    pos += state.doc.firstChild.child(child).nodeSize - 1
+    return pos
+}
+
 export let keywordInputPlugin = function(options) {
     let keywordView // The input element for keywords
 
@@ -129,51 +141,47 @@ export let keywordInputPlugin = function(options) {
         return dom
     }
 
+    let createKeywordsEndDeco = function(state) {
+        let dom = createKeywordInputDom()
+        let pos = findKeywordsEndPos(state)
+        return Decoration.widget(pos, dom, {
+            side: 1,
+            stopEvent: event => {
+                if (
+                    event.type==='keydown' &&
+                    event.key==='ArrowRight' &&
+                    keywordView.state.selection.from ===
+                        keywordView.state.doc.nodeSize -3
+                ) {
+                    window.getSelection().removeAllRanges()
+                    options.editor.view.focus()
+                    return false
+                } else if (
+                    event.type==='keydown' &&
+                    event.key==='ArrowLeft' &&
+                    keywordView.state.selection.to === 1
+                ) {
+                    window.getSelection().removeAllRanges()
+                    options.editor.view.focus()
+                    return false
+                }
+                return true
+            }
+        })
+
+    }
+
     return new Plugin({
         key,
         state: {
             init(config, state) {
-                let pos = 1, // enter article
-                    child = 0,
-                    decos = DecorationSet.empty
+                let decos = DecorationSet.empty
 
                 if (options.editor.docInfo.access_rights !== 'write') {
                     return {decos}
                 }
 
-                while(state.doc.firstChild.child(child).type.name !== 'keywords') {
-                    pos += state.doc.firstChild.child(child).nodeSize
-                    child++
-                }
-                // Put decoration at end within keywords element
-                pos += state.doc.firstChild.child(child).nodeSize - 1
-
-                let dom = createKeywordInputDom(),
-                    deco = Decoration.widget(pos, dom, {
-                        side: 1,
-                        stopEvent: event => {
-                            if (
-                                event.type==='keydown' &&
-                                event.key==='ArrowRight' &&
-                                keywordView.state.selection.from ===
-                                    keywordView.state.doc.nodeSize -3
-                            ) {
-                                window.getSelection().removeAllRanges()
-                                options.editor.view.focus()
-                                return false
-                            } else if (
-                                event.type==='keydown' &&
-                                event.key==='ArrowLeft' &&
-                                keywordView.state.selection.to === 1
-                            ) {
-                                window.getSelection().removeAllRanges()
-                                options.editor.view.focus()
-                                return false
-                            }
-                            return true
-                        }
-                    })
-
+                let deco = createKeywordsEndDeco(state)
                 decos = decos.add(state.doc, [deco])
 
                 return {
@@ -184,11 +192,20 @@ export let keywordInputPlugin = function(options) {
                 let {
                     decos
                 } = this.getState(oldState)
-
-                decos = decos.map(tr.mapping, tr.doc)
                 if (options.editor.docInfo.access_rights !== 'write') {
                     return {decos}
                 }
+                let decoDropped = false
+                decos = decos.map(tr.mapping, tr.doc, {
+                    onRemove: oldDeco => decoDropped = true
+                })
+
+                if (decoDropped) {
+                    decos = DecorationSet.empty
+                    let deco = createKeywordsEndDeco(state)
+                    decos = decos.add(state.doc, [deco])
+                }
+
                 let decoPos = decos.find()[0].from
                 if (
                     tr.selection.from === tr.selection.to &&

@@ -13,7 +13,7 @@ let loginPage = function() {
     btnWidth += 15
     socialButtons.forEach(
         button => {
-            button.style.width = `${btnWidth}px;`
+            button.style.width = `${btnWidth}px`
         }
     )
 }

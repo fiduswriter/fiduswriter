@@ -566,7 +566,7 @@ class WebSocket(BaseWebSocketHandler):
     def save_document(cls, document_id):
         doc = cls.sessions[document_id]
         doc_db = doc['db']
-        doc_db.title = json_decode(json_encode(doc['title']))[-255:]
+        doc_db.title = doc['title'][-255:]
         doc_db.version = doc['version']
         doc_db.contents = json_encode(doc['contents'])
         doc_db.last_diffs = json_encode(doc['last_diffs'])

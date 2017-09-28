@@ -395,7 +395,9 @@ def import_js(request):
                 response,
                 status=status
             )
-        document.title = json_decode(json_encode(request.POST['title']))
+        document.title = request.POST['title']
+        # We need to decode/encode the following so that it has the same
+        # character encoding as used the the save_document method in ws_views.
         document.contents = json_encode(json_decode(request.POST['contents']))
         document.comments = json_encode(json_decode(request.POST['comments']))
         document.bibliography = \

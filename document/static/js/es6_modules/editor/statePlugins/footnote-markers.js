@@ -73,7 +73,7 @@ export let updateFootnoteMarker = function(state, index, content) {
     if (node.attrs.footnote === content) {
         return
     }
-    let transaction = state.tr.setNodeType(footnote.from, node.type, {
+    let transaction = state.tr.setNodeMarkup(footnote.from, node.type, {
         footnote: content
     })
     transaction.setMeta('fromFootnote', true)

@@ -82,7 +82,7 @@ export class ModStyles {
                     let attrs = Object.assign({}, article.attrs)
                     attrs.documentstyle = docStyle.filename
                     editor.view.dispatch(
-                        editor.view.state.tr.setNodeType(0, false, attrs)
+                        editor.view.state.tr.setNodeMarkup(0, false, attrs)
                     )
                 },
                 selected: editor => {
@@ -105,7 +105,7 @@ export class ModStyles {
                     let attrs = Object.assign({}, article.attrs)
                     attrs.citationstyle = citeStyle.short_title
                     editor.view.dispatch(
-                        editor.view.state.tr.setNodeType(0, false, attrs)
+                        editor.view.state.tr.setNodeMarkup(0, false, attrs)
                     )
                 },
                 selected: editor => {

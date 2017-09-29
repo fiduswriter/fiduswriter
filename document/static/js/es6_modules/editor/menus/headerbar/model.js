@@ -27,7 +27,7 @@ let languageItem = function(code, name) {
             let attrs = Object.assign({}, article.attrs)
             attrs.language = code
             editor.view.dispatch(
-                editor.view.state.tr.setNodeType(0, false, attrs)
+                editor.view.state.tr.setNodeMarkup(0, false, attrs)
             )
         },
         selected: editor => {
@@ -217,7 +217,7 @@ export let headerbarModel = {
                                     }
                                 })
                                 editor.view.dispatch(
-                                    editor.view.state.tr.setNodeType(offset, false, attrs)
+                                    editor.view.state.tr.setNodeMarkup(offset, false, attrs)
                                 )
                             },
                             selected: editor => {
@@ -239,7 +239,7 @@ export let headerbarModel = {
                                     }
                                 })
                                 editor.view.dispatch(
-                                    editor.view.state.tr.setNodeType(offset, false, attrs)
+                                    editor.view.state.tr.setNodeMarkup(offset, false, attrs)
                                 )
                             },
                             selected: editor => {
@@ -261,7 +261,7 @@ export let headerbarModel = {
                                     }
                                 })
                                 editor.view.dispatch(
-                                    editor.view.state.tr.setNodeType(offset, false, attrs)
+                                    editor.view.state.tr.setNodeMarkup(offset, false, attrs)
                                 )
                             },
                             selected: editor => {
@@ -283,7 +283,7 @@ export let headerbarModel = {
                                     }
                                 })
                                 editor.view.dispatch(
-                                    editor.view.state.tr.setNodeType(offset, false, attrs)
+                                    editor.view.state.tr.setNodeMarkup(offset, false, attrs)
                                 )
                             },
                             selected: editor => {
@@ -383,7 +383,7 @@ export let headerbarModel = {
                                 let attrs = Object.assign({}, article.attrs)
                                 attrs.papersize = 'A4'
                                 editor.view.dispatch(
-                                    editor.view.state.tr.setNodeType(0, false, attrs)
+                                    editor.view.state.tr.setNodeMarkup(0, false, attrs)
                                 )
                             },
                             selected: editor => {
@@ -399,7 +399,7 @@ export let headerbarModel = {
                                 let attrs = Object.assign({}, article.attrs)
                                 attrs.papersize = 'US Letter'
                                 editor.view.dispatch(
-                                    editor.view.state.tr.setNodeType(0, false, attrs)
+                                    editor.view.state.tr.setNodeMarkup(0, false, attrs)
                                 )
                             },
                             selected: editor => {

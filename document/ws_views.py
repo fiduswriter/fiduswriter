@@ -473,7 +473,7 @@ class WebSocket(BaseWebSocketHandler):
             ]['participants']
         ):
             del self.doc['participants'][self.id]
-            if len(self.doc['participants'].keys()) == 0:
+            if len(self.doc['participants']) == 0:
                 WebSocket.save_document(self.user_info.document_id)
                 del WebSocket.sessions[self.user_info.document_id]
                 logger.debug("noone left")

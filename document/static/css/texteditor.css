@@ -735,3 +735,18 @@ span.anchor {
         background-color: #fff;
     }
 }
+
+/* For users who use one of the inverted high contrast modes. Likely want
+as much black as possible. */
+
+html[hc=a3] .ui-widget-overlay, html[hc=a4] .ui-widget-overlay, html[hc=a5] .ui-widget-overlay {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+html[hc=a3] body, html[hc=a4] body, html[hc=a5] body {
+    background-color: white;
+}
+
+html[hc=a3] #toolbar, html[hc=a4] #toolbar, html[hc=a5] #toolbar {
+    border-bottom: 1px solid #c9c9c9;
+}

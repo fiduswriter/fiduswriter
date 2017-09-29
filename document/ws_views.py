@@ -48,7 +48,10 @@ class WebSocket(BaseWebSocketHandler):
             self.send_message(response)
             return
         response['type'] = 'welcome'
-        if doc_db.id in WebSocket.sessions:
+        if (
+            doc_db.id in WebSocket.sessions and
+            len(WebSocket.sessions[doc_db.id]['participants']) > 0
+        ):
             logger.debug("Serving already opened file")
             self.doc = WebSocket.sessions[doc_db.id]
             self.id = max(self.doc['participants']) + 1

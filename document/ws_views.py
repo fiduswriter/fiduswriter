@@ -389,7 +389,7 @@ class WebSocket(BaseWebSocketHandler):
                        True
                     )
                 except:
-                    logger.debug("Cannot apply json diff.")
+                    logger.exception("Cannot apply json diff.")
                     self.send_document()
                 # The json diff is only needed by the python backend which does
                 # not understand the steps. It can therefore be removed before

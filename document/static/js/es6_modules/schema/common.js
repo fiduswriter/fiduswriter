@@ -66,6 +66,7 @@ let imageDBBroken = false
 
 export let figure = {
     group: "block",
+    marks: "annotation",
     attrs: {
         equation: {default: ""},
         image: {default: false},

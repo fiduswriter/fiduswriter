@@ -4,6 +4,7 @@ import {
     addCommentDuringCreationDecoration,
     removeCommentDuringCreationDecoration
 } from "../statePlugins"
+import {AddMarkStep} from "prosemirror-transform"
 
 export class ModCommentStore {
     constructor(mod) {
@@ -78,9 +79,47 @@ export class ModCommentStore {
         })
         let markType = this.mod.editor.view.state.schema.marks.comment.create({id})
         this.mod.editor.view.dispatch(
-            this.mod.editor.view.state.tr.addMark(posFrom, posTo, markType)
+            this.addMark(this.mod.editor.view.state.tr, posFrom, posTo, markType)
         )
         this.mustSend()
+    }
+
+    // Fairly similar to general addMark function [1], but also working on block
+    // elements (<hr> and <figure>).
+    // [1] https://github.com/ProseMirror/prosemirror-transform/blob/055c50e08df6b8626dadba88299e50a533c9d6f7/src/mark.js
+    addMark(tr, from, to, mark) {
+      let removed = [], added = [], removing = null, adding = null
+      tr.doc.nodesBetween(from, to, (node, pos, parent) => {
+        //if (!node.isInline) return
+        let marks = node.marks
+        console.log({block:node.isBlock, allowed: node.type.allowsMarkType(mark.type), node})
+        if (
+            !mark.isInSet(marks) &&
+            (node.isInline && parent.type.allowsMarkType(mark.type)) ||
+            (node.isBlock && node.type.allowsMarkType(mark.type))
+        ) {
+          let start = Math.max(pos, from), end = Math.min(pos + node.nodeSize, to)
+          let newSet = mark.addToSet(marks)
+
+          for (let i = 0; i < marks.length; i++) {
+            if (!marks[i].isInSet(newSet)) {
+              if (removing && removing.to == start && removing.mark.eq(marks[i]))
+                removing.to = end
+              else
+                removed.push(removing = new RemoveMarkStep(start, end, marks[i]))
+            }
+          }
+
+          if (adding && adding.to == start)
+            adding.to = end
+          else
+            added.push(adding = new AddMarkStep(start, end, mark))
+        }
+      })
+
+      removed.forEach(s => tr.step(s))
+      added.forEach(s => tr.step(s))
+      return tr
     }
 
 

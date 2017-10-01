@@ -139,6 +139,8 @@ export class MathDialog {
                 //clear resources
                 this.destroy()
                 this.mathQuill.destroy()
+                this.dialog.dialog('destroy').remove()
+                this.editor.currentView.focus()
             }
         })
 

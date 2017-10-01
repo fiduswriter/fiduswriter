@@ -73,6 +73,7 @@ export class CitationDialog {
             create: () => this.dialogCreate(),
             close: () => {
                 this.dialog.dialog('destroy').remove()
+                this.editor.currentView.focus()
             }
         })
 

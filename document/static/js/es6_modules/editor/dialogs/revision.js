@@ -35,7 +35,11 @@ export class RevisionDialog {
             height: 180,
             width: 300,
             modal: true,
-            buttons
+            buttons,
+            close: () => {
+                this.dialog.dialog('destroy').remove()
+                this.editor.currentView.focus()
+            }
         })
 
         return dialogDonePromise

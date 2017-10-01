@@ -8,7 +8,7 @@ import {figure, citation, equation, heading, anchor} from "./common"
 
 let footnotecontainer = {
     group: "part",
-    content: "(block|table_block)+",
+    content: "(block|table_block)+ paragraph",
     parseDOM: [{tag: "div.footnote-container"}],
     toDOM(node) {
         return ['div',{class: 'footnote-container'}, 0]

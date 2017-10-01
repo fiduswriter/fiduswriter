@@ -95,7 +95,10 @@ export class AuthorDialog {
             height: 360,
             modal: true,
             buttons,
-            close: () => this.dialog.dialog('destroy').remove()
+            close: () => {
+                this.dialog.dialog('destroy').remove()
+                this.editor.currentView.focus()
+            }
         })
 
     }

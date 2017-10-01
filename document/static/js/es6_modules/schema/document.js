@@ -171,7 +171,7 @@ let authors = {
 }
 
 let abstract = {
-    content: "(block | table_block)+",
+    content: "(block | table_block)* (paragraph | heading | blockquote | code_block | ordered_list | bullet_list)",
     group: "part",
     marks: "annotation",
     defining: true,
@@ -256,7 +256,7 @@ let keywords = {
 }
 
 let body = {
-    content: "(block | table_block)+",
+    content: "(block | table_block)* (paragraph | heading | blockquote | code_block | ordered_list | bullet_list)",
     group: "part",
     marks: "annotation",
     defining: true,

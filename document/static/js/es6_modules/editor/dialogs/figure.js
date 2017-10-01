@@ -145,7 +145,10 @@ export class FigureDialog {
             draggable: false,
             buttons: dialogButtons,
             dialogClass: 'figure-dialog',
-            close: event => this.dialog.dialog('destroy').remove()
+            close: event => {
+                 this.dialog.dialog('destroy').remove()
+                 this.editor.currentView.focus()
+            }
         }
 
         this.dialog.dialog(dialogOpts)

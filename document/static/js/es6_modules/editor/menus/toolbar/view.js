@@ -270,7 +270,7 @@ export class ToolbarView {
 
     getButtonHTML(menuItem) {
         return `
-        <button class="fw-button fw-light fw-large fw-square edit-button${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}${menuItem.selected && menuItem.selected(this.editor) ? ' ui-state-active' : ''}${menuItem.class ? ` ${menuItem.class(this.editor)}` : ''}" title="${menuItem.title}">
+        <button aria-label="${menuItem.title}" class="fw-button fw-light fw-large fw-square edit-button${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}${menuItem.selected && menuItem.selected(this.editor) ? ' ui-state-active' : ''}${menuItem.class ? ` ${menuItem.class(this.editor)}` : ''}" title="${menuItem.title}" >
             <span class="ui-button-text">
                 <i class="fa fa-${typeof(menuItem.icon) === 'function' ? menuItem.icon(this.editor) : menuItem.icon}"></i>
             </span>

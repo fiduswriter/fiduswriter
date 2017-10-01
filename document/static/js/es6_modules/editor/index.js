@@ -33,6 +33,9 @@ import {
     dropCursor
 } from "prosemirror-dropcursor"
 import {
+    gapCursor
+} from "prosemirror-gapcursor"
+import {
     buildKeymap
 } from "prosemirror-example-setup"
 import {
@@ -129,6 +132,7 @@ export class Editor {
             [keymap, () => buildKeymap(this.schema)],
             [collab],
             [dropCursor],
+            [gapCursor],
             [tableEditing],
             [placeholdersPlugin, () => ({editor: this})],
             [headerbarPlugin, () => ({editor: this})],

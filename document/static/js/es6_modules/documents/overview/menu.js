@@ -21,7 +21,7 @@ export let menuModel = {
                     title: gettext('Delete selected'),
                     action: overview => {
                         let ids = overview.getSelected()
-                        let ownIds = ids.filter(id => overview.documentList[id].is_owner)
+                        let ownIds = ids.filter(id => overview.documentList.find(doc => doc.id===id).is_owner)
                         if (ownIds.length !== ids.length) {
                             addAlert('error', gettext('You cannot delete documents of other users'))
                         }
@@ -34,7 +34,7 @@ export let menuModel = {
                     title: gettext('Share selected'),
                     action: overview => {
                         let ids = overview.getSelected()
-                        let ownIds = ids.filter(id => overview.documentList[id].is_owner)
+                        let ownIds = ids.filter(id => overview.documentList.find(doc => doc.id===id).is_owner)
                         if (ownIds.length !== ids.length) {
                             addAlert('error', gettext('You cannot share documents of other users'))
                         }

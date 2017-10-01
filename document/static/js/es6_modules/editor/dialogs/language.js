@@ -79,7 +79,7 @@ export class LanguageDialog {
                 let attrs = Object.assign({}, article.attrs)
                 attrs.language = language
                 this.editor.view.dispatch(
-                    this.editor.view.state.tr.setNodeType(0, false, attrs)
+                    this.editor.view.state.tr.setNodeMarkup(0, false, attrs)
                 )
                 this.editor.view.focus()
                 return

@@ -1,5 +1,6 @@
 import time
 import os
+from tornado.escape import json_decode, json_encode
 from django.shortcuts import render
 from django.core import serializers
 from django.http import HttpResponse, JsonResponse, HttpRequest
@@ -395,9 +396,12 @@ def import_js(request):
                 status=status
             )
         document.title = request.POST['title']
-        document.contents = request.POST['contents']
-        document.comments = request.POST['comments']
-        document.bibliography = request.POST['bibliography']
+        # We need to decode/encode the following so that it has the same
+        # character encoding as used the the save_document method in ws_views.
+        document.contents = json_encode(json_decode(request.POST['contents']))
+        document.comments = json_encode(json_decode(request.POST['comments']))
+        document.bibliography = \
+            json_encode(json_decode(request.POST['bibliography']))
         # document.doc_version should always be the current version, so don't
         # bother about it.
         document.save()

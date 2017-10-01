@@ -2,7 +2,7 @@ import {escapeText} from "../../common"
 
 /** Simpler image overview table for use in editor. */
 let imageItemSelectionTemplate =  ({image, db}) =>
-    `<tr id="Image_${db}_${image.id}" class="${image.cats.map(cat =>`cat_${cat} `)}" >
+    `<tr id="Image_${db}_${image.id}" class="${image.cats.map(cat =>`cat_${cat}`).join(' ')}" >
          <td class="type" style="width:100px;">
             ${
                 image.thumbnail === undefined ?
@@ -33,7 +33,7 @@ export let imageSelectionTemplate = ({images}) =>
                 </tr>
             </thead>
             <tbody class="fw-document-table-body fw-small">
-                ${images.map(imageData => imageItemSelectionTemplate(imageData))}
+                ${images.map(imageData => imageItemSelectionTemplate(imageData)).join('')}
             </tbody>
         </table>
         <div class="dialogSubmit">

@@ -101,6 +101,7 @@ export class FigureDialog {
             this.submitMessage = gettext('Update')
             this.equation = this.node.attrs.equation
             this.imgId = this.node.attrs.image
+            this.imgDb = 'document'
             this.figureCategory = this.node.attrs.figureCategory
             this.caption = this.node.attrs.caption
 

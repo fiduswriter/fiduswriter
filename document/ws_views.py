@@ -42,13 +42,16 @@ class WebSocket(BaseWebSocketHandler):
         self.user_info = SessionUserInfo()
         doc_db, can_access = self.user_info.init_access(
             document_id, current_user)
-        if doc_db.doc_version != FW_DOCUMENT_VERSION or not can_access:
+        if not can_access or doc_db.doc_version != FW_DOCUMENT_VERSION:
             response['type'] = 'access_denied'
             self.id = 0
             self.send_message(response)
             return
         response['type'] = 'welcome'
-        if doc_db.id in WebSocket.sessions:
+        if (
+            doc_db.id in WebSocket.sessions and
+            len(WebSocket.sessions[doc_db.id]['participants']) > 0
+        ):
             logger.debug("Serving already opened file")
             self.doc = WebSocket.sessions[doc_db.id]
             self.id = max(self.doc['participants']) + 1
@@ -182,12 +185,18 @@ class WebSocket(BaseWebSocketHandler):
             logger.debug('receiving message for closed document')
             return
         parsed = json_decode(message)
-        logger.debug("Type %s, server %d, client %d, id %d" % (
-            parsed["type"], parsed["s"], parsed["c"], self.id
-        ))
         if parsed["type"] == 'request_resend':
             self.resend_messages(parsed["from"])
             return
+        if 'c' not in parsed and 's' not in parsed:
+            self.write_message({
+                'type': 'access_denied'
+            })
+            # Message doesn't contain needed client/server info. Ignore.
+            return
+        logger.debug("Type %s, server %d, client %d, id %d" % (
+            parsed["type"], parsed["s"], parsed["c"], self.id
+        ))
         if parsed["c"] < (self.messages["client"] + 1):
             # Receive a message already received at least once. Ignore.
             return
@@ -380,7 +389,9 @@ class WebSocket(BaseWebSocketHandler):
                        True
                     )
                 except:
-                    logger.debug("Cannot apply json diff.")
+                    logger.exception("Cannot apply json diff.")
+                    logger.error(json_encode(parsed))
+                    logger.error(json_encode(self.doc['contents']))
                     self.send_document()
                 # The json diff is only needed by the python backend which does
                 # not understand the steps. It can therefore be removed before
@@ -464,7 +475,7 @@ class WebSocket(BaseWebSocketHandler):
             ]['participants']
         ):
             del self.doc['participants'][self.id]
-            if len(self.doc['participants'].keys()) == 0:
+            if len(self.doc['participants']) == 0:
                 WebSocket.save_document(self.user_info.document_id)
                 del WebSocket.sessions[self.user_info.document_id]
                 logger.debug("noone left")

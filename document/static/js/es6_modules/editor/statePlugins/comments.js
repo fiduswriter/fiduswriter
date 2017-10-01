@@ -167,7 +167,7 @@ export let commentsPlugin = function(options) {
             // We try to see if the deleted comments are still to be found in
             // another part of the document.
             state.doc.descendants((node, pos, parent) => {
-                if (!node.isInline) {
+                if (!node.isInline && !node.isLeaf) {
                     return
                 }
 

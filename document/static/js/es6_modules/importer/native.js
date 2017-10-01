@@ -143,6 +143,7 @@ export class ImportNative {
                     }
                     this.doc.version = 0
                     this.doc.comment_version = 0
+                    this.doc.id = this.docId
                     this.doc.added = data['added']
                     this.doc.updated = data['updated']
                     this.doc.revisions = []

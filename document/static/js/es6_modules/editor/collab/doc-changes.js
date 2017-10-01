@@ -332,6 +332,7 @@ export class ModCollabDocChanges {
         this.mod.editor.view.dispatch(transaction)
         this.setConfirmedDoc(transaction)
         this.receiving = false
+        this.sendToCollaborators()
     }
 
 }

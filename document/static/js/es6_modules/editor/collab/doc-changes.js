@@ -74,9 +74,13 @@ export class ModCollabDocChanges {
     }
 
     sendToCollaborators() {
-        if (this.awaitingDiffResponse || this.mod.editor.waitingForDocument) {
-            // We are waiting for the confirmation of previous steps, so don't
-            // send anything now.
+        if (
+            this.awaitingDiffResponse ||
+            this.mod.editor.waitingForDocument ||
+            this.receiving
+        ) {
+            // We are waiting for the confirmation of previous steps or are currently
+            // applying a diff, so don't send anything now.
             return
         }
 
@@ -105,7 +109,6 @@ export class ModCollabDocChanges {
                     // no diff. abandon operation
                     return
                 }
-
                 let rid = this.confirmStepsRequestCounter++,
                     unconfirmedDiff = {
                         type: 'diff',
@@ -232,7 +235,7 @@ export class ModCollabDocChanges {
             this.mod.editor.mod.comments.store.receive(data["cu"])
         }
         if (data["ds"]) { // document steps
-            data["ds"].forEach(diff => this.applyDiff(diff))
+            this.applyDiffs(data["ds"])
         }
         if (data["fs"]) { // footnote steps
             this.mod.editor.mod.footnotes.fnEditor.applyDiffs(data["fs"])
@@ -316,18 +319,20 @@ export class ModCollabDocChanges {
         this.enableDiffSending()
     }
 
-    applyDiff(diff) {
+    applyDiffs(diffs) {
         this.receiving = true
-        let step = Step.fromJSON(docSchema, diff)
+        let steps = diffs.map(j => Step.fromJSON(docSchema, j))
+        let clientIds = diffs.map(j => j.client_id)
         let transaction = receiveTransaction(
             this.mod.editor.view.state,
-            [step],
-            [diff.client_id]
+            steps,
+            clientIds
         )
         transaction.setMeta('remote', true)
         this.mod.editor.view.dispatch(transaction)
         this.setConfirmedDoc(transaction)
         this.receiving = false
+        this.sendToCollaborators()
     }
 
 }

@@ -1,10 +1,13 @@
-import {Comment} from "./comment"
-import {REVIEW_ROLES} from ".."
+import {
+    Comment
+} from "./comment"
+import {
+    REVIEW_ROLES
+} from ".."
 import {
     addCommentDuringCreationDecoration,
     removeCommentDuringCreationDecoration
 } from "../statePlugins"
-import {AddMarkStep} from "prosemirror-transform"
 
 export class ModCommentStore {
     constructor(mod) {
@@ -32,9 +35,10 @@ export class ModCommentStore {
     // as it is empty, shouldn't be shared and if canceled, it should go away
     // entirely.
     addCommentDuringCreation() {
-        let id = -1, userName, userAvatar
+        let id = -1,
+            userName, userAvatar
 
-        if(REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
+        if (REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
             userName = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
             userAvatar = `${window.staticUrl}img/default_avatar.png`
         } else {
@@ -42,7 +46,8 @@ export class ModCommentStore {
             userAvatar = this.mod.editor.user.avatar
         }
 
-        let transaction = addCommentDuringCreationDecoration(this.mod.editor.view.state)
+        let transaction = addCommentDuringCreationDecoration(this.mod.editor
+            .view.state)
         if (transaction) {
             this.mod.editor.view.dispatch(transaction)
         }
@@ -61,7 +66,8 @@ export class ModCommentStore {
     removeCommentDuringCreation() {
         if (this.commentDuringCreation) {
             this.commentDuringCreation = false
-            let transaction = removeCommentDuringCreationDecoration(this.mod.editor.view.state)
+            let transaction = removeCommentDuringCreationDecoration(this.mod
+                .editor.view.state)
             if (transaction) {
                 this.mod.editor.view.dispatch(transaction)
             }
@@ -69,61 +75,70 @@ export class ModCommentStore {
     }
 
     // Add a new comment to the comment database both remotely and locally.
-    addComment(user, userName, userAvatar, date, comment, isMajor, posFrom, posTo) {
-        let id = randomID()
+    addComment(user, userName, userAvatar, date, comment, isMajor, posFrom,
+        posTo) {
+        let id = randomID(),
+            markType = this.mod.editor.view.state.schema.marks.comment.create({
+                id
+            }),
+            tr = this.addMark(this.mod.editor.view.state.tr, posFrom, posTo, markType)
 
-        this.addLocalComment(id, user, userName, userAvatar, date, comment, [], isMajor, true)
-        this.unsent.push({
-            type: "create",
-            id
-        })
-        let markType = this.mod.editor.view.state.schema.marks.comment.create({id})
-        this.mod.editor.view.dispatch(
-            this.addMark(this.mod.editor.view.state.tr, posFrom, posTo, markType)
-        )
-        this.mustSend()
-    }
-
-    // Fairly similar to general addMark function [1], but also working on block
-    // elements (<hr> and <figure>).
-    // [1] https://github.com/ProseMirror/prosemirror-transform/blob/055c50e08df6b8626dadba88299e50a533c9d6f7/src/mark.js
-    addMark(tr, from, to, mark) {
-      let removed = [], added = [], removing = null, adding = null
-      tr.doc.nodesBetween(from, to, (node, pos, parent) => {
-        //if (!node.isInline) return
-        let marks = node.marks
-        console.log({block:node.isBlock, allowed: node.type.allowsMarkType(mark.type), node})
-        if (
-            !mark.isInSet(marks) &&
-            (node.isInline && parent.type.allowsMarkType(mark.type)) ||
-            (node.isBlock && node.type.allowsMarkType(mark.type))
-        ) {
-          let start = Math.max(pos, from), end = Math.min(pos + node.nodeSize, to)
-          let newSet = mark.addToSet(marks)
-
-          for (let i = 0; i < marks.length; i++) {
-            if (!marks[i].isInSet(newSet)) {
-              if (removing && removing.to == start && removing.mark.eq(marks[i]))
-                removing.to = end
-              else
-                removed.push(removing = new RemoveMarkStep(start, end, marks[i]))
-            }
-          }
-
-          if (adding && adding.to == start)
-            adding.to = end
-          else
-            added.push(adding = new AddMarkStep(start, end, mark))
+        if (tr) {
+            this.addLocalComment(id, user, userName, userAvatar, date, comment, [],
+                isMajor, true)
+            this.unsent.push({
+                type: "create",
+                id
+            })
+            this.mod.editor.view.dispatch(tr)
+            this.mustSend()
         }
-      })
+    }
 
-      removed.forEach(s => tr.step(s))
-      added.forEach(s => tr.step(s))
-      return tr
+    // Add marks to leaf nodes and inline nodes.
+    addMark(tr, from, to, mark) {
+        // add to inline nodes
+        tr.addMark(from, to, mark)
+        // add to leaf nodes
+        tr.doc.nodesBetween(from, to, (node, pos, parent) => {
+            if (!node.isLeaf) {
+                return
+            }
+            let marks = node.marks
+            if (!mark.isInSet(marks) && parent.type.allowsMarkType(mark.type)) {
+                let newMarks = mark.addToSet(marks)
+                tr.setNodeMarkup(pos, null, node.attrs, newMarks)
+            }
+        })
+        if (!tr.steps.length) {
+            return
+        }
+        return tr
+    }
+
+    removeMark(tr, from, to, mark) {
+        // remove from inline nodes
+        tr.removeMark(from, to, mark)
+        // remove from leaf nodes
+        tr.doc.nodesBetween(from, to, (node, pos, parent) => {
+            if (!node.isLeaf) {
+                return
+            }
+            let marks = node.marks
+            if (mark.isInSet(marks)) {
+                let newMarks = mark.removeFromSet(marks)
+                tr.setNodeMarkup(pos, null, node.attrs, newMarks)
+            }
+        })
+        if (!tr.steps.length) {
+            return
+        }
+        return tr
     }
 
 
-    addLocalComment(id, user, userName, userAvatar, date, comment, answers, isMajor, local) {
+    addLocalComment(id, user, userName, userAvatar, date, comment, answers,
+        isMajor, local) {
         if (!this.comments[id]) {
             this.comments[id] = new Comment(
                 id,
@@ -164,12 +179,16 @@ export class ModCommentStore {
         this.mod.editor.view.state.doc.descendants((node, pos, parent) => {
             let nodeStart = pos
             let nodeEnd = pos + node.nodeSize
-            for (let i =0; i < node.marks.length; i++) {
+            for (let i = 0; i < node.marks.length; i++) {
                 let mark = node.marks[i]
-                if (mark.type.name === 'comment' && parseInt(mark.attrs.id) === id) {
-                    let markType = this.mod.editor.view.state.schema.marks.comment.create({id})
+                if (mark.type.name === 'comment' && parseInt(mark.attrs
+                        .id) === id) {
+                    let markType = this.mod.editor.view.state.schema
+                        .marks.comment.create({
+                            id
+                        })
                     this.mod.editor.view.dispatch(
-                        this.mod.editor.view.state.tr.removeMark(nodeStart, nodeEnd, markType)
+                        this.removeMark(this.mod.editor.view.state.tr, nodeStart, nodeEnd, markType)
                     )
                 }
             }
@@ -227,7 +246,8 @@ export class ModCommentStore {
 
     deleteLocalAnswer(id, answerId, local) {
         if (this.comments[id] && this.comments[id].answers) {
-            this.comments[id].answers = this.comments[id].answers.filter(answer => answer.id !== answerId)
+            this.comments[id].answers = this.comments[id].answers.filter(
+                answer => answer.id !== answerId)
         }
         if (local || (!this.mod.layout.isCurrentlyEditing())) {
             this.mod.layout.layoutComments()
@@ -246,7 +266,8 @@ export class ModCommentStore {
 
     updateLocalAnswer(id, answerId, answerText, local) {
         if (this.comments[id] && this.comments[id].answers) {
-            let answer = this.comments[id].answers.find(answer => answer.id === answerId)
+            let answer = this.comments[id].answers.find(answer => answer.id ===
+                answerId)
             if (answer) {
                 answer.answer = answerText
             }
@@ -309,9 +330,11 @@ export class ModCommentStore {
                     })
                 }
             } else if (event.type == "add_answer") {
-                let found = this.comments[event.id], foundAnswer
+                let found = this.comments[event.id],
+                    foundAnswer
                 if (found && found.id && found.answers) {
-                    foundAnswer = found.answers.find(answer => answer.id === event.answerId)
+                    foundAnswer = found.answers.find(answer => answer.id ===
+                        event.answerId)
                 }
                 if (foundAnswer) {
                     result.push({
@@ -343,9 +366,11 @@ export class ModCommentStore {
                     })
                 }
             } else if (event.type == "update_answer") {
-                let found = this.comments[event.id], foundAnswer
+                let found = this.comments[event.id],
+                    foundAnswer
                 if (found && found.id && found.answers) {
-                    foundAnswer = found.answers.find(answer => answer.id === event.answerId)
+                    foundAnswer = found.answers.find(answer => answer.id ===
+                        event.answerId)
                 }
                 if (foundAnswer) {
                     result.push({
@@ -373,15 +398,20 @@ export class ModCommentStore {
             if (event.type == "delete") {
                 this.deleteLocalComment(event.id, false)
             } else if (event.type == "create") {
-                this.addLocalComment(event.id, event.user, event.userName, event.userAvatar, event.date, event.comment, [], event['review:isMajor'], false)
+                this.addLocalComment(event.id, event.user, event.userName,
+                    event.userAvatar, event.date, event.comment, [],
+                    event['review:isMajor'], false)
             } else if (event.type == "update") {
-                this.updateLocalComment(event.id, event.comment, event['review:isMajor'], false)
+                this.updateLocalComment(event.id, event.comment,
+                    event['review:isMajor'], false)
             } else if (event.type == "add_answer") {
                 this.addLocalAnswer(event.id, event, false)
             } else if (event.type == "delete_answer") {
-                this.deleteLocalAnswer(event.id, event.answerId, false)
+                this.deleteLocalAnswer(event.id, event.answerId,
+                    false)
             } else if (event.type == "update_answer") {
-                this.updateLocalAnswer(event.id, event.answerId, event.answer, false)
+                this.updateLocalAnswer(event.id, event.answerId,
+                    event.answer, false)
             }
         })
 

@@ -142,3 +142,8 @@
 .comment-is-major-bgc {
     background-color: #f2dede;
 }
+
+/* comments directly on block elements like figures */
+div.article-part > span.comment {
+    display: block;
+}

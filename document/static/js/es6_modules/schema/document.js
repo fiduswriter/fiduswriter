@@ -173,6 +173,7 @@ let authors = {
 let abstract = {
     content: "(block | table_block)+",
     group: "part",
+    marks: "annotation",
     defining: true,
     isMetadata() {
         return true
@@ -257,6 +258,7 @@ let keywords = {
 let body = {
     content: "(block | table_block)+",
     group: "part",
+    marks: "annotation",
     defining: true,
     isMetadata() {
         return true

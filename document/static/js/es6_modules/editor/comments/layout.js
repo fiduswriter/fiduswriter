@@ -4,7 +4,6 @@ import {getCommentDuringCreationDecoration} from "../statePlugins"
 
 import fastdom from "fastdom"
 
-
 /* Functions related to layouting of comments */
 export class ModCommentLayout {
     constructor(mod) {
@@ -147,7 +146,7 @@ export class ModCommentLayout {
         let theComments = [], referrers = [], activeCommentStyle = ''
 
         this.mod.editor.view.state.doc.descendants((node, pos, parent) => {
-            if (!node.isInline) {
+            if (!node.isInline && !node.isLeaf) {
                 return
             }
             let commentIds = this.findCommentIds(node)
@@ -158,7 +157,7 @@ export class ModCommentLayout {
                 let comment = this.findComment(commentId)
                 if (!comment) {
                     // We have no comment with this ID. Ignore the referrer.
-                    return;
+                    return
                 }
                 if (theComments.includes(comment)) {
                     // comment already placed
@@ -210,17 +209,23 @@ export class ModCommentLayout {
             fastdom.measure(() => {
                 // DOM read phase
                 let totalOffset = document.getElementById('comment-box-container').getBoundingClientRect().top + 10,
-                  commentBoxes = document.querySelectorAll('#comment-box-container .comment-box'),
-                  commentPlacementStyle = ''
+                    commentBoxes = document.querySelectorAll('#comment-box-container .comment-box'),
+                    commentPlacementStyle = ''
+                if (commentBoxes.length !== referrers.length) {
+                    // Number of comment boxes and referrers differ.
+                    // This isn't right. Abort.
+                    resolve()
+                    return
+                }
                 referrers.forEach((referrer, index) => {
                     let commentBox = commentBoxes[index]
                     if (commentBox.classList.contains("hidden")) {
                         return
                     }
                     let commentBoxCoords = commentBox.getBoundingClientRect(),
-                      commentBoxHeight = commentBoxCoords.height,
-                      referrerTop = this.mod.editor.view.coordsAtPos(referrer).top,
-                      topMargin = 10
+                        commentBoxHeight = commentBoxCoords.height,
+                        referrerTop = this.mod.editor.view.coordsAtPos(referrer).top,
+                        topMargin = 10
 
                     if (referrerTop > totalOffset) {
                         topMargin = parseInt(referrerTop - totalOffset)

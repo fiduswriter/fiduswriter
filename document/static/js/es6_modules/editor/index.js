@@ -143,7 +143,7 @@ export class Editor {
             [keywordInputPlugin, () => ({editor: this})],
             [authorInputPlugin, () => ({editor: this})],
             [pastePlugin, () => ({editor: this})],
-            [accessRightsPlugin, () => ({editor: this})],
+            [accessRightsPlugin, () => ({editor: this})]
         ]
         new ModFootnotes(this)
         new ModServerCommunications(this)

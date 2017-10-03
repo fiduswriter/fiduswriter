@@ -41,6 +41,7 @@ export class ModServerCommunications {
         this.ws.onmessage = event => {
             let data = JSON.parse(event.data)
             let expectedServer = this.messages.server + 1
+            console.log({data, expectedServer})
             if (data.type === 'request_resend') {
                 this.resend_messages(data.from)
             } else if (data.s < expectedServer) {

@@ -133,12 +133,12 @@ export class ModServerCommunications {
     /** Sends data to server or keeps it in a list if currently offline. */
     send(getData) {
         if (this.connected) {
-            this.messages.client += 1
             let data = getData()
             if (!data) {
                 // message is empty
                 return
             }
+            this.messages.client += 1
             data.c = this.messages.client
             data.s = this.messages.server
             this.messages.lastTen.push(getData)

@@ -251,9 +251,9 @@ class WebSocket(BaseWebSocketHandler):
             logger.debug('cannot fix it')
             self.send_document()
             return
+        self.messages['server'] -= to_send
         for message in self.messages['last_ten'][0-to_send:]:
-            message['c'] = self.messages['client']
-            self.write_message(message)
+            self.send_message(message)
 
     def update_bibliography(self, bibliography_updates):
         for bu in bibliography_updates:

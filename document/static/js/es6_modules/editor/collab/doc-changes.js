@@ -82,7 +82,6 @@ export class ModCollabDocChanges {
             this.mod.editor.mod.db.bibDB.unsentEvents().length ||
             this.mod.editor.mod.db.imageDB.unsentEvents().length
         ) {
-            this.disableDiffSending()
             this.mod.editor.mod.serverCommunications.send(() => {
                 if (
                     this.awaitingDiffResponse ||
@@ -93,6 +92,7 @@ export class ModCollabDocChanges {
                     // applying a diff, so don't send anything now.
                     return
                 }
+                this.disableDiffSending()
                 let stepsToSend = sendableSteps(this.mod.editor.view.state),
                     fnStepsToSend = sendableSteps(this.mod.editor.mod.footnotes.fnEditor.view.state),
                     commentUpdates = this.mod.editor.mod.comments.store.unsentEvents(),

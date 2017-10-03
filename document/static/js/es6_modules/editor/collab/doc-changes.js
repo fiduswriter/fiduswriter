@@ -63,7 +63,7 @@ export class ModCollabDocChanges {
                 this.awaitingDiffResponse = false
                 this.sendToCollaborators()
             },
-            2000
+            8000
         )
     }
 
@@ -74,16 +74,6 @@ export class ModCollabDocChanges {
     }
 
     sendToCollaborators() {
-        if (
-            this.awaitingDiffResponse ||
-            this.mod.editor.waitingForDocument ||
-            this.receiving
-        ) {
-            // We are waiting for the confirmation of previous steps or are currently
-            // applying a diff, so don't send anything now.
-            return
-        }
-
         // Handle either doc change and comment updates OR caret update. Priority
         // for doc change/comment update.
         if (
@@ -93,6 +83,16 @@ export class ModCollabDocChanges {
             this.mod.editor.mod.db.imageDB.unsentEvents().length
         ) {
             this.mod.editor.mod.serverCommunications.send(() => {
+                if (
+                    this.awaitingDiffResponse ||
+                    this.mod.editor.waitingForDocument ||
+                    this.receiving
+                ) {
+                    // We are waiting for the confirmation of previous steps or are currently
+                    // applying a diff, so don't send anything now.
+                    return
+                }
+                this.disableDiffSending()
                 let stepsToSend = sendableSteps(this.mod.editor.view.state),
                     fnStepsToSend = sendableSteps(this.mod.editor.mod.footnotes.fnEditor.view.state),
                     commentUpdates = this.mod.editor.mod.comments.store.unsentEvents(),
@@ -165,7 +165,6 @@ export class ModCollabDocChanges {
                 this.unconfirmedDiffs[rid] = unconfirmedDiff
                 return unconfirmedDiff
             })
-            this.disableDiffSending()
 
         } else if (getSelectionUpdate(this.mod.editor.currentView.state)) {
             let currentView = this.mod.editor.currentView

@@ -9,7 +9,7 @@ LOGGING = {
     'loggers': {
         'document.ws_views': {
             'handlers': ['console'],
-            'level': 'WARNING',
+            'level': 'DEBUG',
         },
     },
 }

@@ -79,6 +79,7 @@ export class ModServerCommunications {
                         this.messages.client += 1
                         data.c = this.messages.client
                         data.s = this.messages.server
+                        console.log({type:'resend',data})
                         this.ws.send(JSON.stringify(data))
                     })
                     this.receive(data)
@@ -142,6 +143,7 @@ export class ModServerCommunications {
             data.s = this.messages.server
             this.messages.lastTen.push(getData)
             this.messages.lastTen = this.messages['lastTen'].slice(-10)
+            console.log({data})
             this.ws.send(JSON.stringify(data))
         } else {
             this.messagesToSend.push(getData)
@@ -165,6 +167,7 @@ export class ModServerCommunications {
             }
             data.c = this.messages.client
             data.s = this.messages.server
+            console.log({data})
             this.ws.send(JSON.stringify(data))
         })
     }

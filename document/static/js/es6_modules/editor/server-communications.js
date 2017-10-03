@@ -70,12 +70,7 @@ export class ModServerCommunications {
                         this.send(() =>({type: 'get_document'}))
                         return
                     }
-                    this.messages['lastTen'].slice(0-clientDifference).forEach(getData => {
-                        let data = getData()
-                        if (!data) {
-                            // message is empty
-                            return
-                        }
+                    this.messages['lastTen'].slice(0-clientDifference).forEach(data => {
                         this.messages.client += 1
                         data.c = this.messages.client
                         data.s = this.messages.server
@@ -141,7 +136,7 @@ export class ModServerCommunications {
             this.messages.client += 1
             data.c = this.messages.client
             data.s = this.messages.server
-            this.messages.lastTen.push(getData)
+            this.messages.lastTen.push(data)
             this.messages.lastTen = this.messages['lastTen'].slice(-10)
             console.log({data})
             this.ws.send(JSON.stringify(data))
@@ -158,13 +153,8 @@ export class ModServerCommunications {
             this.send(() => ({type: 'get_document'}))
             return
         }
-        this.messages.lastTen.slice(0-toSend).forEach(getData => {
+        this.messages.lastTen.slice(0-toSend).forEach(data => {
             this.messages.client += 1
-            let data = getData()
-            if (!data) {
-                // message is empty
-                return
-            }
             data.c = this.messages.client
             data.s = this.messages.server
             console.log({data})

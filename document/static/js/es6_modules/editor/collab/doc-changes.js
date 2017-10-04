@@ -37,21 +37,23 @@ export class ModCollabDocChanges {
     }
 
     checkVersion() {
-        if (this.currentlyCheckingVersion) {
-            return
-        }
-        this.currentlyCheckingVersion = true
-        this.enableCheckVersion = window.setTimeout(
-            () => {this.currentlyCheckingVersion = false},
-            1000
-        )
-        if (this.mod.editor.mod.serverCommunications.connected) {
-            this.disableDiffSending()
-        }
-        this.mod.editor.mod.serverCommunications.send(() => ({
-            type: 'check_version',
-            v: this.mod.editor.docInfo.version
-        }))
+        this.mod.editor.mod.serverCommunications.send(() => {
+            if (this.currentlyCheckingVersion | !this.mod.editor.docInfo.version) {
+                return
+            }
+            this.currentlyCheckingVersion = true
+            this.enableCheckVersion = window.setTimeout(
+                () => {this.currentlyCheckingVersion = false},
+                1000
+            )
+            if (this.mod.editor.mod.serverCommunications.connected) {
+                this.disableDiffSending()
+            }
+            return {
+                type: 'check_version',
+                v: this.mod.editor.docInfo.version
+            }
+        })
     }
 
     disableDiffSending() {

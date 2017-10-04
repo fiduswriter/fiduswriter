@@ -7,9 +7,9 @@ LOGGING = {
         },
     },
     'loggers': {
-#        'document.ws_views': {
-#            'handlers': ['console'],
-#            'level': 'DEBUG',
-#        },
+        # 'document.ws_views': {
+        #     'handlers': ['console'],
+        #     'level': 'DEBUG',
+        # },
     },
 }

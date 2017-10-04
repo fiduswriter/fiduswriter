@@ -121,13 +121,12 @@ export class ModCollabDocChanges {
                         rid
                     }
 
+                unconfirmedDiff['cid'] = this.mod.editor.client_id
+
                 if (stepsToSend) {
-                    // We add the client ID to every single step
-                    unconfirmedDiff['ds'] = stepsToSend.steps.map(s => {
-                        let step = s.toJSON()
-                        step.client_id = stepsToSend.clientID
-                        return step
-                    })
+                    unconfirmedDiff['ds'] = stepsToSend.steps.map(
+                        s => s.toJSON()
+                    )
                     // We add a json diff in a format understandable by the
                     // server. If the version is zero, we need to send a diff
                     // starting from an empty document.
@@ -139,7 +138,7 @@ export class ModCollabDocChanges {
                         this.mod.editor.view.state.doc.firstChild
                         .toJSON()
                     )
-                    unconfirmedDiff['confirmed_json'] = confirmedJson
+                    //unconfirmedDiff['confirmed_json'] = confirmedJson
                     // In case the title changed, we also add a title field to
                     // update the title field instantly - important for the
                     // document overview page.
@@ -158,11 +157,8 @@ export class ModCollabDocChanges {
                 if (fnStepsToSend) {
                     // We add the client ID to every single step
                     unconfirmedDiff['fs'] = fnStepsToSend.steps.map(
-                        s => {
-                            let step = s.toJSON()
-                            step.client_id = fnStepsToSend.clientID
-                            return step
-                        })
+                        s => s.toJSON()
+                    )
                 }
                 if (commentUpdates.length) {
                     unconfirmedDiff["cu"] = commentUpdates
@@ -174,7 +170,10 @@ export class ModCollabDocChanges {
                     unconfirmedDiff["iu"] = imageUpdates
                 }
 
-                this.unconfirmedDiffs[rid] = unconfirmedDiff
+                this.unconfirmedDiffs[rid] = Object.assign(
+                    {doc: this.mod.editor.view.state.doc},
+                    unconfirmedDiff
+                )
                 return unconfirmedDiff
 
             } else if (getSelectionUpdate(this.mod.editor.currentView
@@ -251,10 +250,10 @@ export class ModCollabDocChanges {
             this.mod.editor.mod.comments.store.receive(data["cu"])
         }
         if (data["ds"]) { // document steps
-            this.applyDiffs(data["ds"])
+            this.applyDiffs(data["ds"], data["cid"])
         }
         if (data["fs"]) { // footnote steps
-            this.mod.editor.mod.footnotes.fnEditor.applyDiffs(data["fs"])
+            this.mod.editor.mod.footnotes.fnEditor.applyDiffs(data["fs"], data["cid"])
         }
 
         if (data.server_fix) {
@@ -286,18 +285,18 @@ export class ModCollabDocChanges {
             return
         }
         this.mod.editor.docInfo.version++
+        this.mod.editor.docInfo.confirmedDoc = unconfirmedDiffs["doc"]
 
-            let sentSteps = unconfirmedDiffs["ds"] // document steps
+        let sentSteps = unconfirmedDiffs["ds"] // document steps
         if (sentSteps) {
             let transaction = receiveTransaction(
                 this.mod.editor.view.state,
                 sentSteps,
                 sentSteps.map(
-                    step => step.client_id
+                    step => this.mod.editor.client_id
                 )
             )
             this.mod.editor.view.dispatch(transaction)
-            this.setConfirmedDoc(transaction)
         }
 
         let sentFnSteps = unconfirmedDiffs["fs"] // footnote steps
@@ -307,7 +306,7 @@ export class ModCollabDocChanges {
                     this.mod.editor.mod.footnotes.fnEditor.view.state,
                     sentFnSteps,
                     sentFnSteps.map(
-                        step => step.client_id
+                        step => this.mod.editor.client_id
                     )
                 )
             )
@@ -337,10 +336,10 @@ export class ModCollabDocChanges {
         this.enableDiffSending()
     }
 
-    applyDiffs(diffs) {
+    applyDiffs(diffs, cid) {
         this.receiving = true
         let steps = diffs.map(j => Step.fromJSON(docSchema, j))
-        let clientIds = diffs.map(j => j.client_id)
+        let clientIds = diffs.map(j => cid)
         let transaction = receiveTransaction(
             this.mod.editor.view.state,
             steps,

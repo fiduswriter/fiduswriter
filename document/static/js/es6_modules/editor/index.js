@@ -125,12 +125,13 @@ export class Editor {
             headerbarModel,
             toolbarModel
         }
+        this.client_id = Math.floor(Math.random() * 0xFFFFFFFF)
         this.statePlugins = [
             [linksPlugin, () => ({editor: this})],
             [history],
             [keymap, () => baseKeymap],
             [keymap, () => buildKeymap(this.schema)],
-            [collab],
+            [collab, () => ({clientID: this.client_id})],
             [dropCursor],
             [gapCursor],
             [tableEditing],
@@ -152,6 +153,7 @@ export class Editor {
 
     init() {
         new ModSettings(this)
+
         jQuery(document).ready(() => {
             this.initEditor()
         })

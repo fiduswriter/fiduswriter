@@ -35,7 +35,7 @@ export class ModFootnoteEditor {
             [history],
             [keymap, () => baseKeymap],
             [keymap, () => buildKeymap(this.schema)],
-            [collab],
+            [collab, () => ({clientID: this.mod.editor.client_id})],
             [dropCursor],
             [gapCursor],
             [toolbarPlugin, () => ({editor: this.mod.editor})],
@@ -140,9 +140,9 @@ export class ModFootnoteEditor {
         }
     }
 
-    applyDiffs(diffs) {
+    applyDiffs(diffs, cid) {
         let steps = diffs.map(j => Step.fromJSON(this.view.state.schema, j))
-        let clientIds = diffs.map(j => j.client_id)
+        let clientIds = diffs.map(j => cid)
         let transaction = receiveTransaction(
             this.view.state,
             steps,

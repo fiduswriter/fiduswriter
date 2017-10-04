@@ -206,6 +206,11 @@ export class ModServerCommunications {
                 this.editor.mod.collab.docChanges.receiveSelectionChange(data)
                 break
             case 'diff':
+                if (data["cid"] === this.editor.client_id) {
+                    // The diff origins from the local user.
+                    this.editor.mod.collab.docChanges.confirmDiff(data["rid"])
+                    return
+                }
                 if (data["v"] !== this.editor.docInfo.version) {
                     this.editor.mod.collab.docChanges.checkVersion()
                     return

@@ -201,18 +201,7 @@ export class Editor {
         })
     }
 
-    askForDocument() {
-        if (this.waitingForDocument) {
-            return
-        }
-        this.waitingForDocument = true
-        this.mod.serverCommunications.send(()=>({
-            type: 'get_document'
-        }))
-    }
-
     receiveDocument(data) {
-
         // Reset collaboration
         this.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
         this.mod.collab.docChanges.unconfirmedDiffs = {}
@@ -236,10 +225,6 @@ export class Editor {
         } else {
             this.user = this.docInfo.owner
         }
-
-        this.mod.serverCommunications.send(() => ({
-            type: 'participant_update'
-        }))
 
         this.mod.db.bibDB.setDB(data.doc.bibliography)
         this.mod.db.imageDB.setDB(data.doc.images)

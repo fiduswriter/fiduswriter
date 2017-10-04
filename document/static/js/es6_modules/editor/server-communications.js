@@ -12,8 +12,10 @@ export class ModServerCommunications {
         this.messagesToSend = []
 
         this.connected = false
-            /* Whether the connection is established for the first time. */
-        this.firstTimeConnection = true
+        /* Increases when connection has to be reestablished */
+        /* 0 = before first connection. */
+        /* 1 = first connection established, etc. */
+        this.connectionCount = 0
         this.recentlySent = false
     }
 
@@ -30,7 +32,9 @@ export class ModServerCommunications {
             lastTen: []
         }
         try {
-            this.ws = new window.WebSocket(`${websocketProtocol}//${window.websocketServer}${window.websocketPort}/ws/document/${this.editor.docInfo.id}`)
+            this.ws = new window.WebSocket(
+                `${websocketProtocol}//${window.websocketServer}${window.websocketPort}/ws/document/${this.editor.docInfo.id}/${this.connectionCount}/`
+            )
             this.ws.onopen = () => {
                 jQuery('#unobtrusive_messages').html('')
             }
@@ -108,22 +112,16 @@ export class ModServerCommunications {
 
     activateConnection() {
         this.connected = true
-        if (this.firstTimeConnection) {
-            this.editor.waitingForDocument = false
-            this.editor.askForDocument()
-        } else {
+        if (this.connectionCount > 0) {
             this.editor.mod.footnotes.fnEditor.renderAllFootnotes()
             this.editor.mod.collab.docChanges.checkVersion()
-            this.send(() => ({
-                type: 'participant_update'
-            }))
             let oldMessages = this.messagesToSend
             this.messagesToSend = []
             while (oldMessages.length > 0) {
                 this.send(oldMessages.shift())
             }
         }
-        this.firstTimeConnection = false
+        this.connectionCount++
     }
 
     /** Sends data to server or keeps it in a list if currently offline. */
@@ -148,7 +146,7 @@ export class ModServerCommunications {
 
     setRecentlySentTimer() {
         this.recentlySent = true
-        setTimeout(()=> {
+        window.setTimeout(()=> {
             this.recentlySent = false
             let oldMessages = this.messagesToSend
             this.messagesToSend = []

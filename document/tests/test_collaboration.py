@@ -90,6 +90,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             document_input2.send_keys(first_part[i])
             time.sleep(randrange(30, 40) / 200.0)
 
+        # Wait for the two editors to be synched
+        self.wait_for_doc_sync(self.driver, self.driver2)
+
         self.assertEqual(
             16,
             len(self.get_title(self.driver))
@@ -117,6 +120,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             time.sleep(randrange(30, 40) / 200.0)
             document_input2.send_keys(char)
             time.sleep(randrange(30, 40) / 200.0)
+
+        # Wait for the two editors to be synched
+        self.wait_for_doc_sync(self.driver, self.driver2)
 
         self.assertEqual(
             len(self.TEST_TEXT) * 2,
@@ -271,6 +277,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.join()
         p2.join()
 
+        self.wait_for_doc_sync(self.driver, self.driver2)
+
         self.assertEqual(
             5,
             len(self.get_boldtext(self.driver2))
@@ -333,6 +341,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p2.start()
         p1.join()
         p2.join()
+
+        self.wait_for_doc_sync(self.driver, self.driver2)
 
         self.assertEqual(
             5,
@@ -409,6 +419,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         p1.join()
         p2.join()
+
+        self.wait_for_doc_sync(self.driver, self.driver2)
 
         self.assertEqual(
             2,
@@ -487,6 +499,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.join()
         p2.join()
 
+        self.wait_for_doc_sync(self.driver, self.driver2)
+
         self.assertEqual(
             2,
             len(self.get_bulletlist(self.driver2))
@@ -549,6 +563,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p2.start()
         p2.join()
         p1.join()
+
+        self.wait_for_doc_sync(self.driver, self.driver2)
 
         self.assertEqual(
             1,
@@ -774,6 +790,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.join()
         p2.join()
 
+        # Wait for the two editors to be synched
+        self.wait_for_doc_sync(self.driver, self.driver2)
+
         self.assertEqual(
             self.TEST_TEXT,
             self.get_undo(self.driver2)
@@ -846,6 +865,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p2.start()
         p1.join()
         p2.join()
+
+        # Wait for the two editors to be synched
+        self.wait_for_doc_sync(self.driver, self.driver2)
 
         self.assertEqual(
             54,

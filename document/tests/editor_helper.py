@@ -38,7 +38,7 @@ class EditorHelper(SeleniumHelper):
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
-            time.sleep(randrange(30, 40) / 200.0)
+            time.sleep(randrange(10, 40) / 200.0)
 
     def add_title(self, driver):
         title = "My title"

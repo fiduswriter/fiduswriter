@@ -125,12 +125,13 @@ export class Editor {
             headerbarModel,
             toolbarModel
         }
+        this.client_id = Math.floor(Math.random() * 0xFFFFFFFF)
         this.statePlugins = [
             [linksPlugin, () => ({editor: this})],
             [history],
             [keymap, () => baseKeymap],
             [keymap, () => buildKeymap(this.schema)],
-            [collab],
+            [collab, () => ({clientID: this.client_id})],
             [dropCursor],
             [gapCursor],
             [tableEditing],
@@ -152,6 +153,7 @@ export class Editor {
 
     init() {
         new ModSettings(this)
+
         jQuery(document).ready(() => {
             this.initEditor()
         })
@@ -199,18 +201,7 @@ export class Editor {
         })
     }
 
-    askForDocument() {
-        if (this.waitingForDocument) {
-            return
-        }
-        this.waitingForDocument = true
-        this.mod.serverCommunications.send(()=>({
-            type: 'get_document'
-        }))
-    }
-
     receiveDocument(data) {
-
         // Reset collaboration
         this.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
         this.mod.collab.docChanges.unconfirmedDiffs = {}
@@ -234,10 +225,6 @@ export class Editor {
         } else {
             this.user = this.docInfo.owner
         }
-
-        this.mod.serverCommunications.send(() => ({
-            type: 'participant_update'
-        }))
 
         this.mod.db.bibDB.setDB(data.doc.bibliography)
         this.mod.db.imageDB.setDB(data.doc.images)

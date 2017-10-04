@@ -25,7 +25,10 @@ logger = logging.getLogger(__name__)
 class WebSocket(BaseWebSocketHandler):
     sessions = dict()
 
-    def open(self, document_id):
+    def open(self, arg):
+        args = arg.split("/")
+        document_id = int(args[0])
+        connection_count = int(args[1])
         logger.debug('Websocket opened')
         self.messages = {
             'server': 0,
@@ -95,6 +98,10 @@ class WebSocket(BaseWebSocketHandler):
             'citation_locales': [obj['fields'] for obj in cite_locales],
         }
         self.send_message(response)
+        if connection_count < 1:
+            self.send_document()
+        if self.can_communicate():
+            self.handle_participant_update()
 
     def confirm_diff(self, rid):
         response = {

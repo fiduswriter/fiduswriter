@@ -12,8 +12,11 @@ export class ModServerCommunications {
         this.messagesToSend = []
 
         this.connected = false
-            /* Whether the connection is established for the first time. */
-        this.firstTimeConnection = true
+        /* Increases when connection has to be reestablished */
+        /* 0 = before first connection. */
+        /* 1 = first connection established, etc. */
+        this.connectionCount = 0
+        this.recentlySent = false
     }
 
     init() {
@@ -29,7 +32,9 @@ export class ModServerCommunications {
             lastTen: []
         }
         try {
-            this.ws = new window.WebSocket(`${websocketProtocol}//${window.websocketServer}${window.websocketPort}/ws/document/${this.editor.docInfo.id}`)
+            this.ws = new window.WebSocket(
+                `${websocketProtocol}//${window.websocketServer}${window.websocketPort}/ws/document/${this.editor.docInfo.id}/${this.connectionCount}/`
+            )
             this.ws.onopen = () => {
                 jQuery('#unobtrusive_messages').html('')
             }
@@ -107,25 +112,21 @@ export class ModServerCommunications {
 
     activateConnection() {
         this.connected = true
-        if (this.firstTimeConnection) {
-            this.editor.waitingForDocument = false
-            this.editor.askForDocument()
-        } else {
+        if (this.connectionCount > 0) {
             this.editor.mod.footnotes.fnEditor.renderAllFootnotes()
             this.editor.mod.collab.docChanges.checkVersion()
-            this.send(() => ({
-                type: 'participant_update'
-            }))
-            while (this.messagesToSend.length > 0) {
-                this.send(this.messagesToSend.shift())
+            let oldMessages = this.messagesToSend
+            this.messagesToSend = []
+            while (oldMessages.length > 0) {
+                this.send(oldMessages.shift())
             }
         }
-        this.firstTimeConnection = false
+        this.connectionCount++
     }
 
     /** Sends data to server or keeps it in a list if currently offline. */
-    send(getData) {
-        if (this.connected) {
+    send(getData, timer = 150) {
+        if (this.connected && !this.recentlySent) {
             let data = getData()
             if (!data) {
                 // message is empty
@@ -137,9 +138,22 @@ export class ModServerCommunications {
             this.messages.lastTen.push(data)
             this.messages.lastTen = this.messages['lastTen'].slice(-10)
             this.ws.send(JSON.stringify(data))
+            this.setRecentlySentTimer(timer)
         } else {
             this.messagesToSend.push(getData)
         }
+    }
+
+    setRecentlySentTimer(timer) {
+        this.recentlySent = true
+        window.setTimeout(()=> {
+            this.recentlySent = false
+            let oldMessages = this.messagesToSend
+            this.messagesToSend = []
+            while (oldMessages.length > 0) {
+                this.send(oldMessages.shift(), Math.min(timer*1.2, 15000))
+            }
+        }, timer)
     }
 
     resend_messages(from) {
@@ -190,6 +204,11 @@ export class ModServerCommunications {
                 this.editor.mod.collab.docChanges.receiveSelectionChange(data)
                 break
             case 'diff':
+                if (data["cid"] === this.editor.client_id) {
+                    // The diff origins from the local user.
+                    this.editor.mod.collab.docChanges.confirmDiff(data["rid"])
+                    return
+                }
                 if (data["v"] !== this.editor.docInfo.version) {
                     this.editor.mod.collab.docChanges.checkVersion()
                     return

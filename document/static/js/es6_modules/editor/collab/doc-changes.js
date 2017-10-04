@@ -37,27 +37,32 @@ export class ModCollabDocChanges {
     }
 
     checkVersion() {
-        if (this.currentlyCheckingVersion) {
-            return
-        }
-        this.currentlyCheckingVersion = true
-        this.enableCheckVersion = window.setTimeout(
-            () => {this.currentlyCheckingVersion = false},
-            1000
-        )
-        if (this.mod.editor.mod.serverCommunications.connected) {
-            this.disableDiffSending()
-        }
-        this.mod.editor.mod.serverCommunications.send(() => ({
-            type: 'check_version',
-            v: this.mod.editor.docInfo.version
-        }))
+        this.mod.editor.mod.serverCommunications.send(() => {
+            if (this.currentlyCheckingVersion | !this.mod.editor.docInfo
+                .version) {
+                return
+            }
+            this.currentlyCheckingVersion = true
+            this.enableCheckVersion = window.setTimeout(
+                () => {
+                    this.currentlyCheckingVersion = false
+                },
+                1000
+            )
+            if (this.mod.editor.mod.serverCommunications.connected) {
+                this.disableDiffSending()
+            }
+            return {
+                type: 'check_version',
+                v: this.mod.editor.docInfo.version
+            }
+        })
     }
 
     disableDiffSending() {
         this.awaitingDiffResponse = true
-            // If no answer has been received from the server within 2 seconds,
-            // check the version
+        // If no answer has been received from the server within 2 seconds,
+        // check the version
         this.sendNextDiffTimer = window.setTimeout(
             () => {
                 this.awaitingDiffResponse = false
@@ -76,31 +81,31 @@ export class ModCollabDocChanges {
     sendToCollaborators() {
         // Handle either doc change and comment updates OR caret update. Priority
         // for doc change/comment update.
-        if (
-            sendableSteps(this.mod.editor.view.state) ||
-            this.mod.editor.mod.comments.store.unsentEvents().length ||
-            this.mod.editor.mod.db.bibDB.unsentEvents().length ||
-            this.mod.editor.mod.db.imageDB.unsentEvents().length
-        ) {
-            this.mod.editor.mod.serverCommunications.send(() => {
-                if (
-                    this.awaitingDiffResponse ||
-                    this.mod.editor.waitingForDocument ||
-                    this.receiving
-                ) {
-                    // We are waiting for the confirmation of previous steps or are currently
-                    // applying a diff, so don't send anything now.
-                    return
-                }
+        this.mod.editor.mod.serverCommunications.send(() => {
+            if (
+                this.awaitingDiffResponse ||
+                this.mod.editor.waitingForDocument ||
+                this.receiving
+            ) {
+                return false
+            } else if (
+                sendableSteps(this.mod.editor.view.state) ||
+                this.mod.editor.mod.comments.store.unsentEvents().length ||
+                this.mod.editor.mod.db.bibDB.unsentEvents().length ||
+                this.mod.editor.mod.db.imageDB.unsentEvents().length
+            ) {
                 this.disableDiffSending()
-                let stepsToSend = sendableSteps(this.mod.editor.view.state),
-                    fnStepsToSend = sendableSteps(this.mod.editor.mod.footnotes.fnEditor.view.state),
-                    commentUpdates = this.mod.editor.mod.comments.store.unsentEvents(),
-                    bibliographyUpdates = this.mod.editor.mod.db.bibDB.unsentEvents(),
+                let stepsToSend = sendableSteps(this.mod.editor.view
+                        .state),
+                    fnStepsToSend = sendableSteps(this.mod.editor.mod
+                        .footnotes.fnEditor.view.state),
+                    commentUpdates = this.mod.editor.mod.comments.store
+                    .unsentEvents(),
+                    bibliographyUpdates = this.mod.editor.mod.db.bibDB
+                    .unsentEvents(),
                     imageUpdates = this.mod.editor.mod.db.imageDB.unsentEvents()
 
-                if (
-                    !stepsToSend &&
+                if (!stepsToSend &&
                     !fnStepsToSend &&
                     !commentUpdates.length &&
                     !bibliographyUpdates.length &&
@@ -116,29 +121,34 @@ export class ModCollabDocChanges {
                         rid
                     }
 
+                unconfirmedDiff['cid'] = this.mod.editor.client_id
+
                 if (stepsToSend) {
-                    // We add the client ID to every single step
-                    unconfirmedDiff['ds'] = stepsToSend.steps.map(s => {
-                        let step = s.toJSON()
-                        step.client_id = stepsToSend.clientID
-                        return step
-                    })
+                    unconfirmedDiff['ds'] = stepsToSend.steps.map(
+                        s => s.toJSON()
+                    )
                     // We add a json diff in a format understandable by the
                     // server. If the version is zero, we need to send a diff
                     // starting from an empty document.
                     let confirmedJson = this.mod.editor.docInfo.version ?
-                        this.mod.editor.docInfo.confirmedDoc.firstChild.toJSON() : {}
+                        this.mod.editor.docInfo.confirmedDoc.firstChild
+                        .toJSON() : {}
                     unconfirmedDiff['jd'] = compare(
                         confirmedJson,
-                        this.mod.editor.view.state.doc.firstChild.toJSON()
+                        this.mod.editor.view.state.doc.firstChild
+                        .toJSON()
                     )
+                    //unconfirmedDiff['confirmed_json'] = confirmedJson
                     // In case the title changed, we also add a title field to
                     // update the title field instantly - important for the
                     // document overview page.
-                    let title = this.mod.editor.view.state.doc.firstChild.firstChild.textContent.slice(0, 255)
+                    let title = this.mod.editor.view.state.doc.firstChild
+                        .firstChild.textContent.slice(0, 255)
 
                     if (
-                        title !== this.mod.editor.docInfo.confirmedDoc.firstChild.firstChild.textContent.slice(0, 255)
+                        title !== this.mod.editor.docInfo.confirmedDoc
+                        .firstChild.firstChild.textContent.slice(0,
+                            255)
                     ) {
                         unconfirmedDiff['ti'] = title
                     }
@@ -146,11 +156,9 @@ export class ModCollabDocChanges {
 
                 if (fnStepsToSend) {
                     // We add the client ID to every single step
-                    unconfirmedDiff['fs'] = fnStepsToSend.steps.map(s => {
-                        let step = s.toJSON()
-                        step.client_id = fnStepsToSend.clientID
-                        return step
-                    })
+                    unconfirmedDiff['fs'] = fnStepsToSend.steps.map(
+                        s => s.toJSON()
+                    )
                 }
                 if (commentUpdates.length) {
                     unconfirmedDiff["cu"] = commentUpdates
@@ -162,15 +170,18 @@ export class ModCollabDocChanges {
                     unconfirmedDiff["iu"] = imageUpdates
                 }
 
-                this.unconfirmedDiffs[rid] = unconfirmedDiff
+                this.unconfirmedDiffs[rid] = Object.assign(
+                    {doc: this.mod.editor.view.state.doc},
+                    unconfirmedDiff
+                )
                 return unconfirmedDiff
-            })
 
-        } else if (getSelectionUpdate(this.mod.editor.currentView.state)) {
-            let currentView = this.mod.editor.currentView
-            // Create a new caret as the current user
-            this.mod.editor.mod.serverCommunications.send(() => {
-                let selectionUpdate = getSelectionUpdate(currentView.state)
+            } else if (getSelectionUpdate(this.mod.editor.currentView
+                    .state)) {
+                let currentView = this.mod.editor.currentView
+                // Create a new caret as the current user
+                let selectionUpdate = getSelectionUpdate(
+                    currentView.state)
                 return {
                     type: 'selection_change',
                     id: this.mod.editor.user.id,
@@ -179,15 +190,19 @@ export class ModCollabDocChanges {
                     anchor: selectionUpdate.anchor,
                     head: selectionUpdate.head,
                     // Whether the selection is in the footnote or the main editor
-                    editor: currentView === this.mod.editor.view ? 'main' : 'footnotes'
+                    editor: currentView === this.mod.editor.view ?
+                        'main' : 'footnotes'
                 }
-            })
-        }
+            } else {
+                return false
+            }
+        })
 
     }
 
     receiveSelectionChange(data) {
-        let participant = this.mod.participants.find(par  => par.id === data.id),
+        let participant = this.mod.participants.find(par => par.id === data
+                .id),
             transaction, fnTransaction
         if (!participant) {
             // participant is still unknown to us. Ignore
@@ -218,15 +233,16 @@ export class ModCollabDocChanges {
             this.mod.editor.view.dispatch(transaction)
         }
         if (fnTransaction) {
-            this.mod.editor.mod.footnotes.fnEditor.view.dispatch(fnTransaction)
+            this.mod.editor.mod.footnotes.fnEditor.view.dispatch(
+                fnTransaction)
         }
     }
 
     receiveFromCollaborators(data) {
         this.mod.editor.docInfo.version++
-        if (data["bu"]) { // bibliography updates
-            this.mod.editor.mod.db.bibDB.receive(data["bu"])
-        }
+            if (data["bu"]) { // bibliography updates
+                this.mod.editor.mod.db.bibDB.receive(data["bu"])
+            }
         if (data["iu"]) { // images updates
             this.mod.editor.mod.db.imageDB.receive(data["iu"])
         }
@@ -234,10 +250,10 @@ export class ModCollabDocChanges {
             this.mod.editor.mod.comments.store.receive(data["cu"])
         }
         if (data["ds"]) { // document steps
-            this.applyDiffs(data["ds"])
+            this.applyDiffs(data["ds"], data["cid"])
         }
         if (data["fs"]) { // footnote steps
-            this.mod.editor.mod.footnotes.fnEditor.applyDiffs(data["fs"])
+            this.mod.editor.mod.footnotes.fnEditor.applyDiffs(data["fs"], data["cid"])
         }
 
         if (data.server_fix) {
@@ -258,7 +274,9 @@ export class ModCollabDocChanges {
     setConfirmedDoc(transaction) {
         // Find the latest version of the doc without any unconfirmed local changes
         let rebased = transaction.getMeta("rebased")
-        this.mod.editor.docInfo.confirmedDoc = rebased > 0 ? transaction.docs[transaction.steps.length - rebased] : transaction.doc
+        this.mod.editor.docInfo.confirmedDoc = rebased > 0 ?
+            transaction.docs[transaction.docs.length - rebased] :
+            transaction.doc
     }
 
     confirmDiff(request_id) {
@@ -267,6 +285,7 @@ export class ModCollabDocChanges {
             return
         }
         this.mod.editor.docInfo.version++
+        this.mod.editor.docInfo.confirmedDoc = unconfirmedDiffs["doc"]
 
         let sentSteps = unconfirmedDiffs["ds"] // document steps
         if (sentSteps) {
@@ -274,10 +293,9 @@ export class ModCollabDocChanges {
                 this.mod.editor.view.state,
                 sentSteps,
                 sentSteps.map(
-                    step => step.client_id
+                    step => this.mod.editor.client_id
                 )
             )
-            this.setConfirmedDoc(transaction)
             this.mod.editor.view.dispatch(transaction)
         }
 
@@ -288,24 +306,24 @@ export class ModCollabDocChanges {
                     this.mod.editor.mod.footnotes.fnEditor.view.state,
                     sentFnSteps,
                     sentFnSteps.map(
-                        step => step.client_id
+                        step => this.mod.editor.client_id
                     )
                 )
             )
         }
 
         let sentComments = unconfirmedDiffs["cu"] // comment updates
-        if(sentComments) {
+        if (sentComments) {
             this.mod.editor.mod.comments.store.eventsSent(sentComments)
         }
 
         let sentBibliographyUpdates = unconfirmedDiffs["bu"] // bibliography updates
-        if(sentBibliographyUpdates) {
+        if (sentBibliographyUpdates) {
             this.mod.editor.mod.db.bibDB.eventsSent(sentBibliographyUpdates)
         }
 
         let sentImageUpdates = unconfirmedDiffs["iu"] // image updates
-        if(sentImageUpdates) {
+        if (sentImageUpdates) {
             this.mod.editor.mod.db.imageDB.eventsSent(sentImageUpdates)
         }
 
@@ -318,10 +336,10 @@ export class ModCollabDocChanges {
         this.enableDiffSending()
     }
 
-    applyDiffs(diffs) {
+    applyDiffs(diffs, cid) {
         this.receiving = true
         let steps = diffs.map(j => Step.fromJSON(docSchema, j))
-        let clientIds = diffs.map(j => j.client_id)
+        let clientIds = diffs.map(j => cid)
         let transaction = receiveTransaction(
             this.mod.editor.view.state,
             steps,
@@ -333,5 +351,4 @@ export class ModCollabDocChanges {
         this.receiving = false
         this.sendToCollaborators()
     }
-
 }

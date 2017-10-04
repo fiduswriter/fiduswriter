@@ -14,6 +14,7 @@ export class ModServerCommunications {
         this.connected = false
             /* Whether the connection is established for the first time. */
         this.firstTimeConnection = true
+        this.recentlySent = false
     }
 
     init() {
@@ -116,8 +117,10 @@ export class ModServerCommunications {
             this.send(() => ({
                 type: 'participant_update'
             }))
-            while (this.messagesToSend.length > 0) {
-                this.send(this.messagesToSend.shift())
+            let oldMessages = this.messagesToSend
+            this.messagesToSend = []
+            while (oldMessages.length > 0) {
+                this.send(oldMessages.shift())
             }
         }
         this.firstTimeConnection = false
@@ -125,7 +128,7 @@ export class ModServerCommunications {
 
     /** Sends data to server or keeps it in a list if currently offline. */
     send(getData) {
-        if (this.connected) {
+        if (this.connected && !this.recentlySent) {
             let data = getData()
             if (!data) {
                 // message is empty
@@ -137,9 +140,22 @@ export class ModServerCommunications {
             this.messages.lastTen.push(data)
             this.messages.lastTen = this.messages['lastTen'].slice(-10)
             this.ws.send(JSON.stringify(data))
+            this.setRecentlySentTimer()
         } else {
             this.messagesToSend.push(getData)
         }
+    }
+
+    setRecentlySentTimer() {
+        this.recentlySent = true
+        setTimeout(()=> {
+            this.recentlySent = false
+            let oldMessages = this.messagesToSend
+            this.messagesToSend = []
+            while (oldMessages.length > 0) {
+                this.send(oldMessages.shift())
+            }
+        }, 1000)
     }
 
     resend_messages(from) {

@@ -274,6 +274,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.join()
         p2.join()
 
+        self.wait_for_doc_sync(self.driver, self.driver2)
+
         self.assertEqual(
             5,
             len(self.get_boldtext(self.driver2))
@@ -336,6 +338,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p2.start()
         p1.join()
         p2.join()
+
+        self.wait_for_doc_sync(self.driver, self.driver2)
 
         self.assertEqual(
             5,

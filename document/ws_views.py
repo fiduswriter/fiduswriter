@@ -382,9 +382,6 @@ class WebSocket(BaseWebSocketHandler):
             self.doc["last_diffs"] = self.doc["last_diffs"][-1000:]
             self.doc['version'] += 1
             if "jd" in parsed:  # jd = json diff
-                logger.debug('patching doc')
-                logger.debug(json_encode(parsed))
-                logger.debug(json_encode(self.doc['contents']))
                 try:
                     jsonpatch.apply_patch(
                        self.doc['contents'],

@@ -52,7 +52,7 @@ class SeleniumHelper(object):
                 drivers.append(
                     webdriver.Chrome()
                 )
-            wait_time = 3
+            wait_time = 6
         for driver in drivers:
             # Set sizes of browsers so that all buttons are visible.
             driver.set_window_position(0, 0)

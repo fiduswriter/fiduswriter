@@ -231,7 +231,7 @@ class WebSocket(BaseWebSocketHandler):
         elif parsed["type"] == 'chat' and self.can_communicate():
             self.handle_chat(parsed)
         elif parsed["type"] == 'check_version':
-            self.check_version(parsed, message)
+            self.check_version(parsed)
         elif parsed["type"] == 'selection_change':
             self.handle_selection_change(parsed)
         elif parsed["type"] == 'diff' and self.can_update_document():
@@ -431,8 +431,7 @@ class WebSocket(BaseWebSocketHandler):
             # Client has a higher version than server. Something is fishy!
             logger.debug('unfixable')
 
-    def check_version(self, parsed, message):
-        logger.debug(message)
+    def check_version(self, parsed):
         pv = parsed["v"]
         dv = self.doc['version']
         logger.debug("PV: %d, DV: %d" % (pv, dv))

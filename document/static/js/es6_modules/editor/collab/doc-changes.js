@@ -295,8 +295,8 @@ export class ModCollabDocChanges {
                     step => step.client_id
                 )
             )
-            this.setConfirmedDoc(transaction)
             this.mod.editor.view.dispatch(transaction)
+            this.setConfirmedDoc(transaction)
         }
 
         let sentFnSteps = unconfirmedDiffs["fs"] // footnote steps
@@ -346,8 +346,8 @@ export class ModCollabDocChanges {
             clientIds
         )
         transaction.setMeta('remote', true)
-        this.setConfirmedDoc(transaction)
         this.mod.editor.view.dispatch(transaction)
+        this.setConfirmedDoc(transaction)
         this.receiving = false
         this.sendToCollaborators()
     }

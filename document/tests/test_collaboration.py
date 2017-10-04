@@ -121,6 +121,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             document_input2.send_keys(char)
             time.sleep(randrange(30, 40) / 200.0)
 
+        # Wait for the two editors to be synched
+        self.wait_for_doc_sync(self.driver, self.driver2)
+
         self.assertEqual(
             len(self.TEST_TEXT) * 2,
             len(self.get_contents(self.driver))
@@ -862,6 +865,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p2.start()
         p1.join()
         p2.join()
+
+        # Wait for the two editors to be synched
+        self.wait_for_doc_sync(self.driver, self.driver2)
 
         self.assertEqual(
             54,

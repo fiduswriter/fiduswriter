@@ -46,7 +46,7 @@ class SeleniumHelper(object):
                         command_executor="http://%s/wd/hub" % hub_url
                     )
                 )
-            wait_time = 25
+            wait_time = 35
         else:
             for i in range(number):
                 drivers.append(

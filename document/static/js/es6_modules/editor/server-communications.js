@@ -153,7 +153,7 @@ export class ModServerCommunications {
             while (oldMessages.length > 0) {
                 this.send(oldMessages.shift())
             }
-        }, 1000)
+        }, 500)
     }
 
     resend_messages(from) {

@@ -274,7 +274,7 @@ export class ModCollabDocChanges {
     setConfirmedDoc(transaction) {
         // Find the latest version of the doc without any unconfirmed local changes
         let rebased = transaction.getMeta("rebased")
-        console.error(JSON.stringify({'rebased': rebased}))
+        console.error({'rebased': rebased})
         this.mod.editor.docInfo.confirmedDoc = rebased > 0 ? transaction.docs[
             transaction.steps.length - rebased] : transaction.doc
     }
@@ -346,8 +346,8 @@ export class ModCollabDocChanges {
             clientIds
         )
         transaction.setMeta('remote', true)
-        this.mod.editor.view.dispatch(transaction)
         this.setConfirmedDoc(transaction)
+        this.mod.editor.view.dispatch(transaction)
         this.receiving = false
         this.sendToCollaborators()
     }

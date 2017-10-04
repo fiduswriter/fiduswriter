@@ -139,6 +139,7 @@ export class ModCollabDocChanges {
                         this.mod.editor.view.state.doc.firstChild
                         .toJSON()
                     )
+                    unconfirmedDiff['confirmed_json'] = confirmedJson
                     // In case the title changed, we also add a title field to
                     // update the title field instantly - important for the
                     // document overview page.
@@ -274,9 +275,9 @@ export class ModCollabDocChanges {
     setConfirmedDoc(transaction) {
         // Find the latest version of the doc without any unconfirmed local changes
         let rebased = transaction.getMeta("rebased")
-        console.error({'rebased': rebased})
-        this.mod.editor.docInfo.confirmedDoc = rebased > 0 ? transaction.docs[
-            transaction.steps.length - rebased] : transaction.doc
+        this.mod.editor.docInfo.confirmedDoc = rebased > 0 ?
+            transaction.docs[transaction.docs.length - rebased] :
+            transaction.doc
     }
 
     confirmDiff(request_id) {

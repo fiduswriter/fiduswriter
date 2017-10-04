@@ -125,7 +125,7 @@ export class ModServerCommunications {
     }
 
     /** Sends data to server or keeps it in a list if currently offline. */
-    send(getData) {
+    send(getData, timer = 150) {
         if (this.connected && !this.recentlySent) {
             let data = getData()
             if (!data) {
@@ -138,22 +138,22 @@ export class ModServerCommunications {
             this.messages.lastTen.push(data)
             this.messages.lastTen = this.messages['lastTen'].slice(-10)
             this.ws.send(JSON.stringify(data))
-            this.setRecentlySentTimer()
+            this.setRecentlySentTimer(timer)
         } else {
             this.messagesToSend.push(getData)
         }
     }
 
-    setRecentlySentTimer() {
+    setRecentlySentTimer(timer) {
         this.recentlySent = true
         window.setTimeout(()=> {
             this.recentlySent = false
             let oldMessages = this.messagesToSend
             this.messagesToSend = []
             while (oldMessages.length > 0) {
-                this.send(oldMessages.shift())
+                this.send(oldMessages.shift(), Math.min(timer*1.2, 15000))
             }
-        }, 500)
+        }, timer)
     }
 
     resend_messages(from) {

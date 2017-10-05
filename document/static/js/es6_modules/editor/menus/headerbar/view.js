@@ -176,7 +176,6 @@ export class HeaderbarView {
             return ''
         }
         return `
-            <div id="close-document-top" class="close fa fa-times-circle" title="${gettext("Close the document and return to the document overview menu.")}"></div>
             <div id="document-top">
                 <h1>${doc.firstChild.firstChild.textContent.length ? escapeText(doc.firstChild.firstChild.textContent) : gettext('Untitled Document')}</h1>
                 <nav id="header-navigation">

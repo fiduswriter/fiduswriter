@@ -14,14 +14,6 @@ header {
     z-index: 100;
 }
 
-#close-document-top {
-    position: fixed;
-    right: 30px;
-    top: 28px;
-    z-index: 100;
-    cursor: pointer;
-}
-
 #document-top {
     padding: 16px 0;
     background-color: #84b4a7;

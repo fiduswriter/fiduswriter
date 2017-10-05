@@ -26,22 +26,22 @@ class WebSocket(BaseWebSocketHandler):
     sessions = dict()
 
     def open(self, arg):
+        logger.debug('Websocket opened')
+        response = dict()
+        current_user = self.get_current_user()
         args = arg.split("/")
+        if len(args) < 2 or current_user is None:
+            response['type'] = 'access_denied'
+            self.id = 0
+            self.send_message(response)
+            return
         document_id = int(args[0])
         connection_count = int(args[1])
-        logger.debug('Websocket opened')
         self.messages = {
             'server': 0,
             'client': 0,
             'last_ten': []
         }
-        response = dict()
-        current_user = self.get_current_user()
-        if current_user is None:
-            response['type'] = 'access_denied'
-            self.id = 0
-            self.send_message(response)
-            return
         self.user_info = SessionUserInfo()
         doc_db, can_access = self.user_info.init_access(
             document_id, current_user)

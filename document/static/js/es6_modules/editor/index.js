@@ -258,6 +258,7 @@ export class Editor {
             plugins
         }
 
+        document.getElementById('flow').classList.remove('hide')
         // Set document in prosemirror
         this.view.updateState(EditorState.create(stateConfig))
 

@@ -343,6 +343,9 @@ span.delete {
     bottom: 50px;
     border: 1px solid #ccc;
 }
+#flow.hide {
+    display: none;
+}
 
 figure {
     width: 80%;

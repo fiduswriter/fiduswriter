@@ -30,18 +30,19 @@ class WebSocket(BaseWebSocketHandler):
         response = dict()
         current_user = self.get_current_user()
         args = arg.split("/")
-        if len(args) < 2 or current_user is None:
-            response['type'] = 'access_denied'
-            self.id = 0
-            self.send_message(response)
-            return
-        document_id = int(args[0])
-        connection_count = int(args[1])
         self.messages = {
             'server': 0,
             'client': 0,
             'last_ten': []
         }
+        if len(args) < 3 or current_user is None:
+            response['type'] = 'access_denied'
+            self.id = 0
+            self.send_message(response)
+            self.close()
+            return
+        document_id = int(args[0])
+        connection_count = int(args[1])
         self.user_info = SessionUserInfo()
         doc_db, can_access = self.user_info.init_access(
             document_id, current_user)

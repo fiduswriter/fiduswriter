@@ -8,7 +8,8 @@ import {figure, citation, equation, heading, anchor} from "./common"
 
 let footnotecontainer = {
     group: "part",
-    content: "(block|table_block)* (paragraph | heading | blockquote | ordered_list | bullet_list)",
+    selectable: false,
+    content: "(block|table_block)+",
     parseDOM: [{tag: "div.footnote-container"}],
     toDOM(node) {
         return ['div',{class: 'footnote-container'}, 0]
@@ -16,7 +17,8 @@ let footnotecontainer = {
 }
 
 let doc = {
-    content: "part*"
+    content: "part*",
+    selectable: false
 }
 
 let spec = {
@@ -46,9 +48,14 @@ let spec = {
 
 spec.nodes = addListNodes(spec.nodes, "block+", "block")
 
-spec.nodes = spec.nodes.append(tableNodes({
+let tableNodeObj = tableNodes({
     tableGroup: "table_block",
     cellContent: "block+"
-}))
+})
+
+tableNodeObj.table.allowGapCursor = false
+tableNodeObj.table_row.allowGapCursor = false
+
+spec.nodes = spec.nodes.append(tableNodeObj)
 
 export const fnSchema = new Schema(spec)

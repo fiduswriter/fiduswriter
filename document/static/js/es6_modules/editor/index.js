@@ -154,12 +154,17 @@ export class Editor {
     init() {
         new ModSettings(this)
 
-        jQuery(document).ready(() => {
+        if (document.readyState === "complete") {
             this.initEditor()
-        })
+        } else {
+            document.addEventListener("DOMContentLoaded", event => this.initEditor())
+        }
     }
 
     initEditor() {
+        // The following two commands prevent Firefox from showing table controls.
+        document.execCommand("enableObjectResizing", false, false)
+        document.execCommand("enableInlineTableEditing", false, false)
         this.view = new EditorView(document.getElementById('document-editable'), {
             state: EditorState.create({
                 schema: this.schema

@@ -8,23 +8,12 @@ SERVER_INFO = {
     # This determines whether the server is used for testing and will let the
     # users know upon signup know that their documents may disappear.
     'TEST_SERVER': True,
-    # This determines whether experimental or unfinished features will be
-    # enabled.
-    'EXPERIMENTAL': False,
     # This is the contact email that will be shown in various places all over
     # the site.
     'CONTACT_EMAIL': 'mail@email.com',
     # If websockets is running on a non-standard port, add it here:
     'WS_PORT': False,
 }
-
-# An API key to allow searching in Worldcat's opensearch. If False, will
-# disable searches on worldcat.
-WORLDCAT_KEY = False
-
-# An API key to allow searching in Sowiport (http://sowiport.gesis.org/)
-# If False, will disable searches on Sowiport.
-SOWIPORT_KEY = False
 
 ADMINS = (
     ('Your Name', 'your_email@example.com'),
@@ -224,19 +213,6 @@ INSTALLED_APPS = (
     # 'allauth.socialaccount.providers.soundcloud',
     # 'allauth.socialaccount.providers.stackexchange',
 )
-
-# TODO: use it or remove it
-# VISIBILITY = {
-#    'author': {'author': ['always']},
-#    'reviewer': {'author': ['revision', 'publication'],
-#                 'reviewer': ['always'],
-#                 'all_rev': ['discussion, revision, publication'],
-#                 'editor': ['always']},
-#    'editor': {'author': ['revision', 'publication'],
-#               'reviewer': ['always'],
-#               'all_rev': ['always'],
-#               'editor': ['always']}
-# }
 
 
 AUTHENTICATION_BACKENDS = (

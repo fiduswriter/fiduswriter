@@ -176,17 +176,20 @@ export class ModCommentLayout {
         })
         // Add a comment that is currently under construction to the list.
         if(this.mod.store.commentDuringCreation) {
-            let pos = getCommentDuringCreationDecoration(this.mod.editor.view.state).from
-            let comment = this.mod.store.commentDuringCreation.comment
-            let index = 0
-            // We need the position of the new comment in relation to the other
-            // comments in order to insert it in the right place
-            while (referrers[index] < pos) {
-                index++
+            let deco = getCommentDuringCreationDecoration(this.mod.editor.view.state)
+            if (deco) {
+                let pos = deco.from
+                let comment = this.mod.store.commentDuringCreation.comment
+                let index = 0
+                // We need the position of the new comment in relation to the other
+                // comments in order to insert it in the right place
+                while (referrers[index] < pos) {
+                    index++
+                }
+                theComments.splice(index, 0, comment)
+                referrers.splice(index, 0, pos)
+                activeCommentStyle += '.comments-enabled .active-comment, .comments-enabled .active-comment .comment {background-color: #fffacf !important;}'
             }
-            theComments.splice(index, 0, comment)
-            referrers.splice(index, 0, pos)
-            activeCommentStyle += '.comments-enabled .active-comment, .comments-enabled .active-comment .comment {background-color: #fffacf !important;}'
         }
 
         let commentsTemplateHTML = commentsTemplate({

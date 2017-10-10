@@ -361,15 +361,15 @@ export class LatexExporterConvert {
                 }
                 break
             case 'figure':
-                let latexPackage
-                let figureType = node.attrs.figureCategory
-                let caption = node.attrs.caption
-                let imageDBEntry = this.imageDB.db[node.attrs.image]
-                this.imageIds.push(node.attrs.image)
-                let filePathName = imageDBEntry.image
-                let innerFigure = ''
-                if (filePathName) {
-                    let filename = filePathName.split('/').pop()
+                let figureType = node.attrs.figureCategory,
+                    caption = node.attrs.caption,
+                    innerFigure = ''
+                if (node.attrs.image) {
+                    this.imageIds.push(node.attrs.image)
+                    let imageDBEntry = this.imageDB.db[node.attrs.image],
+                        filePathName = imageDBEntry.image,
+                        filename = filePathName.split('/').pop(),
+                        latexPackage
                     if (filename.split('.').pop() === 'svg') {
                         latexPackage = 'includesvg'
                         this.features.SVGs = true

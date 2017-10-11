@@ -47,9 +47,6 @@
     position: absolute;
     left: 50%;
     top: 25px;
-    display: block;
-    font-family: 'fontello';
-    content: '\25b4';
     line-height: 100%;
     font-size: 24px;
     margin-left: -8px;
@@ -62,7 +59,7 @@
     text-decoration: none;
 }
 
-.fw-nav-item a:hover, .fw-nav-item a.active {
+.fw-nav-item a:hover, .fw-nav-item.active-menu-wrapper a {
     color: #3a3e3d;
 }
 

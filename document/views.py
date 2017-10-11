@@ -1,4 +1,6 @@
 import time
+import os
+from tornado.escape import json_decode, json_encode
 from django.shortcuts import render
 from django.core import serializers
 from django.http import HttpResponse, JsonResponse, HttpRequest
@@ -6,12 +8,12 @@ from django.contrib.auth.decorators import login_required
 from django.template.context_processors import csrf
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.files import File
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.core.mail import send_mail
 from django.db.models import Q
-from django.core.serializers.python import Serializer
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.paginator import Paginator, EmptyPage
 
@@ -20,15 +22,11 @@ from avatar.templatetags.avatar_tags import avatar_url
 
 from document.models import Document, AccessRight, DocumentRevision, \
     ExportTemplate, CAN_UPDATE_DOCUMENT
-
-
-class SimpleSerializer(Serializer):
-    def end_object(self, obj):
-        self._current['id'] = obj._get_pk_val()
-        self.objects.append(self._current)
-
-
-serializer = SimpleSerializer()
+from usermedia.models import DocumentImage, Image
+from bibliography.models import Entry
+from document.helpers.serializers import PythonWithURLSerializer
+from bibliography.views import serializer
+from style.models import CitationStyle, CitationLocale
 
 
 def get_accessrights(ars):
@@ -52,7 +50,6 @@ def get_accessrights(ars):
 @login_required
 def index(request):
     response = {}
-    response['export_templates'] = ExportTemplate.objects.all()
     response.update(csrf(request))
     return render(request, 'document/index.html',
                   response)
@@ -65,17 +62,30 @@ def get_documentlist_extra_js(request):
     if request.is_ajax() and request.method == 'POST':
         status = 200
         ids = request.POST['ids'].split(',')
-        documents = Document.objects.filter(Q(owner=request.user) | Q(
+        docs = Document.objects.filter(Q(owner=request.user) | Q(
             accessright__user=request.user)).filter(id__in=ids)
-        response['documents'] = serializer.serialize(
-            documents, fields=(
-                'contents',
-                'comments',
-                'id',
-                'settings',
-                'metadata'
-            )
-        )
+        response['documents'] = []
+        for doc in docs:
+            images = {}
+            for image in doc.documentimage_set.all():
+                images[image.image.id] = {
+                    'added': image.image.added,
+                    'checksum': image.image.checksum,
+                    'file_type': image.image.file_type,
+                    'height': image.image.height,
+                    'id': image.image.id,
+                    'image': image.image.image.url,
+                    'thumbnail': image.image.thumbnail.url,
+                    'title': image.title,
+                    'width': image.image.width
+                }
+            response['documents'].append({
+                'images': images,
+                'contents': doc.contents,
+                'comments': doc.comments,
+                'bibliography': doc.bibliography,
+                'id': doc.id
+            })
     return JsonResponse(
         response,
         status=status
@@ -140,6 +150,17 @@ def get_documentlist_js(request):
             tm_object['name'] = team_member.member.readable_name
             tm_object['avatar'] = avatar_url(team_member.member, 80)
             response['team_members'].append(tm_object)
+        serializer = PythonWithURLSerializer()
+        export_temps = serializer.serialize(
+            ExportTemplate.objects.all()
+        )
+        response['export_templates'] = [obj['fields'] for obj in export_temps]
+        cit_styles = serializer.serialize(
+            CitationStyle.objects.all()
+        )
+        response['citation_styles'] = [obj['fields'] for obj in cit_styles]
+        cit_locales = serializer.serialize(CitationLocale.objects.all())
+        response['citation_locales'] = [obj['fields'] for obj in cit_locales]
         response['user'] = {}
         response['user']['id'] = request.user.id
         response['user']['name'] = request.user.readable_name
@@ -155,7 +176,6 @@ def get_documentlist_js(request):
 @login_required
 def editor(request):
     response = {}
-    response['export_templates'] = ExportTemplate.objects.all()
     return render(request, 'document/editor.html',
                   response)
 
@@ -166,8 +186,15 @@ def delete_js(request):
     status = 405
     if request.is_ajax() and request.method == 'POST':
         doc_id = int(request.POST['id'])
+        image_ids = list(
+            DocumentImage.objects.filter(document_id=doc_id)
+            .values_list('image_id', flat=True)
+        )
         document = Document.objects.get(pk=doc_id, owner=request.user)
         document.delete()
+        for image in Image.objects.filter(id__in=image_ids):
+            if image.is_deletable():
+                image.delete()
         status = 200
     return JsonResponse(
         response,
@@ -290,60 +317,98 @@ def access_right_save_js(request):
 
 
 @login_required
+def import_create_js(request):
+    # First step of import: Create a document and return the id of it
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 201
+        document = Document.objects.create(owner_id=request.user.pk)
+        response['id'] = document.id
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@login_required
+def import_image_js(request):
+    # create an image for a document
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        document = Document.objects.filter(
+            owner_id=request.user.pk,
+            id=int(request.POST['doc_id'])
+        )
+        if document.exists():
+            status = 201
+        else:
+            status = 401
+            return JsonResponse(
+                response,
+                status=status
+            )
+        document = document[0]
+        checksum = request.POST['checksum']
+        image = Image.objects.filter(checksum=checksum)
+        if image.exists():
+            image = image[0]
+        else:
+            image = Image.objects.create(
+                uploader=request.user,
+                image=request.FILES['image'],
+                checksum=checksum
+            )
+        doc_image = DocumentImage.objects.create(
+            image=image,
+            title=request.POST['title'],
+            document=document
+        )
+        response['id'] = doc_image.image.id
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@login_required
 def import_js(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
-        if 'doc_id' in request.POST:
-            doc_id = request.POST['doc_id']
-            # There is a doc_id, so we overwrite an existing doc rather than
-            # creating a new one.
-            document = Document.objects.get(id=int(doc_id))
-            if (
-                document.owner != request.user and
-                len(AccessRight.objects.filter(
-                    document_id=doc_id,
-                    user_id=request.user.id,
-                    rights__in=CAN_UPDATE_DOCUMENT
-                )) == 0
-            ):
-                response['error'] = 'No access to file'
-                status = 403
-                return JsonResponse(
-                    response,
-                    status=status
-                )
-            if document.version > 0:
-                # The file has been initialized already. Do not do this again.
-                # This could happen if two users click on the link almost at
-                # the same time.
-                response['document_id'] = document.id
-                response['added'] = time.mktime(document.added.utctimetuple())
-                response['updated'] = time.mktime(
-                    document.updated.utctimetuple()
-                )
-                status = 200
-                return JsonResponse(
-                    response,
-                    status=status
-                )
-            else:
-                # We increase the version to 1 to mark that the file now
-                # contains imported contents.
-                document.version = 1
-                document.diff_version = 1
-        else:
-            document = Document.objects.create(owner_id=request.user.pk)
+        doc_id = request.POST['id']
+        # There is a doc_id, so we overwrite an existing doc rather than
+        # creating a new one.
+        document = Document.objects.get(id=int(doc_id))
+        if (
+            document.owner != request.user and
+            len(AccessRight.objects.filter(
+                document_id=doc_id,
+                user_id=request.user.id,
+                rights__in=CAN_UPDATE_DOCUMENT
+            )) == 0
+        ):
+            response['error'] = 'No access to file'
+            status = 403
+            return JsonResponse(
+                response,
+                status=status
+            )
         document.title = request.POST['title']
-        document.contents = request.POST['contents']
-        document.comments = request.POST['comments']
-        document.metadata = request.POST['metadata']
-        document.settings = request.POST['settings']
+        # We need to decode/encode the following so that it has the same
+        # character encoding as used the the save_document method in ws_views.
+        document.contents = json_encode(json_decode(request.POST['contents']))
+        document.comments = json_encode(json_decode(request.POST['comments']))
+        document.bibliography = \
+            json_encode(json_decode(request.POST['bibliography']))
+        # document.doc_version should always be the current version, so don't
+        # bother about it.
         document.save()
         response['document_id'] = document.id
         response['added'] = time.mktime(document.added.utctimetuple())
         response['updated'] = time.mktime(document.updated.utctimetuple())
-        status = 201
+        status = 200
     return JsonResponse(
         response,
         status=status
@@ -429,7 +494,7 @@ def get_all_docs_js(request):
     status = 405
     if request.is_ajax() and request.method == 'POST':
         status = 200
-        doc_list = Document.objects.all().order_by('id')
+        doc_list = Document.objects.all()
         paginator = Paginator(doc_list, 10)  # Get 10 docs per page
 
         batch = request.POST['batch']
@@ -456,24 +521,44 @@ def save_doc_js(request):
         doc = Document.objects.get(pk=int(doc_id))
         # Only looking at fields that may have changed.
         contents = request.POST.get('contents', False)
-        metadata = request.POST.get('metadata', False)
-        settings = request.POST.get('settings', False)
+        bibliography = request.POST.get('bibliography', False)
+        doc_version = request.POST.get('doc_version', False)
         last_diffs = request.POST.get('last_diffs', False)
-        diff_version = request.POST.get('diff_version', False)
         version = request.POST.get('version', False)
         if contents:
             doc.contents = contents
-        if metadata:
-            doc.metadata = metadata
-        if settings:
-            doc.settings = settings
+        if bibliography:
+            doc.bibliography = bibliography
+        if doc_version:
+            doc.doc_version = doc_version
         if version:
             doc.version = version
         if last_diffs:
             doc.last_diffs = last_diffs
-        if diff_version:
-            doc.diff_version = diff_version
         doc.save()
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@staff_member_required
+def get_user_biblist_js(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 200
+        user_id = request.POST['user_id']
+        response['bibList'] = serializer.serialize(
+            Entry.objects.filter(
+                entry_owner_id=user_id
+            ), fields=(
+                    'entry_key',
+                    'entry_owner',
+                    'bib_type',
+                    'fields'
+            )
+        )
     return JsonResponse(
         response,
         status=status
@@ -509,6 +594,49 @@ def update_revision_js(request):
         revision.file_object = request.FILES['file']
         revision.file_object.name = file_name
         revision.save()
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@staff_member_required
+def add_images_to_doc_js(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 201
+        doc_id = request.POST['doc_id']
+        doc = Document.objects.get(id=doc_id)
+        # Delete all existing image links
+        DocumentImage.objects.filter(
+            document_id=doc_id
+        ).delete()
+        ids = request.POST.getlist('ids[]')
+        for id in ids:
+            title = 'Deleted'
+            image = Image.objects.filter(id=id)
+            if image.exists():
+                image = image[0]
+                user_image = image.userimage_set.all()
+                if user_image.exists():
+                    user_image = user_image[0]
+                    title = user_image.title
+            else:
+                image = Image()
+                image.pk = id
+                image.uploader = doc.owner
+                f = open(os.path.join(
+                    settings.PROJECT_PATH, "base/static/img/error.png"
+                ))
+                image.image.save('error.png', File(f))
+                image.save()
+            DocumentImage.objects.create(
+                document=doc,
+                image=image,
+                title=title
+            )
+
     return JsonResponse(
         response,
         status=status

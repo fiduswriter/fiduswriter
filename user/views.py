@@ -315,23 +315,29 @@ def list_team_members(request):
     List all team members of the current user
     """
     response = {}
-    all_team_members = request.user.leader.all()
-    '''
-    paginator = Paginator(all_team_members, 25)
-    # Show only 25 team members at a time
-
-    page = request.GET.get('page')
-    try:
-        team_members = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        team_members = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        team_members = paginator.page(paginator.num_pages)
-    '''
-    response['teammembers'] = all_team_members
     return render(request, 'account/list_team_members.html', response)
+
+
+@login_required
+def list_team_members_js(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 200
+        response['team_members'] = []
+
+        for member in User.objects.filter(member__leader=request.user):
+            team_member = {
+                'id': member.id,
+                'name': member.get_username(),
+                'email': member.email,
+                'avatar': userutil.get_user_avatar_url(member)
+            }
+            response['team_members'].append(team_member)
+    return JsonResponse(
+        response,
+        status=status
+    )
 
 
 @login_required

@@ -1,4 +1,5 @@
 import {RenderCitations} from "../../citations/render"
+import {BibEntryForm} from "../../bibliography/form"
 
 export class ModCitations {
     constructor(editor) {
@@ -7,7 +8,6 @@ export class ModCitations {
         this.citationType = ''
         this.fnOverrideElement =  false
         this.setup()
-        this.bindEvents()
     }
 
     setup() {
@@ -22,13 +22,6 @@ export class ModCitations {
             document.head.appendChild(styleContainers.firstElementChild)
         }
         this.fnOverrideElement = document.getElementById('footnote-numbering-override')
-    }
-
-    bindEvents () {
-        let pm = this.editor.pm
-        pm.updateScheduler([pm.on.flush], () => this.layoutCitations())
-        let fnPm = this.editor.mod.footnotes.fnPm
-        fnPm.updateScheduler([fnPm.on.flush], () => this.layoutCitations())
     }
 
     resetCitations() {
@@ -47,7 +40,7 @@ export class ModCitations {
     }
 
     layoutCitations() {
-        if (!this.editor.bibDB) {
+        if (!this.editor.mod.db.bibDB.db) {
             // bibliography hasn't been loaded yet
             return
         }
@@ -55,8 +48,10 @@ export class ModCitations {
         if (this.emptyCitations.length > 0) {
             this.citRenderer = new RenderCitations(
                 document.getElementById('paper-editable'), // TODO: Should we point this to somewhere else?
-                document.querySelector('div.article').getAttribute('data-citationstyle'),
-                this.editor.bibDB,
+                this.editor.view.state.doc.firstChild.attrs.citationstyle,
+                this.editor.mod.db.bibDB,
+                this.editor.mod.styles.citationStyles,
+                this.editor.mod.styles.citationLocales,
                 false
             )
             this.citRenderer.init().then(
@@ -67,9 +62,19 @@ export class ModCitations {
 
     }
 
+    bindBibliographyClicks() {
+        document.querySelectorAll('div.csl-entry').forEach((el, index) => {
+            el.addEventListener('click', event => {
+                let eID = this.citRenderer.fm.bibliography[0].entry_ids[index],
+                    form = new BibEntryForm(this.editor.mod.db.bibDB, eID)
+                form.init()
+            })
+        })
+    }
+
     layoutCitationsTwo() {
-        let citRenderer = this.citRenderer
-        let needFootnoteLayout = false
+        let citRenderer = this.citRenderer,
+            needFootnoteLayout = false
         if (this.citationType !== citRenderer.fm.citationType) {
             // The citation format has changed, so we need to relayout the footnotes as well
             needFootnoteLayout = true
@@ -83,6 +88,16 @@ export class ModCitations {
             styleEl = document.querySelector('.article-bibliography-style')
         }
         let css = citRenderer.fm.bibCSS
+        if (this.editor.docInfo.access_rights === 'write') {
+            this.bindBibliographyClicks()
+            css += `
+                div.csl-entry {
+                    cursor: pointer;
+                }
+                div.csl-entry:hover {
+                    background-color: grey;
+                }`
+        }
         if (styleEl.innerHTML !== css) {
             styleEl.innerHTML = css
         }
@@ -95,19 +110,26 @@ export class ModCitations {
 
             if (emptyBodyCitation) {
                 // Find all the citations in the main body text (not footnotes)
-                let citationNodes = [].slice.call(document.querySelectorAll('#document-editable span.citation'))
+                let citationNodes = [].slice.call(document.querySelectorAll('#document-editable span.citation')),
+                    citations = []
 
-                let citationsHTML = ''
-                // The citations have not been filled, so we do so manually.
-                citationNodes.forEach(function(citationNode, index) {
-                    citationNode.innerHTML = '<span class="citation-footnote-marker"></span>'
-                    let citationText = citRenderer.fm.citationTexts[index][0][1]
-                    citationsHTML += '<div class="footnote-citation">'+citationText+'</div>'
+                citRenderer.fm.citationTexts.forEach(citText => {
+                    citText.forEach(entry => {
+                        let index = entry[0],
+                            citationText =
+                                `<div class="footnote-citation">${entry[1]}</div>`
+                        citations[index] = citationText
+                    })
                 })
 
+                let citationsHTML = citations.join('')
                 if (citationsContainer.innerHTML !== citationsHTML) {
                     citationsContainer.innerHTML = citationsHTML
                 }
+                // The citations have not been filled, so we do so manually.
+                citationNodes.forEach(citationNode => {
+                    citationNode.innerHTML = '<span class="citation-footnote-marker"></span>'
+                })
             }
 
         } else {
@@ -135,7 +157,7 @@ export class ModCitations {
              citationFootnoteCounter = 1,
              footnoteCounter = 1
 
-             this.editor.pm.doc.descendants(function(node){
+             this.editor.view.state.doc.descendants(function(node){
                  if (node.isInline && (node.type.name==='footnote' || node.type.name==='citation')) {
                      if (node.type.name==='footnote') {
                          outputCSS += '#footnote-box-container .footnote-container:nth-of-type('+editorFootnoteCounter+') > *:first-child::before {content: "' + footnoteCounter + ' ";}\n'

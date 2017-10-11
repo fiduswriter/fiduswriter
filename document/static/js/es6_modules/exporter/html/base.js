@@ -1,10 +1,14 @@
 import {BaseDOMExporter} from "../tools/dom-export"
 import {RenderCitations} from "../../citations/render"
 import {docSchema} from "../../schema/document"
+import {DOMSerializer} from "prosemirror-model"
 
 export class BaseHTMLExporter extends BaseDOMExporter {
     joinDocumentParts() {
-        this.contents = docSchema.nodeFromJSON(this.doc.contents).toDOM()
+        let schema = docSchema
+        schema.cached.imageDB = this.imageDB
+        let serializer = DOMSerializer.fromSchema(schema)
+        this.contents = serializer.serializeNode(schema.nodeFromJSON(this.doc.contents))
 
         // Remove hidden parts
         let hiddenEls = [].slice.call(this.contents.querySelectorAll('[data-hidden=true]'))
@@ -16,6 +20,8 @@ export class BaseHTMLExporter extends BaseDOMExporter {
             this.contents,
             this.doc.settings.citationstyle,
             this.bibDB,
+            this.citationStyles,
+            this.citationLocales,
             true
         )
         return citRenderer.init().then(

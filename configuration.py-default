@@ -13,23 +13,12 @@ SERVER_INFO = {
     # This determines whether the server is used for testing and will let the
     # users know upon signup know that their documents may disappear.
     'TEST_SERVER': True,
-    # This determines whether experimental or unfinished features will be
-    # enabled.
-    'EXPERIMENTAL': False,
     # This is the contact email that will be shown in various places all over
     # the site.
     'CONTACT_EMAIL': 'mail@email.com',
     # If websockets is running on a non-standard port, add it here:
     'WS_PORT': False,
 }
-
-# An API key to allow searching in Worldcat's opensearch. If False, will
-# disable searches on worldcat.
-WORLDCAT_KEY = False
-
-# An API key to allow searching in Sowiport (http://sowiport.gesis.org/)
-# If False, will disable searches on Sowiport.
-SOWIPORT_KEY = False
 
 ADMINS = (
     ('Your Name', 'your_email@example.com'),
@@ -72,32 +61,26 @@ MANAGERS = ADMINS
 # Make this unique, and don't share it with anybody. Change the default string.
 SECRET_KEY = '2ouq2zgw5y-@w+t6!#zf#-z1inigg7$lg3p%8e3kkob1bf$#p4'
 
-VISIBILITY = {
-    'author': {'author': ['always']},
-    'reviewer': {'author': ['revision', 'publication'],
-                 'reviewer': ['always'],
-                 'all_rev': ['discussion, revision, publication'],
-                 'editor': ['always']},
-    'editor': {'author': ['revision', 'publication'],
-               'reviewer': ['always'],
-               'all_rev': ['always'],
-               'editor': ['always']}
-}
 
-# INSTALLED_APPS += (
-#    If you want to enable one or several of the social network login options
-#    below, make sure you add the authorization keys at:
-#    http://SERVER.COM/admin/socialaccount/socialapp/
-#    'allauth.socialaccount.providers.facebook',
-#    'allauth.socialaccount.providers.google',
-#    'allauth.socialaccount.providers.twitter',
-#    'allauth.socialaccount.providers.github',
-#    'allauth.socialaccount.providers.linkedin',
-#    'allauth.socialaccount.providers.openid',
-#    'allauth.socialaccount.providers.persona',
-#    'allauth.socialaccount.providers.soundcloud',
-#    'allauth.socialaccount.providers.stackexchange',
-# )
+try:
+    INSTALLED_APPS
+except NameError:
+    INSTALLED_APPS = ()
+
+INSTALLED_APPS += (
+    # If you want to enable one or several of the social network login options
+    # below, make sure you add the authorization keys at:
+    # http://SERVER.COM/admin/socialaccount/socialapp/
+    # 'allauth.socialaccount.providers.facebook',
+    # 'allauth.socialaccount.providers.google',
+    # 'allauth.socialaccount.providers.twitter',
+    # 'allauth.socialaccount.providers.github',
+    # 'allauth.socialaccount.providers.linkedin',
+    # 'allauth.socialaccount.providers.openid',
+    # 'allauth.socialaccount.providers.persona',
+    # 'allauth.socialaccount.providers.soundcloud',
+    # 'allauth.socialaccount.providers.stackexchange',
+)
 
 # A list of allowed hostnames of this Fidus Writer installation
 ALLOWED_HOSTS = [
@@ -109,10 +92,10 @@ ALLOWED_HOSTS = [
 # For deployment a version on the net is better.
 # Only uncomment if you change any of these values!
 # JS_LOCATIONS = {
-#    'JQUERY_URL': STATIC_URL + 'js/libs/jquery-2.2.0.js',
-#    'JQUERYUI_URL': STATIC_URL + 'js/libs/jquery-ui-1.11.4.js',
-#    'UNDERSCOREJS_URL': STATIC_URL + 'js/libs/underscore-1.8.3.js',
-#    }
+#     'JQUERY_URL': STATIC_URL + 'js/libs/jquery.min.js',
+#     'JQUERYUI_URL': STATIC_URL + 'js/libs/jquery-ui.min.js',
+#     'DATATABLES_URL': STATIC_URL + 'js/libs/jquery.dataTables.min.js'
+# }
 #
 # CSS_LOCATIONS = {
 #    }

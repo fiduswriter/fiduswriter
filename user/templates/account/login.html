@@ -8,17 +8,7 @@
 {% block loginhref %}{{signup_url}}{% endblock %}
 {% block loginbtn %}{% trans "Sign up" %}{% endblock %}
 {% block extraheaders %}
-<script type="text/javascript">
-    jQuery(function() {
-        var btn_width = 1;
-        jQuery('.fw-button.fw-socialaccount').each(function() {
-            var the_width = jQuery(this).width();
-            if(btn_width < the_width)
-                btn_width = the_width;
-        });
-        jQuery('.fw-button.fw-socialaccount').css('width', btn_width + 15);
-    });
-</script>
+    <script src="{{ STATIC_URL }}js/login.es5.js"></script>
 {% endblock %}
 
 {% block body %}
@@ -40,7 +30,7 @@
             <li>
                 <a title="{{provider.name}}" class="fw-button fw-socialaccount fw-{{provider.id}}"
                     href="{% provider_login_url provider.id %}">
-                    <span class="icon-{{provider.id}}"></span>
+                    <span class="fa fa-{{provider.id}}"></span>
                     {% trans "Login with" %} {{provider.name}}
                 </a>
             </li>

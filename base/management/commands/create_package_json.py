@@ -1,7 +1,8 @@
 import os
 import json
 import shutil
-import commentjson
+from json_minify import json_minify
+from tornado.escape import json_decode
 from django.core.management.base import BaseCommand
 from django.apps import apps as django_apps
 from fiduswriter.settings import PROJECT_PATH
@@ -40,7 +41,7 @@ class Command(BaseCommand):
             package_path = os.path.join(config.path, 'package.json')
             try:
                 with open(package_path) as data_file:
-                    data = commentjson.load(data_file)
+                    data = json_decode(json_minify(data_file.read()))
             except IOError:
                 continue
             deep_merge_dicts(package, data)

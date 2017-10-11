@@ -16,10 +16,32 @@ export class ModSettings {
                 this.settings[key] = newSettings[key]
                 switch(key) {
                     case 'documentstyle':
-                        this.updateDocStyleCSS()
+                        // Check if doc style is valid. Otherwise pick first possible style
+                        if (this.editor.mod.styles.documentStyles.map(d => d.filename).includes(
+                            newSettings[key])
+                        ) {
+                            this.updateDocStyleCSS(newSettings[key])
+                        } else {
+                            let settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='settings'),
+                                documentStyleMenu = settingsMenu.content.find(menu => menu.id==='document_style')
+                            if (documentStyleMenu.content.length) {
+                                documentStyleMenu.content[0].action(this.editor)
+                            }
+                        }
                         break
                     case 'citationstyle':
-                        this.editor.mod.citations.resetCitations()
+                        // Check if cite style is valid. Otherwise pick first possible style
+                        if (this.editor.mod.styles.citationStyles.map(d => d.short_title).includes(
+                            newSettings[key])
+                        ) {
+                            this.editor.mod.citations.resetCitations()
+                        } else {
+                            let settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='settings'),
+                                citationStyleMenu = settingsMenu.content.find(menu => menu.id==='citation_style')
+                            if (citationStyleMenu.content.length) {
+                                citationStyleMenu.content[0].action(this.editor)
+                            }
+                        }
                         break
                 }
             }
@@ -29,27 +51,36 @@ export class ModSettings {
 
     /** Update the stylesheet used for the docStyle
      */
-    updateDocStyleCSS() {
-        let docStyleLink = document.getElementById('document-style-link')
+    updateDocStyleCSS(docStyleId) {
 
-        // Remove previous style.
-        docStyleLink.parentElement.removeChild(docStyleLink.previousElementSibling)
+        let docStyle = this.editor.mod.styles.documentStyles.find(doc_style => doc_style.filename===docStyleId)
 
-        let stylesheet = loadCSS(
-            window.staticUrl + `css/document/${this.settings.documentstyle}.css`,
-            docStyleLink
-        )
-        stylesheet.addEventListener("load", () => {
-            // We layout the comments 250 ms after the stylesheet has been loaded.
-            // This should usually be enough to make the layout work correctly.
-            //
-            // TODO: Find a way that is more reliable than a timeout to check
-            // for font loading.
-            window.setTimeout(() => {
-                this.editor.mod.comments.layout.layoutComments()
-                this.editor.mod.footnotes.layout.layoutFootnotes()
-            }, 250)
-        })
+        let docStyleCSS = `
+        ${docStyle.fonts.map(font => {
+            return `@font-face {${
+                font[1].replace('[URL]', font[0])
+            }}`
+        }).join('\n')}
+
+        ${docStyle.contents}
+        `
+
+        let docStyleEl = document.getElementById('document-style')
+
+        if (!docStyleEl) {
+            docStyleEl = document.createElement('style')
+            docStyleEl.id = 'document-style'
+            document.head.appendChild(docStyleEl)
+        }
+
+        docStyleEl.innerHTML = docStyleCSS
+
+        // TODO: Find a way that is more reliable than a timeout to check
+        // for font loading.
+        window.setTimeout(() => {
+            this.editor.mod.comments.layout.layoutComments()
+            this.editor.mod.footnotes.layout.layoutFootnotes()
+        }, 250)
 
     }
 

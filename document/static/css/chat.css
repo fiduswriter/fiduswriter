@@ -42,14 +42,13 @@
     padding-top: 5px;
 }
 
-#current-editors {
+#connected-collaborators {
     position: fixed;
     right: 60px;
     top: 20px;
-    display: none;
 }
 
-#current-editors img {
+#connected-collaborators img {
     width: 26px;
     margin-left:4px;
 }

@@ -4,10 +4,12 @@ import {FormatCitations} from "./format"
  */
 
 export class RenderCitations {
-    constructor(contentElement, citationStyle, bibDB, renderNoteCitations = true) {
+    constructor(contentElement, citationStyle, bibDB, citationStyles, citationLocales, renderNoteCitations = true) {
         this.contentElement = contentElement
         this.citationStyle = citationStyle
         this.bibDB = bibDB
+        this.citationStyles = citationStyles
+        this.citationLocales = citationLocales
         this.renderNoteCitations = renderNoteCitations
         this.allCitationNodes = []
         this.allCitationInfos = []
@@ -24,7 +26,9 @@ export class RenderCitations {
         this.fm = new FormatCitations(
             this.allCitationInfos,
             this.citationStyle,
-            this.bibDB
+            this.bibDB,
+            this.citationStyles,
+            this.citationLocales
         )
         return this.fm.init().then(
             () => {
@@ -37,12 +41,18 @@ export class RenderCitations {
     }
 
     renderCitations() {
-        this.fm.citationTexts.forEach((citText, index) => {
-            let citationText = citText[citText.length - 1][1]
-            if ('note' === this.fm.citationType) {
-                citationText = `<span class="pagination-footnote"><span><span>${citationText}</span></span></span>`
-            }
-            this.allCitationNodes[index].innerHTML = citationText
+        this.fm.citationTexts.forEach(citText => {
+            citText.forEach(entry => {
+                let index = entry[0],
+                    citationText = entry[1]
+                if ('note' === this.fm.citationType) {
+                    citationText =
+                        `<span class="pagination-footnote"><span><span>
+                            ${citationText}
+                        </span></span></span>`
+                }
+                this.allCitationNodes[index].innerHTML = citationText
+            })
         })
     }
 

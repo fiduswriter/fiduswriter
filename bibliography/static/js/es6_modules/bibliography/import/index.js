@@ -69,7 +69,7 @@ export class BibLatexFileImporter {
         let bibData = new BibLatexParser(fileContents)
         this.tmpDB = bibData.output
         this.bibKeys = Object.keys(this.tmpDB)
-        if (_.isEmpty(this.bibKeys)) {
+        if (!this.bibKeys.length) {
             deactivateWait()
             addAlert('error', gettext('No bibliography entries could be found in import file.'))
             return

@@ -40,7 +40,7 @@ export class LatexExporterConvert {
             // that are being linked to.
             case 'text':
                 if (node.marks) {
-                    let hyperlink = _.findWhere(node.marks, {type:'link'})
+                    let hyperlink = node.marks.find(mark => mark.type === 'link')
                     if (hyperlink) {
                         let href = hyperlink.attrs.href
                         if (href[0] === '#' && !this.internalLinks.includes(href)) {
@@ -76,24 +76,83 @@ export class LatexExporterConvert {
                     this.features.subtitle = true
                 }
                 break
+            case 'author':
+                // Ignore - we deal with authors instead.
+                break
             case 'authors':
                 if (node.content) {
-                    start += '\n\\author{'
-                    end = '}' + end
+                    let authorsPerAffil = node.content.map(node => {
+                        let author = node.attrs,
+                            nameParts = [],
+                            affiliation = false
+                        if (author.firstname) {
+                            nameParts.push(author.firstname)
+                        }
+                        if (author.lastname) {
+                            nameParts.push(author.lastname)
+                        }
+                        if (nameParts.length && author.institution) {
+                            affiliation = author.institution
+                        } else if (author.institution) {
+                            // We have an institution but no names. Use institution as name.
+                            nameParts.push(author.institution)
+                        }
+                        return {
+                            name: nameParts.join(' '),
+                            affiliation,
+                            email: author.email
+                        }
+                    }).reduce((affils, author) => {
+                        let affil = author.affiliation
+                        affils[affil] = affils[affil] || []
+                        affils[affil].push(author)
+                        return affils
+                    }, {})
+
+                    Object.values(authorsPerAffil).forEach(
+                        affil => {
+                            affil.forEach(
+                                author => {
+                                    content +=
+                                        `\n\\author{${escapeLatexText(author.name)}${
+                                            author.email ?
+                                            `\\thanks{${
+                                                escapeLatexText(author.email)
+                                            }}` :
+                                            ''
+                                        }}`
+                                }
+                            )
+
+                            content += `\n\\affil{${
+                                affil[0].affiliation ?
+                                escapeLatexText(affil[0].affiliation) :
+                                ''
+                            }}`
+                        }
+                    )
+                    this.features.authors = true
+                    content += "\n\n"
                 }
-                // We add the maketitle command here. TODO: This relies on the
-                // existence of a subtitle node, even if it has no content.
-                // It would be better if it wouldn't have to rely on this.
-                start += '\n\n\\maketitle\n'
                 break
             case 'keywords':
                 if (node.content) {
                     start += '\n\\keywords{'
+                    start += node.content.map(
+                        keyword => escapeLatexText(keyword.attrs.keyword)
+                    ).join('\\sep ')
                     end = '}' + end
                     this.features.keywords = true
                 }
                 break
+            case 'keyword':
+                // Ignore - we already took all the keywords from the keywords node.
+                break
             case 'abstract':
+                // We add the maketitle command here. TODO: This relies on the
+                // existence of a abstract node, even if it has no content.
+                // It would be better if it wouldn't have to rely on this.
+                start += '\n\n\\maketitle\n'
                 if (node.content) {
                     start += '\n\\begin{abstract}\n'
                     end = '\n\\end{abstract}\n' + end
@@ -132,7 +191,7 @@ export class LatexExporterConvert {
                 }
                 if(!options.onlyFootnoteMarkers) {
                     placeFootnotesAfterBlock = true
-                    options = _.clone(options)
+                    options = Object.assign({}, options)
                     options.onlyFootnoteMarkers = true
                     options.unplacedFootnotes = []
                 }
@@ -150,7 +209,7 @@ export class LatexExporterConvert {
                 end = '\n\\end{enumerated}' + end
                 if(!options.onlyFootnoteMarkers) {
                     placeFootnotesAfterBlock = true
-                    options = _.clone(options)
+                    options = Object.assign({}, options)
                     options.onlyFootnoteMarkers = true
                     options.unplacedFootnotes = []
                 }
@@ -160,7 +219,7 @@ export class LatexExporterConvert {
                 end = '\n\\end{itemize}' + end
                 if(!options.onlyFootnoteMarkers) {
                     placeFootnotesAfterBlock = true
-                    options = _.clone(options)
+                    options = Object.assign({}, options)
                     options.onlyFootnoteMarkers = true
                     options.unplacedFootnotes = []
                 }
@@ -190,9 +249,9 @@ export class LatexExporterConvert {
                 // Check for hyperlink, bold/strong and italic/em
                 let hyperlink, strong, em
                 if (node.marks) {
-                    strong = _.findWhere(node.marks, {type:'strong'})
-                    em = _.findWhere(node.marks, {type:'em'})
-                    hyperlink = _.findWhere(node.marks, {type:'link'})
+                    strong = node.marks.find(mark => mark.type === 'strong')
+                    em = node.marks.find(mark => mark.type === 'em')
+                    hyperlink = node.marks.find(mark => mark.type === 'link')
                 }
                 if (em) {
                     start += '\\emph{'
@@ -302,15 +361,15 @@ export class LatexExporterConvert {
                 }
                 break
             case 'figure':
-                let latexPackage
-                let figureType = node.attrs.figureCategory
-                let caption = node.attrs.caption
-                let imageDBEntry = this.imageDB.db[node.attrs.image]
-                this.imageIds.push(node.attrs.image)
-                let filePathName = imageDBEntry.image
-                let innerFigure = ''
-                if (filePathName) {
-                    let filename = filePathName.split('/').pop()
+                let figureType = node.attrs.figureCategory,
+                    caption = node.attrs.caption,
+                    innerFigure = ''
+                if (node.attrs.image) {
+                    this.imageIds.push(node.attrs.image)
+                    let imageDBEntry = this.imageDB.db[node.attrs.image],
+                        filePathName = imageDBEntry.image,
+                        filename = filePathName.split('/').pop(),
+                        latexPackage
                     if (filename.split('.').pop() === 'svg') {
                         latexPackage = 'includesvg'
                         this.features.SVGs = true
@@ -324,20 +383,46 @@ export class LatexExporterConvert {
                     innerFigure += `\\begin{displaymath}\n${equation}\n\\end{displaymath}\n`
                 }
                 if (figureType==='table') {
-                    content += `\n\\begin{table}\n\\caption{${caption}}\n${innerFigure}\\end{table}\n`
+                    start += `\n\\begin{table}\n`
+                    content += `\\caption{${caption}}\n${innerFigure}`
+                    end += `\\end{table}\n`
                 } else { // TODO: handle photo figure types in a special way
-                    content += `\n\\begin{figure}\n${innerFigure}\\caption{${caption}}\n\\end{figure}\n`
+                    start += `\n\\begin{figure}\n`
+                    content += `${innerFigure}\\caption{${caption}}\n`
+                    end += `\\end{figure}\n`
+                }
+                if (this.internalLinks.includes(node.attrs.id)) {
+                    // Add a link target
+                    end = `\\texorpdfstring{\\protect\\hypertarget{${node.attrs.id}}{}}{}\n` + end
                 }
                 break
             case 'table':
-                start += `\n\n\\begin{tabularx}{\\textwidth}{ |${'X|'.repeat(node.attrs.columns)} }\n\\hline\n\n`
-                end += `\n\n\\end{tabularx}`
-                this.features.tables = true
+                if(node.content && node.content.length) {
+                    let columns = node.content[0].content.reduce(
+                        (columns, node) => columns + node.attrs.colspan,
+                        0
+                    )
+                    start += `\n\n\\begin{tabularx}{\\textwidth}{ |${'X|'.repeat(columns)} }\n\\hline\n\n`
+                    end += `\\hline\n\n\\end{tabularx}`
+                    this.features.tables = true
+                }
                 break
             case 'table_row':
-                end += ' \\\\ \\hline\n'
+                end += ' \\\\\n'
                 break
             case 'table_cell':
+            case 'table_header':
+                if (node.attrs.colspan > 1) {
+                    start += `\\multicolumn{${node.attrs.colspan}}{c}{`
+                    end += '}'
+                }
+                // TODO: these multirow outputs don't work very well with longer text.
+                // If there is another alternative, please change!
+                if (node.attrs.rowspan > 1) {
+                    start += `\\multirow{${node.attrs.rowspan}}{*}{`
+                    end += '}'
+                    this.features.rowspan = true
+                }
                 end += ' & '
                 break
             case 'equation':
@@ -375,6 +460,10 @@ export class LatexExporterConvert {
                 end += '}'
             })
             options.unplacedFootnotes = []
+        }
+        if (['table_cell', 'table_header'].includes(node.type) && node.attrs.rowspan > 1) {
+            // \multirow doesn't allow multiple paragraphs.
+            content = content.trim().replace(/\n\n/g, ' \\\\ ')
         }
 
         return start + content + end
@@ -430,6 +519,14 @@ export class LatexExporterConvert {
                 }
             `
         }
+        if (this.features.authors) {
+            preamble += `
+                \n\\usepackage{authblk}
+                \n\\makeatletter
+                \n\\let\\@fnsymbol\\@alph
+                \n\\makeatother
+            `
+        }
 
         if (this.features.keywords) {
             preamble += `
@@ -437,6 +534,7 @@ export class LatexExporterConvert {
                 \n{\\textit{Keywords}:\\,\\relax%
                 \n}}
                 \n\\def\\endkeywords{\\par}
+                \n\\newcommand{\\sep}{, }
             `
         }
 
@@ -472,6 +570,10 @@ export class LatexExporterConvert {
         if (this.features.tables) {
             preamble += '\n\\usepackage{tabularx}'
         }
+        if (this.features.rowspan) {
+            preamble += '\n\\usepackage{multirow}'
+        }
+
 
         return preamble
 

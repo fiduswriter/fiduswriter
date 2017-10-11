@@ -3,32 +3,29 @@ import {GetImages} from "./get-images"
 
 export class ImportNative {
     /* Save document information into the database */
-    constructor(doc, impBibDB, impImageDB, images, user, bibDB, imageDB, docId) {
+    constructor(doc, bibliography, images, otherFiles, user) {
         this.doc = doc
-        this.impBibDB = impBibDB // These are the imported values
-        this.impImageDB = impImageDB // These are the imported values
-        this.images = images // Images at URLs or in Zip files.
+        this.docId = false
+        this.bibliography = bibliography
+        this.images = images
+        this.otherFiles = otherFiles // Data of image files
         this.user = user
-        this.bibDB = bibDB // These are values stored in the database (data in bibDB.db)
-        this.imageDB = imageDB // These are values stored in the database (data in imageDB.db)
-        this.docId = docId // The id of an existing doc to be overwritten. Used by OJS. See file.js
     }
 
     init() {
-        let {BibTranslationTable, newBibEntries} = this.compareBibDBs()
-        let {ImageTranslationTable, newImageEntries} = this.compareImageDBs()
-        // We first create any new entries in the DB for images and/or
-        // bibliography items.
-        let imageGetter = new GetImages(newImageEntries, this.images)
-        return imageGetter.init().then(
-            () => this.saveImages(newImageEntries, ImageTranslationTable)
+        let ImageTranslationTable = {}
+        return this.createDoc().then(
+            () => {
+                // We first create any new entries in the DB for images.
+                let imageGetter = new GetImages(this.images, this.otherFiles)
+                return imageGetter.init()
+            }
         ).then(
-            () => this.bibDB.saveBibEntries(newBibEntries, true)
+            () => this.saveImages(this.images, ImageTranslationTable)
         ).then(
-            idTranslations => idTranslations.forEach(idTrans => {BibTranslationTable[idTrans[0]] = idTrans[1]})
-        ).then(() => {
+            () => {
             // We need to change some reference numbers in the document contents
-            this.translateReferenceIds(BibTranslationTable, ImageTranslationTable)
+            this.translateReferenceIds(ImageTranslationTable)
             // We are good to go. All the used images and bibliography entries
             // exist in the DB for this user with the same numbers.
             // We can go ahead and create the new document entry in the
@@ -38,88 +35,41 @@ export class ImportNative {
 
     }
 
-    saveImages(newImageEntries, ImageTranslationTable) {
-        let sendPromises = newImageEntries.map(
+    saveImages(images, ImageTranslationTable) {
+        let sendPromises = Object.values(images).map(
             imageEntry => {
                 let formValues = new window.FormData()
-                formValues.append('id', 0)
+                formValues.append('doc_id', this.docId)
                 formValues.append('title', imageEntry.title)
-                formValues.append('imageCats', '')
-                formValues.append('image', imageEntry.file, imageEntry.oldUrl.split('/').pop())
+                formValues.append('image', imageEntry.file, imageEntry.image.split('/').pop())
                 formValues.append('checksum', imageEntry.checksum)
-                return this.imageDB.saveImage(formValues).then(
-                    newId => {
-                        ImageTranslationTable[imageEntry.oldId] = newId
-                    }
-                )
+                return new Promise((resolve, reject) => {
+                    jQuery.ajax({
+                        url: '/document/import/image/',
+                        data: formValues,
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        type: 'POST',
+                        dataType: 'json',
+                        crossDomain: false, // obviates need for sameOrigin test
+                        beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
+                        success: (data, textStatus, jqXHR) => {
+                            ImageTranslationTable[imageEntry.id] = data.id
+                            resolve()
+                        },
+                        error: () =>
+                            reject(`${gettext('Could not save Image')} ${imageEntry.checksum}`)
+                    })
+                })
             }
         )
         return Promise.all(sendPromises)
     }
 
-    compareBibDBs() {
-        let BibTranslationTable = {},
-            newBibEntries = {}
-        Object.keys(this.impBibDB).forEach(impKey => {
-            let impEntry = this.impBibDB[impKey]
-            let matchEntries = []
-            Object.keys(this.bibDB.db).forEach(key => {
-                let bibEntry = this.bibDB.db[key]
-                if(
-                    impEntry.bib_type === bibEntry.bib_type &&
-                    _.isEqual(impEntry.fields, bibEntry.fields)
-                ) {
-                    matchEntries.push(key)
-                }
-            })
-            if (0 === matchEntries.length) {
-                //create new
-                newBibEntries[impKey] = this.impBibDB[impKey]
-                newBibEntries[impKey].entry_cat = []
-            } else {
-                BibTranslationTable[impKey] = matchEntries[0]
-            }
-        })
-
-        return {BibTranslationTable, newBibEntries}
-    }
-
-    compareImageDBs() {
-        let ImageTranslationTable = {},
-        newImageEntries = []
-
-        Object.keys(this.impImageDB).map(key => parseInt(key)).forEach(key => {
-            let imageObj = this.impImageDB[key]
-            let matchEntries = _.where(
-                this.imageDB.db,
-                {checksum: imageObj.checksum}
-            )
-            if (0 === matchEntries.length) {
-                newImageEntries.push({
-                    oldId: key,
-                    oldUrl: imageObj.image,
-                    title: imageObj.title,
-                    file_type: imageObj.file_type,
-                    checksum: imageObj.checksum
-                })
-            } else {
-                // There is at least one match.
-                // We pick the first.
-                ImageTranslationTable[key] = matchEntries[0].pk
-            }
-        })
-        return {ImageTranslationTable, newImageEntries}
-    }
-
-
-    translateReferenceIds(BibTranslationTable, ImageTranslationTable) {
+    translateReferenceIds(ImageTranslationTable) {
         function walkTree(node) {
             switch (node.type) {
-                case 'citation':
-                    node.attrs.references.forEach(ref => {
-                        ref.id = BibTranslationTable[ref.id]
-                    })
-                    break
                 case 'figure':
                     if (node.attrs.image !== false) {
                         node.attrs.image = ImageTranslationTable[node.attrs.image]
@@ -142,19 +92,36 @@ export class ImportNative {
         walkTree(this.doc.contents)
     }
 
+    createDoc() {
+        // We create the document on the sever so that we have an ID for it and
+        // can link the images to it.
+        return new Promise((resolve, reject) => {
+            jQuery.ajax({
+                url: '/document/import/create/',
+                type: 'POST',
+                dataType: 'json',
+                crossDomain: false, // obviates need for sameOrigin test
+                beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
+                success: (data, textStatus, jqXHR) => {
+                    this.docId = data['id']
+                    resolve()
+                },
+                error: () => {
+                    reject(gettext('Could not create document'))
+                }
+            })
+        })
+    }
+
     saveDocument() {
         let postData = {
+            id: this.docId,
             title: this.doc.title,
             contents: JSON.stringify(this.doc.contents),
             comments: JSON.stringify(this.doc.comments),
-            settings: JSON.stringify(this.doc.settings),
-            metadata: JSON.stringify(this.doc.metadata)
+            bibliography: JSON.stringify(this.bibliography)
         }
-        if (typeof this.docId !== 'undefined') {
-            // There is a docId, so we overwrite this doc rather than creating
-            // a new one. Used in connection with OJS. See docId in file.js.
-            postData.doc_id = this.docId
-        }
+
         return new Promise((resolve, reject) => {
             jQuery.ajax({
                 url: '/document/import/',
@@ -165,20 +132,18 @@ export class ImportNative {
                 beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
                 success: (data, textStatus, jqXHR) => {
                     let docInfo = {
-                        unapplied_diffs: [],
                         is_owner: true,
-                        rights: 'write',
-                        changed: false,
-                        title_changed: false
+                        access_rights: 'write',
+                        id: this.docId
                     }
                     this.doc.owner = {
                         id: this.user.id,
                         name: this.user.name,
                         avatar: this.user.avatar
                     }
-                    this.doc.id = data['document_id']
                     this.doc.version = 0
                     this.doc.comment_version = 0
+                    this.doc.id = this.docId
                     this.doc.added = data['added']
                     this.doc.updated = data['updated']
                     this.doc.revisions = []
@@ -186,7 +151,7 @@ export class ImportNative {
                     resolve({doc: this.doc, docInfo})
                 },
                 error: () => {
-                    reject(gettext('Could not save ') + this.doc.title)
+                    reject(`${gettext('Could not save ')} ${this.doc.title}`)
                 }
             })
         })

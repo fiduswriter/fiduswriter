@@ -23,34 +23,33 @@ export class DocumentAccessRightsDialog {
         let len = this.accessRights.length
 
         for (let i = 0; i < len; i++) {
-            if (_.include(this.documentIds, this.accessRights[i].document_id)) {
-                if ('undefined' == typeof (documentCollaborators[
-                    this.accessRights[i].user_id])) {
+            if (this.documentIds.includes(this.accessRights[i].document_id)) {
+                if ('undefined' == typeof (
+                    documentCollaborators[this.accessRights[i].user_id]
+                )) {
                     documentCollaborators[this.accessRights[i].user_id] =
                         this.accessRights[i]
-                    documentCollaborators[this.accessRights[i].user_id].count =
-                        1
+                    documentCollaborators[this.accessRights[i].user_id].count = 1
                 } else {
-                    if (documentCollaborators[this.accessRights[i].user_id].rights !=
-                        this.accessRights[i].rights)
-                    documentCollaborators[this.accessRights[i].user_id].rights =
-                        'read'
-                    documentCollaborators[this.accessRights[i].user_id].count +=
-                        1
+                    if (
+                        documentCollaborators[this.accessRights[i].user_id].rights !=
+                        this.accessRights[i].rights
+                    )
+                    documentCollaborators[this.accessRights[i].user_id].rights ='read'
+                    documentCollaborators[this.accessRights[i].user_id].count +=1
                 }
             }
         }
-        documentCollaborators = _.select(
-            documentCollaborators,
-            obj => obj.count === this.documentIds.length
+
+        let collaborators = Object.values(documentCollaborators).filter(
+            col => col.count === this.documentIds.length
         )
 
+
         let dialogBody = accessRightOverviewTemplate({
-            dialogHeader: dialogHeader,
-            contacts: accessRightTrTemplate({contacts: this.contacts}),
-            collaborators: collaboratorsTemplate({
-                collaborators: documentCollaborators
-            })
+            dialogHeader,
+            contacts: this.contacts,
+            collaborators
         })
         jQuery('body').append(dialogBody)
 

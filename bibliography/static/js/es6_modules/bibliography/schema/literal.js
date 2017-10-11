@@ -1,21 +1,25 @@
-import {EnquoteMark, Literal, SupMark, SubMark, SmallCapsMark, UrlMark, Variable} from "./common"
-import {Doc, EmMark, StrongMark, Text} from "prosemirror-old/dist/schema-basic"
-import {Schema} from "prosemirror-old/dist/model"
+import {enquote, literal, sup, sub, smallcaps, url, variable, text} from "./common"
+import {marks} from "prosemirror-schema-basic"
+import {Schema} from "prosemirror-model"
+
+let doc = {
+    content: 'literal'
+}
 
 export const litSchema = new Schema({
     nodes: {
-        doc: {type: Doc, content: "literal"},
-        literal: {type: Literal, content: "inline<_>*"},
-        text: {type: Text, group: "inline"},
-        variable: {type: Variable, group: "inline"}
+        doc,
+        literal,
+        text,
+        variable
     },
     marks: {
-        em: EmMark,
-        enquote: EnquoteMark,
-        smallcaps: SmallCapsMark,
-        strong: StrongMark,
-        sup: SupMark,
-        sub: SubMark,
-        url: UrlMark
+        em: marks.em,
+        enquote,
+        smallcaps,
+        strong: marks.strong,
+        sup,
+        sub,
+        url
     }
 })

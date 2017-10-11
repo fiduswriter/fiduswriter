@@ -23,7 +23,7 @@ export class GeneralPasteHandler {
     }
 
     outputHandlerType() {
-        console.log('general paste handler')
+        console.info('general paste handler')
     }
 
 

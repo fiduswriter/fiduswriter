@@ -16,6 +16,8 @@ urlpatterns = [
         name='get_documentlist_extra_js'
     ),
     url('^delete/$', views.delete_js, name='delete_js'),
+    url('^import/create/$', views.import_create_js, name='import_create_js'),
+    url('^import/image/$', views.import_image_js, name='import_image_js'),
     url('^import/$', views.import_js, name='import_js'),
     url('^upload/$', views.upload_revision_js, name='upload_revision_js'),
     url(
@@ -45,9 +47,19 @@ urlpatterns = [
         name='save_doc_js'
     ),
     url(
+        '^maintenance/add_images_to_doc/$',
+        views.add_images_to_doc_js,
+        name='add_images_to_doc_js'
+    ),
+    url(
         '^maintenance/get_all_revision_ids/$',
         views.get_all_revision_ids_js,
         name='get_all_revision_ids_js'
+    ),
+    url(
+        '^maintenance/get_user_biblist/$',
+        views.get_user_biblist_js,
+        name='get_user_biblist_js'
     ),
     url(
         '^maintenance/update_revision/$',

@@ -1,3 +1,5 @@
+export {OverviewMenuView} from "./overview-menu"
+
 /** Creates a dropdown box.
  * @param btn The button to open and close the dropdown box.
  * @param box The node containing the contents of the dropdown box.
@@ -49,13 +51,19 @@ export let setCheckableLabel = function(label) {
 /** Cover the page signaling to the user to wait.
  */
 export let activateWait = function() {
-    jQuery('#wait').addClass('active')
+    let waitEl = document.getElementById('wait')
+    if (waitEl) {
+        waitEl.classList.add('active')
+    }
 }
 
 /** Remove the wait cover.
  */
 export let deactivateWait = function() {
-    jQuery('#wait').removeClass('active')
+    let waitEl = document.getElementById('wait')
+    if (waitEl) {
+        waitEl.classList.remove('active')
+    }
 }
 
 /** Show a message to the user.
@@ -65,12 +73,12 @@ export let deactivateWait = function() {
 export let addAlert = function(alertType, alertMsg) {
     let fadeSpeed = 300
     let iconNames = {
-        'error': 'icon-attention-circle',
-        'warning': 'icon-attention-circle',
-        'info': 'icon-info-circle',
-        'success': 'icon-ok'
+        'error': 'exclamation-circle',
+        'warning': 'exclamation-circle',
+        'info': 'info-circle',
+        'success': 'check-circle'
     }
-    let alertBox = jQuery('<li class="alerts-' + alertType + ' ' + iconNames[alertType] + '">' + alertMsg + '</li>')
+    let alertBox = jQuery(`<li class="alerts-${alertType} fa fa-${iconNames[alertType]}">${alertMsg}</li>`)
     if(0 === jQuery('#alerts-outer-wrapper').length)
         jQuery('body').append('<div id="alerts-outer-wrapper"><ul id="alerts-wrapper"></ul></div>')
     jQuery('#alerts-wrapper').append(alertBox)
@@ -93,11 +101,7 @@ export let localizeDate = function (milliseconds, sortable) {
                 mm = theDate.getMonth() + 1,
                 dd = theDate.getDate()
 
-            if (10 > mm) {
-                mm = '0' + mm
-            }
-
-            return yyyy + '/' + mm + '/' + dd
+            return `${yyyy}-${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`
         }
         else {
             return theDate.toLocaleString()
@@ -137,7 +141,7 @@ export let csrfToken = getCookie('csrftoken')
  * Turn string literals into single line, removing spaces at start of line
  */
 
- export let noSpaceTmp = function(strings) {
+export let noSpaceTmp = function(strings) {
      let values = [].slice.call(arguments)
      let tmpStrings = [].slice.call(values.shift())
 
@@ -158,9 +162,15 @@ export let csrfToken = getCookie('csrftoken')
      return out
  }
 
+export let escapeText = function(text) {
+     return text
+         .replace(/&/g, '&amp;')
+         .replace(/</g, '&lt;')
+         .replace(/>/g, '&gt;')
+ }
 /**
  * Return a cancel promise if you need to cancel a promise chain. Import as
  * ES6 promises are not (yet) cancelable.
  */
 
- export let cancelPromise = () => new Promise(()=>{})
+export let cancelPromise = () => new Promise(()=>{})

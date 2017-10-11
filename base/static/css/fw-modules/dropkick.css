@@ -20,20 +20,6 @@
     padding: 0 4px;
     height: 34px;
 }
-/*.dk-selected:after {
-    display: block;
-    position: absolute;
-    right: 10px;
-    top: 5px;
-    font-family: 'fontello';
-    speak: none;
-    width: 1em;
-    text-align: center;
-    line-height: 34px;
-    content: '\f0dc';
-    font-size: 10px;
-}*/
-
 
 .dk-select-open-down .dk-selected {
     border-color: #ccc;

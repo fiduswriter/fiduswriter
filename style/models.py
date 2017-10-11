@@ -20,6 +20,9 @@ class DocumentFont(models.Model):
         )
     )
 
+    def natural_key(self):
+        return (self.font_file.url, self.fontface_definition)
+
     def __unicode__(self):
         return self.title
 

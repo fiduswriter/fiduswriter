@@ -1,13 +1,8 @@
-#caret-markers {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-}
-
 div.caret {
-    position: absolute;
+    display: inline;
     border-style: solid;
     border-width: 1px;
+    position: relative;
 }
 
 div.caret-head {

@@ -1,5 +1,4 @@
-import {escapeText} from "../tools/html"
-import {noSpaceTmp} from "../../common"
+import {noSpaceTmp, escapeText} from "../../common"
 
 export class DocxExporterRichtext {
     constructor(exporter, rels, citations, images) {
@@ -9,6 +8,7 @@ export class DocxExporterRichtext {
         this.images = images
         this.fnCounter = 2 // footnotes 0 and 1 are occupied by separators by default.
         this.bookmarkCounter = 0
+        this.figureCounter = {} // counters for each type of figure (figure/table/photo)
     }
 
     transformRichtext(node, options = {}) {
@@ -18,11 +18,11 @@ export class DocxExporterRichtext {
             case 'article':
                 break
             case 'body':
-                options = _.clone(options)
+                options = Object.assign({}, options)
                 options.section = 'Normal'
                 break
             case 'abstract':
-                options = _.clone(options)
+                options = Object.assign({}, options)
                 options.section = 'Abstract'
                 break
             case 'paragraph':
@@ -71,11 +71,11 @@ export class DocxExporterRichtext {
                 break
             case 'blockquote':
                 // This is imperfect, but Word doesn't seem to provide section/quotation nesting
-                options = _.clone(options)
+                options = Object.assign({}, options)
                 options.section = 'Quote'
                 break
             case 'ordered_list':
-                options = _.clone(options)
+                options = Object.assign({}, options)
                 options.section = 'ListParagraph'
                 options.list_type = this.exporter.lists.getNumberedType()
                 if (options.list_depth === undefined) {
@@ -85,7 +85,7 @@ export class DocxExporterRichtext {
                 }
                 break
             case 'bullet_list':
-                options = _.clone(options)
+                options = Object.assign({}, options)
                 options.section = 'ListParagraph'
                 options.list_type = this.exporter.lists.getBulletType()
                 if (options.list_depth === undefined) {
@@ -100,7 +100,7 @@ export class DocxExporterRichtext {
                 // cases.
                 break
             case 'footnotecontainer':
-                options = _.clone(options)
+                options = Object.assign({}, options)
                 options.section = 'Footnote'
                 start += `<w:footnote w:id="${this.fnCounter++}">`
                 end = '</w:footnote>' + end
@@ -119,12 +119,12 @@ export class DocxExporterRichtext {
                 // Check for hyperlink, bold/strong and italic/em
                 let hyperlink, em, strong, smallcaps, sup, sub
                 if (node.marks) {
-                    hyperlink = _.findWhere(node.marks, {type:'link'})
-                    em = _.findWhere(node.marks, {type:'em'})
-                    strong = _.findWhere(node.marks, {type:'strong'})
-                    smallcaps = _.findWhere(node.marks, {type:'smallcaps'})
-                    sup = _.findWhere(node.marks, {type:'sup'})
-                    sub = _.findWhere(node.marks, {type:'sub'})
+                    hyperlink = node.marks.find(mark => mark.type === 'link')
+                    em = node.marks.find(mark => mark.type === 'em')
+                    strong = node.marks.find(mark => mark.type === 'strong')
+                    smallcaps = node.marks.find(mark => mark.type === 'smallcaps')
+                    sup = node.marks.find(mark => mark.type === 'sup')
+                    sub = node.marks.find(mark => mark.type === 'sub')
                 }
 
                 if (hyperlink) {
@@ -221,6 +221,19 @@ export class DocxExporterRichtext {
                 }
                 break
             case 'figure':
+                let caption = node.attrs.caption
+                let figCat = node.attrs.figureCategory
+                if (figCat !== 'none') {
+                    if (!this.figureCounter[figCat]) {
+                        this.figureCounter[figCat] = 1
+                    }
+                    let figCount = this.figureCounter[figCat]++
+                    if (caption.length) {
+                        caption = `${figCat} ${figCount}: ${caption}`
+                    } else {
+                        caption = `${figCat} ${figCount}`
+                    }
+                }
                 if(node.attrs.image !== false) {
                     let imgDBEntry = this.images.imageDB.db[node.attrs.image]
                     let cx = imgDBEntry.width * 9525 // width in EMU
@@ -250,6 +263,8 @@ export class DocxExporterRichtext {
                       <w:pPr>
                         <w:jc w:val="center"/>
                       </w:pPr>
+                      <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
+                      <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>
                       <w:r>
                         <w:rPr/>
                         <w:drawing>
@@ -296,8 +311,7 @@ export class DocxExporterRichtext {
                     </w:p>
                     <w:p>
                       <w:pPr><w:pStyle w:val="Caption"/><w:rPr></w:rPr></w:pPr>`
-                      // TODO: Add "Figure X:"/"Table X": before caption.
-                      content += this.transformRichtext({type: 'text', text: node.attrs.caption}, options)
+                      content += this.transformRichtext({type: 'text', text: caption}, options)
                       end = '</w:p>' + end
                 } else {
                     let latex = node.attrs.equation
@@ -306,7 +320,7 @@ export class DocxExporterRichtext {
                         <w:p>${omml}</w:p>
                         <w:p>
                           <w:pPr><w:pStyle w:val="Caption"/><w:rPr></w:rPr></w:pPr>`
-                    content += this.transformRichtext({type: 'text', text: node.attrs.caption}, options)
+                    content += this.transformRichtext({type: 'text', text: caption}, options)
                     end =  '</w:p>' + end
                 }
                 break
@@ -320,15 +334,16 @@ export class DocxExporterRichtext {
                             <w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1" />
                         </w:tblPr>
                         <w:tblGrid>`
-                let cellWidth = 63500 // standard width
                 let columns = node.content[0].content.length
-                options = _.clone(options)
+                let cellWidth = 63500 // standard width
+                options = Object.assign({}, options)
                 if (options.dimensions && options.dimensions.width) {
                     cellWidth = parseInt(options.dimensions.width / columns) - 2540 // subtracting for border width
                 } else if (!options.dimensions) {
                     options.dimensions = {}
                 }
-                options.dimensions =  _.clone(options.dimensions)
+
+                options.dimensions = Object.assign({}, options.dimensions)
                 options.dimensions.width = cellWidth
                 options.tableSideMargins = this.exporter.tables.getSideMargins()
                 for (let i=0;i<columns;i++) {
@@ -343,12 +358,37 @@ export class DocxExporterRichtext {
                 end = '</w:tr>' + end
                 break
             case 'table_cell':
+            case 'table_header':
                 start += noSpaceTmp`
                     <w:tc>
                         <w:tcPr>
-                            <w:tcW w:w="${parseInt(options.dimensions.width  / 635)}" w:type="dxa" />
-                        </w:tcPr>`
+                            ${
+                                node.attrs.rowspan && node.attrs.colspan ?
+                                `<w:tcW w:w="${parseInt(options.dimensions.width  / 635)}" w:type="dxa" />` :
+                                '<w:tcW w:w="0" w:type="auto" />'
+                            }
+                            ${
+                                node.attrs.rowspan ?
+                                node.attrs.rowspan > 1 ?
+                                '<w:vMerge w:val="restart" />' :
+                                '' :
+                                '<w:vMerge/>'
+                            }
+                            ${
+                                node.attrs.colspan ?
+                                node.attrs.colspan > 1 ?
+                                '<w:hMerge w:val="restart" />' :
+                                '' :
+                                '<w:hMerge/>'
+                            }
+                        </w:tcPr>
+                        ${
+                            node.content ?
+                            '' :
+                            '<w:p/>'
+                        }`
                 end = '</w:tc>' + end
+
                 break
             case 'equation':
                 let latex = node.attrs.equation
@@ -359,7 +399,7 @@ export class DocxExporterRichtext {
                 break
             // CSL bib entries
             case 'cslbib':
-                options = _.clone(options)
+                options = Object.assign({}, options)
                 options.section = 'Bibliography1'
                 break
             case 'cslblock':
@@ -394,8 +434,6 @@ export class DocxExporterRichtext {
                 content += this.transformRichtext(node.content[i], options)
             }
         }
-
         return start + content + end
     }
-
 }

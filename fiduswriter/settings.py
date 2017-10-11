@@ -8,23 +8,12 @@ SERVER_INFO = {
     # This determines whether the server is used for testing and will let the
     # users know upon signup know that their documents may disappear.
     'TEST_SERVER': True,
-    # This determines whether experimental or unfinished features will be
-    # enabled.
-    'EXPERIMENTAL': False,
     # This is the contact email that will be shown in various places all over
     # the site.
     'CONTACT_EMAIL': 'mail@email.com',
     # If websockets is running on a non-standard port, add it here:
     'WS_PORT': False,
 }
-
-# An API key to allow searching in Worldcat's opensearch. If False, will
-# disable searches on worldcat.
-WORLDCAT_KEY = False
-
-# An API key to allow searching in Sowiport (http://sowiport.gesis.org/)
-# If False, will disable searches on Sowiport.
-SOWIPORT_KEY = False
 
 ADMINS = (
     ('Your Name', 'your_email@example.com'),
@@ -261,9 +250,6 @@ ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 
 AUTH_PROFILE_MODULE = "account.UserProfile"
 
-# locking
-LOCK_TIMEOUT = 600
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -286,7 +272,6 @@ LOGGING = {
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
-            'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
         },
         'console': {
@@ -327,13 +312,14 @@ AVATAR_MAX_AVATARS_PER_USER = 1
 JS_LOCATIONS = {
     'JQUERY_URL': STATIC_URL + 'js/libs/jquery.min.js',
     'JQUERYUI_URL': STATIC_URL + 'js/libs/jquery-ui.min.js',
-    'UNDERSCOREJS_URL': STATIC_URL + 'js/libs/underscore-min.js',
     'DATATABLES_URL': STATIC_URL + 'js/libs/jquery.dataTables.min.js'
 }
 
 CSS_LOCATIONS = {}
 
 try:
-    exec(open(os.path.join(PROJECT_PATH, 'configuration.py')), globals())
-except:
+    local_config = open(os.path.join(PROJECT_PATH, 'configuration.py'))
+except IOError:
     pass
+else:
+    exec(local_config.read(), globals())

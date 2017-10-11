@@ -36,7 +36,7 @@ class SeleniumHelper(object):
 
             capabilities["browserName"] = "chrome"
             capabilities["platform"] = "Windows 10"
-            capabilities["version"] = "58.0"
+            capabilities["version"] = "latest"
             capabilities["screenResolution"] = "1920x1080"
             hub_url = "%s:%s@localhost:4445" % (username, access_key)
             for i in range(number):
@@ -46,13 +46,13 @@ class SeleniumHelper(object):
                         command_executor="http://%s/wd/hub" % hub_url
                     )
                 )
-            wait_time = 25
+            wait_time = 35
         else:
             for i in range(number):
                 drivers.append(
                     webdriver.Chrome()
                 )
-            wait_time = 3
+            wait_time = 6
         for driver in drivers:
             # Set sizes of browsers so that all buttons are visible.
             driver.set_window_position(0, 0)

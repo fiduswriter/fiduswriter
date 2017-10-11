@@ -29,7 +29,7 @@
     "browserkeymap": "^1.0.0",
     "citeproc": "2.1.177",
     "datatables": "1.10.12",
-    "diff-dom": "2.2.3",
+    "diff-dom": "2.3.0",
     "downloadjs": "^1.4.6",
     "dropkickjs": "2.1.10",
     "fastdom": "1.0.6",

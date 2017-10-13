@@ -25,8 +25,7 @@ let spec = {
   nodes: from({
     doc,
     footnotecontainer,
-
-    paragraph: nodes.paragraph,
+    paragraph: nodes.paragraph, // default textblock
     heading,
     blockquote: nodes.blockquote,
     horizontal_rule: nodes.horizontal_rule,
@@ -48,14 +47,9 @@ let spec = {
 
 spec.nodes = addListNodes(spec.nodes, "block+", "block")
 
-let tableNodeObj = tableNodes({
+spec.nodes = spec.nodes.append(tableNodes({
     tableGroup: "table_block",
     cellContent: "block+"
-})
-
-tableNodeObj.table.allowGapCursor = false
-tableNodeObj.table_row.allowGapCursor = false
-
-spec.nodes = spec.nodes.append(tableNodeObj)
+}))
 
 export const fnSchema = new Schema(spec)

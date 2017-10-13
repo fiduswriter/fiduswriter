@@ -11,7 +11,6 @@ let article = {
     defining: true,
     content: "title subtitle authors abstract keywords body",
     selectable: false,
-    allowGapCursor: false,
     attrs: {
         papersize: {
             default: 'A4'
@@ -343,14 +342,12 @@ let comment = {
 
 let doc = {
     content: "article", // Transformations don't work well on the top most element
-    selectable: false,
-    allowGapCursor: false
+    selectable: false
 }
 
 
 let spec = {
     nodes: from({
-        paragraph: nodes.paragraph,
         doc,
         article,
         title,
@@ -361,6 +358,7 @@ let spec = {
         keywords,
         keyword,
         body,
+        paragraph: nodes.paragraph, // default textblock
         blockquote: nodes.blockquote,
         horizontal_rule: nodes.horizontal_rule,
         figure,
@@ -384,15 +382,9 @@ let spec = {
 
 spec.nodes = addListNodes(spec.nodes, "block+", "block")
 
-let tableNodeObj = tableNodes({
+spec.nodes = spec.nodes.append(tableNodes({
     tableGroup: "table_block",
     cellContent: "block+"
-})
-
-tableNodeObj.table.allowGapCursor = false
-tableNodeObj.table_row.allowGapCursor = false
-tableNodeObj.table_cell.allowGapCursor = false
-
-spec.nodes = spec.nodes.append(tableNodeObj)
+}))
 
 export const docSchema = new Schema(spec)

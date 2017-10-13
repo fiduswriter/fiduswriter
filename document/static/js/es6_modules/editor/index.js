@@ -127,11 +127,11 @@ export class Editor {
         }
         this.client_id = Math.floor(Math.random() * 0xFFFFFFFF)
         this.statePlugins = [
+            [keymap, () => buildKeymap(this.schema)],
+            [keymap, () => baseKeymap],
+            [collab, () => ({clientID: this.client_id})],
             [linksPlugin, () => ({editor: this})],
             [history],
-            [keymap, () => baseKeymap],
-            [keymap, () => buildKeymap(this.schema)],
-            [collab, () => ({clientID: this.client_id})],
             [dropCursor],
             [gapCursor],
             [tableEditing],

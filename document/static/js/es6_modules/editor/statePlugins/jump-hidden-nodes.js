@@ -1,4 +1,5 @@
 import {Plugin, PluginKey, TextSelection} from "prosemirror-state"
+import {GapCursor} from "prosemirror-gapcursor"
 
 // A plugin that makes sure that the selecion is not put into a node that has been
 // hidden.
@@ -28,16 +29,21 @@ export let jumpHiddenNodesPlugin = function(options) {
             if (selectionSet && posHidden(state.selection.$from)) {
                 let dir = state.selection.from > oldState.selection.from ? 1 : -1,
                     newPos = state.selection.from,
-                    $pos = state.doc.resolve(newPos)
-                while (posHidden($pos) || !$pos.parent.inlineContent) {
+                    $pos = state.doc.resolve(newPos),
+                    validTextSelection = false,
+                    validGapSelection = false
+                while (posHidden($pos) || (!validGapSelection && !validTextSelection)) {
                     newPos += dir
                     if (newPos === 0 || newPos === state.doc.nodeSize) {
                         // Could not find any valid position
                         return
                     }
                     $pos = state.doc.resolve(newPos)
+                    validTextSelection = $pos.parent.inlineContent
+                    validGapSelection = GapCursor.valid($pos)
                 }
-                return state.tr.setSelection(new TextSelection($pos, $pos))
+                let selection = validTextSelection ? new TextSelection($pos) : new GapCursor($pos)
+                return state.tr.setSelection(selection)
             }
         }
     })

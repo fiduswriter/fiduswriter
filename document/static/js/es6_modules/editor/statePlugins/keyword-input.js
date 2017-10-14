@@ -151,7 +151,7 @@ export let keywordInputPlugin = function(options) {
                     event.type==='keydown' &&
                     event.key==='ArrowRight' &&
                     keywordView.state.selection.from ===
-                        keywordView.state.doc.nodeSize -3
+                        keywordView.state.doc.nodeSize-3
                 ) {
                     window.getSelection().removeAllRanges()
                     options.editor.view.focus()

@@ -54,7 +54,7 @@ export let placeholdersPlugin = function(options) {
     }
 
     return new Plugin({
-        key: key,
+        key,
         props: {
             decorations(state) {
                 const anchor = state.selection.$anchor

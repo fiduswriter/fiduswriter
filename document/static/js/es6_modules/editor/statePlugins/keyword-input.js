@@ -48,6 +48,48 @@ let placeholderPlugin = function() {
     })
 }
 
+let pastePlugin = function(options) {
+
+    let submitKeywords = keywords => {
+        let eState = options.editor.view.state,
+            {decos} = key.getState(eState),
+            deco = decos.find()[0],
+            pos = deco.from,
+            nodes = keywords.map(keyword => eState.schema.nodes.keyword.create({keyword}))
+        options.editor.view.dispatch(
+            options.editor.view.state.tr.insert(pos, nodes)
+        )
+    }
+
+
+    return new Plugin({
+        props: {
+            transformPastedHTML: inHTML => {
+                let dom = document.createElement('div')
+                dom.innerHTML = inHTML
+                let keywords = dom.innerText.split(/[,;]+/).filter(keyword => keyword.length)
+                if (keywords.length) {
+                    let lastKeyword = keywords.pop()
+                    submitKeywords(keywords)
+                    return lastKeyword
+                } else {
+                    return inHTML
+                }
+            },
+            transformPastedText: inText => {
+                let keywords = inText.split(/[,;]+/).filter(keyword => keyword.length)
+                if (keywords.length) {
+                    let lastKeyword = keywords.pop()
+                    submitKeywords(keywords)
+                    return lastKeyword
+                } else {
+                    return inText
+                }
+            }
+        }
+    })
+}
+
 let findKeywordsEndPos = function(state) {
     let pos = 1, // enter article
         child = 0
@@ -98,6 +140,7 @@ export let keywordInputPlugin = function(options) {
                 plugins: [
                     history(),
                     placeholderPlugin(),
+                    pastePlugin(options),
                     keymap({
                         "Mod-z": undo,
                         "Mod-shift-z": undo,
@@ -221,7 +264,7 @@ export let keywordInputPlugin = function(options) {
                     }
                     let $pos = keywordView.state.doc.resolve(pos)
                     keywordView.dispatch(
-                        keywordView.state.tr.setSelection(new TextSelection($pos, $pos))
+                        keywordView.state.tr.setSelection(new TextSelection($pos))
                     )
                 }
 

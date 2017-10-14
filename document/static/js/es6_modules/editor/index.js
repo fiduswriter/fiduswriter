@@ -174,6 +174,9 @@ export class Editor {
             handleDOMEvents: {
                 focus: (view, event) => {
                     this.currentView = this.view
+                    // We focus once more, as focus may have disappeared due to
+                    // disappearing placeholders.
+                    view.focus()
                 }
             },
             dispatchTransaction: (transaction) => {

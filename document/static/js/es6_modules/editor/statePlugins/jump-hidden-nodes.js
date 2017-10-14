@@ -29,10 +29,11 @@ export let jumpHiddenNodesPlugin = function(options) {
             if (selectionSet && posHidden(state.selection.$from)) {
                 let dir = state.selection.from > oldState.selection.from ? 1 : -1,
                     newPos = state.selection.from,
-                    $pos = state.doc.resolve(newPos),
+                    hidden = true,
                     validTextSelection = false,
-                    validGapSelection = false
-                while (posHidden($pos) || (!validGapSelection && !validTextSelection)) {
+                    validGapCursor = false,
+                    $pos
+                while (hidden || (!validGapCursor && !validTextSelection)) {
                     newPos += dir
                     if (newPos === 0 || newPos === state.doc.nodeSize) {
                         // Could not find any valid position
@@ -40,7 +41,8 @@ export let jumpHiddenNodesPlugin = function(options) {
                     }
                     $pos = state.doc.resolve(newPos)
                     validTextSelection = $pos.parent.inlineContent
-                    validGapSelection = GapCursor.valid($pos)
+                    validGapCursor = GapCursor.valid($pos)
+                    hidden = posHidden($pos)
                 }
                 let selection = validTextSelection ? new TextSelection($pos) : new GapCursor($pos)
                 return state.tr.setSelection(selection)

@@ -11,6 +11,7 @@ let article = {
     defining: true,
     content: "title subtitle authors abstract keywords body",
     selectable: false,
+    allowGapCursor: false,
     attrs: {
         papersize: {
             default: 'A4'

@@ -1,5 +1,3 @@
-import {loadCSS} from "fg-loadcss/src/loadCSS"
-
 /* A Module relted to setting document settings such as citation style and
 papersize and making needed changes to the DOM when settings are set/change.*/
 

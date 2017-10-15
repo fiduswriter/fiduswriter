@@ -3,12 +3,10 @@ from django.http import HttpResponse
 from django.contrib import admin
 from adminplus.sites import AdminSitePlus
 from . import settings
-from user.views import logout_page
 from django.contrib.flatpages import views as flatpages_views
 from document.views import index as document_index
 
 from django.views.i18n import JavaScriptCatalog
-from django.contrib.auth.views import login as login_view
 from importlib import import_module
 
 admin.site = AdminSitePlus()
@@ -32,10 +30,6 @@ urlpatterns = [
 
     # I18n Javascript translations
     url(r'^jsi18n/$', JavaScriptCatalog.as_view(), name='javascript-catalog'),
-
-    # Login / logout.
-    url('^login/$', login_view),
-    url('^logout/$', logout_page, name='logout'),
 
     # Admin interface
     url('^admin/doc/', include('django.contrib.admindocs.urls')),

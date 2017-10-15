@@ -1,5 +1,21 @@
+from allauth.account import views as allauth_views
 from django.conf.urls import include, url
+from django.views.generic.base import RedirectView
+from fiduswriter import settings
 from . import views
+
+
+class LoginView(allauth_views.LoginView):
+    def get_context_data(self, **kwargs):
+        context = super(LoginView, self).get_context_data(**kwargs)
+        # Add info about whether registration is open.
+        context['registration_open'] = settings.REGISTRATION_OPEN
+        return context
+
+if settings.REGISTRATION_OPEN:
+    signup_view = allauth_views.signup
+else:
+    signup_view = RedirectView.as_view(url='/', permanent=False)
 
 urlpatterns = [
     url('^save/$', views.save_profile_js, name='save_profile_js'),
@@ -48,6 +64,12 @@ urlpatterns = [
 
     # User avatar handling
     url('^avatar/', include('avatar.urls')),
+
+    # Login view
+    url(r'^login/$', LoginView.as_view(), name="account_login"),
+
+    # Signup view
+    url(r"^signup/$", signup_view, name="account_signup"),
 
     # Authentication handling
     url('', include('allauth.urls')),

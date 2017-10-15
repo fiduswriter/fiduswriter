@@ -5,7 +5,6 @@
   "name": "fidus-writer",
   "description": "Install dependencies for ES6 transpilation",
   "scripts": {
-    "build_prosemirror-gapcursor": "cd node_modules/prosemirror-gapcursor && npm install --only=dev && npm run build && cd ../..",
     "get_mml2omml": "mkdir -p ./static-libs/xsl/ && wget https://raw.githubusercontent.com/AbiWord/abiword/14cbf144cb10a5a5ea6ee11275f7178ca4ff055a/plugins/openxml/omml_xslt/mml2omml.xsl -O ./static-libs/xsl/mml2omml.xsl",
     "copy_jquery": "mkdir -p ./static-libs/js/libs/ && cp node_modules/jquery/dist/jquery.min.js ./static-libs/js/libs/",
     "copy_jquery-ui": "mkdir -p ./static-libs/js/libs/ && cp node_modules/jquery-ui-dist/jquery-ui.min.js ./static-libs/js/libs/",
@@ -14,7 +13,7 @@
     "copy_fontawesome": "mkdir -p ./static-libs/css/ && mkdir -p ./static-libs/fonts/ && cp node_modules/font-awesome/css/* ./static-libs/css/ && cp node_modules/font-awesome/fonts/* ./static-libs/fonts/",
     "copy_dropkickjs_css": "mkdir -p ./static-libs/css/ && cp node_modules/dropkickjs/build/css/dropkick.css ./static-libs/css/",
     "copy_prosemirror_css": "mkdir -p ./static-libs/css/ && cp node_modules/prosemirror-view/style/prosemirror.css ./static-libs/css/",
-    "postinstall": "npm run build_prosemirror-gapcursor && npm run get_mml2omml && npm run copy_jquery && npm run copy_jquery-ui && npm run copy_fontawesome && npm run copy_datatables && npm run copy_dropkickjs && npm run copy_dropkickjs_css && npm run copy_prosemirror_css",
+    "postinstall": "npm run get_mml2omml && npm run copy_jquery && npm run copy_jquery-ui && npm run copy_fontawesome && npm run copy_datatables && npm run copy_dropkickjs && npm run copy_dropkickjs_css && npm run copy_prosemirror_css",
     "jshint": "jshint ."
   },
   "author": "Johannes Wilm",
@@ -45,9 +44,7 @@
     "mathquill": "0.10.1-b",
     "orderedmap": "1.0.0",
     "paginate-for-print": "0.0.7",
-    // Temporary while waiting for solution for
-    // https://github.com/ProseMirror/prosemirror-gapcursor/pull/3
-    "prosemirror-gapcursor": "file:./prosemirror-gapcursor",
+    "prosemirror-gapcursor": "1.0.0",
     "prosemirror-state": "1.0.0",
     "prosemirror-transform": "1.0.0",
     "prosemirror-view": "1.0.0",

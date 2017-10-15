@@ -1,0 +1,29 @@
+{
+  "name": "prosemirror-gapcursor",
+  "version": "1.0.0",
+  "description": "ProseMirror plugin for cursors at normally impossible-to-reach positions",
+  "main": "dist/index.js",
+  "style": "style/gapcursor.css",
+  "dependencies": {
+    "prosemirror-keymap": "^1.0.0",
+    "prosemirror-model": "^1.0.0",
+    "prosemirror-state": "^1.0.0",
+    "prosemirror-view": "^1.0.0"
+  },
+  "devDependencies": {
+    "prosemirror-commands": "^1.0.0",
+    "prosemirror-example-setup": "^1.0.0",
+    "prosemirror-menu": "^1.0.0",
+    "prosemirror-schema-basic": "^1.0.0",
+    "prosemirror-tables": "^0.1.0",
+    "prosemirror-test-builder": "^1.0.0",
+    "prosemirror-transform": "^1.0.0",
+    "rollup": "^0.49.0",
+    "rollup-plugin-buble": "^0.15.0"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "watch": "rollup -w -c",
+    "prepare": "npm run build"
+  }
+}

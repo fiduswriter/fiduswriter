@@ -32,7 +32,7 @@ export class BibliographyDB {
         }
 
         if (Number.isNaN(localStorageOwnerId)) {
-            numberOfEntries = -1
+            localStorageOwnerId = -1
         }
 
         if (

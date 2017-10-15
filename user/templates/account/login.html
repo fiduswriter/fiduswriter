@@ -15,7 +15,9 @@
 
 <div class="fw-login-left">
     <h1 class="fw-login-title">{% trans "Log in" %}</h1>
-{% if not user.is_authenticated %}
+{% if user.is_authenticated %}
+    {% include "account/snippets/already_logged_in.html" %}
+{% elif registration_open %}
     {% load socialaccount %}
     {% get_providers as socialaccount_providers %}
     {% if socialaccount_providers  %}
@@ -45,8 +47,6 @@
         {% endblocktrans %}
 	</p>
     {% endif %}
-{% else %}
-    {% include "account/snippets/already_logged_in.html" %}
 {% endif %}
 </div>
 <div class="fw-login-right">

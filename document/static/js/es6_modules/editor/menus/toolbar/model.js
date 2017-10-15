@@ -98,7 +98,9 @@ export let toolbarModel = {
             show: editor => {
                 if (
                     editor.currentView.state.selection.$anchor.node(2) &&
-                    TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name)
+                    TEXT_ONLY_PARTS.includes(
+                        editor.currentView.state.selection.$anchor.node(2).type.name
+                    )
                 ) {
                     return ''
                 }
@@ -118,8 +120,10 @@ export let toolbarModel = {
                 if (!startElement || !endElement) {
                     return ''
                 } else if (startElement === endElement) {
-                    let blockNodeType = startElement.type.name === 'heading' ? `${startElement.type.name}_${startElement.attrs.level}` : startElement.type.name
-                    return BLOCK_LABELS[blockNodeType]
+                    let blockNodeType = startElement.type.name === 'heading' ?
+                        `${startElement.type.name}_${startElement.attrs.level}` :
+                        startElement.type.name
+                    return BLOCK_LABELS[blockNodeType] ? BLOCK_LABELS[blockNodeType] : ''
                 } else {
                     let blockNodeType = true
                     editor.currentView.state.doc.nodesBetween(
@@ -127,7 +131,9 @@ export let toolbarModel = {
                         editor.currentView.state.selection.to,
                         (node, pos, parent) => {
                             if (node.isTextblock) {
-                                let nextBlockNodeType = node.type.name === 'heading' ? `${node.type.name}_${node.attrs.level}` : node.type.name
+                                let nextBlockNodeType = node.type.name === 'heading' ?
+                                    `${node.type.name}_${node.attrs.level}` :
+                                    node.type.name
                                 if (blockNodeType === true) {
                                     blockNodeType = nextBlockNodeType
                                 }
@@ -139,7 +145,7 @@ export let toolbarModel = {
                     )
 
                     if (blockNodeType) {
-                        return BLOCK_LABELS[blockNodeType]
+                        return BLOCK_LABELS[blockNodeType] ? BLOCK_LABELS[blockNodeType] : ''
                     } else {
                         return ''
                     }
@@ -158,7 +164,9 @@ export let toolbarModel = {
                         editor.currentView.state.selection.jsonID === 'node' &&
                         editor.currentView.state.selection.node.isBlock &&
                         !editor.currentView.state.selection.node.isTextblock
-                    ),
+                    ) ||
+                        editor.currentView.state.selection.jsonID === 'gapcursor'
+                    ,
             content: [
                 {
                     title: BLOCK_LABELS['paragraph'],
@@ -215,7 +223,11 @@ export let toolbarModel = {
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    editor.currentView.state.selection.jsonID === 'gapcursor'
+                ) {
                     return true
                 } else if (
                     editor.currentView.state.selection.$anchor.node(2) &&
@@ -250,7 +262,11 @@ export let toolbarModel = {
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    editor.currentView.state.selection.jsonID === 'gapcursor'
+                ) {
                     return true
                 } else if (
                     editor.currentView.state.selection.$anchor.node(2) &&

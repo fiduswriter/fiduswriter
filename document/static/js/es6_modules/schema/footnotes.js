@@ -8,7 +8,8 @@ import {figure, citation, equation, heading, anchor} from "./common"
 
 let footnotecontainer = {
     group: "part",
-    content: "(block|table_block)* (paragraph | heading | blockquote | ordered_list | bullet_list)",
+    selectable: false,
+    content: "(block|table_block)+",
     parseDOM: [{tag: "div.footnote-container"}],
     toDOM(node) {
         return ['div',{class: 'footnote-container'}, 0]
@@ -16,15 +17,15 @@ let footnotecontainer = {
 }
 
 let doc = {
-    content: "part*"
+    content: "part*",
+    selectable: false
 }
 
 let spec = {
   nodes: from({
     doc,
     footnotecontainer,
-
-    paragraph: nodes.paragraph,
+    paragraph: nodes.paragraph, // default textblock
     heading,
     blockquote: nodes.blockquote,
     horizontal_rule: nodes.horizontal_rule,

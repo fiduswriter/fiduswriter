@@ -30,6 +30,10 @@ export {
 }
 from "./headerbar"
 export {
+    jumpHiddenNodesPlugin
+}
+from "./jump-hidden-nodes"
+export {
     keywordInputPlugin
 }
 from "./keyword-input"

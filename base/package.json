@@ -44,6 +44,9 @@
     "mathquill": "0.10.1-b",
     "orderedmap": "1.0.0",
     "paginate-for-print": "0.0.7",
+    // Temporary while waiting for solution for
+    // https://github.com/ProseMirror/prosemirror-gapcursor/pull/3
+    "prosemirror-gapcursor": "file:./prosemirror-gapcursor",
     "prosemirror-state": "1.0.0",
     "prosemirror-transform": "1.0.0",
     "prosemirror-view": "1.0.0",
@@ -57,7 +60,6 @@
     "prosemirror-collab": "1.0.0",
     "prosemirror-example-setup": "1.0.0",
     "prosemirror-dropcursor": "1.0.0",
-    "prosemirror-gapcursor": "1.0.0",
     "texzilla": "0.9.9",
     "tokenfield": "^0.3.14",
     "w3c-keyname": "1.1.6",

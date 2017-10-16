@@ -10,6 +10,8 @@ import {figure, citation, equation, heading, anchor} from "./common"
 let article = {
     defining: true,
     content: "title subtitle authors abstract keywords body",
+    selectable: false,
+    allowGapCursor: false,
     attrs: {
         papersize: {
             default: 'A4'
@@ -171,7 +173,7 @@ let authors = {
 }
 
 let abstract = {
-    content: "(block | table_block)* (paragraph | heading | blockquote | code_block | ordered_list | bullet_list)",
+    content: "(block | table_block)+",
     group: "part",
     marks: "annotation",
     defining: true,
@@ -256,7 +258,7 @@ let keywords = {
 }
 
 let body = {
-    content: "(block | table_block)* (paragraph | heading | blockquote | code_block | ordered_list | bullet_list)",
+    content: "(block | table_block)+",
     group: "part",
     marks: "annotation",
     defining: true,
@@ -340,8 +342,10 @@ let comment = {
 }
 
 let doc = {
-    content: "article" // Transformations don't work well on the top most element
+    content: "article", // Transformations don't work well on the top most element
+    selectable: false
 }
+
 
 let spec = {
     nodes: from({
@@ -355,7 +359,7 @@ let spec = {
         keywords,
         keyword,
         body,
-        paragraph: nodes.paragraph,
+        paragraph: nodes.paragraph, // default textblock
         blockquote: nodes.blockquote,
         horizontal_rule: nodes.horizontal_rule,
         figure,

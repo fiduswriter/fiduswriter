@@ -83,17 +83,18 @@ import {
 } from "../images/database"
 
 import {
+    accessRightsPlugin,
+    authorInputPlugin,
+    collabCaretsPlugin,
+    commentsPlugin,
+    footnoteMarkersPlugin,
+    headerbarPlugin,
+    jumpHiddenNodesPlugin,
+    keywordInputPlugin,
+    linksPlugin,
     pastePlugin,
     placeholdersPlugin,
-    headerbarPlugin,
-    toolbarPlugin,
-    collabCaretsPlugin,
-    footnoteMarkersPlugin,
-    commentsPlugin,
-    linksPlugin,
-    keywordInputPlugin,
-    authorInputPlugin,
-    accessRightsPlugin
+    toolbarPlugin
 } from "./statePlugins"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
@@ -135,6 +136,7 @@ export class Editor {
             [dropCursor],
             [gapCursor],
             [tableEditing],
+            [jumpHiddenNodesPlugin],
             [placeholdersPlugin, () => ({editor: this})],
             [headerbarPlugin, () => ({editor: this})],
             [toolbarPlugin, () => ({editor: this})],
@@ -172,6 +174,9 @@ export class Editor {
             handleDOMEvents: {
                 focus: (view, event) => {
                     this.currentView = this.view
+                    // We focus once more, as focus may have disappeared due to
+                    // disappearing placeholders.
+                    view.focus()
                 }
             },
             dispatchTransaction: (transaction) => {

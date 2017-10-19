@@ -11,6 +11,7 @@ from base.ws_handler import BaseWebSocketHandler
 import logging
 from tornado.escape import json_decode, json_encode
 from tornado.websocket import WebSocketClosedError
+from tornado.ioloop import IOLoop
 from document.models import AccessRight, COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
     CAN_COMMUNICATE, ExportTemplate, FW_DOCUMENT_VERSION
 from document.views import get_accessrights
@@ -39,7 +40,7 @@ class WebSocket(BaseWebSocketHandler):
             response['type'] = 'access_denied'
             self.id = 0
             self.send_message(response)
-            self.close()
+            IOLoop.current().add_callback(self.do_close)
             return
         document_id = int(args[0])
         connection_count = int(args[1])
@@ -103,6 +104,9 @@ class WebSocket(BaseWebSocketHandler):
             self.send_document()
         if self.can_communicate():
             self.handle_participant_update()
+
+    def do_close(self):
+        self.close()
 
     def confirm_diff(self, rid):
         response = {

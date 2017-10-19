@@ -54,7 +54,7 @@
     "prosemirror-history": "1.0.0",
     "prosemirror-schema-list": "1.0.0",
     "prosemirror-commands": "1.0.1",
-    "prosemirror-tables": "0.3.0",
+    "prosemirror-tables": "0.4.1",
     "prosemirror-collab": "1.0.0",
     "prosemirror-example-setup": "1.0.0",
     "prosemirror-dropcursor": "1.0.0",

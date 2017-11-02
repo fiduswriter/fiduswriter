@@ -121,18 +121,24 @@ export let footnoteMarkersPlugin = function(options) {
                     {
                         fnMarkers
                     } = this.getState(oldState),
-                    ranges = getAddedRanges(tr)
+                    ranges = getAddedRanges(tr), deletedFootnotesIndexes = []
                 fnMarkers = fnMarkers.map(marker => ({
                     from: tr.mapping.map(marker.from, 1),
                     to: tr.mapping.map(marker.to, -1)
                 })).filter((marker, index) => {
                     if (marker.from !== (marker.to - 1)) {
-                        options.editor.mod.footnotes.fnEditor.removeFootnote(index)
+                        // Add in reverse order as highest numbers need to be deleted
+                        // first so that index numbers of lower numbers continue
+                        // to be valid when these are deleted. Only relevant when
+                        // several footnotes are deleted simultaneously.
+                        deletedFootnotesIndexes.unshift(index)
                         return false
                     }
                     return true
                 })
-
+                deletedFootnotesIndexes.forEach(index =>
+                    options.editor.mod.footnotes.fnEditor.removeFootnote(index)
+                )
                 if (!fromFootnote) {
                     ranges.forEach(range => {
                         let newFootnotes = findFootnoteMarkers(range.from, range.to, tr.doc)

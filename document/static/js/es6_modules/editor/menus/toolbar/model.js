@@ -165,8 +165,7 @@ export let toolbarModel = {
                         editor.currentView.state.selection.node.isBlock &&
                         !editor.currentView.state.selection.node.isTextblock
                     ) ||
-                        editor.currentView.state.selection.jsonID === 'gapcursor'
-                    ,
+                        editor.currentView.state.selection.jsonID === 'gapcursor',
             content: [
                 {
                     title: BLOCK_LABELS['paragraph'],

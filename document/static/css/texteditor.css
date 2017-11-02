@@ -773,3 +773,14 @@ html[hc=a3] body, html[hc=a4] body, html[hc=a5] body {
 html[hc=a3] #toolbar, html[hc=a4] #toolbar, html[hc=a5] #toolbar {
     border-bottom: 1px solid #c9c9c9;
 }
+
+#close-document-top {
+    position: fixed;
+    right: 30px;
+    top: 28px;
+    z-index: 100;
+}
+
+#close-document-top a {
+    color: #000;
+}

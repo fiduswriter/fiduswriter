@@ -57,7 +57,7 @@ export class LinkDialog {
         if (linkMark) {
             this.extendSelectionToMark(from, linkMark)
             this.submitButtonText = gettext('Update')
-            this.linkTitle = linkMark.attrs.title
+            this.linkTitle = linkMark.attrs.title ? linkMark.attrs.title : ''
             this.link = linkMark.attrs.href
         }
     }

@@ -28,7 +28,6 @@ export class ModFootnoteEditor {
     constructor(mod) {
         mod.fnEditor = this
         this.mod = mod
-        this.rendering = false
         this.schema = fnSchema
         this.fnStatePlugins = [
             [linksPlugin, () => ({editor: this.mod.editor})],
@@ -67,11 +66,24 @@ export class ModFootnoteEditor {
                 }
             },
             dispatchTransaction: (transaction) => {
-                let remote = transaction.getMeta('remote')
-                let newState = this.view.state.apply(transaction)
-                this.view.updateState(newState)
+                let remote = transaction.getMeta('remote'),
+                    filterFree = transaction.getMeta('filterFree')
+                // Skip if creating new footnote by typing directly into empty footnote editor.
+                if (
+                    transaction.docChanged &&
+                    transaction.steps[0].jsonID === 'replace' &&
+                    transaction.steps[0].from === 0 &&
+                    transaction.steps[0].to === 0 &&
+                    !remote &&
+                    !filterFree
+                ) {
+                    return
+                }
 
-                this.onTransaction(transaction, remote)
+                let newState = this.view.state.apply(transaction)
+
+                this.view.updateState(newState)
+                this.onTransaction(transaction, remote, filterFree)
                 this.mod.layout.updateDOM()
             }
         })
@@ -79,8 +91,8 @@ export class ModFootnoteEditor {
     }
 
     // Find out if we need to recalculate the bibliography
-    onTransaction(transaction, remote) {
-        if (!remote) {
+    onTransaction(transaction, remote, filterFree) {
+        if (!remote && !filterFree) {
             this.footnoteEdit(transaction)
         }
 
@@ -115,27 +127,19 @@ export class ModFootnoteEditor {
     }
 
     footnoteEdit(transaction) {
-        // Handle an edit in the footnote editor.
-        if (this.rendering) {
-            // We are currently adding or removing footnotes in the footnote editor
-            // due to changes at the footnote marker level, so abort.
-            return false
-        }
-
+        // Handle a local edit in the footnote editor.
         if (transaction.docChanged) {
-            let length = transaction.steps.length
-            let lastStep = transaction.steps[length - 1]
+            let steps = transaction.steps,
+                lastStep = steps[steps.length - 1]
             if (lastStep.hasOwnProperty('from')) {
                 // We find the number of the last footnote that was updated by
                 // looking at the last step and seeing footnote number that change referred to.
-                let fnIndex = this.view.state.doc.resolve(lastStep.from).index(0)
-                let fnContent = this.view.state.doc.child(fnIndex).toJSON().content
-                let transaction = updateFootnoteMarker(this.mod.editor.view.state, fnIndex, fnContent)
-                if (transaction) {
-                    this.mod.editor.view.dispatch(transaction)
+                let fnIndex = transaction.doc.resolve(lastStep.from).index(0),
+                    fnContent = transaction.doc.child(fnIndex).toJSON().content,
+                    mainTransaction = updateFootnoteMarker(this.mod.editor.view.state, fnIndex, fnContent)
+                if (mainTransaction) {
+                    this.mod.editor.view.dispatch(mainTransaction)
                 }
-            } else {
-                // TODO: Figure out if there are cases where this is really needed.
             }
         }
     }
@@ -177,7 +181,6 @@ export class ModFootnoteEditor {
     }
 
     renderFootnote(contents, index = 0, setDoc = false) {
-        this.rendering = true
         let node = fnNodeToPmNode(contents)
         let pos = 0
         for (let i=0; i<index;i++) {
@@ -207,12 +210,10 @@ export class ModFootnoteEditor {
             // the change is reversed, so we need to inform collabs manually.
             this.mod.editor.mod.collab.docChanges.sendToCollaborators()
         }
-        this.rendering = false
     }
 
     removeFootnote(index) {
         if (!this.mod.editor.mod.collab.docChanges.receiving) {
-            this.rendering = true
             let startPos = 0
             for (let i=0;i<index;i++) {
                 startPos += this.view.state.doc.child(i).nodeSize
@@ -225,7 +226,6 @@ export class ModFootnoteEditor {
             // so changes are sent to collaborators automatically. When footnotes are added/deleted,
             // the change is reverse, so we need to inform collabs manually.
             this.mod.editor.mod.collab.docChanges.sendToCollaborators()
-            this.rendering = false
         }
     }
 

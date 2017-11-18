@@ -319,6 +319,7 @@ span.delete {
 .pagination-footnote-item-container {
     cursor: pointer;
 }
+
 .pagination-footnote-item-container::before {
     content: '\0000a0x';
     position: absolute;
@@ -334,6 +335,11 @@ span.delete {
 .article-body, .pagination-footnote > * > * {
     font-size: 12pt;
 }
+/* Prevent user from writing in the footnote editor while there are no footnotes. */
+#footnote-box-container div.ProseMirror:empty {
+    display: none;
+}
+
 
 #flow {
     padding: 50px;

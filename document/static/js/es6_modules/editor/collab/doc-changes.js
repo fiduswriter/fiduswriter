@@ -176,12 +176,16 @@ export class ModCollabDocChanges {
                 )
                 return unconfirmedDiff
 
-            } else if (getSelectionUpdate(this.mod.editor.currentView
-                    .state)) {
+            } else if (getSelectionUpdate(this.mod.editor.currentView.state)) {
                 let currentView = this.mod.editor.currentView
+
+                if (this.lastSelectionUpdateState === currentView.state) {
+                    // Selection update has been sent for this state already. Skip
+                    return false
+                }
+                this.lastSelectionUpdateState = currentView.state
                 // Create a new caret as the current user
-                let selectionUpdate = getSelectionUpdate(
-                    currentView.state)
+                let selectionUpdate = getSelectionUpdate(currentView.state)
                 return {
                     type: 'selection_change',
                     id: this.mod.editor.user.id,

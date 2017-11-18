@@ -125,7 +125,7 @@ export class ModServerCommunications {
     }
 
     /** Sends data to server or keeps it in a list if currently offline. */
-    send(getData, timer = 150) {
+    send(getData, timer = 80) {
         if (this.connected && !this.recentlySent) {
             let data = getData()
             if (!data) {
@@ -151,7 +151,8 @@ export class ModServerCommunications {
             let oldMessages = this.messagesToSend
             this.messagesToSend = []
             while (oldMessages.length > 0) {
-                this.send(oldMessages.shift(), Math.min(timer*1.2, 15000))
+                let getData = oldMessages.shift()
+                this.send(getData, Math.min(timer*1.2, 10000))
             }
         }, timer)
     }

@@ -43,25 +43,24 @@ export class ImportNative {
                 formValues.append('title', imageEntry.title)
                 formValues.append('image', imageEntry.file, imageEntry.image.split('/').pop())
                 formValues.append('checksum', imageEntry.checksum)
-                return new Promise((resolve, reject) => {
-                    jQuery.ajax({
-                        url: '/document/import/image/',
-                        data: formValues,
-                        cache: false,
-                        contentType: false,
-                        processData: false,
-                        type: 'POST',
-                        dataType: 'json',
-                        crossDomain: false, // obviates need for sameOrigin test
-                        beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
-                        success: (data, textStatus, jqXHR) => {
-                            ImageTranslationTable[imageEntry.id] = data.id
-                            resolve()
-                        },
-                        error: () =>
-                            reject(`${gettext('Could not save Image')} ${imageEntry.checksum}`)
-                    })
-                })
+                formValues.append('csrfmiddlewaretoken', csrfToken)
+
+                return fetch('/document/import/image/', {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        body: formValues
+                    }).then(
+                        response => response.json(),
+                        () => {
+                            addAlert(
+                                'error',
+                                `${gettext('Could not save Image')} ${imageEntry.checksum}`
+                            )
+                            return Promise.reject()
+                        }
+                    ).then(
+                        data => ImageTranslationTable[imageEntry.id] = data.id
+                    )
             }
         )
         return Promise.all(sendPromises)
@@ -95,22 +94,22 @@ export class ImportNative {
     createDoc() {
         // We create the document on the sever so that we have an ID for it and
         // can link the images to it.
-        return new Promise((resolve, reject) => {
-            jQuery.ajax({
-                url: '/document/import/create/',
-                type: 'POST',
-                dataType: 'json',
-                crossDomain: false, // obviates need for sameOrigin test
-                beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
-                success: (data, textStatus, jqXHR) => {
-                    this.docId = data['id']
-                    resolve()
-                },
-                error: () => {
-                    reject(gettext('Could not create document'))
+        let formValues = new window.FormData()
+        formValues.append('csrfmiddlewaretoken', csrfToken)
+
+        return fetch('/document/import/create/', {
+                method: 'POST',
+                credentials: 'same-origin',
+                body: formValues
+            }).then(
+                response => response.json(),
+                () => {
+                    addAlert('error', gettext('Could not create document'))
+                    return Promise.reject()
                 }
-            })
-        })
+            ).then(
+                data => this.docId = data.id
+            )
     }
 
     saveDocument() {
@@ -119,18 +118,22 @@ export class ImportNative {
             title: this.doc.title,
             contents: JSON.stringify(this.doc.contents),
             comments: JSON.stringify(this.doc.comments),
-            bibliography: JSON.stringify(this.bibliography)
+            bibliography: JSON.stringify(this.bibliography),
+            csrfmiddlewaretoken: csrfToken
         }
 
-        return new Promise((resolve, reject) => {
-            jQuery.ajax({
-                url: '/document/import/',
-                data: postData,
-                type: 'POST',
-                dataType: 'json',
-                crossDomain: false, // obviates need for sameOrigin test
-                beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
-                success: (data, textStatus, jqXHR) => {
+        return fetch('/document/import/', {
+                method: 'POST',
+                credentials: 'same-origin',
+                body: new URLSearchParams(Object.entries(postData))
+            }).then(
+                response => response.json(),
+                () => {
+                    addAlert('error', `${gettext('Could not save ')} ${this.doc.title}`)
+                    return Promise.reject()
+                }
+            ).then(
+                data => {
                     let docInfo = {
                         is_owner: true,
                         access_rights: 'write',
@@ -148,13 +151,9 @@ export class ImportNative {
                     this.doc.updated = data['updated']
                     this.doc.revisions = []
                     this.doc.rights = "write"
-                    resolve({doc: this.doc, docInfo})
-                },
-                error: () => {
-                    reject(`${gettext('Could not save ')} ${this.doc.title}`)
+                    return {doc: this.doc, docInfo}
                 }
-            })
-        })
+            )
 
     }
 }

@@ -33,6 +33,3 @@ base/static/css/libs/
 /package.json
 *.swp
 *.swo
-/citation-api-import
-/ojs
-/book

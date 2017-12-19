@@ -1,6 +1,5 @@
 import {addDropdownBox} from "../common"
 
-
 /** Add and remove name list field.
  * @function addRemoveListHandler
  */
@@ -63,8 +62,6 @@ export let addRemoveListHandler = function () {
         jQuery(this).addClass('selected')
         jQuery(this).parent().parent().parent().siblings('label').html(selected_title)
     })
-
-    jQuery('.dk').dropkick()
 }
 
 

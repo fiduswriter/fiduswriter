@@ -122,7 +122,6 @@ export class ImageOverviewCategories {
                 parent.remove()
             }
         })
-        jQuery('.dk').dropkick()
     }
 
 }

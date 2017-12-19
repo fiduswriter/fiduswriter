@@ -634,8 +634,13 @@ table.insert-table-selection td.selected.hover {
 
 /* Wide table: used for submission dialog */
 
-.fw-dialog-table-wide .entry-field input[type=text] {
+.fw-dialog-table-wide .entry-field input[type=text],
+.fw-dialog-table-wide .entry-field textarea {
     width: 678px;
+}
+
+.fw-dialog-table-wide .entry-field textarea {
+    resize: none;
 }
 
 .fw-dialog-table-wide th {

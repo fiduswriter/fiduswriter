@@ -174,7 +174,7 @@ export class ToolbarView {
                 ${this.editor.menu.toolbarModel.content.map((menuItem, index) => {
                     if (!menuIndexToDrop || index < menuIndexToDrop) {
                         return `
-                            <div class="ui-buttonset">
+                            <div class="ui-buttonset${menuItem.disabled && menuItem.disabled(this.editor) ? ' disabled' : ''}">
                                 ${this.getToolbarMenuItemHTML(menuItem, index)}
                             </div>
                         `

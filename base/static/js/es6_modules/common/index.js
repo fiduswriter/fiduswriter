@@ -174,3 +174,11 @@ export let escapeText = function(text) {
  */
 
 export let cancelPromise = () => new Promise(()=>{})
+
+
+/* from https://www.tjvantoll.com/2015/09/13/fetch-and-errors/ */
+
+export let handleFetchErrors = function(response) {
+    if (!response.ok) { throw Error(response.statusText) }
+    return response
+}

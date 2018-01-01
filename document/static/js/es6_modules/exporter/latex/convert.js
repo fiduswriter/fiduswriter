@@ -20,7 +20,7 @@ export class LatexExporterConvert {
         let body = this.postProcess(rawTransformation)
         let preamble = this.assemblePreamble()
         let epilogue = this.assembleEpilogue()
-        let latex = this.docDeclaration + preamble + body + epilogue
+        let latex = this.docDeclaration + preamble + '\n\\begin{document}\n' + body + epilogue + '\n\\end{document}\n'
         let returnObject = {
             latex,
             imageIds: this.imageIds,
@@ -62,8 +62,6 @@ export class LatexExporterConvert {
 
         switch(node.type) {
             case 'article':
-                start += '\n\\begin{document}\n'
-                end = '\n\\end{document}\n' + end
                 break
             case 'title':
                 start += '\n\\title{'
@@ -205,8 +203,8 @@ export class LatexExporterConvert {
                 end = '\n\n\\end{quote}\n'
                 break
             case 'ordered_list':
-                start += '\n\\begin{enumerated}'
-                end = '\n\\end{enumerated}' + end
+                start += '\n\\begin{enumerate}'
+                end = '\n\\end{enumerate}' + end
                 if(!options.onlyFootnoteMarkers) {
                     placeFootnotesAfterBlock = true
                     options = Object.assign({}, options)

@@ -129,18 +129,6 @@
     list-style-type: none;
 }
 
-.tokenfield .tokenfield-set > ul > li {
-    float: left;
-    margin-right: 5px;
-    margin-bottom: 5px;
-    padding: 0 5px;
-    border-radius: 4px;
-    line-height: 1.5;
-    cursor: pointer;
-    color: rgba(0, 0, 0, 0.4);
-    background: rgba(0, 0, 0, 0.08);
-}
-
 .tokenfield .tokenfield-set > ul {
     margin: 0;
     padding: 0;
@@ -159,8 +147,14 @@
     border: 1px solid #7d948e;
 }
 
+.tokenfield .tokenfield-set > ul > li a {
+    color: #fff;
+}
+
+
 .tokenfield .tokenfield-input {
-    margin-bottom: 5px;
+    margin: -6px -6px 0 0;
+    background-color: transparent;
     border: none;
     outline: none;
     float: left;

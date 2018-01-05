@@ -48,19 +48,19 @@ export class ModCollab {
         // If not, remove the corresponding carets if any.
         this.sessionIds.forEach(session_id => {
             if (!allSessionIds.includes(session_id)) {
-                let transaction = removeCollaboratorSelection(
+                let tr = removeCollaboratorSelection(
                     this.editor.view.state,
                     {session_id}
                 )
-                let fnTransaction = removeCollaboratorSelection(
+                let fnTr = removeCollaboratorSelection(
                     this.editor.mod.footnotes.fnEditor.view.state,
                     {session_id}
                 )
-                if (transaction) {
-                    this.editor.view.dispatch(transaction)
+                if (tr) {
+                    this.editor.view.dispatch(tr)
                 }
-                if (fnTransaction) {
-                    this.editor.mod.footnotes.fnEditor.view.dispatch(fnTransaction)
+                if (fnTr) {
+                    this.editor.mod.footnotes.fnEditor.view.dispatch(fnTr)
                 }
             }
         })

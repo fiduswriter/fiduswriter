@@ -63,7 +63,7 @@ export class ZipFileCreator {
             )
         )
         return Promise.all(httpPromises).then(
-            () => this.zipFs.generateAsync({type:"blob"})
+            () => this.zipFs.generateAsync({type:"blob", mimeType: this.mimeType})
         )
     }
 

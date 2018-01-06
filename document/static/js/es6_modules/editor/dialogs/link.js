@@ -86,8 +86,9 @@ export class LinkDialog {
             }
             endPos += size
         }
-        let transaction = state.tr.setSelection(TextSelection.create(state.doc, startPos, endPos))
-        view.dispatch(transaction)
+        view.dispatch(
+            state.tr.setSelection(TextSelection.create(state.doc, startPos, endPos))
+        )
     }
 
     createDialog() {

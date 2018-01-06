@@ -1,6 +1,6 @@
 import {accessRightOverviewTemplate, accessRightTrTemplate, collaboratorsTemplate} from "./templates"
 import {addMemberDialog} from "../../contacts/manage"
-import {addDropdownBox, setCheckableLabel, addAlert, csrfToken} from "../../common"
+import {addDropdownBox, setCheckableLabel, addAlert, postJson} from "../../common"
 
 /**
 * Functions for the document access rights dialog.
@@ -163,29 +163,23 @@ export class DocumentAccessRightsDialog {
     }
 
     submitAccessRight(newCollaborators, newAccessRights) {
-        let postData = {
-            'documents[]': this.documentIds,
-            'collaborators[]': newCollaborators,
-            'rights[]': newAccessRights
-        }
-        jQuery.ajax({
-            url: '/document/accessright/save/',
-            data: postData,
-            type: 'POST',
-            dataType: 'json',
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: response => {
+        postJson(
+            '/document/accessright/save/',
+            {
+                'documents[]': this.documentIds,
+                'collaborators[]': newCollaborators,
+                'rights[]': newAccessRights
+            }
+        ).then(
+            response => {
                 this.accessRights = response.access_rights
                 this.modifiedRightsCall(this.accessRights)
                 addAlert('success', gettext(
                     'Access rights have been saved'))
-            },
-            error: (jqXHR, textStatus, errorThrown) => {
-                console.error(jqXHR.responseText)
             }
-        })
+        ).catch(
+            () => addAlert('error', gettext('Access rights could not be saved'))
+        )
+
     }
 }

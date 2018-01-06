@@ -1,4 +1,4 @@
-import {activateWait, deactivateWait, addAlert, csrfToken} from "../common"
+import {activateWait, deactivateWait, addAlert, post, postJson} from "../common"
 
 const FW_LOCALSTORAGE_VERSION = "1.0"
 
@@ -44,53 +44,48 @@ export class BibliographyDB {
         }
 
         activateWait()
-        return new Promise((resolve, reject) => {
-            jQuery.ajax({
-                url: '/bibliography/biblist/',
-                data: {
-                    'last_modified': lastModified,
-                    'number_of_entries': numberOfEntries,
-                    'user_id': localStorageOwnerId
-                },
-                type: 'POST',
-                dataType: 'json',
-                crossDomain: false, // obviates need for sameOrigin test
-                beforeSend: (xhr, settings) =>
-                    xhr.setRequestHeader("X-CSRFToken", csrfToken),
-                success: (response, textStatus, jqXHR) => {
-                    let bibCats = response['bib_categories']
-                    bibCats.forEach(bibCat => {
-                        this.cats.push(bibCat)
-                    })
+        return postJson(
+            '/bibliography/biblist/',
+            {
+                last_modified: lastModified,
+                number_of_entries: numberOfEntries,
+                user_id: localStorageOwnerId
+            }
+        ).then(
+            response => {
+                let bibCats = response['bib_categories']
+                bibCats.forEach(bibCat => {
+                    this.cats.push(bibCat)
+                })
 
-                    let bibList = []
+                let bibList = []
 
-                    if (response.hasOwnProperty('bib_list')) {
-                        bibList = response['bib_list']
-                        try {
-                            window.localStorage.setItem('biblist', JSON.stringify(bibList))
-                            window.localStorage.setItem('last_modified_biblist', response['last_modified'])
-                            window.localStorage.setItem('number_of_entries', response['number_of_entries'])
-                            window.localStorage.setItem('owner_id', response['user_id'])
-                            window.localStorage.setItem('version', FW_LOCALSTORAGE_VERSION)
-                        } catch (error) {
-                            // The local storage was likely too small
-                        }
-                    } else {
-                        bibList = JSON.parse(window.localStorage.getItem('biblist'))
+                if (response.hasOwnProperty('bib_list')) {
+                    bibList = response['bib_list']
+                    try {
+                        window.localStorage.setItem('biblist', JSON.stringify(bibList))
+                        window.localStorage.setItem('last_modified_biblist', response['last_modified'])
+                        window.localStorage.setItem('number_of_entries', response['number_of_entries'])
+                        window.localStorage.setItem('owner_id', response['user_id'])
+                        window.localStorage.setItem('version', FW_LOCALSTORAGE_VERSION)
+                    } catch (error) {
+                        // The local storage was likely too small
                     }
+                } else {
+                    bibList = JSON.parse(window.localStorage.getItem('biblist'))
+                }
 
-                    let bibPKs = bibList.map(bibItem => this.serverBibItemToBibDB(bibItem))
-
-                    resolve({bibPKs, bibCats})
-                },
-                error: (jqXHR, textStatus, errorThrown) => {
-                    addAlert('error', jqXHR.responseText)
-                    reject()
-                },
-                complete: () => deactivateWait()
-            })
-        })
+                let bibPKs = bibList.map(bibItem => this.serverBibItemToBibDB(bibItem))
+                deactivateWait()
+                return {bibPKs, bibCats}
+            }
+        ).catch(
+            () => {
+                addAlert('error', gettext('Could not obtain bibliography data'))
+                deactivateWait()
+                return Promise.reject()
+            }
+        )
     }
 
     /** Converts a bibliography item as it arrives from the server to a BibDB object.
@@ -122,34 +117,25 @@ export class BibliographyDB {
             dbObject[bibKey].entry_cat = JSON.stringify(tmpDB[bibKey].entry_cat)
             dbObject[bibKey].fields = JSON.stringify(tmpDB[bibKey].fields)
         })
-        let sendData = {
-            is_new: isNew,
-            bibs: JSON.stringify(dbObject)
-        }
-        return new Promise((resolve, reject) => {
-            jQuery.ajax({
-                url: '/bibliography/save/',
-                data: sendData,
-                type: 'POST',
-                dataType: 'json',
-                crossDomain: false, // obviates need for sameOrigin test
-                beforeSend: (xhr, settings) =>
-                    xhr.setRequestHeader("X-CSRFToken", csrfToken),
-                success: (response, textStatus, jqXHR) => {
-                    let idTranslations = response['id_translations']
-                    idTranslations.forEach(bibTrans => {
-                        this.db[bibTrans[1]] = tmpDB[bibTrans[0]]
-                    })
-                    addAlert('success', gettext('The bibliography has been updated.'))
-                    resolve(idTranslations)
-                },
-                error: (jqXHR, textStatus, errorThrown) => {
-                    addAlert('error', errorThrown)
-                    reject()
-                },
-                complete: () => {}
-            })
-        })
+
+        return postJson(
+            '/bibliography/save/',
+            {
+                is_new: isNew,
+                bibs: JSON.stringify(dbObject)
+            }
+        ).then(
+            response => {
+                let idTranslations = response['id_translations']
+                idTranslations.forEach(bibTrans => {
+                    this.db[bibTrans[1]] = tmpDB[bibTrans[0]]
+                })
+                addAlert('success', gettext('The bibliography has been updated.'))
+                return idTranslations
+            }
+        ).catch(
+            () => addAlert('error', gettext('The bibliography could not be updated'))
+        )
 
     }
 
@@ -159,41 +145,35 @@ export class BibliographyDB {
      * @param cats The category objects to add.
      */
     createCategory(cats) {
-        let postData = {
-            'ids[]': cats.ids,
-            'titles[]': cats.titles
-        }
         activateWait()
-        return new Promise((resolve, reject) => {
-            jQuery.ajax({
-                url: '/bibliography/save_category/',
-                data: postData,
-                type: 'POST',
-                dataType: 'json',
-                crossDomain: false, // obviates need for sameOrigin test
-                beforeSend: (xhr, settings) =>
-                    xhr.setRequestHeader("X-CSRFToken", csrfToken),
-                success: (response, textStatus, jqXHR) => {
-                    if (jqXHR.status == 201) {
-                        let bibCats = response.entries // We receive both existing and new categories.
-                        // Replace the old with the new categories, but don't lose the link to the array (so delete each, then add each).
-                        while(this.cats.length > 0) {
-                            this.cats.pop()
-                        }
-                        while(bibCats.length > 0) {
-                            this.cats.push(bibCats.pop())
-                        }
-                        addAlert('success', gettext('The categories have been updated'))
-                        resolve(this.cats)
-                    }
-                },
-                error: (jqXHR, textStatus, errorThrown) => {
-                    addAlert('error', jqXHR.responseText)
-                    reject()
-                },
-                complete: () => deactivateWait()
-            })
-        })
+
+        return postJson(
+            '/bibliography/save_category/',
+            {
+                'ids[]': cats.ids,
+                'titles[]': cats.titles
+            }
+        ).then(
+            response => {
+                let bibCats = response.entries // We receive both existing and new categories.
+                // Replace the old with the new categories, but don't lose the link to the array (so delete each, then add each).
+                while(this.cats.length > 0) {
+                    this.cats.pop()
+                }
+                while(bibCats.length > 0) {
+                    this.cats.push(bibCats.pop())
+                }
+                addAlert('success', gettext('The categories have been updated'))
+                deactivateWait()
+                return this.cats
+            }
+        ).catch(
+            () => {
+                addAlert('error', gettext('The categories could not be updated'))
+                deactivateWait()
+                return Promise.reject()
+            }
+        )
 
     }
 
@@ -203,35 +183,27 @@ export class BibliographyDB {
      */
     deleteCategory(ids) {
 
-        let postData = {
-            'ids[]': ids
-        }
-        return new Promise((resolve, reject) => {
-            jQuery.ajax({
-                url: '/bibliography/delete_category/',
-                data: postData,
-                type: 'POST',
-                dataType: 'json',
-                crossDomain: false, // obviates need for sameOrigin test
-                beforeSend: (xhr, settings) => {
-                    xhr.setRequestHeader("X-CSRFToken", csrfToken)
-                },
-                success: (response, textStatus, jqXHR) => {
-                    let deletedPks = ids.slice()
-                    let deletedBibCats = []
-                    this.cats.forEach(bibCat => {
-                        if (ids.indexOf(bibCat.id) !== -1) {
-                            deletedBibCats.push(bibCat)
-                        }
-                    })
-                    deletedBibCats.forEach(bibCat => {
-                        let index = this.cats.indexOf(bibCat)
-                        this.cats.splice(index, 1)
-                    })
-                    resolve(deletedPks)
-                }
-            })
-        })
+        return post(
+            '/bibliography/delete_category/',
+            {
+                'ids[]': ids
+            }
+        ).then(
+            () => {
+                let deletedPks = ids.slice()
+                let deletedBibCats = []
+                this.cats.forEach(bibCat => {
+                    if (ids.indexOf(bibCat.id) !== -1) {
+                        deletedBibCats.push(bibCat)
+                    }
+                })
+                deletedBibCats.forEach(bibCat => {
+                    let index = this.cats.indexOf(bibCat)
+                    this.cats.splice(index, 1)
+                })
+                return deletedPks
+            }
+        )
 
     }
 
@@ -240,36 +212,32 @@ export class BibliographyDB {
      * @param ids A list of bibliography item ids that are to be deleted.
      */
     deleteBibEntries(ids) {
-        for (let i = 0; i < ids.length; i++) {
-            ids[i] = parseInt(ids[i])
-        }
+        ids = ids.map(id => parseInt(id))
         let postData = {
             'ids[]': ids
         }
         activateWait()
-        return new Promise(
-            (resolve, reject) => {
-                jQuery.ajax({
-                    url: '/bibliography/delete/',
-                    data: postData,
-                    type: 'POST',
-                    crossDomain: false, // obviates need for sameOrigin test
-                    beforeSend: (xhr, settings) =>
-                        xhr.setRequestHeader("X-CSRFToken", csrfToken),
-                    success: (response, textStatus, jqXHR) => {
-                        for (let i = 0; i < ids.length; i++) {
-                            delete this.db[ids[i]]
-                        }
-                        addAlert('success', gettext(
-                            'The bibliography item(s) have been deleted'))
-                        resolve(ids)
-                    },
-                    error: (jqXHR, textStatus, errorThrown) => {
-                        addAlert('error', jqXHR.responseText)
-                        reject()
-                    },
-                    complete: () => deactivateWait()
+
+        return post(
+            '/bibliography/delete/',
+            {
+                'ids[]': ids
+            }
+        ).then(
+            () => {
+                ids.forEach(id => {
+                    delete this.db[id]
                 })
+                addAlert('success', gettext(
+                    'The bibliography item(s) have been deleted'))
+                deactivateWait()
+                return ids
+            }
+        ).catch(
+            () => {
+                addAlert('error', 'The bibliography item(s) could not be deleted')
+                deactivateWait()
+                return Promise.reject()
             }
         )
 

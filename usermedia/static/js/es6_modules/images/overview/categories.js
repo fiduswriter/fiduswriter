@@ -1,5 +1,5 @@
 import {usermediaEditcategoriesTemplate, usermediaCategoryListItemTemplate} from "./templates"
-import {activateWait, deactivateWait, addAlert, csrfToken} from "../../common"
+import {activateWait, deactivateWait, addAlert, postJson} from "../../common"
 
 export class ImageOverviewCategories {
 
@@ -10,31 +10,25 @@ export class ImageOverviewCategories {
 
     //save changes or create a new category
     saveCategories(cats) {
-        let postData = {
-            'ids[]': cats.ids,
-            'titles[]': cats.titles
-        }
         activateWait()
-        jQuery.ajax({
-            url: '/usermedia/save_category/',
-            data: postData,
-            type: 'POST',
-            dataType: 'json',
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: (xhr, settings) =>
-                xhr.setRequestHeader("X-CSRFToken", csrfToken),
-            success: (response, textStatus, jqXHR) => {
-                if (jqXHR.status == 201) {
-                    this.imageOverview.imageDB.cats = response.entries
-                    this.setImageCategoryList(response.entries)
-                    addAlert('success', gettext('The categories have been updated'))
-                }
-            },
-            error: (jqXHR, textStatus, errorThrown) => {
-                addAlert('error', jqXHR.responseText)
-            },
-            complete: () => deactivateWait()
-        })
+
+        postJson(
+            '/usermedia/save_category/',
+            {
+                'ids[]': cats.ids,
+                'titles[]': cats.titles
+            }
+        ).then(
+            response => {
+                this.imageOverview.imageDB.cats = response.entries
+                this.setImageCategoryList(response.entries)
+                addAlert('success', gettext('The categories have been updated'))
+            }
+        ).catch(
+            () => addAlert('error', gettext('Could not update categories'))
+        ).then(
+            () => deactivateWait()
+        )
     }
 
     setImageCategoryList(imageCategories) {

@@ -38,7 +38,7 @@ export class ImportNative {
     saveImages(images, ImageTranslationTable) {
         let sendPromises = Object.values(images).map(
             imageEntry => {
-                return postJson('/document/import/image', {
+                return postJson('/document/import/image/', {
                     doc_id: this.docId,
                     title: imageEntry.title,
                     checksum: imageEntry.checksum,

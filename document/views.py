@@ -321,7 +321,7 @@ def import_create_js(request):
     # First step of import: Create a document and return the id of it
     response = {}
     status = 405
-    if request.method == 'POST':
+    if request.is_ajax() and request.method == 'POST':
         status = 201
         document = Document.objects.create(owner_id=request.user.pk)
         response['id'] = document.id
@@ -336,7 +336,7 @@ def import_image_js(request):
     # create an image for a document
     response = {}
     status = 405
-    if request.method == 'POST':
+    if request.is_ajax() and request.method == 'POST':
         document = Document.objects.filter(
             owner_id=request.user.pk,
             id=int(request.POST['doc_id'])
@@ -376,7 +376,7 @@ def import_image_js(request):
 def import_js(request):
     response = {}
     status = 405
-    if request.method == 'POST':
+    if request.is_ajax() and request.method == 'POST':
         doc_id = request.POST['id']
         # There is a doc_id, so we overwrite an existing doc rather than
         # creating a new one.
@@ -420,7 +420,7 @@ def upload_revision_js(request):
     response = {}
     can_save = False
     status = 405
-    if request.method == 'POST':
+    if request.is_ajax() and request.method == 'POST':
         document_id = request.POST['document_id']
         document = Document.objects.filter(id=int(document_id))
         if len(document) > 0:

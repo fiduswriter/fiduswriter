@@ -1,4 +1,4 @@
-import {addAlert, csrfToken} from "../common"
+import {addAlert, postJson} from "../common"
 import {GetImages} from "./get-images"
 
 export class ImportNative {
@@ -38,29 +38,23 @@ export class ImportNative {
     saveImages(images, ImageTranslationTable) {
         let sendPromises = Object.values(images).map(
             imageEntry => {
-                let formValues = new window.FormData()
-                formValues.append('doc_id', this.docId)
-                formValues.append('title', imageEntry.title)
-                formValues.append('image', imageEntry.file, imageEntry.image.split('/').pop())
-                formValues.append('checksum', imageEntry.checksum)
-                formValues.append('csrfmiddlewaretoken', csrfToken)
+                return postJson('/document/import/image', {
+                    doc_id: this.docId,
+                    title: imageEntry.title,
+                    checksum: imageEntry.checksum,
+                    image: {file: imageEntry.file, filename: imageEntry.image.split('/').pop()}
+                }).then(
+                    data => ImageTranslationTable[imageEntry.id] = data.id
+                ).catch(
+                    () => {
+                        addAlert(
+                            'error',
+                            `${gettext('Could not save Image')} ${imageEntry.checksum}`
+                        )
+                        return Promise.reject()
+                    }
+                )
 
-                return fetch('/document/import/image/', {
-                        method: 'POST',
-                        credentials: 'same-origin',
-                        body: formValues
-                    }).then(
-                        response => response.json(),
-                        () => {
-                            addAlert(
-                                'error',
-                                `${gettext('Could not save Image')} ${imageEntry.checksum}`
-                            )
-                            return Promise.reject()
-                        }
-                    ).then(
-                        data => ImageTranslationTable[imageEntry.id] = data.id
-                    )
             }
         )
         return Promise.all(sendPromises)
@@ -94,66 +88,54 @@ export class ImportNative {
     createDoc() {
         // We create the document on the sever so that we have an ID for it and
         // can link the images to it.
-        let formValues = new window.FormData()
-        formValues.append('csrfmiddlewaretoken', csrfToken)
 
-        return fetch('/document/import/create/', {
-                method: 'POST',
-                credentials: 'same-origin',
-                body: formValues
-            }).then(
-                response => response.json(),
+        return postJson('/document/import/create/').then(
+                data => this.docId = data.id
+            ).catch(
                 () => {
                     addAlert('error', gettext('Could not create document'))
                     return Promise.reject()
                 }
-            ).then(
-                data => this.docId = data.id
             )
     }
 
     saveDocument() {
-        let postData = {
-            id: this.docId,
-            title: this.doc.title,
-            contents: JSON.stringify(this.doc.contents),
-            comments: JSON.stringify(this.doc.comments),
-            bibliography: JSON.stringify(this.bibliography),
-            csrfmiddlewaretoken: csrfToken
-        }
 
-        return fetch('/document/import/', {
-                method: 'POST',
-                credentials: 'same-origin',
-                body: new URLSearchParams(Object.entries(postData))
-            }).then(
-                response => response.json(),
-                () => {
-                    addAlert('error', `${gettext('Could not save ')} ${this.doc.title}`)
-                    return Promise.reject()
+        return postJson(
+            '/document/import/',
+            {
+                id: this.docId,
+                title: this.doc.title,
+                contents: JSON.stringify(this.doc.contents),
+                comments: JSON.stringify(this.doc.comments),
+                bibliography: JSON.stringify(this.bibliography)
+            }
+        ).then(
+            data => {
+                let docInfo = {
+                    is_owner: true,
+                    access_rights: 'write',
+                    id: this.docId
                 }
-            ).then(
-                data => {
-                    let docInfo = {
-                        is_owner: true,
-                        access_rights: 'write',
-                        id: this.docId
-                    }
-                    this.doc.owner = {
-                        id: this.user.id,
-                        name: this.user.name,
-                        avatar: this.user.avatar
-                    }
-                    this.doc.version = 0
-                    this.doc.comment_version = 0
-                    this.doc.id = this.docId
-                    this.doc.added = data['added']
-                    this.doc.updated = data['updated']
-                    this.doc.revisions = []
-                    this.doc.rights = "write"
-                    return {doc: this.doc, docInfo}
+                this.doc.owner = {
+                    id: this.user.id,
+                    name: this.user.name,
+                    avatar: this.user.avatar
                 }
-            )
-
+                this.doc.version = 0
+                this.doc.comment_version = 0
+                this.doc.id = this.docId
+                this.doc.added = data['added']
+                this.doc.updated = data['updated']
+                this.doc.revisions = []
+                this.doc.rights = "write"
+                return {doc: this.doc, docInfo}
+            }
+        ).catch(
+            () => {
+                addAlert('error', `${gettext('Could not save ')} ${this.doc.title}`)
+                return Promise.reject()
+            }
+        )
     }
 }

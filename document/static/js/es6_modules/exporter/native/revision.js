@@ -1,7 +1,7 @@
 import {ZipFidus} from "./zip"
 import {ShrinkFidus} from "./shrink"
 import {createSlug} from "../tools/file"
-import {addAlert, csrfToken} from "../../common"
+import {addAlert, post} from "../../common"
 
 /** Create a Fidus Writer document and upload it to the server as a backup.
  * @function uploadNative
@@ -35,20 +35,17 @@ export class SaveRevision {
 
     uploadRevision(blob) {
 
-        let data = new window.FormData()
-        data.append('note', this.note)
-        data.append('file', blob, createSlug(this.doc.title) + '.fidus')
-        data.append('document_id', this.doc.id)
-        data.append('csrfmiddlewaretoken', csrfToken)
-
-        fetch('/document/upload/', {
-                method: 'POST',
-                credentials: 'same-origin',
-                body: data
-            }).then(
-                () => addAlert('success', gettext('Revision saved')),
-                () => addAlert('error', gettext('Revision could not be saved.'))
-            )
+        post('/document/upload/', {
+            note: this.note,
+            file: {
+                file: blob,
+                filename: createSlug(this.doc.title) + '.fidus'
+            },
+            document_id: this.doc.id
+        }).then(
+            () => addAlert('success', gettext('Revision saved')),
+            () => addAlert('error', gettext('Revision could not be saved.'))
+        )
     }
 
 }

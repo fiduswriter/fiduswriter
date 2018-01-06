@@ -207,38 +207,37 @@ export class ModCollabDocChanges {
     receiveSelectionChange(data) {
         let participant = this.mod.participants.find(par => par.id === data
                 .id),
-            transaction, fnTransaction
+            tr, fnTr
         if (!participant) {
             // participant is still unknown to us. Ignore
             return
         }
         if (data.editor === 'footnotes') {
-            fnTransaction = updateCollaboratorSelection(
+            fnTr = updateCollaboratorSelection(
                 this.mod.editor.mod.footnotes.fnEditor.view.state,
                 participant,
                 data
             )
-            transaction = removeCollaboratorSelection(
+            tr = removeCollaboratorSelection(
                 this.mod.editor.view.state,
                 data
             )
         } else {
-            transaction = updateCollaboratorSelection(
+            tr = updateCollaboratorSelection(
                 this.mod.editor.view.state,
                 participant,
                 data
             )
-            fnTransaction = removeCollaboratorSelection(
+            fnTr = removeCollaboratorSelection(
                 this.mod.editor.mod.footnotes.fnEditor.view.state,
                 data
             )
         }
-        if (transaction) {
-            this.mod.editor.view.dispatch(transaction)
+        if (tr) {
+            this.mod.editor.view.dispatch(tr)
         }
-        if (fnTransaction) {
-            this.mod.editor.mod.footnotes.fnEditor.view.dispatch(
-                fnTransaction)
+        if (fnTr) {
+            this.mod.editor.mod.footnotes.fnEditor.view.dispatch(fnTr)
         }
     }
 
@@ -293,27 +292,26 @@ export class ModCollabDocChanges {
 
         let sentSteps = unconfirmedDiffs["ds"] // document steps
         if (sentSteps) {
-            let transaction = receiveTransaction(
+            let tr = receiveTransaction(
                 this.mod.editor.view.state,
                 sentSteps,
                 sentSteps.map(
                     step => this.mod.editor.client_id
                 )
             )
-            this.mod.editor.view.dispatch(transaction)
+            this.mod.editor.view.dispatch(tr)
         }
 
         let sentFnSteps = unconfirmedDiffs["fs"] // footnote steps
         if (sentFnSteps) {
-            this.mod.editor.mod.footnotes.fnEditor.view.dispatch(
-                receiveTransaction(
-                    this.mod.editor.mod.footnotes.fnEditor.view.state,
-                    sentFnSteps,
-                    sentFnSteps.map(
-                        step => this.mod.editor.client_id
-                    )
+            let fnTr = receiveTransaction(
+                this.mod.editor.mod.footnotes.fnEditor.view.state,
+                sentFnSteps,
+                sentFnSteps.map(
+                    step => this.mod.editor.client_id
                 )
             )
+            this.mod.editor.mod.footnotes.fnEditor.view.dispatch(fnTr)
         }
 
         let sentComments = unconfirmedDiffs["cu"] // comment updates
@@ -344,14 +342,14 @@ export class ModCollabDocChanges {
         this.receiving = true
         let steps = diffs.map(j => Step.fromJSON(docSchema, j))
         let clientIds = diffs.map(j => cid)
-        let transaction = receiveTransaction(
+        let tr = receiveTransaction(
             this.mod.editor.view.state,
             steps,
             clientIds
         )
-        transaction.setMeta('remote', true)
-        this.mod.editor.view.dispatch(transaction)
-        this.setConfirmedDoc(transaction)
+        tr.setMeta('remote', true)
+        this.mod.editor.view.dispatch(tr)
+        this.setConfirmedDoc(tr)
         this.receiving = false
         this.sendToCollaborators()
     }

@@ -46,10 +46,9 @@ export class ModCommentStore {
             userAvatar = this.mod.editor.user.avatar
         }
 
-        let transaction = addCommentDuringCreationDecoration(this.mod.editor
-            .view.state)
-        if (transaction) {
-            this.mod.editor.view.dispatch(transaction)
+        let tr = addCommentDuringCreationDecoration(this.mod.editor.view.state)
+        if (tr) {
+            this.mod.editor.view.dispatch(tr)
         }
         this.commentDuringCreation = {
             comment: new Comment(
@@ -66,10 +65,9 @@ export class ModCommentStore {
     removeCommentDuringCreation() {
         if (this.commentDuringCreation) {
             this.commentDuringCreation = false
-            let transaction = removeCommentDuringCreationDecoration(this.mod
-                .editor.view.state)
-            if (transaction) {
-                this.mod.editor.view.dispatch(transaction)
+            let tr = removeCommentDuringCreationDecoration(this.mod.editor.view.state)
+            if (tr) {
+                this.mod.editor.view.dispatch(tr)
             }
         }
     }
@@ -187,9 +185,10 @@ export class ModCommentStore {
                         .marks.comment.create({
                             id
                         })
-                    this.mod.editor.view.dispatch(
-                        this.removeMark(this.mod.editor.view.state.tr, nodeStart, nodeEnd, markType)
-                    )
+                    let tr = this.removeMark(this.mod.editor.view.state.tr, nodeStart, nodeEnd, markType)
+                    if (tr) {
+                        this.mod.editor.view.dispatch(tr)
+                    }
                 }
             }
         })

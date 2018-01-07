@@ -255,6 +255,7 @@ let addEmailDialog = function() {
     let buttons = [
         {
             text: gettext('Submit'),
+            class: "fw-button fw-dark",
             click: () => {
                 let email = document.getElementById('new-profile-email').value.replace(/(^\s+)|(\s+$)/g, "")
 

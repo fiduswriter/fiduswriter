@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from selenium.common.exceptions import NoSuchElementException
-from selenium.common.exceptions import NoAlertPresentException
 import time
 
 from test.testcases import LiveTornadoTestCase
@@ -52,12 +51,10 @@ class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
         driver.find_element_by_id("new-password-input2").send_keys("otter2")
         driver.find_element_by_xpath("(//button[@type='button'])[2]").click()
         for i in range(60):
-            try:
-                alert_text = self.close_alert_and_get_its_text()
-                if "The password has been changed." == alert_text:
-                    break
-            except:
-                pass
+            if len(
+                driver.find_elements_by_css_selector("#fw-change-pwd-dialog")
+            ) == 0:
+                break
             time.sleep(1)
         else:
             self.fail("time out")
@@ -70,12 +67,10 @@ class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
         driver.find_element_by_id("new-password-input2").send_keys("otter1")
         driver.find_element_by_xpath("(//button[@type='button'])[2]").click()
         for i in range(60):
-            try:
-                alert_text = self.close_alert_and_get_its_text()
-                if "The password has been changed." == alert_text:
-                    break
-            except:
-                pass
+            if len(
+                driver.find_elements_by_css_selector("#fw-change-pwd-dialog")
+            ) == 0:
+                break
             time.sleep(1)
         else:
             self.fail("time out")
@@ -113,25 +108,6 @@ class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
         except NoSuchElementException:
             return False
         return True
-
-    def is_alert_present(self):
-        try:
-            self.driver.switch_to_alert()
-        except NoAlertPresentException:
-            return False
-        return True
-
-    def close_alert_and_get_its_text(self):
-        try:
-            alert = self.driver.switch_to_alert()
-            alert_text = alert.text
-            if self.accept_next_alert:
-                alert.accept()
-            else:
-                alert.dismiss()
-            return alert_text
-        finally:
-            self.accept_next_alert = True
 
     def tearDown(self):
         self.assertEqual([], self.verificationErrors)

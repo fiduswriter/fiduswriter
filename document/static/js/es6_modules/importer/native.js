@@ -1,4 +1,4 @@
-import {addAlert, csrfToken} from "../common"
+import {addAlert, postJson} from "../common"
 import {GetImages} from "./get-images"
 
 export class ImportNative {
@@ -38,30 +38,23 @@ export class ImportNative {
     saveImages(images, ImageTranslationTable) {
         let sendPromises = Object.values(images).map(
             imageEntry => {
-                let formValues = new window.FormData()
-                formValues.append('doc_id', this.docId)
-                formValues.append('title', imageEntry.title)
-                formValues.append('image', imageEntry.file, imageEntry.image.split('/').pop())
-                formValues.append('checksum', imageEntry.checksum)
-                return new Promise((resolve, reject) => {
-                    jQuery.ajax({
-                        url: '/document/import/image/',
-                        data: formValues,
-                        cache: false,
-                        contentType: false,
-                        processData: false,
-                        type: 'POST',
-                        dataType: 'json',
-                        crossDomain: false, // obviates need for sameOrigin test
-                        beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
-                        success: (data, textStatus, jqXHR) => {
-                            ImageTranslationTable[imageEntry.id] = data.id
-                            resolve()
-                        },
-                        error: () =>
-                            reject(`${gettext('Could not save Image')} ${imageEntry.checksum}`)
-                    })
-                })
+                return postJson('/document/import/image/', {
+                    doc_id: this.docId,
+                    title: imageEntry.title,
+                    checksum: imageEntry.checksum,
+                    image: {file: imageEntry.file, filename: imageEntry.image.split('/').pop()}
+                }).then(
+                    data => ImageTranslationTable[imageEntry.id] = data.id
+                ).catch(
+                    () => {
+                        addAlert(
+                            'error',
+                            `${gettext('Could not save Image')} ${imageEntry.checksum}`
+                        )
+                        return Promise.reject()
+                    }
+                )
+
             }
         )
         return Promise.all(sendPromises)
@@ -95,66 +88,54 @@ export class ImportNative {
     createDoc() {
         // We create the document on the sever so that we have an ID for it and
         // can link the images to it.
-        return new Promise((resolve, reject) => {
-            jQuery.ajax({
-                url: '/document/import/create/',
-                type: 'POST',
-                dataType: 'json',
-                crossDomain: false, // obviates need for sameOrigin test
-                beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
-                success: (data, textStatus, jqXHR) => {
-                    this.docId = data['id']
-                    resolve()
-                },
-                error: () => {
-                    reject(gettext('Could not create document'))
+
+        return postJson('/document/import/create/').then(
+                data => this.docId = data.id
+            ).catch(
+                () => {
+                    addAlert('error', gettext('Could not create document'))
+                    return Promise.reject()
                 }
-            })
-        })
+            )
     }
 
     saveDocument() {
-        let postData = {
-            id: this.docId,
-            title: this.doc.title,
-            contents: JSON.stringify(this.doc.contents),
-            comments: JSON.stringify(this.doc.comments),
-            bibliography: JSON.stringify(this.bibliography)
-        }
 
-        return new Promise((resolve, reject) => {
-            jQuery.ajax({
-                url: '/document/import/',
-                data: postData,
-                type: 'POST',
-                dataType: 'json',
-                crossDomain: false, // obviates need for sameOrigin test
-                beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
-                success: (data, textStatus, jqXHR) => {
-                    let docInfo = {
-                        is_owner: true,
-                        access_rights: 'write',
-                        id: this.docId
-                    }
-                    this.doc.owner = {
-                        id: this.user.id,
-                        name: this.user.name,
-                        avatar: this.user.avatar
-                    }
-                    this.doc.version = 0
-                    this.doc.comment_version = 0
-                    this.doc.id = this.docId
-                    this.doc.added = data['added']
-                    this.doc.updated = data['updated']
-                    this.doc.revisions = []
-                    this.doc.rights = "write"
-                    resolve({doc: this.doc, docInfo})
-                },
-                error: () => {
-                    reject(`${gettext('Could not save ')} ${this.doc.title}`)
+        return postJson(
+            '/document/import/',
+            {
+                id: this.docId,
+                title: this.doc.title,
+                contents: JSON.stringify(this.doc.contents),
+                comments: JSON.stringify(this.doc.comments),
+                bibliography: JSON.stringify(this.bibliography)
+            }
+        ).then(
+            data => {
+                let docInfo = {
+                    is_owner: true,
+                    access_rights: 'write',
+                    id: this.docId
                 }
-            })
-        })
-
+                this.doc.owner = {
+                    id: this.user.id,
+                    name: this.user.name,
+                    avatar: this.user.avatar
+                }
+                this.doc.version = 0
+                this.doc.comment_version = 0
+                this.doc.id = this.docId
+                this.doc.added = data['added']
+                this.doc.updated = data['updated']
+                this.doc.revisions = []
+                this.doc.rights = "write"
+                return {doc: this.doc, docInfo}
+            }
+        ).catch(
+            () => {
+                addAlert('error', `${gettext('Could not save ')} ${this.doc.title}`)
+                return Promise.reject()
+            }
+        )
     }
 }

@@ -3,7 +3,7 @@ import {DocumentOverviewActions} from "./actions"
 import {DocumentAccessRightsDialog} from "../access-rights"
 import {menuModel} from "./menu"
 import {documentsListTemplate} from "./templates"
-import {activateWait, deactivateWait, addAlert, csrfToken, OverviewMenuView} from "../../common"
+import {activateWait, deactivateWait, addAlert, postJson, OverviewMenuView} from "../../common"
 import {SiteMenu} from "../../menu"
 /*
 * Helper functions for the document overview page.
@@ -64,16 +64,10 @@ export class DocumentOverview {
 
     getDocumentListData(id) {
         activateWait()
-        jQuery.ajax({
-            url: '/document/documentlist/',
-            data: {},
-            type: 'POST',
-            dataType: 'json',
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: (xhr, settings) => {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: (response, textStatus, jqXHR) => {
+        postJson(
+            '/document/documentlist/'
+        ).then(
+            response => {
                 let ids = new Set()
                 this.documentList = response.documents.filter(doc => {
                     if (ids.has(doc.id)) {return false}
@@ -89,11 +83,13 @@ export class DocumentOverview {
                 this.exportTemplates = response.export_templates
                 this.layoutTable()
                 this.addExportTemplatesToMenu()
-            },
-            error: (jqXHR, textStatus, errorThrown) => addAlert('error', jqXHR.responseText),
-            complete: () => deactivateWait()
+            }
+        ).catch(
+            () => addAlert('error', gettext('Cannot load data of documents.'))
+        ).then(
+            () => deactivateWait()
+        )
 
-        })
     }
 
     layoutTable() {

@@ -1,4 +1,4 @@
-import {addAlert, csrfToken} from "../common"
+import {addAlert, postJson} from "../common"
 import {getSettings} from "../schema/convert"
 
 export let getMissingDocumentListData = function (ids, documentList) {
@@ -13,36 +13,30 @@ export let getMissingDocumentListData = function (ids, documentList) {
     })
 
     if (incompleteIds.length > 0) {
-        return new Promise((resolve, reject) => {
-            jQuery.ajax({
-                url: '/document/documentlist/extra/',
-                data: {
-                    ids: incompleteIds.join(',')
-                },
-                type: 'POST',
-                dataType: 'json',
-                crossDomain: false, // obviates need for sameOrigin test
-                beforeSend: (xhr, settings) =>
-                    xhr.setRequestHeader("X-CSRFToken", csrfToken),
-                success: (response, textStatus, jqXHR) => {
-                    response.documents.forEach(
-                        extraValues => {
-                            let doc = documentList.find(entry => entry.id === extraValues.id)
-                            doc.contents = JSON.parse(extraValues.contents)
-                            doc.comments = JSON.parse(extraValues.comments)
-                            doc.bibliography = JSON.parse(extraValues.bibliography)
-                            doc.images = extraValues.images
-                            doc.settings = getSettings(doc.contents)
-                        }
-                    )
-                    resolve()
-                },
-                error: (jqXHR, textStatus, errorThrown) => {
-                    addAlert('error', jqXHR.responseText)
-                    reject()
-                }
-            })
-        })
+        return postJson(
+            '/document/documentlist/extra/',
+            {
+                ids: incompleteIds.join(',')
+            }
+        ).then(
+            response => {
+                response.documents.forEach(
+                    extraValues => {
+                        let doc = documentList.find(entry => entry.id === extraValues.id)
+                        doc.contents = JSON.parse(extraValues.contents)
+                        doc.comments = JSON.parse(extraValues.comments)
+                        doc.bibliography = JSON.parse(extraValues.bibliography)
+                        doc.images = extraValues.images
+                        doc.settings = getSettings(doc.contents)
+                    }
+                )
+            }
+        ).catch(
+            () => {
+                addAlert('error', gettext('Could not obtain extra document data'))
+            }
+        )
+
 
     } else {
         return Promise.resolve()

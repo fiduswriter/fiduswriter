@@ -8,7 +8,7 @@ import {DocxExporter} from "../../exporter/docx"
 import {OdtExporter} from "../../exporter/odt"
 import {ImportFidusFile} from "../../importer/file"
 import {DocumentRevisionsDialog} from "../revisions"
-import {activateWait, deactivateWait, addAlert, csrfToken} from "../../common"
+import {activateWait, deactivateWait, addAlert, post} from "../../common"
 
 export class DocumentOverviewActions {
     constructor (documentOverview) {
@@ -17,24 +17,18 @@ export class DocumentOverviewActions {
     }
 
     deleteDocument(id) {
-        let postData = {id}
-
-        jQuery.ajax({
-            url: '/document/delete/',
-            data: postData,
-            type: 'POST',
-            dataType: 'json',
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: (xhr, settings) => {
-                xhr.setRequestHeader("X-CSRFToken", csrfToken)
-            },
-            success: (data, textStatus, jqXHR) => {
+        post(
+            '/document/delete/',
+            {id}
+        ).then(
+            () => {
                 this.documentOverview.stopDocumentTable()
-                jQuery('#Text_' + id).detach()
+                let removedEl = document.getElementById(`Text_${id}`)
+                removedEl.parentElement.removeChild(removedEl)
                 this.documentOverview.documentList = this.documentOverview.documentList.filter(doc => doc.id !== id)
                 this.documentOverview.startDocumentTable()
             }
-        })
+        )
     }
 
     deleteDocumentDialog(ids) {

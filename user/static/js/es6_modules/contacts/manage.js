@@ -1,5 +1,5 @@
 import {addTeammemberTemplate, teammemberTemplate} from "./templates"
-import {csrfToken, cancelPromise} from "../common"
+import {postJsonStatus, cancelPromise} from "../common"
 
 /**
  * Sets up the contacts management. Helper functions for adding and removing contacts.
@@ -16,50 +16,41 @@ let addMember = function(userString) {
     if ('' === userString) {
         return cancelPromise()
     }
-    return new Promise((resolve, reject) => {
-        jQuery.ajax({
-            url: '/account/teammember/add',
-            data: {
-                'user_string': userString
-            },
-            type: 'POST',
-            dataType: 'json',
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: (xhr, settings) =>
-                xhr.setRequestHeader("X-CSRFToken", csrfToken),
-            success: (response, textStatus, jqXHR) => {
-                if (jqXHR.status == 201) { //user added to the contacts
-                    jQuery("#add-new-member").dialog('close')
-                    return resolve(response.member)
-                } else { //user not found
-                    let responseHtml
 
-                    if (response.error === 1) {
-                        responseHtml = gettext('You cannot add yourself to your contacts!')
-                    } else if (response.error === 2) {
-                        responseHtml = gettext('This person is already in your contacts')
-                    } else if (userString.indexOf('@') != -1 && userString.indexOf('.') != -1) {
-                        responseHtml = gettext('No user is registered with the given email address.') +
-                            '<br />' +
-                            gettext('Please invite him/her ') +
-                            `<a href="mailto:${userString}?subject=` +
-                                `${encodeURIComponent(gettext('Fidus Writer'))}&body=` +
-                                `${encodeURIComponent(gettext('Hey, I would like you to sign up for a Fidus Writer account.'))} ` +
-                                `${encodeURIComponent(gettext('Please register at'))} ${window.location.origin}">` +
-                            `${gettext('by sending an email')}</a>!`
-                    } else {
-                        responseHtml = gettext('User is not registered.')
-                    }
-                    jQuery('#add-new-member').append('<div class="warning" style="padding: 8px;">' + responseHtml + '</div>')
-                    return resolve(cancelPromise())
+    return postJsonStatus(
+        '/account/teammember/add',
+        {
+            user_string: userString
+        }
+    ).then(
+        ({json, status}) => {
+            if (status == 201) { //user added to the contacts
+                jQuery("#add-new-member").dialog('close')
+                return json.member
+            } else { //user not found
+                let responseHtml
+
+                if (json.error === 1) {
+                    responseHtml = gettext('You cannot add yourself to your contacts!')
+                } else if (json.error === 2) {
+                    responseHtml = gettext('This person is already in your contacts')
+                } else if (userString.indexOf('@') != -1 && userString.indexOf('.') != -1) {
+                    responseHtml = gettext('No user is registered with the given email address.') +
+                        '<br />' +
+                        gettext('Please invite him/her ') +
+                        `<a href="mailto:${userString}?subject=` +
+                            `${encodeURIComponent(gettext('Fidus Writer'))}&body=` +
+                            `${encodeURIComponent(gettext('Hey, I would like you to sign up for a Fidus Writer account.'))} ` +
+                            `${encodeURIComponent(gettext('Please register at'))} ${window.location.origin}">` +
+                        `${gettext('by sending an email')}</a>!`
+                } else {
+                    responseHtml = gettext('User is not registered.')
                 }
-            },
-            error: (jqXHR, textStatus, errorThrown) => {
-                console.error(jqXHR.responseText)
-                reject()
+                jQuery('#add-new-member').append(`<div class="warning" style="padding: 8px;">${responseHtml}</div>`)
+                return cancelPromise()
             }
-        })
-    })
+        }
+    )
 }
 
 //dialog for adding a user to contacts
@@ -103,25 +94,22 @@ export let addMemberDialog = function() {
 }
 
 let deleteMember = function(ids) {
-    jQuery.ajax({
-        url: '/account/teammember/remove',
-        data: {
+
+    postJsonStatus(
+        '/account/teammember/remove',
+        {
             'members[]': ids
-        },
-        type: 'POST',
-        dataType: 'json',
-        crossDomain: false, // obviates need for sameOrigin test
-        beforeSend: (xhr, settings) =>
-            xhr.setRequestHeader("X-CSRFToken", csrfToken),
-        success: (response, textStatus, jqXHR) => {
-            if (jqXHR.status == 200) { //user removed from contacts
-                jQuery('#user-' + ids.join(', #user-')).remove()
+        }
+    ).then(
+        ({json, status}) => {
+            if (status == 200) { //user removed from contacts
+                Array.slice.call(document.querySelectorAll('#user-' + ids.join(', #user-'))).forEach(
+                    el => el.parentElement.removeChild(el)
+                )
                 jQuery("#confirmdeletion").dialog('close')
             }
-        },
-        error: (jqXHR, textStatus, errorThrown) =>
-            console.error(jqXHR.responseText)
-    })
+        }
+    )
 }
 
 //dialog for removing a user from contacts

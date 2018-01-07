@@ -235,8 +235,18 @@ export let post = function(url, params={}) {
     )
 }
 
+// post and then return json
 export let postJson = function(url, params={}) {
     return post(url, params).then(
         response => response.json()
+    )
+}
+
+// post and then return json and status
+export let postJsonStatus = function(url, params={}) {
+    return post(url, params).then(
+        response => response.json().then(
+            json => ({json, status: response.status})
+        )
     )
 }

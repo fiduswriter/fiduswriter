@@ -1,6 +1,6 @@
 import {teammemberTemplate} from "./templates"
 import {deleteMemberDialog} from "./manage"
-import {addDropdownBox, csrfToken, addAlert, OverviewMenuView} from "../common"
+import {addDropdownBox, postJson, addAlert, OverviewMenuView} from "../common"
 import {SiteMenu} from "../menu"
 import {menuModel} from "./menu"
 
@@ -15,23 +15,14 @@ export class ContactsOverview {
     }
 
     getList() {
-        jQuery.ajax({
-            url: '/user/team/list/',
-            data: {},
-            type: 'POST',
-            dataType: 'json',
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: (xhr, settings) =>
-                xhr.setRequestHeader("X-CSRFToken", csrfToken),
-            success: (response, textStatus, jqXHR) => {
-                //intialize the teammember table
-                jQuery('#team-table tbody').append(teammemberTemplate({members: response.team_members}))
-            },
-            error: (jqXHR, textStatus, errorThrown) => {
-                addAlert('error', errorThrown)
-            },
-            complete: () => {}
-        })
+
+        postJson('/user/team/list/').then(
+            json => {
+                jQuery('#team-table tbody').append(teammemberTemplate({members: json.team_members}))
+            }
+        ).catch(
+            () => addAlert('error', gettext('Could not obtain contacts list'))
+        )
     }
 
     bind() {

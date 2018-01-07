@@ -1,4 +1,4 @@
-import {csrfToken, getCookie} from "../common"
+import {post} from "../common"
 import * as bowser from "bowser/bowser"
 
 const MINIMUM_BROWSER_VERSIONS = {
@@ -41,25 +41,18 @@ export class FeedbackTab {
         let messageEl = document.querySelector("textarea#message"),
             closeFeedbackEl = document.querySelector('#closeFeedback'),
             feedbackFormEl = document.querySelector('#feedback-form'),
-            responseEl = document.querySelector('#response-message'),
-            data = {message: messageEl.value}
+            responseEl = document.querySelector('#response-message')
 
         closeFeedbackEl.style.display = 'none'
         feedbackFormEl.style.visibility = 'hidden'
 
-        jQuery.ajax({
-            type: "POST",
-            url: "/feedback/feedback/",
-            data,
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: (xhr, settings) =>
-                xhr.setRequestHeader("X-CSRFToken", csrfToken),
-            success : () => {
+        post('/feedback/feedback/', {message: messageEl.value}).then(
+            () => {
                 messageEl.value = ''
                 closeFeedbackEl.style.display = 'block'
                 responseEl.style.display = 'block'
             }
-        })
+        )
         return false
     }
 

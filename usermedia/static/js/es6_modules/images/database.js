@@ -24,6 +24,7 @@ export class ImageDB {
                         return image.id
                     }
                 )
+                deactivateWait()
                 return ids
             }
         )
@@ -38,13 +39,13 @@ export class ImageDB {
             postData
         ).then(
             response => {
+                deactivateWait()
                 if (Object.keys(response.errormsg).length) {
                     return Promise.reject(response.errormsg)
                 } else {
                     this.db[response.values.id] = response.values
                     return response.values.id
                 }
-                deactivateWait()
             }
         ).catch(
             errors => {

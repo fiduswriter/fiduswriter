@@ -286,7 +286,7 @@ def access_right_save_js(request):
                         access_right = AccessRight.objects.get(
                             document_id=doc_id, user_id=collaborator_id)
                         access_right.delete()
-                    except:
+                    except ObjectDoesNotExist:
                         pass
                 else:
                     try:

@@ -73,8 +73,8 @@ class Command(BaseCommand):
         if npm_install:
             if os.path.exists(os.path.join(PROJECT_PATH, "node_modules")):
                 shutil.rmtree("node_modules")
-            print("Cleaning npm cache")
-            call(["npm", "cache", "clean"])  # Not use Pm from git w/ same ver.
+            # print("Cleaning npm cache")
+            # call(["npm", "cache", "clean", "--force"])
             print("Installing dependencies")
             call(["npm", "install"])
             # Copy the package.json file to node_modules, so we can compare it

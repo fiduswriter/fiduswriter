@@ -12,6 +12,7 @@ class LoginView(allauth_views.LoginView):
         context['registration_open'] = settings.REGISTRATION_OPEN
         return context
 
+
 if settings.REGISTRATION_OPEN:
     signup_view = allauth_views.signup
 else:

@@ -3,7 +3,7 @@ import atexit
 from time import mktime
 from copy import deepcopy
 
-import jsonpatch
+from jsonpatch import apply_patch, JsonPatchConflict
 
 from document.helpers.session_user_info import SessionUserInfo
 from document.helpers.serializers import PythonWithURLSerializer
@@ -395,12 +395,12 @@ class WebSocket(BaseWebSocketHandler):
             self.doc['version'] += 1
             if "jd" in parsed:  # jd = json diff
                 try:
-                    jsonpatch.apply_patch(
+                    apply_patch(
                        self.doc['contents'],
                        parsed["jd"],
                        True
                     )
-                except:
+                except JsonPatchConflict:
                     logger.exception("Cannot apply json diff.")
                     logger.error(json_encode(parsed))
                     logger.error(json_encode(self.doc['contents']))
@@ -597,5 +597,6 @@ class WebSocket(BaseWebSocketHandler):
     def save_all_docs(cls):
         for document_id in cls.sessions:
             cls.save_document(document_id)
+
 
 atexit.register(WebSocket.save_all_docs)

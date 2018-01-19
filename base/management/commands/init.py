@@ -1,4 +1,4 @@
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.core.management import call_command
 import os
 import shutil
@@ -51,7 +51,7 @@ class Command(BaseCommand):
         if not options["no-compress"]:
             try:
                 call_command("compress")
-            except:
+            except CommandError:
                 pass
         if not options["no-static"]:
             call_command("collectstatic", interactive=False)

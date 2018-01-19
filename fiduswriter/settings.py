@@ -233,6 +233,7 @@ TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 # You only need to change this in very advanced setups.
 def gettext(s): return s
 
+
 LANGUAGES = (
     ('en', gettext('English')),
     ('bg', gettext('Bulgarian')),

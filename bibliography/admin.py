@@ -7,9 +7,13 @@ from bibliography.models import (
 
 class EntryCategoryAdmin(admin.ModelAdmin):
     pass
+
+
 admin.site.register(EntryCategory, EntryCategoryAdmin)
 
 
 class EntryAdmin(admin.ModelAdmin):
     pass
+
+
 admin.site.register(Entry, EntryAdmin)

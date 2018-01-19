@@ -52,12 +52,9 @@ class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
         driver.find_element_by_id("new-password-input2").send_keys("otter2")
         driver.find_element_by_xpath("(//button[@type='button'])[2]").click()
         for i in range(60):
-            try:
-                alert_text = self.close_alert_and_get_its_text()
-                if "The password has been changed." == alert_text:
-                    break
-            except:
-                pass
+            alert_text = self.close_alert_and_get_its_text()
+            if "The password has been changed." == alert_text:
+                break
             time.sleep(1)
         else:
             self.fail("time out")
@@ -70,12 +67,9 @@ class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
         driver.find_element_by_id("new-password-input2").send_keys("otter1")
         driver.find_element_by_xpath("(//button[@type='button'])[2]").click()
         for i in range(60):
-            try:
-                alert_text = self.close_alert_and_get_its_text()
-                if "The password has been changed." == alert_text:
-                    break
-            except:
-                pass
+            alert_text = self.close_alert_and_get_its_text()
+            if "The password has been changed." == alert_text:
+                break
             time.sleep(1)
         else:
             self.fail("time out")

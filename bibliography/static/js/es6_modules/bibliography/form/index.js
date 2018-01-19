@@ -1,4 +1,4 @@
-import {BibFieldTypes, BibTypes} from "biblatex-csl-converter/lib/const"
+import {BibFieldTypes, BibTypes} from "biblatex-csl-converter"
 import {BibFieldTitles, BibTypeTitles, BibFieldHelp} from "./strings"
 import {bibDialog} from "./templates"
 import {addAlert, noSpaceTmp} from "../../common"

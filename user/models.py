@@ -6,6 +6,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User)
     about = models.TextField(max_length=500, blank=True)
 
+
 User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 
 
@@ -14,6 +15,7 @@ def get_readable_name(user):
     if readable_name == u'':
         readable_name = user.username
     return readable_name
+
 
 User.readable_name = property(lambda u: get_readable_name(u))
 

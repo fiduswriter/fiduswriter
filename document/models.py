@@ -70,6 +70,7 @@ class Document(models.Model):
             # Database has not yet been initialized, so don't throw any error.
             return []
 
+
 RIGHTS_CHOICES = (
     ('read', 'Reader'),
     ('read-without-comments', 'Reader without comment access'),
@@ -130,6 +131,7 @@ class DocumentRevision(models.Model):
                 str(self.document.id)
         else:
             return str(self.id) + ' of ' + str(self.document.id)
+
 
 TEMPLATE_CHOICES = (
     ('docx', 'Docx'),

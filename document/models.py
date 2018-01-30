@@ -46,6 +46,21 @@ class Document(models.Model):
     def get_absolute_url(self):
         return "/document/%i/" % self.id
 
+    def is_deletable(self):
+        reverse_relations = [
+            f for f in self._meta.model._meta.get_fields()
+            if (f.one_to_many or f.one_to_one) and
+            f.auto_created and not f.concrete and
+            f.name not in ['accessright', 'documentrevision']
+        ]
+
+        for r in reverse_relations:
+            if r.remote_field.model.objects.filter(
+                **{r.field.name: self}
+            ).exists():
+                return False
+        return True
+
     @classmethod
     def check(cls, **kwargs):
         errors = super(Document, cls).check(**kwargs)

@@ -186,16 +186,19 @@ def delete_js(request):
     status = 405
     if request.is_ajax() and request.method == 'POST':
         doc_id = int(request.POST['id'])
-        image_ids = list(
-            DocumentImage.objects.filter(document_id=doc_id)
-            .values_list('image_id', flat=True)
-        )
         document = Document.objects.get(pk=doc_id, owner=request.user)
-        document.delete()
-        for image in Image.objects.filter(id__in=image_ids):
-            if image.is_deletable():
-                image.delete()
-        status = 200
+        if document.is_deletable():
+            image_ids = list(
+                DocumentImage.objects.filter(document_id=doc_id)
+                .values_list('image_id', flat=True)
+            )
+            document.delete()
+            for image in Image.objects.filter(id__in=image_ids):
+                if image.is_deletable():
+                    image.delete()
+            status = 200
+        else:
+            status = 409
     return JsonResponse(
         response,
         status=status

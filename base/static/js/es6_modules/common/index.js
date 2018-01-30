@@ -174,3 +174,79 @@ export let escapeText = function(text) {
  */
 
 export let cancelPromise = () => new Promise(()=>{})
+
+
+/* from https://www.tjvantoll.com/2015/09/13/fetch-and-errors/ */
+
+export let handleFetchErrors = function(response) {
+    if (!response.ok) { throw Error(response.statusText) }
+    return response
+}
+
+export let get = function(url, params={}) {
+    let queryString = Object.keys(params).map(
+        key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`
+    ).join('&')
+    if (queryString.length) {
+        url = `${url}?${queryString}`
+    }
+    return fetch(url, {
+        method: "GET",
+        headers: {
+            'X-CSRFToken': csrfToken,
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        credentials: 'include'
+    }).then(
+        handleFetchErrors
+    )
+}
+
+export let getJson = function(url, params={}) {
+    return get(url, params).then(
+        response => response.json()
+    )
+}
+
+export let post = function(url, params={}) {
+    let body = new window.FormData()
+    body.append('csrfmiddlewaretoken', csrfToken)
+    Object.keys(params).forEach(key => {
+        let value = params[key]
+        if (typeof(value)==="object" && value.file && value.filename) {
+            body.append(key, value.file, value.filename)
+        } else {
+            body.append(key, value)
+        }
+    })
+
+    return fetch(url, {
+        method: "POST",
+        headers: {
+            'X-CSRFToken': csrfToken,
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        credentials: 'include',
+        body
+    }).then(
+        handleFetchErrors
+    )
+}
+
+// post and then return json
+export let postJson = function(url, params={}) {
+    return post(url, params).then(
+        response => response.json()
+    )
+}
+
+// post and then return json and status
+export let postJsonStatus = function(url, params={}) {
+    return post(url, params).then(
+        response => response.json().then(
+            json => ({json, status: response.status})
+        )
+    )
+}

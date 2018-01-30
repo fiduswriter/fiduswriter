@@ -17,16 +17,25 @@ export class DocumentOverviewActions {
     }
 
     deleteDocument(id) {
+        let doc = this.documentOverview.documentList.find(doc => doc.id === id)
+        if (!doc) {
+            return
+        }
         post(
             '/document/delete/',
             {id}
         ).then(
             () => {
+                addAlert('success', gettext(`${gettext('Document has been deleted')}: '${doc.title}'`))
                 this.documentOverview.stopDocumentTable()
                 let removedEl = document.getElementById(`Text_${id}`)
                 removedEl.parentElement.removeChild(removedEl)
                 this.documentOverview.documentList = this.documentOverview.documentList.filter(doc => doc.id !== id)
                 this.documentOverview.startDocumentTable()
+            }
+        ).catch(
+            () => {
+                addAlert('error', gettext(`${gettext('Could not delete document')}: '${doc.title}'`))
             }
         )
     }
@@ -43,8 +52,6 @@ export class DocumentOverviewActions {
                 that.deleteDocument(ids[i])
             }
             jQuery(this).dialog("close")
-            addAlert('success', gettext(
-                'The document(s) have been deleted'))
         }
 
         diaButtons[gettext('Cancel')] = function () {

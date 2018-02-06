@@ -18,7 +18,7 @@ export class ContactsOverview {
 
         postJson('/user/team/list/').then(
             json => {
-                jQuery('#team-table tbody').append(teammemberTemplate({members: json.team_members}))
+                document.querySelector('#team-table tbody').innerHTML += teammemberTemplate({members: json.team_members})
             }
         ).catch(
             () => addAlert('error', gettext('Could not obtain contacts list'))

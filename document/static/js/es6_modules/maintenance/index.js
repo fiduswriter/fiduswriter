@@ -3,7 +3,7 @@ import {Step} from "prosemirror-transform"
 import {updateFileDoc, updateFileBib} from "../importer/update"
 import {updateDoc, getSettings} from "../schema/convert"
 import {docSchema} from "../schema/document"
-import {addAlert, csrfToken} from "../common"
+import {addAlert, post, postJson} from "../common"
 import {FW_FILETYPE_VERSION} from "../exporter/native"
 import JSZip from "jszip"
 import JSZipUtils from "jszip-utils"
@@ -32,30 +32,25 @@ export class DocMaintenance {
 
     getDocBatch() {
         this.batch++
-        jQuery.ajax({
-          url: "/document/maintenance/get_all/",
-          type: 'POST',
-          dataType: 'json',
-          crossDomain: false, // obviates need for sameOrigin test
-          beforeSend: (xhr, settings) =>
-              xhr.setRequestHeader("X-CSRFToken", csrfToken),
-          data: {
-              batch: this.batch
-          },
-          success: data => {
-              let docs = window.JSON.parse(data.docs)
-              if (docs.length) {
-                  addAlert('info', gettext('Downloaded batch: ') + this.batch)
-                  docs.forEach(doc => this.fixDoc(doc))
-                  this.getDocBatch()
-              } else {
-                  this.batchesDone = true
-                  if (this.docSavesLeft===0) {
-                      this.updateRevisions()
-                  }
-              }
-          }
-        })
+        postJson(
+            '/document/maintenance/get_all/'
+        ).then(
+            data => {
+                let docs = window.JSON.parse(data.docs)
+                if (docs.length) {
+                    addAlert('info', `${gettext('Downloaded batch')}: ${this.batch}`)
+                    docs.forEach(doc => this.fixDoc(doc))
+                    this.getDocBatch()
+                } else {
+                    this.batchesDone = true
+                    if (this.docSavesLeft===0) {
+                        this.updateRevisions()
+                    }
+                }
+            }
+        ).catch(
+            () => addAlert('error', `${gettext('Could not download batch')}: ${this.batch}`)
+        )
     }
 
     fixDoc(doc) {
@@ -71,18 +66,15 @@ export class DocMaintenance {
             if (docVersion < 2) {
                 // In version 0 - 1.x, the bibliography had to be loaded from
                 // the document user.
-                jQuery.ajax({
-                    url: '/document/maintenance/get_user_biblist/',
-                    data: {
-                        'user_id': doc.fields.owner
-                    },
-                    type: 'POST',
-                    dataType: 'json',
-                    crossDomain: false, // obviates need for sameOrigin test
-                    beforeSend: (xhr, settings) =>
-                        xhr.setRequestHeader("X-CSRFToken", csrfToken),
-                    success: (response, textStatus, jqXHR) => {
-                        let bibDB = response.bibList.reduce((db, item) => {
+
+                postJson(
+                    '/document/maintenance/get_user_biblist/',
+                    {
+                        user_id: doc.fields.owner
+                    }
+                ).then(
+                    response => {
+                        resolve(response.bibList.reduce((db, item) => {
                             let id = item['id']
                             let bibDBEntry = {}
                             bibDBEntry['fields'] = JSON.parse(item['fields'])
@@ -90,14 +82,11 @@ export class DocMaintenance {
                             bibDBEntry['entry_key'] = item['entry_key']
                             db[id] = bibDBEntry
                             return db
-                        }, {})
-                        resolve(bibDB)
-                    },
-                    error: (jqXHR, textStatus, errorThrown) => {
-                        addAlert('error', jqXHR.responseText)
-                        reject()
+                        }, {}))
                     }
-                })
+                ).catch(
+                    () => reject()
+                )
             } else {
                 resolve(doc.bibliography)
             }
@@ -114,34 +103,24 @@ export class DocMaintenance {
 
     saveDoc(doc) {
         this.docSavesLeft++
-        let p1 = new Promise(resolve => jQuery.ajax({
-            url: "/document/maintenance/save_doc/",
-            type: 'POST',
-            dataType: 'json',
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
-            data: {
+        let p1 = post(
+            '/document/maintenance/save_doc/',
+            {
                 id: doc.id,
                 contents: window.JSON.stringify(doc.contents),
                 bibliography: window.JSON.stringify(doc.bibliography),
                 doc_version: parseFloat(FW_FILETYPE_VERSION),
                 version: doc.version,
                 last_diffs: window.JSON.stringify(doc.last_diffs)
-            },
-            success: () => resolve()
-        })),
-            p2 = new Promise(resolve => jQuery.ajax({
-            url: "/document/maintenance/add_images_to_doc/",
-            type: 'POST',
-            dataType: 'json',
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
-            data: {
+            }
+        )
+        let p2 = post(
+            '/document/maintenance/add_images_to_doc/',
+            {
                 doc_id: doc.id,
                 ids: doc.imageIds
-            },
-            success: () => resolve()
-        }))
+            }
+        )
         Promise.all([p1, p2]).then(() => {
             addAlert('success', `${gettext('The document has been updated')}: ${doc.id}`)
             this.docSavesLeft--
@@ -154,14 +133,10 @@ export class DocMaintenance {
 
     updateRevisions() {
         addAlert('info', gettext('Updating saved revisions.'))
-        jQuery.ajax({
-            url: "/document/maintenance/get_all_revision_ids/",
-            type: 'POST',
-            dataType: 'json',
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
-            data: {},
-            success: data => {
+        postJson(
+            '/document/maintenance/get_all_revision_ids/'
+        ).then(
+            data => {
                 this.revSavesLeft = data.revision_ids.length
                 if (this.revSavesLeft) {
                     data.revision_ids.forEach(revId => this.updateRevision(revId))
@@ -169,7 +144,7 @@ export class DocMaintenance {
                     this.done()
                 }
             }
-        })
+        )
     }
 
     updateRevision(id) {
@@ -212,27 +187,25 @@ export class DocMaintenance {
 
     saveRevision(id, zipfs) {
         zipfs.generateAsync({type:"blob"}).then(blob => {
-            let data = new window.FormData()
-            data.append('file', blob, 'some_file.fidus')
-            data.append('id', id)
 
-            jQuery.ajax({
-                url: '/document/maintenance/update_revision/',
-                data,
-                type: 'POST',
-                cache: false,
-                contentType: false,
-                processData: false,
-                crossDomain: false, // obviates need for sameOrigin test
-                beforeSend: (xhr, settings) => xhr.setRequestHeader("X-CSRFToken", csrfToken),
-                success: () => {
+            post(
+                '/document/maintenance/update_revision/',
+                {
+                    id,
+                    file: {
+                        file: blob,
+                        filename: 'some_file.fidus'
+                    }
+                }
+            ).then(
+                () => {
                     addAlert('success', gettext('The revision has been updated: ') + id)
                     this.revSavesLeft--
                     if (this.revSavesLeft===0) {
                         this.done()
                     }
                 }
-            })
+            )
         })
     }
 

@@ -1,6 +1,6 @@
 import {documentrevisionsTemplate, documentrevisionsConfirmDeleteTemplate} from "./templates"
 import {ImportFidusFile} from "../../importer/file"
-import {deactivateWait, addAlert, csrfToken, cancelPromise} from "../../common"
+import {deactivateWait, addAlert, post, cancelPromise} from "../../common"
 import JSZipUtils from "jszip-utils"
 import download from "downloadjs"
 
@@ -91,10 +91,10 @@ export class DocumentRevisionsDialog {
                             ({doc, docInfo}) => {
                                 deactivateWait()
                                 addAlert('info', `${doc.title} ${gettext('successfully imported.')}`)
-                                return Promise.resolve({
+                                return {
                                     action: 'added-document',
                                     doc
-                                })
+                                }
                             },
                             errorMessage => addAlert('error', errorMessage)
                         )
@@ -158,33 +158,28 @@ export class DocumentRevisionsDialog {
     }
 
     deleteRevision(id) {
-        return new Promise((resolve, reject) => {
-            jQuery.ajax({
-                url: '/document/delete_revision/',
-                data: {id},
-                type: 'POST',
-                crossDomain: false, // obviates need for sameOrigin test
-                beforeSend: (xhr, settings) => {
-                    xhr.setRequestHeader("X-CSRFToken", csrfToken)
-                },
-                success: () => {
-                    let thisTr = jQuery(`tr.revision-${id}`),
-                        documentId = jQuery(thisTr).attr('data-document'),
-                        doc = this.documentList.find(doc => doc.id === parseInt(documentId))
-                    jQuery(thisTr).remove()
-                    addAlert('success', gettext('Revision deleted'))
-                    resolve({
-                        action: 'deleted-revision',
-                        id,
-                        doc
-                    })
-                },
-                error: () => {
-                    addAlert('error', gettext('Could not delete revision.'))
-                    reject()
-                }
-            })
-        })
+        return post(
+            '/document/delete_revision/',
+            {id}
+        ).then(
+            () => {
+                let thisTr = document.querySelector(`tr.revision-${id}`),
+                documentId = thisTr.getAttribute('data-document'),
+                doc = this.documentList.find(doc => doc.id === parseInt(documentId))
+                thisTr.parentElement.removeChild(thisTr)
+                addAlert('success', gettext('Revision deleted'))
+                return Promise.resolve({
+                    action: 'deleted-revision',
+                    id,
+                    doc
+                })
+            }
+        ).catch(
+            () => {
+                addAlert('error', gettext('Could not delete revision.'))
+                return Promise.reject()
+            }
+        )
 
     }
 

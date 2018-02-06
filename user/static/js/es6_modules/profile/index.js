@@ -1,7 +1,7 @@
 import {changeAvatarDialogTemplate, confirmDeleteAvatarTemplate,
     deleteUserDialogTemplate, changePwdDialogTemplate, changeEmailDialogTemplate,
 deleteEmailDialogTemplate} from "./templates"
-import {addDropdownBox, activateWait, deactivateWait, csrfToken} from "../common"
+import {addDropdownBox, activateWait, deactivateWait, post, postJson, postJsonStatus, addAlert} from "../common"
 import {SiteMenu} from "../menu"
 
 let changeAvatarDialog = function() {
@@ -11,27 +11,34 @@ let changeAvatarDialog = function() {
             text: gettext('Upload'),
             class: "fw-button fw-dark",
             click: function() {
+
+                let avatarUploaderEl = document.getElementById('avatar-uploader')
+
+                if (!avatarUploaderEl.files.length) {
+                    // No file selected
+                    return
+                }
+
                 activateWait()
-                let data = new window.FormData(jQuery('#avatar-uploader-form')[0])
-                jQuery.ajax({
-                    url: '/account/avatar/upload/',
-                    data,
-                    type: 'POST',
-                    crossDomain: false, // obviates need for sameOrigin test
-                    beforeSend: function(xhr, settings) {
-                        xhr.setRequestHeader("X-CSRFToken", csrfToken)
-                    },
-                    processData: false,
-                    contentType: false,
-                    dataType: 'json',
-                    success: (response, textStatus, jqXHR) => {
-                        jQuery('#profile-avatar > img').attr('src', response.avatar)
-                    },
-                    error: (jqXHR, textStatus, errorThrown) => {
-                        console.error(jqXHR.responseText)
-                    },
-                    complete: () => deactivateWait()
-                })
+
+                let file = avatarUploaderEl.files[0]
+
+                postJson(
+                    '/account/avatar/upload/',
+                    {
+                        avatar: {
+                            file,
+                            filename: file.name
+                        }
+                    }
+                ).then(
+                    response => document.querySelector('#profile-avatar > img').setAttribute('src', response.avatar)
+                ).catch(
+                    () => addAlert('error', gettext('Could not update profile avatar'))
+                ).then(
+                    () => deactivateWait()
+                )
+
                 jQuery(this).dialog('close')
             }
         },
@@ -62,42 +69,32 @@ let changeAvatarDialog = function() {
 
 let deleteCurrentUser = function() {
     activateWait()
-    jQuery.ajax({
-        url : '/account/delete/',
-        data : {},
-        type : 'POST',
-        dataType : 'json',
-        crossDomain: false, // obviates need for sameOrigin test
-        beforeSend: (xhr, settings) => {
-            xhr.setRequestHeader("X-CSRFToken", csrfToken)
-        },
-        success : (response, textStatus, jqXHR) => {
-            window.location = '/logout/'
-        },
-        error: (jqXHR, textStatus, errorThrown) => {
-            console.error(jqXHR.responseText)
-        },
-        complete: () => deactivateWait()
-    })
+
+    post(
+        '/account/delete/'
+    ).then(
+        () => window.location = '/logout/'
+    ).catch(
+        () => {
+            addAlert('error', gettext('Could not delete account'))
+            deactivateWait()
+        }
+    )
 }
 
 
 let deleteAvatar = function() {
     activateWait()
-    jQuery.ajax({
-        url : '/account/avatar/delete/',
-        data : {},
-        type : 'POST',
-        dataType : 'json',
-        crossDomain: false, // obviates need for sameOrigin test
-        beforeSend: (xhr, settings) =>
-            xhr.setRequestHeader("X-CSRFToken", csrfToken),
-        success : (response, textStatus, jqXHR) =>
-            jQuery('#profile-avatar > img').attr('src', response.avatar),
-        error: (jqXHR, textStatus, errorThrown) =>
-            console.error(jqXHR.responseText),
-        complete: () => deactivateWait()
-    })
+
+    postJson(
+        '/account/avatar/delete/'
+    ).then(
+        response => document.querySelector('#profile-avatar > img').setAttribute('src', response.avatar)
+    ).catch(
+        () => addAlert('error', gettext('Could not delete avatar'))
+    ).then(
+        () => deactivateWait()
+    )
 }
 
 let deleteAvatarDialog = function() {
@@ -128,37 +125,24 @@ let deleteAvatarDialog = function() {
 
 let saveProfile = function() {
     activateWait()
-    let postData = {
-        'user': {
-            'username': jQuery('#username').val(),
-            'first_name': jQuery('#first_name').val(),
-            'last_name': jQuery('#last_name').val()
+
+    post(
+        '/account/save/',
+        {
+            form_data: JSON.stringify({
+                user: {
+                    username: document.getElementById('username').value,
+                    first_name: document.getElementById('first_name').value,
+                    last_name: document.getElementById('last_name').value
+                }
+            })
         }
-    }
-    jQuery.ajax({
-        url : '/account/save/',
-        data : {'form_data': JSON.stringify(postData)},
-        type : 'POST',
-        crossDomain: false, // obviates need for sameOrigin test
-        beforeSend: (xhr, settings) => {
-            xhr.setRequestHeader("X-CSRFToken", csrfToken)
-        },
-        error: (jqXHR, textStatus, errorThrown) => {
-            if(422 === jqXHR.status) {
-                jQuery('#edit_user').removeAttr("disabled")
-                let response = jQuery.parseJSON(jqXHR.responseText)
-                jQuery.each(response.errors, (fieldname, errmsg) => {
-                    let firstError = '<span class="form-error-msg">'+errmsg[0]+'</span>'
-                    jQuery('#'+fieldname).after(firstError)
-                })
-                let eMsg = gettext("Please check the above errors")
-                jQuery('#emsg').text( eMsg ).fadeIn('slow')
-            } else {
-                console.error(jqXHR.responseText)
-            }
-        },
-        complete: () => deactivateWait()
-    })
+    ).catch(
+        () => addAlert('error', gettext('Could not save profile data'))
+    ).then(
+        () => deactivateWait()
+    )
+
 }
 
 let deleteUserDialog = function() {
@@ -198,59 +182,56 @@ let changePwdDialog = function() {
             text: gettext('Submit'),
             class: "fw-button fw-dark",
             click: () => {
-                let oldPwd = jQuery('#old-password-input').val(),
-                    newPwd1 = jQuery('#new-password-input1').val(),
-                    newPwd2 = jQuery('#new-password-input2').val()
+                let oldPwd = document.getElementById('old-password-input').value,
+                    newPwd1 = document.getElementById('new-password-input1').value,
+                    newPwd2 = document.getElementById('new-password-input2').value
 
-                jQuery('#fw-password-change-error').html('')
+                document.getElementById('fw-password-change-error').innerHTML = ''
 
                 if('' === oldPwd || '' === newPwd1 || '' === newPwd2) {
-                    jQuery('#fw-password-change-error').html(gettext('All fields are required!'))
+                    document.getElementById('fw-password-change-error').innerHTML = gettext('All fields are required!')
                     return
                 }
 
                 if(newPwd1 !== newPwd2) {
-                    jQuery('#fw-password-change-error').html(gettext('Please confirm the new password!'))
+                    document.getElementById('fw-password-change-error').innerHTML = gettext('Please confirm the new password!')
                     return
                 }
 
-                let formData = new window.FormData(document.getElementById('fw-password-change-form'))
 
                 activateWait()
-                jQuery.ajax({
-                    url : '/account/passwordchange/',
-                    data: formData,
-                    type : 'POST',
-                    processData: false,
-                    contentType: false,
-                    dataType : 'json',
-                    crossDomain: false, // obviates need for sameOrigin test
-                    beforeSend: (xhr, settings) => {
-                        xhr.setRequestHeader("X-CSRFToken", csrfToken)
-                    },
-                    success: (response, textStatus, jqXHR) => {
-                        if(200 === jqXHR.status) {
+
+                postJsonStatus(
+                    '/account/passwordchange/',
+                    {
+                        old_password: oldPwd,
+                        new_password1: newPwd1,
+                        new_password2: newPwd2
+                    }
+                ).then(
+                    ({json, status}) => {
+                        if(200 === status) {
                             jQuery("#fw-change-pwd-dialog").dialog('close')
-                            window.alert(gettext('The password has been changed.'))
+                            addAlert('info', gettext('The password has been changed.'))
                         } else {
                             let eMsg
-                            if(response.msg.hasOwnProperty('old_password')) {
-                                eMsg = response.msg['old_password'][0]
-                            } else if(response.msg.hasOwnProperty('new_password1')) {
-                                eMsg = response.msg['new_password1'][0]
-                            } else if(response.msg.hasOwnProperty('new_password2')) {
-                                eMsg = response.msg['new_password2'][0]
+                            if(json.msg.hasOwnProperty('old_password')) {
+                                eMsg = json.msg['old_password'][0]
+                            } else if(json.msg.hasOwnProperty('new_password1')) {
+                                eMsg = json.msg['new_password1'][0]
+                            } else if(json.msg.hasOwnProperty('new_password2')) {
+                                eMsg = json.msg['new_password2'][0]
                             } else {
                                 eMsg = gettext('The password could not be changed!')
                             }
-                            jQuery('#fw-password-change-error').html(eMsg)
+                            document.getElementById('fw-password-change-error').innerHTML = eMsg
                         }
-                    },
-                    error: (jqXHR, textStatus, errorThrown) => {
-                        jQuery('#fw-password-change-error').html(gettext('The password could not be changed!'))
-                    },
-                    complete: () => deactivateWait()
-                })
+                    }
+                ).catch(
+                    () => addAlert('error', gettext('The password could not be changed'))
+                ).then(
+                    () => deactivateWait()
+                )
             }
         },
         {
@@ -262,7 +243,7 @@ let changePwdDialog = function() {
 
     jQuery("#fw-change-pwd-dialog").dialog({
         resizable: false,
-        height: 300,
+        height: 350,
         modal: true,
         buttons,
         close: function() { jQuery(this).dialog('destroy').remove() }
@@ -274,45 +255,38 @@ let addEmailDialog = function() {
     let buttons = [
         {
             text: gettext('Submit'),
+            class: "fw-button fw-dark",
             click: () => {
-                let newEmail = jQuery('#new-profile-email').val()
-                newEmail = newEmail.replace(/(^\s+)|(\s+$)/g, "")
+                let email = document.getElementById('new-profile-email').value.replace(/(^\s+)|(\s+$)/g, "")
 
-                jQuery('#fw-add-email-error').html('')
+                document.getElementById('fw-add-email-error').innerHTML = ''
 
-                if('' === newEmail) {
-                    jQuery('#fw-add-email-error').html(gettext('New email address is required!'))
+                if('' === email) {
+                    document.getElementById('fw-add-email-error').innerHTML = gettext('New email address is required!')
                     return
                 }
 
-                jQuery('#new-profile-email').val(newEmail)
+                document.getElementById('new-profile-email').value = email
 
-                let formData = new window.FormData(document.getElementById('fw-add-email-form'))
-                activateWait()
-                jQuery.ajax({
-                    url : '/account/emailadd/',
-                    data: formData,
-                    type : 'POST',
-                    processData: false,
-                    contentType: false,
-                    dataType : 'json',
-                    crossDomain: false, // obviates need for sameOrigin test
-                    beforeSend: (xhr, settings) =>
-                        xhr.setRequestHeader("X-CSRFToken", csrfToken),
-                    success : (response, textStatus, jqXHR) => {
-                        if(200 == jqXHR.status) {
+                postJsonStatus(
+                    '/account/emailadd/',
+                    {
+                        email
+                    }
+                ).then(
+                    ({json, status}) => {
+                        if(200 === status) {
                             jQuery('#fw-add-email-dialog').dialog('close')
-                            window.alert(gettext('Confirmation e-mail sent to ' + newEmail))
+                            addAlert('info', `${gettext('Confirmation e-mail sent to')}: ${email}`)
                         } else {
-                            let eMsg = response.msg['email'][0]
-                            jQuery('#fw-add-email-error').html(eMsg)
+                            document.getElementById('fw-add-email-error').innerHTML = json.msg['email'][0]
                         }
-                    },
-                    error: (jqXHR, textStatus, errorThrown) => {
-                        jQuery('#fw-add-email-error').html(gettext('The email could not be added!'))
-                    },
-                    complete: () => deactivateWait()
-                })
+                    }
+                ).catch(
+                    () => document.getElementById('fw-add-email-error').innerHTML = gettext('The email could not be added!')
+                ).then(
+                    () => deactivateWait()
+                )
             }
         },
         {
@@ -345,34 +319,28 @@ let deleteEmailDialog = function() {
             text: gettext('Remove'),
             class: "fw-button fw-dark",
             click: () => {
-                let formData = new window.FormData()
-                formData.append('email', email)
-
                 activateWait()
-                jQuery.ajax({
-                    url : '/account/emaildelete/',
-                    data: formData,
-                    type : 'POST',
-                    processData: false,
-                    contentType: false,
-                    dataType : 'json',
-                    crossDomain: false, // obviates need for sameOrigin test
-                    beforeSend: (xhr, settings) => {
-                        xhr.setRequestHeader("X-CSRFToken", csrfToken)
-                    },
-                    success : (response, textStatus, jqXHR) => {
-                        if(200 == jqXHR.status) {
+
+                postJsonStatus(
+                    '/account/emaildelete/',
+                    {
+                        email
+                    }
+                ).then(
+                    ({json, status}) => {
+                        if(200 == status) {
                             thisTr.remove()
                         }
+                        addAlert('info', gettext(json.msg))
+                    }
+                ).catch(
+                    () => addAlert('error', gettext('The email could not be removed!'))
+                ).then(
+                    () => {
                         jQuery('#fw-confirm-email-dialog').dialog('close')
-                        window.alert(gettext(response.msg))
-                    },
-                    error: (jqXHR, textStatus, errorThrown) => {
-                        jQuery('#fw-confirm-email-dialog').dialog('close')
-                        window.alert(gettext('The email could not be removed!'))
-                    },
-                    complete: () => deactivateWait()
-                })
+                        deactivateWait()
+                    }
+                )
             }
         },
         {
@@ -394,11 +362,11 @@ let deleteEmailDialog = function() {
 let changePrimaryEmailDialog = function() {
     let primEmailRadio = jQuery('.primary-email-radio:checked'),
         primEmailErapper = primEmailRadio.parent().parent(),
-        primEmail = primEmailRadio.val()
+        email = primEmailRadio.val()
 
     jQuery('body').append(deleteEmailDialogTemplate({
         'title': gettext('Confirm set primary'),
-        'text':  gettext('Set the email address primary') + ': ' + primEmail + '?'
+        'text':  `${gettext('Set the email address primary')}: ${email}?`
     }))
 
     let buttons = [
@@ -406,37 +374,31 @@ let changePrimaryEmailDialog = function() {
             text: gettext('Submit'),
             class: "fw-button fw-dark",
             click: () => {
-                let formData = new window.FormData()
-                formData.append('email', primEmail)
-
                 activateWait()
-                jQuery.ajax({
-                    url : '/account/emailprimary/',
-                    data: formData,
-                    type : 'POST',
-                    processData: false,
-                    contentType: false,
-                    dataType : 'json',
-                    crossDomain: false, // obviates need for sameOrigin test
-                    beforeSend: (xhr, settings) =>
-                        xhr.setRequestHeader("X-CSRFToken", csrfToken),
-                    success : (response, textStatus, jqXHR) => {
-                        if(200 == jqXHR.status) {
-                            jQuery('tr.primary-email-tr span.disabled').attr('class', 'delete-email fw-link-text')
+
+                postJsonStatus(
+                    '/account/emailprimary/',
+                    {
+                        email
+                    }
+                ).then(
+                    ({json, status}) => {
+                        if(200 == status) {
+                            document.querySelector('tr.primary-email-tr span.disabled').setAttribute('class', 'delete-email fw-link-text')
                             primEmailErapper.find('span.delete-email.fw-link-text').attr('class', 'disabled')
                         } else {
                             jQuery('tr.primary-email-tr .primary-email-radio').prop("checked", true)
                         }
-                        window.alert(gettext(response.msg))
-                    },
-                    error: (jqXHR, textStatus, errorThrown) => {
-                        window.alert(gettext('The email could not be set primary!'))
-                    },
-                    complete: () => {
+                        addAlert('info', gettext(json.msg))
+                    }
+                ).catch(
+                    () => addAlert('error', gettext('The email could not be set primary'))
+                ).then(
+                    () => {
                         jQuery('#fw-confirm-email-dialog').dialog('close')
                         deactivateWait()
                     }
-                })
+                )
             }
         },
         {

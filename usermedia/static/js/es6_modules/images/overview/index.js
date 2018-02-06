@@ -1,6 +1,6 @@
 import {ImageDB} from "../database"
 import {ImageOverviewCategories} from "./categories"
-import {addDropdownBox, activateWait, deactivateWait, addAlert, csrfToken} from "../../common"
+import {addDropdownBox, activateWait, deactivateWait, addAlert, post} from "../../common"
 import {SiteMenu} from "../../menu"
 import {OverviewMenuView} from "../../common"
 import {menuModel} from "./menu"
@@ -36,35 +36,31 @@ export class ImageOverview {
     deleteImage(ids) {
         ids = ids.map(id => parseInt(id))
 
-        let postData = {
-            'ids[]': ids
-        }
         activateWait()
-        jQuery.ajax({
-            url: '/usermedia/delete/',
-            data: postData,
-            type: 'POST',
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: (xhr, settings) =>
-                xhr.setRequestHeader("X-CSRFToken", csrfToken),
-            success: (response, textStatus, jqXHR) => {
+        post(
+            '/usermedia/delete/',
+            {
+                'ids[]': ids
+            }
+        ).then(
+            () => {
                 this.stopUsermediaTable()
-                let len = ids.length
-                for (let i = 0; i < len; i++) {
-                    delete this.imageDB[ids[i]]
-                }
+                ids.forEach(id => {
+                    delete this.imageDB[id]
+                })
                 let elementsId = '#Image_' + ids.join(', #Image_')
-                jQuery(elementsId).detach()
+
+                Array.prototype.slice.call(document.querySelectorAll(elementsId)).forEach(
+                    el => el.parentElement.removeChild(el)
+                )
                 this.startUsermediaTable()
                 addAlert('success', gettext('The image(s) have been deleted'))
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                addAlert('error', jqXHR.responseText)
-            },
-            complete: function () {
-                deactivateWait()
             }
-        })
+        ).catch(
+            () => addAlert('error', gettext('The image(s) could not be deleted'))
+        ).then(
+            () => deactivateWait()
+        )
     }
 
     deleteImageDialog(ids) {

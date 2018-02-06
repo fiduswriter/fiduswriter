@@ -32,21 +32,13 @@ export class DocxExporterMath {
     }
 
     setupXslt() {
-        return new Promise(
-            resolve => {
-                jQuery.ajax({
-                    type: 'GET',
-                    url: window.staticUrl + 'xsl/mml2omml.xsl',
-                    dataType: 'text',
-                    success: xslFile => {
-                        const parser = new window.DOMParser()
-                        let xsl = parser.parseFromString(xslFile, "text/xml").querySelector('stylesheet')
-                        this.processor.importStylesheet(xsl)
-                        resolve()
-                    }
-                })
-            }
-        )
+        return fetch(`${window.staticUrl}xsl/mml2omml.xsl`)
+            .then(response => response.text())
+            .then(xmlString => {
+                const parser = new window.DOMParser()
+                let xsl = parser.parseFromString(xmlString, "text/xml").querySelector('stylesheet')
+                this.processor.importStylesheet(xsl)
+            })
     }
 
 

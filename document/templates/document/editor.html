@@ -21,6 +21,8 @@
                 var websocketServer = location.host.split(':')[0];
             {% endif %}
         </script>
+        <!-- Check browser -->
+        <script type="text/javascript" src="{{ STATIC_URL }}js/browser_check.es5.js"></script>
         <!-- KaTeX -->
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/libs/katex/katex.min.css" />
         <!-- MathQuill -->

@@ -1,6 +1,7 @@
 from datetime import datetime
 from sys import platform
 
+from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import translation, autoreload
 from django.conf import settings
@@ -28,6 +29,7 @@ class Command(BaseCommand):
             self.port = self.default_port
         if not self.port.isdigit():
             raise CommandError("%r is not a valid port number." % self.port)
+        call_command("transpile")
         if settings.DEBUG:
             autoreload.main(self.inner_run, args, options)
         else:

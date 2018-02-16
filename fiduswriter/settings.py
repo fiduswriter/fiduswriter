@@ -191,6 +191,7 @@ INSTALLED_APPS = (
     'django_js_error_hook',
     'adminplus',
     'fixturemedia',
+    'browser_check',
     'menu',
     'document',
     'bibliography',

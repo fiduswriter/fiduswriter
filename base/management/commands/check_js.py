@@ -1,5 +1,4 @@
 import shutil
-from os import path
 from subprocess import call
 
 from django.core.management.base import BaseCommand
@@ -11,6 +10,6 @@ class Command(BaseCommand):
     help = 'Check JavaScript files with JSHint'
 
     def handle(self, *args, **options):
-        shutil.os.chdir(PROJECT_PATH)
         call_command("transpile")
+        shutil.os.chdir(PROJECT_PATH)
         call(["npm", "run", "jshint"])

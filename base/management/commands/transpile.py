@@ -1,10 +1,11 @@
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
+from django.apps import apps as django_apps
 from subprocess import call, check_output
 import os
-import filecmp
 import shutil
 import time
+import pickle
 
 from django.contrib.staticfiles import finders
 from fiduswriter.settings import PROJECT_PATH, STATIC_ROOT
@@ -24,77 +25,87 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         start = time.time()
-        shutil.os.chdir(PROJECT_PATH)
-        call_command("create_package_json")
-        npm_install = True
-        bundle_katex = True
-        if (
-            os.path.exists(
+        last_run = 0
+        try:
+            with open('.transpile-time', 'rb') as f:
+                last_run = pickle.load(f)
+        except EOFError:
+            pass
+        except IOError:
+            pass
+        settings_change = os.path.getmtime(
+            os.path.join(
+                PROJECT_PATH,
+                "fiduswriter/settings.py"
+            )
+        )
+        configuration_change = 0
+        try:
+            configuration_change = os.path.getmtime(
                 os.path.join(
                     PROJECT_PATH,
-                    "node_modules/.bin/browserifyinc"
-                )
-            ) and os.path.exists(
-                os.path.join(
-                    PROJECT_PATH,
-                    "node_modules/package.json"
-                )
-            ) and os.path.exists(
-                os.path.join(
-                    PROJECT_PATH,
-                    "static-libs"
+                    "configuration.py"
                 )
             )
-        ):
-            if filecmp.cmp(
+        except OSError:
+            pass
+        configuration_change = max([settings_change, configuration_change])
+        package_change = -1
+        try:
+            package_change = os.path.getmtime(
                 os.path.join(
                     PROJECT_PATH,
                     "package.json"
-                ),
-                os.path.join(
-                    PROJECT_PATH,
-                    "node_modules/package.json"
                 )
-            ):
-                npm_install = False
-                if os.path.exists(
-                    os.path.join(
-                        PROJECT_PATH,
-                        "base/static/zip/katex-style.zip"
-                    )
-                ) and os.path.exists(
-                    os.path.join(
-                        PROJECT_PATH,
-                        "base/static/js/es6_modules/katex/opf-includes.js"
-                    )
-                ):
-                    bundle_katex = False
-
-        if npm_install:
+            )
+        except OSError:
+            pass
+        app_package_change = 0
+        configs = django_apps.get_app_configs()
+        for config in configs:
+            package_path = os.path.join(config.path, 'package.json')
+            try:
+                app_package_change = max(
+                    os.path.getmtime(package_path),
+                    app_package_change
+                )
+            except OSError:
+                pass
+        npm_install = False
+        if (
+            configuration_change > last_run or
+            app_package_change > package_change
+        ):
+            call_command("create_package_json")
             if os.path.exists(os.path.join(PROJECT_PATH, "node_modules")):
                 shutil.rmtree("node_modules")
-            # print("Cleaning npm cache")
-            # call(["npm", "cache", "clean", "--force"])
             print("Installing dependencies")
             call(["npm", "install"])
-            # Copy the package.json file to node_modules, so we can compare it
-            # to the current version next time we run it.
-            call(["cp", "package.json", "node_modules"])
-
-        if bundle_katex:
             call_command("bundle_katex")
-        # Collect all javascript in a temporary dir (similar to
-        # ./manage.py collectstatic).
-        # This allows for the modules to import from oneanother, across Django
-        # Apps.
-        # Create a cache dir for collecting JavaScript files
-        cache_path = os.path.join(PROJECT_PATH, "es6-cache")
-        if not os.path.exists(cache_path):
-            os.makedirs(cache_path)
-        cache_dir = "./es6-cache/"
+            npm_install = True
+        js_paths = finders.find('js/', True)
+        # Remove paths inside of collection dir
+        js_paths = [x for x in js_paths if not x.startswith(STATIC_ROOT)]
 
-        # Remove any previously created static output dirs
-        if os.path.exists(os.path.join(PROJECT_PATH, "static-es5")):
+        es5_path = os.path.join(PROJECT_PATH, "static-es5")
+
+        if os.path.exists(es5_path):
+            files = []
+            for js_path in js_paths:
+                for root, dirnames, filenames in os.walk(js_path):
+                    for filename in filenames:
+                        files.append(os.path.join(root, filename))
+            newest_file = max(
+                files,
+                key=os.path.getmtime
+            )
+            if (
+                os.path.commonprefix([newest_file, es5_path]) == es5_path and
+                not npm_install
+            ):
+                # Transpile not needed as nothing has changed
+                return
+            # Remove any previously created static output dirs
             shutil.rmtree("static-es5")
 
         # Create a static output dir
@@ -110,11 +121,8 @@ class Command(BaseCommand):
                 )
             )
 
-        js_paths = finders.find('js/', True)
         mainfiles = []
         sourcefiles = []
-        # Remove paths inside of collection dir
-        js_paths = [x for x in js_paths if not x.startswith(STATIC_ROOT)]
         for path in js_paths:
             for mainfile in check_output(
                 ["find", path, "-type", "f", "-name", "*.es6.js", "-print"]
@@ -125,7 +133,15 @@ class Command(BaseCommand):
             ).decode('utf-8').split("\n")[:-1]:
                 if 'static/js' in sourcefile:
                     sourcefiles.append(sourcefile)
-
+        # Collect all JavaScript in a temporary dir (similar to
+        # ./manage.py collectstatic).
+        # This allows for the modules to import from oneanother, across Django
+        # Apps.
+        # Create a cache dir for collecting JavaScript files
+        cache_path = os.path.join(PROJECT_PATH, "es6-cache")
+        if not os.path.exists(cache_path):
+            os.makedirs(cache_path)
+        cache_dir = "./es6-cache/"
         # Note all cache files so that we can remove outdated files that no
         # longer are in the prject.
         cache_files = []
@@ -214,3 +230,6 @@ class Command(BaseCommand):
         end = time.time()
         print("Time spent transpiling: " +
               str(int(round(end - start))) + " seconds")
+        last_run = end
+        with open('.transpile-time', 'wb') as f:
+            pickle.dump(last_run, f)

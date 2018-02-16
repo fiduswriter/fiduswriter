@@ -33,3 +33,5 @@ base/static/css/libs/
 /package.json
 *.swp
 *.swo
+/.transpile-time
+/package-lock.json

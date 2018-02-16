@@ -12,11 +12,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         shutil.os.chdir(PROJECT_PATH)
-        if not path.exists(
-            path.join(
-                PROJECT_PATH,
-                "node_modules/.bin/jshint"
-            )
-        ):
-            call_command("transpile")
+        call_command("transpile")
         call(["npm", "run", "jshint"])

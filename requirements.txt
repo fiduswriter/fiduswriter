@@ -9,7 +9,7 @@ django-js-error-hook==0.6
 tornado==4.5.3
 python-dateutil==2.6.1
 python-magic==0.4.15
-setuptools==38.4.0
+setuptools==38.5.1
 future==0.16.0
 JSON_minify==0.3.0
 jsonpatch==1.21

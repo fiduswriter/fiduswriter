@@ -8,6 +8,8 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.apps import apps as django_apps
 
+from npm_mjs import signals
+
 if settings.SETTINGS_PATHS:
     SETTINGS_PATHS = settings.SETTINGS_PATHS
 else:
@@ -70,7 +72,7 @@ def install_npm():
             shutil.rmtree(node_modules_path)
         call_command("create_package_json")
         call(["npm", "install"])
-        call_command("bundle_katex")
+        signals.post_npm_install.send(sender=None)
         npm_install = True
     return npm_install
 

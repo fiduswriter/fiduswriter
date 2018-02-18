@@ -9,6 +9,7 @@ from django.contrib.staticfiles import finders
 from django.conf import settings
 
 from .npm_install import install_npm
+from npm_mjs import signals
 
 if settings.PROJECT_PATH:
     PROJECT_PATH = settings.PROJECT_PATH
@@ -191,20 +192,11 @@ class Command(BaseCommand):
                   "--cachefile", cachefile, "--outfile", outfile, "-t",
                   "babelify", infile])
 
-        # Copy mathquill CSS
-        try:
-            os.makedirs("static-transpile/css/libs/mathquill")
-        except OSError:
-            pass
-        call(["cp", "node_modules/mathquill/build/mathquill.css",
-              "static-transpile/css/libs/mathquill"])
-        call(["cp", "-R", "node_modules/mathquill/build/font",
-              "static-transpile/css/libs/mathquill"])
-
         end = int(round(time.time()))
         self.stdout.write(
             "Time spent transpiling: " + str(end - start) + " seconds"
         )
+
         LAST_RUN = end
         with open(
             os.path.join(
@@ -214,3 +206,4 @@ class Command(BaseCommand):
             'wb'
         ) as f:
             pickle.dump(LAST_RUN, f)
+        signals.post_transpile.send(sender=None)

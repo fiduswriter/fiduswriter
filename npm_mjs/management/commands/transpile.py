@@ -192,7 +192,10 @@ class Command(BaseCommand):
                   "babelify", infile])
 
         # Copy mathquill CSS
-        os.makedirs("static-transpile/css/libs/mathquill", exist_ok=True)
+        try:
+            os.makedirs("static-transpile/css/libs/mathquill")
+        except OSError:
+            pass
         call(["cp", "node_modules/mathquill/build/mathquill.css",
               "static-transpile/css/libs/mathquill"])
         call(["cp", "-R", "node_modules/mathquill/build/font",

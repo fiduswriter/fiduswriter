@@ -26,7 +26,7 @@ MANAGERS = ADMINS
 PROJECT_PATH = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
 
 # Paths to settings files
-SETTINGS_PATHS = [os.path.dirname(__file__),]
+SETTINGS_PATHS = [os.path.dirname(__file__), ]
 
 DATABASES = {
     'default': {

@@ -52,7 +52,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         global LAST_RUN
         start = int(round(time.time()))
-        change_times = [0,]
+        change_times = [0, ]
         for path in SETTINGS_PATHS:
             change_times.append(os.path.getmtime(path))
         settings_change = max(change_times)

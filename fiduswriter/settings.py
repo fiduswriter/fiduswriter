@@ -25,6 +25,9 @@ MANAGERS = ADMINS
 # above this file.
 PROJECT_PATH = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
 
+# Paths to settings files
+SETTINGS_PATHS = [os.path.dirname(__file__),]
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -187,6 +190,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django.contrib.flatpages',
     'django_js_error_hook',
+    'npm_mjs',
     'adminplus',
     'fixturemedia',
     'browser_check',
@@ -320,9 +324,12 @@ JS_LOCATIONS = {
 
 CSS_LOCATIONS = {}
 
+local_config_path = os.path.join(PROJECT_PATH, 'configuration.py')
 try:
-    local_config = open(os.path.join(PROJECT_PATH, 'configuration.py'))
+    local_config = open(local_config_path)
 except IOError:
     pass
 else:
     exec(local_config.read(), globals())
+    # Paths to settings files
+    SETTINGS_PATHS += [local_config_path]

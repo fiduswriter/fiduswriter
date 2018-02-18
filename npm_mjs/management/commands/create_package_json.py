@@ -5,7 +5,8 @@ from json_minify import json_minify
 from tornado.escape import json_decode
 from django.core.management.base import BaseCommand
 from django.apps import apps as django_apps
-from fiduswriter.settings import PROJECT_PATH
+
+from django.conf import settings
 
 
 def deep_merge_dicts(old_dict, merge_dict, scripts=False):
@@ -34,7 +35,8 @@ class Command(BaseCommand):
     help = 'Join package.json files from apps into common package.json'
 
     def handle(self, *args, **options):
-        shutil.os.chdir(PROJECT_PATH)
+        if settings.PROJECT_PATH:
+            shutil.os.chdir(settings.PROJECT_PATH)
         package = {}
         configs = django_apps.get_app_configs()
         for config in configs:

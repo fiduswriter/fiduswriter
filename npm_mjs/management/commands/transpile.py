@@ -8,8 +8,17 @@ import time
 import pickle
 
 from django.contrib.staticfiles import finders
-from fiduswriter.settings import PROJECT_PATH, STATIC_ROOT
+from django.conf import settings
 
+if settings.PROJECT_PATH:
+    PROJECT_PATH = settings.PROJECT_PATH
+else:
+    PROJECT_PATH = "./"
+
+if settings.SETTINGS_PATHS:
+    SETTINGS_PATHS = settings.SETTINGS_PATHS
+else:
+    SETTINGS_PATHS = []
 
 # Temporary conversion of JavaScript ES6 to ES5. Once
 # all supported browsers support ES6 sufficiently ('class' in particular,
@@ -19,12 +28,14 @@ from fiduswriter.settings import PROJECT_PATH, STATIC_ROOT
 # Run this script every time you update an *.mjs file or any of the
 # modules it loads.
 LAST_RUN = 0
+transpile_time_path = os.path.join(
+    PROJECT_PATH,
+    ".transpile-time"
+)
+
 try:
     with open(
-        os.path.join(
-            PROJECT_PATH,
-            ".transpile-time"
-        ),
+        transpile_time_path,
         'rb'
     ) as f:
         LAST_RUN = pickle.load(f)
@@ -41,63 +52,55 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         global LAST_RUN
         start = int(round(time.time()))
-        settings_change = os.path.getmtime(
-            os.path.join(
-                PROJECT_PATH,
-                "fiduswriter/settings.py"
-            )
+        change_times = [0,]
+        for path in SETTINGS_PATHS:
+            change_times.append(os.path.getmtime(path))
+        settings_change = max(change_times)
+        package_path = os.path.join(
+            PROJECT_PATH,
+            "package.json"
         )
-        configuration_change = 0
-        try:
-            configuration_change = os.path.getmtime(
-                os.path.join(
-                    PROJECT_PATH,
-                    "configuration.py"
-                )
-            )
-        except OSError:
-            pass
-        configuration_change = max([settings_change, configuration_change])
-        package_change = -1
-        try:
-            package_change = os.path.getmtime(
-                os.path.join(
-                    PROJECT_PATH,
-                    "package.json"
-                )
-            )
-        except OSError:
-            pass
+        if os.path.exists(package_path):
+            package_change = os.path.getmtime(package_path)
+        else:
+            package_change = -1
         app_package_change = 0
         configs = django_apps.get_app_configs()
         for config in configs:
-            package_path = os.path.join(config.path, 'package.json')
-            try:
+            app_package_path = os.path.join(config.path, "package.json")
+            if os.path.exists(app_package_path):
                 app_package_change = max(
-                    os.path.getmtime(package_path),
+                    os.path.getmtime(app_package_path),
                     app_package_change
                 )
-            except OSError:
-                pass
         npm_install = False
+        node_modules_path = os.path.join(
+            PROJECT_PATH,
+            "node_modules"
+        )
         if (
-            configuration_change > LAST_RUN or
+            settings_change > LAST_RUN or
             app_package_change > package_change
         ):
             call_command("create_package_json")
-            if os.path.exists(os.path.join(PROJECT_PATH, "node_modules")):
-                shutil.rmtree("node_modules")
+            if os.path.exists(node_modules_path):
+                shutil.rmtree(node_modules_path)
             print("Installing dependencies")
             call(["npm", "install"])
             call_command("bundle_katex")
             npm_install = True
         js_paths = finders.find('js/', True)
         # Remove paths inside of collection dir
-        js_paths = [x for x in js_paths if not x.startswith(STATIC_ROOT)]
+        js_paths = [
+            x for x in js_paths if not x.startswith(settings.STATIC_ROOT)
+        ]
 
-        es5_path = os.path.join(PROJECT_PATH, "static-transpile")
+        transpile_path = os.path.join(
+            PROJECT_PATH,
+            "static_transpile"
+        )
 
-        if os.path.exists(es5_path):
+        if os.path.exists(transpile_path):
             files = []
             for js_path in js_paths:
                 for root, dirnames, filenames in os.walk(js_path):
@@ -108,18 +111,20 @@ class Command(BaseCommand):
                 key=os.path.getmtime
             )
             if (
-                os.path.commonprefix([newest_file, es5_path]) == es5_path and
+                os.path.commonprefix(
+                    [newest_file, transpile_path]
+                ) == transpile_path and
                 not npm_install
             ):
                 # Transpile not needed as nothing has changed
                 return
             # Remove any previously created static output dirs
-            shutil.rmtree("static-transpile")
+            shutil.rmtree(transpile_path)
 
         # Create a static output dir
-        out_dir = "./static-transpile/js/transpile"
+        out_dir = os.path.join(transpile_path, "js/transpile")
         os.makedirs(out_dir)
-        with open("./static-transpile/README.txt", 'w') as f:
+        with open(os.path.join(transpile_path, "README.txt"), 'w') as f:
             f.write(
                 (
                     'These files have been automatically generated. '
@@ -146,6 +151,7 @@ class Command(BaseCommand):
         # This allows for the modules to import from oneanother, across Django
         # Apps.
         # Create a cache dir for collecting JavaScript files
+
         cache_path = os.path.join(PROJECT_PATH, ".transpile-cache")
         if not os.path.exists(cache_path):
             os.makedirs(cache_path)
@@ -203,7 +209,7 @@ class Command(BaseCommand):
 
         # Check for outdated files that should be removed
         for existing_file in check_output(
-            ["find", './.transpile-cache', "-type", "f"]
+            ["find", cache_path, "-type", "f"]
         ).decode('utf-8').split("\n")[:-1]:
             if existing_file not in cache_files:
                 if existing_file[-10:] == "cache.json":
@@ -214,6 +220,10 @@ class Command(BaseCommand):
                     print("Removing %s" % existing_file)
                     os.remove(existing_file)
 
+        browserifyinc_path = os.path.join(
+            node_modules_path,
+            '.bin/browserifyinc'
+        )
         for mainfile in mainfiles:
             dirname = os.path.dirname(mainfile)
             basename = os.path.basename(mainfile)
@@ -224,7 +234,7 @@ class Command(BaseCommand):
             infile = os.path.join(cache_dir, relative_dir, basename)
             outfile = os.path.join(out_dir, relative_dir, outfilename)
             print("Transpiling %s." % basename)
-            call(["node_modules/.bin/browserifyinc", "--ignore-missing",
+            call([browserifyinc_path, "--ignore-missing",
                   "--cachefile", cachefile, "--outfile", outfile, "-t",
                   "babelify", infile])
 

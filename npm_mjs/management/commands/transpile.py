@@ -155,7 +155,6 @@ class Command(BaseCommand):
         cache_path = os.path.join(PROJECT_PATH, ".transpile-cache")
         if not os.path.exists(cache_path):
             os.makedirs(cache_path)
-        cache_dir = "./.transpile-cache/"
         # Note all cache files so that we can remove outdated files that no
         # longer are in the prject.
         cache_files = []
@@ -164,7 +163,7 @@ class Command(BaseCommand):
         plugin_dirs = {}
         for sourcefile in sourcefiles:
             relative_path = sourcefile.split('static/js/')[1]
-            outfile = os.path.join(cache_dir, relative_path)
+            outfile = os.path.join(cache_path, relative_path)
             cache_files.append(outfile)
             dirname = os.path.dirname(outfile)
             if not os.path.exists(dirname):
@@ -229,9 +228,9 @@ class Command(BaseCommand):
             basename = os.path.basename(mainfile)
             outfilename = basename.split('.')[0] + ".js"
             cachefile = os.path.join(
-                cache_dir, basename.split('.')[0] + ".cache.json")
+                cache_path, basename.split('.')[0] + ".cache.json")
             relative_dir = dirname.split('static/js')[1]
-            infile = os.path.join(cache_dir, relative_dir, basename)
+            infile = os.path.join(cache_path, relative_dir, basename)
             outfile = os.path.join(out_dir, relative_dir, outfilename)
             print("Transpiling %s." % basename)
             call([browserifyinc_path, "--ignore-missing",

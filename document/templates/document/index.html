@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load compress %}
+{% load transpile %}
 {% load avatar_tags %}
 
 {% block title %}{% trans "Document Overview" %}{% endblock %}
@@ -13,13 +14,11 @@
 
     <!-- jQuery tablesorter -->
     <script type="text/javascript" src="{{ DATATABLES_URL }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/document-overview.es5.js"></script>
+    <script type="text/javascript" src="{% transpile-static "js/document_overview.mjs" %}"></script>
 
-    {% compress js %}
-        <script type="text/javascript">
-            var staticUrl = '{{ STATIC_URL }}';
-        </script>
-    {% endcompress %}
+    <script type="text/javascript">
+        var staticUrl = '{{ STATIC_URL }}';
+    </script>
 {% endblock %}
 
 {% block contents %}

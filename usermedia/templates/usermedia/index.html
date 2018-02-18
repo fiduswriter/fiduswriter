@@ -1,13 +1,14 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load compress %}
+{% load transpile %}
 
 {% block title %}{% trans "Media Manager" %}{% endblock %}
 
 {% block extraheaders %}
 <!-- jQuery tablesorter -->
 <script type="text/javascript" src="{{ DATATABLES_URL }}"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/images-overview.es5.js"></script>
+<script type="text/javascript" src="{% transpile-static "js/images_overview.mjs" %}"></script>
 
 {% endblock %}
 

@@ -1,20 +1,22 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load static %}
+{% load transpile %}
 {% load compress %}
 
 {% block title %}{% trans "Bibliography Manager" %}{% endblock %}
 
 {% block extraheaders %}
     {% compress css %}
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/bibliography.css" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw-layouts/bibliography.css" %}" />
+        <!-- ProseMirror CSS -->
+        <link type="text/css" rel="stylesheet" href="{% static "css/prosemirror.css" %}" />
     {% endcompress %}
 
     <!-- jQuery tablesorter -->
     <script type="text/javascript" src="{{ DATATABLES_URL }}"></script>
-    <!-- ProseMirror CSS -->
-    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/prosemirror.css" />
-    
-    <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-overview.es5.js"></script>
+
+    <script type="text/javascript" src="{% transpile-static "js/bibliography_overview.mjs" %}"></script>
 
 {% endblock %}
 

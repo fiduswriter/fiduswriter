@@ -1,0 +1,39 @@
+// Django-npm-mjs will combine this file with package.json files in other installed
+// apps before executing npm commands. Different from a regular package.json, comments
+// are allowed in this file.
+{
+  "description": "Install dependencies for ES6 transpilation",
+  "author": "Johannes Wilm",
+  "license": "AGPL",
+  "private": true,
+  "dependencies": {
+    "babel-preset-env": "1.6.1",
+    "babel-core": "6.26.0",
+    "babelify": "8.0.0",
+    "browserify": "16.1.0",
+    "browserify-incremental": "3.1.1"
+  },
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "presets": [
+            [
+              "env",
+              {
+                "targets": {
+                  "browsers": [
+                    "last 2 versions"
+                  ]
+                }
+              }
+            ]
+          ],
+          "compact": false,
+          "extensions": [".mjs", ".js"]
+        }
+      ]
+    ]
+  }
+}

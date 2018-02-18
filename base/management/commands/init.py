@@ -40,6 +40,7 @@ class Command(BaseCommand):
             "loaddata",
             "document/fixtures/initial_export_templates.json")
         call_command("compilemessages")
+        call_command("transpile")
         if not options["no-compress"]:
             try:
                 call_command("compress")

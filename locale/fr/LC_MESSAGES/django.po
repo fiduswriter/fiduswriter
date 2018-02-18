@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-13 22:55+0000\n"
+"POT-Creation-Date: 2018-02-17 23:33+0000\n"
 "PO-Revision-Date: 2016-06-17 15:21+0200\n"
 "Last-Translator: Nicolas Rochard <nrochard@gmail.com>\n"
 "Language-Team: français <nrochard@gmail.com>\n"
@@ -18,20 +18,20 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Gtranslator 2.91.7\n"
 
-#: base/templates/base.html:9 document/templates/document/editor.html:9
+#: base/templates/base.html:10 document/templates/document/editor.html:10
 #: user/templates/account/base.html:7
 msgid "The all in one solution for collaborative academic writing."
 msgstr "La solution tout en un pour l'écriture académique collaborative."
 
-#: base/templates/base.html:76
+#: base/templates/base.html:77
 msgid "Edit profile"
 msgstr "Éditer le profil"
 
-#: base/templates/base.html:81 user/templates/account/list_team_members.html:21
+#: base/templates/base.html:82 user/templates/account/list_team_members.html:19
 msgid "Contacts"
 msgstr "Contacts"
 
-#: base/templates/base.html:87
+#: base/templates/base.html:88
 msgid "Log out"
 msgstr "Déconnexion"
 
@@ -51,60 +51,75 @@ msgstr "Citations avec Citation Style Language"
 msgid "Editing with ProseMirror"
 msgstr "Édité avec ProseMirror"
 
-#: bibliography/templates/bibliography/index.html:5
+#: bibliography/templates/bibliography/index.html:7
 msgid "Bibliography Manager"
 msgstr "Gestionnaire de Bibliographie"
 
-#: bibliography/templates/bibliography/index.html:32
-#: document/templates/document/index.html:32
+#: bibliography/templates/bibliography/index.html:30
+#: document/templates/document/index.html:31
 msgid "Title"
 msgstr "Titre"
 
-#: bibliography/templates/bibliography/index.html:33
+#: bibliography/templates/bibliography/index.html:31
 msgid "Sourcetype"
 msgstr "Type de Source"
 
-#: bibliography/templates/bibliography/index.html:34
+#: bibliography/templates/bibliography/index.html:32
 msgid "Author"
 msgstr "Auteur"
 
-#: bibliography/templates/bibliography/index.html:35
+#: bibliography/templates/bibliography/index.html:33
 msgid "Published"
 msgstr "Publié"
 
-#: bibliography/templates/bibliography/index.html:36
-#: document/templates/document/index.html:38
-#: user/templates/account/list_team_members.html:23
-#: user/templates/account/show_profile.html:70
-#: usermedia/templates/usermedia/index.html:31
+#: bibliography/templates/bibliography/index.html:34
+#: document/templates/document/index.html:37
+#: user/templates/account/list_team_members.html:21
+#: user/templates/account/show_profile.html:71
+#: usermedia/templates/usermedia/index.html:25
 msgid "Delete"
 msgstr "Effacer"
 
-#: document/templates/document/editor.html:92
+#: browser_check/templates/browser_check/browser_not_supported.html:4
+#: browser_check/templates/browser_check/browser_not_supported.html:27
+msgid "Browser not supported"
+msgstr ""
+
+#: browser_check/templates/browser_check/browser_not_supported.html:28
+msgid ""
+"\n"
+"                Your browser is not supported by Fidus Writer.\n"
+"                Please update! We recommend using a current\n"
+"                version of Chrome/Chromium or Firefox on a\n"
+"                desktop computer.\n"
+"            "
+msgstr ""
+
+#: document/templates/document/editor.html:89
 msgid "en"
 msgstr "fr"
 
-#: document/templates/document/index.html:6
+#: document/templates/document/index.html:7
 msgid "Document Overview"
 msgstr "Aperçu du document"
 
-#: document/templates/document/index.html:33
+#: document/templates/document/index.html:32
 msgid "Revisions"
 msgstr "Révisions"
 
-#: document/templates/document/index.html:34
+#: document/templates/document/index.html:33
 msgid "Created"
 msgstr "Créé"
 
-#: document/templates/document/index.html:35
+#: document/templates/document/index.html:34
 msgid "Last changed"
 msgstr "Dernière modification"
 
-#: document/templates/document/index.html:36
+#: document/templates/document/index.html:35
 msgid "Owner"
 msgstr "Propriétaire"
 
-#: document/templates/document/index.html:37
+#: document/templates/document/index.html:36
 msgid "Rights"
 msgstr "Droits"
 
@@ -133,70 +148,70 @@ msgstr ""
 msgid "Update all documents (DANGER!)"
 msgstr ""
 
-#: document/views.py:212
+#: document/views.py:216
 msgid "Untitled"
 msgstr "Sans Titre"
 
-#: document/views.py:226
+#: document/views.py:230
 msgid "Document shared:"
 msgstr "Document partagé:"
 
-#: document/views.py:252
+#: document/views.py:256
 msgid "Fidus Writer document write access"
 msgstr "Droits d'écriture du document Fidus Writer"
 
-#: feedback/templates/feedback/feedback.html:2
-#: feedback/templates/feedback/feedback.html:5
+#: feedback/templates/feedback/feedback.html:3
+#: feedback/templates/feedback/feedback.html:6
 msgid "Feedback"
 msgstr "Feedback"
 
-#: feedback/templates/feedback/feedback.html:10
-#: user/templates/account/show_profile.html:105
+#: feedback/templates/feedback/feedback.html:11
+#: user/templates/account/show_profile.html:106
 msgid "submit"
 msgstr "soumettre"
 
-#: feedback/templates/feedback/feedback.html:14
+#: feedback/templates/feedback/feedback.html:15
 msgid "Thank you for your comment!"
 msgstr "Merci pour votre commentaire!"
 
-#: fiduswriter/settings.py:258
+#: fiduswriter/settings.py:237
 msgid "English"
 msgstr "Anglais"
 
-#: fiduswriter/settings.py:259
+#: fiduswriter/settings.py:238
 msgid "Bulgarian"
 msgstr "Bulgare"
 
-#: fiduswriter/settings.py:260
+#: fiduswriter/settings.py:239
 msgid "German"
 msgstr "Allemand"
 
-#: fiduswriter/settings.py:261
+#: fiduswriter/settings.py:240
 msgid "French"
 msgstr ""
 
-#: fiduswriter/settings.py:262
+#: fiduswriter/settings.py:241
 msgid "Italian"
 msgstr "Italien"
 
-#: fiduswriter/settings.py:263
+#: fiduswriter/settings.py:242
 msgid "Spanish"
 msgstr "Espagnol"
 
-#: user/templates/account/base.html:54 user/templates/account/login.html:6
+#: user/templates/account/base.html:56 user/templates/account/login.html:7
 #: user/templates/account/signup.html:9
 msgid "Log In"
 msgstr "Connexion"
 
-#: user/templates/account/email_confirm.html:7
+#: user/templates/account/email_confirm.html:8
 msgid "Confirm E-mail Address"
 msgstr "Confirmer l'Adresse E-mail"
 
-#: user/templates/account/email_confirm.html:16
+#: user/templates/account/email_confirm.html:15
 msgid "Confirm E-mail Address and Agree to Terms and Conditions"
 msgstr "Confirmer l'Adresse E-mail et Accepter les Termes et Conditions"
 
-#: user/templates/account/email_confirm.html:21
+#: user/templates/account/email_confirm.html:20
 #, python-format
 msgid ""
 "\n"
@@ -215,7 +230,7 @@ msgstr ""
 "        <a href=\"/terms/\" target=\"_blank\">Termes et Conditions</a>.\n"
 "        "
 
-#: user/templates/account/email_confirm.html:30
+#: user/templates/account/email_confirm.html:29
 msgid ""
 "\n"
 "        I have read and agree to the <a href=\"/terms/\" target=\"_blank"
@@ -227,7 +242,7 @@ msgstr ""
 "et Conditions</a>.\n"
 "        "
 
-#: user/templates/account/email_confirm.html:38
+#: user/templates/account/email_confirm.html:37
 msgid ""
 "\n"
 "            I am aware that I am signing up for a test account and that "
@@ -240,11 +255,11 @@ msgstr ""
 "être interrompu sans préavis, me laissant sans fichier.\n"
 "            "
 
-#: user/templates/account/email_confirm.html:47
+#: user/templates/account/email_confirm.html:46
 msgid "Confirm"
 msgstr "Confirmer"
 
-#: user/templates/account/email_confirm.html:55
+#: user/templates/account/email_confirm.html:54
 #, python-format
 msgid ""
 "\n"
@@ -263,28 +278,28 @@ msgstr ""
 msgid "Team members"
 msgstr "Membres de l'équipe"
 
-#: user/templates/account/list_team_members.html:22
+#: user/templates/account/list_team_members.html:20
 #: user/templates/account/password_reset.html:28
 #: user/templates/account/signup.html:44
 msgid "E-mail address"
 msgstr "Adresse E-mail"
 
-#: user/templates/account/login.html:7
+#: user/templates/account/login.html:8
 #: user/templates/account/password_reset.html:7
 msgid "New here?"
 msgstr "Nouveau dans le coin?"
 
-#: user/templates/account/login.html:9
+#: user/templates/account/login.html:10
 #: user/templates/account/password_reset.html:9
 #: user/templates/account/signup.html:13 user/templates/account/signup.html:51
 msgid "Sign up"
 msgstr "S'inscrire"
 
-#: user/templates/account/login.html:17 user/templates/account/login.html:68
+#: user/templates/account/login.html:18 user/templates/account/login.html:69
 msgid "Log in"
 msgstr "Se connecter"
 
-#: user/templates/account/login.html:23
+#: user/templates/account/login.html:26
 #, python-format
 msgid ""
 "\n"
@@ -299,11 +314,11 @@ msgstr ""
 "options suivantes pour créer un compte.\n"
 "        "
 
-#: user/templates/account/login.html:34
+#: user/templates/account/login.html:37
 msgid "Login with"
 msgstr "Connexion avec"
 
-#: user/templates/account/login.html:43
+#: user/templates/account/login.html:46
 #, python-format
 msgid ""
 "\n"
@@ -316,22 +331,22 @@ msgstr ""
 "title=\"Sign up for %(site_name)s\">inscrire</a>.\n"
 "        "
 
-#: user/templates/account/login.html:57
-#: user/templates/account/show_profile.html:43
-#: user/templates/account/show_profile.html:121
+#: user/templates/account/login.html:58
+#: user/templates/account/show_profile.html:44
+#: user/templates/account/show_profile.html:122
 msgid "Username"
 msgstr "Nom d'utilisateur"
 
-#: user/templates/account/login.html:61
-#: user/templates/account/show_profile.html:55
+#: user/templates/account/login.html:62
+#: user/templates/account/show_profile.html:56
 msgid "Password"
 msgstr "Mot de passe"
 
-#: user/templates/account/login.html:71
+#: user/templates/account/login.html:72
 msgid "Remember me"
 msgstr "Se souvenir de moi"
 
-#: user/templates/account/login.html:73
+#: user/templates/account/login.html:74
 msgid "Forgot Password?"
 msgstr "Mot de Passe Oublié?"
 
@@ -372,46 +387,46 @@ msgstr ""
 msgid "Reset My Password"
 msgstr "Réinitialiser Mon Mot de Passe"
 
-#: user/templates/account/show_profile.html:22
+#: user/templates/account/show_profile.html:23
 msgid "Edit profile picture"
 msgstr "Changer l'image de profil"
 
-#: user/templates/account/show_profile.html:28
+#: user/templates/account/show_profile.html:29
 msgid "Change picture"
 msgstr "Changer l'image"
 
-#: user/templates/account/show_profile.html:33
+#: user/templates/account/show_profile.html:34
 msgid "Delete picture"
 msgstr "Effacer l'image"
 
-#: user/templates/account/show_profile.html:47
-#: user/templates/account/show_profile.html:125
+#: user/templates/account/show_profile.html:48
+#: user/templates/account/show_profile.html:126
 msgid "First name"
 msgstr "Prénom"
 
-#: user/templates/account/show_profile.html:51
-#: user/templates/account/show_profile.html:129
+#: user/templates/account/show_profile.html:52
+#: user/templates/account/show_profile.html:130
 msgid "Last name"
 msgstr "Nom"
 
-#: user/templates/account/show_profile.html:62
-#: user/templates/account/show_profile.html:133
+#: user/templates/account/show_profile.html:63
+#: user/templates/account/show_profile.html:134
 msgid "Email"
 msgstr "Email"
 
-#: user/templates/account/show_profile.html:68
+#: user/templates/account/show_profile.html:69
 msgid "Primary address"
 msgstr "Adresse Principale"
 
-#: user/templates/account/show_profile.html:69
+#: user/templates/account/show_profile.html:70
 msgid "Verified"
 msgstr "Vérifié"
 
-#: user/templates/account/show_profile.html:108
+#: user/templates/account/show_profile.html:109
 msgid "Delete account"
 msgstr "Effacer son compte"
 
-#: user/templates/account/show_profile.html:147
+#: user/templates/account/show_profile.html:148
 msgid "User does not exist."
 msgstr "L'Utilisateur n'existe pas"
 
@@ -483,29 +498,32 @@ msgstr ""
 "minutes.\n"
 "        "
 
-#: usermedia/templates/usermedia/index.html:5
+#: usermedia/templates/usermedia/index.html:6
 msgid "Media Manager"
 msgstr "Gestionnaire de Médias"
 
-#: usermedia/templates/usermedia/index.html:28
+#: usermedia/templates/usermedia/index.html:22
 msgid "File"
 msgstr "Fichier"
 
-#: usermedia/templates/usermedia/index.html:29
+#: usermedia/templates/usermedia/index.html:23
 msgid "Size (px)"
 msgstr "Taille (px)"
 
-#: usermedia/templates/usermedia/index.html:30
-msgid "Updated"
-msgstr "Mis à jour"
+#: usermedia/templates/usermedia/index.html:24
+msgid "Added"
+msgstr ""
 
-#: usermedia/views.py:40
+#: usermedia/views.py:41
 msgid "Filetype not supported"
 msgstr ""
 
-#: usermedia/views.py:66
+#: usermedia/views.py:68
 msgid "No file uploaded"
 msgstr ""
+
+#~ msgid "Updated"
+#~ msgstr "Mis à jour"
 
 #~ msgid "edit documents"
 #~ msgstr "éditer les documents"

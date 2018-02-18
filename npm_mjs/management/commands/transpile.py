@@ -1,22 +1,39 @@
-from django.core.management.base import BaseCommand
-from django.core.management import call_command
-from django.apps import apps as django_apps
 from subprocess import call, check_output
 import os
 import shutil
 import time
 import pickle
 
+from django.core.management.base import BaseCommand
 from django.contrib.staticfiles import finders
-from fiduswriter.settings import PROJECT_PATH, STATIC_ROOT
+from django.conf import settings
 
-# Temporary conversion of JavaScript ES6 to ES5. Once
-# all supported browsers support ES6 sufficiently ('class' in particular,
-# see http://kangax.github.io/compat-table/es6/), this script can be
-# replaced/updated.
+from .npm_install import install_npm
+from npm_mjs import signals
 
-# Run this script every time you update an *.es6.js file or any of the
+if settings.PROJECT_PATH:
+    PROJECT_PATH = settings.PROJECT_PATH
+else:
+    PROJECT_PATH = "./"
+
+# Run this script every time you update an *.mjs file or any of the
 # modules it loads.
+
+transpile_time_path = os.path.join(
+    PROJECT_PATH,
+    ".transpile-time"
+)
+
+try:
+    with open(
+        transpile_time_path,
+        'rb'
+    ) as f:
+        LAST_RUN = pickle.load(f)
+except EOFError:
+    LAST_RUN = 0
+except IOError:
+    LAST_RUN = 0
 
 
 class Command(BaseCommand):
@@ -24,72 +41,22 @@ class Command(BaseCommand):
             'dependencies')
 
     def handle(self, *args, **options):
-        start = time.time()
-        last_run = 0
-        try:
-            with open('.transpile-time', 'rb') as f:
-                last_run = pickle.load(f)
-        except EOFError:
-            pass
-        except IOError:
-            pass
-        settings_change = os.path.getmtime(
-            os.path.join(
-                PROJECT_PATH,
-                "fiduswriter/settings.py"
-            )
-        )
-        configuration_change = 0
-        try:
-            configuration_change = os.path.getmtime(
-                os.path.join(
-                    PROJECT_PATH,
-                    "configuration.py"
-                )
-            )
-        except OSError:
-            pass
-        configuration_change = max([settings_change, configuration_change])
-        package_change = -1
-        try:
-            package_change = os.path.getmtime(
-                os.path.join(
-                    PROJECT_PATH,
-                    "package.json"
-                )
-            )
-        except OSError:
-            pass
-        app_package_change = 0
-        configs = django_apps.get_app_configs()
-        for config in configs:
-            package_path = os.path.join(config.path, 'package.json')
-            try:
-                app_package_change = max(
-                    os.path.getmtime(package_path),
-                    app_package_change
-                )
-            except OSError:
-                pass
-        npm_install = False
-        if (
-            configuration_change > last_run or
-            app_package_change > package_change
-        ):
-            call_command("create_package_json")
-            if os.path.exists(os.path.join(PROJECT_PATH, "node_modules")):
-                shutil.rmtree("node_modules")
-            print("Installing dependencies")
-            call(["npm", "install"])
-            call_command("bundle_katex")
-            npm_install = True
+        global LAST_RUN
+        start = int(round(time.time()))
+        npm_install = install_npm()
+        self.stdout.write("Transpiling...")
         js_paths = finders.find('js/', True)
         # Remove paths inside of collection dir
-        js_paths = [x for x in js_paths if not x.startswith(STATIC_ROOT)]
+        js_paths = [
+            x for x in js_paths if not x.startswith(settings.STATIC_ROOT)
+        ]
 
-        es5_path = os.path.join(PROJECT_PATH, "static-es5")
+        transpile_path = os.path.join(
+            PROJECT_PATH,
+            "static-transpile"
+        )
 
-        if os.path.exists(es5_path):
+        if os.path.exists(transpile_path):
             files = []
             for js_path in js_paths:
                 for root, dirnames, filenames in os.walk(js_path):
@@ -100,18 +67,20 @@ class Command(BaseCommand):
                 key=os.path.getmtime
             )
             if (
-                os.path.commonprefix([newest_file, es5_path]) == es5_path and
+                os.path.commonprefix(
+                    [newest_file, transpile_path]
+                ) == transpile_path and
                 not npm_install
             ):
                 # Transpile not needed as nothing has changed
                 return
             # Remove any previously created static output dirs
-            shutil.rmtree("static-es5")
+            shutil.rmtree(transpile_path)
 
         # Create a static output dir
-        os.makedirs("static-es5/js")
-        out_dir = "./static-es5/js"
-        with open("./static-es5/README.txt", 'w') as f:
+        out_dir = os.path.join(transpile_path, "js/transpile")
+        os.makedirs(out_dir)
+        with open(os.path.join(transpile_path, "README.txt"), 'w') as f:
             f.write(
                 (
                     'These files have been automatically generated. '
@@ -125,7 +94,7 @@ class Command(BaseCommand):
         sourcefiles = []
         for path in js_paths:
             for mainfile in check_output(
-                ["find", path, "-type", "f", "-name", "*.es6.js", "-print"]
+                ["find", path, "-type", "f", "-name", "*.mjs", "-print"]
             ).decode('utf-8').split("\n")[:-1]:
                 mainfiles.append(mainfile)
             for sourcefile in check_output(
@@ -138,10 +107,10 @@ class Command(BaseCommand):
         # This allows for the modules to import from oneanother, across Django
         # Apps.
         # Create a cache dir for collecting JavaScript files
-        cache_path = os.path.join(PROJECT_PATH, "es6-cache")
+
+        cache_path = os.path.join(PROJECT_PATH, ".transpile-cache")
         if not os.path.exists(cache_path):
             os.makedirs(cache_path)
-        cache_dir = "./es6-cache/"
         # Note all cache files so that we can remove outdated files that no
         # longer are in the prject.
         cache_files = []
@@ -150,7 +119,7 @@ class Command(BaseCommand):
         plugin_dirs = {}
         for sourcefile in sourcefiles:
             relative_path = sourcefile.split('static/js/')[1]
-            outfile = os.path.join(cache_dir, relative_path)
+            outfile = os.path.join(cache_path, relative_path)
             cache_files.append(outfile)
             dirname = os.path.dirname(outfile)
             if not os.path.exists(dirname):
@@ -161,7 +130,7 @@ class Command(BaseCommand):
             elif os.path.getmtime(outfile) < os.path.getmtime(sourcefile):
                 shutil.copyfile(sourcefile, outfile)
             # Check for plugin connectors
-            if relative_path[:20] == 'es6_modules/plugins/':
+            if relative_path[:16] == 'modules/plugins/':
                 if dirname not in plugin_dirs:
                     plugin_dirs[dirname] = []
                 module_name = os.path.splitext(
@@ -195,41 +164,46 @@ class Command(BaseCommand):
 
         # Check for outdated files that should be removed
         for existing_file in check_output(
-            ["find", './es6-cache', "-type", "f"]
+            ["find", cache_path, "-type", "f"]
         ).decode('utf-8').split("\n")[:-1]:
             if existing_file not in cache_files:
                 if existing_file[-10:] == "cache.json":
-                    if not existing_file[:-10] + "es6.js" in cache_files:
-                        print("Removing %s" % existing_file)
+                    if not existing_file[:-10] + "mjs" in cache_files:
+                        self.stdout.write("Removing %s" % existing_file)
                         os.remove(existing_file)
                 else:
-                    print("Removing %s" % existing_file)
+                    self.stdout.write("Removing %s" % existing_file)
                     os.remove(existing_file)
-
+        browserifyinc_path = os.path.join(
+            PROJECT_PATH,
+            'node_modules/.bin/browserifyinc'
+        )
         for mainfile in mainfiles:
             dirname = os.path.dirname(mainfile)
             basename = os.path.basename(mainfile)
-            outfilename = basename.split('.')[0] + ".es5.js"
+            outfilename = basename.split('.')[0] + ".js"
             cachefile = os.path.join(
-                cache_dir, basename.split('.')[0] + ".cache.json")
+                cache_path, basename.split('.')[0] + ".cache.json")
             relative_dir = dirname.split('static/js')[1]
-            infile = os.path.join(cache_dir, relative_dir, basename)
+            infile = os.path.join(cache_path, relative_dir, basename)
             outfile = os.path.join(out_dir, relative_dir, outfilename)
-            print("Transpiling %s to %s." % (basename, outfile))
-            call(["node_modules/.bin/browserifyinc", "--ignore-missing",
+            self.stdout.write("Transpiling %s." % basename)
+            call([browserifyinc_path, "--ignore-missing",
                   "--cachefile", cachefile, "--outfile", outfile, "-t",
                   "babelify", infile])
 
-        # Copy mathquill CSS
-        os.makedirs("static-es5/css/libs/mathquill")
-        call(["cp", "node_modules/mathquill/build/mathquill.css",
-              "static-es5/css/libs/mathquill"])
-        call(["cp", "-R", "node_modules/mathquill/build/font",
-              "static-es5/css/libs/mathquill"])
+        end = int(round(time.time()))
+        self.stdout.write(
+            "Time spent transpiling: " + str(end - start) + " seconds"
+        )
 
-        end = time.time()
-        print("Time spent transpiling: " +
-              str(int(round(end - start))) + " seconds")
-        last_run = end
-        with open('.transpile-time', 'wb') as f:
-            pickle.dump(last_run, f)
+        LAST_RUN = end
+        with open(
+            os.path.join(
+                PROJECT_PATH,
+                ".transpile-time"
+            ),
+            'wb'
+        ) as f:
+            pickle.dump(LAST_RUN, f)
+        signals.post_transpile.send(sender=None)

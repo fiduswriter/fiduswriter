@@ -1,4 +1,4 @@
-import {DocumentOverview} from "./es6_modules/documents/overview"
+import {DocumentOverview} from "./modules/documents/overview"
 
 let theDocumentOverview = new DocumentOverview()
 

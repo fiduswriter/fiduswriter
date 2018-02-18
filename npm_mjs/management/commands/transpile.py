@@ -1,33 +1,24 @@
-from django.core.management.base import BaseCommand
-from django.core.management import call_command
-from django.apps import apps as django_apps
 from subprocess import call, check_output
 import os
 import shutil
 import time
 import pickle
 
+from django.core.management.base import BaseCommand
+from django.core.management import call_command
 from django.contrib.staticfiles import finders
 from django.conf import settings
+
+from .npm_install import install_npm
 
 if settings.PROJECT_PATH:
     PROJECT_PATH = settings.PROJECT_PATH
 else:
     PROJECT_PATH = "./"
 
-if settings.SETTINGS_PATHS:
-    SETTINGS_PATHS = settings.SETTINGS_PATHS
-else:
-    SETTINGS_PATHS = []
-
-# Temporary conversion of JavaScript ES6 to ES5. Once
-# all supported browsers support ES6 sufficiently ('class' in particular,
-# see http://kangax.github.io/compat-table/es6/), this script can be
-# replaced/updated.
-
 # Run this script every time you update an *.mjs file or any of the
 # modules it loads.
-LAST_RUN = 0
+
 transpile_time_path = os.path.join(
     PROJECT_PATH,
     ".transpile-time"
@@ -40,9 +31,9 @@ try:
     ) as f:
         LAST_RUN = pickle.load(f)
 except EOFError:
-    pass
+    LAST_RUN = 0
 except IOError:
-    pass
+    LAST_RUN = 0
 
 
 class Command(BaseCommand):
@@ -51,45 +42,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         global LAST_RUN
-        print("Transpiling...")
         start = int(round(time.time()))
-        change_times = [0, ]
-        for path in SETTINGS_PATHS:
-            change_times.append(os.path.getmtime(path))
-        settings_change = max(change_times)
-        package_path = os.path.join(
-            PROJECT_PATH,
-            "package.json"
-        )
-        if os.path.exists(package_path):
-            package_change = os.path.getmtime(package_path)
-        else:
-            package_change = -1
-        app_package_change = 0
-        configs = django_apps.get_app_configs()
-        for config in configs:
-            app_package_path = os.path.join(config.path, "package.json")
-            if os.path.exists(app_package_path):
-                app_package_change = max(
-                    os.path.getmtime(app_package_path),
-                    app_package_change
-                )
-        npm_install = False
-        node_modules_path = os.path.join(
-            PROJECT_PATH,
-            "node_modules"
-        )
-        if (
-            settings_change > LAST_RUN or
-            app_package_change > package_change
-        ):
-            call_command("create_package_json")
-            if os.path.exists(node_modules_path):
-                shutil.rmtree(node_modules_path)
-            print("Installing dependencies")
-            call(["npm", "install"])
-            call_command("bundle_katex")
-            npm_install = True
+        npm_install = install_npm()
+        self.stdout.write("Transpiling...")
         js_paths = finders.find('js/', True)
         # Remove paths inside of collection dir
         js_paths = [
@@ -98,7 +53,7 @@ class Command(BaseCommand):
 
         transpile_path = os.path.join(
             PROJECT_PATH,
-            "static_transpile"
+            "static-transpile"
         )
 
         if os.path.exists(transpile_path):
@@ -214,15 +169,14 @@ class Command(BaseCommand):
             if existing_file not in cache_files:
                 if existing_file[-10:] == "cache.json":
                     if not existing_file[:-10] + "mjs" in cache_files:
-                        print("Removing %s" % existing_file)
+                        self.stdout.write("Removing %s" % existing_file)
                         os.remove(existing_file)
                 else:
-                    print("Removing %s" % existing_file)
+                    self.stdout.write("Removing %s" % existing_file)
                     os.remove(existing_file)
-
         browserifyinc_path = os.path.join(
-            node_modules_path,
-            '.bin/browserifyinc'
+            PROJECT_PATH,
+            'node_modules/.bin/browserifyinc'
         )
         for mainfile in mainfiles:
             dirname = os.path.dirname(mainfile)
@@ -233,12 +187,13 @@ class Command(BaseCommand):
             relative_dir = dirname.split('static/js')[1]
             infile = os.path.join(cache_path, relative_dir, basename)
             outfile = os.path.join(out_dir, relative_dir, outfilename)
-            print("Transpiling %s." % basename)
+            self.stdout.write("Transpiling %s." % basename)
             call([browserifyinc_path, "--ignore-missing",
                   "--cachefile", cachefile, "--outfile", outfile, "-t",
                   "babelify", infile])
 
         # Copy mathquill CSS
+        shutil.rmtree("static-transpile/css/libs/mathquill")
         os.makedirs("static-transpile/css/libs/mathquill")
         call(["cp", "node_modules/mathquill/build/mathquill.css",
               "static-transpile/css/libs/mathquill"])
@@ -246,7 +201,7 @@ class Command(BaseCommand):
               "static-transpile/css/libs/mathquill"])
 
         end = int(round(time.time()))
-        print("Time spent transpiling: " +
+        self.stdout.write("Time spent transpiling: " +
               str(end - start) + " seconds")
         LAST_RUN = end
         with open(

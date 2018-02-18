@@ -29,7 +29,6 @@ class Command(BaseCommand):
             self.port = self.default_port
         if not self.port.isdigit():
             raise CommandError("%r is not a valid port number." % self.port)
-        call_command("transpile")
         if settings.DEBUG:
             autoreload.main(self.inner_run, args, options)
         else:
@@ -37,7 +36,7 @@ class Command(BaseCommand):
 
     def inner_run(self, *args, **options):
         quit_command = (platform == 'win32') and 'CTRL-BREAK' or 'CONTROL-C'
-
+        call_command("transpile")
         self.stdout.write((
             "%(started_at)s\n"
             "Django version %(version)s, using settings %(settings)r\n"

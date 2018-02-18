@@ -1,6 +1,7 @@
 import os
 import pickle
 import shutil
+from subprocess import call
 
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
@@ -68,7 +69,7 @@ def install_npm():
         if os.path.exists(node_modules_path):
             shutil.rmtree(node_modules_path)
         call_command("create_package_json")
-        call_command(["npm", "install"])
+        call(["npm", "install"])
         call_command("bundle_katex")
         npm_install = True
     return npm_install

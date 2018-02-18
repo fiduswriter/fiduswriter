@@ -5,7 +5,6 @@ import time
 import pickle
 
 from django.core.management.base import BaseCommand
-from django.core.management import call_command
 from django.contrib.staticfiles import finders
 from django.conf import settings
 
@@ -201,8 +200,9 @@ class Command(BaseCommand):
               "static-transpile/css/libs/mathquill"])
 
         end = int(round(time.time()))
-        self.stdout.write("Time spent transpiling: " +
-              str(end - start) + " seconds")
+        self.stdout.write(
+            "Time spent transpiling: " + str(end - start) + " seconds"
+        )
         LAST_RUN = end
         with open(
             os.path.join(

@@ -1,6 +1,5 @@
 import os
 import json
-import shutil
 from json_minify import json_minify
 from tornado.escape import json_decode
 from django.core.management.base import BaseCommand
@@ -12,6 +11,7 @@ if settings.PROJECT_PATH:
     PROJECT_PATH = settings.PROJECT_PATH
 else:
     PROJECT_PATH = "./"
+
 
 def deep_merge_dicts(old_dict, merge_dict, scripts=False):
     for key in merge_dict:

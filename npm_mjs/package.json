@@ -2,7 +2,6 @@
 // apps before executing npm commands. Different from a regular package.json, comments
 // are allowed in this file.
 {
-  "name": "npm-mjs",
   "description": "Install dependencies for ES6 transpilation",
   "author": "Johannes Wilm",
   "license": "AGPL",

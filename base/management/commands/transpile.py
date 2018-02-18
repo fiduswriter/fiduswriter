@@ -10,13 +10,28 @@ import pickle
 from django.contrib.staticfiles import finders
 from fiduswriter.settings import PROJECT_PATH, STATIC_ROOT
 
+
 # Temporary conversion of JavaScript ES6 to ES5. Once
 # all supported browsers support ES6 sufficiently ('class' in particular,
 # see http://kangax.github.io/compat-table/es6/), this script can be
 # replaced/updated.
 
-# Run this script every time you update an *.es6.js file or any of the
+# Run this script every time you update an *.mjs file or any of the
 # modules it loads.
+LAST_RUN = 0
+try:
+    with open(
+        os.path.join(
+            PROJECT_PATH,
+            ".transpile-time"
+        ),
+        'rb'
+    ) as f:
+        LAST_RUN = pickle.load(f)
+except EOFError:
+    pass
+except IOError:
+    pass
 
 
 class Command(BaseCommand):
@@ -24,15 +39,8 @@ class Command(BaseCommand):
             'dependencies')
 
     def handle(self, *args, **options):
-        start = time.time()
-        last_run = 0
-        try:
-            with open('.transpile-time', 'rb') as f:
-                last_run = pickle.load(f)
-        except EOFError:
-            pass
-        except IOError:
-            pass
+        global LAST_RUN
+        start = int(round(time.time()))
         settings_change = os.path.getmtime(
             os.path.join(
                 PROJECT_PATH,
@@ -73,7 +81,7 @@ class Command(BaseCommand):
                 pass
         npm_install = False
         if (
-            configuration_change > last_run or
+            configuration_change > LAST_RUN or
             app_package_change > package_change
         ):
             call_command("create_package_json")
@@ -87,7 +95,7 @@ class Command(BaseCommand):
         # Remove paths inside of collection dir
         js_paths = [x for x in js_paths if not x.startswith(STATIC_ROOT)]
 
-        es5_path = os.path.join(PROJECT_PATH, "static-es5")
+        es5_path = os.path.join(PROJECT_PATH, "static-transpile")
 
         if os.path.exists(es5_path):
             files = []
@@ -106,12 +114,12 @@ class Command(BaseCommand):
                 # Transpile not needed as nothing has changed
                 return
             # Remove any previously created static output dirs
-            shutil.rmtree("static-es5")
+            shutil.rmtree("static-transpile")
 
         # Create a static output dir
-        os.makedirs("static-es5/js")
-        out_dir = "./static-es5/js"
-        with open("./static-es5/README.txt", 'w') as f:
+        out_dir = "./static-transpile/js/transpile"
+        os.makedirs(out_dir)
+        with open("./static-transpile/README.txt", 'w') as f:
             f.write(
                 (
                     'These files have been automatically generated. '
@@ -125,7 +133,7 @@ class Command(BaseCommand):
         sourcefiles = []
         for path in js_paths:
             for mainfile in check_output(
-                ["find", path, "-type", "f", "-name", "*.es6.js", "-print"]
+                ["find", path, "-type", "f", "-name", "*.mjs", "-print"]
             ).decode('utf-8').split("\n")[:-1]:
                 mainfiles.append(mainfile)
             for sourcefile in check_output(
@@ -138,10 +146,10 @@ class Command(BaseCommand):
         # This allows for the modules to import from oneanother, across Django
         # Apps.
         # Create a cache dir for collecting JavaScript files
-        cache_path = os.path.join(PROJECT_PATH, "es6-cache")
+        cache_path = os.path.join(PROJECT_PATH, ".transpile-cache")
         if not os.path.exists(cache_path):
             os.makedirs(cache_path)
-        cache_dir = "./es6-cache/"
+        cache_dir = "./.transpile-cache/"
         # Note all cache files so that we can remove outdated files that no
         # longer are in the prject.
         cache_files = []
@@ -161,7 +169,7 @@ class Command(BaseCommand):
             elif os.path.getmtime(outfile) < os.path.getmtime(sourcefile):
                 shutil.copyfile(sourcefile, outfile)
             # Check for plugin connectors
-            if relative_path[:20] == 'es6_modules/plugins/':
+            if relative_path[:16] == 'modules/plugins/':
                 if dirname not in plugin_dirs:
                     plugin_dirs[dirname] = []
                 module_name = os.path.splitext(
@@ -195,11 +203,11 @@ class Command(BaseCommand):
 
         # Check for outdated files that should be removed
         for existing_file in check_output(
-            ["find", './es6-cache', "-type", "f"]
+            ["find", './.transpile-cache', "-type", "f"]
         ).decode('utf-8').split("\n")[:-1]:
             if existing_file not in cache_files:
                 if existing_file[-10:] == "cache.json":
-                    if not existing_file[:-10] + "es6.js" in cache_files:
+                    if not existing_file[:-10] + "mjs" in cache_files:
                         print("Removing %s" % existing_file)
                         os.remove(existing_file)
                 else:
@@ -209,27 +217,33 @@ class Command(BaseCommand):
         for mainfile in mainfiles:
             dirname = os.path.dirname(mainfile)
             basename = os.path.basename(mainfile)
-            outfilename = basename.split('.')[0] + ".es5.js"
+            outfilename = basename.split('.')[0] + ".js"
             cachefile = os.path.join(
                 cache_dir, basename.split('.')[0] + ".cache.json")
             relative_dir = dirname.split('static/js')[1]
             infile = os.path.join(cache_dir, relative_dir, basename)
             outfile = os.path.join(out_dir, relative_dir, outfilename)
-            print("Transpiling %s to %s." % (basename, outfile))
+            print("Transpiling %s." % basename)
             call(["node_modules/.bin/browserifyinc", "--ignore-missing",
                   "--cachefile", cachefile, "--outfile", outfile, "-t",
                   "babelify", infile])
 
         # Copy mathquill CSS
-        os.makedirs("static-es5/css/libs/mathquill")
+        os.makedirs("static-transpile/css/libs/mathquill")
         call(["cp", "node_modules/mathquill/build/mathquill.css",
-              "static-es5/css/libs/mathquill"])
+              "static-transpile/css/libs/mathquill"])
         call(["cp", "-R", "node_modules/mathquill/build/font",
-              "static-es5/css/libs/mathquill"])
+              "static-transpile/css/libs/mathquill"])
 
-        end = time.time()
+        end = int(round(time.time()))
         print("Time spent transpiling: " +
-              str(int(round(end - start))) + " seconds")
-        last_run = end
-        with open('.transpile-time', 'wb') as f:
-            pickle.dump(last_run, f)
+              str(end - start) + " seconds")
+        LAST_RUN = end
+        with open(
+            os.path.join(
+                PROJECT_PATH,
+                ".transpile-time"
+            ),
+            'wb'
+        ) as f:
+            pickle.dump(LAST_RUN, f)

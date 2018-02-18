@@ -79,7 +79,8 @@
               }
             ]
           ],
-          "compact": false
+          "compact": false,
+          "extensions": [".mjs", ".js"]
         }
       ]
     ]

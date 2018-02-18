@@ -1,4 +1,4 @@
-import {BibliographyOverview} from "./es6_modules/bibliography/overview"
+import {BibliographyOverview} from "./modules/bibliography/overview"
 
 let theBibOverview = new BibliographyOverview()
 

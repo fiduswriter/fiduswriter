@@ -104,9 +104,7 @@ STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    # Put strings here, like "/home/html/static".
-    # Don't forget to use absolute paths, not relative paths.
-    os.path.join(PROJECT_PATH, 'static-es5'),
+    os.path.join(PROJECT_PATH, 'static-transpile'),
     os.path.join(PROJECT_PATH, 'static-libs'),
 )
 

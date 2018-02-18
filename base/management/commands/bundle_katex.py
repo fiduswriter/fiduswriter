@@ -70,7 +70,7 @@ class Command(BaseCommand):
 
         opf_file_contents = opf_entries(file_paths)
         opf_file_path = os.path.join(
-            PROJECT_PATH, 'base/static/js/es6_modules/katex/opf-includes.js')
+            PROJECT_PATH, 'base/static/js/modules/katex/opf-includes.js')
         opf_dir = os.path.dirname(opf_file_path)
         if not os.path.exists(opf_dir):
             os.makedirs(opf_dir)

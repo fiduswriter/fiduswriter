@@ -1,4 +1,4 @@
-import {DocMaintenance} from "./es6_modules/maintenance"
+import {DocMaintenance} from "./modules/maintenance"
 
 let theMaintainer = new DocMaintenance()
 

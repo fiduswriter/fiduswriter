@@ -1,5 +1,5 @@
-static-es5/
+static-transpile/
 static-libs/
-es6-cache/
+.transpile-cache/
 node_modules/
 venv/

@@ -3,12 +3,11 @@
 {% load i18n %}
 {% load compress %}
 {% load account %}
+{% load transpile %}
 
 {% block head_title %}{% trans "Confirm E-mail Address" %}{% endblock %}
 {% block extraheaders %}
-{% compress js %}
-<script type="text/javascript" src="{{ STATIC_URL }}js/confirm_email.es5.js" ></script>
-{% endcompress %}
+<script type="text/javascript" src="{% transpile-static "js/confirm_email.mjs" %}"></script>s
 {% endblock %}
 
 {% block content %}

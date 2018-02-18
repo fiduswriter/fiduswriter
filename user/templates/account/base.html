@@ -1,4 +1,4 @@
-<!DOCTYPE html>{% load i18n %}{% load compress %}
+<!DOCTYPE html>{% load i18n %}{% load compress %}{% load transpile %}
 <html class="fw-basic-text">
     <head>
         <meta charset="utf-8" />
@@ -35,7 +35,7 @@
         <link rel="stylesheet" href="{{ STATIC_URL }}css/registration.css" type="text/css" />
         {% endcompress %}
         <!-- Check browser -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/browser_check.es5.js"></script>
+        <script type="text/javascript" src="{% transpile-static "js/browser_check.mjs" %}"></script>
 
         <script type="text/javascript" src="{{ JQUERY_URL }}"></script>
         <!-- jQuery UI -->

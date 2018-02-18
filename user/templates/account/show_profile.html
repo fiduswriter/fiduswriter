@@ -3,10 +3,11 @@
 {% load i18n %}
 {% load compress %}
 {% load avatar_tags %}
+{% load transpile %}
 
 {% block title %}{{user.readable_name}}{% endblock %}
 {% block extraheaders %}
-    <script src="{{ STATIC_URL }}js/profile.es5.js"></script>
+    <script type="text/javascript" src="{% transpile-static "js/profile.mjs" %}"></script>
     {% compress css %}
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/profile.css" />
     {% endcompress %}

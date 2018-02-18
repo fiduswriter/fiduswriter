@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load compress %}
+{% load transpile %}
 <!doctype html>
 <html>
     <head>
@@ -22,7 +23,7 @@
             {% endif %}
         </script>
         <!-- Check browser -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/browser_check.es5.js"></script>
+        <script type="text/javascript" src="{% transpile-static "js/browser_check.mjs" %}"></script>
         <!-- KaTeX -->
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/libs/katex/katex.min.css" />
         <!-- MathQuill -->
@@ -83,10 +84,7 @@
         <script type="text/javascript" src="{{ DATATABLES_URL }}"></script>
         <!-- ProseMirror CSS -->
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/prosemirror.css" />
-        {% compress js %}
-            <!-- Editor  -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor.es5.js"></script>
-        {% endcompress %}
+        <script type="text/javascript" src="{% transpile-static "js/editor.mjs" %}"></script>
     </head>
     <body class="{% trans "en" %} tex2jax_ignore">
         <div id="editor">

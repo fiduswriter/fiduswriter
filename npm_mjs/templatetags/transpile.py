@@ -5,7 +5,7 @@ from django import template
 from django.templatetags.static import StaticNode, PrefixNode
 from django.apps import apps
 
-from base.management.commands.transpile import LAST_RUN
+from npm_mjs.management.commands.transpile import LAST_RUN
 
 register = template.Library()
 

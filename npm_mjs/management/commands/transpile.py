@@ -51,6 +51,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         global LAST_RUN
+        print("Transpiling...")
         start = int(round(time.time()))
         change_times = [0, ]
         for path in SETTINGS_PATHS:

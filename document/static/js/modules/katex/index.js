@@ -1,8 +1,8 @@
-import "katex"
+import {render} from "katex"
 
 export function katexRender (formula, node, options) {
     try {
-        katex.render(formula, node, options)
+        render(formula, node, options)
     } catch (error) {
         if (error.name === 'ParseError') {
             node.innerHTML = gettext('Formula Error!')

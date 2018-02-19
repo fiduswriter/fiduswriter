@@ -1,4 +1,4 @@
-import {usermediaEditcategoriesTemplate, usermediaCategoryListItemTemplate} from "./templates"
+import {usermediaEditcategoriesTemplate} from "./templates"
 import {activateWait, deactivateWait, addAlert, postJson} from "../../common"
 
 export class ImageOverviewCategories {

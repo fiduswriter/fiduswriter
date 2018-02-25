@@ -1,4 +1,4 @@
-import {edtfCheck} from "biblatex-csl-converter"
+import {edtfParse} from "biblatex-csl-converter"
 
 export class DateFieldForm{
     constructor(dom, initialValue = '', placeHolder = '') {
@@ -20,7 +20,7 @@ export class DateFieldForm{
     check() {
         let formValue = this.value
         if (formValue) {
-            let checkValue = edtfCheck(formValue)
+            let checkValue = edtfParse(formValue).valid
             if (!checkValue) {
                 this.dom.classList.add('fw-fomt-error')
                 return false

@@ -9,6 +9,7 @@
         <title> Fidus Writer </title>
         <meta name="description" content="{% trans "The all in one solution for collaborative academic writing." %}">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        {% transpile_vars %}
         <script type="text/javascript">
             'use strict';
             window.staticUrl = '{{ STATIC_URL }}';
@@ -24,7 +25,7 @@
             {% endif %}
         </script>
         <!-- Check browser -->
-        <script type="text/javascript" src="{% transpile-static "js/browser_check.mjs" %}"></script>
+        <script type="text/javascript" src="{% transpile_static "js/browser_check.mjs" %}"></script>
         <!-- KaTeX -->
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/libs/katex/katex.min.css" />
         <!-- MathQuill -->
@@ -85,7 +86,7 @@
         <script type="text/javascript" src="{{ DATATABLES_URL }}"></script>
         <!-- ProseMirror CSS -->
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/prosemirror.css" />
-        <script type="text/javascript" src="{% transpile-static "js/editor.mjs" %}"></script>
+        <script type="text/javascript" src="{% transpile_static "js/editor.mjs" %}"></script>
     </head>
     <body class="{% trans "en" %} tex2jax_ignore">
         <div id="editor">

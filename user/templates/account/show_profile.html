@@ -7,7 +7,7 @@
 
 {% block title %}{{user.readable_name}}{% endblock %}
 {% block extraheaders %}
-    <script type="text/javascript" src="{% transpile-static "js/profile.mjs" %}"></script>
+    <script type="text/javascript" src="{% transpile_static "js/profile.mjs" %}"></script>
     {% compress css %}
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/profile.css" />
     {% endcompress %}

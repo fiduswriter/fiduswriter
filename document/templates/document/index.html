@@ -17,7 +17,8 @@
     <script type="text/javascript" src="{% transpile-static "js/document_overview.mjs" %}"></script>
 
     <script type="text/javascript">
-        var staticUrl = '{{ STATIC_URL }}';
+        'use strict';
+        window.staticUrl = '{{ STATIC_URL }}';
     </script>
 {% endblock %}
 

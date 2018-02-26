@@ -10,16 +10,17 @@
         <meta name="description" content="{% trans "The all in one solution for collaborative academic writing." %}">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script type="text/javascript">
-            var staticUrl = '{{ STATIC_URL }}';
+            'use strict';
+            window.staticUrl = '{{ STATIC_URL }}';
             {% if WS_PORT %}
-                var websocketPort = ':' + {{WS_PORT}};
+                window.websocketPort = ':' + {{WS_PORT}};
             {% else %}
-                var websocketPort = location.port.length ? ':' + location.port : '';
+                window.websocketPort = location.port.length ? ':' + location.port : '';
             {% endif %}
             {% if WS_SERVER %}
-                var websocketServer = '{{ WS_SERVER }}';
+                window.websocketServer = '{{ WS_SERVER }}';
             {% else %}
-                var websocketServer = location.host.split(':')[0];
+                window.websocketServer = location.host.split(':')[0];
             {% endif %}
         </script>
         <!-- Check browser -->

@@ -1,7 +1,7 @@
 from allauth.account import views as allauth_views
 from django.conf.urls import include, url
 from django.views.generic.base import RedirectView
-from fiduswriter import settings
+from django.conf import settings
 from . import views
 
 

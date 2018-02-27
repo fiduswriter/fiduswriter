@@ -62,11 +62,3 @@ export let usermediaTableTemplate = ({id, cats, title, width, height, fileType, 
             </span>
         </td>
     </tr>`
-
-/* A template for each image category list item */
-export let usermediaCategoryListItemTemplate = ({iCat}) =>
-    `<li>
-        <span class="fw-pulldown-item" data-id="${iCat.id}">
-            ${escapeText(iCat.category_title)}
-        </span>
-    </li>`

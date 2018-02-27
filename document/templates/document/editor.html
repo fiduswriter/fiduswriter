@@ -10,20 +10,20 @@
         <meta name="description" content="{% trans "The all in one solution for collaborative academic writing." %}">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script type="text/javascript">
-            var staticUrl = '{{ STATIC_URL }}';
+            'use strict';
             {% if WS_PORT %}
-                var websocketPort = ':' + {{WS_PORT}};
+                window.websocketPort = ':' + {{WS_PORT}};
             {% else %}
-                var websocketPort = location.port.length ? ':' + location.port : '';
+                window.websocketPort = location.port.length ? ':' + location.port : '';
             {% endif %}
             {% if WS_SERVER %}
-                var websocketServer = '{{ WS_SERVER }}';
+                window.websocketServer = '{{ WS_SERVER }}';
             {% else %}
-                var websocketServer = location.host.split(':')[0];
+                window.websocketServer = location.host.split(':')[0];
             {% endif %}
         </script>
         <!-- Check browser -->
-        <script type="text/javascript" src="{% transpile-static "js/browser_check.mjs" %}"></script>
+        <script type="text/javascript" src="{% transpile_static "js/browser_check.mjs" %}"></script>
         <!-- KaTeX -->
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/libs/katex/katex.min.css" />
         <!-- MathQuill -->
@@ -84,7 +84,7 @@
         <script type="text/javascript" src="{{ DATATABLES_URL }}"></script>
         <!-- ProseMirror CSS -->
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/prosemirror.css" />
-        <script type="text/javascript" src="{% transpile-static "js/editor.mjs" %}"></script>
+        <script type="text/javascript" src="{% transpile_static "js/editor.mjs" %}"></script>
     </head>
     <body class="{% trans "en" %} tex2jax_ignore">
         <div id="editor">

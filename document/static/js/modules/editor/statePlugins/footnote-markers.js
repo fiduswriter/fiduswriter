@@ -3,7 +3,7 @@ import {sendableSteps} from "prosemirror-collab"
 
 const key = new PluginKey('footnoteMarkers')
 
-let findFootnoteMarkers = function(fromPos, toPos, doc) {
+export let findFootnoteMarkers = function(fromPos, toPos, doc) {
     let footnoteMarkers = []
     doc.nodesBetween(fromPos, toPos, (node, pos, parent) => {
         if (!node.isInline) {

@@ -5,7 +5,7 @@ import {SiteMenu} from "../../menu"
 import {OverviewMenuView} from "../../common"
 import {menuModel} from "./menu"
 import {ImageEditDialog} from "../edit-dialog"
-import {usermediaCategoryListItem, usermediaTableTemplate} from "./templates"
+import {usermediaTableTemplate} from "./templates"
 import * as plugins from "../../plugins/images-overview"
  /** Helper functions for user added images/SVGs.*/
 

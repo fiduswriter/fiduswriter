@@ -1,4 +1,4 @@
-import {from} from "orderedmap"
+import OrderedMap from "orderedmap"
 import {Schema} from "prosemirror-model"
 import {nodes, marks} from "prosemirror-schema-basic"
 import {addListNodes} from "prosemirror-schema-list"
@@ -348,7 +348,7 @@ let doc = {
 
 
 let spec = {
-    nodes: from({
+    nodes: OrderedMap.from({
         doc,
         article,
         title,
@@ -371,7 +371,7 @@ let spec = {
         equation,
         footnote
     }),
-    marks: from({
+    marks: OrderedMap.from({
         em: marks.em,
         strong: marks.strong,
         link: marks.link,

@@ -1,6 +1,6 @@
 import {BibLatexParser} from "biblatex-csl-converter"
 import {importBibFileTemplate} from "./templates"
-import {activateWait, deactivateWait, addAlert, csrfToken} from "../../common"
+import {activateWait, deactivateWait, addAlert} from "../../common"
 
 /** First step of the BibTeX file import. Creates a dialog box to specify upload file.
  */

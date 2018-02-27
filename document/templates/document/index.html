@@ -14,11 +14,7 @@
 
     <!-- jQuery tablesorter -->
     <script type="text/javascript" src="{{ DATATABLES_URL }}"></script>
-    <script type="text/javascript" src="{% transpile-static "js/document_overview.mjs" %}"></script>
-
-    <script type="text/javascript">
-        var staticUrl = '{{ STATIC_URL }}';
-    </script>
+    <script type="text/javascript" src="{% transpile_static "js/document_overview.mjs" %}"></script>
 {% endblock %}
 
 {% block contents %}

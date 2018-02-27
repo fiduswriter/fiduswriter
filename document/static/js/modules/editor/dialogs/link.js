@@ -1,5 +1,5 @@
 import {TextSelection} from "prosemirror-state"
-import {InternalLinkDialogTemplate, linkDialogTemplate, InternalHeadingsTemplate} from "./templates"
+import {linkDialogTemplate} from "./templates"
 
 export class LinkDialog {
     constructor(editor) {

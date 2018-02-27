@@ -116,7 +116,7 @@ export class ModCommentInteractions {
 
             if(REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
                 userName = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
-                userAvatar = `${window.staticUrl}img/default_avatar.png`
+                userAvatar = `${$StaticUrls.base$}img/default_avatar.png`
             } else {
                 userName = this.mod.editor.user.name
                 userAvatar = this.mod.editor.user.avatar
@@ -202,7 +202,7 @@ export class ModCommentInteractions {
 
         if(REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
             userName = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
-            userAvatar = `${window.staticUrl}img/default_avatar.png`
+            userAvatar = `${$StaticUrls.base$}img/default_avatar.png`
         } else {
             userName = this.mod.editor.user.name
             userAvatar = this.mod.editor.user.avatar

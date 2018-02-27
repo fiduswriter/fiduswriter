@@ -76,7 +76,8 @@
       "gettext",
       "_",
       "fetch",
-      "URLSearchParams"
+      "URLSearchParams",
+      "$StaticUrls"
     ]
   }
 }

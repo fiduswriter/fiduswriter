@@ -3,7 +3,7 @@ import {Schema} from "prosemirror-model"
 import {nodes, marks} from "prosemirror-schema-basic"
 import {addListNodes} from "prosemirror-schema-list"
 import {tableNodes} from "prosemirror-tables"
-import {htmlToFnNode, fnNodeToHtml} from "./footnotes-convert"
+import {htmlToFnNode, fnNodeToHtml} from "./footnotes_convert"
 import {figure, citation, equation, heading, anchor} from "./common"
 
 

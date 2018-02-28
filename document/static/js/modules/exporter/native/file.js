@@ -1,7 +1,8 @@
+import download from "downloadjs"
+
 import {ZipFidus} from "./zip"
 import {ShrinkFidus} from "./shrink"
 import {createSlug} from "../tools/file"
-import download from "downloadjs"
 
 export class ExportFidusFile {
     constructor(doc, bibDB, imageDB) {

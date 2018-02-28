@@ -5,7 +5,6 @@ import {history, redo, undo} from "prosemirror-history"
 import {keymap} from "prosemirror-keymap"
 
 
-
 const key = new PluginKey('keywordInput')
 
 let doc = {content: 'keyword'},

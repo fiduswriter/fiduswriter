@@ -38,6 +38,7 @@ import {
 import {
     buildKeymap
 } from "prosemirror-example-setup"
+
 import {
     docSchema
 } from "../schema/document"
@@ -71,7 +72,7 @@ import {
 } from "./styles"
 import {
     ModServerCommunications
-} from "./server-communications"
+} from "./server_communications"
 import {
     getSettings
 } from "../schema/convert"
@@ -95,7 +96,7 @@ import {
     pastePlugin,
     placeholdersPlugin,
     toolbarPlugin
-} from "./statePlugins"
+} from "./state_plugins"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']

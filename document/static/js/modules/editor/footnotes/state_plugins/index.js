@@ -1,4 +1,4 @@
 export {
     accessRightsPlugin
 }
-from "./access-rights"
+from "./access_rights"

@@ -2,6 +2,7 @@ import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
 import {ReplaceAroundStep, RemoveMarkStep} from "prosemirror-transform"
 import {Slice, Fragment} from "prosemirror-model"
+
 import {noSpaceTmp, addAlert} from "../../common"
 import {randomHeadingId, randomFigureId} from "../../schema/common"
 import {LinkDialog} from "../dialogs"

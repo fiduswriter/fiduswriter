@@ -1,5 +1,5 @@
 import fastdom from "fastdom"
-import {getFootnoteMarkers} from "../statePlugins"
+import {getFootnoteMarkers} from "../state_plugins"
 
 /* A class to make footnotes appear correctly off the side of their referrer. */
 export class ModFootnoteLayout {

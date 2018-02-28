@@ -1,3 +1,6 @@
+import download from "downloadjs"
+import {DOMSerializer} from "prosemirror-model"
+
 import {obj2Node, node2Obj} from "../tools/json"
 import {createSlug} from "../tools/file"
 import {findImages} from "../tools/html"
@@ -8,8 +11,6 @@ import {addAlert} from "../../common"
 import {katexRender} from "../../katex"
 import {BaseEpubExporter} from "./base"
 import {docSchema} from "../../schema/document"
-import download from "downloadjs"
-import {DOMSerializer} from "prosemirror-model"
 
 
 export class EpubExporter extends BaseEpubExporter {

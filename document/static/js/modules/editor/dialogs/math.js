@@ -1,5 +1,5 @@
 import {mathDialogTemplate} from "./templates"
-import {FormulaEditor} from '../tools/formula-editor'
+import {FormulaEditor} from '../tools/formula_editor'
 
 /**
  * Class to work with formula dialog

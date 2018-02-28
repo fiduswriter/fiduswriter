@@ -1,8 +1,9 @@
+import JSZipUtils from "jszip-utils"
+import download from "downloadjs"
+
 import {documentrevisionsTemplate, documentrevisionsConfirmDeleteTemplate} from "./templates"
 import {ImportFidusFile} from "../../importer/file"
 import {deactivateWait, addAlert, post, cancelPromise} from "../../common"
-import JSZipUtils from "jszip-utils"
-import download from "downloadjs"
 
 /**
  * Functions for the recovering previously created document revisions.

@@ -1,5 +1,5 @@
 import {figureImageTemplate, configureFigureTemplate} from "./templates"
-import {ImageSelectionDialog} from "../../images/selection-dialog"
+import {ImageSelectionDialog} from "../../images/selection_dialog"
 import {addDropdownBox} from "../../common"
 import {katexRender} from "../../katex"
 import {randomFigureId} from "../../schema/common"

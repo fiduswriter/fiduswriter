@@ -1,4 +1,4 @@
-import {textContent} from "../tools/doc-contents"
+import {textContent} from "../tools/doc_contents"
 import {domDescendantTexNodes} from "../tools/html"
 import {escapeText} from "../../common"
 

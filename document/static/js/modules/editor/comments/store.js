@@ -7,7 +7,7 @@ import {
 import {
     addCommentDuringCreationDecoration,
     removeCommentDuringCreationDecoration
-} from "../statePlugins"
+} from "../state_plugins"
 
 export class ModCommentStore {
     constructor(mod) {

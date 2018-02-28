@@ -4,9 +4,9 @@ import {addDropdownBox, activateWait, deactivateWait, addAlert, post} from "../.
 import {SiteMenu} from "../../menu"
 import {OverviewMenuView} from "../../common"
 import {menuModel} from "./menu"
-import {ImageEditDialog} from "../edit-dialog"
+import {ImageEditDialog} from "../edit_dialog"
 import {usermediaTableTemplate} from "./templates"
-import * as plugins from "../../../plugins/images-overview"
+import * as plugins from "../../../plugins/images_overview"
  /** Helper functions for user added images/SVGs.*/
 
 export class ImageOverview {

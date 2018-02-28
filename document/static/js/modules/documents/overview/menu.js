@@ -1,4 +1,4 @@
-import {DocumentAccessRightsDialog} from "../access-rights"
+import {DocumentAccessRightsDialog} from "../access_rights"
 import {addAlert} from "../../common"
 
 export let menuModel = {

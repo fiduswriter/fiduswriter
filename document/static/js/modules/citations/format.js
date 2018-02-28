@@ -1,5 +1,6 @@
-import {citeprocSys} from "./citeproc-sys"
 import CSL from "citeproc"
+
+import {citeprocSys} from "./citeproc_sys"
 
 /*
 * Use CSL and bibDB to format all citations for the given prosemirror json citation nodes

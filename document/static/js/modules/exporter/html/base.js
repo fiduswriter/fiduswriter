@@ -1,7 +1,8 @@
-import {BaseDOMExporter} from "../tools/dom-export"
+import {DOMSerializer} from "prosemirror-model"
+
+import {BaseDOMExporter} from "../tools/dom_export"
 import {RenderCitations} from "../../citations/render"
 import {docSchema} from "../../schema/document"
-import {DOMSerializer} from "prosemirror-model"
 
 export class BaseHTMLExporter extends BaseDOMExporter {
     joinDocumentParts() {

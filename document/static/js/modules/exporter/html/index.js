@@ -1,3 +1,5 @@
+import download from "downloadjs"
+
 import {createSlug} from "../tools/file"
 import {findImages} from "../tools/html"
 import {ZipFileCreator} from "../tools/zip"
@@ -5,7 +7,6 @@ import {htmlExportTemplate} from "./templates"
 import {addAlert} from "../../common"
 import {katexRender} from "../../katex"
 import {BaseHTMLExporter} from "./base"
-import download from "downloadjs"
 
 export class HTMLExporter extends BaseHTMLExporter{
     constructor(doc, bibDB, imageDB, citationStyles, citationLocales) {

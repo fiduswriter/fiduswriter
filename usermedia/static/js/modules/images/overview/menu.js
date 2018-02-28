@@ -1,4 +1,4 @@
-import {ImageEditDialog} from "../edit-dialog"
+import {ImageEditDialog} from "../edit_dialog"
 
 export let menuModel = {
     content: [

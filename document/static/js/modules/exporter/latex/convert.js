@@ -1,4 +1,4 @@
-import {escapeLatexText} from "./escape-latex"
+import {escapeLatexText} from "./escape_latex"
 
 export class LatexExporterConvert {
     constructor(exporter, imageDB, bibDB) {

@@ -1,5 +1,5 @@
 import {addAlert, postJson} from "../common"
-import {GetImages} from "./get-images"
+import {GetImages} from "./get_images"
 
 export class ImportNative {
     /* Save document information into the database */

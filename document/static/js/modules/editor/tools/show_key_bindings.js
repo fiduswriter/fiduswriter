@@ -1,4 +1,4 @@
-import {showKeyBindingsTemplate} from "./show-key-bindings-templates"
+import {showKeyBindingsTemplate} from "./show_key_bindings_templates"
 
 /* This is an adaptation of question.mark for Fidus Writer http://fiduswriter.org
 * originally by Gabriel Lopez <gabriel.marcos.lopez@gmail.com>

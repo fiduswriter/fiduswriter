@@ -1,4 +1,4 @@
-import {getCommentDuringCreationDecoration} from "../statePlugins"
+import {getCommentDuringCreationDecoration} from "../state_plugins"
 import {REVIEW_ROLES} from ".."
 
 /* Functions related to user interactions with comments */

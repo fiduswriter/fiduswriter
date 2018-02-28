@@ -1,7 +1,7 @@
 import {createSlug} from "../tools/file"
 import {XmlZip} from "../tools/xml-zip"
-import {textContent, removeHidden, fixTables} from "../tools/doc-contents"
 
+import {textContent, removeHidden, fixTables} from "../tools/doc_contents"
 import {OdtExporterCitations} from "./citations"
 import {OdtExporterImages} from "./images"
 import {OdtExporterRender} from "./render"

@@ -1,4 +1,5 @@
 import {TextSelection} from "prosemirror-state"
+
 import {linkDialogTemplate} from "./templates"
 
 export class LinkDialog {

@@ -1,5 +1,5 @@
 import {imageSelectionTemplate} from "./templates"
-import {ImageEditDialog} from "../edit-dialog"
+import {ImageEditDialog} from "../edit_dialog"
 import {cancelPromise} from "../../common"
 
 export class ImageSelectionDialog {

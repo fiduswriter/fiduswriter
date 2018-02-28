@@ -2,14 +2,14 @@ export {
     authorsEndPos,
     authorInputPlugin
 }
-from "./author-input"
+from "./author_input"
 export {
     getSelectionUpdate,
     updateCollaboratorSelection,
     removeCollaboratorSelection,
     collabCaretsPlugin
 }
-from "./collab-carets"
+from "./collab_carets"
 export {
     addCommentDuringCreationDecoration,
     removeCommentDuringCreationDecoration,
@@ -24,7 +24,7 @@ export {
     getFootnoteMarkers,
     footnoteMarkersPlugin
 }
-from "./footnote-markers"
+from "./footnote_markers"
 export {
     headerbarPlugin
 }
@@ -32,11 +32,11 @@ from "./headerbar"
 export {
     jumpHiddenNodesPlugin
 }
-from "./jump-hidden-nodes"
+from "./jump_hidden_nodes"
 export {
     keywordInputPlugin
 }
-from "./keyword-input"
+from "./keyword_input"
 export {
     linksPlugin
 }
@@ -56,4 +56,4 @@ from "./toolbar"
 export {
     accessRightsPlugin
 }
-from "./access-rights"
+from "./access_rights"

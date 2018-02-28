@@ -1,6 +1,7 @@
-import {fnSchema} from "./footnotes"
 import {Node} from "prosemirror-model"
 import {DOMSerializer, DOMParser} from "prosemirror-model"
+
+import {fnSchema} from "./footnotes"
 
 // Convert the footnote HTML stored with the marker to a PM node representation of the footnote.
 export let htmlToFnNode = function(contents) {

@@ -1,4 +1,4 @@
-import * as plugins from "../plugins/editor"
+import * as plugins from "../../plugins/editor"
 
 /* Functions for ProseMirror integration.*/
 import {

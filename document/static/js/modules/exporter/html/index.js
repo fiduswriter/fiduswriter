@@ -89,7 +89,7 @@ export class HTMLExporter extends BaseHTMLExporter{
         if (math) {
             includeZips.push({
                 'directory': '',
-                'url': `${$StaticUrls.base$}zip/katex-style.zip?v=${$StaticUrls.transpile.version$}`,
+                'url': `${$StaticUrls.base$}zip/katex_style.zip?v=${$StaticUrls.transpile.version$}`,
             })
         }
 

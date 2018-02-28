@@ -19,6 +19,7 @@ venv/
 fidus.db
 deploy
 base/static/zip/katex-style.zip
+base/static/zip/katex_style.zip
 base/static/js/modules/katex/opf-includes.js
 base/static/js/modules/katex/opf_includes.js
 chromedriver

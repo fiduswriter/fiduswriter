@@ -7,8 +7,8 @@
 
 {% block extraheaders %}
 <!-- jQuery tablesorter -->
-<script type="text/javascript" src="{{ DATATABLES_URL }}"></script>
-<script type="text/javascript" src="{% transpile_static "js/images_overview.mjs" %}"></script>
+<script type="text/javascript" src="{% static "js/libs/jquery.dataTables.min.js" %}"></script>
+<script type="text/javascript" src="{% static "js/images_overview.mjs" %}"></script>
 
 {% endblock %}
 

@@ -1,4 +1,4 @@
-import * as plugins from "../../plugins/documents-overview"
+import * as plugins from "../../../plugins/documents-overview"
 import {DocumentOverviewActions} from "./actions"
 import {DocumentAccessRightsDialog} from "../access-rights"
 import {menuModel} from "./menu"

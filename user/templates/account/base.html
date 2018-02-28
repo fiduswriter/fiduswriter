@@ -7,39 +7,39 @@
         <meta name="description" content="{% trans "The all in one solution for collaborative academic writing." %}">
         <meta name="author" content="Fidus Writer" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.png" type="image/png"/>
+        <link rel="shortcut icon" href="{% static "img/favicon.png" %}" type="image/png"/>
 
         {% compress css %}
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/reset.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fonts.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/fonts.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/forms.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/ui-dialogs.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/buttons.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/pulldown.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/loader.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/alerts.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/document-menu.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/document-table.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/dialog-table.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/dropkick.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/ui-tabs.css" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/reset.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fonts.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/fonts.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/forms.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/ui-dialogs.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/buttons.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/pulldown.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/loader.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/alerts.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/document-menu.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/document-table.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/dialog-table.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/dropkick.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/ui-tabs.css" %}" />
             <!-- Font Awesome -->
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/font-awesome.css" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/font-awesome.css" %}" />
         {% endcompress %}
 
         <!-- layout styles -->
         {% compress css %}
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/common.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/header-menu.css" />
-        <link rel="stylesheet" href="{{ STATIC_URL }}css/registration.css" type="text/css" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw-layouts/common.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw-layouts/header-menu.css" %}" />
+        <link rel="stylesheet" href="{% static "css/registration.css" %}" type="text/css" />
         {% endcompress %}
         <!-- Check browser -->
-        <script type="text/javascript" src="{% transpile_static "js/browser_check.mjs" %}"></script>
+        <script type="text/javascript" src="{% static "js/browser_check.mjs" %}"></script>
 
-        <script type="text/javascript" src="{{ JQUERY_URL }}"></script>
+        <script type="text/javascript" src="{% static "js/libs/jquery.min.js" %}"></script>
         <!-- jQuery UI -->
-        <script type="text/javascript" src="{{ JQUERYUI_URL }}"></script>
+        <script type="text/javascript" src="{% static "js/libs/jquery-ui.min.js" %}"></script>
         <!-- JS error handling -->
         <script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>
         <script type="text/javascript" src="/jsi18n/"></script>
@@ -49,7 +49,7 @@
         <header class="fw-header">
             <div class="fw-container">
                 <h1 class="fw-login-logo">
-                    <a href="/"><img src="{{ STATIC_URL }}img/logo.png" alt="Logo" title="Fiduswriter" width="231" height="39" /></a>
+                    <a href="/"><img src="{% static "img/logo.png" %}" alt="Logo" title="Fiduswriter" width="231" height="39" /></a>
                 </h1>
                 <nav class="fw-header-nav">
                     <label for="login-btn">{% block loginlabel %}{% endblock %}</label>
@@ -57,7 +57,7 @@
                 </nav>
             </div>
     <!--Add free star-->
-    <div style="width:961px;position:relative;margin:0 auto;"><img src="{{ STATIC_URL }}img/free_star.png" style="position:absolute;top:0px;left:0px;z-index:3;height:73px;"></div>
+    <div style="width:961px;position:relative;margin:0 auto;"><img src="{% static "img/free_star.png" %}" style="position:absolute;top:0px;left:0px;z-index:3;height:73px;"></div>
         </header>
 
         <div class="fw-contents">

@@ -2,7 +2,7 @@ import {configureCitationTemplate, citationItemTemplate, selectedCitationTemplat
 import {BibEntryForm} from "../../bibliography/form"
 import {setCheckableLabel} from "../../common"
 import {nameToText, litToText} from "../../bibliography/tools"
-import * as plugins from "../../plugins/citation-dialog"
+import * as plugins from "../../../plugins/citation-dialog"
 
 export class CitationDialog {
     constructor(editor) {

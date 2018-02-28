@@ -158,8 +158,6 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
-                'base.context_processors.js_locations',
-                'base.context_processors.css_locations',
                 'base.context_processors.server_info',
                 'django.contrib.auth.context_processors.auth',
                 'django.template.context_processors.debug',
@@ -313,16 +311,6 @@ LOGGING = {
 AVATAR_GRAVATAR_BACKUP = False
 AVATAR_DEFAULT_URL = 'img/default_avatar.png'
 AVATAR_MAX_AVATARS_PER_USER = 1
-
-# Location of commonly used Js libraries. Here the local version is given.
-# For deployment a version on the net is better.
-JS_LOCATIONS = {
-    'JQUERY_URL': STATIC_URL + 'js/libs/jquery.min.js',
-    'JQUERYUI_URL': STATIC_URL + 'js/libs/jquery-ui.min.js',
-    'DATATABLES_URL': STATIC_URL + 'js/libs/jquery.dataTables.min.js'
-}
-
-CSS_LOCATIONS = {}
 
 local_config_path = os.path.join(PROJECT_PATH, 'configuration.py')
 try:

@@ -89,16 +89,3 @@ INSTALLED_APPS += (
 ALLOWED_HOSTS = [
     'localhost',
 ]
-
-
-# Location of commonly used Js libraries. Here the local version is given.
-# For deployment a version on the net is better.
-# Only uncomment if you change any of these values!
-# JS_LOCATIONS = {
-#     'JQUERY_URL': STATIC_URL + 'js/libs/jquery.min.js',
-#     'JQUERYUI_URL': STATIC_URL + 'js/libs/jquery-ui.min.js',
-#     'DATATABLES_URL': STATIC_URL + 'js/libs/jquery.dataTables.min.js'
-# }
-#
-# CSS_LOCATIONS = {
-#    }

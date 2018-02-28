@@ -1,4 +1,4 @@
-import * as plugins from "../plugins/menu"
+import * as plugins from "../../plugins/menu"
 import {addDropdownBox} from "../common"
 import {headerNavTemplate} from "./templates"
 

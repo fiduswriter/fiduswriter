@@ -1,9 +1,9 @@
-<!DOCTYPE html>{% load i18n %}
+<!DOCTYPE html>{% load i18n %}{% load transpile %}
 <html>
     <head>
         <title>{% trans "Browser not supported" %}</title>
         <style>
-            @import url({{ STATIC_URL }}css/lato.css);
+            @import url({% static "css/lato.css" %}");
             body {
                 background-color: #f2f2f2;
             }
@@ -23,7 +23,7 @@
     </head>
     <body>
         <center>
-            <img src="{{ STATIC_URL }}img/error.png">
+            <img src="{% static "img/error.png" %}">
             <h1>{% trans "Browser not supported" %}</h1>
             <p>{% blocktrans %}
                 Your browser is not supported by Fidus Writer.

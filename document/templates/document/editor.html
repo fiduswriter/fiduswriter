@@ -5,7 +5,7 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.png" type="image/png">
+        <link rel="shortcut icon" href="{% static "img/favicon.png" type="image/png">
         <title> Fidus Writer </title>
         <meta name="description" content="{% trans "The all in one solution for collaborative academic writing." %}">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,55 +23,55 @@
             {% endif %}
         </script>
         <!-- Check browser -->
-        <script type="text/javascript" src="{% transpile_static "js/browser_check.mjs" %}"></script>
+        <script type="text/javascript" src="{% static "js/browser_check.mjs" %}"></script>
         <!-- KaTeX -->
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/libs/katex/katex.min.css" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/libs/katex/katex.min.css" %}" />
         <!-- MathQuill -->
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/mathquill.css" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/mathquill.css" />
         <!--  Translations -->
         <script type="text/javascript" src="/jsi18n/"></script>
 
         {% compress css %}
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/reset.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fonts.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/fonts.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/forms.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/ui-dialogs.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/ui-autofill.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/buttons.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/pulldown.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/loader.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/alerts.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/document-menu.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/document-table.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/dialog-table.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/ui-tabs.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/add-remove-dialog.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/figure.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/dropkick.css" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/reset.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fonts.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/fonts.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/forms.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/ui-dialogs.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/ui-autofill.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/buttons.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/pulldown.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/loader.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/alerts.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/document-menu.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/document-table.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/dialog-table.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/ui-tabs.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/add-remove-dialog.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/figure.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/dropkick.css" %}" />
             <!-- Font Awesome -->
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/font-awesome.css" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/font-awesome.css" %}" />
             <!-- layout styles -->
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/common.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/header-menu.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/bibliography.css" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-layouts/common.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-layouts/header-menu.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw-layouts/bibliography.css" %}" />
 
             <!-- Editor -->
-            <link rel="stylesheet" href="{{ STATIC_URL }}css/texteditor.css" type="text/css">
+            <link rel="stylesheet" href="{% static "css/texteditor.css" %}" type="text/css">
             <!-- Collaboration mode -->
-            <link rel="stylesheet" href="{{ STATIC_URL }}css/carets.css" type="text/css">
+            <link rel="stylesheet" href="{% static "css/carets.css" %}" type="text/css">
             <!-- Comments -->
-            <link rel="stylesheet" href="{{ STATIC_URL }}css/comments.css" type="text/css">
+            <link rel="stylesheet" href="{% static "css/comments.css" %}" type="text/css">
             <!-- Footnotes -->
-            <link rel="stylesheet" href="{{ STATIC_URL }}css/footnotes.css" type="text/css">
+            <link rel="stylesheet" href="{% static "css/footnotes.css" %}" type="text/css">
             <!-- Chat -->
-            <link rel="stylesheet" href="{{ STATIC_URL }}css/chat.css" type="text/css">
+            <link rel="stylesheet" href="{% static "css/chat.css" %}" type="text/css">
             <!-- Access rights -->
-            <link rel="stylesheet" href="{{ STATIC_URL }}css/access-rights-dialog.css" type="text/css">
+            <link rel="stylesheet" href="{% static "css/access-rights-dialog.css" %}" type="text/css">
             <!-- Citation dialog style -->
-            <link rel="stylesheet" href="{{ STATIC_URL }}css/citation-dialog.css" type="text/css">
+            <link rel="stylesheet" href="{% static "css/citation-dialog.css" %}" type="text/css">
             <!-- review style -->
-            <link rel="stylesheet" href="{{ STATIC_URL }}css/review.css" type="text/css">
+            <link rel="stylesheet" href="{% static "css/review.css" %}" type="text/css">
         {% endcompress %}
 
         <!-- jQuery -->
@@ -83,8 +83,8 @@
         <!-- jQuery tablesorter -->
         <script type="text/javascript" src="{{ DATATABLES_URL }}"></script>
         <!-- ProseMirror CSS -->
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/prosemirror.css" />
-        <script type="text/javascript" src="{% transpile_static "js/editor.mjs" %}"></script>
+        <link type="text/css" rel="stylesheet" href="{% static "css/prosemirror.css" %}" />
+        <script type="text/javascript" src="{% static "js/editor.mjs" %}"></script>
     </head>
     <body class="{% trans "en" %} tex2jax_ignore">
         <div id="editor">
@@ -115,7 +115,7 @@
                 <div id="chat-container"></div>
                 <div id="messageform" contentEditable="true" class="empty"></div>
                 <audio id="chat-notification">
-                    <source src="{{ STATIC_URL }}ogg/chat-notification.ogg" type="audio/ogg">
+                    <source src="{% static "ogg/chat-notification.ogg" %}" type="audio/ogg">
                 </audio>
             </div>
         </div>

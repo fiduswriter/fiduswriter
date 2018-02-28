@@ -10,33 +10,33 @@
         <meta name="description" content="{% trans "The all in one solution for collaborative academic writing." %}">
         <meta name="author" content="Fidus Writer" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.png" type="image/png"/>
+        <link rel="shortcut icon" href="{% static "img/favicon.png" %}" type="image/png"/>
         <!-- commons styles -->
         {% compress css %}
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/reset.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fonts.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/fonts.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/forms.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/ui-dialogs.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/ui-autofill.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/buttons.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/pulldown.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/loader.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/alerts.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/document-menu.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/document-table.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/dialog-table.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/dropkick.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/ui-tabs.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/figure.css" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/reset.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fonts.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/fonts.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/forms.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/ui-dialogs.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/ui-autofill.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/buttons.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/pulldown.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/loader.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/alerts.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/document-menu.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/document-table.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/dialog-table.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/dropkick.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/ui-tabs.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/figure.css" %}" />
         <!-- Font Awesome -->
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/font-awesome.css" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/font-awesome.css" %}" />
         <!-- layout styles -->
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/common.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/header-menu.css" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw-layouts/common.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw-layouts/header-menu.css" %}" />
         {% endcompress %}
         <!-- Check browser -->
-        <script type="text/javascript" src="{% transpile_static "js/browser_check.mjs" %}"></script>
+        <script type="text/javascript" src="{% static "js/browser_check.mjs" %}"></script>
         <script type="text/javascript" src="/jsi18n/"></script>
         <script type="text/javascript" src="{{ JQUERY_URL }}"></script>
         <!-- JS error handling -->
@@ -52,7 +52,7 @@
 
             <div class="fw-container">
                 <h1 class="fw-logo">
-                    <img src="{{ STATIC_URL }}img/logo.png" alt="Fiduswriter" title="Logo" width="231" height="39" />
+                    <img src="{% static "img/logo.png" %}" alt="Fiduswriter" title="Logo" width="231" height="39" />
                 </h1>
                 <div id="user-preferences" class="fw-user-preferences fw-header-text">
                     <h3 class="fw-name">{{request.user.username}}</h3>

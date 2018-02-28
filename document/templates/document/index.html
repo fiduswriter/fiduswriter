@@ -7,14 +7,14 @@
 {% block title %}{% trans "Document Overview" %}{% endblock %}
 {% block extraheaders %}
     {% compress css %}
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/add-remove-dialog.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/access-rights-dialog.css" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw-modules/add-remove-dialog.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/access-rights-dialog.css" %}" />
     {% endcompress %}
 
 
     <!-- jQuery tablesorter -->
     <script type="text/javascript" src="{{ DATATABLES_URL }}"></script>
-    <script type="text/javascript" src="{% transpile_static "js/document_overview.mjs" %}"></script>
+    <script type="text/javascript" src="{% static "js/document_overview.mjs" %}"></script>
 {% endblock %}
 
 {% block contents %}

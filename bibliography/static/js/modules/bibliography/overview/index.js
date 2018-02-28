@@ -8,7 +8,7 @@ import {BibTypeTitles} from "../form/strings"
 import {SiteMenu} from "../../menu"
 import {OverviewMenuView} from "../../common"
 import {menuModel} from "./menu"
-import * as plugins from "../../../plugins/bibliography-overview"
+import * as plugins from "../../../plugins/bibliography_overview"
 
 export class BibliographyOverview {
 

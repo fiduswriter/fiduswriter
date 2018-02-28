@@ -1,3 +1,6 @@
+import download from "downloadjs"
+import {DOMSerializer} from "prosemirror-model"
+
 import {obj2Node, node2Obj} from "../tools/json"
 import {createSlug} from "../tools/file"
 import {findImages} from "../tools/html"
@@ -8,8 +11,6 @@ import {addAlert} from "../../common"
 import {katexRender} from "../../katex"
 import {BaseEpubExporter} from "./base"
 import {docSchema} from "../../schema/document"
-import download from "downloadjs"
-import {DOMSerializer} from "prosemirror-model"
 
 
 export class EpubExporter extends BaseEpubExporter {
@@ -177,7 +178,7 @@ export class EpubExporter extends BaseEpubExporter {
         if (math) {
             includeZips.push({
                 'directory': 'EPUB',
-                'url': `${$StaticUrls.base$}zip/katex-style.zip?v=${$StaticUrls.transpile.version$}`
+                'url': `${$StaticUrls.base$}zip/katex_style.zip?v=${$StaticUrls.transpile.version$}`
             })
         }
         let zipper = new ZipFileCreator(

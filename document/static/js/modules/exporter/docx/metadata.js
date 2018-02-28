@@ -1,4 +1,4 @@
-import {textContent} from "../tools/doc-contents"
+import {textContent} from "../tools/doc_contents"
 import {escapeText} from "../../common"
 
 

@@ -1,4 +1,4 @@
-import {katexOpfIncludes} from "../../katex/opf-includes"
+import {katexOpfIncludes} from "../../katex/opf_includes"
 import {escapeText} from "../../common"
 
 /** A template for the OPF file of an epub. */

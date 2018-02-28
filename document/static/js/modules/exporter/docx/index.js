@@ -1,7 +1,6 @@
 import {createSlug} from "../tools/file"
-import {XmlZip} from "../tools/xml-zip"
-import {textContent, removeHidden, fixTables} from "../tools/doc-contents"
-
+import {XmlZip} from "../tools/xml_zip"
+import {textContent, removeHidden, fixTables} from "../tools/doc_contents"
 import {DocxExporterCitations} from "./citations"
 import {DocxExporterImages} from "./images"
 import {DocxExporterRender} from "./render"

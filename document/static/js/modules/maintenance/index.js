@@ -1,12 +1,12 @@
 import {Step} from "prosemirror-transform"
+import JSZip from "jszip"
+import JSZipUtils from "jszip-utils"
 
 import {updateFileDoc, updateFileBib} from "../importer/update"
 import {updateDoc, getSettings} from "../schema/convert"
 import {docSchema} from "../schema/document"
 import {addAlert, post, postJson} from "../common"
 import {FW_FILETYPE_VERSION} from "../exporter/native"
-import JSZip from "jszip"
-import JSZipUtils from "jszip-utils"
 
 // To upgrade all docs and document revions to the newest version
 

@@ -17,11 +17,11 @@ import {
     linksPlugin,
     getFootnoteMarkerContents,
     updateFootnoteMarker
-} from "../statePlugins"
+} from "../state_plugins"
 import {
     accessRightsPlugin
-} from "./statePlugins"
-import {fnNodeToPmNode} from "../../schema/footnotes-convert"
+} from "./state_plugins"
+import {fnNodeToPmNode} from "../../schema/footnotes_convert"
 
 /* Functions related to the footnote editor instance */
 export class ModFootnoteEditor {

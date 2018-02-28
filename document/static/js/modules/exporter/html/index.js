@@ -1,3 +1,5 @@
+import download from "downloadjs"
+
 import {createSlug} from "../tools/file"
 import {findImages} from "../tools/html"
 import {ZipFileCreator} from "../tools/zip"
@@ -5,7 +7,6 @@ import {htmlExportTemplate} from "./templates"
 import {addAlert} from "../../common"
 import {katexRender} from "../../katex"
 import {BaseHTMLExporter} from "./base"
-import download from "downloadjs"
 
 export class HTMLExporter extends BaseHTMLExporter{
     constructor(doc, bibDB, imageDB, citationStyles, citationLocales) {
@@ -88,7 +89,7 @@ export class HTMLExporter extends BaseHTMLExporter{
         if (math) {
             includeZips.push({
                 'directory': '',
-                'url': `${$StaticUrls.base$}zip/katex-style.zip?v=${$StaticUrls.transpile.version$}`,
+                'url': `${$StaticUrls.base$}zip/katex_style.zip?v=${$StaticUrls.transpile.version$}`,
             })
         }
 

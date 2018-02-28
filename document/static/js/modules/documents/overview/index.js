@@ -1,6 +1,6 @@
-import * as plugins from "../../../plugins/documents-overview"
+import * as plugins from "../../../plugins/documents_overview"
 import {DocumentOverviewActions} from "./actions"
-import {DocumentAccessRightsDialog} from "../access-rights"
+import {DocumentAccessRightsDialog} from "../access_rights"
 import {menuModel} from "./menu"
 import {documentsListTemplate} from "./templates"
 import {activateWait, deactivateWait, addAlert, postJson, OverviewMenuView} from "../../common"

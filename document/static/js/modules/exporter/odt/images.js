@@ -1,5 +1,6 @@
 import JSZipUtils from "jszip-utils"
-import {descendantNodes} from "../tools/doc-contents"
+
+import {descendantNodes} from "../tools/doc_contents"
 
 export class OdtExporterImages {
     constructor(exporter, imageDB, docContents) {

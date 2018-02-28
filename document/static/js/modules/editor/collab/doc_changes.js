@@ -17,7 +17,7 @@ import {
     getSelectionUpdate,
     removeCollaboratorSelection,
     updateCollaboratorSelection
-} from "../statePlugins"
+} from "../state_plugins"
 
 export class ModCollabDocChanges {
     constructor(mod) {

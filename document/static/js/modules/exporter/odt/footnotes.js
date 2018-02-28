@@ -3,7 +3,7 @@ import {OdtExporterImages} from "./images"
 //import {OdtExporterRichtext} from "./richtext"
 import {fnSchema} from "../../schema/footnotes"
 import {noSpaceTmp} from "../../common"
-import {descendantNodes} from "../tools/doc-contents"
+import {descendantNodes} from "../tools/doc_contents"
 
 
 const DEFAULT_STYLE_FOOTNOTE = noSpaceTmp`

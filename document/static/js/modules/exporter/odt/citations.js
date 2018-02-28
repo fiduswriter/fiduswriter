@@ -1,8 +1,9 @@
+import {DOMSerializer, DOMParser} from "prosemirror-model"
+
 import {FormatCitations} from "../../citations/format"
 import {docSchema} from "../../schema/document"
-import {cslBibSchema} from "../../bibliography/schema/csl-bib"
-import {descendantNodes} from "../tools/doc-contents"
-import {DOMSerializer, DOMParser} from "prosemirror-model"
+import {cslBibSchema} from "../../bibliography/schema/csl_bib"
+import {descendantNodes} from "../tools/doc_contents"
 
 export class OdtExporterCitations {
     constructor(exporter, bibDB, citationStyles, citationLocales, docContents, origCitInfos = []) {

@@ -1,5 +1,6 @@
-import {HTMLPaste, TextPaste} from "../paste"
 import {Plugin, PluginKey} from "prosemirror-state"
+
+import {HTMLPaste, TextPaste} from "../paste"
 
 const key = new PluginKey('paste')
 export let pastePlugin = function(options) {

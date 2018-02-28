@@ -1,5 +1,5 @@
 import {noSpaceTmp} from "../../common"
-import {descendantNodes} from "../tools/doc-contents"
+import {descendantNodes} from "../tools/doc_contents"
 
 let DEFAULT_LISTPARAGRAPH_XML = noSpaceTmp`
     <w:style w:type="paragraph" w:styleId="ListParagraph">

@@ -1,5 +1,5 @@
 import {authorTemplate} from "./templates"
-import {authorsEndPos} from "../statePlugins"
+import {authorsEndPos} from "../state_plugins"
 import {addAlert} from "../../common"
 /*
     Source for email regexp:

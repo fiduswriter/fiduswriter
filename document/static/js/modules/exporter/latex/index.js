@@ -1,10 +1,12 @@
+import {BibLatexExporter} from "biblatex-csl-converter"
+import download from "downloadjs"
+
 import {createSlug} from "../tools/file"
-import {removeHidden, fixTables} from "../tools/doc-contents"
+import {removeHidden, fixTables} from "../tools/doc_contents"
 import {LatexExporterConvert} from "./convert"
 import {ZipFileCreator} from "../tools/zip"
-import {BibLatexExporter} from "biblatex-csl-converter"
 import {readMe} from "./readme"
-import download from "downloadjs"
+
 /*
  Exporter to LaTeX
 */

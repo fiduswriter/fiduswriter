@@ -1,6 +1,6 @@
-import {ModToolsWordCount} from "./word-count"
+import {ModToolsWordCount} from "./word_count"
 import {ModToolsPrint} from "./print"
-import {ModToolsShowKeyBindings} from "./show-key-bindings"
+import {ModToolsShowKeyBindings} from "./show_key_bindings"
 
 export class ModTools {
     constructor(editor) {

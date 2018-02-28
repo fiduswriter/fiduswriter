@@ -1,7 +1,7 @@
-import {noSpaceTmp} from "../../common"
-
 import JSZipUtils from "jszip-utils"
 import TeXZilla from "texzilla"
+
+import {noSpaceTmp} from "../../common"
 
 // Not entirely sure if we need this font here. This is included whenever Word
 // itself adds a formula, but our ooml doesn't refer to the font, so it may be pointless.

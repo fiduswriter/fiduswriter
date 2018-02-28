@@ -1,5 +1,6 @@
-import {ImportNative} from "./native"
 import JSZip from "jszip"
+
+import {ImportNative} from "./native"
 import {FW_FILETYPE_VERSION} from "../exporter/native"
 import {updateFileDoc, updateFileBib} from "./update"
 /** The current Fidus Writer filetype version. The importer will not import from

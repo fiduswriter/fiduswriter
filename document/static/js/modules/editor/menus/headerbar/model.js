@@ -2,7 +2,7 @@ import {addColumnAfter, addColumnBefore, deleteColumn, addRowBefore, addRowAfter
         mergeCells, splitCell, setCellAttr, toggleHeaderRow, toggleHeaderColumn, toggleHeaderCell}
 from "prosemirror-tables"
 
-import {DocumentAccessRightsDialog} from "../../../documents/access-rights"
+import {DocumentAccessRightsDialog} from "../../../documents/access_rights"
 import {SaveRevision, SaveCopy} from "../../../exporter/native"
 import {ExportFidusFile} from "../../../exporter/native/file"
 import {LatexExporter} from "../../../exporter/latex"

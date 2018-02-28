@@ -1,7 +1,7 @@
 import {GeneralPasteHandler} from "./general"
-import {MicrosoftWordPasteHandler} from "./microsoft-word"
-import {LibreOfficeWriterPasteHandler} from "./libreoffice-writer"
-import {GoogleDocsPasteHandler} from "./google-docs"
+import {MicrosoftWordPasteHandler} from "./microsoft_word"
+import {LibreOfficeWriterPasteHandler} from "./libreoffice_writer"
+import {GoogleDocsPasteHandler} from "./google_docs"
 
 // Some pasted HTML will need slight conversions to work correctly.
 // We try to sniff whether paste comes from MsWord, LibreOffice or Google Docs

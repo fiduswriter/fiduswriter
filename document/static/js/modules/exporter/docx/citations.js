@@ -1,9 +1,10 @@
+import {DOMSerializer, DOMParser} from "prosemirror-model"
+
 import {FormatCitations} from "../../citations/format"
 import {docSchema} from "../../schema/document"
-import {cslBibSchema} from "../../bibliography/schema/csl-bib"
-import {descendantNodes} from "../tools/doc-contents"
+import {cslBibSchema} from "../../bibliography/schema/csl_bib"
+import {descendantNodes} from "../tools/doc_contents"
 import {noSpaceTmp} from "../../common"
-import {DOMSerializer, DOMParser} from "prosemirror-model"
 
 export class DocxExporterCitations {
     constructor(exporter, bibDB, citationStyles, citationLocales, docContents, origCitInfos = []) {

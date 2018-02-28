@@ -57,7 +57,7 @@ class Command(BaseCommand):
         call(["cp", "-R", "node_modules/katex/dist/fonts",
               "base/static/css/libs/katex"])
         zip_file_path = os.path.join(
-            settings.PROJECT_PATH, 'base/static/zip/katex-style.zip')
+            settings.PROJECT_PATH, 'base/static/zip/katex_style.zip')
         zip_dir = os.path.dirname(zip_file_path)
         if not os.path.exists(zip_dir):
             os.makedirs(zip_dir)
@@ -71,7 +71,7 @@ class Command(BaseCommand):
         opf_file_contents = opf_entries(file_paths)
         opf_file_path = os.path.join(
             settings.PROJECT_PATH,
-            'base/static/js/modules/katex/opf-includes.js'
+            'base/static/js/modules/katex/opf_includes.js'
         )
         opf_dir = os.path.dirname(opf_file_path)
         if not os.path.exists(opf_dir):

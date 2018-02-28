@@ -4,7 +4,7 @@ import {history, redo, undo} from "prosemirror-history"
 import {toggleMark, baseKeymap} from "prosemirror-commands"
 import {keymap} from "prosemirror-keymap"
 
-import {longLitSchema} from "../../schema/literal-long"
+import {longLitSchema} from "../../schema/literal_long"
 
 export class LiteralLongFieldForm{
     constructor(dom, initialValue = []) {

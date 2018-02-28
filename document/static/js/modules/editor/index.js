@@ -1,5 +1,3 @@
-import * as plugins from "../../plugins/editor"
-
 /* Functions for ProseMirror integration.*/
 import {
     EditorState,
@@ -39,6 +37,7 @@ import {
     buildKeymap
 } from "prosemirror-example-setup"
 
+import * as plugins from "../../plugins/editor"
 import {
     docSchema
 } from "../schema/document"

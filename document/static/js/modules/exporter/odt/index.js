@@ -1,5 +1,5 @@
 import {createSlug} from "../tools/file"
-import {XmlZip} from "../tools/xml-zip"
+import {XmlZip} from "../tools/xml_zip"
 
 import {textContent, removeHidden, fixTables} from "../tools/doc_contents"
 import {OdtExporterCitations} from "./citations"

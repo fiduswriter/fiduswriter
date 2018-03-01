@@ -178,3 +178,57 @@ def save_category_js(request):
         response,
         status=status
     )
+
+# Delete one or more categories
+@login_required
+def delete_category_js(request):
+    status = 405
+    response = {}
+    if request.is_ajax() and request.method == 'POST':
+        status = 201
+        ids = request.POST.getlist('ids[]')
+        #id_chunks = [ids[x:x + 100] for x in range(0, len(ids), 100)]
+        for id_chunk in id_chunks:
+            EntryCategory.objects.filter(
+                pk__in=ids,
+                entry_owner=request.user
+            ).delete()
+    return JsonResponse(
+        response,
+        status=status
+    )
+# def delete_category_js(request):
+#     status = 405
+#     response = {}
+#     response['entries'] = []
+#     if request.is_ajax() and request.method == 'POST':
+#         ids = request.POST.getlist('ids[]')
+#         titles = request.POST.getlist('titles[]')
+#         EntryCategory.objects.filter(
+#             category_owner=request.user
+#         ).exclude(id__in=ids).delete()
+#         x = 0
+#         for the_id in ids:
+#             the_id = int(the_id)
+#             the_title = titles[x]
+#             x += 1
+#             if 0 == the_id:
+#                 # if the category is new, then create new
+#                 the_cat = EntryCategory(
+#                     category_title=the_title,
+#                     category_owner=request.user
+#                 )
+#             else:
+#                 # if the category already exists, update the title
+#                 the_cat = EntryCategory.objects.get(pk=the_id)
+#                 the_cat.category_title = the_title
+#             the_cat.save()
+#             response['entries'].append(
+#                 {'id': the_cat.id, 'category_title': the_cat.category_title}
+#             )
+#         status = 201
+#
+#     return JsonResponse(
+#         response,
+#         status=status
+#     )

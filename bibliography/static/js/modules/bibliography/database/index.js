@@ -1,11 +1,13 @@
-import {activateWait, deactivateWait, addAlert, post, postJson} from "../common"
+import {activateWait, deactivateWait, addAlert} from "../../common"
+import {BibliographyDBServerConnector} from "./server_connector"
 
-const FW_LOCALSTORAGE_VERSION = "1.0"
+const FW_LOCALSTORAGE_VERSION = "1.1"
 
 export class BibliographyDB {
     constructor() {
         this.db = {}
         this.cats = []
+        this.sc = new BibliographyDBServerConnector()
     }
 
     /** Get the bibliography from the server and create as this.db.
@@ -42,65 +44,40 @@ export class BibliographyDB {
             numberOfEntries = -1
             localStorageOwnerId = -1
         }
-
         activateWait()
-        return postJson(
-            '/bibliography/biblist/',
-            {
-                last_modified: lastModified,
-                number_of_entries: numberOfEntries,
-                user_id: localStorageOwnerId
-            }
-        ).then(
-            response => {
-                let bibCats = response['bib_categories']
-                bibCats.forEach(bibCat => {
-                    this.cats.push(bibCat)
-                })
-
-                let bibList = []
-
-                if (response.hasOwnProperty('bib_list')) {
-                    bibList = response['bib_list']
+        return this.sc.getDB(lastModified, numberOfEntries, localStorageOwnerId).then(
+            ({bibCats, bibList, lastModified, numberOfEntries, userId}) => {
+                bibCats.forEach(bibCat => this.cats.push(bibCat))
+                if (bibList) {
                     try {
                         window.localStorage.setItem('biblist', JSON.stringify(bibList))
-                        window.localStorage.setItem('last_modified_biblist', response['last_modified'])
-                        window.localStorage.setItem('number_of_entries', response['number_of_entries'])
-                        window.localStorage.setItem('owner_id', response['user_id'])
+                        window.localStorage.setItem('last_modified_biblist', lastModified)
+                        window.localStorage.setItem('number_of_entries', numberOfEntries)
+                        window.localStorage.setItem('owner_id', userId)
                         window.localStorage.setItem('version', FW_LOCALSTORAGE_VERSION)
                     } catch (error) {
                         // The local storage was likely too small
+                        throw(error)
                     }
                 } else {
                     bibList = JSON.parse(window.localStorage.getItem('biblist'))
                 }
-
-                let bibPKs = bibList.map(bibItem => this.serverBibItemToBibDB(bibItem))
+                let bibPKs = []
+                bibList.forEach(({id, bibDBEntry}) => {
+                    this.db[id] = bibDBEntry
+                    bibPKs.push(id)
+                })
                 deactivateWait()
                 return {bibPKs, bibCats}
             }
         ).catch(
-            () => {
+            error => {
                 addAlert('error', gettext('Could not obtain bibliography data'))
                 deactivateWait()
+                throw(error)
                 return Promise.reject()
             }
         )
-    }
-
-    /** Converts a bibliography item as it arrives from the server to a BibDB object.
-     * @function serverBibItemToBibDB
-     * @param item The bibliography item from the server.
-     */
-    serverBibItemToBibDB(item) {
-        let id = item['id']
-        let bibDBEntry = {}
-        bibDBEntry['fields'] = JSON.parse(item['fields'])
-        bibDBEntry['bib_type'] = item['bib_type']
-        bibDBEntry['entry_key'] = item['entry_key']
-        bibDBEntry['entry_cat'] = JSON.parse(item['entry_cat'])
-        this.db[id] = bibDBEntry
-        return id
     }
 
     /** Saves a bibliography entry to the database on the server.
@@ -108,35 +85,23 @@ export class BibliographyDB {
      * @param tmpDB The bibliography DB with temporary IDs to be send to the server.
      */
     saveBibEntries(tmpDB, isNew) {
-        // Fields field need to be stringified for saving in database.
-        // dbObject is a clone of tmpDB with a stringified fields-field, so
-        // the original tmpDB isn't destroyed.
-        let dbObject = {}
-        Object.keys(tmpDB).forEach((bibKey)=>{
-            dbObject[bibKey] = Object.assign({}, tmpDB[bibKey])
-            dbObject[bibKey].entry_cat = JSON.stringify(tmpDB[bibKey].entry_cat)
-            dbObject[bibKey].fields = JSON.stringify(tmpDB[bibKey].fields)
-        })
-
-        return postJson(
-            '/bibliography/save/',
-            {
-                is_new: isNew,
-                bibs: JSON.stringify(dbObject)
-            }
-        ).then(
-            response => {
-                let idTranslations = response['id_translations']
-                idTranslations.forEach(bibTrans => {
-                    this.db[bibTrans[1]] = tmpDB[bibTrans[0]]
-                })
-                addAlert('success', gettext('The bibliography has been updated.'))
-                return idTranslations
-            }
+        return this.sc.saveBibEntries(tmpDB, isNew).then(
+            idTranslations => this.updateLocalBibEntries(tmpDB, idTranslations)
         ).catch(
-            () => addAlert('error', gettext('The bibliography could not be updated'))
+            error => {
+                addAlert('error', gettext('The bibliography could not be updated'))
+                throw(error)
+            }
         )
 
+    }
+
+    updateLocalBibEntries(tmpDB, idTranslations) {
+        idTranslations.forEach(bibTrans => {
+            this.db[bibTrans[1]] = tmpDB[bibTrans[0]]
+        })
+        addAlert('success', gettext('The bibliography has been updated.'))
+        return idTranslations
     }
 
 
@@ -147,15 +112,8 @@ export class BibliographyDB {
     createCategory(cats) {
         activateWait()
 
-        return postJson(
-            '/bibliography/save_category/',
-            {
-                'ids[]': cats.ids,
-                'titles[]': cats.titles
-            }
-        ).then(
-            response => {
-                let bibCats = response.entries // We receive both existing and new categories.
+        return this.sc.createCategory(cats).then(
+            bibCats => {
                 // Replace the old with the new categories, but don't lose the link to the array (so delete each, then add each).
                 while(this.cats.length > 0) {
                     this.cats.pop()
@@ -168,13 +126,13 @@ export class BibliographyDB {
                 return this.cats
             }
         ).catch(
-            () => {
+            error => {
                 addAlert('error', gettext('The categories could not be updated'))
                 deactivateWait()
+                throw(error)
                 return Promise.reject()
             }
         )
-
     }
 
     /** Delete a categories
@@ -183,12 +141,7 @@ export class BibliographyDB {
      */
     deleteCategory(ids) {
 
-        return post(
-            '/bibliography/delete_category/',
-            {
-                'ids[]': ids
-            }
-        ).then(
+        return this.sc.deleteCategory(ids).then(
             () => {
                 let deletedPks = ids.slice()
                 let deletedBibCats = []
@@ -212,18 +165,9 @@ export class BibliographyDB {
      * @param ids A list of bibliography item ids that are to be deleted.
      */
     deleteBibEntries(ids) {
-        ids = ids.map(id => parseInt(id))
-        let postData = {
-            'ids[]': ids
-        }
         activateWait()
-
-        return post(
-            '/bibliography/delete/',
-            {
-                'ids[]': ids
-            }
-        ).then(
+        ids = ids.map(id => parseInt(id))
+        return this.sc.deleteBibEntries(ids).then(
             () => {
                 ids.forEach(id => {
                     delete this.db[id]
@@ -234,9 +178,10 @@ export class BibliographyDB {
                 return ids
             }
         ).catch(
-            () => {
+            error => {
                 addAlert('error', 'The bibliography item(s) could not be deleted')
                 deactivateWait()
+                throw(error)
                 return Promise.reject()
             }
         )

@@ -1,7 +1,7 @@
 import {addAlert} from "../../common"
 import {BibLatexFileExporter} from "../export"
 import {BibEntryForm} from "../form"
-import {BibLatexFileImporter} from "../import"
+import {BibLatexFileImportDialog} from "../import"
 
 export let menuModel = {
     content: [
@@ -22,7 +22,7 @@ export let menuModel = {
                 {
                     title: gettext('Delete selected'),
                     action: overview => {
-                        let ids = overview.getSelected()
+                        let ids = overview.getSelected().map(id => parseInt(id))
                         if (ids.length) {
                             overview.deleteBibEntryDialog(ids)
                         }
@@ -78,7 +78,7 @@ export let menuModel = {
             icon: 'upload',
             title: gettext('Upload BibTeX file'),
             action: overview => {
-                let fileImporter = new BibLatexFileImporter(
+                let fileImporter = new BibLatexFileImportDialog(
                     overview.bibDB,
                     bibEntries => overview.addBibList(bibEntries)
                 )

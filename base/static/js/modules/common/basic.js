@@ -211,6 +211,8 @@ export let post = function(url, params={}) {
         let value = params[key]
         if (typeof(value)==="object" && value.file && value.filename) {
             body.append(key, value.file, value.filename)
+        } else if (Array.isArray(value)) {
+            value.forEach(item => body.append(`${key}[]`, item))
         } else {
             body.append(key, value)
         }

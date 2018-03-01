@@ -178,3 +178,21 @@ def save_category_js(request):
         response,
         status=status
     )
+
+
+# Delete one or more categories
+@login_required
+def delete_category_js(request):
+    status = 405
+    response = {}
+    if request.is_ajax() and request.method == 'POST':
+        status = 201
+        ids = request.POST.getlist('ids[]')
+        EntryCategory.objects.filter(
+            pk__in=ids,
+            entry_owner=request.user
+        ).delete()
+    return JsonResponse(
+        response,
+        status=status
+    )

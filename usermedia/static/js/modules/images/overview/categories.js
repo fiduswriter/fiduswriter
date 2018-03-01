@@ -15,8 +15,8 @@ export class ImageOverviewCategories {
         postJson(
             '/usermedia/save_category/',
             {
-                'ids[]': cats.ids,
-                'titles[]': cats.titles
+                'ids': cats.ids,
+                'titles': cats.titles
             }
         ).then(
             response => {

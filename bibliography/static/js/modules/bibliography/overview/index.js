@@ -25,7 +25,6 @@ export class BibliographyOverview {
     /* load data from the bibliography */
     getBibDB() {
         this.bibDB = new BibliographyDB()
-
         this.bibDB.getDB().then(({bibPKs, bibCats}) => {
             this.setBibCategoryList(bibCats)
             this.addBibList(bibPKs)

@@ -1,11 +1,20 @@
-import {BibLatexParser} from "biblatex-csl-converter"
 import {importBibFileTemplate} from "./templates"
-import {activateWait, deactivateWait, addAlert} from "../../common"
+import {activateWait, deactivateWait, addAlert, getCsrfToken} from "../../common"
 
 /** First step of the BibTeX file import. Creates a dialog box to specify upload file.
  */
 
-export class BibLatexFileImporter {
+const ERROR_MSG = {
+    'no_entries': gettext('No bibliography entries could be found in import file.'),
+    'entry_error': gettext('An error occured while reading a bibtex entry'),
+    'unknown_field': gettext('Field cannot not be saved. Fidus Writer does not support the field.'),
+    'unknown_type': gettext('Entry has been saved as "misc". Fidus Writer does not support the entry type.'),
+    'unknown_date': gettext('Field does not contain a valid EDTF string.'),
+    'server_save': gettext('The bibliography could not be updated')
+}
+
+
+export class BibLatexFileImportDialog {
 
     constructor(bibDB, addToListCall) {
         this.bibDB = bibDB
@@ -62,93 +71,49 @@ export class BibLatexFileImporter {
         })
     }
 
-    /** Second step of the BibTeX file import. Takes a BibTeX file object,
-     * processes client side and cuts into chunks to be uploaded to the server.
-     */
     processFile(fileContents) {
-        let bibData = new BibLatexParser(fileContents)
-        this.tmpDB = bibData.output
-        this.bibKeys = Object.keys(this.tmpDB)
-        if (!this.bibKeys.length) {
-            deactivateWait()
-            addAlert('error', gettext('No bibliography entries could be found in import file.'))
-            return
-        } else {
-            this.bibKeys.forEach((bibKey) => {
-                let bibEntry = this.tmpDB[bibKey]
-                // We add an empty category list for all newly imported bib entries.
-                bibEntry.entry_cat = []
-                // If the entry has no title, add an empty title
-                if (!bibEntry.fields.title) {
-                    bibEntry.fields.title = []
-                }
-                // If the entry has no date, add an uncertain date
-                if (!bibEntry.fields.date) {
-                    bibEntry.fields.date = 'uuuu'
-                }
-                // If the entry has no editor or author, add empty author
-                if (!bibEntry.fields.author && !bibEntry.fields.editor) {
-                    bibEntry.fields.author = [{'literal': []}]
-                }
-            })
-            bibData.errors.forEach(error => {
-                let errorMsg = gettext('An error occured while reading the bibtex file')
-                errorMsg += `, error_code: ${error.type}`
-                if (error.key) {
-                    errorMsg += `, key: ${error.key}`
-                }
-                addAlert('error', errorMsg)
-            })
-            bibData.warnings.forEach(warning => {
-                let warningMsg
-                switch (warning.type) {
-                    case 'unknown_field':
-                        warningMsg = warning.field_name + gettext(' of ') +
-                            warning.entry +
-                            gettext(' cannot not be saved. Fidus Writer does not support the field.')
-                        break
-                    case 'unknown_type':
-                        warningMsg = warning.type_name + gettext(' of ') +
-                            warning.entry +
-                            gettext(' is saved as "misc". Fidus Writer does not support the entry type.')
-                        break
-                    case 'unknown_date':
-                        warningMsg = warning.field_name + gettext(' of ') +
-                            warning.entry +
-                            gettext(' not a valid EDTF string.')
-                        break
-                    default:
-                        warningMsg = gettext('An warning occured while reading the bibtex file')
-                        warningMsg += `, warning_code: ${warning.type}`
-                        if (warning.key) {
-                            warningMsg += `, key: ${warning.key}`
-                        }
-                }
-                addAlert('warning', warningMsg)
-            })
-            this.totalChunks = Math.ceil(this.bibKeys.length / 50)
-            this.currentChunkNumber = 0
-            this.processChunk()
-        }
-
+        let importWorker = new Worker(`${$StaticUrls.transpile.base$}biblatex_import_worker.js?v=${$StaticUrls.transpile.version$}`);
+        let csrfToken = getCsrfToken()
+        importWorker.onmessage = message => this.onMessage(message.data, importWorker)
+        importWorker.postMessage({fileContents, csrfToken})
     }
 
-    processChunk() {
-        if (this.currentChunkNumber < this.totalChunks) {
-            let fromNumber = this.currentChunkNumber * 50
-            let toNumber = fromNumber + 50
-            let currentChunk = {}
-            this.bibKeys.slice(fromNumber, toNumber).forEach((bibKey)=>{
-                currentChunk[bibKey] = this.tmpDB[bibKey]
-            })
-            this.bibDB.saveBibEntries(currentChunk, true).then(idTranslations => {
-                let newIds = idTranslations.map(idTrans => idTrans[1])
+    onMessage(message, worker) {
+        switch (message.type) {
+            case 'error':
+            case 'warning':
+                let errorMsg = ERROR_MSG[message.errorCode]
+                if (!errorMsg) {
+                    errorMsg = gettext('There was an issue with the bibtex import')
+                }
+                if (message.errorType) {
+                    errorMsg += `, error_type: ${message.errorType}`
+                }
+                if (message.key) {
+                    errorMsg += `, key: ${message.key}`
+                }
+                if (message.type_name) {
+                    errorMsg += `, entry: ${message.type_name}`
+                }
+                if (message.field_name) {
+                    errorMsg += `, field_name: ${message.field_name}`
+                }
+                if (message.entry) {
+                    errorMsg += `, entry: ${message.entry}`
+                }
+                addAlert(message.type, errorMsg)
+                break
+            case 'savedBibEntries':
+                this.bibDB.updateLocalBibEntries(message.tmpDB, message.idTranslations)
+                let newIds = message.idTranslations.map(idTrans => idTrans[1])
                 this.addToListCall(newIds)
-                this.currentChunkNumber++
-                this.processChunk()
-            })
-        } else {
+                break
+            default:
+                break
+        }
+        if (message.done) {
             deactivateWait()
+            worker.terminate()
         }
     }
 

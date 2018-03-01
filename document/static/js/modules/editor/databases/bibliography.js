@@ -54,6 +54,16 @@ export class ModBibliographyDB {
 
     // Function added here for compatibility with user's bibDB. See comment at
     // saveBibEntries function.
+    updateLocalBibEntries(tmpDB, idTranslations) {
+        idTranslations.forEach(bibTrans => {
+            this.updateLocalReference([bibTrans[1]], tmpDB[bibTrans[0]])
+        })
+        return idTranslations
+    }
+
+
+    // Function added here for compatibility with user's bibDB. See comment at
+    // saveBibEntries function.
     deleteBibEntries(ids) {
         ids.forEach(id => this.deleteReference(id))
         return Promise.resolve(ids)

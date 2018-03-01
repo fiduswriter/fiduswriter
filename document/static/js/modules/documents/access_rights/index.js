@@ -166,9 +166,9 @@ export class DocumentAccessRightsDialog {
         postJson(
             '/document/accessright/save/',
             {
-                'documents[]': this.documentIds,
-                'collaborators[]': newCollaborators,
-                'rights[]': newAccessRights
+                'documents': this.documentIds,
+                'collaborators': newCollaborators,
+                'rights': newAccessRights
             }
         ).then(
             response => {

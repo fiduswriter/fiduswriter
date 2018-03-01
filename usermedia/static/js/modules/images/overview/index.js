@@ -39,9 +39,7 @@ export class ImageOverview {
         activateWait()
         post(
             '/usermedia/delete/',
-            {
-                'ids[]': ids
-            }
+            {ids}
         ).then(
             () => {
                 this.stopUsermediaTable()

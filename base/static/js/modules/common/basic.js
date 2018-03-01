@@ -148,6 +148,7 @@ export let escapeText = function(text) {
 
 export let cancelPromise = () => new Promise(()=>{})
 
+
 /** Get cookie to set as part of the request header of all AJAX requests to the server.
  * @param name The name of the token to look for in the cookie.
  */
@@ -167,10 +168,9 @@ let getCookie = function(name) {
     return cookieValue
 }
 
-/**
- * The Cross Site Request Forgery (CSRF) token
- */
-let csrfToken = getCookie('csrftoken')
+export let getCsrfToken = function () {
+    return getCookie('csrftoken')
+}
 
 /* from https://www.tjvantoll.com/2015/09/13/fetch-and-errors/ */
 let handleFetchErrors = function(response) {
@@ -178,7 +178,10 @@ let handleFetchErrors = function(response) {
     return response
 }
 
-export let get = function(url, params={}) {
+export let get = function(url, params={}, csrfToken=false) {
+    if (!csrfToken) {
+        csrfToken = getCsrfToken() // Won't work in web worker.
+    }
     let queryString = Object.keys(params).map(
         key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`
     ).join('&')
@@ -198,19 +201,24 @@ export let get = function(url, params={}) {
     )
 }
 
-export let getJson = function(url, params={}) {
-    return get(url, params).then(
+export let getJson = function(url, params={}, csrfToken=false) {
+    return get(url, params, csrfToken).then(
         response => response.json()
     )
 }
 
-export let post = function(url, params={}) {
-    let body = new window.FormData()
+export let post = function(url, params={}, csrfToken=false) {
+    if (!csrfToken) {
+        csrfToken = getCsrfToken() // Won't work in web worker.
+    }
+    let body = new FormData()
     body.append('csrfmiddlewaretoken', csrfToken)
     Object.keys(params).forEach(key => {
         let value = params[key]
         if (typeof(value)==="object" && value.file && value.filename) {
             body.append(key, value.file, value.filename)
+        } else if (Array.isArray(value)) {
+            value.forEach(item => body.append(`${key}[]`, item))
         } else {
             body.append(key, value)
         }
@@ -231,15 +239,15 @@ export let post = function(url, params={}) {
 }
 
 // post and then return json
-export let postJson = function(url, params={}) {
-    return post(url, params).then(
+export let postJson = function(url, params={}, csrfToken=false) {
+    return post(url, params, csrfToken).then(
         response => response.json()
     )
 }
 
 // post and then return json and status
-export let postJsonStatus = function(url, params={}) {
-    return post(url, params).then(
+export let postJsonStatus = function(url, params={}, csrfToken=false) {
+    return post(url, params, csrfToken).then(
         response => response.json().then(
             json => ({json, status: response.status})
         )

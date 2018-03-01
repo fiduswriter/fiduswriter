@@ -7,6 +7,10 @@ urlpatterns = [
     url('^save/$', views.save_js, name='save'),
     url('^delete/$', views.delete_js, name='delete'),
     url('^save_category/$', views.save_category_js, name='save_category'),
-    url('^delete_category/$', views.delete_category_js, name='delete_category'),
+    url(
+        '^delete_category/$',
+        views.delete_category_js,
+        name='delete_category'
+    ),
     url('^biblist/$', views.biblist_js, name='biblist')
 ]

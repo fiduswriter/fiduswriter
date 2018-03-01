@@ -4,19 +4,21 @@ import {post, postJson} from "../../common"
 // class for server calls of BibliographyDB.
 export class BibliographyDBServerConnector {
 
+    constructor(csrfToken) {
+        this.csrfToken = csrfToken
+    }
+
     getDB(lastModified, numberOfEntries, localStorageOwnerId) {
-        console.log('getting DB2')
         return postJson(
             '/bibliography/biblist/',
             {
                 last_modified: lastModified,
                 number_of_entries: numberOfEntries,
                 user_id: localStorageOwnerId
-            }
+            },
+            this.csrfToken
         ).then(
             response => {
-                console.log('response, biblist')
-                console.log({response: response})
                 return {
                     bibCats: response['bib_categories'],
                     bibList: response.hasOwnProperty('bib_list') ? response['bib_list'].map(item => this.serverBibItemToBibDB(item)) : false,
@@ -60,7 +62,8 @@ export class BibliographyDBServerConnector {
             {
                 is_new: isNew,
                 bibs: JSON.stringify(dbObject)
-            }
+            },
+            this.csrfToken
         ).then(
             response => response['id_translations']
         )
@@ -72,23 +75,26 @@ export class BibliographyDBServerConnector {
             {
                 'ids': cats.ids,
                 'titles': cats.titles
-            }
+            },
+            this.csrfToken
         ).then(
-            reponse => response.entries
+            response => response.entries
         )
     }
 
     deleteCategory(ids) {
         return post(
             '/bibliography/delete_category/',
-            {ids}
+            {ids},
+            this.csrfToken
         )
     }
 
     deleteBibEntries(ids) {
         return post(
             '/bibliography/delete/',
-            {ids}
+            {ids},
+            this.csrfToken
         )
     }
 

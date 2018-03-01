@@ -67,17 +67,19 @@
     "multistr": true,
     "sub": true,
     "undef": true,
-    "predef": [
-      "window",
-      "document",
-      "console",
-      "jQuery",
-      "MathQuill",
-      "gettext",
-      "_",
-      "fetch",
-      "URLSearchParams",
-      "$StaticUrls"
-    ]
+    "globals": {
+      "jQuery": true,
+      "MathQuill": true,
+      "gettext": false,
+      "$StaticUrls": false,
+      "console": false,
+      "FormData": false,
+      "URLSearchParams": false,
+      "self": true
+    },
+    "browser": true,
+    "jquery": true,
+    "worker": true,
+    "varstmt": true
   }
 }

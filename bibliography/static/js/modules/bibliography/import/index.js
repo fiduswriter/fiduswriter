@@ -1,8 +1,18 @@
 import {importBibFileTemplate} from "./templates"
-import {activateWait, deactivateWait, addAlert} from "../../common"
-import {BibLatexFileImporter} from "../../importer/biblatex"
+import {activateWait, deactivateWait, addAlert, getCsrfToken} from "../../common"
+
 /** First step of the BibTeX file import. Creates a dialog box to specify upload file.
  */
+
+const ERROR_MSG = {
+    'no_entries': gettext('No bibliography entries could be found in import file.'),
+    'entry_error': gettext('An error occured while reading a bibtex entry'),
+    'unknown_field': gettext('Field cannot not be saved. Fidus Writer does not support the field.'),
+    'unknown_type': gettext('Entry has been saved as "misc". Fidus Writer does not support the entry type.'),
+    'unknown_date': gettext('Field does not contain a valid EDTF string.'),
+    'server_save': gettext('The bibliography could not be updated')
+}
+
 
 export class BibLatexFileImportDialog {
 
@@ -62,17 +72,36 @@ export class BibLatexFileImportDialog {
     }
 
     processFile(fileContents) {
-        let importer = new BibLatexFileImporter(fileContents, message => this.onMessage(message))
-        importer.init()
+        let importWorker = new Worker(`${$StaticUrls.transpile.base$}biblatex_import_worker.js?v=${$StaticUrls.transpile.version$}`);
+        let csrfToken = getCsrfToken()
+        importWorker.onmessage = message => this.onMessage(message.data, importWorker)
+        importWorker.postMessage({fileContents, csrfToken})
     }
 
-    onMessage(message) {
+    onMessage(message, worker) {
         switch (message.type) {
             case 'error':
-                addAlert('error', message.errorMsg)
-                break
             case 'warning':
-                addAlert('warning', message.warningMsg)
+                let errorMsg = ERROR_MSG[message.errorCode]
+                if (!errorMsg) {
+                    errorMsg = gettext('There was an issue with the bibtex import')
+                }
+                if (message.errorType) {
+                    errorMsg += `, error_type: ${message.errorType}`
+                }
+                if (message.key) {
+                    errorMsg += `, key: ${message.key}`
+                }
+                if (message.type_name) {
+                    errorMsg += `, entry: ${message.type_name}`
+                }
+                if (message.field_name) {
+                    errorMsg += `, field_name: ${message.field_name}`
+                }
+                if (message.entry) {
+                    errorMsg += `, entry: ${message.entry}`
+                }
+                addAlert(message.type, errorMsg)
                 break
             case 'savedBibEntries':
                 this.bibDB.updateLocalBibEntries(message.tmpDB, message.idTranslations)
@@ -84,6 +113,7 @@ export class BibLatexFileImportDialog {
         }
         if (message.done) {
             deactivateWait()
+            worker.terminate()
         }
     }
 

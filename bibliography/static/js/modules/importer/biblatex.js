@@ -1,11 +1,11 @@
 import {BibLatexParser} from "biblatex-csl-converter"
 import {BibliographyDBServerConnector} from "../bibliography/database/server_connector"
 
-export class BibLatexFileImporter {
-    constructor(fileContents, sendMessage) {
+export class BibLatexImporter {
+    constructor(fileContents, sendMessage, csrfToken) {
         this.fileContents = fileContents
         this.sendMessage = sendMessage
-        this.sc = new BibliographyDBServerConnector()
+        this.sc = new BibliographyDBServerConnector(csrfToken)
     }
 
     /** Second step of the BibTeX file import. Takes a BibTeX file object,
@@ -16,7 +16,7 @@ export class BibLatexFileImporter {
         this.tmpDB = bibData.output
         this.bibKeys = Object.keys(this.tmpDB)
         if (!this.bibKeys.length) {
-            this.sendMessage({type: 'error', errorMsg: gettext('No bibliography entries could be found in import file.'), done: true})
+            this.sendMessage({type: 'error', errorCode: 'no_Entries', done: true})
             return
         } else {
             this.bibKeys.forEach((bibKey) => {
@@ -37,39 +37,15 @@ export class BibLatexFileImporter {
                 }
             })
             bibData.errors.forEach(error => {
-                let errorMsg = gettext('An error occured while reading the bibtex file')
-                errorMsg += `, error_code: ${error.type}`
-                if (error.key) {
-                    errorMsg += `, key: ${error.key}`
-                }
-                this.sendMessage({type: 'error', errorMsg})
+                error.errorType = error.type
+                error.errorCode = 'entry_error'
+                error.type = 'error'
+                this.sendMessage(error)
             })
             bibData.warnings.forEach(warning => {
-                let warningMsg
-                switch (warning.type) {
-                    case 'unknown_field':
-                        warningMsg = warning.field_name + gettext(' of ') +
-                            warning.entry +
-                            gettext(' cannot not be saved. Fidus Writer does not support the field.')
-                        break
-                    case 'unknown_type':
-                        warningMsg = warning.type_name + gettext(' of ') +
-                            warning.entry +
-                            gettext(' is saved as "misc". Fidus Writer does not support the entry type.')
-                        break
-                    case 'unknown_date':
-                        warningMsg = warning.field_name + gettext(' of ') +
-                            warning.entry +
-                            gettext(' not a valid EDTF string.')
-                        break
-                    default:
-                        warningMsg = gettext('An warning occured while reading the bibtex file')
-                        warningMsg += `, warning_code: ${warning.type}`
-                        if (warning.key) {
-                            warningMsg += `, key: ${warning.key}`
-                        }
-                }
-                this.sendMessage({type: 'warning', warningMsg})
+                warning.errorCode = warning.type
+                warning.type = 'warning'
+                this.sendMessage(warning)
             })
             this.totalChunks = Math.ceil(this.bibKeys.length / 50)
             this.currentChunkNumber = 0
@@ -98,7 +74,7 @@ export class BibLatexFileImporter {
                 }
             ).catch(
                 error => {
-                    this.sendMessage({type: 'error', errorMsg: gettext('The bibliography could not be updated'), done: true})
+                    this.sendMessage({type: 'error', errorCode: 'server_save', done: true})
                     throw(error)
                 }
             )

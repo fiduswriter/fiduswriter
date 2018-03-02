@@ -1,7 +1,7 @@
-import {BibLatexImporter} from "./modules/importer/biblatex"
+import {BibLatexImportWorker} from "./workers/importer/biblatex"
 
 onmessage = function(message) {
-    let importer = new BibLatexImporter(
+    let importer = new BibLatexImportWorker(
         message.data.fileContents,
         response => postMessage(response),
         message.data.csrfToken

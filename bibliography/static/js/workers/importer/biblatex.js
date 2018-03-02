@@ -1,11 +1,13 @@
 import {BibLatexParser} from "biblatex-csl-converter"
-import {BibliographyDBServerConnector} from "../bibliography/database/server_connector"
+import {BibliographyDBServerConnector} from "../../modules/bibliography/database/server_connector"
 
-export class BibLatexImporter {
+export class BibLatexImportWorker {
     constructor(fileContents, sendMessage, csrfToken) {
         this.fileContents = fileContents
         this.sendMessage = sendMessage
-        this.sc = new BibliographyDBServerConnector(csrfToken)
+        if (csrfToken) {
+            this.sc = new BibliographyDBServerConnector(csrfToken)
+        }
     }
 
     /** Second step of the BibTeX file import. Takes a BibTeX file object,
@@ -62,22 +64,30 @@ export class BibLatexImporter {
             this.bibKeys.slice(fromNumber, toNumber).forEach((bibKey)=>{
                 currentChunk[bibKey] = this.tmpDB[bibKey]
             })
-            this.sc.saveBibEntries(currentChunk, true).then(
-                idTranslations => {
-                    this.sendMessage({
-                        type: 'savedBibEntries',
-                        tmpDB: currentChunk,
-                        idTranslations
-                    })
-                    this.currentChunkNumber++
-                    this.processChunk()
-                }
-            ).catch(
-                error => {
-                    this.sendMessage({type: 'error', errorCode: 'server_save', done: true})
-                    throw(error)
-                }
-            )
+            if (this.sc) {
+                this.sc.saveBibEntries(currentChunk, true).then(
+                    idTranslations => {
+                        this.sendMessage({
+                            type: 'savedBibEntries',
+                            tmpDB: currentChunk,
+                            idTranslations
+                        })
+                        this.currentChunkNumber++
+                        this.processChunk()
+                    }
+                ).catch(
+                    error => {
+                        this.sendMessage({type: 'error', errorCode: 'server_save', done: true})
+                        throw(error)
+                    }
+                )
+            } else {
+                // No server connector. Return chunk instead.
+                this.sendMessage({type: 'unsavedBibEntries', tmpDB: currentChunk})
+                this.currentChunkNumber++
+                this.processChunk()
+            }
+
         } else {
             this.sendMessage({type: 'ok', done: true})
         }

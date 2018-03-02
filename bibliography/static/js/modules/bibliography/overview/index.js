@@ -1,12 +1,12 @@
 import fixUTF8 from "fix-utf8"
-import {BibLatexParser} from "biblatex-csl-converter"
+import {BibLatexImporter} from "../import"
 import {addRemoveListHandler, litToText, nameToText} from "../tools"
 import {BibEntryForm} from "../form"
 import {editCategoriesTemplate, bibtableTemplate} from "./templates"
 import {BibliographyDB} from "../database"
 import {BibTypeTitles} from "../form/strings"
 import {SiteMenu} from "../../menu"
-import {OverviewMenuView} from "../../common"
+import {OverviewMenuView, getCsrfToken} from "../../common"
 import {menuModel} from "./menu"
 import * as plugins from "../../../plugins/bibliography_overview"
 
@@ -319,36 +319,14 @@ export class BibliographyOverview {
 
     // find bibtex in pasted or dropped data.
     getBibtex(text) {
-        let bibData = new BibLatexParser(text)
-        let tmpDB = bibData.output
-        if (!Object.keys(tmpDB).length) {
-            // No entries have been found. skip
-            return false
-        }
-
-        // Add missing data to entries.
-        Object.values(tmpDB).forEach(bibEntry => {
-            // We add an empty category list for all newly imported bib entries.
-            bibEntry.entry_cat = []
-            // If the entry has no title, add an empty title
-            if (!bibEntry.fields.title) {
-                bibEntry.fields.title = []
-            }
-            // If the entry has no date, add an uncertain date
-            if (!bibEntry.fields.date) {
-                bibEntry.fields.date = 'uuuu'
-            }
-            // If the entry has no editor or author, add empty author
-            if (!bibEntry.fields.author && !bibEntry.fields.editor) {
-                bibEntry.fields.author = [{'literal': []}]
-            }
-        })
-
-        this.bibDB.saveBibEntries(tmpDB, true).then(idTranslations => {
-            this.addBibList(
-                idTranslations.map(trans => trans[1])
-            )
-        })
+        let importer = new BibLatexImporter(
+            text,
+            this.bibDB,
+            getCsrfToken(),
+            newIds => this.addBibList(newIds),
+            false
+        )
+        importer.init()
         return true
     }
 

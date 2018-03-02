@@ -28,9 +28,9 @@ export let pastePlugin = function(options) {
                 if (shiftPressed) {
                     return inText
                 }
-                let target = options.editor.currentView === options.editor.view ? 'main' : 'footnotes'
-                let ph = new TextPaste(options.editor, inText, target)
-                return ph.getOutput()
+                let ph = new TextPaste(options.editor, inText, options.editor.currentView)
+                ph.init()
+                return '' // We need to analyze it asynchronously, so we always need to turn this into an empty string for now.
             }
         }
     })

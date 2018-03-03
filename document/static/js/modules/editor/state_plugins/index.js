@@ -57,3 +57,7 @@ export {
     accessRightsPlugin
 }
 from "./access_rights"
+export {
+    trackingPlugin
+}
+from "./tracking"

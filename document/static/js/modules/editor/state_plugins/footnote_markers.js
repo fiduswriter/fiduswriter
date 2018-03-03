@@ -115,12 +115,18 @@ export let footnoteMarkersPlugin = function(options) {
                     return meta
                 }
 
+                let {
+                    fnMarkers
+                } = this.getState(oldState)
+
+                if (!tr.steps.length) {
+                    return {
+                        fnMarkers
+                    }
+                }
 
                 let remote = tr.getMeta('remote'),
                     fromFootnote = tr.getMeta('fromFootnote'),
-                    {
-                        fnMarkers
-                    } = this.getState(oldState),
                     ranges = getAddedRanges(tr), deletedFootnotesIndexes = []
                 fnMarkers = fnMarkers.map(marker => ({
                     from: tr.mapping.map(marker.from, 1),

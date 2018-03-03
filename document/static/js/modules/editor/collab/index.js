@@ -18,6 +18,18 @@ export class ModCollab {
         new ModCollabColors(this)
     }
 
+    getColorId(userId) {
+        /* We assign a color to each user. This color stays even if the user
+        * disconnects or the participant list is being updated.
+        */
+        if (!(userId in this.colorIds)) {
+            this.colorIds[userId] = this.newColor
+            this.newColor++
+            this.colors.provideUserColorStyles(this.newColor)
+        }
+        return this.colorIds[userId]
+    }
+
     updateParticipantList(participantArray) {
         let allSessionIds = [],
             participantObj = {}
@@ -71,16 +83,8 @@ export class ModCollab {
             this.collaborativeMode = false
         }
         this.participants.forEach(participant => {
-            /* We assign a color to each user. This color stays even if the user
-            * disconnects or the participant list is being updated.
-            */
-            if (!(participant.id in this.colorIds)) {
-                this.colorIds[participant.id] = this.newColor
-                this.newColor++
-            }
-            participant.colorId = this.colorIds[participant.id]
+            participant.colorId = this.getColorId(participant.id)
         })
-        this.colors.provideUserColorStyles(this.newColor)
         if (this.editor.menu.headerView) {
             this.editor.menu.headerView.update()
         }

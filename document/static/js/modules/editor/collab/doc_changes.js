@@ -288,19 +288,21 @@ export class ModCollabDocChanges {
             return
         }
         this.mod.editor.docInfo.version++
-        this.mod.editor.docInfo.confirmedDoc = unconfirmedDiffs["doc"]
 
         let sentSteps = unconfirmedDiffs["ds"] // document steps
         if (sentSteps) {
+            let ourIds = sentSteps.map(
+                step => this.mod.editor.client_id
+            )
             let tr = receiveTransaction(
                 this.mod.editor.view.state,
                 sentSteps,
-                sentSteps.map(
-                    step => this.mod.editor.client_id
-                )
+                ourIds
             )
             this.mod.editor.view.dispatch(tr)
         }
+
+        this.mod.editor.docInfo.confirmedDoc = unconfirmedDiffs["doc"]
 
         let sentFnSteps = unconfirmedDiffs["fs"] // footnote steps
         if (sentFnSteps) {

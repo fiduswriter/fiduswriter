@@ -36,7 +36,7 @@ export class ModCollabColors {
             for (let i=start;i<number;i++) {
                 let color = i < CSS_COLORS.length ? CSS_COLORS[i] :
                     `${Math.round(Math.random()*255)},${Math.round(Math.random()*255)},${Math.round(Math.random()*255)}`
-                let styleDefinition = `.user-${i} {border-color: rgba(${color},1)} .user-bg-${i} {background-color: rgba(${color},0.2)}`
+                let styleDefinition = `.user-${i}, .user-${i} > * {border-color: rgba(${color},1); text-decoration-color: rgba(${color},1);} .user-bg-${i} {background-color: rgba(${color},0.2)}`
                 this.cssColorDefinitions.push(styleDefinition)
             }
             this.userColorStyle.innerHTML = this.cssColorDefinitions.join('\n')

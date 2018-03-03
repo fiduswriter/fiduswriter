@@ -29,6 +29,66 @@ let copyLink = function(href) {
 
 export let linksPlugin = function(options) {
 
+    function getUrl(state, oldState, oldUrl) {
+        let id = state.selection.$head.parent.attrs.id,
+            mark = state.selection.$head.marks().find(mark =>
+                mark.type.name === 'anchor'),
+            newUrl = oldUrl.split('#')[0]
+        if (mark) {
+            newUrl += `#${mark.attrs.id}`
+        } else if (id) {
+            newUrl += `#${id}`
+        }
+        let changed = oldUrl === newUrl ? false : true
+        // TODO: Should the following be moved to a view?
+        // Not sure if this counts as a DOM update.
+        if (changed && options.editor.currentView.state === oldState) {
+            window.history.replaceState("", "", newUrl)
+        }
+        return newUrl
+    }
+
+    function getLinkMark(state) {
+        return state.selection.$head.marks().find(mark =>
+            mark.type.name === 'link')
+    }
+
+    function getDecos(state) {
+        const $head = state.selection.$head
+        let currentMarks = [],
+            linkMark = $head.marks().find(
+                mark => mark.type.name === 'link'
+            ),
+            anchorMark = $head.marks().find(
+                mark => mark.type.name === 'anchor'
+            )
+        if (linkMark) {
+            currentMarks.push(linkMark)
+        }
+        if (anchorMark) {
+            currentMarks.push(anchorMark)
+        }
+        if (!currentMarks.length) {
+            return DecorationSet.empty
+        }
+        let startIndex = $head.index()
+        while (
+            startIndex > 0 &&
+            currentMarks.some(mark => mark.isInSet(
+                $head.parent.child(startIndex-1).marks
+            ))
+        ) {
+            startIndex--
+        }
+        let startPos = $head.start() // position of block start.
+        for (let i = 0; i < startIndex; i++) {
+            startPos += $head.parent.child(i).nodeSize
+        }
+
+        let dom = createDropUp(linkMark, anchorMark, $head),
+            deco = Decoration.widget(startPos, dom)
+        return DecorationSet.create(state.doc, [deco])
+    }
 
     function createDropUp(linkMark, anchorMark, $head) {
         let dropUp = document.createElement('span'),
@@ -153,30 +213,32 @@ export let linksPlugin = function(options) {
         state: {
             init() {
                 return {
-                    url: window.location.href
+                    url: window.location.href,
+                    decos: DecorationSet.empty,
+                    linkMark: false
                 }
             },
             apply(tr, prev, oldState, state) {
                 let {
-                    url
+                    url,
+                    decos,
+                    linkMark
                 } = this.getState(oldState)
-                let id = state.selection.$head.parent.attrs.id,
-                    mark = state.selection.$head.marks().find(mark =>
-                        mark.type.name === 'anchor'),
-                    newUrl = url.split('#')[0]
-                if (mark) {
-                    newUrl += `#${mark.attrs.id}`
-                } else if (id) {
-                    newUrl += `#${id}`
-                }
-                let changed = url === newUrl ? false : true
-                // TODO: Should the following be moved to a view?
-                // Not sure if this counts as a DOM update.
-                if (changed && options.editor.currentView.state === oldState) {
-                    window.history.replaceState("", "", newUrl)
+
+                if (tr.steps.length || tr.selectionSet) {
+                    url = getUrl(state, oldState, url)
+                    let newLinkMark = getLinkMark(state)
+                    if (newLinkMark === linkMark) {
+                        decos = decos.map(tr.mapping, tr.doc)
+                    } else {
+                        decos = getDecos(state)
+                        linkMark = newLinkMark
+                    }
                 }
                 return {
-                    url: newUrl
+                    url,
+                    decos,
+                    linkMark
                 }
             }
         },
@@ -376,7 +438,6 @@ export let linksPlugin = function(options) {
                         true
                     )
                 )
-
                 figureIds.push(blockId)
             })
 
@@ -391,8 +452,6 @@ export let linksPlugin = function(options) {
                     )
                 )
             }
-
-
             return newTransaction
         },
         props: {
@@ -405,40 +464,10 @@ export let linksPlugin = function(options) {
                 }
             },
             decorations(state) {
-                const $head = state.selection.$head
-                let currentMarks = [],
-                    linkMark = $head.marks().find(
-                        mark => mark.type.name === 'link'
-                    ),
-                    anchorMark = $head.marks().find(
-                        mark => mark.type.name === 'anchor'
-                    )
-                if (linkMark) {
-                    currentMarks.push(linkMark)
-                }
-                if (anchorMark) {
-                    currentMarks.push(anchorMark)
-                }
-                if (!currentMarks.length) {
-                    return
-                }
-                let startIndex = $head.index()
-                while (
-                    startIndex > 0 &&
-                    currentMarks.some(mark => mark.isInSet(
-                        $head.parent.child(startIndex-1).marks
-                    ))
-                ) {
-                    startIndex--
-                }
-                let startPos = $head.start() // position of block start.
-                for (let i = 0; i < startIndex; i++) {
-                    startPos += $head.parent.child(i).nodeSize
-                }
-
-                let dom = createDropUp(linkMark, anchorMark, $head),
-                    deco = Decoration.widget(startPos, dom)
-                return DecorationSet.create(state.doc, [deco])
+                let {
+                    decos
+                } = this.getState(state)
+                return decos
             }
         }
     })

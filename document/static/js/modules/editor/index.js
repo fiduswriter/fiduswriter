@@ -15,7 +15,6 @@ import {
     undo
 } from "prosemirror-history"
 import {
-    toggleMark,
     baseKeymap
 } from "prosemirror-commands"
 import {

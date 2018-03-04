@@ -214,3 +214,53 @@ export let anchor = {
         }]
     }
 }
+
+export let deletion = {
+    attrs: {
+        u: '',
+        t: ''
+    },
+    inclusive: false,
+    excludes: "",
+    parseDOM: [{
+        tag: "span.deletion",
+        getAttrs(dom) {
+            return {
+                u: dom.getAttribute("data-u"),
+                t: dom.getAttribute("data-t")
+            }
+        }
+    }],
+    toDOM(node) {
+        return ['span', {
+            class: `deletion user-${node.attrs.u}`,
+            'data-u': node.attrs.u,
+            'data-t': node.attrs.t
+        }]
+    }
+}
+
+export let insertion = {
+    attrs: {
+        u: '',
+        t: ''
+    },
+    inclusive: false,
+    excludes: "",
+    parseDOM: [{
+        tag: "span.insertion",
+        getAttrs(dom) {
+            return {
+                u: dom.getAttribute("data-u"),
+                t: dom.getAttribute("data-t")
+            }
+        }
+    }],
+    toDOM(node) {
+        return ['span', {
+            class: `insertion user-${node.attrs.u}`,
+            'data-u': node.attrs.u,
+            'data-t': node.attrs.t
+        }]
+    }
+}

@@ -47,9 +47,12 @@ export class ModCollabColors {
             let color = index < CSS_COLORS.length ? CSS_COLORS[index] :
                 `${Math.round(Math.random()*255)},${Math.round(Math.random()*255)},${Math.round(Math.random()*255)}`
             return noSpaceTmp`
-                .user-${id}, .user-${id} > * {
+                .user-${id} {
                     border-color: rgba(${color},1);
                     text-decoration-color: rgba(${color},1);
+                }
+                .user-${id}.insertion {
+                    color: rgba(${color},1);
                 }
                 .user-bg-${id} {
                     background-color: rgba(${color},0.2);

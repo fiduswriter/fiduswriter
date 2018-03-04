@@ -4,7 +4,7 @@ import {nodes, marks} from "prosemirror-schema-basic"
 import {addListNodes} from "prosemirror-schema-list"
 import {tableNodes} from "prosemirror-tables"
 import {htmlToFnNode, fnNodeToHtml} from "./footnotes_convert"
-import {figure, citation, equation, heading, anchor} from "./common"
+import {figure, citation, equation, heading, anchor, deletion, insertion} from "./common"
 
 
 let article = {
@@ -341,31 +341,6 @@ let comment = {
     }
 }
 
-let deletion = {
-    attrs: {
-        u: '',
-        t: ''
-    },
-    inclusive: false,
-    excludes: "",
-    parseDOM: [{
-        tag: "span.deletion",
-        getAttrs(dom) {
-            return {
-                u: dom.getAttribute("data-u"),
-                t: dom.getAttribute("data-t")
-            }
-        }
-    }],
-    toDOM(node) {
-        return ['span', {
-            class: `deletion user-${node.attrs.u}`,
-            'data-u': node.attrs.u,
-            'data-t': node.attrs.t
-        }]
-    }
-}
-
 let doc = {
     content: "article", // Transformations don't work well on the top most element
     selectable: false
@@ -403,7 +378,8 @@ let spec = {
         code: marks.code,
         comment,
         anchor,
-        deletion
+        deletion,
+        insertion
     })
 }
 

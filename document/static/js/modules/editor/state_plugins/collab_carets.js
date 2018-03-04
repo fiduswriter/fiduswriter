@@ -25,7 +25,7 @@ export let updateCollaboratorSelection = function(state, collaborator, data) {
     }
 
     let widgetDom = document.createElement('div')
-    let className = `user-${collaborator.colorId}`
+    let className = `user-${collaborator.id}`
     widgetDom.classList.add('caret')
     widgetDom.classList.add(className)
     widgetDom.innerHTML = '<div class="caret-head"></div>'
@@ -50,7 +50,7 @@ export let updateCollaboratorSelection = function(state, collaborator, data) {
         let from = data.head > data.anchor ? data.anchor : data.head,
             to = data.anchor > data.head ? data.anchor : data.head,
             inlineDeco = Decoration.inline(from, to, {
-                class: `user-bg-${collaborator.colorId}`
+                class: `user-bg-${collaborator.id}`
             }, decoSpec)
         addDecos.push(inlineDeco)
     }

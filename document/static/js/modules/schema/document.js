@@ -341,6 +341,31 @@ let comment = {
     }
 }
 
+let deletion = {
+    attrs: {
+        u: '',
+        t: ''
+    },
+    inclusive: false,
+    excludes: "",
+    parseDOM: [{
+        tag: "span.deletion",
+        getAttrs(dom) {
+            return {
+                u: dom.getAttribute("data-u"),
+                t: dom.getAttribute("data-t")
+            }
+        }
+    }],
+    toDOM(node) {
+        return ['span', {
+            class: `deletion user-${node.attrs.u}`,
+            'data-u': node.attrs.u,
+            'data-t': node.attrs.t
+        }]
+    }
+}
+
 let doc = {
     content: "article", // Transformations don't work well on the top most element
     selectable: false
@@ -377,7 +402,8 @@ let spec = {
         link: marks.link,
         code: marks.code,
         comment,
-        anchor
+        anchor,
+        deletion
     })
 }
 

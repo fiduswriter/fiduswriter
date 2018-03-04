@@ -203,7 +203,7 @@ export class HeaderbarView {
                             }" title="${
                                 escapeText(participant.name)
                             }" class="avatar user-${
-                                participant.colorId
+                                participant.id
                             }">`).join('')
                     }
                 </div>

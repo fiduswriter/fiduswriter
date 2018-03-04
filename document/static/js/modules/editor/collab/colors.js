@@ -1,3 +1,5 @@
+import {noSpaceTmp} from "../../common"
+
 const CSS_COLORS = [
     '0,119,190',
     '217,58,50',
@@ -15,8 +17,8 @@ export class ModCollabColors {
     constructor(mod) {
         mod.colors = this
         this.mod = mod
-        this.cssColorDefinitions = []
         this.userColorStyle = false
+        this.colorIds = []
         this.setup()
     }
 
@@ -29,18 +31,31 @@ export class ModCollabColors {
         this.userColorStyle = document.getElementById('user-colors')
     }
 
-    // Ensure that there are at least the given number of user color styles.
-    provideUserColorStyles(number) {
-        if (this.cssColorDefinitions.length < number) {
-            let start = this.cssColorDefinitions.length
-            for (let i=start;i<number;i++) {
-                let color = i < CSS_COLORS.length ? CSS_COLORS[i] :
-                    `${Math.round(Math.random()*255)},${Math.round(Math.random()*255)},${Math.round(Math.random()*255)}`
-                let styleDefinition = `.user-${i}, .user-${i} > * {border-color: rgba(${color},1); text-decoration-color: rgba(${color},1);} .user-bg-${i} {background-color: rgba(${color},0.2)}`
-                this.cssColorDefinitions.push(styleDefinition)
-            }
-            this.userColorStyle.innerHTML = this.cssColorDefinitions.join('\n')
+    ensureUserColor(userId) {
+        /* We assign a color to each user. This color stays even if the user
+        * disconnects or the participant list is being updated.
+        */
+        if (!(userId in this.colorIds)) {
+            this.colorIds.push(userId)
+            this.provideUserColorStyles()
         }
+    }
+
+    // Ensure that there are at least the given number of user color styles.
+    provideUserColorStyles() {
+        this.userColorStyle.innerHTML = this.colorIds.map((id, index) => {
+            let color = index < CSS_COLORS.length ? CSS_COLORS[index] :
+                `${Math.round(Math.random()*255)},${Math.round(Math.random()*255)},${Math.round(Math.random()*255)}`
+            return noSpaceTmp`
+                .user-${id}, .user-${id} > * {
+                    border-color: rgba(${color},1);
+                    text-decoration-color: rgba(${color},1);
+                }
+                .user-bg-${id} {
+                    background-color: rgba(${color},0.2);
+                }`
+        }).join('\n')
+
     }
 
 

@@ -217,8 +217,12 @@ export let anchor = {
 
 export let deletion = {
     attrs: {
-        u: '',
-        t: ''
+        u: {
+            default: 'unknown'
+        },
+        t: {
+            default: 0
+        }
     },
     inclusive: false,
     excludes: "",
@@ -242,8 +246,12 @@ export let deletion = {
 
 export let insertion = {
     attrs: {
-        u: '',
-        t: ''
+        u: {
+            default: 'unknown'
+        },
+        t: {
+            default: 0
+        }
     },
     inclusive: false,
     excludes: "",

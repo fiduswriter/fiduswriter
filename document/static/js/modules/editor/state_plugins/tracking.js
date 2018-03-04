@@ -66,6 +66,7 @@ export let trackingPlugin = function(options) {
                 user = options.editor.user.id
             addedRanges.forEach(addedRange => {
                 newTr.maybeStep(new AddMarkStep(addedRange[0], addedRange[1], newState.schema.marks.insertion.create({u: user, t: time})))
+                newTr.removeMark(addedRange[0], addedRange[1], newState.schema.marks.deletion)
             })
             if (newTr.steps.length) {
                 return newTr

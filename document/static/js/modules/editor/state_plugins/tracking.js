@@ -24,11 +24,10 @@ class mapPos {
     }
 }
 
-
 export let trackingPlugin = function(options) {
     return new Plugin({
         key,
-        state : {
+        state: {
             init(config, state) {
                 // Make sure there are colors for all users who have left marks in the document
                 let userIds = [options.editor.user.id]
@@ -127,8 +126,8 @@ export let trackingPlugin = function(options) {
                     newTr.maybeStep(step)
                 }
             })
-            if (tr.selection instanceof TextSelection && tr.selection.from === tr.selection.to) {
-                let moveRight =  (tr.selection.from < state.selection.from) ? false : true
+            if (tr.selection instanceof TextSelection) {
+                let moveRight = (tr.selection.from < state.selection.from || tr.getMeta('backspace')) ? false : true
                 newTr.setSelection(new TextSelection(newTr.doc.resolve(map.map(tr.selection.from, moveRight))))
             }
             setTimeout(() => {options.editor.view.dispatch(newTr)},0)

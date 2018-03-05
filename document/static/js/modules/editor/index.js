@@ -96,6 +96,9 @@ import {
     toolbarPlugin,
     trackingPlugin
 } from "./state_plugins"
+import {
+    editorKeymap
+} from "./keymap"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']
@@ -128,8 +131,10 @@ export class Editor {
         }
         this.client_id = Math.floor(Math.random() * 0xFFFFFFFF)
         this.statePlugins = [
+            [keymap, () => editorKeymap],
             [keymap, () => buildKeymap(this.schema)],
             [keymap, () => baseKeymap],
+            [keymap, () => editorKeymap],
             [collab, () => ({clientID: this.client_id})],
             [linksPlugin, () => ({editor: this})],
             [history],

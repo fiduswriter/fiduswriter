@@ -186,7 +186,7 @@ export class DocMaintenance {
     }
 
     saveRevision(id, zipfs) {
-        zipfs.generateAsync({type:"blob"}).then(blob => {
+        zipfs.generateAsync({type:"blob", mimeType: "application/fidus+zip"}).then(blob => {
 
             post(
                 '/document/maintenance/update_revision/',

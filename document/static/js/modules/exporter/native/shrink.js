@@ -49,10 +49,15 @@ export class ShrinkFidus {
         let docCopy = Object.assign({}, this.doc)
 
         // Remove items that aren't needed.
-        delete(docCopy.access_rights)
+        delete(docCopy.rights)
         delete(docCopy.version)
+        delete(docCopy.comment_version)
         delete(docCopy.owner)
         delete(docCopy.id)
+        delete(docCopy.is_owner)
+        delete(docCopy.added)
+        delete(docCopy.updated)
+        delete(docCopy.revisions)
 
         return new Promise(resolve => resolve({
             doc: docCopy,

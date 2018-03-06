@@ -16,11 +16,11 @@ export class ImportFidusFile {
     /* Process a packaged Fidus File, either through user upload, or by reloading
       a saved revision which was saved in the same ZIP-baseformat. */
 
-    constructor(file, user, check) {
+    constructor(file, user, check=false, teamMembers=[]) {
         this.file = file
         this.user = user
-        this.check = check // Whether the file needs to be checked for compliance with ZIP-format
-
+        this.check = check // Whether the file needs to be checked for compliance with ZIP-format and whether authors of comments/changes are team members of current user.
+        this.teamMembers = teamMembers
         this.textFiles = []
         this.otherFiles = []
     }
@@ -83,23 +83,26 @@ export class ImportFidusFile {
     }
 
     processFidusFile() {
-        let filetypeVersion = this.textFiles.find(file => file.filename === 'filetype-version').contents,
+        let filetypeVersion = parseFloat(this.textFiles.find(file => file.filename === 'filetype-version').contents),
             mimeType = this.textFiles.find(file => file.filename === 'mimetype').contents
         if (mimeType === 'application/fidus+zip' &&
-            parseFloat(filetypeVersion) >= MIN_FW_FILETYPE_VERSION &&
-            parseFloat(filetypeVersion) <= MAX_FW_FILETYPE_VERSION) {
+            filetypeVersion >= MIN_FW_FILETYPE_VERSION &&
+            filetypeVersion <= MAX_FW_FILETYPE_VERSION) {
             // This seems to be a valid fidus file with current version number.
             let bibliography = updateFileBib(JSON.parse(
                 this.textFiles.find(file => file.filename === 'bibliography.json').contents
             ), filetypeVersion)
             let images = JSON.parse(this.textFiles.find(file => file.filename === 'images.json').contents)
-            let aDocument = updateFileDoc(
+            let doc = updateFileDoc(
                 JSON.parse(this.textFiles.find(file => file.filename === 'document.json').contents),
                 bibliography,
                 filetypeVersion
             )
+            if (this.check) {
+                doc = this.checkDocUsers(doc)
+            }
             let importer = new ImportNative(
-                aDocument,
+                doc,
                 bibliography,
                 images,
                 this.otherFiles,
@@ -114,6 +117,33 @@ export class ImportFidusFile {
                 FW_FILETYPE_VERSION
             )
         }
+    }
+
+    checkDocUsers(doc) { // Check whether users mentioned in doc are known to current user and present on this server
+        let returnDoc = Object.assign({}, doc)
+        Object.values(returnDoc.comments).forEach(comment => {
+            if (!
+                (
+                    this.teamMembers.find(member => member.id === comment.user && member.username === comment.username) ||
+                    (this.user.id === comment.user && this.user.username === comment.username)
+                )
+            ) {
+                // We could not find matching id/username accessible to current user, so we delete the user id from comment
+                comment.user = 0
+            }
+            comment.answers.forEach(answer => {
+                if (!
+                    (
+                        this.teamMembers.find(member => member.id === answer.user && member.username === answer.username) ||
+                        (this.user.id === answer.user && this.user.username === answer.username)
+                    )
+                ) {
+                    // We could not find matching id/username accessible to current user, so we delete the user id from comment answer
+                    answer.user = 0
+                }
+            })
+        })
+        return returnDoc
     }
 
 }

@@ -194,7 +194,8 @@ export class ModCommentLayout {
 
         let commentsTemplateHTML = commentsTemplate({
             theComments,
-            editor: this.mod.editor,
+            user: this.mod.editor.user,
+            docInfo: this.mod.editor.docInfo,
             activeCommentId: this.activeCommentId,
             activeCommentAnswerId: this.activeCommentAnswerId
         })

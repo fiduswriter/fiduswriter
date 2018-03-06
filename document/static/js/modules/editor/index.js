@@ -280,11 +280,7 @@ export class Editor {
 
         //  Setup comment handling
         this.mod.comments.store.reset()
-        Object.values(doc.comments).forEach(comment => {
-            this.mod.comments.store.addLocalComment(comment.id, comment.user,
-                comment.userName, comment.userAvatar, comment.date, comment.comment,
-                comment.answers, comment['review:isMajor'])
-        })
+        this.mod.comments.store.loadComments(doc.comments)
         this.mod.comments.layout.view()
         this.waitingForDocument = false
         // Get document settings

@@ -148,6 +148,7 @@ def get_documentlist_js(request):
             tm_object = {}
             tm_object['id'] = team_member.member.id
             tm_object['name'] = team_member.member.readable_name
+            tm_object['username'] = team_member.member.get_username()
             tm_object['avatar'] = avatar_url(team_member.member, 80)
             response['team_members'].append(tm_object)
         serializer = PythonWithURLSerializer()
@@ -164,6 +165,7 @@ def get_documentlist_js(request):
         response['user'] = {}
         response['user']['id'] = request.user.id
         response['user']['name'] = request.user.readable_name
+        response['user']['username'] = request.user.get_username()
         response['user']['avatar'] = avatar_url(request.user, 80)
         response['access_rights'] = get_accessrights(
             AccessRight.objects.filter(document__owner=request.user))

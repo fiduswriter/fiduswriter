@@ -329,7 +329,8 @@ def list_team_members_js(request):
         for member in User.objects.filter(member__leader=request.user):
             team_member = {
                 'id': member.id,
-                'name': member.get_username(),
+                'name': member.readable_name,
+                'username': member.get_username(),
                 'email': member.email,
                 'avatar': userutil.get_user_avatar_url(member)
             }

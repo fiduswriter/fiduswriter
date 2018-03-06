@@ -163,8 +163,8 @@ export class DocMaintenance {
                     }))
                 })
                 Promise.all(p).then(() => {
-                    let filetypeVersion = openedFiles["filetype-version"]
-                    if (filetypeVersion !== FW_FILETYPE_VERSION) {
+                    let filetypeVersion = parseFloat(openedFiles["filetype-version"])
+                    if (filetypeVersion !== parseFloat(FW_FILETYPE_VERSION)) {
                         let doc = window.JSON.parse(openedFiles["document.json"])
                         let bib = window.JSON.parse(openedFiles["bibliography.json"])
                         let newBib = updateFileBib(bib, filetypeVersion)

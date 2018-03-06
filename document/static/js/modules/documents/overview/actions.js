@@ -101,7 +101,8 @@ export class DocumentOverviewActions {
             let importer = new ImportFidusFile(
                 fidusFile,
                 that.documentOverview.user,
-                true
+                true,
+                that.documentOverview.teamMembers
             )
 
             importer.init().then(

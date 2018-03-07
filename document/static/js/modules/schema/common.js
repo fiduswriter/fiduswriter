@@ -228,7 +228,6 @@ export let deletion = {
         }
     },
     inclusive: false,
-    excludes: "",
     parseDOM: [{
         tag: "span.deletion",
         getAttrs(dom) {
@@ -262,7 +261,6 @@ export let insertion = {
         }
     },
     inclusive: false,
-    excludes: "",
     parseDOM: [{
         tag: "span.insertion",
         getAttrs(dom) {

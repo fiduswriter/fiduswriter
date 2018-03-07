@@ -32,32 +32,32 @@ export let updateDoc = function(doc, bibliography, docVersion) {
             doc = convertDocV11(doc)
             doc = convertDocV12(doc)
             doc = convertDocV13(doc, bibliography)
-            doc = convertDocV20(doc, bibliography)
+            doc = convertDocV20(doc)
             break
         case 1: // Fidus Writer 3.1 prerelease
             doc = convertDocV1(doc)
             doc = convertDocV11(doc)
             doc = convertDocV12(doc)
             doc = convertDocV13(doc, bibliography)
-            doc = convertDocV20(doc, bibliography)
+            doc = convertDocV20(doc)
             break
         case 1.1: // Fidus Writer 3.1
             doc = convertDocV11(doc)
             doc = convertDocV12(doc)
             doc = convertDocV13(doc, bibliography)
-            doc = convertDocV20(doc, bibliography)
+            doc = convertDocV20(doc)
             break
         case 1.2: // Fidus Writer 3.2
             doc = convertDocV12(doc)
             doc = convertDocV13(doc, bibliography)
-            doc = convertDocV20(doc, bibliography)
+            doc = convertDocV20(doc)
             break
         case 1.3: // Fidus Writer 3.3 prerelease
             doc = convertDocV13(doc, bibliography)
-            doc = convertDocV20(doc, bibliography)
+            doc = convertDocV20(doc)
             break
         case 2.0: // Fidus Writer 3.3
-            doc = convertDocV20(doc, bibliography)
+            doc = convertDocV20(doc)
     }
     return doc
 }
@@ -353,7 +353,7 @@ let convertNodeV13 = function(node, shrunkBib, fullBib, imageIds) {
     }
 }
 
-let convertDocV20 = function(doc, bibliography) {
+let convertDocV20 = function(doc) {
     let returnDoc = Object.assign({}, doc)
     delete(returnDoc.added)
     delete(returnDoc.is_owner)

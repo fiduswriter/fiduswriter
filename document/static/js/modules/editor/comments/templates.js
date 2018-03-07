@@ -3,15 +3,17 @@ import {localizeDate, escapeText} from "../../common"
 /** A template for an answer to a comment */
 let answerCommentTemplate = ({
         answer,
+        author,
         commentId,
         activeCommentAnswerId,
         active,
-        editor
+        user,
+        docInfo
     }) =>
     `<div class="comment-item">
         <div class="comment-user">
-            <img class="comment-user-avatar" src="${answer.userAvatar}">
-            <h5 class="comment-user-name">${answer.userName}</h5>
+            <img class="comment-user-avatar" src="${author ? author.avatar : `${$StaticUrls.base$}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
+            <h5 class="comment-user-name">${escapeText(author ? author.name : answer.username)}</h5>
             <p class="comment-date">${localizeDate(answer.date)}</p>
         </div>
         ${
@@ -27,7 +29,7 @@ let answerCommentTemplate = ({
                <p class="comment-p">${escapeText(answer.answer)}</p>
            </div>
            ${
-               active && (answer.user === editor.user.id || editor.docInfo.is_owner) ?
+               active && (answer.user === user.id || docInfo.is_owner) ?
                `<p class="comment-controls">
                    <span class="edit-comment-answer" data-id="${commentId}" data-answer="${answer.id}">${gettext("Edit")}</span>
                    <span class="delete-comment-answer" data-id="${commentId}" data-answer="${answer.id}">${gettext("Delete")}</span>
@@ -40,13 +42,14 @@ let answerCommentTemplate = ({
 /** A template to show one individual comment */
 let singleCommentTemplate = ({
         comment,
+        author,
         active,
-        editor
+        user
     }) =>
     `<div class="comment-item">
         <div class="comment-user">
-            <img class="comment-user-avatar" src="${comment.userAvatar}">
-            <h5 class="comment-user-name">${escapeText(comment.userName)}</h5>
+            <img class="comment-user-avatar" src="${author ? author.avatar : `${$StaticUrls.base$}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
+            <h5 class="comment-user-name">${escapeText(author ? author.name : comment.username)}</h5>
             <p class="comment-date">${localizeDate(comment.date)}</p>
         </div>
         <div class="comment-text-wrapper">
@@ -54,14 +57,14 @@ let singleCommentTemplate = ({
             <div class="comment-form">
                 <textarea class="commentText" data-id="${comment.id}" rows="5"> </textarea>
                 <input class="comment-is-major" type="checkbox" name="isMajor"
-                    ${comment['review:isMajor'] ? 'checked' : ''}/>
+                    ${comment.isMajor ? 'checked' : ''}/>
                 ${gettext("Is major")}<br />
                 <span class="submitComment fw-button fw-dark">${gettext("Edit")}</span>
                 <span class="cancelSubmitComment fw-button fw-orange">${gettext("Cancel")}</span>
             </div>
         </div>
         ${
-            active && comment.user===editor.user.id ?
+            active && comment.user===user.id ?
             `<p class="comment-controls">
                 <span class="edit-comment">${gettext("Edit")}</span>
                 <span class="delete-comment" data-id="${comment.id}">${gettext("Delete")}</span>
@@ -73,12 +76,13 @@ let singleCommentTemplate = ({
 
 /** A template for the editor of a first comment before it has been saved (not an answer to a comment). */
 let firstCommentTemplate = ({
-        comment
+        comment,
+        author
     }) =>
     `<div class="comment-item">
         <div class="comment-user">
-            <img class="comment-user-avatar" src="${comment.userAvatar}">
-            <h5 class="comment-user-name">${escapeText(comment.userName)}</h5>
+            <img class="comment-user-avatar" src="${author ? author.avatar : `${$StaticUrls.base$}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
+            <h5 class="comment-user-name">${escapeText(author ? author.name : comment.username)}</h5>
             <p class="comment-date">${localizeDate(comment.date)}</p>
         </div>
         <div class="comment-text-wrapper">
@@ -95,30 +99,34 @@ export let commentsTemplate = ({
         theComments,
         activeCommentId,
         activeCommentAnswerId,
-        editor
+        user,
+        docInfo
     }) =>
-    theComments.map(comment =>
-        comment.hidden ?
+    theComments.map(comment => {
+        let author = comment.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === comment.user)
+        return comment.hidden ?
         `<div id="comment-box-${comment.id}" class="comment-box hidden"></div>` :
         `<div id="comment-box-${comment.id}" data-id="${comment.id}"  data-user-id="${comment.user}"
                 class="
                     comment-box ${comment.id === activeCommentId ? 'active' : 'inactive'}
-                    ${comment["review:isMajor"] === true ? 'comment-is-major-bgc' : ''}
+                    ${comment.isMajor === true ? 'comment-is-major-bgc' : ''}
             ">
         ${
             comment.comment.length === 0 ?
-            firstCommentTemplate({comment}) :
-            singleCommentTemplate({comment, active: (comment.id===activeCommentId), editor})
+            firstCommentTemplate({comment, author}) :
+            singleCommentTemplate({comment, active: (comment.id===activeCommentId), user, author})
         }
         ${
             comment.answers ?
             comment.answers.map(answer =>
                 answerCommentTemplate({
                     answer,
+                    author: answer.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === answer.user),
                     commentId: comment.id,
                     active: (comment.id===activeCommentId),
                     activeCommentAnswerId,
-                    editor
+                    user,
+                    docInfo
                 })
             ).join('') :
             ''
@@ -140,8 +148,8 @@ export let commentsTemplate = ({
         }
         ${
             comment.id===activeCommentId && (
-                comment.user===editor.user.id ||
-                editor.docInfo.access_rights==="write"
+                comment.user===user.id ||
+                docInfo.access_rights==="write"
             ) ?
             `<span class="delete-comment-all delete-comment fa fa-times-circle"
                     data-id="${comment.id}">
@@ -149,7 +157,9 @@ export let commentsTemplate = ({
             ''
         }
         </div>`
-    ).join('')
+    }
+).join('')
+
 
 export let filterByUserBoxTemplate = ({
         users

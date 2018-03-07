@@ -36,14 +36,12 @@ export class ModCommentStore {
     // entirely.
     addCommentDuringCreation() {
         let id = -1,
-            userName, userAvatar
+            username
 
         if (REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
-            userName = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
-            userAvatar = `${$StaticUrls.base$}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`
+            username = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
         } else {
-            userName = this.mod.editor.user.name
-            userAvatar = this.mod.editor.user.avatar
+            username = this.mod.editor.user.username
         }
 
         let tr = addCommentDuringCreationDecoration(this.mod.editor.view.state)
@@ -54,8 +52,7 @@ export class ModCommentStore {
             comment: new Comment(
                 id,
                 this.mod.editor.user.id,
-                userName,
-                userAvatar,
+                username,
                 new Date().getTime(),
                 ''),
             inDOM: false
@@ -73,8 +70,11 @@ export class ModCommentStore {
     }
 
     // Add a new comment to the comment database both remotely and locally.
-    addComment(user, userName, userAvatar, date, comment, isMajor, posFrom,
-        posTo) {
+    addComment(
+        commentData,
+        posFrom,
+        posTo
+    ) {
         let id = randomID(),
             markType = this.mod.editor.view.state.schema.marks.comment.create({
                 id
@@ -82,8 +82,9 @@ export class ModCommentStore {
             tr = this.addMark(this.mod.editor.view.state.tr, posFrom, posTo, markType)
 
         if (tr) {
-            this.addLocalComment(id, user, userName, userAvatar, date, comment, [],
-                isMajor, true)
+            commentData.id = id
+            commentData.answers = []
+            this.addLocalComment(commentData, true)
             this.unsent.push({
                 type: "create",
                 id
@@ -134,15 +135,20 @@ export class ModCommentStore {
         return tr
     }
 
+    loadComments(commentsData) {
+        Object.values(commentsData).forEach(commentData => this.addLocalComment(commentData))
+    }
 
-    addLocalComment(id, user, userName, userAvatar, date, comment, answers,
-        isMajor, local) {
+
+    addLocalComment(
+        {id, user, username, date, comment, answers, isMajor},
+        local
+    ) {
         if (!this.comments[id]) {
             this.comments[id] = new Comment(
                 id,
                 user,
-                userName,
-                userAvatar,
+                username,
                 date,
                 comment,
                 answers,
@@ -154,19 +160,19 @@ export class ModCommentStore {
         }
     }
 
-    updateComment(id, comment, commentIsMajor) {
-        this.updateLocalComment(id, comment, commentIsMajor, true)
+    updateComment(id, comment, isMajor) {
+        this.updateLocalComment({id, comment, isMajor}, true)
         this.unsent.push({
             type: "update",
-            id: id
+            id
         })
         this.mustSend()
     }
 
-    updateLocalComment(id, comment, commentIsMajor, local) {
+    updateLocalComment({id, comment, isMajor}, local) {
         if (this.comments[id]) {
             this.comments[id].comment = comment
-            this.comments[id]['review:isMajor'] = commentIsMajor
+            this.comments[id].isMajor = isMajor
         }
         if (local || (!this.mod.layout.isCurrentlyEditing())) {
             this.mod.layout.layoutComments()
@@ -302,7 +308,7 @@ export class ModCommentStore {
                         type: "update",
                         id: found.id,
                         comment: found.comment,
-                        'review:isMajor': found['review:isMajor']
+                        isMajor: found.isMajor
                     })
                 } else {
                     result.push({
@@ -316,12 +322,11 @@ export class ModCommentStore {
                         type: "create",
                         id: found.id,
                         user: found.user,
-                        userName: found.userName,
-                        userAvatar: found.userAvatar,
+                        username: found.username,
                         date: found.date,
                         comment: found.comment,
                         answers: found.answers,
-                        'review:isMajor': found['review:isMajor']
+                        isMajor: found.isMajor
                     })
                 } else {
                     result.push({
@@ -341,8 +346,7 @@ export class ModCommentStore {
                         answerId: foundAnswer.id,
                         id: event.id,
                         user: foundAnswer.user,
-                        userName: foundAnswer.userName,
-                        userAvatar: foundAnswer.userAvatar,
+                        username: foundAnswer.username,
                         date: foundAnswer.date,
                         answer: foundAnswer.answer
                     })
@@ -397,12 +401,9 @@ export class ModCommentStore {
             if (event.type == "delete") {
                 this.deleteLocalComment(event.id, false)
             } else if (event.type == "create") {
-                this.addLocalComment(event.id, event.user, event.userName,
-                    event.userAvatar, event.date, event.comment, [],
-                    event['review:isMajor'], false)
+                this.addLocalComment(event, false)
             } else if (event.type == "update") {
-                this.updateLocalComment(event.id, event.comment,
-                    event['review:isMajor'], false)
+                this.updateLocalComment(event, false)
             } else if (event.type == "add_answer") {
                 this.addLocalAnswer(event.id, event, false)
             } else if (event.type == "delete_answer") {

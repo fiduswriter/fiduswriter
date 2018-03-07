@@ -33,8 +33,8 @@ export let trackingPlugin = function(options) {
                 let userIds = [options.editor.user.id]
                 state.doc.descendants(node => {
                     node.marks.forEach(mark => {
-                        if (['deletion', 'insertion'].includes(mark.type.name) && !userIds.includes(mark.attrs.u) && mark.attrs.u !== '') {
-                            userIds.push(mark.attrs.u)
+                        if (['deletion', 'insertion'].includes(mark.type.name) && !userIds.includes(mark.attrs.user) && mark.attrs.user !== 0) {
+                            userIds.push(mark.attrs.user)
                         }
                     })
                 })
@@ -61,10 +61,12 @@ export let trackingPlugin = function(options) {
             }
 
             let newTr = newState.tr,
-                time = Math.floor(Date.now()/600000), // 10 minute interval
-                user = options.editor.user.id
+                date = Math.floor(Date.now()/600000), // 10 minute interval
+                user = options.editor.user.id,
+                username = options.editor.user.username
+
             addedRanges.forEach(addedRange => {
-                newTr.maybeStep(new AddMarkStep(addedRange[0], addedRange[1], newState.schema.marks.insertion.create({u: user, t: time})))
+                newTr.maybeStep(new AddMarkStep(addedRange[0], addedRange[1], newState.schema.marks.insertion.create({user, username, date})))
                 newTr.removeMark(addedRange[0], addedRange[1], newState.schema.marks.deletion)
             })
             if (newTr.steps.length) {
@@ -88,22 +90,23 @@ export let trackingPlugin = function(options) {
 
             let newTr = state.tr,
                 map = new mapPos(),
-                time = Math.floor(Date.now()/600000), // 10 minute interval
-                user = options.editor.user.id
+                date = Math.floor(Date.now()/600000), // 10 minute interval
+                user = options.editor.user.id,
+                username = options.editor.user.username
 
             tr.steps.forEach(step => {
                 if (step instanceof ReplaceStep && step.from !== step.to) {
                     if (step.slice.size) {
                         newTr.maybeStep(new ReplaceStep(map.map(step.to), map.map(step.to), step.slice, step.structure))
                     }
-                    newTr.maybeStep(new AddMarkStep(map.map(step.from), map.map(step.to), state.schema.marks.deletion.create({u: user, t: time})))
+                    newTr.maybeStep(new AddMarkStep(map.map(step.from), map.map(step.to), state.schema.marks.deletion.create({user, username, date})))
                     map.addMap(step.from, step.to)
                 } else if (step instanceof ReplaceAroundStep && !step.structure) {
                     if (step.gapFrom-step.from > 0) {
-                        newTr.maybeStep(new AddMarkStep(map.map(step.from), map.map(step.gapFrom), state.schema.marks.deletion.create({u: user, t: time})))
+                        newTr.maybeStep(new AddMarkStep(map.map(step.from), map.map(step.gapFrom), state.schema.marks.deletion.create({user, username, date})))
                     }
                     if (step.to-step.gapTo > 0) {
-                        newTr.maybeStep(new AddMarkStep(map.map(step.gapTo), map.map(step.to), state.schema.marks.deletion.create({u: user, t: time})))
+                        newTr.maybeStep(new AddMarkStep(map.map(step.gapTo), map.map(step.to), state.schema.marks.deletion.create({user, username, date})))
                     }
                     if (step.slice.size) {
                         newTr.maybeStep(new ReplaceStep(map.map(step.to), map.map(step.to), step.slice, step.structure))

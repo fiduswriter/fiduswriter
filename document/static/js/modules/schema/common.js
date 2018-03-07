@@ -217,10 +217,13 @@ export let anchor = {
 
 export let deletion = {
     attrs: {
-        u: {
-            default: 'unknown'
+        user: {
+            default: 0
         },
-        t: {
+        username: {
+            default: ''
+        },
+        date: {
             default: 0
         }
     },
@@ -230,26 +233,31 @@ export let deletion = {
         tag: "span.deletion",
         getAttrs(dom) {
             return {
-                u: dom.getAttribute("data-u"),
-                t: dom.getAttribute("data-t")
+                user: parseInt(dom.getAttribute("data-user")),
+                username: dom.getAttribute("data-username"),
+                date: parseInt(dom.getAttribute("data-date"))
             }
         }
     }],
     toDOM(node) {
         return ['span', {
-            class: `deletion user-${node.attrs.u}`,
-            'data-u': node.attrs.u,
-            'data-t': node.attrs.t
+            class: `deletion user-${node.attrs.user}`,
+            'data-user': node.attrs.user,
+            'data-username': node.attrs.username,
+            'data-date': node.attrs.date
         }]
     }
 }
 
 export let insertion = {
     attrs: {
-        u: {
-            default: 'unknown'
+        user: {
+            default: 0
         },
-        t: {
+        username: {
+            default: ''
+        },
+        date: {
             default: 0
         }
     },
@@ -259,16 +267,18 @@ export let insertion = {
         tag: "span.insertion",
         getAttrs(dom) {
             return {
-                u: dom.getAttribute("data-u"),
-                t: dom.getAttribute("data-t")
+                user: parseInt(dom.getAttribute("data-user")),
+                username: dom.getAttribute("data-username"),
+                date: parseInt(dom.getAttribute("data-date"))
             }
         }
     }],
     toDOM(node) {
         return ['span', {
-            class: `insertion user-${node.attrs.u}`,
-            'data-u': node.attrs.u,
-            'data-t': node.attrs.t
+            class: `insertion user-${node.attrs.user}`,
+            'data-user': node.attrs.user,
+            'data-username': node.attrs.username,
+            'data-date': node.attrs.date
         }]
     }
 }

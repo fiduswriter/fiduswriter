@@ -1,13 +1,12 @@
 export class Comment {
-    constructor(id, user, userName, userAvatar, date, comment, answers, isMajor) {
+    constructor(id, user, username, date, comment, answers, isMajor) {
         this.id = id
         this.user = user
-        this.userName = userName
-        this.userAvatar = userAvatar
+        this.username = username
         this.date = date
         this.comment = comment
         this.answers = answers
-        this['review:isMajor'] = isMajor
+        this.isMajor = isMajor
         this.hidden = false
     }
 }

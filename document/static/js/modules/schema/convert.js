@@ -32,25 +32,32 @@ export let updateDoc = function(doc, bibliography, docVersion) {
             doc = convertDocV11(doc)
             doc = convertDocV12(doc)
             doc = convertDocV13(doc, bibliography)
+            doc = convertDocV20(doc, bibliography)
             break
         case 1: // Fidus Writer 3.1 prerelease
             doc = convertDocV1(doc)
             doc = convertDocV11(doc)
             doc = convertDocV12(doc)
             doc = convertDocV13(doc, bibliography)
+            doc = convertDocV20(doc, bibliography)
             break
         case 1.1: // Fidus Writer 3.1
             doc = convertDocV11(doc)
             doc = convertDocV12(doc)
             doc = convertDocV13(doc, bibliography)
+            doc = convertDocV20(doc, bibliography)
             break
         case 1.2: // Fidus Writer 3.2
             doc = convertDocV12(doc)
             doc = convertDocV13(doc, bibliography)
+            doc = convertDocV20(doc, bibliography)
             break
         case 1.3: // Fidus Writer 3.3 prerelease
             doc = convertDocV13(doc, bibliography)
+            doc = convertDocV20(doc, bibliography)
             break
+        case 2.0: // Fidus Writer 3.3
+            doc = convertDocV20(doc, bibliography)
     }
     return doc
 }
@@ -344,4 +351,26 @@ let convertNodeV13 = function(node, shrunkBib, fullBib, imageIds) {
             convertNodeV13(childNode, shrunkBib, fullBib, imageIds)
         })
     }
+}
+
+let convertDocV20 = function(doc, bibliography) {
+    let returnDoc = Object.assign({}, doc)
+    delete(returnDoc.added)
+    delete(returnDoc.is_owner)
+    delete(returnDoc.revisions)
+    delete(returnDoc.rights)
+    delete(returnDoc.updated)
+    Object.values(returnDoc.comments).forEach(comment => {
+        comment.username = comment.userName
+        comment.isMajor = comment['review:isMajor']
+        delete(comment.userAvatar)
+        delete(comment.userName)
+        delete(comment['review:isMajor'])
+        comment.answers.forEach(answer => {
+            answer.username = answer.userName
+            delete(answer.userAvatar)
+            delete(answer.userName)
+        })
+    })
+    return returnDoc
 }

@@ -2,8 +2,8 @@ import {updateDoc} from "../schema/convert"
 
 export function updateFileDoc(doc, bibliography, filetypeVersion) {
     switch(filetypeVersion) {
-        case "1.1":
-        case "1.2":
+        case 1.1:
+        case 1.2:
             doc = Object.assign({}, doc)
             delete(doc.comment_version)
             delete(doc.access_rights)
@@ -13,23 +13,27 @@ export function updateFileDoc(doc, bibliography, filetypeVersion) {
             delete(doc.hash)
             doc = updateDoc(doc, bibliography, doc.settings['doc_version'])
             break
-        case "1.3":
-        case "1.4":
-        case "1.5":
-        case "1.6":
-        case "1.7":
+        case 1.3:
+        case 1.4:
+        case 1.5:
+        case 1.6:
+        case 1.7:
             doc = updateDoc(doc, bibliography, doc.settings['doc_version'])
             break
+        case 2.0:
+            doc = updateDoc(doc, bibliography, filetypeVersion)
+            break
+
     }
     return doc
 }
 
 export function updateFileBib(bib, filetypeVersion) {
     switch(filetypeVersion) {
-        case "1.1":
-        case "1.2":
-        case "1.3":
-        case "1.4":
+        case 1.1:
+        case 1.2:
+        case 1.3:
+        case 1.4:
             bib = updateBib(bib)
             break
     }

@@ -84,8 +84,7 @@ export class DocumentRevisionsDialog {
                 (err, fidusFile) => {
                     let importer = new ImportFidusFile(
                         fidusFile,
-                        user,
-                        false
+                        user
                     )
                     resolve(
                         importer.init().then(

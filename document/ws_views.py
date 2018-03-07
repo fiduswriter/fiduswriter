@@ -167,6 +167,7 @@ class WebSocket(BaseWebSocketHandler):
             tm_object = dict()
             tm_object['id'] = team_member.member.id
             tm_object['name'] = team_member.member.readable_name
+            tm_object['username'] = team_member.member.get_username()
             tm_object['avatar'] = avatar_url(team_member.member, 80)
             response['doc_info']['owner']['team_members'].append(tm_object)
         collaborators = get_accessrights(
@@ -325,9 +326,9 @@ class WebSocket(BaseWebSocketHandler):
                 del self.doc["comments"][id]
             elif cd["type"] == "update":
                 self.doc["comments"][id]["comment"] = cd["comment"]
-                if "review:isMajor" in cd:
+                if "isMajor" in cd:
                     self.doc["comments"][id][
-                        "review:isMajor"] = cd["review:isMajor"]
+                        "isMajor"] = cd["isMajor"]
             elif cd["type"] == "add_answer":
                 if "answers" not in self.doc["comments"][id]:
                     self.doc["comments"][id]["answers"] = []

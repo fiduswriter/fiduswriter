@@ -106,35 +106,34 @@ export class ModCommentInteractions {
     }
 
 
-    updateComment(id, commentText, commentIsMajor) {
+    updateComment(id, commentText, isMajor) {
         // Save the change to a comment and mark that the document has been changed
         if (id===-1) {
             let referrer = getCommentDuringCreationDecoration(this.mod.editor.view.state)
             // This is a new comment. We need to get an ID for it if it has contents.
 
-            let userName, userAvatar
+            let username
 
             if(REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
-                userName = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
-                userAvatar = `${$StaticUrls.base$}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`
+                username = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
             } else {
-                userName = this.mod.editor.user.name
-                userAvatar = this.mod.editor.user.avatar
+                username = this.mod.editor.user.username
             }
 
 
             this.mod.store.addComment(
-                this.mod.editor.user.id,
-                userName,
-                userAvatar,
-                new Date().getTime(), // We update the time to the time the comment was stored
-                commentText,
-                commentIsMajor,
+                {
+                    user: this.mod.editor.user.id,
+                    username,
+                    date: new Date().getTime(), // We update the time to the time the comment was stored
+                    comment: commentText,
+                    isMajor
+                },
                 referrer.from,
                 referrer.to
             )
         } else {
-            this.mod.store.updateComment(id, commentText, commentIsMajor)
+            this.mod.store.updateComment(id, commentText, isMajor)
         }
         this.mod.layout.deactivateAll()
         this.mod.layout.layoutComments()
@@ -145,10 +144,10 @@ export class ModCommentInteractions {
         // Handle a click on the submit button of the comment submit form.
         let commentTextBox = jQuery(submitButton).siblings('.commentText')[0],
             commentText = commentTextBox.value,
-            commentIsMajor = jQuery(submitButton).siblings('.comment-is-major').prop('checked'),
+            isMajor = jQuery(submitButton).siblings('.comment-is-major').prop('checked'),
             id = this.getCommentId(commentTextBox)
         if (commentText.length > 0) {
-            this.updateComment(id, commentText, commentIsMajor)
+            this.updateComment(id, commentText, isMajor)
         } else {
             this.deleteComment(id)
         }
@@ -198,21 +197,18 @@ export class ModCommentInteractions {
     createNewAnswer(id, answerText) {
         // Create a new answer to add to the comment store
 
-        let userName, userAvatar
+        let username
 
         if(REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
-            userName = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
-            userAvatar = `${$StaticUrls.base$}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`
+            username = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
         } else {
-            userName = this.mod.editor.user.name
-            userAvatar = this.mod.editor.user.avatar
+            username = this.mod.editor.user.username
         }
 
         let answer = {
             answer: answerText,
             user: this.mod.editor.user.id,
-            userName,
-            userAvatar,
+            username,
             date: new Date().getTime()
         }
 

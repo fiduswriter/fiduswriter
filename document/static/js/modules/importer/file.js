@@ -120,8 +120,7 @@ export class ImportFidusFile {
     }
 
     checkDocUsers(doc) { // Check whether users mentioned in doc are known to current user and present on this server
-        let returnDoc = Object.assign({}, doc)
-        Object.values(returnDoc.comments).forEach(comment => {
+        Object.values(doc.comments).forEach(comment => {
             if (!
                 (
                     this.teamMembers.find(member => member.id === comment.user && member.username === comment.username) ||
@@ -143,7 +142,29 @@ export class ImportFidusFile {
                 }
             })
         })
-        return returnDoc
+        this.checkDocUsersNode(doc.contents)
+        return doc
+    }
+
+    checkDocUsersNode(node) { // Check whether all users connected to insertion/deletion marks are known on this system.
+        if (node.marks) {
+            node.marks.forEach(mark => {
+                if(['insertion','deletion'].includes(mark.type)) {
+                    if (!
+                        (
+                            this.teamMembers.find(member => member.id === mark.attrs.user && member.username === mark.attrs.username) ||
+                            (this.user.id === mark.attrs.user && this.user.username === mark.attrs.username)
+                        )
+                    ) {
+                        // We could not find matching id/username accessible to current user, so we delete the user id from comment answer
+                        mark.attrs.user = 0
+                    }
+                }
+            })
+        }
+        if (node.content) {
+            node.content.forEach(childNode => this.checkDocUsersNode(childNode))
+        }
     }
 
 }

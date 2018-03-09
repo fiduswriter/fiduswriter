@@ -184,7 +184,7 @@ export let footnoteMarkersPlugin = function(options) {
                 }
             }
         },
-        view(editorState) {
+        view(editorView) {
             return {
                 update: (view, prevState) => {
                     options.editor.mod.footnotes.layout.updateDOM()

@@ -228,6 +228,7 @@ export let deletion = {
         }
     },
     inclusive: false,
+    group: "track",
     parseDOM: [{
         tag: "span.deletion",
         getAttrs(dom) {
@@ -258,25 +259,37 @@ export let insertion = {
         },
         date: {
             default: 0
+        },
+        approved: {
+            default: true
         }
     },
     inclusive: false,
+    group: "track",
     parseDOM: [{
         tag: "span.insertion",
         getAttrs(dom) {
             return {
                 user: parseInt(dom.getAttribute("data-user")),
                 username: dom.getAttribute("data-username"),
-                date: parseInt(dom.getAttribute("data-date"))
+                date: parseInt(dom.getAttribute("data-date")),
+                approved: false
             }
         }
     }],
     toDOM(node) {
-        return ['span', {
-            class: `insertion user-${node.attrs.user}`,
-            'data-user': node.attrs.user,
-            'data-username': node.attrs.username,
-            'data-date': node.attrs.date
-        }]
+        if (node.attrs.approved) {
+            return ['span', {
+                class: 'dated',
+                'data-date': node.attrs.date
+            }]
+        } else {
+            return ['span', {
+                class: `insertion user-${node.attrs.user}`,
+                'data-user': node.attrs.user,
+                'data-username': node.attrs.username,
+                'data-date': node.attrs.date
+            }]
+        }
     }
 }

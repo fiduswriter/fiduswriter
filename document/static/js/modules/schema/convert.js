@@ -360,6 +360,7 @@ let convertDocV20 = function(doc) {
     delete(returnDoc.revisions)
     delete(returnDoc.rights)
     delete(returnDoc.updated)
+    returnDoc.settings.track = false
     Object.values(returnDoc.comments).forEach(comment => {
         comment.username = comment.userName
         comment.isMajor = comment['review:isMajor']

@@ -59,9 +59,6 @@ import {
     ModTools
 } from "./tools"
 import {
-    ModSettings
-} from "./settings"
-import {
     headerbarModel,
     toolbarModel
 } from "./menus"
@@ -93,8 +90,9 @@ import {
     linksPlugin,
     pastePlugin,
     placeholdersPlugin,
+    settingsPlugin,
     toolbarPlugin,
-    trackingPlugin
+    trackPlugin
 } from "./state_plugins"
 import {
     editorKeymap
@@ -134,7 +132,7 @@ export class Editor {
             [keymap, () => editorKeymap],
             [keymap, () => buildKeymap(this.schema)],
             [keymap, () => baseKeymap],
-            [keymap, () => editorKeymap],
+            //[keymap, () => editorKeymap],
             [collab, () => ({clientID: this.client_id})],
             [linksPlugin, () => ({editor: this})],
             [history],
@@ -152,7 +150,8 @@ export class Editor {
             [authorInputPlugin, () => ({editor: this})],
             [pastePlugin, () => ({editor: this})],
             [accessRightsPlugin, () => ({editor: this})],
-            [trackingPlugin, () => ({editor: this})]
+            [settingsPlugin, () => ({editor: this})],
+            [trackPlugin, () => ({editor: this})]
         ]
         new ModFootnotes(this)
         new ModServerCommunications(this)
@@ -160,8 +159,6 @@ export class Editor {
     }
 
     init() {
-        new ModSettings(this)
-
         if (document.readyState === "complete") {
             this.initEditor()
         } else {
@@ -289,9 +286,6 @@ export class Editor {
         this.mod.comments.store.loadComments(doc.comments)
         this.mod.comments.layout.view()
         this.waitingForDocument = false
-        // Get document settings
-        this.mod.settings.check(this.view.state.doc.firstChild.attrs)
-        this.mod.citations.layoutCitations()
         if (locationHash.length) {
             this.scrollIdIntoView(locationHash.slice(1))
         }
@@ -366,7 +360,7 @@ export class Editor {
 
     // Things to be executed on every editor transaction.
     onTransaction(transaction, remote) {
-        let updateBibliography = false, updateSettings = false
+        let updateBibliography = false
             // Check what area is affected
 
         this.mod.collab.docChanges.sendToCollaborators()
@@ -384,9 +378,6 @@ export class Editor {
                             }
                         }
                     )
-                    if (step.from===0 && step.jsonID === 'replaceAround') {
-                        updateSettings = true
-                    }
                 }
             }
         })
@@ -398,9 +389,6 @@ export class Editor {
             this.mod.citations.layoutCitations()
         }
 
-        if (updateSettings) {
-            this.mod.settings.check(this.view.state.doc.firstChild.attrs)
-        }
     }
 
 }

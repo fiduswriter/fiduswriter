@@ -2,9 +2,9 @@ import {Plugin, PluginKey, TextSelection} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
 import {DOMSerializer} from "prosemirror-model"
 import {ReplaceStep, ReplaceAroundStep, AddMarkStep, StepMap, Mapping} from "prosemirror-transform"
-const key = new PluginKey('tracking')
+const key = new PluginKey('track')
 
-export let trackingPlugin = function(options) {
+export let trackPlugin = function(options) {
     return new Plugin({
         key,
         state: {
@@ -26,14 +26,16 @@ export let trackingPlugin = function(options) {
             apply() {}
         },
         appendTransaction(trs, oldState, newState) {
-            if (trs.every(tr => tr.getMeta('remote') || tr.getMeta('fromFootnote'))) {
+            if (
+                trs.every(tr => tr.getMeta('remote') || tr.getMeta('fromFootnote'))
+            ) {
                 // All transactions are remote or come from footnotes. Give up.
                 return false
             }
             let addedRanges = []
             trs.forEach(tr => {
                 tr.steps.forEach((step, index) => {
-                    addedRanges = addedRanges.map(region => [tr.mapping.maps[index].map(region[0]), tr.mapping.maps[index].map(region[1])])
+                    addedRanges = addedRanges.map(region => [tr.mapping.maps[index].map(region[0], -1), tr.mapping.maps[index].map(region[1], 1)])
                     if (step instanceof ReplaceStep) {
                         addedRanges.push(
                             [
@@ -51,14 +53,15 @@ export let trackingPlugin = function(options) {
             let newTr = newState.tr,
                 date = Math.floor(Date.now()/600000), // 10 minute interval
                 user = options.editor.user.id,
-                username = options.editor.user.username
+                username = options.editor.user.username,
+                approved = !options.editor.view.state.doc.firstChild.attrs.track
 
             addedRanges.forEach(addedRange => {
                 newTr.maybeStep(
                     new AddMarkStep(
                         addedRange[0],
                         addedRange[1],
-                        newState.schema.marks.insertion.create({user, username, date})
+                        newState.schema.marks.insertion.create({user, username, date, approved})
                     )
                 )
                 newTr.removeMark(
@@ -73,6 +76,10 @@ export let trackingPlugin = function(options) {
 
         },
         filterTransaction(tr, state) {
+            if (!options.editor.view.state.doc.firstChild.attrs.track) {
+                // tracking turned off. Allow.
+                return true
+            }
             // We filter to not allow deletions. Instead we mark the area that was deleted and set
             // an insertion transaction with a timeout zero to insert the content.
             if(
@@ -96,15 +103,16 @@ export let trackingPlugin = function(options) {
 
             tr.steps.forEach(step => {
                 if (step instanceof ReplaceStep && step.from !== step.to) {
+                    let failed
                     if (step.slice.size) {
-                        newTr.maybeStep(
+                        ({failed} = newTr.maybeStep(
                             new ReplaceStep(
                                 map.map(step.to),
                                 map.map(step.to),
                                 step.slice,
                                 step.structure
                             )
-                        )
+                        ))
                     }
                     newTr.maybeStep(
                         new AddMarkStep(
@@ -113,7 +121,9 @@ export let trackingPlugin = function(options) {
                             state.schema.marks.deletion.create({user, username, date})
                         )
                     )
-                    map.appendMap(new StepMap([step.from, 0, step.to - step.from]))
+                    if (!failed) {
+                        map.appendMap(new StepMap([step.from, 0, step.to - step.from]))
+                    }
                 } else if (step instanceof ReplaceAroundStep && !step.structure) {
                     if (step.gapFrom-step.from > 0) {
                         newTr.maybeStep(
@@ -133,18 +143,21 @@ export let trackingPlugin = function(options) {
                             )
                         )
                     }
+                    let failed
                     if (step.slice.size) {
-                        newTr.maybeStep(
+                        ({failed} = newTr.maybeStep(
                             new ReplaceStep(
                                 map.map(step.to),
                                 map.map(step.to),
                                 step.slice,
                                 step.structure
                             )
-                        )
+                        ))
                     }
-                    map.appendMap(new StepMap([step.from, 0, step.gapFrom - step.from]))
-                    map.appendMap(new StepMap([step.gapTo, 0, step.to - step.gapTo]))
+                    if (!failed) {
+                        map.appendMap(new StepMap([step.from, 0, step.gapFrom - step.from]))
+                        map.appendMap(new StepMap([step.gapTo, 0, step.to - step.gapTo]))
+                    }
                 } else {
                     let mappedStep = step.map(map)
                     if (mappedStep) {
@@ -154,10 +167,11 @@ export let trackingPlugin = function(options) {
             })
             if (tr.selection instanceof TextSelection) {
                 let assoc = (tr.selection.from < state.selection.from || tr.getMeta('backspace')) ? -1 : 1
+                let caretPos = map.map(tr.selection.from, assoc)
                 newTr.setSelection(
                     new TextSelection(
                         newTr.doc.resolve(
-                            map.map(tr.selection.from, assoc)
+                            caretPos
                         )
                     )
                 )

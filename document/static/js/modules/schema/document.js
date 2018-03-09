@@ -24,6 +24,9 @@ let article = {
         },
         language: {
             default: 'en-US'
+        },
+        track: {
+            default: false
         }
     },
     parseDOM: [{
@@ -48,7 +51,7 @@ let article = {
 
 let title = {
     content: "text*",
-    marks: "annotation",
+    marks: "annotation track",
     group: "part",
     defining: true,
     parseDOM: [{
@@ -63,7 +66,7 @@ let title = {
 
 let subtitle = {
     content: "text*",
-    marks: "annotation",
+    marks: "annotation track",
     group: "part",
     defining: true,
     isMetadata() {
@@ -142,7 +145,7 @@ let author = {
 
 let authors = {
     content: "author*",
-    marks: "annotation",
+    marks: "annotation track",
     group: "part",
     defining: true,
     isMetadata() {
@@ -175,7 +178,7 @@ let authors = {
 let abstract = {
     content: "(block | table_block)+",
     group: "part",
-    marks: "annotation",
+    marks: "annotation track",
     defining: true,
     isMetadata() {
         return true
@@ -227,7 +230,7 @@ let keyword = {
 
 let keywords = {
     content: "keyword*",
-    marks: "annotation",
+    marks: "annotation track",
     group: "part",
     defining: true,
     isMetadata() {
@@ -304,7 +307,7 @@ let footnote = {
 
 let code_block = {
     content: "text*",
-    marks: "annotation",
+    marks: "annotation track",
     group: "block",
     code: true,
     defining: true,

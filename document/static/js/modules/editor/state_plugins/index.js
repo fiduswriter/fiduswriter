@@ -58,6 +58,10 @@ export {
 }
 from "./access_rights"
 export {
-    trackingPlugin
+    trackPlugin
 }
-from "./tracking"
+from "./track"
+export {
+    settingsPlugin
+}
+from "./settings"

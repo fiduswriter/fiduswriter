@@ -102,17 +102,22 @@ export let trackPlugin = function(options) {
                 username = options.editor.user.username
 
             tr.steps.forEach(step => {
+                let newMap = map.slice()
+                newMap.appendMap(step.getMap().invert())
                 if (step instanceof ReplaceStep && step.from !== step.to) {
-                    let failed
                     if (step.slice.size) {
-                        ({failed} = newTr.maybeStep(
-                            new ReplaceStep(
-                                map.map(step.to),
-                                map.map(step.to),
-                                step.slice,
-                                step.structure
-                            )
-                        ))
+                        let newStep = new ReplaceStep(
+                            map.map(step.to),
+                            map.map(step.to),
+                            step.slice,
+                            step.structure
+                        )
+
+                        let {failed} = newTr.maybeStep(newStep)
+
+                        if (!failed) {
+                            newMap.appendMap(newStep.getMap())
+                        }
                     }
                     newTr.maybeStep(
                         new AddMarkStep(
@@ -121,9 +126,7 @@ export let trackPlugin = function(options) {
                             state.schema.marks.deletion.create({user, username, date})
                         )
                     )
-                    if (!failed) {
-                        map.appendMap(new StepMap([step.from, 0, step.to - step.from]))
-                    }
+
                 } else if (step instanceof ReplaceAroundStep && !step.structure) {
                     if (step.gapFrom-step.from > 0) {
                         newTr.maybeStep(
@@ -143,27 +146,28 @@ export let trackPlugin = function(options) {
                             )
                         )
                     }
-                    let failed
                     if (step.slice.size) {
-                        ({failed} = newTr.maybeStep(
-                            new ReplaceStep(
-                                map.map(step.to),
-                                map.map(step.to),
-                                step.slice,
-                                step.structure
-                            )
-                        ))
-                    }
-                    if (!failed) {
-                        map.appendMap(new StepMap([step.from, 0, step.gapFrom - step.from]))
-                        map.appendMap(new StepMap([step.gapTo, 0, step.to - step.gapTo]))
+                        let newStep = new ReplaceStep(
+                            map.map(step.to),
+                            map.map(step.to),
+                            step.slice,
+                            step.structure
+                        )
+                        let {failed} = newTr.maybeStep(newStep)
+                        if (!failed) {
+                            newMap.appendMap(newStep.getMap())
+                        }
                     }
                 } else {
                     let mappedStep = step.map(map)
                     if (mappedStep) {
-                        newTr.maybeStep(mappedStep)
+                        let {failed} = newTr.maybeStep(mappedStep)
+                        if (!failed) {
+                            newMap.appendMap(mappedStep.getMap())
+                        }
                     }
                 }
+                map = newMap
             })
             if (tr.selection instanceof TextSelection) {
                 let assoc = (tr.selection.from < state.selection.from || tr.getMeta('backspace')) ? -1 : 1

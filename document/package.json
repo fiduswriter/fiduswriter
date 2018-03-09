@@ -1,6 +1,6 @@
 {
     "dependencies": {
-        "citeproc": "2.1.191",
+        "citeproc": "2.1.192",
         "fastdom": "1.0.8",
         "fast-deep-equal": "1.1.0",
         "fast-json-patch": "2.0.6",
@@ -15,13 +15,13 @@
         "prosemirror-dropcursor": "1.0.0",
         "prosemirror-example-setup": "1.0.1",
         "prosemirror-gapcursor": "1.0.1",
-        "prosemirror-history": "1.0.0",
+        "prosemirror-history": "1.0.1",
         "prosemirror-keymap": "1.0.1",
         "prosemirror-model": "1.1.0",
         "prosemirror-schema-basic": "1.0.0",
         "prosemirror-schema-list": "1.0.0",
         "prosemirror-state": "1.1.0",
-        "prosemirror-tables": "0.6.2",
+        "prosemirror-tables": "0.6.3",
         "prosemirror-transform": "1.0.4",
         "prosemirror-view": "1.1.1",
         "texzilla": "0.9.9"

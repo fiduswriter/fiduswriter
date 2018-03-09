@@ -27,7 +27,7 @@ export let trackPlugin = function(options) {
         },
         appendTransaction(trs, oldState, newState) {
             if (
-                trs.every(tr => tr.getMeta('remote') || tr.getMeta('fromFootnote'))
+                trs.every(tr => tr.getMeta('remote') || tr.getMeta('fromFootnote') || tr.getMeta('history$'))
             ) {
                 // All transactions are remote or come from footnotes. Give up.
                 return false
@@ -76,8 +76,11 @@ export let trackPlugin = function(options) {
 
         },
         filterTransaction(tr, state) {
-            if (!options.editor.view.state.doc.firstChild.attrs.track) {
-                // tracking turned off. Allow.
+            if (
+                !options.editor.view.state.doc.firstChild.attrs.track || // tracking turned off. Allow.
+                tr.getMeta('history$') // part of history. Allow.
+            ) {
+
                 return true
             }
             // We filter to not allow deletions. Instead we mark the area that was deleted and set

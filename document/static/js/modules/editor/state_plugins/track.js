@@ -1,6 +1,6 @@
 import {Plugin, PluginKey, TextSelection} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
-import {DOMSerializer} from "prosemirror-model"
+import {DOMSerializer, Slice} from "prosemirror-model"
 import {ReplaceStep, ReplaceAroundStep, AddMarkStep, StepMap, Mapping} from "prosemirror-transform"
 const key = new PluginKey('track')
 
@@ -90,7 +90,8 @@ export let trackPlugin = function(options) {
                     )
                 ) ||
                 tr.getMeta('fromFootnote') ||
-                tr.getMeta('remote')
+                tr.getMeta('remote') ||
+                tr.getMeta('track')
             ) {
                 return true
             }
@@ -101,10 +102,48 @@ export let trackPlugin = function(options) {
                 user = options.editor.user.id,
                 username = options.editor.user.username
 
-            tr.steps.forEach(step => {
-                let newMap = map.slice()
-                newMap.appendMap(step.getMap().invert())
+            newTr.setMeta('track', true)
+
+            tr.steps.forEach((step, index) => {
+
                 if (step instanceof ReplaceStep && step.from !== step.to) {
+                    newTr.maybeStep(
+                        new AddMarkStep(
+                            map.map(step.from),
+                            map.map(step.to),
+                            state.schema.marks.deletion.create({user, username, date})
+                        )
+                    )
+                    if (newTr.docs.length) {
+                        let delRanges = []
+                        newTr.doc.nodesBetween(
+                            map.map(step.from),
+                            map.map(step.to),
+                            (node, pos, parent, index) => {
+                                if (pos < map.map(step.from)) {
+                                    return true
+                                }
+                                if (node.marks && node.marks.find(mark => mark.type.name==='insertion' && mark.attrs.user===user && !mark.attrs.approved)) {
+                                    delRanges.push([pos, pos + node.nodeSize])
+                                }
+                            }
+                        )
+                        while (delRanges.length) {
+                            let delRange = delRanges.pop(),
+                                delStep = new ReplaceStep(
+                                    delRange[0],
+                                    delRange[1],
+                                    Slice.empty
+                                )
+                            let {failed} = newTr.maybeStep(delStep)
+                            if (!failed) {
+                                let stepMap = delStep.getMap()
+                                map.appendMap(stepMap)
+                                delRanges = delRanges.map(delRange => [stepMap.map(delRange[0], -1), stepMap.map(delRange[1], 1)])
+                            }
+                        }
+                    }
+
                     if (step.slice.size) {
                         let newStep = new ReplaceStep(
                             map.map(step.to),
@@ -116,18 +155,12 @@ export let trackPlugin = function(options) {
                         let {failed} = newTr.maybeStep(newStep)
 
                         if (!failed) {
-                            newMap.appendMap(newStep.getMap())
+                            map.appendMap(newStep.getMap())
                         }
                     }
-                    newTr.maybeStep(
-                        new AddMarkStep(
-                            map.map(step.from),
-                            map.map(step.to),
-                            state.schema.marks.deletion.create({user, username, date})
-                        )
-                    )
 
                 } else if (step instanceof ReplaceAroundStep && !step.structure) {
+                    let delRanges = []
                     if (step.gapFrom-step.from > 0) {
                         newTr.maybeStep(
                             new AddMarkStep(
@@ -146,6 +179,47 @@ export let trackPlugin = function(options) {
                             )
                         )
                     }
+                    if (newTr.docs.length) {
+                        let delRanges = []
+                        newTr.doc.nodesBetween(
+                            map.map(step.from),
+                            map.map(step.gapFrom),
+                            (node, pos, parent, index) => {
+                                if (pos < map.map(step.from)) {
+                                    return true
+                                }
+                                if (node.marks && node.marks.find(mark => mark.type.name==='insertion' && mark.attrs.user===user && !mark.attrs.approved)) {
+                                    delRanges.push([pos, pos + node.nodeSize])
+                                }
+                            }
+                        )
+                        newTr.doc.nodesBetween(
+                            map.map(step.gapTo),
+                            map.map(step.to),
+                            (node, pos, parent, index) => {
+                                if (pos < map.map(step.gapTo)) {
+                                    return true
+                                }
+                                if (node.marks && node.marks.find(mark => mark.type.name==='insertion' && mark.attrs.user===user && !mark.attrs.approved)) {
+                                    delRanges.push([pos, pos + node.nodeSize])
+                                }
+                            }
+                        )
+                        while (delRanges.length) {
+                            let delRange = delRanges.pop(),
+                                delStep = new ReplaceStep(
+                                    delRange[0],
+                                    delRange[1],
+                                    Slice.empty
+                                )
+                            let {failed} = newTr.maybeStep(delStep)
+                            if (!failed) {
+                                let stepMap = delStep.getMap()
+                                map.appendMap(stepMap)
+                                delRanges = delRanges.map(delRange => [stepMap.map(delRange[0], -1), stepMap.map(delRange[1], 1)])
+                            }
+                        }
+                    }
                     if (step.slice.size) {
                         let newStep = new ReplaceStep(
                             map.map(step.to),
@@ -155,7 +229,7 @@ export let trackPlugin = function(options) {
                         )
                         let {failed} = newTr.maybeStep(newStep)
                         if (!failed) {
-                            newMap.appendMap(newStep.getMap())
+                            map.appendMap(newStep.getMap())
                         }
                     }
                 } else {
@@ -163,10 +237,13 @@ export let trackPlugin = function(options) {
                     if (mappedStep) {
                         let {failed} = newTr.maybeStep(mappedStep)
                         if (!failed) {
-                            newMap.appendMap(mappedStep.getMap())
+                            map.appendMap(mappedStep.getMap())
                         }
                     }
                 }
+                let newMap = new Mapping()
+                newMap.appendMap(step.getMap().invert())
+                newMap.appendMapping(map)
                 map = newMap
             })
             if (tr.selection instanceof TextSelection) {

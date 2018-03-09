@@ -53,7 +53,7 @@ export class ModCommentStore {
                 id,
                 this.mod.editor.user.id,
                 username,
-                new Date().getTime(),
+                Date.now()-this.mod.editor.clientTimeAdjustment,
                 ''),
             inDOM: false
         }

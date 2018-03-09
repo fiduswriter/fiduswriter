@@ -125,7 +125,7 @@ export class ModCommentInteractions {
                 {
                     user: this.mod.editor.user.id,
                     username,
-                    date: new Date().getTime(), // We update the time to the time the comment was stored
+                    date: Date.now()-this.mod.editor.clientTimeAdjustment, // We update the time to the time the comment was stored
                     comment: commentText,
                     isMajor
                 },
@@ -209,7 +209,7 @@ export class ModCommentInteractions {
             answer: answerText,
             user: this.mod.editor.user.id,
             username,
-            date: new Date().getTime()
+            date: Date.now()-this.mod.editor.clientTimeAdjustment
         }
 
         this.mod.store.addAnswer(id, answer)

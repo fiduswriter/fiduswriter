@@ -51,7 +51,7 @@ export let trackPlugin = function(options) {
             }
 
             let newTr = newState.tr,
-                date = Math.floor(Date.now()/600000), // 10 minute interval
+                date = Math.floor((Date.now()-options.editor.clientTimeAdjustment)/600000), // 10 minute interval
                 user = options.editor.user.id,
                 username = options.editor.user.username,
                 approved = !options.editor.view.state.doc.firstChild.attrs.track
@@ -98,7 +98,7 @@ export let trackPlugin = function(options) {
 
             let newTr = state.tr,
                 map = new Mapping(),
-                date = Math.floor(Date.now()/600000), // 10 minute interval
+                date = Math.floor((Date.now()-options.editor.clientTimeAdjustment)/600000), // 10 minute interval
                 user = options.editor.user.id,
                 username = options.editor.user.username
 

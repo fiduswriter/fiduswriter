@@ -128,6 +128,7 @@ export class Editor {
             toolbarModel
         }
         this.client_id = Math.floor(Math.random() * 0xFFFFFFFF)
+        this.clientTimeAdjustment = 0
         this.statePlugins = [
             [keymap, () => editorKeymap],
             [keymap, () => buildKeymap(this.schema)],
@@ -223,6 +224,9 @@ export class Editor {
         }
         // Remember location hash to scroll there subsequently.
         let locationHash = window.location.hash
+
+        this.clientTimeAdjustment = Date.now() - data.time 
+
         let doc = data.doc
 
         this.docInfo = data.doc_info
@@ -238,6 +242,8 @@ export class Editor {
         } else {
             this.user = this.docInfo.owner
         }
+
+
 
         this.mod.db.bibDB.setDB(data.doc.bibliography)
         this.mod.db.imageDB.setDB(data.doc.images)

@@ -1,6 +1,6 @@
 import uuid
 import atexit
-from time import mktime
+from time import mktime, time
 from copy import deepcopy
 
 from jsonpatch import apply_patch, JsonPatchConflict
@@ -136,6 +136,7 @@ class WebSocket(BaseWebSocketHandler):
             'bibliography': self.doc['bibliography'],
             'images': {}
         }
+        response['time'] = int(time()) * 1000
         for dimage in DocumentImage.objects.filter(document_id=self.doc['id']):
             image = dimage.image
             field_obj = {

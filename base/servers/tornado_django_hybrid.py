@@ -52,4 +52,4 @@ def make_tornado_server():
 
 def run(port):
     make_tornado_server().listen(int(port))
-    IOLoop.instance().start()
+    IOLoop.current().start()

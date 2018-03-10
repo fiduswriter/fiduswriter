@@ -69,7 +69,8 @@ class LiveTornadoThread(threading.Thread):
                     break
 
             self.is_ready.set()
-            IOLoop.instance().start()
+            self.ioloop = IOLoop.current()
+            self.ioloop.start()
         except Exception as e:
             self.error = e
             self.is_ready.set()
@@ -77,7 +78,9 @@ class LiveTornadoThread(threading.Thread):
     def terminate(self):
         if hasattr(self, 'httpd'):
             self.httpd.stop()
-            IOLoop.instance().stop()
+
+        if hasattr(self, 'ioloop'):
+            self.ioloop.stop()
 
 
 class LiveTornadoTestCase(TransactionTestCase):

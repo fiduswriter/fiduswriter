@@ -141,6 +141,6 @@ export let settingsPlugin = function(options) {
                     updateSettings(view.state.doc.firstChild.attrs, prevState.doc.firstChild.attrs)
                 }
             }
-        },
+        }
     })
 }

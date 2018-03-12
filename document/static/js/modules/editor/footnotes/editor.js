@@ -11,6 +11,7 @@ import {buildKeymap} from "prosemirror-example-setup"
 
 import {fnSchema} from "../../schema/footnotes"
 import {
+    citationRenderPlugin
     pastePlugin,
     toolbarPlugin,
     collabCaretsPlugin,
@@ -38,6 +39,7 @@ export class ModFootnoteEditor {
             [dropCursor],
             [gapCursor],
             [toolbarPlugin, () => ({editor: this.mod.editor})],
+            [citationRenderPlugin, () => ({editor: this.mod.editor})],
             [collabCaretsPlugin, () => ({editor: this.mod.editor})],
             [pastePlugin, () => ({editor: this.mod.editor})],
             [accessRightsPlugin, () => ({editor: this.mod.editor})]
@@ -65,25 +67,25 @@ export class ModFootnoteEditor {
                     this.mod.editor.currentView = this.view
                 }
             },
-            dispatchTransaction: (transaction) => {
-                let remote = transaction.getMeta('remote'),
-                    filterFree = transaction.getMeta('filterFree')
+            dispatchTransaction: (tr) => {
+                let remote = tr.getMeta('remote'),
+                    filterFree = tr.getMeta('filterFree')
                 // Skip if creating new footnote by typing directly into empty footnote editor.
                 if (
-                    transaction.docChanged &&
-                    transaction.steps[0].jsonID === 'replace' &&
-                    transaction.steps[0].from === 0 &&
-                    transaction.steps[0].to === 0 &&
+                    tr.docChanged &&
+                    tr.steps[0].jsonID === 'replace' &&
+                    tr.steps[0].from === 0 &&
+                    tr.steps[0].to === 0 &&
                     !remote &&
                     !filterFree
                 ) {
                     return
                 }
 
-                let newState = this.view.state.apply(transaction)
+                let newState = this.view.state.apply(tr)
 
                 this.view.updateState(newState)
-                this.onTransaction(transaction, remote, filterFree)
+                this.onTransaction(tr, remote, filterFree)
                 this.mod.layout.updateDOM()
             }
         })
@@ -92,43 +94,7 @@ export class ModFootnoteEditor {
 
     // Find out if we need to recalculate the bibliography
     onTransaction(transaction, remote, filterFree) {
-        if (!remote && !filterFree) {
-            this.footnoteEdit(transaction)
-        }
-
-        let updateBibliography = false
-            // Check what area is affected
-
-        transaction.steps.forEach((step, index) => {
-            if (step.jsonID === 'replace' || step.jsonID === 'replaceAround') {
-                if (step.from !== step.to) {
-                    transaction.docs[index].nodesBetween(
-                        step.from,
-                        step.to,
-                        (node, pos, parent) => {
-                            if (node.type.name === 'citation') {
-                                // A citation was replaced
-                                updateBibliography = true
-                            }
-                        }
-                    )
-                }
-            }
-        })
-
-        if (updateBibliography) {
-            // Recreate the bibliography on next flush.
-            this.mod.editor.mod.citations.resetCitations()
-        } else {
-            this.mod.editor.mod.citations.layoutCitations()
-        }
-
-
-    }
-
-    footnoteEdit(transaction) {
-        // Handle a local edit in the footnote editor.
-        if (transaction.docChanged) {
+        if (!remote && !filterFree && transaction.docChanged) {
             let steps = transaction.steps,
                 lastStep = steps[steps.length - 1]
             if (lastStep.hasOwnProperty('from')) {
@@ -142,6 +108,7 @@ export class ModFootnoteEditor {
                 }
             }
         }
+
     }
 
     applyDiffs(diffs, cid) {

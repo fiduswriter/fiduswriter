@@ -4,6 +4,10 @@ export {
 }
 from "./author_input"
 export {
+    citationRenderPlugin
+}
+from "./citation_render"
+export {
     getSelectionUpdate,
     updateCollaboratorSelection,
     removeCollaboratorSelection,

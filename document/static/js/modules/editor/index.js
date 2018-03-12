@@ -76,6 +76,7 @@ import {
 import {
     accessRightsPlugin,
     authorInputPlugin,
+    citationRenderPlugin,
     collabCaretsPlugin,
     commentsPlugin,
     footnoteMarkersPlugin,
@@ -136,6 +137,7 @@ export class Editor {
             [tableEditing],
             [jumpHiddenNodesPlugin],
             [placeholdersPlugin, () => ({editor: this})],
+            [citationRenderPlugin, () => ({editor: this})],
             [headerbarPlugin, () => ({editor: this})],
             [toolbarPlugin, () => ({editor: this})],
             [collabCaretsPlugin, () => ({editor: this})],
@@ -177,11 +179,10 @@ export class Editor {
                     view.focus()
                 }
             },
-            dispatchTransaction: (transaction) => {
-                let newState = this.view.state.apply(transaction)
+            dispatchTransaction: (tr) => {
+                let newState = this.view.state.apply(tr)
                 this.view.updateState(newState)
-                let remote = transaction.getMeta('remote')
-                this.onTransaction(transaction, remote)
+                this.mod.collab.docChanges.sendToCollaborators()
             }
 
         })
@@ -356,39 +357,6 @@ export class Editor {
         let distanceFromTop = view.coordsAtPos(pos).top - topMenuHeight
         window.scrollBy(0, distanceFromTop)
         return
-    }
-
-    // Things to be executed on every editor transaction.
-    onTransaction(transaction, remote) {
-        let updateBibliography = false
-            // Check what area is affected
-
-        this.mod.collab.docChanges.sendToCollaborators()
-
-        transaction.steps.forEach((step, index) => {
-            if (step.jsonID === 'replace' || step.jsonID === 'replaceAround') {
-                if (step.from !== step.to) {
-                    transaction.docs[index].nodesBetween(
-                        step.from,
-                        step.to,
-                        (node, pos, parent) => {
-                            if (node.type.name === 'citation') {
-                                // A citation was replaced
-                                updateBibliography = true
-                            }
-                        }
-                    )
-                }
-            }
-        })
-
-        if (updateBibliography) {
-            // Recreate the bibliography
-            this.mod.citations.resetCitations()
-        } else {
-            this.mod.citations.layoutCitations()
-        }
-
     }
 
 }

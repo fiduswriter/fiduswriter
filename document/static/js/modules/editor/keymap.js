@@ -4,12 +4,15 @@ const mac = typeof navigator != "undefined" ? /Mac/.test(navigator.platform) : f
 
 let backspace = chainCommands(deleteSelection, joinBackward, selectNodeBackward)
 
+let addInputType = (tr, inputType) => tr.setMeta('inputType', inputType)
+
+
 export let editorKeymap = {
-  "Backspace": (state, dispatch, view) => backspace(state, tr => dispatch(tr.setMeta('backspace', true)), view),
-  "Mod-z": (state, dispatch, view) => undo(state, tr => dispatch(tr.setMeta('undo', true)), view),
-  "Shift-Mod-z": (state, dispatch, view) => redo(state, tr => dispatch(tr.setMeta('redo', true)), view)
+  "Backspace": (state, dispatch, view) => backspace(state, tr => dispatch(addInputType(tr, 'deleteContentBackward')), view),
+  "Mod-z": (state, dispatch, view) => undo(state, tr => dispatch(addInputType(tr, 'historyUndo')), view),
+  "Shift-Mod-z": (state, dispatch, view) => redo(state, tr => dispatch(addInputType(tr, 'historyRedo')), view)
 }
 
 if (!mac) {
-    editorKeymap["Mod-y"] = (state, dispatch, view) => redo(state, tr => dispatch(tr.setMeta('redo', true)), view)
+    editorKeymap["Mod-y"] = (state, dispatch, view) => redo(state, tr => dispatch(addInputType(tr, 'historyRedo')), view)
 }

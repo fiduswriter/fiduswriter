@@ -26,8 +26,9 @@ export let trackPlugin = function(options) {
             apply() {}
         },
         appendTransaction(trs, oldState, newState) {
+
             if (
-                trs.every(tr => tr.getMeta('remote') || tr.getMeta('fromFootnote') || tr.getMeta('undo') || tr.getMeta('redo'))
+                trs.every(tr => tr.getMeta('remote') || tr.getMeta('fromFootnote') || ['historyUndo', 'historyRedo'].includes(tr.getMeta('inputType')))
             ) {
                 // All transactions are remote, come from footnotes or history. Give up.
                 return false
@@ -250,7 +251,7 @@ export let trackPlugin = function(options) {
                 map = newMap
             })
             if (tr.selection instanceof TextSelection) {
-                let assoc = (tr.selection.from < state.selection.from || tr.getMeta('backspace')) ? -1 : 1
+                let assoc = (tr.selection.from < state.selection.from || tr.getMeta('inputType') === 'deleteContentBackward' ) ? -1 : 1
                 let caretPos = map.map(tr.selection.from, assoc)
                 newTr.setSelection(
                     new TextSelection(

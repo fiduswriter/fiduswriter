@@ -1,18 +1,13 @@
 /* Functions for ProseMirror integration.*/
 import {
     EditorState,
-    Plugin,
     TextSelection
 } from "prosemirror-state"
 import {
-    EditorView,
-    Decoration,
-    DecorationSet
+    EditorView
 } from "prosemirror-view"
 import {
-    history,
-    redo,
-    undo
+    history
 } from "prosemirror-history"
 import {
     baseKeymap
@@ -133,7 +128,6 @@ export class Editor {
             [keymap, () => editorKeymap],
             [keymap, () => buildKeymap(this.schema)],
             [keymap, () => baseKeymap],
-            //[keymap, () => editorKeymap],
             [collab, () => ({clientID: this.client_id})],
             [linksPlugin, () => ({editor: this})],
             [history],
@@ -225,7 +219,7 @@ export class Editor {
         // Remember location hash to scroll there subsequently.
         let locationHash = window.location.hash
 
-        this.clientTimeAdjustment = Date.now() - data.time 
+        this.clientTimeAdjustment = Date.now() - data.time
 
         let doc = data.doc
 

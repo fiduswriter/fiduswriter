@@ -27,9 +27,9 @@ export let trackPlugin = function(options) {
         },
         appendTransaction(trs, oldState, newState) {
             if (
-                trs.every(tr => tr.getMeta('remote') || tr.getMeta('fromFootnote') || tr.getMeta('history$'))
+                trs.every(tr => tr.getMeta('remote') || tr.getMeta('fromFootnote') || tr.getMeta('undo') || tr.getMeta('redo'))
             ) {
-                // All transactions are remote or come from footnotes. Give up.
+                // All transactions are remote, come from footnotes or history. Give up.
                 return false
             }
             let addedRanges = []

@@ -743,7 +743,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
     def get_undo(self, driver):
         content = driver.find_element_by_class_name('article-body')
-        return content.get_attribute("innerText").rstrip('\n')
+        return content.get_attribute("innerText").rstrip(u'\ufeff\n')
 
     def test_delete_undo(self):
         """

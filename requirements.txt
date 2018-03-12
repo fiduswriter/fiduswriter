@@ -7,7 +7,7 @@ django-avatar==4.1.0
 django-compressor==2.2
 django-js-error-hook==0.6
 django-npm-mjs==0.5.2
-tornado==5.0
+tornado==4.5.3
 python-dateutil==2.6.1
 python-magic==0.4.15
 setuptools==38.5.2

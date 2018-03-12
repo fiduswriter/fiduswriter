@@ -531,14 +531,14 @@ export let toolbarModel = {
             type: 'button',
             title: gettext('Undo'),
             icon: 'undo',
-            action: editor => undo(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('undo', true))),
+            action: editor => undo(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('inputType', 'historyUndo'))),
             disabled: editor => undoDepth(editor.currentView.state) === 0
         },
         {
             type: 'button',
             title: gettext('Redo'),
             icon: 'repeat',
-            action: editor => redo(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('redo', true))),
+            action: editor => redo(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('inputType', 'historyRedo'))),
             disabled: editor => redoDepth(editor.currentView.state) === 0
         },
         {

@@ -1154,7 +1154,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         driver.find_element_by_css_selector('.insert-citation').click()
 
     def get_citation_within_text(self, driver):
-        cite_within_doc = driver.find_elements_by_css_selector(
+        cite_within_doc = driver.find_element_by_css_selector(
             'div.article-body span.citation'
         )
         return cite_within_doc.text

@@ -61,6 +61,4 @@ export class ModCollabColors {
 
     }
 
-
-
 }

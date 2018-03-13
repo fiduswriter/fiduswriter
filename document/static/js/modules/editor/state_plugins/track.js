@@ -1,6 +1,5 @@
 import {Plugin, PluginKey, TextSelection} from "prosemirror-state"
-import {Decoration, DecorationSet} from "prosemirror-view"
-import {DOMSerializer, Slice} from "prosemirror-model"
+import {Slice} from "prosemirror-model"
 import {ReplaceStep, ReplaceAroundStep, AddMarkStep, StepMap, Mapping} from "prosemirror-transform"
 const key = new PluginKey('track')
 
@@ -28,7 +27,13 @@ export let trackPlugin = function(options) {
         appendTransaction(trs, oldState, newState) {
 
             if (
-                trs.every(tr => tr.getMeta('remote') || tr.getMeta('fromFootnote') || ['historyUndo', 'historyRedo'].includes(tr.getMeta('inputType')))
+                trs.every(
+                    tr =>
+                        tr.getMeta('remote') ||
+                        tr.getMeta('track') ||
+                        tr.getMeta('fromFootnote') ||
+                        ['historyUndo', 'historyRedo'].includes(tr.getMeta('inputType'))
+                )
             ) {
                 // All transactions are remote, come from footnotes or history. Give up.
                 return false

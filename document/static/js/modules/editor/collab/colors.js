@@ -35,7 +35,7 @@ export class ModCollabColors {
         /* We assign a color to each user. This color stays even if the user
         * disconnects or the participant list is being updated.
         */
-        if (!(userId in this.colorIds)) {
+        if (!(this.colorIds.includes(userId))) {
             this.colorIds.push(userId)
             this.provideUserColorStyles()
         }

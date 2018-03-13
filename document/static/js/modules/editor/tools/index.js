@@ -1,6 +1,7 @@
 import {ModToolsWordCount} from "./word_count"
 import {ModToolsPrint} from "./print"
 import {ModToolsShowKeyBindings} from "./show_key_bindings"
+import {ModToolsTrack} from "./track"
 
 export class ModTools {
     constructor(editor) {
@@ -9,6 +10,7 @@ export class ModTools {
         new ModToolsWordCount(this)
         new ModToolsPrint(this)
         new ModToolsShowKeyBindings(this)
+        new ModToolsTrack(this)
     }
 
 }

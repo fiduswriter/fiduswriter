@@ -52,7 +52,7 @@ export class ModCollabChat {
             this.beep()
             this.flashtab(message.from + ': ' + message.body)
         }
-        if (chatContainer.css('display') === 'none') {
+        if (chatContainer.style.display === 'none') {
             document.getElementById("chat").classList.add('highlighted')
         }
         jQuery(chatContainer.lastElementChild).slideDown({
@@ -82,14 +82,13 @@ export class ModCollabChat {
     }
 
     init() {
-
-        jQuery(document.head).append(
-            '<style>\n#messageform.empty:before{content:"' + gettext(
-                'Send a message...') + '"}\n</style>')
+        document.head.insertAdjacentHTML(
+            'beforeend',
+            `<style>\n#messageform.empty:before{content:"${gettext('Send a message...')}"}\n</style>`
+        )
         let that = this
-        jQuery(document).ready(function () {
-            jQuery('#chat-container').css('max-height', jQuery(window).height() -
-                200 + 'px')
+        jQuery(document).ready(() => {
+            document.getElementById('chat-container').style.maxHeight = jQuery(window).height() - 200 + 'px'
 
             jQuery('#chat .resize-button').on("click", function (event) {
                 if (this.classList.contains('fa-angle-double-down')) {
@@ -113,44 +112,26 @@ export class ModCollabChat {
                 }
             })
 
-            jQuery("#messageform").on("focus", function () {
-                this.classList.remove('empty')
-            })
+            let messageForm = document.getElementById("messageform")
 
-            jQuery("#messageform").on("blur", function () {
-                if (this.innerText.length === 0) {
-                    this.classList.add('empty')
+            messageForm.addEventListener("focus", event => messageForm.classList.remove('empty'))
+
+            messageForm.addEventListener("blur", event => {
+                if (messageForm.innerText.length === 0) {
+                    messageForm.classList.add('empty')
                 }
             })
 
-
-            jQuery("#messageform").on("keypress", function (event) {
-                if (event.keyCode == 13) {
-                    that.sendMessage(jQuery(this).text())
-                    jQuery(this).empty()
+            messageForm.addEventListener("keypress", event => {
+                if (event.keyCode === 13) {
+                    this.sendMessage(messageForm.innerText)
+                    messageForm.innerText = ''
                     return false
                 }
             })
-
-
         })
 
-        jQuery(window).on("blur focus", function (event) {
-            let prevType = this.getAttribute('data-prev-type')
-
-            if (prevType != event.type) { //  reduce double fire issues
-                switch (event.type) {
-                case "blur":
-                    that.focus = false;
-                    break
-                case "focus":
-                    that.focus = true;
-                    break
-                }
-            }
-
-            this.setAttribute('data-prev-type', event.type)
-
-        })
+        window.addEventListener("blur", () => this.focus = false)
+        window.addEventListener("focus", () => this.focus = true)
     }
 }

@@ -68,7 +68,7 @@ export let trackPlugin = function(options) {
                 date = Math.floor((Date.now()-options.editor.clientTimeAdjustment)/600000), // 10 minute interval
                 user = options.editor.user.id,
                 username = options.editor.user.username,
-                approved = !options.editor.view.state.doc.firstChild.attrs.track
+                approved = !options.editor.view.state.doc.firstChild.attrs.track && options.editor.docInfo.access_rights !== 'write-tracked'
 
             if (!approved) { // Only add deletions if changes are not automatically approved
                 let deletedRanges = addedRanges.slice()

@@ -11,7 +11,7 @@ import {buildKeymap} from "prosemirror-example-setup"
 
 import {fnSchema} from "../../schema/footnotes"
 import {
-    citationRenderPlugin
+    citationRenderPlugin,
     pastePlugin,
     toolbarPlugin,
     collabCaretsPlugin,

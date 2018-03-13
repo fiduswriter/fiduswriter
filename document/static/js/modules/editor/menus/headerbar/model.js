@@ -10,6 +10,7 @@ import {HTMLExporter} from "../../../exporter/html"
 import {EpubExporter} from "../../../exporter/epub"
 import {RevisionDialog, LanguageDialog, TableDialog} from "../../dialogs"
 import {TEXT_ONLY_PARTS} from "../toolbar/model"
+import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from "../.."
 
 // from https://github.com/ProseMirror/prosemirror-tables/blob/master/src/util.js
 let isInTable = function(state) {
@@ -457,9 +458,9 @@ export let headerbarModel = {
             id: 'table',
             title: gettext('Table'),
             tooltip: gettext('Add and edit tables.'),
-            disabled: editor => {
-                return editor.docInfo.access_rights !== 'write'
-            },
+            disabled: editor =>
+                READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights),
             content: [
                 {
                     title: gettext('Insert table'),

@@ -150,6 +150,7 @@ export class Editor {
             [settingsPlugin, () => ({editor: this})],
             [trackPlugin, () => ({editor: this})]
         ]
+        new ModCitations(this)
         new ModFootnotes(this)
         new ModServerCommunications(this)
         new ModDB(this)
@@ -189,7 +190,6 @@ export class Editor {
         // The editor that is currently being edited in -- main or footnote editor
         this.currentView = this.view
         this.mod.footnotes.init()
-        new ModCitations(this)
         new ModCollab(this)
         new ModTools(this)
         new ModComments(this)

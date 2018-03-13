@@ -67,7 +67,7 @@ export class BibEntryForm {
             BibTypes,
             BibTypeTitles
         })
-        jQuery('body').append(dialogEl)
+        document.body.insertAdjacentHTML('beforeend', bibDialog)
 
         let diaButtons = {
             cancel: {

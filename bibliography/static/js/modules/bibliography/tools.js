@@ -31,11 +31,11 @@ export let addRemoveListHandler = function () {
         addDropdownBox(jQuery(this), jQuery(this).children('.fw-pulldown'))
     })
     jQuery('.fw-bib-field-pulldown .fw-pulldown-item').bind('mousedown', function () {
-        let selected_title = jQuery(this).html(),
+        let selected_title = this.innerHTML,
             selected_value = jQuery(this).data('value')
-        jQuery(this).parent().parent().find('.fw-pulldown-item.selected').removeClass('selected')
-        jQuery(this).addClass('selected')
-        jQuery(this).parent().parent().parent().siblings('label').html(selected_title)
+        this.parentElement.parentElement.querySelector('.fw-pulldown-item.selected').classList.remove('selected')
+        this.classList.add('selected')
+        this.parentElement.parentElement.parentElement.parentElement.querySelector('label').innerHTML = selected_title
     })
 
     // init dropdown for date format pulldown
@@ -43,12 +43,12 @@ export let addRemoveListHandler = function () {
         addDropdownBox(jQuery(this), jQuery(this).children('.fw-pulldown'))
     })
     jQuery('.fw-data-format-pulldown .fw-pulldown-item').bind('mousedown', function () {
-        let selected_title = jQuery(this).html(),
+        let selected_title = this.innerHTML,
             selected_value = jQuery(this).data('value')
-        jQuery(this).parent().parent().find('.fw-pulldown-item.selected').removeClass('selected')
-        jQuery(this).addClass('selected')
-        jQuery(this).parent().parent().parent().siblings('label').children('span').html('(' + selected_title + ')')
-        jQuery(this).parent().parent().parent().parent().parent().parent().attr('data-format', selected_value)
+        this.parentElement.parentElement.querySelector('.fw-pulldown-item.selected').classList.remove('selected')
+        this.classList.add('selected')
+        this.parentElement.parentElement.parentElement.parentElement.querySelector('label').querySelector('span').innerHTML = `(${selected_title})`
+        this.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.setAttribute('data-format', selected_value)
     })
 
     // nit dropdown for f_key selection
@@ -56,11 +56,11 @@ export let addRemoveListHandler = function () {
         addDropdownBox(jQuery(this), jQuery(this).children('.fw-pulldown'))
     })
     jQuery('.fw-bib-select-pulldown .fw-pulldown-item').bind('mousedown', function () {
-        let selected_title = jQuery(this).html(),
+        let selected_title = this.innerHTML,
             selected_value = jQuery(this).data('value')
-        jQuery(this).parent().parent().find('.fw-pulldown-item.selected').removeClass('selected')
-        jQuery(this).addClass('selected')
-        jQuery(this).parent().parent().parent().siblings('label').html(selected_title)
+        this.parentElement.parentElement.querySelector('.fw-pulldown-item.selected').classList.remove('selected')
+        this.classList.add('selected')
+        this.parentElement.parentElement.parentElement.parentElement.querySelector('label').innerHTML = selected_title
     })
 }
 

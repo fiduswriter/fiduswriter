@@ -76,7 +76,7 @@ export class BibliographyOverview {
             dialogHeader,
             categories: this.bibDB.cats
         })
-        jQuery('body').append(dialogBody)
+        document.body.insertAdjacentHTML('beforeend', dialogBody)
         let buttons = {}
         let that = this
         buttons[gettext('Submit')] = function () {
@@ -85,8 +85,8 @@ export class BibliographyOverview {
                 'titles': []
             }
             jQuery('#editCategories .category-form').each(function () {
-                let thisVal = jQuery.trim(jQuery(this).val())
-                let thisId = jQuery(this).attr('data-id')
+                let thisVal = this.value.trim()
+                let thisId = this.getAttribute('data-id')
                 if ('undefined' == typeof (thisId)) thisId = 0
                 if ('' !== thisVal) {
                     cats.ids.push(thisId)
@@ -127,9 +127,10 @@ export class BibliographyOverview {
      */
     deleteBibEntryDialog(ids) {
         let that = this
-        jQuery('body').append('<div id="confirmdeletion" title="' + gettext(
-            'Confirm deletion') + '"><p>' + gettext(
-            'Delete the bibliography item(s)') + '?</p></div>')
+        document.body.insertAdjacentHTML(
+            'beforeend',
+            `<div id="confirmdeletion" title="${gettext('Confirm deletion')}"><p>${gettext('Delete the bibliography item(s)')}?</p></div>`
+        )
         let diaButtons = {}
         diaButtons[gettext('Delete')] = function () {
             that.deleteBibEntries(ids)
@@ -186,15 +187,18 @@ export class BibliographyOverview {
                 'published': bibInfo.fields.date ? bibInfo.fields.date.replace('/', ' ') : ''
             }))
         } else { //if this is the new entry, append
-            jQuery('#bibliography > tbody').append(bibtableTemplate({
-                'id': pk,
-                'cats': bibInfo.entry_cat,
-                'type': bibInfo.bib_type,
-                'typetitle': BibTypeTitles[bibInfo.bib_type],
-                'title': bibInfo.fields.title ? litToText(bibInfo.fields.title) : gettext('Untitled'),
-                'author': bibauthors ? nameToText(bibauthors) : '',
-                'published': bibInfo.fields.date ? bibInfo.fields.date.replace('/', ' ') : ''
-            }))
+            document.querySelector('#bibliography > tbody').insertAdjacentHTML(
+                'beforeend',
+                bibtableTemplate({
+                    id: pk,
+                    cats: bibInfo.entry_cat,
+                    type: bibInfo.bib_type,
+                    typetitle: BibTypeTitles[bibInfo.bib_type],
+                    title: bibInfo.fields.title ? litToText(bibInfo.fields.title) : gettext('Untitled'),
+                    author: bibauthors ? nameToText(bibauthors) : '',
+                    published: bibInfo.fields.date ? bibInfo.fields.date.replace('/', ' ') : ''
+                })
+            )
         }
     }
 
@@ -227,10 +231,10 @@ export class BibliographyOverview {
 
         jQuery('#bibliography_filter input').unbind('focus, blur')
         jQuery('#bibliography_filter input').bind('focus', function () {
-            jQuery(this).parent().addClass('focus')
+            this.parentElement.classList.add('focus')
         })
         jQuery('#bibliography_filter input').bind('blur', function () {
-            jQuery(this).parent().removeClass('focus')
+            this.parentElement.classList.add('focus')
         })
 
         let autocompleteTags = []
@@ -268,12 +272,12 @@ export class BibliographyOverview {
     bindEvents() {
         let that = this
         jQuery(document).on('click', '.delete-bib', function () {
-            let bookId = parseInt(jQuery(this).attr('data-id'))
+            let bookId = parseInt(this.getAttribute('data-id'))
             that.deleteBibEntryDialog([bookId])
         })
 
         jQuery(document).on('click', '.edit-bib', function () {
-            let bookId = parseInt(jQuery(this).attr('data-id'))
+            let bookId = parseInt(this.getAttribute('data-id'))
             let form = new BibEntryForm(that.bibDB, bookId)
             form.init().then(
                 idTranslations => {

@@ -15,7 +15,7 @@ export class BibLatexFileImportDialog {
 
     init() {
         let that = this
-        jQuery('body').append(importBibFileTemplate())
+        document.body.insertAdjacentHTML('beforeend', importBibFileTemplate())
         let diaButtons = {}
         diaButtons[gettext('Import')] = function () {
             let bibFile = jQuery('#bib-uploader')[0].files
@@ -59,8 +59,8 @@ export class BibLatexFileImportDialog {
                 theDialog.find(".ui-button:last").addClass(
                     "fw-button fw-orange")
                 jQuery('#bib-uploader').bind('change', function () {
-                    jQuery('#import-bib-name').html(jQuery(this).val().replace(
-                        /C:\\fakepath\\/i, ''))
+
+                    document.getElementById('import-bib-name').innerHTML = this.value.replace(/C:\\fakepath\\/i, '')
                 })
                 jQuery('#import-bib-btn').bind('click', () =>
                     jQuery('#bib-uploader').trigger('click')

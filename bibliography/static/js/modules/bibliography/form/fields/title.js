@@ -61,7 +61,7 @@ export class TitleFieldForm{
     }
 
     linkMarkButton(mark) {
-        jQuery(`.ui-dialog-buttonset .fw-${mark}`).on("mousedown", (event)=>{
+        jQuery(`.ui-dialog-buttonset .fw-${mark}`).on("mousedown", event => {
             event.preventDefault()
             event.stopPropagation()
             if (!this.view.hasFocus()) {

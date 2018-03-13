@@ -55,7 +55,7 @@ export class ModCollabChat {
         if (chatContainer.css('display') === 'none') {
             document.getElementById("chat").classList.add('highlighted')
         }
-        node.slideDown({
+        jQuery(chatContainer.lastElementChild).slideDown({
             progress: function () {
                 chatContainer.scrollTop = chatContainer.scrollHeight
             }

@@ -158,7 +158,7 @@ export class CitationDialog {
     addToCitableItems(ids) {
         ids.forEach(id => {
             let citeItemData = this.bibDBToBibEntry(this.editor.mod.db.bibDB.db[id], id, 'document')
-            jQuery('#cite-source-table > tbody').append(citationItemTemplate(citeItemData))
+            document.querySelector('#cite-source-table > tbody').insertAdjacentHTML('beforeend', citationItemTemplate(citeItemData))
             this.addToCitedItems([citeItemData])
         })
         jQuery('#cite-source-table').trigger('update')
@@ -170,7 +170,8 @@ export class CitationDialog {
         let len = items.length
         for(let i = 0; i < len; i ++) {
             let item = items[i]
-            jQuery('#selected-cite-source-table .fw-document-table-body').append(
+            document.querySelector('#selected-cite-source-table .fw-document-table-body').insertAdjacentHTML(
+                'beforeend',
                 selectedCitationTemplate({
                     id: item.id,
                     db: item.db,
@@ -188,7 +189,7 @@ export class CitationDialog {
 
         jQuery('#cite-source-table').bind('update', function() {
             let autocomplete_tags = []
-            if (jQuery(this).hasClass('dataTable')) {
+            if (this.classList.contains('dataTable')) {
                 jQuery(this).dataTable({
                     "bRetrieve": true,
                 })
@@ -204,7 +205,7 @@ export class CitationDialog {
                     },
                 })
             }
-            jQuery('#cite-source-table_filter input').attr('placeholder', gettext('Search bibliography'))
+            document.querySelector('#cite-source-table_filter input').setAttribute('placeholder', gettext('Search bibliography'))
 
             jQuery('#cite-source-table .fw-searchable').each(function() {
                 autocomplete_tags.push(this.textContent)
@@ -223,7 +224,7 @@ export class CitationDialog {
             checkedElements.each(function() {
                 let id = jQuery(this).data('id'),
                     db = jQuery(this).data('db')
-                if (jQuery(`#selected-source-${db}-${id}`).length) {
+                if (document.querySelector(`#selected-source-${db}-${id}`)) {
                     return
                 }
                 selectedItems.push({
@@ -261,11 +262,11 @@ export class CitationDialog {
                 let returnObj = {
                     id
                 }
-                let prefix = jQuery(bibRef).find('.fw-cite-text').val()
+                let prefix = bibRef.querySelector('.fw-cite-text').value
                 if (prefix.length) {
                     returnObj['prefix'] = prefix
                 }
-                let locator = jQuery(bibRef).find('.fw-cite-page').val()
+                let locator = bibRef.querySelector('.fw-cite-page').value
                 if (locator.length) {
                     returnObj['locator'] = locator
                 }
@@ -277,7 +278,7 @@ export class CitationDialog {
             return false
         }
 
-        let format = jQuery('#citation-style-selector').val()
+        let format = document.getElementById('citation-style-selector').value
 
         if (
             JSON.stringify(references) === JSON.stringify(this.initialReferences) &&

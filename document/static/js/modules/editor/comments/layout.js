@@ -79,7 +79,7 @@ export class ModCommentLayout {
                 // a comment answer edit form is currently open
                 return true
             }
-            let answerForm = document.querySelector('.comment-answer-tex')
+            let answerForm = document.querySelector('.comment-answer-text')
             if (answerForm && answerForm.value.length > 0) {
                 // Part of an answer to a comment has been entered.
                 return true

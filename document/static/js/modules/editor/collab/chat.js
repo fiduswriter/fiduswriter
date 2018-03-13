@@ -15,7 +15,7 @@ export class ModCollabChat {
     }
 
     beep() {
-        let notification = jQuery('#chat-notification')[0]
+        let notification = document.getElementById('chat-notification')
         notification.play()
     }
 
@@ -41,24 +41,23 @@ export class ModCollabChat {
     }
 
     newMessage(message) {
-        let existing = jQuery("#m" + message.id)
-        if (existing.length > 0) return
+        if (document.getElementById(`m${message.id}`)) {
+            return
+        }
         let theChatter = this.mod.participants.find(participant => participant.id === message.from)
-        let node = jQuery(messageTemplate({message, theChatter, localizeDate}))
-        node.hide()
 
-        let chatContainer = jQuery("#chat-container")
-        chatContainer.append(node)
+        let chatContainer = document.getElementById("chat-container")
+        chatContainer.insertAdjacentHTML('beforeend', messageTemplate({message, theChatter, localizeDate}))
         if (!this.focus) {
             this.beep()
             this.flashtab(message.from + ': ' + message.body)
         }
         if (chatContainer.css('display') === 'none') {
-            jQuery("#chat").addClass('highlighted')
+            document.getElementById("chat").classList.add('highlighted')
         }
         node.slideDown({
             progress: function () {
-                chatContainer[0].scrollTop = chatContainer[0].scrollHeight
+                chatContainer.scrollTop = chatContainer.scrollHeight
             }
         })
 
@@ -67,12 +66,11 @@ export class ModCollabChat {
     showChat(participants) {
 
         // If only one machine is connected and nothing has been chatted, don't show chat
-        if (participants.length === 1 && jQuery(
-            '#chat-container .message').length === 0) {
-            jQuery('#chat').css('display', 'none');
+        if (participants.length === 1 && !document.querySelector('#chat-container .message')) {
+            document.getElementById('chat').style.display = 'none'
         }
         else {
-            jQuery('#chat').css('display', 'block')
+            document.getElementById('chat').style.display = 'block'
         }
     }
 
@@ -94,36 +92,34 @@ export class ModCollabChat {
                 200 + 'px')
 
             jQuery('#chat .resize-button').on("click", function (event) {
-                if (jQuery(this).hasClass('fa-angle-double-down')) {
-                    jQuery(this).removeClass(
-                        'fa-angle-double-down')
-                    jQuery(this).addClass('fa-angle-double-up')
+                if (this.classList.contains('fa-angle-double-down')) {
+                    this.classList.remove('fa-angle-double-down')
+                    this.classList.add('fa-angle-double-up')
                     jQuery('#chat-container,#messageform').slideUp()
                 }
                 else {
-                    jQuery(this).removeClass('fa-angle-double-up')
-                    jQuery(this).addClass('fa-angle-double-down')
+                    this.classList.remove('fa-angle-double-up')
+                    this.classList.add('fa-angle-double-down')
                     jQuery('#chat-container,#messageform').slideDown()
-                    if (jQuery(this).parent().hasClass(
+                    if (this.parentElement.classList.contains(
                         'highlighted')) {
                         jQuery(this).parent().animate({
                             backgroundColor: "#fff",
                         }, 1000, 'swing', function () {
-                            jQuery(this).removeClass(
-                                'highlighted').css(
-                                'background-color', '')
+                            this.classList.remove('highlighted')
+                            this.style.backgroundColor = ''
                         });
                     }
                 }
             })
 
             jQuery("#messageform").on("focus", function () {
-                jQuery(this).removeClass('empty')
+                this.classList.remove('empty')
             })
 
             jQuery("#messageform").on("blur", function () {
-                if (jQuery(this).text().length === 0) {
-                    jQuery(this).addClass('empty')
+                if (this.innerText.length === 0) {
+                    this.classList.add('empty')
                 }
             })
 
@@ -140,7 +136,7 @@ export class ModCollabChat {
         })
 
         jQuery(window).on("blur focus", function (event) {
-            let prevType = jQuery(this).data("prevType");
+            let prevType = this.getAttribute('data-prev-type')
 
             if (prevType != event.type) { //  reduce double fire issues
                 switch (event.type) {
@@ -153,7 +149,7 @@ export class ModCollabChat {
                 }
             }
 
-            jQuery(this).data("prevType", event.type)
+            this.setAttribute('data-prev-type', event.type)
 
         })
     }

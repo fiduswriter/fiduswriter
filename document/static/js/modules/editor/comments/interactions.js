@@ -25,31 +25,30 @@ export class ModCommentInteractions {
         })
 
         jQuery(document).on('click', '.edit-comment', function() {
-            let activeWrapper = jQuery('.comment-box.active')
-            activeWrapper.find('.comment-p').show()
-            activeWrapper.find('.comment-form').hide()
-            activeWrapper.find('.comment-controls').show()
-            let btnParent = jQuery(this).parent()
-            let commentTextWrapper = btnParent.siblings(
-                '.comment-text-wrapper')
-            let commentP = commentTextWrapper.children('.comment-p')
-            let commentForm = commentTextWrapper.children('.comment-form')
-            btnParent.parent().siblings('.comment-answer').hide()
-            btnParent.hide()
-            commentP.hide()
-            commentForm.show()
-            commentForm.children('textarea').val(commentP.text())
+            let activeWrapper = document.querySelector('.comment-box.active')
+            activeWrapper.querySelector('.comment-p').style.display = ''
+            activeWrapper.querySelector('.comment-form').style.display = 'none'
+            activeWrapper.querySelector('.comment-controls').style.display = ''
+            let btnParent = this.parentElement
+            let commentTextWrapper = btnParent.previousElementSibling
+            let commentP = commentTextWrapper.querySelector('.comment-p')
+            let commentForm = commentTextWrapper.querySelector('.comment-form')
+            btnParent.parentElement.parentElement.querySelector('.comment-answer').style.display = 'none'
+            btnParent.style.display = 'none'
+            commentP.style.display = 'none'
+            commentForm.style.display = ''
+            commentForm.querySelector('textarea').value = commentP.innerText
         })
 
         jQuery(document).on('click', '.edit-comment-answer', function() {
-            that.editAnswer(parseInt(jQuery(this).attr(
-                'data-id')), parseInt(jQuery(this).attr(
+            that.editAnswer(parseInt(this.getAttribute(
+                'data-id')), parseInt(this.getAttribute(
                 'data-answer')))
         })
 
         jQuery(document).on('click', '.submit-comment-answer-edit',
             function() {
-                that.submitAnswerEdit(jQuery(this).prev())
+                that.submitAnswerEdit(this.previousElementSibling)
             })
 
         jQuery(document).on(
@@ -59,13 +58,13 @@ export class ModCommentInteractions {
         )
 
         jQuery(document).on('click', '.delete-comment', function() {
-            that.deleteComment(parseInt(jQuery(this).attr(
+            that.deleteComment(parseInt(this.getAttribute(
                 'data-id')))
         })
 
         jQuery(document).on('click', '.delete-comment-answer', function() {
-            that.deleteCommentAnswer(parseInt(jQuery(this).attr(
-                'data-id')), parseInt(jQuery(this).attr(
+            that.deleteCommentAnswer(parseInt(this.getAttribute(
+                'data-id')), parseInt(this.getAttribute(
                 'data-answer')))
         })
 
@@ -142,9 +141,9 @@ export class ModCommentInteractions {
 
     submitComment(submitButton) {
         // Handle a click on the submit button of the comment submit form.
-        let commentTextBox = jQuery(submitButton).siblings('.commentText')[0],
+        let commentTextBox = submitButton.parentElement.querySelector('.commentText'),
             commentText = commentTextBox.value,
-            isMajor = jQuery(submitButton).siblings('.comment-is-major').prop('checked'),
+            isMajor = submitButton.parentElement.querySelector('.comment-is-major').checked,
             id = this.getCommentId(commentTextBox)
         if (commentText.length > 0) {
             this.updateComment(id, commentText, isMajor)
@@ -156,7 +155,7 @@ export class ModCommentInteractions {
 
     cancelSubmitComment(cancelButton) {
         // Handle a click on the cancel button of the comment submit form.
-        let commentTextBox = jQuery(cancelButton).siblings('.commentText')[0]
+        let commentTextBox = cancelButton.parentElement.querySelector('.commentText')
         if (commentTextBox) {
             let id = this.getCommentId(commentTextBox)
             if (id===-1 || this.mod.store.comments[id].comment.length === 0) {
@@ -179,8 +178,8 @@ export class ModCommentInteractions {
 
     submitAnswer() {
         // Submit the answer to a comment
-        let commentWrapper = jQuery('.comment-box.active'),
-            answerTextBox = commentWrapper.find('.comment-answer-text')[0],
+        let commentWrapper = document.querySelector('.comment-box.active'),
+            answerTextBox = commentWrapper.querySelector('.comment-answer-text'),
             answerText = answerTextBox.value,
             id = parseInt(commentWrapper.attr('data-id'))
         this.createNewAnswer(id, answerText)
@@ -219,9 +218,9 @@ export class ModCommentInteractions {
     }
 
     submitAnswerEdit(textArea) {
-        let id = parseInt(textArea.attr('data-id')),
-            answerId = parseInt(textArea.attr('data-answer')),
-            theValue = textArea.val()
+        let id = parseInt(textArea.getAttribute('data-id')),
+            answerId = parseInt(textArea.getAttribute('data-answer')),
+            theValue = textArea.value
 
         this.submitAnswerUpdate(id, answerId, theValue)
     }

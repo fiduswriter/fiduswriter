@@ -15,7 +15,7 @@
         "prosemirror-dropcursor": "1.0.0",
         "prosemirror-example-setup": "1.0.1",
         "prosemirror-gapcursor": "1.0.1",
-        "prosemirror-history": "1.0.1",
+        "prosemirror-history": "1.0.2",
         "prosemirror-keymap": "1.0.1",
         "prosemirror-model": "1.1.0",
         "prosemirror-schema-basic": "1.0.0",

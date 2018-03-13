@@ -71,15 +71,15 @@ export class ModCommentLayout {
         // E) a new comment form is about to be displayed, but the updateDOM
         // call has not yet been made.
         if (this.activeCommentId !== false) {
-            if (document.querySelectorAll('.commentText:visible').length > 0) {
+            if (document.querySelector('.commentText')) {
                 // a comment form is currently open
                 return true
             }
-            if (document.querySelectorAll('.submit-comment-answer-edit').length > 0) {
+            if (document.querySelector('.submit-comment-answer-edit')) {
                 // a comment answer edit form is currently open
                 return true
             }
-            let answerForm = document.querySelector('.comment-answer-text:visible')
+            let answerForm = document.querySelector('.comment-answer-tex')
             if (answerForm && answerForm.value.length > 0) {
                 // Part of an answer to a comment has been entered.
                 return true

@@ -56,12 +56,12 @@ export let updateCollaboratorSelection = function(state, collaborator, data) {
     }
     decos = decos.add(state.doc, addDecos)
 
-    let transaction = state.tr.setMeta(key, {
+    let tr = state.tr.setMeta(key, {
         decos,
         caretPositions,
         caretUpdate: false
     })
-    return transaction
+    return tr
 }
 
 export let removeCollaboratorSelection = function(state, data) {
@@ -76,12 +76,12 @@ export let removeCollaboratorSelection = function(state, data) {
         caretPositions = caretPositions.filter(carPos => carPos !== caretPosition)
         let removeDecos = decos.find().filter(deco => deco.spec === caretPosition.decoSpec)
         decos = decos.remove(removeDecos)
-        let transaction = state.tr.setMeta(key, {
+        let tr = state.tr.setMeta(key, {
             decos,
             caretPositions,
             caretUpdate: false
         })
-        return transaction
+        return tr
     }
     return false
 }

@@ -242,9 +242,9 @@ export let linksPlugin = function(options) {
                 }
             }
         },
-        appendTransaction: (transactions, oldState, state) => {
+        appendTransaction: (trs, oldState, state) => {
             // Check if any of the transactions are local.
-            if (transactions.every(transaction => transaction.getMeta(
+            if (trs.every(tr => tr.getMeta(
                     'remote'))) {
                 // All transactions are remote. Give up.
                 return
@@ -252,8 +252,8 @@ export let linksPlugin = function(options) {
             // Check if there are any headings or figures in the affected range.
             // Otherwise, skip.
             let ranges = []
-            transactions.forEach(transaction => {
-                transaction.steps.forEach((step, index) => {
+            trs.forEach(tr => {
+                tr.steps.forEach((step, index) => {
                     if (step.jsonID ===
                         'replace' || step.jsonID ===
                         'replaceAround') {
@@ -263,7 +263,7 @@ export let linksPlugin = function(options) {
                     }
                     ranges = ranges.map(range => {
                         return [
-                            transaction
+                            tr
                             .mapping
                             .maps[
                                 index
@@ -272,7 +272,7 @@ export let linksPlugin = function(options) {
                                     0
                                 ], -
                                 1),
-                            transaction
+                            tr
                             .mapping
                             .maps[
                                 index
@@ -285,11 +285,11 @@ export let linksPlugin = function(options) {
                     })
                 })
             })
-            let transaction = transactions.slice(-1)[0],
+            let tr = trs.slice(-1)[0],
                 foundIdElement = false, // found heading or figure
                 foundAnchorWithoutId = false // found an anchor without an ID
             ranges.forEach(range => {
-                transaction.doc.nodesBetween(
+                tr.doc.nodesBetween(
                     range[0],
                     range[1],
                     (node, pos, parent) => {
@@ -333,7 +333,7 @@ export let linksPlugin = function(options) {
                 }
             })
 
-            transaction.doc.descendants((node, pos) => {
+            tr.doc.descendants((node, pos) => {
                 if (node.type.name === 'heading') {
                     if (headingIds.includes(node.attrs.id) || !node.attrs.id) {
                         // Add node if the id is false (default) or it is present twice

@@ -274,12 +274,15 @@ export class ModCollabDocChanges {
         }
     }
 
-    setConfirmedDoc(transaction) {
+    setConfirmedDoc(tr, stepsLength) {
         // Find the latest version of the doc without any unconfirmed local changes
-        let rebased = transaction.getMeta("rebased")
-        this.mod.editor.docInfo.confirmedDoc = rebased > 0 ?
-            transaction.docs[transaction.docs.length - rebased] :
-            transaction.doc
+
+        let rebased = tr.getMeta("rebased"),
+            docNumber = rebased + stepsLength
+
+        this.mod.editor.docInfo.confirmedDoc = docNumber === tr.docs.length ?
+            tr.doc :
+            tr.docs[docNumber]
     }
 
     confirmDiff(request_id) {
@@ -351,7 +354,7 @@ export class ModCollabDocChanges {
         )
         tr.setMeta('remote', true)
         this.mod.editor.view.dispatch(tr)
-        this.setConfirmedDoc(tr)
+        this.setConfirmedDoc(tr, steps.length)
         this.receiving = false
         this.sendToCollaborators()
     }

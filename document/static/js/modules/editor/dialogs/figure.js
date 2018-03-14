@@ -54,8 +54,8 @@ export class FigureDialog {
         if ((new RegExp(/^\s*$/)).test(this.equation) && (!this.imgId)) {
             // The math input is empty. Delete a math node if it exist. Then close the dialog.
             if (this.insideFigure) {
-                let transaction = this.editor.currentView.state.tr.deleteSelection()
-                this.editor.currentView.dispatch(transaction)
+                let tr = this.editor.currentView.state.tr.deleteSelection()
+                this.editor.currentView.dispatch(tr)
             }
             this.dialog.dialog('close')
             return false
@@ -78,7 +78,7 @@ export class FigureDialog {
         }
 
         let nodeType = this.editor.currentView.state.schema.nodes['figure']
-        let transaction = this.editor.currentView.state.tr.replaceSelectionWith(
+        let tr = this.editor.currentView.state.tr.replaceSelectionWith(
             nodeType.createAndFill({
                 equation: this.equation,
                 image: this.imgId,
@@ -87,7 +87,7 @@ export class FigureDialog {
                 id: randomFigureId()
             })
         )
-        this.editor.currentView.dispatch(transaction)
+        this.editor.currentView.dispatch(tr)
 
         this.dialog.dialog('close')
     }
@@ -109,8 +109,8 @@ export class FigureDialog {
                 text: gettext('Remove'),
                 class: 'fw-button fw-orange',
                 click: () => {
-                    let transaction = this.editor.currentView.state.tr.deleteSelection()
-                    this.editor.currentView.dispatch(transaction)
+                    let tr = this.editor.currentView.state.tr.deleteSelection()
+                    this.editor.currentView.dispatch(tr)
                     this.dialog.dialog('close')
                 }
             })

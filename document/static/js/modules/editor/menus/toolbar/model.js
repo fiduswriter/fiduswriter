@@ -393,8 +393,8 @@ export let toolbarModel = {
             icon: 'asterisk',
             action: editor => {
                 let node = editor.view.state.schema.nodes['footnote']
-                let transaction = editor.view.state.tr.replaceSelectionWith(node.createAndFill())
-                editor.view.dispatch(transaction)
+                let tr = editor.view.state.tr.replaceSelectionWith(node.createAndFill())
+                editor.view.dispatch(tr)
             },
             disabled: editor => {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {

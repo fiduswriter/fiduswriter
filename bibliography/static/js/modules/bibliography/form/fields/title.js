@@ -49,8 +49,8 @@ export class TitleFieldForm{
             onBlur: () => {
                 document.querySelectorAll('.ui-dialog-buttonset .fw-edit').forEach(el => el.classList.add('disabled'))
             },
-            dispatchTransaction: (transaction) => {
-                let newState = this.view.state.apply(transaction)
+            dispatchTransaction: tr => {
+                let newState = this.view.state.apply(tr)
                 this.view.updateState(newState)
             }
         })

@@ -66,8 +66,8 @@ export let addCommentDuringCreationDecoration = function(state) {
     let deco = Decoration.inline(state.selection.from, state.selection.to, {class: 'active-comment'})
     decos = decos.add(state.doc, [deco])
 
-    let transaction = state.tr.setMeta(key, {decos})
-    return transaction
+    let tr = state.tr.setMeta(key, {decos})
+    return tr
 }
 
 export let removeCommentDuringCreationDecoration = function(state) {
@@ -80,8 +80,8 @@ export let removeCommentDuringCreationDecoration = function(state) {
     }
     decos = DecorationSet.empty
 
-    let transaction = state.tr.setMeta(key, {decos})
-    return transaction
+    let tr = state.tr.setMeta(key, {decos})
+    return tr
 
 }
 
@@ -124,9 +124,9 @@ export let commentsPlugin = function(options) {
                 }
             }
         },
-        appendTransaction: (transactions, oldState, state) => {
+        appendTransaction: (trs, oldState, state) => {
             // Check if any of the transactions are local.
-            if (transactions.every(transaction => transaction.getMeta(
+            if (trs.every(tr => tr.getMeta(
                     'remote'))) {
                 // All transactions are remote. Give up.
                 return
@@ -135,15 +135,15 @@ export let commentsPlugin = function(options) {
             let deletedComments = {}
                 // Check what area is affected
 
-            transactions.forEach(transaction => {
+            trs.forEach(tr => {
                 Object.keys(deletedComments).forEach(commentId => {
                     // map positions from earlier transactions
-                    deletedComments[commentId] = transaction.mapping.map(deletedComments[commentId])
+                    deletedComments[commentId] = tr.mapping.map(deletedComments[commentId])
                 })
-                transaction.steps.forEach((step, index) => {
+                tr.steps.forEach((step, index) => {
                     if (step.jsonID === 'replace' || step.jsonID === 'replaceAround') {
                         if (step.from !== step.to) {
-                            transaction.docs[index].nodesBetween(
+                            tr.docs[index].nodesBetween(
                                 step.from,
                                 step.to,
                                 (node, pos, parent) => {

@@ -20,16 +20,16 @@ export let findFootnoteMarkers = function(fromPos, toPos, doc) {
 }
 
 
-let getAddedRanges = function(transaction) {
+let getAddedRanges = function(tr) {
     /* find ranges of the current document that have been added by means of
      * a transaction.
      */
     let ranges = []
-    transaction.steps.forEach((step, index) => {
+    tr.steps.forEach((step, index) => {
         if (step.jsonID === "replace" || step.jsonID === "replaceWrap") {
             ranges.push({from: step.from, to: step.to})
         }
-        let map = transaction.mapping.maps[index]
+        let map = tr.mapping.maps[index]
         ranges = ranges.map(range => ({from: map.map(range.from, -1), to: map.map(range.to, 1)}))
     })
 
@@ -73,11 +73,11 @@ export let updateFootnoteMarker = function(state, index, content) {
     if (node.attrs.footnote === content) {
         return
     }
-    let transaction = state.tr.setNodeMarkup(footnote.from, node.type, {
+    let tr = state.tr.setNodeMarkup(footnote.from, node.type, {
         footnote: content
     })
-    transaction.setMeta('fromFootnote', true)
-    return transaction
+    tr.setMeta('fromFootnote', true)
+    return tr
 }
 
 export let getFootnoteMarkers = function(state) {

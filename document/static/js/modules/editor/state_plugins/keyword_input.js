@@ -157,8 +157,8 @@ export let keywordInputPlugin = function(options) {
                     window.setTimeout(() => {submitKeyword(view.state, undefined, view)},1)
                 }
             },
-            dispatchTransaction: (transaction) => {
-                let newState = keywordView.state.apply(transaction)
+            dispatchTransaction: tr => {
+                let newState = keywordView.state.apply(tr)
                 keywordView.updateState(newState)
             }
         })

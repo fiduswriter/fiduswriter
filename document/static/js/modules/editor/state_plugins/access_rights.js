@@ -6,9 +6,9 @@ const key = new PluginKey('accessRights')
 export let accessRightsPlugin = function(options) {
     return new Plugin({
         key,
-        filterTransaction: (transaction, state) => {
+        filterTransaction: (tr, state) => {
             let allowed = true
-            let remote = transaction.getMeta('remote')
+            let remote = tr.getMeta('remote')
             if (remote) {
                 return allowed
             }
@@ -21,7 +21,7 @@ export let accessRightsPlugin = function(options) {
 
                 //Check all transaction steps. If step type not allowed = prohibit
                 //check if in allowed array. if false - exit loop
-                if (!transaction.steps.every(step =>
+                if (!tr.steps.every(step =>
                     (step.jsonID === 'addMark' || step.jsonID === 'removeMark') &&
                     step.mark.type.name === 'comment'
                 )) {

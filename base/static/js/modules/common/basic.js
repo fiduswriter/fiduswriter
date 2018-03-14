@@ -76,13 +76,18 @@ export let addAlert = function(alertType, alertMsg) {
         'info': 'info-circle',
         'success': 'check-circle'
     }
-    let alertBox = jQuery(`<li class="alerts-${alertType} fa fa-${iconNames[alertType]}">${alertMsg}</li>`)
-    if(0 === jQuery('#alerts-outer-wrapper').length)
-        jQuery('body').append('<div id="alerts-outer-wrapper"><ul id="alerts-wrapper"></ul></div>')
-    jQuery('#alerts-wrapper').append(alertBox)
-    alertBox.fadeTo(fadeSpeed, 1, function() {
-        jQuery(this).delay('2000').fadeOut(fadeSpeed, function() { jQuery(this).remove() })
-    })
+    if(!document.getElementById('#alerts-outer-wrapper'))
+        document.body.insertAdjacentHTML('beforeend', '<div id="alerts-outer-wrapper"><ul id="alerts-wrapper"></ul></div>')
+    let alertsWrapper = document.getElementById('alerts-wrapper')
+    alertsWrapper.insertAdjacentHTML('beforeend', `<li class="alerts-${alertType} fa fa-${iconNames[alertType]}">${alertMsg}</li>`)
+    let alertBox = alertsWrapper.lastElementChild
+    setTimeout(()=>{
+        alertBox.classList.add('visible')
+        setTimeout(()=>{
+            alertBox.classList.remove('visible')
+            setTimeout(()=>alertsWrapper.removeChild(alertBox), 2000)
+        }, 4000)
+    }, 1)
 }
 
 
@@ -157,7 +162,7 @@ let getCookie = function(name) {
     if (document.cookie && document.cookie !== '') {
         let cookies = document.cookie.split(';')
         for (let i = 0; i < cookies.length; i++) {
-            let cookie = jQuery.trim(cookies[i])
+            let cookie = cookies[i].trim()
             // Does this cookie string begin with the name we want?
             if (cookie.substring(0, name.length + 1) == (name + '=')) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1))

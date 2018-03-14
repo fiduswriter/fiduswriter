@@ -22,13 +22,13 @@ export class BaseDOMExporter {
         }
     }
 
-    cleanHTML(htmlCode) {
+    cleanHTML(htmlEl) {
 
         // Replace the footnote markers with anchors and put footnotes with contents
         // at the back of the document.
         // Also, link the footnote anchor with the footnote according to
         // https://rawgit.com/essepuntato/rash/master/documentation/index.html#footnotes.
-        let footnotes = [].slice.call(htmlCode.querySelectorAll('.footnote-marker'))
+        let footnotes = [].slice.call(htmlEl.querySelectorAll('.footnote-marker'))
         let footnotesContainer = document.createElement('section')
         footnotesContainer.id = 'fnlist'
         footnotesContainer.setAttribute('role', 'doc-footnotes')
@@ -48,15 +48,19 @@ export class BaseDOMExporter {
                 footnotesContainer.appendChild(newFootnote)
             }
         )
-        htmlCode.appendChild(footnotesContainer)
+        htmlEl.appendChild(footnotesContainer)
 
         // Replace nbsp spaces with normal ones
-        this.replaceText(htmlCode, '&nbsp;', ' ')
+        this.replaceText(htmlEl, '&nbsp;', ' ')
 
-        jQuery(htmlCode).find('.comment').each(function() {
-           jQuery(this).replaceWith(this.innerHTML)
+        htmlEl.querySelectorAll('.comment').forEach(el => {
+            el.insertAdjacentHTML(
+                'afterend',
+                el.innerHTMLs
+            )
+            el.parentElement.removeChild(el)
         })
 
-        return htmlCode
+        return htmlEl
     }
 }

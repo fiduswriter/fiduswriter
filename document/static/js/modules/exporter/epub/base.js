@@ -68,24 +68,22 @@ export class BaseEpubExporter extends BaseHTMLExporter {
 
 
 
-    setLinks(htmlCode, docNum) {
+    setLinks(htmlEl, docNum) {
         let contentItems = [], title
 
-        jQuery(htmlCode).find('h1,h2,h3,h4,h5,h6').each(function() {
-            title = jQuery.trim(this.textContent)
+        htmlEl.querySelectorAll('h1,h2,h3,h4,h5,h6').forEach(el => {
+            title = el.textContent.trim()
             if (title !== '') {
                 let contentItem = {}
                 contentItem.title = title
-                contentItem.level = parseInt(this.tagName.substring(
-                    1, 2))
+                contentItem.level = parseInt(el.tagName.substring(1, 2))
                 if (docNum) {
                     contentItem.docNum = docNum
                 }
-                if (this.classList.contains('title')) {
+                if (el.classList.contains('title')) {
                     contentItem.level = 0
                 }
-
-                contentItem.id = this.id
+                contentItem.id = el.id
                 contentItems.push(contentItem)
             }
         })

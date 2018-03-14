@@ -42,109 +42,125 @@ export class DocumentOverviewActions {
 
     deleteDocumentDialog(ids) {
         let that = this
-        jQuery('body').append('<div id="confirmdeletion" title="' + gettext(
-                'Confirm deletion') +
-            '"><p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>' +
-            gettext('Delete the document(s)?') + '</p></div>')
-        let diaButtons = {}
-        diaButtons[gettext('Delete')] = function () {
-            for (let i = 0; i < ids.length; i++) {
-                that.deleteDocument(ids[i])
+        document.body.insertAdjacentHTML(
+            'beforeend',
+            `<div id="confirmdeletion" title="${gettext('Confirm deletion')}">
+                <p>
+                    <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
+                    ${gettext('Delete the document(s)?')}
+                </p>
+            </div>`
+        )
+        let buttons = [
+            {
+                text: gettext('Delete'),
+                class: "fw-button fw-dark",
+                click: function () {
+                    for (let i = 0; i < ids.length; i++) {
+                        that.deleteDocument(ids[i])
+                    }
+                    jQuery(this).dialog("close")
+                }
+            },
+            {
+                text: gettext('Cancel'),
+                class: "fw-button fw-orange",
+                click: function () {
+                    jQuery(this).dialog("close")
+                }
             }
-            jQuery(this).dialog("close")
-        }
-
-        diaButtons[gettext('Cancel')] = function () {
-            jQuery(this).dialog("close")
-        }
+        ]
 
         jQuery("#confirmdeletion").dialog({
             resizable: false,
             height: 180,
             modal: true,
             close: function () {
-                jQuery("#confirmdeletion").detach()
+                let confirmDeletionEl = document.getElementById("confirmdeletion")
+                confirmDeletionEl.parentElement.removeChild(confirmDeletionEl)
             },
-            buttons: diaButtons,
-            create: function () {
-                let theDialog = jQuery(this).closest(".ui-dialog")
-                theDialog.find(".ui-button:first-child").addClass(
-                    "fw-button fw-dark")
-                theDialog.find(".ui-button:last").addClass(
-                    "fw-button fw-orange")
-            }
+            buttons
         })
     }
 
     importFidus() {
         let that = this
-        jQuery('body').append(importFidusTemplate())
-        let diaButtons = {}
-        diaButtons[gettext('Import')] = function () {
-            let fidusFile = jQuery('#fidus-uploader')[0].files
-            if (0 === fidusFile.length) {
-                console.warn('no file found')
-                return false
-            }
-            fidusFile = fidusFile[0]
-            if (104857600 < fidusFile.size) {
-                //TODO: This is an arbitrary size. What should be done with huge import files?
-                console.warn('file too big')
-                return false
-            }
-            activateWait()
-            let reader = new window.FileReader()
-            reader.onerror = function (e) {
-                console.warn('error', e.target.error.code)
-            }
+        document.body.insertAdjacentHTML('beforend', importFidusTemplate())
+        let buttons = [
+            {
+                text: gettext('Import'),
+                class: "fw-button fw-dark",
+                click: function () {
+                    let fidusFile = document.getElementById('fidus-uploader').files
+                    if (0 === fidusFile.length) {
+                        console.warn('no file found')
+                        return false
+                    }
+                    fidusFile = fidusFile[0]
+                    if (104857600 < fidusFile.size) {
+                        //TODO: This is an arbitrary size. What should be done with huge import files?
+                        console.warn('file too big')
+                        return false
+                    }
+                    activateWait()
+                    let reader = new window.FileReader()
+                    reader.onerror = function (e) {
+                        console.warn('error', e.target.error.code)
+                    }
 
-            let importer = new ImportFidusFile(
-                fidusFile,
-                that.documentOverview.user,
-                true,
-                that.documentOverview.teamMembers
-            )
+                    let importer = new ImportFidusFile(
+                        fidusFile,
+                        that.documentOverview.user,
+                        true,
+                        that.documentOverview.teamMembers
+                    )
 
-            importer.init().then(
-                ({doc, docInfo}) => {
-                    deactivateWait()
-                    addAlert('info', doc.title + gettext(
-                            ' successfully imported.'))
-                    that.documentOverview.documentList.push(doc)
-                    that.documentOverview.stopDocumentTable()
-                    jQuery('#document-table tbody').append(
-                        documentsListItemTemplate({
-                                doc,
-                                user: that.documentOverview.user
-                            }))
-                    that.documentOverview.startDocumentTable()
+                    importer.init().then(
+                        ({doc, docInfo}) => {
+                            deactivateWait()
+                            addAlert('info', doc.title + gettext(
+                                    ' successfully imported.'))
+                            that.documentOverview.documentList.push(doc)
+                            that.documentOverview.stopDocumentTable()
+                            document.querySelector('#document-table tbody').insertAdjacentHTML(
+                                'beforeend',
+                                documentsListItemTemplate({
+                                    doc,
+                                    user: that.documentOverview.user
+                                })
+                            )
+                            that.documentOverview.startDocumentTable()
+                        }
+                    )
+
+
+                    jQuery(this).dialog('close')
                 }
-            )
-
-
-            jQuery(this).dialog('close')
-        }
-        diaButtons[gettext('Cancel')] = function () {
-            jQuery(this).dialog('close')
-        }
+            },
+            {
+                text: gettext('Cancel'),
+                class: "fw-button fw-orange",
+                click: function () {
+                    jQuery(this).dialog('close')
+                }
+            }
+        ]
         jQuery("#importfidus").dialog({
             resizable: false,
             height: 180,
             modal: true,
-            buttons: diaButtons,
+            buttons,
             create: function () {
-                let theDialog = jQuery(this).closest(".ui-dialog")
-                theDialog.find(".ui-button:first-child").addClass(
-                    "fw-button fw-dark")
-                theDialog.find(".ui-button:last").addClass(
-                    "fw-button fw-orange")
-                jQuery('#fidus-uploader').bind('change', function () {
-                    jQuery('#import-fidus-name').html(jQuery(this).val()
-                        .replace(
-                            /C:\\fakepath\\/i, ''))
-                })
-                jQuery('#import-fidus-btn').bind('click', function (event) {
-                    jQuery('#fidus-uploader').trigger('click')
+                document.getElementById('fidus-uploader').addEventListener(
+                    'change',
+                    () => {
+                        document.getElementById('import-fidus-name').innerHTML =
+                            document.getElementById('fidus-uploader').value.replace(/C:\\fakepath\\/i, '')
+                    }
+                )
+
+                document.getElementById('import-fidus-btn').addEventListener('click', event => {
+                    document.getElementById('fidus-uploader').click()
                     event.preventDefault()
                 })
             },
@@ -172,7 +188,8 @@ export class DocumentOverviewActions {
                         ({doc, docInfo}) => {
                             this.documentOverview.documentList.push(doc)
                             this.documentOverview.stopDocumentTable()
-                            jQuery('#document-table tbody').append(
+                            document.querySelector('#document-table tbody').insertAdjacentHTML(
+                                'beforeend',
                                 documentsListItemTemplate({
                                     doc,
                                     user: this.documentOverview.user
@@ -299,7 +316,8 @@ export class DocumentOverviewActions {
                 case 'added-document':
                     this.documentOverview.documentList.push(actionObject.doc)
                     this.documentOverview.stopDocumentTable()
-                    jQuery('#document-table tbody').append(
+                    document.querySelector('#document-table tbody').insertAdjacentHTML(
+                        'beforeend',
                         documentsListItemTemplate({
                             doc: actionObject.doc,
                             user: this.documentOverview.user
@@ -309,7 +327,7 @@ export class DocumentOverviewActions {
                 case 'deleted-revision':
                     actionObject.doc.revisions = actionObject.doc.revisions.filter(rev => rev.pk !== actionObject.id)
                     if (actionObject.doc.revisions.length === 0) {
-                        jQuery('#Text_' + actionObject.doc.id + ' .revisions').detach()
+                        document.querySelectorAll(`#Text_${actionObject.doc.id} .revisions`).forEach(el => el.parentElement.removeChild(el))
                     }
                     break
             }

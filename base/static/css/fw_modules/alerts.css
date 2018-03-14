@@ -26,7 +26,12 @@
     font-size: 15px;
     line-height: 20px;
     opacity: 0;
+    transition: opacity 0.3s;
     -webkit-column-break-inside: avoid;
+}
+
+#alerts-wrapper li.visible {
+    opacity: 1;
 }
 
 #alerts-wrapper li:before {

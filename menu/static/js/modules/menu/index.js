@@ -54,7 +54,7 @@ export class SiteMenu {
 
         // In addition to adding the dropdown, we also need to add some css
         // values so that the dropdown is placed close to #preferences-btn
-        jQuery('#preferences-btn').bind('mousedown', () => {
+        document.getElementById('preferences-btn').addEventListener('mousedown', () => {
             let btnOffset = button.offset()
             box.css({
                 'left': btnOffset.left - 52,
@@ -64,7 +64,7 @@ export class SiteMenu {
         // As a click will close the pulldown, we need to activate the link by means of a mousedown already.
         jQuery(document).on('mousedown', '#user-preferences-pulldown a', function(event) {
             event.preventDefault()
-            window.location = jQuery(this).attr('href')
+            window.location = this.getAttribute('href')
         })
         // Same for form button
         jQuery(document).on('mousedown', '#user-preferences-pulldown button[type="submit"]', function(event) {

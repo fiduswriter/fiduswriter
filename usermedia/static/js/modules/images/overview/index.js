@@ -62,31 +62,36 @@ export class ImageOverview {
     }
 
     deleteImageDialog(ids) {
-        jQuery('body').append('<div id="confirmdeletion" title="' + gettext(
+        document.body.insertAdjacentHTML(
+            'beforeend',
+            '<div id="confirmdeletion" title="' + gettext(
                 'Confirm deletion') + '"><p>' + gettext(
                 'Delete the image(s)') +
-            '?</p></div>')
-        let diaButtons = {}
+            '?</p></div>'
+        )
         let that = this
-        diaButtons[gettext('Delete')] = function () {
-            that.deleteImage(ids)
-            jQuery(this).dialog('close')
-        }
-        diaButtons[gettext('Cancel')] = function () {
-            jQuery(this).dialog('close')
-        }
+        let buttons = [
+            {
+                text: gettext('Delete'),
+                class: "fw-button fw-dark",
+                click: function () {
+                    that.deleteImage(ids)
+                    jQuery(this).dialog('close')
+                }
+            },
+            {
+                text: gettext('Cancel'),
+                class: "fw-button fw-orange",
+                click: function () {
+                    jQuery(this).dialog('close')
+                }
+            }
+        ]
         jQuery("#confirmdeletion").dialog({
             resizable: false,
             height: 180,
             modal: true,
-            buttons: diaButtons,
-            create: function () {
-                let theDialog = jQuery(this).closest(".ui-dialog")
-                theDialog.find(".ui-button:first-child").addClass(
-                    "fw-button fw-dark")
-                theDialog.find(".ui-button:last").addClass(
-                    "fw-button fw-orange")
-            },
+            buttons,
             close: function () {
                 jQuery("#confirmdeletion").dialog('destroy').remove()
             }
@@ -102,7 +107,7 @@ export class ImageOverview {
 
     appendToImageTable(id) {
         let imageInfo = this.imageDB.db[id]
-        let $tr = jQuery(`#Image_${id}`)
+
         let fileType = imageInfo.file_type.split('/')
 
         if(1 < fileType.length) {
@@ -110,31 +115,38 @@ export class ImageOverview {
         } else {
             fileType = fileType[0].toUpperCase()
         }
-
-        if (0 < $tr.length) { //if the image entry exists, update
-            $tr.replaceWith(usermediaTableTemplate({
-                id,
-                'cats': imageInfo.cats,
-                fileType,
-                'title': imageInfo.title,
-                'thumbnail': imageInfo.thumbnail,
-                'image': imageInfo.image,
-                'height': imageInfo.height,
-                'width': imageInfo.width,
-                'added': imageInfo.added
-            }))
+        let tr = document.getElementById(`Image_${id}`)
+        if (tr) { //if the image entry exists, update
+            tr.insertAdjacentHTML(
+                'afterend',
+                usermediaTableTemplate({
+                    id,
+                    'cats': imageInfo.cats,
+                    fileType,
+                    'title': imageInfo.title,
+                    'thumbnail': imageInfo.thumbnail,
+                    'image': imageInfo.image,
+                    'height': imageInfo.height,
+                    'width': imageInfo.width,
+                    'added': imageInfo.added
+                })
+            )
+            tr.parentElement.removeChild(tr)
         } else { //if this is the new image, append
-            jQuery('#imagelist > tbody').append(usermediaTableTemplate({
-                id,
-                'cats': imageInfo.cats,
-                fileType,
-                'title': imageInfo.title,
-                'thumbnail': imageInfo.thumbnail,
-                'image': imageInfo.image,
-                'height': imageInfo.height,
-                'width': imageInfo.width,
-                'added': imageInfo.added
-            }))
+            document.querySelector('#imagelist > tbody').insertAdjacentHTML(
+                'beforeend',
+                usermediaTableTemplate({
+                    id,
+                    'cats': imageInfo.cats,
+                    fileType,
+                    'title': imageInfo.title,
+                    'thumbnail': imageInfo.thumbnail,
+                    'image': imageInfo.image,
+                    'height': imageInfo.height,
+                    'width': imageInfo.width,
+                    'added': imageInfo.added
+                })
+            )
         }
     }
 

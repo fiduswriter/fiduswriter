@@ -350,7 +350,7 @@ export class Editor {
     }
 
     scrollPosIntoView(pos, view) {
-        let topMenuHeight = jQuery('header').outerHeight() + 10
+        let topMenuHeight = document.querySelector('header').offsetHeight + 10
         let $pos = view.state.doc.resolve(pos)
         view.dispatch(view.state.tr.setSelection(new TextSelection($pos, $pos)))
         view.focus()

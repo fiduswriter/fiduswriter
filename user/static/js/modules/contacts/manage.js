@@ -11,8 +11,8 @@ let addMember = function(userString) {
         return cancelPromise()
     }
 
-    userString = jQuery.trim(userString)
-    jQuery('#add-new-member .warning').detach()
+    userString = userString.trim()
+    document.querySelectorAll('#add-new-member .warning').forEach(el => el.parentElement.removeChild(el))
     if ('' === userString) {
         return cancelPromise()
     }
@@ -46,7 +46,10 @@ let addMember = function(userString) {
                 } else {
                     responseHtml = gettext('User is not registered.')
                 }
-                jQuery('#add-new-member').append(`<div class="warning" style="padding: 8px;">${responseHtml}</div>`)
+                document.getElementById('add-new-member').insertAdjacentHTML(
+                    'beforeend',
+                    `<div class="warning" style="padding: 8px;">${responseHtml}</div>`
+                )
                 return cancelPromise()
             }
         }
@@ -56,35 +59,42 @@ let addMember = function(userString) {
 //dialog for adding a user to contacts
 export let addMemberDialog = function() {
     let dialogHeader = gettext('Add a user to your contacts')
-    jQuery('body').append(addTeammemberTemplate({
-        'dialogHeader': dialogHeader
-    }))
+    document.body.insertAdjacentHTML(
+        'beforeend',
+        addTeammemberTemplate({dialogHeader})
+    )
 
     return new Promise(resolve => {
-        let diaButtons = {}
-        diaButtons[gettext('Submit')] = () => {
-            addMember(jQuery('#new-member-user-string').val()).then(
-                memberData => {
-                    resolve(memberData)
-                    return
+        let buttons = [
+            {
+                text: gettext('Submit'),
+                class: "fw-button fw-dark",
+                click: () => {
+                    addMember(document.getElementById('new-member-user-string').value).then(
+                        memberData => {
+                            resolve(memberData)
+                            return
+                        }
+                    )
                 }
-            )
-        }
-        diaButtons[gettext('Cancel')] = function() {
-            jQuery(this).dialog('close')
-        }
+            },
+            {
+                text: gettext('Cancel'),
+                class: "fw-button fw-orange",
+                click: function() {
+                    jQuery(this).dialog('close')
+                }
+            }
+        ]
 
         jQuery("#add-new-member").dialog({
             resizable: false,
             width: 350,
             height: 250,
             modal: true,
-            buttons: diaButtons,
+            buttons,
             create: function() {
-                let theDialog = jQuery(this).closest(".ui-dialog")
-                theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
-                theDialog.find(".ui-button:last").addClass("fw-button fw-orange")
-                jQuery('#new-member-user-string').css('width', 340)
+                document.getElementById('new-member-user-string').style.width = '340'
             },
             close: () => {
                 jQuery("#add-new-member").dialog('destroy').remove()
@@ -114,24 +124,27 @@ let deleteMember = function(ids) {
 
 //dialog for removing a user from contacts
 export let deleteMemberDialog = function(memberIds) {
-    jQuery('body').append('<div id="confirmdeletion" title="' + gettext('Confirm deletion') + '"><p>' + gettext('Remove from the contacts') + '?</p></div>')
-    let diaButtons = {}
-    diaButtons[gettext('Delete')] = () => {
-        deleteMember(memberIds)
-    }
-    diaButtons[gettext('Cancel')] = () => {
-        jQuery(this).dialog('close')
-    }
+    document.body.insertAdjacentHTML(
+        'beforeend',
+        `<div id="confirmdeletion" title="${gettext('Confirm deletion')}"><p>${gettext('Remove from the contacts')}?</p></div>`
+    )
+    let buttons = [
+        {
+            text: gettext('Delete'),
+            class: "fw-button fw-dark",
+            click: () => deleteMember(memberIds)
+        },
+        {
+            text: gettext('Cancel'),
+            class: "fw-button fw-orange",
+            click: function() {jQuery(this).dialog('close')}
+        }
+    ]
     jQuery("#confirmdeletion").dialog({
         resizable: false,
         height: 200,
         modal: true,
-        buttons: diaButtons,
-        create: function() {
-            let theDialog = jQuery(this).closest(".ui-dialog")
-            theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
-            theDialog.find(".ui-button:last").addClass("fw-button fw-orange")
-        },
+        buttons,
         close: () => jQuery("#confirmdeletion").dialog('destroy').remove()
     })
 }

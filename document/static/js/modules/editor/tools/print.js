@@ -17,7 +17,7 @@ export class ModToolsPrint {
         window.print()
         this.paginator.tearDown()
         this.paginator = false
-        jQuery(flowTo).hide()
+        flowTo.style.display = 'none'
     }
 
     changeAllIds(node) {
@@ -66,7 +66,7 @@ export class ModToolsPrint {
             fnCitationMarker.classList.add('footnote-marker')
         })
 
-        jQuery(flowTo).show()
+        flowTo.style.display = ''
 
         this.paginator = new PaginateForPrint({
             'sectionStartSelector': 'none',

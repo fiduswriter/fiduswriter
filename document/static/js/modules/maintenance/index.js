@@ -20,8 +20,8 @@ export class DocMaintenance {
 
     bind() {
         jQuery(document).on('click', 'button#update:not(.disabled)', () => {
-            jQuery('button#update').prop('disabled', true)
-            jQuery('button#update').html(gettext('Updating...'))
+            document.querySelector('button#update').disabled = true
+            document.querySelector('button#update').innerHTML = gettext('Updating...')
             this.init()
         })
     }
@@ -210,7 +210,7 @@ export class DocMaintenance {
     }
 
     done() {
-        jQuery('button#update').html(gettext('All documents and revisions updated!'))
+        document.querySelector('button#update').innerHTML = gettext('All documents and revisions updated!')
     }
 
 }

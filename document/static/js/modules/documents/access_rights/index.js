@@ -51,45 +51,61 @@ export class DocumentAccessRightsDialog {
             contacts: this.contacts,
             collaborators
         })
-        jQuery('body').append(dialogBody)
-
-        let diaButtons = {}
-        diaButtons[gettext('Add new contact')] = () => {
-            addMemberDialog().then(
-                memberData => {
-                    jQuery('#my-contacts .fw-document-table-body').append(
-                        accessRightTrTemplate({contacts: [memberData]})
-                    )
-                    jQuery('#share-member table tbody').append(
-                        collaboratorsTemplate({'collaborators': [{
-                            user_id: memberData.id,
-                            user_name: memberData.name,
-                            avatar: memberData.avatar,
-                            rights: 'read'
-                        }]})
-                    )
-                    this.collaboratorFunctionsEvent()
-                    this.newContactCall(memberData)
-                }
-            )
-        }
+        document.body.insertAdjacentHTML(
+            'beforeend',
+            dialogBody
+        )
         let that = this
-        diaButtons[gettext('Submit')] = function () {
-            //apply the current state to server
-            let collaborators = [],
-                rights = []
-            jQuery('#share-member .collaborator-tr').each(function () {
-                collaborators[collaborators.length] = jQuery(this).attr(
-                    'data-id')
-                rights[rights.length] = jQuery(this).attr('data-right')
-            })
-            that.submitAccessRight(collaborators, rights)
-            jQuery(this).dialog('close')
-        }
-        diaButtons[gettext('Cancel')] = function () {
-            jQuery(this).dialog("close")
-        }
-
+        let buttons = [
+            {
+                text: gettext('Add new contact'),
+                class: "fw-button fw-light fw-add-button",
+                click: () => {
+                    addMemberDialog().then(
+                        memberData => {
+                            document.querySelector('#my-contacts .fw-document-table-body').insertAdjacentHTML(
+                                'beforeend',
+                                accessRightTrTemplate({contacts: [memberData]})
+                            )
+                            document.querySelector('#share-member table tbody').insertAdjacentHTML(
+                                'beforeend',
+                                collaboratorsTemplate({'collaborators': [{
+                                    user_id: memberData.id,
+                                    user_name: memberData.name,
+                                    avatar: memberData.avatar,
+                                    rights: 'read'
+                                }]})
+                            )
+                            this.collaboratorFunctionsEvent()
+                            this.newContactCall(memberData)
+                        }
+                    )
+                }
+            },
+            {
+                text: gettext('Submit'),
+                class: "fw-button fw-dark",
+                click: function () {
+                    //apply the current state to server
+                    let collaborators = [],
+                        rights = []
+                    jQuery('#share-member .collaborator-tr').each(function () {
+                        collaborators[collaborators.length] = jQuery(this).attr(
+                            'data-id')
+                        rights[rights.length] = jQuery(this).attr('data-right')
+                    })
+                    that.submitAccessRight(collaborators, rights)
+                    jQuery(this).dialog('close')
+                }
+            },
+            {
+                text: gettext('Cancel'),
+                class: "fw-button fw-orange",
+                click: function () {
+                    jQuery(this).dialog("close")
+                }
+            }
+        ]
         jQuery('#access-rights-dialog').dialog({
             draggable: false,
             resizable: false,
@@ -97,13 +113,7 @@ export class DocumentAccessRightsDialog {
             width: 820,
             height: 540,
             modal: true,
-            buttons: diaButtons,
-            create: function () {
-                let theDialog = jQuery(this).closest(".ui-dialog")
-                theDialog.find(".ui-dialog-buttonset .ui-button:eq(0)").addClass("fw-button fw-light fw-add-button")
-                theDialog.find(".ui-dialog-buttonset .ui-button:eq(1)").addClass("fw-button fw-dark")
-                theDialog.find(".ui-dialog-buttonset .ui-button:eq(2)").addClass("fw-button fw-orange")
-            },
+            buttons,
             close: function () {
                 jQuery('#access-rights-dialog').dialog('destroy').remove()
             }
@@ -116,27 +126,33 @@ export class DocumentAccessRightsDialog {
         let that = this
         jQuery('#add-share-member').unbind('click')
         jQuery('#add-share-member').bind('click', function () {
-            let selectedMembers = jQuery('#my-contacts .fw-checkable.checked')
             let selectedData = []
-            selectedMembers.each(function () {
-                let memberId = jQuery(this).attr('data-id')
-                let collaborator = jQuery('#collaborator-' + memberId)
-                if (0 === collaborator.length) {
-                    selectedData[selectedData.length] = {
-                        'user_id': memberId,
-                        'user_name': jQuery(this).attr('data-name'),
-                        'avatar': jQuery(this).attr('data-avatar'),
-                        'rights': 'read'
+            document.querySelectorAll('#my-contacts .fw-checkable.checked').forEach(el => {
+                let memberId = el.getAttribute('data-id')
+                let collaboratorEl = document.getElementById(`collaborator-${memberId}`)
+                if (collaboratorEl) {
+                    if (collaboratorEl.getAttribute('data-right') === 'delete') {
+                        collaboratorEl.classList.remove('delete')
+                        collaboratorEl.classList.addClass('read')
+                        collaboratorEl.setAttribute('data-right', 'read')
                     }
-                } else if ('delete' == collaborator.attr('data-right')) {
-                    collaborator.removeClass('delete').addClass('read').attr(
-                        'data-right', 'read')
+                } else {
+                    selectedData.push({
+                        'user_id': memberId,
+                        'user_name': this.getAttribute('data-name'),
+                        'avatar': this.getAttribute('data-avatar'),
+                        'rights': 'read'
+                    })
                 }
             })
-            jQuery('#my-contacts .checkable-label.checked').removeClass('checked')
-            jQuery('#share-member table tbody').append(collaboratorsTemplate({
-                'collaborators': selectedData
-            }))
+
+            document.querySelectorAll('#my-contacts .checkable-label.checked').forEach(el => el.classList.remove('checked'))
+            document.querySelector('#share-member table tbody').insertHTML(
+                'beforeend',
+                collaboratorsTemplate({
+                    'collaborators': selectedData
+                })
+            )
             that.collaboratorFunctionsEvent()
         })
     }
@@ -154,7 +170,7 @@ export class DocumentAccessRightsDialog {
             '.edit-right-wrapper .fw-pulldown-item, .delete-collaborator')
         spans.unbind('mousedown')
         spans.bind('mousedown', function () {
-            let newRight = jQuery(this).attr('data-right')
+            let newRight = this.getAttribute('data-right')
             let colRow = jQuery(this).closest('.collaborator-tr')
             colRow.attr('data-right', newRight)
             colRow.find('.icon-access-right').attr('class',

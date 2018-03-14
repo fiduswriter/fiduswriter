@@ -25,12 +25,12 @@ export class TableDialog {
             rowCount += 1
         }
         // add hover class.
-        let rows = this.dialog.find('tr')
+        let rows = this.dialog.querySelectorAll('tr')
         for(let i=0;i<rowCount;i++) {
             let row = rows[i]
-            let cols = jQuery(rows[i]).find('td')
+            let cols = rows[i].querySelector('td')
             for(let j=0;j<colCount;j++) {
-                jQuery(cols[j]).addClass(className)
+                cols[j].classList.add(className)
             }
         }
         return {colCount, rowCount}

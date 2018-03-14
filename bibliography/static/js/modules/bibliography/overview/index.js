@@ -77,28 +77,37 @@ export class BibliographyOverview {
             categories: this.bibDB.cats
         })
         document.body.insertAdjacentHTML('beforeend', dialogBody)
-        let buttons = {}
         let that = this
-        buttons[gettext('Submit')] = function () {
-            let cats = {
-                'ids': [],
-                'titles': []
-            }
-            jQuery('#editCategories .category-form').each(function () {
-                let thisVal = this.value.trim()
-                let thisId = this.getAttribute('data-id')
-                if ('undefined' == typeof (thisId)) thisId = 0
-                if ('' !== thisVal) {
-                    cats.ids.push(thisId)
-                    cats.titles.push(thisVal)
+        let buttons = [
+            {
+                text: gettext('Submit'),
+                class: "fw-button fw-dark",
+                click: function () {
+                    let cats = {
+                        'ids': [],
+                        'titles': []
+                    }
+                    document.querySelectorAll('#editCategories .category-form').forEach(el => {
+                        let thisVal = el.value.trim()
+                        let thisId = el.getAttribute('data-id')
+                        if ('undefined' == typeof (thisId)) thisId = 0
+                        if ('' !== thisVal) {
+                            cats.ids.push(thisId)
+                            cats.titles.push(thisVal)
+                        }
+                    })
+                    that.createCategory(cats)
+                    jQuery(this).dialog('close')
                 }
-            })
-            that.createCategory(cats)
-            jQuery(this).dialog('close')
-        }
-        buttons[gettext('Cancel')] = function () {
-            jQuery(this).dialog('close')
-        }
+            },
+            {
+                text: gettext('Cancel'),
+                class: "fw-button fw-orange",
+                click: function () {
+                    jQuery(this).dialog('close')
+                }
+            }
+        ]
 
         jQuery("#editCategories").dialog({
             resizable: false,
@@ -106,11 +115,6 @@ export class BibliographyOverview {
             height: 350,
             modal: true,
             buttons,
-            create: function () {
-                let theDialog = jQuery(this).closest(".ui-dialog")
-                theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
-                theDialog.find(".ui-button:last").addClass("fw-button fw-orange")
-            },
             close: function () {
                 jQuery("#editCategories").dialog('destroy').remove()
             },
@@ -131,26 +135,28 @@ export class BibliographyOverview {
             'beforeend',
             `<div id="confirmdeletion" title="${gettext('Confirm deletion')}"><p>${gettext('Delete the bibliography item(s)')}?</p></div>`
         )
-        let diaButtons = {}
-        diaButtons[gettext('Delete')] = function () {
-            that.deleteBibEntries(ids)
-            jQuery(this).dialog('close')
-        }
-        diaButtons[gettext('Cancel')] = function () {
-            jQuery(this).dialog('close')
-        }
+        let buttons = [
+            {
+                text: gettext('Delete'),
+                class: "fw-button fw-dark",
+                click: function () {
+                    that.deleteBibEntries(ids)
+                    jQuery(this).dialog('close')
+                }
+            },
+            {
+                text: gettext('Cancel'),
+                class: "fw-button fw-orange",
+                click: function () {
+                    jQuery(this).dialog('close')
+                }
+            }
+        ]
         jQuery("#confirmdeletion").dialog({
             resizable: false,
             height: 180,
             modal: true,
-            buttons: diaButtons,
-            create: function () {
-                let theDialog = jQuery(this).closest(".ui-dialog")
-                theDialog.find(".ui-button:first-child").addClass(
-                    "fw-button fw-dark")
-                theDialog.find(".ui-button:last").addClass(
-                    "fw-button fw-orange")
-            },
+            buttons,
             close: function () {
                 jQuery("#confirmdeletion").dialog('destroy').remove()
             }
@@ -171,21 +177,24 @@ export class BibliographyOverview {
      * @param bibInfo An object with the current information about the bibliography item.
      */
     appendToBibTable(pk, bibInfo) {
-        let $tr = jQuery(`#Entry_${pk}`)
+        let tr = document.getElementById(`Entry_${pk}`)
 
         let bibauthors = bibInfo.fields.author || bibInfo.fields.editor
 
-        if (0 < $tr.length) { //if the entry exists, update
-
-            $tr.replaceWith(bibtableTemplate({
-                'id': pk,
-                'cats': bibInfo.entry_cat,
-                'type': bibInfo.bib_type,
-                'typetitle': BibTypeTitles[bibInfo.bib_type],
-                'title': bibInfo.fields.title ? litToText(bibInfo.fields.title) : gettext('Untitled'),
-                'author': bibauthors ? nameToText(bibauthors) : '',
-                'published': bibInfo.fields.date ? bibInfo.fields.date.replace('/', ' ') : ''
-            }))
+        if (tr) { //if the entry exists, update
+            tr.insertAdjacentHTML(
+                'afterend',
+                bibtableTemplate({
+                    id: pk,
+                    cats: bibInfo.entry_cat,
+                    type: bibInfo.bib_type,
+                    typetitle: BibTypeTitles[bibInfo.bib_type],
+                    title: bibInfo.fields.title ? litToText(bibInfo.fields.title) : gettext('Untitled'),
+                    author: bibauthors ? nameToText(bibauthors) : '',
+                    published: bibInfo.fields.date ? bibInfo.fields.date.replace('/', ' ') : ''
+                })
+            )
+            tr.parentElement.removeChild(tr)
         } else { //if this is the new entry, append
             document.querySelector('#bibliography > tbody').insertAdjacentHTML(
                 'beforeend',
@@ -227,19 +236,19 @@ export class BibliographyOverview {
                 "aTargets": [0, 5]
             }],
         })
-        jQuery('#bibliography_filter input').attr('placeholder', gettext('Search for Bibliography'))
+        document.querySelector('#bibliography_filter input').setAttribute('placeholder', gettext('Search for Bibliography'))
 
         jQuery('#bibliography_filter input').unbind('focus, blur')
         jQuery('#bibliography_filter input').bind('focus', function () {
             this.parentElement.classList.add('focus')
         })
         jQuery('#bibliography_filter input').bind('blur', function () {
-            this.parentElement.classList.add('focus')
+            this.parentElement.classList.remove('focus')
         })
 
         let autocompleteTags = []
-        jQuery('#bibliography .fw-searchable').each(function () {
-            autocompleteTags.push(this.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''))
+        document.querySelectorAll('#bibliography .fw-searchable').forEach(el => {
+            autocompleteTags.push(el.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''))
         })
         autocompleteTags = [...new Set(autocompleteTags)] //unique values
         jQuery("#bibliography_filter input").autocomplete({

@@ -35,9 +35,7 @@ export class ModServerCommunications {
             this.ws = new window.WebSocket(
                 `${websocketProtocol}//${window.websocketServer}${window.websocketPort}/ws/document/${this.editor.docInfo.id}/${this.connectionCount}/`
             )
-            this.ws.onopen = () => {
-                jQuery('#unobtrusive_messages').html('')
-            }
+            this.ws.onopen = () => document.getElementById('unobtrusive_messages').innerHTML = ''
         } catch (err) {
             console.error(err)
         }
@@ -97,9 +95,10 @@ export class ModServerCommunications {
             }
             let toSend = sendableSteps(this.editor.view.state)
             if (toSend) {
-                jQuery('#unobtrusive_messages').html('<span class="warn">'+gettext('Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect...')+'</span>')
+                document.getElementById('unobtrusive_messages').innerHTML =
+                    `<span class="warn">${gettext('Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect...')}</span>`
             } else {
-                jQuery('#unobtrusive_messages').html(gettext('Disconnected. Attempting to reconnect...'))
+                document.getElementById('unobtrusive_messages').innerHTML = gettext('Disconnected. Attempting to reconnect...')
             }
 
         }

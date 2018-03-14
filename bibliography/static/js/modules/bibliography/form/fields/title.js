@@ -44,10 +44,10 @@ export class TitleFieldForm{
                 ]
             }),
             onFocus: () => {
-                jQuery('.ui-dialog-buttonset .fw-edit').removeClass('disabled')
+                document.querySelectorAll('.ui-dialog-buttonset .fw-edit').forEach(el => el.classList.remove('disabled'))
             },
             onBlur: () => {
-                jQuery('.ui-dialog-buttonset .fw-edit').addClass('disabled')
+                document.querySelectorAll('.ui-dialog-buttonset .fw-edit').forEach(el => el.classList.add('disabled'))
             },
             dispatchTransaction: (transaction) => {
                 let newState = this.view.state.apply(transaction)
@@ -61,7 +61,7 @@ export class TitleFieldForm{
     }
 
     linkMarkButton(mark) {
-        jQuery(`.ui-dialog-buttonset .fw-${mark}`).on("mousedown", event => {
+        document.querySelector(`.ui-dialog-buttonset .fw-${mark}`).addEventListener("mousedown", event => {
             event.preventDefault()
             event.stopPropagation()
             if (!this.view.hasFocus()) {

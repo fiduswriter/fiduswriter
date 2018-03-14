@@ -30,7 +30,7 @@ export class ContactsOverview {
 
             //delete single user
             jQuery(document).on('click', '.delete-single-member', function() {
-                deleteMemberDialog([jQuery(this).attr('data-id')])
+                deleteMemberDialog([this.dataset.id])
             })
 
         })

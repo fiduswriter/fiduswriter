@@ -90,27 +90,29 @@ export class ModCollabChat {
         jQuery(document).ready(() => {
             document.getElementById('chat-container').style.maxHeight = jQuery(window).height() - 200 + 'px'
 
-            jQuery('#chat .resize-button').on("click", function (event) {
-                if (this.classList.contains('fa-angle-double-down')) {
-                    this.classList.remove('fa-angle-double-down')
-                    this.classList.add('fa-angle-double-up')
-                    jQuery('#chat-container,#messageform').slideUp()
-                }
-                else {
-                    this.classList.remove('fa-angle-double-up')
-                    this.classList.add('fa-angle-double-down')
-                    jQuery('#chat-container,#messageform').slideDown()
-                    if (this.parentElement.classList.contains(
-                        'highlighted')) {
-                        jQuery(this).parent().animate({
-                            backgroundColor: "#fff",
-                        }, 1000, 'swing', function () {
-                            this.classList.remove('highlighted')
-                            this.style.backgroundColor = ''
-                        });
+            document.querySelector('#chat .resize-button').addEventListener(
+                "click",
+                function (event) {
+                    if (this.classList.contains('fa-angle-double-down')) {
+                        this.classList.remove('fa-angle-double-down')
+                        this.classList.add('fa-angle-double-up')
+                        jQuery('#chat-container,#messageform').slideUp()
+                    }
+                    else {
+                        this.classList.remove('fa-angle-double-up')
+                        this.classList.add('fa-angle-double-down')
+                        jQuery('#chat-container, #messageform').slideDown()
+                        if (this.parentElement.classList.contains('highlighted')) {
+                            jQuery(this).parent().animate({
+                                backgroundColor: "#fff",
+                            }, 1000, 'swing', function () {
+                                this.classList.remove('highlighted')
+                                this.style.backgroundColor = ''
+                            });
+                        }
                     }
                 }
-            })
+            )
 
             let messageForm = document.getElementById("messageform")
 

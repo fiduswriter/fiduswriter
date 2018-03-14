@@ -79,9 +79,9 @@ export class CitationDialog {
 
         jQuery('input').blur()
 
-        jQuery('.fw-checkable').bind('click', function() {
-            setCheckableLabel(jQuery(this))
-        })
+        document.querySelectorAll('.fw-checkable').forEach(
+            el => el.addEventListener('click', () => setCheckableLabel(jQuery(el)))
+        )
     }
 
     activatePlugins() {
@@ -207,9 +207,7 @@ export class CitationDialog {
             }
             document.querySelector('#cite-source-table_filter input').setAttribute('placeholder', gettext('Search bibliography'))
 
-            jQuery('#cite-source-table .fw-searchable').each(function() {
-                autocomplete_tags.push(this.textContent)
-            })
+            document.querySelectorAll('#cite-source-table .fw-searchable').forEach(el =>  autocomplete_tags.push(el.textContent))
             autocomplete_tags = [...new Set(autocomplete_tags)] // unique values
             jQuery("#cite-source-table_filter input").autocomplete({
                 source: autocomplete_tags
@@ -219,29 +217,34 @@ export class CitationDialog {
         jQuery('#cite-source-table').trigger('update')
 
         jQuery('#add-cite-source').bind('click', () => {
-            let checkedElements = jQuery('#cite-source-table .fw-checkable.checked'),
-                selectedItems = []
-            checkedElements.each(function() {
-                let id = jQuery(this).data('id'),
-                    db = jQuery(this).data('db')
-                if (document.querySelector(`#selected-source-${db}-${id}`)) {
-                    return
+            let selectedItems = []
+
+            document.querySelectorAll('#cite-source-table .fw-checkable.checked').forEach(
+                el => {
+                    let id = el.dataset.id,
+                        db = el.dataset.db
+                    if (document.querySelector(`#selected-source-${db}-${id}`)) {
+                        return
+                    }
+                    selectedItems.push({
+                        id,
+                        db,
+                        type: el.dataset.type,
+                        title: el.dataset.title,
+                        author: el.dataset.author
+                    })
+                    el.classList.remove('checked')
                 }
-                selectedItems.push({
-                    id,
-                    db,
-                    type: jQuery(this).data('type'),
-                    title: jQuery(this).data('title'),
-                    author: jQuery(this).data('author')
-                })
-            })
-            checkedElements.removeClass('checked')
+            )
+
             this.addToCitedItems(selectedItems)
         })
 
         jQuery(this.dialog).on('click', '.selected-source .delete', function() {
-            let sourceWrapperId = '#selected-source-document-' + jQuery(this).data('id')
-            jQuery(sourceWrapperId).remove()
+            let documentEl = document.getElementById(`selected-source-document-${this.dataset.id}`)
+            if (documentEl) {
+                documentEl.parentElement.removeChild(documentEl)
+            }
         })
     }
 

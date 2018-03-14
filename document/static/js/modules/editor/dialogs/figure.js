@@ -186,29 +186,26 @@ export class FigureDialog {
         jQuery('input[name=figure-math]').bind('focus',
             () => {
                 // If a figure is being entered, disable the image button
-                jQuery('#insertFigureImage').addClass(
-                    'disabled').attr(
-                    'disabled', 'disabled')
+                document.getElementById('insertFigureImage').classList.add('disabled')
+                document.getElementById('insertFigureImage').setAttribute('disabled','disabled')
             })
 
         jQuery('input[name=figure-math]').bind('blur',
             function () {
-                if (jQuery(this).val() === '') {
-                    jQuery('#inner-figure-preview')[0].innerHTML =
-                        ''
+                if (this.value === '') {
+                    document.getElementById('inner-figure-preview').innerHTML = ''
                     // enable image button
-                    jQuery('#insertFigureImage').removeClass(
-                        'disabled')
-                        .removeAttr('disabled')
+                    document.getElementById('insertFigureImage').classList.remove('disabled')
+                    document.getElementById('insertFigureImage').removeAttribute('disabled')
                 } else {
-                    that.equation = jQuery(this).val()
+                    that.equation = this.value
                     that.layoutMathPreview()
                 }
             })
 
-        jQuery('#insertFigureImage').bind('click',
+        document.getElementById('insertFigureImage').addEventListener('click',
             function () {
-                if (jQuery(this).hasClass('disabled')) {
+                if (this.classList.contains('disabled')) {
                     return
                 }
 
@@ -223,15 +220,12 @@ export class FigureDialog {
                             that.imgId = id
                             that.imgDb = db
                             that.layoutImagePreview()
-                            jQuery('input[name=figure-math]').attr(
-                                'disabled',
-                                'disabled')
+                            document.querySelector('input[name=figure-math]').setAttribute('disabled', 'disabled')
                         } else {
                             that.imgId = false
                             that.imgDb = false
-                            jQuery('#inner-figure-preview').html('')
-                            jQuery('input[name=figure-math]').removeAttr(
-                                'disabled')
+                            document.getElementById('inner-figure-preview').innerHTML = ''
+                            document.querySelector('input[name=figure-math]').removeAttribute('disabled')
                         }
                     }
                 )

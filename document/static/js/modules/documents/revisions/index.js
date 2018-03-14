@@ -54,18 +54,18 @@ export class DocumentRevisionsDialog {
     bind() {
         let that = this
         jQuery('.download-revision').on('mousedown', function() {
-            let revisionId = parseInt(jQuery(this).attr('data-id'))
-            let revisionFilename = jQuery(this).attr('data-filename')
+            let revisionId = parseInt(this.getAttribute('data-id'))
+            let revisionFilename = this.getAttribute('data-filename')
             that.download(revisionId, revisionFilename)
         })
         return new Promise(resolve => {
             jQuery('.recreate-revision').on('mousedown', function() {
-                let revisionId = parseInt(jQuery(this).attr('data-id'))
+                let revisionId = parseInt(this.getAttribute('data-id'))
                 resolve(that.recreate(revisionId, that.user))
             })
 
             jQuery('.delete-revision').on('mousedown', function() {
-                let revisionId = parseInt(jQuery(this).attr('data-id'))
+                let revisionId = parseInt(this.getAttribute('data-id'))
                 resolve(that.delete(revisionId))
             })
         })
@@ -122,17 +122,24 @@ export class DocumentRevisionsDialog {
      */
 
     delete(id) {
-        let diaButtons = {}, that = this
+        let buttons = [], that = this
         let returnPromise = new Promise(resolve => {
-            diaButtons[gettext('Delete')] = function() {
-                jQuery(this).dialog("close")
-                resolve(that.deleteRevision(id))
-            }
-
-            diaButtons[gettext('Cancel')] = function() {
-                jQuery(this).dialog("close")
-                resolve(cancelPromise())
-            }
+            buttons.push({
+                text: gettext('Delete'),
+                class: "fw-button fw-dark",
+                click: function() {
+                    jQuery(this).dialog("close")
+                    resolve(that.deleteRevision(id))
+                }
+            })
+            buttons.push({
+                text: gettext('Cancel'),
+                class: "fw-button fw-orange",
+                click: function() {
+                    jQuery(this).dialog("close")
+                    resolve(cancelPromise())
+                }
+            })
         })
 
         jQuery(documentrevisionsConfirmDeleteTemplate()).dialog({
@@ -143,14 +150,7 @@ export class DocumentRevisionsDialog {
             close: function() {
                 jQuery(this).dialog('destroy').remove()
             },
-            buttons: diaButtons,
-            create: function() {
-                let theDialog = jQuery(this).closest(".ui-dialog")
-                theDialog.find(".ui-button:first-child").addClass(
-                    "fw-button fw-dark")
-                theDialog.find(".ui-button:last").addClass(
-                    "fw-button fw-orange")
-            },
+            buttons
         })
 
         return returnPromise

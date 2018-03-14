@@ -5,7 +5,11 @@ import {addDropdownBox, activateWait, deactivateWait, post, postJson, postJsonSt
 import {SiteMenu} from "../menu"
 
 let changeAvatarDialog = function() {
-    jQuery('body').append(changeAvatarDialogTemplate())
+
+    document.body.insertAdjacentHTML(
+        'beforeend',
+        changeAvatarDialogTemplate()
+    )
     let buttons = [
         {
             text: gettext('Upload'),
@@ -54,12 +58,10 @@ let changeAvatarDialog = function() {
         modal : true,
         buttons,
         create : () => {
-            jQuery('#avatar-uploader').bind('change', function() {
-                jQuery('#uploaded-avatar-name').html(jQuery(this).val().replace(/C:\\fakepath\\/i, ''))
+            document.getElementById('avatar-uploader').addEventListener('change', function() {
+                document.getElementById('uploaded-avatar-name').innerHTML = this.value.replace(/C:\\fakepath\\/i, '')
             })
-            jQuery('#upload-avatar-btn').bind('click', () => {
-                jQuery('#avatar-uploader').trigger('click')
-            })
+            document.getElementById('upload-avatar-btn').addEventListener('click', () => document.getElementById('avatar-uploader').click())
         },
         close : () => {
             jQuery("#change-avatar-dialog").dialog('destroy').remove()
@@ -98,7 +100,10 @@ let deleteAvatar = function() {
 }
 
 let deleteAvatarDialog = function() {
-    jQuery('body').append(confirmDeleteAvatarTemplate())
+    document.body.insertAdjacentHTML(
+        'beforeend',
+        confirmDeleteAvatarTemplate()
+    )
     let buttons = [
         {
             text: gettext('Delete'),
@@ -146,14 +151,17 @@ let saveProfile = function() {
 }
 
 let deleteUserDialog = function() {
-    let username = jQuery(this).attr('data-username')
-    jQuery('body').append(deleteUserDialogTemplate())
+    let username = this.dataset.username
+    document.body.insertAdjacentHTML(
+        'beforeend',
+        deleteUserDialogTemplate()
+    )
     let buttons = [
         {
             text: gettext('Delete'),
             class: "fw-button fw-dark",
             click: function() {
-                let usernamefieldValue = jQuery('#username-confirmation').val()
+                let usernamefieldValue = document.getElementById('username-confirmation').value
                 if (usernamefieldValue===username) {
                     deleteCurrentUser()
                     jQuery(this).dialog('close')
@@ -176,7 +184,10 @@ let deleteUserDialog = function() {
 }
 
 let changePwdDialog = function() {
-    jQuery('body').append(changePwdDialogTemplate())
+    document.body.insertAdjacentHTML(
+        'beforeend',
+        changePwdDialogTemplate()
+    )
     let buttons = [
         {
             text: gettext('Submit'),
@@ -251,7 +262,10 @@ let changePwdDialog = function() {
 }
 
 let addEmailDialog = function() {
-    jQuery('body').append(changeEmailDialogTemplate())
+    document.body.insertAdjacentHTML(
+        'beforeend',
+        changeEmailDialogTemplate()
+    )
     let buttons = [
         {
             text: gettext('Submit'),
@@ -306,13 +320,16 @@ let addEmailDialog = function() {
 }
 
 let deleteEmailDialog = function() {
-    let thisTr = jQuery(this).parent().parent(),
-        email = jQuery(this).data('email')
+    let thisTr = this.parentElement.parentElement,
+        email = this.dataset.email
 
-    jQuery('body').append(deleteEmailDialogTemplate({
-        'title': gettext('Confirm remove'),
-        'text':  gettext('Remove the email address') + ': ' + email + '?'
-    }))
+    document.body.insertAdjacentHTML(
+        'beforeend',
+        deleteEmailDialogTemplate({
+            'title': gettext('Confirm remove'),
+            'text':  gettext('Remove the email address') + ': ' + email + '?'
+        })
+    )
 
     let buttons = [
         {
@@ -329,7 +346,7 @@ let deleteEmailDialog = function() {
                 ).then(
                     ({json, status}) => {
                         if(200 == status) {
-                            thisTr.remove()
+                            thisTr.parentElement.removeChild(thisTr)
                         }
                         addAlert('info', gettext(json.msg))
                     }
@@ -360,14 +377,16 @@ let deleteEmailDialog = function() {
 }
 
 let changePrimaryEmailDialog = function() {
-    let primEmailRadio = jQuery('.primary-email-radio:checked'),
-        primEmailErapper = primEmailRadio.parent().parent(),
-        email = primEmailRadio.val()
-
-    jQuery('body').append(deleteEmailDialogTemplate({
-        'title': gettext('Confirm set primary'),
-        'text':  `${gettext('Set the email address primary')}: ${email}?`
-    }))
+    let primEmailRadio = document.querySelector('.primary-email-radio:checked'),
+        primEmailErapper = primEmailRadio.parentElement.parentElement,
+        email = primEmailRadio.value
+    document.body.insertAdjacentHTML(
+        'beforeend',
+        deleteEmailDialogTemplate({
+            'title': gettext('Confirm set primary'),
+            'text':  `${gettext('Set the email address primary')}: ${email}?`
+        })
+    )
 
     let buttons = [
         {
@@ -387,7 +406,7 @@ let changePrimaryEmailDialog = function() {
                             document.querySelector('tr.primary-email-tr span.disabled').setAttribute('class', 'delete-email fw-link-text')
                             primEmailErapper.find('span.delete-email.fw-link-text').attr('class', 'disabled')
                         } else {
-                            jQuery('tr.primary-email-tr .primary-email-radio').prop("checked", true)
+                            document.querySelector('tr.primary-email-tr .primary-email-radio').checked = true
                         }
                         addAlert('info', gettext(json.msg))
                     }
@@ -405,7 +424,7 @@ let changePrimaryEmailDialog = function() {
             text: gettext('Cancel'),
             class: "fw-button fw-orange",
             click: function() {
-                jQuery('tr.primary-email-tr .primary-email-radio').prop("checked", true)
+                document.querySelector('tr.primary-email-tr .primary-email-radio').checked = true
                 jQuery(this).dialog('close')
             }
         }
@@ -425,13 +444,15 @@ export let bind = function() {
         let smenu = new SiteMenu("") // Nothing highlighted
         smenu.init()
         addDropdownBox(jQuery('#edit-avatar-btn'), jQuery('#edit-avatar-pulldown'))
-        jQuery('.change-avatar').bind('mousedown', changeAvatarDialog)
-        jQuery('.delete-avatar').bind('mousedown', deleteAvatarDialog)
-        jQuery('#submit-profile').bind('click', saveProfile)
-        jQuery('#delete-account').bind('click', deleteUserDialog)
-        jQuery('#fw-edit-profile-pwd').bind('click',changePwdDialog)
-        jQuery('#add-profile-email').bind('click', addEmailDialog)
+        document.querySelector('.change-avatar').addEventListener('mousedown', changeAvatarDialog)
+        document.querySelector('.delete-avatar').addEventListener('mousedown', deleteAvatarDialog)
+        document.getElementById('submit-profile').addEventListener('click', saveProfile)
+        document.getElementById('delete-account').addEventListener('click', deleteUserDialog)
+        document.getElementById('fw-edit-profile-pwd').addEventListener('click',changePwdDialog)
+        document.getElementById('add-profile-email').addEventListener('click', addEmailDialog)
         jQuery(document).on('click', '.delete-email', deleteEmailDialog)
-        jQuery('.primary-email-radio').bind('change', changePrimaryEmailDialog)
+        document.querySelectorAll('.primary-email-radio').forEach(el => el.addEventListener(
+            'change', changePrimaryEmailDialog
+        ))
     })
 }

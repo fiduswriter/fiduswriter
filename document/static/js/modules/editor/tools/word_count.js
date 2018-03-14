@@ -30,13 +30,15 @@ export class ModToolsWordCount {
 
     wordCountDialog() {
         let stats = this.countWords()
-
-        jQuery('body').append(wordCounterDialogTemplate({
-            'dialogHeader': gettext('Word counter'),
-            'words': stats.numWords,
-            'chars_no_space': stats.numNoSpace,
-            'chars': stats.numChars
-        }))
+        document.body.insertAdjacentHTML(
+            'beforeend',
+            wordCounterDialogTemplate({
+                'dialogHeader': gettext('Word counter'),
+                'words': stats.numWords,
+                'chars_no_space': stats.numNoSpace,
+                'chars': stats.numChars
+            })
+        )
 
         jQuery('#word-counter-dialog').dialog({
             draggable : false,

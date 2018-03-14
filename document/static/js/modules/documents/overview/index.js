@@ -93,10 +93,10 @@ export class DocumentOverview {
     }
 
     layoutTable() {
-        jQuery('#document-table tbody').html(documentsListTemplate({
+        document.querySelector('#document-table tbody').innerHTML = documentsListTemplate({
             documentList: this.documentList,
             user: this.user
-        }))
+        })
         this.startDocumentTable()
     }
 
@@ -137,8 +137,9 @@ export class DocumentOverview {
             }],
         })
 
-        jQuery('#document-table_wrapper .dataTables_filter input').attr(
-            'placeholder', gettext('Search for Document')
+        document.querySelector('#document-table_wrapper .dataTables_filter input').setAttribute(
+            'placeholder',
+            gettext('Search for Document')
         )
         jQuery('#document-table_wrapper .dataTables_filter input').unbind('focus, blur')
         jQuery('#document-table_wrapper .dataTables_filter input').bind('focus', function() {
@@ -149,8 +150,8 @@ export class DocumentOverview {
         })
 
         let autocompleteTags = []
-        jQuery('#document-table .fw-searchable').each(function() {
-            autocompleteTags.push(this.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''))
+        document.querySelectorAll('#document-table .fw-searchable').forEach(el => {
+            autocompleteTags.push(el.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''))
         })
         autocompleteTags = [...new Set(autocompleteTags)] // only unique values
         jQuery("#document-table_wrapper .dataTables_filter input").autocomplete({

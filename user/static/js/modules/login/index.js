@@ -4,7 +4,7 @@ let loginPage = function() {
 
     socialButtons.forEach(
         button => {
-            let theWidth = jQuery(button).width()
+            let theWidth = button.clientWidth
             if (btnWidth < theWidth) {
                 btnWidth = theWidth
             }

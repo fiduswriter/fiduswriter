@@ -60,7 +60,10 @@ export class ImageOverviewCategories {
             dialogHeader,
             categories: this.imageOverview.imageDB.cats
         })
-        jQuery('body').append(dialogBody)
+        document.body.insertAdjacentHTML(
+            'beforeend',
+            dialogBody
+        )
         let diaButtons = {}
         let that = this
         diaButtons[gettext('Submit')] = function () {
@@ -68,9 +71,9 @@ export class ImageOverviewCategories {
                 'ids': [],
                 'titles': []
             }
-            jQuery('#editCategories .category-form').each(function () {
-                let thisVal = jQuery.trim(jQuery(this).val())
-                let thisId = jQuery(this).attr('data-id')
+            document.querySelectorAll('#editCategories .category-form').forEach(el => {
+                let thisVal = el.value.trim()
+                let thisId = this.dataset.id
                 if ('undefined' == typeof (thisId)) thisId = 0
                 if ('' !== thisVal) {
                     cats.ids.push(thisId)
@@ -105,17 +108,18 @@ export class ImageOverviewCategories {
 
     addRemoveListHandler() {
         //add and remove name list field
-        jQuery('.fw-add-input').bind('click', function () {
-            let parent = jQuery(this).parents('.fw-list-input')
-            if (0 === parent.next().length) {
-                let parentClone = parent.clone(true)
-                parentClone.find('input, select').val('').removeAttr(
-                    'data-id')
-                parentClone.insertAfter(parent)
-            } else {
-                parent.remove()
-            }
-        })
+        document.querySelectorAll('.fw-add-input').forEach(el =>
+            el.addEventListener('click', event => {
+                let parent = jQuery(el).parents('.fw-list-input')
+                if (0 === parent.next().length) {
+                    let parentClone = parent.clone(true)
+                    parentClone.find('input, select').val('').removeAttr('data-id')
+                    parentClone.insertAfter(parent)
+                } else {
+                    parent.remove()
+                }
+            })
+        )
     }
 
 }

@@ -151,6 +151,22 @@ let commentTemplate = ({comment, activeCommentId, activeCommentAnswerId, user, d
     </div>`
 }
 
+let trackTemplate = ({type, data, docInfo}) => {
+    let author = data.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === data.user)
+    return `
+        <div class="margin-box">
+            <div class="track-${type}">
+                <div class="comment-user">
+                    <img class="comment-user-avatar" src="${author ? author.avatar : `${$StaticUrls.base$}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
+                    <h5 class="comment-user-name">${escapeText(author ? author.name : data.username)}</h5>
+                    <p class="comment-date">${localizeDate(data.date*600000)}</p>
+                    <h3>${type==='insertion' ? gettext('Insertion') : gettext('Deletion') }</h3>
+                </div>
+            </div>
+        </div>`
+}
+
+
 /** A template to display all the margin boxes (comments, deletion/insertion notifications) */
 export let marginBoxesTemplate = ({
         marginBoxes,
@@ -162,6 +178,10 @@ export let marginBoxesTemplate = ({
         switch(mBox.type) {
             case 'comment':
                 return commentTemplate({comment: mBox.data, activeCommentId, activeCommentAnswerId, user, docInfo})
+                break
+            case 'insertion':
+            case 'deletion':
+                return trackTemplate({type: mBox.type, data: mBox.data, docInfo})
                 break
             default:
                 console.warn(`Unknown margin box type: ${mBox.type}`)

@@ -41,12 +41,12 @@ export class ModMarginboxes {
             }
             let commentIds = this.editor.mod.comments.interactions.findCommentIds(node)
 
-            let tracks = node.marks.filter(mark =>
+            let trackMarks = node.marks.filter(mark =>
                 mark.type.name==='deletion' ||
                 (mark.type.name==='insertion' && !mark.attrs.approved)
             )
 
-            if (!commentIds.length || tracks.length) {
+            if (!commentIds.length && !trackMarks.length) {
                 return
             }
             commentIds.forEach(commentId => {
@@ -67,6 +67,10 @@ export class ModMarginboxes {
                         `.comments-enabled .comment[data-id="${comment.id}"] {background-color: #f2f2f2;}`
                 }
                 marginBoxes.push({type: 'comment', data: comment})
+                referrers.push(pos)
+            })
+            trackMarks.forEach(mark => {
+                marginBoxes.push({type: mark.type.name, data: Object.assign({}, mark.attrs)})
                 referrers.push(pos)
             })
         })

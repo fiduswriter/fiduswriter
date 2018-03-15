@@ -126,29 +126,30 @@ export class ModCommentInteractions {
         // D) the focus is currently in new answer text area of a comment
         // E) a new comment form is about to be displayed, but the updateDOM
         // call has not yet been made.
-        if (this.activeCommentId !== false) {
-            if (document.querySelector('.commentText')) {
-                // a comment form is currently open
-                return true
-            }
-            if (document.querySelector('.submit-comment-answer-edit')) {
-                // a comment answer edit form is currently open
-                return true
-            }
-            let answerForm = document.querySelector('.comment-answer-text')
-            if (answerForm && answerForm.value.length) {
-                // Part of an answer to a comment has been entered.
-                return true
-            }
-            if (answerForm && answerForm.matches(':focus')) {
-                // There is currently focus in the comment answer form
-                return true
-            }
-            if (this.mod.store.commentDuringCreation.inDOM === false) {
-                // A new comment is about to be created, but it has not
-                // yet been added to the DOM.
-                return true
-            }
+        if (!this.activeCommentId) {
+            return false
+        }
+        if ([].slice.call(document.querySelectorAll('.commentText')).find(el => el.clientWidth)) {
+            // a comment form is currently open
+            return true
+        }
+        if (document.querySelector('.submit-comment-answer-edit')) {
+            // a comment answer edit form is currently open
+            return true
+        }
+        let answerForm = document.querySelector('.comment-answer-text')
+        if (answerForm && answerForm.value.length) {
+            // Part of an answer to a comment has been entered.
+            return true
+        }
+        if (answerForm && answerForm.matches(':focus')) {
+            // There is currently focus in the comment answer form
+            return true
+        }
+        if (this.mod.store.commentDuringCreation.inDOM === false) {
+            // A new comment is about to be created, but it has not
+            // yet been added to the DOM.
+            return true
         }
         return false
     }

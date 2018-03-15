@@ -1,6 +1,6 @@
 import {teammemberTemplate} from "./templates"
 import {deleteMemberDialog} from "./manage"
-import {addDropdownBox, postJson, addAlert, OverviewMenuView} from "../common"
+import {postJson, addAlert, OverviewMenuView} from "../common"
 import {SiteMenu} from "../menu"
 import {menuModel} from "./menu"
 

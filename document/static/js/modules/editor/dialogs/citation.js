@@ -80,7 +80,7 @@ export class CitationDialog {
         jQuery('input').blur()
 
         document.querySelectorAll('.fw-checkable').forEach(
-            el => el.addEventListener('click', () => setCheckableLabel(jQuery(el)))
+            el => el.addEventListener('click', () => setCheckableLabel(el))
         )
     }
 

@@ -6,10 +6,10 @@
 export let addDropdownBox = function(btn, box) {
     btn.bind('mousedown', event => {
         event.preventDefault()
-        if(btn.hasClass('disabled')) {
+        if(btn.classList.contains('disabled')) {
             return
         }
-        if('none' == box.css('display')) {
+        if('none' === box.style.display) {
             openDropdownBox(box)
         }
     })
@@ -20,29 +20,29 @@ export let addDropdownBox = function(btn, box) {
  */
 
 let openDropdownBox = function(box) {
+
     // Show this box
-    box.show()
+    box.style.display = ''
     // Give that the dropdown menu was opened through a mousedown event, there
     // will be a first click event following it. We will wait for the second
     // click event.
     jQuery(document).one('click', () => {
         jQuery(document).one('click', event => {
             event.preventDefault()
-            box.hide()
+            box.style.display = 'none'
         })
     })
 }
 
 
-/** Checkes or uncheckes a checkable label. This is used for example for bibliography categories when editing bibliography items.
+/** Checks or unchecks a checkable label. This is used for example for bibliography categories when editing bibliography items.
  * @param label The node who's parent has to be checked or unchecked.
  */
-export let setCheckableLabel = function(label) {
-    let checkbox = label.parent().find('input[type=checkbox]')
-    if(label.hasClass('checked')) {
-        label.removeClass('checked')
+export let setCheckableLabel = function(labelEl) {
+    if(labelEl.classList.contains('checked')) {
+        labelEl.classList.remove('checked')
     } else {
-        label.addClass('checked')
+        labelEl.classList.add('checked')
     }
 }
 

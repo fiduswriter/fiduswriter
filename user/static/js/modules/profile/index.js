@@ -443,7 +443,7 @@ export let bind = function() {
     jQuery(document).ready(() => {
         let smenu = new SiteMenu("") // Nothing highlighted
         smenu.init()
-        addDropdownBox(jQuery('#edit-avatar-btn'), jQuery('#edit-avatar-pulldown'))
+        addDropdownBox(document.getElementById('edit-avatar-btn'), document.getElementById('edit-avatar-pulldown'))
         document.querySelector('.change-avatar').addEventListener('mousedown', changeAvatarDialog)
         document.querySelector('.delete-avatar').addEventListener('mousedown', deleteAvatarDialog)
         document.getElementById('submit-profile').addEventListener('click', saveProfile)

@@ -171,8 +171,10 @@ export class FigureDialog {
             this.layoutImagePreview()
         }
 
-        addDropdownBox(jQuery('#figure-category-btn'), jQuery(
-            '#figure-category-pulldown'))
+        addDropdownBox(
+            document.getElementById('figure-category-btn'),
+            document.getElementById('figure-category-pulldown')
+        )
         let that = this
         jQuery('#figure-category-pulldown li span').bind(
             'mousedown',

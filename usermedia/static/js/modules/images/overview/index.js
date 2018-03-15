@@ -1,6 +1,6 @@
 import {ImageDB} from "../database"
 import {ImageOverviewCategories} from "./categories"
-import {addDropdownBox, activateWait, deactivateWait, addAlert, post} from "../../common"
+import {activateWait, deactivateWait, addAlert, post} from "../../common"
 import {SiteMenu} from "../../menu"
 import {OverviewMenuView} from "../../common"
 import {menuModel} from "./menu"

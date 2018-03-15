@@ -47,7 +47,7 @@ export class ImageEditDialog {
         })
 
         document.querySelectorAll('.fw-checkable-label').forEach(
-            el => el.addEventListener('click', () => setCheckableLabel(jQuery(el)))
+            el => el.addEventListener('click', () => setCheckableLabel(el))
         )
 
         if (!this.imageId) {

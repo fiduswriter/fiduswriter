@@ -28,7 +28,7 @@ export let addRemoveListHandler = function () {
 
     // init dropdown for eitheror field names
     jQuery('.fw-bib-field-pulldown').each(function () {
-        addDropdownBox(jQuery(this), jQuery(this).children('.fw-pulldown'))
+        addDropdownBox(this, this.querySelector('.fw-pulldown'))
     })
     jQuery('.fw-bib-field-pulldown .fw-pulldown-item').bind('mousedown', function () {
         let selected_title = this.innerHTML,
@@ -40,7 +40,7 @@ export let addRemoveListHandler = function () {
 
     // init dropdown for date format pulldown
     jQuery('.fw-data-format-pulldown').each(function () {
-        addDropdownBox(jQuery(this), jQuery(this).children('.fw-pulldown'))
+        addDropdownBox(this, this.querySelector('.fw-pulldown'))
     })
     jQuery('.fw-data-format-pulldown .fw-pulldown-item').bind('mousedown', function () {
         let selected_title = this.innerHTML,
@@ -53,7 +53,7 @@ export let addRemoveListHandler = function () {
 
     // nit dropdown for f_key selection
     jQuery('.fw-bib-select-pulldown').each(function () {
-        addDropdownBox(jQuery(this), jQuery(this).children('.fw-pulldown'))
+        addDropdownBox(this, this.querySelector('.fw-pulldown'))
     })
     jQuery('.fw-bib-select-pulldown .fw-pulldown-item').bind('mousedown', function () {
         let selected_title = this.innerHTML,

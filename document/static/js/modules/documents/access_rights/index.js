@@ -160,20 +160,20 @@ export class DocumentAccessRightsDialog {
     collaboratorFunctionsEvent() {
         jQuery('.fw-checkable').unbind('click')
         jQuery('.fw-checkable').bind('click', function () {
-            setCheckableLabel(jQuery(this))
+            setCheckableLabel(this)
         })
         jQuery('.edit-right').unbind('click')
         jQuery('.edit-right').each(function () {
-            addDropdownBox(jQuery(this), jQuery(this).siblings('.fw-pulldown'))
+            addDropdownBox(this, this.parentElement.querySelector('.fw-pulldown'))
         })
         let spans = jQuery(
             '.edit-right-wrapper .fw-pulldown-item, .delete-collaborator')
         spans.unbind('mousedown')
         spans.bind('mousedown', function () {
-            let newRight = this.getAttribute('data-right')
-            let colRow = jQuery(this).closest('.collaborator-tr')
-            colRow.attr('data-right', newRight)
-            colRow.find('.icon-access-right').attr('class',
+            let newRight = this.dataset.right
+            let colRow = jQuery(this).closest('.collaborator-tr')[0]
+            colRow.setAttribute('data-right', newRight)
+            colRow.querySelector('.icon-access-right').setAttribute('class',
                 'icon-access-right icon-access-' + newRight)
         })
     }

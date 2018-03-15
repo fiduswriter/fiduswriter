@@ -205,13 +205,6 @@ export let commentsPlugin = function(options) {
             steps.forEach(step => tr.step(step))
             return tr
         },
-        view(editorState) {
-            return {
-                update: (view, prevState) => {
-                    options.editor.mod.comments.layout.view()
-                }
-            }
-        },
         props: {
             decorations(state) {
 				let {

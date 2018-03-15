@@ -46,6 +46,10 @@ export {
 }
 from "./links"
 export {
+    marginboxesPlugin
+}
+from "./marginboxes"
+export {
     pastePlugin
 }
 from "./paste"

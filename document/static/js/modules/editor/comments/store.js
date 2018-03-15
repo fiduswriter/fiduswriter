@@ -23,6 +23,14 @@ export class ModCommentStore {
         this.unsent = []
     }
 
+    findComment(id) {
+        let found = false
+        if (id in this.comments) {
+            found = this.comments[id]
+        }
+        return found
+    }
+
     mustSend() {
         // Set a timeout so that the update can be combines with other updates
         // if they happen more or less simultaneously.
@@ -155,8 +163,8 @@ export class ModCommentStore {
                 isMajor
             )
         }
-        if (local || (!this.mod.layout.isCurrentlyEditing())) {
-            this.mod.layout.layoutComments()
+        if (local || (!this.mod.interactions.isCurrentlyEditing())) {
+            this.mod.editor.mod.marginboxes.updateDOM()
         }
     }
 
@@ -174,8 +182,8 @@ export class ModCommentStore {
             this.comments[id].comment = comment
             this.comments[id].isMajor = isMajor
         }
-        if (local || (!this.mod.layout.isCurrentlyEditing())) {
-            this.mod.layout.layoutComments()
+        if (local || (!this.mod.interactions.isCurrentlyEditing())) {
+            this.mod.editor.mod.marginboxes.updateDOM()
         }
     }
 
@@ -206,8 +214,8 @@ export class ModCommentStore {
             delete this.comments[id]
             return true
         }
-        if (local || (!this.mod.layout.isCurrentlyEditing())) {
-            this.mod.layout.layoutComments()
+        if (local || (!this.mod.interactions.isCurrentlyEditing())) {
+            this.mod.editor.mod.marginboxes.updateDOM()
         }
     }
 
@@ -233,8 +241,8 @@ export class ModCommentStore {
             this.comments[id].answers.push(answer)
         }
 
-        if (local || (!this.mod.layout.isCurrentlyEditing())) {
-            this.mod.layout.layoutComments()
+        if (local || (!this.mod.interactions.isCurrentlyEditing())) {
+            this.mod.editor.mod.marginboxes.updateDOM()
         }
     }
 
@@ -254,8 +262,8 @@ export class ModCommentStore {
             this.comments[id].answers = this.comments[id].answers.filter(
                 answer => answer.id !== answerId)
         }
-        if (local || (!this.mod.layout.isCurrentlyEditing())) {
-            this.mod.layout.layoutComments()
+        if (local || (!this.mod.interactions.isCurrentlyEditing())) {
+            this.mod.editor.mod.marginboxes.updateDOM()
         }
     }
 
@@ -277,8 +285,8 @@ export class ModCommentStore {
                 answer.answer = answerText
             }
         }
-        if (local || (!this.mod.layout.isCurrentlyEditing())) {
-            this.mod.layout.layoutComments()
+        if (local || (!this.mod.interactions.isCurrentlyEditing())) {
+            this.mod.editor.mod.marginboxes.updateDOM()
         }
     }
 

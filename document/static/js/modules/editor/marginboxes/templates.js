@@ -94,84 +94,78 @@ let firstCommentTemplate = ({
     </div>`
 
 
-/** A template to display all the comments */
-export let commentsTemplate = ({
-        theComments,
+let commentTemplate = ({comment, activeCommentId, activeCommentAnswerId, user, docInfo}) => {
+    let author = comment.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === comment.user)
+    return comment.hidden ?
+    `<div id="margin-box-${comment.id}" class="margin-box hidden"></div>` :
+    `<div id="margin-box-${comment.id}" data-id="${comment.id}"  data-user-id="${comment.user}"
+            class="
+                margin-box ${comment.id === activeCommentId ? 'active' : 'inactive'}
+                ${comment.isMajor === true ? 'comment-is-major-bgc' : ''}
+        ">
+    ${
+        comment.comment.length === 0 ?
+        firstCommentTemplate({comment, author}) :
+        singleCommentTemplate({comment, active: (comment.id===activeCommentId), user, author})
+    }
+    ${
+        comment.answers ?
+        comment.answers.map(answer =>
+            answerCommentTemplate({
+                answer,
+                author: answer.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === answer.user),
+                commentId: comment.id,
+                active: (comment.id===activeCommentId),
+                activeCommentAnswerId,
+                user,
+                docInfo
+            })
+        ).join('') :
+        ''
+    }
+    ${
+        comment.id===activeCommentId && 0 < comment.comment.length ?
+        `<div class="comment-answer">
+            <textarea class="comment-answer-text" rows="3"></textarea>
+            <div class="comment-answer-btns">
+                <button class="comment-answer-submit fw-button fw-dark" type="submit">
+                    ${gettext("Submit")}
+                </button>
+                <button class="cancelSubmitComment fw-button fw-orange" type="submit">
+                    ${gettext("Cancel")}
+                </button>
+            </div>
+        </div>` :
+        ''
+    }
+    ${
+        comment.id===activeCommentId && (
+            comment.user===user.id ||
+            docInfo.access_rights==="write"
+        ) ?
+        `<span class="delete-comment-all delete-comment fa fa-times-circle"
+                data-id="${comment.id}">
+        </span>` :
+        ''
+    }
+    </div>`
+}
+
+/** A template to display all the margin boxes (comments, deletion/insertion notifications) */
+export let marginBoxesTemplate = ({
+        marginBoxes,
         activeCommentId,
         activeCommentAnswerId,
         user,
         docInfo
-    }) =>
-    theComments.map(comment => {
-        let author = comment.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === comment.user)
-        return comment.hidden ?
-        `<div id="comment-box-${comment.id}" class="comment-box hidden"></div>` :
-        `<div id="comment-box-${comment.id}" data-id="${comment.id}"  data-user-id="${comment.user}"
-                class="
-                    comment-box ${comment.id === activeCommentId ? 'active' : 'inactive'}
-                    ${comment.isMajor === true ? 'comment-is-major-bgc' : ''}
-            ">
-        ${
-            comment.comment.length === 0 ?
-            firstCommentTemplate({comment, author}) :
-            singleCommentTemplate({comment, active: (comment.id===activeCommentId), user, author})
+    }) => marginBoxes.map(mBox => {
+        switch(mBox.type) {
+            case 'comment':
+                return commentTemplate({comment: mBox.data, activeCommentId, activeCommentAnswerId, user, docInfo})
+                break
+            default:
+                console.warn(`Unknown margin box type: ${mBox.type}`)
+                break
         }
-        ${
-            comment.answers ?
-            comment.answers.map(answer =>
-                answerCommentTemplate({
-                    answer,
-                    author: answer.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === answer.user),
-                    commentId: comment.id,
-                    active: (comment.id===activeCommentId),
-                    activeCommentAnswerId,
-                    user,
-                    docInfo
-                })
-            ).join('') :
-            ''
-        }
-        ${
-            comment.id===activeCommentId && 0 < comment.comment.length ?
-            `<div class="comment-answer">
-                <textarea class="comment-answer-text" rows="3"></textarea>
-                <div class="comment-answer-btns">
-                    <button class="comment-answer-submit fw-button fw-dark" type="submit">
-                        ${gettext("Submit")}
-                    </button>
-                    <button class="cancelSubmitComment fw-button fw-orange" type="submit">
-                        ${gettext("Cancel")}
-                    </button>
-                </div>
-            </div>` :
-            ''
-        }
-        ${
-            comment.id===activeCommentId && (
-                comment.user===user.id ||
-                docInfo.access_rights==="write"
-            ) ?
-            `<span class="delete-comment-all delete-comment fa fa-times-circle"
-                    data-id="${comment.id}">
-            </span>` :
-            ''
-        }
-        </div>`
-    }
-).join('')
-
-
-export let filterByUserBoxTemplate = ({
-        users
-    }) =>
-    `<div id="comment-filter-byuser-box" title="${gettext("Filter by user")}">
-        <select>
-            ${
-                users.map(
-                    user => `<option value="${user.user_id}">
-                                ${escapeText(user.user_name)}
-                            </option>`
-                )
-            }
-        </select>
-    </div>`
+        return ''
+    }).join('')

@@ -95,7 +95,7 @@ export let settingsPlugin = function(options) {
         // TODO: Find a way that is more reliable than a timeout to check
         // for font loading.
         window.setTimeout(() => {
-            options.editor.mod.comments.layout.layoutComments()
+            options.editor.mod.marginboxes.updateDOM()
             options.editor.mod.footnotes.layout.layoutFootnotes()
         }, 250)
 

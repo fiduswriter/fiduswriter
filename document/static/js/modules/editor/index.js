@@ -58,6 +58,9 @@ import {
     toolbarModel
 } from "./menus"
 import {
+    ModMarginboxes
+} from "./marginboxes"
+import {
     ModStyles
 } from "./styles"
 import {
@@ -84,6 +87,7 @@ import {
     jumpHiddenNodesPlugin,
     keywordInputPlugin,
     linksPlugin,
+    marginboxesPlugin,
     pastePlugin,
     placeholdersPlugin,
     settingsPlugin,
@@ -143,6 +147,7 @@ export class Editor {
             [collabCaretsPlugin, () => ({editor: this})],
             [footnoteMarkersPlugin, () => ({editor: this})],
             [commentsPlugin, () => ({editor: this})],
+            [marginboxesPlugin, () => ({editor: this})],
             [keywordInputPlugin, () => ({editor: this})],
             [authorInputPlugin, () => ({editor: this})],
             [pastePlugin, () => ({editor: this})],
@@ -192,6 +197,7 @@ export class Editor {
         this.mod.footnotes.init()
         new ModCollab(this)
         new ModTools(this)
+        new ModMarginboxes(this)
         new ModComments(this)
         new ModStyles(this)
         this.activateFidusPlugins()
@@ -285,7 +291,7 @@ export class Editor {
         //  Setup comment handling
         this.mod.comments.store.reset()
         this.mod.comments.store.loadComments(doc.comments)
-        this.mod.comments.layout.view()
+        this.mod.marginboxes.view()
         this.waitingForDocument = false
         if (locationHash.length) {
             this.scrollIdIntoView(locationHash.slice(1))

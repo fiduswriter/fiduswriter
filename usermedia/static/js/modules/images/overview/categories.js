@@ -76,7 +76,7 @@ export class ImageOverviewCategories {
                     }
                     document.querySelectorAll('#editCategories .category-form').forEach(el => {
                         let thisVal = el.value.trim()
-                        let thisId = this.dataset.id
+                        let thisId = el.dataset.id
                         if ('undefined' == typeof (thisId)) thisId = 0
                         if ('' !== thisVal) {
                             cats.ids.push(thisId)

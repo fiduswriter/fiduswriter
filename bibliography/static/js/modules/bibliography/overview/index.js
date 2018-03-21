@@ -1,6 +1,6 @@
 import fixUTF8 from "fix-utf8"
 import {BibLatexImporter} from "../import"
-import {addRemoveListHandler, litToText, nameToText} from "../tools"
+import {litToText, nameToText} from "../tools"
 import {BibEntryForm} from "../form"
 import {editCategoriesTemplate, bibtableTemplate} from "./templates"
 import {BibliographyDB} from "../database"
@@ -120,10 +120,7 @@ export class BibliographyOverview {
             },
         })
 
-        addRemoveListHandler()
-
     }
-
 
     /** Dialog to confirm deletion of bibliography items.
      * @function deleteBibEntryDialog
@@ -295,6 +292,22 @@ export class BibliographyOverview {
                             return this.addBibList(ids)
                         }
                     )
+                    break
+                case findTarget(event, '.fw-add-input', el):
+                    let itemEl = el.target.closest('.fw-list-input')
+                    if (!itemEl.nextElementSibling) {
+                        itemEl.insertAdjacentHTML(
+                            'afterend',
+                            `<tr class="fw-list-input">
+                                <td>
+                                    <input type="text" class="category-form">
+                                    <span class="fw-add-input icon-addremove"></span>
+                                </td>
+                            </tr>`
+                        )
+                    } else {
+                        itemEl.parentElement.removeChild(itemEl)
+                    }
                     break
                 default:
                     break

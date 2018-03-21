@@ -230,6 +230,22 @@ export class ImageOverview {
                         }
                     )
                     break
+                case findTarget(event, '.fw-add-input', el):
+                    let itemEl = el.target.closest('.fw-list-input')
+                    if (!itemEl.nextElementSibling) {
+                        itemEl.insertAdjacentHTML(
+                            'afterend',
+                            `<tr class="fw-list-input">
+                                <td>
+                                    <input type="text" class="category-form">
+                                    <span class="fw-add-input icon-addremove"></span>
+                                </td>
+                            </tr>`
+                        )
+                    } else {
+                        itemEl.parentElement.removeChild(itemEl)
+                    }
+                    break
                 default:
                     break
             }

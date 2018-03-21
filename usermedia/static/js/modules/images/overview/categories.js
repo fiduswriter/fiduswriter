@@ -103,23 +103,7 @@ export class ImageOverviewCategories {
             close: () =>
                 jQuery("#editCategories").dialog('destroy').remove()
         })
-        this.addRemoveListHandler()
     }
 
-    addRemoveListHandler() {
-        //add and remove name list field
-        document.querySelectorAll('.fw-add-input').forEach(el =>
-            el.addEventListener('click', event => {
-                let parent = jQuery(el).parents('.fw-list-input')
-                if (0 === parent.next().length) {
-                    let parentClone = parent.clone(true)
-                    parentClone.find('input, select').val('').removeAttr('data-id')
-                    parentClone.insertAfter(parent)
-                } else {
-                    parent.remove()
-                }
-            })
-        )
-    }
 
 }

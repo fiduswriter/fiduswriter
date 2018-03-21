@@ -1,3 +1,5 @@
+import {whenReady} from "../common"
+
 let loginPage = function() {
     let btnWidth = 1,
     socialButtons = [].slice.call(document.querySelectorAll('.fw-button.fw-socialaccount'))
@@ -19,7 +21,7 @@ let loginPage = function() {
 }
 
 export let bind = function() {
-    jQuery(document).ready(() => {
+    whenReady().then(() => {
         loginPage()
     })
 }

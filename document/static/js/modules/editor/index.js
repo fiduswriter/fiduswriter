@@ -1,5 +1,8 @@
 /* Functions for ProseMirror integration.*/
 import {
+    whenReady
+} from "../common"
+import {
     EditorState,
     TextSelection
 } from "prosemirror-state"
@@ -162,11 +165,7 @@ export class Editor {
     }
 
     init() {
-        if (document.readyState === "complete") {
-            this.initEditor()
-        } else {
-            document.addEventListener("DOMContentLoaded", event => this.initEditor())
-        }
+        whenReady().then(()=>this.initEditor())
     }
 
     initEditor() {

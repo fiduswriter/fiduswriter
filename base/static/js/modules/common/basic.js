@@ -275,3 +275,14 @@ export let findTarget = function(event, selector, el={}) {
     }
     return false
 }
+
+// Promise when page has been loaded.
+export let whenReady = function() {
+    if (document.readyState === "complete") {
+        return Promise.resolve()
+    } else {
+        return new Promise(resolve => {
+            document.addEventListener("DOMContentLoaded", event => resolve())
+        })
+    }
+}

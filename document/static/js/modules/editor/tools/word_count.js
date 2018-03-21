@@ -44,14 +44,13 @@ export class ModToolsWordCount {
             draggable : false,
             resizable : false,
             modal : true,
-            buttons : {'Close': function() {
-                jQuery('#word-counter-dialog').dialog('close')
-            }},
-            create : function () {
-                let theDialog = jQuery(this).closest(".ui-dialog");
-                theDialog.find(".ui-dialog-buttonset .ui-button:eq(0)").addClass("fw-button fw-orange")
-            },
-
+            buttons : [
+                {
+                    text: gettext('Close'),
+                    class: 'fw-button fw-orange',
+                    click: function() {jQuery('#word-counter-dialog').dialog('close')}
+                }
+            ],
             close : function() {
                 jQuery(this).dialog('destroy').remove()
             }

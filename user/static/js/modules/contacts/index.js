@@ -1,6 +1,6 @@
 import {teammemberTemplate} from "./templates"
 import {deleteMemberDialog} from "./manage"
-import {postJson, addAlert, OverviewMenuView} from "../common"
+import {postJson, addAlert, OverviewMenuView, findTarget} from "../common"
 import {SiteMenu} from "../menu"
 import {menuModel} from "./menu"
 
@@ -26,13 +26,16 @@ export class ContactsOverview {
     }
 
     bind() {
-        jQuery(document).ready(function() {
-
-            //delete single user
-            jQuery(document).on('click', '.delete-single-member', function() {
-                deleteMemberDialog([this.dataset.id])
-            })
-
+        document.addEventListener('click', event => {
+            let el = {}
+            switch (true) {
+                case findTarget(event, '.delete-single-member', el):
+                    //delete single user
+                    deleteMemberDialog([el.target.dataset.id])
+                    break
+                default:
+                    break
+            }
         })
     }
 

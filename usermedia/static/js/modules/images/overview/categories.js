@@ -64,46 +64,46 @@ export class ImageOverviewCategories {
             'beforeend',
             dialogBody
         )
-        let diaButtons = {}
         let that = this
-        diaButtons[gettext('Submit')] = function () {
-            let cats = {
-                'ids': [],
-                'titles': []
-            }
-            document.querySelectorAll('#editCategories .category-form').forEach(el => {
-                let thisVal = el.value.trim()
-                let thisId = this.dataset.id
-                if ('undefined' == typeof (thisId)) thisId = 0
-                if ('' !== thisVal) {
-                    cats.ids.push(thisId)
-                    cats.titles.push(thisVal)
+        let buttons = [
+            {
+                text: gettext('Submit'),
+                class: "fw-button fw-dark",
+                click: function () {
+                    let cats = {
+                        'ids': [],
+                        'titles': []
+                    }
+                    document.querySelectorAll('#editCategories .category-form').forEach(el => {
+                        let thisVal = el.value.trim()
+                        let thisId = this.dataset.id
+                        if ('undefined' == typeof (thisId)) thisId = 0
+                        if ('' !== thisVal) {
+                            cats.ids.push(thisId)
+                            cats.titles.push(thisVal)
+                        }
+                    })
+                    that.saveCategories(cats)
+                    jQuery(this).dialog('close')
                 }
-            })
-            that.saveCategories(cats)
-            jQuery(this).dialog('close')
-        }
-        diaButtons[gettext('Cancel')] = function () {
-            jQuery(this).dialog('close')
-        }
+            },
+            {
+                text: gettext('Cancel'),
+                class: "fw-button fw-orange",
+                click: function () {jQuery(this).dialog('close')}
+            }
+        ]
+
         jQuery("#editCategories").dialog({
             resizable: false,
             width: 350,
             height: 350,
             modal: true,
-            buttons: diaButtons,
-            create: function () {
-                let theDialog = jQuery(this).closest(".ui-dialog")
-                theDialog.find(".ui-button:first-child").addClass(
-                    "fw-button fw-dark")
-                theDialog.find(".ui-button:last").addClass(
-                    "fw-button fw-orange")
-            },
+            buttons,
             close: () =>
                 jQuery("#editCategories").dialog('destroy').remove()
         })
         this.addRemoveListHandler()
-
     }
 
     addRemoveListHandler() {

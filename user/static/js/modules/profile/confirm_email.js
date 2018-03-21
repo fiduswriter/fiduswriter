@@ -1,6 +1,7 @@
+import {whenReady} from "../common"
 
 export let bind = function() {
-    jQuery(document).ready(() => {
+    whenReady().then(() => {
         document.querySelectorAll('.checker').forEach(el => el.addEventListener(
             'click',
             () => {

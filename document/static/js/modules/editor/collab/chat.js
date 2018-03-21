@@ -1,5 +1,5 @@
 import {messageTemplate} from "./templates"
-import {localizeDate} from "../../common"
+import {localizeDate, whenReady} from "../../common"
 
 /*
 * Functions for chat between users who access a document simultaneously.
@@ -86,8 +86,7 @@ export class ModCollabChat {
             'beforeend',
             `<style>\n#messageform.empty:before{content:"${gettext('Send a message...')}"}\n</style>`
         )
-        let that = this
-        jQuery(document).ready(() => {
+        whenReady().then(() => {
             document.getElementById('chat-container').style.maxHeight = jQuery(window).height() - 200 + 'px'
 
             document.querySelector('#chat .resize-button').addEventListener(

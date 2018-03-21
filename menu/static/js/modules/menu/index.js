@@ -1,5 +1,5 @@
 import * as plugins from "../../plugins/menu"
-import {addDropdownBox} from "../common"
+import {addDropdownBox, whenReady} from "../common"
 import {headerNavTemplate} from "./templates"
 
 // Bindings for the top menu on overview pages
@@ -36,7 +36,7 @@ export class SiteMenu {
             currentActive.active = true
         }
 
-        jQuery(document).ready(() => {
+        whenReady().then(() => {
             this.renderMenu()
             this.bindPreferencePullDown()
         })

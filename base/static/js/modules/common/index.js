@@ -18,6 +18,7 @@ export {
     postJson,
     postJsonStatus,
     getCsrfToken,
-    findTarget
+    findTarget,
+    whenReady
 }
 from "./basic"

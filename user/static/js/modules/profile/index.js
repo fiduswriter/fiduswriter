@@ -1,7 +1,7 @@
 import {changeAvatarDialogTemplate, confirmDeleteAvatarTemplate,
     deleteUserDialogTemplate, changePwdDialogTemplate, changeEmailDialogTemplate,
 deleteEmailDialogTemplate} from "./templates"
-import {addDropdownBox, activateWait, deactivateWait, post, postJson, postJsonStatus, addAlert} from "../common"
+import {addDropdownBox, activateWait, deactivateWait, post, postJson, postJsonStatus, addAlert, findTarget, whenReady} from "../common"
 import {SiteMenu} from "../menu"
 
 let changeAvatarDialog = function() {
@@ -319,9 +319,9 @@ let addEmailDialog = function() {
     })
 }
 
-let deleteEmailDialog = function() {
-    let thisTr = this.parentElement.parentElement,
-        email = this.dataset.email
+let deleteEmailDialog = function(target) {
+    let thisTr = target.parentElement.parentElement,
+        email = target.dataset.email
 
     document.body.insertAdjacentHTML(
         'beforeend',
@@ -440,7 +440,7 @@ let changePrimaryEmailDialog = function() {
 }
 
 export let bind = function() {
-    jQuery(document).ready(() => {
+    whenReady().then(() => {
         let smenu = new SiteMenu("") // Nothing highlighted
         smenu.init()
         addDropdownBox(document.getElementById('edit-avatar-btn'), document.getElementById('edit-avatar-pulldown'))
@@ -450,7 +450,16 @@ export let bind = function() {
         document.getElementById('delete-account').addEventListener('click', deleteUserDialog)
         document.getElementById('fw-edit-profile-pwd').addEventListener('click',changePwdDialog)
         document.getElementById('add-profile-email').addEventListener('click', addEmailDialog)
-        jQuery(document).on('click', '.delete-email', deleteEmailDialog)
+        document.addEventListener('click', event => {
+            let el = {}
+            switch (true) {
+                case findTarget(event, '.delete-email', el):
+                    deleteEmailDialog(el.target)
+                    break
+                default:
+                    break
+            }
+        })
         document.querySelectorAll('.primary-email-radio').forEach(el => el.addEventListener(
             'change', changePrimaryEmailDialog
         ))

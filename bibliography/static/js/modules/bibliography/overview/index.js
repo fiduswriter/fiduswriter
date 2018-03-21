@@ -6,7 +6,7 @@ import {editCategoriesTemplate, bibtableTemplate} from "./templates"
 import {BibliographyDB} from "../database"
 import {BibTypeTitles} from "../form/strings"
 import {SiteMenu} from "../../menu"
-import {OverviewMenuView, getCsrfToken} from "../../common"
+import {OverviewMenuView, getCsrfToken, findTarget, whenReady} from "../../common"
 import {menuModel} from "./menu"
 import * as plugins from "../../../plugins/bibliography_overview"
 
@@ -268,32 +268,37 @@ export class BibliographyOverview {
         })
     }
 
-    /** Bind the init function to jQuery(document).ready.
+    /** Bind the init function to doc loading.
      * @function bind
      */
     bind() {
-        jQuery(document).ready(() => this.bindEvents())
+        whenReady().then(() => this.bindEvents())
     }
 
     /** Initialize the bibliography table and bind interactive parts.
      * @function init
           */
     bindEvents() {
-        let that = this
-        jQuery(document).on('click', '.delete-bib', function () {
-            let bookId = parseInt(this.getAttribute('data-id'))
-            that.deleteBibEntryDialog([bookId])
-        })
-
-        jQuery(document).on('click', '.edit-bib', function () {
-            let bookId = parseInt(this.getAttribute('data-id'))
-            let form = new BibEntryForm(that.bibDB, bookId)
-            form.init().then(
-                idTranslations => {
-                    let ids = idTranslations.map(idTrans => idTrans[1])
-                    return that.addBibList(ids)
-                }
-            )
+        document.addEventListener('click', event => {
+            let el = {}, bookId
+            switch (true) {
+                case findTarget(event, '.delete-bib', el):
+                    bookId = parseInt(el.target.dataset.id)
+                    this.deleteBibEntryDialog([bookId])
+                    break
+                case findTarget(event, '.edit-bib', el):
+                    bookId = parseInt(el.target.dataset.id)
+                    let form = new BibEntryForm(this.bibDB, bookId)
+                    form.init().then(
+                        idTranslations => {
+                            let ids = idTranslations.map(idTrans => idTrans[1])
+                            return this.addBibList(ids)
+                        }
+                    )
+                    break
+                default:
+                    break
+            }
         })
 
         // Allow pasting of bibtex data.

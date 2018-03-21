@@ -94,7 +94,7 @@ export class FigureDialog {
 
     init() {
     // toolbar figure
-        let dialogButtons = []
+        let buttons = []
 
         if (this.node && this.node.type && this.node.type.name==='figure') {
             this.insideFigure = true
@@ -105,7 +105,7 @@ export class FigureDialog {
             this.figureCategory = this.node.attrs.figureCategory
             this.caption = this.node.attrs.caption
 
-            dialogButtons.push({
+            buttons.push({
                 text: gettext('Remove'),
                 class: 'fw-button fw-orange',
                 click: () => {
@@ -123,13 +123,13 @@ export class FigureDialog {
             image: this.imgId
         }))
 
-        dialogButtons.push({
+        buttons.push({
             text: this.submitMessage,
             class: 'fw-button fw-dark',
             mousedown: event => this.submitForm()
         })
 
-        dialogButtons.push({
+        buttons.push({
             text: gettext('Cancel'),
             class: 'fw-button fw-orange',
             click: event => this.dialog.dialog('close')
@@ -143,7 +143,7 @@ export class FigureDialog {
             modal: true,
             resizable: false,
             draggable: false,
-            buttons: dialogButtons,
+            buttons,
             dialogClass: 'figure-dialog',
             close: event => {
                  this.dialog.dialog('destroy').remove()

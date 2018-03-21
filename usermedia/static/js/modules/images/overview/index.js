@@ -1,6 +1,6 @@
 import {ImageDB} from "../database"
 import {ImageOverviewCategories} from "./categories"
-import {activateWait, deactivateWait, addAlert, post} from "../../common"
+import {activateWait, deactivateWait, addAlert, post, findTarget, whenReady} from "../../common"
 import {SiteMenu} from "../../menu"
 import {OverviewMenuView} from "../../common"
 import {menuModel} from "./menu"
@@ -212,24 +212,28 @@ export class ImageOverview {
 
 
     bindEvents() {
-        let that = this
-        jQuery(document).on('click', '.delete-image', function () {
-            let imageId = jQuery(this).attr('data-id')
-            that.deleteImageDialog([imageId])
+        document.addEventListener('click', event => {
+            let el = {}, imageId
+            switch (true) {
+                case findTarget(event, '.delete-image', el):
+                    imageId = el.target.dataset.id
+                    this.deleteImageDialog([imageId])
+                    break
+                case findTarget(event, '.edit-image', el):
+                    imageId = el.target.dataset.id
+                    let dialog = new ImageEditDialog(this.imageDB, imageId)
+                    dialog.init().then(
+                        imageId => {
+                            this.stopUsermediaTable()
+                            this.appendToImageTable(imageId)
+                            this.startUsermediaTable()
+                        }
+                    )
+                    break
+                default:
+                    break
+            }
         })
-
-        jQuery(document).on('click', '.edit-image', function () {
-            let imageId = jQuery(this).attr('data-id')
-            let dialog = new ImageEditDialog(that.imageDB, imageId)
-            dialog.init().then(
-                imageId => {
-                    that.stopUsermediaTable()
-                    that.appendToImageTable(imageId)
-                    that.startUsermediaTable()
-                }
-            )
-        })
-
     }
 
     init() {
@@ -239,7 +243,7 @@ export class ImageOverview {
     }
 
     bind() {
-        jQuery(document).ready(() => {
+        whenReady().then(() => {
             this.init()
         })
     }

@@ -33,7 +33,7 @@ export class ModMarginboxes {
         // Handle the layout of the comments on the screen.
         // DOM write phase
 
-        let marginBoxes = [], referrers = [], activeCommentStyle = ''
+        let marginBoxes = [], referrers = [], activeCommentStyle = '', lastNodeTrackMarks = []
 
         this.editor.view.state.doc.descendants((node, pos, parent) => {
             if (!node.isInline && !node.isLeaf) {
@@ -41,10 +41,21 @@ export class ModMarginboxes {
             }
             let commentIds = this.editor.mod.comments.interactions.findCommentIds(node)
 
-            let trackMarks = node.marks.filter(mark =>
+            let nodeTrackMarks = node.marks.filter(mark =>
                 mark.type.name==='deletion' ||
                 (mark.type.name==='insertion' && !mark.attrs.approved)
             )
+
+            // Filter out trackmarks already present in the last node.
+            let trackMarks = nodeTrackMarks.filter(mark =>
+                !lastNodeTrackMarks.find(
+                    lastMark => mark.type.name===lastMark.type.name &&
+                    mark.attrs.user===lastMark.attrs.user &&
+                    mark.attrs.date===lastMark.attrs.date
+                )
+            )
+
+            lastNodeTrackMarks = nodeTrackMarks
 
             if (!commentIds.length && !trackMarks.length) {
                 return
@@ -70,7 +81,7 @@ export class ModMarginboxes {
                 referrers.push(pos)
             })
             trackMarks.forEach(mark => {
-                marginBoxes.push({type: mark.type.name, data: Object.assign({}, mark.attrs)})
+                marginBoxes.push({type: mark.type.name, data: Object.assign({}, mark.attrs), pos})
                 referrers.push(pos)
             })
         })

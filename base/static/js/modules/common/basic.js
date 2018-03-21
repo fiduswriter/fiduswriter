@@ -264,3 +264,14 @@ export let postJsonStatus = function(url, params={}, csrfToken=false) {
         )
     )
 }
+
+// Check if selector matches one of the ancestors of the event target.
+// Used in switch statements of document event listeners.
+export let findTarget = function(event, selector, el={}) {
+    el.target = event.target.closest(selector)
+    if (el.target) {
+        event.stopPropagation()
+        return true
+    }
+    return false
+}

@@ -1,5 +1,6 @@
 import {getCommentDuringCreationDecoration} from "../state_plugins"
 import {REVIEW_ROLES} from ".."
+import {findTarget} from "../../common"
 
 /* Functions related to user interactions with comments */
 export class ModCommentInteractions {
@@ -13,52 +14,49 @@ export class ModCommentInteractions {
 
     bindEvents() {
         // Bind all the click events related to comments
-        let that = this
-        jQuery(document).on("click", ".submitComment", function() {
-            that.submitComment(this)
-        })
-        jQuery(document).on("click", ".cancelSubmitComment", function() {
-            that.cancelSubmitComment(this)
-        })
-        jQuery(document).on("click", ".margin-box.inactive", function() {
-            let id = that.getCommentId(this)
-            that.activateComment(id)
-            that.mod.editor.mod.marginboxes.updateDOM()
-        })
-
-        jQuery(document).on('click', '.edit-comment', function() {
-            let activeWrapper = document.querySelector('.margin-box.active')
-            activeWrapper.querySelector('.comment-text-wrapper').classList.add('editing')
-            activeWrapper.querySelector('textarea').value = activeWrapper.querySelector('.comment-p').innerText
-        })
-
-        jQuery(document).on('click', '.edit-comment-answer', function() {
-            that.editAnswer(
-                parseInt(this.dataset.id),
-                parseInt(this.dataset.answer)
-            )
-        })
-
-        jQuery(document).on('click', '.submit-comment-answer-edit',
-            function() {
-                that.submitAnswerEdit(this.previousElementSibling)
-            })
-
-        jQuery(document).on(
-            "click",
-            ".comment-answer-submit",
-            () => this.submitAnswer()
-        )
-
-        jQuery(document).on('click', '.delete-comment', function() {
-            that.deleteComment(parseInt(this.dataset.id))
-        })
-
-        jQuery(document).on('click', '.delete-comment-answer', function() {
-            that.deleteCommentAnswer(
-                parseInt(this.dataset.id),
-                parseInt(this.dataset.answer)
-            )
+        document.addEventListener('click', event => {
+            let el = {}
+            switch (true) {
+                case findTarget(event, '.submitComment', el):
+                    this.submitComment(el.target)
+                    break
+                case findTarget(event, '.cancelSubmitComment', el):
+                    this.cancelSubmitComment(el.target)
+                    break
+                case findTarget(event, '.margin-box.inactive', el):
+                    let id = this.getCommentId(el.target)
+                    this.activateComment(id)
+                    this.mod.editor.mod.marginboxes.updateDOM()
+                    break
+                case findTarget(event, '.edit-comment', el):
+                    let activeWrapper = document.querySelector('.margin-box.active')
+                    activeWrapper.querySelector('.comment-text-wrapper').classList.add('editing')
+                    activeWrapper.querySelector('textarea').value = activeWrapper.querySelector('.comment-p').innerText
+                    break
+                case findTarget(event, '.edit-comment-answer', el):
+                    this.editAnswer(
+                        parseInt(el.target.dataset.id),
+                        parseInt(el.target.dataset.answer)
+                    )
+                    break
+                case findTarget(event, '.submit-comment-answer-edit', el):
+                    this.submitAnswerEdit(el.target.previousElementSibling)
+                    break
+                case findTarget(event, '.comment-answer-submit', el):
+                    this.submitAnswer()
+                    break
+                case findTarget(event, '.delete-comment', el):
+                    this.deleteComment(parseInt(el.target.dataset.id))
+                    break
+                case findTarget(event, '.delete-comment-answer', el):
+                    this.deleteCommentAnswer(
+                        parseInt(el.target.dataset.id),
+                        parseInt(el.target.dataset.answer)
+                    )
+                    break
+                default:
+                    break
+            }
         })
     }
 

@@ -151,7 +151,7 @@ let commentTemplate = ({comment, activeCommentId, activeCommentAnswerId, user, d
     </div>`
 }
 
-let trackTemplate = ({type, data, docInfo}) => {
+let trackTemplate = ({type, data, pos, docInfo}) => {
     let author = data.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === data.user)
     return `
         <div class="margin-box">
@@ -163,8 +163,8 @@ let trackTemplate = ({type, data, docInfo}) => {
                     <p class="comment-date">${localizeDate(data.date*600000, 'minutes')}</p>
                 </div>
                 <div class="ui-dialog-buttonset">
-                    <button class="fw-button fw-small fw-green">${gettext('Accept')}</button>
-                    <button class="fw-button fw-small fw-orange">${gettext('Reject')}</button>
+                    <button class="fw-button fw-small fw-green track-accept" data-type="${type}" data-pos="${pos}">${gettext('Accept')}</button>
+                    <button class="fw-button fw-small fw-orange track-reject" data-type="${type}" data-pos="${pos}">${gettext('Reject')}</button>
                 </div>
             </div>
         </div>`
@@ -185,7 +185,7 @@ export let marginBoxesTemplate = ({
                 break
             case 'insertion':
             case 'deletion':
-                return trackTemplate({type: mBox.type, data: mBox.data, docInfo})
+                return trackTemplate({type: mBox.type, data: mBox.data, pos: mBox.pos, docInfo})
                 break
             default:
                 console.warn(`Unknown margin box type: ${mBox.type}`)

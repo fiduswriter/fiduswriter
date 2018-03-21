@@ -282,7 +282,11 @@ export let whenReady = function() {
         return Promise.resolve()
     } else {
         return new Promise(resolve => {
-            document.addEventListener("DOMContentLoaded", event => resolve())
+            document.addEventListener("readystatechange", event => {
+                if (document.readyState === "complete") {
+                    resolve()
+                }
+            })
         })
     }
 }

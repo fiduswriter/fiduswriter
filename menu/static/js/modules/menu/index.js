@@ -50,25 +50,29 @@ export class SiteMenu {
     bindPreferencePullDown() {
         let box = document.getElementById('user-preferences-pulldown')
         let button = document.getElementById('preferences-btn')
-        addDropdownBox(button, box)
+        addDropdownBox(
+            button,
+            box,
+            () => {
+                // In addition to adding the dropdown, we also need to add some css
+                // values so that the dropdown is placed close to #preferences-btn
+                let btnOffset = button.getBoundingClientRect()
+                box.style.left = `${document.body.scrollLeft + btnOffset.left - 52}px`
+                box.style.top = `${document.body.scrollTop + btnOffset.top + 27}px`
+            }
+        )
 
-        // In addition to adding the dropdown, we also need to add some css
-        // values so that the dropdown is placed close to #preferences-btn
-        document.getElementById('preferences-btn').addEventListener('mousedown', () => {
-            let btnOffset = button.getBoundingClientRect()
-            box.style.left = document.body.scrollLeft + btnOffset.left - 52
-            box.style.top = document.body.scrollTop + btnOffset.top + 27
-        })
         // As a click will close the pulldown, we need to activate the link by means of a mousedown already.
-        jQuery(document).on('mousedown', '#user-preferences-pulldown a', function(event) {
+        document.querySelectorAll('#user-preferences-pulldown a').forEach(el => el.addEventListener('mousedown', event => {
             event.preventDefault()
-            window.location = this.getAttribute('href')
-        })
+            window.location = el.getAttribute('href')
+        }))
+
         // Same for form button
-        jQuery(document).on('mousedown', '#user-preferences-pulldown button[type="submit"]', function(event) {
+        document.querySelectorAll('#user-preferences-pulldown form').forEach(el => el.addEventListener('mousedown', event => {
             event.preventDefault()
-            jQuery(this).closest('form').submit()
-        })
+            el.submit()
+        }))
     }
 
     activatePlugins() {

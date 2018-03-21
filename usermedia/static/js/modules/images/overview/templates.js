@@ -53,7 +53,7 @@ export let usermediaTableTemplate = ({id, cats, title, width, height, fileType, 
             <span class="fw-inline">${width} x ${height}</span>
         </td>
         <td width="190" class="file_type ">
-            <span class="fw-inline">${localizeDate(added, true)}</span>
+            <span class="fw-inline">${localizeDate(added, 'sortable-date')}</span>
         </td>
         <td width="75" align="center">
             <span class="delete-image fw-inline fw-link-text" data-id="${id}"

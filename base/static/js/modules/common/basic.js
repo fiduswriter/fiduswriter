@@ -1,15 +1,20 @@
 /** Creates a dropdown box.
  * @param btn The button to open and close the dropdown box.
  * @param box The node containing the contents of the dropdown box.
+ * @param preopen An optional function to be called before opening the dropdown box. Used to position dropdown box.
  */
 
-export let addDropdownBox = function(btn, box) {
-    btn.bind('mousedown', event => {
+export let addDropdownBox = function(btn, box, preopen=false) {
+    btn.addEventListener('click', event => {
         event.preventDefault()
+        event.stopPropagation()
         if(btn.classList.contains('disabled')) {
             return
         }
-        if('none' === box.style.display) {
+        if(!box.clientWidth) {
+            if (preopen) {
+                preopen()
+            }
             openDropdownBox(box)
         }
     })
@@ -20,18 +25,15 @@ export let addDropdownBox = function(btn, box) {
  */
 
 let openDropdownBox = function(box) {
-
     // Show this box
-    box.style.display = ''
-    // Give that the dropdown menu was opened through a mousedown event, there
-    // will be a first click event following it. We will wait for the second
-    // click event.
-    jQuery(document).one('click', () => {
-        jQuery(document).one('click', event => {
-            event.preventDefault()
-            box.style.display = 'none'
-        })
-    })
+    box.style.display = 'block'
+
+    let closeDropdownBox = function(event) {
+        event.preventDefault()
+        box.style.display = ''
+        document.removeEventListener('click', closeDropdownBox, false);
+    }
+    document.addEventListener('click', closeDropdownBox, false)
 }
 
 
@@ -93,21 +95,25 @@ export let addAlert = function(alertType, alertMsg) {
 
 /** Turn milliseconds since epoch (UTC) into a local date string.
  * @param {number} milliseconds Number of milliseconds since epoch (1/1/1970 midnight, UTC).
- * @param {boolean} sortable Whether the result should appear in a date only list.
+ * @param {boolean} type 'full' for full date (default), 'sortable-date' for sortable date, 'minutes' for minute accuracy
  */
-export let localizeDate = function (milliseconds, sortable) {
+export let localizeDate = function (milliseconds, type='full') {
     milliseconds = parseInt(milliseconds)
     if (milliseconds > 0) {
         let theDate = new Date(milliseconds)
-        if (true === sortable) {
-            let yyyy = theDate.getFullYear(),
-                mm = theDate.getMonth() + 1,
-                dd = theDate.getDate()
+        switch(type) {
+            case 'sortable-date':
+                let yyyy = theDate.getFullYear(),
+                    mm = theDate.getMonth() + 1,
+                    dd = theDate.getDate()
 
-            return `${yyyy}-${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`
-        }
-        else {
-            return theDate.toLocaleString()
+                return `${yyyy}-${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`
+                break
+            case 'minutes':
+                return theDate.toLocaleString([], {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute:'2-digit'})
+                break
+            default:
+                return theDate.toLocaleString()
         }
     }
     else {

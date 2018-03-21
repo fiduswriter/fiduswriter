@@ -156,11 +156,15 @@ let trackTemplate = ({type, data, docInfo}) => {
     return `
         <div class="margin-box">
             <div class="track-${type}">
+                <h3>${type==='insertion' ? gettext('Insertion') : gettext('Deletion') }</h3>
                 <div class="comment-user">
                     <img class="comment-user-avatar" src="${author ? author.avatar : `${$StaticUrls.base$}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
                     <h5 class="comment-user-name">${escapeText(author ? author.name : data.username)}</h5>
-                    <p class="comment-date">${localizeDate(data.date*600000)}</p>
-                    <h3>${type==='insertion' ? gettext('Insertion') : gettext('Deletion') }</h3>
+                    <p class="comment-date">${localizeDate(data.date*600000, 'minutes')}</p>
+                </div>
+                <div class="ui-dialog-buttonset">
+                    <button class="fw-button fw-small fw-green">${gettext('Accept')}</button>
+                    <button class="fw-button fw-small fw-orange">${gettext('Reject')}</button>
                 </div>
             </div>
         </div>`

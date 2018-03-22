@@ -3,6 +3,26 @@ import {ReplaceStep, AddMarkStep} from "prosemirror-transform"
 import {Slice} from "prosemirror-model"
 
 import {findTarget} from "../../common"
+
+
+// From https://discuss.prosemirror.net/t/expanding-the-selection-to-the-active-mark/478/2 with some bugs fixed
+function getFromToMark(doc, pos, mark) {
+    let $pos = doc.resolve(pos), parent = $pos.parent
+    let start = parent.childAfter($pos.parentOffset)
+    if (!start.node) {
+        return null
+    }
+    let startIndex = $pos.index(), startPos = $pos.start() + start.offset
+    while (startIndex > 0 && mark.isInSet(parent.child(startIndex - 1).marks)) {
+        startPos -= parent.child(--startIndex).nodeSize
+    }
+    let endIndex = $pos.index() + 1, endPos = $pos.start() + start.offset + start.node.nodeSize
+    while (endIndex < parent.childCount && mark.isInSet(parent.child(endIndex).marks)) {
+        endPos += parent.child(endIndex++).nodeSize
+    }
+    return {from: startPos, to: endPos}
+}
+
 // Helper functions related to tracked changes
 export class ModToolsTrack {
     constructor(mod) {
@@ -38,11 +58,11 @@ export class ModToolsTrack {
             if (marks) {
                 insertionMark = marks.find(mark => mark.type.name==='insertion' && !mark.attrs.approved)
                 if (insertionMark) {
-                    insertionPos = selection.from - resolvedPos.textOffset
+                    insertionPos = selection.from
                 }
                 deletionMark = marks.find(mark => mark.type.name==='deletion')
                 if (deletionMark) {
-                    deletionPos = selection.from - resolvedPos.textOffset
+                    deletionPos = selection.from
                 }
             }
         } else {
@@ -70,31 +90,13 @@ export class ModToolsTrack {
             )
         }
         if (insertionMark) {
-            let resolvedPos = view.state.doc.resolve(insertionPos), prevNode = resolvedPos.nodeBefore
-            while(
-                prevNode &&
-                prevNode.marks.find(mark => mark.type.name==='insertion' && !mark.attrs.approved && insertionMark.attrs.user === mark.attrs.user && insertionMark.attrs.date === mark.attrs.date)
-            ) {
-                insertionPos -= prevNode.nodeSize
-                resolvedPos = view.state.doc.resolve(insertionPos)
-                prevNode = resolvedPos.nodeBefore
-            }
-            this.selectedChanges.insertion = insertionPos
+            this.selectedChanges.insertion = getFromToMark(view.state.doc, insertionPos, insertionMark)
         } else {
             this.selectedChanges.insertion = false
         }
 
         if (deletionMark) {
-            let resolvedPos = view.state.doc.resolve(deletionPos), prevNode = resolvedPos.nodeBefore
-            while(
-                prevNode &&
-                prevNode.marks.find(mark => mark.type.name==='deletion' && deletionMark.attrs.user === mark.attrs.user && deletionMark.attrs.date === mark.attrs.date)
-            ) {
-                deletionPos -= prevNode.nodeSize
-                resolvedPos = view.state.doc.resolve(deletionPos)
-                prevNode = resolvedPos.nodeBefore
-            }
-            this.selectedChanges.deletion = deletionPos
+            this.selectedChanges.deletion = getFromToMark(view.state.doc, deletionPos, deletionMark)
         } else {
             this.selectedChanges.deletion = false
         }

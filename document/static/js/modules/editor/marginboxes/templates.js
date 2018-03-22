@@ -186,7 +186,13 @@ export let marginBoxesTemplate = ({
                 break
             case 'insertion':
             case 'deletion':
-                return trackTemplate({type: mBox.type, data: mBox.data, pos: mBox.pos, active:selectedChanges[mBox.type]===mBox.pos, docInfo})
+                return trackTemplate({
+                    type: mBox.type,
+                    data: mBox.data,
+                    pos: mBox.pos,
+                    active: selectedChanges[mBox.type] && selectedChanges[mBox.type].from===mBox.pos,
+                    docInfo
+                })
                 break
             default:
                 console.warn(`Unknown margin box type: ${mBox.type}`)

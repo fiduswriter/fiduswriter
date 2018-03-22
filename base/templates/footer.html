@@ -1,6 +1,6 @@
 {% load i18n %}
 <footer id="footer-menu">
-    <div class="fw-container">.
+    <div class="fw-container">
         <ul class="fw-footer-links">
             <li>
                 <a href="/terms/" target="_blank">
@@ -39,10 +39,7 @@
     </div>
 </footer>
 <script>
-  jQuery(function() {
-    jQuery('#langSelection').change(function() {
-      document.setLangForm.submit();
-      return false;
+    document.getElementById('langSelection').addEventListener('change', () => {
+        document.setLangForm.submit();
     });
-  });
 </script>

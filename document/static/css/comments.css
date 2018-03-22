@@ -22,7 +22,7 @@
 }
 .margin-box.active {
     background-color: #fffacf;
-    left: -30px;
+    left: -18px;
     z-index: 5;
 }
 .margin-box.active:after {

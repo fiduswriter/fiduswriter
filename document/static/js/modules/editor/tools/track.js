@@ -8,6 +8,7 @@ export class ModToolsTrack {
     constructor(mod) {
         mod.track = this
         this.mod = mod
+        this.selectedChanges = {insertion: false, deletion: false}
         this.bindEvents()
     }
 
@@ -26,6 +27,79 @@ export class ModToolsTrack {
                     break
             }
         })
+    }
+
+    activateSelectedChanges(view) {
+
+        let selection = view.state.selection, insertionPos = false, deletionPos = false, insertionMark, deletionMark
+
+        if (selection.empty) {
+            let resolvedPos = view.state.doc.resolve(selection.from), marks = resolvedPos.marks()
+            if (marks) {
+                insertionMark = marks.find(mark => mark.type.name==='insertion' && !mark.attrs.approved)
+                if (insertionMark) {
+                    insertionPos = selection.from - resolvedPos.textOffset
+                }
+                deletionMark = marks.find(mark => mark.type.name==='deletion')
+                if (deletionMark) {
+                    deletionPos = selection.from - resolvedPos.textOffset
+                }
+            }
+        } else {
+            view.state.doc.nodesBetween(
+                selection.from,
+                selection.to,
+                (node, pos, parent) => {
+                    if (!node.isInline) {
+                        return true
+                    }
+                    if (!insertionMark) {
+                        insertionMark = node.marks.find(mark => mark.type.name==='insertion' && !mark.attrs.approved)
+                        if (insertionMark) {
+                            insertionPos = pos
+                        }
+                    }
+                    if (!deletionMark) {
+                        deletionMark = node.marks.find(mark => mark.type.name==='deletion')
+                        if (deletionMark) {
+                            deletionPos = pos
+                        }
+
+                    }
+                }
+            )
+        }
+        if (insertionMark) {
+            let resolvedPos = view.state.doc.resolve(insertionPos), prevNode = resolvedPos.nodeBefore
+            while(
+                prevNode &&
+                prevNode.marks.find(mark => mark.type.name==='insertion' && !mark.attrs.approved && insertionMark.attrs.user === mark.attrs.user && insertionMark.attrs.date === mark.attrs.date)
+            ) {
+                insertionPos -= prevNode.nodeSize
+                resolvedPos = view.state.doc.resolve(insertionPos)
+                prevNode = resolvedPos.nodeBefore
+            }
+            this.selectedChanges.insertion = insertionPos
+        } else {
+            this.selectedChanges.insertion = false
+        }
+
+        if (deletionMark) {
+            let resolvedPos = view.state.doc.resolve(deletionPos), prevNode = resolvedPos.nodeBefore
+            while(
+                prevNode &&
+                prevNode.marks.find(mark => mark.type.name==='deletion' && deletionMark.attrs.user === mark.attrs.user && deletionMark.attrs.date === mark.attrs.date)
+            ) {
+                deletionPos -= prevNode.nodeSize
+                resolvedPos = view.state.doc.resolve(deletionPos)
+                prevNode = resolvedPos.nodeBefore
+            }
+            this.selectedChanges.deletion = deletionPos
+        } else {
+            this.selectedChanges.deletion = false
+        }
+
+
     }
 
     reject(type, pos, view) {

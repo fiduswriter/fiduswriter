@@ -290,7 +290,7 @@ export class Editor {
         //  Setup comment handling
         this.mod.comments.store.reset()
         this.mod.comments.store.loadComments(doc.comments)
-        this.mod.marginboxes.view()
+        this.mod.marginboxes.view(this.view)
         this.waitingForDocument = false
         if (locationHash.length) {
             this.scrollIdIntoView(locationHash.slice(1))

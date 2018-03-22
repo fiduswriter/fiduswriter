@@ -7,7 +7,7 @@ export let marginboxesPlugin = function(options) {
         view(editorState) {
             return {
                 update: (view, prevState) => {
-                    options.editor.mod.marginboxes.view()
+                    options.editor.mod.marginboxes.view(view)
                 }
             }
         }

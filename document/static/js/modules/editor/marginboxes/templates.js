@@ -151,10 +151,10 @@ let commentTemplate = ({comment, activeCommentId, activeCommentAnswerId, user, d
     </div>`
 }
 
-let trackTemplate = ({type, data, pos, docInfo}) => {
+let trackTemplate = ({type, data, pos, active, docInfo}) => {
     let author = data.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === data.user)
     return `
-        <div class="margin-box">
+        <div class="margin-box${active ? ' active' : ''}">
             <div class="track-${type}">
                 <h3>${type==='insertion' ? gettext('Insertion') : gettext('Deletion') }</h3>
                 <div class="comment-user">
@@ -176,6 +176,7 @@ export let marginBoxesTemplate = ({
         marginBoxes,
         activeCommentId,
         activeCommentAnswerId,
+        selectedChanges,
         user,
         docInfo
     }) => marginBoxes.map(mBox => {
@@ -185,7 +186,7 @@ export let marginBoxesTemplate = ({
                 break
             case 'insertion':
             case 'deletion':
-                return trackTemplate({type: mBox.type, data: mBox.data, pos: mBox.pos, docInfo})
+                return trackTemplate({type: mBox.type, data: mBox.data, pos: mBox.pos, active:selectedChanges[mBox.type]===mBox.pos, docInfo})
                 break
             default:
                 console.warn(`Unknown margin box type: ${mBox.type}`)

@@ -84,17 +84,17 @@ export class ModCommentInteractions {
 
     // Activate the comments included in the selection or the comment where the
     // caret is placed, if the editor is in focus.
-    activateSelectedComment() {
+    activateSelectedComment(view) {
 
-        let selection = this.mod.editor.view.state.selection, comments = []
+        let selection = view.state.selection, comments = []
 
         if (selection.empty) {
-            let node = this.mod.editor.view.state.doc.nodeAt(selection.from)
+            let node = view.state.doc.nodeAt(selection.from)
             if (node) {
                 comments = this.findCommentsAt(node)
             }
         } else {
-            this.mod.editor.view.state.doc.nodesBetween(
+            view.state.doc.nodesBetween(
                 selection.from,
                 selection.to,
                 (node, pos, parent) => {

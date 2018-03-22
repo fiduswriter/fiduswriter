@@ -20,12 +20,13 @@ export class ModMarginboxes {
         )
     }
 
-    view() {
+    view(view) {
         // Give up if the user is currently editing a comment.
         if (this.editor.mod.comments.interactions.isCurrentlyEditing()) {
             return false
         }
-        this.editor.mod.comments.interactions.activateSelectedComment()
+        this.editor.mod.comments.interactions.activateSelectedComment(view)
+        this.editor.mod.tools.track.activateSelectedChanges(view)
         return this.updateDOM()
     }
 
@@ -107,6 +108,7 @@ export class ModMarginboxes {
             marginBoxes,
             user: this.editor.user,
             docInfo: this.editor.docInfo,
+            selectedChanges: this.editor.mod.tools.track.selectedChanges,
             activeCommentId: this.editor.mod.comments.interactions.activeCommentId,
             activeCommentAnswerId: this.editor.mod.comments.interactions.activeCommentAnswerId
         })

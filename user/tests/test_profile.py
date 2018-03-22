@@ -52,7 +52,9 @@ class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
         driver.find_element_by_xpath("(//button[@type='button'])[2]").click()
         for i in range(100):
             if len(
-                driver.find_elements_by_css_selector("#alerts-wrapper .alerts-info")
+                driver.find_elements_by_css_selector(
+                    "#alerts-wrapper .alerts-info"
+                )
             ) == 1:
                 break
             time.sleep(0.1)

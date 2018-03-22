@@ -3,7 +3,7 @@ import download from "downloadjs"
 
 import {documentrevisionsTemplate, documentrevisionsConfirmDeleteTemplate} from "./templates"
 import {ImportFidusFile} from "../../importer/file"
-import {deactivateWait, addAlert, post, cancelPromise} from "../../common"
+import {deactivateWait, addAlert, post, cancelPromise, findTarget} from "../../common"
 
 /**
  * Functions for the recovering previously created document revisions.
@@ -52,21 +52,28 @@ export class DocumentRevisionsDialog {
 
 
     bind() {
-        let that = this
-        jQuery('.download-revision').on('mousedown', function() {
-            let revisionId = parseInt(this.getAttribute('data-id'))
-            let revisionFilename = this.getAttribute('data-filename')
-            that.download(revisionId, revisionFilename)
-        })
-        return new Promise(resolve => {
-            jQuery('.recreate-revision').on('mousedown', function() {
-                let revisionId = parseInt(this.getAttribute('data-id'))
-                resolve(that.recreate(revisionId, that.user))
-            })
+        let dialogEl = this.dialog[0]
 
-            jQuery('.delete-revision').on('mousedown', function() {
-                let revisionId = parseInt(this.getAttribute('data-id'))
-                resolve(that.delete(revisionId))
+        return new Promise(resolve => {
+            dialogEl.addEventListener('click', event => {
+                let el = {}, revisionId
+                switch (true) {
+                    case findTarget(event, '.download-revision', el):
+                        revisionId = parseInt(el.target.dataset.id)
+                        let revisionFilename = el.target.dataset.filename
+                        this.download(revisionId, revisionFilename)
+                        break
+                    case findTarget(event, '.recreate-revision', el):
+                        revisionId = parseInt(el.target.dataset.id)
+                        resolve(this.recreate(revisionId, this.user))
+                        break
+                    case findTarget(event, '.delete-revision', el):
+                        revisionId = parseInt(el.target.dataset.id)
+                        resolve(this.delete(revisionId))
+                        break
+                    default:
+                        break
+                }
             })
         })
     }

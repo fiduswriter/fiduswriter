@@ -102,11 +102,9 @@ export let trackPlugin = function(options) {
                 userIds.forEach(userId => options.editor.mod.collab.colors.ensureUserColor(userId))
 
                 return {
-                    selectedChanges: {
-                        insertion: false, // currently selected insertion
-                        deletion: false, // currently selection deletion
-                        decos: DecorationSet.empty
-                    }
+                    insertion: false, // currently selected insertion
+                    deletion: false, // currently selection deletion
+                    decos: DecorationSet.empty
                 }
 
 

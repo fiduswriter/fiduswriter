@@ -136,9 +136,7 @@ export let trackPlugin = function(options) {
                     if (deletion) {
                         deletion = {from: tr.mapping.map(deletion.from, -1), to: tr.mapping.map(deletion.to, 1)}
                     }
-                    if (decos) {
-                        decos = decos.map(tr.mapping, tr.doc)
-                    }
+                    decos = decos.map(tr.mapping, tr.doc)
                 }
                 return {
                     insertion,
@@ -219,8 +217,12 @@ export let trackPlugin = function(options) {
                         })
                     }
                     addedRanges = addedRanges.map(range => ({from: tr.mapping.maps[index].map(range.from, -1), to: tr.mapping.maps[index].map(range.to, 1)}))
-                    markedDeletionRanges = markedDeletionRanges.map(range => ({mark: range.mark, from: tr.mapping.maps[index].map(range.from, -1), to: tr.mapping.maps[index].map(range.to, 1)}))
-                    unmarkedDeletionRanges = unmarkedDeletionRanges.map(range => ({mark: range.mark, from: tr.mapping.maps[index].map(range.from, -1), to: tr.mapping.maps[index].map(range.to, 1)}))
+                    markedDeletionRanges = markedDeletionRanges.map(range =>
+                        ({mark: range.mark, from: tr.mapping.maps[index].map(range.from, -1), to: tr.mapping.maps[index].map(range.to, 1)})
+                    )
+                    unmarkedDeletionRanges = unmarkedDeletionRanges.map(range =>
+                        ({mark: range.mark, from: tr.mapping.maps[index].map(range.from, -1), to: tr.mapping.maps[index].map(range.to, 1)})
+                    )
                 })
             })
             if (!addedRanges.length && !markedDeletionRanges.length && !unmarkedDeletionRanges.length) {

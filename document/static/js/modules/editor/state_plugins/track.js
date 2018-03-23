@@ -1,7 +1,86 @@
 import {Plugin, PluginKey, TextSelection} from "prosemirror-state"
 import {Slice} from "prosemirror-model"
 import {ReplaceStep, ReplaceAroundStep, AddMarkStep, RemoveMarkStep, StepMap, Mapping} from "prosemirror-transform"
+import {Decoration, DecorationSet} from "prosemirror-view"
+
 const key = new PluginKey('track')
+
+export function getSelectedChanges(state) {
+    let {insertion, deletion} = key.getState(state)
+
+    return {insertion, deletion}
+}
+
+
+// From https://discuss.prosemirror.net/t/expanding-the-selection-to-the-active-mark/478/2 with some bugs fixed
+function getFromToMark(doc, pos, mark) {
+    let $pos = doc.resolve(pos), parent = $pos.parent
+    let start = parent.childAfter($pos.parentOffset)
+    if (!start.node) {
+        return null
+    }
+    let startIndex = $pos.index(), startPos = $pos.start() + start.offset
+    while (startIndex > 0 && mark.isInSet(parent.child(startIndex - 1).marks)) {
+        startPos -= parent.child(--startIndex).nodeSize
+    }
+    let endIndex = $pos.index() + 1, endPos = $pos.start() + start.offset + start.node.nodeSize
+    while (endIndex < parent.childCount && mark.isInSet(parent.child(endIndex).marks)) {
+        endPos += parent.child(endIndex++).nodeSize
+    }
+    return {from: startPos, to: endPos}
+}
+
+function getSelectedChanges(state) {
+
+    let selection = state.selection, selectedChanges = {insertion: false, deletion: false}, insertionPos = false, deletionPos = false, insertionMark, deletionMark
+
+    if (selection.empty) {
+        let resolvedPos = state.doc.resolve(selection.from), marks = resolvedPos.marks()
+        if (marks) {
+            insertionMark = marks.find(mark => mark.type.name==='insertion' && !mark.attrs.approved)
+            if (insertionMark) {
+                insertionPos = selection.from
+            }
+            deletionMark = marks.find(mark => mark.type.name==='deletion')
+            if (deletionMark) {
+                deletionPos = selection.from
+            }
+        }
+    } else {
+        state.doc.nodesBetween(
+            selection.from,
+            selection.to,
+            (node, pos, parent) => {
+                if (!node.isInline) {
+                    return true
+                }
+                if (!insertionMark) {
+                    insertionMark = node.marks.find(mark => mark.type.name==='insertion' && !mark.attrs.approved)
+                    if (insertionMark) {
+                        insertionPos = pos
+                    }
+                }
+                if (!deletionMark) {
+                    deletionMark = node.marks.find(mark => mark.type.name==='deletion')
+                    if (deletionMark) {
+                        deletionPos = pos
+                    }
+
+                }
+            }
+        )
+    }
+    if (insertionMark) {
+        selectedChanges.insertion = getFromToMark(state.doc, insertionPos, insertionMark)
+    }
+
+    if (deletionMark) {
+        selectedChanges.deletion = getFromToMark(state.doc, deletionPos, deletionMark)
+    }
+    return selectedChanges
+
+}
+
 
 export let trackPlugin = function(options) {
     return new Plugin({
@@ -21,8 +100,58 @@ export let trackPlugin = function(options) {
                     })
                 })
                 userIds.forEach(userId => options.editor.mod.collab.colors.ensureUserColor(userId))
+
+                return {
+                    selectedChanges: {
+                        insertion: false, // currently selected insertion
+                        deletion: false, // currently selection deletion
+                        decos: DecorationSet.empty
+                    }
+                }
+
+
             },
-            apply() {}
+            apply(tr, prev, oldState, state) {
+                let {
+                    insertion, deletion, decos
+                } = this.getState(oldState)
+
+                if (tr.selectionSet) {
+                    ({insertion, deletion} = getSelectedChanges(state))
+                    decos = DecorationSet.empty
+                    if (insertion) {
+                        decos = decos.add(tr.doc, [Decoration.inline(insertion.from, insertion.to, {
+                            class: 'selected-insertion'
+                        })])
+                    }
+                    if (deletion) {
+                        decos = decos.add(tr.doc, [Decoration.inline(deletion.from, deletion.to, {
+                            class: 'selected-deletion'
+                        })])
+                    }
+                } else {
+                    if (insertion) {
+                        insertion = {from: tr.mapping.map(insertion.from, -1), to: tr.mapping.map(insertion.to, 1)}
+                    }
+                    if (deletion) {
+                        deletion = {from: tr.mapping.map(deletion.from, -1), to: tr.mapping.map(deletion.to, 1)}
+                    }
+                    decos = decos.map(tr.mapping, tr.doc)
+                }
+                return {
+                    insertion,
+                    deletion,
+                    decos
+                }
+            }
+        },
+        props: {
+            decorations(state) {
+				let {
+					decos
+				} = this.getState(state)
+				return decos
+			}
         },
         appendTransaction(trs, oldState, newState) {
 

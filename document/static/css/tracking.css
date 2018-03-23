@@ -2,18 +2,6 @@
     text-decoration: line-through;
 }
 
-.deletion > p:not(:first-child) {
-    border-left-style: solid;
-    border-left-width: 2px;
-}
-
-.deletion > p,
-.deletion > h1,
-.deletion > h2,
-.deletion > h3,
-.deletion > h4,
-.deletion > h5,
-.deletion > h6,
-.deletion > code {
-    display: inline;
+.selected-insertion, .selected-deletion {
+    background-color: #fffacf;
 }

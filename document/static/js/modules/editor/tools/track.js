@@ -5,30 +5,12 @@ import {Slice} from "prosemirror-model"
 import {findTarget} from "../../common"
 
 
-// From https://discuss.prosemirror.net/t/expanding-the-selection-to-the-active-mark/478/2 with some bugs fixed
-function getFromToMark(doc, pos, mark) {
-    let $pos = doc.resolve(pos), parent = $pos.parent
-    let start = parent.childAfter($pos.parentOffset)
-    if (!start.node) {
-        return null
-    }
-    let startIndex = $pos.index(), startPos = $pos.start() + start.offset
-    while (startIndex > 0 && mark.isInSet(parent.child(startIndex - 1).marks)) {
-        startPos -= parent.child(--startIndex).nodeSize
-    }
-    let endIndex = $pos.index() + 1, endPos = $pos.start() + start.offset + start.node.nodeSize
-    while (endIndex < parent.childCount && mark.isInSet(parent.child(endIndex).marks)) {
-        endPos += parent.child(endIndex++).nodeSize
-    }
-    return {from: startPos, to: endPos}
-}
 
 // Helper functions related to tracked changes
 export class ModToolsTrack {
     constructor(mod) {
         mod.track = this
         this.mod = mod
-        this.selectedChanges = {insertion: false, deletion: false}
         this.bindEvents()
     }
 
@@ -47,61 +29,6 @@ export class ModToolsTrack {
                     break
             }
         })
-    }
-
-    activateSelectedChanges(view) {
-
-        let selection = view.state.selection, insertionPos = false, deletionPos = false, insertionMark, deletionMark
-
-        if (selection.empty) {
-            let resolvedPos = view.state.doc.resolve(selection.from), marks = resolvedPos.marks()
-            if (marks) {
-                insertionMark = marks.find(mark => mark.type.name==='insertion' && !mark.attrs.approved)
-                if (insertionMark) {
-                    insertionPos = selection.from
-                }
-                deletionMark = marks.find(mark => mark.type.name==='deletion')
-                if (deletionMark) {
-                    deletionPos = selection.from
-                }
-            }
-        } else {
-            view.state.doc.nodesBetween(
-                selection.from,
-                selection.to,
-                (node, pos, parent) => {
-                    if (!node.isInline) {
-                        return true
-                    }
-                    if (!insertionMark) {
-                        insertionMark = node.marks.find(mark => mark.type.name==='insertion' && !mark.attrs.approved)
-                        if (insertionMark) {
-                            insertionPos = pos
-                        }
-                    }
-                    if (!deletionMark) {
-                        deletionMark = node.marks.find(mark => mark.type.name==='deletion')
-                        if (deletionMark) {
-                            deletionPos = pos
-                        }
-
-                    }
-                }
-            )
-        }
-        if (insertionMark) {
-            this.selectedChanges.insertion = getFromToMark(view.state.doc, insertionPos, insertionMark)
-        } else {
-            this.selectedChanges.insertion = false
-        }
-
-        if (deletionMark) {
-            this.selectedChanges.deletion = getFromToMark(view.state.doc, deletionPos, deletionMark)
-        } else {
-            this.selectedChanges.deletion = false
-        }
-
-
     }
 
     reject(type, pos, view) {

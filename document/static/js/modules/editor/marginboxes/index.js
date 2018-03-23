@@ -1,6 +1,6 @@
 import {marginBoxesTemplate} from "./templates"
 import {Comment} from "../comments/comment"
-import {getCommentDuringCreationDecoration} from "../state_plugins"
+import {getCommentDuringCreationDecoration, getSelectedChanges} from "../state_plugins"
 
 import fastdom from "fastdom"
 
@@ -26,7 +26,6 @@ export class ModMarginboxes {
             return false
         }
         this.editor.mod.comments.interactions.activateSelectedComment(view)
-        this.editor.mod.tools.track.activateSelectedChanges(view)
         return this.updateDOM()
     }
 
@@ -108,7 +107,7 @@ export class ModMarginboxes {
             marginBoxes,
             user: this.editor.user,
             docInfo: this.editor.docInfo,
-            selectedChanges: this.editor.mod.tools.track.selectedChanges,
+            selectedChanges: getSelectedChanges(this.editor.view.state),
             activeCommentId: this.editor.mod.comments.interactions.activeCommentId,
             activeCommentAnswerId: this.editor.mod.comments.interactions.activeCommentAnswerId
         })

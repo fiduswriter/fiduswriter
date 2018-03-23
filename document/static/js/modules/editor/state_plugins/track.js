@@ -136,7 +136,9 @@ export let trackPlugin = function(options) {
                     if (deletion) {
                         deletion = {from: tr.mapping.map(deletion.from, -1), to: tr.mapping.map(deletion.to, 1)}
                     }
-                    decos = decos.map(tr.mapping, tr.doc)
+                    if (decos) {
+                        decos = decos.map(tr.mapping, tr.doc)
+                    }
                 }
                 return {
                     insertion,

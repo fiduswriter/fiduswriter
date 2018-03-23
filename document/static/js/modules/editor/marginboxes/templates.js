@@ -190,7 +190,7 @@ export let marginBoxesTemplate = ({
                     type: mBox.type,
                     data: mBox.data,
                     pos: mBox.pos,
-                    active: selectedChanges[mBox.type] && selectedChanges[mBox.type].from===mBox.pos,
+                    active: selectedChanges[mBox.type] && selectedChanges[mBox.type].from === mBox.pos,
                     docInfo
                 })
                 break

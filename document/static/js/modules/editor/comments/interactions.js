@@ -23,7 +23,7 @@ export class ModCommentInteractions {
                 case findTarget(event, '.cancelSubmitComment', el):
                     this.cancelSubmitComment(el.target)
                     break
-                case findTarget(event, '.margin-box.inactive', el):
+                case findTarget(event, '.margin-box.comment.inactive', el):
                     let id = this.getCommentId(el.target)
                     this.activateComment(id)
                     this.mod.editor.mod.marginboxes.updateDOM()

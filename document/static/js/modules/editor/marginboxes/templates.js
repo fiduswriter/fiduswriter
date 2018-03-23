@@ -97,10 +97,10 @@ let firstCommentTemplate = ({
 let commentTemplate = ({comment, activeCommentId, activeCommentAnswerId, user, docInfo}) => {
     let author = comment.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === comment.user)
     return comment.hidden ?
-    `<div id="margin-box-${comment.id}" class="margin-box hidden"></div>` :
+    `<div id="margin-box-${comment.id}" class="margin-box comment hidden"></div>` :
     `<div id="margin-box-${comment.id}" data-id="${comment.id}"  data-user-id="${comment.user}"
             class="
-                margin-box ${comment.id === activeCommentId ? 'active' : 'inactive'}
+                margin-box comment ${comment.id === activeCommentId ? 'active' : 'inactive'}
                 ${comment.isMajor === true ? 'comment-is-major-bgc' : ''}
         ">
     ${
@@ -154,7 +154,7 @@ let commentTemplate = ({comment, activeCommentId, activeCommentAnswerId, user, d
 let trackTemplate = ({type, data, pos, active, docInfo}) => {
     let author = data.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === data.user)
     return `
-        <div class="margin-box${active ? ' active' : ''}">
+        <div class="margin-box track ${active ? 'active' : 'inactive'}" data-type="${type}" data-pos="${pos}">
             <div class="track-${type}">
                 <h3>${type==='insertion' ? gettext('Insertion') : gettext('Deletion') }</h3>
                 <div class="comment-user">

@@ -3,7 +3,7 @@ import {ReplaceStep, AddMarkStep} from "prosemirror-transform"
 import {Slice} from "prosemirror-model"
 
 import {findTarget} from "../../common"
-
+import {setSelectedChanges} from "../state_plugins"
 
 
 // Helper functions related to tracked changes
@@ -24,6 +24,11 @@ export class ModToolsTrack {
                     break
                 case findTarget(event, '.track-reject', el):
                     this.reject(el.target.dataset.type, parseInt(el.target.dataset.pos), this.mod.editor.view)
+                    break
+                case findTarget(event, '.margin-box.track.inactive', el):
+                    let pos = parseInt(el.target.dataset.pos),
+                        type = el.target.dataset.type
+                    setSelectedChanges(this.mod.editor.view, type, pos)
                     break
                 default:
                     break

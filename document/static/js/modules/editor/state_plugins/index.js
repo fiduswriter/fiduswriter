@@ -67,7 +67,8 @@ export {
 from "./access_rights"
 export {
     trackPlugin,
-    getSelectedChanges
+    getSelectedChanges,
+    setSelectedChanges
 }
 from "./track"
 export {

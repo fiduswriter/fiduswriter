@@ -11,6 +11,26 @@ export function getSelectedChanges(state) {
     return {insertion, deletion}
 }
 
+export function setSelectedChanges(view, type, pos) {
+    let mark = view.state.doc.nodeAt(pos).marks.find(mark => mark.type.name===type)
+    if (!mark) {
+        return
+    }
+    let selectedChanges = {
+        insertion: false,
+        deletion: false
+    }
+    let selectedChange =  getFromToMark(view.state.doc, pos, mark)
+    selectedChanges[type] = selectedChange
+    let decos = DecorationSet.empty
+    selectedChanges.decos = decos.add(view.state.doc, [Decoration.inline(selectedChange.from, selectedChange.to, {
+        class: `selected-${type}`
+    })])
+
+    let tr = view.state.tr
+    tr.setMeta(key, selectedChanges)
+    view.dispatch(tr)
+}
 
 // From https://discuss.prosemirror.net/t/expanding-the-selection-to-the-active-mark/478/2 with some bugs fixed
 function getFromToMark(doc, pos, mark) {
@@ -30,7 +50,7 @@ function getFromToMark(doc, pos, mark) {
     return {from: startPos, to: endPos}
 }
 
-function getSelectedChanges(state) {
+function findSelectedChanges(state) {
 
     let selection = state.selection, selectedChanges = {insertion: false, deletion: false}, insertionPos = false, deletionPos = false, insertionMark, deletionMark
 
@@ -110,12 +130,19 @@ export let trackPlugin = function(options) {
 
             },
             apply(tr, prev, oldState, state) {
+                let meta = tr.getMeta(key)
+                if (meta) {
+                    // There has been an update, return values from meta instead
+                    // of previous values
+                    return meta
+                }
+
                 let {
                     insertion, deletion, decos
                 } = this.getState(oldState)
 
                 if (tr.selectionSet) {
-                    ({insertion, deletion} = getSelectedChanges(state))
+                    ({insertion, deletion} = findSelectedChanges(state))
                     decos = DecorationSet.empty
                     if (insertion) {
                         decos = decos.add(tr.doc, [Decoration.inline(insertion.from, insertion.to, {

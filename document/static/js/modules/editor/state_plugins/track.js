@@ -32,6 +32,17 @@ export function setSelectedChanges(view, type, pos) {
     view.dispatch(tr)
 }
 
+export function deactivateAllSelectedChanges(view) {
+    let selectedChanges = {
+        insertion: false,
+        deletion: false,
+        decos: DecorationSet.empty
+    }
+    let tr = view.state.tr
+    tr.setMeta(key, selectedChanges)
+    view.dispatch(tr)
+}
+
 // From https://discuss.prosemirror.net/t/expanding-the-selection-to-the-active-mark/478/2 with some bugs fixed
 function getFromToMark(doc, pos, mark) {
     let $pos = doc.resolve(pos), parent = $pos.parent

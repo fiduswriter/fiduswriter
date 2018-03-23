@@ -1,4 +1,4 @@
-import {getCommentDuringCreationDecoration} from "../state_plugins"
+import {getCommentDuringCreationDecoration, deactivateAllSelectedChanges} from "../state_plugins"
 import {REVIEW_ROLES} from ".."
 import {findTarget} from "../../common"
 
@@ -24,6 +24,7 @@ export class ModCommentInteractions {
                     this.cancelSubmitComment(el.target)
                     break
                 case findTarget(event, '.margin-box.comment.inactive', el):
+                    deactivateAllSelectedChanges(this.mod.editor.view)
                     let id = this.getCommentId(el.target)
                     this.activateComment(id)
                     this.mod.editor.mod.marginboxes.updateDOM()

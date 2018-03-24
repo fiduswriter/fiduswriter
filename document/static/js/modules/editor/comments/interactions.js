@@ -24,7 +24,10 @@ export class ModCommentInteractions {
                     this.cancelSubmitComment(el.target)
                     break
                 case findTarget(event, '.margin-box.comment.inactive', el):
-                    deactivateAllSelectedChanges(this.mod.editor.view)
+                    let tr = deactivateAllSelectedChanges(this.mod.editor.view.state)
+                    if (tr) {
+                        this.mod.editor.view.dispatch(tr)
+                    }
                     let id = this.getCommentId(el.target)
                     this.activateComment(id)
                     this.mod.editor.mod.marginboxes.updateDOM()

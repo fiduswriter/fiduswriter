@@ -44,13 +44,16 @@ export class ModCommentStore {
     // entirely.
     addCommentDuringCreation() {
 
-        if (!addCommentDuringCreationDecoration(this.mod.editor.view)) {
+        let tr = addCommentDuringCreationDecoration(this.mod.editor.view.state)
+
+        if (!tr) {
             // adding decoration failed
             return
         }
 
-        let id = -1,
-            username
+        this.mod.editor.view.dispatch(tr)
+
+        let id = -1, username
 
         if (REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
             username = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
@@ -73,7 +76,10 @@ export class ModCommentStore {
     removeCommentDuringCreation() {
         if (this.commentDuringCreation) {
             this.commentDuringCreation = false
-            removeCommentDuringCreationDecoration(this.mod.editor.view)
+            let tr = removeCommentDuringCreationDecoration(this.mod.editor.view.state)
+            if (tr) {
+                this.mod.editor.view.dispatch(tr)
+            }
         }
     }
 

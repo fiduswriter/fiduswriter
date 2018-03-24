@@ -11,36 +11,38 @@ export function getSelectedChanges(state) {
     return {insertion, deletion}
 }
 
-export function setSelectedChanges(view, type, pos) {
-    let mark = view.state.doc.nodeAt(pos).marks.find(mark => mark.type.name===type)
+export function setSelectedChanges(state, type, pos, tr = false) {
+    let mark = state.doc.nodeAt(pos).marks.find(mark => mark.type.name===type)
     if (!mark) {
         return
     }
-    let selectedChanges = {
+    if (!tr) {
+        tr = state.tr
+    }
+    let pluginState = {
         insertion: false,
         deletion: false
     }
-    let selectedChange =  getFromToMark(view.state.doc, pos, mark)
-    selectedChanges[type] = selectedChange
+    let selectedChange =  getFromToMark(state.doc, pos, mark)
+    pluginState[type] = selectedChange
     let decos = DecorationSet.empty
-    selectedChanges.decos = decos.add(view.state.doc, [Decoration.inline(selectedChange.from, selectedChange.to, {
+    pluginState.decos = decos.add(state.doc, [Decoration.inline(selectedChange.from, selectedChange.to, {
         class: `selected-${type}`
     })])
 
-    let tr = view.state.tr
-    tr.setMeta(key, selectedChanges)
-    view.dispatch(tr)
+    return tr.setMeta(key, pluginState)
 }
 
-export function deactivateAllSelectedChanges(view) {
-    let selectedChanges = {
+export function deactivateAllSelectedChanges(state, tr = false) {
+    let pluginState = {
         insertion: false,
         deletion: false,
         decos: DecorationSet.empty
     }
-    let tr = view.state.tr
-    tr.setMeta(key, selectedChanges)
-    view.dispatch(tr)
+    if (!tr) {
+        tr = state.tr
+    }
+    return tr.setMeta(key, pluginState)
 }
 
 // From https://discuss.prosemirror.net/t/expanding-the-selection-to-the-active-mark/478/2 with some bugs fixed

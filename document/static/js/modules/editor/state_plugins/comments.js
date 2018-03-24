@@ -58,13 +58,16 @@ let moveComment = function(doc, id, pos) {
     return new AddMarkStep(posFrom, posTo, markType)
 }
 
-export let addCommentDuringCreationDecoration = function(view) {
-    if (!view.state.selection.from || view.state.selection.from === view.state.selection.to) {
+export let addCommentDuringCreationDecoration = function(state, tr=false) {
+    if (!state.selection.from || state.selection.from === state.selection.to) {
         return false
+    }
+    if (!tr) {
+        tr = state.tr
     }
     let {
         decos
-    } = key.getState(view.state)
+    } = key.getState(state)
 
     let commentDuringCreationDeco = decos.find(undefined, undefined, spec => spec === commentDuringCreationDecoSpec)
 
@@ -72,19 +75,20 @@ export let addCommentDuringCreationDecoration = function(view) {
         decos = decos.remove([commentDuringCreationDeco])
     }
 
-    decos = decos.add(view.state.doc, [
-        Decoration.inline(view.state.selection.from, view.state.selection.to, {class: 'active-comment'}, commentDuringCreationDecoSpec)
+    decos = decos.add(state.doc, [
+        Decoration.inline(state.selection.from, state.selection.to, {class: 'active-comment'}, commentDuringCreationDecoSpec)
     ])
 
-    let tr = view.state.tr.setMeta(key, {decos})
-    view.dispatch(tr)
-    return true
+    return tr.setMeta(key, {decos})
 }
 
-export let removeCommentDuringCreationDecoration = function(view) {
+export let removeCommentDuringCreationDecoration = function(state, tr=false) {
     let {
         decos
-    } = key.getState(view.state)
+    } = key.getState(state)
+    if (!tr) {
+        tr = state.tr
+    }
 
     let commentDuringCreationDeco = decos.find(undefined, undefined, spec => spec === commentDuringCreationDecoSpec)
 
@@ -93,8 +97,7 @@ export let removeCommentDuringCreationDecoration = function(view) {
     }
     decos = decos.remove([commentDuringCreationDeco])
 
-    let tr = view.state.tr.setMeta(key, {decos})
-    view.dispatch(tr)
+    return tr.setMeta(key, {decos})
 }
 
 export let getCommentDuringCreationDecoration = function(state) {

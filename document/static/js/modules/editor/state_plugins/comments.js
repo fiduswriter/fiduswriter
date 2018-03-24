@@ -72,7 +72,7 @@ export let addCommentDuringCreationDecoration = function(view) {
         decos = decos.remove([commentDuringCreationDeco])
     }
 
-    decos = decos.add(state.doc, [
+    decos = decos.add(view.state.doc, [
         Decoration.inline(view.state.selection.from, view.state.selection.to, {class: 'active-comment'}, commentDuringCreationDecoSpec)
     ])
 

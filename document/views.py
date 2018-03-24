@@ -527,6 +527,7 @@ def save_doc_js(request):
         # Only looking at fields that may have changed.
         contents = request.POST.get('contents', False)
         bibliography = request.POST.get('bibliography', False)
+        comments = request.POST.get('comments', False)
         doc_version = request.POST.get('doc_version', False)
         last_diffs = request.POST.get('last_diffs', False)
         version = request.POST.get('version', False)
@@ -534,6 +535,8 @@ def save_doc_js(request):
             doc.contents = contents
         if bibliography:
             doc.bibliography = bibliography
+        if comments:
+            doc.comments = comments
         if doc_version:
             doc.doc_version = doc_version
         if version:

@@ -7,7 +7,7 @@ from django.core import checks
 # (same value from >= 2.0) in
 # document/static/js/modules/documents/exporter/native/zip.js
 
-FW_DOCUMENT_VERSION = 2.0
+FW_DOCUMENT_VERSION = 2.1
 
 
 class Document(models.Model):

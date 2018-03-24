@@ -47,7 +47,7 @@ class WebSocket(BaseWebSocketHandler):
         self.user_info = SessionUserInfo()
         doc_db, can_access = self.user_info.init_access(
             document_id, current_user)
-        if not can_access or doc_db.doc_version != FW_DOCUMENT_VERSION:
+        if not can_access or float(doc_db.doc_version) != FW_DOCUMENT_VERSION:
             response['type'] = 'access_denied'
             self.id = 0
             self.send_message(response)

@@ -12,13 +12,17 @@ export {
     noSpaceTmp,
     escapeText,
     cancelPromise,
-    get,
-    getJson,
-    post,
-    postJson,
-    postJsonStatus,
-    getCsrfToken,
     findTarget,
     whenReady
 }
 from "./basic"
+
+export {
+    getCsrfToken,
+    get,
+    getJson,
+    post,
+    postJson,
+    postJsonStatus
+}
+from "./network"

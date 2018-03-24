@@ -85,7 +85,7 @@ export class DocumentOverviewActions {
 
     importFidus() {
         let that = this
-        document.body.insertAdjacentHTML('beforend', importFidusTemplate())
+        document.body.insertAdjacentHTML('beforeend', importFidusTemplate())
         let buttons = [
             {
                 text: gettext('Import'),

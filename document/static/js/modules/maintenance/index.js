@@ -40,7 +40,7 @@ export class DocMaintenance {
     getDocBatch() {
         this.batch++
         postJson(
-            '/document/maintenance/get_all/'
+            '/document/maintenance/get_all/', {batch: this.batch}
         ).then(
             data => {
                 let docs = window.JSON.parse(data.docs)
@@ -56,7 +56,10 @@ export class DocMaintenance {
                 }
             }
         ).catch(
-            () => addAlert('error', `${gettext('Could not download batch')}: ${this.batch}`)
+            error => {
+                addAlert('error', `${gettext('Could not download batch')}: ${this.batch}`)
+                throw(error)
+            }
         )
     }
 
@@ -64,6 +67,8 @@ export class DocMaintenance {
         let oldDoc = {
             contents: window.JSON.parse(doc.fields.contents),
             last_diffs: window.JSON.parse(doc.fields.last_diffs),
+            bibliography: window.JSON.parse(doc.fields.bibliography),
+            comments: window.JSON.parse(doc.fields.comments),
             title: doc.fields.title,
             version: doc.fields.version,
             id: doc.pk
@@ -116,6 +121,7 @@ export class DocMaintenance {
                 id: doc.id,
                 contents: window.JSON.stringify(doc.contents),
                 bibliography: window.JSON.stringify(doc.bibliography),
+                comments: window.JSON.stringify(doc.comments),
                 doc_version: parseFloat(FW_FILETYPE_VERSION),
                 version: doc.version,
                 last_diffs: window.JSON.stringify(doc.last_diffs)

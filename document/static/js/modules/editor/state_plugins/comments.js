@@ -58,41 +58,43 @@ let moveComment = function(doc, id, pos) {
     return new AddMarkStep(posFrom, posTo, markType)
 }
 
-export let addCommentDuringCreationDecoration = function(state) {
-    if (!state.selection.from || state.selection.from === state.selection.to) {
-        return
+export let addCommentDuringCreationDecoration = function(view) {
+    if (!view.state.selection.from || view.state.selection.from === view.state.selection.to) {
+        return false
     }
     let {
         decos
-    } = key.getState(state)
+    } = key.getState(view.state)
 
-    let commentDuringCreationDeco = decos.find(undefined, undefined, commentDuringCreationDecoSpec)
+    let commentDuringCreationDeco = decos.find(undefined, undefined, spec => spec === commentDuringCreationDecoSpec)
 
-    decos = decos.remove([commentDuringCreationDeco])
+    if (commentDuringCreationDeco) {
+        decos = decos.remove([commentDuringCreationDeco])
+    }
 
     decos = decos.add(state.doc, [
-        Decoration.inline(state.selection.from, state.selection.to, {class: 'active-comment'}, commentDuringCreationDecoSpec)
+        Decoration.inline(view.state.selection.from, view.state.selection.to, {class: 'active-comment'}, commentDuringCreationDecoSpec)
     ])
 
-    let tr = state.tr.setMeta(key, {decos})
-    return tr
+    let tr = view.state.tr.setMeta(key, {decos})
+    view.dispatch(tr)
+    return true
 }
 
-export let removeCommentDuringCreationDecoration = function(state) {
+export let removeCommentDuringCreationDecoration = function(view) {
     let {
         decos
-    } = key.getState(state)
+    } = key.getState(view.state)
 
-    let commentDuringCreationDeco = decos.find(undefined, undefined, commentDuringCreationDecoSpec)
+    let commentDuringCreationDeco = decos.find(undefined, undefined, spec => spec === commentDuringCreationDecoSpec)
 
     if (!commentDuringCreationDeco) {
-        return
+        return false
     }
     decos = decos.remove([commentDuringCreationDeco])
 
-    let tr = state.tr.setMeta(key, {decos})
-    return tr
-
+    let tr = view.state.tr.setMeta(key, {decos})
+    view.dispatch(tr)
 }
 
 export let getCommentDuringCreationDecoration = function(state) {
@@ -100,7 +102,7 @@ export let getCommentDuringCreationDecoration = function(state) {
         decos
     } = key.getState(state)
 
-    return decos.find(undefined, undefined, commentDuringCreationDecoSpec)
+    return decos.find(undefined, undefined, spec => spec === commentDuringCreationDecoSpec)
 }
 
 export let commentsPlugin = function(options) {

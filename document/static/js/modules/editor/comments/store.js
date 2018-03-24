@@ -43,6 +43,12 @@ export class ModCommentStore {
     // as it is empty, shouldn't be shared and if canceled, it should go away
     // entirely.
     addCommentDuringCreation() {
+
+        if (!addCommentDuringCreationDecoration(this.mod.editor.view)) {
+            // adding decoration failed
+            return
+        }
+
         let id = -1,
             username
 
@@ -52,28 +58,22 @@ export class ModCommentStore {
             username = this.mod.editor.user.username
         }
 
-        let tr = addCommentDuringCreationDecoration(this.mod.editor.view.state)
-        if (tr) {
-            this.mod.editor.view.dispatch(tr)
-        }
         this.commentDuringCreation = {
             comment: new Comment(
                 id,
                 this.mod.editor.user.id,
                 username,
-                Date.now()-this.mod.editor.clientTimeAdjustment,
+                Date.now() - this.mod.editor.clientTimeAdjustment,
                 ''),
             inDOM: false
         }
+
     }
 
     removeCommentDuringCreation() {
         if (this.commentDuringCreation) {
             this.commentDuringCreation = false
-            let tr = removeCommentDuringCreationDecoration(this.mod.editor.view.state)
-            if (tr) {
-                this.mod.editor.view.dispatch(tr)
-            }
+            removeCommentDuringCreationDecoration(this.mod.editor.view)
         }
     }
 

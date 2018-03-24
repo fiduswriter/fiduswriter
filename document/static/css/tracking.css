@@ -5,3 +5,9 @@
 .selected-insertion, .selected-deletion {
     background-color: #fffacf;
 }
+
+
+.margin-box .track-title {
+    text-align: right;
+    font-weight: 700;
+}

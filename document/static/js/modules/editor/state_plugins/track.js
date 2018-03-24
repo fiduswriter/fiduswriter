@@ -4,9 +4,14 @@ import {ReplaceStep, ReplaceAroundStep, AddMarkStep, RemoveMarkStep, StepMap, Ma
 import {Decoration, DecorationSet} from "prosemirror-view"
 
 const key = new PluginKey('track')
+const selectedInsertionSpec = {}
+const selectedDeletionSpec = {}
 
 export function getSelectedChanges(state) {
-    let {insertion, deletion} = key.getState(state)
+    let {decos} = key.getState(state)
+
+    let insertion = decos.find(undefined, undefined, spec => spec === selectedInsertionSpec)[0]
+    let deletion = decos.find(undefined, undefined, spec => spec === selectedDeletionSpec)[0]
 
     return {insertion, deletion}
 }
@@ -16,23 +21,17 @@ export function setSelectedChanges(tr, type, pos) {
     if (!mark) {
         return
     }
-    let pluginState = {
-        insertion: false,
-        deletion: false
-    }
     let selectedChange =  getFromToMark(tr.doc, pos, mark)
-    pluginState[type] = selectedChange
     let decos = DecorationSet.empty
-    pluginState.decos = decos.add(tr.doc, [Decoration.inline(selectedChange.from, selectedChange.to, {
+    let spec = type === 'insertion' ? selectedInsertionSpec : selectedDeletionSpec
+    decos = decos.add(tr.doc, [Decoration.inline(selectedChange.from, selectedChange.to, {
         class: `selected-${type}`
-    })])
-    return tr.setMeta(key, pluginState)
+    }, spec)])
+    return tr.setMeta(key, {decos})
 }
 
 export function deactivateAllSelectedChanges(tr) {
     let pluginState = {
-        insertion: false,
-        deletion: false,
         decos: DecorationSet.empty
     }
     return tr.setMeta(key, pluginState)
@@ -128,8 +127,6 @@ export let trackPlugin = function(options) {
                 userIds.forEach(userId => options.editor.mod.collab.colors.ensureUserColor(userId))
 
                 return {
-                    insertion: false, // currently selected insertion
-                    deletion: false, // currently selection deletion
                     decos: DecorationSet.empty
                 }
 
@@ -144,34 +141,26 @@ export let trackPlugin = function(options) {
                 }
 
                 let {
-                    insertion, deletion, decos
+                    decos
                 } = this.getState(oldState)
 
                 if (tr.selectionSet) {
-                    ({insertion, deletion} = findSelectedChanges(state))
+                    let {insertion, deletion} = findSelectedChanges(state)
                     decos = DecorationSet.empty
                     if (insertion) {
                         decos = decos.add(tr.doc, [Decoration.inline(insertion.from, insertion.to, {
                             class: 'selected-insertion'
-                        })])
+                        }, selectedInsertionSpec)])
                     }
                     if (deletion) {
                         decos = decos.add(tr.doc, [Decoration.inline(deletion.from, deletion.to, {
                             class: 'selected-deletion'
-                        })])
+                        }, selectedDeletionSpec)])
                     }
                 } else {
-                    if (insertion) {
-                        insertion = {from: tr.mapping.map(insertion.from, -1), to: tr.mapping.map(insertion.to, 1)}
-                    }
-                    if (deletion) {
-                        deletion = {from: tr.mapping.map(deletion.from, -1), to: tr.mapping.map(deletion.to, 1)}
-                    }
                     decos = decos.map(tr.mapping, tr.doc)
                 }
                 return {
-                    insertion,
-                    deletion,
                     decos
                 }
             }

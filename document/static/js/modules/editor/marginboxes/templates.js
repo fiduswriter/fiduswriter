@@ -156,7 +156,7 @@ let trackTemplate = ({type, data, pos, active, docInfo}) => {
     return `
         <div class="margin-box track ${active ? 'active' : 'inactive'}" data-type="${type}" data-pos="${pos}">
             <div class="track-${type}">
-                <h3>${type==='insertion' ? gettext('Insertion') : gettext('Deletion') }</h3>
+                <div class="track-title">${type==='insertion' ? gettext('Insertion') : gettext('Deletion') }</div>
                 <div class="comment-user">
                     <img class="comment-user-avatar" src="${author ? author.avatar : `${$StaticUrls.base$}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
                     <h5 class="comment-user-name">${escapeText(author ? author.name : data.username)}</h5>

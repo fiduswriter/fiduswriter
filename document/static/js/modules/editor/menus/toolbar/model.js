@@ -393,8 +393,8 @@ export let toolbarModel = {
             icon: 'asterisk',
             action: editor => {
                 let node = editor.view.state.schema.nodes['footnote']
-                let transaction = editor.view.state.tr.replaceSelectionWith(node.createAndFill())
-                editor.view.dispatch(transaction)
+                let tr = editor.view.state.tr.replaceSelectionWith(node.createAndFill())
+                editor.view.dispatch(tr)
             },
             disabled: editor => {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
@@ -531,14 +531,14 @@ export let toolbarModel = {
             type: 'button',
             title: gettext('Undo'),
             icon: 'undo',
-            action: editor => undo(editor.currentView.state, tr => editor.currentView.dispatch(tr)),
+            action: editor => undo(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('inputType', 'historyUndo'))),
             disabled: editor => undoDepth(editor.currentView.state) === 0
         },
         {
             type: 'button',
             title: gettext('Redo'),
             icon: 'repeat',
-            action: editor => redo(editor.currentView.state, tr => editor.currentView.dispatch(tr)),
+            action: editor => redo(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('inputType', 'historyRedo'))),
             disabled: editor => redoDepth(editor.currentView.state) === 0
         },
         {

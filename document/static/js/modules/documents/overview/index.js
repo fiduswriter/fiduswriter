@@ -3,7 +3,7 @@ import {DocumentOverviewActions} from "./actions"
 import {DocumentAccessRightsDialog} from "../access_rights"
 import {menuModel} from "./menu"
 import {documentsListTemplate} from "./templates"
-import {activateWait, deactivateWait, addAlert, postJson, OverviewMenuView} from "../../common"
+import {activateWait, deactivateWait, addAlert, postJson, OverviewMenuView, findTarget, whenReady} from "../../common"
 import {SiteMenu} from "../../menu"
 /*
 * Helper functions for the document overview page.
@@ -27,26 +27,31 @@ export class DocumentOverview {
     }
 
     bind() {
-        jQuery(document).ready(() => this.getDocumentListData())
-        let that = this
-        jQuery(document).on('mousedown', '.revisions', function () {
-            let docId = parseInt(jQuery(this).attr('data-id'))
-            that.mod.actions.revisionsDialog(docId)
-        })
-        jQuery(document).on('mousedown', '.delete-document', function () {
-            let docId = parseInt(jQuery(this).attr('data-id'))
-            that.mod.actions.deleteDocumentDialog([docId])
-        })
-
-        jQuery(document).on('mousedown', '.owned-by-user .rights', function () {
-            let docId = parseInt(jQuery(this).attr('data-id'))
-            new DocumentAccessRightsDialog(
-                [docId],
-                that.accessRights,
-                that.teamMembers,
-                newAccessRights => that.accessRights = newAccessRights,
-                memberDetails => that.teamMembers.push(memberDetails)
-            )
+        whenReady().then(() => this.getDocumentListData())
+        document.addEventListener('click', event => {
+            let el = {}, docId
+            switch (true) {
+                case findTarget(event, '.revisions', el):
+                    docId = parseInt(el.target.dataset.id)
+                    this.mod.actions.revisionsDialog(docId)
+                    break
+                case findTarget(event, '.delete-document', el):
+                    docId = parseInt(el.target.dataset.id)
+                    this.mod.actions.deleteDocumentDialog([docId])
+                    break
+                case findTarget(event, '.owned-by-user .rights', el):
+                    docId = parseInt(el.target.dataset.id)
+                    new DocumentAccessRightsDialog(
+                        [docId],
+                        this.accessRights,
+                        this.teamMembers,
+                        newAccessRights => this.accessRights = newAccessRights,
+                        memberDetails => this.teamMembers.push(memberDetails)
+                    )
+                    break
+                default:
+                    break
+            }
         })
     }
 
@@ -93,10 +98,10 @@ export class DocumentOverview {
     }
 
     layoutTable() {
-        jQuery('#document-table tbody').html(documentsListTemplate({
+        document.querySelector('#document-table tbody').innerHTML = documentsListTemplate({
             documentList: this.documentList,
             user: this.user
-        }))
+        })
         this.startDocumentTable()
     }
 
@@ -137,8 +142,9 @@ export class DocumentOverview {
             }],
         })
 
-        jQuery('#document-table_wrapper .dataTables_filter input').attr(
-            'placeholder', gettext('Search for Document')
+        document.querySelector('#document-table_wrapper .dataTables_filter input').setAttribute(
+            'placeholder',
+            gettext('Search for Document')
         )
         jQuery('#document-table_wrapper .dataTables_filter input').unbind('focus, blur')
         jQuery('#document-table_wrapper .dataTables_filter input').bind('focus', function() {
@@ -149,8 +155,8 @@ export class DocumentOverview {
         })
 
         let autocompleteTags = []
-        jQuery('#document-table .fw-searchable').each(function() {
-            autocompleteTags.push(this.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''))
+        document.querySelectorAll('#document-table .fw-searchable').forEach(el => {
+            autocompleteTags.push(el.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''))
         })
         autocompleteTags = [...new Set(autocompleteTags)] // only unique values
         jQuery("#document-table_wrapper .dataTables_filter input").autocomplete({

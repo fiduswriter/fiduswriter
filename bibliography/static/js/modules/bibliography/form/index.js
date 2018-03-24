@@ -61,13 +61,14 @@ export class BibEntryForm {
     addDialogToDOM() {
         let that = this
         // Add form to DOM
-        let dialogEl = bibDialog({
+        let dialogHTML = bibDialog({
             'dialogHeader': this.dialogHeader,
             'bib_type': this.currentValues.bib_type,
             BibTypes,
             BibTypeTitles
         })
-        jQuery('body').append(dialogEl)
+
+        document.body.insertAdjacentHTML('beforeend', dialogHTML)
 
         let diaButtons = {
             cancel: {

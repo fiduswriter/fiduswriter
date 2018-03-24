@@ -19,13 +19,14 @@
 
 /* User rights */
 .icon-access-write:before {content: '\f040'; } /* '✎' */
+.icon-access-write-tracked:before {content: '\f040'; } /* '✎' */
 .icon-access-read:before {content: '\f06e'; } /* '' */
 .icon-access-comment:before {content: '\f0e5'; } /* '' */
 /* Review related user rights */
 .icon-access-read-without-comments:before {content: '\f06e'; } /* '' */
 .icon-access-review:before {content: '\f0e5'; } /* '' */
 
-.icon-access-read-without-comments:before, .icon-access-review:before {
+.icon-access-read-without-comments:before, .icon-access-review:before, .icon-access-write-tracked:before {
     background-color: #000;
     color: #fff;
     padding: 2px;
@@ -65,7 +66,7 @@
     margin-left: -25px;
 }
 
-.comment-box.active:after {
+.margin-box.active:after {
     display: block;
     font: normal normal normal 14px/1 FontAwesome;
     font-size: inherit;

@@ -277,69 +277,6 @@ div.literal em, pre.long-literal em {
     width: 310px;
 }
 
-.fw-bib-select-pulldown {
-    position: relative;
-    width: 468px;
-    height: 36px;
-}
-.fw-bib-select-pulldown .icon-down-dir {
-    position: absolute;
-    right: 10px;
-    top: auto;
-    line-height: 36px;
-}
-.fw-bib-select-pulldown .fw-pulldown {
-    position: absolute;
-    top: 36px;
-}
-.fw-bib-select-pulldown .fw-pulldown > ul {
-    max-height: 145px;
-    overflow: auto;
-    margin-bottom: 5px;
-}
-
-.fw-bib-form-pulldown {
-    position: relative;
-    cursor: pointer;
-}
-
-.fw-bib-form-pulldown > label,
-.fw-bib-form-pulldown > span {
-    display: table-cell;
-    height: 34px;
-    vertical-align: middle;
-}
-
-.fw-bib-form-pulldown > label {
-    font-size: 11px;
-}
-
-.fw-bib-form-pulldown > label > span {
-    white-space: nowrap;
-}
-
-.fw-bib-form-pulldown > span {
-    line-height: 34px;
-}
-
-.fw-bib-form-pulldown > .fw-pulldown {
-    top: 24px;
-}
-
-.fw-bib-date-table {
-    width: 494px;
-    table-layout: fixed;
-}
-
-.fw-bib-date-table td {
-    padding: 0;
-}
-
-.fw-date-separator {
-    width: 26px;
-    text-align: center;
-}
-
 /* api search */
 
 #bibimport-api-search button.api-import {

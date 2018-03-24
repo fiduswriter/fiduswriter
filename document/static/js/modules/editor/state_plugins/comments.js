@@ -4,6 +4,7 @@ import {AddMarkStep} from "prosemirror-transform"
 
 const key = new PluginKey('comments')
 
+const commentDuringCreationDecoSpec = {}
 
 let moveComment = function(doc, id, pos) {
     // The content to which a comment was linked has been removed.
@@ -57,32 +58,40 @@ let moveComment = function(doc, id, pos) {
     return new AddMarkStep(posFrom, posTo, markType)
 }
 
-export let addCommentDuringCreationDecoration = function(state) {
-    let decos = DecorationSet.empty
-    if (!state.selection.from || state.selection.from === state.selection.to) {
-        return
+export let addCommentDuringCreationDecoration = function(state, tr) {
+    if (!tr.selection.from || tr.selection.from === tr.selection.to) {
+        return false
     }
-
-    let deco = Decoration.inline(state.selection.from, state.selection.to, {class: 'active-comment'})
-    decos = decos.add(state.doc, [deco])
-
-    let transaction = state.tr.setMeta(key, {decos})
-    return transaction
-}
-
-export let removeCommentDuringCreationDecoration = function(state) {
     let {
         decos
     } = key.getState(state)
 
-    if (decos.find().length === 0) {
-        return
+    let commentDuringCreationDeco = decos.find(undefined, undefined, spec => spec === commentDuringCreationDecoSpec)
+
+    if (commentDuringCreationDeco) {
+        decos = decos.remove([commentDuringCreationDeco])
     }
-    decos = DecorationSet.empty
 
-    let transaction = state.tr.setMeta(key, {decos})
-    return transaction
+    decos = decos.add(tr.doc, [
+        Decoration.inline(tr.selection.from, tr.selection.to, {class: 'active-comment'}, commentDuringCreationDecoSpec)
+    ])
 
+    return tr.setMeta(key, {decos})
+}
+
+export let removeCommentDuringCreationDecoration = function(state, tr) {
+    let {
+        decos
+    } = key.getState(state)
+
+    let commentDuringCreationDeco = decos.find(undefined, undefined, spec => spec === commentDuringCreationDecoSpec)
+
+    if (!commentDuringCreationDeco) {
+        return false
+    }
+    decos = decos.remove([commentDuringCreationDeco])
+
+    return tr.setMeta(key, {decos})
 }
 
 export let getCommentDuringCreationDecoration = function(state) {
@@ -90,7 +99,13 @@ export let getCommentDuringCreationDecoration = function(state) {
         decos
     } = key.getState(state)
 
-    return decos.find()[0]
+    let deco = decos.find(undefined, undefined, spec => spec === commentDuringCreationDecoSpec)
+
+    if (deco.length) {
+        return deco[0]
+    } else {
+        return false
+    }
 }
 
 export let commentsPlugin = function(options) {
@@ -118,15 +133,14 @@ export let commentsPlugin = function(options) {
                     options.editor.mod.comments.interactions.deleteComment(-1)
                 }})
 
-
                 return {
                     decos
                 }
             }
         },
-        appendTransaction: (transactions, oldState, state) => {
+        appendTransaction: (trs, oldState, state) => {
             // Check if any of the transactions are local.
-            if (transactions.every(transaction => transaction.getMeta(
+            if (trs.every(tr => tr.getMeta(
                     'remote'))) {
                 // All transactions are remote. Give up.
                 return
@@ -135,15 +149,15 @@ export let commentsPlugin = function(options) {
             let deletedComments = {}
                 // Check what area is affected
 
-            transactions.forEach(transaction => {
+            trs.forEach(tr => {
                 Object.keys(deletedComments).forEach(commentId => {
                     // map positions from earlier transactions
-                    deletedComments[commentId] = transaction.mapping.map(deletedComments[commentId])
+                    deletedComments[commentId] = tr.mapping.map(deletedComments[commentId])
                 })
-                transaction.steps.forEach((step, index) => {
+                tr.steps.forEach((step, index) => {
                     if (step.jsonID === 'replace' || step.jsonID === 'replaceAround') {
                         if (step.from !== step.to) {
-                            transaction.docs[index].nodesBetween(
+                            tr.docs[index].nodesBetween(
                                 step.from,
                                 step.to,
                                 (node, pos, parent) => {
@@ -204,13 +218,6 @@ export let commentsPlugin = function(options) {
             }
             steps.forEach(step => tr.step(step))
             return tr
-        },
-        view(editorState) {
-            return {
-                update: (view, prevState) => {
-                    options.editor.mod.comments.layout.view()
-                }
-            }
         },
         props: {
             decorations(state) {

@@ -43,7 +43,7 @@ export class ImageSelectionDialog {
 
         this.startImageTable()
         if (this.imgId) {
-            jQuery(`#Image_${this.imgDb}_${this.imgId}`).addClass('checked')
+            document.getElementById(`Image_${this.imgDb}_${this.imgId}`).classList.add('checked')
         }
         return this.bindEvents()
     }
@@ -69,7 +69,7 @@ export class ImageSelectionDialog {
                 "aTargets": nonSortable
             }],
         })
-        jQuery('#select_imagelist_filter input').attr(
+        document.querySelector('#select_imagelist_filter input').setAttribute(
             'placeholder', gettext('Search for Filename'))
 
         jQuery('#select_imagelist_filter input').unbind('focus, blur')
@@ -81,8 +81,8 @@ export class ImageSelectionDialog {
         })
 
         let autocompleteTags = []
-        jQuery('#imagelist .fw-searchable').each(function() {
-            autocompleteTags.push(this.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''))
+        document.querySelectorAll('#imagelist .fw-searchable').forEach(el => {
+            autocompleteTags.push(el.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''))
         })
         autocompleteTags = [...new Set(autocompleteTags)] // unique values
         jQuery("#select_imagelist_filter input").autocomplete({
@@ -96,7 +96,7 @@ export class ImageSelectionDialog {
         let that = this
         jQuery('#select_imagelist tr').on('click', function () {
             let checkedImage = jQuery('#select_imagelist tr.checked'),
-                selecting = true, elementId = jQuery(this).attr('id')
+                selecting = true, elementId = this.getAttribute('id')
             if (elementId === undefined) {
                 // Likely clicked on header
                 return
@@ -109,7 +109,7 @@ export class ImageSelectionDialog {
             if (selecting) {
                 that.imgId = parseInt(elementId.split('_')[2])
                 that.imgDb = elementId.split('_')[1]
-                jQuery(this).addClass('checked')
+                this.classList.add('checked')
             }
         })
         return new Promise (resolve => {

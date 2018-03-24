@@ -1,15 +1,20 @@
 /** Creates a dropdown box.
  * @param btn The button to open and close the dropdown box.
  * @param box The node containing the contents of the dropdown box.
+ * @param preopen An optional function to be called before opening the dropdown box. Used to position dropdown box.
  */
 
-export let addDropdownBox = function(btn, box) {
-    btn.bind('mousedown', event => {
+export let addDropdownBox = function(btn, box, preopen=false) {
+    btn.addEventListener('click', event => {
         event.preventDefault()
-        if(btn.hasClass('disabled')) {
+        event.stopPropagation()
+        if(btn.classList.contains('disabled')) {
             return
         }
-        if('none' == box.css('display')) {
+        if(!box.clientWidth) {
+            if (preopen) {
+                preopen()
+            }
             openDropdownBox(box)
         }
     })
@@ -21,28 +26,25 @@ export let addDropdownBox = function(btn, box) {
 
 let openDropdownBox = function(box) {
     // Show this box
-    box.show()
-    // Give that the dropdown menu was opened through a mousedown event, there
-    // will be a first click event following it. We will wait for the second
-    // click event.
-    jQuery(document).one('click', () => {
-        jQuery(document).one('click', event => {
-            event.preventDefault()
-            box.hide()
-        })
-    })
+    box.style.display = 'block'
+
+    let closeDropdownBox = function(event) {
+        event.preventDefault()
+        box.style.display = ''
+        document.removeEventListener('click', closeDropdownBox, false);
+    }
+    document.addEventListener('click', closeDropdownBox, false)
 }
 
 
-/** Checkes or uncheckes a checkable label. This is used for example for bibliography categories when editing bibliography items.
+/** Checks or unchecks a checkable label. This is used for example for bibliography categories when editing bibliography items.
  * @param label The node who's parent has to be checked or unchecked.
  */
-export let setCheckableLabel = function(label) {
-    let checkbox = label.parent().find('input[type=checkbox]')
-    if(label.hasClass('checked')) {
-        label.removeClass('checked')
+export let setCheckableLabel = function(labelEl) {
+    if(labelEl.classList.contains('checked')) {
+        labelEl.classList.remove('checked')
     } else {
-        label.addClass('checked')
+        labelEl.classList.add('checked')
     }
 }
 
@@ -76,33 +78,42 @@ export let addAlert = function(alertType, alertMsg) {
         'info': 'info-circle',
         'success': 'check-circle'
     }
-    let alertBox = jQuery(`<li class="alerts-${alertType} fa fa-${iconNames[alertType]}">${alertMsg}</li>`)
-    if(0 === jQuery('#alerts-outer-wrapper').length)
-        jQuery('body').append('<div id="alerts-outer-wrapper"><ul id="alerts-wrapper"></ul></div>')
-    jQuery('#alerts-wrapper').append(alertBox)
-    alertBox.fadeTo(fadeSpeed, 1, function() {
-        jQuery(this).delay('2000').fadeOut(fadeSpeed, function() { jQuery(this).remove() })
-    })
+    if(!document.getElementById('#alerts-outer-wrapper'))
+        document.body.insertAdjacentHTML('beforeend', '<div id="alerts-outer-wrapper"><ul id="alerts-wrapper"></ul></div>')
+    let alertsWrapper = document.getElementById('alerts-wrapper')
+    alertsWrapper.insertAdjacentHTML('beforeend', `<li class="alerts-${alertType} fa fa-${iconNames[alertType]}">${alertMsg}</li>`)
+    let alertBox = alertsWrapper.lastElementChild
+    setTimeout(()=>{
+        alertBox.classList.add('visible')
+        setTimeout(()=>{
+            alertBox.classList.remove('visible')
+            setTimeout(()=>alertsWrapper.removeChild(alertBox), 2000)
+        }, 4000)
+    }, 1)
 }
 
 
 /** Turn milliseconds since epoch (UTC) into a local date string.
  * @param {number} milliseconds Number of milliseconds since epoch (1/1/1970 midnight, UTC).
- * @param {boolean} sortable Whether the result should appear in a date only list.
+ * @param {boolean} type 'full' for full date (default), 'sortable-date' for sortable date, 'minutes' for minute accuracy
  */
-export let localizeDate = function (milliseconds, sortable) {
+export let localizeDate = function (milliseconds, type='full') {
     milliseconds = parseInt(milliseconds)
     if (milliseconds > 0) {
         let theDate = new Date(milliseconds)
-        if (true === sortable) {
-            let yyyy = theDate.getFullYear(),
-                mm = theDate.getMonth() + 1,
-                dd = theDate.getDate()
+        switch(type) {
+            case 'sortable-date':
+                let yyyy = theDate.getFullYear(),
+                    mm = theDate.getMonth() + 1,
+                    dd = theDate.getDate()
 
-            return `${yyyy}-${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`
-        }
-        else {
-            return theDate.toLocaleString()
+                return `${yyyy}-${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`
+                break
+            case 'minutes':
+                return theDate.toLocaleString([], {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute:'2-digit'})
+                break
+            default:
+                return theDate.toLocaleString()
         }
     }
     else {
@@ -148,108 +159,28 @@ export let escapeText = function(text) {
 
 export let cancelPromise = () => new Promise(()=>{})
 
-
-/** Get cookie to set as part of the request header of all AJAX requests to the server.
- * @param name The name of the token to look for in the cookie.
- */
-let getCookie = function(name) {
-    let cookieValue = null
-    if (document.cookie && document.cookie !== '') {
-        let cookies = document.cookie.split(';')
-        for (let i = 0; i < cookies.length; i++) {
-            let cookie = jQuery.trim(cookies[i])
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
-                break
-            }
-        }
+// Check if selector matches one of the ancestors of the event target.
+// Used in switch statements of document event listeners.
+export let findTarget = function(event, selector, el={}) {
+    el.target = event.target.closest(selector)
+    if (el.target) {
+        event.stopPropagation()
+        return true
     }
-    return cookieValue
+    return false
 }
 
-export let getCsrfToken = function () {
-    return getCookie('csrftoken')
-}
-
-/* from https://www.tjvantoll.com/2015/09/13/fetch-and-errors/ */
-let handleFetchErrors = function(response) {
-    if (!response.ok) { throw Error(response.statusText) }
-    return response
-}
-
-export let get = function(url, params={}, csrfToken=false) {
-    if (!csrfToken) {
-        csrfToken = getCsrfToken() // Won't work in web worker.
+// Promise when page has been loaded.
+export let whenReady = function() {
+    if (document.readyState === "complete") {
+        return Promise.resolve()
+    } else {
+        return new Promise(resolve => {
+            document.addEventListener("readystatechange", event => {
+                if (document.readyState === "complete") {
+                    resolve()
+                }
+            })
+        })
     }
-    let queryString = Object.keys(params).map(
-        key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`
-    ).join('&')
-    if (queryString.length) {
-        url = `${url}?${queryString}`
-    }
-    return fetch(url, {
-        method: "GET",
-        headers: {
-            'X-CSRFToken': csrfToken,
-            'Accept': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest'
-        },
-        credentials: 'include'
-    }).then(
-        handleFetchErrors
-    )
-}
-
-export let getJson = function(url, params={}, csrfToken=false) {
-    return get(url, params, csrfToken).then(
-        response => response.json()
-    )
-}
-
-export let post = function(url, params={}, csrfToken=false) {
-    if (!csrfToken) {
-        csrfToken = getCsrfToken() // Won't work in web worker.
-    }
-    let body = new FormData()
-    body.append('csrfmiddlewaretoken', csrfToken)
-    Object.keys(params).forEach(key => {
-        let value = params[key]
-        if (typeof(value)==="object" && value.file && value.filename) {
-            body.append(key, value.file, value.filename)
-        } else if (Array.isArray(value)) {
-            value.forEach(item => body.append(`${key}[]`, item))
-        } else {
-            body.append(key, value)
-        }
-    })
-
-    return fetch(url, {
-        method: "POST",
-        headers: {
-            'X-CSRFToken': csrfToken,
-            'Accept': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest'
-        },
-        credentials: 'include',
-        body
-    }).then(
-        handleFetchErrors
-    )
-}
-
-// post and then return json
-export let postJson = function(url, params={}, csrfToken=false) {
-    return post(url, params, csrfToken).then(
-        response => response.json()
-    )
-}
-
-// post and then return json and status
-export let postJsonStatus = function(url, params={}, csrfToken=false) {
-    return post(url, params, csrfToken).then(
-        response => response.json().then(
-            json => ({json, status: response.status})
-        )
-    )
 }

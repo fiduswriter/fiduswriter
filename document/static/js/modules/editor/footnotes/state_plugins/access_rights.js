@@ -7,10 +7,10 @@ const key = new PluginKey('accessRights')
 export let accessRightsPlugin = function(options) {
     return new Plugin({
         key,
-        filterTransaction: (transaction, state) => {
+        filterTransaction: (tr, state) => {
             let allowed = true
-            let remote = transaction.getMeta('remote')
-            let filterFree = transaction.getMeta('filterFree')
+            let remote = tr.getMeta('remote')
+            let filterFree = tr.getMeta('filterFree')
             if (remote || filterFree) {
                 return allowed
             }
@@ -22,7 +22,7 @@ export let accessRightsPlugin = function(options) {
                 allowed = false
             }
 
-            if (transaction.docs.length && transaction.docs[0].childCount !== transaction.doc.childCount) {
+            if (tr.docs.length && tr.docs[0].childCount !== tr.doc.childCount) {
                 allowed = false
             }
 

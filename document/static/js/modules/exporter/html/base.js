@@ -44,23 +44,26 @@ export class BaseHTMLExporter extends BaseDOMExporter {
         }
     }
 
-    addFigureNumbers(htmlCode) {
+    addFigureNumbers(htmlEl) {
 
-        jQuery(htmlCode).find('figcaption .figure-cat-figure').each(
-            function(index) {
-                this.innerHTML += ' ' + (index + 1) + ': '
-            })
+        htmlEl.querySelectorAll('figcaption .figure-cat-figure').forEach(
+            (el, index) => {
+                el.innerHTML += ' ' + (index + 1) + ': '
+            }
+        )
 
-        jQuery(htmlCode).find('figcaption .figure-cat-photo').each(function(
-            index) {
-            this.innerHTML += ' ' + (index + 1) + ': '
-        })
+        htmlEl.querySelectorAll('figcaption .figure-cat-photo').forEach(
+            (el, index) => {
+                el.innerHTML += ' ' + (index + 1) + ': '
+            }
+        )
 
-        jQuery(htmlCode).find('figcaption .figure-cat-table').each(function(
-            index) {
-            this.innerHTML += ' ' + (index + 1) + ': '
-        })
-        return htmlCode
+        htmlEl.querySelectorAll('figcaption .figure-cat-table').forEach(
+            (el, index) => {
+                el.innerHTML += ' ' + (index + 1) + ': '
+            }
+        )
+        return htmlEl
 
     }
     replaceImgSrc(htmlString) {

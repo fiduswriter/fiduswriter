@@ -1,6 +1,6 @@
 import uuid
 import atexit
-from time import mktime
+from time import mktime, time
 from copy import deepcopy
 
 from jsonpatch import apply_patch, JsonPatchConflict
@@ -47,7 +47,7 @@ class WebSocket(BaseWebSocketHandler):
         self.user_info = SessionUserInfo()
         doc_db, can_access = self.user_info.init_access(
             document_id, current_user)
-        if not can_access or doc_db.doc_version != FW_DOCUMENT_VERSION:
+        if not can_access or float(doc_db.doc_version) != FW_DOCUMENT_VERSION:
             response['type'] = 'access_denied'
             self.id = 0
             self.send_message(response)
@@ -136,6 +136,7 @@ class WebSocket(BaseWebSocketHandler):
             'bibliography': self.doc['bibliography'],
             'images': {}
         }
+        response['time'] = int(time()) * 1000
         for dimage in DocumentImage.objects.filter(document_id=self.doc['id']):
             image = dimage.image
             field_obj = {

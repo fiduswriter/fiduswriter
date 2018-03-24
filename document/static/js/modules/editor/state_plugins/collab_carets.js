@@ -25,7 +25,7 @@ export let updateCollaboratorSelection = function(state, collaborator, data) {
     }
 
     let widgetDom = document.createElement('div')
-    let className = `user-${collaborator.colorId}`
+    let className = `user-${collaborator.id}`
     widgetDom.classList.add('caret')
     widgetDom.classList.add(className)
     widgetDom.innerHTML = '<div class="caret-head"></div>'
@@ -50,18 +50,18 @@ export let updateCollaboratorSelection = function(state, collaborator, data) {
         let from = data.head > data.anchor ? data.anchor : data.head,
             to = data.anchor > data.head ? data.anchor : data.head,
             inlineDeco = Decoration.inline(from, to, {
-                class: `user-bg-${collaborator.colorId}`
+                class: `user-bg-${collaborator.id}`
             }, decoSpec)
         addDecos.push(inlineDeco)
     }
     decos = decos.add(state.doc, addDecos)
 
-    let transaction = state.tr.setMeta(key, {
+    let tr = state.tr.setMeta(key, {
         decos,
         caretPositions,
         caretUpdate: false
     })
-    return transaction
+    return tr
 }
 
 export let removeCollaboratorSelection = function(state, data) {
@@ -76,12 +76,12 @@ export let removeCollaboratorSelection = function(state, data) {
         caretPositions = caretPositions.filter(carPos => carPos !== caretPosition)
         let removeDecos = decos.find().filter(deco => deco.spec === caretPosition.decoSpec)
         decos = decos.remove(removeDecos)
-        let transaction = state.tr.setMeta(key, {
+        let tr = state.tr.setMeta(key, {
             decos,
             caretPositions,
             caretUpdate: false
         })
-        return transaction
+        return tr
     }
     return false
 }

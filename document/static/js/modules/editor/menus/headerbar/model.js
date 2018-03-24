@@ -10,6 +10,7 @@ import {HTMLExporter} from "../../../exporter/html"
 import {EpubExporter} from "../../../exporter/epub"
 import {RevisionDialog, LanguageDialog, TableDialog} from "../../dialogs"
 import {TEXT_ONLY_PARTS} from "../toolbar/model"
+import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from "../.."
 
 // from https://github.com/ProseMirror/prosemirror-tables/blob/master/src/util.js
 let isInTable = function(state) {
@@ -104,9 +105,8 @@ export let headerbarModel = {
                     icon: 'files-o',
                     tooltip: gettext('Create copy of the current document.'),
                     action: editor => {
-                        let doc = editor.getDoc(),
-                            copier = new SaveCopy(
-                                doc,
+                        let copier = new SaveCopy(
+                                editor.getDoc(),
                                 editor.mod.db.bibDB,
                                 editor.mod.db.imageDB,
                                 editor.user
@@ -152,7 +152,7 @@ export let headerbarModel = {
                     tooltip: gettext('Export the document to an HTML file.'),
                     action: editor => {
                         new HTMLExporter(
-                            editor.getDoc(),
+                            editor.getDoc({changes: 'acceptAllNoInsertions'}),
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB,
                             editor.mod.styles.citationStyles,
@@ -166,7 +166,7 @@ export let headerbarModel = {
                     tooltip: gettext('Export the document to an Epub electronic reader file.'),
                     action: editor => {
                         new EpubExporter(
-                            editor.getDoc(),
+                            editor.getDoc({changes: 'acceptAllNoInsertions'}),
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB,
                             editor.mod.styles.citationStyles,
@@ -180,7 +180,7 @@ export let headerbarModel = {
                     tooltip: gettext('Export the document to an LaTeX file.'),
                     action: editor => {
                         new LatexExporter(
-                            editor.getDoc(),
+                            editor.getDoc({changes: 'acceptAllNoInsertions'}),
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB
                         )
@@ -438,9 +438,9 @@ export let headerbarModel = {
             id: 'table',
             title: gettext('Table'),
             tooltip: gettext('Add and edit tables.'),
-            disabled: editor => {
-                return editor.docInfo.access_rights !== 'write'
-            },
+            disabled: editor =>
+                READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights),
             content: [
                 {
                     title: gettext('Insert table'),
@@ -600,6 +600,51 @@ export let headerbarModel = {
                     },
                     disabled: editor => !isInTable(editor.currentView.state)
                 }
+            ]
+        },
+        {
+            title: gettext('Track changes'),
+            type: 'menu',
+            tooltip: gettext('Tracking changes to the document'),
+            disabled: editor => {
+                return editor.docInfo.access_rights !== 'write'
+            },
+            content: [
+                {
+                    title: gettext('Record'),
+                    type: 'setting',
+                    tooltip: gettext('Record document changes'),
+                    disabled: editor => {
+                        return editor.docInfo.access_rights !== 'write'
+                    },
+                    action: editor => {
+                        let article = editor.view.state.doc.firstChild
+                        let attrs = Object.assign({}, article.attrs)
+                        attrs.track = !attrs.track
+                        editor.view.dispatch(
+                            editor.view.state.tr.setNodeMarkup(0, false, attrs)
+                        )
+                    },
+                    selected: editor => {
+                        return editor.view.state.doc.firstChild.attrs.track === true
+                    }
+                },
+                {
+                    title: gettext('Accept all'),
+                    type: 'action',
+                    tooltip: gettext('Accept all tracked changes.'),
+                    action: editor => {
+                        editor.mod.track.acceptAll()
+                    }
+                },
+                {
+                    title: gettext('Reject all'),
+                    type: 'action',
+                    tooltip: gettext('Reject all tracked changes.'),
+                    action: editor => {
+                        editor.mod.track.rejectAll()
+                    }
+                },
             ]
         }
     ]

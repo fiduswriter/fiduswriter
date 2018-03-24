@@ -274,12 +274,15 @@ export class ModCollabDocChanges {
         }
     }
 
-    setConfirmedDoc(transaction) {
+    setConfirmedDoc(tr, stepsLength) {
         // Find the latest version of the doc without any unconfirmed local changes
-        let rebased = transaction.getMeta("rebased")
-        this.mod.editor.docInfo.confirmedDoc = rebased > 0 ?
-            transaction.docs[transaction.docs.length - rebased] :
-            transaction.doc
+
+        let rebased = tr.getMeta("rebased"),
+            docNumber = rebased + stepsLength
+
+        this.mod.editor.docInfo.confirmedDoc = docNumber === tr.docs.length ?
+            tr.doc :
+            tr.docs[docNumber]
     }
 
     confirmDiff(request_id) {
@@ -288,19 +291,21 @@ export class ModCollabDocChanges {
             return
         }
         this.mod.editor.docInfo.version++
-        this.mod.editor.docInfo.confirmedDoc = unconfirmedDiffs["doc"]
 
         let sentSteps = unconfirmedDiffs["ds"] // document steps
         if (sentSteps) {
+            let ourIds = sentSteps.map(
+                step => this.mod.editor.client_id
+            )
             let tr = receiveTransaction(
                 this.mod.editor.view.state,
                 sentSteps,
-                sentSteps.map(
-                    step => this.mod.editor.client_id
-                )
+                ourIds
             )
             this.mod.editor.view.dispatch(tr)
         }
+
+        this.mod.editor.docInfo.confirmedDoc = unconfirmedDiffs["doc"]
 
         let sentFnSteps = unconfirmedDiffs["fs"] // footnote steps
         if (sentFnSteps) {
@@ -349,7 +354,7 @@ export class ModCollabDocChanges {
         )
         tr.setMeta('remote', true)
         this.mod.editor.view.dispatch(tr)
-        this.setConfirmedDoc(tr)
+        this.setConfirmedDoc(tr, steps.length)
         this.receiving = false
         this.sendToCollaborators()
     }

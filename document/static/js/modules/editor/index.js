@@ -1,21 +1,18 @@
 /* Functions for ProseMirror integration.*/
 import {
+    whenReady
+} from "../common"
+import {
     EditorState,
-    Plugin,
     TextSelection
 } from "prosemirror-state"
 import {
-    EditorView,
-    Decoration,
-    DecorationSet
+    EditorView
 } from "prosemirror-view"
 import {
-    history,
-    redo,
-    undo
+    history
 } from "prosemirror-history"
 import {
-    toggleMark,
     baseKeymap
 } from "prosemirror-commands"
 import {
@@ -60,12 +57,16 @@ import {
     ModTools
 } from "./tools"
 import {
-    ModSettings
-} from "./settings"
+    ModTrack,
+    acceptAllNoInsertions
+} from "./track"
 import {
     headerbarModel,
     toolbarModel
 } from "./menus"
+import {
+    ModMarginboxes
+} from "./marginboxes"
 import {
     ModStyles
 } from "./styles"
@@ -85,6 +86,7 @@ import {
 import {
     accessRightsPlugin,
     authorInputPlugin,
+    citationRenderPlugin,
     collabCaretsPlugin,
     commentsPlugin,
     footnoteMarkersPlugin,
@@ -92,10 +94,16 @@ import {
     jumpHiddenNodesPlugin,
     keywordInputPlugin,
     linksPlugin,
+    marginboxesPlugin,
     pastePlugin,
     placeholdersPlugin,
-    toolbarPlugin
+    settingsPlugin,
+    toolbarPlugin,
+    trackPlugin
 } from "./state_plugins"
+import {
+    editorKeymap
+} from "./keymap"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']
@@ -127,7 +135,9 @@ export class Editor {
             toolbarModel
         }
         this.client_id = Math.floor(Math.random() * 0xFFFFFFFF)
+        this.clientTimeAdjustment = 0
         this.statePlugins = [
+            [keymap, () => editorKeymap],
             [keymap, () => buildKeymap(this.schema)],
             [keymap, () => baseKeymap],
             [collab, () => ({clientID: this.client_id})],
@@ -138,29 +148,28 @@ export class Editor {
             [tableEditing],
             [jumpHiddenNodesPlugin],
             [placeholdersPlugin, () => ({editor: this})],
+            [citationRenderPlugin, () => ({editor: this})],
             [headerbarPlugin, () => ({editor: this})],
             [toolbarPlugin, () => ({editor: this})],
             [collabCaretsPlugin, () => ({editor: this})],
             [footnoteMarkersPlugin, () => ({editor: this})],
             [commentsPlugin, () => ({editor: this})],
+            [marginboxesPlugin, () => ({editor: this})],
             [keywordInputPlugin, () => ({editor: this})],
             [authorInputPlugin, () => ({editor: this})],
             [pastePlugin, () => ({editor: this})],
-            [accessRightsPlugin, () => ({editor: this})]
+            [accessRightsPlugin, () => ({editor: this})],
+            [settingsPlugin, () => ({editor: this})],
+            [trackPlugin, () => ({editor: this})]
         ]
+        new ModCitations(this)
         new ModFootnotes(this)
         new ModServerCommunications(this)
         new ModDB(this)
     }
 
     init() {
-        new ModSettings(this)
-
-        if (document.readyState === "complete") {
-            this.initEditor()
-        } else {
-            document.addEventListener("DOMContentLoaded", event => this.initEditor())
-        }
+        whenReady().then(()=>this.initEditor())
     }
 
     initEditor() {
@@ -179,20 +188,20 @@ export class Editor {
                     view.focus()
                 }
             },
-            dispatchTransaction: (transaction) => {
-                let newState = this.view.state.apply(transaction)
+            dispatchTransaction: (tr) => {
+                let newState = this.view.state.apply(tr)
                 this.view.updateState(newState)
-                let remote = transaction.getMeta('remote')
-                this.onTransaction(transaction, remote)
+                this.mod.collab.docChanges.sendToCollaborators()
             }
 
         })
         // The editor that is currently being edited in -- main or footnote editor
         this.currentView = this.view
         this.mod.footnotes.init()
-        new ModCitations(this)
         new ModCollab(this)
         new ModTools(this)
+        new ModTrack(this)
+        new ModMarginboxes(this)
         new ModComments(this)
         new ModStyles(this)
         this.activateFidusPlugins()
@@ -220,6 +229,9 @@ export class Editor {
         }
         // Remember location hash to scroll there subsequently.
         let locationHash = window.location.hash
+
+        this.clientTimeAdjustment = Date.now() - data.time
+
         let doc = data.doc
 
         this.docInfo = data.doc_info
@@ -235,6 +247,8 @@ export class Editor {
         } else {
             this.user = this.docInfo.owner
         }
+
+
 
         this.mod.db.bibDB.setDB(data.doc.bibliography)
         this.mod.db.imageDB.setDB(data.doc.images)
@@ -281,11 +295,8 @@ export class Editor {
         //  Setup comment handling
         this.mod.comments.store.reset()
         this.mod.comments.store.loadComments(doc.comments)
-        this.mod.comments.layout.view()
+        this.mod.marginboxes.view(this.view)
         this.waitingForDocument = false
-        // Get document settings
-        this.mod.settings.check(this.view.state.doc.firstChild.attrs)
-        this.mod.citations.layoutCitations()
         if (locationHash.length) {
             this.scrollIdIntoView(locationHash.slice(1))
         }
@@ -293,8 +304,10 @@ export class Editor {
 
     // Collect all components of the current doc. Needed for saving and export
     // filters
-    getDoc() {
-        let pmArticle = this.docInfo.confirmedDoc.firstChild
+    getDoc(options) {
+        let pmArticle = options.changes === 'acceptAllNoInsertions' ?
+            acceptAllNoInsertions(this.docInfo.confirmedDoc).firstChild :
+            this.docInfo.confirmedDoc.firstChild
         return {
             contents: pmArticle.toJSON(),
             settings: getSettings(pmArticle),
@@ -349,52 +362,13 @@ export class Editor {
     }
 
     scrollPosIntoView(pos, view) {
-        let topMenuHeight = jQuery('header').outerHeight() + 10
+        let topMenuHeight = document.querySelector('header').offsetHeight + 10
         let $pos = view.state.doc.resolve(pos)
         view.dispatch(view.state.tr.setSelection(new TextSelection($pos, $pos)))
         view.focus()
         let distanceFromTop = view.coordsAtPos(pos).top - topMenuHeight
         window.scrollBy(0, distanceFromTop)
         return
-    }
-
-    // Things to be executed on every editor transaction.
-    onTransaction(transaction, remote) {
-        let updateBibliography = false, updateSettings = false
-            // Check what area is affected
-
-        this.mod.collab.docChanges.sendToCollaborators()
-
-        transaction.steps.forEach((step, index) => {
-            if (step.jsonID === 'replace' || step.jsonID === 'replaceAround') {
-                if (step.from !== step.to) {
-                    transaction.docs[index].nodesBetween(
-                        step.from,
-                        step.to,
-                        (node, pos, parent) => {
-                            if (node.type.name === 'citation') {
-                                // A citation was replaced
-                                updateBibliography = true
-                            }
-                        }
-                    )
-                    if (step.from===0 && step.jsonID === 'replaceAround') {
-                        updateSettings = true
-                    }
-                }
-            }
-        })
-
-        if (updateBibliography) {
-            // Recreate the bibliography
-            this.mod.citations.resetCitations()
-        } else {
-            this.mod.citations.layoutCitations()
-        }
-
-        if (updateSettings) {
-            this.mod.settings.check(this.view.state.doc.firstChild.attrs)
-        }
     }
 
 }

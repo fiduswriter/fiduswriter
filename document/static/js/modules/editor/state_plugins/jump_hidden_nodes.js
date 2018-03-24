@@ -19,12 +19,12 @@ export let jumpHiddenNodesPlugin = function(options) {
 
     return new Plugin({
         key,
-        appendTransaction: (transactions, oldState, state) => {
+        appendTransaction: (trs, oldState, state) => {
             if (state.selection.from !== state.selection.to) {
                 // Only applies to collapsed selection
                 return
             }
-            let selectionSet = transactions.find(tr => tr.selectionSet)
+            let selectionSet = trs.find(tr => tr.selectionSet)
 
             if (selectionSet && posHidden(state.selection.$from)) {
                 let dir = state.selection.from > oldState.selection.from ? 1 : -1,

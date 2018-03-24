@@ -15,55 +15,59 @@ export class BibLatexFileImportDialog {
 
     init() {
         let that = this
-        jQuery('body').append(importBibFileTemplate())
-        let diaButtons = {}
-        diaButtons[gettext('Import')] = function () {
-            let bibFile = jQuery('#bib-uploader')[0].files
-            if (0 === bibFile.length) {
-                console.warn('no file found')
-                return false
+        document.body.insertAdjacentHTML('beforeend', importBibFileTemplate())
+        let buttons = [
+            {
+                text: gettext('Import'),
+                class: 'fw-button fw-dark',
+                click: () => {
+                    let bibFile = document.getElementById('bib-uploader').files
+                    if (0 === bibFile.length) {
+                        console.warn('no file found')
+                        return false
+                    }
+                    bibFile = bibFile[0]
+                    if (10485760 < bibFile.size) {
+                        console.warn('file too big')
+                        return false
+                    }
+                    activateWait()
+                    let reader = new window.FileReader()
+                    reader.onerror = error => console.error('error', error.target.error.code)
+                    reader.onload = event => {
+                        let importer = new BibLatexImporter(
+                            event.target.result,
+                            that.bibDB,
+                            getCsrfToken(),
+                            that.addToListCall,
+                            () => deactivateWait()
+                        )
+                        importer.init()
+                    }
+                    reader.readAsText(bibFile)
+                    jQuery(this).dialog('close')
+                }
+            },
+            {
+                text: gettext('Cancel'),
+                class: 'fw-button fw-orange',
+                click: () => jQuery(this).dialog('close')
             }
-            bibFile = bibFile[0]
-            if (10485760 < bibFile.size) {
-                console.warn('file too big')
-                return false
-            }
-            activateWait()
-            let reader = new window.FileReader()
-            reader.onerror = error => console.error('error', error.target.error.code)
-            reader.onload = event => {
-                let importer = new BibLatexImporter(
-                    event.target.result,
-                    that.bibDB,
-                    getCsrfToken(),
-                    that.addToListCall,
-                    () => deactivateWait()
-                )
-                importer.init()
-            }
-            reader.readAsText(bibFile)
-            jQuery(this).dialog('close')
-        }
-        diaButtons[gettext('Cancel')] = function () {
-            jQuery(this).dialog('close')
-        }
+        ]
         jQuery("#importbibtex").dialog({
             resizable: false,
             height: 180,
             modal: true,
-            buttons: diaButtons,
+            buttons,
             create: function () {
-                let theDialog = jQuery(this).closest(".ui-dialog")
-                theDialog.find(".ui-button:first-child").addClass(
-                    "fw-button fw-dark")
-                theDialog.find(".ui-button:last").addClass(
-                    "fw-button fw-orange")
-                jQuery('#bib-uploader').bind('change', function () {
-                    jQuery('#import-bib-name').html(jQuery(this).val().replace(
-                        /C:\\fakepath\\/i, ''))
-                })
-                jQuery('#import-bib-btn').bind('click', () =>
-                    jQuery('#bib-uploader').trigger('click')
+                document.getElementById('bib-uploader').addEventListener(
+                    'change',
+                    event => document.getElementById('import-bib-name').innerHTML =
+                        document.getElementById('bib-uploader').value.replace(/C:\\fakepath\\/i, '')
+                )
+                document.getElementById('import-bib-btn').addEventListener(
+                    'click',
+                    event => document.getElementById('bib-uploader').click()
                 )
             },
             close: () =>

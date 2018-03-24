@@ -1,5 +1,5 @@
 import {messageTemplate} from "./templates"
-import {localizeDate} from "../../common"
+import {localizeDate, whenReady} from "../../common"
 
 /*
 * Functions for chat between users who access a document simultaneously.
@@ -15,7 +15,7 @@ export class ModCollabChat {
     }
 
     beep() {
-        let notification = jQuery('#chat-notification')[0]
+        let notification = document.getElementById('chat-notification')
         notification.play()
     }
 
@@ -41,24 +41,23 @@ export class ModCollabChat {
     }
 
     newMessage(message) {
-        let existing = jQuery("#m" + message.id)
-        if (existing.length > 0) return
+        if (document.getElementById(`m${message.id}`)) {
+            return
+        }
         let theChatter = this.mod.participants.find(participant => participant.id === message.from)
-        let node = jQuery(messageTemplate({message, theChatter, localizeDate}))
-        node.hide()
 
-        let chatContainer = jQuery("#chat-container")
-        chatContainer.append(node)
+        let chatContainer = document.getElementById("chat-container")
+        chatContainer.insertAdjacentHTML('beforeend', messageTemplate({message, theChatter, localizeDate}))
         if (!this.focus) {
             this.beep()
             this.flashtab(message.from + ': ' + message.body)
         }
-        if (chatContainer.css('display') === 'none') {
-            jQuery("#chat").addClass('highlighted')
+        if (chatContainer.style.display === 'none') {
+            document.getElementById("chat").classList.add('highlighted')
         }
-        node.slideDown({
+        jQuery(chatContainer.lastElementChild).slideDown({
             progress: function () {
-                chatContainer[0].scrollTop = chatContainer[0].scrollHeight
+                chatContainer.scrollTop = chatContainer.scrollHeight
             }
         })
 
@@ -67,12 +66,11 @@ export class ModCollabChat {
     showChat(participants) {
 
         // If only one machine is connected and nothing has been chatted, don't show chat
-        if (participants.length === 1 && jQuery(
-            '#chat-container .message').length === 0) {
-            jQuery('#chat').css('display', 'none');
+        if (participants.length === 1 && !document.querySelector('#chat-container .message')) {
+            document.getElementById('chat').style.display = 'none'
         }
         else {
-            jQuery('#chat').css('display', 'block')
+            document.getElementById('chat').style.display = 'block'
         }
     }
 
@@ -84,77 +82,57 @@ export class ModCollabChat {
     }
 
     init() {
+        document.head.insertAdjacentHTML(
+            'beforeend',
+            `<style>\n#messageform.empty:before{content:"${gettext('Send a message...')}"}\n</style>`
+        )
+        whenReady().then(() => {
+            document.getElementById('chat-container').style.maxHeight = jQuery(window).height() - 200 + 'px'
 
-        jQuery(document.head).append(
-            '<style>\n#messageform.empty:before{content:"' + gettext(
-                'Send a message...') + '"}\n</style>')
-        let that = this
-        jQuery(document).ready(function () {
-            jQuery('#chat-container').css('max-height', jQuery(window).height() -
-                200 + 'px')
-
-            jQuery('#chat .resize-button').on("click", function (event) {
-                if (jQuery(this).hasClass('fa-angle-double-down')) {
-                    jQuery(this).removeClass(
-                        'fa-angle-double-down')
-                    jQuery(this).addClass('fa-angle-double-up')
-                    jQuery('#chat-container,#messageform').slideUp()
-                }
-                else {
-                    jQuery(this).removeClass('fa-angle-double-up')
-                    jQuery(this).addClass('fa-angle-double-down')
-                    jQuery('#chat-container,#messageform').slideDown()
-                    if (jQuery(this).parent().hasClass(
-                        'highlighted')) {
-                        jQuery(this).parent().animate({
-                            backgroundColor: "#fff",
-                        }, 1000, 'swing', function () {
-                            jQuery(this).removeClass(
-                                'highlighted').css(
-                                'background-color', '')
-                        });
+            document.querySelector('#chat .resize-button').addEventListener(
+                "click",
+                function (event) {
+                    if (this.classList.contains('fa-angle-double-down')) {
+                        this.classList.remove('fa-angle-double-down')
+                        this.classList.add('fa-angle-double-up')
+                        jQuery('#chat-container,#messageform').slideUp()
+                    }
+                    else {
+                        this.classList.remove('fa-angle-double-up')
+                        this.classList.add('fa-angle-double-down')
+                        jQuery('#chat-container, #messageform').slideDown()
+                        if (this.parentElement.classList.contains('highlighted')) {
+                            jQuery(this).parent().animate({
+                                backgroundColor: "#fff",
+                            }, 1000, 'swing', function () {
+                                this.classList.remove('highlighted')
+                                this.style.backgroundColor = ''
+                            });
+                        }
                     }
                 }
-            })
+            )
 
-            jQuery("#messageform").on("focus", function () {
-                jQuery(this).removeClass('empty')
-            })
+            let messageForm = document.getElementById("messageform")
 
-            jQuery("#messageform").on("blur", function () {
-                if (jQuery(this).text().length === 0) {
-                    jQuery(this).addClass('empty')
+            messageForm.addEventListener("focus", event => messageForm.classList.remove('empty'))
+
+            messageForm.addEventListener("blur", event => {
+                if (messageForm.innerText.length === 0) {
+                    messageForm.classList.add('empty')
                 }
             })
 
-
-            jQuery("#messageform").on("keypress", function (event) {
-                if (event.keyCode == 13) {
-                    that.sendMessage(jQuery(this).text())
-                    jQuery(this).empty()
+            messageForm.addEventListener("keypress", event => {
+                if (event.keyCode === 13) {
+                    this.sendMessage(messageForm.innerText)
+                    messageForm.innerText = ''
                     return false
                 }
             })
-
-
         })
 
-        jQuery(window).on("blur focus", function (event) {
-            let prevType = jQuery(this).data("prevType");
-
-            if (prevType != event.type) { //  reduce double fire issues
-                switch (event.type) {
-                case "blur":
-                    that.focus = false;
-                    break
-                case "focus":
-                    that.focus = true;
-                    break
-                }
-            }
-
-            jQuery(this).data("prevType", event.type)
-
-        })
+        window.addEventListener("blur", () => this.focus = false)
+        window.addEventListener("focus", () => this.focus = true)
     }
 }

@@ -34,7 +34,8 @@ export let menuModel = {
             title: gettext('Add new contact'),
             action: overview => {
                 addMemberDialog().then(memberData => {
-                    jQuery('#team-table tbody').append(
+                    document.querySelector('#team-table tbody').insertAdjacentHTML(
+                        'beforeend',
                         teammemberTemplate({
                             members: [memberData]
                         })

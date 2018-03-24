@@ -1,9 +1,9 @@
-export let findImages = function(htmlCode) {
-    let imageLinks = jQuery(htmlCode).find('img'),
+export let findImages = function(htmlEl) {
+    let imageLinks = htmlEl.querySelectorAll('img'),
         images = []
 
-    imageLinks.each(function(index) {
-        let src = jQuery(this).attr('src').split('?')[0]
+    imageLinks.forEach((el, index) => {
+        let src = el.getAttribute('src').split('?')[0]
         let name = src.split('/').pop()
         // JPGs are output as PNG elements as well.
         if (name === '') {
@@ -21,8 +21,8 @@ export let findImages = function(htmlCode) {
         if(!images.find(image => image.filename === name)) {
 
             images.push({
-                'filename': name,
-                'url': src
+                filename: name,
+                url: src
             })
         }
     })

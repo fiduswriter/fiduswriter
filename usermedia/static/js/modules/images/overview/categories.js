@@ -60,62 +60,50 @@ export class ImageOverviewCategories {
             dialogHeader,
             categories: this.imageOverview.imageDB.cats
         })
-        jQuery('body').append(dialogBody)
-        let diaButtons = {}
+        document.body.insertAdjacentHTML(
+            'beforeend',
+            dialogBody
+        )
         let that = this
-        diaButtons[gettext('Submit')] = function () {
-            let cats = {
-                'ids': [],
-                'titles': []
-            }
-            jQuery('#editCategories .category-form').each(function () {
-                let thisVal = jQuery.trim(jQuery(this).val())
-                let thisId = jQuery(this).attr('data-id')
-                if ('undefined' == typeof (thisId)) thisId = 0
-                if ('' !== thisVal) {
-                    cats.ids.push(thisId)
-                    cats.titles.push(thisVal)
+        let buttons = [
+            {
+                text: gettext('Submit'),
+                class: "fw-button fw-dark",
+                click: function () {
+                    let cats = {
+                        'ids': [],
+                        'titles': []
+                    }
+                    document.querySelectorAll('#editCategories .category-form').forEach(el => {
+                        let thisVal = el.value.trim()
+                        let thisId = el.dataset.id
+                        if ('undefined' == typeof (thisId)) thisId = 0
+                        if ('' !== thisVal) {
+                            cats.ids.push(thisId)
+                            cats.titles.push(thisVal)
+                        }
+                    })
+                    that.saveCategories(cats)
+                    jQuery(this).dialog('close')
                 }
-            })
-            that.saveCategories(cats)
-            jQuery(this).dialog('close')
-        }
-        diaButtons[gettext('Cancel')] = function () {
-            jQuery(this).dialog('close')
-        }
+            },
+            {
+                text: gettext('Cancel'),
+                class: "fw-button fw-orange",
+                click: function () {jQuery(this).dialog('close')}
+            }
+        ]
+
         jQuery("#editCategories").dialog({
             resizable: false,
             width: 350,
             height: 350,
             modal: true,
-            buttons: diaButtons,
-            create: function () {
-                let theDialog = jQuery(this).closest(".ui-dialog")
-                theDialog.find(".ui-button:first-child").addClass(
-                    "fw-button fw-dark")
-                theDialog.find(".ui-button:last").addClass(
-                    "fw-button fw-orange")
-            },
+            buttons,
             close: () =>
                 jQuery("#editCategories").dialog('destroy').remove()
         })
-        this.addRemoveListHandler()
-
     }
 
-    addRemoveListHandler() {
-        //add and remove name list field
-        jQuery('.fw-add-input').bind('click', function () {
-            let parent = jQuery(this).parents('.fw-list-input')
-            if (0 === parent.next().length) {
-                let parentClone = parent.clone(true)
-                parentClone.find('input, select').val('').removeAttr(
-                    'data-id')
-                parentClone.insertAfter(parent)
-            } else {
-                parent.remove()
-            }
-        })
-    }
 
 }

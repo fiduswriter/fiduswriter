@@ -1,6 +1,6 @@
 import {ImageDB} from "../database"
 import {ImageOverviewCategories} from "./categories"
-import {addDropdownBox, activateWait, deactivateWait, addAlert, post} from "../../common"
+import {activateWait, deactivateWait, addAlert, post, findTarget, whenReady} from "../../common"
 import {SiteMenu} from "../../menu"
 import {OverviewMenuView} from "../../common"
 import {menuModel} from "./menu"
@@ -62,31 +62,36 @@ export class ImageOverview {
     }
 
     deleteImageDialog(ids) {
-        jQuery('body').append('<div id="confirmdeletion" title="' + gettext(
+        document.body.insertAdjacentHTML(
+            'beforeend',
+            '<div id="confirmdeletion" title="' + gettext(
                 'Confirm deletion') + '"><p>' + gettext(
                 'Delete the image(s)') +
-            '?</p></div>')
-        let diaButtons = {}
+            '?</p></div>'
+        )
         let that = this
-        diaButtons[gettext('Delete')] = function () {
-            that.deleteImage(ids)
-            jQuery(this).dialog('close')
-        }
-        diaButtons[gettext('Cancel')] = function () {
-            jQuery(this).dialog('close')
-        }
+        let buttons = [
+            {
+                text: gettext('Delete'),
+                class: "fw-button fw-dark",
+                click: function () {
+                    that.deleteImage(ids)
+                    jQuery(this).dialog('close')
+                }
+            },
+            {
+                text: gettext('Cancel'),
+                class: "fw-button fw-orange",
+                click: function () {
+                    jQuery(this).dialog('close')
+                }
+            }
+        ]
         jQuery("#confirmdeletion").dialog({
             resizable: false,
             height: 180,
             modal: true,
-            buttons: diaButtons,
-            create: function () {
-                let theDialog = jQuery(this).closest(".ui-dialog")
-                theDialog.find(".ui-button:first-child").addClass(
-                    "fw-button fw-dark")
-                theDialog.find(".ui-button:last").addClass(
-                    "fw-button fw-orange")
-            },
+            buttons,
             close: function () {
                 jQuery("#confirmdeletion").dialog('destroy').remove()
             }
@@ -102,7 +107,7 @@ export class ImageOverview {
 
     appendToImageTable(id) {
         let imageInfo = this.imageDB.db[id]
-        let $tr = jQuery(`#Image_${id}`)
+
         let fileType = imageInfo.file_type.split('/')
 
         if(1 < fileType.length) {
@@ -110,31 +115,38 @@ export class ImageOverview {
         } else {
             fileType = fileType[0].toUpperCase()
         }
-
-        if (0 < $tr.length) { //if the image entry exists, update
-            $tr.replaceWith(usermediaTableTemplate({
-                id,
-                'cats': imageInfo.cats,
-                fileType,
-                'title': imageInfo.title,
-                'thumbnail': imageInfo.thumbnail,
-                'image': imageInfo.image,
-                'height': imageInfo.height,
-                'width': imageInfo.width,
-                'added': imageInfo.added
-            }))
+        let tr = document.getElementById(`Image_${id}`)
+        if (tr) { //if the image entry exists, update
+            tr.insertAdjacentHTML(
+                'afterend',
+                usermediaTableTemplate({
+                    id,
+                    'cats': imageInfo.cats,
+                    fileType,
+                    'title': imageInfo.title,
+                    'thumbnail': imageInfo.thumbnail,
+                    'image': imageInfo.image,
+                    'height': imageInfo.height,
+                    'width': imageInfo.width,
+                    'added': imageInfo.added
+                })
+            )
+            tr.parentElement.removeChild(tr)
         } else { //if this is the new image, append
-            jQuery('#imagelist > tbody').append(usermediaTableTemplate({
-                id,
-                'cats': imageInfo.cats,
-                fileType,
-                'title': imageInfo.title,
-                'thumbnail': imageInfo.thumbnail,
-                'image': imageInfo.image,
-                'height': imageInfo.height,
-                'width': imageInfo.width,
-                'added': imageInfo.added
-            }))
+            document.querySelector('#imagelist > tbody').insertAdjacentHTML(
+                'beforeend',
+                usermediaTableTemplate({
+                    id,
+                    'cats': imageInfo.cats,
+                    fileType,
+                    'title': imageInfo.title,
+                    'thumbnail': imageInfo.thumbnail,
+                    'image': imageInfo.image,
+                    'height': imageInfo.height,
+                    'width': imageInfo.width,
+                    'added': imageInfo.added
+                })
+            )
         }
     }
 
@@ -200,24 +212,44 @@ export class ImageOverview {
 
 
     bindEvents() {
-        let that = this
-        jQuery(document).on('click', '.delete-image', function () {
-            let imageId = jQuery(this).attr('data-id')
-            that.deleteImageDialog([imageId])
+        document.addEventListener('click', event => {
+            let el = {}, imageId
+            switch (true) {
+                case findTarget(event, '.delete-image', el):
+                    imageId = el.target.dataset.id
+                    this.deleteImageDialog([imageId])
+                    break
+                case findTarget(event, '.edit-image', el):
+                    imageId = el.target.dataset.id
+                    let dialog = new ImageEditDialog(this.imageDB, imageId)
+                    dialog.init().then(
+                        imageId => {
+                            this.stopUsermediaTable()
+                            this.appendToImageTable(imageId)
+                            this.startUsermediaTable()
+                        }
+                    )
+                    break
+                case findTarget(event, '.fw-add-input', el):
+                    let itemEl = el.target.closest('.fw-list-input')
+                    if (!itemEl.nextElementSibling) {
+                        itemEl.insertAdjacentHTML(
+                            'afterend',
+                            `<tr class="fw-list-input">
+                                <td>
+                                    <input type="text" class="category-form">
+                                    <span class="fw-add-input icon-addremove"></span>
+                                </td>
+                            </tr>`
+                        )
+                    } else {
+                        itemEl.parentElement.removeChild(itemEl)
+                    }
+                    break
+                default:
+                    break
+            }
         })
-
-        jQuery(document).on('click', '.edit-image', function () {
-            let imageId = jQuery(this).attr('data-id')
-            let dialog = new ImageEditDialog(that.imageDB, imageId)
-            dialog.init().then(
-                imageId => {
-                    that.stopUsermediaTable()
-                    that.appendToImageTable(imageId)
-                    that.startUsermediaTable()
-                }
-            )
-        })
-
     }
 
     init() {
@@ -227,7 +259,7 @@ export class ImageOverview {
     }
 
     bind() {
-        jQuery(document).ready(() => {
+        whenReady().then(() => {
             this.init()
         })
     }

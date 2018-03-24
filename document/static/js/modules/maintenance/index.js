@@ -5,7 +5,7 @@ import JSZipUtils from "jszip-utils"
 import {updateFileDoc, updateFileBib} from "../importer/update"
 import {updateDoc, getSettings} from "../schema/convert"
 import {docSchema} from "../schema/document"
-import {addAlert, post, postJson} from "../common"
+import {addAlert, post, postJson, findTarget} from "../common"
 import {FW_FILETYPE_VERSION} from "../exporter/native"
 
 // To upgrade all docs and document revions to the newest version
@@ -19,10 +19,17 @@ export class DocMaintenance {
     }
 
     bind() {
-        jQuery(document).on('click', 'button#update:not(.disabled)', () => {
-            jQuery('button#update').prop('disabled', true)
-            jQuery('button#update').html(gettext('Updating...'))
-            this.init()
+        document.addEventListener('click', event => {
+            let el = {}
+            switch (true) {
+                case findTarget(event, 'button#update:not(.disabled)', el):
+                    document.querySelector('button#update').disabled = true
+                    document.querySelector('button#update').innerHTML = gettext('Updating...')
+                    this.init()
+                    break
+                default:
+                    break
+            }
         })
     }
 
@@ -33,7 +40,7 @@ export class DocMaintenance {
     getDocBatch() {
         this.batch++
         postJson(
-            '/document/maintenance/get_all/'
+            '/document/maintenance/get_all/', {batch: this.batch}
         ).then(
             data => {
                 let docs = window.JSON.parse(data.docs)
@@ -49,7 +56,10 @@ export class DocMaintenance {
                 }
             }
         ).catch(
-            () => addAlert('error', `${gettext('Could not download batch')}: ${this.batch}`)
+            error => {
+                addAlert('error', `${gettext('Could not download batch')}: ${this.batch}`)
+                throw(error)
+            }
         )
     }
 
@@ -57,6 +67,8 @@ export class DocMaintenance {
         let oldDoc = {
             contents: window.JSON.parse(doc.fields.contents),
             last_diffs: window.JSON.parse(doc.fields.last_diffs),
+            bibliography: window.JSON.parse(doc.fields.bibliography),
+            comments: window.JSON.parse(doc.fields.comments),
             title: doc.fields.title,
             version: doc.fields.version,
             id: doc.pk
@@ -109,6 +121,7 @@ export class DocMaintenance {
                 id: doc.id,
                 contents: window.JSON.stringify(doc.contents),
                 bibliography: window.JSON.stringify(doc.bibliography),
+                comments: window.JSON.stringify(doc.comments),
                 doc_version: parseFloat(FW_FILETYPE_VERSION),
                 version: doc.version,
                 last_diffs: window.JSON.stringify(doc.last_diffs)
@@ -210,7 +223,7 @@ export class DocMaintenance {
     }
 
     done() {
-        jQuery('button#update').html(gettext('All documents and revisions updated!'))
+        document.querySelector('button#update').innerHTML = gettext('All documents and revisions updated!')
     }
 
 }

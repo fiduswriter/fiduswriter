@@ -33,10 +33,10 @@ export let documentsListItemTemplate = ({doc, user}) =>
             }
         </td>
         <td width="100">
-            <span class="fw-inline">${localizeDate(doc.added*1000, true)}</span>
+            <span class="fw-inline">${localizeDate(doc.added*1000, 'sortable-date')}</span>
         </td>
         <td width="100">
-            <span class="fw-inline">${localizeDate(doc.updated*1000, true)}</span>
+            <span class="fw-inline">${localizeDate(doc.updated*1000, 'sortable-date')}</span>
         </td>
         <td width="200">
             <span>

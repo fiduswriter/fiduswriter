@@ -54,8 +54,8 @@ export class FigureDialog {
         if ((new RegExp(/^\s*$/)).test(this.equation) && (!this.imgId)) {
             // The math input is empty. Delete a math node if it exist. Then close the dialog.
             if (this.insideFigure) {
-                let transaction = this.editor.currentView.state.tr.deleteSelection()
-                this.editor.currentView.dispatch(transaction)
+                let tr = this.editor.currentView.state.tr.deleteSelection()
+                this.editor.currentView.dispatch(tr)
             }
             this.dialog.dialog('close')
             return false
@@ -78,7 +78,7 @@ export class FigureDialog {
         }
 
         let nodeType = this.editor.currentView.state.schema.nodes['figure']
-        let transaction = this.editor.currentView.state.tr.replaceSelectionWith(
+        let tr = this.editor.currentView.state.tr.replaceSelectionWith(
             nodeType.createAndFill({
                 equation: this.equation,
                 image: this.imgId,
@@ -87,14 +87,14 @@ export class FigureDialog {
                 id: randomFigureId()
             })
         )
-        this.editor.currentView.dispatch(transaction)
+        this.editor.currentView.dispatch(tr)
 
         this.dialog.dialog('close')
     }
 
     init() {
     // toolbar figure
-        let dialogButtons = []
+        let buttons = []
 
         if (this.node && this.node.type && this.node.type.name==='figure') {
             this.insideFigure = true
@@ -105,12 +105,12 @@ export class FigureDialog {
             this.figureCategory = this.node.attrs.figureCategory
             this.caption = this.node.attrs.caption
 
-            dialogButtons.push({
+            buttons.push({
                 text: gettext('Remove'),
                 class: 'fw-button fw-orange',
                 click: () => {
-                    let transaction = this.editor.currentView.state.tr.deleteSelection()
-                    this.editor.currentView.dispatch(transaction)
+                    let tr = this.editor.currentView.state.tr.deleteSelection()
+                    this.editor.currentView.dispatch(tr)
                     this.dialog.dialog('close')
                 }
             })
@@ -123,13 +123,13 @@ export class FigureDialog {
             image: this.imgId
         }))
 
-        dialogButtons.push({
+        buttons.push({
             text: this.submitMessage,
             class: 'fw-button fw-dark',
             mousedown: event => this.submitForm()
         })
 
-        dialogButtons.push({
+        buttons.push({
             text: gettext('Cancel'),
             class: 'fw-button fw-orange',
             click: event => this.dialog.dialog('close')
@@ -143,7 +143,7 @@ export class FigureDialog {
             modal: true,
             resizable: false,
             draggable: false,
-            buttons: dialogButtons,
+            buttons,
             dialogClass: 'figure-dialog',
             close: event => {
                  this.dialog.dialog('destroy').remove()
@@ -171,8 +171,10 @@ export class FigureDialog {
             this.layoutImagePreview()
         }
 
-        addDropdownBox(jQuery('#figure-category-btn'), jQuery(
-            '#figure-category-pulldown'))
+        addDropdownBox(
+            document.getElementById('figure-category-btn'),
+            document.getElementById('figure-category-pulldown')
+        )
         let that = this
         jQuery('#figure-category-pulldown li span').bind(
             'mousedown',
@@ -186,29 +188,26 @@ export class FigureDialog {
         jQuery('input[name=figure-math]').bind('focus',
             () => {
                 // If a figure is being entered, disable the image button
-                jQuery('#insertFigureImage').addClass(
-                    'disabled').attr(
-                    'disabled', 'disabled')
+                document.getElementById('insertFigureImage').classList.add('disabled')
+                document.getElementById('insertFigureImage').setAttribute('disabled','disabled')
             })
 
         jQuery('input[name=figure-math]').bind('blur',
             function () {
-                if (jQuery(this).val() === '') {
-                    jQuery('#inner-figure-preview')[0].innerHTML =
-                        ''
+                if (this.value === '') {
+                    document.getElementById('inner-figure-preview').innerHTML = ''
                     // enable image button
-                    jQuery('#insertFigureImage').removeClass(
-                        'disabled')
-                        .removeAttr('disabled')
+                    document.getElementById('insertFigureImage').classList.remove('disabled')
+                    document.getElementById('insertFigureImage').removeAttribute('disabled')
                 } else {
-                    that.equation = jQuery(this).val()
+                    that.equation = this.value
                     that.layoutMathPreview()
                 }
             })
 
-        jQuery('#insertFigureImage').bind('click',
+        document.getElementById('insertFigureImage').addEventListener('click',
             function () {
-                if (jQuery(this).hasClass('disabled')) {
+                if (this.classList.contains('disabled')) {
                     return
                 }
 
@@ -223,15 +222,12 @@ export class FigureDialog {
                             that.imgId = id
                             that.imgDb = db
                             that.layoutImagePreview()
-                            jQuery('input[name=figure-math]').attr(
-                                'disabled',
-                                'disabled')
+                            document.querySelector('input[name=figure-math]').setAttribute('disabled', 'disabled')
                         } else {
                             that.imgId = false
                             that.imgDb = false
-                            jQuery('#inner-figure-preview').html('')
-                            jQuery('input[name=figure-math]').removeAttr(
-                                'disabled')
+                            document.getElementById('inner-figure-preview').innerHTML = ''
+                            document.querySelector('input[name=figure-math]').removeAttribute('disabled')
                         }
                     }
                 )

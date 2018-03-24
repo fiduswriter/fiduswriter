@@ -30,26 +30,27 @@ export class ModToolsWordCount {
 
     wordCountDialog() {
         let stats = this.countWords()
-
-        jQuery('body').append(wordCounterDialogTemplate({
-            'dialogHeader': gettext('Word counter'),
-            'words': stats.numWords,
-            'chars_no_space': stats.numNoSpace,
-            'chars': stats.numChars
-        }))
+        document.body.insertAdjacentHTML(
+            'beforeend',
+            wordCounterDialogTemplate({
+                'dialogHeader': gettext('Word counter'),
+                'words': stats.numWords,
+                'chars_no_space': stats.numNoSpace,
+                'chars': stats.numChars
+            })
+        )
 
         jQuery('#word-counter-dialog').dialog({
             draggable : false,
             resizable : false,
             modal : true,
-            buttons : {'Close': function() {
-                jQuery('#word-counter-dialog').dialog('close')
-            }},
-            create : function () {
-                let theDialog = jQuery(this).closest(".ui-dialog");
-                theDialog.find(".ui-dialog-buttonset .ui-button:eq(0)").addClass("fw-button fw-orange")
-            },
-
+            buttons : [
+                {
+                    text: gettext('Close'),
+                    class: 'fw-button fw-orange',
+                    click: function() {jQuery('#word-counter-dialog').dialog('close')}
+                }
+            ],
             close : function() {
                 jQuery(this).dialog('destroy').remove()
             }

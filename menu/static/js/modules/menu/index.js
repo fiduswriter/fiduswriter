@@ -1,5 +1,5 @@
 import * as plugins from "../../plugins/menu"
-import {addDropdownBox} from "../common"
+import {addDropdownBox, whenReady} from "../common"
 import {headerNavTemplate} from "./templates"
 
 // Bindings for the top menu on overview pages
@@ -36,7 +36,7 @@ export class SiteMenu {
             currentActive.active = true
         }
 
-        jQuery(document).ready(() => {
+        whenReady().then(() => {
             this.renderMenu()
             this.bindPreferencePullDown()
         })
@@ -48,29 +48,31 @@ export class SiteMenu {
     }
 
     bindPreferencePullDown() {
-        let box = jQuery('#user-preferences-pulldown')
-        let button = jQuery('#preferences-btn')
-        addDropdownBox(button, box)
+        let box = document.getElementById('user-preferences-pulldown')
+        let button = document.getElementById('preferences-btn')
+        addDropdownBox(
+            button,
+            box,
+            () => {
+                // In addition to adding the dropdown, we also need to add some css
+                // values so that the dropdown is placed close to #preferences-btn
+                let btnOffset = button.getBoundingClientRect()
+                box.style.left = `${document.body.scrollLeft + btnOffset.left - 52}px`
+                box.style.top = `${document.body.scrollTop + btnOffset.top + 27}px`
+            }
+        )
 
-        // In addition to adding the dropdown, we also need to add some css
-        // values so that the dropdown is placed close to #preferences-btn
-        jQuery('#preferences-btn').bind('mousedown', () => {
-            let btnOffset = button.offset()
-            box.css({
-                'left': btnOffset.left - 52,
-                'top': btnOffset.top + 27
-            })
-        })
         // As a click will close the pulldown, we need to activate the link by means of a mousedown already.
-        jQuery(document).on('mousedown', '#user-preferences-pulldown a', function(event) {
+        document.querySelectorAll('#user-preferences-pulldown a').forEach(el => el.addEventListener('mousedown', event => {
             event.preventDefault()
-            window.location = jQuery(this).attr('href')
-        })
+            window.location = el.getAttribute('href')
+        }))
+
         // Same for form button
-        jQuery(document).on('mousedown', '#user-preferences-pulldown button[type="submit"]', function(event) {
+        document.querySelectorAll('#user-preferences-pulldown form').forEach(el => el.addEventListener('mousedown', event => {
             event.preventDefault()
-            jQuery(this).closest('form').submit()
-        })
+            el.submit()
+        }))
     }
 
     activatePlugins() {

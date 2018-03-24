@@ -4,6 +4,10 @@ export {
 }
 from "./author_input"
 export {
+    citationRenderPlugin
+}
+from "./citation_render"
+export {
     getSelectionUpdate,
     updateCollaboratorSelection,
     removeCollaboratorSelection,
@@ -42,6 +46,10 @@ export {
 }
 from "./links"
 export {
+    marginboxesPlugin
+}
+from "./marginboxes"
+export {
     pastePlugin
 }
 from "./paste"
@@ -57,3 +65,14 @@ export {
     accessRightsPlugin
 }
 from "./access_rights"
+export {
+    trackPlugin,
+    getSelectedChanges,
+    setSelectedChanges,
+    deactivateAllSelectedChanges
+}
+from "./track"
+export {
+    settingsPlugin
+}
+from "./settings"

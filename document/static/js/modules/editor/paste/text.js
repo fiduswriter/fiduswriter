@@ -32,10 +32,10 @@ export class TextPaste {
                 let citationNode = this.editor.currentView.state.schema.nodes['citation'].create(
                     {format, references}
                 )
-                let transaction = this.editor.currentView.state.tr.replaceSelectionWith(
+                let tr = this.editor.currentView.state.tr.replaceSelectionWith(
                     citationNode, true
                 )
-                this.view.dispatch(transaction)
+                this.view.dispatch(tr)
             },
             () => {
                 if (!this.foundBibEntries) {

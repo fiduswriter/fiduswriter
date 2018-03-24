@@ -9,11 +9,13 @@ export class ImageEditDialog {
 
     //open a dialog for uploading an image
     init() {
-
-        jQuery('body').append(imageEditTemplate({
-            image: this.imageId ? this.imageDB.db[this.imageId] : false,
-            cats: this.imageDB.cats
-        }))
+        document.body.insertAdjacentHTML(
+            'beforeend',
+            imageEditTemplate({
+                image: this.imageId ? this.imageDB.db[this.imageId] : false,
+                cats: this.imageDB.cats
+            })
+        )
 
         let returnPromise = new Promise(resolve => {
 
@@ -44,9 +46,9 @@ export class ImageEditDialog {
 
         })
 
-        jQuery('.fw-checkable-label').bind('click', function () {
-            setCheckableLabel(jQuery(this))
-        })
+        document.querySelectorAll('.fw-checkable-label').forEach(
+            el => el.addEventListener('click', () => setCheckableLabel(el))
+        )
 
         if (!this.imageId) {
             this.bindMediaUploadEvents()
@@ -78,9 +80,15 @@ export class ImageEditDialog {
             eKey => {
                 let eMsg = `<div class="warning">${errors[eKey]}</div>`
                 if ('error' == eKey) {
-                    jQuery('#editimage').prepend(eMsg)
+                    document.getElementById(`editimage`).insertAdjacentHTML(
+                        'afterbegin',
+                        eMsg
+                    )
                 } else {
-                    jQuery(`#id_${eKey}`).after(eMsg)
+                    document.getElementById(`id_${eKey}`).insertAdjacentHTML(
+                        'afterend',
+                        eMsg
+                    )
                 }
             }
         )
@@ -102,7 +110,9 @@ export class ImageEditDialog {
         }
 
         // Remove old warning messages
-        jQuery('#editimage .warning').detach()
+        document.querySelectorAll('#editimage .warning').forEach(
+            el => el.parentElement.removeChild(el)
+        )
 
         return new Promise(resolve => {
             this.imageDB.saveImage(imageData).then(

@@ -4,7 +4,19 @@ import {Decoration, DecorationSet} from "prosemirror-view"
 const key = new PluginKey('placeholders')
 export let placeholdersPlugin = function(options) {
 
-    function calculatePlaceHolderDecorations(articleNode, selectedPart) {
+    function calculatePlaceHolderDecorations(state) {
+        const anchor = state.selection.$anchor
+        const head = state.selection.$head
+        if (!anchor || !head) {
+            return
+        }
+        const anchorPart = anchor.node(2)
+        const headPart = head.node(2)
+        if (!anchorPart || !headPart) {
+            return
+        }
+        let currentPart = anchorPart === headPart ? anchorPart : false
+        let articleNode = state.doc.firstChild
 
         const placeHolderTexts = [
             gettext('Title...'),
@@ -29,7 +41,7 @@ export let placeholdersPlugin = function(options) {
                 let placeHolder = document.createElement('span')
                 placeHolder.classList.add('placeholder')
                 placeHolder.setAttribute('data-placeholder', text)
-                if (selectedPart===partElement) {
+                if (currentPart===partElement) {
                     placeHolder.classList.add('selected')
                 }
                 let position = 2 + offset
@@ -49,31 +61,36 @@ export let placeholdersPlugin = function(options) {
             }
         })
 
-        return decorations
+        return decorations.length ? DecorationSet.create(state.doc,decorations) : false
 
     }
 
     return new Plugin({
         key,
+        state: {
+            init(config, state) {
+                return {
+                    decos: calculatePlaceHolderDecorations(state)
+                }
+            },
+            apply(tr, prev, oldState, state) {
+                let {
+                    decos
+                } = this.getState(oldState)
+                if (tr.steps.length || tr.selectionSet) {
+                    decos = calculatePlaceHolderDecorations(state)
+                }
+                return {
+                    decos
+                }
+            }
+        },
         props: {
             decorations(state) {
-                const anchor = state.selection.$anchor
-                const head = state.selection.$head
-                if (!anchor || !head) {
-                    return
-                }
-                const anchorPart = anchor.node(2)
-                const headPart = head.node(2)
-                if (!anchorPart || !headPart) {
-                    return
-                }
-                let currentPart = anchorPart === headPart ? anchorPart : false
-                let articleNode = state.doc.firstChild
-                let decorations = calculatePlaceHolderDecorations(articleNode, currentPart)
-
-                if (decorations.length) {
-                    return DecorationSet.create(state.doc, decorations)
-                }
+                let {
+                    decos
+                } = this.getState(state)
+                return decos
             }
         }
     })

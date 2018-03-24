@@ -743,7 +743,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
     def get_undo(self, driver):
         content = driver.find_element_by_class_name('article-body')
-        return content.get_attribute("innerText").rstrip('\n')
+        return content.get_attribute("innerText").rstrip(u'\ufeff\n')
 
     def test_delete_undo(self):
         """
@@ -1154,8 +1154,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         driver.find_element_by_css_selector('.insert-citation').click()
 
     def get_citation_within_text(self, driver):
-        cite_within_doc = driver.find_element_by_xpath(
-            '//*[contains(@class, "article-body")]/p[1]/span[1]'
+        cite_within_doc = driver.find_element_by_css_selector(
+            'div.article-body span.citation'
         )
         return cite_within_doc.text
 

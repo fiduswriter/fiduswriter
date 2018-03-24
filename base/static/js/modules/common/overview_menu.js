@@ -1,7 +1,7 @@
 import diffDOM from "diff-dom"
 import keyName from "w3c-keyname"
 import {keydownHandler} from "prosemirror-keymap"
-import {escapeText} from "./basic"
+import {escapeText, whenReady} from "./basic"
 
 export class OverviewMenuView {
     constructor(overview, model) {
@@ -15,11 +15,7 @@ export class OverviewMenuView {
     }
 
     init() {
-        if (document.readyState==='loading') {
-            document.addEventListener('DOMContentLoaded', () => this.bindEvents())
-        } else {
-            this.bindEvents()
-        }
+        whenReady().then(()=>this.bindEvents())
     }
 
     bindEvents() {

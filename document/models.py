@@ -7,7 +7,7 @@ from django.core import checks
 # (same value from >= 2.0) in
 # document/static/js/modules/documents/exporter/native/zip.js
 
-FW_DOCUMENT_VERSION = 2.0
+FW_DOCUMENT_VERSION = 2.1
 
 
 class Document(models.Model):
@@ -91,6 +91,7 @@ RIGHTS_CHOICES = (
     ('read-without-comments', 'Reader without comment access'),
     # Can read the text, but not the comments.
     ('write', 'Writer'),
+    ('write-tracked', 'Write with tracked changes'),
     ('review', 'Reviewer'),
     ('comment', 'Commentator'),
     ('edit', 'Editor'),
@@ -100,11 +101,11 @@ RIGHTS_CHOICES = (
 # Editor and Reviewer can only comment and not edit document
 COMMENT_ONLY = ('edit', 'review', 'comment')
 
-CAN_UPDATE_DOCUMENT = ['write', 'edit', 'review', 'comment']
+CAN_UPDATE_DOCUMENT = ['write', 'write-tracked', 'edit', 'review', 'comment']
 
 # Whether the collaborator is allowed to know about other collaborators
 # and communicate with them.
-CAN_COMMUNICATE = ['read', 'write', 'comment']
+CAN_COMMUNICATE = ['read', 'write', 'comment', 'write-tracked']
 
 
 class AccessRight(models.Model):

@@ -4,6 +4,7 @@ import {AddMarkStep} from "prosemirror-transform"
 
 const key = new PluginKey('comments')
 
+const commentDuringCreationDecoSpec = {}
 
 let moveComment = function(doc, id, pos) {
     // The content to which a comment was linked has been removed.
@@ -58,13 +59,20 @@ let moveComment = function(doc, id, pos) {
 }
 
 export let addCommentDuringCreationDecoration = function(state) {
-    let decos = DecorationSet.empty
     if (!state.selection.from || state.selection.from === state.selection.to) {
         return
     }
+    let {
+        decos
+    } = key.getState(state)
 
-    let deco = Decoration.inline(state.selection.from, state.selection.to, {class: 'active-comment'})
-    decos = decos.add(state.doc, [deco])
+    let commentDuringCreationDeco = decos.find(undefined, undefined, commentDuringCreationDecoSpec)
+
+    decos = decos.remove([commentDuringCreationDeco])
+
+    decos = decos.add(state.doc, [
+        Decoration.inline(state.selection.from, state.selection.to, {class: 'active-comment'}, commentDuringCreationDecoSpec)
+    ])
 
     let tr = state.tr.setMeta(key, {decos})
     return tr
@@ -75,10 +83,12 @@ export let removeCommentDuringCreationDecoration = function(state) {
         decos
     } = key.getState(state)
 
-    if (decos.find().length === 0) {
+    let commentDuringCreationDeco = decos.find(undefined, undefined, commentDuringCreationDecoSpec)
+
+    if (!commentDuringCreationDeco) {
         return
     }
-    decos = DecorationSet.empty
+    decos = decos.remove([commentDuringCreationDeco])
 
     let tr = state.tr.setMeta(key, {decos})
     return tr
@@ -90,7 +100,7 @@ export let getCommentDuringCreationDecoration = function(state) {
         decos
     } = key.getState(state)
 
-    return decos.find()[0]
+    return decos.find(undefined, undefined, commentDuringCreationDecoSpec)
 }
 
 export let commentsPlugin = function(options) {
@@ -117,7 +127,6 @@ export let commentsPlugin = function(options) {
                     // comment text has been deleted, cancel comment creation.
                     options.editor.mod.comments.interactions.deleteComment(-1)
                 }})
-
 
                 return {
                     decos

@@ -58,7 +58,7 @@ let moveComment = function(doc, id, pos) {
     return new AddMarkStep(posFrom, posTo, markType)
 }
 
-export let addCommentDuringCreationDecoration = function(tr) {
+export let addCommentDuringCreationDecoration = function(state, tr) {
     if (!tr.selection.from || tr.selection.from === tr.selection.to) {
         return false
     }
@@ -79,7 +79,7 @@ export let addCommentDuringCreationDecoration = function(tr) {
     tr.setMeta(key, {decos})
 }
 
-export let removeCommentDuringCreationDecoration = function(tr) {
+export let removeCommentDuringCreationDecoration = function(state, tr) {
     let {
         decos
     } = key.getState(state)

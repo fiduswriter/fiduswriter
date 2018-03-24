@@ -38,7 +38,7 @@ export class ModStyles {
                     tooltip: gettext('Export the document to a DOCX file with the given template.'),
                     action: editor => {
                         new DocxExporter(
-                            editor.getDoc(),
+                            editor.getDoc({changes: 'acceptAllNoInsertions'}),
                             template.template_file,
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB,
@@ -55,7 +55,7 @@ export class ModStyles {
                     tooltip: gettext('Export the document to an ODT file with the given template.'),
                     action: editor => {
                         new OdtExporter(
-                            editor.getDoc(),
+                            editor.getDoc({changes: 'acceptAllNoInsertions'}),
                             template.template_file,
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB,

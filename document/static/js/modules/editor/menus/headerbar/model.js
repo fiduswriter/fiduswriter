@@ -105,9 +105,8 @@ export let headerbarModel = {
                     icon: 'files-o',
                     tooltip: gettext('Create copy of the current document.'),
                     action: editor => {
-                        let doc = editor.getDoc(),
-                            copier = new SaveCopy(
-                                doc,
+                        let copier = new SaveCopy(
+                                editor.getDoc(),
                                 editor.mod.db.bibDB,
                                 editor.mod.db.imageDB,
                                 editor.user
@@ -153,7 +152,7 @@ export let headerbarModel = {
                     tooltip: gettext('Export the document to an HTML file.'),
                     action: editor => {
                         new HTMLExporter(
-                            editor.getDoc(),
+                            editor.getDoc({changes: 'acceptAllNoInsertions'}),
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB,
                             editor.mod.styles.citationStyles,
@@ -167,7 +166,7 @@ export let headerbarModel = {
                     tooltip: gettext('Export the document to an Epub electronic reader file.'),
                     action: editor => {
                         new EpubExporter(
-                            editor.getDoc(),
+                            editor.getDoc({changes: 'acceptAllNoInsertions'}),
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB,
                             editor.mod.styles.citationStyles,
@@ -181,7 +180,7 @@ export let headerbarModel = {
                     tooltip: gettext('Export the document to an LaTeX file.'),
                     action: editor => {
                         new LatexExporter(
-                            editor.getDoc(),
+                            editor.getDoc({changes: 'acceptAllNoInsertions'}),
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB
                         )

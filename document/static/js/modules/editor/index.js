@@ -57,7 +57,8 @@ import {
     ModTools
 } from "./tools"
 import {
-    ModTrack
+    ModTrack,
+    acceptAllNoInsertions
 } from "./track"
 import {
     headerbarModel,
@@ -303,8 +304,10 @@ export class Editor {
 
     // Collect all components of the current doc. Needed for saving and export
     // filters
-    getDoc() {
-        let pmArticle = this.docInfo.confirmedDoc.firstChild
+    getDoc(options) {
+        let pmArticle = options.changes === 'acceptAllNoInsertions' ?
+            acceptAllNoInsertions(this.docInfo.confirmedDoc).firstChild :
+            this.docInfo.confirmedDoc.firstChild
         return {
             contents: pmArticle.toJSON(),
             settings: getSettings(pmArticle),

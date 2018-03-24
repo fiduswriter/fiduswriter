@@ -1,9 +1,37 @@
 import {Mapping} from "prosemirror-transform"
-import {ReplaceStep, AddMarkStep} from "prosemirror-transform"
+import {ReplaceStep, AddMarkStep, RemoveMarkStep, Transform} from "prosemirror-transform"
 import {Slice} from "prosemirror-model"
 
 import {findTarget} from "../../common"
 import {setSelectedChanges, deactivateAllSelectedChanges} from "../state_plugins"
+
+
+export function acceptAllNoInsertions(doc) {
+    let tr = new Transform(doc), map = new Mapping()
+    doc.descendants((node, pos, parent) => {
+        if (node.marks && node.marks.find(mark => mark.type.name==='deletion')) {
+            let delStep = new ReplaceStep(
+                map.map(pos),
+                map.map(pos+node.nodeSize),
+                Slice.empty
+            )
+            tr.step(delStep)
+            let stepMap = delStep.getMap()
+            map.appendMap(stepMap)
+        } else if (node.marks && node.marks.find(mark => mark.type.name==='insertion')) {
+            let mark = node.marks.find(mark => mark.type.name==='insertion')
+            tr.step(
+                new RemoveMarkStep(
+                    map.map(pos),
+                    map.map(pos+node.nodeSize),
+                    mark
+                )
+            )
+        }
+        return true
+    })
+    return tr.doc
+}
 
 // Helper functions related to tracked changes
 export class ModTrack {

@@ -16,6 +16,7 @@ export let removeHidden = function(node) {
     return returnNode
 }
 
+
 export let descendantNodes = function(node) {
     let returnValue = [node]
     if (node.content) {

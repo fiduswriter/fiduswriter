@@ -24,9 +24,8 @@ export class ModCommentInteractions {
                     this.cancelSubmitComment(el.target)
                     break
                 case findTarget(event, '.margin-box.comment.inactive', el):
-                    let tr = this.mod.editor.view.state.tr
-                    deactivateAllSelectedChanges(tr)
-                    if (tr.steps.length) {
+                    let tr = deactivateAllSelectedChanges(this.mod.editor.view.state.tr)
+                    if (tr) {
                         this.mod.editor.view.dispatch(tr)
                     }
                     let id = this.getCommentId(el.target)

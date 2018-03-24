@@ -76,7 +76,7 @@ export let addCommentDuringCreationDecoration = function(state, tr) {
         Decoration.inline(tr.selection.from, tr.selection.to, {class: 'active-comment'}, commentDuringCreationDecoSpec)
     ])
 
-    tr.setMeta(key, {decos})
+    return tr.setMeta(key, {decos})
 }
 
 export let removeCommentDuringCreationDecoration = function(state, tr) {
@@ -91,7 +91,7 @@ export let removeCommentDuringCreationDecoration = function(state, tr) {
     }
     decos = decos.remove([commentDuringCreationDeco])
 
-    tr.setMeta(key, {decos})
+    return tr.setMeta(key, {decos})
 }
 
 export let getCommentDuringCreationDecoration = function(state) {
@@ -99,7 +99,13 @@ export let getCommentDuringCreationDecoration = function(state) {
         decos
     } = key.getState(state)
 
-    return decos.find(undefined, undefined, spec => spec === commentDuringCreationDecoSpec)
+    let deco = decos.find(undefined, undefined, spec => spec === commentDuringCreationDecoSpec)
+
+    if (deco.length) {
+        return deco[0]
+    } else {
+        return false
+    }
 }
 
 export let commentsPlugin = function(options) {

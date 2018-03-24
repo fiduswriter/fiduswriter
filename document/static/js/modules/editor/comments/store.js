@@ -47,9 +47,9 @@ export class ModCommentStore {
         let state = this.mod.editor.view.state,
             tr = state.tr
 
-        addCommentDuringCreationDecoration(state, tr)
+        tr = addCommentDuringCreationDecoration(state, tr)
 
-        if (!tr.steps.length) {
+        if (!tr) {
             // adding decoration failed
             return
         }
@@ -81,8 +81,8 @@ export class ModCommentStore {
             this.commentDuringCreation = false
             let state = this.mod.editor.view.state
             let tr = state.tr
-            removeCommentDuringCreationDecoration(state, tr)
-            if (tr.steps.length) {
+            tr = removeCommentDuringCreationDecoration(state, tr)
+            if (tr) {
                 this.mod.editor.view.dispatch(tr)
             }
         }

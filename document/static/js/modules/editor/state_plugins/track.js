@@ -26,6 +26,7 @@ export function setSelectedChanges(tr, type, pos) {
     pluginState.decos = decos.add(tr.doc, [Decoration.inline(selectedChange.from, selectedChange.to, {
         class: `selected-${type}`
     })])
+    return tr.setMeta(key, pluginState)
 }
 
 export function deactivateAllSelectedChanges(tr) {
@@ -34,7 +35,7 @@ export function deactivateAllSelectedChanges(tr) {
         deletion: false,
         decos: DecorationSet.empty
     }
-    tr.setMeta(key, pluginState)
+    return tr.setMeta(key, pluginState)
 }
 
 // From https://discuss.prosemirror.net/t/expanding-the-selection-to-the-active-mark/478/2 with some bugs fixed

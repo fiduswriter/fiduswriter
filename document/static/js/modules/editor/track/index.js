@@ -54,13 +54,12 @@ export class ModTrack {
                     break
                 case findTarget(event, '.margin-box.track.inactive', el):
                     this.editor.mod.comments.interactions.deactivateAll()
-                    let tr = this.editor.view.state.tr
-                    setSelectedChanges(
-                        tr,
+                    let tr = setSelectedChanges(
+                        this.editor.view.state.tr,
                         el.target.dataset.type,
                         parseInt(el.target.dataset.pos)
                     )
-                    if (tr.steps.length) {
+                    if (tr) {
                         this.editor.view.dispatch(tr)
                     }
                     break

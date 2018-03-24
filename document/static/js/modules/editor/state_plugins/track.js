@@ -11,38 +11,30 @@ export function getSelectedChanges(state) {
     return {insertion, deletion}
 }
 
-export function setSelectedChanges(state, type, pos, tr = false) {
-    let mark = state.doc.nodeAt(pos).marks.find(mark => mark.type.name===type)
+export function setSelectedChanges(tr, type, pos) {
+    let mark = tr.doc.nodeAt(pos).marks.find(mark => mark.type.name===type)
     if (!mark) {
         return
-    }
-    if (!tr) {
-        tr = state.tr
     }
     let pluginState = {
         insertion: false,
         deletion: false
     }
-    let selectedChange =  getFromToMark(state.doc, pos, mark)
+    let selectedChange =  getFromToMark(tr.doc, pos, mark)
     pluginState[type] = selectedChange
     let decos = DecorationSet.empty
-    pluginState.decos = decos.add(state.doc, [Decoration.inline(selectedChange.from, selectedChange.to, {
+    pluginState.decos = decos.add(tr.doc, [Decoration.inline(selectedChange.from, selectedChange.to, {
         class: `selected-${type}`
     })])
-
-    return tr.setMeta(key, pluginState)
 }
 
-export function deactivateAllSelectedChanges(state, tr = false) {
+export function deactivateAllSelectedChanges(tr) {
     let pluginState = {
         insertion: false,
         deletion: false,
         decos: DecorationSet.empty
     }
-    if (!tr) {
-        tr = state.tr
-    }
-    return tr.setMeta(key, pluginState)
+    tr.setMeta(key, pluginState)
 }
 
 // From https://discuss.prosemirror.net/t/expanding-the-selection-to-the-active-mark/478/2 with some bugs fixed

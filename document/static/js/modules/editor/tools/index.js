@@ -10,7 +10,6 @@ export class ModTools {
         new ModToolsWordCount(this)
         new ModToolsPrint(this)
         new ModToolsShowKeyBindings(this)
-        new ModToolsTrack(this)
     }
 
 }

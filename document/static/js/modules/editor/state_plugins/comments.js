@@ -58,12 +58,9 @@ let moveComment = function(doc, id, pos) {
     return new AddMarkStep(posFrom, posTo, markType)
 }
 
-export let addCommentDuringCreationDecoration = function(state, tr=false) {
-    if (!state.selection.from || state.selection.from === state.selection.to) {
+export let addCommentDuringCreationDecoration = function(tr) {
+    if (!tr.selection.from || tr.selection.from === tr.selection.to) {
         return false
-    }
-    if (!tr) {
-        tr = state.tr
     }
     let {
         decos
@@ -75,20 +72,17 @@ export let addCommentDuringCreationDecoration = function(state, tr=false) {
         decos = decos.remove([commentDuringCreationDeco])
     }
 
-    decos = decos.add(state.doc, [
-        Decoration.inline(state.selection.from, state.selection.to, {class: 'active-comment'}, commentDuringCreationDecoSpec)
+    decos = decos.add(tr.doc, [
+        Decoration.inline(tr.selection.from, tr.selection.to, {class: 'active-comment'}, commentDuringCreationDecoSpec)
     ])
 
-    return tr.setMeta(key, {decos})
+    tr.setMeta(key, {decos})
 }
 
-export let removeCommentDuringCreationDecoration = function(state, tr=false) {
+export let removeCommentDuringCreationDecoration = function(tr) {
     let {
         decos
     } = key.getState(state)
-    if (!tr) {
-        tr = state.tr
-    }
 
     let commentDuringCreationDeco = decos.find(undefined, undefined, spec => spec === commentDuringCreationDecoSpec)
 
@@ -97,7 +91,7 @@ export let removeCommentDuringCreationDecoration = function(state, tr=false) {
     }
     decos = decos.remove([commentDuringCreationDeco])
 
-    return tr.setMeta(key, {decos})
+    tr.setMeta(key, {decos})
 }
 
 export let getCommentDuringCreationDecoration = function(state) {

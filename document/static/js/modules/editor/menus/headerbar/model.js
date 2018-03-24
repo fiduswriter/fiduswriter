@@ -432,51 +432,6 @@ export let headerbarModel = {
                     action: editor => {
                         editor.mod.tools.showKeyBindings.show()
                     }
-                },
-                {
-                    title: gettext('Track changes'),
-                    type: 'menu',
-                    tooltip: gettext('Tracking changes to the document'),
-                    disabled: editor => {
-                        return editor.docInfo.access_rights !== 'write'
-                    },
-                    content: [
-                        {
-                            title: gettext('Record'),
-                            type: 'setting',
-                            tooltip: gettext('Record document changes'),
-                            disabled: editor => {
-                                return editor.docInfo.access_rights !== 'write'
-                            },
-                            action: editor => {
-                                let article = editor.view.state.doc.firstChild
-                                let attrs = Object.assign({}, article.attrs)
-                                attrs.track = !attrs.track
-                                editor.view.dispatch(
-                                    editor.view.state.tr.setNodeMarkup(0, false, attrs)
-                                )
-                            },
-                            selected: editor => {
-                                return editor.view.state.doc.firstChild.attrs.track === true
-                            }
-                        },
-                        {
-                            title: gettext('Accept all'),
-                            type: 'action',
-                            tooltip: gettext('Accept all tracked changes.'),
-                            action: editor => {
-                                editor.mod.tools.track.acceptAll()
-                            }
-                        },
-                        {
-                            title: gettext('Reject all'),
-                            type: 'action',
-                            tooltip: gettext('Reject all tracked changes.'),
-                            action: editor => {
-                                editor.mod.tools.track.rejectAll()
-                            }
-                        },
-                    ]
                 }
             ]
         },
@@ -646,6 +601,51 @@ export let headerbarModel = {
                     },
                     disabled: editor => !isInTable(editor.currentView.state)
                 }
+            ]
+        },
+        {
+            title: gettext('Track changes'),
+            type: 'menu',
+            tooltip: gettext('Tracking changes to the document'),
+            disabled: editor => {
+                return editor.docInfo.access_rights !== 'write'
+            },
+            content: [
+                {
+                    title: gettext('Record'),
+                    type: 'setting',
+                    tooltip: gettext('Record document changes'),
+                    disabled: editor => {
+                        return editor.docInfo.access_rights !== 'write'
+                    },
+                    action: editor => {
+                        let article = editor.view.state.doc.firstChild
+                        let attrs = Object.assign({}, article.attrs)
+                        attrs.track = !attrs.track
+                        editor.view.dispatch(
+                            editor.view.state.tr.setNodeMarkup(0, false, attrs)
+                        )
+                    },
+                    selected: editor => {
+                        return editor.view.state.doc.firstChild.attrs.track === true
+                    }
+                },
+                {
+                    title: gettext('Accept all'),
+                    type: 'action',
+                    tooltip: gettext('Accept all tracked changes.'),
+                    action: editor => {
+                        editor.mod.track.acceptAll()
+                    }
+                },
+                {
+                    title: gettext('Reject all'),
+                    type: 'action',
+                    tooltip: gettext('Reject all tracked changes.'),
+                    action: editor => {
+                        editor.mod.track.rejectAll()
+                    }
+                },
             ]
         }
     ]

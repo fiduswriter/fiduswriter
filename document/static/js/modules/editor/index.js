@@ -57,6 +57,9 @@ import {
     ModTools
 } from "./tools"
 import {
+    ModTrack
+} from "./track"
+import {
     headerbarModel,
     toolbarModel
 } from "./menus"
@@ -196,6 +199,7 @@ export class Editor {
         this.mod.footnotes.init()
         new ModCollab(this)
         new ModTools(this)
+        new ModTrack(this)
         new ModMarginboxes(this)
         new ModComments(this)
         new ModStyles(this)

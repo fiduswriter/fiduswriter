@@ -3,14 +3,13 @@ import {ReplaceStep, AddMarkStep} from "prosemirror-transform"
 import {Slice} from "prosemirror-model"
 
 import {findTarget} from "../../common"
-import {setSelectedChanges} from "../state_plugins"
-
+import {setSelectedChanges, deactivateAllSelectedChanges} from "../state_plugins"
 
 // Helper functions related to tracked changes
-export class ModToolsTrack {
-    constructor(mod) {
-        mod.track = this
-        this.mod = mod
+export class ModTrack {
+    constructor(editor) {
+        editor.mod.track = this
+        this.editor = editor
         this.bindEvents()
     }
 
@@ -20,20 +19,21 @@ export class ModToolsTrack {
             let el = {}
             switch (true) {
                 case findTarget(event, '.track-accept', el):
-                    this.accept(el.target.dataset.type, parseInt(el.target.dataset.pos), this.mod.editor.view)
+                    this.accept(el.target.dataset.type, parseInt(el.target.dataset.pos), this.editor.view)
                     break
                 case findTarget(event, '.track-reject', el):
-                    this.reject(el.target.dataset.type, parseInt(el.target.dataset.pos), this.mod.editor.view)
+                    this.reject(el.target.dataset.type, parseInt(el.target.dataset.pos), this.editor.view)
                     break
                 case findTarget(event, '.margin-box.track.inactive', el):
-                    this.mod.editor.mod.comments.interactions.deactivateAll()
-                    let tr = setSelectedChanges(
-                            this.mod.editor.view.state,
-                            el.target.dataset.type,
-                            parseInt(el.target.dataset.pos)
-                        )
-                    if (tr) {
-                        this.mod.editor.view.dispatch(tr)
+                    this.editor.mod.comments.interactions.deactivateAll()
+                    let tr = this.editor.view.state.tr
+                    setSelectedChanges(
+                        tr,
+                        el.target.dataset.type,
+                        parseInt(el.target.dataset.pos)
+                    )
+                    if (tr.steps.length) {
+                        this.editor.view.dispatch(tr)
                     }
                     break
                 default:
@@ -80,14 +80,17 @@ export class ModToolsTrack {
             }
             return true
         })
+
+        deactivateAllSelectedChanges(tr)
+
         if (tr.steps.length) {
             view.dispatch(tr)
         }
     }
 
     rejectAll() {
-        this.rejectAllForView(this.mod.editor.mod.footnotes.fnEditor.view)
-        this.rejectAllForView(this.mod.editor.view)
+        this.rejectAllForView(this.editor.mod.footnotes.fnEditor.view)
+        this.rejectAllForView(this.editor.view)
     }
 
     rejectAllForView(view) {
@@ -111,6 +114,9 @@ export class ModToolsTrack {
             }
             return true
         })
+
+        deactivateAllSelectedChanges(tr)
+
         if (tr.steps.length) {
             view.dispatch(tr)
         }
@@ -158,14 +164,17 @@ export class ModToolsTrack {
             }
             return true
         })
+
+        deactivateAllSelectedChanges(tr)
+
         if (tr.steps.length) {
             view.dispatch(tr)
         }
     }
 
     acceptAll() {
-        this.acceptAllForView(this.mod.editor.mod.footnotes.fnEditor.view)
-        this.acceptAllForView(this.mod.editor.view)
+        this.acceptAllForView(this.editor.mod.footnotes.fnEditor.view)
+        this.acceptAllForView(this.editor.view)
     }
 
     acceptAllForView(view) {
@@ -194,6 +203,9 @@ export class ModToolsTrack {
             }
             return true
         })
+
+        deactivateAllSelectedChanges(tr)
+
         if (tr.steps.length) {
             view.dispatch(tr)
         }

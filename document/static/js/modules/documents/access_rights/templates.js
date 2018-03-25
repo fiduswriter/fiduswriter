@@ -1,33 +1,31 @@
 import {escapeText} from "../../common"
 
 /** The access rights dialogue template */
-export let accessRightOverviewTemplate = ({dialogHeader, contacts, collaborators}) =>
-    `<div id="access-rights-dialog" title="${dialogHeader}">
-        <div id="my-contacts" class="fw-ar-container">
-            <h3 class="fw-green-title">${gettext("My contacts")}</h3>
-            <table class="fw-document-table">
-                <thead class="fw-document-table-header"><tr><th width="337">${gettext("Contacts")}</th></tr></thead>
-                <tbody class="fw-document-table-body fw-small">
-                    ${accessRightTrTemplate({contacts})}
-                </tbody>
-            </table>
-        </div>
-        <span id="add-share-member" class="fw-button fw-large fw-square fw-light fw-ar-button">
-            <i class="fa fa-caret-right"></i>
-        </span>
-        <div id="share-member" class="fw-ar-container">
-            <h3 class="fw-green-title">${gettext("My collaborators")}</h3>
-            <table class="fw-document-table tablesorter">
-                <thead class="fw-document-table-header"><tr>
-                        <th width="217">${gettext("Collaborators")}</th>
-                        <th width="50" align="center">${gettext("Rights")}</th>
-                        <th width="50" align="center">${gettext("Delete")}</th>
-                </tr></thead>
-                <tbody class="fw-document-table-body fw-small">
-                    ${collaboratorsTemplate({collaborators})}
-                </tbody>
-            </table>
-        </div>
+export let accessRightOverviewTemplate = ({contacts, collaborators}) =>
+    `<div id="my-contacts" class="fw-ar-container">
+        <h3 class="fw-green-title">${gettext("My contacts")}</h3>
+        <table class="fw-document-table">
+            <thead class="fw-document-table-header"><tr><th width="337">${gettext("Contacts")}</th></tr></thead>
+            <tbody class="fw-document-table-body fw-small">
+                ${accessRightTrTemplate({contacts})}
+            </tbody>
+        </table>
+    </div>
+    <span id="add-share-member" class="fw-button fw-large fw-square fw-light fw-ar-button">
+        <i class="fa fa-caret-right"></i>
+    </span>
+    <div id="share-member" class="fw-ar-container">
+        <h3 class="fw-green-title">${gettext("My collaborators")}</h3>
+        <table class="fw-document-table tablesorter">
+            <thead class="fw-document-table-header"><tr>
+                    <th width="217">${gettext("Collaborators")}</th>
+                    <th width="50" align="center">${gettext("Rights")}</th>
+                    <th width="50" align="center">${gettext("Delete")}</th>
+            </tr></thead>
+            <tbody class="fw-document-table-body fw-small">
+                ${collaboratorsTemplate({collaborators})}
+            </tbody>
+        </table>
     </div>`
 
 /** The template for an individual row in the right hand side list of users (all contacts) of the access rights dialogue. */

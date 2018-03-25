@@ -4,6 +4,7 @@ export {
 from "./overview_menu"
 export {
     addDropdownBox,
+    openDropdownBox,
     setCheckableLabel,
     activateWait,
     deactivateWait,
@@ -26,3 +27,8 @@ export {
     postJsonStatus
 }
 from "./network"
+
+export {
+    Dialog
+}
+from "./dialog"

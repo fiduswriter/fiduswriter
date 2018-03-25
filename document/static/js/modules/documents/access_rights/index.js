@@ -1,6 +1,6 @@
 import {accessRightOverviewTemplate, accessRightTrTemplate, collaboratorsTemplate} from "./templates"
 import {addMemberDialog} from "../../contacts/manage"
-import {addDropdownBox, setCheckableLabel, addAlert, postJson} from "../../common"
+import {openDropdownBox, findTarget, setCheckableLabel, addAlert, postJson, Dialog} from "../../common"
 
 /**
 * Functions for the document access rights dialog.
@@ -18,7 +18,6 @@ export class DocumentAccessRightsDialog {
     }
 
     createAccessRightsDialog() {
-        let dialogHeader = gettext('Share your document with others')
         let documentCollaborators = {}
         let len = this.accessRights.length
 
@@ -45,21 +44,10 @@ export class DocumentAccessRightsDialog {
             col => col.count === this.documentIds.length
         )
 
-
-        let dialogBody = accessRightOverviewTemplate({
-            dialogHeader,
-            contacts: this.contacts,
-            collaborators
-        })
-        document.body.insertAdjacentHTML(
-            'beforeend',
-            dialogBody
-        )
-        let that = this
         let buttons = [
             {
                 text: gettext('Add new contact'),
-                class: "fw-button fw-light fw-add-button",
+                classes: "fw-light fw-add-button",
                 click: () => {
                     addMemberDialog().then(
                         memberData => {
@@ -76,7 +64,6 @@ export class DocumentAccessRightsDialog {
                                     rights: 'read'
                                 }]})
                             )
-                            this.collaboratorFunctionsEvent()
                             this.newContactCall(memberData)
                         }
                     )
@@ -84,98 +71,91 @@ export class DocumentAccessRightsDialog {
             },
             {
                 text: gettext('Submit'),
-                class: "fw-button fw-dark",
-                click: function () {
+                classes: "fw-dark",
+                click: () => {
                     //apply the current state to server
                     let collaborators = [],
                         rights = []
-                    jQuery('#share-member .collaborator-tr').each(function () {
-                        collaborators[collaborators.length] = jQuery(this).attr(
-                            'data-id')
-                        rights[rights.length] = jQuery(this).attr('data-right')
+                    document.querySelectorAll('#share-member .collaborator-tr').forEach(el => {
+                        collaborators.push(el.dataset.id)
+                        rights.push(el.dataset.right)
                     })
-                    that.submitAccessRight(collaborators, rights)
-                    jQuery(this).dialog('close')
+                    this.submitAccessRight(collaborators, rights)
+                    this.dialog.close()
                 }
             },
             {
-                text: gettext('Cancel'),
-                class: "fw-button fw-orange",
-                click: function () {
-                    jQuery(this).dialog("close")
-                }
+                type: 'cancel'
             }
         ]
-        jQuery('#access-rights-dialog').dialog({
-            draggable: false,
-            resizable: false,
-            top: 10,
+        this.dialog = new Dialog({
+            title: gettext('Share your document with others'),
+            id: 'access-rights-dialog',
             width: 820,
             height: 540,
-            modal: true,
-            buttons,
-            close: function () {
-                jQuery('#access-rights-dialog').dialog('destroy').remove()
-            }
+            body: accessRightOverviewTemplate({
+                contacts: this.contacts,
+                collaborators
+            }),
+            buttons
         })
+        this.dialog.open()
         this.bindDialogEvents()
-        this.collaboratorFunctionsEvent()
     }
 
     bindDialogEvents() {
-        let that = this
-        jQuery('#add-share-member').unbind('click')
-        jQuery('#add-share-member').bind('click', function () {
+        this.dialog.dialogEl.querySelector('#add-share-member').addEventListener('click', () => {
             let selectedData = []
             document.querySelectorAll('#my-contacts .fw-checkable.checked').forEach(el => {
                 let memberId = el.getAttribute('data-id')
                 let collaboratorEl = document.getElementById(`collaborator-${memberId}`)
                 if (collaboratorEl) {
-                    if (collaboratorEl.getAttribute('data-right') === 'delete') {
+                    if (collaboratorEl.dataset.right === 'delete') {
                         collaboratorEl.classList.remove('delete')
                         collaboratorEl.classList.addClass('read')
-                        collaboratorEl.setAttribute('data-right', 'read')
+                        collaboratorEl.dataset.right = 'read'
                     }
                 } else {
                     selectedData.push({
                         'user_id': memberId,
-                        'user_name': this.getAttribute('data-name'),
-                        'avatar': this.getAttribute('data-avatar'),
+                        'user_name': el.dataset.name,
+                        'avatar': el.dataset.avatar,
                         'rights': 'read'
                     })
                 }
             })
 
             document.querySelectorAll('#my-contacts .checkable-label.checked').forEach(el => el.classList.remove('checked'))
-            document.querySelector('#share-member table tbody').insertHTML(
+            document.querySelector('#share-member table tbody').insertAdjacentHTML(
                 'beforeend',
                 collaboratorsTemplate({
                     'collaborators': selectedData
                 })
             )
-            that.collaboratorFunctionsEvent()
         })
-    }
+        this.dialog.dialogEl.addEventListener('click', event => {
+            let el = {}, docId
+            switch (true) {
+                case findTarget(event, '.fw-checkable', el):
+                    setCheckableLabel(el.target)
+                    break
+                case findTarget(event, '.edit-right-wrapper .fw-pulldown-item, .delete-collaborator', el):
+                    let newRight = el.target.dataset.right
+                    let colRow = el.target.closest('.collaborator-tr')
+                    colRow.dataset.right = newRight
+                    colRow.querySelector('.icon-access-right').setAttribute('class', `icon-access-right icon-access-${newRight}`)
+                    break
+                case findTarget(event, '.edit-right', el):
+                    let box = el.target.parentElement.querySelector('.fw-pulldown')
+                    if(!box.clientWidth) {
+                        openDropdownBox(box)
+                    }
+                    break
+                default:
+                    break
+            }
+        })
 
-    collaboratorFunctionsEvent() {
-        jQuery('.fw-checkable').unbind('click')
-        jQuery('.fw-checkable').bind('click', function () {
-            setCheckableLabel(this)
-        })
-        jQuery('.edit-right').unbind('click')
-        jQuery('.edit-right').each(function () {
-            addDropdownBox(this, this.parentElement.querySelector('.fw-pulldown'))
-        })
-        let spans = jQuery(
-            '.edit-right-wrapper .fw-pulldown-item, .delete-collaborator')
-        spans.unbind('mousedown')
-        spans.bind('mousedown', function () {
-            let newRight = this.dataset.right
-            let colRow = this.closest('.collaborator-tr')
-            colRow.setAttribute('data-right', newRight)
-            colRow.querySelector('.icon-access-right').setAttribute('class',
-                'icon-access-right icon-access-' + newRight)
-        })
     }
 
     submitAccessRight(newCollaborators, newAccessRights) {

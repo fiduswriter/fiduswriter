@@ -304,7 +304,7 @@ export class Editor {
 
     // Collect all components of the current doc. Needed for saving and export
     // filters
-    getDoc(options) {
+    getDoc(options={}) {
         let pmArticle = options.changes === 'acceptAllNoInsertions' ?
             acceptAllNoInsertions(this.docInfo.confirmedDoc).firstChild :
             this.docInfo.confirmedDoc.firstChild

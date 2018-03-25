@@ -8,7 +8,7 @@ import {DocxExporter} from "../../exporter/docx"
 import {OdtExporter} from "../../exporter/odt"
 import {ImportFidusFile} from "../../importer/file"
 import {DocumentRevisionsDialog} from "../revisions"
-import {activateWait, deactivateWait, addAlert, post} from "../../common"
+import {activateWait, deactivateWait, addAlert, post, Dialog} from "../../common"
 
 export class DocumentOverviewActions {
     constructor (documentOverview) {
@@ -41,56 +41,41 @@ export class DocumentOverviewActions {
     }
 
     deleteDocumentDialog(ids) {
-        let that = this
-        document.body.insertAdjacentHTML(
-            'beforeend',
-            `<div id="confirmdeletion" title="${gettext('Confirm deletion')}">
-                <p>
-                    <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
-                    ${gettext('Delete the document(s)?')}
-                </p>
-            </div>`
-        )
-        let buttons = [
-            {
-                text: gettext('Delete'),
-                class: "fw-button fw-dark",
-                click: function () {
-                    for (let i = 0; i < ids.length; i++) {
-                        that.deleteDocument(ids[i])
-                    }
-                    jQuery(this).dialog("close")
-                }
-            },
-            {
-                text: gettext('Cancel'),
-                class: "fw-button fw-orange",
-                click: function () {
-                    jQuery(this).dialog("close")
-                }
-            }
-        ]
 
-        jQuery("#confirmdeletion").dialog({
-            resizable: false,
-            height: 180,
-            modal: true,
-            close: function () {
-                let confirmDeletionEl = document.getElementById("confirmdeletion")
-                confirmDeletionEl.parentElement.removeChild(confirmDeletionEl)
-            },
-            buttons
+        let confirmDeletionDialog = new Dialog({
+            title: gettext('Confirm deletion'),
+            body: `<p>
+                <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
+                ${gettext('Delete the document(s)?')}
+                </p>`,
+            id: 'confirmdeletion',
+            buttons: [
+                {
+                    text: gettext('Delete'),
+                    classes: "fw-dark",
+                    height: 180,
+                    click: () => {
+                        for (let i = 0; i < ids.length; i++) {
+                            this.deleteDocument(ids[i])
+                        }
+                        confirmDeletionDialog.close()
+                    }
+                },
+                {
+                    type: 'cancel'
+                }
+            ]
         })
+
+        confirmDeletionDialog.open()
     }
 
     importFidus() {
-        let that = this
-        document.body.insertAdjacentHTML('beforeend', importFidusTemplate())
         let buttons = [
             {
                 text: gettext('Import'),
-                class: "fw-button fw-dark",
-                click: function () {
+                classes: "fw-dark",
+                click: () => {
                     let fidusFile = document.getElementById('fidus-uploader').files
                     if (0 === fidusFile.length) {
                         console.warn('no file found')
@@ -110,9 +95,9 @@ export class DocumentOverviewActions {
 
                     let importer = new ImportFidusFile(
                         fidusFile,
-                        that.documentOverview.user,
+                        this.documentOverview.user,
                         true,
-                        that.documentOverview.teamMembers
+                        this.documentOverview.teamMembers
                     )
 
                     importer.init().then(
@@ -120,55 +105,46 @@ export class DocumentOverviewActions {
                             deactivateWait()
                             addAlert('info', doc.title + gettext(
                                     ' successfully imported.'))
-                            that.documentOverview.documentList.push(doc)
-                            that.documentOverview.stopDocumentTable()
+                            this.documentOverview.documentList.push(doc)
+                            this.documentOverview.stopDocumentTable()
                             document.querySelector('#document-table tbody').insertAdjacentHTML(
                                 'beforeend',
                                 documentsListItemTemplate({
                                     doc,
-                                    user: that.documentOverview.user
+                                    user: this.documentOverview.user
                                 })
                             )
-                            that.documentOverview.startDocumentTable()
+                            this.documentOverview.startDocumentTable()
                         }
                     )
-
-
-                    jQuery(this).dialog('close')
+                    importDialog.close()
                 }
             },
             {
-                text: gettext('Cancel'),
-                class: "fw-button fw-orange",
-                click: function () {
-                    jQuery(this).dialog('close')
-                }
+                type: 'cancel'
             }
         ]
-        jQuery("#importfidus").dialog({
-            resizable: false,
+        let importDialog = new Dialog({
+            id: 'importfidus',
+            title: gettext('Import a Fidus file'),
+            body: importFidusTemplate(),
             height: 180,
-            modal: true,
-            buttons,
-            create: function () {
-                document.getElementById('fidus-uploader').addEventListener(
-                    'change',
-                    () => {
-                        document.getElementById('import-fidus-name').innerHTML =
-                            document.getElementById('fidus-uploader').value.replace(/C:\\fakepath\\/i, '')
-                    }
-                )
-
-                document.getElementById('import-fidus-btn').addEventListener('click', event => {
-                    document.getElementById('fidus-uploader').click()
-                    event.preventDefault()
-                })
-            },
-            close: () => {
-                jQuery("#importfidus").dialog('destroy').remove()
-            }
+            buttons
         })
+        importDialog.open()
 
+        document.getElementById('fidus-uploader').addEventListener(
+            'change',
+            () => {
+                document.getElementById('import-fidus-name').innerHTML =
+                    document.getElementById('fidus-uploader').value.replace(/C:\\fakepath\\/i, '')
+            }
+        )
+
+        document.getElementById('import-fidus-btn').addEventListener('click', event => {
+            document.getElementById('fidus-uploader').click()
+            event.preventDefault()
+        })
 
     }
 

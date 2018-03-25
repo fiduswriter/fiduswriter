@@ -43,11 +43,13 @@ export class TitleFieldForm{
                     })
                 ]
             }),
-            onFocus: () => {
-                document.querySelectorAll('.ui-dialog-buttonset .fw-edit').forEach(el => el.classList.remove('disabled'))
-            },
-            onBlur: () => {
-                document.querySelectorAll('.ui-dialog-buttonset .fw-edit').forEach(el => el.classList.add('disabled'))
+            handleDOMEvents: {
+                focus: (view, event) => {
+                    document.querySelectorAll('.ui-dialog-buttonset .fw-edit').forEach(el => el.classList.remove('disabled'))
+                },
+                blur: (view, event) => {
+                    document.querySelectorAll('.ui-dialog-buttonset .fw-edit').forEach(el => el.classList.add('disabled'))
+                }
             },
             dispatchTransaction: tr => {
                 let newState = this.view.state.apply(tr)

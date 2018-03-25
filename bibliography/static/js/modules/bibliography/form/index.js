@@ -1,7 +1,7 @@
 import {BibFieldTypes, BibTypes} from "biblatex-csl-converter"
 import {BibFieldTitles, BibTypeTitles, BibFieldHelp} from "./strings"
 import {bibDialog} from "./templates"
-import {addAlert, noSpaceTmp} from "../../common"
+import {addAlert, noSpaceTmp, Dialog} from "../../common"
 import {EntryCatForm} from "./entry_cat"
 import {DateFieldForm} from "./fields/date"
 import {LiteralFieldForm} from "./fields/literal"
@@ -61,77 +61,70 @@ export class BibEntryForm {
     addDialogToDOM() {
         let that = this
         // Add form to DOM
-        let dialogHTML = bibDialog({
-            'dialogHeader': this.dialogHeader,
-            'bib_type': this.currentValues.bib_type,
-            BibTypes,
-            BibTypeTitles
-        })
-
-        document.body.insertAdjacentHTML('beforeend', dialogHTML)
-
-        let diaButtons = {
-            cancel: {
-                class: "fw-button fw-orange",
-                text: gettext('Cancel'),
-                click: function() {
-                    jQuery(this).dialog('close')
-                }
+        let buttons = [
+            {
+                type: 'close'
             },
-            strong: {
-                class: "fw-button fw-small fw-green fw-left fw-strong fw-edit disabled",
+            {
+                classes: "fw-small fw-green fw-left fw-strong fw-edit disabled",
                 text: gettext('Strong'),
                 click: () => {}
             },
-            em: {
-                class: "fw-button fw-small fw-green fw-left fw-em fw-edit disabled",
+            {
+                classes: "fw-small fw-green fw-left fw-em fw-edit disabled",
                 text: gettext('Emphasis'),
                 click: () => {}
             },
-            smallcaps: {
-                class: "fw-button fw-small fw-green fw-left fw-smallcaps fw-edit disabled",
+            {
+                classes: "fw-small fw-green fw-left fw-smallcaps fw-edit disabled",
                 text: gettext('Small caps'),
                 click: () => {}
             },
-            sub: {
-                class: "fw-button fw-small fw-green fw-left fw-sub fw-edit disabled",
+            {
+                classes: "fw-small fw-green fw-left fw-sub fw-edit disabled",
                 text: gettext('Subscript₊'),
                 click: () => {}
             },
-            sup: {
-                class: "fw-button fw-small fw-green fw-left fw-sup fw-edit disabled",
+            {
+                classes: "fw-small fw-green fw-left fw-sup fw-edit disabled",
                 text: gettext('Supscript²'),
                 click: () => {}
             },
-            nocase: {
-                class: "fw-button fw-small fw-green fw-left fw-nocase fw-edit disabled",
+            {
+                classes: "fw-small fw-green fw-left fw-nocase fw-edit disabled",
                 text: gettext('CasE ProTecT'),
                 click: () => {}
             }
-        }
+        ]
 
         return new Promise(resolve => {
-            diaButtons.submit = {
-                class: "fw-button fw-dark",
+            buttons.push({
+                classes: "fw-dark",
                 text: gettext('Submit'),
-                click: function() {
-                    if (that.check()) {
-                        let returnValue = that.save()
-                        jQuery("#bib-dialog").dialog('close')
+                click: () => {
+                    if (this.check()) {
+                        let returnValue = this.save()
+                        this.dialog.close()
                         resolve(returnValue)
                     }
                 }
-            }
+            })
 
-            jQuery("#bib-dialog").dialog({
-                draggable: false,
-                resizable: false,
+            this.dialog = new Dialog({
+                title: this.dialogHeader,
+                id: 'bib-dialog',
                 width: 940,
                 height: 700,
-                modal: true,
-                buttons: diaButtons,
-                close: () => jQuery("#bib-dialog").dialog('destroy').remove()
+                body: bibDialog({
+                    'bib_type': this.currentValues.bib_type,
+                    BibTypes,
+                    BibTypeTitles
+                }),
+                buttons
             })
+
+            this.dialog.open()
+
             // init ui tabs
             jQuery('#bib-dialog-tabs').tabs()
 
@@ -218,7 +211,7 @@ export class BibEntryForm {
         this.currentValues.bib_type = formValue.bib_type
         // Reset fields and close dialog.
         this.fields = {}
-        jQuery('#bib-dialog').dialog('close')
+        this.dialog.close()
         return this.createForm()
     }
 

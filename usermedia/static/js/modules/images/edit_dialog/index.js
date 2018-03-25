@@ -1,48 +1,37 @@
 import {imageEditTemplate} from "./templates"
-import {setCheckableLabel, cancelPromise, addAlert} from "../../common"
+import {setCheckableLabel, cancelPromise, addAlert, Dialog} from "../../common"
 
 export class ImageEditDialog {
     constructor(imageDB, imageId = false) {
         this.imageDB = imageDB
         this.imageId = imageId
+        this.dialog = false
     }
 
     //open a dialog for uploading an image
     init() {
-        document.body.insertAdjacentHTML(
-            'beforeend',
-            imageEditTemplate({
-                image: this.imageId ? this.imageDB.db[this.imageId] : false,
-                cats: this.imageDB.cats
-            })
-        )
 
         let returnPromise = new Promise(resolve => {
 
-            jQuery("#editimage").dialog({
-                resizable: false,
-                height: 'auto',
-                width: 'auto',
-                modal: true,
+            this.dialog = new Dialog({
+                title: this.imageId ? gettext('Update Image Information') : gettext('Upload Image'),
+                id: 'editimage',
+                body: imageEditTemplate({
+                    image: this.imageId ? this.imageDB.db[this.imageId] : false,
+                    cats: this.imageDB.cats
+                }),
                 buttons: [
                     {
                         text: this.imageId ? gettext('Update') : gettext('Upload'),
                         click: () => resolve(this.saveImage()),
-                        class: "fw-button fw-dark"
+                        classes: "fw-dark"
                     },
                     {
-                        text: gettext('Cancel'),
-                        click: function () {
-                            jQuery(this).dialog('close')
-                            resolve(cancelPromise())
-                        },
-                        class: "fw-button fw-orange"
+                        type: 'cancel'
                     }
-                ],
-                close: function () {
-                    jQuery(this).dialog('destroy').remove()
-                }
+                ]
             })
+            this.dialog.open()
 
         })
 
@@ -117,7 +106,7 @@ export class ImageEditDialog {
         return new Promise(resolve => {
             this.imageDB.saveImage(imageData).then(
                 imageId => {
-                    jQuery("#editimage").dialog('close')
+                    this.dialog.close()
                     addAlert('success', gettext('The image has been updated.'))
                     this.imageId = imageId
                     resolve(imageId)

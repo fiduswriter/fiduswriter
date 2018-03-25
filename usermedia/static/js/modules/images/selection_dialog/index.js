@@ -1,6 +1,6 @@
 import {imageSelectionTemplate} from "./templates"
 import {ImageEditDialog} from "../edit_dialog"
-import {cancelPromise} from "../../common"
+import {cancelPromise, Dialog} from "../../common"
 
 export class ImageSelectionDialog {
     constructor(imageDB, userImageDB, imgId) {
@@ -26,19 +26,12 @@ export class ImageSelectionDialog {
                 db: 'user'
             })
         })
-        this.imageDialog = jQuery(imageSelectionTemplate({
-                images
-            })).dialog({
-            width: 'auto',
-            height: 'auto',
+        this.imageDialog = new Dialog({
+            body: imageSelectionTemplate({
+                    images
+                }),
             title: gettext("Images"),
-            modal: true,
-            resizable: false,
-            draggable: false,
-            dialogClass: 'select-image-dialog',
-            close: function () {
-                jQuery(this).dialog('destroy').remove()
-            }
+            id: 'select-image-dialog',
         })
 
         this.startImageTable()
@@ -122,7 +115,7 @@ export class ImageSelectionDialog {
                         imageId => {
                             this.imgId = imageId
                             this.imgDb = 'user'
-                            this.imageDialog.dialog('close')
+                            this.imageDialog.close()
                             return this.init()
                         }
                     )
@@ -131,13 +124,13 @@ export class ImageSelectionDialog {
 
             jQuery('#selectImageSelectionButton').bind('click',
                 () => {
-                    this.imageDialog.dialog('close')
+                    this.imageDialog.close()
                     resolve({id: this.imgId, db: this.imgDb})
                 }
             )
             jQuery('#cancelImageSelectionButton').bind('click',
                 () => {
-                    this.imageDialog.dialog('close')
+                    this.imageDialog.close()
                     resolve(cancelPromise())
                 }
             )

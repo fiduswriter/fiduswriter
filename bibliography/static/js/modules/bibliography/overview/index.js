@@ -6,7 +6,7 @@ import {editCategoriesTemplate, bibtableTemplate} from "./templates"
 import {BibliographyDB} from "../database"
 import {BibTypeTitles} from "../form/strings"
 import {SiteMenu} from "../../menu"
-import {OverviewMenuView, getCsrfToken, findTarget, whenReady} from "../../common"
+import {OverviewMenuView, getCsrfToken, findTarget, whenReady, Dialog} from "../../common"
 import {menuModel} from "./menu"
 import * as plugins from "../../../plugins/bibliography_overview"
 
@@ -71,18 +71,11 @@ export class BibliographyOverview {
      * @function createCategoryDialog
      */
     createCategoryDialog () {
-        let dialogHeader = gettext('Edit Categories')
-        let dialogBody = editCategoriesTemplate({
-            dialogHeader,
-            categories: this.bibDB.cats
-        })
-        document.body.insertAdjacentHTML('beforeend', dialogBody)
-        let that = this
         let buttons = [
             {
                 text: gettext('Submit'),
-                class: "fw-button fw-dark",
-                click: function () {
+                classes: "fw-dark",
+                click: () => {
                     let cats = {
                         'ids': [],
                         'titles': []
@@ -96,29 +89,26 @@ export class BibliographyOverview {
                             cats.titles.push(thisVal)
                         }
                     })
-                    that.createCategory(cats)
-                    jQuery(this).dialog('close')
+                    this.createCategory(cats)
+                    dialog.close()
                 }
             },
             {
-                text: gettext('Cancel'),
-                class: "fw-button fw-orange",
-                click: function () {
-                    jQuery(this).dialog('close')
-                }
+                type: 'cancel'
             }
         ]
 
-        jQuery("#editCategories").dialog({
-            resizable: false,
+        let dialog = new Dialog({
+            id: 'editCategories',
             width: 350,
             height: 350,
-            modal: true,
-            buttons,
-            close: function () {
-                jQuery("#editCategories").dialog('destroy').remove()
-            },
+            title: gettext('Edit Categories'),
+            body: editCategoriesTemplate({
+                categories: this.bibDB.cats
+            }),
+            buttons
         })
+        dialog.open()
 
     }
 
@@ -127,37 +117,29 @@ export class BibliographyOverview {
           * @param ids Ids of items that are to be deleted.
      */
     deleteBibEntryDialog(ids) {
-        let that = this
-        document.body.insertAdjacentHTML(
-            'beforeend',
-            `<div id="confirmdeletion" title="${gettext('Confirm deletion')}"><p>${gettext('Delete the bibliography item(s)')}?</p></div>`
-        )
         let buttons = [
             {
                 text: gettext('Delete'),
-                class: "fw-button fw-dark",
-                click: function () {
-                    that.deleteBibEntries(ids)
-                    jQuery(this).dialog('close')
+                class: "fw-dark",
+                click: () => {
+                    this.deleteBibEntries(ids)
+                    dialog.close()
                 }
             },
             {
-                text: gettext('Cancel'),
-                class: "fw-button fw-orange",
-                click: function () {
-                    jQuery(this).dialog('close')
-                }
+                type: 'cancel'
             }
         ]
-        jQuery("#confirmdeletion").dialog({
-            resizable: false,
+
+        let dialog = new Dialog({
+            id: 'confirmdeletion',
+            title: gettext('Confirm deletion'),
+            body: `<p>${gettext('Delete the bibliography item(s)')}?</p>`,
             height: 180,
-            modal: true,
             buttons,
-            close: function () {
-                jQuery("#confirmdeletion").dialog('destroy').remove()
-            }
+            icon: 'fa-exclamation-triangle'
         })
+        dialog.open()
     }
 
     // get IDs of selected bib entries

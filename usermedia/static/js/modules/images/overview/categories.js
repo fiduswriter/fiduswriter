@@ -1,5 +1,5 @@
 import {usermediaEditcategoriesTemplate} from "./templates"
-import {activateWait, deactivateWait, addAlert, postJson} from "../../common"
+import {activateWait, deactivateWait, addAlert, postJson, Dialog} from "../../common"
 
 export class ImageOverviewCategories {
 
@@ -55,20 +55,10 @@ export class ImageOverviewCategories {
 
     //open a dialog for editing categories
     editCategoryDialog() {
-        let dialogHeader = gettext('Edit Categories')
-        let dialogBody = usermediaEditcategoriesTemplate({
-            dialogHeader,
-            categories: this.imageOverview.imageDB.cats
-        })
-        document.body.insertAdjacentHTML(
-            'beforeend',
-            dialogBody
-        )
-        let that = this
         let buttons = [
             {
                 text: gettext('Submit'),
-                class: "fw-button fw-dark",
+                classes: "fw-dark",
                 click: function () {
                     let cats = {
                         'ids': [],
@@ -83,26 +73,26 @@ export class ImageOverviewCategories {
                             cats.titles.push(thisVal)
                         }
                     })
-                    that.saveCategories(cats)
-                    jQuery(this).dialog('close')
+                    this.saveCategories(cats)
+                    dialog.close()
                 }
             },
             {
-                text: gettext('Cancel'),
-                class: "fw-button fw-orange",
-                click: function () {jQuery(this).dialog('close')}
+                type: 'cancel'
             }
         ]
 
-        jQuery("#editCategories").dialog({
-            resizable: false,
+        let dialog = new Dialog({
+            id: 'editCategories',
+            title: gettext('Edit Categories'),
+            body: usermediaEditcategoriesTemplate({
+                categories: this.imageOverview.imageDB.cats
+            }),
             width: 350,
             height: 350,
-            modal: true,
-            buttons,
-            close: () =>
-                jQuery("#editCategories").dialog('destroy').remove()
+            buttons
         })
+        dialog.open()
     }
 
 

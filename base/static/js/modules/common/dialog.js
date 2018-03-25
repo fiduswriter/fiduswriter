@@ -1,9 +1,10 @@
 
-let dialogTemplate = ({title, height, width, id, buttons, zIndex, body}) =>
+let dialogTemplate = ({title, height, width, id, icon, buttons, zIndex, body}) =>
 `<div tabindex="-1" role="dialog"
         class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-dialog-buttons"
         ${id ? `aria-describedby="${id}"` : ''} style="z-index: ${zIndex};">
     <div class="ui-dialog-titlebar ui-corner-all ui-widget-header ui-helper-clearfix">
+        ${icon ? `<i class="fa ${icon}" aria-hidden="true"></i>` : ''}
         <span id="ui-id-2" class="ui-dialog-title">${title}</span>
         <button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close" title="${gettext('Close')}">
             <span class="ui-button-icon ui-icon ui-icon-closethick"> </span>
@@ -11,7 +12,9 @@ let dialogTemplate = ({title, height, width, id, buttons, zIndex, body}) =>
             ${gettext('Close')}
         </button>
     </div>
-    <div ${id ? `id="${id}"` : ''} class="ui-dialog-content ui-widget-content" style="width: ${width}; height: ${height};">${body}</div>
+    <div ${id ? `id="${id}"` : ''} class="ui-dialog-content ui-widget-content" style="width: ${width}; height: ${height};">
+        ${body}
+    </div>
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
         <div class="ui-dialog-buttonset">${
             buttons.map(button => buttonTemplate(button)).join('')
@@ -45,9 +48,11 @@ export class Dialog {
         this.id = options.id ? options.id : false
         this.title = options.title ? options.title : ''
         this.body = options.body ? options.body : ''
-        this.height = options.heigth ? `${options.height}px` : 'auto'
+        this.height = options.height ? `${options.height}px` : 'auto'
         this.width = options.width ? `${options.width}px` : 'auto'
         this.buttons = options.buttons ? this.addDefaultButtons(options.buttons) : []
+        this.onClose = options.onClose ? options.onClose : false
+        this.alert = options.alert ? options.alert : false
         this.dialogEl = false
         this.backdropEl = false
     }
@@ -71,6 +76,7 @@ export class Dialog {
                 height: this.height,
                 width: this.width,
                 id: this.id,
+                alert: this.alert,
                 buttons : this.buttons,
                 zIndex: this.getHighestDialogZIndex() + 2,
                 body: this.body
@@ -86,10 +92,13 @@ export class Dialog {
         let totalWidth = window.innerWidth,
             totalHeight = window.innerHeight,
             dialogWidth = this.dialogEl.clientWidth,
-            dialogHeight = this.dialogEl.clientHeight
+            dialogHeight = this.dialogEl.clientHeight,
+            scrollTopOffset = window.pageYOffset,
+            scrollLeftOffset = window.pageXOffset
 
-        this.dialogEl.style.top = `${(totalHeight - dialogHeight)/2}px`
-        this.dialogEl.style.left = `${(totalWidth - dialogWidth)/2}px`
+
+        this.dialogEl.style.top = `${(totalHeight - dialogHeight)/2 + scrollTopOffset}px`
+        this.dialogEl.style.left = `${(totalWidth - dialogWidth)/2 + scrollLeftOffset}px`
     }
 
     bind() {
@@ -106,9 +115,13 @@ export class Dialog {
     }
 
     close() {
-        if (this.dialogEl) {
-            this.dialogEl.parentElement.removeChild(this.dialogEl)
-            this.backdropEl.parentElement.removeChild(this.backdropEl)
+        if (!this.dialogEl) {
+            return
+        }
+        this.dialogEl.parentElement.removeChild(this.dialogEl)
+        this.backdropEl.parentElement.removeChild(this.backdropEl)
+        if (this.onClose) {
+            this.onClose()
         }
     }
 }

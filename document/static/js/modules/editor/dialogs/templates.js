@@ -1,48 +1,44 @@
 import {escapeText} from "../../common"
 
 export let linkDialogTemplate = ({defaultLink, internalTargets, link, linkTitle}) =>
-    `<div title="${gettext("Link")}">
-        ${
-            internalTargets.length ?
-            `<div class="fw-radio">
-                <input type="radio" name="link-type" value="internal" class="link-internal-check">
-                <label class="link-internal-label">${gettext("Internal")}</label>
-            </div>
-            <div class="fw-select-container">
-                <select class="internal-link-selector fw-button fw-white fw-large" required="">
-                    <option class="placeholder" selected="" disabled="" value="">
-                        ${gettext("Select Target")}
-                    </option>
-                    ${
-                        internalTargets.map(target =>
-                            `<option class="link-item" type="text" value="${target.id}" ${link === `#${target.id}` ? "selected" : ""}>
-                                ${target.text}
-                            </option>`
-                        )
-                    }
-                </select>
-                <div class="fw-select-arrow fa fa-caret-down"></div>
-            </div>
-            <p></p>
-            <div class="fw-radio">
-                <input type="radio" name="link-type" value="external" class="link-external-check">
-                <label class="link-external-label">${gettext("External")}</label>
-            </div>`
-            :
-            ''
-        }
-        <input class="link-title" type="text" value="${escapeText(linkTitle)}" placeholder="${gettext("Link title")}"/>
+    `${
+        internalTargets.length ?
+        `<div class="fw-radio">
+            <input type="radio" name="link-type" value="internal" class="link-internal-check">
+            <label class="link-internal-label">${gettext("Internal")}</label>
+        </div>
+        <div class="fw-select-container">
+            <select class="internal-link-selector fw-button fw-white fw-large" required="">
+                <option class="placeholder" selected="" disabled="" value="">
+                    ${gettext("Select Target")}
+                </option>
+                ${
+                    internalTargets.map(target =>
+                        `<option class="link-item" type="text" value="${target.id}" ${link === `#${target.id}` ? "selected" : ""}>
+                            ${target.text}
+                        </option>`
+                    )
+                }
+            </select>
+            <div class="fw-select-arrow fa fa-caret-down"></div>
+        </div>
         <p></p>
-        <input class="link" type="text" value="${["#", undefined].includes(link[0]) ? defaultLink : link}" placeholder="${gettext("URL")}"/>
-    </div>`
+        <div class="fw-radio">
+            <input type="radio" name="link-type" value="external" class="link-external-check">
+            <label class="link-external-label">${gettext("External")}</label>
+        </div>`
+        :
+        ''
+    }
+    <input class="link-title" type="text" value="${escapeText(linkTitle)}" placeholder="${gettext("Link title")}"/>
+    <p></p>
+    <input class="link" type="text" value="${["#", undefined].includes(link[0]) ? defaultLink : link}" placeholder="${gettext("URL")}"/>`
 
 /** Dialog to add a note to a revision before saving. */
 export let revisionDialogTemplate = () =>
-    `<div title="${gettext('Revision description')}">
-        <p>
-            <input type="text" class="revision-note" placeholder="${gettext('Description (optional)')}">
-        </p>
-    </div>`
+    `<p>
+        <input type="text" class="revision-note" placeholder="${gettext('Description (optional)')}">
+    </p>`
 
 export let tableInsertTemplate = () => `
     <table class="insert-table-selection">
@@ -99,8 +95,9 @@ export let tableInsertTemplate = () => `
 
 export let mathDialogTemplate = () =>
     `<div title="${gettext("Math")}">
-        <p><span class="math-field-header">${gettext("Type formula here")}: </span><span class="math-field" type="text" name="math" ></span></p>
-        <p><span class="math-field-header">${gettext("LaTeX result")}: </span><span class="math-latex"></span></p>
+        <p><span class="math-field" type="text" name="math" ></span></p>
+        <div><input type="text" class="raw-input" style="display:none"></div>
+        <div class="math-preview"></div>
         <div class="math-error"></div>
     </div>`
 
@@ -201,8 +198,7 @@ export let configureFigureTemplate = ({image, equation, caption}) =>
 
 /** A template to configure citations in the editor */
 export let configureCitationTemplate = ({citableItemsHTML, citedItemsHTML, citeFormat}) =>
-    `<div title="${gettext('Configure Citation')}">
-        <div id="my-sources" class="fw-ar-container">
+        `<div id="my-sources" class="fw-ar-container">
             <h3 class="fw-green-title">${gettext("My sources")}</h3>
             <table id="cite-source-table" class="fw-document-table">
                 <thead class="fw-document-table-header"><tr>
@@ -234,8 +230,7 @@ export let configureCitationTemplate = ({citableItemsHTML, citedItemsHTML, citeF
                   ${citedItemsHTML}
                 </tbody>
             </table>
-        </div>
-    </div>`
+        </div>`
 
 /** A template for each item that can be cited inside the citation configuration dialog of the editor. */
 export let citationItemTemplate = ({bib_type, title, author, id, db}) =>
@@ -294,17 +289,15 @@ export let selectedCitationTemplate = ({title, bib_type, author, id, db, prefix,
     </tr>`
 
 
-export let authorTemplate = ({author, isNew}) =>
-    `<div title="${isNew ? gettext('Add author') : gettext('Update author')}">
-        <input type="text" name="firstname" value="${author.firstname ? author.firstname : ''}" placeholder="${gettext("Firstname")}"/>
-        <input type="text" name="lastname" value="${author.lastname ? author.lastname : ''}" placeholder="${gettext("Lastname")}"/>
-        <input type="text" name="email" value="${author.email ? author.email : ''}" placeholder="${gettext("Email")}"/>
-        <input type="text" name="institution" value="${author.institution ? author.institution : ''}" placeholder="${gettext("Institution")}"/>
-    </div>`
+export let authorTemplate = ({author}) =>
+    `<input type="text" name="firstname" value="${author.firstname ? author.firstname : ''}" placeholder="${gettext("Firstname")}"/>
+    <input type="text" name="lastname" value="${author.lastname ? author.lastname : ''}" placeholder="${gettext("Lastname")}"/>
+    <input type="text" name="email" value="${author.email ? author.email : ''}" placeholder="${gettext("Email")}"/>
+    <input type="text" name="institution" value="${author.institution ? author.institution : ''}" placeholder="${gettext("Institution")}"/>
+    `
 
 export let languageTemplate = ({currentLanguage, languages}) =>
-    `<div title="${gettext('Change language of the document')}">
-        <select class="fw-button fw-white fw-large">
+    `<select class="fw-button fw-white fw-large">
         ${
             languages.map(language =>
                 `<option value="${language[0]}" ${language[0]===currentLanguage ? 'selected' : ''}>
@@ -312,5 +305,4 @@ export let languageTemplate = ({currentLanguage, languages}) =>
                 </option>`
             ).join('')
         }
-        </select>
-    </div>`
+    </select>`

@@ -137,9 +137,9 @@ export class DocumentRevisionsDialog {
         let revisionsConfirmDeleteDialog = new Dialog({
             id: 'confirmdeletion',
             title: gettext('Confirm deletion'),
-            body: `<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
-            ${gettext('Do you really want to delete the revision?')}`,
-            height: 180,
+            icon: 'fa-exclamation-triangle',
+            body: `${gettext('Do you really want to delete the revision?')}`,
+            height: 80,
             buttons
         })
         revisionsConfirmDeleteDialog.open()
@@ -155,7 +155,7 @@ export class DocumentRevisionsDialog {
         ).then(
             () => {
                 let thisTr = document.querySelector(`tr.revision-${id}`),
-                documentId = thisTr.getAttribute('data-document'),
+                documentId = thisTr.dataset.document,
                 doc = this.documentList.find(doc => doc.id === parseInt(documentId))
                 thisTr.parentElement.removeChild(thisTr)
                 addAlert('success', gettext('Revision deleted'))

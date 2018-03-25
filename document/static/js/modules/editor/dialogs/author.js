@@ -1,6 +1,6 @@
 import {authorTemplate} from "./templates"
 import {authorsEndPos} from "../state_plugins"
-import {addAlert} from "../../common"
+import {addAlert, Dialog} from "../../common"
 /*
     Source for email regexp:
     https://html.spec.whatwg.org/multipage/input.html#e-mail-state-(type%3Demail)
@@ -20,12 +20,12 @@ export class AuthorDialog {
         let buttons = []
         buttons.push({
             text: this.author ? gettext('Update') : gettext('Add'),
-            class: 'fw-button fw-dark',
+            classes: 'fw-dark',
             click: () => {
-                let firstname = this.dialog.find('input[name=firstname]').val(),
-                    lastname = this.dialog.find('input[name=lastname]').val(),
-                    email = this.dialog.find('input[name=email]').val(),
-                    institution = this.dialog.find('input[name=institution]').val()
+                let firstname = this.dialog.dialogEl.querySelector('input[name=firstname]').value,
+                    lastname = this.dialog.dialogEl.querySelector('input[name=lastname]').value,
+                    email = this.dialog.dialogEl.querySelector('input[name=email]').value,
+                    institution = this.dialog.dialogEl.querySelector('input[name=institution]').value
 
                 firstname = firstname.length ? firstname : false
                 lastname = lastname.length ? lastname : false
@@ -40,7 +40,7 @@ export class AuthorDialog {
                     return
                 }
 
-                this.dialog.dialog('close')
+                this.dialog.close()
 
                 if (!firstname && !lastname && !institution && !email) {
                     // No data, don't insert.
@@ -68,38 +68,27 @@ export class AuthorDialog {
                     posTo,
                     node
                 ))
-                view.focus()
                 return
             }
         })
 
         buttons.push({
-            text: gettext('Cancel'),
-            class: 'fw-button fw-orange',
-            click: () => {
-                this.dialog.dialog('close')
-                this.editor.currentView.focus()
-            }
+            type: 'cancel'
         })
 
-        this.dialog = jQuery(authorTemplate({
-            author: this.author ? this.author : {},
-            isNew: this.author ? false : true
-        }))
-
-        this.dialog.dialog({
-            draggable: false,
-            resizable: false,
-            top: 10,
+        this.dialog = new Dialog({
+            id: 'edit-author',
+            title: this.author ? gettext('Add author') : gettext('Update author'),
+            body: authorTemplate({
+                author: this.author ? this.author : {},
+            }),
             width: 836,
             height: 360,
-            modal: true,
             buttons,
-            close: () => {
-                this.dialog.dialog('destroy').remove()
-                this.editor.currentView.focus()
-            }
+            onClose: () => this.editor.currentView.focus()
         })
+
+        this.dialog.open()
 
     }
 }

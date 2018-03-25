@@ -2,6 +2,8 @@ import {TextSelection} from "prosemirror-state"
 
 import {linkDialogTemplate} from "./templates"
 
+import {Dialog} from "../../common"
+
 export class LinkDialog {
     constructor(editor) {
         this.editor = editor
@@ -149,59 +151,57 @@ export class LinkDialog {
         })
 
         buttons.push({
-            text: gettext('Cancel'),
-            class: 'fw-button fw-orange',
+            type: 'cancel',
             click: () => {
                 this.dialog.dialog('close')
                 this.editor.currentView.focus()
             }
         })
 
-        this.dialog = jQuery(linkDialogTemplate({
-            linkTitle: this.linkTitle,
-            link: this.link,
-            defaultLink: this.defaultLink,
-            internalTargets: this.internalTargets
-        }))
-
-        this.dialog.dialog({
-            draggable: false,
-            resizable: false,
-            top: 10,
+        this.dialog = new Dialog({
+            id: 'edit-link',
+            title: gettext("Link"),
+            body: linkDialogTemplate({
+                linkTitle: this.linkTitle,
+                link: this.link,
+                defaultLink: this.defaultLink,
+                internalTargets: this.internalTargets
+            }),
+            buttons,
             width: 836,
             height: 360,
-            modal: true,
-            buttons,
-            close: () => this.dialog.dialog('destroy').remove()
+            onClose: () => this.editor.currentView.focus()
         })
 
+        this.dialog.open()
+
         if (this.internalTargets.length) {
-            let externalEls = this.dialog.find('input.link, input.link-title'),
-                internalEls = this.dialog.find('select.internal-link-selector'),
-                externalSwitchers = this.dialog.find('input.link, input.link-title, label.link-external-label, input.link-external-check'),
-                internalSwitchers = this.dialog.find('select.internal-link-selector, label.link-internal-label, input.link-internal-check'),
-                radioInternal = this.dialog.find('input.link-internal-check'),
-                radioExternal = this.dialog.find('input.link-external-check')
+            let externalEls = this.dialog.dialogEl.querySelectorAll('input.link, input.link-title'),
+                internalEls = this.dialog.dialogEl.querySelectorAll('select.internal-link-selector'),
+                externalSwitchers = this.dialog.dialogEl.querySelectorAll('input.link, input.link-title, label.link-external-label, input.link-external-check'),
+                internalSwitchers = this.dialog.dialogEl.querySelectorAll('select.internal-link-selector, label.link-internal-label, input.link-internal-check'),
+                radioInternal = this.dialog.dialogEl.querySelector('input.link-internal-check'),
+                radioExternal = this.dialog.dialogEl.querySelector('input.link-external-check')
 
             if (this.link[0] === '#') {
-                externalEls.addClass("disabled")
-                radioInternal.prop("checked", true)
+                externalEls.forEach(el => el.classList.add("disabled"))
+                radioInternal.checked = true
             } else {
-                internalEls.addClass("disabled")
-                radioExternal.prop("checked", true)
+                internalEls.forEach(el => el.classList.add("disabled"))
+                radioExternal.checked = true
             }
 
-            internalSwitchers.on('mousedown', () => {
-                externalEls.addClass("disabled")
-                internalEls.removeClass("disabled")
-                radioInternal.prop("checked", true)
-            })
+            internalSwitchers.forEach(el => el.addEventListener('click', () => {
+                externalEls.forEach(el => el.classList.add("disabled"))
+                internalEls.forEach(el => el.classList.remove("disabled"))
+                radioInternal.checked = true
+            }))
 
-            externalSwitchers.on('mousedown', () => {
-                internalEls.addClass("disabled")
-                externalEls.removeClass("disabled")
-                radioExternal.prop("checked", true)
-            })
+            externalSwitchers.forEach(el => el.addEventListener('click', () => {
+                internalEls.forEach(el => el.classList.add("disabled"))
+                externalEls.forEach(el => el.classList.remove("disabled"))
+                radioExternal.checked = true
+            }))
 
         }
     }

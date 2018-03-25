@@ -45,10 +45,10 @@ export class DocumentOverviewActions {
         let confirmDeletionDialog = new Dialog({
             title: gettext('Confirm deletion'),
             body: `<p>
-                <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
                 ${gettext('Delete the document(s)?')}
                 </p>`,
             id: 'confirmdeletion',
+            icon: 'fa-exclamation-triangle',
             buttons: [
                 {
                     text: gettext('Delete'),

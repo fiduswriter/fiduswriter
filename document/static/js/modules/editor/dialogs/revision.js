@@ -1,5 +1,5 @@
 import {revisionDialogTemplate} from "./templates"
-import {cancelPromise} from "../../common"
+import {cancelPromise, Dialog} from "../../common"
 
 export class RevisionDialog {
     constructor() {
@@ -11,33 +11,27 @@ export class RevisionDialog {
         let dialogDonePromise = new Promise(resolve => {
             buttons.push({
                 text: gettext("Save"),
-                class: "fw-button fw-dark",
+                classes: "fw-dark",
                 click: () => {
-                    let note = this.dialog.find('.revision-note').val()
-                    this.dialog.dialog("close")
+                    let note = this.dialog.dialogEl.querySelector('.revision-note').value
+                    this.dialog.close()
                     return resolve(note)
                 }
             })
 
             buttons.push({
-                text: gettext("Cancel"),
-                class: "fw-button fw-orange",
-                click: () => {
-                    this.dialog.dialog("close")
-                    return resolve(cancelPromise())
-                }
+                type: 'cancel'
             })
         })
 
-        this.dialog = jQuery(revisionDialogTemplate())
-        this.dialog.dialog({
-            autoOpen: true,
-            height: 180,
+        this.dialog = new Dialog({
+            title: gettext('Revision description'),
+            body: revisionDialogTemplate(),
+            height: 100,
             width: 300,
-            modal: true,
-            buttons,
-            close: () => this.dialog.dialog('destroy').remove()
+            buttons
         })
+        this.dialog.open()
 
         return dialogDonePromise
     }

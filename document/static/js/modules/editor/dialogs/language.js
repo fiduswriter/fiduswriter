@@ -1,3 +1,5 @@
+import {Dialog} from "../../common"
+
 import {languageTemplate} from "./templates"
 
 let languages =[
@@ -64,11 +66,10 @@ export class LanguageDialog {
         let buttons = []
         buttons.push({
             text: gettext('Change'),
-            class: 'fw-button fw-dark',
+            classes: 'fw-dark',
             click: () => {
-                let language = this.dialog.find('select').val()
-
-                this.dialog.dialog('close')
+                let language = this.dialog.dialogEl.querySelector('select').value
+                this.dialog.close()
 
                 if (language === this.language) {
                     // No change.
@@ -81,35 +82,28 @@ export class LanguageDialog {
                 this.editor.view.dispatch(
                     this.editor.view.state.tr.setNodeMarkup(0, false, attrs)
                 )
-                this.editor.view.focus()
                 return
             }
         })
 
         buttons.push({
-            text: gettext('Cancel'),
-            class: 'fw-button fw-orange',
-            click: () => {
-                this.dialog.dialog('close')
-                this.editor.currentView.focus()
-            }
+            type: 'cancel'
         })
 
-        this.dialog = jQuery(languageTemplate({
-            currentLanguage: this.language,
-            languages
-        }))
-
-        this.dialog.dialog({
-            draggable: false,
-            resizable: false,
-            top: 10,
+        this.dialog = new Dialog({
             width: 300,
             height: 180,
-            modal: true,
+            id: 'select-document-language',
+            title: gettext('Change language of the document'),
+            body: languageTemplate({
+                currentLanguage: this.language,
+                languages
+            }),
             buttons,
-            close: () => this.dialog.dialog('destroy').remove()
+            onClose: () => this.editor.currentView.focus()
         })
+
+        this.dialog.open()
 
     }
 }

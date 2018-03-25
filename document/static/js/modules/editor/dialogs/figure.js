@@ -127,7 +127,7 @@ export class FigureDialog {
         })
 
 
-        this.dialog = new Document({
+        this.dialog = new Dialog({
             id: 'figure-dialog',
             title: gettext("Enter latex math or insert an image"),
             height: 585,

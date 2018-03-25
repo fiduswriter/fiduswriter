@@ -1,5 +1,5 @@
 import {addTeammemberTemplate, teammemberTemplate} from "./templates"
-import {postJsonStatus, cancelPromise} from "../common"
+import {postJsonStatus, cancelPromise, Dialog} from "../common"
 
 /**
  * Sets up the contacts management. Helper functions for adding and removing contacts.
@@ -25,7 +25,6 @@ let addMember = function(userString) {
     ).then(
         ({json, status}) => {
             if (status == 201) { //user added to the contacts
-                jQuery("#add-new-member").dialog('close')
                 return json.member
             } else { //user not found
                 let responseHtml
@@ -58,20 +57,16 @@ let addMember = function(userString) {
 
 //dialog for adding a user to contacts
 export let addMemberDialog = function() {
-    let dialogHeader = gettext('Add a user to your contacts')
-    document.body.insertAdjacentHTML(
-        'beforeend',
-        addTeammemberTemplate({dialogHeader})
-    )
 
     return new Promise(resolve => {
         let buttons = [
             {
                 text: gettext('Submit'),
-                class: "fw-button fw-dark",
+                classes: "fw-dark",
                 click: () => {
-                    addMember(document.getElementById('new-member-user-string').value).then(
+                    addMember(document.getElementById('new-member-user-string').value, dialog).then(
                         memberData => {
+                            dialog.close()
                             resolve(memberData)
                             return
                         }
@@ -79,27 +74,22 @@ export let addMemberDialog = function() {
                 }
             },
             {
-                text: gettext('Cancel'),
-                class: "fw-button fw-orange",
-                click: function() {
-                    jQuery(this).dialog('close')
-                }
+                type: 'cancel'
             }
         ]
 
-        jQuery("#add-new-member").dialog({
-            resizable: false,
+        let dialog = new Dialog({
+            id: 'add-new-member',
+            title: gettext('Add a user to your contacts'),
+            body: addTeammemberTemplate(),
             width: 350,
             height: 250,
-            modal: true,
-            buttons,
-            create: function() {
-                document.getElementById('new-member-user-string').style.width = '340'
-            },
-            close: () => {
-                jQuery("#add-new-member").dialog('destroy').remove()
-            }
+            buttons
         })
+
+        dialog.open()
+
+        document.getElementById('new-member-user-string').style.width = '340'
     })
 }
 
@@ -116,7 +106,6 @@ let deleteMember = function(ids) {
                 Array.slice.call(document.querySelectorAll('#user-' + ids.join(', #user-'))).forEach(
                     el => el.parentElement.removeChild(el)
                 )
-                jQuery("#confirmdeletion").dialog('close')
             }
         }
     )
@@ -124,27 +113,25 @@ let deleteMember = function(ids) {
 
 //dialog for removing a user from contacts
 export let deleteMemberDialog = function(memberIds) {
-    document.body.insertAdjacentHTML(
-        'beforeend',
-        `<div id="confirmdeletion" title="${gettext('Confirm deletion')}"><p>${gettext('Remove from the contacts')}?</p></div>`
-    )
     let buttons = [
         {
             text: gettext('Delete'),
-            class: "fw-button fw-dark",
-            click: () => deleteMember(memberIds)
+            classes: "fw-dark",
+            click: () => {
+                deleteMember(memberIds)
+                dialog.close()
+            }
         },
         {
-            text: gettext('Cancel'),
-            class: "fw-button fw-orange",
-            click: function() {jQuery(this).dialog('close')}
+            type: 'cancel'
         }
     ]
-    jQuery("#confirmdeletion").dialog({
-        resizable: false,
+    let dialog = new Dialog({
+        title: gettext('Confirm deletion'),
+        id: 'confirmdeletion',
+        body: `<p>${gettext('Remove from the contacts')}?</p>`,
         height: 200,
-        modal: true,
-        buttons,
-        close: () => jQuery("#confirmdeletion").dialog('destroy').remove()
+        buttons
     })
+    dialog.open()
 }

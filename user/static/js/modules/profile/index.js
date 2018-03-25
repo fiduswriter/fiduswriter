@@ -1,20 +1,15 @@
 import {changeAvatarDialogTemplate, confirmDeleteAvatarTemplate,
     deleteUserDialogTemplate, changePwdDialogTemplate, changeEmailDialogTemplate,
-deleteEmailDialogTemplate} from "./templates"
-import {addDropdownBox, activateWait, deactivateWait, post, postJson, postJsonStatus, addAlert, findTarget, whenReady} from "../common"
+deleteEmailDialogTemplate, changePrimaryEmailDialogTemplate} from "./templates"
+import {addDropdownBox, activateWait, deactivateWait, post, postJson, postJsonStatus, addAlert, findTarget, whenReady, Dialog, escapeText} from "../common"
 import {SiteMenu} from "../menu"
 
 let changeAvatarDialog = function() {
-
-    document.body.insertAdjacentHTML(
-        'beforeend',
-        changeAvatarDialogTemplate()
-    )
     let buttons = [
         {
             text: gettext('Upload'),
-            class: "fw-button fw-dark",
-            click: function() {
+            classes: "fw-dark",
+            click: () => {
 
                 let avatarUploaderEl = document.getElementById('avatar-uploader')
 
@@ -43,30 +38,26 @@ let changeAvatarDialog = function() {
                     () => deactivateWait()
                 )
 
-                jQuery(this).dialog('close')
+                dialog.close()
             }
         },
         {
-            text: gettext('Cancel'),
-            class: "fw-button fw-orange",
-            click: function() { jQuery(this).dialog('close') }
+            type: 'cancel'
         }
     ]
-    jQuery("#change-avatar-dialog").dialog({
-        resizable : false,
-        height : 180,
-        modal : true,
-        buttons,
-        create : () => {
-            document.getElementById('avatar-uploader').addEventListener('change', function() {
-                document.getElementById('uploaded-avatar-name').innerHTML = this.value.replace(/C:\\fakepath\\/i, '')
-            })
-            document.getElementById('upload-avatar-btn').addEventListener('click', () => document.getElementById('avatar-uploader').click())
-        },
-        close : () => {
-            jQuery("#change-avatar-dialog").dialog('destroy').remove()
-        }
+    let dialog = new Dialog({
+        id: 'change-avatar-dialog',
+        title: gettext('Upload your profile picture'),
+        body: changeAvatarDialogTemplate(),
+        height: 180,
+        buttons
     })
+    dialog.open()
+
+    document.getElementById('avatar-uploader').addEventListener('change', function() {
+        document.getElementById('uploaded-avatar-name').innerHTML = this.value.replace(/C:\\fakepath\\/i, '')
+    })
+    document.getElementById('upload-avatar-btn').addEventListener('click', () => document.getElementById('avatar-uploader').click())
 }
 
 let deleteCurrentUser = function() {
@@ -100,32 +91,28 @@ let deleteAvatar = function() {
 }
 
 let deleteAvatarDialog = function() {
-    document.body.insertAdjacentHTML(
-        'beforeend',
-        confirmDeleteAvatarTemplate()
-    )
     let buttons = [
         {
             text: gettext('Delete'),
-            class: "fw-button fw-dark",
-            click: function() {
+            classes: "fw-dark",
+            click: () => {
                 deleteAvatar()
-                jQuery(this).dialog('close')
+                dialog.close()
             }
         },
         {
-            text: gettext('Cancel'),
-            class: "fw-button fw-orange",
-            click: function() { jQuery(this).dialog('close') }
+            type: 'cancel'
         }
     ]
-    jQuery("#confirmdeletion").dialog({
-        resizable: false,
+    let dialog = new Dialog({
         height: 180,
-        modal: true,
-        buttons,
-        close: () => jQuery("#confirmdeletion").dialog('destroy').remove()
+        title: gettext('Confirm deletion'),
+        id: 'confirmdeletion',
+        icon: 'fa-exclamation-triangle',
+        body: confirmDeleteAvatarTemplate(),
+        buttons
     })
+    dialog.open()
 }
 
 let saveProfile = function() {
@@ -152,46 +139,38 @@ let saveProfile = function() {
 
 let deleteUserDialog = function() {
     let username = this.dataset.username
-    document.body.insertAdjacentHTML(
-        'beforeend',
-        deleteUserDialogTemplate()
-    )
     let buttons = [
         {
             text: gettext('Delete'),
-            class: "fw-button fw-dark",
-            click: function() {
+            classes: "fw-dark",
+            click: () => {
                 let usernamefieldValue = document.getElementById('username-confirmation').value
                 if (usernamefieldValue===username) {
                     deleteCurrentUser()
-                    jQuery(this).dialog('close')
+                    dialog.close()
                 }
             }
         },
         {
-            text: gettext('Cancel'),
-            class: "fw-button fw-orange",
-            click: function() { jQuery(this).dialog('close') }
+            type: 'cancel'
         }
     ]
-    jQuery("#confirmaccountdeletion").dialog({
-        resizable: false,
-        height: 250,
-        modal: true,
+    let dialog = new Dialog({
+        id: 'confirmaccountdeletion',
+        title: gettext('Confirm deletion'),
+        body: deleteUserDialogTemplate(),
+        icon: 'fa-exclamation-triangle',
         buttons,
-        close: function() { jQuery(this).dialog('destroy').remove() }
+        height: 250
     })
+    dialog.open()
 }
 
 let changePwdDialog = function() {
-    document.body.insertAdjacentHTML(
-        'beforeend',
-        changePwdDialogTemplate()
-    )
     let buttons = [
         {
             text: gettext('Submit'),
-            class: "fw-button fw-dark",
+            classes: "fw-dark",
             click: () => {
                 let oldPwd = document.getElementById('old-password-input').value,
                     newPwd1 = document.getElementById('new-password-input1').value,
@@ -222,7 +201,7 @@ let changePwdDialog = function() {
                 ).then(
                     ({json, status}) => {
                         if(200 === status) {
-                            jQuery("#fw-change-pwd-dialog").dialog('close')
+                            dialog.close()
                             addAlert('info', gettext('The password has been changed.'))
                         } else {
                             let eMsg
@@ -246,30 +225,26 @@ let changePwdDialog = function() {
             }
         },
         {
-            text: gettext('Cancel'),
-            class: "fw-button fw-orange",
-            click: function() { jQuery(this).dialog('close') }
+            type: 'cancel'
         }
     ]
-
-    jQuery("#fw-change-pwd-dialog").dialog({
-        resizable: false,
+    let dialog = new Dialog({
+        id: 'fw-change-pwd-dialog',
+        title: gettext('Change Password'),
+        body: changePwdDialogTemplate(),
         height: 350,
-        modal: true,
-        buttons,
-        close: function() { jQuery(this).dialog('destroy').remove() }
+        buttons
     })
+
+    dialog.open()
 }
 
 let addEmailDialog = function() {
-    document.body.insertAdjacentHTML(
-        'beforeend',
-        changeEmailDialogTemplate()
-    )
+
     let buttons = [
         {
             text: gettext('Submit'),
-            class: "fw-button fw-dark",
+            classes: "fw-dark",
             click: () => {
                 let email = document.getElementById('new-profile-email').value.replace(/(^\s+)|(\s+$)/g, "")
 
@@ -290,7 +265,7 @@ let addEmailDialog = function() {
                 ).then(
                     ({json, status}) => {
                         if(200 === status) {
-                            jQuery('#fw-add-email-dialog').dialog('close')
+                            dialog.close()
                             addAlert('info', `${gettext('Confirmation e-mail sent to')}: ${email}`)
                         } else {
                             document.getElementById('fw-add-email-error').innerHTML = json.msg['email'][0]
@@ -304,37 +279,28 @@ let addEmailDialog = function() {
             }
         },
         {
-            text: gettext('Cancel'),
-            class: "fw-button fw-orange",
-            click: function() { jQuery(this).dialog('close') }
+            type: 'cancel'
         }
     ]
 
-    jQuery("#fw-add-email-dialog").dialog({
-        resizable: false,
-        height: 230,
-        modal: true,
+    let dialog = new Dialog({
+        id: 'fw-add-email-dialog',
+        title: gettext('Add Email'),
+        body: changeEmailDialogTemplate(),
         buttons,
-        close: function() { jQuery(this).dialog('destroy').remove() }
+        height: 230
     })
+    dialog.open()
 }
 
 let deleteEmailDialog = function(target) {
     let thisTr = target.parentElement.parentElement,
         email = target.dataset.email
 
-    document.body.insertAdjacentHTML(
-        'beforeend',
-        deleteEmailDialogTemplate({
-            'title': gettext('Confirm remove'),
-            'text':  gettext('Remove the email address') + ': ' + email + '?'
-        })
-    )
-
     let buttons = [
         {
             text: gettext('Remove'),
-            class: "fw-button fw-dark",
+            classes: "fw-dark",
             click: () => {
                 activateWait()
 
@@ -354,44 +320,40 @@ let deleteEmailDialog = function(target) {
                     () => addAlert('error', gettext('The email could not be removed!'))
                 ).then(
                     () => {
-                        jQuery('#fw-confirm-email-dialog').dialog('close')
+                        dialog.close()
                         deactivateWait()
                     }
                 )
             }
         },
         {
-            text: gettext('Cancel'),
-            class: "fw-button fw-orange",
-            click: function() { jQuery(this).dialog('close') }
+            type: 'cancel'
         }
     ]
 
-    jQuery("#fw-confirm-email-dialog").dialog({
-        resizable: false,
-        height: 200,
-        modal: true,
+    let dialog = new Dialog({
+        id: 'fw-confirm-email-dialog',
+        title: gettext('Confirm remove'),
+        body: deleteEmailDialogTemplate({
+            'text':  `${gettext('Remove the email address')}: ${escapeText(email)}?`
+        }),
         buttons,
-        close : function() {jQuery(this).dialog('destroy').remove()}
+        icon: 'fa-exclamation-triangle',
+        height: 200
     })
+    dialog.open()
+
 }
 
 let changePrimaryEmailDialog = function() {
     let primEmailRadio = document.querySelector('.primary-email-radio:checked'),
         primEmailErapper = primEmailRadio.parentElement.parentElement,
         email = primEmailRadio.value
-    document.body.insertAdjacentHTML(
-        'beforeend',
-        deleteEmailDialogTemplate({
-            'title': gettext('Confirm set primary'),
-            'text':  `${gettext('Set the email address primary')}: ${email}?`
-        })
-    )
 
     let buttons = [
         {
             text: gettext('Submit'),
-            class: "fw-button fw-dark",
+            classes: "fw-dark",
             click: () => {
                 activateWait()
 
@@ -414,29 +376,27 @@ let changePrimaryEmailDialog = function() {
                     () => addAlert('error', gettext('The email could not be set primary'))
                 ).then(
                     () => {
-                        jQuery('#fw-confirm-email-dialog').dialog('close')
+                        dialog.close()
                         deactivateWait()
                     }
                 )
             }
         },
         {
-            text: gettext('Cancel'),
-            class: "fw-button fw-orange",
-            click: function() {
-                document.querySelector('tr.primary-email-tr .primary-email-radio').checked = true
-                jQuery(this).dialog('close')
-            }
+            type: 'cancel'
         }
     ]
 
-    jQuery("#fw-confirm-email-dialog").dialog({
-        resizable: false,
+    let dialog = new Dialog({
+        id: 'change-primary-email',
+        title: gettext('Confirm set primary'),
+        body: changePrimaryEmailDialogTemplate({
+            'text':  `${gettext('Set this email as the address primary')}: ${email}?`
+        }),
         height: 180,
-        modal: true,
-        buttons,
-        close: function() { jQuery(this).dialog('destroy').remove() }
+        buttons
     })
+    dialog.open()
 }
 
 export let bind = function() {

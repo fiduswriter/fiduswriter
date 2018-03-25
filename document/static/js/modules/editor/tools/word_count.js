@@ -1,4 +1,5 @@
 import {wordCounterDialogTemplate} from "./word_count_templates"
+import {Dialog} from "../../common"
 
 export class ModToolsWordCount {
     constructor(mod) {
@@ -29,16 +30,16 @@ export class ModToolsWordCount {
     }
 
     wordCountDialog() {
-        let stats = this.countWords()
-        let dialog = new Dialog({
-            title: gettext('Word counter'),
-            body: wordCounterDialogTemplate({
-                'words': stats.numWords,
-                'chars_no_space': stats.numNoSpace,
-                'chars': stats.numChars
-            }),
-            buttons: [{type: 'close'}]
-        })
+        let stats = this.countWords(),
+            dialog = new Dialog({
+                title: gettext('Word counter'),
+                body: wordCounterDialogTemplate({
+                    'words': stats.numWords,
+                    'chars_no_space': stats.numNoSpace,
+                    'chars': stats.numChars
+                }),
+                buttons: [{type: 'close'}]
+            })
         dialog.open()
     }
 

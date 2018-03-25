@@ -98,25 +98,25 @@ export class LinkDialog {
         let buttons = []
         buttons.push({
             text: this.submitButtonText,
-            class: 'fw-button fw-dark',
+            classes: 'fw-dark',
             click: () => {
-                let linkType = this.dialog.find('input[name=link-type]:checked').val(),
+                let linkType = this.dialog.dialogEl.querySelector('input[name=link-type]:checked').value,
                     newLink = '', linkTitle = ''
                 if (linkType === 'internal') {
-                    let targetId = this.dialog.find('select.internal-link-selector').val()
+                    let targetId = this.dialog.dialogEl.querySelector('select.internal-link-selector').value
                     if (targetId) {
                         newLink = `#${targetId}`
                         linkTitle = this.internalTargets.find(target => target.id === targetId).text
                     }
                 } else {
-                    newLink = this.dialog.find('input.link').val()
-                    linkTitle = this.dialog.find('input.link-title').val()
+                    newLink = this.dialog.dialogEl.querySelector('input.link').value
+                    linkTitle = this.dialog.dialogEl.querySelector('input.link-title').value
                 }
 
                 if ((new RegExp(/^\s*$/)).test(newLink) || newLink === this.defaultLink) {
                     // The link input is empty or hasn't been changed from the default value.
                     // Just close the dialog.
-                    this.dialog.dialog('close')
+                    this.dialog.close()
                     this.editor.currentView.focus()
                     return
                 }
@@ -126,7 +126,7 @@ export class LinkDialog {
                     linkTitle = newLink
                 }
 
-                this.dialog.dialog('close')
+                this.dialog.close()
                 let view = this.editor.currentView,
                     posFrom = view.state.selection.from,
                     posTo = view.state.selection.to,
@@ -151,11 +151,7 @@ export class LinkDialog {
         })
 
         buttons.push({
-            type: 'cancel',
-            click: () => {
-                this.dialog.dialog('close')
-                this.editor.currentView.focus()
-            }
+            type: 'cancel'
         })
 
         this.dialog = new Dialog({

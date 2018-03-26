@@ -21,14 +21,12 @@ let usermediaCategoryformsTemplate = ({categories}) =>
     </tr>`
 
 /** A template to edit image categories. */
-export let usermediaEditcategoriesTemplate = ({dialogHeader, categories}) =>
-    `<div id="editCategories" title="${dialogHeader}">
-        <table id="editCategoryList" class="fw-dialog-table">
-            <tbody>
-                ${usermediaCategoryformsTemplate({categories})}
-            </tbody>
-        </table>
-    </div>`
+export let usermediaEditcategoriesTemplate = ({categories}) =>
+    `<table id="editCategoryList" class="fw-dialog-table">
+        <tbody>
+            ${usermediaCategoryformsTemplate({categories})}
+        </tbody>
+    </table>`
 
 /** A template for image overview list. */
 export let usermediaTableTemplate = ({id, cats, title, width, height, fileType, added, thumbnail, image}) =>

@@ -21,14 +21,12 @@ let categoryFormsTemplate = ({categories}) =>
     </tr>`
 
 /** A template for the editing of bibliography categories list. */
-export let editCategoriesTemplate = ({categories, dialogHeader}) =>
-    `<div id="editCategories" title="${dialogHeader}">
-        <table id="editCategoryList" class="fw-dialog-table">
-            <tbody>
-                ${categoryFormsTemplate({categories})}
-            </tbody>
-        </table>
-    </div>`
+export let editCategoriesTemplate = ({categories}) =>
+    `<table id="editCategoryList" class="fw-dialog-table">
+        <tbody>
+            ${categoryFormsTemplate({categories})}
+        </tbody>
+    </table>`
 
 /* A template for the overview list of bibliography items. */
 export let bibtableTemplate = ({id, cats, title, type, typetitle, published, author}) =>

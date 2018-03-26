@@ -2,6 +2,8 @@ import {TextSelection} from "prosemirror-state"
 
 import {linkDialogTemplate} from "./templates"
 
+import {Dialog} from "../../common"
+
 export class LinkDialog {
     constructor(editor) {
         this.editor = editor
@@ -96,25 +98,26 @@ export class LinkDialog {
         let buttons = []
         buttons.push({
             text: this.submitButtonText,
-            class: 'fw-button fw-dark',
+            classes: 'fw-dark',
             click: () => {
-                let linkType = this.dialog.find('input[name=link-type]:checked').val(),
+                let linkTypeEl = this.dialog.dialogEl.querySelector('input[name=link-type]:checked'),
+                    linkType = linkTypeEl ? linkTypeEl.value : 'external',
                     newLink = '', linkTitle = ''
                 if (linkType === 'internal') {
-                    let targetId = this.dialog.find('select.internal-link-selector').val()
+                    let targetId = this.dialog.dialogEl.querySelector('select.internal-link-selector').value
                     if (targetId) {
                         newLink = `#${targetId}`
                         linkTitle = this.internalTargets.find(target => target.id === targetId).text
                     }
                 } else {
-                    newLink = this.dialog.find('input.link').val()
-                    linkTitle = this.dialog.find('input.link-title').val()
+                    newLink = this.dialog.dialogEl.querySelector('input.link').value
+                    linkTitle = this.dialog.dialogEl.querySelector('input.link-title').value
                 }
 
                 if ((new RegExp(/^\s*$/)).test(newLink) || newLink === this.defaultLink) {
                     // The link input is empty or hasn't been changed from the default value.
                     // Just close the dialog.
-                    this.dialog.dialog('close')
+                    this.dialog.close()
                     this.editor.currentView.focus()
                     return
                 }
@@ -124,7 +127,7 @@ export class LinkDialog {
                     linkTitle = newLink
                 }
 
-                this.dialog.dialog('close')
+                this.dialog.close()
                 let view = this.editor.currentView,
                     posFrom = view.state.selection.from,
                     posTo = view.state.selection.to,
@@ -149,59 +152,53 @@ export class LinkDialog {
         })
 
         buttons.push({
-            text: gettext('Cancel'),
-            class: 'fw-button fw-orange',
-            click: () => {
-                this.dialog.dialog('close')
-                this.editor.currentView.focus()
-            }
+            type: 'cancel'
         })
 
-        this.dialog = jQuery(linkDialogTemplate({
-            linkTitle: this.linkTitle,
-            link: this.link,
-            defaultLink: this.defaultLink,
-            internalTargets: this.internalTargets
-        }))
-
-        this.dialog.dialog({
-            draggable: false,
-            resizable: false,
-            top: 10,
+        this.dialog = new Dialog({
+            id: 'edit-link',
+            title: gettext("Link"),
+            body: linkDialogTemplate({
+                linkTitle: this.linkTitle,
+                link: this.link,
+                defaultLink: this.defaultLink,
+                internalTargets: this.internalTargets
+            }),
+            buttons,
             width: 836,
             height: 360,
-            modal: true,
-            buttons,
-            close: () => this.dialog.dialog('destroy').remove()
+            onClose: () => this.editor.currentView.focus()
         })
 
+        this.dialog.open()
+
         if (this.internalTargets.length) {
-            let externalEls = this.dialog.find('input.link, input.link-title'),
-                internalEls = this.dialog.find('select.internal-link-selector'),
-                externalSwitchers = this.dialog.find('input.link, input.link-title, label.link-external-label, input.link-external-check'),
-                internalSwitchers = this.dialog.find('select.internal-link-selector, label.link-internal-label, input.link-internal-check'),
-                radioInternal = this.dialog.find('input.link-internal-check'),
-                radioExternal = this.dialog.find('input.link-external-check')
+            let externalEls = this.dialog.dialogEl.querySelectorAll('input.link, input.link-title'),
+                internalEls = this.dialog.dialogEl.querySelectorAll('select.internal-link-selector'),
+                externalSwitchers = this.dialog.dialogEl.querySelectorAll('input.link, input.link-title, label.link-external-label, input.link-external-check'),
+                internalSwitchers = this.dialog.dialogEl.querySelectorAll('select.internal-link-selector, label.link-internal-label, input.link-internal-check'),
+                radioInternal = this.dialog.dialogEl.querySelector('input.link-internal-check'),
+                radioExternal = this.dialog.dialogEl.querySelector('input.link-external-check')
 
             if (this.link[0] === '#') {
-                externalEls.addClass("disabled")
-                radioInternal.prop("checked", true)
+                externalEls.forEach(el => el.classList.add("disabled"))
+                radioInternal.checked = true
             } else {
-                internalEls.addClass("disabled")
-                radioExternal.prop("checked", true)
+                internalEls.forEach(el => el.classList.add("disabled"))
+                radioExternal.checked = true
             }
 
-            internalSwitchers.on('mousedown', () => {
-                externalEls.addClass("disabled")
-                internalEls.removeClass("disabled")
-                radioInternal.prop("checked", true)
-            })
+            internalSwitchers.forEach(el => el.addEventListener('click', () => {
+                externalEls.forEach(el => el.classList.add("disabled"))
+                internalEls.forEach(el => el.classList.remove("disabled"))
+                radioInternal.checked = true
+            }))
 
-            externalSwitchers.on('mousedown', () => {
-                internalEls.addClass("disabled")
-                externalEls.removeClass("disabled")
-                radioExternal.prop("checked", true)
-            })
+            externalSwitchers.forEach(el => el.addEventListener('click', () => {
+                internalEls.forEach(el => el.classList.add("disabled"))
+                externalEls.forEach(el => el.classList.remove("disabled"))
+                radioExternal.checked = true
+            }))
 
         }
     }

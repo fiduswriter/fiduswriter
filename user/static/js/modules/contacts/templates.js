@@ -26,10 +26,8 @@ export let teammemberTemplate = ({members}) =>
     ).join('')
 
 //template for member adding dialog
-export let addTeammemberTemplate = ({dialogHeader}) =>
-    `<div id="add-new-member" title="${dialogHeader}">
-        <table class="ui-dialog-content-table"><tbody><tr><td>
-            <input type="text" name="user_string" id="new-member-user-string"
-                    placeholder="${gettext('E-mail address or username')}" />
-        </td></tr></tbody></table>
-    </div>`
+export let addTeammemberTemplate = () =>
+    `<table class="ui-dialog-content-table"><tbody><tr><td>
+        <input type="text" name="user_string" id="new-member-user-string"
+                placeholder="${gettext('E-mail address or username')}" />
+    </td></tr></tbody></table>`

@@ -1,5 +1,5 @@
 import {showKeyBindingsTemplate} from "./show_key_bindings_templates"
-
+import {Dialog} from "../../common"
 /* This is an adaptation of question.mark for Fidus Writer http://fiduswriter.org
 * originally by Gabriel Lopez <gabriel.marcos.lopez@gmail.com>
 */
@@ -11,19 +11,13 @@ export class ModToolsShowKeyBindings {
     }
 
     show() {
-        let buttons = [
-            {
-                text: gettext("Close"),
-                class: "fw-button fw-orange",
-                click: function () {jQuery(this).dialog("close")}
-            }
-        ]
-        jQuery(showKeyBindingsTemplate()).dialog({
-            autoOpen: true,
+        let dialog = new Dialog({
+            title: gettext('Keyboard Shortcuts'),
+            body: showKeyBindingsTemplate(),
             height: 500,
             width: 800,
-            modal: true,
-            buttons
+            buttons: [{type: 'close'}]
         })
+        dialog.open()
     }
 }

@@ -1,6 +1,6 @@
 import {imageSelectionTemplate} from "./templates"
 import {ImageEditDialog} from "../edit_dialog"
-import {cancelPromise} from "../../common"
+import {cancelPromise, Dialog} from "../../common"
 
 export class ImageSelectionDialog {
     constructor(imageDB, userImageDB, imgId) {
@@ -26,21 +26,14 @@ export class ImageSelectionDialog {
                 db: 'user'
             })
         })
-        this.imageDialog = jQuery(imageSelectionTemplate({
-                images
-            })).dialog({
-            width: 'auto',
-            height: 'auto',
+        this.imageDialog = new Dialog({
+            body: imageSelectionTemplate({
+                    images
+                }),
             title: gettext("Images"),
-            modal: true,
-            resizable: false,
-            draggable: false,
-            dialogClass: 'select-image-dialog',
-            close: function () {
-                jQuery(this).dialog('destroy').remove()
-            }
+            id: 'select-image-dialog',
         })
-
+        this.imageDialog.open()
         this.startImageTable()
         if (this.imgId) {
             document.getElementById(`Image_${this.imgDb}_${this.imgId}`).classList.add('checked')
@@ -94,26 +87,26 @@ export class ImageSelectionDialog {
 
         // functions for the image selection dialog
         let that = this
-        jQuery('#select_imagelist tr').on('click', function () {
-            let checkedImage = jQuery('#select_imagelist tr.checked'),
-                selecting = true, elementId = this.getAttribute('id')
+        this.imageDialog.dialogEl.querySelectorAll('#select_imagelist tr').forEach(el => el.addEventListener('click', () => {
+            let checkedImageEl = this.imageDialog.dialogEl.querySelector('#select_imagelist tr.checked'),
+                selecting = true, elementId = el.id
             if (elementId === undefined) {
                 // Likely clicked on header
                 return
             }
-            if (checkedImage.length > 0 && this == checkedImage[0]) {
+            if (el == checkedImageEl) {
                 selecting = false
-                that.imageId = false
+                this.imageId = false
             }
-            checkedImage.removeClass('checked')
+            checkedImageEl.classList.remove('checked')
             if (selecting) {
-                that.imgId = parseInt(elementId.split('_')[2])
-                that.imgDb = elementId.split('_')[1]
-                this.classList.add('checked')
+                this.imgId = parseInt(elementId.split('_')[2])
+                this.imgDb = elementId.split('_')[1]
+                el.classList.add('checked')
             }
-        })
+        }))
         return new Promise (resolve => {
-            jQuery('#selectImageUploadButton').bind('click', () => {
+            this.imageDialog.dialogEl.querySelector('#selectImageUploadButton').addEventListener('click', () => {
                 let imageUpload = new ImageEditDialog(
                     this.userImageDB // We can only upload to the user's image db
                 )
@@ -122,22 +115,22 @@ export class ImageSelectionDialog {
                         imageId => {
                             this.imgId = imageId
                             this.imgDb = 'user'
-                            this.imageDialog.dialog('close')
+                            this.imageDialog.close()
                             return this.init()
                         }
                     )
                 )
             })
 
-            jQuery('#selectImageSelectionButton').bind('click',
+            this.imageDialog.dialogEl.querySelector('#selectImageSelectionButton').addEventListener('click',
                 () => {
-                    this.imageDialog.dialog('close')
+                    this.imageDialog.close()
                     resolve({id: this.imgId, db: this.imgDb})
                 }
             )
-            jQuery('#cancelImageSelectionButton').bind('click',
+            this.imageDialog.dialogEl.querySelector('#cancelImageSelectionButton').addEventListener('click',
                 () => {
-                    this.imageDialog.dialog('close')
+                    this.imageDialog.close()
                     resolve(cancelPromise())
                 }
             )

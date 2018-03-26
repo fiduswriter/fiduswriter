@@ -28,31 +28,25 @@ let imageEditCategoryTemplate = ({image, cats}) => {
 
 /* A template for the form for the image upload dialog. */
 export let imageEditTemplate = ({image, cats}) =>
-    `<div id="editimage" class="fw-media-uploader" title="${
+    `<div>
+        <input name="title" class="fw-media-title" type="text"
+                placeholder="${gettext('Insert a title')}" value="${
+                        image ? escapeText(image.title) : ''
+                }" />
+        ${
             image ?
-            escapeText('Update Image Information') :
-            gettext('Upload Image')
-        }">
-        <div>
-            <input name="title" class="fw-media-title" type="text"
-                    placeholder="${gettext('Insert a title')}" value="${
-                            image ? escapeText(image.title) : ''
-                    }" />
-            ${
-                image ?
-                '' :
-                `<button type="button" class="fw-media-select-button fw-button fw-light">
-                    ${gettext('Select a file')}
-                </button>
-                <input name="image" type="file" class="fw-media-file-input">`
-            }
-        </div>
-        <div class="figure-preview"><div>
-            ${
-                image && image.image ?
-                `<img src="${image.image}" />` :
-                ''
-            }
-        </div></div>
-        ${imageEditCategoryTemplate({image, cats})}
-    </div>`
+            '' :
+            `<button type="button" class="fw-media-select-button fw-button fw-light">
+                ${gettext('Select a file')}
+            </button>
+            <input name="image" type="file" class="fw-media-file-input">`
+        }
+    </div>
+    <div class="figure-preview"><div>
+        ${
+            image && image.image ?
+            `<img src="${image.image}" />` :
+            ''
+        }
+    </div></div>
+    ${imageEditCategoryTemplate({image, cats})}`

@@ -1,6 +1,6 @@
 import {configureCitationTemplate, citationItemTemplate, selectedCitationTemplate} from "./templates"
 import {BibEntryForm} from "../../bibliography/form"
-import {setCheckableLabel} from "../../common"
+import {setCheckableLabel, Dialog, findTarget} from "../../common"
 import {nameToText, litToText} from "../../bibliography/tools"
 import * as plugins from "../../../plugins/citation_dialog"
 
@@ -24,7 +24,7 @@ export class CitationDialog {
         this.buttons.push({
             text: gettext('Register new source'),
             click: () => this.registerNewSource(),
-            class: 'fw-button fw-light fw-add-button register-new-bib-source'
+            classes: 'fw-light fw-add-button register-new-bib-source'
         })
 
         if (this.node && this.node.type && this.node.type.name==='citation') {
@@ -33,9 +33,9 @@ export class CitationDialog {
                 click: () => {
                     let transaction = this.editor.currentView.state.tr.deleteSelection()
                     this.editor.currentView.dispatch(transaction)
-                    this.dialog.dialog('close')
+                    this.dialog.close()
                 },
-                class: 'fw-button fw-orange'
+                classes: 'fw-orange'
             })
             this.submitButtonText = gettext('Update')
         }
@@ -44,44 +44,29 @@ export class CitationDialog {
             text: this.submitButtonText,
             click: () => {
                 if (this.dialogSubmit()) {
-                    this.dialog.dialog('close')
+                    this.dialog.close()
                 }
             },
-            class: "fw-button fw-dark insert-citation"
+            classes: "fw-dark insert-citation"
         })
 
         this.buttons.push({
-            text: gettext('Cancel'),
-            click: () => {
-                this.dialog.dialog('close')
-            },
-            class: 'fw-button fw-orange'
+            type: 'cancel'
         })
 
         this.activatePlugins()
 
-        this.dialog = jQuery(this.citationDialogHTML())
-
-        this.dialog.dialog({
-            draggable: false,
-            resizable: false,
-            top: 10,
+        this.dialog = new Dialog({
+            id: 'configure-citation',
+            title: gettext('Configure Citation'),
+            buttons: this.buttons,
+            body: this.citationDialogHTML(),
             width: 836,
             height: 540,
-            modal: true,
-            buttons: this.buttons,
-            create: () => this.dialogCreate(),
-            close: () => {
-                this.dialog.dialog('destroy').remove()
-                this.editor.currentView.focus()
-            }
+            onClose: () => this.editor.currentView.focus()
         })
-
-        jQuery('input').blur()
-
-        document.querySelectorAll('.fw-checkable').forEach(
-            el => el.addEventListener('click', () => setCheckableLabel(el))
-        )
+        this.dialog.open()
+        this.bind()
     }
 
     activatePlugins() {
@@ -134,10 +119,6 @@ export class CitationDialog {
             idTranslations => {
                 let ids = idTranslations.map(idTrans => idTrans[1])
                 this.addToCitableItems(ids)
-                jQuery('.fw-checkable').unbind('click')
-                jQuery('.fw-checkable').bind('click', function() {
-                    setCheckableLabel(jQuery(this))
-                })
             }
         )
     }
@@ -185,8 +166,7 @@ export class CitationDialog {
         }
     }
 
-    dialogCreate() {
-
+    bind() {
         jQuery('#cite-source-table').bind('update', function() {
             let autocomplete_tags = []
             if (this.classList.contains('dataTable')) {
@@ -216,7 +196,7 @@ export class CitationDialog {
 
         jQuery('#cite-source-table').trigger('update')
 
-        jQuery('#add-cite-source').bind('click', () => {
+        document.getElementById('add-cite-source').addEventListener('click', () => {
             let selectedItems = []
 
             document.querySelectorAll('#cite-source-table .fw-checkable.checked').forEach(
@@ -240,10 +220,20 @@ export class CitationDialog {
             this.addToCitedItems(selectedItems)
         })
 
-        jQuery(this.dialog).on('click', '.selected-source .delete', function() {
-            let documentEl = document.getElementById(`selected-source-document-${this.dataset.id}`)
-            if (documentEl) {
-                documentEl.parentElement.removeChild(documentEl)
+        this.dialog.dialogEl.addEventListener('click', event => {
+            let el = {}, revisionId
+            switch (true) {
+                case findTarget(event, '.selected-source .delete', el):
+                    let documentEl = document.getElementById(`selected-source-document-${el.target.dataset.id}`)
+                    if (documentEl) {
+                        documentEl.parentElement.removeChild(documentEl)
+                    }
+                    break
+                case findTarget(event, '.fw-checkable', el):
+                    setCheckableLabel(el.target)
+                    break
+                default:
+                    break
             }
         })
     }

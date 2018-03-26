@@ -1,9 +1,9 @@
 import JSZipUtils from "jszip-utils"
 import download from "downloadjs"
 
-import {documentrevisionsTemplate, documentrevisionsConfirmDeleteTemplate} from "./templates"
+import {documentrevisionsTemplate} from "./templates"
 import {ImportFidusFile} from "../../importer/file"
-import {deactivateWait, addAlert, post, cancelPromise, findTarget} from "../../common"
+import {deactivateWait, addAlert, post, cancelPromise, findTarget, Dialog, escapeText} from "../../common"
 
 /**
  * Functions for the recovering previously created document revisions.
@@ -22,37 +22,22 @@ export class DocumentRevisionsDialog {
      * @param {number}
      */
     init() {
-
         let doc = this.documentList.find(doc => doc.id === this.documentId)
-
-        let buttons = [
-            {
-                text: gettext('Close'),
-                class: "fw-button fw-dark",
-                click: () => this.dialog.dialog("close")
-            }
-        ]
-
-        this.dialog = jQuery(documentrevisionsTemplate({
-            doc
-        }))
-
-        this.dialog.dialog({
-            draggable: false,
-            resizable: false,
-            top: 10,
+        this.dialog = new Dialog({
+            title: `${gettext('Saved revisions of')} ${escapeText(doc.title)}`,
+            id: 'revisions-dialog',
             width: 620,
             height: 480,
-            modal: true,
-            buttons,
-            close: () => this.dialog.dialog('destroy').remove()
+            buttons: [{type: 'close'}],
+            body: documentrevisionsTemplate({doc})
         })
+        this.dialog.open()
         return this.bind()
     }
 
 
     bind() {
-        let dialogEl = this.dialog[0]
+        let dialogEl = this.dialog.dialogEl
 
         return new Promise(resolve => {
             dialogEl.addEventListener('click', event => {
@@ -131,34 +116,33 @@ export class DocumentRevisionsDialog {
     delete(id) {
         let buttons = [], that = this
         let returnPromise = new Promise(resolve => {
+
             buttons.push({
                 text: gettext('Delete'),
-                class: "fw-button fw-dark",
-                click: function() {
-                    jQuery(this).dialog("close")
-                    resolve(that.deleteRevision(id))
+                classes: "fw-dark",
+                click: () => {
+                    revisionsConfirmDeleteDialog.close()
+                    resolve(this.deleteRevision(id))
                 }
             })
             buttons.push({
-                text: gettext('Cancel'),
-                class: "fw-button fw-orange",
-                click: function() {
-                    jQuery(this).dialog("close")
+                type: 'cancel',
+                click: () => {
+                    revisionsConfirmDeleteDialog.close()
                     resolve(cancelPromise())
                 }
             })
         })
 
-        jQuery(documentrevisionsConfirmDeleteTemplate()).dialog({
-            resizable: false,
-            height: 180,
-            modal: true,
-            appendTo: "#revisions-dialog",
-            close: function() {
-                jQuery(this).dialog('destroy').remove()
-            },
+        let revisionsConfirmDeleteDialog = new Dialog({
+            id: 'confirmdeletion',
+            title: gettext('Confirm deletion'),
+            icon: 'fa-exclamation-triangle',
+            body: `${gettext('Do you really want to delete the revision?')}`,
+            height: 80,
             buttons
         })
+        revisionsConfirmDeleteDialog.open()
 
         return returnPromise
 
@@ -171,7 +155,7 @@ export class DocumentRevisionsDialog {
         ).then(
             () => {
                 let thisTr = document.querySelector(`tr.revision-${id}`),
-                documentId = thisTr.getAttribute('data-document'),
+                documentId = thisTr.dataset.document,
                 doc = this.documentList.find(doc => doc.id === parseInt(documentId))
                 thisTr.parentElement.removeChild(thisTr)
                 addAlert('success', gettext('Revision deleted'))
@@ -180,6 +164,7 @@ export class DocumentRevisionsDialog {
                     id,
                     doc
                 })
+                // TODO: Remove from overview menu as well
             }
         ).catch(
             () => {

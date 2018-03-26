@@ -1,4 +1,5 @@
 import {wordCounterDialogTemplate} from "./word_count_templates"
+import {Dialog} from "../../common"
 
 export class ModToolsWordCount {
     constructor(mod) {
@@ -29,32 +30,17 @@ export class ModToolsWordCount {
     }
 
     wordCountDialog() {
-        let stats = this.countWords()
-        document.body.insertAdjacentHTML(
-            'beforeend',
-            wordCounterDialogTemplate({
-                'dialogHeader': gettext('Word counter'),
-                'words': stats.numWords,
-                'chars_no_space': stats.numNoSpace,
-                'chars': stats.numChars
+        let stats = this.countWords(),
+            dialog = new Dialog({
+                title: gettext('Word counter'),
+                body: wordCounterDialogTemplate({
+                    'words': stats.numWords,
+                    'chars_no_space': stats.numNoSpace,
+                    'chars': stats.numChars
+                }),
+                buttons: [{type: 'close'}]
             })
-        )
-
-        jQuery('#word-counter-dialog').dialog({
-            draggable : false,
-            resizable : false,
-            modal : true,
-            buttons : [
-                {
-                    text: gettext('Close'),
-                    class: 'fw-button fw-orange',
-                    click: function() {jQuery('#word-counter-dialog').dialog('close')}
-                }
-            ],
-            close : function() {
-                jQuery(this).dialog('destroy').remove()
-            }
-        })
+        dialog.open()
     }
 
 }

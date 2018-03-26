@@ -1,6 +1,4 @@
-/**
- * Created by alex on 30.03.16.
- */
+import {escapeText} from "../../common"
 
 import "mathquill/build/mathquill"
 import {katexRender} from "../../katex"
@@ -12,22 +10,17 @@ export class FormulaEditor {
     constructor(mathDialog, equation) {
         this.dialog = mathDialog
 
-        this.mathFieldDOM = mathDialog.find("p > span.math-field")
-        this.latexFieldDOM = mathDialog.find("p > span.math-latex")
-        this.errorFieldDOM = mathDialog.find("div.math-error")
+        this.mathquillDOM = mathDialog.dialogEl.querySelector("p > .math-field")
+        this.rawInputDOM = mathDialog.dialogEl.querySelector("div > .raw-input")
+        this.previewDOM = mathDialog.dialogEl.querySelector("div.math-preview")
+        this.errorFieldDOM = mathDialog.dialogEl.querySelector("div.math-error")
         this.isRawMode = false
 
         //initializes mathquill library
         this.MQ = MathQuill.getInterface(2)
 
-        this.mathField = this.MQ.MathField(this.mathFieldDOM[0], {
+        this.mathField = this.MQ.MathField(this.mathquillDOM, {
             spaceBehavesLikeTab: true,
-            //to update text field for raw latex representation (not raw latex mode)
-            handlers : {
-                edit: () => {
-                    this.latexFieldDOM.text(this.mathField.latex())
-                }
-            }
         })
 
         this.mathField.latex(equation)
@@ -36,31 +29,39 @@ export class FormulaEditor {
     /**
      * Destroy mathquill object. reinitialize it to work with raw latex
      */
-    switchToRawLatexMode() {
+    switchLatexGraphicMode() {
         let latexText = this.getLatex()
-        this.mathField = null
-        //change from span to input in template
-        this.mathFieldDOM.replaceWith('<input class="math-field" type="text" name="math" value="' + latexText + '" />')
 
-        this.mathFieldDOM = this.dialog.find("p > input.math-field")
+        if (this.isRawMode) {
+            this.mathField.latex(latexText)
+            this.mathquillDOM.style.display = ''
+            this.rawInputDOM.style.display = 'none'
+            this.previewDOM.innerHTML = ''
+            this.isRawMode = false
+        } else {
+            //change from span to input in template
+            this.mathquillDOM.style.display = 'none'
+            this.rawInputDOM.style.display = ''
+            this.rawInputDOM.value = latexText
 
-        //render latex formula using katex
-        katexRender(this.getLatex(), this.latexFieldDOM[0], {throwOnError: false})
+            //render latex formula using katex
+            katexRender(this.getLatex(), this.previewDOM, {throwOnError: false})
 
-        //live-update of katex rendering
-        this.mathFieldDOM.on('input', () => {
-            try {
-                this.latexFieldDOM.text("")
-                katexRender(this.getLatex(), this.latexFieldDOM[0])
-                this.hideError()
-            }
-            catch(msg) {
-                //if error show it
-                this.showError(msg)
-            }
-        })
+            //live-update of katex rendering
+            this.rawInputDOM.addEventListener('input', () => {
+                try {
+                    this.previewDOM.innerHTML = ''
+                    katexRender(this.getLatex(), this.previewDOM)
+                    this.hideError()
+                }
+                catch(msg) {
+                    //if error show it
+                    this.showError(msg)
+                }
+            })
 
-        this.isRawMode = true
+            this.isRawMode = true
+        }
     }
 
     /**
@@ -69,9 +70,9 @@ export class FormulaEditor {
      */
     getLatex() {
         if (this.isRawMode) {
-            return this.mathFieldDOM.val()
+            return this.rawInputDOM.value
         }
-        return this.latexFieldDOM.text()
+        return this.mathField.latex()
     }
 
     /**
@@ -79,26 +80,14 @@ export class FormulaEditor {
      * @param {string} msg Error message
      */
     showError(msg) {
-        this.errorFieldDOM.text(msg).show()
+        this.errorFieldDOM.innerText = msg
+        this.errorFieldDOM.style.display = 'block'
     }
 
     /**
      * Hide error span
      */
     hideError() {
-        this.errorFieldDOM.hide()
-    }
-
-    /**
-     * Clear resources. switch back from raw latex mode
-     */
-    destroy() {
-        if (this.isRawMode) {
-            this.mathFieldDOM.replaceWith('<span class="math-field" type="text" name="math" ></span>')
-            this.isRawMode = false
-        }
-
-        this.hideError()
-        this.mathField = null
+        this.errorFieldDOM.style.display = 'none'
     }
 }

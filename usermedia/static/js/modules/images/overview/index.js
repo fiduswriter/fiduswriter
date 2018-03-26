@@ -1,6 +1,6 @@
 import {ImageDB} from "../database"
 import {ImageOverviewCategories} from "./categories"
-import {activateWait, deactivateWait, addAlert, post, findTarget, whenReady} from "../../common"
+import {activateWait, deactivateWait, addAlert, post, findTarget, whenReady, Dialog} from "../../common"
 import {SiteMenu} from "../../menu"
 import {OverviewMenuView} from "../../common"
 import {menuModel} from "./menu"
@@ -62,40 +62,29 @@ export class ImageOverview {
     }
 
     deleteImageDialog(ids) {
-        document.body.insertAdjacentHTML(
-            'beforeend',
-            '<div id="confirmdeletion" title="' + gettext(
-                'Confirm deletion') + '"><p>' + gettext(
-                'Delete the image(s)') +
-            '?</p></div>'
-        )
-        let that = this
+
         let buttons = [
             {
                 text: gettext('Delete'),
-                class: "fw-button fw-dark",
-                click: function () {
-                    that.deleteImage(ids)
-                    jQuery(this).dialog('close')
+                classes: "fw-dark",
+                click: () => {
+                    this.deleteImage(ids)
+                    dialog.close()
                 }
             },
             {
-                text: gettext('Cancel'),
-                class: "fw-button fw-orange",
-                click: function () {
-                    jQuery(this).dialog('close')
-                }
+                type: 'cancel'
             }
         ]
-        jQuery("#confirmdeletion").dialog({
-            resizable: false,
+        let dialog = new Dialog({
+            id: 'confirmdeletion',
+            icon: 'fa-exclamation-triangle',
+            title: gettext('Confirm deletion'),
+            body: `<p>${gettext('Delete the image(s)')}?</p>`,
             height: 180,
-            modal: true,
-            buttons,
-            close: function () {
-                jQuery("#confirmdeletion").dialog('destroy').remove()
-            }
+            buttons
         })
+        dialog.open()
     }
 
     addImageDB(imagePks) {

@@ -24,7 +24,7 @@ export let addDropdownBox = function(btn, box, preopen=false) {
  * @param box The node containing the contents of the dropdown box.
  */
 
-let openDropdownBox = function(box) {
+export let openDropdownBox = function(box) {
     // Show this box
     box.style.display = 'block'
 

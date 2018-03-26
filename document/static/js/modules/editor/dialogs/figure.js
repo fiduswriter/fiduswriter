@@ -197,11 +197,6 @@ export class FigureDialog {
                 if (insertFigureImage.classList.contains('disabled')) {
                     return
                 }
-                console.log({
-                    imageDB: this.imageDB,
-                    userImageDB: this.userImageDB,
-                    imgId: this.imgId
-                })
                 let imageSelection = new ImageSelectionDialog(
                     this.imageDB,
                     this.userImageDB,

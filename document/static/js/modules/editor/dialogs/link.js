@@ -100,7 +100,8 @@ export class LinkDialog {
             text: this.submitButtonText,
             classes: 'fw-dark',
             click: () => {
-                let linkType = this.dialog.dialogEl.querySelector('input[name=link-type]:checked').value,
+                let linkTypeEl = this.dialog.dialogEl.querySelector('input[name=link-type]:checked'),
+                    linkType = linkTypeEl ? linkTypeEl.value : 'external',
                     newLink = '', linkTitle = ''
                 if (linkType === 'internal') {
                     let targetId = this.dialog.dialogEl.querySelector('select.internal-link-selector').value

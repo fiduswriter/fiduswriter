@@ -130,7 +130,6 @@ export class FigureDialog {
         this.dialog = new Dialog({
             id: 'figure-dialog',
             title: gettext("Enter latex math or insert an image"),
-            height: 585,
             body: configureFigureTemplate({
                 equation: this.equation,
                 caption: this.caption,
@@ -144,7 +143,7 @@ export class FigureDialog {
 
         let captionInput = this.dialog.dialogEl.querySelector('input[name=figure-caption]')
 
-        captionInput.addEventListener('focus', () => this.select())
+        //captionInput.addEventListener('focus', () => captionInput.select())
 
         captionInput.focus()
 
@@ -198,7 +197,11 @@ export class FigureDialog {
                 if (insertFigureImage.classList.contains('disabled')) {
                     return
                 }
-
+                console.log({
+                    imageDB: this.imageDB,
+                    userImageDB: this.userImageDB,
+                    imgId: this.imgId
+                })
                 let imageSelection = new ImageSelectionDialog(
                     this.imageDB,
                     this.userImageDB,

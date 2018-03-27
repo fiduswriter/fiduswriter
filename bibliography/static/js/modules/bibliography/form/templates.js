@@ -23,25 +23,25 @@ export let bibDialog = ({dialogHeader, bib_type, BibTypes, BibTypeTitles}) =>
         <div class="fw-select-arrow fa fa-caret-down"></div>
     </div>
     <div id="bib-dialog-tabs">
-        <ul>
-            <li><a href="#req-fields-tab" class="fw-button fw-large">
+        <ul class="ui-tabs-nav">
+            <li class="tab-link"><a href="#req-fields-tab" class="fw-button fw-large">
                 ${gettext('Required Fields')}
             </a></li>
-            <li><a href="#opt-fields-tab" class="fw-button fw-large">
+            <li class="tab-link"><a href="#opt-fields-tab" class="fw-button fw-large">
                 ${gettext('Optional Fields')}
             </a></li>
-            <li id="categories-link"><a href="#categories-tab" class="fw-button fw-large">
+            <li class="tab-link" id="categories-link"><a href="#categories-tab" class="fw-button fw-large">
                 ${gettext('Categories')}
             </a></li>
         </ul>
-        <div id="req-fields-tab">
+        <div class="tab-content ui-tabs-panel" id="req-fields-tab">
             <table class="fw-dialog-table"><tbody id="eo-fields"></tbody></table>
             <table class="fw-dialog-table"><tbody id="req-fields"></tbody></table>
         </div>
-        <div id="opt-fields-tab">
+        <div class="tab-content ui-tabs-panel" id="opt-fields-tab">
             <table class="fw-dialog-table"><tbody id="opt-fields"></tbody></table>
         </div>
-        <div id="categories-tab">
+        <div class="tab-content ui-tabs-panel" id="categories-tab">
             <table class="fw-dialog-table">
                 <tbody>
                     <tr>

@@ -87,28 +87,25 @@ export class ModCollabChat {
             `<style>\n#messageform.empty:before{content:"${gettext('Send a message...')}"}\n</style>`
         )
         whenReady().then(() => {
-            document.getElementById('chat-container').style.maxHeight = jQuery(window).height() - 200 + 'px'
+            document.getElementById('chat-container').style.maxHeight = `${window.innerHeight - 200}px`
 
-            document.querySelector('#chat .resize-button').addEventListener(
+            let resizeButton = document.querySelector('#chat .resize-button')
+            resizeButton.addEventListener(
                 "click",
-                function (event) {
-                    if (this.classList.contains('fa-angle-double-down')) {
-                        this.classList.remove('fa-angle-double-down')
-                        this.classList.add('fa-angle-double-up')
-                        jQuery('#chat-container,#messageform').slideUp()
+                event => {
+                    let chatEl = document.getElementById('chat')
+                    if (resizeButton.classList.contains('fa-angle-double-down')) {
+                        resizeButton.classList.remove('fa-angle-double-down')
+                        resizeButton.classList.add('fa-angle-double-up')
+                        chatEl.style.top = `${chatEl.getBoundingClientRect().top}px` // Set current height to get the animation working.
+                        setTimeout(() => chatEl.style.top = `${window.innerHeight-29}px`, 0)
                     }
                     else {
-                        this.classList.remove('fa-angle-double-up')
-                        this.classList.add('fa-angle-double-down')
-                        jQuery('#chat-container, #messageform').slideDown()
-                        if (this.parentElement.classList.contains('highlighted')) {
-                            jQuery(this).parent().animate({
-                                backgroundColor: "#fff",
-                            }, 1000, 'swing', function () {
-                                this.classList.remove('highlighted')
-                                this.style.backgroundColor = ''
-                            });
-                        }
+                        resizeButton.classList.remove('fa-angle-double-up')
+                        resizeButton.classList.add('fa-angle-double-down')
+                        // Add height teemporarily to make sliding animation.
+                        chatEl.style.top = `${Math.max(window.innerHeight-chatEl.scrollHeight-11, 0)}px` // 11px for padding
+                        setTimeout(() => chatEl.style.top = '', 3000)
                     }
                 }
             )
@@ -118,7 +115,7 @@ export class ModCollabChat {
             messageForm.addEventListener("focus", event => messageForm.classList.remove('empty'))
 
             messageForm.addEventListener("blur", event => {
-                if (messageForm.innerText.length === 0) {
+                if (messageForm.innerText.trim().length === 0) {
                     messageForm.classList.add('empty')
                 }
             })

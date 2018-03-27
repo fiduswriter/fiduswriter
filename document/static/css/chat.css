@@ -29,7 +29,7 @@
 
 #chat-container {
     max-height: 300px;
-    overflow: overlay;
+    overflow-y: auto;
 }
 
 #chat-container .message:last-child {
@@ -55,4 +55,8 @@
 
 #messageform.empty:before {
     color: #cecece;
+}
+
+#chat {
+    transition: top 2s ease;
 }

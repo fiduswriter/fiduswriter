@@ -126,7 +126,27 @@ export class BibEntryForm {
             this.dialog.open()
 
             // init ui tabs
-            jQuery('#bib-dialog-tabs').tabs()
+
+            // Hide all but first tab
+            this.dialog.dialogEl.querySelectorAll('#bib-dialog-tabs .tab-content').forEach((el, index) => {
+                if (index) {
+                    el.style.display = 'none'
+                }
+            })
+
+            // Handle tab link clicking
+            this.dialog.dialogEl.querySelectorAll('#bib-dialog-tabs .tab-link a').forEach(el => el.addEventListener('click', event => {
+                event.preventDefault()
+                let link = el.getAttribute('href')
+                this.dialog.dialogEl.querySelectorAll('#bib-dialog-tabs .tab-content').forEach(el => {
+                    if (el.matches(link)) {
+                        el.style.display = ''
+                    } else {
+                        el.style.display = 'none'
+                    }
+                })
+
+            }))
 
             document.getElementById('select-bibtype').addEventListener(
                 'change',

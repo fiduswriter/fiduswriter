@@ -8,39 +8,32 @@
     table-layout: auto;
 }
 
-.fw-document-table-header {
+.fw-document-table thead {
     font-size: 11px;
     font-weight: 900;
 }
 
-.fw-document-table-body {
-    float: left;
-    overflow: auto;
-    width: 600px;
-    height: 150px;
-}
-
-.fw-document-table-body.fw-large {
+.fw-document-table.fw-large tbody {
     width: 985px;
     height: calc(100vh - 320px);
 }
-.fw-document-table-body.fw-middle {
+.fw-document-table.fw-middle tbody {
     width: 600px;
     height: calc(100vh - 320px);
 }
 
-.fw-document-table-body.fw-small {
+.fw-document-table.fw-small tbody {
     width: 342px;
     height: 270px;
 }
 
-.fw-document-table-body.fw-min {
+.fw-document-table.fw-min tbody {
     width: 342px;
     height: 225px;
 }
 
-/*.fw-document-table-body [class^="icon-"]:before,
-.fw-document-table-body [class*=" icon-"]:before {
+/*.fw-document-table tbody [class^="icon-"]:before,
+.fw-document-table tbody [class*=" icon-"]:before {
     line-height: 3px;
 }*/
 
@@ -54,30 +47,30 @@
     border-bottom: solid 1px #cecece;
 }
 
-.fw-document-table-header > tr > th,
-.fw-document-table-header > tr > td {
+.fw-document-table thead > tr > th,
+.fw-document-table thead > tr > td {
     padding-top: 10px;
     padding-bottom: 10px;
 }
 
-.fw-document-table-body > tr > th,
-.fw-document-table-body > tr > td {
+.fw-document-table tbody > tr > th,
+.fw-document-table tbody > tr > td {
     padding-top: 6px;
     padding-bottom: 6px;
 }
 
-.fw-document-table-header > tr > td:first-child,
-.fw-document-table-body > tr > td:first-child {
+.fw-document-table thead > tr > td:first-child,
+.fw-document-table tbody > tr > td:first-child {
     padding-left: 5px;
 }
 
-.fw-document-table-header > tr > th:last-child,
-.fw-document-table-header > tr > td:last-child,
-.fw-document-table-body > tr > td:last-child {
+.fw-document-table thead > tr > th:last-child,
+.fw-document-table thead > tr > td:last-child,
+.fw-document-table tbody > tr > td:last-child {
     padding-right: 0;
 }
 
-.fw-document-table-body td.td-icon {
+.fw-document-table tbody td.td-icon {
     text-align: center;
 }
 
@@ -188,14 +181,14 @@ table.dataTable thead th:after {
 }
 
 /* Align text with top of images */
-.fw-document-table-body td {
+.fw-document-table tbody td {
     vertical-align: top;
 }
 
-.fw-document-table-body td.checkable {
+.fw-document-table tbody td.checkable {
     position: relative;
 }
-.fw-document-table-body tr.checked td.checkable:after {
+.fw-document-table tbody tr.checked td.checkable:after {
     width: 1em;
     height: 1em;
     position: absolute;

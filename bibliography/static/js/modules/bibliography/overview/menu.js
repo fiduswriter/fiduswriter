@@ -84,6 +84,12 @@ export let menuModel = {
                 )
                 fileImporter.init()
             }
+        },
+        {
+            type: 'search',
+            icon: 'search',
+            title: gettext('Search bibliography'),
+            input: (overview, text) => overview.table.search(text)
         }
     ]
 }

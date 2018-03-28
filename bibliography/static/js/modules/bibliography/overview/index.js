@@ -1,4 +1,6 @@
 import fixUTF8 from "fix-utf8"
+import DataTable from "vanilla-datatables"
+
 import {BibLatexImporter} from "../import"
 import {litToText, nameToText} from "../tools"
 import {BibEntryForm} from "../form"
@@ -26,9 +28,32 @@ export class BibliographyOverview {
     getBibDB() {
         this.bibDB = new BibliographyDB()
         this.bibDB.getDB().then(({bibPKs, bibCats}) => {
+            this.initTable()
             this.setBibCategoryList(bibCats)
             this.addBibList(bibPKs)
         })
+    }
+
+    /* Initialize the overview table */
+    initTable() {
+        let tableEl = document.createElement('table')
+        tableEl.classList.add('fw-document-table')
+        tableEl.classList.add('fw-large')
+        document.querySelector('.fw-contents').appendChild(tableEl)
+        this.table = new DataTable(tableEl, {
+            searchable: true,
+            perPage: 100,
+            labels: {
+                noRows: gettext("No entries found"), // Message shown when there are no search results
+                info: gettext("Showing {start} to {end} of {rows} entries") //
+            },
+            layout: {
+                top: "",
+                bottom: "{info}{pager}"
+            }
+        })
+        this.table.insert({headings: [gettext("Title"), gettext("Sourcetype"), gettext("Author"), gettext("Published")]})
+        console.log(this.table)
     }
 
     /** Adds a list of bibliography categories to current list of bibliography categories.
@@ -156,38 +181,48 @@ export class BibliographyOverview {
      * @param bibInfo An object with the current information about the bibliography item.
      */
     appendToBibTable(pk, bibInfo) {
-        let tr = document.getElementById(`Entry_${pk}`)
 
         let bibauthors = bibInfo.fields.author || bibInfo.fields.editor
 
-        if (tr) { //if the entry exists, update
-            tr.insertAdjacentHTML(
-                'afterend',
-                bibtableTemplate({
-                    id: pk,
-                    cats: bibInfo.entry_cat,
-                    type: bibInfo.bib_type,
-                    typetitle: BibTypeTitles[bibInfo.bib_type],
-                    title: bibInfo.fields.title ? litToText(bibInfo.fields.title) : gettext('Untitled'),
-                    author: bibauthors ? nameToText(bibauthors) : '',
-                    published: bibInfo.fields.date ? bibInfo.fields.date.replace('/', ' ') : ''
-                })
-            )
-            tr.parentElement.removeChild(tr)
-        } else { //if this is the new entry, append
-            document.querySelector('#bibliography > tbody').insertAdjacentHTML(
-                'beforeend',
-                bibtableTemplate({
-                    id: pk,
-                    cats: bibInfo.entry_cat,
-                    type: bibInfo.bib_type,
-                    typetitle: BibTypeTitles[bibInfo.bib_type],
-                    title: bibInfo.fields.title ? litToText(bibInfo.fields.title) : gettext('Untitled'),
-                    author: bibauthors ? nameToText(bibauthors) : '',
-                    published: bibInfo.fields.date ? bibInfo.fields.date.replace('/', ' ') : ''
-                })
-            )
-        }
+        this.table.rows().add([
+            bibInfo.fields.title ? litToText(bibInfo.fields.title) : gettext('Untitled'), // title
+            BibTypeTitles[bibInfo.bib_type], // sourcetype
+            bibauthors ? nameToText(bibauthors) : '', // author
+            bibInfo.fields.date ? bibInfo.fields.date.replace('/', ' ') : '' // published,
+        ])
+
+        //let tr = document.getElementById(`Entry_${pk}`)
+
+
+
+        // if (tr) { //if the entry exists, update
+        //     tr.insertAdjacentHTML(
+        //         'afterend',
+        //         bibtableTemplate({
+        //             id: pk,
+        //             cats: bibInfo.entry_cat,
+        //             type: bibInfo.bib_type,
+        //             typetitle: BibTypeTitles[bibInfo.bib_type],
+        //             title: bibInfo.fields.title ? litToText(bibInfo.fields.title) : gettext('Untitled'),
+        //             author: bibauthors ? nameToText(bibauthors) : '',
+        //             published: bibInfo.fields.date ? bibInfo.fields.date.replace('/', ' ') : ''
+        //         })
+        //     )
+        //     tr.parentElement.removeChild(tr)
+        // } else { //if this is the new entry, append
+        //     document.querySelector('#bibliography > tbody').insertAdjacentHTML(
+        //         'beforeend',
+        //         bibtableTemplate({
+        //             id: pk,
+        //             cats: bibInfo.entry_cat,
+        //             type: bibInfo.bib_type,
+        //             typetitle: BibTypeTitles[bibInfo.bib_type],
+        //             title: bibInfo.fields.title ? litToText(bibInfo.fields.title) : gettext('Untitled'),
+        //             author: bibauthors ? nameToText(bibauthors) : '',
+        //             published: bibInfo.fields.date ? bibInfo.fields.date.replace('/', ' ') : ''
+        //         })
+        //     )
+        // }
     }
 
     /** Stop the interactive parts of the bibliography table.

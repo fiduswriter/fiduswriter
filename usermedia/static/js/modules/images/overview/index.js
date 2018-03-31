@@ -1,11 +1,12 @@
+import DataTable from "vanilla-datatables"
+
 import {ImageDB} from "../database"
 import {ImageOverviewCategories} from "./categories"
-import {activateWait, deactivateWait, addAlert, post, findTarget, whenReady, Dialog} from "../../common"
+import {activateWait, deactivateWait, addAlert, post, findTarget, whenReady, Dialog, localizeDate, escapeText} from "../../common"
 import {SiteMenu} from "../../menu"
 import {OverviewMenuView} from "../../common"
 import {menuModel} from "./menu"
 import {ImageEditDialog} from "../edit_dialog"
-import {usermediaTableTemplate} from "./templates"
 import * as plugins from "../../../plugins/images_overview"
  /** Helper functions for user added images/SVGs.*/
 
@@ -40,22 +41,19 @@ export class ImageOverview {
         post(
             '/usermedia/delete/',
             {ids}
+        ).catch(
+            error => {
+                addAlert('error', gettext('The image(s) could not be deleted'))
+                throw(error)
+            }
         ).then(
             () => {
-                this.stopUsermediaTable()
                 ids.forEach(id => {
                     delete this.imageDB[id]
                 })
-                let elementsId = '#Image_' + ids.join(', #Image_')
-
-                Array.prototype.slice.call(document.querySelectorAll(elementsId)).forEach(
-                    el => el.parentElement.removeChild(el)
-                )
-                this.startUsermediaTable()
+                this.removeTableRows(ids)
                 addAlert('success', gettext('The image(s) have been deleted'))
             }
-        ).catch(
-            () => addAlert('error', gettext('The image(s) could not be deleted'))
         ).then(
             () => deactivateWait()
         )
@@ -87,55 +85,56 @@ export class ImageOverview {
         dialog.open()
     }
 
-    addImageDB(imagePks) {
-        for (let i = 0; i < imagePks.length; i++) {
-            this.appendToImageTable(imagePks[i])
-        }
-        this.startUsermediaTable()
+
+    updateTable(ids) {
+        // Remove items that already exist
+        this.removeTableRows(ids)
+        this.table.insert({data: ids.map(id => this.createTableRow(id))})
+        // Redo last sort
+        this.table.columns().sort(this.lastSort.column, this.lastSort.dir)
     }
 
-    appendToImageTable(id) {
-        let imageInfo = this.imageDB.db[id]
-
-        let fileType = imageInfo.file_type.split('/')
+    createTableRow(id) {
+        let image = this.imageDB.db[id]
+        let fileType = image.file_type.split('/')
 
         if(1 < fileType.length) {
             fileType = fileType[1].toUpperCase()
         } else {
             fileType = fileType[0].toUpperCase()
         }
-        let tr = document.getElementById(`Image_${id}`)
-        if (tr) { //if the image entry exists, update
-            tr.insertAdjacentHTML(
-                'afterend',
-                usermediaTableTemplate({
-                    id,
-                    'cats': imageInfo.cats,
-                    fileType,
-                    'title': imageInfo.title,
-                    'thumbnail': imageInfo.thumbnail,
-                    'image': imageInfo.image,
-                    'height': imageInfo.height,
-                    'width': imageInfo.width,
-                    'added': imageInfo.added
-                })
-            )
-            tr.parentElement.removeChild(tr)
-        } else { //if this is the new image, append
-            document.querySelector('#imagelist > tbody').insertAdjacentHTML(
-                'beforeend',
-                usermediaTableTemplate({
-                    id,
-                    'cats': imageInfo.cats,
-                    fileType,
-                    'title': imageInfo.title,
-                    'thumbnail': imageInfo.thumbnail,
-                    'image': imageInfo.image,
-                    'height': imageInfo.height,
-                    'width': imageInfo.width,
-                    'added': imageInfo.added
-                })
-            )
+        return [
+            id,
+            `<input type="checkbox" class="entry-select" data-id="${id}">`,
+            `<span class="fw-usermedia-image">
+                <img src="${image.thumbnail ? image.thumbnail : image.image}">
+            </span>
+            <span class="fw-inline fw-usermedia-title">
+                <span class="edit-image fw-link-text fw-searchable" data-id="${id}">
+                    ${image.title.length ? escapeText(image.title) : gettext('Untitled')}
+                </span>
+                <span class="fw-usermedia-type">${fileType}</span>
+            </span>`,
+            `<span class="fw-inline">${image.width} x ${image.height}</span>`,
+            localizeDate(image.added, 'sortable-date'),
+            `<span class="delete-image fw-inline fw-link-text" data-id="${id}">
+                <i class="fa fa-trash-o"></i>
+            </span>`
+        ]
+    }
+
+    removeTableRows(ids) {
+        let existingRows = this.table.data.map((data, index) => {
+            let id = parseInt(data.cells[0].textContent)
+            if (ids.includes(id)) {
+                return index
+            } else {
+                return false
+            }
+        }).filter(rowIndex => rowIndex !== false)
+
+        if (existingRows.length) {
+            this.table.rows().remove(existingRows)
         }
     }
 
@@ -144,7 +143,45 @@ export class ImageOverview {
         imageGetter.getDB().then(ids => {
             this.imageDB = imageGetter
             this.mod.categories.setImageCategoryList(imageGetter.cats)
-            this.addImageDB(ids)
+            this.initTable(ids)
+        })
+    }
+
+    /* Initialize the overview table */
+    initTable(ids) {
+        let tableEl = document.createElement('table')
+        tableEl.classList.add('fw-document-table')
+        tableEl.classList.add('fw-large')
+        document.querySelector('.fw-contents').appendChild(tableEl)
+        this.table = new DataTable(tableEl, {
+            searchable: true,
+            paging: false,
+            scrollY: "calc(100vh - 320px)",
+            labels: {
+                noRows: gettext("No entries found"), // Message shown when there are no search results
+            },
+            layout: {
+                top: ""
+            },
+            data: {
+                headings: ['','&emsp;&emsp;', gettext("File"), gettext("Size (px)"), gettext("Added"), ''],
+                data: ids.map(id => this.createTableRow(id))
+            },
+            columns: [
+                {
+                    select: 0,
+                    hidden: true
+                },
+                {
+                    select: [1,3,5],
+                    sortable: false
+                }
+            ]
+        })
+        this.lastSort = {column: 0, dir: 'asc'}
+
+        this.table.on('datatable.sort', (column, dir) => {
+            this.lastSort = {column, dir}
         })
     }
 
@@ -154,51 +191,6 @@ export class ImageOverview {
             document.querySelectorAll('.entry-select:checked:not(:disabled)')
         ).map(el => parseInt(el.getAttribute('data-id')))
     }
-
-    stopUsermediaTable() {
-        jQuery('#imagelist').dataTable().fnDestroy()
-    }
-
-    startUsermediaTable() {
-        /* The sortable table seems not to have an option to accept new data
-        added to the DOM. Instead we destroy and recreate it.
-        */
-
-        jQuery('#imagelist').dataTable({
-            "bPaginate": false,
-            "bLengthChange": false,
-            "bFilter": true,
-            "bInfo": false,
-            "bAutoWidth": false,
-            "oLanguage": {
-                "sSearch": ''
-            },
-            "aoColumnDefs": [{
-                "bSortable": false,
-                "aTargets": [0, 2, 4]
-            }],
-        })
-        jQuery('#imagelist_filter input').attr('placeholder', gettext('Search for Filename'))
-
-        jQuery('#imagelist_filter input').unbind('focus, blur')
-        jQuery('#imagelist_filter input').bind('focus', function() {
-            jQuery(this).parent().addClass('focus')
-        })
-        jQuery('#imagelist_filter input').bind('blur', function() {
-            jQuery(this).parent().removeClass('focus')
-        })
-
-        let autocompleteTags = []
-        jQuery('#imagelist .fw-searchable').each(function() {
-            autocompleteTags.push(this.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''))
-        })
-        autocompleteTags = [...new Set(autocompleteTags)] // unique values
-        jQuery("#imagelist_filter input").autocomplete({
-            source: autocompleteTags
-        })
-    }
-
-
 
     bindEvents() {
         document.addEventListener('click', event => {
@@ -213,9 +205,7 @@ export class ImageOverview {
                     let dialog = new ImageEditDialog(this.imageDB, imageId)
                     dialog.init().then(
                         imageId => {
-                            this.stopUsermediaTable()
-                            this.appendToImageTable(imageId)
-                            this.startUsermediaTable()
+                            this.updateTable([imageId])
                         }
                     )
                     break

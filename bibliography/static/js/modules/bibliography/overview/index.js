@@ -98,9 +98,9 @@ export class BibliographyOverview {
     }
 
     /** This takes a list of new bib entries and adds them to BibDB and the bibliography table
-     * @function addBibList
+     * @function updateTable
      */
-    addBibList(ids) {
+    updateTable(ids) {
         // Remove items that already exist
         this.removeTableRows(ids)
         this.table.insert({data: ids.map(id => this.createTableRow(id))})
@@ -260,7 +260,7 @@ export class BibliographyOverview {
                     form.init().then(
                         idTranslations => {
                             let ids = idTranslations.map(idTrans => idTrans[1])
-                            return this.addBibList(ids)
+                            return this.updateTable(ids)
                         }
                     )
                     break
@@ -325,7 +325,7 @@ export class BibliographyOverview {
             text,
             this.bibDB,
             getCsrfToken(),
-            newIds => this.addBibList(newIds),
+            newIds => this.updateTable(newIds),
             false
         )
         importer.init()

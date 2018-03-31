@@ -68,7 +68,7 @@ export let menuModel = {
                 form.init().then(
                     idTranslations => {
                         let ids = idTranslations.map(idTrans => idTrans[1])
-                        return overview.addBibList(ids)
+                        return overview.updateTable(ids)
                     }
                 )
             }
@@ -80,7 +80,7 @@ export let menuModel = {
             action: overview => {
                 let fileImporter = new BibLatexFileImportDialog(
                     overview.bibDB,
-                    bibEntries => overview.addBibList(bibEntries)
+                    ids => overview.updateTable(ids)
                 )
                 fileImporter.init()
             }

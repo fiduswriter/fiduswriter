@@ -7,7 +7,7 @@
     margin: 18px 0;
 }
 
-.fw-media-uploader .figure-preview > div {
+.figure-preview > div {
     display: table-cell;
     width: 406px;
     height: 226px;
@@ -16,7 +16,7 @@
     vertical-align: middle;
 }
 
-.fw-media-uploader .figure-preview > div > img {
+.figure-preview > div > img {
     max-width: 400px;
     max-height: 220px;
 }

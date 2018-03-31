@@ -27,31 +27,3 @@ export let editCategoriesTemplate = ({categories}) =>
             ${categoryFormsTemplate({categories})}
         </tbody>
     </table>`
-
-/* A template for the overview list of bibliography items. */
-export let bibtableTemplate = ({id, cats, title, type, typetitle, published, author}) =>
-    `<tr id="Entry_${id}" class="${cats.map(cat => `cat_${cat}`).join(' ')}">
-        <td width="30">
-            <span class="fw-inline">
-                <input type="checkbox" class="entry-select" data-id="${id}" />
-            </span>
-        </td>
-        <td width="285">
-            <span class="fw-document-table-title fw-inline">
-                <i class="fa fa-book"></i>
-                <span class="edit-bib fw-link-text fw-searchable" data-id="${id}"
-                        data-type="${type}">
-                    ${title.length ? escapeText(title) : `<i>${gettext('Untitled')}</i>`}
-                </span>
-            </span>
-        </td>
-        <td width="205" class="type"><span class="fw-inline">${gettext(typetitle)}</span></td>
-        <td width="215" class="author"><span class="fw-inline fw-searchable">${escapeText(author)}</span></td>
-        <td width="120" class="publised"><span class="fw-inline">${published}</span></td>
-        <td width="70" align="center">
-            <span class="delete-bib fw-inline fw-link-text" data-id="${id}"
-                    data-title="${escapeText(title)}">
-                <i class="fa fa-trash-o"></i>
-            </span>
-        </td>
-    </tr>`

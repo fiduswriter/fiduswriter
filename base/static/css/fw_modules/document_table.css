@@ -1,11 +1,6 @@
 .fw-document-table {
     font-size: 12px;
     line-height: 15px;
-    table-layout: fixed;
-}
-
-.fw-document-table.no-fix-layout {
-    table-layout: auto;
 }
 
 .fw-document-table thead {
@@ -41,9 +36,8 @@
   background-color: #fbf9d2;
 }
 
-.fw-document-table th,
+.dataTable-headercontainer th,
 .fw-document-table td {
-    padding-right: 10px;
     border-bottom: solid 1px #cecece;
 }
 
@@ -79,8 +73,6 @@
 }
 
 .fw-document-table-title > span {
-    display: inline-block;
-    width: 195px;
     margin-left: 10px;
     vertical-align: top;
 }
@@ -150,12 +142,9 @@
     background-color: transparent;
 }
 
-table.dataTable thead th {
-    cursor: pointer;
-}
-table.dataTable thead th:after {
-    margin-left: 8px;
-    line-height: 0;
+
+table.dataTable-table input[type=checkbox] {
+    margin-right: 20px;
 }
 /* the usermedia table */
 .fw-usermedia-title {
@@ -199,4 +188,17 @@ table.dataTable thead th:after {
 /* Word counter dialog table */
 .fw-word-counter-tbody {
     line-height: 38px;
+}
+
+table.dataTable-table {
+    border-collapse: separate;
+}
+
+.dataTable-table th a {
+    color: #2c2723;
+    font-weight: bold;
+}
+
+.dataTable-table th, .dataTable-table td {
+    padding: 8px;
 }

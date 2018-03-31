@@ -13,28 +13,10 @@
         <link type="text/css" rel="stylesheet" href="{% static "css/prosemirror.css" %}" />
     {% endcompress %}
 
-    <!-- jQuery tablesorter -->
-    <script type="text/javascript" src="{% static "js/libs/jquery.dataTables.min.js" %}"></script>
-
     <script type="text/javascript" src="{% static "js/bibliography_overview.mjs" %}"></script>
 
 {% endblock %}
 
 {% block contents %}
     <ul id="fw-overview-menu"></ul>
-    <!--div class="fw-table-wrapper">
-        <table id="bibliography" class="tablesorter fw-document-table">
-            <thead class="fw-document-table-header">
-                <tr>
-                    <td width="30"></td>
-                    <th width="255">{% trans "Title" %}</th>
-                    <th width="190">{% trans "Sourcetype" %}</th>
-                    <th width="195">{% trans "Author" %}</th>
-                    <th width="120">{% trans "Published" %}</th>
-                    <td width="70">{% trans "Delete" %}</td>
-                </tr>
-            </thead>
-            <tbody class="fw-document-table-body fw-large"></tbody>
-        </table>
-    </div-->
 {% endblock %}

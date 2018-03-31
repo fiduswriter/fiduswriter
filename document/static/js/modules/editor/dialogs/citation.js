@@ -1,6 +1,8 @@
-import {configureCitationTemplate, citationItemTemplate, selectedCitationTemplate} from "./templates"
+import DataTable from "vanilla-datatables"
+
+import {configureCitationTemplate, selectedCitationTemplate} from "./templates"
 import {BibEntryForm} from "../../bibliography/form"
-import {setCheckableLabel, Dialog, findTarget} from "../../common"
+import {setCheckableLabel, Dialog, findTarget, escapeText, addAlert} from "../../common"
 import {nameToText, litToText} from "../../bibliography/tools"
 import * as plugins from "../../../plugins/citation_dialog"
 
@@ -62,10 +64,11 @@ export class CitationDialog {
             buttons: this.buttons,
             body: this.citationDialogHTML(),
             width: 836,
-            height: 540,
+            height: 400,
             onClose: () => this.editor.currentView.focus()
         })
         this.dialog.open()
+        this.initTable()
         this.bind()
     }
 
@@ -81,33 +84,51 @@ export class CitationDialog {
         })
     }
 
+    createAllTableRows() {
+        let data = []
+        // unify bibs from both document and user
+        Object.keys(this.editor.mod.db.bibDB.db).forEach(id => {
+            data.push(this.createTableRow(this.editor.mod.db.bibDB.db[id], id, 'document', false))
+        })
+        Object.keys(this.editor.user.bibDB.db).forEach(id => {
+            let bib = this.editor.user.bibDB.db[id]
+            if (!this.editor.mod.db.bibDB.hasReference(bib)) {
+                data.push(this.createTableRow(bib, id, 'user', false))
+            }
+        })
+        return data
+    }
+
+    createTableRow(bib, id, db, checked) {
+        let bibauthors = bib.fields.author || bib.fields.editor
+        return [
+            `${db}-${id}`,
+            `<span class="fw-document-table-title fw-inline">
+                <i class="fa fa-book"></i>
+                <span class="fw-searchable">${bib.fields.title ? escapeText(litToText(bib.fields.title)) : gettext('Untitled')}</span>
+            </span>`,
+            bibauthors ? escapeText(nameToText(bibauthors)) : '',
+            checked ? '<i class="fa fa-check" aria-hidden="true"></i>' : ''
+        ]
+    }
+
     citationDialogHTML() {
-        // Assemble the HTML of the 'citable' and 'cited' columns of the dialog,
+        // Assemble the HTML of the 'cited' column of the dialog,
         // and return the templated dialog HTML.
-        let citableItemsHTML = '', citedItemsHTML = ''
+        let citedItemsHTML = ''
 
         Object.keys(this.editor.mod.db.bibDB.db).forEach(id => {
-            let bibEntry = this.bibDBToBibEntry(this.editor.mod.db.bibDB.db[id], id, 'document')
-            citableItemsHTML += citationItemTemplate(bibEntry)
-
             let citEntry = this.initialReferences.find(bibRef => bibRef.id==id)
 
             if (citEntry) {
+                let bibEntry = this.bibDBToBibEntry(this.editor.mod.db.bibDB.db[id], id, 'document')
                 bibEntry.prefix = citEntry.prefix ?  citEntry.prefix : ''
                 bibEntry.locator = citEntry.locator ? citEntry.locator : ''
                 citedItemsHTML += selectedCitationTemplate(bibEntry)
             }
         })
-        Object.keys(this.editor.user.bibDB.db).forEach(id => {
-            let bib = this.editor.user.bibDB.db[id]
-            if (!this.editor.mod.db.bibDB.hasReference(bib)) {
-                let bibEntry = this.bibDBToBibEntry(bib, id, 'user')
-                citableItemsHTML += citationItemTemplate(bibEntry)
-            }
-        })
 
         return configureCitationTemplate({
-            citableItemsHTML,
             citedItemsHTML,
             citeFormat: this.initialFormat
         })
@@ -137,12 +158,15 @@ export class CitationDialog {
     // Update the citation dialog with new items in 'citable' column.
     // Not when dialog is first opened.
     addToCitableItems(ids) {
+        let data = []
         ids.forEach(id => {
             let citeItemData = this.bibDBToBibEntry(this.editor.mod.db.bibDB.db[id], id, 'document')
-            document.querySelector('#cite-source-table > tbody').insertAdjacentHTML('beforeend', citationItemTemplate(citeItemData))
             this.addToCitedItems([citeItemData])
+            data.push(this.createTableRow(this.editor.mod.db.bibDB.db[id], id, 'document', false))
         })
-        jQuery('#cite-source-table').trigger('update')
+
+        this.table.insert({data})
+        this.table.columns().sort(this.lastSort.column, this.lastSort.dir)
     }
 
     // Update the citation dialog with new items in 'cited' column.
@@ -156,7 +180,6 @@ export class CitationDialog {
                 selectedCitationTemplate({
                     id: item.id,
                     db: item.db,
-                    bib_type: item.bib_type,
                     title: item.title,
                     author: item.author,
                     locator: '',
@@ -166,58 +189,91 @@ export class CitationDialog {
         }
     }
 
-    bind() {
-        jQuery('#cite-source-table').bind('update', function() {
-            let autocomplete_tags = []
-            if (this.classList.contains('dataTable')) {
-                jQuery(this).dataTable({
-                    "bRetrieve": true,
-                })
-            } else {
-                jQuery(this).dataTable({
-                    "bPaginate": false,
-                    "bLengthChange": false,
-                    "bFilter": true,
-                    "bInfo": false,
-                    "bAutoWidth": false,
-                    "oLanguage": {
-                        "sSearch": ''
-                    },
-                })
-            }
-            document.querySelector('#cite-source-table_filter input').setAttribute('placeholder', gettext('Search bibliography'))
-
-            document.querySelectorAll('#cite-source-table .fw-searchable').forEach(el =>  autocomplete_tags.push(el.textContent))
-            autocomplete_tags = [...new Set(autocomplete_tags)] // unique values
-            jQuery("#cite-source-table_filter input").autocomplete({
-                source: autocomplete_tags
-            })
+    initTable() {
+        let tableEl = document.createElement('table')
+        tableEl.classList.add('fw-document-table')
+        tableEl.classList.add('fw-large')
+        this.dialog.dialogEl.querySelector('#my-sources').appendChild(tableEl)
+        this.table = new DataTable(tableEl, {
+            searchable: true,
+            paging: false,
+            scrollY: "225px",
+            labels: {
+                noRows: gettext("No entries found"), // Message shown when there are no search results
+            },
+            layout: {
+                top: "{search}"
+            },
+            data: {
+                headings: ['', gettext("Title"), gettext("Author"), ''],
+                data: this.createAllTableRows()
+            },
+            columns: [
+                {
+                    select: 0,
+                    hidden: true
+                },
+                {
+                    select: 3,
+                    sortable: false
+                }
+            ]
         })
+        this.table.on('datatable.sort', (column, dir) => {
+            this.lastSort = {column, dir}
+        })
+        this.table.columns().sort(0, 'asc')
+    }
 
-        jQuery('#cite-source-table').trigger('update')
+    checkRow(dataIndex) {
+        let checkCell = this.table.data[dataIndex].cells[3]
+
+        if (checkCell.innerHTML.trim().length) {
+            checkCell.innerHTML = ''
+        } else {
+            checkCell.innerHTML = '<i class="fa fa-check" aria-hidden="true"></i>'
+        }
+        this.table.columns().rebuild()
+    }
+
+
+    bind() {
+        this.table.body.addEventListener('click', event => {
+            let el = {}
+            switch (true) {
+                case findTarget(event, 'tr', el):
+                    this.checkRow(el.target.dataIndex)
+                    break
+                default:
+                    break
+            }
+        })
 
         document.getElementById('add-cite-source').addEventListener('click', () => {
             let selectedItems = []
 
-            document.querySelectorAll('#cite-source-table .fw-checkable.checked').forEach(
-                el => {
-                    let id = el.dataset.id,
-                        db = el.dataset.db
+            this.table.data.forEach(
+                data => {
+                    if (!data.cells[3].innerHTML.trim().length) {
+                        return
+                    }
+                    data.cells[3].innerHTML = ''
+                    let [db, id] = data.cells[0].textContent.split('-')
+                    id = parseInt(id)
                     if (document.querySelector(`#selected-source-${db}-${id}`)) {
                         return
                     }
                     selectedItems.push({
                         id,
                         db,
-                        type: el.dataset.type,
-                        title: el.dataset.title,
-                        author: el.dataset.author
+                        title: data.cells[1].textContent,
+                        author: data.cells[2].textContent
                     })
-                    el.classList.remove('checked')
                 }
             )
 
             this.addToCitedItems(selectedItems)
+            this.table.columns().rebuild()
         })
 
         this.dialog.dialogEl.addEventListener('click', event => {
@@ -267,7 +323,7 @@ export class CitationDialog {
             })
 
         if (0 === citeItems.length) {
-            window.alert(gettext('Please select at least one citation source!'))
+            addAlert('info',gettext('Please select at least one citation source!'))
             return false
         }
 

@@ -106,6 +106,12 @@ export let menuModel = {
             icon: 'upload',
             title: gettext('Upload Fidus document'),
             action: overview => overview.mod.actions.importFidus()
+        },
+        {
+            type: 'search',
+            icon: 'search',
+            title: gettext('Search documents'),
+            input: (overview, text) => overview.table.search(text)
         }
     ]
 }

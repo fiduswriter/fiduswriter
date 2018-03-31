@@ -52,7 +52,7 @@ export class BibliographyOverview {
             },
             data: {
                 headings: ['','&emsp;&emsp;', gettext("Title"), gettext("Sourcetype"), gettext("Author"), gettext("Published"), ''],
-                data: ids.map(id => this.createBibTableRow(id))
+                data: ids.map(id => this.createTableRow(id))
             },
             columns: [
                 {
@@ -102,13 +102,13 @@ export class BibliographyOverview {
      */
     addBibList(ids) {
         // Remove items that already exist
-        this.removeTableItems(ids)
-        this.table.insert({data: ids.map(id => this.createBibTableRow(id))})
+        this.removeTableRows(ids)
+        this.table.insert({data: ids.map(id => this.createTableRow(id))})
         // Redo last sort
         this.table.columns().sort(this.lastSort.column, this.lastSort.dir)
     }
 
-    createBibTableRow(id) {
+    createTableRow(id) {
         let bibInfo = this.bibDB.db[id]
         let bibauthors = bibInfo.fields.author || bibInfo.fields.editor
         return [
@@ -125,6 +125,21 @@ export class BibliographyOverview {
             bibInfo.fields.date ? bibInfo.fields.date.replace('/', ' ') : '', // published,
             `<span class="delete-bib fw-link-text" data-id="${id}"><i class="fa fa-trash-o">&nbsp;&nbsp;</i></span>` // delete icon
         ]
+    }
+
+    removeTableRows(ids) {
+        let existingRows = this.table.data.map((data, index) => {
+            let id = parseInt(data.cells[0].textContent)
+            if (ids.includes(id)) {
+                return index
+            } else {
+                return false
+            }
+        }).filter(rowIndex => rowIndex !== false)
+
+        if (existingRows.length) {
+            this.table.rows().remove(existingRows)
+        }
     }
 
     /** Opens a dialog for editing categories.
@@ -322,23 +337,8 @@ export class BibliographyOverview {
         this.bibDB.createCategory(cats).then(bibCats => this.setBibCategoryList(bibCats))
     }
 
-    removeTableItems(ids) {
-        let existingRows = this.table.data.map((data, index) => {
-            let id = parseInt(data.cells[0].textContent)
-            if (ids.includes(id)) {
-                return index
-            } else {
-                return false
-            }
-        }).filter(rowIndex => rowIndex !== false)
-
-        if (existingRows.length) {
-            this.table.rows().remove(existingRows)
-        }
-    }
-
     deleteBibEntries(ids) {
-        this.bibDB.deleteBibEntries(ids).then(ids => this.removeTableItems(ids))
+        this.bibDB.deleteBibEntries(ids).then(ids => this.removeTableRows(ids))
     }
 
 }

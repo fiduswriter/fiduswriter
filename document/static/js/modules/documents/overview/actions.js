@@ -1,5 +1,5 @@
 import {getMissingDocumentListData} from "../tools"
-import {importFidusTemplate, documentsListItemTemplate} from "./templates"
+import {importFidusTemplate} from "./templates"
 import {SaveCopy, ExportFidusFile} from "../../exporter/native"
 import {EpubExporter} from "../../exporter/epub"
 import {HTMLExporter} from "../../exporter/html"
@@ -24,18 +24,15 @@ export class DocumentOverviewActions {
         post(
             '/document/delete/',
             {id}
+        ).catch(
+            error => {
+                addAlert('error', gettext(`${gettext('Could not delete document')}: '${doc.title}'`))
+                throw(error)
+            }
         ).then(
             () => {
                 addAlert('success', gettext(`${gettext('Document has been deleted')}: '${doc.title}'`))
-                this.documentOverview.stopDocumentTable()
-                let removedEl = document.getElementById(`Text_${id}`)
-                removedEl.parentElement.removeChild(removedEl)
-                this.documentOverview.documentList = this.documentOverview.documentList.filter(doc => doc.id !== id)
-                this.documentOverview.startDocumentTable()
-            }
-        ).catch(
-            () => {
-                addAlert('error', gettext(`${gettext('Could not delete document')}: '${doc.title}'`))
+                this.documentOverview.removeTableRows([id])
             }
         )
     }
@@ -106,15 +103,7 @@ export class DocumentOverviewActions {
                             addAlert('info', doc.title + gettext(
                                     ' successfully imported.'))
                             this.documentOverview.documentList.push(doc)
-                            this.documentOverview.stopDocumentTable()
-                            document.querySelector('#document-table tbody').insertAdjacentHTML(
-                                'beforeend',
-                                documentsListItemTemplate({
-                                    doc,
-                                    user: this.documentOverview.user
-                                })
-                            )
-                            this.documentOverview.startDocumentTable()
+                            this.documentOverview.addDocToTable(doc)
                         }
                     )
                     importDialog.close()
@@ -163,14 +152,7 @@ export class DocumentOverviewActions {
                     copier.init().then(
                         ({doc, docInfo}) => {
                             this.documentOverview.documentList.push(doc)
-                            this.documentOverview.stopDocumentTable()
-                            document.querySelector('#document-table tbody').insertAdjacentHTML(
-                                'beforeend',
-                                documentsListItemTemplate({
-                                    doc,
-                                    user: this.documentOverview.user
-                                }))
-                            this.documentOverview.startDocumentTable()
+                            this.documentOverview.addDocToTable(doc)
                         }
                     )
                 })
@@ -291,20 +273,12 @@ export class DocumentOverviewActions {
             switch(actionObject.action) {
                 case 'added-document':
                     this.documentOverview.documentList.push(actionObject.doc)
-                    this.documentOverview.stopDocumentTable()
-                    document.querySelector('#document-table tbody').insertAdjacentHTML(
-                        'beforeend',
-                        documentsListItemTemplate({
-                            doc: actionObject.doc,
-                            user: this.documentOverview.user
-                        }))
-                    this.documentOverview.startDocumentTable()
+                    this.documentOverview.addDocToTable(actionObject.doc)
                     break
                 case 'deleted-revision':
                     actionObject.doc.revisions = actionObject.doc.revisions.filter(rev => rev.pk !== actionObject.id)
-                    if (actionObject.doc.revisions.length === 0) {
-                        document.querySelectorAll(`#Text_${actionObject.doc.id} .revisions`).forEach(el => el.parentElement.removeChild(el))
-                    }
+                    this.documentOverview.removeTableRows([actionObject.doc.id])
+                    this.documentOverview.addDocToTable(actionObject.doc)
                     break
             }
         })

@@ -11,29 +11,9 @@
         <link type="text/css" rel="stylesheet" href="{% static "css/access_rights_dialog.css" %}" />
     {% endcompress %}
 
-
-    <!-- jQuery tablesorter -->
-    <script type="text/javascript" src="{% static "js/libs/jquery.dataTables.min.js" %}"></script>
     <script type="text/javascript" src="{% static "js/document_overview.mjs" %}"></script>
 {% endblock %}
 
 {% block contents %}
-<ul id="fw-overview-menu"></ul>
-<div class="fw-table-wrapper">
-    <table id="document-table" class="tablesorter fw-document-table">
-        <thead class="fw-document-table-header">
-            <tr>
-                <td width="20"></td>
-                <th width="220">{% trans "Title" %}</th>
-                <th width="80">{% trans "Revisions" %}</th>
-                <th width="80">{% trans "Created" %}</th>
-                <th width="80">{% trans "Last changed" %}</th>
-                <th width="170">{% trans "Owner" %}</th>
-                <td width="50" align="center">{% trans "Rights" %}</td>
-                <td width="50" align="center">{% trans "Delete" %}</td>
-            </tr>
-        </thead>
-        <tbody class="fw-document-table-body fw-large"></tbody>
-    </table>
-</div>
+    <ul id="fw-overview-menu"></ul>
 {% endblock %}

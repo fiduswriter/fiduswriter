@@ -1,6 +1,5 @@
 import DataTable from "vanilla-datatables"
 
-import {imageSelectionTemplate} from "./templates"
 import {ImageEditDialog} from "../edit_dialog"
 import {cancelPromise, Dialog, escapeText, findTarget} from "../../common"
 

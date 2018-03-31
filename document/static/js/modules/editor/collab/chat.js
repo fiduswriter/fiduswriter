@@ -55,12 +55,6 @@ export class ModCollabChat {
         if (chatContainer.style.display === 'none') {
             document.getElementById("chat").classList.add('highlighted')
         }
-        jQuery(chatContainer.lastElementChild).slideDown({
-            progress: function () {
-                chatContainer.scrollTop = chatContainer.scrollHeight
-            }
-        })
-
     }
 
     showChat(participants) {

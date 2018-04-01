@@ -39,10 +39,8 @@
         <!-- Check browser -->
         <script type="text/javascript" src="{% static "js/browser_check.mjs" %}"></script>
         <script type="text/javascript" src="/jsi18n/"></script>
-        <script type="text/javascript" src="{% static "js/libs/jquery.min.js" %}"></script>
         <!-- JS error handling -->
         <script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>
-        <script type="text/javascript" src="{% static "js/libs/jquery-ui.min.js" %}"></script>
         {% block extraheaders %}{% endblock %}
     </head>
     <body{% block isRegistration %}{% endblock %}>

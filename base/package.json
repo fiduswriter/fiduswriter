@@ -7,20 +7,26 @@
   "description": "Install dependencies for ES6 transpilation",
   "scripts": {
     "get_mml2omml": "mkdir -p ./static-libs/xsl/ && wget https://raw.githubusercontent.com/AbiWord/abiword/14cbf144cb10a5a5ea6ee11275f7178ca4ff055a/plugins/openxml/omml_xslt/mml2omml.xsl -O ./static-libs/xsl/mml2omml.xsl",
+    "copy_jquery": "mkdir -p ./static-libs/js/libs/ && cp node_modules/jquery/dist/jquery.min.js ./static-libs/js/libs/",
+    "copy_jquery-ui": "mkdir -p ./static-libs/js/libs/ && cp node_modules/jquery-ui-dist/jquery-ui.min.js ./static-libs/js/libs/",
+    "copy_datatables": "mkdir -p ./static-libs/js/libs/ && cp node_modules/datatables/media/js/jquery.dataTables.min.js ./static-libs/js/libs/",
     "copy_fontawesome": "mkdir -p ./static-libs/css/ && mkdir -p ./static-libs/fonts/ && cp node_modules/font-awesome/css/* ./static-libs/css/ && cp node_modules/font-awesome/fonts/* ./static-libs/fonts/",
     "copy_prosemirror_css": "mkdir -p ./static-libs/css/ && cp node_modules/prosemirror-view/style/prosemirror.css ./static-libs/css/",
     "copy_mathquill_css": "mkdir -p ./static-libs/css/ && cp node_modules/mathquill/build/mathquill.css ./static-libs/css/",
     "copy_mathquill_font": "mkdir -p ./static-libs/css/font/ && cp node_modules/mathquill/build/font/* ./static-libs/css/font/",
-    "postinstall": "npm run get_mml2omml && npm run copy_fontawesome && npm run copy_prosemirror_css && npm run copy_mathquill_css && npm run copy_mathquill_font",
+    "postinstall": "npm run get_mml2omml && npm run copy_jquery && npm run copy_jquery-ui && npm run copy_fontawesome && npm run copy_datatables && npm run copy_prosemirror_css && npm run copy_mathquill_css && npm run copy_mathquill_font",
     "jshint": "jshint ."
   },
   "author": "Johannes Wilm",
   "license": "AGPL",
   "private": true,
   "dependencies": {
+    "datatables": "1.10.13",
     "diff-dom": "2.3.1",
     "downloadjs": "1.4.7",
     "font-awesome": "4.7.0",
+    "jquery": "3.3.1",
+    "jquery-ui-dist": "1.12.1",
     "jshint": "2.9.5",
     "katex": "0.9.0",
     "w3c-keyname": "1.1.8",
@@ -34,6 +40,7 @@
     "sub": true,
     "undef": true,
     "globals": {
+      "jQuery": true,
       "MathQuill": true,
       "gettext": false,
       "$StaticUrls": false,
@@ -43,6 +50,7 @@
       "self": true
     },
     "browser": true,
+    "jquery": true,
     "worker": true,
     "varstmt": true
   }

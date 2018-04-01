@@ -143,8 +143,6 @@ export class FigureDialog {
 
         let captionInput = this.dialog.dialogEl.querySelector('input[name=figure-caption]')
 
-        //captionInput.addEventListener('focus', () => captionInput.select())
-
         captionInput.focus()
 
 

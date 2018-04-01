@@ -1,9 +1,10 @@
+import DataTable from "vanilla-datatables"
+
 import * as plugins from "../../../plugins/documents_overview"
 import {DocumentOverviewActions} from "./actions"
 import {DocumentAccessRightsDialog} from "../access_rights"
 import {menuModel} from "./menu"
-import {documentsListTemplate} from "./templates"
-import {activateWait, deactivateWait, addAlert, postJson, OverviewMenuView, findTarget, whenReady} from "../../common"
+import {activateWait, deactivateWait, addAlert, postJson, OverviewMenuView, findTarget, whenReady, escapeText, localizeDate} from "../../common"
 import {SiteMenu} from "../../menu"
 /*
 * Helper functions for the document overview page.
@@ -71,6 +72,11 @@ export class DocumentOverview {
         activateWait()
         postJson(
             '/document/documentlist/'
+        ).catch(
+            error => {
+                addAlert('error', gettext('Cannot load data of documents.'))
+                throw(error)
+            }
         ).then(
             response => {
                 let ids = new Set()
@@ -86,23 +92,107 @@ export class DocumentOverview {
                 this.citationStyles = response.citation_styles
                 this.citationLocales = response.citation_locales
                 this.exportTemplates = response.export_templates
-                this.layoutTable()
+                this.initTable()
                 this.addExportTemplatesToMenu()
             }
-        ).catch(
-            () => addAlert('error', gettext('Cannot load data of documents.'))
         ).then(
             () => deactivateWait()
         )
 
     }
 
-    layoutTable() {
-        document.querySelector('#document-table tbody').innerHTML = documentsListTemplate({
-            documentList: this.documentList,
-            user: this.user
+    /* Initialize the overview table */
+    initTable() {
+        let tableEl = document.createElement('table')
+        tableEl.classList.add('fw-document-table')
+        tableEl.classList.add('fw-large')
+        document.querySelector('.fw-contents').appendChild(tableEl)
+        this.table = new DataTable(tableEl, {
+            searchable: true,
+            paging: false,
+            scrollY: "calc(100vh - 320px)",
+            labels: {
+                noRows: gettext("No documents available") // Message shown when there are no search results
+            },
+            layout: {
+                top: ""
+            },
+            data: {
+                headings: ['','&emsp;&emsp;', gettext("Title"), gettext("Revisions"), gettext("Created"), gettext("Last changed"), gettext("Owner"), gettext("Rights"), ''],
+                data: this.documentList.map(doc => this.createTableRow(doc))
+            },
+            columns: [
+                {
+                    select: 0,
+                    hidden: true
+                },
+                {
+                    select: [1,3,7,8],
+                    sortable: false
+                }
+            ]
         })
-        this.startDocumentTable()
+        this.lastSort = {column: 0, dir: 'asc'}
+
+        this.table.on('datatable.sort', (column, dir) => {
+            this.lastSort = {column, dir}
+        })
+    }
+
+    createTableRow(doc) {
+        return [
+            doc.id,
+            `<input type="checkbox" class="entry-select" data-id="${doc.id}">`,
+            `<span class="fw-document-table-title fw-inline">
+                <i class="fa fa-file-text-o"></i>
+                <a class="doc-title fw-link-text fw-searchable" href="/document/${doc.id}/">
+                    ${doc.title.length ? escapeText(doc.title) : gettext('Untitled')}
+                </a>
+            </span>`,
+            doc.revisions.length ?
+            `<span class="fw-inline revisions" data-id="${doc.id}">
+                <i class="fa fa-clock-o"></i>
+            </span>` :
+            '',
+            localizeDate(doc.added*1000, 'sortable-date'),
+            localizeDate(doc.updated*1000, 'sortable-date'),
+            `<span>
+                <img class="fw-avatar" src="${doc.owner.avatar}" />
+            </span>
+            <span class="fw-inline fw-searchable">${escapeText(doc.owner.name)}</span>`,
+            `<span class="rights fw-inline" data-id="${doc.id}" title="${doc.rights}">
+                <i data-id="${doc.id}" class="icon-access-right icon-access-${doc.rights}"></i>
+            </span>`,
+            `<span class="delete-document fw-inline fw-link-text" data-id="${doc.id}"
+                    data-title="${escapeText(doc.title)}">
+                ${
+                    this.user.id === doc.owner.id ?
+                    '<i class="fa fa-trash-o"></i>' :
+                    ''
+                }
+            </span>`
+        ]
+    }
+
+    removeTableRows(ids) {
+        let existingRows = this.table.data.map((data, index) => {
+            let id = parseInt(data.cells[0].textContent)
+            if (ids.includes(id)) {
+                return index
+            } else {
+                return false
+            }
+        }).filter(rowIndex => rowIndex !== false)
+
+        if (existingRows.length) {
+            this.table.rows().remove(existingRows)
+        }
+    }
+
+    addDocToTable(doc) {
+        this.table.insert({data: [this.createTableRow(doc)]})
+        // Redo last sort
+        this.table.columns().sort(this.lastSort.column, this.lastSort.dir)
     }
 
     addExportTemplatesToMenu() {
@@ -121,51 +211,6 @@ export class DocumentOverview {
             })
         })
         this.menu.update()
-    }
-
-    startDocumentTable() {
-        // The document table seems not to have an option to accept new data added to the DOM.
-        // Instead we destroy and recreate it.
-
-        jQuery('#document-table').dataTable({
-            "bPaginate": false,
-            "bLengthChange": false,
-            "bFilter": true,
-            "bInfo": false,
-            "bAutoWidth": false,
-            "oLanguage": {
-                "sSearch": ''
-            },
-            "aoColumnDefs": [{
-                "bSortable": false,
-                "aTargets": [0, 2, 6, 7]
-            }],
-        })
-
-        document.querySelector('#document-table_wrapper .dataTables_filter input').setAttribute(
-            'placeholder',
-            gettext('Search for Document')
-        )
-        jQuery('#document-table_wrapper .dataTables_filter input').unbind('focus, blur')
-        jQuery('#document-table_wrapper .dataTables_filter input').bind('focus', function() {
-            jQuery(this).parent().addClass('focus')
-        })
-        jQuery('#document-table_wrapper .dataTables_filter input').bind('blur', function() {
-            jQuery(this).parent().removeClass('focus')
-        })
-
-        let autocompleteTags = []
-        document.querySelectorAll('#document-table .fw-searchable').forEach(el => {
-            autocompleteTags.push(el.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''))
-        })
-        autocompleteTags = [...new Set(autocompleteTags)] // only unique values
-        jQuery("#document-table_wrapper .dataTables_filter input").autocomplete({
-            source: autocompleteTags
-        })
-    }
-
-    stopDocumentTable() {
-        jQuery('#document-table').dataTable().fnDestroy()
     }
 
     getSelected() {

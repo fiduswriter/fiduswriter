@@ -8,6 +8,7 @@
     position: relative;
     float: left;
     margin-right: 5px;
+    margin-top: 5px;
 }
 
 div.select-action {
@@ -21,4 +22,26 @@ div.select-action input[type=checkbox] {
 
 span.select-action-dropdown {
     margin-left: 5px;
+}
+
+.fw-button input[type=text] {
+    width: calc(100% - 30px);
+    height: 30px;
+    border: 0;
+}
+
+.fw-white input[type=text] {
+    background-color: #f9f9f9;
+}
+
+.fw-button.fw-white:focus-within {
+    background-color: #fbf9d2;
+}
+
+.fw-button.fw-white input[type=text]:focus {
+    background-color: #fbf9d2;
+}
+
+.fw-white.fw-input:hover {
+    background-color:;
 }

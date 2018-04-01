@@ -112,21 +112,21 @@
     -moz-osx-font-smoothing: grayscale;
     content: '\f002';
 }
-table.dataTable thead th:after {
-    display: inline-block;
+table.dataTable-table thead th a:after {
     font: normal normal normal 14px/1 FontAwesome;
     font-size: inherit;
     text-rendering: auto;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    margin-left: 8px;
 }
-table.dataTable thead th.sorting:after {
+table.dataTable-table thead th[data-sortable]:not([data-sortable=false]) a:after {
     content: '\f0dc';
 }
-table.dataTable thead th.sorting_asc:after {
+table.dataTable-table thead th[data-sortable]:not([data-sortable=false]).asc a:after {
     content: '\f0de';
 }
-table.dataTable thead th.sorting_desc:after {
+table.dataTable-table thead th[data-sortable]:not([data-sortable=false]).desc a:after {
     content: '\f0dd';
 }
 .fw-document-table-body tr.checked td.checkable:after {

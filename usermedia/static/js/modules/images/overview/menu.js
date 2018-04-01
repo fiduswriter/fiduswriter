@@ -56,12 +56,16 @@ export let menuModel = {
                 )
                 imageUpload.init().then(
                     imageId => {
-                        overview.stopUsermediaTable()
-                        overview.appendToImageTable(imageId)
-                        overview.startUsermediaTable()
+                        overview.updateTable([imageId])
                     }
                 )
             }
+        },
+        {
+            type: 'search',
+            icon: 'search',
+            title: gettext('Search images'),
+            input: (overview, text) => overview.table.search(text)
         }
     ]
 }

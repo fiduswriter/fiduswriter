@@ -6,28 +6,9 @@
 {% block title %}{% trans "Media Manager" %}{% endblock %}
 
 {% block extraheaders %}
-<!-- jQuery tablesorter -->
-<script type="text/javascript" src="{% static "js/libs/jquery.dataTables.min.js" %}"></script>
-<script type="text/javascript" src="{% static "js/images_overview.mjs" %}"></script>
-
+    <script type="text/javascript" src="{% static "js/images_overview.mjs" %}"></script>
 {% endblock %}
 
 {% block contents %}
-<ul id="fw-overview-menu"></ul>
-<div class="fw-table-wrapper">
-    <table id="imagelist" class="tablesorter fw-document-table">
-        <thead class="fw-document-table-header">
-            <tr>
-                <td width="30"></td>
-                <th width="350">{% trans "File" %}</th>
-                <th width="170">{% trans "Size (px)" %}</th>
-                <th width="170">{% trans "Added" %}</th>
-                <td width="50">{% trans "Delete" %}</td>
-            </tr>
-        </thead>
-        <tbody class="fw-document-table-body fw-large">
-        </tbody>
-    </table>
-</div>
-
+    <ul id="fw-overview-menu"></ul>
 {% endblock %}

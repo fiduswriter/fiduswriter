@@ -1,6 +1,7 @@
-import {imageSelectionTemplate} from "./templates"
+import DataTable from "vanilla-datatables"
+
 import {ImageEditDialog} from "../edit_dialog"
-import {cancelPromise, Dialog} from "../../common"
+import {cancelPromise, Dialog, escapeText, findTarget} from "../../common"
 
 export class ImageSelectionDialog {
     constructor(imageDB, userImageDB, imgId) {
@@ -8,10 +9,11 @@ export class ImageSelectionDialog {
         this.userImageDB = userImageDB
         this.imgId = imgId // a preselected image
         this.imgDb = 'document' // the preselection image will always come from the document
+        this.images = [] // images from both databases
     }
 
     init() {
-        let images = Object.values(this.imageDB.db).map(image => {
+        this.images = Object.values(this.imageDB.db).map(image => {
             return {
                 image,
                 db: 'document'
@@ -21,120 +23,150 @@ export class ImageSelectionDialog {
             if (this.imageDB.db[image.id]) {
                 return
             }
-            images.push({
+            this.images.push({
                 image,
                 db: 'user'
             })
         })
+        let buttons = []
+        let p = new Promise(resolve => {
+            buttons.push(
+                {
+                    text: gettext('Add new image'),
+                    icon: "plus-circle",
+                    click: () => {
+                        let imageUpload = new ImageEditDialog(
+                            this.userImageDB // We can only upload to the user's image db
+                        )
+
+                        resolve(
+                            imageUpload.init().then(
+                                imageId => {
+                                    this.imgId = imageId
+                                    this.imgDb = 'user'
+                                    this.imageDialog.close()
+                                    return this.init()
+                                }
+                            )
+                        )
+                    }
+                }
+            )
+
+            buttons.push(
+                {
+                    text: gettext('Use image'),
+                    classes: "fw-dark",
+                    click: () => {
+                        this.imageDialog.close()
+                        resolve({id: this.imgId, db: this.imgDb})
+                    }
+                }
+            )
+
+            buttons.push(
+                {
+                    type: 'cancel',
+                    click: () => {
+                        this.imageDialog.close()
+                        resolve(cancelPromise())
+                    }
+                }
+            )
+
+        })
         this.imageDialog = new Dialog({
-            body: imageSelectionTemplate({
-                    images
-                }),
+            buttons,
+            width: 300,
+            body: '<div class="image-selection-table"></div>',
             title: gettext("Images"),
-            id: 'select-image-dialog',
+            id: 'select-image-dialog'
         })
         this.imageDialog.open()
-        this.startImageTable()
-        if (this.imgId) {
-            document.getElementById(`Image_${this.imgDb}_${this.imgId}`).classList.add('checked')
-        }
-        return this.bindEvents()
+        this.initTable()
+        this.imageDialog.centerDialog()
+        this.bindEvents()
+        return p
     }
 
-    startImageTable() {
-        /* The sortable table seems not to have an option to accept new data
-        added to the DOM. Instead we destroy and recreate it.
-        */
-
-        let nonSortable = [0, 2]
-
-        jQuery('#select_imagelist').dataTable({
-            "bPaginate": false,
-            "bLengthChange": false,
-            "bFilter": true,
-            "bInfo": false,
-            "bAutoWidth": false,
-            "oLanguage": {
-                "sSearch": ''
+    initTable() {
+        /* Initialize the overview table */
+        let tableEl = document.createElement('table')
+        tableEl.classList.add('fw-document-table')
+        tableEl.classList.add('fw-small')
+        this.imageDialog.dialogEl.querySelector('div.image-selection-table').appendChild(tableEl)
+        this.table = new DataTable(tableEl, {
+            searchable: true,
+            paging: false,
+            scrollY: "270px",
+            labels: {
+                noRows: gettext("No images available"), // Message shown when there are no search results
+                placeholder: gettext("Search...") // placeholder for search field
             },
-            "aoColumnDefs": [{
-                "bSortable": false,
-                "aTargets": nonSortable
-            }],
+            layout: {
+                top: "{search}"
+            },
+            data: {
+                headings: ["", gettext("Image"), gettext("Title"), ""],
+                data: this.images.map(image => this.createTableRow(image))
+            },
+            columns: [
+                {
+                    select: 0,
+                    hidden: true
+                },
+                {
+                    select: [1, 3],
+                    sortable: false
+                }
+            ]
         })
-        document.querySelector('#select_imagelist_filter input').setAttribute(
-            'placeholder', gettext('Search for Filename'))
+        this.lastSort = {column: 0, dir: 'asc'}
 
-        jQuery('#select_imagelist_filter input').unbind('focus, blur')
-        jQuery('#select_imagelist_filter input').bind('focus', function() {
-            jQuery(this).parent().addClass('focus')
+        this.table.on('datatable.sort', (column, dir) => {
+            this.lastSort = {column, dir}
         })
-        jQuery('#select-imagelist_filter input').bind('blur', function() {
-            jQuery(this).parent().removeClass('focus')
-        })
+    }
 
-        let autocompleteTags = []
-        document.querySelectorAll('#imagelist .fw-searchable').forEach(el => {
-            autocompleteTags.push(el.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''))
+    createTableRow(image) {
+        return [
+            `${image.db}-${image.image.id}`,
+            image.image.thumbnail === undefined ?
+            `<img src="${image.image.image}" style="max-heigth:30px;max-width:30px;">` :
+            `<img src="${image.image.thumbnail}" style="max-heigth:30px;max-width:30px;">`,
+            escapeText(image.image.title),
+            image.db === this.imgDb && image.image.id === this.imgId ?
+            '<i class="fa fa-check" aria-hidden="true"></i>' :
+            '&emsp;'
+        ]
+    }
+
+    checkRow(dataIndex) {
+        let [db, id] = this.table.data[dataIndex].cells[0].textContent.split('-')
+        id = parseInt(id)
+        if (id === this.imgId) {
+            this.imgId = false
+        } else {
+            this.imgId = id
+        }
+        this.imgDb = db
+        this.table.data.forEach((data, index) => {
+            data.cells[3].innerHTML = index===dataIndex && this.imgId ? '<i class="fa fa-check" aria-hidden="true"></i>' : '&emsp;'
         })
-        autocompleteTags = [...new Set(autocompleteTags)] // unique values
-        jQuery("#select_imagelist_filter input").autocomplete({
-            source: autocompleteTags
-        })
+        this.table.columns().rebuild()
     }
 
     bindEvents() {
-
         // functions for the image selection dialog
-        let that = this
-        this.imageDialog.dialogEl.querySelectorAll('#select_imagelist tr').forEach(el => el.addEventListener('click', () => {
-            let checkedImageEl = this.imageDialog.dialogEl.querySelector('#select_imagelist tr.checked'),
-                selecting = true, elementId = el.id
-            if (elementId === undefined) {
-                // Likely clicked on header
-                return
+        this.table.body.addEventListener('click', event => {
+            let el = {}, imageId
+            switch (true) {
+                case findTarget(event, 'tr', el):
+                    this.checkRow(el.target.dataIndex)
+                    break
+                default:
+                    break
             }
-            if (el == checkedImageEl) {
-                selecting = false
-                this.imageId = false
-            }
-            checkedImageEl.classList.remove('checked')
-            if (selecting) {
-                this.imgId = parseInt(elementId.split('_')[2])
-                this.imgDb = elementId.split('_')[1]
-                el.classList.add('checked')
-            }
-        }))
-        return new Promise (resolve => {
-            this.imageDialog.dialogEl.querySelector('#selectImageUploadButton').addEventListener('click', () => {
-                let imageUpload = new ImageEditDialog(
-                    this.userImageDB // We can only upload to the user's image db
-                )
-                resolve(
-                    imageUpload.init().then(
-                        imageId => {
-                            this.imgId = imageId
-                            this.imgDb = 'user'
-                            this.imageDialog.close()
-                            return this.init()
-                        }
-                    )
-                )
-            })
-
-            this.imageDialog.dialogEl.querySelector('#selectImageSelectionButton').addEventListener('click',
-                () => {
-                    this.imageDialog.close()
-                    resolve({id: this.imgId, db: this.imgDb})
-                }
-            )
-            this.imageDialog.dialogEl.querySelector('#cancelImageSelectionButton').addEventListener('click',
-                () => {
-                    this.imageDialog.close()
-                    resolve(cancelPromise())
-                }
-            )
         })
-
     }
 }

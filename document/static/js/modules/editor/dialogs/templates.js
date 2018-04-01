@@ -197,21 +197,12 @@ export let configureFigureTemplate = ({image, equation, caption}) =>
         </div>`
 
 /** A template to configure citations in the editor */
-export let configureCitationTemplate = ({citableItemsHTML, citedItemsHTML, citeFormat}) =>
+export let configureCitationTemplate = ({citedItemsHTML, citeFormat}) =>
         `<div id="my-sources" class="fw-ar-container">
             <h3 class="fw-green-title">${gettext("My sources")}</h3>
-            <table id="cite-source-table" class="fw-document-table">
-                <thead class="fw-document-table-header"><tr>
-                    <th width="161">${gettext("Title")}</th>
-                    <th width="161">${gettext("Author")}</th>
-                </tr></thead>
-                <tbody class="fw-document-table-body fw-min">
-                    ${citableItemsHTML}
-                </tbody>
-            </table>
         </div>
         <span id="add-cite-source" class="fw-button fw-large fw-square fw-light fw-ar-button"><i class="fa fa-caret-right"></i></span>
-        <div id="cite-books" class="fw-ar-container">
+        <div id="cited-items" class="fw-ar-container">
             <h3 class="fw-green-title">${gettext("Citation format")}</h3>
             <div class="fw-select-container">
                 <select id="citation-style-selector" class="fw-button fw-white fw-large" required="">
@@ -232,23 +223,9 @@ export let configureCitationTemplate = ({citableItemsHTML, citedItemsHTML, citeF
             </table>
         </div>`
 
-/** A template for each item that can be cited inside the citation configuration dialog of the editor. */
-export let citationItemTemplate = ({bib_type, title, author, id, db}) =>
-    `<tr class="fw-checkable fw-checkable-tr" data-id="${id}" data-db="${db}" data-type="${bib_type}" data-title="${escapeText(title)}" data-author="${escapeText(author)}">
-        <td width="162">
-            <span class="fw-document-table-title fw-inline">
-                <i class="fa fa-book"></i>
-                <span class="fw-searchable">${escapeText(title)}</span>
-            </span>
-        </td>
-        <td width="163">
-            <span class="fw-inline fw-searchable">${escapeText(author)}</span>
-        </td>
-    </tr>`
-
 /** A template for each selected citation item inside the citation configuration
     dialog of the editor. */
-export let selectedCitationTemplate = ({title, bib_type, author, id, db, prefix, locator}) =>
+export let selectedCitationTemplate = ({title, author, id, db, prefix, locator}) =>
     `<tr id="selected-source-${db}-${id}" class="selected-source">
         <td colspan="3" width="335">
           <table class="fw-cite-parts-table">
@@ -256,7 +233,7 @@ export let selectedCitationTemplate = ({title, bib_type, author, id, db, prefix,
                   <td width="135">
                       <span class="fw-document-table-title fw-inline">
                           <i class="fa fa-book"></i>
-                          <span data-id="${id}" data-type="${bib_type}">
+                          <span data-id="${id}">
                               ${escapeText(title)}
                           </span>
                       </span>

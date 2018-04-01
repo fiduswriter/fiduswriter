@@ -1,5 +1,5 @@
 
-let dialogTemplate = ({title, height, width, id, icon, buttons, zIndex, body}) =>
+let dialogTemplate = ({id, classes, title, height, width, icon, buttons, zIndex, body}) =>
 `<div tabindex="-1" role="dialog"
         class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-dialog-buttons"
         ${id ? `aria-describedby="${id}"` : ''} style="z-index: ${zIndex};">
@@ -12,7 +12,7 @@ let dialogTemplate = ({title, height, width, id, icon, buttons, zIndex, body}) =
             ${gettext('Close')}
         </button>
     </div>
-    <div ${id ? `id="${id}"` : ''} class="ui-dialog-content ui-widget-content" style="width: ${width}; height: ${height};">
+    <div ${id ? `id="${id}"` : ''} class="ui-dialog-content ui-widget-content${classes ? ` ${classes}` : ''}" style="width: ${width}; height: ${height};">
         ${body}
     </div>
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
@@ -23,7 +23,10 @@ let dialogTemplate = ({title, height, width, id, icon, buttons, zIndex, body}) =
 </div>
 <div class="ui-widget-overlay ui-front" style="z-index: ${zIndex-1}"></div>`
 
-let buttonTemplate = ({text, classes}) => `<button type="button" class="${classes ? classes : 'fw-light'} fw-button ui-button ui-corner-all ui-widget">${text}</button>`
+let buttonTemplate = ({text, classes, icon}) => `<button type="button" class="${classes ? classes : 'fw-light'} fw-button ui-button ui-corner-all ui-widget">
+    ${icon ? `<i class="fa fa-${icon}" aria-hidden="true"></i>` : ''}
+    ${text}
+</button>`
 
 let BUTTON_TYPES = {
     close: {
@@ -46,6 +49,7 @@ let BUTTON_TYPES = {
 export class Dialog {
     constructor(options) {
         this.id = options.id ? options.id : false
+        this.classes = options.classes ? options.classes : false
         this.title = options.title ? options.title : ''
         this.body = options.body ? options.body : ''
         this.height = options.height ? `${options.height}px` : 'auto'
@@ -59,9 +63,10 @@ export class Dialog {
 
     addDefaultButtons(buttons) {
         return buttons.map(button => ({
-            text: button.text ? button.text : BUTTON_TYPES[button.type].text,
-            classes: button.classes ? button.classes : BUTTON_TYPES[button.type].classes,
-            click: button.click ? button.click : BUTTON_TYPES[button.type].click(this)
+            text: button.text ? button.text : button.type ? BUTTON_TYPES[button.type].text : '',
+            classes: button.classes ? button.classes : button.type ? BUTTON_TYPES[button.type].classes : false,
+            click: button.click ? button.click : button.type ? BUTTON_TYPES[button.type].click(this) : '',
+            icon: button.icon ? button.icon : false
         }))
     }
 
@@ -72,10 +77,11 @@ export class Dialog {
         document.body.insertAdjacentHTML(
             'beforeend',
             dialogTemplate({
+                id: this.id,
+                classes: this.classes,
                 title: this.title,
                 height: this.height,
                 width: this.width,
-                id: this.id,
                 alert: this.alert,
                 buttons : this.buttons,
                 zIndex: this.getHighestDialogZIndex() + 2,

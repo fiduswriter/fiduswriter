@@ -1,14 +1,17 @@
 import fixUTF8 from "fix-utf8"
+import DataTable from "vanilla-datatables"
+
 import {BibLatexImporter} from "../import"
 import {litToText, nameToText} from "../tools"
 import {BibEntryForm} from "../form"
-import {editCategoriesTemplate, bibtableTemplate} from "./templates"
+import {editCategoriesTemplate} from "./templates"
 import {BibliographyDB} from "../database"
 import {BibTypeTitles} from "../form/strings"
 import {SiteMenu} from "../../menu"
 import {OverviewMenuView, getCsrfToken, findTarget, whenReady, Dialog} from "../../common"
 import {menuModel} from "./menu"
 import * as plugins from "../../../plugins/bibliography_overview"
+import {escapeText} from "../../common"
 
 export class BibliographyOverview {
 
@@ -27,7 +30,45 @@ export class BibliographyOverview {
         this.bibDB = new BibliographyDB()
         this.bibDB.getDB().then(({bibPKs, bibCats}) => {
             this.setBibCategoryList(bibCats)
-            this.addBibList(bibPKs)
+            this.initTable(bibPKs)
+        })
+    }
+
+    /* Initialize the overview table */
+    initTable(ids) {
+        let tableEl = document.createElement('table')
+        tableEl.classList.add('fw-document-table')
+        tableEl.classList.add('fw-large')
+        document.querySelector('.fw-contents').appendChild(tableEl)
+        this.table = new DataTable(tableEl, {
+            searchable: true,
+            paging: false,
+            scrollY: "calc(100vh - 320px)",
+            labels: {
+                noRows: gettext("No sources registered") // Message shown when there are no search results
+            },
+            layout: {
+                top: ""
+            },
+            data: {
+                headings: ['','&emsp;&emsp;', gettext("Title"), gettext("Sourcetype"), gettext("Author"), gettext("Published"), ''],
+                data: ids.map(id => this.createTableRow(id))
+            },
+            columns: [
+                {
+                    select: 0,
+                    hidden: true
+                },
+                {
+                    select: [1,6],
+                    sortable: false
+                }
+            ]
+        })
+        this.lastSort = {column: 0, dir: 'asc'}
+
+        this.table.on('datatable.sort', (column, dir) => {
+            this.lastSort = {column, dir}
         })
     }
 
@@ -57,14 +98,48 @@ export class BibliographyOverview {
     }
 
     /** This takes a list of new bib entries and adds them to BibDB and the bibliography table
-     * @function addBibList
+     * @function updateTable
      */
-    addBibList(pks) {
-        this.stopBibliographyTable()
-        pks.forEach(pk =>
-            this.appendToBibTable(pk, this.bibDB.db[pk])
-        )
-        this.startBibliographyTable()
+    updateTable(ids) {
+        // Remove items that already exist
+        this.removeTableRows(ids)
+        this.table.insert({data: ids.map(id => this.createTableRow(id))})
+        // Redo last sort
+        this.table.columns().sort(this.lastSort.column, this.lastSort.dir)
+    }
+
+    createTableRow(id) {
+        let bibInfo = this.bibDB.db[id]
+        let bibauthors = bibInfo.fields.author || bibInfo.fields.editor
+        return [
+            id,
+            `<input type="checkbox" class="entry-select" data-id="${id}">`, // checkbox
+            `<span class="fw-document-table-title fw-inline">
+                <i class="fa fa-book"></i>
+                <span class="edit-bib fw-link-text fw-searchable" data-id="${id}">
+                    ${bibInfo.fields.title ? escapeText(litToText(bibInfo.fields.title)) : gettext('Untitled')}
+                </span>
+            </span>`, // title
+            BibTypeTitles[bibInfo.bib_type], // sourcetype
+            bibauthors ? nameToText(bibauthors) : '', // author
+            bibInfo.fields.date ? bibInfo.fields.date.replace('/', ' ') : '', // published,
+            `<span class="delete-bib fw-link-text" data-id="${id}"><i class="fa fa-trash-o">&nbsp;&nbsp;</i></span>` // delete icon
+        ]
+    }
+
+    removeTableRows(ids) {
+        let existingRows = this.table.data.map((data, index) => {
+            let id = parseInt(data.cells[0].textContent)
+            if (ids.includes(id)) {
+                return index
+            } else {
+                return false
+            }
+        }).filter(rowIndex => rowIndex !== false)
+
+        if (existingRows.length) {
+            this.table.rows().remove(existingRows)
+        }
     }
 
     /** Opens a dialog for editing categories.
@@ -149,92 +224,6 @@ export class BibliographyOverview {
         ).map(el => parseInt(el.getAttribute('data-id')))
     }
 
-
-    /** Add or update an item in the bibliography table (HTML).
-     * @function appendToBibTable
-          * @param pk The pk specifying the bibliography item.
-     * @param bibInfo An object with the current information about the bibliography item.
-     */
-    appendToBibTable(pk, bibInfo) {
-        let tr = document.getElementById(`Entry_${pk}`)
-
-        let bibauthors = bibInfo.fields.author || bibInfo.fields.editor
-
-        if (tr) { //if the entry exists, update
-            tr.insertAdjacentHTML(
-                'afterend',
-                bibtableTemplate({
-                    id: pk,
-                    cats: bibInfo.entry_cat,
-                    type: bibInfo.bib_type,
-                    typetitle: BibTypeTitles[bibInfo.bib_type],
-                    title: bibInfo.fields.title ? litToText(bibInfo.fields.title) : gettext('Untitled'),
-                    author: bibauthors ? nameToText(bibauthors) : '',
-                    published: bibInfo.fields.date ? bibInfo.fields.date.replace('/', ' ') : ''
-                })
-            )
-            tr.parentElement.removeChild(tr)
-        } else { //if this is the new entry, append
-            document.querySelector('#bibliography > tbody').insertAdjacentHTML(
-                'beforeend',
-                bibtableTemplate({
-                    id: pk,
-                    cats: bibInfo.entry_cat,
-                    type: bibInfo.bib_type,
-                    typetitle: BibTypeTitles[bibInfo.bib_type],
-                    title: bibInfo.fields.title ? litToText(bibInfo.fields.title) : gettext('Untitled'),
-                    author: bibauthors ? nameToText(bibauthors) : '',
-                    published: bibInfo.fields.date ? bibInfo.fields.date.replace('/', ' ') : ''
-                })
-            )
-        }
-    }
-
-    /** Stop the interactive parts of the bibliography table.
-     * @function stopBibliographyTable
-          */
-    stopBibliographyTable () {
-        jQuery('#bibliography').dataTable().fnDestroy()
-    }
-    /** Start the interactive parts of the bibliography table.
-     * @function startBibliographyTable
-          */
-    startBibliographyTable() {
-        // The sortable table seems not to have an option to accept new data added to the DOM. Instead we destroy and recreate it.
-        let table = jQuery('#bibliography').dataTable({
-            "bPaginate": false,
-            "bLengthChange": false,
-            "bFilter": true,
-            "bInfo": false,
-            "bAutoWidth": false,
-            "oLanguage": {
-                "sSearch": ''
-            },
-            "aoColumnDefs": [{
-                "bSortable": false,
-                "aTargets": [0, 5]
-            }],
-        })
-        document.querySelector('#bibliography_filter input').setAttribute('placeholder', gettext('Search for Bibliography'))
-
-        jQuery('#bibliography_filter input').unbind('focus, blur')
-        jQuery('#bibliography_filter input').bind('focus', function () {
-            this.parentElement.classList.add('focus')
-        })
-        jQuery('#bibliography_filter input').bind('blur', function () {
-            this.parentElement.classList.remove('focus')
-        })
-
-        let autocompleteTags = []
-        document.querySelectorAll('#bibliography .fw-searchable').forEach(el => {
-            autocompleteTags.push(el.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''))
-        })
-        autocompleteTags = [...new Set(autocompleteTags)] //unique values
-        jQuery("#bibliography_filter input").autocomplete({
-            source: autocompleteTags
-        })
-    }
-
     activatePlugins() {
         // Add plugins
         this.plugins = {}
@@ -271,7 +260,7 @@ export class BibliographyOverview {
                     form.init().then(
                         idTranslations => {
                             let ids = idTranslations.map(idTrans => idTrans[1])
-                            return this.addBibList(ids)
+                            return this.updateTable(ids)
                         }
                     )
                     break
@@ -336,7 +325,7 @@ export class BibliographyOverview {
             text,
             this.bibDB,
             getCsrfToken(),
-            newIds => this.addBibList(newIds),
+            newIds => this.updateTable(newIds),
             false
         )
         importer.init()
@@ -349,16 +338,7 @@ export class BibliographyOverview {
     }
 
     deleteBibEntries(ids) {
-        this.bibDB.deleteBibEntries(ids).then(ids => {
-            this.stopBibliographyTable()
-            ids.forEach(id => {
-                let el = document.querySelector(`#Entry_${id}`)
-                if (el) {
-                    el.parentElement.removeChild(el)
-                }
-            })
-            this.startBibliographyTable()
-        })
+        this.bibDB.deleteBibEntries(ids).then(ids => this.removeTableRows(ids))
     }
 
 }

@@ -20,12 +20,31 @@ export class OverviewMenuView {
 
     bindEvents() {
         this.menuEl = document.getElementById('fw-overview-menu')
-        this.listeners.onmousedown = event => this.onmousedown(event)
-        document.body.addEventListener('mousedown', this.listeners.onmousedown)
+        this.listeners.onclick = event => this.onclick(event)
+        document.body.addEventListener('click', this.listeners.onclick)
+        this.listeners.oninput = event => this.oninput(event)
+        document.body.addEventListener('input', this.listeners.oninput)
         this.update()
     }
 
-    onmousedown(event) {
+    oninput(event) {
+        let target = event.target
+        if(target.matches('#fw-overview-menu > li > .fw-button > input')) {
+            // A text was enetered in a top entry. we find which one.
+            let menuNumber = 0
+            let seekItem = target.closest('li')
+            while (seekItem.previousElementSibling) {
+                menuNumber++
+                seekItem = seekItem.previousElementSibling
+            }
+            let menuItem = this.model.content[menuNumber]
+            if (menuItem.input) {
+                menuItem.input(this.overview, target.value)
+            }
+        }
+    }
+
+    onclick(event) {
         let target = event.target
         if(target.matches('#fw-overview-menu li li, #fw-overview-menu li li *')) {
             event.preventDefault()
@@ -73,7 +92,6 @@ export class OverviewMenuView {
             let that = this
             return true
         } else if(target.matches('#fw-overview-menu li, #fw-overview-menu li *')) {
-            event.preventDefault()
             // A toolbar dropdown menu item was clicked. We just need to
             // find out which one
             let menuNumber = 0
@@ -86,6 +104,7 @@ export class OverviewMenuView {
             // if it is a dropdown menu, open it. Otherwise execute an
             // associated action.
             if (['dropdown', 'select-action-dropdown'].includes(menuItem.type)) {
+                event.preventDefault()
                 if (this.openedMenu === menuNumber) {
                     this.model.content[this.openedMenu].open = false
                     this.openedMenu = false
@@ -96,15 +115,16 @@ export class OverviewMenuView {
                     menuItem.open = true
                     this.openedMenu = menuNumber
                 }
-
+                this.update()
             } else if (menuItem.action) {
+                event.preventDefault()
                 menuItem.action(this.overview)
                 if (this.openedMenu !== false) {
                     this.model.content[this.openedMenu].open = false
                     this.openedMenu = false
                 }
+                this.update()
             }
-            this.update()
             return false
         } else if (this.openedMenu !== false) {
             this.model.content[this.openedMenu].open = false
@@ -145,6 +165,9 @@ export class OverviewMenuView {
                 break
             case 'button':
                 return this.getButtonHTML(menuItem)
+                break
+            case 'search':
+                return this.getSearchHTML(menuItem)
                 break
             default:
                 return ''
@@ -205,7 +228,7 @@ export class OverviewMenuView {
 
     getButtonHTML(menuItem) {
         return `
-        <button class="import-fidus fw-button fw-light fw-large" title="${menuItem.title}">
+        <button class="fw-button fw-light fw-large" title="${menuItem.title}">
             ${menuItem.title}
             ${
                 menuItem.icon ?
@@ -213,6 +236,14 @@ export class OverviewMenuView {
                 ''
             }
         </button>`
+    }
+
+    getSearchHTML(menuItem) {
+        return `
+        <div class="fw-button fw-white fw-large disabled">
+            <input type="text" placeholder="${menuItem.title}">
+            ${menuItem.icon ? `<i class="fa fa-${menuItem.icon}"></i>` : ''}
+        </div>`
     }
 
 }

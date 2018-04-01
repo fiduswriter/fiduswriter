@@ -1,5 +1,9 @@
-#cite-books h3, #my-sources h3 {
+#cited-items h3, #my-sources h3 {
     margin-bottom: 15px;
+}
+
+#cited-items {
+    overflow-y: auto;
 }
 
 #cite-source-table_filter {

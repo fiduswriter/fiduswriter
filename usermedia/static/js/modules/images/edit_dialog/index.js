@@ -16,6 +16,7 @@ export class ImageEditDialog {
             this.dialog = new Dialog({
                 title: this.imageId ? gettext('Update Image Information') : gettext('Upload Image'),
                 id: 'editimage',
+                classes: 'fw-media-uploader',
                 body: imageEditTemplate({
                     image: this.imageId ? this.imageDB.db[this.imageId] : false,
                     cats: this.imageDB.cats

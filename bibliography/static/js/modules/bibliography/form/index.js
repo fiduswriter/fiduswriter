@@ -114,7 +114,7 @@ export class BibEntryForm {
                 title: this.dialogHeader,
                 id: 'bib-dialog',
                 width: 940,
-                height: 700,
+                height: 570,
                 body: bibDialog({
                     'bib_type': this.currentValues.bib_type,
                     BibTypes,

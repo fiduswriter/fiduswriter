@@ -199,7 +199,8 @@ export class CitationDialog {
             paging: false,
             scrollY: "225px",
             labels: {
-                noRows: gettext("No entries found"), // Message shown when there are no search results
+                noRows: gettext("No sources registered"), // Message shown when there are no search results
+                placeholder: gettext("Search...") // placeholder for search field
             },
             layout: {
                 top: "{search}"

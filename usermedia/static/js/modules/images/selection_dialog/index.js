@@ -32,7 +32,7 @@ export class ImageSelectionDialog {
         let p = new Promise(resolve => {
             buttons.push(
                 {
-                    text: gettext('Upload'),
+                    text: gettext('Add new image'),
                     icon: "plus-circle",
                     click: () => {
                         let imageUpload = new ImageEditDialog(
@@ -77,12 +77,14 @@ export class ImageSelectionDialog {
         })
         this.imageDialog = new Dialog({
             buttons,
+            width: 300,
             body: '<div class="image-selection-table"></div>',
             title: gettext("Images"),
             id: 'select-image-dialog'
         })
         this.imageDialog.open()
         this.initTable()
+        this.imageDialog.centerDialog()
         this.bindEvents()
         return p
     }
@@ -135,7 +137,7 @@ export class ImageSelectionDialog {
             escapeText(image.image.title),
             image.db === this.imgDb && image.image.id === this.imgId ?
             '<i class="fa fa-check" aria-hidden="true"></i>' :
-            ''
+            '&emsp;'
         ]
     }
 
@@ -148,9 +150,10 @@ export class ImageSelectionDialog {
             this.imgId = id
         }
         this.imgDb = db
-        this.table.data = []
-        this.table.hasRows = false
-        this.table.insert({data: this.images.map(image => this.createTableRow(image))})
+        this.table.data.forEach((data, index) => {
+            data.cells[3].innerHTML = index===dataIndex && this.imgId ? '<i class="fa fa-check" aria-hidden="true"></i>' : '&emsp;'
+        })
+        this.table.columns().rebuild()
     }
 
     bindEvents() {

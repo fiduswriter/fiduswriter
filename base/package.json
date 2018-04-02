@@ -26,7 +26,7 @@
     "jshint": "2.9.5",
     "katex": "0.9.0",
     "w3c-keyname": "1.1.8",
-    "vanilla-datatables": "johanneswilm/Vanilla-DataTables#466e7ed"
+    "vanilla-datatables": "johanneswilm/Vanilla-DataTables#e5f66af"
   },
   "jshintConfig": {
     "esversion": 6,

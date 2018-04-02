@@ -212,7 +212,7 @@ export class BibliographyOverview {
             body: `<p>${gettext('Delete the bibliography item(s)')}?</p>`,
             height: 180,
             buttons,
-            icon: 'fa-exclamation-triangle'
+            icon: 'exclamation-triangle'
         })
         dialog.open()
     }

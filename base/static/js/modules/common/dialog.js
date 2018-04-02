@@ -4,7 +4,7 @@ let dialogTemplate = ({id, classes, title, height, width, icon, buttons, zIndex,
         class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-dialog-buttons"
         ${id ? `aria-describedby="${id}"` : ''} style="z-index: ${zIndex};">
     <div class="ui-dialog-titlebar ui-corner-all ui-widget-header ui-helper-clearfix">
-        ${icon ? `<i class="fa ${icon}" aria-hidden="true"></i>` : ''}
+        ${icon ? `<i class="fa fa-${icon}" aria-hidden="true"></i>` : ''}
         <span id="ui-id-2" class="ui-dialog-title">${title}</span>
         <button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close" title="${gettext('Close')}">
             <span class="ui-button-icon ui-icon ui-icon-closethick"> </span>

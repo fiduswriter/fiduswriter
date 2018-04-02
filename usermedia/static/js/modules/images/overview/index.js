@@ -76,7 +76,7 @@ export class ImageOverview {
         ]
         let dialog = new Dialog({
             id: 'confirmdeletion',
-            icon: 'fa-exclamation-triangle',
+            icon: 'exclamation-triangle',
             title: gettext('Confirm deletion'),
             body: `<p>${gettext('Delete the image(s)')}?</p>`,
             height: 180,

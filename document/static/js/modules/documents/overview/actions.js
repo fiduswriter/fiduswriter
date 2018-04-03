@@ -33,6 +33,7 @@ export class DocumentOverviewActions {
             () => {
                 addAlert('success', gettext(`${gettext('Document has been deleted')}: '${doc.title}'`))
                 this.documentOverview.removeTableRows([id])
+                this.documentOverview.documentList = this.documentOverview.documentList.filter(doc => doc.id !== id)
             }
         )
     }
@@ -45,7 +46,7 @@ export class DocumentOverviewActions {
                 ${gettext('Delete the document(s)?')}
                 </p>`,
             id: 'confirmdeletion',
-            icon: 'fa-exclamation-triangle',
+            icon: 'exclamation-triangle',
             buttons: [
                 {
                     text: gettext('Delete'),

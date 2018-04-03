@@ -68,7 +68,7 @@ export class DocumentOverview {
         })
     }
 
-    getDocumentListData(id) {
+    getDocumentListData() {
         activateWait()
         postJson(
             '/document/documentlist/'

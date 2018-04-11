@@ -1,6 +1,6 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
-import {ReplaceAroundStep, RemoveMarkStep} from "prosemirror-transform"
+import {ReplaceAroundStep, RemoveMarkStep, ReplaceStep} from "prosemirror-transform"
 import {Slice, Fragment} from "prosemirror-model"
 
 import {noSpaceTmp, addAlert} from "../../common"
@@ -244,9 +244,8 @@ export let linksPlugin = function(options) {
         },
         appendTransaction: (trs, oldState, state) => {
             // Check if any of the transactions are local.
-            if (trs.every(tr => tr.getMeta(
-                    'remote'))) {
-                // All transactions are remote. Give up.
+            if (trs.every(tr => !tr.steps.length || tr.getMeta('remote'))) {
+                // All transactions are remote or don't change anything. Give up.
                 return
             }
             // Check if there are any headings or figures in the affected range.
@@ -321,7 +320,7 @@ export let linksPlugin = function(options) {
 
             // ID should not be found in the other pm either. So we look through
             // those as well.
-            let otherState = oldState === options.editor.view.state ?
+            let otherState = oldState.schema === options.editor.view.state.schema ?
                 options.editor.mod.footnotes.fnEditor.view.state :
                 options.editor.view.state
 
@@ -362,7 +361,6 @@ export let linksPlugin = function(options) {
                 return
             }
 
-
             let newTransaction = state.tr
             // Change the IDs of the nodes that having an ID that was used previously
             // already.
@@ -370,17 +368,14 @@ export let linksPlugin = function(options) {
                 let node = doubleId.node,
                     posFrom = doubleId.pos,
                     posTo = posFrom + node.nodeSize,
-                    blockId
+                    id
 
-                while (!blockId || headingIds.includes(
-                        blockId)) {
-                    blockId = randomHeadingId()
+                while (!id || headingIds.includes(id)) {
+                    id = randomHeadingId()
                 }
 
-                let attrs = {
-                    level: node.attrs.level,
-                    id: blockId
-                }
+                let attrs = Object.assign({}, node.attrs, {id})
+
                 // Because we only change attributes, positions should stay the
                 // the same throughout all our extra steps. We therefore do no
                 // mapping of positions through these steps.
@@ -399,7 +394,7 @@ export let linksPlugin = function(options) {
                     )
                 )
 
-                headingIds.push(blockId)
+                headingIds.push(id)
             })
 
 
@@ -407,38 +402,35 @@ export let linksPlugin = function(options) {
                 let node = doubleId.node,
                     posFrom = doubleId.pos,
                     posTo = posFrom + node.nodeSize,
-                    blockId
+                    id
 
-                while (!blockId || figureIds.includes(
-                        blockId)) {
-                    blockId = randomFigureId()
+                while (!id || figureIds.includes(id)) {
+                    id = randomFigureId()
                 }
 
-                let attrs = {
-                    equation: node.attrs.equation,
-                    image: node.attrs.image,
-                    figureCategory: node.attrs.figureCategory,
-                    caption: node.attrs.caption,
-                    id: blockId
-                }
+                let attrs = Object.assign({}, node.attrs, {id})
 
                 // Because we only change attributes, positions should stay the
                 // the same throughout all our extra steps. We therefore do no
                 // mapping of positions through these steps.
+
                 newTransaction.step(
-                    new ReplaceAroundStep(
+                    new ReplaceStep(
                         posFrom,
                         posTo,
-                        posFrom + 1,
-                        posTo - 1,
-                        new Slice(Fragment.from(
-                            node.type.create(
-                                attrs)), 0, 0),
-                        1,
-                        true
+                        new Slice(
+                            Fragment.from(
+                                node.type.create(
+                                    attrs
+                                )
+                            ),
+                            0,
+                            0
+                        ),
+                        false
                     )
                 )
-                figureIds.push(blockId)
+                figureIds.push(id)
             })
 
             // Remove anchor marks without ID

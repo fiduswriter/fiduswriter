@@ -263,7 +263,7 @@ let keywords = {
 let body = {
     content: "(block | table_block)+",
     group: "part",
-    marks: "annotation",
+    marks: "annotation track",
     defining: true,
     isMetadata() {
         return true

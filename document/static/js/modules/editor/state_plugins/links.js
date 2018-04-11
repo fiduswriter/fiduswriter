@@ -361,7 +361,7 @@ export let linksPlugin = function(options) {
                 return
             }
 
-            let newTransaction = state.tr
+            let newTransaction = state.tr.setMeta('fixIds', true)
             // Change the IDs of the nodes that having an ID that was used previously
             // already.
             doubleHeadingIds.forEach(doubleId => {

@@ -289,29 +289,53 @@ export let insertion = {
     group: "track",
     parseDOM: [
         {
-            tag: "span.insertion, span.approved-insertion",
+            tag: "span.insertion",
             getAttrs(dom) {
                 return {
                     user: parseInt(dom.getAttribute("data-user")),
                     username: dom.getAttribute("data-username"),
                     date: parseInt(dom.getAttribute("data-date")),
                     inline: true,
-                    approved: dom.hasAttribute("data-approved")
+                    approved: false
                 }
             }
         },
         {
-            tag: "div.insertion, div.approved-insertion",
+            tag: "span.approved-insertion",
+            getAttrs(dom) {
+                return {
+                    user: parseInt(dom.getAttribute("data-user")),
+                    username: dom.getAttribute("data-username"),
+                    date: parseInt(dom.getAttribute("data-date")),
+                    inline: true,
+                    approved: true
+                }
+            }
+        },
+        {
+            tag: "div.insertion",
             getAttrs(dom) {
                 return {
                     user: parseInt(dom.getAttribute("data-user")),
                     username: dom.getAttribute("data-username"),
                     date: parseInt(dom.getAttribute("data-date")),
                     inline: false,
-                    approved: dom.hasAttribute("data-approved")
+                    approved: false
                 }
             }
         },
+        {
+            tag: "div.approved-insertion",
+            getAttrs(dom) {
+                return {
+                    user: parseInt(dom.getAttribute("data-user")),
+                    username: dom.getAttribute("data-username"),
+                    date: parseInt(dom.getAttribute("data-date")),
+                    inline: false,
+                    approved: true
+                }
+            }
+        }
     ],
     toDOM(node) {
         let elType = node.attrs.inline ? 'span' : 'div',
@@ -321,10 +345,6 @@ export let insertion = {
                 'data-username': node.attrs.username,
                 'data-date': node.attrs.date
             }
-
-        if (node.attrs.approved) {
-            attrs['data-approved'] = true
-        }
         return [elType, attrs]
     }
 }

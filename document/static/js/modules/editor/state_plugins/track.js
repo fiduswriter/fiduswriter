@@ -17,16 +17,20 @@ export function getSelectedChanges(state) {
 }
 
 export function setSelectedChanges(tr, type, pos) {
-    let mark = tr.doc.nodeAt(pos).marks.find(mark => mark.type.name===type)
+    let node = tr.doc.nodeAt(pos),
+        mark = node.marks.find(mark => mark.type.name===type)
     if (!mark) {
         return
     }
     let selectedChange =  getFromToMark(tr.doc, pos, mark)
     let decos = DecorationSet.empty
     let spec = type === 'insertion' ? selectedInsertionSpec : selectedDeletionSpec
-    decos = decos.add(tr.doc, [Decoration.inline(selectedChange.from, selectedChange.to, {
+    let decoType = node.isInline ? Decoration.inline : Decoration.node
+    decos = decos.add(tr.doc, [decoType(selectedChange.from, selectedChange.to, {
         class: `selected-${type}`
     }, spec)])
+
+
     return tr.setMeta(key, {decos})
 }
 
@@ -45,12 +49,16 @@ function getFromToMark(doc, pos, mark) {
         return null
     }
     let startIndex = $pos.index(), startPos = $pos.start() + start.offset
-    while (startIndex > 0 && mark.isInSet(parent.child(startIndex - 1).marks)) {
-        startPos -= parent.child(--startIndex).nodeSize
+    if (start.node.isInline) {
+        while (startIndex > 0 && mark.isInSet(parent.child(startIndex - 1).marks)) {
+            startPos -= parent.child(--startIndex).nodeSize
+        }
     }
     let endIndex = $pos.index() + 1, endPos = $pos.start() + start.offset + start.node.nodeSize
-    while (endIndex < parent.childCount && mark.isInSet(parent.child(endIndex).marks)) {
-        endPos += parent.child(endIndex++).nodeSize
+    if (start.node.isInline) {
+        while (endIndex < parent.childCount && mark.isInSet(parent.child(endIndex).marks)) {
+            endPos += parent.child(endIndex++).nodeSize
+        }
     }
     return {from: startPos, to: endPos}
 }
@@ -76,9 +84,6 @@ function findSelectedChanges(state) {
             selection.from,
             selection.to,
             (node, pos, parent) => {
-                if (!node.isInline) {
-                    return true
-                }
                 if (!insertionMark) {
                     insertionMark = node.marks.find(mark => mark.type.name==='insertion' && !mark.attrs.approved)
                     if (insertionMark) {
@@ -147,13 +152,14 @@ export let trackPlugin = function(options) {
                 if (tr.selectionSet) {
                     let {insertion, deletion} = findSelectedChanges(state)
                     decos = DecorationSet.empty
+                    let decoType = tr.selection.node ? Decoration.node : Decoration.inline
                     if (insertion) {
-                        decos = decos.add(tr.doc, [Decoration.inline(insertion.from, insertion.to, {
+                        decos = decos.add(tr.doc, [decoType(insertion.from, insertion.to, {
                             class: 'selected-insertion'
                         }, selectedInsertionSpec)])
                     }
                     if (deletion) {
-                        decos = decos.add(tr.doc, [Decoration.inline(deletion.from, deletion.to, {
+                        decos = decos.add(tr.doc, [decoType(deletion.from, deletion.to, {
                             class: 'selected-deletion'
                         }, selectedDeletionSpec)])
                     }
@@ -189,7 +195,6 @@ export let trackPlugin = function(options) {
                 // All transactions don't change the doc, are remote, come from footnotes, history or fixing IDs. Give up.
                 return false
             }
-            console.log({trs})
             let addedRanges = [], // Content that has been added (also may mean removals)
                 markedDeletionRanges = [], // Deleted content that has received marks (Italic/bold) - we need to revert this.
                 unmarkedDeletionRanges = [] // Deleted content where marks have been deleted (Italic/bold) - we need to revert this.
@@ -404,7 +409,6 @@ export let trackPlugin = function(options) {
                         } else if (node.isInline) {
                             return false
                         }
-                        console.log({pos, node})
                         newTr.setNodeMarkup(pos, null, node.attrs, blockInsertionMark.addToSet(node.marks))
                     }
                 )

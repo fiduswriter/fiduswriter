@@ -151,23 +151,27 @@ let commentTemplate = ({comment, activeCommentId, activeCommentAnswerId, user, d
     </div>`
 }
 
-let TRACK_BOX_TITLES = {
-    true: {
-        insertion: gettext('Insertion'),
-        deletion: gettext('Deletion')
-    },
-    false: {
-        insertion: gettext('Inserted break'),
-        deletion: gettext('Deleted break')
-    }
+let TRANSLATE_NODENAMES = {
+    paragraph: gettext('paragraph'),
+    headline: gettext('headline'),
+    text: gettext('text'),
+    blockquote: gettext('blockquote'),
+    bullet_list: gettext('bullet list'),
+    code_block: gettext('code block'),
+    figure: gettext('figure'),
+    list_item: gettext('list item'),
+    ordered_list: gettext('ordered list'),
+    table: gettext('table'),
+    table_cell: gettext('table cell'),
+    table_row: gettext('table row')
 }
 
-let trackTemplate = ({type, data, pos, active, docInfo}) => {
+let trackTemplate = ({type, data, nodeName, pos, active, docInfo}) => {
     let author = data.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === data.user)
     return `
         <div class="margin-box track ${active ? 'active' : 'inactive'}" data-type="${type}" data-pos="${pos}">
             <div class="track-${type}">
-                <div class="track-title">${TRACK_BOX_TITLES[data.inline][type]}</div>
+                <div class="track-title">${type==='insertion' ? gettext('Inserted') : gettext('Deleted')} ${TRANSLATE_NODENAMES[data.inline ? 'text' : nodeName]}</div>
                 <div class="comment-user">
                     <img class="comment-user-avatar" src="${author ? author.avatar : `${$StaticUrls.base$}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
                     <h5 class="comment-user-name">${escapeText(author ? author.name : data.username)}</h5>
@@ -199,6 +203,7 @@ export let marginBoxesTemplate = ({
             case 'deletion':
                 return trackTemplate({
                     type: mBox.type,
+                    nodeName: mBox.nodeName,
                     data: mBox.data,
                     pos: mBox.pos,
                     active: selectedChanges[mBox.type] && selectedChanges[mBox.type].from === mBox.pos,

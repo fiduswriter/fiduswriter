@@ -48,7 +48,9 @@ export class ModMarginboxes {
                 !lastNodeTrackMarks.find(
                     lastMark => mark.type.name===lastMark.type.name &&
                     mark.attrs.user===lastMark.attrs.user &&
-                    mark.attrs.date===lastMark.attrs.date
+                    mark.attrs.date===lastMark.attrs.date &&
+                    mark.attrs.inline &&  // block level changes always need new boxes
+                    mark.attrs.inline===lastMark.attrs.inline
                 )
             )
 
@@ -78,7 +80,7 @@ export class ModMarginboxes {
                 referrers.push(pos)
             })
             trackMarks.forEach(mark => {
-                marginBoxes.push({type: mark.type.name, data: Object.assign({}, mark.attrs), pos})
+                marginBoxes.push({type: mark.type.name, data: Object.assign({}, mark.attrs), nodeName: node.type.name, pos})
                 referrers.push(pos)
             })
         })

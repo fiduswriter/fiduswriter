@@ -151,12 +151,23 @@ let commentTemplate = ({comment, activeCommentId, activeCommentAnswerId, user, d
     </div>`
 }
 
+let TRACK_BOX_TITLES = {
+    true: {
+        insertion: gettext('Insertion'),
+        deletion: gettext('Deletion')
+    },
+    false: {
+        insertion: gettext('Inserted break'),
+        deletion: gettext('Deleted break')
+    }
+}
+
 let trackTemplate = ({type, data, pos, active, docInfo}) => {
     let author = data.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === data.user)
     return `
         <div class="margin-box track ${active ? 'active' : 'inactive'}" data-type="${type}" data-pos="${pos}">
             <div class="track-${type}">
-                <div class="track-title">${type==='insertion' ? gettext('Insertion') : gettext('Deletion') }</div>
+                <div class="track-title">${TRACK_BOX_TITLES[data.inline][type]}</div>
                 <div class="comment-user">
                     <img class="comment-user-avatar" src="${author ? author.avatar : `${$StaticUrls.base$}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
                     <h5 class="comment-user-name">${escapeText(author ? author.name : data.username)}</h5>

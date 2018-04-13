@@ -36,10 +36,7 @@ export class ModMarginboxes {
         let marginBoxes = [], referrers = [], activeCommentStyle = '', lastNodeTrackMarks = []
 
         this.editor.view.state.doc.descendants((node, pos, parent) => {
-            if (!node.isInline && !node.isLeaf) {
-                return
-            }
-            let commentIds = this.editor.mod.comments.interactions.findCommentIds(node)
+            let commentIds = node.isInline || node.isLeaf ? this.editor.mod.comments.interactions.findCommentIds(node) : []
 
             let nodeTrackMarks = node.marks.filter(mark =>
                 mark.type.name==='deletion' ||

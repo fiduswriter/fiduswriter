@@ -159,11 +159,8 @@ let TRANSLATE_NODENAMES = {
     bullet_list: gettext('bullet list'),
     code_block: gettext('code block'),
     figure: gettext('figure'),
-    list_item: gettext('list item'),
     ordered_list: gettext('ordered list'),
-    table: gettext('table'),
-    table_cell: gettext('table cell'),
-    table_row: gettext('table row')
+    table: gettext('table')
 }
 
 let trackTemplate = ({type, data, nodeName, pos, active, docInfo}) => {

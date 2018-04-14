@@ -386,6 +386,8 @@ let spec = {
     })
 }
 
+spec.nodes = spec.nodes.update("blockquote", Object.assign({marks: "annotation track"}, spec.nodes.get("blockquote")))
+
 spec.nodes = addListNodes(spec.nodes, "block+", "block")
 
 spec.nodes = spec.nodes.update("list_item", Object.assign({marks: "annotation track"}, spec.nodes.get("list_item")))

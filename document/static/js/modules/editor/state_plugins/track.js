@@ -7,6 +7,16 @@ const key = new PluginKey('track')
 const selectedInsertionSpec = {}
 const selectedDeletionSpec = {}
 
+// TODO:
+// - Add tracking of:
+//   * lists
+//   * table operations (remove row/column)
+//   * style changes (italic/bold)
+//   * block type changes (heading/paragraph/etc.) and list/blockquote wrapping
+//   * footnote contents
+// - Decide whether to store block level approved insertions or not.
+// - Tests
+
 export function getSelectedChanges(state) {
     let {decos} = key.getState(state)
 
@@ -409,7 +419,6 @@ export let trackPlugin = function(options) {
                         } else if (node.isInline) {
                             return false
                         }
-                        console.log({node})
                         newTr.setNodeMarkup(pos, null, node.attrs, blockInsertionMark.addToSet(node.marks))
                     }
                 )

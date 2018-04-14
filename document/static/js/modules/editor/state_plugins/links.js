@@ -376,7 +376,7 @@ export let linksPlugin = function(options) {
                 // Because we only change attributes, positions should stay the
                 // the same throughout all our extra steps. We therefore do no
                 // mapping of positions through these steps.
-                tr.setNodeMarkup(doubleId.pos, null, attrs)
+                newTransaction.setNodeMarkup(doubleId.pos, null, attrs)
 
                 headingIds.push(id)
             })
@@ -394,7 +394,7 @@ export let linksPlugin = function(options) {
                 // Because we only change attributes, positions should stay the
                 // the same throughout all our extra steps. We therefore do no
                 // mapping of positions through these steps.
-                tr.setNodeMarkup(doubleId.pos, null, attrs)
+                newTransaction.setNodeMarkup(doubleId.pos, null, attrs)
                 figureIds.push(id)
             })
 

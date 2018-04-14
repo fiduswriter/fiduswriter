@@ -365,71 +365,36 @@ export let linksPlugin = function(options) {
             // Change the IDs of the nodes that having an ID that was used previously
             // already.
             doubleHeadingIds.forEach(doubleId => {
-                let node = doubleId.node,
-                    posFrom = doubleId.pos,
-                    posTo = posFrom + node.nodeSize,
-                    id
+                let id
 
                 while (!id || headingIds.includes(id)) {
                     id = randomHeadingId()
                 }
 
-                let attrs = Object.assign({}, node.attrs, {id})
+                let attrs = Object.assign({}, doubleId.node.attrs, {id})
 
                 // Because we only change attributes, positions should stay the
                 // the same throughout all our extra steps. We therefore do no
                 // mapping of positions through these steps.
-
-                newTransaction.step(
-                    new ReplaceAroundStep(
-                        posFrom,
-                        posTo,
-                        posFrom + 1,
-                        posTo - 1,
-                        new Slice(Fragment.from(
-                            node.type.create(
-                                attrs)), 0, 0),
-                        1,
-                        true
-                    )
-                )
+                tr.setNodeMarkup(doubleId.pos, null, attrs)
 
                 headingIds.push(id)
             })
 
 
             doubleFigureIds.forEach(doubleId => {
-                let node = doubleId.node,
-                    posFrom = doubleId.pos,
-                    posTo = posFrom + node.nodeSize,
-                    id
+                let id
 
                 while (!id || figureIds.includes(id)) {
                     id = randomFigureId()
                 }
 
-                let attrs = Object.assign({}, node.attrs, {id})
+                let attrs = Object.assign({}, doubleId.node.attrs, {id})
 
                 // Because we only change attributes, positions should stay the
                 // the same throughout all our extra steps. We therefore do no
                 // mapping of positions through these steps.
-
-                newTransaction.step(
-                    new ReplaceStep(
-                        posFrom,
-                        posTo,
-                        new Slice(
-                            Fragment.from(
-                                node.type.create(
-                                    attrs
-                                )
-                            ),
-                            0,
-                            0
-                        ),
-                        false
-                    )
-                )
+                tr.setNodeMarkup(doubleId.pos, null, attrs)
                 figureIds.push(id)
             })
 

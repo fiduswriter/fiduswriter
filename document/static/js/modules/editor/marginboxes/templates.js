@@ -153,7 +153,7 @@ let commentTemplate = ({comment, activeCommentId, activeCommentAnswerId, user, d
 
 let TRANSLATE_NODENAMES = {
     paragraph: gettext('paragraph'),
-    headline: gettext('headline'),
+    heading: gettext('heading'),
     text: gettext('text'),
     blockquote: gettext('blockquote'),
     bullet_list: gettext('bullet list'),

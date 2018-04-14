@@ -258,10 +258,21 @@ export class ModTrack {
     acceptAllForView(view) {
         let tr = view.state.tr.setMeta('track', true), map = new Mapping()
         view.state.doc.descendants((node, pos, parent) => {
-            if (node.marks && node.marks.find(mark => mark.type.name==='deletion')) {
+            // mark as approved if node text block with no previous sibling text block.
+            let blockBefore = node.isTextblock ? tr.doc.resolve(map.map(pos)).nodeBefore : false
+            if (blockBefore && !blockBefore.isTextblock) {
+                let marks = node.marks.filter(mark => mark.type.name !== 'deletion')
+                let insertionMark = marks.find(mark => mark.type.name === 'insertion')
+                if (insertionMark) {
+                    insertionMark.attrs.approved = true
+                }
+                tr.setNodeMarkup(map.map(pos), null, node.attrs, marks)
+            } else if (node.marks && node.marks.find(mark => mark.type.name==='deletion')) {
+                let from = node.isTextblock ? nodePos - 1 : nodePos, // if the current node and the previous node are textblocks, merge them. Otherwise delete node.
+                    to = node.isTextblock ? nodePos + 1 : nodePos + node.nodeSize
                 let delStep = new ReplaceStep(
-                    map.map(pos),
-                    map.map(pos+node.nodeSize),
+                    map.map(from),
+                    map.map(to),
                     Slice.empty
                 )
                 tr.step(delStep)
@@ -271,13 +282,17 @@ export class ModTrack {
                 let mark = node.marks.find(mark => mark.type.name==='insertion' && !mark.attrs.approved),
                     attrs = Object.assign({}, mark.attrs)
                 attrs.approved = true
-                tr.step(
-                    new AddMarkStep(
-                        map.map(pos),
-                        map.map(pos+node.nodeSize),
-                        view.state.schema.marks.insertion.create(attrs)
+                if (node.isInline) {
+                    tr.step(
+                        new AddMarkStep(
+                            map.map(pos),
+                            map.map(pos+node.nodeSize),
+                            view.state.schema.marks.insertion.create(attrs)
+                        )
                     )
-                )
+                } else {
+                    tr.setNodeMarkup(map.map(pos), null, node.attrs, mark.removeFromSet(node.marks))
+                }
             }
             return true
         })

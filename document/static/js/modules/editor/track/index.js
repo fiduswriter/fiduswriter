@@ -11,7 +11,7 @@ export function acceptAllNoInsertions(doc) {
     doc.descendants((node, pos, parent) => {
         let deletionMark = node.marks ? node.marks.find(mark => mark.type.name==='deletion') : false,
             insertionMark = node.marks ? node.marks.find(mark => mark.type.name==='insertion') : false,
-            blockBefore = node.isTextblock ? tr.doc.resolve(map.map(nodePos)).nodeBefore : false
+            blockBefore = node.isTextblock ? tr.doc.resolve(map.map(pos)).nodeBefore : false
         if (blockBefore && !blockBefore.isTextblock) {
             let marks = node.marks.slice().filter(mark => mark.type.name !== 'deletion')
             let insertionMark = marks.find(mark => mark.type.name === 'insertion')
@@ -21,7 +21,7 @@ export function acceptAllNoInsertions(doc) {
             tr.setNodeMarkup(map.map(pos), null, node.attrs, marks)
         } else if (deletionMark) {
             let from = node.isTextblock ? pos - 1 : pos,
-                to = node.isTextblock ? pos + 1 : pos + node.nodeSize
+                to = node.isTextblock ? pos + 1 : pos + node.nodeSize,
                 delStep = new ReplaceStep(
                     map.map(from),
                     map.map(to),
@@ -144,7 +144,7 @@ export class ModTrack {
         let tr = view.state.tr.setMeta('track', true), map = new Mapping()
         view.state.doc.descendants((node, pos, parent) => {
             // mark as approved if node text block with no previous sibling text block.
-            let blockBefore = node.isTextblock ? tr.doc.resolve(map.map(nodePos)).nodeBefore : false
+            let blockBefore = node.isTextblock ? tr.doc.resolve(map.map(pos)).nodeBefore : false
             if (blockBefore && !blockBefore.isTextblock) {
                 let marks = node.marks.filter(mark => mark.type.name !== 'deletion')
                 let insertionMark = marks.find(mark => mark.type.name === 'insertion')

@@ -399,16 +399,17 @@ export let trackPlugin = function(options) {
                     addedRange.to,
                     newState.schema.marks.deletion
                 )
-                // Add insertion mark also to block nodes (figures, text blocks)
+                // Add insertion mark also to block nodes (figures, text blocks) but not table cells/rows and list items as thesese cannot be wrapped in divs.
                 newTr.doc.nodesBetween(
                     addedRange.from,
                     addedRange.to,
                     (node, pos) => {
-                        if (pos < addedRange.from) {
+                        if (pos < addedRange.from || ['list_item', 'table_row', 'table_cell'].includes(node.type.name)) {
                             return true
                         } else if (node.isInline) {
                             return false
                         }
+                        console.log({node})
                         newTr.setNodeMarkup(pos, null, node.attrs, blockInsertionMark.addToSet(node.marks))
                     }
                 )

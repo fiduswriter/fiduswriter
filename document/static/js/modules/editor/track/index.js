@@ -268,8 +268,8 @@ export class ModTrack {
                 }
                 tr.setNodeMarkup(map.map(pos), null, node.attrs, marks)
             } else if (node.marks && node.marks.find(mark => mark.type.name==='deletion')) {
-                let from = node.isTextblock ? nodePos - 1 : nodePos, // if the current node and the previous node are textblocks, merge them. Otherwise delete node.
-                    to = node.isTextblock ? nodePos + 1 : nodePos + node.nodeSize
+                let from = node.isTextblock ? pos - 1 : pos, // if the current node and the previous node are textblocks, merge them. Otherwise delete node.
+                    to = node.isTextblock ? pos + 1 : pos + node.nodeSize
                 let delStep = new ReplaceStep(
                     map.map(from),
                     map.map(to),

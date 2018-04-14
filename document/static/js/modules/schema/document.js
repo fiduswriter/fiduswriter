@@ -388,9 +388,13 @@ let spec = {
 
 spec.nodes = addListNodes(spec.nodes, "block+", "block")
 
+spec.nodes = spec.nodes.update("list_item", Object.assign({marks: "annotation track"}, spec.nodes.get("list_item")))
+
 spec.nodes = spec.nodes.append(tableNodes({
     tableGroup: "table_block",
     cellContent: "block+"
 }))
+
+spec.nodes = spec.nodes.update("table_cell", Object.assign({marks: "annotation track"}, spec.nodes.get("table_cell")))
 
 export const docSchema = new Schema(spec)

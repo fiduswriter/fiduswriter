@@ -34,8 +34,7 @@ let spec = {
     hard_break: nodes.hard_break,
     citation,
     equation
-}),
-
+  }),
   marks: OrderedMap.from({
       em: marks.em,
       strong: marks.strong,

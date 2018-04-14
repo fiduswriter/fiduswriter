@@ -1014,16 +1014,16 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             '/html/body/div[5]/div[3]/div/button[1]').click()
 
     def get_image(self, driver):
-        figure = driver.find_element_by_xpath(
-            '//*[contains(@class, "article-body")]/figure'
+        figure = driver.find_element_by_css_selector(
+            'div.article-body figure'
         )
         image = figure.find_elements_by_tag_name('img')
 
         return image
 
     def get_caption(self, driver):
-        caption = driver.find_element_by_xpath(
-            '//*[contains(@class, "article-body")]/figure/figcaption/span[2]'
+        caption = driver.find_element_by_css_selector(
+            'div.article-body figure figcaption span[data-caption]'
         )
 
         return caption.text

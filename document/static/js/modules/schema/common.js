@@ -225,22 +225,40 @@ export let deletion = {
         },
         date: {
             default: 0
+        },
+        inline: { // Whether the change is inline or block level
+            default: true
         }
     },
     inclusive: false,
     group: "track",
-    parseDOM: [{
-        tag: "span.deletion",
-        getAttrs(dom) {
-            return {
-                user: parseInt(dom.getAttribute("data-user")),
-                username: dom.getAttribute("data-username"),
-                date: parseInt(dom.getAttribute("data-date"))
+    parseDOM: [
+        {
+            tag: "span.deletion",
+            getAttrs(dom) {
+                return {
+                    user: parseInt(dom.getAttribute("data-user")),
+                    username: dom.getAttribute("data-username"),
+                    date: parseInt(dom.getAttribute("data-date")),
+                    inline: true
+                }
+            }
+        },
+        {
+            tag: "div.deletion",
+            getAttrs(dom) {
+                return {
+                    user: parseInt(dom.getAttribute("data-user")),
+                    username: dom.getAttribute("data-username"),
+                    date: parseInt(dom.getAttribute("data-date")),
+                    inline: false
+                }
             }
         }
-    }],
+    ],
     toDOM(node) {
-        return ['span', {
+        let elType = node.attrs.inline ? 'span' : 'div'
+        return [elType, {
             class: `deletion user-${node.attrs.user}`,
             'data-user': node.attrs.user,
             'data-username': node.attrs.username,
@@ -260,36 +278,73 @@ export let insertion = {
         date: {
             default: 0
         },
+        inline: { // Whether the change is inline or block level
+            default: true
+        },
         approved: {
             default: true
         }
     },
     inclusive: false,
     group: "track",
-    parseDOM: [{
-        tag: "span.insertion",
-        getAttrs(dom) {
-            return {
-                user: parseInt(dom.getAttribute("data-user")),
-                username: dom.getAttribute("data-username"),
-                date: parseInt(dom.getAttribute("data-date")),
-                approved: false
+    parseDOM: [
+        {
+            tag: "span.insertion",
+            getAttrs(dom) {
+                return {
+                    user: parseInt(dom.getAttribute("data-user")),
+                    username: dom.getAttribute("data-username"),
+                    date: parseInt(dom.getAttribute("data-date")),
+                    inline: true,
+                    approved: false
+                }
+            }
+        },
+        {
+            tag: "span.approved-insertion",
+            getAttrs(dom) {
+                return {
+                    user: parseInt(dom.getAttribute("data-user")),
+                    username: dom.getAttribute("data-username"),
+                    date: parseInt(dom.getAttribute("data-date")),
+                    inline: true,
+                    approved: true
+                }
+            }
+        },
+        {
+            tag: "div.insertion",
+            getAttrs(dom) {
+                return {
+                    user: parseInt(dom.getAttribute("data-user")),
+                    username: dom.getAttribute("data-username"),
+                    date: parseInt(dom.getAttribute("data-date")),
+                    inline: false,
+                    approved: false
+                }
+            }
+        },
+        {
+            tag: "div.approved-insertion",
+            getAttrs(dom) {
+                return {
+                    user: parseInt(dom.getAttribute("data-user")),
+                    username: dom.getAttribute("data-username"),
+                    date: parseInt(dom.getAttribute("data-date")),
+                    inline: false,
+                    approved: true
+                }
             }
         }
-    }],
+    ],
     toDOM(node) {
-        if (node.attrs.approved) {
-            return ['span', {
-                class: 'dated',
-                'data-date': node.attrs.date
-            }]
-        } else {
-            return ['span', {
-                class: `insertion user-${node.attrs.user}`,
+        let elType = node.attrs.inline ? 'span' : 'div',
+            attrs = {
+                class: node.attrs.approved ? 'approved-insertion' : `insertion user-${node.attrs.user}`,
                 'data-user': node.attrs.user,
                 'data-username': node.attrs.username,
                 'data-date': node.attrs.date
-            }]
-        }
+            }
+        return [elType, attrs]
     }
 }

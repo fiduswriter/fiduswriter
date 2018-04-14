@@ -263,7 +263,7 @@ let keywords = {
 let body = {
     content: "(block | table_block)+",
     group: "part",
-    marks: "annotation",
+    marks: "annotation track",
     defining: true,
     isMetadata() {
         return true
@@ -386,11 +386,17 @@ let spec = {
     })
 }
 
+spec.nodes = spec.nodes.update("blockquote", Object.assign({marks: "annotation track"}, spec.nodes.get("blockquote")))
+
 spec.nodes = addListNodes(spec.nodes, "block+", "block")
+
+spec.nodes = spec.nodes.update("list_item", Object.assign({marks: "annotation track"}, spec.nodes.get("list_item")))
 
 spec.nodes = spec.nodes.append(tableNodes({
     tableGroup: "table_block",
     cellContent: "block+"
 }))
+
+spec.nodes = spec.nodes.update("table_cell", Object.assign({marks: "annotation track"}, spec.nodes.get("table_cell")))
 
 export const docSchema = new Schema(spec)

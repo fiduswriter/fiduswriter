@@ -1,4 +1,4 @@
-.deletion {
+span.deletion {
     text-decoration: line-through;
 }
 
@@ -10,4 +10,17 @@
 .margin-box .track-title {
     text-align: right;
     font-weight: 700;
+}
+
+div.deletion > *, div.insertion > * {
+    position: relative;
+}
+
+
+div.deletion > *::before, div.insertion > *::before {
+    content: '';
+    position: absolute;
+    border-left: 1px solid black;
+    left: -10px;
+    height: 22px;
 }

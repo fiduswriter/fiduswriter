@@ -36,10 +36,7 @@ export class ModMarginboxes {
         let marginBoxes = [], referrers = [], activeCommentStyle = '', lastNodeTrackMarks = []
 
         this.editor.view.state.doc.descendants((node, pos, parent) => {
-            if (!node.isInline && !node.isLeaf) {
-                return
-            }
-            let commentIds = this.editor.mod.comments.interactions.findCommentIds(node)
+            let commentIds = node.isInline || node.isLeaf ? this.editor.mod.comments.interactions.findCommentIds(node) : []
 
             let nodeTrackMarks = node.marks.filter(mark =>
                 mark.type.name==='deletion' ||
@@ -51,7 +48,9 @@ export class ModMarginboxes {
                 !lastNodeTrackMarks.find(
                     lastMark => mark.type.name===lastMark.type.name &&
                     mark.attrs.user===lastMark.attrs.user &&
-                    mark.attrs.date===lastMark.attrs.date
+                    mark.attrs.date===lastMark.attrs.date &&
+                    mark.attrs.inline &&  // block level changes always need new boxes
+                    mark.attrs.inline===lastMark.attrs.inline
                 )
             )
 
@@ -81,7 +80,7 @@ export class ModMarginboxes {
                 referrers.push(pos)
             })
             trackMarks.forEach(mark => {
-                marginBoxes.push({type: mark.type.name, data: Object.assign({}, mark.attrs), pos})
+                marginBoxes.push({type: mark.type.name, data: Object.assign({}, mark.attrs), nodeName: node.type.name, pos})
                 referrers.push(pos)
             })
         })

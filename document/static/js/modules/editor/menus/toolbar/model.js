@@ -1,29 +1,46 @@
-import {setBlockType, wrapIn, toggleMark} from "prosemirror-commands"
+import {wrapIn, toggleMark} from "prosemirror-commands"
 import {wrapInList} from "prosemirror-schema-list"
 import {undo, redo, undoDepth, redoDepth} from "prosemirror-history"
+import {ReplaceAroundStep} from "prosemirror-transform"
+import {Slice, Fragment} from "prosemirror-model"
 
 import {CitationDialog, FigureDialog, LinkDialog, MathDialog} from "../../dialogs"
 import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from "../.."
 import {randomHeadingId, randomAnchorId} from "../../../schema/common"
 
 
-let setHeadlineBlock = function(editor, level) {
-    let block = editor.currentView.state.schema.nodes['heading'],
-        attrs = {level}
-
-    if (
-        editor.currentView.state.selection.$from.parent &&
-        editor.currentView.state.selection.$from.parent.attrs &&
-        editor.currentView.state.selection.$from.parent.attrs.id &&
-        editor.currentView.state.selection.$from.parent.attrs.id.length
-    ) {
-        attrs.id = editor.currentView.state.selection.$from.parent.attrs.id
-    } else {
-        attrs.id = randomHeadingId()
+// Modified version of setBlockType that keeps heading IDs and marks.
+// Source: https://github.com/ProseMirror/prosemirror-transform/blob/07a71183adfd7ee0b8be35e4b7729eecde09d1f7/src/structure.js#L116-L131
+let setBlockType = function(view, typeName, attrs) {
+    let type = view.state.schema.nodes[typeName]
+    let {
+        from,
+        to
+    } = view.state.selection
+    let tr = view.state.tr
+    view.state.doc.nodesBetween(from, to, (node, pos) => {
+        if (node.isTextblock && !node.hasMarkup(type, attrs) && canChangeType(tr.doc, tr.mapping.map(pos, 1), type)) {
+            // Ensure all markup that isn't allowed in the new node type is cleared
+            tr.clearIncompatible(tr.mapping.map(pos, 1), type)
+            let startM = tr.mapping.map(pos, 1),
+                endM = tr.mapping.map(pos + node.nodeSize, 1)
+            if (node.type === type && typeName === 'heading') {
+                attrs = Object.assign({}, node.attrs, attrs)
+            }
+            tr.step(new ReplaceAroundStep(startM, endM, startM + 1, endM - 1,
+                new Slice(Fragment.from(type.create(attrs, null, node.marks)), 0, 0), 1, true))
+            return false
+        }
+    })
+    if (tr.steps.length) {
+        view.dispatch(tr)
     }
+}
 
-    let command = setBlockType(block, attrs)
-    command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
+// helper function for setBlockType
+function canChangeType(doc, pos, type) {
+    let $pos = doc.resolve(pos), index = $pos.index()
+    return $pos.parent.canReplaceWith(index, index + 1, type)
 }
 
 
@@ -169,45 +186,35 @@ export let toolbarModel = {
             content: [
                 {
                     title: BLOCK_LABELS['paragraph'],
-                    action: editor => {
-                        let block = editor.currentView.state.schema.nodes['paragraph']
-
-                        let command = setBlockType(block)
-                        command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
-                    }
+                    action: editor => setBlockType(editor.currentView, 'paragraph')
                 },
                 {
                     title: BLOCK_LABELS['heading_1'],
-                    action: editor => setHeadlineBlock(editor, 1)
+                    action: editor => setBlockType(editor.currentView, 'heading', {level: 1})
                 },
                 {
                     title: BLOCK_LABELS['heading_2'],
-                    action: editor => setHeadlineBlock(editor, 2)
+                    action: editor => setBlockType(editor.currentView, 'heading', {level: 2})
                 },
                 {
                     title: BLOCK_LABELS['heading_3'],
-                    action: editor => setHeadlineBlock(editor, 3)
+                    action: editor => setBlockType(editor.currentView, 'heading', {level: 3})
                 },
                 {
                     title: BLOCK_LABELS['heading_4'],
-                    action: editor => setHeadlineBlock(editor, 4)
+                    action: editor => setBlockType(editor.currentView, 'heading', {level: 4})
                 },
                 {
                     title: BLOCK_LABELS['heading_5'],
-                    action: editor => setHeadlineBlock(editor, 5)
+                    action: editor => setBlockType(editor.currentView, 'heading', {level: 5})
                 },
                 {
                     title: BLOCK_LABELS['heading_6'],
-                    action: editor => setHeadlineBlock(editor, 6)
+                    action: editor => setBlockType(editor.currentView, 'heading', {level: 6})
                 },
                 {
                     title: BLOCK_LABELS['code_block'],
-                    action: editor => {
-                        let block = editor.currentView.state.schema.nodes['code_block']
-
-                        let command = setBlockType(block)
-                        command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
-                    }
+                    action: editor => setBlockType(editor.currentView, 'code_block')
                 },
 
             ]

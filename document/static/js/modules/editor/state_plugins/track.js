@@ -16,6 +16,7 @@ const selectedDeletionSpec = {}
 //   * footnote contents
 // - Decide whether to store block level approved insertions or not.
 // - Tests
+// - Use custom setBlockType for keyboard shortcuts
 
 export function getSelectedChanges(state) {
     let {decos} = key.getState(state)

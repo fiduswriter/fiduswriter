@@ -66,7 +66,7 @@ let deleteCurrentUser = function() {
     post(
         '/account/delete/'
     ).then(
-        () => window.location = '/logout/'
+        () => window.location = '/account/logout/'
     ).catch(
         () => {
             addAlert('error', gettext('Could not delete account'))

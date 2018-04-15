@@ -42,8 +42,8 @@ export class DocMaintenance {
         postJson(
             '/document/maintenance/get_all/', {batch: this.batch}
         ).then(
-            data => {
-                let docs = window.JSON.parse(data.docs)
+            ({json}) => {
+                let docs = window.JSON.parse(json.docs)
                 if (docs.length) {
                     addAlert('info', `${gettext('Downloaded batch')}: ${this.batch}`)
                     docs.forEach(doc => this.fixDoc(doc))
@@ -73,36 +73,33 @@ export class DocMaintenance {
             version: doc.fields.version,
             id: doc.pk
         }
-        let docVersion = parseFloat(doc.fields.doc_version)
-        return new Promise((resolve, reject) => {
-            if (docVersion < 2) {
-                // In version 0 - 1.x, the bibliography had to be loaded from
-                // the document user.
+        let docVersion = parseFloat(doc.fields.doc_version), p
+        if (docVersion < 2) {
+            // In version 0 - 1.x, the bibliography had to be loaded from
+            // the document user.
 
-                postJson(
-                    '/document/maintenance/get_user_biblist/',
-                    {
-                        user_id: doc.fields.owner
-                    }
-                ).then(
-                    response => {
-                        resolve(response.bibList.reduce((db, item) => {
-                            let id = item['id']
-                            let bibDBEntry = {}
-                            bibDBEntry['fields'] = JSON.parse(item['fields'])
-                            bibDBEntry['bib_type'] = item['bib_type']
-                            bibDBEntry['entry_key'] = item['entry_key']
-                            db[id] = bibDBEntry
-                            return db
-                        }, {}))
-                    }
-                ).catch(
-                    () => reject()
-                )
-            } else {
-                resolve(doc.bibliography)
-            }
-        }).then(bibliography => {
+            p = postJson(
+                '/document/maintenance/get_user_biblist/',
+                {
+                    user_id: doc.fields.owner
+                }
+            ).then(
+                ({json}) => {
+                    return json.bibList.reduce((db, item) => {
+                        let id = item['id']
+                        let bibDBEntry = {}
+                        bibDBEntry['fields'] = JSON.parse(item['fields'])
+                        bibDBEntry['bib_type'] = item['bib_type']
+                        bibDBEntry['entry_key'] = item['entry_key']
+                        db[id] = bibDBEntry
+                        return db
+                    }, {})
+                }
+            )
+        } else {
+            p = Promise.resolve(doc.bibliography)
+        }
+        p.then(bibliography => {
             // updates doc to the newest version
             doc = updateDoc(oldDoc, bibliography, docVersion)
             // only proceed with saving if the doc update has changed something
@@ -149,10 +146,10 @@ export class DocMaintenance {
         postJson(
             '/document/maintenance/get_all_revision_ids/'
         ).then(
-            data => {
-                this.revSavesLeft = data.revision_ids.length
+            ({json}) => {
+                this.revSavesLeft = json.revision_ids.length
                 if (this.revSavesLeft) {
-                    data.revision_ids.forEach(revId => this.updateRevision(revId))
+                    json.revision_ids.forEach(revId => this.updateRevision(revId))
                 } else {
                     this.done()
                 }

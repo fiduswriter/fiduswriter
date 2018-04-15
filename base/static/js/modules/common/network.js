@@ -56,7 +56,7 @@ export let getJson = function(url, params={}, csrfToken=false) {
     )
 }
 
-export let post = function(url, params={}, csrfToken=false) {
+export let postBare = function(url, params={}, csrfToken=false) {
     if (!csrfToken) {
         csrfToken = getCsrfToken() // Won't work in web worker.
     }
@@ -82,20 +82,17 @@ export let post = function(url, params={}, csrfToken=false) {
         },
         credentials: 'include',
         body
-    }).then(
+    })
+}
+
+export let post = function(url, params={}, csrfToken=false) {
+    return postBare(url, params, csrfToken).then(
         handleFetchErrors
     )
 }
 
-// post and then return json
-export let postJson = function(url, params={}, csrfToken=false) {
-    return post(url, params, csrfToken).then(
-        response => response.json()
-    )
-}
-
 // post and then return json and status
-export let postJsonStatus = function(url, params={}, csrfToken=false) {
+export let postJson = function(url, params={}, csrfToken=false) {
     return post(url, params, csrfToken).then(
         response => response.json().then(
             json => ({json, status: response.status})

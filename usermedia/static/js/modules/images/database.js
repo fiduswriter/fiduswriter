@@ -15,9 +15,9 @@ export class ImageDB {
         activateWait()
 
         return postJson('/usermedia/images/').then(
-            response => {
-                this.cats = response.imageCategories
-                let ids = response.images.map(
+            ({json}) => {
+                this.cats = json.imageCategories
+                let ids = json.images.map(
                     image => {
                         image.image = image.image.split('?')[0]
                         this.db[image.id] = image
@@ -38,22 +38,20 @@ export class ImageDB {
             '/usermedia/save/',
             postData
         ).then(
-            response => {
+            ({json}) => {
                 deactivateWait()
-                if (Object.keys(response.errormsg).length) {
-                    return Promise.reject(response.errormsg)
+                if (Object.keys(json.errormsg).length) {
+                    return Promise.reject(json.errormsg)
                 } else {
-                    this.db[response.values.id] = response.values
-                    return response.values.id
+                    this.db[json.values.id] = json.values
+                    return json.values.id
                 }
             }
         ).catch(
-            errors => {
+            error => {
                 addAlert('error', gettext('Could not save image'))
                 deactivateWait()
-                if (errors) {
-                    return Promise.reject(errors)
-                }
+                throw(error)
             }
         )
 

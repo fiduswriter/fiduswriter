@@ -17,10 +17,20 @@ export let changeAvatarDialogTemplate = () =>
 
 /** A template for the confirmation dialog to delete a user account. */
 export let deleteUserDialogTemplate = () =>
-    `<p>
-        ${gettext('Really delete your account? Type in your username below to confirm deletion.')}
+    `<h3>
+        ${gettext('NOTICE: ALL OF YOUR INFORMATION WILL DISAPPEAR FROM OUR SYSTEM!')}
+    </h3>
+    <p>
+        ${gettext('Really delete your account? Type in your username and password below to confirm deletion.')}
     </p>
-    <input type="text" id="username-confirmation">`
+    <p>
+        ${gettext('We cannot reverse an account deletion.')}
+    </p>
+    <p>
+        ${gettext('Some copies of your files may temporarily be kept in our backup system, but also these will disappear automatically in due time.')}
+    </p>
+    <input type="text" id="username-confirmation" placeholder="${gettext('Username')}">
+    <input type="password" id="password" autocomplete="new-password" placeholder="${gettext('Password')}">`
 
 /** A template for the change email dialog of the user account. */
 export let changeEmailDialogTemplate = () =>

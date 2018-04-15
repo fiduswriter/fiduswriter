@@ -24,7 +24,7 @@ export {
     getJson,
     post,
     postJson,
-    postJsonStatus
+    postBare
 }
 from "./network"
 

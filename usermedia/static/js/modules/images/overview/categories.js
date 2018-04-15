@@ -18,16 +18,18 @@ export class ImageOverviewCategories {
                 'ids': cats.ids,
                 'titles': cats.titles
             }
-        ).then(
-            response => {
-                this.imageOverview.imageDB.cats = response.entries
-                this.setImageCategoryList(response.entries)
-                addAlert('success', gettext('The categories have been updated'))
-            }
         ).catch(
-            () => addAlert('error', gettext('Could not update categories'))
+            error => {
+                addAlert('error', gettext('Could not update categories'))
+                throw(error)
+            }
         ).then(
-            () => deactivateWait()
+            ({json}) => {
+                this.imageOverview.imageDB.cats = json.entries
+                this.setImageCategoryList(json.entries)
+                addAlert('success', gettext('The categories have been updated'))
+                deactivateWait()
+            }
         )
     }
 

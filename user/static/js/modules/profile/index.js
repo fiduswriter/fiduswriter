@@ -1,8 +1,9 @@
 import {changeAvatarDialogTemplate, confirmDeleteAvatarTemplate,
-    deleteUserDialogTemplate, changePwdDialogTemplate, changeEmailDialogTemplate,
+    changePwdDialogTemplate, changeEmailDialogTemplate,
 deleteEmailDialogTemplate, changePrimaryEmailDialogTemplate} from "./templates"
-import {addDropdownBox, activateWait, deactivateWait, post, postJson, postJsonStatus, addAlert, findTarget, whenReady, Dialog, escapeText} from "../common"
+import {addDropdownBox, activateWait, deactivateWait, post, postJson, addAlert, findTarget, whenReady, Dialog, escapeText} from "../common"
 import {SiteMenu} from "../menu"
+import {DeleteUserDialog} from "./delete_user"
 
 let changeAvatarDialog = function() {
     let buttons = [
@@ -31,7 +32,7 @@ let changeAvatarDialog = function() {
                         }
                     }
                 ).then(
-                    response => document.querySelector('#profile-avatar > img').setAttribute('src', response.avatar)
+                    ({json}) => document.querySelector('#profile-avatar > img').setAttribute('src', json.avatar)
                 ).catch(
                     () => addAlert('error', gettext('Could not update profile avatar'))
                 ).then(
@@ -60,21 +61,6 @@ let changeAvatarDialog = function() {
     document.getElementById('upload-avatar-btn').addEventListener('click', () => document.getElementById('avatar-uploader').click())
 }
 
-let deleteCurrentUser = function() {
-    activateWait()
-
-    post(
-        '/account/delete/'
-    ).then(
-        () => window.location = '/account/logout/'
-    ).catch(
-        () => {
-            addAlert('error', gettext('Could not delete account'))
-            deactivateWait()
-        }
-    )
-}
-
 
 let deleteAvatar = function() {
     activateWait()
@@ -82,7 +68,7 @@ let deleteAvatar = function() {
     postJson(
         '/account/avatar/delete/'
     ).then(
-        response => document.querySelector('#profile-avatar > img').setAttribute('src', response.avatar)
+        ({json}) => document.querySelector('#profile-avatar > img').setAttribute('src', json.avatar)
     ).catch(
         () => addAlert('error', gettext('Could not delete avatar'))
     ).then(
@@ -137,35 +123,6 @@ let saveProfile = function() {
 
 }
 
-let deleteUserDialog = function() {
-    let username = this.dataset.username
-    let buttons = [
-        {
-            text: gettext('Delete'),
-            classes: "fw-dark",
-            click: () => {
-                let usernamefieldValue = document.getElementById('username-confirmation').value
-                if (usernamefieldValue===username) {
-                    deleteCurrentUser()
-                    dialog.close()
-                }
-            }
-        },
-        {
-            type: 'cancel'
-        }
-    ]
-    let dialog = new Dialog({
-        id: 'confirmaccountdeletion',
-        title: gettext('Confirm deletion'),
-        body: deleteUserDialogTemplate(),
-        icon: 'fa-exclamation-triangle',
-        buttons,
-        height: 250
-    })
-    dialog.open()
-}
-
 let changePwdDialog = function() {
     let buttons = [
         {
@@ -191,7 +148,7 @@ let changePwdDialog = function() {
 
                 activateWait()
 
-                postJsonStatus(
+                postJson(
                     '/account/passwordchange/',
                     {
                         old_password: oldPwd,
@@ -257,7 +214,7 @@ let addEmailDialog = function() {
 
                 document.getElementById('new-profile-email').value = email
 
-                postJsonStatus(
+                postJson(
                     '/account/emailadd/',
                     {
                         email
@@ -304,14 +261,14 @@ let deleteEmailDialog = function(target) {
             click: () => {
                 activateWait()
 
-                postJsonStatus(
+                postJson(
                     '/account/emaildelete/',
                     {
                         email
                     }
                 ).then(
                     ({json, status}) => {
-                        if(200 == status) {
+                        if(200 === status) {
                             thisTr.parentElement.removeChild(thisTr)
                         }
                         addAlert('info', gettext(json.msg))
@@ -357,14 +314,14 @@ let changePrimaryEmailDialog = function() {
             click: () => {
                 activateWait()
 
-                postJsonStatus(
+                postJson(
                     '/account/emailprimary/',
                     {
                         email
                     }
                 ).then(
                     ({json, status}) => {
-                        if(200 == status) {
+                        if(200 === status) {
                             document.querySelector('tr.primary-email-tr span.disabled').setAttribute('class', 'delete-email fw-link-text')
                             primEmailErapper.find('span.delete-email.fw-link-text').attr('class', 'disabled')
                         } else {
@@ -407,7 +364,10 @@ export let bind = function() {
         document.querySelector('.change-avatar').addEventListener('mousedown', changeAvatarDialog)
         document.querySelector('.delete-avatar').addEventListener('mousedown', deleteAvatarDialog)
         document.getElementById('submit-profile').addEventListener('click', saveProfile)
-        document.getElementById('delete-account').addEventListener('click', deleteUserDialog)
+        document.getElementById('delete-account').addEventListener('click', () => {
+            let dialog = new DeleteUserDialog(document.getElementById('delete-account').dataset.username)
+            dialog.init()
+        })
         document.getElementById('fw-edit-profile-pwd').addEventListener('click',changePwdDialog)
         document.getElementById('add-profile-email').addEventListener('click', addEmailDialog)
         document.addEventListener('click', event => {

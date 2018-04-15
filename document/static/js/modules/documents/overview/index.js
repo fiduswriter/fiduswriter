@@ -78,20 +78,20 @@ export class DocumentOverview {
                 throw(error)
             }
         ).then(
-            response => {
+            ({json}) => {
                 let ids = new Set()
-                this.documentList = response.documents.filter(doc => {
+                this.documentList = json.documents.filter(doc => {
                     if (ids.has(doc.id)) {return false}
                     ids.add(doc.id)
                     return true
                 })
 
-                this.teamMembers = response.team_members
-                this.accessRights = response.access_rights
-                this.user = response.user
-                this.citationStyles = response.citation_styles
-                this.citationLocales = response.citation_locales
-                this.exportTemplates = response.export_templates
+                this.teamMembers = json.team_members
+                this.accessRights = json.access_rights
+                this.user = json.user
+                this.citationStyles = json.citation_styles
+                this.citationLocales = json.citation_locales
+                this.exportTemplates = json.export_templates
                 this.initTable()
                 this.addExportTemplatesToMenu()
             }

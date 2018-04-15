@@ -167,8 +167,8 @@ export class DocumentAccessRightsDialog {
                 'rights': newAccessRights
             }
         ).then(
-            response => {
-                this.accessRights = response.access_rights
+            ({json}) => {
+                this.accessRights = json.access_rights
                 this.modifiedRightsCall(this.accessRights)
                 addAlert('success', gettext(
                     'Access rights have been saved'))

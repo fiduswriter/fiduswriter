@@ -6,7 +6,7 @@
   "sub": true,
   "undef": true,
   "globals": {
-    "jQuery": true,
+    "django": true,
     "MathQuill": true,
     "gettext": false,
     "$StaticUrls": false,
@@ -16,7 +16,6 @@
     "self": true
   },
   "browser": true,
-  "jquery": true,
   "worker": true,
   "varstmt": true
 }

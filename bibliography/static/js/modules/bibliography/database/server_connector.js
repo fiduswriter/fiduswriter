@@ -5,7 +5,7 @@ import {post, postJson} from "../../common"
 export class BibliographyDBServerConnector {
 
     constructor(csrfToken) {
-        this.csrfToken = csrfToken
+        this.csrfToken = csrfToken // To be usable from worker
     }
 
     getDB(lastModified, numberOfEntries, localStorageOwnerId) {
@@ -18,13 +18,13 @@ export class BibliographyDBServerConnector {
             },
             this.csrfToken
         ).then(
-            response => {
+            ({json}) => {
                 return {
-                    bibCats: response['bib_categories'],
-                    bibList: response.hasOwnProperty('bib_list') ? response['bib_list'].map(item => this.serverBibItemToBibDB(item)) : false,
-                    lastModified: response['last_modified'],
-                    numberOfEntries: response['number_of_entries'],
-                    userId: response['user_id']
+                    bibCats: json['bib_categories'],
+                    bibList: json.hasOwnProperty('bib_list') ? json['bib_list'].map(item => this.serverBibItemToBibDB(item)) : false,
+                    lastModified: json['last_modified'],
+                    numberOfEntries: json['number_of_entries'],
+                    userId: json['user_id']
                 }
             }
         )
@@ -65,7 +65,7 @@ export class BibliographyDBServerConnector {
             },
             this.csrfToken
         ).then(
-            response => response['id_translations']
+            ({json}) => json['id_translations']
         )
     }
 
@@ -78,7 +78,9 @@ export class BibliographyDBServerConnector {
             },
             this.csrfToken
         ).then(
-            response => response.entries
+            ({json}) => {
+                return json.entries
+            }
         )
     }
 

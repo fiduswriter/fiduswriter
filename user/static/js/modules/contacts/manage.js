@@ -1,5 +1,5 @@
 import {addTeammemberTemplate, teammemberTemplate} from "./templates"
-import {postJsonStatus, cancelPromise, Dialog} from "../common"
+import {postJson, cancelPromise, Dialog} from "../common"
 
 /**
  * Sets up the contacts management. Helper functions for adding and removing contacts.
@@ -17,7 +17,7 @@ let addMember = function(userString) {
         return cancelPromise()
     }
 
-    return postJsonStatus(
+    return postJson(
         '/account/teammember/add',
         {
             user_string: userString
@@ -95,7 +95,7 @@ export let addMemberDialog = function() {
 
 let deleteMember = function(ids) {
 
-    postJsonStatus(
+    postJson(
         '/account/teammember/remove',
         {
             'members[]': ids

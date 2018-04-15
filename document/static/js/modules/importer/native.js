@@ -44,17 +44,14 @@ export class ImportNative {
                     checksum: imageEntry.checksum,
                     image: {file: imageEntry.file, filename: imageEntry.image.split('/').pop()}
                 }).then(
-                    data => ImageTranslationTable[imageEntry.id] = data.id
-                ).catch(
-                    () => {
-                        addAlert(
-                            'error',
-                            `${gettext('Could not save Image')} ${imageEntry.checksum}`
-                        )
-                        return Promise.reject()
-                    }
-                )
-
+                    ({json}) => ImageTranslationTable[imageEntry.id] = json.id
+                ).catch(error => {
+                    addAlert(
+                        'error',
+                        `${gettext('Could not save Image')} ${imageEntry.checksum}`
+                    )
+                    throw(error)
+                })
             }
         )
         return Promise.all(sendPromises)
@@ -90,13 +87,11 @@ export class ImportNative {
         // can link the images to it.
 
         return postJson('/document/import/create/').then(
-                data => this.docId = data.id
-            ).catch(
-                () => {
-                    addAlert('error', gettext('Could not create document'))
-                    return Promise.reject()
-                }
-            )
+            ({json}) => this.docId = json.id
+        ).catch(error => {
+            addAlert('error', gettext('Could not create document'))
+            throw(error)
+        })
     }
 
     saveDocument() {
@@ -111,7 +106,7 @@ export class ImportNative {
                 bibliography: JSON.stringify(this.bibliography)
             }
         ).then(
-            data => {
+            ({json}) => {
                 let docInfo = {
                     is_owner: true,
                     access_rights: 'write',
@@ -125,16 +120,17 @@ export class ImportNative {
                 this.doc.version = 0
                 this.doc.comment_version = 0
                 this.doc.id = this.docId
-                this.doc.added = data['added']
-                this.doc.updated = data['updated']
+                this.doc.added = json.added
+                this.doc.updated = json.updated
                 this.doc.revisions = []
                 this.doc.rights = "write"
                 return {doc: this.doc, docInfo}
+
             }
         ).catch(
-            () => {
+            error => {
                 addAlert('error', `${gettext('Could not save ')} ${this.doc.title}`)
-                return Promise.reject()
+                throw(error)
             }
         )
     }

@@ -249,7 +249,7 @@ def delete_avatar_js(request):
 @login_required
 def delete_user_js(request):
     """
-    Mark the user as deleted
+    Delete the user
     """
     response = {}
     status = 405
@@ -257,10 +257,14 @@ def delete_user_js(request):
         user = request.user
         # Only remove users who are not marked as having staff status
         # to prevent administratoras from deleting themselves accidentally.
-        if user.is_staff is False:
-            user.is_active = False
-        user.save()
-        status = 200
+        if not user.check_password(request.POST['password']):
+            status = 401
+        elif user.is_staff:
+            status = 403
+        else:
+            logout(request)
+            user.delete()
+            status = 204
     return JsonResponse(
         response,
         status=status

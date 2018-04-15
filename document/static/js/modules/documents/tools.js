@@ -19,8 +19,8 @@ export let getMissingDocumentListData = function (ids, documentList) {
                 ids: incompleteIds.join(',')
             }
         ).then(
-            response => {
-                response.documents.forEach(
+            ({json}) => {
+                json.documents.forEach(
                     extraValues => {
                         let doc = documentList.find(entry => entry.id === extraValues.id)
                         doc.contents = JSON.parse(extraValues.contents)

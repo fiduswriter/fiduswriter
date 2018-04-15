@@ -17,11 +17,14 @@ export class ContactsOverview {
     getList() {
 
         postJson('/user/team/list/').then(
-            json => {
+            ({json}) => {
                 document.querySelector('#team-table tbody').innerHTML += teammemberTemplate({members: json.team_members})
             }
         ).catch(
-            () => addAlert('error', gettext('Could not obtain contacts list'))
+            error => {
+                addAlert('error', gettext('Could not obtain contacts list'))
+                throw(error)
+            }
         )
     }
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-28 09:06+0000\n"
+"POT-Creation-Date: 2018-04-18 07:01+0000\n"
 "PO-Revision-Date: 2013-03-03 12:18-0700\n"
 "Last-Translator: Ana Vera Resquín <ani.tavr77@gmail.com>\n"
 "Language-Team: Spanish <ani.tavr77@gmail.com>\n"
@@ -22,15 +22,15 @@ msgstr ""
 msgid "The all in one solution for collaborative academic writing."
 msgstr "La herramienta perfecta para redactar textos académicos."
 
-#: base/templates/base.html:77
+#: base/templates/base.html:76
 msgid "Edit profile"
 msgstr "Edita tu perfil"
 
-#: base/templates/base.html:82 user/templates/account/list_team_members.html:19
+#: base/templates/base.html:81 user/templates/account/list_team_members.html:19
 msgid "Contacts"
 msgstr "Contactos"
 
-#: base/templates/base.html:88
+#: base/templates/base.html:87
 msgid "Log out"
 msgstr "Cerrar sesión"
 
@@ -56,31 +56,6 @@ msgstr ""
 msgid "Bibliography Manager"
 msgstr "Administrador de Bibliografía"
 
-#: bibliography/templates/bibliography/index.html:30
-#: document/templates/document/index.html:27
-msgid "Title"
-msgstr "Título"
-
-#: bibliography/templates/bibliography/index.html:31
-msgid "Sourcetype"
-msgstr "Tipo de fuente"
-
-#: bibliography/templates/bibliography/index.html:32
-msgid "Author"
-msgstr "Autor"
-
-#: bibliography/templates/bibliography/index.html:33
-msgid "Published"
-msgstr "Publicado"
-
-#: bibliography/templates/bibliography/index.html:34
-#: document/templates/document/index.html:33
-#: user/templates/account/list_team_members.html:21
-#: user/templates/account/show_profile.html:71
-#: usermedia/templates/usermedia/index.html:25
-msgid "Delete"
-msgstr "Borrar"
-
 #: browser_check/templates/browser_check/browser_not_supported.html:4
 #: browser_check/templates/browser_check/browser_not_supported.html:27
 msgid "Browser not supported"
@@ -96,7 +71,7 @@ msgid ""
 "            "
 msgstr ""
 
-#: document/templates/document/editor.html:89
+#: document/templates/document/editor.html:88
 msgid "en"
 msgstr "es"
 
@@ -104,36 +79,16 @@ msgstr "es"
 msgid "Document Overview"
 msgstr "Lista de Documentos"
 
-#: document/templates/document/index.html:28
-msgid "Revisions"
-msgstr ""
-
-#: document/templates/document/index.html:29
-msgid "Created"
-msgstr "Creado"
-
-#: document/templates/document/index.html:30
-msgid "Last changed"
-msgstr "Último cambio"
-
-#: document/templates/document/index.html:31
-msgid "Owner"
-msgstr "Propietario"
-
-#: document/templates/document/index.html:32
-msgid "Rights"
-msgstr "Derechos"
-
 #: document/templates/maintenance/index.html:4
 msgid "Maintenance"
 msgstr ""
 
-#: document/templates/maintenance/index.html:17
+#: document/templates/maintenance/index.html:15
 #, fuzzy
 msgid "Document Maintenance"
 msgstr "Documentos"
 
-#: document/templates/maintenance/index.html:19
+#: document/templates/maintenance/index.html:17
 msgid ""
 "\n"
 "            Before and after upgrading Fidus Writer, you should update all "
@@ -144,21 +99,21 @@ msgid ""
 "            "
 msgstr ""
 
-#: document/templates/maintenance/index.html:27
+#: document/templates/maintenance/index.html:25
 msgid "Update all documents (DANGER!)"
 msgstr ""
 
-#: document/views.py:216
+#: document/views.py:218
 #, fuzzy
 msgid "Untitled"
 msgstr "Subtítulo"
 
-#: document/views.py:230
+#: document/views.py:232
 #, fuzzy
 msgid "Document shared:"
 msgstr "Documentos"
 
-#: document/views.py:256
+#: document/views.py:258
 msgid "Fidus Writer document write access"
 msgstr ""
 
@@ -176,31 +131,31 @@ msgstr "enviar"
 msgid "Thank you for your comment!"
 msgstr "¡Gracias por tu comentario!"
 
-#: fiduswriter/settings.py:241
+#: fiduswriter/settings.py:239
 msgid "English"
 msgstr "Inglés"
 
-#: fiduswriter/settings.py:242
+#: fiduswriter/settings.py:240
 msgid "Bulgarian"
 msgstr "Búlgaro"
 
-#: fiduswriter/settings.py:243
+#: fiduswriter/settings.py:241
 msgid "German"
 msgstr "Alemán"
 
-#: fiduswriter/settings.py:244
+#: fiduswriter/settings.py:242
 msgid "French"
 msgstr "Francés"
 
-#: fiduswriter/settings.py:245
+#: fiduswriter/settings.py:243
 msgid "Italian"
 msgstr "Italiano"
 
-#: fiduswriter/settings.py:246
+#: fiduswriter/settings.py:244
 msgid "Spanish"
 msgstr "Español"
 
-#: user/templates/account/base.html:56 user/templates/account/login.html:7
+#: user/templates/account/base.html:52 user/templates/account/login.html:7
 #: user/templates/account/signup.html:9
 msgid "Log In"
 msgstr "Iniciar sesión"
@@ -286,6 +241,11 @@ msgstr "Miembros del equipo"
 #: user/templates/account/signup.html:44
 msgid "E-mail address"
 msgstr "Correo electrónico"
+
+#: user/templates/account/list_team_members.html:21
+#: user/templates/account/show_profile.html:71
+msgid "Delete"
+msgstr "Borrar"
 
 #: user/templates/account/login.html:8
 #: user/templates/account/password_reset.html:7
@@ -504,18 +464,6 @@ msgstr ""
 msgid "Media Manager"
 msgstr "Administrador de medios"
 
-#: usermedia/templates/usermedia/index.html:22
-msgid "File"
-msgstr "Archivo"
-
-#: usermedia/templates/usermedia/index.html:23
-msgid "Size (px)"
-msgstr "Tamaño (píxeles)"
-
-#: usermedia/templates/usermedia/index.html:24
-msgid "Added"
-msgstr ""
-
 #: usermedia/views.py:41
 msgid "Filetype not supported"
 msgstr ""
@@ -523,6 +471,36 @@ msgstr ""
 #: usermedia/views.py:68
 msgid "No file uploaded"
 msgstr ""
+
+#~ msgid "Title"
+#~ msgstr "Título"
+
+#~ msgid "Sourcetype"
+#~ msgstr "Tipo de fuente"
+
+#~ msgid "Author"
+#~ msgstr "Autor"
+
+#~ msgid "Published"
+#~ msgstr "Publicado"
+
+#~ msgid "Created"
+#~ msgstr "Creado"
+
+#~ msgid "Last changed"
+#~ msgstr "Último cambio"
+
+#~ msgid "Owner"
+#~ msgstr "Propietario"
+
+#~ msgid "Rights"
+#~ msgstr "Derechos"
+
+#~ msgid "File"
+#~ msgstr "Archivo"
+
+#~ msgid "Size (px)"
+#~ msgstr "Tamaño (píxeles)"
 
 #~ msgid "Updated"
 #~ msgstr "Cambiado"

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer git Version\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-25 01:13-0200\n"
+"POT-Creation-Date: 2018-04-18 07:01+0000\n"
 "PO-Revision-Date: 2015-04-25 21:29-0300\n"
 "Last-Translator: Job Diogenes Ribeiro Borges <jobdrb@gmail.com>\n"
 "Language-Team: Portuguese Brazil <jobdrb@gmail.com>\n"
@@ -15,908 +15,915 @@ msgstr ""
 "X-Generator: Poedit 1.5.4\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
-#: account%2Ftemplates%2Faccount%2Fbase.html%3A65+account%2Ftemplates%2Faccount%2Flogin.html%3A7+account%2Ftemplates%2Faccount%2Fsignup.html%3A10
+#: base/templates/base.html:10 document/templates/document/editor.html:10
+#: user/templates/account/base.html:7
 msgid "The all in one solution for collaborative academic writing."
 msgstr ""
 "A solução completa para a escrita acadêmica colaborativa usando tecnologia "
 "latex."
 
-#: account/templates/account/email_confirm.html:8
+#: base/templates/base.html:76
+msgid "Edit profile"
+msgstr "Editar Perfil"
+
+#: base/templates/base.html:81 user/templates/account/list_team_members.html:19
+msgid "Contacts"
+msgstr "Contatos"
+
+#: base/templates/base.html:87
+msgid "Log out"
+msgstr "Sair"
+
+#: base/templates/footer.html:7
+msgid "Terms and Conditions"
+msgstr "Termos e Condições"
+
+#: base/templates/footer.html:12
+#, fuzzy
+#| msgid "Equations and Math by mathjax"
+msgid "Equations and Math by KaTeX"
+msgstr "Equações e matemática por MathJax"
+
+#: base/templates/footer.html:17
+msgid "Citations with Citation Style Language"
+msgstr "Citações usando Citation Style Language"
+
+#: base/templates/footer.html:22
+msgid "Editing with ProseMirror"
+msgstr ""
+
+#: bibliography/templates/bibliography/index.html:7
+msgid "Bibliography Manager"
+msgstr "Gerenciador de Bibliografia"
+
+#: browser_check/templates/browser_check/browser_not_supported.html:4
+#: browser_check/templates/browser_check/browser_not_supported.html:27
+msgid "Browser not supported"
+msgstr ""
+
+#: browser_check/templates/browser_check/browser_not_supported.html:28
+msgid ""
+"\n"
+"                Your browser is not supported by Fidus Writer.\n"
+"                Please update! We recommend using a current\n"
+"                version of Chrome/Chromium or Firefox on a\n"
+"                desktop computer.\n"
+"            "
+msgstr ""
+
+#: document/templates/document/editor.html:88
+msgid "en"
+msgstr "en"
+
+#: document/templates/document/index.html:7
+msgid "Document Overview"
+msgstr "Visão geral do documento"
+
+#: document/templates/maintenance/index.html:4
+msgid "Maintenance"
+msgstr ""
+
+#: document/templates/maintenance/index.html:15
+#, fuzzy
+#| msgid "Document Style"
+msgid "Document Maintenance"
+msgstr "Estilo Document"
+
+#: document/templates/maintenance/index.html:17
+msgid ""
+"\n"
+"            Before and after upgrading Fidus Writer, you should update all "
+"the documents\n"
+"            of all users to the newest document version. Only do this if you "
+"know that\n"
+"            no user is currently editing any document!\n"
+"            "
+msgstr ""
+
+#: document/templates/maintenance/index.html:25
+msgid "Update all documents (DANGER!)"
+msgstr ""
+
+#: document/views.py:218
+msgid "Untitled"
+msgstr "Sem título"
+
+#: document/views.py:232
+msgid "Document shared:"
+msgstr "Documento compartilhado:"
+
+#: document/views.py:258
+msgid "Fidus Writer document write access"
+msgstr "Acesso de escrita a documento do Fidus Writer"
+
+#: feedback/templates/feedback/feedback.html:3
+#: feedback/templates/feedback/feedback.html:6
+msgid "Feedback"
+msgstr "Feedback"
+
+#: feedback/templates/feedback/feedback.html:11
+#: user/templates/account/show_profile.html:106
+msgid "submit"
+msgstr "submeter"
+
+#: feedback/templates/feedback/feedback.html:15
+msgid "Thank you for your comment!"
+msgstr "Obrigado pelo seu comentário!"
+
+#: fiduswriter/settings.py:239
+msgid "English"
+msgstr "Inglês"
+
+#: fiduswriter/settings.py:240
+msgid "Bulgarian"
+msgstr "Búlgaro"
+
+#: fiduswriter/settings.py:241
+msgid "German"
+msgstr "Alemão"
+
+#: fiduswriter/settings.py:242
+msgid "French"
+msgstr ""
+
+#: fiduswriter/settings.py:243
+msgid "Italian"
+msgstr "Italiano"
+
+#: fiduswriter/settings.py:244
+msgid "Spanish"
+msgstr "Espanhol"
+
+#: user/templates/account/base.html:52 user/templates/account/login.html:7
+#: user/templates/account/signup.html:9
 msgid "Log In"
 msgstr "Entrar"
 
-#: account/templates/account/email_confirm.html:17
+#: user/templates/account/email_confirm.html:8
 msgid "Confirm E-mail Address"
 msgstr "Confirme o endereço de e-mail"
 
-#: account/templates/account/email_confirm.html:22
+#: user/templates/account/email_confirm.html:15
 msgid "Confirm E-mail Address and Agree to Terms and Conditions"
 msgstr "Confirme o endereço de e-mail e Concordar com os Termos e Condições"
 
-#: account/templates/account/email_confirm.html:31
+#: user/templates/account/email_confirm.html:20
+#, fuzzy, python-format
+#| msgid ""
+#| "        Please confirm that you own the email <a href=\"mailto:%(email)s"
+#| "\">%(email)s</a>,        that you apply for the username "
+#| "%(user_display)s, and that you have read and agree to the        <a href="
+#| "\"/terms/\" target=\"_blank\">Terms and Conditions</a>.        "
 msgid ""
+"\n"
 "        Please confirm that you own the email <a href=\"mailto:%(email)s\">"
-"%(email)s</a>,        that you apply for the username %(user_display)s, and "
-"that you have read and agree to the        <a href=\"/terms/\" target="
-"\"_blank\">Terms and Conditions</a>.        "
+"%(email)s</a>,\n"
+"        that you apply for the username %(user_display)s, and that you have "
+"read and agree to the\n"
+"        <a href=\"/terms/\" target=\"_blank\">Terms and Conditions</a>.\n"
+"        "
 msgstr ""
 "        Por favor confirme a posse do email <a href=\"mailto:%(email)s\">"
 "%(email)s</a>,        que você atribuiu para o usuário %(user_display)s, e "
 "que você leu e concordou com os        <a href=\"/terms/\" target=\"_blank"
 "\">Termos e Condições</a>.        "
 
-#: account/templates/account/email_confirm.html:39
+#: user/templates/account/email_confirm.html:29
+#, fuzzy
+#| msgid ""
+#| "        I have read and agree to the <a href=\"/terms/\" target=\"_blank"
+#| "\">Terms and Conditions</a>.        "
 msgid ""
+"\n"
 "        I have read and agree to the <a href=\"/terms/\" target=\"_blank"
-"\">Terms and Conditions</a>.        "
+"\">Terms and Conditions</a>.\n"
+"        "
 msgstr ""
 "        Eu li e concordei com os <a href=\"/terms/\" target=\"_blank"
 "\">Termos e Conditions</a>.        "
 
-#: account/templates/account/email_confirm.html:46
+#: user/templates/account/email_confirm.html:37
+#, fuzzy
+#| msgid ""
+#| "            I am aware that I am signing up for a test account and that "
+#| "service may be ended abruptly and without notice, leaving me without my "
+#| "files.            "
 msgid ""
+"\n"
 "            I am aware that I am signing up for a test account and that "
 "service may be ended abruptly and without notice, leaving me without my "
-"files.            "
+"files.\n"
+"            "
 msgstr ""
 "            Estou ciente de que é uma inscrição para uma conta de teste e "
 "que o serviço pode terminar abruptamente e sem aviso prévio, apagando os "
 "arquivos criados.            "
 
-#: account/templates/account/email_confirm.html:54
-msgid ""
-"        Please notice that Fidus Writer currently only works with the Google "
-"Chrome, Chromium or Apple Safari browsers.</p>        "
-msgstr ""
-"        Atenção o Fidus Writer atualmentesó funciona com os navegadores "
-"Google Chrome, Chromium ou Applesafari. </ P>        "
-
-#: account/templates/account/email_confirm.html:62
+#: user/templates/account/email_confirm.html:46
 msgid "Confirm"
 msgstr "Confirmar"
 
-#: account/templates/account/list_team_members.html:8
+#: user/templates/account/email_confirm.html:54
+#, fuzzy, python-format
+#| msgid ""
+#| "        This e-mail confirmation link expired or is invalid.        "
+#| "Please <a href=\"%(email_url)s\">issue a new e-mail confirmation request</"
+#| "a>.        "
 msgid ""
-"        This e-mail confirmation link expired or is invalid.        Please "
-"<a href=\"%(email_url)s\">issue a new e-mail confirmation request</"
-"a>.        "
+"\n"
+"        This e-mail confirmation link expired or is invalid.\n"
+"        Please <a href=\"%(email_url)s\">issue a new e-mail confirmation "
+"request</a>.\n"
+"        "
 msgstr ""
 "        Este link de confirmação de e-mail expirou ou é inválido.        Por "
 "favor <a Href=\"%(email_url)s\">solicite uma nova confirmação de conta de "
 "email </a>.        "
 
-#: account/templates/account/list_team_members.html:39
+#: user/templates/account/list_team_members.html:7
 msgid "Team members"
 msgstr "Membros da equipe"
 
-#: account%2Ftemplates%2Faccount%2Flist_team_members.html%3A44+bibliography%2Ftemplates%2Fbibliography%2Findex.html%3A52+book%2Ftemplates%2Fbook%2Findex.html%3A105+document%2Ftemplates%2Fdocument%2Findex.html%3A105+usermedia%2Ftemplates%2Fusermedia%2Findex.html%3A39
-msgid "Select action"
-msgstr "Selecionar ação"
-
-#: account/templates/account/list_team_members.html:52
-msgid "Delete selected"
-msgstr "Excluirs elecionado"
-
-#: account%2Ftemplates%2Faccount%2Flist_team_members.html%3A62+base%2Ftemplates%2Fbase.html%3A120
-msgid "Add new contact"
-msgstr "Adicionar novo contato"
-
-#: account%2Ftemplates%2Faccount%2Flist_team_members.html%3A63+account%2Ftemplates%2Faccount%2Fpassword_reset.html%3A29+account%2Ftemplates%2Faccount%2Fsignup.html%3A45
-msgid "Contacts"
-msgstr "Contatos"
-
-#: account%2Ftemplates%2Faccount%2Flist_team_members.html%3A64+account%2Ftemplates%2Faccount%2Fshow_profile.html%3A88+bibliography%2Ftemplates%2Fbibliography%2Findex.html%3A107+book%2Ftemplates%2Fbook%2Findex.html%3A164+document%2Ftemplates%2Fdocument%2Findex.html%3A165+usermedia%2Ftemplates%2Fusermedia%2Findex.html%3A82
+#: user/templates/account/list_team_members.html:20
+#: user/templates/account/password_reset.html:28
+#: user/templates/account/signup.html:44
 msgid "E-mail address"
 msgstr "Endereço de e-mail"
 
-#: account%2Ftemplates%2Faccount%2Flogin.html%3A8+account%2Ftemplates%2Faccount%2Fpassword_reset.html%3A8
+#: user/templates/account/list_team_members.html:21
+#: user/templates/account/show_profile.html:71
 msgid "Delete"
 msgstr "Excluir"
 
-#: account%2Ftemplates%2Faccount%2Flogin.html%3A10+account%2Ftemplates%2Faccount%2Fpassword_reset.html%3A10+account%2Ftemplates%2Faccount%2Fsignup.html%3A14+account%2Ftemplates%2Faccount%2Fsignup.html%3A52
+#: user/templates/account/login.html:8
+#: user/templates/account/password_reset.html:7
 msgid "New here?"
 msgstr "Novo aqui?"
 
-#: account%2Ftemplates%2Faccount%2Flogin.html%3A28+account%2Ftemplates%2Faccount%2Flogin.html%3A78
+#: user/templates/account/login.html:10
+#: user/templates/account/password_reset.html:9
+#: user/templates/account/signup.html:13 user/templates/account/signup.html:51
 msgid "Sign up"
 msgstr "Inscrever-se"
 
-#: account/templates/account/login.html:32
+#: user/templates/account/login.html:18 user/templates/account/login.html:69
 msgid "Log in"
 msgstr "Entrar"
 
-#: account/templates/account/login.html:44
+#: user/templates/account/login.html:26
+#, fuzzy, python-format
+#| msgid ""
+#| "        If you are new here, please <a href=\"%(signup_url)s\" title="
+#| "\"Sign up for %(site_name)s\">sign up</a> or use one of the login options "
+#| "below to create an account.        "
 msgid ""
+"\n"
 "        If you are new here, please <a href=\"%(signup_url)s\" title=\"Sign "
 "up for %(site_name)s\">sign up</a> or use one of the login options below to "
-"create an account.        "
+"create an account.\n"
+"        "
 msgstr ""
 "        Se você é novo aqui, por favor <a href=\"%(signup_url)s\" title="
 "\"Inscrever-se para %(site_name)s\">Inscrever</a> ou use uma das opções de "
 "entrada abaixo para criar uma conta.        "
 
-#: account/templates/account/login.html:53
+#: user/templates/account/login.html:37
 msgid "Login with"
 msgstr "Entrar com"
 
-#: account%2Ftemplates%2Faccount%2Flogin.html%3A67+account%2Ftemplates%2Faccount%2Fshow_profile.html%3A61+account%2Ftemplates%2Faccount%2Fshow_profile.html%3A139
+#: user/templates/account/login.html:46
+#, fuzzy, python-format
+#| msgid ""
+#| "        If you are new here, please <a href=\"%(signup_url)s\" title="
+#| "\"Sign up for %(site_name)s\">sign up</a>.        "
 msgid ""
+"\n"
 "        If you are new here, please <a href=\"%(signup_url)s\" title=\"Sign "
-"up for %(site_name)s\">sign up</a>.        "
+"up for %(site_name)s\">sign up</a>.\n"
+"        "
 msgstr ""
 "        Se você é novo aqui, por favor <a href=\"%(signup_url)s\" title="
 "\"Registre-se para %(site_name)s\">Inscrever</a>.        "
 
-#: account%2Ftemplates%2Faccount%2Flogin.html%3A71+account%2Ftemplates%2Faccount%2Fshow_profile.html%3A73
+#: user/templates/account/login.html:58
+#: user/templates/account/show_profile.html:44
+#: user/templates/account/show_profile.html:122
 msgid "Username"
 msgstr "Nome de Usuário"
 
-#: account/templates/account/login.html:81
+#: user/templates/account/login.html:62
+#: user/templates/account/show_profile.html:56
 msgid "Password"
 msgstr "Senha"
 
-#: account/templates/account/login.html:83
+#: user/templates/account/login.html:72
 msgid "Remember me"
 msgstr "Lembre-se de mim"
 
-#: account%2Ftemplates%2Faccount%2Flogout.html%3A6+account%2Ftemplates%2Faccount%2Flogout.html%3A10+account%2Ftemplates%2Faccount%2Flogout.html%3A20
+#: user/templates/account/login.html:74
 msgid "Forgot Password?"
 msgstr "Esqueceu asenha?"
 
-#: account/templates/account/logout.html:12
+#: user/templates/account/logout.html:5 user/templates/account/logout.html:9
+#: user/templates/account/logout.html:19
 msgid "Sign Out"
 msgstr "Sair"
 
-#: account%2Ftemplates%2Faccount%2Fpassword_reset.html%3A7+account%2Ftemplates%2Faccount%2Fpassword_reset.html%3A14
+#: user/templates/account/logout.html:11
 msgid "Are you sure you want to sign out?"
 msgstr "Tem certeza de que desejasair?"
 
-#: account/templates/account/password_reset.html:15
+#: user/templates/account/password_reset.html:6
+#: user/templates/account/password_reset.html:13
 msgid "Password reset"
 msgstr "Redefinir asenha"
 
-#: account/templates/account/password_reset.html:33
+#: user/templates/account/password_reset.html:14
+#, fuzzy, python-format
+#| msgid ""
+#| "    <p>Forgotten your password? Enter your e-mail address below, and "
+#| "we'll send you an e-mail allowing you to reset it.</p>    <p>If you have "
+#| "any trouble resetting your password, please <a href=\"mailto:"
+#| "%(CONTACT_EMAIL)s\">contact us</a>.</p>    "
 msgid ""
+"\n"
 "    <p>Forgotten your password? Enter your e-mail address below, and we'll "
-"send you an e-mail allowing you to reset it.</p>    <p>If you have any "
-"trouble resetting your password, please <a href=\"mailto:%(CONTACT_EMAIL)s"
-"\">contact us</a>.</p>    "
+"send you an e-mail allowing you to reset it.</p>\n"
+"    <p>If you have any trouble resetting your password, please <a href="
+"\"mailto:%(CONTACT_EMAIL)s\">contact us</a>.</p>\n"
+"    "
 msgstr ""
 "    <P>Esqueceusuasenha? Digite abaixo oseu endereço de e-mail, e nós "
 "enviamos-lhe um e-mail que lhe permite redefini-la.</ P>    <P>se você tiver "
 "qualquer dificuldade para redefinirsuasenha, <a href=\"mailto:"
 "%(CONTACT_EMAIL)s\">contacte-nos</a>. </ P>    "
 
-#: account/templates/account/show_profile.html:40
+#: user/templates/account/password_reset.html:32
 msgid "Reset My Password"
 msgstr "Redefinir Minhasenha"
 
-#: account/templates/account/show_profile.html:46
+#: user/templates/account/show_profile.html:23
 msgid "Edit profile picture"
 msgstr "Imagem Editar perfil"
 
-#: account/templates/account/show_profile.html:51
+#: user/templates/account/show_profile.html:29
 msgid "Change picture"
 msgstr "Alterar imagem"
 
-#: account%2Ftemplates%2Faccount%2Fshow_profile.html%3A65+account%2Ftemplates%2Faccount%2Fshow_profile.html%3A143
+#: user/templates/account/show_profile.html:34
 msgid "Delete picture"
 msgstr "Excluir imagem"
 
-#: account%2Ftemplates%2Faccount%2Fshow_profile.html%3A69+account%2Ftemplates%2Faccount%2Fshow_profile.html%3A147
+#: user/templates/account/show_profile.html:48
+#: user/templates/account/show_profile.html:126
 msgid "First name"
 msgstr "Primeiro nome"
 
-#: account%2Ftemplates%2Faccount%2Fshow_profile.html%3A80+account%2Ftemplates%2Faccount%2Fshow_profile.html%3A151
+#: user/templates/account/show_profile.html:52
+#: user/templates/account/show_profile.html:130
 msgid "Last name"
 msgstr "Sobrenome"
 
-#: account/templates/account/show_profile.html:86
+#: user/templates/account/show_profile.html:63
+#: user/templates/account/show_profile.html:134
 msgid "Email"
 msgstr "Email"
 
-#: account/templates/account/show_profile.html:87
+#: user/templates/account/show_profile.html:69
 msgid "Primary address"
 msgstr "Endereço principal"
 
-#: account%2Ftemplates%2Faccount%2Fshow_profile.html%3A123+feedback%2Ftemplates%2Ffeedback%2Ffeedback.html%3A165
+#: user/templates/account/show_profile.html:70
 msgid "Verified"
 msgstr "Verificado"
 
-#: account/templates/account/show_profile.html:126
-msgid "submit"
-msgstr "submeter"
-
-#: account/templates/account/show_profile.html:165
+#: user/templates/account/show_profile.html:109
 msgid "Delete account"
 msgstr "Excluir conta"
 
-#: account/templates/account/signup.html:7
+#: user/templates/account/show_profile.html:148
 msgid "User does not exist."
 msgstr "O usuário não existe."
 
-#: account/templates/account/signup.html:8
+#: user/templates/account/signup.html:6
 msgid "Sign Up"
 msgstr "Inscrever-se"
 
-#: account/templates/account/signup.html:16
+#: user/templates/account/signup.html:7
 msgid "Already have an account"
 msgstr "Já tem uma conta"
 
-#: account/templates/account/signup.html:30
+#: user/templates/account/signup.html:15
+#, fuzzy, python-format
+#| msgid ""
+#| "        Already have an account? Then please <a href=\"%(login_url)s\" "
+#| "title=\"Login to %(site_name)s\">login</a>.        "
 msgid ""
+"\n"
 "        Already have an account? Then please <a href=\"%(login_url)s\" title="
-"\"Login to %(site_name)s\">login</a>.        "
+"\"Login to %(site_name)s\">login</a>.\n"
+"        "
 msgstr ""
 "        Já tem uma conta? Então, por favor <a href=\"%(login_url)s\" title="
 "\"Entrar para %(site_name)s\"> entrar </a>.        "
 
-#: account/templates/account/signup.html:35
+#: user/templates/account/signup.html:29
 msgid "Choose your username"
 msgstr "Escolha oseu nome de usuário"
 
-#: account/templates/account/signup.html:40
+#: user/templates/account/signup.html:34
 msgid "Create a password"
 msgstr "Criar umasenha"
 
-#: account%2Ftemplates%2Faccount%2Fsignup_closed.html%3A6+account%2Ftemplates%2Faccount%2Fsignup_closed.html%3A10
+#: user/templates/account/signup.html:39
 msgid "Confirm your password"
 msgstr "Confirmesuasenha"
 
-#: account/templates/account/signup_closed.html:11
+#: user/templates/account/signup_closed.html:5
+#: user/templates/account/signup_closed.html:9
 msgid "Sign Up Closed"
 msgstr "Registrar Fechado"
 
-#: account%2Ftemplates%2Faccount%2Fverification_sent.html%3A5+account%2Ftemplates%2Faccount%2Fverification_sent.html%3A9
+#: user/templates/account/signup_closed.html:10
 msgid "We are sorry, but the sign up is currently closed."
 msgstr "Desculpe-nos, mas a inscrição de novos usuários esta fechada."
 
-#: account/templates/account/verification_sent.html:12
+#: user/templates/account/verification_sent.html:5
+#: user/templates/account/verification_sent.html:9
 msgid "Verify Your E-mail Address"
 msgstr "Verifiquesua conta de e-mail"
 
-#: base/templates/base.html:84
+#: user/templates/account/verification_sent.html:12
+#, fuzzy, python-format
+#| msgid ""
+#| "        We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</"
+#| "a> for verification.        Follow the link provided to finalize the "
+#| "signup process.        <br />        Please contact us if you do not "
+#| "receive it within a few minutes.        "
 msgid ""
+"\n"
 "        We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> "
-"for verification.        Follow the link provided to finalize the signup "
-"process.        <br />        Please contact us if you do not receive it "
-"within a few minutes.        "
+"for verification.\n"
+"        Follow the link provided to finalize the signup process.\n"
+"        <br />\n"
+"        Please contact us if you do not receive it within a few minutes.\n"
+"        "
 msgstr ""
 "        Enviamos um e-mail para <a href=\"mailto:%(email)s\">%(email)s</a> "
 "para verificação.        Siga o link fornecido para finalizar o processo de "
 "inscrição.        <br />        Entre em contato conoscose você não recebê-"
 "lo dentro de alguns minutos.        "
 
-#: base/templates/base.html:85
-msgid "edit documents"
-msgstr "editar documentos"
-
-#: base/templates/base.html:89
-msgid "Documents"
-msgstr "Documentos"
-
-#: base/templates/base.html:90
-msgid "manage bibliography library"
-msgstr "gerenciar biblioteca de bibliografia"
-
-#: base/templates/base.html:94
-msgid "Bibliography"
-msgstr "Bibliografia"
-
-#: base/templates/base.html:95
-msgid "manage image files"
-msgstr "gerenciar arquivos de imagem"
-
-#: base/templates/base.html:99
-msgid "Images"
-msgstr "Imagens"
-
-#: base/templates/base.html:100
-msgid "compose books"
-msgstr "compor livros"
-
-#: base/templates/base.html:115
-msgid "Books"
-msgstr "Livros"
-
-#: base/templates/base.html:126
-msgid "Edit profile"
-msgstr "Editar Perfil"
-
-#: base/templates/footer.html:7
-msgid "Log out"
-msgstr "Sair"
-
-#: base/templates/footer.html:12
-msgid "Terms and Conditions"
-msgstr "Termos e Condições"
-
-#: base/templates/footer.html:17
-msgid "Equations and Math by mathjax"
-msgstr "Equações e matemática por MathJax"
-
-#: base/templates/footer.html:21
-msgid "Citations with Citation Style Language"
-msgstr "Citações usando Citation Style Language"
-
-#: bibliography/templates/bibliography/index.html:5
-msgid "Requires Chrome/Chromium/Safari"
-msgstr "Requer Chrome/Chromium/Safari"
-
-#: bibliography/templates/bibliography/index.html:57
-msgid "Bibliography Manager"
-msgstr "Gerenciador de Bibliografia"
-
-#: bibliography%2Ftemplates%2Fbibliography%2Findex.html%3A66+bibliography%2Ftemplates%2Fbibliography%2Findex.html%3A73+usermedia%2Ftemplates%2Fusermedia%2Findex.html%3A48+usermedia%2Ftemplates%2Fusermedia%2Findex.html%3A55
-msgid "Export selected"
-msgstr "Exportar selecionado"
-
-#: bibliography%2Ftemplates%2Fbibliography%2Findex.html%3A81+usermedia%2Ftemplates%2Fusermedia%2Findex.html%3A63
-msgid "All categories"
-msgstr "Todas as categorias"
-
-#: bibliography/templates/bibliography/index.html:87
-msgid "Edit categories"
-msgstr "Editar categorias"
-
-#: bibliography/templates/bibliography/index.html:93
-msgid "Register new source"
-msgstr "Registrar nova fonte"
-
-#: bibliography%2Ftemplates%2Fbibliography%2Findex.html%3A103+book%2Ftemplates%2Fbook%2Findex.html%3A159+document%2Ftemplates%2Fdocument%2Findex.html%3A159
-msgid "Import Bibtex Library"
-msgstr "Importar arquivo de bibliografia Bibtex"
-
-#: bibliography/templates/bibliography/index.html:104
-msgid "Title"
-msgstr "Título"
-
-#: bibliography/templates/bibliography/index.html:105
-msgid "Sourcetype"
-msgstr "TipoFonte"
-
-#: bibliography/templates/bibliography/index.html:106
-msgid "Author"
-msgstr "Autor"
-
-#: book%2Fviews.py%3A306+document%2Fviews.py%3A187
-msgid "Published"
-msgstr "Publicado"
-
-#: book/views.py:311
-msgid "Untitled"
-msgstr "Sem título"
-
-#: book/views.py:312
-msgid ""
-"Hey %(collaborator_name)s,%(owner)s has shared the book '%(book)s' on Fidus "
-"Writer with you and given you %(right)s access rights.Find the book in your "
-"book overview: %(link)s"
-msgstr ""
-"Ola %(collaborator_name)s, %(owner)s já dividiu o livro ' %(book)s' em Fidus "
-"Escritor com você e lhe dado %(right)s direitos de acesso.Encontre o livro "
-"emsua visão geral do livro: %(link)s"
-
-#: book/views.py:322
-msgid "Book shared:"
-msgstr "Livro Compartilhado"
-
-#: book/views.py:323
-msgid ""
-"Hey %(collaborator_name)s,%(owner)s has given you write access rights to the "
-"book '%(book)s' on Fidus Writer.Find the book in your book overview: %(link)s"
-msgstr ""
-"Ola %(collaborator_name)s, %(owner)s lhe deu direitos de escrita ao livro' "
-"%(book)s' em Fidus Writer.Encontre o livro em sua visão geral do livro: "
-"%(link)s"
-
-#: book/templates/book/index.html:6
-msgid "Fidus Writer book write access"
-msgstr "Fidus Writer acesso de escrita a livro"
-
-#: book%2Ftemplates%2Fbook%2Findex.html%3A110+document%2Ftemplates%2Fdocument%2Findex.html%3A110
-msgid "Book Overview"
-msgstr "Resumo do Livro"
-
-#: book%2Ftemplates%2Fbook%2Findex.html%3A115+document%2Ftemplates%2Fdocument%2Findex.html%3A115
-msgid "Share selected"
-msgstr "Compartilhar selecionado"
-
-#: book%2Ftemplates%2Fbook%2Findex.html%3A120+document%2Ftemplates%2Fdocument%2Findex.html%3A120
-msgid "Copy selected"
-msgstr "Copiar selecionado"
-
-#: book%2Ftemplates%2Fbook%2Findex.html%3A125+document%2Ftemplates%2Fdocument%2Findex.html%3A125
-msgid "Export selected as Epub"
-msgstr "Exportar selecionado como Epub"
-
-#: book%2Ftemplates%2Fbook%2Findex.html%3A130+document%2Ftemplates%2Fdocument%2Findex.html%3A130
-msgid "Export selected as HTML"
-msgstr "Exportar selecionado como HTML"
-
-#: book/templates/book/index.html:135
-msgid "Export selected as LaTeX"
-msgstr "Exportar selecionado como LaTeX"
-
-#: book/templates/book/index.html:143
-msgid "Export selected for Print/PDF"
-msgstr "Exportar selecionados para Impressão/PDF"
-
-#: book/templates/book/index.html:149
-msgid "Create New Book"
-msgstr "Criar Novo Livro"
-
-#: book%2Ftemplates%2Fbook%2Findex.html%3A160+document%2Ftemplates%2Fdocument%2Findex.html%3A161
-msgid "Upload Fidus Book"
-msgstr "Carregar Livro Fidus"
-
-#: book%2Ftemplates%2Fbook%2Findex.html%3A161+document%2Ftemplates%2Fdocument%2Findex.html%3A162
-msgid "Created"
-msgstr "Criado"
-
-#: book%2Ftemplates%2Fbook%2Findex.html%3A162+document%2Ftemplates%2Fdocument%2Findex.html%3A163
-msgid "Last changed"
-msgstr "Alterado pela última vez"
-
-#: book%2Ftemplates%2Fbook%2Findex.html%3A163+document%2Ftemplates%2Fdocument%2Findex.html%3A164
-msgid "Owner"
-msgstr "Proprietário"
-
-#: document/views.py:192
-msgid "Rights"
-msgstr "Direitos"
-
-#: document/views.py:193
-msgid ""
-"Hey %(collaborator_name)s,%(owner)s has shared the document '%(document)s' "
-"with you and given you %(right)s access rights. Access the document through "
-"this link: %(link)s"
-msgstr ""
-"Ola %(collaborator_name)s, %(owner)s compartilhou o documento ' "
-"%(document)s' com você e lhe deu %(right)s direitos de acesso.Acesse o "
-"documento através deste link: %(link)s"
-
-#: document/views.py:203
-msgid "Document shared:"
-msgstr "Documento compartilhado:"
-
-#: document/views.py:204
-msgid ""
-"Hey %(collaborator_name)s,%(owner)s has given you write access rights to a "
-"Fidus Writer document.Access the document through this link: %(link)s"
-msgstr ""
-"Ola %(collaborator_name)s, %(owner)s lhe deu direitos de escrita a um "
-"documento do FidusWriter.Acesse o documento através deste link: %(link)s"
-
-#: document%2Ftemplates%2Fdocument%2Feditor.html%3A38+document%2Ftemplates%2Fdocument%2Feditor.html%3A375
-msgid "Fidus Writer document write access"
-msgstr "Acesso de escrita a documento do Fidus Writer"
-
-#: document%2Ftemplates%2Fdocument%2Feditor.html%3A41+document%2Ftemplates%2Fdocument%2Feditor.html%3A378
-msgid "Subtitle"
-msgstr "Subtítulo"
-
-#: document/templates/document/editor.html:44
-msgid "Abstract"
-msgstr "Abstract/Resumo"
-
-#: document%2Ftemplates%2Fdocument%2Feditor.html%3A47+document%2Ftemplates%2Fdocument%2Feditor.html%3A384
-msgid "Authors"
-msgstr "Autores"
-
-#: document/templates/document/editor.html:287
-msgid "Keywords"
-msgstr "Palavras-chave"
-
-#: document%2Ftemplates%2Fdocument%2Feditor.html%3A292+document%2Ftemplates%2Fdocument%2Feditor.html%3A304
-msgid "en"
-msgstr "en"
-
-#: document/templates/document/editor.html:297
-msgid "Close the document and return to the document overview menu."
-msgstr "Feche o documento e retornar para o menu de síntese do documento."
-
-#: document%2Ftemplates%2Fdocument%2Feditor.html%3A297+usermedia%2Ftemplates%2Fusermedia%2Findex.html%3A79
-msgid "File handling"
-msgstr "Manipulação de arquivos"
-
-#: document/templates/document/editor.html:301
-msgid "File"
-msgstr "Arquivo"
-
-#: document/templates/document/editor.html:301
-msgid "Share the document with other users."
-msgstr "Compartilhar o documento com outros usuários."
-
-#: document/templates/document/editor.html:304
-msgid "Share"
-msgstr "Ação"
-
-#: document/templates/document/editor.html:307
-msgid "Close"
-msgstr "Perto"
-
-#: document/templates/document/editor.html:307
-msgid "Save a revision of the current document"
-msgstr "Salvar uma revisão do documento atual"
-
-#: document/templates/document/editor.html:310
-msgid "Save revision"
-msgstr "Salvar revisão"
-
-#: document/templates/document/editor.html:310
-msgid "Create copy of the current document"
-msgstr "Criar cópia do documento atual"
-
-#: document/templates/document/editor.html:313
-msgid "Create copy"
-msgstr "Criar cópia"
-
-#: document/templates/document/editor.html:313
-msgid "Download the current document"
-msgstr "Faça o download do documento atual"
-
-#: document/templates/document/editor.html:316
-msgid "Download"
-msgstr "Baixar"
-
-#: document/templates/document/editor.html:316
-msgid "Either print or create a PDF using your browser's print dialog"
-msgstr "Imprimir ou criar um PDF usando diálogo de impressão do seu navegador"
-
-#: document/templates/document/editor.html:322
-msgid "Print/PDF"
-msgstr "Imprimir / PDF"
-
-#: document/templates/document/editor.html:322
-msgid "Export of the document contents"
-msgstr "Exportação de o conteúdo do documento"
-
-#: document/templates/document/editor.html:326
-msgid "Export"
-msgstr "Exportação"
-
-#: document/templates/document/editor.html:331
-msgid "Export the document to an HTML file"
-msgstr "Exporte o documento para um arquivo HTML"
-
-#: document/templates/document/editor.html:336
-msgid "Export the document to an Epub electronic reader file."
-msgstr "Exporte o documento para um arquivo de leitor eletrônico Epub."
-
-#: document/templates/document/editor.html:344
-msgid ""
-"Export the document to a Latex file. This will also attach a BibTex file if "
-"you are using citations."
-msgstr ""
-"Exportar o documento em um arquivo Latex. Isso também irá anexar um arquivo "
-"BibTexse você estiver usando citações."
-
-#: document/templates/document/editor.html:344
-msgid "Choose your preferred citation style."
-msgstr "Escolha oseu estilo de citação preferida."
-
-#: document/templates/document/editor.html:351
-msgid "Citation Style"
-msgstr "Estilo Citation"
-
-#: document/templates/document/editor.html:351
-msgid "Choose a document style"
-msgstr "Escolha um estilo de documento"
-
-#: document/templates/document/editor.html:358
-msgid "Document Style"
-msgstr "Estilo Document"
-
-#: document/templates/document/editor.html:358
-msgid "Choose a papersize for printing and PDF generation."
-msgstr "Escolha um papersize para impressão e geração de PDF."
-
-#: document/templates/document/editor.html:362
-msgid "Paper Size"
-msgstr "Tamanho do papel"
-
-#: document/templates/document/editor.html:362
-msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
-msgstr "A4 (A4 / ISO 216), que é utilizado na maior parte do mundo."
-
-#: document/templates/document/editor.html:365
-msgid "DIN A4"
-msgstr "DIN A4"
-
-#: document/templates/document/editor.html:365
-msgid "The format used by the USA and some other American countries."
-msgstr "O formato usado pelos EUA e alguns outros países da América."
-
-#: document/templates/document/editor.html:371
-msgid "US Letter"
-msgstr "Tipo Carta"
-
-#: document/templates/document/editor.html:371
-msgid "Choose which metadata to enable."
-msgstr "Escolha os metadados que deseja ativar."
-
-#: document/templates/document/editor.html:375
-msgid "Metadata"
-msgstr "Metadados"
-
-#: document/templates/document/editor.html:378
-msgid "Define a subtitle in addition to the title of the document."
-msgstr "Definir uma legenda para além do título do documento."
-
-#: document/templates/document/editor.html:381
-msgid "Add an abstract to the document."
-msgstr "Adicionar um resumo do documento."
-
-#: document/templates/document/editor.html:381
-msgid "Specify the authors of the document."
-msgstr "Especificar os autores do documento."
-
-#: document/templates/document/editor.html:384
-msgid "Author(s)"
-msgstr "Autor(es)"
-
-#: document/templates/document/editor.html:390
-msgid "Add keywords to facilitate categorization."
-msgstr "Adicione palavras-chave para facilitar a categorização."
-
-#: document%2Ftemplates%2Fdocument%2Feditor.html%3A394+document%2Ftemplates%2Fdocument%2Feditor.html%3A395
-msgid "Tools"
-msgstr "Ferramentas"
-
-#: document%2Ftemplates%2Fdocument%2Feditor.html%3A399+document%2Ftemplates%2Fdocument%2Feditor.html%3A400
-msgid "Word counter"
-msgstr "Contador de palavras"
-
-#: document/templates/document/editor.html:411
-msgid "Keyboard shortcuts"
-msgstr "Atalhos do teclado"
-
-#: document/templates/document/editor.html:415
-msgid "Show/hide the top menu."
-msgstr "Mostrar / ocultar o menusuperior."
-
-#: document/templates/document/editor.html:416
-msgid "Handle tracking of changes."
-msgstr "Manusear registro de alterações."
-
-#: document/templates/document/editor.html:421
-msgid "Changes"
-msgstr "Alterações"
-
-#: document/templates/document/editor.html:421
-msgid "Turn tracking of changes on."
-msgstr "Ative o registro de alterações."
-
-#: document/templates/document/editor.html:424
-msgid "Track"
-msgstr "Rastrear"
-
-#: document/templates/document/editor.html:424
-msgid "Show all changes that have been tracked in the entire document."
-msgstr ""
-"Mostrar todas as alterações que foram registradas por todo o documento."
-
-#: document/templates/document/editor.html:427
-msgid "Show"
-msgstr "Mostrar"
-
-#: document/templates/document/editor.html:427
-msgid "Accept all changes that have been tracked in the entire document."
-msgstr ""
-"Aceitar todas as alterações que foram registradas por todo o documento."
-
-#: document/templates/document/editor.html:430
-msgid "Accept all"
-msgstr "Aceitar tudo"
-
-#: document/templates/document/editor.html:430
-msgid "Reject all changes that have been tracked in the entire document."
-msgstr ""
-"Rejeitar todas as alterações que foram registradas por todo o documento."
-
-#: document/templates/document/editor.html:435
-msgid "Reject all"
-msgstr "Rejeitar tudo"
-
-#: document/templates/document/editor.html:436
-msgid "Show/hide comments"
-msgstr "Mostrar/esconder comentários"
-
-#: document%2Ftemplates%2Fdocument%2Feditor.html%3A440+document%2Ftemplates%2Fdocument%2Feditor.html%3A444
-msgid "Comments"
-msgstr "Comentários"
-
-#: document%2Ftemplates%2Fdocument%2Feditor.html%3A440+document%2Ftemplates%2Fdocument%2Feditor.html%3A446
-msgid "Text that is part of a standard paragraph."
-msgstr "O texto que faz parte de um parágrafo padrão."
-
-#: document/templates/document/editor.html:450
-msgid "Normal Text"
-msgstr "Texto Normal"
-
-#: document/templates/document/editor.html:452
-msgid "A headline of the highest level (under title)."
-msgstr "Um cabeçalho de mais alto nível (abaixo do título)"
-
-#: document/templates/document/editor.html:456
-msgid "1st Headline"
-msgstr "1º Cabeçalho"
-
-#: document/templates/document/editor.html:458
-msgid "A headline of the 2nd highest level."
-msgstr "Um cabeçalho de segundo nível"
-
-#: document/templates/document/editor.html:462
-msgid "2nd Headline"
-msgstr "2º Cabeçalho"
-
-#: document/templates/document/editor.html:464
-msgid "A headline of the 3rd highest level."
-msgstr "Cabeçalho de  3º mais alto nível."
-
-#: document/templates/document/editor.html:468
-msgid "3rd Headline"
-msgstr "3º Cabeçalho"
-
-#: document/templates/document/editor.html:470
-msgid "A longer quotation set as an indented block."
-msgstr "Uma longa citação definida como um bloco recuado."
-
-#: document/templates/document/editor.html:474
-msgid "Block quote"
-msgstr "Bloco de Citação"
-
-#: document/templates/document/editor.html:476
-msgid "Computer Code."
-msgstr "Código de computador."
-
-#: document/templates/document/editor.html:480
-msgid "Code"
-msgstr "Código"
-
-#: document/templates/document/editor.html:482
-msgid "An item in an ordered list."
-msgstr "Um item em uma lista ordenada."
-
-#: document/templates/document/editor.html:486
-msgid "Numbered List"
-msgstr "Lista numerada"
-
-#: document/templates/document/editor.html:488
-msgid "An item in an unordered list."
-msgstr "Um item em uma lista não ordenada."
-
-#: document/templates/document/editor.html:495
-msgid "Bulleted List"
-msgstr "Lista com marcadores"
-
-#: document/templates/document/editor.html:502
-msgid "Bold"
-msgstr "Negrito"
-
-#: document/templates/document/editor.html:509
-msgid "Italic"
-msgstr "Itálico"
-
-#: document/templates/document/editor.html:516
-msgid "Numbered list"
-msgstr "Lista numerada"
-
-#: document/templates/document/editor.html:523
-msgid "Bulleted list"
-msgstr "Lista com marcadores"
-
-#: document/templates/document/editor.html:530
-msgid "Link"
-msgstr "Link"
-
-#: document/templates/document/editor.html:537
-msgid "Footnote"
-msgstr "Nota de rodapé"
-
-#: document/templates/document/editor.html:544
-msgid "Cite"
-msgstr "Citar"
-
-#: document/templates/document/editor.html:551
-msgid "Math"
-msgstr "Matemática"
-
-#: document/templates/document/editor.html:558
-msgid "Figure"
-msgstr "Figura"
-
-#: document/templates/document/editor.html:565
-msgid "Undo"
-msgstr "Desfazer"
-
-#: document/templates/document/editor.html:572
-msgid "Redo"
-msgstr "Refazer"
-
-#: document/templates/document/editor.html:584
-msgid "Comment"
-msgstr "Comente"
-
-#: document/templates/document/index.html:6
-msgid "The title of the document"
-msgstr "O título do documento"
-
-#: document/templates/document/index.html:135
-msgid "Document Overview"
-msgstr "Visão geral do documento"
-
-#: document/templates/document/index.html:143
-msgid "Download selected as Fidus Document"
-msgstr "Baixar documento Fidus selecionado"
-
-#: document/templates/document/index.html:149
-msgid "Create New Document"
-msgstr "Criar novo documento"
-
-#: document/templates/document/index.html:160
-msgid "Upload Fidus Document"
-msgstr "Carregar Documento Fidus"
-
-#: feedback/templates/feedback/browser.html:7
-msgid "Revisions"
-msgstr "Revisões"
-
-#: feedback/templates/feedback/browser.html:11
-msgid "Browser check"
-msgstr "Verificação do navegador"
-
-#: feedback/templates/feedback/browser.html:12
-msgid "Hey there!"
-msgstr "Olá!"
-
-#: feedback%2Ftemplates%2Ffeedback%2Ffeedback.html%3A157+feedback%2Ftemplates%2Ffeedback%2Ffeedback.html%3A160
-msgid ""
-"Unfortunately, Fidus Writer currently only works on Google Chrome (29+) and "
-"Apple Safari (6.1+). We hope to provide support for Mozilla Firefox in the "
-"future."
-msgstr ""
-"Infelizmente, Fidus Escritor atualmente só funciona no Google Chrome (29+) e "
-"Applesafari (6.1 +). Esperamos fornecer suporte para o Mozilla Firefox no "
-"futuro."
-
-#: feedback/templates/feedback/feedback.html:169
-msgid "Feedback"
-msgstr "Feedback"
-
-#: fiduswriter/settings.py:248
-msgid "Thank you for your comment!"
-msgstr "Obrigado pelo seu comentário!"
-
-#: fiduswriter/settings.py:249
-msgid "English"
-msgstr "Inglês"
-
-#: fiduswriter/settings.py:250
-msgid "Bulgarian"
-msgstr "Búlgaro"
-
-#: fiduswriter/settings.py:251
-msgid "German"
-msgstr "Alemão"
-
-#: fiduswriter/settings.py:252
-msgid "Italian"
-msgstr "Italiano"
-
-#: usermedia/templates/usermedia/index.html:5
-msgid "Spanish"
-msgstr "Espanhol"
-
-#: usermedia/templates/usermedia/index.html:69
+#: usermedia/templates/usermedia/index.html:6
 msgid "Media Manager"
 msgstr "Gerenciador de Mídia"
 
-#: usermedia/templates/usermedia/index.html:80
-msgid "Upload new image"
-msgstr "Carregar nova imagem"
+#: usermedia/views.py:41
+msgid "Filetype not supported"
+msgstr ""
 
-#: usermedia/templates/usermedia/index.html:81
-msgid "Size (px)"
-msgstr "Tamanho (px)"
+#: usermedia/views.py:68
+msgid "No file uploaded"
+msgstr ""
+
+#~ msgid ""
+#~ "        Please notice that Fidus Writer currently only works with the "
+#~ "Google Chrome, Chromium or Apple Safari browsers.</p>        "
+#~ msgstr ""
+#~ "        Atenção o Fidus Writer atualmentesó funciona com os navegadores "
+#~ "Google Chrome, Chromium ou Applesafari. </ P>        "
+
+#~ msgid "Select action"
+#~ msgstr "Selecionar ação"
+
+#~ msgid "Delete selected"
+#~ msgstr "Excluirs elecionado"
+
+#~ msgid "Add new contact"
+#~ msgstr "Adicionar novo contato"
+
+#~ msgid "edit documents"
+#~ msgstr "editar documentos"
+
+#~ msgid "Documents"
+#~ msgstr "Documentos"
+
+#~ msgid "manage bibliography library"
+#~ msgstr "gerenciar biblioteca de bibliografia"
+
+#~ msgid "Bibliography"
+#~ msgstr "Bibliografia"
+
+#~ msgid "manage image files"
+#~ msgstr "gerenciar arquivos de imagem"
+
+#~ msgid "Images"
+#~ msgstr "Imagens"
+
+#~ msgid "compose books"
+#~ msgstr "compor livros"
+
+#~ msgid "Books"
+#~ msgstr "Livros"
+
+#~ msgid "Requires Chrome/Chromium/Safari"
+#~ msgstr "Requer Chrome/Chromium/Safari"
+
+#~ msgid "Export selected"
+#~ msgstr "Exportar selecionado"
+
+#~ msgid "All categories"
+#~ msgstr "Todas as categorias"
+
+#~ msgid "Edit categories"
+#~ msgstr "Editar categorias"
+
+#~ msgid "Register new source"
+#~ msgstr "Registrar nova fonte"
+
+#~ msgid "Import Bibtex Library"
+#~ msgstr "Importar arquivo de bibliografia Bibtex"
+
+#~ msgid "Title"
+#~ msgstr "Título"
+
+#~ msgid "Sourcetype"
+#~ msgstr "TipoFonte"
+
+#~ msgid "Author"
+#~ msgstr "Autor"
+
+#~ msgid "Published"
+#~ msgstr "Publicado"
+
+#~ msgid ""
+#~ "Hey %(collaborator_name)s,%(owner)s has shared the book '%(book)s' on "
+#~ "Fidus Writer with you and given you %(right)s access rights.Find the book "
+#~ "in your book overview: %(link)s"
+#~ msgstr ""
+#~ "Ola %(collaborator_name)s, %(owner)s já dividiu o livro ' %(book)s' em "
+#~ "Fidus Escritor com você e lhe dado %(right)s direitos de acesso.Encontre "
+#~ "o livro emsua visão geral do livro: %(link)s"
+
+#~ msgid "Book shared:"
+#~ msgstr "Livro Compartilhado"
+
+#~ msgid ""
+#~ "Hey %(collaborator_name)s,%(owner)s has given you write access rights to "
+#~ "the book '%(book)s' on Fidus Writer.Find the book in your book overview: "
+#~ "%(link)s"
+#~ msgstr ""
+#~ "Ola %(collaborator_name)s, %(owner)s lhe deu direitos de escrita ao "
+#~ "livro' %(book)s' em Fidus Writer.Encontre o livro em sua visão geral do "
+#~ "livro: %(link)s"
+
+#~ msgid "Fidus Writer book write access"
+#~ msgstr "Fidus Writer acesso de escrita a livro"
+
+#~ msgid "Book Overview"
+#~ msgstr "Resumo do Livro"
+
+#~ msgid "Share selected"
+#~ msgstr "Compartilhar selecionado"
+
+#~ msgid "Copy selected"
+#~ msgstr "Copiar selecionado"
+
+#~ msgid "Export selected as Epub"
+#~ msgstr "Exportar selecionado como Epub"
+
+#~ msgid "Export selected as HTML"
+#~ msgstr "Exportar selecionado como HTML"
+
+#~ msgid "Export selected as LaTeX"
+#~ msgstr "Exportar selecionado como LaTeX"
+
+#~ msgid "Export selected for Print/PDF"
+#~ msgstr "Exportar selecionados para Impressão/PDF"
+
+#~ msgid "Create New Book"
+#~ msgstr "Criar Novo Livro"
+
+#~ msgid "Upload Fidus Book"
+#~ msgstr "Carregar Livro Fidus"
+
+#~ msgid "Created"
+#~ msgstr "Criado"
+
+#~ msgid "Last changed"
+#~ msgstr "Alterado pela última vez"
+
+#~ msgid "Owner"
+#~ msgstr "Proprietário"
+
+#~ msgid "Rights"
+#~ msgstr "Direitos"
+
+#~ msgid ""
+#~ "Hey %(collaborator_name)s,%(owner)s has shared the document "
+#~ "'%(document)s' with you and given you %(right)s access rights. Access the "
+#~ "document through this link: %(link)s"
+#~ msgstr ""
+#~ "Ola %(collaborator_name)s, %(owner)s compartilhou o documento ' "
+#~ "%(document)s' com você e lhe deu %(right)s direitos de acesso.Acesse o "
+#~ "documento através deste link: %(link)s"
+
+#~ msgid ""
+#~ "Hey %(collaborator_name)s,%(owner)s has given you write access rights to "
+#~ "a Fidus Writer document.Access the document through this link: %(link)s"
+#~ msgstr ""
+#~ "Ola %(collaborator_name)s, %(owner)s lhe deu direitos de escrita a um "
+#~ "documento do FidusWriter.Acesse o documento através deste link: %(link)s"
+
+#~ msgid "Subtitle"
+#~ msgstr "Subtítulo"
+
+#~ msgid "Abstract"
+#~ msgstr "Abstract/Resumo"
+
+#~ msgid "Authors"
+#~ msgstr "Autores"
+
+#~ msgid "Keywords"
+#~ msgstr "Palavras-chave"
+
+#~ msgid "Close the document and return to the document overview menu."
+#~ msgstr "Feche o documento e retornar para o menu de síntese do documento."
+
+#~ msgid "File handling"
+#~ msgstr "Manipulação de arquivos"
+
+#~ msgid "File"
+#~ msgstr "Arquivo"
+
+#~ msgid "Share the document with other users."
+#~ msgstr "Compartilhar o documento com outros usuários."
+
+#~ msgid "Share"
+#~ msgstr "Ação"
+
+#~ msgid "Close"
+#~ msgstr "Perto"
+
+#~ msgid "Save a revision of the current document"
+#~ msgstr "Salvar uma revisão do documento atual"
+
+#~ msgid "Save revision"
+#~ msgstr "Salvar revisão"
+
+#~ msgid "Create copy of the current document"
+#~ msgstr "Criar cópia do documento atual"
+
+#~ msgid "Create copy"
+#~ msgstr "Criar cópia"
+
+#~ msgid "Download the current document"
+#~ msgstr "Faça o download do documento atual"
+
+#~ msgid "Download"
+#~ msgstr "Baixar"
+
+#~ msgid "Either print or create a PDF using your browser's print dialog"
+#~ msgstr ""
+#~ "Imprimir ou criar um PDF usando diálogo de impressão do seu navegador"
+
+#~ msgid "Print/PDF"
+#~ msgstr "Imprimir / PDF"
+
+#~ msgid "Export of the document contents"
+#~ msgstr "Exportação de o conteúdo do documento"
+
+#~ msgid "Export"
+#~ msgstr "Exportação"
+
+#~ msgid "Export the document to an HTML file"
+#~ msgstr "Exporte o documento para um arquivo HTML"
+
+#~ msgid "Export the document to an Epub electronic reader file."
+#~ msgstr "Exporte o documento para um arquivo de leitor eletrônico Epub."
+
+#~ msgid ""
+#~ "Export the document to a Latex file. This will also attach a BibTex file "
+#~ "if you are using citations."
+#~ msgstr ""
+#~ "Exportar o documento em um arquivo Latex. Isso também irá anexar um "
+#~ "arquivo BibTexse você estiver usando citações."
+
+#~ msgid "Choose your preferred citation style."
+#~ msgstr "Escolha oseu estilo de citação preferida."
+
+#~ msgid "Citation Style"
+#~ msgstr "Estilo Citation"
+
+#~ msgid "Choose a document style"
+#~ msgstr "Escolha um estilo de documento"
+
+#~ msgid "Choose a papersize for printing and PDF generation."
+#~ msgstr "Escolha um papersize para impressão e geração de PDF."
+
+#~ msgid "Paper Size"
+#~ msgstr "Tamanho do papel"
+
+#~ msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
+#~ msgstr "A4 (A4 / ISO 216), que é utilizado na maior parte do mundo."
+
+#~ msgid "DIN A4"
+#~ msgstr "DIN A4"
+
+#~ msgid "The format used by the USA and some other American countries."
+#~ msgstr "O formato usado pelos EUA e alguns outros países da América."
+
+#~ msgid "US Letter"
+#~ msgstr "Tipo Carta"
+
+#~ msgid "Choose which metadata to enable."
+#~ msgstr "Escolha os metadados que deseja ativar."
+
+#~ msgid "Metadata"
+#~ msgstr "Metadados"
+
+#~ msgid "Define a subtitle in addition to the title of the document."
+#~ msgstr "Definir uma legenda para além do título do documento."
+
+#~ msgid "Add an abstract to the document."
+#~ msgstr "Adicionar um resumo do documento."
+
+#~ msgid "Specify the authors of the document."
+#~ msgstr "Especificar os autores do documento."
+
+#~ msgid "Author(s)"
+#~ msgstr "Autor(es)"
+
+#~ msgid "Add keywords to facilitate categorization."
+#~ msgstr "Adicione palavras-chave para facilitar a categorização."
+
+#~ msgid "Tools"
+#~ msgstr "Ferramentas"
+
+#~ msgid "Word counter"
+#~ msgstr "Contador de palavras"
+
+#~ msgid "Keyboard shortcuts"
+#~ msgstr "Atalhos do teclado"
+
+#~ msgid "Show/hide the top menu."
+#~ msgstr "Mostrar / ocultar o menusuperior."
+
+#~ msgid "Handle tracking of changes."
+#~ msgstr "Manusear registro de alterações."
+
+#~ msgid "Changes"
+#~ msgstr "Alterações"
+
+#~ msgid "Turn tracking of changes on."
+#~ msgstr "Ative o registro de alterações."
+
+#~ msgid "Track"
+#~ msgstr "Rastrear"
+
+#~ msgid "Show all changes that have been tracked in the entire document."
+#~ msgstr ""
+#~ "Mostrar todas as alterações que foram registradas por todo o documento."
+
+#~ msgid "Show"
+#~ msgstr "Mostrar"
+
+#~ msgid "Accept all changes that have been tracked in the entire document."
+#~ msgstr ""
+#~ "Aceitar todas as alterações que foram registradas por todo o documento."
+
+#~ msgid "Accept all"
+#~ msgstr "Aceitar tudo"
+
+#~ msgid "Reject all changes that have been tracked in the entire document."
+#~ msgstr ""
+#~ "Rejeitar todas as alterações que foram registradas por todo o documento."
+
+#~ msgid "Reject all"
+#~ msgstr "Rejeitar tudo"
+
+#~ msgid "Show/hide comments"
+#~ msgstr "Mostrar/esconder comentários"
+
+#~ msgid "Comments"
+#~ msgstr "Comentários"
+
+#~ msgid "Text that is part of a standard paragraph."
+#~ msgstr "O texto que faz parte de um parágrafo padrão."
+
+#~ msgid "Normal Text"
+#~ msgstr "Texto Normal"
+
+#~ msgid "A headline of the highest level (under title)."
+#~ msgstr "Um cabeçalho de mais alto nível (abaixo do título)"
+
+#~ msgid "1st Headline"
+#~ msgstr "1º Cabeçalho"
+
+#~ msgid "A headline of the 2nd highest level."
+#~ msgstr "Um cabeçalho de segundo nível"
+
+#~ msgid "2nd Headline"
+#~ msgstr "2º Cabeçalho"
+
+#~ msgid "A headline of the 3rd highest level."
+#~ msgstr "Cabeçalho de  3º mais alto nível."
+
+#~ msgid "3rd Headline"
+#~ msgstr "3º Cabeçalho"
+
+#~ msgid "A longer quotation set as an indented block."
+#~ msgstr "Uma longa citação definida como um bloco recuado."
+
+#~ msgid "Block quote"
+#~ msgstr "Bloco de Citação"
+
+#~ msgid "Computer Code."
+#~ msgstr "Código de computador."
+
+#~ msgid "Code"
+#~ msgstr "Código"
+
+#~ msgid "An item in an ordered list."
+#~ msgstr "Um item em uma lista ordenada."
+
+#~ msgid "Numbered List"
+#~ msgstr "Lista numerada"
+
+#~ msgid "An item in an unordered list."
+#~ msgstr "Um item em uma lista não ordenada."
+
+#~ msgid "Bulleted List"
+#~ msgstr "Lista com marcadores"
+
+#~ msgid "Bold"
+#~ msgstr "Negrito"
+
+#~ msgid "Italic"
+#~ msgstr "Itálico"
+
+#~ msgid "Numbered list"
+#~ msgstr "Lista numerada"
+
+#~ msgid "Bulleted list"
+#~ msgstr "Lista com marcadores"
+
+#~ msgid "Link"
+#~ msgstr "Link"
+
+#~ msgid "Footnote"
+#~ msgstr "Nota de rodapé"
+
+#~ msgid "Cite"
+#~ msgstr "Citar"
+
+#~ msgid "Math"
+#~ msgstr "Matemática"
+
+#~ msgid "Figure"
+#~ msgstr "Figura"
+
+#~ msgid "Undo"
+#~ msgstr "Desfazer"
+
+#~ msgid "Redo"
+#~ msgstr "Refazer"
+
+#~ msgid "Comment"
+#~ msgstr "Comente"
+
+#~ msgid "The title of the document"
+#~ msgstr "O título do documento"
+
+#~ msgid "Download selected as Fidus Document"
+#~ msgstr "Baixar documento Fidus selecionado"
+
+#~ msgid "Create New Document"
+#~ msgstr "Criar novo documento"
+
+#~ msgid "Upload Fidus Document"
+#~ msgstr "Carregar Documento Fidus"
+
+#~ msgid "Revisions"
+#~ msgstr "Revisões"
+
+#~ msgid "Browser check"
+#~ msgstr "Verificação do navegador"
+
+#~ msgid "Hey there!"
+#~ msgstr "Olá!"
+
+#~ msgid ""
+#~ "Unfortunately, Fidus Writer currently only works on Google Chrome (29+) "
+#~ "and Apple Safari (6.1+). We hope to provide support for Mozilla Firefox "
+#~ "in the future."
+#~ msgstr ""
+#~ "Infelizmente, Fidus Escritor atualmente só funciona no Google Chrome "
+#~ "(29+) e Applesafari (6.1 +). Esperamos fornecer suporte para o Mozilla "
+#~ "Firefox no futuro."
+
+#~ msgid "Upload new image"
+#~ msgstr "Carregar nova imagem"
+
+#~ msgid "Size (px)"
+#~ msgstr "Tamanho (px)"

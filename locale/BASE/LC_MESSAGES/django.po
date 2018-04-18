@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-28 09:06+0000\n"
+"POT-Creation-Date: 2018-04-18 07:01+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,15 +22,15 @@ msgstr ""
 msgid "The all in one solution for collaborative academic writing."
 msgstr ""
 
-#: base/templates/base.html:77
+#: base/templates/base.html:76
 msgid "Edit profile"
 msgstr ""
 
-#: base/templates/base.html:82 user/templates/account/list_team_members.html:19
+#: base/templates/base.html:81 user/templates/account/list_team_members.html:19
 msgid "Contacts"
 msgstr ""
 
-#: base/templates/base.html:88
+#: base/templates/base.html:87
 msgid "Log out"
 msgstr ""
 
@@ -54,31 +54,6 @@ msgstr ""
 msgid "Bibliography Manager"
 msgstr ""
 
-#: bibliography/templates/bibliography/index.html:30
-#: document/templates/document/index.html:27
-msgid "Title"
-msgstr ""
-
-#: bibliography/templates/bibliography/index.html:31
-msgid "Sourcetype"
-msgstr ""
-
-#: bibliography/templates/bibliography/index.html:32
-msgid "Author"
-msgstr ""
-
-#: bibliography/templates/bibliography/index.html:33
-msgid "Published"
-msgstr ""
-
-#: bibliography/templates/bibliography/index.html:34
-#: document/templates/document/index.html:33
-#: user/templates/account/list_team_members.html:21
-#: user/templates/account/show_profile.html:71
-#: usermedia/templates/usermedia/index.html:25
-msgid "Delete"
-msgstr ""
-
 #: browser_check/templates/browser_check/browser_not_supported.html:4
 #: browser_check/templates/browser_check/browser_not_supported.html:27
 msgid "Browser not supported"
@@ -94,7 +69,7 @@ msgid ""
 "            "
 msgstr ""
 
-#: document/templates/document/editor.html:89
+#: document/templates/document/editor.html:88
 msgid "en"
 msgstr ""
 
@@ -102,35 +77,15 @@ msgstr ""
 msgid "Document Overview"
 msgstr ""
 
-#: document/templates/document/index.html:28
-msgid "Revisions"
-msgstr ""
-
-#: document/templates/document/index.html:29
-msgid "Created"
-msgstr ""
-
-#: document/templates/document/index.html:30
-msgid "Last changed"
-msgstr ""
-
-#: document/templates/document/index.html:31
-msgid "Owner"
-msgstr ""
-
-#: document/templates/document/index.html:32
-msgid "Rights"
-msgstr ""
-
 #: document/templates/maintenance/index.html:4
 msgid "Maintenance"
 msgstr ""
 
-#: document/templates/maintenance/index.html:17
+#: document/templates/maintenance/index.html:15
 msgid "Document Maintenance"
 msgstr ""
 
-#: document/templates/maintenance/index.html:19
+#: document/templates/maintenance/index.html:17
 msgid ""
 "\n"
 "            Before and after upgrading Fidus Writer, you should update all "
@@ -141,19 +96,19 @@ msgid ""
 "            "
 msgstr ""
 
-#: document/templates/maintenance/index.html:27
+#: document/templates/maintenance/index.html:25
 msgid "Update all documents (DANGER!)"
 msgstr ""
 
-#: document/views.py:216
+#: document/views.py:218
 msgid "Untitled"
 msgstr ""
 
-#: document/views.py:230
+#: document/views.py:232
 msgid "Document shared:"
 msgstr ""
 
-#: document/views.py:256
+#: document/views.py:258
 msgid "Fidus Writer document write access"
 msgstr ""
 
@@ -171,31 +126,31 @@ msgstr ""
 msgid "Thank you for your comment!"
 msgstr ""
 
-#: fiduswriter/settings.py:241
+#: fiduswriter/settings.py:239
 msgid "English"
 msgstr ""
 
-#: fiduswriter/settings.py:242
+#: fiduswriter/settings.py:240
 msgid "Bulgarian"
 msgstr ""
 
-#: fiduswriter/settings.py:243
+#: fiduswriter/settings.py:241
 msgid "German"
 msgstr ""
 
-#: fiduswriter/settings.py:244
+#: fiduswriter/settings.py:242
 msgid "French"
 msgstr ""
 
-#: fiduswriter/settings.py:245
+#: fiduswriter/settings.py:243
 msgid "Italian"
 msgstr ""
 
-#: fiduswriter/settings.py:246
+#: fiduswriter/settings.py:244
 msgid "Spanish"
 msgstr ""
 
-#: user/templates/account/base.html:56 user/templates/account/login.html:7
+#: user/templates/account/base.html:52 user/templates/account/login.html:7
 #: user/templates/account/signup.html:9
 msgid "Log In"
 msgstr ""
@@ -259,6 +214,11 @@ msgstr ""
 #: user/templates/account/password_reset.html:28
 #: user/templates/account/signup.html:44
 msgid "E-mail address"
+msgstr ""
+
+#: user/templates/account/list_team_members.html:21
+#: user/templates/account/show_profile.html:71
+msgid "Delete"
 msgstr ""
 
 #: user/templates/account/login.html:8
@@ -447,18 +407,6 @@ msgstr ""
 
 #: usermedia/templates/usermedia/index.html:6
 msgid "Media Manager"
-msgstr ""
-
-#: usermedia/templates/usermedia/index.html:22
-msgid "File"
-msgstr ""
-
-#: usermedia/templates/usermedia/index.html:23
-msgid "Size (px)"
-msgstr ""
-
-#: usermedia/templates/usermedia/index.html:24
-msgid "Added"
 msgstr ""
 
 #: usermedia/views.py:41

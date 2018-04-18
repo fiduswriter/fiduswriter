@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-18 07:03+0000\n"
+"POT-Creation-Date: 2018-04-18 07:26+0000\n"
 "PO-Revision-Date: 2013-03-03 12:18-0700\n"
 "Last-Translator: Ana Vera Resquín <ani.tavr77@gmail.com>\n"
 "Language-Team: Spanish <ani.tavr77@gmail.com>\n"
@@ -4857,17 +4857,17 @@ msgstr "Subir nuevo imagen"
 msgid "Search images"
 msgstr "Imagen de tapada"
 
-#: static-transpile/js/transpile/profile.js:1086
+#: static-transpile/js/transpile/profile.js:1085
 #: user/static/js/modules/profile/delete_user.js:50
 msgid "Staff accounts have to be deleted through the admin interface."
 msgstr ""
 
-#: static-transpile/js/transpile/profile.js:1089
+#: static-transpile/js/transpile/profile.js:1088
 #: user/static/js/modules/profile/delete_user.js:53
 msgid "Password incorrect."
 msgstr ""
 
-#: static-transpile/js/transpile/profile.js:1092
+#: static-transpile/js/transpile/profile.js:1091
 #: user/static/js/modules/profile/delete_user.js:56
 msgid "Could not delete user account."
 msgstr ""

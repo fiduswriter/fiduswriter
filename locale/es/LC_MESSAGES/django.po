@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-18 07:01+0000\n"
+"POT-Creation-Date: 2018-04-18 07:26+0000\n"
 "PO-Revision-Date: 2013-03-03 12:18-0700\n"
 "Last-Translator: Ana Vera Resquín <ani.tavr77@gmail.com>\n"
 "Language-Team: Spanish <ani.tavr77@gmail.com>\n"
@@ -154,6 +154,12 @@ msgstr "Italiano"
 #: fiduswriter/settings.py:244
 msgid "Spanish"
 msgstr "Español"
+
+#: fiduswriter/settings.py:245
+#, fuzzy
+#| msgid "Portuguese"
+msgid "Portuguese (Brazil)"
+msgstr "Portugués"
 
 #: user/templates/account/base.html:52 user/templates/account/login.html:7
 #: user/templates/account/signup.html:9
@@ -1584,9 +1590,6 @@ msgstr ""
 
 #~ msgid "Polish"
 #~ msgstr "Polaco"
-
-#~ msgid "Portuguese"
-#~ msgstr "Portugués"
 
 #~ msgid "Brazilian Portuguese"
 #~ msgstr "Portugués Brasileño"

@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-18 07:03+0000\n"
+"POT-Creation-Date: 2018-04-18 07:26+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4585,17 +4585,17 @@ msgstr ""
 msgid "Search images"
 msgstr ""
 
-#: static-transpile/js/transpile/profile.js:1086
+#: static-transpile/js/transpile/profile.js:1085
 #: user/static/js/modules/profile/delete_user.js:50
 msgid "Staff accounts have to be deleted through the admin interface."
 msgstr ""
 
-#: static-transpile/js/transpile/profile.js:1089
+#: static-transpile/js/transpile/profile.js:1088
 #: user/static/js/modules/profile/delete_user.js:53
 msgid "Password incorrect."
 msgstr ""
 
-#: static-transpile/js/transpile/profile.js:1092
+#: static-transpile/js/transpile/profile.js:1091
 #: user/static/js/modules/profile/delete_user.js:56
 msgid "Could not delete user account."
 msgstr ""

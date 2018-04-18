@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-18 07:03+0000\n"
+"POT-Creation-Date: 2018-04-18 07:26+0000\n"
 "PO-Revision-Date: 2013-02-24 10:03-0600\n"
 "Last-Translator: Daniel Frebel <daniel@fiduswriter.com>\n"
 "Language-Team: German <daniel@fiduswriter.com>\n"
@@ -4859,17 +4859,17 @@ msgstr "Neues Bild uploaden"
 msgid "Search images"
 msgstr "Vorderseitenbild"
 
-#: static-transpile/js/transpile/profile.js:1086
+#: static-transpile/js/transpile/profile.js:1085
 #: user/static/js/modules/profile/delete_user.js:50
 msgid "Staff accounts have to be deleted through the admin interface."
 msgstr ""
 
-#: static-transpile/js/transpile/profile.js:1089
+#: static-transpile/js/transpile/profile.js:1088
 #: user/static/js/modules/profile/delete_user.js:53
 msgid "Password incorrect."
 msgstr ""
 
-#: static-transpile/js/transpile/profile.js:1092
+#: static-transpile/js/transpile/profile.js:1091
 #: user/static/js/modules/profile/delete_user.js:56
 msgid "Could not delete user account."
 msgstr ""

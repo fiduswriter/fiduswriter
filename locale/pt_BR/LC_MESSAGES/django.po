@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer git Version\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-18 07:01+0000\n"
+"POT-Creation-Date: 2018-04-18 07:26+0000\n"
 "PO-Revision-Date: 2015-04-25 21:29-0300\n"
 "Last-Translator: Job Diogenes Ribeiro Borges <jobdrb@gmail.com>\n"
 "Language-Team: Portuguese Brazil <jobdrb@gmail.com>\n"
@@ -153,6 +153,10 @@ msgstr "Italiano"
 #: fiduswriter/settings.py:244
 msgid "Spanish"
 msgstr "Espanhol"
+
+#: fiduswriter/settings.py:245
+msgid "Portuguese (Brazil)"
+msgstr ""
 
 #: user/templates/account/base.html:52 user/templates/account/login.html:7
 #: user/templates/account/signup.html:9

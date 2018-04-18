@@ -1,47 +1,42 @@
 /* Comments */
-.comments-enabled .comment {
-    background-color: #f2f2f2;
+#margin-box-container {
+    width: 240px;
+    padding-left: 20px;
 }
 
-#comment-box-container {
-    position: absolute;
-    left: 914px;
-    top: -20px;
-}
-
-#comment-box-container.hide {
+#margin-box-container.hide {
     display: none;
 }
 
-.pagination-simple + #comment-box-container {
+.pagination-simple + #margin-box-container {
     top: 0px;
 }
 
-.comment-box {
+.margin-box {
     background-color: #fbfbfb;
     border: 1px solid #ccc;
-    position: absolute;
     width: 200px;
     padding: 9px;
+    margin-top: 10px;
+    position: relative;
 }
-.comment-box.active {
+.margin-box.active {
     background-color: #fffacf;
-    left: -30px;
+    left: -18px;
     z-index: 5;
 }
-.comment-box.active:after {
+.margin-box.active:after {
     position: absolute;
     left: -11px;
     top: 30px;
-    display: block;
-    font-family: 'fontello';
-    content: '\25c2';
     line-height: 1em;
     font-size: 36px;
     color: #fffacf;
     text-shadow: -1px 0 1px #ccc;
 }
-
+.margin-box.hidden {
+    display: none;
+}
 .comment-item {
     margin-top: 10px;
     padding-top: 10px;
@@ -61,10 +56,10 @@
     background-position: center;
 }
 .comment-item.wait textarea {
-    background-size: 40px 40px;  
+    background-size: 40px 40px;
 }
 .comment-answer.wait .comment-answer-text {
-    background-size: 20px 20px;      
+    background-size: 20px 20px;
 }
 .comment-item.wait .submitComment, .comment-item.wait .cancelSubmitComment, .comment-answer.wait .comment-answer-btns {
     display: none;
@@ -96,7 +91,7 @@
 .comment-p {
     line-height: 18px;
 }
-.comment-box textarea {
+.margin-box textarea {
     resize: none;
     width: 194px;
 }
@@ -121,7 +116,7 @@
     margin-top: 5px;
     text-align: right;
 }
-.comment-box .btn {
+.margin-box .btn {
     font-size: 12px;
     height: 24px;
     line-height: 24px;
@@ -133,9 +128,31 @@
     display: none;
 }
 
+.comment-text-wrapper.editing .comment-form {
+    display: block;
+}
+
+.comment-text-wrapper.editing .comment-p {
+    display: none;
+}
+
+
 .delete-comment-all {
     position: absolute;
     right: 5px;
     top: 8px;
     cursor: pointer;
+}
+
+.comment-is-major {
+    margin: 5px 5px 9px 3px;
+}
+
+.comment-is-major-bgc {
+    background-color: #f2dede;
+}
+
+/* comments directly on block elements like figures */
+div.article-part > span.comment {
+    display: block;
 }

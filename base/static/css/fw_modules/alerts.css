@@ -1,0 +1,65 @@
+#alerts-outer-wrapper {
+    position: fixed;
+    right: 22px;
+    bottom: 10px;
+    direction:rtl;
+    -webkit-column-width: 328px;
+    z-index: 101;
+}
+
+#alerts-wrapper {
+    z-index: 1600;
+    direction:ltr;
+}
+
+#alerts-wrapper li {
+    display: block; /* else several of them will stack horizontally. */
+    position: relative;
+    width: 247px;
+    height: auto;
+    padding: 20px 20px 20px 60px;
+    border: none;
+    border-radius: 3px;
+    box-shadow: 0px 0px 5px rgba(240, 240, 240, 1);
+    margin-bottom: 5px;
+    color: #fff;
+    font-size: 15px;
+    line-height: 20px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    -webkit-column-break-inside: avoid;
+}
+
+#alerts-wrapper li.visible {
+    opacity: 1;
+}
+
+#alerts-wrapper li:before {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    font-size: 20px;
+}
+
+#alerts-wrapper .alerts-error {
+    background-color: rgba(200, 63, 27, 0.8);
+}
+
+#alerts-wrapper .alerts-warning {
+    background-color: rgba(221, 208, 63, 0.8);
+}
+
+#alerts-wrapper .alerts-info {
+    background-color: rgba(36, 113, 176, 0.8);
+}
+
+#alerts-wrapper .alerts-success {
+    background-color: rgba(109, 164, 147, 0.8);
+}
+/* A form wasn't filled out correctly and the warning was added to the form. */
+div.warning {
+    margin: 0 0 5px 0;
+    border: 1px solid rgba(200, 63, 27, 0.8);
+    background-color: rgba(200, 63, 27, 0.4);
+    padding: 6px;
+}

@@ -1,614 +1,124 @@
 {% load i18n %}
 {% load compress %}
+{% load transpile %}
 <!doctype html>
 <html>
     <head>
         <meta charset="utf-8" />
-        <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.png" type="image/png">
-        <title> Fidus Writer - {{document.title}} </title>
+        <link rel="shortcut icon" href="{% static "img/favicon.png" %}" type="image/png">
+        <title> Fidus Writer </title>
         <meta name="description" content="{% trans "The all in one solution for collaborative academic writing." %}">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script type="text/javascript">
-            var mathjaxZipUrl = '{{ STATIC_URL }}zip/mathjax.zip';
-            var staticUrl = '{{ STATIC_URL }}';
+            'use strict';
             {% if WS_PORT %}
-                var websocketPort = {{WS_PORT}};
+                window.websocketPort = ':' + {{WS_PORT}};
             {% else %}
-                var websocketPort = location.port.length>0?location.port:'80';
+                window.websocketPort = location.port.length ? ':' + location.port : '';
             {% endif %}
             {% if WS_SERVER %}
-                var websocketServer = '{{ WS_SERVER }}';
+                window.websocketServer = '{{ WS_SERVER }}';
             {% else %}
-                var websocketServer = location.host.split(':')[0];
+                window.websocketServer = location.host.split(':')[0];
             {% endif %}
-
-            var isChrome = (window.hasOwnProperty('chrome')),
-                isSafari = (navigator.userAgent.indexOf('Safari/') > -1),
-                isFirefox = !(window.mozInnerScreenX == null);
-
-            if(!(isChrome || isSafari)) {
-                var currentURL = location.href.substr(7);
-                var currentRelativeURL = currentURL.substr(currentURL.indexOf('/'));
-                if(currentRelativeURL != '/feedback/browser/') {
-                    window.location = '/feedback/browser';
-                }
-            }
         </script>
-        <style>
-            #metadata-subtitle:empty:not(:focus)::before, #metadata-subtitle:not(:focus) > p:first-child:only-child > br::before {
-                content: "{% trans "Subtitle" %}...";
-            }
-            #metadata-abstract:empty:not(:focus)::before, #metadata-abstract:not(:focus) > p:first-child:only-child > br::before {
-                content: "{% trans "Abstract" %}...";
-            }
-            #metadata-authors:empty:not(:focus)::before, #metadata-authors:not(:focus) > p:first-child:only-child > br::before {
-                content: "{% trans "Authors" %}...";
-            }
-            #metadata-keywords:empty:not(:focus)::before, #metadata-keywords:not(:focus) > p:first-child:only-child > br::before {
-                content: "{% trans "Keywords" %}...";
-            }
-        </style>
-        <style type="text/css" id="placeholderStyles">
-        </style>
-        <style type="text/css" id="activeCommentStyle">
-        </style>
+        <!-- Check browser -->
+        <script type="text/javascript" src="{% static "js/browser_check.mjs" %}"></script>
+        <!-- KaTeX -->
+        <link type="text/css" rel="stylesheet" href="{% static "css/libs/katex/katex.min.css" %}" />
+        <!-- MathQuill -->
+        <link type="text/css" rel="stylesheet" href="{% static "css/mathquill.css" %}" />
         <!--  Translations -->
         <script type="text/javascript" src="/jsi18n/"></script>
-        <!-- document style -->
-        <link id="document-style-link" rel="stylesheet" type="text/css">
 
-        <!-- commons styles -->
         {% compress css %}
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/reset.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fonts.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/fonts.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/forms.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/ui-dialogs.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/ui-autofill.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/buttons.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/pulldown.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/loader.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/alerts.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/document-menu.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/document-table.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/dialog-table.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/dropkick.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/ui-tabs.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/add-remove-dialog.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/figure.css" />
-
-            <!-- question.mark.js -->
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/question.mark.css" />
-
+            <link type="text/css" rel="stylesheet" href="{% static "css/reset.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fonts.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/fonts.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/forms.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/ui_dialogs.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/ui_autofill.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/buttons.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/pulldown.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/loader.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/alerts.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/document_menu.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/document_table.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/dialog_table.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/ui_tabs.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/add_remove_dialog.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/figure.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/dialog.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/dropkick.css" %}" />
+            <!-- Font Awesome -->
+            <link type="text/css" rel="stylesheet" href="{% static "css/font-awesome.css" %}" />
             <!-- layout styles -->
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/common.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/header-menu.css" />
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/bibliography.css" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw_layouts/common.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw_layouts/header_menu.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "css/fw_layouts/bibliography.css" %}" />
 
-            <!-- ICE -->
-            <link rel="stylesheet" href="{{ STATIC_URL }}css/ice.css" type="text/css">
             <!-- Editor -->
-            <link rel="stylesheet" href="{{ STATIC_URL }}css/texteditor.css" type="text/css">
+            <link rel="stylesheet" href="{% static "css/texteditor.css" %}" type="text/css">
+            <!-- Collaboration mode -->
+            <link rel="stylesheet" href="{% static "css/carets.css" %}" type="text/css">
+            <!-- Tracking changes -->
+            <link rel="stylesheet" href="{% static "css/tracking.css" %}" type="text/css">
             <!-- Comments -->
-            <link rel="stylesheet" href="{{ STATIC_URL }}css/comments.css" type="text/css">
+            <link rel="stylesheet" href="{% static "css/comments.css" %}" type="text/css">
+            <!-- Footnotes -->
+            <link rel="stylesheet" href="{% static "css/footnotes.css" %}" type="text/css">
             <!-- Chat -->
-            <link rel="stylesheet" href="{{ STATIC_URL }}css/chat.css" type="text/css">
-            <!-- Tracking -->
-            <link rel="stylesheet" href="{{ STATIC_URL }}css/tracking.css" type="text/css">
+            <link rel="stylesheet" href="{% static "css/chat.css" %}" type="text/css">
             <!-- Access rights -->
-            <link rel="stylesheet" href="{{ STATIC_URL }}css/access-rights-dialog.css" type="text/css">
+            <link rel="stylesheet" href="{% static "css/access_rights_dialog.css" %}" type="text/css">
             <!-- Citation dialog style -->
-            <link rel="stylesheet" href="{{ STATIC_URL }}css/citation-dialog.css" type="text/css">
-
+            <link rel="stylesheet" href="{% static "css/citation_dialog.css" %}" type="text/css">
+            <!-- review style -->
+            <link rel="stylesheet" href="{% static "css/review.css" %}" type="text/css">
         {% endcompress %}
-
 
         <!-- jQuery -->
-        <script type="text/javascript" src="{{ JQUERY_URL }}"></script>
-        <script type="text/javascript" src="{{ JQUERYMIGRATE_URL }}"></script>
+        <script type="text/javascript" src="{% static "js/libs/jquery.min.js" %}"></script>
         <!-- JS error handling -->
         <script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>
-        <!-- jQuery UI -->
-        <script type="text/javascript" src="{{ JQUERYUI_URL }}"></script>
-        <!-- Underscore -->
-        <script type="text/javascript" src="{{ UNDERSCOREJS_URL }}"></script>
-        <!-- Mathjax -->
-        <script type="text/x-mathjax-config">
-            MathJax.Hub.Config({
-                extensions: ["tex2jax.js"],
-                jax: ["input/TeX", "output/SVG"],
-                tex2jax: {
-                    inlineMath: [ ['[MATH]','[/MATH]']],
-                    displayMath: [ ['[DMATH]','[/DMATH]']],
-                    processEscapes: true
-                },
-                showMathMenu: false,
-                "SVG": {
-                    scale: 120
-                }
-            });
-        </script>
-        <script type="text/javascript" src="{{ MATHJAX_URL }}"></script>
-        <!-- citeproc -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/xmldom.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/citeproc.js"></script>
-        <!-- Citation functions -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/citation-helpers.js"></script>
-        <!-- Citation definitions -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/citation/definitions.js"></script>
-        <!-- document styles -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/document/stylelist.js"></script>
-        <script type="text/javascript">
-            var document_style_folder_path = '{{ STATIC_URL }}css/document/';
-        </script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.autoresize.js"></script>
-        <!-- diff-match-patch -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/diff_match_patch.js"></script>
-
-        {% compress js %}
-
-            <script type="text/javascript" src="{{ STATIC_URL }}js/common.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/menubase.js"></script>
-            <!-- simplePagination.js -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/simplePagination.js"></script>
-            <script type="text/javascript">
-                // Config options for pagination
-
-                var paginationConfig = {
-                    'flowElement' : "flowCopy",
-                    'enableFrontmatter' : false,
-                    'divideContents' : false,
-                    'alwaysEven' : false,
-                    'autoStart': false,
-                    'pageWidth': 790,
-                    'pageHeight': 1117, // A4 is standard size
-                    'outerMargin': 90,
-                    'innerMargin': 90,
-                    'contentsTopMargin': 80,
-                    'headerTopMargin': 80,
-                    'contentsBottomMargin': 80,
-                    'pagenumberBottomMargin': 50,
-                    'lengthUnit': 'px',
-                    'flowTo': 'document.getElementById("print")'
-                };
-            </script>
-            <script type="text/javascript">
-                // Prevent migrate messages. Currently only one message from hallo.js is being created.
-                jQuery.migrateMute = true;
-            </script>
-            <!-- diffDOM -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/diffDOM.js"></script>
-            <!-- Django form submission code -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/csrf.js"></script>
-            <!-- jQuery tablesorter -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.dataTables.min.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.ui.potato.menu.js"></script>
-            <!-- Dropkick -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.dropkick-1.1.0.js"></script>
-            <!-- Rangy -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/rangy-core-1.2.3.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/rangy-selectionsaverestore.js"></script>
-            <!-- Zip.js -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/zip.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/deflate.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/inflate.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/zip-fs.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/zip-ext.js"></script>
-            <script type="text/javascript">
-                zip.useWebWorkers = false;
-            </script>
-
-            <!-- Question Mark -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/question.mark.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/question.mark.templates.js"></script>
-
-            <!-- ICE -->
-            <script type="text/javascript" src='{{ STATIC_URL }}js/libs/ice/ice.js'></script>
-            <script type="text/javascript" src='{{ STATIC_URL }}js/libs/ice/dom.js'></script>
-            <script type="text/javascript" src='{{ STATIC_URL }}js/libs/ice/icePluginManager.js'></script>
-            <script type="text/javascript" src='{{ STATIC_URL }}js/libs/ice/bookmark.js'></script>
-            <script type="text/javascript" src='{{ STATIC_URL }}js/libs/ice/selection.js'></script>
-
-            <!-- Functions to modify bibliography -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-statics.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-helpers.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-template-dialogs.js"></script>
-            <!-- contact functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/contact-helpers.js"></script>
-            <!-- tools functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/tools-templates.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/tools-helpers.js"></script>
-            <!-- Usermedia functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/usermedia-helpers.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/usermedia-template-dialogs.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/usermedia-simplelist-template-dialogs.js"></script>
-            <!-- Math functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/math-helpers.js"></script>
-            <!-- Editor toolbar buttons -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/highlight_buttons.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/blockstyles.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/bold.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/italic.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/link.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/footnote.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/cite.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/math.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/figure.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/undo_redo.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/comment.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/templates.js"></script>
-            <!-- Editor insert functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/insert-element.js"></script>
-            <!-- Access rights dialog -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/document-accessrights-templates.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/document-accessrights-helpers.js"></script>
-            <!-- Comment functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/comment-templates.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/comment-helpers.js"></script>
-            <!-- Tracking functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/tracking-templates.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/tracking-helpers.js"></script>
-            <!-- File export functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/export-templates.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/exporter.js"></script>
-            <!-- File import -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/importer.js"></script>
-            <!-- Chat functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/chat-helpers.js"></script>
-            <script type="text/javascript">
-                chatHelpers.bind();
-            </script>
-            <!-- Moving of footnotes-->
-            <script type="text/javascript"  src="{{ STATIC_URL }}js/editor-escapes.js"></script>
-            <!-- Document related functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor-helpers.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor-setup.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/server-communications.js"></script>
-            <script type="text/javascript">
-                serverCommunications.bind();
-            </script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/diff-helpers.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/node-converter.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/dom.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/manual-edits.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/key-events.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/key-events-firefox.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/clean-HTML.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/cut.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/paste.js"></script>
-        {% endcompress %}
-
-        <script type="text/javascript">
-
-            if(window.chrome && navigator.appVersion.indexOf("Win") !== -1) {
-                // We are running Chrome on Windows. We will now load a special style file to make font rendering work.
-                    var link  = document.createElement('link');
-                    link.rel  = 'stylesheet';
-                    link.media = 'all';
-                    link.type = 'text/css';
-                    link.href = '{{ STATIC_URL }}css/windows-chrome-fonts.css';
-                    document.head.appendChild(link);
-            }
-        </script>
-        <script>
-            if (isFirefox) {
-                window.keyEvents = window.keyEventsFirefox;
-            }
-        </script>
+        <!-- ProseMirror CSS -->
+        <link type="text/css" rel="stylesheet" href="{% static "css/prosemirror.css" %}" />
+        <script type="text/javascript" src="{% static "js/editor.mjs" %}"></script>
     </head>
     <body class="{% trans "en" %} tex2jax_ignore">
         <div id="editor">
-        <div id="wait">
-            <i class="icon-spin2 animate-spin"></i>
-        </div>
-        <div id="close-document-top" class="close icon-cancel-circle" title="{% trans "Close the document and return to the document overview menu." %}"></div>
-        <header id="header">
-            <h1>Untitled document</h1>
-            <nav id="header-navigation">
-                <div>
-                    <span class="header-nav-item" title="{% trans "File handling" %}">{% trans "File" %}</span>
-                    <div class="fw-pulldown fw-left">
-                        <ul>
-                            <li>
-                                <span class="fw-pulldown-item share icon-export" title="{% trans "Share the document with other users." %}"> {% trans "Share" %} </span>
-                            </li>
-                            <li>
-                                <span class="fw-pulldown-item close icon-cancel-circle" title="{% trans "Close the document and return to the document overview menu." %}"> {% trans "Close" %} </span>
-                            </li>
-                            <li>
-                                <span class="fw-pulldown-item save icon-floppy" title="{% trans "Save a revision of the current document" %}"> {% trans "Save revision" %} </span>
-                            </li>
-                            <li>
-                                <span class="fw-pulldown-item savecopy disabled icon-floppy" title="{% trans "Create copy of the current document" %}"> {% trans "Create copy" %} </span>
-                            </li>
-                            <li>
-                                <span class="fw-pulldown-item download icon-download" title="{% trans "Download the current document" %}"> {% trans "Download" %} </span>
-                            </li>
-                            <li>
-                                <span class="fw-pulldown-item print icon-print" title="{% trans "Either print or create a PDF using your browser's print dialog" %}"> {% trans "Print/PDF" %} </span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div>
-                    <span class="header-nav-item-disabled exporter-menu" title="{% trans "Export of the document contents" %}">{% trans "Export" %}</span>
-                    <div class="fw-pulldown fw-left">
-                        <ul>
-                            <li>
-                                <span class="fw-pulldown-item html" title="{% trans "Export the document to an HTML file" %}">
-                                    HTML
-                                </span>
-                            </li>
-                            <li>
-                                <span class="fw-pulldown-item epub" title="{% trans "Export the document to an Epub electronic reader file." %}">
-                                    Epub
-                                </span>
-                            </li>
-                            <li>
-                                <span class="fw-pulldown-item latex" title="{% trans "Export the document to a Latex file. This will also attach a BibTex file if you are using citations." %}">
-                                    LaTeX
-                                </span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div>
-                    <span class="header-nav-item-disabled citationstyle-menu" title="{% trans "Choose your preferred citation style." %}">{% trans "Citation Style" %}</span>
-                    <div class="fw-pulldown fw-left">
-                        <ul id="citationstyle-list">
-                        </ul>
-                    </div>
-                </div>
-                <div>
-                    <span class="header-nav-item documentstyle-menu" title="{% trans "Choose a document style" %}">{% trans "Document Style" %}</span>
-                    <div class="fw-pulldown fw-left">
-                        <ul id="documentstyle-list">
-                        </ul>
-                    </div>
-                </div>
-                <div>
-                    <span class="header-nav-item papersize-menu" title="{% trans "Choose a papersize for printing and PDF generation." %}">{% trans "Paper Size" %}</span>
-                    <div class="fw-pulldown fw-left">
-                        <ul>
-                            <li>
-                                <span class="fw-pulldown-item papersize" data-paperheight="1117" title="{% trans "A4 (DIN A4/ISO 216) which is used in most of the world." %}"> {% trans "DIN A4" %} </span>
-                            </li>
-                            <li>
-                                <span class="fw-pulldown-item papersize" data-paperheight="1020" title="{% trans "The format used by the USA and some other American countries." %}"> {% trans "US Letter" %} </span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div>
-                    <span class="header-nav-item metadata-menu" title="{% trans "Choose which metadata to enable." %}">{% trans "Metadata" %}</span>
-                    <div class="fw-pulldown fw-left">
-                        <ul>
-                            <li>
-                                <span class="fw-pulldown-item metadata-menu-item metadata-subtitle" data-metadata="subtitle" title="{% trans "Define a subtitle in addition to the title of the document." %}"> {% trans "Subtitle" %} </span>
-                            </li>
-                            <li>
-                                <span class="fw-pulldown-item metadata-menu-item metadata-abstract" data-metadata="abstract" title="{% trans "Add an abstract to the document." %}"> {% trans "Abstract" %} </span>
-                            </li>
-                            <li>
-                                <span class="fw-pulldown-item metadata-menu-item metadata-authors" data-metadata="authors" title="{% trans "Specify the authors of the document." %}"> {% trans "Author(s)" %} </span>
-                            </li>
-                            <li>
-                                <span class="fw-pulldown-item metadata-menu-item metadata-keywords" data-metadata="keywords" title="{% trans "Add keywords to facilitate categorization." %}"> {% trans "Keywords" %} </span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div>
-                    <span class="header-nav-item tools-menu" title="{% trans "Tools" %}">{% trans "Tools" %}</span>
-                    <div class="fw-pulldown fw-left">
-                        <ul>
-                            <li>
-                                <span class="fw-pulldown-item tools-item" data-function="wordcounter" title="{% trans "Word counter" %}">
-                                  {% trans "Word counter" %}
-                                </span>
-                            </li>
-                            <li>
-                                <span class="fw-pulldown-item tools-item" data-function="showshortcuts" title="{% trans "Keyboard shortcuts" %}">
-                                  {% trans "Keyboard shortcuts" %}
-                                </span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-            <div id="current-editors"></div>
-        </header>
-
-        <nav id="editor-navigation">
-            <span id="open-close-header" class="fw-button fw-light fw-large" title="{% trans "Show/hide the top menu." %}">
-                <i class="icon-angle-double-up"></i>
-            </span>
-            <div id="editor-tools-wrapper">
-                <div id="ice-control" class="fw-button fw-light fw-large" title="{% trans "Handle tracking of changes." %}">
-                    {% trans "Changes" %}
-                    <i class="icon-down-dir"></i>
-                    <div class="fw-pulldown fw-left">
-                        <ul>
-                            <li>
-                                <span class="fw-pulldown-item ice-track icon-ok" title="{% trans "Turn tracking of changes on." %}">{% trans "Track" %}</span>
-                            </li>
-                            <li>
-                                <span class="fw-pulldown-item ice-display icon-eye" title="{% trans "Show all changes that have been tracked in the entire document." %}">{% trans "Show" %}</span>
-                            </li>
-                            <li>
-                                <span class="fw-pulldown-item ice-accept-all icon-acceptall" title="{% trans "Accept all changes that have been tracked in the entire document." %}">{% trans "Accept all" %}</span>
-                            </li>
-                            <li>
-                                <span class="fw-pulldown-item ice-reject-all icon-rejectall" title="{% trans "Reject all changes that have been tracked in the entire document." %}">{% trans "Reject all" %}</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div id="comments-display" class="fw-button fw-light fw-large" title="{% trans "Show/hide comments" %}">
-                    {% trans "Comments" %}
-                </div>
-                <div class="editortoolbar" style="display: block;">
-                    <div class="toolbarheadings ui-buttonset multiButtons">
-                        <span class="multibuttonsCover fw-button fw-light fw-large" title="{% trans "Text that is part of a standard paragraph." %}" id="block-style-label">{% trans "Normal Text" %}</span>
-                        <div class="fw-pulldown fw-left" style="display: none;">
-                            <ul>
-                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-                                    <span class="ui-button-text" title="{% trans "Text that is part of a standard paragraph." %}">
-                                        <input type="radio" >
-                                        <label class="fw-pulldown-item" id="p_button">{% trans "Normal Text" %}</label>
-                                    </span>
-                                </li>
-                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-                                    <span class="ui-button-text" title="{% trans "A headline of the highest level (under title)." %}">
-                                        <input type="radio">
-                                        <label class="fw-pulldown-item" id="h1_button">{% trans "1st Headline" %}</label>
-                                    </span>
-                                </li>
-                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-                                    <span class="ui-button-text" title="{% trans "A headline of the 2nd highest level." %}">
-                                        <input type="radio">
-                                        <label class="fw-pulldown-item" id="h2_button">{% trans "2nd Headline" %}</label>
-                                    </span>
-                                </li>
-                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-                                    <span class="ui-button-text" title="{% trans "A headline of the 3rd highest level." %}">
-                                        <input type="radio">
-                                        <label id="h3_button" class="fw-pulldown-item">{% trans "3rd Headline" %}</label>
-                                    </span>
-                                </li>
-                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-                                    <span class="ui-button-text" title="{% trans "A longer quotation set as an indented block." %}">
-                                        <input type="radio">
-                                        <label id="blockquote_button" class="fw-pulldown-item">{% trans "Block quote" %}</label>
-                                    </span>
-                                </li>
-                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-                                    <span class="ui-button-text" title="{% trans "Computer Code." %}">
-                                        <input type="radio">
-                                        <label id="code_button" class="fw-pulldown-item">{% trans "Code" %}</label>
-                                    </span>
-                                </li>
-                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-                                    <span class="ui-button-text" title="{% trans "An item in an ordered list." %}">
-                                        <input type="radio">
-                                        <label id="ol_button" class="fw-pulldown-item">{% trans "Numbered List" %}</label>
-                                    </span>
-                                </li>
-                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-                                    <span class="ui-button-text" title="{% trans "An item in an unordered list." %}">
-                                        <input type="radio">
-                                        <label id="ul_button" class="fw-pulldown-item">{% trans "Bulleted List" %}</label>
-                                    </span>
-                                </li>
-                            </ul>
+            <div id="wait" class="active"><i class="fa fa-spinner fa-pulse"></i></div>
+            <header>
+                <nav id="headerbar">
+                    <div></div>
+                </nav>
+                <nav id="toolbar">
+                    <div></div>
+                </nav>
+            </header>
+            <div id="editor-content">
+                <div id="flow" class="comments-enabled hide">
+                    <div id="paper-editable">
+                        <div id="document-editable" class="user-contents"></div>
+                        <div id="footnote-box-container">
+                            <div id="citation-footnote-box-container"></div>
                         </div>
                     </div>
-                    <div class="toolbarbold ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square" id="button-bold" title="{% trans "Bold" %}">
-                            <span class="ui-button-text">
-                                <i class="icon-bold"></i>
-                            </span>
-                        </button>
-                    </div>
-                    <div class="toolbaritalic ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square" id="button-italic" title="{% trans "Italic" %}">
-                            <span class="ui-button-text">
-                                <i class="icon-italic"></i>
-                            </span>
-                        </button>
-                    </div>
-                    <div class="toolbarol ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square" id="button-ol" title="{% trans "Numbered list" %}">
-                            <span class="ui-button-text">
-                                <i class="icon-list-numbered"></i>
-                            </span>
-                        </button>
-                    </div>
-                    <div class="toolbarul ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square" id="button-ul" title="{% trans "Bulleted list" %}">
-                            <span class="ui-button-text">
-                                <i class="icon-list-bullet"></i>
-                            </span>
-                        </button>
-                    </div>
-                    <div class="toolbarlink ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square" id="button-link" title="{% trans "Link" %}">
-                            <span class="ui-button-text">
-                                <i class="icon-link"></i>
-                            </span>
-                        </button>
-                    </div>
-                    <div class="toolbarfootnote ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square" id="button-footnote" title="{% trans "Footnote" %}">
-                            <span class="ui-button-text">
-                                <i class="icon-footnote"></i>
-                            </span>
-                        </button>
-                    </div>
-                    <div class="toolbarcite ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square" id="button-cite" title="{% trans "Cite" %}">
-                            <span class="ui-button-text">
-                                <i class="icon-quote-right"></i>
-                            </span>
-                        </button>
-                    </div>
-                    <div class="toolbarmath ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square" id="button-math" title="{% trans "Math" %}">
-                            <span class="ui-button-text">
-                                <i class="icon-math"></i>
-                            </span>
-                        </button>
-                    </div>
-                    <div class="toolbarfigure ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square"  id="button-figure" title="{% trans "Figure" %}">
-                            <span class="ui-button-text">
-                                <i class="icon-figure"></i>
-                            </span>
-                        </button>
-                    </div>
-                    <div class="toolbarundoredo ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square disabled"  id="button-undo" title="{% trans "Undo" %}">
-                            <span class="ui-button-text">
-                                <i class="icon-ccw"></i>
-                            </span>
-                        </button>
-                    </div>
-                    <div class="toolbarundoredo ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square disabled"  id="button-redo" title="{% trans "Redo" %}">
-                            <span class="ui-button-text">
-                                <i class="icon-cw"></i>
-                            </span>
-                        </button>
-                    </div>
-                    <div class="toolbarcomment ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square"  id="button-comment" title="{% trans "Comment" %}">
-                            <span class="ui-button-text">
-                                <i class="icon-comment-empty"></i>
-                            </span>
-                        </button>
-                    </div>
+                    <div class="article-bibliography user-contents"></div>
                 </div>
+                <div id="margin-box-container"></div>
             </div>
-        </nav>
-
-        <div id="flow" class="comments-enabled CT-hide">
-            <div id="document-editable">
-                <div id="document-title" class="editable user-contents" title="{% trans "The title of the document" %}"></div>
-                <div id="document-metadata" class="user-contents"></div>
-                <div id="document-contents" class="editable user-contents"></div>
+            <div id="chat">
+                <i class="resize-button fa fa-angle-double-down"></i>
+                <div id="chat-container"></div>
+                <div id="messageform" contentEditable="true" class="empty"></div>
+                <audio id="chat-notification">
+                    <source src="{% static "ogg/chat_notification.ogg" %}" type="audio/ogg">
+                </audio>
             </div>
-            <div id="document-bibliography" class="user-contents"></div>
-        </div>
-        <div id="comment-box-container"></div><div id="tracking-box-container"></div>
-        {% include "feedback/feedback.html" %}
-        <div id="chat">
-            <i class="resize-button icon-angle-double-down"></i>
-            <div id="chat-container"></div>
-            <div id="messageform" contentEditable="true" class="empty"></div>
-            <audio id="chat-notification">
-                <source src="{{ STATIC_URL }}ogg/chat-notification.ogg" type="audio/ogg">
-            </audio>
-        </div>
         </div>
         <div id="print"></div>
+        <div id="unobtrusive_messages"></div>
+        {% include "feedback/feedback.html" %}
     </body>
 </html>

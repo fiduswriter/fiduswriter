@@ -1,4 +1,3 @@
-from optparse import make_option
 import os
 from os.path import abspath, dirname, exists, join
 
@@ -18,10 +17,15 @@ pre_dump = django.dispatch.Signal(providing_args=('instance',))
 
 class Command(django.core.management.commands.dumpdata.Command):
 
-    option_list = django.core.management.commands.dumpdata.Command.option_list + (
-        make_option('--outfile', dest='outfile',
-            help='Specifies the file to write the serialized items to (required)'),
-    )
+    def add_arguments(self, parser):
+        super(Command, self).add_arguments(parser)
+        parser.add_argument(
+            '--outfile', dest='outfile',
+            help=(
+                'Specifies the file to write the serialized items to '
+                '(required).'
+            )
+        )
 
     def save_images_for_signal(self, sender, **kwargs):
         instance = kwargs['instance']
@@ -48,14 +52,18 @@ class Command(django.core.management.commands.dumpdata.Command):
 
     def set_up_serializer(self, ser_format):
         try:
-            super_serializer = django.core.serializers.get_serializer(ser_format)
-            super_deserializer = django.core.serializers.get_deserializer(ser_format)
+            super_serializer = django.core.serializers.get_serializer(
+                ser_format)
+            super_deserializer = django.core.serializers.get_deserializer(
+                ser_format)
         except KeyError:
-            raise CommandError("Unknown serialization format: {}".format(ser_format))
+            raise CommandError(
+                "Unknown serialization format: {}".format(ser_format))
 
         global Serializer, Deserializer
 
         class Serializer(super_serializer):
+
             def get_dump_object(self, obj):
                 pre_dump.send(sender=type(obj), instance=obj)
                 return super(Serializer, self).get_dump_object(obj)
@@ -63,15 +71,16 @@ class Command(django.core.management.commands.dumpdata.Command):
         # We don't care about deserializing.
         Deserializer = super_deserializer
 
-        django.core.serializers.register_serializer(ser_format,
-             'fixturemedia.management.commands.dumpdata')
+        django.core.serializers.register_serializer(
+            ser_format, 'fixturemedia.management.commands.dumpdata')
 
     def handle(self, *app_labels, **options):
         ser_format = options.get('format')
 
         outfilename = options.get('outfile')
         if outfilename is None:
-            raise CommandError('No --outfile specified (this is a required option)')
+            raise CommandError(
+                'No --outfile specified (this is a required option)')
         self.target_dir = join(dirname(abspath(outfilename)), 'media')
 
         for modelclass in models_with_filefields():

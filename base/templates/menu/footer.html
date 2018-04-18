@@ -6,19 +6,18 @@
             {% get_current_language as LANGUAGE_CODE %}
             <input name="next" type="hidden" value="/" />
             <select id="langSelection" name="language">
-                <option value="en"{% if 'en' == LANGUAGE_CODE %}{{ 'selected' }}{% endif %}>English</option>
-                <option value="es"{% if 'es' == LANGUAGE_CODE %}{{ 'selected' }}{% endif %}>Espa&ntilde;ol</option>
-                <option value="de"{% if 'de' == LANGUAGE_CODE %}{{ 'selected' }}{% endif %}>Deutsch</option>
                 <option value="bg"{% if 'bg' == LANGUAGE_CODE %}{{ 'selected' }}{% endif %}>Български</option>
+                <option value="de"{% if 'de' == LANGUAGE_CODE %}{{ 'selected' }}{% endif %}>Deutsch</option>
+                <option value="en"{% if 'en' == LANGUAGE_CODE %}{{ 'selected' }}{% endif %}>English</option>
+                <option value="es"{% if 'es' == LANGUAGE_CODE %}{{ 'selected' }}{% endif %}>Español</option>
+                <option value="fr"{% if 'fr' == LANGUAGE_CODE %}{{ 'selected' }}{% endif %}>Français</option>
+                <option value="it"{% if 'it' == LANGUAGE_CODE %}{{ 'selected' }}{% endif %}>Italiano</option>
             </select>
         </form>
     </div>
 </footer>
 <script>
-  $(function() {
-    $('#langSelection').change(function() {
-      document.setLangForm.submit();
-      return false;
+    document.getElementById('langSelection').addEventListener('change', () => {
+        document.setLangForm.submit();
     });
-  });
 </script>

@@ -1,0 +1,2 @@
+[flake8]
+exclude = node_modules/*,*/migrations/*,venv/*

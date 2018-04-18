@@ -1,152 +1,152 @@
 @charset "UTF-8";
 
 /*
- * styles for fontello fonts
+ * font awesome styles for special icons
  */
-@font-face {
-  font-family: 'fontello';
-  src: url("../fonts/fontello/fidus_fontello.woff");
-  font-weight: normal;
-  font-style: normal;
-}
-.add-remove-list,
-[class^="icon-"]:before,
-[class*=" icon-"]:before {
-  font-family: 'fontello';
-  font-style: normal;
-  font-weight: normal;
-  speak: none;
-  display: inline-block;
-  text-decoration: inherit;
-  width: 1em;
-  margin-right: 0.2em;
-  text-align: center;
-/* fix buttons height, for twitter bootstrap */
-  line-height: 1em;
-/* Animation center compensation - magrins should be symmetric */
-/* remove if not needed */
-  margin-left: 0.2em;
-/* you can be more comfortable with increased icons size */
-/* font-size: 120%; */
-/* Uncomment for 3D effect */
-/* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
-}
+[class^="icon-"],
+[class*=" icon-"] {
+   display: inline-block;
+   font: normal normal normal 14px/1 FontAwesome;
+   font-size: inherit;
+   text-rendering: auto;
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale;
+ }
 
-.icon-google:before { content: '\47'; } /* 'G' */
-.icon-twitter:before { content: '\54'; } /* 'T' */
-.icon-facebook:before { content: '\66'; } /* 'f' */
-.icon-openid:before { content: '\e803'; } /* '' */
-.icon-github:before { content: '\e801'; } /* '' */
-.icon-linkedin:before { content: '\e805'; } /* '' */
-.icon-soundcloud:before { content: '\e802'; } /* '' */
-.icon-stackexchange:before { content: '\e804'; } /* '' */
-.icon-persona:before { content: '\e806'; } /* '' */
-.icon-up-dir:before { content: '\25b4'; } /* '▴' */
-.icon-right-dir:before { content: '\25b8'; } /* '▸' */
-.icon-down-dir:before { content: '\25be'; } /* '▾' */
-.icon-left-dir:before { content: '\25c2'; } /* '◂' */
-.icon-cog:before { content: '\2699'; } /* '⚙' */
-.icon-edit:before { content: '\270d'; } /* '✍' */
-.icon-pencil:before { content: '\270e'; } /* '✎' */
-.icon-ok:before { content: '\2713'; } /* '✓' */
-.icon-cancel:before { content: '\2715'; } /* '✕' */
-.icon-cancel-circle:before { content: '\2716'; } /* '✖' */
-.icon-attention-circle:before { content: '\2757'; } /* '❗' */
-.icon-plus-circle:before { content: '\2795'; } /* '➕' */
-.icon-minus-circle:before { content: '\2796'; } /* '➖' */
-.icon-ccw:before { content: '\27f2'; } /* '⟲' */
-.icon-cw:before { content: '\27f3'; } /* '⟳' */
-.icon-info-circle:before { content: '\e705'; } /* '' */
-.icon-eye:before { content: '\e70a'; } /* '' */
-.icon-export:before { content: '\e715'; } /* '' */
-.icon-print:before { content: '\e716'; } /* '' */
-.icon-trash:before { content: '\e729'; } /* '' */
-.icon-bold:before { content: '\e77a'; } /* '' */
-.icon-italic:before { content: '\e77b'; } /* '' */
-.icon-right:before { content: '\2192'; } /* '→' */
-.icon-align-left:before { content: '\e77e'; } /* '' */
-.icon-align-center:before { content: '\e77f'; } /* '' */
-.icon-align-right:before { content: '\e780'; } /* '' */
-.icon-align-justify:before { content: '\e781'; } /* '' */
-.icon-list:before { content: '\e782'; } /* '' */
-.icon-indent-left:before { content: '\e783'; } /* '' */
-.icon-indent-right:before { content: '\e784'; } /* '' */
-.icon-spin2:before { content: '\e831'; } /* '' */
-.icon-list-bullet:before { content: '\f0ca'; } /* '' */
-.icon-list-numbered:before { content: '\f0cb'; } /* '' */
-.icon-sort:before { content: '\f0dc'; } /* '' */
-.icon-sort-down:before { content: '\f0dd'; } /* '' */
-.icon-sort-up:before { content: '\f0de'; } /* '' */
-.icon-comment-empty:before { content: '\f0e5'; } /* '' */
-.icon-angle-double-left:before { content: '\f100'; } /* '' */
-.icon-angle-double-right:before { content: '\f101'; } /* '' */
-.icon-angle-double-up:before { content: '\f102'; } /* '' */
-.icon-angle-double-down:before { content: '\f103'; } /* '' */
-.icon-angle-left:before { content: '\f104'; } /* '' */
-.icon-angle-right:before { content: '\f105'; } /* '' */
-.icon-angle-up:before { content: '\f106'; } /* '' */
-.icon-angle-down:before { content: '\f107'; } /* '' */
-.icon-quote-left:before { content: '\f10d'; } /* '' */
-.icon-quote-right:before { content: '\f10e'; } /* '' */
-.icon-picture:before { content: '\1f304'; } /* '' */
-.icon-user:before { content: '\1f464'; } /* '' */
-.icon-floppy:before { content: '\1f4be'; } /* '' */
-.icon-doc:before { content: '\1f4c4'; } /* '' */
-.icon-book:before { content: '\1f4d5'; } /* '' */
-.icon-download:before { content: '\1f4e5'; } /* '' */
-.icon-link:before { content: '\1f517'; } /* '' */
-.icon-math:before { content: '\4d'; } /* '' */
-.icon-search:before { content: '\e800'; }
-.icon-clock:before { content: '\e807'; } /* '' */
-/* Fidus Writer specific */
-.icon-footnote:before { content: '\46'; } /* 'F' */
-.icon-figure:before { content: '\49'; } /* 'F' */
-.icon-acceptall:before { content: '\41'; } /* 'A' */
-.icon-rejectall:before { content: '\52'; } /* 'R' */
-.es .icon-bold:before { content: '\4b'; } /* 'N' */
-.es .icon-italic:before { content: '\4e'; } /* 'K' */
+ /* last list item is a plus, others are minuses */
+ .icon-addremove:before {content: '\f056'; }
+ .fw-list-input:last-child .fw-add-input:before {content: '\f055'; }
 
+/* User rights */
+.icon-access-write:before {content: '\f040'; } /* '✎' */
+.icon-access-write-tracked:before {content: '\f040'; } /* '✎' */
+.icon-access-read:before {content: '\f06e'; } /* '' */
+.icon-access-comment:before {content: '\f0e5'; } /* '' */
+/* Review related user rights */
+.icon-access-read-without-comments:before {content: '\f06e'; } /* '' */
+.icon-access-review:before {content: '\f0e5'; } /* '' */
 
-/* Animation for spinners 
- * 
- * TODO: make work with CSS Regions. Most likely just wait for a fix as browser code seems broken. 
- * 
- * The animation caused for getBoundingClientRect not to work on elements inside the CSS Region.
- * 
- * Bug report: https://github.com/fiduswriter/fiduswriter/issues/40
- * 
- */
-/*
-.animate-spin {
-  -webkit-animation: spin 2s infinite linear;
-  animation: spin 2s infinite linear;
-  display: inline-block;
+.icon-access-read-without-comments:before, .icon-access-review:before, .icon-access-write-tracked:before {
+    background-color: #000;
+    color: #fff;
+    padding: 2px;
+    border-radius: 4px;
 }
 
-@-webkit-keyframes spin {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-
-  100% {
-    -webkit-transform: rotate(359deg);
-    transform: rotate(359deg);
-  }
+.fw-checkable.checked:after, tr.fw-checkable.checked > td:last-child:after {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: '\f00c';
+    position: absolute;
+    right: 12px;
 }
 
-@keyframes spin {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-
-  100% {
-    -webkit-transform: rotate(359deg);
-    transform: rotate(359deg);
-  }
+.editortoolbar div.multiButtons .multibuttonsCover:after {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: '\f0d7';
 }
- */
+
+#cite-source-table_filter label:after {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: '\f002';
+    margin-left: -25px;
+}
+
+.margin-box.active:after {
+    display: block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: '\f0d9';
+}
+
+.fw-nav-item.active-menu-wrapper:after {
+    display: block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: '\f0d8';
+}
+.ui-icon-closethick:before {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: '\f057';
+}
+.fw-add-button:after {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: '\f055';
+}
+.fw-table-wrapper .dataTables_filter label:after {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: '\f002';
+}
+table.dataTable-table thead th a:after {
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin-left: 8px;
+}
+table.dataTable-table thead th[data-sortable]:not([data-sortable=false]) a:after {
+    content: '\f0dc';
+}
+table.dataTable-table thead th[data-sortable]:not([data-sortable=false]).asc a:after {
+    content: '\f0de';
+}
+table.dataTable-table thead th[data-sortable]:not([data-sortable=false]).desc a:after {
+    content: '\f0dd';
+}
+.fw-document-table-body tr.checked td.checkable:after {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: '\f00c';
+}
+.fw-pulldown:after {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: '\f0d8';
+}
 
 
 /*
@@ -182,16 +182,4 @@
   font-style: italic;
   font-weight: 400;
   src: local('Lato Italic'), local('Lato-Italic'), url(../fonts/lato/Lato-Italic.woff) format('woff');
-} 
-
-/*
- * Style for missionscript (used only for feedback tab)
- */
-
-@font-face {
-  font-family: 'missionscript';
-  font-style: normal;
-  font-weight: 400;
-  src: url(../fonts/missionscript.woff) format('woff');
 }
-

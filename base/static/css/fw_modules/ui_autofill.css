@@ -1,0 +1,26 @@
+.ui-helper-hidden-accessible {
+    display: none;
+}
+
+.ui-autocomplete {
+    position: fixed;
+    background-color: #fff;
+    box-shadow: 0 0 4px rgba(0,0,0,.6);
+    z-index: 5;
+    width: 255px;
+    max-height: 50%;
+    overflow: scroll;
+}
+
+.ui-autocomplete li {
+    display: block;
+    padding: 10px;
+    color: #2c2723;
+    line-height: 1.2em;
+}
+
+.ui-autocomplete li:hover,
+.ui-autocomplete li:focus,
+.ui-autocomplete li.ui-state-focus {
+    background-color: #fbf9d2;
+}

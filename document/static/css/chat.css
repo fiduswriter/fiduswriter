@@ -1,3 +1,9 @@
+/*For profile list*/
+.avatar {
+    border-bottom-width: 4px;
+    border-bottom-style: solid;
+}
+
 #chat {
     position: fixed;
     bottom: 0px;
@@ -23,7 +29,7 @@
 
 #chat-container {
     max-height: 300px;
-    overflow: overlay;
+    overflow-y: auto;
 }
 
 #chat-container .message:last-child {
@@ -36,18 +42,21 @@
     padding-top: 5px;
 }
 
-#current-editors {
+#connected-collaborators {
     position: fixed;
     right: 60px;
     top: 20px;
-    display: none;
 }
 
-#current-editors img {
+#connected-collaborators img {
     width: 26px;
     margin-left:4px;
 }
 
 #messageform.empty:before {
     color: #cecece;
+}
+
+#chat {
+    transition: top 2s ease;
 }

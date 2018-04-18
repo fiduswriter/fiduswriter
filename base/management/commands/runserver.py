@@ -1,42 +1,32 @@
-#
-# This file is part of Fidus Writer <http://www.fiduswriter.org>
-#
-# Copyright (C) 2013 Takuto Kojima, Johannes Wilm
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as
-# published by the Free Software Foundation, either version 3 of the
-# License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 from datetime import datetime
 from sys import platform
 
+from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import translation, autoreload
 from django.conf import settings
 
 from base.servers.tornado_django_hybrid import run as run_server
 
-DEFAULT_PORT = "8000"
-
 
 class Command(BaseCommand):
-    args = '[optional port number]'
     help = 'Run django using the tornado server'
+    requires_migrations_checks = True
+    requires_system_checks = True
+    leave_locale_alone = True
+    default_port = '8000'
 
-    def handle(self, port=None, *args, **options):
-        if not port:
-            self.port = DEFAULT_PORT
+    def add_arguments(self, parser):
+        parser.add_argument(
+            'port', nargs='?',
+            help='Optional port number'
+        )
+
+    def handle(self, *args, **options):
+        if options['port']:
+            self.port = options['port']
         else:
-            self.port = port
+            self.port = self.default_port
         if not self.port.isdigit():
             raise CommandError("%r is not a valid port number." % self.port)
         if settings.DEBUG:
@@ -46,9 +36,7 @@ class Command(BaseCommand):
 
     def inner_run(self, *args, **options):
         quit_command = (platform == 'win32') and 'CTRL-BREAK' or 'CONTROL-C'
-
-        self.stdout.write("Validating models...\n\n")
-        self.validate(display_num_errors=True)
+        call_command("transpile")
         self.stdout.write((
             "%(started_at)s\n"
             "Django version %(version)s, using settings %(settings)r\n"

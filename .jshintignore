@@ -1,0 +1,5 @@
+static-transpile/
+static-libs/
+.transpile-cache/
+node_modules/
+venv/

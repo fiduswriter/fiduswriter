@@ -1,0 +1,21 @@
+{
+  "esversion": 6,
+  "loopfunc": true,
+  "asi": true,
+  "multistr": true,
+  "sub": true,
+  "undef": true,
+  "globals": {
+    "django": true,
+    "MathQuill": true,
+    "gettext": false,
+    "$StaticUrls": false,
+    "console": false,
+    "FormData": false,
+    "URLSearchParams": false,
+    "self": true
+  },
+  "browser": true,
+  "worker": true,
+  "varstmt": true
+}

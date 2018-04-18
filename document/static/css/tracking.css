@@ -1,70 +1,26 @@
-#tracking-box-container {
-    position: absolute;
-    z-index: 93;
-    top: -20px;
-    left: -50px;
+span.deletion {
+    text-decoration: line-through;
 }
 
-div.pagination-simple ~ #tracking-box-container {
-    top: -30px;
-    left: 38px;
-}    
-
-#tracking-box-container .review-box {
-    position: absolute;
-    box-shadow: 0 0 5px rgba(0,0,0,0.3);
-    width: auto;
-    white-space: nowrap;
-    padding-bottom: 5px;
-}
-#tracking-box-container .review-box:after {
-    display: block;
-    position: absolute;
-    bottom: -26px;
-    left: 14px;
-    font-family: 'fontello';
-    content: '\25be';
-    line-height: 1em;
-    font-size: 24px;
+.selected-insertion, .selected-deletion {
+    background-color: #fffacf;
 }
 
-.change-owner {
-    padding: 7px 30px 7px 7px;
-    border-bottom: solid 1px #000;
-}
-.change-owner-avatar {
-    width: 26px;
-    height: 26px;
-    border: solid 1px #ccc;
-}
-.change-owner-name {
-    margin: -30px 0 4px 36px;
-    font-size: 12px;
-}
-.change-date {
-    font-size: 10px;
-    margin-left: 36px;
+
+.margin-box .track-title {
+    text-align: right;
+    font-weight: 700;
 }
 
-.review-box button {
-    display: block;
-    width: 100%;
-    border: none;
-    text-align: left;
-    padding: 9px 0 6px 10px;
-    margin: 0;
-    background: transparent;
-    cursor: pointer;
+div.deletion > *, div.insertion > * {
     position: relative;
-    z-index: 10;
 }
 
-.review-box button:hover {
-    background-color: rgba(255,255,255,0.3)
-}
 
-.review-box .close {
+div.deletion > *::before, div.insertion > *::before {
+    content: '';
     position: absolute;
-    right: 3px;
-    top: 8px;
+    border-left: 1px solid black;
+    left: -10px;
+    height: 22px;
 }

@@ -1,50 +1,24 @@
-#
-# This file is part of Fidus Writer <http://www.fiduswriter.org>
-#
-# Copyright (C) 2013 Takuto Kojima, Johannes Wilm
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as
-# published by the Free Software Foundation, either version 3 of the
-# License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 import json
 
 from django.http import JsonResponse, HttpResponseRedirect
-from django.contrib.auth import logout
-from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.contrib.auth import logout, update_session_auth_hash
+from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.core.exceptions import ObjectDoesNotExist
 
-
-from .models import UserProfile
-from .forms import UserForm, UserProfileForm, TeamMemberForm
+from .forms import UserForm, TeamMemberForm
 from . import util as userutil
 from document.models import AccessRight
-
 
 from allauth.account.models import EmailAddress
 from allauth.account import signals
 from django.contrib.auth.forms import PasswordChangeForm
 from allauth.account.forms import AddEmailForm
 
-
 from avatar.models import Avatar
 from avatar import views as avatarviews
-from avatar.forms import UploadAvatarForm, DeleteAvatarForm
+from avatar.forms import UploadAvatarForm
 from avatar.signals import avatar_updated
-
 
 
 def logout_page(request):
@@ -54,22 +28,22 @@ def logout_page(request):
     logout(request)
     return HttpResponseRedirect('/')
 
+
 @login_required
-def show_profile(request,username):
+def show_profile(request, username):
     """
     Show user profile page
     """
     response = {}
-    if username==request.user.username:
+    if username == request.user.username:
         response['can_edit'] = True
     else:
-        the_user =  User.objects.filter(username=username)
+        the_user = User.objects.filter(username=username)
         if len(the_user) > 0:
             response['the_user'] = the_user[0]
         response['can_edit'] = False
-    return render_to_response('account/show_profile.html',
-        response,
-        context_instance=RequestContext(request))
+    return render(request, 'account/show_profile.html', response)
+
 
 @login_required
 def password_change_js(request):
@@ -83,6 +57,9 @@ def password_change_js(request):
         if form.is_valid():
             status = 200
             form.save()
+            # Updating the password logs out all other sessions for the user
+            # except the current one.
+            update_session_auth_hash(request, form.user)
         else:
             response['msg'] = form.errors
             status = 201
@@ -91,6 +68,7 @@ def password_change_js(request):
         response,
         status=status
     )
+
 
 @login_required
 def add_email_js(request):
@@ -118,6 +96,7 @@ def add_email_js(request):
         status=status
     )
 
+
 @login_required
 def delete_email_js(request):
     response = {}
@@ -133,7 +112,9 @@ def delete_email_js(request):
             )
             if email_address.primary:
                 status = 201
-                response['msg'] = "You cannot remove your primary e-mail address " + email
+                msg = "You cannot remove your primary e-mail address " + email
+                response['msg'] = msg
+
             else:
                 email_address.delete()
                 signals.email_removed.send(
@@ -151,6 +132,7 @@ def delete_email_js(request):
         status=status
     )
 
+
 @login_required
 def primary_email_js(request):
     response = {}
@@ -164,12 +146,16 @@ def primary_email_js(request):
             )
             if not email_address.verified:
                 status = 201
-                response['msg'] = "Your primary e-mail address must be verified"
+                msg = "Your primary e-mail address must be verified"
+                response['msg'] = msg
             else:
                 # Sending the old primary address to the signal
                 # adds a db query.
                 try:
-                    from_email_address = EmailAddress.objects.get(user=request.user, primary=True )
+                    from_email_address = EmailAddress.objects.get(
+                        user=request.user,
+                        primary=True
+                    )
                 except EmailAddress.DoesNotExist:
                     from_email_address = None
 
@@ -191,6 +177,7 @@ def primary_email_js(request):
         status=status
     )
 
+
 @login_required
 def upload_avatar_js(request):
     '''
@@ -201,22 +188,31 @@ def upload_avatar_js(request):
     if request.is_ajax() and request.method == 'POST':
 
         avatar, avatars = avatarviews._get_avatars(request.user)
-        upload_avatar_form = UploadAvatarForm(None, request.FILES, user=request.user)
+        upload_avatar_form = UploadAvatarForm(
+            None,
+            request.FILES,
+            user=request.user
+        )
         if upload_avatar_form.is_valid():
             avatar = Avatar(
-                user = request.user,
-                primary = True,
+                user=request.user,
+                primary=True,
             )
             image_file = request.FILES['avatar']
             avatar.avatar.save(image_file.name, image_file)
             avatar.save()
-            avatar_updated.send(sender=Avatar, user=request.user, avatar=avatar)
+            avatar_updated.send(
+                sender=Avatar,
+                user=request.user,
+                avatar=avatar
+            )
             response['avatar'] = userutil.get_user_avatar_url(request.user)
             status = 200
     return JsonResponse(
         response,
         status=status
     )
+
 
 @login_required
 def delete_avatar_js(request):
@@ -227,15 +223,19 @@ def delete_avatar_js(request):
     status = 405
     if request.is_ajax() and request.method == 'POST':
         avatar, avatars = avatarviews._get_avatars(request.user)
-        if avatar is None :
+        if avatar is None:
             response = 'No avatar exists'
         else:
             aid = avatar.id
             for a in avatars:
-                if a.id == aid :
+                if a.id == aid:
                     a.primary = True
                     a.save()
-                    avatar_updated.send(sender=Avatar, user=request.user, avatar=avatar)
+                    avatar_updated.send(
+                        sender=Avatar,
+                        user=request.user,
+                        avatar=avatar
+                    )
                     break
             Avatar.objects.filter(pk=aid).delete()
             response['avatar'] = userutil.get_user_avatar_url(request.user)
@@ -245,20 +245,26 @@ def delete_avatar_js(request):
         status=status
     )
 
+
 @login_required
 def delete_user_js(request):
     """
-    Mark the user as deleted
+    Delete the user
     """
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
         user = request.user
-        # Only remove users who are not marked as having staff status to prevent administratoras from deleting themselves accidentally.
-        if user.is_staff == False:
-            user.is_active = False
-        user.save()
-        status = 200
+        # Only remove users who are not marked as having staff status
+        # to prevent administratoras from deleting themselves accidentally.
+        if not user.check_password(request.POST['password']):
+            status = 401
+        elif user.is_staff:
+            status = 403
+        else:
+            logout(request)
+            user.delete()
+            status = 204
     return JsonResponse(
         response,
         status=status
@@ -285,7 +291,10 @@ def save_profile_js(request):
         '''
         currently not used
         profile_object = user_object.profile
-        profile_form = UserProfileForm(form_data['profile'],instance=profile_object)
+        profile_form = UserProfileForm(
+            form_data['profile'],
+            instance=profile_object
+        )
         if profile_form.is_valid():
             if status == 200:
                 user_form.save()
@@ -303,30 +312,38 @@ def save_profile_js(request):
         status=status
     )
 
+
 @login_required
 def list_team_members(request):
     """
     List all team members of the current user
     """
     response = {}
-    all_team_members = request.user.leader.all()
-    '''
-    paginator = Paginator(all_team_members, 25)
-    # Show only 25 team members at a time
+    return render(request, 'account/list_team_members.html', response)
 
-    page = request.GET.get('page')
-    try:
-        team_members = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        team_members = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        team_members = paginator.page(paginator.num_pages)
-    '''
-    response['teammembers'] = all_team_members
-    return render_to_response('account/list_team_members.html',
-        response, context_instance=RequestContext(request))
+
+@login_required
+def list_team_members_js(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 200
+        response['team_members'] = []
+
+        for member in User.objects.filter(member__leader=request.user):
+            team_member = {
+                'id': member.id,
+                'name': member.readable_name,
+                'username': member.get_username(),
+                'email': member.email,
+                'avatar': userutil.get_user_avatar_url(member)
+            }
+            response['team_members'].append(team_member)
+    return JsonResponse(
+        response,
+        status=status
+    )
+
 
 @login_required
 def add_team_member_js(request):
@@ -340,17 +357,18 @@ def add_team_member_js(request):
         status = 202
         user_string = request.POST['user_string']
         if "@" in user_string and "." in user_string:
-	    email_address = EmailAddress.objects.filter(email=user_string)
-	    if len(email_address) > 0:
-		email_address = email_address[0]
-		new_member = email_address.user
-	else:
-	    users = User.objects.filter(username=user_string)
-	    if len(users) > 0:
-		new_member = users[0]
-	if new_member:
-	    if new_member.pk is request.user.pk:
-                response['error'] = 1 #'You cannot add yourself to your contacts!'
+            email_address = EmailAddress.objects.filter(email=user_string)
+            if len(email_address) > 0:
+                email_address = email_address[0]
+                new_member = email_address.user
+        else:
+            users = User.objects.filter(username=user_string)
+            if len(users) > 0:
+                new_member = users[0]
+        if new_member:
+            if new_member.pk is request.user.pk:
+                # 'You cannot add yourself to your contacts!'
+                response['error'] = 1
             else:
                 form_data = {
                     'leader': request.user.pk,
@@ -368,14 +386,17 @@ def add_team_member_js(request):
                     }
                     status = 201
                 else:
-                    response['error'] = 2 #'This person is already in your contacts!'
+                    # 'This person is already in your contacts!'
+                    response['error'] = 2
         else:
-	    response['error'] = 3 #'User cannot be found'
+            # 'User cannot be found'
+            response['error'] = 3
 
     return JsonResponse(
         response,
         status=status
     )
+
 
 @login_required
 def change_team_member_roles_js(request):
@@ -387,9 +408,14 @@ def change_team_member_roles_js(request):
     if request.is_ajax() and request.method == 'POST':
         form_data = json.loads(request.POST['form_data'])
         form_data['leader'] = request.user.pk
-        member=User.objects.get(pk=form_data['member'])
-        team_member_object_instance = request.user.leader.filter(member=member)[0]
-        team_member_form = TeamMemberForm(form_data, instance=team_member_object_instance)
+        member = User.objects.get(pk=form_data['member'])
+        team_member_object_instance = request.user.leader.filter(
+            member=member
+        )[0]
+        team_member_form = TeamMemberForm(
+            form_data,
+            instance=team_member_object_instance
+        )
         if team_member_form.is_valid():
             team_member_form.save()
             status = 200
@@ -397,6 +423,7 @@ def change_team_member_roles_js(request):
         response,
         status=status
     )
+
 
 @login_required
 def remove_team_member_js(request):
@@ -407,12 +434,17 @@ def remove_team_member_js(request):
     status = 405
     if request.is_ajax() and request.method == 'POST':
         former_members = request.POST.getlist('members[]')
-        for former_member in former_members :
+        for former_member in former_members:
             former_member = int(former_member)
             # Revoke all permissions given to this person
-            AccessRight.objects.filter(user_id=former_member,document__owner=request.user).delete()
+            AccessRight.objects.filter(
+                user_id=former_member,
+                document__owner=request.user
+            ).delete()
             # Now delete the user from the team
-            team_member_object_instance = request.user.leader.filter(member_id=former_member)[0]
+            team_member_object_instance = request.user.leader.filter(
+                member_id=former_member
+            )[0]
             team_member_object_instance.delete()
         status = 200
     return JsonResponse(

@@ -1,60 +1,39 @@
-#
-# This file is part of Fidus Writer <http://www.fiduswriter.org>
-#
-# Copyright (C) 2013 Takuto Kojima, Johannes Wilm
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as
-# published by the Free Software Foundation, either version 3 of the
-# License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-import json
-
-from django.shortcuts import render_to_response
+import time
+import os
+from tornado.escape import json_decode, json_encode
+from django.shortcuts import render
+from django.core import serializers
 from django.http import HttpResponse, JsonResponse, HttpRequest
-from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-from django.core.context_processors import csrf
-from django.template import RequestContext
+from django.template.context_processors import csrf
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.files import File
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.core.mail import send_mail
+from django.db.models import Q
+from django.contrib.admin.views.decorators import staff_member_required
+from django.core.paginator import Paginator, EmptyPage
 
-from document.models import Document, AccessRight, DocumentRevision
-from avatar.util import get_primary_avatar, get_default_avatar_url
-
+from avatar.utils import get_primary_avatar, get_default_avatar_url
 from avatar.templatetags.avatar_tags import avatar_url
 
-from django.core.serializers.python import Serializer
+from document.models import Document, AccessRight, DocumentRevision, \
+    ExportTemplate, CAN_UPDATE_DOCUMENT
+from usermedia.models import DocumentImage, Image
+from bibliography.models import Entry
+from document.helpers.serializers import PythonWithURLSerializer
+from bibliography.views import serializer
+from style.models import CitationStyle, CitationLocale
 
-from django.db.models import Q
-import dateutil.parser
-
-
-from django.core.serializers.python import Serializer
-
-class SimpleSerializer(Serializer):
-    def end_object( self, obj ):
-        self._current['id'] = obj._get_pk_val()
-        self.objects.append( self._current )
-serializer = SimpleSerializer()
 
 def get_accessrights(ars):
     ret = []
-    for ar in ars :
+    for ar in ars:
         the_avatar = get_primary_avatar(ar.user, 80)
-        if the_avatar :
+        if the_avatar:
             the_avatar = the_avatar.avatar_url(80)
         else:
             the_avatar = get_default_avatar_url()
@@ -67,34 +46,64 @@ def get_accessrights(ars):
         })
     return ret
 
+
 @login_required
 def index(request):
     response = {}
     response.update(csrf(request))
-    return render_to_response('document/index.html',
-        response,
-        context_instance=RequestContext(request))
+    return render(request, 'document/index.html',
+                  response)
+
 
 @login_required
 def get_documentlist_extra_js(request):
-    response={}
+    response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
         status = 200
         ids = request.POST['ids'].split(',')
-        documents = Document.objects.filter(Q(owner=request.user) | Q(accessright__user=request.user)).filter(id__in=ids)
-        #documents = Document.objects.filter(id__in=ids)
-        response['documents'] = serializer.serialize(documents, fields=('contents','id','settings','metadata'))
+        docs = Document.objects.filter(Q(owner=request.user) | Q(
+            accessright__user=request.user)).filter(id__in=ids)
+        response['documents'] = []
+        for doc in docs:
+            images = {}
+            for image in doc.documentimage_set.all():
+                images[image.image.id] = {
+                    'added': image.image.added,
+                    'checksum': image.image.checksum,
+                    'file_type': image.image.file_type,
+                    'height': image.image.height,
+                    'id': image.image.id,
+                    'image': image.image.image.url,
+                    'thumbnail': image.image.thumbnail.url,
+                    'title': image.title,
+                    'width': image.image.width
+                }
+            response['documents'].append({
+                'images': images,
+                'contents': doc.contents,
+                'comments': doc.comments,
+                'bibliography': doc.bibliography,
+                'id': doc.id
+            })
     return JsonResponse(
         response,
         status=status
     )
-import time
+
+
 def documents_list(request):
-    documents = Document.objects.filter(Q(owner=request.user) | Q(accessright__user=request.user)).order_by('-updated')
-    output_list=[]
-    for document in documents :
-        access_right = 'w' if document.owner == request.user else AccessRight.objects.get(user=request.user,document=document).rights
+    documents = Document.objects.filter(Q(owner=request.user) | Q(
+        accessright__user=request.user)).order_by('-updated')
+    output_list = []
+    for document in documents:
+        if document.owner == request.user:
+            access_right = 'write'
+        else:
+            access_right = AccessRight.objects.get(
+                user=request.user,
+                document=document
+            ).rights
         revisions = DocumentRevision.objects.filter(document=document)
         revision_list = []
         for revision in revisions:
@@ -117,7 +126,7 @@ def documents_list(request):
             'owner': {
                 'id': document.owner.id,
                 'name': document.owner.readable_name,
-                'avatar': avatar_url(document.owner,80)
+                'avatar': avatar_url(document.owner, 80)
             },
             'added': added,
             'updated': updated,
@@ -126,25 +135,40 @@ def documents_list(request):
         })
     return output_list
 
+
 @login_required
 def get_documentlist_js(request):
-    response={}
+    response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
         status = 200
         response['documents'] = documents_list(request)
-        response['team_members']=[]
+        response['team_members'] = []
         for team_member in request.user.leader.all():
             tm_object = {}
             tm_object['id'] = team_member.member.id
             tm_object['name'] = team_member.member.readable_name
-            tm_object['avatar'] = avatar_url(team_member.member,80)
+            tm_object['username'] = team_member.member.get_username()
+            tm_object['avatar'] = avatar_url(team_member.member, 80)
             response['team_members'].append(tm_object)
-        response['user']={}
-        response['user']['id']=request.user.id
-        response['user']['name']=request.user.readable_name
-        response['user']['avatar']=avatar_url(request.user,80)
-        response['access_rights'] = get_accessrights(AccessRight.objects.filter(document__owner=request.user))
+        serializer = PythonWithURLSerializer()
+        export_temps = serializer.serialize(
+            ExportTemplate.objects.all()
+        )
+        response['export_templates'] = [obj['fields'] for obj in export_temps]
+        cit_styles = serializer.serialize(
+            CitationStyle.objects.all()
+        )
+        response['citation_styles'] = [obj['fields'] for obj in cit_styles]
+        cit_locales = serializer.serialize(CitationLocale.objects.all())
+        response['citation_locales'] = [obj['fields'] for obj in cit_locales]
+        response['user'] = {}
+        response['user']['id'] = request.user.id
+        response['user']['name'] = request.user.readable_name
+        response['user']['username'] = request.user.get_username()
+        response['user']['avatar'] = avatar_url(request.user, 80)
+        response['access_rights'] = get_accessrights(
+            AccessRight.objects.filter(document__owner=request.user))
     return JsonResponse(
         response,
         status=status
@@ -154,10 +178,9 @@ def get_documentlist_js(request):
 @login_required
 def editor(request):
     response = {}
+    return render(request, 'document/editor.html',
+                  response)
 
-    return render_to_response('document/editor.html',
-        response,
-        context_instance=RequestContext(request))
 
 @login_required
 def delete_js(request):
@@ -165,30 +188,55 @@ def delete_js(request):
     status = 405
     if request.is_ajax() and request.method == 'POST':
         doc_id = int(request.POST['id'])
-        document = Document.objects.get(pk=doc_id,owner=request.user)
-        document.delete()
-        status = 200
+        document = Document.objects.get(pk=doc_id, owner=request.user)
+        if document.is_deletable():
+            image_ids = list(
+                DocumentImage.objects.filter(document_id=doc_id)
+                .values_list('image_id', flat=True)
+            )
+            document.delete()
+            for image in Image.objects.filter(id__in=image_ids):
+                if image.is_deletable():
+                    image.delete()
+            status = 200
+        else:
+            status = 409
     return JsonResponse(
         response,
         status=status
     )
 
-def send_share_notification(request, doc_id, collaborator_id, tgt_right):
+
+def send_share_notification(request, doc_id, collaborator_id, right):
     owner = request.user.readable_name
     document = Document.objects.get(id=doc_id)
     collaborator = User.objects.get(id=collaborator_id)
     collaborator_name = collaborator.readable_name
     collaborator_email = collaborator.email
     document_title = document.title
-    if len(document_title)==0:
+    if len(document_title) == 0:
         document_title = _('Untitled')
-    right = 'read'
-    if tgt_right == 'w':
-        right = 'read and write'
     link = HttpRequest.build_absolute_uri(request, document.get_absolute_url())
-    message_body = _('Hey %(collaborator_name)s,\n%(owner)s has shared the document \'%(document)s\' with you and given you %(right)s access rights. \nAccess the document through this link: %(link)s') % {'owner': owner, 'right': right, 'collaborator_name': collaborator_name, 'link': link, 'document': document_title}
-    send_mail(_('Document shared:')+' '+document_title, message_body, settings.DEFAULT_FROM_EMAIL,
-        [collaborator_email], fail_silently=True)
+    message_body = _(
+        ('Hey %(collaborator_name)s,\n%(owner)s has shared the document '
+         '\'%(document)s\' with you and given you %(right)s access rights. '
+         '\nAccess the document through this link: %(link)s')
+    ) % {
+                       'owner': owner,
+                       'right': right,
+                       'collaborator_name': collaborator_name,
+                       'link': link,
+                       'document': document_title
+                   }
+    send_mail(
+        _('Document shared:') +
+        ' ' +
+        document_title,
+        message_body,
+        settings.DEFAULT_FROM_EMAIL,
+        [collaborator_email],
+        fail_silently=True)
+
 
 def send_share_upgrade_notification(request, doc_id, collaborator_id):
     owner = request.user.readable_name
@@ -197,16 +245,28 @@ def send_share_upgrade_notification(request, doc_id, collaborator_id):
     collaborator_name = collaborator.readable_name
     collaborator_email = collaborator.email
     link = HttpRequest.build_absolute_uri(request, document.get_absolute_url())
-    message_body = _('Hey %(collaborator_name)s,\n%(owner)s has given you write access rights to a Fidus Writer document.\nAccess the document through this link: %(link)s') % {'owner': owner, 'collaborator_name': collaborator_name, 'link': link}
-    send_mail(_('Fidus Writer document write access'), message_body, settings.DEFAULT_FROM_EMAIL,
-        [collaborator_email], fail_silently=True)
+    message_body = _(
+        ('Hey %(collaborator_name)s,\n%(owner)s has given you write access '
+         'rights to a Fidus Writer document.\nAccess the document through '
+         'this link: %(link)s')
+    ) % {
+                       'owner': owner,
+                       'collaborator_name': collaborator_name,
+                       'link': link
+                   }
+    send_mail(
+        _('Fidus Writer document write access'),
+        message_body,
+        settings.DEFAULT_FROM_EMAIL,
+        [collaborator_email],
+        fail_silently=True)
 
 
 @login_required
 @transaction.atomic
 def access_right_save_js(request):
     status = 405
-    response={}
+    response = {}
     if request.is_ajax() and request.method == 'POST':
         tgt_documents = request.POST.getlist('documents[]')
         tgt_users = request.POST.getlist('collaborators[]')
@@ -214,46 +274,107 @@ def access_right_save_js(request):
         for tgt_doc in tgt_documents:
             doc_id = int(tgt_doc)
             try:
-                the_doc = Document.objects.get(pk=doc_id, owner=request.user)
+                Document.objects.get(pk=doc_id, owner=request.user)
             except ObjectDoesNotExist:
                 continue
             x = 0
-            for tgt_user in tgt_users :
+            for tgt_user in tgt_users:
                 collaborator_id = int(tgt_user)
                 try:
                     tgt_right = tgt_rights[x]
                 except IndexError:
-                    tgt_right = 'r'
-                if tgt_right == 'd':
-                    # Status 'd' means the access right is marked for deletion.
+                    tgt_right = 'read'
+                if tgt_right == 'delete':
+                    # Status 'delete' means the access right is marked for
+                    # deletion.
                     try:
-                        access_right = AccessRight.objects.get(document_id = doc_id, user_id = collaborator_id)
+                        access_right = AccessRight.objects.get(
+                            document_id=doc_id, user_id=collaborator_id)
                         access_right.delete()
-                    except:
+                    except ObjectDoesNotExist:
                         pass
                 else:
                     try:
-                        access_right = AccessRight.objects.get(document_id = doc_id, user_id = collaborator_id)
+                        access_right = AccessRight.objects.get(
+                            document_id=doc_id, user_id=collaborator_id)
                         if access_right.rights != tgt_right:
                             access_right.rights = tgt_right
-                            if tgt_right == 'w':
-                                send_share_upgrade_notification(request, doc_id, collaborator_id)
+                            if tgt_right == 'write':
+                                send_share_upgrade_notification(
+                                    request, doc_id, collaborator_id)
                     except ObjectDoesNotExist:
                         access_right = AccessRight.objects.create(
-                            document_id = doc_id,
-                            user_id = collaborator_id,
-                            rights= tgt_right,
+                            document_id=doc_id,
+                            user_id=collaborator_id,
+                            rights=tgt_right,
                         )
-                        send_share_notification(request, doc_id, collaborator_id, tgt_right)
+                        send_share_notification(
+                            request, doc_id, collaborator_id, tgt_right)
                     access_right.save()
                 x += 1
-        response['access_rights'] = get_accessrights(AccessRight.objects.filter(document__owner=request.user))
+        response['access_rights'] = get_accessrights(
+            AccessRight.objects.filter(document__owner=request.user))
         status = 201
     return JsonResponse(
         response,
         status=status
     )
 
+
+@login_required
+def import_create_js(request):
+    # First step of import: Create a document and return the id of it
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 201
+        document = Document.objects.create(owner_id=request.user.pk)
+        response['id'] = document.id
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@login_required
+def import_image_js(request):
+    # create an image for a document
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        document = Document.objects.filter(
+            owner_id=request.user.pk,
+            id=int(request.POST['doc_id'])
+        )
+        if document.exists():
+            status = 201
+        else:
+            status = 401
+            return JsonResponse(
+                response,
+                status=status
+            )
+        document = document[0]
+        checksum = request.POST['checksum']
+        image = Image.objects.filter(checksum=checksum)
+        if image.exists():
+            image = image[0]
+        else:
+            image = Image.objects.create(
+                uploader=request.user,
+                image=request.FILES['image'],
+                checksum=checksum
+            )
+        doc_image = DocumentImage.objects.create(
+            image=image,
+            title=request.POST['title'],
+            document=document
+        )
+        response['id'] = doc_image.image.id
+    return JsonResponse(
+        response,
+        status=status
+    )
 
 
 @login_required
@@ -261,23 +382,46 @@ def import_js(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
-        document = Document.objects.create(owner_id=request.user.pk)
+        doc_id = request.POST['id']
+        # There is a doc_id, so we overwrite an existing doc rather than
+        # creating a new one.
+        document = Document.objects.get(id=int(doc_id))
+        if (
+            document.owner != request.user and
+            len(AccessRight.objects.filter(
+                document_id=doc_id,
+                user_id=request.user.id,
+                rights__in=CAN_UPDATE_DOCUMENT
+            )) == 0
+        ):
+            response['error'] = 'No access to file'
+            status = 403
+            return JsonResponse(
+                response,
+                status=status
+            )
         document.title = request.POST['title']
-        document.contents = request.POST['contents']
-        document.metadata = request.POST['metadata']
-        document.settings = request.POST['settings']
+        # We need to decode/encode the following so that it has the same
+        # character encoding as used the the save_document method in ws_views.
+        document.contents = json_encode(json_decode(request.POST['contents']))
+        document.comments = json_encode(json_decode(request.POST['comments']))
+        document.bibliography = \
+            json_encode(json_decode(request.POST['bibliography']))
+        # document.doc_version should always be the current version, so don't
+        # bother about it.
         document.save()
         response['document_id'] = document.id
         response['added'] = time.mktime(document.added.utctimetuple())
         response['updated'] = time.mktime(document.updated.utctimetuple())
-        status = 201
+        status = 200
     return JsonResponse(
         response,
         status=status
     )
 
+
 @login_required
-def upload_js(request):
+def upload_revision_js(request):
     response = {}
     can_save = False
     status = 405
@@ -289,8 +433,11 @@ def upload_js(request):
             if document.owner == request.user:
                 can_save = True
             else:
-                access_rights = AccessRight.objects.filter(document=document, user=request.user)
-                if len(access_rights) > 0 and access_rights[0].rights == 'w':
+                access_rights = AccessRight.objects.filter(
+                    document=document, user=request.user)
+                if len(access_rights) > 0 and access_rights[
+                    0
+                ].rights == 'write':
                     can_save = True
         if can_save:
             status = 201
@@ -305,41 +452,30 @@ def upload_js(request):
         status=status
     )
 
+
 # Download a revision that was previously uploaded
 @login_required
-def download_js(request):
-    can_access = False
-    response = {}
-    if request.is_ajax() and request.method == 'POST':
-        revision_id = request.POST['id']
-        revision = DocumentRevision.objects.filter(pk=int(revision_id))
-        if len(revision) > 0:
-            revision = revision[0]
-            document = revision.document
-            if document.owner == request.user:
-                can_access = True
-            else:
-                access_rights = AccessRight.objects.filter(document=document, user=request.user)
-                if len(access_rights) > 0:
-                    can_save = True
-        if can_access:
-            response = {}
-            http_response = HttpResponse(
-                revision.file_object.file,
-                content_type = 'application/zip; charset=x-user-defined',
-                status=200
-            )
-            http_response['Content-Disposition'] = 'attachment; filename=some_name.zip'
-            return http_response
-    return JsonResponse(
-        response,
-        status=405
+def get_revision(request, revision_id):
+    if request.user.is_staff:
+        revision = DocumentRevision.objects.get(pk=int(revision_id))
+    else:
+        revision = DocumentRevision.objects.get(
+            pk=int(revision_id),
+            document__owner=request.user
+        )
+    http_response = HttpResponse(
+        revision.file_object.file,
+        content_type='application/zip; charset=x-user-defined',
+        status=200
     )
+    http_response[
+        'Content-Disposition'] = 'attachment; filename=some_name.zip'
+    return http_response
+
 
 @login_required
 def delete_revision_js(request):
     response = {}
-    can_save = False
     status = 405
     if request.is_ajax() and request.method == 'POST':
         revision_id = request.POST['id']
@@ -350,6 +486,165 @@ def delete_revision_js(request):
             if document.owner == request.user:
                 status = 200
                 revision.delete()
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+# maintenance views
+@staff_member_required
+def get_all_docs_js(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 200
+        doc_list = Document.objects.all()
+        paginator = Paginator(doc_list, 10)  # Get 10 docs per page
+
+        batch = request.POST['batch']
+        try:
+            response['docs'] = serializers.serialize(
+                'json',
+                paginator.page(batch)
+            )
+        except EmptyPage:
+            response['docs'] = "[]"
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@staff_member_required
+def save_doc_js(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 200
+        doc_id = request.POST['id']
+        doc = Document.objects.get(pk=int(doc_id))
+        # Only looking at fields that may have changed.
+        contents = request.POST.get('contents', False)
+        bibliography = request.POST.get('bibliography', False)
+        comments = request.POST.get('comments', False)
+        doc_version = request.POST.get('doc_version', False)
+        last_diffs = request.POST.get('last_diffs', False)
+        version = request.POST.get('version', False)
+        if contents:
+            doc.contents = contents
+        if bibliography:
+            doc.bibliography = bibliography
+        if comments:
+            doc.comments = comments
+        if doc_version:
+            doc.doc_version = doc_version
+        if version:
+            doc.version = version
+        if last_diffs:
+            doc.last_diffs = last_diffs
+        doc.save()
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@staff_member_required
+def get_user_biblist_js(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 200
+        user_id = request.POST['user_id']
+        response['bibList'] = serializer.serialize(
+            Entry.objects.filter(
+                entry_owner_id=user_id
+            ), fields=(
+                    'entry_key',
+                    'entry_owner',
+                    'bib_type',
+                    'fields'
+            )
+        )
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@staff_member_required
+def get_all_revision_ids_js(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 200
+        revisions = DocumentRevision.objects.only('id')
+        response["revision_ids"] = []
+        for revision in revisions:
+            response["revision_ids"].append(revision.id)
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@staff_member_required
+def update_revision_js(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 200
+        revision_id = request.POST['id']
+        revision = DocumentRevision.objects.get(pk=int(revision_id))
+        # keep the filename
+        file_name = revision.file_object.name
+        revision.file_object = request.FILES['file']
+        revision.file_object.name = file_name
+        revision.save()
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@staff_member_required
+def add_images_to_doc_js(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 201
+        doc_id = request.POST['doc_id']
+        doc = Document.objects.get(id=doc_id)
+        # Delete all existing image links
+        DocumentImage.objects.filter(
+            document_id=doc_id
+        ).delete()
+        ids = request.POST.getlist('ids[]')
+        for id in ids:
+            title = 'Deleted'
+            image = Image.objects.filter(id=id)
+            if image.exists():
+                image = image[0]
+                user_image = image.userimage_set.all()
+                if user_image.exists():
+                    user_image = user_image[0]
+                    title = user_image.title
+            else:
+                image = Image()
+                image.pk = id
+                image.uploader = doc.owner
+                f = open(os.path.join(
+                    settings.PROJECT_PATH, "base/static/img/error.png"
+                ))
+                image.image.save('error.png', File(f))
+                image.save()
+            DocumentImage.objects.create(
+                document=doc,
+                image=image,
+                title=title
+            )
+
     return JsonResponse(
         response,
         status=status

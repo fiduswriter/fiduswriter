@@ -1,75 +1,64 @@
-#
-# This file is part of Fidus Writer <http://www.fiduswriter.org>
-#
-# Copyright (C) 2013 Takuto Kojima, Johannes Wilm
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as
-# published by the Free Software Foundation, either version 3 of the
-# License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-#############################################
-# Django settings for Fidus Writer project. #
-#############################################
-
-
 import os
 
 # If you want to show debug messages, set DEBUG to True.
 
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 
 SERVER_INFO = {
-    # This determines whether the server is used for testing and will let the users
-    # upon signup know that their documents may disappear.
+    # This determines whether the server is used for testing and will let the
+    # users know upon signup know that their documents may disappear.
     'TEST_SERVER': True,
-    # This is the contact email that will be shown in various places all over the site.
-    # It will also be used to forward feedback messages.
+    # This is the contact email that will be shown in various places all over
+    # the site.
     'CONTACT_EMAIL': 'mail@email.com',
-    'WS_PORT': False
+    # If websockets is running on a non-standard port, add it here:
+    'WS_PORT': False,
 }
 
 ADMINS = (
-     ('Your Name', 'your_email@example.com'),
+    ('Your Name', 'your_email@example.com'),
 )
 
 MANAGERS = ADMINS
 
+# The top path of the project. The default is for it to point to the directory
+# above this file.
+PROJECT_PATH = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
+
+# Paths to settings files
+SETTINGS_PATHS = [os.path.dirname(__file__), ]
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': './fiduswriter.sql',
+        'NAME': os.path.join(PROJECT_PATH, 'fiduswriter.sql'),
         'CONN_MAX_AGE': 15
     }
 
 }
 
+# Will let any user not delete more than 5000 bibliography entries
+# simultaneously
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000
+
+# Whether anyone surfing to the site can open an account.
+REGISTRATION_OPEN = True
+
 # Send emails to console.
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Or send emails using an SMTP server
-#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-#EMAIL_HOST = 'localhost'
-#EMAIL_HOST_USER = ''
-#EMAIL_HOST_PASSWORD = ''
-#EMAIL_PORT = 25
-#EMAIL_SUBJECT_PREFIX = '[Fidus Writer]'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'localhost'
+# EMAIL_HOST_USER = ''
+# EMAIL_HOST_PASSWORD = ''
+# EMAIL_PORT = 25
+# EMAIL_SUBJECT_PREFIX = '[Fidus Writer]'
 
 
-# Local time zone for this installation. Choices can be found here:
-# http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
-# although not all choices may be available on all operating systems.
-# In a Windows environment this must be set to your system time zone.
-TIME_ZONE = 'America/Chicago'
+# Local time zone for this installation. Keep UTC here, the frontend will
+# translate this to the correct local time.
+TIME_ZONE = 'UTC'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -84,7 +73,7 @@ SITE_ID = 1
 USE_I18N = True
 
 LOCALE_PATHS = (
-    './locale',
+    os.path.join(PROJECT_PATH, 'locale'),
 )
 
 # A list of allowed hostnames of this Fidus Writer installation
@@ -98,10 +87,6 @@ USE_L10N = True
 
 # If you set this to False, the server will not use timezone-aware datetimes.
 USE_TZ = True
-
-# The top path of the project. The default is for it to point to the directory
-# above this file.
-PROJECT_PATH = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # The default is the media folder in the directory above this file.
@@ -122,9 +107,8 @@ STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    # Put strings here, like "/home/html/static" or "C:/www/django/static".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
+    os.path.join(PROJECT_PATH, 'static-transpile'),
+    os.path.join(PROJECT_PATH, 'static-libs'),
 )
 
 LOGIN_URL = '/account/login/'
@@ -134,7 +118,7 @@ LOGIN_URL = '/account/login/'
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    #'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
     'compressor.finders.CompressorFinder',
 )
 
@@ -142,13 +126,6 @@ COMPRESS_OUTPUT_DIR = '.'
 
 # Make this unique, and don't share it with anybody. Change the default string.
 SECRET_KEY = '2ouq2zgw5y-@w+t6!#zf#-z1inigg7$lg3p%8e3kkob1bf$#p4'
-
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
-)
 
 
 # These middleware classes is what Fidus Writer needs in its standard setup.
@@ -169,24 +146,31 @@ ROOT_URLCONF = 'fiduswriter.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'fiduswriter.wsgi.application'
 
-TEMPLATE_DIRS = (
-    './templates',
-    # Put strings here, like "/home/html/django_templates".
-    # You only need to change this in very advanced setups.
-)
 
-# The context processors used by Fidus Writer.
-# You only need to change this in very advanced setups.
-TEMPLATE_CONTEXT_PROCESSORS = (
-    "base.context_processors.js_locations",
-    "base.context_processors.css_locations",
-    "base.context_processors.server_info",
-    "django.core.context_processors.static",
-    "django.core.context_processors.request",
-    "django.contrib.auth.context_processors.auth",
-    "allauth.account.context_processors.account",
-    "allauth.socialaccount.context_processors.socialaccount",
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            os.path.join(PROJECT_PATH, 'templates'),
+            # Put strings here, like "/home/html/django_templates".
+            # You only need to change this in very advanced setups.
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'base.context_processors.server_info',
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.request',
+                'django.template.context_processors.tz',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
 
 
 # The following are the apps needed by Fidus Writer. The lower part of the list
@@ -200,14 +184,16 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.admin',
+    'django.contrib.admin.apps.SimpleAdminConfig',
     'django.contrib.admindocs',
     'django.contrib.flatpages',
     'django_js_error_hook',
+    'npm_mjs',
+    'adminplus',
     'fixturemedia',
+    'browser_check',
     'menu',
     'document',
-    'book',
     'bibliography',
     'usermedia',
     'user',
@@ -217,19 +203,19 @@ INSTALLED_APPS = (
     'avatar',
     'compressor',
     'feedback',
-    'style'
+    'style',
     # If you want to enable one or several of the social network login options
     # below, make sure you add the authorization keys at:
     # http://SERVER.COM/admin/socialaccount/socialapp/
-    #'allauth.socialaccount.providers.facebook',
-    #'allauth.socialaccount.providers.google',
-    #'allauth.socialaccount.providers.twitter',
-    #'allauth.socialaccount.providers.github',
-    #'allauth.socialaccount.providers.linkedin',
-    #'allauth.socialaccount.providers.openid',
-    #'allauth.socialaccount.providers.persona',
-    #'allauth.socialaccount.providers.soundcloud',
-    #'allauth.socialaccount.providers.stackexchange',
+    # 'allauth.socialaccount.providers.facebook',
+    # 'allauth.socialaccount.providers.google',
+    # 'allauth.socialaccount.providers.twitter',
+    # 'allauth.socialaccount.providers.github',
+    # 'allauth.socialaccount.providers.linkedin',
+    # 'allauth.socialaccount.providers.openid',
+    # 'allauth.socialaccount.providers.persona',
+    # 'allauth.socialaccount.providers.soundcloud',
+    # 'allauth.socialaccount.providers.stackexchange',
 )
 
 
@@ -246,11 +232,14 @@ TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 # Define available languages
 # You only need to change this in very advanced setups.
-gettext = lambda s: s
+def gettext(s): return s
+
+
 LANGUAGES = (
     ('en', gettext('English')),
     ('bg', gettext('Bulgarian')),
     ('de', gettext('German')),
+    ('fr', gettext('French')),
     ('it', gettext('Italian')),
     ('es', gettext('Spanish')),
 )
@@ -266,9 +255,6 @@ ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 
 AUTH_PROFILE_MODULE = "account.UserProfile"
 
-# locking
-LOCK_TIMEOUT = 600
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -279,7 +265,10 @@ LOGGING = {
     },
     'formatters': {
         'verbose': {
-            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+            'format': (
+                '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d '
+                '%(message)s'
+            )
         },
         'simple': {
             'format': '\033[22;32m%(levelname)s\033[0;0m %(message)s'
@@ -288,20 +277,26 @@ LOGGING = {
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
-            'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
         },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
-            },
+        },
+        'null': {
+            'class': 'logging.NullHandler',
+        },
     },
     'loggers': {
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
             'propagate': True,
+        },
+        'django.security.DisallowedHost': {
+            'handlers': ['null'],
+            'propagate': False,
         },
         'javascript_error': {
             'handlers': ['mail_admins'],
@@ -317,20 +312,12 @@ AVATAR_GRAVATAR_BACKUP = False
 AVATAR_DEFAULT_URL = 'img/default_avatar.png'
 AVATAR_MAX_AVATARS_PER_USER = 1
 
-# Location of commonly used Js libraries. Here the local version is given. For deployment a version on the net is better.
-JS_LOCATIONS = {
-    'JQUERY_URL': STATIC_URL + 'js/libs/jquery-2.0.3.js',
-    'JQUERYMIGRATE_URL': STATIC_URL + 'js/libs/jquery-migrate-1.2.1.js',
-    'JQUERYUI_URL': STATIC_URL + 'js/libs/jquery-ui-1.10.1.custom.js',
-    'UNDERSCOREJS_URL': STATIC_URL + 'js/libs/underscore-1.5.2.js',
-    'MODERNIZR_URL': STATIC_URL + 'js/libs/modernizr-2.6.3.js',
-    'MATHJAX_URL': STATIC_URL + 'js/libs/mathjax/MathJax.js',
-    }
-
-CSS_LOCATIONS = {
-    }
-
+local_config_path = os.path.join(PROJECT_PATH, 'configuration.py')
 try:
-    exec open(os.path.join(PROJECT_PATH, 'configuration.py')) in globals()
-except:
+    local_config = open(local_config_path)
+except IOError:
     pass
+else:
+    exec(local_config.read(), globals())
+    # Paths to settings files
+    SETTINGS_PATHS += [local_config_path]

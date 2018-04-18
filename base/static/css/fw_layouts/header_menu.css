@@ -1,0 +1,77 @@
+.fw-header > .fw-container {
+    z-index: 100;
+    overflow: visible;
+}
+
+.fw-logo {
+    margin: 30px 0 29px;
+}
+
+.fw-logo > img {
+    width: auto;
+    height: 25px;
+    margin-left: 2px;
+}
+
+.fw-user-preferences {
+    position: absolute;
+    right: 40px;
+    top: 0;
+}
+
+.fw-user-preferences .fw-name {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+#header-nav {
+    position: relative;
+    background-color: #fff;
+    border-top: solid 1px #8d8d8d;
+    border-bottom: solid 1px #cecece;
+    z-index: 1;
+}
+
+.fw-nav-container {
+    overflow: visible;
+}
+
+.fw-nav-item {
+    position: relative;
+    display: inline-block;
+    width: auto;
+    height: 40px;
+    margin-right: 18px;
+}
+.fw-nav-item.active-menu-wrapper:after {
+    position: absolute;
+    left: 50%;
+    top: 25px;
+    line-height: 100%;
+    font-size: 24px;
+    margin-left: -8px;
+    color: #f2f2f2;
+    text-shadow: 0 -1px 0px #b6b6b6;
+}
+
+.fw-nav-item a {
+    color: #a9abaa;
+    text-decoration: none;
+}
+
+.fw-nav-item a:hover, .fw-nav-item.active-menu-wrapper a {
+    color: #3a3e3d;
+}
+
+#user-preferences-pulldown {
+    position: fixed;
+    right: auto;
+}
+.fw-logout-button {
+    background: none!important;
+    border: none;
+    padding: 0!important;
+    font-size: inherit;
+    font-family: inherit;
+    cursor: pointer;
+}

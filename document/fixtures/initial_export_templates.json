@@ -1,0 +1,20 @@
+[
+{
+    "model": "document.exporttemplate",
+    "pk": 1,
+    "fields": {
+        "file_name": "Classic",
+        "file_type": "docx",
+        "template_file": "export-templates/template.docx"
+    }
+},
+{
+    "model": "document.exporttemplate",
+    "pk": 2,
+    "fields": {
+        "file_name": "Free",
+        "file_type": "odt",
+        "template_file": "export-templates/template.odt"
+    }
+}
+]

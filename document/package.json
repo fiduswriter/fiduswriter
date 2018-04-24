@@ -1,6 +1,6 @@
 {
     "dependencies": {
-        "citeproc": "2.1.200",
+        "citeproc": "2.1.x",
         "fastdom": "1.0.8",
         "fast-deep-equal": "1.1.0",
         "fast-json-patch": "2.0.6",
@@ -21,7 +21,7 @@
         "prosemirror-schema-basic": "1.0.x",
         "prosemirror-schema-list": "1.0.x",
         "prosemirror-state": "1.2.x",
-        "prosemirror-tables": "0.6.x",
+        "prosemirror-tables": "0.7.x",
         "prosemirror-transform": "1.0.x",
         "prosemirror-view": "1.2.x",
         "texzilla": "0.9.9"

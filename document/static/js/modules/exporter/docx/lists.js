@@ -132,7 +132,7 @@ export class DocxExporterLists {
     }
 
     addUsedListTypes() {
-        let allAbstractNum = [].slice.call(this.numberingXml.querySelectorAll('abstractNum'))
+        let allAbstractNum = this.numberingXml.querySelectorAll('abstractNum')
         allAbstractNum.forEach(
             abstractNum => {
                 // We check the format for the lowest level list and use the first
@@ -155,7 +155,7 @@ export class DocxExporterLists {
 
             }
         )
-        let allNum = [].slice.call(this.numberingXml.querySelectorAll('num'))
+        let allNum = this.numberingXml.querySelectorAll('num')
         allNum.forEach(numEl => {
             let numId = parseInt(numEl.getAttribute('w:val'))
             if(this.maxNumId < numId) {

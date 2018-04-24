@@ -88,7 +88,7 @@ export class DocxExporterRender {
     // replacements.
     render() {
         // Including global page definition at end
-        let pars = [].slice.call(this.xml.querySelectorAll('p,sectPr'))
+        let pars = this.xml.querySelectorAll('p,sectPr')
         let currentTags = []
 
         pars.forEach(
@@ -153,7 +153,7 @@ export class DocxExporterRender {
     inlineRender(tag) {
         let texts = tag.par.textContent.split('{'+tag.title+'}')
         let fullText = texts[0] + escapeText(tag.content) + texts[1]
-        let rs = [].slice.call(tag.par.querySelectorAll('r'))
+        let rs = Array.from(tag.par.querySelectorAll('r'))
         while (rs.length > 1) {
             rs[0].parentNode.removeChild(rs[0])
             rs.shift()

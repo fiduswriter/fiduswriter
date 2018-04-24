@@ -45,7 +45,7 @@ export class ModToolsPrint {
         footnoteBox.parentElement.removeChild(footnoteBox)
 
         let footnotes = footnoteBox.querySelectorAll('.footnote-container')
-        let footnoteMarkers = [].slice.call(flowCopy.querySelectorAll('.footnote-marker'))
+        let footnoteMarkers = flowCopy.querySelectorAll('.footnote-marker')
 
         footnoteMarkers.forEach((fnMarker, index) => {
             while (fnMarker.firstChild) {
@@ -56,7 +56,7 @@ export class ModToolsPrint {
             }
         })
         let footnoteCitations = footnoteBox.querySelectorAll('.footnote-citation')
-        let footnoteCitationMarkers = [].slice.call(flowCopy.querySelectorAll('.citation-footnote-marker'))
+        let footnoteCitationMarkers = flowCopy.querySelectorAll('.citation-footnote-marker')
 
         footnoteCitationMarkers.forEach((fnCitationMarker, index) => {
             let fnCitation = footnoteCitations[index]

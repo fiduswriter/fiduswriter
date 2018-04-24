@@ -41,7 +41,7 @@ export class ImageOverviewCategories {
                 type: 'category',
                 title: cat.category_title,
                 action: overview => {
-                    let trs = [].slice.call(document.querySelectorAll('#bibliography > tbody > tr'))
+                    let trs = document.querySelectorAll('#bibliography > tbody > tr')
                     trs.forEach(tr => {
                         if (tr.classList.contains(`cat_${cat.id}`)) {
                             tr.style.display = ''

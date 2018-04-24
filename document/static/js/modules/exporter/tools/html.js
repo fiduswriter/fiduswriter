@@ -33,8 +33,7 @@ export let findImages = function(htmlEl) {
 // all descendant text nodes for dom nodes
 export let domDescendantTexNodes = function(node) {
     let returnValue = []
-    let childNodes = [].slice.call(node.childNodes)
-    childNodes.forEach(
+    node.childNodes.forEach(
         subNode => {
             if (subNode.nodeType===3) {
                 returnValue.push(subNode)

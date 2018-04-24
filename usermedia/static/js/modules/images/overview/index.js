@@ -187,7 +187,7 @@ export class ImageOverview {
 
     // get IDs of selected bib entries
     getSelected() {
-        return [].slice.call(
+        return Array.from(
             document.querySelectorAll('.entry-select:checked:not(:disabled)')
         ).map(el => parseInt(el.getAttribute('data-id')))
     }

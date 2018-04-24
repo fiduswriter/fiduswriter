@@ -45,9 +45,8 @@ def save_js(request):
                 user_image = UserImage.objects.filter(
                     image_id=int(request.POST['id']),
                     owner=request.user
-                )
-                if user_image.exists():
-                    user_image = user_image[0]
+                ).first()
+                if user_image:
                     image = user_image.image
                     status = 200
             if image is False:

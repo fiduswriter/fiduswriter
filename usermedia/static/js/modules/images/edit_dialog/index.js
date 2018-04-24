@@ -88,7 +88,7 @@ export class ImageEditDialog {
 
         let imageData = {
             title: document.querySelector('#editimage .fw-media-title').value,
-            cats: [].slice.call(document.querySelectorAll('#editimage .entry-cat:checked')).map(
+            cats: Array.from(document.querySelectorAll('#editimage .entry-cat:checked')).map(
                 el => parseInt(el.value)
             )
         }

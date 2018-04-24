@@ -35,7 +35,7 @@ export class DocxExporterRels {
 
     // Go through a rels xml file and file all the listed relations
     findMaxRelId() {
-        let rels = [].slice.call(this.xml.querySelectorAll('Relationship'))
+        let rels = this.xml.querySelectorAll('Relationship')
 
         rels.forEach(
             rel => {

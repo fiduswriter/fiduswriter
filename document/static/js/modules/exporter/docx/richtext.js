@@ -201,7 +201,7 @@ export class DocxExporterRichtext {
                     let fnXml = `<w:footnote w:id="${this.fnCounter}">${fnContents}</w:footnote>`
                     let xml = this.exporter.footnotes.xml
                     let lastId = this.fnCounter - 1
-                    let footnotes = [].slice.call(xml.querySelectorAll('footnote'))
+                    let footnotes = xml.querySelectorAll('footnote')
                     footnotes.forEach(
                         footnote => {
                             let id = parseInt(footnote.getAttribute('w:id'))

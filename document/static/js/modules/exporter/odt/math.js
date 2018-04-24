@@ -19,7 +19,7 @@ export class OdtExporterMath {
 
     checkObjectCounter() {
         let manifestEl = this.manifestXml.querySelector('manifest')
-        let fileEntries = [].slice.call(manifestEl.querySelectorAll('file-entry'))
+        let fileEntries = manifestEl.querySelectorAll('file-entry')
 
         fileEntries.forEach(
             fileEntry => {

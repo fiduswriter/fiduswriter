@@ -93,7 +93,7 @@ export class OdtExporterRender {
     // replacements.
     render() {
 
-        let pars = [].slice.call(this.xml.querySelectorAll('p'))
+        let pars = this.xml.querySelectorAll('p')
 
         pars.forEach(par => {
             domDescendantTexNodes(par).forEach(textNode => {

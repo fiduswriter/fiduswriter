@@ -296,7 +296,7 @@ export class CitationDialog {
     }
 
     dialogSubmit() {
-        let citeItems = [].slice.call(
+        let citeItems = Array.from(
                 document.querySelectorAll('#selected-cite-source-table .fw-cite-parts-table')
             ),
             references = citeItems.map(bibRef => {
@@ -323,7 +323,7 @@ export class CitationDialog {
                 return returnObj
             })
 
-        if (0 === citeItems.length) {
+        if (!citeItems.length) {
             addAlert('info',gettext('Please select at least one citation source!'))
             return false
         }

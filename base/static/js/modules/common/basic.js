@@ -126,8 +126,8 @@ export let localizeDate = function (milliseconds, type='full') {
  */
 
 export let noSpaceTmp = function(strings) {
-     let values = [].slice.call(arguments)
-     let tmpStrings = [].slice.call(values.shift())
+     let values = Array.from(arguments)
+     let tmpStrings = Array.from(values.shift())
 
      let combined = ""
      while (tmpStrings.length > 0 || values.length > 0) {

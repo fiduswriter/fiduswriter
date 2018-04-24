@@ -25,7 +25,7 @@ export class ModCitations {
     }
 
     resetCitations() {
-        let citations = [].slice.call(document.querySelectorAll('#paper-editable span.citation'))
+        let citations = document.querySelectorAll('#paper-editable span.citation')
         citations.forEach(function(citation){
             citation.innerHTML = ''
         })
@@ -44,8 +44,8 @@ export class ModCitations {
             // bibliography hasn't been loaded yet
             return
         }
-        this.emptyCitations = [].slice.call(document.querySelectorAll('#paper-editable span.citation:empty'))
-        if (this.emptyCitations.length > 0) {
+        let emptyCitations = document.querySelectorAll('#paper-editable span.citation:empty')
+        if (emptyCitations.length) {
             this.citRenderer = new RenderCitations(
                 document.getElementById('paper-editable'), // TODO: Should we point this to somewhere else?
                 this.editor.view.state.doc.firstChild.attrs.citationstyle,
@@ -110,7 +110,7 @@ export class ModCitations {
 
             if (emptyBodyCitation) {
                 // Find all the citations in the main body text (not footnotes)
-                let citationNodes = [].slice.call(document.querySelectorAll('#document-editable span.citation')),
+                let citationNodes = document.querySelectorAll('#document-editable span.citation'),
                     citations = []
 
                 citRenderer.fm.citationTexts.forEach(citText => {
@@ -127,9 +127,7 @@ export class ModCitations {
                     citationsContainer.innerHTML = citationsHTML
                 }
                 // The citations have not been filled, so we do so manually.
-                citationNodes.forEach(citationNode => {
-                    citationNode.innerHTML = '<span class="citation-footnote-marker"></span>'
-                })
+                citationNodes.forEach(citationNode => citationNode.innerHTML = '<span class="citation-footnote-marker"></span>')
             }
 
         } else {

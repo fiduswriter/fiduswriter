@@ -84,7 +84,7 @@ export class BibliographyOverview {
             title: cat.category_title,
             type: 'category',
             action: overview => {
-                let trs = [].slice.call(document.querySelectorAll('#bibliography > tbody > tr'))
+                let trs = document.querySelectorAll('#bibliography > tbody > tr')
                 trs.forEach(tr => {
                     if (tr.classList.contains(`cat_${cat.id}`)) {
                         tr.style.display = ''
@@ -219,7 +219,7 @@ export class BibliographyOverview {
 
     // get IDs of selected bib entries
     getSelected() {
-        return [].slice.call(
+        return Array.from(
             document.querySelectorAll('.entry-select:checked:not(:disabled)')
         ).map(el => parseInt(el.getAttribute('data-id')))
     }

@@ -19,7 +19,7 @@ export class EntryCatForm{
     }
 
     get value() {
-        return [].slice.call(this.dom.querySelectorAll('.fw-checkable.checked')).map(el => {
+        return Array.from(this.dom.querySelectorAll('.fw-checkable.checked')).map(el => {
             return parseInt(el.getAttribute('data-id'))
         })
     }

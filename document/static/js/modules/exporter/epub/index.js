@@ -103,14 +103,14 @@ export class EpubExporter extends BaseEpubExporter {
         let docContents = serializer.serializeNode(schema.nodeFromJSON(this.doc.contents))
 
         // Remove hidden parts
-        let hiddenEls = [].slice.call(docContents.querySelectorAll('[data-hidden=true]'))
+        let hiddenEls = docContents.querySelectorAll('[data-hidden=true]')
         hiddenEls.forEach(hiddenEl => hiddenEl.parentElement.removeChild(hiddenEl))
 
-        let authors = [].slice.call(docContents.querySelectorAll('.article-authors .author')).map(
+        let authors = Array.from(docContents.querySelectorAll('.article-authors .author')).map(
             authorEl => authorEl.textContent
         )
 
-        let keywords = [].slice.call(docContents.querySelectorAll('.article-keywords .keyword')).map(
+        let keywords = Array.from(docContents.querySelectorAll('.article-keywords .keyword')).map(
             keywordEl => keywordEl.textContent
         )
 

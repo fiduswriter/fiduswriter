@@ -103,7 +103,7 @@ let deleteMember = function(ids) {
     ).then(
         ({json, status}) => {
             if (status == 200) { //user removed from contacts
-                Array.slice.call(document.querySelectorAll('#user-' + ids.join(', #user-'))).forEach(
+                document.querySelectorAll(`#user-${ids.join(', #user-')}`).forEach(
                     el => el.parentElement.removeChild(el)
                 )
             }

@@ -17,7 +17,7 @@ export class RenderCitations {
     }
 
     init() {
-        this.allCitationNodes = [].slice.call(this.contentElement.querySelectorAll('span.citation'))
+        this.allCitationNodes = this.contentElement.querySelectorAll('span.citation')
         this.allCitationNodes.forEach((cElement) => {
             let citeInfo = Object.assign({},cElement.dataset)
             citeInfo.references = JSON.parse(citeInfo.references)

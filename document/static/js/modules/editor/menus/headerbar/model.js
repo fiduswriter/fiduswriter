@@ -620,13 +620,13 @@ export let headerbarModel = {
                     action: editor => {
                         let article = editor.view.state.doc.firstChild
                         let attrs = Object.assign({}, article.attrs)
-                        attrs.track = !attrs.track
+                        attrs.tracked = !attrs.tracked
                         editor.view.dispatch(
                             editor.view.state.tr.setNodeMarkup(0, false, attrs)
                         )
                     },
                     selected: editor => {
-                        return editor.view.state.doc.firstChild.attrs.track === true
+                        return editor.view.state.doc.firstChild.attrs.tracked === true
                     }
                 },
                 {

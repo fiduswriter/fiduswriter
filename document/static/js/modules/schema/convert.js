@@ -361,7 +361,7 @@ let convertDocV20 = function(doc) {
     delete(returnDoc.rights)
     delete(returnDoc.updated)
     if(returnDoc.contents.attrs) {
-        returnDoc.contents.attrs.track = false
+        returnDoc.contents.attrs.tracked = false
     }
     Object.values(returnDoc.comments).forEach(comment => {
         comment.username = comment.userName

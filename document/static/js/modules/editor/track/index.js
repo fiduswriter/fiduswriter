@@ -9,17 +9,16 @@ import {setSelectedChanges, deactivateAllSelectedChanges} from "../state_plugins
 export function acceptAllNoInsertions(doc) {
     let tr = new Transform(doc), map = new Mapping()
     doc.descendants((node, pos, parent) => {
-        let deletionMark = node.marks ? node.marks.find(mark => mark.type.name==='deletion') : false,
-            insertionMark = node.marks ? node.marks.find(mark => mark.type.name==='insertion') : false,
+        let deletionTrack = node.attrs.track ?
+                node.attrs.track.find(track => track.name==='deletion') :
+                node.marks.find(mark => mark.type.name==='deletion'),
+            insertionTrack = node.attrs.track ?
+                node.attrs.track.find(track => track.name==='insertion') :
+                node.marks.find(mark => mark.type.name==='insertion'),
             blockBefore = node.isTextblock ? tr.doc.resolve(map.map(pos)).nodeBefore : false
         if (blockBefore && !blockBefore.isTextblock) {
-            let marks = node.marks.slice().filter(mark => mark.type.name !== 'deletion')
-            let insertionMark = marks.find(mark => mark.type.name === 'insertion')
-            if (insertionMark) {
-                insertionMark.attrs.approved = true
-            }
-            tr.setNodeMarkup(map.map(pos), null, node.attrs, marks)
-        } else if (deletionMark) {
+            tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track:[]}), node.marks)
+        } else if (deletionTrack) {
             let from = node.isTextblock ? pos - 1 : pos,
                 to = node.isTextblock ? pos + 1 : pos + node.nodeSize,
                 delStep = new ReplaceStep(
@@ -30,14 +29,19 @@ export function acceptAllNoInsertions(doc) {
             tr.step(delStep)
             let stepMap = delStep.getMap()
             map.appendMap(stepMap)
-        } else if (insertionMark) {
-            tr.step(
-                new RemoveMarkStep(
-                    map.map(pos),
-                    map.map(pos+node.nodeSize),
-                    insertionMark
+        } else if (insertionTrack) {
+            if (node.isInline) {
+                tr.step(
+                    new RemoveMarkStep(
+                        map.map(pos),
+                        map.map(pos+node.nodeSize),
+                        insertionTrack
+                    )
                 )
-            )
+            } else {
+                tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track:[]}), node.marks)
+            }
+
         }
         return true
     })
@@ -90,19 +94,16 @@ export class ModTrack {
             if (reachedEnd) {
                 return false
             }
-            if (!trackMark.isInSet(node.marks) || (!trackMark.attrs.inline && nodePos !== pos)) {
+            if (!node.isInline) {
+                reachedEnd = true
+            } else if (!trackMark.isInSet(node.marks) || (!trackMark.attrs.inline && nodePos !== pos)) {
                 reachedEnd = true
                 return false
             }
             // mark as approved if node text block with no previous sibling text block.
             let blockBefore = node.isTextblock ? tr.doc.resolve(map.map(nodePos)).nodeBefore : false
             if (blockBefore && !blockBefore.isTextblock) {
-                let marks = node.marks.filter(mark => mark.type.name !== 'deletion')
-                let insertionMark = marks.find(mark => mark.type.name === 'insertion')
-                if (insertionMark) {
-                    insertionMark.attrs.approved = true
-                }
-                tr.setNodeMarkup(map.map(pos), null, node.attrs, marks)
+                tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track:[]}), node.marks)
             } else if (type==='insertion') {
                 let from = node.isTextblock ? nodePos - 1 : nodePos, // if the current node and the previous node are textblocks, merge them. Otherwise delete node.
                     to = node.isTextblock ? nodePos + 1 : nodePos + node.nodeSize
@@ -115,14 +116,16 @@ export class ModTrack {
                 let stepMap = delStep.getMap()
                 map.appendMap(stepMap)
             } else {
-                if (node.isInline) {
+                if (node.attrs.track) {
+                    let track = node.attrs.track.filter(track => track.type !== 'deletion')
+                    tr.setNodeMarkup(map.map(nodePos), null, Object.assign({}, node.attrs, {track}), node.marks)
+                    reachedEnd = true
+                } else {
                     tr.removeMark(
                         map.map(nodePos),
                         map.map(nodePos+node.nodeSize),
                         view.state.schema.marks.deletion
                     )
-                } else {
-                    tr.setNodeMarkup(map.map(nodePos), null, node.attrs, trackMark.removeFromSet(node.marks))
                 }
             }
             return true
@@ -146,13 +149,8 @@ export class ModTrack {
             // mark as approved if node text block with no previous sibling text block.
             let blockBefore = node.isTextblock ? tr.doc.resolve(map.map(pos)).nodeBefore : false
             if (blockBefore && !blockBefore.isTextblock) {
-                let marks = node.marks.filter(mark => mark.type.name !== 'deletion')
-                let insertionMark = marks.find(mark => mark.type.name === 'insertion')
-                if (insertionMark) {
-                    insertionMark.attrs.approved = true
-                }
-                tr.setNodeMarkup(map.map(pos), null, node.attrs, marks)
-            } else if (node.marks && node.marks.find(mark => mark.type.name==='insertion' && !mark.attrs.approved)) {
+                tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track:[]}), node.marks)
+            } else if (node.attrs.track && node.attrs.track.find(track => track.type==='insertion')) {
                 let from = node.isTextblock ? pos - 1 : pos,
                     to = node.isTextblick ? pos + 1 : pos + node.nodeSize
                 let delStep = new ReplaceStep(
@@ -163,17 +161,25 @@ export class ModTrack {
                 tr.step(delStep)
                 let stepMap = delStep.getMap()
                 map.appendMap(stepMap)
+            } else if (node.marks && node.marks.find(mark => mark.type.name==='insertion' && !mark.attrs.approved)) {
+                let from = pos,
+                    to = pos + node.nodeSize
+                let delStep = new ReplaceStep(
+                    map.map(from),
+                    map.map(to),
+                    Slice.empty
+                )
+                tr.step(delStep)
+                let stepMap = delStep.getMap()
+                map.appendMap(stepMap)
+            } else if (node.attrs.track && node.attrs.track.find(track => track.type==='deletion')) {
+                tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track:[]}), node.marks)
             } else if (node.marks && node.marks.find(mark => mark.type.name==='deletion')) {
-                if (node.isInline) {
-                    tr.removeMark(
-                        map.map(pos),
-                        map.map(pos+node.nodeSize),
-                        view.state.schema.marks.deletion
-                    )
-                } else {
-                    tr.setNodeMarkup(map.map(pos), null, node.attrs, node.marks.filter(mark => mark.type.name!=='deletion'))
-                }
-
+                tr.removeMark(
+                    map.map(pos),
+                    map.map(pos+node.nodeSize),
+                    view.state.schema.marks.deletion
+                )
             }
             return true
         })
@@ -195,8 +201,9 @@ export class ModTrack {
             if (reachedEnd) {
                 return false
             }
-
-            if (!trackMark.isInSet(node.marks) || (!trackMark.attrs.inline && nodePos !== pos)) {
+            if (!node.isInline) {
+                reachedEnd = true
+            } else if (!trackMark.isInSet(node.marks) || (!trackMark.attrs.inline && nodePos !== pos)) {
                 reachedEnd = true
                 return false
             }
@@ -207,12 +214,7 @@ export class ModTrack {
                 // Node is a text block at the beginning of a document part or right after
                 // a figure or alike. Just mark the block as accepted, no matter whether
                 // it is a deletion or insertion mark.
-                let marks = node.marks.slice().filter(mark => mark.type.name !== 'deletion')
-                let insertionMark = marks.find(mark => mark.type.name === 'insertion')
-                if (insertionMark) {
-                    insertionMark.attrs.approved = true
-                }
-                tr.setNodeMarkup(map.map(nodePos), null, node.attrs, marks)
+                tr.setNodeMarkup(map.map(nodePos), null, Object.assign({}, node.attrs, {track:[]}), node.marks)
             } else if (type==='deletion') {
                 let from = node.isTextblock ? nodePos - 1 : nodePos, // if the current node and the previous node are textblocks, merge them. Otherwise delete node.
                     to = node.isTextblock ? nodePos + 1 : nodePos + node.nodeSize
@@ -225,20 +227,18 @@ export class ModTrack {
                 let stepMap = delStep.getMap()
                 map.appendMap(stepMap)
             } else {
-                let attrs = Object.assign({}, trackMark.attrs)
-                attrs.approved = true
-                if (node.isInline) {
+                if (node.attrs.track) {
+                    let track = node.attrs.track.filter(track => track.type !== 'insertion')
+                    tr.setNodeMarkup(map.map(nodePos), null, Object.assign({}, node.attrs, {track}), node.marks)
+                } else {
                     tr.step(
                         new AddMarkStep(
                             map.map(nodePos),
                             map.map(nodePos+node.nodeSize),
-                            view.state.schema.marks.insertion.create(attrs)
+                            view.state.schema.marks.insertion.create(Object.assign({}, trackMark.attrs, {approved: true}))
                         )
                     )
-                } else {
-                    tr.setNodeMarkup(map.map(nodePos), null, node.attrs, trackMark.removeFromSet(node.marks))
                 }
-
             }
             return true
         })
@@ -261,13 +261,8 @@ export class ModTrack {
             // mark as approved if node text block with no previous sibling text block.
             let blockBefore = node.isTextblock ? tr.doc.resolve(map.map(pos)).nodeBefore : false
             if (blockBefore && !blockBefore.isTextblock) {
-                let marks = node.marks.filter(mark => mark.type.name !== 'deletion')
-                let insertionMark = marks.find(mark => mark.type.name === 'insertion')
-                if (insertionMark) {
-                    insertionMark.attrs.approved = true
-                }
-                tr.setNodeMarkup(map.map(pos), null, node.attrs, marks)
-            } else if (node.marks && node.marks.find(mark => mark.type.name==='deletion')) {
+                tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track:[]}), node.marks)
+            } else if (node.attrs.track && node.attrs.track.find(track => track.type==='deletion')) {
                 let from = node.isTextblock ? pos - 1 : pos, // if the current node and the previous node are textblocks, merge them. Otherwise delete node.
                     to = node.isTextblock ? pos + 1 : pos + node.nodeSize
                 let delStep = new ReplaceStep(
@@ -278,21 +273,29 @@ export class ModTrack {
                 tr.step(delStep)
                 let stepMap = delStep.getMap()
                 map.appendMap(stepMap)
+            } else if (node.marks && node.marks.find(mark => mark.type.name==='deletion')) {
+                let from = pos,
+                    to = pos + node.nodeSize
+                let delStep = new ReplaceStep(
+                    map.map(from),
+                    map.map(to),
+                    Slice.empty
+                )
+                tr.step(delStep)
+                let stepMap = delStep.getMap()
+                map.appendMap(stepMap)
+            } else if (node.attrs.track && node.attrs.track.find(track => track.type==='insertion')) {
+                tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track:[]}), node.marks)
             } else if (node.marks && node.marks.find(mark => mark.type.name==='insertion' && !mark.attrs.approved)) {
-                let mark = node.marks.find(mark => mark.type.name==='insertion' && !mark.attrs.approved),
-                    attrs = Object.assign({}, mark.attrs)
-                attrs.approved = true
-                if (node.isInline) {
-                    tr.step(
-                        new AddMarkStep(
-                            map.map(pos),
-                            map.map(pos+node.nodeSize),
-                            view.state.schema.marks.insertion.create(attrs)
-                        )
+                let mark = node.marks.find(mark => mark.type.name==='insertion'),
+                    attrs = Object.assign({}, mark.attrs, {approved: true})
+                tr.step(
+                    new AddMarkStep(
+                        map.map(pos),
+                        map.map(pos+node.nodeSize),
+                        view.state.schema.marks.insertion.create(attrs)
                     )
-                } else {
-                    tr.setNodeMarkup(map.map(pos), null, node.attrs, mark.removeFromSet(node.marks))
-                }
+                )
             }
             return true
         })

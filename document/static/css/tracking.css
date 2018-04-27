@@ -12,12 +12,12 @@ span.deletion {
     font-weight: 700;
 }
 
-div.deletion > *, div.insertion > * {
+[data-track] {
     position: relative;
 }
 
 
-div.deletion > *::before, div.insertion > *::before {
+[data-track]::before {
     content: '';
     position: absolute;
     border-left: 1px solid black;

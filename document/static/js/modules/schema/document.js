@@ -1,10 +1,9 @@
 import OrderedMap from "orderedmap"
 import {Schema} from "prosemirror-model"
 import {nodes, marks} from "prosemirror-schema-basic"
-import {addListNodes} from "prosemirror-schema-list"
 import {tableNodes} from "prosemirror-tables"
 import {htmlToFnNode, fnNodeToHtml} from "./footnotes_convert"
-import {figure, citation, equation, heading, anchor, deletion, insertion} from "./common"
+import {figure, citation, equation, heading, anchor, paragraph, blockquote, horizontal_rule, ordered_list, bullet_list, list_item, deletion, insertion} from "./common"
 
 
 let article = {
@@ -25,7 +24,7 @@ let article = {
         language: {
             default: 'en-US'
         },
-        track: {
+        tracked: {
             default: false
         }
     },
@@ -33,9 +32,9 @@ let article = {
         tag: "div.article",
         getAttrs(dom) {
             return {
-                papersize: dom.getAttribute('data-papersize'),
-                citationstyle: dom.getAttribute('data-citationstyle'),
-                documentstyle: dom.getAttribute('data-documentstyle')
+                papersize: dom.dataset.papersize,
+                citationstyle: dom.dataset.citationstyle,
+                documentstyle: dom.dataset.documentstyle
             }
         }
     }],
@@ -51,7 +50,7 @@ let article = {
 
 let title = {
     content: "text*",
-    marks: "annotation track",
+    marks: "annotation",
     group: "part",
     defining: true,
     parseDOM: [{
@@ -66,7 +65,7 @@ let title = {
 
 let subtitle = {
     content: "text*",
-    marks: "annotation track",
+    marks: "annotation",
     group: "part",
     defining: true,
     isMetadata() {
@@ -81,7 +80,7 @@ let subtitle = {
         tag: "div.article-subtitle",
         getAttrs(dom) {
             return {
-                hidden: dom.getAttribute('data-hidden') === "true" ? true : false
+                hidden: dom.dataset.hidden === "true" ? true : false
             }
         }
     }],
@@ -109,20 +108,20 @@ let author = {
         tag: 'span.author',
         getAttrs(dom) {
             return {
-                firstname: dom.getAttribute('data-firstname'),
-                lastname: dom.getAttribute('data-lastname'),
-                email: dom.getAttribute('data-email'),
-                institution: dom.getAttribute('data-institution')
+                firstname: dom.dataset.firstname,
+                lastname: dom.dataset.lastname,
+                email: dom.dataset.email,
+                institution: dom.dataset.institution
             }
         }
     }],
     toDOM(node) {
         let dom = document.createElement('span')
         dom.classList.add('author')
-        dom.setAttribute('data-firstname', node.attrs.firstname)
-        dom.setAttribute('data-lastname', node.attrs.lastname)
-        dom.setAttribute('data-email', node.attrs.email)
-        dom.setAttribute('data-institution', node.attrs.institution)
+        dom.dataset.firstname = node.attrs.firstname
+        dom.dataset.lastname = node.attrs.lastname
+        dom.dataset.email = node.attrs.email
+        dom.dataset.institution = node.attrs.institution
         let content = []
         if (node.attrs.firstname) {
             content.push(node.attrs.firstname)
@@ -160,7 +159,7 @@ let authors = {
         tag: "div.article-authors",
         getAttrs(dom) {
             return {
-                hidden: dom.getAttribute('data-hidden') === "true" ? true : false
+                hidden: dom.dataset.hidden === "true" ? true : false
             }
         }
     }],
@@ -178,7 +177,7 @@ let authors = {
 let abstract = {
     content: "(block | table_block)+",
     group: "part",
-    marks: "annotation track",
+    marks: "annotation",
     defining: true,
     isMetadata() {
         return true
@@ -192,7 +191,7 @@ let abstract = {
         tag: "div.article-abstract",
         getAttrs(dom) {
             return {
-                hidden: dom.getAttribute('data-hidden') === "true" ? true : false
+                hidden: dom.dataset.hidden === "true" ? true : false
             }
         }
     }],
@@ -245,7 +244,7 @@ let keywords = {
         tag: "div.article-keywords",
         getAttrs(dom) {
             return {
-                hidden: dom.getAttribute('data-hidden') === "true" ? true : false
+                hidden: dom.dataset.hidden === "true" ? true : false
             }
         }
     }],
@@ -263,7 +262,7 @@ let keywords = {
 let body = {
     content: "(block | table_block)+",
     group: "part",
-    marks: "annotation track",
+    marks: "annotation",
     defining: true,
     isMetadata() {
         return true
@@ -292,14 +291,14 @@ let footnote = {
         tag: "span.footnote-marker[data-footnote]",
         getAttrs(dom) {
             return {
-                footnote: htmlToFnNode(dom.getAttribute('data-footnote'))
+                footnote: htmlToFnNode(dom.dataset.footnote)
             }
         }
     }],
     toDOM(node) {
         let dom = document.createElement("span")
         dom.classList.add("footnote-marker")
-        dom.setAttribute("data-footnote", fnNodeToHtml(node.attrs.footnote))
+        dom.dataset.footnote = fnNodeToHtml(node.attrs.footnote)
         dom.innerHTML = '&nbsp;'
         return dom
     }
@@ -307,19 +306,27 @@ let footnote = {
 
 let code_block = {
     content: "text*",
-    marks: "annotation track",
+    marks: "annotation",
     group: "block",
     code: true,
     defining: true,
+    attrs: {
+        track: {
+            default: []
+        }
+    },
     parseDOM: [{
         tag: "pre",
-        preserveWhitespace: "full"
+        preserveWhitespace: "full",
+        getAttrs(dom) {return {
+            track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+        }}
     }],
-    toDOM() {
-        return ["pre", ["code", 0]]
+    toDOM(node) {
+        let attrs = node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
+        return ["pre", attrs, ["code", 0]]
     }
 }
-
 
 let comment = {
     attrs: {
@@ -332,7 +339,7 @@ let comment = {
         tag: "span.comment[data-id]",
         getAttrs(dom) {
             return {
-                id: parseInt(dom.getAttribute("data-id"))
+                id: parseInt(dom.dataset.id)
             }
         }
     }],
@@ -362,9 +369,9 @@ let spec = {
         keywords,
         keyword,
         body,
-        paragraph: nodes.paragraph, // default textblock
-        blockquote: nodes.blockquote,
-        horizontal_rule: nodes.horizontal_rule,
+        paragraph,
+        blockquote,
+        horizontal_rule,
         figure,
         heading,
         code_block,
@@ -372,7 +379,10 @@ let spec = {
         hard_break: nodes.hard_break,
         citation,
         equation,
-        footnote
+        footnote,
+        ordered_list,
+        bullet_list,
+        list_item
     }),
     marks: OrderedMap.from({
         em: marks.em,
@@ -386,17 +396,36 @@ let spec = {
     })
 }
 
-spec.nodes = spec.nodes.update("blockquote", Object.assign({marks: "annotation track"}, spec.nodes.get("blockquote")))
-
-spec.nodes = addListNodes(spec.nodes, "block+", "block")
-
-spec.nodes = spec.nodes.update("list_item", Object.assign({marks: "annotation track"}, spec.nodes.get("list_item")))
-
 spec.nodes = spec.nodes.append(tableNodes({
     tableGroup: "table_block",
     cellContent: "block+"
 }))
 
-spec.nodes = spec.nodes.update("table_cell", Object.assign({marks: "annotation track"}, spec.nodes.get("table_cell")))
+spec.nodes = spec.nodes.update("table_cell", Object.assign({marks: "annotation"}, spec.nodes.get("table_cell")))
+
+spec.nodes = spec.nodes.update(
+    "table",
+    Object.assign(
+        {},
+        spec.nodes.get("table"),
+        {
+            attrs: {
+                track: {default: []}
+            },
+            parseDOM: [{tag: "table", getAttrs(dom) {
+                return {
+                    track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+                }
+            }}],
+            toDOM(node) {
+                let attrs = {}
+                if (node.attrs.track.length) {
+                    attrs['data-track'] = JSON.stringify(node.attrs.track)
+                }
+                return ["table", attrs, ["tbody", 0]]
+            }
+        }
+    )
+)
 
 export const docSchema = new Schema(spec)

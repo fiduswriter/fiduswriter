@@ -33,30 +33,35 @@ export class ModMarginboxes {
         // Handle the layout of the comments on the screen.
         // DOM write phase
 
-        let marginBoxes = [], referrers = [], activeCommentStyle = '', lastNodeTrackMarks = []
+        let marginBoxes = [], referrers = [], activeCommentStyle = '', lastNodeTracks = []
 
         this.editor.view.state.doc.descendants((node, pos, parent) => {
             let commentIds = node.isInline || node.isLeaf ? this.editor.mod.comments.interactions.findCommentIds(node) : []
 
-            let nodeTrackMarks = node.marks.filter(mark =>
-                mark.type.name==='deletion' ||
-                (mark.type.name==='insertion' && !mark.attrs.approved)
-            )
+            let nodeTracks = node.attrs.track ?
+                node.attrs.track.map(track => ({type: track.type, data: {user: track.user, username: track.username, date: track.date}})) :
+                node.marks.filter(mark =>
+                    mark.type.name==='deletion' ||
+                    (mark.type.name==='insertion' && !mark.attrs.approved)
+                ).map(mark => ({type: mark.type.name, data: mark.attrs}))
 
-            // Filter out trackmarks already present in the last node.
-            let trackMarks = nodeTrackMarks.filter(mark =>
-                !lastNodeTrackMarks.find(
-                    lastMark => mark.type.name===lastMark.type.name &&
-                    mark.attrs.user===lastMark.attrs.user &&
-                    mark.attrs.date===lastMark.attrs.date &&
-                    mark.attrs.inline &&  // block level changes always need new boxes
-                    mark.attrs.inline===lastMark.attrs.inline
+            // Filter out trackmarks already present in the last node (if it's an inline node).
+            let tracks = nodeTracks.filter(track =>
+                !lastNodeTracks.find(
+                    lastTrack =>
+                        track.type===lastTrack.type &&
+                        track.data.user===lastTrack.data.user &&
+                        track.data.date===lastTrack.data.date &&
+                        node.isInline // block level changes always need new boxes
                 )
             )
+            tracks.forEach(track => {
+                marginBoxes.push(Object.assign({nodeName: node.type.name, pos}, track))
+                referrers.push(pos)
+            })
+            lastNodeTracks = node.isInline ? nodeTracks : []
 
-            lastNodeTrackMarks = nodeTrackMarks
-
-            if (!commentIds.length && !trackMarks.length) {
+            if (!commentIds.length && !tracks.length) {
                 return
             }
             commentIds.forEach(commentId => {
@@ -79,10 +84,7 @@ export class ModMarginboxes {
                 marginBoxes.push({type: 'comment', data: comment})
                 referrers.push(pos)
             })
-            trackMarks.forEach(mark => {
-                marginBoxes.push({type: mark.type.name, data: Object.assign({}, mark.attrs), nodeName: node.type.name, pos})
-                referrers.push(pos)
-            })
+
         })
         // Add a comment that is currently under construction to the list.
         if(this.editor.mod.comments.store.commentDuringCreation) {
@@ -144,7 +146,7 @@ export class ModMarginboxes {
 
                     if (referrerTop > totalOffset) {
                         topMargin = parseInt(referrerTop - totalOffset)
-                        marginBoxesPlacementStyle += '.margin-box:nth-of-type('+(index+1)+') {margin-top: ' + topMargin + 'px;}\n'
+                        marginBoxesPlacementStyle += `.margin-box:nth-of-type(${(index+1)}) {margin-top: ${topMargin}px;}\n`
                     }
                     totalOffset += marginBoxHeight + topMargin
                 })

@@ -1,10 +1,9 @@
 import OrderedMap from "orderedmap"
 import {Schema} from "prosemirror-model"
 import {nodes, marks} from "prosemirror-schema-basic"
-import {addListNodes} from "prosemirror-schema-list"
 import {tableNodes} from "prosemirror-tables"
 
-import {figure, citation, equation, heading, anchor, deletion, insertion} from "./common"
+import {figure, citation, equation, heading, anchor, paragraph, blockquote, horizontal_rule, ordered_list, bullet_list, list_item, deletion, insertion} from "./common"
 
 let footnotecontainer = {
     group: "part",
@@ -25,15 +24,18 @@ let spec = {
   nodes: OrderedMap.from({
     doc,
     footnotecontainer,
-    paragraph: nodes.paragraph, // default textblock
+    paragraph,
     heading,
-    blockquote: nodes.blockquote,
-    horizontal_rule: nodes.horizontal_rule,
+    blockquote,
+    horizontal_rule,
     figure,
     text: nodes.text,
     hard_break: nodes.hard_break,
     citation,
-    equation
+    equation,
+    ordered_list,
+    bullet_list,
+    list_item
   }),
   marks: OrderedMap.from({
       em: marks.em,
@@ -46,11 +48,34 @@ let spec = {
   })
 }
 
-spec.nodes = addListNodes(spec.nodes, "block+", "block")
-
 spec.nodes = spec.nodes.append(tableNodes({
     tableGroup: "table_block",
     cellContent: "block+"
 }))
+
+spec.nodes = spec.nodes.update(
+    "table",
+    Object.assign(
+        {},
+        spec.nodes.get("table"),
+        {
+            attrs: {
+                track: {default: []}
+            },
+            parseDOM: [{tag: "table", getAttrs(dom) {
+                return {
+                    track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+                }
+            }}],
+            toDOM(node) {
+                let attrs = {}
+                if (node.attrs.track.length) {
+                    attrs['data-track'] = JSON.stringify(node.attrs.track)
+                }
+                return ["table", attrs, ["tbody", 0]]
+            }
+        }
+    )
+)
 
 export const fnSchema = new Schema(spec)

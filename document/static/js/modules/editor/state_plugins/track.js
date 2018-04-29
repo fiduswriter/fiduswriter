@@ -9,12 +9,10 @@ const selectedDeletionSpec = {}
 
 // TODO:
 // - Add tracking of:
-//   * lists
 //   * table operations (remove row/column)
 //   * style changes (italic/bold)
-//   * block type changes (heading/paragraph/etc.) and list/blockquote wrapping
+//   * block type changes (heading/paragraph/etc.)
 //   * footnote contents
-// - Decide whether to store block level approved insertions or not.
 // - Tests
 // - Use custom setBlockType for keyboard shortcuts
 
@@ -80,8 +78,8 @@ function findSelectedChanges(state) {
         deletionPos = false,
         insertionMark,
         deletionMark,
-        insertionNode,
-        deletionNode
+        insertionSize,
+        deletionSize
 
     if (selection.empty) {
         let resolvedPos = state.doc.resolve(selection.from), marks = resolvedPos.marks()
@@ -109,7 +107,9 @@ function findSelectedChanges(state) {
                         node.marks.find(mark => mark.type.name==='insertion' && !mark.attrs.approved)
                     if (insertionMark) {
                         insertionPos = pos
-                        insertionNode = node
+                        if (!node.isInline) {
+                            insertionSize = node.nodeSize
+                        }
                     }
                 }
                 if (!deletionMark) {
@@ -118,7 +118,9 @@ function findSelectedChanges(state) {
                         node.marks.find(mark => mark.type.name==='deletion')
                     if (deletionMark) {
                         deletionPos = pos
-                        deletionNode = node
+                        if (!node.isInline) {
+                            deletionSize = node.nodeSize
+                        }
                     }
 
                 }
@@ -126,15 +128,16 @@ function findSelectedChanges(state) {
         )
     }
     if (insertionMark) {
-        selectedChanges.insertion = insertionNode.isInline ?
-            getFromToMark(state.doc, insertionPos, insertionMark) :
-            {from: insertionPos, to: insertionPos + insertionNode.nodeSize}
+        selectedChanges.insertion = insertionSize ?
+            {from: insertionPos, to: insertionPos + insertionSize} :
+            getFromToMark(state.doc, insertionPos, insertionMark)
     }
 
     if (deletionMark) {
-        selectedChanges.deletion = deletionNode.isInline ?
-            getFromToMark(state.doc, deletionPos, deletionMark) :
-            {from: deletionPos, to: deletionPos + deletionNode.nodeSize}
+        selectedChanges.deletion = deletionSize ?
+            {from: deletionPos, to: deletionPos + deletionSize} :
+            getFromToMark(state.doc, deletionPos, deletionMark)
+
     }
     return selectedChanges
 
@@ -236,20 +239,68 @@ export let trackPlugin = function(options) {
             }
             let addedRanges = [], // Content that has been added (also may mean removals)
                 markedDeletionRanges = [], // Deleted content that has received marks (Italic/bold) - we need to revert this.
-                unmarkedDeletionRanges = [] // Deleted content where marks have been deleted (Italic/bold) - we need to revert this.
+                unmarkedDeletionRanges = [], // Deleted content where marks have been deleted (Italic/bold) - we need to revert this.
+                user = options.editor.user.id // current user
+
             trs.forEach(tr => {
                 tr.steps.forEach((step, index) => {
                     if (step instanceof ReplaceStep) {
-                        addedRanges.push(
-                            {from: step.from, to: step.to}
-                        )
-                    } else if (step instanceof ReplaceAroundStep && !step.structure) {
-                        addedRanges.push(
-                            {from: step.from, to: step.gapFrom}
-                        )
-                        addedRanges.push(
-                            {from: step.gapTo, to: step.to}
-                        )
+                        if (step.from===step.to) {
+                            addedRanges.push(
+                                {from: step.from, to: step.to}
+                            )
+                        } else {
+                            tr.docs[index].nodesBetween(step.from, step.to, (node, pos) => {
+                                if (pos < step.from) {
+                                    return true
+                                }
+                                if (node.attrs.track && node.attrs.track.find(track => track.user===user && track.type==='insertion')) {
+                                    // user has created element. so (s)he is allowed to delete it again.
+                                    return true
+                                }
+                                addedRanges.push(
+                                    {from: pos, to: pos + 1}
+                                )
+                            })
+                        }
+                    } else if (step instanceof ReplaceAroundStep) {
+                        if (step.structure) {
+                            if (step.from===step.gapFrom && step.to===step.gapTo) { // wrapped in something
+                                addedRanges.push(
+                                    {from: step.from, to: step.gapFrom}
+                                )
+                            } else if(!step.slice.size) {// unwrapped from something
+                                tr.docs[index].nodesBetween(step.from, step.gapFrom, (node, pos) => {
+                                    if (pos < step.from) {
+                                        return true
+                                    }
+                                    if (node.attrs.track && node.attrs.track.find(track => track.user===user && track.type==='insertion')) {
+                                        // user has created element. so (s)he is allowed to delete it again.
+                                        return true
+                                    }
+                                    addedRanges.push(
+                                        {from: pos, to: pos + 1}
+                                    )
+                                })
+                            } else {
+                                // TODO: one wrapping has been replaced by another.
+                            }
+                        } else {
+                            [{from: step.from, to: step.gapFrom}, {from: step.gapTo, to: step.to}].forEach(
+                                range => tr.docs[index].nodesBetween(range.from, range.to, (node, pos) => {
+                                    if (pos < range.from) {
+                                        return true
+                                    }
+                                    if (node.attrs.track && node.attrs.track.find(track => track.user===user && track.type==='insertion')) {
+                                        // user has created element. so (s)he is allowed to delete it again.
+                                        return true
+                                    }
+                                    addedRanges.push(
+                                        {from: pos, to: pos + 1}
+                                    )
+                                })
+                            )
+                        }
                     } else if (step instanceof AddMarkStep) {
                         tr.docs[index].nodesBetween(step.from, step.to, (node, pos) => {
                             if (!node.isInline) {
@@ -298,7 +349,6 @@ export let trackPlugin = function(options) {
 
             let newTr = newState.tr,
                 date = Math.floor((Date.now()-options.editor.clientTimeAdjustment)/600000), // 10 minute interval
-                user = options.editor.user.id,
                 username = options.editor.user.username,
                 approved = !options.editor.view.state.doc.firstChild.attrs.tracked && options.editor.docInfo.access_rights !== 'write-tracked'
 
@@ -329,7 +379,11 @@ export let trackPlugin = function(options) {
                                 if (oldDeletionMark) {
                                     oldDeletionMarks[pos] = oldDeletionMark
                                 }
-                            } else if (node.attrs.track && !node.attrs.track.find(trackAttr => trackAttr.type === 'deletion')) {
+                            } else if (
+                                node.attrs.track &&
+                                !node.attrs.track.find(trackAttr => trackAttr.type === 'deletion') &&
+                                !['table_row', 'table_cell', 'bullet_list', 'ordered_list'].includes(node.type.name)
+                            ) {
                                 let track = node.attrs.track.slice()
                                 track.push({type: 'deletion', user, username, date})
                                 newTr.setNodeMarkup(pos, null, Object.assign({}, node.attrs, {track}), node.marks)
@@ -385,8 +439,28 @@ export let trackPlugin = function(options) {
 
                 trs.forEach(tr => { // We insert all the same steps, but with "from"/"to" both set to "to" in order not to delete content. Mapped as needed.
                     tr.steps.forEach((step, index) => {
-                        if (step instanceof ReplaceStep || (step instanceof ReplaceAroundStep && !step.structure)) {
-                            if (step.slice.size) {
+                        let stepMap
+                        if (step instanceof ReplaceStep || (step instanceof ReplaceAroundStep)) {
+                            if (step.structure) {
+                                if (
+                                    step.from===step.gapFrom && step.to===step.gapTo && step.slice.size // wrapped in something
+                                ) {
+                                    let mappedStep = step.map(map)
+                                    if (mappedStep) {
+                                        if (!newTr.maybeStep(mappedStep).failed) {
+                                            addedRanges.push(
+                                                {
+                                                    from: map.map(step.from, -1),
+                                                    to: map.map(step.gapFrom, 1)
+                                                }
+                                            )
+                                            stepMap = mappedStep.getMap()
+                                        }
+                                    }
+                                } else if (step.slice.size){
+                                    // TODO: one wrapping has been replaced by another.
+                                }
+                            } else if (step.slice.size) {
                                 let newStep = new ReplaceStep(
                                     map.map(step.to),
                                     map.map(step.to),
@@ -401,24 +475,24 @@ export let trackPlugin = function(options) {
                                             to: map.map(step.to, 1)
                                         }
                                     )
-                                    let stepMap = newStep.getMap()
-                                    addedRanges = addedRanges.map(range => ({from: stepMap.map(range.from, -1), to: stepMap.map(range.to, 1)}))
-                                    map.appendMap(stepMap)
+                                    stepMap = newStep.getMap()
                                 }
                             }
                         } else {
                             let mappedStep = step.map(map)
                             if (mappedStep) {
                                 if (!newTr.maybeStep(mappedStep).failed) {
-                                    let stepMap = mappedStep.getMap()
-                                    addedRanges = addedRanges.map(range => ({from: stepMap.map(range.from, -1), to: stepMap.map(range.to, 1)}))
-                                    map.appendMap(stepMap)
+                                    stepMap = mappedStep.getMap()
                                 }
                             }
                         }
                         let newMap = new Mapping()
                         newMap.appendMap(step.getMap().invert())
                         newMap.appendMapping(map)
+                        if (stepMap) {
+                            addedRanges = addedRanges.map(range => ({from: stepMap.map(range.from, -1), to: stepMap.map(range.to, 1)}))
+                            newMap.appendMap(stepMap)
+                        }
                         map = newMap
                     })
                 })
@@ -454,23 +528,25 @@ export let trackPlugin = function(options) {
                     addedRange.to,
                     newState.schema.marks.deletion
                 )
-                // Add insertion mark also to block nodes (figures, text blocks) but not table cells/rows and list items as thesese cannot be wrapped in divs.
-                newTr.doc.nodesBetween(
-                    addedRange.from,
-                    addedRange.to,
-                    (node, pos) => {
-                        if (pos < addedRange.from || ['table_row', 'table_cell'].includes(node.type.name)) {
-                            return true
-                        } else if (node.isInline) {
-                            return false
+                // Add insertion mark also to block nodes (figures, text blocks) but not table cells/rows and lists.
+                if (!approved) {
+                    newTr.doc.nodesBetween(
+                        addedRange.from,
+                        addedRange.to,
+                        (node, pos) => {
+                            if (pos < addedRange.from || ['table_row', 'table_cell', 'bullet_list', 'ordered_list'].includes(node.type.name)) {
+                                return true
+                            } else if (node.isInline) {
+                                return false
+                            }
+                            if (node.attrs.track) {
+                                let track = node.attrs.track.filter(trackAttr => trackAttr.type !== 'insertion')
+                                track.push({type: 'insertion', user, username, date})
+                                newTr.setNodeMarkup(pos, null, Object.assign({}, node.attrs, {track}), node.marks)
+                            }
                         }
-                        if (node.attrs.track) {
-                            let track = node.attrs.track.filter(trackAttr => trackAttr.type !== 'insertion')
-                            track.push({type: 'insertion', user, username, date})
-                            newTr.setNodeMarkup(pos, null, Object.assign({}, node.attrs, {track}), node.marks)
-                        }
-                    }
-                )
+                    )
+                }
             })
             markedDeletionRanges.forEach(range => {
                 newTr.maybeStep(

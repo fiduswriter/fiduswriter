@@ -56,7 +56,7 @@ export class ModMarginboxes {
                 )
             )
             tracks.forEach(track => {
-                marginBoxes.push(Object.assign({nodeName: node.type.name, pos}, track))
+                marginBoxes.push(Object.assign({nodeType: node.isInline ? 'text' : node.type.name, pos}, track))
                 referrers.push(pos)
             })
             lastNodeTracks = node.isInline ? nodeTracks : []

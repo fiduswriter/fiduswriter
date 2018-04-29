@@ -151,24 +151,35 @@ let commentTemplate = ({comment, activeCommentId, activeCommentAnswerId, user, d
     </div>`
 }
 
-let TRANSLATE_NODENAMES = {
-    paragraph: gettext('paragraph'),
-    heading: gettext('heading'),
-    text: gettext('text'),
-    blockquote: gettext('blockquote'),
-    bullet_list: gettext('bullet list'),
-    code_block: gettext('code block'),
-    figure: gettext('figure'),
-    ordered_list: gettext('ordered list'),
-    table: gettext('table')
+let TRANSLATE_ACTIONS = {
+    insertion_paragraph: gettext('New paragraph'),
+    insertion_heading: gettext('New heading'),
+    insertion_text: gettext('Inserted text'),
+    insertion_blockquote: gettext('Wrapped into blockquote'),
+    insertion_bullet_list: gettext('Wrapped into bullet list'),
+    insertion_code_block: gettext('Added code block'),
+    insertion_figure: gettext('Inserted figure'),
+    insertion_ordered_list: gettext('Wrapped into ordered list'),
+    insertion_list_item: gettext('New list item'),
+    insertion_table: gettext('Inserted table'),
+    deletion_paragraph: gettext('Merged paragraph'),
+    deletion_heading: gettext('Merged heading'),
+    deletion_text: gettext('Deleted text'),
+    deletion_blockquote: gettext('Unwrapped blockquote'),
+    deletion_bullet_list: gettext('Unwrapped bullet list'),
+    deletion_code_block: gettext('Removed code block'),
+    deletion_figure: gettext('Deleted figure'),
+    deletion_ordered_list: gettext('Unwrapped ordered list'),
+    deletion_list_item: gettext('Lifted list item'),
+    deletion_table: gettext('Delete table')
 }
 
-let trackTemplate = ({type, data, nodeName, pos, active, docInfo}) => {
+let trackTemplate = ({type, data, nodeType, pos, active, docInfo}) => {
     let author = data.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === data.user)
     return `
         <div class="margin-box track ${active ? 'active' : 'inactive'}" data-type="${type}" data-pos="${pos}">
             <div class="track-${type}">
-                <div class="track-title">${type==='insertion' ? gettext('Inserted') : gettext('Deleted')} ${TRANSLATE_NODENAMES[data.inline ? 'text' : nodeName]}</div>
+                <div class="track-title">${TRANSLATE_ACTIONS[`${type}_${nodeType}`]}</div>
                 <div class="comment-user">
                     <img class="comment-user-avatar" src="${author ? author.avatar : `${$StaticUrls.base$}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
                     <h5 class="comment-user-name">${escapeText(author ? author.name : data.username)}</h5>
@@ -200,7 +211,7 @@ export let marginBoxesTemplate = ({
             case 'deletion':
                 return trackTemplate({
                     type: mBox.type,
-                    nodeName: mBox.nodeName,
+                    nodeType: mBox.nodeType,
                     data: mBox.data,
                     pos: mBox.pos,
                     active: selectedChanges[mBox.type] && selectedChanges[mBox.type].from === mBox.pos,

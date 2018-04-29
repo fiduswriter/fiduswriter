@@ -80,8 +80,8 @@ function findSelectedChanges(state) {
         deletionPos = false,
         insertionMark,
         deletionMark,
-        insertionNode,
-        deletionNode
+        insertionSize,
+        deletionSize
 
     if (selection.empty) {
         let resolvedPos = state.doc.resolve(selection.from), marks = resolvedPos.marks()
@@ -109,7 +109,9 @@ function findSelectedChanges(state) {
                         node.marks.find(mark => mark.type.name==='insertion' && !mark.attrs.approved)
                     if (insertionMark) {
                         insertionPos = pos
-                        insertionNode = node
+                        if (!node.isInline) {
+                            insertionSize = node.nodeSize
+                        }
                     }
                 }
                 if (!deletionMark) {
@@ -118,7 +120,9 @@ function findSelectedChanges(state) {
                         node.marks.find(mark => mark.type.name==='deletion')
                     if (deletionMark) {
                         deletionPos = pos
-                        deletionNode = node
+                        if (!node.isInline) {
+                            deletionSize = node.nodeSize
+                        }
                     }
 
                 }
@@ -126,15 +130,16 @@ function findSelectedChanges(state) {
         )
     }
     if (insertionMark) {
-        selectedChanges.insertion = insertionNode.isInline ?
-            getFromToMark(state.doc, insertionPos, insertionMark) :
-            {from: insertionPos, to: insertionPos + insertionNode.nodeSize}
+        selectedChanges.insertion = insertionSize ?
+            {from: insertionPos, to: insertionPos + insertionSize} :
+            getFromToMark(state.doc, insertionPos, insertionMark)
     }
 
     if (deletionMark) {
-        selectedChanges.deletion = deletionNode.isInline ?
-            getFromToMark(state.doc, deletionPos, deletionMark) :
-            {from: deletionPos, to: deletionPos + deletionNode.nodeSize}
+        selectedChanges.deletion = deletionSize ?
+            {from: deletionPos, to: deletionPos + deletionSize} :
+            getFromToMark(state.doc, deletionPos, deletionMark)
+
     }
     return selectedChanges
 
@@ -236,20 +241,34 @@ export let trackPlugin = function(options) {
             }
             let addedRanges = [], // Content that has been added (also may mean removals)
                 markedDeletionRanges = [], // Deleted content that has received marks (Italic/bold) - we need to revert this.
-                unmarkedDeletionRanges = [] // Deleted content where marks have been deleted (Italic/bold) - we need to revert this.
+                unmarkedDeletionRanges = [], // Deleted content where marks have been deleted (Italic/bold) - we need to revert this.
+                replaceAroundStructural = false // whether there is a ReplaceAroundStep with step.structure
             trs.forEach(tr => {
                 tr.steps.forEach((step, index) => {
                     if (step instanceof ReplaceStep) {
                         addedRanges.push(
                             {from: step.from, to: step.to}
                         )
-                    } else if (step instanceof ReplaceAroundStep && !step.structure) {
-                        addedRanges.push(
-                            {from: step.from, to: step.gapFrom}
-                        )
-                        addedRanges.push(
-                            {from: step.gapTo, to: step.to}
-                        )
+                    } else if (step instanceof ReplaceAroundStep) {
+                        if (step.structure) {
+                            if (
+                                (step.from===step.gapFrom && step.to===step.gapTo) || // wrapped in something
+                                (!step.slice.size) // unwrapped from something
+                            ) {
+                                addedRanges.push(
+                                    {from: step.from, to: step.gapFrom}
+                                )
+                            } else {
+                                // todo: one wrapping has been replaced by another.
+                            }
+                        } else {
+                            addedRanges.push(
+                                {from: step.from, to: step.gapFrom}
+                            )
+                            addedRanges.push(
+                                {from: step.gapTo, to: step.to}
+                            )
+                        }
                     } else if (step instanceof AddMarkStep) {
                         tr.docs[index].nodesBetween(step.from, step.to, (node, pos) => {
                             if (!node.isInline) {
@@ -354,6 +373,9 @@ export let trackPlugin = function(options) {
                             if (node.marks && node.marks.find(mark => mark.type.name==='insertion' && mark.attrs.user===user && !mark.attrs.approved)) {
                                 realDeletedRanges.push({from: pos, to: pos + node.nodeSize})
                             }
+                            if (node.attrs.track && node.attrs.track.find(track => track.type==='insertion' && track.user===user)) {
+                                // TODO remove node but not its contents!
+                            }
                             if(oldDeletionMarks[pos]) {
                                 // Readd preexisting deletion mark
                                 newTr.maybeStep(
@@ -385,8 +407,28 @@ export let trackPlugin = function(options) {
 
                 trs.forEach(tr => { // We insert all the same steps, but with "from"/"to" both set to "to" in order not to delete content. Mapped as needed.
                     tr.steps.forEach((step, index) => {
-                        if (step instanceof ReplaceStep || (step instanceof ReplaceAroundStep && !step.structure)) {
-                            if (step.slice.size) {
+                        let stepMap
+                        if (step instanceof ReplaceStep || (step instanceof ReplaceAroundStep)) {
+                            if (step.structure) {
+                                if (
+                                    step.from===step.gapFrom && step.to===step.gapTo && step.slice.size // wrapped in something
+                                ) {
+                                    let mappedStep = step.map(map)
+                                    if (mappedStep) {
+                                        if (!newTr.maybeStep(mappedStep).failed) {
+                                            addedRanges.push(
+                                                {
+                                                    from: map.map(step.from, -1),
+                                                    to: map.map(step.gapFrom, 1)
+                                                }
+                                            )
+                                            stepMap = mappedStep.getMap()
+                                        }
+                                    }
+                                } else if (step.slice.size){
+                                    // TODO: one wrapping has been replaced by another.
+                                }
+                            } else if (step.slice.size) {
                                 let newStep = new ReplaceStep(
                                     map.map(step.to),
                                     map.map(step.to),
@@ -401,24 +443,24 @@ export let trackPlugin = function(options) {
                                             to: map.map(step.to, 1)
                                         }
                                     )
-                                    let stepMap = newStep.getMap()
-                                    addedRanges = addedRanges.map(range => ({from: stepMap.map(range.from, -1), to: stepMap.map(range.to, 1)}))
-                                    map.appendMap(stepMap)
+                                    stepMap = newStep.getMap()
                                 }
                             }
                         } else {
                             let mappedStep = step.map(map)
                             if (mappedStep) {
                                 if (!newTr.maybeStep(mappedStep).failed) {
-                                    let stepMap = mappedStep.getMap()
-                                    addedRanges = addedRanges.map(range => ({from: stepMap.map(range.from, -1), to: stepMap.map(range.to, 1)}))
-                                    map.appendMap(stepMap)
+                                    stepMap = mappedStep.getMap()
                                 }
                             }
                         }
                         let newMap = new Mapping()
                         newMap.appendMap(step.getMap().invert())
                         newMap.appendMapping(map)
+                        if (stepMap) {
+                            addedRanges = addedRanges.map(range => ({from: stepMap.map(range.from, -1), to: stepMap.map(range.to, 1)}))
+                            newMap.appendMap(stepMap)
+                        }
                         map = newMap
                     })
                 })

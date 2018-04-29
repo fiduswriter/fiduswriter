@@ -1,10 +1,65 @@
 import {Mapping} from "prosemirror-transform"
-import {ReplaceStep, AddMarkStep, RemoveMarkStep, Transform} from "prosemirror-transform"
+import {ReplaceStep, AddMarkStep, RemoveMarkStep, ReplaceAroundStep, Transform, replaceStep} from "prosemirror-transform"
 import {Slice} from "prosemirror-model"
+import {Selection, TextSelection, EditorState} from "prosemirror-state"
+import {liftListItem} from "prosemirror-schema-list"
+
 
 import {findTarget} from "../../common"
 import {setSelectedChanges, deactivateAllSelectedChanges} from "../state_plugins"
 
+
+function deleteNode(tr, node, nodePos, map) { // Delete a node either because a deletion has been accepted or an insertion rejected.
+    let newNodePos = map.map(nodePos), delStep
+    if (node.isTextblock) {
+        let selectionBefore = Selection.findFrom(tr.doc.resolve(newNodePos), -1)
+        if (selectionBefore instanceof TextSelection) {
+            delStep = replaceStep(
+                tr.doc,
+                selectionBefore.$anchor.pos,
+                newNodePos + 1
+            )
+        } else {
+            // There is a block node right in front of it that cannot be removed. Give up. (table/figure/etc.)
+            let track = node.attrs.track.filter(track => track.type !== 'insertion')
+            tr.setNodeMarkup(newNodePos, null, Object.assign({}, node.attrs, {track}), node.marks)
+        }
+    } else if (node.isLeaf) {
+        delStep = new ReplaceStep(
+            newNodePos,
+            map.map(nodePos + node.nodeSize),
+            Slice.empty
+        )
+    } else if (node.type === tr.doc.type.schema.nodes['list_item']) {
+        let state = EditorState.create({
+            doc: tr.doc,
+            selection: Selection.findFrom(tr.doc.resolve(newNodePos), 1)
+        })
+        liftListItem(node.type)(state, newTr => {
+                newTr.steps.forEach(step => {
+                    tr.step(step)
+                    map.appendMap(step.getMap())
+                })
+            }
+        )
+    } else {
+        let end = map.map(nodePos + node.nodeSize)
+        delStep = new ReplaceAroundStep(
+            newNodePos,
+            end,
+            newNodePos+1,
+            end-1,
+            Slice.empty,
+            0,
+            true
+        )
+    }
+    if (delStep) {
+        tr.step(delStep)
+        let stepMap = delStep.getMap()
+        map.appendMap(stepMap)
+    }
+}
 
 export function acceptAllNoInsertions(doc) {
     let tr = new Transform(doc), map = new Mapping()
@@ -14,21 +69,10 @@ export function acceptAllNoInsertions(doc) {
                 node.marks.find(mark => mark.type.name==='deletion'),
             insertionTrack = node.attrs.track ?
                 node.attrs.track.find(track => track.name==='insertion') :
-                node.marks.find(mark => mark.type.name==='insertion'),
-            blockBefore = node.isTextblock ? tr.doc.resolve(map.map(pos)).nodeBefore : false
-        if (blockBefore && !blockBefore.isTextblock) {
-            tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track:[]}), node.marks)
-        } else if (deletionTrack) {
-            let from = node.isTextblock ? pos - 1 : pos,
-                to = node.isTextblock ? pos + 1 : pos + node.nodeSize,
-                delStep = new ReplaceStep(
-                    map.map(from),
-                    map.map(to),
-                    Slice.empty
-                )
-            tr.step(delStep)
-            let stepMap = delStep.getMap()
-            map.appendMap(stepMap)
+                node.marks.find(mark => mark.type.name==='insertion')
+
+        if (deletionTrack) {
+            deleteNode(tr, node, pos, map)
         } else if (insertionTrack) {
             if (node.isInline) {
                 tr.step(
@@ -39,9 +83,9 @@ export function acceptAllNoInsertions(doc) {
                     )
                 )
             } else {
-                tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track:[]}), node.marks)
+                let track = node.attrs.track.filter(track => track.type !== 'insertion')
+                tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track}), node.marks)
             }
-
         }
         return true
     })
@@ -100,21 +144,8 @@ export class ModTrack {
                 reachedEnd = true
                 return false
             }
-            // mark as approved if node text block with no previous sibling text block.
-            let blockBefore = node.isTextblock ? tr.doc.resolve(map.map(nodePos)).nodeBefore : false
-            if (blockBefore && !blockBefore.isTextblock) {
-                tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track:[]}), node.marks)
-            } else if (type==='insertion') {
-                let from = node.isTextblock ? nodePos - 1 : nodePos, // if the current node and the previous node are textblocks, merge them. Otherwise delete node.
-                    to = node.isTextblock ? nodePos + 1 : nodePos + node.nodeSize
-                let delStep = new ReplaceStep(
-                    map.map(from),
-                    map.map(to),
-                    Slice.empty
-                )
-                tr.step(delStep)
-                let stepMap = delStep.getMap()
-                map.appendMap(stepMap)
+            if (type==='insertion') {
+                deleteNode(tr, node, nodePos, map)
             } else {
                 if (node.attrs.track) {
                     let track = node.attrs.track.filter(track => track.type !== 'deletion')
@@ -146,34 +177,14 @@ export class ModTrack {
     rejectAllForView(view) {
         let tr = view.state.tr.setMeta('track', true), map = new Mapping()
         view.state.doc.descendants((node, pos, parent) => {
-            // mark as approved if node text block with no previous sibling text block.
-            let blockBefore = node.isTextblock ? tr.doc.resolve(map.map(pos)).nodeBefore : false
-            if (blockBefore && !blockBefore.isTextblock) {
-                tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track:[]}), node.marks)
-            } else if (node.attrs.track && node.attrs.track.find(track => track.type==='insertion')) {
-                let from = node.isTextblock ? pos - 1 : pos,
-                    to = node.isTextblick ? pos + 1 : pos + node.nodeSize
-                let delStep = new ReplaceStep(
-                    map.map(from),
-                    map.map(to),
-                    Slice.empty
-                )
-                tr.step(delStep)
-                let stepMap = delStep.getMap()
-                map.appendMap(stepMap)
-            } else if (node.marks && node.marks.find(mark => mark.type.name==='insertion' && !mark.attrs.approved)) {
-                let from = pos,
-                    to = pos + node.nodeSize
-                let delStep = new ReplaceStep(
-                    map.map(from),
-                    map.map(to),
-                    Slice.empty
-                )
-                tr.step(delStep)
-                let stepMap = delStep.getMap()
-                map.appendMap(stepMap)
+            if (
+                node.attrs.track && node.attrs.track.find(track => track.type==='insertion') ||
+                node.marks && node.marks.find(mark => mark.type.name==='insertion' && !mark.attrs.approved)
+            ) {
+                deleteNode(tr, node, pos, map)
             } else if (node.attrs.track && node.attrs.track.find(track => track.type==='deletion')) {
-                tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track:[]}), node.marks)
+                let track = node.attrs.track.filter(track=> track.type !== 'deletion')
+                tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track}), node.marks)
             } else if (node.marks && node.marks.find(mark => mark.type.name==='deletion')) {
                 tr.removeMark(
                     map.map(pos),
@@ -208,24 +219,8 @@ export class ModTrack {
                 return false
             }
 
-            let blockBefore = node.isTextblock ? tr.doc.resolve(map.map(nodePos)).nodeBefore : false
-
-            if (blockBefore && !blockBefore.isTextblock) {
-                // Node is a text block at the beginning of a document part or right after
-                // a figure or alike. Just mark the block as accepted, no matter whether
-                // it is a deletion or insertion mark.
-                tr.setNodeMarkup(map.map(nodePos), null, Object.assign({}, node.attrs, {track:[]}), node.marks)
-            } else if (type==='deletion') {
-                let from = node.isTextblock ? nodePos - 1 : nodePos, // if the current node and the previous node are textblocks, merge them. Otherwise delete node.
-                    to = node.isTextblock ? nodePos + 1 : nodePos + node.nodeSize
-                let delStep = new ReplaceStep(
-                    map.map(from),
-                    map.map(to),
-                    Slice.empty
-                )
-                tr.step(delStep)
-                let stepMap = delStep.getMap()
-                map.appendMap(stepMap)
+            if (type==='deletion') {
+                deleteNode(tr, node, nodePos, map)
             } else {
                 if (node.attrs.track) {
                     let track = node.attrs.track.filter(track => track.type !== 'insertion')
@@ -258,34 +253,15 @@ export class ModTrack {
     acceptAllForView(view) {
         let tr = view.state.tr.setMeta('track', true), map = new Mapping()
         view.state.doc.descendants((node, pos, parent) => {
-            // mark as approved if node text block with no previous sibling text block.
-            let blockBefore = node.isTextblock ? tr.doc.resolve(map.map(pos)).nodeBefore : false
-            if (blockBefore && !blockBefore.isTextblock) {
-                tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track:[]}), node.marks)
-            } else if (node.attrs.track && node.attrs.track.find(track => track.type==='deletion')) {
-                let from = node.isTextblock ? pos - 1 : pos, // if the current node and the previous node are textblocks, merge them. Otherwise delete node.
-                    to = node.isTextblock ? pos + 1 : pos + node.nodeSize
-                let delStep = new ReplaceStep(
-                    map.map(from),
-                    map.map(to),
-                    Slice.empty
-                )
-                tr.step(delStep)
-                let stepMap = delStep.getMap()
-                map.appendMap(stepMap)
-            } else if (node.marks && node.marks.find(mark => mark.type.name==='deletion')) {
-                let from = pos,
-                    to = pos + node.nodeSize
-                let delStep = new ReplaceStep(
-                    map.map(from),
-                    map.map(to),
-                    Slice.empty
-                )
-                tr.step(delStep)
-                let stepMap = delStep.getMap()
-                map.appendMap(stepMap)
+
+            if (
+                node.attrs.track && node.attrs.track.find(track => track.type==='deletion') ||
+                node.marks && node.marks.find(mark => mark.type.name==='deletion')
+            ) {
+                deleteNode(tr, node, pos, map)
             } else if (node.attrs.track && node.attrs.track.find(track => track.type==='insertion')) {
-                tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track:[]}), node.marks)
+                let track = node.attrs.track.filter(track => track.type !== 'insertion')
+                tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track}), node.marks)
             } else if (node.marks && node.marks.find(mark => mark.type.name==='insertion' && !mark.attrs.approved)) {
                 let mark = node.marks.find(mark => mark.type.name==='insertion'),
                     attrs = Object.assign({}, mark.attrs, {approved: true})

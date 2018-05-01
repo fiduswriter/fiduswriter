@@ -149,7 +149,6 @@ table.dataTable-table input[type=checkbox] {
 /* the usermedia table */
 .fw-usermedia-title {
     display: inline-block;
-    width: 270px;
     height: auto;
 }
 .fw-usermedia-type {
@@ -158,8 +157,8 @@ table.dataTable-table input[type=checkbox] {
 }
 .fw-usermedia-image {
     display: inline-block;
-    width: 60px;
-    height: 60px;
+    max-width: 60px;
+    max-height: 60px;
     overflow: hidden;
     vertical-align: top;
     margin: 2px 14px 2px 0;

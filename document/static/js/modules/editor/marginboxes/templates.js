@@ -151,7 +151,7 @@ let commentTemplate = ({comment, activeCommentId, activeCommentAnswerId, user, d
     </div>`
 }
 
-let TRANSLATE_ACTIONS = {
+let ACTIONS = {
     insertion_paragraph: gettext('New paragraph'),
     insertion_heading: gettext('New heading'),
     insertion_text: gettext('Inserted text'),
@@ -175,7 +175,7 @@ let trackTemplate = ({type, data, nodeType, pos, active, docInfo}) => {
     return `
         <div class="margin-box track ${active ? 'active' : 'inactive'}" data-type="${type}" data-pos="${pos}">
             <div class="track-${type}">
-                <div class="track-title">${TRANSLATE_ACTIONS[`${type}_${nodeType}`]}</div>
+                <div class="track-title">${ACTIONS[`${type}_${nodeType}`]}</div>
                 <div class="comment-user">
                     <img class="comment-user-avatar" src="${author ? author.avatar : `${$StaticUrls.base$}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
                     <h5 class="comment-user-name">${escapeText(author ? author.name : data.username)}</h5>

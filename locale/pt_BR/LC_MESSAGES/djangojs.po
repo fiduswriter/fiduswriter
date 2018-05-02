@@ -1,7 +1,7 @@
-# Bulgarian translation for Fidus Writer
-# Copyright (C) 2013 Vladimir Vitkov
+# LANGUAGE translation for Fidus Writer
+# Copyright (C) YEAR THE TRANSLATORS NAME
 # This file is distributed under the same license as Fidus Writer.
-# Vladimir Vitkov <vvitkov@linux-bg.org>, 2013
+# THE TRANSLATORS NAME <EMAIL@ADDRESS>, YEAR
 #
 #: node_modules/mathquill/build/mathquill.js:1192
 #: node_modules/mathquill/build/mathquill.min.js:10
@@ -9,16 +9,18 @@
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:69325
 msgid ""
 msgstr ""
-"Project-Id-Version: 1.0\n"
+"Project-Id-Version: Fidus Writer \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-04-18 07:26+0000\n"
-"PO-Revision-Date: 2013-09-18 08:52+0200\n"
-"Last-Translator: Vladimir Vitkov <vvitkov@linux-bg.org>\n"
-"Language-Team: Bulgarian <vvitkov@linux-bg.org>\n"
-"Language: BG\n"
+"PO-Revision-Date: 2015-04-24 23:57-0300\n"
+"Last-Translator: Job Diogenes Ribeiro Borges <jobdrb@gmail.com>\n"
+"Language-Team: Brazilian Portuguese <jobdrb@gmail.com>\n"
+"Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.4\n"
+"X-Poedit-SourceCharset: UTF-8\n"
 
 #: base/static/js/modules/common/dialog.js:12
 #: document/static/js/modules/editor/menus/headerbar/model.js:72
@@ -49,16 +51,14 @@ msgstr ""
 #: static-transpile/js/transpile/profile.js:218
 #: static-transpile/js/transpile/profile.js:232
 msgid "Close"
-msgstr "Затвори"
+msgstr "Fechar"
 
 #: bibliography/static/js/modules/bibliography/database/index.js:75
 #: static-transpile/js/transpile/bibliography_overview.js:108
 #: static-transpile/js/transpile/editor.js:118
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:99
-#, fuzzy
-#| msgid "Search for Bibliography"
 msgid "Could not obtain bibliography data"
-msgstr "Търсене на библиография"
+msgstr ""
 
 #: bibliography/static/js/modules/bibliography/database/index.js:92
 #: bibliography/static/js/modules/bibliography/import/biblatex.js:9
@@ -71,7 +71,7 @@ msgstr "Търсене на библиография"
 #, fuzzy
 #| msgid "The bibliography has been updated"
 msgid "The bibliography could not be updated"
-msgstr "Библиографията беше обновена"
+msgstr "A bibliografia foi atualizada"
 
 #: bibliography/static/js/modules/bibliography/database/index.js:103
 #: static-transpile/js/transpile/bibliography_overview.js:140
@@ -80,7 +80,7 @@ msgstr "Библиографията беше обновена"
 #, fuzzy
 #| msgid "The bibliography has been updated"
 msgid "The bibliography has been updated."
-msgstr "Библиографията беше обновена"
+msgstr "A bibliografia foi atualizada"
 
 #: bibliography/static/js/modules/bibliography/database/index.js:124
 #: static-transpile/js/transpile/bibliography_overview.js:164
@@ -89,7 +89,7 @@ msgstr "Библиографията беше обновена"
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:155
 #: usermedia/static/js/modules/images/overview/categories.js:30
 msgid "The categories have been updated"
-msgstr "Категориите бяха обновени"
+msgstr "As categorias foram atualizados"
 
 #: bibliography/static/js/modules/bibliography/database/index.js:130
 #: static-transpile/js/transpile/bibliography_overview.js:168
@@ -98,14 +98,14 @@ msgstr "Категориите бяха обновени"
 #, fuzzy
 #| msgid "The categories have been updated"
 msgid "The categories could not be updated"
-msgstr "Категориите бяха обновени"
+msgstr "As categorias foram atualizados"
 
 #: bibliography/static/js/modules/bibliography/database/index.js:176
 #: static-transpile/js/transpile/bibliography_overview.js:219
 #: static-transpile/js/transpile/editor.js:229
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:210
 msgid "The bibliography item(s) have been deleted"
-msgstr "Библиографските запис(и) бяха изтрити"
+msgstr "As bibliografias foram excluídas"
 
 #: bibliography/static/js/modules/bibliography/form/fields/key.js:35
 #: static-transpile/js/transpile/bibliography_overview.js:565
@@ -128,7 +128,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Organization(s)"
 msgid "Organization name"
-msgstr "Организация(и)"
+msgstr "Organizações"
 
 #: bibliography/static/js/modules/bibliography/form/fields/range.js:36
 #: static-transpile/js/transpile/bibliography_overview.js:1448
@@ -163,14 +163,14 @@ msgstr ""
 #: static-transpile/js/transpile/editor.js:1942
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:1923
 msgid "Edit Source"
-msgstr "Редактиране на източник"
+msgstr "Editar Fonte"
 
 #: bibliography/static/js/modules/bibliography/form/index.js:50
 #: static-transpile/js/transpile/bibliography_overview.js:1985
 #: static-transpile/js/transpile/editor.js:1946
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:1927
 msgid "Register New Source"
-msgstr "Добавяне на нов източник"
+msgstr "Criar Nova Fonte"
 
 #: bibliography/static/js/modules/bibliography/form/index.js:70
 #: static-transpile/js/transpile/bibliography_overview.js:2006
@@ -246,7 +246,7 @@ msgstr ""
 #: user/static/js/modules/profile/index.js:312
 #: usermedia/static/js/modules/images/overview/categories.js:62
 msgid "Submit"
-msgstr "Изпрати"
+msgstr "Enviar"
 
 #: bibliography/static/js/modules/bibliography/form/index.js:298
 #: static-transpile/js/transpile/bibliography_overview.js:2200
@@ -268,35 +268,35 @@ msgstr ""
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:10604
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:22680
 msgid "Abstract"
-msgstr "Обобщение"
+msgstr "Resumo"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:3
 #: static-transpile/js/transpile/bibliography_overview.js:2235
 #: static-transpile/js/transpile/editor.js:2196
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2177
 msgid "Addendum"
-msgstr "Допълнение"
+msgstr "Apêndice"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:4
 #: static-transpile/js/transpile/bibliography_overview.js:2236
 #: static-transpile/js/transpile/editor.js:2197
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2178
 msgid "Afterword"
-msgstr "Послеслов"
+msgstr "Posfácio"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:5
 #: static-transpile/js/transpile/bibliography_overview.js:2237
 #: static-transpile/js/transpile/editor.js:2198
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2179
 msgid "Annotation"
-msgstr "Анотация"
+msgstr "Anotação"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:6
 #: static-transpile/js/transpile/bibliography_overview.js:2238
 #: static-transpile/js/transpile/editor.js:2199
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2180
 msgid "Annotations author(s)"
-msgstr "Автор(и) на анотация"
+msgstr "Autor(es) Anotações"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:7
 #: document/static/js/modules/editor/menus/headerbar/model.js:228
@@ -306,224 +306,224 @@ msgstr "Автор(и) на анотация"
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2181
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:9839
 msgid "Author(s)"
-msgstr "Автор(и)"
+msgstr "Autor(es)"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:8
 #: static-transpile/js/transpile/bibliography_overview.js:2240
 #: static-transpile/js/transpile/editor.js:2201
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2182
 msgid "Author type"
-msgstr "Тип Автор"
+msgstr "Tipo de Autor"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:9
 #: static-transpile/js/transpile/bibliography_overview.js:2241
 #: static-transpile/js/transpile/editor.js:2202
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2183
 msgid "Book author(s)"
-msgstr "Автор(и) на книга"
+msgstr "Autores do Livro"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:10
 #: static-transpile/js/transpile/bibliography_overview.js:2242
 #: static-transpile/js/transpile/editor.js:2203
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2184
 msgid "Book pagination"
-msgstr "Страниране на книга"
+msgstr "Paginação do Livro"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:11
 #: static-transpile/js/transpile/bibliography_overview.js:2243
 #: static-transpile/js/transpile/editor.js:2204
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2185
 msgid "Book subtitle"
-msgstr "Подзаглавие на книгата"
+msgstr "Subtítulo do Livro"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:12
 #: static-transpile/js/transpile/bibliography_overview.js:2244
 #: static-transpile/js/transpile/editor.js:2205
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2186
 msgid "Book title"
-msgstr "Заглавие на книгата"
+msgstr "Título do Livro"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:13
 #: static-transpile/js/transpile/bibliography_overview.js:2245
 #: static-transpile/js/transpile/editor.js:2206
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2187
 msgid "Book title annex"
-msgstr "Допълнения към заглавието"
+msgstr "Título do anexo do Livro"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:14
 #: static-transpile/js/transpile/bibliography_overview.js:2246
 #: static-transpile/js/transpile/editor.js:2207
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2188
 msgid "Chapter or section"
-msgstr "Глава или секция"
+msgstr "Capítulo ou seção"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:15
 #: static-transpile/js/transpile/bibliography_overview.js:2247
 #: static-transpile/js/transpile/editor.js:2208
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2189
 msgid "Author(s) of a commentary"
-msgstr "Автор(и) на коментара"
+msgstr "Autor(es) de um comentário"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:16
 #: static-transpile/js/transpile/bibliography_overview.js:2248
 #: static-transpile/js/transpile/editor.js:2209
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2190
 msgid "Publication date"
-msgstr "Дата на публикуване"
+msgstr "Data de publicação"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:17
 #: static-transpile/js/transpile/bibliography_overview.js:2249
 #: static-transpile/js/transpile/editor.js:2210
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2191
 msgid "Digital Object Identifier"
-msgstr "Дигитален идентификатор"
+msgstr "Digital Object Identifier (DOI)"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:18
 #: static-transpile/js/transpile/bibliography_overview.js:2250
 #: static-transpile/js/transpile/editor.js:2211
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2192
 msgid "Edition"
-msgstr "Издание"
+msgstr "Edição"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:19
 #: static-transpile/js/transpile/bibliography_overview.js:2251
 #: static-transpile/js/transpile/editor.js:2212
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2193
 msgid "Editor(s)"
-msgstr "Редактор(и)"
+msgstr "Editor(es)"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:20
 #: static-transpile/js/transpile/bibliography_overview.js:2252
 #: static-transpile/js/transpile/editor.js:2213
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2194
 msgid "Secondary editor"
-msgstr "Втори Редактор"
+msgstr "Editor Secundário"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:21
 #: static-transpile/js/transpile/bibliography_overview.js:2253
 #: static-transpile/js/transpile/editor.js:2214
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2195
 msgid "Secondary editor 2"
-msgstr "Втори Редактор 2"
+msgstr "Editor Secundária 2"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:22
 #: static-transpile/js/transpile/bibliography_overview.js:2254
 #: static-transpile/js/transpile/editor.js:2215
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2196
 msgid "Secondary editor 3"
-msgstr "Втори Редактор 3"
+msgstr "Editor Secundária 3"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:23
 #: static-transpile/js/transpile/bibliography_overview.js:2255
 #: static-transpile/js/transpile/editor.js:2216
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2197
 msgid "Role of editor(s)"
-msgstr "Роля на редактор(и)"
+msgstr "Papel do(s) editor(es)"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:24
 #: static-transpile/js/transpile/bibliography_overview.js:2256
 #: static-transpile/js/transpile/editor.js:2217
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2198
 msgid "Role of secondary editor"
-msgstr "Роля на втори редактор"
+msgstr "Papel do editor secundário"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:25
 #: static-transpile/js/transpile/bibliography_overview.js:2257
 #: static-transpile/js/transpile/editor.js:2218
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2199
 msgid "Role of secondary editor 2"
-msgstr "Роля на втори редактор 2"
+msgstr "Papel do editor secundário 2"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:26
 #: static-transpile/js/transpile/bibliography_overview.js:2258
 #: static-transpile/js/transpile/editor.js:2219
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2200
 msgid "Role of secondary editor 3"
-msgstr "Роля на втори редактор 3"
+msgstr "Papel do editor secundário 3"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:27
 #: static-transpile/js/transpile/bibliography_overview.js:2259
 #: static-transpile/js/transpile/editor.js:2220
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2201
 msgid "Electronic identifier of an article"
-msgstr "Електронен идентификатор на статия"
+msgstr "Identificador eletrônico de um artigo"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:28
 #: static-transpile/js/transpile/bibliography_overview.js:2260
 #: static-transpile/js/transpile/editor.js:2221
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2202
 msgid "Entry subtype"
-msgstr "Тип на записа"
+msgstr "Entre com o subtitpo"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:29
 #: static-transpile/js/transpile/bibliography_overview.js:2261
 #: static-transpile/js/transpile/editor.js:2222
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2203
 msgid "Electronic identifier of an online publication"
-msgstr "Електронен идентификатор на публикацията"
+msgstr "Identificador eletrônico de uma publicação on-line"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:30
 #: static-transpile/js/transpile/bibliography_overview.js:2262
 #: static-transpile/js/transpile/editor.js:2223
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2204
 msgid "Additional information to an online publication"
-msgstr "Допълнителна информация към онлайн публикация"
+msgstr "Informações adicionais para uma publicação on-line"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:31
 #: static-transpile/js/transpile/bibliography_overview.js:2263
 #: static-transpile/js/transpile/editor.js:2224
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2205
 msgid "Eprint identifier type"
-msgstr "Епринт идентификатор"
+msgstr "Tipo de identificador Eprint"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:32
 #: static-transpile/js/transpile/bibliography_overview.js:2264
 #: static-transpile/js/transpile/editor.js:2225
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2206
 msgid "Event date"
-msgstr "Дата на събитието"
+msgstr "Data do evento"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:33
 #: static-transpile/js/transpile/bibliography_overview.js:2265
 #: static-transpile/js/transpile/editor.js:2226
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2207
 msgid "Event title"
-msgstr "Име на събитието"
+msgstr "Título do evento"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:34
 #: static-transpile/js/transpile/bibliography_overview.js:2266
 #: static-transpile/js/transpile/editor.js:2227
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2208
 msgid "Local link to the work"
-msgstr "Локална връзка към творбата"
+msgstr "Ligação local para o trabalho"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:35
 #: static-transpile/js/transpile/bibliography_overview.js:2267
 #: static-transpile/js/transpile/editor.js:2228
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2209
 msgid "Foreword author(s)"
-msgstr "Автор(и) на предговора"
+msgstr "Autor(es) do Prefácio "
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:36
 #: static-transpile/js/transpile/bibliography_overview.js:2268
 #: static-transpile/js/transpile/editor.js:2229
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2210
 msgid "Patent holder(s)"
-msgstr "Притежател(и) на патент"
+msgstr "Donos da Patente"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:37
 #: static-transpile/js/transpile/bibliography_overview.js:2269
 #: static-transpile/js/transpile/editor.js:2230
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2211
 msgid "Publication notice"
-msgstr "Информация за публикуване"
+msgstr "Aviso de publicação"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:38
 #: static-transpile/js/transpile/bibliography_overview.js:2270
 #: static-transpile/js/transpile/editor.js:2231
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2212
 msgid "Title for indexing"
-msgstr "Заглавие за индексиране"
+msgstr "Título para indexação"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:39
 #: static-transpile/js/transpile/bibliography_overview.js:2271
@@ -532,14 +532,14 @@ msgstr "Заглавие за индексиране"
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2213
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:8417
 msgid "Institution"
-msgstr "Институция"
+msgstr "Instituição"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:40
 #: static-transpile/js/transpile/bibliography_overview.js:2272
 #: static-transpile/js/transpile/editor.js:2233
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2214
 msgid "Author(s) of an introduction to the work"
-msgstr "Автор(и) на въведението"
+msgstr "Autor(es) de uma introdução ao trabalho"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:41
 #: static-transpile/js/transpile/bibliography_overview.js:2273
@@ -581,21 +581,21 @@ msgstr "ISSN"
 #: static-transpile/js/transpile/editor.js:2239
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2220
 msgid "Issue"
-msgstr "брой"
+msgstr "Edição"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:47
 #: static-transpile/js/transpile/bibliography_overview.js:2279
 #: static-transpile/js/transpile/editor.js:2240
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2221
 msgid "Issue subtitle"
-msgstr "Подзаглавие на броя"
+msgstr "Subtítulo da edição"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:48
 #: static-transpile/js/transpile/bibliography_overview.js:2280
 #: static-transpile/js/transpile/editor.js:2241
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2222
 msgid "Issue title"
-msgstr "Заглавие на Броя"
+msgstr "Título da edição"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:49
 #: static-transpile/js/transpile/bibliography_overview.js:2281
@@ -609,14 +609,14 @@ msgstr "ISWC"
 #: static-transpile/js/transpile/editor.js:2243
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2224
 msgid "Subtitle of publication"
-msgstr "Подзаглавие на публикация"
+msgstr "Subtítulo da publicação"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:51
 #: static-transpile/js/transpile/bibliography_overview.js:2283
 #: static-transpile/js/transpile/editor.js:2244
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2225
 msgid "Title of publication"
-msgstr "Заглавие на публикация"
+msgstr "Título da publicação"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:52
 #: document/static/js/modules/editor/menus/headerbar/model.js:272
@@ -629,14 +629,14 @@ msgstr "Заглавие на публикация"
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:9881
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:10605
 msgid "Keywords"
-msgstr "Ключови думи"
+msgstr "Palavras-chave"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:53
 #: static-transpile/js/transpile/bibliography_overview.js:2285
 #: static-transpile/js/transpile/editor.js:2246
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2227
 msgid "Label"
-msgstr "Етикет"
+msgstr "Rótulo"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:54
 #: static-transpile/js/transpile/bibliography_overview.js:2286
@@ -645,7 +645,7 @@ msgstr "Етикет"
 #, fuzzy
 #| msgid "Language(s)"
 msgid "Language(s) of work"
-msgstr "Език/Езици"
+msgstr "Lingua(s)"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:55
 #: static-transpile/js/transpile/bibliography_overview.js:2287
@@ -654,210 +654,210 @@ msgstr "Език/Езици"
 #, fuzzy
 #| msgid "Delete the bibliography item(s)"
 msgid "Language of bibliography item"
-msgstr "Изтриване на библиграфски запис(и)"
+msgstr "Excluir as bibliografias"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:56
 #: static-transpile/js/transpile/bibliography_overview.js:2288
 #: static-transpile/js/transpile/editor.js:2249
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2230
 msgid "Library information"
-msgstr "Библиотечна информация"
+msgstr "Informações da Biblioteca"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:57
 #: static-transpile/js/transpile/bibliography_overview.js:2289
 #: static-transpile/js/transpile/editor.js:2250
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2231
 msgid "Location(s) of publication"
-msgstr "Местоположение(я) на публиклацията"
+msgstr "Local(s) da publicação"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:58
 #: static-transpile/js/transpile/bibliography_overview.js:2290
 #: static-transpile/js/transpile/editor.js:2251
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2232
 msgid "Main subtitle"
-msgstr "Основно Подзаглавие"
+msgstr "SubTítulo Principal"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:59
 #: static-transpile/js/transpile/bibliography_overview.js:2291
 #: static-transpile/js/transpile/editor.js:2252
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2233
 msgid "Maintitle"
-msgstr "Осн. Заглавие"
+msgstr "Título príncipal"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:60
 #: static-transpile/js/transpile/bibliography_overview.js:2292
 #: static-transpile/js/transpile/editor.js:2253
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2234
 msgid "Annex to the maintitle"
-msgstr "Допълнение към основното заглавие"
+msgstr "Anexar ao título principal"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:61
 #: static-transpile/js/transpile/bibliography_overview.js:2293
 #: static-transpile/js/transpile/editor.js:2254
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2235
 msgid "author name addon"
-msgstr "Допълнителен Автор"
+msgstr "nome do autor addon"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:62
 #: static-transpile/js/transpile/bibliography_overview.js:2294
 #: static-transpile/js/transpile/editor.js:2255
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2236
 msgid "Note"
-msgstr "Бележка"
+msgstr "Nota"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:63
 #: static-transpile/js/transpile/bibliography_overview.js:2295
 #: static-transpile/js/transpile/editor.js:2256
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2237
 msgid "Number of the work in a series"
-msgstr "Номер на творбата в серията"
+msgstr "Número do trabalho em uma série"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:64
 #: static-transpile/js/transpile/bibliography_overview.js:2296
 #: static-transpile/js/transpile/editor.js:2257
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2238
 msgid "Organization(s)"
-msgstr "Организация(и)"
+msgstr "Organizações"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:65
 #: static-transpile/js/transpile/bibliography_overview.js:2297
 #: static-transpile/js/transpile/editor.js:2258
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2239
 msgid "Publication date of the original work"
-msgstr "Дата на публикуване на оригиналната творба"
+msgstr "Data de publicação do trabalho original"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:66
 #: static-transpile/js/transpile/bibliography_overview.js:2298
 #: static-transpile/js/transpile/editor.js:2259
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2240
 msgid "Language of the original work"
-msgstr "Език на оригиналната творба"
+msgstr "Idioma da obra original"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:67
 #: static-transpile/js/transpile/bibliography_overview.js:2299
 #: static-transpile/js/transpile/editor.js:2260
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2241
 msgid "Publication location of the original edition"
-msgstr "Място на публикуване на оригиналната творба"
+msgstr "Localização de publicação da edição original"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:68
 #: static-transpile/js/transpile/bibliography_overview.js:2300
 #: static-transpile/js/transpile/editor.js:2261
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2242
 msgid "Publisher of the original edition"
-msgstr "Издател на оригиналното издание"
+msgstr "Editor da edição original"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:69
 #: static-transpile/js/transpile/bibliography_overview.js:2301
 #: static-transpile/js/transpile/editor.js:2262
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2243
 msgid "Title of the original work"
-msgstr "Заглавие на оригиналната творба"
+msgstr "Título da obra original"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:70
 #: static-transpile/js/transpile/bibliography_overview.js:2302
 #: static-transpile/js/transpile/editor.js:2263
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2244
 msgid "Pages"
-msgstr "Страници"
+msgstr "Páginas"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:71
 #: static-transpile/js/transpile/bibliography_overview.js:2303
 #: static-transpile/js/transpile/editor.js:2264
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2245
 msgid "Total number of pages"
-msgstr "Брой страниц"
+msgstr "Número total de páginas"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:72
 #: static-transpile/js/transpile/bibliography_overview.js:2304
 #: static-transpile/js/transpile/editor.js:2265
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2246
 msgid "Pagination"
-msgstr "Страниране"
+msgstr "Paginação"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:73
 #: static-transpile/js/transpile/bibliography_overview.js:2305
 #: static-transpile/js/transpile/editor.js:2266
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2247
 msgid "Number of a partial volume"
-msgstr "Номер от непълен том"
+msgstr "Número de um volume parcial"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:74
 #: static-transpile/js/transpile/bibliography_overview.js:2306
 #: static-transpile/js/transpile/editor.js:2267
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2248
 msgid "Publisher(s)"
-msgstr "Издател(и)"
+msgstr "Editor(es)"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:75
 #: static-transpile/js/transpile/bibliography_overview.js:2307
 #: static-transpile/js/transpile/editor.js:2268
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2249
 msgid "Publication state of the work"
-msgstr "Състояние на публикуване"
+msgstr "Estado de publicação da obra"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:76
 #: static-transpile/js/transpile/bibliography_overview.js:2308
 #: static-transpile/js/transpile/editor.js:2269
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2250
 msgid "Title of reprint"
-msgstr "Заглавие на препечатката"
+msgstr "Título de reimpressão"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:77
 #: static-transpile/js/transpile/bibliography_overview.js:2309
 #: static-transpile/js/transpile/editor.js:2270
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2251
 msgid "Name of series"
-msgstr "Име на серията"
+msgstr "Nome da série"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:78
 #: static-transpile/js/transpile/bibliography_overview.js:2310
 #: static-transpile/js/transpile/editor.js:2271
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2252
 msgid "Abbreviated author(s)"
-msgstr "Съкратен Автор(и)"
+msgstr "Autores abreviados"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:79
 #: static-transpile/js/transpile/bibliography_overview.js:2311
 #: static-transpile/js/transpile/editor.js:2272
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2253
 msgid "Abbreviated editor(s)"
-msgstr "Съкратен Редактор(и)"
+msgstr "Editores abreviados"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:80
 #: static-transpile/js/transpile/bibliography_overview.js:2312
 #: static-transpile/js/transpile/editor.js:2273
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2254
 msgid "Shorthand"
-msgstr "Стенография"
+msgstr "Taquigrafia"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:81
 #: static-transpile/js/transpile/bibliography_overview.js:2313
 #: static-transpile/js/transpile/editor.js:2274
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2255
 msgid "Shorthand intro"
-msgstr "Стонография накратко"
+msgstr "Introdução Taquigráfica"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:82
 #: static-transpile/js/transpile/bibliography_overview.js:2314
 #: static-transpile/js/transpile/editor.js:2275
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2256
 msgid "Acronym of the publication's title"
-msgstr "Акроним на заглавието"
+msgstr "Sigla do título da publicação"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:83
 #: static-transpile/js/transpile/bibliography_overview.js:2315
 #: static-transpile/js/transpile/editor.js:2276
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2257
 msgid "Acronym of the series"
-msgstr "Акроним на серията"
+msgstr "Sigla da série"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:84
 #: static-transpile/js/transpile/bibliography_overview.js:2316
 #: static-transpile/js/transpile/editor.js:2277
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2258
 msgid "Abridged title"
-msgstr "Съкратено заглавие"
+msgstr "Título abreviado"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:85
 #: document/static/js/modules/editor/menus/headerbar/model.js:206
@@ -870,7 +870,7 @@ msgstr "Съкратено заглавие"
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:9818
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:10602
 msgid "Subtitle"
-msgstr "Подзаглавие"
+msgstr "Subtítulo"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:86
 #: bibliography/static/js/modules/bibliography/overview/index.js:54
@@ -899,28 +899,28 @@ msgstr "Подзаглавие"
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:21738
 #: usermedia/static/js/modules/images/selection_dialog/index.js:110
 msgid "Title"
-msgstr "Заглавие"
+msgstr "Título"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:87
 #: static-transpile/js/transpile/bibliography_overview.js:2319
 #: static-transpile/js/transpile/editor.js:2280
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2261
 msgid "Title addon"
-msgstr "Добавено заглавие"
+msgstr "Título anexo"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:88
 #: static-transpile/js/transpile/bibliography_overview.js:2320
 #: static-transpile/js/transpile/editor.js:2281
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2262
 msgid "Translator(s)"
-msgstr "Преводач(и)"
+msgstr "Tradutores"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:89
 #: static-transpile/js/transpile/bibliography_overview.js:2321
 #: static-transpile/js/transpile/editor.js:2282
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2263
 msgid "Manual type"
-msgstr "Тип ръководство"
+msgstr "Tipo manual"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:90
 #: static-transpile/js/transpile/bibliography_overview.js:2322
@@ -929,42 +929,42 @@ msgstr "Тип ръководство"
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2264
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:8353
 msgid "URL"
-msgstr "Адрес"
+msgstr "URL"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:91
 #: static-transpile/js/transpile/bibliography_overview.js:2323
 #: static-transpile/js/transpile/editor.js:2284
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2265
 msgid "Access date"
-msgstr "Дата на проверка"
+msgstr "Data de acesso"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:92
 #: static-transpile/js/transpile/bibliography_overview.js:2324
 #: static-transpile/js/transpile/editor.js:2285
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2266
 msgid "Location of a conference"
-msgstr "Място на провеждане на конференцията"
+msgstr "Localização da conferência"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:93
 #: static-transpile/js/transpile/bibliography_overview.js:2325
 #: static-transpile/js/transpile/editor.js:2286
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2267
 msgid "Version"
-msgstr "Версия"
+msgstr "Versão"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:94
 #: static-transpile/js/transpile/bibliography_overview.js:2326
 #: static-transpile/js/transpile/editor.js:2287
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2268
 msgid "Volume"
-msgstr "Том"
+msgstr "Volume"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:95
 #: static-transpile/js/transpile/bibliography_overview.js:2327
 #: static-transpile/js/transpile/editor.js:2288
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2269
 msgid "Total number of volumes"
-msgstr "Общо брой Тома"
+msgstr "Número total de volumes"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:99
 #: static-transpile/js/transpile/bibliography_overview.js:2330
@@ -996,77 +996,77 @@ msgstr ""
 #: static-transpile/js/transpile/editor.js:2309
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2290
 msgid "Article"
-msgstr "Статия"
+msgstr "Artigo"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:121
 #: static-transpile/js/transpile/bibliography_overview.js:2349
 #: static-transpile/js/transpile/editor.js:2310
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2291
 msgid "Book"
-msgstr "Книга"
+msgstr "Livro"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:122
 #: static-transpile/js/transpile/bibliography_overview.js:2350
 #: static-transpile/js/transpile/editor.js:2311
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2292
 msgid "Multi-volume book"
-msgstr "Многотомник"
+msgstr "Livro multi-volume"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:123
 #: static-transpile/js/transpile/bibliography_overview.js:2351
 #: static-transpile/js/transpile/editor.js:2312
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2293
 msgid "In book"
-msgstr "В Книга"
+msgstr "No livro"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:124
 #: static-transpile/js/transpile/bibliography_overview.js:2352
 #: static-transpile/js/transpile/editor.js:2313
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2294
 msgid "Book in book"
-msgstr "Книга в книга"
+msgstr "Livro no livro"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:125
 #: static-transpile/js/transpile/bibliography_overview.js:2353
 #: static-transpile/js/transpile/editor.js:2314
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2295
 msgid "Supplemental material in a book"
-msgstr "Допълнителен материал в книга"
+msgstr "Material suplementar num livro"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:126
 #: static-transpile/js/transpile/bibliography_overview.js:2354
 #: static-transpile/js/transpile/editor.js:2315
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2296
 msgid "Booklet"
-msgstr "Книжка"
+msgstr "Folheto"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:127
 #: static-transpile/js/transpile/bibliography_overview.js:2355
 #: static-transpile/js/transpile/editor.js:2316
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2297
 msgid "Collection"
-msgstr "Колекция"
+msgstr "Coleção"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:128
 #: static-transpile/js/transpile/bibliography_overview.js:2356
 #: static-transpile/js/transpile/editor.js:2317
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2298
 msgid "Multi-volume collection"
-msgstr "Многотомна колекция"
+msgstr "Coleção multi-volume"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:129
 #: static-transpile/js/transpile/bibliography_overview.js:2357
 #: static-transpile/js/transpile/editor.js:2318
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2299
 msgid "In collection"
-msgstr "В Колекция"
+msgstr "Na coleção"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:130
 #: static-transpile/js/transpile/bibliography_overview.js:2358
 #: static-transpile/js/transpile/editor.js:2319
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2300
 msgid "Supplemental material in a collection"
-msgstr "Допълнителен материал в колекция"
+msgstr "Material suplementar numa coleção"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:131
 #: bibliography/static/js/modules/bibliography/form/strings.js:156
@@ -1077,21 +1077,21 @@ msgstr "Допълнителен материал в колекция"
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2301
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2326
 msgid "Manual"
-msgstr "Наръчник"
+msgstr "Manual"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:132
 #: static-transpile/js/transpile/bibliography_overview.js:2360
 #: static-transpile/js/transpile/editor.js:2321
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2302
 msgid "Miscellany"
-msgstr "Разни"
+msgstr "Miscelânea"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:133
 #: static-transpile/js/transpile/bibliography_overview.js:2361
 #: static-transpile/js/transpile/editor.js:2322
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2303
 msgid "Online resource"
-msgstr "Онлайн ресурс"
+msgstr "Recurso online"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:134
 #: bibliography/static/js/modules/bibliography/form/strings.js:157
@@ -1102,63 +1102,63 @@ msgstr "Онлайн ресурс"
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2304
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2327
 msgid "Patent"
-msgstr "Патент"
+msgstr "Patente"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:135
 #: static-transpile/js/transpile/bibliography_overview.js:2363
 #: static-transpile/js/transpile/editor.js:2324
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2305
 msgid "Periodical"
-msgstr "Периодично издание"
+msgstr "Periódico"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:136
 #: static-transpile/js/transpile/bibliography_overview.js:2364
 #: static-transpile/js/transpile/editor.js:2325
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2306
 msgid "Supplemental material in a periodical"
-msgstr "Допълнителен материал в периодика"
+msgstr "Material suplementar num periódico"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:137
 #: static-transpile/js/transpile/bibliography_overview.js:2365
 #: static-transpile/js/transpile/editor.js:2326
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2307
 msgid "Proceedings"
-msgstr "Протоколи"
+msgstr "Anais"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:138
 #: static-transpile/js/transpile/bibliography_overview.js:2366
 #: static-transpile/js/transpile/editor.js:2327
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2308
 msgid "Multi-volume proceedings"
-msgstr "Многотомни протоколи"
+msgstr "Anais multi-volume"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:139
 #: static-transpile/js/transpile/bibliography_overview.js:2367
 #: static-transpile/js/transpile/editor.js:2328
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2309
 msgid "Article in a proceedings"
-msgstr "Статия от протоколи"
+msgstr "Artigo em anais"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:140
 #: static-transpile/js/transpile/bibliography_overview.js:2368
 #: static-transpile/js/transpile/editor.js:2329
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2310
 msgid "Reference"
-msgstr "Референция"
+msgstr "Referência"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:141
 #: static-transpile/js/transpile/bibliography_overview.js:2369
 #: static-transpile/js/transpile/editor.js:2330
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2311
 msgid "Multi-volume work of reference"
-msgstr "Многотомна творба"
+msgstr "Trabalho Multi-volume de referência"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:142
 #: static-transpile/js/transpile/bibliography_overview.js:2370
 #: static-transpile/js/transpile/editor.js:2331
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2312
 msgid "Article in a work of reference"
-msgstr "Статия в енциклопедия"
+msgstr "Artigo numa obra de referência"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:143
 #: bibliography/static/js/modules/bibliography/form/strings.js:158
@@ -1169,7 +1169,7 @@ msgstr "Статия в енциклопедия"
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2313
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2328
 msgid "Report"
-msgstr "Доклад"
+msgstr "Relatório"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:144
 #: bibliography/static/js/modules/bibliography/form/strings.js:159
@@ -1180,63 +1180,63 @@ msgstr "Доклад"
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2314
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2329
 msgid "Thesis"
-msgstr "Дипломна работа"
+msgstr "Tese"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:145
 #: static-transpile/js/transpile/bibliography_overview.js:2373
 #: static-transpile/js/transpile/editor.js:2334
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2315
 msgid "Unpublished"
-msgstr "Непубликувано"
+msgstr "Inédito"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:146
 #: static-transpile/js/transpile/bibliography_overview.js:2374
 #: static-transpile/js/transpile/editor.js:2335
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2316
 msgid "Magazine article"
-msgstr "Статия в списание"
+msgstr "Artigo de revista"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:147
 #: static-transpile/js/transpile/bibliography_overview.js:2375
 #: static-transpile/js/transpile/editor.js:2336
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2317
 msgid "Newspaper article"
-msgstr "Статия във вестник"
+msgstr "Artigo de jornal"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:148
 #: static-transpile/js/transpile/bibliography_overview.js:2376
 #: static-transpile/js/transpile/editor.js:2337
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2318
 msgid "Journal article"
-msgstr "Статия в журнал"
+msgstr "Artigo de jornal"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:149
 #: static-transpile/js/transpile/bibliography_overview.js:2377
 #: static-transpile/js/transpile/editor.js:2338
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2319
 msgid "Encyclopedia entry"
-msgstr "Запис в енциклопедия"
+msgstr "Entrada de Encyclopedia"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:150
 #: static-transpile/js/transpile/bibliography_overview.js:2378
 #: static-transpile/js/transpile/editor.js:2339
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2320
 msgid "Dictionary entry"
-msgstr "Дума в речник"
+msgstr "Entrada de Dicionário"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:151
 #: static-transpile/js/transpile/bibliography_overview.js:2379
 #: static-transpile/js/transpile/editor.js:2340
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2321
 msgid "Blog post"
-msgstr "Блог запис"
+msgstr "Postagem de blog"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:152
 #: static-transpile/js/transpile/bibliography_overview.js:2380
 #: static-transpile/js/transpile/editor.js:2341
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2322
 msgid "Forum post"
-msgstr "Запис във Форум"
+msgstr "Postagem de fórum"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:160
 #: static-transpile/js/transpile/bibliography_overview.js:2388
@@ -1245,7 +1245,7 @@ msgstr "Запис във Форум"
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2330
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:22182
 msgid "Editor"
-msgstr "Редактор"
+msgstr "Editor"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:161
 #: static-transpile/js/transpile/bibliography_overview.js:2389
@@ -1268,7 +1268,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Contacts"
 msgid "Continuator"
-msgstr "Контакти"
+msgstr "Contatos"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:164
 #: static-transpile/js/transpile/bibliography_overview.js:2392
@@ -1291,7 +1291,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Collaborators"
 msgid "Collaborator"
-msgstr "Сътрудници"
+msgstr "Colaboradores"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:167
 #: document/static/js/modules/editor/dialogs/templates.js:255
@@ -1301,7 +1301,7 @@ msgstr "Сътрудници"
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2337
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:8412
 msgid "Page"
-msgstr "Страница"
+msgstr "Página"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:168
 #: static-transpile/js/transpile/bibliography_overview.js:2396
@@ -1310,7 +1310,7 @@ msgstr "Страница"
 #, fuzzy
 #| msgid "Volume"
 msgid "Column"
-msgstr "Том"
+msgstr "Volume"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:169
 #: static-transpile/js/transpile/bibliography_overview.js:2397
@@ -1319,7 +1319,7 @@ msgstr "Том"
 #, fuzzy
 #| msgid "Collection"
 msgid "Section"
-msgstr "Колекция"
+msgstr "Coleção"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:170
 #: static-transpile/js/transpile/bibliography_overview.js:2398
@@ -1335,7 +1335,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Version"
 msgid "Verse"
-msgstr "Версия"
+msgstr "Versão"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:172
 #: static-transpile/js/transpile/bibliography_overview.js:2400
@@ -1351,7 +1351,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Insert caption"
 msgid "In preparation"
-msgstr "Сложи опсание"
+msgstr "Inserir legenda"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:174
 #: static-transpile/js/transpile/bibliography_overview.js:2402
@@ -1360,7 +1360,7 @@ msgstr "Сложи опсание"
 #, fuzzy
 #| msgid "Submit"
 msgid "Submitted"
-msgstr "Изпрати"
+msgstr "Enviar"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:175
 #: static-transpile/js/transpile/bibliography_overview.js:2403
@@ -1383,7 +1383,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Unpublished"
 msgid "Pre-published"
-msgstr "Непубликувано"
+msgstr "Inédito"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:178
 #: static-transpile/js/transpile/bibliography_overview.js:2406
@@ -1424,10 +1424,8 @@ msgstr ""
 #: static-transpile/js/transpile/bibliography_overview.js:2411
 #: static-transpile/js/transpile/editor.js:2372
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2353
-#, fuzzy
-#| msgid "Computer Code."
 msgid "Computer software"
-msgstr "Компютърен код."
+msgstr ""
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:184
 #: static-transpile/js/transpile/bibliography_overview.js:2412
@@ -1559,7 +1557,7 @@ msgstr ""
 #, fuzzy
 #| msgid "English"
 msgid "Canadian English"
-msgstr "Английски"
+msgstr "Inglês"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:200
 #: static-transpile/js/transpile/bibliography_overview.js:2428
@@ -1579,7 +1577,7 @@ msgstr ""
 #, fuzzy
 #| msgid "English"
 msgid "UK English"
-msgstr "Английски"
+msgstr "Inglês"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:203
 #: bibliography/static/js/modules/bibliography/form/strings.js:204
@@ -1592,7 +1590,7 @@ msgstr "Английски"
 #, fuzzy
 #| msgid "English"
 msgid "US English"
-msgstr "Английски"
+msgstr "Inglês"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:205
 #: static-transpile/js/transpile/bibliography_overview.js:2433
@@ -1693,8 +1691,10 @@ msgstr ""
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2386
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:9928
+#, fuzzy
+#| msgid "Italics"
 msgid "Italian"
-msgstr ""
+msgstr "Itálico"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:217
 #: document/static/js/modules/editor/dialogs/language.js:33
@@ -1774,7 +1774,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Publisher"
 msgid "Polish"
-msgstr "Издател"
+msgstr "Editor"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:226
 #: static-transpile/js/transpile/bibliography_overview.js:2454
@@ -1910,21 +1910,21 @@ msgstr ""
 #: static-transpile/js/transpile/editor.js:2444
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2425
 msgid "Select source type"
-msgstr "Избери тип на източника"
+msgstr "Selecionar o tipo da fonte"
 
 #: bibliography/static/js/modules/bibliography/form/templates.js:48
 #: static-transpile/js/transpile/bibliography_overview.js:2485
 #: static-transpile/js/transpile/editor.js:2446
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2427
 msgid "Categories"
-msgstr "Категории"
+msgstr "Categorias"
 
 #: bibliography/static/js/modules/bibliography/import/biblatex.js:4
 #: static-transpile/js/transpile/bibliography_overview.js:2503
 #: static-transpile/js/transpile/editor.js:2464
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2445
 msgid "No bibliography entries could be found in import file."
-msgstr ""
+msgstr "Nenhum registro bibliográfico foi encontrado no arquivo de importação."
 
 #: bibliography/static/js/modules/bibliography/import/biblatex.js:5
 #: static-transpile/js/transpile/bibliography_overview.js:2504
@@ -1969,15 +1969,14 @@ msgstr ""
 #: static-transpile/js/transpile/editor.js:2595
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2576
 msgid "Import"
-msgstr "Импортиране"
+msgstr "Importar"
 
 #: bibliography/static/js/modules/bibliography/import/dialog.js:55
 #: static-transpile/js/transpile/bibliography_overview.js:2666
 #: static-transpile/js/transpile/editor.js:2627
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2608
-#, fuzzy
 msgid "Import a BibTex library"
-msgstr "Импортирай BibTex библиотека"
+msgstr "Importar uma biblioteca BibTex"
 
 #: bibliography/static/js/modules/bibliography/import/templates.js:6
 #: document/static/js/modules/documents/overview/templates.js:6
@@ -1992,22 +1991,24 @@ msgstr "Импортирай BibTex библиотека"
 #: user/static/js/modules/profile/templates.js:13
 #: usermedia/static/js/modules/images/edit_dialog/templates.js:40
 msgid "Select a file"
-msgstr "Изберете файл"
+msgstr "Selecione um arquivo"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:48
 #: document/static/js/modules/editor/dialogs/citation.js:202
 #: static-transpile/js/transpile/bibliography_overview.js:2812
 #: static-transpile/js/transpile/editor.js:7263
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:7244
+#, fuzzy
+#| msgid "User is not registered."
 msgid "No sources registered"
-msgstr ""
+msgstr "O usuário não está registrado."
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:54
 #: static-transpile/js/transpile/bibliography_overview.js:2818
 #, fuzzy
 #| msgid "Select source type"
 msgid "Sourcetype"
-msgstr "Избери тип на източника"
+msgstr "Selecionar o tipo da fonte"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:54
 #: document/static/js/modules/editor/dialogs/citation.js:209
@@ -2017,21 +2018,21 @@ msgstr "Избери тип на източника"
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:7251
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:8400
 msgid "Author"
-msgstr "Автор"
+msgstr "Autor"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:54
 #: static-transpile/js/transpile/bibliography_overview.js:2818
 #, fuzzy
 #| msgid "Publisher"
 msgid "Published"
-msgstr "Издател"
+msgstr "Editor"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:180
 #: static-transpile/js/transpile/bibliography_overview.js:2958
 #: static-transpile/js/transpile/images_overview.js:1255
 #: usermedia/static/js/modules/images/overview/categories.js:89
 msgid "Edit Categories"
-msgstr "Редактирай категории"
+msgstr "Editar categorias"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:197
 #: document/static/js/modules/documents/access_rights/templates.js:23
@@ -2060,7 +2061,7 @@ msgstr "Редактирай категории"
 #: user/static/js/modules/profile/index.js:82
 #: usermedia/static/js/modules/images/overview/index.js:66
 msgid "Delete"
-msgstr "Изтрий"
+msgstr "Excluir"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:211
 #: document/static/js/modules/documents/overview/actions.js:44
@@ -2080,12 +2081,12 @@ msgstr "Изтрий"
 #: user/static/js/modules/profile/index.js:95
 #: usermedia/static/js/modules/images/overview/index.js:80
 msgid "Confirm deletion"
-msgstr "Потвърди изтриването"
+msgstr "Confirmar exclusão"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:212
 #: static-transpile/js/transpile/bibliography_overview.js:2991
 msgid "Delete the bibliography item(s)"
-msgstr "Изтриване на библиграфски запис(и)"
+msgstr "Excluir as bibliografias"
 
 #: bibliography/static/js/modules/bibliography/overview/menu.js:23
 #: document/static/js/modules/documents/overview/menu.js:21
@@ -2098,7 +2099,7 @@ msgstr "Изтриване на библиграфски запис(и)"
 #, fuzzy
 #| msgid "Use selected image"
 msgid "Delete selected"
-msgstr "Използване на избраното изображение"
+msgstr "Usar imagem selecionada"
 
 #: bibliography/static/js/modules/bibliography/overview/menu.js:32
 #: static-transpile/js/transpile/bibliography_overview.js:3193
@@ -2112,7 +2113,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Select categories"
 msgid "All categories"
-msgstr "Избери категории"
+msgstr "Escolha as categorias"
 
 #: bibliography/static/js/modules/bibliography/overview/menu.js:59
 #: static-transpile/js/transpile/bibliography_overview.js:3217
@@ -2121,7 +2122,7 @@ msgstr "Избери категории"
 #, fuzzy
 #| msgid "Edit Categories"
 msgid "Edit categories"
-msgstr "Редактирай категории"
+msgstr "Editar categorias"
 
 #: bibliography/static/js/modules/bibliography/overview/menu.js:65
 #: document/static/js/modules/editor/dialogs/citation.js:27
@@ -2129,28 +2130,28 @@ msgstr "Редактирай категории"
 #: static-transpile/js/transpile/editor.js:7068
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:7049
 msgid "Register new source"
-msgstr "Добавяне на нов източник"
+msgstr "Registrar nova fonte"
 
 #: bibliography/static/js/modules/bibliography/overview/menu.js:79
 #: static-transpile/js/transpile/bibliography_overview.js:3237
 #, fuzzy
 #| msgid "Upload new image"
 msgid "Upload BibTeX file"
-msgstr "Качване на ново изображение"
+msgstr "Carregar nova imagem"
 
 #: bibliography/static/js/modules/bibliography/overview/menu.js:91
 #: static-transpile/js/transpile/bibliography_overview.js:3247
 #, fuzzy
 #| msgid "Search for Bibliography"
 msgid "Search bibliography"
-msgstr "Търсене на библиография"
+msgstr "Pesquisar Bibliografia"
 
 #: bibliography/static/js/modules/bibliography/tools.js:30
 #: static-transpile/js/transpile/bibliography_overview.js:3528
 #: static-transpile/js/transpile/editor.js:3052
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:3033
 msgid " and others"
-msgstr "и други"
+msgstr "e outros"
 
 #: document/static/js/modules/documents/access_rights/index.js:49
 #: static-transpile/js/transpile/contacts_overview.js:1144
@@ -2159,21 +2160,21 @@ msgstr "и други"
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4474
 #: user/static/js/modules/contacts/menu.js:34
 msgid "Add new contact"
-msgstr "Добавяне на нов контакт"
+msgstr "Adicionar novo contato"
 
 #: document/static/js/modules/documents/access_rights/index.js:92
 #: static-transpile/js/transpile/document_overview.js:1682
 #: static-transpile/js/transpile/editor.js:4525
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4506
 msgid "Share your document with others"
-msgstr "Сподели документа с други потребители"
+msgstr "Compartilhe seu documento com os outros"
 
 #: document/static/js/modules/documents/access_rights/index.js:174
 #: static-transpile/js/transpile/document_overview.js:1764
 #: static-transpile/js/transpile/editor.js:4607
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4588
 msgid "Access rights have been saved"
-msgstr "Правата за достъп бяха запазени"
+msgstr "Os direitos de acesso foram salvos"
 
 #: document/static/js/modules/documents/access_rights/index.js:177
 #: static-transpile/js/transpile/document_overview.js:1766
@@ -2182,21 +2183,21 @@ msgstr "Правата за достъп бяха запазени"
 #, fuzzy
 #| msgid "Access rights have been saved"
 msgid "Access rights could not be saved"
-msgstr "Правата за достъп бяха запазени"
+msgstr "Os direitos de acesso foram salvos"
 
 #: document/static/js/modules/documents/access_rights/templates.js:6
 #: static-transpile/js/transpile/document_overview.js:1788
 #: static-transpile/js/transpile/editor.js:4631
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4612
 msgid "My contacts"
-msgstr "Моите контакти"
+msgstr "Meus contatos"
 
 #: document/static/js/modules/documents/access_rights/templates.js:21
 #: static-transpile/js/transpile/document_overview.js:1788
 #: static-transpile/js/transpile/editor.js:4631
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4612
 msgid "Collaborators"
-msgstr "Сътрудници"
+msgstr "Colaboradores"
 
 #: document/static/js/modules/documents/access_rights/templates.js:64
 #: static-transpile/js/transpile/document_overview.js:1803
@@ -2215,7 +2216,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Document"
 msgid "Comment"
-msgstr "Документ"
+msgstr "Documento"
 
 #: document/static/js/modules/documents/access_rights/templates.js:93
 #: static-transpile/js/transpile/document_overview.js:1803
@@ -2224,7 +2225,7 @@ msgstr "Документ"
 #, fuzzy
 #| msgid "Documents"
 msgid "No comments"
-msgstr "Документи"
+msgstr "Documentos"
 
 #: document/static/js/modules/documents/access_rights/templates.js:98
 #: static-transpile/js/transpile/document_overview.js:1803
@@ -2236,9 +2237,9 @@ msgstr ""
 #: document/static/js/modules/documents/overview/actions.js:29
 #: static-transpile/js/transpile/document_overview.js:1861
 #, fuzzy
-#| msgid "Untitled document"
+#| msgid "Could not delete revision."
 msgid "Could not delete document"
-msgstr "Неозаглавен документ"
+msgstr "Não foi possível excluir revisão."
 
 #: document/static/js/modules/documents/overview/actions.js:29
 #: document/static/js/modules/documents/overview/actions.js:34
@@ -2250,12 +2251,12 @@ msgstr ""
 #, fuzzy
 #| msgid "The document(s) have been deleted"
 msgid "Document has been deleted"
-msgstr "Документ(и) бяха изтрити"
+msgstr "Documentos excluídos"
 
 #: document/static/js/modules/documents/overview/actions.js:46
 #: static-transpile/js/transpile/document_overview.js:1878
 msgid "Delete the document(s)?"
-msgstr "Изтрий документ(и)?"
+msgstr "Excluir o(s) documento(s)?"
 
 #: document/static/js/modules/documents/overview/index.js:77
 #: static-transpile/js/transpile/document_overview.js:2192
@@ -2270,20 +2271,21 @@ msgstr ""
 #: document/static/js/modules/documents/overview/index.js:121
 #: static-transpile/js/transpile/document_overview.js:2241
 #, fuzzy
+#| msgid "Revision saved"
 msgid "Revisions"
-msgstr "Версия"
+msgstr "Revisão salva"
 
 #: document/static/js/modules/documents/overview/index.js:121
 #: static-transpile/js/transpile/document_overview.js:2241
 msgid "Created"
-msgstr "Създаден"
+msgstr "Criado"
 
 #: document/static/js/modules/documents/overview/index.js:121
 #: static-transpile/js/transpile/document_overview.js:2241
 #, fuzzy
-#| msgid "Last Updated"
+#| msgid "Last Name"
 msgid "Last changed"
-msgstr "Последно обновен"
+msgstr "Sobrenome"
 
 #: document/static/js/modules/documents/overview/index.js:121
 #: static-transpile/js/transpile/document_overview.js:2241
@@ -2296,21 +2298,21 @@ msgstr ""
 #: static-transpile/js/transpile/editor.js:4631
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4612
 msgid "Rights"
-msgstr "Права"
+msgstr "Direitos"
 
 #: document/static/js/modules/documents/overview/menu.js:26
 #: static-transpile/js/transpile/document_overview.js:2365
 #, fuzzy
 #| msgid "You cannot delete or share: "
 msgid "You cannot delete documents of other users"
-msgstr "не можете да изтриете или споделите:"
+msgstr "Você não pode excluir ou compartilhar:"
 
 #: document/static/js/modules/documents/overview/menu.js:34
 #: static-transpile/js/transpile/document_overview.js:2372
 #, fuzzy
 #| msgid "Use selected image"
 msgid "Share selected"
-msgstr "Използване на избраното изображение"
+msgstr "Usar imagem selecionada"
 
 #: document/static/js/modules/documents/overview/menu.js:39
 #: static-transpile/js/transpile/document_overview.js:2381
@@ -2347,52 +2349,51 @@ msgstr ""
 #, fuzzy
 #| msgid "Delete the document(s)?"
 msgid "Create new document"
-msgstr "Изтрий документ(и)?"
+msgstr "Excluir o(s) documento(s)?"
 
 #: document/static/js/modules/documents/overview/menu.js:107
 #: static-transpile/js/transpile/document_overview.js:2440
 #, fuzzy
-#| msgid "Untitled document"
+#| msgid "Upload image"
 msgid "Upload Fidus document"
-msgstr "Неозаглавен документ"
+msgstr "Enviar imagem"
 
 #: document/static/js/modules/documents/overview/menu.js:113
 #: static-transpile/js/transpile/document_overview.js:2447
 #, fuzzy
 #| msgid "Search for Document"
 msgid "Search documents"
-msgstr "Търсене за документ"
+msgstr "Pesquisar por Documento"
 
 #: document/static/js/modules/documents/revisions/index.js:27
 #: static-transpile/js/transpile/document_overview.js:2522
 msgid "Saved revisions of"
-msgstr ""
+msgstr "Gravadas revisões de"
 
 #: document/static/js/modules/documents/revisions/index.js:141
 #: static-transpile/js/transpile/document_overview.js:2641
 msgid "Do you really want to delete the revision?"
-msgstr ""
+msgstr "Você realmente quer apagar a revisão?"
 
 #: document/static/js/modules/documents/revisions/index.js:161
 #: static-transpile/js/transpile/document_overview.js:2661
 msgid "Revision deleted"
-msgstr ""
+msgstr "Revisão excluída"
 
 #: document/static/js/modules/documents/revisions/index.js:171
 #: static-transpile/js/transpile/document_overview.js:2669
 msgid "Could not delete revision."
-msgstr ""
+msgstr "Não foi possível excluir revisão."
 
 #: document/static/js/modules/documents/revisions/templates.js:7
 #: static-transpile/js/transpile/document_overview.js:2691
 msgid "Time"
-msgstr ""
+msgstr "Tempo"
 
 #: document/static/js/modules/documents/revisions/templates.js:9
 #: static-transpile/js/transpile/document_overview.js:2691
-#, fuzzy
 msgid "Recreate"
-msgstr "Създаден"
+msgstr "Recriar"
 
 #: document/static/js/modules/documents/tools.js:36
 #: static-transpile/js/transpile/document_overview.js:2740
@@ -2431,7 +2432,7 @@ msgstr ""
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:21484
 #: usermedia/static/js/modules/images/edit_dialog/index.js:26
 msgid "Update"
-msgstr "Обновяване"
+msgstr "Atualizar"
 
 #: document/static/js/modules/editor/dialogs/author.js:22
 #: static-transpile/js/transpile/editor.js:6941
@@ -2451,7 +2452,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Author"
 msgid "Add author"
-msgstr "Автор"
+msgstr "Autor"
 
 #: document/static/js/modules/editor/dialogs/author.js:81
 #: static-transpile/js/transpile/editor.js:6991
@@ -2459,7 +2460,7 @@ msgstr "Автор"
 #, fuzzy
 #| msgid "Update image"
 msgid "Update author"
-msgstr "Обнови изображение"
+msgstr "Atualizar imagem"
 
 #: document/static/js/modules/editor/dialogs/citation.js:17
 #: document/static/js/modules/editor/dialogs/figure.js:21
@@ -2479,7 +2480,7 @@ msgstr "Обнови изображение"
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:8259
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:8385
 msgid "Insert"
-msgstr "Вмъкване"
+msgstr "Insert"
 
 #: document/static/js/modules/editor/dialogs/citation.js:34
 #: document/static/js/modules/editor/dialogs/figure.js:108
@@ -2496,13 +2497,13 @@ msgstr "Вмъкване"
 #: static-transpile/js/transpile/profile.js:1345
 #: user/static/js/modules/profile/index.js:259
 msgid "Remove"
-msgstr "Изтриване"
+msgstr "Remover"
 
 #: document/static/js/modules/editor/dialogs/citation.js:63
 #: static-transpile/js/transpile/editor.js:7106
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:7087
 msgid "Configure Citation"
-msgstr "Настройка на цитати"
+msgstr "Configurar Citação"
 
 #: document/static/js/modules/editor/dialogs/citation.js:153
 #: document/static/js/modules/exporter/tools/file.js:3
@@ -2518,7 +2519,7 @@ msgstr "Настройка на цитати"
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:7187
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:20959
 msgid "Untitled"
-msgstr "Неозаглавен"
+msgstr "Sem título"
 
 #: document/static/js/modules/editor/dialogs/citation.js:203
 #: static-transpile/js/transpile/editor.js:7264
@@ -2533,13 +2534,13 @@ msgstr ""
 #: static-transpile/js/transpile/editor.js:7393
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:7374
 msgid "Please select at least one citation source!"
-msgstr "Моля изберете поне един източник на цитати!"
+msgstr "Por favor, selecione pelo menos uma fonte de citação!"
 
 #: document/static/js/modules/editor/dialogs/figure.js:132
 #: static-transpile/js/transpile/editor.js:7562
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:7543
 msgid "Enter latex math or insert an image"
-msgstr "Въведете Latex формула или изображение"
+msgstr "Entre com equação Latex de matemática ou inserir uma imagem"
 
 #: document/static/js/modules/editor/dialogs/language.js:7
 #: static-transpile/js/transpile/editor.js:7740
@@ -2592,7 +2593,7 @@ msgstr ""
 #, fuzzy
 #| msgid "English"
 msgid "English (Canada)"
-msgstr "Английски"
+msgstr "Inglês"
 
 #: document/static/js/modules/editor/dialogs/language.js:20
 #: static-transpile/js/transpile/editor.js:7740
@@ -2687,7 +2688,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Version"
 msgid "Persian"
-msgstr "Версия"
+msgstr "Versão"
 
 #: document/static/js/modules/editor/dialogs/language.js:41
 #: document/static/js/modules/editor/menus/headerbar/model.js:333
@@ -2740,7 +2741,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Accept Change"
 msgid "Change"
-msgstr "Приеми промяната"
+msgstr "Aceitar Alterações"
 
 #: document/static/js/modules/editor/dialogs/language.js:97
 #: static-transpile/js/transpile/editor.js:7785
@@ -2748,7 +2749,7 @@ msgstr "Приеми промяната"
 #, fuzzy
 #| msgid "The subtitle of the document"
 msgid "Change language of the document"
-msgstr "Подзаглавието на документа"
+msgstr "O subtítulo do documento"
 
 #: document/static/js/modules/editor/dialogs/link.js:160
 #: document/static/js/modules/editor/menus/toolbar/model.js:375
@@ -2757,7 +2758,7 @@ msgstr "Подзаглавието на документа"
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:7968
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:10869
 msgid "Link"
-msgstr ""
+msgstr "Link"
 
 #: document/static/js/modules/editor/dialogs/math.js:56
 #: static-transpile/js/transpile/editor.js:8125
@@ -2775,13 +2776,13 @@ msgstr ""
 #: static-transpile/js/transpile/editor.js:8181
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:8162
 msgid "Save"
-msgstr ""
+msgstr "Salvar"
 
 #: document/static/js/modules/editor/dialogs/revision.js:28
 #: static-transpile/js/transpile/editor.js:8196
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:8177
 msgid "Revision description"
-msgstr ""
+msgstr "Descrição da Revisão"
 
 #: document/static/js/modules/editor/dialogs/table.js:71
 #: document/static/js/modules/editor/menus/headerbar/model.js:446
@@ -2792,7 +2793,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Insert a title"
 msgid "Insert table"
-msgstr "Вмъкни заглавие"
+msgstr "Inserir um título"
 
 #: document/static/js/modules/editor/dialogs/templates.js:8
 #: static-transpile/js/transpile/editor.js:8370
@@ -2806,7 +2807,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Select Image"
 msgid "Select Target"
-msgstr "Избор на изображение"
+msgstr "Selecionar Imagem"
 
 #: document/static/js/modules/editor/dialogs/templates.js:28
 #: static-transpile/js/transpile/editor.js:8372
@@ -2838,13 +2839,13 @@ msgstr ""
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:9565
 #: static-transpile/js/transpile/profile.js:241
 msgid "Cancel"
-msgstr "Отказ"
+msgstr "Cancelar"
 
 #: document/static/js/modules/editor/dialogs/templates.js:175
 #: static-transpile/js/transpile/editor.js:8412
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:8393
 msgid "None"
-msgstr ""
+msgstr "Nenhum"
 
 #: document/static/js/modules/editor/dialogs/templates.js:178
 #: document/static/js/modules/editor/menus/toolbar/model.js:65
@@ -2856,13 +2857,13 @@ msgstr ""
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:10618
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:10963
 msgid "Figure"
-msgstr "Фигура"
+msgstr "Figura"
 
 #: document/static/js/modules/editor/dialogs/templates.js:181
 #: static-transpile/js/transpile/editor.js:8412
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:8393
 msgid "Photo"
-msgstr "Снимка"
+msgstr "Foto"
 
 #: document/static/js/modules/editor/dialogs/templates.js:184
 #: document/static/js/modules/editor/menus/headerbar/model.js:439
@@ -2871,25 +2872,25 @@ msgstr "Снимка"
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:8393
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:10000
 msgid "Table"
-msgstr "Таблица"
+msgstr "Tabela"
 
 #: document/static/js/modules/editor/dialogs/templates.js:202
 #: static-transpile/js/transpile/editor.js:8419
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:8400
 msgid "My sources"
-msgstr "Моите източници"
+msgstr "Minhas fontes"
 
 #: document/static/js/modules/editor/dialogs/templates.js:206
 #: static-transpile/js/transpile/editor.js:8419
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:8400
 msgid "Citation format"
-msgstr "Формат на цитати"
+msgstr "Formato da Citação"
 
 #: document/static/js/modules/editor/dialogs/templates.js:210
 #: static-transpile/js/transpile/editor.js:8419
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:8400
 msgid "Author (1998)"
-msgstr "Автор (1998)"
+msgstr "Autor (1998)"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:24
 #: document/static/js/modules/editor/marginboxes/templates.js:34
@@ -2906,7 +2907,7 @@ msgstr "Автор (1998)"
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:12293
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:13809
 msgid "Edit"
-msgstr "Редактиране"
+msgstr "Editar"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:61
 #: static-transpile/js/transpile/editor.js:9552
@@ -2925,10 +2926,8 @@ msgstr ""
 #: document/static/js/modules/editor/marginboxes/templates.js:156
 #: static-transpile/js/transpile/editor.js:9589
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:9570
-#, fuzzy
-#| msgid "1st Headline"
 msgid "heading"
-msgstr "1ви Заглавен ред"
+msgstr ""
 
 #: document/static/js/modules/editor/marginboxes/templates.js:157
 #: static-transpile/js/transpile/editor.js:9590
@@ -2939,18 +2938,14 @@ msgstr ""
 #: document/static/js/modules/editor/marginboxes/templates.js:158
 #: static-transpile/js/transpile/editor.js:9591
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:9572
-#, fuzzy
-#| msgid "Block quote"
 msgid "blockquote"
-msgstr "Блоков цитат"
+msgstr ""
 
 #: document/static/js/modules/editor/marginboxes/templates.js:159
 #: static-transpile/js/transpile/editor.js:9592
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:9573
-#, fuzzy
-#| msgid "Bulleted List"
 msgid "bullet list"
-msgstr "Неномериран списък"
+msgstr ""
 
 #: document/static/js/modules/editor/marginboxes/templates.js:160
 #: static-transpile/js/transpile/editor.js:9593
@@ -2964,15 +2959,13 @@ msgstr ""
 #, fuzzy
 #| msgid "Figure"
 msgid "figure"
-msgstr "Фигура"
+msgstr "Figura"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:162
 #: static-transpile/js/transpile/editor.js:9595
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:9576
-#, fuzzy
-#| msgid "Numbered List"
 msgid "ordered list"
-msgstr "Номериран списък"
+msgstr ""
 
 #: document/static/js/modules/editor/marginboxes/templates.js:163
 #: static-transpile/js/transpile/editor.js:9596
@@ -2980,7 +2973,7 @@ msgstr "Номериран списък"
 #, fuzzy
 #| msgid "Table"
 msgid "table"
-msgstr "Таблица"
+msgstr "Tabela"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:171
 #: static-transpile/js/transpile/editor.js:9610
@@ -2988,7 +2981,7 @@ msgstr "Таблица"
 #, fuzzy
 #| msgid "Insert"
 msgid "Inserted"
-msgstr "Вмъкване"
+msgstr "Insert"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:171
 #: static-transpile/js/transpile/editor.js:9610
@@ -2996,7 +2989,7 @@ msgstr "Вмъкване"
 #, fuzzy
 #| msgid "Delete"
 msgid "Deleted"
-msgstr "Изтрий"
+msgstr "Excluir"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:179
 #: static-transpile/js/transpile/editor.js:9610
@@ -3004,7 +2997,7 @@ msgstr "Изтрий"
 #, fuzzy
 #| msgid "Reject Change"
 msgid "Reject"
-msgstr "Отхвърли промяната"
+msgstr "Rejeitar alteração"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:46
 #: static-transpile/js/transpile/editor.js:9726
@@ -3031,7 +3024,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Share your document with others"
 msgid "Share the document with other users."
-msgstr "Сподели документа с други потребители"
+msgstr "Compartilhe seu documento com os outros"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:75
 #: static-transpile/js/transpile/editor.js:9747
@@ -3047,9 +3040,8 @@ msgstr ""
 #: static-transpile/js/transpile/editor.js:15293
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:9733
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:15274
-#, fuzzy
 msgid "Save revision"
-msgstr "Версия"
+msgstr "Salvar revisão"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:84
 #: static-transpile/js/transpile/editor.js:9755
@@ -3063,7 +3055,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Created by"
 msgid "Create Copy"
-msgstr "Създадено от"
+msgstr "Criado por"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:106
 #: static-transpile/js/transpile/editor.js:9771
@@ -3071,7 +3063,7 @@ msgstr "Създадено от"
 #, fuzzy
 #| msgid "The abstract of the document"
 msgid "Create copy of the current document."
-msgstr "Обобщение на документа"
+msgstr "O resumo do documento"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:136
 #: static-transpile/js/transpile/editor.js:9792
@@ -3083,9 +3075,9 @@ msgstr ""
 #: static-transpile/js/transpile/editor.js:9800
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:9781
 #, fuzzy
-#| msgid "Report"
+#| msgid "Import"
 msgid "Export"
-msgstr "Доклад"
+msgstr "Importar"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:147
 #: static-transpile/js/transpile/editor.js:9801
@@ -3093,7 +3085,7 @@ msgstr "Доклад"
 #, fuzzy
 #| msgid "The abstract of the document"
 msgid "Export of the document contents"
-msgstr "Обобщение на документа"
+msgstr "O resumo do documento"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:150
 #: static-transpile/js/transpile/editor.js:9803
@@ -3143,7 +3135,7 @@ msgstr ""
 #, fuzzy
 #| msgid "The subtitle of the document"
 msgid "Configure settings of this document."
-msgstr "Подзаглавието на документа"
+msgstr "O subtítulo do documento"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:198
 #: static-transpile/js/transpile/editor.js:9830
@@ -3169,7 +3161,7 @@ msgstr ""
 #, fuzzy
 #| msgid "The abstract of the document"
 msgid "Specify the authors of the document."
-msgstr "Обобщение на документа"
+msgstr "O resumo do documento"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:252
 #: static-transpile/js/transpile/editor.js:9881
@@ -3177,7 +3169,7 @@ msgstr "Обобщение на документа"
 #, fuzzy
 #| msgid "The abstract of the document"
 msgid "Add an abstract to the document."
-msgstr "Обобщение на документа"
+msgstr "O resumo do documento"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:274
 #: static-transpile/js/transpile/editor.js:9902
@@ -3191,7 +3183,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Citation style"
 msgid "Citation Style"
-msgstr "Стил на цитатите"
+msgstr "Estilo de Citação"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:299
 #: static-transpile/js/transpile/editor.js:9925
@@ -3205,7 +3197,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Document style"
 msgid "Document Style"
-msgstr "Стил на Документа"
+msgstr "Estilo do Documento"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:309
 #: static-transpile/js/transpile/editor.js:9934
@@ -3219,7 +3211,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Language"
 msgid "Text Language"
-msgstr "Език"
+msgstr "Idioma "
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:319
 #: static-transpile/js/transpile/editor.js:9943
@@ -3227,7 +3219,7 @@ msgstr "Език"
 #, fuzzy
 #| msgid "The subtitle of the document"
 msgid "Choose the language of the document."
-msgstr "Подзаглавието на документа"
+msgstr "O subtítulo do documento"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:340
 #: static-transpile/js/transpile/editor.js:9950
@@ -3241,7 +3233,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Paper size"
 msgid "Paper Size"
-msgstr "Размер на листите"
+msgstr "Tamanho do papel"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:372
 #: static-transpile/js/transpile/editor.js:9965
@@ -3292,7 +3284,7 @@ msgstr ""
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:9983
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:15329
 msgid "Word counter"
-msgstr "Брой Думи"
+msgstr "Contador de palavras"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:421
 #: static-transpile/js/transpile/editor.js:10004
@@ -3303,14 +3295,18 @@ msgstr ""
 #: document/static/js/modules/editor/menus/headerbar/model.js:427
 #: static-transpile/js/transpile/editor.js:10009
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:9990
+#, fuzzy
+#| msgid "Keyboard Shortcuts"
 msgid "Keyboard shortcuts"
-msgstr ""
+msgstr "Atalhos Do Teclado"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:429
 #: static-transpile/js/transpile/editor.js:10011
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:9992
+#, fuzzy
+#| msgid "Show keyboard shortcuts"
 msgid "Show an overview of available keyboard shortcuts."
-msgstr ""
+msgstr "Atalhos de teclado Mostrar"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:440
 #: static-transpile/js/transpile/editor.js:10020
@@ -3324,7 +3320,7 @@ msgstr ""
 #, fuzzy
 #| msgid "The subtitle of the document"
 msgid "Insert a table into the document."
-msgstr "Подзаглавието на документа"
+msgstr "O subtítulo do documento"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:472
 #: static-transpile/js/transpile/editor.js:10043
@@ -3380,7 +3376,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Delete"
 msgid "Delete row"
-msgstr "Изтрий"
+msgstr "Excluir"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:513
 #: static-transpile/js/transpile/editor.js:10087
@@ -3392,9 +3388,9 @@ msgstr ""
 #: static-transpile/js/transpile/editor.js:10095
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:10076
 #, fuzzy
-#| msgid "Remove Image"
+#| msgid "Delete"
 msgid "Delete column"
-msgstr "Изтрий изображение:"
+msgstr "Excluir"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:522
 #: static-transpile/js/transpile/editor.js:10097
@@ -3414,7 +3410,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Use selected image"
 msgid "Merge selected cells"
-msgstr "Използване на избраното изображение"
+msgstr "Usar imagem selecionada"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:545
 #: static-transpile/js/transpile/editor.js:10117
@@ -3468,9 +3464,9 @@ msgstr ""
 #: static-transpile/js/transpile/editor.js:10161
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:10142
 #, fuzzy
-#| msgid "Remove Image"
+#| msgid "Delete"
 msgid "Delete table"
-msgstr "Изтрий изображение:"
+msgstr "Excluir"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:597
 #: static-transpile/js/transpile/editor.js:10163
@@ -3490,7 +3486,7 @@ msgstr ""
 #, fuzzy
 #| msgid "The subtitle of the document"
 msgid "Tracking changes to the document"
-msgstr "Подзаглавието на документа"
+msgstr "O subtítulo do documento"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:614
 #: static-transpile/js/transpile/editor.js:10179
@@ -3510,7 +3506,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Accept Change"
 msgid "Accept all"
-msgstr "Приеми промяната"
+msgstr "Aceitar Alterações"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:635
 #: static-transpile/js/transpile/editor.js:10197
@@ -3518,7 +3514,7 @@ msgstr "Приеми промяната"
 #, fuzzy
 #| msgid "Accept Change"
 msgid "Accept all tracked changes."
-msgstr "Приеми промяната"
+msgstr "Aceitar Alterações"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:641
 #: static-transpile/js/transpile/editor.js:10202
@@ -3526,7 +3522,7 @@ msgstr "Приеми промяната"
 #, fuzzy
 #| msgid "Reject Change"
 msgid "Reject all"
-msgstr "Отхвърли промяната"
+msgstr "Rejeitar alteração"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:643
 #: static-transpile/js/transpile/editor.js:10204
@@ -3534,7 +3530,7 @@ msgstr "Отхвърли промяната"
 #, fuzzy
 #| msgid "Reject Change"
 msgid "Reject all tracked changes."
-msgstr "Отхвърли промяната"
+msgstr "Rejeitar alteração"
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:50
 #: static-transpile/js/transpile/editor.js:10622
@@ -3542,7 +3538,7 @@ msgstr "Отхвърли промяната"
 #, fuzzy
 #| msgid "Author"
 msgid "Authors"
-msgstr "Автор"
+msgstr "Autor"
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:53
 #: static-transpile/js/transpile/editor.js:10625
@@ -3554,61 +3550,49 @@ msgstr ""
 #: static-transpile/js/transpile/editor.js:10629
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:10610
 msgid "Normal Text"
-msgstr "Нормален текст"
+msgstr ""
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:58
 #: static-transpile/js/transpile/editor.js:10630
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:10611
-#, fuzzy
-#| msgid "1st Headline"
 msgid "1st Heading"
-msgstr "1ви Заглавен ред"
+msgstr ""
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:59
 #: static-transpile/js/transpile/editor.js:10631
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:10612
-#, fuzzy
-#| msgid "2nd Headline"
 msgid "2nd Heading"
-msgstr "2ри Заглавен ред"
+msgstr ""
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:60
 #: static-transpile/js/transpile/editor.js:10632
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:10613
-#, fuzzy
-#| msgid "3rd Headline"
 msgid "3rd Heading"
-msgstr "3ти Заглавен ред"
+msgstr ""
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:61
 #: static-transpile/js/transpile/editor.js:10633
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:10614
-#, fuzzy
-#| msgid "1st Headline"
 msgid "4th Heading"
-msgstr "1ви Заглавен ред"
+msgstr ""
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:62
 #: static-transpile/js/transpile/editor.js:10634
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:10615
-#, fuzzy
-#| msgid "1st Headline"
 msgid "5th Heading"
-msgstr "1ви Заглавен ред"
+msgstr ""
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:63
 #: static-transpile/js/transpile/editor.js:10635
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:10616
-#, fuzzy
-#| msgid "1st Headline"
 msgid "6th Heading"
-msgstr "1ви Заглавен ред"
+msgstr ""
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:64
 #: static-transpile/js/transpile/editor.js:10636
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:10617
 msgid "Code"
-msgstr "Код"
+msgstr ""
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:75
 #: static-transpile/js/transpile/editor.js:10646
@@ -3632,37 +3616,35 @@ msgstr ""
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:10744
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:15274
 msgid "Bold"
-msgstr ""
+msgstr "Negrito"
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:263
 #: static-transpile/js/transpile/editor.js:10795
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:10776
+#, fuzzy
+#| msgid "Italics"
 msgid "Italic"
-msgstr ""
+msgstr "Itálico"
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:302
 #: static-transpile/js/transpile/editor.js:10827
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:10808
 #, fuzzy
-#| msgid "Numbered List"
+#| msgid "Number of"
 msgid "Numbered list"
-msgstr "Номериран списък"
+msgstr "Número de"
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:326
 #: static-transpile/js/transpile/editor.js:10847
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:10828
-#, fuzzy
-#| msgid "Bulleted List"
 msgid "Bullet list"
-msgstr "Неномериран списък"
+msgstr ""
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:350
 #: static-transpile/js/transpile/editor.js:10867
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:10848
-#, fuzzy
-#| msgid "Block quote"
 msgid "Blockquote"
-msgstr "Блоков цитат"
+msgstr ""
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:425
 #: static-transpile/js/transpile/editor.js:10930
@@ -3691,7 +3673,7 @@ msgstr ""
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:10980
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:15274
 msgid "Undo"
-msgstr ""
+msgstr "Desfazer"
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:546
 #: document/static/js/modules/editor/tools/show_key_bindings_templates.js:48
@@ -3700,7 +3682,7 @@ msgstr ""
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:10992
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:15274
 msgid "Redo"
-msgstr ""
+msgstr "Refazer"
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:578
 #: static-transpile/js/transpile/editor.js:11046
@@ -3726,15 +3708,17 @@ msgstr ""
 #: static-transpile/js/transpile/editor.js:12290
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:12271
 #, fuzzy
+#| msgid "Author(s)..."
 msgid "Add author..."
-msgstr "Автор(и)"
+msgstr "Autor (s) ..."
 
 #: document/static/js/modules/editor/state_plugins/keyword_input.js:42
 #: static-transpile/js/transpile/editor.js:13470
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:13451
 #, fuzzy
+#| msgid "Keywords..."
 msgid "Add keyword..."
-msgstr "Ключови думи"
+msgstr "Palavras-chave ..."
 
 #: document/static/js/modules/editor/state_plugins/links.js:21
 #: static-transpile/js/transpile/editor.js:13737
@@ -3751,37 +3735,34 @@ msgstr ""
 #: document/static/js/modules/editor/state_plugins/placeholders.js:22
 #: static-transpile/js/transpile/editor.js:14171
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:14152
-#, fuzzy
 msgid "Title..."
-msgstr "Заглавие"
+msgstr "Título ..."
 
 #: document/static/js/modules/editor/state_plugins/placeholders.js:23
 #: static-transpile/js/transpile/editor.js:14171
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:14152
-#, fuzzy
 msgid "Subtitle..."
-msgstr "Подзаглавие"
+msgstr "Subtítulo ..."
 
 #: document/static/js/modules/editor/state_plugins/placeholders.js:24
 #: static-transpile/js/transpile/editor.js:14171
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:14152
 #, fuzzy
+#| msgid "Author(s)..."
 msgid "Authors..."
-msgstr "Автор(и)"
+msgstr "Autor (s) ..."
 
 #: document/static/js/modules/editor/state_plugins/placeholders.js:25
 #: static-transpile/js/transpile/editor.js:14171
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:14152
-#, fuzzy
 msgid "Abstract..."
-msgstr "Обобщение"
+msgstr "Abstrac/Resumo ..."
 
 #: document/static/js/modules/editor/state_plugins/placeholders.js:26
 #: static-transpile/js/transpile/editor.js:14171
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:14152
-#, fuzzy
 msgid "Keywords..."
-msgstr "Ключови думи"
+msgstr "Palavras-chave ..."
 
 #: document/static/js/modules/editor/state_plugins/placeholders.js:27
 #: static-transpile/js/transpile/editor.js:14171
@@ -3805,38 +3786,37 @@ msgstr ""
 #: static-transpile/js/transpile/editor.js:15273
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:15254
 msgid "Keyboard Shortcuts"
-msgstr ""
+msgstr "Atalhos Do Teclado"
 
 #: document/static/js/modules/editor/tools/show_key_bindings_templates.js:6
 #: static-transpile/js/transpile/editor.js:15293
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:15274
-#, fuzzy
 msgid "Print"
-msgstr "Печат/PDF"
+msgstr "Impressão"
 
 #: document/static/js/modules/editor/tools/show_key_bindings_templates.js:40
 #: static-transpile/js/transpile/editor.js:15293
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:15274
 msgid "Italics"
-msgstr ""
+msgstr "Itálico"
 
 #: document/static/js/modules/editor/tools/word_count_templates.js:4
 #: static-transpile/js/transpile/editor.js:15373
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:15354
 msgid "Number of"
-msgstr "Номер от"
+msgstr "Número de"
 
 #: document/static/js/modules/editor/tools/word_count_templates.js:9
 #: static-transpile/js/transpile/editor.js:15373
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:15354
 msgid "Words"
-msgstr "Думи"
+msgstr "Palavras"
 
 #: document/static/js/modules/editor/tools/word_count_templates.js:17
 #: static-transpile/js/transpile/editor.js:15373
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:15354
 msgid "Characters with blanks"
-msgstr "Знаци (с интервали)"
+msgstr "Personagens com espaços em branco"
 
 #: document/static/js/modules/exporter/docx/metadata.js:59
 #: document/static/js/modules/exporter/docx/metadata.js:60
@@ -3851,21 +3831,21 @@ msgstr "Знаци (с интервали)"
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:16679
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:19994
 msgid "Unknown"
-msgstr "Неизвестен"
+msgstr "Desconhecido"
 
 #: document/static/js/modules/exporter/epub/index.js:32
 #: static-transpile/js/transpile/document_overview.js:4806
 #: static-transpile/js/transpile/editor.js:17773
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:17754
 msgid "Epub export has been initiated."
-msgstr "Започнат бе Epub експорт."
+msgstr "Foi iniciada a exportação para Epub"
 
 #: document/static/js/modules/exporter/html/index.js:24
 #: static-transpile/js/transpile/document_overview.js:5214
 #: static-transpile/js/transpile/editor.js:18181
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:18162
 msgid "HTML export has been initiated."
-msgstr "Започнат бе HTML експорт."
+msgstr "Foi iniciada a Exportação para HTML "
 
 #: document/static/js/modules/exporter/native/copy.js:30
 #: static-transpile/js/transpile/document_overview.js:6050
@@ -3875,7 +3855,7 @@ msgstr "Започнат бе HTML експорт."
 #, fuzzy
 #| msgid " successfully imported."
 msgid " successfully copied."
-msgstr " успешно импортиран."
+msgstr "importados com sucesso."
 
 #: document/static/js/modules/exporter/native/revision.js:46
 #: static-transpile/js/transpile/document_overview.js:6225
@@ -3883,16 +3863,15 @@ msgstr " успешно импортиран."
 #: static-transpile/js/transpile/maintenance.js:1123
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:19173
 msgid "Revision saved"
-msgstr ""
+msgstr "Revisão salva"
 
 #: document/static/js/modules/exporter/native/revision.js:47
 #: static-transpile/js/transpile/document_overview.js:6227
 #: static-transpile/js/transpile/editor.js:19194
 #: static-transpile/js/transpile/maintenance.js:1125
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:19175
-#, fuzzy
 msgid "Revision could not be saved."
-msgstr "Документа не беше запазен"
+msgstr "Revisão não pôde ser salva"
 
 #: document/static/js/modules/exporter/native/shrink.js:17
 #: static-transpile/js/transpile/document_overview.js:6271
@@ -3900,20 +3879,20 @@ msgstr "Документа не беше запазен"
 #: static-transpile/js/transpile/maintenance.js:1169
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:19219
 msgid "File export has been initiated."
-msgstr "Експортирането беше стартирано."
+msgstr "Foi iniciada a exportação"
 
 #: document/static/js/modules/importer/file.js:41
 #: document/static/js/modules/importer/file.js:62
 #: static-transpile/js/transpile/document_overview.js:8483
 #: static-transpile/js/transpile/document_overview.js:8513
 msgid "The uploaded file does not appear to be a Fidus Writer file."
-msgstr ""
+msgstr "O arquivo enviado não parece ser um arquivo Fidus."
 
 #: document/static/js/modules/importer/file.js:116
 #: static-transpile/js/transpile/document_overview.js:8565
 msgid ""
 "The uploaded file does not appear to be of the version used on this server: "
-msgstr ""
+msgstr "O arquivo enviado não parece ser da versão utilizada neste servidor:"
 
 #: document/static/js/modules/importer/native.js:51
 #: static-transpile/js/transpile/document_overview.js:8779
@@ -3923,7 +3902,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Could not save "
 msgid "Could not save Image"
-msgstr "Не можа да бъде запазен"
+msgstr "Não foi possível salvar"
 
 #: document/static/js/modules/importer/native.js:92
 #: static-transpile/js/transpile/document_overview.js:8823
@@ -3933,7 +3912,7 @@ msgstr "Не можа да бъде запазен"
 #, fuzzy
 #| msgid "Could not save "
 msgid "Could not create document"
-msgstr "Не можа да бъде запазен"
+msgstr "Não foi possível salvar"
 
 #: document/static/js/modules/importer/native.js:132
 #: static-transpile/js/transpile/document_overview.js:8860
@@ -3941,7 +3920,7 @@ msgstr "Не можа да бъде запазен"
 #: static-transpile/js/transpile/maintenance.js:1751
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:22045
 msgid "Could not save "
-msgstr "Не можа да бъде запазен"
+msgstr "Não foi possível salvar"
 
 #: document/static/js/modules/katex/index.js:8
 #: static-transpile/js/transpile/document_overview.js:9128
@@ -3954,28 +3933,30 @@ msgstr ""
 #: document/static/js/modules/maintenance/index.js:27
 #: static-transpile/js/transpile/maintenance.js:2082
 #, fuzzy
-#| msgid "Update"
+#| msgid "Update image"
 msgid "Updating..."
-msgstr "Обновяване"
+msgstr "Atualizar imagem"
 
 #: document/static/js/modules/maintenance/index.js:48
 #: static-transpile/js/transpile/maintenance.js:2106
+#, fuzzy
+#| msgid "Download"
 msgid "Downloaded batch"
-msgstr ""
+msgstr "Baixar"
 
 #: document/static/js/modules/maintenance/index.js:60
 #: static-transpile/js/transpile/maintenance.js:2118
 #, fuzzy
 #| msgid "Could not save "
 msgid "Could not download batch"
-msgstr "Не можа да бъде запазен"
+msgstr "Não foi possível salvar"
 
 #: document/static/js/modules/maintenance/index.js:135
 #: static-transpile/js/transpile/maintenance.js:2189
 #, fuzzy
 #| msgid "The document(s) have been deleted"
 msgid "The document has been updated"
-msgstr "Документ(и) бяха изтрити"
+msgstr "Documentos excluídos"
 
 #: document/static/js/modules/maintenance/index.js:138
 #: static-transpile/js/transpile/maintenance.js:2192
@@ -3985,15 +3966,16 @@ msgstr ""
 #: document/static/js/modules/maintenance/index.js:145
 #: static-transpile/js/transpile/maintenance.js:2202
 #, fuzzy
+#| msgid "Saved revisions of"
 msgid "Updating saved revisions."
-msgstr "Версия"
+msgstr "Gravadas revisões de"
 
 #: document/static/js/modules/maintenance/index.js:212
 #: static-transpile/js/transpile/maintenance.js:2269
 #, fuzzy
 #| msgid "The bibliography has been updated"
 msgid "The revision has been updated: "
-msgstr "Библиографията беше обновена"
+msgstr "A bibliografia foi atualizada"
 
 #: document/static/js/modules/maintenance/index.js:223
 #: static-transpile/js/transpile/maintenance.js:2280
@@ -4010,7 +3992,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Add Email"
 msgid "Email"
-msgstr "Добави имейл"
+msgstr "Adicionar E-mail"
 
 #: menu/static/js/modules/menu/index.js:12
 #: static-transpile/js/transpile/bibliography_overview.js:4555
@@ -4019,7 +4001,7 @@ msgstr "Добави имейл"
 #: static-transpile/js/transpile/images_overview.js:1679
 #: static-transpile/js/transpile/profile.js:918
 msgid "Documents"
-msgstr "Документи"
+msgstr "Documentos"
 
 #: menu/static/js/modules/menu/index.js:14
 #: static-transpile/js/transpile/bibliography_overview.js:4557
@@ -4030,7 +4012,7 @@ msgstr "Документи"
 #, fuzzy
 #| msgid "My documents"
 msgid "edit documents"
-msgstr "Моите документи"
+msgstr "Meus documentos"
 
 #: menu/static/js/modules/menu/index.js:18
 #: static-transpile/js/transpile/bibliography_overview.js:4560
@@ -4039,7 +4021,7 @@ msgstr "Моите документи"
 #: static-transpile/js/transpile/images_overview.js:1684
 #: static-transpile/js/transpile/profile.js:923
 msgid "Bibliography"
-msgstr "Библиография"
+msgstr "Bibliografia"
 
 #: menu/static/js/modules/menu/index.js:20
 #: static-transpile/js/transpile/bibliography_overview.js:4562
@@ -4047,10 +4029,8 @@ msgstr "Библиография"
 #: static-transpile/js/transpile/document_overview.js:9181
 #: static-transpile/js/transpile/images_overview.js:1686
 #: static-transpile/js/transpile/profile.js:925
-#, fuzzy
-#| msgid "Delete the bibliography item(s)"
 msgid "manage bibliography library"
-msgstr "Изтриване на библиграфски запис(и)"
+msgstr ""
 
 #: menu/static/js/modules/menu/index.js:24
 #: static-transpile/js/transpile/bibliography_overview.js:4565
@@ -4062,7 +4042,7 @@ msgstr "Изтриване на библиграфски запис(и)"
 #: static-transpile/js/transpile/profile.js:928
 #: usermedia/static/js/modules/images/selection_dialog/index.js:82
 msgid "Images"
-msgstr "Изображения"
+msgstr "Imagens"
 
 #: menu/static/js/modules/menu/index.js:26
 #: static-transpile/js/transpile/bibliography_overview.js:4567
@@ -4128,7 +4108,7 @@ msgstr ""
 #, fuzzy
 #| msgid "First Name"
 msgid "First name"
-msgstr "Име"
+msgstr "Primeiro Nome"
 
 #: static-transpile/js/transpile/bibliography_overview.js:1211
 #: static-transpile/js/transpile/editor.js:1172
@@ -4144,7 +4124,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Last Name"
 msgid "Last name"
-msgstr "Фамилия"
+msgstr "Sobrenome"
 
 #: static-transpile/js/transpile/bibliography_overview.js:1215
 #: static-transpile/js/transpile/editor.js:1176
@@ -4158,25 +4138,24 @@ msgstr ""
 #, fuzzy
 #| msgid "Organization(s)"
 msgid "Organization"
-msgstr "Организация(и)"
+msgstr "Organizações"
 
 #: static-transpile/js/transpile/bibliography_overview.js:2485
 #: static-transpile/js/transpile/editor.js:2446
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2427
 msgid "Required Fields"
-msgstr "Задължителни полета"
+msgstr "Campos obrigatórios"
 
 #: static-transpile/js/transpile/bibliography_overview.js:2485
 #: static-transpile/js/transpile/editor.js:2446
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2427
 msgid "Optional Fields"
-msgstr "Полета по избор"
+msgstr "Campos opcionais"
 
 #: static-transpile/js/transpile/confirm_email.js:925
 #: user/static/js/modules/profile/confirm_email.js:24
-#, fuzzy
 msgid "Thanks for verifying! You can now log in."
-msgstr "Благадарим ви за потвърждението! Вече може да влезете във Fiduswriter"
+msgstr "Obrigado por realizar a verificação! Agora você pode Entrar."
 
 #: static-transpile/js/transpile/contacts_overview.js:938
 #: user/static/js/modules/contacts/index.js:25
@@ -4188,9 +4167,8 @@ msgstr ""
 #: static-transpile/js/transpile/editor.js:4325
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4306
 #: user/static/js/modules/contacts/manage.js:33
-#, fuzzy
 msgid "You cannot add yourself to your contacts!"
-msgstr "Добави потребител към твоите контакти"
+msgstr "Você não pode adicionar-se aos seus contatos!"
 
 #: static-transpile/js/transpile/contacts_overview.js:1018
 #: static-transpile/js/transpile/document_overview.js:1484
@@ -4198,7 +4176,7 @@ msgstr "Добави потребител към твоите контакти"
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4308
 #: user/static/js/modules/contacts/manage.js:35
 msgid "This person is already in your contacts"
-msgstr ""
+msgstr "Esta pessoa já está em seus contatos"
 
 #: static-transpile/js/transpile/contacts_overview.js:1020
 #: static-transpile/js/transpile/document_overview.js:1486
@@ -4206,7 +4184,7 @@ msgstr ""
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4310
 #: user/static/js/modules/contacts/manage.js:37
 msgid "No user is registered with the given email address."
-msgstr "Няма регистриран потребител с този имейл."
+msgstr "Nenhum usuário está registrado com o endereço de e-mail fornecido."
 
 #: static-transpile/js/transpile/contacts_overview.js:1020
 #: static-transpile/js/transpile/document_overview.js:1486
@@ -4214,7 +4192,7 @@ msgstr "Няма регистриран потребител с този име�
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4310
 #: user/static/js/modules/contacts/manage.js:39
 msgid "Please invite him/her "
-msgstr "Моля поканете него/нея"
+msgstr "Por favor, fazer o convite "
 
 #: static-transpile/js/transpile/contacts_overview.js:1020
 #: static-transpile/js/transpile/document_overview.js:1486
@@ -4229,9 +4207,8 @@ msgstr "Fidus Writer"
 #: static-transpile/js/transpile/editor.js:4329
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4310
 #: user/static/js/modules/contacts/manage.js:42
-#, fuzzy
 msgid "Hey, I would like you to sign up for a Fidus Writer account."
-msgstr "Хей, бих искал да създадеш акаунт във Fidus Writer."
+msgstr "Ola, eu gostaria que você se inscrever para uma conta do Fidus Writer."
 
 #: static-transpile/js/transpile/contacts_overview.js:1020
 #: static-transpile/js/transpile/document_overview.js:1486
@@ -4239,7 +4216,7 @@ msgstr "Хей, бих искал да създадеш акаунт във Fidu
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4310
 #: user/static/js/modules/contacts/manage.js:43
 msgid "Please register at"
-msgstr "Моля регистрирай се на"
+msgstr "Por favor, registre-se em"
 
 #: static-transpile/js/transpile/contacts_overview.js:1020
 #: static-transpile/js/transpile/document_overview.js:1486
@@ -4247,14 +4224,14 @@ msgstr "Моля регистрирай се на"
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4310
 #: user/static/js/modules/contacts/manage.js:44
 msgid "by sending an email"
-msgstr "със електронно писмо"
+msgstr "enviando um e-mail"
 
 #: static-transpile/js/transpile/contacts_overview.js:1022
 #: static-transpile/js/transpile/document_overview.js:1488
 #: static-transpile/js/transpile/editor.js:4331
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4312
 msgid "User is not registered."
-msgstr ""
+msgstr "O usuário não está registrado."
 
 #: static-transpile/js/transpile/contacts_overview.js:1050
 #: static-transpile/js/transpile/document_overview.js:1516
@@ -4262,7 +4239,7 @@ msgstr ""
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4340
 #: user/static/js/modules/contacts/manage.js:83
 msgid "Add a user to your contacts"
-msgstr "Добави потребител към твоите контакти"
+msgstr "Adicionar um usuário para seus contatos"
 
 #: static-transpile/js/transpile/contacts_overview.js:1095
 #: static-transpile/js/transpile/document_overview.js:1561
@@ -4270,27 +4247,26 @@ msgstr "Добави потребител към твоите контакти"
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4385
 #: user/static/js/modules/contacts/manage.js:132
 msgid "Remove from the contacts"
-msgstr "Премахни от контактите"
+msgstr "Remover dos contatos"
 
 #: static-transpile/js/transpile/contacts_overview.js:1175
 #: static-transpile/js/transpile/document_overview.js:1588
 #: static-transpile/js/transpile/editor.js:4431
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4412
-#, fuzzy
 msgid "E-mail address or username"
-msgstr "Имейл на потребителя"
+msgstr "Endereço de email ou nome de usuário"
 
 #: static-transpile/js/transpile/document_overview.js:1788
 #: static-transpile/js/transpile/editor.js:4631
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4612
 msgid "Contacts"
-msgstr "Контакти"
+msgstr "Contatos"
 
 #: static-transpile/js/transpile/document_overview.js:1788
 #: static-transpile/js/transpile/editor.js:4631
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4612
 msgid "My collaborators"
-msgstr "Моите приноси"
+msgstr "Meus colaboradores"
 
 #: static-transpile/js/transpile/document_overview.js:1803
 #: static-transpile/js/transpile/editor.js:4646
@@ -4304,7 +4280,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Basic info"
 msgid "Basic"
-msgstr "Основна информация"
+msgstr "Informação básica"
 
 #: static-transpile/js/transpile/document_overview.js:1803
 #: static-transpile/js/transpile/editor.js:4646
@@ -4324,7 +4300,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Read only"
 msgid "Read"
-msgstr "Само за четене"
+msgstr "Somente leitura"
 
 #: static-transpile/js/transpile/document_overview.js:1803
 #: static-transpile/js/transpile/editor.js:4646
@@ -4332,7 +4308,7 @@ msgstr "Само за четене"
 #, fuzzy
 #| msgid "Access rights have been saved"
 msgid "Access rights used within document review"
-msgstr "Правата за достъп бяха запазени"
+msgstr "Os direitos de acesso foram salvos"
 
 #: static-transpile/js/transpile/document_overview.js:1803
 #: static-transpile/js/transpile/editor.js:4646
@@ -4353,12 +4329,11 @@ msgstr ""
 
 #: static-transpile/js/transpile/document_overview.js:1931
 msgid " successfully imported."
-msgstr " успешно импортиран."
+msgstr "importados com sucesso."
 
 #: static-transpile/js/transpile/document_overview.js:1942
-#, fuzzy
 msgid "Import a Fidus file"
-msgstr "Импортирайте друг Fidus файл"
+msgstr "Importar um arquivo Fidus"
 
 #: static-transpile/js/transpile/document_overview.js:2300
 msgid "Export selected as: "
@@ -4368,34 +4343,34 @@ msgstr ""
 #, fuzzy
 #| msgid " successfully imported."
 msgid "successfully imported."
-msgstr " успешно импортиран."
+msgstr "importados com sucesso."
 
 #: static-transpile/js/transpile/document_overview.js:2691
 msgid "Description"
-msgstr ""
+msgstr "Descrição"
 
 #: static-transpile/js/transpile/document_overview.js:2691
 #: static-transpile/js/transpile/editor.js:9781
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:9762
 msgid "Download"
-msgstr ""
+msgstr "Baixar"
 
 #: static-transpile/js/transpile/editor.js:4947
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4928
 msgid "Send a message..."
-msgstr ""
+msgstr "Envie uma mensagem ..."
 
 #: static-transpile/js/transpile/editor.js:8372
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:8353
 #, fuzzy
 #| msgid "Maintitle"
 msgid "Link title"
-msgstr "Осн. Заглавие"
+msgstr "Título príncipal"
 
 #: static-transpile/js/transpile/editor.js:8377
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:8358
 msgid "Description (optional)"
-msgstr ""
+msgstr "Descrição (opcional)"
 
 #: static-transpile/js/transpile/editor.js:8402
 #: static-transpile/js/transpile/editor.js:21757
@@ -4403,7 +4378,7 @@ msgstr ""
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:21738
 #: usermedia/static/js/modules/images/selection_dialog/index.js:110
 msgid "Image"
-msgstr "Изображение"
+msgstr "Imagem"
 
 #: static-transpile/js/transpile/editor.js:8404
 #: static-transpile/js/transpile/editor.js:21503
@@ -4414,53 +4389,53 @@ msgstr "Изображение"
 #: user/static/js/modules/profile/index.js:11
 #: usermedia/static/js/modules/images/edit_dialog/index.js:26
 msgid "Upload"
-msgstr "Качване"
+msgstr "Carregar"
 
 #: static-transpile/js/transpile/editor.js:8412
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:8393
 msgid "Insert formula"
-msgstr "Вмъкни формула"
+msgstr "Inserir fórmula"
 
 #: static-transpile/js/transpile/editor.js:8412
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:8393
 msgid "Insert image"
-msgstr "Вмъкни изображение"
+msgstr "Inserir imagem"
 
 #: static-transpile/js/transpile/editor.js:8412
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:8393
 msgid "Insert caption"
-msgstr "Сложи опсание"
+msgstr "Inserir legenda"
 
 #: static-transpile/js/transpile/editor.js:8419
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:8400
 msgid "(Author, 1998)"
-msgstr "(Автор, 1998)"
+msgstr "(Autor, 1998)"
 
 #: static-transpile/js/transpile/editor.js:8431
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:8412
 msgid "Text before"
-msgstr "Текстов преди"
+msgstr "Texto antes"
 
 #: static-transpile/js/transpile/editor.js:8436
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:8417
 #, fuzzy
 #| msgid "First Name"
 msgid "Firstname"
-msgstr "Име"
+msgstr "Primeiro Nome"
 
 #: static-transpile/js/transpile/editor.js:8436
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:8417
 #, fuzzy
 #| msgid "Last Name"
 msgid "Lastname"
-msgstr "Фамилия"
+msgstr "Sobrenome"
 
 #: static-transpile/js/transpile/editor.js:9610
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:9591
 #, fuzzy
 #| msgid "Accept Change"
 msgid "Accept"
-msgstr "Приеми промяната"
+msgstr "Aceitar Alterações"
 
 #: static-transpile/js/transpile/editor.js:9784
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:9765
@@ -4470,12 +4445,12 @@ msgstr ""
 #: static-transpile/js/transpile/editor.js:9789
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:9770
 msgid "Print/PDF"
-msgstr "Печат/PDF"
+msgstr "Imprimir / PDF"
 
 #: static-transpile/js/transpile/editor.js:10435
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:10416
 msgid "Untitled Document"
-msgstr "Неозаглавен документ"
+msgstr "Documento sem título"
 
 #: static-transpile/js/transpile/editor.js:12041
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:12022
@@ -4490,7 +4465,7 @@ msgstr ""
 #: static-transpile/js/transpile/editor.js:15293
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:15274
 msgid "Show keyboard shortcuts"
-msgstr ""
+msgstr "Atalhos de teclado Mostrar"
 
 #: static-transpile/js/transpile/editor.js:15293
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:15274
@@ -4505,12 +4480,12 @@ msgstr ""
 #: static-transpile/js/transpile/editor.js:15373
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:15354
 msgid "Document"
-msgstr "Документ"
+msgstr "Documento"
 
 #: static-transpile/js/transpile/editor.js:15373
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:15354
 msgid "Characters without blanks"
-msgstr "Знаци (без интервали)"
+msgstr "Personagens sem espaços em branco"
 
 #: static-transpile/js/transpile/editor.js:21447
 #: static-transpile/js/transpile/images_overview.js:962
@@ -4519,7 +4494,7 @@ msgstr "Знаци (без интервали)"
 #, fuzzy
 #| msgid "Could not save "
 msgid "Could not save image"
-msgstr "Не можа да бъде запазен"
+msgstr "Não foi possível salvar"
 
 #: static-transpile/js/transpile/editor.js:21495
 #: static-transpile/js/transpile/images_overview.js:1010
@@ -4528,7 +4503,7 @@ msgstr "Не можа да бъде запазен"
 #, fuzzy
 #| msgid "Update image"
 msgid "Update Image Information"
-msgstr "Обнови изображение"
+msgstr "Atualizar imagem"
 
 #: static-transpile/js/transpile/editor.js:21495
 #: static-transpile/js/transpile/images_overview.js:1010
@@ -4537,7 +4512,7 @@ msgstr "Обнови изображение"
 #, fuzzy
 #| msgid "Upload image"
 msgid "Upload Image"
-msgstr "Качи изображение"
+msgstr "Enviar imagem"
 
 #: static-transpile/js/transpile/editor.js:21588
 #: static-transpile/js/transpile/images_overview.js:1103
@@ -4545,7 +4520,7 @@ msgstr "Качи изображение"
 #, fuzzy
 #| msgid "The image has been uploaded"
 msgid "The image has been updated."
-msgstr "Изображението беше качено"
+msgstr "A imagem foi carregada"
 
 #: static-transpile/js/transpile/editor.js:21593
 #: static-transpile/js/transpile/images_overview.js:1108
@@ -4553,20 +4528,20 @@ msgstr "Изображението беше качено"
 #, fuzzy
 #| msgid "Some errors are found. Please examine the form."
 msgid "Some errors were found. Please examine the form."
-msgstr "Бяха открити грешки. Моля прегледайте формата."
+msgstr "Foram encontrados alguns erros. Por favor, verifique o formulário."
 
 #: static-transpile/js/transpile/editor.js:21620
 #: static-transpile/js/transpile/images_overview.js:1135
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:21601
 #: usermedia/static/js/modules/images/edit_dialog/templates.js:9
 msgid "Select categories"
-msgstr "Избери категории"
+msgstr "Escolha as categorias"
 
 #: static-transpile/js/transpile/editor.js:21629
 #: static-transpile/js/transpile/images_overview.js:1144
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:21610
 msgid "Insert a title"
-msgstr "Вмъкни заглавие"
+msgstr "Inserir um título"
 
 #: static-transpile/js/transpile/editor.js:21690
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:21671
@@ -4574,7 +4549,7 @@ msgstr "Вмъкни заглавие"
 #, fuzzy
 #| msgid "Upload new image"
 msgid "Add new image"
-msgstr "Качване на ново изображение"
+msgstr "Carregar nova imagem"
 
 #: static-transpile/js/transpile/editor.js:21706
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:21687
@@ -4582,7 +4557,7 @@ msgstr "Качване на ново изображение"
 #, fuzzy
 #| msgid "Update image"
 msgid "Use image"
-msgstr "Обнови изображение"
+msgstr "Atualizar imagem"
 
 #: static-transpile/js/transpile/editor.js:21750
 #: static-transpile/js/transpile/images_overview.js:1460
@@ -4606,7 +4581,7 @@ msgstr ""
 #, fuzzy
 #| msgid "No connection to server"
 msgid "Could not connect to OJS server."
-msgstr "Няма връзка към сървъра"
+msgstr "Sem conexão com o servidor"
 
 #: static-transpile/js/transpile/editor.js:22214
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:22195
@@ -4628,7 +4603,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Journal article"
 msgid "Journal saved."
-msgstr "Статия в журнал"
+msgstr "Artigo de jornal"
 
 #: static-transpile/js/transpile/editor.js:22247
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:22228
@@ -4638,14 +4613,16 @@ msgstr ""
 #: static-transpile/js/transpile/editor.js:22252
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:22233
 #, fuzzy
-#| msgid "Some errors are found. Please examin the form."
+#| msgid "Some errors are found. Please examine the form."
 msgid "Could not save journal. Please check form."
-msgstr "Бяха открити грешки. Моля прегледайте формата"
+msgstr "Foram encontrados alguns erros. Por favor, verifique o formulário."
 
 #: static-transpile/js/transpile/editor.js:22313
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:22294
+#, fuzzy
+#| msgid "Could not delete revision."
 msgid "Could not obtain submission info."
-msgstr ""
+msgstr "Não foi possível excluir revisão."
 
 #: static-transpile/js/transpile/editor.js:22330
 #: static-transpile/js/transpile/editor.js:22355
@@ -4653,10 +4630,8 @@ msgstr ""
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:22311
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:22336
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:22339
-#, fuzzy
-#| msgid "Submit"
 msgid "Submit to journal"
-msgstr "Изпрати"
+msgstr ""
 
 #: static-transpile/js/transpile/editor.js:22401
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:22382
@@ -4680,7 +4655,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Submit"
 msgid "Resubmit"
-msgstr "Изпрати"
+msgstr "Enviar"
 
 #: static-transpile/js/transpile/editor.js:22464
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:22445
@@ -4692,8 +4667,9 @@ msgstr ""
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:22450
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:22538
 #, fuzzy
+#| msgid "Revision could not be saved."
 msgid "Review could not be submitted."
-msgstr "Документа не беше запазен"
+msgstr "Revisão não pôde ser salva"
 
 #: static-transpile/js/transpile/editor.js:22525
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:22506
@@ -4718,29 +4694,30 @@ msgstr ""
 #: static-transpile/js/transpile/editor.js:22671
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:22652
 #, fuzzy
+#| msgid "Revision could not be saved."
 msgid "Article could not be submitted."
-msgstr "Документа не беше запазен"
+msgstr "Revisão não pôde ser salva"
 
 #: static-transpile/js/transpile/editor.js:22697
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:22678
 #, fuzzy
 #| msgid "Library information"
 msgid "Submission information"
-msgstr "Библиотечна информация"
+msgstr "Informações da Biblioteca"
 
 #: static-transpile/js/transpile/editor.js:22697
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:22678
 #, fuzzy
 #| msgid "Journal article"
 msgid "Journal"
-msgstr "Статия в журнал"
+msgstr "Artigo de jornal"
 
 #: static-transpile/js/transpile/editor.js:22699
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:22680
 #, fuzzy
 #| msgid "Foreword author(s)"
 msgid "Corresponding author"
-msgstr "Автор(и) на предговора"
+msgstr "Autor(es) do Prefácio "
 
 #: static-transpile/js/transpile/editor.js:22699
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:22680
@@ -4767,9 +4744,8 @@ msgstr ""
 
 #: static-transpile/js/transpile/editor.js:22707
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:22688
-#, fuzzy
 msgid "Message for editor"
-msgstr "Втори Редактор"
+msgstr ""
 
 #: static-transpile/js/transpile/editor.js:22707
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:22688
@@ -4793,8 +4769,10 @@ msgstr ""
 
 #: static-transpile/js/transpile/editor.js:22707
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:22688
+#, fuzzy
+#| msgid "Revision deleted"
 msgid "Revisions Required"
-msgstr ""
+msgstr "Revisão excluída"
 
 #: static-transpile/js/transpile/editor.js:22707
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:22688
@@ -4819,26 +4797,26 @@ msgstr ""
 #: static-transpile/js/transpile/images_overview.js:1185
 #: usermedia/static/js/modules/images/overview/categories.js:23
 #, fuzzy
-#| msgid "Could not save "
+#| msgid "Could not delete revision."
 msgid "Could not update categories"
-msgstr "Не можа да бъде запазен"
+msgstr "Não foi possível excluir revisão."
 
 #: static-transpile/js/transpile/images_overview.js:1350
 #: usermedia/static/js/modules/images/overview/index.js:46
 #, fuzzy
 #| msgid "The image(s) have been deleted"
 msgid "The image(s) could not be deleted"
-msgstr "Изображенията бяха изтрити"
+msgstr "As imagens foram excluídas"
 
 #: static-transpile/js/transpile/images_overview.js:1357
 #: usermedia/static/js/modules/images/overview/index.js:55
 msgid "The image(s) have been deleted"
-msgstr "Изображенията бяха изтрити"
+msgstr "As imagens foram excluídas"
 
 #: static-transpile/js/transpile/images_overview.js:1381
 #: usermedia/static/js/modules/images/overview/index.js:81
 msgid "Delete the image(s)"
-msgstr "Изтрий изображенията"
+msgstr "Apagar a imagens"
 
 #: static-transpile/js/transpile/images_overview.js:1466
 msgid "Size (px)"
@@ -4848,19 +4826,19 @@ msgstr ""
 #, fuzzy
 #| msgid "Addendum"
 msgid "Added"
-msgstr "Допълнение"
+msgstr "Apêndice"
 
 #: static-transpile/js/transpile/images_overview.js:1608
 #: usermedia/static/js/modules/images/overview/menu.js:52
 msgid "Upload new image"
-msgstr "Качване на ново изображение"
+msgstr "Carregar nova imagem"
 
 #: static-transpile/js/transpile/images_overview.js:1618
 #: usermedia/static/js/modules/images/overview/menu.js:67
 #, fuzzy
 #| msgid "Cover image"
 msgid "Search images"
-msgstr "Изображение за корица"
+msgstr "Imagem da capa"
 
 #: static-transpile/js/transpile/profile.js:1085
 #: user/static/js/modules/profile/delete_user.js:50
@@ -4874,8 +4852,10 @@ msgstr ""
 
 #: static-transpile/js/transpile/profile.js:1091
 #: user/static/js/modules/profile/delete_user.js:56
+#, fuzzy
+#| msgid "Could not delete revision."
 msgid "Could not delete user account."
-msgstr ""
+msgstr "Não foi possível excluir revisão."
 
 #: static-transpile/js/transpile/profile.js:1144
 #: user/static/js/modules/profile/index.js:37
@@ -4885,116 +4865,116 @@ msgstr ""
 #: static-transpile/js/transpile/profile.js:1156
 #: user/static/js/modules/profile/index.js:51
 msgid "Upload your profile picture"
-msgstr "Качи профилна снимка"
+msgstr "Carregue sua foto de perfil"
 
 #: static-transpile/js/transpile/profile.js:1178
 #: user/static/js/modules/profile/index.js:73
 #, fuzzy
-#| msgid "Could not save "
+#| msgid "Could not delete revision."
 msgid "Could not delete avatar"
-msgstr "Не можа да бъде запазен"
+msgstr "Não foi possível excluir revisão."
 
 #: static-transpile/js/transpile/profile.js:1218
 #: user/static/js/modules/profile/index.js:119
 #, fuzzy
 #| msgid "Could not save "
 msgid "Could not save profile data"
-msgstr "Не можа да бъде запазен"
+msgstr "Não foi possível salvar"
 
 #: static-transpile/js/transpile/profile.js:1236
 #: user/static/js/modules/profile/index.js:139
 msgid "All fields are required!"
-msgstr "Всички полета са задължителни"
+msgstr "Todos os campos são obrigatórios!"
 
 #: static-transpile/js/transpile/profile.js:1241
 #: user/static/js/modules/profile/index.js:144
 msgid "Please confirm the new password!"
-msgstr "Моля потвърдете новата парола!"
+msgstr "Por favor, confirme a nova senha!"
 
 #: static-transpile/js/transpile/profile.js:1257
 #: user/static/js/modules/profile/index.js:162
 msgid "The password has been changed."
-msgstr "Паролата беше променена."
+msgstr "A senha foi alterada."
 
 #: static-transpile/js/transpile/profile.js:1267
 #: user/static/js/modules/profile/index.js:172
 msgid "The password could not be changed!"
-msgstr "Паролата не можа да бъде променена!"
+msgstr "A senha não pode ser alterada!"
 
 #: static-transpile/js/transpile/profile.js:1272
 #: user/static/js/modules/profile/index.js:178
 #, fuzzy
 #| msgid "The password could not be changed!"
 msgid "The password could not be changed"
-msgstr "Паролата не можа да бъде променена!"
+msgstr "A senha não pode ser alterada!"
 
 #: static-transpile/js/transpile/profile.js:1282
 #: user/static/js/modules/profile/index.js:190
 msgid "Change Password"
-msgstr "Промяна на паролата"
+msgstr "Alterar sua Senha"
 
 #: static-transpile/js/transpile/profile.js:1302
 #: user/static/js/modules/profile/index.js:211
 msgid "New email address is required!"
-msgstr "Необходим е нов имейл адрес."
+msgstr "É necessário um novo endereço de e-mail!"
 
 #: static-transpile/js/transpile/profile.js:1316
 #: user/static/js/modules/profile/index.js:226
 #, fuzzy
 #| msgid "Confirmation e-mail sent to "
 msgid "Confirmation e-mail sent to"
-msgstr "Имейл за потвърждение бе изпратен до"
+msgstr "Confirmação de e-mail enviada para"
 
 #: static-transpile/js/transpile/profile.js:1321
 #: user/static/js/modules/profile/index.js:232
 msgid "The email could not be added!"
-msgstr "Имейлът не можа да бъде добавен!"
+msgstr "O e-mail não pôde ser adicionado!"
 
 #: static-transpile/js/transpile/profile.js:1332
 #: user/static/js/modules/profile/index.js:245
 msgid "Add Email"
-msgstr "Добави имейл"
+msgstr "Adicionar E-mail"
 
 #: static-transpile/js/transpile/profile.js:1361
 #: user/static/js/modules/profile/index.js:277
 msgid "The email could not be removed!"
-msgstr "Имейлът не можа да бъде изтрит!"
+msgstr "O e-mail não pôde ser removido!"
 
 #: static-transpile/js/transpile/profile.js:1373
 #: user/static/js/modules/profile/index.js:293
 msgid "Confirm remove"
-msgstr "Потвърди изтриването"
+msgstr "Confirmar remover"
 
 #: static-transpile/js/transpile/profile.js:1375
 #: user/static/js/modules/profile/index.js:295
 msgid "Remove the email address"
-msgstr "Изтриване на имейл"
+msgstr "Remover o endereço de email"
 
 #: static-transpile/js/transpile/profile.js:1409
 #: user/static/js/modules/profile/index.js:333
 #, fuzzy
 #| msgid "The email could not be set primary!"
 msgid "The email could not be set primary"
-msgstr "Имейла не можа да бъде настроен като основен!"
+msgstr "O e-mail não pôde ser definido como princial!"
 
 #: static-transpile/js/transpile/profile.js:1421
 #: user/static/js/modules/profile/index.js:349
 msgid "Confirm set primary"
-msgstr "Потвърди настройването като основен"
+msgstr "Confirmar definir principal"
 
 #: static-transpile/js/transpile/profile.js:1423
 #: user/static/js/modules/profile/index.js:351
 #, fuzzy
 #| msgid "Set the email address primary"
 msgid "Set this email as the address primary"
-msgstr "Настрой имейл адреса като основен"
+msgstr "Defina o principal endereço de e-mail"
 
 #: static-transpile/js/transpile/profile.js:1473
 #: user/static/js/modules/profile/templates.js:5
 #, fuzzy
 #| msgid "Delete the avatar"
 msgid "Delete the avatar?"
-msgstr "Изтрий аватара"
+msgstr "Excluir o avatar"
 
 #: static-transpile/js/transpile/profile.js:1483
 msgid "NOTICE: ALL OF YOUR INFORMATION WILL DISAPPEAR FROM OUR SYSTEM!"
@@ -5010,8 +4990,8 @@ msgid ""
 "Really delete your account? Type in your username and password below to "
 "confirm deletion."
 msgstr ""
-"Наистина ли искате да изтиете вашият акаунт? Въведете потребителското си име "
-"по долу за да потвърдите изтриването."
+"Deseja realmente excluir a sua conta? Digite abaixo o seu nome de usuário "
+"para confirmar a exclusão."
 
 #: static-transpile/js/transpile/profile.js:1483
 msgid "We cannot reverse an account deletion."
@@ -5032,101 +5012,111 @@ msgstr ""
 #, fuzzy
 #| msgid "Old password"
 msgid "Password"
-msgstr "Стара парола"
+msgstr "Senha Antiga"
 
 #: static-transpile/js/transpile/profile.js:1488
 msgid "Enter the new E-mail address"
-msgstr "Веведете новият имейл"
+msgstr "Digite o novo endereço de e-mail"
 
 #: static-transpile/js/transpile/profile.js:1505
 msgid "Old password"
-msgstr "Стара парола"
+msgstr "Senha Antiga"
 
 #: static-transpile/js/transpile/profile.js:1505
 msgid "New password"
-msgstr "Нова парола"
+msgstr "Nova senha"
 
 #: static-transpile/js/transpile/profile.js:1505
 msgid "Confirm the new password"
-msgstr "Потвърди новата парола"
+msgstr "Confirme a nova senha"
 
-#, fuzzy
-#~| msgid "Copy of "
-#~ msgid " of "
-#~ msgstr "Копие на"
+#~ msgid "Profile updated"
+#~ msgstr "Perfil atualizado"
 
-#~ msgid "Search for Bibliography"
-#~ msgstr "Търсене на библиография"
+#~ msgid "Please check the above errors"
+#~ msgstr "Por favor, verifique os erros acima"
 
-#, fuzzy
-#~| msgid "Insert a title"
-#~ msgid "Insert row after"
-#~ msgstr "Вмъкни заглавие"
+#~ msgid "Year"
+#~ msgstr "Ano"
 
-#, fuzzy
-#~| msgid "Insert image"
-#~ msgid "Insert column after"
-#~ msgstr "Вмъкни изображение"
+#~ msgid "Year - Year"
+#~ msgstr "Ano - Ano"
+
+#~ msgid "Month/Year"
+#~ msgstr "Ano/Mês"
+
+#~ msgid "M/Y - M/Y"
+#~ msgstr "A/M - A/M"
+
+#~ msgid "Month/Day/Year"
+#~ msgstr "Dia/Mês/Ano"
+
+#~ msgid "M/D/Y - M/D/Y"
+#~ msgstr "D/M/A - D/M/A"
+
+#~ msgid "A variable could not be identified. Possible error in bibtex syntax."
+#~ msgstr ""
+#~ "Uma variável não pode ser identificada. Possível erro na sintaxe bibtex."
+
+#~ msgid "Page numbers or page ranges"
+#~ msgstr "Os números de páginas ou intervalos de páginas"
+
+#~ msgid "Extras"
+#~ msgstr "Extras"
+
+#~ msgid "Cover"
+#~ msgstr "Capa"
+
+#~ msgid "Title page"
+#~ msgstr "Folha de rosto"
 
 #~ msgid "en"
-#~ msgstr "англ"
+#~ msgstr "en"
+
+#~ msgid "Copyright"
+#~ msgstr "Direitos autorais"
 
 #~ msgid "en-US"
 #~ msgstr "en-US"
 
-#~ msgid "Share your book with others"
-#~ msgstr "Сподели твоята книга с други"
-
 #~ msgid "Search for Book Title"
-#~ msgstr "Тъсене на заглавие на книга"
+#~ msgstr "Procurar por Título do Livro"
 
 #~ msgid "Delete the book(s)?"
-#~ msgstr "Изтрий Книга(и)"
+#~ msgstr "Excluir livro(s)?"
 
 #~ msgid "The book(s) have been deleted"
-#~ msgstr "Книгата(е) бе изтрита."
+#~ msgstr "O(s) livro(s) foram excluídos"
+
+#~ msgid "Select cover image"
+#~ msgstr "Seleciona a imagem da capa"
 
 #~ msgid "Edit Chapter"
-#~ msgstr "Редактирай глава"
+#~ msgstr "Editar Capítulo"
 
-#~ msgid "Cover"
-#~ msgstr "Обложка"
+#~ msgid "Create Book"
+#~ msgstr "Criar Livro"
 
-#~ msgid "Title page"
-#~ msgstr "Заглавна страница"
-
-#~ msgid "Copyright"
-#~ msgstr "Авторски права"
-
-#~ msgid "Cover Image"
-#~ msgstr "Изображение за корица"
-
-#~ msgid "by"
-#~ msgstr "от"
-
-#~ msgid "Published by"
-#~ msgstr "Издадено от"
+#~ msgid "Edit Book"
+#~ msgstr "Editar Livro"
 
 #~ msgid "Latex export has been initiated."
-#~ msgstr "Започнат бе Latex експорт."
-
-#~ msgid "Publisher"
-#~ msgstr "Издател"
+#~ msgstr "Foi iniciada a exportação para Látex "
 
 #~ msgid "Copyright notice"
-#~ msgstr "Бележка за Авторските Права"
+#~ msgstr "Nota de direitos autorais"
 
 #~ msgid "Comma separated keywords"
-#~ msgstr "Ключови думи разделени със запетаи"
+#~ msgstr "Palavras-chave separadas por vírgula "
 
 #~ msgid "Folio (15 x 12 inch)"
-#~ msgstr "Folio (15 x 12 inch)"
+#~ msgstr "Folio (15 x 12 polegadas)"
 
 #~ msgid "Quarto (12 × 9 inch)"
-#~ msgstr "Quarto (12 × 9 inch)"
+#~ msgstr "Quarto (12 × 9 polegadas)"
 
 #~ msgid "Octavo (9 x 6 inch)"
-#~ msgstr "Octavo (9 x 6 inch)"
+#~ msgstr "Octavo (9 x 6 polegadas)"
 
 #~ msgid "A5"
 #~ msgstr "A5"
@@ -5134,175 +5124,74 @@ msgstr "Потвърди новата парола"
 #~ msgid "A4"
 #~ msgstr "A4"
 
-#~ msgid "Select Image"
-#~ msgstr "Избор на изображение"
-
 #~ msgid "Remove Image"
-#~ msgstr "Изтрий изображение:"
-
-#~ msgid "Basic info"
-#~ msgstr "Основна информация"
+#~ msgstr "Remover imagem"
 
 #~ msgid "Chapters"
-#~ msgstr "Глави"
+#~ msgstr "Capítulos"
 
 #~ msgid "Book chapters"
-#~ msgstr "Глави на книгата"
+#~ msgstr "Capítulos de livros"
 
 #~ msgid "Sort"
-#~ msgstr "Сортиране"
+#~ msgstr "Ordenar"
 
 #~ msgid "Book part"
-#~ msgstr "Част от Книгата"
+#~ msgstr "Parte do livro"
 
 #~ msgid ""
 #~ "If this chapter starts a part of the book, specify the title of that part "
 #~ "here"
 #~ msgstr ""
-#~ "Ако тази глава започва част от книга, въведете заглавието на тази част тук"
+#~ "Se este capítulo inicia uma parte do livro, especificar o título dessa "
+#~ "parte aqui"
 
 #~ msgid "Book part title"
-#~ msgstr "Заглавие на част от книгата"
+#~ msgstr "Título parte Livro"
 
-#~ msgid "Search for Filename"
-#~ msgstr "Търсене за файл"
+#~ msgid "Cover Image"
+#~ msgstr "Imagem da capa"
 
-#, fuzzy
-#~| msgid "Book"
-#~ msgid "Books"
-#~ msgstr "Книга"
+#~ msgid "by"
+#~ msgstr "por"
 
-#~ msgid "Please check the above errors"
-#~ msgstr "Моля проверете горните грешки"
+#~ msgid "Published by"
+#~ msgstr "Publicado por"
 
-#, fuzzy
-#~| msgid "A5"
-#~ msgid "A"
-#~ msgstr "A5"
+#~ msgid "Last Updated"
+#~ msgstr "Ultima Atualização"
 
-#, fuzzy
-#~| msgid "Total number of pages"
-#~ msgid "not a number"
-#~ msgstr "Брой страниц"
+#~ msgid "Share your book with others"
+#~ msgstr "Compartilhar o seu livro com os outros"
 
-#~ msgid "Create Book"
-#~ msgstr "Създай Книга"
-
-#~ msgid "Edit Book"
-#~ msgstr "Редактирай Книга"
-
-#, fuzzy
-#~| msgid "Insert formula"
-#~ msgid "Insert row before"
-#~ msgstr "Вмъкни формула"
-
-#, fuzzy
-#~| msgid "Remove"
-#~ msgid "Remove row"
-#~ msgstr "Изтриване"
-
-#, fuzzy
-#~| msgid "Submit"
-#~ msgid "Submit paper"
-#~ msgstr "Изпрати"
-
-#~ msgid "Profile updated"
-#~ msgstr "Профилът е обновен"
-
-#~ msgid "Year"
-#~ msgstr "Година"
-
-#~ msgid "Year - Year"
-#~ msgstr "Година - Година"
-
-#~ msgid "Month/Year"
-#~ msgstr "Месец/Година"
-
-#~ msgid "M/Y - M/Y"
-#~ msgstr "М/Г - М/Г"
-
-#~ msgid "Month/Day/Year"
-#~ msgstr "Месец/Ден/Година"
-
-#~ msgid "M/D/Y - M/D/Y"
-#~ msgstr "М/Д/Г - М/Д/Г"
-
-#~ msgid "Page numbers or page ranges"
-#~ msgstr "Номер страница/страници"
-
-#~ msgid "Extras"
-#~ msgstr "Екстри"
-
-#~ msgid "Select cover image"
-#~ msgstr "Изберете изображение на корицата"
-
-#, fuzzy
 #~ msgid "The authors of the document (comma-separated)"
-#~ msgstr "Обобщение на документа"
+#~ msgstr "Os autores do documento (separados por vírgula)"
+
+#~ msgid "The keywords related to the document (comma-separated)"
+#~ msgstr ""
+#~ "As palavras-chave relacionadas com o documento (separados por vírgula)"
 
 #~ msgid "Contents..."
-#~ msgstr "Съдържание"
+#~ msgstr "Conteúdo ..."
+
+#~ msgid "Copy of "
+#~ msgstr "Cópia de"
 
 #~ msgid ""
 #~ "Sorry, but the connection to the server has been lost. Please reload to "
 #~ "ensure that no date is being lost."
 #~ msgstr ""
-#~ "Съжаляваме, но връзката със сървъра бе прекъсната. Поля опреснете за да "
-#~ "се предпазите от загуба на данни."
+#~ "Desculpe, mas a conexão com o servidor foi perdida. Recarregue para "
+#~ "garantir que nenhuma data está sendo perdida."
 
 #~ msgid "Ok"
-#~ msgstr "ОК"
+#~ msgstr "Ok"
 
-#~ msgid "American Psychological Association"
-#~ msgstr "American Psychological Association."
+#~ msgid "Link text (optional)"
+#~ msgstr "O texto do link (opcional)"
 
-#~ msgid "Chicago Manual of Style (Author-Date format)"
-#~ msgstr "Chicago Manual of Style (Author-Date format)"
+#~ msgid "Latex equation"
+#~ msgstr "Equação Latex"
 
-#~ msgid "Chicago Manual of Style (Note with Bibliography)"
-#~ msgstr "Chicago Manual of Style (Note with Bibliography)"
-
-#~ msgid "Harvard Reference format (Author-Date)"
-#~ msgstr "Harvard Reference format (Author-Date)"
-
-#~ msgid "Modern Language Association"
-#~ msgstr "Modern Language Association"
-
-#~ msgid "Text that is part of a standard paragraph."
-#~ msgstr "Текст който е част от обикновен параграф."
-
-#~ msgid "A headline of the highest level (under title)."
-#~ msgstr "Най-голям заглавен ред (под заглавието)"
-
-#~ msgid "A headline of the 2nd highest level."
-#~ msgstr "Заглавен ред от 2ро ниво"
-
-#~ msgid "A headline of the 3rd highest level."
-#~ msgstr "Заглавен ред от 2то ниво"
-
-#~ msgid "A longer quotation set as an indented block."
-#~ msgstr "По-дълъг цитат представен като изместен текстов блок."
-
-#~ msgid "An item in an ordered list."
-#~ msgstr "Елемент от подреден списък"
-
-#~ msgid "An item in an unordered list."
-#~ msgstr "Елемент от неподреден списък"
-
-#~ msgid "Configure citation"
-#~ msgstr "Настройка на цитати"
-
-#~ msgid "Enter Latex math"
-#~ msgstr "Въвеждане на Latex формула"
-
-#~ msgid "Your lock on this page expires in less than %s"
-#~ msgstr "Заключването на тази страница ще изтече след %s"
-
-#~ msgid "This page is locked by <em>%(for_user)s"
-#~ msgstr "Тази страница е заключена от <em>%(for_user)s"
-
-#~ msgid "Your lock on this page is expired!"
-#~ msgstr "Заключването ви за тази страница изтече!"
-
-#~ msgid "Please register at http://beta.fiduswriter.com"
-#~ msgstr "Моля регистрирай се на http://beta.fiduswriter.com"
+#~ msgid "Search for Filename"
+#~ msgstr "Procure por nome do arquívo"

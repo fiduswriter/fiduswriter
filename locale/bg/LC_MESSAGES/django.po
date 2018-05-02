@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-28 09:06+0000\n"
+"POT-Creation-Date: 2018-04-18 07:26+0000\n"
 "PO-Revision-Date: 2013-09-18 08:54+0200\n"
 "Last-Translator: Vladimir Vitkov <vvitkov@linux-bg.org>\n"
 "Language-Team: Bulgarian <vvitkov@linux-bg.org>\n"
@@ -21,15 +21,15 @@ msgstr ""
 msgid "The all in one solution for collaborative academic writing."
 msgstr "Комплексно решение за съвместно създаване на академични документи."
 
-#: base/templates/base.html:77
+#: base/templates/base.html:76
 msgid "Edit profile"
 msgstr "Редактирай профил"
 
-#: base/templates/base.html:82 user/templates/account/list_team_members.html:19
+#: base/templates/base.html:81 user/templates/account/list_team_members.html:19
 msgid "Contacts"
 msgstr "Контакти"
 
-#: base/templates/base.html:88
+#: base/templates/base.html:87
 msgid "Log out"
 msgstr "Изход"
 
@@ -55,31 +55,6 @@ msgstr ""
 msgid "Bibliography Manager"
 msgstr "Управление на Библиография"
 
-#: bibliography/templates/bibliography/index.html:30
-#: document/templates/document/index.html:27
-msgid "Title"
-msgstr "Заглавие"
-
-#: bibliography/templates/bibliography/index.html:31
-msgid "Sourcetype"
-msgstr "Тип на източника"
-
-#: bibliography/templates/bibliography/index.html:32
-msgid "Author"
-msgstr "Автор"
-
-#: bibliography/templates/bibliography/index.html:33
-msgid "Published"
-msgstr "Публикувани"
-
-#: bibliography/templates/bibliography/index.html:34
-#: document/templates/document/index.html:33
-#: user/templates/account/list_team_members.html:21
-#: user/templates/account/show_profile.html:71
-#: usermedia/templates/usermedia/index.html:25
-msgid "Delete"
-msgstr "Изтрий"
-
 #: browser_check/templates/browser_check/browser_not_supported.html:4
 #: browser_check/templates/browser_check/browser_not_supported.html:27
 msgid "Browser not supported"
@@ -95,7 +70,7 @@ msgid ""
 "            "
 msgstr ""
 
-#: document/templates/document/editor.html:89
+#: document/templates/document/editor.html:88
 msgid "en"
 msgstr "англ"
 
@@ -103,37 +78,17 @@ msgstr "англ"
 msgid "Document Overview"
 msgstr "Преглед на документа"
 
-#: document/templates/document/index.html:28
-msgid "Revisions"
-msgstr ""
-
-#: document/templates/document/index.html:29
-msgid "Created"
-msgstr "Създаден"
-
-#: document/templates/document/index.html:30
-msgid "Last changed"
-msgstr "Последна промяна"
-
-#: document/templates/document/index.html:31
-msgid "Owner"
-msgstr "Собственик"
-
-#: document/templates/document/index.html:32
-msgid "Rights"
-msgstr "Права"
-
 #: document/templates/maintenance/index.html:4
 msgid "Maintenance"
 msgstr ""
 
-#: document/templates/maintenance/index.html:17
+#: document/templates/maintenance/index.html:15
 #, fuzzy
 #| msgid "Document Style"
 msgid "Document Maintenance"
 msgstr "Стил на Документа"
 
-#: document/templates/maintenance/index.html:19
+#: document/templates/maintenance/index.html:17
 msgid ""
 "\n"
 "            Before and after upgrading Fidus Writer, you should update all "
@@ -144,21 +99,21 @@ msgid ""
 "            "
 msgstr ""
 
-#: document/templates/maintenance/index.html:27
+#: document/templates/maintenance/index.html:25
 msgid "Update all documents (DANGER!)"
 msgstr ""
 
-#: document/views.py:216
+#: document/views.py:218
 #, fuzzy
 msgid "Untitled"
 msgstr "Подзаглавие"
 
-#: document/views.py:230
+#: document/views.py:232
 #, fuzzy
 msgid "Document shared:"
 msgstr "Документи"
 
-#: document/views.py:256
+#: document/views.py:258
 msgid "Fidus Writer document write access"
 msgstr "Достъп за писане във Fidus Writer документ"
 
@@ -176,31 +131,35 @@ msgstr "изпрати"
 msgid "Thank you for your comment!"
 msgstr "Благодарим ви за коментара!"
 
-#: fiduswriter/settings.py:241
+#: fiduswriter/settings.py:239
 msgid "English"
 msgstr "Английски"
 
-#: fiduswriter/settings.py:242
+#: fiduswriter/settings.py:240
 msgid "Bulgarian"
 msgstr "Български"
 
-#: fiduswriter/settings.py:243
+#: fiduswriter/settings.py:241
 msgid "German"
 msgstr "Немски"
 
-#: fiduswriter/settings.py:244
+#: fiduswriter/settings.py:242
 msgid "French"
 msgstr ""
 
-#: fiduswriter/settings.py:245
+#: fiduswriter/settings.py:243
 msgid "Italian"
 msgstr ""
 
-#: fiduswriter/settings.py:246
+#: fiduswriter/settings.py:244
 msgid "Spanish"
 msgstr "Испански"
 
-#: user/templates/account/base.html:56 user/templates/account/login.html:7
+#: fiduswriter/settings.py:245
+msgid "Portuguese (Brazil)"
+msgstr ""
+
+#: user/templates/account/base.html:52 user/templates/account/login.html:7
 #: user/templates/account/signup.html:9
 msgid "Log In"
 msgstr "Вход"
@@ -289,6 +248,11 @@ msgstr "Членове на екипа"
 #: user/templates/account/signup.html:44
 msgid "E-mail address"
 msgstr "Имейл адрес"
+
+#: user/templates/account/list_team_members.html:21
+#: user/templates/account/show_profile.html:71
+msgid "Delete"
+msgstr "Изтрий"
 
 #: user/templates/account/login.html:8
 #: user/templates/account/password_reset.html:7
@@ -507,18 +471,6 @@ msgstr ""
 msgid "Media Manager"
 msgstr "Управление на медийни елементи"
 
-#: usermedia/templates/usermedia/index.html:22
-msgid "File"
-msgstr "Файл"
-
-#: usermedia/templates/usermedia/index.html:23
-msgid "Size (px)"
-msgstr "Размер (px)"
-
-#: usermedia/templates/usermedia/index.html:24
-msgid "Added"
-msgstr ""
-
 #: usermedia/views.py:41
 msgid "Filetype not supported"
 msgstr ""
@@ -526,6 +478,36 @@ msgstr ""
 #: usermedia/views.py:68
 msgid "No file uploaded"
 msgstr ""
+
+#~ msgid "Title"
+#~ msgstr "Заглавие"
+
+#~ msgid "Sourcetype"
+#~ msgstr "Тип на източника"
+
+#~ msgid "Author"
+#~ msgstr "Автор"
+
+#~ msgid "Published"
+#~ msgstr "Публикувани"
+
+#~ msgid "Created"
+#~ msgstr "Създаден"
+
+#~ msgid "Last changed"
+#~ msgstr "Последна промяна"
+
+#~ msgid "Owner"
+#~ msgstr "Собственик"
+
+#~ msgid "Rights"
+#~ msgstr "Права"
+
+#~ msgid "File"
+#~ msgstr "Файл"
+
+#~ msgid "Size (px)"
+#~ msgstr "Размер (px)"
 
 #~ msgid "Updated"
 #~ msgstr "Обновен"

@@ -3,6 +3,11 @@
     height: 40px;
     margin-bottom: 40px;
 }
+@media screen and (max-width: 985px) {
+    #fw-overview-menu {
+        padding-left: 8px;
+    }
+}
 
 .fw-overview-menu-item {
     position: relative;

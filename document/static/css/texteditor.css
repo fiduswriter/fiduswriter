@@ -730,7 +730,7 @@ span.anchor {
 }
 
 /* Additions for tablets + mobile */
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 1023px) {
     #editor-content {
         padding: 0;
     }
@@ -740,7 +740,26 @@ span.anchor {
     body {
         background-color: #fff;
     }
+    #document-top > h1 {
+        padding-left: 50px;
+        background: initial;
+    }
+    #header-navigation {
+        margin-left: 50px;
+    }
 }
+@media screen and (max-width: 767px) {
+    #flow {
+        padding-left: 8px;
+    }
+    #document-top > h1 {
+        padding-left: 8px;
+    }
+    #header-navigation {
+        margin-left: 8px;
+    }
+}
+
 
 .ProseMirror-gapcursor {
   display: none;

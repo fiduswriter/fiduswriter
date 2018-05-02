@@ -16,7 +16,6 @@ body {
 
 .fw-container {
     position: relative;
-    width: 985px;
     height: auto;
     margin: 0 auto;
     padding: 0 40px;
@@ -30,7 +29,6 @@ body {
     height: auto;
     max-width: 985px;
     margin: 0 auto;
-    padding: 0 40px;
     overflow: hidden;
 }
 

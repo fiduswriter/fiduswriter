@@ -9,11 +9,11 @@ export let menuModel = {
             open: false,
             checked: false,
             checkAction: overview => {
-                let checkboxes = [].slice.call(document.querySelectorAll('input.entry-select[type=checkbox]'))
+                let checkboxes = document.querySelectorAll('input.entry-select[type=checkbox]')
                 checkboxes.forEach(checkbox => checkbox.checked = true)
             },
             uncheckAction: overview => {
-                let checkboxes = [].slice.call(document.querySelectorAll('input.entry-select[type=checkbox]'))
+                let checkboxes = document.querySelectorAll('input.entry-select[type=checkbox]')
                 checkboxes.forEach(checkbox => checkbox.checked = false)
             },
             content: [

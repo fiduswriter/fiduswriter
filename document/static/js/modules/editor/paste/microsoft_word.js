@@ -10,9 +10,9 @@ export class MicrosoftWordPasteHandler extends GeneralPasteHandler {
     // Remove unused content
     cleanDOM() {
         // Remove footnote list container with separator line
-        let removableElements = [].slice.call(this.dom.querySelectorAll(
+        let removableElements = this.dom.querySelectorAll(
             'div[style*="mso-element:footnote-list"]'
-        ))
+        )
 
         removableElements.forEach(el => el.parentNode.removeChild(el))
     }

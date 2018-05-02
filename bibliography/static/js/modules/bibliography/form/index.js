@@ -214,7 +214,7 @@ export class BibEntryForm {
 
             if (!this.bibDB.cats.length) {
                 // There are no ctaegories to select from, so remove the categories tab.
-                [].slice.call(document.querySelectorAll('#categories-tab, #categories-link')).forEach(
+                document.querySelectorAll('#categories-tab, #categories-link').forEach(
                     el => el.parentElement.removeChild(el)
                 )
             }

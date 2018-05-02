@@ -131,7 +131,7 @@ export class ModCommentInteractions {
         if (!this.activeCommentId) {
             return false
         }
-        if ([].slice.call(document.querySelectorAll('.commentText')).find(el => el.clientWidth)) {
+        if (Array.from(document.querySelectorAll('.commentText')).find(el => el.clientWidth)) {
             // a comment form is currently open
             return true
         }

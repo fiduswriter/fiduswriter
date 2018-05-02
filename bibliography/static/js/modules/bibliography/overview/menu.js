@@ -11,11 +11,11 @@ export let menuModel = {
             open: false,
             checked: false,
             checkAction: overview => {
-                let checkboxes = [].slice.call(document.querySelectorAll('input.entry-select[type=checkbox]'))
+                let checkboxes = document.querySelectorAll('input.entry-select[type=checkbox]')
                 checkboxes.forEach(checkbox => checkbox.checked = true)
             },
             uncheckAction: overview => {
-                let checkboxes = [].slice.call(document.querySelectorAll('input.entry-select[type=checkbox]'))
+                let checkboxes = document.querySelectorAll('input.entry-select[type=checkbox]')
                 checkboxes.forEach(checkbox => checkbox.checked = false)
             },
             content: [
@@ -47,7 +47,7 @@ export let menuModel = {
                 {
                     title: gettext('All categories'),
                     action: overview => {
-                        let trs = [].slice.call(document.querySelectorAll('#bibliography > tbody > tr'))
+                        let trs = document.querySelectorAll('#bibliography > tbody > tr')
                         trs.forEach(tr => tr.style.display = '')
                     }
                 }

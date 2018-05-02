@@ -32,7 +32,7 @@ export class BaseEpubExporter extends BaseHTMLExporter {
 
     styleEpubFootnotes(htmlCode) {
         // Converts RASH style footnotes into epub footnotes.
-        let footnotes = [].slice.call(htmlCode.querySelectorAll('section#fnlist section[role=doc-footnote]'))
+        let footnotes = htmlCode.querySelectorAll('section#fnlist section[role=doc-footnote]')
         let footnoteCounter = 1
         footnotes.forEach(footnote => {
             let newFootnote = document.createElement('aside')
@@ -50,7 +50,7 @@ export class BaseEpubExporter extends BaseHTMLExporter {
             footnote.parentNode.replaceChild(newFootnote, footnote)
             footnoteCounter++
         })
-        let footnoteMarkers = [].slice.call(htmlCode.querySelectorAll('a.fn'))
+        let footnoteMarkers = htmlCode.querySelectorAll('a.fn')
         let footnoteMarkerCounter = 1
         footnoteMarkers.forEach(fnMarker => {
             let newFnMarker = document.createElement('sup')

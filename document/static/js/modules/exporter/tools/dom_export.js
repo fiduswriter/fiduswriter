@@ -28,7 +28,7 @@ export class BaseDOMExporter {
         // at the back of the document.
         // Also, link the footnote anchor with the footnote according to
         // https://rawgit.com/essepuntato/rash/master/documentation/index.html#footnotes.
-        let footnotes = [].slice.call(htmlEl.querySelectorAll('.footnote-marker'))
+        let footnotes = htmlEl.querySelectorAll('.footnote-marker')
         let footnotesContainer = document.createElement('section')
         footnotesContainer.id = 'fnlist'
         footnotesContainer.setAttribute('role', 'doc-footnotes')

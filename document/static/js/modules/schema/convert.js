@@ -64,7 +64,7 @@ export let updateDoc = function(doc, bibliography, docVersion) {
 
 
 let convertCitationsV0 = function(dom) {
-    let citations = [].slice.call(dom.querySelectorAll('span.citation'))
+    let citations = dom.querySelectorAll('span.citation')
     citations.forEach(citation => {
         let hasRefs = citation.getAttribute('data-references')
         if (hasRefs) {
@@ -124,7 +124,7 @@ let convertDocV0 = function(doc) {
     editorNode.appendChild(contentsNode)
 
     // Footnotes FW 3.1 pre-release
-    let fw31Footnotes = [].slice.call(editorNode.querySelectorAll('footnote-marker'))
+    let fw31Footnotes = editorNode.querySelectorAll('footnote-marker')
     fw31Footnotes.forEach(footnote => {
         let contents = footnote.getAttribute('contents')
         let tmpNode = document.createElement('div')
@@ -135,7 +135,7 @@ let convertDocV0 = function(doc) {
     })
 
     // Footnotes FW 1.1-3.0
-    let fw11Footnotes = [].slice.call(editorNode.querySelectorAll('footnote,span.footnote'))
+    let fw11Footnotes = editorNode.querySelectorAll('footnote,span.footnote')
     fw11Footnotes.forEach(footnote => {
         let newFn = document.createElement('span')
         newFn.classList.add('footnote-marker')
@@ -361,7 +361,7 @@ let convertDocV20 = function(doc) {
     delete(returnDoc.rights)
     delete(returnDoc.updated)
     if(returnDoc.contents.attrs) {
-        returnDoc.contents.attrs.track = false
+        returnDoc.contents.attrs.tracked = false
     }
     Object.values(returnDoc.comments).forEach(comment => {
         comment.username = comment.userName

@@ -78,7 +78,7 @@ export class OdtExporterMetadata {
 
         // Keywords
         // Remove all existing keywords
-        let keywordEls = [].slice.call(this.metaXml.querySelectorAll('keywords'))
+        let keywordEls = this.metaXml.querySelectorAll('keywords')
         keywordEls.forEach(
             keywordEl => keywordEl.parentNode.removeChild(keywordEl)
         )

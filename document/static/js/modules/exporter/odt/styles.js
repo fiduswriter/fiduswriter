@@ -40,7 +40,7 @@ export class OdtExporterStyles {
     }
 
     getStyleCounters() {
-        let styles = [].slice.call(this.contentXml.querySelectorAll('automatic-styles style'))
+        let styles = this.contentXml.querySelectorAll('automatic-styles style')
         styles.forEach(style => {
             let styleNumber = parseInt(style.getAttribute('style:name').replace(/\D/g,''))
             let styleFamily = style.getAttribute('style:family')
@@ -54,7 +54,7 @@ export class OdtExporterStyles {
                 }
             }
         })
-        let listStyles = [].slice.call(this.contentXml.querySelectorAll('automatic-styles list-style'))
+        let listStyles = this.contentXml.querySelectorAll('automatic-styles list-style')
         listStyles.forEach(style => {
             let styleNumber = parseInt(style.getAttribute('style:name').replace(/\D/g,''))
             if (styleNumber>this.listStyleCounter) {
@@ -239,9 +239,7 @@ export class OdtExporterStyles {
         if (!country) {
             country = 'none'
         }
-        [].slice.call(
-            this.stylesXml.querySelectorAll('styles default-style text-properties')
-        ).forEach(el => {
+        this.stylesXml.querySelectorAll('styles default-style text-properties').forEach(el => {
             el.setAttribute('fo:language', language)
             el.setAttribute('fo:country', country)
         })

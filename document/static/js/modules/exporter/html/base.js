@@ -12,7 +12,7 @@ export class BaseHTMLExporter extends BaseDOMExporter {
         this.contents = serializer.serializeNode(schema.nodeFromJSON(this.doc.contents))
 
         // Remove hidden parts
-        let hiddenEls = [].slice.call(this.contents.querySelectorAll('[data-hidden=true]'))
+        let hiddenEls = Array.from(this.contents.querySelectorAll('[data-hidden=true]'))
         hiddenEls.forEach(hiddenEl => {
             hiddenEl.parentElement.removeChild(hiddenEl)
         })

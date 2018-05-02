@@ -2,7 +2,7 @@ import {whenReady} from "../common"
 
 let loginPage = function() {
     let btnWidth = 1,
-    socialButtons = [].slice.call(document.querySelectorAll('.fw-button.fw-socialaccount'))
+    socialButtons = document.querySelectorAll('.fw-button.fw-socialaccount')
 
     socialButtons.forEach(
         button => {
@@ -14,9 +14,7 @@ let loginPage = function() {
     )
     btnWidth += 15
     socialButtons.forEach(
-        button => {
-            button.style.width = `${btnWidth}px`
-        }
+        button => button.style.width = `${btnWidth}px`
     )
 }
 

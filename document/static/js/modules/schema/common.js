@@ -15,8 +15,8 @@ export let citation = {
         tag: 'span.citation',
         getAttrs(dom) {
             return {
-                format: dom.getAttribute('data-format') || '',
-                references: JSON.parse(dom.getAttribute('data-references') || '[]')
+                format: dom.dataset.format || '',
+                references: JSON.parse(dom.dataset.references || '[]')
             }
         }
     }],
@@ -42,13 +42,13 @@ export let equation = {
         tag: 'span.equation',
         getAttrs(dom) {
             return {
-                equation: dom.getAttribute('data-equation')
+                equation: dom.dataset.equation
             }
         }
     }],
     toDOM(node) {
         let dom = document.createElement('span')
-        dom.setAttribute('data-equation', node.attrs.equation)
+        dom.dataset.equation = node.attrs.equation
         dom.classList.add('equation')
         katexRender(node.attrs.equation, dom, {
             throwOnError: false
@@ -71,28 +71,33 @@ export let figure = {
         image: {default: false},
         figureCategory: {default: ""},
         caption: {default: ""},
-        id: {default: false}
+        id: {default: false},
+        track: {default: []}
     },
     parseDOM: [{
         tag: 'figure',
         getAttrs(dom) {
-            let image = parseInt(dom.getAttribute('data-image'))
+            let image = parseInt(dom.dataset.image)
             return {
-                equation: dom.getAttribute('data-equation'),
+                equation: dom.dataset.equation,
                 image: isNaN(image) ? false : image,
-                figureCategory: dom.getAttribute('data-figure-category'),
-                caption: dom.getAttribute('data-caption'),
-                id: dom.getAttribute('id')
+                figureCategory: dom.dataset.figureCategory,
+                caption: dom.dataset.caption,
+                id: dom.dataset.id,
+                track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
             }
         }
     }],
     toDOM(node) {
         let dom = document.createElement('figure')
-        dom.setAttribute('data-equation', node.attrs.equation)
-        dom.setAttribute('data-image', node.attrs.image)
-        dom.setAttribute('data-figure-category', node.attrs.figureCategory)
-        dom.setAttribute('data-caption', node.attrs.caption)
-        dom.setAttribute('id', node.attrs.id)
+        dom.dataset.equation = node.attrs.equation
+        dom.dataset.image = node.attrs.image
+        dom.dataset.figureCategory = node.attrs.figureCategory
+        dom.dataset.caption = node.attrs.caption
+        dom.id = node.attrs.id
+        if(node.attrs.track.length) {
+            dom.dataset.track = JSON.stringify(node.attrs.track)
+        }
         if (node.attrs.image !== false) {
             dom.appendChild(document.createElement("div"))
             if (node.type.schema.cached.imageDB) {
@@ -102,7 +107,7 @@ export let figure = {
                     let img = document.createElement("img")
                     img.setAttribute('src', node.type.schema.cached.imageDB.db[node.attrs.image].image)
                     dom.firstChild.appendChild(img)
-                    dom.setAttribute('data-image-src', node.type.schema.cached.imageDB.db[node.attrs.image].image)
+                    dom.dataset.imageSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
                 } else {
                     /* The image was not present in the imageDB -- possibly because a collaborator just added ut.
                     Try to reload the imageDB, but only once. If the image cannot be found in the updated
@@ -116,7 +121,7 @@ export let figure = {
                                 let img = document.createElement("img")
                                 img.setAttribute('src', imgSrc)
                                 dom.firstChild.appendChild(img)
-                                dom.setAttribute('data-image-src', node.type.schema.cached.imageDB.db[node.attrs.image].image)
+                                dom.dataset.imageSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
                             } else {
                                 imageDBBroken = true
                             }
@@ -176,15 +181,135 @@ export let heading = {
         },
         id: {
             default: false
+        },
+        track: {
+            default: []
         }
     },
-    parseDOM: [{tag: "h1", getAttrs(dom) {return {level: 1, id: dom.getAttribute('id')}}},
-               {tag: "h2", getAttrs(dom) {return {level: 2, id: dom.getAttribute('id')}}},
-               {tag: "h3", getAttrs(dom) {return {level: 3, id: dom.getAttribute('id')}}},
-               {tag: "h4", getAttrs(dom) {return {level: 4, id: dom.getAttribute('id')}}},
-               {tag: "h5", getAttrs(dom) {return {level: 5, id: dom.getAttribute('id')}}},
-               {tag: "h6", getAttrs(dom) {return {level: 6, id: dom.getAttribute('id')}}},],
-    toDOM(node) { return [`h${node.attrs.level}`, {id: node.attrs.id}, 0] }
+    parseDOM: [
+        {
+            tag: "h1",
+            getAttrs(dom) {
+                return {
+                    level: 1,
+                    id: dom.id,
+                    track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+                }
+            }
+        },
+        {
+            tag: "h2",
+            getAttrs(dom) {
+                return {
+                    level: 2,
+                    id: dom.id,
+                    track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+                }
+             }
+        },
+        {
+            tag: "h3",
+            getAttrs(dom) {
+                return {
+                    level: 3,
+                    id: dom.id,
+                    track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+                }
+            }
+        },
+        {
+            tag: "h4",
+            getAttrs(dom) {
+                return {
+                    level: 4,
+                    id: dom.id,
+                    track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+                }
+            }
+        },
+        {
+            tag: "h5",
+            getAttrs(dom) {
+                return {
+                    level: 5,
+                    id: dom.id,
+                    track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+                }
+            }
+        },
+        {
+            tag: "h6",
+            getAttrs(dom) {
+                return {
+                    level: 6,
+                    id: dom.id,
+                    track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+                }
+            }
+        }
+    ],
+    toDOM(node) {
+        let attrs = {id: node.attrs.id}
+        if (node.attrs.track.length) {
+            attrs['data-track'] = JSON.stringify(node.attrs.track)
+        }
+        return [`h${node.attrs.level}`, attrs, 0]
+    }
+}
+// :: NodeSpec A plain paragraph textblock. Represented in the DOM
+  // as a `<p>` element.
+export let paragraph = {
+    group: "block",
+    content: "inline*",
+    attrs: {
+        track: {
+            default: []
+        }
+    },
+    parseDOM: [{tag: "p", getAttrs(dom) {return {
+        track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+    }}}],
+    toDOM(node) {
+        let attrs = node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
+        return ['p', attrs, 0]
+    }
+}
+
+// :: NodeSpec A blockquote (`<blockquote>`) wrapping one or more blocks.
+export let blockquote = {
+    content: "block+",
+    group: "block",
+    attrs: {
+        track: {
+            default: []
+        }
+    },
+    marks: "annotation",
+    defining: true,
+    parseDOM: [{tag: "blockquote", getAttrs(dom) {return {
+        track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+    }}}],
+    toDOM(node) {
+        let attrs = node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
+        return ["blockquote", attrs, 0]
+    }
+}
+
+// :: NodeSpec A horizontal rule (`<hr>`).
+export let horizontal_rule = {
+    group: "block",
+    attrs: {
+        track: {
+            default: []
+        }
+    },
+    parseDOM: [{tag: "hr", getAttrs(dom) {return {
+        track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+    }}}],
+    toDOM(node) {
+        let attrs = node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
+        return ["hr", attrs]
+    }
 }
 
 export let randomAnchorId = () => {
@@ -203,7 +328,7 @@ export let anchor = {
         tag: "span.anchor[data-id]",
         getAttrs(dom) {
             return {
-                id: dom.getAttribute("data-id")
+                id: dom.dataset.id
             }
         }
     }],
@@ -213,6 +338,81 @@ export let anchor = {
             'data-id': node.attrs.id
         }]
     }
+}
+
+// :: NodeSpec
+// An ordered list [node spec](#model.NodeSpec). Has a single
+// attribute, `order`, which determines the number at which the list
+// starts counting, and defaults to 1. Represented as an `<ol>`
+// element.
+export const ordered_list = {
+    group: "block",
+    content: "list_item+",
+    attrs: {
+        order: {default: 1},
+        track: {default: []}
+    },
+    parseDOM: [{tag: "ol", getAttrs(dom) {
+        return {
+            order: dom.hasAttribute("start") ? +dom.getAttribute("start") : 1,
+            track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+        }
+    }}],
+    toDOM(node) {
+        let attrs = {}
+        if (node.attrs.order !== 1) {
+            attrs.start = node.attrs.order
+        }
+        if (node.attrs.track.length) {
+            attrs['data-track'] = JSON.stringify(node.attrs.track)
+        }
+        return ["ol", attrs, 0]
+    }
+}
+
+// :: NodeSpec
+// A bullet list node spec, represented in the DOM as `<ul>`.
+export const bullet_list = {
+    group: "block",
+    content: "list_item+",
+    attrs: {
+        track: {default: []}
+    },
+    parseDOM: [{tag: "ul", getAttrs(dom) {
+        return {
+            track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+        }
+    }}],
+    toDOM(node) {
+        let attrs = {}
+        if (node.attrs.track.length) {
+            attrs['data-track'] = JSON.stringify(node.attrs.track)
+        }
+        return ["ul", attrs, 0]
+    }
+}
+
+// :: NodeSpec
+// A list item (`<li>`) spec.
+export const list_item = {
+    content: "block+",
+    marks: "annotation",
+    attrs: {
+        track: {default: []}
+    },
+    parseDOM: [{tag: "li", getAttrs(dom) {
+        return {
+            track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+        }
+    }}],
+    toDOM(node) {
+        let attrs = {}
+        if (node.attrs.track.length) {
+            attrs['data-track'] = JSON.stringify(node.attrs.track)
+        }
+        return ["li", attrs, 0]
+    },
+    defining: true
 }
 
 export let deletion = {
@@ -225,9 +425,6 @@ export let deletion = {
         },
         date: {
             default: 0
-        },
-        inline: { // Whether the change is inline or block level
-            default: true
         }
     },
     inclusive: false,
@@ -237,28 +434,16 @@ export let deletion = {
             tag: "span.deletion",
             getAttrs(dom) {
                 return {
-                    user: parseInt(dom.getAttribute("data-user")),
-                    username: dom.getAttribute("data-username"),
-                    date: parseInt(dom.getAttribute("data-date")),
+                    user: parseInt(dom.dataset.user),
+                    username: dom.dataset.username,
+                    date: parseInt(dom.dataset.date),
                     inline: true
-                }
-            }
-        },
-        {
-            tag: "div.deletion",
-            getAttrs(dom) {
-                return {
-                    user: parseInt(dom.getAttribute("data-user")),
-                    username: dom.getAttribute("data-username"),
-                    date: parseInt(dom.getAttribute("data-date")),
-                    inline: false
                 }
             }
         }
     ],
     toDOM(node) {
-        let elType = node.attrs.inline ? 'span' : 'div'
-        return [elType, {
+        return ['span', {
             class: `deletion user-${node.attrs.user}`,
             'data-user': node.attrs.user,
             'data-username': node.attrs.username,
@@ -278,9 +463,6 @@ export let insertion = {
         date: {
             default: 0
         },
-        inline: { // Whether the change is inline or block level
-            default: true
-        },
         approved: {
             default: true
         }
@@ -292,9 +474,9 @@ export let insertion = {
             tag: "span.insertion",
             getAttrs(dom) {
                 return {
-                    user: parseInt(dom.getAttribute("data-user")),
-                    username: dom.getAttribute("data-username"),
-                    date: parseInt(dom.getAttribute("data-date")),
+                    user: parseInt(dom.dataset.user),
+                    username: dom.dataset.username,
+                    date: parseInt(dom.dataset.date),
                     inline: true,
                     approved: false
                 }
@@ -304,47 +486,21 @@ export let insertion = {
             tag: "span.approved-insertion",
             getAttrs(dom) {
                 return {
-                    user: parseInt(dom.getAttribute("data-user")),
-                    username: dom.getAttribute("data-username"),
-                    date: parseInt(dom.getAttribute("data-date")),
+                    user: parseInt(dom.dataset.user),
+                    username: dom.dataset.username,
+                    date: parseInt(dom.dataset.date),
                     inline: true,
-                    approved: true
-                }
-            }
-        },
-        {
-            tag: "div.insertion",
-            getAttrs(dom) {
-                return {
-                    user: parseInt(dom.getAttribute("data-user")),
-                    username: dom.getAttribute("data-username"),
-                    date: parseInt(dom.getAttribute("data-date")),
-                    inline: false,
-                    approved: false
-                }
-            }
-        },
-        {
-            tag: "div.approved-insertion",
-            getAttrs(dom) {
-                return {
-                    user: parseInt(dom.getAttribute("data-user")),
-                    username: dom.getAttribute("data-username"),
-                    date: parseInt(dom.getAttribute("data-date")),
-                    inline: false,
                     approved: true
                 }
             }
         }
     ],
     toDOM(node) {
-        let elType = node.attrs.inline ? 'span' : 'div',
-            attrs = {
-                class: node.attrs.approved ? 'approved-insertion' : `insertion user-${node.attrs.user}`,
-                'data-user': node.attrs.user,
-                'data-username': node.attrs.username,
-                'data-date': node.attrs.date
-            }
-        return [elType, attrs]
+        return ['span', {
+            class: node.attrs.approved ? 'approved-insertion' : `insertion user-${node.attrs.user}`,
+            'data-user': node.attrs.user,
+            'data-username': node.attrs.username,
+            'data-date': node.attrs.date
+        }]
     }
 }

@@ -1,5 +1,21 @@
 import {katexRender} from "../katex"
 
+function parseReferences(str) {
+    if (!str) {
+        return []
+    }
+    let references
+    try {
+        references = JSON.parse(str)
+    } catch(error) {
+       return []
+   }
+   if (!Array.isArray(references)) {
+       return []
+   }
+   return references.filter(ref => ref.hasOwnProperty('id')) // ensure there is an id.
+}
+
 export let citation = {
     inline: true,
     group: "inline",
@@ -16,7 +32,7 @@ export let citation = {
         getAttrs(dom) {
             return {
                 format: dom.dataset.format || '',
-                references: JSON.parse(dom.dataset.references || '[]')
+                references: parseReferences(dom.dataset.references)
             }
         }
     }],
@@ -62,6 +78,26 @@ export function randomFigureId() {
     return 'F' + Math.round(Math.random()*10000000) + 1
 }
 
+export function parseTracks(str) {
+    if (!str) {
+        return []
+    }
+    let tracks
+    try {
+        tracks = JSON.parse(str)
+    } catch(error) {
+        return []
+    }
+    if (!Array.isArray(tracks)) {
+        return []
+    }
+    return tracks.filter(track => // ensure required fields are present
+        track.hasOwnProperty('user') &&
+        track.hasOwnProperty('username') &&
+        track.hasOwnProperty('date')
+    )
+}
+
 let imageDBBroken = false
 
 export let figure = {
@@ -84,7 +120,7 @@ export let figure = {
                 figureCategory: dom.dataset.figureCategory,
                 caption: dom.dataset.caption,
                 id: dom.dataset.id,
-                track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+                track: parseTracks(dom.dataset.track)
             }
         }
     }],
@@ -193,7 +229,7 @@ export let heading = {
                 return {
                     level: 1,
                     id: dom.id,
-                    track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+                    track: parseTracks(dom.dataset.track)
                 }
             }
         },
@@ -203,7 +239,7 @@ export let heading = {
                 return {
                     level: 2,
                     id: dom.id,
-                    track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+                    track: parseTracks(dom.dataset.track)
                 }
              }
         },
@@ -213,7 +249,7 @@ export let heading = {
                 return {
                     level: 3,
                     id: dom.id,
-                    track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+                    track: parseTracks(dom.dataset.track)
                 }
             }
         },
@@ -223,7 +259,7 @@ export let heading = {
                 return {
                     level: 4,
                     id: dom.id,
-                    track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+                    track: parseTracks(dom.dataset.track)
                 }
             }
         },
@@ -233,7 +269,7 @@ export let heading = {
                 return {
                     level: 5,
                     id: dom.id,
-                    track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+                    track: parseTracks(dom.dataset.track)
                 }
             }
         },
@@ -243,7 +279,7 @@ export let heading = {
                 return {
                     level: 6,
                     id: dom.id,
-                    track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+                    track: parseTracks(dom.dataset.track)
                 }
             }
         }
@@ -267,7 +303,7 @@ export let paragraph = {
         }
     },
     parseDOM: [{tag: "p", getAttrs(dom) {return {
-        track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+        track: parseTracks(dom.dataset.track)
     }}}],
     toDOM(node) {
         let attrs = node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
@@ -287,7 +323,7 @@ export let blockquote = {
     marks: "annotation",
     defining: true,
     parseDOM: [{tag: "blockquote", getAttrs(dom) {return {
-        track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+        track: parseTracks(dom.dataset.track)
     }}}],
     toDOM(node) {
         let attrs = node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
@@ -304,7 +340,7 @@ export let horizontal_rule = {
         }
     },
     parseDOM: [{tag: "hr", getAttrs(dom) {return {
-        track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+        track: parseTracks(dom.dataset.track)
     }}}],
     toDOM(node) {
         let attrs = node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
@@ -355,7 +391,7 @@ export const ordered_list = {
     parseDOM: [{tag: "ol", getAttrs(dom) {
         return {
             order: dom.hasAttribute("start") ? +dom.getAttribute("start") : 1,
-            track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+            track: parseTracks(dom.dataset.track)
         }
     }}],
     toDOM(node) {
@@ -380,7 +416,7 @@ export const bullet_list = {
     },
     parseDOM: [{tag: "ul", getAttrs(dom) {
         return {
-            track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+            track: parseTracks(dom.dataset.track)
         }
     }}],
     toDOM(node) {
@@ -402,7 +438,7 @@ export const list_item = {
     },
     parseDOM: [{tag: "li", getAttrs(dom) {
         return {
-            track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+            track: parseTracks(dom.dataset.track)
         }
     }}],
     toDOM(node) {

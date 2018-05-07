@@ -3,7 +3,7 @@ import {Schema} from "prosemirror-model"
 import {nodes, marks} from "prosemirror-schema-basic"
 import {tableNodes} from "prosemirror-tables"
 import {htmlToFnNode, fnNodeToHtml} from "./footnotes_convert"
-import {figure, citation, equation, heading, anchor, paragraph, blockquote, horizontal_rule, ordered_list, bullet_list, list_item, deletion, insertion} from "./common"
+import {figure, citation, equation, heading, anchor, paragraph, blockquote, horizontal_rule, ordered_list, bullet_list, list_item, deletion, insertion, parseTracks} from "./common"
 
 
 let article = {
@@ -319,7 +319,7 @@ let code_block = {
         tag: "pre",
         preserveWhitespace: "full",
         getAttrs(dom) {return {
-            track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+            track: parseTracks(dom.dataset.track)
         }}
     }],
     toDOM(node) {
@@ -414,7 +414,7 @@ spec.nodes = spec.nodes.update(
             },
             parseDOM: [{tag: "table", getAttrs(dom) {
                 return {
-                    track: dom.dataset.track ? JSON.parse(dom.dataset.track) : []
+                    track: parseTracks(dom.dataset.track)
                 }
             }}],
             toDOM(node) {

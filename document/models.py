@@ -33,6 +33,10 @@ class Document(models.Model):
     updated = models.DateTimeField(auto_now=True)
     comments = models.TextField(default='{}')
     bibliography = models.TextField(default='{}')
+    # Whether or not document is listed on document overview list page.
+    # True by default and for all normal documents. Can be set to False when
+    # documents are added in plugins that list these documents somewhere else.
+    listed = models.BooleanField(default=True)
 
     def __unicode__(self):
         if len(self.title) > 0:

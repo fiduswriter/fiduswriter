@@ -146,7 +146,7 @@ export class ModTrack {
             }
             if (type==='insertion') {
                 deleteNode(tr, node, nodePos, map)
-            } else {
+            } else if (type==='deletion') {
                 if (node.attrs.track) {
                     let track = node.attrs.track.filter(track => track.type !== 'deletion')
                     tr.setNodeMarkup(map.map(nodePos), null, Object.assign({}, node.attrs, {track}), node.marks)
@@ -214,17 +214,24 @@ export class ModTrack {
             }
             if (!node.isInline) {
                 reachedEnd = true
-            } else if (!trackMark.isInSet(node.marks) || (!trackMark.attrs.inline && nodePos !== pos)) {
+            } else if (!trackMark.isInSet(node.marks)) {
                 reachedEnd = true
                 return false
             }
 
             if (type==='deletion') {
                 deleteNode(tr, node, nodePos, map)
-            } else {
+            } else if (type==='insertion') {
                 if (node.attrs.track) {
                     let track = node.attrs.track.filter(track => track.type !== 'insertion')
+                    if (node.attrs.track.length === track) {
+                        return true
+                    }
                     tr.setNodeMarkup(map.map(nodePos), null, Object.assign({}, node.attrs, {track}), node.marks)
+                    // Special case: first paragraph in list item by same user -- will also be accepted.
+                    if (node.type.name === 'list_item' && node.child(0) && node.child(0).type.name === 'paragraph') {
+                        reachedEnd = false
+                    }
                 } else {
                     tr.step(
                         new AddMarkStep(

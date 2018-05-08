@@ -33,7 +33,7 @@ export class ModMarginboxes {
         // Handle the layout of the comments on the screen.
         // DOM write phase
 
-        let marginBoxes = [], referrers = [], activeCommentStyle = '', lastNodeTracks = []
+        let marginBoxes = [], referrers = [], activeCommentStyle = '', lastNodeTracks = [], lastNodeType, lastNodeInline
 
         this.editor.view.state.doc.descendants((node, pos, parent) => {
             let commentIds = node.isInline || node.isLeaf ? this.editor.mod.comments.interactions.findCommentIds(node) : []
@@ -46,20 +46,27 @@ export class ModMarginboxes {
                 ).map(mark => ({type: mark.type.name, data: mark.attrs}))
 
             // Filter out trackmarks already present in the last node (if it's an inline node).
-            let tracks = nodeTracks.filter(track =>
-                !lastNodeTracks.find(
-                    lastTrack =>
-                        track.type===lastTrack.type &&
-                        track.data.user===lastTrack.data.user &&
-                        track.data.date===lastTrack.data.date &&
-                        node.isInline // block level changes always need new boxes
-                )
-            )
+            let tracks = node.isInline === lastNodeInline ?
+                nodeTracks.filter(track =>
+                    !lastNodeTracks.find(
+                        lastTrack =>
+                            track.type===lastTrack.type &&
+                            track.data.user===lastTrack.data.user &&
+                            track.data.date===lastTrack.data.date &&
+                            (
+                                node.isInline || // block level changes almost always need new boxes
+                                node.type.name === 'paragraph' && lastNodeType === 'list_item' && lastTrack.type === 'insertion' // Don't show first paragraphs in list items.
+                            )
+                    )
+                ) :
+                nodeTracks
             tracks.forEach(track => {
                 marginBoxes.push(Object.assign({nodeType: node.isInline ? 'text' : node.type.name, pos}, track))
                 referrers.push(pos)
             })
-            lastNodeTracks = node.isInline ? nodeTracks : []
+            lastNodeTracks = nodeTracks
+            lastNodeType = node.type.name
+            lastNodeInline = node.isInline
 
             if (!commentIds.length && !tracks.length) {
                 return

@@ -72,7 +72,7 @@ export class ModMarginboxes {
                 pos = deco.from
                 view = 'main'
             } else {
-                let fnDeco = getCommentDuringCreationDecoration(this.editor.mod.footnotes.fnEditor.view)
+                let fnDeco = getCommentDuringCreationDecoration(this.editor.mod.footnotes.fnEditor.view.state)
                 if (fnDeco) {
                     pos = this.fnPosToPos(fnDeco.from)
                     view = 'footnote'

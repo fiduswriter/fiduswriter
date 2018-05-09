@@ -243,7 +243,7 @@ export let trackPlugin = function(options) {
                         ['historyUndo', 'historyRedo'].includes(tr.getMeta('inputType'))
                 )
             ) {
-                // All transactions don't change the doc, are remote, come from footnotes, history or fixing IDs. Give up.
+                // None of the transactions change the doc, or all are remote, come from footnotes, are footnote creations, history or fixing IDs. Give up.
                 return false
             }
             let addedRanges = [], // Content that has been added (also may mean removals)

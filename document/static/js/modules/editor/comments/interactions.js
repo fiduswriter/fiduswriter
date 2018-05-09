@@ -32,8 +32,9 @@ export class ModCommentInteractions {
                     if (fnTr) {
                         this.mod.editor.mod.footnotes.fnEditor.view.dispatch(fnTr)
                     }
-                    let id = parseInt(el.target.dataset.id)
-                    this.activateComment(id)
+                    this.activateComment(
+                        parseInt(el.target.dataset.id)
+                    )
                     this.mod.editor.mod.marginboxes.updateDOM()
                     break
                 case findTarget(event, '.edit-comment', el):
@@ -165,7 +166,7 @@ export class ModCommentInteractions {
     // with collaborators.
     createNewComment() {
         this.deactivateAll()
-        this.mod.store.addCommentDuringCreation()
+        this.mod.store.addCommentDuringCreation(this.mod.editor.currentView)
         this.activeCommentId = -1
         this.mod.editor.mod.marginboxes.updateDOM().then(
             () => {
@@ -192,7 +193,7 @@ export class ModCommentInteractions {
     updateComment(id, commentText, isMajor) {
         // Save the change to a comment and mark that the document has been changed
         if (id===-1) {
-            let referrer = getCommentDuringCreationDecoration(this.mod.editor.view.state)
+            let referrer = getCommentDuringCreationDecoration(this.mod.store.commentDuringCreation.view.state)
             // This is a new comment. We need to get an ID for it if it has contents.
 
             let username
@@ -213,7 +214,8 @@ export class ModCommentInteractions {
                     isMajor
                 },
                 referrer.from,
-                referrer.to
+                referrer.to,
+                this.mod.store.commentDuringCreation.view
             )
         } else {
             this.mod.store.updateComment(id, commentText, isMajor)

@@ -19,7 +19,8 @@ import {
     getFootnoteMarkerContents,
     updateFootnoteMarker,
     trackPlugin,
-    marginboxesPlugin
+    marginboxesPlugin,
+    commentsPlugin
 } from "../state_plugins"
 import {
     accessRightsPlugin
@@ -45,6 +46,7 @@ export class ModFootnoteEditor {
             [collabCaretsPlugin, () => ({editor: this.mod.editor})],
             [pastePlugin, () => ({editor: this.mod.editor})],
             [accessRightsPlugin, () => ({editor: this.mod.editor})],
+            [commentsPlugin, () => ({editor: this.mod.editor})],
             [trackPlugin, () => ({editor: this.mod.editor})],
             [marginboxesPlugin, () => ({editor: this.mod.editor})]
         ]

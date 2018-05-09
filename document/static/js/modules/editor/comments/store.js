@@ -42,9 +42,9 @@ export class ModCommentStore {
     // Create a new temporary comment. This one is not going into the store yet,
     // as it is empty, shouldn't be shared and if canceled, it should go away
     // entirely.
-    addCommentDuringCreation() {
+    addCommentDuringCreation(view) {
 
-        let state = this.mod.editor.currentView.state,
+        let state = view.state,
             tr = state.tr
 
         tr = addCommentDuringCreationDecoration(state, tr)
@@ -54,7 +54,7 @@ export class ModCommentStore {
             return
         }
 
-        this.mod.editor.view.dispatch(tr)
+        view.dispatch(tr)
 
         let id = -1, username
 
@@ -71,19 +71,21 @@ export class ModCommentStore {
                 username,
                 Date.now() - this.mod.editor.clientTimeAdjustment,
                 ''),
-            inDOM: false
+            inDOM: false,
+            view
         }
 
     }
 
     removeCommentDuringCreation() {
         if (this.commentDuringCreation) {
+            let view = this.commentDuringCreation.view
             this.commentDuringCreation = false
-            let state = this.mod.editor.view.state
+            let state = view.state
             let tr = state.tr
             tr = removeCommentDuringCreationDecoration(state, tr)
             if (tr) {
-                this.mod.editor.view.dispatch(tr)
+                view.dispatch(tr)
             }
         }
     }
@@ -92,13 +94,14 @@ export class ModCommentStore {
     addComment(
         commentData,
         posFrom,
-        posTo
+        posTo,
+        view
     ) {
         let id = randomID(),
-            markType = this.mod.editor.view.state.schema.marks.comment.create({
+            markType = view.state.schema.marks.comment.create({
                 id
             }),
-            tr = this.addMark(this.mod.editor.view.state.tr, posFrom, posTo, markType)
+            tr = this.addMark(view.state.tr, posFrom, posTo, markType)
 
         if (tr) {
             commentData.id = id
@@ -108,7 +111,7 @@ export class ModCommentStore {
                 type: "create",
                 id
             })
-            this.mod.editor.view.dispatch(tr)
+            view.dispatch(tr)
             this.mustSend()
         }
     }
@@ -148,10 +151,6 @@ export class ModCommentStore {
                 tr.setNodeMarkup(pos, null, node.attrs, newMarks)
             }
         })
-        if (!tr.steps.length) {
-            return
-        }
-        return tr
     }
 
     loadComments(commentsData) {
@@ -199,22 +198,22 @@ export class ModCommentStore {
     }
 
     removeCommentMarks(id) {
-        this.mod.editor.view.state.doc.descendants((node, pos, parent) => {
-            let nodeStart = pos
-            let nodeEnd = pos + node.nodeSize
-            for (let i = 0; i < node.marks.length; i++) {
-                let mark = node.marks[i]
-                if (mark.type.name === 'comment' && parseInt(mark.attrs
-                        .id) === id) {
-                    let markType = this.mod.editor.view.state.schema
-                        .marks.comment.create({
-                            id
-                        })
-                    let tr = this.removeMark(this.mod.editor.view.state.tr, nodeStart, nodeEnd, markType)
-                    if (tr) {
-                        this.mod.editor.view.dispatch(tr)
+        // remove comment marks with the given ID in both views.
+        [this.mod.editor.view, this.mod.editor.mod.footnotes.fnEditor.view].forEach(view => {
+            let tr = view.state.tr
+            view.state.doc.descendants((node, pos, parent) => {
+                let nodeStart = pos
+                let nodeEnd = pos + node.nodeSize
+                for (let i = 0; i < node.marks.length; i++) {
+                    let mark = node.marks[i]
+                    if (mark.type.name === 'comment' && parseInt(mark.attrs.id) === id) {
+                        let markType = view.state.schema.marks.comment.create({id})
+                        this.removeMark(tr, nodeStart, nodeEnd, markType)
                     }
                 }
+            })
+            if (tr.steps.length) {
+                view.dispatch(tr)
             }
         })
     }

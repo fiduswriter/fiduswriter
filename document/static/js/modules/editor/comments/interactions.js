@@ -28,7 +28,11 @@ export class ModCommentInteractions {
                     if (tr) {
                         this.mod.editor.view.dispatch(tr)
                     }
-                    let id = this.getCommentId(el.target)
+                    let fnTr = deactivateAllSelectedChanges(this.mod.editor.mod.footnotes.fnEditor.view.state.tr)
+                    if (fnTr) {
+                        this.mod.editor.mod.footnotes.fnEditor.view.dispatch(fnTr)
+                    }
+                    let id = parseInt(el.target.dataset.id)
                     this.activateComment(id)
                     this.mod.editor.mod.marginboxes.updateDOM()
                     break
@@ -174,12 +178,6 @@ export class ModCommentInteractions {
 
     }
 
-    getCommentId(node) {
-        // Returns the value of the attributte data-id as an integer.
-        // This function can be used on both comment referrers and comment boxes.
-        return parseInt(node.dataset.id)
-    }
-
     deleteComment(id) {
         if (id===-1) {
             this.deactivateAll()
@@ -230,7 +228,7 @@ export class ModCommentInteractions {
         let commentTextBox = submitButton.parentElement.querySelector('.commentText'),
             commentText = commentTextBox.value,
             isMajor = submitButton.parentElement.querySelector('.comment-is-major').checked,
-            id = this.getCommentId(commentTextBox)
+            id = parseInt(commentTextBox.dataset.id)
         if (commentText.length > 0) {
             this.updateComment(id, commentText, isMajor)
         } else {
@@ -243,7 +241,7 @@ export class ModCommentInteractions {
         // Handle a click on the cancel button of the comment submit form.
         let commentTextBox = cancelButton.parentElement.querySelector('.commentText')
         if (commentTextBox) {
-            let id = this.getCommentId(commentTextBox)
+            let id = parseInt(commentTextBox.dataset.id)
             if (id===-1 || this.mod.store.comments[id].comment.length === 0) {
                 this.deleteComment(id)
             } else {

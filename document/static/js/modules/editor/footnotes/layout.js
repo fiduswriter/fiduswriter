@@ -90,7 +90,7 @@ export class ModFootnoteLayout {
 
                     if (referrerTop > totalOffset) {
                         topMargin = parseInt(referrerTop - totalOffset)
-                        footnotePlacementStyle += '.footnote-container:nth-of-type('+(index+1)+') {margin-top: ' + topMargin + 'px;}\n'
+                        footnotePlacementStyle += `.footnote-container:nth-of-type(${(index+1)}) {margin-top: ${topMargin}px;}\n`
                     }
                     totalOffset += footnoteBoxHeight + topMargin
                 })

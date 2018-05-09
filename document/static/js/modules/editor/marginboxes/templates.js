@@ -94,11 +94,11 @@ let firstCommentTemplate = ({
     </div>`
 
 
-let commentTemplate = ({comment, activeCommentId, activeCommentAnswerId, user, docInfo}) => {
+let commentTemplate = ({comment, view, activeCommentId, activeCommentAnswerId, user, docInfo}) => {
     let author = comment.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === comment.user)
     return comment.hidden ?
     `<div id="margin-box-${comment.id}" class="margin-box comment hidden"></div>` :
-    `<div id="margin-box-${comment.id}" data-id="${comment.id}"  data-user-id="${comment.user}"
+    `<div id="margin-box-${comment.id}" data-view="${view}" data-id="${comment.id}" data-user-id="${comment.user}"
             class="
                 margin-box comment ${comment.id === activeCommentId ? 'active' : 'inactive'}
                 ${comment.isMajor === true ? 'comment-is-major-bgc' : ''}
@@ -170,10 +170,10 @@ let ACTIONS = {
     deletion_table: gettext('Delete table')
 }
 
-let trackTemplate = ({type, data, nodeType, pos, active, docInfo}) => {
+let trackTemplate = ({type, data, nodeType, pos, view, active, docInfo}) => {
     let author = data.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === data.user)
     return `
-        <div class="margin-box track ${active ? 'active' : 'inactive'}" data-type="${type}" data-pos="${pos}">
+        <div class="margin-box track ${active ? 'active' : 'inactive'}" data-type="${type}" data-pos="${pos}" data-view="${view}">
             <div class="track-${type}">
                 <div class="track-title">${ACTIONS[`${type}_${nodeType}`]}</div>
                 <div class="comment-user">
@@ -182,8 +182,8 @@ let trackTemplate = ({type, data, nodeType, pos, active, docInfo}) => {
                     <p class="comment-date">${localizeDate(data.date*600000, 'minutes')}</p>
                 </div>
                 <div class="ui-dialog-buttonset">
-                    <button class="fw-button fw-small fw-green track-accept" data-type="${type}" data-pos="${pos}">${gettext('Accept')}</button>
-                    <button class="fw-button fw-small fw-orange track-reject" data-type="${type}" data-pos="${pos}">${gettext('Reject')}</button>
+                    <button class="fw-button fw-small fw-green track-accept" data-type="${type}" data-pos="${pos}" data-view="${view}">${gettext('Accept')}</button>
+                    <button class="fw-button fw-small fw-orange track-reject" data-type="${type}" data-pos="${pos}" data-view="${view}">${gettext('Reject')}</button>
                 </div>
             </div>
         </div>`
@@ -201,7 +201,7 @@ export let marginBoxesTemplate = ({
     }) => marginBoxes.map(mBox => {
         switch(mBox.type) {
             case 'comment':
-                return commentTemplate({comment: mBox.data, activeCommentId, activeCommentAnswerId, user, docInfo})
+                return commentTemplate({comment: mBox.data, view: mBox.view, activeCommentId, activeCommentAnswerId, user, docInfo})
                 break
             case 'insertion':
             case 'deletion':
@@ -210,6 +210,7 @@ export let marginBoxesTemplate = ({
                     nodeType: mBox.nodeType,
                     data: mBox.data,
                     pos: mBox.pos,
+                    view: mBox.view,
                     active: selectedChanges[mBox.type] && selectedChanges[mBox.type].from === mBox.pos,
                     docInfo
                 })

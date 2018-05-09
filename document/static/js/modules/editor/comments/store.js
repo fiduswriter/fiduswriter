@@ -44,7 +44,7 @@ export class ModCommentStore {
     // entirely.
     addCommentDuringCreation() {
 
-        let state = this.mod.editor.view.state,
+        let state = this.mod.editor.currentView.state,
             tr = state.tr
 
         tr = addCommentDuringCreationDecoration(state, tr)

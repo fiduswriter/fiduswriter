@@ -1,6 +1,6 @@
 import {marginBoxesTemplate} from "./templates"
 import {Comment} from "../comments/comment"
-import {getCommentDuringCreationDecoration, getSelectedChanges} from "../state_plugins"
+import {getCommentDuringCreationDecoration, getSelectedChanges, getFootnoteMarkers} from "../state_plugins"
 
 import fastdom from "fastdom"
 
@@ -34,21 +34,51 @@ export class ModMarginboxes {
         // Handle the layout of the comments on the screen.
         // DOM write phase
 
-        let marginBoxes = [], referrers = [], lastNodeTracks = [], lastNode = this.editor.view.state.doc
+        let marginBoxes = [], referrers = [], lastNodeTracks = [], lastNode = this.editor.view.state.doc, fnIndex = 0, fnPosCount = 0
         this.activeCommentStyle = ''
-        
+
         this.editor.view.state.doc.descendants(
             (node, pos) => {
-                lastNodeTracks = this.getMarginBoxes(node, pos, lastNode, lastNodeTracks, marginBoxes, referrers)
+                lastNodeTracks = this.getMarginBoxes(node, pos, pos, lastNode, lastNodeTracks, 'main', marginBoxes, referrers)
                 lastNode = node
+                if (node.type.name==='footnote') {
+                    let lastFnNode = this.editor.mod.footnotes.fnEditor.view.state.doc,
+                        footnote = lastFnNode.childCount > fnIndex ? lastFnNode.child(fnIndex) : false,
+                        lastFnNodeTracks = []
+                    if (!footnote) {
+                        return
+                    }
+                    this.editor.mod.footnotes.fnEditor.view.state.doc.nodesBetween(
+                        fnPosCount,
+                        fnPosCount+footnote.nodeSize,
+                        (fnNode, fnPos) => {
+                            if (fnPos < fnPosCount) {
+                                return false
+                            }
+                            lastFnNodeTracks = this.getMarginBoxes(fnNode, fnPos, pos, lastFnNode, lastFnNodeTracks, 'footnote', marginBoxes, referrers)
+                            lastFnNode = fnNode
+                        }
+                    )
+                    fnIndex++
+                    fnPosCount += footnote.nodeSize
+                }
             }
         )
 
         // Add a comment that is currently under construction to the list.
         if(this.editor.mod.comments.store.commentDuringCreation) {
-            let deco = getCommentDuringCreationDecoration(this.editor.view.state)
+            let deco = getCommentDuringCreationDecoration(this.editor.view.state), pos, view
             if (deco) {
-                let pos = deco.from
+                pos = deco.from
+                view = 'main'
+            } else {
+                let fnDeco = getCommentDuringCreationDecoration(this.editor.mod.footnotes.fnEditor.view)
+                if (fnDeco) {
+                    pos = this.fnPosToPos(fnDeco.from)
+                    view = 'footnote'
+                }
+            }
+            if (pos) {
                 let comment = this.editor.mod.comments.store.commentDuringCreation.comment
                 // let comment = this.editor.mod.comments.store.commentDuringCreation.comment
                 let index = 0
@@ -57,7 +87,7 @@ export class ModMarginboxes {
                 while (referrers.length > index && referrers[index] < pos) {
                     index++
                 }
-                marginBoxes.splice(index, 0, {type: 'comment', data: comment})
+                marginBoxes.splice(index, 0, {type: 'comment', data: comment, view, pos})
                 referrers.splice(index, 0, pos)
                 this.activeCommentStyle += '.comments-enabled .active-comment, .comments-enabled .active-comment .comment {background-color: #fffacf !important;}'
             }
@@ -69,7 +99,7 @@ export class ModMarginboxes {
             marginBoxes,
             user: this.editor.user,
             docInfo: this.editor.docInfo,
-            selectedChanges: getSelectedChanges(this.editor.view.state),
+            selectedChanges: getSelectedChanges(this.editor.currentView.state),
             activeCommentId: this.editor.mod.comments.interactions.activeCommentId,
             activeCommentAnswerId: this.editor.mod.comments.interactions.activeCommentAnswerId
         })
@@ -127,7 +157,14 @@ export class ModMarginboxes {
 
     }
 
-    getMarginBoxes(node, pos, lastNode, lastNodeTracks, marginBoxes, referrers) {
+    fnPosToPos(fnPos) {
+        let fnIndex = this.editor.mod.footnotes.fnEditor.view.state.doc.resolve(fnPos).index(0),
+            fnMarker = getFootnoteMarkers(this.editor.view.state)[fnIndex]
+
+        return fnMarker.from
+    }
+
+    getMarginBoxes(node, pos, refPos, lastNode, lastNodeTracks, view, marginBoxes, referrers) {
         let commentIds = node.isInline || node.isLeaf ? this.editor.mod.comments.interactions.findCommentIds(node) : []
 
         let nodeTracks = node.attrs.track ?
@@ -153,12 +190,12 @@ export class ModMarginboxes {
             ) :
             nodeTracks
         tracks.forEach(track => {
-            marginBoxes.push(Object.assign({nodeType: node.isInline ? 'text' : node.type.name, pos}, track))
-            referrers.push(pos)
+            marginBoxes.push(Object.assign({nodeType: node.isInline ? 'text' : node.type.name, pos, view}, track))
+            referrers.push(refPos)
         })
 
         if (!commentIds.length && !tracks.length) {
-            return
+            return nodeTracks
         }
         commentIds.forEach(commentId => {
             let comment = this.editor.mod.comments.store.findComment(commentId)
@@ -177,8 +214,8 @@ export class ModMarginboxes {
                 this.activeCommentStyle +=
                     `.comments-enabled .comment[data-id="${comment.id}"] {background-color: #f2f2f2;}`
             }
-            marginBoxes.push({type: 'comment', data: comment})
-            referrers.push(pos)
+            marginBoxes.push({type: 'comment', data: comment, pos, view})
+            referrers.push(refPos)
         })
 
         return nodeTracks

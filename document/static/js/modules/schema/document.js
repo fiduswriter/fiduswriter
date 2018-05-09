@@ -3,7 +3,7 @@ import {Schema} from "prosemirror-model"
 import {nodes, marks} from "prosemirror-schema-basic"
 import {tableNodes} from "prosemirror-tables"
 import {htmlToFnNode, fnNodeToHtml} from "./footnotes_convert"
-import {figure, citation, equation, heading, anchor, paragraph, blockquote, horizontal_rule, ordered_list, bullet_list, list_item, deletion, insertion, parseTracks} from "./common"
+import {figure, citation, equation, heading, anchor, paragraph, blockquote, horizontal_rule, ordered_list, bullet_list, list_item, deletion, insertion, parseTracks, comment} from "./common"
 
 
 let article = {
@@ -325,29 +325,6 @@ let code_block = {
     toDOM(node) {
         let attrs = node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
         return ["pre", attrs, ["code", 0]]
-    }
-}
-
-let comment = {
-    attrs: {
-        id: {}
-    },
-    inclusive: false,
-    excludes: "",
-    group: "annotation",
-    parseDOM: [{
-        tag: "span.comment[data-id]",
-        getAttrs(dom) {
-            return {
-                id: parseInt(dom.dataset.id)
-            }
-        }
-    }],
-    toDOM(node) {
-        return ['span', {
-            class: 'comment',
-            'data-id': node.attrs.id
-        }]
     }
 }
 

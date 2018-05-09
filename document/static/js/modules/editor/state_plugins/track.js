@@ -12,7 +12,6 @@ const selectedDeletionSpec = {}
 //   * table operations (remove row/column)
 //   * style changes (italic/bold)
 //   * block type changes (heading/paragraph/etc.)
-//   * footnote contents
 // - Tests
 // - Use custom setBlockType for keyboard shortcuts
 
@@ -171,7 +170,11 @@ export let trackPlugin = function(options) {
                         })
                     }
                 })
-                userIds.forEach(userId => options.editor.mod.collab.colors.ensureUserColor(userId))
+
+                if (options.editor.mod.collab) {
+                    userIds.forEach(userId => options.editor.mod.collab.colors.ensureUserColor(userId))
+                }
+
 
                 return {
                     decos: DecorationSet.empty
@@ -219,10 +222,15 @@ export let trackPlugin = function(options) {
 					decos
 				} = this.getState(state)
 				return decos
-			}
+			},
+            handleDOMEvents: {
+                focus: (view, event) => {
+                    let otherView = view === options.editor.view ? options.editor.mod.footnotes.fnEditor.view : options.editor.view
+                    otherView.dispatch(deactivateAllSelectedChanges(otherView.state.tr))
+                }
+            }
         },
         appendTransaction(trs, oldState, newState) {
-
             if (
                 trs.every(
                     tr =>

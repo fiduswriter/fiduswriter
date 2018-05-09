@@ -556,7 +556,7 @@ export let toolbarModel = {
             disabled: editor => {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
                     return true
-                } else if (editor.view !== editor.currentView || editor.currentView.state.selection.empty) {
+                } else if (editor.currentView.state.selection.empty) {
                     return true
                 }
             },

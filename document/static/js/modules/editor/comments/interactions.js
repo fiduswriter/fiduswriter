@@ -28,8 +28,13 @@ export class ModCommentInteractions {
                     if (tr) {
                         this.mod.editor.view.dispatch(tr)
                     }
-                    let id = this.getCommentId(el.target)
-                    this.activateComment(id)
+                    let fnTr = deactivateAllSelectedChanges(this.mod.editor.mod.footnotes.fnEditor.view.state.tr)
+                    if (fnTr) {
+                        this.mod.editor.mod.footnotes.fnEditor.view.dispatch(fnTr)
+                    }
+                    this.activateComment(
+                        parseInt(el.target.dataset.id)
+                    )
                     this.mod.editor.mod.marginboxes.updateDOM()
                     break
                 case findTarget(event, '.edit-comment', el):
@@ -161,7 +166,7 @@ export class ModCommentInteractions {
     // with collaborators.
     createNewComment() {
         this.deactivateAll()
-        this.mod.store.addCommentDuringCreation()
+        this.mod.store.addCommentDuringCreation(this.mod.editor.currentView)
         this.activeCommentId = -1
         this.mod.editor.mod.marginboxes.updateDOM().then(
             () => {
@@ -172,12 +177,6 @@ export class ModCommentInteractions {
             }
         )
 
-    }
-
-    getCommentId(node) {
-        // Returns the value of the attributte data-id as an integer.
-        // This function can be used on both comment referrers and comment boxes.
-        return parseInt(node.dataset.id)
     }
 
     deleteComment(id) {
@@ -194,7 +193,7 @@ export class ModCommentInteractions {
     updateComment(id, commentText, isMajor) {
         // Save the change to a comment and mark that the document has been changed
         if (id===-1) {
-            let referrer = getCommentDuringCreationDecoration(this.mod.editor.view.state)
+            let referrer = getCommentDuringCreationDecoration(this.mod.store.commentDuringCreation.view.state)
             // This is a new comment. We need to get an ID for it if it has contents.
 
             let username
@@ -215,7 +214,8 @@ export class ModCommentInteractions {
                     isMajor
                 },
                 referrer.from,
-                referrer.to
+                referrer.to,
+                this.mod.store.commentDuringCreation.view
             )
         } else {
             this.mod.store.updateComment(id, commentText, isMajor)
@@ -230,7 +230,7 @@ export class ModCommentInteractions {
         let commentTextBox = submitButton.parentElement.querySelector('.commentText'),
             commentText = commentTextBox.value,
             isMajor = submitButton.parentElement.querySelector('.comment-is-major').checked,
-            id = this.getCommentId(commentTextBox)
+            id = parseInt(commentTextBox.dataset.id)
         if (commentText.length > 0) {
             this.updateComment(id, commentText, isMajor)
         } else {
@@ -243,7 +243,7 @@ export class ModCommentInteractions {
         // Handle a click on the cancel button of the comment submit form.
         let commentTextBox = cancelButton.parentElement.querySelector('.commentText')
         if (commentTextBox) {
-            let id = this.getCommentId(commentTextBox)
+            let id = parseInt(commentTextBox.dataset.id)
             if (id===-1 || this.mod.store.comments[id].comment.length === 0) {
                 this.deleteComment(id)
             } else {

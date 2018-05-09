@@ -84,12 +84,12 @@ export let removeCommentDuringCreationDecoration = function(state, tr) {
         decos
     } = key.getState(state)
 
-    let commentDuringCreationDeco = decos.find(undefined, undefined, spec => spec === commentDuringCreationDecoSpec)
+    let commentDuringCreationDecos = decos.find(undefined, undefined, spec => spec === commentDuringCreationDecoSpec)
 
-    if (!commentDuringCreationDeco) {
+    if (!commentDuringCreationDecos) {
         return false
     }
-    decos = decos.remove([commentDuringCreationDeco])
+    decos = decos.remove(commentDuringCreationDecos)
 
     return tr.setMeta(key, {decos})
 }

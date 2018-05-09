@@ -17,7 +17,10 @@ import {
     collabCaretsPlugin,
     linksPlugin,
     getFootnoteMarkerContents,
-    updateFootnoteMarker
+    updateFootnoteMarker,
+    trackPlugin,
+    marginboxesPlugin,
+    commentsPlugin
 } from "../state_plugins"
 import {
     accessRightsPlugin
@@ -42,7 +45,10 @@ export class ModFootnoteEditor {
             [citationRenderPlugin, () => ({editor: this.mod.editor})],
             [collabCaretsPlugin, () => ({editor: this.mod.editor})],
             [pastePlugin, () => ({editor: this.mod.editor})],
-            [accessRightsPlugin, () => ({editor: this.mod.editor})]
+            [accessRightsPlugin, () => ({editor: this.mod.editor})],
+            [commentsPlugin, () => ({editor: this.mod.editor})],
+            [trackPlugin, () => ({editor: this.mod.editor})],
+            [marginboxesPlugin, () => ({editor: this.mod.editor})]
         ]
     }
 

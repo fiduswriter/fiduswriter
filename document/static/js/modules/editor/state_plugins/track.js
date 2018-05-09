@@ -239,6 +239,7 @@ export let trackPlugin = function(options) {
                         tr.getMeta('remote') ||
                         tr.getMeta('track') ||
                         tr.getMeta('fromFootnote') ||
+                        tr.getMeta('filterFree') ||
                         ['historyUndo', 'historyRedo'].includes(tr.getMeta('inputType'))
                 )
             ) {

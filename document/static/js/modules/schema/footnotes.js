@@ -2,13 +2,29 @@ import OrderedMap from "orderedmap"
 import {Schema} from "prosemirror-model"
 import {nodes, marks} from "prosemirror-schema-basic"
 import {tableNodes} from "prosemirror-tables"
-
-import {figure, citation, equation, heading, anchor, paragraph, blockquote, horizontal_rule, ordered_list, bullet_list, list_item, deletion, insertion, comment} from "./common"
+import {
+    figure,
+    citation,
+    equation,
+    heading,
+    anchor,
+    paragraph,
+    blockquote,
+    horizontal_rule,
+    ordered_list,
+    bullet_list,
+    list_item,
+    deletion,
+    insertion,
+    comment,
+    annotation_tag
+} from "./common"
 
 let footnotecontainer = {
     group: "part",
     selectable: false,
     content: "(block|table_block)+",
+    marks: "annotation",
     parseDOM: [{tag: "div.footnote-container"}],
     toDOM(node) {
         return ['div',{class: 'footnote-container'}, 0]
@@ -44,6 +60,7 @@ let spec = {
       code: marks.code,
       anchor,
       comment,
+      annotation_tag,
       deletion,
       insertion
   })

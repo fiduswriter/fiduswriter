@@ -3,8 +3,24 @@ import {Schema} from "prosemirror-model"
 import {nodes, marks} from "prosemirror-schema-basic"
 import {tableNodes} from "prosemirror-tables"
 import {htmlToFnNode, fnNodeToHtml} from "./footnotes_convert"
-import {figure, citation, equation, heading, anchor, paragraph, blockquote, horizontal_rule, ordered_list, bullet_list, list_item, deletion, insertion, parseTracks, comment} from "./common"
-
+import {
+    figure,
+    citation,
+    equation,
+    heading,
+    anchor,
+    paragraph,
+    blockquote,
+    horizontal_rule,
+    ordered_list,
+    bullet_list,
+    list_item,
+    deletion,
+    insertion,
+    parseTracks,
+    comment,
+    annotation_tag
+} from "./common"
 
 let article = {
     defining: true,
@@ -367,6 +383,7 @@ let spec = {
         link: marks.link,
         code: marks.code,
         comment,
+        annotation_tag,
         anchor,
         deletion,
         insertion

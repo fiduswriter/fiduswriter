@@ -19,10 +19,11 @@ let isInTable = function(state) {
   return false
 }
 
-let languageItem = function(code, name) {
+let languageItem = function(code, name, order) {
     return {
         title: name,
         type: 'setting',
+        order,
         action: editor => {
             let article = editor.view.state.doc.firstChild
             let attrs = Object.assign({}, article.attrs)
@@ -45,12 +46,14 @@ export let headerbarModel = {
             id: 'file',
             title: gettext('File'),
             tooltip: gettext('File handling'),
+            order: 0,
             content: [
                 {
                     title: gettext('Share'),
                     type: 'action',
                     icon: 'share',
                     tooltip: gettext('Share the document with other users.'),
+                    order: 0,
                     action: editor => {
                         new DocumentAccessRightsDialog(
                             [editor.docInfo.id],
@@ -73,6 +76,7 @@ export let headerbarModel = {
                     type: 'action',
                     icon: 'times-circle',
                     tooltip: gettext('Close the document and return to the document overview menu.'),
+                    order: 1,
                     action: editor => {
                         window.location.href = '/'
                     }
@@ -82,6 +86,7 @@ export let headerbarModel = {
                     type: 'action',
                     icon: 'floppy-o',
                     tooltip: gettext('Save a revision of the current document.'),
+                    order: 2,
                     keys: 'Ctrl-s',
                     action: editor => {
                         let dialog = new RevisionDialog()
@@ -104,6 +109,7 @@ export let headerbarModel = {
                     type: 'action',
                     icon: 'files-o',
                     tooltip: gettext('Create copy of the current document.'),
+                    order: 3,
                     action: editor => {
                         let copier = new SaveCopy(
                                 editor.getDoc(),
@@ -121,6 +127,7 @@ export let headerbarModel = {
                     type: 'action',
                     icon: 'download',
                     tooltip: gettext('Download the current document.'),
+                    order: 4,
                     action: editor => {
                         new ExportFidusFile(
                             editor.getDoc(),
@@ -134,6 +141,7 @@ export let headerbarModel = {
                     type: 'action',
                     icon: 'print',
                     tooltip: gettext('Either print or create a PDF using your browser print dialog.'),
+                    order: 5,
                     keys: 'Ctrl-p',
                     action: editor => {
                         editor.mod.tools.print.print()
@@ -145,11 +153,13 @@ export let headerbarModel = {
             id: 'export',
             title: gettext('Export'),
             tooltip: gettext('Export of the document contents'),
+            order: 1,
             content: [
                 {
                     title: gettext('HTML'),
                     type: 'action',
                     tooltip: gettext('Export the document to an HTML file.'),
+                    order: 0,
                     action: editor => {
                         new HTMLExporter(
                             editor.getDoc({changes: 'acceptAllNoInsertions'}),
@@ -164,6 +174,7 @@ export let headerbarModel = {
                     title: gettext('Epub'),
                     type: 'action',
                     tooltip: gettext('Export the document to an Epub electronic reader file.'),
+                    order: 1,
                     action: editor => {
                         new EpubExporter(
                             editor.getDoc({changes: 'acceptAllNoInsertions'}),
@@ -178,6 +189,7 @@ export let headerbarModel = {
                     title: gettext('LaTeX'),
                     type: 'action',
                     tooltip: gettext('Export the document to an LaTeX file.'),
+                    order: 2,
                     action: editor => {
                         new LatexExporter(
                             editor.getDoc({changes: 'acceptAllNoInsertions'}),
@@ -192,12 +204,14 @@ export let headerbarModel = {
             id: 'settings',
             title: gettext('Settings'),
             tooltip: gettext('Configure settings of this document.'),
+            order: 2,
             content: [
                 {
                     id: 'metadata',
                     title: gettext('Metadata'),
                     type: 'menu',
                     tooltip: gettext('Choose which metadata to enable.'),
+                    order: 0,
                     disabled: editor => {
                         return editor.docInfo.access_rights !== 'write'
                     },
@@ -206,6 +220,7 @@ export let headerbarModel = {
                             title: gettext('Subtitle'),
                             type: 'setting',
                             tooltip: gettext('Define a subtitle in addition to the title of the document.'),
+                            order: 0,
                             action: editor => {
                                 let offset = 1, // We need to add one as we are looking at offset values within the firstChild
                                     attrs
@@ -228,6 +243,7 @@ export let headerbarModel = {
                             title: gettext('Author(s)'),
                             type: 'setting',
                             tooltip: gettext('Specify the authors of the document.'),
+                            order: 1,
                             action: editor => {
                                 let offset = 1, // We need to add one as we are looking at offset values within the firstChild
                                     attrs
@@ -250,6 +266,7 @@ export let headerbarModel = {
                             title: gettext('Abstract'),
                             type: 'setting',
                             tooltip: gettext('Add an abstract to the document.'),
+                            order: 2,
                             action: editor => {
                                 let offset = 1, // We need to add one as we are looking at offset values within the firstChild
                                     attrs
@@ -272,6 +289,7 @@ export let headerbarModel = {
                             title: gettext('Keywords'),
                             type: 'setting',
                             tooltip: gettext('Add keywords to facilitate categorization.'),
+                            order: 3,
                             action: editor => {
                                 let offset = 1, // We need to add one as we are looking at offset values within the firstChild
                                     attrs
@@ -297,6 +315,7 @@ export let headerbarModel = {
                     title: gettext('Citation Style'),
                     type: 'menu',
                     tooltip: gettext('Choose your preferred citation style.'),
+                    order: 1,
                     disabled: editor => {
                         return editor.docInfo.access_rights !== 'write'
                     },
@@ -307,6 +326,7 @@ export let headerbarModel = {
                     title: gettext('Document Style'),
                     type: 'menu',
                     tooltip: gettext('Choose your preferred document style.'),
+                    order: 2,
                     disabled: editor => {
                         return editor.docInfo.access_rights !== 'write'
                     },
@@ -317,28 +337,31 @@ export let headerbarModel = {
                     title: gettext('Text Language'),
                     type: 'menu',
                     tooltip: gettext('Choose the language of the document.'),
+                    order: 3,
                     disabled: editor => {
                         return editor.docInfo.access_rights !== 'write'
                     },
                     content: [
-                        languageItem('en-US', gettext('English (United States)')),
-                        languageItem('en-GB', gettext('English (United Kingdom)')),
-                        languageItem('de-DE', gettext('German (Germany)')),
-                        languageItem('zh-CN', gettext('Chinese (Simplified)')),
-                        languageItem('es', gettext('Spanish')),
-                        languageItem('fr', gettext('French')),
-                        languageItem('ja', gettext('Japanese')),
-                        languageItem('it', gettext('Italian')),
-                        languageItem('pl', gettext('Polish')),
-                        languageItem('pt-BR', gettext('Portuguese (Brazil)')),
-                        languageItem('nl', gettext('Dutch')),
-                        languageItem('ru', gettext('Russian')),
+                        languageItem('en-US', gettext('English (United States)'), 0),
+                        languageItem('en-GB', gettext('English (United Kingdom)'), 1),
+                        languageItem('de-DE', gettext('German (Germany)'), 2),
+                        languageItem('zh-CN', gettext('Chinese (Simplified)'), 3),
+                        languageItem('es', gettext('Spanish'), 4),
+                        languageItem('fr', gettext('French'), 5),
+                        languageItem('ja', gettext('Japanese'), 6),
+                        languageItem('it', gettext('Italian'), 7),
+                        languageItem('pl', gettext('Polish'), 8),
+                        languageItem('pt-BR', gettext('Portuguese (Brazil)'), 9),
+                        languageItem('nl', gettext('Dutch'), 10),
+                        languageItem('ru', gettext('Russian'), 11),
                         {
-                            type: 'separator'
+                            type: 'separator',
+                            order: 12
                         },
                         {
                             title: gettext('Other'),
                             type: 'setting',
+                            order: 13,
                             action: editor => {
                                 let language = editor.view.state.doc.firstChild.attrs.language,
                                     dialog = new LanguageDialog(editor, language)
@@ -370,6 +393,7 @@ export let headerbarModel = {
                     title: gettext('Paper Size'),
                     type: 'menu',
                     tooltip: gettext('Choose a papersize for print and PDF generation.'),
+                    order: 4,
                     disabled: editor => {
                         return editor.docInfo.access_rights !== 'write'
                     },
@@ -378,6 +402,7 @@ export let headerbarModel = {
                             title: gettext('DIN A4'),
                             type: 'setting',
                             tooltip: gettext('A4 (DIN A4/ISO 216) which is used in most of the world.'),
+                            order: 0,
                             action: editor => {
                                 let article = editor.view.state.doc.firstChild
                                 let attrs = Object.assign({}, article.attrs)
@@ -394,6 +419,7 @@ export let headerbarModel = {
                             title: gettext('US Letter'),
                             type: 'setting',
                             tooltip: gettext('The format used by the USA and some other American countries.'),
+                            order: 1,
                             action: editor => {
                                 let article = editor.view.state.doc.firstChild
                                 let attrs = Object.assign({}, article.attrs)
@@ -414,11 +440,13 @@ export let headerbarModel = {
             id: 'tools',
             title: gettext('Tools'),
             tooltip: gettext('Select document editing tool.'),
+            order: 3,
             content: [
                 {
                     title: gettext('Word counter'),
                     type: 'action',
                     tooltip: gettext('See document statistics.'),
+                    order: 0,
                     action: editor => {
                         editor.mod.tools.wordCount.wordCountDialog()
                     }
@@ -427,6 +455,7 @@ export let headerbarModel = {
                     title: gettext('Keyboard shortcuts'),
                     type: 'action',
                     tooltip: gettext('Show an overview of available keyboard shortcuts.'),
+                    order: 1,
                     keys: 'Shift-Ctrl-/',
                     action: editor => {
                         editor.mod.tools.showKeyBindings.show()
@@ -438,6 +467,7 @@ export let headerbarModel = {
             id: 'table',
             title: gettext('Table'),
             tooltip: gettext('Add and edit tables.'),
+            order: 4,
             disabled: editor =>
                 READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
                 COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights),
@@ -446,6 +476,7 @@ export let headerbarModel = {
                     title: gettext('Insert table'),
                     type: 'action',
                     tooltip: gettext('Insert a table into the document.'),
+                    order: 0,
                     icon: 'table',
                     action: editor => {
                         let dialog = new TableDialog(editor)
@@ -466,12 +497,14 @@ export let headerbarModel = {
                     }
                 },
                 {
-                    type: 'separator'
+                    type: 'separator',
+                    order: 1
                 },
                 {
                     title: gettext('Add row above'),
                     type: 'action',
                     tooltip: gettext('Add a row above the current row'),
+                    order: 2,
                     action: editor => {
                         addRowBefore(editor.currentView.state, editor.currentView.dispatch)
                     },
@@ -481,6 +514,7 @@ export let headerbarModel = {
                     title: gettext('Add row below'),
                     type: 'action',
                     tooltip: gettext('Add a row below the current row'),
+                    order: 3,
                     action: editor => {
                         addRowAfter(editor.currentView.state, editor.currentView.dispatch)
                     },
@@ -490,6 +524,7 @@ export let headerbarModel = {
                     title: gettext('Add column left'),
                     type: 'action',
                     tooltip: gettext('Add a column to the left of the current column'),
+                    order: 4,
                     action: editor => {
                         addColumnBefore(editor.currentView.state, editor.currentView.dispatch)
                     },
@@ -499,18 +534,21 @@ export let headerbarModel = {
                     title: gettext('Add column right'),
                     type: 'action',
                     tooltip: gettext('Add a column to the right of the current column'),
+                    order: 5,
                     action: editor => {
                         addColumnAfter(editor.currentView.state, editor.currentView.dispatch)
                     },
                     disabled: editor => !isInTable(editor.currentView.state)
                 },
                 {
-                    type: 'separator'
+                    type: 'separator',
+                    order: 6
                 },
                 {
                     title: gettext('Delete row'),
                     type: 'action',
                     tooltip: gettext('Delete current row'),
+                    order: 7,
                     action: editor => {
                         deleteRow(editor.currentView.state, editor.currentView.dispatch)
                     },
@@ -520,6 +558,7 @@ export let headerbarModel = {
                     title: gettext('Delete column'),
                     type: 'action',
                     tooltip: gettext('Delete current column'),
+                    order: 8,
                     action: editor => {
                         deleteColumn(editor.currentView.state, editor.currentView.dispatch)
                     },
@@ -532,6 +571,7 @@ export let headerbarModel = {
                     title: gettext('Merge cells'),
                     type: 'action',
                     tooltip: gettext('Merge selected cells'),
+                    order: 9,
                     action: editor => {
                         mergeCells(editor.currentView.state, editor.currentView.dispatch)
                     },
@@ -545,6 +585,7 @@ export let headerbarModel = {
                     title: gettext('Split cell'),
                     type: 'action',
                     tooltip: gettext('Split selected cell'),
+                    order: 10,
                     action: editor => {
                         splitCell(editor.currentView.state, editor.currentView.dispatch)
                     },
@@ -559,12 +600,14 @@ export let headerbarModel = {
                         )
                 },
                 {
-                    type: 'separator'
+                    type: 'separator',
+                    order: 11,
                 },
                 {
                     title: gettext('Toggle header row'),
                     type: 'action',
                     tooltip: gettext('Toggle header-status of currently selected row'),
+                    order: 12,
                     action: editor => {
                         toggleHeaderRow(editor.currentView.state, editor.currentView.dispatch)
                     },
@@ -574,6 +617,7 @@ export let headerbarModel = {
                     title: gettext('Toggle header column'),
                     type: 'action',
                     tooltip: gettext('Toggle header-status of currently selected column'),
+                    order: 13,
                     action: editor => {
                         toggleHeaderColumn(editor.currentView.state, editor.currentView.dispatch)
                     },
@@ -583,6 +627,7 @@ export let headerbarModel = {
                     title: gettext('Toggle header cell'),
                     type: 'action',
                     tooltip: gettext('Toggle header-status of currently selected cells'),
+                    order: 14,
                     action: editor => {
                         toggleHeaderCell(editor.currentView.state, editor.currentView.dispatch)
                     },
@@ -595,6 +640,7 @@ export let headerbarModel = {
                     title: gettext('Delete table'),
                     type: 'action',
                     tooltip: gettext('Delete currently selected table'),
+                    order: 15,
                     action: editor => {
                         deleteTable(editor.currentView.state, editor.currentView.dispatch)
                     },
@@ -606,6 +652,7 @@ export let headerbarModel = {
             title: gettext('Track changes'),
             type: 'menu',
             tooltip: gettext('Tracking changes to the document'),
+            order: 5,
             disabled: editor => {
                 return editor.docInfo.access_rights !== 'write'
             },
@@ -614,6 +661,7 @@ export let headerbarModel = {
                     title: gettext('Record'),
                     type: 'setting',
                     tooltip: gettext('Record document changes'),
+                    order: 0,
                     disabled: editor => {
                         return editor.docInfo.access_rights !== 'write'
                     },
@@ -633,6 +681,7 @@ export let headerbarModel = {
                     title: gettext('Accept all'),
                     type: 'action',
                     tooltip: gettext('Accept all tracked changes.'),
+                    order: 1,
                     action: editor => {
                         editor.mod.track.acceptAll()
                     }
@@ -641,6 +690,7 @@ export let headerbarModel = {
                     title: gettext('Reject all'),
                     type: 'action',
                     tooltip: gettext('Reject all tracked changes.'),
+                    order: 2,
                     action: editor => {
                         editor.mod.track.rejectAll()
                     }

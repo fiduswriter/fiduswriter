@@ -24,6 +24,7 @@ let footnotecontainer = {
     group: "part",
     selectable: false,
     content: "(block|table_block)+",
+    marks: "annotation",
     parseDOM: [{tag: "div.footnote-container"}],
     toDOM(node) {
         return ['div',{class: 'footnote-container'}, 0]

@@ -23,9 +23,11 @@ export let menuModel = {
                         if (ids.length) {
                             overview.deleteImageDialog(ids)
                         }
-                    }
+                    },
+                    order: 0
                 }
-            ]
+            ],
+            order: 0
         },
         {
             type: 'dropdown',
@@ -38,13 +40,15 @@ export let menuModel = {
                         trs.forEach(tr => tr.style.display = '')
                     }
                 }
-            ]
+            ],
+            order: 1
         },
         {
             type: 'button',
             icon: 'pencil',
             title: gettext('Edit categories'),
-            action: overview => overview.mod.categories.editCategoryDialog()
+            action: overview => overview.mod.categories.editCategoryDialog(),
+            order: 2
         },
         {
             type: 'button',
@@ -59,13 +63,15 @@ export let menuModel = {
                         overview.updateTable([imageId])
                     }
                 )
-            }
+            },
+            order: 3
         },
         {
             type: 'search',
             icon: 'search',
             title: gettext('Search images'),
-            input: (overview, text) => overview.table.search(text)
+            input: (overview, text) => overview.table.search(text),
+            order: 4
         }
     ]
 }

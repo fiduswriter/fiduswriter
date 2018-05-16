@@ -26,7 +26,8 @@ export let menuModel = {
                         if (ids.length) {
                             overview.deleteBibEntryDialog(ids)
                         }
-                    }
+                    },
+                    order: 0
                 },
                 {
                     title: gettext('Export selected'),
@@ -36,9 +37,11 @@ export let menuModel = {
                             let exporter = new BibLatexFileExporter(overview.bibDB, ids)
                             exporter.init()
                         }
-                    }
+                    },
+                    order: 1
                 }
-            ]
+            ],
+            order: 0
         },
         {
             type: 'dropdown',
@@ -51,13 +54,15 @@ export let menuModel = {
                         trs.forEach(tr => tr.style.display = '')
                     }
                 }
-            ]
+            ],
+            order: 1
         },
         {
             type: 'button',
             icon: 'pencil',
             title: gettext('Edit categories'),
-            action: overview => overview.createCategoryDialog()
+            action: overview => overview.createCategoryDialog(),
+            order: 2
         },
         {
             type: 'button',
@@ -71,7 +76,8 @@ export let menuModel = {
                         return overview.updateTable(ids)
                     }
                 )
-            }
+            },
+            order: 3
         },
         {
             type: 'button',
@@ -83,13 +89,15 @@ export let menuModel = {
                     ids => overview.updateTable(ids)
                 )
                 fileImporter.init()
-            }
+            },
+            order: 4
         },
         {
             type: 'search',
             icon: 'search',
             title: gettext('Search bibliography'),
-            input: (overview, text) => overview.table.search(text)
+            input: (overview, text) => overview.table.search(text),
+            order: 5
         }
     ]
 }

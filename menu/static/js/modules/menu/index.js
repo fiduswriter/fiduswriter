@@ -12,19 +12,22 @@ export class SiteMenu {
                 text: gettext('Documents'),
                 url: '/',
                 title: gettext('edit documents'),
-                id: 'documents'
+                id: 'documents',
+                order: 0
             },
             {
                 text: gettext('Bibliography'),
                 url: '/bibliography/',
                 title: gettext('manage bibliography library'),
-                id: 'bibliography'
+                id: 'bibliography',
+                order: 1
             },
             {
                 text: gettext('Images'),
                 url: '/usermedia/',
                 title: gettext('manage image files'),
-                id: 'images'
+                id: 'images',
+                order: 2
             }
         ]
     }

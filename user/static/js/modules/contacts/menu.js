@@ -24,9 +24,11 @@ export let menuModel = {
                         if (ids.length) {
                             deleteMemberDialog(ids)
                         }
-                    }
+                    },
+                    order: 0
                 }
-            ]
+            ],
+            order: 0
         },
         {
             type: 'button',
@@ -41,7 +43,8 @@ export let menuModel = {
                         })
                     )
                 })
-            }
+            },
+            order: 1
         }
     ]
 }

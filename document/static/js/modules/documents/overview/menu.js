@@ -28,7 +28,8 @@ export let menuModel = {
                         if (ownIds.length) {
                             overview.mod.actions.deleteDocumentDialog(ownIds)
                         }
-                    }
+                    },
+                    order: 0
                 },
                 {
                     title: gettext('Share selected'),
@@ -46,7 +47,8 @@ export let menuModel = {
                                 newAccessRights => overview.accessRights = newAccessRights
                             )
                         }
-                    }
+                    },
+                    order: 1
                 },
                 {
                     title: gettext('Copy selected'),
@@ -55,7 +57,8 @@ export let menuModel = {
                         if (ids.length) {
                             overview.mod.actions.copyFiles(ids)
                         }
-                    }
+                    },
+                    order: 2
                 },
                 {
                     title: gettext('Export selected as Epub'),
@@ -64,7 +67,8 @@ export let menuModel = {
                         if (ids.length) {
                             overview.mod.actions.downloadEpubFiles(ids)
                         }
-                    }
+                    },
+                    order: 3
                 },
                 {
                     title: gettext('Export selected as HTML'),
@@ -73,7 +77,8 @@ export let menuModel = {
                         if (ids.length) {
                             overview.mod.actions.downloadHtmlFiles(ids)
                         }
-                    }
+                    },
+                    order: 4
                 },
                 {
                     title: gettext('Export selected as LaTeX'),
@@ -82,7 +87,8 @@ export let menuModel = {
                         if (ids.length) {
                             overview.mod.actions.downloadLatexFiles(ids)
                         }
-                    }
+                    },
+                    order: 5
                 },
                 {
                     title: gettext('Download selected as Fidus document'),
@@ -91,27 +97,32 @@ export let menuModel = {
                         if (ids.length) {
                             overview.mod.actions.downloadNativeFiles(ids)
                         }
-                    }
+                    },
+                    order: 6
                 }
-            ]
+            ],
+            order: 0
         },
         {
             type: 'button',
             icon: 'plus-circle',
             title: gettext('Create new document'),
-            action: overview => window.location.href = '/document/new/'
+            action: overview => window.location.href = '/document/new/',
+            order: 1
         },
         {
             type: 'button',
             icon: 'upload',
             title: gettext('Upload Fidus document'),
-            action: overview => overview.mod.actions.importFidus()
+            action: overview => overview.mod.actions.importFidus(),
+            order: 2
         },
         {
             type: 'search',
             icon: 'search',
             title: gettext('Search documents'),
-            input: (overview, text) => overview.table.search(text)
+            input: (overview, text) => overview.table.search(text),
+            order: 3
         }
     ]
 }

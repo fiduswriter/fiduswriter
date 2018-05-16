@@ -92,7 +92,8 @@ export let toolbarModel = {
                 } else {
                     return 'no-border header-closed'
                 }
-            }
+            },
+            order: 0
         },
         {
             type: 'info',
@@ -107,7 +108,8 @@ export let toolbarModel = {
                 } else {
                     return ''
                 }
-            }
+            },
+            order: 1
 
         },
         {
@@ -186,38 +188,46 @@ export let toolbarModel = {
             content: [
                 {
                     title: BLOCK_LABELS['paragraph'],
-                    action: editor => setBlockType(editor.currentView, 'paragraph')
+                    action: editor => setBlockType(editor.currentView, 'paragraph'),
+                    order: 0
                 },
                 {
                     title: BLOCK_LABELS['heading_1'],
-                    action: editor => setBlockType(editor.currentView, 'heading', {level: 1})
+                    action: editor => setBlockType(editor.currentView, 'heading', {level: 1}),
+                    order: 1
                 },
                 {
                     title: BLOCK_LABELS['heading_2'],
-                    action: editor => setBlockType(editor.currentView, 'heading', {level: 2})
+                    action: editor => setBlockType(editor.currentView, 'heading', {level: 2}),
+                    order: 2
                 },
                 {
                     title: BLOCK_LABELS['heading_3'],
-                    action: editor => setBlockType(editor.currentView, 'heading', {level: 3})
+                    action: editor => setBlockType(editor.currentView, 'heading', {level: 3}),
+                    order: 3
                 },
                 {
                     title: BLOCK_LABELS['heading_4'],
-                    action: editor => setBlockType(editor.currentView, 'heading', {level: 4})
+                    action: editor => setBlockType(editor.currentView, 'heading', {level: 4}),
+                    order: 4
                 },
                 {
                     title: BLOCK_LABELS['heading_5'],
-                    action: editor => setBlockType(editor.currentView, 'heading', {level: 5})
+                    action: editor => setBlockType(editor.currentView, 'heading', {level: 5}),
+                    order: 5
                 },
                 {
                     title: BLOCK_LABELS['heading_6'],
-                    action: editor => setBlockType(editor.currentView, 'heading', {level: 6})
+                    action: editor => setBlockType(editor.currentView, 'heading', {level: 6}),
+                    order: 6
                 },
                 {
                     title: BLOCK_LABELS['code_block'],
-                    action: editor => setBlockType(editor.currentView, 'code_block')
-                },
-
-            ]
+                    action: editor => setBlockType(editor.currentView, 'code_block'),
+                    order: 7
+                }
+            ],
+            order: 2
         },
         {
             type: 'button',
@@ -256,7 +266,8 @@ export let toolbarModel = {
                     return false
                 }
 
-            }
+            },
+            order: 3
         },
         {
             type: 'button',
@@ -295,7 +306,8 @@ export let toolbarModel = {
                     return false
                 }
 
-            }
+            },
+            order: 4
         },
         {
             type: 'button',
@@ -319,7 +331,8 @@ export let toolbarModel = {
                 } else {
                     return true
                 }
-            }
+            },
+            order: 5
         },
         {
             type: 'button',
@@ -343,7 +356,8 @@ export let toolbarModel = {
                 } else {
                     return true
                 }
-            }
+            },
+            order: 6
         },
         {
             type: 'button',
@@ -367,7 +381,8 @@ export let toolbarModel = {
                 } else {
                     return true
                 }
-            }
+            },
+            order: 7
         },
         {
             id: 'link',
@@ -392,7 +407,8 @@ export let toolbarModel = {
                     return true
                 }
             },
-            selected: editor => editor.currentView.state.selection.$head.marks().some(mark => mark.type.name === 'link')
+            selected: editor => editor.currentView.state.selection.$head.marks().some(mark => mark.type.name === 'link'),
+            order: 8
         },
         {
             type: 'button',
@@ -418,7 +434,8 @@ export let toolbarModel = {
                 } else {
                     return true
                 }
-            }
+            },
+            order: 9
         },
         {
             type: 'button',
@@ -447,7 +464,8 @@ export let toolbarModel = {
                 } else {
                     return true
                 }
-            }
+            },
+            order: 10
         },
         {
             type: 'button',
@@ -473,7 +491,8 @@ export let toolbarModel = {
                 } else {
                     return true
                 }
-            }
+            },
+            order: 11
         },
         {
             type: 'button',
@@ -502,7 +521,8 @@ export let toolbarModel = {
                 } else {
                     return true
                 }
-            }
+            },
+            order: 12
         },
         {
             type: 'button',
@@ -532,21 +552,24 @@ export let toolbarModel = {
                 } else {
                     return true
                 }
-            }
+            },
+            order: 13
         },
         {
             type: 'button',
             title: gettext('Undo'),
             icon: 'undo',
             action: editor => undo(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('inputType', 'historyUndo'))),
-            disabled: editor => undoDepth(editor.currentView.state) === 0
+            disabled: editor => undoDepth(editor.currentView.state) === 0,
+            order: 14
         },
         {
             type: 'button',
             title: gettext('Redo'),
             icon: 'repeat',
             action: editor => redo(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('inputType', 'historyRedo'))),
-            disabled: editor => redoDepth(editor.currentView.state) === 0
+            disabled: editor => redoDepth(editor.currentView.state) === 0,
+            order: 15
         },
         {
             type: 'button',
@@ -571,7 +594,8 @@ export let toolbarModel = {
                     return false
                 }
 
-            }
+            },
+            order: 16
         },
         {
             type: 'button',
@@ -600,7 +624,8 @@ export let toolbarModel = {
                     return false
                 }
 
-            }
+            },
+            order: 17
         }
     ]
 }

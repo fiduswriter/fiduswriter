@@ -1,14 +1,33 @@
-import {whenReady, post} from "../common"
-import {confirmAccountTemplate, verifiedAccountTemplate} from "./templates"
+import {whenReady, post, activateWait, deactivateWait} from "../common"
+import {confirmAccountTemplate, verifiedAccountTemplate, checkTermsTemplate, testServerQuestionTemplate} from "./templates"
+import * as plugins from "../../plugins/confirm_account"
+
 
 export class ConfirmAccount {
     constructor(confirmationData, testServer) {
         this.confirmationData = confirmationData
         this.testServer = testServer
         this.submissionReady = false
+        this.formChecks = [
+            () => document.getElementById('terms-check').matches(':checked')
+        ]
+        this.confirmQuestionsTemplates = [checkTermsTemplate]
+        this.confirmMethods = []
+        if (confirmationData.confirmed) {
+            this.confirmMethods.push(
+                () => post(this.confirmationData.submissionUrl)
+            )
+        }
+        if (testServer) {
+            this.formChecks.push(
+                () => document.getElementById('test-check').matches(':checked')
+            )
+            this.confirmQuestionsTemplates.push(testServerQuestionTemplate)
+        }
     }
 
     init() {
+        this.activateFidusPlugins()
         whenReady().then(() => {
             this.setFormHTML()
             this.bind()
@@ -22,15 +41,7 @@ export class ConfirmAccount {
         document.querySelectorAll('.checker').forEach(el => el.addEventListener(
             'click',
             () => {
-                let testCheck = false
-                if (document.getElementById('test-check')) {
-                    if (document.getElementById('test-check').matches(':checked')) {
-                        testCheck = true
-                    }
-                } else {
-                    testCheck = true
-                }
-                if (testCheck && document.getElementById('terms-check').matches(':checked')) {
+                if (this.formChecks.every(check => check())) {
                     document.getElementById('submit').removeAttribute("disabled")
                     this.submissionReady = true
                 } else {
@@ -44,15 +55,31 @@ export class ConfirmAccount {
             if (!this.submissionReady) {
                 return
             }
-            post(this.confirmationData.submissionUrl).then(
-                () => this.setVerifiedHTML()
+            activateWait()
+            Promise.all(this.confirmMethods.map(method => method())).then(
+                () => {
+                    deactivateWait()
+                    this.setVerifiedHTML()
+                }
             )
+        })
+    }
+
+    activateFidusPlugins() {
+        // Add plugins.
+        this.plugins = {}
+
+        Object.keys(plugins).forEach(plugin => {
+            if (typeof plugins[plugin] === 'function') {
+                this.plugins[plugin] = new plugins[plugin](this)
+                this.plugins[plugin].init()
+            }
         })
     }
 
     setFormHTML() {
         let contentsDOM = document.querySelector('.fw-contents')
-        contentsDOM.innerHTML = confirmAccountTemplate({confirmationData: this.confirmationData, testServer: this.testServer})
+        contentsDOM.innerHTML = confirmAccountTemplate({confirmationData: this.confirmationData, confirmQuestionsTemplates: this.confirmQuestionsTemplates})
     }
 
     setVerifiedHTML() {

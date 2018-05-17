@@ -19,14 +19,14 @@
   "license": "AGPL",
   "private": true,
   "dependencies": {
-    "diff-dom": "2.3.1",
+    "diff-dom": "2.4.0",
     "downloadjs": "1.4.7",
     "font-awesome": "4.7.0",
     "jquery": "3.3.1", // for mathquill
     "jshint": "2.9.5",
     "katex": "0.9.0",
     "w3c-keyname": "1.1.8",
-    "vanilla-datatables": "johanneswilm/Vanilla-DataTables#e5f66af"
+    "vanilla-datatables": "file:bundled_js_libs/Vanilla-DataTables"
   },
   "jshintConfig": {
     "esversion": 6,

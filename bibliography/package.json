@@ -2,6 +2,7 @@
     "dependencies": {
         "biblatex-csl-converter": "1.3.x",
         "fix-utf8": "1.0.4",
-        "tokenfield": "0.9.x"
+        "tokenfield": "0.9.x",
+        "fast-deep-equal": "2.0.x"
     }
 }

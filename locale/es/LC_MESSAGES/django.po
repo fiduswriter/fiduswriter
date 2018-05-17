@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-18 07:26+0000\n"
+"POT-Creation-Date: 2018-05-17 22:45+0200\n"
 "PO-Revision-Date: 2013-03-03 12:18-0700\n"
 "Last-Translator: Ana Vera Resquín <ani.tavr77@gmail.com>\n"
 "Language-Team: Spanish <ani.tavr77@gmail.com>\n"
@@ -103,17 +103,17 @@ msgstr ""
 msgid "Update all documents (DANGER!)"
 msgstr ""
 
-#: document/views.py:218
+#: document/views.py:220
 #, fuzzy
 msgid "Untitled"
 msgstr "Subtítulo"
 
-#: document/views.py:232
+#: document/views.py:234
 #, fuzzy
 msgid "Document shared:"
 msgstr "Documentos"
 
-#: document/views.py:258
+#: document/views.py:260
 msgid "Fidus Writer document write access"
 msgstr ""
 
@@ -131,37 +131,37 @@ msgstr "enviar"
 msgid "Thank you for your comment!"
 msgstr "¡Gracias por tu comentario!"
 
-#: fiduswriter/settings.py:239
+#: fiduswriter/settings.py:226
 msgid "English"
 msgstr "Inglés"
 
-#: fiduswriter/settings.py:240
+#: fiduswriter/settings.py:227
 msgid "Bulgarian"
 msgstr "Búlgaro"
 
-#: fiduswriter/settings.py:241
+#: fiduswriter/settings.py:228
 msgid "German"
 msgstr "Alemán"
 
-#: fiduswriter/settings.py:242
+#: fiduswriter/settings.py:229
 msgid "French"
 msgstr "Francés"
 
-#: fiduswriter/settings.py:243
+#: fiduswriter/settings.py:230
 msgid "Italian"
 msgstr "Italiano"
 
-#: fiduswriter/settings.py:244
+#: fiduswriter/settings.py:231
 msgid "Spanish"
 msgstr "Español"
 
-#: fiduswriter/settings.py:245
+#: fiduswriter/settings.py:232
 #, fuzzy
 #| msgid "Portuguese"
 msgid "Portuguese (Brazil)"
 msgstr "Portugués"
 
-#: user/templates/account/base.html:52 user/templates/account/login.html:7
+#: user/templates/account/base.html:55 user/templates/account/login.html:7
 #: user/templates/account/signup.html:9
 msgid "Log In"
 msgstr "Iniciar sesión"
@@ -169,74 +169,6 @@ msgstr "Iniciar sesión"
 #: user/templates/account/email_confirm.html:8
 msgid "Confirm E-mail Address"
 msgstr "Confirmar Correo electrónico"
-
-#: user/templates/account/email_confirm.html:15
-msgid "Confirm E-mail Address and Agree to Terms and Conditions"
-msgstr "Confirmar Correo Electrónico y aceptar Términos y Condiciones"
-
-#: user/templates/account/email_confirm.html:20
-#, fuzzy, python-format
-msgid ""
-"\n"
-"        Please confirm that you own the email <a href=\"mailto:%(email)s\">"
-"%(email)s</a>,\n"
-"        that you apply for the username %(user_display)s, and that you have "
-"read and agree to the\n"
-"        <a href=\"/terms/\" target=\"_blank\">Terms and Conditions</a>.\n"
-"        "
-msgstr ""
-"\n"
-"Por favor, confirma que <a href=\"mailto:%(email)s\">%(email)s</a> es tu "
-"correo, que quieres obtener el usuario %(user_display)s y que has leído los "
-"<a href=\"http://www.fiduswriter.com/?page_id=41\">Términos y Condiciones</"
-"a>."
-
-#: user/templates/account/email_confirm.html:29
-#, fuzzy
-msgid ""
-"\n"
-"        I have read and agree to the <a href=\"/terms/\" target=\"_blank"
-"\">Terms and Conditions</a>.\n"
-"        "
-msgstr ""
-"\n"
-"He leído y estoy de acuerdo con los <a href=\"http://www.fiduswriter.com/?"
-"page_id=41\">Términos y Condiciones</a>.\n"
-"        "
-
-#: user/templates/account/email_confirm.html:37
-#, fuzzy
-msgid ""
-"\n"
-"            I am aware that I am signing up for a test account and that "
-"service may be ended abruptly and without notice, leaving me without my "
-"files.\n"
-"            "
-msgstr ""
-"\n"
-"Estoy conciente, de que se trata de una versión de prueba y que el servicio "
-"puede ser terminado en cualquier momento sin nota previa, dejándome sin mis "
-"archivos.\n"
-"        "
-
-#: user/templates/account/email_confirm.html:46
-msgid "Confirm"
-msgstr "Confirmar"
-
-#: user/templates/account/email_confirm.html:54
-#, python-format
-msgid ""
-"\n"
-"        This e-mail confirmation link expired or is invalid.\n"
-"        Please <a href=\"%(email_url)s\">issue a new e-mail confirmation "
-"request</a>.\n"
-"        "
-msgstr ""
-"\n"
-"        Este enlace de confirmación de correo ha caducado o no es válido.\n"
-"        Por favor, solicita <a href=\"%(email_url)s\"> un nuevo correo "
-"electrónico de confirmaciónSolicitud</ a>.\n"
-"        "
 
 #: user/templates/account/list_team_members.html:7
 msgid "Team members"
@@ -474,9 +406,71 @@ msgstr "Administrador de medios"
 msgid "Filetype not supported"
 msgstr ""
 
-#: usermedia/views.py:68
+#: usermedia/views.py:67
 msgid "No file uploaded"
 msgstr ""
+
+#~ msgid "Confirm E-mail Address and Agree to Terms and Conditions"
+#~ msgstr "Confirmar Correo Electrónico y aceptar Términos y Condiciones"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "        Please confirm that you own the email <a href=\"mailto:%(email)s"
+#~ "\">%(email)s</a>,\n"
+#~ "        that you apply for the username %(user_display)s, and that you "
+#~ "have read and agree to the\n"
+#~ "        <a href=\"/terms/\" target=\"_blank\">Terms and Conditions</a>.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "Por favor, confirma que <a href=\"mailto:%(email)s\">%(email)s</a> es tu "
+#~ "correo, que quieres obtener el usuario %(user_display)s y que has leído "
+#~ "los <a href=\"http://www.fiduswriter.com/?page_id=41\">Términos y "
+#~ "Condiciones</a>."
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "        I have read and agree to the <a href=\"/terms/\" target=\"_blank"
+#~ "\">Terms and Conditions</a>.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "He leído y estoy de acuerdo con los <a href=\"http://www.fiduswriter.com/?"
+#~ "page_id=41\">Términos y Condiciones</a>.\n"
+#~ "        "
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "            I am aware that I am signing up for a test account and that "
+#~ "service may be ended abruptly and without notice, leaving me without my "
+#~ "files.\n"
+#~ "            "
+#~ msgstr ""
+#~ "\n"
+#~ "Estoy conciente, de que se trata de una versión de prueba y que el "
+#~ "servicio puede ser terminado en cualquier momento sin nota previa, "
+#~ "dejándome sin mis archivos.\n"
+#~ "        "
+
+#~ msgid "Confirm"
+#~ msgstr "Confirmar"
+
+#~ msgid ""
+#~ "\n"
+#~ "        This e-mail confirmation link expired or is invalid.\n"
+#~ "        Please <a href=\"%(email_url)s\">issue a new e-mail confirmation "
+#~ "request</a>.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "        Este enlace de confirmación de correo ha caducado o no es "
+#~ "válido.\n"
+#~ "        Por favor, solicita <a href=\"%(email_url)s\"> un nuevo correo "
+#~ "electrónico de confirmaciónSolicitud</ a>.\n"
+#~ "        "
 
 #~ msgid "Title"
 #~ msgstr "Título"

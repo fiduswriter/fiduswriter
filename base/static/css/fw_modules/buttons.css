@@ -92,8 +92,7 @@
 }
 
 .fw-button.fw-orange {
-    background: -moz-linear-gradient(top, #d3421c, #b13615);
-    background: -webkit-gradient(linear, left top, left bottom, from(#d3421c), to(#b13615));
+    background: linear-gradient(to bottom left, #d3421c, #b13615);
     border-color: #7d331f;
 }
 .fw-button.fw-orange:not(.disabled):hover {
@@ -101,15 +100,18 @@
 }
 
 .fw-button.fw-dark {
-    background: -moz-linear-gradient(top, #6a6a6a, #585858);
-    background: -webkit-gradient(linear, left top, left bottom, from(#6a6a6a), to(#585858));
+    background: linear-gradient(to bottom left, #6a6a6a, #585858);
     box-shadow: 0 1px 1px 0 #7f7f7f inset;
     border-color: #4f4d4f;
 }
 .fw-button.fw-dark:not(.disabled):hover {
     background: #585858;
 }
-
+.fw-button:disabled {
+    background: grey;
+    color: darkgrey;
+    border-color: darkgrey;
+}
 .fw-button.fw-left {
     float: left;
 }
@@ -154,8 +156,7 @@
 }
 
 .fw-button.fw-socialaccount {
-    background: -moz-linear-gradient(top, #0d78be, #0d63ab);
-    background: -webkit-gradient(linear, left top, left bottom, from(#0d78be), to(#0d63ab));
+    background: linear-gradient(to bottom left, #0d78be, #0d63ab);
     box-shadow: 0px 0px 1px 1px #3c9fdf inset;
     border-color: #0557a1;
 }
@@ -170,8 +171,7 @@
 }
 
 .fw-button.fw-facebook {
-    background: -moz-linear-gradient(top, #0d78be, #0d63ab);
-    background: -webkit-gradient(linear, left top, left bottom, from(#0d78be), to(#0d63ab));
+    background: linear-gradient(to bottom left, #0d78be, #0d63ab);
     box-shadow: 0px 0px 1px 1px #3c9fdf inset;
     border-color: #0557a1;
 }
@@ -185,8 +185,7 @@
 }
 
 .fw-button.fw-twitter {
-    background: -moz-linear-gradient(top, #3ccfff, #17addf);
-    background: -webkit-gradient(linear, left top, left bottom, from(#3ccfff), to(#17addf));
+    background: linear-gradient(to bottom left, #3ccfff, #17addf);
     box-shadow: 0px 0px 1px 1px #3dcfff inset;
     border-color: #2498be;
 }
@@ -199,8 +198,7 @@
 }
 
 .fw-button.fw-google {
-    background: -moz-linear-gradient(top, #879ded, #6d84d8);
-    background: -webkit-gradient(linear, left top, left bottom, from(#879ded), to(#6d84d8));
+    background: linear-gradient(to bottom left, #879ded, #6d84d8);
     box-shadow: 0px 0px 1px 1px #93a6e6 inset;
     border-color: #6578bb;
 }
@@ -214,8 +212,7 @@
 }
 
 .fw-button.fw-google {
-    background: -moz-linear-gradient(top, #879ded, #6d84d8);
-    background: -webkit-gradient(linear, left top, left bottom, from(#879ded), to(#6d84d8));
+    background: linear-gradient(to bottom left, #879ded, #6d84d8);
     box-shadow: 0px 0px 1px 1px #93a6e6 inset;
     border-color: #6578bb;
 }
@@ -229,8 +226,7 @@
 }
 
 .fw-button.fw-soundcloud {
-    background: -moz-linear-gradient(top, #f76700, #fa3219);
-    background: -webkit-gradient(linear, left top, left bottom, from(#f76700), to(#fa3219));
+    background: linear-gradient(to bottom left, #f76700, #fa3219);
     box-shadow: 0px 0px 1px 1px #f79955 inset;
     border-color: #c53421;
 }
@@ -244,8 +240,7 @@
 }
 
 .fw-button.fw-openid {
-    background: -moz-linear-gradient(top, #fae719, #fac219);
-    background: -webkit-gradient(linear, left top, left bottom, from(#fae719), to(#fac219));
+    background: linear-gradient(to bottom left, #fae719, #fac219);
     box-shadow: 0px 0px 1px 1px #fad819 inset;
     border-color: #faad19;
 }
@@ -259,8 +254,7 @@
 }
 
 .fw-button.fw-persona {
-    background: -moz-linear-gradient(top, #17e861, #1bbd54);
-    background: -webkit-gradient(linear, left top, left bottom, from(#17e861), to(#1bbd54));
+    background: linear-gradient(to bottom left, #17e861, #1bbd54);
     box-shadow: 0px 0px 1px 1px #29e76c inset;
     border-color: #168e40;
 }
@@ -274,8 +268,7 @@
 }
 
 .fw-button.fw-linkedin {
-    background: -moz-linear-gradient(top, #c529e7, #ad22cb);
-    background: -webkit-gradient(linear, left top, left bottom, from(#c529e7), to(#ad22cb));
+    background: linear-gradient(to bottom left, #c529e7, #ad22cb);
     box-shadow: 0px 0px 1px 1px #d648f4 inset;
     border-color: #841c9a;
 }
@@ -289,8 +282,7 @@
 }
 
 .fw-button.fw-github {
-    background: -moz-linear-gradient(top, #f95858, #f92958);
-    background: -webkit-gradient(linear, left top, left bottom, from(#f95858), to(#f92958));
+    background: linear-gradient(to bottom left, #f95858, #f92958);
     box-shadow: 0px 0px 1px 1px #f87795 inset;
     border-color: #d20e3c;
 }
@@ -304,8 +296,7 @@
 }
 
 .fw-button.fw-stackexchange {
-    background: -moz-linear-gradient(top, #fcff23, #eaed0d);
-    background: -webkit-gradient(linear, left top, left bottom, from(#fcff23), to(#eaed0d));
+    background: linear-gradient(to bottom left, #fcff23, #eaed0d);
     box-shadow: 0px 0px 1px 1px #fdff91 inset;
     border-color: #ced03f;
     color: #585854;

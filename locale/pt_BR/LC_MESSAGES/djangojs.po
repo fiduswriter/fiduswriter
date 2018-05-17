@@ -5,13 +5,13 @@
 #
 #: node_modules/mathquill/build/mathquill.js:1192
 #: node_modules/mathquill/build/mathquill.min.js:10
-#: static-transpile/js/transpile/editor.js:69333
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:69325
+#: static-transpile/js/transpile/editor.js:69904
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:69896
 msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-18 07:26+0000\n"
+"POT-Creation-Date: 2018-05-17 22:45+0200\n"
 "PO-Revision-Date: 2015-04-24 23:57-0300\n"
 "Last-Translator: Job Diogenes Ribeiro Borges <jobdrb@gmail.com>\n"
 "Language-Team: Brazilian Portuguese <jobdrb@gmail.com>\n"
@@ -23,20 +23,20 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 
 #: base/static/js/modules/common/dialog.js:12
-#: document/static/js/modules/editor/menus/headerbar/model.js:72
+#: document/static/js/modules/editor/menus/headerbar/model.js:75
 #: static-transpile/js/transpile/biblatex_import_worker.js:340
 #: static-transpile/js/transpile/biblatex_import_worker.js:354
-#: static-transpile/js/transpile/bibliography_overview.js:3751
-#: static-transpile/js/transpile/bibliography_overview.js:3765
-#: static-transpile/js/transpile/confirm_email.js:225
-#: static-transpile/js/transpile/confirm_email.js:239
+#: static-transpile/js/transpile/bibliography_overview.js:3759
+#: static-transpile/js/transpile/bibliography_overview.js:3773
+#: static-transpile/js/transpile/confirm_account.js:225
+#: static-transpile/js/transpile/confirm_account.js:239
 #: static-transpile/js/transpile/contacts_overview.js:225
 #: static-transpile/js/transpile/contacts_overview.js:239
 #: static-transpile/js/transpile/document_overview.js:768
 #: static-transpile/js/transpile/document_overview.js:782
 #: static-transpile/js/transpile/editor.js:3611
 #: static-transpile/js/transpile/editor.js:3625
-#: static-transpile/js/transpile/editor.js:9744
+#: static-transpile/js/transpile/editor.js:9814
 #: static-transpile/js/transpile/feedback.js:225
 #: static-transpile/js/transpile/feedback.js:239
 #: static-transpile/js/transpile/images_overview.js:227
@@ -47,7 +47,7 @@ msgstr ""
 #: static-transpile/js/transpile/maintenance.js:243
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:3592
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:3606
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9725
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9795
 #: static-transpile/js/transpile/profile.js:218
 #: static-transpile/js/transpile/profile.js:232
 msgid "Close"
@@ -227,19 +227,19 @@ msgstr ""
 #: static-transpile/js/transpile/editor.js:1994
 #: static-transpile/js/transpile/editor.js:4344
 #: static-transpile/js/transpile/editor.js:4508
-#: static-transpile/js/transpile/editor.js:9559
-#: static-transpile/js/transpile/editor.js:9584
-#: static-transpile/js/transpile/editor.js:22391
+#: static-transpile/js/transpile/editor.js:9616
+#: static-transpile/js/transpile/editor.js:9642
+#: static-transpile/js/transpile/editor.js:22636
 #: static-transpile/js/transpile/images_overview.js:1230
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:1975
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4325
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4489
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9540
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9565
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22372
-#: static-transpile/js/transpile/profile.js:1226
-#: static-transpile/js/transpile/profile.js:1294
-#: static-transpile/js/transpile/profile.js:1390
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9597
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9623
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22617
+#: static-transpile/js/transpile/profile.js:1229
+#: static-transpile/js/transpile/profile.js:1297
+#: static-transpile/js/transpile/profile.js:1393
 #: user/static/js/modules/contacts/manage.js:64
 #: user/static/js/modules/profile/index.js:129
 #: user/static/js/modules/profile/index.js:203
@@ -256,17 +256,17 @@ msgid "Error in form, check highlighted values!"
 msgstr ""
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:2
-#: document/static/js/modules/editor/menus/headerbar/model.js:250
+#: document/static/js/modules/editor/menus/headerbar/model.js:266
 #: document/static/js/modules/editor/menus/toolbar/model.js:51
 #: static-transpile/js/transpile/bibliography_overview.js:2234
 #: static-transpile/js/transpile/editor.js:2195
-#: static-transpile/js/transpile/editor.js:9879
-#: static-transpile/js/transpile/editor.js:10623
-#: static-transpile/js/transpile/editor.js:22699
+#: static-transpile/js/transpile/editor.js:9962
+#: static-transpile/js/transpile/editor.js:10740
+#: static-transpile/js/transpile/editor.js:22944
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2176
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9860
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10604
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22680
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9943
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10721
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22925
 msgid "Abstract"
 msgstr "Resumo"
 
@@ -299,12 +299,12 @@ msgid "Annotations author(s)"
 msgstr "Autor(es) Anotações"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:7
-#: document/static/js/modules/editor/menus/headerbar/model.js:228
+#: document/static/js/modules/editor/menus/headerbar/model.js:243
 #: static-transpile/js/transpile/bibliography_overview.js:2239
 #: static-transpile/js/transpile/editor.js:2200
-#: static-transpile/js/transpile/editor.js:9858
+#: static-transpile/js/transpile/editor.js:9940
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2181
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9839
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9921
 msgid "Author(s)"
 msgstr "Autor(es)"
 
@@ -528,9 +528,9 @@ msgstr "Título para indexação"
 #: bibliography/static/js/modules/bibliography/form/strings.js:39
 #: static-transpile/js/transpile/bibliography_overview.js:2271
 #: static-transpile/js/transpile/editor.js:2232
-#: static-transpile/js/transpile/editor.js:8436
+#: static-transpile/js/transpile/editor.js:8432
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2213
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8417
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8413
 msgid "Institution"
 msgstr "Instituição"
 
@@ -619,15 +619,15 @@ msgid "Title of publication"
 msgstr "Título da publicação"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:52
-#: document/static/js/modules/editor/menus/headerbar/model.js:272
+#: document/static/js/modules/editor/menus/headerbar/model.js:289
 #: document/static/js/modules/editor/menus/toolbar/model.js:52
 #: static-transpile/js/transpile/bibliography_overview.js:2284
 #: static-transpile/js/transpile/editor.js:2245
-#: static-transpile/js/transpile/editor.js:9900
-#: static-transpile/js/transpile/editor.js:10624
+#: static-transpile/js/transpile/editor.js:9984
+#: static-transpile/js/transpile/editor.js:10741
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2226
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9881
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10605
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9965
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10722
 msgid "Keywords"
 msgstr "Palavras-chave"
 
@@ -860,15 +860,15 @@ msgid "Abridged title"
 msgstr "Título abreviado"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:85
-#: document/static/js/modules/editor/menus/headerbar/model.js:206
+#: document/static/js/modules/editor/menus/headerbar/model.js:220
 #: document/static/js/modules/editor/menus/toolbar/model.js:49
 #: static-transpile/js/transpile/bibliography_overview.js:2317
 #: static-transpile/js/transpile/editor.js:2278
-#: static-transpile/js/transpile/editor.js:9837
-#: static-transpile/js/transpile/editor.js:10621
+#: static-transpile/js/transpile/editor.js:9918
+#: static-transpile/js/transpile/editor.js:10738
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2259
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9818
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10602
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9899
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10719
 msgid "Subtitle"
 msgstr "Subtítulo"
 
@@ -884,19 +884,19 @@ msgstr "Subtítulo"
 #: static-transpile/js/transpile/bibliography_overview.js:2818
 #: static-transpile/js/transpile/document_overview.js:2241
 #: static-transpile/js/transpile/editor.js:2279
-#: static-transpile/js/transpile/editor.js:7270
-#: static-transpile/js/transpile/editor.js:8402
-#: static-transpile/js/transpile/editor.js:8419
-#: static-transpile/js/transpile/editor.js:10620
-#: static-transpile/js/transpile/editor.js:13828
-#: static-transpile/js/transpile/editor.js:21757
+#: static-transpile/js/transpile/editor.js:7266
+#: static-transpile/js/transpile/editor.js:8398
+#: static-transpile/js/transpile/editor.js:8415
+#: static-transpile/js/transpile/editor.js:10737
+#: static-transpile/js/transpile/editor.js:13971
+#: static-transpile/js/transpile/editor.js:22002
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2260
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7251
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8383
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8400
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10601
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:13809
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:21738
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7247
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8379
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8396
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10718
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:13952
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:21983
 #: usermedia/static/js/modules/images/selection_dialog/index.js:110
 msgid "Title"
 msgstr "Título"
@@ -925,9 +925,9 @@ msgstr "Tipo manual"
 #: bibliography/static/js/modules/bibliography/form/strings.js:90
 #: static-transpile/js/transpile/bibliography_overview.js:2322
 #: static-transpile/js/transpile/editor.js:2283
-#: static-transpile/js/transpile/editor.js:8372
+#: static-transpile/js/transpile/editor.js:8368
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2264
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8353
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8349
 msgid "URL"
 msgstr "URL"
 
@@ -1241,9 +1241,9 @@ msgstr "Postagem de fórum"
 #: bibliography/static/js/modules/bibliography/form/strings.js:160
 #: static-transpile/js/transpile/bibliography_overview.js:2388
 #: static-transpile/js/transpile/editor.js:2349
-#: static-transpile/js/transpile/editor.js:22201
+#: static-transpile/js/transpile/editor.js:22446
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2330
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22182
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22427
 msgid "Editor"
 msgstr "Editor"
 
@@ -1297,9 +1297,9 @@ msgstr "Colaboradores"
 #: document/static/js/modules/editor/dialogs/templates.js:255
 #: static-transpile/js/transpile/bibliography_overview.js:2395
 #: static-transpile/js/transpile/editor.js:2356
-#: static-transpile/js/transpile/editor.js:8431
+#: static-transpile/js/transpile/editor.js:8427
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2337
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8412
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8408
 msgid "Page"
 msgstr "Página"
 
@@ -1452,9 +1452,9 @@ msgstr ""
 #: document/static/js/modules/editor/dialogs/language.js:6
 #: static-transpile/js/transpile/bibliography_overview.js:2415
 #: static-transpile/js/transpile/editor.js:2376
-#: static-transpile/js/transpile/editor.js:7740
+#: static-transpile/js/transpile/editor.js:7736
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2357
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Afrikaans"
 msgstr ""
 
@@ -1462,9 +1462,9 @@ msgstr ""
 #: document/static/js/modules/editor/dialogs/language.js:8
 #: static-transpile/js/transpile/bibliography_overview.js:2416
 #: static-transpile/js/transpile/editor.js:2377
-#: static-transpile/js/transpile/editor.js:7740
+#: static-transpile/js/transpile/editor.js:7736
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2358
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Arabic"
 msgstr ""
 
@@ -1479,9 +1479,9 @@ msgstr ""
 #: document/static/js/modules/editor/dialogs/language.js:12
 #: static-transpile/js/transpile/bibliography_overview.js:2418
 #: static-transpile/js/transpile/editor.js:2379
-#: static-transpile/js/transpile/editor.js:7740
+#: static-transpile/js/transpile/editor.js:7736
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2360
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Bulgarian"
 msgstr ""
 
@@ -1489,9 +1489,9 @@ msgstr ""
 #: document/static/js/modules/editor/dialogs/language.js:13
 #: static-transpile/js/transpile/bibliography_overview.js:2419
 #: static-transpile/js/transpile/editor.js:2380
-#: static-transpile/js/transpile/editor.js:7740
+#: static-transpile/js/transpile/editor.js:7736
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2361
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Catalan"
 msgstr ""
 
@@ -1524,22 +1524,22 @@ msgstr ""
 #: document/static/js/modules/editor/dialogs/language.js:16
 #: static-transpile/js/transpile/bibliography_overview.js:2424
 #: static-transpile/js/transpile/editor.js:2385
-#: static-transpile/js/transpile/editor.js:7740
+#: static-transpile/js/transpile/editor.js:7736
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2366
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Danish"
 msgstr ""
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:197
 #: document/static/js/modules/editor/dialogs/language.js:17
-#: document/static/js/modules/editor/menus/headerbar/model.js:334
+#: document/static/js/modules/editor/menus/headerbar/model.js:355
 #: static-transpile/js/transpile/bibliography_overview.js:2425
 #: static-transpile/js/transpile/editor.js:2386
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/editor.js:9947
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/editor.js:10035
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2367
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9928
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10016
 msgid "Dutch"
 msgstr ""
 
@@ -1615,14 +1615,14 @@ msgstr ""
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:208
 #: document/static/js/modules/editor/dialogs/language.js:25
-#: document/static/js/modules/editor/menus/headerbar/model.js:329
+#: document/static/js/modules/editor/menus/headerbar/model.js:350
 #: static-transpile/js/transpile/bibliography_overview.js:2436
 #: static-transpile/js/transpile/editor.js:2397
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/editor.js:9947
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/editor.js:10035
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2378
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9928
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10016
 msgid "French"
 msgstr ""
 
@@ -1651,9 +1651,9 @@ msgstr ""
 #: document/static/js/modules/editor/dialogs/language.js:30
 #: static-transpile/js/transpile/bibliography_overview.js:2440
 #: static-transpile/js/transpile/editor.js:2401
-#: static-transpile/js/transpile/editor.js:7740
+#: static-transpile/js/transpile/editor.js:7736
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2382
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Greek"
 msgstr ""
 
@@ -1675,22 +1675,22 @@ msgstr ""
 #: document/static/js/modules/editor/dialogs/language.js:31
 #: static-transpile/js/transpile/bibliography_overview.js:2443
 #: static-transpile/js/transpile/editor.js:2404
-#: static-transpile/js/transpile/editor.js:7740
+#: static-transpile/js/transpile/editor.js:7736
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2385
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Icelandic"
 msgstr ""
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:216
 #: document/static/js/modules/editor/dialogs/language.js:32
-#: document/static/js/modules/editor/menus/headerbar/model.js:331
+#: document/static/js/modules/editor/menus/headerbar/model.js:352
 #: static-transpile/js/transpile/bibliography_overview.js:2444
 #: static-transpile/js/transpile/editor.js:2405
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/editor.js:9947
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/editor.js:10035
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2386
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9928
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10016
 #, fuzzy
 #| msgid "Italics"
 msgid "Italian"
@@ -1698,14 +1698,14 @@ msgstr "Itálico"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:217
 #: document/static/js/modules/editor/dialogs/language.js:33
-#: document/static/js/modules/editor/menus/headerbar/model.js:330
+#: document/static/js/modules/editor/menus/headerbar/model.js:351
 #: static-transpile/js/transpile/bibliography_overview.js:2445
 #: static-transpile/js/transpile/editor.js:2406
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/editor.js:9947
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/editor.js:10035
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2387
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9928
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10016
 msgid "Japanese"
 msgstr ""
 
@@ -1727,9 +1727,9 @@ msgstr ""
 #: document/static/js/modules/editor/dialogs/language.js:35
 #: static-transpile/js/transpile/bibliography_overview.js:2448
 #: static-transpile/js/transpile/editor.js:2409
-#: static-transpile/js/transpile/editor.js:7740
+#: static-transpile/js/transpile/editor.js:7736
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2390
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Lithuanian"
 msgstr ""
 
@@ -1763,14 +1763,14 @@ msgstr ""
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:225
 #: document/static/js/modules/editor/dialogs/language.js:40
-#: document/static/js/modules/editor/menus/headerbar/model.js:332
+#: document/static/js/modules/editor/menus/headerbar/model.js:353
 #: static-transpile/js/transpile/bibliography_overview.js:2453
 #: static-transpile/js/transpile/editor.js:2414
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/editor.js:9947
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/editor.js:10035
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2395
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9928
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10016
 #, fuzzy
 #| msgid "Publisher"
 msgid "Polish"
@@ -1798,22 +1798,22 @@ msgstr ""
 #: document/static/js/modules/editor/dialogs/language.js:43
 #: static-transpile/js/transpile/bibliography_overview.js:2457
 #: static-transpile/js/transpile/editor.js:2418
-#: static-transpile/js/transpile/editor.js:7740
+#: static-transpile/js/transpile/editor.js:7736
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2399
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Romanian"
 msgstr ""
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:230
 #: document/static/js/modules/editor/dialogs/language.js:44
-#: document/static/js/modules/editor/menus/headerbar/model.js:335
+#: document/static/js/modules/editor/menus/headerbar/model.js:356
 #: static-transpile/js/transpile/bibliography_overview.js:2458
 #: static-transpile/js/transpile/editor.js:2419
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/editor.js:9947
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/editor.js:10035
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2400
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9928
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10016
 msgid "Russian"
 msgstr ""
 
@@ -1835,9 +1835,9 @@ msgstr ""
 #: document/static/js/modules/editor/dialogs/language.js:48
 #: static-transpile/js/transpile/bibliography_overview.js:2461
 #: static-transpile/js/transpile/editor.js:2422
-#: static-transpile/js/transpile/editor.js:7740
+#: static-transpile/js/transpile/editor.js:7736
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2403
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Slovak"
 msgstr ""
 
@@ -1850,14 +1850,14 @@ msgstr ""
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:235
 #: document/static/js/modules/editor/dialogs/language.js:50
-#: document/static/js/modules/editor/menus/headerbar/model.js:328
+#: document/static/js/modules/editor/menus/headerbar/model.js:349
 #: static-transpile/js/transpile/bibliography_overview.js:2463
 #: static-transpile/js/transpile/editor.js:2424
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/editor.js:9947
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/editor.js:10035
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2405
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9928
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10016
 msgid "Spanish"
 msgstr ""
 
@@ -1865,9 +1865,9 @@ msgstr ""
 #: document/static/js/modules/editor/dialogs/language.js:51
 #: static-transpile/js/transpile/bibliography_overview.js:2464
 #: static-transpile/js/transpile/editor.js:2425
-#: static-transpile/js/transpile/editor.js:7740
+#: static-transpile/js/transpile/editor.js:7736
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2406
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Swedish"
 msgstr ""
 
@@ -1882,9 +1882,9 @@ msgstr ""
 #: document/static/js/modules/editor/dialogs/language.js:45
 #: static-transpile/js/transpile/bibliography_overview.js:2466
 #: static-transpile/js/transpile/editor.js:2427
-#: static-transpile/js/transpile/editor.js:7740
+#: static-transpile/js/transpile/editor.js:7736
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2408
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Turkish"
 msgstr ""
 
@@ -1892,9 +1892,9 @@ msgstr ""
 #: document/static/js/modules/editor/dialogs/language.js:54
 #: static-transpile/js/transpile/bibliography_overview.js:2467
 #: static-transpile/js/transpile/editor.js:2428
-#: static-transpile/js/transpile/editor.js:7740
+#: static-transpile/js/transpile/editor.js:7736
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2409
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Ukrainian"
 msgstr ""
 
@@ -1981,13 +1981,14 @@ msgstr "Importar uma biblioteca BibTex"
 #: bibliography/static/js/modules/bibliography/import/templates.js:6
 #: document/static/js/modules/documents/overview/templates.js:6
 #: static-transpile/js/transpile/bibliography_overview.js:2716
-#: static-transpile/js/transpile/document_overview.js:2462
+#: static-transpile/js/transpile/confirm_account.js:1100
+#: static-transpile/js/transpile/document_overview.js:2473
 #: static-transpile/js/transpile/editor.js:2677
-#: static-transpile/js/transpile/editor.js:21629
+#: static-transpile/js/transpile/editor.js:21874
 #: static-transpile/js/transpile/images_overview.js:1144
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:2658
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:21610
-#: static-transpile/js/transpile/profile.js:1478
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:21855
+#: static-transpile/js/transpile/profile.js:1481
 #: user/static/js/modules/profile/templates.js:13
 #: usermedia/static/js/modules/images/edit_dialog/templates.js:40
 msgid "Select a file"
@@ -1996,8 +1997,8 @@ msgstr "Selecione um arquivo"
 #: bibliography/static/js/modules/bibliography/overview/index.js:48
 #: document/static/js/modules/editor/dialogs/citation.js:202
 #: static-transpile/js/transpile/bibliography_overview.js:2812
-#: static-transpile/js/transpile/editor.js:7263
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7244
+#: static-transpile/js/transpile/editor.js:7259
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7240
 #, fuzzy
 #| msgid "User is not registered."
 msgid "No sources registered"
@@ -2013,10 +2014,10 @@ msgstr "Selecionar o tipo da fonte"
 #: bibliography/static/js/modules/bibliography/overview/index.js:54
 #: document/static/js/modules/editor/dialogs/citation.js:209
 #: static-transpile/js/transpile/bibliography_overview.js:2818
-#: static-transpile/js/transpile/editor.js:7270
-#: static-transpile/js/transpile/editor.js:8419
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7251
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8400
+#: static-transpile/js/transpile/editor.js:7266
+#: static-transpile/js/transpile/editor.js:8415
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7247
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8396
 msgid "Author"
 msgstr "Autor"
 
@@ -2043,19 +2044,19 @@ msgstr "Editar categorias"
 #: static-transpile/js/transpile/document_overview.js:1549
 #: static-transpile/js/transpile/document_overview.js:1788
 #: static-transpile/js/transpile/document_overview.js:1882
-#: static-transpile/js/transpile/document_overview.js:2621
-#: static-transpile/js/transpile/document_overview.js:2691
+#: static-transpile/js/transpile/document_overview.js:2632
+#: static-transpile/js/transpile/document_overview.js:2702
 #: static-transpile/js/transpile/editor.js:4392
 #: static-transpile/js/transpile/editor.js:4631
-#: static-transpile/js/transpile/editor.js:9543
-#: static-transpile/js/transpile/editor.js:9552
+#: static-transpile/js/transpile/editor.js:9600
+#: static-transpile/js/transpile/editor.js:9609
 #: static-transpile/js/transpile/images_overview.js:1368
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4373
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4612
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9524
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9533
-#: static-transpile/js/transpile/profile.js:1052
-#: static-transpile/js/transpile/profile.js:1186
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9581
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9590
+#: static-transpile/js/transpile/profile.js:1055
+#: static-transpile/js/transpile/profile.js:1189
 #: user/static/js/modules/contacts/manage.js:118
 #: user/static/js/modules/profile/delete_user.js:12
 #: user/static/js/modules/profile/index.js:82
@@ -2070,12 +2071,12 @@ msgstr "Excluir"
 #: static-transpile/js/transpile/contacts_overview.js:1093
 #: static-transpile/js/transpile/document_overview.js:1559
 #: static-transpile/js/transpile/document_overview.js:1877
-#: static-transpile/js/transpile/document_overview.js:2639
+#: static-transpile/js/transpile/document_overview.js:2650
 #: static-transpile/js/transpile/editor.js:4402
 #: static-transpile/js/transpile/images_overview.js:1380
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4383
-#: static-transpile/js/transpile/profile.js:1066
-#: static-transpile/js/transpile/profile.js:1197
+#: static-transpile/js/transpile/profile.js:1069
+#: static-transpile/js/transpile/profile.js:1200
 #: user/static/js/modules/contacts/manage.js:130
 #: user/static/js/modules/profile/delete_user.js:28
 #: user/static/js/modules/profile/index.js:95
@@ -2101,64 +2102,64 @@ msgstr "Excluir as bibliografias"
 msgid "Delete selected"
 msgstr "Usar imagem selecionada"
 
-#: bibliography/static/js/modules/bibliography/overview/menu.js:32
-#: static-transpile/js/transpile/bibliography_overview.js:3193
+#: bibliography/static/js/modules/bibliography/overview/menu.js:33
+#: static-transpile/js/transpile/bibliography_overview.js:3194
 msgid "Export selected"
 msgstr ""
 
-#: bibliography/static/js/modules/bibliography/overview/menu.js:48
-#: static-transpile/js/transpile/bibliography_overview.js:3206
-#: static-transpile/js/transpile/images_overview.js:1590
-#: usermedia/static/js/modules/images/overview/menu.js:35
+#: bibliography/static/js/modules/bibliography/overview/menu.js:51
+#: static-transpile/js/transpile/bibliography_overview.js:3209
+#: static-transpile/js/transpile/images_overview.js:1592
+#: usermedia/static/js/modules/images/overview/menu.js:37
 #, fuzzy
 #| msgid "Select categories"
 msgid "All categories"
 msgstr "Escolha as categorias"
 
-#: bibliography/static/js/modules/bibliography/overview/menu.js:59
-#: static-transpile/js/transpile/bibliography_overview.js:3217
-#: static-transpile/js/transpile/images_overview.js:1601
-#: usermedia/static/js/modules/images/overview/menu.js:46
+#: bibliography/static/js/modules/bibliography/overview/menu.js:63
+#: static-transpile/js/transpile/bibliography_overview.js:3221
+#: static-transpile/js/transpile/images_overview.js:1604
+#: usermedia/static/js/modules/images/overview/menu.js:49
 #, fuzzy
 #| msgid "Edit Categories"
 msgid "Edit categories"
 msgstr "Editar categorias"
 
-#: bibliography/static/js/modules/bibliography/overview/menu.js:65
+#: bibliography/static/js/modules/bibliography/overview/menu.js:70
 #: document/static/js/modules/editor/dialogs/citation.js:27
-#: static-transpile/js/transpile/bibliography_overview.js:3224
-#: static-transpile/js/transpile/editor.js:7068
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7049
+#: static-transpile/js/transpile/bibliography_overview.js:3229
+#: static-transpile/js/transpile/editor.js:7064
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7045
 msgid "Register new source"
 msgstr "Registrar nova fonte"
 
-#: bibliography/static/js/modules/bibliography/overview/menu.js:79
-#: static-transpile/js/transpile/bibliography_overview.js:3237
+#: bibliography/static/js/modules/bibliography/overview/menu.js:85
+#: static-transpile/js/transpile/bibliography_overview.js:3243
 #, fuzzy
 #| msgid "Upload new image"
 msgid "Upload BibTeX file"
 msgstr "Carregar nova imagem"
 
-#: bibliography/static/js/modules/bibliography/overview/menu.js:91
-#: static-transpile/js/transpile/bibliography_overview.js:3247
+#: bibliography/static/js/modules/bibliography/overview/menu.js:98
+#: static-transpile/js/transpile/bibliography_overview.js:3254
 #, fuzzy
 #| msgid "Search for Bibliography"
 msgid "Search bibliography"
 msgstr "Pesquisar Bibliografia"
 
 #: bibliography/static/js/modules/bibliography/tools.js:30
-#: static-transpile/js/transpile/bibliography_overview.js:3528
+#: static-transpile/js/transpile/bibliography_overview.js:3536
 #: static-transpile/js/transpile/editor.js:3052
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:3033
 msgid " and others"
 msgstr "e outros"
 
 #: document/static/js/modules/documents/access_rights/index.js:49
-#: static-transpile/js/transpile/contacts_overview.js:1144
+#: static-transpile/js/transpile/contacts_overview.js:1146
 #: static-transpile/js/transpile/document_overview.js:1650
 #: static-transpile/js/transpile/editor.js:4493
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4474
-#: user/static/js/modules/contacts/menu.js:34
+#: user/static/js/modules/contacts/menu.js:36
 msgid "Add new contact"
 msgstr "Adicionar novo contato"
 
@@ -2207,12 +2208,12 @@ msgid "Write"
 msgstr ""
 
 #: document/static/js/modules/documents/access_rights/templates.js:74
-#: document/static/js/modules/editor/menus/toolbar/model.js:553
+#: document/static/js/modules/editor/menus/toolbar/model.js:576
 #: static-transpile/js/transpile/document_overview.js:1803
 #: static-transpile/js/transpile/editor.js:4646
-#: static-transpile/js/transpile/editor.js:11023
+#: static-transpile/js/transpile/editor.js:11164
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4627
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:11004
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:11145
 #, fuzzy
 #| msgid "Document"
 msgid "Comment"
@@ -2307,108 +2308,108 @@ msgstr "Direitos"
 msgid "You cannot delete documents of other users"
 msgstr "Você não pode excluir ou compartilhar:"
 
-#: document/static/js/modules/documents/overview/menu.js:34
-#: static-transpile/js/transpile/document_overview.js:2372
+#: document/static/js/modules/documents/overview/menu.js:35
+#: static-transpile/js/transpile/document_overview.js:2373
 #, fuzzy
 #| msgid "Use selected image"
 msgid "Share selected"
 msgstr "Usar imagem selecionada"
 
-#: document/static/js/modules/documents/overview/menu.js:39
-#: static-transpile/js/transpile/document_overview.js:2381
+#: document/static/js/modules/documents/overview/menu.js:40
+#: static-transpile/js/transpile/document_overview.js:2382
 msgid "You cannot share documents of other users"
 msgstr ""
 
-#: document/static/js/modules/documents/overview/menu.js:52
-#: static-transpile/js/transpile/document_overview.js:2390
+#: document/static/js/modules/documents/overview/menu.js:54
+#: static-transpile/js/transpile/document_overview.js:2392
 msgid "Copy selected"
 msgstr ""
 
-#: document/static/js/modules/documents/overview/menu.js:61
-#: static-transpile/js/transpile/document_overview.js:2398
+#: document/static/js/modules/documents/overview/menu.js:64
+#: static-transpile/js/transpile/document_overview.js:2401
 msgid "Export selected as Epub"
 msgstr ""
 
-#: document/static/js/modules/documents/overview/menu.js:70
-#: static-transpile/js/transpile/document_overview.js:2406
+#: document/static/js/modules/documents/overview/menu.js:74
+#: static-transpile/js/transpile/document_overview.js:2410
 msgid "Export selected as HTML"
 msgstr ""
 
-#: document/static/js/modules/documents/overview/menu.js:79
-#: static-transpile/js/transpile/document_overview.js:2414
+#: document/static/js/modules/documents/overview/menu.js:84
+#: static-transpile/js/transpile/document_overview.js:2419
 msgid "Export selected as LaTeX"
 msgstr ""
 
-#: document/static/js/modules/documents/overview/menu.js:88
-#: static-transpile/js/transpile/document_overview.js:2422
+#: document/static/js/modules/documents/overview/menu.js:94
+#: static-transpile/js/transpile/document_overview.js:2428
 msgid "Download selected as Fidus document"
 msgstr ""
 
-#: document/static/js/modules/documents/overview/menu.js:101
-#: static-transpile/js/transpile/document_overview.js:2433
+#: document/static/js/modules/documents/overview/menu.js:109
+#: static-transpile/js/transpile/document_overview.js:2441
 #, fuzzy
 #| msgid "Delete the document(s)?"
 msgid "Create new document"
 msgstr "Excluir o(s) documento(s)?"
 
-#: document/static/js/modules/documents/overview/menu.js:107
-#: static-transpile/js/transpile/document_overview.js:2440
+#: document/static/js/modules/documents/overview/menu.js:116
+#: static-transpile/js/transpile/document_overview.js:2449
 #, fuzzy
 #| msgid "Upload image"
 msgid "Upload Fidus document"
 msgstr "Enviar imagem"
 
-#: document/static/js/modules/documents/overview/menu.js:113
-#: static-transpile/js/transpile/document_overview.js:2447
+#: document/static/js/modules/documents/overview/menu.js:123
+#: static-transpile/js/transpile/document_overview.js:2457
 #, fuzzy
 #| msgid "Search for Document"
 msgid "Search documents"
 msgstr "Pesquisar por Documento"
 
 #: document/static/js/modules/documents/revisions/index.js:27
-#: static-transpile/js/transpile/document_overview.js:2522
+#: static-transpile/js/transpile/document_overview.js:2533
 msgid "Saved revisions of"
 msgstr "Gravadas revisões de"
 
 #: document/static/js/modules/documents/revisions/index.js:141
-#: static-transpile/js/transpile/document_overview.js:2641
+#: static-transpile/js/transpile/document_overview.js:2652
 msgid "Do you really want to delete the revision?"
 msgstr "Você realmente quer apagar a revisão?"
 
 #: document/static/js/modules/documents/revisions/index.js:161
-#: static-transpile/js/transpile/document_overview.js:2661
+#: static-transpile/js/transpile/document_overview.js:2672
 msgid "Revision deleted"
 msgstr "Revisão excluída"
 
 #: document/static/js/modules/documents/revisions/index.js:171
-#: static-transpile/js/transpile/document_overview.js:2669
+#: static-transpile/js/transpile/document_overview.js:2680
 msgid "Could not delete revision."
 msgstr "Não foi possível excluir revisão."
 
 #: document/static/js/modules/documents/revisions/templates.js:7
-#: static-transpile/js/transpile/document_overview.js:2691
+#: static-transpile/js/transpile/document_overview.js:2702
 msgid "Time"
 msgstr "Tempo"
 
 #: document/static/js/modules/documents/revisions/templates.js:9
-#: static-transpile/js/transpile/document_overview.js:2691
+#: static-transpile/js/transpile/document_overview.js:2702
 msgid "Recreate"
 msgstr "Recriar"
 
 #: document/static/js/modules/documents/tools.js:36
-#: static-transpile/js/transpile/document_overview.js:2740
+#: static-transpile/js/transpile/document_overview.js:2751
 msgid "Could not obtain extra document data"
 msgstr ""
 
-#: document/static/js/modules/editor/comments/interactions.js:203
+#: document/static/js/modules/editor/comments/interactions.js:202
 #: document/static/js/modules/editor/comments/interactions.js:288
 #: document/static/js/modules/editor/comments/store.js:62
-#: static-transpile/js/transpile/editor.js:5795
-#: static-transpile/js/transpile/editor.js:5879
-#: static-transpile/js/transpile/editor.js:5996
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:5776
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:5860
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:5977
+#: static-transpile/js/transpile/editor.js:5791
+#: static-transpile/js/transpile/editor.js:5875
+#: static-transpile/js/transpile/editor.js:5992
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:5772
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:5856
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:5973
 msgid "Reviewer"
 msgstr ""
 
@@ -2417,46 +2418,46 @@ msgstr ""
 #: document/static/js/modules/editor/dialogs/figure.js:100
 #: document/static/js/modules/editor/dialogs/link.js:62
 #: document/static/js/modules/editor/dialogs/math.js:26
-#: static-transpile/js/transpile/editor.js:6941
-#: static-transpile/js/transpile/editor.js:7085
-#: static-transpile/js/transpile/editor.js:7530
-#: static-transpile/js/transpile/editor.js:7886
-#: static-transpile/js/transpile/editor.js:8098
-#: static-transpile/js/transpile/editor.js:21503
+#: static-transpile/js/transpile/editor.js:6937
+#: static-transpile/js/transpile/editor.js:7081
+#: static-transpile/js/transpile/editor.js:7526
+#: static-transpile/js/transpile/editor.js:7882
+#: static-transpile/js/transpile/editor.js:8094
+#: static-transpile/js/transpile/editor.js:21748
 #: static-transpile/js/transpile/images_overview.js:1018
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:6922
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7066
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7511
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7867
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8079
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:21484
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:6918
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7062
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7507
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7863
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8075
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:21729
 #: usermedia/static/js/modules/images/edit_dialog/index.js:26
 msgid "Update"
 msgstr "Atualizar"
 
 #: document/static/js/modules/editor/dialogs/author.js:22
-#: static-transpile/js/transpile/editor.js:6941
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:6922
+#: static-transpile/js/transpile/editor.js:6937
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:6918
 msgid "Add"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/author.js:39
-#: static-transpile/js/transpile/editor.js:6955
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:6936
+#: static-transpile/js/transpile/editor.js:6951
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:6932
 msgid "Email is in incorrect format!"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/author.js:81
-#: static-transpile/js/transpile/editor.js:6991
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:6972
+#: static-transpile/js/transpile/editor.js:6987
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:6968
 #, fuzzy
 #| msgid "Author"
 msgid "Add author"
 msgstr "Autor"
 
 #: document/static/js/modules/editor/dialogs/author.js:81
-#: static-transpile/js/transpile/editor.js:6991
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:6972
+#: static-transpile/js/transpile/editor.js:6987
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:6968
 #, fuzzy
 #| msgid "Update image"
 msgid "Update author"
@@ -2467,18 +2468,18 @@ msgstr "Atualizar imagem"
 #: document/static/js/modules/editor/dialogs/link.js:13
 #: document/static/js/modules/editor/dialogs/math.js:26
 #: document/static/js/modules/editor/dialogs/table.js:44
-#: static-transpile/js/transpile/editor.js:7054
-#: static-transpile/js/transpile/editor.js:7452
-#: static-transpile/js/transpile/editor.js:7829
-#: static-transpile/js/transpile/editor.js:8098
-#: static-transpile/js/transpile/editor.js:8278
-#: static-transpile/js/transpile/editor.js:8404
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7035
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7433
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7810
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8079
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8259
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8385
+#: static-transpile/js/transpile/editor.js:7050
+#: static-transpile/js/transpile/editor.js:7448
+#: static-transpile/js/transpile/editor.js:7825
+#: static-transpile/js/transpile/editor.js:8094
+#: static-transpile/js/transpile/editor.js:8274
+#: static-transpile/js/transpile/editor.js:8400
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7031
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7429
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7806
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8075
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8255
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8381
 msgid "Insert"
 msgstr "Insert"
 
@@ -2486,22 +2487,22 @@ msgstr "Insert"
 #: document/static/js/modules/editor/dialogs/figure.js:108
 #: document/static/js/modules/editor/dialogs/templates.js:218
 #: document/static/js/modules/editor/state_plugins/links.js:151
-#: static-transpile/js/transpile/editor.js:7077
-#: static-transpile/js/transpile/editor.js:7538
-#: static-transpile/js/transpile/editor.js:8419
-#: static-transpile/js/transpile/editor.js:13828
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7058
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7519
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8400
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:13809
-#: static-transpile/js/transpile/profile.js:1345
+#: static-transpile/js/transpile/editor.js:7073
+#: static-transpile/js/transpile/editor.js:7534
+#: static-transpile/js/transpile/editor.js:8415
+#: static-transpile/js/transpile/editor.js:13971
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7054
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7515
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8396
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:13952
+#: static-transpile/js/transpile/profile.js:1348
 #: user/static/js/modules/profile/index.js:259
 msgid "Remove"
 msgstr "Remover"
 
 #: document/static/js/modules/editor/dialogs/citation.js:63
-#: static-transpile/js/transpile/editor.js:7106
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7087
+#: static-transpile/js/transpile/editor.js:7102
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7083
 msgid "Configure Citation"
 msgstr "Configurar Citação"
 
@@ -2509,386 +2510,386 @@ msgstr "Configurar Citação"
 #: document/static/js/modules/exporter/tools/file.js:3
 #: static-transpile/js/transpile/bibliography_overview.js:2895
 #: static-transpile/js/transpile/document_overview.js:2263
-#: static-transpile/js/transpile/document_overview.js:8011
-#: static-transpile/js/transpile/editor.js:7156
-#: static-transpile/js/transpile/editor.js:7206
-#: static-transpile/js/transpile/editor.js:20978
+#: static-transpile/js/transpile/document_overview.js:8022
+#: static-transpile/js/transpile/editor.js:7152
+#: static-transpile/js/transpile/editor.js:7202
+#: static-transpile/js/transpile/editor.js:21224
 #: static-transpile/js/transpile/images_overview.js:1411
 #: static-transpile/js/transpile/maintenance.js:1324
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7137
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7187
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:20959
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7133
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7183
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:21205
 msgid "Untitled"
 msgstr "Sem título"
 
 #: document/static/js/modules/editor/dialogs/citation.js:203
-#: static-transpile/js/transpile/editor.js:7264
-#: static-transpile/js/transpile/editor.js:21751
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7245
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:21732
+#: static-transpile/js/transpile/editor.js:7260
+#: static-transpile/js/transpile/editor.js:21996
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7241
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:21977
 #: usermedia/static/js/modules/images/selection_dialog/index.js:104
 msgid "Search..."
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/citation.js:327
-#: static-transpile/js/transpile/editor.js:7393
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7374
+#: static-transpile/js/transpile/editor.js:7389
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7370
 msgid "Please select at least one citation source!"
 msgstr "Por favor, selecione pelo menos uma fonte de citação!"
 
 #: document/static/js/modules/editor/dialogs/figure.js:132
-#: static-transpile/js/transpile/editor.js:7562
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7543
+#: static-transpile/js/transpile/editor.js:7558
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7539
 msgid "Enter latex math or insert an image"
 msgstr "Entre com equação Latex de matemática ou inserir uma imagem"
 
 #: document/static/js/modules/editor/dialogs/language.js:7
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Albanian"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/language.js:9
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Asturian"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/language.js:10
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Belarusian"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/language.js:11
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Breton"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/language.js:14
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Catalan (Valencia)"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/language.js:15
-#: document/static/js/modules/editor/menus/headerbar/model.js:327
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/editor.js:9947
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9928
+#: document/static/js/modules/editor/menus/headerbar/model.js:348
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/editor.js:10035
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10016
 msgid "Chinese (Simplified)"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/language.js:18
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "English (Australia)"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/language.js:19
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 #, fuzzy
 #| msgid "English"
 msgid "English (Canada)"
 msgstr "Inglês"
 
 #: document/static/js/modules/editor/dialogs/language.js:20
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "English (New Zealand)"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/language.js:21
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "English (South Africa)"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/language.js:22
-#: document/static/js/modules/editor/menus/headerbar/model.js:325
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/editor.js:9947
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9928
+#: document/static/js/modules/editor/menus/headerbar/model.js:346
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/editor.js:10035
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10016
 msgid "English (United Kingdom)"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/language.js:23
-#: document/static/js/modules/editor/menus/headerbar/model.js:324
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/editor.js:9947
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9928
+#: document/static/js/modules/editor/menus/headerbar/model.js:345
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/editor.js:10035
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10016
 msgid "English (United States)"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/language.js:24
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Esperanto"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/language.js:26
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Galician"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/language.js:27
-#: document/static/js/modules/editor/menus/headerbar/model.js:326
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/editor.js:9947
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9928
+#: document/static/js/modules/editor/menus/headerbar/model.js:347
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/editor.js:10035
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10016
 msgid "German (Germany)"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/language.js:28
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "German (Austria)"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/language.js:29
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "German (Switzerland)"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/language.js:34
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Khmer"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/language.js:36
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Malayalam"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/language.js:37
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Norwegian (bokmål)"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/language.js:38
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Norwegian (nynorsk)"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/language.js:39
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 #, fuzzy
 #| msgid "Version"
 msgid "Persian"
 msgstr "Versão"
 
 #: document/static/js/modules/editor/dialogs/language.js:41
-#: document/static/js/modules/editor/menus/headerbar/model.js:333
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/editor.js:9947
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9928
+#: document/static/js/modules/editor/menus/headerbar/model.js:354
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/editor.js:10035
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10016
 msgid "Portuguese (Brazil)"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/language.js:42
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Portuguese (Portugal)"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/language.js:46
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Serbian (Cyrillic)"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/language.js:47
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Serbian (Latin)"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/language.js:49
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Slovenian"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/language.js:52
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Tamil"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/language.js:53
-#: static-transpile/js/transpile/editor.js:7740
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7721
+#: static-transpile/js/transpile/editor.js:7736
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7717
 msgid "Tagalog"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/language.js:68
-#: static-transpile/js/transpile/editor.js:7758
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7739
+#: static-transpile/js/transpile/editor.js:7754
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7735
 #, fuzzy
 #| msgid "Accept Change"
 msgid "Change"
 msgstr "Aceitar Alterações"
 
 #: document/static/js/modules/editor/dialogs/language.js:97
-#: static-transpile/js/transpile/editor.js:7785
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7766
+#: static-transpile/js/transpile/editor.js:7781
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7762
 #, fuzzy
 #| msgid "The subtitle of the document"
 msgid "Change language of the document"
 msgstr "O subtítulo do documento"
 
 #: document/static/js/modules/editor/dialogs/link.js:160
-#: document/static/js/modules/editor/menus/toolbar/model.js:375
-#: static-transpile/js/transpile/editor.js:7987
-#: static-transpile/js/transpile/editor.js:10888
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:7968
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10869
+#: document/static/js/modules/editor/menus/toolbar/model.js:390
+#: static-transpile/js/transpile/editor.js:7983
+#: static-transpile/js/transpile/editor.js:11021
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:7964
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:11002
 msgid "Link"
 msgstr "Link"
 
 #: document/static/js/modules/editor/dialogs/math.js:56
-#: static-transpile/js/transpile/editor.js:8125
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8106
+#: static-transpile/js/transpile/editor.js:8121
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8102
 msgid "LaTeX / Graphic"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/math.js:64
-#: static-transpile/js/transpile/editor.js:8133
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8114
+#: static-transpile/js/transpile/editor.js:8129
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8110
 msgid "Mathematical formula"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/revision.js:13
-#: static-transpile/js/transpile/editor.js:8181
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8162
+#: static-transpile/js/transpile/editor.js:8177
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8158
 msgid "Save"
 msgstr "Salvar"
 
 #: document/static/js/modules/editor/dialogs/revision.js:28
-#: static-transpile/js/transpile/editor.js:8196
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8177
+#: static-transpile/js/transpile/editor.js:8192
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8173
 msgid "Revision description"
 msgstr "Descrição da Revisão"
 
 #: document/static/js/modules/editor/dialogs/table.js:71
-#: document/static/js/modules/editor/menus/headerbar/model.js:446
-#: static-transpile/js/transpile/editor.js:8300
-#: static-transpile/js/transpile/editor.js:10025
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8281
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10006
+#: document/static/js/modules/editor/menus/headerbar/model.js:476
+#: static-transpile/js/transpile/editor.js:8296
+#: static-transpile/js/transpile/editor.js:10122
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8277
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10103
 #, fuzzy
 #| msgid "Insert a title"
 msgid "Insert table"
 msgstr "Inserir um título"
 
 #: document/static/js/modules/editor/dialogs/templates.js:8
-#: static-transpile/js/transpile/editor.js:8370
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8351
+#: static-transpile/js/transpile/editor.js:8366
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8347
 msgid "Internal"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/templates.js:13
-#: static-transpile/js/transpile/editor.js:8370
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8351
+#: static-transpile/js/transpile/editor.js:8366
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8347
 #, fuzzy
 #| msgid "Select Image"
 msgid "Select Target"
 msgstr "Selecionar Imagem"
 
 #: document/static/js/modules/editor/dialogs/templates.js:28
-#: static-transpile/js/transpile/editor.js:8372
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8353
+#: static-transpile/js/transpile/editor.js:8368
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8349
 msgid "External"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/templates.js:147
 #: static-transpile/js/transpile/biblatex_import_worker.js:363
-#: static-transpile/js/transpile/bibliography_overview.js:3774
-#: static-transpile/js/transpile/confirm_email.js:248
+#: static-transpile/js/transpile/bibliography_overview.js:3782
+#: static-transpile/js/transpile/confirm_account.js:248
 #: static-transpile/js/transpile/contacts_overview.js:248
 #: static-transpile/js/transpile/document_overview.js:791
 #: static-transpile/js/transpile/editor.js:3634
-#: static-transpile/js/transpile/editor.js:8404
-#: static-transpile/js/transpile/editor.js:9543
-#: static-transpile/js/transpile/editor.js:9552
-#: static-transpile/js/transpile/editor.js:9559
-#: static-transpile/js/transpile/editor.js:9584
+#: static-transpile/js/transpile/editor.js:8400
+#: static-transpile/js/transpile/editor.js:9600
+#: static-transpile/js/transpile/editor.js:9609
+#: static-transpile/js/transpile/editor.js:9616
+#: static-transpile/js/transpile/editor.js:9642
 #: static-transpile/js/transpile/feedback.js:248
 #: static-transpile/js/transpile/images_overview.js:250
 #: static-transpile/js/transpile/login.js:248
 #: static-transpile/js/transpile/maintenance.js:252
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:3615
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8385
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9524
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9533
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9540
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9565
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8381
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9581
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9590
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9597
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9623
 #: static-transpile/js/transpile/profile.js:241
 msgid "Cancel"
 msgstr "Cancelar"
 
 #: document/static/js/modules/editor/dialogs/templates.js:175
-#: static-transpile/js/transpile/editor.js:8412
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8393
+#: static-transpile/js/transpile/editor.js:8408
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8389
 msgid "None"
 msgstr "Nenhum"
 
 #: document/static/js/modules/editor/dialogs/templates.js:178
 #: document/static/js/modules/editor/menus/toolbar/model.js:65
-#: document/static/js/modules/editor/menus/toolbar/model.js:509
-#: static-transpile/js/transpile/editor.js:8412
-#: static-transpile/js/transpile/editor.js:10637
-#: static-transpile/js/transpile/editor.js:10982
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8393
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10618
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10963
+#: document/static/js/modules/editor/menus/toolbar/model.js:529
+#: static-transpile/js/transpile/editor.js:8408
+#: static-transpile/js/transpile/editor.js:10754
+#: static-transpile/js/transpile/editor.js:11120
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8389
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10735
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:11101
 msgid "Figure"
 msgstr "Figura"
 
 #: document/static/js/modules/editor/dialogs/templates.js:181
-#: static-transpile/js/transpile/editor.js:8412
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8393
+#: static-transpile/js/transpile/editor.js:8408
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8389
 msgid "Photo"
 msgstr "Foto"
 
 #: document/static/js/modules/editor/dialogs/templates.js:184
-#: document/static/js/modules/editor/menus/headerbar/model.js:439
-#: static-transpile/js/transpile/editor.js:8412
-#: static-transpile/js/transpile/editor.js:10019
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8393
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10000
+#: document/static/js/modules/editor/menus/headerbar/model.js:468
+#: static-transpile/js/transpile/editor.js:8408
+#: static-transpile/js/transpile/editor.js:10115
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8389
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10096
 msgid "Table"
 msgstr "Tabela"
 
 #: document/static/js/modules/editor/dialogs/templates.js:202
-#: static-transpile/js/transpile/editor.js:8419
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8400
+#: static-transpile/js/transpile/editor.js:8415
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8396
 msgid "My sources"
 msgstr "Minhas fontes"
 
 #: document/static/js/modules/editor/dialogs/templates.js:206
-#: static-transpile/js/transpile/editor.js:8419
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8400
+#: static-transpile/js/transpile/editor.js:8415
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8396
 msgid "Citation format"
 msgstr "Formato da Citação"
 
 #: document/static/js/modules/editor/dialogs/templates.js:210
-#: static-transpile/js/transpile/editor.js:8419
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8400
+#: static-transpile/js/transpile/editor.js:8415
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8396
 msgid "Author (1998)"
 msgstr "Autor (1998)"
 
@@ -2898,1035 +2899,1064 @@ msgstr "Autor (1998)"
 #: document/static/js/modules/editor/marginboxes/templates.js:69
 #: document/static/js/modules/editor/state_plugins/author_input.js:59
 #: document/static/js/modules/editor/state_plugins/links.js:131
-#: static-transpile/js/transpile/editor.js:9543
-#: static-transpile/js/transpile/editor.js:9552
-#: static-transpile/js/transpile/editor.js:12312
-#: static-transpile/js/transpile/editor.js:13828
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9524
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9533
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:12293
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:13809
+#: static-transpile/js/transpile/editor.js:9600
+#: static-transpile/js/transpile/editor.js:9609
+#: static-transpile/js/transpile/editor.js:12455
+#: static-transpile/js/transpile/editor.js:13971
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9581
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9590
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:12436
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:13952
 msgid "Edit"
 msgstr "Editar"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:61
-#: static-transpile/js/transpile/editor.js:9552
-#: static-transpile/js/transpile/editor.js:9559
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9533
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9540
+#: static-transpile/js/transpile/editor.js:9609
+#: static-transpile/js/transpile/editor.js:9616
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9590
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9597
 msgid "Is major"
 msgstr ""
 
 #: document/static/js/modules/editor/marginboxes/templates.js:155
-#: static-transpile/js/transpile/editor.js:9588
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9569
-msgid "paragraph"
+#: static-transpile/js/transpile/editor.js:9646
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9627
+msgid "New paragraph"
 msgstr ""
 
 #: document/static/js/modules/editor/marginboxes/templates.js:156
-#: static-transpile/js/transpile/editor.js:9589
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9570
-msgid "heading"
+#: static-transpile/js/transpile/editor.js:9647
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9628
+msgid "New heading"
 msgstr ""
 
 #: document/static/js/modules/editor/marginboxes/templates.js:157
-#: static-transpile/js/transpile/editor.js:9590
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9571
-msgid "text"
-msgstr ""
+#: static-transpile/js/transpile/editor.js:9648
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9629
+#, fuzzy
+#| msgid "Insert"
+msgid "Inserted text"
+msgstr "Insert"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:158
-#: static-transpile/js/transpile/editor.js:9591
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9572
-msgid "blockquote"
+#: static-transpile/js/transpile/editor.js:9649
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9630
+msgid "Wrapped into blockquote"
 msgstr ""
 
 #: document/static/js/modules/editor/marginboxes/templates.js:159
-#: static-transpile/js/transpile/editor.js:9592
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9573
-msgid "bullet list"
+#: static-transpile/js/transpile/editor.js:9650
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9631
+msgid "Added code block"
 msgstr ""
 
 #: document/static/js/modules/editor/marginboxes/templates.js:160
-#: static-transpile/js/transpile/editor.js:9593
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9574
-msgid "code block"
-msgstr ""
+#: static-transpile/js/transpile/editor.js:9651
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9632
+#, fuzzy
+#| msgid "Insert image"
+msgid "Inserted figure"
+msgstr "Inserir imagem"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:161
-#: static-transpile/js/transpile/editor.js:9594
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9575
-#, fuzzy
-#| msgid "Figure"
-msgid "figure"
-msgstr "Figura"
+#: static-transpile/js/transpile/editor.js:9652
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9633
+msgid "New list item"
+msgstr ""
 
 #: document/static/js/modules/editor/marginboxes/templates.js:162
-#: static-transpile/js/transpile/editor.js:9595
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9576
-msgid "ordered list"
-msgstr ""
+#: static-transpile/js/transpile/editor.js:9653
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9634
+#, fuzzy
+#| msgid "Insert a title"
+msgid "Inserted table"
+msgstr "Inserir um título"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:163
-#: static-transpile/js/transpile/editor.js:9596
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9577
-#, fuzzy
-#| msgid "Table"
-msgid "table"
-msgstr "Tabela"
+#: static-transpile/js/transpile/editor.js:9654
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9635
+msgid "Merged paragraph"
+msgstr ""
 
-#: document/static/js/modules/editor/marginboxes/templates.js:171
-#: static-transpile/js/transpile/editor.js:9610
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9591
-#, fuzzy
-#| msgid "Insert"
-msgid "Inserted"
-msgstr "Insert"
+#: document/static/js/modules/editor/marginboxes/templates.js:164
+#: static-transpile/js/transpile/editor.js:9655
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9636
+msgid "Merged heading"
+msgstr ""
 
-#: document/static/js/modules/editor/marginboxes/templates.js:171
-#: static-transpile/js/transpile/editor.js:9610
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9591
+#: document/static/js/modules/editor/marginboxes/templates.js:165
+#: static-transpile/js/transpile/editor.js:9656
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9637
 #, fuzzy
 #| msgid "Delete"
-msgid "Deleted"
+msgid "Deleted text"
 msgstr "Excluir"
 
-#: document/static/js/modules/editor/marginboxes/templates.js:179
-#: static-transpile/js/transpile/editor.js:9610
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9591
-#, fuzzy
-#| msgid "Reject Change"
-msgid "Reject"
-msgstr "Rejeitar alteração"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:46
-#: static-transpile/js/transpile/editor.js:9726
-#: static-transpile/js/transpile/images_overview.js:1466
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9707
-msgid "File"
+#: document/static/js/modules/editor/marginboxes/templates.js:166
+#: static-transpile/js/transpile/editor.js:9657
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9638
+msgid "Unwrapped blockquote"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:47
-#: static-transpile/js/transpile/editor.js:9727
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9708
-msgid "File handling"
+#: document/static/js/modules/editor/marginboxes/templates.js:167
+#: static-transpile/js/transpile/editor.js:9658
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9639
+msgid "Removed code block"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:50
-#: static-transpile/js/transpile/editor.js:9729
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9710
-msgid "Share"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:53
-#: static-transpile/js/transpile/editor.js:9732
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9713
-#, fuzzy
-#| msgid "Share your document with others"
-msgid "Share the document with other users."
-msgstr "Compartilhe seu documento com os outros"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:75
-#: static-transpile/js/transpile/editor.js:9747
-#: static-transpile/js/transpile/editor.js:10435
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9728
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10416
-msgid "Close the document and return to the document overview menu."
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:81
-#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:10
-#: static-transpile/js/transpile/editor.js:9752
-#: static-transpile/js/transpile/editor.js:15293
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9733
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:15274
-msgid "Save revision"
-msgstr "Salvar revisão"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:84
-#: static-transpile/js/transpile/editor.js:9755
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9736
-msgid "Save a revision of the current document."
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:103
-#: static-transpile/js/transpile/editor.js:9768
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9749
-#, fuzzy
-#| msgid "Created by"
-msgid "Create Copy"
-msgstr "Criado por"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:106
-#: static-transpile/js/transpile/editor.js:9771
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9752
-#, fuzzy
-#| msgid "The abstract of the document"
-msgid "Create copy of the current document."
-msgstr "O resumo do documento"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:136
-#: static-transpile/js/transpile/editor.js:9792
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9773
-msgid "Either print or create a PDF using your browser print dialog."
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:146
-#: static-transpile/js/transpile/editor.js:9800
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9781
-#, fuzzy
-#| msgid "Import"
-msgid "Export"
-msgstr "Importar"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:147
-#: static-transpile/js/transpile/editor.js:9801
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9782
-#, fuzzy
-#| msgid "The abstract of the document"
-msgid "Export of the document contents"
-msgstr "O resumo do documento"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:150
-#: static-transpile/js/transpile/editor.js:9803
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9784
-msgid "HTML"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:152
-#: static-transpile/js/transpile/editor.js:9805
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9786
-msgid "Export the document to an HTML file."
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:164
-#: static-transpile/js/transpile/editor.js:9810
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9791
-msgid "Epub"
-msgstr "Epub"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:166
-#: static-transpile/js/transpile/editor.js:9812
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9793
-msgid "Export the document to an Epub electronic reader file."
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:178
-#: static-transpile/js/transpile/editor.js:9817
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9798
-msgid "LaTeX"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:180
-#: static-transpile/js/transpile/editor.js:9819
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9800
-msgid "Export the document to an LaTeX file."
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:193
-#: static-transpile/js/transpile/editor.js:9826
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9807
-msgid "Settings"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:194
-#: static-transpile/js/transpile/editor.js:9827
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9808
-#, fuzzy
-#| msgid "The subtitle of the document"
-msgid "Configure settings of this document."
-msgstr "O subtítulo do documento"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:198
-#: static-transpile/js/transpile/editor.js:9830
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9811
-msgid "Metadata"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:200
-#: static-transpile/js/transpile/editor.js:9832
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9813
-msgid "Choose which metadata to enable."
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:208
-#: static-transpile/js/transpile/editor.js:9839
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9820
-msgid "Define a subtitle in addition to the title of the document."
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:230
-#: static-transpile/js/transpile/editor.js:9860
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9841
-#, fuzzy
-#| msgid "The abstract of the document"
-msgid "Specify the authors of the document."
-msgstr "O resumo do documento"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:252
-#: static-transpile/js/transpile/editor.js:9881
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9862
-#, fuzzy
-#| msgid "The abstract of the document"
-msgid "Add an abstract to the document."
-msgstr "O resumo do documento"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:274
-#: static-transpile/js/transpile/editor.js:9902
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9883
-msgid "Add keywords to facilitate categorization."
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:297
-#: static-transpile/js/transpile/editor.js:9923
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9904
-#, fuzzy
-#| msgid "Citation style"
-msgid "Citation Style"
-msgstr "Estilo de Citação"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:299
-#: static-transpile/js/transpile/editor.js:9925
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9906
-msgid "Choose your preferred citation style."
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:307
-#: static-transpile/js/transpile/editor.js:9932
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9913
-#, fuzzy
-#| msgid "Document style"
-msgid "Document Style"
-msgstr "Estilo do Documento"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:309
-#: static-transpile/js/transpile/editor.js:9934
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9915
-msgid "Choose your preferred document style."
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:317
-#: static-transpile/js/transpile/editor.js:9941
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9922
-#, fuzzy
-#| msgid "Language"
-msgid "Text Language"
-msgstr "Idioma "
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:319
-#: static-transpile/js/transpile/editor.js:9943
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9924
-#, fuzzy
-#| msgid "The subtitle of the document"
-msgid "Choose the language of the document."
-msgstr "O subtítulo do documento"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:340
-#: static-transpile/js/transpile/editor.js:9950
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9931
-msgid "Other"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:370
-#: static-transpile/js/transpile/editor.js:9963
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9944
-#, fuzzy
-#| msgid "Paper size"
-msgid "Paper Size"
-msgstr "Tamanho do papel"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:372
-#: static-transpile/js/transpile/editor.js:9965
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9946
-msgid "Choose a papersize for print and PDF generation."
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:378
-#: static-transpile/js/transpile/editor.js:9970
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9951
-msgid "DIN A4"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:380
-#: static-transpile/js/transpile/editor.js:9972
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9953
-msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:394
-#: static-transpile/js/transpile/editor.js:9983
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9964
-msgid "US Letter"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:396
-#: static-transpile/js/transpile/editor.js:9985
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9966
-msgid "The format used by the USA and some other American countries."
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:415
-#: static-transpile/js/transpile/editor.js:9999
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9980
-msgid "Tools"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:416
-#: static-transpile/js/transpile/editor.js:10000
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9981
-msgid "Select document editing tool."
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:419
-#: document/static/js/modules/editor/tools/word_count.js:35
-#: static-transpile/js/transpile/editor.js:10002
-#: static-transpile/js/transpile/editor.js:15348
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9983
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:15329
-msgid "Word counter"
-msgstr "Contador de palavras"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:421
-#: static-transpile/js/transpile/editor.js:10004
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9985
-msgid "See document statistics."
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:427
-#: static-transpile/js/transpile/editor.js:10009
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9990
-#, fuzzy
-#| msgid "Keyboard Shortcuts"
-msgid "Keyboard shortcuts"
-msgstr "Atalhos Do Teclado"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:429
-#: static-transpile/js/transpile/editor.js:10011
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9992
-#, fuzzy
-#| msgid "Show keyboard shortcuts"
-msgid "Show an overview of available keyboard shortcuts."
-msgstr "Atalhos de teclado Mostrar"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:440
-#: static-transpile/js/transpile/editor.js:10020
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10001
-msgid "Add and edit tables."
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:448
-#: static-transpile/js/transpile/editor.js:10027
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10008
-#, fuzzy
-#| msgid "The subtitle of the document"
-msgid "Insert a table into the document."
-msgstr "O subtítulo do documento"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:472
-#: static-transpile/js/transpile/editor.js:10043
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10024
-msgid "Add row above"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:474
-#: static-transpile/js/transpile/editor.js:10045
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10026
-msgid "Add a row above the current row"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:481
-#: static-transpile/js/transpile/editor.js:10053
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10034
-msgid "Add row below"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:483
-#: static-transpile/js/transpile/editor.js:10055
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10036
-msgid "Add a row below the current row"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:490
-#: static-transpile/js/transpile/editor.js:10063
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10044
-msgid "Add column left"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:492
-#: static-transpile/js/transpile/editor.js:10065
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10046
-msgid "Add a column to the left of the current column"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:499
-#: static-transpile/js/transpile/editor.js:10073
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10054
-msgid "Add column right"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:501
-#: static-transpile/js/transpile/editor.js:10075
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10056
-msgid "Add a column to the right of the current column"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:511
-#: static-transpile/js/transpile/editor.js:10085
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10066
+#: document/static/js/modules/editor/marginboxes/templates.js:168
+#: static-transpile/js/transpile/editor.js:9659
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9640
 #, fuzzy
 #| msgid "Delete"
-msgid "Delete row"
+msgid "Deleted figure"
 msgstr "Excluir"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:513
-#: static-transpile/js/transpile/editor.js:10087
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10068
-msgid "Delete current row"
+#: document/static/js/modules/editor/marginboxes/templates.js:169
+#: static-transpile/js/transpile/editor.js:9660
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9641
+msgid "Lifted list item"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:520
-#: static-transpile/js/transpile/editor.js:10095
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10076
-#, fuzzy
-#| msgid "Delete"
-msgid "Delete column"
-msgstr "Excluir"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:522
-#: static-transpile/js/transpile/editor.js:10097
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10078
-msgid "Delete current column"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:532
-#: static-transpile/js/transpile/editor.js:10107
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10088
-msgid "Merge cells"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:534
-#: static-transpile/js/transpile/editor.js:10109
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10090
-#, fuzzy
-#| msgid "Use selected image"
-msgid "Merge selected cells"
-msgstr "Usar imagem selecionada"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:545
-#: static-transpile/js/transpile/editor.js:10117
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10098
-msgid "Split cell"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:547
-#: static-transpile/js/transpile/editor.js:10119
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10100
-msgid "Split selected cell"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:565
-#: static-transpile/js/transpile/editor.js:10129
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10110
-msgid "Toggle header row"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:567
-#: static-transpile/js/transpile/editor.js:10131
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10112
-msgid "Toggle header-status of currently selected row"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:574
-#: static-transpile/js/transpile/editor.js:10139
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10120
-msgid "Toggle header column"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:576
-#: static-transpile/js/transpile/editor.js:10141
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10122
-msgid "Toggle header-status of currently selected column"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:583
-#: static-transpile/js/transpile/editor.js:10149
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10130
-msgid "Toggle header cell"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:585
-#: static-transpile/js/transpile/editor.js:10151
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10132
-msgid "Toggle header-status of currently selected cells"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:595
-#: static-transpile/js/transpile/editor.js:10161
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10142
+#: document/static/js/modules/editor/marginboxes/templates.js:170
+#: document/static/js/modules/editor/menus/headerbar/model.js:640
+#: static-transpile/js/transpile/editor.js:9661
+#: static-transpile/js/transpile/editor.js:10273
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9642
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10254
 #, fuzzy
 #| msgid "Delete"
 msgid "Delete table"
 msgstr "Excluir"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:597
-#: static-transpile/js/transpile/editor.js:10163
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10144
+#: document/static/js/modules/editor/marginboxes/templates.js:186
+#: static-transpile/js/transpile/editor.js:9676
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9657
+#, fuzzy
+#| msgid "Reject Change"
+msgid "Reject"
+msgstr "Rejeitar alteração"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:47
+#: static-transpile/js/transpile/editor.js:9794
+#: static-transpile/js/transpile/images_overview.js:1466
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9775
+msgid "File"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:48
+#: static-transpile/js/transpile/editor.js:9795
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9776
+msgid "File handling"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:52
+#: static-transpile/js/transpile/editor.js:9798
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9779
+msgid "Share"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:55
+#: static-transpile/js/transpile/editor.js:9801
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9782
+#, fuzzy
+#| msgid "Share your document with others"
+msgid "Share the document with other users."
+msgstr "Compartilhe seu documento com os outros"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:78
+#: static-transpile/js/transpile/editor.js:9817
+#: static-transpile/js/transpile/editor.js:10552
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9798
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10533
+msgid "Close the document and return to the document overview menu."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:85
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:10
+#: static-transpile/js/transpile/editor.js:9823
+#: static-transpile/js/transpile/editor.js:15553
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9804
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:15534
+msgid "Save revision"
+msgstr "Salvar revisão"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:88
+#: static-transpile/js/transpile/editor.js:9826
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9807
+msgid "Save a revision of the current document."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:108
+#: static-transpile/js/transpile/editor.js:9840
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9821
+#, fuzzy
+#| msgid "Created by"
+msgid "Create Copy"
+msgstr "Criado por"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:111
+#: static-transpile/js/transpile/editor.js:9843
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9824
+#, fuzzy
+#| msgid "The abstract of the document"
+msgid "Create copy of the current document."
+msgstr "O resumo do documento"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:143
+#: static-transpile/js/transpile/editor.js:9866
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9847
+msgid "Either print or create a PDF using your browser print dialog."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:154
+#: static-transpile/js/transpile/editor.js:9875
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9856
+#, fuzzy
+#| msgid "Import"
+msgid "Export"
+msgstr "Importar"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:155
+#: static-transpile/js/transpile/editor.js:9876
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9857
+#, fuzzy
+#| msgid "The abstract of the document"
+msgid "Export of the document contents"
+msgstr "O resumo do documento"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:159
+#: static-transpile/js/transpile/editor.js:9879
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9860
+msgid "HTML"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:161
+#: static-transpile/js/transpile/editor.js:9881
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9862
+msgid "Export the document to an HTML file."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:174
+#: static-transpile/js/transpile/editor.js:9887
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9868
+msgid "Epub"
+msgstr "Epub"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:176
+#: static-transpile/js/transpile/editor.js:9889
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9870
+msgid "Export the document to an Epub electronic reader file."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:189
+#: static-transpile/js/transpile/editor.js:9895
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9876
+msgid "LaTeX"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:191
+#: static-transpile/js/transpile/editor.js:9897
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9878
+msgid "Export the document to an LaTeX file."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:205
+#: static-transpile/js/transpile/editor.js:9905
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9886
+msgid "Settings"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:206
+#: static-transpile/js/transpile/editor.js:9906
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9887
+#, fuzzy
+#| msgid "The subtitle of the document"
+msgid "Configure settings of this document."
+msgstr "O subtítulo do documento"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:211
+#: static-transpile/js/transpile/editor.js:9910
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9891
+msgid "Metadata"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:213
+#: static-transpile/js/transpile/editor.js:9912
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9893
+msgid "Choose which metadata to enable."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:222
+#: static-transpile/js/transpile/editor.js:9920
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9901
+msgid "Define a subtitle in addition to the title of the document."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:245
+#: static-transpile/js/transpile/editor.js:9942
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9923
+#, fuzzy
+#| msgid "The abstract of the document"
+msgid "Specify the authors of the document."
+msgstr "O resumo do documento"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:268
+#: static-transpile/js/transpile/editor.js:9964
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9945
+#, fuzzy
+#| msgid "The abstract of the document"
+msgid "Add an abstract to the document."
+msgstr "O resumo do documento"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:291
+#: static-transpile/js/transpile/editor.js:9986
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9967
+msgid "Add keywords to facilitate categorization."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:315
+#: static-transpile/js/transpile/editor.js:10008
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9989
+#, fuzzy
+#| msgid "Citation style"
+msgid "Citation Style"
+msgstr "Estilo de Citação"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:317
+#: static-transpile/js/transpile/editor.js:10010
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9991
+msgid "Choose your preferred citation style."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:326
+#: static-transpile/js/transpile/editor.js:10018
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9999
+#, fuzzy
+#| msgid "Document style"
+msgid "Document Style"
+msgstr "Estilo do Documento"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:328
+#: static-transpile/js/transpile/editor.js:10020
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10001
+msgid "Choose your preferred document style."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:337
+#: static-transpile/js/transpile/editor.js:10028
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10009
+#, fuzzy
+#| msgid "Language"
+msgid "Text Language"
+msgstr "Idioma "
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:339
+#: static-transpile/js/transpile/editor.js:10030
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10011
+#, fuzzy
+#| msgid "The subtitle of the document"
+msgid "Choose the language of the document."
+msgstr "O subtítulo do documento"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:362
+#: static-transpile/js/transpile/editor.js:10039
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10020
+msgid "Other"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:393
+#: static-transpile/js/transpile/editor.js:10053
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10034
+#, fuzzy
+#| msgid "Paper size"
+msgid "Paper Size"
+msgstr "Tamanho do papel"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:395
+#: static-transpile/js/transpile/editor.js:10055
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10036
+msgid "Choose a papersize for print and PDF generation."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:402
+#: static-transpile/js/transpile/editor.js:10061
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10042
+msgid "DIN A4"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:404
+#: static-transpile/js/transpile/editor.js:10063
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10044
+msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:419
+#: static-transpile/js/transpile/editor.js:10075
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10056
+msgid "US Letter"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:421
+#: static-transpile/js/transpile/editor.js:10077
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10058
+msgid "The format used by the USA and some other American countries."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:441
+#: static-transpile/js/transpile/editor.js:10092
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10073
+msgid "Tools"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:442
+#: static-transpile/js/transpile/editor.js:10093
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10074
+msgid "Select document editing tool."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:446
+#: document/static/js/modules/editor/tools/word_count.js:35
+#: static-transpile/js/transpile/editor.js:10096
+#: static-transpile/js/transpile/editor.js:15608
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10077
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:15589
+msgid "Word counter"
+msgstr "Contador de palavras"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:448
+#: static-transpile/js/transpile/editor.js:10098
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10079
+msgid "See document statistics."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:455
+#: static-transpile/js/transpile/editor.js:10104
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10085
+#, fuzzy
+#| msgid "Keyboard Shortcuts"
+msgid "Keyboard shortcuts"
+msgstr "Atalhos Do Teclado"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:457
+#: static-transpile/js/transpile/editor.js:10106
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10087
+#, fuzzy
+#| msgid "Show keyboard shortcuts"
+msgid "Show an overview of available keyboard shortcuts."
+msgstr "Atalhos de teclado Mostrar"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:469
+#: static-transpile/js/transpile/editor.js:10116
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10097
+msgid "Add and edit tables."
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:478
+#: static-transpile/js/transpile/editor.js:10124
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10105
+#, fuzzy
+#| msgid "The subtitle of the document"
+msgid "Insert a table into the document."
+msgstr "O subtítulo do documento"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:504
+#: static-transpile/js/transpile/editor.js:10142
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10123
+msgid "Add row above"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:506
+#: static-transpile/js/transpile/editor.js:10144
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10125
+msgid "Add a row above the current row"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:514
+#: static-transpile/js/transpile/editor.js:10153
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10134
+msgid "Add row below"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:516
+#: static-transpile/js/transpile/editor.js:10155
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10136
+msgid "Add a row below the current row"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:524
+#: static-transpile/js/transpile/editor.js:10164
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10145
+msgid "Add column left"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:526
+#: static-transpile/js/transpile/editor.js:10166
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10147
+msgid "Add a column to the left of the current column"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:534
+#: static-transpile/js/transpile/editor.js:10175
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10156
+msgid "Add column right"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:536
+#: static-transpile/js/transpile/editor.js:10177
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10158
+msgid "Add a column to the right of the current column"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:548
+#: static-transpile/js/transpile/editor.js:10189
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10170
+#, fuzzy
+#| msgid "Delete"
+msgid "Delete row"
+msgstr "Excluir"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:550
+#: static-transpile/js/transpile/editor.js:10191
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10172
+msgid "Delete current row"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:558
+#: static-transpile/js/transpile/editor.js:10200
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10181
+#, fuzzy
+#| msgid "Delete"
+msgid "Delete column"
+msgstr "Excluir"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:560
+#: static-transpile/js/transpile/editor.js:10202
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10183
+msgid "Delete current column"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:571
+#: static-transpile/js/transpile/editor.js:10213
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10194
+msgid "Merge cells"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:573
+#: static-transpile/js/transpile/editor.js:10215
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10196
+#, fuzzy
+#| msgid "Use selected image"
+msgid "Merge selected cells"
+msgstr "Usar imagem selecionada"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:585
+#: static-transpile/js/transpile/editor.js:10224
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10205
+msgid "Split cell"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:587
+#: static-transpile/js/transpile/editor.js:10226
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10207
+msgid "Split selected cell"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:607
+#: static-transpile/js/transpile/editor.js:10238
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10219
+msgid "Toggle header row"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:609
+#: static-transpile/js/transpile/editor.js:10240
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10221
+msgid "Toggle header-status of currently selected row"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:617
+#: static-transpile/js/transpile/editor.js:10249
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10230
+msgid "Toggle header column"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:619
+#: static-transpile/js/transpile/editor.js:10251
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10232
+msgid "Toggle header-status of currently selected column"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:627
+#: static-transpile/js/transpile/editor.js:10260
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10241
+msgid "Toggle header cell"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:629
+#: static-transpile/js/transpile/editor.js:10262
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10243
+msgid "Toggle header-status of currently selected cells"
+msgstr ""
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:642
+#: static-transpile/js/transpile/editor.js:10275
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10256
 msgid "Delete currently selected table"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:606
-#: static-transpile/js/transpile/editor.js:10172
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10153
+#: document/static/js/modules/editor/menus/headerbar/model.js:652
+#: static-transpile/js/transpile/editor.js:10285
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10266
 msgid "Track changes"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:608
-#: static-transpile/js/transpile/editor.js:10174
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10155
+#: document/static/js/modules/editor/menus/headerbar/model.js:654
+#: static-transpile/js/transpile/editor.js:10287
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10268
 #, fuzzy
 #| msgid "The subtitle of the document"
 msgid "Tracking changes to the document"
 msgstr "O subtítulo do documento"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:614
-#: static-transpile/js/transpile/editor.js:10179
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10160
+#: document/static/js/modules/editor/menus/headerbar/model.js:661
+#: static-transpile/js/transpile/editor.js:10293
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10274
 msgid "Record"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:616
-#: static-transpile/js/transpile/editor.js:10181
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10162
+#: document/static/js/modules/editor/menus/headerbar/model.js:663
+#: static-transpile/js/transpile/editor.js:10295
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10276
 msgid "Record document changes"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:633
-#: static-transpile/js/transpile/editor.js:10195
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10176
+#: document/static/js/modules/editor/menus/headerbar/model.js:681
+#: static-transpile/js/transpile/editor.js:10310
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10291
 #, fuzzy
 #| msgid "Accept Change"
 msgid "Accept all"
 msgstr "Aceitar Alterações"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:635
-#: static-transpile/js/transpile/editor.js:10197
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10178
+#: document/static/js/modules/editor/menus/headerbar/model.js:683
+#: static-transpile/js/transpile/editor.js:10312
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10293
 #, fuzzy
 #| msgid "Accept Change"
 msgid "Accept all tracked changes."
 msgstr "Aceitar Alterações"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:641
-#: static-transpile/js/transpile/editor.js:10202
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10183
+#: document/static/js/modules/editor/menus/headerbar/model.js:690
+#: static-transpile/js/transpile/editor.js:10318
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10299
 #, fuzzy
 #| msgid "Reject Change"
 msgid "Reject all"
 msgstr "Rejeitar alteração"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:643
-#: static-transpile/js/transpile/editor.js:10204
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10185
+#: document/static/js/modules/editor/menus/headerbar/model.js:692
+#: static-transpile/js/transpile/editor.js:10320
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10301
 #, fuzzy
 #| msgid "Reject Change"
 msgid "Reject all tracked changes."
 msgstr "Rejeitar alteração"
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:50
-#: static-transpile/js/transpile/editor.js:10622
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10603
+#: static-transpile/js/transpile/editor.js:10739
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10720
 #, fuzzy
 #| msgid "Author"
 msgid "Authors"
 msgstr "Autor"
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:53
-#: static-transpile/js/transpile/editor.js:10625
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10606
+#: static-transpile/js/transpile/editor.js:10742
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10723
 msgid "Body"
 msgstr ""
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:57
-#: static-transpile/js/transpile/editor.js:10629
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10610
+#: static-transpile/js/transpile/editor.js:10746
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10727
 msgid "Normal Text"
 msgstr ""
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:58
-#: static-transpile/js/transpile/editor.js:10630
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10611
+#: static-transpile/js/transpile/editor.js:10747
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10728
 msgid "1st Heading"
 msgstr ""
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:59
-#: static-transpile/js/transpile/editor.js:10631
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10612
+#: static-transpile/js/transpile/editor.js:10748
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10729
 msgid "2nd Heading"
 msgstr ""
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:60
-#: static-transpile/js/transpile/editor.js:10632
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10613
+#: static-transpile/js/transpile/editor.js:10749
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10730
 msgid "3rd Heading"
 msgstr ""
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:61
-#: static-transpile/js/transpile/editor.js:10633
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10614
+#: static-transpile/js/transpile/editor.js:10750
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10731
 msgid "4th Heading"
 msgstr ""
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:62
-#: static-transpile/js/transpile/editor.js:10634
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10615
+#: static-transpile/js/transpile/editor.js:10751
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10732
 msgid "5th Heading"
 msgstr ""
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:63
-#: static-transpile/js/transpile/editor.js:10635
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10616
+#: static-transpile/js/transpile/editor.js:10752
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10733
 msgid "6th Heading"
 msgstr ""
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:64
-#: static-transpile/js/transpile/editor.js:10636
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10617
+#: static-transpile/js/transpile/editor.js:10753
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10734
 msgid "Code"
 msgstr ""
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:75
-#: static-transpile/js/transpile/editor.js:10646
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10627
+#: static-transpile/js/transpile/editor.js:10763
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10744
 msgid "Open/close header menu"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:101
-#: document/static/js/modules/editor/menus/toolbar/model.js:399
-#: static-transpile/js/transpile/editor.js:10671
-#: static-transpile/js/transpile/editor.js:10910
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10652
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10891
+#: document/static/js/modules/editor/menus/toolbar/model.js:102
+#: document/static/js/modules/editor/menus/toolbar/model.js:415
+#: static-transpile/js/transpile/editor.js:10789
+#: static-transpile/js/transpile/editor.js:11044
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10770
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:11025
 msgid "Footnote"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:224
+#: document/static/js/modules/editor/menus/toolbar/model.js:234
 #: document/static/js/modules/editor/tools/show_key_bindings_templates.js:36
-#: static-transpile/js/transpile/editor.js:10763
-#: static-transpile/js/transpile/editor.js:15293
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10744
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:15274
+#: static-transpile/js/transpile/editor.js:10891
+#: static-transpile/js/transpile/editor.js:15553
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10872
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:15534
 msgid "Bold"
 msgstr "Negrito"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:263
-#: static-transpile/js/transpile/editor.js:10795
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10776
+#: document/static/js/modules/editor/menus/toolbar/model.js:274
+#: static-transpile/js/transpile/editor.js:10924
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10905
 #, fuzzy
 #| msgid "Italics"
 msgid "Italic"
 msgstr "Itálico"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:302
-#: static-transpile/js/transpile/editor.js:10827
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10808
+#: document/static/js/modules/editor/menus/toolbar/model.js:314
+#: static-transpile/js/transpile/editor.js:10957
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10938
 #, fuzzy
 #| msgid "Number of"
 msgid "Numbered list"
 msgstr "Número de"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:326
-#: static-transpile/js/transpile/editor.js:10847
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10828
+#: document/static/js/modules/editor/menus/toolbar/model.js:339
+#: static-transpile/js/transpile/editor.js:10978
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10959
 msgid "Bullet list"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:350
-#: static-transpile/js/transpile/editor.js:10867
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10848
+#: document/static/js/modules/editor/menus/toolbar/model.js:364
+#: static-transpile/js/transpile/editor.js:10999
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10980
 msgid "Blockquote"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:425
-#: static-transpile/js/transpile/editor.js:10930
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10911
+#: document/static/js/modules/editor/menus/toolbar/model.js:442
+#: static-transpile/js/transpile/editor.js:11065
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:11046
 msgid "Cite"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:454
-#: static-transpile/js/transpile/editor.js:10947
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10928
+#: document/static/js/modules/editor/menus/toolbar/model.js:472
+#: static-transpile/js/transpile/editor.js:11083
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:11064
 msgid "Horizontal line"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:480
-#: static-transpile/js/transpile/editor.js:8385
-#: static-transpile/js/transpile/editor.js:10965
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8366
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10946
+#: document/static/js/modules/editor/menus/toolbar/model.js:499
+#: static-transpile/js/transpile/editor.js:8381
+#: static-transpile/js/transpile/editor.js:11102
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8362
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:11083
 msgid "Math"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:539
+#: document/static/js/modules/editor/menus/toolbar/model.js:560
 #: document/static/js/modules/editor/tools/show_key_bindings_templates.js:44
-#: static-transpile/js/transpile/editor.js:10999
-#: static-transpile/js/transpile/editor.js:15293
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10980
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:15274
+#: static-transpile/js/transpile/editor.js:11138
+#: static-transpile/js/transpile/editor.js:15553
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:11119
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:15534
 msgid "Undo"
 msgstr "Desfazer"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:546
+#: document/static/js/modules/editor/menus/toolbar/model.js:568
 #: document/static/js/modules/editor/tools/show_key_bindings_templates.js:48
-#: static-transpile/js/transpile/editor.js:11011
-#: static-transpile/js/transpile/editor.js:15293
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10992
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:15274
+#: static-transpile/js/transpile/editor.js:11151
+#: static-transpile/js/transpile/editor.js:15553
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:11132
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:15534
 msgid "Redo"
 msgstr "Refazer"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:578
-#: static-transpile/js/transpile/editor.js:11046
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:11027
+#: document/static/js/modules/editor/menus/toolbar/model.js:602
+#: static-transpile/js/transpile/editor.js:11188
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:11169
 msgid "Anchor"
 msgstr ""
 
 #: document/static/js/modules/editor/menus/toolbar/view.js:213
-#: static-transpile/js/transpile/editor.js:11311
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:11292
+#: static-transpile/js/transpile/editor.js:11454
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:11435
 msgid "More"
 msgstr ""
 
 #: document/static/js/modules/editor/server_communications.js:99
-#: static-transpile/js/transpile/editor.js:12039
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:12020
+#: static-transpile/js/transpile/editor.js:12182
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:12163
 msgid ""
 "Warning! Not all your changes have been saved! You could suffer data loss. "
 "Attempting to reconnect..."
 msgstr ""
 
 #: document/static/js/modules/editor/state_plugins/author_input.js:36
-#: static-transpile/js/transpile/editor.js:12290
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:12271
+#: static-transpile/js/transpile/editor.js:12433
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:12414
 #, fuzzy
 #| msgid "Author(s)..."
 msgid "Add author..."
 msgstr "Autor (s) ..."
 
 #: document/static/js/modules/editor/state_plugins/keyword_input.js:42
-#: static-transpile/js/transpile/editor.js:13470
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:13451
+#: static-transpile/js/transpile/editor.js:13613
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:13594
 #, fuzzy
 #| msgid "Keywords..."
 msgid "Add keyword..."
 msgstr "Palavras-chave ..."
 
 #: document/static/js/modules/editor/state_plugins/links.js:21
-#: static-transpile/js/transpile/editor.js:13737
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:13718
+#: static-transpile/js/transpile/editor.js:13880
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:13861
 msgid "Link copied to clipboard"
 msgstr ""
 
 #: document/static/js/modules/editor/state_plugins/links.js:24
-#: static-transpile/js/transpile/editor.js:13739
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:13720
+#: static-transpile/js/transpile/editor.js:13882
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:13863
 msgid "Copy to clipboard failed. Please copy manually."
 msgstr ""
 
 #: document/static/js/modules/editor/state_plugins/placeholders.js:22
-#: static-transpile/js/transpile/editor.js:14171
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:14152
+#: static-transpile/js/transpile/editor.js:14314
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:14295
 msgid "Title..."
 msgstr "Título ..."
 
 #: document/static/js/modules/editor/state_plugins/placeholders.js:23
-#: static-transpile/js/transpile/editor.js:14171
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:14152
+#: static-transpile/js/transpile/editor.js:14314
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:14295
 msgid "Subtitle..."
 msgstr "Subtítulo ..."
 
 #: document/static/js/modules/editor/state_plugins/placeholders.js:24
-#: static-transpile/js/transpile/editor.js:14171
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:14152
+#: static-transpile/js/transpile/editor.js:14314
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:14295
 #, fuzzy
 #| msgid "Author(s)..."
 msgid "Authors..."
 msgstr "Autor (s) ..."
 
 #: document/static/js/modules/editor/state_plugins/placeholders.js:25
-#: static-transpile/js/transpile/editor.js:14171
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:14152
+#: static-transpile/js/transpile/editor.js:14314
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:14295
 msgid "Abstract..."
 msgstr "Abstrac/Resumo ..."
 
 #: document/static/js/modules/editor/state_plugins/placeholders.js:26
-#: static-transpile/js/transpile/editor.js:14171
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:14152
+#: static-transpile/js/transpile/editor.js:14314
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:14295
 msgid "Keywords..."
 msgstr "Palavras-chave ..."
 
 #: document/static/js/modules/editor/state_plugins/placeholders.js:27
-#: static-transpile/js/transpile/editor.js:14171
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:14152
+#: static-transpile/js/transpile/editor.js:14314
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:14295
 msgid "Body..."
 msgstr ""
 
 #: document/static/js/modules/editor/styles/index.js:38
-#: static-transpile/js/transpile/editor.js:14893
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:14874
+#: static-transpile/js/transpile/editor.js:15153
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:15134
 msgid "Export the document to a DOCX file with the given template."
 msgstr ""
 
 #: document/static/js/modules/editor/styles/index.js:55
-#: static-transpile/js/transpile/editor.js:14903
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:14884
+#: static-transpile/js/transpile/editor.js:15163
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:15144
 msgid "Export the document to an ODT file with the given template."
 msgstr ""
 
 #: document/static/js/modules/editor/tools/show_key_bindings.js:15
-#: static-transpile/js/transpile/editor.js:15273
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:15254
+#: static-transpile/js/transpile/editor.js:15533
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:15514
 msgid "Keyboard Shortcuts"
 msgstr "Atalhos Do Teclado"
 
 #: document/static/js/modules/editor/tools/show_key_bindings_templates.js:6
-#: static-transpile/js/transpile/editor.js:15293
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:15274
+#: static-transpile/js/transpile/editor.js:15553
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:15534
 msgid "Print"
 msgstr "Impressão"
 
 #: document/static/js/modules/editor/tools/show_key_bindings_templates.js:40
-#: static-transpile/js/transpile/editor.js:15293
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:15274
+#: static-transpile/js/transpile/editor.js:15553
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:15534
 msgid "Italics"
 msgstr "Itálico"
 
 #: document/static/js/modules/editor/tools/word_count_templates.js:4
-#: static-transpile/js/transpile/editor.js:15373
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:15354
+#: static-transpile/js/transpile/editor.js:15633
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:15614
 msgid "Number of"
 msgstr "Número de"
 
 #: document/static/js/modules/editor/tools/word_count_templates.js:9
-#: static-transpile/js/transpile/editor.js:15373
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:15354
+#: static-transpile/js/transpile/editor.js:15633
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:15614
 msgid "Words"
 msgstr "Palavras"
 
 #: document/static/js/modules/editor/tools/word_count_templates.js:17
-#: static-transpile/js/transpile/editor.js:15373
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:15354
+#: static-transpile/js/transpile/editor.js:15633
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:15614
 msgid "Characters with blanks"
 msgstr "Personagens com espaços em branco"
 
 #: document/static/js/modules/exporter/docx/metadata.js:59
 #: document/static/js/modules/exporter/docx/metadata.js:60
 #: document/static/js/modules/exporter/odt/metadata.js:62
-#: static-transpile/js/transpile/document_overview.js:3730
-#: static-transpile/js/transpile/document_overview.js:3731
-#: static-transpile/js/transpile/document_overview.js:7046
-#: static-transpile/js/transpile/editor.js:16697
-#: static-transpile/js/transpile/editor.js:16698
-#: static-transpile/js/transpile/editor.js:20013
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:16678
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:16679
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:19994
+#: static-transpile/js/transpile/document_overview.js:3741
+#: static-transpile/js/transpile/document_overview.js:3742
+#: static-transpile/js/transpile/document_overview.js:7057
+#: static-transpile/js/transpile/editor.js:16943
+#: static-transpile/js/transpile/editor.js:16944
+#: static-transpile/js/transpile/editor.js:20259
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:16924
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:16925
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:20240
 msgid "Unknown"
 msgstr "Desconhecido"
 
 #: document/static/js/modules/exporter/epub/index.js:32
-#: static-transpile/js/transpile/document_overview.js:4806
-#: static-transpile/js/transpile/editor.js:17773
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:17754
+#: static-transpile/js/transpile/document_overview.js:4817
+#: static-transpile/js/transpile/editor.js:18019
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:18000
 msgid "Epub export has been initiated."
 msgstr "Foi iniciada a exportação para Epub"
 
 #: document/static/js/modules/exporter/html/index.js:24
-#: static-transpile/js/transpile/document_overview.js:5214
-#: static-transpile/js/transpile/editor.js:18181
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:18162
+#: static-transpile/js/transpile/document_overview.js:5225
+#: static-transpile/js/transpile/editor.js:18427
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:18408
 msgid "HTML export has been initiated."
 msgstr "Foi iniciada a Exportação para HTML "
 
 #: document/static/js/modules/exporter/native/copy.js:30
-#: static-transpile/js/transpile/document_overview.js:6050
-#: static-transpile/js/transpile/editor.js:19017
+#: static-transpile/js/transpile/document_overview.js:6061
+#: static-transpile/js/transpile/editor.js:19263
 #: static-transpile/js/transpile/maintenance.js:948
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:18998
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:19244
 #, fuzzy
 #| msgid " successfully imported."
 msgid " successfully copied."
 msgstr "importados com sucesso."
 
 #: document/static/js/modules/exporter/native/revision.js:46
-#: static-transpile/js/transpile/document_overview.js:6225
-#: static-transpile/js/transpile/editor.js:19192
+#: static-transpile/js/transpile/document_overview.js:6236
+#: static-transpile/js/transpile/editor.js:19438
 #: static-transpile/js/transpile/maintenance.js:1123
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:19173
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:19419
 msgid "Revision saved"
 msgstr "Revisão salva"
 
 #: document/static/js/modules/exporter/native/revision.js:47
-#: static-transpile/js/transpile/document_overview.js:6227
-#: static-transpile/js/transpile/editor.js:19194
+#: static-transpile/js/transpile/document_overview.js:6238
+#: static-transpile/js/transpile/editor.js:19440
 #: static-transpile/js/transpile/maintenance.js:1125
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:19175
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:19421
 msgid "Revision could not be saved."
 msgstr "Revisão não pôde ser salva"
 
 #: document/static/js/modules/exporter/native/shrink.js:17
-#: static-transpile/js/transpile/document_overview.js:6271
-#: static-transpile/js/transpile/editor.js:19238
+#: static-transpile/js/transpile/document_overview.js:6282
+#: static-transpile/js/transpile/editor.js:19484
 #: static-transpile/js/transpile/maintenance.js:1169
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:19219
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:19465
 msgid "File export has been initiated."
 msgstr "Foi iniciada a exportação"
 
 #: document/static/js/modules/importer/file.js:41
 #: document/static/js/modules/importer/file.js:62
-#: static-transpile/js/transpile/document_overview.js:8483
-#: static-transpile/js/transpile/document_overview.js:8513
+#: static-transpile/js/transpile/document_overview.js:8493
+#: static-transpile/js/transpile/document_overview.js:8523
 msgid "The uploaded file does not appear to be a Fidus Writer file."
 msgstr "O arquivo enviado não parece ser um arquivo Fidus."
 
 #: document/static/js/modules/importer/file.js:116
-#: static-transpile/js/transpile/document_overview.js:8565
+#: static-transpile/js/transpile/document_overview.js:8575
 msgid ""
 "The uploaded file does not appear to be of the version used on this server: "
 msgstr "O arquivo enviado não parece ser da versão utilizada neste servidor:"
 
 #: document/static/js/modules/importer/native.js:51
-#: static-transpile/js/transpile/document_overview.js:8779
-#: static-transpile/js/transpile/editor.js:21983
+#: static-transpile/js/transpile/document_overview.js:8789
+#: static-transpile/js/transpile/editor.js:22228
 #: static-transpile/js/transpile/maintenance.js:1670
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:21964
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22209
 #, fuzzy
 #| msgid "Could not save "
 msgid "Could not save Image"
 msgstr "Não foi possível salvar"
 
 #: document/static/js/modules/importer/native.js:92
-#: static-transpile/js/transpile/document_overview.js:8823
-#: static-transpile/js/transpile/editor.js:22027
+#: static-transpile/js/transpile/document_overview.js:8833
+#: static-transpile/js/transpile/editor.js:22272
 #: static-transpile/js/transpile/maintenance.js:1714
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22008
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22253
 #, fuzzy
 #| msgid "Could not save "
 msgid "Could not create document"
 msgstr "Não foi possível salvar"
 
 #: document/static/js/modules/importer/native.js:132
-#: static-transpile/js/transpile/document_overview.js:8860
-#: static-transpile/js/transpile/editor.js:22064
+#: static-transpile/js/transpile/document_overview.js:8870
+#: static-transpile/js/transpile/editor.js:22309
 #: static-transpile/js/transpile/maintenance.js:1751
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22045
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22290
 msgid "Could not save "
 msgstr "Não foi possível salvar"
 
 #: document/static/js/modules/katex/index.js:8
-#: static-transpile/js/transpile/document_overview.js:9128
-#: static-transpile/js/transpile/editor.js:22092
+#: static-transpile/js/transpile/document_overview.js:9138
+#: static-transpile/js/transpile/editor.js:22337
 #: static-transpile/js/transpile/maintenance.js:2019
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22073
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22318
 msgid "Formula Error!"
 msgstr ""
 
@@ -3982,74 +4012,74 @@ msgstr "A bibliografia foi atualizada"
 msgid "All documents and revisions updated!"
 msgstr ""
 
-#: document/static/js/modules/schema/document.js:134
-#: static-transpile/js/transpile/document_overview.js:10195
-#: static-transpile/js/transpile/editor.js:8436
-#: static-transpile/js/transpile/editor.js:23626
-#: static-transpile/js/transpile/maintenance.js:3203
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8417
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:23607
+#: document/static/js/modules/schema/document.js:149
+#: static-transpile/js/transpile/document_overview.js:10460
+#: static-transpile/js/transpile/editor.js:8432
+#: static-transpile/js/transpile/editor.js:24123
+#: static-transpile/js/transpile/maintenance.js:3455
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8413
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:24104
 #, fuzzy
 #| msgid "Add Email"
 msgid "Email"
 msgstr "Adicionar E-mail"
 
 #: menu/static/js/modules/menu/index.js:12
-#: static-transpile/js/transpile/bibliography_overview.js:4555
-#: static-transpile/js/transpile/contacts_overview.js:1208
-#: static-transpile/js/transpile/document_overview.js:9174
-#: static-transpile/js/transpile/images_overview.js:1679
+#: static-transpile/js/transpile/bibliography_overview.js:4563
+#: static-transpile/js/transpile/contacts_overview.js:1211
+#: static-transpile/js/transpile/document_overview.js:9184
+#: static-transpile/js/transpile/images_overview.js:1685
 #: static-transpile/js/transpile/profile.js:918
 msgid "Documents"
 msgstr "Documentos"
 
 #: menu/static/js/modules/menu/index.js:14
-#: static-transpile/js/transpile/bibliography_overview.js:4557
-#: static-transpile/js/transpile/contacts_overview.js:1210
-#: static-transpile/js/transpile/document_overview.js:9176
-#: static-transpile/js/transpile/images_overview.js:1681
+#: static-transpile/js/transpile/bibliography_overview.js:4565
+#: static-transpile/js/transpile/contacts_overview.js:1213
+#: static-transpile/js/transpile/document_overview.js:9186
+#: static-transpile/js/transpile/images_overview.js:1687
 #: static-transpile/js/transpile/profile.js:920
 #, fuzzy
 #| msgid "My documents"
 msgid "edit documents"
 msgstr "Meus documentos"
 
-#: menu/static/js/modules/menu/index.js:18
-#: static-transpile/js/transpile/bibliography_overview.js:4560
-#: static-transpile/js/transpile/contacts_overview.js:1213
-#: static-transpile/js/transpile/document_overview.js:9179
-#: static-transpile/js/transpile/images_overview.js:1684
-#: static-transpile/js/transpile/profile.js:923
+#: menu/static/js/modules/menu/index.js:19
+#: static-transpile/js/transpile/bibliography_overview.js:4569
+#: static-transpile/js/transpile/contacts_overview.js:1217
+#: static-transpile/js/transpile/document_overview.js:9190
+#: static-transpile/js/transpile/images_overview.js:1691
+#: static-transpile/js/transpile/profile.js:924
 msgid "Bibliography"
 msgstr "Bibliografia"
 
-#: menu/static/js/modules/menu/index.js:20
-#: static-transpile/js/transpile/bibliography_overview.js:4562
-#: static-transpile/js/transpile/contacts_overview.js:1215
-#: static-transpile/js/transpile/document_overview.js:9181
-#: static-transpile/js/transpile/images_overview.js:1686
-#: static-transpile/js/transpile/profile.js:925
+#: menu/static/js/modules/menu/index.js:21
+#: static-transpile/js/transpile/bibliography_overview.js:4571
+#: static-transpile/js/transpile/contacts_overview.js:1219
+#: static-transpile/js/transpile/document_overview.js:9192
+#: static-transpile/js/transpile/images_overview.js:1693
+#: static-transpile/js/transpile/profile.js:926
 msgid "manage bibliography library"
 msgstr ""
 
-#: menu/static/js/modules/menu/index.js:24
-#: static-transpile/js/transpile/bibliography_overview.js:4565
-#: static-transpile/js/transpile/contacts_overview.js:1218
-#: static-transpile/js/transpile/document_overview.js:9184
-#: static-transpile/js/transpile/editor.js:21726
-#: static-transpile/js/transpile/images_overview.js:1689
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:21707
-#: static-transpile/js/transpile/profile.js:928
+#: menu/static/js/modules/menu/index.js:26
+#: static-transpile/js/transpile/bibliography_overview.js:4575
+#: static-transpile/js/transpile/contacts_overview.js:1223
+#: static-transpile/js/transpile/document_overview.js:9196
+#: static-transpile/js/transpile/editor.js:21971
+#: static-transpile/js/transpile/images_overview.js:1697
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:21952
+#: static-transpile/js/transpile/profile.js:930
 #: usermedia/static/js/modules/images/selection_dialog/index.js:82
 msgid "Images"
 msgstr "Imagens"
 
-#: menu/static/js/modules/menu/index.js:26
-#: static-transpile/js/transpile/bibliography_overview.js:4567
-#: static-transpile/js/transpile/contacts_overview.js:1220
-#: static-transpile/js/transpile/document_overview.js:9186
-#: static-transpile/js/transpile/images_overview.js:1691
-#: static-transpile/js/transpile/profile.js:930
+#: menu/static/js/modules/menu/index.js:28
+#: static-transpile/js/transpile/bibliography_overview.js:4577
+#: static-transpile/js/transpile/contacts_overview.js:1225
+#: static-transpile/js/transpile/document_overview.js:9198
+#: static-transpile/js/transpile/images_overview.js:1699
+#: static-transpile/js/transpile/profile.js:932
 msgid "manage image files"
 msgstr ""
 
@@ -4074,8 +4104,8 @@ msgid "op-symbols"
 msgstr ""
 
 #: static-transpile/js/transpile/biblatex_import_worker.js:372
-#: static-transpile/js/transpile/bibliography_overview.js:3783
-#: static-transpile/js/transpile/confirm_email.js:257
+#: static-transpile/js/transpile/bibliography_overview.js:3791
+#: static-transpile/js/transpile/confirm_account.js:257
 #: static-transpile/js/transpile/contacts_overview.js:257
 #: static-transpile/js/transpile/document_overview.js:800
 #: static-transpile/js/transpile/editor.js:3643
@@ -4102,9 +4132,9 @@ msgstr ""
 
 #: static-transpile/js/transpile/bibliography_overview.js:1209
 #: static-transpile/js/transpile/editor.js:1170
-#: static-transpile/js/transpile/editor.js:22699
+#: static-transpile/js/transpile/editor.js:22944
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:1151
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22680
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22925
 #, fuzzy
 #| msgid "First Name"
 msgid "First name"
@@ -4118,9 +4148,9 @@ msgstr ""
 
 #: static-transpile/js/transpile/bibliography_overview.js:1213
 #: static-transpile/js/transpile/editor.js:1174
-#: static-transpile/js/transpile/editor.js:22699
+#: static-transpile/js/transpile/editor.js:22944
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:1155
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22680
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22925
 #, fuzzy
 #| msgid "Last Name"
 msgid "Last name"
@@ -4152,9 +4182,152 @@ msgstr "Campos obrigatórios"
 msgid "Optional Fields"
 msgstr "Campos opcionais"
 
-#: static-transpile/js/transpile/confirm_email.js:925
-#: user/static/js/modules/profile/confirm_email.js:24
-msgid "Thanks for verifying! You can now log in."
+#: static-transpile/js/transpile/confirm_account.js:953
+msgid "Yes"
+msgstr ""
+
+#: static-transpile/js/transpile/confirm_account.js:953
+#, fuzzy
+#| msgid "Note"
+msgid "No"
+msgstr "Nota"
+
+#: static-transpile/js/transpile/confirm_account.js:953
+msgid ""
+"I would like to receive information about news and updates to the service by "
+"email."
+msgstr ""
+
+#: static-transpile/js/transpile/confirm_account.js:1095
+#: static-transpile/js/transpile/profile.js:1476
+#: user/static/js/modules/profile/templates.js:5
+#, fuzzy
+#| msgid "Delete the avatar"
+msgid "Delete the avatar?"
+msgstr "Excluir o avatar"
+
+#: static-transpile/js/transpile/confirm_account.js:1105
+#: static-transpile/js/transpile/profile.js:1486
+msgid "NOTICE: ALL OF YOUR INFORMATION WILL DISAPPEAR FROM OUR SYSTEM!"
+msgstr ""
+
+#: static-transpile/js/transpile/confirm_account.js:1105
+#: static-transpile/js/transpile/profile.js:1486
+#: user/static/js/modules/profile/templates.js:24
+#, fuzzy
+#| msgid ""
+#| "Really delete your account? Type in your username below to confirm "
+#| "deletion."
+msgid ""
+"Really delete your account? Type in your username and password below to "
+"confirm deletion."
+msgstr ""
+"Deseja realmente excluir a sua conta? Digite abaixo o seu nome de usuário "
+"para confirmar a exclusão."
+
+#: static-transpile/js/transpile/confirm_account.js:1105
+#: static-transpile/js/transpile/profile.js:1486
+msgid "We cannot reverse an account deletion."
+msgstr ""
+
+#: static-transpile/js/transpile/confirm_account.js:1105
+#: static-transpile/js/transpile/profile.js:1486
+#: user/static/js/modules/profile/templates.js:30
+msgid ""
+"Some copies of your files may temporarily be kept in our backup system, but "
+"also these will disappear automatically in due time."
+msgstr ""
+
+#: static-transpile/js/transpile/confirm_account.js:1105
+#: static-transpile/js/transpile/profile.js:1486
+msgid "Username"
+msgstr ""
+
+#: static-transpile/js/transpile/confirm_account.js:1105
+#: static-transpile/js/transpile/profile.js:1486
+#, fuzzy
+#| msgid "Old password"
+msgid "Password"
+msgstr "Senha Antiga"
+
+#: static-transpile/js/transpile/confirm_account.js:1110
+#: static-transpile/js/transpile/profile.js:1491
+msgid "Enter the new E-mail address"
+msgstr "Digite o novo endereço de e-mail"
+
+#: static-transpile/js/transpile/confirm_account.js:1127
+#: static-transpile/js/transpile/profile.js:1508
+msgid "Old password"
+msgstr "Senha Antiga"
+
+#: static-transpile/js/transpile/confirm_account.js:1127
+#: static-transpile/js/transpile/profile.js:1508
+msgid "New password"
+msgstr "Nova senha"
+
+#: static-transpile/js/transpile/confirm_account.js:1127
+#: static-transpile/js/transpile/profile.js:1508
+msgid "Confirm the new password"
+msgstr "Confirme a nova senha"
+
+#: static-transpile/js/transpile/confirm_account.js:1134
+#: static-transpile/js/transpile/profile.js:1515
+msgid "Confirm E-mail Address and Agree to Terms and Conditions"
+msgstr ""
+
+#: static-transpile/js/transpile/confirm_account.js:1140
+#: static-transpile/js/transpile/profile.js:1521
+#: user/static/js/modules/profile/templates.js:81
+msgid ""
+"Please confirm that you own the email <a href=\"mailto:%(email)s\">"
+"%(email)s</a>, that you apply for the username %(userName)s, and that you "
+"have read and agree to the <a href=\"/terms/\" target=\"_blank\">Terms and "
+"Conditions</a>."
+msgstr ""
+
+#: static-transpile/js/transpile/confirm_account.js:1142
+#: static-transpile/js/transpile/profile.js:1523
+#, fuzzy
+#| msgid "Confirm remove"
+msgid "Confirm"
+msgstr "Confirmar remover"
+
+#: static-transpile/js/transpile/confirm_account.js:1146
+#: static-transpile/js/transpile/profile.js:1527
+#: user/static/js/modules/profile/templates.js:99
+msgid ""
+"I have read and agree to the <a href=\"/terms/\" target=\"_blank\">Terms and "
+"Conditions</a>."
+msgstr ""
+
+#: static-transpile/js/transpile/confirm_account.js:1150
+#: static-transpile/js/transpile/profile.js:1531
+#: user/static/js/modules/profile/templates.js:106
+msgid ""
+"I am aware that I am signing up for a test account and that service may be "
+"ended abruptly and without notice, leaving me without my files."
+msgstr ""
+
+#: static-transpile/js/transpile/confirm_account.js:1155
+#: static-transpile/js/transpile/profile.js:1536
+msgid ""
+"This e-mail confirmation link expired or is invalid. Please <a href="
+"\"%(emailUrl)s\">issue a new e-mail confirmation request</a>."
+msgstr ""
+
+#: static-transpile/js/transpile/confirm_account.js:1159
+#: static-transpile/js/transpile/profile.js:1540
+#, fuzzy
+#| msgid "Thanks for verifying! You can now log in."
+msgid "Thanks for verifying!"
+msgstr "Obrigado por realizar a verificação! Agora você pode Entrar."
+
+#: static-transpile/js/transpile/confirm_account.js:1159
+#: static-transpile/js/transpile/profile.js:1540
+#: user/static/js/modules/profile/templates.js:122
+#, fuzzy
+#| msgid "Thanks for verifying! You can now log in."
+msgid "You can now log in."
 msgstr "Obrigado por realizar a verificação! Agora você pode Entrar."
 
 #: static-transpile/js/transpile/contacts_overview.js:938
@@ -4249,7 +4422,7 @@ msgstr "Adicionar um usuário para seus contatos"
 msgid "Remove from the contacts"
 msgstr "Remover dos contatos"
 
-#: static-transpile/js/transpile/contacts_overview.js:1175
+#: static-transpile/js/transpile/contacts_overview.js:1178
 #: static-transpile/js/transpile/document_overview.js:1588
 #: static-transpile/js/transpile/editor.js:4431
 #: static-transpile/js/transpile/ojs_admin_register_journals.js:4412
@@ -4339,19 +4512,19 @@ msgstr "Importar um arquivo Fidus"
 msgid "Export selected as: "
 msgstr ""
 
-#: static-transpile/js/transpile/document_overview.js:2581
+#: static-transpile/js/transpile/document_overview.js:2592
 #, fuzzy
 #| msgid " successfully imported."
 msgid "successfully imported."
 msgstr "importados com sucesso."
 
-#: static-transpile/js/transpile/document_overview.js:2691
+#: static-transpile/js/transpile/document_overview.js:2702
 msgid "Description"
 msgstr "Descrição"
 
-#: static-transpile/js/transpile/document_overview.js:2691
-#: static-transpile/js/transpile/editor.js:9781
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9762
+#: static-transpile/js/transpile/document_overview.js:2702
+#: static-transpile/js/transpile/editor.js:9854
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9835
 msgid "Download"
 msgstr "Baixar"
 
@@ -4360,437 +4533,437 @@ msgstr "Baixar"
 msgid "Send a message..."
 msgstr "Envie uma mensagem ..."
 
-#: static-transpile/js/transpile/editor.js:8372
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8353
+#: static-transpile/js/transpile/editor.js:8368
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8349
 #, fuzzy
 #| msgid "Maintitle"
 msgid "Link title"
 msgstr "Título príncipal"
 
-#: static-transpile/js/transpile/editor.js:8377
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8358
+#: static-transpile/js/transpile/editor.js:8373
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8354
 msgid "Description (optional)"
 msgstr "Descrição (opcional)"
 
-#: static-transpile/js/transpile/editor.js:8402
-#: static-transpile/js/transpile/editor.js:21757
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8383
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:21738
+#: static-transpile/js/transpile/editor.js:8398
+#: static-transpile/js/transpile/editor.js:22002
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8379
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:21983
 #: usermedia/static/js/modules/images/selection_dialog/index.js:110
 msgid "Image"
 msgstr "Imagem"
 
-#: static-transpile/js/transpile/editor.js:8404
-#: static-transpile/js/transpile/editor.js:21503
+#: static-transpile/js/transpile/editor.js:8400
+#: static-transpile/js/transpile/editor.js:21748
 #: static-transpile/js/transpile/images_overview.js:1018
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8385
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:21484
-#: static-transpile/js/transpile/profile.js:1120
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8381
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:21729
+#: static-transpile/js/transpile/profile.js:1123
 #: user/static/js/modules/profile/index.js:11
 #: usermedia/static/js/modules/images/edit_dialog/index.js:26
 msgid "Upload"
 msgstr "Carregar"
 
-#: static-transpile/js/transpile/editor.js:8412
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8393
+#: static-transpile/js/transpile/editor.js:8408
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8389
 msgid "Insert formula"
 msgstr "Inserir fórmula"
 
-#: static-transpile/js/transpile/editor.js:8412
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8393
+#: static-transpile/js/transpile/editor.js:8408
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8389
 msgid "Insert image"
 msgstr "Inserir imagem"
 
-#: static-transpile/js/transpile/editor.js:8412
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8393
+#: static-transpile/js/transpile/editor.js:8408
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8389
 msgid "Insert caption"
 msgstr "Inserir legenda"
 
-#: static-transpile/js/transpile/editor.js:8419
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8400
+#: static-transpile/js/transpile/editor.js:8415
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8396
 msgid "(Author, 1998)"
 msgstr "(Autor, 1998)"
 
-#: static-transpile/js/transpile/editor.js:8431
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8412
+#: static-transpile/js/transpile/editor.js:8427
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8408
 msgid "Text before"
 msgstr "Texto antes"
 
-#: static-transpile/js/transpile/editor.js:8436
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8417
+#: static-transpile/js/transpile/editor.js:8432
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8413
 #, fuzzy
 #| msgid "First Name"
 msgid "Firstname"
 msgstr "Primeiro Nome"
 
-#: static-transpile/js/transpile/editor.js:8436
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:8417
+#: static-transpile/js/transpile/editor.js:8432
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:8413
 #, fuzzy
 #| msgid "Last Name"
 msgid "Lastname"
 msgstr "Sobrenome"
 
-#: static-transpile/js/transpile/editor.js:9610
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9591
+#: static-transpile/js/transpile/editor.js:9676
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9657
 #, fuzzy
 #| msgid "Accept Change"
 msgid "Accept"
 msgstr "Aceitar Alterações"
 
-#: static-transpile/js/transpile/editor.js:9784
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9765
+#: static-transpile/js/transpile/editor.js:9857
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9838
 msgid "Download the current document."
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:9789
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:9770
+#: static-transpile/js/transpile/editor.js:9863
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:9844
 msgid "Print/PDF"
 msgstr "Imprimir / PDF"
 
-#: static-transpile/js/transpile/editor.js:10435
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:10416
+#: static-transpile/js/transpile/editor.js:10552
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:10533
 msgid "Untitled Document"
 msgstr "Documento sem título"
 
-#: static-transpile/js/transpile/editor.js:12041
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:12022
+#: static-transpile/js/transpile/editor.js:12184
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:12165
 msgid "Disconnected. Attempting to reconnect..."
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:13828
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:13809
+#: static-transpile/js/transpile/editor.js:13971
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:13952
 msgid "Copy link"
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:15293
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:15274
+#: static-transpile/js/transpile/editor.js:15553
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:15534
 msgid "Show keyboard shortcuts"
 msgstr "Atalhos de teclado Mostrar"
 
-#: static-transpile/js/transpile/editor.js:15293
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:15274
+#: static-transpile/js/transpile/editor.js:15553
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:15534
 msgid "Paste with content detection"
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:15293
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:15274
+#: static-transpile/js/transpile/editor.js:15553
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:15534
 msgid "Paste without content detection"
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:15373
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:15354
+#: static-transpile/js/transpile/editor.js:15633
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:15614
 msgid "Document"
 msgstr "Documento"
 
-#: static-transpile/js/transpile/editor.js:15373
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:15354
+#: static-transpile/js/transpile/editor.js:15633
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:15614
 msgid "Characters without blanks"
 msgstr "Personagens sem espaços em branco"
 
-#: static-transpile/js/transpile/editor.js:21447
+#: static-transpile/js/transpile/editor.js:21692
 #: static-transpile/js/transpile/images_overview.js:962
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:21428
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:21673
 #: usermedia/static/js/modules/images/database.js:52
 #, fuzzy
 #| msgid "Could not save "
 msgid "Could not save image"
 msgstr "Não foi possível salvar"
 
-#: static-transpile/js/transpile/editor.js:21495
+#: static-transpile/js/transpile/editor.js:21740
 #: static-transpile/js/transpile/images_overview.js:1010
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:21476
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:21721
 #: usermedia/static/js/modules/images/edit_dialog/index.js:17
 #, fuzzy
 #| msgid "Update image"
 msgid "Update Image Information"
 msgstr "Atualizar imagem"
 
-#: static-transpile/js/transpile/editor.js:21495
+#: static-transpile/js/transpile/editor.js:21740
 #: static-transpile/js/transpile/images_overview.js:1010
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:21476
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:21721
 #: usermedia/static/js/modules/images/edit_dialog/index.js:17
 #, fuzzy
 #| msgid "Upload image"
 msgid "Upload Image"
 msgstr "Enviar imagem"
 
-#: static-transpile/js/transpile/editor.js:21588
+#: static-transpile/js/transpile/editor.js:21833
 #: static-transpile/js/transpile/images_overview.js:1103
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:21569
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:21814
 #, fuzzy
 #| msgid "The image has been uploaded"
 msgid "The image has been updated."
 msgstr "A imagem foi carregada"
 
-#: static-transpile/js/transpile/editor.js:21593
+#: static-transpile/js/transpile/editor.js:21838
 #: static-transpile/js/transpile/images_overview.js:1108
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:21574
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:21819
 #, fuzzy
 #| msgid "Some errors are found. Please examine the form."
 msgid "Some errors were found. Please examine the form."
 msgstr "Foram encontrados alguns erros. Por favor, verifique o formulário."
 
-#: static-transpile/js/transpile/editor.js:21620
+#: static-transpile/js/transpile/editor.js:21865
 #: static-transpile/js/transpile/images_overview.js:1135
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:21601
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:21846
 #: usermedia/static/js/modules/images/edit_dialog/templates.js:9
 msgid "Select categories"
 msgstr "Escolha as categorias"
 
-#: static-transpile/js/transpile/editor.js:21629
+#: static-transpile/js/transpile/editor.js:21874
 #: static-transpile/js/transpile/images_overview.js:1144
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:21610
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:21855
 msgid "Insert a title"
 msgstr "Inserir um título"
 
-#: static-transpile/js/transpile/editor.js:21690
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:21671
+#: static-transpile/js/transpile/editor.js:21935
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:21916
 #: usermedia/static/js/modules/images/selection_dialog/index.js:35
 #, fuzzy
 #| msgid "Upload new image"
 msgid "Add new image"
 msgstr "Carregar nova imagem"
 
-#: static-transpile/js/transpile/editor.js:21706
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:21687
+#: static-transpile/js/transpile/editor.js:21951
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:21932
 #: usermedia/static/js/modules/images/selection_dialog/index.js:58
 #, fuzzy
 #| msgid "Update image"
 msgid "Use image"
 msgstr "Atualizar imagem"
 
-#: static-transpile/js/transpile/editor.js:21750
+#: static-transpile/js/transpile/editor.js:21995
 #: static-transpile/js/transpile/images_overview.js:1460
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:21731
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:21976
 #: usermedia/static/js/modules/images/selection_dialog/index.js:103
 msgid "No images available"
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22180
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22161
+#: static-transpile/js/transpile/editor.js:22425
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22406
 msgid "Provide a URL for the OJS server and the key to access it."
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22201
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22182
+#: static-transpile/js/transpile/editor.js:22446
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22427
 msgid "Register"
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22206
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22187
+#: static-transpile/js/transpile/editor.js:22451
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22432
 #, fuzzy
 #| msgid "No connection to server"
 msgid "Could not connect to OJS server."
 msgstr "Sem conexão com o servidor"
 
-#: static-transpile/js/transpile/editor.js:22214
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22195
+#: static-transpile/js/transpile/editor.js:22459
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22440
 msgid "Cannot find Fidus Writer user corresponding to email: "
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22228
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22209
+#: static-transpile/js/transpile/editor.js:22473
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22454
 msgid "Editor and journal name need to be filled out."
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22233
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22214
+#: static-transpile/js/transpile/editor.js:22478
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22459
 msgid "Editor needs to be the ID number of the editor user."
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22245
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22226
+#: static-transpile/js/transpile/editor.js:22490
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22471
 #, fuzzy
 #| msgid "Journal article"
 msgid "Journal saved."
 msgstr "Artigo de jornal"
 
-#: static-transpile/js/transpile/editor.js:22247
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22228
+#: static-transpile/js/transpile/editor.js:22492
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22473
 msgid "Journal already present on server."
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22252
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22233
+#: static-transpile/js/transpile/editor.js:22497
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22478
 #, fuzzy
 #| msgid "Some errors are found. Please examine the form."
 msgid "Could not save journal. Please check form."
 msgstr "Foram encontrados alguns erros. Por favor, verifique o formulário."
 
-#: static-transpile/js/transpile/editor.js:22313
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22294
+#: static-transpile/js/transpile/editor.js:22558
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22539
 #, fuzzy
 #| msgid "Could not delete revision."
 msgid "Could not obtain submission info."
 msgstr "Não foi possível excluir revisão."
 
-#: static-transpile/js/transpile/editor.js:22330
-#: static-transpile/js/transpile/editor.js:22355
-#: static-transpile/js/transpile/editor.js:22358
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22311
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22336
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22339
+#: static-transpile/js/transpile/editor.js:22575
+#: static-transpile/js/transpile/editor.js:22600
+#: static-transpile/js/transpile/editor.js:22603
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22556
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22581
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22584
 msgid "Submit to journal"
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22401
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22382
+#: static-transpile/js/transpile/editor.js:22646
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22627
 msgid "Firstname, lastname and abstract are obligatory fields!"
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22419
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22400
+#: static-transpile/js/transpile/editor.js:22664
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22645
 msgid "Complete missing information and choose journal"
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22439
-#: static-transpile/js/transpile/editor.js:22506
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22420
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22487
+#: static-transpile/js/transpile/editor.js:22684
+#: static-transpile/js/transpile/editor.js:22751
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22665
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22732
 msgid "Send"
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22452
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22433
+#: static-transpile/js/transpile/editor.js:22697
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22678
 #, fuzzy
 #| msgid "Submit"
 msgid "Resubmit"
 msgstr "Enviar"
 
-#: static-transpile/js/transpile/editor.js:22464
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22445
+#: static-transpile/js/transpile/editor.js:22709
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22690
 msgid "Resubmission successful"
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22469
-#: static-transpile/js/transpile/editor.js:22557
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22450
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22538
+#: static-transpile/js/transpile/editor.js:22714
+#: static-transpile/js/transpile/editor.js:22802
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22695
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22783
 #, fuzzy
 #| msgid "Revision could not be saved."
 msgid "Review could not be submitted."
 msgstr "Revisão não pôde ser salva"
 
-#: static-transpile/js/transpile/editor.js:22525
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22506
+#: static-transpile/js/transpile/editor.js:22770
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22751
 msgid "Leave your messages for editor and authors"
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22541
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22522
+#: static-transpile/js/transpile/editor.js:22786
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22767
 msgid "Fill out all fields before submitting!"
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22552
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22533
+#: static-transpile/js/transpile/editor.js:22797
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22778
 msgid "Review submitted"
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22669
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22650
+#: static-transpile/js/transpile/editor.js:22914
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22895
 msgid "Article submitted"
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22671
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22652
+#: static-transpile/js/transpile/editor.js:22916
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22897
 #, fuzzy
 #| msgid "Revision could not be saved."
 msgid "Article could not be submitted."
 msgstr "Revisão não pôde ser salva"
 
-#: static-transpile/js/transpile/editor.js:22697
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22678
+#: static-transpile/js/transpile/editor.js:22942
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22923
 #, fuzzy
 #| msgid "Library information"
 msgid "Submission information"
 msgstr "Informações da Biblioteca"
 
-#: static-transpile/js/transpile/editor.js:22697
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22678
+#: static-transpile/js/transpile/editor.js:22942
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22923
 #, fuzzy
 #| msgid "Journal article"
 msgid "Journal"
 msgstr "Artigo de jornal"
 
-#: static-transpile/js/transpile/editor.js:22699
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22680
+#: static-transpile/js/transpile/editor.js:22944
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22925
 #, fuzzy
 #| msgid "Foreword author(s)"
 msgid "Corresponding author"
 msgstr "Autor(es) do Prefácio "
 
-#: static-transpile/js/transpile/editor.js:22699
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22680
+#: static-transpile/js/transpile/editor.js:22944
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22925
 msgid "Affiliation"
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22699
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22680
+#: static-transpile/js/transpile/editor.js:22944
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22925
 msgid "Webpage"
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22703
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22684
+#: static-transpile/js/transpile/editor.js:22948
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22929
 msgid ""
 "By pressing the submit button your resubmission will be sent to the journal"
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22703
-#: static-transpile/js/transpile/editor.js:22707
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22684
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22688
+#: static-transpile/js/transpile/editor.js:22948
+#: static-transpile/js/transpile/editor.js:22952
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22929
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22933
 msgid "Be aware that this action cannot be undone!"
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22707
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22688
+#: static-transpile/js/transpile/editor.js:22952
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22933
 msgid "Message for editor"
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22707
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22688
+#: static-transpile/js/transpile/editor.js:22952
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22933
 msgid "Message for editor and authors"
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22707
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22688
+#: static-transpile/js/transpile/editor.js:22952
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22933
 msgid "Recommendation"
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22707
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22688
+#: static-transpile/js/transpile/editor.js:22952
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22933
 msgid "Choose One"
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22707
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22688
+#: static-transpile/js/transpile/editor.js:22952
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22933
 msgid "Accept Submission"
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22707
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22688
+#: static-transpile/js/transpile/editor.js:22952
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22933
 #, fuzzy
 #| msgid "Revision deleted"
 msgid "Revisions Required"
 msgstr "Revisão excluída"
 
-#: static-transpile/js/transpile/editor.js:22707
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22688
+#: static-transpile/js/transpile/editor.js:22952
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22933
 msgid "Resubmit for Review"
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22707
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22688
+#: static-transpile/js/transpile/editor.js:22952
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22933
 msgid "Resubmit Elsewhere"
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22707
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22688
+#: static-transpile/js/transpile/editor.js:22952
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22933
 msgid "Decline Submission"
 msgstr ""
 
-#: static-transpile/js/transpile/editor.js:22707
-#: static-transpile/js/transpile/ojs_admin_register_journals.js:22688
+#: static-transpile/js/transpile/editor.js:22952
+#: static-transpile/js/transpile/ojs_admin_register_journals.js:22933
 msgid "See Comments"
 msgstr ""
 
@@ -4828,207 +5001,156 @@ msgstr ""
 msgid "Added"
 msgstr "Apêndice"
 
-#: static-transpile/js/transpile/images_overview.js:1608
-#: usermedia/static/js/modules/images/overview/menu.js:52
+#: static-transpile/js/transpile/images_overview.js:1612
+#: usermedia/static/js/modules/images/overview/menu.js:56
 msgid "Upload new image"
 msgstr "Carregar nova imagem"
 
-#: static-transpile/js/transpile/images_overview.js:1618
-#: usermedia/static/js/modules/images/overview/menu.js:67
+#: static-transpile/js/transpile/images_overview.js:1623
+#: usermedia/static/js/modules/images/overview/menu.js:72
 #, fuzzy
 #| msgid "Cover image"
 msgid "Search images"
 msgstr "Imagem da capa"
 
-#: static-transpile/js/transpile/profile.js:1085
+#: static-transpile/js/transpile/profile.js:1088
 #: user/static/js/modules/profile/delete_user.js:50
 msgid "Staff accounts have to be deleted through the admin interface."
 msgstr ""
 
-#: static-transpile/js/transpile/profile.js:1088
+#: static-transpile/js/transpile/profile.js:1091
 #: user/static/js/modules/profile/delete_user.js:53
 msgid "Password incorrect."
 msgstr ""
 
-#: static-transpile/js/transpile/profile.js:1091
+#: static-transpile/js/transpile/profile.js:1094
 #: user/static/js/modules/profile/delete_user.js:56
 #, fuzzy
 #| msgid "Could not delete revision."
 msgid "Could not delete user account."
 msgstr "Não foi possível excluir revisão."
 
-#: static-transpile/js/transpile/profile.js:1144
+#: static-transpile/js/transpile/profile.js:1147
 #: user/static/js/modules/profile/index.js:37
 msgid "Could not update profile avatar"
 msgstr ""
 
-#: static-transpile/js/transpile/profile.js:1156
+#: static-transpile/js/transpile/profile.js:1159
 #: user/static/js/modules/profile/index.js:51
 msgid "Upload your profile picture"
 msgstr "Carregue sua foto de perfil"
 
-#: static-transpile/js/transpile/profile.js:1178
+#: static-transpile/js/transpile/profile.js:1181
 #: user/static/js/modules/profile/index.js:73
 #, fuzzy
 #| msgid "Could not delete revision."
 msgid "Could not delete avatar"
 msgstr "Não foi possível excluir revisão."
 
-#: static-transpile/js/transpile/profile.js:1218
+#: static-transpile/js/transpile/profile.js:1221
 #: user/static/js/modules/profile/index.js:119
 #, fuzzy
 #| msgid "Could not save "
 msgid "Could not save profile data"
 msgstr "Não foi possível salvar"
 
-#: static-transpile/js/transpile/profile.js:1236
+#: static-transpile/js/transpile/profile.js:1239
 #: user/static/js/modules/profile/index.js:139
 msgid "All fields are required!"
 msgstr "Todos os campos são obrigatórios!"
 
-#: static-transpile/js/transpile/profile.js:1241
+#: static-transpile/js/transpile/profile.js:1244
 #: user/static/js/modules/profile/index.js:144
 msgid "Please confirm the new password!"
 msgstr "Por favor, confirme a nova senha!"
 
-#: static-transpile/js/transpile/profile.js:1257
+#: static-transpile/js/transpile/profile.js:1260
 #: user/static/js/modules/profile/index.js:162
 msgid "The password has been changed."
 msgstr "A senha foi alterada."
 
-#: static-transpile/js/transpile/profile.js:1267
+#: static-transpile/js/transpile/profile.js:1270
 #: user/static/js/modules/profile/index.js:172
 msgid "The password could not be changed!"
 msgstr "A senha não pode ser alterada!"
 
-#: static-transpile/js/transpile/profile.js:1272
+#: static-transpile/js/transpile/profile.js:1275
 #: user/static/js/modules/profile/index.js:178
 #, fuzzy
 #| msgid "The password could not be changed!"
 msgid "The password could not be changed"
 msgstr "A senha não pode ser alterada!"
 
-#: static-transpile/js/transpile/profile.js:1282
+#: static-transpile/js/transpile/profile.js:1285
 #: user/static/js/modules/profile/index.js:190
 msgid "Change Password"
 msgstr "Alterar sua Senha"
 
-#: static-transpile/js/transpile/profile.js:1302
+#: static-transpile/js/transpile/profile.js:1305
 #: user/static/js/modules/profile/index.js:211
 msgid "New email address is required!"
 msgstr "É necessário um novo endereço de e-mail!"
 
-#: static-transpile/js/transpile/profile.js:1316
+#: static-transpile/js/transpile/profile.js:1319
 #: user/static/js/modules/profile/index.js:226
 #, fuzzy
 #| msgid "Confirmation e-mail sent to "
 msgid "Confirmation e-mail sent to"
 msgstr "Confirmação de e-mail enviada para"
 
-#: static-transpile/js/transpile/profile.js:1321
+#: static-transpile/js/transpile/profile.js:1324
 #: user/static/js/modules/profile/index.js:232
 msgid "The email could not be added!"
 msgstr "O e-mail não pôde ser adicionado!"
 
-#: static-transpile/js/transpile/profile.js:1332
+#: static-transpile/js/transpile/profile.js:1335
 #: user/static/js/modules/profile/index.js:245
 msgid "Add Email"
 msgstr "Adicionar E-mail"
 
-#: static-transpile/js/transpile/profile.js:1361
+#: static-transpile/js/transpile/profile.js:1364
 #: user/static/js/modules/profile/index.js:277
 msgid "The email could not be removed!"
 msgstr "O e-mail não pôde ser removido!"
 
-#: static-transpile/js/transpile/profile.js:1373
+#: static-transpile/js/transpile/profile.js:1376
 #: user/static/js/modules/profile/index.js:293
 msgid "Confirm remove"
 msgstr "Confirmar remover"
 
-#: static-transpile/js/transpile/profile.js:1375
+#: static-transpile/js/transpile/profile.js:1378
 #: user/static/js/modules/profile/index.js:295
 msgid "Remove the email address"
 msgstr "Remover o endereço de email"
 
-#: static-transpile/js/transpile/profile.js:1409
+#: static-transpile/js/transpile/profile.js:1412
 #: user/static/js/modules/profile/index.js:333
 #, fuzzy
 #| msgid "The email could not be set primary!"
 msgid "The email could not be set primary"
 msgstr "O e-mail não pôde ser definido como princial!"
 
-#: static-transpile/js/transpile/profile.js:1421
+#: static-transpile/js/transpile/profile.js:1424
 #: user/static/js/modules/profile/index.js:349
 msgid "Confirm set primary"
 msgstr "Confirmar definir principal"
 
-#: static-transpile/js/transpile/profile.js:1423
+#: static-transpile/js/transpile/profile.js:1426
 #: user/static/js/modules/profile/index.js:351
 #, fuzzy
 #| msgid "Set the email address primary"
 msgid "Set this email as the address primary"
 msgstr "Defina o principal endereço de e-mail"
 
-#: static-transpile/js/transpile/profile.js:1473
-#: user/static/js/modules/profile/templates.js:5
 #, fuzzy
-#| msgid "Delete the avatar"
-msgid "Delete the avatar?"
-msgstr "Excluir o avatar"
+#~| msgid "Figure"
+#~ msgid "figure"
+#~ msgstr "Figura"
 
-#: static-transpile/js/transpile/profile.js:1483
-msgid "NOTICE: ALL OF YOUR INFORMATION WILL DISAPPEAR FROM OUR SYSTEM!"
-msgstr ""
-
-#: static-transpile/js/transpile/profile.js:1483
-#: user/static/js/modules/profile/templates.js:24
 #, fuzzy
-#| msgid ""
-#| "Really delete your account? Type in your username below to confirm "
-#| "deletion."
-msgid ""
-"Really delete your account? Type in your username and password below to "
-"confirm deletion."
-msgstr ""
-"Deseja realmente excluir a sua conta? Digite abaixo o seu nome de usuário "
-"para confirmar a exclusão."
-
-#: static-transpile/js/transpile/profile.js:1483
-msgid "We cannot reverse an account deletion."
-msgstr ""
-
-#: static-transpile/js/transpile/profile.js:1483
-#: user/static/js/modules/profile/templates.js:30
-msgid ""
-"Some copies of your files may temporarily be kept in our backup system, but "
-"also these will disappear automatically in due time."
-msgstr ""
-
-#: static-transpile/js/transpile/profile.js:1483
-msgid "Username"
-msgstr ""
-
-#: static-transpile/js/transpile/profile.js:1483
-#, fuzzy
-#| msgid "Old password"
-msgid "Password"
-msgstr "Senha Antiga"
-
-#: static-transpile/js/transpile/profile.js:1488
-msgid "Enter the new E-mail address"
-msgstr "Digite o novo endereço de e-mail"
-
-#: static-transpile/js/transpile/profile.js:1505
-msgid "Old password"
-msgstr "Senha Antiga"
-
-#: static-transpile/js/transpile/profile.js:1505
-msgid "New password"
-msgstr "Nova senha"
-
-#: static-transpile/js/transpile/profile.js:1505
-msgid "Confirm the new password"
-msgstr "Confirme a nova senha"
+#~| msgid "Table"
+#~ msgid "table"
+#~ msgstr "Tabela"
 
 #~ msgid "Profile updated"
 #~ msgstr "Perfil atualizado"

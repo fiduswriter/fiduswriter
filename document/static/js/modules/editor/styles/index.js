@@ -1,5 +1,7 @@
 import {DocxExporter} from "../../exporter/docx"
 import {OdtExporter} from "../../exporter/odt"
+import * as bowser from "bowser/bowser"
+import {Dialog} from "../../common"
 
 export class ModStyles {
     constructor(editor) {
@@ -25,6 +27,16 @@ export class ModStyles {
         }
     }
 
+    showSafariErrorMessage() {
+        let dialog = new Dialog({
+            title: gettext('Safari bug warning'),
+            height: 100,
+            body: gettext('Unfortunately Safari has a bug which makes it impossible to export to this format. Please use Chrome or Firefox (on a desktop computer).'),
+            buttons: [{type: 'close'}]
+        })
+        dialog.open()
+    }
+
     addExportTemplateMenuEntries() {
         let exportMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='export')
         // Remove any previous entries in case we run this a second time
@@ -37,6 +49,10 @@ export class ModStyles {
                     type: 'action',
                     tooltip: gettext('Export the document to a DOCX file with the given template.'),
                     action: editor => {
+                        if (bowser.safari) {
+                            this.showSafariErrorMessage()
+                            return
+                        }
                         new DocxExporter(
                             editor.getDoc({changes: 'acceptAllNoInsertions'}),
                             template.template_file,
@@ -54,6 +70,10 @@ export class ModStyles {
                     type: 'action',
                     tooltip: gettext('Export the document to an ODT file with the given template.'),
                     action: editor => {
+                        if (bowser.safari) {
+                            this.showSafariErrorMessage()
+                            return
+                        }
                         new OdtExporter(
                             editor.getDoc({changes: 'acceptAllNoInsertions'}),
                             template.template_file,

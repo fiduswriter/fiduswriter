@@ -7,55 +7,23 @@
 
 {% block head_title %}{% trans "Confirm E-mail Address" %}{% endblock %}
 {% block extraheaders %}
-<script type="text/javascript" src="{% static "js/confirm_email.mjs" %}"></script>s
-{% endblock %}
-
-{% block content %}
-<div class="fw-login-left">
-    <h1 class="fw-login-title">{% trans "Confirm E-mail Address and Agree to Terms and Conditions" %}</h1>
-
-{% if confirmation %}
-    {% user_display confirmation.email_address.user as user_display %}
-    <p>
-        {% blocktrans with confirmation.email_address.email as email %}
-        Please confirm that you own the email <a href="mailto:{{email}}">{{ email }}</a>,
-        that you apply for the username {{ user_display }}, and that you have read and agree to the
-        <a href="/terms/" target="_blank">Terms and Conditions</a>.
-        {% endblocktrans %}
-    </p>
-
-    <p>
-        <input type="checkbox" class="checker" id="terms-check">
-        {% blocktrans %}
-        I have read and agree to the <a href="/terms/" target="_blank">Terms and Conditions</a>.
-        {% endblocktrans %}
-    </p>
-
-    {% if TEST_SERVER %}
-        <p>
-            <input type="checkbox" class="checker" id="test-check">
-            {% blocktrans %}
-            I am aware that I am signing up for a test account and that service may be ended abruptly and without notice, leaving me without my files.
-            {% endblocktrans %}
-        </p>
+<script type="text/javascript" src="{% static "js/confirm_account.mjs" %}"></script>
+<script type="text/javascript">
+    let testServer = "{{TEST_SERVER}}" === "True" ? true : false
+    {% if confirmation %}
+        let confirmationData = {
+            confirmed: true,
+            userName: "{{ confirmation.email_address.user }}",
+            email: "{{ confirmation.email_address.email }}",
+            submissionUrl: "{% url 'account_confirm_email' confirmation.key %}"
+        }
+    {% else %}
+        let confirmationData = {
+            confirmed: false,
+            emailUrl: "{% url 'account_email' %}"
+        }
     {% endif %}
-
-    <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
-        {% csrf_token %}
-        <p class="submit-wrapper">
-            <button type="submit" id="submit" disabled class="fw-button fw-orange fw-uppercase">{% trans 'Confirm' %}</button>
-        </p>
-    </form>
-
-{% else %}
-
-    {% url 'account_email' as email_url %}
-    <p>
-        {% blocktrans %}
-        This e-mail confirmation link expired or is invalid.
-        Please <a href="{{ email_url}}">issue a new e-mail confirmation request</a>.
-        {% endblocktrans %}
-    </p>
-{% endif %}
-</div>
+    window.theAccountConfirmer = new ConfirmAccount(confirmationData, testServer)
+    theAccountConfirmer.init()
+</script>
 {% endblock %}

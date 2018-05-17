@@ -203,21 +203,8 @@ INSTALLED_APPS = (
     'avatar',
     'compressor',
     'feedback',
-    'style',
-    # If you want to enable one or several of the social network login options
-    # below, make sure you add the authorization keys at:
-    # http://SERVER.COM/admin/socialaccount/socialapp/
-    # 'allauth.socialaccount.providers.facebook',
-    # 'allauth.socialaccount.providers.google',
-    # 'allauth.socialaccount.providers.twitter',
-    # 'allauth.socialaccount.providers.github',
-    # 'allauth.socialaccount.providers.linkedin',
-    # 'allauth.socialaccount.providers.openid',
-    # 'allauth.socialaccount.providers.persona',
-    # 'allauth.socialaccount.providers.soundcloud',
-    # 'allauth.socialaccount.providers.stackexchange',
+    'style'
 )
-
 
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`

@@ -39,6 +39,7 @@
       "django": true,
       "MathQuill": true,
       "gettext": false,
+      "interpolate": false,
       "$StaticUrls": false,
       "console": false,
       "FormData": false,

@@ -17,6 +17,7 @@ import {
     list_item,
     deletion,
     insertion,
+    format_change,
     parseTracks,
     comment,
     annotation_tag
@@ -386,7 +387,8 @@ let spec = {
         annotation_tag,
         anchor,
         deletion,
-        insertion
+        insertion,
+        format_change
     })
 }
 

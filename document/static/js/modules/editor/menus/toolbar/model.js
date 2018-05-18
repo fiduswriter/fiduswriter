@@ -154,64 +154,64 @@ export let toolbarModel = {
                 {
                     title: BLOCK_LABELS['paragraph'],
                     action: editor => {
-                        let state = editor.currentView.state
-                        setBlockType(state.schema.nodes.paragraph)(state, editor.currentView.dispatch)
+                        let view = editor.currentView
+                        setBlockType(view.state.schema.nodes.paragraph)(view.state, view.dispatch)
                     },
                     order: 0
                 },
                 {
                     title: BLOCK_LABELS['heading_1'],
                     action: editor => {
-                        let state = editor.currentView.state
-                        setBlockType(state.schema.nodes.heading, {level: 1})(state, editor.currentView.dispatch)
+                        let view = editor.currentView
+                        setBlockType(view.state.schema.nodes.heading, {level: 1})(view.state, view.dispatch)
                     },
                     order: 1
                 },
                 {
                     title: BLOCK_LABELS['heading_2'],
                     action: editor => {
-                        let state = editor.currentView.state
-                        setBlockType(state.schema.nodes.heading, {level: 2})(state, editor.currentView.dispatch)
+                        let view = editor.currentView
+                        setBlockType(view.state.schema.nodes.heading, {level: 2})(view.state, view.dispatch)
                     },
                     order: 2
                 },
                 {
                     title: BLOCK_LABELS['heading_3'],
                     action: editor => {
-                        let state = editor.currentView.state
-                        setBlockType(state.schema.nodes.heading, {level: 3})(state, editor.currentView.dispatch)
+                        let view = editor.currentView
+                        setBlockType(view.state.schema.nodes.heading, {level: 3})(view.state, view.dispatch)
                     },
                     order: 3
                 },
                 {
                     title: BLOCK_LABELS['heading_4'],
                     action: editor => {
-                        let state = editor.currentView.state
-                        setBlockType(state.schema.nodes.heading, {level: 4})(state, editor.currentView.dispatch)
+                        let view = editor.currentView
+                        setBlockType(view.state.schema.nodes.heading, {level: 4})(view.state, view.dispatch)
                     },
                     order: 4
                 },
                 {
                     title: BLOCK_LABELS['heading_5'],
                     action: editor => {
-                        let state = editor.currentView.state
-                        setBlockType(state.schema.nodes.heading, {level: 5})(state, editor.currentView.dispatch)
+                        let view = editor.currentView
+                        setBlockType(view.state.schema.nodes.heading, {level: 5})(view.state, view.dispatch)
                     },
                     order: 5
                 },
                 {
                     title: BLOCK_LABELS['heading_6'],
                     action: editor => {
-                        let state = editor.currentView.state
-                        setBlockType(state.schema.nodes.heading, {level: 6})(state, editor.currentView.dispatch)
+                        let view = editor.currentView
+                        setBlockType(view.state.schema.nodes.heading, {level: 6})(view.state, view.dispatch)
                     },
                     order: 6
                 },
                 {
                     title: BLOCK_LABELS['code_block'],
                     action: editor => {
-                        let state = editor.currentView.state
-                        setBlockType(state.schema.nodes.code_block)(state, editor.currentView.dispatch)
+                        let view = editor.currentView
+                        setBlockType(view.state.schema.nodes.code_block)(view.state, view.dispatch)
                     },
                     order: 7
                 }

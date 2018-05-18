@@ -16,6 +16,7 @@ import {
     list_item,
     deletion,
     insertion,
+    format_change,
     comment,
     annotation_tag
 } from "./common"
@@ -62,7 +63,8 @@ let spec = {
       comment,
       annotation_tag,
       deletion,
-      insertion
+      insertion,
+      format_change
   })
 }
 

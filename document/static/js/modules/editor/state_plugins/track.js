@@ -6,22 +6,23 @@ import {Decoration, DecorationSet} from "prosemirror-view"
 const key = new PluginKey('track')
 const selectedInsertionSpec = {}
 const selectedDeletionSpec = {}
+const selectedChangeFormatSpec = {}
 
 // TODO:
 // - Add tracking of:
 //   * table operations (remove row/column)
 //   * bibliography changes
-//   * style changes (italic/bold)
 //   * block type changes (heading/paragraph/etc.)
 // - Tests
 
 export function getSelectedChanges(state) {
     let {decos} = key.getState(state)
 
-    let insertion = decos.find(undefined, undefined, spec => spec === selectedInsertionSpec)[0]
-    let deletion = decos.find(undefined, undefined, spec => spec === selectedDeletionSpec)[0]
+    let insertion = decos.find(undefined, undefined, spec => spec === selectedInsertionSpec)[0],
+        deletion = decos.find(undefined, undefined, spec => spec === selectedDeletionSpec)[0],
+        format_change = decos.find(undefined, undefined, spec => spec === selectedChangeFormatSpec)[0]
 
-    return {insertion, deletion}
+    return {insertion, deletion, format_change}
 }
 
 export function setSelectedChanges(tr, type, pos) {
@@ -34,13 +35,20 @@ export function setSelectedChanges(tr, type, pos) {
     }
     let selectedChange = node.isInline ? getFromToMark(tr.doc, pos, mark) : {from: pos, to: pos + node.nodeSize}
     let decos = DecorationSet.empty
-    let spec = type === 'insertion' ? selectedInsertionSpec : selectedDeletionSpec
+    let spec
+    if (type==='insertion') {
+        spec = selectedInsertionSpec
+    } else if (type==='deletion') {
+        spec = selectedDeletionSpec
+    } else if (type==='format_change') {
+        spec = selectedChangeFormatSpec
+    } else {
+        console.warn('unknown track type')
+    }
     let decoType = node.isInline ? Decoration.inline : Decoration.node
     decos = decos.add(tr.doc, [decoType(selectedChange.from, selectedChange.to, {
         class: `selected-${type}`
     }, spec)])
-
-
     return tr.setMeta(key, {decos})
 }
 
@@ -72,13 +80,16 @@ function getFromToMark(doc, pos, mark) {
 function findSelectedChanges(state) {
 
     let selection = state.selection,
-        selectedChanges = {insertion: false, deletion: false},
+        selectedChanges = {insertion: false, deletion: false, formatChange: false},
         insertionPos = false,
         deletionPos = false,
+        formatChangePos = false,
         insertionMark,
         deletionMark,
+        formatChangeMark,
         insertionSize,
-        deletionSize
+        deletionSize,
+        formatChangeSize
 
     if (selection.empty) {
         let resolvedPos = state.doc.resolve(selection.from), marks = resolvedPos.marks()
@@ -90,6 +101,10 @@ function findSelectedChanges(state) {
             deletionMark = marks.find(mark => mark.type.name==='deletion')
             if (deletionMark) {
                 deletionPos = selection.from
+            }
+            formatChangeMark = marks.find(mark => mark.type.name==='format_change')
+            if (formatChangeMark) {
+                formatChangePos = selection.from
             }
         }
     } else {
@@ -121,7 +136,15 @@ function findSelectedChanges(state) {
                             deletionSize = node.nodeSize
                         }
                     }
-
+                }
+                if (!formatChangeMark) {
+                    formatChangeMark = node.marks.find(mark => mark.type.name==='format_change')
+                    if (formatChangeMark) {
+                        formatChangePos = pos
+                        if (!node.isInline) {
+                            formatChangeSize = node.nodeSize
+                        }
+                    }
                 }
             }
         )
@@ -136,6 +159,13 @@ function findSelectedChanges(state) {
         selectedChanges.deletion = deletionSize ?
             {from: deletionPos, to: deletionPos + deletionSize} :
             getFromToMark(state.doc, deletionPos, deletionMark)
+
+    }
+
+    if (formatChangeMark) {
+        selectedChanges.formatChange = formatChangeSize ?
+            {from: formatChangePos, to: formatChangePos + formatChangeSize} :
+            getFromToMark(state.doc, formatChangePos, formatChangeMark)
 
     }
     return selectedChanges
@@ -195,7 +225,7 @@ export let trackPlugin = function(options) {
                 } = this.getState(oldState)
 
                 if (tr.selectionSet) {
-                    let {insertion, deletion} = findSelectedChanges(state)
+                    let {insertion, deletion, formatChange} = findSelectedChanges(state)
                     decos = DecorationSet.empty
                     let decoType = tr.selection.node ? Decoration.node : Decoration.inline
                     if (insertion) {
@@ -207,6 +237,11 @@ export let trackPlugin = function(options) {
                         decos = decos.add(tr.doc, [decoType(deletion.from, deletion.to, {
                             class: 'selected-deletion'
                         }, selectedDeletionSpec)])
+                    }
+                    if (formatChange) {
+                        decos = decos.add(tr.doc, [decoType(formatChange.from, formatChange.to, {
+                            class: 'selected-format_change'
+                        }, selectedChangeFormatSpec)])
                     }
                 } else {
                     decos = decos.map(tr.mapping, tr.doc)
@@ -249,7 +284,9 @@ export let trackPlugin = function(options) {
             let addedRanges = [], // Content that has been added (also may mean removals)
                 markedDeletionRanges = [], // Deleted content that has received marks (Italic/bold) - we need to revert this.
                 unmarkedDeletionRanges = [], // Deleted content where marks have been deleted (Italic/bold) - we need to revert this.
-                user = options.editor.user.id // current user
+                formatChangeRanges = [], // Ranges where em/strong have been added or removed
+                user = options.editor.user.id, // current user
+                approved = !options.editor.view.state.doc.firstChild.attrs.tracked && options.editor.docInfo.access_rights !== 'write-tracked'
             trs.forEach(tr => {
                 tr.steps.forEach((step, index) => {
                     if (step instanceof ReplaceStep) {
@@ -303,8 +340,31 @@ export let trackPlugin = function(options) {
                                 markedDeletionRanges.push(
                                     {
                                         mark: step.mark,
-                                        from: pos,
-                                        to: pos + node.nodeSize
+                                        from: Math.max(step.from, pos),
+                                        to: Math.min(step.to, pos + node.nodeSize)
+                                    }
+                                )
+                            } else if (
+                                !approved &&
+                                ['em', 'strong'].includes(step.mark.type.name) &&
+                                !node.marks.find(mark => mark.type === step.mark.type)
+                            ) {
+                                let formatChangeMark = node.marks.find(mark => mark.type.name==='format_change'),
+                                    before = formatChangeMark ?
+                                        formatChangeMark.attrs.before :
+                                        node.marks.map(mark => mark.type.name).filter(markName => ['em', 'strong'].includes(markName)),
+                                    after = formatChangeMark ?
+                                        formatChangeMark.attrs.after.concat(step.mark.type.name) :
+                                        before.concat(step.mark.type.name),
+                                    common = before.filter(markName => after.includes(markName))
+                                before = before.filter(markName => !common.includes(markName))
+                                after = after.filter(markName => !common.includes(markName))
+                                formatChangeRanges.push(
+                                    {
+                                        from: Math.max(step.from, pos),
+                                        to: Math.min(step.to, pos + node.nodeSize),
+                                        before,
+                                        after
                                     }
                                 )
                             }
@@ -319,8 +379,32 @@ export let trackPlugin = function(options) {
                                 unmarkedDeletionRanges.push(
                                     {
                                         mark: step.mark,
-                                        from: pos,
-                                        to: pos + node.nodeSize
+                                        from: Math.max(step.from, pos),
+                                        to: Math.min(step.to, pos + node.nodeSize)
+                                    }
+                                )
+                            } else if (
+                                !approved &&
+                                ['em', 'strong'].includes(step.mark.type.name) &&
+                                node.marks.find(mark => mark.type === step.mark.type)
+                            ) {
+                                let formatChangeMark = node.marks.find(mark => mark.type.name==='format_change'),
+                                    before = formatChangeMark ?
+                                        formatChangeMark.attrs.before :
+                                        node.marks.map(mark => mark.type.name).filter(markName => ['em', 'strong'].includes(markName)),
+                                    after = formatChangeMark ?
+                                        formatChangeMark.attrs.after.filter(format => format !== step.mark.type.name) :
+                                        before.filter(format => format !== step.mark.type.name),
+                                    common = before.filter(markName => after.includes(markName))
+                                before = before.filter(markName => !common.includes(markName))
+                                after = after.filter(markName => !common.includes(markName))
+
+                                formatChangeRanges.push(
+                                    {
+                                        from: Math.max(step.from, pos),
+                                        to: Math.min(step.to, pos + node.nodeSize),
+                                        before,
+                                        after
                                     }
                                 )
                             }
@@ -334,17 +418,38 @@ export let trackPlugin = function(options) {
                     unmarkedDeletionRanges = unmarkedDeletionRanges.map(range =>
                         ({mark: range.mark, from: tr.mapping.maps[index].map(range.from, -1), to: tr.mapping.maps[index].map(range.to, 1)})
                     )
+                    formatChangeRanges = formatChangeRanges.map(range =>
+                        ({before: range.before, after: range.after, from: tr.mapping.maps[index].map(range.from, -1), to: tr.mapping.maps[index].map(range.to, 1)})
+                    )
                 })
             })
-            if (!addedRanges.length && !markedDeletionRanges.length && !unmarkedDeletionRanges.length) {
+            if (!addedRanges.length && !markedDeletionRanges.length && !unmarkedDeletionRanges.length && !formatChangeRanges.length) {
                 return false
             }
             let newTr = newState.tr,
                 exactDate = Date.now() - options.editor.clientTimeAdjustment,
                 date10 = Math.floor(exactDate/600000) * 10, // 10 minute interval
                 date1 = Math.floor(exactDate/60000), // 1 minute interval
-                username = options.editor.user.username,
-                approved = !options.editor.view.state.doc.firstChild.attrs.tracked && options.editor.docInfo.access_rights !== 'write-tracked'
+                username = options.editor.user.username
+
+            formatChangeRanges.forEach(formatChange => {
+                if (!formatChange.before.length && !formatChange.after.length) {
+                    newTr.removeMark(
+                        formatChange.from,
+                        formatChange.to,
+                        newState.schema.marks.format_change
+                    )
+                } else {
+                    let formatChangeMark = newState.schema.marks.format_change.create({user, username, date: date10, before: formatChange.before, after: formatChange.after})
+                    newTr.maybeStep(
+                        new AddMarkStep(
+                            formatChange.from,
+                            formatChange.to,
+                            formatChangeMark
+                        )
+                    )
+                }
+            })
 
             if (!approved && addedRanges.length) { // Only add deletions if changes are not automatically approved
                 let deletedRanges = addedRanges.slice()

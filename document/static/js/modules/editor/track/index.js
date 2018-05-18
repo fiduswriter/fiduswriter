@@ -69,7 +69,8 @@ export function acceptAllNoInsertions(doc) {
                 node.marks.find(mark => mark.type.name==='deletion'),
             insertionTrack = node.attrs.track ?
                 node.attrs.track.find(track => track.name==='insertion') :
-                node.marks.find(mark => mark.type.name==='insertion')
+                node.marks.find(mark => mark.type.name==='insertion'),
+            formatChangeMark = node.marks.find(mark => mark.type.name==='format_change')
 
         if (deletionTrack) {
             deleteNode(tr, node, pos, map)
@@ -86,6 +87,15 @@ export function acceptAllNoInsertions(doc) {
                 let track = node.attrs.track.filter(track => track.type !== 'insertion')
                 tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track}), node.marks)
             }
+        }
+        if (!deletionTrack && node.isInline && formatChangeMark) {
+            tr.step(
+                new RemoveMarkStep(
+                    map.map(pos),
+                    map.map(pos+node.nodeSize),
+                    formatChangeMark
+                )
+            )
         }
         return true
     })
@@ -164,6 +174,32 @@ export class ModTrack {
                         view.state.schema.marks.deletion
                     )
                 }
+            } else if (type==='format_change') {
+                trackMark.attrs.before.forEach(oldMark =>
+                    tr.step(
+                        new AddMarkStep(
+                            map.map(nodePos),
+                            map.map(nodePos+node.nodeSize),
+                            view.state.schema.marks[oldMark].create()
+                        )
+                    )
+                )
+                trackMark.attrs.after.forEach(newMark => {
+                    tr.step(
+                        new RemoveMarkStep(
+                            map.map(nodePos),
+                            map.map(nodePos+node.nodeSize),
+                            node.marks.find(mark => mark.type.name===newMark)
+                        )
+                    )
+                })
+                tr.step(
+                    new RemoveMarkStep(
+                        map.map(nodePos),
+                        map.map(nodePos+node.nodeSize),
+                        trackMark
+                    )
+                )
             }
             return true
         })
@@ -183,11 +219,13 @@ export class ModTrack {
     rejectAllForView(view) {
         let tr = view.state.tr.setMeta('track', true), map = new Mapping()
         view.state.doc.descendants((node, pos, parent) => {
+            let deletedNode = false
             if (
                 node.attrs.track && node.attrs.track.find(track => track.type==='insertion') ||
                 node.marks && node.marks.find(mark => mark.type.name==='insertion' && !mark.attrs.approved)
             ) {
                 deleteNode(tr, node, pos, map)
+                deletedNode = true
             } else if (node.attrs.track && node.attrs.track.find(track => track.type==='deletion')) {
                 let track = node.attrs.track.filter(track=> track.type !== 'deletion')
                 tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track}), node.marks)
@@ -196,6 +234,40 @@ export class ModTrack {
                     map.map(pos),
                     map.map(pos+node.nodeSize),
                     view.state.schema.marks.deletion
+                )
+            }
+            let formatChangeMark = node.marks.find(mark => mark.type.name==='format_change')
+
+            if (
+                node.isInline &&
+                !deletedNode &&
+                formatChangeMark
+            ) {
+                formatChangeMark.attrs.before.forEach(oldMark =>
+                    tr.step(
+                        new AddMarkStep(
+                            map.map(pos),
+                            map.map(pos+node.nodeSize),
+                            view.state.schema.marks[oldMark].create()
+                        )
+                    )
+                )
+                formatChangeMark.attrs.after.forEach(newMark => {
+                    tr.step(
+                        new RemoveMarkStep(
+                            map.map(pos),
+                            map.map(pos+node.nodeSize),
+                            node.marks.find(mark => mark.type.name===newMark)
+                        )
+                    )
+                })
+
+                tr.step(
+                    new RemoveMarkStep(
+                        map.map(pos),
+                        map.map(pos+node.nodeSize),
+                        formatChangeMark
+                    )
                 )
             }
             return true
@@ -247,6 +319,14 @@ export class ModTrack {
                         )
                     )
                 }
+            } else if (type==='format_change') {
+                tr.step(
+                    new RemoveMarkStep(
+                        map.map(nodePos),
+                        map.map(nodePos+node.nodeSize),
+                        trackMark
+                    )
+                )
             }
             return true
         })
@@ -266,12 +346,13 @@ export class ModTrack {
     acceptAllForView(view) {
         let tr = view.state.tr.setMeta('track', true), map = new Mapping()
         view.state.doc.descendants((node, pos, parent) => {
-
+            let deletedNode = false
             if (
                 node.attrs.track && node.attrs.track.find(track => track.type==='deletion') ||
                 node.marks && node.marks.find(mark => mark.type.name==='deletion')
             ) {
                 deleteNode(tr, node, pos, map)
+                deletedNode = true
             } else if (node.attrs.track && node.attrs.track.find(track => track.type==='insertion')) {
                 let track = node.attrs.track.filter(track => track.type !== 'insertion')
                 tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track}), node.marks)
@@ -283,6 +364,20 @@ export class ModTrack {
                         map.map(pos),
                         map.map(pos+node.nodeSize),
                         view.state.schema.marks.insertion.create(attrs)
+                    )
+                )
+            }
+            let formatChangeMark = node.marks.find(mark => mark.type.name==='format_change')
+            if (
+                node.isInline &&
+                !deletedNode &&
+                formatChangeMark
+            ) {
+                tr.step(
+                    new RemoveMarkStep(
+                        map.map(pos),
+                        map.map(pos+node.nodeSize),
+                        formatChangeMark
                     )
                 )
             }

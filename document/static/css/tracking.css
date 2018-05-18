@@ -2,13 +2,21 @@ span.deletion {
     text-decoration: line-through;
 }
 
-.selected-insertion, .selected-deletion {
+.selected-insertion, .selected-deletion, .selected-format_change {
     background-color: #fffacf;
 }
 
 
 .margin-box .track-title {
     text-align: right;
+    font-weight: 700;
+}
+
+.margin-box .format-change-info {
+    margin-bottom: 9px;
+}
+
+.margin-box .format-change-info b {
     font-weight: 700;
 }
 

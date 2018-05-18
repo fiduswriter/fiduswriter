@@ -171,6 +171,7 @@ export class ModMarginboxes {
             node.attrs.track.map(track => ({type: track.type, data: {user: track.user, username: track.username, date: track.date}})) :
             node.marks.filter(mark =>
                 mark.type.name==='deletion' ||
+                mark.type.name==='format_change' ||
                 (mark.type.name==='insertion' && !mark.attrs.approved)
             ).map(mark => ({type: mark.type.name, data: mark.attrs}))
 
@@ -184,7 +185,16 @@ export class ModMarginboxes {
                         track.data.date===lastTrack.data.date &&
                         (
                             node.isInline || // block level changes almost always need new boxes
-                            node.type.name === 'paragraph' && lastNode.type.name === 'list_item' && lastTrack.type === 'insertion' // Don't show first paragraphs in list items.
+                            (node.type.name === 'paragraph' && lastNode.type.name === 'list_item' && lastTrack.type === 'insertion') // Don't show first paragraphs in list items.
+                        ) &&
+                        (
+                            track.type.name !== 'format_change' ||
+                            (
+                                track.data.before.length===lastTrack.data.before.length &&
+                                track.data.after.length===lastTrack.data.after.length &&
+                                track.data.before.every(markName => lastTrack.data.before.includes(markName)) &&
+                                track.data.after.every(markName => lastTrack.data.after.includes(markName))
+                            )
                         )
                 )
             ) :

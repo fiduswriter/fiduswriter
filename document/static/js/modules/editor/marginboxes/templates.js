@@ -167,8 +167,26 @@ let ACTIONS = {
     deletion_code_block: gettext('Removed code block'),
     deletion_figure: gettext('Deleted figure'),
     deletion_list_item: gettext('Lifted list item'),
-    deletion_table: gettext('Delete table')
+    deletion_table: gettext('Delete table'),
+    format_change_text: gettext('Format change')
 }
+
+let FORMAT_MARK_NAMES = {
+    'em': gettext('Emphasis'),
+    'strong': gettext('Strong')
+}
+
+let formatChangeTemplate = ({before, after}) => {
+    let returnText = ''
+    if (before.length) {
+        returnText += `<div class="format-change-info"><b>${gettext('Removed')}:</b> ${before.map(markName => FORMAT_MARK_NAMES[markName]).join(', ')}</div>`
+    }
+    if (after.length) {
+        returnText += `<div class="format-change-info"><b>${gettext('Added')}:</b> ${after.map(markName => FORMAT_MARK_NAMES[markName]).join(', ')}</div>`
+    }
+    return returnText
+}
+
 
 let trackTemplate = ({type, data, nodeType, pos, view, active, docInfo}) => {
     let author = data.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === data.user)
@@ -181,6 +199,7 @@ let trackTemplate = ({type, data, nodeType, pos, view, active, docInfo}) => {
                     <h5 class="comment-user-name">${escapeText(author ? author.name : data.username)}</h5>
                     <p class="comment-date">${nodeType==='text' ? `${gettext('ca.')} ` : ''}${localizeDate(data.date*60000, 'minutes')}</p>
                 </div>
+                ${type==='format_change' ? formatChangeTemplate(data) : ''}
                 <div class="ui-dialog-buttonset">
                     <button class="fw-button fw-small fw-green track-accept" data-type="${type}" data-pos="${pos}" data-view="${view}">${gettext('Accept')}</button>
                     <button class="fw-button fw-small fw-orange track-reject" data-type="${type}" data-pos="${pos}" data-view="${view}">${gettext('Reject')}</button>
@@ -205,6 +224,7 @@ export let marginBoxesTemplate = ({
                 break
             case 'insertion':
             case 'deletion':
+            case 'format_change':
                 return trackTemplate({
                     type: mBox.type,
                     nodeType: mBox.nodeType,

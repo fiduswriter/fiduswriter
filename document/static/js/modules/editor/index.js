@@ -102,7 +102,7 @@ import {
     trackPlugin
 } from "./state_plugins"
 import {
-    editorKeymap
+    buildEditorKeymap
 } from "./keymap"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
@@ -137,7 +137,7 @@ export class Editor {
         this.client_id = Math.floor(Math.random() * 0xFFFFFFFF)
         this.clientTimeAdjustment = 0
         this.statePlugins = [
-            [keymap, () => editorKeymap],
+            [keymap, () => buildEditorKeymap(this.schema)],
             [keymap, () => buildKeymap(this.schema)],
             [keymap, () => baseKeymap],
             [collab, () => ({clientID: this.client_id})],

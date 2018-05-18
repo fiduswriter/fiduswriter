@@ -13,7 +13,6 @@ const selectedDeletionSpec = {}
 //   * style changes (italic/bold)
 //   * block type changes (heading/paragraph/etc.)
 // - Tests
-// - Use custom setBlockType for keyboard shortcuts
 
 export function getSelectedChanges(state) {
     let {decos} = key.getState(state)

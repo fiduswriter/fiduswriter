@@ -7,42 +7,7 @@ import {Slice, Fragment} from "prosemirror-model"
 import {CitationDialog, FigureDialog, LinkDialog, MathDialog} from "../../dialogs"
 import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from "../.."
 import {randomHeadingId, randomAnchorId} from "../../../schema/common"
-
-
-// Modified version of setBlockType that keeps heading IDs and marks.
-// Source: https://github.com/ProseMirror/prosemirror-transform/blob/07a71183adfd7ee0b8be35e4b7729eecde09d1f7/src/structure.js#L116-L131
-let setBlockType = function(view, typeName, attrs) {
-    let type = view.state.schema.nodes[typeName]
-    let {
-        from,
-        to
-    } = view.state.selection
-    let tr = view.state.tr
-    view.state.doc.nodesBetween(from, to, (node, pos) => {
-        if (node.isTextblock && !node.hasMarkup(type, attrs) && canChangeType(tr.doc, tr.mapping.map(pos, 1), type)) {
-            // Ensure all markup that isn't allowed in the new node type is cleared
-            tr.clearIncompatible(tr.mapping.map(pos, 1), type)
-            let startM = tr.mapping.map(pos, 1),
-                endM = tr.mapping.map(pos + node.nodeSize, 1)
-            if (node.type === type && typeName === 'heading') {
-                attrs = Object.assign({}, node.attrs, attrs)
-            }
-            tr.step(new ReplaceAroundStep(startM, endM, startM + 1, endM - 1,
-                new Slice(Fragment.from(type.create(attrs, null, node.marks)), 0, 0), 1, true))
-            return false
-        }
-    })
-    if (tr.steps.length) {
-        view.dispatch(tr)
-    }
-}
-
-// helper function for setBlockType
-function canChangeType(doc, pos, type) {
-    let $pos = doc.resolve(pos), index = $pos.index()
-    return $pos.parent.canReplaceWith(index, index + 1, type)
-}
-
+import {setBlockType} from "../../keymap"
 
 const PART_LABELS = {
     'title': gettext('Title'),
@@ -188,42 +153,66 @@ export let toolbarModel = {
             content: [
                 {
                     title: BLOCK_LABELS['paragraph'],
-                    action: editor => setBlockType(editor.currentView, 'paragraph'),
+                    action: editor => {
+                        let state = editor.currentView.state
+                        setBlockType(state.schema.nodes.paragraph)(state, editor.currentView.dispatch)
+                    },
                     order: 0
                 },
                 {
                     title: BLOCK_LABELS['heading_1'],
-                    action: editor => setBlockType(editor.currentView, 'heading', {level: 1}),
+                    action: editor => {
+                        let state = editor.currentView.state
+                        setBlockType(state.schema.nodes.heading, {level: 1})(state, editor.currentView.dispatch)
+                    },
                     order: 1
                 },
                 {
                     title: BLOCK_LABELS['heading_2'],
-                    action: editor => setBlockType(editor.currentView, 'heading', {level: 2}),
+                    action: editor => {
+                        let state = editor.currentView.state
+                        setBlockType(state.schema.nodes.heading, {level: 2})(state, editor.currentView.dispatch)
+                    },
                     order: 2
                 },
                 {
                     title: BLOCK_LABELS['heading_3'],
-                    action: editor => setBlockType(editor.currentView, 'heading', {level: 3}),
+                    action: editor => {
+                        let state = editor.currentView.state
+                        setBlockType(state.schema.nodes.heading, {level: 3})(state, editor.currentView.dispatch)
+                    },
                     order: 3
                 },
                 {
                     title: BLOCK_LABELS['heading_4'],
-                    action: editor => setBlockType(editor.currentView, 'heading', {level: 4}),
+                    action: editor => {
+                        let state = editor.currentView.state
+                        setBlockType(state.schema.nodes.heading, {level: 4})(state, editor.currentView.dispatch)
+                    },
                     order: 4
                 },
                 {
                     title: BLOCK_LABELS['heading_5'],
-                    action: editor => setBlockType(editor.currentView, 'heading', {level: 5}),
+                    action: editor => {
+                        let state = editor.currentView.state
+                        setBlockType(state.schema.nodes.heading, {level: 5})(state, editor.currentView.dispatch)
+                    },
                     order: 5
                 },
                 {
                     title: BLOCK_LABELS['heading_6'],
-                    action: editor => setBlockType(editor.currentView, 'heading', {level: 6}),
+                    action: editor => {
+                        let state = editor.currentView.state
+                        setBlockType(state.schema.nodes.heading, {level: 6})(state, editor.currentView.dispatch)
+                    },
                     order: 6
                 },
                 {
                     title: BLOCK_LABELS['code_block'],
-                    action: editor => setBlockType(editor.currentView, 'code_block'),
+                    action: editor => {
+                        let state = editor.currentView.state
+                        setBlockType(state.schema.nodes.code_block)(state, editor.currentView.dispatch)
+                    },
                     order: 7
                 }
             ],

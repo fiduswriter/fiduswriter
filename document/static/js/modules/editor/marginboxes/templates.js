@@ -179,7 +179,7 @@ let trackTemplate = ({type, data, nodeType, pos, view, active, docInfo}) => {
                 <div class="comment-user">
                     <img class="comment-user-avatar" src="${author ? author.avatar : `${$StaticUrls.base$}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
                     <h5 class="comment-user-name">${escapeText(author ? author.name : data.username)}</h5>
-                    <p class="comment-date">${localizeDate(data.date*600000, 'minutes')}</p>
+                    <p class="comment-date">${localizeDate(data.date*60000, 'minutes')}</p>
                 </div>
                 <div class="ui-dialog-buttonset">
                     <button class="fw-button fw-small fw-green track-accept" data-type="${type}" data-pos="${pos}" data-view="${view}">${gettext('Accept')}</button>

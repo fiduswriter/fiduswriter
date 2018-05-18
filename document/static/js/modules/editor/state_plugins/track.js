@@ -250,28 +250,12 @@ export let trackPlugin = function(options) {
                 markedDeletionRanges = [], // Deleted content that has received marks (Italic/bold) - we need to revert this.
                 unmarkedDeletionRanges = [], // Deleted content where marks have been deleted (Italic/bold) - we need to revert this.
                 user = options.editor.user.id // current user
-
             trs.forEach(tr => {
                 tr.steps.forEach((step, index) => {
                     if (step instanceof ReplaceStep) {
-                        if (step.from===step.to) {
-                            addedRanges.push(
-                                {from: step.from, to: step.to}
-                            )
-                        } else {
-                            tr.docs[index].nodesBetween(step.from, step.to, (node, pos) => {
-                                if (pos < step.from) {
-                                    return true
-                                }
-                                if (node.attrs.track && node.attrs.track.find(track => track.user===user && track.type==='insertion')) {
-                                    // user has created element. so (s)he is allowed to delete it again.
-                                    return true
-                                }
-                                addedRanges.push(
-                                    {from: pos, to: pos + 1}
-                                )
-                            })
-                        }
+                        addedRanges.push(
+                            {from: step.from, to: step.to}
+                        )
                     } else if (step instanceof ReplaceAroundStep) {
                         if (step.structure) {
                             if (step.from===step.gapFrom && step.to===step.gapTo) { // wrapped in something
@@ -355,9 +339,10 @@ export let trackPlugin = function(options) {
             if (!addedRanges.length && !markedDeletionRanges.length && !unmarkedDeletionRanges.length) {
                 return false
             }
-
             let newTr = newState.tr,
-                date = Math.floor((Date.now()-options.editor.clientTimeAdjustment)/600000), // 10 minute interval
+                exactDate = Date.now() - options.editor.clientTimeAdjustment,
+                date10 = Math.floor(exactDate/600000) * 10, // 10 minute interval
+                date1 = Math.floor(exactDate/60000), // 1 minute interval
                 username = options.editor.user.username,
                 approved = !options.editor.view.state.doc.firstChild.attrs.tracked && options.editor.docInfo.access_rights !== 'write-tracked'
 
@@ -373,7 +358,7 @@ export let trackPlugin = function(options) {
                 })
 
                 let realDeletedRanges = [], // ranges of content by the same user. Should not be marked as gone, but really be removed
-                    deletionMark = newState.schema.marks.deletion.create({user, username, date})
+                    deletionMark = newState.schema.marks.deletion.create({user, username, date: date10})
                 deletedRanges.forEach(delRange => {
                     let oldDeletionMarks = {}
                     // Add deletion mark to block nodes (figures, text blocks) and find already deleted inline nodes
@@ -394,7 +379,7 @@ export let trackPlugin = function(options) {
                                 !['table_row', 'table_cell', 'bullet_list', 'ordered_list'].includes(node.type.name)
                             ) {
                                 let track = node.attrs.track.slice()
-                                track.push({type: 'deletion', user, username, date})
+                                track.push({type: 'deletion', user, username, date: date1})
                                 newTr.setNodeMarkup(pos, null, Object.assign({}, node.attrs, {track}), node.marks)
                             }
                         }
@@ -416,8 +401,10 @@ export let trackPlugin = function(options) {
                             }
                             if (node.marks && node.marks.find(mark => mark.type.name==='insertion' && mark.attrs.user===user && !mark.attrs.approved)) {
                                 realDeletedRanges.push({from: pos, to: pos + node.nodeSize})
-                            }
-                            if(oldDeletionMarks[pos]) {
+                            } else if (node.attrs.track && node.attrs.track.find(track => track.user===user && track.type==='insertion')) {
+                                // user has created element. so (s)he is allowed to delete it again.
+                                realDeletedRanges.push({from: pos, to: pos + 1})
+                            } else if(oldDeletionMarks[pos]) {
                                 // Readd preexisting deletion mark
                                 newTr.maybeStep(
                                     new AddMarkStep(
@@ -522,7 +509,7 @@ export let trackPlugin = function(options) {
                 unmarkedDeletionRanges = unmarkedDeletionRanges.map(range => ({mark: range.mark, from: map.map(range.from, -1), to: map.map(range.to, 1)}))
             }
 
-            let insertionMark = newState.schema.marks.insertion.create({user, username, date, approved})
+            let insertionMark = newState.schema.marks.insertion.create({user, username, date: date10, approved})
 
             addedRanges.forEach(addedRange => {
                 newTr.maybeStep(
@@ -550,7 +537,7 @@ export let trackPlugin = function(options) {
                             }
                             if (node.attrs.track) {
                                 let track = node.attrs.track.filter(trackAttr => trackAttr.type !== 'insertion')
-                                track.push({type: 'insertion', user, username, date})
+                                track.push({type: 'insertion', user, username, date: date1})
                                 newTr.setNodeMarkup(pos, null, Object.assign({}, node.attrs, {track}), node.marks)
                             }
                         }

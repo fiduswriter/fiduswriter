@@ -10,6 +10,7 @@ const selectedDeletionSpec = {}
 // TODO:
 // - Add tracking of:
 //   * table operations (remove row/column)
+//   * bibliography changes
 //   * style changes (italic/bold)
 //   * block type changes (heading/paragraph/etc.)
 // - Tests

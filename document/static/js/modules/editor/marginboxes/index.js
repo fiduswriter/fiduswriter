@@ -188,7 +188,7 @@ export class ModMarginboxes {
                             (node.type.name === 'paragraph' && lastNode.type.name === 'list_item' && lastTrack.type === 'insertion') // Don't show first paragraphs in list items.
                         ) &&
                         (
-                            track.type.name !== 'format_change' ||
+                            track.type !== 'format_change' ||
                             (
                                 track.data.before.length===lastTrack.data.before.length &&
                                 track.data.after.length===lastTrack.data.after.length &&

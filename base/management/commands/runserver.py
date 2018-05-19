@@ -36,7 +36,8 @@ class Command(BaseCommand):
 
     def inner_run(self, *args, **options):
         quit_command = (platform == 'win32') and 'CTRL-BREAK' or 'CONTROL-C'
-        call_command("transpile")
+        if hasattr(settings, 'AUTO_TRANSPILE') and settings.AUTO_TRANSPILE:
+            call_command("transpile")
         self.stdout.write((
             "%(started_at)s\n"
             "Django version %(version)s, using settings %(settings)r\n"

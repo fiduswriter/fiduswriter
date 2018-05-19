@@ -9,6 +9,11 @@
 
 DEBUG = True
 
+# Transpile JavaScript automatically when running the server. You might want to
+# turn this off on a production server
+
+AUTO_TRANSPILE = True
+
 SERVER_INFO = {
     # This determines whether the server is used for testing and will let the
     # users know upon signup know that their documents may disappear.

@@ -369,11 +369,13 @@ let convertDocV20 = function(doc) {
         delete(comment.userAvatar)
         delete(comment.userName)
         delete(comment['review:isMajor'])
-        comment.answers.forEach(answer => {
-            answer.username = answer.userName
-            delete(answer.userAvatar)
-            delete(answer.userName)
-        })
+        if (comment.answers) {
+            comment.answers.forEach(answer => {
+                answer.username = answer.userName
+                delete(answer.userAvatar)
+                delete(answer.userName)
+            })
+        }
     })
     return returnDoc
 }

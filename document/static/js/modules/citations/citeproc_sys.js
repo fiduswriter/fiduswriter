@@ -20,6 +20,7 @@ export class citeprocSys {
             if (this.bibDB.db[id]) {
                 let cslGetter = new CSLExporter(this.bibDB.db, [id])
                 Object.assign(this.items, cslGetter.output)
+                console.log(this.items)
             } else {
                 this.missingItems.push(id)
                 this.items[id] = {author:{literal:''}, type: 'article', id}

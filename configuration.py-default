@@ -9,6 +9,11 @@
 
 DEBUG = True
 
+# Transpile JavaScript automatically when running the server. You might want to
+# turn this off on a production server
+
+AUTO_TRANSPILE = True
+
 SERVER_INFO = {
     # This determines whether the server is used for testing and will let the
     # users know upon signup know that their documents may disappear.
@@ -89,16 +94,3 @@ INSTALLED_APPS += (
 ALLOWED_HOSTS = [
     'localhost',
 ]
-
-
-# Location of commonly used Js libraries. Here the local version is given.
-# For deployment a version on the net is better.
-# Only uncomment if you change any of these values!
-# JS_LOCATIONS = {
-#     'JQUERY_URL': STATIC_URL + 'js/libs/jquery.min.js',
-#     'JQUERYUI_URL': STATIC_URL + 'js/libs/jquery-ui.min.js',
-#     'DATATABLES_URL': STATIC_URL + 'js/libs/jquery.dataTables.min.js'
-# }
-#
-# CSS_LOCATIONS = {
-#    }

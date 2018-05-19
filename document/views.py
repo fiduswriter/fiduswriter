@@ -93,8 +93,10 @@ def get_documentlist_extra_js(request):
 
 
 def documents_list(request):
-    documents = Document.objects.filter(Q(owner=request.user) | Q(
-        accessright__user=request.user)).order_by('-updated')
+    documents = Document.objects.filter(
+        Q(owner=request.user) | Q(accessright__user=request.user),
+        listed=True
+    ).order_by('-updated')
     output_list = []
     for document in documents:
         if document.owner == request.user:
@@ -148,6 +150,7 @@ def get_documentlist_js(request):
             tm_object = {}
             tm_object['id'] = team_member.member.id
             tm_object['name'] = team_member.member.readable_name
+            tm_object['username'] = team_member.member.get_username()
             tm_object['avatar'] = avatar_url(team_member.member, 80)
             response['team_members'].append(tm_object)
         serializer = PythonWithURLSerializer()
@@ -164,6 +167,7 @@ def get_documentlist_js(request):
         response['user'] = {}
         response['user']['id'] = request.user.id
         response['user']['name'] = request.user.readable_name
+        response['user']['username'] = request.user.get_username()
         response['user']['avatar'] = avatar_url(request.user, 80)
         response['access_rights'] = get_accessrights(
             AccessRight.objects.filter(document__owner=request.user))
@@ -343,8 +347,8 @@ def import_image_js(request):
         document = Document.objects.filter(
             owner_id=request.user.pk,
             id=int(request.POST['doc_id'])
-        )
-        if document.exists():
+        ).first()
+        if document:
             status = 201
         else:
             status = 401
@@ -352,12 +356,9 @@ def import_image_js(request):
                 response,
                 status=status
             )
-        document = document[0]
         checksum = request.POST['checksum']
-        image = Image.objects.filter(checksum=checksum)
-        if image.exists():
-            image = image[0]
-        else:
+        image = Image.objects.filter(checksum=checksum).first()
+        if image is None:
             image = Image.objects.create(
                 uploader=request.user,
                 image=request.FILES['image'],
@@ -425,9 +426,8 @@ def upload_revision_js(request):
     status = 405
     if request.is_ajax() and request.method == 'POST':
         document_id = request.POST['document_id']
-        document = Document.objects.filter(id=int(document_id))
-        if len(document) > 0:
-            document = document[0]
+        document = Document.objects.filter(id=int(document_id)).first()
+        if document:
             if document.owner == request.user:
                 can_save = True
             else:
@@ -477,9 +477,8 @@ def delete_revision_js(request):
     status = 405
     if request.is_ajax() and request.method == 'POST':
         revision_id = request.POST['id']
-        revision = DocumentRevision.objects.filter(pk=int(revision_id))
-        if len(revision) > 0:
-            revision = revision[0]
+        revision = DocumentRevision.objects.filter(pk=int(revision_id)).first()
+        if revision:
             document = revision.document
             if document.owner == request.user:
                 status = 200
@@ -525,6 +524,7 @@ def save_doc_js(request):
         # Only looking at fields that may have changed.
         contents = request.POST.get('contents', False)
         bibliography = request.POST.get('bibliography', False)
+        comments = request.POST.get('comments', False)
         doc_version = request.POST.get('doc_version', False)
         last_diffs = request.POST.get('last_diffs', False)
         version = request.POST.get('version', False)
@@ -532,6 +532,8 @@ def save_doc_js(request):
             doc.contents = contents
         if bibliography:
             doc.bibliography = bibliography
+        if comments:
+            doc.comments = comments
         if doc_version:
             doc.doc_version = doc_version
         if version:
@@ -618,12 +620,10 @@ def add_images_to_doc_js(request):
         ids = request.POST.getlist('ids[]')
         for id in ids:
             title = 'Deleted'
-            image = Image.objects.filter(id=id)
-            if image.exists():
-                image = image[0]
-                user_image = image.userimage_set.all()
-                if user_image.exists():
-                    user_image = user_image[0]
+            image = Image.objects.filter(id=id).first()
+            if image:
+                user_image = image.userimage_set.all().first()
+                if user_image:
                     title = user_image.title
             else:
                 image = Image()

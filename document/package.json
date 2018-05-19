@@ -1,0 +1,28 @@
+{
+    "dependencies": {
+        "citeproc": "2.1.x",
+        "fastdom": "1.0.8",
+        "fast-json-patch": "2.0.6",
+        "fix-utf8": "1.0.4",
+        "jszip": "3.1.5",
+        "jszip-utils": "0.0.2",
+        "mathquill": "0.10.1-b",
+        "orderedmap": "1.0.0",
+        "paginate-for-print": "0.0.7",
+        "prosemirror-collab": "1.0.x",
+        "prosemirror-commands": "1.0.x",
+        "prosemirror-dropcursor": "1.0.x",
+        "prosemirror-example-setup": "1.0.x",
+        "prosemirror-gapcursor": "1.0.x",
+        "prosemirror-history": "1.0.x",
+        "prosemirror-keymap": "1.0.x",
+        "prosemirror-model": "1.4.x",
+        "prosemirror-schema-basic": "1.0.x",
+        "prosemirror-schema-list": "1.0.x",
+        "prosemirror-state": "1.2.x",
+        "prosemirror-tables": "0.7.x",
+        "prosemirror-transform": "1.0.x",
+        "prosemirror-view": "1.3.x",
+        "texzilla": "0.9.9"
+    }
+}

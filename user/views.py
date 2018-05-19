@@ -38,9 +38,9 @@ def show_profile(request, username):
     if username == request.user.username:
         response['can_edit'] = True
     else:
-        the_user = User.objects.filter(username=username)
-        if len(the_user) > 0:
-            response['the_user'] = the_user[0]
+        user = User.objects.filter(username=username).first()
+        if user:
+            response['the_user'] = user
         response['can_edit'] = False
     return render(request, 'account/show_profile.html', response)
 
@@ -249,7 +249,7 @@ def delete_avatar_js(request):
 @login_required
 def delete_user_js(request):
     """
-    Mark the user as deleted
+    Delete the user
     """
     response = {}
     status = 405
@@ -257,10 +257,14 @@ def delete_user_js(request):
         user = request.user
         # Only remove users who are not marked as having staff status
         # to prevent administratoras from deleting themselves accidentally.
-        if user.is_staff is False:
-            user.is_active = False
-        user.save()
-        status = 200
+        if not user.check_password(request.POST['password']):
+            status = 401
+        elif user.is_staff:
+            status = 403
+        else:
+            logout(request)
+            user.delete()
+            status = 204
     return JsonResponse(
         response,
         status=status
@@ -329,7 +333,8 @@ def list_team_members_js(request):
         for member in User.objects.filter(member__leader=request.user):
             team_member = {
                 'id': member.id,
-                'name': member.get_username(),
+                'name': member.readable_name,
+                'username': member.get_username(),
                 'email': member.email,
                 'avatar': userutil.get_user_avatar_url(member)
             }
@@ -352,14 +357,15 @@ def add_team_member_js(request):
         status = 202
         user_string = request.POST['user_string']
         if "@" in user_string and "." in user_string:
-            email_address = EmailAddress.objects.filter(email=user_string)
-            if len(email_address) > 0:
-                email_address = email_address[0]
+            email_address = EmailAddress.objects.filter(
+                email=user_string
+            ).first()
+            if email_address:
                 new_member = email_address.user
         else:
-            users = User.objects.filter(username=user_string)
-            if len(users) > 0:
-                new_member = users[0]
+            user = User.objects.filter(username=user_string).first()
+            if user:
+                new_member = user
         if new_member:
             if new_member.pk is request.user.pk:
                 # 'You cannot add yourself to your contacts!'
@@ -406,7 +412,7 @@ def change_team_member_roles_js(request):
         member = User.objects.get(pk=form_data['member'])
         team_member_object_instance = request.user.leader.filter(
             member=member
-        )[0]
+        ).first()
         team_member_form = TeamMemberForm(
             form_data,
             instance=team_member_object_instance
@@ -439,7 +445,7 @@ def remove_team_member_js(request):
             # Now delete the user from the team
             team_member_object_instance = request.user.leader.filter(
                 member_id=former_member
-            )[0]
+            ).first()
             team_member_object_instance.delete()
         status = 200
     return JsonResponse(

@@ -19,12 +19,14 @@ venv/
 fidus.db
 deploy
 base/static/zip/katex-style.zip
-base/static/js/es6_modules/katex/opf-includes.js
+base/static/zip/katex_style.zip
+base/static/js/modules/katex/opf-includes.js
+base/static/js/modules/katex/opf_includes.js
 chromedriver
 testing.py
 es6-tmp/
-es6-cache/
-static-es5/
+.transpile-cache/
+static-transpile/
 static-libs/
 *.es5.js
 base/static/css/libs/
@@ -33,3 +35,5 @@ base/static/css/libs/
 /package.json
 *.swp
 *.swo
+/.transpile-time
+/package-lock.json

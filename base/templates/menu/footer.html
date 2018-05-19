@@ -17,10 +17,7 @@
     </div>
 </footer>
 <script>
-  jQuery(function() {
-    jQuery('#langSelection').change(function() {
-      document.setLangForm.submit();
-      return false;
+    document.getElementById('langSelection').addEventListener('change', () => {
+        document.setLangForm.submit();
     });
-  });
 </script>

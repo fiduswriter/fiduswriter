@@ -1,0 +1,5 @@
+{
+    "dependencies": {
+        "bowser": "1.9.x"
+    }
+}

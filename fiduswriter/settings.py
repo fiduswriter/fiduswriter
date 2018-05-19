@@ -25,6 +25,9 @@ MANAGERS = ADMINS
 # above this file.
 PROJECT_PATH = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
 
+# Paths to settings files
+SETTINGS_PATHS = [os.path.dirname(__file__), ]
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -104,9 +107,7 @@ STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    # Put strings here, like "/home/html/static".
-    # Don't forget to use absolute paths, not relative paths.
-    os.path.join(PROJECT_PATH, 'static-es5'),
+    os.path.join(PROJECT_PATH, 'static-transpile'),
     os.path.join(PROJECT_PATH, 'static-libs'),
 )
 
@@ -157,8 +158,6 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
-                'base.context_processors.js_locations',
-                'base.context_processors.css_locations',
                 'base.context_processors.server_info',
                 'django.contrib.auth.context_processors.auth',
                 'django.template.context_processors.debug',
@@ -189,8 +188,10 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django.contrib.flatpages',
     'django_js_error_hook',
+    'npm_mjs',
     'adminplus',
     'fixturemedia',
+    'browser_check',
     'menu',
     'document',
     'bibliography',
@@ -202,21 +203,8 @@ INSTALLED_APPS = (
     'avatar',
     'compressor',
     'feedback',
-    'style',
-    # If you want to enable one or several of the social network login options
-    # below, make sure you add the authorization keys at:
-    # http://SERVER.COM/admin/socialaccount/socialapp/
-    # 'allauth.socialaccount.providers.facebook',
-    # 'allauth.socialaccount.providers.google',
-    # 'allauth.socialaccount.providers.twitter',
-    # 'allauth.socialaccount.providers.github',
-    # 'allauth.socialaccount.providers.linkedin',
-    # 'allauth.socialaccount.providers.openid',
-    # 'allauth.socialaccount.providers.persona',
-    # 'allauth.socialaccount.providers.soundcloud',
-    # 'allauth.socialaccount.providers.stackexchange',
+    'style'
 )
-
 
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`
@@ -241,6 +229,7 @@ LANGUAGES = (
     ('fr', gettext('French')),
     ('it', gettext('Italian')),
     ('es', gettext('Spanish')),
+    ('pt-br', gettext('Portuguese (Brazil)')),
 )
 
 
@@ -311,19 +300,12 @@ AVATAR_GRAVATAR_BACKUP = False
 AVATAR_DEFAULT_URL = 'img/default_avatar.png'
 AVATAR_MAX_AVATARS_PER_USER = 1
 
-# Location of commonly used Js libraries. Here the local version is given.
-# For deployment a version on the net is better.
-JS_LOCATIONS = {
-    'JQUERY_URL': STATIC_URL + 'js/libs/jquery.min.js',
-    'JQUERYUI_URL': STATIC_URL + 'js/libs/jquery-ui.min.js',
-    'DATATABLES_URL': STATIC_URL + 'js/libs/jquery.dataTables.min.js'
-}
-
-CSS_LOCATIONS = {}
-
+local_config_path = os.path.join(PROJECT_PATH, 'configuration.py')
 try:
-    local_config = open(os.path.join(PROJECT_PATH, 'configuration.py'))
+    local_config = open(local_config_path)
 except IOError:
     pass
 else:
     exec(local_config.read(), globals())
+    # Paths to settings files
+    SETTINGS_PATHS += [local_config_path]

@@ -1,38 +1,21 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load static %}
+{% load transpile %}
 {% load compress %}
 
 {% block title %}{% trans "Bibliography Manager" %}{% endblock %}
 
 {% block extraheaders %}
     {% compress css %}
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/bibliography.css" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw_layouts/bibliography.css" %}" />
+        <!-- ProseMirror CSS -->
+        <link type="text/css" rel="stylesheet" href="{% static "css/prosemirror.css" %}" />
     {% endcompress %}
 
-    <!-- jQuery tablesorter -->
-    <script type="text/javascript" src="{{ DATATABLES_URL }}"></script>
-    <!-- ProseMirror CSS -->
-    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/prosemirror.css" />
-    
-    <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-overview.es5.js"></script>
-
+    <script type="text/javascript" src="{% static "js/bibliography_overview.mjs" %}"></script>
 {% endblock %}
 
 {% block contents %}
     <ul id="fw-overview-menu"></ul>
-    <div class="fw-table-wrapper">
-        <table id="bibliography" class="tablesorter fw-document-table">
-            <thead class="fw-document-table-header">
-                <tr>
-                    <td width="30"></td>
-                    <th width="255">{% trans "Title" %}</th>
-                    <th width="190">{% trans "Sourcetype" %}</th>
-                    <th width="195">{% trans "Author" %}</th>
-                    <th width="120">{% trans "Published" %}</th>
-                    <td width="70">{% trans "Delete" %}</td>
-                </tr>
-            </thead>
-            <tbody class="fw-document-table-body fw-large"></tbody>
-        </table>
-    </div>
 {% endblock %}

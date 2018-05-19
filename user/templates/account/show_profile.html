@@ -3,12 +3,13 @@
 {% load i18n %}
 {% load compress %}
 {% load avatar_tags %}
+{% load transpile %}
 
 {% block title %}{{user.readable_name}}{% endblock %}
 {% block extraheaders %}
-    <script src="{{ STATIC_URL }}js/profile.es5.js"></script>
+    <script type="text/javascript" src="{% static "js/profile.mjs" %}"></script>
     {% compress css %}
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/profile.css" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw_layouts/profile.css" %}" />
     {% endcompress %}
 {% endblock %}
 
@@ -61,7 +62,7 @@
                 <tr>
                     <th class="profile-emial-title">{% trans 'Email' %}:</th>
                     <td>
-                        <table class="fw-document-table no-fix-layout">
+                        <table class="fw-document-table">
                             <thead class="fw-document-table-header">
                                 <tr>
                                     <th></th>

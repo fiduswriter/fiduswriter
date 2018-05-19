@@ -20,25 +20,24 @@
  background: #ecdc9e;
 }
 a.feedback-tab {
-  position: fixed;
-  left: -28px;
-  top: 270px;
-  width: auto;
-  padding: 0 10px 0 10px;
-  background: #ecdc9e;
-  border-color: #eac642;
-  border-style: solid;
-  border-width: 1px;
-  border-top-width: 0;
-  text-decoration: none;
-  border-top-left-radius: 6px;
-  border-top-right-radius: 6px;
-  transform: rotate(90deg);
-  font-family: 'Lato', sans-serif;
-  font-size: 13px;
-  color: #d3421c;
-  line-height: 23px;
-  z-index:100;
+    position: fixed;
+    right: 8px;
+    top: 0px;
+    width: auto;
+    padding: 0 10px 0 10px;
+    background: #ecdc9e;
+    border-color: #eac642;
+    border-style: solid;
+    border-width: 1px;
+    border-top-width: 0;
+    text-decoration: none;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    font-family: 'Lato', sans-serif;
+    font-size: 13px;
+    color: #d3421c;
+    line-height: 23px;
+    z-index: 100;
 }
 
 a.feedback-tab:hover {

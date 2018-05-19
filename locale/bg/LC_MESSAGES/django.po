@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-13 22:55+0000\n"
+"POT-Creation-Date: 2018-05-17 22:45+0200\n"
 "PO-Revision-Date: 2013-09-18 08:54+0200\n"
 "Last-Translator: Vladimir Vitkov <vvitkov@linux-bg.org>\n"
 "Language-Team: Bulgarian <vvitkov@linux-bg.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: base/templates/base.html:9 document/templates/document/editor.html:9
+#: base/templates/base.html:10 document/templates/document/editor.html:10
 #: user/templates/account/base.html:7
 msgid "The all in one solution for collaborative academic writing."
 msgstr "Комплексно решение за съвместно създаване на академични документи."
@@ -25,7 +25,7 @@ msgstr "Комплексно решение за съвместно създав
 msgid "Edit profile"
 msgstr "Редактирай профил"
 
-#: base/templates/base.html:81 user/templates/account/list_team_members.html:21
+#: base/templates/base.html:81 user/templates/account/list_team_members.html:19
 msgid "Contacts"
 msgstr "Контакти"
 
@@ -51,74 +51,44 @@ msgstr "Цитати с Citation Style Language"
 msgid "Editing with ProseMirror"
 msgstr ""
 
-#: bibliography/templates/bibliography/index.html:5
+#: bibliography/templates/bibliography/index.html:7
 msgid "Bibliography Manager"
 msgstr "Управление на Библиография"
 
-#: bibliography/templates/bibliography/index.html:32
-#: document/templates/document/index.html:32
-msgid "Title"
-msgstr "Заглавие"
+#: browser_check/templates/browser_check/browser_not_supported.html:4
+#: browser_check/templates/browser_check/browser_not_supported.html:27
+msgid "Browser not supported"
+msgstr ""
 
-#: bibliography/templates/bibliography/index.html:33
-msgid "Sourcetype"
-msgstr "Тип на източника"
+#: browser_check/templates/browser_check/browser_not_supported.html:28
+msgid ""
+"\n"
+"                Your browser is not supported by Fidus Writer.\n"
+"                Please update! We recommend using a current\n"
+"                version of Chrome/Chromium or Firefox on a\n"
+"                desktop computer.\n"
+"            "
+msgstr ""
 
-#: bibliography/templates/bibliography/index.html:34
-msgid "Author"
-msgstr "Автор"
-
-#: bibliography/templates/bibliography/index.html:35
-msgid "Published"
-msgstr "Публикувани"
-
-#: bibliography/templates/bibliography/index.html:36
-#: document/templates/document/index.html:38
-#: user/templates/account/list_team_members.html:23
-#: user/templates/account/show_profile.html:70
-#: usermedia/templates/usermedia/index.html:31
-msgid "Delete"
-msgstr "Изтрий"
-
-#: document/templates/document/editor.html:92
+#: document/templates/document/editor.html:88
 msgid "en"
 msgstr "англ"
 
-#: document/templates/document/index.html:6
+#: document/templates/document/index.html:7
 msgid "Document Overview"
 msgstr "Преглед на документа"
 
-#: document/templates/document/index.html:33
-msgid "Revisions"
-msgstr ""
-
-#: document/templates/document/index.html:34
-msgid "Created"
-msgstr "Създаден"
-
-#: document/templates/document/index.html:35
-msgid "Last changed"
-msgstr "Последна промяна"
-
-#: document/templates/document/index.html:36
-msgid "Owner"
-msgstr "Собственик"
-
-#: document/templates/document/index.html:37
-msgid "Rights"
-msgstr "Права"
-
-#: document/templates/maintenance/index.html:3
+#: document/templates/maintenance/index.html:4
 msgid "Maintenance"
 msgstr ""
 
-#: document/templates/maintenance/index.html:16
+#: document/templates/maintenance/index.html:15
 #, fuzzy
 #| msgid "Document Style"
 msgid "Document Maintenance"
 msgstr "Стил на Документа"
 
-#: document/templates/maintenance/index.html:18
+#: document/templates/maintenance/index.html:17
 msgid ""
 "\n"
 "            Before and after upgrading Fidus Writer, you should update all "
@@ -129,168 +99,106 @@ msgid ""
 "            "
 msgstr ""
 
-#: document/templates/maintenance/index.html:26
+#: document/templates/maintenance/index.html:25
 msgid "Update all documents (DANGER!)"
 msgstr ""
 
-#: document/views.py:212
+#: document/views.py:220
 #, fuzzy
 msgid "Untitled"
 msgstr "Подзаглавие"
 
-#: document/views.py:226
+#: document/views.py:234
 #, fuzzy
 msgid "Document shared:"
 msgstr "Документи"
 
-#: document/views.py:252
+#: document/views.py:260
 msgid "Fidus Writer document write access"
 msgstr "Достъп за писане във Fidus Writer документ"
 
-#: feedback/templates/feedback/feedback.html:2
-#: feedback/templates/feedback/feedback.html:5
+#: feedback/templates/feedback/feedback.html:3
+#: feedback/templates/feedback/feedback.html:6
 msgid "Feedback"
 msgstr "Забележки"
 
-#: feedback/templates/feedback/feedback.html:10
-#: user/templates/account/show_profile.html:105
+#: feedback/templates/feedback/feedback.html:11
+#: user/templates/account/show_profile.html:106
 msgid "submit"
 msgstr "изпрати"
 
-#: feedback/templates/feedback/feedback.html:14
+#: feedback/templates/feedback/feedback.html:15
 msgid "Thank you for your comment!"
 msgstr "Благодарим ви за коментара!"
 
-#: fiduswriter/settings.py:258
+#: fiduswriter/settings.py:226
 msgid "English"
 msgstr "Английски"
 
-#: fiduswriter/settings.py:259
+#: fiduswriter/settings.py:227
 msgid "Bulgarian"
 msgstr "Български"
 
-#: fiduswriter/settings.py:260
+#: fiduswriter/settings.py:228
 msgid "German"
 msgstr "Немски"
 
-#: fiduswriter/settings.py:261
+#: fiduswriter/settings.py:229
 msgid "French"
 msgstr ""
 
-#: fiduswriter/settings.py:262
+#: fiduswriter/settings.py:230
 msgid "Italian"
 msgstr ""
 
-#: fiduswriter/settings.py:263
+#: fiduswriter/settings.py:231
 msgid "Spanish"
 msgstr "Испански"
 
-#: user/templates/account/base.html:54 user/templates/account/login.html:6
+#: fiduswriter/settings.py:232
+msgid "Portuguese (Brazil)"
+msgstr ""
+
+#: user/templates/account/base.html:55 user/templates/account/login.html:7
 #: user/templates/account/signup.html:9
 msgid "Log In"
 msgstr "Вход"
 
-#: user/templates/account/email_confirm.html:7
+#: user/templates/account/email_confirm.html:8
 msgid "Confirm E-mail Address"
 msgstr "Потвърди имейл"
-
-#: user/templates/account/email_confirm.html:16
-msgid "Confirm E-mail Address and Agree to Terms and Conditions"
-msgstr "Потвърдете вашият имейл и се съгласете с общите условия"
-
-#: user/templates/account/email_confirm.html:21
-#, fuzzy, python-format
-msgid ""
-"\n"
-"        Please confirm that you own the email <a href=\"mailto:%(email)s\">"
-"%(email)s</a>,\n"
-"        that you apply for the username %(user_display)s, and that you have "
-"read and agree to the\n"
-"        <a href=\"/terms/\" target=\"_blank\">Terms and Conditions</a>.\n"
-"        "
-msgstr ""
-"\n"
-"        Моля потвърдете, че имате контрол над имейла <a href=\"mailto:"
-"%(email)s\">%(email)s</a>,\n"
-"        че заявявате потребителско име %(user_display)s, и че сте прочел и "
-"сте съгласен с\n"
-"        <a href=\"http://www.fiduswriter.com/?page_id=41\">Общите Условия</"
-"a>.\n"
-"        "
-
-#: user/templates/account/email_confirm.html:30
-#, fuzzy
-msgid ""
-"\n"
-"        I have read and agree to the <a href=\"/terms/\" target=\"_blank"
-"\">Terms and Conditions</a>.\n"
-"        "
-msgstr ""
-"\n"
-"        Прочетох и съм съгласен с <a href=\"http://www.fiduswriter.com/?"
-"page_id=41\">Общите Условия</a>.\n"
-"        "
-
-#: user/templates/account/email_confirm.html:38
-#, fuzzy
-msgid ""
-"\n"
-"            I am aware that I am signing up for a test account and that "
-"service may be ended abruptly and without notice, leaving me without my "
-"files.\n"
-"            "
-msgstr ""
-"\n"
-"        Известно ми е, че се регистрирам за тестов акаунт, и че услугата "
-"може да бъде прекратена без предизвестие,\n"
-"        оставяйки ме без достъп до моите файлове.\n"
-"        "
-
-#: user/templates/account/email_confirm.html:47
-msgid "Confirm"
-msgstr "Потвърди"
-
-#: user/templates/account/email_confirm.html:55
-#, python-format
-msgid ""
-"\n"
-"        This e-mail confirmation link expired or is invalid.\n"
-"        Please <a href=\"%(email_url)s\">issue a new e-mail confirmation "
-"request</a>.\n"
-"        "
-msgstr ""
-"\n"
-"        Тази връзка за потвърждение е изтекла.\n"
-"        Моля <a href=\"%(email_url)s\">изискайте нова връзка за "
-"потвърждение</a>.\n"
-"        "
 
 #: user/templates/account/list_team_members.html:7
 msgid "Team members"
 msgstr "Членове на екипа"
 
-#: user/templates/account/list_team_members.html:22
+#: user/templates/account/list_team_members.html:20
 #: user/templates/account/password_reset.html:28
 #: user/templates/account/signup.html:44
 msgid "E-mail address"
 msgstr "Имейл адрес"
 
-#: user/templates/account/login.html:7
+#: user/templates/account/list_team_members.html:21
+#: user/templates/account/show_profile.html:71
+msgid "Delete"
+msgstr "Изтрий"
+
+#: user/templates/account/login.html:8
 #: user/templates/account/password_reset.html:7
 msgid "New here?"
 msgstr "Нов?"
 
-#: user/templates/account/login.html:9
+#: user/templates/account/login.html:10
 #: user/templates/account/password_reset.html:9
 #: user/templates/account/signup.html:13 user/templates/account/signup.html:51
 msgid "Sign up"
 msgstr "Създай акаунт"
 
-#: user/templates/account/login.html:17 user/templates/account/login.html:68
+#: user/templates/account/login.html:18 user/templates/account/login.html:69
 msgid "Log in"
 msgstr "Влез"
 
-#: user/templates/account/login.html:23
+#: user/templates/account/login.html:26
 #, fuzzy, python-format
 msgid ""
 "\n"
@@ -306,11 +214,11 @@ msgstr ""
 "за %(site_name)s\">Регистрирайте се</a>.\n"
 "        "
 
-#: user/templates/account/login.html:34
+#: user/templates/account/login.html:37
 msgid "Login with"
 msgstr "Влез със"
 
-#: user/templates/account/login.html:43
+#: user/templates/account/login.html:46
 #, fuzzy, python-format
 msgid ""
 "\n"
@@ -325,22 +233,22 @@ msgstr ""
 "за %(site_name)s\">Регистрирайте се</a>.\n"
 "        "
 
-#: user/templates/account/login.html:57
-#: user/templates/account/show_profile.html:43
-#: user/templates/account/show_profile.html:121
+#: user/templates/account/login.html:58
+#: user/templates/account/show_profile.html:44
+#: user/templates/account/show_profile.html:122
 msgid "Username"
 msgstr "Потребител"
 
-#: user/templates/account/login.html:61
-#: user/templates/account/show_profile.html:55
+#: user/templates/account/login.html:62
+#: user/templates/account/show_profile.html:56
 msgid "Password"
 msgstr "Парола"
 
-#: user/templates/account/login.html:71
+#: user/templates/account/login.html:72
 msgid "Remember me"
 msgstr "Запомни ме"
 
-#: user/templates/account/login.html:73
+#: user/templates/account/login.html:74
 msgid "Forgot Password?"
 msgstr "Забравена Парола?"
 
@@ -379,46 +287,46 @@ msgstr ""
 msgid "Reset My Password"
 msgstr "Смени моята Парола"
 
-#: user/templates/account/show_profile.html:22
+#: user/templates/account/show_profile.html:23
 msgid "Edit profile picture"
 msgstr "Редактиране на профилна картинка"
 
-#: user/templates/account/show_profile.html:28
+#: user/templates/account/show_profile.html:29
 msgid "Change picture"
 msgstr "Смени картинката"
 
-#: user/templates/account/show_profile.html:33
+#: user/templates/account/show_profile.html:34
 msgid "Delete picture"
 msgstr "Изтрий картинката"
 
-#: user/templates/account/show_profile.html:47
-#: user/templates/account/show_profile.html:125
+#: user/templates/account/show_profile.html:48
+#: user/templates/account/show_profile.html:126
 msgid "First name"
 msgstr "Име"
 
-#: user/templates/account/show_profile.html:51
-#: user/templates/account/show_profile.html:129
+#: user/templates/account/show_profile.html:52
+#: user/templates/account/show_profile.html:130
 msgid "Last name"
 msgstr "Фамилия"
 
-#: user/templates/account/show_profile.html:62
-#: user/templates/account/show_profile.html:133
+#: user/templates/account/show_profile.html:63
+#: user/templates/account/show_profile.html:134
 msgid "Email"
 msgstr "Имейл"
 
-#: user/templates/account/show_profile.html:68
+#: user/templates/account/show_profile.html:69
 msgid "Primary address"
 msgstr "Основен адрес"
 
-#: user/templates/account/show_profile.html:69
+#: user/templates/account/show_profile.html:70
 msgid "Verified"
 msgstr "Потвърден"
 
-#: user/templates/account/show_profile.html:108
+#: user/templates/account/show_profile.html:109
 msgid "Delete account"
 msgstr "Изтрий акаунт"
 
-#: user/templates/account/show_profile.html:147
+#: user/templates/account/show_profile.html:148
 msgid "User does not exist."
 msgstr "Потребителят не съществува"
 
@@ -488,29 +396,114 @@ msgstr ""
 "        Свържете се с нас ако не получите имейла до няколко минути.\n"
 "        "
 
-#: usermedia/templates/usermedia/index.html:5
+#: usermedia/templates/usermedia/index.html:6
 msgid "Media Manager"
 msgstr "Управление на медийни елементи"
 
-#: usermedia/templates/usermedia/index.html:28
-msgid "File"
-msgstr "Файл"
-
-#: usermedia/templates/usermedia/index.html:29
-msgid "Size (px)"
-msgstr "Размер (px)"
-
-#: usermedia/templates/usermedia/index.html:30
-msgid "Updated"
-msgstr "Обновен"
-
-#: usermedia/views.py:40
+#: usermedia/views.py:41
 msgid "Filetype not supported"
 msgstr ""
 
-#: usermedia/views.py:66
+#: usermedia/views.py:67
 msgid "No file uploaded"
 msgstr ""
+
+#~ msgid "Confirm E-mail Address and Agree to Terms and Conditions"
+#~ msgstr "Потвърдете вашият имейл и се съгласете с общите условия"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "        Please confirm that you own the email <a href=\"mailto:%(email)s"
+#~ "\">%(email)s</a>,\n"
+#~ "        that you apply for the username %(user_display)s, and that you "
+#~ "have read and agree to the\n"
+#~ "        <a href=\"/terms/\" target=\"_blank\">Terms and Conditions</a>.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "        Моля потвърдете, че имате контрол над имейла <a href=\"mailto:"
+#~ "%(email)s\">%(email)s</a>,\n"
+#~ "        че заявявате потребителско име %(user_display)s, и че сте прочел "
+#~ "и сте съгласен с\n"
+#~ "        <a href=\"http://www.fiduswriter.com/?page_id=41\">Общите "
+#~ "Условия</a>.\n"
+#~ "        "
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "        I have read and agree to the <a href=\"/terms/\" target=\"_blank"
+#~ "\">Terms and Conditions</a>.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "        Прочетох и съм съгласен с <a href=\"http://www.fiduswriter.com/?"
+#~ "page_id=41\">Общите Условия</a>.\n"
+#~ "        "
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "            I am aware that I am signing up for a test account and that "
+#~ "service may be ended abruptly and without notice, leaving me without my "
+#~ "files.\n"
+#~ "            "
+#~ msgstr ""
+#~ "\n"
+#~ "        Известно ми е, че се регистрирам за тестов акаунт, и че услугата "
+#~ "може да бъде прекратена без предизвестие,\n"
+#~ "        оставяйки ме без достъп до моите файлове.\n"
+#~ "        "
+
+#~ msgid "Confirm"
+#~ msgstr "Потвърди"
+
+#~ msgid ""
+#~ "\n"
+#~ "        This e-mail confirmation link expired or is invalid.\n"
+#~ "        Please <a href=\"%(email_url)s\">issue a new e-mail confirmation "
+#~ "request</a>.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "        Тази връзка за потвърждение е изтекла.\n"
+#~ "        Моля <a href=\"%(email_url)s\">изискайте нова връзка за "
+#~ "потвърждение</a>.\n"
+#~ "        "
+
+#~ msgid "Title"
+#~ msgstr "Заглавие"
+
+#~ msgid "Sourcetype"
+#~ msgstr "Тип на източника"
+
+#~ msgid "Author"
+#~ msgstr "Автор"
+
+#~ msgid "Published"
+#~ msgstr "Публикувани"
+
+#~ msgid "Created"
+#~ msgstr "Създаден"
+
+#~ msgid "Last changed"
+#~ msgstr "Последна промяна"
+
+#~ msgid "Owner"
+#~ msgstr "Собственик"
+
+#~ msgid "Rights"
+#~ msgstr "Права"
+
+#~ msgid "File"
+#~ msgstr "Файл"
+
+#~ msgid "Size (px)"
+#~ msgstr "Размер (px)"
+
+#~ msgid "Updated"
+#~ msgstr "Обновен"
 
 #~ msgid "edit documents"
 #~ msgstr "редактирай документи"

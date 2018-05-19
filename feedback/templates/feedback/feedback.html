@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load transpile %}
 <a class="feedback-tab" href="#">{% trans "Feedback" %}</a>
 <div class="feedback-panel">
   <div id="feedback-wrapper">
@@ -16,5 +17,5 @@
     <span id="closeFeedback" class="fa fa-times-circle"></span>
   </div>
 </div>
-<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/feedback/feedback.css" />
-<script type="text/javascript" src="{{ STATIC_URL }}js/feedback.es5.js"></script>
+<link type="text/css" rel="stylesheet" href="{% static "css/feedback/feedback.css" %}" />
+<script type="text/javascript" src="{% static "js/feedback.mjs" %}"></script>

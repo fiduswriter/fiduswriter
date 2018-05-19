@@ -1,0 +1,301 @@
+#bib-dialog {
+    margin-top: 18px;
+}
+
+#bib-dialog .ui-tabs-panel {
+    height: 439px;
+}
+
+#bib-dialog .fw-dialog-table th {
+    vertical-align: top;
+    padding: 0 6px 0 8px;
+    width: 164px;
+}
+
+#bib-dialog .entry-field .ProseMirror, #bib-dialog .entry-field input[type=text] {
+    width: 686px;
+}
+
+#bib-dialog .entry-field input[type=text] {
+    width: 678px;
+}
+
+#bib-dialog :focus {
+  outline-color: transparent;
+  outline: 0;
+}
+
+#bib-dialog .entry-field.fw-fomt-error input[type=text] {
+    background-color: #f34141;
+}
+
+
+#bib-dialog .entry-field .selection-list {
+    position: relative
+}
+
+#bib-dialog .entry-field select {
+    padding: 0px 3px 0px 13px;
+    border-color: #c9c9c9;
+    background-color: #f9f9f9;
+    height: 38px;
+    width: 561px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    display: inline-block;
+}
+
+#bib-dialog .entry-field .fw-select-arrow {
+    position: absolute;
+	top: 14px;
+	right: 28px;
+	pointer-events: none;
+}
+
+#bib-dialog .input-with-button {
+    width: 705px;
+}
+
+#bib-dialog .input-with-button button {
+    width: 81px;
+    float: left;
+    margin-right: 18px;
+}
+
+#bib-dialog .input-with-button .field-part {
+    display: inline-block;
+    margin-right: 18px;
+}
+
+#bib-dialog .input-with-button .field-part-huge .ProseMirror {
+    width: 250px;
+}
+
+#bib-dialog .input-with-button .field-part-long .ProseMirror {
+    width: 130px;
+}
+
+#bib-dialog .input-with-button .field-part-short .ProseMirror {
+    width: 58px;
+}
+
+#bib-dialog .input-with-button .field-part-single .ProseMirror {
+    width: 561px;
+}
+
+
+#bib-dialog .ProseMirror-focused div.literal,
+#bib-dialog .ProseMirror-focused pre.long-literal,
+#bib-dialog .tokenfield.focused,
+#bib-dialog .tokenfield.focused .tokenfield-input {
+    background-color: #fbf9d2;
+}
+
+#bib-dialog .fw-pulldown.fw-center {
+    left: 10px;
+    top: 40px;
+}
+
+.tokenfield {
+    width: 678px;
+    position: relative;
+}
+
+.tokenfield:before, .tokenfield:after {
+    content: " ";
+    display: table;
+}
+
+.tokenfield:after {
+    clear: both;
+}
+
+.tokenfield.tokenfield-mode-tokens {
+    display: block;
+    min-height: 34px;
+    padding: 8px 3px 0px 3px;
+    font-size: 14px;
+    line-height: 1.42857;
+    color: #555555;
+    background-color: #fff;
+    border: 1px solid #d3d3d3;
+}
+
+.tokenfield .tokenfield-set > ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.tokenfield .tokenfield-set > ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+.tokenfield .tokenfield-set > ul > li {
+    float: left;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    padding: 0 5px;
+    border-radius: 3px;
+    line-height: 1.5;
+    cursor: pointer;
+    color: #fff;
+    background: #76a698;
+    border: 1px solid #7d948e;
+}
+
+.tokenfield .tokenfield-set > ul > li a {
+    color: #fff;
+}
+
+
+.tokenfield .tokenfield-input {
+    margin: -6px -6px 0 0;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    float: left;
+}
+
+div.literal, pre.long-literal {
+    font-size: 14px;
+    line-height: 1.33em;
+    border: solid 1px #d3d3d3;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 8px 3px 0px 3px;
+    min-height: 28px;
+    background-color: #fff;
+}
+
+pre.long-literal {
+    min-height: 112px;
+    height: auto;
+}
+
+div.literal strong, pre.long-literal strong  {
+    font-weight: bold;
+}
+
+div.literal em, pre.long-literal em {
+    font-style: italic;
+}
+
+.list-input-wrapper .add-remove-list {
+    display: inline-block;
+    cursor: pointer;
+    margin-left: 14px;
+}
+
+.list-input-wrapper .add-remove-list:before {
+    content: '\2796';
+    width: 0.7em;
+}
+
+.list-input-wrapper:last-child .add-remove-list:before {
+    content: '\2795';
+}
+
+#bib-dialog .date-form input {
+    width: 66px;
+    margin-right: 1px;
+}
+
+#bib-dialog .date-form .separator {
+    display: inline-block;
+    width: 15px;
+    text-align: center;
+}
+
+#bib-dialog td .dk-selected, #bib-dialog td .dk-select-options {
+    width: 486px !important;
+}
+
+#bib-dialog th .dk-selected, #bib-dialog th .dk-select-options {
+    width: 140px !important;
+}
+
+#bib-dialog sup {
+    vertical-align: super;
+    font-size: smaller;
+}
+
+#bib-dialog sub {
+    vertical-align: sub;
+    font-size: smaller;
+}
+
+#bib-dialog .smallcaps {
+    font-variant: small-caps;
+}
+
+#bib-dialog .nocase {
+    text-decoration: underline;
+}
+
+.checkable-label {
+    width: 462px;
+    height: 36px;
+    border: solid 1px #ccc;
+    line-height: 36px;
+    background-color: #fff;
+    padding: 0 12px;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+#source-type-selection {
+    position: relative;
+    display: block;
+    z-index: 2;
+    margin-bottom: 18px;
+    margin-right: 49px;
+}
+
+#source-type-selection .fw-pulldown > ul {
+    max-height: 230px;
+    overflow: scroll;
+}
+
+#selected-source-type-title {
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+}
+#source-type-selection .icon-down-dir {
+    position: absolute;
+    right: 10px;
+}
+
+#editCategories {
+    width: 369px !important;
+}
+#editCategories input[type="text"] {
+    width: 310px;
+}
+
+/* api search */
+
+#bibimport-api-search button.api-import {
+    float: left;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+#bibimport-api-search div.item {
+    margin-bottom: 10px;
+}
+
+
+#bibimport-api-search h3 {
+    font-weight: 700;
+    margin: 10px 0px 10px 20px;
+    font-size: 1.1em;
+}
+
+#bibimport-api-search .bibimport-search-result, #bibimport-api-search div.item {
+    clear: left;
+}

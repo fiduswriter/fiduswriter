@@ -1,6 +1,7 @@
 from datetime import datetime
 from sys import platform
 
+from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import translation, autoreload
 from django.conf import settings
@@ -35,7 +36,8 @@ class Command(BaseCommand):
 
     def inner_run(self, *args, **options):
         quit_command = (platform == 'win32') and 'CTRL-BREAK' or 'CONTROL-C'
-
+        if hasattr(settings, 'AUTO_TRANSPILE') and settings.AUTO_TRANSPILE:
+            call_command("transpile")
         self.stdout.write((
             "%(started_at)s\n"
             "Django version %(version)s, using settings %(settings)r\n"

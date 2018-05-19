@@ -100,13 +100,14 @@ def save_js(request):
                     'entry_cat': bib['entry_cat'],
                     'fields': bib['fields']
                 }
-                similar = Entry.objects.filter(**inserting_obj)
-                if len(similar) == 0:
+                similar = Entry.objects.filter(**inserting_obj).first()
+                if similar:
+                    response['id_translations'].append([b_id, similar.id])
+                else:
                     the_entry = Entry(**inserting_obj)
                     the_entry.save()
                     response['id_translations'].append([b_id, the_entry.id])
-                else:
-                    response['id_translations'].append([b_id, similar[0].id])
+
             else:
                 the_entry = Entry.objects.get(id=b_id)
                 the_entry.entry_key = bib['entry_key'][-64:]
@@ -174,6 +175,24 @@ def save_category_js(request):
             )
         status = 201
 
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+# Delete one or more categories
+@login_required
+def delete_category_js(request):
+    status = 405
+    response = {}
+    if request.is_ajax() and request.method == 'POST':
+        status = 201
+        ids = request.POST.getlist('ids[]')
+        EntryCategory.objects.filter(
+            pk__in=ids,
+            entry_owner=request.user
+        ).delete()
     return JsonResponse(
         response,
         status=status

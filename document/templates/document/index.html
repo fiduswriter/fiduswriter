@@ -1,44 +1,19 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load compress %}
+{% load transpile %}
 {% load avatar_tags %}
 
 {% block title %}{% trans "Document Overview" %}{% endblock %}
 {% block extraheaders %}
     {% compress css %}
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/add-remove-dialog.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/access-rights-dialog.css" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/add_remove_dialog.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/access_rights_dialog.css" %}" />
     {% endcompress %}
 
-
-    <!-- jQuery tablesorter -->
-    <script type="text/javascript" src="{{ DATATABLES_URL }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/document-overview.es5.js"></script>
-
-    {% compress js %}
-        <script type="text/javascript">
-            var staticUrl = '{{ STATIC_URL }}';
-        </script>
-    {% endcompress %}
+    <script type="text/javascript" src="{% static "js/document_overview.mjs" %}"></script>
 {% endblock %}
 
 {% block contents %}
-<ul id="fw-overview-menu"></ul>
-<div class="fw-table-wrapper">
-    <table id="document-table" class="tablesorter fw-document-table">
-        <thead class="fw-document-table-header">
-            <tr>
-                <td width="20"></td>
-                <th width="220">{% trans "Title" %}</th>
-                <th width="80">{% trans "Revisions" %}</th>
-                <th width="80">{% trans "Created" %}</th>
-                <th width="80">{% trans "Last changed" %}</th>
-                <th width="170">{% trans "Owner" %}</th>
-                <td width="50" align="center">{% trans "Rights" %}</td>
-                <td width="50" align="center">{% trans "Delete" %}</td>
-            </tr>
-        </thead>
-        <tbody class="fw-document-table-body fw-large"></tbody>
-    </table>
-</div>
+    <ul id="fw-overview-menu"></ul>
 {% endblock %}

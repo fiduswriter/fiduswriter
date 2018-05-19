@@ -2,13 +2,14 @@
 
 {% load i18n %}
 {% load account %}
+{% load transpile %}
 
 {% block title %}{% trans "Log In" %}{% endblock %}
 {% block loginlabel %}{% trans "New here?" %}{% endblock %}
 {% block loginhref %}{{signup_url}}{% endblock %}
 {% block loginbtn %}{% trans "Sign up" %}{% endblock %}
 {% block extraheaders %}
-    <script src="{{ STATIC_URL }}js/login.es5.js"></script>
+    <script type="text/javascript" src="{% static "js/login.mjs" %}"></script>
 {% endblock %}
 
 {% block body %}

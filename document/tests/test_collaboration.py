@@ -743,7 +743,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
     def get_undo(self, driver):
         content = driver.find_element_by_class_name('article-body')
-        return content.get_attribute("innerText").rstrip('\n')
+        return content.get_attribute("innerText").rstrip(u'\ufeff\n')
 
     def test_delete_undo(self):
         """
@@ -968,7 +968,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         driver.find_element_by_id('insertFigureImage').click()
 
         upload_button = WebDriverWait(driver, self.wait_time).until(
-            EC.presence_of_element_located((By.ID, 'selectImageUploadButton'))
+            EC.presence_of_element_located(
+                (
+                    By.XPATH,
+                    '//*[normalize-space()="Add new image"]'
+                )
+            )
         )
 
         upload_button.click()
@@ -990,32 +995,35 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # click on 'Upload' button
         driver.find_element_by_xpath(
-            '//*[contains(@class, "ui-button") and text()="Upload"]').click()
+            '//*[contains(@class, "ui-button") and normalize-space()="Upload"]'
+        ).click()
 
         # click on 'Use image' button
         WebDriverWait(driver, self.wait_time).until(
             EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, '#select_imagelist tr.checked')
+                (By.CSS_SELECTOR, '.fw-document-table i.fa-check')
             )
         )
 
-        driver.find_element_by_id('selectImageSelectionButton').click()
+        driver.find_element_by_xpath(
+            '//*[normalize-space()="Use image"]'
+        ).click()
 
         # click on 'Insert' button
         driver.find_element_by_xpath(
             '/html/body/div[5]/div[3]/div/button[1]').click()
 
     def get_image(self, driver):
-        figure = driver.find_element_by_xpath(
-            '//*[contains(@class, "article-body")]/figure'
+        figure = driver.find_element_by_css_selector(
+            'div.article-body figure'
         )
         image = figure.find_elements_by_tag_name('img')
 
         return image
 
     def get_caption(self, driver):
-        caption = driver.find_element_by_xpath(
-            '//*[contains(@class, "article-body")]/figure/figcaption/span[2]'
+        caption = driver.find_element_by_css_selector(
+            'div.article-body figure figcaption span[data-caption]'
         )
 
         return caption.text
@@ -1138,7 +1146,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # click on Submit button
         driver.find_element_by_xpath(
-            '//*[contains(@class, "ui-button") and text()="Submit"]').click()
+            '//*[contains(@class, "ui-button") and normalize-space()="Submit"]'
+        ).click()
 
         # Wait for source to be listed
         WebDriverWait(driver, self.wait_time).until(
@@ -1154,8 +1163,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         driver.find_element_by_css_selector('.insert-citation').click()
 
     def get_citation_within_text(self, driver):
-        cite_within_doc = driver.find_element_by_xpath(
-            '//*[contains(@class, "article-body")]/p[1]/span[1]'
+        cite_within_doc = driver.find_element_by_css_selector(
+            'div.article-body span.citation'
         )
         return cite_within_doc.text
 

@@ -1,5 +1,5 @@
+from __future__ import unicode_literals
 from django.conf import settings
-
 
 def server_info(request):
     """

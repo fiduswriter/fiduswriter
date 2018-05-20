@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import uuid
 import atexit
 from time import mktime, time

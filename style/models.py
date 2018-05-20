@@ -1,10 +1,13 @@
-from django.db import models
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
 
+from django.db import models
 
 def document_filename(instance, filename):
     return '/'.join(['document-fonts', filename])
 
 
+@python_2_unicode_compatible
 class DocumentFont(models.Model):
     title = models.CharField(
         max_length=128,
@@ -23,10 +26,11 @@ class DocumentFont(models.Model):
     def natural_key(self):
         return (self.font_file.url, self.fontface_definition)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
 
+@python_2_unicode_compatible
 class DocumentStyle(models.Model):
     title = models.CharField(
         max_length=128,
@@ -37,10 +41,11 @@ class DocumentStyle(models.Model):
     contents = models.TextField(help_text='The CSS style definiton.')
     fonts = models.ManyToManyField(DocumentFont, blank=True, default=None)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
 
+@python_2_unicode_compatible
 class CitationStyle(models.Model):
     title = models.CharField(
         max_length=128,
@@ -51,10 +56,11 @@ class CitationStyle(models.Model):
     )
     contents = models.TextField(help_text='The XML style definiton.')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
 
+@python_2_unicode_compatible
 class CitationLocale(models.Model):
     language_code = models.SlugField(
         max_length=4, help_text='language code of the locale file.')
@@ -66,5 +72,5 @@ class CitationLocale(models.Model):
         else:
             self.language_code
 
-    def __unicode__(self):
+    def __str__(self):
         return self.display_language_code()

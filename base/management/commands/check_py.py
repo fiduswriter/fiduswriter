@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from subprocess import call
 from django.core.management.base import BaseCommand
 

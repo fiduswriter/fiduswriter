@@ -15,11 +15,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='accessright',
             name='rights',
-            field=models.CharField(choices=[(b'read', b'Reader'), (b'read-without-comments', b'Reader without comment access'), (b'write', b'Writer'), (b'review', b'Reviewer'), (b'comment', b'Commentator'), (b'edit', b'Editor')], max_length=21),
+            field=models.CharField(choices=[('read', 'Reader'), ('read-without-comments', 'Reader without comment access'), ('write', 'Writer'), ('review', 'Reviewer'), ('comment', 'Commentator'), ('edit', 'Editor')], max_length=21),
         ),
         migrations.AlterField(
             model_name='document',
             name='settings',
-            field=models.TextField(default=b'{"doc_version":1}'),
+            field=models.TextField(default='{"doc_version":1}'),
         ),
     ]

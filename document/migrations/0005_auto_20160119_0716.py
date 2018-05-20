@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='document',
             name='contents',
-            field=models.TextField(default=b'{"nn":"DIV","a":[],"c":[{"nn":"P","c":[]}]}'),
+            field=models.TextField(default='{"nn":"DIV","a":[],"c":[{"nn":"P","c":[]}]}'),
         ),
     ]

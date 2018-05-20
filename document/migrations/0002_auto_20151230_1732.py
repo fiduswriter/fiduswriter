@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='document',
             name='last_diffs',
-            field=models.TextField(default=b'[]'),
+            field=models.TextField(default='[]'),
         ),
         migrations.AddField(
             model_name='document',

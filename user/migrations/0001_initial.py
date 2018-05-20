@@ -17,8 +17,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('roles', models.CharField(max_length=100, blank=True)),
-                ('leader', models.ForeignKey(related_name=b'leader', to=settings.AUTH_USER_MODEL)),
-                ('member', models.ForeignKey(related_name=b'member', to=settings.AUTH_USER_MODEL)),
+                ('leader', models.ForeignKey(related_name='leader', to=settings.AUTH_USER_MODEL)),
+                ('member', models.ForeignKey(related_name='member', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'account_teammember',

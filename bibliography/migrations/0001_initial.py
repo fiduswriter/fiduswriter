@@ -17,9 +17,9 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('entry_key', models.CharField(max_length=64)),
-                ('entry_cat', models.CharField(default=b'', max_length=255)),
+                ('entry_cat', models.CharField(default='', max_length=255)),
                 ('last_modified', models.DateTimeField(auto_now=True)),
-                ('fields', models.TextField(default=b'{}')),
+                ('fields', models.TextField(default='{}')),
                 ('entry_owner', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
             options={
@@ -46,7 +46,7 @@ class Migration(migrations.Migration):
                 ('biblatex', models.CharField(max_length=30)),
                 ('csl', models.CharField(max_length=30, blank=True)),
                 ('field_title', models.CharField(max_length=100)),
-                ('field_type', models.CharField(default=b'l_name', max_length=30, choices=[(b'l_name', b'Name list'), (b'l_literal', b'Literal list'), (b'l_key', b'Key list'), (b'f_literal', b'Literal field'), (b'f_range', b'Range field'), (b'f_integer', b'Integer field'), (b'f_date', b'Date field'), (b'f_verbatim', b'Vervatim field'), (b'f_commaSeparatedValue', b'Comma-separated value field'), (b'f_pattern', b'Pattern field'), (b'f_key', b'Key field'), (b'f_code', b'Code field'), (b'f_uri', b'URI Field')])),
+                ('field_type', models.CharField(default='l_name', max_length=30, choices=[('l_name', 'Name list'), ('l_literal', 'Literal list'), ('l_key', 'Key list'), ('f_literal', 'Literal field'), ('f_range', 'Range field'), ('f_integer', 'Integer field'), ('f_date', 'Date field'), ('f_verbatim', 'Vervatim field'), ('f_commaSeparatedValue', 'Comma-separated value field'), ('f_pattern', 'Pattern field'), ('f_key', 'Key field'), ('f_code', 'Code field'), ('f_uri', 'URI Field')])),
             ],
             options={
             },
@@ -73,9 +73,9 @@ class Migration(migrations.Migration):
                 ('type_order', models.IntegerField()),
                 ('biblatex', models.CharField(max_length=30)),
                 ('csl', models.CharField(max_length=30)),
-                ('eitheror_fields', models.ManyToManyField(related_name=b'eitheror_fields', to='bibliography.EntryField')),
-                ('optional_fields', models.ManyToManyField(related_name=b'optional_fields', to='bibliography.EntryField')),
-                ('required_fields', models.ManyToManyField(related_name=b'required_fields', to='bibliography.EntryField')),
+                ('eitheror_fields', models.ManyToManyField(related_name='eitheror_fields', to='bibliography.EntryField')),
+                ('optional_fields', models.ManyToManyField(related_name='optional_fields', to='bibliography.EntryField')),
+                ('required_fields', models.ManyToManyField(related_name='required_fields', to='bibliography.EntryField')),
             ],
             options={
             },

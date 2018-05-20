@@ -201,3 +201,8 @@ table.dataTable-table {
 .dataTable-table th, .dataTable-table td {
     padding: 8px;
 }
+
+
+.dataTable-table .date {
+    white-space: nowrap;
+}

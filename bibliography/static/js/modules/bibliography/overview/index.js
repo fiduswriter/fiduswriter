@@ -122,7 +122,7 @@ export class BibliographyOverview {
             </span>`, // title
             BibTypeTitles[bibInfo.bib_type], // sourcetype
             bibauthors ? nameToText(bibauthors) : '', // author
-            bibInfo.fields.date ? bibInfo.fields.date.replace('/', ' ') : '', // published,
+            `<span class="date">${bibInfo.fields.date ? bibInfo.fields.date.replace('/', ' ') : ''}</span>`, // published,
             `<span class="delete-bib fw-link-text" data-id="${id}"><i class="fa fa-trash-o">&nbsp;&nbsp;</i></span>` // delete icon
         ]
     }

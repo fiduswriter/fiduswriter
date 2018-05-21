@@ -40,9 +40,8 @@ urlpatterns = [
     # Account management
     url('^account/', include('user.urls')),
 
-    # Terms and conditions
-    url('^terms/$', flatpages_views.flatpage,
-        {'url': '/terms/'}, name='terms'),
+    # Flat pages
+    url('^pages/', include('django.contrib.flatpages.urls')),
 
 ]
 

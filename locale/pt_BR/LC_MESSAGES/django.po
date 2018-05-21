@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer git Version\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-20 09:28+0000\n"
+"POT-Creation-Date: 2018-05-21 09:14+0000\n"
 "PO-Revision-Date: 2015-04-25 21:29-0300\n"
 "Last-Translator: Job Diogenes Ribeiro Borges <jobdrb@gmail.com>\n"
 "Language-Team: Portuguese Brazil <jobdrb@gmail.com>\n"
@@ -39,16 +39,20 @@ msgid "Terms and Conditions"
 msgstr "Termos e Condições"
 
 #: base/templates/footer.html:12
+msgid "Privacy policy"
+msgstr ""
+
+#: base/templates/footer.html:17
 #, fuzzy
 #| msgid "Equations and Math by mathjax"
 msgid "Equations and Math by KaTeX"
 msgstr "Equações e matemática por MathJax"
 
-#: base/templates/footer.html:17
+#: base/templates/footer.html:22
 msgid "Citations with Citation Style Language"
 msgstr "Citações usando Citation Style Language"
 
-#: base/templates/footer.html:22
+#: base/templates/footer.html:27
 msgid "Editing with ProseMirror"
 msgstr ""
 
@@ -104,15 +108,15 @@ msgstr ""
 msgid "Update all documents (DANGER!)"
 msgstr ""
 
-#: document/views.py:220
+#: document/views.py:222
 msgid "Untitled"
 msgstr "Sem título"
 
-#: document/views.py:234
+#: document/views.py:236
 msgid "Document shared:"
 msgstr "Documento compartilhado:"
 
-#: document/views.py:260
+#: document/views.py:262
 msgid "Fidus Writer document write access"
 msgstr "Acesso de escrita a documento do Fidus Writer"
 
@@ -140,31 +144,31 @@ msgstr "submeter"
 msgid "Thank you for your report!"
 msgstr "Obrigado pelo seu comentário!"
 
-#: fiduswriter/settings.py:226
+#: fiduswriter/settings.py:228
 msgid "English"
 msgstr "Inglês"
 
-#: fiduswriter/settings.py:227
+#: fiduswriter/settings.py:229
 msgid "Bulgarian"
 msgstr "Búlgaro"
 
-#: fiduswriter/settings.py:228
+#: fiduswriter/settings.py:230
 msgid "German"
 msgstr "Alemão"
 
-#: fiduswriter/settings.py:229
+#: fiduswriter/settings.py:231
 msgid "French"
 msgstr ""
 
-#: fiduswriter/settings.py:230
+#: fiduswriter/settings.py:232
 msgid "Italian"
 msgstr "Italiano"
 
-#: fiduswriter/settings.py:231
+#: fiduswriter/settings.py:233
 msgid "Spanish"
 msgstr "Espanhol"
 
-#: fiduswriter/settings.py:232
+#: fiduswriter/settings.py:234
 msgid "Portuguese (Brazil)"
 msgstr ""
 
@@ -415,11 +419,11 @@ msgstr ""
 msgid "Media Manager"
 msgstr "Gerenciador de Mídia"
 
-#: usermedia/views.py:41
+#: usermedia/views.py:43
 msgid "Filetype not supported"
 msgstr ""
 
-#: usermedia/views.py:67
+#: usermedia/views.py:69
 msgid "No file uploaded"
 msgstr ""
 

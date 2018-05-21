@@ -20,6 +20,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='document',
             name='comments',
-            field=models.TextField(default=b'[]'),
+            field=models.TextField(default='[]'),
         ),
     ]

@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='entry',
             name='entry_cat',
-            field=models.TextField(default=b'[]'),
+            field=models.TextField(default='[]'),
         ),
     ]

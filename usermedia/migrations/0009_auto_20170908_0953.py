@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='documentimage',
             name='title',
-            field=models.CharField(default=b'', max_length=128),
+            field=models.CharField(default='', max_length=128),
         ),
     ]

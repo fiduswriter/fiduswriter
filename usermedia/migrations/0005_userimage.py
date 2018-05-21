@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(max_length=128)),
-                ('image_cat', models.CharField(default=b'', max_length=255)),
+                ('image_cat', models.CharField(default='', max_length=255)),
                 ('image', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='usermedia.Image')),
                 ('owner', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='new_image_owner', to=settings.AUTH_USER_MODEL)),
             ],

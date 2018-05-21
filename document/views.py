@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import time
 import os
 from tornado.escape import json_decode, json_encode

@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='document',
             name='settings',
-            field=models.TextField(default=b'{"doc_version":1.2}'),
+            field=models.TextField(default='{"doc_version":1.2}'),
         ),
     ]

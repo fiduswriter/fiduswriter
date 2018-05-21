@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer git Version\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-17 22:45+0200\n"
+"POT-Creation-Date: 2018-05-20 09:28+0000\n"
 "PO-Revision-Date: 2015-04-25 21:29-0300\n"
 "Last-Translator: Job Diogenes Ribeiro Borges <jobdrb@gmail.com>\n"
 "Language-Team: Portuguese Brazil <jobdrb@gmail.com>\n"
@@ -118,16 +118,26 @@ msgstr "Acesso de escrita a documento do Fidus Writer"
 
 #: feedback/templates/feedback/feedback.html:3
 #: feedback/templates/feedback/feedback.html:6
-msgid "Feedback"
-msgstr "Feedback"
+msgid "Tech support"
+msgstr ""
 
-#: feedback/templates/feedback/feedback.html:11
+#: feedback/templates/feedback/feedback.html:7
+msgid "Did you encounter an error or bug?"
+msgstr ""
+
+#: feedback/templates/feedback/feedback.html:8
+msgid "Give a brief description of what has happened."
+msgstr ""
+
+#: feedback/templates/feedback/feedback.html:13
 #: user/templates/account/show_profile.html:106
 msgid "submit"
 msgstr "submeter"
 
-#: feedback/templates/feedback/feedback.html:15
-msgid "Thank you for your comment!"
+#: feedback/templates/feedback/feedback.html:17
+#, fuzzy
+#| msgid "Thank you for your comment!"
+msgid "Thank you for your report!"
 msgstr "Obrigado pelo seu comentário!"
 
 #: fiduswriter/settings.py:226
@@ -412,6 +422,9 @@ msgstr ""
 #: usermedia/views.py:67
 msgid "No file uploaded"
 msgstr ""
+
+#~ msgid "Feedback"
+#~ msgstr "Feedback"
 
 #~ msgid "Confirm E-mail Address and Agree to Terms and Conditions"
 #~ msgstr "Confirme o endereço de e-mail e Concordar com os Termos e Condições"

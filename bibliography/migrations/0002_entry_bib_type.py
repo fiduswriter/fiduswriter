@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='entry',
             name='bib_type',
-            field=models.CharField(default=b'', max_length=30),
+            field=models.CharField(default='', max_length=30),
         ),
     ]

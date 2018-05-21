@@ -1,14 +1,18 @@
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.conf import settings
 
 
+@python_2_unicode_compatible
 class Feedback(models.Model):
     message = models.TextField()
     owner = models.ForeignKey(User, blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         if self.owner:
             return self.owner.username + ': ' + self.message
         else:

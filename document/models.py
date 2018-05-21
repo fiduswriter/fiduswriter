@@ -12,6 +12,7 @@ from django.core import checks
 
 FW_DOCUMENT_VERSION = 2.1
 
+
 @python_2_unicode_compatible
 class Document(models.Model):
     title = models.CharField(max_length=255, default='', blank=True)

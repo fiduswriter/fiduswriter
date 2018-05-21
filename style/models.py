@@ -3,6 +3,7 @@ from django.utils.encoding import python_2_unicode_compatible
 
 from django.db import models
 
+
 def document_filename(instance, filename):
     return '/'.join(['document-fonts', filename])
 

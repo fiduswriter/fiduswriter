@@ -5,7 +5,6 @@ from django.http import HttpResponse
 from django.contrib import admin
 from adminplus.sites import AdminSitePlus
 from django.conf import settings
-from django.contrib.flatpages import views as flatpages_views
 from document.views import index as document_index
 
 from django.views.i18n import JavaScriptCatalog

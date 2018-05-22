@@ -1,15 +1,14 @@
 language: node_js
 python:
-  - "2.7"
+  - "3.6"
 node_js:
-  - "6"
+  - "8"
 
 dist: trusty
 sudo: required
-group: deprecated-2017Q3
 
 env:
-  - TRAVIS_PYTHON_VERSION="2.7"
+  - TRAVIS_PYTHON_VERSION="3.6"
 
 addons:
   sauce_connect:

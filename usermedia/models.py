@@ -3,18 +3,12 @@ from django.utils.encoding import python_2_unicode_compatible
 
 import os
 import uuid
+from PIL import Image as PilImage
+from io import BytesIO
 
 from django.db import models
 from django.contrib.auth.models import User
 from django.db import IntegrityError
-
-from PIL import Image as PilImage
-try:
-    # Python 2
-    from StringIO import StringIO
-except ImportError:
-    # Python 3
-    from io import StringIO
 from django.core.files.uploadedfile import SimpleUploadedFile
 from document.models import Document
 
@@ -111,7 +105,7 @@ class Image(models.Model):
             return
 
         # Open original photo which we want to thumbnail using PIL's Image
-        image = PilImage.open(StringIO(self.image.read()))
+        image = PilImage.open(BytesIO(self.image.read()))
 
         self.width, self.height = image.size
 
@@ -152,7 +146,7 @@ class Image(models.Model):
         image.thumbnail((dst_width, dst_height), PilImage.ANTIALIAS)
 
         # Save the thumbnail
-        temp_handle = StringIO()
+        temp_handle = BytesIO()
         image.save(temp_handle, PIL_TYPE)
         temp_handle.seek(0)
 

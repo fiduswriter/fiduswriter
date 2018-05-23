@@ -78,7 +78,9 @@ class Document(models.Model):
     @classmethod
     def _check_doc_versions(cls, **kwargs):
         try:
-            if len(cls.objects.filter(doc_version__lt=FW_DOCUMENT_VERSION)):
+            if len(
+                cls.objects.filter(doc_version__lt=str(FW_DOCUMENT_VERSION))
+            ):
                 return [
                     checks.Warning(
                         'Documents need to be upgraded. Please navigate to '

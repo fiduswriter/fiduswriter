@@ -1,4 +1,4 @@
-import {post, postJson} from "../../common"
+import {post, postJson} from "../../common/network"
 
 
 // class for server calls of BibliographyDB.

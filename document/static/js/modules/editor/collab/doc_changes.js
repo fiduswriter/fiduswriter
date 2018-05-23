@@ -128,13 +128,9 @@ export class ModCollabDocChanges {
                         s => s.toJSON()
                     )
                     // We add a json diff in a format understandable by the
-                    // server. If the version is zero, we need to send a diff
-                    // starting from an empty document.
-                    let confirmedJson = this.mod.editor.docInfo.version ?
-                        this.mod.editor.docInfo.confirmedDoc.firstChild
-                        .toJSON() : {}
+                    // server.
                     unconfirmedDiff['jd'] = compare(
-                        confirmedJson,
+                        this.mod.editor.docInfo.confirmedJson,
                         this.mod.editor.view.state.doc.firstChild
                         .toJSON()
                     )
@@ -283,6 +279,7 @@ export class ModCollabDocChanges {
         this.mod.editor.docInfo.confirmedDoc = docNumber === tr.docs.length ?
             tr.doc :
             tr.docs[docNumber]
+        this.mod.editor.docInfo.confirmedJson = this.mod.editor.docInfo.confirmedDoc.firstChild.toJSON()
     }
 
     confirmDiff(request_id) {
@@ -306,6 +303,7 @@ export class ModCollabDocChanges {
         }
 
         this.mod.editor.docInfo.confirmedDoc = unconfirmedDiffs["doc"]
+        this.mod.editor.docInfo.confirmedJson = this.mod.editor.docInfo.confirmedDoc.firstChild.toJSON()
 
         let sentFnSteps = unconfirmedDiffs["fs"] // footnote steps
         if (sentFnSteps) {

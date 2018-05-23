@@ -266,7 +266,6 @@ export class Editor {
             stateDoc = docSchema.nodeFromJSON({type:'doc', content:[doc.contents]})
         } else {
             stateDoc = this.schema.topNodeType.createAndFill()
-
         }
         let plugins = this.statePlugins.map(plugin => {
             if (plugin[1]) {
@@ -288,6 +287,7 @@ export class Editor {
 
         // Set initial confirmed doc
         this.docInfo.confirmedDoc = this.view.state.doc
+        this.docInfo.confirmedJson = doc.contents
 
         // Render footnotes based on main doc
         this.mod.footnotes.fnEditor.renderAllFootnotes()

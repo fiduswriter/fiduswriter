@@ -26,9 +26,7 @@ export class ModCitations {
 
     resetCitations() {
         let citations = document.querySelectorAll('#paper-editable span.citation')
-        citations.forEach(function(citation){
-            citation.innerHTML = ''
-        })
+        citations.forEach(citation => citation.innerHTML = '')
         if (document.querySelector('.article-bibliography').innerHTML !== '') {
             document.querySelector('.article-bibliography').innerHTML = ''
         }

@@ -3,7 +3,8 @@ const BLOCK_NODE_TAGS = ['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'DIV', 'FIGURE
 // General Fallback handler for paste
 export class GeneralPasteHandler {
 
-    constructor(htmlDoc, pmType) {
+    constructor(editor, htmlDoc, pmType) {
+        this.editor = editor
         this.htmlDoc = htmlDoc
         this.pmType = pmType
         this.footnoteMarkers = []

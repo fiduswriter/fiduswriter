@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-17 22:45+0200\n"
+"POT-Creation-Date: 2018-05-21 09:14+0000\n"
 "PO-Revision-Date: 2013-02-24 10:03-0600\n"
 "Last-Translator: Daniel Frebel <daniel@fiduswriter.com>\n"
 "Language-Team: German <daniel@fiduswriter.com>\n"
@@ -39,16 +39,20 @@ msgid "Terms and Conditions"
 msgstr "Geschäftsbedingungen"
 
 #: base/templates/footer.html:12
+msgid "Privacy policy"
+msgstr ""
+
+#: base/templates/footer.html:17
 #, fuzzy
 #| msgid "Equations and Math by mathjax"
 msgid "Equations and Math by KaTeX"
 msgstr "Matheformeln mit mathjax"
 
-#: base/templates/footer.html:17
+#: base/templates/footer.html:22
 msgid "Citations with Citation Style Language"
 msgstr "Zitate mit Citation Style Language"
 
-#: base/templates/footer.html:22
+#: base/templates/footer.html:27
 msgid "Editing with ProseMirror"
 msgstr ""
 
@@ -103,59 +107,69 @@ msgstr ""
 msgid "Update all documents (DANGER!)"
 msgstr ""
 
-#: document/views.py:220
+#: document/views.py:222
 #, fuzzy
 msgid "Untitled"
 msgstr "Untertitel"
 
-#: document/views.py:234
+#: document/views.py:236
 #, fuzzy
 msgid "Document shared:"
 msgstr "Dokumente"
 
-#: document/views.py:260
+#: document/views.py:262
 msgid "Fidus Writer document write access"
 msgstr ""
 
 #: feedback/templates/feedback/feedback.html:3
 #: feedback/templates/feedback/feedback.html:6
-msgid "Feedback"
-msgstr "Feedback"
+msgid "Tech support"
+msgstr ""
 
-#: feedback/templates/feedback/feedback.html:11
+#: feedback/templates/feedback/feedback.html:7
+msgid "Did you encounter an error or bug?"
+msgstr ""
+
+#: feedback/templates/feedback/feedback.html:8
+msgid "Give a brief description of what has happened."
+msgstr ""
+
+#: feedback/templates/feedback/feedback.html:13
 #: user/templates/account/show_profile.html:106
 msgid "submit"
 msgstr "einschicken"
 
-#: feedback/templates/feedback/feedback.html:15
-msgid "Thank you for your comment!"
+#: feedback/templates/feedback/feedback.html:17
+#, fuzzy
+#| msgid "Thank you for your comment!"
+msgid "Thank you for your report!"
 msgstr "Vielen Dank für deine Anmerkung!"
 
-#: fiduswriter/settings.py:226
+#: fiduswriter/settings.py:228
 msgid "English"
 msgstr "Englisch"
 
-#: fiduswriter/settings.py:227
+#: fiduswriter/settings.py:229
 msgid "Bulgarian"
 msgstr "Bulgarisch"
 
-#: fiduswriter/settings.py:228
+#: fiduswriter/settings.py:230
 msgid "German"
 msgstr "Deutsch"
 
-#: fiduswriter/settings.py:229
+#: fiduswriter/settings.py:231
 msgid "French"
 msgstr ""
 
-#: fiduswriter/settings.py:230
+#: fiduswriter/settings.py:232
 msgid "Italian"
 msgstr ""
 
-#: fiduswriter/settings.py:231
+#: fiduswriter/settings.py:233
 msgid "Spanish"
 msgstr "Spanisch"
 
-#: fiduswriter/settings.py:232
+#: fiduswriter/settings.py:234
 msgid "Portuguese (Brazil)"
 msgstr ""
 
@@ -402,13 +416,16 @@ msgstr ""
 msgid "Media Manager"
 msgstr "Medienmanager"
 
-#: usermedia/views.py:41
+#: usermedia/views.py:43
 msgid "Filetype not supported"
 msgstr ""
 
-#: usermedia/views.py:67
+#: usermedia/views.py:69
 msgid "No file uploaded"
 msgstr ""
+
+#~ msgid "Feedback"
+#~ msgstr "Feedback"
 
 #~ msgid "Confirm E-mail Address and Agree to Terms and Conditions"
 #~ msgstr "Bestätige die E-Mailadresse und stimme den Geschäftsbedingungen zu"

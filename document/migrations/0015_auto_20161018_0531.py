@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='accessright',
             name='rights',
-            field=models.CharField(choices=[(b'read', b'Reader'), (b'read-without-comments', b'Read without comments'), (b'write', b'Writer'), (b'review', b'Reviewer'), (b'comment', b'Commentator'), (b'edit', b'Editor')], max_length=21),
+            field=models.CharField(choices=[('read', 'Reader'), ('read-without-comments', 'Read without comments'), ('write', 'Writer'), ('review', 'Reviewer'), ('comment', 'Commentator'), ('edit', 'Editor')], max_length=21),
         ),
     ]

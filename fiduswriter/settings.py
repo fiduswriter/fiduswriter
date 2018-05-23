@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import os
 
 # If you want to show debug messages, set DEBUG to True.

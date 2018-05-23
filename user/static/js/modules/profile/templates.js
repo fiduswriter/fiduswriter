@@ -78,7 +78,7 @@ let confirmAccountFormTemplate = ({userName, email}, confirmQuestionsTemplates) 
     `<p>${
         interpolate(
             gettext(
-                'Please confirm that you own the email <a href="mailto:%(email)s">%(email)s</a>, that you apply for the username %(userName)s, and that you have read and agree to the <a href="/terms/" target="_blank">Terms and Conditions</a>.'
+                'Please confirm that you own the email <a href="mailto:%(email)s">%(email)s</a>, that you apply for the username %(userName)s, and that you have read and agree to our <a href="/pages/terms/" target="_blank">Terms and Conditions</a> and <a href="/pages/privacy/" target="_blank">Privacy Policy</a>.'
             ),
             {email, userName},
             true

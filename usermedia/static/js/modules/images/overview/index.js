@@ -116,7 +116,7 @@ export class ImageOverview {
                 <span class="fw-usermedia-type">${fileType}</span>
             </span>`,
             `<span class="fw-inline">${image.width} x ${image.height}</span>`,
-            localizeDate(image.added, 'sortable-date'),
+            `<span class="date">${localizeDate(image.added, 'sortable-date')}</span>`,
             `<span class="delete-image fw-inline fw-link-text" data-id="${id}">
                 <i class="fa fa-trash-o"></i>
             </span>`

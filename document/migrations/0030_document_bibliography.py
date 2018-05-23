@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='document',
             name='bibliography',
-            field=models.TextField(default=b'{}'),
+            field=models.TextField(default='{}'),
         ),
     ]

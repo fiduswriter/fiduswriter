@@ -1,9 +1,10 @@
+from __future__ import unicode_literals
+
 from django.conf.urls import include, url
 from django.http import HttpResponse
 from django.contrib import admin
 from adminplus.sites import AdminSitePlus
 from django.conf import settings
-from django.contrib.flatpages import views as flatpages_views
 from document.views import index as document_index
 
 from django.views.i18n import JavaScriptCatalog
@@ -38,9 +39,8 @@ urlpatterns = [
     # Account management
     url('^account/', include('user.urls')),
 
-    # Terms and conditions
-    url('^terms/$', flatpages_views.flatpage,
-        {'url': '/terms/'}, name='terms'),
+    # Flat pages
+    url('^pages/', include('django.contrib.flatpages.urls')),
 
 ]
 

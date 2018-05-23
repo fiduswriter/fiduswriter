@@ -1,3 +1,6 @@
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
+
 from django.db import models
 from django.db.utils import OperationalError
 from django.contrib.auth.models import User
@@ -10,6 +13,7 @@ from django.core import checks
 FW_DOCUMENT_VERSION = 2.1
 
 
+@python_2_unicode_compatible
 class Document(models.Model):
     title = models.CharField(max_length=255, default='', blank=True)
     contents = models.TextField(default='{}')  # json object of content
@@ -38,7 +42,7 @@ class Document(models.Model):
     # documents are added in plugins that list these documents somewhere else.
     listed = models.BooleanField(default=True)
 
-    def __unicode__(self):
+    def __str__(self):
         if len(self.title) > 0:
             return self.title + ' (' + str(self.id) + ')'
         else:
@@ -74,7 +78,9 @@ class Document(models.Model):
     @classmethod
     def _check_doc_versions(cls, **kwargs):
         try:
-            if len(cls.objects.filter(doc_version__lt=FW_DOCUMENT_VERSION)):
+            if len(
+                cls.objects.filter(doc_version__lt=str(FW_DOCUMENT_VERSION))
+            ):
                 return [
                     checks.Warning(
                         'Documents need to be upgraded. Please navigate to '
@@ -112,6 +118,7 @@ CAN_UPDATE_DOCUMENT = ['write', 'write-tracked', 'edit', 'review', 'comment']
 CAN_COMMUNICATE = ['read', 'write', 'comment', 'write-tracked']
 
 
+@python_2_unicode_compatible
 class AccessRight(models.Model):
     document = models.ForeignKey(Document)
     user = models.ForeignKey(User)
@@ -123,7 +130,7 @@ class AccessRight(models.Model):
     class Meta:
         unique_together = (("document", "user"),)
 
-    def __unicode__(self):
+    def __str__(self):
         return (
             '%(name)s %(rights)s on %(doc_id)d' %
             {
@@ -138,6 +145,7 @@ def revision_filename(instance, filename):
     return '/'.join(['revision', str(instance.document.id), filename])
 
 
+@python_2_unicode_compatible
 class DocumentRevision(models.Model):
     document = models.ForeignKey(Document)
     note = models.CharField(max_length=255, default='', blank=True)
@@ -145,7 +153,7 @@ class DocumentRevision(models.Model):
     file_object = models.FileField(upload_to=revision_filename)
     file_name = models.CharField(max_length=255, default='', blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         if len(self.note) > 0:
             return self.note + ' (' + str(self.id) + ') of ' + \
                 str(self.document.id)
@@ -163,6 +171,7 @@ def template_filename(instance, filename):
     return '/'.join(['export-templates', filename])
 
 
+@python_2_unicode_compatible
 class ExportTemplate(models.Model):
     file_name = models.CharField(max_length=255, default='', blank=True)
     file_type = models.CharField(
@@ -174,5 +183,5 @@ class ExportTemplate(models.Model):
     class Meta:
         unique_together = (("file_name", "file_type"),)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.file_name + " (" + self.file_type + ")"

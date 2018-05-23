@@ -1,9 +1,11 @@
+from __future__ import unicode_literals
+
 import uuid
 import atexit
 from time import mktime, time
 from copy import deepcopy
 
-from jsonpatch import apply_patch, JsonPatchConflict
+from jsonpatch import apply_patch, JsonPatchConflict, JsonPointerException
 
 from document.helpers.session_user_info import SessionUserInfo
 from document.helpers.serializers import PythonWithURLSerializer
@@ -402,7 +404,7 @@ class WebSocket(BaseWebSocketHandler):
                        parsed["jd"],
                        True
                     )
-                except JsonPatchConflict:
+                except (JsonPatchConflict, JsonPointerException):
                     logger.exception("Cannot apply json diff.")
                     logger.error(json_encode(parsed))
                     logger.error(json_encode(self.doc['contents']))

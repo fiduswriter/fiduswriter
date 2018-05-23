@@ -16,7 +16,7 @@ export let findImages = function(htmlEl) {
         // We set the src of the image as "data-src" for now so that the browser
         // won't try to load the file immediately
         newImg.setAttribute('data-src', name)
-        this.parentNode.replaceChild(newImg, this)
+        el.parentNode.replaceChild(newImg, el)
 
         if(!images.find(image => image.filename === name)) {
 

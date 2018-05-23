@@ -154,8 +154,8 @@ export class DocumentOverview {
                 <i class="fa fa-clock-o"></i>
             </span>` :
             '',
-            localizeDate(doc.added*1000, 'sortable-date'),
-            localizeDate(doc.updated*1000, 'sortable-date'),
+            `<span class="date">${localizeDate(doc.added*1000, 'sortable-date')}</span>`,
+            `<span class="date">${localizeDate(doc.updated*1000, 'sortable-date')}</span>`,
             `<span>
                 <img class="fw-avatar" src="${doc.owner.avatar}" />
             </span>

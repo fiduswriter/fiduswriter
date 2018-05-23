@@ -9,7 +9,7 @@ const commentDuringCreationDecoSpec = {}
 let moveComment = function(doc, id, pos) {
     // The content to which a comment was linked has been removed.
     // We need to find text close to the position to which we can link
-    // comment. This is user for reviewer comments that should not be lost.
+    // comment.
     if (!pos) {
         // The position is linked to the start of the document. The minimum start
         // position is 2

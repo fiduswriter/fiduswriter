@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from document.models import AccessRight, Document
 
 

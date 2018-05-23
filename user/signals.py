@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 # This file is split of from django-allauth and is licensed as:
 
 # Copyright (c) 2010 Raymond Penners and contributors

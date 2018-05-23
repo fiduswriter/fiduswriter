@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             name='SubmittedAccessRight',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('rights', models.CharField(choices=[(b'read', b'Reader'), (b'read-without-comments', b'Reader without comment access'), (b'write', b'Writer'), (b'review', b'Reviewer'), (b'comment', b'Commentator'), (b'edit', b'Editor')], max_length=21)),
+                ('rights', models.CharField(choices=[('read', 'Reader'), ('read-without-comments', 'Reader without comment access'), ('write', 'Writer'), ('review', 'Reviewer'), ('comment', 'Commentator'), ('edit', 'Editor')], max_length=21)),
                 ('document', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='document.Document')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],

@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from time import mktime
 
 from django.shortcuts import render

@@ -15,11 +15,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='document',
             name='contents',
-            field=models.TextField(default=b'{}'),
+            field=models.TextField(default='{}'),
         ),
         migrations.AlterField(
             model_name='document',
             name='settings',
-            field=models.TextField(default=b'{"doc_version":0}'),
+            field=models.TextField(default='{"doc_version":0}'),
         ),
     ]

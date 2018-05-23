@@ -1,17 +1,14 @@
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
+
 import os
 import uuid
+from PIL import Image as PilImage
+from io import BytesIO
 
 from django.db import models
 from django.contrib.auth.models import User
 from django.db import IntegrityError
-
-from PIL import Image as PilImage
-try:
-    # Python 2
-    from StringIO import StringIO
-except ImportError:
-    # Python 3
-    from io import StringIO
 from django.core.files.uploadedfile import SimpleUploadedFile
 from document.models import Document
 
@@ -27,6 +24,7 @@ def get_file_path(instance, filename):
     return os.path.join('images', filename)
 
 
+@python_2_unicode_compatible
 class Image(models.Model):
     uploader = models.ForeignKey(User, related_name='image_uploader')
     added = models.DateTimeField(auto_now_add=True)
@@ -41,7 +39,7 @@ class Image(models.Model):
     width = models.IntegerField(blank=True, null=True)
     checksum = models.BigIntegerField(default=0)
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.pk)
 
     def is_deletable(self):
@@ -107,7 +105,7 @@ class Image(models.Model):
             return
 
         # Open original photo which we want to thumbnail using PIL's Image
-        image = PilImage.open(StringIO(self.image.read()))
+        image = PilImage.open(BytesIO(self.image.read()))
 
         self.width, self.height = image.size
 
@@ -148,7 +146,7 @@ class Image(models.Model):
         image.thumbnail((dst_width, dst_height), PilImage.ANTIALIAS)
 
         # Save the thumbnail
-        temp_handle = StringIO()
+        temp_handle = BytesIO()
         image.save(temp_handle, PIL_TYPE)
         temp_handle.seek(0)
 
@@ -175,6 +173,7 @@ class Image(models.Model):
 
 
 # Image linked to a particular User.
+@python_2_unicode_compatible
 class UserImage(models.Model):
     title = models.CharField(max_length=128)
     owner = models.ForeignKey(
@@ -185,7 +184,7 @@ class UserImage(models.Model):
     image_cat = models.CharField(max_length=255, default='')
     image = models.ForeignKey(Image)
 
-    def __unicode__(self):
+    def __str__(self):
         if len(self.title) > 0:
             return self.title
         else:
@@ -193,12 +192,13 @@ class UserImage(models.Model):
 
 
 # Image linked to a document
+@python_2_unicode_compatible
 class DocumentImage(models.Model):
     title = models.CharField(max_length=128, default='')
     document = models.ForeignKey(Document)
     image = models.ForeignKey(Image)
 
-    def __unicode__(self):
+    def __str__(self):
         if len(self.title) > 0:
             return self.title
         else:
@@ -206,11 +206,12 @@ class DocumentImage(models.Model):
 
 
 # category
+@python_2_unicode_compatible
 class ImageCategory(models.Model):
     category_title = models.CharField(max_length=100)
     category_owner = models.ForeignKey(User)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.category_title
 
     class Meta:

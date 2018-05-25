@@ -287,7 +287,7 @@ export class ModTrack {
                     )
                 )
             }
-            if (!node.isInline && node.attrs.track) {
+            if (!node.isInline && !deletedNode && node.attrs.track) {
                 let blockChangeTrack = node.attrs.track.find(track => track.type === 'block_change')
                 if (blockChangeTrack) {
                     let track = node.attrs.track.filter(track => track !== blockChangeTrack)
@@ -416,7 +416,7 @@ export class ModTrack {
             }
 
             if (
-                !node.isInline && node.attrs.track
+                !node.isInline && !deletedNode && node.attrs.track
             ) {
                 let blockChangeTrack = node.attrs.track.find(track => track.type==='block_change')
                 if (blockChangeTrack) {

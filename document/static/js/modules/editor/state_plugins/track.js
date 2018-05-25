@@ -282,7 +282,6 @@ export let trackPlugin = function(options) {
                 // None of the transactions change the doc, or all are remote, come from footnotes, are footnote creations, history or fixing IDs. Give up.
                 return false
             }
-            console.log({trs})
             let addedRanges = [], // Content that has been added (also may mean removals)
                 markedDeletionRanges = [], // Deleted content that has received marks (Italic/bold) - we need to revert this.
                 unmarkedDeletionRanges = [], // Deleted content where marks have been deleted (Italic/bold) - we need to revert this.
@@ -316,8 +315,11 @@ export let trackPlugin = function(options) {
                                     )
                                 })
                             } else if (step.slice.size===2 && step.gapFrom-step.from===1 && step.to-step.gapTo===1) { // Replaced one wrapping with another
-                                replacedWrappings.push({pos, node: tr.docs[index].nodeAt(pos)})
-                                //replacedWrapping = true
+                                let pos = step.from,
+                                    oldNode = tr.docs[index].nodeAt(pos)
+                                if (oldNode.attrs.track) {
+                                    replacedWrappings.push({pos, oldNode, newNode: step.slice.content.firstChild})
+                                }
                             }
                         } else {
                             [{from: step.from, to: step.gapFrom}, {from: step.gapTo, to: step.to}].forEach(
@@ -426,7 +428,7 @@ export let trackPlugin = function(options) {
                         ({before: range.before, after: range.after, from: tr.mapping.maps[index].map(range.from, -1), to: tr.mapping.maps[index].map(range.to, 1)})
                     )
                     replacedWrappings = replacedWrappings.map(wrapping =>
-                        ({pos: tr.mapping.maps[index].map(wrapping.pos), node: wrapping.node})
+                        ({pos: tr.mapping.maps[index].map(wrapping.pos), oldNode: wrapping.oldNode, newNode: wrapping.newNode})
                     )
                 })
             })
@@ -458,7 +460,30 @@ export let trackPlugin = function(options) {
                 }
             })
 
-            
+            replacedWrappings.forEach(wrap => {
+                let {oldNode, newNode, pos} = wrap,
+                    track = oldNode.attrs.track,
+                    blockTrack = track.find(track => track.type==="block_change")
+
+                if (blockTrack) {
+                    track = track.filter(track => track !== blockTrack)
+                    if (!approved && (blockTrack.before.type !== newNode.type.name || blockTrack.before.attrs.level !== newNode.attrs.level)) {
+                        blockTrack = {type: "block_change", user, username, date: date1, before: blockTrack.before}
+                        track.push(blockTrack)
+                    }
+                } else if (!approved) {
+                    blockTrack = {type: "block_change", user, username, date: date1, before: {type: oldNode.type.name, attrs: oldNode.attrs}}
+                    if (blockTrack.before.attrs.id) {
+                        delete blockTrack.before.attrs.id
+                    }
+                    if (blockTrack.before.attrs.track) {
+                        delete blockTrack.before.attrs.track
+                    }
+                    track.push(blockTrack)
+                }
+                newTr.setNodeMarkup(pos, null, Object.assign({}, newNode.attrs, {track}))
+            })
+
 
             if (!approved && addedRanges.length) { // Only add deletions if changes are not automatically approved
                 let deletedRanges = addedRanges.slice()
@@ -550,70 +575,42 @@ export let trackPlugin = function(options) {
                 trs.forEach(tr => { // We insert all the same steps, but with "from"/"to" both set to "to" in order not to delete content. Mapped as needed.
                     tr.steps.forEach((step, index) => {
                         let stepMap
-                        if (step instanceof ReplaceStep || (step instanceof ReplaceAroundStep)) {
+                        if (step instanceof ReplaceStep) {
+                            if (step.slice.size) {
+                                let newStep = new ReplaceStep(
+                                    map.map(step.to),
+                                    map.map(step.to),
+                                    step.slice,
+                                    step.structure
+                                )
+
+                                if (!newTr.maybeStep(newStep).failed) {
+                                    addedRanges.push(
+                                        {
+                                            from: map.map(step.to, -1),
+                                            to: map.map(step.to, 1)
+                                        }
+                                    )
+                                    stepMap = newStep.getMap()
+                                }
+                        } else if (step instanceof ReplaceAroundStep) {
                             if (step.structure) {
-                                if (
-                                    step.from===step.gapFrom && step.to===step.gapTo && step.slice.size // wrapped in something
-                                ) {
                                     let mappedStep = step.map(map)
                                     if (mappedStep) {
                                         if (!newTr.maybeStep(mappedStep).failed) {
-                                            addedRanges.push(
-                                                {
-                                                    from: map.map(step.from, -1),
-                                                    to: map.map(step.gapFrom, 1)
-                                                }
-                                            )
+                                            if (
+                                                step.from===step.gapFrom && step.to===step.gapTo && step.slice.size // wrapped in something
+                                            ) {
+                                                addedRanges.push(
+                                                    {
+                                                        from: map.map(step.from, -1),
+                                                        to: map.map(step.gapFrom, 1)
+                                                    }
+                                                )
+                                            }
                                             stepMap = mappedStep.getMap()
                                         }
                                     }
-                                } else if (step.slice.size===2 && step.gapFrom-step.from===1 && step.to-step.gapTo===1) { //one wrapping has been replaced by another.
-                                    let mappedStep = step.map(map)
-                                    if (mappedStep) {
-                                        let doc = tr.docs[index],
-                                            oldNode = doc.nodeAt(step.from),
-                                            newNode = step.slice.content.firstChild,
-                                            track = oldNode.attrs.track
-                                        if (!track) {
-                                            newTr.maybeStep(mappedStep)
-                                            return
-                                        }
-                                        let blockTrack = track.find(track => track.type==="block_change")
-                                        console.log('REER')
-                                        console.log({approved})
-                                        if (approved) {
-                                            console.log('firsg')
-                                            if (!newTr.maybeStep(mappedStep).failed) {
-                                                console.log('micbook')
-                                                if (blockTrack) {
-                                                    track = track.filter(track => track !== blockTrack)
-                                                    console.log('THERE')
-                                                    newTr.setNodeMarkup(mappedStep.from, null, Object.assign({}, newNode.attrs, {track}))
-                                                }
-                                            }
-                                        } else {
-                                            if (blockTrack) {
-                                                track = track.filter(track => track !== blockTrack)
-                                                if (blockTrack.before.type !== newNode.type.name || blockTrack.before.attrs.level !== newNode.attrs.level) {
-                                                    blockTrack = {type: "block_change", user, username, date: date1, before: blockTrack.before}
-                                                    track.push(blockTrack)
-                                                }
-                                            } else {
-                                                blockTrack = {type: "block_change", user, username, date: date1, before: {type: oldNode.type.name, attrs: oldNode.attrs}}
-                                                if (blockTrack.before.attrs.id) {
-                                                    delete blockTrack.before.attrs.id
-                                                }
-                                                if (blockTrack.before.attrs.track) {
-                                                    delete blockTrack.before.attrs.track
-                                                }
-                                                track.push(blockTrack)
-                                            }
-                                            if (!newTr.maybeStep(mappedStep).failed) {
-                                                newTr.setNodeMarkup(mappedStep.from, null, Object.assign({}, newNode.attrs, {track}))
-                                            }
-                                        }
-                                    }
-
                                 }
                             } else if (step.slice.size) {
                                 let newStep = new ReplaceStep(

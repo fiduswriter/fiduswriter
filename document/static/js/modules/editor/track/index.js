@@ -65,12 +65,15 @@ export function acceptAllNoInsertions(doc) {
     let tr = new Transform(doc), map = new Mapping()
     doc.descendants((node, pos, parent) => {
         let deletionTrack = node.attrs.track ?
-                node.attrs.track.find(track => track.name==='deletion') :
+                node.attrs.track.find(track => track.type==='deletion') :
                 node.marks.find(mark => mark.type.name==='deletion'),
             insertionTrack = node.attrs.track ?
-                node.attrs.track.find(track => track.name==='insertion') :
+                node.attrs.track.find(track => track.type==='insertion') :
                 node.marks.find(mark => mark.type.name==='insertion'),
-            formatChangeMark = node.marks.find(mark => mark.type.name==='format_change')
+            formatChangeMark = node.marks.find(mark => mark.type.name==='format_change'),
+            blockChangeTrack = node.attrs.track ?
+                node.attrs.track.find(track => track.name==='block_change') :
+                false
 
         if (deletionTrack) {
             deleteNode(tr, node, pos, map)
@@ -84,7 +87,7 @@ export function acceptAllNoInsertions(doc) {
                     )
                 )
             } else {
-                let track = node.attrs.track.filter(track => track.type !== 'insertion')
+                let track = node.attrs.track.filter(track => track !== insertionTrack)
                 tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track}), node.marks)
             }
         }
@@ -96,6 +99,10 @@ export function acceptAllNoInsertions(doc) {
                     formatChangeMark
                 )
             )
+        }
+        if (blockChangeTrack) {
+            let track = node.attrs.track.filter(track => track.type !== blockChangeTrack)
+            tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track}), node.marks)
         }
         return true
     })
@@ -155,8 +162,8 @@ export class ModTrack {
                 return false
             }
             if (!node.isInline) {
-                reachedEnd = true
-            } else if (!trackMark.isInSet(node.marks) || (!trackMark.attrs.inline && nodePos !== pos)) {
+                reachedEnd = true // Changes on inline nodes are applied/reject until next non-inline node. Non-inline node changes are only applied that one node by default.
+            } else if (!trackMark.isInSet(node.marks)) {
                 reachedEnd = true
                 return false
             }
@@ -199,6 +206,16 @@ export class ModTrack {
                         map.map(nodePos+node.nodeSize),
                         trackMark
                     )
+                )
+            } else if (type==='block_change') {
+                let blockChangeTrack = node.attrs.track.find(track => track.type === 'block_change'),
+                    track = node.attrs.track.filter(track => track !== blockChangeTrack)
+
+                tr.setNodeMarkup(
+                    map.map(nodePos),
+                    view.state.schema.nodes[blockChangeTrack.before.type],
+                    Object.assign({}, node.attrs, blockChangeTrack.before.attrs, {track}),
+                    node.marks
                 )
             }
             return true
@@ -270,6 +287,19 @@ export class ModTrack {
                     )
                 )
             }
+            if (!node.isInline && node.attrs.track) {
+                let blockChangeTrack = node.attrs.track.find(track => track.type === 'block_change')
+                if (blockChangeTrack) {
+                    let track = node.attrs.track.filter(track => track !== blockChangeTrack)
+                    tr.setNodeMarkup(
+                        map.map(pos),
+                        view.state.schema.nodes[blockChangeTrack.before.type],
+                        Object.assign({}, node.attrs, blockChangeTrack.before.attrs, {track}),
+                        node.marks
+                    )
+                }
+            }
+
             return true
         })
 
@@ -327,6 +357,9 @@ export class ModTrack {
                         trackMark
                     )
                 )
+            } else if (type==='block_change') {
+                let track = node.attrs.track.filter(track => track.type !== 'block_change')
+                tr.setNodeMarkup(map.map(nodePos), null, Object.assign({}, node.attrs, {track}), node.marks)
             }
             return true
         })
@@ -381,6 +414,17 @@ export class ModTrack {
                     )
                 )
             }
+
+            if (
+                !node.isInline && node.attrs.track
+            ) {
+                let blockChangeTrack = node.attrs.track.find(track => track.type==='block_change')
+                if (blockChangeTrack) {
+                    let track = node.attrs.track.filter(track => track !== blockChangeTrack)
+                    tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track}), node.marks)
+                }
+            }
+
             return true
         })
 

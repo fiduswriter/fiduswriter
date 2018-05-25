@@ -12,7 +12,6 @@ const selectedChangeFormatSpec = {}
 // - Add tracking of:
 //   * table operations (remove row/column)
 //   * bibliography changes
-//   * block type changes (heading/paragraph/etc.)
 // - Tests
 
 export function getSelectedChanges(state) {

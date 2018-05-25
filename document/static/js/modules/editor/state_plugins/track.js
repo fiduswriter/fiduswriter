@@ -570,7 +570,6 @@ export let trackPlugin = function(options) {
                     }
                 }
                 addedRanges = [] // We reset the added ranges.
-
                 trs.forEach(tr => { // We insert all the same steps, but with "from"/"to" both set to "to" in order not to delete content. Mapped as needed.
                     tr.steps.forEach((step, index) => {
                         let stepMap
@@ -592,25 +591,27 @@ export let trackPlugin = function(options) {
                                     )
                                     stepMap = newStep.getMap()
                                 }
+                            }
                         } else if (step instanceof ReplaceAroundStep) {
                             if (step.structure) {
+                                if (
+                                    step.from===step.gapFrom && step.to===step.gapTo && step.slice.size // wrapped in something
+                                ) {
+                                    addedRanges.push(
+                                        {
+                                            from: map.map(step.from, -1),
+                                            to: map.map(step.gapFrom, 1)
+                                        }
+                                    )
                                     let mappedStep = step.map(map)
                                     if (mappedStep) {
                                         if (!newTr.maybeStep(mappedStep).failed) {
-                                            if (
-                                                step.from===step.gapFrom && step.to===step.gapTo && step.slice.size // wrapped in something
-                                            ) {
-                                                addedRanges.push(
-                                                    {
-                                                        from: map.map(step.from, -1),
-                                                        to: map.map(step.gapFrom, 1)
-                                                    }
-                                                )
-                                            }
+
                                             stepMap = mappedStep.getMap()
                                         }
                                     }
                                 }
+
                             } else if (step.slice.size) {
                                 let newStep = new ReplaceStep(
                                     map.map(step.to),

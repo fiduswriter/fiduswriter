@@ -37,10 +37,14 @@ export let citation = {
         }
     }],
     toDOM(node) {
+        let bibDB = node.type.schema.cached.bibDB,
+            bibs = {}
+            node.attrs.references.forEach(ref => bibs[ref.id] = bibDB.db[ref.id])
         return ["span", {
             class: 'citation',
             'data-format': node.attrs.format,
-            'data-references': JSON.stringify(node.attrs.references)
+            'data-references': JSON.stringify(node.attrs.references),
+            'data-bibs': JSON.stringify(bibs)
         }]
     }
 }

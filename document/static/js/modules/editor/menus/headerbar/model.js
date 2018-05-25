@@ -29,7 +29,7 @@ let languageItem = function(code, name, order) {
             let attrs = Object.assign({}, article.attrs)
             attrs.language = code
             editor.view.dispatch(
-                editor.view.state.tr.setNodeMarkup(0, false, attrs)
+                editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta('settings', true)
             )
         },
         selected: editor => {
@@ -232,7 +232,7 @@ export let headerbarModel = {
                                     }
                                 })
                                 editor.view.dispatch(
-                                    editor.view.state.tr.setNodeMarkup(offset, false, attrs)
+                                    editor.view.state.tr.setNodeMarkup(offset, false, attrs).setMeta('settings', true)
                                 )
                             },
                             selected: editor => {
@@ -255,7 +255,7 @@ export let headerbarModel = {
                                     }
                                 })
                                 editor.view.dispatch(
-                                    editor.view.state.tr.setNodeMarkup(offset, false, attrs)
+                                    editor.view.state.tr.setNodeMarkup(offset, false, attrs).setMeta('settings', true)
                                 )
                             },
                             selected: editor => {
@@ -278,7 +278,7 @@ export let headerbarModel = {
                                     }
                                 })
                                 editor.view.dispatch(
-                                    editor.view.state.tr.setNodeMarkup(offset, false, attrs)
+                                    editor.view.state.tr.setNodeMarkup(offset, false, attrs).setMeta('settings', true)
                                 )
                             },
                             selected: editor => {
@@ -301,7 +301,7 @@ export let headerbarModel = {
                                     }
                                 })
                                 editor.view.dispatch(
-                                    editor.view.state.tr.setNodeMarkup(offset, false, attrs)
+                                    editor.view.state.tr.setNodeMarkup(offset, false, attrs).setMeta('settings', true)
                                 )
                             },
                             selected: editor => {
@@ -408,7 +408,7 @@ export let headerbarModel = {
                                 let attrs = Object.assign({}, article.attrs)
                                 attrs.papersize = 'A4'
                                 editor.view.dispatch(
-                                    editor.view.state.tr.setNodeMarkup(0, false, attrs)
+                                    editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta('settings', true)
                                 )
                             },
                             selected: editor => {
@@ -425,7 +425,7 @@ export let headerbarModel = {
                                 let attrs = Object.assign({}, article.attrs)
                                 attrs.papersize = 'US Letter'
                                 editor.view.dispatch(
-                                    editor.view.state.tr.setNodeMarkup(0, false, attrs)
+                                    editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta('settings', true)
                                 )
                             },
                             selected: editor => {
@@ -670,7 +670,7 @@ export let headerbarModel = {
                         let attrs = Object.assign({}, article.attrs)
                         attrs.tracked = !attrs.tracked
                         editor.view.dispatch(
-                            editor.view.state.tr.setNodeMarkup(0, false, attrs)
+                            editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta('settings', true)
                         )
                     },
                     selected: editor => {

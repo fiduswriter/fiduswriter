@@ -168,7 +168,10 @@ let ACTIONS = {
     deletion_figure: gettext('Deleted figure'),
     deletion_list_item: gettext('Lifted list item'),
     deletion_table: gettext('Delete table'),
-    format_change_text: gettext('Format change')
+    format_change_text: gettext('Format change'),
+    block_change_paragraph: gettext('Changed into paragraph'),
+    block_change_heading: gettext('Changed into heading %(level)s'),
+    block_change_code_block: gettext('Changed into code block'),
 }
 
 let FORMAT_MARK_NAMES = {
@@ -187,19 +190,26 @@ let formatChangeTemplate = ({before, after}) => {
     return returnText
 }
 
+let BLOCK_NAMES = {
+    paragraph: gettext('Paragraph'),
+    heading: gettext('Heading %(level)s'),
+    code_block: gettext('Code block')
+}
 
-let trackTemplate = ({type, data, nodeType, pos, view, active, docInfo}) => {
+let blockChangeTemplate = ({before}) => `<div class="format-change-info"><b>${gettext('Was')}:</b> ${interpolate(BLOCK_NAMES[before.type], before.attrs, true)}</div>`
+
+let trackTemplate = ({type, data, node, pos, view, active, docInfo}) => {
     let author = data.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === data.user)
     return `
         <div class="margin-box track ${active ? 'active' : 'inactive'}" data-type="${type}" data-pos="${pos}" data-view="${view}">
             <div class="track-${type}">
-                <div class="track-title">${ACTIONS[`${type}_${nodeType}`]}</div>
+                <div class="track-title">${interpolate(ACTIONS[`${type}_${node.type.name}`], node.attrs, true)}</div>
                 <div class="comment-user">
                     <img class="comment-user-avatar" src="${author ? author.avatar : `${$StaticUrls.base$}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
                     <h5 class="comment-user-name">${escapeText(author ? author.name : data.username)}</h5>
-                    <p class="comment-date">${nodeType==='text' ? `${gettext('ca.')} ` : ''}${localizeDate(data.date*60000, 'minutes')}</p>
+                    <p class="comment-date">${node.type.name==='text' ? `${gettext('ca.')} ` : ''}${localizeDate(data.date*60000, 'minutes')}</p>
                 </div>
-                ${type==='format_change' ? formatChangeTemplate(data) : ''}
+                ${type==='format_change' ? formatChangeTemplate(data) : type==='block_change' ? blockChangeTemplate(data) : ''}
                 <div class="ui-dialog-buttonset">
                     <button class="fw-button fw-small fw-green track-accept" data-type="${type}" data-pos="${pos}" data-view="${view}">${gettext('Accept')}</button>
                     <button class="fw-button fw-small fw-orange track-reject" data-type="${type}" data-pos="${pos}" data-view="${view}">${gettext('Reject')}</button>
@@ -225,9 +235,10 @@ export let marginBoxesTemplate = ({
             case 'insertion':
             case 'deletion':
             case 'format_change':
+            case 'block_change':
                 return trackTemplate({
                     type: mBox.type,
-                    nodeType: mBox.nodeType,
+                    node: mBox.node,
                     data: mBox.data,
                     pos: mBox.pos,
                     view: mBox.view,

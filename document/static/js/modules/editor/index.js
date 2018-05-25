@@ -251,6 +251,10 @@ export class Editor {
 
 
         this.mod.db.bibDB.setDB(data.doc.bibliography)
+        // assign bibDB to be used in document schema.
+        this.schema.cached.bibDB = this.mod.db.bibDB
+        // assign bibDB to be used in footnote schema.
+        this.mod.footnotes.fnEditor.schema.cached.bibDB = this.mod.db.bibDB
         this.mod.db.imageDB.setDB(data.doc.images)
         // assign image DB to be used in document schema.
         this.schema.cached.imageDB = this.mod.db.imageDB

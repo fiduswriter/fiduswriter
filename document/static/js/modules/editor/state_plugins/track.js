@@ -302,11 +302,12 @@ export let trackPlugin = function(options) {
                                 )
                             } else if(!step.slice.size) {// unwrapped from something
                                 tr.docs[index].nodesBetween(step.from, step.gapFrom, (node, pos) => {
-                                    if (pos < step.from) {
-                                        return true
-                                    }
-                                    if (node.attrs.track && node.attrs.track.find(track => track.user===user && track.type==='insertion')) {
+                                    if (
+                                        pos < step.from ||
                                         // user has created element. so (s)he is allowed to delete it again.
+                                        (node.attrs.track && node.attrs.track.find(track => track.user===user && track.type==='insertion')) ||
+                                        ['table_row', 'table_cell', 'bullet_list', 'ordered_list'].includes(node.type.name)
+                                    ) {
                                         return true
                                     }
                                     addedRanges.push(
@@ -323,11 +324,11 @@ export let trackPlugin = function(options) {
                         } else {
                             [{from: step.from, to: step.gapFrom}, {from: step.gapTo, to: step.to}].forEach(
                                 range => tr.docs[index].nodesBetween(range.from, range.to, (node, pos) => {
-                                    if (pos < range.from) {
-                                        return true
-                                    }
-                                    if (node.attrs.track && node.attrs.track.find(track => track.user===user && track.type==='insertion')) {
+                                    if (
+                                        pos < range.from ||
                                         // user has created element. so (s)he is allowed to delete it again.
+                                        (node.attrs.track && node.attrs.track.find(track => track.user===user && track.type==='insertion'))
+                                    ) {
                                         return true
                                     }
                                     addedRanges.push(

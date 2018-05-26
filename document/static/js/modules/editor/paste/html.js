@@ -2,13 +2,15 @@ import {GeneralPasteHandler} from "./general"
 import {MicrosoftWordPasteHandler} from "./microsoft_word"
 import {LibreOfficeWriterPasteHandler} from "./libreoffice_writer"
 import {GoogleDocsPasteHandler} from "./google_docs"
+import {FidusWriterPasteHandler} from "./fidus_writer"
 
 // Some pasted HTML will need slight conversions to work correctly.
 // We try to sniff whether paste comes from MsWord, LibreOffice or Google Docs
 // and use specialized handlers for these and a general handler everything else.
 
 export class HTMLPaste {
-    constructor(inHTML, pmType) {
+    constructor(editor, inHTML, pmType) {
+        this.editor = editor
         this.inHTML = inHTML
         this.pmType = pmType
     }
@@ -16,7 +18,7 @@ export class HTMLPaste {
     getOutput() {
         this.parseHTML()
         this.selectHandler()
-        this.handlerInstance = new this.handler(this.htmlDoc, this.pmType)
+        this.handlerInstance = new this.handler(this.editor, this.htmlDoc, this.pmType)
         this.outHTML = this.handlerInstance.getOutput()
         return this.outHTML
     }
@@ -35,6 +37,8 @@ export class HTMLPaste {
         // For Google Docs
         let body = this.htmlDoc.getElementsByTagName('body')[0]
         let firstB = body.querySelector('b')
+        // For Fidus Writer
+        let pmSlice = this.htmlDoc.querySelector('[data-pm-slice]')
         if (this.htmlDoc.hasAttribute('xmlns:w') &&
             this.htmlDoc.getAttribute('xmlns:w') === "urn:schemas-microsoft-com:office:word"
         ) {
@@ -43,6 +47,8 @@ export class HTMLPaste {
             this.handler = LibreOfficeWriterPasteHandler
         } else if (firstB && firstB.id.startsWith("docs-internal-guid")) {
             this.handler = GoogleDocsPasteHandler
+        } else if (pmSlice) {
+            this.handler = FidusWriterPasteHandler
         } else {
             this.handler = GeneralPasteHandler
         }

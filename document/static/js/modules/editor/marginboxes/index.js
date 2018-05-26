@@ -168,10 +168,15 @@ export class ModMarginboxes {
         let commentIds = node.isInline || node.isLeaf ? this.editor.mod.comments.interactions.findCommentIds(node) : []
 
         let nodeTracks = node.attrs.track ?
-            node.attrs.track.map(track => ({type: track.type, data: {user: track.user, username: track.username, date: track.date}})) :
+            node.attrs.track.map(track => {
+                let nodeTrack = {type: track.type, data: {user: track.user, username: track.username, date: track.date}}
+                if (track.type==='block_change') {
+                    nodeTrack.data.before = track.before
+                }
+                return nodeTrack
+            }) :
             node.marks.filter(mark =>
-                mark.type.name==='deletion' ||
-                mark.type.name==='format_change' ||
+                ['deletion', 'format_change'].includes(mark.type.name) ||
                 (mark.type.name==='insertion' && !mark.attrs.approved)
             ).map(mark => ({type: mark.type.name, data: mark.attrs}))
 
@@ -188,19 +193,25 @@ export class ModMarginboxes {
                             (node.type.name === 'paragraph' && lastNode.type.name === 'list_item' && lastTrack.type === 'insertion') // Don't show first paragraphs in list items.
                         ) &&
                         (
-                            track.type !== 'format_change' ||
+                            ['insertion', 'deletion'].includes(track.type) ||
                             (
+                                track.type === 'format_change' &&
                                 track.data.before.length===lastTrack.data.before.length &&
                                 track.data.after.length===lastTrack.data.after.length &&
                                 track.data.before.every(markName => lastTrack.data.before.includes(markName)) &&
                                 track.data.after.every(markName => lastTrack.data.after.includes(markName))
+                            ) ||
+                            (
+                                track.type === 'block_change' &&
+                                track.data.before.type===lastTrack.data.before.type &&
+                                track.data.before.attrs.level===lastTrack.data.before.attrs.level
                             )
                         )
                 )
             ) :
             nodeTracks
         tracks.forEach(track => {
-            marginBoxes.push(Object.assign({nodeType: node.isInline ? 'text' : node.type.name, pos, view}, track))
+            marginBoxes.push(Object.assign({node, pos, view}, track))
             referrers.push(refPos)
         })
 

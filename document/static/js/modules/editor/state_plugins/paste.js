@@ -35,7 +35,7 @@ export let pastePlugin = function(options) {
                     return inHTML
                 }
                 let target = options.editor.currentView === options.editor.view ? 'main' : 'footnotes'
-                let ph = new HTMLPaste(inHTML, target)
+                let ph = new HTMLPaste(options.editor, inHTML, target)
                 return ph.getOutput()
             },
             transformPastedText: inText => {

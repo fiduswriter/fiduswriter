@@ -191,7 +191,7 @@ export let trackPlugin = function(options) {
                     } else {
                         node.marks.forEach(mark => {
                             if (
-                                ['deletion', 'insertion'].includes(mark.type.name) &&
+                                ['deletion', 'insertion', 'format_change'].includes(mark.type.name) &&
                                 !userIds.includes(mark.attrs.user) && mark.attrs.user !== 0
                             ) {
                                 userIds.push(mark.attrs.user)
@@ -306,9 +306,11 @@ export let trackPlugin = function(options) {
                                         pos < step.from ||
                                         // user has created element. so (s)he is allowed to delete it again.
                                         (node.attrs.track && node.attrs.track.find(track => track.user===user && track.type==='insertion')) ||
-                                        ['table_row', 'table_cell', 'bullet_list', 'ordered_list'].includes(node.type.name)
+                                        ['bullet_list', 'ordered_list'].includes(node.type.name)
                                     ) {
                                         return true
+                                    } else if (['table_row', 'table_cell'].includes(node.type.name)) {
+                                        return false
                                     }
                                     addedRanges.push(
                                         {from: pos, to: pos + 1}
@@ -507,6 +509,8 @@ export let trackPlugin = function(options) {
                         (node, pos) => {
                             if (pos < delRange.from) {
                                 return true
+                            } else if (['table_row', 'table_cell'].includes(node.type.name)) {
+                                return false
                             } else if (node.isInline) {
                                 let oldDeletionMark = node.marks.find(mark => mark.type.name==='deletion')
                                 if (oldDeletionMark) {
@@ -515,7 +519,7 @@ export let trackPlugin = function(options) {
                             } else if (
                                 node.attrs.track &&
                                 !node.attrs.track.find(trackAttr => trackAttr.type === 'deletion') &&
-                                !['table_row', 'table_cell', 'bullet_list', 'ordered_list'].includes(node.type.name)
+                                !['bullet_list', 'ordered_list'].includes(node.type.name)
                             ) {
                                 let track = node.attrs.track.slice()
                                 track.push({type: 'deletion', user, username, date: date1})
@@ -572,10 +576,13 @@ export let trackPlugin = function(options) {
                 }
                 addedRanges = [] // We reset the added ranges.
                 trs.forEach(tr => { // We insert all the same steps, but with "from"/"to" both set to "to" in order not to delete content. Mapped as needed.
+                    let deleteTr = ['deleteContentBackward', 'deleteContentBackward'].includes(tr.getMeta('inputType')) ? true : false
                     tr.steps.forEach((step, index) => {
                         let stepMap
                         if (step instanceof ReplaceStep) {
-                            if (step.slice.size) {
+                            // We only insert content if this is not directly a tr for deletion. This is because tables delete rows by deleting the contents of
+                            // each cell and replacing it with an empty paragraph.
+                            if (step.slice.size && !deleteTr) {
                                 let newStep = new ReplaceStep(
                                     map.map(step.to),
                                     map.map(step.to),
@@ -686,9 +693,9 @@ export let trackPlugin = function(options) {
                     addedRange.from,
                     addedRange.to,
                     (node, pos) => {
-                        if (pos < addedRange.from || ['table_row', 'table_cell', 'bullet_list', 'ordered_list'].includes(node.type.name)) {
+                        if (pos < addedRange.from || ['bullet_list', 'ordered_list'].includes(node.type.name)) {
                             return true
-                        } else if (node.isInline) {
+                        } else if (node.isInline || ['table_row', 'table_cell'].includes(node.type.name)) {
                             return false
                         }
                         if (node.attrs.track) {
@@ -697,6 +704,10 @@ export let trackPlugin = function(options) {
                                 track.push({type: 'insertion', user, username, date: date1})
                             }
                             newTr.setNodeMarkup(pos, null, Object.assign({}, node.attrs, {track}), node.marks)
+                        }
+                        if (node.type.name==='table') {
+                            // A table was inserted. We don't add track marks to elements inside of it.
+                            return false
                         }
                     }
                 )

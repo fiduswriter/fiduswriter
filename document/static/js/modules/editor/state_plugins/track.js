@@ -462,7 +462,7 @@ export let trackPlugin = function(options) {
 
             replacedWrappings.forEach(wrap => {
                 let {oldNode, newNode, pos} = wrap,
-                    track = oldNode.attrs.track,
+                    track = oldNode.attrs.track.slice(),
                     blockTrack = track.find(track => track.type==="block_change")
 
                 if (blockTrack) {
@@ -682,24 +682,24 @@ export let trackPlugin = function(options) {
                     newState.schema.marks.deletion
                 )
                 // Add insertion mark also to block nodes (figures, text blocks) but not table cells/rows and lists.
-                if (!approved) {
-                    newTr.doc.nodesBetween(
-                        addedRange.from,
-                        addedRange.to,
-                        (node, pos) => {
-                            if (pos < addedRange.from || ['table_row', 'table_cell', 'bullet_list', 'ordered_list'].includes(node.type.name)) {
-                                return true
-                            } else if (node.isInline) {
-                                return false
-                            }
-                            if (node.attrs.track) {
-                                let track = node.attrs.track.filter(trackAttr => trackAttr.type !== 'insertion')
-                                track.push({type: 'insertion', user, username, date: date1})
-                                newTr.setNodeMarkup(pos, null, Object.assign({}, node.attrs, {track}), node.marks)
-                            }
+                newTr.doc.nodesBetween(
+                    addedRange.from,
+                    addedRange.to,
+                    (node, pos) => {
+                        if (pos < addedRange.from || ['table_row', 'table_cell', 'bullet_list', 'ordered_list'].includes(node.type.name)) {
+                            return true
+                        } else if (node.isInline) {
+                            return false
                         }
-                    )
-                }
+                        if (node.attrs.track) {
+                            let track = []
+                            if (!approved) {
+                                track.push({type: 'insertion', user, username, date: date1})
+                            }
+                            newTr.setNodeMarkup(pos, null, Object.assign({}, node.attrs, {track}), node.marks)
+                        }
+                    }
+                )
             })
             markedDeletionRanges.forEach(range => {
                 newTr.maybeStep(

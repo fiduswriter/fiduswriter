@@ -291,7 +291,7 @@ export class Editor {
 
         // Set initial confirmed doc
         this.docInfo.confirmedDoc = this.view.state.doc
-        this.docInfo.confirmedJson = JSON.parse(JSON.stringify(doc.contents))
+        this.docInfo.confirmedJson = doc.contents
 
         // Render footnotes based on main doc
         this.mod.footnotes.fnEditor.renderAllFootnotes()

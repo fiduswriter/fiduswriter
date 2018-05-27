@@ -34,17 +34,17 @@ export class ModBibliographyDB {
     saveBibEntries(tmpDB, isNew) {
         let idTranslations = []
         Object.keys(tmpDB).forEach(bibKey => {
-            let reference = tmpDB[bibKey]
+            let reference = tmpDB[bibKey], bibId = parseInt(bibKey)
             delete reference.entry_cat
             let oldRef = this.findReference(reference)
             if (oldRef) {
-                idTranslations.push([bibKey, oldRef])
+                idTranslations.push([bibId, oldRef])
             } else if (isNew) {
-                let id = this.addReference(reference, bibKey)
-                idTranslations.push([bibKey, id])
+                let id = this.addReference(reference, bibId)
+                idTranslations.push([bibId, id])
             } else {
-                this.updateReference(bibKey, reference)
-                idTranslations.push([bibKey, bibKey])
+                this.updateReference(bibId, reference)
+                idTranslations.push([bibId, bibId])
             }
             // We don't use entry_cats in the document internal bibDB, so just
             // to make sure, we remove it.

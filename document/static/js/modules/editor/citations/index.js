@@ -63,7 +63,7 @@ export class ModCitations {
     bindBibliographyClicks() {
         document.querySelectorAll('div.csl-entry').forEach((el, index) => {
             el.addEventListener('click', event => {
-                let eID = this.citRenderer.fm.bibliography[0].entry_ids[index],
+                let eID = parseInt(this.citRenderer.fm.bibliography[0].entry_ids[index][0]),
                     form = new BibEntryForm(this.editor.mod.db.bibDB, eID)
                 form.init()
             })

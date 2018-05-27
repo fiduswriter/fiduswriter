@@ -13,7 +13,20 @@ function parseReferences(str) {
    if (!Array.isArray(references)) {
        return []
    }
-   return references.filter(ref => ref.hasOwnProperty('id')) // ensure there is an id.
+   return references.filter(
+       ref => ref.hasOwnProperty('id') // ensure there is an id.
+   ).map(
+       ref => {
+           mRef = {id:ref.id}
+           if (ref.locator) {
+               mRef.locator = ref.locator
+           }
+           if (ref.prefix) {
+               mRef.prefix = ref.prefix
+           }
+           return mRef
+       }
+   )
 }
 
 export let citation = {

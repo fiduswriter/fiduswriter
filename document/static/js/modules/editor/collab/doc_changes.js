@@ -279,7 +279,7 @@ export class ModCollabDocChanges {
         this.mod.editor.docInfo.confirmedDoc = docNumber === tr.docs.length ?
             tr.doc :
             tr.docs[docNumber]
-        this.mod.editor.docInfo.confirmedJson = this.mod.editor.docInfo.confirmedDoc.firstChild.toJSON()
+        this.mod.editor.docInfo.confirmedJson = JSON.parse(JSON.stringify(this.mod.editor.docInfo.confirmedDoc.firstChild.toJSON()))
     }
 
     confirmDiff(request_id) {
@@ -303,7 +303,7 @@ export class ModCollabDocChanges {
         }
 
         this.mod.editor.docInfo.confirmedDoc = unconfirmedDiffs["doc"]
-        this.mod.editor.docInfo.confirmedJson = this.mod.editor.docInfo.confirmedDoc.firstChild.toJSON()
+        this.mod.editor.docInfo.confirmedJson = JSON.parse(JSON.stringify(this.mod.editor.docInfo.confirmedDoc.firstChild.toJSON()))
 
         let sentFnSteps = unconfirmedDiffs["fs"] // footnote steps
         if (sentFnSteps) {

@@ -1,4 +1,4 @@
-import {addAlert} from "../../common"
+import {addAlert, makeWorker} from "../../common"
 
 const ERROR_MSG = {
     'no_entries': gettext('No bibliography entries could be found in import file.'),
@@ -21,7 +21,7 @@ export class BibLatexImporter {
     }
 
     init() {
-        let importWorker = new Worker(`${$StaticUrls.transpile.base$}biblatex_import_worker.js?v=${$StaticUrls.transpile.version$}`);
+        let importWorker = makeWorker(`${$StaticUrls.transpile.base$}biblatex_import_worker.js?v=${$StaticUrls.transpile.version$}`);
         importWorker.onmessage = message => this.onMessage(message.data)
         importWorker.postMessage({fileContents: this.fileContents, csrfToken: this.csrfToken})
     }

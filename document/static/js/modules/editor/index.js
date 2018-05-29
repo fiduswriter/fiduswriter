@@ -264,6 +264,7 @@ export class Editor {
         this.user.bibDB.getDB()
         this.user.imageDB = new ImageDB()
         this.user.imageDB.getDB()
+        this.docInfo.confirmedJson = JSON.parse(JSON.stringify(doc.contents))
 
         let stateDoc
         if (doc.contents.type) {
@@ -291,7 +292,6 @@ export class Editor {
 
         // Set initial confirmed doc
         this.docInfo.confirmedDoc = this.view.state.doc
-        this.docInfo.confirmedJson = doc.contents
 
         // Render footnotes based on main doc
         this.mod.footnotes.fnEditor.renderAllFootnotes()

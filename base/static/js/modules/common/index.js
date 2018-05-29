@@ -32,3 +32,8 @@ export {
     Dialog
 }
 from "./dialog"
+
+export {
+    makeWorker
+}
+from "./worker"

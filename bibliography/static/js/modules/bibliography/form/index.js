@@ -42,7 +42,7 @@ export class BibEntryForm {
     }
 
     init() {
-        if (this.itemId) {
+        if (this.itemId !== false) {
             this.dialogHeader = gettext('Edit Source')
             let bibEntry = this.bibDB.db[this.itemId]
             this.currentValues = JSON.parse(JSON.stringify(bibEntry)) // copy current values
@@ -270,14 +270,15 @@ export class BibEntryForm {
     }
 
     save() {
-        let isNew = this.itemId===false ? true : false
-        let itemId = this.itemId===false ? 0 : this.itemId
-        let saveObj = {}
-        saveObj[itemId] = this.value
+        let isNew = this.itemId===false ? true : false,
+            itemId = this.itemId===false ? 0 : this.itemId,
+            item = this.value
 
-        if (saveObj[itemId].entry_key==='FidusWriter') {
-            this.createEntryKey(saveObj[itemId])
+        if (item.entry_key==='FidusWriter') {
+            this.createEntryKey(item)
         }
+        let saveObj = {}
+        saveObj[itemId] = item
         return this.bibDB.saveBibEntries(
             saveObj,
             isNew

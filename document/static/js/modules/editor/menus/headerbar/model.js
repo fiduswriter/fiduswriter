@@ -501,42 +501,42 @@ export let headerbarModel = {
                     order: 1
                 },
                 {
-                    title: gettext('Add row above'),
+                    title: editor => `${gettext('Add row above')}${editor.view.state.doc.firstChild.attrs.tracked ? ` (${gettext('Not tracked')})` : ''}`,
                     type: 'action',
                     tooltip: gettext('Add a row above the current row'),
                     order: 2,
                     action: editor => {
-                        addRowBefore(editor.currentView.state, editor.currentView.dispatch)
+                        addRowBefore(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('untracked', true)))
                     },
                     disabled: editor => !isInTable(editor.currentView.state)
                 },
                 {
-                    title: gettext('Add row below'),
+                    title: editor => `${gettext('Add row below')}${editor.view.state.doc.firstChild.attrs.tracked ? ` (${gettext('Not tracked')})` : ''}`,
                     type: 'action',
                     tooltip: gettext('Add a row below the current row'),
                     order: 3,
                     action: editor => {
-                        addRowAfter(editor.currentView.state, editor.currentView.dispatch)
+                        addRowAfter(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('untracked', true)))
                     },
                     disabled: editor => !isInTable(editor.currentView.state)
                 },
                 {
-                    title: gettext('Add column left'),
+                    title: editor => `${gettext('Add column left')}${editor.view.state.doc.firstChild.attrs.tracked ? ` (${gettext('Not tracked')})` : ''}`,,
                     type: 'action',
                     tooltip: gettext('Add a column to the left of the current column'),
                     order: 4,
                     action: editor => {
-                        addColumnBefore(editor.currentView.state, editor.currentView.dispatch)
+                        addColumnBefore(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('untracked', true)))
                     },
                     disabled: editor => !isInTable(editor.currentView.state)
                 },
                 {
-                    title: gettext('Add column right'),
+                    title: editor => `${gettext('Add column right')}${editor.view.state.doc.firstChild.attrs.tracked ? ` (${gettext('Not tracked')})` : ''}`,,
                     type: 'action',
                     tooltip: gettext('Add a column to the right of the current column'),
                     order: 5,
                     action: editor => {
-                        addColumnAfter(editor.currentView.state, editor.currentView.dispatch)
+                        addColumnAfter(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('untracked', true)))
                     },
                     disabled: editor => !isInTable(editor.currentView.state)
                 },
@@ -545,22 +545,22 @@ export let headerbarModel = {
                     order: 6
                 },
                 {
-                    title: gettext('Delete row'),
+                    title: editor => `${gettext('Delete row')}${editor.view.state.doc.firstChild.attrs.tracked ? ` (${gettext('Not tracked')})` : ''}`,,
                     type: 'action',
                     tooltip: gettext('Delete current row'),
                     order: 7,
                     action: editor => {
-                        deleteRow(editor.currentView.state, editor.currentView.dispatch)
+                        deleteRow(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('untracked', true)))
                     },
                     disabled: editor => !isInTable(editor.currentView.state)
                 },
                 {
-                    title: gettext('Delete column'),
+                    title: editor => `${gettext('Delete column')}${editor.view.state.doc.firstChild.attrs.tracked ? ` (${gettext('Not tracked')})` : ''}`,,
                     type: 'action',
                     tooltip: gettext('Delete current column'),
                     order: 8,
                     action: editor => {
-                        deleteColumn(editor.currentView.state, editor.currentView.dispatch)
+                        deleteColumn(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('untracked', true)))
                     },
                     disabled: editor => !isInTable(editor.currentView.state)
                 },
@@ -568,12 +568,12 @@ export let headerbarModel = {
                     type: 'separator'
                 },
                 {
-                    title: gettext('Merge cells'),
+                    title: editor => `${gettext('Merge cells')}${editor.view.state.doc.firstChild.attrs.tracked ? ` (${gettext('Not tracked')})` : ''}`,,
                     type: 'action',
                     tooltip: gettext('Merge selected cells'),
                     order: 9,
                     action: editor => {
-                        mergeCells(editor.currentView.state, editor.currentView.dispatch)
+                        mergeCells(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('untracked', true)))
                     },
                     disabled: editor =>
                         !isInTable(editor.currentView.state) ||
@@ -582,12 +582,12 @@ export let headerbarModel = {
                         editor.currentView.state.selection.$anchorCell.pos
                 },
                 {
-                    title: gettext('Split cell'),
+                    title: editor => `${gettext('Split cells')}${editor.view.state.doc.firstChild.attrs.tracked ? ` (${gettext('Not tracked')})` : ''}`,,
                     type: 'action',
                     tooltip: gettext('Split selected cell'),
                     order: 10,
                     action: editor => {
-                        splitCell(editor.currentView.state, editor.currentView.dispatch)
+                        splitCell(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('untracked', true)))
                     },
                     disabled: editor =>
                         !isInTable(editor.currentView.state) ||
@@ -604,7 +604,7 @@ export let headerbarModel = {
                     order: 11,
                 },
                 {
-                    title: gettext('Toggle header row'),
+                    title: editor => `${gettext('Toggle header row')}${editor.view.state.doc.firstChild.attrs.tracked ? ` (${gettext('Not tracked')})` : ''}`,,
                     type: 'action',
                     tooltip: gettext('Toggle header-status of currently selected row'),
                     order: 12,
@@ -614,7 +614,7 @@ export let headerbarModel = {
                     disabled: editor => !isInTable(editor.currentView.state)
                 },
                 {
-                    title: gettext('Toggle header column'),
+                    title: editor => `${gettext('Toggle header column')}${editor.view.state.doc.firstChild.attrs.tracked ? ` (${gettext('Not tracked')})` : ''}`,,
                     type: 'action',
                     tooltip: gettext('Toggle header-status of currently selected column'),
                     order: 13,
@@ -624,7 +624,7 @@ export let headerbarModel = {
                     disabled: editor => !isInTable(editor.currentView.state)
                 },
                 {
-                    title: gettext('Toggle header cell'),
+                    title: editor => `${gettext('Toggle header cell')}${editor.view.state.doc.firstChild.attrs.tracked ? ` (${gettext('Not tracked')})` : ''}`,,
                     type: 'action',
                     tooltip: gettext('Toggle header-status of currently selected cells'),
                     order: 14,

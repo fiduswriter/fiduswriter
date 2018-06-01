@@ -4,6 +4,7 @@ import {ReplaceStep, ReplaceAroundStep, AddMarkStep, RemoveMarkStep, Mapping} fr
 import {CellSelection} from "prosemirror-tables"
 
 export function appendTransaction(trs, oldState, newState, editor) {
+
     if (
         trs.every(
             tr =>
@@ -14,6 +15,7 @@ export function appendTransaction(trs, oldState, newState, editor) {
                 tr.getMeta('fromFootnote') ||
                 tr.getMeta('filterFree') ||
                 tr.getMeta('settings') ||
+                tr.getMeta('untracked') ||
                 ['historyUndo', 'historyRedo'].includes(tr.getMeta('inputType'))
         )
     ) {

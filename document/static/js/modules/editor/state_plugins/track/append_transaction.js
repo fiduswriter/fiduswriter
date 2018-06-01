@@ -293,7 +293,7 @@ export function appendTransaction(trs, oldState, newState, editor) {
                         realDeletedRanges.push({from: pos, to: pos + node.nodeSize})
                     } else if (node.attrs.track && node.attrs.track.find(track => track.user===user && track.type==='insertion')) {
                         // user has created element. so (s)he is allowed to delete it again.
-                        realDeletedRanges.push({from: pos, to: pos + 1})
+                        realDeletedRanges.push({from: pos, to: pos + node.nodeSize})
                     } else if(oldDeletionMarks[pos]) {
                         // Readd preexisting deletion mark
                         newTr.maybeStep(
@@ -315,6 +315,7 @@ export function appendTransaction(trs, oldState, newState, editor) {
                     delRange.to,
                     Slice.empty
                 )
+
             if (!newTr.maybeStep(delStep).failed) {
                 let stepMap = delStep.getMap()
                 map.appendMap(stepMap)

@@ -12,7 +12,6 @@ export const selectedChangeFormatSpec = {}
 
 // TODO:
 // - Add tracking of:
-//   * table operations (remove row/column)
 //   * bibliography changes
 // - Tests
 

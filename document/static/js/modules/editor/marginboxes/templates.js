@@ -155,6 +155,7 @@ let ACTIONS = {
     insertion_paragraph: gettext('New paragraph'),
     insertion_heading: gettext('New heading'),
     insertion_text: gettext('Inserted text'),
+    insertion_citation: gettext('Inserted citation'),
     insertion_blockquote: gettext('Wrapped into blockquote'),
     insertion_code_block: gettext('Added code block'),
     insertion_figure: gettext('Inserted figure'),
@@ -163,6 +164,7 @@ let ACTIONS = {
     deletion_paragraph: gettext('Merged paragraph'),
     deletion_heading: gettext('Merged heading'),
     deletion_text: gettext('Deleted text'),
+    deletion_citation: gettext('Deleted citation'),
     deletion_blockquote: gettext('Unwrapped blockquote'),
     deletion_code_block: gettext('Removed code block'),
     deletion_figure: gettext('Deleted figure'),
@@ -210,10 +212,14 @@ let trackTemplate = ({type, data, node, pos, view, active, docInfo}) => {
                     <p class="comment-date">${node.type.name==='text' ? `${gettext('ca.')} ` : ''}${localizeDate(data.date*60000, 'minutes')}</p>
                 </div>
                 ${type==='format_change' ? formatChangeTemplate(data) : type==='block_change' ? blockChangeTemplate(data) : ''}
-                <div class="ui-dialog-buttonset">
-                    <button class="fw-button fw-small fw-green track-accept" data-type="${type}" data-pos="${pos}" data-view="${view}">${gettext('Accept')}</button>
-                    <button class="fw-button fw-small fw-orange track-reject" data-type="${type}" data-pos="${pos}" data-view="${view}">${gettext('Reject')}</button>
-                </div>
+                ${
+                    docInfo.access_rights === 'write' ?
+                    `<div class="ui-dialog-buttonset">
+                        <button class="fw-button fw-small fw-green track-accept" data-type="${type}" data-pos="${pos}" data-view="${view}">${gettext('Accept')}</button>
+                        <button class="fw-button fw-small fw-orange track-reject" data-type="${type}" data-pos="${pos}" data-view="${view}">${gettext('Reject')}</button>
+                    </div>` :
+                    ''
+                }
             </div>
         </div>`
 }

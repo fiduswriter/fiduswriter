@@ -17,7 +17,7 @@ function parseReferences(str) {
        ref => ref.hasOwnProperty('id') // ensure there is an id.
    ).map(
        ref => {
-           mRef = {id:ref.id}
+           let mRef = {id:ref.id}
            if (ref.locator) {
                mRef.locator = ref.locator
            }

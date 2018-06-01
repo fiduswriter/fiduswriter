@@ -10,11 +10,6 @@ export const selectedInsertionSpec = {}
 export const selectedDeletionSpec = {}
 export const selectedChangeFormatSpec = {}
 
-// TODO:
-// - Add tracking of:
-//   * bibliography changes
-// - Tests
-
 
 export function trackPlugin(options) {
     return new Plugin({

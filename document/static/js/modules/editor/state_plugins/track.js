@@ -2,6 +2,7 @@ import {Plugin, PluginKey, TextSelection} from "prosemirror-state"
 import {Slice} from "prosemirror-model"
 import {ReplaceStep, ReplaceAroundStep, AddMarkStep, RemoveMarkStep, StepMap, Mapping} from "prosemirror-transform"
 import {Decoration, DecorationSet} from "prosemirror-view"
+import {CellSelection} from "prosemirror-tables"
 
 const key = new PluginKey('track')
 const selectedInsertionSpec = {}
@@ -288,6 +289,9 @@ export let trackPlugin = function(options) {
                 replacedWrappings = [],
                 user = options.editor.user.id, // current user
                 approved = !options.editor.view.state.doc.firstChild.attrs.tracked && options.editor.docInfo.access_rights !== 'write-tracked'
+
+            // We go through all trs a first time. The point is to collect arrays of addedRanges , markedDeletionRanges, formatChangeRanges and replacedWrappings.
+            // These are all mapped through to AFTEr the application of the tr.
             trs.forEach(tr => {
                 tr.steps.forEach((step, index) => {
                     if (step instanceof ReplaceStep) {
@@ -501,13 +505,18 @@ export let trackPlugin = function(options) {
                 let realDeletedRanges = [], // ranges of content by the same user. Should not be marked as gone, but really be removed
                     deletionMark = newState.schema.marks.deletion.create({user, username, date: date10})
                 deletedRanges.forEach(delRange => {
-                    let oldDeletionMarks = {}
+                    let oldDeletionMarks = {},
+                        firstTableCellChild = false
                     // Add deletion mark to block nodes (figures, text blocks) and find already deleted inline nodes
                     newTr.doc.nodesBetween(
                         delRange.from,
                         delRange.to,
                         (node, pos) => {
-                            if (pos < delRange.from) {
+                            if (pos < delRange.from && node.type.name==='table_cell') {
+                                firstTableCellChild = true
+                                return true
+                            } else if (pos < delRange.from || firstTableCellChild) {
+                                firstTableCellChild = false
                                 return true
                             } else if (['table_row', 'table_cell'].includes(node.type.name)) {
                                 return false
@@ -535,13 +544,11 @@ export let trackPlugin = function(options) {
                             deletionMark
                         )
                     )
+
                     newTr.doc.nodesBetween(
                         delRange.from,
                         delRange.to,
                         (node, pos, parent, index) => {
-                            if (pos < delRange.from) {
-                                return true
-                            }
                             if (node.marks && node.marks.find(mark => mark.type.name==='insertion' && mark.attrs.user===user && !mark.attrs.approved)) {
                                 realDeletedRanges.push({from: pos, to: pos + node.nodeSize})
                             } else if (node.attrs.track && node.attrs.track.find(track => track.user===user && track.type==='insertion')) {
@@ -576,13 +583,14 @@ export let trackPlugin = function(options) {
                 }
                 addedRanges = [] // We reset the added ranges.
                 trs.forEach(tr => { // We insert all the same steps, but with "from"/"to" both set to "to" in order not to delete content. Mapped as needed.
-                    let deleteTr = ['deleteContentBackward', 'deleteContentBackward'].includes(tr.getMeta('inputType')) ? true : false
+                    let deleteTr = ['deleteContentBackward', 'deleteContentBackward'].includes(tr.getMeta('inputType')) ? true : false,
+                    cellDeleteTr = deleteTr && (oldState.selection instanceof CellSelection)
                     tr.steps.forEach((step, index) => {
                         let stepMap
                         if (step instanceof ReplaceStep) {
-                            // We only insert content if this is not directly a tr for deletion. This is because tables delete rows by deleting the contents of
-                            // each cell and replacing it with an empty paragraph.
-                            if (step.slice.size && !deleteTr) {
+                            // We only insert content if this is not directly a tr for cell deletion. This is because tables delete rows by deleting the
+                            // contents of each cell and replacing it with an empty paragraph.
+                            if (step.slice.size && !cellDeleteTr) {
                                 let newStep = new ReplaceStep(
                                     map.map(step.to),
                                     map.map(step.to),

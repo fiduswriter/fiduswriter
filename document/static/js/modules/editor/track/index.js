@@ -9,22 +9,39 @@ import {findTarget} from "../../common"
 import {setSelectedChanges, deactivateAllSelectedChanges} from "../state_plugins"
 
 
-function deleteNode(tr, node, nodePos, map) { // Delete a node either because a deletion has been accepted or an insertion rejected.
-    let newNodePos = map.map(nodePos), delStep
+function deleteNode(tr, node, nodePos, map, accept) { // Delete a node either because a deletion has been accepted or an insertion rejected.
+    let newNodePos = map.map(nodePos), delStep, trackType = accept ? 'deletion' : 'insertion'
     if (node.isTextblock) {
         let selectionBefore = Selection.findFrom(tr.doc.resolve(newNodePos), -1)
         if (selectionBefore instanceof TextSelection) {
-            delStep = replaceStep(
-                tr.doc,
-                selectionBefore.$anchor.pos,
-                newNodePos + 1
-            )
+            let start = selectionBefore.$anchor.pos,
+                end = newNodePos + 1,
+                allowMerge = true
+            // Make sure there is no isolating nodes inbetween.
+            tr.doc.nodesBetween(start, end, (node, pos) => {
+                if (pos < start) {
+                    return true
+                }
+                if (node.type.spec.isolating) {
+                    allowMerge = false
+                }
+            })
+            if (allowMerge) {
+                delStep = replaceStep(
+                    tr.doc,
+                    start,
+                    end
+                )
+            } else {
+                let track = node.attrs.track.filter(track => track.type !== trackType)
+                tr.setNodeMarkup(newNodePos, null, Object.assign({}, node.attrs, {track}), node.marks)
+            }
         } else {
             // There is a block node right in front of it that cannot be removed. Give up. (table/figure/etc.)
-            let track = node.attrs.track.filter(track => track.type !== 'insertion')
+            let track = node.attrs.track.filter(track => track.type !== trackType)
             tr.setNodeMarkup(newNodePos, null, Object.assign({}, node.attrs, {track}), node.marks)
         }
-    } else if (node.isLeaf) {
+    } else if (node.isLeaf || node.type === tr.doc.type.schema.nodes['table']) {
         delStep = new ReplaceStep(
             newNodePos,
             map.map(nodePos + node.nodeSize),
@@ -63,7 +80,7 @@ function deleteNode(tr, node, nodePos, map) { // Delete a node either because a 
 
 export function acceptAllNoInsertions(doc) {
     let tr = new Transform(doc), map = new Mapping()
-    doc.descendants((node, pos, parent) => {
+    doc.descendants((node, pos, parent, index) => {
         let deletionTrack = node.attrs.track ?
                 node.attrs.track.find(track => track.type==='deletion') :
                 node.marks.find(mark => mark.type.name==='deletion'),
@@ -76,7 +93,7 @@ export function acceptAllNoInsertions(doc) {
                 false
 
         if (deletionTrack) {
-            deleteNode(tr, node, pos, map)
+            deleteNode(tr, node, pos, map, true)
         } else if (insertionTrack) {
             if (node.isInline) {
                 tr.step(
@@ -154,7 +171,7 @@ export class ModTrack {
     reject(type, pos, view) {
         let tr = view.state.tr.setMeta('track', true), map = new Mapping(), reachedEnd = false
         let trackMark = view.state.doc.nodeAt(pos).marks.find(mark => mark.type.name===type)
-        view.state.doc.nodesBetween(pos, view.state.doc.firstChild.nodeSize, (node, nodePos) => {
+        view.state.doc.nodesBetween(pos, view.state.doc.firstChild.nodeSize, (node, nodePos, parent, index) => {
             if (nodePos < pos) {
                 return true
             }
@@ -168,7 +185,7 @@ export class ModTrack {
                 return false
             }
             if (type==='insertion') {
-                deleteNode(tr, node, nodePos, map)
+                deleteNode(tr, node, nodePos, map, false)
             } else if (type==='deletion') {
                 if (node.attrs.track) {
                     let track = node.attrs.track.filter(track => track.type !== 'deletion')
@@ -235,13 +252,13 @@ export class ModTrack {
 
     rejectAllForView(view) {
         let tr = view.state.tr.setMeta('track', true), map = new Mapping()
-        view.state.doc.descendants((node, pos, parent) => {
+        view.state.doc.descendants((node, pos, parent, index) => {
             let deletedNode = false
             if (
                 node.attrs.track && node.attrs.track.find(track => track.type==='insertion') ||
                 node.marks && node.marks.find(mark => mark.type.name==='insertion' && !mark.attrs.approved)
             ) {
-                deleteNode(tr, node, pos, map)
+                deleteNode(tr, node, pos, map, false)
                 deletedNode = true
             } else if (node.attrs.track && node.attrs.track.find(track => track.type==='deletion')) {
                 let track = node.attrs.track.filter(track=> track.type !== 'deletion')
@@ -328,7 +345,7 @@ export class ModTrack {
             }
 
             if (type==='deletion') {
-                deleteNode(tr, node, nodePos, map)
+                deleteNode(tr, node, nodePos, map, true)
             } else if (type==='insertion') {
                 if (node.attrs.track) {
                     let track = node.attrs.track.filter(track => track.type !== 'insertion')
@@ -378,13 +395,13 @@ export class ModTrack {
 
     acceptAllForView(view) {
         let tr = view.state.tr.setMeta('track', true), map = new Mapping()
-        view.state.doc.descendants((node, pos, parent) => {
+        view.state.doc.descendants((node, pos, parent, index) => {
             let deletedNode = false
             if (
                 node.attrs.track && node.attrs.track.find(track => track.type==='deletion') ||
                 node.marks && node.marks.find(mark => mark.type.name==='deletion')
             ) {
-                deleteNode(tr, node, pos, map)
+                deleteNode(tr, node, pos, map, true)
                 deletedNode = true
             } else if (node.attrs.track && node.attrs.track.find(track => track.type==='insertion')) {
                 let track = node.attrs.track.filter(track => track.type !== 'insertion')

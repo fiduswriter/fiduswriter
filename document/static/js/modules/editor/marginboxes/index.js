@@ -41,12 +41,13 @@ export class ModMarginboxes {
             fnIndex = 0,
             fnPosCount = 0,
             selectedChanges = getSelectedChanges(this.editor.currentView.state)
-        this.activeCommentStyle = '',
+        this.activeCommentStyle = ''
 
         this.editor.view.state.doc.descendants(
             (node, pos) => {
                 lastNodeTracks = this.getMarginBoxes(node, pos, pos, lastNode, lastNodeTracks, 'main', marginBoxes, referrers, selectedChanges)
                 lastNode = node
+
                 if (node.type.name==='footnote') {
                     let lastFnNode = this.editor.mod.footnotes.fnEditor.view.state.doc,
                         footnote = lastFnNode.childCount > fnIndex ? lastFnNode.child(fnIndex) : false,

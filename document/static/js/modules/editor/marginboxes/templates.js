@@ -106,7 +106,7 @@ let commentTemplate = ({comment, view, active, activeCommentAnswerId, user, docI
     ${
         comment.comment.length === 0 ?
         firstCommentTemplate({comment, author}) :
-        singleCommentTemplate({comment, active: (comment.id===activeCommentId), user, author})
+        singleCommentTemplate({comment, active, user, author})
     }
     ${
         comment.answers ?
@@ -115,7 +115,7 @@ let commentTemplate = ({comment, view, active, activeCommentAnswerId, user, docI
                 answer,
                 author: answer.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === answer.user),
                 commentId: comment.id,
-                active: (comment.id===activeCommentId),
+                active,
                 activeCommentAnswerId,
                 user,
                 docInfo
@@ -124,7 +124,7 @@ let commentTemplate = ({comment, view, active, activeCommentAnswerId, user, docI
         ''
     }
     ${
-        comment.id===activeCommentId && 0 < comment.comment.length ?
+        active && 0 < comment.comment.length ?
         `<div class="comment-answer">
             <textarea class="comment-answer-text" rows="3"></textarea>
             <div class="comment-answer-btns">
@@ -139,7 +139,7 @@ let commentTemplate = ({comment, view, active, activeCommentAnswerId, user, docI
         ''
     }
     ${
-        comment.id===activeCommentId && (
+        active && (
             comment.user===user.id ||
             docInfo.access_rights==="write"
         ) ?

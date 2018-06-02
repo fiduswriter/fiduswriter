@@ -76,7 +76,11 @@ export class FormatCitations {
 
     reloadCitations(missingItems) {
         // Not all citations could be found in the database.
-        // Reload the database, but don't cycle if no new matches are found.
+        // Reload the database if possible, but don't cycle if no new matches are found.
+        if (!this.bibDB.getDB) {
+            return Promise.resolve()
+        }
+
         return this.bibDB.getDB().then(() => {
             if (missingItems.some(item => this.bibDB.db.hasOwnProperty(item))) {
                 return this.init()

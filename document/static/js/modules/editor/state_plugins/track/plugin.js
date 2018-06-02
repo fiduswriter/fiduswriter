@@ -9,7 +9,7 @@ export const key = new PluginKey('track')
 export const selectedInsertionSpec = {}
 export const selectedDeletionSpec = {}
 export const selectedChangeFormatSpec = {}
-
+export const selectedChangeBlockSpec = {}
 
 export function trackPlugin(options) {
     return new Plugin({

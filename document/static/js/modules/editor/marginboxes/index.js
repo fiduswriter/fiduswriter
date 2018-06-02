@@ -34,12 +34,18 @@ export class ModMarginboxes {
         // Handle the layout of the comments on the screen.
         // DOM write phase
 
-        let marginBoxes = [], referrers = [], lastNodeTracks = [], lastNode = this.editor.view.state.doc, fnIndex = 0, fnPosCount = 0
-        this.activeCommentStyle = ''
+        let marginBoxes = [],
+            referrers = [],
+            lastNodeTracks = [],
+            lastNode = this.editor.view.state.doc,
+            fnIndex = 0,
+            fnPosCount = 0,
+            selectedChanges = getSelectedChanges(this.editor.currentView.state)
+        this.activeCommentStyle = '',
 
         this.editor.view.state.doc.descendants(
             (node, pos) => {
-                lastNodeTracks = this.getMarginBoxes(node, pos, pos, lastNode, lastNodeTracks, 'main', marginBoxes, referrers)
+                lastNodeTracks = this.getMarginBoxes(node, pos, pos, lastNode, lastNodeTracks, 'main', marginBoxes, referrers, selectedChanges)
                 lastNode = node
                 if (node.type.name==='footnote') {
                     let lastFnNode = this.editor.mod.footnotes.fnEditor.view.state.doc,
@@ -55,7 +61,7 @@ export class ModMarginboxes {
                             if (fnPos < fnPosCount) {
                                 return false
                             }
-                            lastFnNodeTracks = this.getMarginBoxes(fnNode, fnPos, pos, lastFnNode, lastFnNodeTracks, 'footnote', marginBoxes, referrers)
+                            lastFnNodeTracks = this.getMarginBoxes(fnNode, fnPos, pos, lastFnNode, lastFnNodeTracks, 'footnote', marginBoxes, referrers, selectedChanges)
                             lastFnNode = fnNode
                         }
                     )
@@ -87,7 +93,7 @@ export class ModMarginboxes {
                 while (referrers.length > index && referrers[index] < pos) {
                     index++
                 }
-                marginBoxes.splice(index, 0, {type: 'comment', data: comment, view, pos})
+                marginBoxes.splice(index, 0, {type: 'comment', data: comment, view, pos, active: true})
                 referrers.splice(index, 0, pos)
                 this.activeCommentStyle += '.comments-enabled .active-comment, .comments-enabled .active-comment .comment {background-color: #fffacf !important;}'
             }
@@ -99,8 +105,6 @@ export class ModMarginboxes {
             marginBoxes,
             user: this.editor.user,
             docInfo: this.editor.docInfo,
-            selectedChanges: getSelectedChanges(this.editor.currentView.state),
-            activeCommentId: this.editor.mod.comments.interactions.activeCommentId,
             activeCommentAnswerId: this.editor.mod.comments.interactions.activeCommentAnswerId
         })
         if (document.getElementById('margin-box-container').innerHTML !== marginBoxesHTML) {
@@ -116,31 +120,67 @@ export class ModMarginboxes {
 
             fastdom.measure(() => {
                 // DOM read phase
-                let totalOffset = document.getElementById('margin-box-container').getBoundingClientRect().top + 10,
-                    marginBoxes = document.querySelectorAll('#margin-box-container .margin-box'),
-                    marginBoxesPlacementStyle = ''
-                if (marginBoxes.length !== referrers.length) {
+                let marginBoxesDOM = document.querySelectorAll('#margin-box-container .margin-box')
+                if (marginBoxesDOM.length !== referrers.length || !marginBoxesDOM.length) {
                     // Number of comment boxes and referrers differ.
                     // This isn't right. Abort.
                     resolve()
                     return
                 }
-                referrers.forEach((referrer, index) => {
-                    let marginBox = marginBoxes[index]
-                    if (marginBox.classList.contains("hidden")) {
-                        return
-                    }
-                    let marginBoxCoords = marginBox.getBoundingClientRect(),
-                        marginBoxHeight = marginBoxCoords.height,
-                        referrerTop = this.editor.view.coordsAtPos(referrer).top,
-                        topMargin = 10
+                let marginBoxPlacements = Array.from(marginBoxesDOM).map((mboxDOM, index) => {
+                        let mboxDOMRect = mboxDOM.getBoundingClientRect()
+                        if (mboxDOMRect.height === 0) {
+                            return false
+                        }
+                        return {
+                            height: mboxDOMRect.height,
+                            refPos: this.editor.view.coordsAtPos(referrers[index]).top
+                        }
+                    }).filter(mbox => mbox),
+                    firstActiveIndex = marginBoxes.findIndex(mBox => mBox.active),
+                    firstActiveMboxPlacement = marginBoxPlacements[firstActiveIndex],
+                    activeIndex = firstActiveIndex,
+                    currentPos = 0
 
-                    if (referrerTop > totalOffset) {
-                        topMargin = parseInt(referrerTop - totalOffset)
-                        marginBoxesPlacementStyle += `.margin-box:nth-of-type(${(index+1)}) {margin-top: ${topMargin}px;}\n`
+                while (activeIndex > -1) {
+                    let mboxPlacement = marginBoxPlacements[activeIndex]
+                    if (mboxPlacement===firstActiveMboxPlacement) {
+                        mboxPlacement.pos = mboxPlacement.refPos
+                    } else {
+                        mboxPlacement.pos = Math.min(currentPos - 10 - mboxPlacement.height, mboxPlacement.refPos)
                     }
-                    totalOffset += marginBoxHeight + topMargin
-                })
+                    currentPos = mboxPlacement.pos
+                    activeIndex--
+                }
+                if (firstActiveIndex > -1) {
+                    currentPos = firstActiveMboxPlacement.pos + firstActiveMboxPlacement.height
+                    activeIndex = firstActiveIndex + 1
+                } else {
+                    activeIndex = 0
+                }
+
+                while (activeIndex < marginBoxPlacements.length) {
+                    let mboxPlacement = marginBoxPlacements[activeIndex]
+                    mboxPlacement.pos = Math.max(currentPos + 10, mboxPlacement.refPos)
+                    currentPos = mboxPlacement.pos + mboxPlacement.height
+                    activeIndex++
+                }
+
+                let initialOffset = document.getElementById('margin-box-container').getBoundingClientRect().top + 10,
+                    totalOffset = 0
+
+
+                let marginBoxesPlacementStyle = marginBoxPlacements.map((mboxPlacement, index) => {
+                    let pos = mboxPlacement.pos - initialOffset, css = ''
+                    if (pos !== totalOffset) {
+                        let topMargin = parseInt(pos - totalOffset)
+                        css += `.margin-box:nth-of-type(${(index+1)}) {margin-top: ${topMargin}px;}\n`
+                        totalOffset += topMargin
+                    }
+                    totalOffset += mboxPlacement.height + 10
+                    return css
+                }).join('')
+
                 fastdom.mutate(() => {
                     //DOM write phase
                     if (document.getElementById('margin-box-placement-style').innerHTML != marginBoxesPlacementStyle) {
@@ -164,7 +204,7 @@ export class ModMarginboxes {
         return fnMarker.from
     }
 
-    getMarginBoxes(node, pos, refPos, lastNode, lastNodeTracks, view, marginBoxes, referrers) {
+    getMarginBoxes(node, pos, refPos, lastNode, lastNodeTracks, view, marginBoxes, referrers, selectedChanges) {
         let commentIds = node.isInline || node.isLeaf ? this.editor.mod.comments.interactions.findCommentIds(node) : []
 
         let nodeTracks = node.attrs.track ?
@@ -211,7 +251,12 @@ export class ModMarginboxes {
             ) :
             nodeTracks
         tracks.forEach(track => {
-            marginBoxes.push(Object.assign({node, pos, view}, track))
+            marginBoxes.push(Object.assign({
+                node,
+                pos,
+                view,
+                active: selectedChanges[track.type] && selectedChanges[track.type].from === pos
+            }, track))
             referrers.push(refPos)
         })
 
@@ -228,14 +273,15 @@ export class ModMarginboxes {
                 // comment already placed
                 return
             }
-            if (comment.id === this.editor.mod.comments.interactions.activeCommentId) {
+            let active = comment.id === this.editor.mod.comments.interactions.activeCommentId
+            if (active) {
                 this.activeCommentStyle +=
                     `.comments-enabled .comment[data-id="${comment.id}"], .comments-enabled .comment[data-id="${comment.id}"] .comment {background-color: #fffacf !important;}`
             } else {
                 this.activeCommentStyle +=
                     `.comments-enabled .comment[data-id="${comment.id}"] {background-color: #f2f2f2;}`
             }
-            marginBoxes.push({type: 'comment', data: comment, pos, view})
+            marginBoxes.push({type: 'comment', data: comment, pos, view, active})
             referrers.push(refPos)
         })
 

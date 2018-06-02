@@ -4,7 +4,8 @@ import {
     key,
     selectedInsertionSpec,
     selectedDeletionSpec,
-    selectedChangeFormatSpec
+    selectedChangeFormatSpec,
+    selectedChangeBlockSpec
 } from "./plugin"
 
 export function getSelectedChanges(state) {
@@ -12,9 +13,10 @@ export function getSelectedChanges(state) {
 
     let insertion = decos.find(undefined, undefined, spec => spec === selectedInsertionSpec)[0],
         deletion = decos.find(undefined, undefined, spec => spec === selectedDeletionSpec)[0],
-        format_change = decos.find(undefined, undefined, spec => spec === selectedChangeFormatSpec)[0]
+        format_change = decos.find(undefined, undefined, spec => spec === selectedChangeFormatSpec)[0],
+        block_change = decos.find(undefined, undefined, spec => spec === selectedChangeBlockSpec)[0]
 
-    return {insertion, deletion, format_change}
+    return {insertion, deletion, format_change, block_change}
 }
 
 export function setSelectedChanges(tr, type, pos) {
@@ -34,6 +36,8 @@ export function setSelectedChanges(tr, type, pos) {
         spec = selectedDeletionSpec
     } else if (type==='format_change') {
         spec = selectedChangeFormatSpec
+    } else if (type==='block_change') {
+        spec = selectedChangeBlockSpec
     } else {
         console.warn('unknown track type')
     }

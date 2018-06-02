@@ -94,13 +94,13 @@ let firstCommentTemplate = ({
     </div>`
 
 
-let commentTemplate = ({comment, view, activeCommentId, activeCommentAnswerId, user, docInfo}) => {
+let commentTemplate = ({comment, view, active, activeCommentAnswerId, user, docInfo}) => {
     let author = comment.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === comment.user)
     return comment.hidden ?
     `<div id="margin-box-${comment.id}" class="margin-box comment hidden"></div>` :
     `<div id="margin-box-${comment.id}" data-view="${view}" data-id="${comment.id}" data-user-id="${comment.user}"
             class="
-                margin-box comment ${comment.id === activeCommentId ? 'active' : 'inactive'}
+                margin-box comment ${active ? 'active' : 'inactive'}
                 ${comment.isMajor === true ? 'comment-is-major-bgc' : ''}
         ">
     ${
@@ -228,15 +228,13 @@ let trackTemplate = ({type, data, node, pos, view, active, docInfo}) => {
 /** A template to display all the margin boxes (comments, deletion/insertion notifications) */
 export let marginBoxesTemplate = ({
         marginBoxes,
-        activeCommentId,
         activeCommentAnswerId,
-        selectedChanges,
         user,
         docInfo
     }) => marginBoxes.map(mBox => {
         switch(mBox.type) {
             case 'comment':
-                return commentTemplate({comment: mBox.data, view: mBox.view, activeCommentId, activeCommentAnswerId, user, docInfo})
+                return commentTemplate({comment: mBox.data, view: mBox.view, active: mBox.active, activeCommentAnswerId, user, docInfo})
                 break
             case 'insertion':
             case 'deletion':
@@ -248,7 +246,7 @@ export let marginBoxesTemplate = ({
                     data: mBox.data,
                     pos: mBox.pos,
                     view: mBox.view,
-                    active: selectedChanges[mBox.type] && selectedChanges[mBox.type].from === mBox.pos,
+                    active: mBox.active,
                     docInfo
                 })
                 break

@@ -56,7 +56,7 @@ export class Dialog {
         this.width = options.width ? `${options.width}px` : 'auto'
         this.buttons = options.buttons ? this.addDefaultButtons(options.buttons) : []
         this.onClose = options.onClose ? options.onClose : false
-        this.alert = options.alert ? options.alert : false
+        this.icon = options.icon ? options.icon : false
         this.dialogEl = false
         this.backdropEl = false
     }
@@ -82,7 +82,7 @@ export class Dialog {
                 title: this.title,
                 height: this.height,
                 width: this.width,
-                alert: this.alert,
+                icon: this.icon,
                 buttons : this.buttons,
                 zIndex: this.getHighestDialogZIndex() + 2,
                 body: this.body

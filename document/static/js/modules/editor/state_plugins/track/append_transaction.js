@@ -1,4 +1,4 @@
-import {TextSelection} from "prosemirror-state"
+import {TextSelection, Selection} from "prosemirror-state"
 import {Slice} from "prosemirror-model"
 import {ReplaceStep, ReplaceAroundStep, AddMarkStep, RemoveMarkStep, Mapping} from "prosemirror-transform"
 import {CellSelection} from "prosemirror-tables"
@@ -241,6 +241,7 @@ export function appendTransaction(trs, oldState, newState, editor) {
                 deletedRanges = deletedRanges.map(range => ({from: stepMap.map(range.from, -1), to: stepMap.map(range.to, 1)}))
             })
         })
+        deletedRanges = deletedRanges.filter(range => range.from !== range.to)
 
         let realDeletedRanges = [], // ranges of content by the same user. Should not be marked as gone, but really be removed
             deletionMark = newState.schema.marks.deletion.create({user, username, date: date10})
@@ -289,11 +290,21 @@ export function appendTransaction(trs, oldState, newState, editor) {
                 delRange.from,
                 delRange.to,
                 (node, pos, parent, index) => {
-                    if (node.marks && node.marks.find(mark => mark.type.name==='insertion' && mark.attrs.user===user && !mark.attrs.approved)) {
-                        realDeletedRanges.push({from: pos, to: pos + node.nodeSize})
+                    if (pos < delRange.from) {
+                        return true
+                    } else if (node.marks && node.marks.find(mark => mark.type.name==='insertion' && mark.attrs.user===user && !mark.attrs.approved)) {
+                        realDeletedRanges.push({from: pos, to: Math.min(pos + node.nodeSize, delRange.to)})
                     } else if (node.attrs.track && node.attrs.track.find(track => track.user===user && track.type==='insertion')) {
                         // user has created element. so (s)he is allowed to delete it again.
-                        realDeletedRanges.push({from: pos, to: pos + 1})
+                        if (node.isTextblock && delRange.to < (pos + node.nodeSize)) {
+                            // The node is a textblock. So we need to merge into the last possible position inside the last text block.
+                            let selectionBefore = Selection.findFrom(newTr.doc.resolve(pos), -1)
+                            if (selectionBefore instanceof TextSelection) {
+                                realDeletedRanges.push({from: selectionBefore.$anchor.pos, to: delRange.to})
+                            }
+                        } else {
+                            realDeletedRanges.push({from: pos, to: Math.min(pos + node.nodeSize, delRange.to)})
+                        }
                     } else if(oldDeletionMarks[pos]) {
                         // Readd preexisting deletion mark
                         newTr.maybeStep(

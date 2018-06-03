@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 from django.utils.encoding import python_2_unicode_compatible
 
 from django.db import models
-from django.db.utils import OperationalError
+from django.db.utils import OperationalError, ProgrammingError
 from django.contrib.auth.models import User
 from django.core import checks
 
@@ -91,7 +91,7 @@ class Document(models.Model):
                 ]
             else:
                 return []
-        except OperationalError:
+        except (ProgrammingError, OperationalError):
             # Database has not yet been initialized, so don't throw any error.
             return []
 

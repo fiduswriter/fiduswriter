@@ -94,7 +94,7 @@ let deleteAvatarDialog = function() {
         height: 180,
         title: gettext('Confirm deletion'),
         id: 'confirmdeletion',
-        icon: 'fa-exclamation-triangle',
+        icon: 'exclamation-triangle',
         body: confirmDeleteAvatarTemplate(),
         buttons
     })
@@ -295,7 +295,7 @@ let deleteEmailDialog = function(target) {
             'text':  `${gettext('Remove the email address')}: ${escapeText(email)}?`
         }),
         buttons,
-        icon: 'fa-exclamation-triangle',
+        icon: 'exclamation-triangle',
         height: 200
     })
     dialog.open()

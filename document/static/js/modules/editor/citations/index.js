@@ -1,5 +1,6 @@
 import {RenderCitations} from "../../citations/render"
 import {BibEntryForm} from "../../bibliography/form"
+import {Dialog, cancelPromise} from "../../common"
 
 export class ModCitations {
     constructor(editor) {
@@ -63,11 +64,50 @@ export class ModCitations {
     bindBibliographyClicks() {
         document.querySelectorAll('div.csl-entry').forEach((el, index) => {
             el.addEventListener('click', event => {
-                let eID = parseInt(this.citRenderer.fm.bibliography[0].entry_ids[index][0]),
-                    form = new BibEntryForm(this.editor.mod.db.bibDB, eID)
-                form.init()
+                let eID = parseInt(this.citRenderer.fm.bibliography[0].entry_ids[index][0])
+                this.checkTrackingDialog().then(
+                    () => {
+                        let form = new BibEntryForm(this.editor.mod.db.bibDB, eID)
+                        form.init()
+                    }
+                )
             })
         })
+    }
+
+    checkTrackingDialog() {
+        if (!this.editor.view.state.doc.firstChild.attrs.tracked) {
+            return Promise.resolve()
+        }
+        let buttons = [],
+            dialog,
+            promise = new Promise((resolve, reject) => {
+                buttons.push({
+                    type: 'cancel',
+                    click: () => {
+                        dialog.close()
+                        resolve(cancelPromise())
+                    }
+                })
+                buttons.push({
+                    type: 'ok',
+                    click: () => {
+                        dialog.close()
+                        resolve()
+                    }
+                })
+            })
+
+        dialog = new Dialog({
+            title: gettext('No tracking'),
+            body: gettext('Changes to citation sources are not being tracked!'),
+            icon: 'exclamation-triangle',
+            width: 400,
+            height: 100,
+            buttons
+        })
+        dialog.open()
+        return promise
     }
 
     layoutCitationsTwo() {

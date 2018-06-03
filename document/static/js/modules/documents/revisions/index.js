@@ -137,7 +137,7 @@ export class DocumentRevisionsDialog {
         let revisionsConfirmDeleteDialog = new Dialog({
             id: 'confirmdeletion',
             title: gettext('Confirm deletion'),
-            icon: 'fa-exclamation-triangle',
+            icon: 'exclamation-triangle',
             body: `${gettext('Do you really want to delete the revision?')}`,
             height: 80,
             buttons

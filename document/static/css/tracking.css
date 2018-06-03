@@ -2,7 +2,7 @@ span.deletion {
     text-decoration: line-through;
 }
 
-.selected-insertion, .selected-deletion, .selected-format_change {
+.selected-insertion, .selected-deletion, .selected-format_change, .selected-block_change {
     background-color: #fffacf;
 }
 

@@ -16,7 +16,7 @@
         "prosemirror-gapcursor": "1.0.x",
         "prosemirror-history": "1.0.x",
         "prosemirror-keymap": "1.0.x",
-        "prosemirror-model": "1.4.x",
+        "prosemirror-model": "1.5.x",
         "prosemirror-schema-basic": "1.0.x",
         "prosemirror-schema-list": "1.0.x",
         "prosemirror-state": "1.2.x",

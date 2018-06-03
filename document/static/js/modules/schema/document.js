@@ -1,3 +1,4 @@
+import {escapeText} from "../common"
 import OrderedMap from "orderedmap"
 import {Schema} from "prosemirror-model"
 import {nodes, marks} from "prosemirror-schema-basic"
@@ -141,16 +142,16 @@ let author = {
         dom.dataset.institution = node.attrs.institution
         let content = []
         if (node.attrs.firstname) {
-            content.push(node.attrs.firstname)
+            content.push(escapeText(node.attrs.firstname))
         }
         if (node.attrs.lastname) {
-            content.push(node.attrs.lastname)
+            content.push(escapeText(node.attrs.lastname))
         }
         if (node.attrs.email) {
-            content.push(`<i>${gettext('Email')}: ${node.attrs.email}</i>`)
+            content.push(`<i>${gettext('Email')}: ${escapeText(node.attrs.email)}</i>`)
         }
         if (node.attrs.institution) {
-            content.push(`(${node.attrs.institution})`)
+            content.push(`(${escapeText(node.attrs.institution)})`)
         }
 
         dom.innerHTML = content.join(' ')

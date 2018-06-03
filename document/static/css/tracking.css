@@ -6,6 +6,11 @@ span.deletion {
     background-color: #fffacf;
 }
 
+.keyword.selected-insertion, .author.selected-insertion, .keyword.selected-deletion, .author.selected-deletion {
+    background-color: #fffacf;
+    color: #000;
+}
+
 
 .margin-box .track-title {
     text-align: right;

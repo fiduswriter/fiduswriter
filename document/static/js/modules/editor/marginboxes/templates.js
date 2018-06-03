@@ -152,28 +152,31 @@ let commentTemplate = ({comment, view, active, activeCommentAnswerId, user, docI
 }
 
 let ACTIONS = {
+    insertion: gettext('Insertion'),
+    deletion: gettext('Deletion'),
+    format_change: gettext('Format change'),
+    block_change: gettext('Block change'),
     insertion_paragraph: gettext('New paragraph'),
     insertion_heading: gettext('New heading'),
-    insertion_text: gettext('Inserted text'),
     insertion_citation: gettext('Inserted citation'),
     insertion_blockquote: gettext('Wrapped into blockquote'),
     insertion_code_block: gettext('Added code block'),
     insertion_figure: gettext('Inserted figure'),
     insertion_list_item: gettext('New list item'),
     insertion_table: gettext('Inserted table'),
+    insertion_keyword: gettext('New keyword: %(keyword)s'),
     deletion_paragraph: gettext('Merged paragraph'),
     deletion_heading: gettext('Merged heading'),
-    deletion_text: gettext('Deleted text'),
     deletion_citation: gettext('Deleted citation'),
     deletion_blockquote: gettext('Unwrapped blockquote'),
     deletion_code_block: gettext('Removed code block'),
     deletion_figure: gettext('Deleted figure'),
     deletion_list_item: gettext('Lifted list item'),
     deletion_table: gettext('Delete table'),
-    format_change_text: gettext('Format change'),
+    deletion_keyword: gettext('Deleted keyword: %(keyword)s'),
     block_change_paragraph: gettext('Changed into paragraph'),
     block_change_heading: gettext('Changed into heading %(level)s'),
-    block_change_code_block: gettext('Changed into code block'),
+    block_change_code_block: gettext('Changed into code block')
 }
 
 let FORMAT_MARK_NAMES = {
@@ -201,11 +204,13 @@ let BLOCK_NAMES = {
 let blockChangeTemplate = ({before}) => `<div class="format-change-info"><b>${gettext('Was')}:</b> ${interpolate(BLOCK_NAMES[before.type], before.attrs, true)}</div>`
 
 let trackTemplate = ({type, data, node, pos, view, active, docInfo}) => {
-    let author = data.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === data.user)
+    let author = data.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === data.user),
+        nodeActionType = `${type}_${node.type.name}`
+
     return `
         <div class="margin-box track ${active ? 'active' : 'inactive'}" data-type="${type}" data-pos="${pos}" data-view="${view}">
             <div class="track-${type}">
-                <div class="track-title">${interpolate(ACTIONS[`${type}_${node.type.name}`], node.attrs, true)}</div>
+                <div class="track-title">${interpolate(ACTIONS[nodeActionType] ? ACTIONS[nodeActionType] : ACTIONS[type], node.attrs, true)}</div>
                 <div class="comment-user">
                     <img class="comment-user-avatar" src="${author ? author.avatar : `${$StaticUrls.base$}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
                     <h5 class="comment-user-name">${escapeText(author ? author.name : data.username)}</h5>

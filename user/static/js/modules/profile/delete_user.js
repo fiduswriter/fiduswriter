@@ -27,7 +27,7 @@ export class DeleteUserDialog {
             id: 'confirmaccountdeletion',
             title: gettext('Confirm deletion'),
             body: deleteUserDialogTemplate(),
-            icon: 'fa-exclamation-triangle',
+            icon: 'exclamation-triangle',
             buttons,
             height: 250
         })

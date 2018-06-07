@@ -93,7 +93,7 @@ export let headerbarModel = {
                     order: 2,
                     keys: 'Ctrl-s',
                     action: editor => {
-                        let dialog = new RevisionDialog()
+                        let dialog = new RevisionDialog(editor.docInfo.dir)
                         dialog.init().then(
                             note => {
                                 let saver = new SaveRevision(

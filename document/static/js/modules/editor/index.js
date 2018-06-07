@@ -125,7 +125,8 @@ export class Editor {
             rights: '',
             owner: undefined,
             is_owner: false,
-            confirmedDoc: false // The latest doc as confirmed by the server.
+            confirmedDoc: false, // The latest doc as confirmed by the server.
+            dir: 'ltr' // standard direction, used in input fields, etc.
         }
         this.schema = docSchema
         this.user = false

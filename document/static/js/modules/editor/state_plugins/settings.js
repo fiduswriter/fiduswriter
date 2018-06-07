@@ -1,5 +1,7 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 
+import {LANGUAGES} from "../common"
+
 const key = new PluginKey('settings')
 
 let settings = {}
@@ -13,23 +15,23 @@ export let settingsPlugin = function(options) {
             let value = settings[key]
             switch(key) {
                 case 'documentstyle':
-                if (
-                    !options.editor.mod.styles.documentStyles.find(d => d.filename === value) &&
-                    options.editor.mod.styles.documentStyles.length
-                ) {
-                    fixedSettings[key] = options.editor.mod.styles.documentStyles[0].filename
-                    changed = true
-                }
-                break;
+                    if (
+                        !options.editor.mod.styles.documentStyles.find(d => d.filename === value) &&
+                        options.editor.mod.styles.documentStyles.length
+                    ) {
+                        fixedSettings[key] = options.editor.mod.styles.documentStyles[0].filename
+                        changed = true
+                    }
+                    break
                 case 'citationstyle':
-                if (
-                    !options.editor.mod.styles.citationStyles.find(d => d.short_title === value) &&
-                    options.editor.mod.styles.citationStyles.length
-                ) {
-                    fixedSettings[key] = options.editor.mod.styles.citationStyles[0].short_title
-                    changed = true
-                }
-                break;
+                    if (
+                        !options.editor.mod.styles.citationStyles.find(d => d.short_title === value) &&
+                        options.editor.mod.styles.citationStyles.length
+                    ) {
+                        fixedSettings[key] = options.editor.mod.styles.citationStyles[0].short_title
+                        changed = true
+                    }
+                    break
             }
 
         })
@@ -56,6 +58,15 @@ export let settingsPlugin = function(options) {
                     case 'citationstyle':
                         if (newValue.length) {
                             options.editor.mod.citations.resetCitations()
+                        } else {
+                            settingsValid = false
+                        }
+                        break
+                    case 'language':
+                        if (newValue.length) {
+                            const lang = LANGUAGES.find(lang => lang[0] === newValue)
+                            document.querySelectorAll('.ProseMirror').forEach(el => el.dir = lang[2])
+                            options.editor.docInfo.dir = lang[2]
                         } else {
                             settingsValid = false
                         }

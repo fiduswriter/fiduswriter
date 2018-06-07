@@ -133,7 +133,8 @@ export class FigureDialog {
             body: configureFigureTemplate({
                 equation: this.equation,
                 caption: this.caption,
-                image: this.imgId
+                image: this.imgId,
+                dir: this.editor.docInfo.dir
             }),
             buttons,
             onClose: () => this.editor.currentView.focus()

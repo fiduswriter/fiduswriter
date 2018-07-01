@@ -1,5 +1,5 @@
 import diffDOM from "diff-dom"
-import keyName from "w3c-keyname"
+import {keyName} from "w3c-keyname"
 import {keydownHandler} from "prosemirror-keymap"
 
 import {escapeText} from "../../../common"

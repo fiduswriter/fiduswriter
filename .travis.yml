@@ -1,6 +1,6 @@
 language: node_js
 python:
-  - "3.7"
+  - "3.6"
 node_js:
   - "10"
 
@@ -21,6 +21,7 @@ before_install:
 install:
   - mv travis/configuration.py ./
   - pip install requests[security]
+  - pip install pip --upgrade
   - pip install -r requirements.txt
   - pip install -r dev-requirements.txt
   - flake8 ./

@@ -8,7 +8,7 @@ dist: trusty
 sudo: required
 
 env:
-  - TRAVIS_PYTHON_VERSION="3.7"
+  - TRAVIS_PYTHON_VERSION="3.6"
 
 addons:
   sauce_connect:

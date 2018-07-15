@@ -3,6 +3,7 @@ import JSZip from "jszip"
 import {ImportNative} from "./native"
 import {FW_FILETYPE_VERSION} from "../exporter/native"
 import {updateFileDoc, updateFileBib} from "./update"
+import {addAlert} from "../common"
 /** The current Fidus Writer filetype version. The importer will not import from
  * a different version and the exporter will include this number in all exports.
  */
@@ -23,6 +24,10 @@ export class ImportFidusFile {
         this.teamMembers = teamMembers
         this.textFiles = []
         this.otherFiles = []
+        this.ok = false
+        this.statusText = ""
+        this.doc = false
+        this.docInfo = false
     }
 
     init() {
@@ -30,19 +35,20 @@ export class ImportFidusFile {
         if (this.check === false) {
             return this.initZipFileRead()
         }
-        return new Promise((resolve, reject) => {
+        return new Promise(resolve => {
             // use a BlobReader to read the zip from a Blob object
             let reader = new window.FileReader()
             reader.onloadend = () => {
-                if (reader.result.length > 60 && reader.result.substring(0, 2) == 'PK') {
-                    resolve()
+                if (reader.result.length > 60 && reader.result.substring(0, 2) === 'PK') {
+                    this.initZipFileRead().then(() => resolve(this))
                 } else {
-                    // The file is not a Fidus Writer file.
-                    reject(gettext('The uploaded file does not appear to be a Fidus Writer file.'))
+                    this.statusText = gettext('The uploaded file does not appear to be a Fidus Writer file.')
+                    resolve(this)
                 }
+
             }
             reader.readAsText(this.file)
-        }).then(() => this.initZipFileRead())
+        })
     }
 
     initZipFileRead() {
@@ -59,7 +65,8 @@ export class ImportFidusFile {
                 }
             })
             if (!validFile) {
-                return Promise.reject(gettext('The uploaded file does not appear to be a Fidus Writer file.'))
+                this.statusText = gettext('The uploaded file does not appear to be a Fidus Writer file.')
+                return
             }
 
             filenames.forEach(filename => {
@@ -108,14 +115,18 @@ export class ImportFidusFile {
                 this.otherFiles,
                 this.user
             )
-            return importer.init()
+            return importer.init().then(({doc, docInfo}) => {
+                this.ok = true
+                this.doc = doc
+                this.docInfo = docInfo
+                this.statusText = `${doc.title} ${gettext(' successfully imported.')}`
+            })
 
         } else {
             // The file is not a Fidus Writer file.
-            return Promise.reject(
-                gettext('The uploaded file does not appear to be of the version used on this server: ') +
-                FW_FILETYPE_VERSION
-            )
+            this.statusText = gettext('The uploaded file does not appear to be of the version used on this server: ') +
+            FW_FILETYPE_VERSION
+            return
         }
     }
 

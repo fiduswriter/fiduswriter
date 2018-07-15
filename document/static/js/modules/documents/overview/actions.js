@@ -99,15 +99,21 @@ export class DocumentOverviewActions {
                     )
 
                     importer.init().then(
-                        ({doc, docInfo}) => {
+                        ({ok, statusText, doc, docInfo}) => {
                             deactivateWait()
-                            addAlert('info', doc.title + gettext(
-                                    ' successfully imported.'))
+                            if (ok) {
+                                addAlert('info', statusText)
+                            } else {
+                                addAlert('error', statusText)
+                                return
+                            }
+
                             this.documentOverview.documentList.push(doc)
                             this.documentOverview.addDocToTable(doc)
+                            importDialog.close()
                         }
                     )
-                    importDialog.close()
+
                 }
             },
             {
@@ -118,7 +124,7 @@ export class DocumentOverviewActions {
             id: 'importfidus',
             title: gettext('Import a Fidus file'),
             body: importFidusTemplate(),
-            height: 180,
+            height: 100,
             buttons
         })
         importDialog.open()

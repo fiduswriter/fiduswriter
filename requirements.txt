@@ -1,7 +1,7 @@
 wheel==0.31.1
 Django==1.11.13
 django-adminplus==0.5
-Pillow==5.1.0
+Pillow==5.2.0
 django-allauth==0.36.0
 django-avatar==4.1.0
 django-compressor==2.2
@@ -10,6 +10,6 @@ django-npm-mjs==0.6.1
 tornado==5.1
 python-dateutil==2.7.3
 python-magic==0.4.15
-setuptools==39.2.0
+setuptools==40.0.0
 future==0.16.0
 jsonpatch==1.23

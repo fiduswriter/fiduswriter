@@ -49,5 +49,8 @@
     "browser": true,
     "worker": true,
     "varstmt": true
+  },
+  "devDependencies": {
+    "npm-check-updates": "^2.14.2"
   }
 }

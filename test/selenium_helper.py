@@ -42,12 +42,11 @@ class SeleniumHelper(object):
             capabilities["screenResolution"] = "1920x1080"
             hub_url = "%s:%s@localhost:4445" % (username, access_key)
             for i in range(number):
-                drivers.append(
-                    webdriver.Remote(
-                        desired_capabilities=capabilities,
-                        command_executor="http://%s/wd/hub" % hub_url
-                    )
+                driver = webdriver.Remote(
+                    desired_capabilities=capabilities,
+                    command_executor="http://%s/wd/hub" % hub_url
                 )
+                drivers.append(driver)
             wait_time = 35
         else:
             for i in range(number):

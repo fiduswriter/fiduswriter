@@ -16,6 +16,13 @@ from tornado.ioloop import IOLoop
 
 from base.servers.tornado_django_hybrid import make_tornado_server
 
+try:
+    from asyncio import set_event_loop_policy
+    from tornado.platform.asyncio import AnyThreadEventLoopPolicy
+    set_event_loop_policy(AnyThreadEventLoopPolicy())
+except ImportError:
+    pass
+
 
 class LiveTornadoThread(threading.Thread):
     """
@@ -76,6 +83,7 @@ class LiveTornadoThread(threading.Thread):
         except Exception as e:
             self.error = e
             self.is_ready.set()
+            raise
 
     def terminate(self):
         if hasattr(self, 'httpd'):
@@ -114,8 +122,7 @@ class LiveTornadoTestCase(TransactionTestCase):
 
         # Launch the live server's thread
         specified_address = os.environ.get(
-            'DJANGO_LIVE_TEST_SERVER_ADDRESS', 'localhost:8081')
-
+            'DJANGO_LIVE_TEST_SERVER_ADDRESS', 'localhost:8081-8140')
         # The specified ports may be of the form '8000-8010,8080,9200-9300'
         # i.e. a comma-separated list of ports or ranges of ports, so we break
         # it down into a detailed list of all possible ports.
@@ -152,9 +159,6 @@ class LiveTornadoTestCase(TransactionTestCase):
         # Wait for the live server to be ready
         cls.server_thread.is_ready.wait()
         if cls.server_thread.error:
-            # Clean up behind ourselves, since tearDownClass won't get called
-            # in case of errors.
-            cls._tearDownClassInternal()
             raise cls.server_thread.error
 
         cls.live_server_url = 'http://%s:%s' % (

@@ -9,6 +9,13 @@ from django.conf import settings
 
 from base.servers.tornado_django_hybrid import run as run_server
 
+try:
+    from asyncio import set_event_loop_policy
+    from tornado.platform.asyncio import AnyThreadEventLoopPolicy
+    set_event_loop_policy(AnyThreadEventLoopPolicy())
+except ImportError:
+    pass
+
 
 class Command(BaseCommand):
     help = 'Run django using the tornado server'

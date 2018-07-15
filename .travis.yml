@@ -20,14 +20,13 @@ before_install:
 
 install:
   - mv travis/configuration.py ./
-  - pip install requests[security]
-  - pip install pip --upgrade
-  - pip install -r requirements.txt
-  - pip install -r dev-requirements.txt
+  - pip3 install requests[security]
+  - pip3 install -r requirements.txt
+  - pip3 install -r dev-requirements.txt
   - flake8 ./
-  - pip install coverage
-  - pip install coveralls
-  - pip install selenium
+  - pip3 install coverage
+  - pip3 install coveralls
+  - pip3 install selenium
   - coverage run manage.py init --no-static --no-compress
   - ./manage.py check_js
 

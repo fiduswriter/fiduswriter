@@ -41,7 +41,7 @@ export class ImageDB {
             ({json}) => {
                 deactivateWait()
                 if (Object.keys(json.errormsg).length) {
-                    return Promise.reject(json.errormsg)
+                    return Promise.reject(new Error(json.errormsg))
                 } else {
                     this.db[json.values.id] = json.values
                     return json.values.id

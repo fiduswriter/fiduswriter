@@ -58,7 +58,7 @@ export class XmlZip {
             )
         } else {
             // File couldn't be found and there was no default value.
-            return Promise.reject("File not found")
+            return Promise.reject(new Error("File not found"))
         }
 
     }

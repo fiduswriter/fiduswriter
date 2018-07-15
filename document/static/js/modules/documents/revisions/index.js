@@ -80,15 +80,20 @@ export class DocumentRevisionsDialog {
                     )
                     resolve(
                         importer.init().then(
-                            ({doc, docInfo}) => {
+                            ({ok, statusText, doc, docInfo}) => {
                                 deactivateWait()
-                                addAlert('info', `${doc.title} ${gettext('successfully imported.')}`)
-                                return {
-                                    action: 'added-document',
-                                    doc
+                                if (ok) {
+                                    addAlert('info', statusText)
+                                    return {
+                                        action: 'added-document',
+                                        doc
+                                    }
+                                } else {
+                                    addAlert('error', statusText)
+                                    return Promise.reject(new Error(statusText))
                                 }
-                            },
-                            errorMessage => addAlert('error', errorMessage)
+
+                            }
                         )
                     )
                 }
@@ -169,7 +174,7 @@ export class DocumentRevisionsDialog {
         ).catch(
             () => {
                 addAlert('error', gettext('Could not delete revision.'))
-                return Promise.reject()
+                return Promise.reject(new Error('Could not delete revision.'))
             }
         )
 

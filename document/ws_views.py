@@ -29,6 +29,7 @@ class WebSocket(BaseWebSocketHandler):
     sessions = dict()
 
     def open(self, arg):
+        self.set_nodelay(True)
         logger.debug('Websocket opened')
         response = dict()
         current_user = self.get_current_user()

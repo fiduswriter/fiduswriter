@@ -7,7 +7,6 @@ node_js:
 dist: trusty
 sudo: required
 
-
 addons:
   sauce_connect:
     no_ssl_bump_domains: all
@@ -40,6 +39,7 @@ script: travis_retry coverage run manage.py test $TESTS
 jobs:
   include:
     - stage: coveralls
+      before_install: skip
       install: skip
       env: TESTS=done
       script:

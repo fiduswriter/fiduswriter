@@ -50,7 +50,7 @@ let changeAvatarDialog = function() {
         id: 'change-avatar-dialog',
         title: gettext('Upload your profile picture'),
         body: changeAvatarDialogTemplate(),
-        height: 180,
+        height: 80,
         buttons
     })
     dialog.open()
@@ -245,7 +245,8 @@ let addEmailDialog = function() {
         title: gettext('Add Email'),
         body: changeEmailDialogTemplate(),
         buttons,
-        height: 230
+        height: 100,
+        width: 400
     })
     dialog.open()
 }

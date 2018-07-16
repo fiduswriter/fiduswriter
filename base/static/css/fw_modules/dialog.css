@@ -16,7 +16,7 @@
 
 .ui-dialog-titlebar {
     position: relative;
-    padding: 0px;
+    padding: 0 40px 0 0;
 }
 
 .ui-dialog-title {

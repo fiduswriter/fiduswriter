@@ -133,7 +133,6 @@ export class HeaderbarView {
     }
 
     onkeydown(event) {
-
         let name = keyName(event)
         if (event.altKey) {
             name = "Alt-" + name

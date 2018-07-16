@@ -1,15 +1,12 @@
-language: node_js
+language: python
 python:
   - "3.6"
 node_js:
-  - "8"
+  - "10"
 
 dist: trusty
 sudo: required
-group: deprecated-2017Q3
 
-env:
-  - TRAVIS_PYTHON_VERSION="3.6"
 
 addons:
   sauce_connect:
@@ -21,18 +18,31 @@ before_install:
 
 install:
   - mv travis/configuration.py ./
-  - pip install requests[security]
-  - pip install -r requirements.txt
-  - pip install -r dev-requirements.txt
+  - pip3 install requests[security]
+  - pip3 install -r requirements.txt
+  - pip3 install -r dev-requirements.txt
   - flake8 ./
-  - pip install coverage
-  - pip install coveralls
-  - pip install selenium
+  - pip3 install coverage
+  - pip3 install coveralls
+  - pip3 install selenium
   - coverage run manage.py init --no-static --no-compress
   - ./manage.py check_js
 
-script:
-  - travis_retry coverage run manage.py test
+env:
+  global:
+    - COVERALLS_PARALLEL=true
+  matrix:
+    - TESTS=user
+    - TESTS=document
+
+script: travis_retry coverage run manage.py test $TESTS
+
+jobs:
+  include:
+    - stage: coveralls
+      install: skip
+      env: TESTS=done
+      script: curl -k https://coveralls.io/webhook?repo_token=$COVERALLS_REPO_TOKEN -d "payload[build_num]=$TRAVIS_BUILD_NUMBER&payload[status]=done"
 
 after_success:
   - coverage report

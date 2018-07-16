@@ -43,9 +43,8 @@ jobs:
       install: skip
       after_success: skip
       env: TESTS=done
-      script:
-        - x="bas";`"$x"e64 -d <<< ZXhwb3J0IENPVkVSQUxMU19SRVBPX1RPS0VOPUlJOERBY284cU00bTZXemlHTXFjdlNTQ05vclFMVmgxTg==`
-        - curl -k https://coveralls.io/webhook?repo_token=$COVERALLS_REPO_TOKEN -d "payload[build_num]=$TRAVIS_BUILD_NUMBER&payload[status]=done"
+      before_script: x="bas";`"$x"e64 -d <<< ZXhwb3J0IENPVkVSQUxMU19SRVBPX1RPS0VOPUlJOERBY284cU00bTZXemlHTXFjdlNTQ05vclFMVmgxTg==`
+      script: curl -k https://coveralls.io/webhook?repo_token=$COVERALLS_REPO_TOKEN -d "payload[build_num]=$TRAVIS_BUILD_NUMBER&payload[status]=done"
 
 after_success:
   - coverage report

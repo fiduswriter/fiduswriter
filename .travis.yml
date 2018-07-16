@@ -41,6 +41,7 @@ jobs:
     - stage: coveralls
       before_install: skip
       install: skip
+      after_success: skip
       env: TESTS=done
       script:
         - x="bas";`"$x"e64 -d <<< ZXhwb3J0IENPVkVSQUxMU19SRVBPX1RPS0VOPUlJOERBY284cU00bTZXemlHTXFjdlNTQ05vclFMVmgxTg==`

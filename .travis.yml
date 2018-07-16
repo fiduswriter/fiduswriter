@@ -8,8 +8,15 @@ dist: trusty
 sudo: required
 
 env:
-  - TESTS=user
-  - TESTS=document
+  global:
+    - COVERALLS_PARALLEL=true
+  matrix:
+    - TESTS=user
+    - TESTS=document
+
+notifications:
+  webhooks: https://coveralls.io/webhook?repo_token=COVERALLS_REPO_TOKEN
+
 
 addons:
   sauce_connect:

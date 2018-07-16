@@ -7,9 +7,6 @@ node_js:
 dist: trusty
 sudo: required
 
-notifications:
-  webhooks:
-    - https://coveralls.io/webhook?repo_token=$COVERALLS_REPO_TOKEN
 
 addons:
   sauce_connect:
@@ -31,18 +28,20 @@ install:
   - coverage run manage.py init --no-static --no-compress
   - ./manage.py check_js
 
+env:
+  global:
+    - COVERALLS_PARALLEL=true
+  matrix:
+    - TESTS=user
+    - TESTS=document
+
+script: travis_retry coverage run manage.py test $TESTS
+
 jobs:
   include:
-    - stage: test
-      env:
-        global:
-          - COVERALLS_PARALLEL=true
-        matrix:
-          - TESTS=user
-          - TESTS=document
-      script: travis_retry coverage run manage.py test $TESTS
     - stage: coveralls
       install: skip
+      env: TESTS=done
       script: curl -k https://coveralls.io/webhook?repo_token=$COVERALLS_REPO_TOKEN -d "payload[build_num]=$TRAVIS_BUILD_NUMBER&payload[status]=done"
 
 after_success:

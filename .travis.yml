@@ -31,7 +31,7 @@ install:
   - ./manage.py check_js
 
 script:
-  - travis_retry coverage run manage.py test
+  - travis_retry coverage run manage.py test user.tests.test_profile
 
 after_success:
   - coverage report

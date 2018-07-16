@@ -159,6 +159,9 @@ class LiveTornadoTestCase(TransactionTestCase):
         # Wait for the live server to be ready
         cls.server_thread.is_ready.wait()
         if cls.server_thread.error:
+            # Clean up behind ourselves, since tearDownClass won't get called
+            # in case of errors.
+            cls._tearDownClassInternal()
             raise cls.server_thread.error
 
         cls.live_server_url = 'http://%s:%s' % (
@@ -173,8 +176,6 @@ class LiveTornadoTestCase(TransactionTestCase):
         if hasattr(cls, 'server_thread'):
             # Terminate the live server's thread
             cls.server_thread.terminate()
-            cls.server_thread.join()
-
         # Restore sqlite connections' non-shareability
         for conn in connections.all():
             if (conn.vendor == 'sqlite' and

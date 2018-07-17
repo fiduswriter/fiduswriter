@@ -39,6 +39,9 @@ script: travis_retry coverage run manage.py test $TESTS
 jobs:
   include:
     - stage: coveralls
+      addons: {}
+      before_cache: skip
+      cache: {}
       before_install: skip
       install: skip
       after_success: skip

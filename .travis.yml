@@ -41,7 +41,7 @@ jobs:
     - stage: coveralls
       addons: {}
       before_cache: skip
-      cache: {}
+      cache: false
       before_install: skip
       install: skip
       after_success: skip

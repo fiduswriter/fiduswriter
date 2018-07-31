@@ -1,5 +1,4 @@
 import {marginBoxesTemplate} from "./templates"
-import {Comment} from "../comments/comment"
 import {getCommentDuringCreationDecoration, getSelectedChanges, getFootnoteMarkers} from "../state_plugins"
 
 import fastdom from "fastdom"

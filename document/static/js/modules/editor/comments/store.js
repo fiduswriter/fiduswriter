@@ -154,7 +154,7 @@ export class ModCommentStore {
     }
 
     loadComments(commentsData) {
-        Object.values(commentsData).forEach(commentData => this.addLocalComment(commentData))
+        Object.entries(commentsData).forEach(([id, comment]) => this.addLocalComment(Object.assign({id}, comment)))
     }
 
 
@@ -438,5 +438,5 @@ export class ModCommentStore {
 }
 
 function randomID() {
-    return Math.floor(Math.random() * 0xffffffff)
+    return String(Math.floor(Math.random() * 0xffffffff))
 }

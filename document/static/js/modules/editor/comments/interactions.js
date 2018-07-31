@@ -32,9 +32,7 @@ export class ModCommentInteractions {
                     if (fnTr) {
                         this.mod.editor.mod.footnotes.fnEditor.view.dispatch(fnTr)
                     }
-                    this.activateComment(
-                        parseInt(el.target.dataset.id)
-                    )
+                    this.activateComment(el.target.dataset.id)
                     this.mod.editor.mod.marginboxes.updateDOM()
                     break
                 case findTarget(event, '.edit-comment', el):
@@ -44,8 +42,8 @@ export class ModCommentInteractions {
                     break
                 case findTarget(event, '.edit-comment-answer', el):
                     this.editAnswer(
-                        parseInt(el.target.dataset.id),
-                        parseInt(el.target.dataset.answer)
+                        el.target.dataset.id,
+                        el.target.dataset.answer
                     )
                     break
                 case findTarget(event, '.submit-comment-answer-edit', el):
@@ -267,7 +265,7 @@ export class ModCommentInteractions {
         let commentWrapper = document.querySelector('.margin-box.active'),
             answerTextBox = commentWrapper.querySelector('.comment-answer-text'),
             answerText = answerTextBox.value,
-            id = parseInt(commentWrapper.dataset.id)
+            id = commentWrapper.dataset.id
         this.createNewAnswer(id, answerText)
     }
 
@@ -304,8 +302,8 @@ export class ModCommentInteractions {
     }
 
     submitAnswerEdit(textArea) {
-        let id = parseInt(textArea.dataset.id),
-            answerId = parseInt(textArea.dataset.answer),
+        let id = textArea.dataset.id,
+            answerId = textArea.dataset.answer,
             theValue = textArea.value
 
         this.submitAnswerUpdate(id, answerId, theValue)

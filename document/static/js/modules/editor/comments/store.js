@@ -56,7 +56,7 @@ export class ModCommentStore {
 
         view.dispatch(tr)
 
-        let id = false, username
+        let id = -1, username
 
         if (REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
             username = `${gettext('Reviewer')} ${this.mod.editor.user.id}`

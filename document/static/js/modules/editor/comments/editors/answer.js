@@ -14,7 +14,7 @@ export class CommentAnswerEditor {
 
     init() {
         let viewDOM = document.createElement('div')
-        viewDOM.classList.add('Prosemirror-Wrapper')
+        viewDOM.classList.add('ProseMirror-wrapper')
         this.dom.appendChild(viewDOM)
         this.view = new EditorView(viewDOM, {
             state: EditorState.create({

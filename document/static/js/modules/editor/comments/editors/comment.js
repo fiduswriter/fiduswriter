@@ -15,7 +15,7 @@ export class CommentEditor {
 
     init() {
         let viewDOM = document.createElement('div')
-        viewDOM.classList.add('Prosemirror-Wrapper')
+        viewDOM.classList.add('ProseMirror-wrapper')
         this.dom.appendChild(viewDOM)
         this.dom.insertAdjacentHTML(
             'beforeend',

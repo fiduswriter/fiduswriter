@@ -86,7 +86,6 @@ export class ModMarginboxes {
             }
             if (pos) {
                 let comment = this.editor.mod.comments.store.commentDuringCreation.comment
-                // let comment = this.editor.mod.comments.store.commentDuringCreation.comment
                 let index = 0
                 // // We need the position of the new comment in relation to the other
                 // // comments in order to insert it in the right place
@@ -105,6 +104,7 @@ export class ModMarginboxes {
             marginBoxes,
             user: this.editor.user,
             docInfo: this.editor.docInfo,
+            editComment: this.editor.mod.comments.interactions.editComment,
             activeCommentAnswerId: this.editor.mod.comments.interactions.activeCommentAnswerId
         })
         if (document.getElementById('margin-box-container').innerHTML !== marginBoxesHTML) {

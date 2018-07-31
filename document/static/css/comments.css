@@ -91,9 +91,13 @@
 .comment-p {
     line-height: 18px;
 }
-.margin-box textarea {
-    resize: none;
+.margin-box .Prosemirror-Wrapper {
     width: 194px;
+    background-color: #fff;
+    min-height: 40px;
+    border: 1px solid #ccc;
+    padding: 2px;
+    margin-bottom: 6px;
 }
 
 .comment-controls {
@@ -127,15 +131,6 @@
 .comment-form {
     display: none;
 }
-
-.comment-text-wrapper.editing .comment-form {
-    display: block;
-}
-
-.comment-text-wrapper.editing .comment-p {
-    display: none;
-}
-
 
 .delete-comment-all {
     position: absolute;

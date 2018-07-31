@@ -11,7 +11,7 @@ export class ModCommentInteractions {
         this.activeCommentId = false
         this.activeCommentAnswerId = false
         this.editComment = false
-        this.commentEditor = false
+        //this.editor = false
         this.bindEvents()
     }
 
@@ -172,19 +172,15 @@ export class ModCommentInteractions {
         if (!this.activeCommentId) {
             return false
         }
-        if (this.editor) {
-            // a comment form is currently open
-            return true
-        }
         if (document.querySelector('.submit-comment-answer-edit')) {
             // a comment answer edit form is currently open
             return true
         }
-        if (this.editor.view.hasFocus()) {
+        if (this.editor && this.editor.view.hasFocus()) {
             // There is currently focus in the comment (answer) form
             return true
         }
-        if (this.editor.value.text.length) {
+        if (this.editor && this.editor.value.text.length) {
             // Part of a comment (answer) has been entered.
             return true
         }

@@ -123,7 +123,7 @@ let commentTemplate = ({comment, view, active, editComment, activeCommentAnswerI
         ''
     }
     ${
-        active && !activeCommentAnswerId && 0 < comment.comment.length ?
+        active && !activeCommentAnswerId && !editComment && 0 < comment.comment.length ?
         `<div class="comment-answer">
             <div id="answer-editor"></div>
             <div class="comment-answer-btns">

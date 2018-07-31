@@ -885,7 +885,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         button.click()
 
         textArea = WebDriverWait(driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, ".ProseMirror-wrapper .ProseMirror"))
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".ProseMirror-wrapper .ProseMirror")
+            )
         )
         textArea.click()
 

@@ -81,7 +81,7 @@ export class ModCommentInteractions {
         }
         let id = this.activeCommentId
         if (commentEditorDOM) {
-            let value = id === -1 ?
+            let value = id === false ?
                 {text: [], isMajor: false} :
                 {
                     text: this.mod.store.comments[id].comment,
@@ -202,13 +202,13 @@ export class ModCommentInteractions {
     createNewComment() {
         this.deactivateAll()
         this.mod.store.addCommentDuringCreation(this.mod.editor.currentView)
-        this.activeCommentId = -1
+        this.activeCommentId = false
         this.editComment = true
         this.updateDOM()
     }
 
     deleteComment(id) {
-        if (id===-1) {
+        if (id===false) {
             this.deactivateAll()
         } else {
             // Handle the deletion of a comment.
@@ -220,7 +220,7 @@ export class ModCommentInteractions {
 
     updateComment(id, commentText, isMajor) {
         // Save the change to a comment and mark that the document has been changed
-        if (id===-1) {
+        if (id===false) {
             let referrer = getCommentDuringCreationDecoration(this.mod.store.commentDuringCreation.view.state)
             // This is a new comment. We need to get an ID for it if it has contents.
 
@@ -267,7 +267,7 @@ export class ModCommentInteractions {
     cancelSubmitComment() {
         // Handle a click on the cancel button of the comment submit form.
         let id = this.activeCommentId//parseInt(commentTextBox.dataset.id)
-        if (id===-1 || this.mod.store.comments[id].comment.length === 0) {
+        if (id===false || this.mod.store.comments[id].comment.length === 0) {
             this.deleteComment(id)
         } else {
             this.deactivateAll()

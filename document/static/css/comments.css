@@ -61,7 +61,7 @@
 .comment-answer.wait .comment-answer-text {
     background-size: 20px 20px;
 }
-.comment-item.wait .submitComment, .comment-item.wait .cancelSubmitComment, .comment-answer.wait .comment-answer-btns {
+.wait .comment-btns {
     display: none;
 }
 
@@ -98,6 +98,7 @@
     border: 1px solid #ccc;
     padding: 2px;
     margin-bottom: 6px;
+    cursor: text;
 }
 
 .comment-controls {
@@ -116,7 +117,7 @@
 .comment-answer {
     margin-top: 9px;
 }
-.comment-answer-btns {
+.comment-btns {
     margin-top: 5px;
     text-align: right;
 }
@@ -145,9 +146,4 @@
 
 .comment-is-major-bgc {
     background-color: #f2dede;
-}
-
-/* comments directly on block elements like figures */
-div.article-part > span.comment {
-    display: block;
 }

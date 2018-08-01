@@ -71,10 +71,12 @@ export class ToolbarView {
                 this.update()
             } else if (menuItem.action) {
                 event.preventDefault()
-                menuItem.action(this.editor)
+                const focus = menuItem.action(this.editor)
                 this.editor.menu.toolbarModel.openMore = false
                 this.update()
-                this.editor.currentView.focus()
+                if (focus !== false) {
+                    this.editor.currentView.focus()
+                }
             }
 
         } else if(target.matches('.editortoolbar .more-button, .editortoolbar .more-button *')) {
@@ -99,11 +101,13 @@ export class ToolbarView {
                 seekItem = seekItem.previousElementSibling
             }
             event.preventDefault()
-            this.editor.menu.toolbarModel.content[menuNumber].content[itemNumber].action(this.editor)
+            const focus = this.editor.menu.toolbarModel.content[menuNumber].content[itemNumber].action(this.editor)
             this.editor.menu.toolbarModel.content[menuNumber].open = false
             this.openedMenu = false
             this.update()
-            this.editor.currentView.focus()
+            if (focus !== false) {
+                this.editor.currentView.focus()
+            }
         } else if (target.matches('.editortoolbar > div:not(.disabled), .editortoolbar > div:not(.disabled) *')) {
             // A menu item has been clicked, lets find out which one.
             let menuNumber = 0
@@ -123,9 +127,11 @@ export class ToolbarView {
                 this.update()
             } else if (menuItem.action) {
                 event.preventDefault()
-                menuItem.action(this.editor)
+                const focus = menuItem.action(this.editor)
                 this.update()
-                this.editor.currentView.focus()
+                if (focus !== false) {
+                    this.editor.currentView.focus()
+                }
             }
         } else if (this.openedMenu !== false || this.editor.menu.toolbarModel.openMore) {
             if (this.openedMenu !== false) {

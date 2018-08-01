@@ -23,8 +23,6 @@ let answerCommentTemplate = ({
             `<div class="comment-text-wrapper">
                 <div class="comment-answer-form">
                     <div id="answer-editor"></div>
-                    <span class="submit-comment-answer-edit fw-button fw-dark">${gettext("Edit")}</span>
-                    <span class="cancelSubmitComment fw-button fw-orange">${gettext("Cancel")}</span>
                 </div>
            </div>` :
            `<div class="comment-text-wrapper">
@@ -57,9 +55,7 @@ let singleCommentTemplate = ({
         </div>
         <div class="comment-text-wrapper">
             ${ active && editComment ?
-                `<div id="comment-editor"></div>
-                <span class="submitComment fw-button fw-dark">${gettext("Edit")}</span>
-                <span class="cancelSubmitComment fw-button fw-orange">${gettext("Cancel")}</span>` :
+                `<div id="comment-editor"></div>` :
                 `<p class="comment-p">${getCommentHTML(comment.comment)}</p>`
             }
         </div>
@@ -87,8 +83,6 @@ let firstCommentTemplate = ({
         </div>
         <div class="comment-text-wrapper">
             <div id="comment-editor"></div>
-            <span class="submitComment fw-button fw-dark">${gettext("Submit")}</span>
-            <span class="cancelSubmitComment fw-button fw-orange">${gettext("Cancel")}</span>
         </div>
     </div>`
 
@@ -126,14 +120,6 @@ let commentTemplate = ({comment, view, active, editComment, activeCommentAnswerI
         active && !activeCommentAnswerId && !editComment && 0 < comment.comment.length ?
         `<div class="comment-answer">
             <div id="answer-editor"></div>
-            <div class="comment-answer-btns">
-                <button class="comment-answer-submit fw-button fw-dark" type="submit">
-                    ${gettext("Submit")}
-                </button>
-                <button class="cancelSubmitComment fw-button fw-orange" type="submit">
-                    ${gettext("Cancel")}
-                </button>
-            </div>
         </div>` :
         ''
     }

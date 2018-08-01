@@ -7,7 +7,10 @@ import {keymap} from "prosemirror-keymap"
 import {commentSchema} from "./schema"
 
 export class CommentAnswerEditor {
-    constructor(dom, {text}) {
+    constructor(mod, id, commentId, dom, {text}) {
+        this.mod = mod
+        this.id = id
+        this.commentId = commentId
         this.dom = dom
         this.text = text
     }
@@ -16,6 +19,17 @@ export class CommentAnswerEditor {
         let viewDOM = document.createElement('div')
         viewDOM.classList.add('ProseMirror-wrapper')
         this.dom.appendChild(viewDOM)
+        this.dom.insertAdjacentHTML(
+            'beforeend',
+            `<div class="comment-btns">
+                <button class="submit fw-button fw-dark" type="submit">
+                    ${this.id ? gettext("Edit") :gettext("Submit")}
+                </button>
+                <button class="cancel fw-button fw-orange" type="submit">
+                    ${gettext("Cancel")}
+                </button>
+            </div>`
+        )
         this.view = new EditorView(viewDOM, {
             state: EditorState.create({
                 schema: commentSchema,
@@ -30,6 +44,7 @@ export class CommentAnswerEditor {
                         "Mod-z": undo,
                         "Mod-shift-z": undo,
                         "Mod-y": redo,
+                        "Ctrl-Enter": () => this.submit()
                     })
                 ]
             }),
@@ -38,6 +53,28 @@ export class CommentAnswerEditor {
                 this.view.updateState(newState)
             }
         })
+        this.view.focus()
+        this.bind()
+    }
+
+    bind() {
+        this.dom.querySelector('button.submit').addEventListener('click',
+            event => this.submit()
+        )
+        this.dom.querySelector('button.cancel').addEventListener('click',
+            event => this.mod.interactions.cancelSubmit()
+        )
+        this.dom.querySelector('.ProseMirror-wrapper').addEventListener('click',
+            event => this.view.focus()
+        )
+    }
+
+    submit() {
+        if (this.id) {
+            this.mod.interactions.submitAnswerUpdate(this.commentId, this.id, this.value.text)
+        } else {
+            this.mod.interactions.createNewAnswer(this.commentId, this.value.text)
+        }
     }
 
     get value() {

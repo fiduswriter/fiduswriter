@@ -11,7 +11,7 @@ export class ModCommentInteractions {
         this.activeCommentId = false
         this.activeCommentAnswerId = false
         this.editComment = false
-        //this.editor = false
+        this.editor = false
         this.bindEvents()
     }
 
@@ -20,12 +20,6 @@ export class ModCommentInteractions {
         document.addEventListener('click', event => {
             let el = {}
             switch (true) {
-                case findTarget(event, '.submitComment', el):
-                    this.submitComment()
-                    break
-                case findTarget(event, '.cancelSubmitComment', el):
-                    this.cancelSubmitComment()
-                    break
                 case findTarget(event, '.margin-box.comment.inactive', el):
                     let tr = deactivateAllSelectedChanges(this.mod.editor.view.state.tr)
                     if (tr) {
@@ -49,12 +43,6 @@ export class ModCommentInteractions {
                         el.target.dataset.id,
                         el.target.dataset.answer
                     )
-                    break
-                case findTarget(event, '.submit-comment-answer-edit', el):
-                    this.submitAnswerEdit()
-                    break
-                case findTarget(event, '.comment-answer-submit', el):
-                    this.submitAnswer()
                     break
                 case findTarget(event, '.delete-comment', el):
                     this.deleteComment(parseInt(el.target.dataset.id))
@@ -87,13 +75,13 @@ export class ModCommentInteractions {
                     text: this.mod.store.comments[id].comment,
                     isMajor: this.mod.store.comments[id].isMajor
                 }
-            this.editor = new CommentEditor(commentEditorDOM, value)
+            this.editor = new CommentEditor(this.mod, id, commentEditorDOM, value)
         } else {
             let answerId = this.activeCommentAnswerId,
                 value = answerId ?
                     {text: this.mod.store.comments[id].answers.find(answer => answer.id === answerId).answer} :
                     {text: []}
-            this.editor = new CommentAnswerEditor(answerEditorDOM, value)
+            this.editor = new CommentAnswerEditor(this.mod, answerId, id, answerEditorDOM, value)
         }
 
         this.editor.init()
@@ -176,11 +164,11 @@ export class ModCommentInteractions {
             // a comment answer edit form is currently open
             return true
         }
-        if (this.editor && this.editor.view.hasFocus()) {
+        if (this.editor && this.editor.view && this.editor.view.hasFocus()) {
             // There is currently focus in the comment (answer) form
             return true
         }
-        if (this.editor && this.editor.value.text.length) {
+        if (this.editor && this.editor.value && this.editor.value.text && this.editor.value.text.length) {
             // Part of a comment (answer) has been entered.
             return true
         }
@@ -249,20 +237,9 @@ export class ModCommentInteractions {
 
     }
 
-    submitComment() {
-        // Handle a click on the submit button of the comment submit form.
-        let {text, isMajor} = this.editor.value,
-            id = this.activeCommentId
-        if (text.length > 0) {
-            this.updateComment(id, text, isMajor)
-        } else {
-            this.deleteComment(id)
-        }
-    }
-
-    cancelSubmitComment() {
+    cancelSubmit() {
         // Handle a click on the cancel button of the comment submit form.
-        let id = this.activeCommentId//parseInt(commentTextBox.dataset.id)
+        let id = this.activeCommentId
         if (id===-1 || this.mod.store.comments[id].comment.length === 0) {
             this.deleteComment(id)
         } else {
@@ -276,13 +253,6 @@ export class ModCommentInteractions {
         this.mod.store.deleteAnswer(id, answerId)
         this.deactivateAll()
         this.updateDOM()
-    }
-
-    submitAnswer() {
-        // Submit the answer to a comment
-        let {text} = this.editor.value,
-            id = this.activeCommentId
-        this.createNewAnswer(id, text)
     }
 
     editAnswer(id, answerId) {
@@ -315,14 +285,6 @@ export class ModCommentInteractions {
 
         this.deactivateAll()
         this.updateDOM()
-    }
-
-    submitAnswerEdit() {
-        let id = this.activeCommentId,
-            answerId = this.activeCommentAnswerId,
-            {text} = this.editor.value
-
-        this.submitAnswerUpdate(id, answerId, text)
     }
 
     submitAnswerUpdate(id, answerId, commentText) {

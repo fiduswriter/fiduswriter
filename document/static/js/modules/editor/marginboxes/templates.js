@@ -29,7 +29,7 @@ let answerCommentTemplate = ({
                <p class="comment-p">${getCommentHTML(answer.answer)}</p>
            </div>
            ${
-               active && (answer.user === user.id || docInfo.is_owner) ?
+               active && (answer.user === user.id) ?
                `<p class="comment-controls">
                    <span class="edit-comment-answer" data-id="${commentId}" data-answer="${answer.id}">${gettext("Edit")}</span>
                    <span class="delete-comment-answer" data-id="${commentId}" data-answer="${answer.id}">${gettext("Delete")}</span>

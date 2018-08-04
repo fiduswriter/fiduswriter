@@ -2,12 +2,12 @@ import JSZip from "jszip"
 
 import {ImportNative} from "./native"
 import {FW_FILETYPE_VERSION} from "../exporter/native"
-import {updateFileDoc, updateFileBib} from "./update"
+import {updateFile} from "./update"
 import {addAlert} from "../common"
 /** The current Fidus Writer filetype version. The importer will not import from
  * a different version and the exporter will include this number in all exports.
  */
-const MIN_FW_FILETYPE_VERSION = 1.1, MAX_FW_FILETYPE_VERSION = parseFloat(FW_FILETYPE_VERSION)
+const MIN_FW_FILETYPE_VERSION = 1.6, MAX_FW_FILETYPE_VERSION = parseFloat(FW_FILETYPE_VERSION)
 
 const TEXT_FILENAMES = ['mimetype', 'filetype-version', 'document.json', 'images.json', 'bibliography.json']
 
@@ -96,13 +96,12 @@ export class ImportFidusFile {
             filetypeVersion >= MIN_FW_FILETYPE_VERSION &&
             filetypeVersion <= MAX_FW_FILETYPE_VERSION) {
             // This seems to be a valid fidus file with current version number.
-            let bibliography = updateFileBib(JSON.parse(
-                this.textFiles.find(file => file.filename === 'bibliography.json').contents
-            ), filetypeVersion)
             let images = JSON.parse(this.textFiles.find(file => file.filename === 'images.json').contents)
-            let doc = updateFileDoc(
+            let {doc, bibliography} = updateFile(
                 JSON.parse(this.textFiles.find(file => file.filename === 'document.json').contents),
-                bibliography,
+                JSON.parse(
+                    this.textFiles.find(file => file.filename === 'bibliography.json').contents
+                ),
                 filetypeVersion
             )
             if (this.check) {

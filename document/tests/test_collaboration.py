@@ -893,7 +893,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         self.input_text(textArea, "My comment")
 
-        driver.find_element_by_class_name("submitComment").click()
+        driver.find_element_by_css_selector(
+            "div#comment-editor button.submit"
+        ).click()
 
     def get_comment(self, driver):
         comment = driver.find_element_by_class_name('comment-text-wrapper')

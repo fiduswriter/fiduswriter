@@ -8,9 +8,9 @@ from django.core import checks
 
 # FW_DOCUMENT_VERSION: See also FW_FILETYPE_VERSION specified in export
 # (same value from >= 2.0) in
-# document/static/js/modules/documents/exporter/native/zip.js
+# document/static/js/modules/exporter/native/zip.js
 
-FW_DOCUMENT_VERSION = 2.1
+FW_DOCUMENT_VERSION = 2.2
 
 
 @python_2_unicode_compatible

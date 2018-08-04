@@ -885,13 +885,17 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         button.click()
 
         textArea = WebDriverWait(driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "commentText"))
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".ProseMirror-wrapper .ProseMirror")
+            )
         )
         textArea.click()
 
         self.input_text(textArea, "My comment")
 
-        driver.find_element_by_class_name("submitComment").click()
+        driver.find_element_by_css_selector(
+            "div#comment-editor button.submit"
+        ).click()
 
     def get_comment(self, driver):
         comment = driver.find_element_by_class_name('comment-text-wrapper')

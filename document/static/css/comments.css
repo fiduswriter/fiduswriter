@@ -61,7 +61,7 @@
 .comment-answer.wait .comment-answer-text {
     background-size: 20px 20px;
 }
-.comment-item.wait .submitComment, .comment-item.wait .cancelSubmitComment, .comment-answer.wait .comment-answer-btns {
+.wait .comment-btns {
     display: none;
 }
 
@@ -91,9 +91,14 @@
 .comment-p {
     line-height: 18px;
 }
-.margin-box textarea {
-    resize: none;
+.margin-box .ProseMirror-wrapper {
     width: 194px;
+    background-color: #fff;
+    min-height: 40px;
+    border: 1px solid #ccc;
+    padding: 2px;
+    margin-bottom: 6px;
+    cursor: text;
 }
 
 .comment-controls {
@@ -112,7 +117,7 @@
 .comment-answer {
     margin-top: 9px;
 }
-.comment-answer-btns {
+.comment-btns {
     margin-top: 5px;
     text-align: right;
 }
@@ -128,15 +133,6 @@
     display: none;
 }
 
-.comment-text-wrapper.editing .comment-form {
-    display: block;
-}
-
-.comment-text-wrapper.editing .comment-p {
-    display: none;
-}
-
-
 .delete-comment-all {
     position: absolute;
     right: 5px;
@@ -150,9 +146,4 @@
 
 .comment-is-major-bgc {
     background-color: #f2dede;
-}
-
-/* comments directly on block elements like figures */
-div.article-part > span.comment {
-    display: block;
 }

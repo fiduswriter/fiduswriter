@@ -8,12 +8,7 @@ dist: trusty
 sudo: required
 
 addons:
-  sauce_connect:
-    no_ssl_bump_domains: all
-
-before_install:
-  - x="bas";`"$x"e64 -d <<< ZXhwb3J0IFNBVUNFX1VTRVJOQU1FPWZpZHVz`
-  - x="bas";`"$x"e64 -d <<< ZXhwb3J0IFNBVUNFX0FDQ0VTU19LRVk9OWU5ZGJkNzctNDIwOC00ODM5LTkwY2ItMTZkM2M5ODUxZGMw`
+  chrome: stable
 
 install:
   - mv travis/configuration.py ./
@@ -23,7 +18,6 @@ install:
   - flake8 ./
   - pip3 install coverage
   - pip3 install coveralls
-  - pip3 install selenium
   - coverage run manage.py init --no-static --no-compress
   - ./manage.py check_js
 
@@ -41,7 +35,7 @@ jobs:
     - stage: coveralls
       addons: {}
       before_cache: skip
-      cache: {}
+      cache: false
       before_install: skip
       install: skip
       after_success: skip

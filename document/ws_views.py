@@ -322,10 +322,15 @@ class WebSocket(BaseWebSocketHandler):
             if "id" not in cd:
                 # ignore
                 continue
-            id = str(cd["id"])
+            id = cd["id"]
             if cd["type"] == "create":
-                del cd["type"]
-                self.doc["comments"][id] = cd
+                self.doc["comments"][id] = {
+                    "user": cd["user"],
+                    "username": cd["username"],
+                    "date": cd["date"],
+                    "comment": cd["comment"],
+                    "isMajor": cd["isMajor"]
+                }
             elif cd["type"] == "delete":
                 del self.doc["comments"][id]
             elif cd["type"] == "update":
@@ -336,15 +341,20 @@ class WebSocket(BaseWebSocketHandler):
             elif cd["type"] == "add_answer":
                 if "answers" not in self.doc["comments"][id]:
                     self.doc["comments"][id]["answers"] = []
-                del cd["type"]
-                self.doc["comments"][id]["answers"].append(cd)
+                self.doc["comments"][id]["answers"].append({
+                    "id": cd["answerId"],
+                    "user": cd["user"],
+                    "username": cd["username"],
+                    "date": cd["date"],
+                    "answer": cd["answer"]
+                })
             elif cd["type"] == "delete_answer":
-                answer_id = str(cd["answerId"])
+                answer_id = cd["answerId"]
                 for answer in self.doc["comments"][id]["answers"]:
                     if answer["id"] == answer_id:
                         self.doc["comments"][id]["answers"].remove(answer)
             elif cd["type"] == "update_answer":
-                answer_id = str(cd["answerId"])
+                answer_id = cd["answerId"]
                 for answer in self.doc["comments"][id]["answers"]:
                     if answer["id"] == answer_id:
                         answer["answer"] = cd["answer"]

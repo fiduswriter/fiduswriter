@@ -1,5 +1,5 @@
 from __future__ import unicode_literals
-
+from chromedriver_binary import chromedriver_filename
 import os
 
 from django.test import Client
@@ -22,38 +22,18 @@ class SeleniumHelper(object):
             clients.append(Client())
         drivers = []
         wait_time = 0
-        if os.getenv("SAUCE_USERNAME"):
-            username = os.environ["SAUCE_USERNAME"]
-            access_key = os.environ["SAUCE_ACCESS_KEY"]
-            capabilities = {}
-            if os.getenv("TRAVIS_BUILD_NUMBER"):
-                capabilities["build"] = os.environ["TRAVIS_BUILD_NUMBER"]
-                capabilities["tags"] = [
-                    os.environ["TRAVIS_PYTHON_VERSION"],
-                    "CI"
-                ]
-                capabilities["tunnel-identifier"] = os.environ[
-                    "TRAVIS_JOB_NUMBER"
-                ]
-
-            capabilities["browserName"] = "chrome"
-            capabilities["platform"] = "Windows 10"
-            capabilities["version"] = "latest"
-            capabilities["screenResolution"] = "1920x1080"
-            hub_url = "%s:%s@localhost:4445" % (username, access_key)
-            for i in range(number):
-                driver = webdriver.Remote(
-                    desired_capabilities=capabilities,
-                    command_executor="http://%s/wd/hub" % hub_url
+        chrome_options = webdriver.ChromeOptions()
+        if os.getenv("CI"):
+            chrome_options.add_argument('--headless')
+            chrome_options.add_argument('--disable-gpu')
+        for i in range(number):
+            drivers.append(
+                webdriver.Chrome(
+                    chromedriver_filename,
+                    chrome_options=chrome_options
                 )
-                drivers.append(driver)
-            wait_time = 35
-        else:
-            for i in range(number):
-                drivers.append(
-                    webdriver.Chrome()
-                )
-            wait_time = 6
+            )
+        wait_time = 6
         for driver in drivers:
             # Set sizes of browsers so that all buttons are visible.
             driver.set_window_position(0, 0)

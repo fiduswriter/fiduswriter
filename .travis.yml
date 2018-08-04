@@ -18,8 +18,6 @@ install:
   - flake8 ./
   - pip3 install coverage
   - pip3 install coveralls
-  - pip3 install selenium
-  - pip3 install chromedriver
   - coverage run manage.py init --no-static --no-compress
   - ./manage.py check_js
 

@@ -1,5 +1,5 @@
 from __future__ import unicode_literals
-
+from chromedriver_binary import chromedriver_filename
 import os
 
 from django.test import Client
@@ -28,7 +28,10 @@ class SeleniumHelper(object):
             chrome_options.add_argument('--disable-gpu')
         for i in range(number):
             drivers.append(
-                webdriver.Chrome(chrome_options=chrome_options)
+                webdriver.Chrome(
+                    chromedriver_filename,
+                    chrome_options=chrome_options
+                )
             )
         wait_time = 6
         for driver in drivers:

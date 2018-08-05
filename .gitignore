@@ -37,3 +37,9 @@ base/static/css/libs/
 *.swo
 /.transpile-time
 /package-lock.json
+book/
+citation-api-import/
+languagetool/
+npm_mjs/
+ojs/
+phplist/

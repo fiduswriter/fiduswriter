@@ -491,6 +491,103 @@ def delete_revision_js(request):
     )
 
 
+# Check doc access rights.
+def has_doc_access(doc, user):
+    if doc.owner == user:
+        return True
+    access_rights = AccessRight.objects.filter(
+        document=doc,
+        user=user
+    ).first()
+    if access_rights:
+        return True
+    else:
+        return False
+
+
+@login_required
+def comment_notify_js(request):
+    response = {}
+    if not request.is_ajax() or request.method != 'POST':
+        return JsonResponse(
+            response,
+            status=405
+        )
+    doc_id = request.POST['doc_id']
+    collaborator_id = request.POST['collaborator_id']
+    comment_text = request.POST['comment_text']
+    comment_html = request.POST['comment_html']
+    collaborator = User.objects.filter(pk=collaborator_id).first()
+    document = Document.objects.filter(pk=doc_id).first()
+    if (
+        not document or
+        not collaborator or
+        not comment_text or
+        not comment_html or
+        not has_doc_access(document, request.user) or
+        not has_doc_access(document, collaborator)
+    ):
+        return JsonResponse(
+            response,
+            status=403
+        )
+    commentator = request.user.readable_name
+    collaborator_name = collaborator.readable_name
+    collaborator_email = collaborator.email
+    document_title = document.title
+    if len(document_title) == 0:
+        document_title = _('Untitled')
+    link = HttpRequest.build_absolute_uri(request, document.get_absolute_url())
+    message_body_text = _(
+        ('Hey %(collaborator_name)s,\n%(commentator)s has mentioned you in a '
+         'comment in the document \'%(document)s\':\n\n%(comment_text)s'
+         '\n\nGo to the document here: %(link)s')
+    ) % {
+           'commentator': commentator,
+           'collaborator_name': collaborator_name,
+           'link': link,
+           'document': document_title,
+           'comment_text': comment_text
+    }
+    message_body_html = _(
+        ('<p>Hey %(collaborator_name)s,<br>%(commentator)s has mentioned you '
+         'in a comment in the document \'%(document)s\'</p>: %(comment_html)s'
+         '<p>Go to the document <a href="%(link)s">here</a>.</p>')
+    ) % {
+        'commentator': commentator,
+        'collaborator_name': collaborator_name,
+        'link': link,
+        'document': document_title,
+        'comment_html': comment_html
+    }
+    html_message = (
+        '<!DOCTYPE html>\n'
+        '<html>'
+        '<head></head>'
+        '<body>'
+        '%(message_body_html)s'
+        '</body>'
+        '</html>'
+    ) % {
+        'message_body_html': message_body_html
+    }
+
+    send_mail(
+        _('Comment on :') +
+        ' ' +
+        document_title,
+        message_body_text,
+        settings.DEFAULT_FROM_EMAIL,
+        [collaborator_email],
+        fail_silently=True,
+        html_message=html_message
+    )
+    return JsonResponse(
+        response,
+        status=200
+    )
+
+
 # maintenance views
 @staff_member_required
 def get_all_docs_js(request):

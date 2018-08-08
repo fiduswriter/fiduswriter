@@ -38,6 +38,11 @@ urlpatterns = [
         name='access_right_save_js'
     ),
     url(
+        '^comment_notify/$',
+        views.comment_notify_js,
+        name='comment_notify_js'
+    ),
+    url(
         '^maintenance/get_all/$',
         views.get_all_docs_js,
         name='get_all_docs_js'

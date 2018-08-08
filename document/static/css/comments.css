@@ -58,6 +58,11 @@
 .comment-item.wait textarea {
     background-size: 40px 40px;
 }
+
+.comment .collaborator {
+    font-weight: 700;
+}
+
 .comment-answer.wait .comment-answer-text {
     background-size: 20px 20px;
 }
@@ -146,4 +151,28 @@
 
 .comment-is-major-bgc {
     background-color: #f2dede;
+}
+
+#comment-editor .ProseMirror-suggestion, #answer-editor .ProseMirror-suggestion {
+    font-weight: 700;
+}
+
+#comment-editor .tagger, #answer-editor .tagger  {
+    margin: 5px -10px -11px -10px;
+    background-color: #f2f2f2;
+    border: 1px solid #c9c9c9;
+}
+
+#comment-editor .tagger:empty, #answer-editor .tagger:empty {
+    display: none;
+}
+
+#comment-editor .tagger .tag, #answer-editor .tagger .tag {
+    padding: 10px;
+    cursor: pointer;
+}
+
+#comment-editor .tagger .tag:hover, #comment-editor .tagger .tag.selected,
+#answer-editor .tagger .tag:hover, #answer-editor .tagger .tag.selected {
+    background-color: #c9c9c9;
 }

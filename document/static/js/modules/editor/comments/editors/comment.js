@@ -3,26 +3,92 @@ import {EditorView} from "prosemirror-view"
 import {history, redo, undo} from "prosemirror-history"
 import {baseKeymap} from "prosemirror-commands"
 import {keymap} from "prosemirror-keymap"
-
+import {suggestionsPlugin, triggerCharacter} from "prosemirror-suggestions"
+import {DOMSerializer} from "prosemirror-model"
 import {commentSchema} from "./schema"
+import {notifyUser} from "./notify"
+import {escapeText, findTarget} from "../../../common"
 
 export class CommentEditor {
-    constructor(mod, id, dom, {text, isMajor}) {
+    constructor(mod, id, dom, text, options = {}) {
         this.mod = mod
         this.id = id
         this.dom = dom
         this.text = text
-        this.isMajor = isMajor
+        this.options = options
+
+        this.selectedTag = 0
+        this.userTaggerList = []
+        this.plugins = [
+            history(),
+            suggestionsPlugin({
+                escapeOnSelectionChange: true ,
+                matcher: triggerCharacter('@'),
+                onEnter: (args) => {
+                    this.selectedTag = 0
+                    this.tagRange = args.range
+                    const search = args.text.slice(1)
+                    if (search.length) {
+                        this.setUserTaggerList(search)
+                        this.showUserTagger()
+                    }
+                },
+                onChange: (args) => {
+                    this.selectedTag = 0
+                    this.tagRange = args.range
+                    const search = args.text.slice(1)
+                    if (search.length) {
+                        this.setUserTaggerList(search)
+                        this.showUserTagger()
+                    }
+                },
+                onExit: (args) => {
+                    this.selectedTag = 0
+                    this.removeTagger()
+                },
+                onKeyDown: ({view, event}) => {
+                    if (event.key === 'ArrowDown') {
+                        if (this.userTaggerList.length > this.selectedTag + 1) {
+                            this.selectedTag += 1
+                            this.showUserTagger()
+                        }
+                        return true
+                    } else if (event.key === 'ArrowUp') {
+                        if (this.selectedTag > 0) {
+                            this.selectedTag -= 1
+                            this.showUserTagger()
+                        }
+                        return true
+                    } else if (event.key === 'Enter') {
+                        return this.selectUserTag()
+                    }
+                    return false
+                },
+                escapeKeys: ['Escape', 'ArrowRight', 'ArrowLeft']
+            }),
+            keymap(baseKeymap),
+            keymap({
+                "Mod-z": undo,
+                "Mod-shift-z": undo,
+                "Mod-y": redo,
+                "Ctrl-Enter": () => this.submit()
+            })
+        ]
     }
 
     init() {
-        let viewDOM = document.createElement('div')
-        viewDOM.classList.add('ProseMirror-wrapper')
-        this.dom.appendChild(viewDOM)
+        this.initViewDOM()
+        this.initView()
+    }
+
+    initViewDOM() {
+        this.viewDOM = document.createElement('div')
+        this.viewDOM.classList.add('ProseMirror-wrapper')
+        this.dom.appendChild(this.viewDOM)
         this.dom.insertAdjacentHTML(
             'beforeend',
             `<input class="comment-is-major" type="checkbox" name="isMajor"
-                ${this.isMajor ? 'checked' : ''}/>
+                ${this.options.isMajor ? 'checked' : ''}/>
             <label>${gettext("Is major")}</label>
             <div class="comment-btns">
                 <button class="submit fw-button fw-dark" type="submit">
@@ -31,60 +97,123 @@ export class CommentEditor {
                 <button class="cancel fw-button fw-orange" type="submit">
                     ${gettext("Cancel")}
                 </button>
-            </div>`
+            </div>
+            <div class="tagger"></div>`
         )
-        this.view = new EditorView(viewDOM, {
+    }
+
+    initView() {
+        this.view = new EditorView(this.viewDOM, {
             state: EditorState.create({
                 schema: commentSchema,
                 doc: commentSchema.nodeFromJSON({
                     type: 'doc',
                     content: this.text
                 }),
-                plugins: [
-                    history(),
-                    keymap(baseKeymap),
-                    keymap({
-                        "Mod-z": undo,
-                        "Mod-shift-z": undo,
-                        "Mod-y": redo,
-                        "Ctrl-Enter": () => this.submit()
-                    })
-                ]
+                plugins: this.plugins
             }),
             dispatchTransaction: tr => {
                 let newState = this.view.state.apply(tr)
                 this.view.updateState(newState)
             }
         })
+        this.oldUserTags = this.getUserTags()
         this.view.focus()
         this.bind()
     }
 
     bind() {
-        this.dom.querySelector('button.submit').addEventListener('click',
-            event => this.submit()
-        )
-        this.dom.querySelector('button.cancel').addEventListener('click',
-            event => this.mod.interactions.cancelSubmit()
-        )
-        this.dom.querySelector('.ProseMirror-wrapper').addEventListener('click',
-            event => this.view.focus()
-        )
+        this.dom.addEventListener('click', event => {
+            let el = {}
+            switch (true) {
+                case findTarget(event, 'button.submit', el):
+                    this.submit()
+                    break
+                case findTarget(event, 'button.cancel', el):
+                    this.mod.interactions.cancelSubmit()
+                    break
+                case findTarget(event, '.ProseMirror-wrapper', el):
+                    this.view.focus()
+                    break
+                case findTarget(event, '.tag-user', el):
+                    this.selectedTag = parseInt(el.target.dataset.index)
+                    this.selectUserTag()
+                    this.view.focus()
+                    break
+            }
+        })
+
+
     }
 
     submit() {
-        let {text, isMajor} = this.value
+        let text = this.view.state.doc.toJSON().content,
+            isMajor = this.dom.querySelector('.comment-is-major').checked
         if (text.length > 0) {
             this.mod.interactions.updateComment(this.id, text, isMajor)
+            this.sendNotifications()
         } else {
             this.mod.interactions.deleteComment(this.id)
         }
     }
 
-    get value() {
-        return {
-            text: this.view.state.doc.toJSON().content,
-            isMajor: this.dom.querySelector('.comment-is-major').checked
+    sendNotifications() {
+        const newUserTags = this.getUserTags().filter(id => !this.oldUserTags.includes(id))
+        if (newUserTags.length) {
+            const commentDOM = DOMSerializer.fromSchema(
+                this.view.state.schema
+            ).serializeNode(this.view.state.doc),
+                commentText = commentDOM.innerText,
+                commentHTML = commentDOM.innerHTML,
+                docId = this.mod.editor.docInfo.id
+            newUserTags.forEach(userId => notifyUser(docId, userId, commentText, commentHTML))
         }
+    }
+
+    setUserTaggerList(search) {
+        this.userTaggerList = this.mod.editor.docInfo.owner.team_members.filter(
+            user => user.name.includes(search) || user.username.includes(search)
+        )
+    }
+
+    showUserTagger() {
+        if (!this.userTaggerList.length) {
+            return
+        }
+        this.dom.querySelector('div.tagger').innerHTML = this.userTaggerList.map((user, index) =>
+            `<div class="tag-user tag${index === this.selectedTag ? ' selected' : ''}" data-index="${index}">
+                ${escapeText(user.name ? user.name : user.username)}
+            </div>`
+        ).join('')
+    }
+
+    selectUserTag() {
+        const user = this.userTaggerList[this.selectedTag]
+        if (!user || !this.tagRange) {
+            return false
+        }
+        let tr = this.view.state.tr.replaceRangeWith(
+            this.tagRange.from,
+            this.tagRange.to,
+            this.view.state.schema.nodes.collaborator.create({id: user.id, name: user.name ? user.name: user.username})
+        )
+        this.view.dispatch(tr)
+        return true
+    }
+
+    getUserTags() {
+        let users = []
+        this.view.state.doc.descendants(node => {
+            if (node.type.name==='collaborator') {
+                users.push(node.attrs.id)
+            }
+        })
+        return [...new Set(users)] // only unique values.
+    }
+
+    removeTagger() {
+        this.dom.querySelector('div.tagger').innerHTML = ''
+        this.tagRange = false
+        this.userTaggerList = []
     }
 }

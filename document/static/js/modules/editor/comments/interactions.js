@@ -75,13 +75,13 @@ export class ModCommentInteractions {
                     text: this.mod.store.comments[id].comment,
                     isMajor: this.mod.store.comments[id].isMajor
                 }
-            this.editor = new CommentEditor(this.mod, id, commentEditorDOM, value)
+            this.editor = new CommentEditor(this.mod, id, commentEditorDOM, value.text, {isMajor: value.isMajor})
         } else {
             let answerId = this.activeCommentAnswerId,
-                value = answerId ?
-                    {text: this.mod.store.comments[id].answers.find(answer => answer.id === answerId).answer} :
-                    {text: []}
-            this.editor = new CommentAnswerEditor(this.mod, answerId, id, answerEditorDOM, value)
+                text = answerId ?
+                    this.mod.store.comments[id].answers.find(answer => answer.id === answerId).answer :
+                    []
+            this.editor = new CommentAnswerEditor(this.mod, id, answerEditorDOM, text, {answerId})
         }
 
         this.editor.init()
@@ -168,7 +168,7 @@ export class ModCommentInteractions {
             // There is currently focus in the comment (answer) form
             return true
         }
-        if (this.editor && this.editor.value && this.editor.value.text && this.editor.value.text.length) {
+        if (this.editor && this.editor.view && this.view.state.doc.toJSON().content.length) {
             // Part of a comment (answer) has been entered.
             return true
         }

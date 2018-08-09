@@ -5,7 +5,7 @@ import {deactivateAllSelectedChanges} from "../state_plugins"
 import {deleteNode} from "./delete"
 
 export let reject = function(type, pos, view) {
-    let tr = view.state.tr.setMeta('track', true), map = new Mapping(), reachedEnd = false
+    let tr = view.state.tr.setMeta('track', true), map = new Mapping(), reachedEnd = false, inlineChange = false
     let trackMark = view.state.doc.nodeAt(pos).marks.find(mark => mark.type.name===type)
     view.state.doc.nodesBetween(pos, view.state.doc.firstChild.nodeSize, (node, nodePos, parent, index) => {
         if (nodePos < pos) {
@@ -16,9 +16,14 @@ export let reject = function(type, pos, view) {
         }
         if (!node.isInline) {
             reachedEnd = true // Changes on inline nodes are applied/reject until next non-inline node. Non-inline node changes are only applied that one node by default.
+            if (inlineChange) { // Change has already affected inline node. Don't apply to block level.
+                return false
+            }
         } else if (!trackMark.isInSet(node.marks)) {
             reachedEnd = true
             return false
+        } else {
+            inlineChange = true
         }
         if (type==='insertion') {
             deleteNode(tr, node, nodePos, map, false)

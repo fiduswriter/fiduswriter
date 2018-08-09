@@ -4,7 +4,6 @@ import {ReplaceStep, ReplaceAroundStep, AddMarkStep, RemoveMarkStep, Mapping} fr
 import {CellSelection} from "prosemirror-tables"
 
 export function appendTransaction(trs, oldState, newState, editor) {
-
     if (
         trs.every(
             tr =>
@@ -181,6 +180,7 @@ export function appendTransaction(trs, oldState, newState, editor) {
     if (!addedRanges.length && !markedDeletionRanges.length && !unmarkedDeletionRanges.length && !formatChangeRanges.length && !replacedWrappings.length) {
         return false
     }
+
     let newTr = newState.tr,
         exactDate = Date.now() - editor.clientTimeAdjustment,
         date10 = Math.floor(exactDate/600000) * 10, // 10 minute interval
@@ -205,8 +205,19 @@ export function appendTransaction(trs, oldState, newState, editor) {
             )
         }
     })
-
-    replacedWrappings.forEach(wrap => {
+    Object.values( // If the same node is exchanged more than once, use the oldNode of the first instance and newNode of last
+        replacedWrappings.reduce(
+            (obj, value) => {
+                if (obj[value.pos]) {
+                    obj[value.pos].newNode=value.newNode
+                } else {
+                    obj[value.pos]=value
+                }
+                return obj
+            },
+            {}
+        )
+    ).forEach(wrap => {
         let {oldNode, newNode, pos} = wrap,
             track = oldNode.attrs.track.slice(),
             blockTrack = track.find(track => track.type==="block_change")

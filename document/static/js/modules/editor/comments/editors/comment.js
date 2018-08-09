@@ -171,7 +171,8 @@ export class CommentEditor {
     }
 
     setUserTaggerList(search) {
-        this.userTaggerList = this.mod.editor.docInfo.owner.team_members.filter(
+        const owner = this.mod.editor.docInfo.owner
+        this.userTaggerList = owner.team_members.concat(owner).filter(
             user => user.name.includes(search) || user.username.includes(search)
         )
     }
@@ -182,7 +183,8 @@ export class CommentEditor {
         }
         this.dom.querySelector('div.tagger').innerHTML = this.userTaggerList.map((user, index) =>
             `<div class="tag-user tag${index === this.selectedTag ? ' selected' : ''}" data-index="${index}">
-                ${escapeText(user.name ? user.name : user.username)}
+                <img class="comment-user-avatar" src="${user.avatar ? user.avatar : `${$StaticUrls.base$}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
+                <h5 class="comment-user-name">${escapeText(user.name)}</h5>
             </div>`
         ).join('')
     }
@@ -195,7 +197,7 @@ export class CommentEditor {
         let tr = this.view.state.tr.replaceRangeWith(
             this.tagRange.from,
             this.tagRange.to,
-            this.view.state.schema.nodes.collaborator.create({id: user.id, name: user.name ? user.name: user.username})
+            this.view.state.schema.nodes.collaborator.create({id: user.id, name: user.name})
         )
         this.view.dispatch(tr)
         return true

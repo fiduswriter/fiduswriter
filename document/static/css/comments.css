@@ -176,3 +176,7 @@
 #answer-editor .tagger .tag:hover, #answer-editor .tagger .tag.selected {
     background-color: #c9c9c9;
 }
+
+#comment-editor .tagger .tag-user, #answer-editor .tagger .tag-user {
+    min-height: 28px;
+}

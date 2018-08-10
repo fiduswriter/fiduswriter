@@ -29,6 +29,7 @@ from bibliography.models import Entry
 from document.helpers.serializers import PythonWithURLSerializer
 from bibliography.views import serializer
 from style.models import CitationStyle, CitationLocale
+from base.html_email import html_email
 
 
 def get_accessrights(ars):
@@ -549,9 +550,9 @@ def comment_notify_js(request):
            'document': document_title,
            'comment_text': comment_text
     }
-    message_body_html = _(
+    body_html = _(
         ('<p>Hey %(collaborator_name)s,<br>%(commentator)s has mentioned you '
-         'in a comment in the document \'%(document)s\'</p>: %(comment_html)s'
+         'in a comment in the document \'%(document)s\':</p>%(comment_html)s'
          '<p>Go to the document <a href="%(link)s">here</a>.</p>')
     ) % {
         'commentator': commentator,
@@ -559,17 +560,6 @@ def comment_notify_js(request):
         'link': link,
         'document': document_title,
         'comment_html': comment_html
-    }
-    html_message = (
-        '<!DOCTYPE html>\n'
-        '<html>'
-        '<head></head>'
-        '<body>'
-        '%(message_body_html)s'
-        '</body>'
-        '</html>'
-    ) % {
-        'message_body_html': message_body_html
     }
 
     send_mail(
@@ -580,7 +570,7 @@ def comment_notify_js(request):
         settings.DEFAULT_FROM_EMAIL,
         [collaborator_email],
         fail_silently=True,
-        html_message=html_message
+        html_message=html_email(body_html)
     )
     return JsonResponse(
         response,

@@ -222,25 +222,38 @@ def send_share_notification(request, doc_id, collaborator_id, right):
     if len(document_title) == 0:
         document_title = _('Untitled')
     link = HttpRequest.build_absolute_uri(request, document.get_absolute_url())
-    message_body = _(
+    message_text = _(
         ('Hey %(collaborator_name)s,\n%(owner)s has shared the document '
          '\'%(document)s\' with you and given you %(right)s access rights. '
          '\nAccess the document through this link: %(link)s')
     ) % {
-                       'owner': owner,
-                       'right': right,
-                       'collaborator_name': collaborator_name,
-                       'link': link,
-                       'document': document_title
-                   }
+        'owner': owner,
+        'right': right,
+        'collaborator_name': collaborator_name,
+        'link': link,
+        'document': document_title
+    }
+    body_html = _(
+        ('<p>Hey %(collaborator_name)s,<br>%(owner)s has shared the document '
+         '\'%(document)s\' with you and given you %(right)s access rights.</p>'
+         '<p>Access the document <a href="%(link)s">here</a>.</p>')
+    ) % {
+        'owner': owner,
+        'right': right,
+        'collaborator_name': collaborator_name,
+        'link': link,
+        'document': document_title
+    }
     send_mail(
         _('Document shared:') +
         ' ' +
         document_title,
-        message_body,
+        message_text,
         settings.DEFAULT_FROM_EMAIL,
         [collaborator_email],
-        fail_silently=True)
+        fail_silently=True,
+        html_message=html_email(body_html)
+    )
 
 
 def send_share_upgrade_notification(request, doc_id, collaborator_id):
@@ -250,21 +263,32 @@ def send_share_upgrade_notification(request, doc_id, collaborator_id):
     collaborator_name = collaborator.readable_name
     collaborator_email = collaborator.email
     link = HttpRequest.build_absolute_uri(request, document.get_absolute_url())
-    message_body = _(
+    message_text = _(
         ('Hey %(collaborator_name)s,\n%(owner)s has given you write access '
          'rights to a Fidus Writer document.\nAccess the document through '
          'this link: %(link)s')
     ) % {
-                       'owner': owner,
-                       'collaborator_name': collaborator_name,
-                       'link': link
-                   }
+        'owner': owner,
+        'collaborator_name': collaborator_name,
+        'link': link
+    }
+    body_html = _(
+        ('<p>Hey %(collaborator_name)s,<br>%(owner)s has given you write '
+         'access to a Fidus Writer document.</p>'
+         '<p>Access the document <a href="%(link)s">here</a>.</p>')
+    ) % {
+        'owner': owner,
+        'collaborator_name': collaborator_name,
+        'link': link
+    }
     send_mail(
         _('Fidus Writer document write access'),
-        message_body,
+        message_text,
         settings.DEFAULT_FROM_EMAIL,
         [collaborator_email],
-        fail_silently=True)
+        fail_silently=True,
+        html_message=html_email(body_html)
+    )
 
 
 @login_required
@@ -539,7 +563,7 @@ def comment_notify_js(request):
     if len(document_title) == 0:
         document_title = _('Untitled')
     link = HttpRequest.build_absolute_uri(request, document.get_absolute_url())
-    message_body_text = _(
+    message_text = _(
         ('Hey %(collaborator_name)s,\n%(commentator)s has mentioned you in a '
          'comment in the document \'%(document)s\':\n\n%(comment_text)s'
          '\n\nGo to the document here: %(link)s')
@@ -566,7 +590,7 @@ def comment_notify_js(request):
         _('Comment on :') +
         ' ' +
         document_title,
-        message_body_text,
+        message_text,
         settings.DEFAULT_FROM_EMAIL,
         [collaborator_email],
         fail_silently=True,

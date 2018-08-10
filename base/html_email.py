@@ -1,6 +1,7 @@
 import bleach
 from django.template import loader
 
+
 def html_email(body_html):
     body_html = bleach.clean(
         body_html,

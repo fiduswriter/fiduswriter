@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Set the bib_type based on the entry_type name ahead of removal of entry_type foreign key.
-from __future__ import unicode_literals
+
 
 from django.db import migrations
 

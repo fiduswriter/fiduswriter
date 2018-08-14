@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 from avatar.utils import get_primary_avatar, get_default_avatar_url
 

@@ -1,42 +1,42 @@
 # -*- coding: utf-8 -*-
 # Update bibliography fields for biblatex-csl-converter v. 0.11.1
-from __future__ import unicode_literals
+
 
 from tornado.escape import json_decode, json_encode
 from re import sub
 from django.db import migrations
 
-f_date = [u'date', u'urldate', u'eventdate', u'origdate']
+f_date = ['date', 'urldate', 'eventdate', 'origdate']
 
-l_name = [u'afterword', u'annotator', u'author', u'bookauthor', \
-u'commentator', u'editor', u'editora', u'editorb', u'editorc', u'foreword', \
-u'holder', u'introduction', u'shortauthor', u'shorteditor', u'translator']
+l_name = ['afterword', 'annotator', 'author', 'bookauthor', \
+'commentator', 'editor', 'editora', 'editorb', 'editorc', 'foreword', \
+'holder', 'introduction', 'shortauthor', 'shorteditor', 'translator']
 
-f_key = [u'authortype', u'bookpagination', u'editortype', u'editoratype',\
-u'editorbtype', u'editorctype', u'origlanguage', u'pagination', u'pubstate',\
-u'type']
+f_key = ['authortype', 'bookpagination', 'editortype', 'editoratype',\
+'editorbtype', 'editorctype', 'origlanguage', 'pagination', 'pubstate',\
+'type']
 
-l_range = [u'pages',]
+l_range = ['pages',]
 
-l_key = [u'language',]
+l_key = ['language',]
 
-f_literal = [u'abstract', u'addendum', u'annotation', u'booksubtitle',\
-u'booktitle', u'booktitleaddon', u'chapter', u'eid', u'entrysubtype',\
-u'eprinttype', u'eventtitle', u'howpublished', u'indextitle', u'isan',\
-u'isbn', u'ismn', u'isrn', u'issn', u'issue', u'issuesubtitle', u'issuetitle',\
-u'iswc', u'journalsubtitle', u'journaltitle', u'label', u'library',\
-u'mainsubtitle', u'maintitle', u'maintitleaddon', u'nameaddon', u'note',\
-u'number', u'origtitle', u'pagetotal', u'part', u'reprinttitle', u'series',\
-u'shorthand', u'shorthandintro', u'shortjournal', u'shortseries', \
-u'shorttitle', u'subtitle', u'title', u'titleaddon', u'venue', u'version',\
-u'volume', u'volumes', u'eprintclass']
+f_literal = ['abstract', 'addendum', 'annotation', 'booksubtitle',\
+'booktitle', 'booktitleaddon', 'chapter', 'eid', 'entrysubtype',\
+'eprinttype', 'eventtitle', 'howpublished', 'indextitle', 'isan',\
+'isbn', 'ismn', 'isrn', 'issn', 'issue', 'issuesubtitle', 'issuetitle',\
+'iswc', 'journalsubtitle', 'journaltitle', 'label', 'library',\
+'mainsubtitle', 'maintitle', 'maintitleaddon', 'nameaddon', 'note',\
+'number', 'origtitle', 'pagetotal', 'part', 'reprinttitle', 'series',\
+'shorthand', 'shorthandintro', 'shortjournal', 'shortseries', \
+'shorttitle', 'subtitle', 'title', 'titleaddon', 'venue', 'version',\
+'volume', 'volumes', 'eprintclass']
 
-l_literal = [u'institution', u'location', u'organization', \
-u'origlocation', u'origpublisher', u'publisher']
+l_literal = ['institution', 'location', 'organization', \
+'origlocation', 'origpublisher', 'publisher']
 
-f_integer = [u'edition',]
+f_integer = ['edition',]
 
-f_verbatim = [u'doi', u'eprint', u'file']
+f_verbatim = ['doi', 'eprint', 'file']
 
 def strip_brackets_and_html(string):
     return sub('<[^<]+?>', '', string.replace('{','').replace('}',''))

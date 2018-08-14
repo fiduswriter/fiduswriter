@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 from builtins import range
 from builtins import object
 from chromedriver_binary import chromedriver_filename

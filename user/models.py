@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 from builtins import object
 from django.db import models
@@ -15,7 +15,7 @@ User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 
 def get_readable_name(user):
     readable_name = user.get_full_name()
-    if readable_name == u'':
+    if readable_name == '':
         readable_name = user.username
     return readable_name
 

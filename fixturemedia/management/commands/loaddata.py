@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 from os.path import dirname, isdir, join, isfile
 
@@ -14,9 +14,7 @@ try:
     from django.apps import apps
     get_models = apps.get_models
 
-    def get_apps(): return filter(
-        None, [a.models_module for a in apps.get_app_configs()]
-    )
+    def get_apps(): return [_f for _f in [a.models_module for a in apps.get_app_configs()] if _f]
 
     def get_modelclasses():
         for modelclass in get_models():

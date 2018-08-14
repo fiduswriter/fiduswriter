@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 from allauth.account import views as allauth_views
 from django.conf.urls import include, url
 from django.views.generic.base import RedirectView

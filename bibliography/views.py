@@ -92,7 +92,7 @@ def save_js(request):
         bibs = json.loads(request.POST['bibs'])
         status = 200
         response['id_translations'] = []
-        for b_id in bibs.keys():
+        for b_id in list(bibs.keys()):
             bib = bibs[b_id]
             if request.POST['is_new'] == 'true':
                 inserting_obj = {

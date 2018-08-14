@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from builtins import object
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -36,5 +37,5 @@ class TeamMember(models.Model):
     member = models.ForeignKey(User, related_name='member')
     roles = models.CharField(max_length=100, blank=True)
 
-    class Meta:
+    class Meta(object):
         unique_together = (("leader", "member"),)

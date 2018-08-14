@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+from builtins import object
 from django.utils.encoding import python_2_unicode_compatible
 
 from django.db import models
@@ -13,7 +14,7 @@ class EntryCategory(models.Model):
     def __str__(self):
         return self.category_title
 
-    class Meta:
+    class Meta(object):
         verbose_name_plural = 'Entry categories'
 
 

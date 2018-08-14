@@ -1,4 +1,6 @@
 from __future__ import unicode_literals
+from builtins import str
+from builtins import object
 from django.utils.encoding import python_2_unicode_compatible
 
 from django.db import models
@@ -48,7 +50,7 @@ class Document(models.Model):
         else:
             return str(self.id)
 
-    class Meta:
+    class Meta(object):
         ordering = ['-id']
 
     def get_absolute_url(self):
@@ -127,7 +129,7 @@ class AccessRight(models.Model):
         choices=RIGHTS_CHOICES,
         blank=False)
 
-    class Meta:
+    class Meta(object):
         unique_together = (("document", "user"),)
 
     def __str__(self):
@@ -180,7 +182,7 @@ class ExportTemplate(models.Model):
         blank=False)
     template_file = models.FileField(upload_to=template_filename)
 
-    class Meta:
+    class Meta(object):
         unique_together = (("file_name", "file_type"),)
 
     def __str__(self):

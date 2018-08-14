@@ -24,7 +24,10 @@ from __future__ import unicode_literals
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-import urllib2
+from future import standard_library
+standard_library.install_aliases()
+from builtins import map
+import urllib.request, urllib.error, urllib.parse
 from future.moves.urllib.parse import urlparse
 
 from django.template.defaultfilters import slugify
@@ -56,8 +59,7 @@ def name_from_url(url):
     for base in (p.path.split('/')[-1],
                  p.path,
                  p.netloc):
-        name = ".".join(filter(lambda s: s,
-                               map(slugify, base.split("."))))
+        name = ".".join([s for s in map(slugify, base.split(".")) if s])
         if name:
             return name
 
@@ -68,7 +70,7 @@ def copy_avatar(request, user, account):
         ava = Avatar(user=user)
         ava.primary = Avatar.objects.filter(user=user).count() == 0
         try:
-            content = urllib2.urlopen(url).read()
+            content = urllib.request.urlopen(url).read()
             name = name_from_url(url)
             ava.avatar.save(name, ContentFile(content))
         except IOError:

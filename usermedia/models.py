@@ -1,4 +1,8 @@
 from __future__ import unicode_literals
+from __future__ import division
+from builtins import str
+from builtins import object
+from past.utils import old_div
 from django.utils.encoding import python_2_unicode_compatible
 
 import os
@@ -116,10 +120,10 @@ class Image(models.Model):
         if src_width < src_height:
             crop_width = crop_height = src_width
             x_offset = 0
-            y_offset = int(float(src_height - crop_height) / 2)
+            y_offset = int(old_div(float(src_height - crop_height), 2))
         else:
             crop_width = crop_height = src_height
-            x_offset = int(float(src_width - crop_width) / 2)
+            x_offset = int(old_div(float(src_width - crop_width), 2))
             y_offset = 0
 
         image = image.crop(
@@ -214,5 +218,5 @@ class ImageCategory(models.Model):
     def __str__(self):
         return self.category_title
 
-    class Meta:
+    class Meta(object):
         verbose_name_plural = 'Image categories'

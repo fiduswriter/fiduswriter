@@ -1,11 +1,6 @@
-
-from future import standard_library
-
 from builtins import map
-import urllib.request
-import urllib.error
-import urllib.parse
-from future.moves.urllib.parse import urlparse
+from urllib.request import urlopen
+from urllib.parse import urlparse
 
 from django.template.defaultfilters import slugify
 from django.core.files.base import ContentFile
@@ -13,7 +8,6 @@ from django.dispatch import receiver
 
 from avatar.models import Avatar
 from allauth.account.signals import user_signed_up
-standard_library.install_aliases()
 # This file is split of from django-allauth and is licensed as:
 
 # Copyright (c) 2010 Raymond Penners and contributors
@@ -72,7 +66,7 @@ def copy_avatar(request, user, account):
         ava = Avatar(user=user)
         ava.primary = Avatar.objects.filter(user=user).count() == 0
         try:
-            content = urllib.request.urlopen(url).read()
+            content = urlopen(url).read()
             name = name_from_url(url)
             ava.avatar.save(name, ContentFile(content))
         except IOError:

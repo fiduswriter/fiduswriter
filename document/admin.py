@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.contrib.admin import AdminSite
 from django.shortcuts import render
 from django.urls import path
 from . import models
@@ -8,10 +7,10 @@ from . import models
 class DocumentAdmin(admin.ModelAdmin):
     def get_urls(self):
         urls = super().get_urls()
-        my_urls = [
-            path(r'maintenance/', self.maintenance_view)
+        extra_urls = [
+            path('maintenance/', self.admin_site.admin_view(self.maintenance_view))
         ]
-        urls = my_urls + urls
+        urls = extra_urls + urls
         return urls
 
     def maintenance_view(self, request):

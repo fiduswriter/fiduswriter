@@ -1,5 +1,3 @@
-
-
 from os.path import dirname, isdir, join, isfile
 
 from django.conf import settings
@@ -14,7 +12,8 @@ try:
     from django.apps import apps
     get_models = apps.get_models
 
-    def get_apps(): return [_f for _f in [a.models_module for a in apps.get_app_configs()] if _f]
+    def get_apps(): return [_f for _f in [
+        a.models_module for a in apps.get_app_configs()] if _f]
 
     def get_modelclasses():
         for modelclass in get_models():
@@ -29,9 +28,6 @@ except ImportError:
             modelclasses = get_models(app)
             for modelclass in modelclasses:
                 yield modelclass
-
-# For Python < 3.3
-file_not_found_error = getattr(__builtins__, 'FileNotFoundError', IOError)
 
 
 def models_with_filefields():

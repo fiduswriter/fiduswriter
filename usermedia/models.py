@@ -1,9 +1,6 @@
-
-
 from builtins import str
 from builtins import object
 from past.utils import old_div
-from django.utils.encoding import python_2_unicode_compatible
 
 import os
 import uuid
@@ -28,7 +25,6 @@ def get_file_path(instance, filename):
     return os.path.join('images', filename)
 
 
-@python_2_unicode_compatible
 class Image(models.Model):
     uploader = models.ForeignKey(User, related_name='image_uploader')
     added = models.DateTimeField(auto_now_add=True)
@@ -177,7 +173,6 @@ class Image(models.Model):
 
 
 # Image linked to a particular User.
-@python_2_unicode_compatible
 class UserImage(models.Model):
     title = models.CharField(max_length=128)
     owner = models.ForeignKey(
@@ -196,7 +191,6 @@ class UserImage(models.Model):
 
 
 # Image linked to a document
-@python_2_unicode_compatible
 class DocumentImage(models.Model):
     title = models.CharField(max_length=128, default='')
     document = models.ForeignKey(Document)
@@ -210,7 +204,6 @@ class DocumentImage(models.Model):
 
 
 # category
-@python_2_unicode_compatible
 class ImageCategory(models.Model):
     category_title = models.CharField(max_length=100)
     category_owner = models.ForeignKey(User)

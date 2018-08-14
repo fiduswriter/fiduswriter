@@ -1,7 +1,6 @@
 
 from builtins import str
 from builtins import object
-from django.utils.encoding import python_2_unicode_compatible
 
 from django.db import models
 from django.db.utils import OperationalError, ProgrammingError
@@ -15,7 +14,6 @@ from django.core import checks
 FW_DOCUMENT_VERSION = 2.2
 
 
-@python_2_unicode_compatible
 class Document(models.Model):
     title = models.CharField(max_length=255, default='', blank=True)
     contents = models.TextField(default='{}')  # json object of content
@@ -120,7 +118,6 @@ CAN_UPDATE_DOCUMENT = ['write', 'write-tracked', 'edit', 'review', 'comment']
 CAN_COMMUNICATE = ['read', 'write', 'comment', 'write-tracked']
 
 
-@python_2_unicode_compatible
 class AccessRight(models.Model):
     document = models.ForeignKey(Document)
     user = models.ForeignKey(User)
@@ -147,7 +144,6 @@ def revision_filename(instance, filename):
     return '/'.join(['revision', str(instance.document.id), filename])
 
 
-@python_2_unicode_compatible
 class DocumentRevision(models.Model):
     document = models.ForeignKey(Document)
     note = models.CharField(max_length=255, default='', blank=True)
@@ -173,7 +169,6 @@ def template_filename(instance, filename):
     return '/'.join(['export-templates', filename])
 
 
-@python_2_unicode_compatible
 class ExportTemplate(models.Model):
     file_name = models.CharField(max_length=255, default='', blank=True)
     file_type = models.CharField(

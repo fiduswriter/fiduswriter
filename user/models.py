@@ -6,7 +6,10 @@ from django.contrib.auth.models import User
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(
+        User,
+        on_delete=models.deletion.CASCADE
+    )
     about = models.TextField(max_length=500, blank=True)
 
 

@@ -1,4 +1,19 @@
 from __future__ import unicode_literals
+from future import standard_library
+
+from builtins import map
+import urllib.request
+import urllib.error
+import urllib.parse
+from future.moves.urllib.parse import urlparse
+
+from django.template.defaultfilters import slugify
+from django.core.files.base import ContentFile
+from django.dispatch import receiver
+
+from avatar.models import Avatar
+from allauth.account.signals import user_signed_up
+standard_library.install_aliases()
 # This file is split of from django-allauth and is licensed as:
 
 # Copyright (c) 2010 Raymond Penners and contributors
@@ -23,19 +38,6 @@ from __future__ import unicode_literals
 # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
-
-from future import standard_library
-standard_library.install_aliases()
-from builtins import map
-import urllib.request, urllib.error, urllib.parse
-from future.moves.urllib.parse import urlparse
-
-from django.template.defaultfilters import slugify
-from django.core.files.base import ContentFile
-from django.dispatch import receiver
-
-from avatar.models import Avatar
-from allauth.account.signals import user_signed_up
 
 
 def name_from_url(url):

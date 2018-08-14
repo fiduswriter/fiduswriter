@@ -143,28 +143,25 @@ export class BibliographyOverview {
     }
 
     /** Opens a dialog for editing categories.
-     * @function createCategoryDialog
+     * @function editCategoriesDialog
      */
-    createCategoryDialog () {
+    editCategoriesDialog () {
         let buttons = [
             {
                 text: gettext('Submit'),
                 classes: "fw-dark",
                 click: () => {
-                    let cats = {
-                        'ids': [],
-                        'titles': []
-                    }
-                    document.querySelectorAll('#editCategories .category-form').forEach(el => {
-                        let thisVal = el.value.trim()
-                        let thisId = el.getAttribute('data-id')
-                        if ('undefined' == typeof (thisId)) thisId = 0
-                        if ('' !== thisVal) {
-                            cats.ids.push(thisId)
-                            cats.titles.push(thisVal)
+                    const cats = {ids:[], titles:[]}
+                    document.querySelectorAll('#editCategories .category-form').forEach(
+                        el => {
+                            const title = el.value.trim()
+                            if(title.length) {
+                                cats.ids.push(parseInt(el.getAttribute('data-id') || 0))
+                                cats.titles.push(title)
+                            }
                         }
-                    })
-                    this.createCategory(cats)
+                    )
+                    this.saveCategories(cats)
                     dialog.close()
                 }
             },
@@ -333,8 +330,8 @@ export class BibliographyOverview {
     }
 
 
-    createCategory(cats) {
-        this.bibDB.createCategory(cats).then(bibCats => this.setBibCategoryList(bibCats))
+    saveCategories(cats) {
+        this.bibDB.saveCategories(cats).then(bibCats => this.setBibCategoryList(bibCats))
     }
 
     deleteBibEntries(ids) {

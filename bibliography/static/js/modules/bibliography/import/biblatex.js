@@ -23,7 +23,7 @@ export class BibLatexImporter {
     init() {
         let importWorker = makeWorker(`${$StaticUrls.transpile.base$}biblatex_import_worker.js?v=${$StaticUrls.transpile.version$}`);
         importWorker.onmessage = message => this.onMessage(message.data)
-        importWorker.postMessage({fileContents: this.fileContents, csrfToken: this.csrfToken})
+        importWorker.postMessage({fileContents: this.fileContents, csrfToken: this.csrfToken, domain: window.location.origin})
     }
 
     onMessage(message) {

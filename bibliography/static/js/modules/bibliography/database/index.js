@@ -106,13 +106,13 @@ export class BibliographyDB {
 
 
     /** Update or create new category
-     * @function createCategory
+     * @function saveCategories
      * @param cats The category objects to add.
      */
-    createCategory(cats) {
+    saveCategories(cats) {
         activateWait()
 
-        return this.sc.createCategory(cats).then(
+        return this.sc.saveCategories(cats).then(
             bibCats => {
                 // Replace the old with the new categories, but don't lose the link to the array (so delete each, then add each).
                 while(this.cats.length > 0) {

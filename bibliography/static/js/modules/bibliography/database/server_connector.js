@@ -4,13 +4,14 @@ import {post, postJson} from "../../common/network"
 // class for server calls of BibliographyDB.
 export class BibliographyDBServerConnector {
 
-    constructor(csrfToken) {
+    constructor(csrfToken, domain = '') {
         this.csrfToken = csrfToken // To be usable from worker
+        this.domain = domain // To be usable from worker
     }
 
     getDB(lastModified, numberOfEntries, localStorageOwnerId) {
         return postJson(
-            '/bibliography/biblist/',
+            `${this.domain}/bibliography/biblist/`,
             {
                 last_modified: lastModified,
                 number_of_entries: numberOfEntries,
@@ -58,7 +59,7 @@ export class BibliographyDBServerConnector {
         })
 
         return postJson(
-            '/bibliography/save/',
+            `${this.domain}/bibliography/save/`,
             {
                 is_new: isNew,
                 bibs: JSON.stringify(dbObject)
@@ -69,13 +70,10 @@ export class BibliographyDBServerConnector {
         )
     }
 
-    createCategory(cats) {
+    saveCategories(cats) {
         return postJson(
-            '/bibliography/save_category/',
-            {
-                'ids': cats.ids,
-                'titles': cats.titles
-            },
+            `${this.domain}/bibliography/save_category/`,
+            cats,
             this.csrfToken
         ).then(
             ({json}) => {
@@ -86,7 +84,7 @@ export class BibliographyDBServerConnector {
 
     deleteCategory(ids) {
         return post(
-            '/bibliography/delete_category/',
+            `${this.domain}/bibliography/delete_category/`,
             {ids},
             this.csrfToken
         )
@@ -94,7 +92,7 @@ export class BibliographyDBServerConnector {
 
     deleteBibEntries(ids) {
         return post(
-            '/bibliography/delete/',
+            `${this.domain}/bibliography/delete/`,
             {ids},
             this.csrfToken
         )

@@ -8,7 +8,10 @@ class DocumentAdmin(admin.ModelAdmin):
     def get_urls(self):
         urls = super().get_urls()
         extra_urls = [
-            path('maintenance/', self.admin_site.admin_view(self.maintenance_view))
+            path(
+                'maintenance/',
+                self.admin_site.admin_view(self.maintenance_view)
+            )
         ]
         urls = extra_urls + urls
         return urls

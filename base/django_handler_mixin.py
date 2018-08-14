@@ -26,7 +26,7 @@ class DjangoHandlerMixin(object):
         django_request = Dummy()
         django_request.session = self.get_django_session()
         user = auth.get_user(django_request)
-        if user.is_authenticated():
+        if user.is_authenticated:
             return user
         else:
             # try basic auth
@@ -37,7 +37,7 @@ class DjangoHandlerMixin(object):
                 return None
             (username, _, password) = data.decode('base64').partition(':')
             user = auth.authenticate(username=username, password=password)
-            if user is not None and user.is_authenticated():
+            if user is not None and user.is_authenticated:
                 return user
             return None
 

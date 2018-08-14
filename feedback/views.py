@@ -13,7 +13,7 @@ def feedback(request):
         feedback_message = request.POST['message']
         new_feedback = Feedback()
         new_feedback.message = feedback_message
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             new_feedback.owner = request.user
         new_feedback.save()
 

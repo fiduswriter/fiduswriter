@@ -1,11 +1,22 @@
-
 from django.contrib import admin
+from django.contrib.admin import AdminSite
 from django.shortcuts import render
+from django.urls import path
 from . import models
 
 
 class DocumentAdmin(admin.ModelAdmin):
-    pass
+    def get_urls(self):
+        urls = super().get_urls()
+        my_urls = [
+            path(r'maintenance/', self.maintenance_view)
+        ]
+        urls = my_urls + urls
+        return urls
+
+    def maintenance_view(self, request):
+        response = {}
+        return render(request, 'maintenance/index.html', response)
 
 
 admin.site.register(models.Document, DocumentAdmin)
@@ -30,11 +41,3 @@ class ExportTemplateAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.ExportTemplate, ExportTemplateAdmin)
-
-
-def maintenance_view(request, *args, **kwargs):
-    response = {}
-    return render(request, 'maintenance/index.html', response)
-
-
-admin.site.register_view('maintenance/', 'Maintenance', view=maintenance_view)

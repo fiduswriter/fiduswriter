@@ -132,7 +132,7 @@ SECRET_KEY = '2ouq2zgw5y-@w+t6!#zf#-z1inigg7$lg3p%8e3kkob1bf$#p4'
 
 # These middleware classes is what Fidus Writer needs in its standard setup.
 # You only need to change this in very advanced setups.
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -191,7 +191,6 @@ INSTALLED_APPS = (
     'django.contrib.flatpages',
     'django_js_error_hook',
     'npm_mjs',
-    'adminplus',
     'fixturemedia',
     'browser_check',
     'menu',

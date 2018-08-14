@@ -39,5 +39,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(modify_access_rights, demodify_access_rights),
+        migrations.RunPython(modify_access_rights, demodify_access_rights, elidable=True),
     ]

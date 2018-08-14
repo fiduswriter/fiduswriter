@@ -23,5 +23,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(extract_doc_version)
+        migrations.RunPython(extract_doc_version, elidable=True)
     ]

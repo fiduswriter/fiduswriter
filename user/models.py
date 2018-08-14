@@ -33,8 +33,16 @@ User.readable_name = property(lambda u: get_readable_name(u))
 
 
 class TeamMember(models.Model):
-    leader = models.ForeignKey(User, related_name='leader')
-    member = models.ForeignKey(User, related_name='member')
+    leader = models.ForeignKey(
+        User,
+        related_name='leader',
+        on_delete=models.deletion.CASCADE
+    )
+    member = models.ForeignKey(
+        User,
+        related_name='member',
+        on_delete=models.deletion.CASCADE
+    )
     roles = models.CharField(max_length=100, blank=True)
 
     class Meta(object):

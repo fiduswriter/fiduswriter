@@ -6,7 +6,12 @@ from django.conf import settings
 
 class Feedback(models.Model):
     message = models.TextField()
-    owner = models.ForeignKey(User, blank=True, null=True)
+    owner = models.ForeignKey(
+        User,
+        blank=True,
+        null=True,
+        on_delete=models.deletion.CASCADE
+    )
 
     def __str__(self):
         if self.owner:

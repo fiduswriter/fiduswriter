@@ -26,7 +26,11 @@ def get_file_path(instance, filename):
 
 
 class Image(models.Model):
-    uploader = models.ForeignKey(User, related_name='image_uploader')
+    uploader = models.ForeignKey(
+        User,
+        related_name='image_uploader',
+        on_delete=models.deletion.CASCADE
+    )
     added = models.DateTimeField(auto_now_add=True)
     image = models.FileField(upload_to=get_file_path)
     thumbnail = models.ImageField(
@@ -179,9 +183,14 @@ class UserImage(models.Model):
         User,
         related_name='image_owner',
         blank=True,
-        null=True)
+        null=True,
+        on_delete=models.deletion.CASCADE
+    )
     image_cat = models.CharField(max_length=255, default='')
-    image = models.ForeignKey(Image)
+    image = models.ForeignKey(
+        Image,
+        on_delete=models.deletion.CASCADE
+    )
 
     def __str__(self):
         if len(self.title) > 0:
@@ -193,8 +202,14 @@ class UserImage(models.Model):
 # Image linked to a document
 class DocumentImage(models.Model):
     title = models.CharField(max_length=128, default='')
-    document = models.ForeignKey(Document)
-    image = models.ForeignKey(Image)
+    document = models.ForeignKey(
+        Document,
+        on_delete=models.deletion.CASCADE
+    )
+    image = models.ForeignKey(
+        Image,
+        on_delete=models.deletion.CASCADE
+    )
 
     def __str__(self):
         if len(self.title) > 0:
@@ -206,7 +221,10 @@ class DocumentImage(models.Model):
 # category
 class ImageCategory(models.Model):
     category_title = models.CharField(max_length=100)
-    category_owner = models.ForeignKey(User)
+    category_owner = models.ForeignKey(
+        User,
+        on_delete=models.deletion.CASCADE
+    )
 
     def __str__(self):
         return self.category_title

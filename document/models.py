@@ -32,7 +32,11 @@ class Document(models.Model):
     # The last few diffs that were received and approved. The number of stored
     # diffs should always be equivalent to or more than all the diffs since the
     # last full save of the document.
-    owner = models.ForeignKey(User, related_name='owner')
+    owner = models.ForeignKey(
+        User,
+        related_name='owner',
+        on_delete=models.deletion.CASCADE
+    )
     added = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     comments = models.TextField(default='{}')
@@ -119,8 +123,8 @@ CAN_COMMUNICATE = ['read', 'write', 'comment', 'write-tracked']
 
 
 class AccessRight(models.Model):
-    document = models.ForeignKey(Document)
-    user = models.ForeignKey(User)
+    document = models.ForeignKey(Document, on_delete=models.deletion.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.deletion.CASCADE)
     rights = models.CharField(
         max_length=21,
         choices=RIGHTS_CHOICES,
@@ -145,7 +149,7 @@ def revision_filename(instance, filename):
 
 
 class DocumentRevision(models.Model):
-    document = models.ForeignKey(Document)
+    document = models.ForeignKey(Document, on_delete=models.deletion.CASCADE)
     note = models.CharField(max_length=255, default='', blank=True)
     date = models.DateTimeField(auto_now=True)
     file_object = models.FileField(upload_to=revision_filename)

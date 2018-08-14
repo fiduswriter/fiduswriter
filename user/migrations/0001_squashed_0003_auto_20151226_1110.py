@@ -26,9 +26,6 @@ class Migration(migrations.Migration):
                 ('leader', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='leader', to=settings.AUTH_USER_MODEL)),
                 ('member', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='member', to=settings.AUTH_USER_MODEL)),
             ],
-            options={
-                'db_table': 'account_teammember',
-            },
         ),
         migrations.CreateModel(
             name='UserProfile',
@@ -37,29 +34,14 @@ class Migration(migrations.Migration):
                 ('about', models.TextField(blank=True, max_length=500)),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, unique=True)),
             ],
-            options={
-                'db_table': 'account_userprofile',
-            },
         ),
         migrations.AlterUniqueTogether(
             name='teammember',
             unique_together=set([('leader', 'member')]),
         ),
-        migrations.AlterModelTable(
-            name='UserProfile',
-            table='user_userprofile',
-        ),
-        migrations.AlterModelTable(
-            name='teammember',
-            table=None,
-        ),
         migrations.AlterField(
             model_name='userprofile',
             name='user',
             field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
-        ),
-        migrations.AlterModelTable(
-            name='userprofile',
-            table=None,
         ),
     ]

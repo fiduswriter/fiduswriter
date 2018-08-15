@@ -1,5 +1,5 @@
 import {importBibFileTemplate} from "./templates"
-import {activateWait, deactivateWait, getCsrfToken, Dialog} from "../../common"
+import {activateWait, deactivateWait, Dialog} from "../../common"
 import {BibLatexImporter} from "./biblatex"
 /** First step of the BibTeX file import. Creates a dialog box to specify upload file.
  */
@@ -36,7 +36,6 @@ export class BibLatexFileImportDialog {
                         let importer = new BibLatexImporter(
                             event.target.result,
                             this.bibDB,
-                            getCsrfToken(),
                             this.addToListCall,
                             () => deactivateWait()
                         )

@@ -90,7 +90,7 @@ export class ImageEditDialog {
             title: document.querySelector('#editimage .fw-media-title').value,
             cats: Array.from(document.querySelectorAll('#editimage .entry-cat:checked')).map(
                 el => parseInt(el.value)
-            )
+            ).join(',')
         }
 
         if (this.imageId) {

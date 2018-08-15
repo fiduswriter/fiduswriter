@@ -61,7 +61,7 @@ export let menuModel = {
             type: 'button',
             icon: 'pencil',
             title: gettext('Edit categories'),
-            action: overview => overview.createCategoryDialog(),
+            action: overview => overview.editCategoriesDialog(),
             order: 2
         },
         {

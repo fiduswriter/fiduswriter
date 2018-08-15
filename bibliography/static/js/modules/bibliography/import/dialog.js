@@ -57,6 +57,7 @@ export class BibLatexFileImportDialog {
             height: 180,
             buttons
         })
+        dialog.open()
         document.getElementById('bib-uploader').addEventListener(
             'change',
             event => document.getElementById('import-bib-name').innerHTML =

@@ -2,11 +2,11 @@ import {BibLatexParser} from "biblatex-csl-converter"
 import {BibliographyDBServerConnector} from "../../modules/bibliography/database/server_connector"
 
 export class BibLatexImportWorker {
-    constructor(fileContents, sendMessage, csrfToken) {
+    constructor(fileContents, sendMessage, csrfToken, domain) {
         this.fileContents = fileContents
         this.sendMessage = sendMessage
         if (csrfToken) {
-            this.sc = new BibliographyDBServerConnector(csrfToken)
+            this.sc = new BibliographyDBServerConnector(csrfToken, domain)
         }
     }
 

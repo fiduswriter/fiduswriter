@@ -8,7 +8,7 @@ import {editCategoriesTemplate} from "./templates"
 import {BibliographyDB} from "../database"
 import {BibTypeTitles} from "../form/strings"
 import {SiteMenu} from "../../menu"
-import {OverviewMenuView, getCsrfToken, findTarget, whenReady, Dialog} from "../../common"
+import {OverviewMenuView, findTarget, whenReady, Dialog} from "../../common"
 import {menuModel} from "./menu"
 import * as plugins from "../../../plugins/bibliography_overview"
 import {escapeText} from "../../common"
@@ -321,7 +321,6 @@ export class BibliographyOverview {
         let importer = new BibLatexImporter(
             text,
             this.bibDB,
-            getCsrfToken(),
             newIds => this.updateTable(newIds),
             false
         )

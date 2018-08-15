@@ -9,7 +9,7 @@ export class BibliographyDBServerConnector {
 
     getDB(lastModified, numberOfEntries, localStorageOwnerId) {
         return postJson(
-            `${this.domain}/bibliography/biblist/`,
+            '/bibliography/biblist/',
             {
                 last_modified: lastModified,
                 number_of_entries: numberOfEntries,
@@ -56,7 +56,7 @@ export class BibliographyDBServerConnector {
         })
 
         return postJson(
-            `${this.domain}/bibliography/save/`,
+            '/bibliography/save/',
             {
                 is_new: isNew,
                 bibs: JSON.stringify(dbObject)

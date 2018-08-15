@@ -1,5 +1,3 @@
-
-
 from builtins import str
 import uuid
 import atexit
@@ -433,7 +431,8 @@ class WebSocket(BaseWebSocketHandler):
                 self.update_bibliography(parsed["bu"])
             if "iu" in parsed:  # iu = image updates
                 self.update_images(parsed["iu"])
-            WebSocket.save_document(self.user_info.document_id)
+            if self.doc['version'] % 10 == 0:
+                WebSocket.save_document(self.user_info.document_id)
             self.confirm_diff(parsed["rid"])
             WebSocket.send_updates(
                 parsed,
@@ -599,6 +598,8 @@ class WebSocket(BaseWebSocketHandler):
     def save_document(cls, document_id):
         doc = cls.sessions[document_id]
         doc_db = doc['db']
+        if doc_db.version == doc['version']:
+            return
         doc_db.title = doc['title'][-255:]
         doc_db.version = doc['version']
         doc_db.contents = json_encode(doc['contents'])

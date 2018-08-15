@@ -1,4 +1,3 @@
-
 from document.models import AccessRight, Document
 
 

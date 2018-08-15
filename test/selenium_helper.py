@@ -82,3 +82,6 @@ class SeleniumHelper(object):
             'secure': False,
             'path': '/'
         })
+
+    def leave_site(self, driver):
+        driver.get('data:,')

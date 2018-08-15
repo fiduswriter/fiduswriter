@@ -44,6 +44,10 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.login_user(self.user, self.driver2, self.client2)
         self.doc = self.create_new_document()
 
+    def tearDown(self):
+        self.leave_site(self.driver)
+        self.leave_site(self.driver2)
+
     def get_title(self, driver):
         # Title is child 0.
         return driver.execute_script(

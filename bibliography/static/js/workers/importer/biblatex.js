@@ -1,13 +1,9 @@
 import {BibLatexParser} from "biblatex-csl-converter"
-import {BibliographyDBServerConnector} from "../../modules/bibliography/database/server_connector"
 
 export class BibLatexImportWorker {
-    constructor(fileContents, sendMessage, csrfToken, domain) {
+    constructor(fileContents, sendMessage) {
         this.fileContents = fileContents
         this.sendMessage = sendMessage
-        if (csrfToken) {
-            this.sc = new BibliographyDBServerConnector(csrfToken, domain)
-        }
     }
 
     /** Second step of the BibTeX file import. Takes a BibTeX file object,
@@ -64,30 +60,9 @@ export class BibLatexImportWorker {
             this.bibKeys.slice(fromNumber, toNumber).forEach((bibKey)=>{
                 currentChunk[bibKey] = this.tmpDB[bibKey]
             })
-            if (this.sc) {
-                this.sc.saveBibEntries(currentChunk, true).then(
-                    idTranslations => {
-                        this.sendMessage({
-                            type: 'savedBibEntries',
-                            tmpDB: currentChunk,
-                            idTranslations
-                        })
-                        this.currentChunkNumber++
-                        this.processChunk()
-                    }
-                ).catch(
-                    error => {
-                        this.sendMessage({type: 'error', errorCode: 'server_save', done: true})
-                        throw(error)
-                    }
-                )
-            } else {
-                // No server connector. Return chunk instead.
-                this.sendMessage({type: 'unsavedBibEntries', tmpDB: currentChunk})
-                this.currentChunkNumber++
-                this.processChunk()
-            }
-
+            this.sendMessage({type: 'data', data: currentChunk})
+            this.currentChunkNumber++
+            this.processChunk()
         } else {
             this.sendMessage({type: 'ok', done: true})
         }

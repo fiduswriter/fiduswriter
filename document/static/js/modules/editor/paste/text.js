@@ -23,7 +23,6 @@ export class TextPaste {
         let importer = new BibLatexImporter(
             this.text,
             this.editor.mod.db.bibDB,
-            false, // no csrf token so that it does not try to write directly to the database
             newIds => {
                 this.foundBibEntries = true
                 let format = 'autocite',

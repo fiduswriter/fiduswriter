@@ -28,6 +28,7 @@ env:
     - TESTS=user
     - TESTS=document
     - TESTS=bibliography
+    - TESTS=usermedia
 
 script: travis_retry coverage run manage.py test $TESTS
 

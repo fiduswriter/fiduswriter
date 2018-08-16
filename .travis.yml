@@ -27,6 +27,7 @@ env:
   matrix:
     - TESTS=user
     - TESTS=document
+    - TESTS=bibliography
 
 script: travis_retry coverage run manage.py test $TESTS
 

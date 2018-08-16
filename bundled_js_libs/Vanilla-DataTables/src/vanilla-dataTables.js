@@ -478,8 +478,8 @@
 
         // Order the row cells
         each(dt.data, function (row, i) {
-            c = row.cloneNode();
-            d = row.cloneNode();
+            c = row.cloneNode(false);
+            d = row.cloneNode(false);
 
             c.dataIndex = d.dataIndex = i;
 
@@ -796,8 +796,8 @@
 
         // Loop over the rows and reorder the cells
         each(dt.data, function (row, i) {
-            a = row.cloneNode();
-            b = row.cloneNode();
+            a = row.cloneNode(false);
+            b = row.cloneNode(false);
 
             a.dataIndex = b.dataIndex = i;
 
@@ -811,9 +811,9 @@
                 c.data = cell.data;
                 a.appendChild(c);
 
-                if (dt.hiddenColumns.indexOf(cell.cellIndex) < 0) {
-                    d = cell.cloneNode(true);
-                    d.data = cell.data;
+                if (dt.hiddenColumns.indexOf(c.cellIndex) < 0) {
+                    d = c.cloneNode(true);
+                    d.data = c.data;
                     b.appendChild(d);
                 }
             });
@@ -846,7 +846,7 @@
      * @return {HTMLElement}
      */
     Rows.prototype.build = function (row) {
-        var td, tr = createElement("tr");
+        var tr = createElement("tr");
 
         var headings = this.dt.headings;
 
@@ -857,10 +857,10 @@
         }
 
         each(headings, function (h, i) {
-            td = createElement("td");
+            var td = createElement("td");
 
             // Fixes #29
-            if (!row[i] && !row[i].length) {
+            if (!row[i] || !row[i].length) {
                 row[i] = "";
             }
 
@@ -1917,9 +1917,9 @@
             classList.remove(that.wrapper, "search-results");
 
             that.setMessage(that.options.labels.noRows);
-        } else {
-            that.update();
         }
+
+        that.update();
 
         this.emit("datatable.search", query, this.searchData);
     };
@@ -2145,6 +2145,8 @@
                                 text = text.replace(/\s{2,}/g, ' ');
                                 text = text.replace(/\n/g, '  ');
                                 text = text.replace(/"/g, '""');
+                                //have to manually encode "#" as encodeURI leaves it as is.
+                                text = text.replace(/#/g, "%23");
                                 if (text.indexOf(",") > -1)
                                     text = '"' + text + '"';
 
@@ -2254,13 +2256,13 @@
                     link.download = o.filename;
 
                     // Append the link
-                    body.appendChild(link);
+                    document.body.appendChild(link);
 
                     // Trigger the download
                     link.click();
 
                     // Remove the link
-                    body.removeChild(link);
+                    document.body.removeChild(link);
                 }
 
                 return str;

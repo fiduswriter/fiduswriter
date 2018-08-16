@@ -2256,13 +2256,13 @@
                     link.download = o.filename;
 
                     // Append the link
-                    document.body.appendChild(link);
+                    body.appendChild(link);
 
                     // Trigger the download
                     link.click();
 
                     // Remove the link
-                    document.body.removeChild(link);
+                    body.removeChild(link);
                 }
 
                 return str;

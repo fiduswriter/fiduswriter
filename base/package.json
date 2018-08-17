@@ -26,7 +26,7 @@
     "jshint": "2.9.5",
     "katex": "0.9.0",
     "w3c-keyname": "1.1.x",
-    "simple-datatables": "1.7.0"
+    "simple-datatables": "^1.7.2"
   },
   "jshintConfig": {
     "esversion": 6,

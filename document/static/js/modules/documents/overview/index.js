@@ -1,4 +1,4 @@
-import DataTable from "vanilla-datatables"
+import {DataTable} from "simple-datatables"
 
 import * as plugins from "../../../plugins/documents_overview"
 import {DocumentOverviewActions} from "./actions"
@@ -13,6 +13,7 @@ import {SiteMenu} from "../../menu"
 export class DocumentOverview {
 
     constructor () {
+        window.DataTable = DataTable
         this.documentList = []
         this.user = false
         this.teamMembers = []

@@ -1,4 +1,4 @@
-import DataTable from "vanilla-datatables"
+import {DataTable} from "simple-datatables"
 
 import {configureCitationTemplate, selectedCitationTemplate} from "./templates"
 import {BibEntryForm} from "../../bibliography/form"

@@ -1,5 +1,5 @@
 import fixUTF8 from "fix-utf8"
-import DataTable from "vanilla-datatables"
+import {DataTable} from "simple-datatables"
 
 import {BibLatexImporter} from "../import"
 import {litToText, nameToText} from "../tools"

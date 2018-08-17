@@ -104,7 +104,7 @@ export class ImageOverview {
             fileType = fileType[0].toUpperCase()
         }
         return [
-            id,
+            String(id),
             `<input type="checkbox" class="entry-select" data-id="${id}">`,
             `<span class="fw-usermedia-image">
                 <img src="${image.thumbnail ? image.thumbnail : image.image}">

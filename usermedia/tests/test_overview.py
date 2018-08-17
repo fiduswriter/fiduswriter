@@ -162,7 +162,10 @@ class UsermediaOverviewTest(LiveTornadoTestCase, SeleniumHelper):
             "(.//*[normalize-space(text()) and normalize-space(.)="
             "'Confirm deletion'])[1]/following::button[2]"
         ).click()
-        # TODO: check for list empty
+        image_placeholder = WebDriverWait(driver, self.wait_time).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "dataTables-empty"))
+        )
+        self.assertEqual("No images available", image_placeholder.text)
 
     def tearDown(self):
         self.driver.quit()

@@ -112,7 +112,7 @@ export class BibliographyOverview {
         let bibInfo = this.bibDB.db[id]
         let bibauthors = bibInfo.fields.author || bibInfo.fields.editor
         return [
-            id,
+            String(id),
             `<input type="checkbox" class="entry-select" data-id="${id}">`, // checkbox
             `<span class="fw-document-table-title fw-inline">
                 <i class="fa fa-book"></i>

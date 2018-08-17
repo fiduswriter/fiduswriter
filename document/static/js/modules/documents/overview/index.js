@@ -142,7 +142,7 @@ export class DocumentOverview {
 
     createTableRow(doc) {
         return [
-            doc.id,
+            String(doc.id),
             `<input type="checkbox" class="entry-select" data-id="${doc.id}">`,
             `<span class="fw-document-table-title fw-inline">
                 <i class="fa fa-file-text-o"></i>

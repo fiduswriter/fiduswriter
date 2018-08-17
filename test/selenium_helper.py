@@ -1,4 +1,6 @@
-from __future__ import unicode_literals
+
+from builtins import range
+from builtins import object
 from chromedriver_binary import chromedriver_filename
 import os
 
@@ -80,3 +82,6 @@ class SeleniumHelper(object):
             'secure': False,
             'path': '/'
         })
+
+    def leave_site(self, driver):
+        driver.get('data:,')

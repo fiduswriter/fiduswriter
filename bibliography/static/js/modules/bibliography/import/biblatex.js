@@ -11,10 +11,9 @@ const ERROR_MSG = {
 
 
 export class BibLatexImporter {
-    constructor(fileContents, bibDB, csrfToken, addToListCall, callback, showAlerts=true) {
+    constructor(fileContents, bibDB, addToListCall, callback, showAlerts=true) {
         this.fileContents = fileContents
         this.bibDB = bibDB
-        this.csrfToken = csrfToken
         this.addToListCall = addToListCall
         this.callback = callback
         this.showAlerts = showAlerts
@@ -23,7 +22,7 @@ export class BibLatexImporter {
     init() {
         let importWorker = makeWorker(`${$StaticUrls.transpile.base$}biblatex_import_worker.js?v=${$StaticUrls.transpile.version$}`);
         importWorker.onmessage = message => this.onMessage(message.data)
-        importWorker.postMessage({fileContents: this.fileContents, csrfToken: this.csrfToken})
+        importWorker.postMessage({fileContents: this.fileContents})
     }
 
     onMessage(message) {
@@ -53,15 +52,9 @@ export class BibLatexImporter {
                     addAlert(message.type, errorMsg)
                 }
                 break
-            case 'savedBibEntries':
-                // New entries already saved to database
-                this.bibDB.updateLocalBibEntries(message.tmpDB, message.idTranslations)
-                let newIds = message.idTranslations.map(idTrans => idTrans[1])
-                this.addToListCall(newIds)
-                break
-            case 'unsavedBibEntries':
-                // New entries. Not saved as there was no server connector. Used when pasting into document.
-                this.bibDB.saveBibEntries(message.tmpDB, true).then(
+            case 'data':
+                let data = message.data
+                this.bibDB.saveBibEntries(data, true).then(
                     idTranslations => {
                         let newIds = idTranslations.map(idTrans => idTrans[1])
                         this.addToListCall(newIds)

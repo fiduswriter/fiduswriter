@@ -1,5 +1,7 @@
-from __future__ import unicode_literals
 
+
+from builtins import map
+from builtins import filter
 from time import mktime
 
 from django.shortcuts import render
@@ -79,7 +81,10 @@ def save_js(request):
                     'added': mktime(image.added.timetuple()) * 1000,
                     'checksum': image.checksum,
                     'cats': list(
-                        map(int, filter(bool, user_image.image_cat.split(',')))
+                        map(
+                            int,
+                            list(filter(bool, user_image.image_cat.split(',')))
+                        )
                     )
                 }
                 if image.thumbnail:
@@ -135,7 +140,10 @@ def images_js(request):
                     'added': mktime(image.added.timetuple()) * 1000,
                     'checksum': image.checksum,
                     'cats': list(
-                        map(int, filter(bool, user_image.image_cat.split(',')))
+                        map(
+                            int,
+                            list(filter(bool, user_image.image_cat.split(',')))
+                        )
                     )
                 }
                 if image.thumbnail:

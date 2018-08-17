@@ -1,4 +1,4 @@
-import DataTable from "vanilla-datatables"
+import {DataTable} from "simple-datatables"
 
 import {ImageDB} from "../database"
 import {ImageOverviewCategories} from "./categories"

@@ -1,4 +1,4 @@
-import DataTable from "vanilla-datatables"
+import {DataTable} from "simple-datatables"
 
 import {ImageDB} from "../database"
 import {ImageOverviewCategories} from "./categories"
@@ -104,7 +104,7 @@ export class ImageOverview {
             fileType = fileType[0].toUpperCase()
         }
         return [
-            id,
+            String(id),
             `<input type="checkbox" class="entry-select" data-id="${id}">`,
             `<span class="fw-usermedia-image">
                 <img src="${image.thumbnail ? image.thumbnail : image.image}">

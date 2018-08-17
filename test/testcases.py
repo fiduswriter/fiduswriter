@@ -1,5 +1,7 @@
-from __future__ import unicode_literals
 
+
+from builtins import map
+from builtins import range
 import errno
 import os
 import socket
@@ -51,7 +53,7 @@ class LiveTornadoThread(threading.Thread):
         if self.connections_override:
             # Override this thread's database connections with the ones
             # provided by the main thread.
-            for alias, conn in self.connections_override.items():
+            for alias, conn in list(self.connections_override.items()):
                 connections[alias] = conn
         try:
             self.httpd = make_tornado_server()

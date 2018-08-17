@@ -1,5 +1,6 @@
-from __future__ import unicode_literals
-from django.utils.encoding import python_2_unicode_compatible
+from builtins import str
+from builtins import object
+from past.utils import old_div
 
 import os
 import uuid
@@ -24,9 +25,12 @@ def get_file_path(instance, filename):
     return os.path.join('images', filename)
 
 
-@python_2_unicode_compatible
 class Image(models.Model):
-    uploader = models.ForeignKey(User, related_name='image_uploader')
+    uploader = models.ForeignKey(
+        User,
+        related_name='image_uploader',
+        on_delete=models.deletion.CASCADE
+    )
     added = models.DateTimeField(auto_now_add=True)
     image = models.FileField(upload_to=get_file_path)
     thumbnail = models.ImageField(
@@ -116,10 +120,10 @@ class Image(models.Model):
         if src_width < src_height:
             crop_width = crop_height = src_width
             x_offset = 0
-            y_offset = int(float(src_height - crop_height) / 2)
+            y_offset = int(old_div(float(src_height - crop_height), 2))
         else:
             crop_width = crop_height = src_height
-            x_offset = int(float(src_width - crop_width) / 2)
+            x_offset = int(old_div(float(src_width - crop_width), 2))
             y_offset = 0
 
         image = image.crop(
@@ -173,16 +177,20 @@ class Image(models.Model):
 
 
 # Image linked to a particular User.
-@python_2_unicode_compatible
 class UserImage(models.Model):
     title = models.CharField(max_length=128)
     owner = models.ForeignKey(
         User,
         related_name='image_owner',
         blank=True,
-        null=True)
+        null=True,
+        on_delete=models.deletion.CASCADE
+    )
     image_cat = models.CharField(max_length=255, default='')
-    image = models.ForeignKey(Image)
+    image = models.ForeignKey(
+        Image,
+        on_delete=models.deletion.CASCADE
+    )
 
     def __str__(self):
         if len(self.title) > 0:
@@ -192,11 +200,16 @@ class UserImage(models.Model):
 
 
 # Image linked to a document
-@python_2_unicode_compatible
 class DocumentImage(models.Model):
     title = models.CharField(max_length=128, default='')
-    document = models.ForeignKey(Document)
-    image = models.ForeignKey(Image)
+    document = models.ForeignKey(
+        Document,
+        on_delete=models.deletion.CASCADE
+    )
+    image = models.ForeignKey(
+        Image,
+        on_delete=models.deletion.CASCADE
+    )
 
     def __str__(self):
         if len(self.title) > 0:
@@ -206,13 +219,15 @@ class DocumentImage(models.Model):
 
 
 # category
-@python_2_unicode_compatible
 class ImageCategory(models.Model):
     category_title = models.CharField(max_length=100)
-    category_owner = models.ForeignKey(User)
+    category_owner = models.ForeignKey(
+        User,
+        on_delete=models.deletion.CASCADE
+    )
 
     def __str__(self):
         return self.category_title
 
-    class Meta:
+    class Meta(object):
         verbose_name_plural = 'Image categories'

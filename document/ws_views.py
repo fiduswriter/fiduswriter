@@ -1,5 +1,4 @@
-from __future__ import unicode_literals
-
+from builtins import str
 import uuid
 import atexit
 from time import mktime, time
@@ -161,7 +160,7 @@ class WebSocket(BaseWebSocketHandler):
         elif self.user_info.access_rights == 'review':
             # Reviewer should only get his/her own comments
             filtered_comments = {}
-            for key, value in self.doc["comments"].items():
+            for key, value in list(self.doc["comments"].items()):
                 if value["user"] == self.user_info.user.id:
                     filtered_comments[key] = value
             response['doc']['comments'] = filtered_comments
@@ -432,7 +431,8 @@ class WebSocket(BaseWebSocketHandler):
                 self.update_bibliography(parsed["bu"])
             if "iu" in parsed:  # iu = image updates
                 self.update_images(parsed["iu"])
-            WebSocket.save_document(self.user_info.document_id)
+            if self.doc['version'] % 10 == 0:
+                WebSocket.save_document(self.user_info.document_id)
             self.confirm_diff(parsed["rid"])
             WebSocket.send_updates(
                 parsed,
@@ -529,9 +529,9 @@ class WebSocket(BaseWebSocketHandler):
     def send_participant_list(cls, document_id):
         if document_id in WebSocket.sessions:
             participant_list = []
-            for session_id, waiter in cls.sessions[
+            for session_id, waiter in list(cls.sessions[
                 document_id
-            ]['participants'].items():
+            ]['participants'].items()):
                 access_rights = waiter.user_info.access_rights
                 if access_rights not in CAN_COMMUNICATE:
                     continue
@@ -553,7 +553,7 @@ class WebSocket(BaseWebSocketHandler):
             "Sending message to %d waiters",
             len(cls.sessions[document_id]['participants'])
         )
-        for waiter in cls.sessions[document_id]['participants'].values():
+        for waiter in list(cls.sessions[document_id]['participants'].values()):
             if waiter.id != sender_id:
                 access_rights = waiter.user_info.access_rights
                 if "comments" in message and len(message["comments"]) > 0:
@@ -598,6 +598,8 @@ class WebSocket(BaseWebSocketHandler):
     def save_document(cls, document_id):
         doc = cls.sessions[document_id]
         doc_db = doc['db']
+        if doc_db.version == doc['version']:
+            return
         doc_db.title = doc['title'][-255:]
         doc_db.version = doc['version']
         doc_db.contents = json_encode(doc['contents'])

@@ -1,4 +1,4 @@
-import DataTable from "vanilla-datatables"
+import {DataTable} from "simple-datatables"
 
 import * as plugins from "../../../plugins/documents_overview"
 import {DocumentOverviewActions} from "./actions"
@@ -13,6 +13,7 @@ import {SiteMenu} from "../../menu"
 export class DocumentOverview {
 
     constructor () {
+        window.DataTable = DataTable
         this.documentList = []
         this.user = false
         this.teamMembers = []
@@ -141,7 +142,7 @@ export class DocumentOverview {
 
     createTableRow(doc) {
         return [
-            doc.id,
+            String(doc.id),
             `<input type="checkbox" class="entry-select" data-id="${doc.id}">`,
             `<span class="fw-document-table-title fw-inline">
                 <i class="fa fa-file-text-o"></i>

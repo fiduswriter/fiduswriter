@@ -61,7 +61,7 @@ export class ImageOverviewCategories {
             {
                 text: gettext('Submit'),
                 classes: "fw-dark",
-                click: function () {
+                click: () => {
                     let cats = {
                         'ids': [],
                         'titles': []

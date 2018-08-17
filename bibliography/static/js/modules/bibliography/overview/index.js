@@ -1,5 +1,5 @@
 import fixUTF8 from "fix-utf8"
-import DataTable from "vanilla-datatables"
+import {DataTable} from "simple-datatables"
 
 import {BibLatexImporter} from "../import"
 import {litToText, nameToText} from "../tools"
@@ -8,7 +8,7 @@ import {editCategoriesTemplate} from "./templates"
 import {BibliographyDB} from "../database"
 import {BibTypeTitles} from "../form/strings"
 import {SiteMenu} from "../../menu"
-import {OverviewMenuView, getCsrfToken, findTarget, whenReady, Dialog} from "../../common"
+import {OverviewMenuView, findTarget, whenReady, Dialog} from "../../common"
 import {menuModel} from "./menu"
 import * as plugins from "../../../plugins/bibliography_overview"
 import {escapeText} from "../../common"
@@ -112,7 +112,7 @@ export class BibliographyOverview {
         let bibInfo = this.bibDB.db[id]
         let bibauthors = bibInfo.fields.author || bibInfo.fields.editor
         return [
-            id,
+            String(id),
             `<input type="checkbox" class="entry-select" data-id="${id}">`, // checkbox
             `<span class="fw-document-table-title fw-inline">
                 <i class="fa fa-book"></i>
@@ -143,28 +143,25 @@ export class BibliographyOverview {
     }
 
     /** Opens a dialog for editing categories.
-     * @function createCategoryDialog
+     * @function editCategoriesDialog
      */
-    createCategoryDialog () {
+    editCategoriesDialog () {
         let buttons = [
             {
                 text: gettext('Submit'),
                 classes: "fw-dark",
                 click: () => {
-                    let cats = {
-                        'ids': [],
-                        'titles': []
-                    }
-                    document.querySelectorAll('#editCategories .category-form').forEach(el => {
-                        let thisVal = el.value.trim()
-                        let thisId = el.getAttribute('data-id')
-                        if ('undefined' == typeof (thisId)) thisId = 0
-                        if ('' !== thisVal) {
-                            cats.ids.push(thisId)
-                            cats.titles.push(thisVal)
+                    const cats = {ids:[], titles:[]}
+                    document.querySelectorAll('#editCategories .category-form').forEach(
+                        el => {
+                            const title = el.value.trim()
+                            if(title.length) {
+                                cats.ids.push(parseInt(el.getAttribute('data-id') || 0))
+                                cats.titles.push(title)
+                            }
                         }
-                    })
-                    this.createCategory(cats)
+                    )
+                    this.saveCategories(cats)
                     dialog.close()
                 }
             },
@@ -324,7 +321,6 @@ export class BibliographyOverview {
         let importer = new BibLatexImporter(
             text,
             this.bibDB,
-            getCsrfToken(),
             newIds => this.updateTable(newIds),
             false
         )
@@ -333,8 +329,8 @@ export class BibliographyOverview {
     }
 
 
-    createCategory(cats) {
-        this.bibDB.createCategory(cats).then(bibCats => this.setBibCategoryList(bibCats))
+    saveCategories(cats) {
+        this.bibDB.saveCategories(cats).then(bibCats => this.setBibCategoryList(bibCats))
     }
 
     deleteBibEntries(ids) {

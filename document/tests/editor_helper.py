@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 import time
 from random import randrange
 from selenium.webdriver.support import expected_conditions as EC

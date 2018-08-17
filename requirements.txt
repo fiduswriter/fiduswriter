@@ -1,6 +1,5 @@
 wheel==0.31.1
-Django==1.11.13
-django-adminplus==0.5
+Django==2.1
 Pillow==5.2.0
 django-allauth==0.36.0
 django-avatar==4.1.0

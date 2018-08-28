@@ -168,7 +168,7 @@ export class ModCommentInteractions {
             // There is currently focus in the comment (answer) form
             return true
         }
-        if (this.editor && this.editor.view && this.editor.view.state.doc.toJSON().content.length) {
+        if (this.editor && this.editor.view && this.editor.view.state.doc.content.content.length) {
             // Part of a comment (answer) has been entered.
             return true
         }

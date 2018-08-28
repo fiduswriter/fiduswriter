@@ -1,7 +1,7 @@
 import {marks, nodes} from "prosemirror-schema-basic"
 import {Schema, DOMSerializer} from "prosemirror-model"
 
-let collaborator = {
+const collaborator = {
     inline: true,
     group: "inline",
     attrs: {
@@ -30,7 +30,7 @@ let collaborator = {
     }
 }
 
-let doc = {
+const doc = {
     content: 'block+',
     toDOM(node) {
         return ["div", 0]

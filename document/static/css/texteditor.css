@@ -241,7 +241,7 @@ input.required, error {
 
 @media print {
 
-    #editor {
+    #esditor {
         display: none !important;
     }
 /*
@@ -258,7 +258,7 @@ input.required, error {
         margin-bottom: 0;
     }*/
 }
-#print {
+#pddrint {
     z-index: 100;
     position: absolute;
     top: 0;

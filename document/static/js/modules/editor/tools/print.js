@@ -10,14 +10,29 @@ export class ModToolsPrint {
         mod.print = this
         this.mod = mod
         this.paginator = false
+        this.initFlowTo()
+    }
+
+    initFlowTo() {
+        this.flowTo = document.createElement('div')
+        this.flowTo.classList.add('print')
+        this.hideFlowTo()
+        document.body.appendChild(this.flowTo)
+    }
+
+    showFlowTo() {
+        this.flowTo.style.display = ''
+    }
+
+    hideFlowTo() {
+        this.flowTo.style.display = 'none'
     }
 
     printReady() {
-        let flowTo = document.getElementById('print')
         window.print()
         this.paginator.tearDown()
         this.paginator = false
-        flowTo.style.display = 'none'
+        this.hideFlowTo()
     }
 
     changeAllIds(node) {
@@ -32,7 +47,6 @@ export class ModToolsPrint {
     }
 
     print() {
-        let flowTo = document.getElementById('print')
 
         // This is a quick and dirty way of creating a cloned version of the node.
         // We only do this because it is faster and mathjax would be slow in rendering a second time.
@@ -66,7 +80,7 @@ export class ModToolsPrint {
             fnCitationMarker.classList.add('footnote-marker')
         })
 
-        flowTo.style.display = ''
+        this.showFlowTo()
 
         this.paginator = new PaginateForPrint({
             'sectionStartSelector': 'none',
@@ -86,7 +100,7 @@ export class ModToolsPrint {
             'footnoteSelector': '.footnote-marker',
             'lengthUnit': 'px',
             'topfloatSelector': 'table,figure',
-            'flowToElement': document.getElementById("print"),
+            'flowToElement': this.flowTo,
             'callback': () => {
                 this.printReady()
             }

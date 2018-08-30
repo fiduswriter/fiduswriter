@@ -265,7 +265,6 @@ input.required, error {
     min-height: 100%;
     min-width: 100%;
     background-color: rgba(234,234,234,0.5);
-    display: none;
 }
 #print table, #print figure {
     width: 100%;

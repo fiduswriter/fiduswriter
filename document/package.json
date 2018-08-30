@@ -8,7 +8,6 @@
         "jszip-utils": "0.0.2",
         "mathquill": "0.10.1-b",
         "orderedmap": "1.0.0",
-        "paginate-for-print": "0.0.7",
         "prosemirror-collab": "1.0.x",
         "prosemirror-commands": "1.0.x",
         "prosemirror-dropcursor": "1.0.x",

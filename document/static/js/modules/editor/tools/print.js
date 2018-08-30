@@ -26,8 +26,8 @@ export class ModToolsPrint {
         this.mod = mod
         this.paginator = false
         this.hiddenElements = []
+        this.disabledStyles = []
         this.initFlowTo()
-        window.viewer = viewer
     }
 
     initFlowTo() {
@@ -41,7 +41,18 @@ export class ModToolsPrint {
         Array.from(document.body.children).forEach(node => {
             if (node !== this.flowTo) {
                 node.style.display='none'
-                this.hiddenElements.push(node)
+                if (node.nodeName==='STYLE') {
+                    node.disabled = true
+                    this.disabledStyles.push(node)
+                } else {
+                    this.hiddenElements.push(node)
+                }
+            }
+        })
+        Array.from(document.head.children).forEach(node => {
+            if (node.nodeName==='STYLE') {
+                node.disabled = true
+                this.disabledStyles.push(node)
             }
         })
         this.flowTo.style.display = ''
@@ -52,6 +63,8 @@ export class ModToolsPrint {
         this.flowTo.innerHTML = ''
         this.hiddenElements.forEach(node => node.style.display = '')
         this.hiddenElements = []
+        this.disabledStyles.forEach(node => node.disabled = false)
+        this.disabledStyles = []
     }
 
     browserPrint() {
@@ -90,34 +103,86 @@ export class ModToolsPrint {
         const footnoteBox = flowCopy.querySelector('#footnote-box-container-print')
         footnoteBox.parentElement.removeChild(footnoteBox)
 
-        const footnotes = footnoteBox.querySelectorAll('.footnote-container')
         const footnoteMarkers = flowCopy.querySelectorAll('.footnote-marker')
-
         footnoteMarkers.forEach((fnMarker, index) => {
-            while (fnMarker.firstChild) {
-                fnMarker.removeChild(fnMarker.firstChild)
-            }
-
-            while (footnotes[index].firstChild) {
-                fnMarker.appendChild(footnotes[index].firstChild)
-            }
-            fnMarker.innerHTML = 'footnote'
+            const fnLink = document.createElement('a')
+            fnLink.classList.add('footnote')
+            fnLink.href = `#fn-${index}`
+            fnLink.innerHTML = '<span class="fn-counter"></span>'
+            fnMarker.parentElement.replaceChild(fnLink, fnMarker)
         })
-        const footnoteCitations = footnoteBox.querySelectorAll('.footnote-citation')
-        const footnoteCitationMarkers = flowCopy.querySelectorAll('.citation-footnote-marker')
 
-        footnoteCitationMarkers.forEach((fnCitationMarker, index) => {
-            const fnCitation = footnoteCitations[index]
-            fnCitation.classList.remove('footnote-citation')
-            fnCitationMarker.appendChild(fnCitation)
-            fnCitationMarker.classList.remove('citation-footnote-marker')
-            fnCitationMarker.classList.add('footnote-marker')
+        const footnotes = footnoteBox.querySelectorAll('.footnote-container')
+        footnotes.forEach((footnote, index) => {
+            footnote.id = `fn-${index}`
+            footnote.classList.add('footnote-block')
+            footnote.classList.remove('footnote-container')
+            if (footnote.firstElementChild.nodeName === 'P') {
+                footnote.firstElementChild.insertAdjacentHTML('afterbegin', '<span class="fn-content-counter"></span>')
+            } else {
+                footnote.insertAdjacentHTML('afterbegin', '<span class="fn-content-counter"></span>')
+            }
+            flowCopy.appendChild(footnote)
+        })
+
+        const footnoteCitationMarkers = flowCopy.querySelectorAll('.citation-footnote-marker')
+        footnoteCitationMarkers.forEach((fnMarker, index) => {
+            const fnLink = document.createElement('a')
+            fnLink.classList.add('footnote')
+            fnLink.href = `#fn-cit-${index}`
+            fnLink.innerHTML = '<span class="fn-counter"></span>'
+            fnMarker.parentElement.replaceChild(fnLink, fnMarker)
+        })
+
+        const footnoteCitations = footnoteBox.querySelectorAll('.footnote-citation')
+        footnoteCitations.forEach((footnote, index) => {
+            footnote.id = `fn-cit-${index}`
+            footnote.classList.add('footnote-block')
+            footnote.classList.remove('footnote-citation')
+            if (footnote.firstElementChild.nodeName === 'P') {
+                footnote.firstElementChild.insertAdjacentHTML('afterbegin', '<span class="fn-content-counter"></span>')
+            } else {
+                footnote.insertAdjacentHTML('afterbegin', '<span class="fn-content-counter"></span>')
+            }
+            flowCopy.appendChild(footnote)
         })
 
         const styleSheets = [
-            '.footnote-marker {float: footnote;}',
-            document.getElementById('document-style') ? document.getElementById('document-style').innerHTML : '',
-            `@page {size: ${CSS_PAPER_SIZES[this.mod.editor.view.state.doc.firstChild.attrs.papersize]};}`
+            `:root {
+                counter-reset: footnote footnote-content;
+            }
+            .footnote {
+                -adapt-template: url(data:application/xml,${
+                    encodeURI(
+                        '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://www.pyroxy.com/ns/shadow"><head><style>.footnote-content{float:footnote}</style></head><body><s:template id="footnote"><s:content/><s:include class="footnote-content"/></s:template></body></html>#footnote'
+                    )
+                });
+                text-decoration: none;
+                color: inherit;
+                vertical-align: super;
+                font-size: 70%;
+            }
+            .fn-counter::before {
+                counter-increment: footnote;
+                content: counter(footnote);
+            }
+            .fn-content-counter::before {
+                counter-increment: footnote-content;
+                content: counter(footnote-content) ". ";
+            }
+            .footnote-block {
+                display: none;
+            }
+            .footnote-block:footnote-content {
+                display: block;
+            }
+            @page {
+                size: ${CSS_PAPER_SIZES[this.mod.editor.view.state.doc.firstChild.attrs.papersize]};
+                @bottom-center {
+                    content: counter(page);
+                }
+            }`,
+            document.getElementById('document-style') ? document.getElementById('document-style').innerHTML : ''
         ]
 
         this.showFlowTo()

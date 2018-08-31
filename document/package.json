@@ -8,7 +8,7 @@
         "jszip-utils": "0.0.2",
         "mathquill": "0.10.1-b",
         "orderedmap": "1.0.0",
-        "prosemirror-collab": "1.0.x",
+        "prosemirror-collab": "1.1.x",
         "prosemirror-commands": "1.0.x",
         "prosemirror-dropcursor": "1.0.x",
         "prosemirror-example-setup": "1.0.x",
@@ -21,7 +21,7 @@
         "prosemirror-state": "1.2.x",
         "prosemirror-tables": "0.7.x",
         "prosemirror-transform": "1.1.x",
-        "prosemirror-view": "1.4.x",
+        "prosemirror-view": "1.5.x",
         "prosemirror-suggestions": "0.2.x",
         "texzilla": "0.9.9"
     }

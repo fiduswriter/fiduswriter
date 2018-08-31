@@ -159,10 +159,10 @@ export class ModToolsPrint {
                 });
                 text-decoration: none;
                 color: inherit;
-                vertical-align: super;
-                font-size: 70%;
             }
             .fn-counter::before {
+                vertical-align: super;
+                font-size: 70%;
                 counter-increment: footnote;
                 content: counter(footnote);
             }
@@ -204,9 +204,7 @@ export class ModToolsPrint {
                 this.postPrint()
             }
         })
-
         Viewer.loadDocument({url: docURL})
-
     }
 
     postProcess() {

@@ -1,14 +1,20 @@
 import {escapeText} from "../../common"
 
 /** A template for HTML export of a document. */
-export let htmlExportTemplate = ({title, styleSheets, part, contents, settings}) =>
+export let htmlExportTemplate = ({title, styleSheets, part, contents, settings, removeUrlPrefix}) =>
 `<!DOCTYPE html>
 <html>
     <head>
         <title>${escapeText(title)}</title>
 ${
     styleSheets.map(
-        sheet => sheet.filename ? `<link rel="stylesheet" type="text/css" href="${sheet.filename}" />` : `<style>${sheet.contents}</style>`
+        sheet => sheet.filename ?
+            `<link rel="stylesheet" type="text/css" href="${
+                removeUrlPrefix ?
+                sheet.filename.split('/').pop() :
+                sheet.filename
+            }" />` :
+            `<style>${sheet.contents}</style>`
     )
 }
     </head>

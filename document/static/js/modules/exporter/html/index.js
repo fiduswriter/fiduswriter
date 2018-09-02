@@ -1,70 +1,103 @@
 import download from "downloadjs"
 import pretty from "pretty"
+import katex from "katex"
 
 import {createSlug} from "../tools/file"
-import {findImages} from "../tools/html"
+import {modifyImages} from "../tools/html"
 import {ZipFileCreator} from "../tools/zip"
 import {htmlExportTemplate} from "../html/templates"
 import {addAlert} from "../../common"
-import katex from "katex"
 import {BaseHTMLExporter} from "../html/base"
 
 export class HTMLExporter extends BaseHTMLExporter{
-    constructor(doc, bibDB, imageDB, citationStyles, citationLocales) {
+    constructor(doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles) {
         super()
         this.doc = doc
         this.citationStyles = citationStyles
         this.citationLocales = citationLocales
+        this.documentStyles = documentStyles
         this.bibDB = bibDB
         this.imageDB = imageDB
+        this.styleSheets = []
+        this.removeUrlPrefix = true
     }
 
     init() {
         addAlert('info', `${this.doc.title}: ${gettext('HTML export has been initiated.')}`)
 
-        return this.joinDocumentParts().then(
+        let docStyle
+        return this.addStyle().then(
+            style => docStyle = style
+        ).then(
+            () => this.joinDocumentParts()
+        ).then(
             () => this.postProcess()
         ).then(
-            ({title, html, math, styleSheets, binaryFiles}) => this.save({title, html, math, styleSheets, binaryFiles})
+            ({title, html, math, imageFiles}) => this.save({title, html, math, imageFiles, docStyle})
         )
 
     }
 
-    postProcess() {
+    addStyle() {
+        const docStyle = this.documentStyles.find(docStyle => docStyle.filename===this.doc.settings.documentstyle)
 
-        const styleSheets = []
+        const docStyleCSS = `
+        ${docStyle.fonts.map(font => {
+            return `@font-face {${
+                font[1].replace('[URL]', this.removeUrlPrefix ? font[0].split('/').pop() : font[0])
+            }}`
+        }).join('\n')}
+
+        ${docStyle.contents}
+        `
+        this.styleSheets.push({contents: docStyleCSS})
+
+        return Promise.resolve(docStyle)
+    }
+
+    postProcess() {
 
         const title = this.doc.title
 
-        const math = contents.querySelectorAll('.equation, .figure-equation').length ? true : false
+        const math = this.contents.querySelectorAll('.equation, .figure-equation').length ? true : false
 
         if (math) {
-            styleSheets.push({filename: 'katex.min.css'})
+            this.styleSheets.push({filename: `${$StaticUrls.base$}css/libs/katex/katex.min.css`})
         }
 
         this.addFigureNumbers(this.contents)
+
+        const imageFiles = this.removeUrlPrefix ? modifyImages(this.contents) : []
 
         const html = htmlExportTemplate({
             part: false,
             title,
             settings: this.doc.settings,
-            styleSheets,
-            contents: this.contents
+            styleSheets: this.styleSheets,
+            contents: this.contents,
+            removeUrlPrefix: this.removeUrlPrefix
         })
 
-        const binaryFiles = findImages(this.contents)
-
-        return {title, html, math, styleSheets, binaryFiles}
+        return {title, html, math, imageFiles}
     }
 
-    save({title, html, math, styleSheets, binaryFiles}) {
+
+    // The save function is specific to HTMl saving and therefore assumes that this.removeUrlPrefix === true
+    save({title, html, math, imageFiles, docStyle}) {
+
+        const fontFiles = docStyle.fonts.map(font => ({
+            filename: font[0].split('/').pop(),
+            url: font[0]
+        }))
+
+        const binaryFiles = fontFiles.concat(imageFiles)
 
         const textFiles = [{
             filename: 'document.html',
             contents: pretty(this.replaceImgSrc(html), {ocd: true})
         }]
 
-        styleSheets.forEach(styleSheet => {
+        this.styleSheets.forEach(styleSheet => {
             if (styleSheet.contents && styleSheet.filename) {
                 textFiles.push(styleSheet)
             }

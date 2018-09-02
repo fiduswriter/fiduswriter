@@ -1,12 +1,13 @@
 import download from "downloadjs"
+import pretty from "pretty"
 
 import {createSlug} from "../tools/file"
 import {findImages} from "../tools/html"
 import {ZipFileCreator} from "../tools/zip"
-import {htmlExportTemplate} from "./templates"
+import {htmlExportTemplate} from "../html/templates"
 import {addAlert} from "../../common"
-import {katexRender} from "../../katex"
-import {BaseHTMLExporter} from "./base"
+import katex from "katex"
+import {BaseHTMLExporter} from "../html/base"
 
 export class HTMLExporter extends BaseHTMLExporter{
     constructor(doc, bibDB, imageDB, citationStyles, citationLocales) {
@@ -16,75 +17,60 @@ export class HTMLExporter extends BaseHTMLExporter{
         this.citationLocales = citationLocales
         this.bibDB = bibDB
         this.imageDB = imageDB
-        this.exportOne()
     }
 
-    exportOne() {
-        addAlert('info', this.doc.title + ': ' + gettext(
-            'HTML export has been initiated.'))
+    init() {
+        addAlert('info', `${this.doc.title}: ${gettext('HTML export has been initiated.')}`)
 
-        this.joinDocumentParts().then(() => this.exportTwo())
+        return this.joinDocumentParts().then(
+            () => this.postProcess()
+        ).then(
+            ({title, html, math, styleSheets, binaryFiles}) => this.save({title, html, math, styleSheets, binaryFiles})
+        )
 
     }
 
-    exportTwo() {
+    postProcess() {
 
-        let styleSheets = [], math = false
+        const styleSheets = []
 
-        let title = this.doc.title
+        const title = this.doc.title
 
-        let contents = this.contents
+        const math = contents.querySelectorAll('.equation, .figure-equation').length ? true : false
 
-        let equations = contents.querySelectorAll('.equation')
-
-        let figureEquations = contents.querySelectorAll('.figure-equation')
-
-        if (equations.length > 0 || figureEquations.length > 0) {
-            math = true
+        if (math) {
             styleSheets.push({filename: 'katex.min.css'})
         }
 
-        for (let i = 0; i < equations.length; i++) {
-            let node = equations[i]
-            let formula = node.getAttribute('data-equation')
-            katexRender(formula, node, {throwOnError: false})
-        }
-        for (let i = 0; i < figureEquations.length; i++) {
-            let node = figureEquations[i]
-            let formula = node.getAttribute('data-equation')
-            katexRender(formula, node, {
-                displayMode: true,
-                throwOnError: false
-            })
-        }
+        this.addFigureNumbers(this.contents)
 
-        let includeZips = []
-
-        let httpOutputList = findImages(contents)
-
-        contents = this.addFigureNumbers(contents)
-
-        let contentsCode = this.replaceImgSrc(contents.innerHTML)
-
-        let htmlCode = htmlExportTemplate({
+        const html = htmlExportTemplate({
             part: false,
             title,
             settings: this.doc.settings,
             styleSheets,
-            contents: contentsCode
+            contents: this.contents
         })
 
-        let outputList = [{
+        const binaryFiles = findImages(this.contents)
+
+        return {title, html, math, styleSheets, binaryFiles}
+    }
+
+    save({title, html, math, styleSheets, binaryFiles}) {
+
+        const textFiles = [{
             filename: 'document.html',
-            contents: htmlCode
+            contents: pretty(this.replaceImgSrc(html), {ocd: true})
         }]
 
-        for (let i = 0; i < styleSheets.length; i++) {
-            let styleSheet = styleSheets[i]
-            if (styleSheet.contents) {
-                outputList.push(styleSheet)
+        styleSheets.forEach(styleSheet => {
+            if (styleSheet.contents && styleSheet.filename) {
+                textFiles.push(styleSheet)
             }
-        }
+        })
+
+        const includeZips = []
 
         if (math) {
             includeZips.push({
@@ -93,9 +79,9 @@ export class HTMLExporter extends BaseHTMLExporter{
             })
         }
 
-        let zipper = new ZipFileCreator(
-            outputList,
-            httpOutputList,
+        const zipper = new ZipFileCreator(
+            textFiles,
+            binaryFiles,
             includeZips
         )
 

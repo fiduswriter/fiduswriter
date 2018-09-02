@@ -8,14 +8,14 @@ export let htmlExportTemplate = ({title, styleSheets, part, contents, settings})
         <title>${escapeText(title)}</title>
 ${
     styleSheets.map(
-        sheet => `\t\t<link rel="stylesheet" type="text/css" href="${sheet.filename}" />\n`
+        sheet => sheet.filename ? `<link rel="stylesheet" type="text/css" href="${sheet.filename}" />` : `<style>${sheet.contents}</style>`
     )
 }
     </head>
     <body>
 ${
-    part && part.length ? `\t\t<h1 class="part">${escapeText(part)}</h1>\n` : ''
+    part && part.length ? `<h1 class="part">${escapeText(part)}</h1>` : ''
 }
-        ${contents}
+        ${contents.innerHTML}
     </body>
 </html>`

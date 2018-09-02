@@ -34,8 +34,6 @@ export class DocxExporter {
         this.pmBib = false
         this.docContents = false
         this.docTitle = false
-
-        this.init()
     }
 
 

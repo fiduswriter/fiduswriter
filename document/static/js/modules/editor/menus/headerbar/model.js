@@ -165,13 +165,14 @@ export let headerbarModel = {
                     tooltip: gettext('Export the document to an HTML file.'),
                     order: 0,
                     action: editor => {
-                        new HTMLExporter(
+                        const exporter = new HTMLExporter(
                             editor.getDoc({changes: 'acceptAllNoInsertions'}),
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB,
                             editor.mod.styles.citationStyles,
                             editor.mod.styles.citationLocales
                         )
+                        exporter.init()
                     }
                 },
                 {
@@ -180,13 +181,14 @@ export let headerbarModel = {
                     tooltip: gettext('Export the document to an Epub electronic reader file.'),
                     order: 1,
                     action: editor => {
-                        new EpubExporter(
+                        const exporter = new EpubExporter(
                             editor.getDoc({changes: 'acceptAllNoInsertions'}),
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB,
                             editor.mod.styles.citationStyles,
                             editor.mod.styles.citationLocales
                         )
+                        exporter.init()
                     }
                 },
                 {
@@ -195,11 +197,12 @@ export let headerbarModel = {
                     tooltip: gettext('Export the document to an LaTeX file.'),
                     order: 2,
                     action: editor => {
-                        new LatexExporter(
+                        const exporter = new LatexExporter(
                             editor.getDoc({changes: 'acceptAllNoInsertions'}),
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB
                         )
+                        exporter.init()
                     }
                 }
             ]

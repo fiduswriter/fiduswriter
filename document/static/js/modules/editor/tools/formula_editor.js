@@ -1,7 +1,7 @@
 import {escapeText} from "../../common"
 
 import "mathquill/build/mathquill"
-import {katexRender} from "../../katex"
+import katex from "katex"
 
 /**
  * Class to initialize and manage MathQuill library inside editor dialog (math.js)
@@ -45,13 +45,13 @@ export class FormulaEditor {
             this.rawInputDOM.value = latexText
 
             //render latex formula using katex
-            katexRender(this.getLatex(), this.previewDOM, {throwOnError: false})
+            katex.render(this.getLatex(), this.previewDOM, {throwOnError: false})
 
             //live-update of katex rendering
             this.rawInputDOM.addEventListener('input', () => {
                 try {
                     this.previewDOM.innerHTML = ''
-                    katexRender(this.getLatex(), this.previewDOM)
+                    katex.render(this.getLatex(), this.previewDOM)
                     this.hideError()
                 }
                 catch(msg) {

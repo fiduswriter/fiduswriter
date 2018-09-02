@@ -20,7 +20,6 @@ export class LatexExporter {
         this.zipFileName = false
         this.textFiles = []
         this.httpFiles = []
-        this.init()
     }
 
     init() {

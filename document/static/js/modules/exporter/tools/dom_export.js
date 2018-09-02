@@ -22,33 +22,44 @@ export class BaseDOMExporter {
         }
     }
 
+    cleanNode(node) {
+        if (node.contentEditable === 'true') {
+            node.removeAttribute('contentEditable')
+        }
+        if (node.children) {
+            Array.from(node.children).forEach(childNode => this.cleanNode(childNode))
+        }
+    }
+
     cleanHTML(htmlEl) {
 
         // Replace the footnote markers with anchors and put footnotes with contents
         // at the back of the document.
         // Also, link the footnote anchor with the footnote according to
         // https://rawgit.com/essepuntato/rash/master/documentation/index.html#footnotes.
-        let footnotes = htmlEl.querySelectorAll('.footnote-marker')
-        let footnotesContainer = document.createElement('section')
+        const footnotes = htmlEl.querySelectorAll('.footnote-marker')
+        const footnotesContainer = document.createElement('section')
         footnotesContainer.id = 'fnlist'
         footnotesContainer.setAttribute('role', 'doc-footnotes')
 
         footnotes.forEach(
             (footnote, index) => {
-                let footnoteAnchor = document.createElement('a')
-                let counter = index + 1
+                const footnoteAnchor = document.createElement('a')
+                const counter = index + 1
                 footnoteAnchor.setAttribute('href','#fn'+counter)
                 // RASH 0.5 doesn't mark the footnote anchors, so we add this class
                 footnoteAnchor.classList.add('fn')
                 footnote.parentNode.replaceChild(footnoteAnchor, footnote)
-                let newFootnote = document.createElement('section')
+                const newFootnote = document.createElement('section')
                 newFootnote.id = 'fn' + counter
                 newFootnote.setAttribute('role','doc-footnote')
                 newFootnote.innerHTML = footnote.getAttribute('data-footnote')
+
                 footnotesContainer.appendChild(newFootnote)
             }
         )
         htmlEl.appendChild(footnotesContainer)
+        this.cleanNode(htmlEl)
 
         // Replace nbsp spaces with normal ones
         this.replaceText(htmlEl, '&nbsp;', ' ')
@@ -60,6 +71,28 @@ export class BaseDOMExporter {
             )
             el.parentElement.removeChild(el)
         })
+
+        htmlEl.querySelectorAll('.citation').forEach(el => {
+            delete el.dataset.references
+            delete el.dataset.bibs
+            delete el.dataset.format
+        })
+
+        htmlEl.querySelectorAll('.equation, .figure-equation').forEach(el => {
+            delete el.dataset.equation
+        })
+
+        htmlEl.querySelectorAll('.figure').forEach(el => {
+            delete el.dataset.equation
+            delete el.dataset.image
+            delete el.dataset.figureCategory
+            delete el.dataset.caption
+        })
+
+        htmlEl.querySelectorAll('.figure-cat-figure').forEach(el => {
+            delete el.dataset.figureCategory
+        })
+
 
         return htmlEl
     }

@@ -4,15 +4,15 @@ import JSZipUtils from "jszip-utils"
 /** Creates a zip file.
  * @function zipFileCreator
  * @param {list} textFiles A list of files in plain text format.
- * @param {list} httpFiles A list fo files that have to be downloaded from the internet before being included.
+ * @param {list} binaryFiles A list fo files that have to be downloaded from the internet before being included.
  * @param {list} includeZips A list of zip files to be merged into the output zip file.
  * @param {string} [mimeType=application/zip] The mimetype of the file that is to be created.
  */
 
 export class ZipFileCreator {
-    constructor(textFiles = [], httpFiles = [], zipFiles = [], mimeType = 'application/zip') {
+    constructor(textFiles = [], binaryFiles = [], zipFiles = [], mimeType = 'application/zip') {
         this.textFiles = textFiles
-        this.httpFiles = httpFiles
+        this.binaryFiles = binaryFiles
         this.zipFiles = zipFiles
         this.mimeType = mimeType
     }
@@ -52,11 +52,11 @@ export class ZipFileCreator {
         this.textFiles.forEach(textFile => {
             this.zipFs.file(textFile.filename, textFile.contents, {compression: 'DEFLATE'})
         })
-        let httpPromises = this.httpFiles.map(httpFile =>
+        let httpPromises = this.binaryFiles.map(binaryFile =>
             new Promise(
                 resolve => {
-                    JSZipUtils.getBinaryContent(httpFile.url, (err, contents) => {
-                        this.zipFs.file(httpFile.filename, contents, {binary: true, compression: 'DEFLATE'})
+                    JSZipUtils.getBinaryContent(binaryFile.url, (err, contents) => {
+                        this.zipFs.file(binaryFile.filename, contents, {binary: true, compression: 'DEFLATE'})
                         resolve()
                     })
                 }

@@ -4,7 +4,7 @@ import katex from "katex"
 
 import {obj2Node, node2Obj} from "../tools/json"
 import {createSlug} from "../tools/file"
-import {findImages} from "../tools/html"
+import {modifyImages} from "../tools/html"
 import {ZipFileCreator} from "../tools/zip"
 import {opfTemplate, containerTemplate, ncxTemplate, ncxItemTemplate, navTemplate, navItemTemplate, xhtmlTemplate} from "./templates"
 import {addAlert} from "../../common"
@@ -41,7 +41,7 @@ export class EpubExporter extends BaseEpubExporter {
 
         contents = this.addFigureNumbers(contents)
 
-        let images = findImages(contents)
+        let images = modifyImages(contents)
 
         let contentsBody = document.createElement('body')
 

@@ -13,7 +13,6 @@ import {SiteMenu} from "../../menu"
 export class DocumentOverview {
 
     constructor () {
-        window.DataTable = DataTable
         this.documentList = []
         this.user = false
         this.teamMembers = []
@@ -92,6 +91,7 @@ export class DocumentOverview {
                 this.user = json.user
                 this.citationStyles = json.citation_styles
                 this.citationLocales = json.citation_locales
+                this.documentStyles = json.document_styles
                 this.exportTemplates = json.export_templates
                 this.initTable()
                 this.addExportTemplatesToMenu()

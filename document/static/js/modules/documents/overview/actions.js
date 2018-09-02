@@ -195,7 +195,8 @@ export class DocumentOverviewActions {
                     {db:doc.bibliography},
                     {db:doc.images},
                     this.documentOverview.citationStyles,
-                    this.documentOverview.citationLocales
+                    this.documentOverview.citationLocales,
+                    this.documentOverview.documentStyles
                 )
                 exporter.init()
             })

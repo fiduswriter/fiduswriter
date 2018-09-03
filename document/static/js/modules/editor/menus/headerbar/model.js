@@ -8,6 +8,7 @@ import {ExportFidusFile} from "../../../exporter/native/file"
 import {LatexExporter} from "../../../exporter/latex"
 import {HTMLExporter} from "../../../exporter/html"
 import {EpubExporter} from "../../../exporter/epub"
+import {PrintExporter} from "../../../exporter/print"
 import {RevisionDialog, LanguageDialog, TableDialog} from "../../dialogs"
 import {TEXT_ONLY_PARTS} from "../toolbar/model"
 import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from "../.."
@@ -148,7 +149,15 @@ export let headerbarModel = {
                     order: 5,
                     keys: 'Ctrl-p',
                     action: editor => {
-                        editor.mod.tools.print.print()
+                        const exporter = new PrintExporter(
+                            editor.getDoc({changes: 'acceptAllNoInsertions'}),
+                            editor.mod.db.bibDB,
+                            editor.mod.db.imageDB,
+                            editor.mod.styles.citationStyles,
+                            editor.mod.styles.citationLocales,
+                            editor.mod.styles.documentStyles
+                        )
+                        exporter.init()
                     }
                 }
             ]

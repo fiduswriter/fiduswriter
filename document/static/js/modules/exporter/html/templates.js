@@ -15,7 +15,7 @@ ${
                 sheet.filename
             }" />` :
             `<style>${sheet.contents}</style>`
-    )
+    ).join('')
 }
     </head>
     <body>

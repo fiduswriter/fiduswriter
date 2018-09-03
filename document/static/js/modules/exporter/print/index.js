@@ -13,6 +13,7 @@ export class PrintExporter extends HTMLExporter {
     constructor(doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles) {
         super(doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles)
         this.removeUrlPrefix = false
+        this.styleSheets.push({filename: `${$StaticUrls.base$}css/texteditor.css?v=${$StaticUrls.transpile.version$}`})
         this.styleSheets.push({contents:
             `:root {
                 counter-reset: footnote footnote-content;
@@ -50,19 +51,29 @@ export class PrintExporter extends HTMLExporter {
                 }
             }`
         })
-        this.disabledStyles = []
-        this.hiddenElements = []
     }
 
     init() {
         addAlert('info', `${this.doc.title}: ${gettext('Printing has been initiated.')}`)
+        return this.initIframe()
+    }
 
+    initIframe() {
+        this.iframe = document.createElement('iframe')
+        this.window = window
+        this.window.printInstance = this
+        this.iframe.srcdoc="<html><head></head><body onload='parent.printInstance.runInIframe(window)'></body></html>"
+        document.body.appendChild(this.iframe)
+    }
+
+    runInIframe(iframeWin) {
+        this.iframeWin = iframeWin
         return this.addStyle().then(
             () => this.joinDocumentParts()
         ).then(
             () => this.postProcess()
         ).then(
-            ({html}) => this.preparePrint(html)
+            ({html, title}) => this.preparePrint({html, title})
         ).then(
             () => this.fixPreparePrint()
         ).then(
@@ -72,13 +83,14 @@ export class PrintExporter extends HTMLExporter {
         )
     }
 
-    preparePrint(html) {
-        this.addFlowTo()
+    preparePrint({html, title}) {
+        this.iframeWin.document.title = title
         const docBlob = new Blob([html], {type : 'text/html'}),
             docURL = URL.createObjectURL(docBlob),
             Viewer = new viewer.Viewer(
                 {
-                    viewportElement: this.flowTo,
+                    viewportElement: this.iframeWin.document.body,
+                    window: this.iframeWin,
                     userAgentRootURL: `${$StaticUrls.base$}vivliostyle-resources/`
                 }
             )
@@ -93,42 +105,15 @@ export class PrintExporter extends HTMLExporter {
     }
 
     fixPreparePrint() {
-        this.flowTo.querySelectorAll('[data-vivliostyle-page-container]').forEach(node => node.style.display = 'block')
+        this.iframeWin.document.querySelectorAll('[data-vivliostyle-page-container]').forEach(node => node.style.display = 'block')
     }
 
     browserPrint() {
-        window.print()
-    }
-
-    addFlowTo() {
-        this.flowTo = document.createElement('div')
-        this.flowTo.id = 'print'
-        document.body.appendChild(this.flowTo)
-        Array.from(document.body.children).forEach(node => {
-            if (node !== this.flowTo) {
-                node.style.display='none'
-                if (node.nodeName==='STYLE') {
-                    node.disabled = true
-                    this.disabledStyles.push(node)
-                } else {
-                    this.hiddenElements.push(node)
-                }
-            }
-        })
-        Array.from(document.head.children).forEach(node => {
-            if (node.nodeName==='STYLE') {
-                node.disabled = true
-                this.disabledStyles.push(node)
-            }
-        })
+        this.iframeWin.print()
     }
 
     cleanUp() {
-        this.flowTo.parentElement.removeChild(this.flowTo)
-        delete this.flowTo
-        this.hiddenElements.forEach(node => node.style.display = '')
-        this.hiddenElements = []
-        this.disabledStyles.forEach(node => node.disabled = false)
-        this.disabledStyles = []
+        this.iframe.parentElement.removeChild(this.iframe)
+        delete this.window.printInstance
     }
 }

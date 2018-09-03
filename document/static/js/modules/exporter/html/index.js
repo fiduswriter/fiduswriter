@@ -62,7 +62,7 @@ export class HTMLExporter extends BaseHTMLExporter{
         const math = this.contents.querySelectorAll('.equation, .figure-equation').length ? true : false
 
         if (math) {
-            this.styleSheets.push({filename: `${$StaticUrls.base$}css/libs/katex/katex.min.css`})
+            this.styleSheets.push({filename: `${$StaticUrls.base$}css/libs/katex/katex.min.css?v=${$StaticUrls.transpile.version$}`})
         }
 
         this.addFigureNumbers(this.contents)

@@ -18,7 +18,9 @@ export class HTMLExporter extends BaseHTMLExporter{
         this.documentStyles = documentStyles
         this.bibDB = bibDB
         this.imageDB = imageDB
-        this.styleSheets = []
+        this.styleSheets = [
+            {filename: `${$StaticUrls.base$}css/document.css?v=${$StaticUrls.transpile.version$}`}
+        ]
         this.removeUrlPrefix = true
     }
 
@@ -64,8 +66,6 @@ export class HTMLExporter extends BaseHTMLExporter{
         if (math) {
             this.styleSheets.push({filename: `${$StaticUrls.base$}css/libs/katex/katex.min.css?v=${$StaticUrls.transpile.version$}`})
         }
-
-        this.addFigureNumbers(this.contents)
 
         const imageFiles = this.removeUrlPrefix ? modifyImages(this.contents) : []
 

@@ -28,7 +28,7 @@ export class BaseHTMLExporter extends BaseDOMExporter {
         return citRenderer.init().then(
             () => {
                 this.addBibliographyHTML(citRenderer.fm.bibHTML)
-                this.contents = this.cleanHTML(this.contents)
+                this.contents = this.cleanHTML(this.contents, citRenderer.fm.citationType)
                 return Promise.resolve()
             }
         )

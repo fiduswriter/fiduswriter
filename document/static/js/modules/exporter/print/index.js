@@ -13,12 +13,8 @@ export class PrintExporter extends HTMLExporter {
     constructor(doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles) {
         super(doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles)
         this.removeUrlPrefix = false
-        this.styleSheets.push({filename: `${$StaticUrls.base$}css/texteditor.css?v=${$StaticUrls.transpile.version$}`})
         this.styleSheets.push({contents:
-            `:root {
-                counter-reset: footnote footnote-content;
-            }
-            a.fn {
+            `a.fn {
                 -adapt-template: url(data:application/xml,${
                     encodeURI(
                         '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://www.pyroxy.com/ns/shadow"><head><style>.footnote-content{float:footnote}</style></head><body><s:template id="footnote"><s:content/><s:include class="footnote-content"/></s:template></body></html>#footnote'
@@ -26,19 +22,14 @@ export class PrintExporter extends HTMLExporter {
                 });
                 text-decoration: none;
                 color: inherit;
-                content: counter(footnote);
-            }
-            a.fn::footnote-marker {
                 vertical-align: super;
                 font-size: 70%;
-                counter-increment: footnote;
-                content: counter(footnote);
             }
-            section[role=doc-ffootnote]:footnote-content::before {
-                counter-increment: footnote-content;
-                content: counter(footnote-content) ". ";
+            section[role=doc-footnote] > *:first-child:before {
+                counter-increment: footnote-counter;
+                content: counter(footnote-counter) ". ";
             }
-            sectdion[role=doc-footnote] {
+            section#fnlist {
                 display: none;
             }
             section:footnote-content {
@@ -110,6 +101,13 @@ export class PrintExporter extends HTMLExporter {
 
     browserPrint() {
         this.iframeWin.print()
+    }
+
+    getFootnoteAnchor(counter) {
+        const footnoteAnchor = super.getFootnoteAnchor(counter)
+        // Add the counter directly into the footnote.
+        footnoteAnchor.innerHTML = counter
+        return footnoteAnchor
     }
 
     cleanUp() {

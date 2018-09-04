@@ -1017,8 +1017,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         ).click()
 
         # click on 'Insert' button
-        driver.find_element_by_xpath(
-            '/html/body/div[5]/div[3]/div/button[1]').click()
+        driver.find_element_by_css_selector("button.fw-dark").click()
 
     def get_image(self, driver):
         figure = driver.find_element_by_css_selector(

@@ -7,9 +7,9 @@ import {modifyImages} from "../tools/html"
 import {ZipFileCreator} from "../tools/zip"
 import {htmlExportTemplate} from "../html/templates"
 import {addAlert} from "../../common"
-import {BaseHTMLExporter} from "../html/base"
+import {BaseDOMExporter} from "../tools/dom_export"
 
-export class HTMLExporter extends BaseHTMLExporter{
+export class HTMLExporter extends BaseDOMExporter{
     constructor(doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles) {
         super()
         this.doc = doc

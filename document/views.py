@@ -1,5 +1,3 @@
-
-
 import time
 import os
 from tornado.escape import json_decode, json_encode
@@ -28,7 +26,7 @@ from usermedia.models import DocumentImage, Image
 from bibliography.models import Entry
 from document.helpers.serializers import PythonWithURLSerializer
 from bibliography.views import serializer
-from style.models import CitationStyle, CitationLocale
+from style.models import CitationStyle, CitationLocale, DocumentStyle
 from base.html_email import html_email
 
 
@@ -167,6 +165,11 @@ def get_documentlist_js(request):
         response['citation_styles'] = [obj['fields'] for obj in cit_styles]
         cit_locales = serializer.serialize(CitationLocale.objects.all())
         response['citation_locales'] = [obj['fields'] for obj in cit_locales]
+        doc_styles = serializer.serialize(
+            DocumentStyle.objects.all(),
+            use_natural_foreign_keys=True
+        )
+        response['document_styles'] = [obj['fields'] for obj in doc_styles]
         response['user'] = {}
         response['user']['id'] = request.user.id
         response['user']['name'] = request.user.readable_name

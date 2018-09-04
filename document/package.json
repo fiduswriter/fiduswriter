@@ -23,6 +23,7 @@
         "prosemirror-transform": "1.1.x",
         "prosemirror-view": "1.5.x",
         "prosemirror-suggestions": "0.2.x",
-        "texzilla": "0.9.9"
+        "texzilla": "0.9.9",
+        "pretty": "2.0.0"
     }
 }

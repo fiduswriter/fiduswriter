@@ -1,4 +1,4 @@
-import {katexRender} from "../katex"
+import katex from "katex"
 
 function parseReferences(str) {
     if (!str) {
@@ -83,7 +83,7 @@ export let equation = {
         let dom = document.createElement('span')
         dom.dataset.equation = node.attrs.equation
         dom.classList.add('equation')
-        katexRender(node.attrs.equation, dom, {
+        katex.render(node.attrs.equation, dom, {
             throwOnError: false
         })
         dom.setAttribute('contenteditable', 'false')
@@ -187,7 +187,7 @@ export let figure = {
             domEquation.classList.add('figure-equation')
             domEquation.setAttribute('data-equation', node.attrs.equation)
 
-            katexRender(node.attrs.equation, domEquation, {
+            katex.render(node.attrs.equation, domEquation, {
                 displayMode: true,
                 throwOnError: false
             })

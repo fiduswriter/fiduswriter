@@ -1,6 +1,6 @@
-import {BaseHTMLExporter} from "../html/base"
+import {BaseDOMExporter} from "../tools/dom_export"
 
-export class BaseEpubExporter extends BaseHTMLExporter {
+export class BaseEpubExporter extends BaseDOMExporter {
     getTimestamp() {
         let today = new Date()
         let second = today.getUTCSeconds()

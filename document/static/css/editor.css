@@ -220,7 +220,6 @@ div#statusarea .error {
 }
 
 
-
 div#layout {
     padding-top: 60px;
 }
@@ -237,38 +236,6 @@ input.required, error {
     border: 2px solid red;
 }
 
-/* For print */
-
-@media print {
-
-    #esditor {
-        display: none !important;
-    }
-/*
-    #pagination-layout {
-        top: 0 !important;
-    }
-
-    .pagination-page {
-        margin: 0 !important;
-        border: 0 !important;
-    }
-
-    body {
-        margin-bottom: 0;
-    }*/
-}
-#pddrint {
-    z-index: 100;
-    position: absolute;
-    top: 0;
-    min-height: 100%;
-    min-width: 100%;
-    background-color: rgba(234,234,234,0.5);
-}
-#print table, #print figure {
-    width: 100%;
-}
 /* Overwrite color changes through font in editor. Webkit bug */
 
 font {
@@ -352,50 +319,8 @@ span.delete {
     display: none;
 }
 
-figure {
-    width: 80%;
-    border: 1px solid black;
-    padding: 5px;
-    text-align: center;
-    -webkit-region-break-inside: avoid;
-    cursor: pointer;
-}
-
-#flow figure {
-    margin: 10%;
-}
-
-figure figcaption {
-    margin-top: 10px;
-    font-size: .9em;
-}
-
-figure img {
-    max-width: 100%
-}
-
-div#print,
-div#flow {
-    counter-reset: figure-cat-0 figure-cat-1 figure-cat-2 footnote-counter footnote-marker-counter;
-}
-
 #flow {
     background-color: white;
-}
-
-.figure-cat-figure::after {
-    counter-increment: figure-cat-0;
-    content: ' ' counter(figure-cat-0) ': ';
-}
-
-.figure-cat-photo::after {
-    counter-increment: figure-cat-1;
-    content: ' ' counter(figure-cat-1) ': ';
-}
-
-.figure-cat-table::after {
-    counter-increment: figure-cat-2;
-    content: ' ' counter(figure-cat-2) ': ';
 }
 
 #document-editable {
@@ -584,53 +509,6 @@ table.insert-table-selection td.selected.hover {
     caret-color: transparent;
 }
 
-/* CSL */
-
-.csl-bib-body {
-    padding-top: 0.5em;
-    padding-bottom: 0.5em;
-}
-
-.csl-left-margin {
-    padding-right: 1ch;
-}
-
-.csl-entry i {
-    font-style: italic;
-}
-
-.csl-entry b {
-    font-weight: bold;
-}
-
-.csl-entry sup {
-    vertical-align: super;
-    font-size: smaller;
-}
-
-.csl-entry sub {
-    vertical-align: sub;
-    font-size: smaller;
-}
-
-.csl-indent {
-    padding-left: 0.5in;
-}
-
-.csl-entry {
-     clear: left;
-}
-
-.csl-left-margin {
-    clear: left;
-    float: left;
-    white-space: pre;
-}
-
-.csl-right-inline {
-    padding-left: 20px;
-}
-
 /* Wide table: used for submission dialog */
 
 .fw-dialog-table-wide .entry-field input[type=text],
@@ -678,11 +556,6 @@ table.insert-table-selection td.selected.hover {
     color: #551A8B;
 }
 
-span.anchor {
-    text-decoration: underline;
-    color: green;
-}
-
 /* Keywords */
 
 .keyword-input {
@@ -699,31 +572,6 @@ span.anchor {
     background-color: white;
 }
 
-.article-keywords .keyword {
-    margin-right: 5px;
-    margin-bottom: 5px;
-    padding: 0 5px;
-    border-radius: 3px;
-    line-height: 2em;
-    cursor: pointer;
-    color: #fff;
-    background: #76a698;
-    border: 1px solid #7d948e;
-}
-
-.article-authors .author {
-    margin-right: 5px;
-    margin-bottom: 5px;
-    padding: 0 12px;
-    height: 34px;
-    display: inline-block;
-    border-radius: 3px;
-    line-height: 34px;
-    cursor: pointer;
-    color: #fff;
-    background: #76a698;
-    border: 1px solid #7d948e;
-}
 *:focus {
     outline: none;
 }

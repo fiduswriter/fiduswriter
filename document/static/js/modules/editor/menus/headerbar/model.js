@@ -8,6 +8,7 @@ import {ExportFidusFile} from "../../../exporter/native/file"
 import {LatexExporter} from "../../../exporter/latex"
 import {HTMLExporter} from "../../../exporter/html"
 import {EpubExporter} from "../../../exporter/epub"
+import {PrintExporter} from "../../../exporter/print"
 import {RevisionDialog, LanguageDialog, TableDialog} from "../../dialogs"
 import {TEXT_ONLY_PARTS} from "../toolbar/model"
 import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from "../.."
@@ -148,7 +149,15 @@ export let headerbarModel = {
                     order: 5,
                     keys: 'Ctrl-p',
                     action: editor => {
-                        editor.mod.tools.print.print()
+                        const exporter = new PrintExporter(
+                            editor.getDoc({changes: 'acceptAllNoInsertions'}),
+                            editor.mod.db.bibDB,
+                            editor.mod.db.imageDB,
+                            editor.mod.styles.citationStyles,
+                            editor.mod.styles.citationLocales,
+                            editor.mod.styles.documentStyles
+                        )
+                        exporter.init()
                     }
                 }
             ]
@@ -165,13 +174,15 @@ export let headerbarModel = {
                     tooltip: gettext('Export the document to an HTML file.'),
                     order: 0,
                     action: editor => {
-                        new HTMLExporter(
+                        const exporter = new HTMLExporter(
                             editor.getDoc({changes: 'acceptAllNoInsertions'}),
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB,
                             editor.mod.styles.citationStyles,
-                            editor.mod.styles.citationLocales
+                            editor.mod.styles.citationLocales,
+                            editor.mod.styles.documentStyles
                         )
+                        exporter.init()
                     }
                 },
                 {
@@ -180,13 +191,14 @@ export let headerbarModel = {
                     tooltip: gettext('Export the document to an Epub electronic reader file.'),
                     order: 1,
                     action: editor => {
-                        new EpubExporter(
+                        const exporter = new EpubExporter(
                             editor.getDoc({changes: 'acceptAllNoInsertions'}),
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB,
                             editor.mod.styles.citationStyles,
                             editor.mod.styles.citationLocales
                         )
+                        exporter.init()
                     }
                 },
                 {
@@ -195,11 +207,12 @@ export let headerbarModel = {
                     tooltip: gettext('Export the document to an LaTeX file.'),
                     order: 2,
                     action: editor => {
-                        new LatexExporter(
+                        const exporter = new LatexExporter(
                             editor.getDoc({changes: 'acceptAllNoInsertions'}),
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB
                         )
+                        exporter.init()
                     }
                 }
             ]

@@ -189,14 +189,16 @@ export class DocumentOverviewActions {
             this.documentOverview.documentList
         ).then(
             () => ids.forEach(id => {
-                let doc = this.documentOverview.documentList.find(entry => entry.id===id)
-                new HTMLExporter(
+                const doc = this.documentOverview.documentList.find(entry => entry.id===id)
+                const exporter = new HTMLExporter(
                     doc,
                     {db:doc.bibliography},
                     {db:doc.images},
                     this.documentOverview.citationStyles,
-                    this.documentOverview.citationLocales
+                    this.documentOverview.citationLocales,
+                    this.documentOverview.documentStyles
                 )
+                exporter.init()
             })
         )
     }
@@ -208,9 +210,9 @@ export class DocumentOverviewActions {
         ).then(
             () => {
                 ids.forEach(id => {
-                    let doc = this.documentOverview.documentList.find(entry => entry.id===id)
+                    const doc = this.documentOverview.documentList.find(entry => entry.id===id)
                     if (templateType==='docx') {
-                        new DocxExporter(
+                        const exporter = new DocxExporter(
                             doc,
                             templateUrl,
                             {db:doc.bibliography},
@@ -218,8 +220,9 @@ export class DocumentOverviewActions {
                             this.documentOverview.citationStyles,
                             this.documentOverview.citationLocales
                         )
+                        exporter.init()
                     } else {
-                        new OdtExporter(
+                        const exporter = new OdtExporter(
                             doc,
                             templateUrl,
                             {db:doc.bibliography},
@@ -227,6 +230,7 @@ export class DocumentOverviewActions {
                             this.documentOverview.citationStyles,
                             this.documentOverview.citationLocales
                         )
+                        exporter.init()
                     }
                 })
             }
@@ -240,12 +244,13 @@ export class DocumentOverviewActions {
         ).then(
             () =>
                 ids.forEach(id => {
-                    let doc = this.documentOverview.documentList.find(entry => entry.id===id)
-                    new LatexExporter(
+                    const doc = this.documentOverview.documentList.find(entry => entry.id===id)
+                    const exporter = new LatexExporter(
                         doc,
                         {db:doc.bibliography},
                         {db:doc.images}
                     )
+                    exporter.init()
                 })
         )
     }
@@ -257,14 +262,15 @@ export class DocumentOverviewActions {
         ).then(
             () =>
                 ids.forEach(id => {
-                    let doc = this.documentOverview.documentList.find(entry => entry.id===id)
-                    new EpubExporter(
+                    const doc = this.documentOverview.documentList.find(entry => entry.id===id)
+                    const exporter = new EpubExporter(
                         doc,
                         {db:doc.bibliography},
                         {db:doc.images},
                         this.documentOverview.citationStyles,
                         this.documentOverview.citationLocales
                     )
+                    exporter.init()
                 })
         )
     }

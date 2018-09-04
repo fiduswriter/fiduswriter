@@ -31,30 +31,35 @@ export class BaseDOMExporter {
         }
     }
 
-    cleanHTML(htmlEl) {
+    getFootnoteAnchor(counter) {
+        const footnoteAnchor = document.createElement('a')
+        footnoteAnchor.setAttribute('href','#fn'+counter)
+        // RASH 0.5 doesn't mark the footnote anchors, so we add this class
+        footnoteAnchor.classList.add('fn')
+        return footnoteAnchor
+    }
 
+    cleanHTML(htmlEl, citationType) {
+
+        const footnoteSelector = citationType === 'note' ? '.footnote-marker, .citation' : '.citation'
         // Replace the footnote markers with anchors and put footnotes with contents
         // at the back of the document.
         // Also, link the footnote anchor with the footnote according to
         // https://rawgit.com/essepuntato/rash/master/documentation/index.html#footnotes.
-        const footnotes = htmlEl.querySelectorAll('.footnote-marker')
+        const footnotes = htmlEl.querySelectorAll(footnoteSelector)
         const footnotesContainer = document.createElement('section')
         footnotesContainer.id = 'fnlist'
         footnotesContainer.setAttribute('role', 'doc-footnotes')
 
         footnotes.forEach(
             (footnote, index) => {
-                const footnoteAnchor = document.createElement('a')
                 const counter = index + 1
-                footnoteAnchor.setAttribute('href','#fn'+counter)
-                // RASH 0.5 doesn't mark the footnote anchors, so we add this class
-                footnoteAnchor.classList.add('fn')
+                const footnoteAnchor = this.getFootnoteAnchor(counter)
                 footnote.parentNode.replaceChild(footnoteAnchor, footnote)
                 const newFootnote = document.createElement('section')
                 newFootnote.id = 'fn' + counter
-                newFootnote.setAttribute('role','doc-footnote')
-                newFootnote.innerHTML = footnote.getAttribute('data-footnote')
-
+                newFootnote.setAttribute('role', 'doc-footnote')
+                newFootnote.innerHTML = footnote.dataset.footnote ? footnote.dataset.footnote : `<p>${footnote.innerHTML}</p>`
                 footnotesContainer.appendChild(newFootnote)
             }
         )

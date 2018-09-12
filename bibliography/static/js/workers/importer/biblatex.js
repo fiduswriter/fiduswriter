@@ -11,7 +11,7 @@ export class BibLatexImportWorker {
      */
     init() {
         let bibData = new BibLatexParser(this.fileContents)
-        this.tmpDB = bibData.output
+        this.tmpDB = bibData.parse()
         this.bibKeys = Object.keys(this.tmpDB)
         if (!this.bibKeys.length) {
             this.sendMessage({type: 'error', errorCode: 'no_Entries', done: true})

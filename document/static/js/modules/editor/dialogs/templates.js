@@ -215,7 +215,7 @@ export let configureCitationTemplate = ({citedItemsHTML, citeFormat}) =>
                 <thead class="fw-document-table-header"><tr>
                     <th width="135">${gettext("Title")}</th>
                     <th width="135">${gettext("Author")}</th>
-                    <td width="50" align="center">${gettext("Remove")}</td>
+                    <th width="50" align="center">${gettext("Remove")}</th>
                 </tr></thead>
                 <tbody class="fw-document-table-body fw-min">
                   ${citedItemsHTML}

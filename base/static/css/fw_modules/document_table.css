@@ -27,17 +27,13 @@
     height: 225px;
 }
 
-/*.fw-document-table tbody [class^="icon-"]:before,
-.fw-document-table tbody [class*=" icon-"]:before {
-    line-height: 3px;
-}*/
-
 .fw-document-table tbody tr:hover {
   background-color: #fbf9d2;
 }
 
 .dataTable-headercontainer th,
-.fw-document-table td {
+.fw-document-table td,
+.fw-document-table th {
     border-bottom: solid 1px #cecece;
 }
 

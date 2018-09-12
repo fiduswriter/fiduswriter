@@ -1,6 +1,6 @@
 {
     "dependencies": {
-        "biblatex-csl-converter": "1.4.x",
+        "biblatex-csl-converter": "1.6.x",
         "fix-utf8": "1.0.4",
         "tokenfield": "0.9.x",
         "fast-deep-equal": "2.0.x"

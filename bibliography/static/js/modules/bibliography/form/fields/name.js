@@ -11,7 +11,7 @@ export class NameFieldForm{
             family: [],
             prefix: [],
             suffix: [],
-            prefixused: false,
+            useprefix: false,
             literal: []
         }) {
         this.currentValue = initialValue
@@ -45,9 +45,9 @@ export class NameFieldForm{
                 <div class='prefix field-part field-part-short'></div>
                 <div class='family field-part field-part-long'></div>
                 <div class='suffix field-part field-part-short'></div>
-                <div class='prefixused field-part'>
-                    <input type='checkbox' class='prefixused'
-                        ${this.currentValue.prefixused? 'checked' : ''}>
+                <div class='useprefix field-part'>
+                    <input type='checkbox' class='useprefix'
+                        ${this.currentValue.useprefix? 'checked' : ''}>
                     &nbsp;${gettext('Prefix used')}
                 </div>
             </div>
@@ -128,7 +128,7 @@ export class NameFieldForm{
             }
             if (this.fields.prefix.value) {
                 returnObject['prefix'] = this.fields.prefix.value
-                returnObject['prefixused'] = this.dom.querySelector('.prefixused').checked
+                returnObject['useprefix'] = this.dom.querySelector('input.useprefix').checked ? true : false
             }
             if (this.fields.suffix.value) {
                 returnObject['suffix'] = this.fields.suffix.value

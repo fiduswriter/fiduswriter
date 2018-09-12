@@ -10,8 +10,9 @@ export class BibLatexImportWorker {
      * processes client side and cuts into chunks to be uploaded to the server.
      */
     init() {
-        let bibData = new BibLatexParser(this.fileContents)
-        this.tmpDB = bibData.output
+        const bibData = new BibLatexParser(this.fileContents)
+        const bibDataOutput = bibData.parse()
+        this.tmpDB =  bibDataOutput.entries
         this.bibKeys = Object.keys(this.tmpDB)
         if (!this.bibKeys.length) {
             this.sendMessage({type: 'error', errorCode: 'no_Entries', done: true})

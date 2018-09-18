@@ -8,6 +8,10 @@ export {
 }
 from "./citation_render"
 export {
+    clipboardPlugin
+}
+from "./clipboard"
+export {
     getSelectionUpdate,
     updateCollaboratorSelection,
     removeCollaboratorSelection,
@@ -49,10 +53,6 @@ export {
     marginboxesPlugin
 }
 from "./marginboxes"
-export {
-    pastePlugin
-}
-from "./paste"
 export {
     placeholdersPlugin
 }

@@ -12,7 +12,7 @@ import {buildKeymap} from "prosemirror-example-setup"
 import {fnSchema} from "../../schema/footnotes"
 import {
     citationRenderPlugin,
-    pastePlugin,
+    clipboardPlugin,
     toolbarPlugin,
     collabCaretsPlugin,
     linksPlugin,
@@ -44,7 +44,7 @@ export class ModFootnoteEditor {
             [toolbarPlugin, () => ({editor: this.mod.editor})],
             [citationRenderPlugin, () => ({editor: this.mod.editor})],
             [collabCaretsPlugin, () => ({editor: this.mod.editor})],
-            [pastePlugin, () => ({editor: this.mod.editor})],
+            [clipboardPlugin, () => ({editor: this.mod.editor, viewType: 'footnotes'})],
             [accessRightsPlugin, () => ({editor: this.mod.editor})],
             [commentsPlugin, () => ({editor: this.mod.editor})],
             [trackPlugin, () => ({editor: this.mod.editor})],

@@ -38,12 +38,12 @@ export class FormatCitations {
     }
 
     get bibHTML() {
-        // HTML
-        let html = '', bib = this.bibliography
-        html += '<h1 class="article-bibliography-header"></h1>'
-        // Add entries to bibliography
-        html += bib[0].bibstart + bib[1].join('') + bib[0].bibend
-        return html
+        if (!this.bibliography[0].entry_ids.length) {
+            return ''
+        }
+        const bib = this.bibliography,
+            bibHTML = bib[0].bibstart + bib[1].join('') + bib[0].bibend
+        return `<h1 class="article-bibliography-header"></h1>${bibHTML}`
     }
 
         // CSS

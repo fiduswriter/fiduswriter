@@ -40,19 +40,7 @@ export class RenderCitations {
     }
 
     renderCitations() {
-        this.fm.citationTexts.forEach(citText => {
-            citText.forEach(entry => {
-                const index = entry[0],
-                    citationText = entry[1]
-                if ('note' === this.fm.citationType) {
-                    citationText =
-                        `<span class="pagination-footnote"><span><span>
-                            ${citationText}
-                        </span></span></span>`
-                }
-                this.allCitationNodes[index].innerHTML = citationText
-            })
-        })
+        this.fm.citationTexts.forEach((citationText, index) => this.allCitationNodes[index].innerHTML = citationText)
     }
 
 }

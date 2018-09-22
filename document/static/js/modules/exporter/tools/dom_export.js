@@ -37,24 +37,11 @@ export class BaseDOMExporter {
         )
         return citRenderer.init().then(
             () => {
-                if (citRenderer.fm.citationType === 'note') {
-                    this.renderNoteCitations(citRenderer)
-                }
                 this.addBibliographyHTML(citRenderer.fm.bibHTML)
-                this.contents = this.cleanHTML(this.contents, citRenderer.fm.citationType)
+                this.contents = this.cleanHTML(this.contents, citRenderer.fm)
                 return Promise.resolve()
             }
         )
-    }
-
-    renderNoteCitations(citRenderer) {
-        citRenderer.fm.citationTexts.forEach(citText => {
-            citText.forEach(entry => {
-                const index = entry[0],
-                    citationText = `<span class="pagination-footnote"><span><span>${entry[1]}</span></span></span>`
-                citRenderer.allCitationNodes[index].innerHTML = citationText
-            })
-        })
     }
 
     addBibliographyHTML(bibliographyHTML) {
@@ -122,15 +109,18 @@ export class BaseDOMExporter {
         return footnoteAnchor
     }
 
-    cleanHTML(htmlEl, citationType) {
+    cleanHTML(htmlEl, citationFormatter) {
 
-        const footnoteSelector = citationType === 'note' ? '.footnote-marker, .citation' : '.citation'
+        const footnoteSelector = citationFormatter.citationType === 'note' ?
+            '.footnote-marker, .citation' :
+            '.footnote-marker'
         // Replace the footnote markers with anchors and put footnotes with contents
         // at the back of the document.
         // Also, link the footnote anchor with the footnote according to
         // https://rawgit.com/essepuntato/rash/master/documentation/index.html#footnotes.
         const footnotes = htmlEl.querySelectorAll(footnoteSelector)
         const footnotesContainer = document.createElement('section')
+        let citationCount = 0
         footnotesContainer.id = 'fnlist'
         footnotesContainer.setAttribute('role', 'doc-footnotes')
 
@@ -142,7 +132,9 @@ export class BaseDOMExporter {
                 const newFootnote = document.createElement('section')
                 newFootnote.id = 'fn' + counter
                 newFootnote.setAttribute('role', 'doc-footnote')
-                newFootnote.innerHTML = footnote.dataset.footnote ? footnote.dataset.footnote : `<p>${footnote.innerHTML}</p>`
+                newFootnote.innerHTML = footnote.matches('.footnote-marker') ?
+                    footnote.dataset.footnote :
+                    `<p>${citationFormatter.citationTexts[citationCount++] || " "}</p>`
                 footnotesContainer.appendChild(newFootnote)
             }
         )

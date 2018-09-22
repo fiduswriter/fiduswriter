@@ -30,17 +30,15 @@ export class RenderCitations {
             this.citationLocales
         )
         return this.fm.init().then(
-            () => {
-                if ('note' !== this.fm.citationType) {
-                    this.renderCitations()
-                }
-                return Promise.resolve()
-            }
+            () => this.renderCitations()
         )
     }
 
     renderCitations() {
-        this.fm.citationTexts.forEach((citationText, index) => this.allCitationNodes[index].innerHTML = citationText)
+        if ('note' !== this.fm.citationType) {
+            this.fm.citationTexts.forEach((citationText, index) => this.allCitationNodes[index].innerHTML = citationText)
+        }
+        return Promise.resolve()
     }
 
 }

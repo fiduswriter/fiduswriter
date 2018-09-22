@@ -50,8 +50,7 @@ export class ModCitations {
                 this.editor.view.state.doc.firstChild.attrs.citationstyle,
                 this.editor.mod.db.bibDB,
                 this.editor.mod.styles.citationStyles,
-                this.editor.mod.styles.citationLocales,
-                false
+                this.editor.mod.styles.citationLocales
             )
             this.citRenderer.init().then(
                 () => this.layoutCitationsTwo()

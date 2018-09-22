@@ -17,27 +17,29 @@ by little, and they are all based on the BaseDOMExporter class.
 export class BaseDOMExporter {
 
     joinDocumentParts() {
-        let schema = docSchema
+        const schema = docSchema
         schema.cached.imageDB = this.imageDB
-        let serializer = DOMSerializer.fromSchema(schema)
+        const serializer = DOMSerializer.fromSchema(schema)
         this.contents = serializer.serializeNode(schema.nodeFromJSON(this.doc.contents))
 
         // Remove hidden parts
-        let hiddenEls = Array.from(this.contents.querySelectorAll('[data-hidden=true]'))
+        const hiddenEls = Array.from(this.contents.querySelectorAll('[data-hidden=true]'))
         hiddenEls.forEach(hiddenEl => {
             hiddenEl.parentElement.removeChild(hiddenEl)
         })
 
-        let citRenderer = new RenderCitations(
+        const citRenderer = new RenderCitations(
             this.contents,
             this.doc.settings.citationstyle,
             this.bibDB,
             this.citationStyles,
-            this.citationLocales,
-            true
+            this.citationLocales
         )
         return citRenderer.init().then(
             () => {
+                if (citRenderer.fm.citationType === 'note') {
+                    this.renderNoteCitations(citRenderer)
+                }
                 this.addBibliographyHTML(citRenderer.fm.bibHTML)
                 this.contents = this.cleanHTML(this.contents, citRenderer.fm.citationType)
                 return Promise.resolve()
@@ -45,9 +47,19 @@ export class BaseDOMExporter {
         )
     }
 
+    renderNoteCitations(citRenderer) {
+        citRenderer.fm.citationTexts.forEach(citText => {
+            citText.forEach(entry => {
+                const index = entry[0],
+                    citationText = `<span class="pagination-footnote"><span><span>${entry[1]}</span></span></span>`
+                citRenderer.allCitationNodes[index].innerHTML = citationText
+            })
+        })
+    }
+
     addBibliographyHTML(bibliographyHTML) {
         if (bibliographyHTML.length > 0) {
-            let tempNode = document.createElement('div')
+            const tempNode = document.createElement('div')
             tempNode.innerHTML = bibliographyHTML
             while (tempNode.firstChild) {
                 this.contents.appendChild(tempNode.firstChild)

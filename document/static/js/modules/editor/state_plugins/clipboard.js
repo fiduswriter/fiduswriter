@@ -47,8 +47,8 @@ export let clipboardPlugin = function(options) {
                 return '' // We need to analyze it asynchronously, so we always need to turn this into an empty string for now.
             },
             clipboardSerializer: options.viewType === 'main' ?
-                docClipboardSerializer :
-                fnClipboardSerializer
+                docClipboardSerializer(options.editor) :
+                fnClipboardSerializer(options.editor)
         }
     })
 }

@@ -202,7 +202,7 @@ export class ModCommentInteractions {
     }
 
 
-    updateComment(id, commentText, isMajor) {
+    updateComment({id, comment, isMajor}) {
         // Save the change to a comment and mark that the document has been changed
         if (id===-1) {
             let referrer = getCommentDuringCreationDecoration(this.mod.store.commentDuringCreation.view.state)
@@ -222,7 +222,7 @@ export class ModCommentInteractions {
                     user: this.mod.editor.user.id,
                     username,
                     date: Date.now()-this.mod.editor.clientTimeAdjustment, // We update the time to the time the comment was stored
-                    comment: commentText,
+                    comment,
                     isMajor
                 },
                 referrer.from,
@@ -230,7 +230,7 @@ export class ModCommentInteractions {
                 this.mod.store.commentDuringCreation.view
             )
         } else {
-            this.mod.store.updateComment(id, commentText, isMajor)
+            this.mod.store.updateComment({id, comment, isMajor})
         }
         this.deactivateAll()
         this.updateDOM()

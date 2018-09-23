@@ -98,9 +98,7 @@ export class ModCommentStore {
         view
     ) {
         let id = randomID(),
-            markType = view.state.schema.marks.comment.create({
-                id
-            }),
+            markType = view.state.schema.marks.comment.create({id}),
             tr = this.addMark(view.state.tr, posFrom, posTo, markType)
 
         if (tr) {
@@ -159,38 +157,29 @@ export class ModCommentStore {
 
 
     addLocalComment(
-        {id, user, username, date, comment, answers, isMajor},
+        commentData,
         local
     ) {
-        if (!this.comments[id]) {
-            this.comments[id] = new Comment({
-                id,
-                user,
-                username,
-                date,
-                comment,
-                answers,
-                isMajor
-            })
+        if (!this.comments[commentData.id]) {
+            this.comments[commentData.id] = new Comment(commentData)
         }
         if (local || (!this.mod.interactions.isCurrentlyEditing())) {
             this.mod.editor.mod.marginboxes.updateDOM()
         }
     }
 
-    updateComment(id, comment, isMajor) {
-        this.updateLocalComment({id, comment, isMajor}, true)
+    updateComment(commentData) {
+        this.updateLocalComment(commentData, true)
         this.unsent.push({
             type: "update",
-            id
+            commentData.id
         })
         this.mustSend()
     }
 
-    updateLocalComment({id, comment, isMajor}, local) {
+    updateLocalComment(commentData, local) {
         if (this.comments[id]) {
-            this.comments[id].comment = comment
-            this.comments[id].isMajor = isMajor
+            Object.assign(this.comments[id], commentData)
         }
         if (local || (!this.mod.interactions.isCurrentlyEditing())) {
             this.mod.editor.mod.marginboxes.updateDOM()
@@ -322,12 +311,7 @@ export class ModCommentStore {
             } else if (event.type == "update") {
                 let found = this.comments[event.id]
                 if (found && found.id) {
-                    result.push({
-                        type: "update",
-                        id: found.id,
-                        comment: found.comment,
-                        isMajor: found.isMajor
-                    })
+                    result.push(Object.assign({type: 'update'}, found))
                 } else {
                     result.push({
                         type: "ignore"
@@ -336,16 +320,7 @@ export class ModCommentStore {
             } else if (event.type == "create") {
                 let found = this.comments[event.id]
                 if (found && found.id) {
-                    result.push({
-                        type: "create",
-                        id: found.id,
-                        user: found.user,
-                        username: found.username,
-                        date: found.date,
-                        comment: found.comment,
-                        answers: found.answers,
-                        isMajor: found.isMajor
-                    })
+                    result.push(Object.assign({type: 'create'}, found))
                 } else {
                     result.push({
                         type: "ignore"
@@ -355,19 +330,12 @@ export class ModCommentStore {
                 let found = this.comments[event.id],
                     foundAnswer
                 if (found && found.id && found.answers) {
-                    foundAnswer = found.answers.find(answer => answer.id ===
-                        event.answerId)
+                    foundAnswer = found.answers.find(answer => answer.id === event.answerId)
                 }
                 if (foundAnswer) {
-                    result.push({
-                        type: "add_answer",
-                        answerId: foundAnswer.id,
-                        id: event.id,
-                        user: foundAnswer.user,
-                        username: foundAnswer.username,
-                        date: foundAnswer.date,
-                        answer: foundAnswer.answer
-                    })
+                    result.push(
+                        Object.assign({}, foundAnswer, {type: 'add_answer', id: event.id, answerId: foundAnswer.id})
+                    )
                 } else {
                     result.push({
                         type: "ignore"
@@ -394,12 +362,8 @@ export class ModCommentStore {
                         event.answerId)
                 }
                 if (foundAnswer) {
-                    result.push({
-                        type: "update_answer",
-                        id: event.id,
-                        answerId: event.answerId,
-                        answer: foundAnswer.answer
-                    })
+                    result.push(
+                        Object.assign({}, foundAnswer, {type: 'update_answer', id: event.id, answerId: foundAnswer.id})
                 } else {
                     result.push({
                         type: "ignore"

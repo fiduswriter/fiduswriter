@@ -38,12 +38,12 @@ export class FormatCitations {
     }
 
     get bibHTML() {
-        // HTML
-        let html = '', bib = this.bibliography
-        html += '<h1 class="article-bibliography-header"></h1>'
-        // Add entries to bibliography
-        html += bib[0].bibstart + bib[1].join('') + bib[0].bibend
-        return html
+        if (!this.bibliography[0].entry_ids.length) {
+            return ''
+        }
+        const bib = this.bibliography,
+            bibHTML = bib[0].bibstart + bib[1].join('') + bib[0].bibend
+        return `<h1 class="article-bibliography-header"></h1>${bibHTML}`
     }
 
         // CSS
@@ -103,7 +103,7 @@ export class FormatCitations {
         )
         let allIds = []
         this.citations.forEach(cit =>
-            cit.citationItems.forEach(item => allIds.push('' + item.id))
+            cit.citationItems.forEach(item => allIds.push(String(item.id)))
         )
         citeprocInstance.updateItems(allIds)
 
@@ -111,19 +111,19 @@ export class FormatCitations {
         let len = this.citations.length
         for (let i = 0; i < len; i++) {
             let citation = this.citations[i],
-                citationText = citeprocInstance.appendCitationCluster(citation, true)
+                citationTexts = citeprocInstance.appendCitationCluster(citation, true)
             if (inText && 'textcite' == this.bibFormats[i]) {
                 let newCiteText = '',
                     items = citation.citationItems,
                     len2 = items.length
 
                 for (let j = 0; j < len2; j++) {
-                    let onlyNameOption = [{
+                    const onlyNameOption = [{
                         id: items[j].id,
                         "author-only": 1
                     }]
 
-                    let onlyDateOption = [{
+                    const onlyDateOption = [{
                         id: items[j].id,
                         "suppress-author": 1
                     }]
@@ -141,9 +141,9 @@ export class FormatCitations {
                     }
                     newCiteText += `${citeprocInstance.makeCitationCluster(onlyNameOption)} ${citeprocInstance.makeCitationCluster(onlyDateOption)}`
                 }
-                citationText[0][1] = newCiteText
+                citationTexts.find(citationText => citationText[0] === i)[1] = newCiteText
             }
-            this.citationTexts.push(citationText)
+            citationTexts.forEach(([index, citationText]) => this.citationTexts[index] = citationText)
         }
         this.citationType = citeprocInstance.cslXml.dataObj.attrs.class
         this.bibliography = citeprocInstance.makeBibliography()

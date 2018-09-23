@@ -17,29 +17,28 @@ by little, and they are all based on the BaseDOMExporter class.
 export class BaseDOMExporter {
 
     joinDocumentParts() {
-        let schema = docSchema
+        const schema = docSchema
         schema.cached.imageDB = this.imageDB
-        let serializer = DOMSerializer.fromSchema(schema)
+        const serializer = DOMSerializer.fromSchema(schema)
         this.contents = serializer.serializeNode(schema.nodeFromJSON(this.doc.contents))
 
         // Remove hidden parts
-        let hiddenEls = Array.from(this.contents.querySelectorAll('[data-hidden=true]'))
+        const hiddenEls = Array.from(this.contents.querySelectorAll('[data-hidden=true]'))
         hiddenEls.forEach(hiddenEl => {
             hiddenEl.parentElement.removeChild(hiddenEl)
         })
 
-        let citRenderer = new RenderCitations(
+        const citRenderer = new RenderCitations(
             this.contents,
             this.doc.settings.citationstyle,
             this.bibDB,
             this.citationStyles,
-            this.citationLocales,
-            true
+            this.citationLocales
         )
         return citRenderer.init().then(
             () => {
                 this.addBibliographyHTML(citRenderer.fm.bibHTML)
-                this.contents = this.cleanHTML(this.contents, citRenderer.fm.citationType)
+                this.contents = this.cleanHTML(this.contents, citRenderer.fm)
                 return Promise.resolve()
             }
         )
@@ -47,7 +46,7 @@ export class BaseDOMExporter {
 
     addBibliographyHTML(bibliographyHTML) {
         if (bibliographyHTML.length > 0) {
-            let tempNode = document.createElement('div')
+            const tempNode = document.createElement('div')
             tempNode.innerHTML = bibliographyHTML
             while (tempNode.firstChild) {
                 this.contents.appendChild(tempNode.firstChild)
@@ -110,15 +109,18 @@ export class BaseDOMExporter {
         return footnoteAnchor
     }
 
-    cleanHTML(htmlEl, citationType) {
+    cleanHTML(htmlEl, citationFormatter) {
 
-        const footnoteSelector = citationType === 'note' ? '.footnote-marker, .citation' : '.citation'
+        const footnoteSelector = citationFormatter.citationType === 'note' ?
+            '.footnote-marker, .citation' :
+            '.footnote-marker'
         // Replace the footnote markers with anchors and put footnotes with contents
         // at the back of the document.
         // Also, link the footnote anchor with the footnote according to
         // https://rawgit.com/essepuntato/rash/master/documentation/index.html#footnotes.
         const footnotes = htmlEl.querySelectorAll(footnoteSelector)
         const footnotesContainer = document.createElement('section')
+        let citationCount = 0
         footnotesContainer.id = 'fnlist'
         footnotesContainer.setAttribute('role', 'doc-footnotes')
 
@@ -130,7 +132,9 @@ export class BaseDOMExporter {
                 const newFootnote = document.createElement('section')
                 newFootnote.id = 'fn' + counter
                 newFootnote.setAttribute('role', 'doc-footnote')
-                newFootnote.innerHTML = footnote.dataset.footnote ? footnote.dataset.footnote : `<p>${footnote.innerHTML}</p>`
+                newFootnote.innerHTML = footnote.matches('.footnote-marker') ?
+                    footnote.dataset.footnote :
+                    `<p>${citationFormatter.citationTexts[citationCount++] || " "}</p>`
                 footnotesContainer.appendChild(newFootnote)
             }
         )

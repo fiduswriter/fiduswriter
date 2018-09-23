@@ -4,13 +4,12 @@ import {FormatCitations} from "./format"
  */
 
 export class RenderCitations {
-    constructor(contentElement, citationStyle, bibDB, citationStyles, citationLocales, renderNoteCitations = true) {
+    constructor(contentElement, citationStyle, bibDB, citationStyles, citationLocales) {
         this.contentElement = contentElement
         this.citationStyle = citationStyle
         this.bibDB = bibDB
         this.citationStyles = citationStyles
         this.citationLocales = citationLocales
-        this.renderNoteCitations = renderNoteCitations
         this.allCitationNodes = []
         this.allCitationInfos = []
         this.fm = false
@@ -19,7 +18,7 @@ export class RenderCitations {
     init() {
         this.allCitationNodes = this.contentElement.querySelectorAll('span.citation')
         this.allCitationNodes.forEach((cElement) => {
-            let citeInfo = Object.assign({},cElement.dataset)
+            const citeInfo = Object.assign({},cElement.dataset)
             citeInfo.references = JSON.parse(citeInfo.references)
             this.allCitationInfos.push(citeInfo)
         })
@@ -31,29 +30,15 @@ export class RenderCitations {
             this.citationLocales
         )
         return this.fm.init().then(
-            () => {
-                if (this.renderNoteCitations || 'note' !== this.fm.citationType) {
-                    this.renderCitations()
-                }
-                return Promise.resolve()
-            }
+            () => this.renderCitations()
         )
     }
 
     renderCitations() {
-        this.fm.citationTexts.forEach(citText => {
-            citText.forEach(entry => {
-                let index = entry[0],
-                    citationText = entry[1]
-                if ('note' === this.fm.citationType) {
-                    citationText =
-                        `<span class="pagination-footnote"><span><span>
-                            ${citationText}
-                        </span></span></span>`
-                }
-                this.allCitationNodes[index].innerHTML = citationText
-            })
-        })
+        if ('note' !== this.fm.citationType) {
+            this.fm.citationTexts.forEach((citationText, index) => this.allCitationNodes[index].innerHTML = citationText)
+        }
+        return Promise.resolve()
     }
 
 }

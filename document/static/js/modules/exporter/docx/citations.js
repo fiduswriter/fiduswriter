@@ -77,7 +77,7 @@ export class DocxExporterCitations {
         // the fiduswriter schema and so that the converter doesn't mash them together.
         let citationsHTML = ''
         this.citationTexts.forEach(ct => {
-            citationsHTML += `<p>${ct[0][1]}</p>`
+            citationsHTML += `<p>${ct}</p>`
         })
 
         // We create a standard body DOM node, add the citations into it, and parse it back.

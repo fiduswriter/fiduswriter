@@ -1,9 +1,10 @@
 import {Plugin, PluginKey, TextSelection} from "prosemirror-state"
 
-import {HTMLPaste, TextPaste} from "../paste"
+import {HTMLPaste, TextPaste} from "../clipboard/paste"
+import {docClipboardSerializer, fnClipboardSerializer} from "../clipboard/copy"
 
-const key = new PluginKey('paste')
-export let pastePlugin = function(options) {
+const key = new PluginKey('clipboard')
+export let clipboardPlugin = function(options) {
     let shiftPressed = false
     return new Plugin({
         key,
@@ -34,8 +35,7 @@ export let pastePlugin = function(options) {
                 if (shiftPressed) {
                     return inHTML
                 }
-                let target = options.editor.currentView === options.editor.view ? 'main' : 'footnotes'
-                let ph = new HTMLPaste(options.editor, inHTML, target)
+                const ph = new HTMLPaste(options.editor, inHTML, options.viewType)
                 return ph.getOutput()
             },
             transformPastedText: inText => {
@@ -45,7 +45,10 @@ export let pastePlugin = function(options) {
                 let ph = new TextPaste(options.editor, inText, options.editor.currentView)
                 ph.init()
                 return '' // We need to analyze it asynchronously, so we always need to turn this into an empty string for now.
-            }
+            },
+            clipboardSerializer: options.viewType === 'main' ?
+                docClipboardSerializer(options.editor) :
+                fnClipboardSerializer(options.editor)
         }
     })
 }

@@ -2,7 +2,7 @@ import fixUTF8 from "fix-utf8"
 
 import {__parseFromClipboard} from "prosemirror-view"
 
-import {BibLatexImporter} from "../../bibliography/import"
+import {BibLatexImporter} from "../../../bibliography/import"
 
 
 export class TextPaste {

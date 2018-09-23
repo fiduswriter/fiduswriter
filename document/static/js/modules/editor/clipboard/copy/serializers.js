@@ -60,17 +60,17 @@ class ClipboardDOMSerializer {
                 const counter = index + 1, id = this.getRandomID()
                 const footnoteAnchor = this.getFootnoteAnchor(counter, id)
                 footnote.appendChild(footnoteAnchor)
-                const newFootnote = document.createElement('section')
+                const newFootnote = document.createElement('h6') // We use H6 as Wordpress Gutenberg only allows IDs on H1-6 elements.
                 newFootnote.setAttribute('role', 'doc-footnote')
                 newFootnote.innerHTML = footnote.matches('.footnote-marker') ?
                     footnote.dataset.footnote :
                     `<p>${citationFormatter.citationTexts[citationCount++] || " "}</p>`
                 if (newFootnote.firstElementChild && newFootnote.firstElementChild.matches('p')) {
-                    newFootnote.firstElementChild.insertAdjacentHTML('afterbegin', `<span id="fn-${id}">${counter}.</span> `)
+                    newFootnote.firstElementChild.insertAdjacentHTML('afterbegin', `${counter}. `)
                 } else {
-                    newFootnote.insertAdjacentHTML('afterbegin', `<p><span id="fn-${id}">${counter}.</span> </p>`)
+                    newFootnote.insertAdjacentHTML('afterbegin', `<p>${counter}. </p>`)
                 }
-//                newFootnote.firstElementChild.id = `fn-${id}`
+                newFootnote.id = `fn-${id}`
                 footnotesContainer.appendChild(newFootnote)
             }
         )

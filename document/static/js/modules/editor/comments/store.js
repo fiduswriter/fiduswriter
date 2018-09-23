@@ -65,12 +65,12 @@ export class ModCommentStore {
         }
 
         this.commentDuringCreation = {
-            comment: new Comment(
+            comment: new Comment({
                 id,
-                this.mod.editor.user.id,
+                user: this.mod.editor.user.id,
                 username,
-                Date.now() - this.mod.editor.clientTimeAdjustment,
-                ''),
+                date: Date.now() - this.mod.editor.clientTimeAdjustment
+            }),
             inDOM: false,
             view
         }
@@ -163,7 +163,7 @@ export class ModCommentStore {
         local
     ) {
         if (!this.comments[id]) {
-            this.comments[id] = new Comment(
+            this.comments[id] = new Comment({
                 id,
                 user,
                 username,
@@ -171,7 +171,7 @@ export class ModCommentStore {
                 comment,
                 answers,
                 isMajor
-            )
+            })
         }
         if (local || (!this.mod.interactions.isCurrentlyEditing())) {
             this.mod.editor.mod.marginboxes.updateDOM()

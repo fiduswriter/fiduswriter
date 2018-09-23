@@ -16,29 +16,82 @@ class ClipboardDOMSerializer {
     }
 
     postProcessFragment(domFragment) {
-        this.renderCitations(domFragment)
+        const citationFormatter = this.renderCitations(domFragment)
+        this.renderFootnotes(domFragment, citationFormatter)
         this.removeTrackingData(domFragment)
         return domFragment
     }
 
     renderCitations(domFragment) {
-        this.citRenderer = new RenderCitations(
+        const citRenderer = new RenderCitations(
             domFragment,
             this.editor.view.state.doc.firstChild.attrs.citationstyle,
             this.editor.mod.db.bibDB,
             this.editor.mod.styles.citationStyles,
             this.editor.mod.styles.citationLocales
         )
-        this.citRenderer.init()
-        this.citRenderer.renderCitations()
-        if (this.citRenderer.fm.bibHTML.length) {
+        citRenderer.init()
+        citRenderer.renderCitations()
+        if (citRenderer.fm.bibHTML.length) {
             let bibDiv = document.createElement('div')
             bibDiv.classList.add('fiduswriter-clipboard-bibliography')
-            bibDiv.innerHTML = this.citRenderer.fm.bibHTML
+            bibDiv.innerHTML = citRenderer.fm.bibHTML
             bibDiv.firstElementChild.innerHTML = gettext('Bibliography')
             domFragment.appendChild(bibDiv)
         }
+        return citRenderer.fm
     }
+
+    renderFootnotes(domFragment, citationFormatter) {
+        const footnoteSelector = citationFormatter.citationType === 'note' ?
+            '.footnote-marker, .citation' :
+            '.footnote-marker'
+        // Inside of footnote markers add anchors and put footnotes with contents
+        // at the back of the document.
+        // Also, link the footnote anchor with the footnote.
+        const footnotes = domFragment.querySelectorAll(footnoteSelector)
+        const footnotesContainer = document.createElement('section')
+        let citationCount = 0
+        footnotesContainer.id = 'fnlist'
+        footnotesContainer.setAttribute('role', 'doc-footnotes')
+        footnotesContainer.classList.add('fiduswriter-clipboard-footnotes')
+        footnotes.forEach(
+            (footnote, index) => {
+                const counter = index + 1, id = this.getRandomID()
+                const footnoteAnchor = this.getFootnoteAnchor(counter, id)
+                footnote.appendChild(footnoteAnchor)
+                const newFootnote = document.createElement('section')
+                newFootnote.setAttribute('role', 'doc-footnote')
+                newFootnote.innerHTML = footnote.matches('.footnote-marker') ?
+                    footnote.dataset.footnote :
+                    `<p>${citationFormatter.citationTexts[citationCount++] || " "}</p>`
+                if (newFootnote.firstElementChild && newFootnote.firstElementChild.matches('p')) {
+                    newFootnote.firstElementChild.insertAdjacentHTML('afterbegin', `<span id="fn-${id}">${counter}.</span> `)
+                } else {
+                    newFootnote.insertAdjacentHTML('afterbegin', `<p><span id="fn-${id}">${counter}.</span> </p>`)
+                }
+//                newFootnote.firstElementChild.id = `fn-${id}`
+                footnotesContainer.appendChild(newFootnote)
+            }
+        )
+        if (footnotes.length) {
+            domFragment.appendChild(footnotesContainer)
+        }
+    }
+
+    getRandomID() {
+        return (0|Math.random()*9e6).toString(36)
+    }
+
+    getFootnoteAnchor(counter, id) {
+        const footnoteAnchor = document.createElement('a')
+        footnoteAnchor.setAttribute('href',`#fn-${id}`)
+        footnoteAnchor.classList.add('fn')
+        footnoteAnchor.innerHTML = `<sup>${counter}</sup>`
+        return footnoteAnchor
+    }
+
+
 
     removeTrackingData(domFragment) {
         domFragment.querySelectorAll('.approved-insertion, .insertion').forEach(el => el.outerHTML = el.innerHTML)

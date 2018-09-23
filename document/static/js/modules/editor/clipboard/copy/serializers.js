@@ -19,6 +19,8 @@ class ClipboardDOMSerializer {
         const citationFormatter = this.renderCitations(domFragment)
         this.renderFootnotes(domFragment, citationFormatter)
         this.removeTrackingData(domFragment)
+        this.addBaseUrlToImages(domFragment)
+        this.addFigureNumbers(domFragment)
         return domFragment
     }
 
@@ -77,6 +79,30 @@ class ClipboardDOMSerializer {
         if (footnotes.length) {
             domFragment.appendChild(footnotesContainer)
         }
+    }
+
+    addFigureNumbers(domFragment) {
+        domFragment.querySelectorAll('figcaption .figure-cat-figure').forEach(
+            (el, index) => {
+                el.innerHTML += ' ' + (index + 1) + ': '
+            }
+        )
+
+        domFragment.querySelectorAll('figcaption .figure-cat-photo').forEach(
+            (el, index) => {
+                el.innerHTML += ' ' + (index + 1) + ': '
+            }
+        )
+
+        domFragment.querySelectorAll('figcaption .figure-cat-table').forEach(
+            (el, index) => {
+                el.innerHTML += ' ' + (index + 1) + ': '
+            }
+        )
+    }
+
+    addBaseUrlToImages(domFragment) {
+        domFragment.querySelectorAll('img').forEach(el => el.setAttribute('src', el.src))
     }
 
     getRandomID() {

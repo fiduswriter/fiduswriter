@@ -59,16 +59,15 @@ export class GeneralPasteHandler {
     // Move footnotes into their markers and turn footnote markers into the
     // required format.
     convertFootnotes() {
+
         this.footnoteMarkers.forEach((fnM, index) => {
             let footnote = this.footnotes[index]
             let newFnM = document.createElement('span')
             newFnM.classList.add('footnote-marker')
-            let footnoteContents = footnote.innerHTML
+            const footnoteContents = footnote.innerHTML.replace(/\s+/g, ' ')
             // Remove linebreaks in string (not <BR>)
-            //footnoteContents = footnoteContents.replace(/(\r\n|\n|\r)/gm,"")
             // Turn multiple white spaces into single space
-            footnoteContents = footnoteContents.replace(/\s+/g, ' ')
-            newFnM.setAttribute('contents', footnoteContents)
+            newFnM.dataset.footnote = footnoteContents
             fnM.parentNode.replaceChild(newFnM, fnM)
         })
         // Remove all footnotes from document. Some footnotes may have several

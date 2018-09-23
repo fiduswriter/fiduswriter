@@ -172,14 +172,14 @@ export class ModCommentStore {
         this.updateLocalComment(commentData, true)
         this.unsent.push({
             type: "update",
-            commentData.id
+            id: commentData.id
         })
         this.mustSend()
     }
 
     updateLocalComment(commentData, local) {
-        if (this.comments[id]) {
-            Object.assign(this.comments[id], commentData)
+        if (this.comments[commentData.id]) {
+            Object.assign(this.comments[commentData.id], commentData)
         }
         if (local || (!this.mod.interactions.isCurrentlyEditing())) {
             this.mod.editor.mod.marginboxes.updateDOM()
@@ -364,6 +364,7 @@ export class ModCommentStore {
                 if (foundAnswer) {
                     result.push(
                         Object.assign({}, foundAnswer, {type: 'update_answer', id: event.id, answerId: foundAnswer.id})
+                    )
                 } else {
                     result.push({
                         type: "ignore"

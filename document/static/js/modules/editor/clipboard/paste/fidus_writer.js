@@ -47,12 +47,10 @@ export class FidusWriterPasteHandler extends GeneralPasteHandler {
 
     cleanDOM() {
         // Remove the bibliography that was added by the copy serializer
-        const clipboardBib = this.dom.querySelector('.fiduswriter-clipboard-bibliography')
-
-        if (clipboardBib) {
-            clipboardBib.parentElement.removeChild(clipboardBib)
-        }
-
+        const clipboardArtifacts = this.dom.querySelectorAll(
+            '.fiduswriter-clipboard-bibliography, .fiduswriter-clipboard-footnotes'
+        )
+        clipboardArtifacts.forEach(el => el.parentElement.removeChild(el))
     }
 
 }

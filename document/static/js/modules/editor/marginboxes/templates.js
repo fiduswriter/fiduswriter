@@ -309,9 +309,9 @@ export let marginBoxesTemplate = ({
                 })
                 break
             case 'filter':
-            return filterTemplate({
-                data: mBox.data
-            })
+                return filterTemplate({
+                    data: mBox.data
+                })
                 break
             default:
                 console.warn(`Unknown margin box type: ${mBox.type}`)

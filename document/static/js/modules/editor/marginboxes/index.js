@@ -132,8 +132,6 @@ export class ModMarginboxes {
             }
         }
 
-
-
         const marginBoxesHTML = marginBoxesTemplate({
             marginBoxes,
             user: this.editor.user,
@@ -163,14 +161,11 @@ export class ModMarginboxes {
                 }
                 let marginBoxPlacements = Array.from(marginBoxesDOM).map((mboxDOM, index) => {
                         let mboxDOMRect = mboxDOM.getBoundingClientRect()
-                        if (mboxDOMRect.height === 0) {
-                            return false
-                        }
                         return {
                             height: mboxDOMRect.height,
                             refPos: this.editor.view.coordsAtPos(referrers[index]).top
                         }
-                    }).filter(mbox => mbox),
+                    }),
                     firstActiveIndex = marginBoxes.findIndex(mBox => mBox.active),
                     firstActiveMboxPlacement = marginBoxPlacements[firstActiveIndex],
                     activeIndex = firstActiveIndex,
@@ -178,7 +173,9 @@ export class ModMarginboxes {
 
                 while (activeIndex > -1) {
                     let mboxPlacement = marginBoxPlacements[activeIndex]
-                    if (mboxPlacement===firstActiveMboxPlacement) {
+                    if (mboxPlacement.height === 0) {
+                        mboxPlacement.pos = currentPos - 10
+                    } else if (mboxPlacement===firstActiveMboxPlacement) {
                         mboxPlacement.pos = mboxPlacement.refPos
                     } else {
                         mboxPlacement.pos = Math.min(currentPos - 10 - mboxPlacement.height, mboxPlacement.refPos)

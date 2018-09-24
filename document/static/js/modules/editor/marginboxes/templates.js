@@ -87,7 +87,16 @@ let firstCommentTemplate = ({
 
 
 let commentTemplate = ({comment, view, active, editComment, activeCommentAnswerId, user, docInfo}) => {
-    let author = comment.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === comment.user)
+    const author = comment.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === comment.user),
+        assignedUser = comment.assignedUser ?
+            comment.assignedUser === docInfo.owner.id ?
+                docInfo.owner :
+                docInfo.owner.team_members.find(member => member.id === comment.assignedUser)  ||
+                {
+                    name: comment.assignedUsername || ''
+                } :
+            false,
+        assignedUsername = assignedUser ? assignedUser.name : false
     return comment.hidden ?
     `<div id="margin-box-${comment.id}" class="margin-box comment hidden"></div>` :
     `<div id="margin-box-${comment.id}" data-view="${view}" data-id="${comment.id}" data-user-id="${comment.user}"
@@ -100,6 +109,11 @@ let commentTemplate = ({comment, view, active, editComment, activeCommentAnswerI
         comment.comment.length === 0 ?
         firstCommentTemplate({comment, author}) :
         singleCommentTemplate({comment, user, author, active, editComment})
+    }
+    ${
+        assignedUsername ?
+            `<div class="assigned-user">${gettext('Assigned to')} <em>${escapeText(assignedUsername)}</em></div>` :
+        ''
     }
     ${
         comment.answers ?
@@ -132,18 +146,31 @@ let commentTemplate = ({comment, view, active, editComment, activeCommentAnswerI
         <div class="comment-options fw-pulldown fw-right">
             <ul>
                 <li>
-                    <span class="fw-pulldown-item" title="${gettext('Assign comment')}">${gettext('Assign comment')}</span>
+                    <span class="fw-pulldown-item show-assign-comment-menu" title="${gettext('Assign comment to user')}">
+                        ${gettext('Assign to')}
+                        <span class="fw-icon-right"><i class="fa fa-caret-right"></i></span>
+                    </span>
+                    <div class="fw-pulldown assign-comment-menu">
+                        <ul>
+                            <li><span class="fw-pulldown-item unassign-comment" data-id="${comment.id}" title="${gettext('Remove user assignment from comment')}">${gettext('No-one')}</span></li>
+                        ${
+                            docInfo.owner.team_members.concat(docInfo.owner).map(
+                                user => `<li><span class="fw-pulldown-item assign-comment" data-id="${comment.id}" data-user="${user.id}" data-username="${escapeText(user.name)}" title="${gettext('Assign comment to')} ${escapeText(user.name)}">${escapeText(user.name)}</span></li>`
+                            ).join('')
+                        }
+                        </ul>
+                    </div>
                 </li>
                 <li>
                     ${
                         comment.resolved ?
-                        `<span class="fw-pulldown-item recreate-comment" data-id="${comment.id}" title="${gettext('Recreate comment')}">${gettext('Recreate comment')}</span>` :
-                        `<span class="fw-pulldown-item resolve-comment" data-id="${comment.id}" title="${gettext('Resolve comment')}">${gettext('Resolve comment')}</span>`
+                        `<span class="fw-pulldown-item recreate-comment" data-id="${comment.id}" title="${gettext('Recreate comment')}">${gettext('Recreate')}</span>` :
+                        `<span class="fw-pulldown-item resolve-comment" data-id="${comment.id}" title="${gettext('Resolve comment')}">${gettext('Resolve')}</span>`
                     }
 
                 </li>
                 <li>
-                    <span class="fw-pulldown-item delete-comment" data-id="${comment.id}" title="${gettext('Delete comment')}">${gettext('Delete comment')}</span>
+                    <span class="fw-pulldown-item delete-comment" data-id="${comment.id}" title="${gettext('Delete comment')}">${gettext('Delete')}</span>
                 </li>
             </ul>
         </div>

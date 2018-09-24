@@ -93,6 +93,16 @@
 .comment-date {
     font-size: 10px;
 }
+.assigned-user {
+    border: 1px solid #ccc;
+    padding: 5px;
+    margin: 10px;
+    font-size: 0.9em;
+    text-align: center;
+}
+.assigned-user em {
+    font-weight: 700;
+}
 .comment-p {
     line-height: 18px;
 }

@@ -92,7 +92,7 @@ export class CommentEditor {
             <label>${gettext("Is major")}</label>
             <div class="comment-btns">
                 <button class="submit fw-button fw-dark" type="submit">
-                    ${this.id !== -1 ? gettext("Edit") :gettext("Submit")}
+                    ${this.id !== '-1' ? gettext("Edit") :gettext("Submit")}
                 </button>
                 <button class="cancel fw-button fw-orange" type="submit">
                     ${gettext("Cancel")}

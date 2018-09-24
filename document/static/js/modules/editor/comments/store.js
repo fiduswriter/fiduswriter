@@ -56,7 +56,7 @@ export class ModCommentStore {
 
         view.dispatch(tr)
 
-        let id = -1, username
+        let username
 
         if (REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
             username = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
@@ -66,7 +66,7 @@ export class ModCommentStore {
 
         this.commentDuringCreation = {
             comment: new Comment({
-                id,
+                id: '-1',
                 user: this.mod.editor.user.id,
                 username,
                 date: Date.now() - this.mod.editor.clientTimeAdjustment
@@ -189,17 +189,16 @@ export class ModCommentStore {
     removeCommentMarks(id) {
         // remove comment marks with the given ID in both views.
         [this.mod.editor.view, this.mod.editor.mod.footnotes.fnEditor.view].forEach(view => {
-            let tr = view.state.tr
+            const tr = view.state.tr,
+                markType = view.state.schema.marks.comment.create({id})
             view.state.doc.descendants((node, pos, parent) => {
-                let nodeStart = pos
-                let nodeEnd = pos + node.nodeSize
-                for (let i = 0; i < node.marks.length; i++) {
-                    let mark = node.marks[i]
-                    if (mark.type.name === 'comment' && parseInt(mark.attrs.id) === id) {
-                        let markType = view.state.schema.marks.comment.create({id})
+                const nodeStart = pos,
+                    nodeEnd = pos + node.nodeSize
+                node.marks.forEach(mark => {
+                    if (mark.type.name === 'comment' && mark.attrs.id === id) {
                         this.removeMark(tr, nodeStart, nodeEnd, markType)
                     }
-                }
+                })
             })
             if (tr.steps.length) {
                 view.dispatch(tr)
@@ -223,7 +222,7 @@ export class ModCommentStore {
         if (this.deleteLocalComment(id, true)) {
             this.unsent.push({
                 type: "delete",
-                id: id
+                id
             })
             if (removeMarks) {
                 this.removeCommentMarks(id)

@@ -20,17 +20,9 @@ export class ModCommentInteractions {
         document.addEventListener('click', event => {
             let el = {}
             switch (true) {
-                case findTarget(event, '.margin-box.comment.inactive', el):
-                    let tr = deactivateAllSelectedChanges(this.mod.editor.view.state.tr)
-                    if (tr) {
-                        this.mod.editor.view.dispatch(tr)
-                    }
-                    let fnTr = deactivateAllSelectedChanges(this.mod.editor.mod.footnotes.fnEditor.view.state.tr)
-                    if (fnTr) {
-                        this.mod.editor.mod.footnotes.fnEditor.view.dispatch(fnTr)
-                    }
-                    this.activateComment(el.target.dataset.id)
-                    this.updateDOM()
+                case findTarget(event, '.show-comment-options', el):
+                    el.target.parentElement.querySelector('.comment-options').classList.add('fw-open')
+                    event.stopPropagation()
                     break
                 case findTarget(event, '.edit-comment', el):
                     this.editComment = true
@@ -44,6 +36,12 @@ export class ModCommentInteractions {
                         el.target.dataset.answer
                     )
                     break
+                case findTarget(event, '.resolve-comment', el):
+                    this.resolveComment(parseInt(el.target.dataset.id))
+                    break
+                case findTarget(event, '.recreate-comment', el):
+                    this.recreateComment(parseInt(el.target.dataset.id))
+                    break
                 case findTarget(event, '.delete-comment', el):
                     this.deleteComment(parseInt(el.target.dataset.id))
                     break
@@ -53,7 +51,23 @@ export class ModCommentInteractions {
                         parseInt(el.target.dataset.answer)
                     )
                     break
+                case findTarget(event, '.margin-box.comment.inactive', el):
+                    let tr = deactivateAllSelectedChanges(this.mod.editor.view.state.tr)
+                    if (tr) {
+                        this.mod.editor.view.dispatch(tr)
+                    }
+                    let fnTr = deactivateAllSelectedChanges(this.mod.editor.mod.footnotes.fnEditor.view.state.tr)
+                    if (fnTr) {
+                        this.mod.editor.mod.footnotes.fnEditor.view.dispatch(fnTr)
+                    }
+                    this.activateComment(el.target.dataset.id)
+                    this.updateDOM()
+                    break
                 default:
+                    const commentOptionsOpen = document.querySelector('.comment-options.fw-open')
+                    if (commentOptionsOpen) {
+                        commentOptionsOpen.classList.remove('fw-open')
+                    }
                     break
             }
         })
@@ -155,7 +169,8 @@ export class ModCommentInteractions {
         // B) the comment answer edit form is currently open
         // C) part of a new answer has been written
         // D) the focus is currently in new answer text area of a comment
-        // E) a new comment form is about to be displayed, but the updateDOM
+        // E) The comment options are open
+        // F) a new comment form is about to be displayed, but the updateDOM
         // call has not yet been made.
         if (!this.activeCommentId) {
             return false
@@ -170,6 +185,10 @@ export class ModCommentInteractions {
         }
         if (this.editor && this.editor.view && this.editor.view.state.doc.content.content.length) {
             // Part of a comment (answer) has been entered.
+            return true
+        }
+        if (document.querySelector('div.comment-options.fw-open')) {
+            // A comment options menu is open.
             return true
         }
         if (this.mod.store.commentDuringCreation.inDOM === false) {
@@ -199,6 +218,14 @@ export class ModCommentInteractions {
             this.mod.store.deleteComment(id, true)
         }
         this.updateDOM()
+    }
+
+    resolveComment(id) {
+        this.mod.store.updateComment({id, resolved: true})
+    }
+
+    recreateComment(id) {
+        this.mod.store.updateComment({id, resolved: false})
     }
 
 

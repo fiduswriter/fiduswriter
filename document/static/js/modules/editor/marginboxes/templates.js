@@ -63,7 +63,6 @@ let singleCommentTemplate = ({
             active && !editComment && comment.user===user.id ?
             `<p class="comment-controls">
                 <span class="edit-comment" data-id="${comment.id}">${gettext("Edit")}</span>
-                <span class="delete-comment" data-id="${comment.id}">${gettext("Delete")}</span>
             </p>` :
             ''
         }
@@ -94,6 +93,7 @@ let commentTemplate = ({comment, view, active, editComment, activeCommentAnswerI
     `<div id="margin-box-${comment.id}" data-view="${view}" data-id="${comment.id}" data-user-id="${comment.user}"
             class="
                 margin-box comment ${active ? 'active' : 'inactive'}
+                ${comment.resolved ? 'resolved' : ''}
                 ${comment.isMajor === true ? 'comment-is-major-bgc' : ''}
         ">
     ${
@@ -124,13 +124,30 @@ let commentTemplate = ({comment, view, active, editComment, activeCommentAnswerI
         ''
     }
     ${
-        active && (
+        comment.id > 0 && (
             comment.user===user.id ||
             docInfo.access_rights==="write"
         ) ?
-        `<span class="delete-comment-all delete-comment fa fa-times-circle"
-                data-id="${comment.id}">
-        </span>` :
+        `<span class="show-comment-options fa fa-ellipsis-v" data-id="${comment.id}"></span>
+        <div class="comment-options fw-pulldown fw-right">
+            <ul>
+                <li>
+                    <span class="fw-pulldown-item" title="${gettext('Assign comment')}">${gettext('Assign comment')}</span>
+                </li>
+                <li>
+                    ${
+                        comment.resolved ?
+                        `<span class="fw-pulldown-item recreate-comment" data-id="${comment.id}" title="${gettext('Recreate comment')}">${gettext('Recreate comment')}</span>` :
+                        `<span class="fw-pulldown-item resolve-comment" data-id="${comment.id}" title="${gettext('Resolve comment')}">${gettext('Resolve comment')}</span>`
+                    }
+
+                </li>
+                <li>
+                    <span class="fw-pulldown-item delete-comment" data-id="${comment.id}" title="${gettext('Delete comment')}">${gettext('Delete comment')}</span>
+                </li>
+            </ul>
+        </div>
+        ` :
         ''
     }
     </div>`

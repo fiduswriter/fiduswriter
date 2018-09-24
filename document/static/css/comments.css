@@ -138,11 +138,16 @@
     display: none;
 }
 
-.delete-comment-all {
+.show-comment-options {
     position: absolute;
     right: 5px;
     top: 8px;
     cursor: pointer;
+}
+
+.comment-options.fw-pulldown.fw-right {
+    right: -22px;
+    top: 18px;
 }
 
 .comment-is-major {
@@ -151,6 +156,10 @@
 
 .comment-is-major-bgc {
     background-color: #f2dede;
+}
+
+.comment.resolved .comment-item {
+    opacity: 0.7;
 }
 
 #comment-editor .ProseMirror-suggestion, #answer-editor .ProseMirror-suggestion {

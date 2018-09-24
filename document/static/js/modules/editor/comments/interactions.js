@@ -22,7 +22,9 @@ export class ModCommentInteractions {
             switch (true) {
                 case findTarget(event, '.show-comment-options', el):
                     el.target.parentElement.querySelector('.comment-options').classList.add('fw-open')
-                    event.stopPropagation()
+                    break
+                case findTarget(event, '.show-assign-comment-menu', el):
+                    el.target.parentElement.querySelector('.assign-comment-menu').classList.toggle('fw-open')
                     break
                 case findTarget(event, '.edit-comment', el):
                     this.editComment = true
@@ -37,13 +39,19 @@ export class ModCommentInteractions {
                     )
                     break
                 case findTarget(event, '.resolve-comment', el):
-                    this.resolveComment(parseInt(el.target.dataset.id))
+                    this.resolveComment(el.target.dataset.id)
                     break
                 case findTarget(event, '.recreate-comment', el):
-                    this.recreateComment(parseInt(el.target.dataset.id))
+                    this.recreateComment(el.target.dataset.id)
+                    break
+                case findTarget(event, '.assign-comment', el):
+                    this.assignComment(el.target.dataset.id, parseInt(el.target.dataset.user), el.target.dataset.username)
+                    break
+                case findTarget(event, '.unassign-comment', el):
+                    this.unassignComment(el.target.dataset.id)
                     break
                 case findTarget(event, '.delete-comment', el):
-                    this.deleteComment(parseInt(el.target.dataset.id))
+                    this.deleteComment(el.target.dataset.id)
                     break
                 case findTarget(event, '.delete-comment-answer', el):
                     this.deleteCommentAnswer(
@@ -64,10 +72,9 @@ export class ModCommentInteractions {
                     this.updateDOM()
                     break
                 default:
-                    const commentOptionsOpen = document.querySelector('.comment-options.fw-open')
-                    if (commentOptionsOpen) {
-                        commentOptionsOpen.classList.remove('fw-open')
-                    }
+                    document.querySelectorAll('.comment-options.fw-open, .assign-comment-menu.fw-open').forEach(
+                        el => el.classList.remove('fw-open')
+                    )
                     break
             }
         })
@@ -83,7 +90,7 @@ export class ModCommentInteractions {
         }
         let id = this.activeCommentId
         if (commentEditorDOM) {
-            let value = id === -1 ?
+            let value = id === '-1' ?
                 {text: [], isMajor: false} :
                 {
                     text: this.mod.store.comments[id].comment,
@@ -205,13 +212,13 @@ export class ModCommentInteractions {
     createNewComment() {
         this.deactivateAll()
         this.mod.store.addCommentDuringCreation(this.mod.editor.currentView)
-        this.activeCommentId = -1
+        this.activeCommentId = '-1'
         this.editComment = true
         this.updateDOM()
     }
 
     deleteComment(id) {
-        if (id===-1) {
+        if (id==='-1') {
             this.deactivateAll()
         } else {
             // Handle the deletion of a comment.
@@ -228,10 +235,18 @@ export class ModCommentInteractions {
         this.mod.store.updateComment({id, resolved: false})
     }
 
+    assignComment(id, user, username) {
+        this.mod.store.updateComment({id, assignedUser: user, assignedUsername: username})
+    }
+
+    unassignComment(id) {
+        this.mod.store.updateComment({id, assignedUser: false, assignedUsername: false})
+    }
+
 
     updateComment({id, comment, isMajor}) {
         // Save the change to a comment and mark that the document has been changed
-        if (id===-1) {
+        if (id==='-1') {
             let referrer = getCommentDuringCreationDecoration(this.mod.store.commentDuringCreation.view.state)
             // This is a new comment. We need to get an ID for it if it has contents.
 
@@ -267,7 +282,7 @@ export class ModCommentInteractions {
     cancelSubmit() {
         // Handle a click on the cancel button of the comment submit form.
         let id = this.activeCommentId
-        if (id===-1 || this.mod.store.comments[id].comment.length === 0) {
+        if (id==='-1' || this.mod.store.comments[id].comment.length === 0) {
             this.deleteComment(id)
         } else {
             this.deactivateAll()

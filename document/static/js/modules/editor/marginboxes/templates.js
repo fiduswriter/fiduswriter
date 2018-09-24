@@ -86,7 +86,10 @@ let firstCommentTemplate = ({
     </div>`
 
 
-let commentTemplate = ({comment, view, active, editComment, activeCommentAnswerId, user, docInfo}) => {
+let commentTemplate = ({comment, view, active, editComment, activeCommentAnswerId, user, docInfo, filterOptions}) => {
+    if (!filterOptions.comments || (!filterOptions.commentsResolved && comment.resolved) || comment.hidden) {
+        return '<div class="margin-box comment hidden"></div>'
+    }
     const author = comment.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === comment.user),
         assignedUser = comment.assignedUser ?
             comment.assignedUser === docInfo.owner.id ?
@@ -97,9 +100,8 @@ let commentTemplate = ({comment, view, active, editComment, activeCommentAnswerI
                 } :
             false,
         assignedUsername = assignedUser ? assignedUser.name : false
-    return comment.hidden ?
-    `<div id="margin-box-${comment.id}" class="margin-box comment hidden"></div>` :
-    `<div id="margin-box-${comment.id}" data-view="${view}" data-id="${comment.id}" data-user-id="${comment.user}"
+    return `
+        <div id="margin-box-${comment.id}" data-view="${view}" data-id="${comment.id}" data-user-id="${comment.user}"
             class="
                 margin-box comment ${active ? 'active' : 'inactive'}
                 ${comment.resolved ? 'resolved' : ''}
@@ -232,7 +234,11 @@ let BLOCK_NAMES = {
 
 let blockChangeTemplate = ({before}) => `<div class="format-change-info"><b>${gettext('Was')}:</b> ${interpolate(BLOCK_NAMES[before.type], before.attrs, true)}</div>`
 
-let trackTemplate = ({type, data, node, pos, view, active, docInfo}) => {
+let trackTemplate = ({type, data, node, pos, view, active, docInfo, filterOptions}) => {
+    if (!filterOptions.track) {
+        return '<div class="margin-box track hidden"></div>'
+    }
+
     let author = data.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === data.user),
         nodeActionType = `${type}_${node.type.name}`
 
@@ -258,6 +264,21 @@ let trackTemplate = ({type, data, node, pos, view, active, docInfo}) => {
         </div>`
 }
 
+let filterTemplate = ({data}) => {
+    return `
+        <div class="margin-box filter">
+            <div><label id="filter-track"><input type="checkbox" ${data.track ? 'checked' : ''}>${gettext('Tracked Changes')}</label></div>
+            <hr>
+            <div><label id="filter-comments"><input type="checkbox" ${data.comments ? 'checked' : ''}>${gettext('Comments')}</label></div>
+            ${
+                data.comments ?
+                `<label id="filter-comments-resolved"><input type="checkbox" ${data.commentsResolved ? 'checked' : ''}>${gettext('Resolved Comments')}</label>` :
+                ''
+            }
+        </div>`
+}
+
+
 
 /** A template to display all the margin boxes (comments, deletion/insertion notifications) */
 export let marginBoxesTemplate = ({
@@ -265,11 +286,12 @@ export let marginBoxesTemplate = ({
         editComment,
         activeCommentAnswerId,
         user,
-        docInfo
+        docInfo,
+        filterOptions
     }) => marginBoxes.map(mBox => {
         switch(mBox.type) {
             case 'comment':
-                return commentTemplate({comment: mBox.data, view: mBox.view, active: mBox.active, activeCommentAnswerId, editComment, user, docInfo})
+                return commentTemplate({comment: mBox.data, view: mBox.view, active: mBox.active, activeCommentAnswerId, editComment, user, docInfo, filterOptions})
                 break
             case 'insertion':
             case 'deletion':
@@ -282,8 +304,14 @@ export let marginBoxesTemplate = ({
                     pos: mBox.pos,
                     view: mBox.view,
                     active: mBox.active,
-                    docInfo
+                    docInfo,
+                    filterOptions
                 })
+                break
+            case 'filter':
+            return filterTemplate({
+                data: mBox.data
+            })
                 break
             default:
                 console.warn(`Unknown margin box type: ${mBox.type}`)

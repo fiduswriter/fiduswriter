@@ -87,7 +87,13 @@ let firstCommentTemplate = ({
 
 
 let commentTemplate = ({comment, view, active, editComment, activeCommentAnswerId, user, docInfo, filterOptions}) => {
-    if (!filterOptions.comments || (!filterOptions.commentsResolved && comment.resolved) || comment.hidden) {
+    if (
+        !filterOptions.comments ||
+        (!filterOptions.commentsResolved && comment.resolved) ||
+        (filterOptions.author && comment.user !== filterOptions.author) ||
+        (filterOptions.assigned && comment.assignedUser !== filterOptions.assigned) ||
+        comment.hidden
+    ) {
         return '<div class="margin-box comment hidden"></div>'
     }
     const author = comment.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === comment.user),
@@ -264,7 +270,7 @@ let trackTemplate = ({type, data, node, pos, view, active, docInfo, filterOption
         </div>`
 }
 
-let filterTemplate = ({data}) => {
+let filterTemplate = ({data, docInfo}) => {
     return `
         <div class="margin-box filter">
             <div><label id="filter-track"><input type="checkbox" ${data.track ? 'checked' : ''}>${gettext('Tracked Changes')}</label></div>
@@ -272,7 +278,23 @@ let filterTemplate = ({data}) => {
             <div><label id="filter-comments"><input type="checkbox" ${data.comments ? 'checked' : ''}>${gettext('Comments')}</label></div>
             ${
                 data.comments ?
-                `<label id="filter-comments-resolved"><input type="checkbox" ${data.commentsResolved ? 'checked' : ''}>${gettext('Resolved Comments')}</label>` :
+                `<label id="filter-comments-resolved"><input type="checkbox" ${data.commentsResolved ? 'checked' : ''}>${gettext('Resolved')}</label>
+                <div><label>${gettext('Author')}<label><select id="filter-comments-author">
+                    <option value="0">${gettext('Everyone')}</option>
+                    ${
+                        docInfo.owner.team_members.concat(docInfo.owner).map(
+                            user => `<option value="${user.id}" ${data.author === user.id ? 'selected' : ''}>${escapeText(user.name)}</option>`
+                        ).join('')
+                    }
+                </select></div>
+                <div><label>${gettext('Assigned to')}<label><select id="filter-comments-assigned">
+                    <option value="0">${gettext('Everyone')}</option>
+                    ${
+                        docInfo.owner.team_members.concat(docInfo.owner).map(
+                            user => `<option value="${user.id}" ${data.assigned === user.id ? 'selected' : ''}>${escapeText(user.name)}</option>`
+                        ).join('')
+                    }
+                </select></div>` :
                 ''
             }
         </div>`
@@ -310,7 +332,8 @@ export let marginBoxesTemplate = ({
                 break
             case 'filter':
                 return filterTemplate({
-                    data: mBox.data
+                    data: mBox.data,
+                    docInfo
                 })
                 break
             default:

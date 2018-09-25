@@ -14,7 +14,9 @@ export class ModMarginboxes {
         this.filterOptions = {
             track: true,
             comments: true,
-            commentsResolved: false
+            commentsResolved: false,
+            author: false,
+            assigned: false
         }
         this.bindEvents()
     }
@@ -48,6 +50,22 @@ export class ModMarginboxes {
                     break
             }
         })
+        document.addEventListener('change', event => {
+            const el = {}
+            switch (true) {
+                case findTarget(event, '#filter-comments-author', el):
+                    this.filterOptions.author = parseInt(el.target.value) ? parseInt(el.target.value) : false
+                    this.view(this.editor.currentView)
+                    break
+                case findTarget(event, '#filter-comments-assigned', el):
+                    this.filterOptions.assigned = parseInt(el.target.value) ? parseInt(el.target.value) : false
+                    this.view(this.editor.currentView)
+                    break
+                default:
+                    break
+            }
+        })
+
     }
 
 
@@ -174,7 +192,7 @@ export class ModMarginboxes {
                 while (activeIndex > -1) {
                     let mboxPlacement = marginBoxPlacements[activeIndex]
                     if (mboxPlacement.height === 0) {
-                        mboxPlacement.pos = currentPos - 10
+                        mboxPlacement.pos = currentPos
                     } else if (mboxPlacement===firstActiveMboxPlacement) {
                         mboxPlacement.pos = mboxPlacement.refPos
                     } else {
@@ -202,6 +220,9 @@ export class ModMarginboxes {
 
 
                 let marginBoxesPlacementStyle = marginBoxPlacements.map((mboxPlacement, index) => {
+                    if (mboxPlacement.height === 0) {
+                        return ''
+                    }
                     let pos = mboxPlacement.pos - initialOffset, css = ''
                     if (pos !== totalOffset) {
                         let topMargin = parseInt(pos - totalOffset)

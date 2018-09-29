@@ -1,3 +1,4 @@
+import {findTarget} from "../../common"
 import {marginBoxesTemplate} from "./templates"
 import {getCommentDuringCreationDecoration, getSelectedChanges, getFootnoteMarkers} from "../state_plugins"
 
@@ -10,6 +11,14 @@ export class ModMarginboxes {
         this.editor = editor
         this.setup()
         this.activeCommentStyle = ''
+        this.filterOptions = {
+            track: true,
+            comments: true,
+            commentsResolved: false,
+            author: false,
+            assigned: false
+        }
+        this.bindEvents()
     }
 
     setup() {
@@ -19,6 +28,46 @@ export class ModMarginboxes {
             '<style type="text/css" id="active-comment-style"></style><style type="text/css" id="margin-box-placement-style"></style>'
         )
     }
+
+    bindEvents() {
+        // Bind all the click events related to the margin box filter
+        document.addEventListener('click', event => {
+            const el = {}
+            switch (true) {
+                case findTarget(event, '#filter-track', el):
+                    this.filterOptions.track = el.target.querySelector('input').checked
+                    this.view(this.editor.currentView)
+                    break
+                case findTarget(event, '#filter-comments', el):
+                    this.filterOptions.comments = el.target.querySelector('input').checked
+                    this.view(this.editor.currentView)
+                    break
+                case findTarget(event, '#filter-comments-resolved', el):
+                    this.filterOptions.commentsResolved = el.target.querySelector('input').checked
+                    this.view(this.editor.currentView)
+                    break
+                default:
+                    break
+            }
+        })
+        document.addEventListener('change', event => {
+            const el = {}
+            switch (true) {
+                case findTarget(event, '#filter-comments-author', el):
+                    this.filterOptions.author = parseInt(el.target.value) ? parseInt(el.target.value) : false
+                    this.view(this.editor.currentView)
+                    break
+                case findTarget(event, '#filter-comments-assigned', el):
+                    this.filterOptions.assigned = parseInt(el.target.value) ? parseInt(el.target.value) : false
+                    this.view(this.editor.currentView)
+                    break
+                default:
+                    break
+            }
+        })
+
+    }
+
 
     view(view) {
         // Give up if the user is currently editing a comment.
@@ -41,6 +90,9 @@ export class ModMarginboxes {
             fnPosCount = 0,
             selectedChanges = getSelectedChanges(this.editor.currentView.state)
         this.activeCommentStyle = ''
+
+        marginBoxes.push({type: 'filter', data: this.filterOptions})
+        referrers.push(0)
 
         this.editor.view.state.doc.descendants(
             (node, pos) => {
@@ -98,19 +150,17 @@ export class ModMarginboxes {
             }
         }
 
-
-
-        let marginBoxesHTML = marginBoxesTemplate({
+        const marginBoxesHTML = marginBoxesTemplate({
             marginBoxes,
             user: this.editor.user,
             docInfo: this.editor.docInfo,
             editComment: this.editor.mod.comments.interactions.editComment,
-            activeCommentAnswerId: this.editor.mod.comments.interactions.activeCommentAnswerId
+            activeCommentAnswerId: this.editor.mod.comments.interactions.activeCommentAnswerId,
+            filterOptions: this.filterOptions
         })
         if (document.getElementById('margin-box-container').innerHTML !== marginBoxesHTML) {
             document.getElementById('margin-box-container').innerHTML = marginBoxesHTML
         }
-
 
         if (document.getElementById('active-comment-style').innerHTML != this.activeCommentStyle) {
             document.getElementById('active-comment-style').innerHTML = this.activeCommentStyle
@@ -129,14 +179,11 @@ export class ModMarginboxes {
                 }
                 let marginBoxPlacements = Array.from(marginBoxesDOM).map((mboxDOM, index) => {
                         let mboxDOMRect = mboxDOM.getBoundingClientRect()
-                        if (mboxDOMRect.height === 0) {
-                            return false
-                        }
                         return {
                             height: mboxDOMRect.height,
                             refPos: this.editor.view.coordsAtPos(referrers[index]).top
                         }
-                    }).filter(mbox => mbox),
+                    }),
                     firstActiveIndex = marginBoxes.findIndex(mBox => mBox.active),
                     firstActiveMboxPlacement = marginBoxPlacements[firstActiveIndex],
                     activeIndex = firstActiveIndex,
@@ -144,7 +191,9 @@ export class ModMarginboxes {
 
                 while (activeIndex > -1) {
                     let mboxPlacement = marginBoxPlacements[activeIndex]
-                    if (mboxPlacement===firstActiveMboxPlacement) {
+                    if (mboxPlacement.height === 0) {
+                        mboxPlacement.pos = currentPos
+                    } else if (mboxPlacement===firstActiveMboxPlacement) {
                         mboxPlacement.pos = mboxPlacement.refPos
                     } else {
                         mboxPlacement.pos = Math.min(currentPos - 10 - mboxPlacement.height, mboxPlacement.refPos)
@@ -171,6 +220,9 @@ export class ModMarginboxes {
 
 
                 let marginBoxesPlacementStyle = marginBoxPlacements.map((mboxPlacement, index) => {
+                    if (mboxPlacement.height === 0) {
+                        return ''
+                    }
                     let pos = mboxPlacement.pos - initialOffset, css = ''
                     if (pos !== totalOffset) {
                         let topMargin = parseInt(pos - totalOffset)

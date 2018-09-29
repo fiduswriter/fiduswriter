@@ -92,7 +92,7 @@ export class CommentEditor {
             <label>${gettext("Is major")}</label>
             <div class="comment-btns">
                 <button class="submit fw-button fw-dark" type="submit">
-                    ${this.id !== -1 ? gettext("Edit") :gettext("Submit")}
+                    ${this.id !== '-1' ? gettext("Edit") :gettext("Submit")}
                 </button>
                 <button class="cancel fw-button fw-orange" type="submit">
                     ${gettext("Cancel")}
@@ -147,10 +147,10 @@ export class CommentEditor {
     }
 
     submit() {
-        let text = this.view.state.doc.toJSON().content,
+        const comment = this.view.state.doc.toJSON().content,
             isMajor = this.dom.querySelector('.comment-is-major').checked
-        if (text.length > 0) {
-            this.mod.interactions.updateComment(this.id, text, isMajor)
+        if (comment.length > 0) {
+            this.mod.interactions.updateComment({id: this.id, comment, isMajor})
             this.sendNotifications()
         } else {
             this.mod.interactions.deleteComment(this.id)

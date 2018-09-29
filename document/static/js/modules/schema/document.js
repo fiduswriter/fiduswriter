@@ -24,7 +24,7 @@ import {
     annotation_tag
 } from "./common"
 
-let article = {
+const article = {
     defining: true,
     content: "title subtitle authors abstract keywords body",
     selectable: false,
@@ -66,7 +66,7 @@ let article = {
     }
 }
 
-let title = {
+const title = {
     content: "text*",
     marks: "annotation",
     group: "part",
@@ -81,7 +81,7 @@ let title = {
     }
 }
 
-let subtitle = {
+const subtitle = {
     content: "text*",
     marks: "annotation",
     group: "part",
@@ -103,7 +103,7 @@ let subtitle = {
         }
     }],
     toDOM(node) {
-        let attrs = {
+        const attrs = {
             class: 'article-part metadata article-subtitle'
         }
         if (node.attrs.hidden) {
@@ -113,7 +113,7 @@ let subtitle = {
     }
 }
 
-let author = {
+const author = {
     inline: true,
     draggable: true,
     attrs: {
@@ -134,13 +134,13 @@ let author = {
         }
     }],
     toDOM(node) {
-        let dom = document.createElement('span')
+        const dom = document.createElement('span')
         dom.classList.add('author')
         dom.dataset.firstname = node.attrs.firstname
         dom.dataset.lastname = node.attrs.lastname
         dom.dataset.email = node.attrs.email
         dom.dataset.institution = node.attrs.institution
-        let content = []
+        const content = []
         if (node.attrs.firstname) {
             content.push(escapeText(node.attrs.firstname))
         }
@@ -160,7 +160,7 @@ let author = {
     }
 }
 
-let authors = {
+const authors = {
     content: "author*",
     marks: "annotation track",
     group: "part",
@@ -182,7 +182,7 @@ let authors = {
         }
     }],
     toDOM(node) {
-        let attrs = {
+        const attrs = {
             class: 'article-part metadata article-authors'
         }
         if (node.attrs.hidden) {
@@ -192,7 +192,7 @@ let authors = {
     }
 }
 
-let abstract = {
+const abstract = {
     content: "(block | table_block)+",
     group: "part",
     marks: "annotation",
@@ -214,7 +214,7 @@ let abstract = {
         }
     }],
     toDOM(node) {
-        let attrs = {
+        const attrs = {
             class: 'article-part metadata article-abstract'
         }
         if (node.attrs.hidden) {
@@ -224,7 +224,7 @@ let abstract = {
     }
 }
 
-let keyword = {
+const keyword = {
     inline: true,
     draggable: true,
     attrs: {
@@ -245,7 +245,7 @@ let keyword = {
     }
 }
 
-let keywords = {
+const keywords = {
     content: "keyword*",
     marks: "annotation track",
     group: "part",
@@ -267,7 +267,7 @@ let keywords = {
         }
     }],
     toDOM(node) {
-        let attrs = {
+        const attrs = {
             class: 'article-part metadata article-keywords'
         }
         if (node.attrs.hidden) {
@@ -277,7 +277,7 @@ let keywords = {
     }
 }
 
-let body = {
+const body = {
     content: "(block | table_block)+",
     group: "part",
     marks: "annotation",
@@ -295,7 +295,7 @@ let body = {
     }
 }
 
-let footnote = {
+const footnote = {
     inline: true,
     group: "inline",
     attrs: {
@@ -314,7 +314,7 @@ let footnote = {
         }
     }],
     toDOM(node) {
-        let dom = document.createElement("span")
+        const dom = document.createElement("span")
         dom.classList.add("footnote-marker")
         dom.dataset.footnote = fnNodeToHtml(node.attrs.footnote)
         dom.innerHTML = '&nbsp;'
@@ -322,7 +322,7 @@ let footnote = {
     }
 }
 
-let code_block = {
+const code_block = {
     content: "text*",
     marks: "annotation",
     group: "block",
@@ -341,18 +341,18 @@ let code_block = {
         }}
     }],
     toDOM(node) {
-        let attrs = node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
+        const attrs = node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
         return ["pre", attrs, ["code", 0]]
     }
 }
 
-let doc = {
+const doc = {
     content: "article", // Transformations don't work well on the top most element
     selectable: false
 }
 
 
-let spec = {
+const spec = {
     nodes: OrderedMap.from({
         doc,
         article,
@@ -415,7 +415,7 @@ spec.nodes = spec.nodes.update(
                 }
             }}],
             toDOM(node) {
-                let attrs = {}
+                const attrs = {}
                 if (node.attrs.track.length) {
                     attrs['data-track'] = JSON.stringify(node.attrs.track)
                 }

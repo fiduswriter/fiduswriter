@@ -72,12 +72,9 @@ const convertDocV1 = function(doc) {
 const convertNodeV1 = function(node) {
     switch (node.type) {
         case 'citation':
-            const prefixes = node.attrs.bibBefore
-            prefixes = prefixes ? prefixes.split(',,,') : []
-            const locators = node.attrs.bibPage
-            locators = locators ? locators.split(',,,') : []
-            const ids = node.attrs.bibEntry
-            ids = ids ? ids.split(',') : []
+            const prefixes = node.attrs.bibBefore ? node.attrs.bibBefore.split(',,,') : []
+            const locators = node.attrs.bibPage ? node.attrs.bibPage.split(',,,') : []
+            const ids = node.attrs.bibEntry ? node.attrs.bibEntry.split(',') : []
             const references = ids.map((id, index) => {
                 const returnObj = {id: parseInt(id)}
                 if (prefixes[index] && prefixes[index] !== '') {
@@ -117,7 +114,7 @@ const convertDocV11 = function(doc) {
 const convertNodeV11 = function(node, ids = []) {
     switch (node.type) {
         case 'heading':
-            const blockId = node.attrs.id
+            let blockId = node.attrs.id
             while (!blockId || ids.includes(blockId)) {
                 blockId = randomHeadingId()
             }
@@ -198,7 +195,7 @@ const convertNodeV13 = function(node, shrunkBib, fullBib, imageIds) {
             break
         case 'citation':
             node.attrs.references.forEach(ref => {
-                const item = fullBib[ref.id]
+                let item = fullBib[ref.id]
                 if (!item) {
                     item = {
                         fields: {"title":[{"type":"text","text":"Deleted"}]},

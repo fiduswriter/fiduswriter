@@ -184,3 +184,11 @@ export const whenReady = function() {
         })
     }
 }
+
+export const setDocTitle = function(title) {
+    const titleText = `${title} - Fidus Writer`
+    if (document.title !== titleText) {
+        document.title = titleText
+    }
+
+}

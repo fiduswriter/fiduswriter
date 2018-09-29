@@ -14,7 +14,8 @@ export {
     escapeText,
     cancelPromise,
     findTarget,
-    whenReady
+    whenReady,
+    setDocTitle
 }
 from "./basic"
 
@@ -38,3 +39,8 @@ export {
     makeWorker
 }
 from "./worker"
+
+export {
+    baseBodyTemplate
+}
+from "./templates"

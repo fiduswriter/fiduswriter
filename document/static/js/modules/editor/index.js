@@ -117,7 +117,9 @@ export class Editor {
     // A class that contains everything that happens on the editor page.
     // It is currently not possible to initialize more than one editor class, as it
     // contains bindings to menu items, etc. that are uniquely defined.
-    constructor(id) {
+    constructor(id, {staticUrl, websocketUrl}) {
+        this.staticUrl = staticUrl,
+        this.websocketUrl = websocketUrl
         this.mod = {}
         // Whether the editor is currently waiting for a document update. Set to true
         // initially so that diffs that arrive before document has been loaded are not
@@ -174,7 +176,10 @@ export class Editor {
     }
 
     init() {
-        whenReady().then(()=>this.initEditor())
+        whenReady().then(() => {
+            this.render()
+            this.initEditor()
+        })
     }
 
     render() {
@@ -205,12 +210,13 @@ export class Editor {
                 <div id="chat-container"></div>
                 <div id="messageform" contentEditable="true" class="empty"></div>
                 <audio id="chat-notification">
-                    <source src="${$StaticUrls.base$}ogg/chat_notification.ogg?v=${$StaticUrls.transpile.version$}" type="audio/ogg">
+                    <source src="${this.staticUrl}ogg/chat_notification.ogg?v=${$StaticUrls.transpile.version$}" type="audio/ogg">
                 </audio>
             </div>
         </div>
         <div id="unobtrusive_messages"></div>`
         ensureCSS([
+            'libs/katex/katex.min.css',
             'mathquill.css',
             'editor.css',
             'document.css',
@@ -223,13 +229,12 @@ export class Editor {
             'access_rights_dialog.css',
             'citation_dialog.css',
             'review.css'
-        ])
+        ], this.staticUrl)
         const feedbackTab = new FeedbackTab()
         feedbackTab.init()
     }
 
     initEditor() {
-        this.render()
         // The following two commands prevent Firefox from showing table controls.
         document.execCommand("enableObjectResizing", false, false)
         document.execCommand("enableInlineTableEditing", false, false)
@@ -304,8 +309,6 @@ export class Editor {
         } else {
             this.user = this.docInfo.owner
         }
-
-
 
         this.mod.db.bibDB.setDB(data.doc.bibliography)
         // assign bibDB to be used in document schema.

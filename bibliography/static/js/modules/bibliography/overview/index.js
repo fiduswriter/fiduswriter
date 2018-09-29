@@ -8,21 +8,48 @@ import {editCategoriesTemplate} from "./templates"
 import {BibliographyDB} from "../database"
 import {BibTypeTitles} from "../form/strings"
 import {SiteMenu} from "../../menu"
-import {OverviewMenuView, findTarget, whenReady, Dialog} from "../../common"
+import {OverviewMenuView, findTarget, whenReady, Dialog, baseBodyTemplate, ensureCSS, setDocTitle} from "../../common"
+import {FeedbackTab} from "../../feedback"
 import {menuModel} from "./menu"
 import * as plugins from "../../../plugins/bibliography_overview"
 import {escapeText} from "../../common"
 
 export class BibliographyOverview {
 
-    constructor() {
-        let smenu = new SiteMenu("bibliography")
-        smenu.init()
-        this.menu = new OverviewMenuView(this, menuModel)
-        this.menu.init()
-        this.getBibDB()
-        this.activatePlugins()
-        this.bind()
+    constructor({username, staticUrl}) {
+        this.username = username
+        this.staticUrl = staticUrl
+    }
+
+    /** Bind the init function to doc loading.
+     * @function bind
+     */
+    init() {
+        whenReady().then(() => {
+            this.render()
+            let smenu = new SiteMenu("bibliography")
+            smenu.init()
+            this.menu = new OverviewMenuView(this, menuModel)
+            this.menu.init()
+            this.getBibDB()
+            this.activatePlugins()
+            this.bindEvents()
+        })
+    }
+
+    render() {
+        document.body.innerHTML = baseBodyTemplate({
+            contents: '<ul id="fw-overview-menu"></ul>',
+            username: this.username,
+            staticUrl: this.staticUrl
+        })
+        ensureCSS([
+            'fw_layouts/bibliography.css',
+            'prosemirror.css'
+        ], this.staticUrl)
+        setDocTitle(gettext('Bibliography Manager'))
+        const feedbackTab = new FeedbackTab()
+        feedbackTab.init()
     }
 
     /* load data from the bibliography */
@@ -233,15 +260,8 @@ export class BibliographyOverview {
         })
     }
 
-    /** Bind the init function to doc loading.
-     * @function bind
-     */
-    bind() {
-        whenReady().then(() => this.bindEvents())
-    }
-
     /** Initialize the bibliography table and bind interactive parts.
-     * @function init
+     * @function bibEvents
           */
     bindEvents() {
         document.addEventListener('click', event => {

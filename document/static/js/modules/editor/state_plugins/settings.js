@@ -1,6 +1,7 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 
 import {LANGUAGES} from "../common"
+import {setDocTitle} from "../../common"
 
 const key = new PluginKey('settings')
 
@@ -152,6 +153,7 @@ export let settingsPlugin = function(options) {
             return {
                 update: (view, prevState) => {
                     updateSettings(view.state.doc.firstChild.attrs, prevState.doc.firstChild.attrs)
+                    setDocTitle(view.state.doc.firstChild.firstChild.textContent)
                 }
             }
         }

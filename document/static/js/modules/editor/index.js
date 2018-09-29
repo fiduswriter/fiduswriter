@@ -183,6 +183,7 @@ export class Editor {
     }
 
     render() {
+        document.body = document.createElement('body')
         document.body.innerHTML = `<div id="editor">
             <div id="wait" class="active"><i class="fa fa-spinner fa-pulse"></i></div>
             <header>
@@ -230,7 +231,8 @@ export class Editor {
             'citation_dialog.css',
             'review.css'
         ], this.staticUrl)
-        const feedbackTab = new FeedbackTab()
+        console.log(this.staticUrl)
+        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
         feedbackTab.init()
     }
 

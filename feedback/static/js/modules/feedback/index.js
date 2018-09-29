@@ -6,7 +6,8 @@ import {post, ensureCSS} from "../common"
 
 export class FeedbackTab {
 
-    init() {
+    init({staticUrl}) {
+        this.staticUrl = staticUrl
         this.render()
         this.bind()
     }
@@ -33,7 +34,7 @@ export class FeedbackTab {
               </div>
             </div>`
         )
-        ensureCSS('feedback/feedback.css')
+        ensureCSS('feedback/feedback.css', this.staticUrl)
     }
 
     bind() {

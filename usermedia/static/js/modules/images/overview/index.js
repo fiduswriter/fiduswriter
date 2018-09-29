@@ -33,13 +33,14 @@ export class ImageOverview {
     }
 
     render() {
+        document.body = document.createElement('body')
         document.body.innerHTML = baseBodyTemplate({
             contents: '<ul id="fw-overview-menu"></ul>',
             username: this.username,
             staticUrl: this.staticUrl
         })
         setDocTitle(gettext('Media Manager'))
-        const feedbackTab = new FeedbackTab()
+        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
         feedbackTab.init()
     }
 

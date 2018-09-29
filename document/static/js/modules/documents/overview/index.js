@@ -39,6 +39,7 @@ export class DocumentOverview {
     }
 
     render() {
+        document.body = document.createElement('body')
         document.body.innerHTML = baseBodyTemplate({
             contents: '<ul id="fw-overview-menu"></ul>',
             username: this.username,
@@ -49,7 +50,7 @@ export class DocumentOverview {
             'access_rights_dialog.css'
         ], this.staticUrl)
         setDocTitle(gettext('Document Overview'))
-        const feedbackTab = new FeedbackTab()
+        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
         feedbackTab.init()
     }
 

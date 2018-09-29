@@ -140,6 +140,16 @@ export class ImportFidusFile {
                 // We could not find matching id/username accessible to current user, so we delete the user id from comment
                 comment.user = 0
             }
+            if (!
+                (
+                    !comment.assignedUser ||
+                    this.teamMembers.find(member => member.id === comment.assignedUser && member.username === comment.assignedUsername) ||
+                    (this.user.id === comment.assignedUser && this.user.username === comment.assignedUsername)
+                )
+            ) {
+                // We could not find matching id/username accessible to current user, so we delete the assignedUser id from comment
+                comment.assignedUser = 0
+            }
             comment.answers.forEach(answer => {
                 if (!
                     (

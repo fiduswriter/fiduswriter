@@ -6,12 +6,12 @@ import {obj2Node} from "../exporter/tools/json"
 import {docSchema} from "./document"
 import {randomHeadingId, randomFigureId} from "./common"
 
-export let getSettings = function(pmArticle) {
-    let settings = JSON.parse(JSON.stringify(pmArticle.attrs))
+export const getSettings = function(pmArticle) {
+    const settings = JSON.parse(JSON.stringify(pmArticle.attrs))
     return settings
 }
 
-export let updateDoc = function(doc, bibliography, docVersion) {
+export const updateDoc = function(doc, bibliography, docVersion) {
     /* This is to clean documents taking all the accepted formatting from older
        versions and outputting the current version of the doc format.
        Notice that the docVersion isn't the same as the version of the FW export
@@ -63,23 +63,23 @@ export let updateDoc = function(doc, bibliography, docVersion) {
     return doc
 }
 
-let convertDocV1 = function(doc) {
-    let returnDoc = JSON.parse(JSON.stringify(doc))
+const convertDocV1 = function(doc) {
+    const returnDoc = JSON.parse(JSON.stringify(doc))
     convertNodeV1(returnDoc.contents)
     return returnDoc
 }
 
-let convertNodeV1 = function(node) {
+const convertNodeV1 = function(node) {
     switch (node.type) {
         case 'citation':
-            let prefixes = node.attrs.bibBefore
+            const prefixes = node.attrs.bibBefore
             prefixes = prefixes ? prefixes.split(',,,') : []
-            let locators = node.attrs.bibPage
+            const locators = node.attrs.bibPage
             locators = locators ? locators.split(',,,') : []
-            let ids = node.attrs.bibEntry
+            const ids = node.attrs.bibEntry
             ids = ids ? ids.split(',') : []
-            let references = ids.map((id, index) => {
-                let returnObj = {id: parseInt(id)}
+            const references = ids.map((id, index) => {
+                const returnObj = {id: parseInt(id)}
                 if (prefixes[index] && prefixes[index] !== '') {
                     returnObj['prefix'] = prefixes[index]
                 }
@@ -108,16 +108,16 @@ let convertNodeV1 = function(node) {
     }
 }
 
-let convertDocV11 = function(doc) {
-    let returnDoc = JSON.parse(JSON.stringify(doc))
+const convertDocV11 = function(doc) {
+    const returnDoc = JSON.parse(JSON.stringify(doc))
     convertNodeV11(returnDoc.contents)
     return returnDoc
 }
 
-let convertNodeV11 = function(node, ids = []) {
+const convertNodeV11 = function(node, ids = []) {
     switch (node.type) {
         case 'heading':
-            let blockId = node.attrs.id
+            const blockId = node.attrs.id
             while (!blockId || ids.includes(blockId)) {
                 blockId = randomHeadingId()
             }
@@ -132,13 +132,13 @@ let convertNodeV11 = function(node, ids = []) {
     }
 }
 
-let convertDocV12 = function(doc) {
-    let returnDoc = JSON.parse(JSON.stringify(doc))
+const convertDocV12 = function(doc) {
+    const returnDoc = JSON.parse(JSON.stringify(doc))
     convertNodeV12(returnDoc.contents)
     return returnDoc
 }
 
-let convertNodeV12 = function(node, ids = []) {
+const convertNodeV12 = function(node, ids = []) {
     switch (node.type) {
         case 'figure':
             let blockId = node.attrs.id
@@ -156,8 +156,8 @@ let convertNodeV12 = function(node, ids = []) {
     }
 }
 
-let convertDocV13 = function(doc, bibliography) {
-    let returnDoc = JSON.parse(JSON.stringify(doc))
+const convertDocV13 = function(doc, bibliography) {
+    const returnDoc = JSON.parse(JSON.stringify(doc))
     delete returnDoc.settings
     delete returnDoc.metadata
     returnDoc.bibliography = {}
@@ -166,22 +166,22 @@ let convertDocV13 = function(doc, bibliography) {
     return returnDoc
 }
 
-let convertNodeV13 = function(node, shrunkBib, fullBib, imageIds) {
+const convertNodeV13 = function(node, shrunkBib, fullBib, imageIds) {
     switch (node.type) {
         case 'article':
             node.attrs.language = 'en-US'
             break
         case 'authors':
-            let authorsText = node.content ? node.content.reduce(
+            const authorsText = node.content ? node.content.reduce(
                     (text, item) => item.type === 'text' ? text + item.text : text,
                     ''
                 ) : ''
             node.content = authorsText.split(/[,;]/g).map(authorString => {
-                let author = authorString.trim()
+                const author = authorString.trim()
                 if (!author.length) {
                     return false
                 }
-                let authorParts = author.split(' ')
+                const authorParts = author.split(' ')
                 return {
                     type: 'author',
                     attrs: {
@@ -198,7 +198,7 @@ let convertNodeV13 = function(node, shrunkBib, fullBib, imageIds) {
             break
         case 'citation':
             node.attrs.references.forEach(ref => {
-                let item = fullBib[ref.id]
+                const item = fullBib[ref.id]
                 if (!item) {
                     item = {
                         fields: {"title":[{"type":"text","text":"Deleted"}]},
@@ -212,12 +212,12 @@ let convertNodeV13 = function(node, shrunkBib, fullBib, imageIds) {
             })
             break
         case 'keywords':
-                let keywordsText = node.content ? node.content.reduce(
+                const keywordsText = node.content ? node.content.reduce(
                         (text, item) => item.type === 'text' ? text + item.text : text,
                         ''
                     ) : ''
                 node.content = keywordsText.split(/[,;]/g).map(keywordString => {
-                    let keyword = keywordString.trim()
+                    const keyword = keywordString.trim()
                     if (!keyword.length) {
                         return false
                     }
@@ -247,8 +247,8 @@ let convertNodeV13 = function(node, shrunkBib, fullBib, imageIds) {
     }
 }
 
-let convertDocV20 = function(doc) {
-    let returnDoc = JSON.parse(JSON.stringify(doc))
+const convertDocV20 = function(doc) {
+    const returnDoc = JSON.parse(JSON.stringify(doc))
     delete(returnDoc.added)
     delete(returnDoc.is_owner)
     delete(returnDoc.revisions)
@@ -274,10 +274,24 @@ let convertDocV20 = function(doc) {
     return returnDoc
 }
 
-let convertDocV21 = function(doc) {
-    let returnDoc = JSON.parse(JSON.stringify(doc))
+const convertNodeV21 = function(node) {
+    let commentMark
+    if (node.marks && (commentMark = node.marks.find(mark => mark.type==='comment'))) {
+        commentMark.attrs.id = String(commentMark.attrs.id)
+    }
+    if (node.content) {
+        node.content.forEach(childNode => convertNodeV21(childNode))
+    }
+}
+
+const convertDocV21 = function(doc) {
+    const returnDoc = JSON.parse(JSON.stringify(doc))
+    convertNodeV21(returnDoc.contents)
     Object.entries(returnDoc.comments).forEach(([commentId, comment]) => {
         delete(comment.id)
+        comment.assignedUser = false
+        comment.assignedUsername = false
+        comment.resolved = false
         comment.comment = comment.comment.split('\n').map(text =>
             ({type: 'paragraph', content: [{type: 'text', text}]})
         )

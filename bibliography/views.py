@@ -30,7 +30,9 @@ serializer = SimpleSerializer()
 @login_required
 def index(request):
     response = {
-        'script': StaticTranspileNode.handle_simple('js/bibliography_overview.mjs')
+        'script': StaticTranspileNode.handle_simple(
+            'js/bibliography_overview.mjs'
+        )
     }
     response.update(csrf(request))
     return render(request, 'index.html', response)

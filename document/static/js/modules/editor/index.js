@@ -118,7 +118,7 @@ export class Editor {
     // It is currently not possible to initialize more than one editor class, as it
     // contains bindings to menu items, etc. that are uniquely defined.
     constructor(id, {staticUrl, websocketUrl}) {
-        this.staticUrl = staticUrl,
+        this.staticUrl = staticUrl
         this.websocketUrl = websocketUrl
         this.mod = {}
         // Whether the editor is currently waiting for a document update. Set to true

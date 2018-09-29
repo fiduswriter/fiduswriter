@@ -101,12 +101,12 @@ export const postJson = function(url, params={}, csrfToken=false) {
     )
 }
 
-export const ensureCSS = function(cssUrl) {
+export const ensureCSS = function(cssUrl, staticUrl) {
     if (typeof cssUrl === 'object') {
-        cssUrl.forEach(url => ensureCSS(url))
+        cssUrl.forEach(url => ensureCSS(url, staticUrl))
         return
     }
-    const url = `${$StaticUrls.base$}css/${cssUrl}?v=${$StaticUrls.transpile.version$}`
+    const url = `${staticUrl}css/${cssUrl}?v=${$StaticUrls.transpile.version$}`
     const styleSheet = Array.from(document.styleSheets).find(styleSheet => styleSheet.href === url)
     if (!styleSheet) {
         const link = document.createElement("link")

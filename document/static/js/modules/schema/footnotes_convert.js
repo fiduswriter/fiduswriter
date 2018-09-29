@@ -4,29 +4,29 @@ import {DOMSerializer, DOMParser} from "prosemirror-model"
 import {fnSchema} from "./footnotes"
 
 // Convert the footnote HTML stored with the marker to a PM node representation of the footnote.
-export let htmlToFnNode = function(contents) {
-    let footnoteDOM = document.createElement('div')
+export const htmlToFnNode = function(contents) {
+    const footnoteDOM = document.createElement('div')
     footnoteDOM.classList.add('footnote-container')
     footnoteDOM.innerHTML = contents
-    let node = DOMParser.fromSchema(fnSchema).parse(footnoteDOM, {
+    const node = DOMParser.fromSchema(fnSchema).parse(footnoteDOM, {
         preserveWhitespace: true,
         topNode: false
     })
-    let json = node.firstChild.toJSON().content
+    const json = node.firstChild.toJSON().content
 
     return json
 }
 
-export let fnNodeToPmNode = function(fnContents) {
-    let footnote = {
+export const fnNodeToPmNode = function(fnContents) {
+    const footnote = {
         type: 'footnotecontainer',
         content: fnContents
     }
     return Node.fromJSON(fnSchema, footnote)
 }
 
-export let fnNodeToHtml = function(jsonString) {
-    let pmNode = fnNodeToPmNode(jsonString),
+export const fnNodeToHtml = function(jsonString) {
+    const pmNode = fnNodeToPmNode(jsonString),
         serializer = DOMSerializer.fromSchema(fnSchema)
     return serializer.serializeNode(pmNode).innerHTML
 }

@@ -19,6 +19,7 @@ from django.core.paginator import Paginator, EmptyPage
 
 from avatar.utils import get_primary_avatar, get_default_avatar_url
 from avatar.templatetags.avatar_tags import avatar_url
+from npm_mjs.templatetags.transpile import StaticTranspileNode
 
 from document.models import Document, AccessRight, DocumentRevision, \
     ExportTemplate, CAN_UPDATE_DOCUMENT
@@ -50,10 +51,11 @@ def get_accessrights(ars):
 
 @login_required
 def index(request):
-    response = {}
+    response = {
+        'script': StaticTranspileNode.handle_simple('js/document_overview.mjs')
+    }
     response.update(csrf(request))
-    return render(request, 'document/index.html',
-                  response)
+    return render(request, 'index.html', response)
 
 
 @login_required
@@ -185,9 +187,10 @@ def get_documentlist_js(request):
 
 @login_required
 def editor(request):
-    response = {}
-    return render(request, 'document/editor.html',
-                  response)
+    response = {
+        'script': StaticTranspileNode.handle_simple('js/editor.mjs')
+    }
+    return render(request, 'index.html', response)
 
 
 @login_required

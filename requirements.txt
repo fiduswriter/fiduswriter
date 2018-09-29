@@ -5,7 +5,7 @@ django-allauth==0.36.0
 django-avatar==4.1.0
 django-compressor==2.2
 django-js-error-hook==0.6
-django-npm-mjs==0.6.1
+django-npm-mjs==0.6.2
 tornado==5.1
 python-dateutil==2.7.3
 python-magic==0.4.15

@@ -1,5 +1,6 @@
 import {DocumentOverview} from "./modules/documents/overview"
 
-let theDocumentOverview = new DocumentOverview()
+const theDocumentOverview = new DocumentOverview(window.fidusConfig)
+theDocumentOverview.init()
 
 window.theDocumentOverview = theDocumentOverview

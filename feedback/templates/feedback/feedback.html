@@ -1,23 +1,2 @@
-{% load i18n %}
 {% load transpile %}
-<a class="feedback-tab" href="#">{% trans "Tech support" %}</a>
-<div class="feedback-panel">
-  <div id="feedback-wrapper">
-    <div id="feedback-title">{% trans "Tech support" %}</div>
-    <p>{% trans "Did you encounter an error or bug?" %}<br>
-        {% trans "Give a brief description of what has happened." %}</p>
-    <div id="feedback-form">
-      <form method="post" action="/feedback/feedback/">
-        {% csrf_token %}
-        <textarea id="message" name="message" rows="10" cols="30"></textarea>
-        <input type="button" value='{% trans "submit" %}' id="feedbackbutton" class="fw-button fw-orange" />
-      </form>
-    </div>
-    <div id="response-message">
-      {% trans "Thank you for your report!" %}
-    </div>
-    <span id="closeFeedback" class="fa fa-times-circle"></span>
-  </div>
-</div>
-<link type="text/css" rel="stylesheet" href="{% static "css/feedback/feedback.css" %}" />
-<!--script type="text/javascript" src="{% static "js/feedback.mjs" %}"></script-->
+<script type="text/javascript" src="{% static "js/feedback.mjs" %}"></script>

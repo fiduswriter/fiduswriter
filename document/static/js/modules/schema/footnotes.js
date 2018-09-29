@@ -21,7 +21,7 @@ import {
     annotation_tag
 } from "./common"
 
-let footnotecontainer = {
+const footnotecontainer = {
     group: "part",
     selectable: false,
     content: "(block|table_block)+",
@@ -32,12 +32,12 @@ let footnotecontainer = {
     }
 }
 
-let doc = {
+const doc = {
     content: "part*",
     selectable: false
 }
 
-let spec = {
+const spec = {
   nodes: OrderedMap.from({
     doc,
     footnotecontainer,
@@ -88,7 +88,7 @@ spec.nodes = spec.nodes.update(
                 }
             }}],
             toDOM(node) {
-                let attrs = {}
+                const attrs = {}
                 if (node.attrs.track.length) {
                     attrs['data-track'] = JSON.stringify(node.attrs.track)
                 }

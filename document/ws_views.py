@@ -326,9 +326,12 @@ class WebSocket(BaseWebSocketHandler):
                 self.doc["comments"][id] = {
                     "user": cd["user"],
                     "username": cd["username"],
+                    "assignedUser": cd["assignedUser"],
+                    "assignedUsername": cd["assignedUsername"],
                     "date": cd["date"],
                     "comment": cd["comment"],
-                    "isMajor": cd["isMajor"]
+                    "isMajor": cd["isMajor"],
+                    "resolved": cd["resolved"],
                 }
             elif cd["type"] == "delete":
                 del self.doc["comments"][id]
@@ -337,6 +340,14 @@ class WebSocket(BaseWebSocketHandler):
                 if "isMajor" in cd:
                     self.doc["comments"][id][
                         "isMajor"] = cd["isMajor"]
+                if "assignedUser" in cd and "assignedUsername" in cd:
+                    self.doc["comments"][id][
+                        "assignedUser"] = cd["assignedUser"]
+                    self.doc["comments"][id][
+                        "assignedUsername"] = cd["assignedUsername"]
+                if "resolved" in cd:
+                    self.doc["comments"][id][
+                        "resolved"] = cd["resolved"]
             elif cd["type"] == "add_answer":
                 if "answers" not in self.doc["comments"][id]:
                     self.doc["comments"][id]["answers"] = []

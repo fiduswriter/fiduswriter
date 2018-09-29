@@ -1,7 +1,11 @@
 /* Functions for ProseMirror integration.*/
 import {
-    whenReady
+    whenReady,
+    ensureCSS
 } from "../common"
+import {
+    FeedbackTab
+} from "../feedback"
 import {
     EditorState,
     TextSelection
@@ -173,7 +177,59 @@ export class Editor {
         whenReady().then(()=>this.initEditor())
     }
 
+    render() {
+        document.body.innerHTML = `<div id="editor">
+            <div id="wait" class="active"><i class="fa fa-spinner fa-pulse"></i></div>
+            <header>
+                <nav id="headerbar">
+                    <div></div>
+                </nav>
+                <nav id="toolbar">
+                    <div></div>
+                </nav>
+            </header>
+            <div id="editor-content">
+                <div id="flow" class="comments-enabled hide">
+                    <div id="paper-editable">
+                        <div id="document-editable" class="user-contents"></div>
+                        <div id="footnote-box-container" class="user-contents">
+                            <div id="citation-footnote-box-container"></div>
+                        </div>
+                    </div>
+                    <div class="article-bibliography user-contents"></div>
+                </div>
+                <div id="margin-box-container"></div>
+            </div>
+            <div id="chat">
+                <i class="resize-button fa fa-angle-double-down"></i>
+                <div id="chat-container"></div>
+                <div id="messageform" contentEditable="true" class="empty"></div>
+                <audio id="chat-notification">
+                    <source src="${$StaticUrls.base$}ogg/chat_notification.ogg?v=${$StaticUrls.transpile.version$}" type="audio/ogg">
+                </audio>
+            </div>
+        </div>
+        <div id="unobtrusive_messages"></div>`
+        ensureCSS([
+            'mathquill.css',
+            'editor.css',
+            'document.css',
+            'carets.css',
+            'tracking.css',
+            'comments.css',
+            'prosemirror.css',
+            'footnotes.css',
+            'chat.css',
+            'access_rights_dialog.css',
+            'citation_dialog.css',
+            'review.css'
+        ])
+        const feedbackTab = new FeedbackTab()
+        feedbackTab.init()
+    }
+
     initEditor() {
+        this.render()
         // The following two commands prevent Firefox from showing table controls.
         document.execCommand("enableObjectResizing", false, false)
         document.execCommand("enableInlineTableEditing", false, false)

@@ -4,7 +4,7 @@
  * @param preopen An optional function to be called before opening the dropdown box. Used to position dropdown box.
  */
 
-export let addDropdownBox = function(btn, box, preopen=false) {
+export const addDropdownBox = function(btn, box, preopen=false) {
     btn.addEventListener('click', event => {
         event.preventDefault()
         event.stopPropagation()
@@ -24,11 +24,11 @@ export let addDropdownBox = function(btn, box, preopen=false) {
  * @param box The node containing the contents of the dropdown box.
  */
 
-export let openDropdownBox = function(box) {
+export const openDropdownBox = function(box) {
     // Show this box
     box.style.display = 'block'
 
-    let closeDropdownBox = function(event) {
+    const closeDropdownBox = function(event) {
         event.preventDefault()
         box.style.display = ''
         document.removeEventListener('click', closeDropdownBox, false);
@@ -40,7 +40,7 @@ export let openDropdownBox = function(box) {
 /** Checks or unchecks a checkable label. This is used for example for bibliography categories when editing bibliography items.
  * @param label The node who's parent has to be checked or unchecked.
  */
-export let setCheckableLabel = function(labelEl) {
+export const setCheckableLabel = function(labelEl) {
     if(labelEl.classList.contains('checked')) {
         labelEl.classList.remove('checked')
     } else {
@@ -50,8 +50,8 @@ export let setCheckableLabel = function(labelEl) {
 
 /** Cover the page signaling to the user to wait.
  */
-export let activateWait = function() {
-    let waitEl = document.getElementById('wait')
+export const activateWait = function() {
+    const waitEl = document.getElementById('wait')
     if (waitEl) {
         waitEl.classList.add('active')
     }
@@ -59,8 +59,8 @@ export let activateWait = function() {
 
 /** Remove the wait cover.
  */
-export let deactivateWait = function() {
-    let waitEl = document.getElementById('wait')
+export const deactivateWait = function() {
+    const waitEl = document.getElementById('wait')
     if (waitEl) {
         waitEl.classList.remove('active')
     }
@@ -70,9 +70,9 @@ export let deactivateWait = function() {
  * @param alertType The type of message that is shown (error, warning, info or success).
  * @param alertMsg The message text.
  */
-export let addAlert = function(alertType, alertMsg) {
-    let fadeSpeed = 300
-    let iconNames = {
+export const addAlert = function(alertType, alertMsg) {
+    const fadeSpeed = 300
+    const iconNames = {
         'error': 'exclamation-circle',
         'warning': 'exclamation-circle',
         'info': 'info-circle',
@@ -80,9 +80,9 @@ export let addAlert = function(alertType, alertMsg) {
     }
     if(!document.getElementById('#alerts-outer-wrapper'))
         document.body.insertAdjacentHTML('beforeend', '<div id="alerts-outer-wrapper"><ul id="alerts-wrapper"></ul></div>')
-    let alertsWrapper = document.getElementById('alerts-wrapper')
+    const alertsWrapper = document.getElementById('alerts-wrapper')
     alertsWrapper.insertAdjacentHTML('beforeend', `<li class="alerts-${alertType} fa fa-${iconNames[alertType]}">${alertMsg}</li>`)
-    let alertBox = alertsWrapper.lastElementChild
+    const alertBox = alertsWrapper.lastElementChild
     setTimeout(()=>{
         alertBox.classList.add('visible')
         setTimeout(()=>{
@@ -97,13 +97,13 @@ export let addAlert = function(alertType, alertMsg) {
  * @param {number} milliseconds Number of milliseconds since epoch (1/1/1970 midnight, UTC).
  * @param {boolean} type 'full' for full date (default), 'sortable-date' for sortable date, 'minutes' for minute accuracy
  */
-export let localizeDate = function (milliseconds, type='full') {
+export const localizeDate = function (milliseconds, type='full') {
     milliseconds = parseInt(milliseconds)
     if (milliseconds > 0) {
-        let theDate = new Date(milliseconds)
+        const theDate = new Date(milliseconds)
         switch(type) {
             case 'sortable-date':
-                let yyyy = theDate.getFullYear(),
+                const yyyy = theDate.getFullYear(),
                     mm = theDate.getMonth() + 1,
                     dd = theDate.getDate()
 
@@ -125,9 +125,9 @@ export let localizeDate = function (milliseconds, type='full') {
  * Turn string literals into single line, removing spaces at start of line
  */
 
-export let noSpaceTmp = function(strings) {
-     let values = Array.from(arguments)
-     let tmpStrings = Array.from(values.shift())
+export const noSpaceTmp = function(strings) {
+     const values = Array.from(arguments)
+     const tmpStrings = Array.from(values.shift())
 
      let combined = ""
      while (tmpStrings.length > 0 || values.length > 0) {
@@ -146,7 +146,7 @@ export let noSpaceTmp = function(strings) {
      return out
  }
 
-export let escapeText = function(text) {
+export const escapeText = function(text) {
      return text
          .replace(/&/g, '&amp;')
          .replace(/</g, '&lt;')
@@ -157,11 +157,11 @@ export let escapeText = function(text) {
  * ES6 promises are not (yet) cancelable.
  */
 
-export let cancelPromise = () => new Promise(()=>{})
+export const cancelPromise = () => new Promise(()=>{})
 
 // Check if selector matches one of the ancestors of the event target.
 // Used in switch statements of document event listeners.
-export let findTarget = function(event, selector, el={}) {
+export const findTarget = function(event, selector, el={}) {
     el.target = event.target.closest(selector)
     if (el.target) {
         event.stopPropagation()
@@ -171,7 +171,7 @@ export let findTarget = function(event, selector, el={}) {
 }
 
 // Promise when page has been loaded.
-export let whenReady = function() {
+export const whenReady = function() {
     if (document.readyState === "complete") {
         return Promise.resolve()
     } else {

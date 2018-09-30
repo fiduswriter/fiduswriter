@@ -42,6 +42,7 @@ export class TextPaste {
                     this.insertText()
                 }
             },
+            this.editor.staticUrl,
             false // no messages to end user. Would be confusing if user just wants to paste unrelated text.
         )
         importer.init()

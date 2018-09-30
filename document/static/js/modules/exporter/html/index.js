@@ -10,7 +10,7 @@ import {addAlert} from "../../common"
 import {BaseDOMExporter} from "../tools/dom_export"
 
 export class HTMLExporter extends BaseDOMExporter{
-    constructor(doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles) {
+    constructor(doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles, staticUrl) {
         super()
         this.doc = doc
         this.citationStyles = citationStyles
@@ -18,8 +18,9 @@ export class HTMLExporter extends BaseDOMExporter{
         this.documentStyles = documentStyles
         this.bibDB = bibDB
         this.imageDB = imageDB
+        this.staticUrl = staticUrl
         this.styleSheets = [
-            {filename: `${$StaticUrls.base$}css/document.css?v=${$StaticUrls.transpile.version$}`}
+            {filename: `${this.staticUrl}css/document.css?v=${$StaticUrls.transpile.version$}`}
         ]
         this.removeUrlPrefix = true
     }
@@ -64,7 +65,7 @@ export class HTMLExporter extends BaseDOMExporter{
         const math = this.contents.querySelectorAll('.equation, .figure-equation').length ? true : false
 
         if (math) {
-            this.styleSheets.push({filename: `${$StaticUrls.base$}css/libs/katex/katex.min.css?v=${$StaticUrls.transpile.version$}`})
+            this.styleSheets.push({filename: `${this.staticUrl}css/libs/katex/katex.min.css?v=${$StaticUrls.transpile.version$}`})
         }
 
         const imageFiles = this.removeUrlPrefix ? modifyImages(this.contents) : []
@@ -108,7 +109,7 @@ export class HTMLExporter extends BaseDOMExporter{
         if (math) {
             includeZips.push({
                 'directory': '',
-                'url': `${$StaticUrls.base$}zip/katex_style.zip?v=${$StaticUrls.transpile.version$}`,
+                'url': `${this.staticUrl}zip/katex_style.zip?v=${$StaticUrls.transpile.version$}`,
             })
         }
 

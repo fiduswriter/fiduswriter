@@ -24,7 +24,6 @@ export class ModServerCommunications {
     }
 
     createWSConnection() {
-        let websocketProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
         // Messages object used to ensure that data is received in right order.
         this.messages = {
             server: 0,
@@ -33,7 +32,7 @@ export class ModServerCommunications {
         }
         try {
             this.ws = new window.WebSocket(
-                `${websocketProtocol}//${window.websocketServer}${window.websocketPort}/ws/document/${this.editor.docInfo.id}/${this.connectionCount}/`
+                `${this.editor.websocketUrl}/ws/document/${this.editor.docInfo.id}/${this.connectionCount}/`
             )
             this.ws.onopen = () => document.getElementById('unobtrusive_messages').innerHTML = ''
         } catch (err) {

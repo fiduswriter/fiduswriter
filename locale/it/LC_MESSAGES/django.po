@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-21 09:14+0000\n"
+"POT-Creation-Date: 2018-09-29 20:36+0000\n"
 "PO-Revision-Date: 2013-10-08 04:30-0500\n"
 "Last-Translator: Eugenio Battaglia <contafinoasette@gmail.com>\n"
 "Language-Team: Italian <contafinoasette@gmail.com>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: base/templates/base.html:10 document/templates/document/editor.html:10
+#: base/templates/base.html:10 base/templates/index.html:10
 #: user/templates/account/base.html:7
 msgid "The all in one solution for collaborative academic writing."
 msgstr "La soluzione completa per la stesura collaborativa di testi accademici"
@@ -56,10 +56,6 @@ msgstr "Citazioni con Linguaggio Stile di Citazione"
 msgid "Editing with ProseMirror"
 msgstr ""
 
-#: bibliography/templates/bibliography/index.html:7
-msgid "Bibliography Manager"
-msgstr "Gestisci Bibliografia"
-
 #: browser_check/templates/browser_check/browser_not_supported.html:4
 #: browser_check/templates/browser_check/browser_not_supported.html:27
 msgid "Browser not supported"
@@ -75,14 +71,12 @@ msgid ""
 "            "
 msgstr ""
 
-#: document/templates/document/editor.html:88
-msgid "en"
-msgstr "en"
+#: document/templates/admin/document/document/change_list_object_tools.html:8
+#, python-format
+msgid "Add %(name)s"
+msgstr ""
 
-#: document/templates/document/index.html:7
-msgid "Document Overview"
-msgstr "Panoramica Documento"
-
+#: document/templates/admin/document/document/change_list_object_tools.html:13
 #: document/templates/maintenance/index.html:4
 msgid "Maintenance"
 msgstr ""
@@ -108,69 +102,50 @@ msgstr ""
 msgid "Update all documents (DANGER!)"
 msgstr ""
 
-#: document/views.py:222
+#: document/views.py:229 document/views.py:570
 #, fuzzy
 msgid "Untitled"
 msgstr "Sottotitolo"
 
-#: document/views.py:236
+#: document/views.py:254
 #, fuzzy
 msgid "Document shared:"
 msgstr "Documenti"
 
-#: document/views.py:262
+#: document/views.py:291
 msgid "Fidus Writer document write access"
 msgstr ""
 
-#: feedback/templates/feedback/feedback.html:3
-#: feedback/templates/feedback/feedback.html:6
-msgid "Tech support"
-msgstr ""
-
-#: feedback/templates/feedback/feedback.html:7
-msgid "Did you encounter an error or bug?"
-msgstr ""
-
-#: feedback/templates/feedback/feedback.html:8
-msgid "Give a brief description of what has happened."
-msgstr ""
-
-#: feedback/templates/feedback/feedback.html:13
-#: user/templates/account/show_profile.html:106
-msgid "submit"
-msgstr "invio"
-
-#: feedback/templates/feedback/feedback.html:17
+#: document/views.py:596
 #, fuzzy
-#| msgid "Thank you for your comment!"
-msgid "Thank you for your report!"
-msgstr "Grazie per il commento!"
+msgid "Comment on :"
+msgstr "Commenti"
 
-#: fiduswriter/settings.py:228
+#: fiduswriter/settings.py:227
 msgid "English"
 msgstr "Inglese"
 
-#: fiduswriter/settings.py:229
+#: fiduswriter/settings.py:228
 msgid "Bulgarian"
 msgstr "Bulgaro"
 
-#: fiduswriter/settings.py:230
+#: fiduswriter/settings.py:229
 msgid "German"
 msgstr "Tedesco"
 
-#: fiduswriter/settings.py:231
+#: fiduswriter/settings.py:230
 msgid "French"
 msgstr ""
 
-#: fiduswriter/settings.py:232
+#: fiduswriter/settings.py:231
 msgid "Italian"
 msgstr ""
 
-#: fiduswriter/settings.py:233
+#: fiduswriter/settings.py:232
 msgid "Spanish"
 msgstr "Spagnolo"
 
-#: fiduswriter/settings.py:234
+#: fiduswriter/settings.py:233
 msgid "Portuguese (Brazil)"
 msgstr ""
 
@@ -337,6 +312,10 @@ msgstr "Indirizzo primario"
 msgid "Verified"
 msgstr "Verificato"
 
+#: user/templates/account/show_profile.html:106
+msgid "submit"
+msgstr "invio"
+
 #: user/templates/account/show_profile.html:109
 msgid "Delete account"
 msgstr "Cancella account"
@@ -413,17 +392,30 @@ msgstr ""
 "        Contattaci se non lo ricevi nel giro di qualche minuto.\n"
 "        "
 
-#: usermedia/templates/usermedia/index.html:6
-msgid "Media Manager"
-msgstr "Gestisci File multimediali"
-
-#: usermedia/views.py:43
+#: usermedia/views.py:47
 msgid "Filetype not supported"
 msgstr ""
 
-#: usermedia/views.py:69
+#: usermedia/views.py:73
 msgid "No file uploaded"
 msgstr ""
+
+#~ msgid "Bibliography Manager"
+#~ msgstr "Gestisci Bibliografia"
+
+#~ msgid "en"
+#~ msgstr "en"
+
+#~ msgid "Document Overview"
+#~ msgstr "Panoramica Documento"
+
+#, fuzzy
+#~| msgid "Thank you for your comment!"
+#~ msgid "Thank you for your report!"
+#~ msgstr "Grazie per il commento!"
+
+#~ msgid "Media Manager"
+#~ msgstr "Gestisci File multimediali"
 
 #~ msgid "Feedback"
 #~ msgstr "Feedback"
@@ -690,10 +682,6 @@ msgstr ""
 
 #~ msgid "Show/hide the top menu."
 #~ msgstr "Mostra/Nascondi il menu superiore."
-
-#, fuzzy
-#~ msgid "Comment"
-#~ msgstr "Commenti"
 
 #~ msgid "Show/hide comments"
 #~ msgstr "Mostra/Nascondi i commenti"

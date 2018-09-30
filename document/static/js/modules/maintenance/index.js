@@ -11,30 +11,27 @@ import {FW_FILETYPE_VERSION} from "../exporter/native"
 // To upgrade all docs and document revions to the newest version
 
 export class DocMaintenance {
-    constructor() {
+    constructor({staticUrl}) {
+        this.staticUrl = staticUrl
         this.batch = 0
         this.batchesDone = false
         this.docSavesLeft = 0
         this.revSavesLeft = 0
     }
 
-    bind() {
+    init() {
         document.addEventListener('click', event => {
             let el = {}
             switch (true) {
                 case findTarget(event, 'button#update:not(.disabled)', el):
                     document.querySelector('button#update').disabled = true
                     document.querySelector('button#update').innerHTML = gettext('Updating...')
-                    this.init()
+                    this.getDocBatch()
                     break
                 default:
                     break
             }
         })
-    }
-
-    init() {
-        this.getDocBatch()
     }
 
     getDocBatch() {

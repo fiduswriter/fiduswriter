@@ -1,0 +1,53 @@
+{% load i18n %}
+{% load compress %}
+{% load transpile %}
+{% load fiduswriter %}
+<!DOCTYPE html>
+<html class="fw-basic-text">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <title> Fidus Writer </title>
+        <meta name="description" content="{% trans "The all in one solution for collaborative academic writing." %}">
+        <meta name="author" content="Fidus Writer" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="shortcut icon" href="{% static "img/favicon.png" %}" type="image/png"/>
+        <!-- commons styles -->
+        {% compress css %}
+        <link type="text/css" rel="stylesheet" href="{% static "css/reset.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fonts.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/fonts.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/forms.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/ui_dialogs.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/ui_autofill.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/buttons.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/pulldown.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/loader.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/alerts.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/document_menu.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/document_table.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/dialog_table.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/dropkick.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/ui_tabs.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/figure.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw_modules/dialog.css" %}" />
+        <!-- Font Awesome -->
+        <link type="text/css" rel="stylesheet" href="{% static "css/font-awesome.css" %}" />
+        <!-- layout styles -->
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw_layouts/common.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fw_layouts/header_menu.css" %}" />
+        {% endcompress %}
+        <!-- jQuery -->
+        <!-- Please don't use jQuery! This is only left in here as a dependency of mathquill -->
+        <script type="text/javascript" src="{% static "js/libs/jquery.min.js" %}"></script>
+        <!-- Check browser -->
+        <script type="text/javascript" src="{% static "js/browser_check.mjs" %}"></script>
+        <script type="text/javascript" src="/jsi18n/"></script>
+        <!-- JS error handling -->
+        <script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>
+        {% fiduswriter_config_js %}
+        <!-- Main page script -->
+        <script type="text/javascript" src="{{script}}"></script>
+    </head>
+    <body></body>
+</html>

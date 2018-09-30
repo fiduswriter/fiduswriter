@@ -1,5 +1,6 @@
 import {BibliographyOverview} from "./modules/bibliography/overview"
 
-let theBibOverview = new BibliographyOverview()
+const theBibOverview = new BibliographyOverview(window.fidusConfig)
+theBibOverview.init()
 
 window.theBibOverview = theBibOverview

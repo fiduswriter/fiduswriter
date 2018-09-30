@@ -10,11 +10,12 @@ let answerCommentTemplate = ({
         activeCommentAnswerId,
         active,
         user,
-        docInfo
+        docInfo,
+        staticUrl
     }) =>
     `<div class="comment-item">
         <div class="comment-user">
-            <img class="comment-user-avatar" src="${author ? author.avatar : `${$StaticUrls.base$}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
+            <img class="comment-user-avatar" src="${author ? author.avatar : `${staticUrl}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
             <h5 class="comment-user-name">${escapeText(author ? author.name : answer.username)}</h5>
             <p class="comment-date">${localizeDate(answer.date)}</p>
         </div>
@@ -45,11 +46,12 @@ let singleCommentTemplate = ({
         author,
         active,
         editComment,
-        user
+        user,
+        staticUrl
     }) =>
     `<div class="comment-item">
         <div class="comment-user">
-            <img class="comment-user-avatar" src="${author ? author.avatar : `${$StaticUrls.base$}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
+            <img class="comment-user-avatar" src="${author ? author.avatar : `${staticUrl}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
             <h5 class="comment-user-name">${escapeText(author ? author.name : comment.username)}</h5>
             <p class="comment-date">${localizeDate(comment.date)}</p>
         </div>
@@ -72,11 +74,12 @@ let singleCommentTemplate = ({
 /** A template for the editor of a first comment before it has been saved (not an answer to a comment). */
 let firstCommentTemplate = ({
         comment,
-        author
+        author,
+        staticUrl
     }) =>
     `<div class="comment-item">
         <div class="comment-user">
-            <img class="comment-user-avatar" src="${author ? author.avatar : `${$StaticUrls.base$}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
+            <img class="comment-user-avatar" src="${author ? author.avatar : `${staticUrl}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
             <h5 class="comment-user-name">${escapeText(author ? author.name : comment.username)}</h5>
             <p class="comment-date">${localizeDate(comment.date)}</p>
         </div>
@@ -86,7 +89,7 @@ let firstCommentTemplate = ({
     </div>`
 
 
-let commentTemplate = ({comment, view, active, editComment, activeCommentAnswerId, user, docInfo, filterOptions}) => {
+let commentTemplate = ({comment, view, active, editComment, activeCommentAnswerId, user, docInfo, filterOptions, staticUrl}) => {
     if (
         !filterOptions.comments ||
         (!filterOptions.commentsResolved && comment.resolved) ||
@@ -115,8 +118,8 @@ let commentTemplate = ({comment, view, active, editComment, activeCommentAnswerI
         ">
     ${
         comment.comment.length === 0 ?
-        firstCommentTemplate({comment, author}) :
-        singleCommentTemplate({comment, user, author, active, editComment})
+        firstCommentTemplate({comment, author, staticUrl}) :
+        singleCommentTemplate({comment, user, author, active, editComment, staticUrl})
     }
     ${
         assignedUsername ?
@@ -133,7 +136,8 @@ let commentTemplate = ({comment, view, active, editComment, activeCommentAnswerI
                 active,
                 activeCommentAnswerId,
                 user,
-                docInfo
+                docInfo,
+                staticUrl
             })
         ).join('') :
         ''
@@ -240,7 +244,7 @@ let BLOCK_NAMES = {
 
 let blockChangeTemplate = ({before}) => `<div class="format-change-info"><b>${gettext('Was')}:</b> ${interpolate(BLOCK_NAMES[before.type], before.attrs, true)}</div>`
 
-let trackTemplate = ({type, data, node, pos, view, active, docInfo, filterOptions}) => {
+let trackTemplate = ({type, data, node, pos, view, active, docInfo, filterOptions, staticUrl}) => {
     if (!filterOptions.track) {
         return '<div class="margin-box track hidden"></div>'
     }
@@ -253,7 +257,7 @@ let trackTemplate = ({type, data, node, pos, view, active, docInfo, filterOption
             <div class="track-${type}">
                 <div class="track-title">${interpolate(ACTIONS[nodeActionType] ? ACTIONS[nodeActionType] : ACTIONS[type], node.attrs, true)}</div>
                 <div class="comment-user">
-                    <img class="comment-user-avatar" src="${author ? author.avatar : `${$StaticUrls.base$}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
+                    <img class="comment-user-avatar" src="${author ? author.avatar : `${staticUrl}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
                     <h5 class="comment-user-name">${escapeText(author ? author.name : data.username)}</h5>
                     <p class="comment-date">${node.type.name==='text' ? `${gettext('ca.')} ` : ''}${localizeDate(data.date*60000, 'minutes')}</p>
                 </div>
@@ -309,11 +313,22 @@ export let marginBoxesTemplate = ({
         activeCommentAnswerId,
         user,
         docInfo,
-        filterOptions
+        filterOptions,
+        staticUrl
     }) => marginBoxes.map(mBox => {
         switch(mBox.type) {
             case 'comment':
-                return commentTemplate({comment: mBox.data, view: mBox.view, active: mBox.active, activeCommentAnswerId, editComment, user, docInfo, filterOptions})
+                return commentTemplate({
+                    comment: mBox.data,
+                    view: mBox.view,
+                    active: mBox.active,
+                    activeCommentAnswerId,
+                    editComment,
+                    user,
+                    docInfo,
+                    filterOptions,
+                    staticUrl
+                })
                 break
             case 'insertion':
             case 'deletion':
@@ -327,7 +342,8 @@ export let marginBoxesTemplate = ({
                     view: mBox.view,
                     active: mBox.active,
                     docInfo,
-                    filterOptions
+                    filterOptions,
+                    staticUrl
                 })
                 break
             case 'filter':

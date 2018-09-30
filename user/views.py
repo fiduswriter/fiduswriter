@@ -15,6 +15,7 @@ from allauth.account.models import EmailAddress
 from allauth.account import signals
 from django.contrib.auth.forms import PasswordChangeForm
 from allauth.account.forms import AddEmailForm
+from npm_mjs.templatetags.transpile import StaticTranspileNode
 
 from avatar.models import Avatar
 from avatar import views as avatarviews
@@ -43,7 +44,7 @@ def show_profile(request, username):
         if user:
             response['the_user'] = user
         response['can_edit'] = False
-    return render(request, 'account/show_profile.html', response)
+    return render(request, 'user/show_profile.html', response)
 
 
 @login_required
@@ -319,8 +320,10 @@ def list_team_members(request):
     """
     List all team members of the current user
     """
-    response = {}
-    return render(request, 'account/list_team_members.html', response)
+    response = {
+        'script': StaticTranspileNode.handle_simple('js/contacts_overview.mjs')
+    }
+    return render(request, 'index.html', response)
 
 
 @login_required

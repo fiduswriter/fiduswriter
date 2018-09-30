@@ -1,3 +1,5 @@
 import {ContactsOverview} from "./modules/contacts"
 
-new ContactsOverview()
+const theContactsOverview = new ContactsOverview(window.fidusConfig)
+theContactsOverview.init()
+window.theContactsOverview = theContactsOverview

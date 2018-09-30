@@ -1,8 +1,5 @@
-import re
-
-from django.utils.six.moves.urllib.parse import quote, urljoin
 from django import template
-from django.templatetags.static import StaticNode, PrefixNode
+from django.templatetags.static import PrefixNode
 from django.apps import apps
 from django.conf import settings
 

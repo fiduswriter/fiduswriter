@@ -86,7 +86,8 @@ export let menuModel = {
             action: overview => {
                 let fileImporter = new BibLatexFileImportDialog(
                     overview.bibDB,
-                    ids => overview.updateTable(ids)
+                    ids => overview.updateTable(ids),
+                    overview.staticUrl
                 )
                 fileImporter.init()
             },

@@ -30,7 +30,6 @@ def fiduswriter_config_js(context):
         username = context['user'].get_username()
     else:
         username = ''
-    print(username)
     return {
         'static_url': static_url,
         'ws_port': ws_port,

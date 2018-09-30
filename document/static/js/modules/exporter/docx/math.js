@@ -32,7 +32,7 @@ export class DocxExporterMath {
     }
 
     setupXslt() {
-        return fetch(`${$StaticUrls.base$}xsl/mml2omml.xsl?v=${$StaticUrls.transpile.version$}`)
+        return fetch(`${this.exporter.staticUrl}xsl/mml2omml.xsl?v=${$StaticUrls.transpile.version$}`)
             .then(response => response.text())
             .then(xmlString => {
                 const parser = new window.DOMParser()

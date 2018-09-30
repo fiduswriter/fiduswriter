@@ -196,7 +196,8 @@ export class DocumentOverviewActions {
                     {db:doc.images},
                     this.documentOverview.citationStyles,
                     this.documentOverview.citationLocales,
-                    this.documentOverview.documentStyles
+                    this.documentOverview.documentStyles,
+                    this.documentOverview.staticUrl
                 )
                 exporter.init()
             })
@@ -218,7 +219,8 @@ export class DocumentOverviewActions {
                             {db:doc.bibliography},
                             {db:doc.images},
                             this.documentOverview.citationStyles,
-                            this.documentOverview.citationLocales
+                            this.documentOverview.citationLocales,
+                            this.documentOverview.staticUrl
                         )
                         exporter.init()
                     } else {
@@ -268,7 +270,8 @@ export class DocumentOverviewActions {
                         {db:doc.bibliography},
                         {db:doc.images},
                         this.documentOverview.citationStyles,
-                        this.documentOverview.citationLocales
+                        this.documentOverview.citationLocales,
+                        this.documentOverview.staticUrl
                     )
                     exporter.init()
                 })

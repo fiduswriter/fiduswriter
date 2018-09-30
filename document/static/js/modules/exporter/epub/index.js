@@ -14,13 +14,14 @@ import {docSchema} from "../../schema/document"
 
 export class EpubExporter extends BaseEpubExporter {
 
-    constructor(doc, bibDB, imageDB, citationStyles, citationLocales) {
+    constructor(doc, bibDB, imageDB, citationStyles, citationLocales, staticUrl) {
         super()
         this.doc = doc
         this.citationStyles = citationStyles
         this.citationLocales = citationLocales
         this.bibDB = bibDB
         this.imageDB = imageDB
+        this.staticUrl = staticUrl
         this.shortLang = this.doc.settings.language.split('-')[0]
         this.lang = this.doc.settings.language
     }
@@ -156,7 +157,7 @@ export class EpubExporter extends BaseEpubExporter {
         if (math) {
             includeZips.push({
                 'directory': 'EPUB',
-                'url': `${$StaticUrls.base$}zip/katex_style.zip?v=${$StaticUrls.transpile.version$}`
+                'url': `${this.staticUrl}zip/katex_style.zip?v=${$StaticUrls.transpile.version$}`
             })
         }
         let zipper = new ZipFileCreator(

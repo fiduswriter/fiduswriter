@@ -59,7 +59,8 @@ export class ModStyles {
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB,
                             editor.mod.styles.citationStyles,
-                            editor.mod.styles.citationLocales
+                            editor.mod.styles.citationLocales,
+                            editor.staticUrl
                         )
                         exporter.init()
                     }

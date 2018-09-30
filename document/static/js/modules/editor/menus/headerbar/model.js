@@ -155,7 +155,8 @@ export let headerbarModel = {
                             editor.mod.db.imageDB,
                             editor.mod.styles.citationStyles,
                             editor.mod.styles.citationLocales,
-                            editor.mod.styles.documentStyles
+                            editor.mod.styles.documentStyles,
+                            editor.staticUrl
                         )
                         exporter.init()
                     }
@@ -180,7 +181,8 @@ export let headerbarModel = {
                             editor.mod.db.imageDB,
                             editor.mod.styles.citationStyles,
                             editor.mod.styles.citationLocales,
-                            editor.mod.styles.documentStyles
+                            editor.mod.styles.documentStyles,
+                            editor.staticUrl
                         )
                         exporter.init()
                     }
@@ -196,7 +198,8 @@ export let headerbarModel = {
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB,
                             editor.mod.styles.citationStyles,
-                            editor.mod.styles.citationLocales
+                            editor.mod.styles.citationLocales,
+                            editor.staticUrl
                         )
                         exporter.init()
                     }

@@ -156,7 +156,8 @@ export class ModMarginboxes {
             docInfo: this.editor.docInfo,
             editComment: this.editor.mod.comments.interactions.editComment,
             activeCommentAnswerId: this.editor.mod.comments.interactions.activeCommentAnswerId,
-            filterOptions: this.filterOptions
+            filterOptions: this.filterOptions,
+            staticUrl: this.editor.staticUrl
         })
         if (document.getElementById('margin-box-container').innerHTML !== marginBoxesHTML) {
             document.getElementById('margin-box-container').innerHTML = marginBoxesHTML

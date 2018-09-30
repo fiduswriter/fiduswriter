@@ -1,8 +1,0 @@
-{% for entry in entries %}
-@{{entry.type}}{% templatetag openbrace %}{{entry.name}},
-{% for value in entry.values %}
-{{value.name}} = {% templatetag openbrace %}{{value.value}}{% templatetag closebrace %},
-{% endfor %}
-{% templatetag closebrace %},
-
-{% endfor %}

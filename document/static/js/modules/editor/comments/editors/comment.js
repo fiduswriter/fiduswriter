@@ -183,7 +183,7 @@ export class CommentEditor {
         }
         this.dom.querySelector('div.tagger').innerHTML = this.userTaggerList.map((user, index) =>
             `<div class="tag-user tag${index === this.selectedTag ? ' selected' : ''}" data-index="${index}">
-                <img class="comment-user-avatar" src="${user.avatar ? user.avatar : `${$StaticUrls.base$}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
+                <img class="comment-user-avatar" src="${user.avatar ? user.avatar : `${this.mod.editor.staticUrl}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
                 <h5 class="comment-user-name">${escapeText(user.name)}</h5>
             </div>`
         ).join('')

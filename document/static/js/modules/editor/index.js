@@ -229,9 +229,10 @@ export class Editor {
             'chat.css',
             'access_rights_dialog.css',
             'citation_dialog.css',
-            'review.css'
+            'review.css',
+            'fw_modules/add_remove_dialog.css',
+            'fw_layouts/bibliography.css'
         ], this.staticUrl)
-        console.log(this.staticUrl)
         const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
         feedbackTab.init()
     }

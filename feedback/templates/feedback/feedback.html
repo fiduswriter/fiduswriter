@@ -1,7 +1,3 @@
-{% load transpile %}
+{% load fiduswriter %}
+{% fiduswriter_config_js %}
 <script type="text/javascript" src="{% static "js/feedback.mjs" %}"></script>
-{% static_urls_js %}
-<script type="text/javascript">
-'use strict';
-window.fidusFeedbackConfig = {staticUrl: window.StaticUrls.base};
-</script>

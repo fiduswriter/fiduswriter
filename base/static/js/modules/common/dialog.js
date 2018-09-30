@@ -1,5 +1,5 @@
 
-let dialogTemplate = ({id, classes, title, height, width, icon, buttons, zIndex, body}) =>
+const dialogTemplate = ({id, classes, title, height, width, icon, buttons, zIndex, body}) =>
 `<div tabindex="-1" role="dialog"
         class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-dialog-buttons"
         ${id ? `aria-describedby="${id}"` : ''} style="z-index: ${zIndex};">
@@ -23,12 +23,12 @@ let dialogTemplate = ({id, classes, title, height, width, icon, buttons, zIndex,
 </div>
 <div class="ui-widget-overlay ui-front" style="z-index: ${zIndex-1}"></div>`
 
-let buttonTemplate = ({text, classes, icon}) => `<button type="button" class="${classes ? classes : 'fw-light'} fw-button ui-button ui-corner-all ui-widget">
+const buttonTemplate = ({text, classes, icon}) => `<button type="button" class="${classes ? classes : 'fw-light'} fw-button ui-button ui-corner-all ui-widget">
     ${icon ? `<i class="fa fa-${icon}" aria-hidden="true"></i>` : ''}
     ${text}
 </button>`
 
-let BUTTON_TYPES = {
+const BUTTON_TYPES = {
     close: {
         text: gettext('Close'),
         classes: 'fw-orange',
@@ -95,7 +95,7 @@ export class Dialog {
     }
 
     centerDialog() {
-        let totalWidth = window.innerWidth,
+        const totalWidth = window.innerWidth,
             totalHeight = window.innerHeight,
             dialogWidth = this.dialogEl.clientWidth,
             dialogHeight = this.dialogEl.clientHeight,

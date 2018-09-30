@@ -4,31 +4,57 @@ import * as plugins from "../../../plugins/documents_overview"
 import {DocumentOverviewActions} from "./actions"
 import {DocumentAccessRightsDialog} from "../access_rights"
 import {menuModel} from "./menu"
-import {activateWait, deactivateWait, addAlert, postJson, OverviewMenuView, findTarget, whenReady, escapeText, localizeDate} from "../../common"
+import {activateWait, deactivateWait, addAlert, postJson, OverviewMenuView, findTarget, whenReady, escapeText, localizeDate, baseBodyTemplate, ensureCSS, setDocTitle} from "../../common"
 import {SiteMenu} from "../../menu"
+import {FeedbackTab} from "../../feedback"
+
 /*
 * Helper functions for the document overview page.
 */
 
 export class DocumentOverview {
 
-    constructor () {
+    constructor ({username, staticUrl}) {
+        this.username = username
+        this.staticUrl = staticUrl
         this.documentList = []
         this.user = false
         this.teamMembers = []
         this.accessRights = []
         this.mod = {}
-        let smenu = new SiteMenu("documents")
-        smenu.init()
-        new DocumentOverviewActions(this)
-        this.menu = new OverviewMenuView(this, menuModel)
-        this.menu.init()
-        this.activateFidusPlugins()
-        this.bind()
+    }
+
+    init() {
+        whenReady().then(() => {
+            this.render()
+            let smenu = new SiteMenu("documents")
+            smenu.init()
+            new DocumentOverviewActions(this)
+            this.menu = new OverviewMenuView(this, menuModel)
+            this.menu.init()
+            this.activateFidusPlugins()
+            this.bind()
+            this.getDocumentListData()
+        })
+    }
+
+    render() {
+        document.body = document.createElement('body')
+        document.body.innerHTML = baseBodyTemplate({
+            contents: '<ul id="fw-overview-menu"></ul>',
+            username: this.username,
+            staticUrl: this.staticUrl
+        })
+        ensureCSS([
+            'fw_modules/add_remove_dialog.css',
+            'access_rights_dialog.css'
+        ], this.staticUrl)
+        setDocTitle(gettext('Document Overview'))
+        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
+        feedbackTab.init()
     }
 
     bind() {
-        whenReady().then(() => this.getDocumentListData())
         document.addEventListener('click', event => {
             let el = {}, docId
             switch (true) {

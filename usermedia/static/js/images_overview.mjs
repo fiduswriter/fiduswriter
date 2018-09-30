@@ -1,5 +1,6 @@
 import {ImageOverview} from "./modules/images/overview"
 
-let theImageOverview = new ImageOverview()
+const theImageOverview = new ImageOverview(window.fidusConfig)
+theImageOverview.init()
 
 window.theImageOverview = theImageOverview

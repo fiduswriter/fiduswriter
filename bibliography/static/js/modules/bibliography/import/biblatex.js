@@ -11,16 +11,17 @@ const ERROR_MSG = {
 
 
 export class BibLatexImporter {
-    constructor(fileContents, bibDB, addToListCall, callback, showAlerts=true) {
+    constructor(fileContents, bibDB, addToListCall, callback, staticUrl, showAlerts=true) {
         this.fileContents = fileContents
         this.bibDB = bibDB
         this.addToListCall = addToListCall
         this.callback = callback
+        this.staticUrl = staticUrl
         this.showAlerts = showAlerts
     }
 
     init() {
-        let importWorker = makeWorker(`${$StaticUrls.transpile.base$}biblatex_import_worker.js?v=${$StaticUrls.transpile.version$}`);
+        let importWorker = makeWorker(`${this.staticUrl}js/transpile/biblatex_import_worker.js?v=${$StaticUrls.transpile.version$}`);
         importWorker.onmessage = message => this.onMessage(message.data)
         importWorker.postMessage({fileContents: this.fileContents})
     }

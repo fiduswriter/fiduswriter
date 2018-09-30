@@ -10,8 +10,9 @@ const CSS_PAPER_SIZES = {
 
 export class PrintExporter extends HTMLExporter {
 
-    constructor(doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles) {
-        super(doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles)
+    constructor(doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles, staticUrl) {
+        super(doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles, staticUrl)
+        this.staticUrl = staticUrl
         this.removeUrlPrefix = false
         this.styleSheets.push({contents:
             `a.fn {
@@ -82,7 +83,7 @@ export class PrintExporter extends HTMLExporter {
                 {
                     viewportElement: this.iframeWin.document.body,
                     window: this.iframeWin,
-                    userAgentRootURL: `${$StaticUrls.base$}vivliostyle-resources/`
+                    userAgentRootURL: `${this.staticUrl}vivliostyle-resources/`
                 }
             )
         return new Promise(resolve => {

@@ -1,6 +1,6 @@
 {% load i18n %}
 {% load compress %}
-{% load transpile %}
+{% load fiduswriter %}
 <!DOCTYPE html>
 <html class="fw-basic-text">
     <head>
@@ -37,32 +37,14 @@
         <link type="text/css" rel="stylesheet" href="{% static "css/fw_layouts/header_menu.css" %}" />
         {% endcompress %}
         <!-- jQuery -->
+        <!-- Please don't use jQuery! This is only left in here as a dependency of mathquill -->
         <script type="text/javascript" src="{% static "js/libs/jquery.min.js" %}"></script>
         <!-- Check browser -->
         <script type="text/javascript" src="{% static "js/browser_check.mjs" %}"></script>
         <script type="text/javascript" src="/jsi18n/"></script>
         <!-- JS error handling -->
         <script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>
-        {% static_urls_js %}
-        <script type="text/javascript">
-            'use strict';
-            {% if WS_PORT %}
-                const websocketPort = ':' + {{WS_PORT}};
-            {% else %}
-                const websocketPort = location.port.length ? ':' + location.port : '';
-            {% endif %}
-            {% if WS_SERVER %}
-                const websocketServer = '{{ WS_SERVER }}';
-            {% else %}
-                const websocketServer = location.host.split(':')[0];
-            {% endif %}
-            const websocketProtocol = location.protocol === 'https:' ? 'wss://' : 'ws://'
-            window.fidusConfig = {
-                username: "{{request.user.username}}",
-                staticUrl: window.StaticUrls.base,
-                websocketUrl: websocketProtocol + websocketServer + websocketPort
-            };
-        </script>
+        {% fiduswriter_config_js %}
         <!-- Main page script -->
         <script type="text/javascript" src="{{script}}"></script>
     </head>

@@ -1,6 +1,6 @@
 import {addDropdownBox, whenReady, getUserInfo, activateWait, deactivateWait, post, addAlert, baseBodyTemplate, findTarget} from "../common"
 import {SiteMenu} from "../menu"
-import {changeAvatarDialog, deleteAvatarDialog, changePwdDialog, addEmailDialog, changePrimaryEmailDialog} from "./dialogs"
+import {changeAvatarDialog, deleteAvatarDialog, changePwdDialog, addEmailDialog, changePrimaryEmailDialog, deleteEmailDialog} from "./dialogs"
 import {profileContents} from "./templates"
 import {DeleteUserDialog} from "./delete_user"
 

@@ -29,16 +29,17 @@
     padding: 5px 0 2px;
     margin-top: 9px;
 }
-#edit-avatar-pulldown {
-    top: 33px;
-}
-#edit-avatar-pulldown:after {
-    left: 14px;
-}
 
 #profile-data th, #profile-data td {
     padding-bottom: 5px;
+    vertical-align: middle;
 }
+
+#profile-data .profile-emial-title {
+    vertical-align: top;
+    padding-top: 82px;
+}
+
 #profile-data th {
     padding-right: 20px;
 }
@@ -46,7 +47,8 @@
     text-align: right;
     padding-top: 30px;
 }
-#profile-data input {
+#profile-data input[type="text"],
+#profile-data input[type="password"] {
     width: 470px;
 }
 
@@ -56,4 +58,37 @@
 
 #username-confirmation {
   margin: 15px 0 0;
+}
+
+.fw-profile-dialog-input {
+    width: 290px;
+    margin-bottom: 6px;
+}
+
+#profile-data .fw-document-table {
+    width: 476px;
+    white-space: nowrap;
+    margin-top: 40px;
+}
+
+#profile-data .fw-document-table th,
+#profile-data .fw-document-table td {
+    text-align: center;
+    vertical-align: middle;
+    height: 36px;
+    padding: 0;
+    line-height: 36px;
+}
+
+#profile-data .fw-document-table td.emailaddress {
+    width: 235px;
+    text-align: left;
+}
+
+#profile-data .fw-document-table .disabled {
+    color: #cecece;
+}
+
+#add-profile-email {
+    cursor: pointer;
 }

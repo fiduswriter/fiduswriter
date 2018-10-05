@@ -40,6 +40,7 @@ export class App {
                         this.page = new ContactsOverview(this.config)
                         break
                 }
+                break
             case "document":
                 let id = parseInt(pathnameParts[2])
                 if (isNaN(id)) {

@@ -6,8 +6,8 @@ import {SiteMenu} from "../menu"
 import {menuModel} from "./menu"
 
 export class ContactsOverview {
-    constructor({username, staticUrl}) {
-        this.username = username
+    constructor({user, staticUrl}) {
+        this.username = user.username
         this.staticUrl = staticUrl
     }
 

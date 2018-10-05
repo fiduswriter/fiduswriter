@@ -3,20 +3,16 @@ import {SiteMenu} from "../menu"
 import {changeAvatarDialog, deleteAvatarDialog, changePwdDialog, addEmailDialog, changePrimaryEmailDialog, deleteEmailDialog} from "./dialogs"
 import {profileContents} from "./templates"
 import {DeleteUserDialog} from "./delete_user"
+import {FeedbackTab} from "../feedback"
 
 export class Profile {
-    constructor({username, staticUrl}) {
-        this.username = username
+    constructor({user, staticUrl}) {
+        this.user = user
         this.staticUrl = staticUrl
     }
 
     init() {
-        getUserInfo().then(
-            ({json}) => {
-                this.userInfo = json
-                return whenReady()
-            }
-        ).then(() => {
+        whenReady().then(() => {
             this.render()
             const smenu = new SiteMenu("") // Nothing highlighted
             smenu.init()
@@ -49,10 +45,13 @@ export class Profile {
     render() {
         document.body = document.createElement('body')
         document.body.innerHTML = baseBodyTemplate({
-            contents: profileContents(this.userInfo),
-            username: this.username,
+            contents: profileContents(this.user),
+            username: this.user.username,
             staticUrl: this.staticUrl
         })
+        setDocTitle(gettext('Configure profile'))
+        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
+        feedbackTab.init()
     }
 
     save() {

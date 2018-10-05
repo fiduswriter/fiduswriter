@@ -50,14 +50,14 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
     def get_title(self, driver):
         # Title is child 0.
         return driver.execute_script(
-            'return window.theEditor.view.state.doc.firstChild'
+            'return window.theApp.page.view.state.doc.firstChild'
             '.firstChild.textContent;'
         )
 
     def get_contents(self, driver):
         # Contents is child 5.
         return driver.execute_script(
-            'return window.theEditor.view.state.doc.firstChild'
+            'return window.theApp.page.view.state.doc.firstChild'
             '.child(5).textContent;'
         )
 

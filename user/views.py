@@ -36,7 +36,7 @@ def show_profile(request):
     Show user profile page
     """
     response = {
-        'script': StaticTranspileNode.handle_simple('js/profile.mjs')
+        'script': StaticTranspileNode.handle_simple('js/app.mjs')
     }
     return render(request, 'index.html', response)
 
@@ -345,7 +345,7 @@ def list_team_members(request):
     List all team members of the current user
     """
     response = {
-        'script': StaticTranspileNode.handle_simple('js/contacts_overview.mjs')
+        'script': StaticTranspileNode.handle_simple('js/app.mjs')
     }
     return render(request, 'index.html', response)
 

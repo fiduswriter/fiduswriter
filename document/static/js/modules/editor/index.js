@@ -118,6 +118,8 @@ export class Editor {
     // It is currently not possible to initialize more than one editor class, as it
     // contains bindings to menu items, etc. that are uniquely defined.
     constructor(id, {staticUrl, websocketUrl}) {
+        console.log('here')
+        console.log({staticUrl, websocketUrl})
         this.staticUrl = staticUrl
         this.websocketUrl = websocketUrl
         this.mod = {}

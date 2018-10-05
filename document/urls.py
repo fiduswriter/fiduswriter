@@ -1,10 +1,11 @@
 from django.conf.urls import url
 
 from . import views
+from base.views import app
 
 urlpatterns = [
-    url('^$', views.index, name='index'),
-    url('^new/$', views.editor, name='editor'),
+    url('^$', app, name='index'),
+    url('^new/$', app, name='editor'),
     url(
         '^documentlist/$',
         views.get_documentlist_js,
@@ -30,7 +31,7 @@ urlpatterns = [
         views.delete_revision_js,
         name='delete_revision_js'
     ),
-    url('^\d+/$', views.editor, name='editor'),
+    url('^\d+/$', app, name='editor'),
     url(
         '^accessright/save/$',
         views.access_right_save_js,

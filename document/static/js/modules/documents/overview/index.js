@@ -14,7 +14,8 @@ import {FeedbackTab} from "../../feedback"
 
 export class DocumentOverview {
 
-    constructor ({user, staticUrl}) {
+    constructor ({app, user, staticUrl}) {
+        this.app = app
         this.username = user.username
         this.staticUrl = staticUrl
         this.documentList = []
@@ -55,7 +56,7 @@ export class DocumentOverview {
     }
 
     bind() {
-        document.addEventListener('click', event => {
+        document.body.addEventListener('click', event => {
             let el = {}, docId
             switch (true) {
                 case findTarget(event, '.revisions', el):
@@ -75,6 +76,12 @@ export class DocumentOverview {
                         newAccessRights => this.accessRights = newAccessRights,
                         memberDetails => this.teamMembers.push(memberDetails)
                     )
+                    break
+                case findTarget(event, 'a', el):
+                    if (el.target.hostname === window.location.hostname) {
+                        event.preventDefault()
+                        this.app.goTo(el.target.href)
+                    }
                     break
                 default:
                     break

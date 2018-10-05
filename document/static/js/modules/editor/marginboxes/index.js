@@ -31,7 +31,7 @@ export class ModMarginboxes {
 
     bindEvents() {
         // Bind all the click events related to the margin box filter
-        document.addEventListener('click', event => {
+        document.body.addEventListener('click', event => {
             const el = {}
             switch (true) {
                 case findTarget(event, '#filter-track', el):
@@ -50,7 +50,7 @@ export class ModMarginboxes {
                     break
             }
         })
-        document.addEventListener('change', event => {
+        document.body.addEventListener('change', event => {
             const el = {}
             switch (true) {
                 case findTarget(event, '#filter-comments-author', el):

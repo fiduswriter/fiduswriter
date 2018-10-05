@@ -23,6 +23,13 @@ export class ModServerCommunications {
         this.createWSConnection()
     }
 
+    close() {
+        if (this.ws) {
+            this.ws.onclose = () => {}
+            this.ws.close()
+        }
+    }
+
     createWSConnection() {
         // Messages object used to ensure that data is received in right order.
         this.messages = {
@@ -92,12 +99,13 @@ export class ModServerCommunications {
                 console.warn('doc not initiated')
                 return
             }
-            let toSend = sendableSteps(this.editor.view.state)
+            const toSend = sendableSteps(this.editor.view.state),
+                unobtrusiveMessages = document.getElementById('unobtrusive_messages')
             if (toSend) {
-                document.getElementById('unobtrusive_messages').innerHTML =
+                unobtrusiveMessages.innerHTML =
                     `<span class="warn">${gettext('Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect...')}</span>`
-            } else {
-                document.getElementById('unobtrusive_messages').innerHTML = gettext('Disconnected. Attempting to reconnect...')
+            } else if (unobtrusiveMessages) {
+                unobtrusiveMessages.innerHTML = gettext('Disconnected. Attempting to reconnect...')
             }
 
         }

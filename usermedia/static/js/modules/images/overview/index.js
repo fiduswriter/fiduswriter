@@ -12,9 +12,10 @@ import * as plugins from "../../../plugins/images_overview"
  /** Helper functions for user added images/SVGs.*/
 
 export class ImageOverview {
-    constructor({staticUrl, username}) {
+    constructor({app, staticUrl, user}) {
+        this.app = app
         this.staticUrl = staticUrl
-        this.username = username
+        this.username = user.username
         this.mod = {}
     }
 
@@ -216,7 +217,7 @@ export class ImageOverview {
     }
 
     bindEvents() {
-        document.addEventListener('click', event => {
+        document.body.addEventListener('click', event => {
             let el = {}, imageId
             switch (true) {
                 case findTarget(event, '.delete-image', el):
@@ -246,6 +247,12 @@ export class ImageOverview {
                         )
                     } else {
                         itemEl.parentElement.removeChild(itemEl)
+                    }
+                    break
+                case findTarget(event, 'a', el):
+                    if (el.target.hostname === window.location.hostname) {
+                        event.preventDefault()
+                        this.app.goTo(el.target.href)
                     }
                     break
                 default:

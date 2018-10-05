@@ -1,11 +1,9 @@
 import time
 import os
 from tornado.escape import json_decode, json_encode
-from django.shortcuts import render
 from django.core import serializers
 from django.http import HttpResponse, JsonResponse, HttpRequest
 from django.contrib.auth.decorators import login_required
-from django.template.context_processors import csrf
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.files import File
@@ -19,7 +17,6 @@ from django.core.paginator import Paginator, EmptyPage
 
 from avatar.utils import get_primary_avatar, get_default_avatar_url
 from avatar.templatetags.avatar_tags import avatar_url
-from npm_mjs.templatetags.transpile import StaticTranspileNode
 
 from document.models import Document, AccessRight, DocumentRevision, \
     ExportTemplate, CAN_UPDATE_DOCUMENT
@@ -47,15 +44,6 @@ def get_accessrights(ars):
             'avatar': the_avatar
         })
     return ret
-
-
-@login_required
-def index(request):
-    response = {
-        'script': StaticTranspileNode.handle_simple('js/document_overview.mjs')
-    }
-    response.update(csrf(request))
-    return render(request, 'index.html', response)
 
 
 @login_required
@@ -183,14 +171,6 @@ def get_documentlist_js(request):
         response,
         status=status
     )
-
-
-@login_required
-def editor(request):
-    response = {
-        'script': StaticTranspileNode.handle_simple('js/editor.mjs')
-    }
-    return render(request, 'index.html', response)
 
 
 @login_required

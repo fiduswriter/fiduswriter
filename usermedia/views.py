@@ -2,14 +2,10 @@ from builtins import map
 from builtins import filter
 from time import mktime
 
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.template.context_processors import csrf
 from django.http import JsonResponse
 from django.core.serializers.python import Serializer
 from django.utils.translation import ugettext as _
-
-from npm_mjs.templatetags.transpile import StaticTranspileNode
 
 from usermedia.models import Image, ImageCategory, UserImage
 from .models import ALLOWED_FILETYPES
@@ -23,15 +19,6 @@ class SimpleSerializer(Serializer):
 
 
 serializer = SimpleSerializer()
-
-
-@login_required
-def index(request):
-    response = {
-        'script': StaticTranspileNode.handle_simple('js/images_overview.mjs')
-    }
-    response.update(csrf(request))
-    return render(request, 'index.html', response)
 
 
 # save changes or create a new entry

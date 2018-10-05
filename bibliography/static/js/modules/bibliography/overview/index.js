@@ -16,8 +16,9 @@ import {escapeText} from "../../common"
 
 export class BibliographyOverview {
 
-    constructor({username, staticUrl}) {
-        this.username = username
+    constructor({app, user, staticUrl}) {
+        this.app = app
+        this.username = user.username
         this.staticUrl = staticUrl
     }
 
@@ -38,6 +39,7 @@ export class BibliographyOverview {
     }
 
     render() {
+        document.body = document.createElement('body')
         document.body.innerHTML = baseBodyTemplate({
             contents: '<ul id="fw-overview-menu"></ul>',
             username: this.username,
@@ -264,7 +266,7 @@ export class BibliographyOverview {
      * @function bibEvents
           */
     bindEvents() {
-        document.addEventListener('click', event => {
+        document.body.addEventListener('click', event => {
             let el = {}, bookId
             switch (true) {
                 case findTarget(event, '.delete-bib', el):
@@ -295,6 +297,12 @@ export class BibliographyOverview {
                         )
                     } else {
                         itemEl.parentElement.removeChild(itemEl)
+                    }
+                    break
+                case findTarget(event, 'a', el):
+                    if (el.target.hostname === window.location.hostname && el.target.getAttribute('href')[0] === '/') {
+                        event.preventDefault()
+                        this.app.goTo(el.target.href)
                     }
                     break
                 default:

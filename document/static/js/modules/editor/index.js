@@ -117,7 +117,8 @@ export class Editor {
     // A class that contains everything that happens on the editor page.
     // It is currently not possible to initialize more than one editor class, as it
     // contains bindings to menu items, etc. that are uniquely defined.
-    constructor(id, {staticUrl, websocketUrl}) {
+    constructor(id, {app, staticUrl, websocketUrl}) {
+        this.app = app
         this.staticUrl = staticUrl
         this.websocketUrl = websocketUrl
         this.mod = {}
@@ -180,6 +181,10 @@ export class Editor {
             this.render()
             this.initEditor()
         })
+    }
+
+    close() {
+        this.mod.serverCommunications.close()
     }
 
     render() {

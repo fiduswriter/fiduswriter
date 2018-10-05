@@ -31,7 +31,7 @@ serializer = SimpleSerializer()
 def index(request):
     response = {
         'script': StaticTranspileNode.handle_simple(
-            'js/bibliography_overview.mjs'
+            'js/app.mjs'
         )
     }
     response.update(csrf(request))

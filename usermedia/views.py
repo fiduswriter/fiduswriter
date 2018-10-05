@@ -28,7 +28,7 @@ serializer = SimpleSerializer()
 @login_required
 def index(request):
     response = {
-        'script': StaticTranspileNode.handle_simple('js/images_overview.mjs')
+        'script': StaticTranspileNode.handle_simple('js/app.mjs')
     }
     response.update(csrf(request))
     return render(request, 'index.html', response)

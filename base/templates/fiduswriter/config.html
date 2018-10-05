@@ -13,7 +13,6 @@
         {% endif %}
         const websocketProtocol = location.protocol === 'https:' ? 'wss://' : 'ws://'
         window.fidusConfig = {
-            username: '{{ username }}',
             staticUrl: '{{ static_url }}',
             websocketUrl: websocketProtocol + websocketServer + websocketPort
         };

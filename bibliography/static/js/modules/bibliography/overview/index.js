@@ -16,8 +16,8 @@ import {escapeText} from "../../common"
 
 export class BibliographyOverview {
 
-    constructor({username, staticUrl}) {
-        this.username = username
+    constructor({user, staticUrl}) {
+        this.username = user.username
         this.staticUrl = staticUrl
     }
 

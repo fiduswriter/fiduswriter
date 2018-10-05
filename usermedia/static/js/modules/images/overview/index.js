@@ -12,9 +12,9 @@ import * as plugins from "../../../plugins/images_overview"
  /** Helper functions for user added images/SVGs.*/
 
 export class ImageOverview {
-    constructor({staticUrl, username}) {
+    constructor({staticUrl, user}) {
         this.staticUrl = staticUrl
-        this.username = username
+        this.username = user.username
         this.mod = {}
     }
 

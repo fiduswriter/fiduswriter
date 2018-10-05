@@ -52,7 +52,7 @@ def get_accessrights(ars):
 @login_required
 def index(request):
     response = {
-        'script': StaticTranspileNode.handle_simple('js/document_overview.mjs')
+        'script': StaticTranspileNode.handle_simple('js/app.mjs')
     }
     response.update(csrf(request))
     return render(request, 'index.html', response)
@@ -188,7 +188,7 @@ def get_documentlist_js(request):
 @login_required
 def editor(request):
     response = {
-        'script': StaticTranspileNode.handle_simple('js/editor.mjs')
+        'script': StaticTranspileNode.handle_simple('js/app.mjs')
     }
     return render(request, 'index.html', response)
 

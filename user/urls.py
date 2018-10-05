@@ -30,9 +30,14 @@ urlpatterns = [
         name='list_team_members_js'
     ),
     url(
-        '^profile/(?P<username>[\w\d\.\-_\@]{1,30})$',
+        '^profile/$',
         views.show_profile,
         name='show_userprofile'
+    ),
+    url(
+        '^info/$',
+        views.info_js,
+        name='info_js'
     ),
     url('^avatar/delete/$', views.delete_avatar_js, name="delete_avatar_js"),
     url('^avatar/upload/$', views.upload_avatar_js, name="upload_avatar_js"),

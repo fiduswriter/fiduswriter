@@ -117,3 +117,7 @@ export const ensureCSS = function(cssUrl, staticUrl) {
     }
     return false
 }
+
+export const getUserInfo = function() {
+    return postJson('/user/info/')
+}

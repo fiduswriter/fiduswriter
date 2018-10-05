@@ -46,7 +46,7 @@ export class DocumentOverview {
             staticUrl: this.staticUrl
         })
         ensureCSS([
-            'fw_modules/add_remove_dialog.css',
+            'add_remove_dialog.css',
             'access_rights_dialog.css'
         ], this.staticUrl)
         setDocTitle(gettext('Document Overview'))

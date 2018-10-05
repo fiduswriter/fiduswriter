@@ -44,7 +44,7 @@ export class BibliographyOverview {
             staticUrl: this.staticUrl
         })
         ensureCSS([
-            'fw_layouts/bibliography.css',
+            'bibliography.css',
             'prosemirror.css'
         ], this.staticUrl)
         setDocTitle(gettext('Bibliography Manager'))

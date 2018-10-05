@@ -17,7 +17,7 @@ export class ModCommentInteractions {
 
     bindEvents() {
         // Bind all the click events related to comments
-        document.addEventListener('click', event => {
+        document.body.addEventListener('click', event => {
             let el = {}
             switch (true) {
                 case findTarget(event, '.show-comment-options', el):

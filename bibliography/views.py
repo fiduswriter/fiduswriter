@@ -2,14 +2,10 @@ import time
 import json
 from builtins import range
 
-from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
-from django.template.context_processors import csrf
 from django.db.models import Max, Count
 from django.core.serializers.python import Serializer
-
-from npm_mjs.templatetags.transpile import StaticTranspileNode
 
 from bibliography.models import (
     Entry,
@@ -25,17 +21,6 @@ class SimpleSerializer(Serializer):
 
 
 serializer = SimpleSerializer()
-
-
-@login_required
-def index(request):
-    response = {
-        'script': StaticTranspileNode.handle_simple(
-            'js/bibliography_overview.mjs'
-        )
-    }
-    response.update(csrf(request))
-    return render(request, 'index.html', response)
 
 
 # returns list of bibliography items

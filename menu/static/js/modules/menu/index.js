@@ -65,12 +65,6 @@ export class SiteMenu {
             }
         )
 
-        // As a click will close the pulldown, we need to activate the link by means of a mousedown already.
-        document.querySelectorAll('#user-preferences-pulldown a').forEach(el => el.addEventListener('mousedown', event => {
-            event.preventDefault()
-            window.location = el.getAttribute('href')
-        }))
-
         // Same for form button
         document.querySelectorAll('#user-preferences-pulldown form').forEach(el => el.addEventListener('mousedown', event => {
             event.preventDefault()

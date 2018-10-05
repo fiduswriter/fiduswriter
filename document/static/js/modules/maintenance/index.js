@@ -20,7 +20,7 @@ export class DocMaintenance {
     }
 
     init() {
-        document.addEventListener('click', event => {
+        document.body.addEventListener('click', event => {
             let el = {}
             switch (true) {
                 case findTarget(event, 'button#update:not(.disabled)', el):

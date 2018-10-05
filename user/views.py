@@ -2,7 +2,6 @@ import json
 
 from django.http import JsonResponse, HttpResponseRedirect
 from django.contrib.auth import logout, update_session_auth_hash
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
@@ -14,7 +13,6 @@ from allauth.account.models import EmailAddress
 from allauth.account import signals
 from django.contrib.auth.forms import PasswordChangeForm
 from allauth.account.forms import AddEmailForm
-from npm_mjs.templatetags.transpile import StaticTranspileNode
 
 from avatar.models import Avatar
 from avatar import views as avatarviews
@@ -28,17 +26,6 @@ def logout_page(request):
     """
     logout(request)
     return HttpResponseRedirect('/')
-
-
-@login_required
-def show_profile(request):
-    """
-    Show user profile page
-    """
-    response = {
-        'script': StaticTranspileNode.handle_simple('js/profile.mjs')
-    }
-    return render(request, 'index.html', response)
 
 
 @login_required
@@ -232,7 +219,9 @@ def upload_avatar_js(request):
                 user=request.user,
                 avatar=avatar
             )
-            response['avatar'] = userutil.get_user_avatar_url(request.user)
+            response['avatar'] = userutil.get_user_avatar_url(
+                request.user
+            )['url']
             status = 200
     return JsonResponse(
         response,
@@ -250,7 +239,7 @@ def delete_avatar_js(request):
     if request.is_ajax() and request.method == 'POST':
         avatar, avatars = avatarviews._get_avatars(request.user)
         if avatar is None:
-            response = 'No avatar exists'
+            response['error'] = 'User has no avatar'
         else:
             aid = avatar.id
             for a in avatars:
@@ -264,7 +253,9 @@ def delete_avatar_js(request):
                     )
                     break
             Avatar.objects.filter(pk=aid).delete()
-            response['avatar'] = userutil.get_user_avatar_url(request.user)
+            response['avatar'] = userutil.get_user_avatar_url(
+                request.user
+            )['url']
             status = 200
     return JsonResponse(
         response,
@@ -340,17 +331,6 @@ def save_profile_js(request):
 
 
 @login_required
-def list_team_members(request):
-    """
-    List all team members of the current user
-    """
-    response = {
-        'script': StaticTranspileNode.handle_simple('js/contacts_overview.mjs')
-    }
-    return render(request, 'index.html', response)
-
-
-@login_required
 def list_team_members_js(request):
     response = {}
     status = 405
@@ -364,7 +344,7 @@ def list_team_members_js(request):
                 'name': member.readable_name,
                 'username': member.get_username(),
                 'email': member.email,
-                'avatar': userutil.get_user_avatar_url(member)
+                'avatar': userutil.get_user_avatar_url(member)['url']
             }
             response['team_members'].append(team_member)
     return JsonResponse(
@@ -406,7 +386,9 @@ def add_team_member_js(request):
                 team_member_form = TeamMemberForm(form_data)
                 if team_member_form.is_valid():
                     team_member_form.save()
-                    the_avatar = userutil.get_user_avatar_url(new_member)
+                    the_avatar = userutil.get_user_avatar_url(
+                        new_member
+                    )['url']
                     response['member'] = {
                         'id': new_member.pk,
                         'name': new_member.username,

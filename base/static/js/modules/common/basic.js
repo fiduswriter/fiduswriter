@@ -33,7 +33,7 @@ export const openDropdownBox = function(box) {
         box.style.display = ''
         document.removeEventListener('click', closeDropdownBox, false);
     }
-    document.addEventListener('click', closeDropdownBox, false)
+    document.body.addEventListener('click', closeDropdownBox, false)
 }
 
 

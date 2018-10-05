@@ -3,25 +3,27 @@ import {changeAvatarDialogTemplate, confirmDeleteAvatarTemplate,
 deleteEmailDialogTemplate, changePrimaryEmailDialogTemplate} from "./templates"
 import {activateWait, deactivateWait, post, postJson, addAlert, Dialog, escapeText} from "../common"
 
-export const changeAvatarDialog = function() {
-    let buttons = [
+export const changeAvatarDialog = function(app) {
+    const avatarUploader = document.createElement('input')
+    avatarUploader.type='file'
+    avatarUploader.accept=".png, .jpg, .jpeg"
+
+    const buttons = [
         {
             text: gettext('Upload'),
             classes: "fw-dark",
             click: () => {
 
-                let avatarUploaderEl = document.getElementById('avatar-uploader')
-
-                if (!avatarUploaderEl.files.length) {
+                if (!avatarUploader.files.length) {
                     // No file selected
                     return
                 }
 
                 activateWait()
 
-                let file = avatarUploaderEl.files[0]
+                const file = avatarUploader.files[0]
 
-                postJson(
+                post(
                     '/account/avatar/upload/',
                     {
                         avatar: {
@@ -30,13 +32,17 @@ export const changeAvatarDialog = function() {
                         }
                     }
                 ).then(
-                    ({json}) => document.querySelector('#profile-avatar > img').setAttribute('src', json.avatar)
-                ).catch(
-                    () => addAlert('error', gettext('Could not update profile avatar'))
-                ).then(
                     () => deactivateWait()
+                ).then(
+                    () => app.getUserInfo()
+                ).then(
+                    () => app.selectPage()
+                ).catch(
+                    () => {
+                        deactivateWait()
+                        addAlert('error', gettext('Could not update profile avatar'))
+                    }
                 )
-
                 dialog.close()
             }
         },
@@ -48,39 +54,49 @@ export const changeAvatarDialog = function() {
         id: 'change-avatar-dialog',
         title: gettext('Upload your profile picture'),
         body: changeAvatarDialogTemplate(),
-        height: 80,
         buttons
     })
     dialog.open()
 
-    document.getElementById('avatar-uploader').addEventListener('change', function() {
-        document.getElementById('uploaded-avatar-name').innerHTML = this.value.replace(/C:\\fakepath\\/i, '')
+    avatarUploader.addEventListener('change', () => {
+         document.getElementById('uploaded-avatar-name').innerHTML = avatarUploader.value.replace(/C:\\fakepath\\/i, '')
     })
-    document.getElementById('upload-avatar-btn').addEventListener('click', () => document.getElementById('avatar-uploader').click())
-}
-
-
-const deleteAvatar = function() {
-    activateWait()
-
-    postJson(
-        '/account/avatar/delete/'
-    ).then(
-        ({json}) => document.querySelector('#profile-avatar > img').setAttribute('src', json.avatar)
-    ).catch(
-        () => addAlert('error', gettext('Could not delete avatar'))
-    ).then(
-        () => deactivateWait()
+    document.getElementById('upload-avatar-btn').addEventListener(
+         'click',
+         event => {
+             event.preventDefault()
+             avatarUploader.click()
+         }
     )
 }
 
-export const deleteAvatarDialog = function() {
+
+const deleteAvatar = function(app) {
+    activateWait()
+
+    post(
+        '/account/avatar/delete/'
+    ).then(
+        () => deactivateWait()
+    ).then(
+        () => app.getUserInfo()
+    ).then(
+        () => app.selectPage()
+    ).catch(
+        () => {
+            deactivateWait()
+            addAlert('error', gettext('Could not delete avatar'))
+        }
+    )
+}
+
+export const deleteAvatarDialog = function(app) {
     let buttons = [
         {
             text: gettext('Delete'),
             classes: "fw-dark",
             click: () => {
-                deleteAvatar()
+                deleteAvatar(app)
                 dialog.close()
             }
         },
@@ -89,7 +105,6 @@ export const deleteAvatarDialog = function() {
         }
     ]
     let dialog = new Dialog({
-        height: 180,
         title: gettext('Confirm deletion'),
         id: 'confirmdeletion',
         icon: 'exclamation-triangle',
@@ -165,7 +180,6 @@ export const changePwdDialog = function() {
         id: 'fw-change-pwd-dialog',
         title: gettext('Change Password'),
         body: changePwdDialogTemplate(),
-        height: 250,
         buttons
     })
 
@@ -221,13 +235,12 @@ export const addEmailDialog = function() {
         title: gettext('Add Email'),
         body: changeEmailDialogTemplate(),
         buttons,
-        height: 100,
         width: 400
     })
     dialog.open()
 }
 
-export const deleteEmailDialog = function(target) {
+export const deleteEmailDialog = function(target, app) {
     let thisTr = target.parentElement.parentElement,
         email = target.dataset.email
 
@@ -238,24 +251,26 @@ export const deleteEmailDialog = function(target) {
             click: () => {
                 activateWait()
 
-                postJson(
+                post(
                     '/account/emaildelete/',
                     {
                         email
                     }
                 ).then(
-                    ({json, status}) => {
-                        if(200 === status) {
-                            thisTr.parentElement.removeChild(thisTr)
-                        }
-                        addAlert('info', gettext(json.msg))
-                    }
-                ).catch(
-                    () => addAlert('error', gettext('The email could not be removed!'))
+                    () => addAlert('info', gettext('Email succesfully deleted!'))
                 ).then(
                     () => {
                         dialog.close()
                         deactivateWait()
+                    }
+                ).then(
+                    () => app.getUserInfo()
+                ).then(
+                    () => app.selectPage()
+                ).catch(
+                    () => {
+                        deactivateWait()
+                        addAlert('error', gettext('The email could not be deleted!'))
                     }
                 )
             }
@@ -272,16 +287,14 @@ export const deleteEmailDialog = function(target) {
             'text':  `${gettext('Remove the email address')}: ${escapeText(email)}?`
         }),
         buttons,
-        icon: 'exclamation-triangle',
-        height: 200
+        icon: 'exclamation-triangle'
     })
     dialog.open()
 
 }
 
-export const changePrimaryEmailDialog = function() {
+export const changePrimaryEmailDialog = function(app) {
     let primEmailRadio = document.querySelector('.primary-email-radio:checked'),
-        primEmailErapper = primEmailRadio.parentElement.parentElement,
         email = primEmailRadio.value
     let buttons = [
         {
@@ -290,30 +303,24 @@ export const changePrimaryEmailDialog = function() {
             click: () => {
                 activateWait()
 
-                postJson(
+                post(
                     '/account/emailprimary/',
                     {
                         email
                     }
                 ).then(
-                    ({json, status}) => {
-                        if(200 === status) {
-                            document.querySelector('tr.primary-email-tr span.disabled').setAttribute('class', 'delete-email fw-link-text')
-                            primEmailErapper.querySelector('span.delete-email.fw-link-text').setAttribute('class', 'disabled')
-                        } else {
-                            document.querySelector('tr.primary-email-tr .primary-email-radio').checked = true
-                        }
-                        addAlert('info', gettext(json.msg))
-                    }
-                ).catch(
-                    error => {
-                        console.error({error})
-                        addAlert('error', gettext('The email could not be set primary'))
-                    }
-                ).then(
                     () => {
                         dialog.close()
                         deactivateWait()
+                    }
+                ).then(
+                    () => app.getUserInfo()
+                ).then(
+                    () => app.selectPage()
+                ).catch(
+                    error => {
+                        deactivateWait()
+                        addAlert('error', gettext('The email could not be set primary'))
                     }
                 )
             }
@@ -329,7 +336,6 @@ export const changePrimaryEmailDialog = function() {
         body: changePrimaryEmailDialogTemplate({
             'text':  `${gettext('Set this email as the address primary')}: ${email}?`
         }),
-        height: 180,
         buttons
     })
     dialog.open()

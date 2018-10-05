@@ -1,47 +1,60 @@
-import {addDropdownBox, whenReady, getUserInfo, activateWait, deactivateWait, post, addAlert, baseBodyTemplate, findTarget} from "../common"
+import {addDropdownBox, whenReady, getUserInfo, activateWait, deactivateWait, post, addAlert, baseBodyTemplate, findTarget, setDocTitle} from "../common"
 import {SiteMenu} from "../menu"
 import {changeAvatarDialog, deleteAvatarDialog, changePwdDialog, addEmailDialog, changePrimaryEmailDialog, deleteEmailDialog} from "./dialogs"
 import {profileContents} from "./templates"
 import {DeleteUserDialog} from "./delete_user"
+import {FeedbackTab} from "../feedback"
 
 export class Profile {
-    constructor({username, staticUrl}) {
-        this.username = username
+    constructor({app, user, staticUrl}) {
+        this.app = app
+        this.user = user
         this.staticUrl = staticUrl
     }
 
     init() {
-        getUserInfo().then(
-            ({json}) => {
-                this.userInfo = json
-                return whenReady()
-            }
-        ).then(() => {
+        whenReady().then(() => {
             this.render()
             const smenu = new SiteMenu("") // Nothing highlighted
             smenu.init()
             addDropdownBox(document.getElementById('edit-avatar-btn'), document.getElementById('edit-avatar-pulldown'))
-            document.querySelector('.change-avatar').addEventListener('mousedown', changeAvatarDialog)
-            document.querySelector('.delete-avatar').addEventListener('mousedown', deleteAvatarDialog)
-            document.getElementById('submit-profile').addEventListener('click', this.save)
-            document.getElementById('delete-account').addEventListener('click', () => {
-                const dialog = new DeleteUserDialog(document.getElementById('delete-account').dataset.username)
-                dialog.init()
-            })
-            document.getElementById('fw-edit-profile-pwd').addEventListener('click',changePwdDialog)
-            document.getElementById('add-profile-email').addEventListener('click', addEmailDialog)
-            document.addEventListener('click', event => {
+            document.body.addEventListener('click', event => {
                 const el = {}
                 switch (true) {
+                    case findTarget(event, '#add-profile-email', el):
+                        addEmailDialog()
+                        break
+                    case findTarget(event, '#fw-edit-profile-pwd', el):
+                        changePwdDialog()
+                        break
+                    case findTarget(event, '#delete-account', el):
+                        const dialog = new DeleteUserDialog(document.getElementById('delete-account').dataset.username)
+                        dialog.init()
+                        break
+                    case findTarget(event, '#submit-profile', el):
+                        this.save()
+                        break
                     case findTarget(event, '.delete-email', el):
-                        deleteEmailDialog(el.target)
+                        deleteEmailDialog(el.target, this.app)
+                        break
+                    case findTarget(event, '.change-avatar', el):
+                        changeAvatarDialog(this.app)
+                        break
+                    case findTarget(event, '.delete-avatar', el):
+                        deleteAvatarDialog(this.app)
+                        break
+                    case findTarget(event, 'a', el):
+                        if (el.target.hostname === window.location.hostname) {
+                            event.preventDefault()
+                            this.app.goTo(el.target.href)
+                        }
                         break
                     default:
                         break
                 }
             })
             document.querySelectorAll('.primary-email-radio').forEach(el => el.addEventListener(
-                'change', changePrimaryEmailDialog
+                'change', () => changePrimaryEmailDialog(this.app)
             ))
         })
     }
@@ -49,10 +62,13 @@ export class Profile {
     render() {
         document.body = document.createElement('body')
         document.body.innerHTML = baseBodyTemplate({
-            contents: profileContents(this.userInfo),
-            username: this.username,
+            contents: profileContents(this.user),
+            username: this.user.username,
             staticUrl: this.staticUrl
         })
+        setDocTitle(gettext('Configure profile'))
+        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
+        feedbackTab.init()
     }
 
     save() {
@@ -72,7 +88,12 @@ export class Profile {
         ).catch(
             () => addAlert('error', gettext('Could not save profile data'))
         ).then(
-            () => deactivateWait()
+            () => {
+                deactivateWait()
+                return this.app.getUserInfo()
+            }
+        ).then(
+            () => this.app.selectPage()
         )
 
     }

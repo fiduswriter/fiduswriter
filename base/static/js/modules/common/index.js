@@ -26,7 +26,8 @@ export {
     post,
     postJson,
     postBare,
-    ensureCSS
+    ensureCSS,
+    getUserInfo
 }
 from "./network"
 

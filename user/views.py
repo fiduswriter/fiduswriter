@@ -2,7 +2,6 @@ import json
 
 from django.http import JsonResponse, HttpResponseRedirect
 from django.contrib.auth import logout, update_session_auth_hash
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
@@ -14,7 +13,6 @@ from allauth.account.models import EmailAddress
 from allauth.account import signals
 from django.contrib.auth.forms import PasswordChangeForm
 from allauth.account.forms import AddEmailForm
-from npm_mjs.templatetags.transpile import StaticTranspileNode
 
 from avatar.models import Avatar
 from avatar import views as avatarviews
@@ -28,17 +26,6 @@ def logout_page(request):
     """
     logout(request)
     return HttpResponseRedirect('/')
-
-
-@login_required
-def show_profile(request):
-    """
-    Show user profile page
-    """
-    response = {
-        'script': StaticTranspileNode.handle_simple('js/app.mjs')
-    }
-    return render(request, 'index.html', response)
 
 
 @login_required
@@ -337,17 +324,6 @@ def save_profile_js(request):
         response,
         status=status
     )
-
-
-@login_required
-def list_team_members(request):
-    """
-    List all team members of the current user
-    """
-    response = {
-        'script': StaticTranspileNode.handle_simple('js/app.mjs')
-    }
-    return render(request, 'index.html', response)
 
 
 @login_required

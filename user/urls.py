@@ -1,9 +1,9 @@
-
 from allauth.account import views as allauth_views
 from django.conf.urls import include, url
 from django.views.generic.base import RedirectView
 from django.conf import settings
 from . import views
+from base.views import app
 
 
 class LoginView(allauth_views.LoginView):
@@ -23,7 +23,7 @@ urlpatterns = [
     url('^save/$', views.save_profile_js, name='save_profile_js'),
 
     # Show user profiles
-    url('^team/$', views.list_team_members, name='list_team_members'),
+    url('^team/$', app, name='list_team_members'),
     url(
         '^team/list/$',
         views.list_team_members_js,
@@ -31,7 +31,7 @@ urlpatterns = [
     ),
     url(
         '^profile/$',
-        views.show_profile,
+        app,
         name='show_userprofile'
     ),
     url(

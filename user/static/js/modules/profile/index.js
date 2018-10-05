@@ -6,7 +6,8 @@ import {DeleteUserDialog} from "./delete_user"
 import {FeedbackTab} from "../feedback"
 
 export class Profile {
-    constructor({user, staticUrl}) {
+    constructor({app, user, staticUrl}) {
+        this.app = app
         this.user = user
         this.staticUrl = staticUrl
     }
@@ -26,11 +27,17 @@ export class Profile {
             })
             document.getElementById('fw-edit-profile-pwd').addEventListener('click',changePwdDialog)
             document.getElementById('add-profile-email').addEventListener('click', addEmailDialog)
-            document.addEventListener('click', event => {
+            document.body.addEventListener('click', event => {
                 const el = {}
                 switch (true) {
                     case findTarget(event, '.delete-email', el):
                         deleteEmailDialog(el.target)
+                        break
+                    case findTarget(event, 'a', el):
+                        if (el.target.hostname === window.location.hostname) {
+                            event.preventDefault()
+                            this.app.goTo(el.target.href)
+                        }
                         break
                     default:
                         break

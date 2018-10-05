@@ -6,7 +6,8 @@ import {SiteMenu} from "../menu"
 import {menuModel} from "./menu"
 
 export class ContactsOverview {
-    constructor({user, staticUrl}) {
+    constructor({app, user, staticUrl}) {
+        this.app = app
         this.username = user.username
         this.staticUrl = staticUrl
     }
@@ -64,12 +65,18 @@ export class ContactsOverview {
     }
 
     bind() {
-        document.addEventListener('click', event => {
+        document.body.addEventListener('click', event => {
             let el = {}
             switch (true) {
                 case findTarget(event, '.delete-single-member', el):
                     //delete single user
                     deleteMemberDialog([el.target.dataset.id])
+                    break
+                case findTarget(event, 'a', el):
+                    if (el.target.hostname === window.location.hostname) {
+                        event.preventDefault()
+                        this.app.goTo(el.target.href)
+                    }
                     break
                 default:
                     break

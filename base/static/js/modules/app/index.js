@@ -10,20 +10,21 @@ import {getUserInfo} from "../common"
 export class App {
     constructor(config = {}) {
         this.config = config
+        this.config.app = this
     }
 
     init() {
-        getUserInfo().then(
-            ({json}) => {
-                this.config.user = json
-                this.selectPage()
-            }
+        this.getUserInfo().then(
+            () => this.selectPage()
         )
+        window.onpopstate = () => this.selectPage()
     }
 
     selectPage() {
+        if (this.page && this.page.close) {
+            this.page.close()
+        }
         const pathnameParts = window.location.pathname.split('/')
-
         switch(pathnameParts[1]) {
             case "usermedia":
                 this.page = new ImageOverview(this.config)
@@ -54,6 +55,21 @@ export class App {
         }
         if (this.page) {
             this.page.init()
+        } else {
+            window.location = window.location
         }
+    }
+
+    getUserInfo() {
+        return getUserInfo().then(
+            ({json}) => {
+                this.config.user = json
+            }
+        )
+    }
+
+    goTo(url) {
+        window.history.pushState({}, "", url)
+        this.selectPage()
     }
 }

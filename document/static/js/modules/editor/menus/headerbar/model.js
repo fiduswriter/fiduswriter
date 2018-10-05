@@ -83,7 +83,7 @@ export let headerbarModel = {
                     tooltip: gettext('Close the document and return to the document overview menu.'),
                     order: 1,
                     action: editor => {
-                        window.location.href = '/'
+                        editor.app.goTo('/')
                     }
                 },
                 {

@@ -6,14 +6,10 @@ export let confirmDeleteAvatarTemplate = () =>
 
 /** A template to change the user avatar. */
 export let changeAvatarDialogTemplate = () =>
-    `<form id="avatar-uploader-form" method="post" enctype="multipart/form-data"
-            class="ajax-upload">
-        <input type="file" id="avatar-uploader" name="avatar" required />
-        <span id="upload-avatar-btn" class="fw-button fw-white fw-large">
-            ${gettext('Select a file')}
-        </span>
-        <label id="uploaded-avatar-name" class="ajax-upload-label"></label>
-    </form>`
+    `<span id="upload-avatar-btn" class="fw-button fw-white fw-large">
+        ${gettext('Select a file')}
+    </span>
+    <label id="uploaded-avatar-name" class="ajax-upload-label"></label>`
 
 /** A template for the confirmation dialog to delete a user account. */
 export let deleteUserDialogTemplate = () =>
@@ -124,9 +120,9 @@ export let verifiedAccountTemplate = () =>
 export let profileContents = ({avatar, username, first_name, last_name, emails}) =>
     `<div id="profile-wrapper">
         <div id="profile-avatar">
-            <img src="${avatar}" width="80" height="80" alt="${username}">
+            <img src="${avatar.url}" width="80" height="80" alt="${username}">
             <div id="avatar-pulldown-wrapper">
-                <span id="edit-avatar-btn">
+                <span id="edit-avatar-btn" class="fw-link-text">
                     <i class="fa fa-pencil"></i> ${gettext('Edit profile picture')}
                 </span>
                 <div id="edit-avatar-pulldown" class="fw-pulldown fw-left">
@@ -136,11 +132,15 @@ export let profileContents = ({avatar, username, first_name, last_name, emails})
                                 <i class="fa fa-file-image-o"></i> ${gettext('Change picture')}
                             </span>
                         </li>
-                        <li>
-                            <span class="fw-pulldown-item delete-avatar">
-                                <i class="fa fa-times-circle"></i> ${gettext('Delete picture')}
-                            </span>
-                        </li>
+                        ${
+                            avatar.uploaded ?
+                            `<li>
+                                <span class="fw-pulldown-item delete-avatar">
+                                    <i class="fa fa-times-circle"></i> ${gettext('Delete picture')}
+                                </span>
+                            </li>` :
+                            ''
+                        }
                     </ul>
                 </div>
             </div>

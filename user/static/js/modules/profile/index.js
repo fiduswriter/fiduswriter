@@ -18,20 +18,30 @@ export class Profile {
             const smenu = new SiteMenu("") // Nothing highlighted
             smenu.init()
             addDropdownBox(document.getElementById('edit-avatar-btn'), document.getElementById('edit-avatar-pulldown'))
-            document.querySelector('.change-avatar').addEventListener('mousedown', changeAvatarDialog)
-            document.querySelector('.delete-avatar').addEventListener('mousedown', deleteAvatarDialog)
-            document.getElementById('submit-profile').addEventListener('click', () => this.save())
-            document.getElementById('delete-account').addEventListener('click', () => {
-                const dialog = new DeleteUserDialog(document.getElementById('delete-account').dataset.username)
-                dialog.init()
-            })
-            document.getElementById('fw-edit-profile-pwd').addEventListener('click',changePwdDialog)
-            document.getElementById('add-profile-email').addEventListener('click', addEmailDialog)
             document.body.addEventListener('click', event => {
                 const el = {}
                 switch (true) {
+                    case findTarget(event, '#add-profile-email', el):
+                        addEmailDialog()
+                        break
+                    case findTarget(event, '#fw-edit-profile-pwd', el):
+                        changePwdDialog()
+                        break
+                    case findTarget(event, '#delete-account', el):
+                        const dialog = new DeleteUserDialog(document.getElementById('delete-account').dataset.username)
+                        dialog.init()
+                        break
+                    case findTarget(event, '#submit-profile', el):
+                        this.save()
+                        break
                     case findTarget(event, '.delete-email', el):
-                        deleteEmailDialog(el.target)
+                        deleteEmailDialog(el.target, this.app)
+                        break
+                    case findTarget(event, '.change-avatar', el):
+                        changeAvatarDialog(this.app)
+                        break
+                    case findTarget(event, '.delete-avatar', el):
+                        deleteAvatarDialog(this.app)
                         break
                     case findTarget(event, 'a', el):
                         if (el.target.hostname === window.location.hostname) {
@@ -44,7 +54,7 @@ export class Profile {
                 }
             })
             document.querySelectorAll('.primary-email-radio').forEach(el => el.addEventListener(
-                'change', changePrimaryEmailDialog
+                'change', () => changePrimaryEmailDialog(this.app)
             ))
         })
     }

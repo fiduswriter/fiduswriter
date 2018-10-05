@@ -219,7 +219,9 @@ def upload_avatar_js(request):
                 user=request.user,
                 avatar=avatar
             )
-            response['avatar'] = userutil.get_user_avatar_url(request.user)
+            response['avatar'] = userutil.get_user_avatar_url(
+                request.user
+            )['url']
             status = 200
     return JsonResponse(
         response,
@@ -237,7 +239,7 @@ def delete_avatar_js(request):
     if request.is_ajax() and request.method == 'POST':
         avatar, avatars = avatarviews._get_avatars(request.user)
         if avatar is None:
-            response = 'No avatar exists'
+            response['error'] = 'User has no avatar'
         else:
             aid = avatar.id
             for a in avatars:
@@ -251,7 +253,9 @@ def delete_avatar_js(request):
                     )
                     break
             Avatar.objects.filter(pk=aid).delete()
-            response['avatar'] = userutil.get_user_avatar_url(request.user)
+            response['avatar'] = userutil.get_user_avatar_url(
+                request.user
+            )['url']
             status = 200
     return JsonResponse(
         response,
@@ -340,7 +344,7 @@ def list_team_members_js(request):
                 'name': member.readable_name,
                 'username': member.get_username(),
                 'email': member.email,
-                'avatar': userutil.get_user_avatar_url(member)
+                'avatar': userutil.get_user_avatar_url(member)['url']
             }
             response['team_members'].append(team_member)
     return JsonResponse(
@@ -382,7 +386,9 @@ def add_team_member_js(request):
                 team_member_form = TeamMemberForm(form_data)
                 if team_member_form.is_valid():
                     team_member_form.save()
-                    the_avatar = userutil.get_user_avatar_url(new_member)
+                    the_avatar = userutil.get_user_avatar_url(
+                        new_member
+                    )['url']
                     response['member'] = {
                         'id': new_member.pk,
                         'name': new_member.username,

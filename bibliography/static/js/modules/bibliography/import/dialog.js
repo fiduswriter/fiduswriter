@@ -7,9 +7,10 @@ import {BibLatexImporter} from "./biblatex"
 
 export class BibLatexFileImportDialog {
 
-    constructor(bibDB, addToListCall) {
+    constructor(bibDB, addToListCall, staticUrl) {
         this.bibDB = bibDB
         this.addToListCall = addToListCall
+        this.staticUrl = staticUrl
         this.tmpDB = false
     }
 
@@ -37,7 +38,8 @@ export class BibLatexFileImportDialog {
                             event.target.result,
                             this.bibDB,
                             this.addToListCall,
-                            () => deactivateWait()
+                            () => deactivateWait(),
+                            this.staticUrl
                         )
                         importer.init()
                     }

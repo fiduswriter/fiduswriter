@@ -1,24 +1,47 @@
-import DataTable from "vanilla-datatables"
+import {DataTable} from "simple-datatables"
 
 import {ImageDB} from "../database"
 import {ImageOverviewCategories} from "./categories"
 import {activateWait, deactivateWait, addAlert, post, findTarget, whenReady, Dialog, localizeDate, escapeText} from "../../common"
 import {SiteMenu} from "../../menu"
-import {OverviewMenuView} from "../../common"
+import {OverviewMenuView, baseBodyTemplate, setDocTitle} from "../../common"
+import {FeedbackTab} from "../../feedback"
 import {menuModel} from "./menu"
 import {ImageEditDialog} from "../edit_dialog"
 import * as plugins from "../../../plugins/images_overview"
  /** Helper functions for user added images/SVGs.*/
 
 export class ImageOverview {
-    constructor() {
+    constructor({staticUrl, user}) {
+        this.staticUrl = staticUrl
+        this.username = user.username
         this.mod = {}
-        new ImageOverviewCategories(this)
-        let smenu = new SiteMenu("images")
-        smenu.init()
-        this.menu = new OverviewMenuView(this, menuModel)
-        this.menu.init()
-        this.bind()
+    }
+
+    init() {
+        whenReady().then(() => {
+            this.render()
+            new ImageOverviewCategories(this)
+            let smenu = new SiteMenu("images")
+            smenu.init()
+            this.menu = new OverviewMenuView(this, menuModel)
+            this.menu.init()
+            this.activatePlugins()
+            this.bindEvents()
+            this.getImageDB()
+        })
+    }
+
+    render() {
+        document.body = document.createElement('body')
+        document.body.innerHTML = baseBodyTemplate({
+            contents: '<ul id="fw-overview-menu"></ul>',
+            username: this.username,
+            staticUrl: this.staticUrl
+        })
+        setDocTitle(gettext('Media Manager'))
+        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
+        feedbackTab.init()
     }
 
     activatePlugins() {
@@ -104,7 +127,7 @@ export class ImageOverview {
             fileType = fileType[0].toUpperCase()
         }
         return [
-            id,
+            String(id),
             `<input type="checkbox" class="entry-select" data-id="${id}">`,
             `<span class="fw-usermedia-image">
                 <img src="${image.thumbnail ? image.thumbnail : image.image}">
@@ -228,18 +251,6 @@ export class ImageOverview {
                 default:
                     break
             }
-        })
-    }
-
-    init() {
-        this.activatePlugins()
-        this.bindEvents()
-        this.getImageDB()
-    }
-
-    bind() {
-        whenReady().then(() => {
-            this.init()
         })
     }
 

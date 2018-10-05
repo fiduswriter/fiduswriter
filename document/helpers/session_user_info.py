@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 from document.models import AccessRight, Document
 
 
@@ -33,11 +32,10 @@ class SessionUserInfo():
             document = Document.objects.create(owner_id=self.user.id)
             self.document_id = document.id
         else:
-            document = Document.objects.filter(id=int(document_id))
-            if len(document) == 0:
+            document = Document.objects.filter(id=int(document_id)).first()
+            if document is None:
                 return (False, False)
             else:
-                document = document[0]
                 self.document_id = document.id
                 if document.owner == self.user:
                     self.access_rights = 'write'
@@ -48,8 +46,8 @@ class SessionUserInfo():
                     access_rights = AccessRight.objects.filter(
                         document=document,
                         user=self.user
-                    )
-                    if len(access_rights) > 0:
-                        self.access_rights = access_rights[0].rights
+                    ).first()
+                    if access_rights:
+                        self.access_rights = access_rights.rights
                         can_access = True
         return (document, can_access)

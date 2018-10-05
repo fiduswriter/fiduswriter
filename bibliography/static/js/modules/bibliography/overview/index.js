@@ -1,5 +1,5 @@
 import fixUTF8 from "fix-utf8"
-import DataTable from "vanilla-datatables"
+import {DataTable} from "simple-datatables"
 
 import {BibLatexImporter} from "../import"
 import {litToText, nameToText} from "../tools"
@@ -8,21 +8,48 @@ import {editCategoriesTemplate} from "./templates"
 import {BibliographyDB} from "../database"
 import {BibTypeTitles} from "../form/strings"
 import {SiteMenu} from "../../menu"
-import {OverviewMenuView, findTarget, whenReady, Dialog} from "../../common"
+import {OverviewMenuView, findTarget, whenReady, Dialog, baseBodyTemplate, ensureCSS, setDocTitle} from "../../common"
+import {FeedbackTab} from "../../feedback"
 import {menuModel} from "./menu"
 import * as plugins from "../../../plugins/bibliography_overview"
 import {escapeText} from "../../common"
 
 export class BibliographyOverview {
 
-    constructor() {
-        let smenu = new SiteMenu("bibliography")
-        smenu.init()
-        this.menu = new OverviewMenuView(this, menuModel)
-        this.menu.init()
-        this.getBibDB()
-        this.activatePlugins()
-        this.bind()
+    constructor({user, staticUrl}) {
+        this.username = user.username
+        this.staticUrl = staticUrl
+    }
+
+    /** Bind the init function to doc loading.
+     * @function bind
+     */
+    init() {
+        whenReady().then(() => {
+            this.render()
+            let smenu = new SiteMenu("bibliography")
+            smenu.init()
+            this.menu = new OverviewMenuView(this, menuModel)
+            this.menu.init()
+            this.getBibDB()
+            this.activatePlugins()
+            this.bindEvents()
+        })
+    }
+
+    render() {
+        document.body.innerHTML = baseBodyTemplate({
+            contents: '<ul id="fw-overview-menu"></ul>',
+            username: this.username,
+            staticUrl: this.staticUrl
+        })
+        ensureCSS([
+            'bibliography.css',
+            'prosemirror.css'
+        ], this.staticUrl)
+        setDocTitle(gettext('Bibliography Manager'))
+        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
+        feedbackTab.init()
     }
 
     /* load data from the bibliography */
@@ -112,7 +139,7 @@ export class BibliographyOverview {
         let bibInfo = this.bibDB.db[id]
         let bibauthors = bibInfo.fields.author || bibInfo.fields.editor
         return [
-            id,
+            String(id),
             `<input type="checkbox" class="entry-select" data-id="${id}">`, // checkbox
             `<span class="fw-document-table-title fw-inline">
                 <i class="fa fa-book"></i>
@@ -233,15 +260,8 @@ export class BibliographyOverview {
         })
     }
 
-    /** Bind the init function to doc loading.
-     * @function bind
-     */
-    bind() {
-        whenReady().then(() => this.bindEvents())
-    }
-
     /** Initialize the bibliography table and bind interactive parts.
-     * @function init
+     * @function bibEvents
           */
     bindEvents() {
         document.addEventListener('click', event => {
@@ -318,11 +338,12 @@ export class BibliographyOverview {
 
     // find bibtex in pasted or dropped data.
     getBibtex(text) {
-        let importer = new BibLatexImporter(
+        const importer = new BibLatexImporter(
             text,
             this.bibDB,
             newIds => this.updateTable(newIds),
-            false
+            false,
+            this.staticUrl
         )
         importer.init()
         return true

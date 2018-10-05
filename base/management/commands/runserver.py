@@ -1,13 +1,20 @@
-from __future__ import unicode_literals
+
 from datetime import datetime
 from sys import platform
 
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
-from django.utils import translation, autoreload
+from django.utils import translation
 from django.conf import settings
 
 from base.servers.tornado_django_hybrid import run as run_server
+
+try:
+    from asyncio import set_event_loop_policy
+    from tornado.platform.asyncio import AnyThreadEventLoopPolicy
+    set_event_loop_policy(AnyThreadEventLoopPolicy())
+except ImportError:
+    pass
 
 
 class Command(BaseCommand):
@@ -30,10 +37,7 @@ class Command(BaseCommand):
             self.port = self.default_port
         if not self.port.isdigit():
             raise CommandError("%r is not a valid port number." % self.port)
-        if settings.DEBUG:
-            autoreload.main(self.inner_run, args, options)
-        else:
-            self.inner_run(*args, **options)
+        self.inner_run(*args, **options)
 
     def inner_run(self, *args, **options):
         quit_command = (platform == 'win32') and 'CTRL-BREAK' or 'CONTROL-C'

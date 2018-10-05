@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 import json
 
 from django.http import JsonResponse, HttpResponseRedirect
@@ -15,6 +14,7 @@ from allauth.account.models import EmailAddress
 from allauth.account import signals
 from django.contrib.auth.forms import PasswordChangeForm
 from allauth.account.forms import AddEmailForm
+from npm_mjs.templatetags.transpile import StaticTranspileNode
 
 from avatar.models import Avatar
 from avatar import views as avatarviews
@@ -31,19 +31,44 @@ def logout_page(request):
 
 
 @login_required
-def show_profile(request, username):
+def show_profile(request):
     """
     Show user profile page
     """
-    response = {}
-    if username == request.user.username:
-        response['can_edit'] = True
-    else:
-        user = User.objects.filter(username=username).first()
-        if user:
-            response['the_user'] = user
-        response['can_edit'] = False
-    return render(request, 'account/show_profile.html', response)
+    response = {
+        'script': StaticTranspileNode.handle_simple('js/app.mjs')
+    }
+    return render(request, 'index.html', response)
+
+
+@login_required
+def info_js(request):
+    """
+    Get user profile info
+    """
+    if not request.is_ajax() or request.method != 'POST':
+        return JsonResponse({}, status=405)
+    response = {
+        'username': request.user.username,
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
+        'avatar': userutil.get_user_avatar_url(request.user),
+        'emails': []
+    }
+
+    for emailaddress in request.user.emailaddress_set.all():
+        email = {
+            'address': emailaddress.email,
+        }
+        if emailaddress.primary:
+            email['primary'] = True
+        if emailaddress.verified:
+            email['verified'] = True
+        response['emails'].append(email)
+    return JsonResponse(
+        response,
+        status=200
+    )
 
 
 @login_required
@@ -319,8 +344,10 @@ def list_team_members(request):
     """
     List all team members of the current user
     """
-    response = {}
-    return render(request, 'account/list_team_members.html', response)
+    response = {
+        'script': StaticTranspileNode.handle_simple('js/app.mjs')
+    }
+    return render(request, 'index.html', response)
 
 
 @login_required

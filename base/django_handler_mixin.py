@@ -1,4 +1,5 @@
-from __future__ import unicode_literals
+
+from builtins import object
 from django.contrib import auth
 from django.conf import settings
 from django.core.handlers.wsgi import WSGIRequest
@@ -25,7 +26,7 @@ class DjangoHandlerMixin(object):
         django_request = Dummy()
         django_request.session = self.get_django_session()
         user = auth.get_user(django_request)
-        if user.is_authenticated():
+        if user.is_authenticated:
             return user
         else:
             # try basic auth
@@ -36,7 +37,7 @@ class DjangoHandlerMixin(object):
                 return None
             (username, _, password) = data.decode('base64').partition(':')
             user = auth.authenticate(username=username, password=password)
-            if user is not None and user.is_authenticated():
+            if user is not None and user.is_authenticated:
                 return user
             return None
 

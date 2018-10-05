@@ -1,4 +1,6 @@
 import {localizeDate, escapeText} from "../../common"
+import {getCommentHTML} from "../comments/editors"
+
 
 /** A template for an answer to a comment */
 let answerCommentTemplate = ({
@@ -8,11 +10,12 @@ let answerCommentTemplate = ({
         activeCommentAnswerId,
         active,
         user,
-        docInfo
+        docInfo,
+        staticUrl
     }) =>
     `<div class="comment-item">
         <div class="comment-user">
-            <img class="comment-user-avatar" src="${author ? author.avatar : `${$StaticUrls.base$}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
+            <img class="comment-user-avatar" src="${author ? author.avatar : `${staticUrl}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
             <h5 class="comment-user-name">${escapeText(author ? author.name : answer.username)}</h5>
             <p class="comment-date">${localizeDate(answer.date)}</p>
         </div>
@@ -20,16 +23,14 @@ let answerCommentTemplate = ({
             active && answer.id === activeCommentAnswerId ?
             `<div class="comment-text-wrapper">
                 <div class="comment-answer-form">
-                    <textarea class="commentAnswerText" data-id="${commentId}" data-answer="${answer.id}" rows="3">${answer.answer}</textarea>
-                    <span class="submit-comment-answer-edit fw-button fw-dark">${gettext("Edit")}</span>
-                    <span class="cancelSubmitComment fw-button fw-orange">${gettext("Cancel")}</span>
+                    <div id="answer-editor"></div>
                 </div>
            </div>` :
            `<div class="comment-text-wrapper">
-               <p class="comment-p">${escapeText(answer.answer)}</p>
+               <p class="comment-p">${getCommentHTML(answer.answer)}</p>
            </div>
            ${
-               active && (answer.user === user.id || docInfo.is_owner) ?
+               active && (answer.user === user.id) ?
                `<p class="comment-controls">
                    <span class="edit-comment-answer" data-id="${commentId}" data-answer="${answer.id}">${gettext("Edit")}</span>
                    <span class="delete-comment-answer" data-id="${commentId}" data-answer="${answer.id}">${gettext("Delete")}</span>
@@ -44,30 +45,26 @@ let singleCommentTemplate = ({
         comment,
         author,
         active,
-        user
+        editComment,
+        user,
+        staticUrl
     }) =>
     `<div class="comment-item">
         <div class="comment-user">
-            <img class="comment-user-avatar" src="${author ? author.avatar : `${$StaticUrls.base$}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
+            <img class="comment-user-avatar" src="${author ? author.avatar : `${staticUrl}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
             <h5 class="comment-user-name">${escapeText(author ? author.name : comment.username)}</h5>
             <p class="comment-date">${localizeDate(comment.date)}</p>
         </div>
         <div class="comment-text-wrapper">
-            <p class="comment-p">${escapeText(comment.comment)}</p>
-            <div class="comment-form">
-                <textarea class="commentText" data-id="${comment.id}" rows="5"> </textarea>
-                <input class="comment-is-major" type="checkbox" name="isMajor"
-                    ${comment.isMajor ? 'checked' : ''}/>
-                ${gettext("Is major")}<br />
-                <span class="submitComment fw-button fw-dark">${gettext("Edit")}</span>
-                <span class="cancelSubmitComment fw-button fw-orange">${gettext("Cancel")}</span>
-            </div>
+            ${ active && editComment ?
+                `<div id="comment-editor"></div>` :
+                `<p class="comment-p">${getCommentHTML(comment.comment)}</p>`
+            }
         </div>
         ${
-            active && comment.user===user.id ?
+            active && !editComment && comment.user===user.id ?
             `<p class="comment-controls">
-                <span class="edit-comment">${gettext("Edit")}</span>
-                <span class="delete-comment" data-id="${comment.id}">${gettext("Delete")}</span>
+                <span class="edit-comment" data-id="${comment.id}">${gettext("Edit")}</span>
             </p>` :
             ''
         }
@@ -77,36 +74,57 @@ let singleCommentTemplate = ({
 /** A template for the editor of a first comment before it has been saved (not an answer to a comment). */
 let firstCommentTemplate = ({
         comment,
-        author
+        author,
+        staticUrl
     }) =>
     `<div class="comment-item">
         <div class="comment-user">
-            <img class="comment-user-avatar" src="${author ? author.avatar : `${$StaticUrls.base$}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
+            <img class="comment-user-avatar" src="${author ? author.avatar : `${staticUrl}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
             <h5 class="comment-user-name">${escapeText(author ? author.name : comment.username)}</h5>
             <p class="comment-date">${localizeDate(comment.date)}</p>
         </div>
         <div class="comment-text-wrapper">
-            <textarea class="commentText" data-id="${comment.id}" rows="5"></textarea>
-            <input class="comment-is-major" type="checkbox" name="isMajor" value="0" />${gettext("Is major")}<br />
-            <span class="submitComment fw-button fw-dark">${gettext("Submit")}</span>
-            <span class="cancelSubmitComment fw-button fw-orange">${gettext("Cancel")}</span>
+            <div id="comment-editor"></div>
         </div>
     </div>`
 
 
-let commentTemplate = ({comment, view, activeCommentId, activeCommentAnswerId, user, docInfo}) => {
-    let author = comment.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === comment.user)
-    return comment.hidden ?
-    `<div id="margin-box-${comment.id}" class="margin-box comment hidden"></div>` :
-    `<div id="margin-box-${comment.id}" data-view="${view}" data-id="${comment.id}" data-user-id="${comment.user}"
+let commentTemplate = ({comment, view, active, editComment, activeCommentAnswerId, user, docInfo, filterOptions, staticUrl}) => {
+    if (
+        !filterOptions.comments ||
+        (!filterOptions.commentsResolved && comment.resolved) ||
+        (filterOptions.author && comment.user !== filterOptions.author) ||
+        (filterOptions.assigned && comment.assignedUser !== filterOptions.assigned) ||
+        comment.hidden
+    ) {
+        return '<div class="margin-box comment hidden"></div>'
+    }
+    const author = comment.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === comment.user),
+        assignedUser = comment.assignedUser ?
+            comment.assignedUser === docInfo.owner.id ?
+                docInfo.owner :
+                docInfo.owner.team_members.find(member => member.id === comment.assignedUser)  ||
+                {
+                    name: comment.assignedUsername || ''
+                } :
+            false,
+        assignedUsername = assignedUser ? assignedUser.name : false
+    return `
+        <div id="margin-box-${comment.id}" data-view="${view}" data-id="${comment.id}" data-user-id="${comment.user}"
             class="
-                margin-box comment ${comment.id === activeCommentId ? 'active' : 'inactive'}
+                margin-box comment ${active ? 'active' : 'inactive'}
+                ${comment.resolved ? 'resolved' : ''}
                 ${comment.isMajor === true ? 'comment-is-major-bgc' : ''}
         ">
     ${
         comment.comment.length === 0 ?
-        firstCommentTemplate({comment, author}) :
-        singleCommentTemplate({comment, active: (comment.id===activeCommentId), user, author})
+        firstCommentTemplate({comment, author, staticUrl}) :
+        singleCommentTemplate({comment, user, author, active, editComment, staticUrl})
+    }
+    ${
+        assignedUsername ?
+            `<div class="assigned-user">${gettext('Assigned to')} <em>${escapeText(assignedUsername)}</em></div>` :
+        ''
     }
     ${
         comment.answers ?
@@ -115,60 +133,91 @@ let commentTemplate = ({comment, view, activeCommentId, activeCommentAnswerId, u
                 answer,
                 author: answer.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === answer.user),
                 commentId: comment.id,
-                active: (comment.id===activeCommentId),
+                active,
                 activeCommentAnswerId,
                 user,
-                docInfo
+                docInfo,
+                staticUrl
             })
         ).join('') :
         ''
     }
     ${
-        comment.id===activeCommentId && 0 < comment.comment.length ?
+        active && !activeCommentAnswerId && !editComment && 0 < comment.comment.length ?
         `<div class="comment-answer">
-            <textarea class="comment-answer-text" rows="3"></textarea>
-            <div class="comment-answer-btns">
-                <button class="comment-answer-submit fw-button fw-dark" type="submit">
-                    ${gettext("Submit")}
-                </button>
-                <button class="cancelSubmitComment fw-button fw-orange" type="submit">
-                    ${gettext("Cancel")}
-                </button>
-            </div>
+            <div id="answer-editor"></div>
         </div>` :
         ''
     }
     ${
-        comment.id===activeCommentId && (
+        comment.id > 0 && (
             comment.user===user.id ||
             docInfo.access_rights==="write"
         ) ?
-        `<span class="delete-comment-all delete-comment fa fa-times-circle"
-                data-id="${comment.id}">
-        </span>` :
+        `<span class="show-comment-options fa fa-ellipsis-v" data-id="${comment.id}"></span>
+        <div class="comment-options fw-pulldown fw-right">
+            <ul>
+                <li>
+                    <span class="fw-pulldown-item show-assign-comment-menu" title="${gettext('Assign comment to user')}">
+                        ${gettext('Assign to')}
+                        <span class="fw-icon-right"><i class="fa fa-caret-right"></i></span>
+                    </span>
+                    <div class="fw-pulldown assign-comment-menu">
+                        <ul>
+                            <li><span class="fw-pulldown-item unassign-comment" data-id="${comment.id}" title="${gettext('Remove user assignment from comment')}">${gettext('No-one')}</span></li>
+                        ${
+                            docInfo.owner.team_members.concat(docInfo.owner).map(
+                                user => `<li><span class="fw-pulldown-item assign-comment" data-id="${comment.id}" data-user="${user.id}" data-username="${escapeText(user.name)}" title="${gettext('Assign comment to')} ${escapeText(user.name)}">${escapeText(user.name)}</span></li>`
+                            ).join('')
+                        }
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    ${
+                        comment.resolved ?
+                        `<span class="fw-pulldown-item recreate-comment" data-id="${comment.id}" title="${gettext('Recreate comment')}">${gettext('Recreate')}</span>` :
+                        `<span class="fw-pulldown-item resolve-comment" data-id="${comment.id}" title="${gettext('Resolve comment')}">${gettext('Resolve')}</span>`
+                    }
+
+                </li>
+                <li>
+                    <span class="fw-pulldown-item delete-comment" data-id="${comment.id}" title="${gettext('Delete comment')}">${gettext('Delete')}</span>
+                </li>
+            </ul>
+        </div>
+        ` :
         ''
     }
     </div>`
 }
 
 let ACTIONS = {
+    insertion: gettext('Insertion'),
+    deletion: gettext('Deletion'),
+    format_change: gettext('Format change'),
+    block_change: gettext('Block change'),
     insertion_paragraph: gettext('New paragraph'),
     insertion_heading: gettext('New heading'),
-    insertion_text: gettext('Inserted text'),
+    insertion_citation: gettext('Inserted citation'),
     insertion_blockquote: gettext('Wrapped into blockquote'),
     insertion_code_block: gettext('Added code block'),
     insertion_figure: gettext('Inserted figure'),
     insertion_list_item: gettext('New list item'),
     insertion_table: gettext('Inserted table'),
+    insertion_keyword: gettext('New keyword: %(keyword)s'),
     deletion_paragraph: gettext('Merged paragraph'),
     deletion_heading: gettext('Merged heading'),
-    deletion_text: gettext('Deleted text'),
+    deletion_citation: gettext('Deleted citation'),
     deletion_blockquote: gettext('Unwrapped blockquote'),
     deletion_code_block: gettext('Removed code block'),
     deletion_figure: gettext('Deleted figure'),
     deletion_list_item: gettext('Lifted list item'),
     deletion_table: gettext('Delete table'),
-    format_change_text: gettext('Format change')
+    deletion_keyword: gettext('Deleted keyword: %(keyword)s'),
+    block_change_paragraph: gettext('Changed into paragraph'),
+    block_change_heading: gettext('Changed into heading %(level)s'),
+    block_change_code_block: gettext('Changed into code block')
 }
 
 let FORMAT_MARK_NAMES = {
@@ -187,51 +236,119 @@ let formatChangeTemplate = ({before, after}) => {
     return returnText
 }
 
+let BLOCK_NAMES = {
+    paragraph: gettext('Paragraph'),
+    heading: gettext('Heading %(level)s'),
+    code_block: gettext('Code block')
+}
 
-let trackTemplate = ({type, data, nodeType, pos, view, active, docInfo}) => {
-    let author = data.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === data.user)
+let blockChangeTemplate = ({before}) => `<div class="format-change-info"><b>${gettext('Was')}:</b> ${interpolate(BLOCK_NAMES[before.type], before.attrs, true)}</div>`
+
+let trackTemplate = ({type, data, node, pos, view, active, docInfo, filterOptions, staticUrl}) => {
+    if (!filterOptions.track) {
+        return '<div class="margin-box track hidden"></div>'
+    }
+
+    let author = data.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === data.user),
+        nodeActionType = `${type}_${node.type.name}`
+
     return `
         <div class="margin-box track ${active ? 'active' : 'inactive'}" data-type="${type}" data-pos="${pos}" data-view="${view}">
             <div class="track-${type}">
-                <div class="track-title">${ACTIONS[`${type}_${nodeType}`]}</div>
+                <div class="track-title">${interpolate(ACTIONS[nodeActionType] ? ACTIONS[nodeActionType] : ACTIONS[type], node.attrs, true)}</div>
                 <div class="comment-user">
-                    <img class="comment-user-avatar" src="${author ? author.avatar : `${$StaticUrls.base$}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
+                    <img class="comment-user-avatar" src="${author ? author.avatar : `${staticUrl}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
                     <h5 class="comment-user-name">${escapeText(author ? author.name : data.username)}</h5>
-                    <p class="comment-date">${nodeType==='text' ? `${gettext('ca.')} ` : ''}${localizeDate(data.date*60000, 'minutes')}</p>
+                    <p class="comment-date">${node.type.name==='text' ? `${gettext('ca.')} ` : ''}${localizeDate(data.date*60000, 'minutes')}</p>
                 </div>
-                ${type==='format_change' ? formatChangeTemplate(data) : ''}
-                <div class="ui-dialog-buttonset">
-                    <button class="fw-button fw-small fw-green track-accept" data-type="${type}" data-pos="${pos}" data-view="${view}">${gettext('Accept')}</button>
-                    <button class="fw-button fw-small fw-orange track-reject" data-type="${type}" data-pos="${pos}" data-view="${view}">${gettext('Reject')}</button>
-                </div>
+                ${type==='format_change' ? formatChangeTemplate(data) : type==='block_change' ? blockChangeTemplate(data) : ''}
+                ${
+                    docInfo.access_rights === 'write' ?
+                    `<div class="ui-dialog-buttonset">
+                        <button class="fw-button fw-small fw-green track-accept" data-type="${type}" data-pos="${pos}" data-view="${view}">${gettext('Accept')}</button>
+                        <button class="fw-button fw-small fw-orange track-reject" data-type="${type}" data-pos="${pos}" data-view="${view}">${gettext('Reject')}</button>
+                    </div>` :
+                    ''
+                }
             </div>
         </div>`
 }
+
+let filterTemplate = ({data, docInfo}) => {
+    return `
+        <div class="margin-box filter">
+            <div><label id="filter-track"><input type="checkbox" ${data.track ? 'checked' : ''}>${gettext('Tracked Changes')}</label></div>
+            <hr>
+            <div><label id="filter-comments"><input type="checkbox" ${data.comments ? 'checked' : ''}>${gettext('Comments')}</label></div>
+            ${
+                data.comments ?
+                `<label id="filter-comments-resolved"><input type="checkbox" ${data.commentsResolved ? 'checked' : ''}>${gettext('Resolved')}</label>
+                <div><label>${gettext('Author')}<label><select id="filter-comments-author">
+                    <option value="0">${gettext('Everyone')}</option>
+                    ${
+                        docInfo.owner.team_members.concat(docInfo.owner).map(
+                            user => `<option value="${user.id}" ${data.author === user.id ? 'selected' : ''}>${escapeText(user.name)}</option>`
+                        ).join('')
+                    }
+                </select></div>
+                <div><label>${gettext('Assigned to')}<label><select id="filter-comments-assigned">
+                    <option value="0">${gettext('Everyone')}</option>
+                    ${
+                        docInfo.owner.team_members.concat(docInfo.owner).map(
+                            user => `<option value="${user.id}" ${data.assigned === user.id ? 'selected' : ''}>${escapeText(user.name)}</option>`
+                        ).join('')
+                    }
+                </select></div>` :
+                ''
+            }
+        </div>`
+}
+
 
 
 /** A template to display all the margin boxes (comments, deletion/insertion notifications) */
 export let marginBoxesTemplate = ({
         marginBoxes,
-        activeCommentId,
+        editComment,
         activeCommentAnswerId,
-        selectedChanges,
         user,
-        docInfo
+        docInfo,
+        filterOptions,
+        staticUrl
     }) => marginBoxes.map(mBox => {
         switch(mBox.type) {
             case 'comment':
-                return commentTemplate({comment: mBox.data, view: mBox.view, activeCommentId, activeCommentAnswerId, user, docInfo})
+                return commentTemplate({
+                    comment: mBox.data,
+                    view: mBox.view,
+                    active: mBox.active,
+                    activeCommentAnswerId,
+                    editComment,
+                    user,
+                    docInfo,
+                    filterOptions,
+                    staticUrl
+                })
                 break
             case 'insertion':
             case 'deletion':
             case 'format_change':
+            case 'block_change':
                 return trackTemplate({
                     type: mBox.type,
-                    nodeType: mBox.nodeType,
+                    node: mBox.node,
                     data: mBox.data,
                     pos: mBox.pos,
                     view: mBox.view,
-                    active: selectedChanges[mBox.type] && selectedChanges[mBox.type].from === mBox.pos,
+                    active: mBox.active,
+                    docInfo,
+                    filterOptions,
+                    staticUrl
+                })
+                break
+            case 'filter':
+                return filterTemplate({
+                    data: mBox.data,
                     docInfo
                 })
                 break

@@ -407,6 +407,7 @@ export let toolbarModel = {
                 let node = editor.view.state.schema.nodes['footnote']
                 let tr = editor.view.state.tr.replaceSelectionWith(node.createAndFill())
                 editor.view.dispatch(tr)
+                return false
             },
             disabled: editor => {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
@@ -433,6 +434,7 @@ export let toolbarModel = {
             action: editor => {
                 let dialog = new CitationDialog(editor)
                 dialog.init()
+                return false
             },
             disabled: editor => {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
@@ -520,6 +522,7 @@ export let toolbarModel = {
             action: editor => {
                 let dialog = new FigureDialog(editor)
                 dialog.init()
+                return false
             },
             disabled: editor => {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
@@ -564,7 +567,10 @@ export let toolbarModel = {
             type: 'button',
             title: gettext('Comment'),
             icon: 'comment-o',
-            action: editor => editor.mod.comments.interactions.createNewComment(),
+            action: editor => {
+                editor.mod.comments.interactions.createNewComment()
+                return false
+            },
             disabled: editor => {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
                     return true

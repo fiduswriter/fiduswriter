@@ -1,101 +1,121 @@
 import download from "downloadjs"
+import pretty from "pretty"
+import katex from "katex"
 
 import {createSlug} from "../tools/file"
-import {findImages} from "../tools/html"
+import {modifyImages} from "../tools/html"
 import {ZipFileCreator} from "../tools/zip"
-import {htmlExportTemplate} from "./templates"
+import {htmlExportTemplate} from "../html/templates"
 import {addAlert} from "../../common"
-import {katexRender} from "../../katex"
-import {BaseHTMLExporter} from "./base"
+import {BaseDOMExporter} from "../tools/dom_export"
 
-export class HTMLExporter extends BaseHTMLExporter{
-    constructor(doc, bibDB, imageDB, citationStyles, citationLocales) {
+export class HTMLExporter extends BaseDOMExporter{
+    constructor(doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles, staticUrl) {
         super()
         this.doc = doc
         this.citationStyles = citationStyles
         this.citationLocales = citationLocales
+        this.documentStyles = documentStyles
         this.bibDB = bibDB
         this.imageDB = imageDB
-        this.exportOne()
+        this.staticUrl = staticUrl
+        this.styleSheets = [
+            {filename: `${this.staticUrl}css/document.css?v=${$StaticUrls.transpile.version$}`}
+        ]
+        this.removeUrlPrefix = true
     }
 
-    exportOne() {
-        addAlert('info', this.doc.title + ': ' + gettext(
-            'HTML export has been initiated.'))
+    init() {
+        addAlert('info', `${this.doc.title}: ${gettext('HTML export has been initiated.')}`)
 
-        this.joinDocumentParts().then(() => this.exportTwo())
+        let docStyle
+        return this.addStyle().then(
+            style => docStyle = style
+        ).then(
+            () => this.joinDocumentParts()
+        ).then(
+            () => this.postProcess()
+        ).then(
+            ({title, html, math, imageFiles}) => this.save({title, html, math, imageFiles, docStyle})
+        )
 
     }
 
-    exportTwo() {
+    addStyle() {
+        const docStyle = this.documentStyles.find(docStyle => docStyle.filename===this.doc.settings.documentstyle)
 
-        let styleSheets = [], math = false
+        const docStyleCSS = `
+        ${docStyle.fonts.map(font => {
+            return `@font-face {${
+                font[1].replace('[URL]', this.removeUrlPrefix ? font[0].split('/').pop() : font[0])
+            }}`
+        }).join('\n')}
 
-        let title = this.doc.title
+        ${docStyle.contents}
+        `
+        this.styleSheets.push({contents: docStyleCSS})
 
-        let contents = this.contents
+        return Promise.resolve(docStyle)
+    }
 
-        let equations = contents.querySelectorAll('.equation')
+    postProcess() {
 
-        let figureEquations = contents.querySelectorAll('.figure-equation')
+        const title = this.doc.title
 
-        if (equations.length > 0 || figureEquations.length > 0) {
-            math = true
-            styleSheets.push({filename: 'katex.min.css'})
+        const math = this.contents.querySelectorAll('.equation, .figure-equation').length ? true : false
+
+        if (math) {
+            this.styleSheets.push({filename: `${this.staticUrl}css/libs/katex/katex.min.css?v=${$StaticUrls.transpile.version$}`})
         }
 
-        for (let i = 0; i < equations.length; i++) {
-            let node = equations[i]
-            let formula = node.getAttribute('data-equation')
-            katexRender(formula, node, {throwOnError: false})
-        }
-        for (let i = 0; i < figureEquations.length; i++) {
-            let node = figureEquations[i]
-            let formula = node.getAttribute('data-equation')
-            katexRender(formula, node, {
-                displayMode: true,
-                throwOnError: false
-            })
-        }
+        const imageFiles = this.removeUrlPrefix ? modifyImages(this.contents) : []
 
-        let includeZips = []
-
-        let httpOutputList = findImages(contents)
-
-        contents = this.addFigureNumbers(contents)
-
-        let contentsCode = this.replaceImgSrc(contents.innerHTML)
-
-        let htmlCode = htmlExportTemplate({
+        const html = htmlExportTemplate({
             part: false,
             title,
             settings: this.doc.settings,
-            styleSheets,
-            contents: contentsCode
+            styleSheets: this.styleSheets,
+            contents: this.contents,
+            removeUrlPrefix: this.removeUrlPrefix
         })
 
-        let outputList = [{
+        return {title, html, math, imageFiles}
+    }
+
+
+    // The save function is specific to HTMl saving and therefore assumes that this.removeUrlPrefix === true
+    save({title, html, math, imageFiles, docStyle}) {
+
+        const fontFiles = docStyle.fonts.map(font => ({
+            filename: font[0].split('/').pop(),
+            url: font[0]
+        }))
+
+        const binaryFiles = fontFiles.concat(imageFiles)
+
+        const textFiles = [{
             filename: 'document.html',
-            contents: htmlCode
+            contents: pretty(this.replaceImgSrc(html), {ocd: true})
         }]
 
-        for (let i = 0; i < styleSheets.length; i++) {
-            let styleSheet = styleSheets[i]
-            if (styleSheet.contents) {
-                outputList.push(styleSheet)
+        this.styleSheets.forEach(styleSheet => {
+            if (styleSheet.contents && styleSheet.filename) {
+                textFiles.push(styleSheet)
             }
-        }
+        })
+
+        const includeZips = []
 
         if (math) {
             includeZips.push({
                 'directory': '',
-                'url': `${$StaticUrls.base$}zip/katex_style.zip?v=${$StaticUrls.transpile.version$}`,
+                'url': `${this.staticUrl}zip/katex_style.zip?v=${$StaticUrls.transpile.version$}`,
             })
         }
 
-        let zipper = new ZipFileCreator(
-            outputList,
-            httpOutputList,
+        const zipper = new ZipFileCreator(
+            textFiles,
+            binaryFiles,
             includeZips
         )
 

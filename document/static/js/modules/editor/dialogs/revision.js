@@ -2,7 +2,8 @@ import {revisionDialogTemplate} from "./templates"
 import {cancelPromise, Dialog} from "../../common"
 
 export class RevisionDialog {
-    constructor() {
+    constructor(dir) {
+        this.dir = dir
         this.dialog = false
     }
 
@@ -26,7 +27,7 @@ export class RevisionDialog {
 
         this.dialog = new Dialog({
             title: gettext('Revision description'),
-            body: revisionDialogTemplate(),
+            body: revisionDialogTemplate({dir: this.dir}),
             height: 100,
             width: 300,
             buttons

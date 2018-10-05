@@ -1,5 +1,5 @@
-from __future__ import unicode_literals
-
+from builtins import map
+from builtins import filter
 from time import mktime
 
 from django.shortcuts import render
@@ -8,6 +8,8 @@ from django.template.context_processors import csrf
 from django.http import JsonResponse
 from django.core.serializers.python import Serializer
 from django.utils.translation import ugettext as _
+
+from npm_mjs.templatetags.transpile import StaticTranspileNode
 
 from usermedia.models import Image, ImageCategory, UserImage
 from .models import ALLOWED_FILETYPES
@@ -25,9 +27,11 @@ serializer = SimpleSerializer()
 
 @login_required
 def index(request):
-    response = {}
+    response = {
+        'script': StaticTranspileNode.handle_simple('js/app.mjs')
+    }
     response.update(csrf(request))
-    return render(request, 'usermedia/index.html', response)
+    return render(request, 'index.html', response)
 
 
 # save changes or create a new entry
@@ -79,7 +83,10 @@ def save_js(request):
                     'added': mktime(image.added.timetuple()) * 1000,
                     'checksum': image.checksum,
                     'cats': list(
-                        map(int, filter(bool, user_image.image_cat.split(',')))
+                        map(
+                            int,
+                            list(filter(bool, user_image.image_cat.split(',')))
+                        )
                     )
                 }
                 if image.thumbnail:
@@ -135,7 +142,10 @@ def images_js(request):
                     'added': mktime(image.added.timetuple()) * 1000,
                     'checksum': image.checksum,
                     'cats': list(
-                        map(int, filter(bool, user_image.image_cat.split(',')))
+                        map(
+                            int,
+                            list(filter(bool, user_image.image_cat.split(',')))
+                        )
                     )
                 }
                 if image.thumbnail:

@@ -58,10 +58,15 @@
 .comment-item.wait textarea {
     background-size: 40px 40px;
 }
+
+.comment .collaborator {
+    font-weight: 700;
+}
+
 .comment-answer.wait .comment-answer-text {
     background-size: 20px 20px;
 }
-.comment-item.wait .submitComment, .comment-item.wait .cancelSubmitComment, .comment-answer.wait .comment-answer-btns {
+.wait .comment-btns {
     display: none;
 }
 
@@ -88,12 +93,27 @@
 .comment-date {
     font-size: 10px;
 }
+.assigned-user {
+    border: 1px solid #ccc;
+    padding: 5px;
+    margin: 10px;
+    font-size: 0.9em;
+    text-align: center;
+}
+.assigned-user em {
+    font-weight: 700;
+}
 .comment-p {
     line-height: 18px;
 }
-.margin-box textarea {
-    resize: none;
+.margin-box .ProseMirror-wrapper {
     width: 194px;
+    background-color: #fff;
+    min-height: 40px;
+    border: 1px solid #ccc;
+    padding: 2px;
+    margin-bottom: 6px;
+    cursor: text;
 }
 
 .comment-controls {
@@ -112,7 +132,7 @@
 .comment-answer {
     margin-top: 9px;
 }
-.comment-answer-btns {
+.comment-btns {
     margin-top: 5px;
     text-align: right;
 }
@@ -128,20 +148,16 @@
     display: none;
 }
 
-.comment-text-wrapper.editing .comment-form {
-    display: block;
-}
-
-.comment-text-wrapper.editing .comment-p {
-    display: none;
-}
-
-
-.delete-comment-all {
+.show-comment-options {
     position: absolute;
     right: 5px;
     top: 8px;
     cursor: pointer;
+}
+
+.comment-options.fw-pulldown.fw-right {
+    right: -22px;
+    top: 18px;
 }
 
 .comment-is-major {
@@ -152,7 +168,34 @@
     background-color: #f2dede;
 }
 
-/* comments directly on block elements like figures */
-div.article-part > span.comment {
-    display: block;
+.comment.resolved .comment-item {
+    opacity: 0.7;
+}
+
+#comment-editor .ProseMirror-suggestion, #answer-editor .ProseMirror-suggestion {
+    font-weight: 700;
+}
+
+#comment-editor .tagger, #answer-editor .tagger  {
+    margin: 5px -10px -11px -10px;
+    background-color: #f2f2f2;
+    border: 1px solid #c9c9c9;
+}
+
+#comment-editor .tagger:empty, #answer-editor .tagger:empty {
+    display: none;
+}
+
+#comment-editor .tagger .tag, #answer-editor .tagger .tag {
+    padding: 10px;
+    cursor: pointer;
+}
+
+#comment-editor .tagger .tag:hover, #comment-editor .tagger .tag.selected,
+#answer-editor .tagger .tag:hover, #answer-editor .tagger .tag.selected {
+    background-color: #c9c9c9;
+}
+
+#comment-editor .tagger .tag-user, #answer-editor .tagger .tag-user {
+    min-height: 28px;
 }

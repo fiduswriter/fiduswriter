@@ -1,12 +1,43 @@
-import {post} from "../common"
+import {post, ensureCSS} from "../common"
 
 // Creates the feedback tab. The tab is meant for user feedback to the developers while FW is still in
 // a somewhat early stage. It is included in a way so it's easy to remove from all the templates.
 // This is also where browser sniffing happens to prevent still unsupported browsers from logging in.
 
 export class FeedbackTab {
-    constructor() {
+
+    constructor({staticUrl}) {
+        this.staticUrl = staticUrl
+    }
+
+    init() {
+        this.render()
         this.bind()
+    }
+
+    render() {
+        document.body.insertAdjacentHTML(
+            'beforeend',
+            `<a class="feedback-tab" href="#">${gettext("Tech support")}</a>
+            <div class="feedback-panel">
+              <div id="feedback-wrapper">
+                <div id="feedback-title">${gettext("Tech support")}</div>
+                <p>${gettext("Did you encounter an error or bug?")}<br>
+                    ${gettext("Give a brief description of what has happened.")}</p>
+                <div id="feedback-form">
+                  <form method="post" action="/feedback/feedback/">
+                    <textarea id="message" name="message" rows="10" cols="30"></textarea>
+                    <input type="button" value='${gettext("submit")}' id="feedbackbutton" class="fw-button fw-orange" />
+                  </form>
+                </div>
+                <div id="response-message">
+                  ${gettext("Thank you for your report!")}
+                </div>
+                <span id="closeFeedback" class="fa fa-times-circle"></span>
+              </div>
+            </div>`
+        )
+        ensureCSS('feedback/feedback.css', this.staticUrl)
     }
 
     bind() {

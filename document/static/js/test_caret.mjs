@@ -6,14 +6,14 @@ import {TextSelection} from "prosemirror-state"
 let testCaret = {}
 
 testCaret.setSelection = function(selectFrom, selectTo) {
-    let caretOneRes = window.theEditor.view.state.doc.resolve(selectFrom)
-    let caretTwoRes = window.theEditor.view.state.doc.resolve(selectTo)
+    let caretOneRes = window.theApp.page.view.state.doc.resolve(selectFrom)
+    let caretTwoRes = window.theApp.page.view.state.doc.resolve(selectTo)
     let selection = new TextSelection(caretOneRes, caretTwoRes)
 
-    window.theEditor.view.dispatch(
-        window.theEditor.view.state.tr.setSelection(selection)
+    window.theApp.page.view.dispatch(
+        window.theApp.page.view.state.tr.setSelection(selection)
     )
-    window.theEditor.view.focus()
+    window.theApp.page.view.focus()
 
     return selection
 }

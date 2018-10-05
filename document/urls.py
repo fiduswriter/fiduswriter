@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 from django.conf.urls import url
 
 from . import views
@@ -36,6 +35,11 @@ urlpatterns = [
         '^accessright/save/$',
         views.access_right_save_js,
         name='access_right_save_js'
+    ),
+    url(
+        '^comment_notify/$',
+        views.comment_notify_js,
+        name='comment_notify_js'
     ),
     url(
         '^maintenance/get_all/$',

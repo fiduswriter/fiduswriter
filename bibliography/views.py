@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 import time
 import json
 from builtins import range
@@ -10,6 +8,8 @@ from django.contrib.auth.decorators import login_required
 from django.template.context_processors import csrf
 from django.db.models import Max, Count
 from django.core.serializers.python import Serializer
+
+from npm_mjs.templatetags.transpile import StaticTranspileNode
 
 from bibliography.models import (
     Entry,
@@ -29,9 +29,13 @@ serializer = SimpleSerializer()
 
 @login_required
 def index(request):
-    response = {}
+    response = {
+        'script': StaticTranspileNode.handle_simple(
+            'js/app.mjs'
+        )
+    }
     response.update(csrf(request))
-    return render(request, 'bibliography/index.html', response)
+    return render(request, 'index.html', response)
 
 
 # returns list of bibliography items
@@ -92,7 +96,7 @@ def save_js(request):
         bibs = json.loads(request.POST['bibs'])
         status = 200
         response['id_translations'] = []
-        for b_id in bibs.keys():
+        for b_id in list(bibs.keys()):
             bib = bibs[b_id]
             if request.POST['is_new'] == 'true':
                 inserting_obj = {

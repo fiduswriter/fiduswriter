@@ -133,7 +133,6 @@ export class HeaderbarView {
     }
 
     onkeydown(event) {
-
         let name = keyName(event)
         if (event.altKey) {
             name = "Alt-" + name
@@ -218,7 +217,7 @@ export class HeaderbarView {
             `
                 <div class="header-menu">
                     <span class="header-nav-item${menu.disabled && menu.disabled(this.editor) ? ' disabled' : ''}" title="${menu.tooltip}">
-                        ${menu.title}
+                        ${typeof menu.title === 'function' ? menu.title(this.editor) : menu.title}
                     </span>
                     ${
                         menu.open ?
@@ -277,7 +276,7 @@ export class HeaderbarView {
                 `<i class="fa fa-${menuItem.icon}"></i>` :
                 ''
             }
-            ${menuItem.title}
+            ${typeof menuItem.title === 'function' ? menuItem.title(this.editor) : menuItem.title}
         </span>`
     }
 
@@ -296,7 +295,8 @@ export class HeaderbarView {
                 `<i class="fa fa-${menuItem.icon}"></i>` :
                 ''
             }
-            ${menuItem.title} <span class="fw-icon-right"><i class="fa fa-caret-right"></i></span>
+            ${typeof menuItem.title === 'function' ? menuItem.title(this.editor) : menuItem.title}
+            <span class="fw-icon-right"><i class="fa fa-caret-right"></i></span>
         </span>
         ${
             menuItem.open ?

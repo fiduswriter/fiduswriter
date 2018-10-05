@@ -35,9 +35,9 @@ export let linkDialogTemplate = ({defaultLink, internalTargets, link, linkTitle}
     <input class="link" type="text" value="${["#", undefined].includes(link[0]) ? defaultLink : link}" placeholder="${gettext("URL")}"/>`
 
 /** Dialog to add a note to a revision before saving. */
-export let revisionDialogTemplate = () =>
+export let revisionDialogTemplate = ({dir}) =>
     `<p>
-        <input type="text" class="revision-note" placeholder="${gettext('Description (optional)')}">
+        <input type="text" class="revision-note" placeholder="${gettext('Description (optional)')}" dir="${dir}">
     </p>`
 
 export let tableInsertTemplate = () => `
@@ -150,12 +150,12 @@ export let figureImageTemplate = ({imageDB}) =>
     </div>`
 
     /** A template to configure the display of a figure in the editor. */
-export let configureFigureTemplate = ({image, equation, caption}) =>
+export let configureFigureTemplate = ({image, equation, caption, dir}) =>
     `<div class="fw-media-uploader">
             <div>
                 <input class="fw-media-title figure-math" type="text" name="figure-math"
                     placeholder="${gettext('Insert formula')}" value="${escapeText(equation)}"
-                    ${image ? 'disabled="disabled"' : ''}>
+                    ${image ? 'disabled="disabled"' : ''} />
                 <button type="button" id="insertFigureImage" class="fw-button fw-light
                         ${equation === '' ? '' : 'disabled'}">
                     ${gettext('Insert image')} <i class="fa fa-picture-o"></i>
@@ -192,7 +192,7 @@ export let configureFigureTemplate = ({image, equation, caption}) =>
             <div style="margin-top: 10px;">
                 <input style="width: 402px;" class="caption"
                         type="text" name="figure-caption" value="${escapeText(caption)}"
-                        placeholder="${gettext('Insert caption')}" />
+                        placeholder="${gettext('Insert caption')}" dir="${dir}" />
             </div>
         </div>`
 
@@ -215,7 +215,7 @@ export let configureCitationTemplate = ({citedItemsHTML, citeFormat}) =>
                 <thead class="fw-document-table-header"><tr>
                     <th width="135">${gettext("Title")}</th>
                     <th width="135">${gettext("Author")}</th>
-                    <td width="50" align="center">${gettext("Remove")}</td>
+                    <th width="50" align="center">${gettext("Remove")}</th>
                 </tr></thead>
                 <tbody class="fw-document-table-body fw-min">
                   ${citedItemsHTML}
@@ -273,10 +273,10 @@ export let authorTemplate = ({author}) =>
     <input type="text" name="institution" value="${author.institution ? author.institution : ''}" placeholder="${gettext("Institution")}"/>
     `
 
-export let languageTemplate = ({currentLanguage, languages}) =>
+export let languageTemplate = ({currentLanguage, LANGUAGES}) =>
     `<select class="fw-button fw-white fw-large">
         ${
-            languages.map(language =>
+            LANGUAGES.map(language =>
                 `<option value="${language[0]}" ${language[0]===currentLanguage ? 'selected' : ''}>
                     ${language[1]}
                 </option>`

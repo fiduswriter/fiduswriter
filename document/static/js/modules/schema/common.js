@@ -1,4 +1,4 @@
-import {katexRender} from "../katex"
+import katex from "katex"
 
 function parseReferences(str) {
     if (!str) {
@@ -17,7 +17,7 @@ function parseReferences(str) {
        ref => ref.hasOwnProperty('id') // ensure there is an id.
    ).map(
        ref => {
-           let mRef = {id:ref.id}
+           const mRef = {id:ref.id}
            if (ref.locator) {
                mRef.locator = ref.locator
            }
@@ -29,7 +29,7 @@ function parseReferences(str) {
    )
 }
 
-export let citation = {
+export const citation = {
     inline: true,
     group: "inline",
     attrs: {
@@ -50,20 +50,16 @@ export let citation = {
         }
     }],
     toDOM(node) {
-        let bibDB = node.type.schema.cached.bibDB,
-            bibs = {}
-            node.attrs.references.forEach(ref => bibs[ref.id] = bibDB.db[ref.id])
         return ["span", {
             class: 'citation',
             'data-format': node.attrs.format,
-            'data-references': JSON.stringify(node.attrs.references),
-            'data-bibs': JSON.stringify(bibs)
+            'data-references': JSON.stringify(node.attrs.references)
         }]
     }
 }
 
 
-export let equation = {
+export const equation = {
     inline: true,
     group: "inline",
     attrs: {
@@ -80,10 +76,10 @@ export let equation = {
         }
     }],
     toDOM(node) {
-        let dom = document.createElement('span')
+        const dom = document.createElement('span')
         dom.dataset.equation = node.attrs.equation
         dom.classList.add('equation')
-        katexRender(node.attrs.equation, dom, {
+        katex.render(node.attrs.equation, dom, {
             throwOnError: false
         })
         dom.setAttribute('contenteditable', 'false')
@@ -117,7 +113,7 @@ export function parseTracks(str) {
 
 let imageDBBroken = false
 
-export let figure = {
+export const figure = {
     group: "block",
     attrs: {
         equation: {default: ""},
@@ -130,7 +126,7 @@ export let figure = {
     parseDOM: [{
         tag: 'figure',
         getAttrs(dom) {
-            let image = parseInt(dom.dataset.image)
+            const image = parseInt(dom.dataset.image)
             return {
                 equation: dom.dataset.equation,
                 image: isNaN(image) ? false : image,
@@ -142,7 +138,7 @@ export let figure = {
         }
     }],
     toDOM(node) {
-        let dom = document.createElement('figure')
+        const dom = document.createElement('figure')
         dom.dataset.equation = node.attrs.equation
         dom.dataset.image = node.attrs.image
         dom.dataset.figureCategory = node.attrs.figureCategory
@@ -156,8 +152,8 @@ export let figure = {
             if (node.type.schema.cached.imageDB) {
                 if (node.type.schema.cached.imageDB.db[node.attrs.image] &&
                     node.type.schema.cached.imageDB.db[node.attrs.image].image) {
-                    let imgSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
-                    let img = document.createElement("img")
+                    const imgSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
+                    const img = document.createElement("img")
                     img.setAttribute('src', node.type.schema.cached.imageDB.db[node.attrs.image].image)
                     dom.firstChild.appendChild(img)
                     dom.dataset.imageSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
@@ -170,8 +166,8 @@ export let figure = {
                         node.type.schema.cached.imageDB.getDB().then(() => {
                             if (node.type.schema.cached.imageDB.db[node.attrs.image] &&
                                 node.type.schema.cached.imageDB.db[node.attrs.image].image) {
-                                let imgSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
-                                let img = document.createElement("img")
+                                const imgSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
+                                const img = document.createElement("img")
                                 img.setAttribute('src', imgSrc)
                                 dom.firstChild.appendChild(img)
                                 dom.dataset.imageSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
@@ -183,26 +179,26 @@ export let figure = {
                 }
             }
         } else {
-            let domEquation = document.createElement('div')
+            const domEquation = document.createElement('div')
             domEquation.classList.add('figure-equation')
             domEquation.setAttribute('data-equation', node.attrs.equation)
 
-            katexRender(node.attrs.equation, domEquation, {
+            katex.render(node.attrs.equation, domEquation, {
                 displayMode: true,
                 throwOnError: false
             })
             dom.appendChild(domEquation)
         }
-        let captionNode = document.createElement("figcaption")
+        const captionNode = document.createElement("figcaption")
         if (node.attrs.figureCategory !== 'none') {
-            let figureCatNode = document.createElement('span')
+            const figureCatNode = document.createElement('span')
             figureCatNode.classList.add(`figure-cat-${node.attrs.figureCategory}`)
             figureCatNode.setAttribute('data-figure-category', node.attrs.figureCategory)
             figureCatNode.innerHTML = node.attrs.figureCategory
             captionNode.appendChild(figureCatNode)
         }
         if (node.attrs.caption !== '') {
-            let captionTextNode = document.createElement("span")
+            const captionTextNode = document.createElement("span")
             captionTextNode.setAttribute('data-caption', node.attrs.caption)
             captionTextNode.innerHTML = node.attrs.caption
 
@@ -219,11 +215,11 @@ export let figure = {
     }
 }
 
-export let randomHeadingId = () => {
+export const randomHeadingId = () => {
     return `H${Math.round(Math.random()*10000000) + 1}`
 }
 
-export let heading = {
+export const heading = {
     group: "block",
     content: "inline*",
     marks: "_",
@@ -302,7 +298,7 @@ export let heading = {
         }
     ],
     toDOM(node) {
-        let attrs = {id: node.attrs.id}
+        const attrs = {id: node.attrs.id}
         if (node.attrs.track.length) {
             attrs['data-track'] = JSON.stringify(node.attrs.track)
         }
@@ -310,7 +306,7 @@ export let heading = {
     }
 }
 
-export let comment = {
+export const comment = {
     attrs: {
         id: {}
     },
@@ -334,7 +330,7 @@ export let comment = {
 }
 
 // Annotation tag is not used by the core Fidus Writer editor, but can be used by plugins that need to add annotation capability.
-export let annotation_tag = {
+export const annotation_tag = {
     attrs: {
         type: {
             default: '' // Make this a string unique to your plugin so that you avoid handling tags of other plugins. For example 'rdfa' for an rdfa-tagging plugin.
@@ -360,7 +356,7 @@ export let annotation_tag = {
         }
     }],
     toDOM(node) {
-        let attrs = {
+        const attrs = {
             class: 'annotation-tag',
             'data-type': node.attrs.type
         }
@@ -376,7 +372,7 @@ export let annotation_tag = {
 
 // :: NodeSpec A plain paragraph textblock. Represented in the DOM
   // as a `<p>` element.
-export let paragraph = {
+export const paragraph = {
     group: "block",
     content: "inline*",
     attrs: {
@@ -388,13 +384,13 @@ export let paragraph = {
         track: parseTracks(dom.dataset.track)
     }}}],
     toDOM(node) {
-        let attrs = node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
+        const attrs = node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
         return ['p', attrs, 0]
     }
 }
 
 // :: NodeSpec A blockquote (`<blockquote>`) wrapping one or more blocks.
-export let blockquote = {
+export const blockquote = {
     content: "block+",
     group: "block",
     attrs: {
@@ -408,13 +404,13 @@ export let blockquote = {
         track: parseTracks(dom.dataset.track)
     }}}],
     toDOM(node) {
-        let attrs = node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
+        const attrs = node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
         return ["blockquote", attrs, 0]
     }
 }
 
 // :: NodeSpec A horizontal rule (`<hr>`).
-export let horizontal_rule = {
+export const horizontal_rule = {
     group: "block",
     attrs: {
         track: {
@@ -425,16 +421,16 @@ export let horizontal_rule = {
         track: parseTracks(dom.dataset.track)
     }}}],
     toDOM(node) {
-        let attrs = node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
+        const attrs = node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
         return ["hr", attrs]
     }
 }
 
-export let randomAnchorId = () => {
+export const randomAnchorId = () => {
     return `A${Math.round(Math.random()*10000000) + 1}`
 }
 
-export let anchor = {
+export const anchor = {
     attrs: {
         id: {
             default: false
@@ -477,7 +473,7 @@ export const ordered_list = {
         }
     }}],
     toDOM(node) {
-        let attrs = {}
+        const attrs = {}
         if (node.attrs.order !== 1) {
             attrs.start = node.attrs.order
         }
@@ -502,7 +498,7 @@ export const bullet_list = {
         }
     }}],
     toDOM(node) {
-        let attrs = {}
+        const attrs = {}
         if (node.attrs.track.length) {
             attrs['data-track'] = JSON.stringify(node.attrs.track)
         }
@@ -524,7 +520,7 @@ export const list_item = {
         }
     }}],
     toDOM(node) {
-        let attrs = {}
+        const attrs = {}
         if (node.attrs.track.length) {
             attrs['data-track'] = JSON.stringify(node.attrs.track)
         }
@@ -533,7 +529,7 @@ export const list_item = {
     defining: true
 }
 
-export let deletion = {
+export const deletion = {
     attrs: {
         user: {
             default: 0

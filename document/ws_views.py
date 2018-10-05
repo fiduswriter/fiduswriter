@@ -1,5 +1,4 @@
-from __future__ import unicode_literals
-
+from builtins import str
 import uuid
 import atexit
 from time import mktime, time
@@ -29,6 +28,7 @@ class WebSocket(BaseWebSocketHandler):
     sessions = dict()
 
     def open(self, arg):
+        self.set_nodelay(True)
         logger.debug('Websocket opened')
         response = dict()
         current_user = self.get_current_user()
@@ -160,7 +160,7 @@ class WebSocket(BaseWebSocketHandler):
         elif self.user_info.access_rights == 'review':
             # Reviewer should only get his/her own comments
             filtered_comments = {}
-            for key, value in self.doc["comments"].items():
+            for key, value in list(self.doc["comments"].items()):
                 if value["user"] == self.user_info.user.id:
                     filtered_comments[key] = value
             response['doc']['comments'] = filtered_comments
@@ -321,10 +321,18 @@ class WebSocket(BaseWebSocketHandler):
             if "id" not in cd:
                 # ignore
                 continue
-            id = str(cd["id"])
+            id = cd["id"]
             if cd["type"] == "create":
-                del cd["type"]
-                self.doc["comments"][id] = cd
+                self.doc["comments"][id] = {
+                    "user": cd["user"],
+                    "username": cd["username"],
+                    "assignedUser": cd["assignedUser"],
+                    "assignedUsername": cd["assignedUsername"],
+                    "date": cd["date"],
+                    "comment": cd["comment"],
+                    "isMajor": cd["isMajor"],
+                    "resolved": cd["resolved"],
+                }
             elif cd["type"] == "delete":
                 del self.doc["comments"][id]
             elif cd["type"] == "update":
@@ -332,18 +340,31 @@ class WebSocket(BaseWebSocketHandler):
                 if "isMajor" in cd:
                     self.doc["comments"][id][
                         "isMajor"] = cd["isMajor"]
+                if "assignedUser" in cd and "assignedUsername" in cd:
+                    self.doc["comments"][id][
+                        "assignedUser"] = cd["assignedUser"]
+                    self.doc["comments"][id][
+                        "assignedUsername"] = cd["assignedUsername"]
+                if "resolved" in cd:
+                    self.doc["comments"][id][
+                        "resolved"] = cd["resolved"]
             elif cd["type"] == "add_answer":
                 if "answers" not in self.doc["comments"][id]:
                     self.doc["comments"][id]["answers"] = []
-                del cd["type"]
-                self.doc["comments"][id]["answers"].append(cd)
+                self.doc["comments"][id]["answers"].append({
+                    "id": cd["answerId"],
+                    "user": cd["user"],
+                    "username": cd["username"],
+                    "date": cd["date"],
+                    "answer": cd["answer"]
+                })
             elif cd["type"] == "delete_answer":
-                answer_id = str(cd["answerId"])
+                answer_id = cd["answerId"]
                 for answer in self.doc["comments"][id]["answers"]:
                     if answer["id"] == answer_id:
                         self.doc["comments"][id]["answers"].remove(answer)
             elif cd["type"] == "update_answer":
-                answer_id = str(cd["answerId"])
+                answer_id = cd["answerId"]
                 for answer in self.doc["comments"][id]["answers"]:
                     if answer["id"] == answer_id:
                         answer["answer"] = cd["answer"]
@@ -421,7 +442,8 @@ class WebSocket(BaseWebSocketHandler):
                 self.update_bibliography(parsed["bu"])
             if "iu" in parsed:  # iu = image updates
                 self.update_images(parsed["iu"])
-            WebSocket.save_document(self.user_info.document_id)
+            if self.doc['version'] % 10 == 0:
+                WebSocket.save_document(self.user_info.document_id)
             self.confirm_diff(parsed["rid"])
             WebSocket.send_updates(
                 parsed,
@@ -518,9 +540,9 @@ class WebSocket(BaseWebSocketHandler):
     def send_participant_list(cls, document_id):
         if document_id in WebSocket.sessions:
             participant_list = []
-            for session_id, waiter in cls.sessions[
+            for session_id, waiter in list(cls.sessions[
                 document_id
-            ]['participants'].items():
+            ]['participants'].items()):
                 access_rights = waiter.user_info.access_rights
                 if access_rights not in CAN_COMMUNICATE:
                     continue
@@ -542,7 +564,7 @@ class WebSocket(BaseWebSocketHandler):
             "Sending message to %d waiters",
             len(cls.sessions[document_id]['participants'])
         )
-        for waiter in cls.sessions[document_id]['participants'].values():
+        for waiter in list(cls.sessions[document_id]['participants'].values()):
             if waiter.id != sender_id:
                 access_rights = waiter.user_info.access_rights
                 if "comments" in message and len(message["comments"]) > 0:
@@ -587,6 +609,8 @@ class WebSocket(BaseWebSocketHandler):
     def save_document(cls, document_id):
         doc = cls.sessions[document_id]
         doc_db = doc['db']
+        if doc_db.version == doc['version']:
+            return
         doc_db.title = doc['title'][-255:]
         doc_db.version = doc['version']
         doc_db.contents = json_encode(doc['contents'])

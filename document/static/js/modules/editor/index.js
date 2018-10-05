@@ -1,7 +1,11 @@
 /* Functions for ProseMirror integration.*/
 import {
-    whenReady
+    whenReady,
+    ensureCSS
 } from "../common"
+import {
+    FeedbackTab
+} from "../feedback"
 import {
     EditorState,
     TextSelection
@@ -87,6 +91,7 @@ import {
     accessRightsPlugin,
     authorInputPlugin,
     citationRenderPlugin,
+    clipboardPlugin,
     collabCaretsPlugin,
     commentsPlugin,
     footnoteMarkersPlugin,
@@ -95,7 +100,6 @@ import {
     keywordInputPlugin,
     linksPlugin,
     marginboxesPlugin,
-    pastePlugin,
     placeholdersPlugin,
     settingsPlugin,
     toolbarPlugin,
@@ -113,7 +117,11 @@ export class Editor {
     // A class that contains everything that happens on the editor page.
     // It is currently not possible to initialize more than one editor class, as it
     // contains bindings to menu items, etc. that are uniquely defined.
-    constructor(id) {
+    constructor(id, {staticUrl, websocketUrl}) {
+        console.log('here')
+        console.log({staticUrl, websocketUrl})
+        this.staticUrl = staticUrl
+        this.websocketUrl = websocketUrl
         this.mod = {}
         // Whether the editor is currently waiting for a document update. Set to true
         // initially so that diffs that arrive before document has been loaded are not
@@ -125,7 +133,8 @@ export class Editor {
             rights: '',
             owner: undefined,
             is_owner: false,
-            confirmedDoc: false // The latest doc as confirmed by the server.
+            confirmedDoc: false, // The latest doc as confirmed by the server.
+            dir: 'ltr' // standard direction, used in input fields, etc.
         }
         this.schema = docSchema
         this.user = false
@@ -157,7 +166,7 @@ export class Editor {
             [marginboxesPlugin, () => ({editor: this})],
             [keywordInputPlugin, () => ({editor: this})],
             [authorInputPlugin, () => ({editor: this})],
-            [pastePlugin, () => ({editor: this})],
+            [clipboardPlugin, () => ({editor: this, viewType: 'main'})],
             [accessRightsPlugin, () => ({editor: this})],
             [settingsPlugin, () => ({editor: this})],
             [trackPlugin, () => ({editor: this})]
@@ -169,7 +178,65 @@ export class Editor {
     }
 
     init() {
-        whenReady().then(()=>this.initEditor())
+        whenReady().then(() => {
+            this.render()
+            this.initEditor()
+        })
+    }
+
+    render() {
+        document.body = document.createElement('body')
+        document.body.innerHTML = `<div id="editor">
+            <div id="wait" class="active"><i class="fa fa-spinner fa-pulse"></i></div>
+            <header>
+                <nav id="headerbar">
+                    <div></div>
+                </nav>
+                <nav id="toolbar">
+                    <div></div>
+                </nav>
+            </header>
+            <div id="editor-content">
+                <div id="flow" class="comments-enabled hide">
+                    <div id="paper-editable">
+                        <div id="document-editable" class="user-contents"></div>
+                        <div id="footnote-box-container" class="user-contents">
+                            <div id="citation-footnote-box-container"></div>
+                        </div>
+                    </div>
+                    <div class="article-bibliography user-contents"></div>
+                </div>
+                <div id="margin-box-container"></div>
+            </div>
+            <div id="chat">
+                <i class="resize-button fa fa-angle-double-down"></i>
+                <div id="chat-container"></div>
+                <div id="messageform" contentEditable="true" class="empty"></div>
+                <audio id="chat-notification">
+                    <source src="${this.staticUrl}ogg/chat_notification.ogg?v=${$StaticUrls.transpile.version$}" type="audio/ogg">
+                </audio>
+            </div>
+        </div>
+        <div id="unobtrusive_messages"></div>`
+        ensureCSS([
+            'libs/katex/katex.min.css',
+            'mathquill.css',
+            'editor.css',
+            'document.css',
+            'carets.css',
+            'tracking.css',
+            'comments.css',
+            'prosemirror.css',
+            'footnotes.css',
+            'chat.css',
+            'access_rights_dialog.css',
+            'citation_dialog.css',
+            'review.css',
+            'add_remove_dialog.css',
+            'bibliography.css'
+        ], this.staticUrl)
+        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
+        feedbackTab.init()
     }
 
     initEditor() {
@@ -247,8 +314,6 @@ export class Editor {
         } else {
             this.user = this.docInfo.owner
         }
-
-
 
         this.mod.db.bibDB.setDB(data.doc.bibliography)
         // assign bibDB to be used in document schema.

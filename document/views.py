@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 import time
 import os
 from tornado.escape import json_decode, json_encode
@@ -21,6 +19,7 @@ from django.core.paginator import Paginator, EmptyPage
 
 from avatar.utils import get_primary_avatar, get_default_avatar_url
 from avatar.templatetags.avatar_tags import avatar_url
+from npm_mjs.templatetags.transpile import StaticTranspileNode
 
 from document.models import Document, AccessRight, DocumentRevision, \
     ExportTemplate, CAN_UPDATE_DOCUMENT
@@ -28,7 +27,8 @@ from usermedia.models import DocumentImage, Image
 from bibliography.models import Entry
 from document.helpers.serializers import PythonWithURLSerializer
 from bibliography.views import serializer
-from style.models import CitationStyle, CitationLocale
+from style.models import CitationStyle, CitationLocale, DocumentStyle
+from base.html_email import html_email
 
 
 def get_accessrights(ars):
@@ -51,10 +51,11 @@ def get_accessrights(ars):
 
 @login_required
 def index(request):
-    response = {}
+    response = {
+        'script': StaticTranspileNode.handle_simple('js/app.mjs')
+    }
     response.update(csrf(request))
-    return render(request, 'document/index.html',
-                  response)
+    return render(request, 'index.html', response)
 
 
 @login_required
@@ -166,6 +167,11 @@ def get_documentlist_js(request):
         response['citation_styles'] = [obj['fields'] for obj in cit_styles]
         cit_locales = serializer.serialize(CitationLocale.objects.all())
         response['citation_locales'] = [obj['fields'] for obj in cit_locales]
+        doc_styles = serializer.serialize(
+            DocumentStyle.objects.all(),
+            use_natural_foreign_keys=True
+        )
+        response['document_styles'] = [obj['fields'] for obj in doc_styles]
         response['user'] = {}
         response['user']['id'] = request.user.id
         response['user']['name'] = request.user.readable_name
@@ -181,9 +187,10 @@ def get_documentlist_js(request):
 
 @login_required
 def editor(request):
-    response = {}
-    return render(request, 'document/editor.html',
-                  response)
+    response = {
+        'script': StaticTranspileNode.handle_simple('js/app.mjs')
+    }
+    return render(request, 'index.html', response)
 
 
 @login_required
@@ -221,25 +228,38 @@ def send_share_notification(request, doc_id, collaborator_id, right):
     if len(document_title) == 0:
         document_title = _('Untitled')
     link = HttpRequest.build_absolute_uri(request, document.get_absolute_url())
-    message_body = _(
+    message_text = _(
         ('Hey %(collaborator_name)s,\n%(owner)s has shared the document '
          '\'%(document)s\' with you and given you %(right)s access rights. '
          '\nAccess the document through this link: %(link)s')
     ) % {
-                       'owner': owner,
-                       'right': right,
-                       'collaborator_name': collaborator_name,
-                       'link': link,
-                       'document': document_title
-                   }
+        'owner': owner,
+        'right': right,
+        'collaborator_name': collaborator_name,
+        'link': link,
+        'document': document_title
+    }
+    body_html = _(
+        ('<p>Hey %(collaborator_name)s,<br>%(owner)s has shared the document '
+         '\'%(document)s\' with you and given you %(right)s access rights.</p>'
+         '<p>Access the document <a href="%(link)s">here</a>.</p>')
+    ) % {
+        'owner': owner,
+        'right': right,
+        'collaborator_name': collaborator_name,
+        'link': link,
+        'document': document_title
+    }
     send_mail(
         _('Document shared:') +
         ' ' +
         document_title,
-        message_body,
+        message_text,
         settings.DEFAULT_FROM_EMAIL,
         [collaborator_email],
-        fail_silently=True)
+        fail_silently=True,
+        html_message=html_email(body_html)
+    )
 
 
 def send_share_upgrade_notification(request, doc_id, collaborator_id):
@@ -249,21 +269,32 @@ def send_share_upgrade_notification(request, doc_id, collaborator_id):
     collaborator_name = collaborator.readable_name
     collaborator_email = collaborator.email
     link = HttpRequest.build_absolute_uri(request, document.get_absolute_url())
-    message_body = _(
+    message_text = _(
         ('Hey %(collaborator_name)s,\n%(owner)s has given you write access '
          'rights to a Fidus Writer document.\nAccess the document through '
          'this link: %(link)s')
     ) % {
-                       'owner': owner,
-                       'collaborator_name': collaborator_name,
-                       'link': link
-                   }
+        'owner': owner,
+        'collaborator_name': collaborator_name,
+        'link': link
+    }
+    body_html = _(
+        ('<p>Hey %(collaborator_name)s,<br>%(owner)s has given you write '
+         'access to a Fidus Writer document.</p>'
+         '<p>Access the document <a href="%(link)s">here</a>.</p>')
+    ) % {
+        'owner': owner,
+        'collaborator_name': collaborator_name,
+        'link': link
+    }
     send_mail(
         _('Fidus Writer document write access'),
-        message_body,
+        message_text,
         settings.DEFAULT_FROM_EMAIL,
         [collaborator_email],
-        fail_silently=True)
+        fail_silently=True,
+        html_message=html_email(body_html)
+    )
 
 
 @login_required
@@ -488,6 +519,92 @@ def delete_revision_js(request):
     return JsonResponse(
         response,
         status=status
+    )
+
+
+# Check doc access rights.
+def has_doc_access(doc, user):
+    if doc.owner == user:
+        return True
+    access_rights = AccessRight.objects.filter(
+        document=doc,
+        user=user
+    ).first()
+    if access_rights:
+        return True
+    else:
+        return False
+
+
+@login_required
+def comment_notify_js(request):
+    response = {}
+    if not request.is_ajax() or request.method != 'POST':
+        return JsonResponse(
+            response,
+            status=405
+        )
+    doc_id = request.POST['doc_id']
+    collaborator_id = request.POST['collaborator_id']
+    comment_text = request.POST['comment_text']
+    comment_html = request.POST['comment_html']
+    collaborator = User.objects.filter(pk=collaborator_id).first()
+    document = Document.objects.filter(pk=doc_id).first()
+    if (
+        not document or
+        not collaborator or
+        not comment_text or
+        not comment_html or
+        not has_doc_access(document, request.user) or
+        not has_doc_access(document, collaborator)
+    ):
+        return JsonResponse(
+            response,
+            status=403
+        )
+    commentator = request.user.readable_name
+    collaborator_name = collaborator.readable_name
+    collaborator_email = collaborator.email
+    document_title = document.title
+    if len(document_title) == 0:
+        document_title = _('Untitled')
+    link = HttpRequest.build_absolute_uri(request, document.get_absolute_url())
+    message_text = _(
+        ('Hey %(collaborator_name)s,\n%(commentator)s has mentioned you in a '
+         'comment in the document \'%(document)s\':\n\n%(comment_text)s'
+         '\n\nGo to the document here: %(link)s')
+    ) % {
+           'commentator': commentator,
+           'collaborator_name': collaborator_name,
+           'link': link,
+           'document': document_title,
+           'comment_text': comment_text
+    }
+    body_html = _(
+        ('<p>Hey %(collaborator_name)s,<br>%(commentator)s has mentioned you '
+         'in a comment in the document \'%(document)s\':</p>%(comment_html)s'
+         '<p>Go to the document <a href="%(link)s">here</a>.</p>')
+    ) % {
+        'commentator': commentator,
+        'collaborator_name': collaborator_name,
+        'link': link,
+        'document': document_title,
+        'comment_html': comment_html
+    }
+
+    send_mail(
+        _('Comment on :') +
+        ' ' +
+        document_title,
+        message_text,
+        settings.DEFAULT_FROM_EMAIL,
+        [collaborator_email],
+        fail_silently=True,
+        html_message=html_email(body_html)
+    )
+    return JsonResponse(
+        response,
+        status=200
     )
 
 

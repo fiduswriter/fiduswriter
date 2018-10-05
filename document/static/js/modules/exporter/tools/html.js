@@ -1,4 +1,4 @@
-export let findImages = function(htmlEl) {
+export let modifyImages = function(htmlEl) {
     let imageLinks = htmlEl.querySelectorAll('img'),
         images = []
 

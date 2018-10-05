@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 import time
 from random import randrange
 from selenium.webdriver.support import expected_conditions as EC
@@ -57,7 +57,7 @@ class EditorHelper(SeleniumHelper):
         if seconds is False:
             seconds = self.wait_time
         doc_size = driver.execute_script(
-            'return window.theEditor.view.state.doc.content.size')
+            'return window.theApp.page.view.state.doc.content.size')
         if doc_size < size and seconds > 0:
             time.sleep(0.1)
             self.wait_for_doc_size(driver, size, seconds - 0.1)
@@ -66,9 +66,9 @@ class EditorHelper(SeleniumHelper):
         if seconds is False:
             seconds = self.wait_time
         doc_str = driver.execute_script(
-            'return window.theEditor.view.state.doc.toString()')
+            'return window.theApp.page.view.state.doc.toString()')
         doc2_str = driver2.execute_script(
-            'return window.theEditor.view.state.doc.toString()')
+            'return window.theApp.page.view.state.doc.toString()')
         if (doc_str != doc2_str):
             # The strings don't match.
             time.sleep(0.1)

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-21 09:14+0000\n"
+"POT-Creation-Date: 2018-10-05 12:46+0000\n"
 "PO-Revision-Date: 2013-10-08 04:30-0500\n"
 "Last-Translator: Eugenio Battaglia <contafinoasette@gmail.com>\n"
 "Language-Team: Italian <contafinoasette@gmail.com>\n"
@@ -16,23 +16,6 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-
-#: base/templates/base.html:10 document/templates/document/editor.html:10
-#: user/templates/account/base.html:7
-msgid "The all in one solution for collaborative academic writing."
-msgstr "La soluzione completa per la stesura collaborativa di testi accademici"
-
-#: base/templates/base.html:76
-msgid "Edit profile"
-msgstr "Modifica profilo"
-
-#: base/templates/base.html:81 user/templates/account/list_team_members.html:19
-msgid "Contacts"
-msgstr "Contatti"
-
-#: base/templates/base.html:87
-msgid "Log out"
-msgstr "Esci"
 
 #: base/templates/footer.html:7
 msgid "Terms and Conditions"
@@ -56,9 +39,9 @@ msgstr "Citazioni con Linguaggio Stile di Citazione"
 msgid "Editing with ProseMirror"
 msgstr ""
 
-#: bibliography/templates/bibliography/index.html:7
-msgid "Bibliography Manager"
-msgstr "Gestisci Bibliografia"
+#: base/templates/index.html:11 user/templates/account/base.html:7
+msgid "The all in one solution for collaborative academic writing."
+msgstr "La soluzione completa per la stesura collaborativa di testi accademici"
 
 #: browser_check/templates/browser_check/browser_not_supported.html:4
 #: browser_check/templates/browser_check/browser_not_supported.html:27
@@ -75,25 +58,23 @@ msgid ""
 "            "
 msgstr ""
 
-#: document/templates/document/editor.html:88
-msgid "en"
-msgstr "en"
+#: document/templates/admin/document/document/change_list_object_tools.html:8
+#, python-format
+msgid "Add %(name)s"
+msgstr ""
 
-#: document/templates/document/index.html:7
-msgid "Document Overview"
-msgstr "Panoramica Documento"
-
-#: document/templates/maintenance/index.html:4
+#: document/templates/admin/document/document/change_list_object_tools.html:13
+#: document/templates/maintenance/index.html:5
 msgid "Maintenance"
 msgstr ""
 
-#: document/templates/maintenance/index.html:15
+#: document/templates/maintenance/index.html:17
 #, fuzzy
 #| msgid "Document Style"
 msgid "Document Maintenance"
 msgstr "Stile Documento"
 
-#: document/templates/maintenance/index.html:17
+#: document/templates/maintenance/index.html:19
 msgid ""
 "\n"
 "            Before and after upgrading Fidus Writer, you should update all "
@@ -104,73 +85,54 @@ msgid ""
 "            "
 msgstr ""
 
-#: document/templates/maintenance/index.html:25
+#: document/templates/maintenance/index.html:27
 msgid "Update all documents (DANGER!)"
 msgstr ""
 
-#: document/views.py:222
+#: document/views.py:229 document/views.py:570
 #, fuzzy
 msgid "Untitled"
 msgstr "Sottotitolo"
 
-#: document/views.py:236
+#: document/views.py:254
 #, fuzzy
 msgid "Document shared:"
 msgstr "Documenti"
 
-#: document/views.py:262
+#: document/views.py:291
 msgid "Fidus Writer document write access"
 msgstr ""
 
-#: feedback/templates/feedback/feedback.html:3
-#: feedback/templates/feedback/feedback.html:6
-msgid "Tech support"
-msgstr ""
-
-#: feedback/templates/feedback/feedback.html:7
-msgid "Did you encounter an error or bug?"
-msgstr ""
-
-#: feedback/templates/feedback/feedback.html:8
-msgid "Give a brief description of what has happened."
-msgstr ""
-
-#: feedback/templates/feedback/feedback.html:13
-#: user/templates/account/show_profile.html:106
-msgid "submit"
-msgstr "invio"
-
-#: feedback/templates/feedback/feedback.html:17
+#: document/views.py:596
 #, fuzzy
-#| msgid "Thank you for your comment!"
-msgid "Thank you for your report!"
-msgstr "Grazie per il commento!"
+msgid "Comment on :"
+msgstr "Commenti"
 
-#: fiduswriter/settings.py:228
+#: fiduswriter/settings.py:227
 msgid "English"
 msgstr "Inglese"
 
-#: fiduswriter/settings.py:229
+#: fiduswriter/settings.py:228
 msgid "Bulgarian"
 msgstr "Bulgaro"
 
-#: fiduswriter/settings.py:230
+#: fiduswriter/settings.py:229
 msgid "German"
 msgstr "Tedesco"
 
-#: fiduswriter/settings.py:231
+#: fiduswriter/settings.py:230
 msgid "French"
 msgstr ""
 
-#: fiduswriter/settings.py:232
+#: fiduswriter/settings.py:231
 msgid "Italian"
 msgstr ""
 
-#: fiduswriter/settings.py:233
+#: fiduswriter/settings.py:232
 msgid "Spanish"
 msgstr "Spagnolo"
 
-#: fiduswriter/settings.py:234
+#: fiduswriter/settings.py:233
 msgid "Portuguese (Brazil)"
 msgstr ""
 
@@ -182,21 +144,6 @@ msgstr "Accedi"
 #: user/templates/account/email_confirm.html:8
 msgid "Confirm E-mail Address"
 msgstr "Conferma Indirizzo E-mail"
-
-#: user/templates/account/list_team_members.html:7
-msgid "Team members"
-msgstr "Membri del team"
-
-#: user/templates/account/list_team_members.html:20
-#: user/templates/account/password_reset.html:28
-#: user/templates/account/signup.html:44
-msgid "E-mail address"
-msgstr "Indirizzi e-mail"
-
-#: user/templates/account/list_team_members.html:21
-#: user/templates/account/show_profile.html:71
-msgid "Delete"
-msgstr "Cancella"
 
 #: user/templates/account/login.html:8
 #: user/templates/account/password_reset.html:7
@@ -249,13 +196,10 @@ msgstr ""
 "        "
 
 #: user/templates/account/login.html:58
-#: user/templates/account/show_profile.html:44
-#: user/templates/account/show_profile.html:122
 msgid "Username"
 msgstr "Nome Utente"
 
 #: user/templates/account/login.html:62
-#: user/templates/account/show_profile.html:56
 msgid "Password"
 msgstr "Password"
 
@@ -298,52 +242,14 @@ msgstr ""
 "href=\"mailto:mail@fiduswriter.com\">contattaci</a>.</p>\n"
 "    "
 
+#: user/templates/account/password_reset.html:28
+#: user/templates/account/signup.html:44
+msgid "E-mail address"
+msgstr "Indirizzi e-mail"
+
 #: user/templates/account/password_reset.html:32
 msgid "Reset My Password"
 msgstr "Ripristina la Mia Password"
-
-#: user/templates/account/show_profile.html:23
-msgid "Edit profile picture"
-msgstr "Modifica l'immagine del profilo"
-
-#: user/templates/account/show_profile.html:29
-msgid "Change picture"
-msgstr "Cambia l'immagine"
-
-#: user/templates/account/show_profile.html:34
-msgid "Delete picture"
-msgstr "Elimina l'immagine"
-
-#: user/templates/account/show_profile.html:48
-#: user/templates/account/show_profile.html:126
-msgid "First name"
-msgstr "Nome"
-
-#: user/templates/account/show_profile.html:52
-#: user/templates/account/show_profile.html:130
-msgid "Last name"
-msgstr "Cognome"
-
-#: user/templates/account/show_profile.html:63
-#: user/templates/account/show_profile.html:134
-msgid "Email"
-msgstr "Email"
-
-#: user/templates/account/show_profile.html:69
-msgid "Primary address"
-msgstr "Indirizzo primario"
-
-#: user/templates/account/show_profile.html:70
-msgid "Verified"
-msgstr "Verificato"
-
-#: user/templates/account/show_profile.html:109
-msgid "Delete account"
-msgstr "Cancella account"
-
-#: user/templates/account/show_profile.html:148
-msgid "User does not exist."
-msgstr "L'utente non esiste."
 
 #: user/templates/account/signup.html:6
 msgid "Sign Up"
@@ -413,17 +319,78 @@ msgstr ""
 "        Contattaci se non lo ricevi nel giro di qualche minuto.\n"
 "        "
 
-#: usermedia/templates/usermedia/index.html:6
-msgid "Media Manager"
-msgstr "Gestisci File multimediali"
-
-#: usermedia/views.py:43
+#: usermedia/views.py:47
 msgid "Filetype not supported"
 msgstr ""
 
-#: usermedia/views.py:69
+#: usermedia/views.py:73
 msgid "No file uploaded"
 msgstr ""
+
+#~ msgid "Edit profile"
+#~ msgstr "Modifica profilo"
+
+#~ msgid "Contacts"
+#~ msgstr "Contatti"
+
+#~ msgid "Log out"
+#~ msgstr "Esci"
+
+#~ msgid "Team members"
+#~ msgstr "Membri del team"
+
+#~ msgid "Delete"
+#~ msgstr "Cancella"
+
+#~ msgid "Edit profile picture"
+#~ msgstr "Modifica l'immagine del profilo"
+
+#~ msgid "Change picture"
+#~ msgstr "Cambia l'immagine"
+
+#~ msgid "Delete picture"
+#~ msgstr "Elimina l'immagine"
+
+#~ msgid "First name"
+#~ msgstr "Nome"
+
+#~ msgid "Last name"
+#~ msgstr "Cognome"
+
+#~ msgid "Email"
+#~ msgstr "Email"
+
+#~ msgid "Primary address"
+#~ msgstr "Indirizzo primario"
+
+#~ msgid "Verified"
+#~ msgstr "Verificato"
+
+#~ msgid "submit"
+#~ msgstr "invio"
+
+#~ msgid "Delete account"
+#~ msgstr "Cancella account"
+
+#~ msgid "User does not exist."
+#~ msgstr "L'utente non esiste."
+
+#~ msgid "Bibliography Manager"
+#~ msgstr "Gestisci Bibliografia"
+
+#~ msgid "en"
+#~ msgstr "en"
+
+#~ msgid "Document Overview"
+#~ msgstr "Panoramica Documento"
+
+#, fuzzy
+#~| msgid "Thank you for your comment!"
+#~ msgid "Thank you for your report!"
+#~ msgstr "Grazie per il commento!"
+
+#~ msgid "Media Manager"
+#~ msgstr "Gestisci File multimediali"
 
 #~ msgid "Feedback"
 #~ msgstr "Feedback"
@@ -690,10 +657,6 @@ msgstr ""
 
 #~ msgid "Show/hide the top menu."
 #~ msgstr "Mostra/Nascondi il menu superiore."
-
-#, fuzzy
-#~ msgid "Comment"
-#~ msgstr "Commenti"
 
 #~ msgid "Show/hide comments"
 #~ msgstr "Mostra/Nascondi i commenti"

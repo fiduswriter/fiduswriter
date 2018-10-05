@@ -1,5 +1,7 @@
-# -*- coding: utf-8 -*-
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 import time
 
 from test.testcases import LiveTornadoTestCase
@@ -42,6 +44,9 @@ class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
         driver.find_element_by_id("last_name").clear()
         driver.find_element_by_id("last_name").send_keys("Yeti")
         driver.find_element_by_id("submit-profile").click()
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, 'fw-edit-profile-pwd'))
+        )
         driver.find_element_by_id("fw-edit-profile-pwd").click()
         driver.find_element_by_id("old-password-input").clear()
         driver.find_element_by_id("old-password-input").send_keys("otter1")
@@ -97,6 +102,9 @@ class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
         driver.find_element_by_id("last_name").clear()
         driver.find_element_by_id("last_name").send_keys("")
         driver.find_element_by_id("submit-profile").click()
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, 'preferences-btn'))
+        )
         driver.find_element_by_id("preferences-btn").click()
         driver.find_element_by_css_selector("button.fw-logout-button").click()
         try:

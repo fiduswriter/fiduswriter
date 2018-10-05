@@ -40,13 +40,14 @@ def show_profile(request):
     }
     return render(request, 'index.html', response)
 
+
 @login_required
 def info_js(request):
     """
     Get user profile info
     """
     if not request.is_ajax() or request.method != 'POST':
-        return JsonResponse({},status=405)
+        return JsonResponse({}, status=405)
     response = {
         'username': request.user.username,
         'first_name': request.user.first_name,
@@ -68,6 +69,7 @@ def info_js(request):
         response,
         status=200
     )
+
 
 @login_required
 def password_change_js(request):

@@ -1,3 +1,7 @@
-import {bind} from "./modules/profile"
+import {Profile} from "./modules/profile"
 
-bind()
+const theProfile = new Profile(window.fidusConfig)
+
+theProfile.init()
+
+window.theProfile = theProfile

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-29 20:36+0000\n"
+"POT-Creation-Date: 2018-10-05 12:46+0000\n"
 "PO-Revision-Date: 2016-06-17 15:21+0200\n"
 "Last-Translator: Nicolas Rochard <nrochard@gmail.com>\n"
 "Language-Team: français <nrochard@gmail.com>\n"
@@ -17,23 +17,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Gtranslator 2.91.7\n"
-
-#: base/templates/base.html:10 base/templates/index.html:10
-#: user/templates/account/base.html:7
-msgid "The all in one solution for collaborative academic writing."
-msgstr "La solution tout en un pour l'écriture académique collaborative."
-
-#: base/templates/base.html:76
-msgid "Edit profile"
-msgstr "Éditer le profil"
-
-#: base/templates/base.html:81 user/templates/account/list_team_members.html:19
-msgid "Contacts"
-msgstr "Contacts"
-
-#: base/templates/base.html:87
-msgid "Log out"
-msgstr "Déconnexion"
 
 #: base/templates/footer.html:7
 msgid "Terms and Conditions"
@@ -54,6 +37,10 @@ msgstr "Citations avec Citation Style Language"
 #: base/templates/footer.html:27
 msgid "Editing with ProseMirror"
 msgstr "Édité avec ProseMirror"
+
+#: base/templates/index.html:11 user/templates/account/base.html:7
+msgid "The all in one solution for collaborative academic writing."
+msgstr "La solution tout en un pour l'écriture académique collaborative."
 
 #: browser_check/templates/browser_check/browser_not_supported.html:4
 #: browser_check/templates/browser_check/browser_not_supported.html:27
@@ -76,17 +63,17 @@ msgid "Add %(name)s"
 msgstr ""
 
 #: document/templates/admin/document/document/change_list_object_tools.html:13
-#: document/templates/maintenance/index.html:4
+#: document/templates/maintenance/index.html:5
 msgid "Maintenance"
 msgstr ""
 
-#: document/templates/maintenance/index.html:15
+#: document/templates/maintenance/index.html:17
 #, fuzzy
 #| msgid "Document Style"
 msgid "Document Maintenance"
 msgstr "Style de Document"
 
-#: document/templates/maintenance/index.html:17
+#: document/templates/maintenance/index.html:19
 msgid ""
 "\n"
 "            Before and after upgrading Fidus Writer, you should update all "
@@ -97,7 +84,7 @@ msgid ""
 "            "
 msgstr ""
 
-#: document/templates/maintenance/index.html:25
+#: document/templates/maintenance/index.html:27
 msgid "Update all documents (DANGER!)"
 msgstr ""
 
@@ -156,21 +143,6 @@ msgstr "Connexion"
 msgid "Confirm E-mail Address"
 msgstr "Confirmer l'Adresse E-mail"
 
-#: user/templates/account/list_team_members.html:7
-msgid "Team members"
-msgstr "Membres de l'équipe"
-
-#: user/templates/account/list_team_members.html:20
-#: user/templates/account/password_reset.html:28
-#: user/templates/account/signup.html:44
-msgid "E-mail address"
-msgstr "Adresse E-mail"
-
-#: user/templates/account/list_team_members.html:21
-#: user/templates/account/show_profile.html:71
-msgid "Delete"
-msgstr "Effacer"
-
 #: user/templates/account/login.html:8
 #: user/templates/account/password_reset.html:7
 msgid "New here?"
@@ -219,13 +191,10 @@ msgstr ""
 "        "
 
 #: user/templates/account/login.html:58
-#: user/templates/account/show_profile.html:44
-#: user/templates/account/show_profile.html:122
 msgid "Username"
 msgstr "Nom d'utilisateur"
 
 #: user/templates/account/login.html:62
-#: user/templates/account/show_profile.html:56
 msgid "Password"
 msgstr "Mot de passe"
 
@@ -270,56 +239,14 @@ msgstr ""
 "p>\n"
 "    "
 
+#: user/templates/account/password_reset.html:28
+#: user/templates/account/signup.html:44
+msgid "E-mail address"
+msgstr "Adresse E-mail"
+
 #: user/templates/account/password_reset.html:32
 msgid "Reset My Password"
 msgstr "Réinitialiser Mon Mot de Passe"
-
-#: user/templates/account/show_profile.html:23
-msgid "Edit profile picture"
-msgstr "Changer l'image de profil"
-
-#: user/templates/account/show_profile.html:29
-msgid "Change picture"
-msgstr "Changer l'image"
-
-#: user/templates/account/show_profile.html:34
-msgid "Delete picture"
-msgstr "Effacer l'image"
-
-#: user/templates/account/show_profile.html:48
-#: user/templates/account/show_profile.html:126
-msgid "First name"
-msgstr "Prénom"
-
-#: user/templates/account/show_profile.html:52
-#: user/templates/account/show_profile.html:130
-msgid "Last name"
-msgstr "Nom"
-
-#: user/templates/account/show_profile.html:63
-#: user/templates/account/show_profile.html:134
-msgid "Email"
-msgstr "Email"
-
-#: user/templates/account/show_profile.html:69
-msgid "Primary address"
-msgstr "Adresse Principale"
-
-#: user/templates/account/show_profile.html:70
-msgid "Verified"
-msgstr "Vérifié"
-
-#: user/templates/account/show_profile.html:106
-msgid "submit"
-msgstr "soumettre"
-
-#: user/templates/account/show_profile.html:109
-msgid "Delete account"
-msgstr "Effacer son compte"
-
-#: user/templates/account/show_profile.html:148
-msgid "User does not exist."
-msgstr "L'Utilisateur n'existe pas"
 
 #: user/templates/account/signup.html:6
 msgid "Sign Up"
@@ -396,6 +323,54 @@ msgstr ""
 #: usermedia/views.py:73
 msgid "No file uploaded"
 msgstr ""
+
+#~ msgid "Edit profile"
+#~ msgstr "Éditer le profil"
+
+#~ msgid "Contacts"
+#~ msgstr "Contacts"
+
+#~ msgid "Log out"
+#~ msgstr "Déconnexion"
+
+#~ msgid "Team members"
+#~ msgstr "Membres de l'équipe"
+
+#~ msgid "Delete"
+#~ msgstr "Effacer"
+
+#~ msgid "Edit profile picture"
+#~ msgstr "Changer l'image de profil"
+
+#~ msgid "Change picture"
+#~ msgstr "Changer l'image"
+
+#~ msgid "Delete picture"
+#~ msgstr "Effacer l'image"
+
+#~ msgid "First name"
+#~ msgstr "Prénom"
+
+#~ msgid "Last name"
+#~ msgstr "Nom"
+
+#~ msgid "Email"
+#~ msgstr "Email"
+
+#~ msgid "Primary address"
+#~ msgstr "Adresse Principale"
+
+#~ msgid "Verified"
+#~ msgstr "Vérifié"
+
+#~ msgid "submit"
+#~ msgstr "soumettre"
+
+#~ msgid "Delete account"
+#~ msgstr "Effacer son compte"
+
+#~ msgid "User does not exist."
+#~ msgstr "L'Utilisateur n'existe pas"
 
 #~ msgid "Bibliography Manager"
 #~ msgstr "Gestionnaire de Bibliographie"

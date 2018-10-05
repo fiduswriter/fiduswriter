@@ -30,7 +30,7 @@ export const baseBodyTemplate = ({username, contents, staticUrl}) => `
 <div id="user-preferences-pulldown" class="fw-pulldown fw-right">
     <ul>
         <li>
-            <a class="fw-pulldown-item" href="/user/profile/${escapeText(username)}">
+            <a class="fw-pulldown-item" href="/user/profile/">
                 ${gettext("Edit profile")}
             </a>
         </li>

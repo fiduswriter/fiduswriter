@@ -20,7 +20,7 @@ export class Profile {
             addDropdownBox(document.getElementById('edit-avatar-btn'), document.getElementById('edit-avatar-pulldown'))
             document.querySelector('.change-avatar').addEventListener('mousedown', changeAvatarDialog)
             document.querySelector('.delete-avatar').addEventListener('mousedown', deleteAvatarDialog)
-            document.getElementById('submit-profile').addEventListener('click', this.save)
+            document.getElementById('submit-profile').addEventListener('click', () => this.save())
             document.getElementById('delete-account').addEventListener('click', () => {
                 const dialog = new DeleteUserDialog(document.getElementById('delete-account').dataset.username)
                 dialog.init()
@@ -78,7 +78,12 @@ export class Profile {
         ).catch(
             () => addAlert('error', gettext('Could not save profile data'))
         ).then(
-            () => deactivateWait()
+            () => {
+                deactivateWait()
+                return this.app.getUserInfo()
+            }
+        ).then(
+            () => this.app.selectPage()
         )
 
     }

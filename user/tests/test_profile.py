@@ -1,7 +1,4 @@
 from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
 import time
 
 from test.testcases import LiveTornadoTestCase
@@ -44,9 +41,16 @@ class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
         driver.find_element_by_id("last_name").clear()
         driver.find_element_by_id("last_name").send_keys("Yeti")
         driver.find_element_by_id("submit-profile").click()
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.ID, 'fw-edit-profile-pwd'))
-        )
+        for i in range(100):
+            if len(
+                driver.find_elements_by_css_selector(
+                    "#fw-edit-profile-pwd"
+                )
+            ) == 1:
+                break
+            time.sleep(0.1)
+        else:
+            self.fail("time out")
         driver.find_element_by_id("fw-edit-profile-pwd").click()
         driver.find_element_by_id("old-password-input").clear()
         driver.find_element_by_id("old-password-input").send_keys("otter1")
@@ -73,12 +77,12 @@ class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
         driver.find_element_by_id("new-password-input2").clear()
         driver.find_element_by_id("new-password-input2").send_keys("otter1")
         driver.find_element_by_xpath("(//button[@type='button'])[2]").click()
-        for i in range(100):
+        for i in range(30):
+            time.sleep(0.3)
             if len(
                 driver.find_elements_by_css_selector("#fw-change-pwd-dialog")
             ) == 0:
                 break
-            time.sleep(0.1)
         else:
             self.fail("time out")
         driver.refresh()
@@ -102,9 +106,17 @@ class EditProfileTest(LiveTornadoTestCase, SeleniumHelper):
         driver.find_element_by_id("last_name").clear()
         driver.find_element_by_id("last_name").send_keys("")
         driver.find_element_by_id("submit-profile").click()
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.ID, 'preferences-btn'))
-        )
+        time.sleep(1)
+        for i in range(30):
+            time.sleep(0.3)
+            if len(
+                driver.find_elements_by_css_selector(
+                    "#preferences-btn"
+                )
+            ) == 1:
+                break
+        else:
+            self.fail("time out")
         driver.find_element_by_id("preferences-btn").click()
         driver.find_element_by_css_selector("button.fw-logout-button").click()
         try:

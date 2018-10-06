@@ -1,5 +1,5 @@
 import {localizeDate, escapeText} from "../../common"
-import {getCommentHTML} from "../comments/editors"
+import {serializeComment} from "../comments/editors"
 
 
 /** A template for an answer to a comment */
@@ -27,7 +27,7 @@ let answerCommentTemplate = ({
                 </div>
            </div>` :
            `<div class="comment-text-wrapper">
-               <p class="comment-p">${getCommentHTML(answer.answer)}</p>
+               <p class="comment-p">${serializeComment(answer.answer).html}</p>
            </div>
            ${
                active && (answer.user === user.id) ?
@@ -58,7 +58,7 @@ let singleCommentTemplate = ({
         <div class="comment-text-wrapper">
             ${ active && editComment ?
                 `<div id="comment-editor"></div>` :
-                `<p class="comment-p">${getCommentHTML(comment.comment)}</p>`
+                `<p class="comment-p">${serializeComment(comment.comment).html}</p>`
             }
         </div>
         ${

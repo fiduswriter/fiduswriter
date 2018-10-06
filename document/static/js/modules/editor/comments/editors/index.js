@@ -6,5 +6,5 @@ export {
 } from "./answer"
 
 export {
-    getCommentHTML
+    serializeComment
 } from "./schema"

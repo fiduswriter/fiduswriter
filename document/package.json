@@ -2,7 +2,7 @@
     "dependencies": {
         "citeproc": "2.1.x",
         "fastdom": "1.0.8",
-        "fast-json-patch": "2.0.6",
+        "fast-json-patch": "2.0.x",
         "fix-utf8": "1.0.4",
         "jszip": "3.1.5",
         "jszip-utils": "0.0.2",
@@ -21,7 +21,7 @@
         "prosemirror-state": "1.2.x",
         "prosemirror-tables": "0.7.x",
         "prosemirror-transform": "1.1.x",
-        "prosemirror-view": "1.5.x",
+        "prosemirror-view": "1.6.x",
         "prosemirror-suggestions": "0.2.x",
         "texzilla": "0.9.9",
         "pretty": "2.0.0"

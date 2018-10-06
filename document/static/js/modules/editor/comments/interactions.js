@@ -1,7 +1,7 @@
 import {getCommentDuringCreationDecoration, deactivateAllSelectedChanges} from "../state_plugins"
 import {REVIEW_ROLES} from ".."
-import {findTarget} from "../../common"
-import {CommentEditor, CommentAnswerEditor} from "./editors"
+import {findTarget, post} from "../../common"
+import {CommentEditor, CommentAnswerEditor, serializeComment} from "./editors"
 
 /* Functions related to user interactions with comments */
 export class ModCommentInteractions {
@@ -236,11 +236,28 @@ export class ModCommentInteractions {
     }
 
     assignComment(id, user, username) {
+        this.notifyAssignedUser(user, id)
         this.mod.store.updateComment({id, assignedUser: user, assignedUsername: username})
     }
 
     unassignComment(id) {
         this.mod.store.updateComment({id, assignedUser: false, assignedUsername: false})
+    }
+
+    notifyAssignedUser(user, id) {
+        const comment = this.mod.store.findComment(id)
+        const {html, text} = serializeComment(comment.comment)
+
+        post(
+            '/document/comment_notify/',
+            {
+                doc_id: this.mod.editor.docInfo.id,
+                collaborator_id: user,
+                comment_html: html,
+                comment_text: text,
+                type: 'assign'
+            }
+        )
     }
 
 

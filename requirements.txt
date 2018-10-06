@@ -1,12 +1,12 @@
 wheel==0.31.1
-Django==2.1
-Pillow==5.2.0
+Django==2.1.2
+Pillow==5.3.0
 django-allauth==0.36.0
 django-avatar==4.1.0
 django-compressor==2.2
 django-js-error-hook==0.6
 django-npm-mjs==0.6.2
-tornado==5.1
+tornado==5.1.1
 python-dateutil==2.7.3
 python-magic==0.4.15
 setuptools==40.0.0

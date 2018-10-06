@@ -91,7 +91,7 @@ export class ModMarginboxes {
             selectedChanges = getSelectedChanges(this.editor.currentView.state)
         this.activeCommentStyle = ''
 
-        marginBoxes.push({type: 'filter', data: this.filterOptions})
+        //marginBoxes.push({type: 'filter', data: this.filterOptions})
         referrers.push(0)
 
         this.editor.view.state.doc.descendants(

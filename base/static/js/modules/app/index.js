@@ -24,6 +24,7 @@ export class App {
         if (this.page && this.page.close) {
             this.page.close()
         }
+        delete this.page
         const pathnameParts = window.location.pathname.split('/')
         switch(pathnameParts[1]) {
             case "usermedia":

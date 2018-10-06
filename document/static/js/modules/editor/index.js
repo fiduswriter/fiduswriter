@@ -177,6 +177,23 @@ export class Editor {
     }
 
     init() {
+        ensureCSS([
+            'libs/katex/katex.min.css',
+            'mathquill.css',
+            'editor.css',
+            'document.css',
+            'carets.css',
+            'tracking.css',
+            'comments.css',
+            'prosemirror.css',
+            'footnotes.css',
+            'chat.css',
+            'access_rights_dialog.css',
+            'citation_dialog.css',
+            'review.css',
+            'add_remove_dialog.css',
+            'bibliography.css'
+        ], this.staticUrl)
         whenReady().then(() => {
             this.render()
             this.initEditor()
@@ -221,23 +238,6 @@ export class Editor {
             </div>
         </div>
         <div id="unobtrusive_messages"></div>`
-        ensureCSS([
-            'libs/katex/katex.min.css',
-            'mathquill.css',
-            'editor.css',
-            'document.css',
-            'carets.css',
-            'tracking.css',
-            'comments.css',
-            'prosemirror.css',
-            'footnotes.css',
-            'chat.css',
-            'access_rights_dialog.css',
-            'citation_dialog.css',
-            'review.css',
-            'add_remove_dialog.css',
-            'bibliography.css'
-        ], this.staticUrl)
         const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
         feedbackTab.init()
     }

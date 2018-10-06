@@ -4,9 +4,8 @@ import {history, redo, undo} from "prosemirror-history"
 import {baseKeymap} from "prosemirror-commands"
 import {keymap} from "prosemirror-keymap"
 import {suggestionsPlugin, triggerCharacter} from "prosemirror-suggestions"
-import {DOMSerializer} from "prosemirror-model"
 import {commentSchema} from "./schema"
-import {notifyUser} from "./notify"
+import {notifyMentionedUser} from "./notify"
 import {escapeText, findTarget} from "../../../common"
 
 export class CommentEditor {
@@ -160,13 +159,9 @@ export class CommentEditor {
     sendNotifications() {
         const newUserTags = this.getUserTags().filter(id => !this.oldUserTags.includes(id))
         if (newUserTags.length) {
-            const commentDOM = DOMSerializer.fromSchema(
-                this.view.state.schema
-            ).serializeNode(this.view.state.doc),
-                commentText = commentDOM.innerText,
-                commentHTML = commentDOM.innerHTML,
+            const comment = this.view.state.doc,
                 docId = this.mod.editor.docInfo.id
-            newUserTags.forEach(userId => notifyUser(docId, userId, commentText, commentHTML))
+            newUserTags.forEach(userId => notifyMentionedUser(docId, userId, comment))
         }
     }
 

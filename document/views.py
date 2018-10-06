@@ -528,6 +528,7 @@ def comment_notify_js(request):
     collaborator_id = request.POST['collaborator_id']
     comment_text = request.POST['comment_text']
     comment_html = request.POST['comment_html']
+    notification_type = request.POST['type']
     collaborator = User.objects.filter(pk=collaborator_id).first()
     document = Document.objects.filter(pk=doc_id).first()
     if (
@@ -536,7 +537,8 @@ def comment_notify_js(request):
         not comment_text or
         not comment_html or
         not has_doc_access(document, request.user) or
-        not has_doc_access(document, collaborator)
+        not has_doc_access(document, collaborator) or
+        not notification_type
     ):
         return JsonResponse(
             response,
@@ -549,33 +551,62 @@ def comment_notify_js(request):
     if len(document_title) == 0:
         document_title = _('Untitled')
     link = HttpRequest.build_absolute_uri(request, document.get_absolute_url())
-    message_text = _(
-        ('Hey %(collaborator_name)s,\n%(commentator)s has mentioned you in a '
-         'comment in the document \'%(document)s\':\n\n%(comment_text)s'
-         '\n\nGo to the document here: %(link)s')
-    ) % {
-           'commentator': commentator,
-           'collaborator_name': collaborator_name,
-           'link': link,
-           'document': document_title,
-           'comment_text': comment_text
-    }
-    body_html = _(
-        ('<p>Hey %(collaborator_name)s,<br>%(commentator)s has mentioned you '
-         'in a comment in the document \'%(document)s\':</p>%(comment_html)s'
-         '<p>Go to the document <a href="%(link)s">here</a>.</p>')
-    ) % {
-        'commentator': commentator,
-        'collaborator_name': collaborator_name,
-        'link': link,
-        'document': document_title,
-        'comment_html': comment_html
-    }
+
+    if notification_type == 'mention':
+
+        message_text = _(
+            ('Hey %(collaborator_name)s,\n%(commentator)s has mentioned you '
+             'in a comment in the document \'%(document)s\':'
+             '\n\n%(comment_text)s'
+             '\n\nGo to the document here: %(link)s')
+        ) % {
+               'commentator': commentator,
+               'collaborator_name': collaborator_name,
+               'link': link,
+               'document': document_title,
+               'comment_text': comment_text
+        }
+        body_html = _(
+            ('<p>Hey %(collaborator_name)s,<br>%(commentator)s has mentioned '
+             'you in a comment in the document \'%(document)s\':</p>'
+             '%(comment_html)s'
+             '<p>Go to the document <a href="%(link)s">here</a>.</p>')
+        ) % {
+            'commentator': commentator,
+            'collaborator_name': collaborator_name,
+            'link': link,
+            'document': document_title,
+            'comment_html': comment_html
+        }
+        message_title = _('Comment on :') + ' ' + document_title
+    else:
+        message_text = _(
+            ('Hey %(collaborator_name)s,\n%(commentator)s has assigned you to '
+             'a comment in the document \'%(document)s\':\n\n%(comment_text)s'
+             '\n\nGo to the document here: %(link)s')
+        ) % {
+               'commentator': commentator,
+               'collaborator_name': collaborator_name,
+               'link': link,
+               'document': document_title,
+               'comment_text': comment_text
+        }
+        body_html = _(
+            ('<p>Hey %(collaborator_name)s,<br>%(commentator)s has assigned '
+             'you to a comment in the document \'%(document)s\':</p>'
+             '%(comment_html)s'
+             '<p>Go to the document <a href="%(link)s">here</a>.</p>')
+        ) % {
+            'commentator': commentator,
+            'collaborator_name': collaborator_name,
+            'link': link,
+            'document': document_title,
+            'comment_html': comment_html
+        }
+        message_title = _('Comment assignment on :') + ' ' + document_title
 
     send_mail(
-        _('Comment on :') +
-        ' ' +
-        document_title,
+        message_title,
         message_text,
         settings.DEFAULT_FROM_EMAIL,
         [collaborator_email],

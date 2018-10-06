@@ -1,7 +1,7 @@
 import {figureImageTemplate, configureFigureTemplate} from "./templates"
 import {ImageSelectionDialog} from "../../images/selection_dialog"
 import {addDropdownBox, Dialog} from "../../common"
-import {katexRender} from "../../katex"
+import katex from "katex"
 import {randomFigureId} from "../../schema/common"
 
 export class FigureDialog {
@@ -23,8 +23,8 @@ export class FigureDialog {
     }
 
     layoutMathPreview() {
-        let previewNode = document.getElementById('inner-figure-preview')
-        katexRender(this.equation, previewNode, {
+        const previewNode = document.getElementById('inner-figure-preview')
+        katex.render(this.equation, previewNode, {
             displayMode: true,
             throwOnError: false
         })
@@ -32,7 +32,7 @@ export class FigureDialog {
 
     layoutImagePreview() {
         if (this.imgId) {
-            let db = this.imgDb === 'document' ? this.imageDB.db : this.userImageDB.db
+            const db = this.imgDb === 'document' ? this.imageDB.db : this.userImageDB.db
             document.getElementById('inner-figure-preview').innerHTML =
                 `<img src="${db[this.imgId].image}"
                         style="max-width: 400px;max-height:220px">`
@@ -45,15 +45,15 @@ export class FigureDialog {
     }
 
     submitForm() {
-        let mathInput = this.dialog.dialogEl.querySelector('input[name=figure-math]')
-        let captionInput = this.dialog.dialogEl.querySelector('input[name=figure-caption]')
+        const mathInput = this.dialog.dialogEl.querySelector('input[name=figure-math]')
+        const captionInput = this.dialog.dialogEl.querySelector('input[name=figure-caption]')
         this.equation = mathInput.value
         this.caption = captionInput.value
 
         if ((new RegExp(/^\s*$/)).test(this.equation) && (!this.imgId)) {
             // The math input is empty. Delete a math node if it exist. Then close the dialog.
             if (this.insideFigure) {
-                let tr = this.editor.currentView.state.tr.deleteSelection()
+                const tr = this.editor.currentView.state.tr.deleteSelection()
                 this.editor.currentView.dispatch(tr)
             }
             this.dialog.close()
@@ -71,13 +71,13 @@ export class FigureDialog {
         }
         if (this.imgDb==='user') {
             // add image to document db.
-            let imageEntry = this.userImageDB.db[this.imgId]
+            const imageEntry = this.userImageDB.db[this.imgId]
             this.imageDB.setImage(this.imgId, imageEntry)
             this.imgDb = 'document'
         }
 
-        let nodeType = this.editor.currentView.state.schema.nodes['figure']
-        let tr = this.editor.currentView.state.tr.replaceSelectionWith(
+        const nodeType = this.editor.currentView.state.schema.nodes['figure']
+        const tr = this.editor.currentView.state.tr.replaceSelectionWith(
             nodeType.createAndFill({
                 equation: this.equation,
                 image: this.imgId,
@@ -93,7 +93,7 @@ export class FigureDialog {
 
     init() {
     // toolbar figure
-        let buttons = []
+        const buttons = []
 
         if (this.node && this.node.type && this.node.type.name==='figure') {
             this.insideFigure = true
@@ -108,7 +108,7 @@ export class FigureDialog {
                 text: gettext('Remove'),
                 classes: 'fw-orange',
                 click: () => {
-                    let tr = this.editor.currentView.state.tr.deleteSelection()
+                    const tr = this.editor.currentView.state.tr.deleteSelection()
                     this.editor.currentView.dispatch(tr)
                     this.dialog.close()
                 }
@@ -133,7 +133,8 @@ export class FigureDialog {
             body: configureFigureTemplate({
                 equation: this.equation,
                 caption: this.caption,
-                image: this.imgId
+                image: this.imgId,
+                dir: this.editor.docInfo.dir
             }),
             buttons,
             onClose: () => this.editor.currentView.focus()
@@ -141,10 +142,9 @@ export class FigureDialog {
 
         this.dialog.open()
 
-        let captionInput = this.dialog.dialogEl.querySelector('input[name=figure-caption]')
+        const captionInput = this.dialog.dialogEl.querySelector('input[name=figure-caption]')
 
         captionInput.focus()
-
 
         this.setFigureLabel()
 
@@ -175,9 +175,9 @@ export class FigureDialog {
                 document.getElementById('insertFigureImage').setAttribute('disabled','disabled')
             })
 
-        let mathInput = document.querySelector('input[name=figure-math]')
+        const mathInput = document.querySelector('input[name=figure-math]')
         mathInput.addEventListener('blur',
-            function () {
+            () => {
                 if (mathInput.value === '') {
                     document.getElementById('inner-figure-preview').innerHTML = ''
                     // enable image button
@@ -189,13 +189,13 @@ export class FigureDialog {
                 }
             }
         )
-        let insertFigureImage = document.getElementById('insertFigureImage')
+        const insertFigureImage = document.getElementById('insertFigureImage')
         insertFigureImage.addEventListener('click',
             () => {
                 if (insertFigureImage.classList.contains('disabled')) {
                     return
                 }
-                let imageSelection = new ImageSelectionDialog(
+                const imageSelection = new ImageSelectionDialog(
                     this.imageDB,
                     this.userImageDB,
                     this.imgId

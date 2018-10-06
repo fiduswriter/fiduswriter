@@ -56,7 +56,7 @@ export class ModCommentStore {
 
         view.dispatch(tr)
 
-        let id = -1, username
+        let username
 
         if (REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
             username = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
@@ -65,12 +65,12 @@ export class ModCommentStore {
         }
 
         this.commentDuringCreation = {
-            comment: new Comment(
-                id,
-                this.mod.editor.user.id,
+            comment: new Comment({
+                id: '-1',
+                user: this.mod.editor.user.id,
                 username,
-                Date.now() - this.mod.editor.clientTimeAdjustment,
-                ''),
+                date: Date.now() - this.mod.editor.clientTimeAdjustment
+            }),
             inDOM: false,
             view
         }
@@ -98,9 +98,7 @@ export class ModCommentStore {
         view
     ) {
         let id = randomID(),
-            markType = view.state.schema.marks.comment.create({
-                id
-            }),
+            markType = view.state.schema.marks.comment.create({id}),
             tr = this.addMark(view.state.tr, posFrom, posTo, markType)
 
         if (tr) {
@@ -154,43 +152,34 @@ export class ModCommentStore {
     }
 
     loadComments(commentsData) {
-        Object.values(commentsData).forEach(commentData => this.addLocalComment(commentData))
+        Object.entries(commentsData).forEach(([id, comment]) => this.addLocalComment(Object.assign({id}, comment)))
     }
 
 
     addLocalComment(
-        {id, user, username, date, comment, answers, isMajor},
+        commentData,
         local
     ) {
-        if (!this.comments[id]) {
-            this.comments[id] = new Comment(
-                id,
-                user,
-                username,
-                date,
-                comment,
-                answers,
-                isMajor
-            )
+        if (!this.comments[commentData.id]) {
+            this.comments[commentData.id] = new Comment(commentData)
         }
         if (local || (!this.mod.interactions.isCurrentlyEditing())) {
             this.mod.editor.mod.marginboxes.updateDOM()
         }
     }
 
-    updateComment(id, comment, isMajor) {
-        this.updateLocalComment({id, comment, isMajor}, true)
+    updateComment(commentData) {
+        this.updateLocalComment(commentData, true)
         this.unsent.push({
             type: "update",
-            id
+            id: commentData.id
         })
         this.mustSend()
     }
 
-    updateLocalComment({id, comment, isMajor}, local) {
-        if (this.comments[id]) {
-            this.comments[id].comment = comment
-            this.comments[id].isMajor = isMajor
+    updateLocalComment(commentData, local) {
+        if (this.comments[commentData.id]) {
+            Object.assign(this.comments[commentData.id], commentData)
         }
         if (local || (!this.mod.interactions.isCurrentlyEditing())) {
             this.mod.editor.mod.marginboxes.updateDOM()
@@ -200,17 +189,16 @@ export class ModCommentStore {
     removeCommentMarks(id) {
         // remove comment marks with the given ID in both views.
         [this.mod.editor.view, this.mod.editor.mod.footnotes.fnEditor.view].forEach(view => {
-            let tr = view.state.tr
+            const tr = view.state.tr,
+                markType = view.state.schema.marks.comment.create({id})
             view.state.doc.descendants((node, pos, parent) => {
-                let nodeStart = pos
-                let nodeEnd = pos + node.nodeSize
-                for (let i = 0; i < node.marks.length; i++) {
-                    let mark = node.marks[i]
-                    if (mark.type.name === 'comment' && parseInt(mark.attrs.id) === id) {
-                        let markType = view.state.schema.marks.comment.create({id})
+                const nodeStart = pos,
+                    nodeEnd = pos + node.nodeSize
+                node.marks.forEach(mark => {
+                    if (mark.type.name === 'comment' && mark.attrs.id === id) {
                         this.removeMark(tr, nodeStart, nodeEnd, markType)
                     }
-                }
+                })
             })
             if (tr.steps.length) {
                 view.dispatch(tr)
@@ -234,7 +222,7 @@ export class ModCommentStore {
         if (this.deleteLocalComment(id, true)) {
             this.unsent.push({
                 type: "delete",
-                id: id
+                id
             })
             if (removeMarks) {
                 this.removeCommentMarks(id)
@@ -322,12 +310,7 @@ export class ModCommentStore {
             } else if (event.type == "update") {
                 let found = this.comments[event.id]
                 if (found && found.id) {
-                    result.push({
-                        type: "update",
-                        id: found.id,
-                        comment: found.comment,
-                        isMajor: found.isMajor
-                    })
+                    result.push(Object.assign({type: 'update'}, found))
                 } else {
                     result.push({
                         type: "ignore"
@@ -336,16 +319,7 @@ export class ModCommentStore {
             } else if (event.type == "create") {
                 let found = this.comments[event.id]
                 if (found && found.id) {
-                    result.push({
-                        type: "create",
-                        id: found.id,
-                        user: found.user,
-                        username: found.username,
-                        date: found.date,
-                        comment: found.comment,
-                        answers: found.answers,
-                        isMajor: found.isMajor
-                    })
+                    result.push(Object.assign({type: 'create'}, found))
                 } else {
                     result.push({
                         type: "ignore"
@@ -355,19 +329,12 @@ export class ModCommentStore {
                 let found = this.comments[event.id],
                     foundAnswer
                 if (found && found.id && found.answers) {
-                    foundAnswer = found.answers.find(answer => answer.id ===
-                        event.answerId)
+                    foundAnswer = found.answers.find(answer => answer.id === event.answerId)
                 }
                 if (foundAnswer) {
-                    result.push({
-                        type: "add_answer",
-                        answerId: foundAnswer.id,
-                        id: event.id,
-                        user: foundAnswer.user,
-                        username: foundAnswer.username,
-                        date: foundAnswer.date,
-                        answer: foundAnswer.answer
-                    })
+                    result.push(
+                        Object.assign({}, foundAnswer, {type: 'add_answer', id: event.id, answerId: foundAnswer.id})
+                    )
                 } else {
                     result.push({
                         type: "ignore"
@@ -394,12 +361,9 @@ export class ModCommentStore {
                         event.answerId)
                 }
                 if (foundAnswer) {
-                    result.push({
-                        type: "update_answer",
-                        id: event.id,
-                        answerId: event.answerId,
-                        answer: foundAnswer.answer
-                    })
+                    result.push(
+                        Object.assign({}, foundAnswer, {type: 'update_answer', id: event.id, answerId: foundAnswer.id})
+                    )
                 } else {
                     result.push({
                         type: "ignore"
@@ -438,5 +402,5 @@ export class ModCommentStore {
 }
 
 function randomID() {
-    return Math.floor(Math.random() * 0xffffffff)
+    return String(Math.floor(Math.random() * 0xffffffff))
 }

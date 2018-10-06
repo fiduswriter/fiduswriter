@@ -53,14 +53,16 @@ export class ModStyles {
                             this.showSafariErrorMessage()
                             return
                         }
-                        new DocxExporter(
+                        const exporter = new DocxExporter(
                             editor.getDoc({changes: 'acceptAllNoInsertions'}),
                             template.template_file,
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB,
                             editor.mod.styles.citationStyles,
-                            editor.mod.styles.citationLocales
+                            editor.mod.styles.citationLocales,
+                            editor.staticUrl
                         )
+                        exporter.init()
                     }
                 }
             } else {
@@ -74,7 +76,7 @@ export class ModStyles {
                             this.showSafariErrorMessage()
                             return
                         }
-                        new OdtExporter(
+                        const exporter = new OdtExporter(
                             editor.getDoc({changes: 'acceptAllNoInsertions'}),
                             template.template_file,
                             editor.mod.db.bibDB,
@@ -82,6 +84,7 @@ export class ModStyles {
                             editor.mod.styles.citationStyles,
                             editor.mod.styles.citationLocales
                         )
+                        exporter.init()
                     }
                 }
             }

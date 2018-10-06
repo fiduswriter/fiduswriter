@@ -1,9 +1,7 @@
-from __future__ import unicode_literals
 import json
 
 from django.http import JsonResponse, HttpResponseRedirect
 from django.contrib.auth import logout, update_session_auth_hash
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
@@ -31,19 +29,33 @@ def logout_page(request):
 
 
 @login_required
-def show_profile(request, username):
+def info_js(request):
     """
-    Show user profile page
+    Get user profile info
     """
-    response = {}
-    if username == request.user.username:
-        response['can_edit'] = True
-    else:
-        user = User.objects.filter(username=username).first()
-        if user:
-            response['the_user'] = user
-        response['can_edit'] = False
-    return render(request, 'account/show_profile.html', response)
+    if not request.is_ajax() or request.method != 'POST':
+        return JsonResponse({}, status=405)
+    response = {
+        'username': request.user.username,
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
+        'avatar': userutil.get_user_avatar_url(request.user),
+        'emails': []
+    }
+
+    for emailaddress in request.user.emailaddress_set.all():
+        email = {
+            'address': emailaddress.email,
+        }
+        if emailaddress.primary:
+            email['primary'] = True
+        if emailaddress.verified:
+            email['verified'] = True
+        response['emails'].append(email)
+    return JsonResponse(
+        response,
+        status=200
+    )
 
 
 @login_required
@@ -207,7 +219,9 @@ def upload_avatar_js(request):
                 user=request.user,
                 avatar=avatar
             )
-            response['avatar'] = userutil.get_user_avatar_url(request.user)
+            response['avatar'] = userutil.get_user_avatar_url(
+                request.user
+            )['url']
             status = 200
     return JsonResponse(
         response,
@@ -225,7 +239,7 @@ def delete_avatar_js(request):
     if request.is_ajax() and request.method == 'POST':
         avatar, avatars = avatarviews._get_avatars(request.user)
         if avatar is None:
-            response = 'No avatar exists'
+            response['error'] = 'User has no avatar'
         else:
             aid = avatar.id
             for a in avatars:
@@ -239,7 +253,9 @@ def delete_avatar_js(request):
                     )
                     break
             Avatar.objects.filter(pk=aid).delete()
-            response['avatar'] = userutil.get_user_avatar_url(request.user)
+            response['avatar'] = userutil.get_user_avatar_url(
+                request.user
+            )['url']
             status = 200
     return JsonResponse(
         response,
@@ -315,15 +331,6 @@ def save_profile_js(request):
 
 
 @login_required
-def list_team_members(request):
-    """
-    List all team members of the current user
-    """
-    response = {}
-    return render(request, 'account/list_team_members.html', response)
-
-
-@login_required
 def list_team_members_js(request):
     response = {}
     status = 405
@@ -337,7 +344,7 @@ def list_team_members_js(request):
                 'name': member.readable_name,
                 'username': member.get_username(),
                 'email': member.email,
-                'avatar': userutil.get_user_avatar_url(member)
+                'avatar': userutil.get_user_avatar_url(member)['url']
             }
             response['team_members'].append(team_member)
     return JsonResponse(
@@ -379,7 +386,9 @@ def add_team_member_js(request):
                 team_member_form = TeamMemberForm(form_data)
                 if team_member_form.is_valid():
                     team_member_form.save()
-                    the_avatar = userutil.get_user_avatar_url(new_member)
+                    the_avatar = userutil.get_user_avatar_url(
+                        new_member
+                    )['url']
                     response['member'] = {
                         'id': new_member.pk,
                         'name': new_member.username,

@@ -1,6 +1,7 @@
 import {getCommentDuringCreationDecoration, deactivateAllSelectedChanges} from "../state_plugins"
 import {REVIEW_ROLES} from ".."
-import {findTarget} from "../../common"
+import {findTarget, post} from "../../common"
+import {CommentEditor, CommentAnswerEditor, serializeComment} from "./editors"
 
 /* Functions related to user interactions with comments */
 export class ModCommentInteractions {
@@ -9,19 +10,54 @@ export class ModCommentInteractions {
         this.mod = mod
         this.activeCommentId = false
         this.activeCommentAnswerId = false
+        this.editComment = false
+        this.editor = false
         this.bindEvents()
     }
 
     bindEvents() {
         // Bind all the click events related to comments
-        document.addEventListener('click', event => {
+        document.body.addEventListener('click', event => {
             let el = {}
             switch (true) {
-                case findTarget(event, '.submitComment', el):
-                    this.submitComment(el.target)
+                case findTarget(event, '.show-comment-options', el):
+                    el.target.parentElement.querySelector('.comment-options').classList.add('fw-open')
                     break
-                case findTarget(event, '.cancelSubmitComment', el):
-                    this.cancelSubmitComment(el.target)
+                case findTarget(event, '.show-assign-comment-menu', el):
+                    el.target.parentElement.querySelector('.assign-comment-menu').classList.toggle('fw-open')
+                    break
+                case findTarget(event, '.edit-comment', el):
+                    this.editComment = true
+                    this.activeCommentAnswerId = false
+                    this.updateDOM()
+                    break
+                case findTarget(event, '.edit-comment-answer', el):
+                    this.editComment = false
+                    this.editAnswer(
+                        el.target.dataset.id,
+                        el.target.dataset.answer
+                    )
+                    break
+                case findTarget(event, '.resolve-comment', el):
+                    this.resolveComment(el.target.dataset.id)
+                    break
+                case findTarget(event, '.recreate-comment', el):
+                    this.recreateComment(el.target.dataset.id)
+                    break
+                case findTarget(event, '.assign-comment', el):
+                    this.assignComment(el.target.dataset.id, parseInt(el.target.dataset.user), el.target.dataset.username)
+                    break
+                case findTarget(event, '.unassign-comment', el):
+                    this.unassignComment(el.target.dataset.id)
+                    break
+                case findTarget(event, '.delete-comment', el):
+                    this.deleteComment(el.target.dataset.id)
+                    break
+                case findTarget(event, '.delete-comment-answer', el):
+                    this.deleteCommentAnswer(
+                        parseInt(el.target.dataset.id),
+                        parseInt(el.target.dataset.answer)
+                    )
                     break
                 case findTarget(event, '.margin-box.comment.inactive', el):
                     let tr = deactivateAllSelectedChanges(this.mod.editor.view.state.tr)
@@ -32,41 +68,49 @@ export class ModCommentInteractions {
                     if (fnTr) {
                         this.mod.editor.mod.footnotes.fnEditor.view.dispatch(fnTr)
                     }
-                    this.activateComment(
-                        parseInt(el.target.dataset.id)
-                    )
-                    this.mod.editor.mod.marginboxes.updateDOM()
-                    break
-                case findTarget(event, '.edit-comment', el):
-                    let activeWrapper = document.querySelector('.margin-box.active')
-                    activeWrapper.querySelector('.comment-text-wrapper').classList.add('editing')
-                    activeWrapper.querySelector('textarea').value = activeWrapper.querySelector('.comment-p').innerText
-                    break
-                case findTarget(event, '.edit-comment-answer', el):
-                    this.editAnswer(
-                        parseInt(el.target.dataset.id),
-                        parseInt(el.target.dataset.answer)
-                    )
-                    break
-                case findTarget(event, '.submit-comment-answer-edit', el):
-                    this.submitAnswerEdit(el.target.previousElementSibling)
-                    break
-                case findTarget(event, '.comment-answer-submit', el):
-                    this.submitAnswer()
-                    break
-                case findTarget(event, '.delete-comment', el):
-                    this.deleteComment(parseInt(el.target.dataset.id))
-                    break
-                case findTarget(event, '.delete-comment-answer', el):
-                    this.deleteCommentAnswer(
-                        parseInt(el.target.dataset.id),
-                        parseInt(el.target.dataset.answer)
-                    )
+                    this.activateComment(el.target.dataset.id)
+                    this.updateDOM()
                     break
                 default:
+                    document.querySelectorAll('.comment-options.fw-open, .assign-comment-menu.fw-open').forEach(
+                        el => el.classList.remove('fw-open')
+                    )
                     break
             }
         })
+    }
+
+    initEditor() {
+        let commentEditorDOM = document.getElementById('comment-editor'),
+            answerEditorDOM = document.getElementById('answer-editor')
+
+        if (!(commentEditorDOM || answerEditorDOM)) {
+            this.editor = false
+            return
+        }
+        let id = this.activeCommentId
+        if (commentEditorDOM) {
+            let value = id === '-1' ?
+                {text: [], isMajor: false} :
+                {
+                    text: this.mod.store.comments[id].comment,
+                    isMajor: this.mod.store.comments[id].isMajor
+                }
+            this.editor = new CommentEditor(this.mod, id, commentEditorDOM, value.text, {isMajor: value.isMajor})
+        } else {
+            let answerId = this.activeCommentAnswerId,
+                text = answerId ?
+                    this.mod.store.comments[id].answers.find(answer => answer.id === answerId).answer :
+                    []
+            this.editor = new CommentAnswerEditor(this.mod, id, answerEditorDOM, text, {answerId})
+        }
+
+        this.editor.init()
+    }
+
+    updateDOM() {
+        this.mod.editor.mod.marginboxes.updateDOM()
+        this.initEditor()
     }
 
     findCommentIds(node) {
@@ -86,6 +130,7 @@ export class ModCommentInteractions {
 
     deactivateAll() {
         this.activeCommentId = false
+        this.editComment = false
         this.activeCommentAnswerId = false
         // If there is a comment currently under creation, remove it.
         this.mod.store.removeCommentDuringCreation()
@@ -131,26 +176,26 @@ export class ModCommentInteractions {
         // B) the comment answer edit form is currently open
         // C) part of a new answer has been written
         // D) the focus is currently in new answer text area of a comment
-        // E) a new comment form is about to be displayed, but the updateDOM
+        // E) The comment options are open
+        // F) a new comment form is about to be displayed, but the updateDOM
         // call has not yet been made.
         if (!this.activeCommentId) {
             return false
-        }
-        if (Array.from(document.querySelectorAll('.commentText')).find(el => el.clientWidth)) {
-            // a comment form is currently open
-            return true
         }
         if (document.querySelector('.submit-comment-answer-edit')) {
             // a comment answer edit form is currently open
             return true
         }
-        let answerForm = document.querySelector('.comment-answer-text')
-        if (answerForm && answerForm.value.length) {
-            // Part of an answer to a comment has been entered.
+        if (this.editor && this.editor.view && this.editor.view.hasFocus()) {
+            // There is currently focus in the comment (answer) form
             return true
         }
-        if (answerForm && answerForm.matches(':focus')) {
-            // There is currently focus in the comment answer form
+        if (this.editor && this.editor.view && this.editor.view.state.doc.content.content.length) {
+            // Part of a comment (answer) has been entered.
+            return true
+        }
+        if (document.querySelector('div.comment-options.fw-open')) {
+            // A comment options menu is open.
             return true
         }
         if (this.mod.store.commentDuringCreation.inDOM === false) {
@@ -167,32 +212,58 @@ export class ModCommentInteractions {
     createNewComment() {
         this.deactivateAll()
         this.mod.store.addCommentDuringCreation(this.mod.editor.currentView)
-        this.activeCommentId = -1
-        this.mod.editor.mod.marginboxes.updateDOM().then(
-            () => {
-                let commentBox = document.querySelector('.margin-box.active .commentText')
-                if (commentBox) {
-                    commentBox.focus()
-                }
-            }
-        )
-
+        this.activeCommentId = '-1'
+        this.editComment = true
+        this.updateDOM()
     }
 
     deleteComment(id) {
-        if (id===-1) {
+        if (id==='-1') {
             this.deactivateAll()
         } else {
             // Handle the deletion of a comment.
             this.mod.store.deleteComment(id, true)
         }
-        this.mod.editor.mod.marginboxes.updateDOM()
+        this.updateDOM()
+    }
+
+    resolveComment(id) {
+        this.mod.store.updateComment({id, resolved: true})
+    }
+
+    recreateComment(id) {
+        this.mod.store.updateComment({id, resolved: false})
+    }
+
+    assignComment(id, user, username) {
+        this.notifyAssignedUser(user, id)
+        this.mod.store.updateComment({id, assignedUser: user, assignedUsername: username})
+    }
+
+    unassignComment(id) {
+        this.mod.store.updateComment({id, assignedUser: false, assignedUsername: false})
+    }
+
+    notifyAssignedUser(user, id) {
+        const comment = this.mod.store.findComment(id)
+        const {html, text} = serializeComment(comment.comment)
+
+        post(
+            '/document/comment_notify/',
+            {
+                doc_id: this.mod.editor.docInfo.id,
+                collaborator_id: user,
+                comment_html: html,
+                comment_text: text,
+                type: 'assign'
+            }
+        )
     }
 
 
-    updateComment(id, commentText, isMajor) {
+    updateComment({id, comment, isMajor}) {
         // Save the change to a comment and mark that the document has been changed
-        if (id===-1) {
+        if (id==='-1') {
             let referrer = getCommentDuringCreationDecoration(this.mod.store.commentDuringCreation.view.state)
             // This is a new comment. We need to get an ID for it if it has contents.
 
@@ -210,7 +281,7 @@ export class ModCommentInteractions {
                     user: this.mod.editor.user.id,
                     username,
                     date: Date.now()-this.mod.editor.clientTimeAdjustment, // We update the time to the time the comment was stored
-                    comment: commentText,
+                    comment,
                     isMajor
                 },
                 referrer.from,
@@ -218,57 +289,29 @@ export class ModCommentInteractions {
                 this.mod.store.commentDuringCreation.view
             )
         } else {
-            this.mod.store.updateComment(id, commentText, isMajor)
+            this.mod.store.updateComment({id, comment, isMajor})
         }
         this.deactivateAll()
-        this.mod.editor.mod.marginboxes.updateDOM()
+        this.updateDOM()
 
     }
 
-    submitComment(submitButton) {
-        // Handle a click on the submit button of the comment submit form.
-        let commentTextBox = submitButton.parentElement.querySelector('.commentText'),
-            commentText = commentTextBox.value,
-            isMajor = submitButton.parentElement.querySelector('.comment-is-major').checked,
-            id = parseInt(commentTextBox.dataset.id)
-        if (commentText.length > 0) {
-            this.updateComment(id, commentText, isMajor)
-        } else {
-            this.deleteComment(id)
-        }
-
-    }
-
-    cancelSubmitComment(cancelButton) {
+    cancelSubmit() {
         // Handle a click on the cancel button of the comment submit form.
-        let commentTextBox = cancelButton.parentElement.querySelector('.commentText')
-        if (commentTextBox) {
-            let id = parseInt(commentTextBox.dataset.id)
-            if (id===-1 || this.mod.store.comments[id].comment.length === 0) {
-                this.deleteComment(id)
-            } else {
-                this.deactivateAll()
-            }
+        let id = this.activeCommentId
+        if (id==='-1' || this.mod.store.comments[id].comment.length === 0) {
+            this.deleteComment(id)
         } else {
             this.deactivateAll()
         }
-        this.mod.editor.mod.marginboxes.updateDOM()
+        this.updateDOM()
     }
 
     deleteCommentAnswer(id, answerId) {
         // Handle the deletion of a comment answer.
         this.mod.store.deleteAnswer(id, answerId)
         this.deactivateAll()
-        this.mod.editor.mod.marginboxes.updateDOM()
-    }
-
-    submitAnswer() {
-        // Submit the answer to a comment
-        let commentWrapper = document.querySelector('.margin-box.active'),
-            answerTextBox = commentWrapper.querySelector('.comment-answer-text'),
-            answerText = answerTextBox.value,
-            id = parseInt(commentWrapper.dataset.id)
-        this.createNewAnswer(id, answerText)
+        this.updateDOM()
     }
 
     editAnswer(id, answerId) {
@@ -276,7 +319,7 @@ export class ModCommentInteractions {
         // comments, which will make that answer editable.
         this.activeCommentId = id
         this.activeCommentAnswerId = answerId
-        this.mod.editor.mod.marginboxes.updateDOM()
+        this.updateDOM()
     }
 
     createNewAnswer(id, answerText) {
@@ -300,20 +343,12 @@ export class ModCommentInteractions {
         this.mod.store.addAnswer(id, answer)
 
         this.deactivateAll()
-        this.mod.editor.mod.marginboxes.updateDOM()
-    }
-
-    submitAnswerEdit(textArea) {
-        let id = parseInt(textArea.dataset.id),
-            answerId = parseInt(textArea.dataset.answer),
-            theValue = textArea.value
-
-        this.submitAnswerUpdate(id, answerId, theValue)
+        this.updateDOM()
     }
 
     submitAnswerUpdate(id, answerId, commentText) {
         this.mod.store.updateAnswer(id, answerId, commentText)
         this.deactivateAll()
-        this.mod.editor.mod.marginboxes.updateDOM()
+        this.updateDOM()
     }
 }

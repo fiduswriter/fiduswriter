@@ -1,5 +1,5 @@
-from __future__ import unicode_literals
-from django.utils.encoding import python_2_unicode_compatible
+from builtins import str
+from builtins import object
 
 from django.db import models
 from django.db.utils import OperationalError, ProgrammingError
@@ -8,12 +8,11 @@ from django.core import checks
 
 # FW_DOCUMENT_VERSION: See also FW_FILETYPE_VERSION specified in export
 # (same value from >= 2.0) in
-# document/static/js/modules/documents/exporter/native/zip.js
+# document/static/js/modules/exporter/native/zip.js
 
-FW_DOCUMENT_VERSION = 2.1
+FW_DOCUMENT_VERSION = 2.2
 
 
-@python_2_unicode_compatible
 class Document(models.Model):
     title = models.CharField(max_length=255, default='', blank=True)
     contents = models.TextField(default='{}')  # json object of content
@@ -32,7 +31,11 @@ class Document(models.Model):
     # The last few diffs that were received and approved. The number of stored
     # diffs should always be equivalent to or more than all the diffs since the
     # last full save of the document.
-    owner = models.ForeignKey(User, related_name='owner')
+    owner = models.ForeignKey(
+        User,
+        related_name='owner',
+        on_delete=models.deletion.CASCADE
+    )
     added = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     comments = models.TextField(default='{}')
@@ -48,7 +51,7 @@ class Document(models.Model):
         else:
             return str(self.id)
 
-    class Meta:
+    class Meta(object):
         ordering = ['-id']
 
     def get_absolute_url(self):
@@ -118,16 +121,15 @@ CAN_UPDATE_DOCUMENT = ['write', 'write-tracked', 'edit', 'review', 'comment']
 CAN_COMMUNICATE = ['read', 'write', 'comment', 'write-tracked']
 
 
-@python_2_unicode_compatible
 class AccessRight(models.Model):
-    document = models.ForeignKey(Document)
-    user = models.ForeignKey(User)
+    document = models.ForeignKey(Document, on_delete=models.deletion.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.deletion.CASCADE)
     rights = models.CharField(
         max_length=21,
         choices=RIGHTS_CHOICES,
         blank=False)
 
-    class Meta:
+    class Meta(object):
         unique_together = (("document", "user"),)
 
     def __str__(self):
@@ -145,9 +147,8 @@ def revision_filename(instance, filename):
     return '/'.join(['revision', str(instance.document.id), filename])
 
 
-@python_2_unicode_compatible
 class DocumentRevision(models.Model):
-    document = models.ForeignKey(Document)
+    document = models.ForeignKey(Document, on_delete=models.deletion.CASCADE)
     note = models.CharField(max_length=255, default='', blank=True)
     date = models.DateTimeField(auto_now=True)
     file_object = models.FileField(upload_to=revision_filename)
@@ -171,7 +172,6 @@ def template_filename(instance, filename):
     return '/'.join(['export-templates', filename])
 
 
-@python_2_unicode_compatible
 class ExportTemplate(models.Model):
     file_name = models.CharField(max_length=255, default='', blank=True)
     file_type = models.CharField(
@@ -180,7 +180,7 @@ class ExportTemplate(models.Model):
         blank=False)
     template_file = models.FileField(upload_to=template_filename)
 
-    class Meta:
+    class Meta(object):
         unique_together = (("file_name", "file_type"),)
 
     def __str__(self):

@@ -98,7 +98,7 @@ let deleteMember = function(ids) {
     postJson(
         '/account/teammember/remove',
         {
-            'members[]': ids
+            'members': ids
         }
     ).then(
         ({json, status}) => {

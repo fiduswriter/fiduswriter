@@ -1,33 +1,32 @@
 import download from "downloadjs"
 import {DOMSerializer} from "prosemirror-model"
+import katex from "katex"
 
 import {obj2Node, node2Obj} from "../tools/json"
 import {createSlug} from "../tools/file"
-import {findImages} from "../tools/html"
+import {modifyImages} from "../tools/html"
 import {ZipFileCreator} from "../tools/zip"
-import {opfTemplate, containerTemplate, ncxTemplate, ncxItemTemplate, navTemplate,
-  navItemTemplate, xhtmlTemplate} from "./templates"
+import {opfTemplate, containerTemplate, ncxTemplate, ncxItemTemplate, navTemplate, navItemTemplate, xhtmlTemplate} from "./templates"
 import {addAlert} from "../../common"
-import {katexRender} from "../../katex"
 import {BaseEpubExporter} from "./base"
 import {docSchema} from "../../schema/document"
 
 
 export class EpubExporter extends BaseEpubExporter {
 
-    constructor(doc, bibDB, imageDB, citationStyles, citationLocales) {
+    constructor(doc, bibDB, imageDB, citationStyles, citationLocales, staticUrl) {
         super()
         this.doc = doc
         this.citationStyles = citationStyles
         this.citationLocales = citationLocales
         this.bibDB = bibDB
         this.imageDB = imageDB
+        this.staticUrl = staticUrl
         this.shortLang = this.doc.settings.language.split('-')[0]
         this.lang = this.doc.settings.language
-        this.exportOne()
     }
 
-    exportOne() {
+    init() {
         addAlert('info', this.doc.title + ': ' + gettext(
             'Epub export has been initiated.'))
 
@@ -43,7 +42,7 @@ export class EpubExporter extends BaseEpubExporter {
 
         contents = this.addFigureNumbers(contents)
 
-        let images = findImages(contents)
+        let images = modifyImages(contents)
 
         let contentsBody = document.createElement('body')
 
@@ -51,29 +50,9 @@ export class EpubExporter extends BaseEpubExporter {
             contentsBody.appendChild(contents.firstChild)
         }
 
-        let equations = contentsBody.querySelectorAll('.equation')
+        const equations = contentsBody.querySelectorAll('.equation, .figure-equation')
 
-        let figureEquations = contentsBody.querySelectorAll('.figure-equation')
-
-        let math = false
-
-        if (equations.length > 0 || figureEquations.length > 0) {
-            math = true
-        }
-
-        for (let i = 0; i < equations.length; i++) {
-            let node = equations[i]
-            let formula = node.getAttribute('data-equation')
-            katexRender(formula, node, {throwOnError: false})
-        }
-        for (let i = 0; i < figureEquations.length; i++) {
-            let node = figureEquations[i]
-            let formula = node.getAttribute('data-equation')
-            katexRender(formula, node, {
-                displayMode: true,
-                throwOnError: false
-            })
-        }
+        const math = equations.length ? true : false
 
         // Make links to all H1-3 and create a TOC list of them
         let contentItems = this.orderLinks(this.setLinks(
@@ -178,7 +157,7 @@ export class EpubExporter extends BaseEpubExporter {
         if (math) {
             includeZips.push({
                 'directory': 'EPUB',
-                'url': `${$StaticUrls.base$}zip/katex_style.zip?v=${$StaticUrls.transpile.version$}`
+                'url': `${this.staticUrl}zip/katex_style.zip?v=${$StaticUrls.transpile.version$}`
             })
         }
         let zipper = new ZipFileCreator(

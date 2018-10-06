@@ -1,12 +1,15 @@
-from __future__ import unicode_literals
-
 from avatar.utils import get_primary_avatar, get_default_avatar_url
 
 
 def get_user_avatar_url(user):
-    the_avatar = get_primary_avatar(user, 80)
-    if the_avatar:
-        the_avatar = the_avatar.avatar_url(80)
+    avatar = get_primary_avatar(user, 80)
+    if avatar:
+        return {
+            'url': avatar.avatar_url(80),
+            'uploaded': True
+        }
     else:
-        the_avatar = get_default_avatar_url()
-    return the_avatar
+        return {
+            'url': get_default_avatar_url(),
+            'uploaded': False
+        }

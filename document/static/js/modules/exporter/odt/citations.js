@@ -73,7 +73,7 @@ export class OdtExporterCitations {
             let citationsHTML = ''
             this.citationTexts.forEach(
                 ct => {
-                    citationsHTML += `<p>${ct[0][1]}</p>`
+                    citationsHTML += `<p>${ct}</p>`
                 }
             )
 

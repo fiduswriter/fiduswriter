@@ -14,7 +14,8 @@ export {
     escapeText,
     cancelPromise,
     findTarget,
-    whenReady
+    whenReady,
+    setDocTitle
 }
 from "./basic"
 
@@ -24,7 +25,9 @@ export {
     getJson,
     post,
     postJson,
-    postBare
+    postBare,
+    ensureCSS,
+    getUserInfo
 }
 from "./network"
 
@@ -37,3 +40,8 @@ export {
     makeWorker
 }
 from "./worker"
+
+export {
+    baseBodyTemplate
+}
+from "./templates"

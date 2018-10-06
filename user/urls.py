@@ -1,9 +1,9 @@
-from __future__ import unicode_literals
 from allauth.account import views as allauth_views
 from django.conf.urls import include, url
 from django.views.generic.base import RedirectView
 from django.conf import settings
 from . import views
+from base.views import app
 
 
 class LoginView(allauth_views.LoginView):
@@ -23,16 +23,21 @@ urlpatterns = [
     url('^save/$', views.save_profile_js, name='save_profile_js'),
 
     # Show user profiles
-    url('^team/$', views.list_team_members, name='list_team_members'),
+    url('^team/$', app, name='list_team_members'),
     url(
         '^team/list/$',
         views.list_team_members_js,
         name='list_team_members_js'
     ),
     url(
-        '^profile/(?P<username>[\w\d\.\-_\@]{1,30})$',
-        views.show_profile,
+        '^profile/$',
+        app,
         name='show_userprofile'
+    ),
+    url(
+        '^info/$',
+        views.info_js,
+        name='info_js'
     ),
     url('^avatar/delete/$', views.delete_avatar_js, name="delete_avatar_js"),
     url('^avatar/upload/$', views.upload_avatar_js, name="upload_avatar_js"),

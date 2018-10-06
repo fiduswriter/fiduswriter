@@ -1,35 +1,62 @@
-import DataTable from "vanilla-datatables"
+import {DataTable} from "simple-datatables"
 
 import * as plugins from "../../../plugins/documents_overview"
 import {DocumentOverviewActions} from "./actions"
 import {DocumentAccessRightsDialog} from "../access_rights"
 import {menuModel} from "./menu"
-import {activateWait, deactivateWait, addAlert, postJson, OverviewMenuView, findTarget, whenReady, escapeText, localizeDate} from "../../common"
+import {activateWait, deactivateWait, addAlert, postJson, OverviewMenuView, findTarget, whenReady, escapeText, localizeDate, baseBodyTemplate, ensureCSS, setDocTitle} from "../../common"
 import {SiteMenu} from "../../menu"
+import {FeedbackTab} from "../../feedback"
+
 /*
 * Helper functions for the document overview page.
 */
 
 export class DocumentOverview {
 
-    constructor () {
+    constructor ({app, user, staticUrl}) {
+        this.app = app
+        this.username = user.username
+        this.staticUrl = staticUrl
         this.documentList = []
         this.user = false
         this.teamMembers = []
         this.accessRights = []
         this.mod = {}
-        let smenu = new SiteMenu("documents")
-        smenu.init()
-        new DocumentOverviewActions(this)
-        this.menu = new OverviewMenuView(this, menuModel)
-        this.menu.init()
-        this.activateFidusPlugins()
-        this.bind()
+    }
+
+    init() {
+        whenReady().then(() => {
+            this.render()
+            let smenu = new SiteMenu("documents")
+            smenu.init()
+            new DocumentOverviewActions(this)
+            this.menu = new OverviewMenuView(this, menuModel)
+            this.menu.init()
+            this.activateFidusPlugins()
+            this.bind()
+            this.getDocumentListData()
+        })
+    }
+
+    render() {
+        document.body = document.createElement('body')
+        document.body.innerHTML = baseBodyTemplate({
+            contents: '<ul id="fw-overview-menu"></ul>',
+            username: this.username,
+            staticUrl: this.staticUrl
+        })
+        ensureCSS([
+            'add_remove_dialog.css',
+            'access_rights_dialog.css'
+        ], this.staticUrl)
+        setDocTitle(gettext('Document Overview'))
+        const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
+        feedbackTab.init()
     }
 
     bind() {
-        whenReady().then(() => this.getDocumentListData())
-        document.addEventListener('click', event => {
+        document.body.addEventListener('click', event => {
             let el = {}, docId
             switch (true) {
                 case findTarget(event, '.revisions', el):
@@ -49,6 +76,12 @@ export class DocumentOverview {
                         newAccessRights => this.accessRights = newAccessRights,
                         memberDetails => this.teamMembers.push(memberDetails)
                     )
+                    break
+                case findTarget(event, 'a', el):
+                    if (el.target.hostname === window.location.hostname) {
+                        event.preventDefault()
+                        this.app.goTo(el.target.href)
+                    }
                     break
                 default:
                     break
@@ -91,6 +124,7 @@ export class DocumentOverview {
                 this.user = json.user
                 this.citationStyles = json.citation_styles
                 this.citationLocales = json.citation_locales
+                this.documentStyles = json.document_styles
                 this.exportTemplates = json.export_templates
                 this.initTable()
                 this.addExportTemplatesToMenu()
@@ -141,7 +175,7 @@ export class DocumentOverview {
 
     createTableRow(doc) {
         return [
-            doc.id,
+            String(doc.id),
             `<input type="checkbox" class="entry-select" data-id="${doc.id}">`,
             `<span class="fw-document-table-title fw-inline">
                 <i class="fa fa-file-text-o"></i>

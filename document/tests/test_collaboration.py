@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 import os
 import time
 import multiprocessing
@@ -9,7 +8,7 @@ from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 from django.conf import settings
 from test.testcases import LiveTornadoTestCase
-from editor_helper import EditorHelper
+from .editor_helper import EditorHelper
 
 
 class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
@@ -44,17 +43,21 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.login_user(self.user, self.driver2, self.client2)
         self.doc = self.create_new_document()
 
+    def tearDown(self):
+        self.leave_site(self.driver)
+        self.leave_site(self.driver2)
+
     def get_title(self, driver):
         # Title is child 0.
         return driver.execute_script(
-            'return window.theEditor.view.state.doc.firstChild'
+            'return window.theApp.page.view.state.doc.firstChild'
             '.firstChild.textContent;'
         )
 
     def get_contents(self, driver):
         # Contents is child 5.
         return driver.execute_script(
-            'return window.theEditor.view.state.doc.firstChild'
+            'return window.theApp.page.view.state.doc.firstChild'
             '.child(5).textContent;'
         )
 
@@ -591,8 +594,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         link = driver.find_element_by_class_name('link')
         self.input_text(link, "example.com")
 
-        driver.find_element_by_xpath(
-            "/html/body/div[5]/div[3]/div/button[1]").click()
+        driver.find_element_by_css_selector("button.fw-dark").click()
 
     def get_link(self, driver):
         atag = driver.find_element_by_xpath(
@@ -744,7 +746,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
     def get_undo(self, driver):
         content = driver.find_element_by_class_name('article-body')
-        return content.get_attribute("innerText").rstrip(u'\ufeff\n')
+        return content.get_attribute("innerText").rstrip('\ufeff\n')
 
     def test_delete_undo(self):
         """
@@ -885,13 +887,17 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         button.click()
 
         textArea = WebDriverWait(driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "commentText"))
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".ProseMirror-wrapper .ProseMirror")
+            )
         )
         textArea.click()
 
         self.input_text(textArea, "My comment")
 
-        driver.find_element_by_class_name("submitComment").click()
+        driver.find_element_by_css_selector(
+            "div#comment-editor button.submit"
+        ).click()
 
     def get_comment(self, driver):
         comment = driver.find_element_by_class_name('comment-text-wrapper')
@@ -1011,8 +1017,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         ).click()
 
         # click on 'Insert' button
-        driver.find_element_by_xpath(
-            '/html/body/div[5]/div[3]/div/button[1]').click()
+        driver.find_element_by_css_selector("button.fw-dark").click()
 
     def get_image(self, driver):
         figure = driver.find_element_by_css_selector(

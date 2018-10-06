@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 from django.core.management import call_command
 from django.contrib.staticfiles.management.commands.collectstatic import (
     Command as CollectStaticCommand

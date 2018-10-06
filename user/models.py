@@ -1,11 +1,15 @@
-from __future__ import unicode_literals
 
+
+from builtins import object
 from django.db import models
 from django.contrib.auth.models import User
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(
+        User,
+        on_delete=models.deletion.CASCADE
+    )
     about = models.TextField(max_length=500, blank=True)
 
 
@@ -14,7 +18,7 @@ User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 
 def get_readable_name(user):
     readable_name = user.get_full_name()
-    if readable_name == u'':
+    if readable_name == '':
         readable_name = user.username
     return readable_name
 
@@ -32,9 +36,17 @@ User.readable_name = property(lambda u: get_readable_name(u))
 
 
 class TeamMember(models.Model):
-    leader = models.ForeignKey(User, related_name='leader')
-    member = models.ForeignKey(User, related_name='member')
+    leader = models.ForeignKey(
+        User,
+        related_name='leader',
+        on_delete=models.deletion.CASCADE
+    )
+    member = models.ForeignKey(
+        User,
+        related_name='member',
+        on_delete=models.deletion.CASCADE
+    )
     roles = models.CharField(max_length=100, blank=True)
 
-    class Meta:
+    class Meta(object):
         unique_together = (("leader", "member"),)

@@ -1,4 +1,4 @@
-import DataTable from "vanilla-datatables"
+import {DataTable} from "simple-datatables"
 
 import {ImageEditDialog} from "../edit_dialog"
 import {cancelPromise, Dialog, escapeText, findTarget} from "../../common"

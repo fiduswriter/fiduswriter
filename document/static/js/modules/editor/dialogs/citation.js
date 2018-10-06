@@ -1,4 +1,4 @@
-import DataTable from "vanilla-datatables"
+import {DataTable} from "simple-datatables"
 
 import {configureCitationTemplate, selectedCitationTemplate} from "./templates"
 import {BibEntryForm} from "../../bibliography/form"
@@ -281,7 +281,7 @@ export class CitationDialog {
             let el = {}, revisionId
             switch (true) {
                 case findTarget(event, '.selected-source .delete', el):
-                    let documentEl = document.getElementById(`selected-source-document-${el.target.dataset.id}`)
+                    const documentEl = document.getElementById(`selected-source-${el.target.dataset.db}-${el.target.dataset.id}`)
                     if (documentEl) {
                         documentEl.parentElement.removeChild(documentEl)
                     }

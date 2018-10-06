@@ -1,0 +1,20 @@
+<script type="text/javascript">
+    'use strict';
+    (function() {
+        {% if ws_port %}
+            const websocketPort = ':' + {{ws_port}};
+        {% else %}
+            const websocketPort = location.port.length ? ':' + location.port : '';
+        {% endif %}
+        {% if ws_server %}
+            const websocketServer = '{{ ws_server }}';
+        {% else %}
+            const websocketServer = location.host.split(':')[0];
+        {% endif %}
+        const websocketProtocol = location.protocol === 'https:' ? 'wss://' : 'ws://'
+        window.fidusConfig = {
+            staticUrl: '{{ static_url }}',
+            websocketUrl: websocketProtocol + websocketServer + websocketPort
+        };
+    })();
+</script>

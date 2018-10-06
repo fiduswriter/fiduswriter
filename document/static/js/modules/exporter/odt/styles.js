@@ -21,7 +21,6 @@ export class OdtExporterStyles {
         this.italicStyleId = false
         this.boldItalicStyleId = false
         this.inlineStyleIds = {}
-        this.orderedListStyleId = [false, false]
         this.bulletListStyleId = [false, false]
         this.inlineStyleCounter = 0
         this.blockStyleCounter = 0
@@ -198,13 +197,10 @@ export class OdtExporterStyles {
     }
 
     getOrderedListStyleId() {
-        if (this.orderedListStyleId[0]) {
-            return this.orderedListStyleId
-        }
-        this.orderedListStyleId[0] = ++this.listStyleCounter
+        let orderedListStyleId = ++this.listStyleCounter
         let autoStylesEl = this.contentXml.querySelector('automatic-styles')
         autoStylesEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
-            <text:list-style style:name="L${this.orderedListStyleId[0]}">
+            <text:list-style style:name="L${orderedListStyleId}">
             </text:list-style>
         `)
         let listStyleEl = autoStylesEl.lastChild
@@ -218,8 +214,7 @@ export class OdtExporterStyles {
                 </text:list-level-style-number>
             `)
         }
-        this.orderedListStyleId[1] = this.addListParStyle(this.orderedListStyleId[0])
-        return this.orderedListStyleId
+        return [orderedListStyleId, this.addListParStyle(orderedListStyleId)]
     }
 
     // Add a paragraph style for either paragraph in bullet or numeric list

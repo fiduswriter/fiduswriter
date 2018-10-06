@@ -1,23 +1,19 @@
-from __future__ import unicode_literals
-
 from django.conf.urls import include, url
 from django.http import HttpResponse
 from django.contrib import admin
-from adminplus.sites import AdminSitePlus
+from django.urls import path
 from django.conf import settings
-from document.views import index as document_index
+from base.views import app as app_view
 
 from django.views.i18n import JavaScriptCatalog
 from importlib import import_module
 
-admin.site = AdminSitePlus()
-admin.sites.site = admin.site
 admin.autodiscover()
 
 # Django URLs -- Notice that these are only consulted after the
 # tornado_url_list found in base/servers/tornado_django_hybrid.py
 urlpatterns = [
-    url('^$', document_index, name='index'),
+    url('^$', app_view, name='index'),
     url(
         '^robots\.txt$',
         lambda r: HttpResponse(
@@ -33,8 +29,7 @@ urlpatterns = [
     url(r'^jsi18n/$', JavaScriptCatalog.as_view(), name='javascript-catalog'),
 
     # Admin interface
-    url('^admin/doc/', include('django.contrib.admindocs.urls')),
-    url('^admin/', include(admin.site.urls)),
+    path('admin/', admin.site.urls),
 
     # Account management
     url('^account/', include('user.urls')),

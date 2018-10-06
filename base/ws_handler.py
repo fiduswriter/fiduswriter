@@ -1,5 +1,4 @@
-from __future__ import unicode_literals
-from future.moves.urllib.parse import urlparse
+from urllib.parse import urlparse
 from tornado.websocket import WebSocketHandler
 from django.db import connection
 from logging import info, debug

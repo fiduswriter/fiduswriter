@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 from importlib import import_module
 
 from django.conf import settings
@@ -45,7 +45,7 @@ def make_tornado_server():
     tornado_url_list += [
         ('.*', FallbackHandler, dict(fallback=wsgi_app))
     ]
-    tornado_app = Application(tornado_url_list)
+    tornado_app = Application(tornado_url_list, debug=settings.DEBUG)
     server = HTTPServer(tornado_app)
     server.xheaders = True
     return server

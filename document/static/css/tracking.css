@@ -2,8 +2,13 @@ span.deletion {
     text-decoration: line-through;
 }
 
-.selected-insertion, .selected-deletion, .selected-format_change {
+.selected-insertion, .selected-deletion, .selected-format_change, .selected-block_change {
     background-color: #fffacf;
+}
+
+.keyword.selected-insertion, .author.selected-insertion, .keyword.selected-deletion, .author.selected-deletion {
+    background-color: #fffacf;
+    color: #000;
 }
 
 

@@ -1,5 +1,4 @@
 import diffDOM from "diff-dom"
-import keyName from "w3c-keyname"
 import {keydownHandler} from "prosemirror-keymap"
 import {escapeText, whenReady} from "./basic"
 
@@ -28,7 +27,7 @@ export class OverviewMenuView {
     }
 
     oninput(event) {
-        let target = event.target
+        const target = event.target
         if(target.matches('#fw-overview-menu > li > .fw-button > input')) {
             // A text was enetered in a top entry. we find which one.
             let menuNumber = 0
@@ -37,7 +36,7 @@ export class OverviewMenuView {
                 menuNumber++
                 seekItem = seekItem.previousElementSibling
             }
-            let menuItem = this.model.content[menuNumber]
+            const menuItem = this.model.content[menuNumber]
             if (menuItem.input) {
                 menuItem.input(this.overview, target.value)
             }
@@ -45,7 +44,7 @@ export class OverviewMenuView {
     }
 
     onclick(event) {
-        let target = event.target
+        const target = event.target
         if(target.matches('#fw-overview-menu li li, #fw-overview-menu li li *')) {
             event.preventDefault()
             let itemNumber = 0
@@ -80,7 +79,7 @@ export class OverviewMenuView {
                 menuNumber++
                 seekItem = seekItem.previousElementSibling
             }
-            let menuItem = this.model.content[menuNumber]
+            const menuItem = this.model.content[menuNumber]
 
             if (menuItem.checked === true) {
                 menuItem.checked = false
@@ -89,7 +88,6 @@ export class OverviewMenuView {
                 menuItem.checked = true
                 menuItem.checkAction(this.overview)
             }
-            let that = this
             return true
         } else if(target.matches('#fw-overview-menu li, #fw-overview-menu li *')) {
             // A toolbar dropdown menu item was clicked. We just need to
@@ -100,7 +98,7 @@ export class OverviewMenuView {
                 menuNumber++
                 seekItem = seekItem.previousElementSibling
             }
-            let menuItem = this.model.content[menuNumber]
+            const menuItem = this.model.content[menuNumber]
             // if it is a dropdown menu, open it. Otherwise execute an
             // associated action.
             if (['dropdown', 'select-action-dropdown'].includes(menuItem.type)) {
@@ -138,10 +136,10 @@ export class OverviewMenuView {
             // page has not yet been loaded. abort
             return
         }
-        let tempEl = document.createElement('div')
+        const tempEl = document.createElement('div')
         tempEl.innerHTML = this.getMenuHTML()
-        let newMenuEl = tempEl.firstElementChild
-        let diff = this.dd.diff(this.menuEl, newMenuEl)
+        const newMenuEl = tempEl.firstElementChild
+        const diff = this.dd.diff(this.menuEl, newMenuEl)
         this.dd.apply(this.menuEl, diff)
     }
 

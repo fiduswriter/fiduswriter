@@ -32,7 +32,6 @@ export class OdtExporter {
         this.pmCits = false
         this.docContents = false
         this.docTitle = false
-        this.init()
     }
 
 

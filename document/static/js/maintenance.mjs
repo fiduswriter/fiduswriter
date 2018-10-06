@@ -1,7 +1,7 @@
 import {DocMaintenance} from "./modules/maintenance"
 
-let theMaintainer = new DocMaintenance()
+const theMaintainer = new DocMaintenance(window.fidusConfig)
 
-theMaintainer.bind()
+theMaintainer.init()
 
 window.theMaintainer = theMaintainer

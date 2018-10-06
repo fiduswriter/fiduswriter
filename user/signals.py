@@ -1,4 +1,13 @@
-from __future__ import unicode_literals
+from builtins import map
+from urllib.request import urlopen
+from urllib.parse import urlparse
+
+from django.template.defaultfilters import slugify
+from django.core.files.base import ContentFile
+from django.dispatch import receiver
+
+from avatar.models import Avatar
+from allauth.account.signals import user_signed_up
 # This file is split of from django-allauth and is licensed as:
 
 # Copyright (c) 2010 Raymond Penners and contributors
@@ -24,16 +33,6 @@ from __future__ import unicode_literals
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-import urllib2
-from future.moves.urllib.parse import urlparse
-
-from django.template.defaultfilters import slugify
-from django.core.files.base import ContentFile
-from django.dispatch import receiver
-
-from avatar.models import Avatar
-from allauth.account.signals import user_signed_up
-
 
 def name_from_url(url):
     """
@@ -56,8 +55,7 @@ def name_from_url(url):
     for base in (p.path.split('/')[-1],
                  p.path,
                  p.netloc):
-        name = ".".join(filter(lambda s: s,
-                               map(slugify, base.split("."))))
+        name = ".".join([s for s in map(slugify, base.split(".")) if s])
         if name:
             return name
 
@@ -68,7 +66,7 @@ def copy_avatar(request, user, account):
         ava = Avatar(user=user)
         ava.primary = Avatar.objects.filter(user=user).count() == 0
         try:
-            content = urllib2.urlopen(url).read()
+            content = urlopen(url).read()
             name = name_from_url(url)
             ava.avatar.save(name, ContentFile(content))
         except IOError:

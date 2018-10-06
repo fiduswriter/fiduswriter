@@ -65,6 +65,11 @@ export let collaboratorsTemplate = ({collaborators}) =>
                                 </span>
                             </li>
                             <li>
+                                <span class="fw-pulldown-item" data-right="write-tracked" title="${gettext("Write with changes tracked")}">
+                                    <i class="icon-access-write-tracked" ></i>&nbsp;${gettext("Write tracked")}
+                                </span>
+                            </li>
+                            <li>
                                 <span class="fw-pulldown-item" data-right="comment" title="${gettext("Comment")}">
                                     <i class="icon-access-comment"></i>&nbsp;${gettext("Comment")}
                                 </span>

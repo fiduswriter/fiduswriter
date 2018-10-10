@@ -23,7 +23,7 @@ export class ModMarginboxes {
 
     setup() {
         // Add two elements to hold dynamic CSS info about comments.
-        document.head.insertAdjacentHTML(
+        document.body.insertAdjacentHTML(
             'beforeend',
             '<style type="text/css" id="active-comment-style"></style><style type="text/css" id="margin-box-placement-style"></style>'
         )

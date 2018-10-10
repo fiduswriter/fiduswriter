@@ -92,7 +92,7 @@ export class ModMarginboxes {
         this.activeCommentStyle = ''
 
         //marginBoxes.push({type: 'filter', data: this.filterOptions})
-        referrers.push(0)
+        //referrers.push(0)
 
         this.editor.view.state.doc.descendants(
             (node, pos) => {

@@ -20,7 +20,7 @@ export class ModCitations {
         let styleContainers = document.createElement('temp')
         styleContainers.innerHTML = `<style type="text/css" id="footnote-numbering-override"></style>`
         while (styleContainers.firstElementChild) {
-            document.head.appendChild(styleContainers.firstElementChild)
+            document.body.appendChild(styleContainers.firstElementChild)
         }
         this.fnOverrideElement = document.getElementById('footnote-numbering-override')
     }
@@ -121,7 +121,7 @@ export class ModCitations {
         document.querySelector('.article-bibliography').innerHTML = citRenderer.fm.bibHTML
         let styleEl = document.querySelector('.article-bibliography-style')
         if (!styleEl) {
-            document.head.insertAdjacentHTML('beforeend','<style type="text/css" class="article-bibliography-style"></style>')
+            document.body.insertAdjacentHTML('beforeend','<style type="text/css" class="article-bibliography-style"></style>')
             styleEl = document.querySelector('.article-bibliography-style')
         }
         let css = citRenderer.fm.bibCSS

@@ -76,7 +76,7 @@ export class ModCollabChat {
     }
 
     init() {
-        document.head.insertAdjacentHTML(
+        document.body.insertAdjacentHTML(
             'beforeend',
             `<style>\n#messageform.empty:before{content:"${gettext('Send a message...')}"}\n</style>`
         )

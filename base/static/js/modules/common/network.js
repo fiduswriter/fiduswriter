@@ -106,12 +106,12 @@ export const ensureCSS = function(cssUrl, staticUrl) {
         cssUrl.forEach(url => ensureCSS(url, staticUrl))
         return
     }
-    const url = `${staticUrl}css/${cssUrl}?v=${$StaticUrls.transpile.version$}`
-    const styleSheet = Array.from(document.styleSheets).find(styleSheet => styleSheet.href === url)
+    const url = `${staticUrl}css/${cssUrl}?v=${$StaticUrls.transpile.version$}`,
+        link = document.createElement("link")
+    link.rel = "stylesheet"
+    link.href = url
+    const styleSheet = Array.from(document.styleSheets).find(styleSheet => styleSheet.href === link.href)
     if (!styleSheet) {
-        const link = document.createElement("link")
-        link.rel = "stylesheet"
-        link.href = url
         document.head.appendChild(link)
         return true
     }

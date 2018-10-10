@@ -99,7 +99,7 @@ export let settingsPlugin = function(options) {
         if (!docStyleEl) {
             docStyleEl = document.createElement('style')
             docStyleEl.id = 'document-style'
-            document.head.appendChild(docStyleEl)
+            document.body.appendChild(docStyleEl)
         }
 
         docStyleEl.innerHTML = docStyleCSS

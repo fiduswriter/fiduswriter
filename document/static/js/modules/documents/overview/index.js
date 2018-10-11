@@ -78,7 +78,7 @@ export class DocumentOverview {
                     )
                     break
                 case findTarget(event, 'a', el):
-                    if (el.target.hostname === window.location.hostname) {
+                    if (el.target.hostname === window.location.hostname && el.target.getAttribute('href')[0] === '/') {
                         event.preventDefault()
                         this.app.goTo(el.target.href)
                     }

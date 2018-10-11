@@ -1,4 +1,3 @@
-/* Functions for ProseMirror integration.*/
 import {
     whenReady,
     ensureCSS

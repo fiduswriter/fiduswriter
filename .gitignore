@@ -15,7 +15,6 @@ node_modules/
 style/static/
 venv/
 .idea/
-/configuration.py
 fidus.db
 deploy
 base/static/zip/katex-style.zip

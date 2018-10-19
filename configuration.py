@@ -88,6 +88,7 @@ INSTALLED_APPS += (
     # 'allauth.socialaccount.providers.persona',
     # 'allauth.socialaccount.providers.soundcloud',
     # 'allauth.socialaccount.providers.stackexchange',
+    # "fiduswriter_plugins.skin",
 )
 
 # A list of allowed hostnames of this Fidus Writer installation

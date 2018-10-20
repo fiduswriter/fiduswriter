@@ -14,6 +14,10 @@
     outline: 0px;
 }
 
+.ui-dialog-content.ui-scrollable {
+    overflow-y: scroll;
+}
+
 .ui-dialog-titlebar {
     position: relative;
     padding: 0 40px 0 0;

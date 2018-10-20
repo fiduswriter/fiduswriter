@@ -138,8 +138,8 @@ export class Editor {
         this.user = false
 
         this.menu = {
-            headerbarModel,
-            toolbarModel
+            headerbarModel: headerbarModel(),
+            toolbarModel: toolbarModel()
         }
         this.client_id = Math.floor(Math.random() * 0xFFFFFFFF)
         this.clientTimeAdjustment = 0
@@ -169,10 +169,6 @@ export class Editor {
             [settingsPlugin, () => ({editor: this})],
             [trackPlugin, () => ({editor: this})]
         ]
-        new ModCitations(this)
-        new ModFootnotes(this)
-        new ModServerCommunications(this)
-        new ModDB(this)
     }
 
     init() {
@@ -194,6 +190,10 @@ export class Editor {
             'bibliography.css'
         ], this.staticUrl)
         whenReady().then(() => {
+            new ModCitations(this)
+            new ModFootnotes(this)
+            new ModServerCommunications(this)
+            new ModDB(this)
             this.render()
             this.initEditor()
         })

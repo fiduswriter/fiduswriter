@@ -44,7 +44,7 @@ let languageItem = function(code, name, order) {
 }
 
 
-export let headerbarModel = {
+export let headerbarModel = () => ({
     open: true, // Whether the menu is shown at all.
     content: [
         {
@@ -856,4 +856,4 @@ export let headerbarModel = {
             ]
         }
     ]
-}
+})

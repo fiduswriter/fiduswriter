@@ -1,4 +1,4 @@
-import {viewer} from "vivliostyle"
+import {vivliostylePrint} from "vivliostyle-print"
 
 import {HTMLExporter} from "../html"
 import {addAlert} from "../../common"
@@ -47,61 +47,13 @@ export class PrintExporter extends HTMLExporter {
 
     init() {
         addAlert('info', `${this.doc.title}: ${gettext('Printing has been initiated.')}`)
-        return this.initIframe()
-    }
-
-    initIframe() {
-        this.iframe = document.createElement('iframe')
-        this.window = window
-        this.window.printInstance = this
-        this.iframe.srcdoc="<html><head></head><body onload='parent.printInstance.runInIframe(window)'></body></html>"
-        document.body.appendChild(this.iframe)
-    }
-
-    runInIframe(iframeWin) {
-        this.iframeWin = iframeWin
         return this.addStyle().then(
             () => this.joinDocumentParts()
         ).then(
             () => this.postProcess()
         ).then(
-            ({html, title}) => this.preparePrint({html, title})
-        ).then(
-            () => this.fixPreparePrint()
-        ).then(
-            () => this.browserPrint()
-        ).then(
-            () => this.cleanUp()
+            ({html, title}) => vivliostylePrint(html, title, `${this.staticUrl}vivliostyle-resources/`)
         )
-    }
-
-    preparePrint({html, title}) {
-        this.iframeWin.document.title = title
-        const docBlob = new Blob([html], {type : 'text/html'}),
-            docURL = URL.createObjectURL(docBlob),
-            Viewer = new viewer.Viewer(
-                {
-                    viewportElement: this.iframeWin.document.body,
-                    window: this.iframeWin,
-                    userAgentRootURL: `${this.staticUrl}vivliostyle-resources/`
-                }
-            )
-        return new Promise(resolve => {
-            Viewer.addListener('readystatechange', () => {
-                if (Viewer.readyState === 'complete') {
-                    resolve()
-                }
-            })
-            Viewer.loadDocument({url: docURL})
-        })
-    }
-
-    fixPreparePrint() {
-        this.iframeWin.document.querySelectorAll('[data-vivliostyle-page-container]').forEach(node => node.style.display = 'block')
-    }
-
-    browserPrint() {
-        this.iframeWin.print()
     }
 
     getFootnoteAnchor(counter) {
@@ -109,10 +61,5 @@ export class PrintExporter extends HTMLExporter {
         // Add the counter directly into the footnote.
         footnoteAnchor.innerHTML = counter
         return footnoteAnchor
-    }
-
-    cleanUp() {
-        this.iframe.parentElement.removeChild(this.iframe)
-        delete this.window.printInstance
     }
 }

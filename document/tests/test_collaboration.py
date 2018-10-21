@@ -748,7 +748,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         content = driver.find_element_by_class_name('article-body')
         return content.get_attribute(
             "innerText"
-        ).rstrip('\ufeff\n').replace('\n','')
+        ).rstrip('\ufeff\n').replace('\n', '')
 
     def test_delete_undo(self):
         """

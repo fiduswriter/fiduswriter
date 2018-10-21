@@ -116,10 +116,11 @@ export class Editor {
     // A class that contains everything that happens on the editor page.
     // It is currently not possible to initialize more than one editor class, as it
     // contains bindings to menu items, etc. that are uniquely defined.
-    constructor(id, {app, staticUrl, websocketUrl}) {
+    constructor(id, {app, staticUrl, websocketUrl, user}) {
         this.app = app
         this.staticUrl = staticUrl
         this.websocketUrl = websocketUrl
+        this.user = user
         this.mod = {}
         // Whether the editor is currently waiting for a document update. Set to true
         // initially so that diffs that arrive before document has been loaded are not
@@ -135,7 +136,6 @@ export class Editor {
             dir: 'ltr' // standard direction, used in input fields, etc.
         }
         this.schema = docSchema
-        this.user = false
 
         this.menu = {
             headerbarModel: headerbarModel(),
@@ -309,12 +309,6 @@ export class Editor {
         if (this.docInfo.version === 0) {
             // If the document is new, change the url.
             window.history.replaceState("", "", `/document/${this.docInfo.id}/`)
-        }
-
-        if (data.hasOwnProperty('user')) {
-            this.user = data.user
-        } else {
-            this.user = this.docInfo.owner
         }
 
         this.mod.db.bibDB.setDB(data.doc.bibliography)

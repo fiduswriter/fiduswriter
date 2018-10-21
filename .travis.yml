@@ -30,7 +30,7 @@ env:
     - TESTS=bibliography
     - TESTS=usermedia
 
-script: travis_retry coverage run manage.py test $TESTS
+script: coverage run manage.py test $TESTS
 
 jobs:
   include:

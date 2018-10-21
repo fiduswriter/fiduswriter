@@ -160,11 +160,6 @@ def get_documentlist_js(request):
             use_natural_foreign_keys=True
         )
         response['document_styles'] = [obj['fields'] for obj in doc_styles]
-        response['user'] = {}
-        response['user']['id'] = request.user.id
-        response['user']['name'] = request.user.readable_name
-        response['user']['username'] = request.user.get_username()
-        response['user']['avatar'] = avatar_url(request.user, 80)
         response['access_rights'] = get_accessrights(
             AccessRight.objects.filter(document__owner=request.user))
     return JsonResponse(

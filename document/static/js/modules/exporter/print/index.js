@@ -30,7 +30,7 @@ export class PrintExporter extends HTMLExporter {
                 counter-increment: footnote-counter;
                 content: counter(footnote-counter) ". ";
             }
-            section#fnlist {
+            section.fnlist {
                 display: none;
             }
             section:footnote-content {

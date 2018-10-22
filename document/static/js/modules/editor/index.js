@@ -200,6 +200,8 @@ export class Editor {
     }
 
     close() {
+        this.menu.toolbarViews.forEach(view => view.destroy())
+        this.menu.headerView.destroy()
         this.mod.serverCommunications.close()
     }
 

@@ -46,13 +46,13 @@ export class SiteMenu {
     }
 
     renderMenu() {
-        let headerNav = document.getElementById('header-nav')
+        const headerNav = document.getElementById('header-nav')
         headerNav.innerHTML = headerNavTemplate({navItems: this.navItems})
     }
 
     bindPreferencePullDown() {
-        let box = document.getElementById('user-preferences-pulldown')
-        let button = document.getElementById('preferences-btn')
+        const box = document.getElementById('user-preferences-pulldown')
+        const button = document.getElementById('preferences-btn')
         addDropdownBox(
             button,
             box,

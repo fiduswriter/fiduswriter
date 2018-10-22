@@ -121,7 +121,7 @@ export class BaseDOMExporter {
         const footnotes = htmlEl.querySelectorAll(footnoteSelector)
         const footnotesContainer = document.createElement('section')
         let citationCount = 0
-        footnotesContainer.id = 'fnlist'
+        footnotesContainer.classList.add('fnlist')
         footnotesContainer.setAttribute('role', 'doc-footnotes')
 
         footnotes.forEach(

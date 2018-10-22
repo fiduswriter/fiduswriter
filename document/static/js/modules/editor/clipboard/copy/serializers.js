@@ -54,8 +54,8 @@ class ClipboardDOMSerializer {
         const footnotes = domFragment.querySelectorAll(footnoteSelector)
         const footnotesContainer = document.createElement('section')
         let citationCount = 0
-        footnotesContainer.id = 'fnlist'
         footnotesContainer.setAttribute('role', 'doc-footnotes')
+        footnotesContainer.classList.add('fnlist')
         footnotesContainer.classList.add('fiduswriter-clipboard-footnotes')
         footnotes.forEach(
             (footnote, index) => {

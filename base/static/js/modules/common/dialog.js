@@ -1,5 +1,5 @@
 
-const dialogTemplate = ({id, classes, title, height, width, icon, buttons, zIndex, body}) =>
+const dialogTemplate = ({id, classes, title, height, width, icon, buttons, zIndex, body, scroll}) =>
 `<div tabindex="-1" role="dialog"
         class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-dialog-buttons"
         ${id ? `aria-describedby="${id}"` : ''} style="z-index: ${zIndex};">
@@ -12,7 +12,7 @@ const dialogTemplate = ({id, classes, title, height, width, icon, buttons, zInde
             ${gettext('Close')}
         </button>
     </div>
-    <div ${id ? `id="${id}"` : ''} class="ui-dialog-content ui-widget-content${classes ? ` ${classes}` : ''}" style="width: ${width}; height: ${height};">
+    <div ${id ? `id="${id}"` : ''} class="ui-dialog-content ui-widget-content${classes ? ` ${classes}` : ''}${scroll ? ` ui-scrollable` : ''}" style="width: ${width}; height: ${height};">
         ${body}
     </div>
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
@@ -48,15 +48,16 @@ const BUTTON_TYPES = {
 
 export class Dialog {
     constructor(options) {
-        this.id = options.id ? options.id : false
-        this.classes = options.classes ? options.classes : false
-        this.title = options.title ? options.title : ''
-        this.body = options.body ? options.body : ''
+        this.id = options.id || false
+        this.classes = options.classes || false
+        this.title = options.title || ''
+        this.body = options.body || ''
         this.height = options.height ? `${options.height}px` : 'auto'
         this.width = options.width ? `${options.width}px` : 'auto'
         this.buttons = options.buttons ? this.addDefaultButtons(options.buttons) : []
-        this.onClose = options.onClose ? options.onClose : false
-        this.icon = options.icon ? options.icon : false
+        this.onClose = options.onClose || false
+        this.icon = options.icon || false
+        this.scroll = options.scroll || false
         this.dialogEl = false
         this.backdropEl = false
     }
@@ -85,7 +86,8 @@ export class Dialog {
                 icon: this.icon,
                 buttons : this.buttons,
                 zIndex: this.getHighestDialogZIndex() + 2,
-                body: this.body
+                body: this.body,
+                scroll: this.scroll
             })
         )
         this.backdropEl = document.body.lastElementChild

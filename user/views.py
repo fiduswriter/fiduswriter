@@ -36,8 +36,10 @@ def info_js(request):
     if not request.is_ajax() or request.method != 'POST':
         return JsonResponse({}, status=405)
     response = {
+        'id': request.user.id,
         'username': request.user.username,
         'first_name': request.user.first_name,
+        'name': request.user.readable_name,
         'last_name': request.user.last_name,
         'avatar': userutil.get_user_avatar_url(request.user),
         'emails': []

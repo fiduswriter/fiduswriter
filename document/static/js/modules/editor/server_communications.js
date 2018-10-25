@@ -25,6 +25,7 @@ export class ModServerCommunications {
 
     close() {
         if (this.ws) {
+            window.clearInterval(this.wsPinger)
             this.ws.onclose = () => {}
             this.ws.close()
         }

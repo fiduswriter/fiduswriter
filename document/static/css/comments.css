@@ -13,15 +13,21 @@
 }
 
 .margin-box {
-    background-color: #fbfbfb;
-    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    color: #2c2723;
     width: 200px;
     padding: 9px;
     margin-top: 10px;
     position: relative;
 }
+.margin-box.track {
+    background-color: #9eafcc;
+    color: #fff;
+}
 .margin-box.active {
+    color: #000;
     background-color: #fffacf;
+    border: 1px solid #2c2723;
     left: -18px;
     z-index: 5;
 }
@@ -32,11 +38,12 @@
     line-height: 1em;
     font-size: 36px;
     color: #fffacf;
-    text-shadow: -1px 0 1px #ccc;
+    text-shadow: -1px 0px 0px #2c2723;
 }
 .margin-box.hidden {
     display: none;
 }
+
 .comment-item {
     margin-top: 10px;
     padding-top: 10px;
@@ -86,9 +93,10 @@
     border: solid 1px #ccc;
 }
 .comment-user-name {
-    font-weight: 700;
+    font-family: Lato;
     font-size: 12px;
-    margin-bottom: 4px;
+    font-weight: 700;
+    line-height: 20px;
 }
 .comment-date {
     font-size: 10px;
@@ -150,14 +158,15 @@
 
 .show-comment-options {
     position: absolute;
-    right: 5px;
-    top: 8px;
+    right: 14px;
+    top: 11px;
     cursor: pointer;
+    opacity: 0.4;
 }
 
 .comment-options.fw-pulldown.fw-right {
-    right: -22px;
-    top: 18px;
+    right: -16px;
+    top: 22px;
 }
 
 .comment-is-major {
@@ -165,7 +174,7 @@
 }
 
 .comment-is-major-bgc {
-    background-color: #f2dede;
+    background-color: #fbd0e0;
 }
 
 .comment.resolved .comment-item {
@@ -178,8 +187,8 @@
 
 #comment-editor .tagger, #answer-editor .tagger  {
     margin: 5px -10px -11px -10px;
-    background-color: #f2f2f2;
-    border: 1px solid #c9c9c9;
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
 }
 
 #comment-editor .tagger:empty, #answer-editor .tagger:empty {
@@ -193,7 +202,7 @@
 
 #comment-editor .tagger .tag:hover, #comment-editor .tagger .tag.selected,
 #answer-editor .tagger .tag:hover, #answer-editor .tagger .tag.selected {
-    background-color: #c9c9c9;
+    background-color: #e0e0e0;
 }
 
 #comment-editor .tagger .tag-user, #answer-editor .tagger .tag-user {

@@ -5,7 +5,7 @@ body {
     font-size: 13px;
     color: #2c2723;
     width: 100%;
-    background-color: #f2f2f2;
+    background-color: #fff;
 }
 
 header {
@@ -18,6 +18,7 @@ header {
     padding: 16px 0;
     background-color: #84b4a7;
     width: 100%;
+    border-bottom: 1px solid #c2dad3;
 }
 #document-top > h1 {
     font-size: 22px;
@@ -26,6 +27,7 @@ header {
     padding-left: 108px;
     background: url(../img/fidus_face.png) no-repeat 68px 0;
     background-size: 17px 21px;
+    line-height: 32px;
 }
 #header-navigation {
     position: relative;
@@ -43,11 +45,11 @@ header {
     cursor: pointer;
 }
 #header-navigation .header-nav-item {
-    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.3);
+    opacity: 0.6;
+    line-height: 35px;
 }
 #header-navigation .header-nav-item:hover {
-    color: #fff;
-    text-shadow: none;
+    opacity: 1;
 }
 #header-navigation span.selected, #toolbar span.selected {
     background-color: black;
@@ -70,7 +72,7 @@ header {
  */
 #toolbar {
     display: block;
-    background-color: #f9f9f9;
+    background-color: #fff;
     z-index: 88;
     width: 100%;
     -webkit-user-select: none;
@@ -86,14 +88,14 @@ header {
     vertical-align: top;
 }
 #comments-display.selected {
-    background-color: #f2f2f2;
+    background-color: #f9f9f9;
 }
 #comments-display:hover {
-    background-color: #c9c9c9;
+    background-color: #e0e0e0;
 }
 #comments-display.disabled {
     color: #ccc;
-    background-color: #f2f2f2;
+    background-color: #f9f9f9;
 }
 #reviewed {
     left: 100%;
@@ -101,7 +103,7 @@ header {
     background-color: #81F781;
 }
 #reviewed:hover {
-    background-color: #c9c9c9;
+    background-color: #e0e0e0;
 }
 .editortoolbar {
     position: relative;
@@ -113,29 +115,29 @@ header {
     display: inline-block;
     white-space: nowrap;
     vertical-align: top;
-    margin-right: 7px;
+    margin-right: 6px;
 }
 
 .editortoolbar div.info {
   /*max-width: 90px;*/
   min-width: 62px;
   color: #000;
-  background-color: #f2f2f2;
+  background-color: #f9f9f9;
   text-shadow: none;
-  border-color: #c9c9c9;
-  height: 40px;
-  line-height: 40px;
+  border-color: #e0e0e0;
+  height: 46px;
+  line-height: 46px;
   padding: 0 10px;
   display: inline-block;
   font-size: 14px;
-  border-style: solid;
-  border-width: 1px;
-  border-radius: 3px;
+  border-width: 0px;
+  border-radius: 23px;
   text-decoration: none;
   box-shadow: none;
   box-sizing: content-box;
   white-space: nowrap;
-  margin-right: 7px;
+  margin-right: 6px;
+  text-align: center;
 }
 
 
@@ -145,10 +147,15 @@ header {
 
 .editortoolbar div.multiButtons .multibuttonsCover {
     position: relative;
-    min-width: 80px;
+    min-width: 85px;
     max-width: 120px;
     font-size: 11px;
-    font-weight: 900;
+    font-weight: 700;
+    color: #2c2723;
+    font-family: Lato;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.07px;
 }
 .editortoolbar div.multiButtons .multibuttonsCover:after {
     display: block;
@@ -157,11 +164,48 @@ header {
     top: 14px;
     text-align: right;
     margin-top: 0;
+    width: 9px;
+    height: 5px;
+    opacity: 0.5;
+    color: #262626;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 15.75px;
+    letter-spacing: 0.15px;
+}
+
+.editortoolbar div.multiButtons .multibuttonsCover.disabled:after {
+    display: none;
 }
 
 .editortoolbar .fw-button.no-border {
     background: transparent;
     border-color: transparent;
+}
+
+.editortoolbar .fw-button.no-border .ui-button-text {
+    width: 10px;
+    height: 10px;
+    opacity: 0.4;
+    color: #262626;
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 15.75px;
+    letter-spacing: 0.17px;
+}
+
+.editortoolbar .fw-button {
+    border-width: 0px;
+}
+
+.editortoolbar .fw-button.fw-large {
+    height: 46px;
+    line-height: 46px;
+    border-radius: 23px;
+}
+
+.editortoolbar .fw-button.fw-large.fw-square {
+    width: 46px;
 }
 
 .ui-dialog-content-table .dk_toggle {
@@ -309,11 +353,10 @@ span.delete {
 
 #flow {
     padding: 50px;
-/*    padding-right: calc(20vw + 10px);*/
     position: relative;
     width: 100%;
     bottom: 50px;
-    border: 1px solid #ccc;
+    border: 1px solid #d1d1d1;
 }
 #flow.hide {
     display: none;
@@ -356,10 +399,10 @@ span.delete {
   position: fixed;
   bottom: 0;
   left: 100px;
-  background-color: #f2f2f2;
-  border-top: 1px solid #c9c9c9;
-  border-right: 1px solid #c9c9c9;
-  border-left: 1px solid #c9c9c9;
+  background-color: #f9f9f9;
+  border-top: 1px solid #e0e0e0;
+  border-right: 1px solid #e0e0e0;
+  border-left: 1px solid #e0e0e0;
   padding: 4px;
 }
 
@@ -493,7 +536,7 @@ table.insert-table-selection td {
 }
 
 table.insert-table-selection td.hover {
-    background-color: #c9c9c9;
+    background-color: #e0e0e0;
 }
 
 table.insert-table-selection td.selected {
@@ -584,9 +627,6 @@ table.insert-table-selection td.selected.hover {
     #flow {
         border-width: 0;
     }
-    body {
-        background-color: #fff;
-    }
     #document-top > h1 {
         padding-left: 50px;
         background: initial;
@@ -648,7 +688,7 @@ html[hc=a3] body, html[hc=a4] body, html[hc=a5] body {
 }
 
 html[hc=a3] #toolbar, html[hc=a4] #toolbar, html[hc=a5] #toolbar {
-    border-bottom: 1px solid #c9c9c9;
+    border-bottom: 1px solid #e0e0e0;
 }
 
 #close-document-top {
@@ -659,5 +699,12 @@ html[hc=a3] #toolbar, html[hc=a4] #toolbar, html[hc=a5] #toolbar {
 }
 
 #close-document-top a {
-    color: #000;
+    width: 10px;
+    height: 10px;
+    opacity: 0.6;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 25px;
+    letter-spacing: -0.35px;
 }

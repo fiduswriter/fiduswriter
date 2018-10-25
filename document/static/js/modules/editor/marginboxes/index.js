@@ -46,7 +46,24 @@ export class ModMarginboxes {
                     this.filterOptions.commentsResolved = el.target.querySelector('input').checked
                     this.view(this.editor.currentView)
                     break
+                case findTarget(event, '.show-marginbox-options', el):
+                    el.target.parentElement.querySelector('.marginbox-options').classList.add('fw-open')
+                    break
+                case findTarget(event, '.margin-box.comment.inactive', el):
+                    this.editor.mod.comments.interactions.deactivateSelectedChanges()
+                    this.editor.mod.comments.interactions.activateComment(el.target.dataset.id)
+                    break
+                case findTarget(event, '.margin-box.track.inactive', el):
+                    this.editor.mod.track.activateTrack(
+                        el.target.dataset.view,
+                        el.target.dataset.type,
+                        parseInt(el.target.dataset.pos)
+                    )
+                    break
                 default:
+                    document.querySelectorAll('.marginbox-options.fw-open').forEach(
+                        el => el.classList.remove('fw-open')
+                    )
                     break
             }
         })

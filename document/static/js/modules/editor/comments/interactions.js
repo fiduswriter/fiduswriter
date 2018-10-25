@@ -20,9 +20,6 @@ export class ModCommentInteractions {
         document.body.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, '.show-comment-options', el):
-                    el.target.parentElement.querySelector('.comment-options').classList.add('fw-open')
-                    break
                 case findTarget(event, '.show-assign-comment-menu', el):
                     el.target.parentElement.querySelector('.assign-comment-menu').classList.toggle('fw-open')
                     break
@@ -65,12 +62,8 @@ export class ModCommentInteractions {
                         parseInt(el.target.dataset.answer)
                     )
                     break
-                case findTarget(event, '.margin-box.comment.inactive', el):
-                    this.deactivateSelectedChanges()
-                    this.activateComment(el.target.dataset.id)
-                    break
                 default:
-                    document.querySelectorAll('.comment-options.fw-open, .assign-comment-menu.fw-open').forEach(
+                    document.querySelectorAll('.assign-comment-menu.fw-open').forEach(
                         el => el.classList.remove('fw-open')
                     )
                     break
@@ -205,8 +198,8 @@ export class ModCommentInteractions {
             // Part of a comment (answer) has been entered.
             return true
         }
-        if (document.querySelector('div.comment-options.fw-open')) {
-            // A comment options menu is open.
+        if (document.querySelector('div.marginbox-options.fw-open')) {
+            // A margin box options menu is open.
             return true
         }
         if (this.mod.store.commentDuringCreation.inDOM === false) {

@@ -156,7 +156,7 @@
     display: none;
 }
 
-.show-comment-options {
+.show-marginbox-options {
     position: absolute;
     right: 14px;
     top: 11px;
@@ -164,7 +164,7 @@
     opacity: 0.4;
 }
 
-.comment-options.fw-pulldown.fw-right {
+.marginbox-options.fw-pulldown.fw-right {
     right: -16px;
     top: 22px;
 }

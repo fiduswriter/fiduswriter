@@ -102,9 +102,9 @@
     font-size: 10px;
 }
 .assigned-user {
-    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,0.2);
     padding: 5px;
-    margin: 10px;
+    margin: 10px 0 10px 0;
     font-size: 0.9em;
     text-align: center;
 }

@@ -95,7 +95,7 @@ export class ModCollabDocChanges {
                 this.mod.editor.mod.db.imageDB.unsentEvents().length
             ) {
                 this.disableDiffSending()
-                let stepsToSend = sendableSteps(this.mod.editor.view
+                const stepsToSend = sendableSteps(this.mod.editor.view
                         .state),
                     fnStepsToSend = sendableSteps(this.mod.editor.mod
                         .footnotes.fnEditor.view.state),
@@ -114,7 +114,7 @@ export class ModCollabDocChanges {
                     // no diff. abandon operation
                     return
                 }
-                let rid = this.confirmStepsRequestCounter++,
+                const rid = this.confirmStepsRequestCounter++,
                     unconfirmedDiff = {
                         type: 'diff',
                         v: this.mod.editor.docInfo.version,
@@ -138,7 +138,7 @@ export class ModCollabDocChanges {
                     // In case the title changed, we also add a title field to
                     // update the title field instantly - important for the
                     // document overview page.
-                    let title = this.mod.editor.view.state.doc.firstChild
+                    const title = this.mod.editor.view.state.doc.firstChild
                         .firstChild.textContent.slice(0, 255)
 
                     if (
@@ -173,7 +173,7 @@ export class ModCollabDocChanges {
                 return unconfirmedDiff
 
             } else if (getSelectionUpdate(this.mod.editor.currentView.state)) {
-                let currentView = this.mod.editor.currentView
+                const currentView = this.mod.editor.currentView
 
                 if (this.lastSelectionUpdateState === currentView.state) {
                     // Selection update has been sent for this state already. Skip
@@ -181,7 +181,7 @@ export class ModCollabDocChanges {
                 }
                 this.lastSelectionUpdateState = currentView.state
                 // Create a new caret as the current user
-                let selectionUpdate = getSelectionUpdate(currentView.state)
+                const selectionUpdate = getSelectionUpdate(currentView.state)
                 return {
                     type: 'selection_change',
                     id: this.mod.editor.user.id,
@@ -201,9 +201,9 @@ export class ModCollabDocChanges {
     }
 
     receiveSelectionChange(data) {
-        let participant = this.mod.participants.find(par => par.id === data
-                .id),
-            tr, fnTr
+        const participant = this.mod.participants.find(par => par.id === data
+                .id)
+        let tr, fnTr
         if (!participant) {
             // participant is still unknown to us. Ignore
             return
@@ -273,7 +273,7 @@ export class ModCollabDocChanges {
     setConfirmedDoc(tr, stepsLength) {
         // Find the latest version of the doc without any unconfirmed local changes
 
-        let rebased = tr.getMeta("rebased"),
+        const rebased = tr.getMeta("rebased"),
             docNumber = rebased + stepsLength
 
         this.mod.editor.docInfo.confirmedDoc = docNumber === tr.docs.length ?
@@ -283,18 +283,18 @@ export class ModCollabDocChanges {
     }
 
     confirmDiff(request_id) {
-        let unconfirmedDiffs = this.unconfirmedDiffs[request_id]
+        const unconfirmedDiffs = this.unconfirmedDiffs[request_id]
         if (!unconfirmedDiffs) {
             return
         }
         this.mod.editor.docInfo.version++
 
-        let sentSteps = unconfirmedDiffs["ds"] // document steps
+        const sentSteps = unconfirmedDiffs["ds"] // document steps
         if (sentSteps) {
-            let ourIds = sentSteps.map(
+            const ourIds = sentSteps.map(
                 step => this.mod.editor.client_id
             )
-            let tr = receiveTransaction(
+            const tr = receiveTransaction(
                 this.mod.editor.view.state,
                 sentSteps,
                 ourIds
@@ -305,9 +305,9 @@ export class ModCollabDocChanges {
         this.mod.editor.docInfo.confirmedDoc = unconfirmedDiffs["doc"]
         this.mod.editor.docInfo.confirmedJson = JSON.parse(JSON.stringify(this.mod.editor.docInfo.confirmedDoc.firstChild.toJSON()))
 
-        let sentFnSteps = unconfirmedDiffs["fs"] // footnote steps
+        const sentFnSteps = unconfirmedDiffs["fs"] // footnote steps
         if (sentFnSteps) {
-            let fnTr = receiveTransaction(
+            const fnTr = receiveTransaction(
                 this.mod.editor.mod.footnotes.fnEditor.view.state,
                 sentFnSteps,
                 sentFnSteps.map(
@@ -317,17 +317,17 @@ export class ModCollabDocChanges {
             this.mod.editor.mod.footnotes.fnEditor.view.dispatch(fnTr)
         }
 
-        let sentComments = unconfirmedDiffs["cu"] // comment updates
+        const sentComments = unconfirmedDiffs["cu"] // comment updates
         if (sentComments) {
             this.mod.editor.mod.comments.store.eventsSent(sentComments)
         }
 
-        let sentBibliographyUpdates = unconfirmedDiffs["bu"] // bibliography updates
+        const sentBibliographyUpdates = unconfirmedDiffs["bu"] // bibliography updates
         if (sentBibliographyUpdates) {
             this.mod.editor.mod.db.bibDB.eventsSent(sentBibliographyUpdates)
         }
 
-        let sentImageUpdates = unconfirmedDiffs["iu"] // image updates
+        const sentImageUpdates = unconfirmedDiffs["iu"] // image updates
         if (sentImageUpdates) {
             this.mod.editor.mod.db.imageDB.eventsSent(sentImageUpdates)
         }
@@ -343,9 +343,9 @@ export class ModCollabDocChanges {
 
     applyDiffs(diffs, cid) {
         this.receiving = true
-        let steps = diffs.map(j => Step.fromJSON(docSchema, j))
-        let clientIds = diffs.map(j => cid)
-        let tr = receiveTransaction(
+        const steps = diffs.map(j => Step.fromJSON(docSchema, j))
+        const clientIds = diffs.map(j => cid)
+        const tr = receiveTransaction(
             this.mod.editor.view.state,
             steps,
             clientIds

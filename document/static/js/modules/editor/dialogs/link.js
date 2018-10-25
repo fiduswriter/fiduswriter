@@ -23,7 +23,7 @@ export class LinkDialog {
 
     findInternalTargets() {
 
-        let docs = [this.editor.view.state.doc, this.editor.mod.footnotes.fnEditor.view.state.doc],
+        const docs = [this.editor.view.state.doc, this.editor.mod.footnotes.fnEditor.view.state.doc],
         figures = {}
 
         docs.forEach(doc => doc.descendants(node => {
@@ -52,7 +52,7 @@ export class LinkDialog {
     // Check if there is an existing link at the selection. If this is the case
     // use its values in dialog.
     checkLink() {
-        let state = this.editor.currentView.state,
+        const state = this.editor.currentView.state,
             from = state.selection.from,
             linkMark = state.selection.$from.marks().find(
                 mark => mark.type.name === 'link'
@@ -67,10 +67,10 @@ export class LinkDialog {
 
     // Find the start and end of the link currently selected.
     extendSelectionToMark(pos, mark) {
-        let view = this.editor.currentView,
+        const view = this.editor.currentView,
             state = view.state,
-            $pos = state.doc.resolve(pos),
-            startIndex = $pos.index(),
+            $pos = state.doc.resolve(pos)
+        let startIndex = $pos.index()
             endIndex = $pos.indexAfter()
 
         while (startIndex > 0 && mark.isInSet($pos.parent.child(startIndex - 1).marks)) {
@@ -83,7 +83,7 @@ export class LinkDialog {
             endPos = startPos
 
         for (let i = 0; i < endIndex; i++) {
-            let size = $pos.parent.child(i).nodeSize
+            const size = $pos.parent.child(i).nodeSize
             if (i < startIndex) {
                 startPos += size
             }
@@ -95,16 +95,16 @@ export class LinkDialog {
     }
 
     createDialog() {
-        let buttons = []
+        const buttons = []
         buttons.push({
             text: this.submitButtonText,
             classes: 'fw-dark',
             click: () => {
-                let linkTypeEl = this.dialog.dialogEl.querySelector('input[name=link-type]:checked'),
-                    linkType = linkTypeEl ? linkTypeEl.value : 'external',
-                    newLink = '', linkTitle = ''
+                const linkTypeEl = this.dialog.dialogEl.querySelector('input[name=link-type]:checked'),
+                    linkType = linkTypeEl ? linkTypeEl.value : 'external'
+                let newLink = '', linkTitle = ''
                 if (linkType === 'internal') {
-                    let targetId = this.dialog.dialogEl.querySelector('select.internal-link-selector').value
+                    const targetId = this.dialog.dialogEl.querySelector('select.internal-link-selector').value
                     if (targetId) {
                         newLink = `#${targetId}`
                         linkTitle = this.internalTargets.find(target => target.id === targetId).text
@@ -128,13 +128,13 @@ export class LinkDialog {
                 }
 
                 this.dialog.close()
-                let view = this.editor.currentView,
+                const view = this.editor.currentView,
                     posFrom = view.state.selection.from,
-                    posTo = view.state.selection.to,
                     markType = view.state.schema.marks.link.create({
                         href: newLink,
                         title: linkTitle
                     })
+                let posTo = view.state.selection.to
                 // There is an empty selection. We insert the link title into the editor
                 // and then add the link to that.
                 if (posFrom===posTo) {
@@ -173,7 +173,7 @@ export class LinkDialog {
         this.dialog.open()
 
         if (this.internalTargets.length) {
-            let externalEls = this.dialog.dialogEl.querySelectorAll('input.link, input.link-title'),
+            const externalEls = this.dialog.dialogEl.querySelectorAll('input.link, input.link-title'),
                 internalEls = this.dialog.dialogEl.querySelectorAll('select.internal-link-selector'),
                 externalSwitchers = this.dialog.dialogEl.querySelectorAll('input.link, input.link-title, label.link-external-label, input.link-external-check'),
                 internalSwitchers = this.dialog.dialogEl.querySelectorAll('select.internal-link-selector, label.link-internal-label, input.link-internal-check'),

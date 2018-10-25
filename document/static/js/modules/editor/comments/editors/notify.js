@@ -2,9 +2,9 @@ import {post} from "../../../common"
 import {serializeCommentNode} from "./schema"
 
 
-export let notifyMentionedUser = (docId, userId, comment) => {
+export const notifyMentionedUser = (docId, userId, comment) => {
 
-    let {html, text} = serializeCommentNode(comment)
+    const {html, text} = serializeCommentNode(comment)
     return post(
         '/document/comment_notify/',
         {

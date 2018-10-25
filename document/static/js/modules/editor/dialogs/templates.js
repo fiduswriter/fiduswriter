@@ -1,6 +1,6 @@
 import {escapeText} from "../../common"
 
-export let linkDialogTemplate = ({defaultLink, internalTargets, link, linkTitle}) =>
+export const linkDialogTemplate = ({defaultLink, internalTargets, link, linkTitle}) =>
     `${
         internalTargets.length ?
         `<div class="fw-radio">
@@ -35,12 +35,12 @@ export let linkDialogTemplate = ({defaultLink, internalTargets, link, linkTitle}
     <input class="link" type="text" value="${["#", undefined].includes(link[0]) ? defaultLink : link}" placeholder="${gettext("URL")}"/>`
 
 /** Dialog to add a note to a revision before saving. */
-export let revisionDialogTemplate = ({dir}) =>
+export const revisionDialogTemplate = ({dir}) =>
     `<p>
         <input type="text" class="revision-note" placeholder="${gettext('Description (optional)')}" dir="${dir}">
     </p>`
 
-export let tableInsertTemplate = () => `
+export const tableInsertTemplate = () => `
     <table class="insert-table-selection">
         <tr>
             <td>&nbsp;</td>
@@ -93,7 +93,7 @@ export let tableInsertTemplate = () => `
         </tr>
     </table>`
 
-export let mathDialogTemplate = () =>
+export const mathDialogTemplate = () =>
     `<div title="${gettext("Math")}">
         <p><span class="math-field" type="text" name="math" ></span></p>
         <div><input type="text" class="raw-input" style="display:none"></div>
@@ -101,7 +101,7 @@ export let mathDialogTemplate = () =>
         <div class="math-error"></div>
     </div>`
 
-export let figureImageItemTemplate =  ({id, cats, image, thumbnail, title}) =>
+export const figureImageItemTemplate =  ({id, cats, image, thumbnail, title}) =>
     `<tr id="Image_${id}" class="${cats.map(cat => `cat_${escapeText(cat)} `)}" >
          <td class="type" style="width:100px;">
             ${
@@ -122,7 +122,7 @@ export let figureImageItemTemplate =  ({id, cats, image, thumbnail, title}) =>
     </tr>`
 
 /** A template to select images inside the figure configuration dialog in the editor. */
-export let figureImageTemplate = ({imageDB}) =>
+export const figureImageTemplate = ({imageDB}) =>
     `<div>
         <table id="imagelist" class="tablesorter fw-document-table" style="width:342px;">
             <thead class="fw-document-table-header">
@@ -150,7 +150,7 @@ export let figureImageTemplate = ({imageDB}) =>
     </div>`
 
     /** A template to configure the display of a figure in the editor. */
-export let configureFigureTemplate = ({image, equation, caption, dir}) =>
+export const configureFigureTemplate = ({image, equation, caption, dir}) =>
     `<div class="fw-media-uploader">
             <div>
                 <input class="fw-media-title figure-math" type="text" name="figure-math"
@@ -197,7 +197,7 @@ export let configureFigureTemplate = ({image, equation, caption, dir}) =>
         </div>`
 
 /** A template to configure citations in the editor */
-export let configureCitationTemplate = ({citedItemsHTML, citeFormat}) =>
+export const configureCitationTemplate = ({citedItemsHTML, citeFormat}) =>
         `<div id="my-sources" class="fw-ar-container">
             <h3 class="fw-green-title">${gettext("My sources")}</h3>
         </div>
@@ -225,7 +225,7 @@ export let configureCitationTemplate = ({citedItemsHTML, citeFormat}) =>
 
 /** A template for each selected citation item inside the citation configuration
     dialog of the editor. */
-export let selectedCitationTemplate = ({title, author, id, db, prefix, locator}) =>
+export const selectedCitationTemplate = ({title, author, id, db, prefix, locator}) =>
     `<tr id="selected-source-${db}-${id}" class="selected-source">
         <td colspan="3" width="335">
           <table class="fw-cite-parts-table">
@@ -266,14 +266,14 @@ export let selectedCitationTemplate = ({title, author, id, db, prefix, locator})
     </tr>`
 
 
-export let authorTemplate = ({author}) =>
+export const authorTemplate = ({author}) =>
     `<input type="text" name="firstname" value="${author.firstname ? author.firstname : ''}" placeholder="${gettext("Firstname")}"/>
     <input type="text" name="lastname" value="${author.lastname ? author.lastname : ''}" placeholder="${gettext("Lastname")}"/>
     <input type="text" name="email" value="${author.email ? author.email : ''}" placeholder="${gettext("Email")}"/>
     <input type="text" name="institution" value="${author.institution ? author.institution : ''}" placeholder="${gettext("Institution")}"/>
     `
 
-export let languageTemplate = ({currentLanguage, LANGUAGES}) =>
+export const languageTemplate = ({currentLanguage, LANGUAGES}) =>
     `<select class="fw-button fw-white fw-large">
         ${
             LANGUAGES.map(language =>

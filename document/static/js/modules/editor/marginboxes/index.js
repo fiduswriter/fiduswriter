@@ -82,13 +82,13 @@ export class ModMarginboxes {
         // Handle the layout of the comments on the screen.
         // DOM write phase
 
-        let marginBoxes = [],
+        const marginBoxes = [],
             referrers = [],
-            lastNodeTracks = [],
-            lastNode = this.editor.view.state.doc,
-            fnIndex = 0,
-            fnPosCount = 0,
             selectedChanges = getSelectedChanges(this.editor.currentView.state)
+        let fnIndex = 0,
+            fnPosCount = 0,
+            lastNodeTracks = [],
+            lastNode = this.editor.view.state.doc
         this.activeCommentStyle = ''
 
         //marginBoxes.push({type: 'filter', data: this.filterOptions})
@@ -101,8 +101,8 @@ export class ModMarginboxes {
 
                 if (node.type.name==='footnote') {
                     let lastFnNode = this.editor.mod.footnotes.fnEditor.view.state.doc,
-                        footnote = lastFnNode.childCount > fnIndex ? lastFnNode.child(fnIndex) : false,
                         lastFnNodeTracks = []
+                    const footnote = lastFnNode.childCount > fnIndex ? lastFnNode.child(fnIndex) : false
                     if (!footnote) {
                         return
                     }
@@ -125,19 +125,20 @@ export class ModMarginboxes {
 
         // Add a comment that is currently under construction to the list.
         if(this.editor.mod.comments.store.commentDuringCreation) {
-            let deco = getCommentDuringCreationDecoration(this.editor.view.state), pos, view
+            const deco = getCommentDuringCreationDecoration(this.editor.view.state)
+            let pos, view
             if (deco) {
                 pos = deco.from
                 view = 'main'
             } else {
-                let fnDeco = getCommentDuringCreationDecoration(this.editor.mod.footnotes.fnEditor.view.state)
+                const fnDeco = getCommentDuringCreationDecoration(this.editor.mod.footnotes.fnEditor.view.state)
                 if (fnDeco) {
                     pos = this.fnPosToPos(fnDeco.from)
                     view = 'footnote'
                 }
             }
             if (pos) {
-                let comment = this.editor.mod.comments.store.commentDuringCreation.comment
+                const comment = this.editor.mod.comments.store.commentDuringCreation.comment
                 let index = 0
                 // // We need the position of the new comment in relation to the other
                 // // comments in order to insert it in the right place
@@ -171,27 +172,27 @@ export class ModMarginboxes {
 
             fastdom.measure(() => {
                 // DOM read phase
-                let marginBoxesDOM = document.querySelectorAll('#margin-box-container .margin-box')
+                const marginBoxesDOM = document.querySelectorAll('#margin-box-container .margin-box')
                 if (marginBoxesDOM.length !== referrers.length || !marginBoxesDOM.length) {
                     // Number of comment boxes and referrers differ.
                     // This isn't right. Abort.
                     resolve()
                     return
                 }
-                let marginBoxPlacements = Array.from(marginBoxesDOM).map((mboxDOM, index) => {
-                        let mboxDOMRect = mboxDOM.getBoundingClientRect()
+                const marginBoxPlacements = Array.from(marginBoxesDOM).map((mboxDOM, index) => {
+                        const mboxDOMRect = mboxDOM.getBoundingClientRect()
                         return {
                             height: mboxDOMRect.height,
                             refPos: this.editor.view.coordsAtPos(referrers[index]).top
                         }
                     }),
                     firstActiveIndex = marginBoxes.findIndex(mBox => mBox.active),
-                    firstActiveMboxPlacement = marginBoxPlacements[firstActiveIndex],
-                    activeIndex = firstActiveIndex,
+                    firstActiveMboxPlacement = marginBoxPlacements[firstActiveIndex]
+                let activeIndex = firstActiveIndex,
                     currentPos = 0
 
                 while (activeIndex > -1) {
-                    let mboxPlacement = marginBoxPlacements[activeIndex]
+                    const mboxPlacement = marginBoxPlacements[activeIndex]
                     if (mboxPlacement.height === 0) {
                         mboxPlacement.pos = currentPos
                     } else if (mboxPlacement===firstActiveMboxPlacement) {
@@ -210,23 +211,24 @@ export class ModMarginboxes {
                 }
 
                 while (activeIndex < marginBoxPlacements.length) {
-                    let mboxPlacement = marginBoxPlacements[activeIndex]
+                    const mboxPlacement = marginBoxPlacements[activeIndex]
                     mboxPlacement.pos = Math.max(currentPos + 10, mboxPlacement.refPos)
                     currentPos = mboxPlacement.pos + mboxPlacement.height
                     activeIndex++
                 }
 
-                let initialOffset = document.getElementById('margin-box-container').getBoundingClientRect().top + 10,
-                    totalOffset = 0
+                const initialOffset = document.getElementById('margin-box-container').getBoundingClientRect().top + 10
+                let totalOffset = 0
 
 
-                let marginBoxesPlacementStyle = marginBoxPlacements.map((mboxPlacement, index) => {
+                const marginBoxesPlacementStyle = marginBoxPlacements.map((mboxPlacement, index) => {
                     if (mboxPlacement.height === 0) {
                         return ''
                     }
-                    let pos = mboxPlacement.pos - initialOffset, css = ''
+                    const pos = mboxPlacement.pos - initialOffset
+                    let css = ''
                     if (pos !== totalOffset) {
-                        let topMargin = parseInt(pos - totalOffset)
+                        const topMargin = parseInt(pos - totalOffset)
                         css += `.margin-box:nth-of-type(${(index+1)}) {margin-top: ${topMargin}px;}\n`
                         totalOffset += topMargin
                     }
@@ -251,18 +253,18 @@ export class ModMarginboxes {
     }
 
     fnPosToPos(fnPos) {
-        let fnIndex = this.editor.mod.footnotes.fnEditor.view.state.doc.resolve(fnPos).index(0),
+        const fnIndex = this.editor.mod.footnotes.fnEditor.view.state.doc.resolve(fnPos).index(0),
             fnMarker = getFootnoteMarkers(this.editor.view.state)[fnIndex]
 
         return fnMarker.from
     }
 
     getMarginBoxes(node, pos, refPos, lastNode, lastNodeTracks, view, marginBoxes, referrers, selectedChanges) {
-        let commentIds = node.isInline || node.isLeaf ? this.editor.mod.comments.interactions.findCommentIds(node) : []
+        const commentIds = node.isInline || node.isLeaf ? this.editor.mod.comments.interactions.findCommentIds(node) : []
 
-        let nodeTracks = node.attrs.track ?
+        const nodeTracks = node.attrs.track ?
             node.attrs.track.map(track => {
-                let nodeTrack = {type: track.type, data: {user: track.user, username: track.username, date: track.date}}
+                const nodeTrack = {type: track.type, data: {user: track.user, username: track.username, date: track.date}}
                 if (track.type==='block_change') {
                     nodeTrack.data.before = track.before
                 }
@@ -274,7 +276,7 @@ export class ModMarginboxes {
             ).map(mark => ({type: mark.type.name, data: mark.attrs}))
 
         // Filter out trackmarks already present in the last node (if it's an inline node).
-        let tracks = node.isInline === lastNode.isInline ?
+        const tracks = node.isInline === lastNode.isInline ?
             nodeTracks.filter(track =>
                 !lastNodeTracks.find(
                     lastTrack =>
@@ -317,7 +319,7 @@ export class ModMarginboxes {
             return nodeTracks
         }
         commentIds.forEach(commentId => {
-            let comment = this.editor.mod.comments.store.findComment(commentId)
+            const comment = this.editor.mod.comments.store.findComment(commentId)
             if (!comment) {
                 // We have no comment with this ID. Ignore the referrer.
                 return
@@ -326,7 +328,7 @@ export class ModMarginboxes {
                 // comment already placed
                 return
             }
-            let active = comment.id === this.editor.mod.comments.interactions.activeCommentId
+            const active = comment.id === this.editor.mod.comments.interactions.activeCommentId
             if (active) {
                 this.activeCommentStyle +=
                     `.comments-enabled .comment[data-id="${comment.id}"], .comments-enabled .comment[data-id="${comment.id}"] .comment {background-color: #fffacf !important;}`

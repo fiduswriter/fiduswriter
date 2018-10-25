@@ -34,12 +34,13 @@ export class HeaderbarView {
     }
 
     onclick(event) {
-        let target = event.target
+        const target = event.target
 
         if(target.matches('#headerbar #header-navigation .fw-pulldown-item')) {
             // A header nav menu item was clicked. Now we just need to find
             // which one and execute the corresponding action.
-            let searchPath = [], seekItem = target
+            const searchPath = []
+            let seekItem = target
             while(seekItem.closest('li')) {
                 let itemNumber = 0
                 seekItem = seekItem.closest('li')
@@ -57,7 +58,7 @@ export class HeaderbarView {
                 menuNumber++
                 seekItem = seekItem.previousElementSibling
             }
-            let menu = this.editor.menu.headerbarModel.content[menuNumber]
+            const menu = this.editor.menu.headerbarModel.content[menuNumber]
 
             let menuItem = menu
 
@@ -162,14 +163,14 @@ export class HeaderbarView {
     }
 
     update() {
-        let newHeader = document.createElement('div')
+        const newHeader = document.createElement('div')
         newHeader.innerHTML = this.getHeaderHTML()
-        let diff = this.dd.diff(this.headerEl, newHeader)
+        const diff = this.dd.diff(this.headerEl, newHeader)
         this.dd.apply(this.headerEl, diff)
     }
 
     getHeaderHTML() {
-        let doc = this.editor.view.state.doc
+        const doc = this.editor.view.state.doc
         if (!this.editor.menu.headerbarModel.open) {
             // header is closed
             return ''
@@ -191,7 +192,7 @@ export class HeaderbarView {
     }
 
     getParticipantListHTML() {
-        let participants = this.editor.mod.collab.participants
+        const participants = this.editor.mod.collab.participants
         if (participants.length > 1) {
             return `
                 <div id="connected-collaborators">

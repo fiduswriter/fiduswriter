@@ -13,12 +13,12 @@ export class LibreOfficeWriterPasteHandler extends GeneralPasteHandler {
         if (node.tagName === 'A' &&
             node.classList.contains("sdfootnoteanc") &&
             this.pmType === "main") {
-            let fnSelector = node.getAttribute("href")
-            // Remove "sym" at the end of the selector
-            fnSelector = fnSelector.substring(0, fnSelector.length - 3)
-            let footnote = this.dom.querySelector(fnSelector)
+                // Remove "sym" at the end of the selector
+            const href = node.getAttribute("href")
+            const fnSelector = href.length > 3 ? href.substring(0, href.length - 3) : href
+            const footnote = this.dom.querySelector(fnSelector)
             if (footnote) {
-                let footnoteCounter = footnote.querySelector('a.sdfootnotesym')
+                const footnoteCounter = footnote.querySelector('a.sdfootnotesym')
                 if (footnoteCounter) {
                     footnoteCounter.parentNode.removeChild(footnoteCounter)
                 }

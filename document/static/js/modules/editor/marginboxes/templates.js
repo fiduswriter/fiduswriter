@@ -146,15 +146,15 @@ const commentTemplate = ({comment, view, active, editComment, activeCommentAnswe
         comment.id > 0 && (
             comment.user===user.id ||
             docInfo.access_rights==="write"
-        ) ?
-        `<span class="show-comment-options fa fa-ellipsis-v" data-id="${comment.id}"></span>
-        <div class="comment-options fw-pulldown fw-right">
+        ) && !editComment ?
+        `<span class="show-marginbox-options fa fa-ellipsis-v" data-id="${comment.id}"></span>
+        <div class="marginbox-options fw-pulldown fw-right">
             <ul>
                 ${
                     comment.user===user.id ?
-                    `<span class="fw-pulldown-item edit-comment" data-id="${comment.id}" title="${gettext("Edit")}">
+                    `<li><span class="fw-pulldown-item edit-comment" data-id="${comment.id}" title="${gettext("Edit")}">
                         ${gettext("Edit")}
-                    </span>` :
+                    </span></li>` :
                     ''
                 }
                 <li>
@@ -264,15 +264,23 @@ const trackTemplate = ({type, data, node, pos, view, active, docInfo, filterOpti
                     ${interpolate(ACTIONS[nodeActionType] ? ACTIONS[nodeActionType] : ACTIONS[type], node.attrs, true)}
                 </div>
                 ${type==='format_change' ? formatChangeTemplate(data) : type==='block_change' ? blockChangeTemplate(data) : ''}
-                ${
-                    docInfo.access_rights === 'write' ?
-                    `<div class="ui-dialog-buttonset">
-                        <button class="fw-button fw-small fw-green track-accept" data-type="${type}" data-pos="${pos}" data-view="${view}">${gettext('Accept')}</button>
-                        <button class="fw-button fw-small fw-orange track-reject" data-type="${type}" data-pos="${pos}" data-view="${view}">${gettext('Reject')}</button>
-                    </div>` :
-                    ''
-                }
             </div>
+            ${
+                docInfo.access_rights === 'write' ?
+                `<span class="show-marginbox-options fa fa-ellipsis-v"></span>
+                <div class="marginbox-options fw-pulldown fw-right">
+                    <ul>
+                        <li><span class="fw-pulldown-item track-accept" data-type="${type}" data-pos="${pos}" data-view="${view}" title="${gettext("Accept")}">
+                            ${gettext("Accept")}
+                        </span></li>
+                        <li><span class="fw-pulldown-item track-reject" data-type="${type}" data-pos="${pos}" data-view="${view}" title="${gettext("Reject")}">
+                            ${gettext("Reject")}
+                        </span></li>
+                    </ul>
+                </div>` :
+                ''
+            }
+
         </div>`
 }
 

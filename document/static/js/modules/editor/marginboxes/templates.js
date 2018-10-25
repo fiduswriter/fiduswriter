@@ -61,13 +61,6 @@ let singleCommentTemplate = ({
                 `<p class="comment-p">${serializeComment(comment.comment).html}</p>`
             }
         </div>
-        ${
-            active && !editComment && comment.user===user.id ?
-            `<p class="comment-controls">
-                <span class="edit-comment" data-id="${comment.id}">${gettext("Edit")}</span>
-            </p>` :
-            ''
-        }
     </div>`
 
 
@@ -157,6 +150,13 @@ let commentTemplate = ({comment, view, active, editComment, activeCommentAnswerI
         `<span class="show-comment-options fa fa-ellipsis-v" data-id="${comment.id}"></span>
         <div class="comment-options fw-pulldown fw-right">
             <ul>
+                ${
+                    comment.user===user.id ?
+                    `<span class="fw-pulldown-item edit-comment" data-id="${comment.id}" title="${gettext("Edit")}">
+                        ${gettext("Edit")}
+                    </span>` :
+                    ''
+                }
                 <li>
                     <span class="fw-pulldown-item show-assign-comment-menu" title="${gettext('Assign comment to user')}">
                         ${gettext('Assign to')}
@@ -255,11 +255,13 @@ let trackTemplate = ({type, data, node, pos, view, active, docInfo, filterOption
     return `
         <div class="margin-box track ${active ? 'active' : 'inactive'}" data-type="${type}" data-pos="${pos}" data-view="${view}">
             <div class="track-${type}">
-                <div class="track-title">${interpolate(ACTIONS[nodeActionType] ? ACTIONS[nodeActionType] : ACTIONS[type], node.attrs, true)}</div>
                 <div class="comment-user">
                     <img class="comment-user-avatar" src="${author ? author.avatar : `${staticUrl}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
                     <h5 class="comment-user-name">${escapeText(author ? author.name : data.username)}</h5>
                     <p class="comment-date">${node.type.name==='text' ? `${gettext('ca.')} ` : ''}${localizeDate(data.date*60000, 'minutes')}</p>
+                </div>
+                <div class="track-title">
+                    ${interpolate(ACTIONS[nodeActionType] ? ACTIONS[nodeActionType] : ACTIONS[type], node.attrs, true)}
                 </div>
                 ${type==='format_change' ? formatChangeTemplate(data) : type==='block_change' ? blockChangeTemplate(data) : ''}
                 ${

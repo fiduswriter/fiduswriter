@@ -86,7 +86,8 @@
 }
 
 .fw-pulldown-item:hover {
-    background-color: #f9f9f9;
+    background-color: #e0e0e0;
+    color: #2b2b2b;
 }
 
 .fw-pulldown:after {

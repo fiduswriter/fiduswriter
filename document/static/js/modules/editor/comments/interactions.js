@@ -18,7 +18,7 @@ export class ModCommentInteractions {
     bindEvents() {
         // Bind all the click events related to comments
         document.body.addEventListener('click', event => {
-            let el = {}
+            const el = {}
             switch (true) {
                 case findTarget(event, '.show-comment-options', el):
                     el.target.parentElement.querySelector('.comment-options').classList.add('fw-open')
@@ -29,7 +29,13 @@ export class ModCommentInteractions {
                 case findTarget(event, '.edit-comment', el):
                     this.editComment = true
                     this.activeCommentAnswerId = false
-                    this.updateDOM()
+                    const id = el.target.dataset.id
+                    if (this.activeCommentId !== id) {
+                        this.deactivateSelectedChanges()
+                        this.activateComment(id)
+                    } else {
+                        this.updateDOM()
+                    }
                     break
                 case findTarget(event, '.edit-comment-answer', el):
                     this.editComment = false
@@ -60,16 +66,8 @@ export class ModCommentInteractions {
                     )
                     break
                 case findTarget(event, '.margin-box.comment.inactive', el):
-                    let tr = deactivateAllSelectedChanges(this.mod.editor.view.state.tr)
-                    if (tr) {
-                        this.mod.editor.view.dispatch(tr)
-                    }
-                    let fnTr = deactivateAllSelectedChanges(this.mod.editor.mod.footnotes.fnEditor.view.state.tr)
-                    if (fnTr) {
-                        this.mod.editor.mod.footnotes.fnEditor.view.dispatch(fnTr)
-                    }
+                    this.deactivateSelectedChanges()
                     this.activateComment(el.target.dataset.id)
-                    this.updateDOM()
                     break
                 default:
                     document.querySelectorAll('.comment-options.fw-open, .assign-comment-menu.fw-open').forEach(
@@ -81,16 +79,16 @@ export class ModCommentInteractions {
     }
 
     initEditor() {
-        let commentEditorDOM = document.getElementById('comment-editor'),
+        const commentEditorDOM = document.getElementById('comment-editor'),
             answerEditorDOM = document.getElementById('answer-editor')
 
         if (!(commentEditorDOM || answerEditorDOM)) {
             this.editor = false
             return
         }
-        let id = this.activeCommentId
+        const id = this.activeCommentId
         if (commentEditorDOM) {
-            let value = id === '-1' ?
+            const value = id === '-1' ?
                 {text: [], isMajor: false} :
                 {
                     text: this.mod.store.comments[id].comment,
@@ -98,7 +96,7 @@ export class ModCommentInteractions {
                 }
             this.editor = new CommentEditor(this.mod, id, commentEditorDOM, value.text, {isMajor: value.isMajor})
         } else {
-            let answerId = this.activeCommentAnswerId,
+            const answerId = this.activeCommentAnswerId,
                 text = answerId ?
                     this.mod.store.comments[id].answers.find(answer => answer.id === answerId).answer :
                     []
@@ -123,9 +121,21 @@ export class ModCommentInteractions {
         return this.findCommentIds(node).map(id => this.mod.store.findComment(id))
     }
 
+    deactivateSelectedChanges() {
+        const tr = deactivateAllSelectedChanges(this.mod.editor.view.state.tr)
+        if (tr) {
+            this.mod.editor.view.dispatch(tr)
+        }
+        const fnTr = deactivateAllSelectedChanges(this.mod.editor.mod.footnotes.fnEditor.view.state.tr)
+        if (fnTr) {
+            this.mod.editor.mod.footnotes.fnEditor.view.dispatch(fnTr)
+        }
+    }
+
     activateComment(id) {
         this.deactivateAll()
         this.activeCommentId = id
+        this.updateDOM()
     }
 
     deactivateAll() {
@@ -140,10 +150,11 @@ export class ModCommentInteractions {
     // caret is placed, if the editor is in focus.
     activateSelectedComment(view) {
 
-        let selection = view.state.selection, comments = []
+        const selection = view.state.selection
+        let comments = []
 
         if (selection.empty) {
-            let node = view.state.doc.nodeAt(selection.from)
+            const node = view.state.doc.nodeAt(selection.from)
             if (node) {
                 comments = this.findCommentsAt(node)
             }
@@ -264,7 +275,7 @@ export class ModCommentInteractions {
     updateComment({id, comment, isMajor}) {
         // Save the change to a comment and mark that the document has been changed
         if (id==='-1') {
-            let referrer = getCommentDuringCreationDecoration(this.mod.store.commentDuringCreation.view.state)
+            const referrer = getCommentDuringCreationDecoration(this.mod.store.commentDuringCreation.view.state)
             // This is a new comment. We need to get an ID for it if it has contents.
 
             let username
@@ -298,7 +309,7 @@ export class ModCommentInteractions {
 
     cancelSubmit() {
         // Handle a click on the cancel button of the comment submit form.
-        let id = this.activeCommentId
+        const id = this.activeCommentId
         if (id==='-1' || this.mod.store.comments[id].comment.length === 0) {
             this.deleteComment(id)
         } else {
@@ -333,7 +344,7 @@ export class ModCommentInteractions {
             username = this.mod.editor.user.username
         }
 
-        let answer = {
+        const answer = {
             answer: answerText,
             user: this.mod.editor.user.id,
             username,

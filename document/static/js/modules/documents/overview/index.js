@@ -16,10 +16,9 @@ export class DocumentOverview {
 
     constructor ({app, user, staticUrl}) {
         this.app = app
-        this.username = user.username
+        this.user = user
         this.staticUrl = staticUrl
         this.documentList = []
-        this.user = false
         this.teamMembers = []
         this.accessRights = []
         this.mod = {}
@@ -43,7 +42,7 @@ export class DocumentOverview {
         document.body = document.createElement('body')
         document.body.innerHTML = baseBodyTemplate({
             contents: '<ul id="fw-overview-menu"></ul>',
-            username: this.username,
+            username: this.user.username,
             staticUrl: this.staticUrl
         })
         ensureCSS([
@@ -121,7 +120,6 @@ export class DocumentOverview {
 
                 this.teamMembers = json.team_members
                 this.accessRights = json.access_rights
-                this.user = json.user
                 this.citationStyles = json.citation_styles
                 this.citationLocales = json.citation_locales
                 this.documentStyles = json.document_styles

@@ -17,7 +17,7 @@ export class ModCitations {
          * citations to be numbered but they aren't in the same order in the DOM,
          * we need to organize the numbering manually.
          */
-        let styleContainers = document.createElement('temp')
+        const styleContainers = document.createElement('temp')
         styleContainers.innerHTML = `<style type="text/css" id="footnote-numbering-override"></style>`
         while (styleContainers.firstElementChild) {
             document.body.appendChild(styleContainers.firstElementChild)
@@ -26,12 +26,12 @@ export class ModCitations {
     }
 
     resetCitations() {
-        let citations = document.querySelectorAll('#paper-editable span.citation')
+        const citations = document.querySelectorAll('#paper-editable span.citation')
         citations.forEach(citation => citation.innerHTML = '')
         if (document.querySelector('.article-bibliography').innerHTML !== '') {
             document.querySelector('.article-bibliography').innerHTML = ''
         }
-        let citationsContainer = document.getElementById('citation-footnote-box-container')
+        const citationsContainer = document.getElementById('citation-footnote-box-container')
         if (citationsContainer.innerHTML !== '') {
             citationsContainer.innerHTML = ''
         }
@@ -43,7 +43,7 @@ export class ModCitations {
             // bibliography hasn't been loaded yet
             return
         }
-        let emptyCitations = document.querySelectorAll('#paper-editable span.citation:empty')
+        const emptyCitations = document.querySelectorAll('#paper-editable span.citation:empty')
         if (emptyCitations.length) {
             this.citRenderer = new RenderCitations(
                 document.getElementById('paper-editable'),
@@ -63,10 +63,10 @@ export class ModCitations {
     bindBibliographyClicks() {
         document.querySelectorAll('div.csl-entry').forEach((el, index) => {
             el.addEventListener('click', event => {
-                let eID = parseInt(this.citRenderer.fm.bibliography[0].entry_ids[index][0])
+                const eID = parseInt(this.citRenderer.fm.bibliography[0].entry_ids[index][0])
                 this.checkTrackingDialog().then(
                     () => {
-                        let form = new BibEntryForm(this.editor.mod.db.bibDB, eID)
+                        const form = new BibEntryForm(this.editor.mod.db.bibDB, eID)
                         form.init()
                     }
                 )
@@ -78,8 +78,7 @@ export class ModCitations {
         if (!this.editor.view.state.doc.firstChild.attrs.tracked) {
             return Promise.resolve()
         }
-        let buttons = [],
-            dialog,
+        const buttons = [],
             promise = new Promise((resolve, reject) => {
                 buttons.push({
                     type: 'cancel',
@@ -97,7 +96,7 @@ export class ModCitations {
                 })
             })
 
-        dialog = new Dialog({
+        const dialog = new Dialog({
             title: gettext('No tracking'),
             body: gettext('Changes to citation sources are not being tracked!'),
             icon: 'exclamation-triangle',
@@ -110,8 +109,8 @@ export class ModCitations {
     }
 
     layoutCitationsTwo() {
-        let citRenderer = this.citRenderer,
-            needFootnoteLayout = false
+        const citRenderer = this.citRenderer
+        let needFootnoteLayout = false
         if (this.citationType !== citRenderer.fm.citationType) {
             // The citation format has changed, so we need to relayout the footnotes as well
             needFootnoteLayout = true
@@ -139,11 +138,11 @@ export class ModCitations {
             styleEl.innerHTML = css
         }
 
-        let citationsContainer = document.getElementById('citation-footnote-box-container')
+        const citationsContainer = document.getElementById('citation-footnote-box-container')
         if (this.citationType==='note') {
 
             // Check if there is an empty citation in the main body text (not footnotes)
-            let emptyBodyCitation = document.querySelector('#document-editable span.citation:empty')
+            const emptyBodyCitation = document.querySelector('#document-editable span.citation:empty')
 
             if (emptyBodyCitation) {
                 // Find all the citations in the main body text (not footnotes)

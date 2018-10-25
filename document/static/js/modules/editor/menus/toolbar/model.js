@@ -32,7 +32,7 @@ const BLOCK_LABELS = {
 
 export const TEXT_ONLY_PARTS = ['title', 'subtitle', 'authors', 'keywords']
 
-export let toolbarModel = {
+export let toolbarModel = () => ({
     openMore: false, // whether 'more' menu is opened.
     content: [
         {
@@ -623,4 +623,4 @@ export let toolbarModel = {
             order: 17
         }
     ]
-}
+})

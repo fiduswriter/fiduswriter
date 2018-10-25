@@ -26,10 +26,10 @@ export class TableDialog {
             rowCount += 1
         }
         // add hover class.
-        let rows = this.dialog.dialogEl.querySelectorAll('tr')
+        const rows = this.dialog.dialogEl.querySelectorAll('tr')
         for(let i=0;i<rowCount;i++) {
-            let row = rows[i]
-            let cols = rows[i].querySelectorAll('td')
+            const row = rows[i]
+            const cols = rows[i].querySelectorAll('td')
             for(let j=0;j<colCount;j++) {
                 cols[j].classList.add(className)
             }
@@ -39,22 +39,22 @@ export class TableDialog {
 
     insertTableDialog() {
         let rowCount = 1, colCount = 1
-        let buttons = []
+        const buttons = []
         buttons.push({
             text: gettext('Insert'),
             classes: 'fw-dark',
             click: () => {
-                let table = {type: 'table', content: []}
+                const table = {type: 'table', content: []}
 
                 for (let i=0;i<rowCount;i++) {
-                    let row = {type: 'table_row', content: []}
+                    const row = {type: 'table_row', content: []}
                     for (let j=0;j<colCount;j++) {
                         row.content.push({type: 'table_cell', content: [{type: 'paragraph'}]})
                     }
                     table.content.push(row)
 
                 }
-                let schema = this.editor.currentView.state.schema
+                const schema = this.editor.currentView.state.schema
                 this.editor.currentView.dispatch(
                     this.editor.currentView.state.tr.replaceSelectionWith(
                         schema.nodeFromJSON(table)
@@ -79,7 +79,6 @@ export class TableDialog {
         this.dialog.open()
 
         // manage hovering over table cells
-        let that = this
         this.dialog.dialogEl.querySelectorAll('td').forEach(el => el.addEventListener('mouseenter', () => {
             this.markInsertTable(el, 'hover')
         }))
@@ -90,23 +89,10 @@ export class TableDialog {
         this.dialog.dialogEl.querySelectorAll('td').forEach(el => el.addEventListener('click', event => {
             event.preventDefault()
             event.stopImmediatePropagation()
-            let newCounts = this.markInsertTable(el, 'selected')
+            const newCounts = this.markInsertTable(el, 'selected')
             rowCount = newCounts.rowCount
             colCount = newCounts.colCount
         }))
-
-        // this.dialog.find('td').on('mousedown', function(event) {
-        //     // Prevent dialog from opening a second time.
-        //     event.stopImmediatePropagation()
-        // })
-        // this.dialog.find('td').on('click', function(event){
-        //     // Prevent dialog from closing.
-        //     event.preventDefault()
-        //     event.stopImmediatePropagation()
-        //     let newCounts = that.markInsertTable(this, 'selected')
-        //     rowCount = newCounts.rowCount
-        //     colCount = newCounts.colCount
-        // })
 
     }
 }

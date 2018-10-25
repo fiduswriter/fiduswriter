@@ -3,7 +3,7 @@ import {serializeComment} from "../comments/editors"
 
 
 /** A template for an answer to a comment */
-let answerCommentTemplate = ({
+const answerCommentTemplate = ({
         answer,
         author,
         commentId,
@@ -41,7 +41,7 @@ let answerCommentTemplate = ({
     </div>`
 
 /** A template to show one individual comment */
-let singleCommentTemplate = ({
+const singleCommentTemplate = ({
         comment,
         author,
         active,
@@ -65,7 +65,7 @@ let singleCommentTemplate = ({
 
 
 /** A template for the editor of a first comment before it has been saved (not an answer to a comment). */
-let firstCommentTemplate = ({
+const firstCommentTemplate = ({
         comment,
         author,
         staticUrl
@@ -82,7 +82,7 @@ let firstCommentTemplate = ({
     </div>`
 
 
-let commentTemplate = ({comment, view, active, editComment, activeCommentAnswerId, user, docInfo, filterOptions, staticUrl}) => {
+const commentTemplate = ({comment, view, active, editComment, activeCommentAnswerId, user, docInfo, filterOptions, staticUrl}) => {
     if (
         !filterOptions.comments ||
         (!filterOptions.commentsResolved && comment.resolved) ||
@@ -192,7 +192,7 @@ let commentTemplate = ({comment, view, active, editComment, activeCommentAnswerI
     </div>`
 }
 
-let ACTIONS = {
+const ACTIONS = {
     insertion: gettext('Insertion'),
     deletion: gettext('Deletion'),
     format_change: gettext('Format change'),
@@ -220,12 +220,12 @@ let ACTIONS = {
     block_change_code_block: gettext('Changed into code block')
 }
 
-let FORMAT_MARK_NAMES = {
+const FORMAT_MARK_NAMES = {
     'em': gettext('Emphasis'),
     'strong': gettext('Strong')
 }
 
-let formatChangeTemplate = ({before, after}) => {
+const formatChangeTemplate = ({before, after}) => {
     let returnText = ''
     if (before.length) {
         returnText += `<div class="format-change-info"><b>${gettext('Removed')}:</b> ${before.map(markName => FORMAT_MARK_NAMES[markName]).join(', ')}</div>`
@@ -236,20 +236,20 @@ let formatChangeTemplate = ({before, after}) => {
     return returnText
 }
 
-let BLOCK_NAMES = {
+const BLOCK_NAMES = {
     paragraph: gettext('Paragraph'),
     heading: gettext('Heading %(level)s'),
     code_block: gettext('Code block')
 }
 
-let blockChangeTemplate = ({before}) => `<div class="format-change-info"><b>${gettext('Was')}:</b> ${interpolate(BLOCK_NAMES[before.type], before.attrs, true)}</div>`
+const blockChangeTemplate = ({before}) => `<div class="format-change-info"><b>${gettext('Was')}:</b> ${interpolate(BLOCK_NAMES[before.type], before.attrs, true)}</div>`
 
-let trackTemplate = ({type, data, node, pos, view, active, docInfo, filterOptions, staticUrl}) => {
+const trackTemplate = ({type, data, node, pos, view, active, docInfo, filterOptions, staticUrl}) => {
     if (!filterOptions.track) {
         return '<div class="margin-box track hidden"></div>'
     }
 
-    let author = data.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === data.user),
+    const author = data.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === data.user),
         nodeActionType = `${type}_${node.type.name}`
 
     return `
@@ -276,7 +276,7 @@ let trackTemplate = ({type, data, node, pos, view, active, docInfo, filterOption
         </div>`
 }
 
-let filterTemplate = ({data, docInfo}) => {
+const filterTemplate = ({data, docInfo}) => {
     return `
         <div class="margin-box filter">
             <div><label id="filter-track"><input type="checkbox" ${data.track ? 'checked' : ''}>${gettext('Tracked Changes')}</label></div>
@@ -309,7 +309,7 @@ let filterTemplate = ({data, docInfo}) => {
 
 
 /** A template to display all the margin boxes (comments, deletion/insertion notifications) */
-export let marginBoxesTemplate = ({
+export const marginBoxesTemplate = ({
         marginBoxes,
         editComment,
         activeCommentAnswerId,

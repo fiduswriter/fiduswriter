@@ -44,10 +44,8 @@ export class ModCommentStore {
     // entirely.
     addCommentDuringCreation(view) {
 
-        let state = view.state,
-            tr = state.tr
-
-        tr = addCommentDuringCreationDecoration(state, tr)
+        const state = view.state,
+            tr = addCommentDuringCreationDecoration(state, state.tr)
 
         if (!tr) {
             // adding decoration failed
@@ -79,11 +77,10 @@ export class ModCommentStore {
 
     removeCommentDuringCreation() {
         if (this.commentDuringCreation) {
-            let view = this.commentDuringCreation.view
+            const view = this.commentDuringCreation.view
             this.commentDuringCreation = false
-            let state = view.state
-            let tr = state.tr
-            tr = removeCommentDuringCreationDecoration(state, tr)
+            const state = view.state
+            const tr = removeCommentDuringCreationDecoration(state, state.tr)
             if (tr) {
                 view.dispatch(tr)
             }
@@ -97,7 +94,7 @@ export class ModCommentStore {
         posTo,
         view
     ) {
-        let id = randomID(),
+        const id = randomID(),
             markType = view.state.schema.marks.comment.create({id}),
             tr = this.addMark(view.state.tr, posFrom, posTo, markType)
 
@@ -123,9 +120,9 @@ export class ModCommentStore {
             if (!node.isLeaf) {
                 return
             }
-            let marks = node.marks
+            const marks = node.marks
             if (!mark.isInSet(marks) && parent.type.allowsMarkType(mark.type)) {
-                let newMarks = mark.addToSet(marks)
+                const newMarks = mark.addToSet(marks)
                 tr.setNodeMarkup(pos, null, node.attrs, newMarks)
             }
         })
@@ -143,9 +140,9 @@ export class ModCommentStore {
             if (!node.isLeaf) {
                 return
             }
-            let marks = node.marks
+            const marks = node.marks
             if (mark.isInSet(marks)) {
-                let newMarks = mark.removeFromSet(marks)
+                const newMarks = mark.removeFromSet(marks)
                 tr.setNodeMarkup(pos, null, node.attrs, newMarks)
             }
         })
@@ -207,7 +204,7 @@ export class ModCommentStore {
     }
 
     deleteLocalComment(id, local) {
-        let found = this.comments[id]
+        const found = this.comments[id]
         if (found) {
             delete this.comments[id]
             return true
@@ -277,7 +274,7 @@ export class ModCommentStore {
 
     updateLocalAnswer(id, answerId, answerText, local) {
         if (this.comments[id] && this.comments[id].answers) {
-            let answer = this.comments[id].answers.find(answer => answer.id ===
+            const answer = this.comments[id].answers.find(answer => answer.id ===
                 answerId)
             if (answer) {
                 answer.answer = answerText
@@ -299,16 +296,16 @@ export class ModCommentStore {
     }
 
     unsentEvents() {
-        let result = []
+        const result = []
         for (let i = 0; i < this.unsent.length; i++) {
-            let event = this.unsent[i]
+            const event = this.unsent[i]
             if (event.type == "delete") {
                 result.push({
                     type: "delete",
                     id: event.id
                 })
             } else if (event.type == "update") {
-                let found = this.comments[event.id]
+                const found = this.comments[event.id]
                 if (found && found.id) {
                     result.push(Object.assign({type: 'update'}, found))
                 } else {
@@ -317,7 +314,7 @@ export class ModCommentStore {
                     })
                 }
             } else if (event.type == "create") {
-                let found = this.comments[event.id]
+                const found = this.comments[event.id]
                 if (found && found.id) {
                     result.push(Object.assign({type: 'create'}, found))
                 } else {
@@ -326,8 +323,8 @@ export class ModCommentStore {
                     })
                 }
             } else if (event.type == "add_answer") {
-                let found = this.comments[event.id],
-                    foundAnswer
+                const found = this.comments[event.id]
+                let foundAnswer
                 if (found && found.id && found.answers) {
                     foundAnswer = found.answers.find(answer => answer.id === event.answerId)
                 }
@@ -341,7 +338,7 @@ export class ModCommentStore {
                     })
                 }
             } else if (event.type == "delete_answer") {
-                let found = this.comments[event.id]
+                const found = this.comments[event.id]
                 if (found && found.id && found.answers) {
                     result.push({
                         type: "delete_answer",
@@ -354,8 +351,8 @@ export class ModCommentStore {
                     })
                 }
             } else if (event.type == "update_answer") {
-                let found = this.comments[event.id],
-                    foundAnswer
+                const found = this.comments[event.id]
+                let foundAnswer
                 if (found && found.id && found.answers) {
                     foundAnswer = found.answers.find(answer => answer.id ===
                         event.answerId)

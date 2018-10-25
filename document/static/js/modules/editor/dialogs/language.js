@@ -12,12 +12,12 @@ export class LanguageDialog {
     }
 
     init() {
-        let buttons = []
+        const buttons = []
         buttons.push({
             text: gettext('Change'),
             classes: 'fw-dark',
             click: () => {
-                let language = this.dialog.dialogEl.querySelector('select').value
+                const language = this.dialog.dialogEl.querySelector('select').value
                 this.dialog.close()
 
                 if (language === this.language) {
@@ -25,8 +25,8 @@ export class LanguageDialog {
                     return
                 }
 
-                let article = this.editor.view.state.doc.firstChild
-                let attrs = Object.assign({}, article.attrs)
+                const article = this.editor.view.state.doc.firstChild
+                const attrs = Object.assign({}, article.attrs)
                 attrs.language = language
                 this.editor.view.dispatch(
                     this.editor.view.state.tr.setNodeMarkup(0, false, attrs)

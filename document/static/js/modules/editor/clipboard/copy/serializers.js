@@ -35,7 +35,7 @@ class ClipboardDOMSerializer {
         citRenderer.init()
         citRenderer.renderCitations()
         if (citRenderer.fm.bibHTML.length) {
-            let bibDiv = document.createElement('div')
+            const bibDiv = document.createElement('div')
             bibDiv.classList.add('fiduswriter-clipboard-bibliography')
             bibDiv.innerHTML = citRenderer.fm.bibHTML
             bibDiv.firstElementChild.innerHTML = gettext('Bibliography')

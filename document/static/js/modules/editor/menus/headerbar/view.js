@@ -177,7 +177,7 @@ export class HeaderbarView {
         return `
             <div id="close-document-top" title="${gettext("Close the document and return to the document overview menu.")}">
                 <a href="/">
-                    <i class="fa fa-times-circle"></i>
+                    <i class="fa fa-times"></i>
                 </a>
             </div>
             <div id="document-top">

@@ -332,7 +332,7 @@ export class ModMarginboxes {
                     `.comments-enabled .comment[data-id="${comment.id}"], .comments-enabled .comment[data-id="${comment.id}"] .comment {background-color: #fffacf !important;}`
             } else {
                 this.activeCommentStyle +=
-                    `.comments-enabled .comment[data-id="${comment.id}"] {background-color: #f2f2f2;}`
+                    `.comments-enabled .comment[data-id="${comment.id}"] {background-color: #f9f9f9;}`
             }
             marginBoxes.push({type: 'comment', data: comment, pos, view, active})
             referrers.push(refPos)

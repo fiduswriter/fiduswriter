@@ -48,11 +48,11 @@ export class ModMarginboxes {
                     break
                 case findTarget(event, '.show-marginbox-options-submenu', el):
                     this.closeAllMenus('.marginbox-options-submenu.fw-open')
-                    el.target.parentElement.querySelector('.marginbox-options-submenu').classList.add('fw-open')
+                    Array.from(el.target.parentElement.children).find(node => node.matches('.marginbox-options-submenu')).classList.add('fw-open')
                     break
                 case findTarget(event, '.show-marginbox-options', el):
                     this.closeAllMenus()
-                    el.target.parentElement.querySelector('.marginbox-options').classList.add('fw-open')
+                    Array.from(el.target.parentElement.children).find(node => node.matches('.marginbox-options')).classList.add('fw-open')
                     break
                 case findTarget(event, '#margin-box-filter-track', el):
                     this.filterOptions.track = !this.filterOptions.track

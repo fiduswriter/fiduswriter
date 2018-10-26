@@ -45,7 +45,11 @@ export class ModCommentInteractions {
                     this.recreateComment(el.target.dataset.id)
                     break
                 case findTarget(event, '.assign-comment', el):
-                    this.assignComment(el.target.dataset.id, parseInt(el.target.dataset.user), el.target.dataset.username)
+                    this.assignComment(
+                        el.target.dataset.id,
+                        parseInt(el.target.dataset.user),
+                        el.target.dataset.username
+                    )
                     break
                 case findTarget(event, '.unassign-comment', el):
                     this.unassignComment(el.target.dataset.id)
@@ -55,8 +59,8 @@ export class ModCommentInteractions {
                     break
                 case findTarget(event, '.delete-comment-answer', el):
                     this.deleteCommentAnswer(
-                        parseInt(el.target.dataset.id),
-                        parseInt(el.target.dataset.answer)
+                        el.target.dataset.id,
+                        el.target.dataset.answer
                     )
                     break
                 default:

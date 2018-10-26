@@ -20,9 +20,6 @@ export class ModCommentInteractions {
         document.body.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, '.show-assign-comment-menu', el):
-                    el.target.parentElement.querySelector('.assign-comment-menu').classList.toggle('fw-open')
-                    break
                 case findTarget(event, '.edit-comment', el):
                     this.editComment = true
                     this.activeCommentAnswerId = false
@@ -63,9 +60,6 @@ export class ModCommentInteractions {
                     )
                     break
                 default:
-                    document.querySelectorAll('.assign-comment-menu.fw-open').forEach(
-                        el => el.classList.remove('fw-open')
-                    )
                     break
             }
         })

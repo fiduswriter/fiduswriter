@@ -1,5 +1,5 @@
 import {findTarget} from "../../common"
-import {marginBoxesTemplate} from "./templates"
+import {marginBoxesTemplate, marginboxFilterTemplate} from "./templates"
 import {getCommentDuringCreationDecoration, getSelectedChanges, getFootnoteMarkers} from "../state_plugins"
 
 import fastdom from "fastdom"
@@ -15,8 +15,8 @@ export class ModMarginboxes {
             track: true,
             comments: true,
             commentsResolved: false,
-            author: false,
-            assigned: false
+            author: 0,
+            assigned: 0
         }
         this.bindEvents()
     }
@@ -34,20 +34,33 @@ export class ModMarginboxes {
         document.body.addEventListener('click', event => {
             const el = {}
             switch (true) {
-                case findTarget(event, '#filter-track', el):
-                    this.filterOptions.track = el.target.querySelector('input').checked
+                case findTarget(event, '#margin-box-filter-comments-resolved', el):
+                    this.filterOptions.commentsResolved = !this.filterOptions.commentsResolved
                     this.view(this.editor.currentView)
                     break
-                case findTarget(event, '#filter-comments', el):
-                    this.filterOptions.comments = el.target.querySelector('input').checked
+                case findTarget(event, '.margin-box-filter-comments-author', el):
+                    this.filterOptions.author = parseInt(el.target.dataset.id)
                     this.view(this.editor.currentView)
                     break
-                case findTarget(event, '#filter-comments-resolved', el):
-                    this.filterOptions.commentsResolved = el.target.querySelector('input').checked
+                case findTarget(event, '.margin-box-filter-comments-assigned', el):
+                    this.filterOptions.assigned = parseInt(el.target.dataset.id)
                     this.view(this.editor.currentView)
+                    break
+                case findTarget(event, '.show-marginbox-options-submenu', el):
+                    this.closeAllMenus('.marginbox-options-submenu.fw-open')
+                    el.target.parentElement.querySelector('.marginbox-options-submenu').classList.add('fw-open')
                     break
                 case findTarget(event, '.show-marginbox-options', el):
+                    this.closeAllMenus()
                     el.target.parentElement.querySelector('.marginbox-options').classList.add('fw-open')
+                    break
+                case findTarget(event, '#margin-box-filter-track', el):
+                    this.filterOptions.track = !this.filterOptions.track
+                    this.view(this.editor.currentView)
+                    break
+                case findTarget(event, '#margin-box-filter-comments', el):
+                    this.filterOptions.comments = !this.filterOptions.comments
+                    this.view(this.editor.currentView)
                     break
                 case findTarget(event, '.margin-box.comment.inactive', el):
                     this.editor.mod.comments.interactions.deactivateSelectedChanges()
@@ -61,30 +74,17 @@ export class ModMarginboxes {
                     )
                     break
                 default:
-                    document.querySelectorAll('.marginbox-options.fw-open').forEach(
-                        el => el.classList.remove('fw-open')
-                    )
+                    this.closeAllMenus()
                     break
             }
         })
-        document.body.addEventListener('change', event => {
-            const el = {}
-            switch (true) {
-                case findTarget(event, '#filter-comments-author', el):
-                    this.filterOptions.author = parseInt(el.target.value) ? parseInt(el.target.value) : false
-                    this.view(this.editor.currentView)
-                    break
-                case findTarget(event, '#filter-comments-assigned', el):
-                    this.filterOptions.assigned = parseInt(el.target.value) ? parseInt(el.target.value) : false
-                    this.view(this.editor.currentView)
-                    break
-                default:
-                    break
-            }
-        })
-
     }
 
+    closeAllMenus(selector='.marginbox-options-submenu.fw-open, .marginbox-options.fw-open') {
+        document.querySelectorAll(selector).forEach(
+            el => el.classList.remove('fw-open')
+        )
+    }
 
     view(view) {
         // Give up if the user is currently editing a comment.
@@ -106,10 +106,8 @@ export class ModMarginboxes {
             fnPosCount = 0,
             lastNodeTracks = [],
             lastNode = this.editor.view.state.doc
-        this.activeCommentStyle = ''
 
-        //marginBoxes.push({type: 'filter', data: this.filterOptions})
-        //referrers.push(0)
+        this.activeCommentStyle = ''
 
         this.editor.view.state.doc.descendants(
             (node, pos) => {
@@ -185,6 +183,16 @@ export class ModMarginboxes {
             document.getElementById('active-comment-style').innerHTML = this.activeCommentStyle
         }
 
+        const marginBoxFilterHTML = marginboxFilterTemplate({
+            marginBoxes,
+            filterOptions: this.filterOptions,
+            docInfo: this.editor.docInfo
+        })
+
+        if (document.getElementById('margin-box-filter').innerHTML != marginBoxFilterHTML) {
+            document.getElementById('margin-box-filter').innerHTML = marginBoxFilterHTML
+        }
+
         return new Promise(resolve => {
 
             fastdom.measure(() => {
@@ -207,7 +215,6 @@ export class ModMarginboxes {
                     firstActiveMboxPlacement = marginBoxPlacements[firstActiveIndex]
                 let activeIndex = firstActiveIndex,
                     currentPos = 0
-
                 while (activeIndex > -1) {
                     const mboxPlacement = marginBoxPlacements[activeIndex]
                     if (mboxPlacement.height === 0) {
@@ -234,9 +241,8 @@ export class ModMarginboxes {
                     activeIndex++
                 }
 
-                const initialOffset = document.getElementById('margin-box-container').getBoundingClientRect().top + 10
+                const initialOffset = document.getElementById('margin-box-filter').getBoundingClientRect().bottom + 10
                 let totalOffset = 0
-
 
                 const marginBoxesPlacementStyle = marginBoxPlacements.map((mboxPlacement, index) => {
                     if (mboxPlacement.height === 0) {
@@ -337,11 +343,11 @@ export class ModMarginboxes {
         }
         commentIds.forEach(commentId => {
             const comment = this.editor.mod.comments.store.findComment(commentId)
-            if (!comment) {
+            if (!comment || (!this.filterOptions.commentsResolved && comment.resolved)) {
                 // We have no comment with this ID. Ignore the referrer.
                 return
             }
-            if (marginBoxes.find(marginBox =>marginBox.data===comment)) {
+            if (marginBoxes.find(marginBox => marginBox.data===comment)) {
                 // comment already placed
                 return
             }

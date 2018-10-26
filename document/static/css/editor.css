@@ -51,10 +51,6 @@ header {
 #header-navigation .header-nav-item:hover {
     opacity: 1;
 }
-#header-navigation span.selected, #toolbar span.selected {
-    background-color: black;
-    color: white;
-}
 
 #header-navigation span.deactivated {
     text-decoration: line-through;

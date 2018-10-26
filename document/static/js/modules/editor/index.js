@@ -227,7 +227,10 @@ export class Editor {
                     </div>
                     <div class="article-bibliography user-contents"></div>
                 </div>
-                <div id="margin-box-container"></div>
+                <div id="margin-box-column">
+                    <div id="margin-box-filter"></div>
+                    <div id="margin-box-container"></div>
+                </div>
             </div>
             <div id="chat">
                 <i class="resize-button fa fa-angle-double-down"></i>

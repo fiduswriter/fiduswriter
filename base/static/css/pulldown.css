@@ -60,6 +60,11 @@
     letter-spacing: 0.06px;
 }
 
+.fw-pulldown-item.selected {
+    background-color: #fff;
+    color: #2b2b2b;
+}
+
 .fw-pulldown-item .fw-icon-right {
     position: absolute;
     right: 10px;

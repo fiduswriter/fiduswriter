@@ -1,15 +1,44 @@
 /* Comments */
-#margin-box-container {
+#margin-box-column {
     width: 240px;
     padding-left: 20px;
+    margin-top: -50px;
 }
 
-#margin-box-container.hide {
-    display: none;
+#margin-box-filter {
+    height: 44px;
+    z-index: 5;
+    position: relative;
+    width: 220px;
+    margin-bottom: 6px;
+    margin-left: -3px;
+    display: flex;
+    border: 2px solid #fff;
 }
-
-.pagination-simple + #margin-box-container {
-    top: 0px;
+.margin-box-filter-button {
+    flex: 1;
+    background-color: #84b4a7;
+    color: #fff;
+    border-right: 1px solid #fff;
+    border-left: 1px solid #fff;
+    position: relative;
+    cursor: pointer;
+}
+.margin-box-filter-button.disabled {
+    background-color: #e0e0e0;
+    color: #545454;
+}
+.margin-box-filter-button .marginbox-options.fw-pulldown.fw-right {
+    top: 27px;
+}
+.margin-box-filter-button .label {
+    top: 17px;
+    left: 16px;
+    position: absolute;
+    font-family: Lato;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06px;
 }
 
 .margin-box {
@@ -30,6 +59,7 @@
     border: 1px solid #2c2723;
     left: -18px;
     z-index: 5;
+    padding: 8px;
 }
 .margin-box.active:after {
     position: absolute;
@@ -158,10 +188,13 @@
 
 .show-marginbox-options {
     position: absolute;
-    right: 14px;
-    top: 11px;
+    right: 0px;
+    top: 0px;
     cursor: pointer;
     opacity: 0.4;
+    height: 24px;
+    width: 17px;
+    line-height: 40px;
 }
 
 .marginbox-options.fw-pulldown.fw-right {

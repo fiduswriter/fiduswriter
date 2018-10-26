@@ -164,6 +164,7 @@ export class ModCommentInteractions {
             }
         } else {
             this.deactivateAll()
+            this.updateDOM()
         }
     }
 
@@ -213,6 +214,7 @@ export class ModCommentInteractions {
         this.activeCommentId = '-1'
         this.editComment = true
         this.updateDOM()
+        this.editor.view.focus()
     }
 
     deleteComment(id) {

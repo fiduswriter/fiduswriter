@@ -56,7 +56,7 @@
 .margin-box.active {
     color: #000;
     background-color: #fffacf;
-    border: 1px solid #2c2723;
+    border: 1px solid #c5c5c5;
     left: -18px;
     z-index: 5;
     padding: 8px;
@@ -68,7 +68,7 @@
     line-height: 1em;
     font-size: 36px;
     color: #fffacf;
-    text-shadow: -1px 0px 0px #2c2723;
+    text-shadow: -1px 0px 0px #c5c5c5;
 }
 .margin-box.hidden {
     display: none;

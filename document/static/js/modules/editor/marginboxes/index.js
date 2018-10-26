@@ -92,7 +92,6 @@ export class ModMarginboxes {
             return false
         }
         this.editor.mod.comments.interactions.activateSelectedComment(view)
-        return this.updateDOM()
     }
 
     updateDOM() {

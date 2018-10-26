@@ -117,7 +117,6 @@ export class CommentEditor {
             }
         })
         this.oldUserTags = this.getUserTags()
-        this.view.focus()
         this.bind()
     }
 

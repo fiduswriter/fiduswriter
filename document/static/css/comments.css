@@ -79,6 +79,9 @@
     padding-top: 10px;
     border-top: solid 1px #ccc;
 }
+.comment-item.comment-answer {
+    position: relative;
+}
 .comment-item:first-child {
     margin-top: 0;
     padding-top: 0;
@@ -152,19 +155,6 @@
     padding: 2px;
     margin-bottom: 6px;
     cursor: text;
-}
-
-.comment-controls {
-    margin-top: 9px;
-    font-size: 10px;
-    color: #af3515;
-}
-.comment-controls > span {
-    margin-right: 5px;
-    cursor: pointer;
-}
-.comment-controls > span:hover {
-    color: #999;
 }
 
 .comment-answer {

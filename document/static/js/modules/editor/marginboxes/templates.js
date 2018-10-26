@@ -13,7 +13,7 @@ const answerCommentTemplate = ({
         docInfo,
         staticUrl
     }) =>
-    `<div class="comment-item">
+    `<div class="comment-item comment-answer">
         <div class="comment-user">
             <img class="comment-user-avatar" src="${author ? author.avatar : `${staticUrl}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
             <h5 class="comment-user-name">${escapeText(author ? author.name : answer.username)}</h5>
@@ -30,11 +30,18 @@ const answerCommentTemplate = ({
                <p class="comment-p">${serializeComment(answer.answer).html}</p>
            </div>
            ${
-               active && (answer.user === user.id) ?
-               `<p class="comment-controls">
-                   <span class="edit-comment-answer" data-id="${commentId}" data-answer="${answer.id}">${gettext("Edit")}</span>
-                   <span class="delete-comment-answer" data-id="${commentId}" data-answer="${answer.id}">${gettext("Delete")}</span>
-               </p>` :
+               answer.user === user.id ?
+               `<span class="show-marginbox-options fa fa-ellipsis-v"></span>
+               <div class="marginbox-options fw-pulldown fw-right">
+                   <ul>
+                      <li><span class="fw-pulldown-item edit-comment-answer" data-id="${commentId}" data-answer="${answer.id}" title="${gettext('Edit')}">
+                        ${gettext('Edit')}
+                      </span></li>
+                      <li><span class="fw-pulldown-item delete-comment-answer" data-id="${commentId}" data-answer="${answer.id}" title="${gettext('Delete')}">
+                        ${gettext('Delete')}
+                      </span></li>
+                   </ul>
+               </div>` :
                ''
            }`
        }

@@ -2,7 +2,7 @@ import {Plugin, PluginKey} from "prosemirror-state"
 import {ReplaceStep, ReplaceAroundStep} from "prosemirror-transform"
 const key = new PluginKey('citationRender')
 
-export let citationRenderPlugin = function(options) {
+export const citationRenderPlugin = function(options) {
     return new Plugin({
         key,
         state: {
@@ -10,7 +10,7 @@ export let citationRenderPlugin = function(options) {
                 return {reset: false}
             },
             apply(tr, prev, oldState, state) {
-                let meta = tr.getMeta(key)
+                const meta = tr.getMeta(key)
                 if (meta) {
                     // There has been an update, return values from meta instead
                     // of previous values
@@ -47,10 +47,10 @@ export let citationRenderPlugin = function(options) {
             options.editor.mod.citations.resetCitations()
             return {
                 update: (view, prevState) => {
-                    let {reset} = key.getState(view.state)
+                    const {reset} = key.getState(view.state)
                     if (reset) {
                         options.editor.mod.citations.resetCitations()
-                        let tr = view.state.tr.setMeta(key, {reset: false})
+                        const tr = view.state.tr.setMeta(key, {reset: false})
                         view.dispatch(tr)
                     } else {
                         options.editor.mod.citations.layoutCitations()

@@ -5,36 +5,36 @@ import {REVIEW_ROLES} from ".."
 
 const key = new PluginKey('collabCarets')
 
-export let getSelectionUpdate = function(state) {
-     let {caretUpdate} = key.getState(state)
+export const getSelectionUpdate = function(state) {
+     const {caretUpdate} = key.getState(state)
      return caretUpdate
 }
 
-export let updateCollaboratorSelection = function(state, collaborator, data) {
+export const updateCollaboratorSelection = function(state, collaborator, data) {
     let {
         decos,
         caretPositions
     } = key.getState(state)
 
-    let oldCarPos = caretPositions.find(carPos => carPos.sessionId === data.session_id)
+    const oldCarPos = caretPositions.find(carPos => carPos.sessionId === data.session_id)
 
     if (oldCarPos) {
         caretPositions = caretPositions.filter(carPos => carPos !== oldCarPos)
-        let removeDecos = decos.find().filter(deco => deco.spec === oldCarPos.decoSpec)
+        const removeDecos = decos.find().filter(deco => deco.spec === oldCarPos.decoSpec)
         decos = decos.remove(removeDecos)
     }
 
-    let widgetDom = document.createElement('div')
-    let className = `user-${collaborator.id}`
+    const widgetDom = document.createElement('div')
+    const className = `user-${collaborator.id}`
     widgetDom.classList.add('caret')
     widgetDom.classList.add(className)
     widgetDom.innerHTML = '<div class="caret-head"></div>'
     widgetDom.firstChild.classList.add(className)
-    let tooltip = collaborator.name
+    const tooltip = collaborator.name
     widgetDom.title = tooltip
     widgetDom.firstChild.title = tooltip
-    let decoSpec = {id: data.session_id} // We will compare the decoSpec object. Id not really needed.
-    let newCarPos = {
+    const decoSpec = {id: data.session_id} // We will compare the decoSpec object. Id not really needed.
+    const newCarPos = {
         sessionId: data.session_id,
         userId: collaborator.id,
         decoSpec,
@@ -43,11 +43,11 @@ export let updateCollaboratorSelection = function(state, collaborator, data) {
     }
     caretPositions.push(newCarPos)
 
-    let widgetDeco = Decoration.widget(data.head, widgetDom, decoSpec),
+    const widgetDeco = Decoration.widget(data.head, widgetDom, decoSpec),
         addDecos = [widgetDeco]
 
     if (data.anchor !== data.head) {
-        let from = data.head > data.anchor ? data.anchor : data.head,
+        const from = data.head > data.anchor ? data.anchor : data.head,
             to = data.anchor > data.head ? data.anchor : data.head,
             inlineDeco = Decoration.inline(from, to, {
                 class: `user-bg-${collaborator.id}`
@@ -56,7 +56,7 @@ export let updateCollaboratorSelection = function(state, collaborator, data) {
     }
     decos = decos.add(state.doc, addDecos)
 
-    let tr = state.tr.setMeta(key, {
+    const tr = state.tr.setMeta(key, {
         decos,
         caretPositions,
         caretUpdate: false
@@ -64,7 +64,7 @@ export let updateCollaboratorSelection = function(state, collaborator, data) {
     return tr
 }
 
-export let removeCollaboratorSelection = function(state, data) {
+export const removeCollaboratorSelection = function(state, data) {
     let {
         decos,
         caretPositions
@@ -74,9 +74,9 @@ export let removeCollaboratorSelection = function(state, data) {
 
     if (caretPosition) {
         caretPositions = caretPositions.filter(carPos => carPos !== caretPosition)
-        let removeDecos = decos.find().filter(deco => deco.spec === caretPosition.decoSpec)
+        const removeDecos = decos.find().filter(deco => deco.spec === caretPosition.decoSpec)
         decos = decos.remove(removeDecos)
-        let tr = state.tr.setMeta(key, {
+        const tr = state.tr.setMeta(key, {
             decos,
             caretPositions,
             caretUpdate: false

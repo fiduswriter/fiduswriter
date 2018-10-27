@@ -5,15 +5,16 @@ import {setDocTitle} from "../../common"
 
 const key = new PluginKey('settings')
 
-let settings = {}
+const settings = {}
 
-export let settingsPlugin = function(options) {
+export const settingsPlugin = function(options) {
 
-    let fixSettings = function(settings) {
-        let fixedSettings = Object.assign({}, settings), changed = false
+    const fixSettings = function(settings) {
+        const fixedSettings = Object.assign({}, settings)
+        let changed = false
 
         Object.keys(settings).forEach(key => {
-            let value = settings[key]
+            const value = settings[key]
             switch(key) {
                 case 'documentstyle':
                     if (
@@ -43,10 +44,10 @@ export let settingsPlugin = function(options) {
         }
     }
 
-    let updateSettings = function(newSettings, oldSettings) {
+    const updateSettings = function(newSettings, oldSettings) {
         let settingsValid = true
         Object.keys(newSettings).forEach(key => {
-            let newValue = newSettings[key]
+            const newValue = newSettings[key]
             if(oldSettings[key] !== newValue) {
                 switch(key) {
                     case 'documentstyle':
@@ -80,11 +81,11 @@ export let settingsPlugin = function(options) {
 
     /** Update the stylesheet used for the docStyle
      */
-    let updateDocStyleCSS = function(docStyleId) {
+    const updateDocStyleCSS = function(docStyleId) {
 
-        let docStyle = options.editor.mod.styles.documentStyles.find(doc_style => doc_style.filename===docStyleId)
+        const docStyle = options.editor.mod.styles.documentStyles.find(doc_style => doc_style.filename===docStyleId)
 
-        let docStyleCSS = `
+        const docStyleCSS = `
         ${docStyle.fonts.map(font => {
             return `@font-face {${
                 font[1].replace('[URL]', font[0])
@@ -123,15 +124,15 @@ export let settingsPlugin = function(options) {
                 // All transactions are remote. Give up.
                 return false
             }
-            let lastTr = trs[trs.length-1]
-            let attrs = lastTr.doc.firstChild.attrs
-            let fixedSettings = fixSettings(attrs)
+            const lastTr = trs[trs.length-1]
+            const attrs = lastTr.doc.firstChild.attrs
+            const fixedSettings = fixSettings(attrs)
 
             if (!fixedSettings) {
                 return false
             }
 
-            let tr = newState.tr
+            const tr = newState.tr
 
             tr.setNodeMarkup(0, false, fixedSettings)
             tr.setMeta('settings', true)
@@ -141,7 +142,7 @@ export let settingsPlugin = function(options) {
         },
         view(view) {
             if(!updateSettings(view.state.doc.firstChild.attrs, {})) {
-                let tr = view.state.tr
+                const tr = view.state.tr
                 tr.setNodeMarkup(0, false, fixSettings(view.state.doc.firstChild.attrs))
                 tr.setMeta('settings', true)
                 setTimeout(

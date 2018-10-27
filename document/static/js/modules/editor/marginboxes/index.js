@@ -240,7 +240,7 @@ export class ModMarginboxes {
                     activeIndex++
                 }
 
-                const initialOffset = document.getElementById('margin-box-filter').getBoundingClientRect().bottom + 10
+                const initialOffset = document.getElementById('margin-box-column').getBoundingClientRect().top + 60
                 let totalOffset = 0
 
                 const marginBoxesPlacementStyle = marginBoxPlacements.map((mboxPlacement, index) => {

@@ -14,6 +14,11 @@
     margin-left: -3px;
     display: flex;
     border: 2px solid #fff;
+    position: sticky;
+    top: 179px;
+}
+body.header-closed #margin-box-filter {
+    top: 70px;
 }
 .margin-box-filter-button {
     flex: 1;

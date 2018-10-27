@@ -379,10 +379,18 @@ export class Editor {
         let pmArticle = options.changes === 'acceptAllNoInsertions' ?
             acceptAllNoInsertions(this.docInfo.confirmedDoc).firstChild :
             this.docInfo.confirmedDoc.firstChild
+            let title = ""
+            pmArticle.firstChild.forEach(
+                child => {
+                    if(!child.marks.find(mark => mark.type.name==='deletion')) {
+                        title += child.textContent
+                    }
+                }
+            )
         return {
             contents: pmArticle.toJSON(),
             settings: getSettings(pmArticle),
-            title: pmArticle.firstChild.textContent.substring(0, 255),
+            title: title.substring(0, 255),
             version: this.docInfo.version,
             comments: this.mod.comments.store.comments,
             id: this.docInfo.id

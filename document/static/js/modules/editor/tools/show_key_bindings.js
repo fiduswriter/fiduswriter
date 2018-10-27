@@ -11,7 +11,7 @@ export class ModToolsShowKeyBindings {
     }
 
     show() {
-        let dialog = new Dialog({
+        const dialog = new Dialog({
             title: gettext('Keyboard Shortcuts'),
             body: showKeyBindingsTemplate(),
             height: 500,

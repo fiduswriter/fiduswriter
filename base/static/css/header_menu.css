@@ -74,4 +74,8 @@
     font-size: inherit;
     font-family: inherit;
     cursor: pointer;
+    color: #fff;
+}
+.fw-logout-button:hover {
+    color: #000;
 }

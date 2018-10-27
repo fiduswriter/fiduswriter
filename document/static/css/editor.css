@@ -656,7 +656,7 @@ ul.drop-up-options li:hover {
 /* Additions for tablets + mobile */
 @media screen and (max-width: 1023px) {
     #editor-content {
-        padding: 0;
+        padding: 0.5in 0 0 0;
     }
     #flow {
         border-width: 0;

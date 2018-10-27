@@ -175,6 +175,18 @@ export class HeaderbarView {
             // header is closed
             return ''
         }
+        let title = ""
+        doc.firstChild.firstChild.forEach(
+            child => {
+                if(!child.marks.find(mark => mark.type.name==='deletion')) {
+                    title += escapeText(child.textContent)
+                }
+            }
+        )
+        if (!title.length) {
+            title = gettext('Untitled Document')
+        }
+
         return `
             <div id="close-document-top" title="${gettext("Close the document and return to the document overview menu.")}">
                 <a href="/">
@@ -182,7 +194,7 @@ export class HeaderbarView {
                 </a>
             </div>
             <div id="document-top">
-                <h1>${doc.firstChild.firstChild.textContent.length ? escapeText(doc.firstChild.firstChild.textContent) : gettext('Untitled Document')}</h1>
+                <h1>${title}</h1>
                 <nav id="header-navigation">
                     ${this.getHeaderNavHTML()}
                 </nav>

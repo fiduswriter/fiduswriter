@@ -207,6 +207,7 @@ export class Editor {
 
     render() {
         document.body = document.createElement('body')
+        document.body.classList.add('editor')
         document.body.innerHTML = `<div id="editor">
             <div id="wait" class="active"><i class="fa fa-spinner fa-pulse"></i></div>
             <header>

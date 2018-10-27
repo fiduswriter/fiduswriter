@@ -70,7 +70,7 @@ export class LinkDialog {
         const view = this.editor.currentView,
             state = view.state,
             $pos = state.doc.resolve(pos)
-        let startIndex = $pos.index()
+        let startIndex = $pos.index(),
             endIndex = $pos.indexAfter()
 
         while (startIndex > 0 && mark.isInSet($pos.parent.child(startIndex - 1).marks)) {

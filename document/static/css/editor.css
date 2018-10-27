@@ -1,4 +1,4 @@
-body {
+body.editor {
     width: 100%;
     height: 100%;
     font-family: 'Lato', sans-serif;
@@ -574,25 +574,63 @@ table.insert-table-selection td.selected.hover {
 .drop-up-inner {
     position: relative;
     background-color: white;
-    border: 1px solid #ccc;
-    padding: 10px;
     z-index: 1;
     font-weight: normal;
     color: black;
+    left: 10px;
+}
+
+.drop-up-head {
+    padding:  20px 22px;
+    background-color: #605f5f;
+    color: #ffffff;
+    font-family: Lato;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 18px;
+    letter-spacing: 0.13px;
+    border-radius: 5px 5px 0 0;
+}
+
+.drop-up-head .link-href a {
+    opacity: 0.6;
+    color: #ffffff;
+    font-family: Lato;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 40px;
+    text-decoration: none;
+}
+
+.link.drop-up-inner {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.11);
+    border-radius: 5px;
+}
+
+.user-contents ul.drop-up-options li {
+    border-top: 1px solid #eeeeee;
+    padding: 18px 31px 15px 31px;
+    color: #2c2723;
+    font-family: Lato;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1em;
+}
+
+.user-contents ul.drop-up-options {
+    list-style: none;
+    padding: 0 0 5px 0;
+    cursor: pointer;
+}
+
+ul.drop-up-options li:hover {
+    background-color: #eeeeee;
 }
 
 
 .drop-up-inner .edit {
     font-size: 0.8em;
     text-align: right;
-}
-
-.drop-up-inner a.href {
-    color: #0000EE;
-}
-
-.drop-up-inner a.href:visited {
-    color: #551A8B;
 }
 
 /* Keywords */

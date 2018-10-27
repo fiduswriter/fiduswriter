@@ -167,6 +167,11 @@ export class HeaderbarView {
         newHeader.innerHTML = this.getHeaderHTML()
         const diff = this.dd.diff(this.headerEl, newHeader)
         this.dd.apply(this.headerEl, diff)
+        if (this.editor.menu.headerbarModel.open) {
+            document.body.classList.remove('header-closed')
+        } else {
+            document.body.classList.add('header-closed')
+        }
     }
 
     getHeaderHTML() {

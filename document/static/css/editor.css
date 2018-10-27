@@ -238,6 +238,9 @@ div#statusarea .error {
     max-width: 1600px;
     padding: .5in 68px 0 68px;
 }
+body.header-closed #editor-content {
+    top: 91px;
+}
 #flow .article-bibliography {
     background-color: lightgrey;
 }

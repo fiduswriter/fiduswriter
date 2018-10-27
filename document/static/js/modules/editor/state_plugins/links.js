@@ -9,8 +9,8 @@ import {LinkDialog} from "../dialogs"
 
 const key = new PluginKey('links')
 
-let copyLink = function(href) {
-    let textarea = document.createElement("textarea")
+const copyLink = function(href) {
+    const textarea = document.createElement("textarea")
     textarea.textContent = href
     textarea.style.position = "fixed" // Prevent scrolling to bottom of page in MS Edge.
     document.body.appendChild(textarea)
@@ -27,19 +27,19 @@ let copyLink = function(href) {
     }
 }
 
-export let linksPlugin = function(options) {
+export const linksPlugin = function(options) {
 
     function getUrl(state, oldState, oldUrl) {
-        let id = state.selection.$head.parent.attrs.id,
+        const id = state.selection.$head.parent.attrs.id,
             mark = state.selection.$head.marks().find(mark =>
-                mark.type.name === 'anchor'),
-            newUrl = oldUrl.split('#')[0]
+                mark.type.name === 'anchor')
+        let newUrl = oldUrl.split('#')[0]
         if (mark) {
             newUrl += `#${mark.attrs.id}`
         } else if (id) {
             newUrl += `#${id}`
         }
-        let changed = oldUrl === newUrl ? false : true
+        const changed = oldUrl === newUrl ? false : true
         // TODO: Should the following be moved to a view?
         // Not sure if this counts as a DOM update.
         if (changed && options.editor.currentView.state === oldState) {
@@ -60,7 +60,7 @@ export let linksPlugin = function(options) {
 
     function getDecos(state) {
         const $head = state.selection.$head
-        let currentMarks = [],
+        const currentMarks = [],
             linkMark = $head.marks().find(
                 mark => mark.type.name === 'link'
             ),
@@ -90,16 +90,16 @@ export let linksPlugin = function(options) {
             startPos += $head.parent.child(i).nodeSize
         }
 
-        let dom = createDropUp(linkMark, anchorMark, $head),
+        const dom = createDropUp(linkMark, anchorMark, $head),
             deco = Decoration.widget(startPos, dom)
         return DecorationSet.create(state.doc, [deco])
     }
 
     function createDropUp(linkMark, anchorMark, $head) {
-        let dropUp = document.createElement('span'),
+        const dropUp = document.createElement('span'),
             editor = options.editor,
-            writeAccess = editor.docInfo.access_rights === 'write' ? true : false,
-            linkType, linkHref, anchorHref, requiredPx = 10
+            writeAccess = editor.docInfo.access_rights === 'write' ? true : false
+        let linkType, linkHref, anchorHref, requiredPx = 10
 
         if (linkMark) {
             linkType = linkMark.attrs.href[0] === '#' ? 'internal' : 'external'
@@ -172,7 +172,7 @@ export let linksPlugin = function(options) {
                 }
             </div>`
 
-        let copyLinkHref = dropUp.querySelector('.copy-link')
+        const copyLinkHref = dropUp.querySelector('.copy-link')
         if (copyLinkHref) {
             copyLinkHref.addEventListener('mousedown',
                 event => {
@@ -182,7 +182,7 @@ export let linksPlugin = function(options) {
                 }
             )
         }
-        let copyAnchorHref = dropUp.querySelector('.copy-anchor')
+        const copyAnchorHref = dropUp.querySelector('.copy-anchor')
         if (copyAnchorHref) {
             copyAnchorHref.addEventListener('mousedown',
                 () => {
@@ -193,19 +193,19 @@ export let linksPlugin = function(options) {
             )
         }
 
-        let editLink = dropUp.querySelector('.edit-link')
+        const editLink = dropUp.querySelector('.edit-link')
         if (editLink) {
             editLink.addEventListener('mousedown',
                 event => {
                     event.preventDefault()
                     event.stopImmediatePropagation()
-                    let dialog = new LinkDialog(editor)
+                    const dialog = new LinkDialog(editor)
                     dialog.init()
                 }
             )
         }
 
-        let removeLink = dropUp.querySelector('.remove-link')
+        const removeLink = dropUp.querySelector('.remove-link')
         if (removeLink) {
             removeLink.addEventListener('mousedown',
                 event => {
@@ -217,7 +217,7 @@ export let linksPlugin = function(options) {
             )
         }
 
-        let removeAnchor = dropUp.querySelector('.remove-anchor')
+        const removeAnchor = dropUp.querySelector('.remove-anchor')
         if (removeAnchor) {
             removeAnchor.addEventListener('mousedown',
                 event => {
@@ -250,8 +250,8 @@ export let linksPlugin = function(options) {
                     anchorMark
                 } = this.getState(oldState)
                 url = getUrl(state, oldState, url)
-                let newLinkMark = getLinkMark(state)
-                let newAnchorMark = getAnchorMark(state)
+                const newLinkMark = getLinkMark(state)
+                const newAnchorMark = getAnchorMark(state)
                 if (newLinkMark === linkMark && newAnchorMark === anchorMark) {
                     decos = decos.map(tr.mapping, tr.doc)
                 } else {
@@ -309,8 +309,8 @@ export let linksPlugin = function(options) {
                     })
                 })
             })
-            let tr = trs.slice(-1)[0],
-                foundIdElement = false, // found heading or figure
+            const tr = trs.slice(-1)[0]
+            let foundIdElement = false, // found heading or figure
                 foundAnchorWithoutId = false // found an anchor without an ID
             ranges.forEach(range => {
                 tr.doc.nodesBetween(
@@ -338,14 +338,14 @@ export let linksPlugin = function(options) {
             // Check that unique IDs only exist once in the document
             // If an ID is used more than once, add steps to change the ID of all
             // but the first occurence.
-            let headingIds = [],
-                doubleHeadingIds = []
-            let figureIds = [],
+            const headingIds = [],
+                doubleHeadingIds = [],
+                figureIds = [],
                 doubleFigureIds = []
 
             // ID should not be found in the other pm either. So we look through
             // those as well.
-            let otherState = oldState.schema === options.editor.view.state.schema ?
+            const otherState = oldState.schema === options.editor.view.state.schema ?
                 options.editor.mod.footnotes.fnEditor.view.state :
                 options.editor.view.state
 
@@ -386,7 +386,7 @@ export let linksPlugin = function(options) {
                 return
             }
 
-            let newTransaction = state.tr.setMeta('fixIds', true)
+            const newTransaction = state.tr.setMeta('fixIds', true)
             // Change the IDs of the nodes that having an ID that was used previously
             // already.
             doubleHeadingIds.forEach(doubleId => {
@@ -396,7 +396,7 @@ export let linksPlugin = function(options) {
                     id = randomHeadingId()
                 }
 
-                let attrs = Object.assign({}, doubleId.node.attrs, {id})
+                const attrs = Object.assign({}, doubleId.node.attrs, {id})
 
                 // Because we only change attributes, positions should stay the
                 // the same throughout all our extra steps. We therefore do no
@@ -414,7 +414,7 @@ export let linksPlugin = function(options) {
                     id = randomFigureId()
                 }
 
-                let attrs = Object.assign({}, doubleId.node.attrs, {id})
+                const attrs = Object.assign({}, doubleId.node.attrs, {id})
 
                 // Because we only change attributes, positions should stay the
                 // the same throughout all our extra steps. We therefore do no
@@ -425,7 +425,7 @@ export let linksPlugin = function(options) {
 
             // Remove anchor marks without ID
             if (foundAnchorWithoutId) {
-                let markType = state.schema.marks.anchor.create({id : false})
+                const markType = state.schema.marks.anchor.create({id : false})
                 newTransaction.step(
                     new RemoveMarkStep(
                         0,
@@ -439,14 +439,14 @@ export let linksPlugin = function(options) {
         props: {
             handleDOMEvents: {
                 focus: (view, event) => {
-                    let {
+                    const {
                         url
                     } = key.getState(view.state)
                     window.history.replaceState("", "", url)
                 }
             },
             decorations(state) {
-                let {
+                const {
                     decos
                 } = this.getState(state)
                 return decos

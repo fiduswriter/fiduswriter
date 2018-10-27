@@ -7,7 +7,7 @@ import {keymap} from "prosemirror-keymap"
 
 const key = new PluginKey('keywordInput')
 
-let doc = {content: 'keyword'},
+const doc = {content: 'keyword'},
     keyword = {
         content: 'inline*',
         parseDOM: [{tag: 'div.keyword-input-editor'}],
@@ -25,17 +25,17 @@ const schema = new Schema({
 })
 
 
-let placeholderPlugin = function() {
+const placeholderPlugin = function() {
     return new Plugin({
         props: {
             decorations: (state) => {
-                let doc = state.doc
+                const doc = state.doc
                 if (
                     doc.childCount === 1 &&
                     doc.firstChild.isTextblock &&
                     doc.firstChild.content.size === 0
                 ) {
-                    let placeHolder = document.createElement('span')
+                    const placeHolder = document.createElement('span')
                     placeHolder.classList.add('placeholder')
                     // There is only one field, so we know the selection is there
                     placeHolder.classList.add('selected')
@@ -47,10 +47,10 @@ let placeholderPlugin = function() {
     })
 }
 
-let pastePlugin = function(options) {
+const pastePlugin = function(options) {
 
-    let submitKeywords = keywords => {
-        let eState = options.editor.view.state,
+    const submitKeywords = keywords => {
+        const eState = options.editor.view.state,
             {decos} = key.getState(eState),
             deco = decos.find()[0],
             pos = deco.from,
@@ -64,11 +64,11 @@ let pastePlugin = function(options) {
     return new Plugin({
         props: {
             transformPastedHTML: inHTML => {
-                let dom = document.createElement('div')
+                const dom = document.createElement('div')
                 dom.innerHTML = inHTML
-                let keywords = dom.innerText.split(/[,;]+/).filter(keyword => keyword.length)
+                const keywords = dom.innerText.split(/[,;]+/).filter(keyword => keyword.length)
                 if (keywords.length) {
-                    let lastKeyword = keywords.pop()
+                    const lastKeyword = keywords.pop()
                     submitKeywords(keywords)
                     return lastKeyword
                 } else {
@@ -76,9 +76,9 @@ let pastePlugin = function(options) {
                 }
             },
             transformPastedText: inText => {
-                let keywords = inText.split(/[,;]+/).filter(keyword => keyword.length)
+                const keywords = inText.split(/[,;]+/).filter(keyword => keyword.length)
                 if (keywords.length) {
-                    let lastKeyword = keywords.pop()
+                    const lastKeyword = keywords.pop()
                     submitKeywords(keywords)
                     return lastKeyword
                 } else {
@@ -89,7 +89,7 @@ let pastePlugin = function(options) {
     })
 }
 
-let findKeywordsEndPos = function(state) {
+const findKeywordsEndPos = function(state) {
     let pos = 1, // enter article
         child = 0
     while(state.doc.firstChild.child(child).type.name !== 'keywords') {
@@ -101,13 +101,13 @@ let findKeywordsEndPos = function(state) {
     return pos
 }
 
-export let keywordInputPlugin = function(options) {
+export const keywordInputPlugin = function(options) {
     let keywordView // The input element for keywords
 
-    let submitKeyword = (state, dispatch, view) => {
-        let keyword = state.doc.textContent
+    const submitKeyword = (state, dispatch, view) => {
+        const keyword = state.doc.textContent
         if (keyword.length) {
-            let eState = options.editor.view.state,
+            const eState = options.editor.view.state,
                 {decos} = key.getState(eState),
                 deco = decos.find()[0],
                 pos = deco.from,
@@ -122,8 +122,8 @@ export let keywordInputPlugin = function(options) {
         return true
     }
 
-    let createKeywordInputDom = function() {
-        let dom = document.createElement('div')
+    const createKeywordInputDom = function() {
+        const dom = document.createElement('div')
         dom.classList.add('keyword-input')
 
         keywordView = new EditorView(dom, {
@@ -158,13 +158,13 @@ export let keywordInputPlugin = function(options) {
                 }
             },
             dispatchTransaction: tr => {
-                let newState = keywordView.state.apply(tr)
+                const newState = keywordView.state.apply(tr)
                 keywordView.updateState(newState)
             }
         })
 
         dom.addEventListener('click', event => {
-            let state = options.editor.view.state,
+            const state = options.editor.view.state,
                 {decos} = key.getState(state),
                 deco = decos.find()[0],
                 pos = deco.from
@@ -172,7 +172,7 @@ export let keywordInputPlugin = function(options) {
                 state.selection.from !== pos ||
                 state.selection.to !== pos
             ) {
-                let $pos = state.doc.resolve(pos)
+                const $pos = state.doc.resolve(pos)
                 options.editor.view.dispatch(
                     state.tr.setSelection(new TextSelection($pos, $pos))
                 )
@@ -183,9 +183,9 @@ export let keywordInputPlugin = function(options) {
         return dom
     }
 
-    let createKeywordsEndDeco = function(state) {
-        let dom = createKeywordInputDom()
-        let pos = findKeywordsEndPos(state)
+    const createKeywordsEndDeco = function(state) {
+        const dom = createKeywordInputDom()
+        const pos = findKeywordsEndPos(state)
         return Decoration.widget(pos, dom, {
             side: 1,
             stopEvent: event => {
@@ -223,7 +223,7 @@ export let keywordInputPlugin = function(options) {
                     return {decos}
                 }
 
-                let deco = createKeywordsEndDeco(state)
+                const deco = createKeywordsEndDeco(state)
                 decos = decos.add(state.doc, [deco])
 
                 return {
@@ -244,11 +244,11 @@ export let keywordInputPlugin = function(options) {
 
                 if (decoDropped) {
                     decos = DecorationSet.empty
-                    let deco = createKeywordsEndDeco(state)
+                    const deco = createKeywordsEndDeco(state)
                     decos = decos.add(state.doc, [deco])
                 }
 
-                let decoPos = decos.find()[0].from
+                const decoPos = decos.find()[0].from
                 if (
                     tr.selection.from === tr.selection.to &&
                     decoPos === tr.selection.from &&
@@ -261,7 +261,7 @@ export let keywordInputPlugin = function(options) {
                     } else {
                         pos = keywordView.state.doc.nodeSize - 3
                     }
-                    let $pos = keywordView.state.doc.resolve(pos)
+                    const $pos = keywordView.state.doc.resolve(pos)
                     keywordView.dispatch(
                         keywordView.state.tr.setSelection(new TextSelection($pos))
                     )
@@ -274,7 +274,7 @@ export let keywordInputPlugin = function(options) {
         },
         props: {
             decorations(state) {
-				let {
+				const {
 					decos
 				} = this.getState(state)
 				return decos

@@ -178,7 +178,7 @@ TEMPLATES = [
 # The following are the apps needed by Fidus Writer. The lower part of the list
 # are modules to allow different login options.
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'base',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -186,7 +186,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.admin.apps.SimpleAdminConfig',
+    'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.flatpages',
     'django_js_error_hook',
@@ -205,7 +205,7 @@ INSTALLED_APPS = (
     'compressor',
     'feedback',
     'style'
-)
+]
 
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`

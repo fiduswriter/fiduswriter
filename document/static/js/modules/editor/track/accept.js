@@ -5,9 +5,10 @@ import {deactivateAllSelectedChanges} from "../state_plugins"
 
 import {deleteNode} from "./delete"
 
-export let accept = function(type, pos, view) {
-    let tr = view.state.tr.setMeta('track', true), map = new Mapping(), reachedEnd = false
-    let trackMark = view.state.doc.nodeAt(pos).marks.find(mark => mark.type.name===type)
+export const accept = function(type, pos, view) {
+    const tr = view.state.tr.setMeta('track', true), map = new Mapping()
+    let reachedEnd = false
+    const trackMark = view.state.doc.nodeAt(pos).marks.find(mark => mark.type.name===type)
     view.state.doc.nodesBetween(pos, view.state.doc.firstChild.nodeSize, (node, nodePos, parent, index) => {
         if (nodePos < pos) {
             return true
@@ -26,7 +27,7 @@ export let accept = function(type, pos, view) {
             deleteNode(tr, node, nodePos, map, true)
         } else if (type==='insertion') {
             if (node.attrs.track) {
-                let track = node.attrs.track.filter(track => track.type !== 'insertion')
+                const track = node.attrs.track.filter(track => track.type !== 'insertion')
                 if (node.attrs.track.length === track) {
                     return true
                 }
@@ -53,7 +54,7 @@ export let accept = function(type, pos, view) {
                 )
             )
         } else if (type==='block_change') {
-            let track = node.attrs.track.filter(track => track.type !== 'block_change')
+            const track = node.attrs.track.filter(track => track.type !== 'block_change')
             tr.setNodeMarkup(map.map(nodePos), null, Object.assign({}, node.attrs, {track}), node.marks)
         }
         return true

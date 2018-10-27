@@ -264,7 +264,7 @@ export class Editor {
                 }
             },
             dispatchTransaction: (tr) => {
-                let newState = this.view.state.apply(tr)
+                const newState = this.view.state.apply(tr)
                 this.view.updateState(newState)
                 this.mod.collab.docChanges.sendToCollaborators()
             }
@@ -303,11 +303,11 @@ export class Editor {
             this.mod.collab.docChanges.enableDiffSending()
         }
         // Remember location hash to scroll there subsequently.
-        let locationHash = window.location.hash
+        const locationHash = window.location.hash
 
         this.clientTimeAdjustment = Date.now() - data.time
 
-        let doc = data.doc
+        const doc = data.doc
 
         this.docInfo = data.doc_info
         this.docInfo.version = doc["v"]
@@ -339,7 +339,7 @@ export class Editor {
         } else {
             stateDoc = this.schema.topNodeType.createAndFill()
         }
-        let plugins = this.statePlugins.map(plugin => {
+        const plugins = this.statePlugins.map(plugin => {
             if (plugin[1]) {
                 return plugin[0](plugin[1](doc))
             } else {
@@ -347,7 +347,7 @@ export class Editor {
             }
         })
 
-        let stateConfig = {
+        const stateConfig = {
             schema: this.schema,
             doc: stateDoc,
             plugins
@@ -376,7 +376,7 @@ export class Editor {
     // Collect all components of the current doc. Needed for saving and export
     // filters
     getDoc(options={}) {
-        let pmArticle = options.changes === 'acceptAllNoInsertions' ?
+        const pmArticle = options.changes === 'acceptAllNoInsertions' ?
             acceptAllNoInsertions(this.docInfo.confirmedDoc).firstChild :
             this.docInfo.confirmedDoc.firstChild
             let title = ""
@@ -410,7 +410,7 @@ export class Editor {
                 foundPos = pos + 1
                 view = this.view
             } else {
-                let anchorMark = node.marks.find(mark => mark.type.name === 'anchor')
+                const anchorMark = node.marks.find(mark => mark.type.name === 'anchor')
                 if (anchorMark && anchorMark.attrs.id === id) {
                     foundPos = pos + 1
                     view = this.view
@@ -426,7 +426,7 @@ export class Editor {
                     foundPos = pos + 1
                     view = this.mod.footnotes.fnEditor.view
                 } else {
-                    let anchorMark = node.marks.find(mark => mark.type.name === 'anchor')
+                    const anchorMark = node.marks.find(mark => mark.type.name === 'anchor')
                     if (anchorMark && anchorMark.attrs.id === id) {
                         foundPos = pos + 1
                         view = this.mod.footnotes.fnEditor.view
@@ -441,11 +441,11 @@ export class Editor {
     }
 
     scrollPosIntoView(pos, view) {
-        let topMenuHeight = document.querySelector('header').offsetHeight + 10
-        let $pos = view.state.doc.resolve(pos)
+        const topMenuHeight = document.querySelector('header').offsetHeight + 10
+        const $pos = view.state.doc.resolve(pos)
         view.dispatch(view.state.tr.setSelection(new TextSelection($pos, $pos)))
         view.focus()
-        let distanceFromTop = view.coordsAtPos(pos).top - topMenuHeight
+        const distanceFromTop = view.coordsAtPos(pos).top - topMenuHeight
         window.scrollBy(0, distanceFromTop)
         return
     }

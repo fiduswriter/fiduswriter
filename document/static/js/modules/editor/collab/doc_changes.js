@@ -138,15 +138,28 @@ export class ModCollabDocChanges {
                     // In case the title changed, we also add a title field to
                     // update the title field instantly - important for the
                     // document overview page.
-                    const title = this.mod.editor.view.state.doc.firstChild
-                        .firstChild.textContent.slice(0, 255)
-
+                    let newTitle = ""
+                    this.mod.editor.view.state.doc.firstChild.firstChild.forEach(
+                        child => {
+                            if(!child.marks.find(mark => mark.type.name==='deletion')) {
+                                newTitle += child.textContent
+                            }
+                        }
+                    )
+                    newTitle = newTitle.slice(0, 255)
+                    let oldTitle = ""
+                    this.mod.editor.docInfo.confirmedDoc.firstChild.firstChild.forEach(
+                        child => {
+                            if(!child.marks.find(mark => mark.type.name==='deletion')) {
+                                oldTitle += child.textContent
+                            }
+                        }
+                    )
+                    oldTitle = oldTitle.slice(0, 255)
                     if (
-                        title !== this.mod.editor.docInfo.confirmedDoc
-                        .firstChild.firstChild.textContent.slice(0,
-                            255)
+                        newTitle !== oldTitle
                     ) {
-                        unconfirmedDiff['ti'] = title
+                        unconfirmedDiff['ti'] = newTitle
                     }
                 }
 

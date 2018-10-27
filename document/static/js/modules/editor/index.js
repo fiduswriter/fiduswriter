@@ -219,7 +219,7 @@ export class Editor {
                 </nav>
             </header>
             <div id="editor-content">
-                <div id="flow" class="comments-enabled hide">
+                <div id="flow" class="hide">
                     <div id="paper-editable">
                         <div id="document-editable" class="user-contents"></div>
                         <div id="footnote-box-container" class="user-contents">

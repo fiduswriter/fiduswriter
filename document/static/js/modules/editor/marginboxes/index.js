@@ -161,7 +161,7 @@ export class ModMarginboxes {
                 }
                 marginBoxes.splice(index, 0, {type: 'comment', data: comment, view, pos, active: true})
                 referrers.splice(index, 0, pos)
-                this.activeCommentStyle += '.comments-enabled .active-comment, .comments-enabled .active-comment .comment {background-color: #fffacf !important;}'
+                this.activeCommentStyle += '.active-comment, .active-comment .comment {background-color: #fffacf !important;}'
             }
         }
 
@@ -351,12 +351,17 @@ export class ModMarginboxes {
                 return
             }
             const active = comment.id === this.editor.mod.comments.interactions.activeCommentId
-            if (active) {
-                this.activeCommentStyle +=
-                    `.comments-enabled .comment[data-id="${comment.id}"], .comments-enabled .comment[data-id="${comment.id}"] .comment {background-color: #fffacf !important;}`
-            } else {
-                this.activeCommentStyle +=
-                    `.comments-enabled .comment[data-id="${comment.id}"] {background-color: #f9f9f9;}`
+            if (this.filterOptions.comments) {
+                if (active) {
+                    this.activeCommentStyle +=
+                        `.comment[data-id="${comment.id}"], .comment[data-id="${comment.id}"] .comment {background-color: #fffacf !important;}`
+                } else if (comment.isMajor) {
+                    this.activeCommentStyle +=
+                        `.comment[data-id="${comment.id}"] {background-color: #fbd0e0;}`
+                } else {
+                    this.activeCommentStyle +=
+                        `.comment[data-id="${comment.id}"] {background-color: #f9f9f9;}`
+                }
             }
             marginBoxes.push({type: 'comment', data: comment, pos, view, active})
             referrers.push(refPos)

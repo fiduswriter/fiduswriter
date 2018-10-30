@@ -3,16 +3,16 @@ import {sendableSteps} from "prosemirror-collab"
 
 const key = new PluginKey('footnoteMarkers')
 
-export let findFootnoteMarkers = function(fromPos, toPos, doc) {
-    let footnoteMarkers = []
+export const findFootnoteMarkers = function(fromPos, toPos, doc) {
+    const footnoteMarkers = []
     doc.nodesBetween(fromPos, toPos, (node, pos, parent) => {
         if (!node.isInline) {
             return
         }
         if (node.type.name === 'footnote') {
-            let from = pos
-            let to = pos + node.nodeSize
-            let footnoteMarker = {from, to}
+            const from = pos
+            const to = pos + node.nodeSize
+            const footnoteMarker = {from, to}
             footnoteMarkers.push(footnoteMarker)
         }
     })
@@ -20,7 +20,7 @@ export let findFootnoteMarkers = function(fromPos, toPos, doc) {
 }
 
 
-let getAddedRanges = function(tr) {
+const getAddedRanges = function(tr) {
     /* find ranges of the current document that have been added by means of
      * a transaction.
      */
@@ -29,11 +29,11 @@ let getAddedRanges = function(tr) {
         if (step.jsonID === "replace" || step.jsonID === "replaceWrap") {
             ranges.push({from: step.from, to: step.to})
         }
-        let map = tr.mapping.maps[index]
+        const map = tr.mapping.maps[index]
         ranges = ranges.map(range => ({from: map.map(range.from, -1), to: map.map(range.to, 1)}))
     })
 
-    let nonOverlappingRanges = []
+    const nonOverlappingRanges = []
 
     ranges.forEach(range => {
         let addedRange = false
@@ -56,43 +56,43 @@ let getAddedRanges = function(tr) {
     return nonOverlappingRanges
 }
 
-export let getFootnoteMarkerContents = function(state) {
-    let {
+export const getFootnoteMarkerContents = function(state) {
+    const {
         fnMarkers
     } = key.getState(state)
     return fnMarkers.map(fnMarker => state.doc.nodeAt(fnMarker.from).attrs.footnote)
 }
 
-export let updateFootnoteMarker = function(state, index, content) {
-    let {
+export const updateFootnoteMarker = function(state, index, content) {
+    const {
         fnMarkers
     } = key.getState(state)
 
-    let footnote = fnMarkers[index]
-    let node = state.doc.nodeAt(footnote.from)
+    const footnote = fnMarkers[index]
+    const node = state.doc.nodeAt(footnote.from)
     if (node.attrs.footnote === content) {
         return
     }
-    let tr = state.tr.setNodeMarkup(footnote.from, node.type, {
+    const tr = state.tr.setNodeMarkup(footnote.from, node.type, {
         footnote: content
     })
     tr.setMeta('fromFootnote', true)
     return tr
 }
 
-export let getFootnoteMarkers = function(state) {
-    let {
+export const getFootnoteMarkers = function(state) {
+    const {
         fnMarkers
     } = key.getState(state)
     return fnMarkers
 }
 
-export let footnoteMarkersPlugin = function(options) {
+export const footnoteMarkersPlugin = function(options) {
     return new Plugin({
         key,
         state: {
             init(state) {
-                let fnMarkers = []
+                const fnMarkers = []
                 state.doc.descendants((node, pos, parent) => {
                     if (node.type.name==='footnote') {
                         fnMarkers.push({
@@ -107,7 +107,7 @@ export let footnoteMarkersPlugin = function(options) {
                 }
             },
             apply(tr, prev, oldState, state) {
-                let meta = tr.getMeta(key)
+                const meta = tr.getMeta(key)
                 if (meta) {
                     // There has been an update of a footnote marker,
                     // return values from meta instead of previous values
@@ -125,7 +125,7 @@ export let footnoteMarkersPlugin = function(options) {
                     }
                 }
 
-                let remote = tr.getMeta('remote'),
+                const remote = tr.getMeta('remote'),
                     fromFootnote = tr.getMeta('fromFootnote'),
                     ranges = getAddedRanges(tr), deletedFootnotesIndexes = []
                 fnMarkers = fnMarkers.map(marker => ({
@@ -150,7 +150,7 @@ export let footnoteMarkersPlugin = function(options) {
                         let newFootnotes = findFootnoteMarkers(range.from, range.to, tr.doc)
                         if (newFootnotes.length) {
 
-                            let firstFn = newFootnotes[0]
+                            const firstFn = newFootnotes[0]
                             let offset = fnMarkers.findIndex(marker => marker.from > firstFn.from)
                             if (offset < 0) {
                                 offset = fnMarkers.length
@@ -166,7 +166,7 @@ export let footnoteMarkersPlugin = function(options) {
                                 )
                             } else {
                                 newFootnotes.forEach((footnote, index) => {
-                                    let fnContent = state.doc.nodeAt(footnote.from).attrs.footnote
+                                    const fnContent = state.doc.nodeAt(footnote.from).attrs.footnote
                                     options.editor.mod.footnotes.fnEditor.renderFootnote(
                                         fnContent,
                                         offset + index

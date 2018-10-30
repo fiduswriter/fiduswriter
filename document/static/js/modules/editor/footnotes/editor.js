@@ -53,7 +53,7 @@ export class ModFootnoteEditor {
     }
 
     init() {
-        let doc = this.schema.nodeFromJSON({"type":"doc","content":[]}),
+        const doc = this.schema.nodeFromJSON({"type":"doc","content":[]}),
             plugins = this.fnStatePlugins.map(plugin => {
                 if (plugin[1]) {
                     return plugin[0](plugin[1](doc))
@@ -74,7 +74,7 @@ export class ModFootnoteEditor {
                 }
             },
             dispatchTransaction: (tr) => {
-                let remote = tr.getMeta('remote'),
+                const remote = tr.getMeta('remote'),
                     filterFree = tr.getMeta('filterFree')
                 // Skip if creating new footnote by typing directly into empty footnote editor.
                 if (
@@ -88,7 +88,7 @@ export class ModFootnoteEditor {
                     return
                 }
 
-                let newState = this.view.state.apply(tr)
+                const newState = this.view.state.apply(tr)
 
                 this.view.updateState(newState)
                 this.onTransaction(tr, remote, filterFree)
@@ -101,12 +101,12 @@ export class ModFootnoteEditor {
     // Find out if we need to recalculate the bibliography
     onTransaction(tr, remote, filterFree) {
         if (!remote && !filterFree && tr.docChanged) {
-            let steps = tr.steps,
+            const steps = tr.steps,
                 lastStep = steps[steps.length - 1]
             if (lastStep.hasOwnProperty('from')) {
                 // We find the number of the last footnote that was updated by
                 // looking at the last step and seeing footnote number that change referred to.
-                let fnIndex = tr.doc.resolve(lastStep.from).index(0),
+                const fnIndex = tr.doc.resolve(lastStep.from).index(0),
                     fnContent = tr.doc.child(fnIndex).toJSON().content,
                     mainTransaction = updateFootnoteMarker(this.mod.editor.view.state, fnIndex, fnContent)
                 if (mainTransaction) {
@@ -118,9 +118,9 @@ export class ModFootnoteEditor {
     }
 
     applyDiffs(diffs, cid) {
-        let steps = diffs.map(j => Step.fromJSON(this.view.state.schema, j))
-        let clientIds = diffs.map(j => cid)
-        let tr = receiveTransaction(
+        const steps = diffs.map(j => Step.fromJSON(this.view.state.schema, j))
+        const clientIds = diffs.map(j => cid)
+        const tr = receiveTransaction(
             this.view.state,
             steps,
             clientIds
@@ -130,8 +130,8 @@ export class ModFootnoteEditor {
     }
 
     renderAllFootnotes() {
-        let fnContents = getFootnoteMarkerContents(this.mod.editor.view.state)
-        let doc = this.schema.nodeFromJSON({"type":"doc","content":[]}),
+        const fnContents = getFootnoteMarkerContents(this.mod.editor.view.state)
+        const doc = this.schema.nodeFromJSON({"type":"doc","content":[]}),
             plugins = this.fnStatePlugins.map(plugin => {
                 if (plugin[1]) {
                     return plugin[0](plugin[1](doc))
@@ -140,7 +140,7 @@ export class ModFootnoteEditor {
                 }
             })
 
-        let newState = EditorState.create({
+        const newState = EditorState.create({
             schema: this.schema,
             doc,
             plugins
@@ -154,20 +154,20 @@ export class ModFootnoteEditor {
     }
 
     renderFootnote(contents, index = 0, setDoc = false) {
-        let node = fnNodeToPmNode(contents)
+        const node = fnNodeToPmNode(contents)
         let pos = 0
         for (let i=0; i<index;i++) {
             pos += this.view.state.doc.child(i).nodeSize
         }
 
-        let tr = this.view.state.tr.insert(pos, node)
+        const tr = this.view.state.tr.insert(pos, node)
 
         tr.setMeta('filterFree', true)
 
         this.view.dispatch(tr)
         if (setDoc) {
-            let initialSteps = sendableSteps(this.view.state)
-            let rTransaction = receiveTransaction(
+            const initialSteps = sendableSteps(this.view.state)
+            const rTransaction = receiveTransaction(
                 this.view.state,
                 initialSteps.steps,
                 initialSteps.steps.map(
@@ -191,8 +191,8 @@ export class ModFootnoteEditor {
             for (let i=0;i<index;i++) {
                 startPos += this.view.state.doc.child(i).nodeSize
             }
-            let endPos = startPos + this.view.state.doc.child(index).nodeSize
-            let tr = this.view.state.tr.delete(startPos, endPos)
+            const endPos = startPos + this.view.state.doc.child(index).nodeSize
+            const tr = this.view.state.tr.delete(startPos, endPos)
             tr.setMeta('filterFree', true)
             this.view.dispatch(tr)
             // Most changes to the footnotes are followed by a change to the main editor,

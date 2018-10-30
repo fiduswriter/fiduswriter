@@ -4,9 +4,9 @@ import {
 
 export function findSelectedChanges(state) {
 
-    let selection = state.selection,
-        selectedChanges = {insertion: false, deletion: false, formatChange: false},
-        insertionPos = false,
+    const selection = state.selection,
+        selectedChanges = {insertion: false, deletion: false, formatChange: false}
+    let insertionPos = false,
         deletionPos = false,
         formatChangePos = false,
         insertionMark,
@@ -17,7 +17,7 @@ export function findSelectedChanges(state) {
         formatChangeSize
 
     if (selection.empty) {
-        let resolvedPos = state.doc.resolve(selection.from), marks = resolvedPos.marks()
+        const resolvedPos = state.doc.resolve(selection.from), marks = resolvedPos.marks()
         if (marks) {
             insertionMark = marks.find(mark => mark.type.name==='insertion' && !mark.attrs.approved)
             if (insertionMark) {

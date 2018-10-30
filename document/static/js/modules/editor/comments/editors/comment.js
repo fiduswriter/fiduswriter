@@ -88,7 +88,7 @@ export class CommentEditor {
             'beforeend',
             `<input class="comment-is-major" type="checkbox" name="isMajor"
                 ${this.options.isMajor ? 'checked' : ''}/>
-            <label>${gettext("Is major")}</label>
+            <label>${gettext("High priority")}</label>
             <div class="comment-btns">
                 <button class="submit fw-button fw-dark" type="submit">
                     ${this.id !== '-1' ? gettext("Edit") :gettext("Submit")}
@@ -112,18 +112,17 @@ export class CommentEditor {
                 plugins: this.plugins
             }),
             dispatchTransaction: tr => {
-                let newState = this.view.state.apply(tr)
+                const newState = this.view.state.apply(tr)
                 this.view.updateState(newState)
             }
         })
         this.oldUserTags = this.getUserTags()
-        this.view.focus()
         this.bind()
     }
 
     bind() {
         this.dom.addEventListener('click', event => {
-            let el = {}
+            const el = {}
             switch (true) {
                 case findTarget(event, 'button.submit', el):
                     this.submit()
@@ -189,7 +188,7 @@ export class CommentEditor {
         if (!user || !this.tagRange) {
             return false
         }
-        let tr = this.view.state.tr.replaceRangeWith(
+        const tr = this.view.state.tr.replaceRangeWith(
             this.tagRange.from,
             this.tagRange.to,
             this.view.state.schema.nodes.collaborator.create({id: user.id, name: user.name})
@@ -199,7 +198,7 @@ export class CommentEditor {
     }
 
     getUserTags() {
-        let users = []
+        const users = []
         this.view.state.doc.descendants(node => {
             if (node.type.name==='collaborator') {
                 users.push(node.attrs.id)

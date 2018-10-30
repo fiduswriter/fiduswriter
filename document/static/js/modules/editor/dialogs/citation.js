@@ -33,7 +33,7 @@ export class CitationDialog {
             this.buttons.push({
                 text: gettext('Remove'),
                 click: () => {
-                    let transaction = this.editor.currentView.state.tr.deleteSelection()
+                    const transaction = this.editor.currentView.state.tr.deleteSelection()
                     this.editor.currentView.dispatch(transaction)
                     this.dialog.close()
                 },
@@ -85,13 +85,13 @@ export class CitationDialog {
     }
 
     createAllTableRows() {
-        let data = []
+        const data = []
         // unify bibs from both document and user
         Object.keys(this.editor.mod.db.bibDB.db).forEach(id => {
             data.push(this.createTableRow(this.editor.mod.db.bibDB.db[id], id, 'document', false))
         })
         Object.keys(this.editor.user.bibDB.db).forEach(id => {
-            let bib = this.editor.user.bibDB.db[id]
+            const bib = this.editor.user.bibDB.db[id]
             if (!this.editor.mod.db.bibDB.hasReference(bib)) {
                 data.push(this.createTableRow(bib, id, 'user', false))
             }
@@ -100,7 +100,7 @@ export class CitationDialog {
     }
 
     createTableRow(bib, id, db, checked) {
-        let bibauthors = bib.fields.author || bib.fields.editor
+        const bibauthors = bib.fields.author || bib.fields.editor
         return [
             `${db}-${id}`,
             `<span class="fw-document-table-title fw-inline">
@@ -118,10 +118,10 @@ export class CitationDialog {
         let citedItemsHTML = ''
 
         Object.keys(this.editor.mod.db.bibDB.db).forEach(id => {
-            let citEntry = this.initialReferences.find(bibRef => bibRef.id==id)
+            const citEntry = this.initialReferences.find(bibRef => bibRef.id==id)
 
             if (citEntry) {
-                let bibEntry = this.bibDBToBibEntry(this.editor.mod.db.bibDB.db[id], id, 'document')
+                const bibEntry = this.bibDBToBibEntry(this.editor.mod.db.bibDB.db[id], id, 'document')
                 bibEntry.prefix = citEntry.prefix ?  citEntry.prefix : ''
                 bibEntry.locator = citEntry.locator ? citEntry.locator : ''
                 citedItemsHTML += selectedCitationTemplate(bibEntry)
@@ -135,17 +135,17 @@ export class CitationDialog {
     }
 
     registerNewSource() {
-        let form = new BibEntryForm(this.editor.mod.db.bibDB)
+        const form = new BibEntryForm(this.editor.mod.db.bibDB)
         form.init().then(
             idTranslations => {
-                let ids = idTranslations.map(idTrans => idTrans[1])
+                const ids = idTranslations.map(idTrans => idTrans[1])
                 this.addToCitableItems(ids)
             }
         )
     }
 
     bibDBToBibEntry(bib, id, db) {
-        let bibauthors = bib.fields.author || bib.fields.editor
+        const bibauthors = bib.fields.author || bib.fields.editor
         return {
             id,
             db,
@@ -158,9 +158,9 @@ export class CitationDialog {
     // Update the citation dialog with new items in 'citable' column.
     // Not when dialog is first opened.
     addToCitableItems(ids) {
-        let data = []
+        const data = []
         ids.forEach(id => {
-            let citeItemData = this.bibDBToBibEntry(this.editor.mod.db.bibDB.db[id], id, 'document')
+            const citeItemData = this.bibDBToBibEntry(this.editor.mod.db.bibDB.db[id], id, 'document')
             this.addToCitedItems([citeItemData])
             data.push(this.createTableRow(this.editor.mod.db.bibDB.db[id], id, 'document', false))
         })
@@ -172,9 +172,9 @@ export class CitationDialog {
     // Update the citation dialog with new items in 'cited' column.
     // Not when dialog is first opened.
     addToCitedItems(items) {
-        let len = items.length
+        const len = items.length
         for(let i = 0; i < len; i ++) {
-            let item = items[i]
+            const item = items[i]
             document.querySelector('#selected-cite-source-table .fw-document-table-body').insertAdjacentHTML(
                 'beforeend',
                 selectedCitationTemplate({
@@ -190,7 +190,7 @@ export class CitationDialog {
     }
 
     initTable() {
-        let tableEl = document.createElement('table')
+        const tableEl = document.createElement('table')
         tableEl.classList.add('fw-document-table')
         tableEl.classList.add('fw-large')
         this.dialog.dialogEl.querySelector('#my-sources').appendChild(tableEl)
@@ -227,7 +227,7 @@ export class CitationDialog {
     }
 
     checkRow(dataIndex) {
-        let checkCell = this.table.data[dataIndex].cells[3]
+        const checkCell = this.table.data[dataIndex].cells[3]
 
         if (checkCell.innerHTML.trim().length) {
             checkCell.innerHTML = ''
@@ -240,7 +240,7 @@ export class CitationDialog {
 
     bind() {
         this.table.body.addEventListener('click', event => {
-            let el = {}
+            const el = {}
             switch (true) {
                 case findTarget(event, 'tr', el):
                     this.checkRow(el.target.dataIndex)
@@ -251,7 +251,7 @@ export class CitationDialog {
         })
 
         document.getElementById('add-cite-source').addEventListener('click', () => {
-            let selectedItems = []
+            const selectedItems = []
 
             this.table.data.forEach(
                 data => {
@@ -278,7 +278,8 @@ export class CitationDialog {
         })
 
         this.dialog.dialogEl.addEventListener('click', event => {
-            let el = {}, revisionId
+            const el = {}
+            let revisionId
             switch (true) {
                 case findTarget(event, '.selected-source .delete', el):
                     const documentEl = document.getElementById(`selected-source-${el.target.dataset.db}-${el.target.dataset.id}`)
@@ -296,27 +297,27 @@ export class CitationDialog {
     }
 
     dialogSubmit() {
-        let citeItems = Array.from(
+        const citeItems = Array.from(
                 document.querySelectorAll('#selected-cite-source-table .fw-cite-parts-table')
             ),
             references = citeItems.map(bibRef => {
-                let deleteButton = bibRef.querySelector('.delete'),
-                    id = parseInt(deleteButton.dataset.id),
+                const deleteButton = bibRef.querySelector('.delete'),
                     db = deleteButton.dataset.db
+                let id = parseInt(deleteButton.dataset.id)
                 if (db === 'user') {
                     // entry is from user's bibDB. We need to import it into the
                     // document's bibDB.
-                    let bib = this.editor.user.bibDB.db[id]
+                    const bib = this.editor.user.bibDB.db[id]
                     id = this.editor.mod.db.bibDB.addReference(bib, id)
                 }
-                let returnObj = {
+                const returnObj = {
                     id
                 }
-                let prefix = bibRef.querySelector('.fw-cite-text').value
+                const prefix = bibRef.querySelector('.fw-cite-text').value
                 if (prefix.length) {
                     returnObj['prefix'] = prefix
                 }
-                let locator = bibRef.querySelector('.fw-cite-page').value
+                const locator = bibRef.querySelector('.fw-cite-page').value
                 if (locator.length) {
                     returnObj['locator'] = locator
                 }
@@ -328,7 +329,7 @@ export class CitationDialog {
             return false
         }
 
-        let format = document.getElementById('citation-style-selector').value
+        const format = document.getElementById('citation-style-selector').value
 
         if (
             JSON.stringify(references) === JSON.stringify(this.initialReferences) &&
@@ -338,8 +339,8 @@ export class CitationDialog {
             return true
         }
 
-        let citationNode = this.editor.currentView.state.schema.nodes['citation'].create({format, references})
-        let transaction = this.editor.currentView.state.tr.replaceSelectionWith(citationNode, true)
+        const citationNode = this.editor.currentView.state.schema.nodes['citation'].create({format, references})
+        const transaction = this.editor.currentView.state.tr.replaceSelectionWith(citationNode, true)
         this.editor.currentView.dispatch(transaction)
         return true
     }

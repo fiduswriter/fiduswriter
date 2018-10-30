@@ -1,7 +1,7 @@
 import {DocumentAccessRightsDialog} from "../access_rights"
 import {addAlert} from "../../common"
 
-export let menuModel = {
+export let menuModel = () => ({
     content: [
         {
             type: 'select-action-dropdown',
@@ -125,4 +125,4 @@ export let menuModel = {
             order: 3
         }
     ]
-}
+})

@@ -11,6 +11,10 @@ span.deletion {
     color: #000;
 }
 
+.margin-box.track > div {
+    padding: 10px;
+}
+
 .margin-box .track-title {
     font-weight: 700;
 }

@@ -122,7 +122,11 @@ export const linksPlugin = function(options) {
                 ${
                     linkMark ?
                     `<div class="drop-up-head">
-                        <div class="link-title">${gettext('Title')}:&nbsp;${linkMark.attrs.title}</div>
+                        ${
+                            linkMark.attrs.title ?
+                            `<div class="link-title">${gettext('Title')}:&nbsp;${linkMark.attrs.title}</div>` :
+                            ''
+                        }
                         <div class="link-href">
                             <a class="href" ${linkType === 'external' ? 'target="_blank"' : ''} href="${linkHref}">
             		            ${linkHref}

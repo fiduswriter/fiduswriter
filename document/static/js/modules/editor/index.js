@@ -272,6 +272,7 @@ export class Editor {
         })
         // The editor that is currently being edited in -- main or footnote editor
         this.currentView = this.view
+        this.mod.citations.init()
         this.mod.footnotes.init()
         new ModCollab(this)
         new ModTools(this)

@@ -1,6 +1,6 @@
 import {ImageEditDialog} from "../edit_dialog"
 
-export let menuModel = {
+export let menuModel = () => ({
     content: [
         {
             type: 'select-action-dropdown',
@@ -74,4 +74,4 @@ export let menuModel = {
             order: 4
         }
     ]
-}
+})

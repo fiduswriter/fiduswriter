@@ -44,7 +44,7 @@
     line-height: 24px;
 }
 .dk-select-options .dk-option-highlight, .dk-select-options .dk-option-selected {
-    background-color: #c9c9c9;
+    background-color: #e0e0e0;
 }
 /* Inner container for options, this is what makes the scrollbar possible. */
 .dk-select-options_inner {

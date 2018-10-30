@@ -114,3 +114,8 @@ figure {
     counter-increment: figure-cat-2;
     content: ' ' counter(figure-cat-2) ': ';
 }
+
+.user-contents a, .user-contents a:hover {
+    color: #84b4a7;
+    text-decoration: underline;
+}

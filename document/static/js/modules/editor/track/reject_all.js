@@ -5,8 +5,8 @@ import {deactivateAllSelectedChanges} from "../state_plugins"
 
 import {deleteNode} from "./delete"
 
-export let rejectAll = function(view) {
-    let tr = view.state.tr.setMeta('track', true), map = new Mapping()
+export const rejectAll = function(view) {
+    const tr = view.state.tr.setMeta('track', true), map = new Mapping()
     view.state.doc.descendants((node, pos, parent, index) => {
         let deletedNode = false
         if (
@@ -16,7 +16,7 @@ export let rejectAll = function(view) {
             deleteNode(tr, node, pos, map, false)
             deletedNode = true
         } else if (node.attrs.track && node.attrs.track.find(track => track.type==='deletion')) {
-            let track = node.attrs.track.filter(track=> track.type !== 'deletion')
+            const track = node.attrs.track.filter(track=> track.type !== 'deletion')
             tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track}), node.marks)
         } else if (node.marks && node.marks.find(mark => mark.type.name==='deletion')) {
             tr.removeMark(
@@ -25,7 +25,7 @@ export let rejectAll = function(view) {
                 view.state.schema.marks.deletion
             )
         }
-        let formatChangeMark = node.marks.find(mark => mark.type.name==='format_change')
+        const formatChangeMark = node.marks.find(mark => mark.type.name==='format_change')
 
         if (
             node.isInline &&
@@ -60,9 +60,9 @@ export let rejectAll = function(view) {
             )
         }
         if (!node.isInline && !deletedNode && node.attrs.track) {
-            let blockChangeTrack = node.attrs.track.find(track => track.type === 'block_change')
+            const blockChangeTrack = node.attrs.track.find(track => track.type === 'block_change')
             if (blockChangeTrack) {
-                let track = node.attrs.track.filter(track => track !== blockChangeTrack)
+                const track = node.attrs.track.filter(track => track !== blockChangeTrack)
                 tr.setNodeMarkup(
                     map.map(pos),
                     view.state.schema.nodes[blockChangeTrack.before.type],

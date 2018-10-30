@@ -15,7 +15,7 @@ export class ModCollabChat {
     }
 
     beep() {
-        let notification = document.getElementById('chat-notification')
+        const notification = document.getElementById('chat-notification')
         notification.play()
     }
 
@@ -23,11 +23,11 @@ export class ModCollabChat {
         if (this.currentlyFlashing) {
             return false
         }
-        let origTitle = document.title
+        const origTitle = document.title
 
         this.currentlyFlashing = true
 
-        let changeDocumentTitle = window.setInterval(() => {
+        const changeDocumentTitle = window.setInterval(() => {
             if (this.focus) {
                 window.clearInterval(changeDocumentTitle)
                 document.title = origTitle
@@ -44,9 +44,9 @@ export class ModCollabChat {
         if (document.getElementById(`m${message.id}`)) {
             return
         }
-        let theChatter = this.mod.participants.find(participant => participant.id === message.from)
+        const theChatter = this.mod.participants.find(participant => participant.id === message.from)
 
-        let chatContainer = document.getElementById("chat-container")
+        const chatContainer = document.getElementById("chat-container")
         chatContainer.insertAdjacentHTML('beforeend', messageTemplate({message, theChatter, localizeDate}))
         if (!this.focus) {
             this.beep()
@@ -83,11 +83,11 @@ export class ModCollabChat {
         whenReady().then(() => {
             document.getElementById('chat-container').style.maxHeight = `${window.innerHeight - 200}px`
 
-            let resizeButton = document.querySelector('#chat .resize-button')
+            const resizeButton = document.querySelector('#chat .resize-button')
             resizeButton.addEventListener(
                 "click",
                 event => {
-                    let chatEl = document.getElementById('chat')
+                    const chatEl = document.getElementById('chat')
                     if (resizeButton.classList.contains('fa-angle-double-down')) {
                         resizeButton.classList.remove('fa-angle-double-down')
                         resizeButton.classList.add('fa-angle-double-up')
@@ -104,7 +104,7 @@ export class ModCollabChat {
                 }
             )
 
-            let messageForm = document.getElementById("messageform")
+            const messageForm = document.getElementById("messageform")
 
             messageForm.addEventListener("focus", event => messageForm.classList.remove('empty'))
 

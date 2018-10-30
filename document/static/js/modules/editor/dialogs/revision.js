@@ -8,13 +8,13 @@ export class RevisionDialog {
     }
 
     init() {
-        let buttons = []
-        let dialogDonePromise = new Promise(resolve => {
+        const buttons = []
+        const dialogDonePromise = new Promise(resolve => {
             buttons.push({
                 text: gettext("Save"),
                 classes: "fw-dark",
                 click: () => {
-                    let note = this.dialog.dialogEl.querySelector('.revision-note').value
+                    const note = this.dialog.dialogEl.querySelector('.revision-note').value
                     this.dialog.close()
                     return resolve(note)
                 }

@@ -19,7 +19,7 @@ export class GoogleDocsPasteHandler extends GeneralPasteHandler {
 
     // Replace any type of inline node with a span node.
     neutralizeInlineNode(node) {
-        let newNode = document.createElement('span')
+        const newNode = document.createElement('span')
         while (node.firstChild) {
             newNode.appendChild(node.firstChild)
         }

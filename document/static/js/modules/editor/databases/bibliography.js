@@ -32,15 +32,15 @@ export class ModBibliographyDB {
     // Function added to make document's and user's bibDBs be connectable to the
     // same interface functions.
     saveBibEntries(tmpDB, isNew) {
-        let idTranslations = []
+        const idTranslations = []
         Object.keys(tmpDB).forEach(bibKey => {
-            let reference = tmpDB[bibKey], bibId = parseInt(bibKey)
+            const reference = tmpDB[bibKey], bibId = parseInt(bibKey)
             delete reference.entry_cat
-            let oldRef = this.findReference(reference)
+            const oldRef = this.findReference(reference)
             if (oldRef) {
                 idTranslations.push([bibId, oldRef])
             } else if (isNew) {
-                let id = this.addReference(reference, bibId)
+                const id = this.addReference(reference, bibId)
                 idTranslations.push([bibId, id])
             } else {
                 this.updateReference(bibId, reference)
@@ -100,7 +100,7 @@ export class ModBibliographyDB {
 
     // Add or update a reference only locally.
     updateLocalReference(id, reference) {
-        let preExisting = this.db[id] ? true : false
+        const preExisting = this.db[id] ? true : false
         this.db[id] = reference
         if (preExisting) {
             this.mod.editor.mod.citations.resetCitations()
@@ -135,7 +135,7 @@ export class ModBibliographyDB {
                     return event
                 } else if (event.type === 'update') {
                     // Check bib entry still exists. Otherwise ignore.
-                    let reference = this.db[event.id]
+                    const reference = this.db[event.id]
                     if (reference) {
                         return {
                             type: 'update',
@@ -169,7 +169,7 @@ export class ModBibliographyDB {
 
     findReference(ref) {
         return Object.keys(this.db).find(id => {
-            let bib = this.db[id]
+            const bib = this.db[id]
             return (
                 bib.bib_type === ref.bib_type &&
                 deepEqual(bib.fields, ref.fields)

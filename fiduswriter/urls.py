@@ -8,8 +8,6 @@ from base.views import app as app_view
 from django.views.i18n import JavaScriptCatalog
 from importlib import import_module
 
-admin.autodiscover()
-
 # Django URLs -- Notice that these are only consulted after the
 # tornado_url_list found in base/servers/tornado_django_hybrid.py
 urlpatterns = [

@@ -18,6 +18,11 @@ export class ModMarginboxes {
             author: 0,
             assigned: 0
         }
+        this.commentColors = {
+            isMajor: '#f4c9d9',
+            marker: '#f9f9f9',
+            active: '#fffacf'
+        }
         this.bindEvents()
     }
 
@@ -203,15 +208,17 @@ export class ModMarginboxes {
                     resolve()
                     return
                 }
-                const marginBoxPlacements = Array.from(marginBoxesDOM).map((mboxDOM, index) => {
+                const bodyTop = document.body.getBoundingClientRect().top,
+                    marginBoxPlacements = Array.from(marginBoxesDOM).map((mboxDOM, index) => {
                         const mboxDOMRect = mboxDOM.getBoundingClientRect()
                         return {
                             height: mboxDOMRect.height,
-                            refPos: this.editor.view.coordsAtPos(referrers[index]).top
+                            refPos: this.editor.view.coordsAtPos(referrers[index]).top - bodyTop
                         }
                     }),
                     firstActiveIndex = marginBoxes.findIndex(mBox => mBox.active),
                     firstActiveMboxPlacement = marginBoxPlacements[firstActiveIndex]
+
                 let activeIndex = firstActiveIndex,
                     currentPos = 0
                 while (activeIndex > -1) {
@@ -221,7 +228,10 @@ export class ModMarginboxes {
                     } else if (mboxPlacement===firstActiveMboxPlacement) {
                         mboxPlacement.pos = mboxPlacement.refPos
                     } else {
-                        mboxPlacement.pos = Math.min(currentPos - 10 - mboxPlacement.height, mboxPlacement.refPos)
+                        mboxPlacement.pos = Math.min(
+                            currentPos - 2 - mboxPlacement.height,
+                            mboxPlacement.refPos
+                    )
                     }
                     currentPos = mboxPlacement.pos
                     activeIndex--
@@ -235,12 +245,12 @@ export class ModMarginboxes {
 
                 while (activeIndex < marginBoxPlacements.length) {
                     const mboxPlacement = marginBoxPlacements[activeIndex]
-                    mboxPlacement.pos = Math.max(currentPos + 10, mboxPlacement.refPos)
+                    mboxPlacement.pos = Math.max(currentPos + 2, mboxPlacement.refPos)
                     currentPos = mboxPlacement.pos + mboxPlacement.height
                     activeIndex++
                 }
 
-                const initialOffset = document.getElementById('margin-box-column').getBoundingClientRect().top + 60
+                const initialOffset = document.body.classList.contains('header-closed') ? 91 + 60 : 200 + 60
                 let totalOffset = 0
 
                 const marginBoxesPlacementStyle = marginBoxPlacements.map((mboxPlacement, index) => {
@@ -254,7 +264,7 @@ export class ModMarginboxes {
                         css += `.margin-box:nth-of-type(${(index+1)}) {margin-top: ${topMargin}px;}\n`
                         totalOffset += topMargin
                     }
-                    totalOffset += mboxPlacement.height + 10
+                    totalOffset += mboxPlacement.height + 2
                     return css
                 }).join('')
 
@@ -354,13 +364,13 @@ export class ModMarginboxes {
             if (this.filterOptions.comments) {
                 if (active) {
                     this.activeCommentStyle +=
-                        `.comment[data-id="${comment.id}"], .comment[data-id="${comment.id}"] .comment {background-color: #fffacf !important;}`
+                        `.comment[data-id="${comment.id}"], .comment[data-id="${comment.id}"] .comment {background-color: ${this.commentColors.active} !important;}`
                 } else if (comment.isMajor) {
                     this.activeCommentStyle +=
-                        `.comment[data-id="${comment.id}"] {background-color: #fbd0e0;}`
+                        `#paper-editable .comment[data-id="${comment.id}"] {background-color: ${this.commentColors.isMajor};}`
                 } else {
                     this.activeCommentStyle +=
-                        `.comment[data-id="${comment.id}"] {background-color: #f9f9f9;}`
+                        `#paper-editable .comment[data-id="${comment.id}"] {background-color: ${this.commentColors.marker};}`
                 }
             }
             marginBoxes.push({type: 'comment', data: comment, pos, view, active})

@@ -13,7 +13,7 @@
     margin-bottom: 6px;
     margin-left: -3px;
     display: flex;
-    border: 2px solid #fff;
+    border: 2px solid #f2f2f2;
     position: sticky;
     top: 179px;
 }
@@ -24,8 +24,8 @@ body.header-closed #margin-box-filter {
     flex: 1;
     background-color: #84b4a7;
     color: #fff;
-    border-right: 1px solid #fff;
-    border-left: 1px solid #fff;
+    border-right: 1px solid #f2f2f2;
+    border-left: 1px solid #f2f2f2;
     position: relative;
     cursor: pointer;
 }
@@ -47,15 +47,18 @@ body.header-closed #margin-box-filter {
 }
 
 .margin-box {
-    background-color: #f9f9f9;
+    background-color: #f8f8f8;
     color: #2c2723;
     width: 200px;
-    padding: 9px;
-    margin-top: 10px;
+    margin-top: 2px;
     position: relative;
 }
+.margin-box .comment-item:first-child {
+    background-color: #fff;
+}
+
 .margin-box.track {
-    background-color: #9eafcc;
+    background-color: #98a9c5;
     color: #fff;
 }
 .margin-box.active {
@@ -64,7 +67,14 @@ body.header-closed #margin-box-filter {
     border: 1px solid #c5c5c5;
     left: -18px;
     z-index: 5;
-    padding: 8px;
+    padding: 10px;
+}
+.margin-box.active .comment-item {
+    padding: 0;
+}
+.margin-box.active .comment-item:first-child {
+    background-color: #fffacf;
+    padding-bottom: 10px;
 }
 .margin-box.active:after {
     position: absolute;
@@ -80,8 +90,7 @@ body.header-closed #margin-box-filter {
 }
 
 .comment-item {
-    margin-top: 10px;
-    padding-top: 10px;
+    padding: 10px;
     border-top: solid 1px #ccc;
 }
 .comment-item.comment-answer {
@@ -89,7 +98,6 @@ body.header-closed #margin-box-filter {
 }
 .comment-item:first-child {
     margin-top: 0;
-    padding-top: 0;
     border-top: none;
 }
 .comment-item.wait, .comment-answer.wait {
@@ -162,9 +170,6 @@ body.header-closed #margin-box-filter {
     cursor: text;
 }
 
-.comment-answer {
-    margin-top: 9px;
-}
 .comment-btns {
     margin-top: 5px;
     text-align: right;
@@ -201,8 +206,8 @@ body.header-closed #margin-box-filter {
     margin: 5px 5px 9px 3px;
 }
 
-.comment-is-major-bgc {
-    background-color: #fbd0e0;
+.comment-is-major-bgc .comment-item:first-child {
+    background-color: #f4c9d9;
 }
 
 .comment.resolved .comment-item {

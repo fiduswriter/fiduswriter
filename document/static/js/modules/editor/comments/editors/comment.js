@@ -88,7 +88,7 @@ export class CommentEditor {
             'beforeend',
             `<input class="comment-is-major" type="checkbox" name="isMajor"
                 ${this.options.isMajor ? 'checked' : ''}/>
-            <label>${gettext("Is major")}</label>
+            <label>${gettext("High priority")}</label>
             <div class="comment-btns">
                 <button class="submit fw-button fw-dark" type="submit">
                     ${this.id !== '-1' ? gettext("Edit") :gettext("Submit")}

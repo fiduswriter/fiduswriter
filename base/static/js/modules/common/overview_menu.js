@@ -5,7 +5,7 @@ import {escapeText, whenReady} from "./basic"
 export class OverviewMenuView {
     constructor(overview, model) {
         this.overview = overview
-        this.model = model
+        this.model = model()
         this.dd = new diffDOM({
             valueDiffing: false
         })

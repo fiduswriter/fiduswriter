@@ -9,9 +9,9 @@ import {
 } from "./plugin"
 
 export function getSelectedChanges(state) {
-    let {decos} = key.getState(state)
+    const {decos} = key.getState(state)
 
-    let insertion = decos.find(undefined, undefined, spec => spec === selectedInsertionSpec)[0],
+    const insertion = decos.find(undefined, undefined, spec => spec === selectedInsertionSpec)[0],
         deletion = decos.find(undefined, undefined, spec => spec === selectedDeletionSpec)[0],
         format_change = decos.find(undefined, undefined, spec => spec === selectedChangeFormatSpec)[0],
         block_change = decos.find(undefined, undefined, spec => spec === selectedChangeBlockSpec)[0]
@@ -20,16 +20,15 @@ export function getSelectedChanges(state) {
 }
 
 export function setSelectedChanges(tr, type, pos) {
-    let node = tr.doc.nodeAt(pos),
+    const node = tr.doc.nodeAt(pos),
         mark = node.attrs.track ?
             node.attrs.track.find(trackAttr => trackAttr.type===type) :
             node.marks.find(mark => mark.type.name===type)
     if (!mark) {
         return
     }
-    let selectedChange = node.isInline ? getFromToMark(tr.doc, pos, mark) : {from: pos, to: pos + node.nodeSize}
-    let decos = DecorationSet.empty
-    let spec
+    const selectedChange = node.isInline ? getFromToMark(tr.doc, pos, mark) : {from: pos, to: pos + node.nodeSize}
+    let decos = DecorationSet.empty, spec
     if (type==='insertion') {
         spec = selectedInsertionSpec
     } else if (type==='deletion') {
@@ -41,7 +40,7 @@ export function setSelectedChanges(tr, type, pos) {
     } else {
         console.warn('unknown track type')
     }
-    let decoType = node.isInline ? Decoration.inline : Decoration.node
+    const decoType = node.isInline ? Decoration.inline : Decoration.node
     decos = decos.add(tr.doc, [decoType(selectedChange.from, selectedChange.to, {
         class: `selected-${type}`
     }, spec)])
@@ -49,7 +48,7 @@ export function setSelectedChanges(tr, type, pos) {
 }
 
 export function deactivateAllSelectedChanges(tr) {
-    let pluginState = {
+    const pluginState = {
         decos: DecorationSet.empty
     }
     return tr.setMeta(key, pluginState)
@@ -57,8 +56,8 @@ export function deactivateAllSelectedChanges(tr) {
 
 // From https://discuss.prosemirror.net/t/expanding-the-selection-to-the-active-mark/478/2 with some bugs fixed
 export function getFromToMark(doc, pos, mark) {
-    let $pos = doc.resolve(pos), parent = $pos.parent
-    let start = parent.childAfter($pos.parentOffset)
+    const $pos = doc.resolve(pos), parent = $pos.parent
+    const start = parent.childAfter($pos.parentOffset)
     if (!start.node) {
         return null
     }

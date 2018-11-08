@@ -43,7 +43,7 @@ export class GeneralPasteHandler {
         } else if (node.nodeType === 1) {
             let childNode = node.firstChild
             while (childNode) {
-                let nextChildNode = childNode.nextSibling
+                const nextChildNode = childNode.nextSibling
                 this.iterateNode(childNode)
                 childNode = nextChildNode
             }
@@ -61,8 +61,8 @@ export class GeneralPasteHandler {
     convertFootnotes() {
 
         this.footnoteMarkers.forEach((fnM, index) => {
-            let footnote = this.footnotes[index]
-            let newFnM = document.createElement('span')
+            const footnote = this.footnotes[index]
+            const newFnM = document.createElement('span')
             newFnM.classList.add('footnote-marker')
             const footnoteContents = footnote.innerHTML.replace(/\s+/g, ' ')
             // Remove linebreaks in string (not <BR>)

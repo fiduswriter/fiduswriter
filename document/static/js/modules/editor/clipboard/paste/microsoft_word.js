@@ -10,7 +10,7 @@ export class MicrosoftWordPasteHandler extends GeneralPasteHandler {
     // Remove unused content
     cleanDOM() {
         // Remove footnote list container with separator line
-        let removableElements = this.dom.querySelectorAll(
+        const removableElements = this.dom.querySelectorAll(
             'div[style*="mso-element:footnote-list"]'
         )
 
@@ -26,7 +26,7 @@ export class MicrosoftWordPasteHandler extends GeneralPasteHandler {
             if (node.textContent==="EndFragment") {
                 // End of paste content. Remove all remaining sibling nodes.
                 while(node) {
-                    let nextSibling = node.nextSibling
+                    const nextSibling = node.nextSibling
                     node.parentNode.removeChild(node)
                     node = nextSibling
                 }
@@ -39,7 +39,7 @@ export class MicrosoftWordPasteHandler extends GeneralPasteHandler {
         if (node.nodeType === 1) {
             let childNode = node.firstChild
             while (childNode) {
-                let nextChildNode = childNode.nextSibling
+                const nextChildNode = childNode.nextSibling
                 if (this.iterateNode(childNode)) {
                     childNode = nextChildNode
                 } else {
@@ -60,15 +60,15 @@ export class MicrosoftWordPasteHandler extends GeneralPasteHandler {
             node.firstChild.classList.contains("MsoFootnoteReference") &&
             this.pmType === "main") {
             // Remove "#_ftn" from the selector (#_ftn1)
-            let fnSelector = node.getAttribute("href")
-            let fnNumber = node.getAttribute(
+            const fnSelector = node.getAttribute("href")
+            const fnNumber = node.getAttribute(
                 "href"
             ).substring(5, fnSelector.length)
-            let footnote = this.dom.querySelector("#ftn" + fnNumber)
+            const footnote = this.dom.querySelector("#ftn" + fnNumber)
             if (footnote) {
-                let footnoteCounter = footnote.querySelector('a[href="#_ftnref' + fnNumber + '"]')
+                const footnoteCounter = footnote.querySelector('a[href="#_ftnref' + fnNumber + '"]')
                 if (footnoteCounter) {
-                    let followingNode = footnoteCounter.nextSibling
+                    const followingNode = footnoteCounter.nextSibling
                     footnoteCounter.parentNode.removeChild(footnoteCounter)
                     if (followingNode && followingNode.nodeType === 3) {
                         // If there is a text string right after the footnote

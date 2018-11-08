@@ -6,7 +6,7 @@ const key = new PluginKey('comments')
 
 const commentDuringCreationDecoSpec = {}
 
-let moveComment = function(doc, id, pos) {
+const moveComment = function(doc, id, pos) {
     // The content to which a comment was linked has been removed.
     // We need to find text close to the position to which we can link
     // comment.
@@ -54,11 +54,11 @@ let moveComment = function(doc, id, pos) {
             }
         }
     }
-    let markType = doc.type.schema.marks.comment.create({id})
+    const markType = doc.type.schema.marks.comment.create({id})
     return new AddMarkStep(posFrom, posTo, markType)
 }
 
-export let addCommentDuringCreationDecoration = function(state, tr) {
+export const addCommentDuringCreationDecoration = function(state, tr) {
     if (!tr.selection.from || tr.selection.from === tr.selection.to) {
         return false
     }
@@ -66,7 +66,7 @@ export let addCommentDuringCreationDecoration = function(state, tr) {
         decos
     } = key.getState(state)
 
-    let commentDuringCreationDeco = decos.find(undefined, undefined, spec => spec === commentDuringCreationDecoSpec)
+    const commentDuringCreationDeco = decos.find(undefined, undefined, spec => spec === commentDuringCreationDecoSpec)
 
     if (commentDuringCreationDeco) {
         decos = decos.remove([commentDuringCreationDeco])
@@ -79,12 +79,12 @@ export let addCommentDuringCreationDecoration = function(state, tr) {
     return tr.setMeta(key, {decos})
 }
 
-export let removeCommentDuringCreationDecoration = function(state, tr) {
+export const removeCommentDuringCreationDecoration = function(state, tr) {
     let {
         decos
     } = key.getState(state)
 
-    let commentDuringCreationDecos = decos.find(undefined, undefined, spec => spec === commentDuringCreationDecoSpec)
+    const commentDuringCreationDecos = decos.find(undefined, undefined, spec => spec === commentDuringCreationDecoSpec)
 
     if (!commentDuringCreationDecos) {
         return false
@@ -94,12 +94,12 @@ export let removeCommentDuringCreationDecoration = function(state, tr) {
     return tr.setMeta(key, {decos})
 }
 
-export let getCommentDuringCreationDecoration = function(state) {
-    let {
+export const getCommentDuringCreationDecoration = function(state) {
+    const {
         decos
     } = key.getState(state)
 
-    let deco = decos.find(undefined, undefined, spec => spec === commentDuringCreationDecoSpec)
+    const deco = decos.find(undefined, undefined, spec => spec === commentDuringCreationDecoSpec)
 
     if (deco.length) {
         return deco[0]
@@ -108,7 +108,7 @@ export let getCommentDuringCreationDecoration = function(state) {
     }
 }
 
-export let commentsPlugin = function(options) {
+export const commentsPlugin = function(options) {
     return new Plugin({
         key,
         state: {
@@ -118,7 +118,7 @@ export let commentsPlugin = function(options) {
                 }
             },
             apply(tr, prev, oldState, state) {
-                let meta = tr.getMeta(key)
+                const meta = tr.getMeta(key)
                 if (meta) {
                     // There has been an update, return values from meta instead
                     // of previous values
@@ -146,7 +146,7 @@ export let commentsPlugin = function(options) {
                 return
             }
 
-            let deletedComments = {}
+            const deletedComments = {}
                 // Check what area is affected
 
             trs.forEach(tr => {
@@ -196,7 +196,8 @@ export let commentsPlugin = function(options) {
             if (!Object.keys(deletedComments).length) {
                 return
             }
-            let steps = [], tr = state.tr
+            let steps = [],
+                tr = state.tr
             Object.entries(deletedComments).forEach(([id, pos]) => {
                 steps.push(moveComment(state.doc, id, pos))
             })
@@ -221,7 +222,7 @@ export let commentsPlugin = function(options) {
         },
         props: {
             decorations(state) {
-				let {
+				const {
 					decos
 				} = this.getState(state)
 				return decos

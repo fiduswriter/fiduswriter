@@ -16,7 +16,7 @@ export class ToolbarView {
 
         this.dd = new diffDOM()
         this.toolbarEl = document.querySelector('#toolbar').firstElementChild
-        this.sideMargins = 14 + 14 + 42 // CSS sets left margin to 14px + 42 px for left most button and we want the same margin on both sides
+        this.sideMargins = 14 + 14 + 52 // CSS sets left margin to 14px + 46 px for left most button and we want the same margin on both sides
         this.availableWidth = window.innerWidth - this.sideMargins
         this.openedMenu = false
         this.listeners = {}
@@ -154,13 +154,13 @@ export class ToolbarView {
         this.editor.menu.toolbarModel.content.some((menuItem, index) => {
             switch (menuItem.type) {
                 case 'info':
-                    spaceCounter -= 98
+                    spaceCounter -= 94
                     break
                 case 'dropdown':
-                    spaceCounter -= 109
+                    spaceCounter -= 111
                     break
                 default:
-                    spaceCounter -= 49
+                    spaceCounter -= 52
             }
             if (spaceCounter < 0) {
                 menuIndexToDrop = index - 2 // We need the space of two buttons for the more button

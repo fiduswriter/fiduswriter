@@ -2,7 +2,7 @@ import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
 
 const key = new PluginKey('placeholders')
-export let placeholdersPlugin = function(options) {
+export const placeholdersPlugin = function(options) {
 
     function calculatePlaceHolderDecorations(state) {
         const anchor = state.selection.$anchor
@@ -15,8 +15,8 @@ export let placeholdersPlugin = function(options) {
         if (!anchorPart || !headPart) {
             return
         }
-        let currentPart = anchorPart === headPart ? anchorPart : false
-        let articleNode = state.doc.firstChild
+        const currentPart = anchorPart === headPart ? anchorPart : false
+        const articleNode = state.doc.firstChild
 
         const placeHolderTexts = [
             gettext('Title...'),
@@ -27,18 +27,18 @@ export let placeholdersPlugin = function(options) {
             gettext('Body...')
         ]
 
-        let decorations = []
+        const decorations = []
 
         articleNode.forEach((partElement, offset, index) => {
             if (
                 (partElement.isTextblock && partElement.nodeSize === 2) ||
                 (!partElement.isTextblock && partElement.nodeSize === 4)
             ) {
-                let text = placeHolderTexts[index]
+                const text = placeHolderTexts[index]
                 if (!text) {
                     return
                 }
-                let placeHolder = document.createElement('span')
+                const placeHolder = document.createElement('span')
                 placeHolder.classList.add('placeholder')
                 placeHolder.setAttribute('data-placeholder', text)
                 if (currentPart===partElement) {
@@ -87,7 +87,7 @@ export let placeholdersPlugin = function(options) {
         },
         props: {
             decorations(state) {
-                let {
+                const {
                     decos
                 } = this.getState(state)
                 return decos

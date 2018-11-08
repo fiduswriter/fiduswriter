@@ -4,7 +4,7 @@ import {HTMLPaste, TextPaste} from "../clipboard/paste"
 import {docClipboardSerializer, fnClipboardSerializer} from "../clipboard/copy"
 
 const key = new PluginKey('clipboard')
-export let clipboardPlugin = function(options) {
+export const clipboardPlugin = function(options) {
     let shiftPressed = false
     return new Plugin({
         key,
@@ -18,15 +18,15 @@ export let clipboardPlugin = function(options) {
                 if (dragging || (slice && slice.size)) {
                     return false // Something other than en empty plain text string from outside. Handled by PM already.
                 }
-                let eventPos = view.posAtCoords({left: event.clientX, top: event.clientY})
+                const eventPos = view.posAtCoords({left: event.clientX, top: event.clientY})
                 if (!eventPos) {
                     return false
                 }
-                let $mouse = view.state.doc.resolve(eventPos.pos)
+                const $mouse = view.state.doc.resolve(eventPos.pos)
                 if (!$mouse) {
                     return false
                 }
-                let tr = view.state.tr
+                const tr = view.state.tr
                 tr.setSelection(new TextSelection($mouse))
                 view.dispatch(tr)
                 return true
@@ -42,7 +42,7 @@ export let clipboardPlugin = function(options) {
                 if (shiftPressed) {
                     return inText
                 }
-                let ph = new TextPaste(options.editor, inText, options.editor.currentView)
+                const ph = new TextPaste(options.editor, inText, options.editor.currentView)
                 ph.init()
                 return '' // We need to analyze it asynchronously, so we always need to turn this into an empty string for now.
             },

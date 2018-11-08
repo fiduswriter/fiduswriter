@@ -8,7 +8,7 @@ import {DocxExporter} from "../../exporter/docx"
 import {OdtExporter} from "../../exporter/odt"
 import {ImportFidusFile} from "../../importer/file"
 import {DocumentRevisionsDialog} from "../revisions"
-import {activateWait, deactivateWait, addAlert, post, Dialog} from "../../common"
+import {activateWait, deactivateWait, addAlert, postJson, Dialog} from "../../common"
 
 export class DocumentOverviewActions {
     constructor (documentOverview) {
@@ -21,19 +21,18 @@ export class DocumentOverviewActions {
         if (!doc) {
             return
         }
-        post(
+        postJson(
             '/document/delete/',
             {id}
-        ).catch(
-            error => {
-                addAlert('error', gettext(`${gettext('Could not delete document')}: '${doc.title}'`))
-                throw(error)
-            }
         ).then(
-            () => {
-                addAlert('success', gettext(`${gettext('Document has been deleted')}: '${doc.title}'`))
-                this.documentOverview.removeTableRows([id])
-                this.documentOverview.documentList = this.documentOverview.documentList.filter(doc => doc.id !== id)
+            ({json}) => {
+                if (json.done) {
+                    addAlert('success', gettext(`${gettext('Document has been deleted')}: '${doc.title}'`))
+                    this.documentOverview.removeTableRows([id])
+                    this.documentOverview.documentList = this.documentOverview.documentList.filter(doc => doc.id !== id)
+                } else {
+                    addAlert('error', gettext(`${gettext('Could not delete document')}: '${doc.title}'`))
+                }
             }
         )
     }

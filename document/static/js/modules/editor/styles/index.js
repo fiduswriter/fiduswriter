@@ -28,7 +28,7 @@ export class ModStyles {
     }
 
     showSafariErrorMessage() {
-        let dialog = new Dialog({
+        const dialog = new Dialog({
             title: gettext('Safari bug warning'),
             height: 100,
             body: gettext('Unfortunately Safari has a bug which makes it impossible to export to this format. Please use Chrome or Firefox (on a desktop computer).'),
@@ -38,10 +38,10 @@ export class ModStyles {
     }
 
     addExportTemplateMenuEntries() {
-        let exportMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='export')
+        const exportMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='export')
         // Remove any previous entries in case we run this a second time
         exportMenu.content = exportMenu.content.filter(menuItem => menuItem.class!=='export_template')
-        let exportMenuEntries = this.exportTemplates.map(template => {
+        const exportMenuEntries = this.exportTemplates.map(template => {
             if(template.file_type==='docx') {
                 return {
                     class: 'export_template',
@@ -93,7 +93,7 @@ export class ModStyles {
     }
 
     addDocumentStylesMenuEntries() {
-        let settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='settings'),
+        const settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='settings'),
             documentStyleMenu = settingsMenu.content.find(menu => menu.id==='document_style')
 
         documentStyleMenu.content = this.documentStyles.map(docStyle => {
@@ -101,8 +101,8 @@ export class ModStyles {
                 title: docStyle.title,
                 type: 'setting',
                 action: editor => {
-                    let article = editor.view.state.doc.firstChild
-                    let attrs = Object.assign({}, article.attrs)
+                    const article = editor.view.state.doc.firstChild
+                    const attrs = Object.assign({}, article.attrs)
                     attrs.documentstyle = docStyle.filename
                     editor.view.dispatch(
                         editor.view.state.tr.setNodeMarkup(0, false, attrs)
@@ -116,7 +116,7 @@ export class ModStyles {
     }
 
     addCitationStylesMenuEntries() {
-        let settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='settings'),
+        const settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='settings'),
             citationStyleMenu = settingsMenu.content.find(menu => menu.id==='citation_style')
 
         citationStyleMenu.content = this.citationStyles.map(citeStyle => {
@@ -124,8 +124,8 @@ export class ModStyles {
                 title: citeStyle.title,
                 type: 'setting',
                 action: editor => {
-                    let article = editor.view.state.doc.firstChild
-                    let attrs = Object.assign({}, article.attrs)
+                    const article = editor.view.state.doc.firstChild
+                    const attrs = Object.assign({}, article.attrs)
                     attrs.citationstyle = citeStyle.short_title
                     editor.view.dispatch(
                         editor.view.state.tr.setNodeMarkup(0, false, attrs)

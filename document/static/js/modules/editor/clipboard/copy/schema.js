@@ -8,7 +8,7 @@ import {citation} from "../../../schema/common"
 const copyCitation = Object.assign({}, citation)
 
 copyCitation.toDOM = function(node) {
-    let bibDB = node.type.schema.cached.bibDB,
+    const bibDB = node.type.schema.cached.bibDB,
         bibs = {}
         node.attrs.references.forEach(ref => bibs[ref.id] = bibDB.db[ref.id])
     return ["span", {

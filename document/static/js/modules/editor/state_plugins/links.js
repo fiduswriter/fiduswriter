@@ -9,8 +9,8 @@ import {LinkDialog} from "../dialogs"
 
 const key = new PluginKey('links')
 
-let copyLink = function(href) {
-    let textarea = document.createElement("textarea")
+const copyLink = function(href) {
+    const textarea = document.createElement("textarea")
     textarea.textContent = href
     textarea.style.position = "fixed" // Prevent scrolling to bottom of page in MS Edge.
     document.body.appendChild(textarea)
@@ -27,19 +27,19 @@ let copyLink = function(href) {
     }
 }
 
-export let linksPlugin = function(options) {
+export const linksPlugin = function(options) {
 
     function getUrl(state, oldState, oldUrl) {
-        let id = state.selection.$head.parent.attrs.id,
+        const id = state.selection.$head.parent.attrs.id,
             mark = state.selection.$head.marks().find(mark =>
-                mark.type.name === 'anchor'),
-            newUrl = oldUrl.split('#')[0]
+                mark.type.name === 'anchor')
+        let newUrl = oldUrl.split('#')[0]
         if (mark) {
             newUrl += `#${mark.attrs.id}`
         } else if (id) {
             newUrl += `#${id}`
         }
-        let changed = oldUrl === newUrl ? false : true
+        const changed = oldUrl === newUrl ? false : true
         // TODO: Should the following be moved to a view?
         // Not sure if this counts as a DOM update.
         if (changed && options.editor.currentView.state === oldState) {
@@ -53,9 +53,14 @@ export let linksPlugin = function(options) {
             mark.type.name === 'link')
     }
 
+    function getAnchorMark(state) {
+        return state.selection.$head.marks().find(mark =>
+            mark.type.name === 'anchor')
+    }
+
     function getDecos(state) {
         const $head = state.selection.$head
-        let currentMarks = [],
+        const currentMarks = [],
             linkMark = $head.marks().find(
                 mark => mark.type.name === 'link'
             ),
@@ -71,30 +76,30 @@ export let linksPlugin = function(options) {
         if (!currentMarks.length) {
             return DecorationSet.empty
         }
-        let startIndex = $head.index()
+        let index = $head.index()
         while (
-            startIndex > 0 &&
+            index < ($head.parent.childCount-1) &&
             currentMarks.some(mark => mark.isInSet(
-                $head.parent.child(startIndex-1).marks
+                $head.parent.child(index-1).marks
             ))
         ) {
-            startIndex--
+            index++
         }
         let startPos = $head.start() // position of block start.
-        for (let i = 0; i < startIndex; i++) {
+        for (let i = 0; i <= index; i++) {
             startPos += $head.parent.child(i).nodeSize
         }
 
-        let dom = createDropUp(linkMark, anchorMark, $head),
+        const dom = createDropUp(linkMark, anchorMark, $head),
             deco = Decoration.widget(startPos, dom)
         return DecorationSet.create(state.doc, [deco])
     }
 
     function createDropUp(linkMark, anchorMark, $head) {
-        let dropUp = document.createElement('span'),
+        const dropUp = document.createElement('span'),
             editor = options.editor,
-            writeAccess = editor.docInfo.access_rights === 'write' ? true : false,
-            linkType, linkHref, anchorHref, requiredPx = 10
+            writeAccess = editor.docInfo.access_rights === 'write' ? true : false
+        let linkType, linkHref, anchorHref, requiredPx = 10
 
         if (linkMark) {
             linkType = linkMark.attrs.href[0] === '#' ? 'internal' : 'external'
@@ -116,89 +121,112 @@ export let linksPlugin = function(options) {
             <div class="link drop-up-inner" style="top: -${requiredPx}px;">
                 ${
                     linkMark ?
-                    `<a class="href"
-                            ${linkType === 'external' ? 'target="_blank"' : ''} href="${linkHref}">
-            		${linkHref}
-            		</a>&nbsp;
-                    <button class="fw-button fw-light fw-large fw-square copy-link" title="${gettext('Copy link')}">
-                        <span class="ui-button-text">
-                            <i class="fa fa-clipboard"></i>
-                        </span>
-                    </button><br>
-            		${gettext('Title')}:&nbsp;${linkMark.attrs.title}
-            		${writeAccess ? noSpaceTmp`
-                        <div class="edit">
-                            [ <a href="#" class="edit-link">${gettext('Edit')}</a> |
-                            <a href="#" class="remove-link">${gettext('Remove')}</a>]
+                    `<div class="drop-up-head">
+                        ${
+                            linkMark.attrs.title ?
+                            `<div class="link-title">${gettext('Title')}:&nbsp;${linkMark.attrs.title}</div>` :
+                            ''
+                        }
+                        <div class="link-href">
+                            <a class="href" ${linkType === 'external' ? 'target="_blank"' : ''} href="${linkHref}">
+            		            ${linkHref}
+            		        </a>
                         </div>
-                    ` : ''}
-                    ` :
+                    </div>
+                    <ul class="drop-up-options">
+                        <li class="copy-link" title="${gettext('Copy link')}">
+                            ${gettext('Copy link')}
+                        </li>
+                        ${
+                            writeAccess ?
+                            `<li class="edit-link" title="${gettext('Edit link')}">
+                                ${gettext('Edit')}
+                            </li>
+                            <li class="remove-link" title="${gettext('Remove link')}">
+                                ${gettext('Remove')}
+                            </li>` :
+                            ''
+                        }
+                    </ul>` :
                     ''
                 }
                 ${
-                    anchorMark && linkMark ? '<hr>' : ''
-                }
-                ${
                     anchorMark ?
-                    `${anchorHref}&nbsp;
-                    <button class="fw-button fw-light fw-large fw-square copy-anchor" title="${gettext('Copy link')}">
-                        <span class="ui-button-text">
-                            <i class="fa fa-clipboard"></i>
-                        </span>
-                    </button><br>
-            		${writeAccess ? noSpaceTmp`
-                        <div class="edit">
-                            [<a href="#" class="remove-anchor">${gettext('Remove')}</a>]
+                    `<div class="drop-up-head">
+                        <div class="link-title">${gettext('Anchor')}</div>
+                        <div class="link-href">
+                        <a class="href" target="_blank" href="${anchorHref}">
+                            ${anchorHref}
+                        </a>
                         </div>
-                    ` : ''}
-                    ` :
+                    </div>
+                    <ul class="drop-up-options">
+                        <li class="copy-anchor" title="${gettext('Copy anchor')}">
+                            ${gettext('Copy anchor')}
+                        </li>
+                        ${
+                            writeAccess ?
+                            `<li class="remove-anchor" title="${gettext('Remove anchor')}">
+                                ${gettext('Remove')}
+                            </li>` :
+                            ''
+                        }
+                    </ul>` :
                     ''
                 }
             </div>`
 
-        let copyLinkHref = dropUp.querySelector('.copy-link')
+        const copyLinkHref = dropUp.querySelector('.copy-link')
         if (copyLinkHref) {
-            copyLinkHref.addEventListener('click',
+            copyLinkHref.addEventListener('mousedown',
                 event => {
                     event.preventDefault()
+                    event.stopImmediatePropagation()
                     copyLink(linkHref)
                 }
             )
         }
-        let copyAnchorHref = dropUp.querySelector('.copy-anchor')
+        const copyAnchorHref = dropUp.querySelector('.copy-anchor')
         if (copyAnchorHref) {
-            copyAnchorHref.addEventListener('click',
-                () => copyLink(anchorHref)
+            copyAnchorHref.addEventListener('mousedown',
+                () => {
+                    event.preventDefault()
+                    event.stopImmediatePropagation()
+                    copyLink(anchorHref)
+                }
             )
         }
 
-        let editLink = dropUp.querySelector('.edit-link')
+        const editLink = dropUp.querySelector('.edit-link')
         if (editLink) {
-            editLink.addEventListener('click',
+            editLink.addEventListener('mousedown',
                 event => {
                     event.preventDefault()
-                    let dialog = new LinkDialog(editor)
+                    event.stopImmediatePropagation()
+                    const dialog = new LinkDialog(editor)
                     dialog.init()
                 }
             )
         }
 
-        let removeLink = dropUp.querySelector('.remove-link')
+        const removeLink = dropUp.querySelector('.remove-link')
         if (removeLink) {
-            removeLink.addEventListener('click',
+            removeLink.addEventListener('mousedown',
                 event => {
                     event.preventDefault()
+                    event.stopImmediatePropagation()
                     editor.view.dispatch(editor.view.state.tr.removeMark(
                         $head.start(), $head.end(), linkMark))
                 }
             )
         }
 
-        let removeAnchor = dropUp.querySelector('.remove-anchor')
+        const removeAnchor = dropUp.querySelector('.remove-anchor')
         if (removeAnchor) {
-            removeAnchor.addEventListener('click',
+            removeAnchor.addEventListener('mousedown',
                 event => {
                     event.preventDefault()
+                    event.stopImmediatePropagation()
                     editor.view.dispatch(editor.view.state.tr.removeMark(
                         $head.start(), $head.end(), anchorMark))
                 }
@@ -222,23 +250,24 @@ export let linksPlugin = function(options) {
                 let {
                     url,
                     decos,
-                    linkMark
+                    linkMark,
+                    anchorMark
                 } = this.getState(oldState)
-
-                if (tr.steps.length || tr.selectionSet) {
-                    url = getUrl(state, oldState, url)
-                    let newLinkMark = getLinkMark(state)
-                    if (newLinkMark === linkMark) {
-                        decos = decos.map(tr.mapping, tr.doc)
-                    } else {
-                        decos = getDecos(state)
-                        linkMark = newLinkMark
-                    }
+                url = getUrl(state, oldState, url)
+                const newLinkMark = getLinkMark(state)
+                const newAnchorMark = getAnchorMark(state)
+                if (newLinkMark === linkMark && newAnchorMark === anchorMark) {
+                    decos = decos.map(tr.mapping, tr.doc)
+                } else {
+                    decos = getDecos(state)
+                    linkMark = newLinkMark
+                    anchorMark = newAnchorMark
                 }
                 return {
                     url,
                     decos,
-                    linkMark
+                    linkMark,
+                    anchorMark
                 }
             }
         },
@@ -284,8 +313,8 @@ export let linksPlugin = function(options) {
                     })
                 })
             })
-            let tr = trs.slice(-1)[0],
-                foundIdElement = false, // found heading or figure
+            const tr = trs.slice(-1)[0]
+            let foundIdElement = false, // found heading or figure
                 foundAnchorWithoutId = false // found an anchor without an ID
             ranges.forEach(range => {
                 tr.doc.nodesBetween(
@@ -313,14 +342,14 @@ export let linksPlugin = function(options) {
             // Check that unique IDs only exist once in the document
             // If an ID is used more than once, add steps to change the ID of all
             // but the first occurence.
-            let headingIds = [],
-                doubleHeadingIds = []
-            let figureIds = [],
+            const headingIds = [],
+                doubleHeadingIds = [],
+                figureIds = [],
                 doubleFigureIds = []
 
             // ID should not be found in the other pm either. So we look through
             // those as well.
-            let otherState = oldState.schema === options.editor.view.state.schema ?
+            const otherState = oldState.schema === options.editor.view.state.schema ?
                 options.editor.mod.footnotes.fnEditor.view.state :
                 options.editor.view.state
 
@@ -361,7 +390,7 @@ export let linksPlugin = function(options) {
                 return
             }
 
-            let newTransaction = state.tr.setMeta('fixIds', true)
+            const newTransaction = state.tr.setMeta('fixIds', true)
             // Change the IDs of the nodes that having an ID that was used previously
             // already.
             doubleHeadingIds.forEach(doubleId => {
@@ -371,7 +400,7 @@ export let linksPlugin = function(options) {
                     id = randomHeadingId()
                 }
 
-                let attrs = Object.assign({}, doubleId.node.attrs, {id})
+                const attrs = Object.assign({}, doubleId.node.attrs, {id})
 
                 // Because we only change attributes, positions should stay the
                 // the same throughout all our extra steps. We therefore do no
@@ -389,7 +418,7 @@ export let linksPlugin = function(options) {
                     id = randomFigureId()
                 }
 
-                let attrs = Object.assign({}, doubleId.node.attrs, {id})
+                const attrs = Object.assign({}, doubleId.node.attrs, {id})
 
                 // Because we only change attributes, positions should stay the
                 // the same throughout all our extra steps. We therefore do no
@@ -400,7 +429,7 @@ export let linksPlugin = function(options) {
 
             // Remove anchor marks without ID
             if (foundAnchorWithoutId) {
-                let markType = state.schema.marks.anchor.create({id : false})
+                const markType = state.schema.marks.anchor.create({id : false})
                 newTransaction.step(
                     new RemoveMarkStep(
                         0,
@@ -414,14 +443,14 @@ export let linksPlugin = function(options) {
         props: {
             handleDOMEvents: {
                 focus: (view, event) => {
-                    let {
+                    const {
                         url
                     } = key.getState(view.state)
                     window.history.replaceState("", "", url)
                 }
             },
             decorations(state) {
-                let {
+                const {
                     decos
                 } = this.getState(state)
                 return decos

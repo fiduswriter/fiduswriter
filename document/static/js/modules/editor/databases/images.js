@@ -83,7 +83,7 @@ export class ModImageDB {
                     return event
                 } else if (event.type === 'update') {
                     // Check image entry still exists. Otherwise ignore.
-                    let image = this.db[event.id]
+                    const image = this.db[event.id]
                     if (image) {
                         return {
                             type: 'update',

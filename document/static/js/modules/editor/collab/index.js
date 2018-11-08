@@ -17,7 +17,7 @@ export class ModCollab {
     }
 
     updateParticipantList(participantArray) {
-        let allSessionIds = [],
+        const allSessionIds = [],
             participantObj = {}
 
         participantArray.forEach(participant => {
@@ -46,11 +46,11 @@ export class ModCollab {
         // If not, remove the corresponding carets if any.
         this.sessionIds.forEach(session_id => {
             if (!allSessionIds.includes(session_id)) {
-                let tr = removeCollaboratorSelection(
+                const tr = removeCollaboratorSelection(
                     this.editor.view.state,
                     {session_id}
                 )
-                let fnTr = removeCollaboratorSelection(
+                const fnTr = removeCollaboratorSelection(
                     this.editor.mod.footnotes.fnEditor.view.state,
                     {session_id}
                 )

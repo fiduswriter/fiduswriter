@@ -9,7 +9,7 @@ import {AuthorDialog} from "../dialogs"
 
 const key = new PluginKey('authorInput')
 
-let findAuthorsEndPos = function(state) {
+const findAuthorsEndPos = function(state) {
     let pos = 1, // enter article
         child = 0
     while(state.doc.firstChild.child(child).type.name !== 'authors') {
@@ -21,25 +21,25 @@ let findAuthorsEndPos = function(state) {
     return pos
 }
 
-export let authorsEndPos = function(state) {
-    let {decos} = key.getState(state),
+export const authorsEndPos = function(state) {
+    const {decos} = key.getState(state),
         decoArray = decos.find(),
         pos = decoArray.length ? decoArray[0].from : findAuthorsEndPos(state)
     return pos
 }
 
-export let authorInputPlugin = function(options) {
+export const authorInputPlugin = function(options) {
 
-    let createAuthorsEndDeco = function(state) {
-        let dom = document.createElement('button')
+    const createAuthorsEndDeco = function(state) {
+        const dom = document.createElement('button')
         dom.setAttribute('class','fw-button fw-light')
         dom.innerHTML = gettext('Add author...')
 
         dom.addEventListener('click', () => {
-            let dialog = new AuthorDialog(options.editor)
+            const dialog = new AuthorDialog(options.editor)
             dialog.init()
         })
-        let pos = findAuthorsEndPos(state)
+        const pos = findAuthorsEndPos(state)
         return Decoration.widget(pos, dom, {
             side: 1,
             stopEvent: event => true,
@@ -47,8 +47,8 @@ export let authorInputPlugin = function(options) {
         })
     }
 
-    let createDropUp = function() {
-        let dropUp = document.createElement('span'),
+    const createDropUp = function() {
+        const dropUp = document.createElement('span'),
             requiredPx = 60
 
         dropUp.classList.add('drop-up-outer')
@@ -61,7 +61,7 @@ export let authorInputPlugin = function(options) {
             </div>`
 
         dropUp.querySelector('.edit-author').addEventListener('click', () => {
-            let dialog = new AuthorDialog(options.editor, options.editor.view.state.selection.node.attrs)
+            const dialog = new AuthorDialog(options.editor, options.editor.view.state.selection.node.attrs)
             dialog.init()
         })
         return dropUp
@@ -74,7 +74,7 @@ export let authorInputPlugin = function(options) {
                 let decos = DecorationSet.empty, dropUp
 
                 if (options.editor.docInfo.access_rights === 'write') {
-                    let authorsButtonDeco = createAuthorsEndDeco(state)
+                    const authorsButtonDeco = createAuthorsEndDeco(state)
                     decos = decos.add(state.doc, [authorsButtonDeco])
                     dropUp = createDropUp()
                 }
@@ -105,7 +105,7 @@ export let authorInputPlugin = function(options) {
                     onRemove: spec => decoDropped = spec.id === 'authorsButton' ? true : decoDropped
                 })
                 if (decoDropped) {
-                    let authorsButtonDeco = createAuthorsEndDeco(state)
+                    const authorsButtonDeco = createAuthorsEndDeco(state)
                     decos = decos.add(state.doc, [authorsButtonDeco])
                 }
                 if (
@@ -113,7 +113,7 @@ export let authorInputPlugin = function(options) {
                     oldState.selection.node.type.name === 'author' &&
                     state.selection.node !== oldState.selection.node
                 ) {
-                    let oldDropUpDeco = decos.find(null, null, spec => spec.id === 'authorDropUp')
+                    const oldDropUpDeco = decos.find(null, null, spec => spec.id === 'authorDropUp')
                     if (oldDropUpDeco && oldDropUpDeco.length) {
                         decos = decos.remove(oldDropUpDeco)
                     }
@@ -123,7 +123,7 @@ export let authorInputPlugin = function(options) {
                     state.selection.node.type.name === 'author' &&
                     state.selection.node !== oldState.selection.node
                 ) {
-                    let dropUpDeco = Decoration.widget(state.selection.from, dropUp, {
+                    const dropUpDeco = Decoration.widget(state.selection.from, dropUp, {
                         side: 1,
                         stopEvent: event => true,
                         id: 'authorDropUp'
@@ -140,7 +140,7 @@ export let authorInputPlugin = function(options) {
         },
         props: {
             decorations(state) {
-				let {
+				const {
 					decos
 				} = this.getState(state)
 

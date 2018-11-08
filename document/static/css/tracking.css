@@ -11,9 +11,15 @@ span.deletion {
     color: #000;
 }
 
+.margin-box.track > div {
+    padding: 10px;
+}
+
+.margin-box.track.active > div {
+    padding: 0;
+}
 
 .margin-box .track-title {
-    text-align: right;
     font-weight: 700;
 }
 

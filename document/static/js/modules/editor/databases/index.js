@@ -11,7 +11,7 @@ export class ModDB {
 
     // remove images/citation items that are no longer part of the document.
     clean() {
-        let usedImages = [],
+        const usedImages = [],
             usedBibs = []
         this.editor.view.state.doc.descendants(node => {
             if (node.type.name==='citation') {
@@ -29,7 +29,7 @@ export class ModDB {
             }
         })
 
-        let unusedImages = Object.keys(this.imageDB.db).filter(value =>
+        const unusedImages = Object.keys(this.imageDB.db).filter(value =>
                 !usedImages.includes(parseInt(value))
             ),
             unusedBibs = Object.keys(this.bibDB.db).filter(value =>

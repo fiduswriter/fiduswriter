@@ -34,12 +34,13 @@ export class HeaderbarView {
     }
 
     onclick(event) {
-        let target = event.target
+        const target = event.target
 
         if(target.matches('#headerbar #header-navigation .fw-pulldown-item')) {
             // A header nav menu item was clicked. Now we just need to find
             // which one and execute the corresponding action.
-            let searchPath = [], seekItem = target
+            const searchPath = []
+            let seekItem = target
             while(seekItem.closest('li')) {
                 let itemNumber = 0
                 seekItem = seekItem.closest('li')
@@ -57,7 +58,7 @@ export class HeaderbarView {
                 menuNumber++
                 seekItem = seekItem.previousElementSibling
             }
-            let menu = this.editor.menu.headerbarModel.content[menuNumber]
+            const menu = this.editor.menu.headerbarModel.content[menuNumber]
 
             let menuItem = menu
 
@@ -162,26 +163,43 @@ export class HeaderbarView {
     }
 
     update() {
-        let newHeader = document.createElement('div')
+        const newHeader = document.createElement('div')
         newHeader.innerHTML = this.getHeaderHTML()
-        let diff = this.dd.diff(this.headerEl, newHeader)
+        const diff = this.dd.diff(this.headerEl, newHeader)
         this.dd.apply(this.headerEl, diff)
+        if (this.editor.menu.headerbarModel.open) {
+            document.body.classList.remove('header-closed')
+        } else {
+            document.body.classList.add('header-closed')
+        }
     }
 
     getHeaderHTML() {
-        let doc = this.editor.view.state.doc
+        const doc = this.editor.view.state.doc
         if (!this.editor.menu.headerbarModel.open) {
             // header is closed
             return ''
         }
+        let title = ""
+        doc.firstChild.firstChild.forEach(
+            child => {
+                if(!child.marks.find(mark => mark.type.name==='deletion')) {
+                    title += escapeText(child.textContent)
+                }
+            }
+        )
+        if (!title.length) {
+            title = gettext('Untitled Document')
+        }
+
         return `
             <div id="close-document-top" title="${gettext("Close the document and return to the document overview menu.")}">
                 <a href="/">
-                    <i class="fa fa-times-circle"></i>
+                    <i class="fa fa-times"></i>
                 </a>
             </div>
             <div id="document-top">
-                <h1>${doc.firstChild.firstChild.textContent.length ? escapeText(doc.firstChild.firstChild.textContent) : gettext('Untitled Document')}</h1>
+                <h1>${title}</h1>
                 <nav id="header-navigation">
                     ${this.getHeaderNavHTML()}
                 </nav>
@@ -191,7 +209,7 @@ export class HeaderbarView {
     }
 
     getParticipantListHTML() {
-        let participants = this.editor.mod.collab.participants
+        const participants = this.editor.mod.collab.participants
         if (participants.length > 1) {
             return `
                 <div id="connected-collaborators">

@@ -24,7 +24,7 @@ export class HTMLPaste {
     }
 
     parseHTML() {
-        let parser = new window.DOMParser()
+        const parser = new window.DOMParser()
         this.htmlDoc = parser.parseFromString(this.inHTML, "text/html").getElementsByTagName('html')[0]
     }
 
@@ -32,13 +32,13 @@ export class HTMLPaste {
     // handler.
     selectHandler() {
         // For LibreOffice
-        let head = this.htmlDoc.getElementsByTagName('head')[0]
-        let generatorMetaTag = head.querySelector('meta[name=generator]')
+        const head = this.htmlDoc.getElementsByTagName('head')[0]
+        const generatorMetaTag = head.querySelector('meta[name=generator]')
         // For Google Docs
-        let body = this.htmlDoc.getElementsByTagName('body')[0]
-        let firstB = body.querySelector('b')
+        const body = this.htmlDoc.getElementsByTagName('body')[0]
+        const firstB = body.querySelector('b')
         // For Fidus Writer
-        let pmSlice = this.htmlDoc.querySelector('[data-pm-slice]')
+        const pmSlice = this.htmlDoc.querySelector('[data-pm-slice]')
         if (this.htmlDoc.hasAttribute('xmlns:w') &&
             this.htmlDoc.getAttribute('xmlns:w') === "urn:schemas-microsoft-com:office:word"
         ) {

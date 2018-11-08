@@ -19,17 +19,17 @@ export class FidusWriterPasteHandler extends GeneralPasteHandler {
 
     verifyCitationNode(node) {
         try {
-            let bibs = JSON.parse(node.dataset.bibs),
+            const bibs = JSON.parse(node.dataset.bibs),
                 references = JSON.parse(node.dataset.references),
                 bibDB = this.editor.mod.db.bibDB,
                 idTranslations = {}
             Object.keys(bibs).forEach(bibKey => {
-                let reference = bibs[bibKey]
-                let oldKey = bibDB.findReference(reference)
+                const reference = bibs[bibKey]
+                const oldKey = bibDB.findReference(reference)
                 if (oldKey) {
                     idTranslations[bibKey] = oldKey
                 } else {
-                    let newKey = bibDB.addReference(reference, bibKey)
+                    const newKey = bibDB.addReference(reference, bibKey)
                     idTranslations[bibKey] = newKey
                 }
             })

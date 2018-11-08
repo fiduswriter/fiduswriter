@@ -1,4 +1,4 @@
-export let wordCounterDialogTemplate = ({words, chars_no_space, chars}) =>
+export const wordCounterDialogTemplate = ({words, chars_no_space, chars}) =>
     `<table class="fw-document-table">
         <thead class="fw-document-table-header"><tr>
             <th>${gettext("Number of")}</th>

@@ -23,7 +23,7 @@ export class ModCollabColors {
     }
 
     setup() {
-        let styleContainers = document.createElement('temp')
+        const styleContainers = document.createElement('temp')
         styleContainers.innerHTML = `<style type="text/css" id="user-colors"></style>`
         while (styleContainers.firstElementChild) {
             document.body.appendChild(styleContainers.firstElementChild)
@@ -44,7 +44,7 @@ export class ModCollabColors {
     // Ensure that there are at least the given number of user color styles.
     provideUserColorStyles() {
         this.userColorStyle.innerHTML = this.colorIds.map((id, index) => {
-            let color = index < CSS_COLORS.length ? CSS_COLORS[index] :
+            const color = index < CSS_COLORS.length ? CSS_COLORS[index] :
                 `${Math.round(Math.random()*255)},${Math.round(Math.random()*255)},${Math.round(Math.random()*255)}`
             return noSpaceTmp`
                 span.user-${id} {

@@ -3,7 +3,7 @@ import {Plugin, PluginKey} from "prosemirror-state"
 import {HeaderbarView} from "../menus"
 
 const key = new PluginKey('header')
-export let headerbarPlugin = function(options) {
+export const headerbarPlugin = function(options) {
     return new Plugin({
         key,
         view(editorView) { return new HeaderbarView(editorView, options) }

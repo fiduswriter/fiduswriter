@@ -207,6 +207,7 @@ export class Editor {
 
     render() {
         document.body = document.createElement('body')
+        document.body.classList.add('editor')
         document.body.innerHTML = `<div id="editor">
             <div id="wait" class="active"><i class="fa fa-spinner fa-pulse"></i></div>
             <header>
@@ -218,7 +219,7 @@ export class Editor {
                 </nav>
             </header>
             <div id="editor-content">
-                <div id="flow" class="comments-enabled hide">
+                <div id="flow" class="hide">
                     <div id="paper-editable">
                         <div id="document-editable" class="user-contents"></div>
                         <div id="footnote-box-container" class="user-contents">
@@ -227,7 +228,10 @@ export class Editor {
                     </div>
                     <div class="article-bibliography user-contents"></div>
                 </div>
-                <div id="margin-box-container"></div>
+                <div id="margin-box-column">
+                    <div id="margin-box-filter"></div>
+                    <div id="margin-box-container"></div>
+                </div>
             </div>
             <div id="chat">
                 <i class="resize-button fa fa-angle-double-down"></i>
@@ -260,7 +264,7 @@ export class Editor {
                 }
             },
             dispatchTransaction: (tr) => {
-                let newState = this.view.state.apply(tr)
+                const newState = this.view.state.apply(tr)
                 this.view.updateState(newState)
                 this.mod.collab.docChanges.sendToCollaborators()
             }
@@ -268,6 +272,7 @@ export class Editor {
         })
         // The editor that is currently being edited in -- main or footnote editor
         this.currentView = this.view
+        this.mod.citations.init()
         this.mod.footnotes.init()
         new ModCollab(this)
         new ModTools(this)
@@ -299,11 +304,11 @@ export class Editor {
             this.mod.collab.docChanges.enableDiffSending()
         }
         // Remember location hash to scroll there subsequently.
-        let locationHash = window.location.hash
+        const locationHash = window.location.hash
 
         this.clientTimeAdjustment = Date.now() - data.time
 
-        let doc = data.doc
+        const doc = data.doc
 
         this.docInfo = data.doc_info
         this.docInfo.version = doc["v"]
@@ -335,7 +340,7 @@ export class Editor {
         } else {
             stateDoc = this.schema.topNodeType.createAndFill()
         }
-        let plugins = this.statePlugins.map(plugin => {
+        const plugins = this.statePlugins.map(plugin => {
             if (plugin[1]) {
                 return plugin[0](plugin[1](doc))
             } else {
@@ -343,7 +348,7 @@ export class Editor {
             }
         })
 
-        let stateConfig = {
+        const stateConfig = {
             schema: this.schema,
             doc: stateDoc,
             plugins
@@ -372,13 +377,21 @@ export class Editor {
     // Collect all components of the current doc. Needed for saving and export
     // filters
     getDoc(options={}) {
-        let pmArticle = options.changes === 'acceptAllNoInsertions' ?
+        const pmArticle = options.changes === 'acceptAllNoInsertions' ?
             acceptAllNoInsertions(this.docInfo.confirmedDoc).firstChild :
             this.docInfo.confirmedDoc.firstChild
+            let title = ""
+            pmArticle.firstChild.forEach(
+                child => {
+                    if(!child.marks.find(mark => mark.type.name==='deletion')) {
+                        title += child.textContent
+                    }
+                }
+            )
         return {
             contents: pmArticle.toJSON(),
             settings: getSettings(pmArticle),
-            title: pmArticle.firstChild.textContent.substring(0, 255),
+            title: title.substring(0, 255),
             version: this.docInfo.version,
             comments: this.mod.comments.store.comments,
             id: this.docInfo.id
@@ -398,7 +411,7 @@ export class Editor {
                 foundPos = pos + 1
                 view = this.view
             } else {
-                let anchorMark = node.marks.find(mark => mark.type.name === 'anchor')
+                const anchorMark = node.marks.find(mark => mark.type.name === 'anchor')
                 if (anchorMark && anchorMark.attrs.id === id) {
                     foundPos = pos + 1
                     view = this.view
@@ -414,7 +427,7 @@ export class Editor {
                     foundPos = pos + 1
                     view = this.mod.footnotes.fnEditor.view
                 } else {
-                    let anchorMark = node.marks.find(mark => mark.type.name === 'anchor')
+                    const anchorMark = node.marks.find(mark => mark.type.name === 'anchor')
                     if (anchorMark && anchorMark.attrs.id === id) {
                         foundPos = pos + 1
                         view = this.mod.footnotes.fnEditor.view
@@ -429,11 +442,11 @@ export class Editor {
     }
 
     scrollPosIntoView(pos, view) {
-        let topMenuHeight = document.querySelector('header').offsetHeight + 10
-        let $pos = view.state.doc.resolve(pos)
+        const topMenuHeight = document.querySelector('header').offsetHeight + 10
+        const $pos = view.state.doc.resolve(pos)
         view.dispatch(view.state.tr.setSelection(new TextSelection($pos, $pos)))
         view.focus()
-        let distanceFromTop = view.coordsAtPos(pos).top - topMenuHeight
+        const distanceFromTop = view.coordsAtPos(pos).top - topMenuHeight
         window.scrollBy(0, distanceFromTop)
         return
     }

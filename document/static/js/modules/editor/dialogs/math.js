@@ -8,7 +8,7 @@ import {Dialog} from "../../common"
 export class MathDialog {
     constructor(editor) {
         this.editor = editor
-        let defaultEquation = '\\$x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}'
+        const defaultEquation = '\\$x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}'
         this.node = this.editor.currentView.state.selection.node
         this.mathQuill = null
         this.equationSelected = this.node && this.node.attrs && this.node.attrs.equation ? true : false
@@ -26,7 +26,7 @@ export class MathDialog {
                     text: this.equationSelected ? gettext('Update') : gettext('Insert'),
                     classes: 'fw-dark insert-math',
                     click: () => {
-                        let view = this.editor.currentView,
+                        const view = this.editor.currentView,
                             state = view.state
 
                         this.equation = this.mathQuill.getLatex()
@@ -43,7 +43,7 @@ export class MathDialog {
                             this.dialog.close()
                             return
                         }
-                        let nodeType = state.schema.nodes['equation']
+                        const nodeType = state.schema.nodes['equation']
                         view.dispatch(
                             state.tr.replaceSelectionWith(nodeType.createAndFill({
                                 equation: this.equation

@@ -28,7 +28,7 @@
     "katex": "0.10.0-rc.1",
     "w3c-keyname": "1.1.x",
     "simple-datatables": "^1.7.2",
-    "vivliostyle-print": "^0.1.1"
+    "vivliostyle-print": "^0.1.2"
   },
   "jshintConfig": {
     "esversion": 6,

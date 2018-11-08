@@ -6,6 +6,7 @@
     border: solid 1px #ccc;
     vertical-align: middle;
     padding: 20px 14px 0 14px;
+    overflow-y: auto;
 }
 
 .fw-ar-button {

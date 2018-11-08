@@ -173,6 +173,7 @@ def delete_js(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
+        status = 200
         doc_id = int(request.POST['id'])
         document = Document.objects.get(pk=doc_id, owner=request.user)
         if document.is_deletable():
@@ -184,9 +185,9 @@ def delete_js(request):
             for image in Image.objects.filter(id__in=image_ids):
                 if image.is_deletable():
                     image.delete()
-            status = 200
+            response['done'] = True
         else:
-            status = 409
+            response['done'] = False
     return JsonResponse(
         response,
         status=status

@@ -6,11 +6,21 @@ from django.db.utils import OperationalError, ProgrammingError
 from django.contrib.auth.models import User
 from django.core import checks
 
+from style.models import DocumentStyle, CitationStyle
+
 # FW_DOCUMENT_VERSION: See also FW_FILETYPE_VERSION specified in export
 # (same value from >= 2.0) in
 # document/static/js/modules/exporter/native/zip.js
 
 FW_DOCUMENT_VERSION = 2.2
+
+
+class DocumentTemplate(models.Model):
+    title = models.CharField(max_length=255, default='', blank=True)
+    slug = models.SlugField()
+    definition = models.TextField(default='[]')
+    document_styles = models.ManyToManyField(DocumentStyle)
+    citation_styles = models.ManyToManyField(CitationStyle)
 
 
 class Document(models.Model):
@@ -44,6 +54,7 @@ class Document(models.Model):
     # True by default and for all normal documents. Can be set to False when
     # documents are added in plugins that list these documents somewhere else.
     listed = models.BooleanField(default=True)
+    template = models.ForeignKey(DocumentTemplate, on_delete=models.deletion.CASCADE)
 
     def __str__(self):
         if len(self.title) > 0:

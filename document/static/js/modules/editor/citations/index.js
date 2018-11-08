@@ -8,20 +8,18 @@ export class ModCitations {
         this.editor = editor
         this.citationType = ''
         this.fnOverrideElement =  false
-        this.setup()
     }
 
-    setup() {
+    init() {
         /* Add a style to hold dynamic CSS info about footnote numbering overrides.
          * Because we need footnotes in the editor and footnotes added through
          * citations to be numbered but they aren't in the same order in the DOM,
          * we need to organize the numbering manually.
          */
-        const styleContainers = document.createElement('temp')
-        styleContainers.innerHTML = `<style type="text/css" id="footnote-numbering-override"></style>`
-        while (styleContainers.firstElementChild) {
-            document.body.appendChild(styleContainers.firstElementChild)
-        }
+         document.body.insertAdjacentHTML(
+             'beforeend',
+             '<style type="text/css" id="footnote-numbering-override"></style>'
+         )
         this.fnOverrideElement = document.getElementById('footnote-numbering-override')
     }
 
@@ -185,10 +183,14 @@ export class ModCitations {
              this.editor.view.state.doc.descendants(function(node){
                  if (node.isInline && (node.type.name==='footnote' || node.type.name==='citation')) {
                      if (node.type.name==='footnote') {
-                         outputCSS += '#footnote-box-container .footnote-container:nth-of-type('+editorFootnoteCounter+') > *:first-child::before {content: "' + footnoteCounter + ' ";}\n'
+                         outputCSS += `#footnote-box-container .footnote-container:nth-of-type(${editorFootnoteCounter}) > *:first-child::before {
+                             content: "${footnoteCounter} ";
+                         }\n`
                          editorFootnoteCounter++
                      } else {
-                         outputCSS += '.footnote-citation:nth-of-type('+citationFootnoteCounter+')::before {content: "' + footnoteCounter + ' ";}\n'
+                         outputCSS += `.footnote-citation:nth-of-type(${citationFootnoteCounter})::before {
+                             content: "${footnoteCounter} ";
+                         }\n`
                          citationFootnoteCounter++
                      }
                      footnoteCounter++

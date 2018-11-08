@@ -8,29 +8,29 @@ export class ModToolsWordCount {
     }
 
     countWords() {
-        let textContent = this.mod.editor.view.state.doc.textContent,
+        const textContent = this.mod.editor.view.state.doc.textContent,
             footnoteContent = this.mod.editor.mod.footnotes.fnEditor.view.state.doc.textContent,
-            bibliographyContent = document.querySelector('.article-bibliography').textContent,
-            wholeContent = textContent + ' ' + footnoteContent + ' ' + bibliographyContent,
-            numChars = wholeContent.length - 2 // Subtract two for added spaces
+            bibliographyContent = document.querySelector('.article-bibliography').textContent
+        let wholeContent = textContent + ' ' + footnoteContent + ' ' + bibliographyContent
+        const numChars = wholeContent.length - 2 // Subtract two for added spaces
 
         wholeContent = wholeContent.replace(/(^\s*)|(\s*$)/gi,"")
         wholeContent = wholeContent.replace(/[ ]{2,}/gi," ")
         wholeContent = wholeContent.replace(/\n /,"\n")
         wholeContent = wholeContent.split(' ')
 
-        let numWords = wholeContent.length
-        let numNoSpace = wholeContent.join('').length
+        const numWords = wholeContent.length
+        const numNoSpace = wholeContent.join('').length
 
         return {
-            numWords: numWords,
-            numNoSpace: numNoSpace,
-            numChars: numChars
+            numWords,
+            numNoSpace,
+            numChars
         }
     }
 
     wordCountDialog() {
-        let stats = this.countWords(),
+        const stats = this.countWords(),
             dialog = new Dialog({
                 title: gettext('Word counter'),
                 body: wordCounterDialogTemplate({

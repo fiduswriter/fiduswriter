@@ -3,12 +3,12 @@ import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from ".."
 
 const key = new PluginKey('accessRights')
 
-export let accessRightsPlugin = function(options) {
+export const accessRightsPlugin = function(options) {
     return new Plugin({
         key,
         filterTransaction: (tr, state) => {
             let allowed = true
-            let remote = tr.getMeta('remote')
+            const remote = tr.getMeta('remote')
             if (remote) {
                 return allowed
             }

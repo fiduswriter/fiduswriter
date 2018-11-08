@@ -17,7 +17,7 @@ export function trackPlugin(options) {
         state: {
             init(config, state) {
                 // Make sure there are colors for all users who have left marks in the document
-                let userIds = [options.editor.user.id]
+                const userIds = [options.editor.user.id]
                 state.doc.descendants(node => {
                     if (node.attrs.track) {
                         node.attrs.track.forEach(track => {
@@ -51,7 +51,7 @@ export function trackPlugin(options) {
 
             },
             apply(tr, prev, oldState, state) {
-                let meta = tr.getMeta(key)
+                const meta = tr.getMeta(key)
                 if (meta) {
                     // There has been an update, return values from meta instead
                     // of previous values
@@ -63,9 +63,9 @@ export function trackPlugin(options) {
                 } = this.getState(oldState)
 
                 if (tr.selectionSet) {
-                    let {insertion, deletion, formatChange} = findSelectedChanges(state)
+                    const {insertion, deletion, formatChange} = findSelectedChanges(state)
                     decos = DecorationSet.empty
-                    let decoType = tr.selection.node ? Decoration.node : Decoration.inline
+                    const decoType = tr.selection.node ? Decoration.node : Decoration.inline
                     if (insertion) {
                         decos = decos.add(tr.doc, [decoType(insertion.from, insertion.to, {
                             class: 'selected-insertion'
@@ -91,14 +91,14 @@ export function trackPlugin(options) {
         },
         props: {
             decorations(state) {
-				let {
+				const {
 					decos
 				} = this.getState(state)
 				return decos
 			},
             handleDOMEvents: {
                 focus: (view, event) => {
-                    let otherView = view === options.editor.view ? options.editor.mod.footnotes.fnEditor.view : options.editor.view
+                    const otherView = view === options.editor.view ? options.editor.mod.footnotes.fnEditor.view : options.editor.view
                     otherView.dispatch(deactivateAllSelectedChanges(otherView.state.tr))
                 }
             }

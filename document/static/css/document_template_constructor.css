@@ -1,0 +1,39 @@
+.from-container, .to-container, .trash {
+    width: 400px;
+    border: 1px solid black;
+    min-height: 500px;
+    background-color: white;
+}
+
+.trash {
+    background-color: grey;
+    width: 100px
+}
+
+.trash.selected {
+    background-color: black;
+}
+
+.doc-part {
+    background-color: #F0F8FF;
+    border-bottom: 1px dotted black;
+}
+
+.from-container .attrs {
+    display: none;
+}
+
+.attrs label {
+    display: block;
+}
+
+table td {
+    vertical-align: top;
+}
+
+.title {
+    cursor: move; /* fallback if grab cursor is unsupported */
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+}

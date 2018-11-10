@@ -24,6 +24,7 @@
         "prosemirror-view": "1.6.x",
         "prosemirror-suggestions": "0.2.x",
         "texzilla": "0.9.9",
-        "pretty": "2.0.0"
+        "pretty": "2.0.0",
+        "smooth-dnd": "johanneswilm/smooth-dnd#v0.6.4"
     }
 }

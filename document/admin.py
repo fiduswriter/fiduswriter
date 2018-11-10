@@ -23,6 +23,12 @@ class DocumentAdmin(admin.ModelAdmin):
 
 admin.site.register(models.Document, DocumentAdmin)
 
+class DocumentTemplateAdmin(admin.ModelAdmin):
+    pass
+
+
+admin.site.register(models.DocumentTemplate, DocumentTemplateAdmin)
+
 
 class AccessRightAdmin(admin.ModelAdmin):
     pass

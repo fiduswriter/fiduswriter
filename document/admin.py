@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.shortcuts import render
 from django.urls import path
+from django.utils.translation import ugettext as _
 from . import models
-
 
 class DocumentAdmin(admin.ModelAdmin):
     def get_urls(self):
@@ -23,8 +23,15 @@ class DocumentAdmin(admin.ModelAdmin):
 
 admin.site.register(models.Document, DocumentAdmin)
 
+
 class DocumentTemplateAdmin(admin.ModelAdmin):
-    pass
+    actions = ['duplicate']
+
+    def duplicate(self, request, queryset):
+        for template in queryset:
+            template.pk = None
+            template.save()
+    duplicate.short_description = _("Duplicate selected document templates")
 
 
 admin.site.register(models.DocumentTemplate, DocumentTemplateAdmin)

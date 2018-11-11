@@ -1,35 +1,80 @@
 import SmoothDND from "smooth-dnd"
-import {documentConstructorTemplate} from "./templates"
+import {documentConstructorTemplate, templateEditorValueTemplate, toggleEditorButtonTemplate} from "./templates"
 import {whenReady} from "../common"
 
 export class DocumentTemplateConstructor {
     constructor() {
+        this.definitionTextarea = false
+        this.templateEditor = false
+        this.errors = {}
         this.value = []
     }
 
     init() {
         whenReady().then(() => {
-            this.getOriginalValue()
+            this.definitionTextarea = document.querySelector('textarea[name=definition]')
+            this.getInitialValue()
             this.modifyDOM()
             this.bind()
         })
     }
 
     modifyDOM() {
-        const definitionTextarea = document.querySelector('textarea[name=definition]')
-        definitionTextarea.style.display='none'
-        definitionTextarea.insertAdjacentHTML(
-            'afterend',
-            documentConstructorTemplate()
+        this.definitionTextarea.style.display='none'
+        this.definitionTextarea.insertAdjacentHTML(
+            'beforebegin',
+            toggleEditorButtonTemplate()
         )
+
+        this.definitionTextarea.insertAdjacentHTML(
+            'afterend',
+            documentConstructorTemplate({value: this.value})
+        )
+        this.templateEditor = document.getElementById('template-editor')
     }
 
-    getOriginalValue() {
-        this.value = JSON.parse(document.querySelector('textarea[name=definition]').value)
+    getInitialValue() {
+        this.value = JSON.parse(this.definitionTextarea.value)
     }
 
-    getCurrentValue() {
-        
+    setCurrentValue() {
+        let valid = true
+        this.errors = {}
+        this.value = Array.from(document.querySelectorAll('.to-container .doc-part:not(.fixed)')).map(
+            el => {
+                const type = el.dataset.type,
+                    id = el.querySelector('input.id').value,
+                    help = el.querySelector('.help').value,
+                    initial = el.querySelector('.initial').value,
+                    values = {type, id, help, initial}
+                switch(type) {
+                    case 'richtext':
+                        values['elements'] = el.querySelector('.elements').value
+                        values['marks'] = el.querySelector('.marks').value
+                        values['locked'] = el.querySelector('.locked').checked ? true : false
+                        break
+                    case 'table':
+                        values['locking'] = el.querySelector('input[name="table"]:checked').value
+                        break
+                    default:
+                        values['locked'] = el.querySelector('.locked').checked ? true : false
+                        break
+                }
+                if (!id.length) {
+                    valid = false
+                    this.errors['missing_id'] = gettext('All document parts need an ID.')
+                }
+                return values
+            }
+        )
+        this.definitionTextarea.value = JSON.stringify(this.value)
+        this.showErrors()
+        return valid
+    }
+
+    showErrors() {
+        this.definitionTextarea.parentElement.querySelector('ul.errorlist').innerHTML =
+            Object.values(this.errors).map(error => `<li>${error}</li>`).join('')
     }
 
     bind() {
@@ -58,6 +103,30 @@ export class DocumentTemplateConstructor {
                 },
                 onDragEnter: () => trashEl.classList.add('selected'),
                 onDragLeave: () => trashEl.classList.remove('selected')
-            })
+            }),
+            submitButtons = Array.from(document.querySelectorAll('div.submit-row input[type=submit]')),
+            toggleEditorButton = document.getElementById('toggle-editor')
+
+        submitButtons.forEach(button => button.addEventListener('click', event => {
+            if (this.definitionTextarea.style.display==='none' && !this.setCurrentValue()) {
+                event.preventDefault()
+            }
+        }))
+
+        toggleEditorButton.addEventListener('click', event => {
+            event.preventDefault()
+            if (this.definitionTextarea.style.display==='none') {
+                this.definitionTextarea.style.display=''
+                this.templateEditor.style.display='none'
+                this.setCurrentValue()
+            } else {
+                this.definitionTextarea.style.display='none'
+                this.templateEditor.style.display=''
+                this.getInitialValue()
+                this.templateEditor.querySelector('.to-container').innerHTML =
+                    templateEditorValueTemplate({value: this.value})
+            }
+        })
+
     }
 }

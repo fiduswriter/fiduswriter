@@ -1,4 +1,4 @@
-.from-container, .to-container, .trash {
+.from-container, .to-column, .trash {
     width: 400px;
     border: 1px solid black;
     min-height: 500px;
@@ -25,6 +25,7 @@
 
 .attrs label {
     display: block;
+    width: 100%;
 }
 
 table td {
@@ -36,4 +37,8 @@ table td {
     cursor: grab;
     cursor: -moz-grab;
     cursor: -webkit-grab;
+}
+
+.object-tools.right {
+    float: right;
 }

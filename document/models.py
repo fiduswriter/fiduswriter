@@ -14,6 +14,29 @@ from style.models import DocumentStyle, CitationStyle
 
 FW_DOCUMENT_VERSION = 2.2
 
+TEMPLATE_CHOICES = (
+    ('docx', 'Docx'),
+    ('odt', 'ODT')
+)
+
+
+def template_filename(instance, filename):
+    return '/'.join(['export-templates', filename])
+
+
+class ExportTemplate(models.Model):
+    file_name = models.CharField(max_length=255, default='', blank=True)
+    file_type = models.CharField(
+        max_length=5,
+        choices=TEMPLATE_CHOICES,
+        blank=False)
+    template_file = models.FileField(upload_to=template_filename)
+
+    class Meta(object):
+        unique_together = (("file_name", "file_type"),)
+
+    def __str__(self):
+        return self.file_name + " (" + self.file_type + ")"
 
 class DocumentTemplate(models.Model):
     title = models.CharField(max_length=255, default='', blank=True)
@@ -21,6 +44,10 @@ class DocumentTemplate(models.Model):
     definition = models.TextField(default='[]')
     document_styles = models.ManyToManyField(DocumentStyle)
     citation_styles = models.ManyToManyField(CitationStyle)
+    export_templates = models.ManyToManyField(ExportTemplate)
+
+    def __str__(self):
+        return self.title
 
 
 class Document(models.Model):
@@ -171,28 +198,3 @@ class DocumentRevision(models.Model):
                 str(self.document.id)
         else:
             return str(self.id) + ' of ' + str(self.document.id)
-
-
-TEMPLATE_CHOICES = (
-    ('docx', 'Docx'),
-    ('odt', 'ODT')
-)
-
-
-def template_filename(instance, filename):
-    return '/'.join(['export-templates', filename])
-
-
-class ExportTemplate(models.Model):
-    file_name = models.CharField(max_length=255, default='', blank=True)
-    file_type = models.CharField(
-        max_length=5,
-        choices=TEMPLATE_CHOICES,
-        blank=False)
-    template_file = models.FileField(upload_to=template_filename)
-
-    class Meta(object):
-        unique_together = (("file_name", "file_type"),)
-
-    def __str__(self):
-        return self.file_name + " (" + self.file_type + ")"

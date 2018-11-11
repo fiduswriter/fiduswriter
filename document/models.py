@@ -38,6 +38,7 @@ class ExportTemplate(models.Model):
     def __str__(self):
         return self.file_name + " (" + self.file_type + ")"
 
+
 class DocumentTemplate(models.Model):
     title = models.CharField(max_length=255, default='', blank=True)
     slug = models.SlugField()
@@ -81,7 +82,10 @@ class Document(models.Model):
     # True by default and for all normal documents. Can be set to False when
     # documents are added in plugins that list these documents somewhere else.
     listed = models.BooleanField(default=True)
-    template = models.ForeignKey(DocumentTemplate, on_delete=models.deletion.CASCADE)
+    template = models.ForeignKey(
+        DocumentTemplate,
+        on_delete=models.deletion.CASCADE
+    )
 
     def __str__(self):
         if len(self.title) > 0:

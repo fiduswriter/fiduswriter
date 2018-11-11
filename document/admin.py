@@ -4,6 +4,7 @@ from django.urls import path
 from django.utils.translation import ugettext as _
 from . import models
 
+
 class DocumentAdmin(admin.ModelAdmin):
     def get_urls(self):
         urls = super().get_urls()

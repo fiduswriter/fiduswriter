@@ -14,12 +14,12 @@ from tornado.escape import json_decode, json_encode
 from tornado.websocket import WebSocketClosedError
 from tornado.ioloop import IOLoop
 from document.models import AccessRight, COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
-    CAN_COMMUNICATE, ExportTemplate, FW_DOCUMENT_VERSION
+    CAN_COMMUNICATE, FW_DOCUMENT_VERSION
 from document.views import get_accessrights
 from usermedia.models import Image, DocumentImage, UserImage
 from avatar.templatetags.avatar_tags import avatar_url
 
-from style.models import DocumentStyle, CitationStyle, CitationLocale
+from style.models import CitationLocale
 
 logger = logging.getLogger(__name__)
 
@@ -78,19 +78,24 @@ class WebSocket(BaseWebSocketHandler):
                 'contents': json_decode(doc_db.contents),
                 'version': doc_db.version,
                 'title': doc_db.title,
-                'id': doc_db.id
+                'id': doc_db.id,
+                'template': {
+                    'title': doc_db.template.title,
+                    'slug': doc_db.template.slug,
+                    'definition': json_decode(doc_db.template.definition)
+                }
             }
             WebSocket.sessions[doc_db.id] = self.doc
         serializer = PythonWithURLSerializer()
         export_temps = serializer.serialize(
-            ExportTemplate.objects.all()
+            doc_db.template.export_templates.all()
         )
         document_styles = serializer.serialize(
-            DocumentStyle.objects.all(),
+            doc_db.template.document_styles.all(),
             use_natural_foreign_keys=True
         )
         cite_styles = serializer.serialize(
-            CitationStyle.objects.all()
+            doc_db.template.citation_styles.all()
         )
         cite_locales = serializer.serialize(
             CitationLocale.objects.all()
@@ -136,6 +141,7 @@ class WebSocket(BaseWebSocketHandler):
             'v': self.doc['version'],
             'contents': self.doc['contents'],
             'bibliography': self.doc['bibliography'],
+            'template': self.doc['template'],
             'images': {}
         }
         response['time'] = int(time()) * 1000

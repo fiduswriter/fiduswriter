@@ -333,6 +333,7 @@ export class Editor {
         this.user.imageDB = new ImageDB()
         this.user.imageDB.getDB()
         this.docInfo.confirmedJson = JSON.parse(JSON.stringify(doc.contents))
+        this.docInfo.template = data.doc.template
 
         let stateDoc
         if (doc.contents.type) {

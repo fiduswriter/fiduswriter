@@ -32,7 +32,7 @@ const BLOCK_LABELS = {
 
 export const TEXT_ONLY_PARTS = ['title', 'subtitle', 'authors', 'keywords']
 
-export let toolbarModel = {
+export const toolbarModel = () => ({
     openMore: false, // whether 'more' menu is opened.
     content: [
         {
@@ -92,19 +92,19 @@ export let toolbarModel = {
                     editor.currentView.state.selection.jsonID === 'node' &&
                     editor.currentView.state.selection.node.isBlock
                 ) {
-                    let selectedNode = editor.currentView.state.selection.node
+                    const selectedNode = editor.currentView.state.selection.node
                     return BLOCK_LABELS[
                         selectedNode.type.name === 'heading' ?
                         `${selectedNode.type.name}_${selectedNode.attrs.level}` :
                         selectedNode.type.name
                     ]
                 }
-                let startElement = editor.currentView.state.selection.$anchor.parent,
+                const startElement = editor.currentView.state.selection.$anchor.parent,
                     endElement = editor.currentView.state.selection.$head.parent
                 if (!startElement || !endElement) {
                     return ''
                 } else if (startElement === endElement) {
-                    let blockNodeType = startElement.type.name === 'heading' ?
+                    const blockNodeType = startElement.type.name === 'heading' ?
                         `${startElement.type.name}_${startElement.attrs.level}` :
                         startElement.type.name
                     return BLOCK_LABELS[blockNodeType] ? BLOCK_LABELS[blockNodeType] : ''
@@ -115,7 +115,7 @@ export let toolbarModel = {
                         editor.currentView.state.selection.to,
                         (node, pos, parent) => {
                             if (node.isTextblock) {
-                                let nextBlockNodeType = node.type.name === 'heading' ?
+                                const nextBlockNodeType = node.type.name === 'heading' ?
                                     `${node.type.name}_${node.attrs.level}` :
                                     node.type.name
                                 if (blockNodeType === true) {
@@ -154,7 +154,7 @@ export let toolbarModel = {
                 {
                     title: BLOCK_LABELS['paragraph'],
                     action: editor => {
-                        let view = editor.currentView
+                        const view = editor.currentView
                         setBlockType(view.state.schema.nodes.paragraph)(view.state, view.dispatch)
                     },
                     order: 0
@@ -162,7 +162,7 @@ export let toolbarModel = {
                 {
                     title: BLOCK_LABELS['heading_1'],
                     action: editor => {
-                        let view = editor.currentView
+                        const view = editor.currentView
                         setBlockType(view.state.schema.nodes.heading, {level: 1})(view.state, view.dispatch)
                     },
                     order: 1
@@ -170,7 +170,7 @@ export let toolbarModel = {
                 {
                     title: BLOCK_LABELS['heading_2'],
                     action: editor => {
-                        let view = editor.currentView
+                        const view = editor.currentView
                         setBlockType(view.state.schema.nodes.heading, {level: 2})(view.state, view.dispatch)
                     },
                     order: 2
@@ -178,7 +178,7 @@ export let toolbarModel = {
                 {
                     title: BLOCK_LABELS['heading_3'],
                     action: editor => {
-                        let view = editor.currentView
+                        const view = editor.currentView
                         setBlockType(view.state.schema.nodes.heading, {level: 3})(view.state, view.dispatch)
                     },
                     order: 3
@@ -186,7 +186,7 @@ export let toolbarModel = {
                 {
                     title: BLOCK_LABELS['heading_4'],
                     action: editor => {
-                        let view = editor.currentView
+                        const view = editor.currentView
                         setBlockType(view.state.schema.nodes.heading, {level: 4})(view.state, view.dispatch)
                     },
                     order: 4
@@ -194,7 +194,7 @@ export let toolbarModel = {
                 {
                     title: BLOCK_LABELS['heading_5'],
                     action: editor => {
-                        let view = editor.currentView
+                        const view = editor.currentView
                         setBlockType(view.state.schema.nodes.heading, {level: 5})(view.state, view.dispatch)
                     },
                     order: 5
@@ -202,7 +202,7 @@ export let toolbarModel = {
                 {
                     title: BLOCK_LABELS['heading_6'],
                     action: editor => {
-                        let view = editor.currentView
+                        const view = editor.currentView
                         setBlockType(view.state.schema.nodes.heading, {level: 6})(view.state, view.dispatch)
                     },
                     order: 6
@@ -210,7 +210,7 @@ export let toolbarModel = {
                 {
                     title: BLOCK_LABELS['code_block'],
                     action: editor => {
-                        let view = editor.currentView
+                        const view = editor.currentView
                         setBlockType(view.state.schema.nodes.code_block)(view.state, view.dispatch)
                     },
                     order: 7
@@ -223,8 +223,8 @@ export let toolbarModel = {
             title: gettext('Bold'),
             icon: 'bold',
             action: editor => {
-                let mark = editor.currentView.state.schema.marks['strong']
-                let command = toggleMark(mark)
+                const mark = editor.currentView.state.schema.marks['strong']
+                const command = toggleMark(mark)
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
             disabled: editor => {
@@ -245,7 +245,7 @@ export let toolbarModel = {
                 }
             },
             selected: editor => {
-                let storedMarks = editor.currentView.state.storedMarks
+                const storedMarks = editor.currentView.state.storedMarks
                 if (
                     storedMarks && storedMarks.some(mark => mark.type.name === 'strong') ||
                     editor.currentView.state.selection.$head.marks().some(mark => mark.type.name === 'strong')
@@ -263,8 +263,8 @@ export let toolbarModel = {
             title: gettext('Italic'),
             icon: 'italic',
             action: editor => {
-                let mark = editor.currentView.state.schema.marks['em']
-                let command = toggleMark(mark)
+                const mark = editor.currentView.state.schema.marks['em']
+                const command = toggleMark(mark)
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
             disabled: editor => {
@@ -285,7 +285,7 @@ export let toolbarModel = {
                 }
             },
             selected: editor => {
-                let storedMarks = editor.currentView.state.storedMarks
+                const storedMarks = editor.currentView.state.storedMarks
                 if (
                     storedMarks && storedMarks.some(mark => mark.type.name === 'em') ||
                     editor.currentView.state.selection.$head.marks().some(mark => mark.type.name === 'em')
@@ -303,8 +303,8 @@ export let toolbarModel = {
             title: gettext('Numbered list'),
             icon: 'list-ol',
             action: editor => {
-                let node = editor.currentView.state.schema.nodes['ordered_list']
-                let command = wrapInList(node)
+                const node = editor.currentView.state.schema.nodes['ordered_list']
+                const command = wrapInList(node)
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
             disabled: editor => {
@@ -328,8 +328,8 @@ export let toolbarModel = {
             title: gettext('Bullet list'),
             icon: 'list-ul',
             action: editor => {
-                let node = editor.currentView.state.schema.nodes['bullet_list']
-                let command = wrapInList(node)
+                const node = editor.currentView.state.schema.nodes['bullet_list']
+                const command = wrapInList(node)
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
             disabled: editor => {
@@ -353,8 +353,8 @@ export let toolbarModel = {
             title: gettext('Blockquote'),
             icon: 'quote-right',
             action: editor => {
-                let node = editor.currentView.state.schema.nodes['blockquote']
-                let command = wrapIn(node)
+                const node = editor.currentView.state.schema.nodes['blockquote']
+                const command = wrapIn(node)
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
             disabled: editor => {
@@ -379,7 +379,7 @@ export let toolbarModel = {
             title: gettext('Link'),
             icon: 'link',
             action: editor => {
-                let dialog = new LinkDialog(editor)
+                const dialog = new LinkDialog(editor)
                 dialog.init()
             },
             disabled: editor => {
@@ -404,8 +404,8 @@ export let toolbarModel = {
             title: gettext('Footnote'),
             icon: 'asterisk',
             action: editor => {
-                let node = editor.view.state.schema.nodes['footnote']
-                let tr = editor.view.state.tr.replaceSelectionWith(node.createAndFill())
+                const node = editor.view.state.schema.nodes['footnote']
+                const tr = editor.view.state.tr.replaceSelectionWith(node.createAndFill())
                 editor.view.dispatch(tr)
                 return false
             },
@@ -432,7 +432,7 @@ export let toolbarModel = {
             title: gettext('Cite'),
             icon: 'book',
             action: editor => {
-                let dialog = new CitationDialog(editor)
+                const dialog = new CitationDialog(editor)
                 dialog.init()
                 return false
             },
@@ -463,7 +463,7 @@ export let toolbarModel = {
             title: gettext('Horizontal line'),
             icon: 'minus',
             action: editor => {
-                let view = editor.currentView,
+                const view = editor.currentView,
                     state = view.state
                 view.dispatch(
                     state.tr.replaceSelectionWith(state.schema.node("horizontal_rule"))
@@ -490,7 +490,7 @@ export let toolbarModel = {
             title: gettext('Math'),
             icon: 'percent',
             action: editor => {
-                let dialog = new MathDialog(editor)
+                const dialog = new MathDialog(editor)
                 dialog.init()
             },
             disabled: editor => {
@@ -520,7 +520,7 @@ export let toolbarModel = {
             title: gettext('Figure'),
             icon: 'picture-o',
             action: editor => {
-                let dialog = new FigureDialog(editor)
+                const dialog = new FigureDialog(editor)
                 dialog.init()
                 return false
             },
@@ -597,8 +597,8 @@ export let toolbarModel = {
             title: gettext('Anchor'),
             icon: 'anchor',
             action: editor => {
-                let mark = editor.currentView.state.schema.marks['anchor']
-                let command = toggleMark(mark, {id: randomAnchorId()})
+                const mark = editor.currentView.state.schema.marks['anchor']
+                const command = toggleMark(mark, {id: randomAnchorId()})
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
             disabled: editor => {
@@ -623,4 +623,4 @@ export let toolbarModel = {
             order: 17
         }
     ]
-}
+})

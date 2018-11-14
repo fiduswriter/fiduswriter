@@ -3,7 +3,7 @@ import {serializeComment} from "../comments/editors"
 
 
 /** A template for an answer to a comment */
-let answerCommentTemplate = ({
+const answerCommentTemplate = ({
         answer,
         author,
         commentId,
@@ -13,7 +13,7 @@ let answerCommentTemplate = ({
         docInfo,
         staticUrl
     }) =>
-    `<div class="comment-item">
+    `<div class="comment-item comment-answer">
         <div class="comment-user">
             <img class="comment-user-avatar" src="${author ? author.avatar : `${staticUrl}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
             <h5 class="comment-user-name">${escapeText(author ? author.name : answer.username)}</h5>
@@ -30,18 +30,25 @@ let answerCommentTemplate = ({
                <p class="comment-p">${serializeComment(answer.answer).html}</p>
            </div>
            ${
-               active && (answer.user === user.id) ?
-               `<p class="comment-controls">
-                   <span class="edit-comment-answer" data-id="${commentId}" data-answer="${answer.id}">${gettext("Edit")}</span>
-                   <span class="delete-comment-answer" data-id="${commentId}" data-answer="${answer.id}">${gettext("Delete")}</span>
-               </p>` :
+               answer.user === user.id ?
+               `<span class="show-marginbox-options fa fa-ellipsis-v"></span>
+               <div class="marginbox-options fw-pulldown fw-right">
+                   <ul>
+                      <li><span class="fw-pulldown-item edit-comment-answer" data-id="${commentId}" data-answer="${answer.id}" title="${gettext('Edit')}">
+                        ${gettext('Edit')}
+                      </span></li>
+                      <li><span class="fw-pulldown-item delete-comment-answer" data-id="${commentId}" data-answer="${answer.id}" title="${gettext('Delete')}">
+                        ${gettext('Delete')}
+                      </span></li>
+                   </ul>
+               </div>` :
                ''
            }`
        }
     </div>`
 
 /** A template to show one individual comment */
-let singleCommentTemplate = ({
+const singleCommentTemplate = ({
         comment,
         author,
         active,
@@ -61,18 +68,11 @@ let singleCommentTemplate = ({
                 `<p class="comment-p">${serializeComment(comment.comment).html}</p>`
             }
         </div>
-        ${
-            active && !editComment && comment.user===user.id ?
-            `<p class="comment-controls">
-                <span class="edit-comment" data-id="${comment.id}">${gettext("Edit")}</span>
-            </p>` :
-            ''
-        }
     </div>`
 
 
 /** A template for the editor of a first comment before it has been saved (not an answer to a comment). */
-let firstCommentTemplate = ({
+const firstCommentTemplate = ({
         comment,
         author,
         staticUrl
@@ -89,7 +89,7 @@ let firstCommentTemplate = ({
     </div>`
 
 
-let commentTemplate = ({comment, view, active, editComment, activeCommentAnswerId, user, docInfo, filterOptions, staticUrl}) => {
+const commentTemplate = ({comment, view, active, editComment, activeCommentAnswerId, user, docInfo, filterOptions, staticUrl}) => {
     if (
         !filterOptions.comments ||
         (!filterOptions.commentsResolved && comment.resolved) ||
@@ -153,16 +153,23 @@ let commentTemplate = ({comment, view, active, editComment, activeCommentAnswerI
         comment.id > 0 && (
             comment.user===user.id ||
             docInfo.access_rights==="write"
-        ) ?
-        `<span class="show-comment-options fa fa-ellipsis-v" data-id="${comment.id}"></span>
-        <div class="comment-options fw-pulldown fw-right">
+        ) && !editComment ?
+        `<span class="show-marginbox-options fa fa-ellipsis-v" data-id="${comment.id}"></span>
+        <div class="marginbox-options fw-pulldown fw-right">
             <ul>
+                ${
+                    comment.user===user.id ?
+                    `<li><span class="fw-pulldown-item edit-comment" data-id="${comment.id}" title="${gettext("Edit")}">
+                        ${gettext("Edit")}
+                    </span></li>` :
+                    ''
+                }
                 <li>
-                    <span class="fw-pulldown-item show-assign-comment-menu" title="${gettext('Assign comment to user')}">
+                    <span class="fw-pulldown-item show-marginbox-options-submenu" title="${gettext('Assign comment to user')}">
                         ${gettext('Assign to')}
                         <span class="fw-icon-right"><i class="fa fa-caret-right"></i></span>
                     </span>
-                    <div class="fw-pulldown assign-comment-menu">
+                    <div class="fw-pulldown marginbox-options-submenu">
                         <ul>
                             <li><span class="fw-pulldown-item unassign-comment" data-id="${comment.id}" title="${gettext('Remove user assignment from comment')}">${gettext('No-one')}</span></li>
                         ${
@@ -192,7 +199,7 @@ let commentTemplate = ({comment, view, active, editComment, activeCommentAnswerI
     </div>`
 }
 
-let ACTIONS = {
+const ACTIONS = {
     insertion: gettext('Insertion'),
     deletion: gettext('Deletion'),
     format_change: gettext('Format change'),
@@ -220,12 +227,12 @@ let ACTIONS = {
     block_change_code_block: gettext('Changed into code block')
 }
 
-let FORMAT_MARK_NAMES = {
+const FORMAT_MARK_NAMES = {
     'em': gettext('Emphasis'),
     'strong': gettext('Strong')
 }
 
-let formatChangeTemplate = ({before, after}) => {
+const formatChangeTemplate = ({before, after}) => {
     let returnText = ''
     if (before.length) {
         returnText += `<div class="format-change-info"><b>${gettext('Removed')}:</b> ${before.map(markName => FORMAT_MARK_NAMES[markName]).join(', ')}</div>`
@@ -236,78 +243,121 @@ let formatChangeTemplate = ({before, after}) => {
     return returnText
 }
 
-let BLOCK_NAMES = {
+const BLOCK_NAMES = {
     paragraph: gettext('Paragraph'),
     heading: gettext('Heading %(level)s'),
     code_block: gettext('Code block')
 }
 
-let blockChangeTemplate = ({before}) => `<div class="format-change-info"><b>${gettext('Was')}:</b> ${interpolate(BLOCK_NAMES[before.type], before.attrs, true)}</div>`
+const blockChangeTemplate = ({before}) => `<div class="format-change-info"><b>${gettext('Was')}:</b> ${interpolate(BLOCK_NAMES[before.type], before.attrs, true)}</div>`
 
-let trackTemplate = ({type, data, node, pos, view, active, docInfo, filterOptions, staticUrl}) => {
+const trackTemplate = ({type, data, node, pos, view, active, docInfo, filterOptions, staticUrl}) => {
     if (!filterOptions.track) {
         return '<div class="margin-box track hidden"></div>'
     }
 
-    let author = data.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === data.user),
+    const author = data.user === docInfo.owner.id ? docInfo.owner : docInfo.owner.team_members.find(member => member.id === data.user),
         nodeActionType = `${type}_${node.type.name}`
 
     return `
         <div class="margin-box track ${active ? 'active' : 'inactive'}" data-type="${type}" data-pos="${pos}" data-view="${view}">
             <div class="track-${type}">
-                <div class="track-title">${interpolate(ACTIONS[nodeActionType] ? ACTIONS[nodeActionType] : ACTIONS[type], node.attrs, true)}</div>
                 <div class="comment-user">
                     <img class="comment-user-avatar" src="${author ? author.avatar : `${staticUrl}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
                     <h5 class="comment-user-name">${escapeText(author ? author.name : data.username)}</h5>
                     <p class="comment-date">${node.type.name==='text' ? `${gettext('ca.')} ` : ''}${localizeDate(data.date*60000, 'minutes')}</p>
                 </div>
+                <div class="track-title">
+                    ${interpolate(ACTIONS[nodeActionType] ? ACTIONS[nodeActionType] : ACTIONS[type], node.attrs, true)}
+                </div>
                 ${type==='format_change' ? formatChangeTemplate(data) : type==='block_change' ? blockChangeTemplate(data) : ''}
-                ${
-                    docInfo.access_rights === 'write' ?
-                    `<div class="ui-dialog-buttonset">
-                        <button class="fw-button fw-small fw-green track-accept" data-type="${type}" data-pos="${pos}" data-view="${view}">${gettext('Accept')}</button>
-                        <button class="fw-button fw-small fw-orange track-reject" data-type="${type}" data-pos="${pos}" data-view="${view}">${gettext('Reject')}</button>
-                    </div>` :
-                    ''
-                }
             </div>
+            ${
+                docInfo.access_rights === 'write' ?
+                `<span class="show-marginbox-options fa fa-ellipsis-v"></span>
+                <div class="marginbox-options fw-pulldown fw-right">
+                    <ul>
+                        <li><span class="fw-pulldown-item track-accept" data-type="${type}" data-pos="${pos}" data-view="${view}" title="${gettext("Accept")}">
+                            ${gettext("Accept")}
+                        </span></li>
+                        <li><span class="fw-pulldown-item track-reject" data-type="${type}" data-pos="${pos}" data-view="${view}" title="${gettext("Reject")}">
+                            ${gettext("Reject")}
+                        </span></li>
+                    </ul>
+                </div>` :
+                ''
+            }
+
         </div>`
 }
 
-let filterTemplate = ({data, docInfo}) => {
-    return `
-        <div class="margin-box filter">
-            <div><label id="filter-track"><input type="checkbox" ${data.track ? 'checked' : ''}>${gettext('Tracked Changes')}</label></div>
-            <hr>
-            <div><label id="filter-comments"><input type="checkbox" ${data.comments ? 'checked' : ''}>${gettext('Comments')}</label></div>
-            ${
-                data.comments ?
-                `<label id="filter-comments-resolved"><input type="checkbox" ${data.commentsResolved ? 'checked' : ''}>${gettext('Resolved')}</label>
-                <div><label>${gettext('Author')}<label><select id="filter-comments-author">
-                    <option value="0">${gettext('Everyone')}</option>
-                    ${
-                        docInfo.owner.team_members.concat(docInfo.owner).map(
-                            user => `<option value="${user.id}" ${data.author === user.id ? 'selected' : ''}>${escapeText(user.name)}</option>`
-                        ).join('')
-                    }
-                </select></div>
-                <div><label>${gettext('Assigned to')}<label><select id="filter-comments-assigned">
-                    <option value="0">${gettext('Everyone')}</option>
-                    ${
-                        docInfo.owner.team_members.concat(docInfo.owner).map(
-                            user => `<option value="${user.id}" ${data.assigned === user.id ? 'selected' : ''}>${escapeText(user.name)}</option>`
-                        ).join('')
-                    }
-                </select></div>` :
-                ''
-            }
+export const marginboxFilterTemplate = ({marginBoxes, filterOptions, docInfo}) => {
+    const comments = marginBoxes.find(box => box.type==='comment')
+    const tracks = marginBoxes.find(box => ['insertion', 'deletion', 'format_change', 'block_change'].includes(box.type))
+    let filterHTML = ''
+    if (comments) {
+        filterHTML += `<div id="margin-box-filter-comments" class="margin-box-filter-button${filterOptions.comments ? '' : ' disabled'}">
+            <span class="label">${gettext('Comments')}</span>
+            <span class="show-marginbox-options fa fa-ellipsis-v"></span>
+            <div class="marginbox-options fw-pulldown fw-right"><ul>
+                <li><span class="fw-pulldown-item${filterOptions.commentsResolved ? ' selected' : ''}" id="margin-box-filter-comments-resolved">
+                    ${gettext('Show resolved comments')}
+                </span></li>
+                <li>
+                    <span class="fw-pulldown-item show-marginbox-options-submenu" title="${gettext('Author')}">
+                        ${gettext('Author')}
+                        <span class="fw-icon-right"><i class="fa fa-caret-right"></i></span>
+                    </span>
+                    <div class="fw-pulldown marginbox-options-submenu">
+                        <ul>
+                            <li><span class="fw-pulldown-item margin-box-filter-comments-author${filterOptions.author === 0 ? ' selected' : ''}" data-id="0" title="${gettext('Show comments from all authors.')}">
+                                ${gettext('Any')}
+                            </span></li>
+                        ${
+                            docInfo.owner.team_members.concat(docInfo.owner).map(
+                                user => `<li><span class="fw-pulldown-item margin-box-filter-comments-author${filterOptions.author === user.id ? ' selected' : ''}" data-id="${user.id}" title="${gettext('Show comments of ')} ${escapeText(user.name)}">
+                                    ${escapeText(user.name)}
+                                </span></li>`
+                            ).join('')
+                        }
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <span class="fw-pulldown-item show-marginbox-options-submenu" title="${gettext('Assignee')}">
+                        ${gettext('Assignee')}
+                        <span class="fw-icon-right"><i class="fa fa-caret-right"></i></span>
+                    </span>
+                    <div class="fw-pulldown marginbox-options-submenu">
+                        <ul>
+                            <li><span class="fw-pulldown-item margin-box-filter-comments-assigned${filterOptions.assigned === 0 ? ' selected' : ''}" data-id="0" title="${gettext('Show comments from all authors.')}">
+                                ${gettext('Any/None')}
+                            </span></li>
+                        ${
+                            docInfo.owner.team_members.concat(docInfo.owner).map(
+                                user => `<li><span class="fw-pulldown-item margin-box-filter-comments-assigned${filterOptions.assigned === user.id ? ' selected' : ''}" data-id="${user.id}" title="${gettext('Show comments of ')} ${escapeText(user.name)}">
+                                    ${escapeText(user.name)}
+                                </span></li>`
+                            ).join('')
+                        }
+                        </ul>
+                    </div>
+                </li>
+            </ul></div>
         </div>`
+    }
+    if (tracks) {
+        filterHTML += `<div id="margin-box-filter-track" class="margin-box-filter-button${filterOptions.track ? '' : ' disabled'}">
+            <span class="label">${gettext('Track changes')}</span>
+        </div>`
+    }
+    return filterHTML
 }
 
 
 
 /** A template to display all the margin boxes (comments, deletion/insertion notifications) */
-export let marginBoxesTemplate = ({
+export const marginBoxesTemplate = ({
         marginBoxes,
         editComment,
         activeCommentAnswerId,
@@ -344,12 +394,6 @@ export let marginBoxesTemplate = ({
                     docInfo,
                     filterOptions,
                     staticUrl
-                })
-                break
-            case 'filter':
-                return filterTemplate({
-                    data: mBox.data,
-                    docInfo
                 })
                 break
             default:

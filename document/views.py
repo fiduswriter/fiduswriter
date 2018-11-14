@@ -160,11 +160,6 @@ def get_documentlist_js(request):
             use_natural_foreign_keys=True
         )
         response['document_styles'] = [obj['fields'] for obj in doc_styles]
-        response['user'] = {}
-        response['user']['id'] = request.user.id
-        response['user']['name'] = request.user.readable_name
-        response['user']['username'] = request.user.get_username()
-        response['user']['avatar'] = avatar_url(request.user, 80)
         response['access_rights'] = get_accessrights(
             AccessRight.objects.filter(document__owner=request.user))
     return JsonResponse(
@@ -178,6 +173,7 @@ def delete_js(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
+        status = 200
         doc_id = int(request.POST['id'])
         document = Document.objects.get(pk=doc_id, owner=request.user)
         if document.is_deletable():
@@ -189,9 +185,9 @@ def delete_js(request):
             for image in Image.objects.filter(id__in=image_ids):
                 if image.is_deletable():
                     image.delete()
-            status = 200
+            response['done'] = True
         else:
-            status = 409
+            response['done'] = False
     return JsonResponse(
         response,
         status=status

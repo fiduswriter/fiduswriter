@@ -1,4 +1,4 @@
-export let showKeyBindingsTemplate = () =>
+export const showKeyBindingsTemplate = () =>
     `<div id="helpListWrap" class="help-list-wrap">
         <ul class="help-list">
           <li class="help-key-unit">

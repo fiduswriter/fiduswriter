@@ -4,9 +4,10 @@ import {AddMarkStep, RemoveMarkStep} from "prosemirror-transform"
 import {deactivateAllSelectedChanges} from "../state_plugins"
 import {deleteNode} from "./delete"
 
-export let reject = function(type, pos, view) {
-    let tr = view.state.tr.setMeta('track', true), map = new Mapping(), reachedEnd = false, inlineChange = false
-    let trackMark = view.state.doc.nodeAt(pos).marks.find(mark => mark.type.name===type)
+export const reject = function(type, pos, view) {
+    const tr = view.state.tr.setMeta('track', true), map = new Mapping()
+    let reachedEnd = false, inlineChange = false
+    const trackMark = view.state.doc.nodeAt(pos).marks.find(mark => mark.type.name===type)
     view.state.doc.nodesBetween(pos, view.state.doc.firstChild.nodeSize, (node, nodePos, parent, index) => {
         if (nodePos < pos) {
             return true
@@ -29,7 +30,7 @@ export let reject = function(type, pos, view) {
             deleteNode(tr, node, nodePos, map, false)
         } else if (type==='deletion') {
             if (node.attrs.track) {
-                let track = node.attrs.track.filter(track => track.type !== 'deletion')
+                const track = node.attrs.track.filter(track => track.type !== 'deletion')
                 tr.setNodeMarkup(map.map(nodePos), null, Object.assign({}, node.attrs, {track}), node.marks)
                 reachedEnd = true
             } else {
@@ -66,7 +67,7 @@ export let reject = function(type, pos, view) {
                 )
             )
         } else if (type==='block_change') {
-            let blockChangeTrack = node.attrs.track.find(track => track.type === 'block_change'),
+            const blockChangeTrack = node.attrs.track.find(track => track.type === 'block_change'),
                 track = node.attrs.track.filter(track => track !== blockChangeTrack)
 
             tr.setNodeMarkup(

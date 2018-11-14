@@ -25,6 +25,7 @@ export class ModServerCommunications {
 
     close() {
         if (this.ws) {
+            window.clearInterval(this.wsPinger)
             this.ws.onclose = () => {}
             this.ws.close()
         }
@@ -48,8 +49,8 @@ export class ModServerCommunications {
 
 
         this.ws.onmessage = event => {
-            let data = JSON.parse(event.data)
-            let expectedServer = this.messages.server + 1
+            const data = JSON.parse(event.data)
+            const expectedServer = this.messages.server + 1
             if (data.type === 'request_resend') {
                 this.resend_messages(data.from)
             } else if (data.s < expectedServer) {
@@ -71,7 +72,7 @@ export class ModServerCommunications {
                     // to have missed some of the client's messages. They could
                     // have been sent simultaneously.
                     // The server wins over the client in this case.
-                    let clientDifference = this.messages.client - data.c
+                    const clientDifference = this.messages.client - data.c
                     this.messages.client = data.c
                     if (clientDifference > this.messages.lastTen.length) {
                         // We cannot fix the situation
@@ -121,7 +122,7 @@ export class ModServerCommunications {
         if (this.connectionCount > 0) {
             this.editor.mod.footnotes.fnEditor.renderAllFootnotes()
             this.editor.mod.collab.docChanges.checkVersion()
-            let oldMessages = this.messagesToSend
+            const oldMessages = this.messagesToSend
             this.messagesToSend = []
             while (oldMessages.length > 0) {
                 this.send(oldMessages.shift())
@@ -133,7 +134,7 @@ export class ModServerCommunications {
     /** Sends data to server or keeps it in a list if currently offline. */
     send(getData, timer = 80) {
         if (this.connected && !this.recentlySent) {
-            let data = getData()
+            const data = getData()
             if (!data) {
                 // message is empty
                 return
@@ -154,17 +155,17 @@ export class ModServerCommunications {
         this.recentlySent = true
         window.setTimeout(()=> {
             this.recentlySent = false
-            let oldMessages = this.messagesToSend
+            const oldMessages = this.messagesToSend
             this.messagesToSend = []
             while (oldMessages.length > 0) {
-                let getData = oldMessages.shift()
+                const getData = oldMessages.shift()
                 this.send(getData, Math.min(timer*1.2, 10000))
             }
         }, timer)
     }
 
     resend_messages(from) {
-        let toSend = this.messages.client - from
+        const toSend = this.messages.client - from
         this.messages.client = from
         if (toSend > this.messages.lastTen.length) {
             // Too many messages requested. Abort.

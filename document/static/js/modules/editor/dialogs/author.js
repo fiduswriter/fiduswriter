@@ -17,7 +17,7 @@ export class AuthorDialog {
     }
 
     init() {
-        let buttons = []
+        const buttons = []
         buttons.push({
             text: this.author ? gettext('Update') : gettext('Add'),
             classes: 'fw-dark',
@@ -47,10 +47,11 @@ export class AuthorDialog {
                     return
                 }
 
-                let view = this.editor.view,
+                const view = this.editor.view,
                     node = view.state.schema.nodes.author.create({
                         firstname, lastname, email, institution
-                    }), posFrom, posTo
+                    })
+                let posFrom, posTo
 
                 if (
                     this.author &&

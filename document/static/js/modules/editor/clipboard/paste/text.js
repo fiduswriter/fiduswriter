@@ -20,18 +20,18 @@ export class TextPaste {
 
     init() {
 
-        let importer = new BibLatexImporter(
+        const importer = new BibLatexImporter(
             this.text,
             this.editor.mod.db.bibDB,
             newIds => {
                 this.foundBibEntries = true
-                let format = 'autocite',
+                const format = 'autocite',
                     references = newIds.map(id => ({id}))
 
-                let citationNode = this.editor.currentView.state.schema.nodes['citation'].create(
+                const citationNode = this.editor.currentView.state.schema.nodes['citation'].create(
                     {format, references}
                 )
-                let tr = this.editor.currentView.state.tr.replaceSelectionWith(
+                const tr = this.editor.currentView.state.tr.replaceSelectionWith(
                     citationNode, true
                 )
                 this.view.dispatch(tr)
@@ -55,20 +55,20 @@ export class TextPaste {
     insertText() {
         // Inserts text as if it was pasted. We do that by converting it to html and inserting it that way.
         // Adapted from prosemirror-view/src/input.js
-        let dom = document.createElement("div")
+        const dom = document.createElement("div")
         this.text.trim().split(/(?:\r\n?|\n)+/).forEach(block => {
             dom.appendChild(document.createElement("p")).textContent = block
         })
-        let html = dom.innerHTML
+        const html = dom.innerHTML
 
-        let slice = __parseFromClipboard(this.view, '', html, this.view.shiftKey, this.view.state.selection.$from)
+        const slice = __parseFromClipboard(this.view, '', html, this.view.shiftKey, this.view.state.selection.$from)
 
         if (!slice) {
             return
         }
 
-        let singleNode = this.sliceSingleNode(slice)
-        let tr = singleNode ? this.view.state.tr.replaceSelectionWith(singleNode, this.view.shiftKey) : this.view.state.tr.replaceSelection(slice)
+        const singleNode = this.sliceSingleNode(slice)
+        const tr = singleNode ? this.view.state.tr.replaceSelectionWith(singleNode, this.view.shiftKey) : this.view.state.tr.replaceSelection(slice)
         this.view.dispatch(tr.scrollIntoView().setMeta("paste", true).setMeta("uiEvent", "paste"))
     }
 

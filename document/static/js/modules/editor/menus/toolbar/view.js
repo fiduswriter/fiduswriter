@@ -16,7 +16,7 @@ export class ToolbarView {
 
         this.dd = new diffDOM()
         this.toolbarEl = document.querySelector('#toolbar').firstElementChild
-        this.sideMargins = 14 + 14 + 42 // CSS sets left margin to 14px + 42 px for left most button and we want the same margin on both sides
+        this.sideMargins = 14 + 14 + 52 // CSS sets left margin to 14px + 46 px for left most button and we want the same margin on both sides
         this.availableWidth = window.innerWidth - this.sideMargins
         this.openedMenu = false
         this.listeners = {}
@@ -35,6 +35,7 @@ export class ToolbarView {
     destroy() {
         window.removeEventListener('resize', this.listeners.onresize)
         document.body.removeEventListener('click', this.listeners.onclick)
+        this.editor.menu.toolbarViews = this.editor.menu.toolbarViews.filter(view => view !== this)
     }
 
     onresize(event) {
@@ -48,7 +49,7 @@ export class ToolbarView {
             // the other editor must be active
             return
         }
-        let target = event.target
+        const target = event.target
         if(target.matches('.editortoolbar .more-button li:not(.disabled), .editortoolbar .more-button li:not(.disabled) *')) {
             let menuNumber = 0
             let seekItem = target.closest('li')
@@ -61,7 +62,7 @@ export class ToolbarView {
                 menuNumber++
                 seekItem = seekItem.previousElementSibling
             }
-            let menuItem = this.editor.menu.toolbarModel.content[menuNumber]
+            const menuItem = this.editor.menu.toolbarModel.content[menuNumber]
             // if it is a dropdown menu, open it. Otherwise execute an
             // associated action.
             if (menuItem.type==='dropdown') {
@@ -116,7 +117,7 @@ export class ToolbarView {
                 menuNumber++
                 seekItem = seekItem.previousElementSibling
             }
-            let menuItem = this.editor.menu.toolbarModel.content[menuNumber]
+            const menuItem = this.editor.menu.toolbarModel.content[menuNumber]
             // if it is a dropdown menu, open it. Otherwise execute an
             // associated action.
             if (menuItem.type==='dropdown') {
@@ -153,23 +154,23 @@ export class ToolbarView {
         this.editor.menu.toolbarModel.content.some((menuItem, index) => {
             switch (menuItem.type) {
                 case 'info':
-                    spaceCounter -= 98
+                    spaceCounter -= 94
                     break
                 case 'dropdown':
-                    spaceCounter -= 109
+                    spaceCounter -= 111
                     break
                 default:
-                    spaceCounter -= 49
+                    spaceCounter -= 52
             }
             if (spaceCounter < 0) {
                 menuIndexToDrop = index - 2 // We need the space of two buttons for the more button
                 return true
             }
         })
-        let newToolbar = document.createElement('div')
+        const newToolbar = document.createElement('div')
         newToolbar.innerHTML = this.getToolbarHTML(menuIndexToDrop)
-        let toolbarEl = document.querySelector('#toolbar').firstElementChild
-        let diff = this.dd.diff(toolbarEl, newToolbar)
+        const toolbarEl = document.querySelector('#toolbar').firstElementChild
+        const diff = this.dd.diff(toolbarEl, newToolbar)
         this.dd.apply(toolbarEl, diff)
     }
 
@@ -228,7 +229,7 @@ export class ToolbarView {
 
     getMoreButtonListHTML(menuIndexToDrop) {
         if (this.editor.menu.toolbarModel.openMore) {
-            let remainingItems = this.editor.menu.toolbarModel.content.slice(menuIndexToDrop)
+            const remainingItems = this.editor.menu.toolbarModel.content.slice(menuIndexToDrop)
             return `
                 <div class="fw-pulldown fw-left" style="display: block;">
                     <ul>${remainingItems.map(menuOption => this.getDropdownOptionHTML(menuOption)).join('')}</ul>

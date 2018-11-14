@@ -25,8 +25,8 @@ export function appendTransaction(trs, oldState, newState, editor) {
         markedDeletionRanges = [], // Deleted content that has received marks (Italic/bold) - we need to revert this.
         unmarkedDeletionRanges = [], // Deleted content where marks have been deleted (Italic/bold) - we need to revert this.
         formatChangeRanges = [], // Ranges where em/strong have been added or removed
-        replacedWrappings = [],
-        user = editor.user.id, // current user
+        replacedWrappings = []
+    const user = editor.user.id, // current user
         approved = !editor.view.state.doc.firstChild.attrs.tracked && editor.docInfo.access_rights !== 'write-tracked'
 
     // We go through all trs a first time. The point is to collect arrays of addedRanges , markedDeletionRanges, formatChangeRanges and replacedWrappings.
@@ -60,7 +60,7 @@ export function appendTransaction(trs, oldState, newState, editor) {
                             )
                         })
                     } else if (step.slice.size===2 && step.gapFrom-step.from===1 && step.to-step.gapTo===1) { // Replaced one wrapping with another
-                        let pos = step.from,
+                        const pos = step.from,
                             oldNode = tr.docs[index].nodeAt(pos)
                         if (oldNode.attrs.track) {
                             replacedWrappings.push({pos, oldNode, newNode: step.slice.content.firstChild})
@@ -100,14 +100,14 @@ export function appendTransaction(trs, oldState, newState, editor) {
                         ['em', 'strong'].includes(step.mark.type.name) &&
                         !node.marks.find(mark => mark.type === step.mark.type)
                     ) {
-                        let formatChangeMark = node.marks.find(mark => mark.type.name==='format_change'),
-                            before = formatChangeMark ?
+                        const formatChangeMark = node.marks.find(mark => mark.type.name==='format_change')
+                        let before = formatChangeMark ?
                                 formatChangeMark.attrs.before :
                                 node.marks.map(mark => mark.type.name).filter(markName => ['em', 'strong'].includes(markName)),
                             after = formatChangeMark ?
                                 formatChangeMark.attrs.after.concat(step.mark.type.name) :
-                                before.concat(step.mark.type.name),
-                            common = before.filter(markName => after.includes(markName))
+                                before.concat(step.mark.type.name)
+                        const common = before.filter(markName => after.includes(markName))
                         before = before.filter(markName => !common.includes(markName))
                         after = after.filter(markName => !common.includes(markName))
                         formatChangeRanges.push(
@@ -139,14 +139,14 @@ export function appendTransaction(trs, oldState, newState, editor) {
                         ['em', 'strong'].includes(step.mark.type.name) &&
                         node.marks.find(mark => mark.type === step.mark.type)
                     ) {
-                        let formatChangeMark = node.marks.find(mark => mark.type.name==='format_change'),
-                            before = formatChangeMark ?
+                        const formatChangeMark = node.marks.find(mark => mark.type.name==='format_change')
+                        let before = formatChangeMark ?
                                 formatChangeMark.attrs.before :
                                 node.marks.map(mark => mark.type.name).filter(markName => ['em', 'strong'].includes(markName)),
                             after = formatChangeMark ?
                                 formatChangeMark.attrs.after.filter(format => format !== step.mark.type.name) :
-                                before.filter(format => format !== step.mark.type.name),
-                            common = before.filter(markName => after.includes(markName))
+                                before.filter(format => format !== step.mark.type.name)
+                        const common = before.filter(markName => after.includes(markName))
                         before = before.filter(markName => !common.includes(markName))
                         after = after.filter(markName => !common.includes(markName))
 
@@ -181,7 +181,7 @@ export function appendTransaction(trs, oldState, newState, editor) {
         return false
     }
 
-    let newTr = newState.tr,
+    const newTr = newState.tr,
         exactDate = Date.now() - editor.clientTimeAdjustment,
         date10 = Math.floor(exactDate/600000) * 10, // 10 minute interval
         date1 = Math.floor(exactDate/60000), // 1 minute interval
@@ -195,7 +195,7 @@ export function appendTransaction(trs, oldState, newState, editor) {
                 newState.schema.marks.format_change
             )
         } else {
-            let formatChangeMark = newState.schema.marks.format_change.create({user, username, date: date10, before: formatChange.before, after: formatChange.after})
+            const formatChangeMark = newState.schema.marks.format_change.create({user, username, date: date10, before: formatChange.before, after: formatChange.after})
             newTr.maybeStep(
                 new AddMarkStep(
                     formatChange.from,
@@ -218,8 +218,8 @@ export function appendTransaction(trs, oldState, newState, editor) {
             {}
         )
     ).forEach(wrap => {
-        let {oldNode, newNode, pos} = wrap,
-            track = oldNode.attrs.track.slice(),
+        const {oldNode, newNode, pos} = wrap
+        let track = oldNode.attrs.track.slice(),
             blockTrack = track.find(track => track.type==="block_change")
 
         if (blockTrack) {
@@ -246,19 +246,19 @@ export function appendTransaction(trs, oldState, newState, editor) {
         let deletedRanges = addedRanges.slice()
         trs.slice().reverse().forEach(tr => {
             tr.steps.slice().reverse().forEach((step, index) => {
-                let invertedStep = step.invert(tr.docs[tr.docs.length-index-1])
+                const invertedStep = step.invert(tr.docs[tr.docs.length-index-1])
                 newTr.step(invertedStep)
-                let stepMap = invertedStep.getMap()
+                const stepMap = invertedStep.getMap()
                 deletedRanges = deletedRanges.map(range => ({from: stepMap.map(range.from, -1), to: stepMap.map(range.to, 1)}))
             })
         })
         deletedRanges = deletedRanges.filter(range => range.from !== range.to)
 
-        let realDeletedRanges = [], // ranges of content by the same user. Should not be marked as gone, but really be removed
-            deletionMark = newState.schema.marks.deletion.create({user, username, date: date10})
+        let realDeletedRanges = [] // ranges of content by the same user. Should not be marked as gone, but really be removed
+        const deletionMark = newState.schema.marks.deletion.create({user, username, date: date10})
         deletedRanges.forEach(delRange => {
-            let oldDeletionMarks = {},
-                firstTableCellChild = false
+            const oldDeletionMarks = {}
+            let firstTableCellChild = false
             // Add deletion mark to block nodes (figures, text blocks) and find already deleted inline nodes
             newTr.doc.nodesBetween(
                 delRange.from,
@@ -273,7 +273,7 @@ export function appendTransaction(trs, oldState, newState, editor) {
                     } else if (['table_row', 'table_cell'].includes(node.type.name)) {
                         return false
                     } else if (node.isInline) {
-                        let oldDeletionMark = node.marks.find(mark => mark.type.name==='deletion')
+                        const oldDeletionMark = node.marks.find(mark => mark.type.name==='deletion')
                         if (oldDeletionMark) {
                             oldDeletionMarks[pos] = oldDeletionMark
                         }
@@ -282,7 +282,7 @@ export function appendTransaction(trs, oldState, newState, editor) {
                         !node.attrs.track.find(trackAttr => trackAttr.type === 'deletion') &&
                         !['bullet_list', 'ordered_list'].includes(node.type.name)
                     ) {
-                        let track = node.attrs.track.slice()
+                        const track = node.attrs.track.slice()
                         track.push({type: 'deletion', user, username, date: date1})
                         newTr.setNodeMarkup(pos, null, Object.assign({}, node.attrs, {track}), node.marks)
                     }
@@ -309,7 +309,7 @@ export function appendTransaction(trs, oldState, newState, editor) {
                         // user has created element. so (s)he is allowed to delete it again.
                         if (node.isTextblock && delRange.to < (pos + node.nodeSize)) {
                             // The node is a textblock. So we need to merge into the last possible position inside the last text block.
-                            let selectionBefore = Selection.findFrom(newTr.doc.resolve(pos), -1)
+                            const selectionBefore = Selection.findFrom(newTr.doc.resolve(pos), -1)
                             if (selectionBefore instanceof TextSelection) {
                                 realDeletedRanges.push({from: selectionBefore.$anchor.pos, to: delRange.to})
                             }
@@ -331,21 +331,21 @@ export function appendTransaction(trs, oldState, newState, editor) {
         })
         let map = new Mapping()
         while (realDeletedRanges.length) { // We delete nodes deleted and previously inserted by same user (unapproved content)
-            let delRange = realDeletedRanges.pop(),
+            const delRange = realDeletedRanges.pop(),
                 delStep = new ReplaceStep(
                     delRange.from,
                     delRange.to,
                     Slice.empty
                 )
             if (!newTr.maybeStep(delStep).failed) {
-                let stepMap = delStep.getMap()
+                const stepMap = delStep.getMap()
                 map.appendMap(stepMap)
                 realDeletedRanges = realDeletedRanges.map(delRange => ({from: stepMap.map(delRange.from, -1), to: stepMap.map(delRange.to, 1)}))
             }
         }
         addedRanges = [] // We reset the added ranges.
         trs.forEach(tr => { // We insert all the same steps, but with "from"/"to" both set to "to" in order not to delete content. Mapped as needed.
-            let deleteTr = ['deleteContentBackward', 'deleteContentBackward'].includes(tr.getMeta('inputType')) ? true : false,
+            const deleteTr = ['deleteContentBackward', 'deleteContentBackward'].includes(tr.getMeta('inputType')) ? true : false,
             cellDeleteTr = deleteTr && (oldState.selection instanceof CellSelection)
             tr.steps.forEach((step, index) => {
                 let stepMap
@@ -353,7 +353,7 @@ export function appendTransaction(trs, oldState, newState, editor) {
                     // We only insert content if this is not directly a tr for cell deletion. This is because tables delete rows by deleting the
                     // contents of each cell and replacing it with an empty paragraph.
                     if (step.slice.size && !cellDeleteTr) {
-                        let newStep = new ReplaceStep(
+                        const newStep = new ReplaceStep(
                             map.map(step.to),
                             map.map(step.to),
                             step.slice,
@@ -381,7 +381,7 @@ export function appendTransaction(trs, oldState, newState, editor) {
                                     to: map.map(step.gapFrom, 1)
                                 }
                             )
-                            let mappedStep = step.map(map)
+                            const mappedStep = step.map(map)
                             if (mappedStep) {
                                 if (!newTr.maybeStep(mappedStep).failed) {
 
@@ -391,7 +391,7 @@ export function appendTransaction(trs, oldState, newState, editor) {
                         }
 
                     } else if (step.slice.size) {
-                        let newStep = new ReplaceStep(
+                        const newStep = new ReplaceStep(
                             map.map(step.to),
                             map.map(step.to),
                             step.slice,
@@ -409,14 +409,14 @@ export function appendTransaction(trs, oldState, newState, editor) {
                         }
                     }
                 } else {
-                    let mappedStep = step.map(map)
+                    const mappedStep = step.map(map)
                     if (mappedStep) {
                         if (!newTr.maybeStep(mappedStep).failed) {
                             stepMap = mappedStep.getMap()
                         }
                     }
                 }
-                let newMap = new Mapping()
+                const newMap = new Mapping()
                 newMap.appendMap(step.getMap().invert())
                 newMap.appendMapping(map)
                 if (stepMap) {
@@ -427,10 +427,10 @@ export function appendTransaction(trs, oldState, newState, editor) {
             })
         })
 
-        let tr = trs[trs.length-1]
+        const tr = trs[trs.length-1]
         if (tr.selection instanceof TextSelection) {
-            let assoc = (tr.selection.from < oldState.selection.from || tr.getMeta('inputType') === 'deleteContentBackward' ) ? -1 : 1
-            let caretPos = map.map(tr.selection.from, assoc)
+            const assoc = (tr.selection.from < oldState.selection.from || tr.getMeta('inputType') === 'deleteContentBackward' ) ? -1 : 1
+            const caretPos = map.map(tr.selection.from, assoc)
             newTr.setSelection(
                 new TextSelection(
                     newTr.doc.resolve(
@@ -443,7 +443,7 @@ export function appendTransaction(trs, oldState, newState, editor) {
         unmarkedDeletionRanges = unmarkedDeletionRanges.map(range => ({mark: range.mark, from: map.map(range.from, -1), to: map.map(range.to, 1)}))
     } // End only unapproved with added ranges
 
-    let insertionMark = newState.schema.marks.insertion.create({user, username, date: date10, approved})
+    const insertionMark = newState.schema.marks.insertion.create({user, username, date: date10, approved})
 
     addedRanges.forEach(addedRange => {
         newTr.maybeStep(
@@ -469,7 +469,7 @@ export function appendTransaction(trs, oldState, newState, editor) {
                     return false
                 }
                 if (node.attrs.track) {
-                    let track = []
+                    const track = []
                     if (!approved) {
                         track.push({type: 'insertion', user, username, date: date1})
                     }

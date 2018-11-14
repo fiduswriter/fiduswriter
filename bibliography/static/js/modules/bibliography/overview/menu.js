@@ -3,7 +3,7 @@ import {BibLatexFileExporter} from "../export"
 import {BibEntryForm} from "../form"
 import {BibLatexFileImportDialog} from "../import"
 
-export let menuModel = {
+export let menuModel = () => ({
     content: [
         {
             type: 'select-action-dropdown',
@@ -34,7 +34,7 @@ export let menuModel = {
                     action: overview => {
                         let ids = overview.getSelected()
                         if (ids.length) {
-                            let exporter = new BibLatexFileExporter(overview.bibDB, ids)
+                            let exporter = new BibLatexFileExporter(overview.app.bibDB, ids)
                             exporter.init()
                         }
                     },
@@ -69,7 +69,7 @@ export let menuModel = {
             icon: 'plus-circle',
             title: gettext('Register new source'),
             action: overview => {
-                let form = new BibEntryForm(overview.bibDB)
+                let form = new BibEntryForm(overview.app.bibDB)
                 form.init().then(
                     idTranslations => {
                         let ids = idTranslations.map(idTrans => idTrans[1])
@@ -85,7 +85,7 @@ export let menuModel = {
             title: gettext('Upload BibTeX file'),
             action: overview => {
                 let fileImporter = new BibLatexFileImportDialog(
-                    overview.bibDB,
+                    overview.app.bibDB,
                     ids => overview.updateTable(ids),
                     overview.staticUrl
                 )
@@ -101,4 +101,4 @@ export let menuModel = {
             order: 5
         }
     ]
-}
+})

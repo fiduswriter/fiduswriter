@@ -9,16 +9,17 @@
 {% block extraheaders %}
 <script type="text/javascript" src="{% static "js/confirm_account.mjs" %}"></script>
 <script type="text/javascript">
-    let testServer = "{{TEST_SERVER}}" === "True" ? true : false
+    'use strict';
+    const testServer = "{{TEST_SERVER}}" === "True" ? true : false
     {% if confirmation %}
-        let confirmationData = {
+        const confirmationData = {
             confirmed: true,
             userName: "{{ confirmation.email_address.user }}",
             email: "{{ confirmation.email_address.email }}",
             submissionUrl: "{% url 'account_confirm_email' confirmation.key %}"
         }
     {% else %}
-        let confirmationData = {
+        const confirmationData = {
             confirmed: false,
             emailUrl: "{% url 'account_email' %}"
         }

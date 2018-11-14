@@ -18,7 +18,7 @@ export class ModTrack {
     bindEvents() {
         // Bind all the click events related to track changes
         document.body.addEventListener('click', event => {
-            let el = {}
+            const el = {}
             switch (true) {
                 case findTarget(event, '.track-accept', el):
                     accept(el.target.dataset.type, parseInt(el.target.dataset.pos), el.target.dataset.view==='main' ? this.editor.view : this.editor.mod.footnotes.fnEditor.view)
@@ -26,27 +26,28 @@ export class ModTrack {
                 case findTarget(event, '.track-reject', el):
                     reject(el.target.dataset.type, parseInt(el.target.dataset.pos), el.target.dataset.view==='main' ? this.editor.view : this.editor.mod.footnotes.fnEditor.view)
                     break
-                case findTarget(event, '.margin-box.track.inactive', el):
-                    this.editor.mod.comments.interactions.deactivateAll()
-                    let view = el.target.dataset.view === 'main' ? this.editor.view : this.editor.mod.footnotes.fnEditor.view
-                    let otherView = el.target.dataset.view === 'main' ? this.editor.mod.footnotes.fnEditor.view : this.editor.view
-                    // remove all selected changes in other view
-                    otherView.dispatch(deactivateAllSelectedChanges(otherView.state.tr))
-                    // activate selected change in relevant view
-                    let tr = setSelectedChanges(
-                        view.state.tr,
-                        el.target.dataset.type,
-                        parseInt(el.target.dataset.pos)
-                    )
-                    if (tr) {
-                        this.editor.currentView = view
-                        view.dispatch(tr)
-                    }
-                    break
                 default:
                     break
             }
         })
+    }
+
+    activateTrack(viewName, type, pos) {
+        this.editor.mod.comments.interactions.deactivateAll()
+        const view = viewName === 'main' ? this.editor.view : this.editor.mod.footnotes.fnEditor.view
+        const otherView = viewName === 'main' ? this.editor.mod.footnotes.fnEditor.view : this.editor.view
+        // remove all selected changes in other view
+        otherView.dispatch(deactivateAllSelectedChanges(otherView.state.tr))
+        // activate selected change in relevant view
+        const tr = setSelectedChanges(
+            view.state.tr,
+            type,
+            pos
+        )
+        if (tr) {
+            this.editor.currentView = view
+            view.dispatch(tr)
+        }
     }
 
     rejectAll() {

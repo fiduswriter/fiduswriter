@@ -1,7 +1,7 @@
 import {addMemberDialog, deleteMemberDialog} from "./manage"
 import {teammemberTemplate} from "./templates"
 
-export let menuModel = {
+export let menuModel = () => ({
     content: [
         {
             type: 'select-action-dropdown',
@@ -47,4 +47,4 @@ export let menuModel = {
             order: 1
         }
     ]
-}
+})

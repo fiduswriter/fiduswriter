@@ -14,24 +14,24 @@ import {TEXT_ONLY_PARTS} from "../toolbar/model"
 import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from "../.."
 
 // from https://github.com/ProseMirror/prosemirror-tables/blob/master/src/util.js
-let findTable = function(state) {
-    let $head = state.selection.$head
+const findTable = function(state) {
+    const $head = state.selection.$head
     for (let d = $head.depth; d > 0; d--) if ($head.node(d).type.spec.tableRole == "table") return $head.node(d)
     return false
 }
 
-let tableAddedByUser = function(table, userId) {
+const tableAddedByUser = function(table, userId) {
     return table.attrs.track.find(track => (track.type==='insertion' && track.user === userId)) ? true : false
 }
 
-let languageItem = function(code, name, order) {
+const languageItem = function(code, name, order) {
     return {
         title: name,
         type: 'setting',
         order,
         action: editor => {
-            let article = editor.view.state.doc.firstChild
-            let attrs = Object.assign({}, article.attrs)
+            const article = editor.view.state.doc.firstChild
+            const attrs = Object.assign({}, article.attrs)
             attrs.language = code
             editor.view.dispatch(
                 editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta('settings', true)
@@ -44,7 +44,7 @@ let languageItem = function(code, name, order) {
 }
 
 
-export let headerbarModel = {
+export const headerbarModel = () => ({
     open: true, // Whether the menu is shown at all.
     content: [
         {
@@ -94,10 +94,10 @@ export let headerbarModel = {
                     order: 2,
                     keys: 'Ctrl-s',
                     action: editor => {
-                        let dialog = new RevisionDialog(editor.docInfo.dir)
+                        const dialog = new RevisionDialog(editor.docInfo.dir)
                         dialog.init().then(
                             note => {
-                                let saver = new SaveRevision(
+                                const saver = new SaveRevision(
                                     editor.getDoc(),
                                     editor.mod.db.imageDB,
                                     editor.mod.db.bibDB,
@@ -116,7 +116,7 @@ export let headerbarModel = {
                     tooltip: gettext('Create copy of the current document.'),
                     order: 3,
                     action: editor => {
-                        let copier = new SaveCopy(
+                        const copier = new SaveCopy(
                                 editor.getDoc(),
                                 editor.mod.db.bibDB,
                                 editor.mod.db.imageDB,
@@ -383,7 +383,7 @@ export let headerbarModel = {
                             type: 'setting',
                             order: 13,
                             action: editor => {
-                                let language = editor.view.state.doc.firstChild.attrs.language,
+                                const language = editor.view.state.doc.firstChild.attrs.language,
                                     dialog = new LanguageDialog(editor, language)
                                 dialog.init()
                             },
@@ -424,8 +424,8 @@ export let headerbarModel = {
                             tooltip: gettext('A4 (DIN A4/ISO 216) which is used in most of the world.'),
                             order: 0,
                             action: editor => {
-                                let article = editor.view.state.doc.firstChild
-                                let attrs = Object.assign({}, article.attrs)
+                                const article = editor.view.state.doc.firstChild
+                                const attrs = Object.assign({}, article.attrs)
                                 attrs.papersize = 'A4'
                                 editor.view.dispatch(
                                     editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta('settings', true)
@@ -441,8 +441,8 @@ export let headerbarModel = {
                             tooltip: gettext('The format used by the USA and some other American countries.'),
                             order: 1,
                             action: editor => {
-                                let article = editor.view.state.doc.firstChild
-                                let attrs = Object.assign({}, article.attrs)
+                                const article = editor.view.state.doc.firstChild
+                                const attrs = Object.assign({}, article.attrs)
                                 attrs.papersize = 'US Letter'
                                 editor.view.dispatch(
                                     editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta('settings', true)
@@ -499,7 +499,7 @@ export let headerbarModel = {
                     order: 0,
                     icon: 'table',
                     action: editor => {
-                        let dialog = new TableDialog(editor)
+                        const dialog = new TableDialog(editor)
                         dialog.init()
                     },
                     disabled: editor => {
@@ -529,7 +529,7 @@ export let headerbarModel = {
                         addRowBefore(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('untracked', true)))
                     },
                     disabled: editor => {
-                        let table = findTable(editor.currentView.state)
+                        const table = findTable(editor.currentView.state)
                         if (
                             !table ||
                             (
@@ -552,7 +552,7 @@ export let headerbarModel = {
                         addRowAfter(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('untracked', true)))
                     },
                     disabled: editor => {
-                        let table = findTable(editor.currentView.state)
+                        const table = findTable(editor.currentView.state)
                         if (
                             !table ||
                             (
@@ -575,7 +575,7 @@ export let headerbarModel = {
                         addColumnBefore(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('untracked', true)))
                     },
                     disabled: editor => {
-                        let table = findTable(editor.currentView.state)
+                        const table = findTable(editor.currentView.state)
                         if (
                             !table ||
                             (
@@ -598,7 +598,7 @@ export let headerbarModel = {
                         addColumnAfter(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('untracked', true)))
                     },
                     disabled: editor => {
-                        let table = findTable(editor.currentView.state)
+                        const table = findTable(editor.currentView.state)
                         if (
                             !table ||
                             (
@@ -625,7 +625,7 @@ export let headerbarModel = {
                         deleteRow(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('untracked', true)))
                     },
                     disabled: editor => {
-                        let table = findTable(editor.currentView.state)
+                        const table = findTable(editor.currentView.state)
                         if (
                             !table ||
                             (
@@ -648,7 +648,7 @@ export let headerbarModel = {
                         deleteColumn(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('untracked', true)))
                     },
                     disabled: editor => {
-                        let table = findTable(editor.currentView.state)
+                        const table = findTable(editor.currentView.state)
                         if (
                             !table ||
                             (
@@ -674,7 +674,7 @@ export let headerbarModel = {
                         mergeCells(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('untracked', true)))
                     },
                     disabled: editor => {
-                        let table = findTable(editor.currentView.state)
+                        const table = findTable(editor.currentView.state)
                         if (
                             !table ||
                             editor.currentView.state.selection.jsonID !== 'cell' ||
@@ -701,7 +701,7 @@ export let headerbarModel = {
                         splitCell(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('untracked', true)))
                     },
                     disabled: editor => {
-                        let table = findTable(editor.currentView.state)
+                        const table = findTable(editor.currentView.state)
                         if (
                             !table ||
                             editor.currentView.state.selection.jsonID !== 'cell' ||
@@ -731,7 +731,7 @@ export let headerbarModel = {
                         toggleHeaderRow(editor.currentView.state, editor.currentView.dispatch)
                     },
                     disabled: editor => {
-                        let table = findTable(editor.currentView.state)
+                        const table = findTable(editor.currentView.state)
                         if (
                             !table ||
                             (
@@ -754,7 +754,7 @@ export let headerbarModel = {
                         toggleHeaderColumn(editor.currentView.state, editor.currentView.dispatch)
                     },
                     disabled: editor => {
-                        let table = findTable(editor.currentView.state)
+                        const table = findTable(editor.currentView.state)
                         if (
                             !table ||
                             (
@@ -777,7 +777,7 @@ export let headerbarModel = {
                         toggleHeaderCell(editor.currentView.state, editor.currentView.dispatch)
                     },
                     disabled: editor => {
-                        let table = findTable(editor.currentView.state)
+                        const table = findTable(editor.currentView.state)
                         if (
                             !table ||
                             (
@@ -824,8 +824,8 @@ export let headerbarModel = {
                         return editor.docInfo.access_rights !== 'write'
                     },
                     action: editor => {
-                        let article = editor.view.state.doc.firstChild
-                        let attrs = Object.assign({}, article.attrs)
+                        const article = editor.view.state.doc.firstChild
+                        const attrs = Object.assign({}, article.attrs)
                         attrs.tracked = !attrs.tracked
                         editor.view.dispatch(
                             editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta('settings', true)
@@ -856,4 +856,4 @@ export let headerbarModel = {
             ]
         }
     ]
-}
+})

@@ -34,7 +34,7 @@ export let menuModel = () => ({
                     action: overview => {
                         let ids = overview.getSelected()
                         if (ids.length) {
-                            let exporter = new BibLatexFileExporter(overview.bibDB, ids)
+                            let exporter = new BibLatexFileExporter(overview.app.bibDB, ids)
                             exporter.init()
                         }
                     },
@@ -69,7 +69,7 @@ export let menuModel = () => ({
             icon: 'plus-circle',
             title: gettext('Register new source'),
             action: overview => {
-                let form = new BibEntryForm(overview.bibDB)
+                let form = new BibEntryForm(overview.app.bibDB)
                 form.init().then(
                     idTranslations => {
                         let ids = idTranslations.map(idTrans => idTrans[1])

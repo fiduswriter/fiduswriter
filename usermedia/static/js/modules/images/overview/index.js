@@ -85,7 +85,7 @@ export class ImageOverview {
 
     deleteImageDialog(ids) {
 
-        let buttons = [
+        const buttons = [
             {
                 text: gettext('Delete'),
                 classes: "fw-dark",
@@ -98,7 +98,7 @@ export class ImageOverview {
                 type: 'cancel'
             }
         ]
-        let dialog = new Dialog({
+        const dialog = new Dialog({
             id: 'confirmdeletion',
             icon: 'exclamation-triangle',
             title: gettext('Confirm deletion'),
@@ -247,12 +247,6 @@ export class ImageOverview {
                         )
                     } else {
                         itemEl.parentElement.removeChild(itemEl)
-                    }
-                    break
-                case findTarget(event, 'a', el):
-                    if (el.target.hostname === window.location.hostname && el.target.getAttribute('href')[0] === '/') {
-                        event.preventDefault()
-                        this.app.goTo(el.target.href)
                     }
                     break
                 default:

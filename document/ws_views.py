@@ -177,22 +177,6 @@ class WebSocket(BaseWebSocketHandler):
             AccessRight.objects.filter(document__owner=doc_owner)
         )
         response['doc_info']['collaborators'] = collaborators
-        if self.user_info.is_owner:
-            the_user = self.user_info.user
-            response['doc_info']['owner']['email'] = the_user.email
-            response['doc_info']['owner']['username'] = the_user.username
-            response['doc_info']['owner']['first_name'] = the_user.first_name
-            response['doc_info']['owner']['last_name'] = the_user.last_name
-        else:
-            the_user = self.user_info.user
-            response['user'] = dict()
-            response['user']['id'] = the_user.id
-            response['user']['name'] = the_user.readable_name
-            response['user']['avatar'] = avatar_url(the_user, 80)
-            response['user']['email'] = the_user.email
-            response['user']['username'] = the_user.username
-            response['user']['first_name'] = the_user.first_name
-            response['user']['last_name'] = the_user.last_name
         response['doc_info']['session_id'] = self.id
         self.send_message(response)
 

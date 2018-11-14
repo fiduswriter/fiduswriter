@@ -1,6 +1,6 @@
 import {ImageEditDialog} from "../edit_dialog"
 
-export let menuModel = {
+export let menuModel = () => ({
     content: [
         {
             type: 'select-action-dropdown',
@@ -56,7 +56,7 @@ export let menuModel = {
             title: gettext('Upload new image'),
             action: overview => {
                 let imageUpload = new ImageEditDialog(
-                    overview.imageDB
+                    overview.app.imageDB
                 )
                 imageUpload.init().then(
                     imageId => {
@@ -74,4 +74,4 @@ export let menuModel = {
             order: 4
         }
     ]
-}
+})

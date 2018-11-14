@@ -4,56 +4,93 @@ import {Editor} from "../editor"
 import {ImageOverview} from "../images/overview"
 import {ContactsOverview} from "../contacts"
 import {Profile} from "../profile"
-import {getUserInfo} from "../common"
-
+import {getUserInfo, findTarget} from "../common"
+import {ImageDB} from "../images/database"
+import {BibliographyDB} from "../bibliography/database"
+import * as plugins from "../../plugins/app"
 
 export class App {
     constructor(config = {}) {
         this.config = config
         this.config.app = this
+        this.routes = {
+            "usermedia": () => new ImageOverview(this.config),
+            "bibliography": () => new BibliographyOverview(this.config),
+            "user": pathnameParts => {
+                switch(pathnameParts[2]) {
+                    case "profile":
+                        return new Profile(this.config)
+                        break
+                    case "team":
+                        return new ContactsOverview(this.config)
+                        break
+                    default:
+                        return false
+                }
+            },
+            "document": pathnameParts => {
+                let id = parseInt(pathnameParts[2])
+                if (isNaN(id)) {
+                    id = 0
+                }
+                return new Editor(id, this.config)
+            },
+            "": () => new DocumentOverview(this.config)
+        }
     }
 
     init() {
-        this.getUserInfo().then(
-            () => this.selectPage()
+        this.bibDB = new BibliographyDB()
+        this.imageDB = new ImageDB()
+        Promise.all([
+            this.bibDB.getDB(),
+            this.imageDB.getDB(),
+            this.getUserInfo()
+        ]).then(
+            () => {
+                this.activateFidusPlugins()
+                this.selectPage()
+            }
         )
+        this.bind()
+    }
+
+    bind() {
         window.onpopstate = () => this.selectPage()
+        document.addEventListener('click', event => {
+            const el = {}
+            switch (true) {
+                case findTarget(event, 'a', el):
+                    if (
+                        el.target.hostname === window.location.hostname &&
+                        el.target.getAttribute('href')[0] === '/'
+                    ) {
+                        event.preventDefault()
+                        this.goTo(el.target.href)
+                    }
+                    break
+            }
+        })
+    }
+
+    activateFidusPlugins() {
+        // Add plugins.
+        this.plugins = {}
+
+        Object.keys(plugins).forEach(plugin => {
+            if (typeof plugins[plugin] === 'function') {
+                this.plugins[plugin] = new plugins[plugin](this)
+                this.plugins[plugin].init()
+            }
+        })
     }
 
     selectPage() {
         if (this.page && this.page.close) {
             this.page.close()
         }
-        delete this.page
         const pathnameParts = window.location.pathname.split('/')
-        switch(pathnameParts[1]) {
-            case "usermedia":
-                this.page = new ImageOverview(this.config)
-                break
-            case "bibliography":
-                this.page = new BibliographyOverview(this.config)
-                break
-            case "user":
-                switch(pathnameParts[2]) {
-                    case "profile":
-                        this.page = new Profile(this.config)
-                        break
-                    case "team":
-                        this.page = new ContactsOverview(this.config)
-                        break
-                }
-                break
-            case "document":
-                let id = parseInt(pathnameParts[2])
-                if (isNaN(id)) {
-                    id = 0
-                }
-                this.page = new Editor(id, this.config)
-                break
-            case "":
-                this.page = new DocumentOverview(this.config)
-                break
-        }
+        this.page = this.routes[pathnameParts[1]] ? this.routes[pathnameParts[1]](pathnameParts) : false
         if (this.page) {
             this.page.init()
         } else {

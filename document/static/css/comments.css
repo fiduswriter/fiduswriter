@@ -1,29 +1,80 @@
 /* Comments */
-#margin-box-container {
+#margin-box-column {
     width: 240px;
     padding-left: 20px;
+    margin-top: -50px;
 }
 
-#margin-box-container.hide {
-    display: none;
+#margin-box-filter {
+    height: 44px;
+    z-index: 5;
+    position: relative;
+    width: 220px;
+    margin-bottom: 6px;
+    margin-left: -3px;
+    display: flex;
+    border: 2px solid #f2f2f2;
+    position: sticky;
+    top: 179px;
 }
-
-.pagination-simple + #margin-box-container {
-    top: 0px;
+body.header-closed #margin-box-filter {
+    top: 70px;
+}
+.margin-box-filter-button {
+    flex: 1;
+    background-color: #84b4a7;
+    color: #fff;
+    border-right: 1px solid #f2f2f2;
+    border-left: 1px solid #f2f2f2;
+    position: relative;
+    cursor: pointer;
+}
+.margin-box-filter-button.disabled {
+    background-color: #e0e0e0;
+    color: #545454;
+}
+.margin-box-filter-button .marginbox-options.fw-pulldown.fw-right {
+    top: 27px;
+}
+.margin-box-filter-button .label {
+    top: 17px;
+    left: 16px;
+    position: absolute;
+    font-family: Lato;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06px;
 }
 
 .margin-box {
-    background-color: #fbfbfb;
-    border: 1px solid #ccc;
-    width: 200px;
-    padding: 9px;
-    margin-top: 10px;
+    background-color: #f8f8f8;
+    color: #2c2723;
+    width: 218px;
+    margin-top: 2px;
     position: relative;
 }
+.margin-box .comment-item:first-child {
+    background-color: #fff;
+}
+
+.margin-box.track {
+    background-color: #98a9c5;
+    color: #fff;
+}
 .margin-box.active {
+    color: #000;
     background-color: #fffacf;
+    border: 1px solid #c5c5c5;
     left: -18px;
     z-index: 5;
+    padding: 10px;
+}
+.margin-box.active .comment-item {
+    padding: 0;
+}
+.margin-box.active .comment-item:first-child {
+    background-color: #fffacf;
+    padding-bottom: 10px;
 }
 .margin-box.active:after {
     position: absolute;
@@ -32,19 +83,21 @@
     line-height: 1em;
     font-size: 36px;
     color: #fffacf;
-    text-shadow: -1px 0 1px #ccc;
+    text-shadow: -1px 0px 0px #c5c5c5;
 }
 .margin-box.hidden {
     display: none;
 }
+
 .comment-item {
-    margin-top: 10px;
-    padding-top: 10px;
+    padding: 10px;
     border-top: solid 1px #ccc;
+}
+.comment-item.comment-answer {
+    position: relative;
 }
 .comment-item:first-child {
     margin-top: 0;
-    padding-top: 0;
     border-top: none;
 }
 .comment-item.wait, .comment-answer.wait {
@@ -86,17 +139,18 @@
     border: solid 1px #ccc;
 }
 .comment-user-name {
-    font-weight: 700;
+    font-family: Lato;
     font-size: 12px;
-    margin-bottom: 4px;
+    font-weight: 700;
+    line-height: 20px;
 }
 .comment-date {
     font-size: 10px;
 }
 .assigned-user {
-    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,0.2);
     padding: 5px;
-    margin: 10px;
+    margin: 10px 0 10px 0;
     font-size: 0.9em;
     text-align: center;
 }
@@ -116,22 +170,6 @@
     cursor: text;
 }
 
-.comment-controls {
-    margin-top: 9px;
-    font-size: 10px;
-    color: #af3515;
-}
-.comment-controls > span {
-    margin-right: 5px;
-    cursor: pointer;
-}
-.comment-controls > span:hover {
-    color: #999;
-}
-
-.comment-answer {
-    margin-top: 9px;
-}
 .comment-btns {
     margin-top: 5px;
     text-align: right;
@@ -148,24 +186,28 @@
     display: none;
 }
 
-.show-comment-options {
+.show-marginbox-options {
     position: absolute;
-    right: 5px;
-    top: 8px;
+    right: 0px;
+    top: 0px;
     cursor: pointer;
+    opacity: 0.4;
+    height: 24px;
+    width: 17px;
+    line-height: 40px;
 }
 
-.comment-options.fw-pulldown.fw-right {
-    right: -22px;
-    top: 18px;
+.marginbox-options.fw-pulldown.fw-right {
+    right: -16px;
+    top: 22px;
 }
 
 .comment-is-major {
     margin: 5px 5px 9px 3px;
 }
 
-.comment-is-major-bgc {
-    background-color: #f2dede;
+.comment-is-major-bgc .comment-item:first-child {
+    background-color: #f4c9d9;
 }
 
 .comment.resolved .comment-item {
@@ -178,8 +220,8 @@
 
 #comment-editor .tagger, #answer-editor .tagger  {
     margin: 5px -10px -11px -10px;
-    background-color: #f2f2f2;
-    border: 1px solid #c9c9c9;
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
 }
 
 #comment-editor .tagger:empty, #answer-editor .tagger:empty {
@@ -193,7 +235,7 @@
 
 #comment-editor .tagger .tag:hover, #comment-editor .tagger .tag.selected,
 #answer-editor .tagger .tag:hover, #answer-editor .tagger .tag.selected {
-    background-color: #c9c9c9;
+    background-color: #e0e0e0;
 }
 
 #comment-editor .tagger .tag-user, #answer-editor .tagger .tag-user {

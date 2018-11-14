@@ -30,7 +30,7 @@ export class FormulaEditor {
      * Destroy mathquill object. reinitialize it to work with raw latex
      */
     switchLatexGraphicMode() {
-        let latexText = this.getLatex()
+        const latexText = this.getLatex()
 
         if (this.isRawMode) {
             this.mathField.latex(latexText)

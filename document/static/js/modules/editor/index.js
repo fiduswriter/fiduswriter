@@ -79,12 +79,6 @@ import {
 import {
     getSettings
 } from "../schema/convert"
-import {
-    BibliographyDB
-} from "../bibliography/database"
-import {
-    ImageDB
-} from "../images/database"
 
 import {
     accessRightsPlugin,
@@ -116,10 +110,11 @@ export class Editor {
     // A class that contains everything that happens on the editor page.
     // It is currently not possible to initialize more than one editor class, as it
     // contains bindings to menu items, etc. that are uniquely defined.
-    constructor(id, {app, staticUrl, websocketUrl}) {
+    constructor(id, {app, staticUrl, websocketUrl, user}) {
         this.app = app
         this.staticUrl = staticUrl
         this.websocketUrl = websocketUrl
+        this.user = user
         this.mod = {}
         // Whether the editor is currently waiting for a document update. Set to true
         // initially so that diffs that arrive before document has been loaded are not
@@ -135,11 +130,10 @@ export class Editor {
             dir: 'ltr' // standard direction, used in input fields, etc.
         }
         this.schema = docSchema
-        this.user = false
 
         this.menu = {
-            headerbarModel,
-            toolbarModel
+            headerbarModel: headerbarModel(),
+            toolbarModel: toolbarModel()
         }
         this.client_id = Math.floor(Math.random() * 0xFFFFFFFF)
         this.clientTimeAdjustment = 0
@@ -169,10 +163,6 @@ export class Editor {
             [settingsPlugin, () => ({editor: this})],
             [trackPlugin, () => ({editor: this})]
         ]
-        new ModCitations(this)
-        new ModFootnotes(this)
-        new ModServerCommunications(this)
-        new ModDB(this)
     }
 
     init() {
@@ -194,19 +184,26 @@ export class Editor {
             'bibliography.css'
         ], this.staticUrl)
         whenReady().then(() => {
+            new ModCitations(this)
+            new ModFootnotes(this)
+            new ModServerCommunications(this)
+            new ModDB(this)
             this.render()
             this.initEditor()
         })
     }
 
     close() {
+        this.menu.toolbarViews.forEach(view => view.destroy())
+        this.menu.headerView.destroy()
         this.mod.serverCommunications.close()
     }
 
     render() {
         document.body = document.createElement('body')
+        document.body.classList.add('editor')
         document.body.innerHTML = `<div id="editor">
-            <div id="wait" class="active"><i class="fa fa-spinner fa-pulse"></i></div>
+            <div id="wait"><i class="fa fa-spinner fa-pulse"></i></div>
             <header>
                 <nav id="headerbar">
                     <div></div>
@@ -216,7 +213,7 @@ export class Editor {
                 </nav>
             </header>
             <div id="editor-content">
-                <div id="flow" class="comments-enabled hide">
+                <div id="flow" class="hide">
                     <div id="paper-editable">
                         <div id="document-editable" class="user-contents"></div>
                         <div id="footnote-box-container" class="user-contents">
@@ -225,7 +222,10 @@ export class Editor {
                     </div>
                     <div class="article-bibliography user-contents"></div>
                 </div>
-                <div id="margin-box-container"></div>
+                <div id="margin-box-column">
+                    <div id="margin-box-filter"></div>
+                    <div id="margin-box-container"></div>
+                </div>
             </div>
             <div id="chat">
                 <i class="resize-button fa fa-angle-double-down"></i>
@@ -258,7 +258,7 @@ export class Editor {
                 }
             },
             dispatchTransaction: (tr) => {
-                let newState = this.view.state.apply(tr)
+                const newState = this.view.state.apply(tr)
                 this.view.updateState(newState)
                 this.mod.collab.docChanges.sendToCollaborators()
             }
@@ -266,6 +266,7 @@ export class Editor {
         })
         // The editor that is currently being edited in -- main or footnote editor
         this.currentView = this.view
+        this.mod.citations.init()
         this.mod.footnotes.init()
         new ModCollab(this)
         new ModTools(this)
@@ -297,11 +298,11 @@ export class Editor {
             this.mod.collab.docChanges.enableDiffSending()
         }
         // Remember location hash to scroll there subsequently.
-        let locationHash = window.location.hash
+        const locationHash = window.location.hash
 
         this.clientTimeAdjustment = Date.now() - data.time
 
-        let doc = data.doc
+        const doc = data.doc
 
         this.docInfo = data.doc_info
         this.docInfo.version = doc["v"]
@@ -309,12 +310,6 @@ export class Editor {
         if (this.docInfo.version === 0) {
             // If the document is new, change the url.
             window.history.replaceState("", "", `/document/${this.docInfo.id}/`)
-        }
-
-        if (data.hasOwnProperty('user')) {
-            this.user = data.user
-        } else {
-            this.user = this.docInfo.owner
         }
 
         this.mod.db.bibDB.setDB(data.doc.bibliography)
@@ -327,10 +322,6 @@ export class Editor {
         this.schema.cached.imageDB = this.mod.db.imageDB
         // assign image DB to be used in footnote schema.
         this.mod.footnotes.fnEditor.schema.cached.imageDB = this.mod.db.imageDB
-        this.user.bibDB = new BibliographyDB()
-        this.user.bibDB.getDB()
-        this.user.imageDB = new ImageDB()
-        this.user.imageDB.getDB()
         this.docInfo.confirmedJson = JSON.parse(JSON.stringify(doc.contents))
 
         let stateDoc
@@ -339,7 +330,7 @@ export class Editor {
         } else {
             stateDoc = this.schema.topNodeType.createAndFill()
         }
-        let plugins = this.statePlugins.map(plugin => {
+        const plugins = this.statePlugins.map(plugin => {
             if (plugin[1]) {
                 return plugin[0](plugin[1](doc))
             } else {
@@ -347,7 +338,7 @@ export class Editor {
             }
         })
 
-        let stateConfig = {
+        const stateConfig = {
             schema: this.schema,
             doc: stateDoc,
             plugins
@@ -376,13 +367,21 @@ export class Editor {
     // Collect all components of the current doc. Needed for saving and export
     // filters
     getDoc(options={}) {
-        let pmArticle = options.changes === 'acceptAllNoInsertions' ?
+        const pmArticle = options.changes === 'acceptAllNoInsertions' ?
             acceptAllNoInsertions(this.docInfo.confirmedDoc).firstChild :
             this.docInfo.confirmedDoc.firstChild
+            let title = ""
+            pmArticle.firstChild.forEach(
+                child => {
+                    if(!child.marks.find(mark => mark.type.name==='deletion')) {
+                        title += child.textContent
+                    }
+                }
+            )
         return {
             contents: pmArticle.toJSON(),
             settings: getSettings(pmArticle),
-            title: pmArticle.firstChild.textContent.substring(0, 255),
+            title: title.substring(0, 255),
             version: this.docInfo.version,
             comments: this.mod.comments.store.comments,
             id: this.docInfo.id
@@ -402,7 +401,7 @@ export class Editor {
                 foundPos = pos + 1
                 view = this.view
             } else {
-                let anchorMark = node.marks.find(mark => mark.type.name === 'anchor')
+                const anchorMark = node.marks.find(mark => mark.type.name === 'anchor')
                 if (anchorMark && anchorMark.attrs.id === id) {
                     foundPos = pos + 1
                     view = this.view
@@ -418,7 +417,7 @@ export class Editor {
                     foundPos = pos + 1
                     view = this.mod.footnotes.fnEditor.view
                 } else {
-                    let anchorMark = node.marks.find(mark => mark.type.name === 'anchor')
+                    const anchorMark = node.marks.find(mark => mark.type.name === 'anchor')
                     if (anchorMark && anchorMark.attrs.id === id) {
                         foundPos = pos + 1
                         view = this.mod.footnotes.fnEditor.view
@@ -433,11 +432,11 @@ export class Editor {
     }
 
     scrollPosIntoView(pos, view) {
-        let topMenuHeight = document.querySelector('header').offsetHeight + 10
-        let $pos = view.state.doc.resolve(pos)
+        const topMenuHeight = document.querySelector('header').offsetHeight + 10
+        const $pos = view.state.doc.resolve(pos)
         view.dispatch(view.state.tr.setSelection(new TextSelection($pos, $pos)))
         view.focus()
-        let distanceFromTop = view.coordsAtPos(pos).top - topMenuHeight
+        const distanceFromTop = view.coordsAtPos(pos).top - topMenuHeight
         window.scrollBy(0, distanceFromTop)
         return
     }

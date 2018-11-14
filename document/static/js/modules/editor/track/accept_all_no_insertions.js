@@ -4,9 +4,9 @@ import {RemoveMarkStep, Transform} from "prosemirror-transform"
 import {deleteNode} from "./delete"
 
 export function acceptAllNoInsertions(doc) {
-    let tr = new Transform(doc), map = new Mapping()
+    const tr = new Transform(doc), map = new Mapping()
     doc.descendants((node, pos, parent, index) => {
-        let deletionTrack = node.attrs.track ?
+        const deletionTrack = node.attrs.track ?
                 node.attrs.track.find(track => track.type==='deletion') :
                 node.marks.find(mark => mark.type.name==='deletion'),
             insertionTrack = node.attrs.track ?
@@ -29,7 +29,7 @@ export function acceptAllNoInsertions(doc) {
                     )
                 )
             } else {
-                let track = node.attrs.track.filter(track => track !== insertionTrack)
+                const track = node.attrs.track.filter(track => track !== insertionTrack)
                 tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track}), node.marks)
             }
         }
@@ -43,7 +43,7 @@ export function acceptAllNoInsertions(doc) {
             )
         }
         if (blockChangeTrack) {
-            let track = node.attrs.track.filter(track => track.type !== blockChangeTrack)
+            const track = node.attrs.track.filter(track => track.type !== blockChangeTrack)
             tr.setNodeMarkup(map.map(pos), null, Object.assign({}, node.attrs, {track}), node.marks)
         }
         return true

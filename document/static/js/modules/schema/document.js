@@ -68,7 +68,7 @@ const article = {
 
 const title = {
     content: "text*",
-    marks: "annotation",
+    marks: "annotation track",
     group: "part",
     defining: true,
     parseDOM: [{
@@ -83,7 +83,7 @@ const title = {
 
 const subtitle = {
     content: "text*",
-    marks: "annotation",
+    marks: "annotation track",
     group: "part",
     defining: true,
     isMetadata() {
@@ -280,7 +280,7 @@ const keywords = {
 const body = {
     content: "(block | table_block)+",
     group: "part",
-    marks: "annotation",
+    marks: "annotation track",
     defining: true,
     isMetadata() {
         return true
@@ -324,7 +324,7 @@ const footnote = {
 
 const code_block = {
     content: "text*",
-    marks: "annotation",
+    marks: "annotation track",
     group: "block",
     code: true,
     defining: true,

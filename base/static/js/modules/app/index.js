@@ -5,6 +5,8 @@ import {ImageOverview} from "../images/overview"
 import {ContactsOverview} from "../contacts"
 import {Profile} from "../profile"
 import {getUserInfo, findTarget} from "../common"
+import {ImageDB} from "../images/database"
+import {BibliographyDB} from "../bibliography/database"
 import * as plugins from "../../plugins/app"
 
 export class App {
@@ -38,7 +40,13 @@ export class App {
     }
 
     init() {
-        this.getUserInfo().then(
+        this.bibDB = new BibliographyDB()
+        this.imageDB = new ImageDB()
+        Promise.all([
+            this.bibDB.getDB(),
+            this.imageDB.getDB(),
+            this.getUserInfo()
+        ]).then(
             () => {
                 this.activateFidusPlugins()
                 this.selectPage()

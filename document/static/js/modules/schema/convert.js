@@ -3,7 +3,6 @@
 */
 
 import {obj2Node} from "../exporter/tools/json"
-import {docSchema} from "./document"
 import {randomHeadingId, randomFigureId} from "./common"
 
 export const getSettings = function(pmArticle) {

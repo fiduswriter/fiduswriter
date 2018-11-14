@@ -9,10 +9,6 @@ import {
 import {
     Step
 } from "prosemirror-transform"
-
-import {
-    docSchema
-} from "../../schema/document"
 import {
     getSelectionUpdate,
     removeCollaboratorSelection,
@@ -356,7 +352,7 @@ export class ModCollabDocChanges {
 
     applyDiffs(diffs, cid) {
         this.receiving = true
-        const steps = diffs.map(j => Step.fromJSON(docSchema, j))
+        const steps = diffs.map(j => Step.fromJSON(this.mod.editor.schema, j))
         const clientIds = diffs.map(j => cid)
         const tr = receiveTransaction(
             this.mod.editor.view.state,

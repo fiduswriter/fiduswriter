@@ -1,7 +1,7 @@
 import {DOMSerializer} from "prosemirror-model"
 
 import {RenderCitations} from "../../citations/render"
-import {docSchema} from "../../schema/document"
+import {createDocSchema} from "../../schema/document"
 /*
 
 WARNING: DEPRECATED!
@@ -17,7 +17,7 @@ by little, and they are all based on the BaseDOMExporter class.
 export class BaseDOMExporter {
 
     joinDocumentParts() {
-        const schema = docSchema
+        const schema = createDocSchema(this.doc.settings.template)
         schema.cached.imageDB = this.imageDB
         const serializer = DOMSerializer.fromSchema(schema)
         this.contents = serializer.serializeNode(schema.nodeFromJSON(this.doc.contents))

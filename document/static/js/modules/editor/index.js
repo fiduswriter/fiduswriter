@@ -36,10 +36,13 @@ import {
 import {
     buildKeymap
 } from "prosemirror-example-setup"
+import {
+    schema
+} from "prosemirror-schema-basic"
 
 import * as plugins from "../../plugins/editor"
 import {
-    docSchema
+    createDocSchema
 } from "../schema/document"
 import {
     ModComments
@@ -129,7 +132,7 @@ export class Editor {
             confirmedDoc: false, // The latest doc as confirmed by the server.
             dir: 'ltr' // standard direction, used in input fields, etc.
         }
-        this.schema = docSchema
+        this.schema = schema
 
         this.menu = {
             headerbarModel: headerbarModel(),
@@ -311,7 +314,8 @@ export class Editor {
             // If the document is new, change the url.
             window.history.replaceState("", "", `/document/${this.docInfo.id}/`)
         }
-
+        this.docInfo.template = data.doc.template.definition
+        this.schema = createDocSchema(this.docInfo.template)
         this.mod.db.bibDB.setDB(data.doc.bibliography)
         // assign bibDB to be used in document schema.
         this.schema.cached.bibDB = this.mod.db.bibDB
@@ -323,11 +327,9 @@ export class Editor {
         // assign image DB to be used in footnote schema.
         this.mod.footnotes.fnEditor.schema.cached.imageDB = this.mod.db.imageDB
         this.docInfo.confirmedJson = JSON.parse(JSON.stringify(doc.contents))
-        this.docInfo.template = data.doc.template
-
         let stateDoc
         if (doc.contents.type) {
-            stateDoc = docSchema.nodeFromJSON({type:'doc', content:[doc.contents]})
+            stateDoc = this.schema.nodeFromJSON({type:'doc', content:[doc.contents]})
         } else {
             stateDoc = this.schema.topNodeType.createAndFill()
         }

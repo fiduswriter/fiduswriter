@@ -1,6 +1,6 @@
 import {DOMSerializer} from "prosemirror-model"
 import {RenderCitations} from "../../../citations/render"
-import {docCopySchema, fnCopySchema} from "./schema"
+import {createDocCopySchema, fnCopySchema} from "./schema"
 
 
 // Wrap around DOMSerializer, allowing post processing.
@@ -135,5 +135,11 @@ class ClipboardDOMSerializer {
     }
 }
 
-export const docClipboardSerializer = editor => ClipboardDOMSerializer.fromSchema(docCopySchema, editor)
-export const fnClipboardSerializer = editor => ClipboardDOMSerializer.fromSchema(fnCopySchema, editor)
+export const docClipboardSerializer = editor => ClipboardDOMSerializer.fromSchema(
+    createDocCopySchema(editor.schema),
+    editor
+)
+export const fnClipboardSerializer = editor => ClipboardDOMSerializer.fromSchema(
+    fnCopySchema,
+    editor
+)

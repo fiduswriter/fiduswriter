@@ -1,9 +1,9 @@
-import {escapeText} from "../common"
+import {escapeText} from "../../common"
 import OrderedMap from "orderedmap"
 import {Schema} from "prosemirror-model"
 import {nodes, marks} from "prosemirror-schema-basic"
 import {tableNodes} from "prosemirror-tables"
-import {htmlToFnNode, fnNodeToHtml} from "./footnotes_convert"
+import {htmlToFnNode, fnNodeToHtml} from "../footnotes_convert"
 import {
     figure,
     citation,
@@ -22,54 +22,12 @@ import {
     parseTracks,
     comment,
     annotation_tag
-} from "./common"
-
-const article = {
-    defining: true,
-    content: "title subtitle authors abstract keywords body",
-    selectable: false,
-    allowGapCursor: false,
-    attrs: {
-        papersize: {
-            default: 'A4'
-        },
-        citationstyle: {
-            default: ''
-        },
-        documentstyle: {
-            default: ''
-        },
-        language: {
-            default: 'en-US'
-        },
-        tracked: {
-            default: false
-        }
-    },
-    parseDOM: [{
-        tag: "div.article",
-        getAttrs(dom) {
-            return {
-                papersize: dom.dataset.papersize,
-                citationstyle: dom.dataset.citationstyle,
-                documentstyle: dom.dataset.documentstyle
-            }
-        }
-    }],
-    toDOM(node) {
-        return ["div", {
-            class: 'article',
-            'data-papersize': node.attrs.papersize,
-            'data-citationstyle': node.attrs.citationstyle,
-            'data-documentstyle': node.attrs.documentstyle
-        }, 0]
-    }
-}
+} from "../common"
 
 const title = {
     content: "text*",
     marks: "annotation track",
-    group: "part",
+    group: "fixedpart",
     defining: true,
     parseDOM: [{
         tag: "div.article-title"
@@ -84,7 +42,7 @@ const title = {
 const subtitle = {
     content: "text*",
     marks: "annotation track",
-    group: "part",
+    group: "fixedpart",
     defining: true,
     isMetadata() {
         return true
@@ -351,60 +309,43 @@ const doc = {
     selectable: false
 }
 
-
-const spec = {
-    nodes: OrderedMap.from({
-        doc,
-        article,
-        title,
-        subtitle,
-        authors,
-        author,
-        abstract,
-        keywords,
-        keyword,
-        body,
-        paragraph,
-        blockquote,
-        horizontal_rule,
-        figure,
-        heading,
-        code_block,
-        text: nodes.text,
-        hard_break: nodes.hard_break,
-        citation,
-        equation,
-        footnote,
-        ordered_list,
-        bullet_list,
-        list_item
-    }),
-    marks: OrderedMap.from({
-        em: marks.em,
-        strong: marks.strong,
-        link: marks.link,
-        code: marks.code,
-        comment,
-        annotation_tag,
-        anchor,
-        deletion,
-        insertion,
-        format_change
-    })
-}
-
-spec.nodes = spec.nodes.append(tableNodes({
+let specNodes = OrderedMap.from({
+    doc,
+    title,
+    subtitle,
+    authors,
+    author,
+    abstract,
+    keywords,
+    keyword,
+    body,
+    paragraph,
+    blockquote,
+    horizontal_rule,
+    figure,
+    heading,
+    code_block,
+    text: nodes.text,
+    hard_break: nodes.hard_break,
+    citation,
+    equation,
+    footnote,
+    ordered_list,
+    bullet_list,
+    list_item
+}).append(tableNodes({
     tableGroup: "table_block",
     cellContent: "block+"
 }))
 
-spec.nodes = spec.nodes.update("table_cell", Object.assign({marks: "annotation"}, spec.nodes.get("table_cell")))
-
-spec.nodes = spec.nodes.update(
+specNodes = specNodes.update(
+    "table_cell",
+    Object.assign({marks: "annotation"}, specNodes.get("table_cell"))
+).update(
     "table",
     Object.assign(
         {},
-        spec.nodes.get("table"),
+        specNodes.get("table"),
         {
             attrs: {
                 track: {default: []}
@@ -425,4 +366,18 @@ spec.nodes = spec.nodes.update(
     )
 )
 
-export const docSchema = new Schema(spec)
+export const spec = {
+    nodes: specNodes,
+    marks: OrderedMap.from({
+        em: marks.em,
+        strong: marks.strong,
+        link: marks.link,
+        code: marks.code,
+        comment,
+        annotation_tag,
+        anchor,
+        deletion,
+        insertion,
+        format_change
+    })
+}

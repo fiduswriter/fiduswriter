@@ -45,7 +45,7 @@ class DocumentTemplate(models.Model):
     definition = models.TextField(default='[]')
     document_styles = models.ManyToManyField(DocumentStyle)
     citation_styles = models.ManyToManyField(CitationStyle)
-    export_templates = models.ManyToManyField(ExportTemplate)
+    export_templates = models.ManyToManyField(ExportTemplate, blank=True)
 
     def __str__(self):
         return self.title

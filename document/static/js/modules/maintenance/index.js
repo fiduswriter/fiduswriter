@@ -4,7 +4,6 @@ import JSZipUtils from "jszip-utils"
 
 import {updateFile} from "../importer/update"
 import {updateDoc, getSettings} from "../schema/convert"
-import {docSchema} from "../schema/document"
 import {addAlert, post, postJson, findTarget, whenReady} from "../common"
 import {FW_FILETYPE_VERSION} from "../exporter/native"
 

@@ -5,8 +5,26 @@ from django.db import migrations
 def create_base_template(apps, schema_editor):
     DocumentTemplate = apps.get_model('document', 'DocumentTemplate')
     template = DocumentTemplate()
+    template.slug = 'article'
+    template.title = 'Standard Article'
+    template.definition = '[{"type":"contributors","id":"authors","help":"","initial":"","locked":false},{"type":"richtext","id":"abstract","help":"","initial":"","elements":"h1 h2 h3 h4 h5 h6 p code citation equation","marks":"strong emph highlight underline","locked":false},{"type":"tags","id":"keywords","help":"","initial":"","locked":false},{"type":"richtext","id":"body","help":"","initial":"","elements":"h1 h2 h3 h4 h5 h6 p code citation equation","marks":"strong emph highlight underline","locked":false}]'
+    template.save()
+    CitationStyle = apps.get_model('style', 'CitationStyle')
+    for style in CitationStyle.objects.all():
+        template.citation_styles.add(style)
+    DocumentStyle = apps.get_model('style', 'DocumentStyle')
+    for style in DocumentStyle.objects.all():
+        template.document_styles.add(style)
+    ExportTemplate = apps.get_model('document', 'ExportTemplate')
+    for exporter in ExportTemplate.objects.all():
+        template.export_templates.add(exporter)
     template.save()
 
+def remove_base_template(apps, schema_editor):
+    DocumentTemplate = apps.get_model('document', 'DocumentTemplate')
+    template = DocumentTemplate.objects.filter(pk=1).first()
+    if template:
+        template.delete()
 
 class Migration(migrations.Migration):
 
@@ -15,5 +33,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(create_base_template),
+        migrations.RunPython(create_base_template, remove_base_template),
     ]

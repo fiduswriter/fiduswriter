@@ -20,6 +20,7 @@ class Migration(migrations.Migration):
                 ('definition', models.TextField(default='[]')),
                 ('citation_styles', models.ManyToManyField(to='style.CitationStyle')),
                 ('document_styles', models.ManyToManyField(to='style.DocumentStyle')),
+                ('export_templates', models.ManyToManyField(to='document.ExportTemplate', blank=True)),
             ],
         ),
     ]

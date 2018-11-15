@@ -87,8 +87,9 @@ class Document(models.Model):
                 return [
                     checks.Warning(
                         'Documents need to be upgraded. Please navigate to '
-                        '/admin/maintenance/ with a browser as a superuser '
-                        'and upgrade all documents on this server.',
+                        '/admin/document/document/maintenance/ with a browser '
+                        'as a superuser and upgrade all documents on this '
+                        'server.',
                         obj=cls
                     )
                 ]

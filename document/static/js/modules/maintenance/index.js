@@ -112,7 +112,7 @@ export class DocMaintenance {
 
     saveDoc(doc) {
         this.docSavesLeft++
-        let p1 = post(
+        const p1 = post(
             '/document/maintenance/save_doc/',
             {
                 id: doc.id,
@@ -123,15 +123,18 @@ export class DocMaintenance {
                 version: doc.version,
                 last_diffs: window.JSON.stringify(doc.last_diffs)
             }
-        )
-        let p2 = post(
-            '/document/maintenance/add_images_to_doc/',
-            {
-                doc_id: doc.id,
-                ids: doc.imageIds
-            }
-        )
-        Promise.all([p1, p2]).then(() => {
+        ), promises = [p1]
+        if (doc.imageIds) {
+            const p2 = post(
+                '/document/maintenance/add_images_to_doc/',
+                {
+                    doc_id: doc.id,
+                    ids: doc.imageIds
+                }
+            )
+            promises.push(p2)
+        }
+        Promise.all(promises).then(() => {
             addAlert('success', `${gettext('The document has been updated')}: ${doc.id}`)
             this.docSavesLeft--
             if (this.docSavesLeft===0 && this.batchesDone) {

@@ -17,7 +17,7 @@ export class ModDB {
             if (node.type.name==='citation') {
                 node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
             } else if (node.type.name==='figure' && node.attrs.image) {
-                usedImages.push(parseInt(node.attrs.image))
+                usedImages.push(node.attrs.image)
             }
         })
 
@@ -25,7 +25,7 @@ export class ModDB {
             if (node.type.name==='citation') {
                 node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
             } else if (node.type.name==='figure' && node.attrs.image) {
-                usedImages.push(parseInt(node.attrs.image))
+                usedImages.push(node.attrs.image)
             }
         })
 

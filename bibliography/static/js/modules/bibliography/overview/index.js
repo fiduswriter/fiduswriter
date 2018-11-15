@@ -5,6 +5,7 @@ import {BibLatexImporter} from "../import"
 import {litToText, nameToText} from "../tools"
 import {BibEntryForm} from "../form"
 import {editCategoriesTemplate} from "./templates"
+import {BibliographyDB} from "../database"
 import {BibTypeTitles} from "../form/strings"
 import {SiteMenu} from "../../menu"
 import {OverviewMenuView, findTarget, whenReady, Dialog, baseBodyTemplate, ensureCSS, setDocTitle} from "../../common"
@@ -31,8 +32,7 @@ export class BibliographyOverview {
             smenu.init()
             this.menu = new OverviewMenuView(this, menuModel)
             this.menu.init()
-            this.setBibCategoryList(this.app.bibDB.cats)
-            this.initTable(Object.keys(this.app.bibDB.db))
+            this.getBibDB()
             this.activatePlugins()
             this.bindEvents()
         })
@@ -54,6 +54,14 @@ export class BibliographyOverview {
         feedbackTab.init()
     }
 
+    /* load data from the bibliography */
+    getBibDB() {
+        this.bibDB = new BibliographyDB()
+        this.bibDB.getDB().then(({bibPKs, bibCats}) => {
+            this.setBibCategoryList(bibCats)
+            this.initTable(bibPKs)
+        })
+    }
 
     /* Initialize the overview table */
     initTable(ids) {
@@ -130,7 +138,7 @@ export class BibliographyOverview {
     }
 
     createTableRow(id) {
-        let bibInfo = this.app.bibDB.db[id]
+        let bibInfo = this.bibDB.db[id]
         let bibauthors = bibInfo.fields.author || bibInfo.fields.editor
         return [
             String(id),
@@ -197,7 +205,7 @@ export class BibliographyOverview {
             height: 350,
             title: gettext('Edit Categories'),
             body: editCategoriesTemplate({
-                categories: this.app.bibDB.cats
+                categories: this.bibDB.cats
             }),
             buttons
         })
@@ -267,7 +275,7 @@ export class BibliographyOverview {
                     break
                 case findTarget(event, '.edit-bib', el):
                     bookId = parseInt(el.target.dataset.id)
-                    let form = new BibEntryForm(this.app.bibDB, bookId)
+                    let form = new BibEntryForm(this.bibDB, bookId)
                     form.init().then(
                         idTranslations => {
                             let ids = idTranslations.map(idTrans => idTrans[1])
@@ -289,6 +297,12 @@ export class BibliographyOverview {
                         )
                     } else {
                         itemEl.parentElement.removeChild(itemEl)
+                    }
+                    break
+                case findTarget(event, 'a', el):
+                    if (el.target.hostname === window.location.hostname && el.target.getAttribute('href')[0] === '/') {
+                        event.preventDefault()
+                        this.app.goTo(el.target.href)
                     }
                     break
                 default:
@@ -334,7 +348,7 @@ export class BibliographyOverview {
     getBibtex(text) {
         const importer = new BibLatexImporter(
             text,
-            this.app.bibDB,
+            this.bibDB,
             newIds => this.updateTable(newIds),
             false,
             this.staticUrl
@@ -345,11 +359,11 @@ export class BibliographyOverview {
 
 
     saveCategories(cats) {
-        this.app.bibDB.saveCategories(cats).then(bibCats => this.setBibCategoryList(bibCats))
+        this.bibDB.saveCategories(cats).then(bibCats => this.setBibCategoryList(bibCats))
     }
 
     deleteBibEntries(ids) {
-        this.app.bibDB.deleteBibEntries(ids).then(ids => this.removeTableRows(ids))
+        this.bibDB.deleteBibEntries(ids).then(ids => this.removeTableRows(ids))
     }
 
 }

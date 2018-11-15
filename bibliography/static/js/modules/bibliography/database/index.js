@@ -62,11 +62,13 @@ export class BibliographyDB {
                 } else {
                     bibList = JSON.parse(window.localStorage.getItem('biblist'))
                 }
+                let bibPKs = []
                 bibList.forEach(({id, bibDBEntry}) => {
                     this.db[id] = bibDBEntry
+                    bibPKs.push(id)
                 })
                 deactivateWait()
-                return
+                return {bibPKs, bibCats}
             }
         ).catch(
             error => {

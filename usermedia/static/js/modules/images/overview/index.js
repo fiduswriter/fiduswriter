@@ -1,5 +1,6 @@
 import {DataTable} from "simple-datatables"
 
+import {ImageDB} from "../database"
 import {ImageOverviewCategories} from "./categories"
 import {activateWait, deactivateWait, addAlert, post, findTarget, whenReady, Dialog, localizeDate, escapeText} from "../../common"
 import {SiteMenu} from "../../menu"
@@ -28,8 +29,7 @@ export class ImageOverview {
             this.menu.init()
             this.activatePlugins()
             this.bindEvents()
-            this.mod.categories.setImageCategoryList(this.app.imageDB.cats)
-            this.initTable(Object.keys(this.app.imageDB.db))
+            this.getImageDB()
         })
     }
 
@@ -73,7 +73,7 @@ export class ImageOverview {
         ).then(
             () => {
                 ids.forEach(id => {
-                    delete this.app.imageDB[id]
+                    delete this.imageDB[id]
                 })
                 this.removeTableRows(ids)
                 addAlert('success', gettext('The image(s) have been deleted'))
@@ -85,7 +85,7 @@ export class ImageOverview {
 
     deleteImageDialog(ids) {
 
-        const buttons = [
+        let buttons = [
             {
                 text: gettext('Delete'),
                 classes: "fw-dark",
@@ -98,7 +98,7 @@ export class ImageOverview {
                 type: 'cancel'
             }
         ]
-        const dialog = new Dialog({
+        let dialog = new Dialog({
             id: 'confirmdeletion',
             icon: 'exclamation-triangle',
             title: gettext('Confirm deletion'),
@@ -119,7 +119,7 @@ export class ImageOverview {
     }
 
     createTableRow(id) {
-        let image = this.app.imageDB.db[id]
+        let image = this.imageDB.db[id]
         let fileType = image.file_type.split('/')
 
         if(1 < fileType.length) {
@@ -160,6 +160,15 @@ export class ImageOverview {
         if (existingRows.length) {
             this.table.rows().remove(existingRows)
         }
+    }
+
+    getImageDB() {
+        let imageGetter = new ImageDB()
+        imageGetter.getDB().then(ids => {
+            this.imageDB = imageGetter
+            this.mod.categories.setImageCategoryList(imageGetter.cats)
+            this.initTable(ids)
+        })
     }
 
     /* Initialize the overview table */
@@ -238,6 +247,12 @@ export class ImageOverview {
                         )
                     } else {
                         itemEl.parentElement.removeChild(itemEl)
+                    }
+                    break
+                case findTarget(event, 'a', el):
+                    if (el.target.hostname === window.location.hostname && el.target.getAttribute('href')[0] === '/') {
+                        event.preventDefault()
+                        this.app.goTo(el.target.href)
                     }
                     break
                 default:

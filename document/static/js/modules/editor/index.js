@@ -79,6 +79,12 @@ import {
 import {
     getSettings
 } from "../schema/convert"
+import {
+    BibliographyDB
+} from "../bibliography/database"
+import {
+    ImageDB
+} from "../images/database"
 
 import {
     accessRightsPlugin,
@@ -203,7 +209,7 @@ export class Editor {
         document.body = document.createElement('body')
         document.body.classList.add('editor')
         document.body.innerHTML = `<div id="editor">
-            <div id="wait"><i class="fa fa-spinner fa-pulse"></i></div>
+            <div id="wait" class="active"><i class="fa fa-spinner fa-pulse"></i></div>
             <header>
                 <nav id="headerbar">
                     <div></div>
@@ -322,6 +328,10 @@ export class Editor {
         this.schema.cached.imageDB = this.mod.db.imageDB
         // assign image DB to be used in footnote schema.
         this.mod.footnotes.fnEditor.schema.cached.imageDB = this.mod.db.imageDB
+        this.user.bibDB = new BibliographyDB()
+        this.user.bibDB.getDB()
+        this.user.imageDB = new ImageDB()
+        this.user.imageDB.getDB()
         this.docInfo.confirmedJson = JSON.parse(JSON.stringify(doc.contents))
 
         let stateDoc

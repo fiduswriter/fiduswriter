@@ -187,7 +187,6 @@ export class Editor {
             new ModCitations(this)
             new ModFootnotes(this)
             new ModServerCommunications(this)
-            new ModDB(this)
             this.render()
             this.initEditor()
         })
@@ -311,7 +310,7 @@ export class Editor {
             // If the document is new, change the url.
             window.history.replaceState("", "", `/document/${this.docInfo.id}/`)
         }
-
+        new ModDB(this)
         this.mod.db.bibDB.setDB(data.doc.bibliography)
         // assign bibDB to be used in document schema.
         this.schema.cached.bibDB = this.mod.db.bibDB

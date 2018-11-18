@@ -266,11 +266,11 @@ export const selectedCitationTemplate = ({title, author, id, db, prefix, locator
     </tr>`
 
 
-export const authorTemplate = ({author}) =>
-    `<input type="text" name="firstname" value="${author.firstname ? author.firstname : ''}" placeholder="${gettext("Firstname")}"/>
-    <input type="text" name="lastname" value="${author.lastname ? author.lastname : ''}" placeholder="${gettext("Lastname")}"/>
-    <input type="text" name="email" value="${author.email ? author.email : ''}" placeholder="${gettext("Email")}"/>
-    <input type="text" name="institution" value="${author.institution ? author.institution : ''}" placeholder="${gettext("Institution")}"/>
+export const contributorTemplate = ({contributor}) =>
+    `<input type="text" name="firstname" value="${contributor.firstname ? contributor.firstname : ''}" placeholder="${gettext("Firstname")}"/>
+    <input type="text" name="lastname" value="${contributor.lastname ? contributor.lastname : ''}" placeholder="${gettext("Lastname")}"/>
+    <input type="text" name="email" value="${contributor.email ? contributor.email : ''}" placeholder="${gettext("Email")}"/>
+    <input type="text" name="institution" value="${contributor.institution ? contributor.institution : ''}" placeholder="${gettext("Institution")}"/>
     `
 
 export const languageTemplate = ({currentLanguage, LANGUAGES}) =>

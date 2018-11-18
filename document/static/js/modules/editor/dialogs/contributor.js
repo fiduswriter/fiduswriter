@@ -1,5 +1,5 @@
-import {authorTemplate} from "./templates"
-import {authorsEndPos} from "../state_plugins"
+import {contributorTemplate} from "./templates"
+import {contributorsEndPos} from "../state_plugins"
 import {addAlert, Dialog} from "../../common"
 /*
     Source for email regexp:
@@ -9,17 +9,17 @@ const emailRegExp = new RegExp(
     /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 )
 
-export class AuthorDialog {
-    constructor(editor, author = false) {
+export class ContributorDialog {
+    constructor(editor, contributor = false) {
         this.editor = editor
-        this.author = author
+        this.contributor = contributor
         this.dialog = false
     }
 
     init() {
         const buttons = []
         buttons.push({
-            text: this.author ? gettext('Update') : gettext('Add'),
+            text: this.contributor ? gettext('Update') : gettext('Add'),
             classes: 'fw-dark',
             click: () => {
                 let firstname = this.dialog.dialogEl.querySelector('input[name=firstname]').value,
@@ -48,20 +48,20 @@ export class AuthorDialog {
                 }
 
                 const view = this.editor.view,
-                    node = view.state.schema.nodes.author.create({
+                    node = view.state.schema.nodes.contributor.create({
                         firstname, lastname, email, institution
                     })
                 let posFrom, posTo
 
                 if (
-                    this.author &&
+                    this.contributor &&
                     view.state.selection.jsonID === 'node' &&
-                    view.state.selection.node.type.name === 'author'
+                    view.state.selection.node.type.name === 'contributor'
                 ) {
                     posFrom = view.state.selection.from
                     posTo = view.state.selection.to
                 } else {
-                    posFrom = posTo = authorsEndPos(view.state)
+                    posFrom = posTo = contributorsEndPos(view.state)
                 }
 
                 view.dispatch(view.state.tr.replaceRangeWith(
@@ -78,10 +78,10 @@ export class AuthorDialog {
         })
 
         this.dialog = new Dialog({
-            id: 'edit-author',
-            title: this.author ? gettext('Add author') : gettext('Update author'),
-            body: authorTemplate({
-                author: this.author ? this.author : {},
+            id: 'edit-contributor',
+            title: this.contributor ? gettext('Add contributor') : gettext('Update contributor'),
+            body: contributorTemplate({
+                contributor: this.contributor ? this.contributor : {},
             }),
             width: 836,
             height: 360,

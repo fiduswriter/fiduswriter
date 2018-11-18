@@ -85,7 +85,7 @@ import {
 
 import {
     accessRightsPlugin,
-    authorInputPlugin,
+    contributorInputPlugin,
     citationRenderPlugin,
     clipboardPlugin,
     collabCaretsPlugin,
@@ -160,7 +160,7 @@ export class Editor {
             [commentsPlugin, () => ({editor: this})],
             [marginboxesPlugin, () => ({editor: this})],
             [tagInputPlugin, () => ({editor: this})],
-            [authorInputPlugin, () => ({editor: this})],
+            [contributorInputPlugin, () => ({editor: this})],
             [clipboardPlugin, () => ({editor: this, viewType: 'main'})],
             [accessRightsPlugin, () => ({editor: this})],
             [settingsPlugin, () => ({editor: this})],

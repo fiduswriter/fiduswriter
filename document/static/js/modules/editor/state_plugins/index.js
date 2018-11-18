@@ -1,8 +1,8 @@
 export {
-    authorsEndPos,
-    authorInputPlugin
+    contributorsEndPos,
+    contributorInputPlugin
 }
-from "./author_input"
+from "./contributor_input"
 export {
     citationRenderPlugin
 }

@@ -1,4 +1,4 @@
-export {AuthorDialog} from "./author"
+export {ContributorDialog} from "./contributor"
 export {CitationDialog} from "./citation"
 export {FigureDialog} from "./figure"
 export {MathDialog} from "./math"

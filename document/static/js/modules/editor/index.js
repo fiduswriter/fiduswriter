@@ -190,7 +190,6 @@ export class Editor {
             new ModCitations(this)
             new ModFootnotes(this)
             new ModServerCommunications(this)
-            new ModDB(this)
             this.render()
             this.initEditor()
         })
@@ -314,6 +313,7 @@ export class Editor {
             // If the document is new, change the url.
             window.history.replaceState("", "", `/document/${this.docInfo.id}/`)
         }
+        new ModDB(this)
         this.docInfo.template = data.doc.template.definition
         this.schema = createDocSchema(this.docInfo.template)
         this.mod.db.bibDB.setDB(data.doc.bibliography)

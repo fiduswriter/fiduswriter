@@ -32,6 +32,7 @@ export const updateDoc = function(doc, bibliography, docVersion) {
             doc = convertDocV13(doc, bibliography)
             doc = convertDocV20(doc)
             doc = convertDocV21(doc)
+            doc = convertDocV22(doc)
             break
         case 1.1: // Fidus Writer 3.1
             doc = convertDocV11(doc)
@@ -39,24 +40,32 @@ export const updateDoc = function(doc, bibliography, docVersion) {
             doc = convertDocV13(doc, bibliography)
             doc = convertDocV20(doc)
             doc = convertDocV21(doc)
+            doc = convertDocV22(doc)
             break
         case 1.2: // Fidus Writer 3.2
             doc = convertDocV12(doc)
             doc = convertDocV13(doc, bibliography)
             doc = convertDocV20(doc)
             doc = convertDocV21(doc)
+            doc = convertDocV22(doc)
             break
         case 1.3: // Fidus Writer 3.3 prerelease
             doc = convertDocV13(doc, bibliography)
             doc = convertDocV20(doc)
             doc = convertDocV21(doc)
+            doc = convertDocV22(doc)
             break
         case 2.0: // Fidus Writer 3.3
             doc = convertDocV20(doc)
             doc = convertDocV21(doc)
+            doc = convertDocV22(doc)
             break
         case 2.1: // Fidus Writer 3.4
             doc = convertDocV21(doc)
+            doc = convertDocV22(doc)
+            break
+        case 2.2: // Fidus Writer 3.5.7
+            doc = convertDocV22(doc)
             break
     }
     return doc
@@ -299,6 +308,48 @@ const convertDocV21 = function(doc) {
                 delete(answer.answerId)
                 answer.answer = answer.answer.split('\n').map(text =>
                     ({type: 'paragraph', content: [{type: 'text', text}]})
+                )
+            })
+        }
+    })
+    return returnDoc
+}
+
+const convertNodeV22 = function(node, imageIds) {
+    switch (node.type) {
+        case 'figure':
+            if (!isNaN(parseInt(node.attrs.image))) {
+                imageIds.push(parseInt(node.attrs.image))
+            }
+            break
+        default:
+            break
+    }
+    if (node.content) {
+        const deleteChildren = []
+        node.content.forEach(childNode => {
+            if (childNode.type==='text' && !childNode.text.length) {
+                deleteChildren.push(childNode)
+            } else {
+                convertNodeV22(childNode, imageIds)
+            }
+        })
+        node.content = node.content.filter(childNode => !deleteChildren.includes(childNode))
+    }
+}
+
+const convertDocV22 = function(doc) {
+    const returnDoc = JSON.parse(JSON.stringify(doc))
+    returnDoc.imageIds = []
+    convertNodeV22(returnDoc.contents, returnDoc.imageIds)
+    Object.entries(returnDoc.comments).forEach(([commentId, comment]) => {
+        comment.comment.forEach(
+            commentNode => convertNodeV22(commentNode, returnDoc.imageIds)
+        )
+        if (comment.answers) {
+            comment.answers.forEach(answer => {
+                answer.answer.forEach(
+                    answerNode => convertNodeV22(answerNode, returnDoc.imageIds)
                 )
             })
         }

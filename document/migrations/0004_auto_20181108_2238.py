@@ -7,7 +7,7 @@ def create_base_template(apps, schema_editor):
     template = DocumentTemplate()
     template.slug = 'article'
     template.title = 'Standard Article'
-    template.definition = '[{"type":"contributors","id":"authors","title":"Authors","help":"","initial":"","locked":false},{"type":"richtext","id":"abstract","title":"Abstract","help":"","initial":"","elements":"paragraph heading figure table","marks":"strong emph highlight underline","locked":false},{"type":"tags","id":"keywords","title":"Keywords","help":"","initial":"","locked":false},{"type":"richtext","id":"body","title":"Body","help":"","initial":"","elements":"paragraph heading figure table","marks":"strong emph highlight underline","locked":false}]'
+    template.definition = '[{"type":"contributors","id":"authors","title":"Authors","help":"","initial":"","item_title":"Author","locked":false},{"type":"richtext","id":"abstract","title":"Abstract","help":"","initial":"","elements":"paragraph heading figure table","marks":"strong emph highlight underline","locked":false},{"type":"tags","id":"keywords","title":"Keywords","help":"","initial":"","item_title":"Keyword","locked":false},{"type":"richtext","id":"body","title":"Body","help":"","initial":"","elements":"paragraph heading figure table","marks":"strong emph highlight underline","locked":false}]'
     template.save()
     CitationStyle = apps.get_model('style', 'CitationStyle')
     for style in CitationStyle.objects.all():

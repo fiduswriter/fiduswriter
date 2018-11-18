@@ -88,7 +88,7 @@ const contributor = {
         institution: {default: false}
     },
     parseDOM: [{
-        tag: 'span.author',
+        tag: 'span.contributor',
         getAttrs(dom) {
             return {
                 firstname: dom.dataset.firstname,
@@ -100,7 +100,7 @@ const contributor = {
     }],
     toDOM(node) {
         const dom = document.createElement('span')
-        dom.classList.add('author')
+        dom.classList.add('contributor')
         dom.dataset.firstname = node.attrs.firstname
         dom.dataset.lastname = node.attrs.lastname
         dom.dataset.email = node.attrs.email

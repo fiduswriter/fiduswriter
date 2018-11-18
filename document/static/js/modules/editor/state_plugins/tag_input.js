@@ -39,7 +39,10 @@ const placeholderPlugin = function(nodeTitle) {
                     placeHolder.classList.add('placeholder')
                     // There is only one field, so we know the selection is there
                     placeHolder.classList.add('selected')
-                    placeHolder.setAttribute('data-placeholder', `${nodeTitle}...`)
+                    placeHolder.setAttribute(
+                        'data-placeholder',
+                        `${gettext('Add')} ${nodeTitle.toLowerCase()}...`
+                    )
                     return DecorationSet.create(doc, [Decoration.widget(1, placeHolder)])
                 }
             }
@@ -111,7 +114,6 @@ const createTagInputEditor = (view, getPos, node) => {
     const dom = document.createElement('div')
     dom.classList.add('tag-input')
     dom.setAttribute('contenteditable', false)
-    console.log({node})
     const tagInputView = new EditorView(dom, {
         state: EditorState.create({
             schema,
@@ -124,7 +126,7 @@ const createTagInputEditor = (view, getPos, node) => {
             }),
             plugins: [
                 history(),
-                placeholderPlugin(node.type.spec.title),
+                placeholderPlugin(node.type.spec.item_title),
                 pastePlugin(view),
                 keymap({
                     "Mod-z": undo,

@@ -652,7 +652,7 @@ ul.drop-up-options li:hover {
     background-color: white;
 }
 
-.tags-inner br {
+.tags-inner br, .contributors-inner br {
     display: none
 }
 

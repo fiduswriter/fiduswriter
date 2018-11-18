@@ -10,8 +10,9 @@ const emailRegExp = new RegExp(
 )
 
 export class ContributorDialog {
-    constructor(editor, contributor = false) {
-        this.editor = editor
+    constructor(node, view, contributor = false) {
+        this.node = node
+        this.view = view
         this.contributor = contributor
         this.dialog = false
     }
@@ -47,7 +48,7 @@ export class ContributorDialog {
                     return
                 }
 
-                const view = this.editor.view,
+                const view = this.view,
                     node = view.state.schema.nodes.contributor.create({
                         firstname, lastname, email, institution
                     })
@@ -61,7 +62,12 @@ export class ContributorDialog {
                     posFrom = view.state.selection.from
                     posTo = view.state.selection.to
                 } else {
-                    posFrom = posTo = contributorsEndPos(view.state)
+                    view.state.doc.firstChild.forEach((partElement, offset) => {
+                        if (partElement===this.node) {
+                            posFrom = posTo = offset + partElement.nodeSize
+                            // +1 to enter article -1 to go to end of node contributors container node
+                        }
+                    })
                 }
 
                 view.dispatch(view.state.tr.replaceRangeWith(
@@ -79,14 +85,14 @@ export class ContributorDialog {
 
         this.dialog = new Dialog({
             id: 'edit-contributor',
-            title: this.contributor ? gettext('Add contributor') : gettext('Update contributor'),
+            title: `${this.contributor ? gettext('Update') : gettext('Add')} ${this.node.type.spec.item_title.toLowerCase()}`,
             body: contributorTemplate({
                 contributor: this.contributor ? this.contributor : {},
             }),
             width: 836,
             height: 360,
             buttons,
-            onClose: () => this.editor.currentView.focus()
+            onClose: () => this.view.focus()
         })
 
         this.dialog.open()

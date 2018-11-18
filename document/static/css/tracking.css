@@ -6,7 +6,7 @@ span.deletion {
     background-color: #fffacf;
 }
 
-.tag.selected-insertion, .author.selected-insertion, .tag.selected-deletion, .author.selected-deletion {
+.tag.selected-insertion, .contributor.selected-insertion, .tag.selected-deletion, .contributor.selected-deletion {
     background-color: #fffacf;
     color: #000;
 }

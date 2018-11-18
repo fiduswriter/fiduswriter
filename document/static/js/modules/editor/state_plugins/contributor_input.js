@@ -9,43 +9,37 @@ import {ContributorDialog} from "../dialogs"
 
 const key = new PluginKey('contributorInput')
 
-const findContributorsEndPos = function(state) {
-    let pos = 1, // enter article
-        child = 0
-    while(state.doc.firstChild.child(child).type.name !== 'contributors') {
-        pos += state.doc.firstChild.child(child).nodeSize
-        child++
+class ContributorsView {
+    constructor(node, view, getPos) {
+        this.node = node
+        this.view = view
+        this.getPos = getPos
+        this.dom = document.createElement('div')
+        this.dom.classList.add(`article-${this.node.type.name}`)
+        this.node.type.groups.forEach(group => this.dom.classList.add(`article-${group}`))
+        this.contentDOM = document.createElement('span')
+        this.contentDOM.classList.add('contributors-inner')
+        this.dom.appendChild(this.contentDOM)
+        const nodeTitle = node.type.spec.item_title
+        this.dom.insertAdjacentHTML('beforeend', `<button class="fw-button fw-light">${gettext('Add')} ${nodeTitle.toLowerCase()}...</button>`)
+        this.dom.lastElementChild.addEventListener('click', () => {
+            const dialog = new ContributorDialog(node, view)
+            dialog.init()
+        })
     }
-    // Put decoration at end within contributors element
-    pos += state.doc.firstChild.child(child).nodeSize - 1
-    return pos
-}
 
-export const contributorsEndPos = function(state) {
-    const {decos} = key.getState(state),
-        decoArray = decos.find(),
-        pos = decoArray.length ? decoArray[0].from : findContributorsEndPos(state)
-    return pos
+    stopEvent(event) {
+        return true
+    }
+
+    ignoreMutation(record) {
+        return true
+    }
+
+
 }
 
 export const contributorInputPlugin = function(options) {
-
-    const createContributorsEndDeco = function(state) {
-        const dom = document.createElement('button')
-        dom.setAttribute('class','fw-button fw-light')
-        dom.innerHTML = gettext('Add contributor...')
-
-        dom.addEventListener('click', () => {
-            const dialog = new ContributorDialog(options.editor)
-            dialog.init()
-        })
-        const pos = findContributorsEndPos(state)
-        return Decoration.widget(pos, dom, {
-            side: 1,
-            stopEvent: event => true,
-            id: 'contributorsButton'
-        })
-    }
 
     const createDropUp = function() {
         const dropUp = document.createElement('span'),
@@ -60,8 +54,13 @@ export const contributorInputPlugin = function(options) {
                 </div>
             </div>`
 
-        dropUp.querySelector('.edit-contributor').addEventListener('click', () => {
-            const dialog = new ContributorDialog(options.editor, options.editor.view.state.selection.node.attrs)
+        dropUp.querySelector('.edit-contributor').addEventListener('click', event => {
+            event.preventDefault()
+            const dialog = new ContributorDialog(
+                options.editor.view.state.selection.$anchor.parent,
+                options.editor.view,
+                options.editor.view.state.selection.node.attrs
+            )
             dialog.init()
         })
         return dropUp
@@ -71,12 +70,18 @@ export const contributorInputPlugin = function(options) {
         key,
         state: {
             init(config, state) {
-                let decos = DecorationSet.empty, dropUp
+                const decos = DecorationSet.empty
+                let dropUp
 
                 if (options.editor.docInfo.access_rights === 'write') {
-                    const contributorsButtonDeco = createContributorsEndDeco(state)
-                    decos = decos.add(state.doc, [contributorsButtonDeco])
                     dropUp = createDropUp()
+                    const contributorsNodeNames = Object.values(state.schema.nodes).filter(
+                        node => node.groups.includes('contributors')
+                    ).map(node => node.name)
+                    contributorsNodeNames.forEach(
+                        nodeName => this.spec.props.nodeViews[nodeName] =
+                            (node, view, getPos) => new ContributorsView(node, view, getPos)
+                    )
                 }
 
                 return {
@@ -100,14 +105,7 @@ export const contributorInputPlugin = function(options) {
                     }
                 }
 
-                let decoDropped = false // Check if the deco at the end of the contributors field was dropped. If so, we need to readd it.
-                decos = decos.map(tr.mapping, tr.doc, {
-                    onRemove: spec => decoDropped = spec.id === 'contributorsButton' ? true : decoDropped
-                })
-                if (decoDropped) {
-                    const contributorsButtonDeco = createContributorsEndDeco(state)
-                    decos = decos.add(state.doc, [contributorsButtonDeco])
-                }
+                decos = decos.map(tr.mapping, tr.doc)
                 if (
                     oldState.selection.jsonID === 'node' &&
                     oldState.selection.node.type.name === 'contributor' &&
@@ -124,7 +122,7 @@ export const contributorInputPlugin = function(options) {
                     state.selection.node !== oldState.selection.node
                 ) {
                     const dropUpDeco = Decoration.widget(state.selection.from, dropUp, {
-                        side: 1,
+                        side: -1,
                         stopEvent: event => true,
                         id: 'contributorDropUp'
                     })
@@ -145,7 +143,8 @@ export const contributorInputPlugin = function(options) {
 				} = this.getState(state)
 
 				return decos
-			}
+			},
+            nodeViews: {}
         }
     })
 }

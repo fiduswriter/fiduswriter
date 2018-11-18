@@ -9,15 +9,20 @@ import {
 } from "./dynamic"
 
 const createPartSpec = part => {
+    let spec
     switch (part.type) {
         case 'richtext':
             return partSpec(part, `(${part.elements.split(' ').join(' | ')})+`)
         case 'heading':
             return partSpec(part, 'heading')
         case 'contributors':
-            return partSpec(part, 'contributor*')
+            spec = partSpec(part, 'contributor*')
+            spec.item_title = part.item_title
+            return spec
         case 'tags':
-            return partSpec(part, 'tag*')
+            spec = partSpec(part, 'tag*')
+            spec.item_title = part.item_title
+            return spec
         case 'table':
             return partSpec(part, 'table')
         default:
@@ -36,6 +41,5 @@ export const createDocSchema = (docTemplate) => {
 
     const nodes = OrderedMap.from(specParts)
     spec.nodes = spec.nodes.append(nodes)
-    console.log({spec})
     return new Schema(spec)
 }

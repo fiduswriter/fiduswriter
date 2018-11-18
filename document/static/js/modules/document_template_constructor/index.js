@@ -57,6 +57,9 @@ export class DocumentTemplateConstructor {
                     case 'table':
                         values['locking'] = el.querySelector('input[name="table"]:checked').value
                         break
+                    case 'contributors':
+                    case 'tags':
+                        values['item_title'] = el.querySelector('input.item_title').value
                     default:
                         values['locked'] = el.querySelector('.locked').checked ? true : false
                         break

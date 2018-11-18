@@ -12,12 +12,13 @@ const headingTemplate = ({id = "", title="", initial="", help=""}) =>
     </div>
 </div>`
 
-const contributorsTemplate = ({id = "", title="", initial="", help=""}) =>
+const contributorsTemplate = ({id = "", title="", item_title="", initial="", help=""}) =>
 `<div class="doc-part" data-type="contributors">
     <div class="title">${gettext('Namelist')}</div>
     <div class="attrs">
         <label>${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}" value="${escapeText(initial)}"></label>
         <label>${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></label>
+        <label>${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(item_title)}"></label>
         <label>${gettext('Locked?')} <input type="checkbox" class="locked"></label>
         <label>${gettext('Prefilled content')} <input type="text" class="initial"></label>
         <label>${gettext('Instructions')}<textarea class="help">${escapeText(help)}</textarea></label>
@@ -45,12 +46,13 @@ const richtextTemplate = ({
     </div>
 </div>`
 
-const tagsTemplate = ({id = "", title="", initial="", help=""}) =>
+const tagsTemplate = ({id = "", title="", item_title="", initial="", help=""}) =>
 `<div class="doc-part" data-type="tags">
     <div class="title">${gettext('Tags')}</div>
     <div class="attrs">
         <label>${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></label>
         <label>${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></label>
+        <label>${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(item_title)}"></label>
         <label>${gettext('Locked?')} <input type="checkbox" class="locked"></label>
         <label>${gettext('Prefilled content')} <input type="text" class="initial" value="${escapeText(initial)}"></label>
         <label>${gettext('Instructions')}<textarea class="help">${escapeText(help)}</textarea></label>

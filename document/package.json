@@ -10,7 +10,7 @@
         "orderedmap": "1.0.0",
         "prosemirror-collab": "1.1.x",
         "prosemirror-commands": "1.0.x",
-        "prosemirror-dropcursor": "1.0.x",
+        "prosemirror-dropcursor": "1.1.x",
         "prosemirror-example-setup": "1.0.x",
         "prosemirror-gapcursor": "1.0.x",
         "prosemirror-history": "1.0.x",

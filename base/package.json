@@ -25,7 +25,7 @@
     "font-awesome": "4.7.0",
     "jquery": "3.3.1", // for mathquill
     "jshint": "^2.9.6",
-    "katex": "0.10.0-rc.1",
+    "katex": "0.10.x",
     "w3c-keyname": "1.1.x",
     "simple-datatables": "^1.7.2",
     "vivliostyle-print": "^0.1.2"

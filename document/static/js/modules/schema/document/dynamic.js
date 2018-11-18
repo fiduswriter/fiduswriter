@@ -1,6 +1,6 @@
-export const createArticle = (content, template) => ({
+export const articleSpec = (content, template) => ({
     defining: true,
-    content: "title subtitle " + content,
+    content: `title subtitle ${content}`,
     selectable: false,
     allowGapCursor: false,
     attrs: {
@@ -39,6 +39,22 @@ export const createArticle = (content, template) => ({
             'data-papersize': node.attrs.papersize,
             'data-citationstyle': node.attrs.citationstyle,
             'data-documentstyle': node.attrs.documentstyle
+        }, 0]
+    }
+})
+
+export const partSpec = ({id, type, title}, content) => ({
+    content,
+    group: `part ${type}`,
+    marks: "annotation track",
+    defining: true,
+    title,
+    parseDOM: [{
+        tag: `div.article-${id}`
+    }],
+    toDOM(node) {
+        return ["div", {
+            class: `article-part article-${id}`
         }, 0]
     }
 })

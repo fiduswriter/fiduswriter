@@ -93,7 +93,7 @@ import {
     footnoteMarkersPlugin,
     headerbarPlugin,
     jumpHiddenNodesPlugin,
-    keywordInputPlugin,
+    tagInputPlugin,
     linksPlugin,
     marginboxesPlugin,
     placeholdersPlugin,
@@ -159,7 +159,7 @@ export class Editor {
             [footnoteMarkersPlugin, () => ({editor: this})],
             [commentsPlugin, () => ({editor: this})],
             [marginboxesPlugin, () => ({editor: this})],
-            [keywordInputPlugin, () => ({editor: this})],
+            [tagInputPlugin, () => ({editor: this})],
             [authorInputPlugin, () => ({editor: this})],
             [clipboardPlugin, () => ({editor: this, viewType: 'main'})],
             [accessRightsPlugin, () => ({editor: this})],
@@ -349,7 +349,7 @@ export class Editor {
 
         document.getElementById('flow').classList.remove('hide')
         // Set document in prosemirror
-        this.view.updateState(EditorState.create(stateConfig))
+        this.view.setProps({state: EditorState.create(stateConfig)})
 
         // Set initial confirmed doc
         this.docInfo.confirmedDoc = this.view.state.doc

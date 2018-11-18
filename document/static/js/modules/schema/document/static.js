@@ -8,7 +8,12 @@ import {
     figure,
     citation,
     equation,
-    heading,
+    heading1,
+    heading2,
+    heading3,
+    heading4,
+    heading5,
+    heading6,
     anchor,
     paragraph,
     blockquote,
@@ -25,6 +30,7 @@ import {
 } from "../common"
 
 const title = {
+    title: gettext('Title'),
     content: "text*",
     marks: "annotation track",
     group: "fixedpart",
@@ -40,6 +46,7 @@ const title = {
 }
 
 const subtitle = {
+    title: gettext('Subtitle'),
     content: "text*",
     marks: "annotation track",
     group: "fixedpart",
@@ -71,7 +78,7 @@ const subtitle = {
     }
 }
 
-const author = {
+const contributor = {
     inline: true,
     draggable: true,
     attrs: {
@@ -118,140 +125,29 @@ const author = {
     }
 }
 
-const authors = {
-    content: "author*",
-    marks: "annotation track",
-    group: "part",
-    defining: true,
-    isMetadata() {
-        return true
-    },
-    attrs: {
-        hidden: {
-            default: true
-        }
-    },
-    parseDOM: [{
-        tag: "div.article-authors",
-        getAttrs(dom) {
-            return {
-                hidden: dom.dataset.hidden === "true" ? true : false
-            }
-        }
-    }],
-    toDOM(node) {
-        const attrs = {
-            class: 'article-part metadata article-authors'
-        }
-        if (node.attrs.hidden) {
-            attrs['data-hidden'] = 'true'
-        }
-        return ["div", attrs, 0]
-    }
-}
 
-const abstract = {
-    content: "(block | table_block)+",
-    group: "part",
-    marks: "annotation",
-    defining: true,
-    isMetadata() {
-        return true
-    },
-    attrs: {
-        hidden: {
-            default: true
-        }
-    },
-    parseDOM: [{
-        tag: "div.article-abstract",
-        getAttrs(dom) {
-            return {
-                hidden: dom.dataset.hidden === "true" ? true : false
-            }
-        }
-    }],
-    toDOM(node) {
-        const attrs = {
-            class: 'article-part metadata article-abstract'
-        }
-        if (node.attrs.hidden) {
-            attrs['data-hidden'] = 'true'
-        }
-        return ["div", attrs, 0]
-    }
-}
-
-const keyword = {
+const tag = {
     inline: true,
     draggable: true,
     attrs: {
-        keyword: {
+        tag: {
             default: ''
         }
     },
     parseDOM: [{
-        tag: 'span.keyword',
+        tag: 'span.tag',
         getAttrs(dom) {
             return {
-                keyword: dom.innerText
+                tag: dom.innerText
             }
         }
     }],
     toDOM(node) {
-        return ["span", {class: 'keyword'}, node.attrs.keyword]
+        return ["span", {class: 'tag'}, node.attrs.tag]
     }
 }
 
-const keywords = {
-    content: "keyword*",
-    marks: "annotation track",
-    group: "part",
-    defining: true,
-    isMetadata() {
-        return true
-    },
-    attrs: {
-        hidden: {
-            default: true
-        }
-    },
-    parseDOM: [{
-        tag: "div.article-keywords",
-        getAttrs(dom) {
-            return {
-                hidden: dom.dataset.hidden === "true" ? true : false
-            }
-        }
-    }],
-    toDOM(node) {
-        const attrs = {
-            class: 'article-part metadata article-keywords'
-        }
-        if (node.attrs.hidden) {
-            attrs['data-hidden'] = 'true'
-        }
-        return ["div", attrs, 0]
-    }
-}
 
-const body = {
-    content: "(block | table_block)+",
-    group: "part",
-    marks: "annotation track",
-    defining: true,
-    isMetadata() {
-        return true
-    },
-    parseDOM: [{
-        tag: "div.article-body"
-    }],
-    toDOM(node) {
-        return ["div", {
-            class: 'article-part article-body'
-        }, 0]
-    }
-}
 
 const footnote = {
     inline: true,
@@ -313,17 +209,18 @@ let specNodes = OrderedMap.from({
     doc,
     title,
     subtitle,
-    authors,
-    author,
-    abstract,
-    keywords,
-    keyword,
-    body,
+    contributor,
+    tag,
     paragraph,
     blockquote,
     horizontal_rule,
     figure,
-    heading,
+    heading1,
+    heading2,
+    heading3,
+    heading4,
+    heading5,
+    heading6,
     code_block,
     text: nodes.text,
     hard_break: nodes.hard_break,

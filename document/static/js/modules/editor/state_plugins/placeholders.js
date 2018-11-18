@@ -18,15 +18,6 @@ export const placeholdersPlugin = function(options) {
         const currentPart = anchorPart === headPart ? anchorPart : false
         const articleNode = state.doc.firstChild
 
-        const placeHolderTexts = [
-            gettext('Title...'),
-            gettext('Subtitle...'),
-            options.editor.docInfo.access_rights === 'write' ? false : gettext('Authors...'),
-            gettext('Abstract...'),
-            options.editor.docInfo.access_rights === 'write' ? false : gettext('Keywords...'),
-            gettext('Body...')
-        ]
-
         const decorations = []
 
         articleNode.forEach((partElement, offset, index) => {
@@ -34,10 +25,19 @@ export const placeholdersPlugin = function(options) {
                 (partElement.isTextblock && partElement.nodeSize === 2) ||
                 (!partElement.isTextblock && partElement.nodeSize === 4)
             ) {
-                const text = placeHolderTexts[index]
-                if (!text) {
+                if (
+                    (
+                        partElement.type.groups.includes('tags') ||
+                        partElement.type.groups.includes('contributors')
+                    ) && options.editor.docInfo.access_rights === 'write'
+                ) {
+                    // We don't need to render placeholders for these kinds
+                    // of nodes in write mode as their nodeviews will take
+                    // care of that.
                     return
                 }
+
+                const text = `${partElement.type.spec.title}...`
                 const placeHolder = document.createElement('span')
                 placeHolder.classList.add('placeholder')
                 placeHolder.setAttribute('data-placeholder', text)

@@ -44,9 +44,10 @@ export class DocumentTemplateConstructor {
             el => {
                 const type = el.dataset.type,
                     id = el.querySelector('input.id').value,
+                    title = el.querySelector('input.title').value,
                     help = el.querySelector('.help').value,
                     initial = el.querySelector('.initial').value,
-                    values = {type, id, help, initial}
+                    values = {type, id, title, help, initial}
                 switch(type) {
                     case 'richtext':
                         values['elements'] = el.querySelector('.elements').value

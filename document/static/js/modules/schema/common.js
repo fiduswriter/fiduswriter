@@ -219,15 +219,13 @@ export const randomHeadingId = () => {
     return `H${Math.round(Math.random()*10000000) + 1}`
 }
 
-export const heading = {
-    group: "block",
+
+const createHeading = level => ({
+    group: "block heading",
     content: "inline*",
     marks: "_",
     defining: true,
     attrs: {
-        level: {
-            default: 1
-        },
         id: {
             default: false
         },
@@ -237,60 +235,9 @@ export const heading = {
     },
     parseDOM: [
         {
-            tag: "h1",
+            tag: `h${level}`,
             getAttrs(dom) {
                 return {
-                    level: 1,
-                    id: dom.id,
-                    track: parseTracks(dom.dataset.track)
-                }
-            }
-        },
-        {
-            tag: "h2",
-            getAttrs(dom) {
-                return {
-                    level: 2,
-                    id: dom.id,
-                    track: parseTracks(dom.dataset.track)
-                }
-             }
-        },
-        {
-            tag: "h3",
-            getAttrs(dom) {
-                return {
-                    level: 3,
-                    id: dom.id,
-                    track: parseTracks(dom.dataset.track)
-                }
-            }
-        },
-        {
-            tag: "h4",
-            getAttrs(dom) {
-                return {
-                    level: 4,
-                    id: dom.id,
-                    track: parseTracks(dom.dataset.track)
-                }
-            }
-        },
-        {
-            tag: "h5",
-            getAttrs(dom) {
-                return {
-                    level: 5,
-                    id: dom.id,
-                    track: parseTracks(dom.dataset.track)
-                }
-            }
-        },
-        {
-            tag: "h6",
-            getAttrs(dom) {
-                return {
-                    level: 6,
                     id: dom.id,
                     track: parseTracks(dom.dataset.track)
                 }
@@ -302,9 +249,16 @@ export const heading = {
         if (node.attrs.track.length) {
             attrs['data-track'] = JSON.stringify(node.attrs.track)
         }
-        return [`h${node.attrs.level}`, attrs, 0]
+        return [`h${level}`, attrs, 0]
     }
-}
+})
+
+export const heading1 = createHeading(1)
+export const heading2 = createHeading(2)
+export const heading3 = createHeading(3)
+export const heading4 = createHeading(4)
+export const heading5 = createHeading(5)
+export const heading6 = createHeading(6)
 
 export const comment = {
     attrs: {

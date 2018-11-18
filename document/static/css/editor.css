@@ -636,20 +636,24 @@ ul.drop-up-options li:hover {
     text-align: right;
 }
 
-/* Keywords */
+/* Tags */
 
-.keyword-input {
+.tag-input {
     display: inline-block;
     min-width: 200px;
 }
 
-.keyword-input input {
+.tag-input input {
     border: 0;
     background-color: white;
 }
 
-.keyword-input input:focus {
+.tag-input input:focus {
     background-color: white;
+}
+
+.tags-inner br {
+    display: none
 }
 
 *:focus {

@@ -54,7 +54,7 @@ span.anchor {
     color: green;
 }
 
-.article-keywords .keyword {
+.article .tag {
     margin-right: 5px;
     margin-bottom: 5px;
     padding: 0 5px;
@@ -66,7 +66,7 @@ span.anchor {
     border: 1px solid #7d948e;
 }
 
-.article-authors .author {
+.article .contributor {
     margin-right: 5px;
     margin-bottom: 5px;
     padding: 0 12px;

@@ -42,9 +42,9 @@ export {
 }
 from "./jump_hidden_nodes"
 export {
-    keywordInputPlugin
+    tagInputPlugin
 }
-from "./keyword_input"
+from "./tag_input"
 export {
     linksPlugin
 }

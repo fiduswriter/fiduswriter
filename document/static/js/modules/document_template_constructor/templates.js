@@ -1,21 +1,23 @@
 import {escapeText} from "../common"
 
-const headingTemplate = ({id = "", initial="", help=""}) =>
+const headingTemplate = ({id = "", title="", initial="", help=""}) =>
 `<div class="doc-part" data-type="heading">
     <div class="title">${gettext('Heading')}</div>
     <div class="attrs">
         <label>${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></label>
+        <label>${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></label>
         <label>${gettext('Locked?')} <input type="checkbox" class="locked"></label>
         <label>${gettext('Prefilled content')} <input type="text" class="initial" value="${escapeText(initial)}"></label>
         <label>${gettext('Instructions')}<textarea class="help">${escapeText(help)}</textarea></label>
     </div>
 </div>`
 
-const contributorsTemplate = ({id = "", initial="", help=""}) =>
+const contributorsTemplate = ({id = "", title="", initial="", help=""}) =>
 `<div class="doc-part" data-type="contributors">
     <div class="title">${gettext('Namelist')}</div>
     <div class="attrs">
         <label>${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}" value="${escapeText(initial)}"></label>
+        <label>${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></label>
         <label>${gettext('Locked?')} <input type="checkbox" class="locked"></label>
         <label>${gettext('Prefilled content')} <input type="text" class="initial"></label>
         <label>${gettext('Instructions')}<textarea class="help">${escapeText(help)}</textarea></label>
@@ -24,7 +26,8 @@ const contributorsTemplate = ({id = "", initial="", help=""}) =>
 
 const richtextTemplate = ({
     id="",
-    elements="h1 h2 h3 h4 h5 h6 p code citation equation",
+    title="",
+    elements="heading paragraph figure table",
     marks="strong emph highlight underline",
     initial="",
     help=""
@@ -33,6 +36,7 @@ const richtextTemplate = ({
     <div class="title">${gettext('Richtext')}</div>
     <div class="attrs">
         <label>${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></label>
+        <label>${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></label>
         <label>${gettext('Locked?')} <input type="checkbox" class="locked"></label>
         <label>${gettext('Whitelist elements')} <input type="text" class="elements" value="${escapeText(elements)}"></label>
         <label>${gettext('Whitelist marks')} <input type="text" class="marks" value="${escapeText(marks)}"></label>
@@ -41,28 +45,30 @@ const richtextTemplate = ({
     </div>
 </div>`
 
-const tagsTemplate = ({id = "", initial="", help=""}) =>
+const tagsTemplate = ({id = "", title="", initial="", help=""}) =>
 `<div class="doc-part" data-type="tags">
     <div class="title">${gettext('Tags')}</div>
     <div class="attrs">
         <label>${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></label>
+        <label>${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></label>
         <label>${gettext('Locked?')} <input type="checkbox" class="locked"></label>
         <label>${gettext('Prefilled content')} <input type="text" class="initial" value="${escapeText(initial)}"></label>
         <label>${gettext('Instructions')}<textarea class="help">${escapeText(help)}</textarea></label>
     </div>
 </div>`
 
-const tableTemplate = ({id = "", initial="", help="", locking="free"}) =>
+const tableTemplate = ({id = "", title="", initial="", help="", locking="free"}) =>
 `<div class="doc-part" data-type="table">
     <div class="title">${gettext('Table')}</div>
     <div class="attrs">
         <label>${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></label>
-        <label>${gettext('Type')}<br>
-            <form action="">
-                <input type="radio" name="table" value="free" ${locking==='free' ? "checked" : ""}> ${gettext('Free')}<br>
-                <input type="radio" name="table" value="fixed" ${locking==='fixed' ? "checked" : ""}> ${gettext('Fixed')}<br>
-                <input type="radio" name="table" value="add_rows" ${locking==='add_rows' ? "checked" : ""}> ${gettext('Can add/remove rows')}
-            </form>
+        <label>${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></label>
+        <label>${gettext('Type')}
+            <select>
+                <option value="free" ${locking==='free' ? "checked" : ""}>${gettext('Free')}</option>
+                <option value="fixed" ${locking==='fixed' ? "checked" : ""}>${gettext('Fixed')}</option>
+                <option value="rows" ${locking==='rows' ? "checked" : ""}>${gettext('Cann add/remove rows')}</option>
+            </select>
         </label>
         <label>${gettext('Prefilled content')} <input type="text" class="initial" value="${escapeText(initial)}"></label>
         <label>${gettext('Instructions')}<textarea class="help">${escapeText(help)}</textarea></label>
@@ -71,25 +77,20 @@ const tableTemplate = ({id = "", initial="", help="", locking="free"}) =>
 
 export const templateEditorValueTemplate = ({value}) =>
     value.map(docPart => {
-        let template
         switch(docPart.type) {
             case 'heading':
-                template = headingTemplate
-                break
+                return headingTemplate(docPart)
             case 'contributors':
-                template = contributorsTemplate
-                break
+                return contributorsTemplate(docPart)
             case 'richtext':
-                template = richtextTemplate
-                break
+                return richtextTemplate(docPart)
             case 'tags':
-                template = tagsTemplate
-                break
+                return tagsTemplate(docPart)
             case 'table':
-                template = tableTemplate
-                break
+                return tableTemplate(docPart)
+            default:
+                return ''
         }
-        return template ? template(docPart) : ''
     }).join('')
 
 export const toggleEditorButtonTemplate = () =>

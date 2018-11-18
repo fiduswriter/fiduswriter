@@ -60,6 +60,8 @@ export class DocumentTemplateConstructor {
                     case 'contributors':
                     case 'tags':
                         values['item_title'] = el.querySelector('input.item_title').value
+                        values['locked'] = el.querySelector('.locked').checked ? true : false
+                        break
                     default:
                         values['locked'] = el.querySelector('.locked').checked ? true : false
                         break

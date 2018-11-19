@@ -7,7 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('style', '0001_squashed_0002_auto_20151226_1110'),
-        ('document', '0002_auto_20180814_1946'),
+        ('document', '0003_auto_20181115_0926'),
     ]
 
     operations = [

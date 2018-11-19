@@ -29,7 +29,7 @@ def remove_base_template(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0003_documenttemplate'),
+        ('document', '0004_documenttemplate'),
     ]
 
     operations = [

@@ -8,7 +8,7 @@ import document.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0004_auto_20181108_2238'),
+        ('document', '0005_auto_20181108_2238'),
     ]
 
     operations = [

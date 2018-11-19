@@ -150,6 +150,12 @@ const createTagInputEditor = (view, getPos, node) => {
                 }, 1)
             },
             focus: (tagInputView, event) => {
+                const startPos = getPos(),
+                    pos = startPos + view.state.doc.nodeAt(startPos).nodeSize - 1,
+                    $pos = view.state.doc.resolve(pos)
+                view.dispatch(
+                    view.state.tr.setSelection(new TextSelection($pos))
+                )
                 tagInputView.focus()
             }
         },
@@ -178,7 +184,9 @@ class TagsView {
     }
 
     stopEvent(event) {
-        if (
+        if (['click', 'mousedown'].includes(event.type)) {
+            return false
+        } else if (
             event.type==='keydown' &&
             event.key==='ArrowRight' &&
             this.tagInputView.state.selection.from ===

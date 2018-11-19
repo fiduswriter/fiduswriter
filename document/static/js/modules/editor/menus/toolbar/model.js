@@ -9,23 +9,14 @@ import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from "../.."
 import {randomHeadingId, randomAnchorId} from "../../../schema/common"
 import {setBlockType} from "../../keymap"
 
-const PART_LABELS = {
-    'title': gettext('Title'),
-    'subtitle': gettext('Subtitle'),
-    'authors': gettext('Authors'),
-    'abstract': gettext('Abstract'),
-    'keywords': gettext('Keywords'),
-    'body': gettext('Body')
-}
-
 const BLOCK_LABELS = {
     'paragraph': gettext('Normal Text'),
-    'heading_1': gettext('1st Heading'),
-    'heading_2': gettext('2nd Heading'),
-    'heading_3': gettext('3rd Heading'),
-    'heading_4': gettext('4th Heading'),
-    'heading_5': gettext('5th Heading'),
-    'heading_6': gettext('6th Heading'),
+    'heading1': gettext('1st Heading'),
+    'heading2': gettext('2nd Heading'),
+    'heading3': gettext('3rd Heading'),
+    'heading4': gettext('4th Heading'),
+    'heading5': gettext('5th Heading'),
+    'heading6': gettext('6th Heading'),
     'code_block': gettext('Code'),
     'figure': gettext('Figure')
 }
@@ -67,9 +58,16 @@ export const toolbarModel = () => ({
                     return gettext('Footnote')
                 } else if (
                     editor.currentView.state.selection.$anchor.node(2) &&
-                    editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2)
+                    editor.currentView.state.selection.$anchor.node(2) ===
+                        editor.currentView.state.selection.$head.node(2)
                 ) {
-                    return PART_LABELS[editor.currentView.state.selection.$anchor.node(2).type.name]
+                    return editor.currentView.state.selection.$anchor.node(2).type.spec.title
+                } else if (
+                    editor.currentView.state.selection.$anchor.depth === 1 &&
+                    editor.currentView.state.selection.from ===
+                        editor.currentView.state.selection.to
+                ) {
+                    return editor.currentView.state.selection.$anchor.nodeAfter.type.spec.title
                 } else {
                     return ''
                 }
@@ -93,20 +91,14 @@ export const toolbarModel = () => ({
                     editor.currentView.state.selection.node.isBlock
                 ) {
                     const selectedNode = editor.currentView.state.selection.node
-                    return BLOCK_LABELS[
-                        selectedNode.type.name === 'heading' ?
-                        `${selectedNode.type.name}_${selectedNode.attrs.level}` :
-                        selectedNode.type.name
-                    ]
+                    return BLOCK_LABELS[selectedNode.type.name]
                 }
                 const startElement = editor.currentView.state.selection.$anchor.parent,
                     endElement = editor.currentView.state.selection.$head.parent
                 if (!startElement || !endElement) {
                     return ''
                 } else if (startElement === endElement) {
-                    const blockNodeType = startElement.type.name === 'heading' ?
-                        `${startElement.type.name}_${startElement.attrs.level}` :
-                        startElement.type.name
+                    const blockNodeType = startElement.type.name
                     return BLOCK_LABELS[blockNodeType] ? BLOCK_LABELS[blockNodeType] : ''
                 } else {
                     let blockNodeType = true
@@ -115,9 +107,7 @@ export const toolbarModel = () => ({
                         editor.currentView.state.selection.to,
                         (node, pos, parent) => {
                             if (node.isTextblock) {
-                                const nextBlockNodeType = node.type.name === 'heading' ?
-                                    `${node.type.name}_${node.attrs.level}` :
-                                    node.type.name
+                                const nextBlockNodeType = node.type.name
                                 if (blockNodeType === true) {
                                     blockNodeType = nextBlockNodeType
                                 }
@@ -160,50 +150,50 @@ export const toolbarModel = () => ({
                     order: 0
                 },
                 {
-                    title: BLOCK_LABELS['heading_1'],
+                    title: BLOCK_LABELS['heading1'],
                     action: editor => {
                         const view = editor.currentView
-                        setBlockType(view.state.schema.nodes.heading, {level: 1})(view.state, view.dispatch)
+                        setBlockType(view.state.schema.nodes.heading1)(view.state, view.dispatch)
                     },
                     order: 1
                 },
                 {
-                    title: BLOCK_LABELS['heading_2'],
+                    title: BLOCK_LABELS['heading2'],
                     action: editor => {
                         const view = editor.currentView
-                        setBlockType(view.state.schema.nodes.heading, {level: 2})(view.state, view.dispatch)
+                        setBlockType(view.state.schema.nodes.heading2)(view.state, view.dispatch)
                     },
                     order: 2
                 },
                 {
-                    title: BLOCK_LABELS['heading_3'],
+                    title: BLOCK_LABELS['heading3'],
                     action: editor => {
                         const view = editor.currentView
-                        setBlockType(view.state.schema.nodes.heading, {level: 3})(view.state, view.dispatch)
+                        setBlockType(view.state.schema.nodes.heading3)(view.state, view.dispatch)
                     },
                     order: 3
                 },
                 {
-                    title: BLOCK_LABELS['heading_4'],
+                    title: BLOCK_LABELS['heading4'],
                     action: editor => {
                         const view = editor.currentView
-                        setBlockType(view.state.schema.nodes.heading, {level: 4})(view.state, view.dispatch)
+                        setBlockType(view.state.schema.nodes.heading4)(view.state, view.dispatch)
                     },
                     order: 4
                 },
                 {
-                    title: BLOCK_LABELS['heading_5'],
+                    title: BLOCK_LABELS['heading5'],
                     action: editor => {
                         const view = editor.currentView
-                        setBlockType(view.state.schema.nodes.heading, {level: 5})(view.state, view.dispatch)
+                        setBlockType(view.state.schema.nodes.heading5)(view.state, view.dispatch)
                     },
                     order: 5
                 },
                 {
-                    title: BLOCK_LABELS['heading_6'],
+                    title: BLOCK_LABELS['heading6'],
                     action: editor => {
                         const view = editor.currentView
-                        setBlockType(view.state.schema.nodes.heading, {level: 6})(view.state, view.dispatch)
+                        setBlockType(view.state.schema.nodes.heading6)(view.state, view.dispatch)
                     },
                     order: 6
                 },

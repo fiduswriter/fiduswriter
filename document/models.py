@@ -50,11 +50,13 @@ class DocumentTemplate(models.Model):
     def __str__(self):
         return self.title
 
+
 def default_template():
     template = DocumentTemplate.objects.first()
     if not template:
         template = DocumentTemplate.objects.create()
     return template.pk
+
 
 class Document(models.Model):
     title = models.CharField(max_length=255, default='', blank=True)

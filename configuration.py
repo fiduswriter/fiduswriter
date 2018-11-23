@@ -92,6 +92,8 @@ INSTALLED_APPS += (
     # "fiduswriter_plugins.textAnalysis",
     "fiduswriter_plugins.client_info",
     "fiduswriter_plugins.session_data",
+    "fiduswriter_plugins.review",
+    #"fiduswriter_plugins.imagePos"
 )
 
 # A list of allowed hostnames of this Fidus Writer installation

@@ -9,8 +9,9 @@ export const baseBodyTemplate = ({username, contents, staticUrl}) => `
 
     <div class="fw-container">
         <h1 class="fw-logo">
-            <img src="${staticUrl}img/logo.png?v=${$StaticUrls.transpile.version$}" alt="Fiduswriter" title="Logo" width="231" height="39" />
+            <img src="${staticUrl}svg/icon.svg?v=${$StaticUrls.transpile.version$}" />
         </h1>
+        <nav id="header-nav"></nav>
         <div id="user-preferences" class="fw-user-preferences fw-header-text">
             <h3 class="fw-name">${escapeText(username)}</h3>
             <div id="preferences-btn" class="fw-button fw-small fw-green">
@@ -19,8 +20,6 @@ export const baseBodyTemplate = ({username, contents, staticUrl}) => `
             </div>
         </div><!-- end user preference -->
     </div><!-- end container -->
-
-    <nav id="header-nav"></nav>
  </header>
 
 <div class="fw-contents">

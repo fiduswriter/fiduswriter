@@ -24,11 +24,11 @@ a:hover,
 }
 
 .fw-header-navigation-text {
-    color: #b73717;
-    font-weight: 700;
-    line-height: 40px;
-    letter-spacing: 1px;
+    color: #fff;
+    font-weight: 400;
+    letter-spacing: 0.6px;
     text-transform: uppercase;
+    font-size: 15px;
 }
 
 .fw-big-title {
@@ -90,4 +90,3 @@ a:hover,
 .fw-text-white-shadow {
     text-shadow: 1px 1px 0 rgba(255,255,255,0.3);
 }
-

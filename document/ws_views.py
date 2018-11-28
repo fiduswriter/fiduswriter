@@ -133,6 +133,7 @@ class WebSocket(BaseWebSocketHandler):
             'owner': {
                 'id': doc_owner.id,
                 'name': doc_owner.readable_name,
+                'username': doc_owner.username,
                 'avatar': avatar_url(doc_owner, 80),
                 'team_members': []
             }

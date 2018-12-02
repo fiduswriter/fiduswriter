@@ -9,7 +9,7 @@ import {ZipFileCreator} from "../tools/zip"
 import {opfTemplate, containerTemplate, ncxTemplate, ncxItemTemplate, navTemplate, navItemTemplate, xhtmlTemplate} from "./templates"
 import {addAlert} from "../../common"
 import {BaseEpubExporter} from "./base"
-import {createDocSchema} from "../../schema/document"
+import {docSchema} from "../../schema/document"
 
 
 export class EpubExporter extends BaseEpubExporter {
@@ -76,7 +76,7 @@ export class EpubExporter extends BaseEpubExporter {
 
         let timestamp = this.getTimestamp()
 
-        let schema = createDocSchema(this.doc.settings.template)
+        let schema = docSchema
         schema.cached.imageDB = this.imageDB
         let serializer = DOMSerializer.fromSchema(schema)
         let docContents = serializer.serializeNode(schema.nodeFromJSON(this.doc.contents))

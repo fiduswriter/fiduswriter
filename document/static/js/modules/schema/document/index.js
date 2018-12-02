@@ -1,45 +1,128 @@
 import OrderedMap from "orderedmap"
 import {Schema} from "prosemirror-model"
+import {tableNodes} from "prosemirror-tables"
+import {nodes, marks} from "prosemirror-schema-basic"
 import {
-    spec
-} from "./static"
+    figure,
+    citation,
+    equation,
+    heading1,
+    heading2,
+    heading3,
+    heading4,
+    heading5,
+    heading6,
+    anchor,
+    paragraph,
+    blockquote,
+    horizontal_rule,
+    ordered_list,
+    bullet_list,
+    list_item,
+    deletion,
+    insertion,
+    format_change,
+    parseTracks,
+    comment,
+    annotation_tag
+} from "../common"
 import {
-    articleSpec,
-    partSpec
-} from "./dynamic"
+    contributor,
+    tag,
+    code_block,
+    footnote
+} from "./content"
+import {
+    doc,
+    title,
+    subtitle,
+    article,
+    richtext_part,
+    heading_part,
+    contributors_part,
+    tags_part,
+    table_part
+} from "./structure"
 
-const createPartSpec = part => {
-    let spec
-    switch (part.type) {
-        case 'richtext':
-            return partSpec(part, `(${part.elements.split(' ').join(' | ')})+`)
-        case 'heading':
-            return partSpec(part, 'heading')
-        case 'contributors':
-            spec = partSpec(part, 'contributor*')
-            spec.item_title = part.item_title
-            return spec
-        case 'tags':
-            spec = partSpec(part, 'tag*')
-            spec.item_title = part.item_title
-            return spec
-        case 'table':
-            return partSpec(part, 'table')
-        default:
-            return false
-    }
-}
 
-export const createDocSchema = (docTemplate) => {
-    const articleContent = docTemplate.map(part => part.id).join(' ')
-    const article = articleSpec(articleContent, docTemplate)
-    const specParts = {article}
-    docTemplate.forEach(part => {
-        specParts[part.id] = createPartSpec(part)
+let specNodes = OrderedMap.from({
+    doc,
+    article,
+    richtext_part,
+    heading_part,
+    contributors_part,
+    tags_part,
+    table_part,
+    title,
+    subtitle,
+    contributor,
+    tag,
+    paragraph,
+    blockquote,
+    horizontal_rule,
+    figure,
+    heading1,
+    heading2,
+    heading3,
+    heading4,
+    heading5,
+    heading6,
+    code_block,
+    text: nodes.text,
+    hard_break: nodes.hard_break,
+    citation,
+    equation,
+    footnote,
+    ordered_list,
+    bullet_list,
+    list_item
+}).append(tableNodes({
+    tableGroup: "table_block",
+    cellContent: "block+"
+}))
+
+specNodes = specNodes.update(
+    "table_cell",
+    Object.assign({marks: "annotation"}, specNodes.get("table_cell"))
+).update(
+    "table",
+    Object.assign(
+        {},
+        specNodes.get("table"),
+        {
+            attrs: {
+                track: {default: []}
+            },
+            parseDOM: [{tag: "table", getAttrs(dom) {
+                return {
+                    track: parseTracks(dom.dataset.track)
+                }
+            }}],
+            toDOM(node) {
+                const attrs = {}
+                if (node.attrs.track.length) {
+                    attrs['data-track'] = JSON.stringify(node.attrs.track)
+                }
+                return ["table", attrs, ["tbody", 0]]
+            }
+        }
+    )
+)
+
+const spec = {
+    nodes: specNodes,
+    marks: OrderedMap.from({
+        em: marks.em,
+        strong: marks.strong,
+        link: marks.link,
+        code: marks.code,
+        comment,
+        annotation_tag,
+        anchor,
+        deletion,
+        insertion,
+        format_change
     })
-
-
-    const nodes = OrderedMap.from(specParts)
-    spec.nodes = spec.nodes.append(nodes)
-    return new Schema(spec)
 }
+
+export const docSchema = new Schema(spec)

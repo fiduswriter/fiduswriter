@@ -37,7 +37,7 @@ export const placeholdersPlugin = function(options) {
                     return
                 }
 
-                const text = `${partElement.type.spec.title}...`
+                const text = `${partElement.attrs.title}...`
                 const placeHolder = document.createElement('span')
                 placeHolder.classList.add('placeholder')
                 placeHolder.setAttribute('data-placeholder', text)

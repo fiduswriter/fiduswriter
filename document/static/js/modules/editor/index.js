@@ -42,7 +42,7 @@ import {
 
 import * as plugins from "../../plugins/editor"
 import {
-    createDocSchema
+    docSchema
 } from "../schema/document"
 import {
     ModComments
@@ -315,7 +315,7 @@ export class Editor {
         }
         new ModDB(this)
         this.docInfo.template = data.doc.template.definition
-        this.schema = createDocSchema(this.docInfo.template)
+        this.schema = docSchema
         this.mod.db.bibDB.setDB(data.doc.bibliography)
         // assign bibDB to be used in document schema.
         this.schema.cached.bibDB = this.mod.db.bibDB

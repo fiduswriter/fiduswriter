@@ -92,7 +92,8 @@ class Document(models.Model):
     template = models.ForeignKey(
         DocumentTemplate,
         on_delete=models.deletion.CASCADE,
-        default=default_template
+        default=default_template,
+        blank=True
     )
 
     def __str__(self):

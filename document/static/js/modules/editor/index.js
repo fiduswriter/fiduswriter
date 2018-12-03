@@ -39,9 +39,6 @@ import {
 import {
     buildKeymap
 } from "prosemirror-example-setup"
-import {
-    schema
-} from "prosemirror-schema-basic"
 
 import * as plugins from "../../plugins/editor"
 import {
@@ -135,7 +132,7 @@ export class Editor {
             confirmedDoc: false, // The latest doc as confirmed by the server.
             dir: 'ltr' // standard direction, used in input fields, etc.
         }
-        this.schema = schema
+        this.schema = docSchema
 
         this.menu = {
             headerbarModel: headerbarModel(),
@@ -317,7 +314,6 @@ export class Editor {
             window.history.replaceState("", "", `/document/${this.docInfo.id}/`)
         }
         new ModDB(this)
-        this.schema = docSchema
         this.mod.db.bibDB.setDB(data.doc.bibliography)
         // assign bibDB to be used in document schema.
         this.schema.cached.bibDB = this.mod.db.bibDB
@@ -354,7 +350,7 @@ export class Editor {
         document.getElementById('flow').classList.remove('hide')
         // Set document in prosemirror
         this.view.setProps({state: EditorState.create(stateConfig)})
-
+        this.view.setProps({nodeViews: {}}) // Needed to initialize nodeViews in plugins
         // Set initial confirmed doc
         this.docInfo.confirmedDoc = this.view.state.doc
 

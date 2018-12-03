@@ -126,7 +126,7 @@ const createTagInputEditor = (view, getPos, node) => {
             }),
             plugins: [
                 history(),
-                placeholderPlugin(node.type.spec.item_title),
+                placeholderPlugin(node.attrs.item_title),
                 pastePlugin(view),
                 keymap({
                     "Mod-z": undo,
@@ -169,13 +169,12 @@ const createTagInputEditor = (view, getPos, node) => {
 
 class TagsView {
     constructor(node, view, getPos) {
-        console.log('TAGSVIEW')
         this.node = node
         this.view = view
         this.getPos = getPos
         this.dom = document.createElement('div')
         this.dom.classList.add(`article-${this.node.type.name}`)
-        this.node.type.groups.forEach(group => this.dom.classList.add(`article-${group}`))
+        this.dom.classList.add(`article-${this.node.attrs.id}`)
         const [tagInputDOM, tagInputView] = createTagInputEditor(view, getPos, node)
         this.tagInputView = tagInputView
         this.contentDOM = document.createElement('span')
@@ -226,15 +225,13 @@ class TagsView {
 }
 
 export const tagInputPlugin = function(options) {
-
     return new Plugin({
         key,
         state: {
             init(config, state) {
                 if (options.editor.docInfo.access_rights === 'write') {
-                    console.log('HERE')
-                    this.spec.props.nodeViews['tags_part'] = (node, view, getPos) => new TagsView(node, view, getPos)
-                    console.log(this.spec.props.nodeViews)
+                    this.spec.props.nodeViews['tags_part'] =
+                        (node, view, getPos) => new TagsView(node, view, getPos)
                 }
 
                 return {}
@@ -244,7 +241,7 @@ export const tagInputPlugin = function(options) {
             }
         },
         props: {
-            nodeViews: {tags_part: (node, view, getPos) => new TagsView(node, view, getPos)}
+            nodeViews: {fish: 'fleisch'}
         }
     })
 }

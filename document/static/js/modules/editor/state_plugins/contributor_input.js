@@ -16,12 +16,15 @@ class ContributorsView {
         this.getPos = getPos
         this.dom = document.createElement('div')
         this.dom.classList.add(`article-${this.node.type.name}`)
-        this.node.type.groups.forEach(group => this.dom.classList.add(`article-${group}`))
+        this.dom.classList.add(`article-${this.node.attrs.id}`)
         this.contentDOM = document.createElement('span')
         this.contentDOM.classList.add('contributors-inner')
         this.dom.appendChild(this.contentDOM)
-        const nodeTitle = node.type.spec.item_title
-        this.dom.insertAdjacentHTML('beforeend', `<button class="fw-button fw-light">${gettext('Add')} ${nodeTitle.toLowerCase()}...</button>`)
+        const nodeTitle = this.node.attrs.item_title
+        this.dom.insertAdjacentHTML(
+            'beforeend',
+            `<button class="fw-button fw-light">${gettext('Add')} ${nodeTitle.toLowerCase()}...</button>`
+        )
         this.dom.lastElementChild.addEventListener('click', () => {
             const dialog = new ContributorDialog(node, view)
             dialog.init()
@@ -35,8 +38,6 @@ class ContributorsView {
     ignoreMutation(record) {
         return true
     }
-
-
 }
 
 export const contributorInputPlugin = function(options) {
@@ -75,7 +76,8 @@ export const contributorInputPlugin = function(options) {
 
                 if (options.editor.docInfo.access_rights === 'write') {
                     dropUp = createDropUp()
-                    this.spec.props.nodeViews['contributors_part'] = (node, view, getPos) => new ContributorsView(node, view, getPos)
+                    this.spec.props.nodeViews['contributors_part'] =
+                        (node, view, getPos) => new ContributorsView(node, view, getPos)
                 }
 
                 return {
@@ -138,7 +140,9 @@ export const contributorInputPlugin = function(options) {
 
 				return decos
 			},
-            nodeViews: {}
+            nodeViews: {
+
+            }
         }
     })
 }

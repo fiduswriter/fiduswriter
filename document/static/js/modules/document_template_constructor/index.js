@@ -35,6 +35,7 @@ export class DocumentTemplateConstructor {
 
     getInitialValue() {
         this.value = JSON.parse(this.definitionTextarea.value)
+        console.log(this.value)
     }
 
     setCurrentValue() {
@@ -47,23 +48,22 @@ export class DocumentTemplateConstructor {
                     title = el.querySelector('input.title').value,
                     help = el.querySelector('.help').value,
                     initial = el.querySelector('.initial').value,
-                    values = {type, id, title, help, initial}
+                    locking = el.querySelector('.locking option:checked').value,
+                    optional = el.querySelector('.optional option:checked').value,
+                    values = {type, id, title, help, initial, locking, optional},
+                    attrs = {}
                 switch(type) {
                     case 'richtext':
-                        values['elements'] = el.querySelector('.elements').value
-                        values['marks'] = el.querySelector('.marks').value
-                        values['locked'] = el.querySelector('.locked').checked ? true : false
-                        break
-                    case 'table':
-                        values['locking'] = el.querySelector('input[name="table"]:checked').value
+                        attrs['elements'] = el.querySelector('.elements').value
+                        attrs['marks'] = el.querySelector('.marks').value
+                        values['attrs'] = attrs
                         break
                     case 'contributors':
                     case 'tags':
-                        values['item_title'] = el.querySelector('input.item_title').value
-                        values['locked'] = el.querySelector('.locked').checked ? true : false
+                        attrs['item_title'] = el.querySelector('input.item_title').value
+                        values['attrs'] = attrs
                         break
                     default:
-                        values['locked'] = el.querySelector('.locked').checked ? true : false
                         break
                 }
                 if (!id.length) {
@@ -73,6 +73,7 @@ export class DocumentTemplateConstructor {
                 return values
             }
         )
+        console.log(this.value)
         this.definitionTextarea.value = JSON.stringify(this.value)
         this.showErrors()
         return valid

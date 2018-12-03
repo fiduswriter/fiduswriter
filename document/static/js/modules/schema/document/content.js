@@ -2,7 +2,7 @@ import {escapeText, parseTracks} from "../../common"
 import {htmlToFnNode, fnNodeToHtml} from "../footnotes_convert"
 
 
-const contributor = {
+export const contributor = {
     inline: true,
     draggable: true,
     attrs: {
@@ -50,7 +50,7 @@ const contributor = {
 }
 
 
-const tag = {
+export const tag = {
     inline: true,
     draggable: true,
     attrs: {
@@ -73,7 +73,7 @@ const tag = {
 
 
 
-const footnote = {
+export const footnote = {
     inline: true,
     group: "inline",
     attrs: {
@@ -100,7 +100,7 @@ const footnote = {
     }
 }
 
-const code_block = {
+export const code_block = {
     content: "text*",
     marks: "annotation track",
     group: "block",

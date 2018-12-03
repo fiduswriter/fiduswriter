@@ -169,6 +169,7 @@ const createTagInputEditor = (view, getPos, node) => {
 
 class TagsView {
     constructor(node, view, getPos) {
+        console.log('TAGSVIEW')
         this.node = node
         this.view = view
         this.getPos = getPos
@@ -231,14 +232,11 @@ export const tagInputPlugin = function(options) {
         state: {
             init(config, state) {
                 if (options.editor.docInfo.access_rights === 'write') {
-                    const tagsNodeNames = Object.values(state.schema.nodes).filter(
-                        node => node.groups.includes('tags')
-                    ).map(node => node.name)
-                    tagsNodeNames.forEach(
-                        nodeName => this.spec.props.nodeViews[nodeName] =
-                            (node, view, getPos) => new TagsView(node, view, getPos)
-                    )
+                    console.log('HERE')
+                    this.spec.props.nodeViews['tags_part'] = (node, view, getPos) => new TagsView(node, view, getPos)
+                    console.log(this.spec.props.nodeViews)
                 }
+
                 return {}
             },
             apply(tr, prev) {
@@ -246,7 +244,7 @@ export const tagInputPlugin = function(options) {
             }
         },
         props: {
-            nodeViews: {}
+            nodeViews: {tags_part: (node, view, getPos) => new TagsView(node, view, getPos)}
         }
     })
 }

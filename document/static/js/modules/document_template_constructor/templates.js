@@ -1,25 +1,49 @@
 import {escapeText} from "../common"
 
-const headingTemplate = ({id = "", title="", initial="", help=""}) =>
+const headingTemplate = ({id = "", title="", locking="free", initial="", help="", optional="false"}) =>
 `<div class="doc-part" data-type="heading">
     <div class="title">${gettext('Heading')}</div>
     <div class="attrs">
         <label>${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></label>
         <label>${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></label>
-        <label>${gettext('Locked?')} <input type="checkbox" class="locked"></label>
+        <label>${gettext('Locking')}
+            <select class="locking">
+                <option value="free" ${locking==='free' ? "selected" : ""}>${gettext('User can change contents')}</option>
+                <option value="fixed" ${locking==='fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
+            </select>
+        </label>
+        <label>${gettext('Optional')}
+            <select class="optional">
+                <option value="false" ${optional==='false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
+                <option value="true_on" ${optional==='true_on' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
+                <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
+            </select>
+        </label>
         <label>${gettext('Prefilled content')} <input type="text" class="initial" value="${escapeText(initial)}"></label>
         <label>${gettext('Instructions')}<textarea class="help">${escapeText(help)}</textarea></label>
     </div>
 </div>`
 
-const contributorsTemplate = ({id = "", title="", item_title="", initial="", help=""}) =>
+const contributorsTemplate = ({id = "", title="", attrs={item_title: ""}, locking="free", initial="", help="", optional="false"}) =>
 `<div class="doc-part" data-type="contributors">
     <div class="title">${gettext('Namelist')}</div>
     <div class="attrs">
         <label>${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}" value="${escapeText(initial)}"></label>
         <label>${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></label>
-        <label>${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(item_title)}"></label>
-        <label>${gettext('Locked?')} <input type="checkbox" class="locked"></label>
+        <label>${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(attrs.item_title)}"></label>
+        <label>${gettext('Locking')}
+            <select class="locking">
+                <option value="free" ${locking==='free' ? "selected" : ""}>${gettext('User can change contents')}</option>
+                <option value="fixed" ${locking==='fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
+            </select>
+        </label>
+        <label>${gettext('Optional')}
+            <select class="optional">
+                <option value="false" ${optional==='false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
+                <option value="true_on" ${optional==='true_on' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
+                <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
+            </select>
+        </label>
         <label>${gettext('Prefilled content')} <input type="text" class="initial"></label>
         <label>${gettext('Instructions')}<textarea class="help">${escapeText(help)}</textarea></label>
     </div>
@@ -28,48 +52,82 @@ const contributorsTemplate = ({id = "", title="", item_title="", initial="", hel
 const richtextTemplate = ({
     id="",
     title="",
-    elements="heading paragraph figure table",
-    marks="strong emph highlight underline",
+    attrs={
+        elements: "paragraph heading figure table",
+        marks: "strong emph highlight underline"
+    },
+    locking="free",
     initial="",
+    optional="false",
     help=""
-}) =>
-`<div class="doc-part" data-type="richtext">
+}) => `<div class="doc-part" data-type="richtext">
     <div class="title">${gettext('Richtext')}</div>
     <div class="attrs">
         <label>${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></label>
         <label>${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></label>
-        <label>${gettext('Locked?')} <input type="checkbox" class="locked"></label>
-        <label>${gettext('Whitelist elements')} <input type="text" class="elements" value="${escapeText(elements)}"></label>
-        <label>${gettext('Whitelist marks')} <input type="text" class="marks" value="${escapeText(marks)}"></label>
+        <label>${gettext('Locking')}
+            <select class="locking">
+                <option value="free" ${locking==='free' ? "selected" : ""}>${gettext('User can change contents')}</option>
+                <option value="fixed" ${locking==='fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
+            </select>
+        </label>
+        <label>${gettext('Optional')}
+            <select class="optional">
+                <option value="false" ${optional==='false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
+                <option value="true_on" ${optional==='true_on' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
+                <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
+            </select>
+        </label>
+        <label>${gettext('Whitelist elements')} <input type="text" class="elements" value="${escapeText(attrs.elements)}"></label>
+        <label>${gettext('Whitelist marks')} <input type="text" class="marks" value="${escapeText(attrs.marks)}"></label>
         <label>${gettext('Prefilled content')}<textarea class="initial">${escapeText(initial)}</textarea></label>
         <label>${gettext('Instructions')}<textarea class="help">${escapeText(help)}</textarea></label>
     </div>
 </div>`
 
-const tagsTemplate = ({id = "", title="", item_title="", initial="", help=""}) =>
+const tagsTemplate = ({id = "", title="", attrs={item_title: ""}, locking="free", initial="", help="", optional="false"}) =>
 `<div class="doc-part" data-type="tags">
     <div class="title">${gettext('Tags')}</div>
     <div class="attrs">
         <label>${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></label>
         <label>${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></label>
-        <label>${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(item_title)}"></label>
-        <label>${gettext('Locked?')} <input type="checkbox" class="locked"></label>
+        <label>${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(attrs.item_title)}"></label>
+        <label>${gettext('Locking')}
+            <select class="locking">
+                <option value="free" ${locking==='free' ? "selected" : ""}>${gettext('User can change contents')}</option>
+                <option value="fixed" ${locking==='fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
+            </select>
+        </label>
+        <label>${gettext('Optional')}
+            <select class="optional">
+                <option value="false" ${optional==='false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
+                <option value="true_on" ${optional==='true_on' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
+                <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
+            </select>
+        </label>
         <label>${gettext('Prefilled content')} <input type="text" class="initial" value="${escapeText(initial)}"></label>
         <label>${gettext('Instructions')}<textarea class="help">${escapeText(help)}</textarea></label>
     </div>
 </div>`
 
-const tableTemplate = ({id = "", title="", initial="", help="", locking="free"}) =>
+const tableTemplate = ({id = "", title="", initial="", help="", locking="free", optional="false"}) =>
 `<div class="doc-part" data-type="table">
     <div class="title">${gettext('Table')}</div>
     <div class="attrs">
         <label>${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></label>
         <label>${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></label>
-        <label>${gettext('Type')}
-            <select>
-                <option value="free" ${locking==='free' ? "checked" : ""}>${gettext('Free')}</option>
-                <option value="fixed" ${locking==='fixed' ? "checked" : ""}>${gettext('Fixed')}</option>
-                <option value="rows" ${locking==='rows' ? "checked" : ""}>${gettext('Cann add/remove rows')}</option>
+        <label>${gettext('Locking')}
+            <select class="locking">
+                <option value="free" ${locking==='free' ? "selected" : ""}>${gettext('User can change contents')}</option>
+                <option value="fixed" ${locking==='fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
+                <option value="rows" ${locking==='rows' ? "selected" : ""}>${gettext('User can add/remove rows')}</option>
+            </select>
+        </label>
+        <label>${gettext('Optional')}
+            <select class="optional">
+                <option value="false" ${optional==='false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
+                <option value="true_on" ${optional==='true_on' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
+                <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </label>
         <label>${gettext('Prefilled content')} <input type="text" class="initial" value="${escapeText(initial)}"></label>
@@ -85,6 +143,7 @@ export const templateEditorValueTemplate = ({value}) =>
             case 'contributors':
                 return contributorsTemplate(docPart)
             case 'richtext':
+                console.log({docPart})
                 return richtextTemplate(docPart)
             case 'tags':
                 return tagsTemplate(docPart)

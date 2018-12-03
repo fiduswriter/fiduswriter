@@ -6,6 +6,9 @@ import {
     FeedbackTab
 } from "../feedback"
 import {
+    templateToDoc
+} from "../template"
+import {
     EditorState,
     TextSelection
 } from "prosemirror-state"
@@ -308,13 +311,12 @@ export class Editor {
 
         this.docInfo = data.doc_info
         this.docInfo.version = doc["v"]
-
+        this.docInfo.template = data.doc.template.definition
         if (this.docInfo.version === 0) {
             // If the document is new, change the url.
             window.history.replaceState("", "", `/document/${this.docInfo.id}/`)
         }
         new ModDB(this)
-        this.docInfo.template = data.doc.template.definition
         this.schema = docSchema
         this.mod.db.bibDB.setDB(data.doc.bibliography)
         // assign bibDB to be used in document schema.
@@ -331,7 +333,9 @@ export class Editor {
         if (doc.contents.type) {
             stateDoc = this.schema.nodeFromJSON({type:'doc', content:[doc.contents]})
         } else {
-            stateDoc = this.schema.topNodeType.createAndFill()
+            stateDoc = this.schema.nodeFromJSON({type:'doc', content:[
+                templateToDoc(this.docInfo.template)
+            ]})
         }
         const plugins = this.statePlugins.map(plugin => {
             if (plugin[1]) {

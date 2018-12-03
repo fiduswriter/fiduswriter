@@ -75,13 +75,7 @@ export const contributorInputPlugin = function(options) {
 
                 if (options.editor.docInfo.access_rights === 'write') {
                     dropUp = createDropUp()
-                    const contributorsNodeNames = Object.values(state.schema.nodes).filter(
-                        node => node.groups.includes('contributors')
-                    ).map(node => node.name)
-                    contributorsNodeNames.forEach(
-                        nodeName => this.spec.props.nodeViews[nodeName] =
-                            (node, view, getPos) => new ContributorsView(node, view, getPos)
-                    )
+                    this.spec.props.nodeViews['contributors_part'] = (node, view, getPos) => new ContributorsView(node, view, getPos)
                 }
 
                 return {

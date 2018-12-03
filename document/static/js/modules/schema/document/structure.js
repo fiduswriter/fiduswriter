@@ -1,4 +1,4 @@
-const doc = {
+export const doc = {
     content: "article", // Transformations don't work well on the top most element
     selectable: false
 }
@@ -57,28 +57,42 @@ const partSpec = (type, content, attrs = {}) => ({
         id: {
             default: ''
         },
-        locked: {
-            default: false
+        locking: {
+            default: 'false'
         },
         language: {
             default: false
         }
     }, attrs),
-    title,
     parseDOM: [{
         tag: `div.article-${type}`
     }],
     toDOM(node) {
         return ["div", {
-            class: `article-part article-${type}`
+            class: `article-part article-${type} article-${node.attrs.id}`
         }, 0]
     }
 })
 
-export const richtext_part = partSpec('richtext', 'block+')
+export const richtext_part = partSpec('richtext', 'block+', {
+    elements: {
+        default: []
+    },
+    marks: {
+        default: []
+    }
+})
 export const heading_part = partSpec('heading', 'heading')
-export const contributors_part = partSpec('contributors', 'contributor*')
-export const tags_part = partSpec('tags', 'tag*')
+export const contributors_part = partSpec('contributors', 'contributor*', {
+    item_title: {
+        default: ""
+    }
+})
+export const tags_part = partSpec('tags', 'tag*', {
+    item_title: {
+        default: ""
+    }
+})
 export const table_part = partSpec('table', 'table')
 
 export const title = {

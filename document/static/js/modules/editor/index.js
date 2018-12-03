@@ -98,6 +98,7 @@ import {
     marginboxesPlugin,
     placeholdersPlugin,
     settingsPlugin,
+    templatePlugin,
     toolbarPlugin,
     trackPlugin
 } from "./state_plugins"
@@ -164,6 +165,7 @@ export class Editor {
             [clipboardPlugin, () => ({editor: this, viewType: 'main'})],
             [accessRightsPlugin, () => ({editor: this})],
             [settingsPlugin, () => ({editor: this})],
+            [templatePlugin, () => ({editor: this})],
             [trackPlugin, () => ({editor: this})]
         ]
     }

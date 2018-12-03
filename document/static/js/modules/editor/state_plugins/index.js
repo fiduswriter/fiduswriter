@@ -76,3 +76,7 @@ export {
     settingsPlugin
 }
 from "./settings"
+export {
+    templatePlugin
+}
+from "./template"

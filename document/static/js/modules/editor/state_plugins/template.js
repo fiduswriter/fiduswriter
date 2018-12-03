@@ -1,0 +1,77 @@
+import {Plugin, PluginKey} from "prosemirror-state"
+
+const key = new PluginKey('template')
+export const templatePlugin = function(options) {
+    return new Plugin({
+        key,
+        filterTransaction: (tr, state) => {
+            if (tr.getMeta('remote')) {
+                return true
+            }
+            if (state.doc.childCount !== tr.doc.childCount) {
+                return false
+            }
+            let allowed = true
+
+            let ranges = []
+
+            tr.steps.forEach((step, index) => {
+                ranges.push({from: step.from, to: step.to})
+                ranges = ranges.map(range => ({from: tr.mapping.maps[index].map(range.from, -1), to: tr.mapping.maps[index].map(range.to, 1)}))
+            })
+            let allowedElements = false, allowedMarks = false
+
+            ranges.forEach(range => tr.doc.nodesBetween(range.from, range.to, (node, pos, parent, index) => {
+                let partNode
+                if (parent===tr.doc.firstChild) {
+                    allowedElements = node.attrs.elements ? node.attrs.elements.split(' ') : false
+                    allowedMarks = node.attrs.marks ? node.attrs.marks.split(' ').concat('insertion', 'deletion') : false
+                    partNode = true
+                }
+                if (pos < range.from || node === tr.doc.firstChild) {
+                    return true
+                }
+                if (partNode) {
+                    const oldNode = state.doc.firstChild.child(index)
+                    if (
+                        oldNode.type !== node.type ||
+                        oldNode.attrs.id !== node.attrs.id ||
+                        oldNode.attrs.title !== node.attrs.title ||
+                        oldNode.attrs.locking !== node.attrs.locking ||
+                        oldNode.attrs.language !== node.attrs.language ||
+                        oldNode.attrs.elements !== node.attrs.elements ||
+                        oldNode.attrs.marks !== node.attrs.marks ||
+                        oldNode.attrs.language !== node.attrs.language ||
+                        oldNode.attrs.item_title !== node.attrs.item_title
+                    ) {
+                        console.log('part node changed')
+                        allowed = false
+                    } else if (
+                        node.type.name === 'part_table' &&
+                        node.attrs.locking === 'rows' &&
+                        node.firstChild.childCount !== oldNode.firstChild.childCount
+                    ) {
+                        console.log('locked table')
+                        allowed = false
+                    }
+                } else if (allowedElements && parent.type.groups.includes('part') && !allowedElements.includes(node.type.name)) {
+                    console.log('illegal element')
+                    console.log(allowedElements)
+                    console.log(node.type.name)
+                    allowed = false
+                } else if (allowedMarks) {
+                    node.marks.forEach(mark => {
+                        if (!allowedMarks.includes(mark.type.name)) {
+                            console.log('illegal mark')
+                            console.log(mark.type.name)
+                            allowed = false
+                        }
+                    })
+                }
+
+            }))
+
+            return allowed
+        }
+    })
+}

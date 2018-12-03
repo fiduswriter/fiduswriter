@@ -185,6 +185,53 @@ export const configureFigureTemplate = ({image, equation, caption, dir}) =>
                         </span></li>
                     </ul>
                 </div>
+                
+                <div id="figure-alignment-btn" class="fw-button fw-light fw-large">
+                    <input type="hidden" id="figure-alignment" />
+                    <label></label>
+                    <span class="fa fa-caret-down"></span>
+                </div>
+                <div id="figure-alignment-pulldown" class="fw-pulldown fw-left"
+                        style="left: 70px;">
+                    <ul id="figure-category-list">
+                        <li><span class="fw-pulldown-item" id="figure-alignment-center">
+                            ${gettext('Center')}
+                        </span></li>
+                        <li><span class="fw-pulldown-item" id="figure-alignment-right">
+                            ${gettext('Right')}
+                        </span></li>
+                        <li><span class="fw-pulldown-item" id="figure-alignment-left">
+                            ${gettext('Left')}
+                        </span></li>
+
+                    </ul>
+                </div>
+
+
+                <div id="figure-width-btn" class="fw-button fw-light fw-large">
+                    <input type="hidden" id="figure-width" />
+                    <label></label>
+                    <span class="fa fa-caret-down"></span>
+                </div>
+                <div id="figure-width-pulldown" class="fw-pulldown fw-left"
+                        style="left: 150px;">
+                    <ul id="figure-category-list">
+                        <li><span class="fw-pulldown-item" id="figure-width-100">
+                           Size: ${gettext('100')} %
+                        </span></li>
+                        <li><span class="fw-pulldown-item" id="figure-width-75">
+                           Size: ${gettext('75')} %
+                        </span></li>
+                        <li><span class="fw-pulldown-item" id="figure-width-50">
+                            Size : ${gettext('50')} %
+                        </span></li>
+                       <li><span class="fw-pulldown-item" id="figure-width-25">
+                            Size : ${gettext('25')} %
+                        </span></li>
+
+                    </ul>
+                </div>
+                
             </div>
             <div class="figure-preview">
                 <div id="inner-figure-preview"></div>

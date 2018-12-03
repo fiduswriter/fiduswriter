@@ -16,6 +16,9 @@ export class FigureDialog {
         this.contentNode = false
         this.caption = ''
         this.figureCategory = 'figure'
+        this.aligned='center'
+        this.width="50"
+       // this.height="50"
         this.equation = ''
         this.node = this.editor.currentView.state.selection.node
         this.submitMessage = gettext('Insert')
@@ -44,6 +47,21 @@ export class FigureDialog {
             document.getElementById(`figure-category-${this.figureCategory}`).innerText
     }
 
+     setFigureAlignment() {
+        this.dialog.dialogEl.querySelector('#figure-alignment-btn label').innerHTML =
+            document.getElementById(`figure-alignment-${this.aligned}`).innerText
+    }
+
+    setFigureWidth() {
+        this.dialog.dialogEl.querySelector('#figure-width-btn label').innerHTML =
+            document.getElementById(`figure-width-${this.width}`).innerText
+
+    }
+    /* setFigureHeight() {
+        this.dialog.dialogEl.querySelector('#figure-height-btn label').innerHTML =
+            document.getElementById(`figure-height-${this.height}`).innerText
+    }*/
+
     submitForm() {
         const mathInput = this.dialog.dialogEl.querySelector('input[name=figure-math]')
         const captionInput = this.dialog.dialogEl.querySelector('input[name=figure-caption]')
@@ -64,7 +82,10 @@ export class FigureDialog {
             (this.imgId === this.node.attrs.image) &&
             this.imgDb === 'document' &&
             this.caption === this.node.attrs.caption &&
-            this.figureCategory === this.node.attrs.figureCategory) {
+            this.figureCategory === this.node.attrs.figureCategory &&
+            this.aligned === this.node.attrs.aligned &&
+              this.width === this.node.attrs.width ) {
+           /*    this.height === this.node.attrs.height*/
             // the figure has not been changed, just close the dialog
             this.dialog.close()
             return false
@@ -75,12 +96,15 @@ export class FigureDialog {
             this.imageDB.setImage(this.imgId, imageEntry)
             this.imgDb = 'document'
         }
-
+        // this is the node wherein my figureAlignment will affect the attribute
         const nodeType = this.editor.currentView.state.schema.nodes['figure']
         const tr = this.editor.currentView.state.tr.replaceSelectionWith(
             nodeType.createAndFill({
                 equation: this.equation,
                 image: this.imgId,
+                aligned: this.aligned,
+                 width: this.width,
+            //     height: this.height,
                 figureCategory: this.figureCategory,
                 caption: this.caption,
                 id: randomFigureId()
@@ -103,7 +127,9 @@ export class FigureDialog {
             this.imgDb = 'document'
             this.figureCategory = this.node.attrs.figureCategory
             this.caption = this.node.attrs.caption
-
+            this.aligned = this.node.attrs.aligned
+             this.width = this.node.attrs.width
+           //  this.height = this.node.attrs.height
             buttons.push({
                 text: gettext('Remove'),
                 classes: 'fw-orange',
@@ -115,12 +141,13 @@ export class FigureDialog {
             })
 
         }
-
-        buttons.push({
+        //image positioning both at the time of updating and inserting for the first time
+        buttons.push({//update
             text: this.submitMessage,
             classes: 'fw-dark',
             click: () => this.submitForm()
         })
+
 
         buttons.push({
             type: 'cancel'
@@ -134,6 +161,9 @@ export class FigureDialog {
                 equation: this.equation,
                 caption: this.caption,
                 image: this.imgId,
+                aligned: this.aligned,
+                width: this.width,
+             //   height: this.height,
                 dir: this.editor.docInfo.dir
             }),
             buttons,
@@ -147,6 +177,8 @@ export class FigureDialog {
         captionInput.focus()
 
         this.setFigureLabel()
+        this.setFigureAlignment()
+        this.setFigureWidth()
 
         if (this.equation) {
             this.layoutMathPreview()
@@ -159,6 +191,39 @@ export class FigureDialog {
             document.getElementById('figure-category-pulldown')
         )
 
+
+         addDropdownBox(
+            document.getElementById('figure-alignment-btn'),
+            document.getElementById('figure-alignment-pulldown')
+        )
+
+        addDropdownBox(
+            document.getElementById('figure-width-btn'),
+            document.getElementById('figure-width-pulldown')
+        )
+   /*     addDropdownBox(
+            document.getElementById('figure-height-btn'),
+            document.getElementById('figure-height-pulldown')
+        )*/
+        document.querySelectorAll('#figure-alignment-pulldown li span').forEach(el => el.addEventListener(
+            'click',
+            event => {
+                event.preventDefault()
+                this.aligned = el.id.split('-')[2]
+                this.setFigureAlignment()
+            }
+        ))
+
+            document.querySelectorAll('#figure-width-pulldown li span').forEach(el => el.addEventListener(
+            'click',
+            event => {
+                event.preventDefault()
+               this.width = el.id.split('-')[2]
+                this.setFigureWidth()
+            }
+        ))
+
+
         document.querySelectorAll('#figure-category-pulldown li span').forEach(el => el.addEventListener(
             'click',
             event => {
@@ -167,6 +232,16 @@ export class FigureDialog {
                 this.setFigureLabel()
             }
         ))
+
+
+    /*     document.querySelectorAll('#figure-height-pulldown li span').forEach(el => el.addEventListener(
+            'click',
+            event => {
+                event.preventDefault()
+                this.height = el.id.split('-')[2]
+                this.setFigureHeight()
+            }
+        ))*/
 
         document.querySelector('input[name=figure-math]').addEventListener('focus',
             () => {

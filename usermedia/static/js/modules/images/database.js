@@ -17,15 +17,14 @@ export class ImageDB {
         return postJson('/usermedia/images/').then(
             ({json}) => {
                 this.cats = json.imageCategories
-                let ids = json.images.map(
+                json.images.forEach(
                     image => {
                         image.image = image.image.split('?')[0]
                         this.db[image.id] = image
-                        return image.id
                     }
                 )
                 deactivateWait()
-                return ids
+                return
             }
         )
     }

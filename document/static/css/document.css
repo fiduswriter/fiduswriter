@@ -95,7 +95,7 @@ figure {
     border: 1px solid black;
     padding: 5px;
     text-align: center;
-    -webkit-region-break-inside: avoid;
+    break-inside: avoid;
     cursor: pointer;
     margin: 10%;
 }

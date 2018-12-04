@@ -91,7 +91,7 @@ figure img {
 
 
 figure {
-    width: 80%;
+    width: calc(80% - 12px);
     border: 1px solid black;
     padding: 5px;
     text-align: center;

@@ -137,7 +137,7 @@ export const figure = {
                 caption: dom.dataset.caption,
                 id: dom.dataset.id,
                 track: parseTracks(dom.dataset.track),
-                aligned: dom.aligned,
+                //aligned: dom.aligned,
                 width: dom.width,
 
             }
@@ -150,10 +150,10 @@ export const figure = {
         dom.dataset.figureCategory = node.attrs.figureCategory
         dom.dataset.caption = node.attrs.caption
         dom.id = node.attrs.id
-        dom.aligned = node.attrs.aligned
+        //dom.aligned = node.attrs.aligned
         dom.width = node.attrs.width
      //   dom.height = node.attrs.height
-        switch (dom.aligned) {
+        switch (node.attrs.aligned) {
             case 'right':
                 dom.classList.add('aligned-right')
                 break

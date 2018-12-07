@@ -122,8 +122,8 @@ export const figure = {
         caption: {default: ""},
         id: {default: false},
         track: {default: []},
-        aligned: {default: 'right'},
-        width:{default:"50"},
+        aligned: {default: 'center'},
+        width:{default:"100"},
         //height: {default:"50"},
     },
     parseDOM: [{
@@ -137,8 +137,8 @@ export const figure = {
                 caption: dom.dataset.caption,
                 id: dom.dataset.id,
                 track: parseTracks(dom.dataset.track),
-                //aligned: dom.aligned,
-                width: dom.width,
+                aligned: dom.dataset.aligned,
+                width: dom.dataset.width,
 
             }
         }
@@ -150,8 +150,8 @@ export const figure = {
         dom.dataset.figureCategory = node.attrs.figureCategory
         dom.dataset.caption = node.attrs.caption
         dom.id = node.attrs.id
-        //dom.aligned = node.attrs.aligned
-        dom.width = node.attrs.width
+        dom.dataset.aligned = node.attrs.aligned
+        dom.dataset.width = node.attrs.width
      //   dom.height = node.attrs.height
         switch (node.attrs.aligned) {
             case 'right':
@@ -167,7 +167,7 @@ export const figure = {
                 dom.classList.add('aligned-center')
         }
 
-         switch (dom.width) {
+         switch (node.attrs.width) {
             case '100':
                 dom.classList.add('image-width-100')
                 break

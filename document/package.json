@@ -6,7 +6,7 @@
         "fix-utf8": "1.0.4",
         "jszip": "3.1.5",
         "jszip-utils": "0.0.2",
-        "mathquill": "0.10.1-b",
+        "mathquill-jquery": "0.0.2",
         "orderedmap": "1.0.0",
         "prosemirror-collab": "1.1.x",
         "prosemirror-commands": "1.0.x",

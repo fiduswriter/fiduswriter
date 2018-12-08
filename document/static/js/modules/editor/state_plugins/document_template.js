@@ -1,7 +1,7 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 
-const key = new PluginKey('template')
-export const templatePlugin = function(options) {
+const key = new PluginKey('documentTemplate')
+export const documentTemplatePlugin = function(options) {
     return new Plugin({
         key,
         filterTransaction: (tr, state) => {
@@ -42,28 +42,23 @@ export const templatePlugin = function(options) {
                         oldNode.attrs.elements !== node.attrs.elements ||
                         oldNode.attrs.marks !== node.attrs.marks ||
                         oldNode.attrs.language !== node.attrs.language ||
-                        oldNode.attrs.item_title !== node.attrs.item_title
+                        oldNode.attrs.item_title !== node.attrs.item_title ||
+                        oldNode.attrs.optional !== node.attrs.optional ||
+                        oldNode.attrs.help !== node.attrs.help
                     ) {
-                        console.log('part node changed')
                         allowed = false
                     } else if (
                         node.type.name === 'part_table' &&
                         node.attrs.locking === 'rows' &&
                         node.firstChild.childCount !== oldNode.firstChild.childCount
                     ) {
-                        console.log('locked table')
                         allowed = false
                     }
                 } else if (allowedElements && parent.type.groups.includes('part') && !allowedElements.includes(node.type.name)) {
-                    console.log('illegal element')
-                    console.log(allowedElements)
-                    console.log(node.type.name)
                     allowed = false
                 } else if (allowedMarks) {
                     node.marks.forEach(mark => {
                         if (!allowedMarks.includes(mark.type.name)) {
-                            console.log('illegal mark')
-                            console.log(mark.type.name)
                             allowed = false
                         }
                     })

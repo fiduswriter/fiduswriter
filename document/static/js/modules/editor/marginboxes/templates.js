@@ -1,6 +1,6 @@
 import {localizeDate, escapeText} from "../../common"
 import {serializeComment} from "../comments/editors"
-
+import {serializeHelp} from "../../document_template"
 
 /** A template for an answer to a comment */
 const answerCommentTemplate = ({
@@ -87,6 +87,14 @@ const firstCommentTemplate = ({
             <div id="comment-editor"></div>
         </div>
     </div>`
+
+const helpTemplate = ({help, filterOptions}) => {
+    if (!filterOptions.help) {
+        return '<div class="margin-box help hidden"></div>'
+    } else {
+        return `<div class="margin-box help"><div class="help-text-wrapper">${serializeHelp(help)}</div></div>`
+    }
+}
 
 
 const commentTemplate = ({comment, view, active, editComment, activeCommentAnswerId, user, docInfo, filterOptions, staticUrl}) => {
@@ -294,6 +302,7 @@ const trackTemplate = ({type, data, node, pos, view, active, docInfo, filterOpti
 export const marginboxFilterTemplate = ({marginBoxes, filterOptions, docInfo}) => {
     const comments = marginBoxes.find(box => box.type==='comment')
     const tracks = marginBoxes.find(box => ['insertion', 'deletion', 'format_change', 'block_change'].includes(box.type))
+    const help = marginBoxes.find(box => box.type==='help')
     let filterHTML = ''
     if (comments) {
         filterHTML += `<div id="margin-box-filter-comments" class="margin-box-filter-button${filterOptions.comments ? '' : ' disabled'}">
@@ -351,6 +360,11 @@ export const marginboxFilterTemplate = ({marginBoxes, filterOptions, docInfo}) =
             <span class="label">${gettext('Track changes')}</span>
         </div>`
     }
+    if (help) {
+        filterHTML += `<div id="margin-box-filter-help" class="margin-box-filter-button${filterOptions.help ? '' : ' disabled'}">
+            <span class="label">${gettext('Instructions')}</span>
+        </div>`
+    }
     return filterHTML
 }
 
@@ -396,6 +410,8 @@ export const marginBoxesTemplate = ({
                     staticUrl
                 })
                 break
+            case 'help':
+                return helpTemplate({help: mBox.data, filterOptions})
             default:
                 console.warn(`Unknown margin box type: ${mBox.type}`)
                 break

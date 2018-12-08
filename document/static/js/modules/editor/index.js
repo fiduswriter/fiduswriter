@@ -7,7 +7,7 @@ import {
 } from "../feedback"
 import {
     templateToDoc
-} from "../template"
+} from "../document_template"
 import {
     EditorState,
     TextSelection
@@ -98,7 +98,7 @@ import {
     marginboxesPlugin,
     placeholdersPlugin,
     settingsPlugin,
-    templatePlugin,
+    documentTemplatePlugin,
     toolbarPlugin,
     trackPlugin
 } from "./state_plugins"
@@ -165,7 +165,7 @@ export class Editor {
             [clipboardPlugin, () => ({editor: this, viewType: 'main'})],
             [accessRightsPlugin, () => ({editor: this})],
             [settingsPlugin, () => ({editor: this})],
-            [templatePlugin, () => ({editor: this})],
+            [documentTemplatePlugin, () => ({editor: this})],
             [trackPlugin, () => ({editor: this})]
         ]
     }

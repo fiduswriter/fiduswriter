@@ -1,25 +1,21 @@
 import SmoothDND from "smooth-dnd"
 import {EditorState} from "prosemirror-state"
 import {EditorView} from "prosemirror-view"
-import {schema} from "prosemirror-schema-basic"
-import {Schema} from "prosemirror-model"
 import {exampleSetup, buildMenuItems} from "prosemirror-example-setup"
 
 import {documentConstructorTemplate, templateEditorValueTemplate, toggleEditorButtonTemplate} from "./templates"
 import {whenReady, ensureCSS} from "../common"
+import {helpSchema} from "./converter"
 
-export class DocumentTemplateConstructor {
+export class DocumentTemplateDesigner {
     constructor({staticUrl}) {
         this.staticUrl = staticUrl
         this.definitionTextarea = false
         this.templateEditor = false
         this.errors = {}
         this.value = []
-        this.helpSchema = new Schema({
-            nodes: schema.spec.nodes.remove('code_block').remove('image').remove('heading').remove('horizontal_rule'),
-            marks: schema.spec.marks.remove('code')
-        })
-        this.helpMenuContent = buildMenuItems(this.helpSchema).fullMenu
+
+        this.helpMenuContent = buildMenuItems(helpSchema).fullMenu
         this.helpMenuContent.splice(1, 1) // full menu minus drop downs
         this.editors = []
     }
@@ -110,11 +106,11 @@ export class DocumentTemplateConstructor {
 
     setupEditors(el, help = false) {
         const helpEl = el.querySelector('.help'),
-            helpDoc = help ? this.helpSchema.nodeFromJSON({type:'doc', content: help}) : this.helpSchema.nodes.doc.createAndFill(),
+            helpDoc = help ? helpSchema.nodeFromJSON({type:'doc', content: help}) : helpSchema.nodes.doc.createAndFill(),
             helpView = new EditorView(helpEl, {
                 state: EditorState.create({
                     doc: helpDoc,
-                    plugins: exampleSetup({schema: this.helpSchema, menuContent: this.helpMenuContent})
+                    plugins: exampleSetup({schema: helpSchema, menuContent: this.helpMenuContent})
                 })
             })
         this.editors.push([helpEl, helpView])

@@ -62,6 +62,12 @@ const partSpec = (type, content, attrs = {}) => ({
         },
         language: {
             default: false
+        },
+        optional: {
+            default: 'false'
+        },
+        help: {
+            default: false
         }
     }, attrs),
     parseDOM: [{

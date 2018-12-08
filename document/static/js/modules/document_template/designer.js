@@ -21,7 +21,7 @@ export class DocumentTemplateDesigner {
     }
 
     init() {
-        ensureCSS(['prosemirror.css', 'prosemirror-menu.css', 'document_template_constructor.css'], this.staticUrl)
+        ensureCSS(['prosemirror.css', 'prosemirror-menu.css', 'document_template_designer.css'], this.staticUrl)
         whenReady().then(() => {
             this.definitionTextarea = document.querySelector('textarea[name=definition]')
             this.getInitialValue()

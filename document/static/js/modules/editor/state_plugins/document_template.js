@@ -25,7 +25,7 @@ export const documentTemplatePlugin = function(options) {
                 let partNode
                 if (parent===tr.doc.firstChild) {
                     allowedElements = node.attrs.elements ? node.attrs.elements.split(' ') : false
-                    allowedMarks = node.attrs.marks ? node.attrs.marks.split(' ').concat('insertion', 'deletion') : false
+                    allowedMarks = node.attrs.marks ? node.attrs.marks.split(' ').concat('insertion', 'deletion', 'comment') : false
                     partNode = true
                 }
                 if (pos < range.from || node === tr.doc.firstChild) {

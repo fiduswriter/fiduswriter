@@ -1,16 +1,31 @@
 import SmoothDND from "smooth-dnd"
+import {EditorState} from "prosemirror-state"
+import {EditorView} from "prosemirror-view"
+import {schema} from "prosemirror-schema-basic"
+import {Schema} from "prosemirror-model"
+import {exampleSetup, buildMenuItems} from "prosemirror-example-setup"
+
 import {documentConstructorTemplate, templateEditorValueTemplate, toggleEditorButtonTemplate} from "./templates"
-import {whenReady} from "../common"
+import {whenReady, ensureCSS} from "../common"
 
 export class DocumentTemplateConstructor {
-    constructor() {
+    constructor({staticUrl}) {
+        this.staticUrl = staticUrl
         this.definitionTextarea = false
         this.templateEditor = false
         this.errors = {}
         this.value = []
+        this.helpSchema = new Schema({
+            nodes: schema.spec.nodes.remove('code_block').remove('image').remove('heading').remove('horizontal_rule'),
+            marks: schema.spec.marks.remove('code')
+        })
+        this.helpMenuContent = buildMenuItems(this.helpSchema).fullMenu
+        this.helpMenuContent.splice(1, 1) // full menu minus drop downs
+        this.editors = []
     }
 
     init() {
+        ensureCSS(['prosemirror.css', 'prosemirror-menu.css', 'document_template_constructor.css'], this.staticUrl)
         whenReady().then(() => {
             this.definitionTextarea = document.querySelector('textarea[name=definition]')
             this.getInitialValue()
@@ -31,11 +46,11 @@ export class DocumentTemplateConstructor {
             documentConstructorTemplate({value: this.value})
         )
         this.templateEditor = document.getElementById('template-editor')
+        this.setupInitialEditors()
     }
 
     getInitialValue() {
         this.value = JSON.parse(this.definitionTextarea.value)
-        console.log(this.value)
     }
 
     setCurrentValue() {
@@ -46,12 +61,15 @@ export class DocumentTemplateConstructor {
                 const type = el.dataset.type,
                     id = el.querySelector('input.id').value,
                     title = el.querySelector('input.title').value,
-                    help = el.querySelector('.help').value,
+                    help = this.getEditorValue(el.querySelector('.help')),
                     initial = el.querySelector('.initial').value,
                     locking = el.querySelector('.locking option:checked').value,
                     optional = el.querySelector('.optional option:checked').value,
-                    values = {type, id, title, help, initial, locking, optional},
+                    values = {type, id, title, initial, locking, optional},
                     attrs = {}
+                if (help) {
+                    values['help'] = help
+                }
                 switch(type) {
                     case 'richtext':
                         attrs['elements'] = el.querySelector('.elements').value
@@ -73,7 +91,6 @@ export class DocumentTemplateConstructor {
                 return values
             }
         )
-        console.log(this.value)
         this.definitionTextarea.value = JSON.stringify(this.value)
         this.showErrors()
         return valid
@@ -82,6 +99,37 @@ export class DocumentTemplateConstructor {
     showErrors() {
         this.definitionTextarea.parentElement.querySelector('ul.errorlist').innerHTML =
             Object.values(this.errors).map(error => `<li>${error}</li>`).join('')
+    }
+
+    setupInitialEditors() {
+        Array.from(document.querySelectorAll('.to-container .doc-part:not(.fixed)')).forEach((el, index) => {
+            const help = this.value[index].help
+            this.setupEditors(el, help)
+        })
+    }
+
+    setupEditors(el, help = false) {
+        const helpEl = el.querySelector('.help'),
+            helpDoc = help ? this.helpSchema.nodeFromJSON({type:'doc', content: help}) : this.helpSchema.nodes.doc.createAndFill(),
+            helpView = new EditorView(helpEl, {
+                state: EditorState.create({
+                    doc: helpDoc,
+                    plugins: exampleSetup({schema: this.helpSchema, menuContent: this.helpMenuContent})
+                })
+            })
+        this.editors.push([helpEl, helpView])
+    }
+
+    getEditorValue(el) {
+        const editor = this.editors.find(editor => editor[0]===el)
+        if (!editor) {
+            return false
+        }
+        const doc = editor[1].state.doc
+        if (doc.textContent.length) {
+            return doc.toJSON().content
+        }
+        return false
     }
 
     bind() {
@@ -98,7 +146,12 @@ export class DocumentTemplateConstructor {
             toContainer = SmoothDND(toContainerEl, {
                 groupName: 'document',
                 dragHandleSelector: '.title',
-                onDrop: () => fromContainerEl.innerHTML = fromContainerHTML
+                onDrop: event => {
+                    if (event.removedIndex===null) {
+                        fromContainerEl.innerHTML = fromContainerHTML
+                        this.setupEditors(event.droppedElement)
+                    }
+                }
             }),
             trash = SmoothDND(trashEl, {
                 behaviour: 'move',
@@ -132,6 +185,7 @@ export class DocumentTemplateConstructor {
                 this.getInitialValue()
                 this.templateEditor.querySelector('.to-container').innerHTML =
                     templateEditorValueTemplate({value: this.value})
+                this.setupInitialEditors()
             }
         })
 

@@ -42,3 +42,8 @@ table td {
 .object-tools.right {
     float: right;
 }
+
+.ProseMirror {
+    background-color: #fff;
+    color: #000;
+}

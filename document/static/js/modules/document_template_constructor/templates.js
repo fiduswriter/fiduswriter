@@ -19,8 +19,8 @@ const headingTemplate = ({id = "", title="", locking="free", initial="", help=""
                 <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </label>
-        <label>${gettext('Prefilled content')} <input type="text" class="initial" value="${escapeText(initial)}"></label>
-        <label>${gettext('Instructions')}<textarea class="help">${escapeText(help)}</textarea></label>
+        <label>${gettext('Prefilled content')}</label> <div class="initial"></div>
+        <label>${gettext('Instructions')}</label> <div class="help"></div>
     </div>
 </div>`
 
@@ -44,8 +44,8 @@ const contributorsTemplate = ({id = "", title="", attrs={item_title: ""}, lockin
                 <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </label>
-        <label>${gettext('Prefilled content')} <input type="text" class="initial"></label>
-        <label>${gettext('Instructions')}<textarea class="help">${escapeText(help)}</textarea></label>
+        <label>${gettext('Prefilled content')}</label> <div class="initial"></div>
+        <label>${gettext('Instructions')}</label> <div class="help"></div>
     </div>
 </div>`
 
@@ -80,8 +80,8 @@ const richtextTemplate = ({
         </label>
         <label>${gettext('Whitelist elements')} <input type="text" class="elements" value="${escapeText(attrs.elements)}"></label>
         <label>${gettext('Whitelist marks')} <input type="text" class="marks" value="${escapeText(attrs.marks)}"></label>
-        <label>${gettext('Prefilled content')}<textarea class="initial">${escapeText(initial)}</textarea></label>
-        <label>${gettext('Instructions')}<textarea class="help">${escapeText(help)}</textarea></label>
+        <label>${gettext('Prefilled content')}</label> <div class="initial"></div>
+        <label>${gettext('Instructions')}</label> <div class="help"></div>
     </div>
 </div>`
 
@@ -105,8 +105,8 @@ const tagsTemplate = ({id = "", title="", attrs={item_title: ""}, locking="free"
                 <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </label>
-        <label>${gettext('Prefilled content')} <input type="text" class="initial" value="${escapeText(initial)}"></label>
-        <label>${gettext('Instructions')}<textarea class="help">${escapeText(help)}</textarea></label>
+        <label>${gettext('Prefilled content')}</label> <div class="initial"></div>
+        <label>${gettext('Instructions')}</label> <div class="help"></div>
     </div>
 </div>`
 
@@ -130,8 +130,8 @@ const tableTemplate = ({id = "", title="", initial="", help="", locking="free", 
                 <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </label>
-        <label>${gettext('Prefilled content')} <input type="text" class="initial" value="${escapeText(initial)}"></label>
-        <label>${gettext('Instructions')}<textarea class="help">${escapeText(help)}</textarea></label>
+        <label>${gettext('Prefilled content')}</label> <div class="initial"></div>
+        <label>${gettext('Instructions')}</label> <div class="help"></div>
     </div>
 </div>`
 
@@ -143,7 +143,6 @@ export const templateEditorValueTemplate = ({value}) =>
             case 'contributors':
                 return contributorsTemplate(docPart)
             case 'richtext':
-                console.log({docPart})
                 return richtextTemplate(docPart)
             case 'tags':
                 return tagsTemplate(docPart)

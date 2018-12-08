@@ -3,7 +3,6 @@
 {% load transpile %}
 {% load fiduswriter %}
 {% block extrahead %}{{ block.super }}
-<link type="text/css" rel="stylesheet" href="{% static "css/document_template_constructor.css" %}" />
 {% fiduswriter_config_js %}
 <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
 <!--  Translations -->

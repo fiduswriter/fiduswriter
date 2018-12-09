@@ -1,11 +1,18 @@
 import SmoothDND from "smooth-dnd"
 import {EditorState} from "prosemirror-state"
 import {EditorView} from "prosemirror-view"
-import {exampleSetup, buildMenuItems} from "prosemirror-example-setup"
+import {exampleSetup} from "prosemirror-example-setup"
 
 import {documentConstructorTemplate, templateEditorValueTemplate, toggleEditorButtonTemplate} from "./templates"
 import {whenReady, ensureCSS} from "../common"
-import {helpSchema, richtextPartSchema, richtextMenuContent} from "./schema"
+import {
+    helpSchema,
+    helpMenuContent,
+    richtextPartSchema,
+    richtextMenuContent,
+    headingPartSchema,
+    headingMenuContent
+} from "./schema"
 
 export class DocumentTemplateDesigner {
     constructor({staticUrl}) {
@@ -15,8 +22,6 @@ export class DocumentTemplateDesigner {
         this.errors = {}
         this.value = []
 
-        this.helpMenuContent = buildMenuItems(helpSchema).fullMenu
-        this.helpMenuContent.splice(1, 1) // full menu minus drop downs
         this.editors = []
     }
 
@@ -119,7 +124,7 @@ export class DocumentTemplateDesigner {
             helpView = new EditorView(helpEl, {
                 state: EditorState.create({
                     doc: helpDoc,
-                    plugins: exampleSetup({schema: helpSchema, menuContent: this.helpMenuContent})
+                    plugins: exampleSetup({schema: helpSchema, menuContent: helpMenuContent})
                 })
             })
         this.editors.push([helpEl, helpView])
@@ -128,6 +133,10 @@ export class DocumentTemplateDesigner {
             case 'richtext':
                 schema = richtextPartSchema
                 menuContent = richtextMenuContent
+                break
+            case 'heading':
+                schema = headingPartSchema
+                menuContent = headingMenuContent
                 break
             default:
                 break

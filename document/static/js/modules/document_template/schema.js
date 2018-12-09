@@ -17,6 +17,9 @@ export const helpSchema = new Schema({
     marks: schema.spec.marks.remove('code')
 })
 
+export const helpMenuContent = buildMenuItems(helpSchema).fullMenu
+helpMenuContent.splice(1, 1) // full menu minus drop downs
+
 const helpSerializer = DOMSerializer.fromSchema(helpSchema)
 
 export const serializeHelp = content => {
@@ -26,18 +29,29 @@ export const serializeHelp = content => {
     return dom.innerHTML
 }
 
-
 export const richtextPartSchema = new Schema({
     nodes: docSchema.spec.nodes.update('doc', docSchema.spec.nodes.get('richtext_part')),
     marks: docSchema.spec.marks
 })
 
 export const richtextMenuContent = buildMenuItems(richtextPartSchema).fullMenu
-const typeMenu = richtextMenuContent[1][1].content
-
 for (let i = 1; i <= 6; i++) {
     let type = richtextPartSchema.nodes[`heading${i}`]
-    typeMenu.push(blockTypeItem(type, {
+    richtextMenuContent[1][1].content.push(blockTypeItem(type, {
+        title: "Change to heading " + i,
+        label: "Heading level " + i
+    }))
+}
+
+export const headingPartSchema = new Schema({
+    nodes: docSchema.spec.nodes.update('doc', docSchema.spec.nodes.get('heading_part')).remove('horizontal_rule').remove('paragraph').remove('code_block'),
+    marks: docSchema.spec.marks
+})
+
+export const headingMenuContent = buildMenuItems(headingPartSchema).fullMenu
+for (let i = 1; i <= 6; i++) {
+    let type = headingPartSchema.nodes[`heading${i}`]
+    headingMenuContent[1][1].content.push(blockTypeItem(type, {
         title: "Change to heading " + i,
         label: "Heading level " + i
     }))

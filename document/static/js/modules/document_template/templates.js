@@ -1,6 +1,13 @@
 import {escapeText} from "../common"
+import {LANGUAGES} from "../editor/common"
 
-const headingTemplate = ({id = "", title="", locking="free", optional="false"}) =>
+const headingTemplate = ({
+    id="",
+    title="",
+    locking="free",
+    optional="false",
+    language=false
+}) =>
 `<div class="doc-part" data-type="heading">
     <div class="title">${gettext('Heading')}</div>
     <div class="attrs">
@@ -19,6 +26,18 @@ const headingTemplate = ({id = "", title="", locking="free", optional="false"}) 
                 <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </label>
+        <label>${gettext('Language')}
+            <select class="language">
+                <option value="false" ${language===false ? "selected" : ""}>${gettext('Document language')}</option>
+                ${
+                    LANGUAGES.map(([code, name]) =>
+                        `<option value="${code}" ${language===code ? "selected" : ""}>${name}</option>`
+                    ).join('')
+                }
+                <option value="true_on" ${optional==='true_on' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
+                <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
+            </select>
+        </label>
         <div>
             <label>${gettext('Initial content')}</label>
             <div class="initial"></div>
@@ -30,7 +49,13 @@ const headingTemplate = ({id = "", title="", locking="free", optional="false"}) 
     </div>
 </div>`
 
-const contributorsTemplate = ({id = "", title="", attrs={item_title: ""}, locking="free", optional="false"}) =>
+const contributorsTemplate = ({
+    id="",
+    title="",
+    attrs={item_title: ""},
+    locking="free",
+    optional="false"
+}) =>
 `<div class="doc-part" data-type="contributors">
     <div class="title">${gettext('Namelist')}</div>
     <div class="attrs">
@@ -50,10 +75,6 @@ const contributorsTemplate = ({id = "", title="", attrs={item_title: ""}, lockin
                 <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </label>
-        <div>
-            <label>${gettext('Initial content')}</label>
-            <div class="initial"></div>
-        </div>
         <div>
             <label>${gettext('Instructions')}</label>
             <div class="help"></div>
@@ -90,6 +111,18 @@ const richtextTemplate = ({
         </label>
         <label>${gettext('Whitelist elements')} <input type="text" class="elements" value="${escapeText(attrs.elements)}"></label>
         <label>${gettext('Whitelist marks')} <input type="text" class="marks" value="${escapeText(attrs.marks)}"></label>
+        <label>${gettext('Language')}
+            <select class="language">
+                <option value="false" ${language===false ? "selected" : ""}>${gettext('Document language')}</option>
+                ${
+                    LANGUAGES.map(([code, name]) =>
+                        `<option value="${code}" ${language===code ? "selected" : ""}>${name}</option>`
+                    ).join('')
+                }
+                <option value="true_on" ${optional==='true_on' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
+                <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
+            </select>
+        </label>
         <div>
             <label>${gettext('Initial content')}</label>
             <div class="initial"></div>
@@ -101,7 +134,13 @@ const richtextTemplate = ({
     </div>
 </div>`
 
-const tagsTemplate = ({id = "", title="", attrs={item_title: ""}, locking="free", optional="false"}) =>
+const tagsTemplate = ({
+    id="",
+    title="",
+    attrs={item_title: ""},
+    locking="free",
+    optional="false"
+}) =>
 `<div class="doc-part" data-type="tags">
     <div class="title">${gettext('Tags')}</div>
     <div class="attrs">
@@ -122,17 +161,18 @@ const tagsTemplate = ({id = "", title="", attrs={item_title: ""}, locking="free"
             </select>
         </label>
         <div>
-            <label>${gettext('Initial content')}</label>
-            <div class="initial"></div>
-        </div>
-        <div>
             <label>${gettext('Instructions')}</label>
             <div class="help"></div>
         </div>
     </div>
 </div>`
 
-const tableTemplate = ({id = "", title="", locking="free", optional="false"}) =>
+const tableTemplate = ({
+    id="",
+    title="",
+    locking="free",
+    optional="false"
+}) =>
 `<div class="doc-part" data-type="table">
     <div class="title">${gettext('Table')}</div>
     <div class="attrs">
@@ -148,6 +188,18 @@ const tableTemplate = ({id = "", title="", locking="free", optional="false"}) =>
         <label>${gettext('Optional')}
             <select class="optional">
                 <option value="false" ${optional==='false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
+                <option value="true_on" ${optional==='true_on' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
+                <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
+            </select>
+        </label>
+        <label>${gettext('Language')}
+            <select class="language">
+                <option value="false" ${language===false ? "selected" : ""}>${gettext('Document language')}</option>
+                ${
+                    LANGUAGES.map(([code, name]) =>
+                        `<option value="${code}" ${language===code ? "selected" : ""}>${name}</option>`
+                    ).join('')
+                }
                 <option value="true_on" ${optional==='true_on' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
                 <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>

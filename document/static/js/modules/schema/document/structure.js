@@ -47,7 +47,7 @@ export const article = {
 
 const partSpec = (type, content, attrs = {}) => ({
     content,
-    group: `part ${type}`,
+    group: 'part',
     marks: "annotation track",
     defining: true,
     attrs: Object.assign({
@@ -66,17 +66,29 @@ const partSpec = (type, content, attrs = {}) => ({
         optional: {
             default: 'false'
         },
+        hidden: {
+            default: false
+        },
         help: {
             default: false
         }
     }, attrs),
     parseDOM: [{
-        tag: `div.article-${type}`
+        tag: `div.article-${type}`,
+        getAttrs(dom) {
+            return {
+                hidden: dom.dataset.hidden === "true" ? true : false
+            }
+        }
     }],
     toDOM(node) {
-        return ["div", {
+        const attrs = {
             class: `article-part article-${type} article-${node.attrs.id}`
-        }, 0]
+        }
+        if (node.attrs.hidden) {
+            attrs['data-hidden'] = 'true'
+        }
+        return ["div", attrs, 0]
     }
 })
 

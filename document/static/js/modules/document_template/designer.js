@@ -75,20 +75,26 @@ export class DocumentTemplateDesigner {
                 if (initial) {
                     values['initial'] = initial
                 }
+                let language
                 switch(type) {
                     case 'richtext':
+                    case 'table':
+                    case 'heading':
                         attrs['elements'] = el.querySelector('.elements').value
                         attrs['marks'] = el.querySelector('.marks').value
-                        values['attrs'] = attrs
+                        language = el.querySelector('.language').value
+                        if (language !== 'false') {
+                            values['language'] = language
+                        }
                         break
                     case 'contributors':
                     case 'tags':
                         attrs['item_title'] = el.querySelector('input.item_title').value
-                        values['attrs'] = attrs
                         break
                     default:
                         break
                 }
+                values['attrs'] = attrs
                 if (!id.length) {
                     valid = false
                     this.errors['missing_id'] = gettext('All document parts need an ID.')

@@ -4,6 +4,10 @@ import {LANGUAGES} from "../editor/common"
 const headingTemplate = ({
     id="",
     title="",
+    attrs={
+        elements: "heading1 heading2 heading3 heading4 heading5 heading6",
+        marks: "strong emph highlight underline"
+    },
     locking="free",
     optional="false",
     language=false
@@ -26,6 +30,8 @@ const headingTemplate = ({
                 <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </label>
+        <label>${gettext('Whitelist elements')} <input type="text" class="elements" value="${escapeText(attrs.elements)}"></label>
+        <label>${gettext('Whitelist marks')} <input type="text" class="marks" value="${escapeText(attrs.marks)}"></label>
         <label>${gettext('Language')}
             <select class="language">
                 <option value="false" ${language===false ? "selected" : ""}>${gettext('Document language')}</option>
@@ -52,7 +58,9 @@ const headingTemplate = ({
 const contributorsTemplate = ({
     id="",
     title="",
-    attrs={item_title: ""},
+    attrs={
+        item_title: ""
+    },
     locking="free",
     optional="false"
 }) =>
@@ -86,11 +94,12 @@ const richtextTemplate = ({
     id="",
     title="",
     attrs={
-        elements: "paragraph heading figure table",
+        elements: "paragraph heading figure table ordered_list bullet_list",
         marks: "strong emph highlight underline"
     },
     locking="free",
     optional="false",
+    language=false
 }) => `<div class="doc-part" data-type="richtext">
     <div class="title">${gettext('Richtext')}</div>
     <div class="attrs">
@@ -137,7 +146,9 @@ const richtextTemplate = ({
 const tagsTemplate = ({
     id="",
     title="",
-    attrs={item_title: ""},
+    attrs={
+        item_title: ""
+    },
     locking="free",
     optional="false"
 }) =>
@@ -170,8 +181,13 @@ const tagsTemplate = ({
 const tableTemplate = ({
     id="",
     title="",
+    attrs={
+        elements: "paragraph heading figure ordered_list bullet_list",
+        marks: "strong emph highlight underline"
+    },
     locking="free",
-    optional="false"
+    optional="false",
+    language=false
 }) =>
 `<div class="doc-part" data-type="table">
     <div class="title">${gettext('Table')}</div>
@@ -192,6 +208,8 @@ const tableTemplate = ({
                 <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </label>
+        <label>${gettext('Whitelist elements')} <input type="text" class="elements" value="${escapeText(attrs.elements)}"></label>
+        <label>${gettext('Whitelist marks')} <input type="text" class="marks" value="${escapeText(attrs.marks)}"></label>
         <label>${gettext('Language')}
             <select class="language">
                 <option value="false" ${language===false ? "selected" : ""}>${gettext('Document language')}</option>

@@ -1,8 +1,19 @@
+form .aligned ul.object-tools.right {
+    margin-left: inherit;
+}
+
 .from-container, .to-column, .trash {
-    width: 400px;
     border: 1px solid black;
     min-height: 500px;
     background-color: white;
+}
+
+.to-column {
+    width: 650px;
+}
+
+.from-container {
+    width: 150px;
 }
 
 .trash {
@@ -17,6 +28,10 @@
 .doc-part {
     background-color: #F0F8FF;
     border-bottom: 1px dotted black;
+}
+
+.from-container .doc-part {
+    height: 50px;
 }
 
 .from-container .attrs {
@@ -46,4 +61,9 @@ table td {
 .ProseMirror {
     background-color: #fff;
     color: #000;
+}
+
+.ProseMirror-menubar {
+    background-color: inherit;
+    position: inherit;
 }

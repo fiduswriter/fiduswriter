@@ -1,2 +1,3 @@
 export {DocumentTemplateDesigner} from "./designer"
-export {templateToDoc, helpSchema, serializeHelp} from "./converter"
+export {templateToDoc} from "./convert"
+export {helpSchema, serializeHelp} from "./schema"

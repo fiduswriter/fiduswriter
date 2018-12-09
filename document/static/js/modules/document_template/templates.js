@@ -1,6 +1,6 @@
 import {escapeText} from "../common"
 
-const headingTemplate = ({id = "", title="", locking="free", initial="", help="", optional="false"}) =>
+const headingTemplate = ({id = "", title="", locking="free", optional="false"}) =>
 `<div class="doc-part" data-type="heading">
     <div class="title">${gettext('Heading')}</div>
     <div class="attrs">
@@ -19,16 +19,22 @@ const headingTemplate = ({id = "", title="", locking="free", initial="", help=""
                 <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </label>
-        <label>${gettext('Prefilled content')}</label> <div class="initial"></div>
-        <label>${gettext('Instructions')}</label> <div class="help"></div>
+        <div>
+            <label>${gettext('Initial content')}</label>
+            <div class="initial"></div>
+        </div>
+        <div>
+            <label>${gettext('Instructions')}</label>
+            <div class="help"></div>
+        </div>
     </div>
 </div>`
 
-const contributorsTemplate = ({id = "", title="", attrs={item_title: ""}, locking="free", initial="", help="", optional="false"}) =>
+const contributorsTemplate = ({id = "", title="", attrs={item_title: ""}, locking="free", optional="false"}) =>
 `<div class="doc-part" data-type="contributors">
     <div class="title">${gettext('Namelist')}</div>
     <div class="attrs">
-        <label>${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}" value="${escapeText(initial)}"></label>
+        <label>${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></label>
         <label>${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></label>
         <label>${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(attrs.item_title)}"></label>
         <label>${gettext('Locking')}
@@ -44,8 +50,14 @@ const contributorsTemplate = ({id = "", title="", attrs={item_title: ""}, lockin
                 <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </label>
-        <label>${gettext('Prefilled content')}</label> <div class="initial"></div>
-        <label>${gettext('Instructions')}</label> <div class="help"></div>
+        <div>
+            <label>${gettext('Initial content')}</label>
+            <div class="initial"></div>
+        </div>
+        <div>
+            <label>${gettext('Instructions')}</label>
+            <div class="help"></div>
+        </div>
     </div>
 </div>`
 
@@ -57,9 +69,7 @@ const richtextTemplate = ({
         marks: "strong emph highlight underline"
     },
     locking="free",
-    initial="",
     optional="false",
-    help=""
 }) => `<div class="doc-part" data-type="richtext">
     <div class="title">${gettext('Richtext')}</div>
     <div class="attrs">
@@ -80,12 +90,18 @@ const richtextTemplate = ({
         </label>
         <label>${gettext('Whitelist elements')} <input type="text" class="elements" value="${escapeText(attrs.elements)}"></label>
         <label>${gettext('Whitelist marks')} <input type="text" class="marks" value="${escapeText(attrs.marks)}"></label>
-        <label>${gettext('Prefilled content')}</label> <div class="initial"></div>
-        <label>${gettext('Instructions')}</label> <div class="help"></div>
+        <div>
+            <label>${gettext('Initial content')}</label>
+            <div class="initial"></div>
+        </div>
+        <div>
+            <label>${gettext('Instructions')}</label>
+            <div class="help"></div>
+        </div>
     </div>
 </div>`
 
-const tagsTemplate = ({id = "", title="", attrs={item_title: ""}, locking="free", initial="", help="", optional="false"}) =>
+const tagsTemplate = ({id = "", title="", attrs={item_title: ""}, locking="free", optional="false"}) =>
 `<div class="doc-part" data-type="tags">
     <div class="title">${gettext('Tags')}</div>
     <div class="attrs">
@@ -105,12 +121,18 @@ const tagsTemplate = ({id = "", title="", attrs={item_title: ""}, locking="free"
                 <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </label>
-        <label>${gettext('Prefilled content')}</label> <div class="initial"></div>
-        <label>${gettext('Instructions')}</label> <div class="help"></div>
+        <div>
+            <label>${gettext('Initial content')}</label>
+            <div class="initial"></div>
+        </div>
+        <div>
+            <label>${gettext('Instructions')}</label>
+            <div class="help"></div>
+        </div>
     </div>
 </div>`
 
-const tableTemplate = ({id = "", title="", initial="", help="", locking="free", optional="false"}) =>
+const tableTemplate = ({id = "", title="", locking="free", optional="false"}) =>
 `<div class="doc-part" data-type="table">
     <div class="title">${gettext('Table')}</div>
     <div class="attrs">
@@ -130,8 +152,14 @@ const tableTemplate = ({id = "", title="", initial="", help="", locking="free", 
                 <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </label>
-        <label>${gettext('Prefilled content')}</label> <div class="initial"></div>
-        <label>${gettext('Instructions')}</label> <div class="help"></div>
+        <div>
+            <label>${gettext('Initial content')}</label>
+            <div class="initial"></div>
+        </div>
+        <div>
+            <label>${gettext('Instructions')}</label>
+            <div class="help"></div>
+        </div>
     </div>
 </div>`
 

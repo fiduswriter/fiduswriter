@@ -22,7 +22,7 @@ export function templateToDoc(template) {
         }
         if (part.initial) {
             node.content = part.initial
-        } else if (part.type==='richtext') {
+        } else if (['richtext', 'heading'].includes(part.type)) {
             let defaultElement = part.attrs.elements.split(' ')[0]
             if (defaultElement==='heading') {
                 defaultElement = 'heading1'
@@ -32,7 +32,7 @@ export function templateToDoc(template) {
         return node
     })
 
-    articleContent.unshift({type: 'title'}, {type: 'subtitle'})
+    articleContent.unshift({type: 'title'})
 
     const articleAttrs = {}
 

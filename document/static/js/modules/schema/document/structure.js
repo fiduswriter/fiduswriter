@@ -5,7 +5,7 @@ export const doc = {
 
 export const article = {
     defining: true,
-    content: 'title subtitle part*',
+    content: 'title part*',
     selectable: false,
     allowGapCursor: false,
     attrs: {
@@ -133,43 +133,5 @@ export const title = {
         return ["div", {
             class: 'article-part article-title'
         }, 0]
-    }
-}
-
-export const subtitle = {
-    content: "text*",
-    marks: "annotation track",
-    group: "fixedpart",
-    defining: true,
-    isMetadata() {
-        return true
-    },
-    attrs: {
-        title: {
-            default: gettext('Subtitle')
-        },
-        id: {
-            default: 'subtitle'
-        },
-        hidden: {
-            default: true
-        }
-    },
-    parseDOM: [{
-        tag: "div.article-subtitle",
-        getAttrs(dom) {
-            return {
-                hidden: dom.dataset.hidden === "true" ? true : false
-            }
-        }
-    }],
-    toDOM(node) {
-        const attrs = {
-            class: 'article-part metadata article-subtitle'
-        }
-        if (node.attrs.hidden) {
-            attrs['data-hidden'] = 'true'
-        }
-        return ["div", attrs, 0]
     }
 }

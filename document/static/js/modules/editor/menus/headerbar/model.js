@@ -153,9 +153,9 @@ export const headerbarModel = () => ({
                             editor.getDoc({changes: 'acceptAllNoInsertions'}),
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB,
-                            editor.mod.styles.citationStyles,
-                            editor.mod.styles.citationLocales,
-                            editor.mod.styles.documentStyles,
+                            editor.mod.documentTemplate.citationStyles,
+                            editor.mod.documentTemplate.citationLocales,
+                            editor.mod.documentTemplate.documentStyles,
                             editor.staticUrl
                         )
                         exporter.init()
@@ -179,9 +179,9 @@ export const headerbarModel = () => ({
                             editor.getDoc({changes: 'acceptAllNoInsertions'}),
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB,
-                            editor.mod.styles.citationStyles,
-                            editor.mod.styles.citationLocales,
-                            editor.mod.styles.documentStyles,
+                            editor.mod.documentTemplate.citationStyles,
+                            editor.mod.documentTemplate.citationLocales,
+                            editor.mod.documentTemplate.documentStyles,
                             editor.staticUrl
                         )
                         exporter.init()
@@ -197,8 +197,8 @@ export const headerbarModel = () => ({
                             editor.getDoc({changes: 'acceptAllNoInsertions'}),
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB,
-                            editor.mod.styles.citationStyles,
-                            editor.mod.styles.citationLocales,
+                            editor.mod.documentTemplate.citationStyles,
+                            editor.mod.documentTemplate.citationLocales,
                             editor.staticUrl
                         )
                         exporter.init()
@@ -226,110 +226,6 @@ export const headerbarModel = () => ({
             tooltip: gettext('Configure settings of this document.'),
             order: 2,
             content: [
-                {
-                    id: 'metadata',
-                    title: gettext('Metadata'),
-                    type: 'menu',
-                    tooltip: gettext('Choose which metadata to enable.'),
-                    order: 0,
-                    disabled: editor => {
-                        return editor.docInfo.access_rights !== 'write'
-                    },
-                    content: [
-                        {
-                            title: gettext('Subtitle'),
-                            type: 'setting',
-                            tooltip: gettext('Define a subtitle in addition to the title of the document.'),
-                            order: 0,
-                            action: editor => {
-                                let offset = 1, // We need to add one as we are looking at offset values within the firstChild
-                                    attrs
-                                editor.view.state.doc.firstChild.forEach((node, nodeOffset) => {
-                                    if (node.type.name==='subtitle') {
-                                        offset += nodeOffset
-                                        attrs = Object.assign({}, node.attrs)
-                                        attrs.hidden = (!attrs.hidden)
-                                    }
-                                })
-                                editor.view.dispatch(
-                                    editor.view.state.tr.setNodeMarkup(offset, false, attrs).setMeta('settings', true)
-                                )
-                            },
-                            selected: editor => {
-                                return !editor.view.state.doc.firstChild.child(1).attrs.hidden
-                            }
-                        },
-                        {
-                            title: gettext('Author(s)'),
-                            type: 'setting',
-                            tooltip: gettext('Specify the authors of the document.'),
-                            order: 1,
-                            action: editor => {
-                                let offset = 1, // We need to add one as we are looking at offset values within the firstChild
-                                    attrs
-                                editor.view.state.doc.firstChild.forEach((node, nodeOffset) => {
-                                    if (node.type.name==='authors') {
-                                        offset += nodeOffset
-                                        attrs = Object.assign({}, node.attrs)
-                                        attrs.hidden = (!attrs.hidden)
-                                    }
-                                })
-                                editor.view.dispatch(
-                                    editor.view.state.tr.setNodeMarkup(offset, false, attrs).setMeta('settings', true)
-                                )
-                            },
-                            selected: editor => {
-                                return !editor.view.state.doc.firstChild.child(2).attrs.hidden
-                            }
-                        },
-                        {
-                            title: gettext('Abstract'),
-                            type: 'setting',
-                            tooltip: gettext('Add an abstract to the document.'),
-                            order: 2,
-                            action: editor => {
-                                let offset = 1, // We need to add one as we are looking at offset values within the firstChild
-                                    attrs
-                                editor.view.state.doc.firstChild.forEach((node, nodeOffset) => {
-                                    if (node.type.name==='abstract') {
-                                        offset += nodeOffset
-                                        attrs = Object.assign({}, node.attrs)
-                                        attrs.hidden = (!attrs.hidden)
-                                    }
-                                })
-                                editor.view.dispatch(
-                                    editor.view.state.tr.setNodeMarkup(offset, false, attrs).setMeta('settings', true)
-                                )
-                            },
-                            selected: editor => {
-                                return !editor.view.state.doc.firstChild.child(3).attrs.hidden
-                            }
-                        },
-                        {
-                            title: gettext('Keywords'),
-                            type: 'setting',
-                            tooltip: gettext('Add keywords to facilitate categorization.'),
-                            order: 3,
-                            action: editor => {
-                                let offset = 1, // We need to add one as we are looking at offset values within the firstChild
-                                    attrs
-                                editor.view.state.doc.firstChild.forEach((node, nodeOffset) => {
-                                    if (node.type.name==='keywords') {
-                                        offset += nodeOffset
-                                        attrs = Object.assign({}, node.attrs)
-                                        attrs.hidden = (!attrs.hidden)
-                                    }
-                                })
-                                editor.view.dispatch(
-                                    editor.view.state.tr.setNodeMarkup(offset, false, attrs).setMeta('settings', true)
-                                )
-                            },
-                            selected: editor => {
-                                return !editor.view.state.doc.firstChild.child(4).attrs.hidden
-                            }
-                        }
-                    ]
-                },
                 {
                     id: 'citation_style',
                     title: gettext('Citation Style'),

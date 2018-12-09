@@ -74,8 +74,8 @@ import {
     ModMarginboxes
 } from "./marginboxes"
 import {
-    ModStyles
-} from "./styles"
+    ModDocumentTemplate
+} from "./document_template"
 import {
     ModServerCommunications
 } from "./server_communications"
@@ -277,7 +277,7 @@ export class Editor {
         new ModTrack(this)
         new ModMarginboxes(this)
         new ModComments(this)
-        new ModStyles(this)
+        new ModDocumentTemplate(this)
         this.activateFidusPlugins()
         this.mod.serverCommunications.init()
     }
@@ -363,6 +363,8 @@ export class Editor {
         this.mod.comments.store.reset()
         this.mod.comments.store.loadComments(doc.comments)
         this.mod.marginboxes.view(this.view)
+        // Set part specific settings
+        this.mod.documentTemplate.addDocPartSettings()
         this.waitingForDocument = false
         if (locationHash.length) {
             this.scrollIdIntoView(locationHash.slice(1))

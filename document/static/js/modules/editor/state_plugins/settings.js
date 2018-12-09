@@ -18,19 +18,19 @@ export const settingsPlugin = function(options) {
             switch(key) {
                 case 'documentstyle':
                     if (
-                        !options.editor.mod.styles.documentStyles.find(d => d.filename === value) &&
-                        options.editor.mod.styles.documentStyles.length
+                        !options.editor.mod.documentTemplate.documentStyles.find(d => d.filename === value) &&
+                        options.editor.mod.documentTemplate.documentStyles.length
                     ) {
-                        fixedSettings[key] = options.editor.mod.styles.documentStyles[0].filename
+                        fixedSettings[key] = options.editor.mod.documentTemplate.documentStyles[0].filename
                         changed = true
                     }
                     break
                 case 'citationstyle':
                     if (
-                        !options.editor.mod.styles.citationStyles.find(d => d.short_title === value) &&
-                        options.editor.mod.styles.citationStyles.length
+                        !options.editor.mod.documentTemplate.citationStyles.find(d => d.short_title === value) &&
+                        options.editor.mod.documentTemplate.citationStyles.length
                     ) {
-                        fixedSettings[key] = options.editor.mod.styles.citationStyles[0].short_title
+                        fixedSettings[key] = options.editor.mod.documentTemplate.citationStyles[0].short_title
                         changed = true
                     }
                     break
@@ -83,7 +83,7 @@ export const settingsPlugin = function(options) {
      */
     const updateDocStyleCSS = function(docStyleId) {
 
-        const docStyle = options.editor.mod.styles.documentStyles.find(doc_style => doc_style.filename===docStyleId)
+        const docStyle = options.editor.mod.documentTemplate.documentStyles.find(doc_style => doc_style.filename===docStyleId)
 
         const docStyleCSS = `
         ${docStyle.fonts.map(font => {

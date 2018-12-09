@@ -35,7 +35,6 @@ import {
 import {
     doc,
     title,
-    subtitle,
     article,
     richtext_part,
     heading_part,
@@ -54,7 +53,6 @@ let specNodes = OrderedMap.from({
     tags_part,
     table_part,
     title,
-    subtitle,
     contributor,
     tag,
     paragraph,

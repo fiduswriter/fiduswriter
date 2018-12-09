@@ -285,9 +285,9 @@ font {
     color: inherit !important;
 }
 
-/* Don't show metadata fields marked as hidden*/
+/* Don't show parts marked as hidden*/
 
-.metadata[data-hidden] {
+.article-part[data-hidden] {
     display: none;
 }
 

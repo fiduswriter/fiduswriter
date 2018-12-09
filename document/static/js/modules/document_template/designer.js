@@ -67,7 +67,7 @@ export class DocumentTemplateDesigner {
                     initial = this.getEditorValue(el.querySelector('.initial')),
                     locking = el.querySelector('.locking option:checked').value,
                     optional = el.querySelector('.optional option:checked').value,
-                    values = {type, id, title, initial, locking, optional},
+                    values = {type, id, title, locking, optional},
                     attrs = {}
                 if (help) {
                     values['help'] = help

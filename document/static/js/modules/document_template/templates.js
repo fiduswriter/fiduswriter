@@ -94,8 +94,8 @@ const richtextTemplate = ({
     id="",
     title="",
     attrs={
-        elements: "paragraph heading figure table ordered_list bullet_list",
-        marks: "strong emph highlight underline"
+        elements: "paragraph heading figure table ordered_list bullet_list horizontal_rule equation citation blockquote",
+        marks: "strong emph highlight underline anchor"
     },
     locking="free",
     optional="false",
@@ -182,8 +182,8 @@ const tableTemplate = ({
     id="",
     title="",
     attrs={
-        elements: "paragraph heading figure ordered_list bullet_list",
-        marks: "strong emph highlight underline"
+        elements: "paragraph heading figure ordered_list bullet_list horizontal_rule equation citation blockquote",
+        marks: "strong emph highlight underline anchor"
     },
     locking="free",
     optional="false",
@@ -279,7 +279,6 @@ export const documentConstructorTemplate = ({value}) =>
                 </td>
                 <td class="to-column">
                     <div class="doc-part fixed" data-type="initial">${gettext('Title')}</div>
-                    <div class="doc-part fixed" data-type="initial">${gettext('Subtitle')}</div>
                     <div class="to-container">${templateEditorValueTemplate({value})}</div>
                 </td>
                 <td class="trash">

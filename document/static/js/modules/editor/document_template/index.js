@@ -3,9 +3,9 @@ import {OdtExporter} from "../../exporter/odt"
 import * as bowser from "bowser/bowser"
 import {Dialog} from "../../common"
 
-export class ModStyles {
+export class ModDocumentTemplate {
     constructor(editor) {
-        editor.mod.styles = this
+        editor.mod.documentTemplate = this
         this.editor = editor
         this.exportTemplates = []
         this.documentStyles = []
@@ -25,6 +25,49 @@ export class ModStyles {
         if (this.editor.menu.headerView) {
             this.editor.menu.headerView.update()
         }
+    }
+
+    addDocPartSettings() {
+        const hideableDocParts = []
+        this.editor.view.state.doc.firstChild.forEach((child, offset, index) => {
+            if (child.attrs.optional && child.attrs.optional !== 'false') {
+                hideableDocParts.push([child, index])
+            }
+        })
+        if (!hideableDocParts.length) {
+            return
+        }
+        const metadataMenu = {
+            id: 'metadata',
+            title: gettext('Metadata'),
+            type: 'menu',
+            tooltip: gettext('Choose which metadata to enable.'),
+            order: 0,
+            disabled: editor => editor.docInfo.access_rights !== 'write',
+            content: hideableDocParts.map(([node, index]) => ({
+                title: node.attrs.title,
+                type: 'setting',
+                tooltip: `${gettext('Show/hide')} ${node.attrs.title}`,
+                order: index,
+                action: editor => {
+                    let offset = 1, // We need to add one as we are looking at offset values within the firstChild
+                        attrs
+                    editor.view.state.doc.firstChild.forEach((docNode, docNodeOffset) => {
+                        if (docNode.attrs.id===node.attrs.id) {
+                            offset += docNodeOffset
+                            attrs = Object.assign({}, docNode.attrs)
+                            attrs.hidden = (!attrs.hidden)
+                        }
+                    })
+                    editor.view.dispatch(
+                        editor.view.state.tr.setNodeMarkup(offset, false, attrs).setMeta('settings', true)
+                    )
+                },
+                selected: editor => !editor.view.state.doc.firstChild.child(index).attrs.hidden
+            }))
+        }
+        const settingsMenu = this.editor.menu.headerbarModel.content.find(menu => menu.id==='settings')
+        settingsMenu.content.unshift(metadataMenu)
     }
 
     showSafariErrorMessage() {
@@ -58,8 +101,8 @@ export class ModStyles {
                             template.template_file,
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB,
-                            editor.mod.styles.citationStyles,
-                            editor.mod.styles.citationLocales,
+                            editor.mod.documentTemplate.citationStyles,
+                            editor.mod.documentTemplate.citationLocales,
                             editor.staticUrl
                         )
                         exporter.init()
@@ -81,8 +124,8 @@ export class ModStyles {
                             template.template_file,
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB,
-                            editor.mod.styles.citationStyles,
-                            editor.mod.styles.citationLocales
+                            editor.mod.documentTemplate.citationStyles,
+                            editor.mod.documentTemplate.citationLocales
                         )
                         exporter.init()
                     }

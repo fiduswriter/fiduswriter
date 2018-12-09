@@ -26,10 +26,11 @@ export const placeholdersPlugin = function(options) {
                 (!partElement.isTextblock && partElement.nodeSize === 4)
             ) {
                 if (
-                    (
-                        partElement.type.groups.includes('tags') ||
-                        partElement.type.groups.includes('contributors')
-                    ) && options.editor.docInfo.access_rights === 'write'
+                    [
+                        state.schema.nodes['tags_part'],
+                        state.schema.nodes['contributors_part']
+                    ].includes(partElement.type) &&
+                    options.editor.docInfo.access_rights === 'write'
                 ) {
                     // We don't need to render placeholders for these kinds
                     // of nodes in write mode as their nodeviews will take

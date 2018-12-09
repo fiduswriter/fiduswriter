@@ -173,8 +173,12 @@ class TagsView {
         this.view = view
         this.getPos = getPos
         this.dom = document.createElement('div')
+        this.dom.classList.add('article-part')
         this.dom.classList.add(`article-${this.node.type.name}`)
         this.dom.classList.add(`article-${this.node.attrs.id}`)
+        if (node.attrs.hidden) {
+            this.dom.dataset.hidden = true
+        }
         const [tagInputDOM, tagInputView] = createTagInputEditor(view, getPos, node)
         this.tagInputView = tagInputView
         this.contentDOM = document.createElement('span')

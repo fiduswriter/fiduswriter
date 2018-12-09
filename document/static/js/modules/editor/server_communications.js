@@ -189,7 +189,7 @@ export class ModServerCommunications {
                 this.editor.mod.collab.updateParticipantList(data.participant_list)
                 break
             case 'welcome':
-                this.editor.mod.styles.setStyles(data.styles)
+                this.editor.mod.documentTemplate.setStyles(data.styles)
                 this.activateConnection()
                 break
             case 'doc_data':

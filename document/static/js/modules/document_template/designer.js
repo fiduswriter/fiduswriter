@@ -1,12 +1,11 @@
 import SmoothDND from "smooth-dnd"
 import {EditorState} from "prosemirror-state"
 import {EditorView} from "prosemirror-view"
-import {blockTypeItem} from "prosemirror-menu"
 import {exampleSetup, buildMenuItems} from "prosemirror-example-setup"
 
 import {documentConstructorTemplate, templateEditorValueTemplate, toggleEditorButtonTemplate} from "./templates"
 import {whenReady, ensureCSS} from "../common"
-import {helpSchema, richtextPartSchema} from "./schema"
+import {helpSchema, richtextPartSchema, richtextMenuContent} from "./schema"
 
 export class DocumentTemplateDesigner {
     constructor({staticUrl}) {
@@ -30,27 +29,6 @@ export class DocumentTemplateDesigner {
             this.bind()
         })
 
-    }
-
-    getRichtextMenuContent() {
-        if (this.richtextMenuContent) {
-            return this.richtextMenuContent
-        }
-
-        const richtextMenuContent = buildMenuItems(richtextPartSchema).fullMenu
-        const typeMenu = richtextMenuContent[1][1].content
-
-        for (let i = 1; i <= 6; i++) {
-            let type = richtextPartSchema.nodes[`heading${i}`]
-            typeMenu.push(blockTypeItem(type, {
-                title: "Change to heading " + i,
-                label: "Heading level " + i
-            }))
-        }
-
-        this.richtextMenuContent = richtextMenuContent
-
-        return richtextMenuContent
     }
 
     modifyDOM() {
@@ -149,7 +127,7 @@ export class DocumentTemplateDesigner {
         switch(type) {
             case 'richtext':
                 schema = richtextPartSchema
-                menuContent = this.getRichtextMenuContent()
+                menuContent = richtextMenuContent
                 break
             default:
                 break

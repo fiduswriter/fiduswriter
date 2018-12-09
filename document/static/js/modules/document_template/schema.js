@@ -1,5 +1,7 @@
 import {schema} from "prosemirror-schema-basic"
 import {Schema, DOMSerializer} from "prosemirror-model"
+import {blockTypeItem} from "prosemirror-menu"
+import {buildMenuItems} from "prosemirror-example-setup"
 
 import {docSchema} from "../schema/document"
 
@@ -29,3 +31,14 @@ export const richtextPartSchema = new Schema({
     nodes: docSchema.spec.nodes.update('doc', docSchema.spec.nodes.get('richtext_part')),
     marks: docSchema.spec.marks
 })
+
+export const richtextMenuContent = buildMenuItems(richtextPartSchema).fullMenu
+const typeMenu = richtextMenuContent[1][1].content
+
+for (let i = 1; i <= 6; i++) {
+    let type = richtextPartSchema.nodes[`heading${i}`]
+    typeMenu.push(blockTypeItem(type, {
+        title: "Change to heading " + i,
+        label: "Heading level " + i
+    }))
+}

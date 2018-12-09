@@ -120,6 +120,9 @@ export class ModMarginboxes {
 
         this.editor.view.state.doc.descendants(
             (node, pos) => {
+                if (node.attrs.hidden) {
+                    return false
+                }
                 lastNodeTracks = this.getMarginBoxes(node, pos, pos, lastNode, lastNodeTracks, 'main', marginBoxes, referrers, selectedChanges)
                 lastNode = node
 

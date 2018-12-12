@@ -194,7 +194,6 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
             "(.//*[normalize-space(text()) and normalize-space(.)="
             "'bibliography.bib'])[1]/following::button[1]"
         ).click()
-        print(self.wait_time)
         book_title_el = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located(
                 (

@@ -24,8 +24,8 @@ export const documentTemplatePlugin = function(options) {
             ranges.forEach(range => tr.doc.nodesBetween(range.from, range.to, (node, pos, parent, index) => {
                 let partNode
                 if (parent===tr.doc.firstChild) {
-                    allowedElements = node.attrs.elements ? node.attrs.elements.split(' ').concat('list_item', 'text') : false
-                    allowedMarks = node.attrs.marks ? node.attrs.marks.split(' ').concat('insertion', 'deletion', 'comment') : false
+                    allowedElements = node.attrs.elements ? node.attrs.elements.concat('list_item', 'text') : false
+                    allowedMarks = node.attrs.marks ? node.attrs.marks.concat('insertion', 'deletion', 'comment') : false
                     partNode = true
                 }
                 if (pos < range.from || node === tr.doc.firstChild) {
@@ -58,10 +58,12 @@ export const documentTemplatePlugin = function(options) {
                     allowedElements &&
                     !allowedElements.includes(node.type.name)
                 ) {
+                    console.log(`forbidden node ${node.type.name}`)
                     allowed = false
                 } else if (allowedMarks) {
                     node.marks.forEach(mark => {
                         if (!allowedMarks.includes(mark.type.name)) {
+                            console.log(`forbidden mark ${mark.type.name}`)
                             allowed = false
                         }
                     })

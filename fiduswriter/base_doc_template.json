@@ -1,0 +1,51 @@
+[{
+    "type": "heading",
+    "id": "subtitle",
+    "title": "Subtitle",
+    "locking": "free",
+    "optional": "true_off",
+    "language": "true_off",
+    "attrs": {
+        "elements": ["heading1"],
+        "marks": ["strong", "em", "highlight", "underline", "link"]
+    }
+}, {
+    "type": "contributors",
+    "id": "authors",
+    "title": "Authors",
+    "locking": "free",
+    "optional": "true_off",
+    "attrs": {
+        "item_title": "Author"
+    }
+}, {
+    "type": "richtext",
+    "id": "abstract",
+    "title": "Abstract",
+    "locking": "free",
+    "optional": "true_off",
+    "language": "true_off",
+    "attrs": {
+        "elements": ["paragraph", "heading", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote"],
+        "marks": ["strong", "em", "highlight", "underline", "link"]
+    }
+}, {
+    "type": "tags",
+    "id": "keywords",
+    "title": "Keywords",
+    "locking": "free",
+    "optional": "true_off",
+    "attrs": {
+        "item_title": "Keyword"
+    }
+}, {
+    "type": "richtext",
+    "id": "body",
+    "title": "Body",
+    "locking": "free",
+    "optional": "false",
+    "attrs": {
+        "elements": ["paragraph", "heading", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote"],
+        "marks": ["strong", "em", "highlight", "underline", "link"]
+    }
+}]

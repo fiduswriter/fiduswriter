@@ -23,7 +23,7 @@ export function templateToDoc(template) {
         if (part.initial) {
             node.content = part.initial
         } else if (['richtext', 'heading'].includes(part.type)) {
-            let defaultElement = part.attrs.elements.split(' ')[0]
+            let defaultElement = part.attrs.elements[0]
             if (defaultElement==='heading') {
                 defaultElement = 'heading1'
             }

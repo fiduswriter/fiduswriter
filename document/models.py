@@ -8,6 +8,8 @@ from django.core import checks
 
 from style.models import DocumentStyle, CitationStyle
 
+from django.conf import settings
+
 # FW_DOCUMENT_VERSION: See also FW_FILETYPE_VERSION specified in export
 # (same value from >= 2.0) in
 # document/static/js/modules/exporter/native/zip.js
@@ -54,7 +56,18 @@ class DocumentTemplate(models.Model):
 def default_template():
     template = DocumentTemplate.objects.first()
     if not template:
-        template = DocumentTemplate.objects.create()
+        template = DocumentTemplate()
+        template.definition = settings.BASE_DOC_TEMPLATE
+        template.slug = 'article'
+        template.title = 'Standard Article'
+        template.save()
+        for style in CitationStyle.objects.all():
+            template.citation_styles.add(style)
+        for style in DocumentStyle.objects.all():
+            template.document_styles.add(style)
+        for exporter in ExportTemplate.objects.all():
+            template.export_templates.add(exporter)
+        template.save()
     return template.pk
 
 
@@ -92,8 +105,7 @@ class Document(models.Model):
     template = models.ForeignKey(
         DocumentTemplate,
         on_delete=models.deletion.CASCADE,
-        default=default_template,
-        blank=True
+        default=default_template
     )
 
     def __str__(self):

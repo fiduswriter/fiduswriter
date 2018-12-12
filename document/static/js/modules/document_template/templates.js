@@ -5,8 +5,8 @@ const headingTemplate = ({
     id="",
     title="",
     attrs={
-        elements: "heading1 heading2 heading3 heading4 heading5 heading6",
-        marks: "strong emph highlight underline"
+        elements: ["heading1", "heading2", "heading3", "heading4", "heading5", "heading6"],
+        marks: ["strong", "em", "highlight", "underline", "link"]
     },
     locking="free",
     optional="false",
@@ -30,8 +30,8 @@ const headingTemplate = ({
                 <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </label>
-        <label>${gettext('Whitelist elements')} <input type="text" class="elements" value="${escapeText(attrs.elements)}"></label>
-        <label>${gettext('Whitelist marks')} <input type="text" class="marks" value="${escapeText(attrs.marks)}"></label>
+        <label>${gettext('Whitelist elements')} <input type="text" class="elements" value="${escapeText(attrs.elements.join(' '))}"></label>
+        <label>${gettext('Whitelist marks')} <input type="text" class="marks" value="${escapeText(attrs.marks.join(' '))}"></label>
         <label>${gettext('Language')}
             <select class="language">
                 <option value="false" ${language===false ? "selected" : ""}>${gettext('Document language')}</option>
@@ -94,8 +94,8 @@ const richtextTemplate = ({
     id="",
     title="",
     attrs={
-        elements: "paragraph heading figure table ordered_list bullet_list horizontal_rule equation citation blockquote",
-        marks: "strong emph highlight underline anchor"
+        elements: ["paragraph", "heading", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote"],
+        marks: ["strong", "em", "highlight", "underline", "link"]
     },
     locking="free",
     optional="false",
@@ -118,8 +118,8 @@ const richtextTemplate = ({
                 <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </label>
-        <label>${gettext('Whitelist elements')} <input type="text" class="elements" value="${escapeText(attrs.elements)}"></label>
-        <label>${gettext('Whitelist marks')} <input type="text" class="marks" value="${escapeText(attrs.marks)}"></label>
+        <label>${gettext('Whitelist elements')} <input type="text" class="elements" value="${escapeText(attrs.elements.join(' '))}"></label>
+        <label>${gettext('Whitelist marks')} <input type="text" class="marks" value="${escapeText(attrs.marks.join(' '))}"></label>
         <label>${gettext('Language')}
             <select class="language">
                 <option value="false" ${language===false ? "selected" : ""}>${gettext('Document language')}</option>
@@ -182,8 +182,8 @@ const tableTemplate = ({
     id="",
     title="",
     attrs={
-        elements: "paragraph heading figure ordered_list bullet_list horizontal_rule equation citation blockquote",
-        marks: "strong emph highlight underline anchor"
+        elements: ["paragraph", "heading", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote"],
+        marks: ["strong", "em", "highlight", "underline", "link"]
     },
     locking="free",
     optional="false",
@@ -208,8 +208,8 @@ const tableTemplate = ({
                 <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </label>
-        <label>${gettext('Whitelist elements')} <input type="text" class="elements" value="${escapeText(attrs.elements)}"></label>
-        <label>${gettext('Whitelist marks')} <input type="text" class="marks" value="${escapeText(attrs.marks)}"></label>
+        <label>${gettext('Whitelist elements')} <input type="text" class="elements" value="${escapeText(attrs.elements.join(' '))}"></label>
+        <label>${gettext('Whitelist marks')} <input type="text" class="marks" value="${escapeText(attrs.marks.join(' '))}"></label>
         <label>${gettext('Language')}
             <select class="language">
                 <option value="false" ${language===false ? "selected" : ""}>${gettext('Document language')}</option>

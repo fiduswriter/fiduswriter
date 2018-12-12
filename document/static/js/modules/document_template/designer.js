@@ -80,8 +80,8 @@ export class DocumentTemplateDesigner {
                     case 'richtext':
                     case 'table':
                     case 'heading':
-                        attrs['elements'] = el.querySelector('.elements').value
-                        attrs['marks'] = el.querySelector('.marks').value
+                        attrs['elements'] = el.querySelector('.elements').value.split(' ')
+                        attrs['marks'] = el.querySelector('.marks').value.split(' ')
                         language = el.querySelector('.language').value
                         if (language !== 'false') {
                             values['language'] = language

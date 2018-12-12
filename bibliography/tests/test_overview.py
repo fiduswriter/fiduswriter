@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 from test.testcases import LiveTornadoTestCase
 from test.selenium_helper import SeleniumHelper
@@ -189,6 +188,14 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
             "(.//*[normalize-space(text()) and normalize-space(.)="
             "'bibliography.bib'])[1]/following::button[1]"
         ).click()
+        book_title_el = WebDriverWait(driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    ".fw-document-table tr:nth-child(2) .edit-bib"
+                )
+            )
+        )
         self.assertEqual(
             "Lean UX: Applying lean principles to improve user experience",
             driver.find_element_by_css_selector(

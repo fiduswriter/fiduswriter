@@ -4,11 +4,11 @@ python:
 node_js:
   - "10"
 
-dist: trusty
+dist: xenial
 sudo: required
 
 addons:
-  chrome: stable
+  chrome: beta
 
 install:
   - mv travis/configuration.py ./

@@ -803,7 +803,26 @@ export const headerbarModel = () => ({
                         deleteTable(editor.currentView.state, editor.currentView.dispatch)
                     },
                     disabled: editor => !findTable(editor.currentView.state)
-                }
+                },
+                {
+                    title: gettext('Resize'),
+                    type: 'action',
+                    tooltip: gettext('Insert a table into the document.'),
+                    order: 16,
+                    action: editor => {
+                        let table = findTable(editor.currentView.state)
+                        table.attrs.width ="50"
+                        deleteTable(editor.currentView.state, editor.currentView.dispatch)
+                        const schema = editor.currentView.state.schema
+                        editor.currentView.dispatch(
+                            editor.currentView.state.tr.replaceSelectionWith(
+                                table
+                            )
+                        )
+
+                    },
+                    disabled: editor => !findTable(editor.currentView.state)
+                },
             ]
         },
         {

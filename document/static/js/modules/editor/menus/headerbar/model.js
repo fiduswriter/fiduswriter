@@ -12,6 +12,7 @@ import {PrintExporter} from "../../../exporter/print"
 import {RevisionDialog, LanguageDialog, TableDialog} from "../../dialogs"
 import {TEXT_ONLY_PARTS} from "../toolbar/model"
 import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from "../.."
+import {TableResizeDialog} from  "../../dialogs"
 
 // from https://github.com/ProseMirror/prosemirror-tables/blob/master/src/util.js
 const findTable = function(state) {
@@ -805,21 +806,23 @@ export const headerbarModel = () => ({
                     disabled: editor => !findTable(editor.currentView.state)
                 },
                 {
-                    title: gettext('Resize'),
+                    title: gettext('Resize/Reposition'),
                     type: 'action',
                     tooltip: gettext('Insert a table into the document.'),
                     order: 16,
                     action: editor => {
-                        let table = findTable(editor.currentView.state)
-                        table.attrs.width ="50"
-                        deleteTable(editor.currentView.state, editor.currentView.dispatch)
-                        const schema = editor.currentView.state.schema
-                        editor.currentView.dispatch(
-                            editor.currentView.state.tr.replaceSelectionWith(
-                                table
-                            )
-                        )
-
+                        // let table = findTable(editor.currentView.state)
+                        // table.attrs.width ="50"
+                        // deleteTable(editor.currentView.state, editor.currentView.dispatch)
+                        // const schema = editor.currentView.state.schema
+                        // editor.currentView.dispatch(
+                        //     editor.currentView.state.tr.replaceSelectionWith(
+                        //         table
+                        //     )
+                        // )
+                        const dialog = new TableResizeDialog(editor)
+                        dialog.init()
+                        return false
                     },
                     disabled: editor => !findTable(editor.currentView.state)
                 },

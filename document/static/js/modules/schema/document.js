@@ -409,11 +409,13 @@ spec.nodes = spec.nodes.update(
             attrs: {
                 track: {default: []},
                 width:{default:"100"},
+                aligned:{default:'center'}
             },
             parseDOM: [{tag: "table", getAttrs(dom) {
                 return {
                     track: parseTracks(dom.dataset.track),
                     width: dom.width,
+                    aligned: dom.aligned
                 }
             }}],
             toDOM(node) {
@@ -436,6 +438,24 @@ spec.nodes = spec.nodes.update(
                         attrs.class = "table-100"
                         break;
                 }
+                if(attrs.width === "100"){
+                    node.attrs.aligned = 'center'
+                }
+                switch(node.attrs.aligned){
+                    case "left":
+                        attrs.aligned = "left",
+                        attrs.class += " table-left"
+                        break;
+                    case "right":
+                        attrs.aligned = "right",
+                        attrs.class += " table-right"
+                        break;
+                    default:
+                        attrs.aligned = "center",
+                        attrs.class += " table-center"
+                        break;
+                }
+
                 if (node.attrs.track.length) {
                     attrs['data-track'] = JSON.stringify(node.attrs.track)
                 }

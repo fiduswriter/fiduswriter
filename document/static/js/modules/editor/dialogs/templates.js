@@ -93,6 +93,56 @@ export const tableInsertTemplate = () => `
         </tr>
     </table>`
 
+export const tableResizeTemplate =() =>
+    `<div style="margin-top:10px;margin-left:20px">
+        <p> ${gettext(' Position : ')}</p>
+        <div style="margin-left:95px;margin-top:-20px" id="table-alignment-btn" class="fw-button fw-light fw-large">
+            <input type="hidden" id="table-alignment" />
+            <label></label>
+            <span class="fa fa-caret-down"></span>
+        </div>
+        <div id="table-alignment-pulldown" class="fw-pulldown fw-left"
+                style="left: 115px;">
+            <ul id="table-category-list">
+                <li><span class="fw-pulldown-item" id="table-alignment-center">
+                    ${gettext('Center')}
+                </span></li>
+                <li><span class="fw-pulldown-item" id="table-alignment-right">
+                    ${gettext('Right')}
+                </span></li>
+                <li><span class="fw-pulldown-item" id="table-alignment-left">
+                    ${gettext('Left')}
+                </span></li>
+
+            </ul>
+        </div>
+
+        <p style="margin-top:30px;"> ${gettext(' Size : ')}</p>
+        <div style="margin-left:95px;margin-top:-20px" id="table-width-btn" class="fw-button fw-light fw-large">
+            <input type="hidden" id="table-width" />
+            <label></label>
+            <span class="fa fa-caret-down"></span>
+        </div>
+        <div id="table-width-pulldown" class="fw-pulldown fw-left"
+                style="left: 115px;">
+            <ul id="table-category-list">
+                <li><span class="fw-pulldown-item" id="table-width-100">
+                    ${gettext('100')} %
+                </span></li>
+                <li><span class="fw-pulldown-item" id="table-width-75">
+                    ${gettext('75')} %
+                </span></li>
+                <li><span class="fw-pulldown-item" id="table-width-50">
+                     ${gettext('50')} %
+                </span></li>
+            <li><span class="fw-pulldown-item" id="table-width-25">
+                     ${gettext('25')} %
+                </span></li>
+
+            </ul>
+        </div>
+
+    </div>`
 export const mathDialogTemplate = () =>
     `<div title="${gettext("Math")}">
         <p><span class="math-field" type="text" name="math" ></span></p>

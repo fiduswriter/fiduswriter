@@ -119,3 +119,17 @@ figure {
     color: #84b4a7;
     text-decoration: underline;
 }
+
+
+.table-25{
+    width: 25%;
+}
+.table-50{
+    width: 50%;
+}
+.table-75{
+    width: 75%;
+}
+.table-100{
+    width: 100%;
+}

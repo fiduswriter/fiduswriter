@@ -407,15 +407,35 @@ spec.nodes = spec.nodes.update(
         spec.nodes.get("table"),
         {
             attrs: {
-                track: {default: []}
+                track: {default: []},
+                width:{default:"100"},
             },
             parseDOM: [{tag: "table", getAttrs(dom) {
                 return {
-                    track: parseTracks(dom.dataset.track)
+                    track: parseTracks(dom.dataset.track),
+                    width: dom.width,
                 }
             }}],
             toDOM(node) {
-                const attrs = {}
+                const attrs ={}
+                switch(node.attrs.width){
+                    case "25":
+                        attrs.width = "25",
+                        attrs.class = "table-25"
+                        break;
+                    case "50":
+                        attrs.width = "50",
+                        attrs.class = "table-50"
+                        break;
+                    case "75":
+                        attrs.width = "75",
+                        attrs.class = "table-75"
+                        break;
+                    default:
+                        attrs.width = "100",
+                        attrs.class = "table-100"
+                        break;
+                }
                 if (node.attrs.track.length) {
                     attrs['data-track'] = JSON.stringify(node.attrs.track)
                 }

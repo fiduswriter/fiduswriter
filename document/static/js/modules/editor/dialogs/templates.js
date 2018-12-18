@@ -144,6 +144,7 @@ export const tableResizeTemplate =() =>
 
     </div>`
 export const mathDialogTemplate = () =>
+
     `<div title="${gettext("Math")}">
         <p><span class="math-field" type="text" name="math" ></span></p>
         <div><input type="text" class="raw-input" style="display:none"></div>

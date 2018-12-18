@@ -25,7 +25,7 @@ export class ImageOverviewCategories {
             }
         ).then(
             ({json}) => {
-                this.imageOverview.imageDB.cats = json.entries
+                this.imageOverview.app.imageDB.cats = json.entries
                 this.setImageCategoryList(json.entries)
                 addAlert('success', gettext('The categories have been updated'))
                 deactivateWait()
@@ -88,7 +88,7 @@ export class ImageOverviewCategories {
             id: 'editCategories',
             title: gettext('Edit Categories'),
             body: usermediaEditcategoriesTemplate({
-                categories: this.imageOverview.imageDB.cats
+                categories: this.imageOverview.app.imageDB.cats
             }),
             width: 350,
             height: 350,

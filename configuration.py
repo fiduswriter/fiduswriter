@@ -34,6 +34,18 @@ REGISTRATION_OPEN = True
 
 MANAGERS = ADMINS
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'typewiser',
+        'USER': 'jo',
+        'PASSWORD': 'roccosiffredi',
+        'HOST': 'localhost',
+        'PORT': '',
+    }
+}
+
+
 # DATABASES = {
 #    'default': {
 # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.

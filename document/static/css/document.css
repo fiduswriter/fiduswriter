@@ -91,11 +91,11 @@ figure img {
 
 
 figure {
-    width: 80%;
+    width: calc(80% - 12px);
     border: 1px solid black;
     padding: 5px;
     text-align: center;
-    -webkit-region-break-inside: avoid;
+    break-inside: avoid;
     cursor: pointer;
     margin: 10%;
 }
@@ -141,4 +141,9 @@ figure {
 }
 .table-right {
     float: right;
+}
+
+.user-contents a, .user-contents a:hover {
+    color: #84b4a7;
+    text-decoration: underline;
 }

@@ -43,12 +43,6 @@ export class Profile {
                     case findTarget(event, '.delete-avatar', el):
                         deleteAvatarDialog(this.app)
                         break
-                    case findTarget(event, 'a', el):
-                        if (el.target.hostname === window.location.hostname && el.target.getAttribute('href')[0] === '/') {
-                            event.preventDefault()
-                            this.app.goTo(el.target.href)
-                        }
-                        break
                     default:
                         break
                 }

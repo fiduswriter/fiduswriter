@@ -10,7 +10,7 @@ from django.core import checks
 # (same value from >= 2.0) in
 # document/static/js/modules/exporter/native/zip.js
 
-FW_DOCUMENT_VERSION = 2.2
+FW_DOCUMENT_VERSION = 2.3
 
 
 class Document(models.Model):
@@ -87,8 +87,9 @@ class Document(models.Model):
                 return [
                     checks.Warning(
                         'Documents need to be upgraded. Please navigate to '
-                        '/admin/maintenance/ with a browser as a superuser '
-                        'and upgrade all documents on this server.',
+                        '/admin/document/document/maintenance/ with a browser '
+                        'as a superuser and upgrade all documents on this '
+                        'server.',
                         obj=cls
                     )
                 ]

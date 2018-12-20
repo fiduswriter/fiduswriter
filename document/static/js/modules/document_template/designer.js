@@ -2,7 +2,7 @@ import SmoothDND from "smooth-dnd"
 import {EditorState, Plugin} from "prosemirror-state"
 import {EditorView} from "prosemirror-view"
 import {exampleSetup} from "prosemirror-example-setup"
-import {TagsView} from "../editor/state_plugins"
+import {TagsView, ContributorsView} from "../editor/state_plugins"
 
 import {documentConstructorTemplate, templateEditorValueTemplate, toggleEditorButtonTemplate} from "./templates"
 import {whenReady, ensureCSS} from "../common"
@@ -13,7 +13,8 @@ import {
     richtextMenuContent,
     headingPartSchema,
     headingMenuContent,
-    tagsPartSchema
+    tagsPartSchema,
+    contributorsPartSchema
 } from "./schema"
 
 export class DocumentTemplateDesigner {
@@ -30,10 +31,12 @@ export class DocumentTemplateDesigner {
     init() {
         ensureCSS([
             'common.css',
+            'dialog.css',
             'prosemirror.css',
             'prosemirror-menu.css',
             'document_template_designer.css',
-            'tags.css'
+            'tags.css',
+            'contributors.css'
         ], this.staticUrl)
         whenReady().then(() => {
             this.definitionTextarea = document.querySelector('textarea[name=definition]')
@@ -158,6 +161,16 @@ export class DocumentTemplateDesigner {
                     props: {
                         nodeViews: {
                             tags_part: (node, view, getPos) => new TagsView(node, view, getPos)
+                        }
+                    }
+                }))
+                break
+            case 'contributors':
+                schema = contributorsPartSchema
+                plugins.push(new Plugin({
+                    props: {
+                        nodeViews: {
+                            contributors_part: (node, view, getPos) => new ContributorsView(node, view, getPos)
                         }
                     }
                 }))

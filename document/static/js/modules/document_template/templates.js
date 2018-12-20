@@ -84,6 +84,10 @@ const contributorsTemplate = ({
             </select>
         </div>
         <div>
+            <div class="label">${gettext('Initial content')}</div>
+            <div class="initial"></div>
+        </div>
+        <div>
             <div class="label">${gettext('Instructions')}</div>
             <div class="instructions"></div>
         </div>

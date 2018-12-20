@@ -9,7 +9,7 @@ import {ContributorDialog} from "../dialogs"
 
 const key = new PluginKey('contributorInput')
 
-class ContributorsView {
+export class ContributorsView {
     constructor(node, view, getPos) {
         this.node = node
         this.view = view
@@ -29,7 +29,8 @@ class ContributorsView {
             'beforeend',
             `<button class="fw-button fw-light">${gettext('Add')} ${nodeTitle.toLowerCase()}...</button>`
         )
-        this.dom.lastElementChild.addEventListener('click', () => {
+        this.dom.lastElementChild.addEventListener('click', event => {
+            event.preventDefault()
             const dialog = new ContributorDialog(node, view)
             dialog.init()
         })

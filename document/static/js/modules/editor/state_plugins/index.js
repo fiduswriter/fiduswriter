@@ -1,6 +1,6 @@
 export {
-    contributorsEndPos,
-    contributorInputPlugin
+    contributorInputPlugin,
+    ContributorsView
 }
 from "./contributor_input"
 export {

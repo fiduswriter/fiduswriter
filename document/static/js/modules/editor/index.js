@@ -176,6 +176,7 @@ export class Editor {
             'mathquill.css',
             'editor.css',
             'tags.css',
+            'contributors.css',
             'document.css',
             'carets.css',
             'tracking.css',

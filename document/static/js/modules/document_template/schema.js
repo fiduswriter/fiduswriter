@@ -66,3 +66,13 @@ export const tagsPartSchema = new Schema({
     },
     marks: docSchema.spec.marks
 })
+
+export const contributorsPartSchema = new Schema({
+    nodes: {
+        doc: {content: "contributors_part"},
+        contributors_part: docSchema.spec.nodes.get('contributors_part'),
+        contributor: docSchema.spec.nodes.get('contributor'),
+        text: docSchema.spec.nodes.get('text')
+    },
+    marks: docSchema.spec.marks
+})

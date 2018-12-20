@@ -1,5 +1,4 @@
 import {contributorTemplate} from "./templates"
-import {contributorsEndPos} from "../state_plugins"
 import {addAlert, Dialog} from "../../common"
 /*
     Source for email regexp:
@@ -62,14 +61,16 @@ export class ContributorDialog {
                     posFrom = view.state.selection.from
                     posTo = view.state.selection.to
                 } else {
-                    view.state.doc.firstChild.forEach((partElement, offset) => {
-                        if (partElement===this.node) {
-                            posFrom = posTo = offset + partElement.nodeSize
-                            // +1 to enter article -1 to go to end of node contributors container node
+                    view.state.doc.descendants((node, pos) => {
+                        if (node.attrs.id === this.node.attrs.id) {
+                            posFrom = posTo = pos + node.nodeSize - 1
+                            // - 1 to go to end of node contributors container node
+                        }
+                        if ('id' in node.attrs) {
+                            return false
                         }
                     })
                 }
-
                 view.dispatch(view.state.tr.replaceRangeWith(
                     posFrom,
                     posTo,
@@ -85,7 +86,7 @@ export class ContributorDialog {
 
         this.dialog = new Dialog({
             id: 'edit-contributor',
-            title: `${this.contributor ? gettext('Update') : gettext('Add')} ${this.node.type.spec.item_title.toLowerCase()}`,
+            title: `${this.contributor ? gettext('Update') : gettext('Add')} ${this.node.attrs.item_title.toLowerCase()}`,
             body: contributorTemplate({
                 contributor: this.contributor ? this.contributor : {},
             }),

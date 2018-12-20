@@ -30,7 +30,7 @@ export const serializeHelp = content => {
 }
 
 export const richtextPartSchema = new Schema({
-    nodes: docSchema.spec.nodes.update('doc', docSchema.spec.nodes.get('richtext_part')),
+    nodes: docSchema.spec.nodes.update('doc', {content: 'richtext_part'}),
     marks: docSchema.spec.marks
 })
 
@@ -44,7 +44,7 @@ for (let i = 1; i <= 6; i++) {
 }
 
 export const headingPartSchema = new Schema({
-    nodes: docSchema.spec.nodes.update('doc', docSchema.spec.nodes.get('heading_part')).remove('horizontal_rule').remove('paragraph').remove('code_block'),
+    nodes: docSchema.spec.nodes.update('doc', {content: 'heading_part'}).remove('horizontal_rule').remove('paragraph').remove('code_block'),
     marks: docSchema.spec.marks
 })
 
@@ -56,3 +56,13 @@ for (let i = 1; i <= 6; i++) {
         label: "Heading level " + i
     }))
 }
+
+export const tagsPartSchema = new Schema({
+    nodes: {
+        doc: {content: "tags_part"},
+        tags_part: docSchema.spec.nodes.get('tags_part'),
+        tag: docSchema.spec.nodes.get('tag'),
+        text: docSchema.spec.nodes.get('text')
+    },
+    marks: docSchema.spec.marks
+})

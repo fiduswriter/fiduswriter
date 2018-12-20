@@ -1,7 +1,8 @@
 import SmoothDND from "smooth-dnd"
-import {EditorState} from "prosemirror-state"
+import {EditorState, Plugin} from "prosemirror-state"
 import {EditorView} from "prosemirror-view"
 import {exampleSetup} from "prosemirror-example-setup"
+import {TagsView} from "../editor/state_plugins"
 
 import {documentConstructorTemplate, templateEditorValueTemplate, toggleEditorButtonTemplate} from "./templates"
 import {whenReady, ensureCSS} from "../common"
@@ -11,7 +12,8 @@ import {
     richtextPartSchema,
     richtextMenuContent,
     headingPartSchema,
-    headingMenuContent
+    headingMenuContent,
+    tagsPartSchema
 } from "./schema"
 
 export class DocumentTemplateDesigner {
@@ -26,7 +28,13 @@ export class DocumentTemplateDesigner {
     }
 
     init() {
-        ensureCSS(['prosemirror.css', 'prosemirror-menu.css', 'document_template_designer.css'], this.staticUrl)
+        ensureCSS([
+            'common.css',
+            'prosemirror.css',
+            'prosemirror-menu.css',
+            'document_template_designer.css',
+            'tags.css'
+        ], this.staticUrl)
         whenReady().then(() => {
             this.definitionTextarea = document.querySelector('textarea[name=definition]')
             this.getInitialValue()
@@ -63,7 +71,7 @@ export class DocumentTemplateDesigner {
                 const type = el.dataset.type,
                     id = el.querySelector('input.id').value,
                     title = el.querySelector('input.title').value,
-                    help = this.getEditorValue(el.querySelector('.help')),
+                    help = this.getEditorValue(el.querySelector('.instructions')),
                     initial = this.getEditorValue(el.querySelector('.initial')),
                     locking = el.querySelector('.locking option:checked').value,
                     optional = el.querySelector('.optional option:checked').value,
@@ -123,7 +131,7 @@ export class DocumentTemplateDesigner {
     }
 
     setupEditors(el, type, help = false, initial = false) {
-        const helpEl = el.querySelector('.help'),
+        const helpEl = el.querySelector('.instructions'),
             helpDoc = help ?
                 helpSchema.nodeFromJSON({type:'doc', content: help}) :
                 helpSchema.nodes.doc.createAndFill(),
@@ -134,7 +142,7 @@ export class DocumentTemplateDesigner {
                 })
             })
         this.editors.push([helpEl, helpView])
-        let schema, menuContent
+        let plugins = [], menuContent = [], schema
         switch(type) {
             case 'richtext':
                 schema = richtextPartSchema
@@ -144,6 +152,15 @@ export class DocumentTemplateDesigner {
                 schema = headingPartSchema
                 menuContent = headingMenuContent
                 break
+            case 'tags':
+                schema = tagsPartSchema
+                plugins.push(new Plugin({
+                    props: {
+                        nodeViews: {
+                            tags_part: (node, view, getPos) => new TagsView(node, view, getPos)
+                        }
+                    }
+                }))
             default:
                 break
         }
@@ -151,14 +168,21 @@ export class DocumentTemplateDesigner {
         if (!schema) {
            return
         }
+
         const initialEl = el.querySelector('.initial'),
             doc = initial ?
-                schema.nodeFromJSON({type:'doc', content: initial}) :
+                schema.nodeFromJSON({
+                    type:'doc',
+                    content: [{
+                        type: `${type}_part`,
+                        content: initial
+                    }]
+                }) :
                 schema.nodes.doc.createAndFill(),
             initialView = new EditorView(initialEl, {
                 state: EditorState.create({
                     doc,
-                    plugins: exampleSetup({schema, menuContent})
+                    plugins: exampleSetup({schema, menuContent}).concat(plugins)
                 })
             })
         this.editors.push([initialEl, initialView])
@@ -170,9 +194,11 @@ export class DocumentTemplateDesigner {
         if (!editor) {
             return false
         }
-        const doc = editor[1].state.doc
-        if (doc.textContent.length) {
-            return doc.toJSON().content
+        const state = editor[1].state
+        // Only return if there is more content that a recently initiated doc
+        // would have. The number varies between part types.
+        if (state.doc.nodeSize > state.schema.nodes.doc.createAndFill().nodeSize) {
+            return state.doc.firstChild.toJSON().content
         }
         return false
     }

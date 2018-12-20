@@ -15,24 +15,24 @@ const headingTemplate = ({
 `<div class="doc-part" data-type="heading">
     <div class="title">${gettext('Heading')}</div>
     <div class="attrs">
-        <label>${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></label>
-        <label>${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></label>
-        <label>${gettext('Locking')}
+        <div class="label">${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></div>
+        <div class="label">${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></div>
+        <div class="label">${gettext('Locking')}
             <select class="locking">
                 <option value="free" ${locking==='free' ? "selected" : ""}>${gettext('User can change contents')}</option>
                 <option value="fixed" ${locking==='fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
             </select>
-        </label>
-        <label>${gettext('Optional')}
+        </div>
+        <div class="label">${gettext('Optional')}
             <select class="optional">
                 <option value="false" ${optional==='false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
                 <option value="true_on" ${optional==='true_on' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
                 <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
-        </label>
-        <label>${gettext('Whitelist elements')} <input type="text" class="elements" value="${escapeText(attrs.elements.join(' '))}"></label>
-        <label>${gettext('Whitelist marks')} <input type="text" class="marks" value="${escapeText(attrs.marks.join(' '))}"></label>
-        <label>${gettext('Language')}
+        </div>
+        <div class="label">${gettext('Whitelist elements')} <input type="text" class="elements" value="${escapeText(attrs.elements.join(' '))}"></div>
+        <div class="label">${gettext('Whitelist marks')} <input type="text" class="marks" value="${escapeText(attrs.marks.join(' '))}"></div>
+        <div class="label">${gettext('Language')}
             <select class="language">
                 <option value="false" ${language===false ? "selected" : ""}>${gettext('Document language')}</option>
                 ${
@@ -43,14 +43,14 @@ const headingTemplate = ({
                 <option value="true_on" ${optional==='true_on' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
                 <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
-        </label>
+        </div>
         <div>
-            <label>${gettext('Initial content')}</label>
+            <div class="label">${gettext('Initial content')}</div>
             <div class="initial"></div>
         </div>
         <div>
-            <label>${gettext('Instructions')}</label>
-            <div class="help"></div>
+            <div class="label">${gettext('Instructions')}</div>
+            <div class="instructions"></div>
         </div>
     </div>
 </div>`
@@ -67,25 +67,25 @@ const contributorsTemplate = ({
 `<div class="doc-part" data-type="contributors">
     <div class="title">${gettext('Namelist')}</div>
     <div class="attrs">
-        <label>${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></label>
-        <label>${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></label>
-        <label>${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(attrs.item_title)}"></label>
-        <label>${gettext('Locking')}
+        <div class="label">${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></div>
+        <div class="label">${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></div>
+        <div class="label">${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(attrs.item_title)}"></div>
+        <div class="label">${gettext('Locking')}
             <select class="locking">
                 <option value="free" ${locking==='free' ? "selected" : ""}>${gettext('User can change contents')}</option>
                 <option value="fixed" ${locking==='fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
             </select>
-        </label>
-        <label>${gettext('Optional')}
+        </div>
+        <div class="label">${gettext('Optional')}
             <select class="optional">
                 <option value="false" ${optional==='false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
                 <option value="true_on" ${optional==='true_on' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
                 <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
-        </label>
+        </div>
         <div>
-            <label>${gettext('Instructions')}</label>
-            <div class="help"></div>
+            <div class="label">${gettext('Instructions')}</div>
+            <div class="instructions"></div>
         </div>
     </div>
 </div>`
@@ -103,24 +103,24 @@ const richtextTemplate = ({
 }) => `<div class="doc-part" data-type="richtext">
     <div class="title">${gettext('Richtext')}</div>
     <div class="attrs">
-        <label>${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></label>
-        <label>${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></label>
-        <label>${gettext('Locking')}
+        <div class="label">${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></div>
+        <div class="label">${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></div>
+        <div class="label">${gettext('Locking')}
             <select class="locking">
                 <option value="free" ${locking==='free' ? "selected" : ""}>${gettext('User can change contents')}</option>
                 <option value="fixed" ${locking==='fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
             </select>
-        </label>
-        <label>${gettext('Optional')}
+        </div>
+        <div class="label">${gettext('Optional')}
             <select class="optional">
                 <option value="false" ${optional==='false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
                 <option value="true_on" ${optional==='true_on' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
                 <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
-        </label>
-        <label>${gettext('Whitelist elements')} <input type="text" class="elements" value="${escapeText(attrs.elements.join(' '))}"></label>
-        <label>${gettext('Whitelist marks')} <input type="text" class="marks" value="${escapeText(attrs.marks.join(' '))}"></label>
-        <label>${gettext('Language')}
+        </div>
+        <div class="label">${gettext('Whitelist elements')} <input type="text" class="elements" value="${escapeText(attrs.elements.join(' '))}"></div>
+        <div class="label">${gettext('Whitelist marks')} <input type="text" class="marks" value="${escapeText(attrs.marks.join(' '))}"></div>
+        <div class="label">${gettext('Language')}
             <select class="language">
                 <option value="false" ${language===false ? "selected" : ""}>${gettext('Document language')}</option>
                 ${
@@ -131,14 +131,14 @@ const richtextTemplate = ({
                 <option value="true_on" ${optional==='true_on' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
                 <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
-        </label>
+        </div>
         <div>
-            <label>${gettext('Initial content')}</label>
+            <div class="label">${gettext('Initial content')}</div>
             <div class="initial"></div>
         </div>
         <div>
-            <label>${gettext('Instructions')}</label>
-            <div class="help"></div>
+            <div class="label">${gettext('Instructions')}</div>
+            <div class="instructions"></div>
         </div>
     </div>
 </div>`
@@ -155,25 +155,29 @@ const tagsTemplate = ({
 `<div class="doc-part" data-type="tags">
     <div class="title">${gettext('Tags')}</div>
     <div class="attrs">
-        <label>${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></label>
-        <label>${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></label>
-        <label>${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(attrs.item_title)}"></label>
-        <label>${gettext('Locking')}
+        <div class="label">${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></div>
+        <div class="label">${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></div>
+        <div class="label">${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(attrs.item_title)}"></div>
+        <div class="label">${gettext('Locking')}
             <select class="locking">
                 <option value="free" ${locking==='free' ? "selected" : ""}>${gettext('User can change contents')}</option>
                 <option value="fixed" ${locking==='fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
             </select>
-        </label>
-        <label>${gettext('Optional')}
+        </div>
+        <div class="label">${gettext('Optional')}
             <select class="optional">
                 <option value="false" ${optional==='false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
                 <option value="true_on" ${optional==='true_on' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
                 <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
-        </label>
+        </div>
         <div>
-            <label>${gettext('Instructions')}</label>
-            <div class="help"></div>
+            <div class="label">${gettext('Initial content')}</div>
+            <div class="initial"></div>
+        </div>
+        <div>
+            <div class="label">${gettext('Instructions')}</div>
+            <div class="instructions"></div>
         </div>
     </div>
 </div>`
@@ -192,25 +196,25 @@ const tableTemplate = ({
 `<div class="doc-part" data-type="table">
     <div class="title">${gettext('Table')}</div>
     <div class="attrs">
-        <label>${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></label>
-        <label>${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></label>
-        <label>${gettext('Locking')}
+        <div class="label">${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></div>
+        <div class="label">${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></div>
+        <div class="label">${gettext('Locking')}
             <select class="locking">
                 <option value="free" ${locking==='free' ? "selected" : ""}>${gettext('User can change contents')}</option>
                 <option value="fixed" ${locking==='fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
                 <option value="rows" ${locking==='rows' ? "selected" : ""}>${gettext('User can add/remove rows')}</option>
             </select>
-        </label>
-        <label>${gettext('Optional')}
+        </div>
+        <div class="label">${gettext('Optional')}
             <select class="optional">
                 <option value="false" ${optional==='false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
                 <option value="true_on" ${optional==='true_on' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
                 <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
-        </label>
-        <label>${gettext('Whitelist elements')} <input type="text" class="elements" value="${escapeText(attrs.elements.join(' '))}"></label>
-        <label>${gettext('Whitelist marks')} <input type="text" class="marks" value="${escapeText(attrs.marks.join(' '))}"></label>
-        <label>${gettext('Language')}
+        </div>
+        <div class="label">${gettext('Whitelist elements')} <input type="text" class="elements" value="${escapeText(attrs.elements.join(' '))}"></div>
+        <div class="label">${gettext('Whitelist marks')} <input type="text" class="marks" value="${escapeText(attrs.marks.join(' '))}"></div>
+        <div class="label">${gettext('Language')}
             <select class="language">
                 <option value="false" ${language===false ? "selected" : ""}>${gettext('Document language')}</option>
                 ${
@@ -221,14 +225,14 @@ const tableTemplate = ({
                 <option value="true_on" ${optional==='true_on' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
                 <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
-        </label>
+        </div>
         <div>
-            <label>${gettext('Initial content')}</label>
+            <div class="label">${gettext('Initial content')}</div>
             <div class="initial"></div>
         </div>
         <div>
-            <label>${gettext('Instructions')}</label>
-            <div class="help"></div>
+            <div class="label">${gettext('Instructions')}</div>
+            <div class="instructions"></div>
         </div>
     </div>
 </div>`

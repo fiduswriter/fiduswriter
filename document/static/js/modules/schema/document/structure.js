@@ -103,12 +103,12 @@ export const richtext_part = partSpec('richtext', 'block+', {
 export const heading_part = partSpec('heading', 'heading')
 export const contributors_part = partSpec('contributors', 'contributor*', {
     item_title: {
-        default: ""
+        default: gettext('Contributor')
     }
 })
 export const tags_part = partSpec('tags', 'tag*', {
     item_title: {
-        default: ""
+        default: gettext('Tag')
     }
 })
 export const table_part = partSpec('table', 'table')

@@ -167,7 +167,7 @@ const createTagInputEditor = (view, getPos, node) => {
     return [dom, tagInputView]
 }
 
-class TagsView {
+export class TagsView {
     constructor(node, view, getPos) {
         this.node = node
         this.view = view
@@ -245,7 +245,7 @@ export const tagInputPlugin = function(options) {
             }
         },
         props: {
-            nodeViews: {fish: 'fleisch'}
+            nodeViews: {}
         }
     })
 }

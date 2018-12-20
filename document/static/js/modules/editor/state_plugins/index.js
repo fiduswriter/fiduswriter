@@ -42,7 +42,8 @@ export {
 }
 from "./jump_hidden_nodes"
 export {
-    tagInputPlugin
+    tagInputPlugin,
+    TagsView
 }
 from "./tag_input"
 export {

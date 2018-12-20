@@ -175,6 +175,7 @@ export class Editor {
             'libs/katex/katex.min.css',
             'mathquill.css',
             'editor.css',
+            'tags.css',
             'document.css',
             'carets.css',
             'tracking.css',

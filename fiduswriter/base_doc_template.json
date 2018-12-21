@@ -26,7 +26,7 @@
     "optional": "true_off",
     "language": "true_off",
     "attrs": {
-        "elements": ["paragraph", "heading", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote"],
+        "elements": ["paragraph", "heading", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote", "table"],
         "marks": ["strong", "em", "highlight", "underline", "link"]
     }
 }, {
@@ -45,7 +45,7 @@
     "locking": "free",
     "optional": "false",
     "attrs": {
-        "elements": ["paragraph", "heading", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote"],
+        "elements": ["paragraph", "heading", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote", "table"],
         "marks": ["strong", "em", "highlight", "underline", "link"]
     }
 }]

@@ -8,7 +8,7 @@ export const documentTemplatePlugin = function(options) {
             if (tr.getMeta('remote')) {
                 return true
             }
-            if (state.doc.childCount !== tr.doc.childCount) {
+            if (state.doc.firstChild.childCount !== tr.doc.firstChild.childCount) {
                 return false
             }
             let allowed = true
@@ -24,7 +24,7 @@ export const documentTemplatePlugin = function(options) {
             ranges.forEach(range => tr.doc.nodesBetween(range.from, range.to, (node, pos, parent, index) => {
                 let partNode
                 if (parent===tr.doc.firstChild) {
-                    allowedElements = node.attrs.elements ? node.attrs.elements.concat('list_item', 'text') : false
+                    allowedElements = node.attrs.elements ? node.attrs.elements.concat('table_row', 'table_cell', 'list_item', 'text') : false
                     allowedMarks = node.attrs.marks ? node.attrs.marks.concat('insertion', 'deletion', 'comment') : false
                     partNode = true
                 }

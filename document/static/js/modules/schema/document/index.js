@@ -75,7 +75,7 @@ let specNodes = OrderedMap.from({
     bullet_list,
     list_item
 }).append(tableNodes({
-    tableGroup: "table_block",
+    tableGroup: "block",
     cellContent: "block+"
 }))
 
@@ -89,11 +89,18 @@ specNodes = specNodes.update(
         specNodes.get("table"),
         {
             attrs: {
-                track: {default: []}
+                track: {default: []},
+                width: {default: '100'},
+                aligned: {default: 'center'}
             },
             parseDOM: [{tag: "table", getAttrs(dom) {
+                const track = parseTracks(dom.dataset.track),
+                    width = dom.dataset.width,
+                    aligned = width === '100' ? 'center' : dom.dataset.aligned
                 return {
-                    track: parseTracks(dom.dataset.track)
+                    track,
+                    width,
+                    aligned
                 }
             }}],
             toDOM(node) {
@@ -101,6 +108,9 @@ specNodes = specNodes.update(
                 if (node.attrs.track.length) {
                     attrs['data-track'] = JSON.stringify(node.attrs.track)
                 }
+                attrs['data-width'] = node.attrs.width
+                attrs['data-aligned'] = node.attrs.aligned
+                attrs['class'] = `table-${node.attrs.width} table-${node.attrs.aligned}`
                 return ["table", attrs, ["tbody", 0]]
             }
         }

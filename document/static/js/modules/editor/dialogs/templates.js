@@ -94,9 +94,9 @@ export const tableInsertTemplate = () => `
     </table>`
 
 export const tableResizeTemplate =() =>
-    `<div style="margin-top:10px;margin-left:20px">
+    `<div style="margin-top:25px;margin-left:20px">
         <p> ${gettext(' Position : ')}</p>
-        <div style="margin-left:95px;margin-top:-20px" id="table-alignment-btn" class="fw-button fw-light fw-large">
+        <div style="margin-left:95px;margin-top:-25px;display:inherit;width:50px;" id="table-alignment-btn" class="fw-button fw-light fw-large">
             <input type="hidden" id="table-alignment" />
             <label></label>
             <span class="fa fa-caret-down"></span>
@@ -117,8 +117,8 @@ export const tableResizeTemplate =() =>
             </ul>
         </div>
 
-        <p style="margin-top:30px;"> ${gettext(' Size : ')}</p>
-        <div style="margin-left:95px;margin-top:-20px" id="table-width-btn" class="fw-button fw-light fw-large">
+        <p style="margin-top:35px;"> ${gettext(' Size : ')}</p>
+        <div style="margin-left:95px;margin-top:-25px;display:inherit;width:50px;" id="table-width-btn" class="fw-button fw-light fw-large">
             <input type="hidden" id="table-width" />
             <label></label>
             <span class="fa fa-caret-down"></span>
@@ -139,6 +139,24 @@ export const tableResizeTemplate =() =>
                      ${gettext('25')} %
                 </span></li>
 
+            </ul>
+        </div>
+
+        <p style="margin-top:35px;"> ${gettext(' Column Width : ')}</p>
+        <div style="margin-left:95px;margin-top:-25px;display:inherit;width:50px;" id="table-layout-btn" class="fw-button fw-light fw-large">
+            <input type="hidden" id="table-layout" />
+            <label></label>
+            <span class="fa fa-caret-down"></span>
+        </div>
+        <div id="table-layout-pulldown" class="fw-pulldown fw-left"
+                style="left: 115px;">
+            <ul id="table-category-list">
+                <li><span class="fw-pulldown-item" id="table-layout-fixed">
+                    ${gettext('Fixed')}
+                </span></li>
+                <li><span class="fw-pulldown-item" id="table-layout-auto">
+                    ${gettext('Auto')}
+                </span></li>
             </ul>
         </div>
 

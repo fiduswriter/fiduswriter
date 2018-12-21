@@ -147,3 +147,10 @@ figure {
     color: #84b4a7;
     text-decoration: underline;
 }
+.layout-fixed {
+    table-layout: fixed !important;
+}
+
+.layout-auto {
+    table-layout: auto !important;
+}

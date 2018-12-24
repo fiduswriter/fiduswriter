@@ -415,60 +415,19 @@ spec.nodes = spec.nodes.update(
             parseDOM: [{tag: "table", getAttrs(dom) {
                 return {
                     track: parseTracks(dom.dataset.track),
-                    width: dom.width,
-                    aligned: dom.aligned,
-                    layout: dom.layout,
+                    width: dom.dataset.width,
+                    aligned: dom.dataset.aligned,
+                    layout: dom.dataset.layout,
                 }
             }}],
             toDOM(node) {
                 const attrs ={}
-                switch(node.attrs.width){
-                    case "25":
-                        attrs.width = "25",
-                        attrs.class = "table-25"
-                        break;
-                    case "50":
-                        attrs.width = "50",
-                        attrs.class = "table-50"
-                        break;
-                    case "75":
-                        attrs.width = "75",
-                        attrs.class = "table-75"
-                        break;
-                    default:
-                        attrs.width = "100",
-                        attrs.class = "table-100"
-                        break;
-                }
-                if(attrs.width === "100"){
-                    node.attrs.aligned = 'center'
-                }
-                switch(node.attrs.aligned){
-                    case "left":
-                        attrs.aligned = "left",
-                        attrs.class += " table-left"
-                        break;
-                    case "right":
-                        attrs.aligned = "right",
-                        attrs.class += " table-right"
-                        break;
-                    default:
-                        attrs.aligned = "center",
-                        attrs.class += " table-center"
-                        break;
-                }
-
-                switch(node.attrs.layout){
-                    case "auto":
-                        attrs.layout = "auto",
-                        attrs.class += " layout-auto"
-                        break;
-                    default:
-                        attrs.layout = "fixed",
-                        attrs.class += " layout-fixed"
-                        break;
-                }
-
+                attrs['data-width'] = node.attrs.width
+                attrs.class = `table-${node.attrs.width}`
+                attrs['data-aligned'] = node.attrs.aligned
+                attrs.class += ` table-${node.attrs.aligned}`
+                attrs['data-layout'] = node.attrs.layout
+                attrs.class += ` layout-${node.attrs.layout}`
                 if (node.attrs.track.length) {
                     attrs['data-track'] = JSON.stringify(node.attrs.track)
                 }

@@ -808,18 +808,9 @@ export const headerbarModel = () => ({
                 {
                     title: gettext('Resize/Reposition'),
                     type: 'action',
-                    tooltip: gettext('Insert a table into the document.'),
+                    tooltip: gettext('Resize/Reposition a table.'),
                     order: 16,
                     action: editor => {
-                        // let table = findTable(editor.currentView.state)
-                        // table.attrs.width ="50"
-                        // deleteTable(editor.currentView.state, editor.currentView.dispatch)
-                        // const schema = editor.currentView.state.schema
-                        // editor.currentView.dispatch(
-                        //     editor.currentView.state.tr.replaceSelectionWith(
-                        //         table
-                        //     )
-                        // )
                         const dialog = new TableResizeDialog(editor)
                         dialog.init()
                         return false

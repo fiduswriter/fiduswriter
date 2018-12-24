@@ -141,10 +141,12 @@ export class TableResizeDialog {
     submitForm(){
         let table = this.findTable(this.editor.currentView.state)
         table.attrs.width = this.width
-        table.attrs.aligned = this.aligned
+        table.attrs['data-width'] = this.width
+        this.width == "100" ? table.attrs['data-aligned'] = "center" : table.attrs['data-aligned'] = this.aligned
+        this.width == "100" ? table.attrs.aligned = "center" : table.attrs.aligned = this.aligned
+        table.attrs['data-layout'] = this.layout
         table.attrs.layout = this.layout
         deleteTable(this.editor.currentView.state, this.editor.currentView.dispatch)
-        const schema = this.editor.currentView.state.schema
         this.editor.currentView.dispatch(
             this.editor.currentView.state.tr.replaceSelectionWith(
                 table
@@ -170,7 +172,7 @@ export class TableResizeDialog {
             title: gettext('Resize table'),
             body: tableResizeTemplate(),
             width: 300,
-            height: 250,
+            height: 260,
             buttons,
             onClose: () => this.editor.currentView.focus()
         })
@@ -209,7 +211,7 @@ export class TableResizeDialog {
             'click',
             event => {
                 event.preventDefault()
-               this.width = el.id.split('-')[2]
+                this.width = el.id.split('-')[2]
                 this.setTableWidth()
             }
         ))

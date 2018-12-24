@@ -142,8 +142,8 @@ export class TableResizeDialog {
         let table = this.findTable(this.editor.currentView.state)
         table.attrs.width = this.width
         table.attrs['data-width'] = this.width
-        this.width == "100" ? table.attrs['data-aligned'] = "center" : table.attrs['data-aligned'] = this.aligned
-        this.width == "100" ? table.attrs.aligned = "center" : table.attrs.aligned = this.aligned
+        table.attrs.aligned = this.width == "100" ? "center" : this.aligned
+        table.attrs['data-aligned'] = this.width == "100" ? "center" : this.aligned
         table.attrs['data-layout'] = this.layout
         table.attrs.layout = this.layout
         deleteTable(this.editor.currentView.state, this.editor.currentView.dispatch)

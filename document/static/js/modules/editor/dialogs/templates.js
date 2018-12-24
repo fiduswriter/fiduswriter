@@ -96,7 +96,7 @@ export const tableInsertTemplate = () => `
 export const tableResizeTemplate =() =>
     `<div style="margin-top:25px;margin-left:20px">
         <p> ${gettext(' Position : ')}</p>
-        <div style="margin-left:95px;margin-top:-25px;display:inherit;width:50px;" id="table-alignment-btn" class="fw-button fw-light fw-large">
+        <div style="margin-left:95px;margin-top:-25px;display:inherit;width:60px;" id="table-alignment-btn" class="fw-button fw-light fw-large">
             <input type="hidden" id="table-alignment" />
             <label></label>
             <span class="fa fa-caret-down"></span>

@@ -100,6 +100,38 @@ figure {
     margin: 10%;
 }
 
+.aligned-right {
+    float: right;
+}
+
+.aligned-left {
+    float: left;
+}
+
+.aligned-center {
+    float: none;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    align-content: center;
+}
+
+.image-width-100 {
+    width: 70%;
+}
+
+.image-width-75 {
+    width: 55%;
+}
+
+.image-width-50 {
+    width: 40%;
+}
+
+.image-width-25 {
+    width: 20%;
+}
+
 .figure-cat-figure::after {
     counter-increment: figure-cat-0;
     content: ' ' counter(figure-cat-0) ': ';

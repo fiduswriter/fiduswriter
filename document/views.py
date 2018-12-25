@@ -1,5 +1,6 @@
 import time
 import os
+import bleach
 from tornado.escape import json_decode, json_encode
 from django.core import serializers
 from django.http import HttpResponse, JsonResponse, HttpRequest
@@ -194,7 +195,7 @@ def delete_js(request):
     )
 
 
-def send_share_notification(request, doc_id, collaborator_id, right):
+def send_share_notification(request, doc_id, collaborator_id, right, change):
     owner = request.user.readable_name
     document = Document.objects.get(id=doc_id)
     collaborator = User.objects.get(id=collaborator_id)
@@ -204,67 +205,88 @@ def send_share_notification(request, doc_id, collaborator_id, right):
     if len(document_title) == 0:
         document_title = _('Untitled')
     link = HttpRequest.build_absolute_uri(request, document.get_absolute_url())
-    message_text = _(
-        ('Hey %(collaborator_name)s,\n%(owner)s has shared the document '
-         '\'%(document)s\' with you and given you %(right)s access rights. '
-         '\nAccess the document through this link: %(link)s')
+    if change:
+        message_text = _(
+            ('Hey %(collaborator_name)s,\n%(owner)s has changed your access '
+             'rights to %(right)s on the document \'%(document_title)s\'. '
+             '\nAccess the document through this link: %(link)s')
+        ) % {
+            'owner': owner,
+            'right': right,
+            'collaborator_name': collaborator_name,
+            'link': link,
+            'document_title': document_title
+        }
+        body_html_title = _(
+            ('Hey %(collaborator_name)s,<br>%(owner)s has changed your access '
+             'rights to %(right)s on the document \'%(document_title)s\'.')
+        ) % {
+            'owner': owner,
+            'right': right,
+            'collaborator_name': collaborator_name,
+            'document_title': document_title
+        }
+    else:
+        message_text = _(
+            ('Hey %(collaborator_name)s,\n%(owner)s has shared the document '
+             '\'%(document_title)s\' with you and given you %(right)s access '
+             'rights. '
+             '\nAccess the document through this link: %(link)s')
+        ) % {
+            'owner': owner,
+            'right': right,
+            'collaborator_name': collaborator_name,
+            'link': link,
+            'document_title': document_title
+        }
+        body_html_title = _(
+            ('Hey %(collaborator_name)s,<br>%(owner)s has shared the document '
+             '\'%(document_title)s\' with you and given you %(right)s access '
+             'rights.')
+        ) % {
+            'owner': owner,
+            'right': right,
+            'collaborator_name': collaborator_name,
+            'document_title': document_title
+        }
+
+    body_html = (
+        '<h1>%(body_html_title)s</h1>'
+        '<table>'
+        '<tr><td>'
+        '%(Document)s'
+        '</td><td>'
+        '<b>%(document_title)s</b>'
+        '</td></tr>'
+        '<tr><td>'
+        '%(Author)s'
+        '</td><td>'
+        '%(owner)s'
+        '</td></tr>'
+        '<tr><td>'
+        '%(AccessRights)s'
+        '</td><td>'
+        '%(right)s'
+        '</td></tr>'
+        '</table>'
+        '<div class="actions"><a class="button" href="%(link)s">'
+        '%(AccessTheDocument)s'
+        '</a></div>'
     ) % {
+        'body_html_title': body_html_title,
+        'Document': _('Document'),
+        'document_title': document_title,
+        'Author': _('Author'),
         'owner': owner,
+        'AccessRights': _('Access Rights'),
         'right': right,
-        'collaborator_name': collaborator_name,
         'link': link,
-        'document': document_title
-    }
-    body_html = _(
-        ('<p>Hey %(collaborator_name)s,<br>%(owner)s has shared the document '
-         '\'%(document)s\' with you and given you %(right)s access rights.</p>'
-         '<p>Access the document <a href="%(link)s">here</a>.</p>')
-    ) % {
-        'owner': owner,
-        'right': right,
-        'collaborator_name': collaborator_name,
-        'link': link,
-        'document': document_title
+        'AccessTheDocument': _('Access the document')
     }
     send_mail(
         _('Document shared:') +
         ' ' +
         document_title,
-        message_text,
-        settings.DEFAULT_FROM_EMAIL,
-        [collaborator_email],
-        fail_silently=True,
-        html_message=html_email(body_html)
-    )
-
-
-def send_share_upgrade_notification(request, doc_id, collaborator_id):
-    owner = request.user.readable_name
-    document = Document.objects.get(id=doc_id)
-    collaborator = User.objects.get(id=collaborator_id)
-    collaborator_name = collaborator.readable_name
-    collaborator_email = collaborator.email
-    link = HttpRequest.build_absolute_uri(request, document.get_absolute_url())
-    message_text = _(
-        ('Hey %(collaborator_name)s,\n%(owner)s has given you write access '
-         'rights to a Fidus Writer document.\nAccess the document through '
-         'this link: %(link)s')
-    ) % {
-        'owner': owner,
-        'collaborator_name': collaborator_name,
-        'link': link
-    }
-    body_html = _(
-        ('<p>Hey %(collaborator_name)s,<br>%(owner)s has given you write '
-         'access to a Fidus Writer document.</p>'
-         '<p>Access the document <a href="%(link)s">here</a>.</p>')
-    ) % {
-        'owner': owner,
-        'collaborator_name': collaborator_name,
-        'link': link
-    }
-    send_mail(
-        _('Fidus Writer document write access'),
         message_text,
         settings.DEFAULT_FROM_EMAIL,
         [collaborator_email],
@@ -298,29 +320,36 @@ def access_right_save_js(request):
                 if tgt_right == 'delete':
                     # Status 'delete' means the access right is marked for
                     # deletion.
-                    try:
-                        access_right = AccessRight.objects.get(
-                            document_id=doc_id, user_id=collaborator_id)
+                    access_right = AccessRight.objects.filter(
+                        document_id=doc_id, user_id=collaborator_id).first()
+                    if access_right:
                         access_right.delete()
-                    except ObjectDoesNotExist:
-                        pass
                 else:
-                    try:
-                        access_right = AccessRight.objects.get(
-                            document_id=doc_id, user_id=collaborator_id)
+                    access_right = AccessRight.objects.filter(
+                        document_id=doc_id, user_id=collaborator_id).first()
+                    if access_right:
                         if access_right.rights != tgt_right:
                             access_right.rights = tgt_right
-                            if tgt_right == 'write':
-                                send_share_upgrade_notification(
-                                    request, doc_id, collaborator_id)
-                    except ObjectDoesNotExist:
+                            send_share_notification(
+                                request,
+                                doc_id,
+                                collaborator_id,
+                                tgt_right,
+                                True
+                            )
+                    else:
                         access_right = AccessRight.objects.create(
                             document_id=doc_id,
                             user_id=collaborator_id,
                             rights=tgt_right,
                         )
                         send_share_notification(
-                            request, doc_id, collaborator_id, tgt_right)
+                            request,
+                            doc_id,
+                            collaborator_id,
+                            tgt_right,
+                            False
+                        )
                     access_right.save()
                 x += 1
         response['access_rights'] = get_accessrights(
@@ -523,7 +552,10 @@ def comment_notify_js(request):
     doc_id = request.POST['doc_id']
     collaborator_id = request.POST['collaborator_id']
     comment_text = request.POST['comment_text']
-    comment_html = request.POST['comment_html']
+    comment_html = bleach.clean(
+        request.POST['comment_html'],
+        strip=True
+    )
     notification_type = request.POST['type']
     collaborator = User.objects.filter(pk=collaborator_id).first()
     document = Document.objects.filter(pk=doc_id).first()
@@ -562,17 +594,14 @@ def comment_notify_js(request):
                'document': document_title,
                'comment_text': comment_text
         }
-        body_html = _(
-            ('<p>Hey %(collaborator_name)s,<br>%(commentator)s has mentioned '
-             'you in a comment in the document \'%(document)s\':</p>'
-             '%(comment_html)s'
-             '<p>Go to the document <a href="%(link)s">here</a>.</p>')
+
+        body_html_title = _(
+            ('Hey %(collaborator_name)s,<br>%(commentator)s has mentioned '
+             'you in a comment in the document \'%(document_title)s\'.')
         ) % {
             'commentator': commentator,
             'collaborator_name': collaborator_name,
-            'link': link,
-            'document': document_title,
-            'comment_html': comment_html
+            'document_title': document_title
         }
         message_title = _('Comment on :') + ' ' + document_title
     else:
@@ -587,19 +616,62 @@ def comment_notify_js(request):
                'document': document_title,
                'comment_text': comment_text
         }
-        body_html = _(
-            ('<p>Hey %(collaborator_name)s,<br>%(commentator)s has assigned '
-             'you to a comment in the document \'%(document)s\':</p>'
-             '%(comment_html)s'
-             '<p>Go to the document <a href="%(link)s">here</a>.</p>')
+        body_html_title = _(
+            ('Hey %(collaborator_name)s,<br>%(commentator)s has assigned you '
+             'to a comment in the document \'%(document_title)s\'.')
         ) % {
             'commentator': commentator,
             'collaborator_name': collaborator_name,
-            'link': link,
-            'document': document_title,
-            'comment_html': comment_html
+            'document_title': document_title
         }
         message_title = _('Comment assignment on :') + ' ' + document_title
+
+    body_html = _(
+        ('<p>Hey %(collaborator_name)s,<br>%(commentator)s has assigned '
+         'you to a comment in the document \'%(document)s\':</p>'
+         '%(comment_html)s'
+         '<p>Go to the document <a href="%(link)s">here</a>.</p>')
+    ) % {
+        'commentator': commentator,
+        'collaborator_name': collaborator_name,
+        'link': link,
+        'document': document_title,
+        'comment_html': comment_html
+    }
+
+    body_html = (
+        '<h1>%(body_html_title)s</h1>'
+        '<table>'
+        '<tr><td>'
+        '%(Document)s'
+        '</td><td>'
+        '<b>%(document_title)s</b>'
+        '</td></tr>'
+        '<tr><td>'
+        '%(Author)s'
+        '</td><td>'
+        '%(commentator)s'
+        '</td></tr>'
+        '<tr><td>'
+        '%(Comment)s'
+        '</td><td>'
+        '%(comment_html)s'
+        '</td></tr>'
+        '</table>'
+        '<div class="actions"><a class="button" href="%(link)s">'
+        '%(AccessTheDocument)s'
+        '</a></div>'
+    ) % {
+        'body_html_title': body_html_title,
+        'Document': _('Document'),
+        'document_title': document_title,
+        'Author': _('Author'),
+        'commentator': commentator,
+        'Comment': _('Comment'),
+        'comment_html': comment_html,
+        'link': link,
+        'AccessTheDocument': _('Access the document')
+    }
 
     send_mail(
         message_title,

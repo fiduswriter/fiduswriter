@@ -8,7 +8,7 @@ export class FigureDialog {
     constructor(editor) {
         this.editor = editor
         this.imageDB = this.editor.mod.db.imageDB
-        this.userImageDB = this.editor.user.imageDB
+        this.userImageDB = this.editor.app.imageDB
         this.imgId = false
         this.imgDb = false
         this.insideFigure = false

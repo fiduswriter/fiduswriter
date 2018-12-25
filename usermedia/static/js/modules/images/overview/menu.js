@@ -56,7 +56,7 @@ export let menuModel = () => ({
             title: gettext('Upload new image'),
             action: overview => {
                 let imageUpload = new ImageEditDialog(
-                    overview.imageDB
+                    overview.app.imageDB
                 )
                 imageUpload.init().then(
                     imageId => {

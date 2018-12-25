@@ -90,8 +90,8 @@ export class CitationDialog {
         Object.keys(this.editor.mod.db.bibDB.db).forEach(id => {
             data.push(this.createTableRow(this.editor.mod.db.bibDB.db[id], id, 'document', false))
         })
-        Object.keys(this.editor.user.bibDB.db).forEach(id => {
-            const bib = this.editor.user.bibDB.db[id]
+        Object.keys(this.editor.app.bibDB.db).forEach(id => {
+            const bib = this.editor.app.bibDB.db[id]
             if (!this.editor.mod.db.bibDB.hasReference(bib)) {
                 data.push(this.createTableRow(bib, id, 'user', false))
             }
@@ -307,7 +307,7 @@ export class CitationDialog {
                 if (db === 'user') {
                     // entry is from user's bibDB. We need to import it into the
                     // document's bibDB.
-                    const bib = this.editor.user.bibDB.db[id]
+                    const bib = this.editor.app.bibDB.db[id]
                     id = this.editor.mod.db.bibDB.addReference(bib, id)
                 }
                 const returnObj = {

@@ -2,6 +2,7 @@ body {
     counter-reset: figure-cat-0 figure-cat-1 figure-cat-2 footnote-counter footnote-marker-counter;
 }
 
+
 /* CSL */
 
 .csl-bib-body {
@@ -36,7 +37,7 @@ body {
 }
 
 .csl-entry {
-     clear: left;
+    clear: left;
 }
 
 .csl-left-margin {
@@ -89,13 +90,12 @@ figure img {
     max-width: 100%
 }
 
-
 figure {
-    width: 80%;
+    width: calc(80% - 12px);
     border: 1px solid black;
     padding: 5px;
     text-align: center;
-    -webkit-region-break-inside: avoid;
+    break-inside: avoid;
     cursor: pointer;
     margin: 10%;
 }
@@ -148,7 +148,51 @@ figure {
     content: ' ' counter(figure-cat-2) ': ';
 }
 
-.user-contents a, .user-contents a:hover {
+.user-contents a,
+.user-contents a:hover {
     color: #84b4a7;
     text-decoration: underline;
+}
+
+.table-25 {
+    width: 25%;
+}
+
+.table-50 {
+    width: 50%;
+}
+
+.table-75 {
+    width: 75%;
+}
+
+.table-100 {
+    width: 100%;
+}
+
+.table-center {
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+.table-left {
+    float: left;
+}
+
+.table-right {
+    float: right;
+}
+
+.user-contents a,
+.user-contents a:hover {
+    color: #84b4a7;
+    text-decoration: underline;
+}
+
+.layout-fixed {
+    table-layout: fixed !important;
+}
+
+.layout-auto {
+    table-layout: auto !important;
 }

@@ -407,15 +407,27 @@ spec.nodes = spec.nodes.update(
         spec.nodes.get("table"),
         {
             attrs: {
-                track: {default: []}
+                track: {default: []},
+                width:{default:"100"},
+                aligned:{default:'center'},
+                layout:{default:'fixed'}
             },
             parseDOM: [{tag: "table", getAttrs(dom) {
                 return {
-                    track: parseTracks(dom.dataset.track)
+                    track: parseTracks(dom.dataset.track),
+                    width: dom.dataset.width,
+                    aligned: dom.dataset.aligned,
+                    layout: dom.dataset.layout,
                 }
             }}],
             toDOM(node) {
-                const attrs = {}
+                const attrs ={}
+                attrs['data-width'] = node.attrs.width
+                attrs.class = `table-${node.attrs.width}`
+                attrs['data-aligned'] = node.attrs.aligned
+                attrs.class += ` table-${node.attrs.aligned}`
+                attrs['data-layout'] = node.attrs.layout
+                attrs.class += ` layout-${node.attrs.layout}`
                 if (node.attrs.track.length) {
                     attrs['data-track'] = JSON.stringify(node.attrs.track)
                 }

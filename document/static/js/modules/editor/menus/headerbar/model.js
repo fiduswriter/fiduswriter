@@ -12,6 +12,7 @@ import {PrintExporter} from "../../../exporter/print"
 import {RevisionDialog, LanguageDialog, TableDialog} from "../../dialogs"
 import {TEXT_ONLY_PARTS} from "../toolbar/model"
 import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from "../.."
+import {TableResizeDialog} from  "../../dialogs"
 
 // from https://github.com/ProseMirror/prosemirror-tables/blob/master/src/util.js
 const findTable = function(state) {
@@ -803,7 +804,19 @@ export const headerbarModel = () => ({
                         deleteTable(editor.currentView.state, editor.currentView.dispatch)
                     },
                     disabled: editor => !findTable(editor.currentView.state)
-                }
+                },
+                {
+                    title: gettext('Resize/Reposition'),
+                    type: 'action',
+                    tooltip: gettext('Resize/Reposition a table.'),
+                    order: 16,
+                    action: editor => {
+                        const dialog = new TableResizeDialog(editor)
+                        dialog.init()
+                        return false
+                    },
+                    disabled: editor => !findTable(editor.currentView.state)
+                },
             ]
         },
         {

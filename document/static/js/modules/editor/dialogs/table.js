@@ -1,5 +1,6 @@
-import {Dialog} from "../../common"
-import {tableInsertTemplate} from "./templates"
+import {Dialog, addDropdownBox} from "../../common"
+import {tableResizeTemplate,tableInsertTemplate} from "./templates"
+import {deleteTable} from "prosemirror-tables"
 
 export class TableDialog {
     constructor(editor) {
@@ -7,7 +8,7 @@ export class TableDialog {
         this.dialogEl = false
     }
 
-    init() {
+    init(){
         this.insertTableDialog()
     }
 
@@ -94,5 +95,134 @@ export class TableDialog {
             colCount = newCounts.colCount
         }))
 
+    }
+}
+
+export class TableResizeDialog {
+    constructor(editor) {
+        this.editor = editor
+        this.dialogEl = false
+        this.aligned='center'
+        this.width = '100'
+        this.layout = 'fixed'
+    }
+
+    init() {
+        let table = this.findTable(this.editor.currentView.state)
+        if(table){
+            this.width = table.attrs.width
+            this.aligned = table.attrs.aligned
+            this.layout = table.attrs.layout
+        }
+        this.insertDialog()
+    }
+
+    setTableAlignment() {
+        this.dialog.dialogEl.querySelector('#table-alignment-btn label').innerHTML =
+            document.getElementById(`table-alignment-${this.aligned}`).innerText
+    }
+
+    setTableWidth() {
+        this.dialog.dialogEl.querySelector('#table-width-btn label').innerHTML =
+            document.getElementById(`table-width-${this.width}`).innerText
+    }
+
+    setTableLayout() {
+        this.dialog.dialogEl.querySelector('#table-layout-btn label').innerHTML =
+            document.getElementById(`table-layout-${this.layout}`).innerText
+    }
+
+    findTable(state) {
+        const $head = state.selection.$head
+        for (let d = $head.depth; d > 0; d--) if ($head.node(d).type.spec.tableRole == "table") return $head.node(d)
+        return false
+    }
+
+    submitForm(){
+        let table = this.findTable(this.editor.currentView.state)
+        table.attrs.width = this.width
+        table.attrs['data-width'] = this.width
+        table.attrs.aligned = this.width == "100" ? "center" : this.aligned
+        table.attrs['data-aligned'] = this.width == "100" ? "center" : this.aligned
+        table.attrs['data-layout'] = this.layout
+        table.attrs.layout = this.layout
+        deleteTable(this.editor.currentView.state, this.editor.currentView.dispatch)
+        this.editor.currentView.dispatch(
+            this.editor.currentView.state.tr.replaceSelectionWith(
+                table
+            )
+        )
+    }
+
+    insertDialog() {
+        const buttons = []
+        buttons.push({
+            text: gettext('Update'),
+            classes: 'fw-dark',
+            click: () => {
+                this.submitForm()
+                this.dialog.close()
+            }
+        })
+        buttons.push({
+            type: 'cancel'
+        })
+
+        this.dialog = new Dialog({
+            title: gettext('Resize table'),
+            body: tableResizeTemplate(),
+            width: 300,
+            height: 260,
+            buttons,
+            onClose: () => this.editor.currentView.focus()
+        })
+
+        this.dialog.open()
+
+        this.setTableAlignment()
+        this.setTableWidth()
+        this.setTableLayout()
+
+        addDropdownBox(
+            document.getElementById('table-alignment-btn'),
+            document.getElementById('table-alignment-pulldown')
+        )
+
+        addDropdownBox(
+            document.getElementById('table-width-btn'),
+            document.getElementById('table-width-pulldown')
+        )
+
+        addDropdownBox(
+            document.getElementById('table-layout-btn'),
+            document.getElementById('table-layout-pulldown')
+        )
+
+        document.querySelectorAll('#table-alignment-pulldown li span').forEach(el => el.addEventListener(
+            'click',
+            event => {
+                event.preventDefault()
+                this.aligned = el.id.split('-')[2]
+                this.setTableAlignment()
+            }
+        ))
+
+        document.querySelectorAll('#table-width-pulldown li span').forEach(el => el.addEventListener(
+            'click',
+            event => {
+                event.preventDefault()
+                this.width = el.id.split('-')[2]
+                this.setTableWidth()
+            }
+        ))
+
+        document.querySelectorAll('#table-layout-pulldown li span').forEach(el => el.addEventListener(
+            'click',
+            event => {
+                event.preventDefault()
+                this.layout = el.id.split('-')[2]
+                this.setTableLayout()
+            }
+        ))
     }
 }

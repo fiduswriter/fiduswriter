@@ -15,7 +15,6 @@ node_modules/
 style/static/
 venv/
 .idea/
-/configuration.py
 fidus.db
 deploy
 base/static/zip/katex-style.zip
@@ -37,10 +36,3 @@ base/static/css/libs/
 *.swo
 /.transpile-time
 /package-lock.json
-/book
-/citation-api-import
-/languagetool
-/npm_mjs
-/ojs
-/phplist
-fiduswriter_plugins/

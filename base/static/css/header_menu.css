@@ -1,16 +1,27 @@
 .fw-header > .fw-container {
     z-index: 100;
     overflow: visible;
+    margin: 19.5px 0 21.5px;
 }
 
-.fw-logo {
-    margin: 30px 0 29px;
+.fw-logo, #header-nav {
+    display: inline-block;
 }
 
 .fw-logo > img {
     width: auto;
-    height: 25px;
-    margin-left: 2px;
+    height: 27px;
+    margin-left: 10.5px;
+}
+
+h1.fw-logo:before {
+    content: 'Fidus Writer';
+    font-family: 'Cookie', cursive;
+    color:  #fff;
+    font-size: 23pt;
+    line-height: 0;
+    position: relative;
+    top: -4px;
 }
 
 .fw-user-preferences {
@@ -26,10 +37,7 @@
 
 #header-nav {
     position: relative;
-    background-color: #fff;
-    border-top: solid 1px #8d8d8d;
-    border-bottom: solid 1px #cecece;
-    z-index: 1;
+    top: -8px;
 }
 
 .fw-nav-container {
@@ -40,27 +48,26 @@
     position: relative;
     display: inline-block;
     width: auto;
-    height: 40px;
-    margin-right: 18px;
+    margin-right: 22px;
 }
 .fw-nav-item.active-menu-wrapper:after {
     position: absolute;
     left: 50%;
-    top: 25px;
+    top: 34px;
     line-height: 100%;
     font-size: 24px;
     margin-left: -8px;
-    color: #f9f9f9;
-    text-shadow: 0 -1px 0px #b6b6b6;
+    color: #84b4a7;
 }
 
 .fw-nav-item a {
-    color: #a9abaa;
+    color: #fff;
+    opacity: 0.7;
     text-decoration: none;
 }
 
 .fw-nav-item a:hover, .fw-nav-item.active-menu-wrapper a {
-    color: #3a3e3d;
+    opacity: 1.0;
 }
 
 #user-preferences-pulldown {

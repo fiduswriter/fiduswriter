@@ -1,4 +1,5 @@
 /*For profile list*/
+
 .avatar {
     border-bottom-width: 4px;
     border-bottom-style: solid;
@@ -50,7 +51,7 @@
 
 #connected-collaborators img {
     width: 26px;
-    margin-left:4px;
+    margin-left: 4px;
 }
 
 #messageform.empty:before {

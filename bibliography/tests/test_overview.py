@@ -1,7 +1,12 @@
+# -*- coding: utf-8 -*-
 import os
 from test.testcases import LiveTornadoTestCase
 from test.selenium_helper import SeleniumHelper
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 
 from django.conf import settings
 
@@ -16,6 +21,7 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
         cls.driver = driver_data["drivers"][0]
         cls.client = driver_data["clients"][0]
         cls.driver.implicitly_wait(driver_data["wait_time"])
+        cls.wait_time = driver_data["wait_time"]
 
     @classmethod
     def tearDownClass(cls):
@@ -197,9 +203,8 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
             )
         )
         self.assertEqual(
-            "Lean UX: Applying lean principles to improve user experience",
-            driver.find_element_by_css_selector(
-                ".fw-document-table tr:nth-child(2) .edit-bib").text
+            'Lean UX: Applying lean principles to improve user experience',
+            book_title_el.text
         )
 
     def tearDown(self):

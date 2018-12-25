@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 from test.testcases import LiveTornadoTestCase
 from test.selenium_helper import SeleniumHelper
@@ -6,7 +5,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
 
 from django.conf import settings
 

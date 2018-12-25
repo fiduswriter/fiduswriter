@@ -100,15 +100,15 @@ figure {
     margin: 10%;
 }
 
-.aligned-right{
+.aligned-right {
     float: right;
 }
 
-.aligned-left{
+.aligned-left {
     float: left;
 }
 
-.aligned-center{
+.aligned-center {
     float: none;
     display: block;
     margin-left: auto;
@@ -116,22 +116,21 @@ figure {
     align-content: center;
 }
 
-.image-width-100{
+.image-width-100 {
     width: 70%;
 }
 
-.image-width-75{
+.image-width-75 {
     width: 55%;
 }
 
-.image-width-50{
+.image-width-50 {
     width: 40%;
 }
 
-.image-width-25{
+.image-width-25 {
     width: 20%;
 }
-
 
 .figure-cat-figure::after {
     counter-increment: figure-cat-0;

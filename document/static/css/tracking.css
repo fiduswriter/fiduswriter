@@ -2,20 +2,26 @@ span.deletion {
     text-decoration: line-through;
 }
 
-.selected-insertion, .selected-deletion, .selected-format_change, .selected-block_change {
+.selected-insertion,
+.selected-deletion,
+.selected-format_change,
+.selected-block_change {
     background-color: #fffacf;
 }
 
-.tag.selected-insertion, .contributor.selected-insertion, .tag.selected-deletion, .contributor.selected-deletion {
+.tag.selected-insertion,
+.contributor.selected-insertion,
+.tag.selected-deletion,
+.contributor.selected-deletion {
     background-color: #fffacf;
     color: #000;
 }
 
-.margin-box.track > div {
+.margin-box.track>div {
     padding: 10px;
 }
 
-.margin-box.track.active > div {
+.margin-box.track.active>div {
     padding: 0;
 }
 
@@ -35,7 +41,6 @@ span.deletion {
     position: relative;
 }
 
-
 [data-track]::before {
     content: '';
     position: absolute;
@@ -44,6 +49,7 @@ span.deletion {
     height: 22px;
 }
 
-li[data-track]::before, li [data-track]::before {
+li[data-track]::before,
+li [data-track]::before {
     left: -5px;
 }

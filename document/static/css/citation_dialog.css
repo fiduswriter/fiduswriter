@@ -1,4 +1,5 @@
-#cited-items h3, #my-sources h3 {
+#cited-items h3,
+#my-sources h3 {
     margin-bottom: 15px;
 }
 
@@ -15,11 +16,11 @@
     height: 33px;
 }
 
-#selected-cite-source-table .fw-document-table-title > span {
+#selected-cite-source-table .fw-document-table-title>span {
     width: 100px;
 }
 
-#cite-source-table .fw-document-table-title > span {
+#cite-source-table .fw-document-table-title>span {
     width: 128px;
 }
 
@@ -32,7 +33,7 @@
     padding-bottom: 5px;
 }
 
-.cite-extra-fields > div {
+.cite-extra-fields>div {
     margin-top: 10px;
 }
 

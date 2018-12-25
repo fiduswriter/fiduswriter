@@ -18,7 +18,8 @@
     outline-width: 0;
 }
 
-.tags-inner br, .contributors-inner br {
+.tags-inner br,
+.contributors-inner br {
     display: none
 }
 

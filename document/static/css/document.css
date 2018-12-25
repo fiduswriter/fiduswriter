@@ -162,10 +162,10 @@ figure {
     text-decoration: underline;
 }
 
-.layout-fixed {
+.table-fixed {
     table-layout: fixed !important;
 }
 
-.layout-auto {
+.table-auto {
     table-layout: auto !important;
 }

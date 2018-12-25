@@ -91,16 +91,19 @@ specNodes = specNodes.update(
             attrs: {
                 track: {default: []},
                 width: {default: '100'},
-                aligned: {default: 'center'}
+                aligned: {default: 'center'},
+                layout: {default: 'fixed'}
             },
             parseDOM: [{tag: "table", getAttrs(dom) {
                 const track = parseTracks(dom.dataset.track),
                     width = dom.dataset.width,
-                    aligned = width === '100' ? 'center' : dom.dataset.aligned
+                    aligned = width === '100' ? 'center' : dom.dataset.aligned,
+                    layout = dom.dataset.layout
                 return {
                     track,
                     width,
-                    aligned
+                    aligned,
+                    layout
                 }
             }}],
             toDOM(node) {
@@ -110,7 +113,8 @@ specNodes = specNodes.update(
                 }
                 attrs['data-width'] = node.attrs.width
                 attrs['data-aligned'] = node.attrs.aligned
-                attrs['class'] = `table-${node.attrs.width} table-${node.attrs.aligned}`
+                attrs['data-layout'] = node.attrs.layout
+                attrs['class'] = `table-${node.attrs.width} table-${node.attrs.aligned} table-${node.attrs.layout}`
                 return ["table", attrs, ["tbody", 0]]
             }
         }

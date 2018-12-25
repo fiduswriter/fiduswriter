@@ -1,6 +1,6 @@
 import {DocxExporter} from "../../exporter/docx"
 import {OdtExporter} from "../../exporter/odt"
-import * as bowser from "bowser/bowser"
+import bowser from "bowser"
 import {Dialog} from "../../common"
 
 export class ModDocumentTemplate {

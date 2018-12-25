@@ -174,6 +174,7 @@ export class DocumentTemplateDesigner {
                         }
                     }
                 }))
+                break
             default:
                 break
         }

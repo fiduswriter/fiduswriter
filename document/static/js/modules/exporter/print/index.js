@@ -52,7 +52,13 @@ export class PrintExporter extends HTMLExporter {
         ).then(
             () => this.postProcess()
         ).then(
-            ({html, title}) => vivliostylePrint(html, title, `${this.staticUrl}vivliostyle-resources/`)
+            ({html, title}) => vivliostylePrint(
+                html,
+                {
+                    title,
+                    resourcesUrl: `${this.staticUrl}vivliostyle-resources/`
+                }
+            )
         )
     }
 

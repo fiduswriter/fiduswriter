@@ -11,6 +11,8 @@ import {
     helpMenuContent,
     richtextPartSchema,
     richtextMenuContent,
+    tablePartSchema,
+    tableMenuContent,
     headingPartSchema,
     headingMenuContent,
     tagsPartSchema,
@@ -150,6 +152,10 @@ export class DocumentTemplateDesigner {
             case 'richtext':
                 schema = richtextPartSchema
                 menuContent = richtextMenuContent
+                break
+            case 'table':
+                schema = tablePartSchema
+                menuContent = tableMenuContent
                 break
             case 'heading':
                 schema = headingPartSchema

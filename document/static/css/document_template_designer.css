@@ -8,8 +8,16 @@ form .aligned ul.object-tools.right {
     background-color: white;
 }
 
+.to-column .smooth-dnd-draggable-wrapper {
+    overflow: visible !important;
+}
+
 .to-column {
     width: 650px;
+}
+
+.to-column .article-part table td {
+    border: 1px solid black;
 }
 
 .from-container {

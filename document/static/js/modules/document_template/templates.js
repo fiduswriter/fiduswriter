@@ -206,7 +206,7 @@ const tableTemplate = ({
             <select class="locking">
                 <option value="free" ${locking==='free' ? "selected" : ""}>${gettext('User can change contents')}</option>
                 <option value="fixed" ${locking==='fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
-                <option value="rows" ${locking==='rows' ? "selected" : ""}>${gettext('User can add/remove rows')}</option>
+                <option value="header" ${locking==='header' ? "selected" : ""}>${gettext('User can not change first row')}</option>
             </select>
         </div>
         <div class="label">${gettext('Optional')}

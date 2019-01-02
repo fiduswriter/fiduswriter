@@ -22,16 +22,9 @@ export const documentTemplatePlugin = function(options) {
             let allowedElements = false, allowedMarks = false
 
             ranges.forEach(range => tr.doc.nodesBetween(range.from, range.to, (node, pos, parent, index) => {
-                let partNode
                 if (parent===tr.doc.firstChild) {
                     allowedElements = node.attrs.elements ? node.attrs.elements.concat('table_row', 'table_cell', 'list_item', 'text') : false
                     allowedMarks = node.attrs.marks ? node.attrs.marks.concat('insertion', 'deletion', 'comment') : false
-                    partNode = true
-                }
-                if (pos < range.from || node === tr.doc.firstChild) {
-                    return true
-                }
-                if (partNode) {
                     const oldNode = state.doc.firstChild.child(index)
                     if (
                         oldNode.type !== node.type ||
@@ -48,13 +41,17 @@ export const documentTemplatePlugin = function(options) {
                     ) {
                         allowed = false
                     } else if (
-                        node.type.name === 'part_table' &&
-                        node.attrs.locking === 'rows' &&
-                        node.firstChild.childCount !== oldNode.firstChild.childCount
+                        node.type.name === 'table_part' &&
+                        node.attrs.locking === 'header' &&
+                        !node.firstChild.firstChild.eq(oldNode.firstChild.firstChild)
                     ) {
                         allowed = false
                     }
-                } else if (
+                }
+                if (pos < range.from || node === tr.doc.firstChild) {
+                    return true
+                }
+                if (
                     allowedElements &&
                     !allowedElements.includes(node.type.name)
                 ) {

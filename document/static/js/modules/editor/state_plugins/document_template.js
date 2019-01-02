@@ -47,6 +47,7 @@ export const documentTemplatePlugin = function(options) {
                     ) {
                         allowed = false
                     }
+                    return true
                 }
                 if (pos < range.from || node === tr.doc.firstChild) {
                     return true

@@ -114,7 +114,7 @@ export class Editor {
     // A class that contains everything that happens on the editor page.
     // It is currently not possible to initialize more than one editor class, as it
     // contains bindings to menu items, etc. that are uniquely defined.
-    constructor(id, {app, staticUrl, websocketUrl, user}) {
+    constructor({app, staticUrl, websocketUrl, user}, idString) {
         this.app = app
         this.staticUrl = staticUrl
         this.websocketUrl = websocketUrl
@@ -126,13 +126,22 @@ export class Editor {
         this.waitingForDocument = true
 
         this.docInfo = {
-            id,
             rights: '',
             owner: undefined,
             is_owner: false,
             confirmedDoc: false, // The latest doc as confirmed by the server.
             dir: 'ltr' // standard direction, used in input fields, etc.
         }
+        let id = parseInt(idString)
+        if (isNaN(id)) {
+            id = 0
+            let template = parseInt(idString.slice(1))
+            if(isNaN(template)) {
+                template = 0
+            }
+            this.docInfo.template = template
+        }
+        this.docInfo.id = id
         this.schema = docSchema
 
         this.menu = {

@@ -29,11 +29,8 @@ export class App {
                 }
             },
             "document": pathnameParts => {
-                let id = parseInt(pathnameParts[2])
-                if (isNaN(id)) {
-                    id = 0
-                }
-                return new Editor(id, this.config)
+                const id = pathnameParts[2]
+                return new Editor(this.config, id)
             },
             "": () => new DocumentOverview(this.config)
         }

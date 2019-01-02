@@ -30,8 +30,17 @@ class DocumentTemplateAdmin(admin.ModelAdmin):
 
     def duplicate(self, request, queryset):
         for template in queryset:
+            document_styles = list(template.document_styles.all())
+            citation_styles = list(template.citation_styles.all())
+            export_templates = list(template.export_templates.all())
             template.pk = None
             template.save()
+            for ds in document_styles:
+                template.document_styles.add(ds)
+            for cs in citation_styles:
+                template.citation_styles.add(cs)
+            for et in export_templates:
+                template.export_templates.add(et)
     duplicate.short_description = _("Duplicate selected document templates")
 
 

@@ -11,3 +11,13 @@
     background: #76a698;
     border: 10px solid #7d948e;
 }
+
+.testing  {
+    width: 50px;
+    height: 20px;
+    color: #424242;
+    position: absolute;
+    right: 5px;
+    cursor: pointer;
+   
+   }

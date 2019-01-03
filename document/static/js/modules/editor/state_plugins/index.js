@@ -76,3 +76,9 @@ export {
     settingsPlugin
 }
 from "./settings"
+
+export {
+    tableMenuPlugin,
+    TableView
+}
+from "./tableMenu"

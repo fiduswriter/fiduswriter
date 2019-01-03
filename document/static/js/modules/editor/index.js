@@ -96,7 +96,8 @@ import {
     placeholdersPlugin,
     settingsPlugin,
     toolbarPlugin,
-    trackPlugin
+    trackPlugin,
+    tableMenuPlugin
 } from "./state_plugins"
 import {
     buildEditorKeymap
@@ -161,7 +162,8 @@ export class Editor {
             [clipboardPlugin, () => ({editor: this, viewType: 'main'})],
             [accessRightsPlugin, () => ({editor: this})],
             [settingsPlugin, () => ({editor: this})],
-            [trackPlugin, () => ({editor: this})]
+            [trackPlugin, () => ({editor: this})],
+            [tableMenuPlugin, () => ({editor: this})],
         ]
     }
 
@@ -181,7 +183,8 @@ export class Editor {
             'citation_dialog.css',
             'review.css',
             'add_remove_dialog.css',
-            'bibliography.css'
+            'bibliography.css',
+            'tags.css'
         ], this.staticUrl)
         whenReady().then(() => {
             new ModCitations(this)

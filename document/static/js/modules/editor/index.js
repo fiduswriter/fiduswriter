@@ -348,7 +348,8 @@ export class Editor {
 
         document.getElementById('flow').classList.remove('hide')
         // Set document in prosemirror
-        this.view.updateState(EditorState.create(stateConfig))
+        this.view.setProps({state: EditorState.create(stateConfig)})
+        this.view.setProps({nodeViews: {}}) 
 
         // Set initial confirmed doc
         this.docInfo.confirmedDoc = this.view.state.doc

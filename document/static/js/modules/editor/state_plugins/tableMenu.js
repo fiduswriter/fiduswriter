@@ -10,10 +10,10 @@ const key = new PluginKey('tableMenu')
 const doc = {content: 'tableMenu'},
     tableMenu = {
         content: 'inline*',
-        parseDOM: [{tag: 'div.tag-input-editor'}],
+        parseDOM: [{table: ''}],
         toDOM() {
             return ["div", {
-                class: 'tag-input-editor'
+                class: ''
             }, 0]
         }
     },
@@ -112,7 +112,7 @@ const submitTag = (tagState, dispatch, tagInputView, view, getPos) => {
 
 const createTagInputEditor = (view, getPos, node) => {
     const dom = document.createElement('div')
-    dom.classList.add('tag-input')
+    dom.classList.add('tag')
     dom.setAttribute('contenteditable', false)
     const tagInputView = new EditorView(dom, {
         state: EditorState.create({
@@ -120,44 +120,15 @@ const createTagInputEditor = (view, getPos, node) => {
             doc: schema.nodeFromJSON({
                 type: 'doc',
                 content:[{
-                    type: 'tag',
+                    type: 'tableMenu',
                     content: []
                 }]
             }),
             plugins: [
-                history(),
-                //placeholderPlugin(node.attrs.item_title),
-                //pastePlugin(view),
-                keymap({
-                    "Mod-z": undo,
-                    "Mod-shift-z": undo,
-                    "Mod-y": redo,
-                    "Enter": (state, dispatch, tagInputView) =>
-                        submitTag(state, dispatch, tagInputView, view, getPos),
-                    ",": (state, dispatch, tagInputView) =>
-                        submitTag(state, dispatch, tagInputView, view, getPos),
-                    ";": (state, dispatch, tagInputView) =>
-                        submitTag(state, dispatch, tagInputView, view, getPos)
-                })
+                
             ]
         }),
         handleDOMEvents: {
-            blur: (tagInputView, event) => {
-                event.preventDefault()
-                // Set a timeout so that change of focus can take place first
-                window.setTimeout(() => {
-                    submitTag(tagInputView.state, undefined, tagInputView, view, getPos)
-                }, 1)
-            },
-            focus: (tagInputView, event) => {
-                const startPos = getPos(),
-                    pos = startPos + view.state.doc.nodeAt(startPos).nodeSize - 1,
-                    $pos = view.state.doc.resolve(pos)
-                view.dispatch(
-                    view.state.tr.setSelection(new TextSelection($pos))
-                )
-                tagInputView.focus()
-            }
         },
         dispatchTransaction: tr => {
             const newState = tagInputView.state.apply(tr)
@@ -167,58 +138,22 @@ const createTagInputEditor = (view, getPos, node) => {
     return [dom, tagInputView]
 }
 
+
+
 export class TableView {
     constructor(node, view, getPos) {
-        console.log("hi")
         this.node = node
         this.view = view
         this.getPos = getPos
         this.dom = document.createElement('div')
-        this.dom.classList.add('article-part')
-        this.dom.classList.add(`article-${this.node.type.name}`)
-        this.dom.classList.add(`article-${this.node.attrs.id}`)
-        if (node.attrs.hidden) {
-            this.dom.dataset.hidden = true
-        }
-        const [tagInputDOM, tagInputView] = createTagInputEditor(view, getPos, node)
-        this.tagInputView = tagInputView
-        this.contentDOM = document.createElement('span')
-        this.contentDOM.classList.add('tags-inner')
-        this.dom.appendChild(this.contentDOM)
-        this.dom.appendChild(tagInputDOM)
+        this.dom.insertAdjacentHTML(
+            'beforeend',
+            `<button class="fw-button fw-light">${gettext('Add')}...</button>`
+        )
+         
     }
 
     stopEvent(event) {
-        if (['click', 'mousedown'].includes(event.type)) {
-            return false
-        } else if (
-            event.type==='keydown' &&
-            event.key==='ArrowRight' &&
-            this.tagInputView.state.selection.from ===
-                this.tagInputView.state.doc.nodeSize-3
-        ) {
-            this.view.focus()
-            const startPos = this.getPos(),
-                pos = startPos + this.view.state.doc.nodeAt(startPos).nodeSize,
-                $pos = this.view.state.doc.resolve(pos)
-            this.view.dispatch(
-                this.view.state.tr.setSelection(new TextSelection($pos))
-            )
-            return false
-        } else if (
-            event.type==='keydown' &&
-            event.key==='ArrowLeft' &&
-            this.tagInputView.state.selection.to === 1
-        ) {
-            this.view.focus()
-            const startPos = this.getPos(),
-                pos = startPos + this.view.state.doc.nodeAt(startPos).nodeSize - 1,
-                $pos = this.view.state.doc.resolve(pos)
-            this.view.dispatch(
-                this.view.state.tr.setSelection(new TextSelection($pos))
-            )
-            return false
-        }
         return true
     }
 
@@ -235,7 +170,7 @@ export const tableMenuPlugin = function(options) {
         state: {
             init(config, state) {
                 if (options.editor.docInfo.access_rights === 'write') {
-                    this.spec.props.nodeViews['table_menu'] =
+                    this.spec.props.nodeViews['table'] =
                         (node, view, getPos) => new TableView(node, view, getPos)
                 }
 

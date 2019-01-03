@@ -110,47 +110,17 @@ const submitTag = (tagState, dispatch, tagInputView, view, getPos) => {
 }
 
 
-const createTagInputEditor = (view, getPos, node) => {
-    const dom = document.createElement('div')
-    dom.classList.add('tag')
-    dom.setAttribute('contenteditable', false)
-    const tagInputView = new EditorView(dom, {
-        state: EditorState.create({
-            schema,
-            doc: schema.nodeFromJSON({
-                type: 'doc',
-                content:[{
-                    type: 'tableMenu',
-                    content: []
-                }]
-            }),
-            plugins: [
-                
-            ]
-        }),
-        handleDOMEvents: {
-        },
-        dispatchTransaction: tr => {
-            const newState = tagInputView.state.apply(tr)
-            tagInputView.updateState(newState)
-        }
-    })
-    return [dom, tagInputView]
-}
-
-
-
 export class TableView {
     constructor(node, view, getPos) {
         this.node = node
         this.view = view
         this.getPos = getPos
-        this.dom = document.createElement('div')
-        this.dom.insertAdjacentHTML(
-            'beforeend',
-            `<button class="fw-button fw-light">${gettext('Add')}...</button>`
-        )
-         
+        this.dom = document.createElement("div")
+        var a = document.createElement("button")
+        a.className = "testing"
+        this.dom.appendChild(a)
+        this.contentDOM = this.dom.appendChild(document.createElement("table"))
+        this.dom.appendChild(this.contentDOM)
     }
 
     stopEvent(event) {

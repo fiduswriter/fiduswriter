@@ -290,16 +290,15 @@ export class DocumentTemplateDesigner {
             }
         )
 
-        const submitButtons = Array.from(document.querySelectorAll('div.submit-row input[type=submit]')),
-            toggleEditorButton = document.getElementById('toggle-editor')
+        Array.from(document.querySelectorAll('div.submit-row input[type=submit]')).forEach(
+            button => button.addEventListener('click', event => {
+                if (this.definitionTextarea.style.display==='none' && !this.setCurrentValue()) {
+                    event.preventDefault()
+                    }
+            })
+        )
 
-        submitButtons.forEach(button => button.addEventListener('click', event => {
-            if (this.definitionTextarea.style.display==='none' && !this.setCurrentValue()) {
-                event.preventDefault()
-            }
-        }))
-
-        toggleEditorButton.addEventListener('click', event => {
+        document.getElementById('toggle-editor').addEventListener('click', event => {
             event.preventDefault()
             if (this.definitionTextarea.style.display==='none') {
                 this.definitionTextarea.style.display=''

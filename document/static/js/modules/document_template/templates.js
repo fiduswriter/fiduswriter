@@ -30,8 +30,52 @@ const headingTemplate = ({
                 <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </div>
-        <div class="label">${gettext('Whitelist elements')} <input type="text" class="elements" value="${escapeText(attrs.elements.join(' '))}"></div>
-        <div class="label">${gettext('Whitelist marks')} <input type="text" class="marks" value="${escapeText(attrs.marks.join(' '))}"></div>
+        <div class="label">
+            ${gettext('Allowed elements')}
+        </div>
+        <label>
+            <input type="checkbox" class="elements" value="heading1" ${attrs.elements.includes('heading1') ? 'checked' : ''}/>
+            ${gettext('Heading 1')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="heading2" ${attrs.elements.includes('heading2') ? 'checked' : ''}/>
+            ${gettext('Heading 2')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="heading3" ${attrs.elements.includes('heading3') ? 'checked' : ''}/>
+            ${gettext('Heading 3')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="heading4" ${attrs.elements.includes('heading4') ? 'checked' : ''}/>
+            ${gettext('Heading 4')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="heading5" ${attrs.elements.includes('heading5') ? 'checked' : ''}/>
+            ${gettext('Heading 5')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="heading6" ${attrs.elements.includes('heading6') ? 'checked' : ''}/>
+            ${gettext('Heading 6')}
+        </label>
+        <div class="label">
+            ${gettext('Allowed marks')}
+        </div>
+        <label>
+            <input type="checkbox" class="marks" value="strong" ${attrs.marks.includes('strong') ? 'checked' : ''}/>
+            ${gettext('Strong')}
+        </label>
+        <label>
+            <input type="checkbox" class="marks" value="em" ${attrs.marks.includes('em') ? 'checked' : ''}/>
+            ${gettext('Emphasis')}
+        </label>
+        <label>
+            <input type="checkbox" class="marks" value="mark" ${attrs.marks.includes('mark') ? 'checked' : ''}/>
+            ${gettext('Mark')}
+        </label>
+        <label>
+            <input type="checkbox" class="marks" value="link" ${attrs.marks.includes('link') ? 'checked' : ''}/>
+            ${gettext('Link')}
+        </label>
         <div class="label">${gettext('Language')}
             <select class="language">
                 <option value="false" ${language===false ? "selected" : ""}>${gettext('Document language')}</option>
@@ -122,8 +166,92 @@ const richtextTemplate = ({
                 <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </div>
-        <div class="label">${gettext('Whitelist elements')} <input type="text" class="elements" value="${escapeText(attrs.elements.join(' '))}"></div>
-        <div class="label">${gettext('Whitelist marks')} <input type="text" class="marks" value="${escapeText(attrs.marks.join(' '))}"></div>
+        <div class="label">
+            ${gettext('Allowed elements')}
+        </div>
+        <label>
+            <input type="checkbox" class="elements" value="heading1" ${attrs.elements.includes('heading1') ? 'checked' : ''}/>
+            ${gettext('Heading 1')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="heading2" ${attrs.elements.includes('heading2') ? 'checked' : ''}/>
+            ${gettext('Heading 2')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="heading3" ${attrs.elements.includes('heading3') ? 'checked' : ''}/>
+            ${gettext('Heading 3')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="heading4" ${attrs.elements.includes('heading4') ? 'checked' : ''}/>
+            ${gettext('Heading 4')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="heading5" ${attrs.elements.includes('heading5') ? 'checked' : ''}/>
+            ${gettext('Heading 5')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="heading6" ${attrs.elements.includes('heading6') ? 'checked' : ''}/>
+            ${gettext('Heading 6')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="paragraph" ${attrs.elements.includes('paragraph') ? 'checked' : ''}/>
+            ${gettext('Paragraph')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="figure" ${attrs.elements.includes('figure') ? 'checked' : ''}/>
+            ${gettext('Figure')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="ordered_list" ${attrs.elements.includes('ordered_list') ? 'checked' : ''}/>
+            ${gettext('Ordered list')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="bullet_list" ${attrs.elements.includes('bullet_list') ? 'checked' : ''}/>
+            ${gettext('Bullet list')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="horizontal_rule" ${attrs.elements.includes('horizontal_rule') ? 'checked' : ''}/>
+            ${gettext('Horizontal rule')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="equation" ${attrs.elements.includes('equation') ? 'checked' : ''}/>
+            ${gettext('Equation')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="citation" ${attrs.elements.includes('citation') ? 'checked' : ''}/>
+            ${gettext('Citation')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="blockquote" ${attrs.elements.includes('blockquote') ? 'checked' : ''}/>
+            ${gettext('Blockquote')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="footnote" ${attrs.elements.includes('footnote') ? 'checked' : ''}/>
+            ${gettext('Footnote')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="table" ${attrs.elements.includes('table') ? 'checked' : ''}/>
+            ${gettext('Table')}
+        </label>
+        <div class="label">
+            ${gettext('Allowed marks')}
+        </div>
+        <label>
+            <input type="checkbox" class="marks" value="strong" ${attrs.marks.includes('strong') ? 'checked' : ''}/>
+            ${gettext('Strong')}
+        </label>
+        <label>
+            <input type="checkbox" class="marks" value="em" ${attrs.marks.includes('em') ? 'checked' : ''}/>
+            ${gettext('Emphasis')}
+        </label>
+        <label>
+            <input type="checkbox" class="marks" value="mark" ${attrs.marks.includes('mark') ? 'checked' : ''}/>
+            ${gettext('Mark')}
+        </label>
+        <label>
+            <input type="checkbox" class="marks" value="link" ${attrs.marks.includes('link') ? 'checked' : ''}/>
+            ${gettext('Link')}
+        </label>
         <div class="label">${gettext('Language')}
             <select class="language">
                 <option value="false" ${language===false ? "selected" : ""}>${gettext('Document language')}</option>
@@ -216,8 +344,92 @@ const tableTemplate = ({
                 <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </div>
-        <div class="label">${gettext('Whitelist elements')} <input type="text" class="elements" value="${escapeText(attrs.elements.join(' '))}"></div>
-        <div class="label">${gettext('Whitelist marks')} <input type="text" class="marks" value="${escapeText(attrs.marks.join(' '))}"></div>
+        <div class="label">
+            ${gettext('Allowed elements')}
+        </div>
+        <label>
+            <input type="checkbox" class="elements" value="heading1" ${attrs.elements.includes('heading1') ? 'checked' : ''}/>
+            ${gettext('Heading 1')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="heading2" ${attrs.elements.includes('heading2') ? 'checked' : ''}/>
+            ${gettext('Heading 2')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="heading3" ${attrs.elements.includes('heading3') ? 'checked' : ''}/>
+            ${gettext('Heading 3')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="heading4" ${attrs.elements.includes('heading4') ? 'checked' : ''}/>
+            ${gettext('Heading 4')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="heading5" ${attrs.elements.includes('heading5') ? 'checked' : ''}/>
+            ${gettext('Heading 5')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="heading6" ${attrs.elements.includes('heading6') ? 'checked' : ''}/>
+            ${gettext('Heading 6')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="paragraph" ${attrs.elements.includes('paragraph') ? 'checked' : ''}/>
+            ${gettext('Paragraph')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="figure" ${attrs.elements.includes('figure') ? 'checked' : ''}/>
+            ${gettext('Figure')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="ordered_list" ${attrs.elements.includes('ordered_list') ? 'checked' : ''}/>
+            ${gettext('Ordered list')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="bullet_list" ${attrs.elements.includes('bullet_list') ? 'checked' : ''}/>
+            ${gettext('Bullet list')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="horizontal_rule" ${attrs.elements.includes('horizontal_rule') ? 'checked' : ''}/>
+            ${gettext('Horizontal rule')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="equation" ${attrs.elements.includes('equation') ? 'checked' : ''}/>
+            ${gettext('Equation')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="citation" ${attrs.elements.includes('citation') ? 'checked' : ''}/>
+            ${gettext('Citation')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="blockquote" ${attrs.elements.includes('blockquote') ? 'checked' : ''}/>
+            ${gettext('Blockquote')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="footnote" ${attrs.elements.includes('footnote') ? 'checked' : ''}/>
+            ${gettext('Footnote')}
+        </label>
+        <label>
+            <input type="checkbox" class="elements" value="table" ${attrs.elements.includes('table') ? 'checked' : ''}/>
+            ${gettext('Table')}
+        </label>
+        <div class="label">
+            ${gettext('Allowed marks')}
+        </div>
+        <label>
+            <input type="checkbox" class="marks" value="strong" ${attrs.marks.includes('strong') ? 'checked' : ''}/>
+            ${gettext('Strong')}
+        </label>
+        <label>
+            <input type="checkbox" class="marks" value="em" ${attrs.marks.includes('em') ? 'checked' : ''}/>
+            ${gettext('Emphasis')}
+        </label>
+        <label>
+            <input type="checkbox" class="marks" value="mark" ${attrs.marks.includes('mark') ? 'checked' : ''}/>
+            ${gettext('Mark')}
+        </label>
+        <label>
+            <input type="checkbox" class="marks" value="link" ${attrs.marks.includes('link') ? 'checked' : ''}/>
+            ${gettext('Link')}
+        </label>
         <div class="label">${gettext('Language')}
             <select class="language">
                 <option value="false" ${language===false ? "selected" : ""}>${gettext('Document language')}</option>

@@ -98,8 +98,8 @@ export class DocumentTemplateDesigner {
                     case 'richtext':
                     case 'table':
                     case 'heading':
-                        attrs['elements'] = el.querySelector('.elements').value.split(' ')
-                        attrs['marks'] = el.querySelector('.marks').value.split(' ')
+                        attrs['elements'] = Array.from(el.querySelectorAll('.elements:checked')).map(el => el.value)
+                        attrs['marks'] = Array.from(el.querySelectorAll('.marks:checked')).map(el => el.value)
                         language = el.querySelector('.language').value
                         if (language !== 'false') {
                             values['language'] = language

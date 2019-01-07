@@ -7,7 +7,7 @@
     "language": "true_off",
     "attrs": {
         "elements": ["heading1"],
-        "marks": ["strong", "em", "highlight", "underline", "link"]
+        "marks": ["strong", "em", "link"]
     }
 }, {
     "type": "contributors",
@@ -26,8 +26,8 @@
     "optional": "true_off",
     "language": "true_off",
     "attrs": {
-        "elements": ["paragraph", "heading", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote", "table"],
-        "marks": ["strong", "em", "highlight", "underline", "link"]
+        "elements": ["heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "paragraph", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote", "table"],
+        "marks": ["strong", "em", "link"]
     }
 }, {
     "type": "tags",
@@ -45,7 +45,7 @@
     "locking": "free",
     "optional": "false",
     "attrs": {
-        "elements": ["paragraph", "heading", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote", "table"],
-        "marks": ["strong", "em", "highlight", "underline", "link"]
+        "elements": ["heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "paragraph", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote", "table"],
+        "marks": ["strong", "em", "link"]
     }
 }]

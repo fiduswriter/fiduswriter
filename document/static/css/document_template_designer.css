@@ -43,8 +43,9 @@ form .aligned ul.object-tools.right {
 }
 
 .attrs label {
-    display: block;
-    width: 100%;
+    display: inline-block;
+    width: initial;
+    float: initial;
 }
 
 table td {

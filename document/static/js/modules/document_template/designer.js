@@ -249,10 +249,9 @@ export class DocumentTemplateDesigner {
     }
 
     bind() {
-        const fromContainerEl = document.querySelector('.from-container'),
-            toContainerEl = document.querySelector('.to-container'),
-            trashEl = document.querySelector('.trash'),
-            fromContainer = new Sortable(fromContainerEl, {
+        new Sortable(
+            document.querySelector('.from-container'),
+            {
                 group: {
                     name: 'document',
                     pull: 'clone',
@@ -260,8 +259,11 @@ export class DocumentTemplateDesigner {
                 },
                 sort: false,
                 handle: '.title'
-            }),
-            toContainer = new Sortable(toContainerEl, {
+            }
+        )
+        new Sortable(
+            document.querySelector('.to-container'),
+            {
                 group: {
                     name: 'document',
                     pull: true,
@@ -274,18 +276,21 @@ export class DocumentTemplateDesigner {
                         event.item.dataset.type
                     )
                 }
-            }),
-            trash = new Sortable(trashEl, {
+            }
+        )
+        new Sortable(
+            document.querySelector('.trash'),
+            {
                 group: {
                     name: 'document',
                     put: true
                 },
                 handle: '.title',
-                onAdd: () => {
-                    trashEl.innerHTML = ''
-                }
-            }),
-            submitButtons = Array.from(document.querySelectorAll('div.submit-row input[type=submit]')),
+                onAdd: event => event.to.removeChild(event.to.firstElementChild) // Remove the item that was just added
+            }
+        )
+
+        const submitButtons = Array.from(document.querySelectorAll('div.submit-row input[type=submit]')),
             toggleEditorButton = document.getElementById('toggle-editor')
 
         submitButtons.forEach(button => button.addEventListener('click', event => {

@@ -1,4 +1,5 @@
 import {escapeText} from "../../common"
+import {tableMenuModel} from './tableMenu'
 
 export const linkDialogTemplate = ({defaultLink, internalTargets, link, linkTitle}) =>
     `${
@@ -161,6 +162,23 @@ export const tableResizeTemplate =() =>
         </div>
 
     </div>`
+
+export const tableMenuTemplate = (options) => {
+    return `
+    <div>
+        <ul class="menu-list">
+        ${
+            tableMenuModel().content.map(menuItem =>
+                    menuItem.type == "separator"?'<hr/>': `<li data-index="${menuItem.order}" class="menu-item${menuItem.disabled && menuItem.disabled(options.editor) ? ' disabled' : ''}"
+                                                            title='${menuItem.tooltip}'>${typeof menuItem.title === 'function' ? menuItem.title(options.editor) : menuItem.title}</li>`
+            ).join('')
+        }
+        </ul>
+    </div>
+    `
+}
+
+
 export const mathDialogTemplate = () =>
 
     `<div title="${gettext("Math")}">

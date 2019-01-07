@@ -1,7 +1,12 @@
-import SmoothDND from "smooth-dnd"
+import Sortable from "sortablejs"
 import {EditorState, Plugin} from "prosemirror-state"
 import {EditorView} from "prosemirror-view"
-import {exampleSetup} from "prosemirror-example-setup"
+import {keymap} from "prosemirror-keymap"
+import {history} from "prosemirror-history"
+import {baseKeymap} from "prosemirror-commands"
+import {gapCursor} from "prosemirror-gapcursor"
+import {menuBar} from "prosemirror-menu"
+import {buildKeymap, buildInputRules} from "prosemirror-example-setup"
 import {TagsView, ContributorsView} from "../editor/state_plugins"
 
 import {documentConstructorTemplate, templateEditorValueTemplate, toggleEditorButtonTemplate} from "./templates"
@@ -143,7 +148,17 @@ export class DocumentTemplateDesigner {
             helpView = new EditorView(helpEl, {
                 state: EditorState.create({
                     doc: helpDoc,
-                    plugins: exampleSetup({schema: helpSchema, menuContent: helpMenuContent})
+                    plugins: [
+                        buildInputRules(helpSchema),
+                        keymap(buildKeymap(helpSchema)),
+                        keymap(baseKeymap),
+                        gapCursor(),
+                        menuBar({
+                            floating: false,
+                            content: helpMenuContent
+                        }),
+                        history()
+                    ]
                 })
             })
         this.editors.push([helpEl, helpView])
@@ -188,7 +203,17 @@ export class DocumentTemplateDesigner {
         if (!schema) {
            return
         }
-
+        plugins.unshift(
+            buildInputRules(schema),
+            keymap(buildKeymap(schema)),
+            keymap(baseKeymap),
+            gapCursor(),
+            menuBar({
+                floating: false,
+                content: menuContent
+            }),
+            history()
+        )
         const initialEl = el.querySelector('.initial'),
             doc = initial ?
                 schema.nodeFromJSON({
@@ -202,7 +227,7 @@ export class DocumentTemplateDesigner {
             initialView = new EditorView(initialEl, {
                 state: EditorState.create({
                     doc,
-                    plugins: exampleSetup({schema, menuContent}).concat(plugins)
+                    plugins
                 })
             })
         this.editors.push([initialEl, initialView])
@@ -227,36 +252,38 @@ export class DocumentTemplateDesigner {
         const fromContainerEl = document.querySelector('.from-container'),
             toContainerEl = document.querySelector('.to-container'),
             trashEl = document.querySelector('.trash'),
-            fromContainer = SmoothDND(fromContainerEl, {
-                behaviour: 'copy',
-                groupName: 'document',
-                shouldAcceptDrop: () => false,
-                dragHandleSelector: '.title'
+            fromContainer = new Sortable(fromContainerEl, {
+                group: {
+                    name: 'document',
+                    pull: 'clone',
+                    put: false
+                },
+                sort: false,
+                handle: '.title'
             }),
-            fromContainerHTML = fromContainerEl.innerHTML,
-            toContainer = SmoothDND(toContainerEl, {
-                groupName: 'document',
-                dragHandleSelector: '.title',
-                onDrop: event => {
-                    if (event.removedIndex===null) {
-                        fromContainerEl.innerHTML = fromContainerHTML
-                        this.setupEditors(
-                            event.droppedElement,
-                            event.droppedElement.dataset.type
-                        )
-                    }
+            toContainer = new Sortable(toContainerEl, {
+                group: {
+                    name: 'document',
+                    pull: true,
+                    put: true
+                },
+                handle: '.title',
+                onAdd: event => {
+                    this.setupEditors(
+                        event.item,
+                        event.item.dataset.type
+                    )
                 }
             }),
-            trash = SmoothDND(trashEl, {
-                behaviour: 'move',
-                groupName: 'document',
-                dragHandleSelector: '.title',
-                onDrop: () => {
-                    trashEl.innerHTML = ''
-                    trashEl.classList.remove('selected')
+            trash = new Sortable(trashEl, {
+                group: {
+                    name: 'document',
+                    put: true
                 },
-                onDragEnter: () => trashEl.classList.add('selected'),
-                onDragLeave: () => trashEl.classList.remove('selected')
+                handle: '.title',
+                onAdd: () => {
+                    trashEl.innerHTML = ''
+                }
             }),
             submitButtons = Array.from(document.querySelectorAll('div.submit-row input[type=submit]')),
             toggleEditorButton = document.getElementById('toggle-editor')

@@ -29,20 +29,16 @@ form .aligned ul.object-tools.right {
     width: 100px
 }
 
-.trash.selected {
-    background-color: black;
-}
-
 .doc-part {
     background-color: #F0F8FF;
     border-bottom: 1px dotted black;
 }
 
-.from-container .doc-part {
+.from-container .doc-part, .trash .doc-part {
     height: 50px;
 }
 
-.from-container .attrs {
+.from-container .attrs, .trash .attrs {
     display: none;
 }
 

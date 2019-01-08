@@ -163,13 +163,13 @@ export const tableResizeTemplate =() =>
 
     </div>`
 
-export const TableMenuTemplate = (options) => {
+export const tableMenuTemplate = (options) => {
     return `
     <div>
         <ul class="menu-list">
         ${
             tableMenuModel().content.map((menuItem,index)=>
-                    menuItem.type == "separator"?'<hr/>': `<li data-index="${index}" class="menu-item${menuItem.disabled && menuItem.disabled(options.editor) ? ' disabled' : ''}"
+                    menuItem.type == "separator"?'<hr/>': `<li data-index="${index}" class="menu-item${menuItem.disabled && menuItem.disabled(options.editor) ? ' btn-disabled' : ''}"
                                                             title='${menuItem.tooltip}'>${typeof menuItem.title === 'function' ? menuItem.title(options.editor) : menuItem.title}</li>`
             ).join('')
         }

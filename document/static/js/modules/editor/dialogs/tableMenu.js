@@ -1,4 +1,4 @@
-import {TableMenuTemplate} from "./templates"
+import {tableMenuTemplate} from "./templates"
 import {Dialog} from "../../common"
 import {tableMenuModel} from "../menus"
 
@@ -15,7 +15,7 @@ export class TableMenuDialog {
         this.listeners.onclick = event => this.onclick(event)
         document.body.addEventListener('click', this.listeners.onclick)
         this.dialog = new Dialog({
-            body: TableMenuTemplate(this.options),
+            body: tableMenuTemplate(this.options),
             width: 260,
             height: 460,
             onClose: () => this.view.focus()
@@ -34,10 +34,11 @@ export class TableMenuDialog {
         if(target.matches('li.menu-item')) {
             let menuNumber = target.dataset.index;
             const menuItem = tableMenuModel().content[menuNumber];
-            if (menuItem.disabled && menuItem.disabled(this.options.editor))
+            if (menuItem.disabled && menuItem.disabled(this.options.editor)){
                 return
-            this.dialog.close()
+            }
             menuItem.action(this.options.editor)
+            this.dialog.close()
             this.destroy()
         }
     }

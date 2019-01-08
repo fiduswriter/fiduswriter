@@ -168,6 +168,10 @@ const richtextTemplate = ({
             ${gettext('Allowed elements')}
         </div>
         <label>
+            <input type="checkbox" class="elements" value="paragraph" ${attrs.elements.includes('paragraph') ? 'checked' : ''}/>
+            ${gettext('Paragraph')}
+        </label>
+        <label>
             <input type="checkbox" class="elements" value="heading1" ${attrs.elements.includes('heading1') ? 'checked' : ''}/>
             ${gettext('Heading 1')}
         </label>
@@ -190,10 +194,6 @@ const richtextTemplate = ({
         <label>
             <input type="checkbox" class="elements" value="heading6" ${attrs.elements.includes('heading6') ? 'checked' : ''}/>
             ${gettext('Heading 6')}
-        </label>
-        <label>
-            <input type="checkbox" class="elements" value="paragraph" ${attrs.elements.includes('paragraph') ? 'checked' : ''}/>
-            ${gettext('Paragraph')}
         </label>
         <label>
             <input type="checkbox" class="elements" value="figure" ${attrs.elements.includes('figure') ? 'checked' : ''}/>
@@ -344,6 +344,10 @@ const tableTemplate = ({
             ${gettext('Allowed elements')}
         </div>
         <label>
+            <input type="checkbox" class="elements" value="paragraph" ${attrs.elements.includes('paragraph') ? 'checked' : ''}/>
+            ${gettext('Paragraph')}
+        </label>
+        <label>
             <input type="checkbox" class="elements" value="heading1" ${attrs.elements.includes('heading1') ? 'checked' : ''}/>
             ${gettext('Heading 1')}
         </label>
@@ -366,10 +370,6 @@ const tableTemplate = ({
         <label>
             <input type="checkbox" class="elements" value="heading6" ${attrs.elements.includes('heading6') ? 'checked' : ''}/>
             ${gettext('Heading 6')}
-        </label>
-        <label>
-            <input type="checkbox" class="elements" value="paragraph" ${attrs.elements.includes('paragraph') ? 'checked' : ''}/>
-            ${gettext('Paragraph')}
         </label>
         <label>
             <input type="checkbox" class="elements" value="figure" ${attrs.elements.includes('figure') ? 'checked' : ''}/>

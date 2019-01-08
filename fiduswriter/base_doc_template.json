@@ -21,7 +21,7 @@
     "title": "Abstract",
     "optional": "hidden",
     "attrs": {
-        "elements": ["heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "paragraph", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote", "table"],
+        "elements": ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote", "table"],
         "marks": ["strong", "em", "link"]
     }
 }, {
@@ -37,7 +37,7 @@
     "id": "body",
     "title": "Body",
     "attrs": {
-        "elements": ["heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "paragraph", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote", "table"],
+        "elements": ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote", "table"],
         "marks": ["strong", "em", "link"]
     }
 }]

@@ -81,4 +81,4 @@ export {
     tableMenuPlugin,
     TableView
 }
-from "./tableMenu"
+from "./table_menu"

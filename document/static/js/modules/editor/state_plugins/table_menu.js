@@ -1,12 +1,8 @@
 import {Schema} from "prosemirror-model"
-import {EditorState, Plugin, PluginKey, TextSelection} from "prosemirror-state"
-import {EditorView, Decoration, DecorationSet} from "prosemirror-view"
-import {history, redo, undo} from "prosemirror-history"
-import {keymap} from "prosemirror-keymap"
-import {tableMenuDialog} from '../dialogs'
+import { Plugin, PluginKey} from "prosemirror-state"
+import {TableMenuDialog} from '../dialogs'
 
 const key = new PluginKey('tableMenu')
-
 const doc = {content: 'tableMenu'},
     tableMenu = {
         content: 'inline*',
@@ -26,22 +22,30 @@ const schema = new Schema({
 
 
 export class TableView {
-    constructor(node, view, getPos,options) {
+    constructor(node, view, getPos, options) {
         this.node = node
         this.view = view
         this.getPos = getPos
         this.options = this.options
         this.dom = document.createElement("div")
-        var a = document.createElement("button")
-        a.className = "testing"
-        this.dom.appendChild(a)
+        this.dom.classList.add(`table-${node.attrs.width}`,`table-${node.attrs.aligned}`,'container');
+        let menu_btn = document.createElement("button")
+        menu_btn.className = "menu-btn"
+        menu_btn.classList.add('btn-disabled')
+        let div = document.createElement("div")
+        div.className = 'menu-stripe'
+        menu_btn.append(div)
+        this.dom.appendChild(menu_btn)
         this.dom.lastElementChild.addEventListener('click', event => {
             event.preventDefault()
-            const dialog = new tableMenuDialog(node, view, options)
-            dialog.init()
-            
+            const dialog = new TableMenuDialog(node, view, options)
+            dialog.init() 
         })
-        this.contentDOM = this.dom.appendChild(document.createElement("table"))
+        let table = document.createElement("table")
+        let tbody = document.createElement("tbody")
+        table.append(tbody)
+        this.contentDOM = this.dom.appendChild(table)
+        this.contentDOM.classList.add(`layout-${node.attrs.layout}`)
         this.dom.appendChild(this.contentDOM)
     }
 
@@ -53,7 +57,21 @@ export class TableView {
         return true
     }
 
+    update(node){
+        let table = findTable(this.view.state)
+        if(table && node === table){
+            this.dom.querySelector('.menu-btn').classList.remove('btn-disabled')
+        }else{
+            this.dom.querySelector('.menu-btn').classList.add('btn-disabled')
+        }
+        return true
+    }
+}
 
+const findTable = function(state) {
+    const $head = state.selection.$head
+    for (let d = $head.depth; d > 0; d--) if ($head.node(d).type.spec.tableRole == "table") return $head.node(d)
+    return false
 }
 
 export const tableMenuPlugin = function(options) {
@@ -65,7 +83,6 @@ export const tableMenuPlugin = function(options) {
                     this.spec.props.nodeViews['table'] =
                         (node, view, getPos) => new TableView(node, view, getPos,options)
                 }
-
                 return {}
             },
             apply(tr, prev) {

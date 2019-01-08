@@ -184,7 +184,7 @@ export class Editor {
             'review.css',
             'add_remove_dialog.css',
             'bibliography.css',
-            'tags.css'
+            'table_menu.css'
         ], this.staticUrl)
         whenReady().then(() => {
             new ModCitations(this)

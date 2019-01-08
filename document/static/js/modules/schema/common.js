@@ -121,7 +121,10 @@ export const figure = {
         figureCategory: {default: ""},
         caption: {default: ""},
         id: {default: false},
-        track: {default: []}
+        track: {default: []},
+        aligned: {default: 'center'},
+        width:{default:"100"},
+        //height: {default:"50"},
     },
     parseDOM: [{
         tag: 'figure',
@@ -133,7 +136,10 @@ export const figure = {
                 figureCategory: dom.dataset.figureCategory,
                 caption: dom.dataset.caption,
                 id: dom.dataset.id,
-                track: parseTracks(dom.dataset.track)
+                track: parseTracks(dom.dataset.track),
+                aligned: dom.dataset.aligned,
+                width: dom.dataset.width,
+
             }
         }
     }],
@@ -144,6 +150,37 @@ export const figure = {
         dom.dataset.figureCategory = node.attrs.figureCategory
         dom.dataset.caption = node.attrs.caption
         dom.id = node.attrs.id
+        dom.dataset.aligned = node.attrs.aligned
+        dom.dataset.width = node.attrs.width
+     //   dom.height = node.attrs.height
+        switch (node.attrs.aligned) {
+            case 'right':
+                dom.classList.add('aligned-right')
+                break
+            case 'left':
+                dom.classList.add('aligned-left')
+                break
+            case 'center':
+                dom.classList.add('aligned-center')
+                break
+            default:
+                dom.classList.add('aligned-center')
+        }
+
+         switch (node.attrs.width) {
+            case '100':
+                dom.classList.add('image-width-100')
+                break
+            case '75':
+                dom.classList.add('image-width-75')
+                break
+            case '50':
+                dom.classList.add('image-width-50')
+                break
+            default:
+                dom.classList.add('image-width-25')
+        }
+
         if(node.attrs.track.length) {
             dom.dataset.track = JSON.stringify(node.attrs.track)
         }

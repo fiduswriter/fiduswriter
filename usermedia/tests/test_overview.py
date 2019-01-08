@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 from test.testcases import LiveTornadoTestCase
 from test.selenium_helper import SeleniumHelper

@@ -38,7 +38,7 @@ export const linkDialogTemplate = ({defaultLink, internalTargets, link, linkTitl
 /** Dialog to add a note to a revision before saving. */
 export const revisionDialogTemplate = ({dir}) =>
     `<p>
-        <input type="text" class="revision-note" placeholder="${gettext('Description (optional)')}" dir="${dir}">
+        <input type="text" class="revision-note" placeholder="${gettext("Description (optional)")}" dir="${dir}">
     </p>`
 
 export const tableInsertTemplate = () => `
@@ -96,7 +96,7 @@ export const tableInsertTemplate = () => `
 
 export const tableResizeTemplate =() =>
     `<div style="margin-top:25px;margin-left:20px">
-        <p> ${gettext(' Position : ')}</p>
+        <p>${gettext("Position")}:</p>
         <div style="margin-left:95px;margin-top:-25px;display:inherit;width:60px;" id="table-alignment-btn" class="fw-button fw-light fw-large">
             <input type="hidden" id="table-alignment" />
             <label></label>
@@ -106,19 +106,19 @@ export const tableResizeTemplate =() =>
                 style="left: 115px;">
             <ul id="table-category-list">
                 <li><span class="fw-pulldown-item" id="table-alignment-center">
-                    ${gettext('Center')}
+                    ${gettext("Center")}
                 </span></li>
                 <li><span class="fw-pulldown-item" id="table-alignment-right">
-                    ${gettext('Right')}
+                    ${gettext("Right")}
                 </span></li>
                 <li><span class="fw-pulldown-item" id="table-alignment-left">
-                    ${gettext('Left')}
+                    ${gettext("Left")}
                 </span></li>
 
             </ul>
         </div>
 
-        <p style="margin-top:35px;"> ${gettext(' Size : ')}</p>
+        <p style="margin-top:35px;"> ${gettext("Size")}:</p>
         <div style="margin-left:95px;margin-top:-25px;display:inherit;width:50px;" id="table-width-btn" class="fw-button fw-light fw-large">
             <input type="hidden" id="table-width" />
             <label></label>
@@ -128,22 +128,22 @@ export const tableResizeTemplate =() =>
                 style="left: 115px;">
             <ul id="table-category-list">
                 <li><span class="fw-pulldown-item" id="table-width-100">
-                    ${gettext('100')} %
+                    ${gettext('100 %')}
                 </span></li>
                 <li><span class="fw-pulldown-item" id="table-width-75">
-                    ${gettext('75')} %
+                    ${gettext('75 %')}
                 </span></li>
                 <li><span class="fw-pulldown-item" id="table-width-50">
-                     ${gettext('50')} %
+                     ${gettext('50 %')}
                 </span></li>
             <li><span class="fw-pulldown-item" id="table-width-25">
-                     ${gettext('25')} %
+                     ${gettext('25 %')}
                 </span></li>
 
             </ul>
         </div>
 
-        <p style="margin-top:35px;"> ${gettext(' Column Width : ')}</p>
+        <p style="margin-top:35px;">${gettext("Column Width")}:</p>
         <div style="margin-left:95px;margin-top:-25px;display:inherit;width:50px;" id="table-layout-btn" class="fw-button fw-light fw-large">
             <input type="hidden" id="table-layout" />
             <label></label>
@@ -153,10 +153,10 @@ export const tableResizeTemplate =() =>
                 style="left: 115px;">
             <ul id="table-category-list">
                 <li><span class="fw-pulldown-item" id="table-layout-fixed">
-                    ${gettext('Fixed')}
+                    ${gettext("Fixed")}
                 </span></li>
                 <li><span class="fw-pulldown-item" id="table-layout-auto">
-                    ${gettext('Auto')}
+                    ${gettext("Auto")}
                 </span></li>
             </ul>
         </div>
@@ -214,8 +214,8 @@ export const figureImageTemplate = ({imageDB}) =>
         <table id="imagelist" class="tablesorter fw-document-table" style="width:342px;">
             <thead class="fw-document-table-header">
                 <tr>
-                    <th width="50">${gettext('Image')}</th>
-                    <th width="150">${gettext('Title')}</th>
+                    <th width="50">${gettext("Image")}</th>
+                    <th width="150">${gettext("Title")}</th>
                 </tr>
             </thead>
             <tbody class="fw-document-table-body fw-small">
@@ -224,14 +224,14 @@ export const figureImageTemplate = ({imageDB}) =>
         </table>
         <div class="dialogSubmit">
             <button class="edit-image createNew fw-button fw-light">
-                ${gettext('Upload')}
+                ${gettext("Upload")}
                 <span class="fa fa-plus-circle"></span>
             </button>
             <button type="button" id="selectImageFigureButton" class="fw-button fw-dark">
-                ${gettext('Insert')}
+                ${gettext("Insert")}
             </button>
             <button type="button" id="cancelImageFigureButton" class="fw-button fw-orange">
-                ${gettext('Cancel')}
+                ${gettext("Cancel")}
             </button>
         </div>
     </div>`
@@ -241,11 +241,11 @@ export const configureFigureTemplate = ({image, equation, caption, dir}) =>
     `<div class="fw-media-uploader">
             <div>
                 <input class="fw-media-title figure-math" type="text" name="figure-math"
-                    placeholder="${gettext('Insert formula')}" value="${escapeText(equation)}"
+                    placeholder="${gettext("Insert formula")}" value="${escapeText(equation)}"
                     ${image ? 'disabled="disabled"' : ''} />
                 <button type="button" id="insertFigureImage" class="fw-button fw-light
                         ${equation === '' ? '' : 'disabled'}">
-                    ${gettext('Insert image')} <i class="fa fa-picture-o"></i>
+                    ${gettext("Insert image")} <i class="fa fa-picture-o"></i>
                 </button>
             </div>
             <input type="hidden" id="figure-category">
@@ -259,19 +259,65 @@ export const configureFigureTemplate = ({image, equation, caption, dir}) =>
                         style="left: 10px;">
                     <ul id="figure-category-list">
                         <li><span class="fw-pulldown-item" id="figure-category-none">
-                            ${gettext('None')}
+                            ${gettext("None")}
                         </span></li>
                         <li><span class="fw-pulldown-item" id="figure-category-figure">
-                            ${gettext('Figure')}
+                            ${gettext("Figure")}
                         </span></li>
                         <li><span class="fw-pulldown-item" id="figure-category-photo">
-                            ${gettext('Photo')}
+                            ${gettext("Photo")}
                         </span></li>
                         <li><span class="fw-pulldown-item" id="figure-category-table">
-                            ${gettext('Table')}
+                            ${gettext("Table")}
                         </span></li>
                     </ul>
                 </div>
+
+                <div id="figure-alignment-btn" class="fw-button fw-light fw-large">
+                    <input type="hidden" id="figure-alignment" />
+                    <label></label>
+                    <span class="fa fa-caret-down"></span>
+                </div>
+                <div id="figure-alignment-pulldown" class="fw-pulldown fw-left"
+                        style="left: 70px;">
+                    <ul id="figure-category-list">
+                        <li><span class="fw-pulldown-item" id="figure-alignment-left">
+                            ${gettext('Left')}
+                        </span></li>
+                        <li><span class="fw-pulldown-item" id="figure-alignment-center">
+                            ${gettext('Center')}
+                        </span></li>
+                        <li><span class="fw-pulldown-item" id="figure-alignment-right">
+                            ${gettext('Right')}
+                        </span></li>
+                    </ul>
+                </div>
+
+
+                <div id="figure-width-btn" class="fw-button fw-light fw-large">
+                    <input type="hidden" id="figure-width" />
+                    <label></label>
+                    <span class="fa fa-caret-down"></span>
+                </div>
+                <div id="figure-width-pulldown" class="fw-pulldown fw-left"
+                        style="left: 150px;">
+                    <ul id="figure-category-list">
+                        <li><span class="fw-pulldown-item" id="figure-width-100">
+                           Size: ${gettext('100')} %
+                        </span></li>
+                        <li><span class="fw-pulldown-item" id="figure-width-75">
+                           Size: ${gettext('75')} %
+                        </span></li>
+                        <li><span class="fw-pulldown-item" id="figure-width-50">
+                            Size : ${gettext('50')} %
+                        </span></li>
+                       <li><span class="fw-pulldown-item" id="figure-width-25">
+                            Size : ${gettext('25')} %
+                        </span></li>
+
+                    </ul>
+                </div>
+
             </div>
             <div class="figure-preview">
                 <div id="inner-figure-preview"></div>
@@ -279,7 +325,7 @@ export const configureFigureTemplate = ({image, equation, caption, dir}) =>
             <div style="margin-top: 10px;">
                 <input style="width: 402px;" class="caption"
                         type="text" name="figure-caption" value="${escapeText(caption)}"
-                        placeholder="${gettext('Insert caption')}" dir="${dir}" />
+                        placeholder="${gettext("Insert caption")}" dir="${dir}" />
             </div>
         </div>`
 
@@ -339,11 +385,11 @@ export const selectedCitationTemplate = ({title, author, id, db, prefix, locator
               <tr>
                   <td class="cite-extra-fields" colspan="3" width="335">
                       <div>
-                          <label>${gettext('Page')}</label>
+                          <label>${gettext("Page")}</label>
                           <input class="fw-cite-page" type="text" value="${escapeText(locator)}" />
                       </div>
                       <div>
-                          <label>${gettext('Text before')}</label>
+                          <label>${gettext("Text before")}</label>
                           <input class="fw-cite-text" type="text" value="${escapeText(prefix)}" />
                       </div>
                   </td>

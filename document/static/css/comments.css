@@ -1,4 +1,5 @@
 /* Comments */
+
 #margin-box-column {
     width: 240px;
     padding-left: 20px;
@@ -17,9 +18,11 @@
     position: sticky;
     top: 179px;
 }
+
 body.header-closed #margin-box-filter {
     top: 70px;
 }
+
 .margin-box-filter-button {
     flex: 1;
     background-color: #84b4a7;
@@ -29,13 +32,16 @@ body.header-closed #margin-box-filter {
     position: relative;
     cursor: pointer;
 }
+
 .margin-box-filter-button.disabled {
     background-color: #e0e0e0;
     color: #545454;
 }
+
 .margin-box-filter-button .marginbox-options.fw-pulldown.fw-right {
     top: 27px;
 }
+
 .margin-box-filter-button .label {
     top: 17px;
     left: 16px;
@@ -53,6 +59,7 @@ body.header-closed #margin-box-filter {
     margin-top: 2px;
     position: relative;
 }
+
 .margin-box .comment-item:first-child {
     background-color: #fff;
 }
@@ -61,6 +68,7 @@ body.header-closed #margin-box-filter {
     background-color: #98a9c5;
     color: #fff;
 }
+
 .margin-box.active {
     color: #000;
     background-color: #fffacf;
@@ -69,13 +77,16 @@ body.header-closed #margin-box-filter {
     z-index: 5;
     padding: 10px;
 }
+
 .margin-box.active .comment-item {
     padding: 0;
 }
+
 .margin-box.active .comment-item:first-child {
     background-color: #fffacf;
     padding-bottom: 10px;
 }
+
 .margin-box.active:after {
     position: absolute;
     left: -11px;
@@ -85,6 +96,7 @@ body.header-closed #margin-box-filter {
     color: #fffacf;
     text-shadow: -1px 0px 0px #c5c5c5;
 }
+
 .margin-box.hidden {
     display: none;
 }
@@ -93,21 +105,28 @@ body.header-closed #margin-box-filter {
     padding: 10px;
     border-top: solid 1px #ccc;
 }
+
 .comment-item.comment-answer {
     position: relative;
 }
+
 .comment-item:first-child {
     margin-top: 0;
     border-top: none;
 }
-.comment-item.wait, .comment-answer.wait {
+
+.comment-item.wait,
+.comment-answer.wait {
     opacity: .5;
 }
-.comment-item.wait textarea, .comment-answer.wait .comment-answer-text {
+
+.comment-item.wait textarea,
+.comment-answer.wait .comment-answer-text {
     background-image: url('../img/wait.gif');
     background-repeat: no-repeat;
     background-position: center;
 }
+
 .comment-item.wait textarea {
     background-size: 40px 40px;
 }
@@ -119,6 +138,7 @@ body.header-closed #margin-box-filter {
 .comment-answer.wait .comment-answer-text {
     background-size: 20px 20px;
 }
+
 .wait .comment-btns {
     display: none;
 }
@@ -126,11 +146,13 @@ body.header-closed #margin-box-filter {
 .comment-user {
     margin-bottom: 9px;
 }
+
 .comment-user:after {
     display: block;
     clear: both;
     content: '';
 }
+
 .comment-user-avatar {
     width: 26px;
     height: 26px;
@@ -138,28 +160,34 @@ body.header-closed #margin-box-filter {
     margin-right: 8px;
     border: solid 1px #ccc;
 }
+
 .comment-user-name {
     font-family: Lato;
     font-size: 12px;
     font-weight: 700;
     line-height: 20px;
 }
+
 .comment-date {
     font-size: 10px;
 }
+
 .assigned-user {
-    border: 1px solid rgba(0,0,0,0.2);
+    border: 1px solid rgba(0, 0, 0, 0.2);
     padding: 5px;
     margin: 10px 0 10px 0;
     font-size: 0.9em;
     text-align: center;
 }
+
 .assigned-user em {
     font-weight: 700;
 }
+
 .comment-p {
     line-height: 18px;
 }
+
 .margin-box .ProseMirror-wrapper {
     width: 194px;
     background-color: #fff;
@@ -174,6 +202,7 @@ body.header-closed #margin-box-filter {
     margin-top: 5px;
     text-align: right;
 }
+
 .margin-box .btn {
     font-size: 12px;
     height: 24px;
@@ -214,30 +243,37 @@ body.header-closed #margin-box-filter {
     opacity: 0.7;
 }
 
-#comment-editor .ProseMirror-suggestion, #answer-editor .ProseMirror-suggestion {
+#comment-editor .ProseMirror-suggestion,
+#answer-editor .ProseMirror-suggestion {
     font-weight: 700;
 }
 
-#comment-editor .tagger, #answer-editor .tagger  {
+#comment-editor .tagger,
+#answer-editor .tagger {
     margin: 5px -10px -11px -10px;
     background-color: #f9f9f9;
     border: 1px solid #e0e0e0;
 }
 
-#comment-editor .tagger:empty, #answer-editor .tagger:empty {
+#comment-editor .tagger:empty,
+#answer-editor .tagger:empty {
     display: none;
 }
 
-#comment-editor .tagger .tag, #answer-editor .tagger .tag {
+#comment-editor .tagger .tag,
+#answer-editor .tagger .tag {
     padding: 10px;
     cursor: pointer;
 }
 
-#comment-editor .tagger .tag:hover, #comment-editor .tagger .tag.selected,
-#answer-editor .tagger .tag:hover, #answer-editor .tagger .tag.selected {
+#comment-editor .tagger .tag:hover,
+#comment-editor .tagger .tag.selected,
+#answer-editor .tagger .tag:hover,
+#answer-editor .tagger .tag.selected {
     background-color: #e0e0e0;
 }
 
-#comment-editor .tagger .tag-user, #answer-editor .tagger .tag-user {
+#comment-editor .tagger .tag-user,
+#answer-editor .tagger .tag-user {
     min-height: 28px;
 }

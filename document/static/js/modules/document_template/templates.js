@@ -8,7 +8,7 @@ const headingTemplate = ({
         elements: ["heading1", "heading2", "heading3", "heading4", "heading5", "heading6"],
         marks: ["strong", "em", "highlight", "underline", "link"]
     },
-    locking="free",
+    locking="false",
     optional="false",
     language=false
 }) =>
@@ -19,15 +19,15 @@ const headingTemplate = ({
         <div class="label">${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></div>
         <div class="label">${gettext('Locking')}
             <select class="locking">
-                <option value="free" ${locking==='free' ? "selected" : ""}>${gettext('User can change contents')}</option>
+                <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>
                 <option value="fixed" ${locking==='fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
             </select>
         </div>
         <div class="label">${gettext('Optional')}
             <select class="optional">
                 <option value="false" ${optional==='false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
-                <option value="true_on" ${optional==='true_on' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
-                <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
+                <option value="shown" ${optional==='shown' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
+                <option value="hidden" ${optional==='hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </div>
         <div class="label">
@@ -84,8 +84,6 @@ const headingTemplate = ({
                         `<option value="${code}" ${language===code ? "selected" : ""}>${name}</option>`
                     ).join('')
                 }
-                <option value="true_on" ${optional==='true_on' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
-                <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </div>
         <div>
@@ -105,7 +103,7 @@ const contributorsTemplate = ({
     attrs={
         item_title: ""
     },
-    locking="free",
+    locking="false",
     optional="false"
 }) =>
 `<div class="doc-part" data-type="contributors">
@@ -116,15 +114,15 @@ const contributorsTemplate = ({
         <div class="label">${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(attrs.item_title)}"></div>
         <div class="label">${gettext('Locking')}
             <select class="locking">
-                <option value="free" ${locking==='free' ? "selected" : ""}>${gettext('User can change contents')}</option>
+                <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>
                 <option value="fixed" ${locking==='fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
             </select>
         </div>
         <div class="label">${gettext('Optional')}
             <select class="optional">
                 <option value="false" ${optional==='false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
-                <option value="true_on" ${optional==='true_on' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
-                <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
+                <option value="shown" ${optional==='shown' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
+                <option value="hidden" ${optional==='hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </div>
         <div>
@@ -145,7 +143,7 @@ const richtextTemplate = ({
         elements: ["paragraph", "heading", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote"],
         marks: ["strong", "em", "highlight", "underline", "link"]
     },
-    locking="free",
+    locking="false",
     optional="false",
     language=false
 }) => `<div class="doc-part" data-type="richtext">
@@ -155,15 +153,15 @@ const richtextTemplate = ({
         <div class="label">${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></div>
         <div class="label">${gettext('Locking')}
             <select class="locking">
-                <option value="free" ${locking==='free' ? "selected" : ""}>${gettext('User can change contents')}</option>
+                <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>
                 <option value="fixed" ${locking==='fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
             </select>
         </div>
         <div class="label">${gettext('Optional')}
             <select class="optional">
                 <option value="false" ${optional==='false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
-                <option value="true_on" ${optional==='true_on' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
-                <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
+                <option value="shown" ${optional==='shown' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
+                <option value="hidden" ${optional==='hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </div>
         <div class="label">
@@ -260,8 +258,6 @@ const richtextTemplate = ({
                         `<option value="${code}" ${language===code ? "selected" : ""}>${name}</option>`
                     ).join('')
                 }
-                <option value="true_on" ${optional==='true_on' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
-                <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </div>
         <div>
@@ -281,7 +277,7 @@ const tagsTemplate = ({
     attrs={
         item_title: ""
     },
-    locking="free",
+    locking="false",
     optional="false"
 }) =>
 `<div class="doc-part" data-type="tags">
@@ -292,15 +288,15 @@ const tagsTemplate = ({
         <div class="label">${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(attrs.item_title)}"></div>
         <div class="label">${gettext('Locking')}
             <select class="locking">
-                <option value="free" ${locking==='free' ? "selected" : ""}>${gettext('User can change contents')}</option>
+                <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>
                 <option value="fixed" ${locking==='fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
             </select>
         </div>
         <div class="label">${gettext('Optional')}
             <select class="optional">
                 <option value="false" ${optional==='false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
-                <option value="true_on" ${optional==='true_on' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
-                <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
+                <option value="shown" ${optional==='shown' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
+                <option value="hidden" ${optional==='hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </div>
         <div>
@@ -321,7 +317,7 @@ const tableTemplate = ({
         elements: ["paragraph", "heading", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote"],
         marks: ["strong", "em", "highlight", "underline", "link"]
     },
-    locking="free",
+    locking="false",
     optional="false",
     language=false
 }) =>
@@ -332,7 +328,7 @@ const tableTemplate = ({
         <div class="label">${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></div>
         <div class="label">${gettext('Locking')}
             <select class="locking">
-                <option value="free" ${locking==='free' ? "selected" : ""}>${gettext('User can change contents')}</option>
+                <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>
                 <option value="fixed" ${locking==='fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
                 <option value="header" ${locking==='header' ? "selected" : ""}>${gettext('User can not change first row')}</option>
             </select>
@@ -340,8 +336,8 @@ const tableTemplate = ({
         <div class="label">${gettext('Optional')}
             <select class="optional">
                 <option value="false" ${optional==='false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
-                <option value="true_on" ${optional==='true_on' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
-                <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
+                <option value="shown" ${optional==='shown' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
+                <option value="hidden" ${optional==='hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </div>
         <div class="label">
@@ -438,8 +434,6 @@ const tableTemplate = ({
                         `<option value="${code}" ${language===code ? "selected" : ""}>${name}</option>`
                     ).join('')
                 }
-                <option value="true_on" ${optional==='true_on' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
-                <option value="true_off" ${optional==='true_off' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </div>
         <div>

@@ -30,7 +30,7 @@ export class ModDocumentTemplate {
     addDocPartSettings() {
         const hideableDocParts = []
         this.editor.view.state.doc.firstChild.forEach((child, offset, index) => {
-            if (child.attrs.optional && child.attrs.optional !== 'false') {
+            if (child.attrs.optional) {
                 hideableDocParts.push([child, index])
             }
         })

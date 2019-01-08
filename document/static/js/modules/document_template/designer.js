@@ -85,13 +85,19 @@ export class DocumentTemplateDesigner {
                     initial = this.getEditorValue(el.querySelector('.initial')),
                     locking = el.querySelector('.locking option:checked').value,
                     optional = el.querySelector('.optional option:checked').value,
-                    values = {type, id, title, locking, optional},
+                    values = {type, id, title},
                     attrs = {}
                 if (help) {
                     values['help'] = help
                 }
                 if (initial) {
                     values['initial'] = initial
+                }
+                if (optional !== 'false') {
+                    values['optional'] = optional
+                }
+                if (locking !== 'false') {
+                    values['locking'] = locking
                 }
                 let language
                 switch(type) {

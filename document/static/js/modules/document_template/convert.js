@@ -8,11 +8,11 @@ export function templateToDoc(template) {
             attrs: {
                 id: part.id,
                 title: part.title,
-                locking: part.locking,
-                language: part.language,
-                optional: part.optional,
+                locking: part.locking || false,
+                language: part.language || false,
+                optional: part.optional || false,
                 help: part.help,
-                hidden: part.optional === 'true_off' ? true : false
+                hidden: part.optional === 'hidden' ? true : false
             }
         }
         if (part.attrs) {

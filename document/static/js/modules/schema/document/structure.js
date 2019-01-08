@@ -58,13 +58,13 @@ const partSpec = (type, content, attrs = {}) => ({
             default: ''
         },
         locking: {
-            default: 'false'
+            default: false
         },
         language: {
             default: false
         },
         optional: {
-            default: 'false'
+            default: false
         },
         hidden: {
             default: false

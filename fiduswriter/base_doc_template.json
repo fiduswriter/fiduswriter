@@ -2,9 +2,7 @@
     "type": "heading",
     "id": "subtitle",
     "title": "Subtitle",
-    "locking": "free",
-    "optional": "true_off",
-    "language": "true_off",
+    "optional": "hidden",
     "attrs": {
         "elements": ["heading1"],
         "marks": ["strong", "em", "link"]
@@ -13,8 +11,7 @@
     "type": "contributors",
     "id": "authors",
     "title": "Authors",
-    "locking": "free",
-    "optional": "true_off",
+    "optional": "hidden",
     "attrs": {
         "item_title": "Author"
     }
@@ -22,9 +19,7 @@
     "type": "richtext",
     "id": "abstract",
     "title": "Abstract",
-    "locking": "free",
-    "optional": "true_off",
-    "language": "true_off",
+    "optional": "hidden",
     "attrs": {
         "elements": ["heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "paragraph", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote", "table"],
         "marks": ["strong", "em", "link"]
@@ -33,8 +28,7 @@
     "type": "tags",
     "id": "keywords",
     "title": "Keywords",
-    "locking": "free",
-    "optional": "true_off",
+    "optional": "hidden",
     "attrs": {
         "item_title": "Keyword"
     }
@@ -42,8 +36,6 @@
     "type": "richtext",
     "id": "body",
     "title": "Body",
-    "locking": "free",
-    "optional": "false",
     "attrs": {
         "elements": ["heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "paragraph", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote", "table"],
         "marks": ["strong", "em", "link"]

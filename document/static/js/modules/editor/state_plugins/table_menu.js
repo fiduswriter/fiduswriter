@@ -3,23 +3,6 @@ import { Plugin, PluginKey} from "prosemirror-state"
 import {TableMenuDialog} from '../dialogs'
 
 const key = new PluginKey('tableMenu')
-const doc = {content: 'tableMenu'},
-    tableMenu = {
-        content: 'inline*',
-        parseDOM: [{table: ''}],
-        toDOM() {
-            return ["div", {
-                class: ''
-            }, 0]
-        }
-    },
-    text = {group: 'inline'}
-
-const schema = new Schema({
-    nodes: {doc, tableMenu, text},
-    marks: {}
-})
-
 
 export class TableView {
     constructor(node, view, getPos, options) {
@@ -66,6 +49,7 @@ export class TableView {
         }
         return true
     }
+    
 }
 
 const findTable = function(state) {

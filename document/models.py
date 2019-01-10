@@ -44,7 +44,7 @@ class ExportTemplate(models.Model):
 class DocumentTemplate(models.Model):
     title = models.CharField(max_length=255, default='', blank=True)
     slug = models.SlugField()
-    definition = models.TextField(default='[]')
+    definition = models.TextField(default='{"structure": [], "footnote": {}}')
     document_styles = models.ManyToManyField(DocumentStyle)
     citation_styles = models.ManyToManyField(CitationStyle)
     export_templates = models.ManyToManyField(ExportTemplate, blank=True)

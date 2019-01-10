@@ -4,8 +4,11 @@ form .aligned ul.object-tools.right {
 
 .from-container, .to-column, .trash {
     border: 1px solid black;
-    min-height: 500px;
     background-color: white;
+}
+
+.to-container {
+    min-height: 500px;
 }
 
 .to-column .smooth-dnd-draggable-wrapper {

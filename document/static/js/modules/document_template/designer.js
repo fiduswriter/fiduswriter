@@ -9,7 +9,14 @@ import {menuBar} from "prosemirror-menu"
 import {buildKeymap, buildInputRules} from "prosemirror-example-setup"
 import {TagsView, ContributorsView} from "../editor/state_plugins"
 
-import {documentConstructorTemplate, templateEditorValueTemplate, toggleEditorButtonTemplate} from "./templates"
+import {
+    documentConstructorTemplate,
+    templateEditorValueTemplate,
+    toggleEditorButtonTemplate,
+    footnoteTemplate,
+    languagesTemplate,
+    papersizesTemplate
+} from "./templates"
 import {whenReady, ensureCSS} from "../common"
 import {
     helpSchema,
@@ -76,56 +83,64 @@ export class DocumentTemplateDesigner {
     setCurrentValue() {
         let valid = true
         this.errors = {}
-        this.value = Array.from(document.querySelectorAll('.to-container .doc-part:not(.fixed)')).map(
-            el => {
-                const type = el.dataset.type,
-                    id = el.querySelector('input.id').value,
-                    title = el.querySelector('input.title').value,
-                    help = this.getEditorValue(el.querySelector('.instructions')),
-                    initial = this.getEditorValue(el.querySelector('.initial')),
-                    locking = el.querySelector('.locking option:checked').value,
-                    optional = el.querySelector('.optional option:checked').value,
-                    values = {type, id, title},
-                    attrs = {}
-                if (help) {
-                    values['help'] = help
+        this.value = {
+            structure: Array.from(document.querySelectorAll('.to-container .doc-part:not(.fixed)')).map(
+                el => {
+                    const type = el.dataset.type,
+                        id = el.querySelector('input.id').value,
+                        title = el.querySelector('input.title').value,
+                        help = this.getEditorValue(el.querySelector('.instructions')),
+                        initial = this.getEditorValue(el.querySelector('.initial')),
+                        locking = el.querySelector('.locking option:checked').value,
+                        optional = el.querySelector('.optional option:checked').value,
+                        values = {type, id, title},
+                        attrs = {}
+                    if (help) {
+                        values['help'] = help
+                    }
+                    if (initial) {
+                        values['initial'] = initial
+                    }
+                    if (optional !== 'false') {
+                        values['optional'] = optional
+                    }
+                    if (locking !== 'false') {
+                        values['locking'] = locking
+                    }
+                    let language
+                    switch(type) {
+                        case 'richtext':
+                        case 'table':
+                        case 'heading':
+                            attrs['elements'] = Array.from(el.querySelectorAll('.elements:checked')).map(el => el.value)
+                            attrs['marks'] = Array.from(el.querySelectorAll('.marks:checked')).map(el => el.value)
+                            language = el.querySelector('.language').value
+                            if (language !== 'false') {
+                                values['language'] = language
+                            }
+                            break
+                        case 'contributors':
+                        case 'tags':
+                            attrs['item_title'] = el.querySelector('input.item_title').value
+                            break
+                        default:
+                            break
+                    }
+                    values['attrs'] = attrs
+                    if (!id.length) {
+                        valid = false
+                        this.errors['missing_id'] = gettext('All document parts need an ID.')
+                    }
+                    return values
                 }
-                if (initial) {
-                    values['initial'] = initial
-                }
-                if (optional !== 'false') {
-                    values['optional'] = optional
-                }
-                if (locking !== 'false') {
-                    values['locking'] = locking
-                }
-                let language
-                switch(type) {
-                    case 'richtext':
-                    case 'table':
-                    case 'heading':
-                        attrs['elements'] = Array.from(el.querySelectorAll('.elements:checked')).map(el => el.value)
-                        attrs['marks'] = Array.from(el.querySelectorAll('.marks:checked')).map(el => el.value)
-                        language = el.querySelector('.language').value
-                        if (language !== 'false') {
-                            values['language'] = language
-                        }
-                        break
-                    case 'contributors':
-                    case 'tags':
-                        attrs['item_title'] = el.querySelector('input.item_title').value
-                        break
-                    default:
-                        break
-                }
-                values['attrs'] = attrs
-                if (!id.length) {
-                    valid = false
-                    this.errors['missing_id'] = gettext('All document parts need an ID.')
-                }
-                return values
-            }
-        )
+            ),
+            footnote: {
+                elements: Array.from(document.querySelectorAll('.footnote-value .elements:checked')).map(el => el.value),
+                marks: Array.from(document.querySelectorAll('.footnote-value .marks:checked')).map(el => el.value)
+            },
+            languages: Array.from(document.querySelectorAll('.languages-value option:checked')).map(el => el.value),
+            papersizes: Array.from(document.querySelectorAll('.papersizes-value option:checked')).map(el => el.value)
+        }
         this.definitionTextarea.value = JSON.stringify(this.value)
         this.showErrors()
         return valid
@@ -138,7 +153,7 @@ export class DocumentTemplateDesigner {
 
     setupInitialEditors() {
         Array.from(document.querySelectorAll('.to-container .doc-part:not(.fixed)')).forEach((el, index) => {
-            const value = this.value[index],
+            const value = this.value.structure[index],
                 help = value.help,
                 initial = value.initial,
                 type = value.type
@@ -300,7 +315,7 @@ export class DocumentTemplateDesigner {
             button => button.addEventListener('click', event => {
                 if (this.definitionTextarea.style.display==='none' && !this.setCurrentValue()) {
                     event.preventDefault()
-                    }
+                }
             })
         )
 
@@ -315,7 +330,13 @@ export class DocumentTemplateDesigner {
                 this.templateEditor.style.display=''
                 this.getInitialValue()
                 this.templateEditor.querySelector('.to-container').innerHTML =
-                    templateEditorValueTemplate({value: this.value})
+                    templateEditorValueTemplate({structure: this.value.structure || []})
+                this.templateEditor.querySelector('.footnote-value').innerHTML =
+                    footnoteTemplate(this.value.footnote || {})
+                this.templateEditor.querySelector('.languages-value').innerHTML =
+                    languagesTemplate(this.value.languages)
+                this.templateEditor.querySelector('.papersizes-value').innerHTML =
+                    papersizesTemplate(this.value.papersizes)
                 this.setupInitialEditors()
             }
         })

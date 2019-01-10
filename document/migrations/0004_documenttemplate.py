@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(blank=True, default='', max_length=255)),
                 ('slug', models.SlugField()),
-                ('definition', models.TextField(default='[]')),
+                ('definition', models.TextField(default='{"main": [], "footnote": {}}')),
                 ('citation_styles', models.ManyToManyField(to='style.CitationStyle')),
                 ('document_styles', models.ManyToManyField(to='style.DocumentStyle')),
                 ('export_templates', models.ManyToManyField(to='document.ExportTemplate', blank=True)),

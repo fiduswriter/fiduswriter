@@ -388,10 +388,10 @@ export const contributorTemplate = ({contributor}) =>
     <input type="text" name="institution" value="${contributor.institution ? contributor.institution : ''}" placeholder="${gettext("Institution")}"/>
     `
 
-export const languageTemplate = ({currentLanguage, LANGUAGES}) =>
+export const languageTemplate = ({currentLanguage, allowedLanguages}) =>
     `<select class="fw-button fw-white fw-large">
         ${
-            LANGUAGES.map(language =>
+            allowedLanguages.map(language =>
                 `<option value="${language[0]}" ${language[0]===currentLanguage ? 'selected' : ''}>
                     ${language[1]}
                 </option>`

@@ -21,6 +21,32 @@ const BLOCK_LABELS = {
     'figure': gettext('Figure')
 }
 
+function elementAvailable(editor, elementName) {
+      let elementInDocParts = false
+      editor.view.state.doc.firstChild.forEach(docPart => {
+          if (docPart.attrs.elements && docPart.attrs.elements.includes(elementName)) {
+              elementInDocParts = true
+          }
+      })
+      return (
+          editor.view.state.doc.firstChild.attrs.footnoteElements.includes(elementName) ||
+          elementInDocParts
+      )
+}
+
+function markAvailable(editor, markName) {
+      let markInDocParts = false
+      editor.view.state.doc.firstChild.forEach(docPart => {
+          if (docPart.attrs.elements && docPart.attrs.marks.includes(markName)) {
+              markInDocParts = true
+          }
+      })
+      return (
+          editor.view.state.doc.firstChild.attrs.footnoteMarks.includes(markName) ||
+          markInDocParts
+      )
+}
+
 export const TEXT_ONLY_PARTS = ['title', 'subtitle', 'authors', 'keywords']
 
 export const toolbarModel = () => ({
@@ -76,7 +102,7 @@ export const toolbarModel = () => ({
 
         },
         {
-            type: 'dropdown',
+            type: 'menu',
             show: editor => {
                 if (
                     editor.currentView.state.selection.$anchor.node(2) &&
@@ -147,6 +173,7 @@ export const toolbarModel = () => ({
                         const view = editor.currentView
                         setBlockType(view.state.schema.nodes.paragraph)(view.state, view.dispatch)
                     },
+                    available: editor => elementAvailable(editor, 'paragraph'),
                     order: 0
                 },
                 {
@@ -155,6 +182,7 @@ export const toolbarModel = () => ({
                         const view = editor.currentView
                         setBlockType(view.state.schema.nodes.heading1)(view.state, view.dispatch)
                     },
+                    available: editor => elementAvailable(editor, 'heading1'),
                     order: 1
                 },
                 {
@@ -163,6 +191,7 @@ export const toolbarModel = () => ({
                         const view = editor.currentView
                         setBlockType(view.state.schema.nodes.heading2)(view.state, view.dispatch)
                     },
+                    available: editor => elementAvailable(editor, 'heading2'),
                     order: 2
                 },
                 {
@@ -171,6 +200,7 @@ export const toolbarModel = () => ({
                         const view = editor.currentView
                         setBlockType(view.state.schema.nodes.heading3)(view.state, view.dispatch)
                     },
+                    available: editor => elementAvailable(editor, 'heading3'),
                     order: 3
                 },
                 {
@@ -179,6 +209,7 @@ export const toolbarModel = () => ({
                         const view = editor.currentView
                         setBlockType(view.state.schema.nodes.heading4)(view.state, view.dispatch)
                     },
+                    available: editor => elementAvailable(editor, 'heading4'),
                     order: 4
                 },
                 {
@@ -187,6 +218,7 @@ export const toolbarModel = () => ({
                         const view = editor.currentView
                         setBlockType(view.state.schema.nodes.heading5)(view.state, view.dispatch)
                     },
+                    available: editor => elementAvailable(editor, 'heading5'),
                     order: 5
                 },
                 {
@@ -195,6 +227,7 @@ export const toolbarModel = () => ({
                         const view = editor.currentView
                         setBlockType(view.state.schema.nodes.heading6)(view.state, view.dispatch)
                     },
+                    available: editor => elementAvailable(editor, 'heading6'),
                     order: 6
                 },
                 {
@@ -203,6 +236,7 @@ export const toolbarModel = () => ({
                         const view = editor.currentView
                         setBlockType(view.state.schema.nodes.code_block)(view.state, view.dispatch)
                     },
+                    available: editor => elementAvailable(editor, 'code_block'),
                     order: 7
                 }
             ],
@@ -217,6 +251,7 @@ export const toolbarModel = () => ({
                 const command = toggleMark(mark)
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
+            available: editor => markAvailable(editor, 'strong'),
             disabled: editor => {
                 if (
                     READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
@@ -257,6 +292,7 @@ export const toolbarModel = () => ({
                 const command = toggleMark(mark)
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
+            available: editor => markAvailable(editor, 'em'),
             disabled: editor => {
                 if (
                     READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
@@ -297,6 +333,7 @@ export const toolbarModel = () => ({
                 const command = wrapInList(node)
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
+            available: editor => elementAvailable(editor, 'ordered_list'),
             disabled: editor => {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
                     return true
@@ -322,6 +359,7 @@ export const toolbarModel = () => ({
                 const command = wrapInList(node)
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
+            available: editor => elementAvailable(editor, 'bullet_list'),
             disabled: editor => {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
                     return true
@@ -347,6 +385,7 @@ export const toolbarModel = () => ({
                 const command = wrapIn(node)
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
+            available: editor => elementAvailable(editor, 'blockquote'),
             disabled: editor => {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
                     return true
@@ -372,6 +411,7 @@ export const toolbarModel = () => ({
                 const dialog = new LinkDialog(editor)
                 dialog.init()
             },
+            available: editor => markAvailable(editor, 'link'),
             disabled: editor => {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
                     return true
@@ -399,6 +439,7 @@ export const toolbarModel = () => ({
                 editor.view.dispatch(tr)
                 return false
             },
+            available: editor => elementAvailable(editor, 'footnote'),
             disabled: editor => {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
                     return true
@@ -426,6 +467,7 @@ export const toolbarModel = () => ({
                 dialog.init()
                 return false
             },
+            available: editor => elementAvailable(editor, 'citation'),
             disabled: editor => {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
                     return true
@@ -459,6 +501,7 @@ export const toolbarModel = () => ({
                     state.tr.replaceSelectionWith(state.schema.node("horizontal_rule"))
                 )
             },
+            available: editor => elementAvailable(editor, 'horizontal_rule'),
             disabled: editor => {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
                     return true
@@ -483,6 +526,7 @@ export const toolbarModel = () => ({
                 const dialog = new MathDialog(editor)
                 dialog.init()
             },
+            available: editor => elementAvailable(editor, 'equation'),
             disabled: editor => {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
                     return true
@@ -514,6 +558,7 @@ export const toolbarModel = () => ({
                 dialog.init()
                 return false
             },
+            available: editor => elementAvailable(editor, 'figure'),
             disabled: editor => {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
                     return true
@@ -591,6 +636,7 @@ export const toolbarModel = () => ({
                 const command = toggleMark(mark, {id: randomAnchorId()})
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
+            available: editor => elementAvailable(editor, 'anchor'),
             disabled: editor => {
                 if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
                     return true

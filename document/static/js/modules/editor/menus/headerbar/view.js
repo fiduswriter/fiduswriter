@@ -16,9 +16,24 @@ export class HeaderbarView {
         this.headerEl = document.querySelector('#headerbar').firstElementChild
         this.listeners = {}
 
+        this.removeUnavailable(this.options.editor.menu.headerbarModel)
 
         this.bindEvents()
         this.update()
+    }
+
+    removeUnavailable(menu) {
+        // Remove those menu items from the menu model that are not available for this document.
+        // Used for example for language or page size options that aren't permitted according to the
+        // document template.
+        menu.content = menu.content.filter(item => {
+            if (item.available && !item.available(this.editor)) {
+                return false
+            } else if (item.type === 'menu') {
+                this.removeUnavailable(item)
+            }
+            return true
+        })
     }
 
     bindEvents() {
@@ -161,6 +176,8 @@ export class HeaderbarView {
             }
         })
     }
+
+
 
     update() {
         const newHeader = document.createElement('div')

@@ -23,6 +23,18 @@ export const article = {
         },
         tracked: {
             default: false
+        },
+        allowedLanguages: {
+            default: ['en-US']
+        },
+        allowedPapersizes: {
+            default: ['A4']
+        },
+        footnoteMarks: {
+            default: ['strong', 'em']
+        },
+        footnoteElements: {
+            default: ['paragraph']
         }
     },
     parseDOM: [{

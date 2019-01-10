@@ -6,7 +6,7 @@
         "optional": "hidden",
         "attrs": {
             "elements": ["heading1"],
-            "marks": ["strong", "em", "link"]
+            "marks": ["strong", "em", "link", "anchor"]
         }
     }, {
         "type": "contributors",
@@ -23,7 +23,7 @@
         "optional": "hidden",
         "attrs": {
             "elements": ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote", "table"],
-            "marks": ["strong", "em", "link"]
+            "marks": ["strong", "em", "link", "anchor"]
         }
     }, {
         "type": "tags",
@@ -39,12 +39,12 @@
         "title": "Body",
         "attrs": {
             "elements": ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote", "table"],
-            "marks": ["strong", "em", "link"]
+            "marks": ["strong", "em", "link", "anchor"]
         }
     }],
     "footnote": {
         "elements": ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "table"],
-        "marks": ["strong", "em", "link"]
+        "marks": ["strong", "em", "link", "anchor"]
     },
     "languages": ["af-ZA", "sq-AL", "ar", "ast", "be", "br", "bg", "ca", "ca-ES-Valencia", "zh-CN", "da", "nl", "en-AU", "en-CA", "en-NZ", "en-ZA", "en-GB", "en-US", "eo", "fr", "gl", "de-DE", "de-AU", "de-CH", "el", "he", "is", "it", "ja", "km", "lt", "ml", "nb-NO", "nn-NO", "fa", "pl", "pt-BR", "pt-PT", "ro", "ru", "tr", "sr-SP-Cy", "sr-SP-Lt", "sk", "sl", "es", "sv", "ta", "tl", "uk"],
     "papersizes": ["A4", "US Letter"]

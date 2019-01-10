@@ -46,7 +46,7 @@ export class LanguageDialog {
             title: gettext('Change language of the document'),
             body: languageTemplate({
                 currentLanguage: this.language,
-                LANGUAGES
+                allowedLanguages: LANGUAGES.filter(lang => this.editor.view.state.doc.firstChild.attrs.allowedLanguages.includes(lang[0]))
             }),
             buttons,
             onClose: () => this.editor.currentView.focus()

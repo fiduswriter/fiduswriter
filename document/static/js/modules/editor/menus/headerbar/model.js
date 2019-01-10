@@ -40,6 +40,9 @@ const languageItem = function(code, name, order) {
         },
         selected: editor => {
             return editor.view.state.doc.firstChild.attrs.language === code
+        },
+        available: editor => {
+            return editor.view.state.doc.firstChild.attrs.allowedLanguages.includes(code)
         }
     }
 }
@@ -52,6 +55,7 @@ export const headerbarModel = () => ({
             id: 'file',
             title: gettext('File'),
             tooltip: gettext('File handling'),
+            type: 'menu',
             order: 0,
             content: [
                 {
@@ -168,6 +172,7 @@ export const headerbarModel = () => ({
             id: 'export',
             title: gettext('Export'),
             tooltip: gettext('Export of the document contents'),
+            type: 'menu',
             order: 1,
             content: [
                 {
@@ -225,6 +230,7 @@ export const headerbarModel = () => ({
             id: 'settings',
             title: gettext('Settings'),
             tooltip: gettext('Configure settings of this document.'),
+            type: 'menu',
             order: 2,
             content: [
                 {
@@ -273,7 +279,43 @@ export const headerbarModel = () => ({
                         languageItem('ru', gettext('Russian'), 11),
                         {
                             type: 'separator',
-                            order: 12
+                            order: 12,
+                            available: editor => {
+                                // There has to be at least one language of the default languages
+                                // among the default ones and one that is not among the default ones.
+                                return !!editor.view.state.doc.firstChild.attrs.allowedLanguages.find(
+                                    lang => [
+                                        'en-US',
+                                        'en-GB',
+                                        'de-DE',
+                                        'zh-CN',
+                                        'es',
+                                        'fr',
+                                        'ja',
+                                        'it',
+                                        'pl',
+                                        'pt-BR',
+                                        'nl',
+                                        'ru'
+                                    ].includes(lang)
+                                ) && !!editor.view.state.doc.firstChild.attrs.allowedLanguages.find(
+                                    lang => ![
+                                        'en-US',
+                                        'en-GB',
+                                        'de-DE',
+                                        'zh-CN',
+                                        'es',
+                                        'fr',
+                                        'ja',
+                                        'it',
+                                        'pl',
+                                        'pt-BR',
+                                        'nl',
+                                        'ru'
+                                    ].includes(lang)
+                                )
+
+                            }
                         },
                         {
                             title: gettext('Other'),
@@ -300,6 +342,24 @@ export const headerbarModel = () => ({
                                     'ru'
                                 ].includes(
                                     editor.view.state.doc.firstChild.attrs.language
+                                )
+                            },
+                            available: editor => {
+                                !!editor.view.state.doc.firstChild.attrs.allowedLanguages.find(
+                                    lang => ![
+                                        'en-US',
+                                        'en-GB',
+                                        'de-DE',
+                                        'zh-CN',
+                                        'es',
+                                        'fr',
+                                        'ja',
+                                        'it',
+                                        'pl',
+                                        'pt-BR',
+                                        'nl',
+                                        'ru'
+                                    ].includes(lang)
                                 )
                             }
                         }
@@ -330,6 +390,9 @@ export const headerbarModel = () => ({
                             },
                             selected: editor => {
                                 return editor.view.state.doc.firstChild.attrs.papersize === 'A4'
+                            },
+                            available: editor => {
+                                return editor.view.state.doc.firstChild.attrs.allowedPapersizes.includes('A4')
                             }
                         },
                         {
@@ -347,6 +410,9 @@ export const headerbarModel = () => ({
                             },
                             selected: editor => {
                                 return editor.view.state.doc.firstChild.attrs.papersize === 'US Letter'
+                            },
+                            available: editor => {
+                                return editor.view.state.doc.firstChild.attrs.allowedPapersizes.includes('US Letter')
                             }
                         }
                     ]
@@ -357,6 +423,7 @@ export const headerbarModel = () => ({
             id: 'tools',
             title: gettext('Tools'),
             tooltip: gettext('Select document editing tool.'),
+            type: 'menu',
             order: 3,
             content: [
                 {
@@ -384,7 +451,20 @@ export const headerbarModel = () => ({
             id: 'table',
             title: gettext('Table'),
             tooltip: gettext('Add and edit tables.'),
+            type: 'menu',
             order: 4,
+            available: editor => {
+                let tablesInDocParts = false
+                editor.view.state.doc.firstChild.forEach(docPart => {
+                    if (docPart.attrs.elements && docPart.attrs.elements.includes('table')) {
+                        tablesInDocParts = true
+                    }
+                })
+                return (
+                    editor.view.state.doc.firstChild.attrs.footnoteElements.includes('table') ||
+                    tablesInDocParts
+                )
+            },
             disabled: editor =>
                 READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
                 COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights),

@@ -40,6 +40,27 @@ export function templateToDoc(template) {
         articleAttrs[key] = value.default
     })
 
+    if (template.footnote.marks.length) {
+        articleAttrs.footnoteMarks = template.footnote.marks
+    }
+    if (template.footnote.elements.length) {
+        articleAttrs.footnoteElements = template.footnote.elements
+    }
+    if (template.languages.length) {
+        articleAttrs.allowedLanguages = template.languages
+    }
+    if (template.papersizes.length) {
+        articleAttrs.allowedPapersizes = template.papersizes
+    }
+
+    articleAttrs.language = navigator.languages.find(
+        lang => articleAttrs.allowedLanguages.includes(lang)
+    ) || articleAttrs.allowedLanguages[0]
+
+    if (!articleAttrs.allowedPapersizes.includes(articleAttrs.papersize)) {
+        articleAttrs.papersize = articleAttrs.allowedPapersizes[0]
+    }
+
     const doc = {type: 'article', attrs: articleAttrs, content: articleContent}
     return doc
 

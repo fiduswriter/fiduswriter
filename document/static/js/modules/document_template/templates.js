@@ -94,6 +94,10 @@ const allowedMarksTemplate = ({attrs}) =>
 <label>
     <input type="checkbox" class="marks" value="link" ${attrs.marks.includes('link') ? 'checked' : ''}/>
     ${gettext('Link')}
+</label>
+<label>
+    <input type="checkbox" class="marks" value="anchor" ${attrs.marks.includes('anchor') ? 'checked' : ''}/>
+    ${gettext('Anchor')}
 </label>`
 
 const headingTemplate = ({

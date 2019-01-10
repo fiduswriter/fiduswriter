@@ -5,7 +5,16 @@ export const documentTemplatePlugin = function(options) {
     return new Plugin({
         key,
         filterTransaction: (tr, state) => {
-            if (tr.getMeta('remote')) {
+            if (
+                !tr.steps.length ||
+                tr.getMeta('fixIds') ||
+                tr.getMeta('remote') ||
+                tr.getMeta('track') ||
+                tr.getMeta('fromFootnote') ||
+                tr.getMeta('filterFree') ||
+                tr.getMeta('untracked') ||
+                ['historyUndo', 'historyRedo'].includes(tr.getMeta('inputType'))
+            ) {
                 return true
             }
             if (state.doc.firstChild.childCount !== tr.doc.firstChild.childCount) {
@@ -49,8 +58,26 @@ export const documentTemplatePlugin = function(options) {
                     }
                     return true
                 }
-                if (pos < range.from || node === tr.doc.firstChild) {
+                if (pos < range.from) {
                     return true
+                }
+                if (node === tr.doc.firstChild) {
+                    // block some settings changes
+                    const oldNode = state.doc.firstChild
+                    if (
+                        oldNode.attrs.footnoteMarks !== node.attrs.footnoteMarks ||
+                        oldNode.attrs.footnoteElements !== node.attrs.footnoteElements ||
+                        oldNode.attrs.allowedLanguages !== node.attrs.allowedLanguages ||
+                        oldNode.attrs.allowedPapersizes !== node.attrs.allowedPapersizes ||
+                        !node.attrs.allowedPapersizes.includes(node.attrs.papersize) ||
+                        !node.attrs.allowedLanguages.includes(node.attrs.language)
+                    ) {
+                        allowed = false
+                        return false
+                    } else {
+                        allowed = true
+                        return true
+                    }
                 }
                 if (
                     allowedElements &&

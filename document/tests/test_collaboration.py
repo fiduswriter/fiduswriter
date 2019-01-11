@@ -229,7 +229,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def make_bold(self, driver):
-        button = driver.find_element_by_xpath('//*[@title="Bold"]')
+        button = driver.find_element_by_xpath('//*[@title="Strong"]')
         button.click()
 
     def get_boldtext(self, driver):
@@ -294,7 +294,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def make_italic(self, driver):
-        button = driver.find_element_by_xpath('//*[@title="Italic"]')
+        button = driver.find_element_by_xpath('//*[@title="Emphasis"]')
         button.click()
 
     def get_italictext(self, driver):

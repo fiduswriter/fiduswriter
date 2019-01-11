@@ -181,7 +181,7 @@ export const figureImageItemTemplate =  ({id, cats, image, thumbnail, title}) =>
         </td>
         <td class="title" style="width:212px;">
             <span class="fw-inline">
-                <span class="edit-image fw-link-text fa fa-picture-o" data-id="${id}">
+                <span class="edit-image fw-link-text fa fa-image" data-id="${id}">
                     ${escapeText(title)}
                 </span>
             </span>
@@ -227,7 +227,7 @@ export const configureFigureTemplate = ({image, equation, caption, dir}) =>
                     ${image ? 'disabled="disabled"' : ''} />
                 <button type="button" id="insertFigureImage" class="fw-button fw-light
                         ${equation === '' ? '' : 'disabled'}">
-                    ${gettext("Insert image")} <i class="fa fa-picture-o"></i>
+                    ${gettext("Insert image")} <i class="fa fa-image"></i>
                 </button>
             </div>
             <input type="hidden" id="figure-category">
@@ -360,7 +360,7 @@ export const selectedCitationTemplate = ({title, author, id, db, prefix, locator
                   </td>
                   <td width="50" align="center">
                       <span class="delete fw-inline fw-link-text" data-id="${id}" data-db="${db}">
-                          <i class="fa fa-trash-o"></i>
+                          <i class="fa fa-trash-alt"></i>
                       </span>
                   </td>
               </tr>

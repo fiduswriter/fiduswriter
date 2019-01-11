@@ -94,7 +94,7 @@ export const headerbarModel = () => ({
                 {
                     title: gettext('Save revision'),
                     type: 'action',
-                    icon: 'floppy-o',
+                    icon: 'save',
                     tooltip: gettext('Save a revision of the current document.'),
                     order: 2,
                     keys: 'Ctrl-s',
@@ -117,7 +117,7 @@ export const headerbarModel = () => ({
                 {
                     title: gettext('Create Copy'),
                     type: 'action',
-                    icon: 'files-o',
+                    icon: 'copy',
                     tooltip: gettext('Create copy of the current document.'),
                     order: 3,
                     action: editor => {

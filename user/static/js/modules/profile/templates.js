@@ -196,7 +196,7 @@ export let profileContents = ({avatar, username, first_name, last_name, emails})
                                             </td>
                                             <td>
                                                 <span class="${ email.primary ? 'disabled' : 'delete-email fw-link-text' }" data-email="${email.address}">
-                                                    <i class="fa fa-trash-o"></i>
+                                                    <i class="fa fa-trash-alt"></i>
                                                 </span>
                                             </td>
                                         </tr>`

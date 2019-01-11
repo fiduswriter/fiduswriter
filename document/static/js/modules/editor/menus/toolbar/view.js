@@ -37,7 +37,6 @@ export class ToolbarView {
         // document template.
         menu.content = menu.content.filter(item => {
             if (item.available && !item.available(this.editor)) {
-                console.log('available!')
                 return false
             } else if (item.type === 'menu') {
                 this.removeUnavailable(item)

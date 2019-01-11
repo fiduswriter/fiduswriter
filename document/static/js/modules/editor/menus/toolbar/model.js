@@ -34,6 +34,27 @@ function elementAvailable(editor, elementName) {
       )
 }
 
+export function elementDisabled(editor, elementName) {
+    if (editor.currentView === editor.view) {
+        // main editor
+        const anchorDocPart = editor.currentView.state.selection.$anchor.node(2),
+            headDocPart = editor.currentView.state.selection.$head.node(2)
+        return !anchorDocPart ||
+            headDocPart !== anchorDocPart ||
+            !anchorDocPart.attrs.elements ||
+            !anchorDocPart.attrs.elements.includes(elementName)
+    } else {
+        // footnote editor
+        const anchorFootnote = editor.currentView.state.selection.$anchor.node(1),
+            headFootnote = editor.currentView.state.selection.$head.node(1)
+
+        return !anchorFootnote ||
+            headFootnote !== anchorFootnote ||
+            !editor.view.state.doc.firstChild.attrs.footnoteElements.includes(elementName)
+    }
+
+}
+
 function markAvailable(editor, markName) {
       let markInDocParts = false
       editor.view.state.doc.firstChild.forEach(docPart => {
@@ -47,7 +68,26 @@ function markAvailable(editor, markName) {
       )
 }
 
-export const TEXT_ONLY_PARTS = ['title', 'subtitle', 'authors', 'keywords']
+function markDisabled(editor, markName) {
+    if (editor.currentView === editor.view) {
+        // main editor
+        const anchorDocPart = editor.currentView.state.selection.$anchor.node(2),
+            headDocPart = editor.currentView.state.selection.$head.node(2)
+        return !anchorDocPart ||
+            headDocPart !== anchorDocPart ||
+            !anchorDocPart.attrs.marks ||
+            !anchorDocPart.attrs.marks.includes(markName)
+    } else {
+        // footnote editor
+        const anchorFootnote = editor.currentView.state.selection.$anchor.node(1),
+            headFootnote = editor.currentView.state.selection.$head.node(1)
+
+        return !anchorFootnote ||
+            headFootnote !== anchorFootnote ||
+            !editor.view.state.doc.firstChild.attrs.footnoteMarks.includes(markName)
+    }
+
+}
 
 export const toolbarModel = () => ({
     openMore: false, // whether 'more' menu is opened.
@@ -106,9 +146,7 @@ export const toolbarModel = () => ({
             show: editor => {
                 if (
                     editor.currentView.state.selection.$anchor.node(2) &&
-                    TEXT_ONLY_PARTS.includes(
-                        editor.currentView.state.selection.$anchor.node(2).type.name
-                    )
+                    !editor.view.state.selection.$anchor.node(2).attrs.elements
                 ) {
                     return ''
                 }
@@ -155,12 +193,9 @@ export const toolbarModel = () => ({
             disabled: editor =>
                     READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
                     COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    !editor.currentView.state.selection.$anchor.node(2) ||
+                    !editor.currentView.state.selection.$anchor.node(2).attrs.elements ||
                     (
-                        editor.currentView.state.selection.$anchor.node(2) &&
-                        TEXT_ONLY_PARTS.includes(
-                            editor.currentView.state.selection.$anchor.node(2).type.name
-                        )
-                    ) || (
                         editor.currentView.state.selection.jsonID === 'node' &&
                         editor.currentView.state.selection.node.isBlock &&
                         !editor.currentView.state.selection.node.isTextblock
@@ -174,6 +209,7 @@ export const toolbarModel = () => ({
                         setBlockType(view.state.schema.nodes.paragraph)(view.state, view.dispatch)
                     },
                     available: editor => elementAvailable(editor, 'paragraph'),
+                    disabled: editor => elementDisabled(editor, 'paragraph'),
                     order: 0
                 },
                 {
@@ -183,6 +219,7 @@ export const toolbarModel = () => ({
                         setBlockType(view.state.schema.nodes.heading1)(view.state, view.dispatch)
                     },
                     available: editor => elementAvailable(editor, 'heading1'),
+                    disabled: editor => elementDisabled(editor, 'heading1'),
                     order: 1
                 },
                 {
@@ -192,6 +229,7 @@ export const toolbarModel = () => ({
                         setBlockType(view.state.schema.nodes.heading2)(view.state, view.dispatch)
                     },
                     available: editor => elementAvailable(editor, 'heading2'),
+                    disabled: editor => elementDisabled(editor, 'heading2'),
                     order: 2
                 },
                 {
@@ -201,6 +239,7 @@ export const toolbarModel = () => ({
                         setBlockType(view.state.schema.nodes.heading3)(view.state, view.dispatch)
                     },
                     available: editor => elementAvailable(editor, 'heading3'),
+                    disabled: editor => elementDisabled(editor, 'heading3'),
                     order: 3
                 },
                 {
@@ -210,6 +249,7 @@ export const toolbarModel = () => ({
                         setBlockType(view.state.schema.nodes.heading4)(view.state, view.dispatch)
                     },
                     available: editor => elementAvailable(editor, 'heading4'),
+                    disabled: editor => elementDisabled(editor, 'heading4'),
                     order: 4
                 },
                 {
@@ -219,6 +259,7 @@ export const toolbarModel = () => ({
                         setBlockType(view.state.schema.nodes.heading5)(view.state, view.dispatch)
                     },
                     available: editor => elementAvailable(editor, 'heading5'),
+                    disabled: editor => elementDisabled(editor, 'heading5'),
                     order: 5
                 },
                 {
@@ -228,6 +269,7 @@ export const toolbarModel = () => ({
                         setBlockType(view.state.schema.nodes.heading6)(view.state, view.dispatch)
                     },
                     available: editor => elementAvailable(editor, 'heading6'),
+                    disabled: editor => elementDisabled(editor, 'heading6'),
                     order: 6
                 },
                 {
@@ -237,6 +279,7 @@ export const toolbarModel = () => ({
                         setBlockType(view.state.schema.nodes.code_block)(view.state, view.dispatch)
                     },
                     available: editor => elementAvailable(editor, 'code_block'),
+                    disabled: editor => elementDisabled(editor, 'code_block'),
                     order: 7
                 }
             ],
@@ -256,16 +299,9 @@ export const toolbarModel = () => ({
                 if (
                     READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
                     COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
-                    editor.currentView.state.selection.jsonID === 'gapcursor'
+                    editor.currentView.state.selection.jsonID === 'gapcursor' ||
+                    markDisabled(editor, 'strong')
                 ) {
-                    return true
-                } else if (
-                    editor.currentView.state.selection.$anchor.node(2) &&
-                    editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
-                    !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name)
-                ) {
-                    return false
-                } else {
                     return true
                 }
             },
@@ -293,23 +329,11 @@ export const toolbarModel = () => ({
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
             available: editor => markAvailable(editor, 'em'),
-            disabled: editor => {
-                if (
+            disabled: editor =>
                     READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
                     COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
-                    editor.currentView.state.selection.jsonID === 'gapcursor'
-                ) {
-                    return true
-                } else if (
-                    editor.currentView.state.selection.$anchor.node(2) &&
-                    editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
-                    !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name)
-                ) {
-                    return false
-                } else {
-                    return true
-                }
-            },
+                    editor.currentView.state.selection.jsonID === 'gapcursor' ||
+                    markDisabled(editor, 'em'),
             selected: editor => {
                 const storedMarks = editor.currentView.state.storedMarks
                 if (
@@ -335,16 +359,11 @@ export const toolbarModel = () => ({
             },
             available: editor => elementAvailable(editor, 'ordered_list'),
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
-                    return true
-                } else if (
-                    editor.currentView.state.selection.$anchor.node(2) &&
-                    editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
-                    !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
-                    editor.currentView.state.selection.jsonID === 'text'
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    elementDisabled(editor, 'ordered_list')
                 ) {
-                    return false
-                } else {
                     return true
                 }
             },
@@ -361,16 +380,11 @@ export const toolbarModel = () => ({
             },
             available: editor => elementAvailable(editor, 'bullet_list'),
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
-                    return true
-                } else if (
-                    editor.currentView.state.selection.$anchor.node(2) &&
-                    editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
-                    !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
-                    editor.currentView.state.selection.jsonID === 'text'
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    elementDisabled(editor, 'bullet_list')
                 ) {
-                    return false
-                } else {
                     return true
                 }
             },
@@ -387,16 +401,11 @@ export const toolbarModel = () => ({
             },
             available: editor => elementAvailable(editor, 'blockquote'),
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
-                    return true
-                } else if (
-                    editor.currentView.state.selection.$anchor.node(2) &&
-                    editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
-                    !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
-                    editor.currentView.state.selection.jsonID === 'text'
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    elementDisabled(editor, 'blockquote')
                 ) {
-                    return false
-                } else {
                     return true
                 }
             },
@@ -413,16 +422,11 @@ export const toolbarModel = () => ({
             },
             available: editor => markAvailable(editor, 'link'),
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
-                    return true
-                } else if (
-                    editor.currentView.state.selection.$anchor.node(2) &&
-                    editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
-                    !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
-                    editor.currentView.state.selection.jsonID === 'text'
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    markDisabled(editor, 'link')
                 ) {
-                    return false
-                } else {
                     return true
                 }
             },
@@ -441,18 +445,12 @@ export const toolbarModel = () => ({
             },
             available: editor => elementAvailable(editor, 'footnote'),
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
-                    return true
-                } else if (editor.view !== editor.currentView) {
-                    return true
-                } else if (
-                    editor.currentView.state.selection.$anchor.node(2) &&
-                    editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
-                    !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
-                    editor.currentView.state.selection.jsonID === 'text'
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    editor.view !== editor.currentView || // we don't allow footnotes in footnotes
+                    elementDisabled(editor, 'footnote')
                 ) {
-                    return false
-                } else {
                     return true
                 }
             },
@@ -469,22 +467,16 @@ export const toolbarModel = () => ({
             },
             available: editor => elementAvailable(editor, 'citation'),
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
-                    return true
-                } else if (
-                    editor.currentView.state.selection.$anchor.node(2) &&
-                    editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
-                    !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    elementDisabled(editor, 'citation') ||
+                    !['text', 'node'].includes(editor.currentView.state.selection.jsonID) ||
                     (
-                        editor.currentView.state.selection.jsonID === 'text' ||
-                        (
-                            editor.currentView.state.selection.jsonID === 'node' &&
-                            editor.currentView.state.selection.node.type.name === 'citation'
-                        )
+                        editor.currentView.state.selection.jsonID === 'node' &&
+                        editor.currentView.state.selection.node.type.name !== 'citation'
                     )
                 ) {
-                    return false
-                } else {
                     return true
                 }
             },
@@ -503,16 +495,11 @@ export const toolbarModel = () => ({
             },
             available: editor => elementAvailable(editor, 'horizontal_rule'),
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
-                    return true
-                } else if (
-                    editor.currentView.state.selection.$anchor.node(2) &&
-                    editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
-                    !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
-                    editor.currentView.state.selection.jsonID === 'text'
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    elementDisabled(editor, 'horizontal_rule')
                 ) {
-                    return false
-                } else {
                     return true
                 }
             },
@@ -528,22 +515,16 @@ export const toolbarModel = () => ({
             },
             available: editor => elementAvailable(editor, 'equation'),
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
-                    return true
-                } else if (
-                    editor.currentView.state.selection.$anchor.node(2) &&
-                    editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
-                    !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    elementDisabled(editor, 'equation') ||
+                    !['text', 'node'].includes(editor.currentView.state.selection.jsonID) ||
                     (
-                        editor.currentView.state.selection.jsonID === 'text' ||
-                        (
-                            editor.currentView.state.selection.jsonID === 'node' &&
-                            editor.currentView.state.selection.node.type.name === 'equation'
-                        )
+                        editor.currentView.state.selection.jsonID === 'node' &&
+                        editor.currentView.state.selection.node.type.name !== 'equation'
                     )
                 ) {
-                    return false
-                } else {
                     return true
                 }
             },
@@ -560,23 +541,11 @@ export const toolbarModel = () => ({
             },
             available: editor => elementAvailable(editor, 'figure'),
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
-                    return true
-                } else if (
-                    editor.currentView.state.selection.$anchor.node(2) &&
-                    editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
-                    !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
-                    editor.currentView.state.selection.$anchor.node(2).type.name !== 'abstract' &&
-                    (
-                        editor.currentView.state.selection.jsonID === 'text' ||
-                        (
-                            editor.currentView.state.selection.jsonID === 'node' &&
-                            editor.currentView.state.selection.node.type.name === 'figure'
-                        )
-                    )
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    elementDisabled(editor, 'figure')
                 ) {
-                    return false
-                } else {
                     return true
                 }
             },
@@ -607,9 +576,10 @@ export const toolbarModel = () => ({
                 return false
             },
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
-                    return true
-                } else if (editor.currentView.state.selection.empty) {
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    editor.currentView.state.selection.empty
+                ) {
                     return true
                 }
             },
@@ -638,9 +608,11 @@ export const toolbarModel = () => ({
             },
             available: editor => elementAvailable(editor, 'anchor'),
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
-                    return true
-                } else if (editor.currentView.state.selection.empty) {
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    markDisabled(editor, 'anchor')
+                ) {
                     return true
                 }
             },

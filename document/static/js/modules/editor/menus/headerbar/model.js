@@ -10,7 +10,7 @@ import {HTMLExporter} from "../../../exporter/html"
 import {EpubExporter} from "../../../exporter/epub"
 import {PrintExporter} from "../../../exporter/print"
 import {RevisionDialog, LanguageDialog, TableDialog} from "../../dialogs"
-import {TEXT_ONLY_PARTS} from "../toolbar/model"
+import {elementDisabled} from "../toolbar/model"
 import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from "../.."
 import {TableResizeDialog} from  "../../dialogs"
 
@@ -344,9 +344,8 @@ export const headerbarModel = () => ({
                                     editor.view.state.doc.firstChild.attrs.language
                                 )
                             },
-                            available: editor => {
-                                !!editor.view.state.doc.firstChild.attrs.allowedLanguages.find(
-                                    lang => ![
+                            available: editor => !!editor.view.state.doc.firstChild.attrs.allowedLanguages.find(
+                                lang => ![
                                         'en-US',
                                         'en-GB',
                                         'de-DE',
@@ -360,8 +359,7 @@ export const headerbarModel = () => ({
                                         'nl',
                                         'ru'
                                     ].includes(lang)
-                                )
-                            }
+                            )
                         }
                     ]
                 },
@@ -467,7 +465,8 @@ export const headerbarModel = () => ({
             },
             disabled: editor =>
                 READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
-                COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights),
+                COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                elementDisabled(editor, 'table'),
             content: [
                 {
                     title: gettext('Insert table'),
@@ -481,14 +480,9 @@ export const headerbarModel = () => ({
                     },
                     disabled: editor => {
                         if (
-                            !findTable(editor.currentView.state) &&
-                            editor.currentView.state.selection.$anchor.node(2) &&
-                            editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
-                            !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
-                            editor.currentView.state.selection.jsonID === 'text'
+                            findTable(editor.currentView.state) ||
+                            elementDisabled(editor, 'table')
                         ) {
-                            return false
-                        } else {
                             return true
                         }
                     }

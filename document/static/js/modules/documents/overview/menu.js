@@ -44,7 +44,8 @@ export let menuModel = () => ({
                                 ids,
                                 overview.accessRights,
                                 overview.teamMembers,
-                                newAccessRights => overview.accessRights = newAccessRights
+                                newAccessRights => overview.accessRights = newAccessRights,
+                                memberDetails => overview.teamMembers.push(memberDetails)
                             )
                         }
                     },

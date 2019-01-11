@@ -7,7 +7,7 @@
   "description": "Install dependencies for ES6 transpilation",
   "scripts": {
     "get_mml2omml": "mkdir -p ./static-libs/xsl/ && wget https://raw.githubusercontent.com/AbiWord/abiword/14cbf144cb10a5a5ea6ee11275f7178ca4ff055a/plugins/openxml/omml_xslt/mml2omml.xsl -O ./static-libs/xsl/mml2omml.xsl",
-    "copy_fontawesome": "mkdir -p ./static-libs/css/ && mkdir -p ./static-libs/fonts/ && cp node_modules/font-awesome/css/* ./static-libs/css/ && cp node_modules/font-awesome/fonts/* ./static-libs/fonts/",
+    "copy_fontawesome": "mkdir -p ./static-libs/fontawesome/ && cp -r node_modules/@fortawesome/fontawesome-free/css ./static-libs/fontawesome/ && cp -r node_modules/@fortawesome/fontawesome-free/webfonts ./static-libs/fontawesome/",
     "copy_prosemirror_css": "mkdir -p ./static-libs/css/ && cp node_modules/prosemirror-view/style/prosemirror.css ./static-libs/css/ && cp node_modules/prosemirror-menu/style/menu.css ./static-libs/css/prosemirror-menu.css",
     "copy_mathquill_css": "mkdir -p ./static-libs/css/ && cp node_modules/mathquill-jquery/build/mathquill.css ./static-libs/css/",
     "copy_mathquill_font": "mkdir -p ./static-libs/css/font/ && cp node_modules/mathquill-jquery/build/font/* ./static-libs/css/font/",
@@ -21,7 +21,7 @@
   "dependencies": {
     "diff-dom": "2.5.x",
     "downloadjs": "1.4.7",
-    "font-awesome": "4.7.0",
+    "@fortawesome/fontawesome-free": "5.6.3",
     "jshint": "^2.9.6",
     "katex": "0.10.x",
     "w3c-keyname": "1.1.x",

@@ -520,6 +520,14 @@ export const list_item = {
     defining: true
 }
 
+
+export const mark = {
+    parseDOM: [{tag: "mark"}],
+    toDOM() {
+        return ["mark", 0]
+    }
+}
+
 export const deletion = {
     attrs: {
         user: {

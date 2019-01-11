@@ -287,7 +287,7 @@ export const toolbarModel = () => ({
         },
         {
             type: 'button',
-            title: gettext('Bold'),
+            title: gettext('Strong'),
             icon: 'bold',
             action: editor => {
                 const mark = editor.currentView.state.schema.marks['strong']
@@ -321,7 +321,7 @@ export const toolbarModel = () => ({
         },
         {
             type: 'button',
-            title: gettext('Italic'),
+            title: gettext('Emphasis'),
             icon: 'italic',
             action: editor => {
                 const mark = editor.currentView.state.schema.marks['em']
@@ -350,6 +350,40 @@ export const toolbarModel = () => ({
         },
         {
             type: 'button',
+            title: gettext('Mark'),
+            icon: 'highlighter',
+            action: editor => {
+                const mark = editor.currentView.state.schema.marks['mark']
+                const command = toggleMark(mark)
+                command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
+            },
+            available: editor => markAvailable(editor, 'mark'),
+            disabled: editor => {
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    editor.currentView.state.selection.jsonID === 'gapcursor' ||
+                    markDisabled(editor, 'mark')
+                ) {
+                    return true
+                }
+            },
+            selected: editor => {
+                const storedMarks = editor.currentView.state.storedMarks
+                if (
+                    storedMarks && storedMarks.some(mark => mark.type.name === 'mark') ||
+                    editor.currentView.state.selection.$head.marks().some(mark => mark.type.name === 'mark')
+                ) {
+                    return true
+                } else {
+                    return false
+                }
+
+            },
+            order: 5
+        },
+        {
+            type: 'button',
             title: gettext('Numbered list'),
             icon: 'list-ol',
             action: editor => {
@@ -367,7 +401,7 @@ export const toolbarModel = () => ({
                     return true
                 }
             },
-            order: 5
+            order: 6
         },
         {
             type: 'button',
@@ -388,7 +422,7 @@ export const toolbarModel = () => ({
                     return true
                 }
             },
-            order: 6
+            order: 7
         },
         {
             type: 'button',
@@ -409,7 +443,7 @@ export const toolbarModel = () => ({
                     return true
                 }
             },
-            order: 7
+            order: 8
         },
         {
             id: 'link',
@@ -431,7 +465,7 @@ export const toolbarModel = () => ({
                 }
             },
             selected: editor => editor.currentView.state.selection.$head.marks().some(mark => mark.type.name === 'link'),
-            order: 8
+            order: 9
         },
         {
             type: 'button',
@@ -454,7 +488,7 @@ export const toolbarModel = () => ({
                     return true
                 }
             },
-            order: 9
+            order: 10
         },
         {
             type: 'button',
@@ -480,7 +514,7 @@ export const toolbarModel = () => ({
                     return true
                 }
             },
-            order: 10
+            order: 11
         },
         {
             type: 'button',
@@ -503,7 +537,7 @@ export const toolbarModel = () => ({
                     return true
                 }
             },
-            order: 11
+            order: 12
         },
         {
             type: 'button',
@@ -528,12 +562,12 @@ export const toolbarModel = () => ({
                     return true
                 }
             },
-            order: 12
+            order: 13
         },
         {
             type: 'button',
             title: gettext('Figure'),
-            icon: 'picture-o',
+            icon: 'image',
             action: editor => {
                 const dialog = new FigureDialog(editor)
                 dialog.init()
@@ -549,7 +583,7 @@ export const toolbarModel = () => ({
                     return true
                 }
             },
-            order: 13
+            order: 14
         },
         {
             type: 'button',
@@ -557,20 +591,20 @@ export const toolbarModel = () => ({
             icon: 'undo',
             action: editor => undo(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('inputType', 'historyUndo'))),
             disabled: editor => undoDepth(editor.currentView.state) === 0,
-            order: 14
-        },
-        {
-            type: 'button',
-            title: gettext('Redo'),
-            icon: 'repeat',
-            action: editor => redo(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('inputType', 'historyRedo'))),
-            disabled: editor => redoDepth(editor.currentView.state) === 0,
             order: 15
         },
         {
             type: 'button',
+            title: gettext('Redo'),
+            icon: 'redo',
+            action: editor => redo(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('inputType', 'historyRedo'))),
+            disabled: editor => redoDepth(editor.currentView.state) === 0,
+            order: 16
+        },
+        {
+            type: 'button',
             title: gettext('Comment'),
-            icon: 'comment-o',
+            icon: 'comment',
             action: editor => {
                 editor.mod.comments.interactions.createNewComment()
                 return false
@@ -595,7 +629,7 @@ export const toolbarModel = () => ({
                 }
 
             },
-            order: 16
+            order: 17
         },
         {
             type: 'button',
@@ -628,7 +662,7 @@ export const toolbarModel = () => ({
                 }
 
             },
-            order: 17
+            order: 18
         }
     ]
 })

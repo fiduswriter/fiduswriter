@@ -6,6 +6,7 @@ import {
     FeedbackTab
 } from "../feedback"
 import {
+    adjustDocToTemplate,
     templateToDoc
 } from "../document_template"
 import {
@@ -340,7 +341,9 @@ export class Editor {
         this.docInfo.confirmedJson = JSON.parse(JSON.stringify(doc.contents))
         let stateDoc
         if (doc.contents.type) {
-            stateDoc = this.schema.nodeFromJSON({type:'doc', content:[doc.contents]})
+            stateDoc = this.schema.nodeFromJSON({type:'doc', content:[
+                adjustDocToTemplate(doc.contents, this.docInfo.template)
+            ]})
         } else {
             stateDoc = this.schema.nodeFromJSON({type:'doc', content:[
                 templateToDoc(this.docInfo.template)

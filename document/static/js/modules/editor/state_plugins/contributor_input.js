@@ -6,6 +6,7 @@ import {Slice, Fragment} from "prosemirror-model"
 import {noSpaceTmp, addAlert} from "../../common"
 import {randomHeadingId, randomFigureId} from "../../schema/common"
 import {ContributorDialog} from "../dialogs"
+import {addDeletedPartWidget} from "./document_template"
 
 const key = new PluginKey('contributorInput')
 
@@ -34,6 +35,9 @@ export class ContributorsView {
             const dialog = new ContributorDialog(node, view)
             dialog.init()
         })
+        if (node.attrs.deleted) {
+            addDeletedPartWidget(this.dom, view, getPos)
+        }
     }
 
     stopEvent(event) {

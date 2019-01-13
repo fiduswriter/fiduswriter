@@ -83,6 +83,9 @@ const partSpec = (type, content, attrs = {}) => ({
         },
         help: {
             default: false
+        },
+        deleted: { // used when a part is present in a document but not part of the document template due to template changes
+            default: false
         }
     }, attrs),
     parseDOM: [{
@@ -99,6 +102,9 @@ const partSpec = (type, content, attrs = {}) => ({
         }
         if (node.attrs.hidden) {
             attrs['data-hidden'] = 'true'
+        }
+        if (node.attrs.deleted) {
+            attrs.class += ' article-deleted'
         }
         return ["div", attrs, 0]
     }

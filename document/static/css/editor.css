@@ -797,3 +797,23 @@ html[hc=a5] #toolbar {
     line-height: 25px;
     letter-spacing: -0.35px;
 }
+
+.article-part.article-deleted {
+    border: 3px solid #d3421c;
+    border-radius: 5px;
+    padding: 10px 20px 10px 10px;
+    margin: 5px 0;
+    position: relative;
+}
+
+.remove-article-part {
+    position: absolute;
+    top: 5px;
+    right:  5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.remove-article-part:hover {
+    color: #d3421c;
+}

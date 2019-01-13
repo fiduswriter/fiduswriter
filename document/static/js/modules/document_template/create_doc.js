@@ -23,10 +23,7 @@ export function templateToDoc(template) {
             if (part.initial) {
                 node.content = part.initial
             } else if (['richtext', 'heading'].includes(part.type)) {
-                let defaultElement = part.attrs.elements[0]
-                if (defaultElement==='heading') {
-                    defaultElement = 'heading1'
-                }
+                const defaultElement = part.attrs.elements[0]
                 node.content = [{type: defaultElement, attrs:{track:[]}}]
             }
             return node

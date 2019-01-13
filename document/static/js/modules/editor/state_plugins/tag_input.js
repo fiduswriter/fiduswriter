@@ -4,6 +4,7 @@ import {EditorView, Decoration, DecorationSet} from "prosemirror-view"
 import {history, redo, undo} from "prosemirror-history"
 import {keymap} from "prosemirror-keymap"
 
+import {addDeletedPartWidget} from "./document_template"
 
 const key = new PluginKey('tagInput')
 
@@ -185,6 +186,9 @@ export class TagsView {
         this.contentDOM.classList.add('tags-inner')
         this.dom.appendChild(this.contentDOM)
         this.dom.appendChild(tagInputDOM)
+        if (node.attrs.deleted) {
+            addDeletedPartWidget(this.dom, view, getPos)
+        }
     }
 
     stopEvent(event) {

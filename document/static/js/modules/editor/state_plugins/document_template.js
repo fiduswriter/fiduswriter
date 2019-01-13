@@ -1,9 +1,82 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 
+
+export function addDeletedPartWidget(dom, view, getPos) {
+    dom.classList.add('article-deleted')
+    dom.insertAdjacentHTML(
+        'beforeend',
+        '<div class="remove-article-part"><i class="fa fa-trash-alt"></i></div>'
+    )
+    const removeButton = dom.lastElementChild
+    removeButton.addEventListener('click', () => {
+        const from = getPos(),
+            to = from + view.state.doc.nodeAt(from).nodeSize,
+            tr = view.state.tr
+        tr.delete(from, to)
+        tr.setMeta('filterFree', true)
+        view.dispatch(tr)
+    })
+}
+
+export class PartView {
+    constructor(node, view, getPos) {
+        this.node = node
+        this.view = view
+        this.getPos = getPos
+        this.dom = document.createElement('div')
+        this.dom.classList.add('article-part')
+        this.dom.classList.add(`article-${this.node.type.name}`)
+        this.dom.classList.add(`article-${this.node.attrs.id}`)
+        if (node.attrs.hidden) {
+            this.dom.dataset.hidden = true
+        }
+        if (node.attrs.deleted) {
+            this.contentDOM = this.dom.appendChild(document.createElement('div'))
+            addDeletedPartWidget(this.dom, view, getPos)
+        } else {
+            this.contentDOM = this.dom
+        }
+    }
+
+    stopEvent() {
+        return false
+    }
+}
+
 const key = new PluginKey('documentTemplate')
 export const documentTemplatePlugin = function(options) {
     return new Plugin({
         key,
+        state: {
+            init(config, state) {
+                if (options.editor.docInfo.access_rights === 'write') {
+                    this.spec.props.nodeViews['richtext_part'] = (node, view, getPos) => new PartView(
+                        node,
+                        view,
+                        getPos
+                    )
+                    this.spec.props.nodeViews['heading_part'] = (node, view, getPos) => new PartView(
+                        node,
+                        view,
+                        getPos
+                    )
+                    this.spec.props.nodeViews['table_part'] = (node, view, getPos) => new PartView(
+                        node,
+                        view,
+                        getPos
+                    )
+                    // Tags and Contributors have node views defined in tag_input and contributor_input.
+                }
+
+                return {}
+            },
+            apply(tr, prev) {
+                return prev
+            }
+        },
+        props: {
+            nodeViews: {}
+        },
         filterTransaction: (tr, state) => {
             if (
                 !tr.steps.length ||
@@ -83,12 +156,10 @@ export const documentTemplatePlugin = function(options) {
                     allowedElements &&
                     !allowedElements.includes(node.type.name)
                 ) {
-                    console.log(`forbidden node ${node.type.name}`)
                     allowed = false
                 } else if (allowedMarks) {
                     node.marks.forEach(mark => {
                         if (!allowedMarks.includes(mark.type.name)) {
-                            console.log(`forbidden mark ${mark.type.name}`)
                             allowed = false
                         }
                     })

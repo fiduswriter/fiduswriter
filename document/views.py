@@ -20,7 +20,7 @@ from avatar.utils import get_primary_avatar, get_default_avatar_url
 from avatar.templatetags.avatar_tags import avatar_url
 
 from document.models import Document, AccessRight, DocumentRevision, \
-    ExportTemplate, CAN_UPDATE_DOCUMENT
+    ExportTemplate, DocumentTemplate, CAN_UPDATE_DOCUMENT
 from usermedia.models import DocumentImage, Image
 from bibliography.models import Entry
 from document.helpers.serializers import PythonWithURLSerializer
@@ -446,6 +446,19 @@ def import_js(request):
             json_encode(json_decode(request.POST['bibliography']))
         # document.doc_version should always be the current version, so don't
         # bother about it.
+        template_hash = request.POST['template_hash']
+        document_template = DocumentTemplate.objects.filter(
+            Q(user=request.user) | Q(user=None),
+            definition_hash=template_hash
+        ).first()
+        if not document_template:
+            document_template = DocumentTemplate.objects.create(
+                user=request.user,
+                title=request.POST['template_title'],
+                definition=json_encode(json_decode(request.POST['template'])),
+                definition_hash=template_hash
+            )
+        document.template = document_template
         document.save()
         response['document_id'] = document.id
         response['added'] = time.mktime(document.added.utctimetuple())

@@ -7,8 +7,8 @@ import {baseKeymap} from "prosemirror-commands"
 import {gapCursor} from "prosemirror-gapcursor"
 import {menuBar} from "prosemirror-menu"
 import {buildKeymap, buildInputRules} from "prosemirror-example-setup"
-import {TagsView, ContributorsView} from "../editor/state_plugins"
 
+import {TagsView, ContributorsView} from "../editor/state_plugins"
 import {
     documentConstructorTemplate,
     templateEditorValueTemplate,
@@ -28,7 +28,8 @@ import {
     headingPartSchema,
     headingMenuContent,
     tagsPartSchema,
-    contributorsPartSchema
+    contributorsPartSchema,
+    templateHash
 } from "./schema"
 
 export class DocumentTemplateDesigner {
@@ -54,6 +55,8 @@ export class DocumentTemplateDesigner {
         ], this.staticUrl)
         whenReady().then(() => {
             this.definitionTextarea = document.querySelector('textarea[name=definition]')
+            this.definitionHashInput = document.querySelector('#id_definition_hash')
+            this.definitionHashInputBlock = document.querySelector('div.field-definition_hash')
             this.getInitialValue()
             this.modifyDOM()
             this.bind()
@@ -63,6 +66,7 @@ export class DocumentTemplateDesigner {
 
     modifyDOM() {
         this.definitionTextarea.style.display='none'
+        this.definitionHashInputBlock.style.display='none'
         this.definitionTextarea.insertAdjacentHTML(
             'beforebegin',
             toggleEditorButtonTemplate()
@@ -84,64 +88,105 @@ export class DocumentTemplateDesigner {
         let valid = true
         this.errors = {}
         this.value = {
-            structure: Array.from(document.querySelectorAll('.to-container .doc-part:not(.fixed)')).map(
-                el => {
-                    const type = el.dataset.type,
-                        id = el.querySelector('input.id').value,
-                        title = el.querySelector('input.title').value,
-                        help = this.getEditorValue(el.querySelector('.instructions')),
-                        initial = this.getEditorValue(el.querySelector('.initial')),
-                        locking = el.querySelector('.locking option:checked').value,
-                        optional = el.querySelector('.optional option:checked').value,
-                        values = {type, id, title},
-                        attrs = {}
-                    if (help) {
-                        values['help'] = help
+            type: 'article',
+            content: [{type: 'title'}].concat(
+                Array.from(document.querySelectorAll('.to-container .doc-part:not(.fixed)')).map(
+                    el => {
+                        const type = el.dataset.type,
+                            id = el.querySelector('input.id').value,
+                            title = el.querySelector('input.title').value,
+                            help = this.getEditorValue(el.querySelector('.instructions')),
+                            initial = this.getEditorValue(el.querySelector('.initial')),
+                            locking = el.querySelector('.locking option:checked').value,
+                            optional = el.querySelector('.optional option:checked').value,
+                            attrs = {id, title},
+                            node = {type, attrs}
+                        if (help) {
+                            attrs.help = help
+                        }
+                        if (initial) {
+                            attrs.initial = initial
+                            node.content = JSON.parse(JSON.stringify(initial))
+                        }
+                        if (optional !== 'false') {
+                            attrs.optional = optional
+                        }
+                        if (optional === 'hidden') {
+                            attrs.hidden = true
+                        }
+                        if (locking !== 'false') {
+                            attrs.locking = locking
+                        }
+                        let language
+                        switch(type) {
+                            case 'richtext_part':
+                            case 'heading_part':
+                                attrs.elements = Array.from(el.querySelectorAll('.elements:checked')).map(el => el.value)
+                                if (!attrs.elements.length) {
+                                    attrs.elements = ['paragraph']
+                                }
+                                attrs.marks = Array.from(el.querySelectorAll('.marks:checked')).map(el => el.value)
+                                language = el.querySelector('.language').value
+                                if (language !== 'false') {
+                                    attrs.language = language
+                                }
+                                if (!node.content) {
+                                    node.content = [{type: attrs.elements[0]}]
+                                }
+                                break
+                            case 'table_part':
+                                attrs.elements = Array.from(el.querySelectorAll('.elements:checked')).map(el => el.value)
+                                if (!attrs.elements.includes('paragraph')) {
+                                    // tables need to allow paragraphs
+                                    attrs.elements.push('paragraph')
+                                }
+                                attrs.marks = Array.from(el.querySelectorAll('.marks:checked')).map(el => el.value)
+                                language = el.querySelector('.language').value
+                                if (language !== 'false') {
+                                    attrs.language = language
+                                }
+                                if (!node.content) {
+                                    node.content = [{type: 'table', content: [{type: 'table_row', content: [{type: 'table_cell', content: [{type: 'paragraph'}]}]}]}]
+                                }
+                                break
+                            case 'contributors_part':
+                            case 'tags_part':
+                                attrs.item_title = el.querySelector('input.item_title').value
+                                break
+                            default:
+                                break
+                        }
+
+                        if (!id.length) {
+                            valid = false
+                            this.errors.missing_id = gettext('All document parts need an ID.')
+                        }
+                        return node
                     }
-                    if (initial) {
-                        values['initial'] = initial
-                    }
-                    if (optional !== 'false') {
-                        values['optional'] = optional
-                    }
-                    if (locking !== 'false') {
-                        values['locking'] = locking
-                    }
-                    let language
-                    switch(type) {
-                        case 'richtext':
-                        case 'table':
-                        case 'heading':
-                            attrs['elements'] = Array.from(el.querySelectorAll('.elements:checked')).map(el => el.value)
-                            attrs['marks'] = Array.from(el.querySelectorAll('.marks:checked')).map(el => el.value)
-                            language = el.querySelector('.language').value
-                            if (language !== 'false') {
-                                values['language'] = language
-                            }
-                            break
-                        case 'contributors':
-                        case 'tags':
-                            attrs['item_title'] = el.querySelector('input.item_title').value
-                            break
-                        default:
-                            break
-                    }
-                    values['attrs'] = attrs
-                    if (!id.length) {
-                        valid = false
-                        this.errors['missing_id'] = gettext('All document parts need an ID.')
-                    }
-                    return values
-                }
+                )
             ),
-            footnote: {
-                elements: Array.from(document.querySelectorAll('.footnote-value .elements:checked')).map(el => el.value),
-                marks: Array.from(document.querySelectorAll('.footnote-value .marks:checked')).map(el => el.value)
-            },
-            languages: Array.from(document.querySelectorAll('.languages-value option:checked')).map(el => el.value),
-            papersizes: Array.from(document.querySelectorAll('.papersizes-value option:checked')).map(el => el.value)
+            attrs: {
+                footnote_elements: Array.from(document.querySelectorAll('.footnote-value .elements:checked')).map(el => el.value),
+                footnote_marks: Array.from(document.querySelectorAll('.footnote-value .marks:checked')).map(el => el.value),
+                languages: Array.from(document.querySelectorAll('.languages-value option:checked')).map(el => el.value),
+                papersizes: Array.from(document.querySelectorAll('.papersizes-value option:checked')).map(el => el.value),
+                template: document.querySelector('#id_title').value
+            }
         }
+        if (!this.value.attrs.papersizes.length) {
+            this.value.attrs.papersizes = ['A4']
+        }
+        this.value.attrs.papersize = this.value.attrs.papersizes[0]
+        if (!this.value.attrs.footnote_elements.length) {
+            this.value.attrs.footnote_elements = ['paragraph']
+        }
+        if (!this.value.attrs.languages.length) {
+            this.value.attrs.languages = ['en-US']
+        }
+        this.value.attrs.language = this.value.attrs.languages[0]
+
         this.definitionTextarea.value = JSON.stringify(this.value)
+        this.definitionHashInput.value = templateHash(this.value)
         this.showErrors()
         return valid
     }
@@ -153,7 +198,7 @@ export class DocumentTemplateDesigner {
 
     setupInitialEditors() {
         Array.from(document.querySelectorAll('.to-container .doc-part:not(.fixed)')).forEach((el, index) => {
-            const value = this.value.structure[index],
+            const value = this.value.content[index+1], // offset by title
                 help = value.help,
                 initial = value.initial,
                 type = value.type
@@ -323,20 +368,22 @@ export class DocumentTemplateDesigner {
             event.preventDefault()
             if (this.definitionTextarea.style.display==='none') {
                 this.definitionTextarea.style.display=''
+                this.definitionHashInputBlock.style.display=''
                 this.templateEditor.style.display='none'
                 this.setCurrentValue()
             } else {
                 this.definitionTextarea.style.display='none'
+                this.definitionHashInputBlock.style.display='none'
                 this.templateEditor.style.display=''
                 this.getInitialValue()
                 this.templateEditor.querySelector('.to-container').innerHTML =
-                    templateEditorValueTemplate({structure: this.value.structure || []})
+                    templateEditorValueTemplate({content: this.value.content.slice(1) || []})
                 this.templateEditor.querySelector('.footnote-value').innerHTML =
-                    footnoteTemplate(this.value.footnote || {})
+                    footnoteTemplate(this.value.attrs)
                 this.templateEditor.querySelector('.languages-value').innerHTML =
-                    languagesTemplate(this.value.languages)
+                    languagesTemplate(this.value.attrs)
                 this.templateEditor.querySelector('.papersizes-value').innerHTML =
-                    papersizesTemplate(this.value.papersizes)
+                    papersizesTemplate(this.value.attrs)
                 this.setupInitialEditors()
             }
         })

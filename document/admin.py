@@ -27,6 +27,7 @@ admin.site.register(models.Document, DocumentAdmin)
 
 class DocumentTemplateAdmin(admin.ModelAdmin):
     actions = ['duplicate']
+    list_display = ('title', 'user',)
 
     def duplicate(self, request, queryset):
         for template in queryset:

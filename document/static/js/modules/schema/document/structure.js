@@ -24,17 +24,20 @@ export const article = {
         tracked: {
             default: false
         },
-        allowedLanguages: {
+        languages: { // Available languages
             default: ['en-US']
         },
-        allowedPapersizes: {
+        papersizes: { // Available paper sizes
             default: ['A4']
         },
-        footnoteMarks: {
+        footnote_marks: {
             default: ['strong', 'em']
         },
-        footnoteElements: {
+        footnote_elements: {
             default: ['paragraph']
+        },
+        template: {
+            default: ''
         }
     },
     parseDOM: [{
@@ -118,7 +121,14 @@ export const richtext_part = partSpec('richtext', 'block+', {
         default: []
     }
 })
-export const heading_part = partSpec('heading', 'heading')
+export const heading_part = partSpec('heading', 'heading', {
+    elements: {
+        default: []
+    },
+    marks: {
+        default: []
+    }
+})
 export const contributors_part = partSpec('contributors', 'contributor*', {
     item_title: {
         default: gettext('Contributor')
@@ -129,7 +139,14 @@ export const tags_part = partSpec('tags', 'tag*', {
         default: gettext('Tag')
     }
 })
-export const table_part = partSpec('table', 'table')
+export const table_part = partSpec('table', 'table', {
+    elements: {
+        default: []
+    },
+    marks: {
+        default: []
+    }
+})
 
 export const title = {
     content: "text*",

@@ -300,15 +300,25 @@ AVATAR_GRAVATAR_BACKUP = False
 AVATAR_DEFAULT_URL = 'img/default_avatar.png'
 AVATAR_MAX_AVATARS_PER_USER = 1
 
-BASE_DOC_TEMPLATE = open(
+DOC_TEMPLATE = open(
     os.path.join(
         os.path.dirname(
             os.path.realpath(__file__)
         ),
-        'base_doc_template.json'
+        'doc_template.json'
     ),
     'r'
 ).read()
+
+DOC_TEMPLATE_HASH = open(
+    os.path.join(
+        os.path.dirname(
+            os.path.realpath(__file__)
+        ),
+        'doc_template.hash'
+    ),
+    'r'
+).read()[:22]
 
 
 local_config_path = os.path.join(PROJECT_PATH, 'configuration.py')

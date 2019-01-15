@@ -1,3 +1,5 @@
+import hash from "object-hash"
+
 import {schema} from "prosemirror-schema-basic"
 import {Schema, DOMSerializer} from "prosemirror-model"
 import {blockTypeItem} from "prosemirror-menu"
@@ -126,3 +128,13 @@ export const contributorsPartSchema = new Schema({
     },
     marks: docSchema.spec.marks
 })
+
+export function templateHash(template) {
+    return hash(
+        template,
+        {
+            algorithm: 'md5',
+            encoding: 'base64'
+        }
+    ).slice(null, 22)
+}

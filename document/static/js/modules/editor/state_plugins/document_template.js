@@ -138,12 +138,13 @@ export const documentTemplatePlugin = function(options) {
                     // block some settings changes
                     const oldNode = state.doc.firstChild
                     if (
-                        oldNode.attrs.footnoteMarks !== node.attrs.footnoteMarks ||
-                        oldNode.attrs.footnoteElements !== node.attrs.footnoteElements ||
-                        oldNode.attrs.allowedLanguages !== node.attrs.allowedLanguages ||
-                        oldNode.attrs.allowedPapersizes !== node.attrs.allowedPapersizes ||
-                        !node.attrs.allowedPapersizes.includes(node.attrs.papersize) ||
-                        !node.attrs.allowedLanguages.includes(node.attrs.language)
+                        oldNode.attrs.footnote_marks !== node.attrs.footnote_marks ||
+                        oldNode.attrs.footnote_elements !== node.attrs.footnote_elements ||
+                        oldNode.attrs.languages !== node.attrs.languages ||
+                        oldNode.attrs.papersizes !== node.attrs.papersizes ||
+                        oldNode.attrs.template !== node.attrs.template ||
+                        !node.attrs.papersizes.includes(node.attrs.papersize) ||
+                        !node.attrs.languages.includes(node.attrs.language)
                     ) {
                         allowed = false
                         return false

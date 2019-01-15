@@ -1,5 +1,3 @@
-import {article} from "../schema/document/structure"
-
 function cleanFootnotes(node, elements, marks) {
     if (node.attrs && node.attrs.footnote) {
         // We remove forbidden block nodes
@@ -30,34 +28,20 @@ function cleanNode(node, elements, marks) {
     }
 }
 
-export function adjustDocToTemplate(oldDoc, template) {
-    const doc = JSON.parse(JSON.stringify(oldDoc)), // We avoid destroying the original object
-        attrs = ['footnoteMarks', 'footnoteElements', 'allowedLanguages', 'allowedPapersizes']
-    attrs.forEach(attr => doc.attrs[attr] = article.attrs[attr].default)
+export function adjustDocToTemplate(doc, template) {
+    const removedFootnoteElements = doc.attrs.footnote_elements.filter(element => !template.attrs.footnote_elements.includes(element)),
+        removedFootnoteMarks = doc.attrs.footnote_marks.filter(mark => !template.attrs.footnote_marks.includes(mark)),
+        attrs = ['footnote_marks', 'footnote_elements', 'languages', 'papersizes', 'template']
 
-    if (template.footnote.marks.length) {
-        doc.attrs.footnoteMarks = template.footnote.marks
-    }
-    if (template.footnote.elements.length) {
-        doc.attrs.footnoteElements = template.footnote.elements
-    }
-    if (template.languages.length) {
-        doc.attrs.allowedLanguages = template.languages
-    }
-    if (template.papersizes.length) {
-        doc.attrs.allowedPapersizes = template.papersizes
+    attrs.forEach(attr => doc.attrs[attr] = template.attrs[attr])
+
+    if(!doc.attrs.languages.includes(doc.attrs.language)) {
+        doc.attrs.language = doc.attrs.languages[0]
     }
 
-    if(!doc.attrs.allowedLanguages.includes(doc.attrs.language)) {
-        doc.attrs.language = doc.attrs.allowedLanguages[0]
+    if (!doc.attrs.papersizes.includes(doc.attrs.papersize)) {
+        doc.attrs.papersize = doc.attrs.papersizes[0]
     }
-
-    if (!doc.attrs.allowedPapersizes.includes(doc.attrs.papersize)) {
-        doc.attrs.papersize = doc.attrs.allowedPapersizes[0]
-    }
-
-    const removedFootnoteElements = oldDoc.attrs.footnoteElements.filter(element => !doc.attrs.footnoteElements.includes(element))
-    const removedFootnoteMarks = oldDoc.attrs.footnoteMarks.filter(mark => !doc.attrs.footnoteMarks.includes(mark))
 
     if (removedFootnoteMarks.length || removedFootnoteElements.length) {
         cleanFootnotes(doc, removedFootnoteElements, removedFootnoteMarks)
@@ -70,14 +54,14 @@ export function adjustDocToTemplate(oldDoc, template) {
 
     let movedParts = []
 
-    template.structure.forEach(part => {
+    template.content.slice(1).forEach(part => {
         let oldNode = oldContent.find(
-            oldContentNode => oldContentNode.type === `${part.type}_part` && oldContentNode.attrs.id === part.id
+            oldContentNode => oldContentNode.type === part.type && oldContentNode.attrs.id === part.attrs.id
         )
         if (oldNode) {
             while (oldNode !== oldContent[0]) {
                 const firstOldContent = oldContent.shift(),
-                    inTemplate = !!template.structure.find(part => `${part.type}_part` === firstOldContent.type && part.id === firstOldContent.attrs.id)
+                    inTemplate = !!template.structure.find(part => part.type === firstOldContent.type && part.attrs.id === firstOldContent.attrs.id)
                 if (inTemplate) {
                     movedParts.push(firstOldContent)
                 } else if (
@@ -96,7 +80,7 @@ export function adjustDocToTemplate(oldDoc, template) {
                         firstOldContent.content[0].type === firstOldContent.attrs.elements[0] &&
                         !firstOldContent.content[0].content
                     )
-                ){
+                ) {
                     firstOldContent.attrs.deleted = true
                     doc.content.push(firstOldContent)
                 }
@@ -104,7 +88,7 @@ export function adjustDocToTemplate(oldDoc, template) {
             oldContent.shift()
         } else {
             oldNode = movedParts.find(
-                oldContentNode => oldContentNode.type === `${part.type}_part` && oldContentNode.attrs.id === part.id
+                oldContentNode => oldContentNode.type === part.type && oldContentNode.attrs.id === part.attrs.id
             )
             if (oldNode) {
                 movedParts = movedParts.filter(oldContentNode => oldContentNode !== oldNode)
@@ -112,37 +96,30 @@ export function adjustDocToTemplate(oldDoc, template) {
         }
 
         if (oldNode) {
-            const oldElements = oldNode.attrs.elements,
-                oldMarks = oldNode.attrs.marks,
-                newNode = Object.assign(
+            const newNode = Object.assign(
                     {},
                     oldNode,
                     {
-                        attrs: {
-                            id: part.id,
-                            title: part.title,
-                            locking: part.locking || false,
-                            language: part.language || false,
-                            optional: part.optional || false,
-                            help: part.help,
-                            hidden: part.optional ? oldNode.attrs.hidden : false
-                        }
+                        attrs: {}
                     }
                 )
 
-            if (part.attrs) {
-                Object.entries(part.attrs).forEach(([key, value]) => {
-                    newNode.attrs[key] = value
-                })
+            Object.entries(part.attrs).forEach(([key, value]) => {
+                newNode.attrs[key] = value
+            })
+            if (newNode.optional) {
+                attrs.hidden = oldNode.hidden
             }
-            if (oldElements) { // parts that define elements also define marks.
-                const removedElements = oldElements.filter(element => !newNode.attrs.elements.includes(element))
-                const removedMarks = oldMarks.filter(mark => !newNode.attrs.marks.includes(mark))
+
+            if (oldNode.attrs.elements) { // parts that define elements also define marks.
+                const removedElements = oldNode.attrs.elements.filter(element => !newNode.attrs.elements.includes(element))
+                const removedMarks = oldNode.attrs.marks.filter(mark => !newNode.attrs.marks.includes(mark))
                 if (removedElements.length || removedMarks.length) {
                     cleanNode(newNode, removedElements, removedMarks)
-                    if (!newNode.content && ['richtext', 'heading'].includes(part.type)) {
-                        const defaultElement = part.attrs.elements[0]
-                        newNode.content = [{type: defaultElement, attrs:{track:[]}}]
+                    if (!newNode.content && ['richtext_part', 'heading_part'].includes(part.type)) {
+                        newNode.content = [{type: part.attrs.elements[0]}]
+                    } else if(!newNode.content && part.type === 'table_part') {
+                        newNode.content = [{type: 'table', content: [{type: 'table_row', content: [{type: 'table_cell', content: [{type: 'paragraph'}]}]}]}]
                     }
                 }
             }
@@ -151,30 +128,7 @@ export function adjustDocToTemplate(oldDoc, template) {
 
         } else {
             // The node is new and didn't exist in the old document.
-            const node = {
-                type: `${part.type}_part`,
-                attrs: {
-                    id: part.id,
-                    title: part.title,
-                    locking: part.locking || false,
-                    language: part.language || false,
-                    optional: part.optional || false,
-                    help: part.help,
-                    hidden: part.optional === 'hidden' ? true : false
-                }
-            }
-            if (part.attrs) {
-                Object.entries(part.attrs).forEach(([key, value]) => {
-                    node.attrs[key] = value
-                })
-            }
-            if (part.initial) {
-                node.content = part.initial
-            } else if (['richtext', 'heading'].includes(part.type)) {
-                const defaultElement = part.attrs.elements[0]
-                node.content = [{type: defaultElement, attrs:{track:[]}}]
-            }
-            doc.content.push(node)
+            doc.content.push(JSON.parse(JSON.stringify(part)))
         }
 
     })

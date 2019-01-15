@@ -29,7 +29,7 @@ function elementAvailable(editor, elementName) {
           }
       })
       return (
-          editor.view.state.doc.firstChild.attrs.footnoteElements.includes(elementName) ||
+          editor.view.state.doc.firstChild.attrs.footnote_elements.includes(elementName) ||
           elementInDocParts
       )
 }
@@ -50,7 +50,7 @@ export function elementDisabled(editor, elementName) {
 
         return !anchorFootnote ||
             headFootnote !== anchorFootnote ||
-            !editor.view.state.doc.firstChild.attrs.footnoteElements.includes(elementName)
+            !editor.view.state.doc.firstChild.attrs.footnote_elements.includes(elementName)
     }
 
 }
@@ -63,7 +63,7 @@ function markAvailable(editor, markName) {
           }
       })
       return (
-          editor.view.state.doc.firstChild.attrs.footnoteMarks.includes(markName) ||
+          editor.view.state.doc.firstChild.attrs.footnote_marks.includes(markName) ||
           markInDocParts
       )
 }
@@ -84,7 +84,7 @@ function markDisabled(editor, markName) {
 
         return !anchorFootnote ||
             headFootnote !== anchorFootnote ||
-            !editor.view.state.doc.firstChild.attrs.footnoteMarks.includes(markName)
+            !editor.view.state.doc.firstChild.attrs.footnote_marks.includes(markName)
     }
 
 }

@@ -4,6 +4,7 @@ from builtins import object
 from django.db import models
 from django.db.utils import OperationalError, ProgrammingError
 from django.contrib.auth.models import User
+from django.utils.translation import ugettext as _
 from django.core import checks
 
 from style.models import DocumentStyle, CitationStyle
@@ -43,11 +44,17 @@ class ExportTemplate(models.Model):
 
 class DocumentTemplate(models.Model):
     title = models.CharField(max_length=255, default='', blank=True)
-    slug = models.SlugField()
-    definition = models.TextField(default='{"structure": [], "footnote": {}}')
+    definition = models.TextField(default='{}')
+    definition_hash = models.CharField(max_length=22, default='', blank=True)
     document_styles = models.ManyToManyField(DocumentStyle)
     citation_styles = models.ManyToManyField(CitationStyle)
     export_templates = models.ManyToManyField(ExportTemplate, blank=True)
+    user = models.ForeignKey(
+        User,
+        null=True,
+        blank=True,
+        on_delete=models.deletion.CASCADE
+    )
 
     def __str__(self):
         return self.title
@@ -57,9 +64,10 @@ def default_template():
     template = DocumentTemplate.objects.first()
     if not template:
         template = DocumentTemplate()
-        template.definition = settings.BASE_DOC_TEMPLATE
+        template.definition = settings.DOC_TEMPLATE
+        template.definition_hash = settings.DOC_TEMPLATE_HASH
         template.slug = 'article'
-        template.title = 'Standard Article'
+        template.title = _('Standard Article')
         template.save()
         for style in CitationStyle.objects.all():
             template.citation_styles.add(style)

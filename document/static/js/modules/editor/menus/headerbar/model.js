@@ -42,7 +42,7 @@ const languageItem = function(code, name, order) {
             return editor.view.state.doc.firstChild.attrs.language === code
         },
         available: editor => {
-            return editor.view.state.doc.firstChild.attrs.allowedLanguages.includes(code)
+            return editor.view.state.doc.firstChild.attrs.languages.includes(code)
         }
     }
 }
@@ -283,7 +283,7 @@ export const headerbarModel = () => ({
                             available: editor => {
                                 // There has to be at least one language of the default languages
                                 // among the default ones and one that is not among the default ones.
-                                return !!editor.view.state.doc.firstChild.attrs.allowedLanguages.find(
+                                return !!editor.view.state.doc.firstChild.attrs.languages.find(
                                     lang => [
                                         'en-US',
                                         'en-GB',
@@ -298,7 +298,7 @@ export const headerbarModel = () => ({
                                         'nl',
                                         'ru'
                                     ].includes(lang)
-                                ) && !!editor.view.state.doc.firstChild.attrs.allowedLanguages.find(
+                                ) && !!editor.view.state.doc.firstChild.attrs.languages.find(
                                     lang => ![
                                         'en-US',
                                         'en-GB',
@@ -344,7 +344,7 @@ export const headerbarModel = () => ({
                                     editor.view.state.doc.firstChild.attrs.language
                                 )
                             },
-                            available: editor => !!editor.view.state.doc.firstChild.attrs.allowedLanguages.find(
+                            available: editor => !!editor.view.state.doc.firstChild.attrs.languages.find(
                                 lang => ![
                                         'en-US',
                                         'en-GB',
@@ -390,7 +390,7 @@ export const headerbarModel = () => ({
                                 return editor.view.state.doc.firstChild.attrs.papersize === 'A4'
                             },
                             available: editor => {
-                                return editor.view.state.doc.firstChild.attrs.allowedPapersizes.includes('A4')
+                                return editor.view.state.doc.firstChild.attrs.papersizes.includes('A4')
                             }
                         },
                         {
@@ -410,7 +410,7 @@ export const headerbarModel = () => ({
                                 return editor.view.state.doc.firstChild.attrs.papersize === 'US Letter'
                             },
                             available: editor => {
-                                return editor.view.state.doc.firstChild.attrs.allowedPapersizes.includes('US Letter')
+                                return editor.view.state.doc.firstChild.attrs.papersizes.includes('US Letter')
                             }
                         }
                     ]
@@ -459,14 +459,13 @@ export const headerbarModel = () => ({
                     }
                 })
                 return (
-                    editor.view.state.doc.firstChild.attrs.footnoteElements.includes('table') ||
+                    editor.view.state.doc.firstChild.attrs.footnote_elements.includes('table') ||
                     tablesInDocParts
                 )
             },
             disabled: editor =>
                 READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
-                COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
-                elementDisabled(editor, 'table'),
+                COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights),
             content: [
                 {
                     title: gettext('Insert table'),

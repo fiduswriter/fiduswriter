@@ -2,116 +2,114 @@ import {escapeText} from "../common"
 import {LANGUAGES, PAPER_SIZES} from "../schema/const"
 
 
-const allowedElementsTemplate = ({attrs, footnote=true}) =>
+const allowedElementsTemplate = ({elements}, footnote=true) =>
 `<div class="label">
     ${gettext('Allowed elements')}
 </div>
 <label>
-    <input type="checkbox" class="elements" value="paragraph" ${attrs.elements.includes('paragraph') ? 'checked' : ''}/>
+    <input type="checkbox" class="elements" value="paragraph" ${elements.includes('paragraph') ? 'checked' : ''}/>
     ${gettext('Paragraph')}
 </label>
 <label>
-    <input type="checkbox" class="elements" value="heading1" ${attrs.elements.includes('heading1') ? 'checked' : ''}/>
+    <input type="checkbox" class="elements" value="heading1" ${elements.includes('heading1') ? 'checked' : ''}/>
     ${gettext('Heading 1')}
 </label>
 <label>
-    <input type="checkbox" class="elements" value="heading2" ${attrs.elements.includes('heading2') ? 'checked' : ''}/>
+    <input type="checkbox" class="elements" value="heading2" ${elements.includes('heading2') ? 'checked' : ''}/>
     ${gettext('Heading 2')}
 </label>
 <label>
-    <input type="checkbox" class="elements" value="heading3" ${attrs.elements.includes('heading3') ? 'checked' : ''}/>
+    <input type="checkbox" class="elements" value="heading3" ${elements.includes('heading3') ? 'checked' : ''}/>
     ${gettext('Heading 3')}
 </label>
 <label>
-    <input type="checkbox" class="elements" value="heading4" ${attrs.elements.includes('heading4') ? 'checked' : ''}/>
+    <input type="checkbox" class="elements" value="heading4" ${elements.includes('heading4') ? 'checked' : ''}/>
     ${gettext('Heading 4')}
 </label>
 <label>
-    <input type="checkbox" class="elements" value="heading5" ${attrs.elements.includes('heading5') ? 'checked' : ''}/>
+    <input type="checkbox" class="elements" value="heading5" ${elements.includes('heading5') ? 'checked' : ''}/>
     ${gettext('Heading 5')}
 </label>
 <label>
-    <input type="checkbox" class="elements" value="heading6" ${attrs.elements.includes('heading6') ? 'checked' : ''}/>
+    <input type="checkbox" class="elements" value="heading6" ${elements.includes('heading6') ? 'checked' : ''}/>
     ${gettext('Heading 6')}
 </label>
 <label>
-    <input type="checkbox" class="elements" value="figure" ${attrs.elements.includes('figure') ? 'checked' : ''}/>
+    <input type="checkbox" class="elements" value="figure" ${elements.includes('figure') ? 'checked' : ''}/>
     ${gettext('Figure')}
 </label>
 <label>
-    <input type="checkbox" class="elements" value="ordered_list" ${attrs.elements.includes('ordered_list') ? 'checked' : ''}/>
+    <input type="checkbox" class="elements" value="ordered_list" ${elements.includes('ordered_list') ? 'checked' : ''}/>
     ${gettext('Ordered list')}
 </label>
 <label>
-    <input type="checkbox" class="elements" value="bullet_list" ${attrs.elements.includes('bullet_list') ? 'checked' : ''}/>
+    <input type="checkbox" class="elements" value="bullet_list" ${elements.includes('bullet_list') ? 'checked' : ''}/>
     ${gettext('Bullet list')}
 </label>
 <label>
-    <input type="checkbox" class="elements" value="horizontal_rule" ${attrs.elements.includes('horizontal_rule') ? 'checked' : ''}/>
+    <input type="checkbox" class="elements" value="horizontal_rule" ${elements.includes('horizontal_rule') ? 'checked' : ''}/>
     ${gettext('Horizontal rule')}
 </label>
 <label>
-    <input type="checkbox" class="elements" value="equation" ${attrs.elements.includes('equation') ? 'checked' : ''}/>
+    <input type="checkbox" class="elements" value="equation" ${elements.includes('equation') ? 'checked' : ''}/>
     ${gettext('Equation')}
 </label>
 <label>
-    <input type="checkbox" class="elements" value="citation" ${attrs.elements.includes('citation') ? 'checked' : ''}/>
+    <input type="checkbox" class="elements" value="citation" ${elements.includes('citation') ? 'checked' : ''}/>
     ${gettext('Citation')}
 </label>
 <label>
-    <input type="checkbox" class="elements" value="blockquote" ${attrs.elements.includes('blockquote') ? 'checked' : ''}/>
+    <input type="checkbox" class="elements" value="blockquote" ${elements.includes('blockquote') ? 'checked' : ''}/>
     ${gettext('Blockquote')}
 </label>
 ${
     footnote ?
     `<label>
-        <input type="checkbox" class="elements" value="footnote" ${attrs.elements.includes('footnote') ? 'checked' : ''}/>
+        <input type="checkbox" class="elements" value="footnote" ${elements.includes('footnote') ? 'checked' : ''}/>
         ${gettext('Footnote')}
     </label>`:
     ''
 }
 <label>
-    <input type="checkbox" class="elements" value="table" ${attrs.elements.includes('table') ? 'checked' : ''}/>
+    <input type="checkbox" class="elements" value="table" ${elements.includes('table') ? 'checked' : ''}/>
     ${gettext('Table')}
 </label>`
 
-const allowedMarksTemplate = ({attrs}) =>
+const allowedMarksTemplate = ({marks}) =>
 `<div class="label">
     ${gettext('Allowed marks')}
 </div>
 <label>
-    <input type="checkbox" class="marks" value="strong" ${attrs.marks.includes('strong') ? 'checked' : ''}/>
+    <input type="checkbox" class="marks" value="strong" ${marks.includes('strong') ? 'checked' : ''}/>
     ${gettext('Strong')}
 </label>
 <label>
-    <input type="checkbox" class="marks" value="em" ${attrs.marks.includes('em') ? 'checked' : ''}/>
+    <input type="checkbox" class="marks" value="em" ${marks.includes('em') ? 'checked' : ''}/>
     ${gettext('Emphasis')}
 </label>
 <label>
-    <input type="checkbox" class="marks" value="mark" ${attrs.marks.includes('mark') ? 'checked' : ''}/>
+    <input type="checkbox" class="marks" value="mark" ${marks.includes('mark') ? 'checked' : ''}/>
     ${gettext('Mark')}
 </label>
 <label>
-    <input type="checkbox" class="marks" value="link" ${attrs.marks.includes('link') ? 'checked' : ''}/>
+    <input type="checkbox" class="marks" value="link" ${marks.includes('link') ? 'checked' : ''}/>
     ${gettext('Link')}
 </label>
 <label>
-    <input type="checkbox" class="marks" value="anchor" ${attrs.marks.includes('anchor') ? 'checked' : ''}/>
+    <input type="checkbox" class="marks" value="anchor" ${marks.includes('anchor') ? 'checked' : ''}/>
     ${gettext('Anchor')}
 </label>`
 
 const headingTemplate = ({
     id="",
     title="",
-    attrs={
-        elements: ["heading1", "heading2", "heading3", "heading4", "heading5", "heading6"],
-        marks: ["strong", "em", "highlight", "underline", "link"]
-    },
+    elements=["heading1", "heading2", "heading3", "heading4", "heading5", "heading6"],
+    marks=["strong", "em", "highlight", "underline", "link"],
     locking="false",
     optional="false",
     language=false
 }) =>
-`<div class="doc-part" data-type="heading">
+`<div class="doc-part" data-type="heading_part">
     <div class="title">${gettext('Heading')}</div>
     <div class="attrs">
         <div class="label">${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></div>
@@ -133,30 +131,30 @@ const headingTemplate = ({
             ${gettext('Allowed headings')}
         </div>
         <label>
-            <input type="checkbox" class="elements" value="heading1" ${attrs.elements.includes('heading1') ? 'checked' : ''}/>
+            <input type="checkbox" class="elements" value="heading1" ${elements.includes('heading1') ? 'checked' : ''}/>
             ${gettext('Heading 1')}
         </label>
         <label>
-            <input type="checkbox" class="elements" value="heading2" ${attrs.elements.includes('heading2') ? 'checked' : ''}/>
+            <input type="checkbox" class="elements" value="heading2" ${elements.includes('heading2') ? 'checked' : ''}/>
             ${gettext('Heading 2')}
         </label>
         <label>
-            <input type="checkbox" class="elements" value="heading3" ${attrs.elements.includes('heading3') ? 'checked' : ''}/>
+            <input type="checkbox" class="elements" value="heading3" ${elements.includes('heading3') ? 'checked' : ''}/>
             ${gettext('Heading 3')}
         </label>
         <label>
-            <input type="checkbox" class="elements" value="heading4" ${attrs.elements.includes('heading4') ? 'checked' : ''}/>
+            <input type="checkbox" class="elements" value="heading4" ${elements.includes('heading4') ? 'checked' : ''}/>
             ${gettext('Heading 4')}
         </label>
         <label>
-            <input type="checkbox" class="elements" value="heading5" ${attrs.elements.includes('heading5') ? 'checked' : ''}/>
+            <input type="checkbox" class="elements" value="heading5" ${elements.includes('heading5') ? 'checked' : ''}/>
             ${gettext('Heading 5')}
         </label>
         <label>
-            <input type="checkbox" class="elements" value="heading6" ${attrs.elements.includes('heading6') ? 'checked' : ''}/>
+            <input type="checkbox" class="elements" value="heading6" ${elements.includes('heading6') ? 'checked' : ''}/>
             ${gettext('Heading 6')}
         </label>
-        ${allowedMarksTemplate({attrs})}
+        ${allowedMarksTemplate({marks})}
         <div class="label">${gettext('Language')}
             <select class="language">
                 <option value="false" ${language===false ? "selected" : ""}>${gettext('Document language')}</option>
@@ -181,18 +179,16 @@ const headingTemplate = ({
 const contributorsTemplate = ({
     id="",
     title="",
-    attrs={
-        item_title: ""
-    },
+    item_title="",
     locking="false",
     optional="false"
 }) =>
-`<div class="doc-part" data-type="contributors">
+`<div class="doc-part" data-type="contributors_part">
     <div class="title">${gettext('Namelist')}</div>
     <div class="attrs">
         <div class="label">${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></div>
         <div class="label">${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></div>
-        <div class="label">${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(attrs.item_title)}"></div>
+        <div class="label">${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(item_title)}"></div>
         <div class="label">${gettext('Locking')}
             <select class="locking">
                 <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>
@@ -220,14 +216,12 @@ const contributorsTemplate = ({
 const richtextTemplate = ({
     id="",
     title="",
-    attrs={
-        elements: ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote"],
-        marks: ["strong", "em", "highlight", "underline", "link"]
-    },
+    elements=["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote"],
+    marks=["strong", "em", "highlight", "underline", "link"],
     locking="false",
     optional="false",
     language=false
-}) => `<div class="doc-part" data-type="richtext">
+}) => `<div class="doc-part" data-type="richtext_part">
     <div class="title">${gettext('Richtext')}</div>
     <div class="attrs">
         <div class="label">${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></div>
@@ -245,8 +239,8 @@ const richtextTemplate = ({
                 <option value="hidden" ${optional==='hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </div>
-        ${allowedElementsTemplate({attrs})}
-        ${allowedMarksTemplate({attrs})}
+        ${allowedElementsTemplate({elements})}
+        ${allowedMarksTemplate({marks})}
         <div class="label">${gettext('Language')}
             <select class="language">
                 <option value="false" ${language===false ? "selected" : ""}>${gettext('Document language')}</option>
@@ -271,18 +265,16 @@ const richtextTemplate = ({
 const tagsTemplate = ({
     id="",
     title="",
-    attrs={
-        item_title: ""
-    },
+    item_title="",
     locking="false",
     optional="false"
 }) =>
-`<div class="doc-part" data-type="tags">
+`<div class="doc-part" data-type="tags_part">
     <div class="title">${gettext('Tags')}</div>
     <div class="attrs">
         <div class="label">${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></div>
         <div class="label">${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></div>
-        <div class="label">${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(attrs.item_title)}"></div>
+        <div class="label">${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(item_title)}"></div>
         <div class="label">${gettext('Locking')}
             <select class="locking">
                 <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>
@@ -310,15 +302,13 @@ const tagsTemplate = ({
 const tableTemplate = ({
     id="",
     title="",
-    attrs={
-        elements: ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote"],
-        marks: ["strong", "em", "highlight", "underline", "link"]
-    },
+    elements= ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote"],
+    marks= ["strong", "em", "highlight", "underline", "link"],
     locking="false",
     optional="false",
     language=false
 }) =>
-`<div class="doc-part" data-type="table">
+`<div class="doc-part" data-type="table_part">
     <div class="title">${gettext('Table')}</div>
     <div class="attrs">
         <div class="label">${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></div>
@@ -337,8 +327,8 @@ const tableTemplate = ({
                 <option value="hidden" ${optional==='hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </div>
-        ${allowedElementsTemplate({attrs})}
-        ${allowedMarksTemplate({attrs})}
+        ${allowedElementsTemplate({elements})}
+        ${allowedMarksTemplate({marks})}
         <div class="label">${gettext('Language')}
             <select class="language">
                 <option value="false" ${language===false ? "selected" : ""}>${gettext('Document language')}</option>
@@ -361,33 +351,33 @@ const tableTemplate = ({
 </div>`
 
 export const footnoteTemplate = ({
-    elements = ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "table"],
-    marks = ["strong", "em", "highlight", "underline", "link"]
-}) => `<div class="doc-part attrs">${allowedElementsTemplate({attrs: {elements}, footnote: false})}${allowedMarksTemplate({attrs: {marks}})}</div>`
+    footnote_elements = ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "table"],
+    footnote_marks = ["strong", "em", "highlight", "underline", "link"]
+}) => `<div class="doc-part attrs">${allowedElementsTemplate({elements: footnote_elements}, false)}${allowedMarksTemplate({marks: footnote_marks})}</div>`
 
-export const languagesTemplate = (languages = LANGUAGES.map(lang => lang[0])) =>
+export const languagesTemplate = ({languages = LANGUAGES.map(lang => lang[0])}) =>
 `<select multiple size=5>
 ${LANGUAGES.map(lang => `<option value="${lang[0]}"${languages.includes(lang[0]) ? ' selected' : ''}>${lang[1]}</option>`).join('')}
 </select>`
 
-export const papersizesTemplate = (papersizes = PAPER_SIZES.map(size => size[0])) =>
+export const papersizesTemplate = ({papersizes = PAPER_SIZES.map(size => size[0])}) =>
 `<select multiple size=5>
 ${PAPER_SIZES.map(size => `<option value="${size[0]}"${papersizes.includes(size[0]) ? ' selected' : ''}>${size[0]}</option>`).join('')}
 </select>`
 
-export const templateEditorValueTemplate = ({structure}) =>
-    structure.map(docPart => {
+export const templateEditorValueTemplate = ({content}) =>
+    content.map(docPart => {
         switch(docPart.type) {
-            case 'heading':
-                return headingTemplate(docPart)
-            case 'contributors':
-                return contributorsTemplate(docPart)
-            case 'richtext':
-                return richtextTemplate(docPart)
-            case 'tags':
-                return tagsTemplate(docPart)
-            case 'table':
-                return tableTemplate(docPart)
+            case 'heading_part':
+                return headingTemplate(docPart.attrs)
+            case 'contributors_part':
+                return contributorsTemplate(docPart.attrs)
+            case 'richtext_part':
+                return richtextTemplate(docPart.attrs)
+            case 'tags_part':
+                return tagsTemplate(docPart.attrs)
+            case 'table_part':
+                return tableTemplate(docPart.attrs)
             default:
                 return ''
         }
@@ -422,7 +412,7 @@ export const documentConstructorTemplate = ({value}) =>
                     </td>
                     <td class="to-column">
                         <div class="doc-part fixed" data-type="initial">${gettext('Title')}</div>
-                        <div class="to-container">${templateEditorValueTemplate({structure: value.structure || []})}</div>
+                        <div class="to-container">${templateEditorValueTemplate({content: value.content || []})}</div>
                     </td>
                     <td class="trash">
                     </td>
@@ -442,7 +432,7 @@ export const documentConstructorTemplate = ({value}) =>
                         ${gettext('Footnote specifications')}
                     </td>
                     <td class="footnote-value">
-                        ${footnoteTemplate(value.footnote)}
+                        ${footnoteTemplate(value.attrs || {})}
                     </td>
                 </tr>
                 <tr>
@@ -450,7 +440,7 @@ export const documentConstructorTemplate = ({value}) =>
                         ${gettext('Permitted languages')}
                     </td>
                     <td class="languages-value">
-                        ${languagesTemplate(value.languages)}
+                        ${languagesTemplate(value.attrs || {})}
                     </td>
                 </tr>
                 <tr>
@@ -458,7 +448,7 @@ export const documentConstructorTemplate = ({value}) =>
                         ${gettext('Permitted paper sizes')}
                     </td>
                     <td class="papersizes-value">
-                        ${papersizesTemplate(value.papersizes)}
+                        ${papersizesTemplate(value.attrs || {})}
                     </td>
                 </tr>
             </tbody>

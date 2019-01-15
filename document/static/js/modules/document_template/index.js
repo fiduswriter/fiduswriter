@@ -1,4 +1,4 @@
 export {DocumentTemplateDesigner} from "./designer"
-export {templateToDoc} from "./create_doc"
+export {extractTemplate} from "./extract_template"
 export {adjustDocToTemplate} from "./fix_doc"
-export {helpSchema, serializeHelp} from "./schema"
+export {helpSchema, serializeHelp, templateHash} from "./schema"

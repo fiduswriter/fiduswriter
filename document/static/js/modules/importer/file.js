@@ -119,13 +119,14 @@ export class ImportFidusFile {
                 this.doc = doc
                 this.docInfo = docInfo
                 this.statusText = `${doc.title} ${gettext(' successfully imported.')}`
+                return this
             })
 
         } else {
             // The file is not a Fidus Writer file.
             this.statusText = gettext('The uploaded file does not appear to be of the version used on this server: ') +
             FW_FILETYPE_VERSION
-            return
+            return this
         }
     }
 

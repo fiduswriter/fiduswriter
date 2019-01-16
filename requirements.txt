@@ -1,5 +1,5 @@
 wheel==0.31.1
-Django==2.1.2
+Django==2.1.5
 Pillow==5.3.0
 django-allauth==0.36.0
 django-avatar==4.1.0

@@ -74,7 +74,7 @@ const title = {
     parseDOM: [{
         tag: "div.article-title"
     }],
-    toDOM(node) {
+    toDOM(_node) {
         return ["div", {
             class: 'article-part article-title'
         }, 0]
@@ -288,7 +288,7 @@ const body = {
     parseDOM: [{
         tag: "div.article-body"
     }],
-    toDOM(node) {
+    toDOM(_node) {
         return ["div", {
             class: 'article-part article-body'
         }, 0]

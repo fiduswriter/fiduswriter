@@ -1,6 +1,5 @@
 import diffDOM from "diff-dom"
 import keyName from "w3c-keyname"
-import {keydownHandler} from "prosemirror-keymap"
 
 import {escapeText} from "../../../common"
 
@@ -260,19 +259,22 @@ export class HeaderbarView {
     }
 
     getMenuItemHTML(menuItem) {
+        let returnValue
         switch(menuItem.type) {
             case 'action':
             case 'setting':
-                return this.getActionMenuItemHTML(menuItem)
+                returnValue = this.getActionMenuItemHTML(menuItem)
                 break;
             case 'menu':
-                return this.getMenuMenuItemHTML(menuItem)
+                returnValue = this.getMenuMenuItemHTML(menuItem)
                 break;
             case 'separator':
-                return '<hr>'
+                returnValue = '<hr>'
+                break;
             default:
                 break;
         }
+        return returnValue
     }
 
     getActionMenuItemHTML(menuItem) {

@@ -1,5 +1,5 @@
 /** A template for the bibliography item edit dialog. */
-export let bibDialog = ({dialogHeader, bib_type, BibTypes, BibTypeTitles}) =>
+export let bibDialog = ({bib_type, BibTypes, BibTypeTitles}) =>
     `<div class="fw-select-container">
         <select id="select-bibtype" class="fw-button fw-white fw-large" required>
             ${

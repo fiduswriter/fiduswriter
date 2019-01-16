@@ -22,7 +22,7 @@ export class DocumentRevisionsDialog {
      * @param {number}
      */
     init() {
-        let doc = this.documentList.find(doc => doc.id === this.documentId)
+        const doc = this.documentList.find(doc => doc.id === this.documentId)
         this.dialog = new Dialog({
             title: `${gettext('Saved revisions of')} ${escapeText(doc.title)}`,
             id: 'revisions-dialog',
@@ -37,15 +37,15 @@ export class DocumentRevisionsDialog {
 
 
     bind() {
-        let dialogEl = this.dialog.dialogEl
+        const dialogEl = this.dialog.dialogEl
 
         return new Promise(resolve => {
             dialogEl.addEventListener('click', event => {
-                let el = {}, revisionId
+                let el = {}, revisionId, revisionFilename
                 switch (true) {
                     case findTarget(event, '.download-revision', el):
                         revisionId = parseInt(el.target.dataset.id)
-                        let revisionFilename = el.target.dataset.filename
+                        revisionFilename = el.target.dataset.filename
                         this.download(revisionId, revisionFilename)
                         break
                     case findTarget(event, '.recreate-revision', el):
@@ -80,7 +80,7 @@ export class DocumentRevisionsDialog {
                     )
                     resolve(
                         importer.init().then(
-                            ({ok, statusText, doc, docInfo}) => {
+                            ({ok, statusText, doc}) => {
                                 deactivateWait()
                                 if (ok) {
                                     addAlert('info', statusText)
@@ -119,7 +119,7 @@ export class DocumentRevisionsDialog {
      */
 
     delete(id) {
-        let buttons = [], that = this
+        const buttons = []
         let returnPromise = new Promise(resolve => {
 
             buttons.push({
@@ -139,7 +139,7 @@ export class DocumentRevisionsDialog {
             })
         })
 
-        let revisionsConfirmDeleteDialog = new Dialog({
+        const revisionsConfirmDeleteDialog = new Dialog({
             id: 'confirmdeletion',
             title: gettext('Confirm deletion'),
             icon: 'exclamation-triangle',

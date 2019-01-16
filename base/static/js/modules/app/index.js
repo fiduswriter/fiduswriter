@@ -17,16 +17,18 @@ export class App {
             "usermedia": () => new ImageOverview(this.config),
             "bibliography": () => new BibliographyOverview(this.config),
             "user": pathnameParts => {
+                let returnValue
                 switch(pathnameParts[2]) {
                     case "profile":
-                        return new Profile(this.config)
+                        returnValue = new Profile(this.config)
                         break
                     case "team":
-                        return new ContactsOverview(this.config)
+                        returnValue = new ContactsOverview(this.config)
                         break
                     default:
-                        return false
+                        returnValue = false
                 }
+                return returnValue
             },
             "document": pathnameParts => {
                 let id = parseInt(pathnameParts[2])

@@ -13,4 +13,4 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         call_command("npm_install")
         shutil.os.chdir(settings.PROJECT_PATH)
-        call(["npm", "run", "jshint"])
+        call(["npm", "run", "eslint"])

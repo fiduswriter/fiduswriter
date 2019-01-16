@@ -191,7 +191,7 @@ export const figure = {
                     node.type.schema.cached.imageDB.db[node.attrs.image].image) {
                     const imgSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
                     const img = document.createElement("img")
-                    img.setAttribute('src', node.type.schema.cached.imageDB.db[node.attrs.image].image)
+                    img.setAttribute('src', imgSrc)
                     dom.firstChild.appendChild(img)
                     dom.dataset.imageSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
                 } else {

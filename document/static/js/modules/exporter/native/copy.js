@@ -1,5 +1,5 @@
 import {ImportNative} from "../../importer/native"
-import {deactivateWait, addAlert} from "../../common"
+import {addAlert} from "../../common"
 import {ShrinkFidus} from "./shrink"
 
 /* Saves a copy of the document. The owner may change in that process, if the

@@ -1,5 +1,5 @@
 import {addColumnAfter, addColumnBefore, deleteColumn, addRowBefore, addRowAfter, deleteRow, deleteTable,
-        mergeCells, splitCell, setCellAttr, toggleHeaderRow, toggleHeaderColumn, toggleHeaderCell}
+        mergeCells, splitCell, toggleHeaderRow, toggleHeaderColumn, toggleHeaderCell}
 from "prosemirror-tables"
 
 import {DocumentAccessRightsDialog} from "../../../documents/access_rights"
@@ -123,7 +123,7 @@ export const headerbarModel = () => ({
                                 editor.mod.db.imageDB,
                                 editor.user
                             )
-                        copier.init().then(({doc, docInfo}) =>
+                        copier.init().then(({docInfo}) =>
                             window.location.href = `/document/${docInfo.id}/`
                         )
                     }

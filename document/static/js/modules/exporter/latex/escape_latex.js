@@ -1,3 +1,5 @@
+/* eslint-disable no-control-regex */
+
 export let escapeLatexText = function(text) {
     return text
     // Remove line breaks

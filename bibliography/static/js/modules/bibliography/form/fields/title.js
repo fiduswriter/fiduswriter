@@ -44,10 +44,10 @@ export class TitleFieldForm{
                 ]
             }),
             handleDOMEvents: {
-                focus: (view, event) => {
+                focus: (_view, _event) => {
                     document.querySelectorAll('.ui-dialog-buttonset .fw-edit').forEach(el => el.classList.remove('disabled'))
                 },
-                blur: (view, event) => {
+                blur: (_view, _event) => {
                     document.querySelectorAll('.ui-dialog-buttonset .fw-edit').forEach(el => el.classList.add('disabled'))
                 }
             },

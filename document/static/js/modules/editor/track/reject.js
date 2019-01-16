@@ -8,7 +8,7 @@ export const reject = function(type, pos, view) {
     const tr = view.state.tr.setMeta('track', true), map = new Mapping()
     let reachedEnd = false, inlineChange = false
     const trackMark = view.state.doc.nodeAt(pos).marks.find(mark => mark.type.name===type)
-    view.state.doc.nodesBetween(pos, view.state.doc.firstChild.nodeSize, (node, nodePos, parent, index) => {
+    view.state.doc.nodesBetween(pos, view.state.doc.firstChild.nodeSize, (node, nodePos) => {
         if (nodePos < pos) {
             return true
         }

@@ -1,12 +1,10 @@
 import {wrapIn, toggleMark} from "prosemirror-commands"
 import {wrapInList} from "prosemirror-schema-list"
 import {undo, redo, undoDepth, redoDepth} from "prosemirror-history"
-import {ReplaceAroundStep} from "prosemirror-transform"
-import {Slice, Fragment} from "prosemirror-model"
 
 import {CitationDialog, FigureDialog, LinkDialog, MathDialog} from "../../dialogs"
 import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from "../.."
-import {randomHeadingId, randomAnchorId} from "../../../schema/common"
+import {randomAnchorId} from "../../../schema/common"
 import {setBlockType} from "../../keymap"
 
 const PART_LABELS = {
@@ -113,7 +111,7 @@ export const toolbarModel = () => ({
                     editor.currentView.state.doc.nodesBetween(
                         editor.currentView.state.selection.from,
                         editor.currentView.state.selection.to,
-                        (node, pos, parent) => {
+                        node => {
                             if (node.isTextblock) {
                                 const nextBlockNodeType = node.type.name === 'heading' ?
                                     `${node.type.name}_${node.attrs.level}` :

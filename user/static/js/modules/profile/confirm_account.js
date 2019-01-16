@@ -51,7 +51,7 @@ export class ConfirmAccount {
             }
         ))
         let submissionButton = document.getElementById('submit')
-        submissionButton.addEventListener('click', event => {
+        submissionButton.addEventListener('click', () => {
             if (!this.submissionReady) {
                 return
             }

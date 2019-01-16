@@ -1,10 +1,7 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
-import {ReplaceAroundStep} from "prosemirror-transform"
-import {Slice, Fragment} from "prosemirror-model"
 
-import {noSpaceTmp, addAlert} from "../../common"
-import {randomHeadingId, randomFigureId} from "../../schema/common"
+import {noSpaceTmp} from "../../common"
 import {AuthorDialog} from "../dialogs"
 
 const key = new PluginKey('authorInput')
@@ -42,7 +39,7 @@ export const authorInputPlugin = function(options) {
         const pos = findAuthorsEndPos(state)
         return Decoration.widget(pos, dom, {
             side: 1,
-            stopEvent: event => true,
+            stopEvent: () => true,
             id: 'authorsButton'
         })
     }
@@ -125,7 +122,7 @@ export const authorInputPlugin = function(options) {
                 ) {
                     const dropUpDeco = Decoration.widget(state.selection.from, dropUp, {
                         side: 1,
-                        stopEvent: event => true,
+                        stopEvent: () => true,
                         id: 'authorDropUp'
                     })
 

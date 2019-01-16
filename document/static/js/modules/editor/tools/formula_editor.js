@@ -1,5 +1,3 @@
-import {escapeText} from "../../common"
-
 import "mathquill/build/mathquill"
 import katex from "katex"
 

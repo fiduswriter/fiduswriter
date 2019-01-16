@@ -98,14 +98,14 @@ export class BibliographyOverview {
      * @param newBibCategories The new categories which will be added to the existing ones.
      */
     setBibCategoryList(bibCategories) {
-        let catSelector = this.menu.model.content.find(menuItem => menuItem.id==='cat_selector')
+        const catSelector = this.menu.model.content.find(menuItem => menuItem.id==='cat_selector')
         catSelector.content = catSelector.content.filter(cat => cat.type !== 'category')
 
         catSelector.content = catSelector.content.concat(bibCategories.map(cat => ({
             title: cat.category_title,
             type: 'category',
-            action: overview => {
-                let trs = document.querySelectorAll('#bibliography > tbody > tr')
+            action: _overview => {
+                const trs = document.querySelectorAll('#bibliography > tbody > tr')
                 trs.forEach(tr => {
                     if (tr.classList.contains(`cat_${cat.id}`)) {
                         tr.style.display = ''
@@ -259,7 +259,7 @@ export class BibliographyOverview {
           */
     bindEvents() {
         document.body.addEventListener('click', event => {
-            let el = {}, bookId
+            let el = {}, bookId, form, itemEl
             switch (true) {
                 case findTarget(event, '.delete-bib', el):
                     bookId = parseInt(el.target.dataset.id)
@@ -267,7 +267,7 @@ export class BibliographyOverview {
                     break
                 case findTarget(event, '.edit-bib', el):
                     bookId = parseInt(el.target.dataset.id)
-                    let form = new BibEntryForm(this.app.bibDB, bookId)
+                    form = new BibEntryForm(this.app.bibDB, bookId)
                     form.init().then(
                         idTranslations => {
                             let ids = idTranslations.map(idTrans => idTrans[1])
@@ -276,7 +276,7 @@ export class BibliographyOverview {
                     )
                     break
                 case findTarget(event, '.fw-add-input', el):
-                    let itemEl = el.target.closest('.fw-list-input')
+                    itemEl = el.target.closest('.fw-list-input')
                     if (!itemEl.nextElementSibling) {
                         itemEl.insertAdjacentHTML(
                             'afterend',

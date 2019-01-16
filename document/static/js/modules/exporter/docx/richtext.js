@@ -13,6 +13,12 @@ export class DocxExporterRichtext {
 
     transformRichtext(node, options = {}) {
         let start = '', content = '', end = ''
+        let hyperlink, em, strong, smallcaps, sup, sub
+        let cit
+        let caption, figCat
+        let columns, cellWidth
+        let latex
+        let textAttr
 
         switch(node.type) {
             case 'article':
@@ -117,7 +123,6 @@ export class DocxExporterRichtext {
                 break
             case 'text':
                 // Check for hyperlink, bold/strong and italic/em
-                let hyperlink, em, strong, smallcaps, sup, sub
                 if (node.marks) {
                     hyperlink = node.marks.find(mark => mark.type === 'link')
                     em = node.marks.find(mark => mark.type === 'em')
@@ -170,7 +175,7 @@ export class DocxExporterRichtext {
                     start+= '<w:footnoteRef /><w:tab />'
                     options.footnoteRefMissing = false
                 }
-                let textAttr = ''
+                textAttr = ''
                 if (node.text[0] === ' ' || node.text[node.text.length-1] === ' ') {
                     textAttr += 'xml:space="preserve"'
                 }
@@ -180,7 +185,7 @@ export class DocxExporterRichtext {
                 break
             case 'citation':
                 // We take the first citation from the stack and remove it.
-                let cit = this.citations.pmCits.shift()
+                cit = this.citations.pmCits.shift()
                 if (options.citationType && options.citationType === 'note') {
                     // If the citations are in notes (footnotes), we need to
                     // put the contents of this citation in a footnote.
@@ -221,8 +226,8 @@ export class DocxExporterRichtext {
                 }
                 break
             case 'figure':
-                let caption = node.attrs.caption
-                let figCat = node.attrs.figureCategory
+                caption = node.attrs.caption
+                figCat = node.attrs.figureCategory
                 if (figCat !== 'none') {
                     if (!this.figureCounter[figCat]) {
                         this.figureCounter[figCat] = 1
@@ -334,8 +339,8 @@ export class DocxExporterRichtext {
                             <w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1" />
                         </w:tblPr>
                         <w:tblGrid>`
-                let columns = node.content[0].content.length
-                let cellWidth = 63500 // standard width
+                columns = node.content[0].content.length
+                cellWidth = 63500 // standard width
                 options = Object.assign({}, options)
                 if (options.dimensions && options.dimensions.width) {
                     cellWidth = parseInt(options.dimensions.width / columns) - 2540 // subtracting for border width
@@ -391,7 +396,7 @@ export class DocxExporterRichtext {
 
                 break
             case 'equation':
-                let latex = node.attrs.equation
+                latex = node.attrs.equation
                 content += this.exporter.math.getOmml(latex)
                 break
             case 'hard_break':
@@ -425,7 +430,6 @@ export class DocxExporterRichtext {
             case 'cslrightinline':
                 break
             default:
-                console.warn('Unhandled node type:' + node.type)
                 break
         }
 

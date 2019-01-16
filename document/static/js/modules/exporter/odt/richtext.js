@@ -12,7 +12,15 @@ export class OdtExporterRichtext {
 
     transformRichtext(node, options = {}) {
         let start = '', content = '', end = ''
-
+        let olId, ulId
+        let hyperlink, strong, em, sup, sub, smallcaps
+        let attributes
+        let cit
+        let caption
+        let figCat
+        let columns
+        let latex
+        let objectNumber
         switch(node.type) {
             case 'article':
                 break
@@ -49,9 +57,9 @@ export class OdtExporterRichtext {
                 options.section = 'Quote'
                 break
             case 'ordered_list':
-                let olId = options.inOrderedList ?
-                        options.inOrderedList :
-                        this.exporter.styles.getOrderedListStyleId()
+                olId = options.inOrderedList ?
+                    options.inOrderedList :
+                    this.exporter.styles.getOrderedListStyleId()
                 start += `<text:list text:style-name="L${olId[0]}">`
                 end = '</text:list>' + end
                 options = Object.assign({}, options)
@@ -59,7 +67,7 @@ export class OdtExporterRichtext {
                 options.inOrderedList = olId
                 break
             case 'bullet_list':
-                let ulId = this.exporter.styles.getBulletListStyleId()
+                ulId = this.exporter.styles.getBulletListStyleId()
                 start += `<text:list text:style-name="L${ulId[0]}">`
                 end = '</text:list>' + end
                 options = Object.assign({}, options)
@@ -90,7 +98,6 @@ export class OdtExporterRichtext {
                 break
             case 'text':
                 // Check for hyperlink, bold/strong and italic/em
-                let hyperlink, strong, em, sup, sub, smallcaps
                 if (node.marks) {
                     hyperlink = node.marks.find(mark => mark.type === 'link')
                     em = node.marks.find(mark => mark.type === 'em')
@@ -105,7 +112,8 @@ export class OdtExporterRichtext {
                     end = '</text:a>' + end
                 }
 
-                let attributes = ''
+                attributes  = ''
+
                 if (em) {
                     attributes += 'e'
                 }
@@ -131,7 +139,6 @@ export class OdtExporterRichtext {
                 break
             case 'citation':
                 // We take the first citation from the stack and remove it.
-                let cit
                 if (options.inFootnote) {
                     cit = this.exporter.footnotes.citations.pmCits.shift()
                 } else {
@@ -158,8 +165,8 @@ export class OdtExporterRichtext {
 
                 break
             case 'figure':
-                let caption = node.attrs.caption
-                let figCat = node.attrs.figureCategory
+                caption = node.attrs.caption
+                figCat = node.attrs.figureCategory
                 if (figCat !== 'none') {
                     if (!this.figureCounter[figCat]) {
                         this.figureCounter[figCat] = 1
@@ -213,7 +220,7 @@ export class OdtExporterRichtext {
                 }
                 break
             case 'table':
-                let columns = node.content[0].content.length
+                columns = node.content[0].content.length
                 start += '<table:table>'
                 start += `<table:table-column table:number-columns-repeated="${columns}" />`
                 end = '</table:table>' + end
@@ -240,8 +247,8 @@ export class OdtExporterRichtext {
                 }
                 break
             case 'equation':
-                let latex = node.attrs.equation
-                let objectNumber = this.exporter.math.addMath(latex)
+                latex = node.attrs.equation
+                objectNumber = this.exporter.math.addMath(latex)
                 this.exporter.styles.checkGraphicStyle('Formula')
                 content += noSpaceTmp`
                     <draw:frame draw:style-name="Formula" draw:name="Object${objectNumber}" text:anchor-type="as-char" draw:z-index="1">
@@ -276,7 +283,6 @@ export class OdtExporterRichtext {
             case 'cslrightinline':
                 break
             default:
-                console.warn('Unhandled node type:' + node.type)
                 break
         }
 

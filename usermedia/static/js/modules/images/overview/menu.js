@@ -7,19 +7,19 @@ export let menuModel = () => ({
             id: 'bib_selector',
             open: false,
             checked: false,
-            checkAction: overview => {
-                let checkboxes = document.querySelectorAll('input.entry-select[type=checkbox]')
+            checkAction: _overview => {
+                const checkboxes = document.querySelectorAll('input.entry-select[type=checkbox]')
                 checkboxes.forEach(checkbox => checkbox.checked = true)
             },
-            uncheckAction: overview => {
-                let checkboxes = document.querySelectorAll('input.entry-select[type=checkbox]')
+            uncheckAction: _overview => {
+                const checkboxes = document.querySelectorAll('input.entry-select[type=checkbox]')
                 checkboxes.forEach(checkbox => checkbox.checked = false)
             },
             content: [
                 {
                     title: gettext('Delete selected'),
                     action: overview => {
-                        let ids = overview.getSelected()
+                        const ids = overview.getSelected()
                         if (ids.length) {
                             overview.deleteImageDialog(ids)
                         }
@@ -35,8 +35,8 @@ export let menuModel = () => ({
             content : [
                 {
                     title: gettext('All categories'),
-                    action: overview => {
-                        let trs = document.querySelectorAll('#imagelist > tbody > tr')
+                    action: _overview => {
+                        const trs = document.querySelectorAll('#imagelist > tbody > tr')
                         trs.forEach(tr => tr.style.display = '')
                     }
                 }
@@ -55,7 +55,7 @@ export let menuModel = () => ({
             icon: 'plus-circle',
             title: gettext('Upload new image'),
             action: overview => {
-                let imageUpload = new ImageEditDialog(
+                const imageUpload = new ImageEditDialog(
                     overview.app.imageDB
                 )
                 imageUpload.init().then(

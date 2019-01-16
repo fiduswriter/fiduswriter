@@ -1,4 +1,3 @@
-import JSZipUtils from "jszip-utils"
 import TeXZilla from "texzilla"
 
 import {noSpaceTmp} from "../../common"

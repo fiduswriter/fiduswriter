@@ -8,20 +8,20 @@ export let menuModel = () => ({
             id: 'doc_selector',
             open: false,
             checked: false,
-            checkAction: overview => {
-                let checkboxes = document.querySelectorAll('input.entry-select[type=checkbox]')
+            checkAction: _overview => {
+                const checkboxes = document.querySelectorAll('input.entry-select[type=checkbox]')
                 checkboxes.forEach(checkbox => checkbox.checked = true)
             },
-            uncheckAction: overview => {
-                let checkboxes = document.querySelectorAll('input.entry-select[type=checkbox]')
+            uncheckAction: _overview => {
+                const checkboxes = document.querySelectorAll('input.entry-select[type=checkbox]')
                 checkboxes.forEach(checkbox => checkbox.checked = false)
             },
             content: [
                 {
                     title: gettext('Delete selected'),
                     action: overview => {
-                        let ids = overview.getSelected()
-                        let ownIds = ids.filter(id => overview.documentList.find(doc => doc.id===id).is_owner)
+                        const ids = overview.getSelected()
+                        const ownIds = ids.filter(id => overview.documentList.find(doc => doc.id===id).is_owner)
                         if (ownIds.length !== ids.length) {
                             addAlert('error', gettext('You cannot delete documents of other users'))
                         }
@@ -107,7 +107,7 @@ export let menuModel = () => ({
             type: 'button',
             icon: 'plus-circle',
             title: gettext('Create new document'),
-            action: overview => window.location.href = '/document/new/',
+            action: _overview => window.location.href = '/document/new/',
             order: 1
         },
         {

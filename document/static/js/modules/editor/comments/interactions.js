@@ -19,11 +19,12 @@ export class ModCommentInteractions {
         // Bind all the click events related to comments
         document.body.addEventListener('click', event => {
             const el = {}
+            let id
             switch (true) {
                 case findTarget(event, '.edit-comment', el):
                     this.editComment = true
                     this.activeCommentAnswerId = false
-                    const id = el.target.dataset.id
+                    id = el.target.dataset.id
                     if (this.activeCommentId !== id) {
                         this.deactivateSelectedChanges()
                         this.activateComment(id)
@@ -153,7 +154,7 @@ export class ModCommentInteractions {
             view.state.doc.nodesBetween(
                 selection.from,
                 selection.to,
-                (node, pos, parent) => {
+                node => {
                     if (!node.isInline) {
                         return
                     }

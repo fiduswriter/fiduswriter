@@ -14,7 +14,7 @@
     "copy_mathquill_font": "mkdir -p ./static-libs/css/font/ && cp node_modules/mathquill/build/font/* ./static-libs/css/font/",
     "copy_vivliostyle_resources": "mkdir -p ./static-libs/vivliostyle-resources/ && cp node_modules/vivliostyle/resources/* ./static-libs/vivliostyle-resources/",
     "postinstall": "npm run get_mml2omml && npm run copy_jquery && npm run copy_fontawesome && npm run copy_prosemirror_css && npm run copy_mathquill_css && npm run copy_mathquill_font && npm run copy_vivliostyle_resources",
-    "jshint": "jshint ."
+    "eslint": "eslint ."
   },
   "author": "Johannes Wilm",
   "license": "AGPL",
@@ -24,33 +24,11 @@
     "downloadjs": "1.4.7",
     "font-awesome": "4.7.0",
     "jquery": "3.3.1", // for mathquill
-    "jshint": "^2.9.6",
     "katex": "0.10.0-rc.1",
     "w3c-keyname": "1.1.x",
     "simple-datatables": "^1.7.2",
-    "vivliostyle-print": "^1.1.1"
-  },
-  "jshintConfig": {
-    "esversion": 6,
-    "loopfunc": true,
-    "asi": true,
-    "multistr": true,
-    "sub": true,
-    "undef": true,
-    "globals": {
-      "django": true,
-      "MathQuill": true,
-      "gettext": false,
-      "interpolate": false,
-      "$StaticUrls": false,
-      "console": false,
-      "FormData": false,
-      "URLSearchParams": false,
-      "self": true
-    },
-    "browser": true,
-    "worker": true,
-    "varstmt": true
+    "vivliostyle-print": "^1.1.1",
+    "eslint": "^5.12.0"
   },
   "devDependencies": {
     "npm-check-updates": "^2.14.2"

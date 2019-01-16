@@ -1,7 +1,4 @@
 import diffDOM from "diff-dom"
-import {keydownHandler} from "prosemirror-keymap"
-
-import {escapeText} from "../../../common"
 
 export class ToolbarView {
     constructor(editorView, options) {
@@ -38,7 +35,7 @@ export class ToolbarView {
         this.editor.menu.toolbarViews = this.editor.menu.toolbarViews.filter(view => view !== this)
     }
 
-    onresize(event) {
+    onresize(_event) {
         // recalculate menu if needed
         this.availableWidth = window.innerWidth - this.sideMargins
         this.update()
@@ -193,21 +190,23 @@ export class ToolbarView {
         `
     }
 
-    getToolbarMenuItemHTML(menuItem, index) {
+    getToolbarMenuItemHTML(menuItem, _index) {
+        let returnValue
         switch(menuItem.type) {
             case 'info':
-                return this.getInfoHTML(menuItem)
+                returnValue = this.getInfoHTML(menuItem)
                 break
             case 'dropdown':
-                return this.getDropdownHTML(menuItem)
+                returnValue = this.getDropdownHTML(menuItem)
                 break
             case 'button':
-                return this.getButtonHTML(menuItem)
+                returnValue = this.getButtonHTML(menuItem)
                 break
             default:
-                return ''
+                returnValue = ''
                 break
         }
+        return returnValue
     }
 
     getMoreButtonHTML(menuIndexToDrop) {

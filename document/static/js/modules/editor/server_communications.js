@@ -38,15 +38,10 @@ export class ModServerCommunications {
             client: 0,
             lastTen: []
         }
-        try {
-            this.ws = new window.WebSocket(
-                `${this.editor.websocketUrl}/ws/document/${this.editor.docInfo.id}/${this.connectionCount}/`
-            )
-            this.ws.onopen = () => document.getElementById('unobtrusive_messages').innerHTML = ''
-        } catch (err) {
-            console.error(err)
-        }
-
+        this.ws = new window.WebSocket(
+            `${this.editor.websocketUrl}/ws/document/${this.editor.docInfo.id}/${this.connectionCount}/`
+        )
+        this.ws.onopen = () => document.getElementById('unobtrusive_messages').innerHTML = ''
 
         this.ws.onmessage = event => {
             const data = JSON.parse(event.data)
@@ -90,14 +85,14 @@ export class ModServerCommunications {
             }
         }
 
-        this.ws.onclose = event => {
+        this.ws.onclose = () => {
             this.connected = false
             window.clearInterval(this.wsPinger)
             window.setTimeout(() => {
                 this.createWSConnection()
             }, 2000)
             if(!this.editor.view.state.plugins.length) {
-                console.warn('doc not initiated')
+                // doc not initiated
                 return
             }
             const toSend = sendableSteps(this.editor.view.state),

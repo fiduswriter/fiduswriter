@@ -8,7 +8,7 @@ dist: xenial
 sudo: required
 
 addons:
-  chrome: beta
+  chrome: stable
 
 install:
   - mv travis/configuration.py ./

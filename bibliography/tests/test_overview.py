@@ -193,6 +193,8 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
             "'bibliography.bib'])[1]/following::button[1]"
         ).click()
         print(self.wait_time)
+        import time
+        time.sleep(10)
         book_title_el = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located(
                 (

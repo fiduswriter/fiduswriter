@@ -60,7 +60,7 @@ export class ModCitations {
 
     bindBibliographyClicks() {
         document.querySelectorAll('div.csl-entry').forEach((el, index) => {
-            el.addEventListener('click', event => {
+            el.addEventListener('click', () => {
                 const eID = parseInt(this.citRenderer.fm.bibliography[0].entry_ids[index][0])
                 this.checkTrackingDialog().then(
                     () => {
@@ -77,7 +77,7 @@ export class ModCitations {
             return Promise.resolve()
         }
         const buttons = [],
-            promise = new Promise((resolve, reject) => {
+            promise = new Promise(resolve => {
                 buttons.push({
                     type: 'cancel',
                     click: () => {

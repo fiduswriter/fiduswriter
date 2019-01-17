@@ -1,7 +1,5 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
-import {ReplaceAroundStep} from "prosemirror-transform"
-import {Slice, Fragment} from "prosemirror-model"
 
 import {noSpaceTmp, addAlert} from "../../common"
 import {randomHeadingId, randomFigureId} from "../../schema/common"
@@ -128,7 +126,7 @@ export const contributorInputPlugin = function(options) {
                 ) {
                     const dropUpDeco = Decoration.widget(state.selection.from, dropUp, {
                         side: -1,
-                        stopEvent: event => true,
+                        stopEvent: () => true,
                         id: 'contributorDropUp'
                     })
 

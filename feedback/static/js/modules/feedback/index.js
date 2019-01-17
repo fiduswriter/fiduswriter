@@ -55,7 +55,7 @@ export class FeedbackTab {
             event.preventDefault()
         })
 
-        document.querySelector('#feedbackbutton').addEventListener('click', event => this.openFeedback())
+        document.querySelector('#feedbackbutton').addEventListener('click', () => this.openFeedback())
     }
 
     openFeedback() {

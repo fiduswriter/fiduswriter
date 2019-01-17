@@ -265,7 +265,7 @@ export class Editor {
                 schema: this.schema
             }),
             handleDOMEvents: {
-                focus: (view, event) => {
+                focus: (view, _event) => {
                     this.currentView = this.view
                     // We focus once more, as focus may have disappeared due to
                     // disappearing placeholders.

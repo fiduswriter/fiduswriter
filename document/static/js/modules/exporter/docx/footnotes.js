@@ -3,7 +3,6 @@ import {DocxExporterCitations} from "./citations"
 import {DocxExporterImages} from "./images"
 import {DocxExporterLists} from "./lists"
 import {DocxExporterRichtext} from "./richtext"
-import {fnSchema} from "../../schema/footnotes"
 import {noSpaceTmp} from "../../common"
 import {descendantNodes} from "../tools/doc_contents"
 

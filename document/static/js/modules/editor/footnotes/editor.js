@@ -69,7 +69,7 @@ export class ModFootnoteEditor {
                 plugins
             }),
             handleDOMEvents : {
-                focus: (view, event) => {
+                focus: (_view, _event) => {
                     this.mod.editor.currentView = this.view
                 }
             },
@@ -119,7 +119,7 @@ export class ModFootnoteEditor {
 
     applyDiffs(diffs, cid) {
         const steps = diffs.map(j => Step.fromJSON(this.view.state.schema, j))
-        const clientIds = diffs.map(j => cid)
+        const clientIds = diffs.map(_ => cid)
         const tr = receiveTransaction(
             this.view.state,
             steps,
@@ -171,7 +171,7 @@ export class ModFootnoteEditor {
                 this.view.state,
                 initialSteps.steps,
                 initialSteps.steps.map(
-                    step => initialSteps.clientID
+                    _step => initialSteps.clientID
                 )
             )
             this.view.updateState(

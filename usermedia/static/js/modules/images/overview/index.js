@@ -209,7 +209,7 @@ export class ImageOverview {
 
     bindEvents() {
         document.body.addEventListener('click', event => {
-            let el = {}, imageId
+            let el = {}, imageId, itemEl, dialog
             switch (true) {
                 case findTarget(event, '.delete-image', el):
                     imageId = el.target.dataset.id
@@ -217,7 +217,7 @@ export class ImageOverview {
                     break
                 case findTarget(event, '.edit-image', el):
                     imageId = el.target.dataset.id
-                    let dialog = new ImageEditDialog(this.imageDB, imageId)
+                    dialog = new ImageEditDialog(this.imageDB, imageId)
                     dialog.init().then(
                         imageId => {
                             this.updateTable([imageId])
@@ -225,7 +225,7 @@ export class ImageOverview {
                     )
                     break
                 case findTarget(event, '.fw-add-input', el):
-                    let itemEl = el.target.closest('.fw-list-input')
+                    itemEl = el.target.closest('.fw-list-input')
                     if (!itemEl.nextElementSibling) {
                         itemEl.insertAdjacentHTML(
                             'afterend',

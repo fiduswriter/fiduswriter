@@ -1,5 +1,3 @@
-import {escapeText} from "../../common"
-
 import MathQuill from "mathquill-jquery"
 import katex from "katex"
 

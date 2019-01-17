@@ -1,6 +1,5 @@
 import download from "downloadjs"
 import pretty from "pretty"
-import katex from "katex"
 
 import {createSlug} from "../tools/file"
 import {modifyImages} from "../tools/html"

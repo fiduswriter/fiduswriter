@@ -302,7 +302,7 @@ export class ModCollabDocChanges {
         const sentSteps = unconfirmedDiffs["ds"] // document steps
         if (sentSteps) {
             const ourIds = sentSteps.map(
-                step => this.mod.editor.client_id
+                _step => this.mod.editor.client_id
             )
             const tr = receiveTransaction(
                 this.mod.editor.view.state,
@@ -322,7 +322,7 @@ export class ModCollabDocChanges {
                 this.mod.editor.mod.footnotes.fnEditor.view.state,
                 sentFnSteps,
                 sentFnSteps.map(
-                    step => this.mod.editor.client_id
+                    _step => this.mod.editor.client_id
                 )
             )
             this.mod.editor.mod.footnotes.fnEditor.view.dispatch(fnTr)
@@ -355,7 +355,7 @@ export class ModCollabDocChanges {
     applyDiffs(diffs, cid) {
         this.receiving = true
         const steps = diffs.map(j => Step.fromJSON(this.mod.editor.schema, j))
-        const clientIds = diffs.map(j => cid)
+        const clientIds = diffs.map(_ => cid)
         const tr = receiveTransaction(
             this.mod.editor.view.state,
             steps,

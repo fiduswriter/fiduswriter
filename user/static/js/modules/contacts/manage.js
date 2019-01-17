@@ -1,4 +1,4 @@
-import {addTeammemberTemplate, teammemberTemplate} from "./templates"
+import {addTeammemberTemplate} from "./templates"
 import {postJson, cancelPromise, Dialog} from "../common"
 
 /**
@@ -101,7 +101,7 @@ let deleteMember = function(ids) {
             'members': ids
         }
     ).then(
-        ({json, status}) => {
+        ({status}) => {
             if (status == 200) { //user removed from contacts
                 document.querySelectorAll(`#user-${ids.join(', #user-')}`).forEach(
                     el => el.parentElement.removeChild(el)

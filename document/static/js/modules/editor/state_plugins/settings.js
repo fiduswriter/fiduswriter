@@ -5,8 +5,6 @@ import {setDocTitle} from "../../common"
 
 const key = new PluginKey('settings')
 
-const settings = {}
-
 export const settingsPlugin = function(options) {
 
     const fixSettings = function(settings) {

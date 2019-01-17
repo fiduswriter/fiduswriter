@@ -1,8 +1,6 @@
 /* To convert to and from how the document is stored in the database to how ProseMirror expects it.
  We use the DOM import for ProseMirror as the JSON we store in the database is really jsonized HTML.
 */
-
-import {obj2Node} from "../exporter/tools/json"
 import {randomHeadingId, randomFigureId} from "./common"
 
 export const getSettings = function(pmArticle) {
@@ -78,12 +76,13 @@ const convertDocV1 = function(doc) {
 }
 
 const convertNodeV1 = function(node) {
+    let prefixes, locators, ids, references
     switch (node.type) {
         case 'citation':
-            const prefixes = node.attrs.bibBefore ? node.attrs.bibBefore.split(',,,') : []
-            const locators = node.attrs.bibPage ? node.attrs.bibPage.split(',,,') : []
-            const ids = node.attrs.bibEntry ? node.attrs.bibEntry.split(',') : []
-            const references = ids.map((id, index) => {
+            prefixes = node.attrs.bibBefore ? node.attrs.bibBefore.split(',,,') : []
+            locators = node.attrs.bibPage ? node.attrs.bibPage.split(',,,') : []
+            ids = node.attrs.bibEntry ? node.attrs.bibEntry.split(',') : []
+            references = ids.map((id, index) => {
                 const returnObj = {id: parseInt(id)}
                 if (prefixes[index] && prefixes[index] !== '') {
                     returnObj['prefix'] = prefixes[index]
@@ -120,9 +119,10 @@ const convertDocV11 = function(doc) {
 }
 
 const convertNodeV11 = function(node, ids = []) {
+    let blockId
     switch (node.type) {
         case 'heading':
-            let blockId = node.attrs.id
+            blockId = node.attrs.id
             while (!blockId || ids.includes(blockId)) {
                 blockId = randomHeadingId()
             }
@@ -144,9 +144,10 @@ const convertDocV12 = function(doc) {
 }
 
 const convertNodeV12 = function(node, ids = []) {
+    let blockId
     switch (node.type) {
         case 'figure':
-            let blockId = node.attrs.id
+            blockId = node.attrs.id
             while (!blockId || ids.includes(blockId)) {
                 blockId = randomFigureId()
             }
@@ -172,12 +173,13 @@ const convertDocV13 = function(doc, bibliography) {
 }
 
 const convertNodeV13 = function(node, shrunkBib, fullBib, imageIds) {
+    let authorsText, keywordsText
     switch (node.type) {
         case 'article':
             node.attrs.language = 'en-US'
             break
         case 'authors':
-            const authorsText = node.content ? node.content.reduce(
+            authorsText = node.content ? node.content.reduce(
                     (text, item) => item.type === 'text' ? text + item.text : text,
                     ''
                 ) : ''
@@ -217,7 +219,7 @@ const convertNodeV13 = function(node, shrunkBib, fullBib, imageIds) {
             })
             break
         case 'keywords':
-                const keywordsText = node.content ? node.content.reduce(
+                keywordsText = node.content ? node.content.reduce(
                         (text, item) => item.type === 'text' ? text + item.text : text,
                         ''
                     ) : ''
@@ -342,7 +344,7 @@ const convertDocV22 = function(doc) {
     const returnDoc = JSON.parse(JSON.stringify(doc))
     returnDoc.imageIds = []
     convertNodeV22(returnDoc.contents, returnDoc.imageIds)
-    Object.entries(returnDoc.comments).forEach(([commentId, comment]) => {
+    Object.entries(returnDoc.comments).forEach(([_commentId, comment]) => {
         comment.comment.forEach(
             commentNode => convertNodeV22(commentNode, returnDoc.imageIds)
         )

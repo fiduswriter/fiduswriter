@@ -1,12 +1,11 @@
 import download from "downloadjs"
 import {DOMSerializer} from "prosemirror-model"
-import katex from "katex"
 
 import {obj2Node, node2Obj} from "../tools/json"
 import {createSlug} from "../tools/file"
 import {modifyImages} from "../tools/html"
 import {ZipFileCreator} from "../tools/zip"
-import {opfTemplate, containerTemplate, ncxTemplate, ncxItemTemplate, navTemplate, navItemTemplate, xhtmlTemplate} from "./templates"
+import {opfTemplate, containerTemplate, ncxTemplate, navTemplate, xhtmlTemplate} from "./templates"
 import {addAlert} from "../../common"
 import {BaseEpubExporter} from "./base"
 import {docSchema} from "../../schema/document"

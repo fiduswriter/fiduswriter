@@ -1,7 +1,6 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
-import {ReplaceAroundStep, RemoveMarkStep, ReplaceStep} from "prosemirror-transform"
-import {Slice, Fragment} from "prosemirror-model"
+import {RemoveMarkStep} from "prosemirror-transform"
 
 import {noSpaceTmp, addAlert} from "../../common"
 import {randomHeadingId, randomFigureId} from "../../schema/common"
@@ -23,7 +22,6 @@ const copyLink = function(href) {
         addAlert('info', gettext(
             'Copy to clipboard failed. Please copy manually.'
         ))
-        console.warn("Copy to clipboard failed.", ex)
     }
 }
 
@@ -320,7 +318,7 @@ export const linksPlugin = function(options) {
                 tr.doc.nodesBetween(
                     range[0],
                     range[1],
-                    (node, pos, parent) => {
+                    node => {
                         if (
                             node.type.groups.includes('heading') ||
                             node.type.name === 'figure'
@@ -443,7 +441,7 @@ export const linksPlugin = function(options) {
         },
         props: {
             handleDOMEvents: {
-                focus: (view, event) => {
+                focus: (view, _event) => {
                     const {
                         url
                     } = key.getState(view.state)

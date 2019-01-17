@@ -241,10 +241,9 @@ export const addEmailDialog = function() {
 }
 
 export const deleteEmailDialog = function(target, app) {
-    let thisTr = target.parentElement.parentElement,
-        email = target.dataset.email
+    const email = target.dataset.email
 
-    let buttons = [
+    const buttons = [
         {
             text: gettext('Remove'),
             classes: "fw-dark",
@@ -280,7 +279,7 @@ export const deleteEmailDialog = function(target, app) {
         }
     ]
 
-    let dialog = new Dialog({
+    const dialog = new Dialog({
         id: 'fw-confirm-email-dialog',
         title: gettext('Confirm remove'),
         body: deleteEmailDialogTemplate({
@@ -318,7 +317,7 @@ export const changePrimaryEmailDialog = function(app) {
                 ).then(
                     () => app.selectPage()
                 ).catch(
-                    error => {
+                    _error => {
                         deactivateWait()
                         addAlert('error', gettext('The email could not be set primary'))
                     }

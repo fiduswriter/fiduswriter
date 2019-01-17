@@ -4,9 +4,9 @@ const key = new PluginKey('marginboxes')
 export const marginboxesPlugin = function(options) {
     return new Plugin({
         key,
-        view(editorState) {
+        view(_editorState) {
             return {
-                update: (view, prevState) => {
+                update: (view, _prevState) => {
                     options.editor.mod.marginboxes.view(view)
                 }
             }

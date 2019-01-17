@@ -10,7 +10,6 @@ const answerCommentTemplate = ({
         activeCommentAnswerId,
         active,
         user,
-        docInfo,
         staticUrl
     }) =>
     `<div class="comment-item comment-answer">
@@ -53,7 +52,6 @@ const singleCommentTemplate = ({
         author,
         active,
         editComment,
-        user,
         staticUrl
     }) =>
     `<div class="comment-item">
@@ -380,9 +378,10 @@ export const marginBoxesTemplate = ({
         filterOptions,
         staticUrl
     }) => marginBoxes.map(mBox => {
+        let returnValue = ''
         switch(mBox.type) {
             case 'comment':
-                return commentTemplate({
+                returnValue = commentTemplate({
                     comment: mBox.data,
                     view: mBox.view,
                     active: mBox.active,
@@ -398,7 +397,7 @@ export const marginBoxesTemplate = ({
             case 'deletion':
             case 'format_change':
             case 'block_change':
-                return trackTemplate({
+                returnValue = trackTemplate({
                     type: mBox.type,
                     node: mBox.node,
                     data: mBox.data,
@@ -413,8 +412,7 @@ export const marginBoxesTemplate = ({
             case 'help':
                 return helpTemplate({help: mBox.data, filterOptions})
             default:
-                console.warn(`Unknown margin box type: ${mBox.type}`)
                 break
         }
-        return ''
+        return returnValue
     }).join('')

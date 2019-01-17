@@ -1,5 +1,4 @@
 import diffDOM from "diff-dom"
-import {keydownHandler} from "prosemirror-keymap"
 import {escapeText, whenReady} from "./basic"
 
 export class OverviewMenuView {
@@ -154,23 +153,25 @@ export class OverviewMenuView {
     }
 
     getMenuItemHTML(menuItem) {
+        let returnValue
         switch(menuItem.type) {
             case 'dropdown':
-                return this.getDropdownHTML(menuItem)
+                returnValue = this.getDropdownHTML(menuItem)
                 break
             case 'select-action-dropdown':
-                return this.getSelectionActionDropdownHTML(menuItem)
+                returnValue = this.getSelectionActionDropdownHTML(menuItem)
                 break
             case 'button':
-                return this.getButtonHTML(menuItem)
+                returnValue = this.getButtonHTML(menuItem)
                 break
             case 'search':
-                return this.getSearchHTML(menuItem)
+                returnValue = this.getSearchHTML(menuItem)
                 break
             default:
-                return ''
+                returnValue = ''
                 break
         }
+        return returnValue
     }
 
 

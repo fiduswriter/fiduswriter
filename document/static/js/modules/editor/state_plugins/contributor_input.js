@@ -1,8 +1,7 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
 
-import {noSpaceTmp, addAlert} from "../../common"
-import {randomHeadingId, randomFigureId} from "../../schema/common"
+import {noSpaceTmp} from "../../common"
 import {ContributorDialog} from "../dialogs"
 import {addDeletedPartWidget} from "./document_template"
 
@@ -38,11 +37,11 @@ export class ContributorsView {
         }
     }
 
-    stopEvent(event) {
+    stopEvent(_event) {
         return true
     }
 
-    ignoreMutation(record) {
+    ignoreMutation(_record) {
         return true
     }
 }
@@ -77,7 +76,7 @@ export const contributorInputPlugin = function(options) {
     return new Plugin({
         key,
         state: {
-            init(config, state) {
+            init(_config, _state) {
                 const decos = DecorationSet.empty
                 let dropUp
 

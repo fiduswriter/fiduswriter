@@ -1,5 +1,3 @@
-import {article} from "../schema/document/structure"
-
 export function extractTemplate(doc) {
     const template = JSON.parse(JSON.stringify(doc))
     // Set attributes to default values

@@ -164,7 +164,7 @@ export const title = {
     parseDOM: [{
         tag: "div.article-title"
     }],
-    toDOM(node) {
+    toDOM(_node) {
         return ["div", {
             class: 'article-part article-title'
         }, 0]

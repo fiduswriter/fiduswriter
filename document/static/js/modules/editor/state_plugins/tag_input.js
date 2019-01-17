@@ -150,7 +150,7 @@ const createTagInputEditor = (view, getPos, node) => {
                     submitTag(tagInputView.state, undefined, tagInputView, view, getPos)
                 }, 1)
             },
-            focus: (tagInputView, event) => {
+            focus: (tagInputView, _event) => {
                 const startPos = getPos(),
                     pos = startPos + view.state.doc.nodeAt(startPos).nodeSize - 1,
                     $pos = view.state.doc.resolve(pos)
@@ -225,7 +225,7 @@ export class TagsView {
         return true
     }
 
-    ignoreMutation(record) {
+    ignoreMutation(_record) {
         return true
     }
 
@@ -236,7 +236,7 @@ export const tagInputPlugin = function(options) {
     return new Plugin({
         key,
         state: {
-            init(config, state) {
+            init(_config, _state) {
                 if (options.editor.docInfo.access_rights === 'write') {
                     this.spec.props.nodeViews['tags_part'] =
                         (node, view, getPos) => new TagsView(node, view, getPos)

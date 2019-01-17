@@ -20,7 +20,7 @@ export const placeholdersPlugin = function(options) {
 
         const decorations = []
 
-        articleNode.forEach((partElement, offset, index) => {
+        articleNode.forEach((partElement, offset) => {
             if (
                 (partElement.isTextblock && partElement.nodeSize === 2) ||
                 (!partElement.isTextblock && partElement.nodeSize === 4)

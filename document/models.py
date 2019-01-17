@@ -60,6 +60,18 @@ class DocumentTemplate(models.Model):
         return self.title
 
 
+    def save(self, *args, **kwargs):
+        super(DocumentTemplate, self).save(*args, **kwargs)
+        if self.citation_styles.count() == 0:
+            for style in CitationStyle.objects.all():
+                self.citation_styles.add(style)
+        # not all document_styles will really fit.
+        # TODO: add a field to classify document styles by used fields
+        if self.document_styles.count() == 0:
+            for style in DocumentStyle.objects.all():
+                self.document_styles.add(style)
+
+
 def default_template():
     template = DocumentTemplate.objects.first()
     if not template:

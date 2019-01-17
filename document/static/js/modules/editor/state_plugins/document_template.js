@@ -48,7 +48,7 @@ export const documentTemplatePlugin = function(options) {
     return new Plugin({
         key,
         state: {
-            init(config, state) {
+            init(_config, _state) {
                 if (options.editor.docInfo.access_rights === 'write') {
                     this.spec.props.nodeViews['richtext_part'] = (node, view, getPos) => new PartView(
                         node,

@@ -23,7 +23,7 @@ import {docSchema} from "../schema/document"
 
 const doc = {
     content: 'block+',
-    toDOM(node) {
+    toDOM(_node) {
         return ["div", 0]
     }
 }

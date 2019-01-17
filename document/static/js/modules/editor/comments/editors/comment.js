@@ -45,7 +45,7 @@ export class CommentEditor {
                     this.selectedTag = 0
                     this.removeTagger()
                 },
-                onKeyDown: ({_view, event}) => {
+                onKeyDown: ({event}) => {
                     if (event.key === 'ArrowDown') {
                         if (this.userTaggerList.length > this.selectedTag + 1) {
                             this.selectedTag += 1

@@ -23,10 +23,10 @@ env:
   global:
     - COVERALLS_PARALLEL=true
   matrix:
-    - TESTS=test user
-    - TESTS=test document
-    - TESTS=test bibliography
-    - TESTS=test usermedia
+    - TESTS="test user"
+    - TESTS="test document"
+    - TESTS="test bibliography"
+    - TESTS="test usermedia"
     - TESTS=check_js
     - TESTS=check_py
 

@@ -62,8 +62,8 @@ export class DocxExporterRender {
                                 if (affiliation) {
                                     parts.push(affiliation)
                                 }
-                                if (author.email) {
-                                    parts.push(author.email)
+                                if (contributor.email) {
+                                    parts.push(contributor.email)
                                 }
                                 return parts.join(', ')
                             }

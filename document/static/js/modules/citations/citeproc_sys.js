@@ -37,11 +37,7 @@ export class citeprocSys {
         }
         if (locale) {
             return locale.contents
-        } else {
-          console.error(`Missing locale: ${lang}`)
         }
-
-
     }
 
     getAbbreviation(dummy, obj, jurisdiction, vartype, key) {

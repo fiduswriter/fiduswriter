@@ -3,10 +3,6 @@ import {GeneralPasteHandler} from "./general"
 // Google Docs (the writing component) paste handler
 export class GoogleDocsPasteHandler extends GeneralPasteHandler {
 
-    outputHandlerType() {
-        console.info('google docs paste handler')
-    }
-
     // Convert an existing node to a different node, if needed.
     convertNode(node) {
         // Replace  nodes with other nodes to not change the number of child nodes

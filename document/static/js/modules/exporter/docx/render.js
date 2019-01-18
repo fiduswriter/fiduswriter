@@ -17,71 +17,72 @@ export class DocxExporterRender {
 
     // Define the tags that are to be looked for in the document
     getTagData(pmBib) {
-        this.tags = [
-            {
-                title: 'title',
-                content: textContent(this.docContents.content[0])
-            },
-            {
-                title: 'subtitle',
-                content: textContent(this.docContents.content[1])
-            },
-            {
-                title: 'authors',
-                // TODO: This is a very basic reduction of the author info into
-                // a simple string. We should expand the templating system so
-                // that one can specify more about the output.
-                content: this.docContents.content[2].content ?
-                    this.docContents.content[2].content.map(
-                        node => {
-                            let author = node.attrs,
-                                nameParts = [],
-                                affiliation = false
-                            if (author.firstname) {
-                                nameParts.push(author.firstname)
-                            }
-                            if (author.lastname) {
-                                nameParts.push(author.lastname)
-                            }
-                            if (author.institution) {
-                                if (nameParts.length) {
-                                    affiliation = author.institution
-                                } else {
-                                    // We have an institution but no names. Use institution as name.
-                                    nameParts.push(author.institution)
+        this.tags = this.docContents.content.map(node => {
+            const tag = {}
+            switch(node.type) {
+                case 'title':
+                    tag.title = 'title'
+                    tag.content = textContent(node)
+                    break
+                case 'heading_part':
+                    tag.title = node.attrs.id
+                    tag.content = textContent(node)
+                    break
+                case 'table_part':
+                case 'richtext_part':
+                    tag.title = `@${node.attrs.id}`
+                    tag.content = node.content
+                    break
+                case 'contributors_part':
+                    tag.title = node.attrs.id
+                    // TODO: This is a very basic reduction of the author info into
+                    // a simple string. We should expand the templating system so
+                    // that one can specify more about the output.
+                    tag.content = node.content ?
+                        node.content.map(
+                            node => {
+                                const contributor = node.attrs,
+                                    nameParts = []
+                                let affiliation = false
+                                if (contributor.firstname) {
+                                    nameParts.push(contributor.firstname)
                                 }
+                                if (contributor.lastname) {
+                                    nameParts.push(contributor.lastname)
+                                }
+                                if (contributor.institution) {
+                                    if (nameParts.length) {
+                                        affiliation = contributor.institution
+                                    } else {
+                                        // We have an institution but no names. Use institution as name.
+                                        nameParts.push(contributor.institution)
+                                    }
+                                }
+                                const parts = [nameParts.join(' ')]
+                                if (affiliation) {
+                                    parts.push(affiliation)
+                                }
+                                if (author.email) {
+                                    parts.push(author.email)
+                                }
+                                return parts.join(', ')
                             }
-                            let parts = [nameParts.join(' ')]
-                            if (affiliation) {
-                                parts.push(affiliation)
-                            }
-                            if (author.email) {
-                                parts.push(author.email)
-                            }
-                            return parts.join(', ')
-                        }
-                    ).join('; ') :
-                    ''
-            },
-            {
-                title: '@abstract', // The '@' triggers handling as block
-                content: this.docContents.content[3]
-            },
-            {
-                title: 'keywords',
-                content: this.docContents.content[4].content ?
-                    this.docContents.content[4].content.map(node => node.attrs.keyword).join(', ') :
-                    ''
-            },
-            {
-                title: '@body', // The '@' triggers handling as block
-                content: this.docContents.content[5]
-            },
-            {
-                title: '@bibliography', // The '@' triggers handling as block
-                content: pmBib ? pmBib : {type: 'paragraph', contents: [{type:'text', text: ' '}]}
+                        ).join('; ') :
+                        ''
+                    break
+                case 'tags_part':
+                    tag.title = node.attrs.id
+                    tag.content = node.content ?
+                        node.content.map(node => node.attrs.tag).join(', ') :
+                        ''
+                    break
             }
-        ]
+            return tag
+        })
+        this.tags.push({
+            title: '@bibliography', // The '@' triggers handling as block
+            content: pmBib ? pmBib : [{type: 'paragraph', contents: [{type:'text', text: ' '}]}]
+        })
     }
 
     // go through document.xml looking for tags and replace them with the given
@@ -151,7 +152,7 @@ export class DocxExporterRender {
 
     // Render Tags that only exchange inline content
     inlineRender(tag) {
-        let texts = tag.par.textContent.split('{'+tag.title+'}')
+        let texts = tag.par.textContent.split(`{${tag.title}}`)
         let fullText = texts[0] + escapeText(tag.content) + texts[1]
         let rs = Array.from(tag.par.querySelectorAll('r'))
         while (rs.length > 1) {
@@ -164,7 +165,7 @@ export class DocxExporterRender {
             if (fullText[0] === ' ' || fullText[fullText.length-1] === ' ') {
                 textAttr += 'xml:space="preserve"'
             }
-            r.innerHTML = `<w:t ${textAttr}>` + fullText + '</w:t>'
+            r.innerHTML = `<w:t ${textAttr}>${fullText}</w:t>`
         } else {
             r.parentNode.removeChild(r)
         }
@@ -172,13 +173,15 @@ export class DocxExporterRender {
 
     // Render tags that exchange paragraphs
     parRender(tag) {
-        let outXML = this.exporter.richtext.transformRichtext(
-            tag.content,
-            {
-                dimensions: tag.dimensions,
-                citationType: this.exporter.citations.citFm.citationType
-            }
-        )
+        const pStyle = tag.par.querySelector('pStyle')
+        const options = {
+            dimensions: tag.dimensions,
+            citationType: this.exporter.citations.citFm.citationType,
+            section: pStyle ? pStyle.getAttribute('w:val') : 'Normal'
+        }
+        const outXML = tag.content.map(
+            content => this.exporter.richtext.transformRichtext(content, options)
+        ).join('')
         tag.par.insertAdjacentHTML('beforebegin', outXML)
         // sectPr contains information about columns, etc. We need to move this
         // to the last paragraph we will be adding.

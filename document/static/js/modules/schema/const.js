@@ -50,3 +50,9 @@ export const LANGUAGES = [
     ['tl', gettext('Tagalog'), 'ltr'],
     ['uk', gettext('Ukrainian'), 'ltr']
 ]
+
+export const PAPER_SIZES = [
+    /* [Fidus Writer value, CSS value]*/
+    ['A4', 'A4'],
+    ['US Letter', 'letter']
+]

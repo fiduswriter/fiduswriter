@@ -59,7 +59,6 @@ export class BibEntryForm {
     }
 
     addDialogToDOM() {
-        let that = this
         // Add form to DOM
         let buttons = [
             {
@@ -188,8 +187,6 @@ export class BibEntryForm {
             let fieldHandler = new FieldClass(fieldDOM, this.currentValues.fields[fieldName], undefined, fieldType)
             fieldHandler.init()
             this.fields[fieldName] = fieldHandler
-        } else {
-            console.warn(`Unknown fieldtype: ${fieldType.type}`)
         }
     }
 
@@ -245,7 +242,7 @@ export class BibEntryForm {
             entryKey += nameToText(bibItem.fields.editor).replace(/\s|,|=|;|:|{|}/g,'')
         }
         if (bibItem.fields.date) {
-            entryKey += bibItem.fields.date.split('/')[0].replace(/\?|\*|u|\~|-/g,'')
+            entryKey += bibItem.fields.date.split('/')[0].replace(/\?|\*|u|~|-/g,'')
         }
         if (entryKey.length) {
             bibItem.entry_key = entryKey
@@ -253,7 +250,6 @@ export class BibEntryForm {
     }
 
     get value() {
-        let that = this
         let returnObj = {
             bib_type: document.querySelector('#select-bibtype').value,
             entry_cat: this.entryCatForm ? this.entryCatForm.value : [],
@@ -261,7 +257,7 @@ export class BibEntryForm {
             fields: {}
         }
         Object.keys(this.fields).forEach(fieldName=>{
-            let fieldValue = that.fields[fieldName].value
+            let fieldValue = this.fields[fieldName].value
             if (fieldValue !== false) {
                 returnObj['fields'][fieldName] = fieldValue
             }
@@ -286,12 +282,12 @@ export class BibEntryForm {
     }
 
     check() {
-        let that = this, passed = true
+        let passed = true
         if (!this.currentValues.bib_type) {
             return false
         }
         Object.keys(this.fields).forEach(fieldName=>{
-            if(that.fields[fieldName].check() !== true) {
+            if(this.fields[fieldName].check() !== true) {
                 passed = false
             }
         })

@@ -7,50 +7,26 @@
   "description": "Install dependencies for ES6 transpilation",
   "scripts": {
     "get_mml2omml": "mkdir -p ./static-libs/xsl/ && wget https://raw.githubusercontent.com/AbiWord/abiword/14cbf144cb10a5a5ea6ee11275f7178ca4ff055a/plugins/openxml/omml_xslt/mml2omml.xsl -O ./static-libs/xsl/mml2omml.xsl",
-    "copy_jquery": "mkdir -p ./static-libs/js/libs/ && cp node_modules/jquery/dist/jquery.min.js ./static-libs/js/libs/",
-    "copy_fontawesome": "mkdir -p ./static-libs/css/ && mkdir -p ./static-libs/fonts/ && cp node_modules/font-awesome/css/* ./static-libs/css/ && cp node_modules/font-awesome/fonts/* ./static-libs/fonts/",
-    "copy_prosemirror_css": "mkdir -p ./static-libs/css/ && cp node_modules/prosemirror-view/style/prosemirror.css ./static-libs/css/",
-    "copy_mathquill_css": "mkdir -p ./static-libs/css/ && cp node_modules/mathquill/build/mathquill.css ./static-libs/css/",
-    "copy_mathquill_font": "mkdir -p ./static-libs/css/font/ && cp node_modules/mathquill/build/font/* ./static-libs/css/font/",
+    "copy_fontawesome": "mkdir -p ./static-libs/fontawesome/ && cp -r node_modules/@fortawesome/fontawesome-free/css ./static-libs/fontawesome/ && cp -r node_modules/@fortawesome/fontawesome-free/webfonts ./static-libs/fontawesome/",
+    "copy_prosemirror_css": "mkdir -p ./static-libs/css/ && cp node_modules/prosemirror-view/style/prosemirror.css ./static-libs/css/ && cp node_modules/prosemirror-menu/style/menu.css ./static-libs/css/prosemirror-menu.css",
+    "copy_mathquill_css": "mkdir -p ./static-libs/css/ && cp node_modules/mathquill-jquery/build/mathquill.css ./static-libs/css/",
+    "copy_mathquill_font": "mkdir -p ./static-libs/css/font/ && cp node_modules/mathquill-jquery/build/font/* ./static-libs/css/font/",
     "copy_vivliostyle_resources": "mkdir -p ./static-libs/vivliostyle-resources/ && cp node_modules/vivliostyle/resources/* ./static-libs/vivliostyle-resources/",
-    "postinstall": "npm run get_mml2omml && npm run copy_jquery && npm run copy_fontawesome && npm run copy_prosemirror_css && npm run copy_mathquill_css && npm run copy_mathquill_font && npm run copy_vivliostyle_resources",
-    "jshint": "jshint ."
+    "postinstall": "npm run get_mml2omml && npm run copy_fontawesome && npm run copy_prosemirror_css && npm run copy_mathquill_css && npm run copy_mathquill_font && npm run copy_vivliostyle_resources",
+    "eslint": "eslint ."
   },
   "author": "Johannes Wilm",
   "license": "AGPL",
   "private": true,
   "dependencies": {
-    "diff-dom": "2.4.0",
+    "diff-dom": "2.5.x",
     "downloadjs": "1.4.7",
-    "font-awesome": "4.7.0",
-    "jquery": "3.3.1", // for mathquill
-    "jshint": "^2.9.6",
-    "katex": "0.10.0-rc.1",
+    "@fortawesome/fontawesome-free": "5.6.3",
+    "katex": "0.10.x",
     "w3c-keyname": "1.1.x",
     "simple-datatables": "^1.7.2",
-    "vivliostyle-print": "^1.1.1"
-  },
-  "jshintConfig": {
-    "esversion": 6,
-    "loopfunc": true,
-    "asi": true,
-    "multistr": true,
-    "sub": true,
-    "undef": true,
-    "globals": {
-      "django": true,
-      "MathQuill": true,
-      "gettext": false,
-      "interpolate": false,
-      "$StaticUrls": false,
-      "console": false,
-      "FormData": false,
-      "URLSearchParams": false,
-      "self": true
-    },
-    "browser": true,
-    "worker": true,
-    "varstmt": true
+    "vivliostyle-print": "^1.1.1",
+    "eslint": "^5.12.0"
   },
   "devDependencies": {
     "npm-check-updates": "^2.14.2"

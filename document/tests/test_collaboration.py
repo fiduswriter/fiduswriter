@@ -115,9 +115,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         # Added content is 16 characters long, so + 16.
         # Total: 30.
         self.driver.execute_script(
-            'window.testCaret.setSelection(31,31)')
+            'window.testCaret.setSelection(33,33)')
         self.driver2.execute_script(
-            'window.testCaret.setSelection(31,31)')
+            'window.testCaret.setSelection(33,33)')
 
         for char in self.TEST_TEXT:
             document_input.send_keys(char)
@@ -198,9 +198,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         # Added content is 16 characters long, so + 16.
         # Total: 30.
         self.driver.execute_script(
-            'window.testCaret.setSelection(31,31)')
+            'window.testCaret.setSelection(33,33)')
         self.driver2.execute_script(
-            'window.testCaret.setSelection(31,31)')
+            'window.testCaret.setSelection(33,33)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -229,7 +229,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def make_bold(self, driver):
-        button = driver.find_element_by_xpath('//*[@title="Bold"]')
+        button = driver.find_element_by_xpath('//*[@title="Strong"]')
         button.click()
 
     def get_boldtext(self, driver):
@@ -253,7 +253,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # Total: 22
         self.driver.execute_script(
-            'window.testCaret.setSelection(23,23)')
+            'window.testCaret.setSelection(25,25)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -262,7 +262,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 32)
+        self.wait_for_doc_size(self.driver2, 34)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
@@ -271,7 +271,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         content.click()
 
         self.driver2.execute_script(
-            'window.testCaret.setSelection(23,28)')
+            'window.testCaret.setSelection(25,30)')
 
         p2 = multiprocessing.Process(
             target=self.make_bold,
@@ -294,7 +294,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def make_italic(self, driver):
-        button = driver.find_element_by_xpath('//*[@title="Italic"]')
+        button = driver.find_element_by_xpath('//*[@title="Emphasis"]')
         button.click()
 
     def get_italictext(self, driver):
@@ -318,7 +318,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # Total: 23
         self.driver.execute_script(
-            'window.testCaret.setSelection(23,23)')
+            'window.testCaret.setSelection(25,25)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -327,7 +327,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 32)
+        self.wait_for_doc_size(self.driver2, 34)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
@@ -336,7 +336,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         content.click()
 
         self.driver2.execute_script(
-            'window.testCaret.setSelection(23,28)')
+            'window.testCaret.setSelection(25,30)')
 
         p2 = multiprocessing.Process(
             target=self.make_italic,
@@ -382,7 +382,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # Total: 23
         self.driver.execute_script(
-            'window.testCaret.setSelection(23,23)')
+            'window.testCaret.setSelection(25,25)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -391,7 +391,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 30)
+        self.wait_for_doc_size(self.driver2, 34)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
@@ -400,7 +400,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         content.click()
 
         self.driver2.execute_script(
-            'window.testCaret.setSelection(23,23)')
+            'window.testCaret.setSelection(25,25)')
 
         p2 = multiprocessing.Process(
             target=self.make_numberedlist,
@@ -410,10 +410,10 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p2.join()
 
         # Wait for the first processor to write some text and go to next line
-        self.wait_for_doc_size(self.driver2, 47)
+        self.wait_for_doc_size(self.driver2, 49)
 
         self.driver2.execute_script(
-            'window.testCaret.setSelection(41,41)')
+            'window.testCaret.setSelection(43,43)')
 
         p2 = multiprocessing.Process(
             target=self.make_numberedlist,
@@ -427,12 +427,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_sync(self.driver, self.driver2)
 
         self.assertEqual(
-            2,
+            len(self.get_numberedlist(self.driver)),
             len(self.get_numberedlist(self.driver2))
         )
 
         self.assertEqual(
-            len(self.get_numberedlist(self.driver)),
+            2,
             len(self.get_numberedlist(self.driver2))
         )
 
@@ -461,7 +461,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # Total: 23
         self.driver.execute_script(
-            'window.testCaret.setSelection(23,23)')
+            'window.testCaret.setSelection(25,25)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -470,7 +470,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 30)
+        self.wait_for_doc_size(self.driver2, 34)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
@@ -479,7 +479,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         content.click()
 
         self.driver2.execute_script(
-            'window.testCaret.setSelection(23,23)')
+            'window.testCaret.setSelection(25,25)')
 
         p2 = multiprocessing.Process(
             target=self.make_bulletlist,
@@ -489,10 +489,10 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p2.join()
 
         # Wait for the first processor to write enough text and go to next line
-        self.wait_for_doc_size(self.driver2, 47)
+        self.wait_for_doc_size(self.driver2, 49)
 
         self.driver2.execute_script(
-            'window.testCaret.setSelection(41,41)')
+            'window.testCaret.setSelection(43,43)')
 
         p2 = multiprocessing.Process(
             target=self.make_bulletlist,
@@ -540,7 +540,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # Total: 22
         self.driver.execute_script(
-            'window.testCaret.setSelection(23,23)')
+            'window.testCaret.setSelection(25,25)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -558,7 +558,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         content.click()
 
         self.driver2.execute_script(
-            'window.testCaret.setSelection(23,23)')
+            'window.testCaret.setSelection(25,25)')
 
         p2 = multiprocessing.Process(
             target=self.make_blockquote,
@@ -618,7 +618,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # Total: 23
         self.driver.execute_script(
-            'window.testCaret.setSelection(23,23)')
+            'window.testCaret.setSelection(25,25)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -627,7 +627,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 32)
+        self.wait_for_doc_size(self.driver2, 34)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
@@ -636,7 +636,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         content.click()
 
         self.driver2.execute_script(
-            'window.testCaret.setSelection(23,28)')
+            'window.testCaret.setSelection(25,30)')
 
         p2 = multiprocessing.Process(
             target=self.addlink,
@@ -697,7 +697,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # Total: 22
         self.driver.execute_script(
-            'window.testCaret.setSelection(23,23)')
+            'window.testCaret.setSelection(25,25)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -706,7 +706,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 32)
+        self.wait_for_doc_size(self.driver2, 34)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
@@ -767,7 +767,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # Total: 22
         self.driver.execute_script(
-            'window.testCaret.setSelection(23,23)')
+            'window.testCaret.setSelection(25,25)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -776,7 +776,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 32)
+        self.wait_for_doc_size(self.driver2, 34)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
@@ -785,7 +785,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         content.click()
 
         self.driver2.execute_script(
-            'window.testCaret.setSelection(23,28)')
+            'window.testCaret.setSelection(25,30)')
 
         p2 = multiprocessing.Process(
             target=self.perform_delete_undo,
@@ -843,7 +843,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # Total: 23
         self.driver.execute_script(
-            'window.testCaret.setSelection(23,23)')
+            'window.testCaret.setSelection(25,25)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -852,7 +852,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 32)
+        self.wait_for_doc_size(self.driver2, 34)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
@@ -923,7 +923,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # Total: 22
         self.driver.execute_script(
-            'window.testCaret.setSelection(23,23)')
+            'window.testCaret.setSelection(25,25)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -941,7 +941,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         content.click()
 
         self.driver2.execute_script(
-            'window.testCaret.setSelection(23,28)')
+            'window.testCaret.setSelection(25,30)')
 
         p2 = multiprocessing.Process(
             target=self.add_comment,
@@ -1052,7 +1052,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # Total: 23
         self.driver.execute_script(
-            'window.testCaret.setSelection(23,23)')
+            'window.testCaret.setSelection(25,25)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -1061,7 +1061,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 32)
+        self.wait_for_doc_size(self.driver2, 34)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(
@@ -1195,7 +1195,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # Total: 22
         self.driver.execute_script(
-            'window.testCaret.setSelection(23,23)')
+            'window.testCaret.setSelection(25,25)')
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -1204,7 +1204,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 32)
+        self.wait_for_doc_size(self.driver2, 34)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_class_name(

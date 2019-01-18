@@ -1,11 +1,10 @@
 import {Plugin, PluginKey} from "prosemirror-state"
-import {sendableSteps} from "prosemirror-collab"
 
 const key = new PluginKey('footnoteMarkers')
 
 export const findFootnoteMarkers = function(fromPos, toPos, doc) {
     const footnoteMarkers = []
-    doc.nodesBetween(fromPos, toPos, (node, pos, parent) => {
+    doc.nodesBetween(fromPos, toPos, (node, pos) => {
         if (!node.isInline) {
             return
         }
@@ -93,7 +92,7 @@ export const footnoteMarkersPlugin = function(options) {
         state: {
             init(state) {
                 const fnMarkers = []
-                state.doc.descendants((node, pos, parent) => {
+                state.doc.descendants((node, pos) => {
                     if (node.type.name==='footnote') {
                         fnMarkers.push({
                             from: pos,
@@ -184,9 +183,9 @@ export const footnoteMarkersPlugin = function(options) {
                 }
             }
         },
-        view(editorView) {
+        view(_editorView) {
             return {
-                update: (view, prevState) => {
+                update: (_view, _prevState) => {
                     options.editor.mod.footnotes.layout.updateDOM()
                 }
             }

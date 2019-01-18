@@ -13,18 +13,14 @@ export class DocxExporterRichtext {
 
     transformRichtext(node, options = {}) {
         let start = '', content = '', end = ''
+        let hyperlink, em, strong, smallcaps, sup, sub
+        let cit
+        let caption, figCat
+        let columns, cellWidth
+        let latex
+        let textAttr
 
         switch(node.type) {
-            case 'article':
-                break
-            case 'body':
-                options = Object.assign({}, options)
-                options.section = 'Normal'
-                break
-            case 'abstract':
-                options = Object.assign({}, options)
-                options.section = 'Abstract'
-                break
             case 'paragraph':
                 if(!options.section) {
                     options.section = 'Normal'
@@ -53,11 +49,66 @@ export class DocxExporterRichtext {
                     end = '</w:p>' + end
                 }
                 break
-            case 'heading':
+            case 'heading1':
                 start += noSpaceTmp`
                     <w:p>
                         <w:pPr>
-                            <w:pStyle w:val="Heading${node.attrs.level}"/>
+                            <w:pStyle w:val="Heading1"/>
+                            <w:rPr></w:rPr>
+                        </w:pPr>
+                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
+                        <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
+                end = '</w:p>' + end
+                break
+            case 'heading2':
+                start += noSpaceTmp`
+                    <w:p>
+                        <w:pPr>
+                            <w:pStyle w:val="Heading2"/>
+                            <w:rPr></w:rPr>
+                        </w:pPr>
+                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
+                        <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
+                end = '</w:p>' + end
+                break
+            case 'heading3':
+                start += noSpaceTmp`
+                    <w:p>
+                        <w:pPr>
+                            <w:pStyle w:val="Heading3"/>
+                            <w:rPr></w:rPr>
+                        </w:pPr>
+                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
+                        <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
+                end = '</w:p>' + end
+                break
+            case 'heading4':
+                start += noSpaceTmp`
+                    <w:p>
+                        <w:pPr>
+                            <w:pStyle w:val="Heading4"/>
+                            <w:rPr></w:rPr>
+                        </w:pPr>
+                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
+                        <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
+                end = '</w:p>' + end
+                break
+            case 'heading5':
+                start += noSpaceTmp`
+                    <w:p>
+                        <w:pPr>
+                            <w:pStyle w:val="Heading5"/>
+                            <w:rPr></w:rPr>
+                        </w:pPr>
+                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
+                        <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
+                end = '</w:p>' + end
+                break
+            case 'heading6':
+                start += noSpaceTmp`
+                    <w:p>
+                        <w:pPr>
+                            <w:pStyle w:val="Heading6"/>
                             <w:rPr></w:rPr>
                         </w:pPr>
                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
@@ -117,7 +168,6 @@ export class DocxExporterRichtext {
                 break
             case 'text':
                 // Check for hyperlink, bold/strong and italic/em
-                let hyperlink, em, strong, smallcaps, sup, sub
                 if (node.marks) {
                     hyperlink = node.marks.find(mark => mark.type === 'link')
                     em = node.marks.find(mark => mark.type === 'em')
@@ -170,7 +220,7 @@ export class DocxExporterRichtext {
                     start+= '<w:footnoteRef /><w:tab />'
                     options.footnoteRefMissing = false
                 }
-                let textAttr = ''
+                textAttr = ''
                 if (node.text[0] === ' ' || node.text[node.text.length-1] === ' ') {
                     textAttr += 'xml:space="preserve"'
                 }
@@ -180,7 +230,7 @@ export class DocxExporterRichtext {
                 break
             case 'citation':
                 // We take the first citation from the stack and remove it.
-                let cit = this.citations.pmCits.shift()
+                cit = this.citations.pmCits.shift()
                 if (options.citationType && options.citationType === 'note') {
                     // If the citations are in notes (footnotes), we need to
                     // put the contents of this citation in a footnote.
@@ -221,8 +271,8 @@ export class DocxExporterRichtext {
                 }
                 break
             case 'figure':
-                let caption = node.attrs.caption
-                let figCat = node.attrs.figureCategory
+                caption = node.attrs.caption
+                figCat = node.attrs.figureCategory
                 if (figCat !== 'none') {
                     if (!this.figureCounter[figCat]) {
                         this.figureCounter[figCat] = 1
@@ -334,8 +384,8 @@ export class DocxExporterRichtext {
                             <w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1" />
                         </w:tblPr>
                         <w:tblGrid>`
-                let columns = node.content[0].content.length
-                let cellWidth = 63500 // standard width
+                columns = node.content[0].content.length
+                cellWidth = 63500 // standard width
                 options = Object.assign({}, options)
                 if (options.dimensions && options.dimensions.width) {
                     cellWidth = parseInt(options.dimensions.width / columns) - 2540 // subtracting for border width
@@ -391,7 +441,7 @@ export class DocxExporterRichtext {
 
                 break
             case 'equation':
-                let latex = node.attrs.equation
+                latex = node.attrs.equation
                 content += this.exporter.math.getOmml(latex)
                 break
             case 'hard_break':
@@ -425,7 +475,6 @@ export class DocxExporterRichtext {
             case 'cslrightinline':
                 break
             default:
-                console.warn('Unhandled node type:' + node.type)
                 break
         }
 

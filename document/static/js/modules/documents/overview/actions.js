@@ -75,22 +75,16 @@ export class DocumentOverviewActions {
                 click: () => {
                     let fidusFile = document.getElementById('fidus-uploader').files
                     if (0 === fidusFile.length) {
-                        console.warn('no file found')
                         return false
                     }
                     fidusFile = fidusFile[0]
                     if (104857600 < fidusFile.size) {
                         //TODO: This is an arbitrary size. What should be done with huge import files?
-                        console.warn('file too big')
                         return false
                     }
                     activateWait()
-                    let reader = new window.FileReader()
-                    reader.onerror = function (e) {
-                        console.warn('error', e.target.error.code)
-                    }
 
-                    let importer = new ImportFidusFile(
+                    const importer = new ImportFidusFile(
                         fidusFile,
                         this.documentOverview.user,
                         true,
@@ -98,7 +92,7 @@ export class DocumentOverviewActions {
                     )
 
                     importer.init().then(
-                        ({ok, statusText, doc, docInfo}) => {
+                        ({ok, statusText, doc}) => {
                             deactivateWait()
                             if (ok) {
                                 addAlert('info', statusText)
@@ -156,7 +150,7 @@ export class DocumentOverviewActions {
                     )
 
                     copier.init().then(
-                        ({doc, docInfo}) => {
+                        ({doc}) => {
                             this.documentOverview.documentList.push(doc)
                             this.documentOverview.addDocToTable(doc)
                         }

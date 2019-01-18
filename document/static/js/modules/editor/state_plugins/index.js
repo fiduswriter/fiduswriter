@@ -1,8 +1,8 @@
 export {
-    authorsEndPos,
-    authorInputPlugin
+    contributorInputPlugin,
+    ContributorsView
 }
-from "./author_input"
+from "./contributor_input"
 export {
     citationRenderPlugin
 }
@@ -42,9 +42,10 @@ export {
 }
 from "./jump_hidden_nodes"
 export {
-    keywordInputPlugin
+    tagInputPlugin,
+    TagsView
 }
-from "./keyword_input"
+from "./tag_input"
 export {
     linksPlugin
 }
@@ -76,3 +77,7 @@ export {
     settingsPlugin
 }
 from "./settings"
+export {
+    documentTemplatePlugin
+}
+from "./document_template"

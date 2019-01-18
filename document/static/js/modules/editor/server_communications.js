@@ -10,6 +10,8 @@ export class ModServerCommunications {
             /* A list of messages to be sent. Only used when temporarily offline.
             Messages will be sent when returning back online. */
         this.messagesToSend = []
+            /* A list of messages from a previous connection */
+        this.oldMessages = []
 
         this.connected = false
         /* Increases when connection has to be reestablished */
@@ -38,14 +40,9 @@ export class ModServerCommunications {
             client: 0,
             lastTen: []
         }
-        try {
-            this.ws = new window.WebSocket(
-                `${this.editor.websocketUrl}/ws/document/${this.editor.docInfo.id}/${this.connectionCount}/`
-            )
-            this.ws.onopen = () => document.getElementById('unobtrusive_messages').innerHTML = ''
-        } catch (err) {
-            console.error(err)
-        }
+        this.ws = new window.WebSocket(
+            `${this.editor.websocketUrl}/ws/document/${this.connectionCount}/`
+        )
 
 
         this.ws.onmessage = event => {
@@ -90,14 +87,14 @@ export class ModServerCommunications {
             }
         }
 
-        this.ws.onclose = event => {
+        this.ws.onclose = () => {
             this.connected = false
             window.clearInterval(this.wsPinger)
             window.setTimeout(() => {
                 this.createWSConnection()
             }, 2000)
             if(!this.editor.view.state.plugins.length) {
-                console.warn('doc not initiated')
+                // doc not initiated
                 return
             }
             const toSend = sendableSteps(this.editor.view.state),
@@ -117,18 +114,33 @@ export class ModServerCommunications {
         }, 50000)
     }
 
-    activateConnection() {
+    open() {
+        document.getElementById('unobtrusive_messages').innerHTML = ''
         this.connected = true
-        if (this.connectionCount > 0) {
-            this.editor.mod.footnotes.fnEditor.renderAllFootnotes()
-            this.editor.mod.collab.docChanges.checkVersion()
-            const oldMessages = this.messagesToSend
-            this.messagesToSend = []
-            while (oldMessages.length > 0) {
-                this.send(oldMessages.shift())
-            }
+
+        const message = {
+            'type': 'subscribe_doc',
+            'id': this.editor.docInfo.id
+        }
+
+        if ('template' in this.editor.docInfo) {
+            message.template = this.editor.docInfo.template
         }
         this.connectionCount++
+        this.oldMessages = this.messagesToSend
+        this.messagesToSend = []
+
+        this.send(() => (message))
+    }
+
+    subscribed() {
+        if (this.connectionCount > 1) {
+            this.editor.mod.footnotes.fnEditor.renderAllFootnotes()
+            this.editor.mod.collab.docChanges.checkVersion()
+            while (this.oldMessages.length > 0) {
+                this.send(this.oldMessages.shift())
+            }
+        }
     }
 
     /** Sends data to server or keeps it in a list if currently offline. */
@@ -189,8 +201,13 @@ export class ModServerCommunications {
                 this.editor.mod.collab.updateParticipantList(data.participant_list)
                 break
             case 'welcome':
-                this.editor.mod.styles.setStyles(data.styles)
-                this.activateConnection()
+                this.open()
+                break
+            case 'subscribed':
+                this.subscribed()
+                break
+            case 'styles':
+                this.editor.mod.documentTemplate.setStyles(data.styles)
                 break
             case 'doc_data':
                 this.editor.receiveDocument(data)

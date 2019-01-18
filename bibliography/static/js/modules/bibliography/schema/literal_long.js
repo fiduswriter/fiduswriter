@@ -8,7 +8,7 @@ let longliteral = {
     code: true,
     defining: true,
     parseDOM: [{tag: 'pre.long-literal'}],
-    toDOM(node) {
+    toDOM(_node) {
         return ["pre", {
             class: 'long-literal'
         }, 0]

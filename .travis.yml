@@ -23,17 +23,30 @@ env:
   global:
     - COVERALLS_PARALLEL=true
   matrix:
-    - TESTS="test user"
-    - TESTS="test document"
-    - TESTS="test bibliography"
-    - TESTS="test usermedia"
-    - TESTS=check_js
-    - TESTS=check_py
+    - TEST=user
+    - TEST=document
+    - TEST=bibliography
+    - TEST=usermedia
 
-script: travis_retry coverage run manage.py $TESTS
+script: travis_retry coverage run manage.py test $TEST
+
+stages:
+  - lint
+  - test
+  - coveralls
 
 jobs:
   include:
+    - stage: lint
+      addons: {}
+      before_cache: skip
+      cache: false
+      before_install: skip
+      install: skip
+      after_success: skip
+      env: TESTS=before
+      before_script: pip3 install flake8==3.5.0 && npm install eslint
+      script: flake8 ./ && ./node_modules/.bin/eslint .
     - stage: coveralls
       addons: {}
       before_cache: skip

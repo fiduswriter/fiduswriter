@@ -6,6 +6,8 @@ from django.db.utils import OperationalError, ProgrammingError
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.core import checks
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 
 from style.models import DocumentStyle, CitationStyle
 
@@ -180,6 +182,17 @@ class Document(models.Model):
         except (ProgrammingError, OperationalError):
             # Database has not yet been initialized, so don't throw any error.
             return []
+
+
+@receiver(post_delete)
+def delete_document(sender, instance, **kwargs):
+    if sender == Document:
+        if (
+            instance.template.user and
+            instance.template.document_set.count() == 0
+        ):
+            # User template no longer used.
+            instance.template.delete()
 
 
 RIGHTS_CHOICES = (

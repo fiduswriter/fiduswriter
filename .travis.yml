@@ -23,14 +23,14 @@ env:
   global:
     - COVERALLS_PARALLEL=true
   matrix:
-    - TESTS="test user"
-    - TESTS="test document"
-    - TESTS="test bibliography"
-    - TESTS="test usermedia"
-    - TESTS=check_js
-    - TESTS=check_py
+    - TEST="travis_retry coverage run manage.py test user"
+    - TEST="travis_retry coverage run manage.py test document"
+    - TEST="travis_retry coverage run manage.py test bibliography"
+    - TEST="travis_retry coverage run manage.py test usermedia"
+    - TEST="npm install eslint && ./node_modules/.bin/eslint ."
+    - TEST="./manage.py check_py"
 
-script: travis_retry coverage run manage.py $TESTS
+script: $TEST
 
 jobs:
   include:

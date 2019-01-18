@@ -107,8 +107,8 @@ export function adjustDocToTemplate(doc, template) {
             Object.entries(part.attrs).forEach(([key, value]) => {
                 newNode.attrs[key] = value
             })
-            if (newNode.optional) {
-                attrs.hidden = oldNode.hidden
+            if (newNode.attrs.optional) {
+                newNode.attrs.hidden = oldNode.attrs.hidden
             }
 
             if (oldNode.attrs.elements) { // parts that define elements also define marks.

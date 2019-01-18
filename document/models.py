@@ -15,7 +15,7 @@ from django.conf import settings
 # (same value from >= 2.0) in
 # document/static/js/modules/exporter/native/zip.js
 
-FW_DOCUMENT_VERSION = 2.3
+FW_DOCUMENT_VERSION = 3.0
 
 TEMPLATE_CHOICES = (
     ('docx', 'Docx'),
@@ -58,7 +58,6 @@ class DocumentTemplate(models.Model):
 
     def __str__(self):
         return self.title
-
 
     def save(self, *args, **kwargs):
         super(DocumentTemplate, self).save(*args, **kwargs)

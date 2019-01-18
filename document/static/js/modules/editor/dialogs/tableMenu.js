@@ -18,7 +18,7 @@ export class TableMenuDialog {
             body: tableMenuTemplate(this.options),
             width: 260,
             height: 460,
-            onClose: () => this.view.focus()
+            onClose: () => {this.view.focus(); this.destroy();}
         })
         this.dialog.open()
     }

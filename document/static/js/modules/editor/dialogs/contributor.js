@@ -1,25 +1,25 @@
-import {authorTemplate} from "./templates"
-import {authorsEndPos} from "../state_plugins"
+import {contributorTemplate} from "./templates"
 import {addAlert, Dialog} from "../../common"
 /*
     Source for email regexp:
     https://html.spec.whatwg.org/multipage/input.html#e-mail-state-(type%3Demail)
 */
 const emailRegExp = new RegExp(
-    /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 )
 
-export class AuthorDialog {
-    constructor(editor, author = false) {
-        this.editor = editor
-        this.author = author
+export class ContributorDialog {
+    constructor(node, view, contributor = false) {
+        this.node = node
+        this.view = view
+        this.contributor = contributor
         this.dialog = false
     }
 
     init() {
         const buttons = []
         buttons.push({
-            text: this.author ? gettext('Update') : gettext('Add'),
+            text: this.contributor ? gettext('Update') : gettext('Add'),
             classes: 'fw-dark',
             click: () => {
                 let firstname = this.dialog.dialogEl.querySelector('input[name=firstname]').value,
@@ -47,23 +47,30 @@ export class AuthorDialog {
                     return
                 }
 
-                const view = this.editor.view,
-                    node = view.state.schema.nodes.author.create({
+                const view = this.view,
+                    node = view.state.schema.nodes.contributor.create({
                         firstname, lastname, email, institution
                     })
                 let posFrom, posTo
 
                 if (
-                    this.author &&
+                    this.contributor &&
                     view.state.selection.jsonID === 'node' &&
-                    view.state.selection.node.type.name === 'author'
+                    view.state.selection.node.type.name === 'contributor'
                 ) {
                     posFrom = view.state.selection.from
                     posTo = view.state.selection.to
                 } else {
-                    posFrom = posTo = authorsEndPos(view.state)
+                    view.state.doc.descendants((node, pos) => {
+                        if (node.attrs.id === this.node.attrs.id) {
+                            posFrom = posTo = pos + node.nodeSize - 1
+                            // - 1 to go to end of node contributors container node
+                        }
+                        if ('id' in node.attrs) {
+                            return false
+                        }
+                    })
                 }
-
                 view.dispatch(view.state.tr.replaceRangeWith(
                     posFrom,
                     posTo,
@@ -78,15 +85,15 @@ export class AuthorDialog {
         })
 
         this.dialog = new Dialog({
-            id: 'edit-author',
-            title: this.author ? gettext('Add author') : gettext('Update author'),
-            body: authorTemplate({
-                author: this.author ? this.author : {},
+            id: 'edit-contributor',
+            title: `${this.contributor ? gettext('Update') : gettext('Add')} ${this.node.attrs.item_title.toLowerCase()}`,
+            body: contributorTemplate({
+                contributor: this.contributor ? this.contributor : {},
             }),
             width: 836,
             height: 360,
             buttons,
-            onClose: () => this.editor.currentView.focus()
+            onClose: () => this.view.focus()
         })
 
         this.dialog.open()

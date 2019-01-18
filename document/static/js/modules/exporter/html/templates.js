@@ -1,7 +1,7 @@
 import {escapeText} from "../../common"
 
 /** A template for HTML export of a document. */
-export let htmlExportTemplate = ({title, styleSheets, part, contents, settings, removeUrlPrefix}) =>
+export let htmlExportTemplate = ({title, styleSheets, part, contents, removeUrlPrefix}) =>
 `<!DOCTYPE html>
 <html>
     <head>

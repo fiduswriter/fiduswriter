@@ -3,10 +3,6 @@ import {GeneralPasteHandler} from "./general"
 // LibreOffice Writer paste handler
 export class LibreOfficeWriterPasteHandler extends GeneralPasteHandler {
 
-    outputHandlerType() {
-        console.info('LibreOffice Writer paste handler')
-    }
-
     // Convert an existing node to a different node, if needed.
     convertNode(node) {
         // Footnote markers (only in main pm instance):

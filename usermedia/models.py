@@ -1,6 +1,5 @@
 from builtins import str
 from builtins import object
-from past.utils import old_div
 
 import os
 import uuid
@@ -120,10 +119,10 @@ class Image(models.Model):
         if src_width < src_height:
             crop_width = crop_height = src_width
             x_offset = 0
-            y_offset = int(old_div(float(src_height - crop_height), 2))
+            y_offset = int((src_height - crop_height)/2)
         else:
             crop_width = crop_height = src_height
-            x_offset = int(old_div(float(src_width - crop_width), 2))
+            x_offset = int((src_width - crop_width)/2)
             y_offset = 0
 
         image = image.crop(

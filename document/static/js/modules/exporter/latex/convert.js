@@ -59,7 +59,10 @@ export class LatexExporterConvert {
     walkJson(node, options = {}) {
         let start = '', content = '', end = '',
             placeFootnotesAfterBlock = false
-
+        let level
+        let hyperlink, strong, em
+        let references, format, citationCommand
+        let figureType, caption, innerFigure
         switch(node.type) {
             case 'article':
                 break
@@ -163,7 +166,7 @@ export class LatexExporterConvert {
                 end = '\n' + end
                 break
             case 'heading':
-                let level = node.attrs.level
+                level = node.attrs.level
                 switch(level) {
                     case 1:
                         start += '\n\n\\section{'
@@ -245,7 +248,6 @@ export class LatexExporterConvert {
                 break
             case 'text':
                 // Check for hyperlink, bold/strong and italic/em
-                let hyperlink, strong, em
                 if (node.marks) {
                     strong = node.marks.find(mark => mark.type === 'strong')
                     em = node.marks.find(mark => mark.type === 'em')
@@ -274,9 +276,9 @@ export class LatexExporterConvert {
                 content += escapeLatexText(node.text)
                 break
             case 'citation':
-                let references = node.attrs.references
-                let format = node.attrs.format
-                let citationCommand = '\\' + format
+                references = node.attrs.references
+                format = node.attrs.format
+                citationCommand = '\\' + format
 
                 if (references.length > 1 &&
                     references.every(ref => !ref.locator && !ref.prefix)
@@ -359,9 +361,9 @@ export class LatexExporterConvert {
                 }
                 break
             case 'figure':
-                let figureType = node.attrs.figureCategory,
-                    caption = node.attrs.caption,
-                    innerFigure = ''
+                figureType = node.attrs.figureCategory
+                caption = node.attrs.caption
+                innerFigure = ''
                 if (node.attrs.image) {
                     this.imageIds.push(node.attrs.image)
                     let imageDBEntry = this.imageDB.db[node.attrs.image],
@@ -430,7 +432,6 @@ export class LatexExporterConvert {
                 content += '\n\n'
                 break
             default:
-                console.warn('Unhandled node type:' + node.type)
                 break
         }
 
@@ -488,7 +489,7 @@ export class LatexExporterConvert {
         .replace(/\\end{code}\n\n\\begin{code}\n\n/g, '')
         .replace(/\\end{quote}\n\n\\begin{quote}\n\n/g, '')
         // Remove the last divider in any any table row.
-        .replace(/&  \\\\/g, '\\\\')
+        .replace(/& {2}\\\\/g, '\\\\')
         // Remove new lines between table cells.
         .replace(/\n & \n\n/g, ' & ')
         // Remove new lines within itemization

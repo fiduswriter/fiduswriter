@@ -117,7 +117,7 @@ export const commentsPlugin = function(options) {
                     decos: DecorationSet.empty,
                 }
             },
-            apply(tr, prev, oldState, state) {
+            apply(tr, prev, oldState, _state) {
                 const meta = tr.getMeta(key)
                 if (meta) {
                     // There has been an update, return values from meta instead
@@ -128,7 +128,7 @@ export const commentsPlugin = function(options) {
                     decos
                 } = this.getState(oldState)
 
-                decos = decos.map(tr.mapping, tr.doc, {onRemove: decoSpec => {
+                decos = decos.map(tr.mapping, tr.doc, {onRemove: _decoSpec => {
                     // comment text has been deleted, cancel comment creation.
                     options.editor.mod.comments.interactions.deleteComment(-1)
                 }})
@@ -160,7 +160,7 @@ export const commentsPlugin = function(options) {
                             tr.docs[index].nodesBetween(
                                 step.from,
                                 step.to,
-                                (node, pos, parent) => {
+                                node => {
                                     node.marks.filter(
                                         mark => mark.type.name === 'comment' && mark.attrs.id
                                     ).map(mark => mark.attrs.id).forEach(commentId => {
@@ -180,7 +180,7 @@ export const commentsPlugin = function(options) {
 
             // We try to see if the deleted comments are still to be found in
             // another part of the document.
-            state.doc.descendants((node, pos, parent) => {
+            state.doc.descendants(node => {
                 if (!node.isInline && !node.isLeaf) {
                     return
                 }

@@ -34,14 +34,14 @@ export class ImageOverviewCategories {
     }
 
     setImageCategoryList(imageCategories) {
-        let catSelector = this.imageOverview.menu.model.content.find(menuItem => menuItem.id === 'cat_selector')
+        const catSelector = this.imageOverview.menu.model.content.find(menuItem => menuItem.id === 'cat_selector')
         catSelector.content = catSelector.content.filter(cat => cat.type !== 'category')
         catSelector.content = catSelector.content.concat(
             imageCategories.map(cat => ({
                 type: 'category',
                 title: cat.category_title,
-                action: overview => {
-                    let trs = document.querySelectorAll('#bibliography > tbody > tr')
+                action: _overview => {
+                    const trs = document.querySelectorAll('#bibliography > tbody > tr')
                     trs.forEach(tr => {
                         if (tr.classList.contains(`cat_${cat.id}`)) {
                             tr.style.display = ''
@@ -62,12 +62,12 @@ export class ImageOverviewCategories {
                 text: gettext('Submit'),
                 classes: "fw-dark",
                 click: () => {
-                    let cats = {
+                    const cats = {
                         'ids': [],
                         'titles': []
                     }
                     document.querySelectorAll('#editCategories .category-form').forEach(el => {
-                        let thisVal = el.value.trim()
+                        const thisVal = el.value.trim()
                         let thisId = el.dataset.id
                         if ('undefined' == typeof (thisId)) thisId = 0
                         if ('' !== thisVal) {

@@ -136,7 +136,7 @@ export class ModCommentStore {
         // remove from inline nodes
         tr.removeMark(from, to, mark)
         // remove from leaf nodes
-        tr.doc.nodesBetween(from, to, (node, pos, parent) => {
+        tr.doc.nodesBetween(from, to, (node, pos) => {
             if (!node.isLeaf) {
                 return
             }
@@ -188,7 +188,7 @@ export class ModCommentStore {
         [this.mod.editor.view, this.mod.editor.mod.footnotes.fnEditor.view].forEach(view => {
             const tr = view.state.tr,
                 markType = view.state.schema.marks.comment.create({id})
-            view.state.doc.descendants((node, pos, parent) => {
+            view.state.doc.descendants((node, pos) => {
                 const nodeStart = pos,
                     nodeEnd = pos + node.nodeSize
                 node.marks.forEach(mark => {

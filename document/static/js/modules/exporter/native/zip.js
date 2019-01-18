@@ -4,7 +4,7 @@ import {ZipFileCreator} from "../tools/zip"
  * The importer will not import from a higher version and the exporter
   * will include this number in all exports.
  */
-export let FW_FILETYPE_VERSION = "2.3"
+export let FW_FILETYPE_VERSION = "3.0"
 
 /** Create a zip blob for a shrunk fidus file.
 */

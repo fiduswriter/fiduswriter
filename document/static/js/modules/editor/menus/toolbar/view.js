@@ -1,7 +1,4 @@
 import diffDOM from "diff-dom"
-import {keydownHandler} from "prosemirror-keymap"
-
-import {escapeText} from "../../../common"
 
 export class ToolbarView {
     constructor(editorView, options) {
@@ -21,8 +18,28 @@ export class ToolbarView {
         this.openedMenu = false
         this.listeners = {}
 
+        if (editorView === this.options.editor.view) {
+            // only do this when called for the main editor (not footnote editor)
+            this.removeUnavailable(this.options.editor.menu.toolbarModel)
+        }
+
+
         this.bindEvents()
         this.update()
+    }
+
+    removeUnavailable(menu) {
+        // Remove those menu items from the menu model that are not available for this document.
+        // Used for example for mark or element buttons that aren't permitted according to the
+        // document template.
+        menu.content = menu.content.filter(item => {
+            if (item.available && !item.available(this.editor)) {
+                return false
+            } else if (item.type === 'menu') {
+                this.removeUnavailable(item)
+            }
+            return true
+        })
     }
 
     bindEvents() {
@@ -38,7 +55,7 @@ export class ToolbarView {
         this.editor.menu.toolbarViews = this.editor.menu.toolbarViews.filter(view => view !== this)
     }
 
-    onresize(event) {
+    onresize(_event) {
         // recalculate menu if needed
         this.availableWidth = window.innerWidth - this.sideMargins
         this.update()
@@ -63,9 +80,9 @@ export class ToolbarView {
                 seekItem = seekItem.previousElementSibling
             }
             const menuItem = this.editor.menu.toolbarModel.content[menuNumber]
-            // if it is a dropdown menu, open it. Otherwise execute an
+            // if it is a menu, open it. Otherwise execute an
             // associated action.
-            if (menuItem.type==='dropdown') {
+            if (menuItem.type==='menu') {
                 menuItem.open = true
                 this.openedMenu = menuNumber
                 event.preventDefault()
@@ -87,7 +104,7 @@ export class ToolbarView {
             }
             this.update()
         } else if(target.matches('.editortoolbar li:not(.disabled), .editortoolbar li:not(.disabled) *')) {
-            // A toolbar dropdown menu item was clicked. We just need to
+            // A toolbar menu item was clicked. We just need to
             // find out which one
             let itemNumber = 0
             let seekItem = target.closest('li')
@@ -118,9 +135,9 @@ export class ToolbarView {
                 seekItem = seekItem.previousElementSibling
             }
             const menuItem = this.editor.menu.toolbarModel.content[menuNumber]
-            // if it is a dropdown menu, open it. Otherwise execute an
+            // if it is a menu, open it. Otherwise execute an
             // associated action.
-            if (menuItem.type==='dropdown') {
+            if (menuItem.type==='menu') {
                 menuItem.open = true
                 this.openedMenu = menuNumber
                 this.editor.menu.toolbarModel.openMore = false
@@ -156,7 +173,7 @@ export class ToolbarView {
                 case 'info':
                     spaceCounter -= 94
                     break
-                case 'dropdown':
+                case 'menu':
                     spaceCounter -= 111
                     break
                 default:
@@ -193,21 +210,23 @@ export class ToolbarView {
         `
     }
 
-    getToolbarMenuItemHTML(menuItem, index) {
+    getToolbarMenuItemHTML(menuItem, _index) {
+        let returnValue
         switch(menuItem.type) {
             case 'info':
-                return this.getInfoHTML(menuItem)
+                returnValue = this.getInfoHTML(menuItem)
                 break
-            case 'dropdown':
-                return this.getDropdownHTML(menuItem)
+            case 'menu':
+                returnValue = this.getDropdownHTML(menuItem)
                 break
             case 'button':
-                return this.getButtonHTML(menuItem)
+                returnValue = this.getButtonHTML(menuItem)
                 break
             default:
-                return ''
+                returnValue = ''
                 break
         }
+        return returnValue
     }
 
     getMoreButtonHTML(menuIndexToDrop) {

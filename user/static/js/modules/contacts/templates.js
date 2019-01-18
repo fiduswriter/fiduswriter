@@ -19,7 +19,7 @@ export let teammemberTemplate = ({members}) =>
             <td width="50" align="center">
                 <span class="fw-link-text delete-single-member fw-inline"
                         data-id="${member.id}">
-                    <i class="fa fa-trash-o"></i>
+                    <i class="fa fa-trash-alt"></i>
                 </span>
             </td>
         </tr>`

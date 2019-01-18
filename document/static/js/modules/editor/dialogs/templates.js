@@ -199,7 +199,7 @@ export const figureImageItemTemplate =  ({id, cats, image, thumbnail, title}) =>
         </td>
         <td class="title" style="width:212px;">
             <span class="fw-inline">
-                <span class="edit-image fw-link-text fa fa-picture-o" data-id="${id}">
+                <span class="edit-image fw-link-text fa fa-image" data-id="${id}">
                     ${escapeText(title)}
                 </span>
             </span>
@@ -245,7 +245,7 @@ export const configureFigureTemplate = ({image, equation, caption, dir}) =>
                     ${image ? 'disabled="disabled"' : ''} />
                 <button type="button" id="insertFigureImage" class="fw-button fw-light
                         ${equation === '' ? '' : 'disabled'}">
-                    ${gettext("Insert image")} <i class="fa fa-picture-o"></i>
+                    ${gettext("Insert image")} <i class="fa fa-image"></i>
                 </button>
             </div>
             <input type="hidden" id="figure-category">
@@ -378,7 +378,7 @@ export const selectedCitationTemplate = ({title, author, id, db, prefix, locator
                   </td>
                   <td width="50" align="center">
                       <span class="delete fw-inline fw-link-text" data-id="${id}" data-db="${db}">
-                          <i class="fa fa-trash-o"></i>
+                          <i class="fa fa-trash-alt"></i>
                       </span>
                   </td>
               </tr>
@@ -399,17 +399,17 @@ export const selectedCitationTemplate = ({title, author, id, db, prefix, locator
     </tr>`
 
 
-export const authorTemplate = ({author}) =>
-    `<input type="text" name="firstname" value="${author.firstname ? author.firstname : ''}" placeholder="${gettext("Firstname")}"/>
-    <input type="text" name="lastname" value="${author.lastname ? author.lastname : ''}" placeholder="${gettext("Lastname")}"/>
-    <input type="text" name="email" value="${author.email ? author.email : ''}" placeholder="${gettext("Email")}"/>
-    <input type="text" name="institution" value="${author.institution ? author.institution : ''}" placeholder="${gettext("Institution")}"/>
+export const contributorTemplate = ({contributor}) =>
+    `<input type="text" name="firstname" value="${contributor.firstname ? contributor.firstname : ''}" placeholder="${gettext("Firstname")}"/>
+    <input type="text" name="lastname" value="${contributor.lastname ? contributor.lastname : ''}" placeholder="${gettext("Lastname")}"/>
+    <input type="text" name="email" value="${contributor.email ? contributor.email : ''}" placeholder="${gettext("Email")}"/>
+    <input type="text" name="institution" value="${contributor.institution ? contributor.institution : ''}" placeholder="${gettext("Institution")}"/>
     `
 
-export const languageTemplate = ({currentLanguage, LANGUAGES}) =>
+export const languageTemplate = ({currentLanguage, allowedLanguages}) =>
     `<select class="fw-button fw-white fw-large">
         ${
-            LANGUAGES.map(language =>
+            allowedLanguages.map(language =>
                 `<option value="${language[0]}" ${language[0]===currentLanguage ? 'selected' : ''}>
                     ${language[1]}
                 </option>`

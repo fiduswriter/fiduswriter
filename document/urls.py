@@ -6,6 +6,8 @@ from base.views import app
 urlpatterns = [
     url('^$', app, name='index'),
     url('^new/$', app, name='editor'),
+    url('^n\d+/$', app, name='editor'),
+    url('^\d+/$', app, name='editor'),
     url(
         '^documentlist/$',
         views.get_documentlist_js,
@@ -31,7 +33,6 @@ urlpatterns = [
         views.delete_revision_js,
         name='delete_revision_js'
     ),
-    url('^\d+/$', app, name='editor'),
     url(
         '^accessright/save/$',
         views.access_right_save_js,

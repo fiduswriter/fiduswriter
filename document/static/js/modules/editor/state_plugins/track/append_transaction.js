@@ -300,7 +300,7 @@ export function appendTransaction(trs, oldState, newState, editor) {
             newTr.doc.nodesBetween(
                 delRange.from,
                 delRange.to,
-                (node, pos, parent, index) => {
+                (node, pos) => {
                     if (pos < delRange.from) {
                         return true
                     } else if (node.marks && node.marks.find(mark => mark.type.name==='insertion' && mark.attrs.user===user && !mark.attrs.approved)) {
@@ -347,7 +347,7 @@ export function appendTransaction(trs, oldState, newState, editor) {
         trs.forEach(tr => { // We insert all the same steps, but with "from"/"to" both set to "to" in order not to delete content. Mapped as needed.
             const deleteTr = ['deleteContentBackward', 'deleteContentBackward'].includes(tr.getMeta('inputType')) ? true : false,
             cellDeleteTr = deleteTr && (oldState.selection instanceof CellSelection)
-            tr.steps.forEach((step, index) => {
+            tr.steps.forEach(step => {
                 let stepMap
                 if (step instanceof ReplaceStep) {
                     // We only insert content if this is not directly a tr for cell deletion. This is because tables delete rows by deleting the

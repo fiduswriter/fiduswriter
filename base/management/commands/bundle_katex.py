@@ -1,4 +1,3 @@
-
 from django.core.management.base import BaseCommand
 import zipfile
 import os

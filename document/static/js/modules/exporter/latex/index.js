@@ -25,6 +25,10 @@ export class LatexExporter {
     init() {
         addAlert('error', 'Latex exporter is temporarily out of order.')
         return
+        console.log('unreachable')
+    }
+
+    disabledInit() { // temporarily disabled
         this.zipFileName = `${createSlug(this.doc.title)}.latex.zip`
         this.docContents = fixTables(removeHidden(this.doc.contents))
         this.converter = new LatexExporterConvert(this, this.imageDB, this.bibDB)

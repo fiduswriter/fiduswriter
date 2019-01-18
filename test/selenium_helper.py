@@ -26,7 +26,7 @@ class SeleniumHelper(object):
         wait_time = 0
         chrome_options = webdriver.ChromeOptions()
         if os.getenv("CI"):
-            chrome_options.set_binary('/usr/bin/google-chrome-beta')
+            chrome_options.binary_location = '/usr/bin/google-chrome-beta'
             chrome_options.add_argument('--headless')
             chrome_options.add_argument('--disable-gpu')
         for i in range(number):
@@ -41,7 +41,6 @@ class SeleniumHelper(object):
             # Set sizes of browsers so that all buttons are visible.
             driver.set_window_position(0, 0)
             driver.set_window_size(1920, 1080)
-            print(driver.capabilities)
         return {
             "clients": clients,
             "drivers": drivers,

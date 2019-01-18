@@ -22,16 +22,6 @@ export class OdtExporterRichtext {
         let latex
         let objectNumber
         switch(node.type) {
-            case 'article':
-                break
-            case 'body':
-                options = Object.assign({}, options)
-                options.section = 'Text_20_body'
-                break
-            case 'abstract':
-                options = Object.assign({}, options)
-                options.section = 'Abstract'
-                break
             case 'paragraph':
                 if (!options.section) {
                     options.section = 'Text_20_body'
@@ -40,9 +30,39 @@ export class OdtExporterRichtext {
                 start += `<text:p text:style-name="${options.section}">`
                 end = '</text:p>' + end
                 break
-            case 'heading':
+            case 'heading1':
                 start += `
-                    <text:h text:outline-level="${node.attrs.level}">
+                    <text:h text:outline-level="1">
+                    <text:bookmark text:name="${node.attrs.id}"/>`
+                end = '</text:h>' + end
+                break
+            case 'heading2':
+                start += `
+                    <text:h text:outline-level="2">
+                    <text:bookmark text:name="${node.attrs.id}"/>`
+                end = '</text:h>' + end
+                break
+            case 'heading3':
+                start += `
+                    <text:h text:outline-level="3">
+                    <text:bookmark text:name="${node.attrs.id}"/>`
+                end = '</text:h>' + end
+                break
+            case 'heading4':
+                start += `
+                    <text:h text:outline-level="4">
+                    <text:bookmark text:name="${node.attrs.id}"/>`
+                end = '</text:h>' + end
+                break
+            case 'heading5':
+                start += `
+                    <text:h text:outline-level="5">
+                    <text:bookmark text:name="${node.attrs.id}"/>`
+                end = '</text:h>' + end
+                break
+            case 'heading6':
+                start += `
+                    <text:h text:outline-level="6">
                     <text:bookmark text:name="${node.attrs.id}"/>`
                 end = '</text:h>' + end
                 break

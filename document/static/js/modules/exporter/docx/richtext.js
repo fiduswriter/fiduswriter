@@ -21,16 +21,6 @@ export class DocxExporterRichtext {
         let textAttr
 
         switch(node.type) {
-            case 'article':
-                break
-            case 'body':
-                options = Object.assign({}, options)
-                options.section = 'Normal'
-                break
-            case 'abstract':
-                options = Object.assign({}, options)
-                options.section = 'Abstract'
-                break
             case 'paragraph':
                 if(!options.section) {
                     options.section = 'Normal'
@@ -59,11 +49,66 @@ export class DocxExporterRichtext {
                     end = '</w:p>' + end
                 }
                 break
-            case 'heading':
+            case 'heading1':
                 start += noSpaceTmp`
                     <w:p>
                         <w:pPr>
-                            <w:pStyle w:val="Heading${node.attrs.level}"/>
+                            <w:pStyle w:val="Heading1"/>
+                            <w:rPr></w:rPr>
+                        </w:pPr>
+                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
+                        <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
+                end = '</w:p>' + end
+                break
+            case 'heading2':
+                start += noSpaceTmp`
+                    <w:p>
+                        <w:pPr>
+                            <w:pStyle w:val="Heading2"/>
+                            <w:rPr></w:rPr>
+                        </w:pPr>
+                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
+                        <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
+                end = '</w:p>' + end
+                break
+            case 'heading3':
+                start += noSpaceTmp`
+                    <w:p>
+                        <w:pPr>
+                            <w:pStyle w:val="Heading3"/>
+                            <w:rPr></w:rPr>
+                        </w:pPr>
+                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
+                        <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
+                end = '</w:p>' + end
+                break
+            case 'heading4':
+                start += noSpaceTmp`
+                    <w:p>
+                        <w:pPr>
+                            <w:pStyle w:val="Heading4"/>
+                            <w:rPr></w:rPr>
+                        </w:pPr>
+                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
+                        <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
+                end = '</w:p>' + end
+                break
+            case 'heading5':
+                start += noSpaceTmp`
+                    <w:p>
+                        <w:pPr>
+                            <w:pStyle w:val="Heading5"/>
+                            <w:rPr></w:rPr>
+                        </w:pPr>
+                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
+                        <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
+                end = '</w:p>' + end
+                break
+            case 'heading6':
+                start += noSpaceTmp`
+                    <w:p>
+                        <w:pPr>
+                            <w:pStyle w:val="Heading6"/>
                             <w:rPr></w:rPr>
                         </w:pPr>
                         <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>

@@ -24,8 +24,6 @@ export class LatexExporter {
 
     init() {
         addAlert('error', 'Latex exporter is temporarily out of order.')
-        return
-        console.log('unreachable')
     }
 
     disabledInit() { // temporarily disabled

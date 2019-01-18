@@ -18,7 +18,7 @@ export class BibLatexFileImportDialog {
         let buttons = [
             {
                 text: gettext('Import'),
-                classes: 'fw-dark',
+                classes: 'fw-dark submit-import',
                 click: () => {
                     let bibFile = document.getElementById('bib-uploader').files
                     if (0 === bibFile.length) {

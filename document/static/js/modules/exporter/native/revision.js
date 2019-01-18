@@ -17,15 +17,15 @@ export class SaveRevision {
     }
 
     init() {
-        let shrinker = new ShrinkFidus(
+        const shrinker = new ShrinkFidus(
             this.doc,
             this.imageDB,
             this.bibDB
         )
 
         shrinker.init().then(
-            ({doc, shrunkImageDB, shrunkBibDB, httpIncludes}) => {
-                let zipper = new ZipFidus(this.doc, shrunkImageDB, shrunkBibDB, httpIncludes)
+            ({shrunkImageDB, shrunkBibDB, httpIncludes}) => {
+                const zipper = new ZipFidus(this.doc, shrunkImageDB, shrunkBibDB, httpIncludes)
                 return zipper.init()
             }
         ).then(

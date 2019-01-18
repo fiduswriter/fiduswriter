@@ -1,5 +1,5 @@
 import {addColumnAfter, addColumnBefore, deleteColumn, addRowBefore, addRowAfter, deleteRow, deleteTable,
-        mergeCells, splitCell, setCellAttr, toggleHeaderRow, toggleHeaderColumn, toggleHeaderCell}
+        mergeCells, splitCell, toggleHeaderRow, toggleHeaderColumn, toggleHeaderCell}
 from "prosemirror-tables"
 
 import {DocumentAccessRightsDialog} from "../../../documents/access_rights"
@@ -10,7 +10,7 @@ import {HTMLExporter} from "../../../exporter/html"
 import {EpubExporter} from "../../../exporter/epub"
 import {PrintExporter} from "../../../exporter/print"
 import {RevisionDialog, LanguageDialog, TableDialog} from "../../dialogs"
-import {TEXT_ONLY_PARTS} from "../toolbar/model"
+import {elementDisabled} from "../toolbar/model"
 import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from "../.."
 import {TableResizeDialog} from  "../../dialogs"
 
@@ -40,6 +40,9 @@ const languageItem = function(code, name, order) {
         },
         selected: editor => {
             return editor.view.state.doc.firstChild.attrs.language === code
+        },
+        available: editor => {
+            return editor.view.state.doc.firstChild.attrs.languages.includes(code)
         }
     }
 }
@@ -52,6 +55,7 @@ export const headerbarModel = () => ({
             id: 'file',
             title: gettext('File'),
             tooltip: gettext('File handling'),
+            type: 'menu',
             order: 0,
             content: [
                 {
@@ -90,7 +94,7 @@ export const headerbarModel = () => ({
                 {
                     title: gettext('Save revision'),
                     type: 'action',
-                    icon: 'floppy-o',
+                    icon: 'save',
                     tooltip: gettext('Save a revision of the current document.'),
                     order: 2,
                     keys: 'Ctrl-s',
@@ -113,7 +117,7 @@ export const headerbarModel = () => ({
                 {
                     title: gettext('Create Copy'),
                     type: 'action',
-                    icon: 'files-o',
+                    icon: 'copy',
                     tooltip: gettext('Create copy of the current document.'),
                     order: 3,
                     action: editor => {
@@ -123,7 +127,7 @@ export const headerbarModel = () => ({
                                 editor.mod.db.imageDB,
                                 editor.user
                             )
-                        copier.init().then(({doc, docInfo}) =>
+                        copier.init().then(({docInfo}) =>
                             window.location.href = `/document/${docInfo.id}/`
                         )
                     }
@@ -154,9 +158,9 @@ export const headerbarModel = () => ({
                             editor.getDoc({changes: 'acceptAllNoInsertions'}),
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB,
-                            editor.mod.styles.citationStyles,
-                            editor.mod.styles.citationLocales,
-                            editor.mod.styles.documentStyles,
+                            editor.mod.documentTemplate.citationStyles,
+                            editor.mod.documentTemplate.citationLocales,
+                            editor.mod.documentTemplate.documentStyles,
                             editor.staticUrl
                         )
                         exporter.init()
@@ -168,6 +172,7 @@ export const headerbarModel = () => ({
             id: 'export',
             title: gettext('Export'),
             tooltip: gettext('Export of the document contents'),
+            type: 'menu',
             order: 1,
             content: [
                 {
@@ -180,9 +185,9 @@ export const headerbarModel = () => ({
                             editor.getDoc({changes: 'acceptAllNoInsertions'}),
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB,
-                            editor.mod.styles.citationStyles,
-                            editor.mod.styles.citationLocales,
-                            editor.mod.styles.documentStyles,
+                            editor.mod.documentTemplate.citationStyles,
+                            editor.mod.documentTemplate.citationLocales,
+                            editor.mod.documentTemplate.documentStyles,
                             editor.staticUrl
                         )
                         exporter.init()
@@ -198,8 +203,8 @@ export const headerbarModel = () => ({
                             editor.getDoc({changes: 'acceptAllNoInsertions'}),
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB,
-                            editor.mod.styles.citationStyles,
-                            editor.mod.styles.citationLocales,
+                            editor.mod.documentTemplate.citationStyles,
+                            editor.mod.documentTemplate.citationLocales,
                             editor.staticUrl
                         )
                         exporter.init()
@@ -225,112 +230,9 @@ export const headerbarModel = () => ({
             id: 'settings',
             title: gettext('Settings'),
             tooltip: gettext('Configure settings of this document.'),
+            type: 'menu',
             order: 2,
             content: [
-                {
-                    id: 'metadata',
-                    title: gettext('Metadata'),
-                    type: 'menu',
-                    tooltip: gettext('Choose which metadata to enable.'),
-                    order: 0,
-                    disabled: editor => {
-                        return editor.docInfo.access_rights !== 'write'
-                    },
-                    content: [
-                        {
-                            title: gettext('Subtitle'),
-                            type: 'setting',
-                            tooltip: gettext('Define a subtitle in addition to the title of the document.'),
-                            order: 0,
-                            action: editor => {
-                                let offset = 1, // We need to add one as we are looking at offset values within the firstChild
-                                    attrs
-                                editor.view.state.doc.firstChild.forEach((node, nodeOffset) => {
-                                    if (node.type.name==='subtitle') {
-                                        offset += nodeOffset
-                                        attrs = Object.assign({}, node.attrs)
-                                        attrs.hidden = (!attrs.hidden)
-                                    }
-                                })
-                                editor.view.dispatch(
-                                    editor.view.state.tr.setNodeMarkup(offset, false, attrs).setMeta('settings', true)
-                                )
-                            },
-                            selected: editor => {
-                                return !editor.view.state.doc.firstChild.child(1).attrs.hidden
-                            }
-                        },
-                        {
-                            title: gettext('Author(s)'),
-                            type: 'setting',
-                            tooltip: gettext('Specify the authors of the document.'),
-                            order: 1,
-                            action: editor => {
-                                let offset = 1, // We need to add one as we are looking at offset values within the firstChild
-                                    attrs
-                                editor.view.state.doc.firstChild.forEach((node, nodeOffset) => {
-                                    if (node.type.name==='authors') {
-                                        offset += nodeOffset
-                                        attrs = Object.assign({}, node.attrs)
-                                        attrs.hidden = (!attrs.hidden)
-                                    }
-                                })
-                                editor.view.dispatch(
-                                    editor.view.state.tr.setNodeMarkup(offset, false, attrs).setMeta('settings', true)
-                                )
-                            },
-                            selected: editor => {
-                                return !editor.view.state.doc.firstChild.child(2).attrs.hidden
-                            }
-                        },
-                        {
-                            title: gettext('Abstract'),
-                            type: 'setting',
-                            tooltip: gettext('Add an abstract to the document.'),
-                            order: 2,
-                            action: editor => {
-                                let offset = 1, // We need to add one as we are looking at offset values within the firstChild
-                                    attrs
-                                editor.view.state.doc.firstChild.forEach((node, nodeOffset) => {
-                                    if (node.type.name==='abstract') {
-                                        offset += nodeOffset
-                                        attrs = Object.assign({}, node.attrs)
-                                        attrs.hidden = (!attrs.hidden)
-                                    }
-                                })
-                                editor.view.dispatch(
-                                    editor.view.state.tr.setNodeMarkup(offset, false, attrs).setMeta('settings', true)
-                                )
-                            },
-                            selected: editor => {
-                                return !editor.view.state.doc.firstChild.child(3).attrs.hidden
-                            }
-                        },
-                        {
-                            title: gettext('Keywords'),
-                            type: 'setting',
-                            tooltip: gettext('Add keywords to facilitate categorization.'),
-                            order: 3,
-                            action: editor => {
-                                let offset = 1, // We need to add one as we are looking at offset values within the firstChild
-                                    attrs
-                                editor.view.state.doc.firstChild.forEach((node, nodeOffset) => {
-                                    if (node.type.name==='keywords') {
-                                        offset += nodeOffset
-                                        attrs = Object.assign({}, node.attrs)
-                                        attrs.hidden = (!attrs.hidden)
-                                    }
-                                })
-                                editor.view.dispatch(
-                                    editor.view.state.tr.setNodeMarkup(offset, false, attrs).setMeta('settings', true)
-                                )
-                            },
-                            selected: editor => {
-                                return !editor.view.state.doc.firstChild.child(4).attrs.hidden
-                            }
-                        }
-                    ]
-                },
                 {
                     id: 'citation_style',
                     title: gettext('Citation Style'),
@@ -377,7 +279,43 @@ export const headerbarModel = () => ({
                         languageItem('ru', gettext('Russian'), 11),
                         {
                             type: 'separator',
-                            order: 12
+                            order: 12,
+                            available: editor => {
+                                // There has to be at least one language of the default languages
+                                // among the default ones and one that is not among the default ones.
+                                return !!editor.view.state.doc.firstChild.attrs.languages.find(
+                                    lang => [
+                                        'en-US',
+                                        'en-GB',
+                                        'de-DE',
+                                        'zh-CN',
+                                        'es',
+                                        'fr',
+                                        'ja',
+                                        'it',
+                                        'pl',
+                                        'pt-BR',
+                                        'nl',
+                                        'ru'
+                                    ].includes(lang)
+                                ) && !!editor.view.state.doc.firstChild.attrs.languages.find(
+                                    lang => ![
+                                        'en-US',
+                                        'en-GB',
+                                        'de-DE',
+                                        'zh-CN',
+                                        'es',
+                                        'fr',
+                                        'ja',
+                                        'it',
+                                        'pl',
+                                        'pt-BR',
+                                        'nl',
+                                        'ru'
+                                    ].includes(lang)
+                                )
+
+                            }
                         },
                         {
                             title: gettext('Other'),
@@ -405,7 +343,23 @@ export const headerbarModel = () => ({
                                 ].includes(
                                     editor.view.state.doc.firstChild.attrs.language
                                 )
-                            }
+                            },
+                            available: editor => !!editor.view.state.doc.firstChild.attrs.languages.find(
+                                lang => ![
+                                        'en-US',
+                                        'en-GB',
+                                        'de-DE',
+                                        'zh-CN',
+                                        'es',
+                                        'fr',
+                                        'ja',
+                                        'it',
+                                        'pl',
+                                        'pt-BR',
+                                        'nl',
+                                        'ru'
+                                    ].includes(lang)
+                            )
                         }
                     ]
                 },
@@ -434,6 +388,9 @@ export const headerbarModel = () => ({
                             },
                             selected: editor => {
                                 return editor.view.state.doc.firstChild.attrs.papersize === 'A4'
+                            },
+                            available: editor => {
+                                return editor.view.state.doc.firstChild.attrs.papersizes.includes('A4')
                             }
                         },
                         {
@@ -451,6 +408,9 @@ export const headerbarModel = () => ({
                             },
                             selected: editor => {
                                 return editor.view.state.doc.firstChild.attrs.papersize === 'US Letter'
+                            },
+                            available: editor => {
+                                return editor.view.state.doc.firstChild.attrs.papersizes.includes('US Letter')
                             }
                         }
                     ]
@@ -461,6 +421,7 @@ export const headerbarModel = () => ({
             id: 'tools',
             title: gettext('Tools'),
             tooltip: gettext('Select document editing tool.'),
+            type: 'menu',
             order: 3,
             content: [
                 {
@@ -488,7 +449,20 @@ export const headerbarModel = () => ({
             id: 'table',
             title: gettext('Table'),
             tooltip: gettext('Add and edit tables.'),
+            type: 'menu',
             order: 4,
+            available: editor => {
+                let tablesInDocParts = false
+                editor.view.state.doc.firstChild.forEach(docPart => {
+                    if (docPart.attrs.elements && docPart.attrs.elements.includes('table')) {
+                        tablesInDocParts = true
+                    }
+                })
+                return (
+                    editor.view.state.doc.firstChild.attrs.footnote_elements.includes('table') ||
+                    tablesInDocParts
+                )
+            },
             disabled: editor =>
                 READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
                 COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights),
@@ -505,14 +479,9 @@ export const headerbarModel = () => ({
                     },
                     disabled: editor => {
                         if (
-                            !findTable(editor.currentView.state) &&
-                            editor.currentView.state.selection.$anchor.node(2) &&
-                            editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
-                            !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
-                            editor.currentView.state.selection.jsonID === 'text'
+                            findTable(editor.currentView.state) ||
+                            elementDisabled(editor, 'table')
                         ) {
-                            return false
-                        } else {
                             return true
                         }
                     }

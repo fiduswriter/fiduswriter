@@ -50,11 +50,11 @@ export class LiteralFieldForm{
                 ]
             }),
             handleDOMEvents: {
-                focus: (view, event) => {
+                focus: (_view, _event) => {
                     document.querySelectorAll('.ui-dialog-buttonset .fw-edit').forEach(el => el.classList.remove('disabled'))
                     document.querySelectorAll('.ui-dialog-buttonset .fw-nocase').forEach(el => el.classList.add('disabled'))
                 },
-                blur: (view, event) => {
+                blur: (_view, _event) => {
                     document.querySelectorAll('.ui-dialog-buttonset .fw-edit').forEach(el => el.classList.add('disabled'))
                 }
             },

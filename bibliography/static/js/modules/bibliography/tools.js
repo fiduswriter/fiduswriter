@@ -1,5 +1,3 @@
-import {addDropdownBox} from "../common"
-
 // Takes any richtext text field as used in bibliography and returns the text contents
 export function litToText(litStringArray) {
     let outText = ''

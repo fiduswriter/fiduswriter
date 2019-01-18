@@ -123,7 +123,7 @@ export let profileContents = ({avatar, username, first_name, last_name, emails})
             <img src="${avatar.url}" width="80" height="80" alt="${username}">
             <div id="avatar-pulldown-wrapper">
                 <span id="edit-avatar-btn" class="fw-link-text">
-                    <i class="fa fa-pencil"></i> ${gettext('Edit profile picture')}
+                    <i class="fa fa-pencil-alt"></i> ${gettext('Edit profile picture')}
                 </span>
                 <div id="edit-avatar-pulldown" class="fw-pulldown fw-left">
                     <ul>
@@ -163,7 +163,7 @@ export let profileContents = ({avatar, username, first_name, last_name, emails})
                     <th>${gettext('Password')}:</th>
                     <td>
                         <input type="password" value="******" readonly disabled />
-                        <span id="fw-edit-profile-pwd" class="fw-link-text"><i class="fa fa-pencil"></i></span>
+                        <span id="fw-edit-profile-pwd" class="fw-link-text"><i class="fa fa-pencil-alt"></i></span>
                     </td>
                 </tr>
                 <tr>
@@ -196,7 +196,7 @@ export let profileContents = ({avatar, username, first_name, last_name, emails})
                                             </td>
                                             <td>
                                                 <span class="${ email.primary ? 'disabled' : 'delete-email fw-link-text' }" data-email="${email.address}">
-                                                    <i class="fa fa-trash-o"></i>
+                                                    <i class="fa fa-trash-alt"></i>
                                                 </span>
                                             </td>
                                         </tr>`

@@ -1,4 +1,3 @@
-import {addAlert} from "../../common"
 import {BibLatexFileExporter} from "../export"
 import {BibEntryForm} from "../form"
 import {BibLatexFileImportDialog} from "../import"
@@ -10,19 +9,19 @@ export let menuModel = () => ({
             id: 'bib_selector',
             open: false,
             checked: false,
-            checkAction: overview => {
-                let checkboxes = document.querySelectorAll('input.entry-select[type=checkbox]')
+            checkAction: _overview => {
+                const checkboxes = document.querySelectorAll('input.entry-select[type=checkbox]')
                 checkboxes.forEach(checkbox => checkbox.checked = true)
             },
-            uncheckAction: overview => {
-                let checkboxes = document.querySelectorAll('input.entry-select[type=checkbox]')
+            uncheckAction: _overview => {
+                const checkboxes = document.querySelectorAll('input.entry-select[type=checkbox]')
                 checkboxes.forEach(checkbox => checkbox.checked = false)
             },
             content: [
                 {
                     title: gettext('Delete selected'),
                     action: overview => {
-                        let ids = overview.getSelected().map(id => parseInt(id))
+                        const ids = overview.getSelected().map(id => parseInt(id))
                         if (ids.length) {
                             overview.deleteBibEntryDialog(ids)
                         }
@@ -32,9 +31,9 @@ export let menuModel = () => ({
                 {
                     title: gettext('Export selected'),
                     action: overview => {
-                        let ids = overview.getSelected()
+                        const ids = overview.getSelected()
                         if (ids.length) {
-                            let exporter = new BibLatexFileExporter(overview.app.bibDB, ids)
+                            const exporter = new BibLatexFileExporter(overview.app.bibDB, ids)
                             exporter.init()
                         }
                     },
@@ -49,8 +48,8 @@ export let menuModel = () => ({
             content : [
                 {
                     title: gettext('All categories'),
-                    action: overview => {
-                        let trs = document.querySelectorAll('#bibliography > tbody > tr')
+                    action: _overview => {
+                        const trs = document.querySelectorAll('#bibliography > tbody > tr')
                         trs.forEach(tr => tr.style.display = '')
                     }
                 }
@@ -69,10 +68,10 @@ export let menuModel = () => ({
             icon: 'plus-circle',
             title: gettext('Register new source'),
             action: overview => {
-                let form = new BibEntryForm(overview.app.bibDB)
+                const form = new BibEntryForm(overview.app.bibDB)
                 form.init().then(
                     idTranslations => {
-                        let ids = idTranslations.map(idTrans => idTrans[1])
+                        const ids = idTranslations.map(idTrans => idTrans[1])
                         return overview.updateTable(ids)
                     }
                 )
@@ -84,7 +83,7 @@ export let menuModel = () => ({
             icon: 'upload',
             title: gettext('Upload BibTeX file'),
             action: overview => {
-                let fileImporter = new BibLatexFileImportDialog(
+                const fileImporter = new BibLatexFileImportDialog(
                     overview.app.bibDB,
                     ids => overview.updateTable(ids),
                     overview.staticUrl

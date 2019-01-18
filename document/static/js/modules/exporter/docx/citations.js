@@ -1,7 +1,7 @@
 import {DOMSerializer, DOMParser} from "prosemirror-model"
 
 import {FormatCitations} from "../../citations/format"
-import {docSchema} from "../../schema/document"
+import {fnSchema} from "../../schema/footnotes"
 import {cslBibSchema} from "../../bibliography/schema/csl_bib"
 import {descendantNodes} from "../tools/doc_contents"
 import {noSpaceTmp} from "../../common"
@@ -80,13 +80,13 @@ export class DocxExporterCitations {
             citationsHTML += `<p>${ct}</p>`
         })
 
-        // We create a standard body DOM node, add the citations into it, and parse it back.
-        let bodyNode = docSchema.nodeFromJSON({type:'body'})
+        // We create a standard body footnotecontainer node, add the citations into it, and parse it back.
+        let fnNode = fnSchema.nodeFromJSON({type:'footnotecontainer'})
 
-        let serializer = DOMSerializer.fromSchema(docSchema)
-        let dom = serializer.serializeNode(bodyNode)
+        let serializer = DOMSerializer.fromSchema(fnSchema)
+        let dom = serializer.serializeNode(fnNode)
         dom.innerHTML = citationsHTML
-        this.pmCits = DOMParser.fromSchema(docSchema).parse(dom, {topNode: bodyNode}).toJSON().content
+        this.pmCits = DOMParser.fromSchema(fnSchema).parse(dom, {topNode: fnNode}).toJSON().content
 
         // Now we do the same for the bibliography.
         let cslBib = this.citFm.bibliography

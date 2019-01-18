@@ -9,7 +9,7 @@ export const citationRenderPlugin = function(options) {
             init() {
                 return {reset: false}
             },
-            apply(tr, prev, oldState, state) {
+            apply(tr, prev, oldState, _state) {
                 const meta = tr.getMeta(key)
                 if (meta) {
                     // There has been an update, return values from meta instead
@@ -28,7 +28,7 @@ export const citationRenderPlugin = function(options) {
                             tr.docs[index].nodesBetween(
                                 step.from,
                                 step.to,
-                                (node, pos, parent) => {
+                                node => {
                                     if (node.type.name === 'citation') {
                                         // A citation was replaced. We need to reset
                                         reset = true
@@ -43,10 +43,10 @@ export const citationRenderPlugin = function(options) {
 
             }
         },
-        view(view) {
+        view(_view) {
             options.editor.mod.citations.resetCitations()
             return {
-                update: (view, prevState) => {
+                update: (view, _prevState) => {
                     const {reset} = key.getState(view.state)
                     if (reset) {
                         options.editor.mod.citations.resetCitations()

@@ -37,8 +37,6 @@ export function setSelectedChanges(tr, type, pos) {
         spec = selectedChangeFormatSpec
     } else if (type==='block_change') {
         spec = selectedChangeBlockSpec
-    } else {
-        console.warn('unknown track type')
     }
     const decoType = node.isInline ? Decoration.inline : Decoration.node
     decos = decos.add(tr.doc, [decoType(selectedChange.from, selectedChange.to, {

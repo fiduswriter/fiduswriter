@@ -218,7 +218,7 @@ export class OdtExporterStyles {
     }
 
     // Add a paragraph style for either paragraph in bullet or numeric list
-    addListParStyle(listId) {
+    addListParStyle(_listId) {
         let parStyleId = ++this.blockStyleCounter
         let autoStylesEl = this.contentXml.querySelector('automatic-styles')
         autoStylesEl.insertAdjacentHTML(

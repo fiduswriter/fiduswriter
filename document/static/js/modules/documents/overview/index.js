@@ -193,7 +193,7 @@ export class DocumentOverview {
                     data-title="${escapeText(doc.title)}">
                 ${
                     this.user.id === doc.owner.id ?
-                    '<i class="fa fa-trash-o"></i>' :
+                    '<i class="fa fa-trash-alt"></i>' :
                     ''
                 }
             </span>`

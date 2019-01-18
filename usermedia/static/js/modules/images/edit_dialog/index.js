@@ -1,5 +1,5 @@
 import {imageEditTemplate} from "./templates"
-import {setCheckableLabel, cancelPromise, addAlert, Dialog} from "../../common"
+import {setCheckableLabel, addAlert, Dialog} from "../../common"
 
 export class ImageEditDialog {
     constructor(imageDB, imageId = false) {

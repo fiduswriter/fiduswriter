@@ -1,0 +1,77 @@
+form .aligned ul.object-tools.right {
+    margin-left: inherit;
+}
+
+.from-container, .to-column, .trash {
+    border: 1px solid black;
+    background-color: white;
+}
+
+.to-container {
+    min-height: 500px;
+}
+
+.to-column .smooth-dnd-draggable-wrapper {
+    overflow: visible !important;
+}
+
+.to-column {
+    width: 650px;
+}
+
+.to-column .article-part table td {
+    border: 1px solid black;
+}
+
+.from-container {
+    width: 150px;
+}
+
+.trash {
+    background-color: grey;
+    width: 100px
+}
+
+.doc-part {
+    background-color: #F0F8FF;
+    border-bottom: 1px dotted black;
+}
+
+.from-container .doc-part, .trash .doc-part {
+    height: 50px;
+}
+
+.from-container .attrs, .trash .attrs {
+    display: none;
+}
+
+.attrs label {
+    display: inline-block;
+    width: initial;
+    float: initial;
+}
+
+table td {
+    vertical-align: top;
+}
+
+.title {
+    cursor: move; /* fallback if grab cursor is unsupported */
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+}
+
+.object-tools.right {
+    float: right;
+}
+
+.ProseMirror {
+    background-color: #fff;
+    color: #000;
+}
+
+.ProseMirror-menubar {
+    background-color: inherit;
+    position: inherit;
+}

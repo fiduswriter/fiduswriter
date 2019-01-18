@@ -159,7 +159,7 @@ export class ImageSelectionDialog {
     bindEvents() {
         // functions for the image selection dialog
         this.table.body.addEventListener('click', event => {
-            let el = {}, imageId
+            const el = {}
             switch (true) {
                 case findTarget(event, 'tr', el):
                     this.checkRow(el.target.dataIndex)

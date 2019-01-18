@@ -12,7 +12,7 @@ export class MathDialog {
         this.node = this.editor.currentView.state.selection.node
         this.mathQuill = null
         this.equationSelected = this.node && this.node.attrs && this.node.attrs.equation ? true : false
-        this.equation = this.selectedEquationNode ? this.node.attrs.equation : defaultEquation
+        this.equation = this.equationSelected ? this.node.attrs.equation : defaultEquation
     }
 
     init() {

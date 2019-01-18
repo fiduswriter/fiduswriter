@@ -50,14 +50,19 @@ export class ModFootnoteLayout {
                         let topMargin = 10
                         if (node.type.name === 'footnote') {
                             const footnoteBox = footnoteBoxes[editorFootnoteIndex],
-                                selector = '.footnote-container:nth-of-type('+(editorFootnoteIndex+1)+')',
+                                selector = `.footnote-container:nth-of-type(${(editorFootnoteIndex+1)})`,
                                 footnoteBoxCoords = footnoteBox.getBoundingClientRect(),
                                 footnoteBoxHeight = footnoteBoxCoords.height,
                                 referrerTop = this.mod.editor.view.coordsAtPos(pos).top
                             editorFootnoteIndex++
+                            if (!referrerTop) {
+                                // footnote is not shown. Also hide the footnote from the editor.
+                                footnotePlacementStyle += `${selector} {display: none;}\n`
+                                return
+                            }
                             if (referrerTop > totalEditorOffset || totalEditorOffset < (totalCitationOffset + topMargin)) {
                                 topMargin = parseInt(Math.max(referrerTop - totalEditorOffset, totalCitationOffset - totalEditorOffset + topMargin))
-                                footnotePlacementStyle += selector + ' {margin-top: ' + topMargin + 'px;}\n'
+                                footnotePlacementStyle += `${selector} {margin-top: ${topMargin}px;}\n`
                             }
                             totalEditorOffset += footnoteBoxHeight + topMargin
                         } else {
@@ -68,9 +73,14 @@ export class ModFootnoteLayout {
                                     footnoteBoxHeight = footnoteBoxCoords.height,
                                     referrerTop = this.mod.editor.view.coordsAtPos(pos).top
                                 citationFootnoteIndex++
+                                if (!referrerTop) {
+                                    // footnote is not shown. Also hide the footnote from the editor.
+                                    footnotePlacementStyle += `${selector} {display: none;}\n`
+                                    return
+                                }
                                 if (referrerTop > totalCitationOffset || totalCitationOffset < (totalEditorOffset + topMargin)) {
                                     topMargin = parseInt(Math.max(referrerTop - totalCitationOffset, totalEditorOffset - totalCitationOffset + topMargin))
-                                    footnotePlacementStyle += selector + ' {margin-top: ' + topMargin + 'px;}\n'
+                                    footnotePlacementStyle += `${selector} {margin-top: ${topMargin}px;}\n`
                                 }
                                 totalCitationOffset += footnoteBoxHeight + topMargin
                             }
@@ -88,12 +98,18 @@ export class ModFootnoteLayout {
 
                     const footnoteBoxCoords = footnoteBox.getBoundingClientRect(),
                         footnoteBoxHeight = footnoteBoxCoords.height,
-                        referrerTop = this.mod.editor.view.coordsAtPos(referrer.from).top
+                        referrerTop = this.mod.editor.view.coordsAtPos(referrer.from).top,
+                        selector = `.footnote-container:nth-of-type(${(index+1)})`
+                    if (!referrerTop) {
+                        // footnote is not shown. Also hide the footnote from the editor.
+                        footnotePlacementStyle += `${selector} {display: none;}\n`
+                        return
+                    }
                     let topMargin = 10
 
                     if (referrerTop > totalOffset) {
                         topMargin = parseInt(referrerTop - totalOffset)
-                        footnotePlacementStyle += `.footnote-container:nth-of-type(${(index+1)}) {margin-top: ${topMargin}px;}\n`
+                        footnotePlacementStyle += `${selector} {margin-top: ${topMargin}px;}\n`
                     }
                     totalOffset += footnoteBoxHeight + topMargin
                 })

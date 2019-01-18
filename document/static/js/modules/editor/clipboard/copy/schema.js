@@ -1,7 +1,6 @@
 // A slight modification of the document schema for the purpose of copying.
 import {Schema} from "prosemirror-model"
 
-import {docSchema} from "../../../schema/document"
 import {fnSchema} from "../../../schema/footnotes"
 import {citation} from "../../../schema/common"
 
@@ -19,7 +18,7 @@ copyCitation.toDOM = function(node) {
     }]
 }
 
-export const docCopySchema = new Schema({
+export const createDocCopySchema = docSchema => new Schema({
     marks: docSchema.spec.marks,
     nodes: docSchema.spec.nodes.update('citation', copyCitation)
 })

@@ -27,10 +27,11 @@ export class BibLatexImporter {
     }
 
     onMessage(message) {
+        let errorMsg, data
         switch (message.type) {
             case 'error':
             case 'warning':
-                let errorMsg = ERROR_MSG[message.errorCode]
+                errorMsg = ERROR_MSG[message.errorCode]
                 if (!errorMsg) {
                     errorMsg = gettext('There was an issue with the bibtex import')
                 }
@@ -54,7 +55,7 @@ export class BibLatexImporter {
                 }
                 break
             case 'data':
-                let data = message.data
+                data = message.data
                 this.bibDB.saveBibEntries(data, true).then(
                     idTranslations => {
                         let newIds = idTranslations.map(idTrans => idTrans[1])

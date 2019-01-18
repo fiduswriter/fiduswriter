@@ -9,10 +9,10 @@ span.deletion {
     background-color: #fffacf;
 }
 
-.keyword.selected-insertion,
-.author.selected-insertion,
-.keyword.selected-deletion,
-.author.selected-deletion {
+.tag.selected-insertion,
+.contributor.selected-insertion,
+.tag.selected-deletion,
+.contributor.selected-deletion {
     background-color: #fffacf;
     color: #000;
 }

@@ -6,7 +6,7 @@ const key = new PluginKey('accessRights')
 export const accessRightsPlugin = function(options) {
     return new Plugin({
         key,
-        filterTransaction: (tr, state) => {
+        filterTransaction: (tr, _state) => {
             let allowed = true
             const remote = tr.getMeta('remote')
             if (remote) {

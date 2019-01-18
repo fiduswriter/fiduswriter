@@ -1,5 +1,4 @@
 import {
-    figureImageTemplate,
     configureFigureTemplate
 } from "./templates"
 import {

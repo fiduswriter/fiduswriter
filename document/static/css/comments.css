@@ -52,6 +52,14 @@ body.header-closed #margin-box-filter {
     letter-spacing: 0.06px;
 }
 
+.margin-box-filter-button:nth-child(1):nth-last-child(3) .label,
+.margin-box-filter-button:nth-child(2):nth-last-child(2) .label,
+.margin-box-filter-button:nth-child(3):nth-last-child(1) .label {
+    font-size: 10px;
+    top: 30px;
+    left: 4px;
+}
+
 .margin-box {
     background-color: #f8f8f8;
     color: #2c2723;
@@ -276,4 +284,22 @@ body.header-closed #margin-box-filter {
 #comment-editor .tagger .tag-user,
 #answer-editor .tagger .tag-user {
     min-height: 28px;
+}
+
+.help-text-wrapper p {
+  margin-bottom: 5px;
+}
+
+.help-text-wrapper strong {
+    font-weight: 700;
+}
+
+.help-text-wrapper em {
+    font-style: italic;
+}
+
+.help-text-wrapper blockquote {
+    border-left: 2px solid #ccc;
+    margin-left: 5px;
+    padding-left: 5px;
 }

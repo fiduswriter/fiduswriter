@@ -73,7 +73,6 @@ export class BibliographyDB {
                 addAlert('error', gettext('Could not obtain bibliography data'))
                 deactivateWait()
                 throw(error)
-                return Promise.reject(new Error('Could not obtain bibliography data'))
             }
         )
     }
@@ -128,7 +127,6 @@ export class BibliographyDB {
                 addAlert('error', gettext('The categories could not be updated'))
                 deactivateWait()
                 throw(error)
-                return Promise.reject(new Error('The categories could not be updated'))
             }
         )
     }
@@ -180,7 +178,6 @@ export class BibliographyDB {
                 addAlert('error', 'The bibliography item(s) could not be deleted')
                 deactivateWait()
                 throw(error)
-                return Promise.reject(new Error('The bibliography item(s) could not be deleted'))
             }
         )
 

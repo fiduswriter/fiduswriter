@@ -27,8 +27,8 @@ env:
     - TEST="travis_retry coverage run manage.py test document"
     - TEST="travis_retry coverage run manage.py test bibliography"
     - TEST="travis_retry coverage run manage.py test usermedia"
-    - TEST="npm install eslint && ./node_modules/.bin/eslint ."
-    - TEST="./manage.py check_py"
+    - TEST="coverage run manage.py check_js"
+    - TEST="coverage run manage.py check_py"
 
 script: $TEST
 

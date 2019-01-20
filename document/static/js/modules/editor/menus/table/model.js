@@ -1,5 +1,5 @@
 import {addColumnAfter, addColumnBefore, deleteColumn, addRowBefore, addRowAfter, deleteRow, deleteTable,
-    mergeCells, splitCell, setCellAttr, toggleHeaderRow, toggleHeaderColumn, toggleHeaderCell}
+    mergeCells, splitCell, toggleHeaderRow, toggleHeaderColumn, toggleHeaderCell}
 from "prosemirror-tables"
 import {TableResizeDialog} from  "../../dialogs"
 

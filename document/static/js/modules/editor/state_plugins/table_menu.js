@@ -1,5 +1,4 @@
-import {Schema} from "prosemirror-model"
-import { Plugin, PluginKey} from "prosemirror-state"
+import {Plugin, PluginKey} from "prosemirror-state"
 import {TableMenuDialog} from '../dialogs'
 
 const key = new PluginKey('tableMenu')
@@ -12,36 +11,36 @@ export class TableView {
         this.options = this.options
         this.dom = document.createElement("div")
         this.dom.classList.add(`table-${node.attrs.width}`,`table-${node.attrs.aligned}`,'container');
-        let menu_btn = document.createElement("button")
+        const menu_btn = document.createElement("button")
         menu_btn.className = "menu-btn"
         menu_btn.classList.add('btn-disabled')
-        let div = document.createElement("div")
+        const div = document.createElement("div")
         div.className = 'menu-stripe'
         menu_btn.append(div)
         this.dom.appendChild(menu_btn)
         this.dom.lastElementChild.addEventListener('click', event => {
             event.preventDefault()
             const dialog = new TableMenuDialog(node, view, options)
-            dialog.init() 
+            dialog.init()
         })
-        let table = document.createElement("table")
-        let tbody = document.createElement("tbody")
+        const table = document.createElement("table")
+        const tbody = document.createElement("tbody")
         table.append(tbody)
         this.contentDOM = this.dom.appendChild(table)
         this.contentDOM.classList.add(`layout-${node.attrs.layout}`)
         this.dom.appendChild(this.contentDOM)
     }
 
-    stopEvent(event) {
+    stopEvent(_event) {
         return true
     }
 
-    ignoreMutation(record) {
+    ignoreMutation(_record) {
         return true
     }
 
     update(node){
-        let table = findTable(this.view.state)
+        const table = findTable(this.view.state)
         if(table && node === table){
             this.dom.querySelector('.menu-btn').classList.remove('btn-disabled')
         }else{
@@ -49,7 +48,7 @@ export class TableView {
         }
         return true
     }
-    
+
 }
 
 const findTable = function(state) {
@@ -62,7 +61,7 @@ export const tableMenuPlugin = function(options) {
     return new Plugin({
         key,
         state: {
-            init(config, state) {
+            init(_config, _state) {
                 if (options.editor.docInfo.access_rights === 'write') {
                     this.spec.props.nodeViews['table'] =
                         (node, view, getPos) => new TableView(node, view, getPos,options)

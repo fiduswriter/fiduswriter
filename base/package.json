@@ -26,7 +26,8 @@
     "w3c-keyname": "1.1.x",
     "simple-datatables": "^1.7.2",
     "vivliostyle-print": "^1.1.1",
-    "eslint": "^5.12.0"
+    "eslint": "^5.12.0",
+    "eslint-plugin-import": "^2.14.0"
   },
   "devDependencies": {
     "npm-check-updates": "^2.14.2"

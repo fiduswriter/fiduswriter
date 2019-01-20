@@ -1,9 +1,21 @@
+const path = require('path');
+
 module.exports = {
     "env": {
         "browser": true,
         "es6": true
     },
-    "extends": "eslint:recommended",
+    "extends": [
+        "eslint:recommended",
+        "plugin:import/errors",
+        "plugin:import/warnings"
+    ],
+    "settings": {
+        "import/resolver": {
+            "node": {},
+            [path.resolve('test/eslint-import-resolver')]: {}
+        }
+    },
     "parserOptions": {
         "ecmaVersion": 2018,
         "sourceType": "module"
@@ -278,12 +290,7 @@ module.exports = {
     "globals": {
         "gettext": false,
         "interpolate": false,
-        //"django": true,
         "MathQuill": true,
-        "$StaticUrls": false//,
-        //"console": false,
-        //"FormData": false,
-        //"URLSearchParams": false,
-        //"self": true
+        "$StaticUrls": false
     }
 };

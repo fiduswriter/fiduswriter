@@ -1,9 +1,21 @@
 import {DataTable} from "simple-datatables"
 
 import {ImageOverviewCategories} from "./categories"
-import {activateWait, deactivateWait, addAlert, post, findTarget, whenReady, Dialog, localizeDate, escapeText} from "../../common"
+import {
+    activateWait,
+    deactivateWait,
+    addAlert,
+    post,
+    findTarget,
+    whenReady,
+    Dialog,
+    localizeDate,
+    escapeText,
+    OverviewMenuView,
+    baseBodyTemplate,
+    setDocTitle
+} from "../../common"
 import {SiteMenu} from "../../menu"
-import {OverviewMenuView, baseBodyTemplate, setDocTitle} from "../../common"
 import {FeedbackTab} from "../../feedback"
 import {menuModel} from "./menu"
 import {ImageEditDialog} from "../edit_dialog"

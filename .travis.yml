@@ -45,7 +45,7 @@ jobs:
       install: skip
       after_success: skip
       env: TESTS=before
-      before_script: pip3 install flake8==3.5.0 && npm install eslint
+      before_script: pip3 install flake8==3.5.0 && npm install eslint eslint-plugin-import
       script: flake8 ./ && ./node_modules/.bin/eslint .
     - stage: coveralls
       addons: {}

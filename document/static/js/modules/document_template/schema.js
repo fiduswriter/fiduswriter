@@ -2,9 +2,8 @@ import hash from "object-hash"
 
 import {schema} from "prosemirror-schema-basic"
 import {Schema, DOMSerializer} from "prosemirror-model"
-import {blockTypeItem} from "prosemirror-menu"
 import {buildMenuItems} from "prosemirror-example-setup"
-import {MenuItem, Dropdown}  from "prosemirror-menu"
+import {MenuItem, Dropdown, blockTypeItem}  from "prosemirror-menu"
 import {
     addColumnAfter,
     addColumnBefore,

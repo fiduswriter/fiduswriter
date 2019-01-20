@@ -1,5 +1,4 @@
-import {Mapping} from "prosemirror-transform"
-import {AddMarkStep, RemoveMarkStep} from "prosemirror-transform"
+import {Mapping, AddMarkStep, RemoveMarkStep} from "prosemirror-transform"
 
 import {deactivateAllSelectedChanges} from "../state_plugins"
 

@@ -9,10 +9,9 @@ import {LatexExporter} from "../../../exporter/latex"
 import {HTMLExporter} from "../../../exporter/html"
 import {EpubExporter} from "../../../exporter/epub"
 import {PrintExporter} from "../../../exporter/print"
-import {RevisionDialog, LanguageDialog, TableDialog} from "../../dialogs"
+import {RevisionDialog, LanguageDialog, TableDialog, TableResizeDialog} from "../../dialogs"
 import {elementDisabled} from "../toolbar/model"
 import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from "../.."
-import {TableResizeDialog} from  "../../dialogs"
 
 // from https://github.com/ProseMirror/prosemirror-tables/blob/master/src/util.js
 const findTable = function(state) {

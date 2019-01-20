@@ -1,4 +1,5 @@
-import {escapeText, parseTracks} from "../../common"
+import {escapeText} from "../../common"
+import {parseTracks} from "../common"
 import {htmlToFnNode, fnNodeToHtml} from "../footnotes_convert"
 
 

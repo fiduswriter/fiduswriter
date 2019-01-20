@@ -1,5 +1,4 @@
-import {Mapping} from "prosemirror-transform"
-import {RemoveMarkStep, Transform} from "prosemirror-transform"
+import {Mapping, RemoveMarkStep, Transform} from "prosemirror-transform"
 
 import {deleteNode} from "./delete"
 

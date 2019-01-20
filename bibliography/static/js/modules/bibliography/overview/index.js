@@ -7,11 +7,10 @@ import {BibEntryForm} from "../form"
 import {editCategoriesTemplate} from "./templates"
 import {BibTypeTitles} from "../form/strings"
 import {SiteMenu} from "../../menu"
-import {OverviewMenuView, findTarget, whenReady, Dialog, baseBodyTemplate, ensureCSS, setDocTitle} from "../../common"
+import {OverviewMenuView, findTarget, whenReady, Dialog, baseBodyTemplate, ensureCSS, setDocTitle, escapeText} from "../../common"
 import {FeedbackTab} from "../../feedback"
 import {menuModel} from "./menu"
 import * as plugins from "../../../plugins/bibliography_overview"
-import {escapeText} from "../../common"
 
 export class BibliographyOverview {
 

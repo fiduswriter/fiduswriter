@@ -11,14 +11,11 @@ export class TableView {
         this.options = this.options
         this.dom = document.createElement("div")
         this.dom.classList.add(`table-${node.attrs.width}`,`table-${node.attrs.aligned}`,'container');
-        const menu_btn = document.createElement("button")
-        menu_btn.className = "menu-btn"
-        menu_btn.classList.add('btn-disabled')
-        const div = document.createElement("div")
-        div.className = 'menu-stripe'
-        menu_btn.append(div)
-        this.dom.appendChild(menu_btn)
-        this.dom.lastElementChild.addEventListener('click', event => {
+        const menuButton = document.createElement("button")
+        menuButton.classList.add('menu-btn', 'btn-disabled')
+        menuButton.innerHTML = '<div class="menu-stripe"></div>'
+        this.dom.appendChild(menuButton)
+        menuButton.addEventListener('click', event => {
             event.preventDefault()
             const dialog = new TableMenuDialog(node, view, options)
             dialog.init()

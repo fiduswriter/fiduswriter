@@ -105,7 +105,7 @@ export const documentTemplatePlugin = function(options) {
 
             ranges.forEach(range => tr.doc.nodesBetween(range.from, range.to, (node, pos, parent, index) => {
                 if (parent===tr.doc.firstChild) {
-                    allowedElements = node.attrs.elements ? node.attrs.elements.concat('table_row', 'table_cell', 'list_item', 'text') : false
+                    allowedElements = node.attrs.elements ? node.attrs.elements.concat('table_row', 'table_cell', 'table_header', 'list_item', 'text') : false
                     allowedMarks = node.attrs.marks ? node.attrs.marks.concat('insertion', 'deletion', 'comment') : false
                     const oldNode = state.doc.firstChild.child(index)
                     if (

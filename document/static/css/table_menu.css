@@ -15,6 +15,11 @@
     pointer-events: none;
     opacity:0.6;
 }
+
+.btn-hide{
+    pointer-events: none;
+    opacity:0.0;
+}
 .menu-stripe {
     position: relative;
     width: 18px;

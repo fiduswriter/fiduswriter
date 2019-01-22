@@ -1,4 +1,4 @@
-import {Plugin, PluginKey} from "prosemirror-state"
+import {Plugin, PluginKey, TextSelection} from "prosemirror-state"
 import {TableMenuDialog} from '../dialogs'
 
 const key = new PluginKey('tableMenu')
@@ -12,13 +12,24 @@ export class TableView {
         this.dom = document.createElement("div")
         this.dom.classList.add(`table-${node.attrs.width}`,`table-${node.attrs.aligned}`,'container');
         const menuButton = document.createElement("button")
-        menuButton.classList.add('menu-btn', 'btn-disabled')
+        options.editor.docInfo.access_rights === "write" ? menuButton.classList.add('menu-btn') : menuButton.classList.add('menu-btn','btn-hide');
         menuButton.innerHTML = '<div class="menu-stripe"></div>'
         this.dom.appendChild(menuButton)
+        console.log(options.editor)
         menuButton.addEventListener('click', event => {
-            event.preventDefault()
-            const dialog = new TableMenuDialog(node, view, options)
-            dialog.init()
+            event.preventDefault();
+            event.stopImmediatePropagation()
+            if(isSelectedTableClicked(this.view.state,getPos())){
+                const dialog = new TableMenuDialog(node, view, options)
+                dialog.init()
+            }else{
+                let tr = view.state.tr;
+                let $pos = view.state.doc.resolve(getPos()+2)
+                tr.setSelection(new TextSelection($pos,$pos))
+                view.dispatch(tr)
+                const dialog = new TableMenuDialog(node, view, options)
+                dialog.init();
+            }  
         })
         const table = document.createElement("table")
         const tbody = document.createElement("tbody")
@@ -36,22 +47,16 @@ export class TableView {
         return true
     }
 
-    update(node){
-        const table = findTable(this.view.state)
-        if(table && node === table){
-            this.dom.querySelector('.menu-btn').classList.remove('btn-disabled')
-        }else{
-            this.dom.querySelector('.menu-btn').classList.add('btn-disabled')
-        }
-        return true
-    }
-
 }
 
-const findTable = function(state) {
-    const $head = state.selection.$head
-    for (let d = $head.depth; d > 0; d--) if ($head.node(d).type.spec.tableRole == "table") return $head.node(d)
-    return false
+const isSelectedTableClicked = (state, $pos) => {
+    let pathArr = state.selection.$anchor.path;
+    for(let i = 0; i < pathArr.length ; i++){
+        if(pathArr[i].type && pathArr[i].type.name && pathArr[i].type.name === "table" && pathArr[i-1] === $pos){
+            return true;
+        }
+    }
+    return false;
 }
 
 export const tableMenuPlugin = function(options) {

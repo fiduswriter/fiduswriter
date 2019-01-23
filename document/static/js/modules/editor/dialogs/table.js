@@ -120,7 +120,7 @@ export class TableResizeDialog {
         if(this.width == "100"){
             this.dialog.dialogEl.querySelector("#table-alignment-btn").classList.add("disabled")
             this.dialog.dialogEl.querySelector('#table-alignment-btn label').innerHTML = "Center"
-            return;
+            return
         }
         this.dialog.dialogEl.querySelector('#table-alignment-btn label').innerHTML =
             document.getElementById(`table-alignment-${this.aligned}`).innerText
@@ -140,6 +140,10 @@ export class TableResizeDialog {
     setTableLayout() {
         this.dialog.dialogEl.querySelector('#table-layout-btn label').innerHTML =
             document.getElementById(`table-layout-${this.layout}`).innerText
+        if(this.layout === "auto")
+            this.dialog.dialogEl.querySelector('#table-layout-btn').style.width = "105px"
+        else
+            this.dialog.dialogEl.querySelector('#table-layout-btn').style.width = "50px"
     }
 
     findTable(state) {

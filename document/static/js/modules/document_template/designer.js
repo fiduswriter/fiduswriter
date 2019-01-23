@@ -230,19 +230,19 @@ export class DocumentTemplateDesigner {
         this.editors.push([helpEl, helpView])
         let plugins = [], menuContent = [], schema
         switch(type) {
-            case 'richtext':
+            case 'richtext_part':
                 schema = richtextPartSchema
                 menuContent = richtextMenuContent
                 break
-            case 'table':
+            case 'table_part':
                 schema = tablePartSchema
                 menuContent = tableMenuContent
                 break
-            case 'heading':
+            case 'heading_part':
                 schema = headingPartSchema
                 menuContent = headingMenuContent
                 break
-            case 'tags':
+            case 'tags_part':
                 schema = tagsPartSchema
                 plugins.push(new Plugin({
                     props: {
@@ -252,7 +252,7 @@ export class DocumentTemplateDesigner {
                     }
                 }))
                 break
-            case 'contributors':
+            case 'contributors_part':
                 schema = contributorsPartSchema
                 plugins.push(new Plugin({
                     props: {

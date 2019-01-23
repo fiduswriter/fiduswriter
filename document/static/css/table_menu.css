@@ -1,4 +1,4 @@
-.container{
+.table-container {
     position: relative;
 }
 .table-menu-btn {
@@ -9,34 +9,30 @@
     overflow: hidden;
     outline:none;
     position: absolute;
-    right: 0px;
-    top: 5px;
+    right: -15px;
+    top: 8px;
 }
 .table-menu-icon {
-    font-size: 18px; 
+    font-size: 18px;
     color:#cecece;
 }
-.btn-disabled{
-    pointer-events: none;
-    opacity:0.6;
-}
-.btn-hide{
-    pointer-events: none;
-    opacity:0.0;
-}
 
-.table-menu-list{
+.table-menu-list {
     list-style: none;
     padding: 0 0 5px 0;
     cursor: pointer;
 }
-.table-menu-item{
+.table-menu-item {
     padding: 18px 31px 15px 31px;
     color: #2c2723;
     font-family: Lato;
     font-size: 14px;
     font-weight: 400;
     line-height: 1em;
+}
+.table-menu-item.disabled {
+    pointer-events: none;
+    opacity:0.6;
 }
 .table-menu-item:hover {
     background-color: #eeeeee;

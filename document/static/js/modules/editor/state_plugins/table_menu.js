@@ -16,6 +16,7 @@ export class TableView {
         menuButton.innerHTML = '<span class="table-menu-icon"><i class="fa fa-ellipsis-v"></i></span>'
         this.dom.appendChild(menuButton)
         menuButton.addEventListener('click', event => {
+            console.log(event)
             event.preventDefault()
             event.stopImmediatePropagation()
             if(!isSelectedTableClicked(this.view.state,getPos())){
@@ -28,6 +29,7 @@ export class TableView {
                 menu: this.options.editor.menu.tableMenuModel,
                 width: 280,
                 page: this.options.editor,
+                menuPos: {X:event.pageX, Y:event.pageY},
                 onClose: () => {view.focus()}
             })
             contentMenu.open()

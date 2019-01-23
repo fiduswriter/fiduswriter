@@ -35,7 +35,8 @@ export class ContentMenu {
         onClose = false,
         scroll = false,
         dialogEl = false,
-        backdropEl = false
+        backdropEl = false,
+        menuPos = false,
     }) {
         this.id = id
         this.page = page
@@ -47,6 +48,7 @@ export class ContentMenu {
         this.scroll = scroll
         this.dialogEl = dialogEl
         this.backdropEl = backdropEl
+        this.menuPos = menuPos
     }
 
     open() {
@@ -68,19 +70,27 @@ export class ContentMenu {
         )
         this.backdropEl = document.body.lastElementChild
         this.dialogEl = this.backdropEl.previousElementSibling
-        this.positionDialog()
+        if(this.menuPos && this.menuPos.X && this.menuPos.Y)
+            this.positionDialog()
+        else
+            this.centerDialog()
         this.bind()
     }
 
-    positionDialog() {
+    centerDialog() {
         const totalWidth = window.innerWidth,
-            totalHeight = window.innerHeight,
-            dialogWidth = this.dialogEl.clientWidth,
-            dialogHeight = this.dialogEl.clientHeight,
-            scrollTopOffset = window.pageYOffset,
-            scrollLeftOffset = window.pageXOffset
-        this.dialogEl.style.top = `${(totalHeight - dialogHeight)/1.4 + scrollTopOffset}px`
-        this.dialogEl.style.left = `${(totalWidth - dialogWidth)/1.5 + scrollLeftOffset}px`
+        totalHeight = window.innerHeight,
+        dialogWidth = this.dialogEl.clientWidth,
+        dialogHeight = this.dialogEl.clientHeight,
+        scrollTopOffset = window.pageYOffset,
+        scrollLeftOffset = window.pageXOffset
+        this.dialogEl.style.top = `${(totalHeight - dialogHeight)/2 + scrollTopOffset}px`
+        this.dialogEl.style.left = `${(totalWidth - dialogWidth)/2 + scrollLeftOffset}px`
+    }
+
+    positionDialog() {
+        this.dialogEl.style.top = `${ parseInt(this.menuPos.Y)-100}px`
+        this.dialogEl.style.left = `${ parseInt(this.menuPos.X)+20}px`
     }
 
     bind() {

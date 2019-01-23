@@ -78,6 +78,11 @@ export {
 }
 from "./settings"
 export {
+    tableMenuPlugin,
+    TableView
+}
+from "./table_menu"
+export {
     documentTemplatePlugin
 }
 from "./document_template"

@@ -47,7 +47,7 @@ export class GetImages {
                 const mimeString = this.imageEntries[this.counter].file_type
                 JSZipUtils.getBinaryContent(getUrl, (err, data) => {
                     const dataView = new DataView(data)
-                    const blob = new window.Blob([dataView], {type: mimeString});
+                    const blob = new window.Blob([dataView], {type: mimeString})
                     this.imageEntries[this.counter]['file'] = blob
                     this.counter++
                     this.getImageUrlEntry().then(()=>{

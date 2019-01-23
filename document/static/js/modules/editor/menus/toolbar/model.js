@@ -2,7 +2,7 @@ import {wrapIn, toggleMark} from "prosemirror-commands"
 import {wrapInList} from "prosemirror-schema-list"
 import {undo, redo, undoDepth, redoDepth} from "prosemirror-history"
 
-import {CitationDialog, FigureDialog, LinkDialog, MathDialog} from "../../dialogs"
+import {CitationDialog, FigureDialog, LinkDialog, MathDialog, TableDialog} from "../../dialogs"
 import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from "../.."
 import {randomAnchorId} from "../../../schema/common"
 import {setBlockType} from "../../keymap"
@@ -17,6 +17,13 @@ const BLOCK_LABELS = {
     'heading6': gettext('6th Heading'),
     'code_block': gettext('Code'),
     'figure': gettext('Figure')
+}
+
+// from https://github.com/ProseMirror/prosemirror-tables/blob/master/src/util.js
+const findTable = function(state) {
+    const $head = state.selection.$head
+    for (let d = $head.depth; d > 0; d--) if ($head.node(d).type.spec.tableRole == "table") return $head.node(d)
+    return false
 }
 
 function elementAvailable(editor, elementName) {
@@ -585,11 +592,45 @@ export const toolbarModel = () => ({
         },
         {
             type: 'button',
+            title: gettext('Table'),
+            tooltip: gettext('Insert a table into the document.'),
+            icon: 'table',
+            action: editor => {
+                const dialog = new TableDialog(editor)
+                dialog.init()
+                return false
+            },
+            available: editor => {
+                let tablesInDocParts = false
+                editor.view.state.doc.firstChild.forEach(docPart => {
+                    if (docPart.attrs.elements && docPart.attrs.elements.includes('table')) {
+                        tablesInDocParts = true
+                    }
+                })
+                return (
+                    editor.view.state.doc.firstChild.attrs.footnote_elements.includes('table') ||
+                    tablesInDocParts
+                )
+            },
+            disabled: editor => {
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    elementDisabled(editor, 'table') ||
+                    findTable(editor.currentView.state)
+                ) {
+                    return true
+                }
+            },
+            order: 15
+        },
+        {
+            type: 'button',
             title: gettext('Undo'),
             icon: 'undo',
             action: editor => undo(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('inputType', 'historyUndo'))),
             disabled: editor => undoDepth(editor.currentView.state) === 0,
-            order: 15
+            order: 16
         },
         {
             type: 'button',
@@ -597,7 +638,7 @@ export const toolbarModel = () => ({
             icon: 'redo',
             action: editor => redo(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('inputType', 'historyRedo'))),
             disabled: editor => redoDepth(editor.currentView.state) === 0,
-            order: 16
+            order: 17
         },
         {
             type: 'button',
@@ -627,7 +668,7 @@ export const toolbarModel = () => ({
                 }
 
             },
-            order: 17
+            order: 18
         },
         {
             type: 'button',
@@ -660,7 +701,7 @@ export const toolbarModel = () => ({
                 }
 
             },
-            order: 18
+            order: 19
         }
     ]
 })

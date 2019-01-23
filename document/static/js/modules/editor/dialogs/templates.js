@@ -161,6 +161,8 @@ export const tableResizeTemplate =() =>
         </div>
 
     </div>`
+
+
 export const mathDialogTemplate = () =>
 
     `<div title="${gettext("Math")}">

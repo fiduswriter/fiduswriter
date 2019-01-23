@@ -68,7 +68,8 @@ import {
 } from "./track"
 import {
     headerbarModel,
-    toolbarModel
+    toolbarModel,
+    tableMenuModel
 } from "./menus"
 import {
     ModMarginboxes
@@ -147,7 +148,8 @@ export class Editor {
 
         this.menu = {
             headerbarModel: headerbarModel(),
-            toolbarModel: toolbarModel()
+            toolbarModel: toolbarModel(),
+            tableMenuModel: tableMenuModel()
         }
         this.client_id = Math.floor(Math.random() * 0xFFFFFFFF)
         this.clientTimeAdjustment = 0

@@ -12,10 +12,13 @@ export class TableView {
         this.dom = document.createElement("div")
         this.dom.classList.add(`table-${node.attrs.width}`,`table-${node.attrs.aligned}`,'container');
         const menuButton = document.createElement("button")
-        options.editor.docInfo.access_rights === "write" ? menuButton.classList.add('menu-btn') : menuButton.classList.add('menu-btn','btn-hide');
-        menuButton.innerHTML = '<div class="menu-stripe"></div>'
+        if(options.editor.docInfo.access_rights === "write"){
+            menuButton.classList.add('table-menu-btn')
+        }else{
+            menuButton.classList.add('table-menu-btn','btn-hide');
+        }
+        menuButton.innerHTML = '<span class="table-menu-icon"><i class="fa fa-ellipsis-v"></i></span>'
         this.dom.appendChild(menuButton)
-        console.log(options.editor)
         menuButton.addEventListener('click', event => {
             event.preventDefault();
             event.stopImmediatePropagation()
@@ -29,7 +32,7 @@ export class TableView {
                 view.dispatch(tr)
                 const dialog = new TableMenuDialog(node, view, options)
                 dialog.init();
-            }  
+            }
         })
         const table = document.createElement("table")
         const tbody = document.createElement("tbody")

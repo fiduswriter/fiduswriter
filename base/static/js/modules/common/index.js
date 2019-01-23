@@ -32,9 +32,14 @@ export {
 from "./network"
 
 export {
-    Dialog
+    Dialog,
 }
 from "./dialog"
+
+export {
+    ContentMenu
+}
+from "./incontent_menu"
 
 export {
     makeWorker

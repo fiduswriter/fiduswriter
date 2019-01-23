@@ -68,7 +68,8 @@ import {
 } from "./track"
 import {
     headerbarModel,
-    toolbarModel
+    toolbarModel,
+    tableMenuModel
 } from "./menus"
 import {
     ModMarginboxes
@@ -100,7 +101,8 @@ import {
     settingsPlugin,
     documentTemplatePlugin,
     toolbarPlugin,
-    trackPlugin
+    trackPlugin,
+    tableMenuPlugin
 } from "./state_plugins"
 import {
     buildEditorKeymap
@@ -146,7 +148,8 @@ export class Editor {
 
         this.menu = {
             headerbarModel: headerbarModel(),
-            toolbarModel: toolbarModel()
+            toolbarModel: toolbarModel(),
+            tableMenuModel: tableMenuModel()
         }
         this.client_id = Math.floor(Math.random() * 0xFFFFFFFF)
         this.clientTimeAdjustment = 0
@@ -175,7 +178,8 @@ export class Editor {
             [accessRightsPlugin, () => ({editor: this})],
             [settingsPlugin, () => ({editor: this})],
             [documentTemplatePlugin, () => ({editor: this})],
-            [trackPlugin, () => ({editor: this})]
+            [trackPlugin, () => ({editor: this})],
+            [tableMenuPlugin, () => ({editor: this})]
         ]
     }
 
@@ -197,7 +201,8 @@ export class Editor {
             'citation_dialog.css',
             'review.css',
             'add_remove_dialog.css',
-            'bibliography.css'
+            'bibliography.css',
+            'table_menu.css'
         ], this.staticUrl)
         whenReady().then(() => {
             new ModCitations(this)

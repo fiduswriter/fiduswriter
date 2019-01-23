@@ -1,5 +1,4 @@
-import {Mapping} from "prosemirror-transform"
-import {AddMarkStep, RemoveMarkStep} from "prosemirror-transform"
+import {Mapping, AddMarkStep, RemoveMarkStep} from "prosemirror-transform"
 
 import {deactivateAllSelectedChanges} from "../state_plugins"
 
@@ -7,7 +6,7 @@ import {deleteNode} from "./delete"
 
 export const acceptAll = function(view) {
     const tr = view.state.tr.setMeta('track', true), map = new Mapping()
-    view.state.doc.descendants((node, pos, parent, index) => {
+    view.state.doc.descendants((node, pos) => {
         let deletedNode = false
         if (
             node.attrs.track && node.attrs.track.find(track => track.type==='deletion') ||

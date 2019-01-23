@@ -3,7 +3,6 @@ import JSZip from "jszip"
 import {ImportNative} from "./native"
 import {FW_FILETYPE_VERSION} from "../exporter/native"
 import {updateFile} from "./update"
-import {addAlert} from "../common"
 /** The current Fidus Writer filetype version. The importer will not import from
  * a different version and the exporter will include this number in all exports.
  */
@@ -37,7 +36,7 @@ export class ImportFidusFile {
         }
         return new Promise(resolve => {
             // use a BlobReader to read the zip from a Blob object
-            let reader = new window.FileReader()
+            const reader = new window.FileReader()
             reader.onloadend = () => {
                 if (reader.result.length > 60 && reader.result.substring(0, 2) === 'PK') {
                     this.initZipFileRead().then(() => resolve(this))
@@ -53,7 +52,7 @@ export class ImportFidusFile {
 
     initZipFileRead() {
         // Extract all the files that can be found in every fidus-file (not images)
-        let zipfs = new JSZip()
+        const zipfs = new JSZip()
         return zipfs.loadAsync(this.file).then(() => {
             let filenames = [], p = [], validFile = true
 
@@ -119,13 +118,14 @@ export class ImportFidusFile {
                 this.doc = doc
                 this.docInfo = docInfo
                 this.statusText = `${doc.title} ${gettext(' successfully imported.')}`
+                return this
             })
 
         } else {
             // The file is not a Fidus Writer file.
             this.statusText = gettext('The uploaded file does not appear to be of the version used on this server: ') +
             FW_FILETYPE_VERSION
-            return
+            return this
         }
     }
 

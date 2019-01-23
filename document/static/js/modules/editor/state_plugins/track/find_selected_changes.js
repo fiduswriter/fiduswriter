@@ -36,7 +36,7 @@ export function findSelectedChanges(state) {
         state.doc.nodesBetween(
             selection.from,
             selection.to,
-            (node, pos, parent) => {
+            (node, pos) => {
                 if (pos < selection.from) {
                     return true
                 }

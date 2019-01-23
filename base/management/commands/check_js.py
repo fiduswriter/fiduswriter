@@ -1,4 +1,3 @@
-
 import shutil
 from subprocess import call
 
@@ -8,9 +7,11 @@ from django.conf import settings
 
 
 class Command(BaseCommand):
-    help = 'Check JavaScript files with JSHint'
+    help = 'Check JavaScript files with ESLint'
 
     def handle(self, *args, **options):
         call_command("npm_install")
         shutil.os.chdir(settings.PROJECT_PATH)
-        call(["npm", "run", "jshint"])
+        return_value = call(["npm", "run", "eslint"])
+        if return_value > 0:
+            exit(return_value)

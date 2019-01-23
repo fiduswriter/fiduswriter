@@ -1,12 +1,8 @@
 import {vivliostylePrint} from "vivliostyle-print"
 
+import {PAPER_SIZES} from "../../schema/const"
 import {HTMLExporter} from "../html"
 import {addAlert} from "../../common"
-
-const CSS_PAPER_SIZES = {
-    'A4': 'A4',
-    'US Letter': 'letter'
-}
 
 export class PrintExporter extends HTMLExporter {
 
@@ -37,7 +33,7 @@ export class PrintExporter extends HTMLExporter {
                 display: block;
             }
             @page {
-                size: ${CSS_PAPER_SIZES[this.doc.settings.papersize]};
+                size: ${PAPER_SIZES.find(size => size[0] === this.doc.settings.papersize)[1]};
                 @bottom-center {
                     content: counter(page);
                 }
@@ -52,7 +48,13 @@ export class PrintExporter extends HTMLExporter {
         ).then(
             () => this.postProcess()
         ).then(
-            ({html, title}) => vivliostylePrint(html,{ title, resourcesUrl: `${this.staticUrl}vivliostyle-resources/`})
+            ({html, title}) => vivliostylePrint(
+                html,
+                {
+                    title,
+                    resourcesUrl: `${this.staticUrl}vivliostyle-resources/`
+                }
+            )
         )
     }
 

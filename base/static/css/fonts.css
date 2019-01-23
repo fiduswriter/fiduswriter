@@ -6,7 +6,8 @@
 [class^="icon-"],
 [class*=" icon-"] {
    display: inline-block;
-   font: normal normal normal 14px/1 FontAwesome;
+   font-family: 'Font Awesome 5 Free';
+   font-weight: 900;
    font-size: inherit;
    text-rendering: auto;
    -webkit-font-smoothing: antialiased;
@@ -18,13 +19,13 @@
  .fw-list-input:last-child .fw-add-input:before {content: '\f055'; }
 
 /* User rights */
-.icon-access-write:before {content: '\f040'; } /* '✎' */
-.icon-access-write-tracked:before {content: '\f040'; } /* '✎' */
+.icon-access-write:before {content: '\f303'; } /* '✎' */
+.icon-access-write-tracked:before {content: '\f303'; } /* '✎' */
 .icon-access-read:before {content: '\f06e'; } /* '' */
-.icon-access-comment:before {content: '\f0e5'; } /* '' */
+.icon-access-comment:before {content: '\f075'; } /* '' */
 /* Review related user rights */
 .icon-access-read-without-comments:before {content: '\f06e'; } /* '' */
-.icon-access-review:before {content: '\f0e5'; } /* '' */
+.icon-access-review:before {content: '\f075'; } /* '' */
 
 .icon-access-read-without-comments:before, .icon-access-review:before, .icon-access-write-tracked:before {
     background-color: #000;
@@ -35,7 +36,8 @@
 
 .fw-checkable.checked:after, tr.fw-checkable.checked > td:last-child:after {
     display: inline-block;
-    font: normal normal normal 14px/1 FontAwesome;
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
     font-size: inherit;
     text-rendering: auto;
     -webkit-font-smoothing: antialiased;
@@ -47,7 +49,8 @@
 
 .editortoolbar div.multiButtons .multibuttonsCover:after {
     display: inline-block;
-    font: normal normal normal 14px/1 FontAwesome;
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
     font-size: inherit;
     text-rendering: auto;
     -webkit-font-smoothing: antialiased;
@@ -57,7 +60,8 @@
 
 #cite-source-table_filter label:after {
     display: inline-block;
-    font: normal normal normal 14px/1 FontAwesome;
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
     font-size: inherit;
     text-rendering: auto;
     -webkit-font-smoothing: antialiased;
@@ -68,7 +72,8 @@
 
 .margin-box.active:after {
     display: block;
-    font: normal normal normal 14px/1 FontAwesome;
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
     font-size: inherit;
     text-rendering: auto;
     -webkit-font-smoothing: antialiased;
@@ -78,7 +83,8 @@
 
 .fw-nav-item.active-menu-wrapper:after {
     display: block;
-    font: normal normal normal 14px/1 FontAwesome;
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
     font-size: inherit;
     text-rendering: auto;
     -webkit-font-smoothing: antialiased;
@@ -87,7 +93,8 @@
 }
 .ui-icon-closethick:before {
     display: inline-block;
-    font: normal normal normal 14px/1 FontAwesome;
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
     font-size: inherit;
     text-rendering: auto;
     -webkit-font-smoothing: antialiased;
@@ -96,7 +103,8 @@
 }
 .fw-add-button:after {
     display: inline-block;
-    font: normal normal normal 14px/1 FontAwesome;
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
     font-size: inherit;
     text-rendering: auto;
     -webkit-font-smoothing: antialiased;
@@ -105,7 +113,8 @@
 }
 .fw-table-wrapper .dataTables_filter label:after {
     display: inline-block;
-    font: normal normal normal 14px/1 FontAwesome;
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
     font-size: inherit;
     text-rendering: auto;
     -webkit-font-smoothing: antialiased;
@@ -113,7 +122,8 @@
     content: '\f002';
 }
 table.dataTable-table thead th a:after {
-    font: normal normal normal 14px/1 FontAwesome;
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
     font-size: inherit;
     text-rendering: auto;
     -webkit-font-smoothing: antialiased;
@@ -131,7 +141,8 @@ table.dataTable-table thead th[data-sortable]:not([data-sortable=false]).desc a:
 }
 .fw-document-table-body tr.checked td.checkable:after {
     display: inline-block;
-    font: normal normal normal 14px/1 FontAwesome;
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
     font-size: inherit;
     text-rendering: auto;
     -webkit-font-smoothing: antialiased;
@@ -140,7 +151,8 @@ table.dataTable-table thead th[data-sortable]:not([data-sortable=false]).desc a:
 }
 .fw-pulldown:after {
     display: inline-block;
-    font: normal normal normal 14px/1 FontAwesome;
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
     font-size: inherit;
     text-rendering: auto;
     -webkit-font-smoothing: antialiased;

@@ -1,4 +1,4 @@
-import {marks, nodes} from "prosemirror-schema-basic"
+import {nodes} from "prosemirror-schema-basic"
 import {Schema, DOMSerializer} from "prosemirror-model"
 
 const collaborator = {
@@ -32,7 +32,7 @@ const collaborator = {
 
 const doc = {
     content: 'block+',
-    toDOM(node) {
+    toDOM(_node) {
         return ["div", 0]
     }
 }

@@ -1,6 +1,5 @@
 import diffDOM from "diff-dom"
 import keyName from "w3c-keyname"
-import {keydownHandler} from "prosemirror-keymap"
 
 import {escapeText} from "../../../common"
 
@@ -16,9 +15,24 @@ export class HeaderbarView {
         this.headerEl = document.querySelector('#headerbar').firstElementChild
         this.listeners = {}
 
+        this.removeUnavailable(this.options.editor.menu.headerbarModel)
 
         this.bindEvents()
         this.update()
+    }
+
+    removeUnavailable(menu) {
+        // Remove those menu items from the menu model that are not available for this document.
+        // Used for example for language or page size options that aren't permitted according to the
+        // document template.
+        menu.content = menu.content.filter(item => {
+            if (item.available && !item.available(this.editor)) {
+                return false
+            } else if (item.type === 'menu') {
+                this.removeUnavailable(item)
+            }
+            return true
+        })
     }
 
     bindEvents() {
@@ -75,7 +89,7 @@ export class HeaderbarView {
                     menu.open = false
                     this.closeMenu(menu)
                     this.update()
-                    break;
+                    break
                 case 'setting':
                     // Similar to 'action' but not closing menu.
                     if (menuItem.disabled && menuItem.disabled(this.editor)) {
@@ -83,14 +97,14 @@ export class HeaderbarView {
                     }
                     menuItem.action(this.editor)
                     this.update()
-                    break;
+                    break
                 case 'menu':
                     this.closeMenu(menu)
                     menuItem.open = true
                     this.update()
-                    break;
+                    break
                 default:
-                    break;
+                    break
             }
         } else if (target.matches('#headerbar #header-navigation .header-nav-item:not(.disabled)')) {
             // A menu has been clicked, lets find out which one.
@@ -161,6 +175,8 @@ export class HeaderbarView {
             }
         })
     }
+
+
 
     update() {
         const newHeader = document.createElement('div')
@@ -260,19 +276,22 @@ export class HeaderbarView {
     }
 
     getMenuItemHTML(menuItem) {
+        let returnValue
         switch(menuItem.type) {
             case 'action':
             case 'setting':
-                return this.getActionMenuItemHTML(menuItem)
-                break;
+                returnValue = this.getActionMenuItemHTML(menuItem)
+                break
             case 'menu':
-                return this.getMenuMenuItemHTML(menuItem)
-                break;
+                returnValue = this.getMenuMenuItemHTML(menuItem)
+                break
             case 'separator':
-                return '<hr>'
+                returnValue = '<hr>'
+                break
             default:
-                break;
+                break
         }
+        return returnValue
     }
 
     getActionMenuItemHTML(menuItem) {

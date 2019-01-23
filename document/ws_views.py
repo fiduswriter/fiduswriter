@@ -14,12 +14,12 @@ from tornado.escape import json_decode, json_encode
 from tornado.websocket import WebSocketClosedError
 from tornado.ioloop import IOLoop
 from document.models import AccessRight, COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
-    CAN_COMMUNICATE, ExportTemplate, FW_DOCUMENT_VERSION
+    CAN_COMMUNICATE, FW_DOCUMENT_VERSION
 from document.views import get_accessrights
 from usermedia.models import Image, DocumentImage, UserImage
 from avatar.templatetags.avatar_tags import avatar_url
 
-from style.models import DocumentStyle, CitationStyle, CitationLocale
+from style.models import CitationLocale
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +30,7 @@ class WebSocket(BaseWebSocketHandler):
     def open(self, arg):
         self.set_nodelay(True)
         logger.debug('Websocket opened')
+        self.id = 0
         response = dict()
         current_user = self.get_current_user()
         args = arg.split("/")
@@ -38,23 +39,38 @@ class WebSocket(BaseWebSocketHandler):
             'client': 0,
             'last_ten': []
         }
-        if len(args) < 3 or current_user is None:
+        if len(args) < 2 or current_user is None:
             response['type'] = 'access_denied'
             self.id = 0
             self.send_message(response)
             IOLoop.current().add_callback(self.do_close)
             return
-        document_id = int(args[0])
-        connection_count = int(args[1])
-        self.user_info = SessionUserInfo()
+        self.connection_count = int(args[0])
+        self.user_info = SessionUserInfo(current_user)
+        response['type'] = 'welcome'
+        self.send_message(response)
+
+    def do_close(self):
+        self.close()
+
+    def confirm_diff(self, rid):
+        response = {
+            'type': 'confirm_diff',
+            'rid': rid
+        }
+        self.send_message(response)
+
+    def subscribe_document(self, document_id, template_id=0):
         doc_db, can_access = self.user_info.init_access(
-            document_id, current_user)
+            document_id,
+            template_id
+        )
         if not can_access or float(doc_db.doc_version) != FW_DOCUMENT_VERSION:
-            response['type'] = 'access_denied'
-            self.id = 0
+            response = {
+                'type': 'access_denied'
+            }
             self.send_message(response)
             return
-        response['type'] = 'welcome'
         if (
             doc_db.id in WebSocket.sessions and
             len(WebSocket.sessions[doc_db.id]['participants']) > 0
@@ -78,19 +94,36 @@ class WebSocket(BaseWebSocketHandler):
                 'contents': json_decode(doc_db.contents),
                 'version': doc_db.version,
                 'title': doc_db.title,
-                'id': doc_db.id
+                'id': doc_db.id,
+                'template': {
+                    'title': doc_db.template.title,
+                    'definition': json_decode(doc_db.template.definition)
+                }
             }
             WebSocket.sessions[doc_db.id] = self.doc
+        self.send_message({
+            'type': 'subscribed'
+        })
+        if self.connection_count < 1:
+            self.send_styles()
+            self.send_document()
+        if self.can_communicate():
+            self.handle_participant_update()
+
+    def send_styles(self):
+        doc_db = self.doc['db']
+        response = dict()
+        response['type'] = 'styles'
         serializer = PythonWithURLSerializer()
         export_temps = serializer.serialize(
-            ExportTemplate.objects.all()
+            doc_db.template.export_templates.all()
         )
         document_styles = serializer.serialize(
-            DocumentStyle.objects.all(),
+            doc_db.template.document_styles.all(),
             use_natural_foreign_keys=True
         )
         cite_styles = serializer.serialize(
-            CitationStyle.objects.all()
+            doc_db.template.citation_styles.all()
         )
         cite_locales = serializer.serialize(
             CitationLocale.objects.all()
@@ -100,20 +133,6 @@ class WebSocket(BaseWebSocketHandler):
             'document_styles': [obj['fields'] for obj in document_styles],
             'citation_styles': [obj['fields'] for obj in cite_styles],
             'citation_locales': [obj['fields'] for obj in cite_locales],
-        }
-        self.send_message(response)
-        if connection_count < 1:
-            self.send_document()
-        if self.can_communicate():
-            self.handle_participant_update()
-
-    def do_close(self):
-        self.close()
-
-    def confirm_diff(self, rid):
-        response = {
-            'type': 'confirm_diff',
-            'rid': rid
         }
         self.send_message(response)
 
@@ -137,6 +156,7 @@ class WebSocket(BaseWebSocketHandler):
             'v': self.doc['version'],
             'contents': self.doc['contents'],
             'bibliography': self.doc['bibliography'],
+            'template': self.doc['template'],
             'images': {}
         }
         response['time'] = int(time()) * 1000
@@ -182,9 +202,6 @@ class WebSocket(BaseWebSocketHandler):
         self.send_message(response)
 
     def on_message(self, message):
-        if self.user_info.document_id not in WebSocket.sessions:
-            logger.debug('receiving message for closed document')
-            return
         parsed = json_decode(message)
         if parsed["type"] == 'request_resend':
             self.resend_messages(parsed["from"])
@@ -224,7 +241,15 @@ class WebSocket(BaseWebSocketHandler):
             return
         # Message order is correct. We continue processing the data.
         self.messages["client"] += 1
-
+        if parsed["type"] == 'subscribe_doc':
+            template = 0
+            if 'template' in parsed:
+                template = parsed['template']
+            self.subscribe_document(parsed["id"], template)
+            return
+        if self.user_info.document_id not in WebSocket.sessions:
+            logger.debug('receiving message for closed document')
+            return
         if parsed["type"] == 'get_document':
             self.send_document()
         elif parsed["type"] == 'participant_update' and self.can_communicate():

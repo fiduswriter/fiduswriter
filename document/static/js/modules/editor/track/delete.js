@@ -1,4 +1,4 @@
-import {ReplaceStep, ReplaceAroundStep, Transform, replaceStep} from "prosemirror-transform"
+import {ReplaceStep, ReplaceAroundStep, replaceStep} from "prosemirror-transform"
 import {Slice} from "prosemirror-model"
 import {Selection, TextSelection, EditorState} from "prosemirror-state"
 import {liftListItem} from "prosemirror-schema-list"

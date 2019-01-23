@@ -1,11 +1,10 @@
-import {Mapping} from "prosemirror-transform"
-import {RemoveMarkStep, Transform} from "prosemirror-transform"
+import {Mapping, RemoveMarkStep, Transform} from "prosemirror-transform"
 
 import {deleteNode} from "./delete"
 
 export function acceptAllNoInsertions(doc) {
     const tr = new Transform(doc), map = new Mapping()
-    doc.descendants((node, pos, parent, index) => {
+    doc.descendants((node, pos) => {
         const deletionTrack = node.attrs.track ?
                 node.attrs.track.find(track => track.type==='deletion') :
                 node.marks.find(mark => mark.type.name==='deletion'),

@@ -279,10 +279,10 @@ export class CitationDialog {
 
         this.dialog.dialogEl.addEventListener('click', event => {
             const el = {}
-            let revisionId
+            let documentEl
             switch (true) {
                 case findTarget(event, '.selected-source .delete', el):
-                    const documentEl = document.getElementById(`selected-source-${el.target.dataset.db}-${el.target.dataset.id}`)
+                    documentEl = document.getElementById(`selected-source-${el.target.dataset.db}-${el.target.dataset.id}`)
                     if (documentEl) {
                         documentEl.parentElement.removeChild(documentEl)
                     }

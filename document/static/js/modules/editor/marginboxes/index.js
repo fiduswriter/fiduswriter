@@ -14,6 +14,7 @@ export class ModMarginboxes {
         this.filterOptions = {
             track: true,
             comments: true,
+            help: true,
             commentsResolved: false,
             author: 0,
             assigned: 0
@@ -67,6 +68,10 @@ export class ModMarginboxes {
                     this.filterOptions.comments = !this.filterOptions.comments
                     this.view(this.editor.currentView)
                     break
+                case findTarget(event, '#margin-box-filter-help', el):
+                    this.filterOptions.help = !this.filterOptions.help
+                    this.view(this.editor.currentView)
+                    break
                 case findTarget(event, '.margin-box.comment.inactive', el):
                     this.editor.mod.comments.interactions.deactivateSelectedChanges()
                     this.editor.mod.comments.interactions.activateComment(el.target.dataset.id)
@@ -115,6 +120,9 @@ export class ModMarginboxes {
 
         this.editor.view.state.doc.descendants(
             (node, pos) => {
+                if (node.attrs.hidden) {
+                    return false
+                }
                 lastNodeTracks = this.getMarginBoxes(node, pos, pos, lastNode, lastNodeTracks, 'main', marginBoxes, referrers, selectedChanges)
                 lastNode = node
 
@@ -292,6 +300,16 @@ export class ModMarginboxes {
     }
 
     getMarginBoxes(node, pos, refPos, lastNode, lastNodeTracks, view, marginBoxes, referrers, selectedChanges) {
+
+
+        if (node.attrs.help) { // Help/instruction margin boxes
+            marginBoxes.push(Object.assign({
+                type: 'help',
+                data: node.attrs.help
+            }))
+            referrers.push(refPos)
+        }
+
         const commentIds = node.isInline || node.isLeaf ? this.editor.mod.comments.interactions.findCommentIds(node) : []
 
         const nodeTracks = node.attrs.track ?

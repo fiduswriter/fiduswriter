@@ -31,7 +31,7 @@ export const openDropdownBox = function(box) {
     const closeDropdownBox = function(event) {
         event.preventDefault()
         box.style.display = ''
-        document.removeEventListener('click', closeDropdownBox, false);
+        document.removeEventListener('click', closeDropdownBox, false)
     }
     document.body.addEventListener('click', closeDropdownBox, false)
 }
@@ -71,7 +71,6 @@ export const deactivateWait = function() {
  * @param alertMsg The message text.
  */
 export const addAlert = function(alertType, alertMsg) {
-    const fadeSpeed = 300
     const iconNames = {
         'error': 'exclamation-circle',
         'warning': 'exclamation-circle',
@@ -101,20 +100,21 @@ export const localizeDate = function (milliseconds, type='full') {
     milliseconds = parseInt(milliseconds)
     if (milliseconds > 0) {
         const theDate = new Date(milliseconds)
+        let yyyy, mm, dd, returnValue
         switch(type) {
             case 'sortable-date':
-                const yyyy = theDate.getFullYear(),
-                    mm = theDate.getMonth() + 1,
-                    dd = theDate.getDate()
-
-                return `${yyyy}-${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`
+                yyyy = theDate.getFullYear()
+                mm = theDate.getMonth() + 1
+                dd = theDate.getDate()
+                returnValue = `${yyyy}-${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`
                 break
             case 'minutes':
-                return theDate.toLocaleString([], {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute:'2-digit'})
+                returnValue = theDate.toLocaleString([], {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute:'2-digit'})
                 break
             default:
-                return theDate.toLocaleString()
+                returnValue = theDate.toLocaleString()
         }
+        return returnValue
     }
     else {
         return ''
@@ -125,7 +125,7 @@ export const localizeDate = function (milliseconds, type='full') {
  * Turn string literals into single line, removing spaces at start of line
  */
 
-export const noSpaceTmp = function(strings) {
+export const noSpaceTmp = function(_strings) {
      const values = Array.from(arguments)
      const tmpStrings = Array.from(values.shift())
 
@@ -176,7 +176,7 @@ export const whenReady = function() {
         return Promise.resolve()
     } else {
         return new Promise(resolve => {
-            document.addEventListener("readystatechange", event => {
+            document.addEventListener("readystatechange", _event => {
                 if (document.readyState === "complete") {
                     resolve()
                 }

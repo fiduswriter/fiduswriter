@@ -166,10 +166,10 @@ export const tableResizeTemplate =() =>
 export const tableMenuTemplate = (options) => {
     return `
     <div>
-        <ul class="menu-list">
+        <ul class="table-menu-list">
         ${
-            tableMenuModel().content.map((menuItem,index)=>
-                    menuItem.type == "separator"?'<hr/>': `<li data-index="${index}" class="menu-item${menuItem.disabled && menuItem.disabled(options.editor) ? ' btn-disabled' : ''}"
+            options.editor.menu.tableMenuModel.content.map((menuItem,index)=>
+                    menuItem.type == "separator"?'<hr class="table-menu-item-divider"/>':`<li data-index="${index}" class="table-menu-item${menuItem.disabled && menuItem.disabled(options.editor) ? ' btn-disabled' : ''}"
                                                             title='${menuItem.tooltip}'>${typeof menuItem.title === 'function' ? menuItem.title(options.editor) : menuItem.title}</li>`
             ).join('')
         }

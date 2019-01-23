@@ -1,7 +1,7 @@
 .container{
     position: relative;
 }
-.menu-btn {
+.table-menu-btn {
     background-color: Transparent;
     background-repeat:no-repeat;
     border: 1px;
@@ -10,50 +10,37 @@
     outline:none;
     position: absolute;
     right: 0px;
+    top: 5px;
+}
+.table-menu-icon {
+    font-size: 18px; 
+    color:#cecece;
 }
 .btn-disabled{
     pointer-events: none;
     opacity:0.6;
 }
-
 .btn-hide{
     pointer-events: none;
     opacity:0.0;
 }
-.menu-stripe {
-    position: relative;
-    width: 18px;
-    height: 48px;
-}
-.menu-stripe:before, .menu-stripe:after {
-    background: #64b4a0;
-    content: "";
-    position: absolute;
-    height: 3px;
-    top: 12px;
-    box-shadow: 0 8px #64b4a0, 0 16px #64b4a0;
-}
-.menu-stripe:before {
-    width: 3px;
-    left: 8px;
-}
 
-
-.menu-list{
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    width: 260px;
-    background-color: #f1f1f1;
-}
-.menu-item{
-    display: block;
-    color: #000;
-    padding: 8px 16px;
-    text-decoration: none;
+.table-menu-list{
+    list-style: none;
+    padding: 0 0 5px 0;
     cursor: pointer;
 }
-.menu-item:hover {
-    background-color: #555;
-    color: white;
+.table-menu-item{
+    padding: 18px 31px 15px 31px;
+    color: #2c2723;
+    font-family: Lato;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1em;
+}
+.table-menu-item:hover {
+    background-color: #eeeeee;
+}
+.table-menu-item-divider {
+    border: 0.8px solid #eeeeee !important;
 }

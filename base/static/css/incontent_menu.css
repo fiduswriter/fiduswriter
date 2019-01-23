@@ -1,0 +1,35 @@
+.ui-content_menu {
+    position: absolute;
+    background-color:white;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.11);
+    font-size: 14px;
+    z-index: 101;
+    padding: 0px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #eeeeee;
+    border-image: initial;
+    overflow: hidden;
+    border-radius: 4px;
+    outline: 0px;
+}
+
+.ui-content_menu-content.ui-scrollable {
+    overflow-y: scroll;
+}
+
+.ui-content_menu-content {
+    position: relative;
+    margin-top: 8px;
+    overflow: hidden;
+}
+
+.ui-widget-overlay {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.1);
+    z-index: 100;
+}

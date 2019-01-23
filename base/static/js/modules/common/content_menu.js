@@ -8,14 +8,23 @@ const menuTemplate = ({id, classes, height, width, zIndex, menu, scroll, page}) 
         <ul class="content-menu-list">
         ${
             menu.content.map((menuItem,index)=>
-                    menuItem.type == "separator"?'<hr class="content-menu-item-divider"/>':`<li data-index="${index}" class="content-menu-item${menuItem.disabled && menuItem.disabled(page) ? ' disabled' : ''}"
-                                                            title='${menuItem.tooltip}'>${typeof menuItem.title === 'function' ? menuItem.title(page) : menuItem.title}
-                                                            ${
-                                                                menuItem.icon ?
-                                                                `<span class="content-menu-item-icon"><i class="fa fa-${menuItem.icon}"></i></span>` :
-                                                                ''
-                                                            }
-                                                            </li>`
+                menuItem.type == "separator" ?
+                    '<hr class="content-menu-item-divider"/>' :
+                    `<li data-index="${index}" class="content-menu-item${
+                        menuItem.disabled && menuItem.disabled(page) ?
+                        ' disabled' :
+                        ''
+                    }" title='${menuItem.tooltip}'>
+                    ${
+                        typeof menuItem.title === 'function' ?
+                            menuItem.title(page) :
+                            menuItem.title
+                    } ${
+                        menuItem.icon ?
+                            `<span class="content-menu-item-icon"><i class="fa fa-${menuItem.icon}"></i></span>` :
+                            ''
+                    }
+                    </li>`
             ).join('')
         }
         </ul>
@@ -36,7 +45,7 @@ export class ContentMenu {
         scroll = false,
         dialogEl = false,
         backdropEl = false,
-        menuPos = false,
+        menuPos = false
     }) {
         this.id = id
         this.page = page

@@ -1,5 +1,5 @@
 import {Plugin, PluginKey, TextSelection} from "prosemirror-state"
-import {TableMenuDialog} from '../dialogs'
+import {ContentMenu} from '../../common'
 
 const key = new PluginKey('tableMenu')
 
@@ -8,27 +8,29 @@ export class TableView {
         this.node = node
         this.view = view
         this.getPos = getPos
-        this.options = this.options
+        this.options = options
         this.dom = document.createElement("div")
-        this.dom.classList.add(`table-${node.attrs.width}`,`table-${node.attrs.aligned}`,'table-container');
+        this.dom.classList.add(`table-${node.attrs.width}`,`table-${node.attrs.aligned}`,'table-container')
         const menuButton = document.createElement("button")
         menuButton.classList.add('table-menu-btn')
         menuButton.innerHTML = '<span class="table-menu-icon"><i class="fa fa-ellipsis-v"></i></span>'
         this.dom.appendChild(menuButton)
         menuButton.addEventListener('click', event => {
-            event.preventDefault();
+            event.preventDefault()
             event.stopImmediatePropagation()
-            if(isSelectedTableClicked(this.view.state,getPos())){
-                const dialog = new TableMenuDialog(node, view, options)
-                dialog.init()
-            }else{
-                let tr = view.state.tr;
-                let $pos = view.state.doc.resolve(getPos()+2)
+            if(!isSelectedTableClicked(this.view.state,getPos())){
+                const tr = view.state.tr
+                const $pos = view.state.doc.resolve(getPos()+2)
                 tr.setSelection(new TextSelection($pos,$pos))
                 view.dispatch(tr)
-                const dialog = new TableMenuDialog(node, view, options)
-                dialog.init();
             }
+            const contentMenu = new ContentMenu({
+                menu: this.options.editor.menu.tableMenuModel,
+                width: 290,
+                page: this.options.editor,
+                onClose: () => {view.focus()}
+            })
+            contentMenu.open()
         })
         const table = document.createElement("table")
         const tbody = document.createElement("tbody")
@@ -38,10 +40,6 @@ export class TableView {
         this.dom.appendChild(this.contentDOM)
     }
 
-    stopEvent(_event) {
-        return true
-    }
-
     ignoreMutation(_record) {
         return true
     }
@@ -49,13 +47,13 @@ export class TableView {
 }
 
 const isSelectedTableClicked = (state, $pos) => {
-    let pathArr = state.selection.$anchor.path;
+    let pathArr = state.selection.$anchor.path
     for(let i = 0; i < pathArr.length ; i++){
         if(pathArr[i].type && pathArr[i].type.name && pathArr[i].type.name === "table" && pathArr[i-1] === $pos){
-            return true;
+            return true
         }
     }
-    return false;
+    return false
 }
 
 export const tableMenuPlugin = function(options) {

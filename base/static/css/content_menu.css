@@ -33,3 +33,27 @@
     background-color: rgba(255, 255, 255, 0.1);
     z-index: 100;
 }
+
+.content-menu-list {
+    list-style: none;
+    padding: 0 0 5px 0;
+    cursor: pointer;
+}
+.content-menu-item {
+    padding: 18px 31px 15px 31px;
+    color: #2c2723;
+    font-family: Lato;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1em;
+}
+.content-menu-item.disabled {
+    pointer-events: none;
+    opacity:0.6;
+}
+.content-menu-item:hover {
+    background-color: #eeeeee;
+}
+.content-menu-item-divider {
+    border: 0.8px solid #eeeeee !important;
+}

@@ -1,25 +1,46 @@
 
-const dialogTemplate = ({id, classes, height, width, zIndex, body, scroll}) =>
+const menuTemplate = ({id, classes, height, width, zIndex, menu, scroll, page}) =>
 `<div tabindex="-1" role="incontent_menu"
         class="ui-content_menu ui-corner-all ui-widget ui-widget-content ui-front"
         ${id ? `aria-describedby="${id}"` : ''} style="z-index: ${zIndex};">
     <div ${id ? `id="${id}"` : ''} class="ui-content_menu-content ui-widget-content${classes ? ` ${classes}` : ''}${scroll ? ` ui-scrollable` : ''}" style="width: ${width}; height: ${height};">
-        ${body}
+    <div>
+        <ul class="content-menu-list">
+        ${
+            menu.content.map((menuItem,index)=>
+                    menuItem.type == "separator"?'<hr class="content-menu-item-divider"/>':`<li data-index="${index}" class="content-menu-item${menuItem.disabled && menuItem.disabled(page) ? ' disabled' : ''}"
+                                                            title='${menuItem.tooltip}'>${typeof menuItem.title === 'function' ? menuItem.title(page) : menuItem.title}</li>`
+            ).join('')
+        }
+        </ul>
+    </div>
     </div>
 </div>
 <div class="ui-widget-overlay ui-front" style="z-index: ${zIndex-1}"></div>`
 
 export class ContentMenu {
-    constructor(options) {
-        this.id = options.id || false
-        this.classes = options.classes || false
-        this.body = options.body || ''
-        this.height = options.height ? `${options.height}px` : 'auto'
-        this.width = options.width ? `${options.width}px` : 'auto'
-        this.onClose = options.onClose || false
-        this.scroll = options.scroll || false
-        this.dialogEl = false
-        this.backdropEl = false
+    constructor({
+        id = false,
+        page = false,
+        classes = false,
+        menu = [],
+        height = false,
+        width = false,
+        onClose = false,
+        scroll = false,
+        dialogEl = false,
+        backdropEl = false
+    }) {
+        this.id = id
+        this.page = page
+        this.classes = classes
+        this.menu = menu
+        this.height = height ? `${height}px` : 'auto'
+        this.width = width ? `${width}px` : 'auto'
+        this.onClose = onClose
+        this.scroll = scroll
+        this.dialogEl = dialogEl
+        this.backdropEl = backdropEl
     }
 
     open() {
@@ -28,14 +49,15 @@ export class ContentMenu {
         }
         document.body.insertAdjacentHTML(
             'beforeend',
-            dialogTemplate({
+            menuTemplate({
                 id: this.id,
                 classes: this.classes,
                 height: this.height,
                 width: this.width,
                 zIndex: this.getHighestDialogZIndex() + 2,
-                body: this.body,
-                scroll: this.scroll
+                menu: this.menu,
+                scroll: this.scroll,
+                page: this.page
             })
         )
         this.backdropEl = document.body.lastElementChild
@@ -56,7 +78,8 @@ export class ContentMenu {
     }
 
     bind() {
-        this.backdropEl.addEventListener('click',() => this.close())
+        this.backdropEl.addEventListener('click', () => this.close())
+        this.dialogEl.addEventListener('click', event => this.onclick(event))
     }
 
     getHighestDialogZIndex() {
@@ -73,6 +96,21 @@ export class ContentMenu {
         this.backdropEl.parentElement.removeChild(this.backdropEl)
         if (this.onClose) {
             this.onClose()
+        }
+    }
+
+    onclick(event){
+        event.preventDefault()
+        event.stopImmediatePropagation()
+        const target = event.target
+        if(target.matches('li.content-menu-item')) {
+            const menuNumber = target.dataset.index
+            const menuItem = this.menu.content[menuNumber]
+            if (menuItem.disabled && menuItem.disabled(this.page)){
+                return
+            }
+            menuItem.action(this.page)
+            this.close()
         }
     }
 }

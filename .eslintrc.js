@@ -254,7 +254,7 @@ module.exports = {
             "error",
             "never"
         ],
-        "semi": "off",
+        "semi": ["error", "never"],
         "semi-spacing": "off",
         "semi-style": [
             "error",

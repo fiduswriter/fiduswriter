@@ -15,7 +15,7 @@ const posHidden = function($pos) {
 }
 
 const key = new PluginKey('jump-hidden-nodes')
-export const jumpHiddenNodesPlugin = function(options) {
+export const jumpHiddenNodesPlugin = function(_options) {
 
     return new Plugin({
         key,

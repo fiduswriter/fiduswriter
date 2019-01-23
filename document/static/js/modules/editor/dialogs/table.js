@@ -29,7 +29,6 @@ export class TableDialog {
         // add hover class.
         const rows = this.dialog.dialogEl.querySelectorAll('tr')
         for(let i=0;i<rowCount;i++) {
-            const row = rows[i]
             const cols = rows[i].querySelectorAll('td')
             for(let j=0;j<colCount;j++) {
                 cols[j].classList.add(className)

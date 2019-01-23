@@ -48,7 +48,7 @@ let addCoveredTableCells = function(node) {
     let rows = node.content.length
     // Add empty cells for col/rowspan
     let fixedTableMatrix = Array.apply(0, {length: rows}).map(
-        item => ({type: 'table_row', content: Array.apply(0, {length: columns})})
+        _item => ({type: 'table_row', content: Array.apply(0, {length: columns})})
     )
     let rowIndex = -1
     node.content.forEach(row => {

@@ -36,7 +36,7 @@ export class ZipFileCreator {
             }
             return new Promise(
                 resolve => JSZipUtils.getBinaryContent(zipFile.url, (err, contents) => {
-                    zipDir.loadAsync(contents).then(importedZip => {
+                    zipDir.loadAsync(contents).then(_importedZip => {
                         resolve()
                     })
                 })

@@ -1,7 +1,7 @@
 import {Dialog} from "../../common"
 
 import {languageTemplate} from "./templates"
-import {LANGUAGES} from "../common"
+import {LANGUAGES} from "../../schema/const"
 
 
 export class LanguageDialog {
@@ -46,7 +46,7 @@ export class LanguageDialog {
             title: gettext('Change language of the document'),
             body: languageTemplate({
                 currentLanguage: this.language,
-                LANGUAGES
+                allowedLanguages: LANGUAGES.filter(lang => this.editor.view.state.doc.firstChild.attrs.languages.includes(lang[0]))
             }),
             buttons,
             onClose: () => this.editor.currentView.focus()

@@ -97,7 +97,7 @@ export function trackPlugin(options) {
 				return decos
 			},
             handleDOMEvents: {
-                focus: (view, event) => {
+                focus: (view, _event) => {
                     const otherView = view === options.editor.view ? options.editor.mod.footnotes.fnEditor.view : options.editor.view
                     otherView.dispatch(deactivateAllSelectedChanges(otherView.state.tr))
                 }

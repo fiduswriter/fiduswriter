@@ -106,7 +106,7 @@ export let collaboratorsTemplate = ({collaborators}) =>
             </td>
             <td width="50" align="center">
                 <span class="delete-collaborator fw-inline" data-right="delete">
-                    <i class="fa fa-trash-o fw-link-text"></i>
+                    <i class="fa fa-trash-alt fw-link-text"></i>
                 </span>
             </td>
         </tr>`

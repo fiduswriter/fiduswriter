@@ -3,10 +3,6 @@ import {GeneralPasteHandler} from "./general"
 // Microsoft Word 2016 paste handler
 export class MicrosoftWordPasteHandler extends GeneralPasteHandler {
 
-    outputHandlerType() {
-        console.info('word paste handler')
-    }
-
     // Remove unused content
     cleanDOM() {
         // Remove footnote list container with separator line

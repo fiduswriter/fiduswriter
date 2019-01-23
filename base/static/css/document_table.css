@@ -77,12 +77,12 @@
     font-size: 15px;
 }
 
-.owned-by-user .icon-access-right,.fw-document-table .fa-clock-o, .fw-document-table .fa-trash, .fw-document-table .fa-download {
+.owned-by-user .icon-access-right,.fw-document-table .fa-clock, .fw-document-table .fa-trash, .fw-document-table .fa-download {
     color: #a7321f;
     cursor: pointer;
 }
 
-.owned-by-user .icon-access-right:hover,.fw-document-table .fa-clock-o:hover, .fw-document-table .fa-trash:hover, .fw-document-table .fa-download:hover {
+.owned-by-user .icon-access-right:hover,.fw-document-table .fa-clock:hover, .fw-document-table .fa-trash:hover, .fw-document-table .fa-download:hover {
     color: #2c2723;
 }
 

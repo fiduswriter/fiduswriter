@@ -1,5 +1,6 @@
 import {addAlert, postJson} from "../common"
 import {GetImages} from "./get_images"
+import {templateHash, extractTemplate} from "../document_template"
 
 export class ImportNative {
     /* Save document information into the database */
@@ -95,7 +96,9 @@ export class ImportNative {
     }
 
     saveDocument() {
-
+        const template = extractTemplate(this.doc.contents),
+            template_hash = templateHash(template),
+            template_title = template.attrs.template
         return postJson(
             '/document/import/',
             {
@@ -103,7 +106,10 @@ export class ImportNative {
                 title: this.doc.title,
                 contents: JSON.stringify(this.doc.contents),
                 comments: JSON.stringify(this.doc.comments),
-                bibliography: JSON.stringify(this.bibliography)
+                bibliography: JSON.stringify(this.bibliography),
+                template: JSON.stringify(template),
+                template_hash,
+                template_title
             }
         ).then(
             ({json}) => {

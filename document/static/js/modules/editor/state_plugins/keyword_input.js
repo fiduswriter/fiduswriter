@@ -163,7 +163,7 @@ export const keywordInputPlugin = function(options) {
             }
         })
 
-        dom.addEventListener('click', event => {
+        dom.addEventListener('click', () => {
             const state = options.editor.view.state,
                 {decos} = key.getState(state),
                 deco = decos.find()[0],
@@ -239,7 +239,7 @@ export const keywordInputPlugin = function(options) {
                 }
                 let decoDropped = false
                 decos = decos.map(tr.mapping, tr.doc, {
-                    onRemove: oldDeco => decoDropped = true
+                    onRemove: _oldDeco => decoDropped = true
                 })
 
                 if (decoDropped) {

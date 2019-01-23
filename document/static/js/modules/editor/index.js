@@ -6,6 +6,9 @@ import {
     FeedbackTab
 } from "../feedback"
 import {
+    adjustDocToTemplate
+} from "../document_template"
+import {
     EditorState,
     TextSelection
 } from "prosemirror-state"
@@ -65,14 +68,15 @@ import {
 } from "./track"
 import {
     headerbarModel,
-    toolbarModel
+    toolbarModel,
+    tableMenuModel
 } from "./menus"
 import {
     ModMarginboxes
 } from "./marginboxes"
 import {
-    ModStyles
-} from "./styles"
+    ModDocumentTemplate
+} from "./document_template"
 import {
     ModServerCommunications
 } from "./server_communications"
@@ -82,7 +86,7 @@ import {
 
 import {
     accessRightsPlugin,
-    authorInputPlugin,
+    contributorInputPlugin,
     citationRenderPlugin,
     clipboardPlugin,
     collabCaretsPlugin,
@@ -90,13 +94,15 @@ import {
     footnoteMarkersPlugin,
     headerbarPlugin,
     jumpHiddenNodesPlugin,
-    keywordInputPlugin,
+    tagInputPlugin,
     linksPlugin,
     marginboxesPlugin,
     placeholdersPlugin,
     settingsPlugin,
+    documentTemplatePlugin,
     toolbarPlugin,
-    trackPlugin
+    trackPlugin,
+    tableMenuPlugin
 } from "./state_plugins"
 import {
     buildEditorKeymap
@@ -110,7 +116,7 @@ export class Editor {
     // A class that contains everything that happens on the editor page.
     // It is currently not possible to initialize more than one editor class, as it
     // contains bindings to menu items, etc. that are uniquely defined.
-    constructor(id, {app, staticUrl, websocketUrl, user}) {
+    constructor({app, staticUrl, websocketUrl, user}, idString) {
         this.app = app
         this.staticUrl = staticUrl
         this.websocketUrl = websocketUrl
@@ -122,18 +128,28 @@ export class Editor {
         this.waitingForDocument = true
 
         this.docInfo = {
-            id,
             rights: '',
             owner: undefined,
             is_owner: false,
             confirmedDoc: false, // The latest doc as confirmed by the server.
             dir: 'ltr' // standard direction, used in input fields, etc.
         }
+        let id = parseInt(idString)
+        if (isNaN(id)) {
+            id = 0
+            let template = parseInt(idString.slice(1))
+            if(isNaN(template)) {
+                template = 0
+            }
+            this.docInfo.template = template
+        }
+        this.docInfo.id = id
         this.schema = docSchema
 
         this.menu = {
             headerbarModel: headerbarModel(),
-            toolbarModel: toolbarModel()
+            toolbarModel: toolbarModel(),
+            tableMenuModel: tableMenuModel()
         }
         this.client_id = Math.floor(Math.random() * 0xFFFFFFFF)
         this.clientTimeAdjustment = 0
@@ -156,12 +172,14 @@ export class Editor {
             [footnoteMarkersPlugin, () => ({editor: this})],
             [commentsPlugin, () => ({editor: this})],
             [marginboxesPlugin, () => ({editor: this})],
-            [keywordInputPlugin, () => ({editor: this})],
-            [authorInputPlugin, () => ({editor: this})],
+            [tagInputPlugin, () => ({editor: this})],
+            [contributorInputPlugin, () => ({editor: this})],
             [clipboardPlugin, () => ({editor: this, viewType: 'main'})],
             [accessRightsPlugin, () => ({editor: this})],
             [settingsPlugin, () => ({editor: this})],
-            [trackPlugin, () => ({editor: this})]
+            [documentTemplatePlugin, () => ({editor: this})],
+            [trackPlugin, () => ({editor: this})],
+            [tableMenuPlugin, () => ({editor: this})]
         ]
     }
 
@@ -170,6 +188,8 @@ export class Editor {
             'libs/katex/katex.min.css',
             'mathquill.css',
             'editor.css',
+            'tags.css',
+            'contributors.css',
             'document.css',
             'carets.css',
             'tracking.css',
@@ -181,7 +201,8 @@ export class Editor {
             'citation_dialog.css',
             'review.css',
             'add_remove_dialog.css',
-            'bibliography.css'
+            'bibliography.css',
+            'table_menu.css'
         ], this.staticUrl)
         whenReady().then(() => {
             new ModCitations(this)
@@ -249,7 +270,7 @@ export class Editor {
                 schema: this.schema
             }),
             handleDOMEvents: {
-                focus: (view, event) => {
+                focus: (view, _event) => {
                     this.currentView = this.view
                     // We focus once more, as focus may have disappeared due to
                     // disappearing placeholders.
@@ -272,7 +293,7 @@ export class Editor {
         new ModTrack(this)
         new ModMarginboxes(this)
         new ModComments(this)
-        new ModStyles(this)
+        new ModDocumentTemplate(this)
         this.activateFidusPlugins()
         this.mod.serverCommunications.init()
     }
@@ -305,7 +326,7 @@ export class Editor {
 
         this.docInfo = data.doc_info
         this.docInfo.version = doc["v"]
-
+        this.docInfo.template = data.doc.template.definition
         if (this.docInfo.version === 0) {
             // If the document is new, change the url.
             window.history.replaceState("", "", `/document/${this.docInfo.id}/`)
@@ -322,12 +343,21 @@ export class Editor {
         // assign image DB to be used in footnote schema.
         this.mod.footnotes.fnEditor.schema.cached.imageDB = this.mod.db.imageDB
         this.docInfo.confirmedJson = JSON.parse(JSON.stringify(doc.contents))
-
         let stateDoc
         if (doc.contents.type) {
-            stateDoc = docSchema.nodeFromJSON({type:'doc', content:[doc.contents]})
+            stateDoc = this.schema.nodeFromJSON({type:'doc', content:[
+                adjustDocToTemplate(doc.contents, this.docInfo.template)
+            ]})
         } else {
-            stateDoc = this.schema.topNodeType.createAndFill()
+            const article = JSON.parse(JSON.stringify(this.docInfo.template)),
+                language = navigator.languages.find(
+                    lang => article.attrs.languages.includes(lang)
+                )
+            // Set document language according to local user preferences
+            if (language) {
+                article.attrs.language = language
+            }
+            stateDoc = this.schema.nodeFromJSON({type:'doc', content:[article]})
         }
         const plugins = this.statePlugins.map(plugin => {
             if (plugin[1]) {
@@ -345,8 +375,8 @@ export class Editor {
 
         document.getElementById('flow').classList.remove('hide')
         // Set document in prosemirror
-        this.view.updateState(EditorState.create(stateConfig))
-
+        this.view.setProps({state: EditorState.create(stateConfig)})
+        this.view.setProps({nodeViews: {}}) // Needed to initialize nodeViews in plugins
         // Set initial confirmed doc
         this.docInfo.confirmedDoc = this.view.state.doc
 
@@ -357,6 +387,8 @@ export class Editor {
         this.mod.comments.store.reset()
         this.mod.comments.store.loadComments(doc.comments)
         this.mod.marginboxes.view(this.view)
+        // Set part specific settings
+        this.mod.documentTemplate.addDocPartSettings()
         this.waitingForDocument = false
         if (locationHash.length) {
             this.scrollIdIntoView(locationHash.slice(1))

@@ -1,8 +1,17 @@
-import {figureImageTemplate, configureFigureTemplate} from "./templates"
-import {ImageSelectionDialog} from "../../images/selection_dialog"
-import {addDropdownBox, Dialog} from "../../common"
+import {
+    configureFigureTemplate
+} from "./templates"
+import {
+    ImageSelectionDialog
+} from "../../images/selection_dialog"
+import {
+    addDropdownBox,
+    Dialog
+} from "../../common"
 import katex from "katex"
-import {randomFigureId} from "../../schema/common"
+import {
+    randomFigureId
+} from "../../schema/common"
 
 export class FigureDialog {
     constructor(editor) {
@@ -16,6 +25,8 @@ export class FigureDialog {
         this.contentNode = false
         this.caption = ''
         this.figureCategory = 'figure'
+        this.aligned = 'center'
+        this.width = "50"
         this.equation = ''
         this.node = this.editor.currentView.state.selection.node
         this.submitMessage = gettext('Insert')
@@ -44,6 +55,17 @@ export class FigureDialog {
             document.getElementById(`figure-category-${this.figureCategory}`).innerText
     }
 
+    setFigureAlignment() {
+        this.dialog.dialogEl.querySelector('#figure-alignment-btn label').innerHTML =
+            document.getElementById(`figure-alignment-${this.aligned}`).innerText
+    }
+
+    setFigureWidth() {
+        this.dialog.dialogEl.querySelector('#figure-width-btn label').innerHTML =
+            document.getElementById(`figure-width-${this.width}`).innerText
+
+    }
+
     submitForm() {
         const mathInput = this.dialog.dialogEl.querySelector('input[name=figure-math]')
         const captionInput = this.dialog.dialogEl.querySelector('input[name=figure-caption]')
@@ -60,27 +82,34 @@ export class FigureDialog {
             return false
         }
 
-        if (this.insideFigure && this.equation === this.node.attrs.equation &&
+        if (
+            this.insideFigure &&
+            this.equation === this.node.attrs.equation &&
             (this.imgId === this.node.attrs.image) &&
             this.imgDb === 'document' &&
             this.caption === this.node.attrs.caption &&
-            this.figureCategory === this.node.attrs.figureCategory) {
-            // the figure has not been changed, just close the dialog
+            this.figureCategory === this.node.attrs.figureCategory &&
+            this.aligned === this.node.attrs.aligned &&
+            this.width === this.node.attrs.width
+        ) {
+            // The figure has not been changed, just close the dialog
             this.dialog.close()
             return false
         }
-        if (this.imgDb==='user') {
-            // add image to document db.
+        if (this.imgDb === 'user') {
+            // Add image to document db.
             const imageEntry = this.userImageDB.db[this.imgId]
             this.imageDB.setImage(this.imgId, imageEntry)
             this.imgDb = 'document'
         }
-
+        // This is the node wherein figureAlignment will affect the attribute
         const nodeType = this.editor.currentView.state.schema.nodes['figure']
         const tr = this.editor.currentView.state.tr.replaceSelectionWith(
             nodeType.createAndFill({
                 equation: this.equation,
                 image: this.imgId,
+                aligned: this.aligned,
+                width: this.width,
                 figureCategory: this.figureCategory,
                 caption: this.caption,
                 id: randomFigureId()
@@ -92,10 +121,10 @@ export class FigureDialog {
     }
 
     init() {
-    // toolbar figure
+        // toolbar figure
         const buttons = []
 
-        if (this.node && this.node.type && this.node.type.name==='figure') {
+        if (this.node && this.node.type && this.node.type.name === 'figure') {
             this.insideFigure = true
             this.submitMessage = gettext('Update')
             this.equation = this.node.attrs.equation
@@ -103,7 +132,8 @@ export class FigureDialog {
             this.imgDb = 'document'
             this.figureCategory = this.node.attrs.figureCategory
             this.caption = this.node.attrs.caption
-
+            this.aligned = this.node.attrs.aligned
+            this.width = this.node.attrs.width
             buttons.push({
                 text: gettext('Remove'),
                 classes: 'fw-orange',
@@ -115,12 +145,13 @@ export class FigureDialog {
             })
 
         }
-
-        buttons.push({
+        // Image positioning both at the time of updating and inserting for the first time
+        buttons.push({ // Update
             text: this.submitMessage,
             classes: 'fw-dark',
             click: () => this.submitForm()
         })
+
 
         buttons.push({
             type: 'cancel'
@@ -134,6 +165,8 @@ export class FigureDialog {
                 equation: this.equation,
                 caption: this.caption,
                 image: this.imgId,
+                aligned: this.aligned,
+                width: this.width,
                 dir: this.editor.docInfo.dir
             }),
             buttons,
@@ -147,6 +180,8 @@ export class FigureDialog {
         captionInput.focus()
 
         this.setFigureLabel()
+        this.setFigureAlignment()
+        this.setFigureWidth()
 
         if (this.equation) {
             this.layoutMathPreview()
@@ -158,6 +193,35 @@ export class FigureDialog {
             document.getElementById('figure-category-btn'),
             document.getElementById('figure-category-pulldown')
         )
+
+
+        addDropdownBox(
+            document.getElementById('figure-alignment-btn'),
+            document.getElementById('figure-alignment-pulldown')
+        )
+
+        addDropdownBox(
+            document.getElementById('figure-width-btn'),
+            document.getElementById('figure-width-pulldown')
+        )
+        document.querySelectorAll('#figure-alignment-pulldown li span').forEach(el => el.addEventListener(
+            'click',
+            event => {
+                event.preventDefault()
+                this.aligned = el.id.split('-')[2]
+                this.setFigureAlignment()
+            }
+        ))
+
+        document.querySelectorAll('#figure-width-pulldown li span').forEach(el => el.addEventListener(
+            'click',
+            event => {
+                event.preventDefault()
+                this.width = el.id.split('-')[2]
+                this.setFigureWidth()
+            }
+        ))
+
 
         document.querySelectorAll('#figure-category-pulldown li span').forEach(el => el.addEventListener(
             'click',
@@ -172,7 +236,7 @@ export class FigureDialog {
             () => {
                 // If a figure is being entered, disable the image button
                 document.getElementById('insertFigureImage').classList.add('disabled')
-                document.getElementById('insertFigureImage').setAttribute('disabled','disabled')
+                document.getElementById('insertFigureImage').setAttribute('disabled', 'disabled')
             })
 
         const mathInput = document.querySelector('input[name=figure-math]')
@@ -201,7 +265,10 @@ export class FigureDialog {
                     this.imgId
                 )
                 imageSelection.init().then(
-                    ({id, db}) => {
+                    ({
+                        id,
+                        db
+                    }) => {
                         if (id) {
                             this.imgId = id
                             this.imgDb = db

@@ -155,7 +155,7 @@ export const tableResizeTemplate =() =>
                     ${gettext("Fixed")}
                 </span></li>
                 <li><span class="fw-pulldown-item" id="table-layout-auto">
-                    ${gettext("Auto")}
+                    ${gettext("Fit the content")}
                 </span></li>
             </ul>
         </div>

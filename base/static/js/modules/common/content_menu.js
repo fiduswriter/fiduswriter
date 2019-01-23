@@ -88,18 +88,35 @@ export class ContentMenu {
 
     centerDialog() {
         const totalWidth = window.innerWidth,
-        totalHeight = window.innerHeight,
-        dialogWidth = this.dialogEl.clientWidth,
-        dialogHeight = this.dialogEl.clientHeight,
-        scrollTopOffset = window.pageYOffset,
-        scrollLeftOffset = window.pageXOffset
+            totalHeight = window.innerHeight,
+            dialogRect = this.dialogEl.getBoundingClientRect(),
+            dialogWidth = dialogRect.width + 10,
+            dialogHeight = dialogRect.height + 10,
+            scrollTopOffset = window.pageYOffset,
+            scrollLeftOffset = window.pageXOffset
         this.dialogEl.style.top = `${(totalHeight - dialogHeight)/2 + scrollTopOffset}px`
         this.dialogEl.style.left = `${(totalWidth - dialogWidth)/2 + scrollLeftOffset}px`
     }
 
     positionDialog() {
-        this.dialogEl.style.top = `${ parseInt(this.menuPos.Y)-100}px`
-        this.dialogEl.style.left = `${ parseInt(this.menuPos.X)+20}px`
+        const dialogHeight = this.dialogEl.getBoundingClientRect().height + 10,
+            scrollTopOffset = window.pageYOffset,
+            clientHeight = window.document.documentElement.clientHeight,
+            left = parseInt(this.menuPos.X)+20
+        // We try to ensure that the menu is seen in the browser at the preferred location.
+        // Adjustments are made in case it doesn't fit.
+        let top = parseInt(this.menuPos.Y)-100
+
+        if ((top + dialogHeight) > (scrollTopOffset + clientHeight)) {
+            top -= ((top + dialogHeight) - (scrollTopOffset + clientHeight))
+        }
+
+        if (top < scrollTopOffset) {
+            top = scrollTopOffset + 10
+        }
+
+        this.dialogEl.style.top = `${top}px`
+        this.dialogEl.style.left = `${left}px`
     }
 
     bind() {

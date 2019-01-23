@@ -26,7 +26,7 @@ export class TableView {
             }
             const contentMenu = new ContentMenu({
                 menu: this.options.editor.menu.tableMenuModel,
-                width: 290,
+                width: 280,
                 page: this.options.editor,
                 onClose: () => {view.focus()}
             })

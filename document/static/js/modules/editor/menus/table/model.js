@@ -291,20 +291,10 @@ export const tableMenuModel = ()=> ({
             order: 14,
         },
         {
-            title: gettext('Delete table'),
-            type: 'action',
-            tooltip: gettext('Delete currently selected table'),
-            order: 15,
-            action: editor => {
-                deleteTable(editor.currentView.state, editor.currentView.dispatch)
-            },
-            disabled: editor => !findTable(editor.currentView.state)
-        },
-        {
             title: gettext('Resize/Reposition'),
             type: 'action',
             tooltip: gettext('Resize/Reposition a table.'),
-            order: 16,
+            order: 15,
             action: editor => {
                 const dialog = new TableResizeDialog(editor)
                 dialog.init()
@@ -312,6 +302,16 @@ export const tableMenuModel = ()=> ({
             },
             disabled: editor => !findTable(editor.currentView.state)
         },
-
+        {
+            title: gettext('Delete table'),
+            type: 'action',
+            icon: 'trash-alt',
+            tooltip: gettext('Delete currently selected table'),
+            order: 16,
+            action: editor => {
+                deleteTable(editor.currentView.state, editor.currentView.dispatch)
+            },
+            disabled: editor => !findTable(editor.currentView.state)
+        }
     ]
 })

@@ -57,3 +57,8 @@
 .content-menu-item-divider {
     border: 0.8px solid #eeeeee !important;
 }
+.content-menu-item-icon {
+    position: absolute;
+    right: 40px;
+    color:#bebebe;
+}

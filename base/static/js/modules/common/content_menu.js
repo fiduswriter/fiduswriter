@@ -9,7 +9,13 @@ const menuTemplate = ({id, classes, height, width, zIndex, menu, scroll, page}) 
         ${
             menu.content.map((menuItem,index)=>
                     menuItem.type == "separator"?'<hr class="content-menu-item-divider"/>':`<li data-index="${index}" class="content-menu-item${menuItem.disabled && menuItem.disabled(page) ? ' disabled' : ''}"
-                                                            title='${menuItem.tooltip}'>${typeof menuItem.title === 'function' ? menuItem.title(page) : menuItem.title}</li>`
+                                                            title='${menuItem.tooltip}'>${typeof menuItem.title === 'function' ? menuItem.title(page) : menuItem.title}
+                                                            ${
+                                                                menuItem.icon ?
+                                                                `<span class="content-menu-item-icon"><i class="fa fa-${menuItem.icon}"></i></span>` :
+                                                                ''
+                                                            }
+                                                            </li>`
             ).join('')
         }
         </ul>

@@ -120,7 +120,7 @@ export class TableResizeDialog {
         if(this.width == "100"){
             this.dialog.dialogEl.querySelector("#table-alignment-btn").classList.add("disabled")
             this.dialog.dialogEl.querySelector('#table-alignment-btn label').innerHTML = "Center"
-            return;
+            return
         }
         this.dialog.dialogEl.querySelector('#table-alignment-btn label').innerHTML =
             document.getElementById(`table-alignment-${this.aligned}`).innerText

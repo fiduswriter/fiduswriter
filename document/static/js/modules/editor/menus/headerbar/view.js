@@ -89,7 +89,7 @@ export class HeaderbarView {
                     menu.open = false
                     this.closeMenu(menu)
                     this.update()
-                    break;
+                    break
                 case 'setting':
                     // Similar to 'action' but not closing menu.
                     if (menuItem.disabled && menuItem.disabled(this.editor)) {
@@ -97,14 +97,14 @@ export class HeaderbarView {
                     }
                     menuItem.action(this.editor)
                     this.update()
-                    break;
+                    break
                 case 'menu':
                     this.closeMenu(menu)
                     menuItem.open = true
                     this.update()
-                    break;
+                    break
                 default:
-                    break;
+                    break
             }
         } else if (target.matches('#headerbar #header-navigation .header-nav-item:not(.disabled)')) {
             // A menu has been clicked, lets find out which one.
@@ -281,15 +281,15 @@ export class HeaderbarView {
             case 'action':
             case 'setting':
                 returnValue = this.getActionMenuItemHTML(menuItem)
-                break;
+                break
             case 'menu':
                 returnValue = this.getMenuMenuItemHTML(menuItem)
-                break;
+                break
             case 'separator':
                 returnValue = '<hr>'
-                break;
+                break
             default:
-                break;
+                break
         }
         return returnValue
     }

@@ -162,21 +162,6 @@ export const tableResizeTemplate =() =>
 
     </div>`
 
-export const tableMenuTemplate = (options) => {
-    return `
-    <div>
-        <ul class="table-menu-list">
-        ${
-            options.editor.menu.tableMenuModel.content.map((menuItem,index)=>
-                    menuItem.type == "separator"?'<hr class="table-menu-item-divider"/>':`<li data-index="${index}" class="table-menu-item${menuItem.disabled && menuItem.disabled(options.editor) ? ' disabled' : ''}"
-                                                            title='${menuItem.tooltip}'>${typeof menuItem.title === 'function' ? menuItem.title(options.editor) : menuItem.title}</li>`
-            ).join('')
-        }
-        </ul>
-    </div>
-    `
-}
-
 
 export const mathDialogTemplate = () =>
 

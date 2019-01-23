@@ -39,7 +39,7 @@ from "./dialog"
 export {
     ContentMenu
 }
-from "./incontent_menu"
+from "./content_menu"
 
 export {
     makeWorker

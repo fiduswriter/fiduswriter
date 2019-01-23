@@ -170,17 +170,17 @@ export class LatexExporterConvert {
                 switch(level) {
                     case 1:
                         start += '\n\n\\section{'
-                        break;
+                        break
                     case 2:
                         start += '\n\n\\subsection{'
-                        break;
+                        break
                     case 3:
                     case 4:
                     case 5:
                     case 6:
                         // TODO: Add support for levels 4/5/6
                         start += '\n\n\\subsubsection{'
-                        break;
+                        break
                 }
                 // Check if this heading is being linked to. If this is the case,
                 // place a protected hypertarget here that does not add an extra

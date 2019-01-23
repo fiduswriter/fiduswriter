@@ -40,10 +40,6 @@ export class TableView {
         this.dom.appendChild(this.contentDOM)
     }
 
-    ignoreMutation(_record) {
-        return true
-    }
-
 }
 
 const isSelectedTableClicked = (state, $pos) => {

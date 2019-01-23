@@ -1,6 +1,5 @@
 import {tableMenuTemplate} from "./templates"
 import {ContentMenu} from "../../common"
-import {tableMenuModel} from "../menus"
 
 export class TableMenuDialog {
     constructor(node, view, options) {
@@ -42,5 +41,3 @@ export class TableMenuDialog {
         }
     }
 }
-
-

@@ -10,13 +10,9 @@ export class TableView {
         this.getPos = getPos
         this.options = this.options
         this.dom = document.createElement("div")
-        this.dom.classList.add(`table-${node.attrs.width}`,`table-${node.attrs.aligned}`,'container');
+        this.dom.classList.add(`table-${node.attrs.width}`,`table-${node.attrs.aligned}`,'table-container');
         const menuButton = document.createElement("button")
-        if(options.editor.docInfo.access_rights === "write"){
-            menuButton.classList.add('table-menu-btn')
-        }else{
-            menuButton.classList.add('table-menu-btn','btn-hide');
-        }
+        menuButton.classList.add('table-menu-btn')
         menuButton.innerHTML = '<span class="table-menu-icon"><i class="fa fa-ellipsis-v"></i></span>'
         this.dom.appendChild(menuButton)
         menuButton.addEventListener('click', event => {

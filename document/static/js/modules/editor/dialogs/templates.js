@@ -1,5 +1,4 @@
 import {escapeText} from "../../common"
-import {tableMenuModel} from '../menus'
 
 export const linkDialogTemplate = ({defaultLink, internalTargets, link, linkTitle}) =>
     `${
@@ -169,7 +168,7 @@ export const tableMenuTemplate = (options) => {
         <ul class="table-menu-list">
         ${
             options.editor.menu.tableMenuModel.content.map((menuItem,index)=>
-                    menuItem.type == "separator"?'<hr class="table-menu-item-divider"/>':`<li data-index="${index}" class="table-menu-item${menuItem.disabled && menuItem.disabled(options.editor) ? ' btn-disabled' : ''}"
+                    menuItem.type == "separator"?'<hr class="table-menu-item-divider"/>':`<li data-index="${index}" class="table-menu-item${menuItem.disabled && menuItem.disabled(options.editor) ? ' disabled' : ''}"
                                                             title='${menuItem.tooltip}'>${typeof menuItem.title === 'function' ? menuItem.title(options.editor) : menuItem.title}</li>`
             ).join('')
         }

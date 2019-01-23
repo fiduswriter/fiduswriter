@@ -16,7 +16,6 @@ export class TableView {
         menuButton.innerHTML = '<span class="table-menu-icon"><i class="fa fa-ellipsis-v"></i></span>'
         this.dom.appendChild(menuButton)
         menuButton.addEventListener('click', event => {
-            console.log(event)
             event.preventDefault()
             event.stopImmediatePropagation()
             if(!isSelectedTableClicked(this.view.state,getPos())){

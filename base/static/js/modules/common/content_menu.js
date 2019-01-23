@@ -8,8 +8,23 @@ const menuTemplate = ({id, classes, height, width, zIndex, menu, scroll, page}) 
         <ul class="content-menu-list">
         ${
             menu.content.map((menuItem,index)=>
-                    menuItem.type == "separator"?'<hr class="content-menu-item-divider"/>':`<li data-index="${index}" class="content-menu-item${menuItem.disabled && menuItem.disabled(page) ? ' disabled' : ''}"
-                                                            title='${menuItem.tooltip}'>${typeof menuItem.title === 'function' ? menuItem.title(page) : menuItem.title}</li>`
+                menuItem.type == "separator" ?
+                    '<hr class="content-menu-item-divider"/>' :
+                    `<li data-index="${index}" class="content-menu-item${
+                        menuItem.disabled && menuItem.disabled(page) ?
+                        ' disabled' :
+                        ''
+                    }" title='${menuItem.tooltip}'>
+                    ${
+                        typeof menuItem.title === 'function' ?
+                            menuItem.title(page) :
+                            menuItem.title
+                    } ${
+                        menuItem.icon ?
+                            `<span class="content-menu-item-icon"><i class="fa fa-${menuItem.icon}"></i></span>` :
+                            ''
+                    }
+                    </li>`
             ).join('')
         }
         </ul>
@@ -29,7 +44,8 @@ export class ContentMenu {
         onClose = false,
         scroll = false,
         dialogEl = false,
-        backdropEl = false
+        backdropEl = false,
+        menuPos = false
     }) {
         this.id = id
         this.page = page
@@ -41,6 +57,7 @@ export class ContentMenu {
         this.scroll = scroll
         this.dialogEl = dialogEl
         this.backdropEl = backdropEl
+        this.menuPos = menuPos
     }
 
     open() {
@@ -62,19 +79,44 @@ export class ContentMenu {
         )
         this.backdropEl = document.body.lastElementChild
         this.dialogEl = this.backdropEl.previousElementSibling
-        this.positionDialog()
+        if(this.menuPos && this.menuPos.X && this.menuPos.Y)
+            this.positionDialog()
+        else
+            this.centerDialog()
         this.bind()
     }
 
-    positionDialog() {
+    centerDialog() {
         const totalWidth = window.innerWidth,
             totalHeight = window.innerHeight,
-            dialogWidth = this.dialogEl.clientWidth,
-            dialogHeight = this.dialogEl.clientHeight,
+            dialogRect = this.dialogEl.getBoundingClientRect(),
+            dialogWidth = dialogRect.width + 10,
+            dialogHeight = dialogRect.height + 10,
             scrollTopOffset = window.pageYOffset,
             scrollLeftOffset = window.pageXOffset
-        this.dialogEl.style.top = `${(totalHeight - dialogHeight)/1.4 + scrollTopOffset}px`
-        this.dialogEl.style.left = `${(totalWidth - dialogWidth)/1.5 + scrollLeftOffset}px`
+        this.dialogEl.style.top = `${(totalHeight - dialogHeight)/2 + scrollTopOffset}px`
+        this.dialogEl.style.left = `${(totalWidth - dialogWidth)/2 + scrollLeftOffset}px`
+    }
+
+    positionDialog() {
+        const dialogHeight = this.dialogEl.getBoundingClientRect().height + 10,
+            scrollTopOffset = window.pageYOffset,
+            clientHeight = window.document.documentElement.clientHeight,
+            left = parseInt(this.menuPos.X)+20
+        // We try to ensure that the menu is seen in the browser at the preferred location.
+        // Adjustments are made in case it doesn't fit.
+        let top = parseInt(this.menuPos.Y)-100
+
+        if ((top + dialogHeight) > (scrollTopOffset + clientHeight)) {
+            top -= ((top + dialogHeight) - (scrollTopOffset + clientHeight))
+        }
+
+        if (top < scrollTopOffset) {
+            top = scrollTopOffset + 10
+        }
+
+        this.dialogEl.style.top = `${top}px`
+        this.dialogEl.style.left = `${left}px`
     }
 
     bind() {

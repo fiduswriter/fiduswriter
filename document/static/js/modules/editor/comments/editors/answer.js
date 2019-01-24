@@ -25,6 +25,9 @@ export class CommentAnswerEditor extends CommentEditor {
 
     submit() {
         const text = this.view.state.doc.toJSON().content
+        if (!text) {
+            return
+        }
         if (this.options.answerId) {
             this.mod.interactions.submitAnswerUpdate(this.id, this.options.answerId, text)
         } else {

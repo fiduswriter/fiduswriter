@@ -147,7 +147,7 @@ export class CommentEditor {
     submit() {
         const comment = this.view.state.doc.toJSON().content,
             isMajor = this.dom.querySelector('.comment-is-major').checked
-        if (comment.length > 0) {
+        if (comment && comment.length > 0) {
             this.mod.interactions.updateComment({id: this.id, comment, isMajor})
             this.sendNotifications()
         } else {

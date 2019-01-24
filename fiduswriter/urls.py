@@ -1,12 +1,18 @@
+from importlib import import_module
+
 from django.conf.urls import include, url
 from django.http import HttpResponse
 from django.contrib import admin
 from django.urls import path
 from django.conf import settings
+from django.views.i18n import JavaScriptCatalog
+
 from base.views import app as app_view
 
-from django.views.i18n import JavaScriptCatalog
-from importlib import import_module
+
+admin.site.site_header = settings.ADMIN_SITE_HEADER
+admin.site.site_title = settings.ADMIN_SITE_TITLE
+admin.site.index_title = settings.ADMIN_INDEX_TITLE
 
 # Django URLs -- Notice that these are only consulted after the
 # tornado_url_list found in base/servers/tornado_django_hybrid.py

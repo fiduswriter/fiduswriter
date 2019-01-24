@@ -495,6 +495,6 @@ const convertNodeV23 = function(node, imageIds) {
 const convertDocV23 = function(doc) {
     const returnDoc = JSON.parse(JSON.stringify(doc))
     convertNodeV23(returnDoc.contents)
-    Object.assign(returnDoc.settings, v23ExtraAttrs)
+    returnDoc.settings = Object.assign({}, returnDoc.settings, v23ExtraAttrs)
     return returnDoc
 }

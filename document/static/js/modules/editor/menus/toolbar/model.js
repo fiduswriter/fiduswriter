@@ -600,7 +600,7 @@ export const toolbarModel = () => ({
                 dialog.init()
                 return false
             },
-            available: editor => available: editor => elementAvailable(editor, 'table'),
+            available: editor => elementAvailable(editor, 'table'),
             disabled: editor => {
                 if (
                     READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||

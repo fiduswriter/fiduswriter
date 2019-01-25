@@ -600,18 +600,7 @@ export const toolbarModel = () => ({
                 dialog.init()
                 return false
             },
-            available: editor => {
-                let tablesInDocParts = false
-                editor.view.state.doc.firstChild.forEach(docPart => {
-                    if (docPart.attrs.elements && docPart.attrs.elements.includes('table')) {
-                        tablesInDocParts = true
-                    }
-                })
-                return (
-                    editor.view.state.doc.firstChild.attrs.footnote_elements.includes('table') ||
-                    tablesInDocParts
-                )
-            },
+            available: editor => available: editor => elementAvailable(editor, 'table'),
             disabled: editor => {
                 if (
                     READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||

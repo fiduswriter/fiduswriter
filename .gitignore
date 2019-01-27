@@ -1,4 +1,5 @@
 fiduswriter.sql
+fiduswriter.sql.backup
 *.pyc
 *~
 *-venv

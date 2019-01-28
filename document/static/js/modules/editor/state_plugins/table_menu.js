@@ -37,7 +37,7 @@ export class TableView {
         const tbody = document.createElement("tbody")
         table.append(tbody)
         this.contentDOM = this.dom.appendChild(table)
-        this.contentDOM.classList.add(`layout-${node.attrs.layout}`)
+        this.contentDOM.classList.add(`table-${node.attrs.layout}`)
         this.dom.appendChild(this.contentDOM)
     }
 

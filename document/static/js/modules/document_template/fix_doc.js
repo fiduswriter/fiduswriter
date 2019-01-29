@@ -61,7 +61,7 @@ export function adjustDocToTemplate(doc, template) {
         if (oldNode) {
             while (oldNode !== oldContent[0]) {
                 const firstOldContent = oldContent.shift(),
-                    inTemplate = !!template.structure.find(part => part.type === firstOldContent.type && part.attrs.id === firstOldContent.attrs.id)
+                    inTemplate = !!template.content.find(part => part.type === firstOldContent.type && part.attrs.id === firstOldContent.attrs.id)
                 if (inTemplate) {
                     movedParts.push(firstOldContent)
                 } else if (

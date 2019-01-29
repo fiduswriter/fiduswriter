@@ -97,7 +97,7 @@ export class DocumentTemplateDesigner {
                             title = el.querySelector('input.title').value,
                             help = this.getEditorValue(el.querySelector('.instructions')),
                             initial = this.getEditorValue(el.querySelector('.initial')),
-                            locking = el.querySelector('.locking option:checked').value,
+                            locking = el.querySelector('.locking option:checked') ? el.querySelector('.locking option:checked').value : 'false',
                             optional = el.querySelector('.optional option:checked').value,
                             attrs = {id, title},
                             node = {type, attrs}
@@ -207,8 +207,11 @@ export class DocumentTemplateDesigner {
     }
 
     setupEditors(el, type, help = false, initial = false) {
-        const helpEl = el.querySelector('.instructions'),
-            helpDoc = help ?
+        const helpEl = el.querySelector('.instructions')
+        if (!helpEl) {
+            return
+        }
+        const helpDoc = help ?
                 helpSchema.nodeFromJSON({type:'doc', content: help}) :
                 helpSchema.nodes.doc.createAndFill(),
             helpView = new EditorView(helpEl, {

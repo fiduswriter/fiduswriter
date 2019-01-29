@@ -139,6 +139,12 @@ export const toolbarModel = () => ({
                         editor.currentView.state.selection.to
                 ) {
                     return editor.currentView.state.selection.$anchor.nodeAfter.attrs.title
+                } else if (
+                    editor.currentView.state.selection.jsonID === 'node' &&
+                    editor.currentView.state.selection.node.isBlock &&
+                    editor.currentView.state.selection.node.attrs.title
+                ) {
+                    return editor.currentView.state.selection.node.attrs.title
                 } else {
                     return ''
                 }
@@ -160,7 +166,7 @@ export const toolbarModel = () => ({
                     editor.currentView.state.selection.node.isBlock
                 ) {
                     const selectedNode = editor.currentView.state.selection.node
-                    return BLOCK_LABELS[selectedNode.type.name]
+                    return BLOCK_LABELS[selectedNode.type.name] ? BLOCK_LABELS[selectedNode.type.name] : ''
                 }
                 const startElement = editor.currentView.state.selection.$anchor.parent,
                     endElement = editor.currentView.state.selection.$head.parent
@@ -640,7 +646,8 @@ export const toolbarModel = () => ({
             disabled: editor => {
                 if (
                     READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
-                    editor.currentView.state.selection.empty
+                    editor.currentView.state.selection.empty ||
+                    editor.currentView.state.selection.$anchor.depth < 2
                 ) {
                     return true
                 }

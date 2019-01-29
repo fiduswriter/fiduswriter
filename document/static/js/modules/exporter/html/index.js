@@ -33,6 +33,8 @@ export class HTMLExporter extends BaseDOMExporter{
         ).then(
             () => this.joinDocumentParts()
         ).then(
+            () => this.fillToc()
+        ).then(
             () => this.postProcess()
         ).then(
             ({title, html, math, imageFiles}) => this.save({title, html, math, imageFiles, docStyle})

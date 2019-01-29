@@ -199,8 +199,8 @@ export class DocumentTemplateDesigner {
     setupInitialEditors() {
         Array.from(document.querySelectorAll('.to-container .doc-part:not(.fixed)')).forEach((el, index) => {
             const value = this.value.content[index+1], // offset by title
-                help = value.help,
-                initial = value.initial,
+                help = value.attrs.help,
+                initial = value.attrs.initial,
                 type = value.type
             this.setupEditors(el, type, help, initial)
         })
@@ -288,7 +288,7 @@ export class DocumentTemplateDesigner {
                 schema.nodeFromJSON({
                     type:'doc',
                     content: [{
-                        type: `${type}_part`,
+                        type: type,
                         content: initial
                     }]
                 }) :

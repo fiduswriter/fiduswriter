@@ -18,7 +18,7 @@ ${
     ).join('')
 }
     </head>
-    <body>
+    <body class="article">
 ${
     part && part.length ? `<h1 class="part">${escapeText(part)}</h1>` : ''
 }

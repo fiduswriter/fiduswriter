@@ -79,7 +79,7 @@ export const documentTemplatePlugin = function(options) {
         },
         filterTransaction: (tr, state) => {
             if (
-                !tr.steps.length ||
+                !tr.docChanged ||
                 tr.getMeta('fixIds') ||
                 tr.getMeta('remote') ||
                 tr.getMeta('track') ||

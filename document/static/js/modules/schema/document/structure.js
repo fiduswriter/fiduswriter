@@ -148,6 +148,37 @@ export const table_part = partSpec('table', 'table', {
     }
 })
 
+export const table_of_contents = {
+    group: "part",
+    parseDOM: [{
+        tag: "div.table-of-contents"
+    }],
+    attrs: {
+        title: {
+            default: gettext('Table of Contents')
+        },
+        id: {
+            default: 'toc'
+        },
+        optional: {
+            default: false
+        },
+        hidden: {
+            default: false
+        }
+    },
+    toDOM(node) {
+        const dom = document.createElement('div')
+        dom.classList.add('table-of-contents', 'article-part')
+        if (node.attrs.hidden) {
+            dom.dataset.hidden = 'true'
+        }
+        dom.innerHTML = `<h1 class="toc">${node.attrs.title}</h1>`
+        return dom
+    }
+
+}
+
 export const title = {
     content: "text*",
     marks: "annotation track",

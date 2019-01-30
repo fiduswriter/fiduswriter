@@ -99,7 +99,7 @@ export const contributorInputPlugin = function(options) {
 
                 if (
                     (options.editor.docInfo.access_rights !== 'write') ||
-                    (!tr.steps.length && !tr.selectionSet)
+                    (!tr.docChanged && !tr.selectionSet)
                 ) {
                     return {
                         decos,

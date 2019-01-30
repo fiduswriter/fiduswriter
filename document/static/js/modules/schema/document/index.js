@@ -41,7 +41,8 @@ import {
     heading_part,
     contributors_part,
     tags_part,
-    table_part
+    table_part,
+    table_of_contents
 } from "./structure"
 
 
@@ -53,6 +54,7 @@ let specNodes = OrderedMap.from({
     contributors_part,
     tags_part,
     table_part,
+    table_of_contents,
     title,
     contributor,
     tag,

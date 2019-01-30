@@ -28,9 +28,11 @@ export class EpubExporter extends BaseEpubExporter {
     init() {
         addAlert('info', this.doc.title + ': ' + gettext(
             'Epub export has been initiated.'))
-
-
-        this.joinDocumentParts().then(() => this.exportTwo())
+        this.joinDocumentParts().then(
+            () => this.fillToc()
+        ).then(
+            () => this.exportTwo()
+        )
     }
 
     exportTwo() {

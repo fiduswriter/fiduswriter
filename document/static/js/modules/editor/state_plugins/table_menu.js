@@ -3,7 +3,7 @@ import {ContentMenu} from '../../common'
 
 const key = new PluginKey('tableMenu')
 
-export class TableView {
+class TableView {
     constructor(node, view, getPos, options) {
         this.node = node
         this.view = view

@@ -97,7 +97,7 @@ export class DocumentTemplateDesigner {
                             title = el.querySelector('input.title').value,
                             help = this.getEditorValue(el.querySelector('.instructions')),
                             initial = this.getEditorValue(el.querySelector('.initial')),
-                            locking = el.querySelector('.locking option:checked').value,
+                            locking = el.querySelector('.locking option:checked') ? el.querySelector('.locking option:checked').value : 'false',
                             optional = el.querySelector('.optional option:checked').value,
                             attrs = {id, title},
                             node = {type, attrs}
@@ -199,16 +199,19 @@ export class DocumentTemplateDesigner {
     setupInitialEditors() {
         Array.from(document.querySelectorAll('.to-container .doc-part:not(.fixed)')).forEach((el, index) => {
             const value = this.value.content[index+1], // offset by title
-                help = value.help,
-                initial = value.initial,
+                help = value.attrs.help,
+                initial = value.attrs.initial,
                 type = value.type
             this.setupEditors(el, type, help, initial)
         })
     }
 
     setupEditors(el, type, help = false, initial = false) {
-        const helpEl = el.querySelector('.instructions'),
-            helpDoc = help ?
+        const helpEl = el.querySelector('.instructions')
+        if (!helpEl) {
+            return
+        }
+        const helpDoc = help ?
                 helpSchema.nodeFromJSON({type:'doc', content: help}) :
                 helpSchema.nodes.doc.createAndFill(),
             helpView = new EditorView(helpEl, {
@@ -285,7 +288,7 @@ export class DocumentTemplateDesigner {
                 schema.nodeFromJSON({
                     type:'doc',
                     content: [{
-                        type: `${type}_part`,
+                        type: type,
                         content: initial
                     }]
                 }) :

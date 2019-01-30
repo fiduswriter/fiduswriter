@@ -1,5 +1,6 @@
 .table-container {
     position: relative;
+    z-index: 5;
 }
 .table-menu-btn {
     background-color: Transparent;

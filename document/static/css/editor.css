@@ -816,3 +816,8 @@ html[hc=a5] #toolbar {
 .remove-article-part:hover {
     color: #d3421c;
 }
+
+.editor .article .table-of-contents {
+    background-color: lightgrey;
+    padding: 10px;
+}

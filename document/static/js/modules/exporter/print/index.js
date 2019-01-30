@@ -32,6 +32,29 @@ export class PrintExporter extends HTMLExporter {
             section:footnote-content {
                 display: block;
             }
+            .table-of-contents a {
+            	display: inline-flex;
+            	width: 100%;
+            	text-decoration: none;
+            	color: currentColor;
+            	break-inside: avoid;
+            	align-items: baseline;
+            }
+            .table-of-contents a::before {
+            	margin-left: 1px;
+            	margin-right: 1px;
+            	border-bottom: solid 1px lightgray;
+            	content: "";
+            	order: 1;
+            	flex: auto;
+            }
+            .table-of-contents a::after {
+            	text-align: right;
+            	content: target-counter(attr(href, url), page);
+            	align-self: flex-end;
+            	flex: none;
+            	order: 2;
+            }
             @page {
                 size: ${PAPER_SIZES.find(size => size[0] === this.doc.settings.papersize)[1]};
                 @bottom-center {
@@ -45,6 +68,8 @@ export class PrintExporter extends HTMLExporter {
         addAlert('info', `${this.doc.title}: ${gettext('Printing has been initiated.')}`)
         return this.addStyle().then(
             () => this.joinDocumentParts()
+        ).then(
+            () => this.fillToc()
         ).then(
             () => this.postProcess()
         ).then(

@@ -350,6 +350,26 @@ const tableTemplate = ({
     </div>
 </div>`
 
+const tocTemplate = ({
+    id="",
+    title="",
+    optional="false"
+}) =>
+`<div class="doc-part" data-type="table_of_contents">
+    <div class="title">${gettext('Table of Contents')}</div>
+    <div class="attrs">
+        <div class="label">${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></div>
+        <div class="label">${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></div>
+        <div class="label">${gettext('Optional')}
+            <select class="optional">
+                <option value="false" ${optional==='false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
+                <option value="shown" ${optional==='shown' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
+                <option value="hidden" ${optional==='hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
+            </select>
+        </div>
+    </div>
+</div>`
+
 export const footnoteTemplate = ({
     footnote_elements = ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "table"],
     footnote_marks = ["strong", "em", "highlight", "underline", "link"]
@@ -378,6 +398,8 @@ export const templateEditorValueTemplate = ({content}) =>
                 return tagsTemplate(docPart.attrs)
             case 'table_part':
                 return tableTemplate(docPart.attrs)
+            case 'table_of_contents':
+                return tocTemplate(docPart.attrs)
             default:
                 return ''
         }
@@ -409,6 +431,7 @@ export const documentConstructorTemplate = ({value}) =>
                         ${richtextTemplate({})}
                         ${tagsTemplate({})}
                         ${tableTemplate({})}
+                        ${tocTemplate({})}
                     </td>
                     <td class="to-column">
                         <div class="doc-part fixed" data-type="initial">${gettext('Title')}</div>

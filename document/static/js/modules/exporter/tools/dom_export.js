@@ -38,7 +38,7 @@ export class BaseDOMExporter {
         return citRenderer.init().then(
             () => {
                 this.addBibliographyHTML(citRenderer.fm.bibHTML)
-                this.contents = this.cleanHTML(this.contents, citRenderer.fm)
+                this.cleanHTML(citRenderer.fm)
                 return Promise.resolve()
             }
         )
@@ -109,7 +109,7 @@ export class BaseDOMExporter {
         return footnoteAnchor
     }
 
-    cleanHTML(htmlEl, citationFormatter) {
+    cleanHTML(citationFormatter) {
 
         const footnoteSelector = citationFormatter.citationType === 'note' ?
             '.footnote-marker, .citation' :
@@ -118,7 +118,7 @@ export class BaseDOMExporter {
         // at the back of the document.
         // Also, link the footnote anchor with the footnote according to
         // https://rawgit.com/essepuntato/rash/master/documentation/index.html#footnotes.
-        const footnotes = htmlEl.querySelectorAll(footnoteSelector)
+        const footnotes = this.contents.querySelectorAll(footnoteSelector)
         const footnotesContainer = document.createElement('section')
         let citationCount = 0
         footnotesContainer.classList.add('fnlist')
@@ -138,13 +138,13 @@ export class BaseDOMExporter {
                 footnotesContainer.appendChild(newFootnote)
             }
         )
-        htmlEl.appendChild(footnotesContainer)
-        this.cleanNode(htmlEl)
+        this.contents.appendChild(footnotesContainer)
+        this.cleanNode(this.contents)
 
         // Replace nbsp spaces with normal ones
-        this.replaceText(htmlEl, '&nbsp;', ' ')
+        this.replaceText(this.contents, '&nbsp;', ' ')
 
-        htmlEl.querySelectorAll('.comment').forEach(el => {
+        this.contents.querySelectorAll('.comment').forEach(el => {
             el.insertAdjacentHTML(
                 'afterend',
                 el.innerHTMLs
@@ -152,27 +152,41 @@ export class BaseDOMExporter {
             el.parentElement.removeChild(el)
         })
 
-        htmlEl.querySelectorAll('.citation').forEach(el => {
+        this.contents.querySelectorAll('.citation').forEach(el => {
             delete el.dataset.references
             delete el.dataset.bibs
             delete el.dataset.format
         })
 
-        htmlEl.querySelectorAll('.equation, .figure-equation').forEach(el => {
+        this.contents.querySelectorAll('.equation, .figure-equation').forEach(el => {
             delete el.dataset.equation
         })
 
-        htmlEl.querySelectorAll('.figure').forEach(el => {
+        this.contents.querySelectorAll('.figure').forEach(el => {
             delete el.dataset.equation
             delete el.dataset.image
             delete el.dataset.figureCategory
             delete el.dataset.caption
         })
 
-        htmlEl.querySelectorAll('.figure-cat-figure').forEach(el => {
+        this.contents.querySelectorAll('.figure-cat-figure').forEach(el => {
             delete el.dataset.figureCategory
         })
+    }
 
-        return htmlEl
+    // Fill the contents of table of contents.
+    fillToc() {
+        const headlines = Array.from(this.contents.querySelectorAll('h1,h2,h3,h4,h5,h6'))
+        const tocs = Array.from(this.contents.querySelectorAll('div.table-of-contents'))
+        tocs.forEach(toc => {
+            toc.innerHTML += headlines.map(headline => {
+                if (!headline.id || !headline.textContent.length) {
+                    // ignore the tocs own headlines
+                    return ''
+                }
+                const tagName = headline.tagName.toLowerCase()
+                return `<${tagName}><a href="#${headline.id}">${headline.innerHTML}</a></${tagName}>`
+            }).join('')
+        })
     }
 }

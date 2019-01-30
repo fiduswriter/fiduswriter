@@ -27,7 +27,7 @@ export class LinkDialog {
         figures = {}
 
         docs.forEach(doc => doc.descendants(node => {
-            if (node.type.name === 'heading') {
+            if (node.type.groups.includes('heading')) {
                 this.internalTargets.push({
                     id: node.attrs.id,
                     text: node.textContent

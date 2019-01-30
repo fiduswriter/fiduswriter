@@ -78,7 +78,7 @@ export const placeholdersPlugin = function(options) {
                 let {
                     decos
                 } = this.getState(oldState)
-                if (tr.steps.length || tr.selectionSet) {
+                if (tr.docChanged || tr.selectionSet) {
                     decos = calculatePlaceHolderDecorations(state)
                 }
                 return {

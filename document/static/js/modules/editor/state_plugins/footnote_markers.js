@@ -90,7 +90,7 @@ export const footnoteMarkersPlugin = function(options) {
     return new Plugin({
         key,
         state: {
-            init(state) {
+            init(config, state) {
                 const fnMarkers = []
                 state.doc.descendants((node, pos) => {
                     if (node.type.name==='footnote') {
@@ -118,7 +118,7 @@ export const footnoteMarkersPlugin = function(options) {
                     fnMarkers
                 } = this.getState(oldState)
 
-                if (!tr.steps.length) {
+                if (!tr.docChanged) {
                     return {
                         fnMarkers
                     }

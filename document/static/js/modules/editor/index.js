@@ -91,6 +91,7 @@ import {
     clipboardPlugin,
     collabCaretsPlugin,
     commentsPlugin,
+    documentTemplatePlugin,
     footnoteMarkersPlugin,
     headerbarPlugin,
     jumpHiddenNodesPlugin,
@@ -99,10 +100,10 @@ import {
     marginboxesPlugin,
     placeholdersPlugin,
     settingsPlugin,
-    documentTemplatePlugin,
+    tableMenuPlugin,
+    tocRenderPlugin,
     toolbarPlugin,
-    trackPlugin,
-    tableMenuPlugin
+    trackPlugin
 } from "./state_plugins"
 import {
     buildEditorKeymap
@@ -179,7 +180,8 @@ export class Editor {
             [settingsPlugin, () => ({editor: this})],
             [documentTemplatePlugin, () => ({editor: this})],
             [trackPlugin, () => ({editor: this})],
-            [tableMenuPlugin, () => ({editor: this})]
+            [tableMenuPlugin, () => ({editor: this})],
+            [tocRenderPlugin, () => ({editor: this})]
         ]
     }
 
@@ -428,7 +430,7 @@ export class Editor {
         this.view.state.doc.descendants((node, pos) => {
             if (foundPos) {
                 return
-            } else if ((node.type.name === 'heading' || node.type.name === 'figure') && node.attrs.id === id) {
+            } else if ((node.type.groups.includes('heading') || node.type.name === 'figure') && node.attrs.id === id) {
                 foundPos = pos + 1
                 view = this.view
             } else {
@@ -444,7 +446,7 @@ export class Editor {
             this.mod.footnotes.fnEditor.view.state.doc.descendants((node, pos) => {
                 if (foundPos) {
                     return
-                } else if ((node.type.name === 'heading' || node.type.name === 'figure') && node.attrs.id === id) {
+                } else if ((node.type.groups.includes('heading') || node.type.name === 'figure') && node.attrs.id === id) {
                     foundPos = pos + 1
                     view = this.mod.footnotes.fnEditor.view
                 } else {

@@ -180,6 +180,7 @@ figure {
     font-size: 1em;
     font-weight: normal;
     font-family: 'Lato', sans-serif;
+    margin-bottom: unset;
 }
 
 .article .table-of-contents h2 {

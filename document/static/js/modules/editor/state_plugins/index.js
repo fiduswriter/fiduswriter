@@ -1,4 +1,8 @@
 export {
+    accessRightsPlugin
+}
+from "./access_rights"
+export {
     contributorInputPlugin,
     ContributorsView
 }
@@ -26,6 +30,10 @@ export {
 }
 from "./comments"
 export {
+    documentTemplatePlugin
+}
+from "./document_template"
+export {
     findFootnoteMarkers,
     getFootnoteMarkerContents,
     updateFootnoteMarker,
@@ -42,11 +50,6 @@ export {
 }
 from "./jump_hidden_nodes"
 export {
-    tagInputPlugin,
-    TagsView
-}
-from "./tag_input"
-export {
     linksPlugin
 }
 from "./links"
@@ -59,13 +62,26 @@ export {
 }
 from "./placeholders"
 export {
+    settingsPlugin
+}
+from "./settings"
+export {
+    tableMenuPlugin
+}
+from "./table_menu"
+export {
+    tagInputPlugin,
+    TagsView
+}
+from "./tag_input"
+export {
+    tocRenderPlugin
+}
+from "./toc_render"
+export {
     toolbarPlugin
 }
 from "./toolbar"
-export {
-    accessRightsPlugin
-}
-from "./access_rights"
 export {
     trackPlugin,
     getSelectedChanges,
@@ -73,16 +89,3 @@ export {
     deactivateAllSelectedChanges
 }
 from "./track"
-export {
-    settingsPlugin
-}
-from "./settings"
-export {
-    tableMenuPlugin,
-    TableView
-}
-from "./table_menu"
-export {
-    documentTemplatePlugin
-}
-from "./document_template"

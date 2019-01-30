@@ -271,7 +271,7 @@ export const linksPlugin = function(options) {
         },
         appendTransaction: (trs, oldState, state) => {
             // Check if any of the transactions are local.
-            if (trs.every(tr => !tr.steps.length || tr.getMeta('remote'))) {
+            if (trs.every(tr => !tr.docChanged || tr.getMeta('remote'))) {
                 // All transactions are remote or don't change anything. Give up.
                 return
             }

@@ -25,7 +25,7 @@
     "katex": "0.10.x",
     "w3c-keyname": "1.1.x",
     "simple-datatables": "^1.7.6",
-    "vivliostyle-print": "^1.1.10",
+    "vivliostyle-print": "^1.1.11",
     "eslint": "^5.12.0",
     "eslint-plugin-import": "^2.14.0"
   },

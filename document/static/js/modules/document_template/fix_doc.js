@@ -28,11 +28,10 @@ function cleanNode(node, elements, marks) {
     }
 }
 
-export function adjustDocToTemplate(doc, template) {
+export function adjustDocToTemplate(doc, template, documentStyles, citationStyles) {
     const removedFootnoteElements = doc.attrs.footnote_elements.filter(element => !template.attrs.footnote_elements.includes(element)),
         removedFootnoteMarks = doc.attrs.footnote_marks.filter(mark => !template.attrs.footnote_marks.includes(mark)),
         attrs = ['footnote_marks', 'footnote_elements', 'languages', 'papersizes', 'template']
-
     attrs.forEach(attr => doc.attrs[attr] = template.attrs[attr])
 
     if(!doc.attrs.languages.includes(doc.attrs.language)) {
@@ -42,6 +41,15 @@ export function adjustDocToTemplate(doc, template) {
     if (!doc.attrs.papersizes.includes(doc.attrs.papersize)) {
         doc.attrs.papersize = doc.attrs.papersizes[0]
     }
+
+    if(!documentStyles.map(style => style.filename).includes(doc.attrs.documentstyle)) {
+        doc.attrs.documentstyle = documentStyles[0].filename
+    }
+
+    if(!citationStyles.map(style => style.short_title).includes(doc.attrs.citationstyle)) {
+        doc.attrs.citationstyle = citationStyles[0].short_title
+    }
+
 
     if (removedFootnoteMarks.length || removedFootnoteElements.length) {
         cleanFootnotes(doc, removedFootnoteElements, removedFootnoteMarks)

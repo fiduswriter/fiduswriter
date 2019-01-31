@@ -110,10 +110,19 @@ const headingTemplate = ({
     language=false
 }) =>
 `<div class="doc-part" data-type="heading_part">
-    <div class="title">${gettext('Heading')}</div>
-    <div class="attrs">
-        <div class="label">${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></div>
-        <div class="label">${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></div>
+    <div class="doc-part-header">
+        ${gettext('Heading')}
+        <ul class="object-tools right">
+            <li>
+                <span class="link configure">${gettext('Configure')}</span>
+            </li>
+        </ul>
+        <div class="label">
+            ${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}">
+            ${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}">
+        </div>
+    </div>
+    <div class="attrs hidden">
         <div class="label">${gettext('Locking')}
             <select class="locking">
                 <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>
@@ -184,10 +193,19 @@ const contributorsTemplate = ({
     optional="false"
 }) =>
 `<div class="doc-part" data-type="contributors_part">
-    <div class="title">${gettext('Namelist')}</div>
-    <div class="attrs">
-        <div class="label">${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></div>
-        <div class="label">${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></div>
+    <div class="doc-part-header">
+        ${gettext('Namelist')}
+        <ul class="object-tools right">
+            <li>
+                <span class="link configure">${gettext('Configure')}</span>
+            </li>
+        </ul>
+        <div class="label">
+            ${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}">
+            ${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}">
+        </div>
+    </div>
+    <div class="attrs hidden">
         <div class="label">${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(item_title)}"></div>
         <div class="label">${gettext('Locking')}
             <select class="locking">
@@ -222,10 +240,19 @@ const richtextTemplate = ({
     optional="false",
     language=false
 }) => `<div class="doc-part" data-type="richtext_part">
-    <div class="title">${gettext('Richtext')}</div>
-    <div class="attrs">
-        <div class="label">${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></div>
-        <div class="label">${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></div>
+    <div class="doc-part-header">
+        ${gettext('Richtext')}
+        <ul class="object-tools right">
+            <li>
+                <span class="link configure">${gettext('Configure')}</span>
+            </li>
+        </ul>
+        <div class="label">
+            ${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}">
+            ${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}">
+        </div>
+    </div>
+    <div class="attrs hidden">
         <div class="label">${gettext('Locking')}
             <select class="locking">
                 <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>
@@ -270,10 +297,19 @@ const tagsTemplate = ({
     optional="false"
 }) =>
 `<div class="doc-part" data-type="tags_part">
-    <div class="title">${gettext('Tags')}</div>
-    <div class="attrs">
-        <div class="label">${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></div>
-        <div class="label">${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></div>
+    <div class="doc-part-header">
+        ${gettext('Tags')}
+        <ul class="object-tools right">
+            <li>
+                <span class="link configure">${gettext('Configure')}</span>
+            </li>
+        </ul>
+        <div class="label">
+            ${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}">
+            ${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}">
+        </div>
+    </div>
+    <div class="attrs hidden">
         <div class="label">${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(item_title)}"></div>
         <div class="label">${gettext('Locking')}
             <select class="locking">
@@ -309,10 +345,19 @@ const tableTemplate = ({
     language=false
 }) =>
 `<div class="doc-part" data-type="table_part">
-    <div class="title">${gettext('Table')}</div>
-    <div class="attrs">
-        <div class="label">${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></div>
-        <div class="label">${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></div>
+    <div class="doc-part-header">
+        ${gettext('Table')}
+        <ul class="object-tools right">
+            <li>
+                <span class="link configure">${gettext('Configure')}</span>
+            </li>
+        </ul>
+        <div class="label">
+            ${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}">
+            ${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}">
+        </div>
+    </div>
+    <div class="attrs hidden">
         <div class="label">${gettext('Locking')}
             <select class="locking">
                 <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>
@@ -356,10 +401,19 @@ const tocTemplate = ({
     optional="false"
 }) =>
 `<div class="doc-part" data-type="table_of_contents">
-    <div class="title">${gettext('Table of Contents')}</div>
-    <div class="attrs">
-        <div class="label">${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}"></div>
-        <div class="label">${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}"></div>
+    <div class="doc-part-header">
+        ${gettext('Table of Contents')}
+        <ul class="object-tools right">
+            <li>
+                <span class="link configure">${gettext('Configure')}</span>
+            </li>
+        </ul>
+        <div class="label">
+            ${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}">
+            ${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}">
+        </div>
+    </div>
+    <div class="attrs hidden">
         <div class="label">${gettext('Optional')}
             <select class="optional">
                 <option value="false" ${optional==='false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
@@ -408,7 +462,7 @@ export const templateEditorValueTemplate = ({content}) =>
 export const toggleEditorButtonTemplate = () =>
     `<ul class="object-tools right">
         <li>
-            <a href="#" id="toggle-editor">${gettext('Source/Editor')}</a>
+            <span class="link" id="toggle-editor">${gettext('Source/Editor')}</span>
         </li>
     </ul>`
 

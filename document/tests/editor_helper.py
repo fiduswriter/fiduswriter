@@ -1,4 +1,3 @@
-
 import time
 from random import randrange
 from selenium.webdriver.support import expected_conditions as EC

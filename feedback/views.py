@@ -1,5 +1,3 @@
-
-
 from django.http import JsonResponse
 
 from feedback.models import Feedback

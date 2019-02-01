@@ -148,7 +148,7 @@ export class ModDocumentTemplate {
                     const attrs = Object.assign({}, article.attrs)
                     attrs.documentstyle = docStyle.filename
                     editor.view.dispatch(
-                        editor.view.state.tr.setNodeMarkup(0, false, attrs)
+                        editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta('settings', true)
                     )
                 },
                 selected: editor => {
@@ -171,7 +171,7 @@ export class ModDocumentTemplate {
                     const attrs = Object.assign({}, article.attrs)
                     attrs.citationstyle = citeStyle.short_title
                     editor.view.dispatch(
-                        editor.view.state.tr.setNodeMarkup(0, false, attrs)
+                        editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta('settings', true)
                     )
                 },
                 selected: editor => {

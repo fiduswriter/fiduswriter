@@ -86,6 +86,7 @@ export const documentTemplatePlugin = function(options) {
                 tr.getMeta('fromFootnote') ||
                 tr.getMeta('filterFree') ||
                 tr.getMeta('untracked') ||
+                tr.getMeta('settings') ||
                 ['historyUndo', 'historyRedo'].includes(tr.getMeta('inputType'))
             ) {
                 return true
@@ -104,9 +105,11 @@ export const documentTemplatePlugin = function(options) {
             let allowedElements = false, allowedMarks = false
 
             ranges.forEach(range => tr.doc.nodesBetween(range.from, range.to, (node, pos, parent, index) => {
+                if (node.attrs && node.attrs.locking === 'fixed') {
+                    allowed = false
+                    return allowed
+                }
                 if (parent===tr.doc.firstChild) {
-                    allowedElements = node.attrs.elements ? node.attrs.elements.concat('table_row', 'table_cell', 'table_header', 'list_item', 'text') : false
-                    allowedMarks = node.attrs.marks ? node.attrs.marks.concat('insertion', 'deletion', 'comment') : false
                     const oldNode = state.doc.firstChild.child(index)
                     if (
                         oldNode.type !== node.type ||
@@ -129,7 +132,9 @@ export const documentTemplatePlugin = function(options) {
                     ) {
                         allowed = false
                     }
-                    return true
+                    allowedElements = node.attrs.elements ? node.attrs.elements.concat('table_row', 'table_cell', 'table_header', 'list_item', 'text') : false
+                    allowedMarks = node.attrs.marks ? node.attrs.marks.concat('insertion', 'deletion', 'comment') : false
+                    return allowed
                 }
                 if (pos < range.from) {
                     return true
@@ -147,11 +152,8 @@ export const documentTemplatePlugin = function(options) {
                         !node.attrs.languages.includes(node.attrs.language)
                     ) {
                         allowed = false
-                        return false
-                    } else {
-                        allowed = true
-                        return true
                     }
+                    return allowed
                 }
                 if (
                     allowedElements &&

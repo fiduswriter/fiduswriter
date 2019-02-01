@@ -17,7 +17,7 @@ import {
     languagesTemplate,
     papersizesTemplate
 } from "./templates"
-import {whenReady, ensureCSS} from "../common"
+import {whenReady, ensureCSS, findTarget} from "../common"
 import {
     helpSchema,
     helpMenuContent,
@@ -327,7 +327,7 @@ export class DocumentTemplateDesigner {
                     put: false
                 },
                 sort: false,
-                handle: '.title'
+                handle: '.doc-part-header'
             }
         )
         new Sortable(
@@ -338,7 +338,7 @@ export class DocumentTemplateDesigner {
                     pull: true,
                     put: true
                 },
-                handle: '.title',
+                handle: '.doc-part-header',
                 onAdd: event => {
                     this.setupEditors(
                         event.item,
@@ -354,40 +354,48 @@ export class DocumentTemplateDesigner {
                     name: 'document',
                     put: true
                 },
-                handle: '.title',
+                handle: '.doc-part-header',
                 onAdd: event => event.to.removeChild(event.to.firstElementChild) // Remove the item that was just added
             }
         )
 
-        Array.from(document.querySelectorAll('div.submit-row input[type=submit]')).forEach(
-            button => button.addEventListener('click', event => {
-                if (this.definitionTextarea.style.display==='none' && !this.setCurrentValue()) {
+        document.body.addEventListener('click', event => {
+            const el = {}
+            switch (true) {
+                case findTarget(event, '#toggle-editor', el):
                     event.preventDefault()
-                }
-            })
-        )
-
-        document.getElementById('toggle-editor').addEventListener('click', event => {
-            event.preventDefault()
-            if (this.definitionTextarea.style.display==='none') {
-                this.definitionTextarea.style.display=''
-                this.definitionHashInputBlock.style.display=''
-                this.templateEditor.style.display='none'
-                this.setCurrentValue()
-            } else {
-                this.definitionTextarea.style.display='none'
-                this.definitionHashInputBlock.style.display='none'
-                this.templateEditor.style.display=''
-                this.getInitialValue()
-                this.templateEditor.querySelector('.to-container').innerHTML =
-                    templateEditorValueTemplate({content: this.value.content.slice(1) || []})
-                this.templateEditor.querySelector('.footnote-value').innerHTML =
-                    footnoteTemplate(this.value.attrs)
-                this.templateEditor.querySelector('.languages-value').innerHTML =
-                    languagesTemplate(this.value.attrs)
-                this.templateEditor.querySelector('.papersizes-value').innerHTML =
-                    papersizesTemplate(this.value.attrs)
-                this.setupInitialEditors()
+                    if (this.definitionTextarea.style.display==='none') {
+                        this.definitionTextarea.style.display=''
+                        this.definitionHashInputBlock.style.display=''
+                        this.templateEditor.style.display='none'
+                        this.setCurrentValue()
+                    } else {
+                        this.definitionTextarea.style.display='none'
+                        this.definitionHashInputBlock.style.display='none'
+                        this.templateEditor.style.display=''
+                        this.getInitialValue()
+                        this.templateEditor.querySelector('.to-container').innerHTML =
+                            templateEditorValueTemplate({content: this.value.content.slice(1) || []})
+                        this.templateEditor.querySelector('.footnote-value').innerHTML =
+                            footnoteTemplate(this.value.attrs)
+                        this.templateEditor.querySelector('.languages-value').innerHTML =
+                            languagesTemplate(this.value.attrs)
+                        this.templateEditor.querySelector('.papersizes-value').innerHTML =
+                            papersizesTemplate(this.value.attrs)
+                        this.setupInitialEditors()
+                    }
+                    break
+                case findTarget(event, 'div.submit-row input[type=submit]', el):
+                    if (this.definitionTextarea.style.display==='none' && !this.setCurrentValue()) {
+                        event.preventDefault()
+                    }
+                    break
+                case findTarget(event, '.doc-part .configure', el):
+                    event.preventDefault()
+                    el.target.closest('.doc-part').querySelector('.attrs').classList.toggle('hidden')
+                    break
+                default:
+                    break
             }
         })
 

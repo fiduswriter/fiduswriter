@@ -89,3 +89,9 @@ export {
     deactivateAllSelectedChanges
 }
 from "./track"
+
+
+export {
+    navigatorPlugin
+}
+from "./navigator"

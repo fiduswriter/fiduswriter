@@ -103,7 +103,8 @@ import {
     tableMenuPlugin,
     tocRenderPlugin,
     toolbarPlugin,
-    trackPlugin
+    trackPlugin,
+    navigatorPlugin
 } from "./state_plugins"
 import {
     buildEditorKeymap
@@ -181,7 +182,8 @@ export class Editor {
             [documentTemplatePlugin, () => ({editor: this})],
             [trackPlugin, () => ({editor: this})],
             [tableMenuPlugin, () => ({editor: this})],
-            [tocRenderPlugin, () => ({editor: this})]
+            [tocRenderPlugin, () => ({editor: this})],
+            [navigatorPlugin, () => ({editor: this})],
         ]
     }
 
@@ -234,6 +236,10 @@ export class Editor {
                     <div></div>
                 </nav>
             </header>
+
+            <div id="navigator">
+            </div>
+
             <div id="editor-content">
                 <div id="flow" class="hide">
                     <div id="paper-editable">

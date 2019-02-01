@@ -98,13 +98,13 @@ import {
     tagInputPlugin,
     linksPlugin,
     marginboxesPlugin,
+    navigatorPlugin,
     placeholdersPlugin,
     settingsPlugin,
     tableMenuPlugin,
     tocRenderPlugin,
     toolbarPlugin,
     trackPlugin,
-    navigatorPlugin
 } from "./state_plugins"
 import {
     buildEditorKeymap
@@ -236,10 +236,7 @@ export class Editor {
                     <div></div>
                 </nav>
             </header>
-
-            <div id="navigator">
-            </div>
-
+            <div id="navigator"></div>
             <div id="editor-content">
                 <div id="flow" class="hide">
                     <div id="paper-editable">

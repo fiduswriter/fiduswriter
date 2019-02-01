@@ -828,11 +828,11 @@ html[hc=a5] #toolbar {
     left:-265px;
     position: fixed;
     z-index: 9;
-    -webkit-transition: left 1s; /* Safari */
-    transition: left 1s;
+    -webkit-transition: left 0.7s; /* Safari */
+    transition: left 0.7s;
 }
 
-.navigator-content {
+#navigator-content {
     display: inline-block;
     background-color: black;
     opacity: 0.8;
@@ -846,21 +846,19 @@ html[hc=a5] #toolbar {
     overflow: -moz-scrollbars-none; 
 
 }
-.navigator-content::-webkit-scrollbar {
+#navigator-content::-webkit-scrollbar {
     display: none;
 }
 
-.navigator-content a {
+#navigator-content a {
     color: white;
 }
-
-
-.navigator-content h1,
-.navigator-content h2,
-.navigator-content h3,
-.navigator-content h4,
-.navigator-content h5,
-.navigator-content h6 {
+#navigator-content h1,
+#navigator-content h2,
+#navigator-content h3,
+#navigator-content h4,
+#navigator-content h5,
+#navigator-content h6 {
     font-size: 1.2em;
     font-weight: normal;
     margin-bottom: unset;
@@ -868,40 +866,31 @@ html[hc=a5] #toolbar {
     padding-top: 1.3em;
     overflow-wrap: break-word;
 }
-
-.navigator-content .header {
-    padding-left: 4em;
+#navigator-content .header {
     font-size: 1.1em;
     font-weight: bold;
-    padding-top: 0px;
-    padding-bottom: 10px;
-    text-decoration: underline
+    text-decoration: underline;
+    padding: 0 0 1em 4em;
 }
-
-.navigator-button {
+#navigator-button {
     float: right;
     background-color: black;
     opacity: 0.8;
     cursor: pointer;
-    padding: 10px;
+    padding: 1em;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
 }
-
-
 .arrow-icon {
     color: white;
     font-size: 1.4em;
 }
-
 .arrow-icon i {
-    transition: all 0.75s 0.25s;
+    transition: all 0.50s 0.25s;
 }
-
-.toggle-down {
+.rotate {
     transform: rotate(180deg);
 }
-
 .hide-navigator {
-    display: none;
+    left:-315px !important;
 }

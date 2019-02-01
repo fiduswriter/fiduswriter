@@ -58,6 +58,10 @@ export {
 }
 from "./marginboxes"
 export {
+    navigatorPlugin
+}
+from "./navigator"
+export {
     placeholdersPlugin
 }
 from "./placeholders"
@@ -89,9 +93,3 @@ export {
     deactivateAllSelectedChanges
 }
 from "./track"
-
-
-export {
-    navigatorPlugin
-}
-from "./navigator"

@@ -1,10 +1,8 @@
-import diffDOM from "diff-dom"
-
 export class NavigatorView {
-    constructor(editorView, options, tocHTML) {
+    constructor(editorView, options, navigatorItems) {
         this.editorView = editorView
         this.options = options
-        this.tocHTML = tocHTML
+        this.navigatorItems = navigatorItems
         this.navigatorEl = document.querySelector('#navigator')
         this.listeners = {}
         this.bindEvents()
@@ -12,34 +10,37 @@ export class NavigatorView {
     }
 
     render(){
-        const newHeader = document.createElement('div')
-        newHeader.innerHTML = this.getHeaderHTML()
-        this.navigatorEl.append(newHeader)
+        this.navigatorEl.innerHTML = this.getNavigatorHTML()
+        if(this.navigatorItems.length){
+            this.navigatorEl.classList.remove('hide-navigator')
+        }else{
+            this.navigatorEl.classList.add('hide-navigator')
+        }
     }
 
     bindEvents(){
         this.listeners.onclick = event => this.onclick(event)
-        document.body.addEventListener('click', this.listeners.onclick)
+        this.navigatorEl.addEventListener('click', this.listeners.onclick)
     }
 
     onclick(event){
         const target = event.target
         event.preventDefault()
         event.stopImmediatePropagation()
-        if(target.matches('.navigator-button')){
-            if( target.firstElementChild.firstElementChild.classList.contains('toggle-down')){
-                target.firstElementChild.firstElementChild.classList.remove('toggle-down')
+        if(target.matches('#navigator-button')){
+            if( target.firstElementChild.firstElementChild.classList.contains('rotate')){
+                target.firstElementChild.firstElementChild.classList.remove('rotate')
                 document.getElementById('navigator').style.left = "-265px"
             }else{
-                target.firstElementChild.firstElementChild.classList.add('toggle-down')
+                target.firstElementChild.firstElementChild.classList.add('rotate')
                 document.getElementById('navigator').style.left = "0px"
             }
         }else if(target.matches('.fa-angle-right')){
-            if( target.classList.contains('toggle-down')){
-                target.classList.remove('toggle-down')
+            if( target.classList.contains('rotate')){
+                target.classList.remove('rotate')
                 document.getElementById('navigator').style.left = "-265px"
             }else{
-                target.classList.add('toggle-down')
+                target.classList.add('rotate')
                 document.getElementById('navigator').style.left = "0px"
             }
         }else if(target.matches('a')){
@@ -48,15 +49,15 @@ export class NavigatorView {
         }
     }
 
-    getHeaderHTML(){
+    getNavigatorHTML(){
         return `
-                <div class="navigator-content">
-                    <h1 class="header">TABLE OF CONTENT</h1>
-                    <div id = "navigator-list">
-                        ${this.tocHTML}
+                <div id= "navigator-content" >
+                    <h1 class= "header" >DOCUMENT NAVIGATOR</h1>
+                    <div id = "navigator-list" >
+                        ${this.navigatorItems}
                     </div>
                 </div>
-                <div class="navigator-button">
+                <div id= "navigator-button" >
                     <span class="arrow-icon"><i class="fas fa-angle-right"></i></span>
                 </div>
                 `

@@ -8,7 +8,7 @@
   "scripts": {
     "get_mml2omml": "mkdir -p ./static-libs/xsl/ && wget https://raw.githubusercontent.com/AbiWord/abiword/14cbf144cb10a5a5ea6ee11275f7178ca4ff055a/plugins/openxml/omml_xslt/mml2omml.xsl -O ./static-libs/xsl/mml2omml.xsl",
     "copy_fontawesome": "mkdir -p ./static-libs/fontawesome/ && cp -r node_modules/@fortawesome/fontawesome-free/css ./static-libs/fontawesome/ && cp -r node_modules/@fortawesome/fontawesome-free/webfonts ./static-libs/fontawesome/",
-    "copy_prosemirror_css": "mkdir -p ./static-libs/css/ && cp node_modules/prosemirror-view/style/prosemirror.css ./static-libs/css/ && cp node_modules/prosemirror-menu/style/menu.css ./static-libs/css/prosemirror-menu.css",
+    "copy_prosemirror_css": "mkdir -p ./static-libs/css/ && cp node_modules/prosemirror-view/style/prosemirror.css ./static-libs/css/ && cp node_modules/prosemirror-menu/style/menu.css ./static-libs/css/prosemirror-menu.css && cp node_modules/prosemirror-example-setup/style/style.css ./static-libs/css/prosemirror-example-setup.css",
     "copy_mathquill_css": "mkdir -p ./static-libs/css/ && cp node_modules/mathquill-jquery/build/mathquill.css ./static-libs/css/",
     "copy_mathquill_font": "mkdir -p ./static-libs/css/font/ && cp node_modules/mathquill-jquery/build/font/* ./static-libs/css/font/",
     "copy_vivliostyle_resources": "mkdir -p ./static-libs/vivliostyle-resources/ && cp node_modules/vivliostyle-print/dist/resources/* ./static-libs/vivliostyle-resources/",

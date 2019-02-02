@@ -97,7 +97,10 @@ export class DocumentTemplateDesigner {
                             id = el.querySelector('input.id').value,
                             title = el.querySelector('input.title').value,
                             help = this.getEditorValue(el.querySelector('.instructions')),
-                            initial = this.getEditorValue(el.querySelector('.initial')),
+                            initial = this.getEditorValue(
+                                el.querySelector('.initial'),
+                                true
+                            ),
                             locking = el.querySelector('.locking option:checked') ? el.querySelector('.locking option:checked').value : 'false',
                             optional = el.querySelector('.optional option:checked').value,
                             attrs = {id, title},
@@ -305,7 +308,7 @@ export class DocumentTemplateDesigner {
 
     }
 
-    getEditorValue(el) {
+    getEditorValue(el, inline = false) {
         const editor = this.editors.find(editor => editor[0]===el)
         if (!editor) {
             return false
@@ -314,7 +317,7 @@ export class DocumentTemplateDesigner {
         // Only return if there is more content that a recently initiated doc
         // would have. The number varies between part types.
         if (state.doc.nodeSize > state.schema.nodes.doc.createAndFill().nodeSize) {
-            return state.doc.firstChild.toJSON().content
+            return inline ? state.doc.firstChild.toJSON().content : state.doc.toJSON().content
         }
         return false
     }

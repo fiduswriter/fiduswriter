@@ -29,7 +29,17 @@ const doc = {
 
 export const helpSchema = new Schema({
     nodes: schema.spec.nodes.remove('code_block').remove('image').remove('heading').remove('horizontal_rule').update('doc', doc),
-    marks: schema.spec.marks.remove('code')
+    marks: schema.spec.marks.remove('code').update('link', {
+        attrs: {
+            href: {},
+            title: {default: null}
+        },
+        inclusive: false,
+        parseDOM: [{tag: "a[href]", getAttrs(dom) {
+                return {href: dom.getAttribute("href"), title: dom.getAttribute("title")}
+        }}],
+        toDOM(node) { return ["a", Object.assign({target: '_blank'}, node.attrs), 0] }
+    })
 })
 
 export const helpMenuContent = buildMenuItems(helpSchema).fullMenu

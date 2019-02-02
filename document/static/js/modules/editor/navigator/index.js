@@ -13,8 +13,6 @@ export class ModNavigator {
     }
     bindEvents(){
         document.body.addEventListener('click', event => {
-            //event.preventDefault()
-            event.stopImmediatePropagation()
             const el = {}
             switch (true) {
                 case findTarget(event, '#navigator-button', el):
@@ -25,15 +23,9 @@ export class ModNavigator {
                         this.openNavigator()
                     }
                     break
-                case findTarget(event, '.fa-angle-right', el):
-                    document.querySelector('#navigator-list').innerHTML = this.populateNavigator() || ""    //Populating the list
-                    if (el.target.classList.contains('rotate')){
-                        this.closeNavigator()
-                    } else {
-                        this.openNavigator()
-                    }
-                    break
-                case findTarget(event, 'a', el):
+                case findTarget(event, '#navigator-list a', el):
+                    event.preventDefault()
+                    event.stopImmediatePropagation()
                     document.getElementById(el.target.getAttribute('href').slice(1)).scrollIntoView({behavior:"smooth"})
                     break
                 default:

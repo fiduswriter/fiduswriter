@@ -50,7 +50,7 @@ export class ImageDB {
             error => {
                 addAlert('error', gettext('Could not save image'))
                 deactivateWait()
-                throw(error)
+                throw (error)
             }
         )
 

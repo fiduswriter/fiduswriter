@@ -85,7 +85,7 @@ export class ModDocumentTemplate {
         // Remove any previous entries in case we run this a second time
         exportMenu.content = exportMenu.content.filter(menuItem => menuItem.class!=='export_template')
         const exportMenuEntries = this.exportTemplates.map(template => {
-            if(template.file_type==='docx') {
+            if (template.file_type==='docx') {
                 return {
                     class: 'export_template',
                     title: `${template.file_name} (DOCX)`,

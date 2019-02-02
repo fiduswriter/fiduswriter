@@ -18,7 +18,7 @@ class TableView {
         menuButton.addEventListener('click', event => {
             event.preventDefault()
             event.stopImmediatePropagation()
-            if(!isSelectedTableClicked(this.view.state,getPos())){
+            if (!isSelectedTableClicked(this.view.state,getPos())){
                 const tr = view.state.tr
                 const $pos = view.state.doc.resolve(getPos()+2)
                 tr.setSelection(new TextSelection($pos,$pos))
@@ -44,9 +44,9 @@ class TableView {
 }
 
 const isSelectedTableClicked = (state, $pos) => {
-    let pathArr = state.selection.$anchor.path
-    for(let i = 0; i < pathArr.length ; i++){
-        if(pathArr[i].type && pathArr[i].type.name && pathArr[i].type.name === "table" && pathArr[i-1] === $pos){
+    const pathArr = state.selection.$anchor.path
+    for (let i = 0; i < pathArr.length ; i++){
+        if (pathArr[i].type && pathArr[i].type.name && pathArr[i].type.name === "table" && pathArr[i-1] === $pos){
             return true
         }
     }

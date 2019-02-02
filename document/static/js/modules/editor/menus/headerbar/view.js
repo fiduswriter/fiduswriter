@@ -50,12 +50,12 @@ export class HeaderbarView {
     onclick(event) {
         const target = event.target
 
-        if(target.matches('#headerbar #header-navigation .fw-pulldown-item')) {
+        if (target.matches('#headerbar #header-navigation .fw-pulldown-item')) {
             // A header nav menu item was clicked. Now we just need to find
             // which one and execute the corresponding action.
             const searchPath = []
             let seekItem = target
-            while(seekItem.closest('li')) {
+            while (seekItem.closest('li')) {
                 let itemNumber = 0
                 seekItem = seekItem.closest('li')
                 while (seekItem.previousElementSibling) {
@@ -76,7 +76,7 @@ export class HeaderbarView {
 
             let menuItem = menu
 
-            while(searchPath.length) {
+            while (searchPath.length) {
                 menuItem = menuItem.content[searchPath.pop()]
             }
 
@@ -199,7 +199,7 @@ export class HeaderbarView {
         let title = ""
         doc.firstChild.firstChild.forEach(
             child => {
-                if(!child.marks.find(mark => mark.type.name==='deletion')) {
+                if (!child.marks.find(mark => mark.type.name==='deletion')) {
                     title += escapeText(child.textContent)
                 }
             }
@@ -277,7 +277,7 @@ export class HeaderbarView {
 
     getMenuItemHTML(menuItem) {
         let returnValue
-        switch(menuItem.type) {
+        switch (menuItem.type) {
             case 'action':
             case 'setting':
                 returnValue = this.getActionMenuItemHTML(menuItem)

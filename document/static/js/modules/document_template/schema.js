@@ -51,7 +51,7 @@ export const richtextPartSchema = new Schema({
 
 export const richtextMenuContent = buildMenuItems(richtextPartSchema).fullMenu
 for (let i = 1; i <= 6; i++) {
-    let type = richtextPartSchema.nodes[`heading${i}`]
+    const type = richtextPartSchema.nodes[`heading${i}`]
     richtextMenuContent[1][1].content.push(blockTypeItem(type, {
         title: gettext("Change to heading ") + i,
         label: gettext("Heading level ") + i
@@ -70,7 +70,7 @@ export const tablePartSchema = new Schema({
 
 export const tableMenuContent = buildMenuItems(tablePartSchema).fullMenu
 for (let i = 1; i <= 6; i++) {
-    let type = tablePartSchema.nodes[`heading${i}`]
+    const type = tablePartSchema.nodes[`heading${i}`]
     tableMenuContent[1][1].content.push(blockTypeItem(type, {
         title: gettext("Change to heading ") + i,
         label: gettext("Heading level ") + i
@@ -101,7 +101,7 @@ export const headingPartSchema = new Schema({
 
 export const headingMenuContent = buildMenuItems(headingPartSchema).fullMenu
 for (let i = 1; i <= 6; i++) {
-    let type = headingPartSchema.nodes[`heading${i}`]
+    const type = headingPartSchema.nodes[`heading${i}`]
     headingMenuContent[1][1].content.push(blockTypeItem(type, {
         title: gettext("Change to heading ") + i,
         label: gettext("Heading level ") + i

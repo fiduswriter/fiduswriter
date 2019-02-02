@@ -67,6 +67,9 @@ import {
     acceptAllNoInsertions
 } from "./track"
 import {
+    ModNavigator
+} from './navigator'
+import {
     headerbarModel,
     toolbarModel,
     tableMenuModel
@@ -103,7 +106,7 @@ import {
     tableMenuPlugin,
     tocRenderPlugin,
     toolbarPlugin,
-    trackPlugin
+    trackPlugin,
 } from "./state_plugins"
 import {
     buildEditorKeymap
@@ -139,7 +142,7 @@ export class Editor {
         if (isNaN(id)) {
             id = 0
             let template = parseInt(idString.slice(1))
-            if(isNaN(template)) {
+            if (isNaN(template)) {
                 template = 0
             }
             this.docInfo.template = template
@@ -181,7 +184,7 @@ export class Editor {
             [documentTemplatePlugin, () => ({editor: this})],
             [trackPlugin, () => ({editor: this})],
             [tableMenuPlugin, () => ({editor: this})],
-            [tocRenderPlugin, () => ({editor: this})]
+            [tocRenderPlugin, () => ({editor: this})],
         ]
     }
 
@@ -234,6 +237,7 @@ export class Editor {
                     <div></div>
                 </nav>
             </header>
+            <div id="navigator"></div>
             <div id="editor-content">
                 <div id="flow" class="hide">
                     <div id="paper-editable">
@@ -296,6 +300,7 @@ export class Editor {
         new ModMarginboxes(this)
         new ModComments(this)
         new ModDocumentTemplate(this)
+        new ModNavigator(this)
         this.activateFidusPlugins()
         this.mod.serverCommunications.init()
     }
@@ -406,7 +411,7 @@ export class Editor {
             let title = ""
             pmArticle.firstChild.forEach(
                 child => {
-                    if(!child.marks.find(mark => mark.type.name==='deletion')) {
+                    if (!child.marks.find(mark => mark.type.name==='deletion')) {
                         title += child.textContent
                     }
                 }

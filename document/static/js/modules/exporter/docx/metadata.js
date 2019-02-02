@@ -30,7 +30,7 @@ export class DocxExporterMetadata {
 
 
     addMetadata() {
-        let corePropertiesEl = this.coreXml.querySelector('coreProperties')
+        const corePropertiesEl = this.coreXml.querySelector('coreProperties')
 
         // Title
         let titleEl = this.coreXml.querySelector('title')
@@ -42,8 +42,8 @@ export class DocxExporterMetadata {
 
         // Authors
 
-        let authors = this.metadata.authors.map(author => {
-            let nameParts = []
+        const authors = this.metadata.authors.map(author => {
+            const nameParts = []
             if (author.firstname) {
                 nameParts.push(author.firstname)
             }
@@ -56,8 +56,8 @@ export class DocxExporterMetadata {
             }
             return nameParts.join(' ')
         })
-        let lastAuthor = authors.length ? escapeText(authors[0]) : gettext('Unknown')
-        let allAuthors = authors.length ? escapeText(authors.join(';')): gettext('Unknown')
+        const lastAuthor = authors.length ? escapeText(authors[0]) : gettext('Unknown')
+        const allAuthors = authors.length ? escapeText(authors.join(';')): gettext('Unknown')
 
         let allAuthorsEl = this.coreXml.querySelector('creator')
         if (!allAuthorsEl) {
@@ -76,7 +76,7 @@ export class DocxExporterMetadata {
         if (this.metadata.keywords.length) {
             // It is not really clear how keywords should be separated in DOCX files,
             // so we use ", ".
-            let keywordsString = escapeText(this.metadata.keywords.join(', '))
+            const keywordsString = escapeText(this.metadata.keywords.join(', '))
 
             let keywordsEl = this.coreXml.querySelector('keywords')
             if (!keywordsEl) {
@@ -89,9 +89,9 @@ export class DocxExporterMetadata {
 
 
         // time
-        let date = new Date()
-        let dateString = date.toISOString().split('.')[0]+'Z'
-        let createdEl = this.coreXml.querySelector('created')
+        const date = new Date()
+        const dateString = date.toISOString().split('.')[0]+'Z'
+        const createdEl = this.coreXml.querySelector('created')
         createdEl.innerHTML = dateString
         let modifiedEl = this.coreXml.querySelector('modified')
         if (!modifiedEl) {

@@ -21,7 +21,7 @@ export class BibLatexImporter {
     }
 
     init() {
-        let importWorker = makeWorker(`${this.staticUrl}js/transpile/biblatex_import_worker.js?v=${$StaticUrls.transpile.version$}`)
+        const importWorker = makeWorker(`${this.staticUrl}js/transpile/biblatex_import_worker.js?v=${$StaticUrls.transpile.version$}`)
         importWorker.onmessage = message => this.onMessage(message.data)
         importWorker.postMessage({fileContents: this.fileContents})
     }
@@ -58,7 +58,7 @@ export class BibLatexImporter {
                 data = message.data
                 this.bibDB.saveBibEntries(data, true).then(
                     idTranslations => {
-                        let newIds = idTranslations.map(idTrans => idTrans[1])
+                        const newIds = idTranslations.map(idTrans => idTrans[1])
                         this.addToListCall(newIds)
                     }
                 )

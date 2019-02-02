@@ -1,6 +1,6 @@
 /* eslint-disable no-control-regex */
 
-export let escapeLatexText = function(text) {
+export const escapeLatexText = function(text) {
     return text
     // Remove line breaks
     .replace(/\r|\n/g, '')

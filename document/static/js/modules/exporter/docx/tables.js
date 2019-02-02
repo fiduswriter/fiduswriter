@@ -68,11 +68,11 @@ export class DocxExporterTables {
             // already added
             return
         }
-        let tableNormalEl = this.styleXml.querySelector(`style[*|type="table"][*|default="1"]`)
+        const tableNormalEl = this.styleXml.querySelector(`style[*|type="table"][*|default="1"]`)
         if (tableNormalEl) {
             this.tableNormalStyle = tableNormalEl.getAttribute('w:styleId')
         } else {
-            let stylesEl = this.styleXml.querySelector('styles')
+            const stylesEl = this.styleXml.querySelector('styles')
             stylesEl.insertAdjacentHTML('beforeEnd', DEFAULT_TABLENORMAL_XML)
             this.tableNormalStyle = 'TableNormal'
         }
@@ -84,11 +84,11 @@ export class DocxExporterTables {
             return
         }
         this.addTableNormalStyle()
-        let tableGridEl = this.styleXml.querySelector('style[*|type="table"][*|customStyle="1"]')
+        const tableGridEl = this.styleXml.querySelector('style[*|type="table"][*|customStyle="1"]')
         if (tableGridEl) {
             this.tableGridStyle = tableGridEl.getAttribute('w:styleId')
         } else {
-            let stylesEl = this.styleXml.querySelector('styles')
+            const stylesEl = this.styleXml.querySelector('styles')
             stylesEl.insertAdjacentHTML('beforeEnd', DEFAULT_TABLEGRID_XML(this.tableNormalStyle))
             this.tableGridStyle = 'TableGrid'
         }
@@ -96,11 +96,11 @@ export class DocxExporterTables {
 
     getSideMargins() {
         if (!this.sideMargins) {
-            let marginsEl = this.styleXml.querySelector(`style[*|styleId="${this.tableGridStyle}"]`)
-            let leftEl = marginsEl.querySelector('left')
-            let rightEl = marginsEl.querySelector('right')
-            let left = parseInt(leftEl.getAttribute('w:w'))
-            let right = parseInt(rightEl.getAttribute('w:w'))
+            const marginsEl = this.styleXml.querySelector(`style[*|styleId="${this.tableGridStyle}"]`)
+            const leftEl = marginsEl.querySelector('left')
+            const rightEl = marginsEl.querySelector('right')
+            const left = parseInt(leftEl.getAttribute('w:w'))
+            const right = parseInt(rightEl.getAttribute('w:w'))
             this.sideMargins = (left + right) * 635
         }
         return this.sideMargins

@@ -2,7 +2,7 @@ import {katexOpfIncludes} from "../../katex/opf_includes"
 import {escapeText} from "../../common"
 
 /** A template for the OPF file of an epub. */
-export let opfTemplate = ({id, idType, title, language, authors, keywords, date, modified, images, styleSheets, math}) =>
+export const opfTemplate = ({id, idType, title, language, authors, keywords, date, modified, images, styleSheets, math}) =>
 `<?xml version="1.0" encoding="UTF-8"?>
 <package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="${idType}" xml:lang="${language}" prefix="cc: http://creativecommons.org/ns#">
     <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
@@ -58,7 +58,7 @@ ${
 
 
 /** A template for the contianer XML of an epub file. */
-export let containerTemplate = () =>
+export const containerTemplate = () =>
 `<?xml version="1.0" encoding="UTF-8"?>
 <container xmlns="urn:oasis:names:tc:opendocument:xmlns:container" version="1.0">
     <rootfiles>
@@ -67,7 +67,7 @@ export let containerTemplate = () =>
 </container>`
 
 /** A template of the NCX file of an epub. */
-export let ncxTemplate = ({shortLang, idType, id, title, contentItems}) =>
+export const ncxTemplate = ({shortLang, idType, id, title, contentItems}) =>
 `<?xml version="1.0" encoding="UTF-8"?>
 <ncx xmlns:ncx="http://www.daisy.org/z3986/2005/ncx/" xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="${shortLang}">
     <head>
@@ -87,7 +87,7 @@ ${
 </ncx>`
 
 /** A template for each list item in the navMap of an epub's NCX file. */
-export let ncxItemTemplate = ({item}) =>
+export const ncxItemTemplate = ({item}) =>
 `        <navPoint id="${item.docNum ? `${item.id}-${item.docNum}` : item.id}">
             <navLabel><text>${escapeText(item.title)}</text></navLabel>
             <content src="${item.link ? item.link : item.docNum ? `document-${item.docNum}.xhtml#${item.id}` : `document.xhtml#${item.id}` }"/>
@@ -100,7 +100,7 @@ ${
 
 
 /** A template for a document in an epub. */
-export let xhtmlTemplate = ({shortLang, title, math, styleSheets, part, body}) =>
+export const xhtmlTemplate = ({shortLang, title, math, styleSheets, part, body}) =>
 `<?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="${shortLang}" lang="${shortLang}"
         xmlns:epub="http://www.idpf.org/2007/ops">
@@ -129,7 +129,7 @@ ${
 
 
 /** A template for an epub's navigation document. */
-export let navTemplate = ({shortLang, contentItems}) =>
+export const navTemplate = ({shortLang, contentItems}) =>
 `<?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="${shortLang}" lang="${shortLang}" xmlns:epub="http://www.idpf.org/2007/ops">
     <head>
@@ -147,7 +147,7 @@ ${
 </html>`
 
 /** A template for each item in an epub's navigation document. */
-export let navItemTemplate = ({item}) =>
+export const navItemTemplate = ({item}) =>
     `\t\t\t\t<li><a href="${
         item.link ?
         item.link :

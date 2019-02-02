@@ -379,7 +379,7 @@ export const marginBoxesTemplate = ({
         staticUrl
     }) => marginBoxes.map(mBox => {
         let returnValue = ''
-        switch(mBox.type) {
+        switch (mBox.type) {
             case 'comment':
                 returnValue = commentTemplate({
                     comment: mBox.data,

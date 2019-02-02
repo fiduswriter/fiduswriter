@@ -20,9 +20,9 @@ export class DocxExporterRichtext {
         let latex
         let textAttr
 
-        switch(node.type) {
+        switch (node.type) {
             case 'paragraph':
-                if(!options.section) {
+                if (!options.section) {
                     options.section = 'Normal'
                 }
                 // This should really be something like
@@ -178,13 +178,13 @@ export class DocxExporterRichtext {
                 }
 
                 if (hyperlink) {
-                    let href = hyperlink.attrs.href
+                    const href = hyperlink.attrs.href
                     if (href[0] === '#') {
                         // Internal link
                         start += `<w:hyperlink w:anchor="${href.slice(1)}">`
                     } else {
                         // External link
-                        let refId = this.rels.addLinkRel(href)
+                        const refId = this.rels.addLinkRel(href)
                         start += `<w:hyperlink r:id="rId${refId}">`
                     }
                     start += '<w:r>'
@@ -244,17 +244,17 @@ export class DocxExporterRichtext {
                             </w:rPr>
                             <w:footnoteReference w:id="${this.fnCounter}"/>
                         </w:r>`
-                    let fnContents = this.transformRichtext(cit, {
+                    const fnContents = this.transformRichtext(cit, {
                         footnoteRefMissing: true,
                         section: 'Footnote'
                     })
-                    let fnXml = `<w:footnote w:id="${this.fnCounter}">${fnContents}</w:footnote>`
-                    let xml = this.exporter.footnotes.xml
-                    let lastId = this.fnCounter - 1
-                    let footnotes = xml.querySelectorAll('footnote')
+                    const fnXml = `<w:footnote w:id="${this.fnCounter}">${fnContents}</w:footnote>`
+                    const xml = this.exporter.footnotes.xml
+                    const lastId = this.fnCounter - 1
+                    const footnotes = xml.querySelectorAll('footnote')
                     footnotes.forEach(
                         footnote => {
-                            let id = parseInt(footnote.getAttribute('w:id'))
+                            const id = parseInt(footnote.getAttribute('w:id'))
                             if (id >= this.fnCounter) {
                                 footnote.setAttribute('w:id', id+1)
                             }
@@ -277,15 +277,15 @@ export class DocxExporterRichtext {
                     if (!this.figureCounter[figCat]) {
                         this.figureCounter[figCat] = 1
                     }
-                    let figCount = this.figureCounter[figCat]++
+                    const figCount = this.figureCounter[figCat]++
                     if (caption.length) {
                         caption = `${figCat} ${figCount}: ${caption}`
                     } else {
                         caption = `${figCat} ${figCount}`
                     }
                 }
-                if(node.attrs.image !== false) {
-                    let imgDBEntry = this.images.imageDB.db[node.attrs.image]
+                if (node.attrs.image !== false) {
+                    const imgDBEntry = this.images.imageDB.db[node.attrs.image]
                     let cx = imgDBEntry.width * 9525 // width in EMU
                     let cy = imgDBEntry.height * 9525 // height in EMU
                     // Shrink image if too large for paper.
@@ -295,19 +295,19 @@ export class DocxExporterRichtext {
                             width = width - options.tableSideMargins
                         }
                         if (cx > width) {
-                            let rel = cy/cx
+                            const rel = cy/cx
                             cx = width
                             cy = cx * rel
                         }
                         if (cy > options.dimensions.height) {
-                            let rel = cx/cy
+                            const rel = cx/cy
                             cy = options.dimensions.height
                             cx = cy * rel
                         }
                     }
                     cy = Math.round(cy)
                     cx = Math.round(cx)
-                    let rId = this.images.imgIdTranslation[node.attrs.image]
+                    const rId = this.images.imgIdTranslation[node.attrs.image]
                     start += noSpaceTmp`
                     <w:p>
                       <w:pPr>
@@ -364,8 +364,8 @@ export class DocxExporterRichtext {
                       content += this.transformRichtext({type: 'text', text: caption}, options)
                       end = '</w:p>' + end
                 } else {
-                    let latex = node.attrs.equation
-                    let omml = this.exporter.math.getOmml(latex)
+                    const latex = node.attrs.equation
+                    const omml = this.exporter.math.getOmml(latex)
                     start += noSpaceTmp`
                         <w:p>${omml}</w:p>
                         <w:p>

@@ -274,7 +274,7 @@ export class ModCommentInteractions {
 
             let username
 
-            if(REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
+            if (REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
                 username = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
             } else {
                 username = this.mod.editor.user.username
@@ -332,7 +332,7 @@ export class ModCommentInteractions {
 
         let username
 
-        if(REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
+        if (REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
             username = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
         } else {
             username = this.mod.editor.user.username

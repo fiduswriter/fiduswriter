@@ -118,7 +118,7 @@ export class DocumentTemplateDesigner {
                             attrs.locking = locking
                         }
                         let language
-                        switch(type) {
+                        switch (type) {
                             case 'richtext_part':
                             case 'heading_part':
                                 attrs.elements = Array.from(el.querySelectorAll('.elements:checked')).map(el => el.value)
@@ -231,8 +231,9 @@ export class DocumentTemplateDesigner {
                 })
             })
         this.editors.push([helpEl, helpView])
-        let plugins = [], menuContent = [], schema
-        switch(type) {
+        const plugins = []
+        let menuContent = [], schema
+        switch (type) {
             case 'richtext_part':
                 schema = richtextPartSchema
                 menuContent = richtextMenuContent

@@ -11,7 +11,7 @@ export class ImageEditDialog {
     //open a dialog for uploading an image
     init() {
 
-        let returnPromise = new Promise(resolve => {
+        const returnPromise = new Promise(resolve => {
 
             this.dialog = new Dialog({
                 title: this.imageId ? gettext('Update Image Information') : gettext('Upload Image'),
@@ -48,14 +48,14 @@ export class ImageEditDialog {
 
     //add image upload events
     bindMediaUploadEvents() {
-        let selectButton = document.querySelector('#editimage .fw-media-select-button'),
+        const selectButton = document.querySelector('#editimage .fw-media-select-button'),
             mediaInput = document.querySelector('#editimage .fw-media-file-input'),
             mediaPreviewer = document.querySelector('#editimage .figure-preview > div')
 
         selectButton.addEventListener('click', () => mediaInput.click())
 
         mediaInput.addEventListener('change', function() {
-            let file = mediaInput.files[0],
+            const file = mediaInput.files[0],
                 fr = new window.FileReader()
 
             fr.onload = () => {
@@ -68,7 +68,7 @@ export class ImageEditDialog {
     displayCreateImageError(errors) {
         Object.keys(errors).forEach(
             eKey => {
-                let eMsg = `<div class="warning">${errors[eKey]}</div>`
+                const eMsg = `<div class="warning">${errors[eKey]}</div>`
                 if ('error' == eKey) {
                     document.getElementById(`editimage`).insertAdjacentHTML(
                         'afterbegin',
@@ -86,7 +86,7 @@ export class ImageEditDialog {
 
     saveImage() {
 
-        let imageData = {
+        const imageData = {
             title: document.querySelector('#editimage .fw-media-title').value,
             cats: Array.from(document.querySelectorAll('#editimage .entry-cat:checked')).map(
                 el => parseInt(el.value)

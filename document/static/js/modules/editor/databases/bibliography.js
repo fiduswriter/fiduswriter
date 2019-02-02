@@ -81,7 +81,7 @@ export class ModBibliographyDB {
     }
 
     addReference(reference, id) {
-        while(!id || this.db[id]) {
+        while (!id || this.db[id]) {
             id = randomID()
         }
         this.updateReference(id, reference)

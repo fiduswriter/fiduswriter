@@ -18,16 +18,16 @@ export class OdtExporterMath {
     }
 
     checkObjectCounter() {
-        let manifestEl = this.manifestXml.querySelector('manifest')
-        let fileEntries = manifestEl.querySelectorAll('file-entry')
+        const manifestEl = this.manifestXml.querySelector('manifest')
+        const fileEntries = manifestEl.querySelectorAll('file-entry')
 
         fileEntries.forEach(
             fileEntry => {
-                let fullPath = fileEntry.getAttribute('manifest:full-path')
-                let dir = fullPath.split('/')[0]
-                let dirParts = dir.split(' ')
+                const fullPath = fileEntry.getAttribute('manifest:full-path')
+                const dir = fullPath.split('/')[0]
+                const dirParts = dir.split(' ')
                 if (dirParts.length===2 && dirParts[0] === 'Object') {
-                    let objectNumber =  parseInt(dirParts[1])
+                    const objectNumber =  parseInt(dirParts[1])
                     if (objectNumber >= this.objectCounter) {
                         this.objectCounter = objectNumber + 1
                     }
@@ -37,13 +37,13 @@ export class OdtExporterMath {
     }
 
     addMath(latex) {
-        let mathml = TeXZilla.toMathML(latex)
-        let objectNumber = this.objectCounter++
+        const mathml = TeXZilla.toMathML(latex)
+        const objectNumber = this.objectCounter++
         this.exporter.xml.addXmlFile(`Object ${objectNumber}/content.xml`, mathml)
-        let manifestEl = this.manifestXml.querySelector('manifest')
-        let stringOne = `<manifest:file-entry manifest:full-path="Object ${objectNumber}/content.xml" manifest:media-type="text/xml"/>`
+        const manifestEl = this.manifestXml.querySelector('manifest')
+        const stringOne = `<manifest:file-entry manifest:full-path="Object ${objectNumber}/content.xml" manifest:media-type="text/xml"/>`
         manifestEl.insertAdjacentHTML('beforeEnd', stringOne)
-        let stringTwo = `<manifest:file-entry manifest:full-path="Object ${objectNumber}/" manifest:version="1.2" manifest:media-type="application/vnd.oasis.opendocument.formula"/>`
+        const stringTwo = `<manifest:file-entry manifest:full-path="Object ${objectNumber}/" manifest:version="1.2" manifest:media-type="application/vnd.oasis.opendocument.formula"/>`
         manifestEl.insertAdjacentHTML('beforeEnd', stringTwo)
         return objectNumber
     }

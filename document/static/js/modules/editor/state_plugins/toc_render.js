@@ -135,7 +135,7 @@ export const tocRenderPlugin = function(options) {
                 // update.
                 // See https://discuss.prosemirror.net/t/how-can-i-communicate-from-a-plugin-to-a-custom-nodeview/952/2
 
-                if(updateToc) {
+                if (updateToc) {
                     decos = getDecos(state)
                 } else {
                     decos = decos.map(tr.mapping, tr.doc)

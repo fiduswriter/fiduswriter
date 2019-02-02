@@ -6,7 +6,7 @@ import {postJson, cancelPromise, Dialog} from "../common"
  */
 
 //add a user to contact per ajax
-let addMember = function(userString) {
+const addMember = function(userString) {
     if (null === userString || 'undefined' == typeof(userString)) {
         return cancelPromise()
     }
@@ -56,10 +56,10 @@ let addMember = function(userString) {
 }
 
 //dialog for adding a user to contacts
-export let addMemberDialog = function() {
+export const addMemberDialog = function() {
 
     return new Promise(resolve => {
-        let buttons = [
+        const buttons = [
             {
                 text: gettext('Submit'),
                 classes: "fw-dark",
@@ -78,7 +78,7 @@ export let addMemberDialog = function() {
             }
         ]
 
-        let dialog = new Dialog({
+        const dialog = new Dialog({
             id: 'add-new-member',
             title: gettext('Add a user to your contacts'),
             body: addTeammemberTemplate(),
@@ -93,7 +93,7 @@ export let addMemberDialog = function() {
     })
 }
 
-let deleteMember = function(ids) {
+const deleteMember = function(ids) {
 
     postJson(
         '/account/teammember/remove',
@@ -112,8 +112,8 @@ let deleteMember = function(ids) {
 }
 
 //dialog for removing a user from contacts
-export let deleteMemberDialog = function(memberIds) {
-    let buttons = [
+export const deleteMemberDialog = function(memberIds) {
+    const buttons = [
         {
             text: gettext('Delete'),
             classes: "fw-dark",
@@ -126,7 +126,7 @@ export let deleteMemberDialog = function(memberIds) {
             type: 'cancel'
         }
     ]
-    let dialog = new Dialog({
+    const dialog = new Dialog({
         title: gettext('Confirm deletion'),
         id: 'confirmdeletion',
         body: `<p>${gettext('Remove from the contacts')}?</p>`,

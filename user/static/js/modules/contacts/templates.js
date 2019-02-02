@@ -1,7 +1,7 @@
 import {escapeText} from "../common"
 
 //template for the list of teammembers
-export let teammemberTemplate = ({members}) =>
+export const teammemberTemplate = ({members}) =>
     members.map(member =>
         `<tr id="user-${member.id}">
             <td width="30">
@@ -26,7 +26,7 @@ export let teammemberTemplate = ({members}) =>
     ).join('')
 
 //template for member adding dialog
-export let addTeammemberTemplate = () =>
+export const addTeammemberTemplate = () =>
     `<table class="ui-dialog-content-table"><tbody><tr><td>
         <input type="text" name="user_string" id="new-member-user-string"
                 placeholder="${gettext('E-mail address or username')}" />

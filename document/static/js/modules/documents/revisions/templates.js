@@ -1,7 +1,7 @@
 import {localizeDate, escapeText} from "../../common"
 
 /** A template for listing the templates of a certain document */
-export let documentrevisionsTemplate = ({doc}) =>
+export const documentrevisionsTemplate = ({doc}) =>
     `<table class="fw-document-table" style="width:342px;">
         <thead class="fw-document-table-header">
             <th width="80">${gettext('Time')}</th>

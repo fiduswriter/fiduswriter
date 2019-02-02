@@ -31,13 +31,13 @@ export class LiteralLongFieldForm{
                         "Mod-shift-z": undo,
                         "Mod-y": redo,
                         "Mod-b": () => {
-                            let sMark = this.view.state.schema.marks['strong']
-                            let command = toggleMark(sMark)
+                            const sMark = this.view.state.schema.marks['strong']
+                            const command = toggleMark(sMark)
                             command(this.view.state, tr => this.view.dispatch(tr))
                         },
                         "Mod-i": () => {
-                            let sMark = this.view.state.schema.marks['em']
-                            let command = toggleMark(sMark)
+                            const sMark = this.view.state.schema.marks['em']
+                            const command = toggleMark(sMark)
                             command(this.view.state, tr => this.view.dispatch(tr))
                         }
                     })
@@ -53,12 +53,12 @@ export class LiteralLongFieldForm{
                 }
             },
             dispatchTransaction: tr => {
-                let newState = this.view.state.apply(tr)
+                const newState = this.view.state.apply(tr)
                 this.view.updateState(newState)
             }
         })
 
-        let supportedMarks = ['em', 'strong', 'sub', 'sup', 'smallcaps']
+        const supportedMarks = ['em', 'strong', 'sub', 'sup', 'smallcaps']
         supportedMarks.forEach(mark =>{
             this.linkMarkButton(mark)
         })
@@ -71,14 +71,14 @@ export class LiteralLongFieldForm{
             if (!this.view.hasFocus()) {
                 return
             }
-            let sMark = this.view.state.schema.marks[mark]
-            let command = toggleMark(sMark)
+            const sMark = this.view.state.schema.marks[mark]
+            const command = toggleMark(sMark)
             command(this.view.state, tr => this.view.dispatch(tr))
         })
     }
 
     get value() {
-        let literalContents = this.view.state.doc.firstChild.content.toJSON()
+        const literalContents = this.view.state.doc.firstChild.content.toJSON()
         return literalContents && literalContents.length ? literalContents : false
     }
 

@@ -19,7 +19,7 @@ export class DocxExporterRender {
     getTagData(pmBib) {
         this.tags = this.docContents.content.map(node => {
             const tag = {}
-            switch(node.type) {
+            switch (node.type) {
                 case 'title':
                     tag.title = 'title'
                     tag.content = textContent(node)
@@ -89,17 +89,17 @@ export class DocxExporterRender {
     // replacements.
     render() {
         // Including global page definition at end
-        let pars = this.xml.querySelectorAll('p,sectPr')
-        let currentTags = []
+        const pars = this.xml.querySelectorAll('p,sectPr')
+        const currentTags = []
 
         pars.forEach(
             par => {
                 // Assuming there is nothing outside of <w:t>...</w:t>
-                let text = par.textContent
+                const text = par.textContent
                 this.tags.forEach(
                     tag => {
-                        let tagString = tag.title
-                        if(text.indexOf('{'+tagString+'}') !== -1) {
+                        const tagString = tag.title
+                        if (text.indexOf('{'+tagString+'}') !== -1) {
                             currentTags.push(tag)
                             tag.par = par
                             // We don't worry about the same tag appearing twice in the document,
@@ -108,27 +108,27 @@ export class DocxExporterRender {
                     }
                 )
 
-                let pageSize = par.querySelector('pgSz')
-                let pageMargins = par.querySelector('pgMar')
-                let cols = par.querySelector('cols')
+                const pageSize = par.querySelector('pgSz')
+                const pageMargins = par.querySelector('pgMar')
+                const cols = par.querySelector('cols')
                 if (pageSize && pageMargins && cols) { // Not sure if these all need to come together
                     let width = parseInt(pageSize.getAttribute('w:w')) -
                     parseInt(pageMargins.getAttribute('w:right')) -
                     parseInt(pageMargins.getAttribute('w:left'))
-                    let height = parseInt(pageSize.getAttribute('w:h')) -
+                    const height = parseInt(pageSize.getAttribute('w:h')) -
                     parseInt(pageMargins.getAttribute('w:bottom')) -
                     parseInt(pageMargins.getAttribute('w:top')) -
                     parseInt(pageMargins.getAttribute('w:header')) -
                     parseInt(pageMargins.getAttribute('w:footer'))
 
-                    let colCount = parseInt(cols.getAttribute('w:num'))
+                    const colCount = parseInt(cols.getAttribute('w:num'))
                     if (colCount > 1) {
-                        let colSpace = parseInt(cols.getAttribute('w:space'))
+                        const colSpace = parseInt(cols.getAttribute('w:space'))
                         width = width - (colSpace * (colCount-1))
                         width = width / colCount
                     }
                     while (currentTags.length) {
-                        let tag = currentTags.pop()
+                        const tag = currentTags.pop()
                         tag.dimensions = {
                             width: width * 635, // convert to EMU
                             height: height * 635 // convert to EMU
@@ -141,7 +141,7 @@ export class DocxExporterRender {
         )
         this.tags.forEach(
             tag => {
-                if(tag.title[0]==='@') {
+                if (tag.title[0]==='@') {
                     this.parRender(tag)
                 } else {
                     this.inlineRender(tag)
@@ -152,14 +152,14 @@ export class DocxExporterRender {
 
     // Render Tags that only exchange inline content
     inlineRender(tag) {
-        let texts = tag.par.textContent.split(`{${tag.title}}`)
-        let fullText = texts[0] + escapeText(tag.content) + texts[1]
-        let rs = Array.from(tag.par.querySelectorAll('r'))
+        const texts = tag.par.textContent.split(`{${tag.title}}`)
+        const fullText = texts[0] + escapeText(tag.content) + texts[1]
+        const rs = Array.from(tag.par.querySelectorAll('r'))
         while (rs.length > 1) {
             rs[0].parentNode.removeChild(rs[0])
             rs.shift()
         }
-        let r = rs[0]
+        const r = rs[0]
         if (fullText.length) {
             let textAttr = ''
             if (fullText[0] === ' ' || fullText[fullText.length-1] === ' ') {
@@ -185,9 +185,9 @@ export class DocxExporterRender {
         tag.par.insertAdjacentHTML('beforebegin', outXML)
         // sectPr contains information about columns, etc. We need to move this
         // to the last paragraph we will be adding.
-        let sectPr = tag.par.querySelector('sectPr')
+        const sectPr = tag.par.querySelector('sectPr')
         if (sectPr) {
-            let pPr = tag.par.previousElementSibling.querySelector('pPr')
+            const pPr = tag.par.previousElementSibling.querySelector('pPr')
             pPr.appendChild(sectPr)
         }
         tag.par.parentNode.removeChild(tag.par)

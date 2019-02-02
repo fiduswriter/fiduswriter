@@ -821,3 +821,74 @@ html[hc=a5] #toolbar {
     background-color: lightgrey;
     padding: 10px;
 }
+
+
+#navigator {
+    top: 250px;
+    left:-265px;
+    position: fixed;
+    z-index: 9;
+    -webkit-transition: left 0.7s; /* Safari */
+    transition: left 0.7s;
+}
+
+#navigator-content {
+    display: inline-block;
+    background-color: black;
+    opacity: 0.8;
+    width:250px;
+    color: white;
+    padding: 15px 15px 20px 0px;
+    min-height: 90px;
+    max-height: 550px;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+    overflow: -moz-scrollbars-none; 
+
+}
+#navigator-content::-webkit-scrollbar {
+    display: none;
+}
+
+#navigator-content a {
+    color: white;
+}
+#navigator-content h1,
+#navigator-content h2,
+#navigator-content h3,
+#navigator-content h4,
+#navigator-content h5,
+#navigator-content h6 {
+    font-size: 1.2em;
+    font-weight: normal;
+    margin-bottom: unset;
+    padding-left: 4em;
+    padding-top: 1.3em;
+    overflow-wrap: break-word;
+}
+#navigator-content .header {
+    font-size: 1.1em;
+    font-weight: bold;
+    text-decoration: underline;
+    padding: 0 0 1em 4em;
+    text-transform: uppercase;
+}
+#navigator-button {
+    float: right;
+    background-color: black;
+    opacity: 0.8;
+    cursor: pointer;
+    padding: 1em;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+.navigator-arrow-icon {
+    color: white;
+    font-size: 1.4em;
+}
+.navigator-arrow-icon i {
+    transition: all 0.50s 0.25s;
+}
+.rotate {
+    transform: rotate(180deg);
+}

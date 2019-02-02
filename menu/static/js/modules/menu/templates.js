@@ -1,4 +1,4 @@
-export let headerNavTemplate = ({navItems}) =>
+export const headerNavTemplate = ({navItems}) =>
     `<div class="fw-container fw-nav-container">
     ${
         navItems.map(navItem =>

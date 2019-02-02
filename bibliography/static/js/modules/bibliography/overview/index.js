@@ -26,7 +26,7 @@ export class BibliographyOverview {
     init() {
         whenReady().then(() => {
             this.render()
-            let smenu = new SiteMenu("bibliography")
+            const smenu = new SiteMenu("bibliography")
             smenu.init()
             this.menu = new OverviewMenuView(this, menuModel)
             this.menu.init()
@@ -56,7 +56,7 @@ export class BibliographyOverview {
 
     /* Initialize the overview table */
     initTable(ids) {
-        let tableEl = document.createElement('table')
+        const tableEl = document.createElement('table')
         tableEl.classList.add('fw-document-table')
         tableEl.classList.add('fw-large')
         document.querySelector('.fw-contents').appendChild(tableEl)
@@ -129,8 +129,8 @@ export class BibliographyOverview {
     }
 
     createTableRow(id) {
-        let bibInfo = this.app.bibDB.db[id]
-        let bibauthors = bibInfo.fields.author || bibInfo.fields.editor
+        const bibInfo = this.app.bibDB.db[id]
+        const bibauthors = bibInfo.fields.author || bibInfo.fields.editor
         return [
             String(id),
             `<input type="checkbox" class="entry-select" data-id="${id}">`, // checkbox
@@ -148,8 +148,8 @@ export class BibliographyOverview {
     }
 
     removeTableRows(ids) {
-        let existingRows = this.table.data.map((data, index) => {
-            let id = parseInt(data.cells[0].textContent)
+        const existingRows = this.table.data.map((data, index) => {
+            const id = parseInt(data.cells[0].textContent)
             if (ids.includes(id)) {
                 return index
             } else {
@@ -165,8 +165,8 @@ export class BibliographyOverview {
     /** Opens a dialog for editing categories.
      * @function editCategoriesDialog
      */
-    editCategoriesDialog () {
-        let buttons = [
+    editCategoriesDialog() {
+        const buttons = [
             {
                 text: gettext('Submit'),
                 classes: "fw-dark",
@@ -175,7 +175,7 @@ export class BibliographyOverview {
                     document.querySelectorAll('#editCategories .category-form').forEach(
                         el => {
                             const title = el.value.trim()
-                            if(title.length) {
+                            if (title.length) {
                                 cats.ids.push(parseInt(el.getAttribute('data-id') || 0))
                                 cats.titles.push(title)
                             }
@@ -190,7 +190,7 @@ export class BibliographyOverview {
             }
         ]
 
-        let dialog = new Dialog({
+        const dialog = new Dialog({
             id: 'editCategories',
             width: 350,
             height: 350,
@@ -209,7 +209,7 @@ export class BibliographyOverview {
           * @param ids Ids of items that are to be deleted.
      */
     deleteBibEntryDialog(ids) {
-        let buttons = [
+        const buttons = [
             {
                 text: gettext('Delete'),
                 class: "fw-dark",
@@ -223,7 +223,7 @@ export class BibliographyOverview {
             }
         ]
 
-        let dialog = new Dialog({
+        const dialog = new Dialog({
             id: 'confirmdeletion',
             title: gettext('Confirm deletion'),
             body: `<p>${gettext('Delete the bibliography item(s)')}?</p>`,
@@ -258,7 +258,8 @@ export class BibliographyOverview {
           */
     bindEvents() {
         document.body.addEventListener('click', event => {
-            let el = {}, bookId, form, itemEl
+            const el = {}
+            let bookId, form, itemEl
             switch (true) {
                 case findTarget(event, '.delete-bib', el):
                     bookId = parseInt(el.target.dataset.id)
@@ -269,7 +270,7 @@ export class BibliographyOverview {
                     form = new BibEntryForm(this.app.bibDB, bookId)
                     form.init().then(
                         idTranslations => {
-                            let ids = idTranslations.map(idTrans => idTrans[1])
+                            const ids = idTranslations.map(idTrans => idTrans[1])
                             return this.updateTable(ids)
                         }
                     )
@@ -301,7 +302,7 @@ export class BibliographyOverview {
                 // We are inside of an input element, cancel.
                 return false
             }
-            let text = event.clipboardData.getData('text')
+            const text = event.clipboardData.getData('text')
             return this.getBibtex(text)
         })
 
@@ -324,7 +325,7 @@ export class BibliographyOverview {
                 // We are inside of an input element, cancel.
                 return false
             }
-            let text = fixUTF8(event.dataTransfer.getData('text'))
+            const text = fixUTF8(event.dataTransfer.getData('text'))
             return this.getBibtex(text)
         })
     }

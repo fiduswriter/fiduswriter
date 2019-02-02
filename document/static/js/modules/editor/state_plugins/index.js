@@ -58,10 +58,6 @@ export {
 }
 from "./marginboxes"
 export {
-    navigatorPlugin
-}
-from "./navigator"
-export {
     placeholdersPlugin
 }
 from "./placeholders"

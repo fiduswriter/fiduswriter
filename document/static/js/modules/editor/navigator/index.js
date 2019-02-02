@@ -58,10 +58,11 @@ export class ModNavigator {
                 items.push({id: node.attrs.id, textContent: node.textContent, type: node.type})
             }
         })
-        if(items.length)
+        if(items.length){
             return this.navigatorHTML(items)
-        else
+        } else{
             return false
+        }
     }
     navigatorHTML(items) {
         return `
@@ -76,13 +77,12 @@ export class ModNavigator {
     }
     getNavigatorTemplate(){
         return `
-                <div id= "navigator-content" >
-                    <h1 class= "header" >${gettext('DOCUMENT-NAVIGATOR')}</h1>
-                    <div id = "navigator-list" >
-                    </div>
+                <div id="navigator-content">
+                    <h1 class="header">${gettext('Document Navigator')}</h1>
+                    <div id="navigator-list"></div>
                 </div>
-                <div id= "navigator-button" >
-                    <span class="arrow-icon"><i class="fas fa-angle-right"></i></span>
+                <div id="navigator-button">
+                    <span class="navigator-arrow-icon"><i class="fas fa-angle-right"></i></span>
                 </div>
                 `
     }

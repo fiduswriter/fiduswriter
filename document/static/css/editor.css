@@ -871,6 +871,7 @@ html[hc=a5] #toolbar {
     font-weight: bold;
     text-decoration: underline;
     padding: 0 0 1em 4em;
+    text-transform: uppercase;
 }
 #navigator-button {
     float: right;
@@ -881,16 +882,13 @@ html[hc=a5] #toolbar {
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
 }
-.arrow-icon {
+.navigator-arrow-icon {
     color: white;
     font-size: 1.4em;
 }
-.arrow-icon i {
+.navigator-arrow-icon i {
     transition: all 0.50s 0.25s;
 }
 .rotate {
     transform: rotate(180deg);
-}
-.hide-navigator {
-    left:-315px !important;
 }

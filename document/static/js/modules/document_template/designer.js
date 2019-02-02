@@ -49,6 +49,7 @@ export class DocumentTemplateDesigner {
             'dialog.css',
             'prosemirror.css',
             'prosemirror-menu.css',
+            'prosemirror-example-setup.css',
             'document_template_designer.css',
             'tags.css',
             'contributors.css'

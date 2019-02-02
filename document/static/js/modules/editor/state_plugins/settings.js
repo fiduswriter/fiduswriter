@@ -117,7 +117,7 @@ export const settingsPlugin = function(options) {
         key,
         appendTransaction(trs, oldState, newState) { // Ensure that there are always settings set.
             if (
-                trs.every(tr => tr.getMeta('remote') || tr.from > 0 )
+                trs.every(tr => tr.getMeta('remote') || tr.from > 0)
             ) {
                 // All transactions are remote. Give up.
                 return false

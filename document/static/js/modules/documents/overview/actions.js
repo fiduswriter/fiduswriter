@@ -11,7 +11,7 @@ import {DocumentRevisionsDialog} from "../revisions"
 import {activateWait, deactivateWait, addAlert, postJson, Dialog} from "../../common"
 
 export class DocumentOverviewActions {
-    constructor (documentOverview) {
+    constructor(documentOverview) {
         documentOverview.mod.actions = this
         this.documentOverview = documentOverview
     }

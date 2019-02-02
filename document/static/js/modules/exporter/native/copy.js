@@ -6,7 +6,7 @@ import {ShrinkFidus} from "./shrink"
   old document was owned by someone else than the current user.
 */
 export class SaveCopy {
-    constructor (doc, bibDB, imageDB, newUser) {
+    constructor(doc, bibDB, imageDB, newUser) {
         this.doc = doc
         this.bibDB = bibDB
         this.imageDB = imageDB

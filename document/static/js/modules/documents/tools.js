@@ -1,7 +1,7 @@
 import {addAlert, postJson} from "../common"
 import {getSettings} from "../schema/convert"
 
-export let getMissingDocumentListData = function (ids, documentList) {
+export let getMissingDocumentListData = function(ids, documentList) {
     // get extra data for the documents identified by the ids and updates the
     // documentList correspondingly.
     let incompleteIds = []

@@ -429,7 +429,7 @@ export function appendTransaction(trs, oldState, newState, editor) {
 
         const tr = trs[trs.length-1]
         if (tr.selection instanceof TextSelection) {
-            const assoc = (tr.selection.from < oldState.selection.from || tr.getMeta('inputType') === 'deleteContentBackward' ) ? -1 : 1
+            const assoc = (tr.selection.from < oldState.selection.from || tr.getMeta('inputType') === 'deleteContentBackward') ? -1 : 1
             const caretPos = map.map(tr.selection.from, assoc)
             newTr.setSelection(
                 new TextSelection(

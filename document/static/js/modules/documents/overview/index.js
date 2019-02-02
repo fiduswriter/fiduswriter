@@ -14,7 +14,7 @@ import {FeedbackTab} from "../../feedback"
 
 export class DocumentOverview {
 
-    constructor ({app, user, staticUrl}) {
+    constructor({app, user, staticUrl}) {
         this.app = app
         this.user = user
         this.staticUrl = staticUrl

@@ -96,7 +96,7 @@ export const addAlert = function(alertType, alertMsg) {
  * @param {number} milliseconds Number of milliseconds since epoch (1/1/1970 midnight, UTC).
  * @param {boolean} type 'full' for full date (default), 'sortable-date' for sortable date, 'minutes' for minute accuracy
  */
-export const localizeDate = function (milliseconds, type='full') {
+export const localizeDate = function(milliseconds, type='full') {
     milliseconds = parseInt(milliseconds)
     if (milliseconds > 0) {
         const theDate = new Date(milliseconds)

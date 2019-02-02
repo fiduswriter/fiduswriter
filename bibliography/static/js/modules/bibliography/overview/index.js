@@ -165,7 +165,7 @@ export class BibliographyOverview {
     /** Opens a dialog for editing categories.
      * @function editCategoriesDialog
      */
-    editCategoriesDialog () {
+    editCategoriesDialog() {
         let buttons = [
             {
                 text: gettext('Submit'),

@@ -67,6 +67,9 @@ import {
     acceptAllNoInsertions
 } from "./track"
 import {
+    ModNavigator
+} from './navigator'
+import {
     headerbarModel,
     toolbarModel,
     tableMenuModel
@@ -98,7 +101,6 @@ import {
     tagInputPlugin,
     linksPlugin,
     marginboxesPlugin,
-    navigatorPlugin,
     placeholdersPlugin,
     settingsPlugin,
     tableMenuPlugin,
@@ -183,7 +185,6 @@ export class Editor {
             [trackPlugin, () => ({editor: this})],
             [tableMenuPlugin, () => ({editor: this})],
             [tocRenderPlugin, () => ({editor: this})],
-            [navigatorPlugin, () => ({editor: this})],
         ]
     }
 
@@ -299,6 +300,7 @@ export class Editor {
         new ModMarginboxes(this)
         new ModComments(this)
         new ModDocumentTemplate(this)
+        new ModNavigator(this)
         this.activateFidusPlugins()
         this.mod.serverCommunications.init()
     }

@@ -42,7 +42,7 @@ export class DeleteUserDialog {
            {password}
        ).then(
            response => {
-               switch(response.status) {
+               switch (response.status) {
                    case 204:
                         window.location = '/account/login/'
                         break

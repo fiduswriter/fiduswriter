@@ -85,7 +85,7 @@ export class ModDocumentTemplate {
         // Remove any previous entries in case we run this a second time
         exportMenu.content = exportMenu.content.filter(menuItem => menuItem.class!=='export_template')
         const exportMenuEntries = this.exportTemplates.map(template => {
-            if(template.file_type==='docx') {
+            if (template.file_type==='docx') {
                 return {
                     class: 'export_template',
                     title: `${template.file_name} (DOCX)`,
@@ -148,7 +148,7 @@ export class ModDocumentTemplate {
                     const attrs = Object.assign({}, article.attrs)
                     attrs.documentstyle = docStyle.filename
                     editor.view.dispatch(
-                        editor.view.state.tr.setNodeMarkup(0, false, attrs)
+                        editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta('settings', true)
                     )
                 },
                 selected: editor => {
@@ -171,7 +171,7 @@ export class ModDocumentTemplate {
                     const attrs = Object.assign({}, article.attrs)
                     attrs.citationstyle = citeStyle.short_title
                     editor.view.dispatch(
-                        editor.view.state.tr.setNodeMarkup(0, false, attrs)
+                        editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta('settings', true)
                     )
                 },
                 selected: editor => {

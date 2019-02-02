@@ -142,14 +142,14 @@ export class DocxExporterLists {
                 // the numeric list.
                 let levelZeroFormat = abstractNum.querySelector('lvl[*|ilvl="0"] numFmt').getAttribute('w:val')
                 let abstractNumId = parseInt(abstractNum.getAttribute('w:abstractNumId'))
-                if(levelZeroFormat==='bullet' && !(this.bulletAbstractType)) {
+                if (levelZeroFormat==='bullet' && !(this.bulletAbstractType)) {
                     let numEl = this.numberingXml.querySelector(`abstractNumId[*|val="${abstractNumId}"]`).parentElement
                     let numId = parseInt(numEl.getAttribute('w:numId'))
                     this.bulletType = numId
-                } else if(levelZeroFormat!=='bullet' && !(this.numberedAbstractType)) {
+                } else if (levelZeroFormat!=='bullet' && !(this.numberedAbstractType)) {
                     this.numberedAbstractType = abstractNumId
                 }
-                if(this.maxAbstractNumId < abstractNumId) {
+                if (this.maxAbstractNumId < abstractNumId) {
                     this.maxAbstractNumId = abstractNumId
                 }
 
@@ -158,23 +158,23 @@ export class DocxExporterLists {
         let allNum = this.numberingXml.querySelectorAll('num')
         allNum.forEach(numEl => {
             let numId = parseInt(numEl.getAttribute('w:val'))
-            if(this.maxNumId < numId) {
+            if (this.maxNumId < numId) {
                 this.maxNumId = numId
             }
         })
 
-        if(!(this.bulletType) && this.useBulletList) {
+        if (!(this.bulletType) && this.useBulletList) {
             this.maxNumId++
             this.maxAbstractNumId++
             this.addBulletNumType(this.maxNumId, this.maxAbstractNumId)
             this.bulletType = this.maxNumId
         }
-        if(!(this.numberedAbstractType) && this.usedNumberedList > 0) {
+        if (!(this.numberedAbstractType) && this.usedNumberedList > 0) {
             this.maxAbstractNumId++
             this.addNumberedAbstractNumType(this.maxAbstractNumId)
             this.numberedAbstractType = this.maxAbstractNumId
         }
-        for(let i=0;i<this.usedNumberedList;i++) {
+        for (let i=0;i<this.usedNumberedList;i++) {
             this.maxNumId++
             let numId = this.maxNumId
             this.addNumberedNumType(numId, this.numberedAbstractType)
@@ -205,7 +205,7 @@ export class DocxExporterLists {
         `)
         let newAbstractNum = this.numberingXml.querySelector(`abstractNum[*|abstractNumId="${abstractNumId}"]`)
         // Definition seem to always define 9 levels (0-8).
-        for(let level = 0; level < 9; level++) {
+        for (let level = 0; level < 9; level++) {
             newAbstractNum.insertAdjacentHTML('beforeEnd', noSpaceTmp`
                 <w:lvl w:ilvl="${level}" w:tplc="04090001" w:tentative="1">
                     <w:start w:val="1" />
@@ -244,7 +244,7 @@ export class DocxExporterLists {
         `)
         let newAbstractNum = this.numberingXml.querySelector(`abstractNum[*|abstractNumId="${abstractNumId}"]`)
         // Definition seem to always define 9 levels (0-8).
-        for(let level = 0; level < 9; level++) {
+        for (let level = 0; level < 9; level++) {
             newAbstractNum.insertAdjacentHTML('beforeEnd', noSpaceTmp`
                 <w:lvl w:ilvl="${level}" w:tplc="0409000F">
                     <w:start w:val="1" />

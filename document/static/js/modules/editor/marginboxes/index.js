@@ -151,7 +151,7 @@ export class ModMarginboxes {
         )
 
         // Add a comment that is currently under construction to the list.
-        if(this.editor.mod.comments.store.commentDuringCreation) {
+        if (this.editor.mod.comments.store.commentDuringCreation) {
             const deco = getCommentDuringCreationDecoration(this.editor.view.state)
             let pos, view
             if (deco) {
@@ -281,7 +281,7 @@ export class ModMarginboxes {
                     if (document.getElementById('margin-box-placement-style').innerHTML != marginBoxesPlacementStyle) {
                         document.getElementById('margin-box-placement-style').innerHTML = marginBoxesPlacementStyle
                     }
-                    if(this.editor.mod.comments.store.commentDuringCreation) {
+                    if (this.editor.mod.comments.store.commentDuringCreation) {
                         this.editor.mod.comments.store.commentDuringCreation.inDOM = true
                     }
                     resolve()

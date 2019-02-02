@@ -20,9 +20,9 @@ export class DocxExporterRichtext {
         let latex
         let textAttr
 
-        switch(node.type) {
+        switch (node.type) {
             case 'paragraph':
-                if(!options.section) {
+                if (!options.section) {
                     options.section = 'Normal'
                 }
                 // This should really be something like
@@ -284,7 +284,7 @@ export class DocxExporterRichtext {
                         caption = `${figCat} ${figCount}`
                     }
                 }
-                if(node.attrs.image !== false) {
+                if (node.attrs.image !== false) {
                     let imgDBEntry = this.images.imageDB.db[node.attrs.image]
                     let cx = imgDBEntry.width * 9525 // width in EMU
                     let cy = imgDBEntry.height * 9525 // height in EMU

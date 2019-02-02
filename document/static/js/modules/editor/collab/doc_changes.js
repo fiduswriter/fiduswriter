@@ -136,7 +136,7 @@ export class ModCollabDocChanges {
                     let newTitle = ""
                     this.mod.editor.view.state.doc.firstChild.firstChild.forEach(
                         child => {
-                            if(!child.marks.find(mark => mark.type.name==='deletion')) {
+                            if (!child.marks.find(mark => mark.type.name==='deletion')) {
                                 newTitle += child.textContent
                             }
                         }
@@ -145,7 +145,7 @@ export class ModCollabDocChanges {
                     let oldTitle = ""
                     this.mod.editor.docInfo.confirmedDoc.firstChild.firstChild.forEach(
                         child => {
-                            if(!child.marks.find(mark => mark.type.name==='deletion')) {
+                            if (!child.marks.find(mark => mark.type.name==='deletion')) {
                                 oldTitle += child.textContent
                             }
                         }

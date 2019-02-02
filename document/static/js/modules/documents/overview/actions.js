@@ -11,7 +11,7 @@ import {DocumentRevisionsDialog} from "../revisions"
 import {activateWait, deactivateWait, addAlert, postJson, Dialog} from "../../common"
 
 export class DocumentOverviewActions {
-    constructor (documentOverview) {
+    constructor(documentOverview) {
         documentOverview.mod.actions = this
         this.documentOverview = documentOverview
     }
@@ -279,7 +279,7 @@ export class DocumentOverviewActions {
         )
         revDialog.init().then(
           actionObject => {
-            switch(actionObject.action) {
+            switch (actionObject.action) {
                 case 'added-document':
                     this.documentOverview.documentList.push(actionObject.doc)
                     this.documentOverview.addDocToTable(actionObject.doc)

@@ -44,11 +44,11 @@ export class OdtExporterStyles {
             let styleNumber = parseInt(style.getAttribute('style:name').replace(/\D/g,''))
             let styleFamily = style.getAttribute('style:family')
             if (styleFamily==='text') {
-                if (styleNumber>this.inlineStyleCounter) {
+                if (styleNumber> this.inlineStyleCounter) {
                     this.inlineStyleCounter = styleNumber
                 }
             } else {
-                if (styleNumber>this.blockStyleCounter) {
+                if (styleNumber> this.blockStyleCounter) {
                     this.blockStyleCounter = styleNumber
                 }
             }
@@ -56,7 +56,7 @@ export class OdtExporterStyles {
         let listStyles = this.contentXml.querySelectorAll('automatic-styles list-style')
         listStyles.forEach(style => {
             let styleNumber = parseInt(style.getAttribute('style:name').replace(/\D/g,''))
-            if (styleNumber>this.listStyleCounter) {
+            if (styleNumber> this.listStyleCounter) {
                 this.listStyleCounter = styleNumber
             }
         })
@@ -149,10 +149,10 @@ export class OdtExporterStyles {
         if (bibInfo.hangingindent) {
             marginLeft = "0.5in"
             textIndent = "-0.5in"
-        } else if(bibInfo["second-field-align"]) {
+        } else if (bibInfo["second-field-align"]) {
             // We calculate 0.55em as roughly equivalent to one letter width.
             let firstFieldWidth = `${(bibInfo.maxoffset + 1)*0.55}em`
-            if(bibInfo["second-field-align"] === 'margin') {
+            if (bibInfo["second-field-align"] === 'margin') {
                 textIndent =  `-${firstFieldWidth}`
                 tabStops = '<style:tab-stops><style:tab-stop style:position="0in"/></style:tab-stops>'
             } else {
@@ -183,7 +183,7 @@ export class OdtExporterStyles {
         `)
         let listStyleEl = autoStylesEl.lastChild
         // ODT files seem to contain ten levels of lists (1-10)
-        for(let level=1;level<11;level++) {
+        for (let level=1;level<11;level++) {
             listStyleEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
                 <text:list-level-style-bullet text:level="${level}" text:style-name="Bullet_20_Symbols" text:bullet-char="•">
                     <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
@@ -205,7 +205,7 @@ export class OdtExporterStyles {
         `)
         let listStyleEl = autoStylesEl.lastChild
         // ODT files seem to contain ten levels of lists (1-10)
-        for(let level=1;level<11;level++) {
+        for (let level=1;level<11;level++) {
             listStyleEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
                 <text:list-level-style-number text:level="${level}" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
                     <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">

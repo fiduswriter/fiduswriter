@@ -56,7 +56,7 @@ export class DocMaintenance {
         ).catch(
             error => {
                 addAlert('error', `${gettext('Could not download batch')}: ${this.batch}`)
-                throw(error)
+                throw (error)
             }
         )
     }

@@ -57,14 +57,14 @@ export class FormatCitations {
                         text-indent: -0.5in;
                         padding-left: 0.5in;
                     }\n`
-            } else if(bibInfo["second-field-align"] === 'margin') {
+            } else if (bibInfo["second-field-align"] === 'margin') {
                 css += `
                     .csl-left-margin {
                         text-indent: -${bibInfo.maxoffset}ch;
                         width: ${bibInfo.maxoffset}ch;
                     }
                 `
-            } else if(bibInfo["second-field-align"] === 'flush') {
+            } else if (bibInfo["second-field-align"] === 'flush') {
                 css += `
                     .csl-left-margin {
                         width: ${bibInfo.maxoffset}ch;

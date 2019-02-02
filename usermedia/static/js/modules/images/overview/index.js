@@ -80,7 +80,7 @@ export class ImageOverview {
         ).catch(
             error => {
                 addAlert('error', gettext('The image(s) could not be deleted'))
-                throw(error)
+                throw (error)
             }
         ).then(
             () => {
@@ -134,7 +134,7 @@ export class ImageOverview {
         let image = this.app.imageDB.db[id]
         let fileType = image.file_type.split('/')
 
-        if(1 < fileType.length) {
+        if (1 < fileType.length) {
             fileType = fileType[1].toUpperCase()
         } else {
             fileType = fileType[0].toUpperCase()

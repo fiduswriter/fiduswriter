@@ -35,7 +35,7 @@ export class LatexExporterConvert {
 
     // Check for things needed before creating raw transofrm
     preWalkJson(node) {
-        switch(node.type) {
+        switch (node.type) {
             // Collect all internal links so that we only set the anchors for those
             // that are being linked to.
             case 'text':
@@ -63,7 +63,7 @@ export class LatexExporterConvert {
         let hyperlink, strong, em
         let references, format, citationCommand
         let figureType, caption, innerFigure
-        switch(node.type) {
+        switch (node.type) {
             case 'article':
                 break
             case 'title':
@@ -167,7 +167,7 @@ export class LatexExporterConvert {
                 break
             case 'heading':
                 level = node.attrs.level
-                switch(level) {
+                switch (level) {
                     case 1:
                         start += '\n\n\\section{'
                         break
@@ -190,7 +190,7 @@ export class LatexExporterConvert {
                     // Add a link target
                     end = `\\texorpdfstring{\\protect\\hypertarget{${node.attrs.id}}{}}{}` + end
                 }
-                if(!options.onlyFootnoteMarkers) {
+                if (!options.onlyFootnoteMarkers) {
                     placeFootnotesAfterBlock = true
                     options = Object.assign({}, options)
                     options.onlyFootnoteMarkers = true
@@ -208,7 +208,7 @@ export class LatexExporterConvert {
             case 'ordered_list':
                 start += '\n\\begin{enumerate}'
                 end = '\n\\end{enumerate}' + end
-                if(!options.onlyFootnoteMarkers) {
+                if (!options.onlyFootnoteMarkers) {
                     placeFootnotesAfterBlock = true
                     options = Object.assign({}, options)
                     options.onlyFootnoteMarkers = true
@@ -218,7 +218,7 @@ export class LatexExporterConvert {
             case 'bullet_list':
                 start += '\n\\begin{itemize}'
                 end = '\n\\end{itemize}' + end
-                if(!options.onlyFootnoteMarkers) {
+                if (!options.onlyFootnoteMarkers) {
                     placeFootnotesAfterBlock = true
                     options = Object.assign({}, options)
                     options.onlyFootnoteMarkers = true
@@ -397,7 +397,7 @@ export class LatexExporterConvert {
                 }
                 break
             case 'table':
-                if(node.content && node.content.length) {
+                if (node.content && node.content.length) {
                     let columns = node.content[0].content.reduce(
                         (columns, node) => columns + node.attrs.colspan,
                         0

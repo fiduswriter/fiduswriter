@@ -57,7 +57,7 @@ export class BibliographyDB {
                         window.localStorage.setItem('version', FW_LOCALSTORAGE_VERSION)
                     } catch (error) {
                         // The local storage was likely too small
-                        throw(error)
+                        throw (error)
                     }
                 } else {
                     bibList = JSON.parse(window.localStorage.getItem('biblist'))
@@ -72,7 +72,7 @@ export class BibliographyDB {
             error => {
                 addAlert('error', gettext('Could not obtain bibliography data'))
                 deactivateWait()
-                throw(error)
+                throw (error)
             }
         )
     }
@@ -87,7 +87,7 @@ export class BibliographyDB {
         ).catch(
             error => {
                 addAlert('error', gettext('The bibliography could not be updated'))
-                throw(error)
+                throw (error)
             }
         )
 
@@ -112,10 +112,10 @@ export class BibliographyDB {
         return this.sc.saveCategories(cats).then(
             bibCats => {
                 // Replace the old with the new categories, but don't lose the link to the array (so delete each, then add each).
-                while(this.cats.length > 0) {
+                while (this.cats.length > 0) {
                     this.cats.pop()
                 }
-                while(bibCats.length > 0) {
+                while (bibCats.length > 0) {
                     this.cats.push(bibCats.pop())
                 }
                 addAlert('success', gettext('The categories have been updated'))
@@ -126,7 +126,7 @@ export class BibliographyDB {
             error => {
                 addAlert('error', gettext('The categories could not be updated'))
                 deactivateWait()
-                throw(error)
+                throw (error)
             }
         )
     }
@@ -177,7 +177,7 @@ export class BibliographyDB {
             error => {
                 addAlert('error', 'The bibliography item(s) could not be deleted')
                 deactivateWait()
-                throw(error)
+                throw (error)
             }
         )
 

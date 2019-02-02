@@ -92,7 +92,7 @@ const pastePlugin = function(options) {
 const findKeywordsEndPos = function(state) {
     let pos = 1, // enter article
         child = 0
-    while(state.doc.firstChild.child(child).type.name !== 'keywords') {
+    while (state.doc.firstChild.child(child).type.name !== 'keywords') {
         pos += state.doc.firstChild.child(child).nodeSize
         child++
     }

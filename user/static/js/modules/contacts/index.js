@@ -59,7 +59,7 @@ export class ContactsOverview {
         ).catch(
             error => {
                 addAlert('error', gettext('Could not obtain contacts list'))
-                throw(error)
+                throw (error)
             }
         )
     }

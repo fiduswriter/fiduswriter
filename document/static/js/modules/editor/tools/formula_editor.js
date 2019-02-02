@@ -49,7 +49,7 @@ export class FormulaEditor {
                     katex.render(this.getLatex(), this.previewDOM)
                     this.hideError()
                 }
-                catch(msg) {
+                catch (msg) {
                     //if error show it
                     this.showError(msg)
                 }

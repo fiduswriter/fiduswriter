@@ -19,7 +19,7 @@ export class DocxExporterRender {
     getTagData(pmBib) {
         this.tags = this.docContents.content.map(node => {
             const tag = {}
-            switch(node.type) {
+            switch (node.type) {
                 case 'title':
                     tag.title = 'title'
                     tag.content = textContent(node)
@@ -99,7 +99,7 @@ export class DocxExporterRender {
                 this.tags.forEach(
                     tag => {
                         let tagString = tag.title
-                        if(text.indexOf('{'+tagString+'}') !== -1) {
+                        if (text.indexOf('{'+tagString+'}') !== -1) {
                             currentTags.push(tag)
                             tag.par = par
                             // We don't worry about the same tag appearing twice in the document,
@@ -141,7 +141,7 @@ export class DocxExporterRender {
         )
         this.tags.forEach(
             tag => {
-                if(tag.title[0]==='@') {
+                if (tag.title[0]==='@') {
                     this.parRender(tag)
                 } else {
                     this.inlineRender(tag)

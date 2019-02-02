@@ -79,7 +79,7 @@ export class ContentMenu {
         )
         this.backdropEl = document.body.lastElementChild
         this.dialogEl = this.backdropEl.previousElementSibling
-        if(this.menuPos && this.menuPos.X && this.menuPos.Y)
+        if (this.menuPos && this.menuPos.X && this.menuPos.Y)
             this.positionDialog()
         else
             this.centerDialog()
@@ -145,7 +145,7 @@ export class ContentMenu {
         event.preventDefault()
         event.stopImmediatePropagation()
         const target = event.target
-        if(target.matches('li.content-menu-item')) {
+        if (target.matches('li.content-menu-item')) {
             const menuNumber = target.dataset.index
             const menuItem = this.menu.content[menuNumber]
             if (menuItem.disabled && menuItem.disabled(this.page)){

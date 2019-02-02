@@ -35,7 +35,7 @@ export class OdtExporterImages {
         let manifestEl = this.manifestXml.querySelector('manifest')
         let imgManifest = manifestEl.querySelector(`file-entry[*|full-path="Pictures/${imgFileName}"]`)
         let counter = 0
-        while(imgManifest) {
+        while (imgManifest) {
             // Name exists already, we change the name until we get a file name not yet included in manifest.
             imgFileName = `${fileNameStart}_${counter++}.${fileNameEnding}`
             imgManifest = manifestEl.querySelector(`file-entry[*|full-path="Pictures/${imgFileName}"]`)

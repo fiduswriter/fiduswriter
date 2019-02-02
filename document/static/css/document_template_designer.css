@@ -1,5 +1,24 @@
 form .aligned ul.object-tools.right {
     margin-left: inherit;
+    height: 3em;
+}
+
+.object-tools span.link, .object-tools span.link {
+    display: block;
+    float: left;
+    padding: 3px 12px;
+    background: #999;
+    font-weight: 400;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #fff;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.object-tools span.link:focus, .object-tools span.link:hover {
+    background-color: #417690;
 }
 
 .from-container, .to-column, .trash {
@@ -34,14 +53,44 @@ form .aligned ul.object-tools.right {
 
 .doc-part {
     background-color: #F0F8FF;
-    border-bottom: 1px dotted black;
+    border-bottom: 3px dotted black;
+    padding: 4px;
+}
+
+.doc-part[data-type="heading_part"] {
+    background-color: #84C4FE;
+}
+
+.doc-part[data-type="contributors_part"] {
+    background-color: #928EFE;
+}
+
+.doc-part[data-type="richtext_part"] {
+    background-color: #FFC87B;
+}
+
+.doc-part[data-type="tags_part"] {
+    background-color: #FFDF7B;
+}
+
+.doc-part[data-type="table_part"] {
+    background-color: #BFEDC1;
+}
+
+.doc-part[data-type="table_of_contents"] {
+    background-color: #985F99;
 }
 
 .from-container .doc-part, .trash .doc-part {
     height: 50px;
 }
 
-.from-container .attrs, .trash .attrs {
+.from-container .attrs,
+.from-container .object-tools,
+.trash .attrs,
+.trash .object-tools,
+.from-container .doc-part-header .label,
+.attrs.hidden {
     display: none;
 }
 
@@ -55,11 +104,20 @@ table td {
     vertical-align: top;
 }
 
-.title {
+.doc-part-header {
     cursor: move; /* fallback if grab cursor is unsupported */
     cursor: grab;
     cursor: -moz-grab;
     cursor: -webkit-grab;
+    height: 60px;
+}
+
+.label {
+    padding: 5px 0 5px 0;
+}
+
+.from-container .doc-part-header {
+    height: 100%;
 }
 
 .object-tools.right {
@@ -74,4 +132,9 @@ table td {
 .ProseMirror-menubar {
     background-color: inherit;
     position: inherit;
+}
+
+.article-table th {
+    background-color: #76a698;
+    color: #fff;
 }

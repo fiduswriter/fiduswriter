@@ -18,7 +18,7 @@ export let modifyImages = function(htmlEl) {
         newImg.setAttribute('data-src', name)
         el.parentNode.replaceChild(newImg, el)
 
-        if(!images.find(image => image.filename === name)) {
+        if (!images.find(image => image.filename === name)) {
 
             images.push({
                 filename: name,

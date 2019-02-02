@@ -147,7 +147,7 @@ export class DocumentAccessRightsDialog {
                     break
                 case findTarget(event, '.edit-right', el):
                     box = el.target.parentElement.querySelector('.fw-pulldown')
-                    if(!box.clientWidth) {
+                    if (!box.clientWidth) {
                         openDropdownBox(box)
                     }
                     break

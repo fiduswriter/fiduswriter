@@ -142,7 +142,7 @@ export class Editor {
         if (isNaN(id)) {
             id = 0
             let template = parseInt(idString.slice(1))
-            if(isNaN(template)) {
+            if (isNaN(template)) {
                 template = 0
             }
             this.docInfo.template = template
@@ -353,7 +353,7 @@ export class Editor {
         let stateDoc
         if (doc.contents.type) {
             stateDoc = this.schema.nodeFromJSON({type:'doc', content:[
-                adjustDocToTemplate(doc.contents, this.docInfo.template)
+                adjustDocToTemplate(doc.contents, this.docInfo.template, this.mod.documentTemplate.documentStyles, this.mod.documentTemplate.citationStyles)
             ]})
         } else {
             const article = JSON.parse(JSON.stringify(this.docInfo.template)),
@@ -411,7 +411,7 @@ export class Editor {
             let title = ""
             pmArticle.firstChild.forEach(
                 child => {
-                    if(!child.marks.find(mark => mark.type.name==='deletion')) {
+                    if (!child.marks.find(mark => mark.type.name==='deletion')) {
                         title += child.textContent
                     }
                 }

@@ -126,12 +126,12 @@ export const changePwdDialog = function() {
 
                 document.getElementById('fw-password-change-error').innerHTML = ''
 
-                if('' === oldPwd || '' === newPwd1 || '' === newPwd2) {
+                if ('' === oldPwd || '' === newPwd1 || '' === newPwd2) {
                     document.getElementById('fw-password-change-error').innerHTML = gettext('All fields are required!')
                     return
                 }
 
-                if(newPwd1 !== newPwd2) {
+                if (newPwd1 !== newPwd2) {
                     document.getElementById('fw-password-change-error').innerHTML = gettext('Please confirm the new password!')
                     return
                 }
@@ -148,16 +148,16 @@ export const changePwdDialog = function() {
                     }
                 ).then(
                     ({json, status}) => {
-                        if(200 === status) {
+                        if (200 === status) {
                             dialog.close()
                             addAlert('info', gettext('The password has been changed.'))
                         } else {
                             let eMsg
-                            if(json.msg.hasOwnProperty('old_password')) {
+                            if (json.msg.hasOwnProperty('old_password')) {
                                 eMsg = json.msg['old_password'][0]
-                            } else if(json.msg.hasOwnProperty('new_password1')) {
+                            } else if (json.msg.hasOwnProperty('new_password1')) {
                                 eMsg = json.msg['new_password1'][0]
-                            } else if(json.msg.hasOwnProperty('new_password2')) {
+                            } else if (json.msg.hasOwnProperty('new_password2')) {
                                 eMsg = json.msg['new_password2'][0]
                             } else {
                                 eMsg = gettext('The password could not be changed!')
@@ -197,7 +197,7 @@ export const addEmailDialog = function() {
 
                 document.getElementById('fw-add-email-error').innerHTML = ''
 
-                if('' === email) {
+                if ('' === email) {
                     document.getElementById('fw-add-email-error').innerHTML = gettext('New email address is required!')
                     return
                 }
@@ -211,7 +211,7 @@ export const addEmailDialog = function() {
                     }
                 ).then(
                     ({json, status}) => {
-                        if(200 === status) {
+                        if (200 === status) {
                             dialog.close()
                             addAlert('info', `${gettext('Confirmation e-mail sent to')}: ${email}`)
                         } else {

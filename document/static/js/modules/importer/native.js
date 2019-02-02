@@ -51,7 +51,7 @@ export class ImportNative {
                         'error',
                         `${gettext('Could not save Image')} ${imageEntry.checksum}`
                     )
-                    throw(error)
+                    throw (error)
                 })
             }
         )
@@ -91,7 +91,7 @@ export class ImportNative {
             ({json}) => this.docId = json.id
         ).catch(error => {
             addAlert('error', gettext('Could not create document'))
-            throw(error)
+            throw (error)
         })
     }
 
@@ -136,7 +136,7 @@ export class ImportNative {
         ).catch(
             error => {
                 addAlert('error', `${gettext('Could not save ')} ${this.doc.title}`)
-                throw(error)
+                throw (error)
             }
         )
     }

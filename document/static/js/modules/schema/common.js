@@ -7,7 +7,7 @@ function parseReferences(str) {
     let references
     try {
         references = JSON.parse(str)
-    } catch(error) {
+    } catch (error) {
        return []
    }
    if (!Array.isArray(references)) {
@@ -98,7 +98,7 @@ export function parseTracks(str) {
     let tracks
     try {
         tracks = JSON.parse(str)
-    } catch(error) {
+    } catch (error) {
         return []
     }
     if (!Array.isArray(tracks)) {
@@ -181,7 +181,7 @@ export const figure = {
                 dom.classList.add('image-width-25')
         }
 
-        if(node.attrs.track.length) {
+        if (node.attrs.track.length) {
             dom.dataset.track = JSON.stringify(node.attrs.track)
         }
         if (node.attrs.image !== false) {
@@ -571,7 +571,7 @@ function parseFormatList(str) {
     let formatList
     try {
         formatList = JSON.parse(str)
-    } catch(error) {
+    } catch (error) {
        return []
    }
    if (!Array.isArray(formatList)) {

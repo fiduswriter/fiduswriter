@@ -165,7 +165,7 @@ export class BibliographyOverview {
     /** Opens a dialog for editing categories.
      * @function editCategoriesDialog
      */
-    editCategoriesDialog () {
+    editCategoriesDialog() {
         let buttons = [
             {
                 text: gettext('Submit'),
@@ -175,7 +175,7 @@ export class BibliographyOverview {
                     document.querySelectorAll('#editCategories .category-form').forEach(
                         el => {
                             const title = el.value.trim()
-                            if(title.length) {
+                            if (title.length) {
                                 cats.ids.push(parseInt(el.getAttribute('data-id') || 0))
                                 cats.titles.push(title)
                             }

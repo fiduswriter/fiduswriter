@@ -279,7 +279,7 @@ export class DocumentOverviewActions {
         )
         revDialog.init().then(
           actionObject => {
-            switch(actionObject.action) {
+            switch (actionObject.action) {
                 case 'added-document':
                     this.documentOverview.documentList.push(actionObject.doc)
                     this.documentOverview.addDocToTable(actionObject.doc)

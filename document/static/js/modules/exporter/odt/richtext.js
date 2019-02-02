@@ -21,7 +21,7 @@ export class OdtExporterRichtext {
         let columns
         let latex
         let objectNumber
-        switch(node.type) {
+        switch (node.type) {
             case 'paragraph':
                 if (!options.section) {
                     options.section = 'Text_20_body'
@@ -198,7 +198,7 @@ export class OdtExporterRichtext {
                         caption = `${figCat} ${figCount}`
                     }
                 }
-                if(node.attrs.image !== false) {
+                if (node.attrs.image !== false) {
                     let imgDBEntry = this.images.imageDB.db[node.attrs.image]
                     let imgFileName = this.images.imgIdTranslation[node.attrs.image]
                     let height = imgDBEntry.height*3/4 // more or less px to point

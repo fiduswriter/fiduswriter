@@ -115,10 +115,10 @@ export class DocxExporterCitations {
         if (bibInfo.hangingindent) {
             marginLeft = 720
             hangingIndent = 720
-        } else if(bibInfo["second-field-align"]) {
+        } else if (bibInfo["second-field-align"]) {
             // We calculate 120 as roughly equivalent to one letter width.
             let firstFieldWidth = (bibInfo.maxoffset + 1) * 120
-            if(bibInfo["second-field-align"] === 'margin') {
+            if (bibInfo["second-field-align"] === 'margin') {
                 hangingIndent =  firstFieldWidth
                 tabStops = '<w:tabs><w:tab w:val="left" w:pos="0" w:leader="none"/></w:tabs>'
             } else {

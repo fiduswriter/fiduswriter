@@ -287,7 +287,7 @@ export class BibEntryForm {
             return false
         }
         Object.keys(this.fields).forEach(fieldName=>{
-            if(this.fields[fieldName].check() !== true) {
+            if (this.fields[fieldName].check() !== true) {
                 passed = false
             }
         })

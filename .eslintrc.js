@@ -79,7 +79,7 @@ module.exports = {
         "init-declarations": "off",
         "jsx-quotes": "error",
         "key-spacing": "off",
-        "keyword-spacing": "off",
+        "keyword-spacing": ["warn", { "before": true, "after": true }],
         "line-comment-position": "off",
         "linebreak-style": [
             "error",

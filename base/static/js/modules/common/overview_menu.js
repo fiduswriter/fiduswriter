@@ -27,7 +27,7 @@ export class OverviewMenuView {
 
     oninput(event) {
         const target = event.target
-        if(target.matches('#fw-overview-menu > li > .fw-button > input')) {
+        if (target.matches('#fw-overview-menu > li > .fw-button > input')) {
             // A text was enetered in a top entry. we find which one.
             let menuNumber = 0
             let seekItem = target.closest('li')
@@ -44,7 +44,7 @@ export class OverviewMenuView {
 
     onclick(event) {
         const target = event.target
-        if(target.matches('#fw-overview-menu li li, #fw-overview-menu li li *')) {
+        if (target.matches('#fw-overview-menu li li, #fw-overview-menu li li *')) {
             event.preventDefault()
             let itemNumber = 0
             let seekItem = target.closest('li')
@@ -66,7 +66,7 @@ export class OverviewMenuView {
                     this.model.content[menuNumber].content[itemNumber].title
             }
             return false
-        } else if(target.matches('#fw-overview-menu li .select-action input[type=checkbox]')) {
+        } else if (target.matches('#fw-overview-menu li .select-action input[type=checkbox]')) {
             event.preventDefault()
             event.stopImmediatePropagation()
             event.stopPropagation()
@@ -88,7 +88,7 @@ export class OverviewMenuView {
                 menuItem.checkAction(this.overview)
             }
             return true
-        } else if(target.matches('#fw-overview-menu li, #fw-overview-menu li *')) {
+        } else if (target.matches('#fw-overview-menu li, #fw-overview-menu li *')) {
             // A toolbar dropdown menu item was clicked. We just need to
             // find out which one
             let menuNumber = 0
@@ -154,7 +154,7 @@ export class OverviewMenuView {
 
     getMenuItemHTML(menuItem) {
         let returnValue
-        switch(menuItem.type) {
+        switch (menuItem.type) {
             case 'dropdown':
                 returnValue = this.getDropdownHTML(menuItem)
                 break

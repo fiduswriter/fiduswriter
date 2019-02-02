@@ -8,10 +8,10 @@ export const addDropdownBox = function(btn, box, preopen=false) {
     btn.addEventListener('click', event => {
         event.preventDefault()
         event.stopPropagation()
-        if(btn.classList.contains('disabled')) {
+        if (btn.classList.contains('disabled')) {
             return
         }
-        if(!box.clientWidth) {
+        if (!box.clientWidth) {
             if (preopen) {
                 preopen()
             }
@@ -41,7 +41,7 @@ export const openDropdownBox = function(box) {
  * @param label The node who's parent has to be checked or unchecked.
  */
 export const setCheckableLabel = function(labelEl) {
-    if(labelEl.classList.contains('checked')) {
+    if (labelEl.classList.contains('checked')) {
         labelEl.classList.remove('checked')
     } else {
         labelEl.classList.add('checked')
@@ -77,7 +77,7 @@ export const addAlert = function(alertType, alertMsg) {
         'info': 'info-circle',
         'success': 'check-circle'
     }
-    if(!document.getElementById('#alerts-outer-wrapper'))
+    if (!document.getElementById('#alerts-outer-wrapper'))
         document.body.insertAdjacentHTML('beforeend', '<div id="alerts-outer-wrapper"><ul id="alerts-wrapper"></ul></div>')
     const alertsWrapper = document.getElementById('alerts-wrapper')
     alertsWrapper.insertAdjacentHTML('beforeend', `<li class="alerts-${alertType} fa fa-${iconNames[alertType]}">${alertMsg}</li>`)
@@ -101,7 +101,7 @@ export const localizeDate = function(milliseconds, type='full') {
     if (milliseconds > 0) {
         const theDate = new Date(milliseconds)
         let yyyy, mm, dd, returnValue
-        switch(type) {
+        switch (type) {
             case 'sortable-date':
                 yyyy = theDate.getFullYear()
                 mm = theDate.getMonth() + 1

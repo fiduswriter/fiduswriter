@@ -21,7 +21,7 @@ export class ImageOverviewCategories {
         ).catch(
             error => {
                 addAlert('error', gettext('Could not update categories'))
-                throw(error)
+                throw (error)
             }
         ).then(
             ({json}) => {

@@ -173,7 +173,7 @@ export class CitationDialog {
     // Not when dialog is first opened.
     addToCitedItems(items) {
         const len = items.length
-        for(let i = 0; i < len; i ++) {
+        for (let i = 0; i < len; i ++) {
             const item = items[i]
             document.querySelector('#selected-cite-source-table .fw-document-table-body').insertAdjacentHTML(
                 'beforeend',

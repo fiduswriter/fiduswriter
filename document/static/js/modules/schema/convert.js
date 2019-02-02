@@ -21,7 +21,7 @@ export const updateDoc = function(doc, bibliography, docVersion) {
        true.
     */
 
-    switch(docVersion) {
+    switch (docVersion) {
         // Import from versions up to 3.0 no longer supported starting with Fidus Writer 3.5
         case 1: // Fidus Writer 3.1 prerelease
             doc = convertDocV1(doc)
@@ -271,7 +271,7 @@ const convertDocV20 = function(doc) {
     delete(returnDoc.revisions)
     delete(returnDoc.rights)
     delete(returnDoc.updated)
-    if(returnDoc.contents.attrs) {
+    if (returnDoc.contents.attrs) {
         returnDoc.contents.attrs.tracked = false
     }
     Object.values(returnDoc.comments).forEach(comment => {

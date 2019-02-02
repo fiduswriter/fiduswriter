@@ -13,7 +13,7 @@ export const settingsPlugin = function(options) {
 
         Object.keys(settings).forEach(key => {
             const value = settings[key]
-            switch(key) {
+            switch (key) {
                 case 'documentstyle':
                     if (
                         !options.editor.mod.documentTemplate.documentStyles.find(d => d.filename === value) &&
@@ -46,8 +46,8 @@ export const settingsPlugin = function(options) {
         let settingsValid = true
         Object.keys(newSettings).forEach(key => {
             const newValue = newSettings[key]
-            if(oldSettings[key] !== newValue) {
-                switch(key) {
+            if (oldSettings[key] !== newValue) {
+                switch (key) {
                     case 'documentstyle':
                         if (newValue.length) {
                             updateDocStyleCSS(newValue)
@@ -139,7 +139,7 @@ export const settingsPlugin = function(options) {
 
         },
         view(view) {
-            if(!updateSettings(view.state.doc.firstChild.attrs, {})) {
+            if (!updateSettings(view.state.doc.firstChild.attrs, {})) {
                 const tr = view.state.tr
                 tr.setNodeMarkup(0, false, fixSettings(view.state.doc.firstChild.attrs))
                 tr.setMeta('settings', true)

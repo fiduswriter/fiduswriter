@@ -23,7 +23,7 @@ export class OdtExporterRender {
     getTagData(pmBib) {
         this.tags = this.docContents.content.map(node => {
             const tag = {}
-            switch(node.type) {
+            switch (node.type) {
                 case 'title':
                     tag.title = 'title'
                     tag.content = textContent(node)
@@ -100,8 +100,8 @@ export class OdtExporterRender {
                 let text = textNode.data
                 this.tags.forEach(tag => {
                     let tagString = tag.title
-                    if(text.indexOf('{'+tagString+'}') !== -1) {
-                        if(tag.title[0]==='@') {
+                    if (text.indexOf('{'+tagString+'}') !== -1) {
+                        if (tag.title[0]==='@') {
                             tag.par = par
                             this.parRender(tag)
                         } else {

@@ -38,8 +38,8 @@ export class BaseEpubExporter extends BaseDOMExporter {
             let newFootnote = document.createElement('aside')
             newFootnote.setAttribute('epub:type', 'footnote')
             newFootnote.id = footnote.id
-            if(footnote.firstChild) {
-                while(footnote.firstChild) {
+            if (footnote.firstChild) {
+                while (footnote.firstChild) {
                     newFootnote.appendChild(footnote.firstChild)
                 }
                 newFootnote.firstChild.innerHTML = footnoteCounter + ' ' + newFootnote.firstChild.innerHTML

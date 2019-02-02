@@ -441,7 +441,7 @@ ${PAPER_SIZES.map(size => `<option value="${size[0]}"${papersizes.includes(size[
 
 export const templateEditorValueTemplate = ({content}) =>
     content.map(docPart => {
-        switch(docPart.type) {
+        switch (docPart.type) {
             case 'heading_part':
                 return headingTemplate(docPart.attrs)
             case 'contributors_part':

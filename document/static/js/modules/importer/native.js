@@ -14,11 +14,11 @@ export class ImportNative {
     }
 
     init() {
-        let ImageTranslationTable = {}
+        const ImageTranslationTable = {}
         return this.createDoc().then(
             () => {
                 // We first create any new entries in the DB for images.
-                let imageGetter = new GetImages(this.images, this.otherFiles)
+                const imageGetter = new GetImages(this.images, this.otherFiles)
                 return imageGetter.init()
             }
         ).then(
@@ -37,7 +37,7 @@ export class ImportNative {
     }
 
     saveImages(images, ImageTranslationTable) {
-        let sendPromises = Object.values(images).map(
+        const sendPromises = Object.values(images).map(
             imageEntry => {
                 return postJson('/document/import/image/', {
                     doc_id: this.docId,
@@ -113,7 +113,7 @@ export class ImportNative {
             }
         ).then(
             ({json}) => {
-                let docInfo = {
+                const docInfo = {
                     is_owner: true,
                     access_rights: 'write',
                     id: this.docId

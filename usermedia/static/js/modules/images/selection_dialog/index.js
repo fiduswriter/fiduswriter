@@ -28,14 +28,14 @@ export class ImageSelectionDialog {
                 db: 'user'
             })
         })
-        let buttons = []
-        let p = new Promise(resolve => {
+        const buttons = []
+        const p = new Promise(resolve => {
             buttons.push(
                 {
                     text: gettext('Add new image'),
                     icon: "plus-circle",
                     click: () => {
-                        let imageUpload = new ImageEditDialog(
+                        const imageUpload = new ImageEditDialog(
                             this.userImageDB // We can only upload to the user's image db
                         )
 
@@ -91,7 +91,7 @@ export class ImageSelectionDialog {
 
     initTable() {
         /* Initialize the overview table */
-        let tableEl = document.createElement('table')
+        const tableEl = document.createElement('table')
         tableEl.classList.add('fw-document-table')
         tableEl.classList.add('fw-small')
         this.imageDialog.dialogEl.querySelector('div.image-selection-table').appendChild(tableEl)
@@ -142,8 +142,9 @@ export class ImageSelectionDialog {
     }
 
     checkRow(dataIndex) {
-        let [db, id] = this.table.data[dataIndex].cells[0].textContent.split('-')
-        id = parseInt(id)
+        const [db, id] = this.table.data[dataIndex].cells[0].textContent.split('-').map(
+            (val, index) => index ? parseInt(val) : val // only parseInt id (where index > 0)
+        )
         if (id === this.imgId) {
             this.imgId = false
         } else {

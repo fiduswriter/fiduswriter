@@ -81,19 +81,19 @@ export class DocxExporterCitations {
         })
 
         // We create a standard body footnotecontainer node, add the citations into it, and parse it back.
-        let fnNode = fnSchema.nodeFromJSON({type:'footnotecontainer'})
+        const fnNode = fnSchema.nodeFromJSON({type:'footnotecontainer'})
 
-        let serializer = DOMSerializer.fromSchema(fnSchema)
+        const serializer = DOMSerializer.fromSchema(fnSchema)
         let dom = serializer.serializeNode(fnNode)
         dom.innerHTML = citationsHTML
         this.pmCits = DOMParser.fromSchema(fnSchema).parse(dom, {topNode: fnNode}).toJSON().content
 
         // Now we do the same for the bibliography.
-        let cslBib = this.citFm.bibliography
+        const cslBib = this.citFm.bibliography
         if (cslBib[1].length > 0) {
             this.addReferenceStyle(cslBib[0])
-            let bibNode = cslBibSchema.nodeFromJSON({type:'cslbib'})
-            let cslSerializer = DOMSerializer.fromSchema(cslBibSchema)
+            const bibNode = cslBibSchema.nodeFromJSON({type:'cslbib'})
+            const cslSerializer = DOMSerializer.fromSchema(cslBibSchema)
             dom = cslSerializer.serializeNode(bibNode)
             dom.innerHTML = cslBib[1].join('')
             this.pmBib = DOMParser.fromSchema(cslBibSchema).parse(dom, {topNode: bibNode}).toJSON()
@@ -103,13 +103,13 @@ export class DocxExporterCitations {
     addReferenceStyle(bibInfo) {
         // The style called "Bibliography1" will override any previous style
         // of the same name.
-        let stylesParStyle = this.styleXml.querySelector(`style[*|styleId="Bibliography1"]`)
+        const stylesParStyle = this.styleXml.querySelector(`style[*|styleId="Bibliography1"]`)
         if (stylesParStyle) {
             stylesParStyle.parentNode.removeChild(stylesParStyle)
         }
 
-        let lineHeight = 240 * bibInfo.linespacing
-        let marginBottom = 240 * bibInfo.entryspacing
+        const lineHeight = 240 * bibInfo.linespacing
+        const marginBottom = 240 * bibInfo.entryspacing
         let marginLeft = 0, hangingIndent = 0, tabStops = ''
 
         if (bibInfo.hangingindent) {
@@ -117,7 +117,7 @@ export class DocxExporterCitations {
             hangingIndent = 720
         } else if (bibInfo["second-field-align"]) {
             // We calculate 120 as roughly equivalent to one letter width.
-            let firstFieldWidth = (bibInfo.maxoffset + 1) * 120
+            const firstFieldWidth = (bibInfo.maxoffset + 1) * 120
             if (bibInfo["second-field-align"] === 'margin') {
                 hangingIndent =  firstFieldWidth
                 tabStops = '<w:tabs><w:tab w:val="left" w:pos="0" w:leader="none"/></w:tabs>'
@@ -127,7 +127,7 @@ export class DocxExporterCitations {
                 tabStops = `<w:tabs><w:tab w:val="left" w:pos="${firstFieldWidth}" w:leader="none"/></w:tabs>`
             }
         }
-        let styleDef = noSpaceTmp`
+        const styleDef = noSpaceTmp`
             <w:style w:type="paragraph" w:styleId="Bibliography1">
                 <w:name w:val="Bibliography 1"/>
                 <w:basedOn w:val="Normal"/>
@@ -139,7 +139,7 @@ export class DocxExporterCitations {
                 </w:pPr>
                 <w:rPr></w:rPr>
             </w:style>`
-        let stylesEl = this.styleXml.querySelector('styles')
+        const stylesEl = this.styleXml.querySelector('styles')
         stylesEl.insertAdjacentHTML('beforeEnd', styleDef)
     }
 

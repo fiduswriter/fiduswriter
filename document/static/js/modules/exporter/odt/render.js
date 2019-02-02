@@ -93,13 +93,13 @@ export class OdtExporterRender {
     // replacements.
     render() {
 
-        let pars = this.xml.querySelectorAll('p')
+        const pars = this.xml.querySelectorAll('p')
 
         pars.forEach(par => {
             domDescendantTexNodes(par).forEach(textNode => {
-                let text = textNode.data
+                const text = textNode.data
                 this.tags.forEach(tag => {
-                    let tagString = tag.title
+                    const tagString = tag.title
                     if (text.indexOf('{'+tagString+'}') !== -1) {
                         if (tag.title[0]==='@') {
                             tag.par = par
@@ -116,8 +116,8 @@ export class OdtExporterRender {
 
     // Render Tags that only exchange inline content
     inlineRender(tag) {
-        let texts = tag.textNode.data.split('{'+tag.title+'}')
-        let fullText = texts[0] + escapeText(tag.content) + texts[1]
+        const texts = tag.textNode.data.split('{'+tag.title+'}')
+        const fullText = texts[0] + escapeText(tag.content) + texts[1]
         tag.textNode.data = fullText
     }
 

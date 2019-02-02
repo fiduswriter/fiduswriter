@@ -34,7 +34,7 @@ export class ModNavigator {
                 this.openNavigator()
             }
         } else if (target.matches('a')){
-                let id = target.getAttribute('href').slice(1)
+                const id = target.getAttribute('href').slice(1)
                 document.getElementById(id).scrollIntoView({behavior:"smooth"})
         } else {
             this.closeNavigator()
@@ -50,7 +50,7 @@ export class ModNavigator {
         document.getElementById('navigator').style.left = "-265px"
     }
     populateNavigator(){
-        let items = []
+        const items = []
         this.editor.view.state.doc.descendants((node) => {
             if (node.attrs && node.attrs.hidden) {
                 return false
@@ -88,5 +88,3 @@ export class ModNavigator {
     }
 
 }
-
-

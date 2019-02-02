@@ -57,7 +57,7 @@ export class ImageOverviewCategories {
 
     //open a dialog for editing categories
     editCategoryDialog() {
-        let buttons = [
+        const buttons = [
             {
                 text: gettext('Submit'),
                 classes: "fw-dark",
@@ -84,7 +84,7 @@ export class ImageOverviewCategories {
             }
         ]
 
-        let dialog = new Dialog({
+        const dialog = new Dialog({
             id: 'editCategories',
             title: gettext('Edit Categories'),
             body: usermediaEditcategoriesTemplate({

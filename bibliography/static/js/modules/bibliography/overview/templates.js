@@ -1,7 +1,7 @@
 import {escapeText} from "../../common"
 
 /** A template for each category in the category list edit of the bibliography categories list. */
-let categoryFormsTemplate = ({categories}) =>
+const categoryFormsTemplate = ({categories}) =>
     `${
         categories.map(cat =>
             `<tr id="categoryTr_${cat.id}" class="fw-list-input">
@@ -21,7 +21,7 @@ let categoryFormsTemplate = ({categories}) =>
     </tr>`
 
 /** A template for the editing of bibliography categories list. */
-export let editCategoriesTemplate = ({categories}) =>
+export const editCategoriesTemplate = ({categories}) =>
     `<table id="editCategoryList" class="fw-dialog-table">
         <tbody>
             ${categoryFormsTemplate({categories})}

@@ -259,8 +259,9 @@ export class CitationDialog {
                         return
                     }
                     data.cells[3].innerHTML = ''
-                    let [db, id] = data.cells[0].textContent.split('-')
-                    id = parseInt(id)
+                    const [db, id] = data.cells[0].textContent.split('-').map(
+                        (val, index) => index ? parseInt(val) : val // only parseInt id (where index > 0)
+                    )
                     if (document.querySelector(`#selected-source-${db}-${id}`)) {
                         return
                     }

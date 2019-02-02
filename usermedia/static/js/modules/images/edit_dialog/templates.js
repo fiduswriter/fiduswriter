@@ -1,7 +1,7 @@
 import {escapeText} from "../../common"
 
 /* A template for the image category selection of the image selection dialog. */
-let imageEditCategoryTemplate = ({image, cats}) => {
+const imageEditCategoryTemplate = ({image, cats}) => {
     if (!cats.length) {
         return ''
     }
@@ -27,7 +27,7 @@ let imageEditCategoryTemplate = ({image, cats}) => {
 }
 
 /* A template for the form for the image upload dialog. */
-export let imageEditTemplate = ({image, cats}) =>
+export const imageEditTemplate = ({image, cats}) =>
     `<div>
         <input name="title" class="fw-media-title" type="text"
                 placeholder="${gettext('Insert a title')}" value="${

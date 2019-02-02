@@ -20,7 +20,7 @@ export class DocMaintenance {
     init() {
         whenReady().then(
             () => document.body.addEventListener('click', event => {
-                let el = {}
+                const el = {}
                 switch (true) {
                     case findTarget(event, 'button#update:not(.disabled)', el):
                         document.querySelector('button#update').disabled = true
@@ -41,7 +41,7 @@ export class DocMaintenance {
             '/document/maintenance/get_all/', {batch: this.batch}
         ).then(
             ({json}) => {
-                let docs = window.JSON.parse(json.docs)
+                const docs = window.JSON.parse(json.docs)
                 if (docs.length) {
                     addAlert('info', `${gettext('Downloaded batch')}: ${this.batch}`)
                     docs.forEach(doc => this.fixDoc(doc))
@@ -62,7 +62,7 @@ export class DocMaintenance {
     }
 
     fixDoc(doc) {
-        let oldDoc = {
+        const oldDoc = {
             contents: window.JSON.parse(doc.fields.contents),
             last_diffs: window.JSON.parse(doc.fields.last_diffs),
             bibliography: window.JSON.parse(doc.fields.bibliography),
@@ -71,7 +71,8 @@ export class DocMaintenance {
             version: doc.fields.version,
             id: doc.pk
         }
-        let docVersion = parseFloat(doc.fields.doc_version), p
+        const docVersion = parseFloat(doc.fields.doc_version)
+        let p
         if (docVersion < 2) {
             // In version 0 - 1.x, the bibliography had to be loaded from
             // the document user.
@@ -84,8 +85,8 @@ export class DocMaintenance {
             ).then(
                 ({json}) => {
                     return json.bibList.reduce((db, item) => {
-                        let id = item['id']
-                        let bibDBEntry = {}
+                        const id = item['id']
+                        const bibDBEntry = {}
                         bibDBEntry['fields'] = JSON.parse(item['fields'])
                         bibDBEntry['bib_type'] = item['bib_type']
                         bibDBEntry['entry_key'] = item['entry_key']
@@ -162,11 +163,11 @@ export class DocMaintenance {
         JSZipUtils.getBinaryContent(
             `/document/get_revision/${id}/`,
             (err, fidusFile) => {
-            let zipfs = new JSZip()
+            const zipfs = new JSZip()
             zipfs.loadAsync(fidusFile).then(() => {
-                let openedFiles = {}, p = []
+                const openedFiles = {}, p = []
                 // We don't open other files as they currently don't need to be changed.
-                let fileNames = ["filetype-version","document.json","bibliography.json"]
+                const fileNames = ["filetype-version","document.json","bibliography.json"]
 
                 fileNames.forEach(fileName => {
                     p.push(zipfs.files[fileName].async("text").then((fileContent) => {
@@ -174,9 +175,9 @@ export class DocMaintenance {
                     }))
                 })
                 Promise.all(p).then(() => {
-                    let filetypeVersion = parseFloat(openedFiles["filetype-version"])
+                    const filetypeVersion = parseFloat(openedFiles["filetype-version"])
                     if (filetypeVersion !== parseFloat(FW_FILETYPE_VERSION)) {
-                        let {bib, doc} = updateFile(
+                        const {bib, doc} = updateFile(
                             window.JSON.parse(openedFiles["document.json"]),
                             window.JSON.parse(openedFiles["bibliography.json"]),
                             filetypeVersion

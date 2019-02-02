@@ -33,8 +33,8 @@ export class BibliographyDBServerConnector {
      * @param item The bibliography item from the server.
      */
     serverBibItemToBibDB(item) {
-        let id = item['id']
-        let bibDBEntry = {}
+        const id = item['id']
+        const bibDBEntry = {}
         bibDBEntry['fields'] = JSON.parse(item['fields'])
         bibDBEntry['bib_type'] = item['bib_type']
         bibDBEntry['entry_key'] = item['entry_key']
@@ -48,7 +48,7 @@ export class BibliographyDBServerConnector {
         // Fields field need to be stringified for saving in database.
         // dbObject is a clone of tmpDB with a stringified fields-field, so
         // the original tmpDB isn't destroyed.
-        let dbObject = {}
+        const dbObject = {}
         Object.keys(tmpDB).forEach(bibKey => {
             dbObject[bibKey] = Object.assign({}, tmpDB[bibKey])
             dbObject[bibKey].entry_cat = JSON.stringify(tmpDB[bibKey].entry_cat)

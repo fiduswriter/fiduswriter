@@ -48,7 +48,8 @@ export class FormatCitations {
 
         // CSS
     get bibCSS()  {
-        let css = '\n', bibInfo = this.bibliography[0]
+        const bibInfo = this.bibliography[0]
+        let css = '\n'
             css += `.csl-entry {padding-bottom: ${bibInfo.entryspacing+1}em;}\n`
             css += `.csl-bib-body {line-height: ${bibInfo.linespacing};}\n`
             if (bibInfo.hangingindent) {
@@ -96,28 +97,27 @@ export class FormatCitations {
         if (!this.citationStyleDef && this.citationStyles.length) {
             this.citationStyleDef = this.citationStyles[0]
         }
-        let citeprocConnector = new citeprocSys(this.bibDB, this.citationLocales)
-        let citeprocInstance = new CSL.Engine(
+        const citeprocConnector = new citeprocSys(this.bibDB, this.citationLocales)
+        const citeprocInstance = new CSL.Engine(
             citeprocConnector,
             this.citationStyleDef.contents
         )
-        let allIds = []
+        const allIds = []
         this.citations.forEach(cit =>
             cit.citationItems.forEach(item => allIds.push(String(item.id)))
         )
         citeprocInstance.updateItems(allIds)
 
-        let inText = citeprocInstance.cslXml.dataObj.attrs.class === 'in-text'
-        let len = this.citations.length
+        const inText = citeprocInstance.cslXml.dataObj.attrs.class === 'in-text'
+        const len = this.citations.length
         for (let i = 0; i < len; i++) {
-            let citation = this.citations[i],
+            const citation = this.citations[i],
                 citationTexts = citeprocInstance.appendCitationCluster(citation, true)
             if (inText && 'textcite' == this.bibFormats[i]) {
-                let newCiteText = '',
-                    items = citation.citationItems,
-                    len2 = items.length
+                const items = citation.citationItems
+                let newCiteText = ''
 
-                for (let j = 0; j < len2; j++) {
+                for (let j = 0; j < items.length; j++) {
                     const onlyNameOption = [{
                         id: items[j].id,
                         "author-only": 1

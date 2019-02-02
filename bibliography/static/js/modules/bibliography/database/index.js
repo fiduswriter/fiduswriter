@@ -16,9 +16,9 @@ export class BibliographyDB {
 
     getDB() {
 
+        const localStorageVersion = window.localStorage.getItem('version')
         let lastModified = parseInt(window.localStorage.getItem('last_modified_biblist')),
             numberOfEntries = parseInt(window.localStorage.getItem('number_of_entries')),
-            localStorageVersion = window.localStorage.getItem('version'),
             localStorageOwnerId = parseInt(window.localStorage.getItem('owner_id'))
 
         // A dictionary to look up bib fields by their fw type name.
@@ -139,15 +139,15 @@ export class BibliographyDB {
 
         return this.sc.deleteCategory(ids).then(
             () => {
-                let deletedPks = ids.slice()
-                let deletedBibCats = []
+                const deletedPks = ids.slice()
+                const deletedBibCats = []
                 this.cats.forEach(bibCat => {
                     if (ids.indexOf(bibCat.id) !== -1) {
                         deletedBibCats.push(bibCat)
                     }
                 })
                 deletedBibCats.forEach(bibCat => {
-                    let index = this.cats.indexOf(bibCat)
+                    const index = this.cats.indexOf(bibCat)
                     this.cats.splice(index, 1)
                 })
                 return deletedPks

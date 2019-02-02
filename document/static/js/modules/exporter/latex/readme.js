@@ -1,4 +1,4 @@
-export let readMe =
+export const readMe =
 `In order to compile the latex file, you need to use at least TeXLive 2016.
 If there are citations, you additionally need Biber 2.7/BibLaTeX 3.7.
 

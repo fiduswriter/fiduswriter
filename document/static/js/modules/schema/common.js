@@ -580,7 +580,7 @@ function parseFormatList(str) {
    return formatList.filter(format => typeof(format)==='string') // ensure there are only strings in list
 }
 
-export let format_change = {
+export const format_change = {
     attrs: {
         user: {
             default: 0
@@ -626,7 +626,7 @@ export let format_change = {
     }
 }
 
-export let insertion = {
+export const insertion = {
     attrs: {
         user: {
             default: 0

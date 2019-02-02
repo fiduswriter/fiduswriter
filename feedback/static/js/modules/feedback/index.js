@@ -59,7 +59,7 @@ export class FeedbackTab {
     }
 
     openFeedback() {
-        let messageEl = document.querySelector("textarea#message"),
+        const messageEl = document.querySelector("textarea#message"),
             closeFeedbackEl = document.querySelector('#closeFeedback'),
             feedbackFormEl = document.querySelector('#feedback-form'),
             responseEl = document.querySelector('#response-message')

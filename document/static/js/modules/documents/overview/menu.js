@@ -1,7 +1,7 @@
 import {DocumentAccessRightsDialog} from "../access_rights"
 import {addAlert} from "../../common"
 
-export let menuModel = () => ({
+export const menuModel = () => ({
     content: [
         {
             type: 'select-action-dropdown',
@@ -34,8 +34,8 @@ export let menuModel = () => ({
                 {
                     title: gettext('Share selected'),
                     action: overview => {
-                        let ids = overview.getSelected()
-                        let ownIds = ids.filter(id => overview.documentList.find(doc => doc.id===id).is_owner)
+                        const ids = overview.getSelected()
+                        const ownIds = ids.filter(id => overview.documentList.find(doc => doc.id===id).is_owner)
                         if (ownIds.length !== ids.length) {
                             addAlert('error', gettext('You cannot share documents of other users'))
                         }
@@ -54,7 +54,7 @@ export let menuModel = () => ({
                 {
                     title: gettext('Copy selected'),
                     action: overview => {
-                        let ids = overview.getSelected()
+                        const ids = overview.getSelected()
                         if (ids.length) {
                             overview.mod.actions.copyFiles(ids)
                         }
@@ -64,7 +64,7 @@ export let menuModel = () => ({
                 {
                     title: gettext('Export selected as Epub'),
                     action: overview => {
-                        let ids = overview.getSelected()
+                        const ids = overview.getSelected()
                         if (ids.length) {
                             overview.mod.actions.downloadEpubFiles(ids)
                         }
@@ -74,7 +74,7 @@ export let menuModel = () => ({
                 {
                     title: gettext('Export selected as HTML'),
                     action: overview => {
-                        let ids = overview.getSelected()
+                        const ids = overview.getSelected()
                         if (ids.length) {
                             overview.mod.actions.downloadHtmlFiles(ids)
                         }
@@ -84,7 +84,7 @@ export let menuModel = () => ({
                 {
                     title: gettext('Export selected as LaTeX'),
                     action: overview => {
-                        let ids = overview.getSelected()
+                        const ids = overview.getSelected()
                         if (ids.length) {
                             overview.mod.actions.downloadLatexFiles(ids)
                         }
@@ -94,7 +94,7 @@ export let menuModel = () => ({
                 {
                     title: gettext('Download selected as Fidus document'),
                     action: overview => {
-                        let ids = overview.getSelected()
+                        const ids = overview.getSelected()
                         if (ids.length) {
                             overview.mod.actions.downloadNativeFiles(ids)
                         }

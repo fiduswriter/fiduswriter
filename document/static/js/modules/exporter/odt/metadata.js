@@ -31,7 +31,7 @@ export class OdtExporterMetadata {
 
 
     addMetadata() {
-        let metaEl = this.metaXml.querySelector('meta')
+        const metaEl = this.metaXml.querySelector('meta')
 
         // Title
         let titleEl = this.metaXml.querySelector('title')
@@ -42,8 +42,8 @@ export class OdtExporterMetadata {
         titleEl.innerHTML = escapeText(this.metadata.title)
 
         // Authors
-        let authors = this.metadata.authors.map(author => {
-            let nameParts = []
+        const authors = this.metadata.authors.map(author => {
+            const nameParts = []
             if (author.firstname) {
                 nameParts.push(author.firstname)
             }
@@ -57,11 +57,11 @@ export class OdtExporterMetadata {
             return nameParts.join(' ')
         })
 
-        let initialAuthor = authors.length ?
+        const initialAuthor = authors.length ?
             escapeText(authors[0]) :
             gettext('Unknown')
         // TODO: We likely want to differentiate between first and last author.
-        let lastAuthor = initialAuthor
+        const lastAuthor = initialAuthor
 
         let lastAuthorEl = this.metaXml.querySelector('creator')
         if (!lastAuthorEl) {
@@ -78,12 +78,12 @@ export class OdtExporterMetadata {
 
         // Keywords
         // Remove all existing keywords
-        let keywordEls = this.metaXml.querySelectorAll('keywords')
+        const keywordEls = this.metaXml.querySelectorAll('keywords')
         keywordEls.forEach(
             keywordEl => keywordEl.parentNode.removeChild(keywordEl)
         )
         // Add new keywords
-        let keywords = this.metadata.keywords
+        const keywords = this.metadata.keywords
         keywords.forEach(
             keyword => metaEl.insertAdjacentHTML('beforeEnd', `<meta:keyword>${escapeText(keyword)}</meta:keyword>`)
         )
@@ -99,9 +99,9 @@ export class OdtExporterMetadata {
         }
         languageEl.innerHTML = this.metadata.language
         // time
-        let date = new Date()
-        let dateString = date.toISOString().split('.')[0]
-        let createdEl = this.metaXml.querySelector('creation-date')
+        const date = new Date()
+        const dateString = date.toISOString().split('.')[0]
+        const createdEl = this.metaXml.querySelector('creation-date')
         createdEl.innerHTML = dateString
         let dateEl = this.metaXml.querySelector('date')
         if (!dateEl) {

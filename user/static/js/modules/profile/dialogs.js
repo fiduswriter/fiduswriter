@@ -50,7 +50,7 @@ export const changeAvatarDialog = function(app) {
             type: 'cancel'
         }
     ]
-    let dialog = new Dialog({
+    const dialog = new Dialog({
         id: 'change-avatar-dialog',
         title: gettext('Upload your profile picture'),
         body: changeAvatarDialogTemplate(),
@@ -91,7 +91,7 @@ const deleteAvatar = function(app) {
 }
 
 export const deleteAvatarDialog = function(app) {
-    let buttons = [
+    const buttons = [
         {
             text: gettext('Delete'),
             classes: "fw-dark",
@@ -104,7 +104,7 @@ export const deleteAvatarDialog = function(app) {
             type: 'cancel'
         }
     ]
-    let dialog = new Dialog({
+    const dialog = new Dialog({
         title: gettext('Confirm deletion'),
         id: 'confirmdeletion',
         icon: 'exclamation-triangle',
@@ -115,12 +115,12 @@ export const deleteAvatarDialog = function(app) {
 }
 
 export const changePwdDialog = function() {
-    let buttons = [
+    const buttons = [
         {
             text: gettext('Submit'),
             classes: "fw-dark",
             click: () => {
-                let oldPwd = document.getElementById('old-password-input').value,
+                const oldPwd = document.getElementById('old-password-input').value,
                     newPwd1 = document.getElementById('new-password-input1').value,
                     newPwd2 = document.getElementById('new-password-input2').value
 
@@ -176,7 +176,7 @@ export const changePwdDialog = function() {
             type: 'cancel'
         }
     ]
-    let dialog = new Dialog({
+    const dialog = new Dialog({
         id: 'fw-change-pwd-dialog',
         title: gettext('Change Password'),
         body: changePwdDialogTemplate(),
@@ -188,12 +188,12 @@ export const changePwdDialog = function() {
 
 export const addEmailDialog = function() {
 
-    let buttons = [
+    const buttons = [
         {
             text: gettext('Submit'),
             classes: "fw-dark",
             click: () => {
-                let email = document.getElementById('new-profile-email').value.replace(/(^\s+)|(\s+$)/g, "")
+                const email = document.getElementById('new-profile-email').value.replace(/(^\s+)|(\s+$)/g, "")
 
                 document.getElementById('fw-add-email-error').innerHTML = ''
 
@@ -230,7 +230,7 @@ export const addEmailDialog = function() {
         }
     ]
 
-    let dialog = new Dialog({
+    const dialog = new Dialog({
         id: 'fw-add-email-dialog',
         title: gettext('Add Email'),
         body: changeEmailDialogTemplate(),
@@ -293,9 +293,9 @@ export const deleteEmailDialog = function(target, app) {
 }
 
 export const changePrimaryEmailDialog = function(app) {
-    let primEmailRadio = document.querySelector('.primary-email-radio:checked'),
+    const primEmailRadio = document.querySelector('.primary-email-radio:checked'),
         email = primEmailRadio.value
-    let buttons = [
+    const buttons = [
         {
             text: gettext('Submit'),
             classes: "fw-dark",
@@ -329,7 +329,7 @@ export const changePrimaryEmailDialog = function(app) {
         }
     ]
 
-    let dialog = new Dialog({
+    const dialog = new Dialog({
         id: 'change-primary-email',
         title: gettext('Confirm set primary'),
         body: changePrimaryEmailDialogTemplate({

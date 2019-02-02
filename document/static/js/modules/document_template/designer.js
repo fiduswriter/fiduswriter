@@ -231,7 +231,8 @@ export class DocumentTemplateDesigner {
                 })
             })
         this.editors.push([helpEl, helpView])
-        let plugins = [], menuContent = [], schema
+        const plugins = []
+        let menuContent = [], schema
         switch (type) {
             case 'richtext_part':
                 schema = richtextPartSchema

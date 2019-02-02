@@ -95,10 +95,10 @@ export const BibFieldTitles = {
     'volumes': gettext('Total number of volumes')
 }
 
-let edtfExplanation = gettext(
+const edtfExplanation = gettext(
     'In <em>Extended Date Time Format</em> (EDTF) 1.0<br>Level 0 or 1'
 )
-let nameExplanation = gettext(
+const nameExplanation = gettext(
     'Prefixed is "used" when it is used in cases where only the last name is used. \
     For example: "Ludwig van Beethoven" turns into "Beethoven", so the prefix "van" \
     is not used. "Vincent van Gogh" turns into "van Gogh", so the prefix "van" is used.'

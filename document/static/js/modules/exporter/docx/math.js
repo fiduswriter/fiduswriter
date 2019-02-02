@@ -35,7 +35,7 @@ export class DocxExporterMath {
             .then(response => response.text())
             .then(xmlString => {
                 const parser = new window.DOMParser()
-                let xsl = parser.parseFromString(xmlString, "text/xml").querySelector('stylesheet')
+                const xsl = parser.parseFromString(xmlString, "text/xml").querySelector('stylesheet')
                 this.processor.importStylesheet(xsl)
             })
     }
@@ -43,12 +43,12 @@ export class DocxExporterMath {
 
     getOmml(latex) {
         if (!this.addedCambriaMath) {
-            let fontsEl = this.fontTableXml.querySelector('fonts')
+            const fontsEl = this.fontTableXml.querySelector('fonts')
             fontsEl.insertAdjacentHTML('beforeEnd', CAMBRIA_MATH_FONT_DECLARATION)
             this.addedCambriaMath = true
         }
-        let mathml = TeXZilla.toMathML(latex)
-        let omml = this.processor.transformToDocument(mathml)
+        const mathml = TeXZilla.toMathML(latex)
+        const omml = this.processor.transformToDocument(mathml)
         return omml.firstChild.outerHTML
 
     }

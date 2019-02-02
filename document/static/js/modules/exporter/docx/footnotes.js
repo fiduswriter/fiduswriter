@@ -139,9 +139,9 @@ export class DocxExporterFootnotes {
     }
 
     addRelsToCt() {
-        let override = this.ctXml.querySelector(`Override[PartName="/${this.filePath}"]`)
+        const override = this.ctXml.querySelector(`Override[PartName="/${this.filePath}"]`)
         if (!override) {
-            let types = this.ctXml.querySelector('Types')
+            const types = this.ctXml.querySelector('Types')
             types.insertAdjacentHTML('beforeEnd', `<Override PartName="/${this.filePath}" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footnotes+xml"/>`)
         }
     }
@@ -159,7 +159,7 @@ export class DocxExporterFootnotes {
 
     addStyle(styleName, xml) {
         if (!this.styleXml.querySelector(`style[*|styleId="${styleName}"]`)) {
-            let stylesEl = this.styleXml.querySelector('styles')
+            const stylesEl = this.styleXml.querySelector('styles')
             stylesEl.insertAdjacentHTML('beforeEnd', xml)
         }
     }
@@ -175,7 +175,7 @@ export class DocxExporterFootnotes {
     }
 
     convertFootnotes() {
-        let fnContent = []
+        const fnContent = []
         this.footnotes.forEach(
             footnote =>{
                 fnContent.push({
@@ -202,7 +202,7 @@ export class DocxExporterFootnotes {
         this.exporter.rels.addFootnoteRel()
         return this.exporter.xml.getXml(this.filePath, DEFAULT_XML).then(
             xml => {
-                let footnotesEl = xml.querySelector('footnotes')
+                const footnotesEl = xml.querySelector('footnotes')
                 footnotesEl.insertAdjacentHTML('beforeEnd', this.fnXml)
                 this.xml = xml
             }
@@ -212,9 +212,9 @@ export class DocxExporterFootnotes {
     setSettings() {
         return this.exporter.xml.getXml(this.settingsFilePath).then(
             settingsXml => {
-                let footnotePr = settingsXml.querySelector('footnotePr')
+                const footnotePr = settingsXml.querySelector('footnotePr')
                 if (!footnotePr) {
-                    let settingsEl = settingsXml.querySelector('settings')
+                    const settingsEl = settingsXml.querySelector('settings')
                     settingsEl.insertAdjacentHTML('beforeEnd', DEFAULT_SETTINGS_XML)
                 }
                 this.settingsXml = settingsXml

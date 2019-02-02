@@ -107,7 +107,7 @@ export class TableResizeDialog {
     }
 
     init() {
-        let table = this.findTable(this.editor.currentView.state)
+        const table = this.findTable(this.editor.currentView.state)
         if (table){
             this.width = table.attrs.width
             this.aligned = table.attrs.aligned
@@ -153,7 +153,7 @@ export class TableResizeDialog {
     }
 
     submitForm(){
-        let table = this.findTable(this.editor.currentView.state)
+        const table = this.findTable(this.editor.currentView.state)
         table.attrs.width = this.width
         table.attrs['data-width'] = this.width
         table.attrs.aligned = this.width == "100" ? "center" : this.aligned

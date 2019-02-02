@@ -34,7 +34,7 @@ export class ImageOverview {
         whenReady().then(() => {
             this.render()
             new ImageOverviewCategories(this)
-            let smenu = new SiteMenu("images")
+            const smenu = new SiteMenu("images")
             smenu.init()
             this.menu = new OverviewMenuView(this, menuModel)
             this.menu.init()
@@ -131,7 +131,7 @@ export class ImageOverview {
     }
 
     createTableRow(id) {
-        let image = this.app.imageDB.db[id]
+        const image = this.app.imageDB.db[id]
         let fileType = image.file_type.split('/')
 
         if (1 < fileType.length) {
@@ -160,8 +160,8 @@ export class ImageOverview {
     }
 
     removeTableRows(ids) {
-        let existingRows = this.table.data.map((data, index) => {
-            let id = parseInt(data.cells[0].textContent)
+        const existingRows = this.table.data.map((data, index) => {
+            const id = parseInt(data.cells[0].textContent)
             if (ids.includes(id)) {
                 return index
             } else {
@@ -176,7 +176,7 @@ export class ImageOverview {
 
     /* Initialize the overview table */
     initTable(ids) {
-        let tableEl = document.createElement('table')
+        const tableEl = document.createElement('table')
         tableEl.classList.add('fw-document-table')
         tableEl.classList.add('fw-large')
         document.querySelector('.fw-contents').appendChild(tableEl)
@@ -221,7 +221,8 @@ export class ImageOverview {
 
     bindEvents() {
         document.body.addEventListener('click', event => {
-            let el = {}, imageId, itemEl, dialog
+            const el = {}
+            let imageId, itemEl, dialog
             switch (true) {
                 case findTarget(event, '.delete-image', el):
                     imageId = el.target.dataset.id

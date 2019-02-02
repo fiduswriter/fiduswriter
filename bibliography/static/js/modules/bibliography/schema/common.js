@@ -1,8 +1,8 @@
-export let text = {
+export const text = {
     group: "inline"
 }
 
-export let literal = {
+export const literal = {
     content: "inline*",
     marks: "_",
     parseDOM: [{tag: 'div.literal'}],
@@ -13,7 +13,7 @@ export let literal = {
     }
 }
 
-export let variable = {
+export const variable = {
     inline: true,
     group: "inline",
     attrs: {
@@ -32,7 +32,7 @@ export let variable = {
     }
 }
 
-export let sup = {
+export const sup = {
     parseDOM: [
         {tag: 'sup'},
         {style: "vertical-align", getAttrs: value => value == "super" && null}
@@ -42,7 +42,7 @@ export let sup = {
     }
 }
 
-export let sub = {
+export const sub = {
     parseDOM: [
         {tag: 'sub'},
         {style: "vertical-align", getAttrs: value => value == "sub" && null}
@@ -52,7 +52,7 @@ export let sub = {
     }
 }
 
-export let smallcaps = {
+export const smallcaps = {
     parseDOM: [
         {tag: 'span.smallcaps'},
         {style: "font-variant", getAttrs: value => value == "small-caps" && null}
@@ -64,14 +64,14 @@ export let smallcaps = {
 
 //Currently unsupported
 
-export let url = {
+export const url = {
     parseDOM: [{tag: 'span.url'}],
     toDOM() {
         return ["span",{class:"url"}]
     }
 }
 
-export let enquote = {
+export const enquote = {
     parseDOM: [{tag: 'span.enquote'}],
     toDOM() {
         return ["span", {class:"enquote"}]

@@ -29,10 +29,10 @@ export class OdtExporterImages {
 
     // add a an image file to the manifest
     addFileToManifest(imgFileName) {
-        let fileNameParts = imgFileName.split('.')
-        let fileNameEnding = fileNameParts.pop()
-        let fileNameStart = fileNameParts.join('.')
-        let manifestEl = this.manifestXml.querySelector('manifest')
+        const fileNameParts = imgFileName.split('.')
+        const fileNameEnding = fileNameParts.pop()
+        const fileNameStart = fileNameParts.join('.')
+        const manifestEl = this.manifestXml.querySelector('manifest')
         let imgManifest = manifestEl.querySelector(`file-entry[*|full-path="Pictures/${imgFileName}"]`)
         let counter = 0
         while (imgManifest) {
@@ -40,7 +40,7 @@ export class OdtExporterImages {
             imgFileName = `${fileNameStart}_${counter++}.${fileNameEnding}`
             imgManifest = manifestEl.querySelector(`file-entry[*|full-path="Pictures/${imgFileName}"]`)
         }
-        let string = `  <manifest:file-entry manifest:full-path="Pictures/${imgFileName}" manifest:media-type="image/${fileNameEnding}"/>`
+        const string = `  <manifest:file-entry manifest:full-path="Pictures/${imgFileName}" manifest:media-type="image/${fileNameEnding}"/>`
         manifestEl.insertAdjacentHTML('beforeEnd', string)
         return imgFileName
     }
@@ -49,7 +49,7 @@ export class OdtExporterImages {
     // TODO: This will likely fail on image types odt doesn't support such as
     // SVG. Try out and fix.
     exportImages() {
-        let usedImgs = []
+        const usedImgs = []
 
         descendantNodes(this.docContents).forEach(
             node => {
@@ -62,17 +62,17 @@ export class OdtExporterImages {
         )
 
         return new Promise((resolveExportImages) => {
-            let p = []
+            const p = []
 
             usedImgs.forEach(image => {
-                let imgDBEntry = this.imageDB.db[image]
+                const imgDBEntry = this.imageDB.db[image]
                 p.push(
                     new Promise(
                         resolve => {
                             JSZipUtils.getBinaryContent(
                                 imgDBEntry.image,
                                 (err, imageFile) => {
-                                    let wImgId = this.addImage(
+                                    const wImgId = this.addImage(
                                         imgDBEntry.image.split('/').pop(),
                                         imageFile
                                     )

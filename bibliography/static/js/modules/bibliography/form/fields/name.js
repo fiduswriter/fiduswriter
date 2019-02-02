@@ -83,7 +83,7 @@ export class NameFieldForm{
     }
 
     switchMode() {
-        let formValue = this.value
+        const formValue = this.value
         if (formValue) {
             Object.assign(this.currentValue, formValue)
         }
@@ -122,7 +122,7 @@ export class NameFieldForm{
                 ) {
                     return false
                 }
-            let returnObject = {
+            const returnObject = {
                 family: this.fields.family.value ? this.fields.family.value : [],
                 given: this.fields.given.value ? this.fields.given.value : [],
             }

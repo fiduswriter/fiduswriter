@@ -7,13 +7,13 @@ export class DeleteUserDialog {
     }
 
     init() {
-        let buttons = [
+        const buttons = [
             {
                 text: gettext('Delete'),
                 classes: "fw-dark",
                 click: () => {
-                    let usernamefieldValue = document.getElementById('username-confirmation').value
-                    let passwordfieldValue = document.getElementById('password').value
+                    const usernamefieldValue = document.getElementById('username-confirmation').value
+                    const passwordfieldValue = document.getElementById('password').value
                     if (usernamefieldValue===this.username && passwordfieldValue.length) {
                         this.deleteCurrentUser(passwordfieldValue)
                     }

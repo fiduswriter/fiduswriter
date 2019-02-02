@@ -15,7 +15,7 @@ export class ContactsOverview {
     init() {
         whenReady().then(() => {
             this.render()
-            let smenu = new SiteMenu("") // Nothing highlighted.
+            const smenu = new SiteMenu("") // Nothing highlighted.
             smenu.init()
             this.menu = new OverviewMenuView(this, menuModel)
             this.menu.init()
@@ -66,7 +66,7 @@ export class ContactsOverview {
 
     bind() {
         document.body.addEventListener('click', event => {
-            let el = {}
+            const el = {}
             switch (true) {
                 case findTarget(event, '.delete-single-member', el):
                     //delete single user

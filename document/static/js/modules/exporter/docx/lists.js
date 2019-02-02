@@ -1,7 +1,7 @@
 import {noSpaceTmp} from "../../common"
 import {descendantNodes} from "../tools/doc_contents"
 
-let DEFAULT_LISTPARAGRAPH_XML = noSpaceTmp`
+const DEFAULT_LISTPARAGRAPH_XML = noSpaceTmp`
     <w:style w:type="paragraph" w:styleId="ListParagraph">
     <w:name w:val="List Paragraph"/>
     <w:basedOn w:val="Normal"/>
@@ -15,7 +15,7 @@ let DEFAULT_LISTPARAGRAPH_XML = noSpaceTmp`
     </w:style>
     `
 
-let DEFAULT_NUMBERING_XML = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' + noSpaceTmp`
+const DEFAULT_NUMBERING_XML = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' + noSpaceTmp`
     <w:numbering xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas" xmlns:cx="http://schemas.microsoft.com/office/drawing/2014/chartex" xmlns:cx1="http://schemas.microsoft.com/office/drawing/2015/9/8/chartex" xmlns:cx2="http://schemas.microsoft.com/office/drawing/2015/10/21/chartex" xmlns:cx3="http://schemas.microsoft.com/office/drawing/2016/5/9/chartex" xmlns:cx4="http://schemas.microsoft.com/office/drawing/2016/5/10/chartex" xmlns:cx5="http://schemas.microsoft.com/office/drawing/2016/5/11/chartex" xmlns:cx6="http://schemas.microsoft.com/office/drawing/2016/5/12/chartex" xmlns:cx7="http://schemas.microsoft.com/office/drawing/2016/5/13/chartex" xmlns:cx8="http://schemas.microsoft.com/office/drawing/2016/5/14/chartex" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:aink="http://schemas.microsoft.com/office/drawing/2016/ink" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:wp14="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml" xmlns:w15="http://schemas.microsoft.com/office/word/2012/wordml" xmlns:w16se="http://schemas.microsoft.com/office/word/2015/wordml/symex" xmlns:wpg="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup" xmlns:wpi="http://schemas.microsoft.com/office/word/2010/wordprocessingInk" xmlns:wne="http://schemas.microsoft.com/office/word/2006/wordml" xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape" mc:Ignorable="w14 w15 w16se wp14">
     </w:numbering>
     `
@@ -46,7 +46,7 @@ export class DocxExporterLists {
     init() {
         this.findLists()
         if (this.usedNumberedList > 0 || this.useBulletList) {
-            let p = []
+            const p = []
 
             p.push(
                 new Promise(resolve => {
@@ -88,9 +88,9 @@ export class DocxExporterLists {
     }
 
     addRelsToCt() {
-        let override = this.ctXml.querySelector(`Override[PartName="/${this.numberingFilePath}"]`)
+        const override = this.ctXml.querySelector(`Override[PartName="/${this.numberingFilePath}"]`)
         if (!override) {
-            let types = this.ctXml.querySelector('Types')
+            const types = this.ctXml.querySelector('Types')
             types.insertAdjacentHTML('beforeEnd', `<Override PartName="/${this.numberingFilePath}" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/>`)
         }
     }
@@ -123,7 +123,7 @@ export class DocxExporterLists {
             styleXml => {
                 this.styleXml = styleXml
                 if (!this.styleXml.querySelector(`style[*|styleId="ListParagraph"]`)) {
-                    let stylesEl = this.styleXml.querySelector('styles')
+                    const stylesEl = this.styleXml.querySelector('styles')
                     stylesEl.insertAdjacentHTML('beforeEnd', DEFAULT_LISTPARAGRAPH_XML)
                 }
                 return Promise.resolve()
@@ -132,7 +132,7 @@ export class DocxExporterLists {
     }
 
     addUsedListTypes() {
-        let allAbstractNum = this.numberingXml.querySelectorAll('abstractNum')
+        const allAbstractNum = this.numberingXml.querySelectorAll('abstractNum')
         allAbstractNum.forEach(
             abstractNum => {
                 // We check the format for the lowest level list and use the first
@@ -140,11 +140,11 @@ export class DocxExporterLists {
                 // This means that if a list is defined using anything else than
                 // bullets, it will be accepted as the format of
                 // the numeric list.
-                let levelZeroFormat = abstractNum.querySelector('lvl[*|ilvl="0"] numFmt').getAttribute('w:val')
-                let abstractNumId = parseInt(abstractNum.getAttribute('w:abstractNumId'))
+                const levelZeroFormat = abstractNum.querySelector('lvl[*|ilvl="0"] numFmt').getAttribute('w:val')
+                const abstractNumId = parseInt(abstractNum.getAttribute('w:abstractNumId'))
                 if (levelZeroFormat==='bullet' && !(this.bulletAbstractType)) {
-                    let numEl = this.numberingXml.querySelector(`abstractNumId[*|val="${abstractNumId}"]`).parentElement
-                    let numId = parseInt(numEl.getAttribute('w:numId'))
+                    const numEl = this.numberingXml.querySelector(`abstractNumId[*|val="${abstractNumId}"]`).parentElement
+                    const numId = parseInt(numEl.getAttribute('w:numId'))
                     this.bulletType = numId
                 } else if (levelZeroFormat!=='bullet' && !(this.numberedAbstractType)) {
                     this.numberedAbstractType = abstractNumId
@@ -155,9 +155,9 @@ export class DocxExporterLists {
 
             }
         )
-        let allNum = this.numberingXml.querySelectorAll('num')
+        const allNum = this.numberingXml.querySelectorAll('num')
         allNum.forEach(numEl => {
-            let numId = parseInt(numEl.getAttribute('w:val'))
+            const numId = parseInt(numEl.getAttribute('w:val'))
             if (this.maxNumId < numId) {
                 this.maxNumId = numId
             }
@@ -176,7 +176,7 @@ export class DocxExporterLists {
         }
         for (let i=0;i<this.usedNumberedList;i++) {
             this.maxNumId++
-            let numId = this.maxNumId
+            const numId = this.maxNumId
             this.addNumberedNumType(numId, this.numberedAbstractType)
             this.numberedTypes.push(numId)
         }
@@ -192,7 +192,7 @@ export class DocxExporterLists {
     }
 
     addBulletNumType(numId, abstractNumId) {
-        let numberingEl = this.numberingXml.querySelector('numbering')
+        const numberingEl = this.numberingXml.querySelector('numbering')
         numberingEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
             <w:abstractNum w:abstractNumId="${abstractNumId}" w15:restartNumberingAfterBreak="0">
                 <w:nsid w:val="3620195A" />
@@ -203,7 +203,7 @@ export class DocxExporterLists {
                 <w:abstractNumId w:val="${abstractNumId}" />
             </w:num>
         `)
-        let newAbstractNum = this.numberingXml.querySelector(`abstractNum[*|abstractNumId="${abstractNumId}"]`)
+        const newAbstractNum = this.numberingXml.querySelector(`abstractNum[*|abstractNumId="${abstractNumId}"]`)
         // Definition seem to always define 9 levels (0-8).
         for (let level = 0; level < 9; level++) {
             newAbstractNum.insertAdjacentHTML('beforeEnd', noSpaceTmp`
@@ -225,7 +225,7 @@ export class DocxExporterLists {
     }
 
     addNumberedNumType(numId, abstractNumId) {
-        let numberingEl = this.numberingXml.querySelector('numbering')
+        const numberingEl = this.numberingXml.querySelector('numbering')
         numberingEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
             <w:num w:numId="${numId}">
                 <w:abstractNumId w:val="${abstractNumId}" />
@@ -234,7 +234,7 @@ export class DocxExporterLists {
     }
 
     addNumberedAbstractNumType(abstractNumId) {
-        let numberingEl = this.numberingXml.querySelector('numbering')
+        const numberingEl = this.numberingXml.querySelector('numbering')
         numberingEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
             <w:abstractNum w:abstractNumId="${abstractNumId}" w15:restartNumberingAfterBreak="0">
                 <w:nsid w:val="7F6635F3" />
@@ -242,7 +242,7 @@ export class DocxExporterLists {
                 <w:tmpl w:val="BFFEF214" />
             </w:abstractNum>
         `)
-        let newAbstractNum = this.numberingXml.querySelector(`abstractNum[*|abstractNumId="${abstractNumId}"]`)
+        const newAbstractNum = this.numberingXml.querySelector(`abstractNum[*|abstractNumId="${abstractNumId}"]`)
         // Definition seem to always define 9 levels (0-8).
         for (let level = 0; level < 9; level++) {
             newAbstractNum.insertAdjacentHTML('beforeEnd', noSpaceTmp`

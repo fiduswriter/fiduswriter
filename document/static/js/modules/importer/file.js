@@ -54,7 +54,8 @@ export class ImportFidusFile {
         // Extract all the files that can be found in every fidus-file (not images)
         const zipfs = new JSZip()
         return zipfs.loadAsync(this.file).then(() => {
-            let filenames = [], p = [], validFile = true
+            const filenames = [], p = []
+            let validFile = true
 
             zipfs.forEach(filename => filenames.push(filename))
 
@@ -89,24 +90,26 @@ export class ImportFidusFile {
     }
 
     processFidusFile() {
-        let filetypeVersion = parseFloat(this.textFiles.find(file => file.filename === 'filetype-version').contents),
+        const filetypeVersion = parseFloat(this.textFiles.find(file => file.filename === 'filetype-version').contents),
             mimeType = this.textFiles.find(file => file.filename === 'mimetype').contents
         if (mimeType === 'application/fidus+zip' &&
             filetypeVersion >= MIN_FW_FILETYPE_VERSION &&
             filetypeVersion <= MAX_FW_FILETYPE_VERSION) {
             // This seems to be a valid fidus file with current version number.
-            let images = JSON.parse(this.textFiles.find(file => file.filename === 'images.json').contents)
-            let {doc, bibliography} = updateFile(
-                JSON.parse(this.textFiles.find(file => file.filename === 'document.json').contents),
-                JSON.parse(
-                    this.textFiles.find(file => file.filename === 'bibliography.json').contents
+            const images = JSON.parse(this.textFiles.find(file => file.filename === 'images.json').contents),
+                updatedFile =  updateFile(
+                    JSON.parse(this.textFiles.find(file => file.filename === 'document.json').contents),
+                    JSON.parse(
+                        this.textFiles.find(file => file.filename === 'bibliography.json').contents
+                    ),
+                    filetypeVersion
                 ),
-                filetypeVersion
-            )
+                {bibliography} = updatedFile
+            let {doc} = updatedFile
             if (this.check) {
                 doc = this.checkDocUsers(doc)
             }
-            let importer = new ImportNative(
+            const importer = new ImportNative(
                 doc,
                 bibliography,
                 images,

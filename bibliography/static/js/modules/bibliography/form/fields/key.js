@@ -37,7 +37,7 @@ export class KeyFieldForm{
                 <div class="fw-select-arrow fa fa-caret-down"></div>
             </div>
         `
-        let selectEl = this.dom.querySelector('.key-selection')
+        const selectEl = this.dom.querySelector('.key-selection')
         if (Array.isArray(this.fieldType.options)) {
             this.fieldType.options.forEach(option => {
                 selectEl.insertAdjacentHTML('beforeend',`<option value="${option}">${BibOptionTitles[option]}</option>`)
@@ -64,7 +64,7 @@ export class KeyFieldForm{
     }
 
     switchMode() {
-        let formValue = this.value
+        const formValue = this.value
         if (formValue) {
             if (this.predefined) {
                 this.currentValue['predefined'] = formValue
@@ -97,8 +97,8 @@ export class KeyFieldForm{
 
     get value() {
         if (this.predefined) {
-            let selectEl = this.dom.querySelector('.key-selection')
-            let selectionValue = selectEl.options[selectEl.selectedIndex].value
+            const selectEl = this.dom.querySelector('.key-selection')
+            const selectionValue = selectEl.options[selectEl.selectedIndex].value
             if (selectionValue === '') {
                 return false
             } else {

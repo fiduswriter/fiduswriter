@@ -1,12 +1,12 @@
 import {whenReady} from "../common"
 
-let loginPage = function() {
-    let btnWidth = 1,
-    socialButtons = document.querySelectorAll('.fw-button.fw-socialaccount')
+const loginPage = function() {
+    const socialButtons = document.querySelectorAll('.fw-button.fw-socialaccount')
+    let btnWidth = 1
 
     socialButtons.forEach(
         button => {
-            let theWidth = button.clientWidth
+            const theWidth = button.clientWidth
             if (btnWidth < theWidth) {
                 btnWidth = theWidth
             }
@@ -18,7 +18,7 @@ let loginPage = function() {
     )
 }
 
-export let bind = function() {
+export const bind = function() {
     whenReady().then(() => {
         loginPage()
     })

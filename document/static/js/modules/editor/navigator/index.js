@@ -19,24 +19,24 @@ export class ModNavigator {
         const target = event.target
         event.preventDefault()
         event.stopImmediatePropagation()
-        if(target.matches('#navigator-button')){
+        if (target.matches('#navigator-button')){
             document.querySelector('#navigator-list').innerHTML = this.populateNavigator() || ""   //Populating the list
-            if( target.firstElementChild.firstElementChild.classList.contains('rotate')){
+            if (target.firstElementChild.firstElementChild.classList.contains('rotate')){
                 this.closeNavigator()
-            }else{
+            } else {
                 this.openNavigator()
             }
-        }else if(target.matches('.fa-angle-right')){
+        } else if (target.matches('.fa-angle-right')){
             document.querySelector('#navigator-list').innerHTML = this.populateNavigator() || ""    //Populating the list
-            if( target.classList.contains('rotate')){
+            if (target.classList.contains('rotate')){
                 this.closeNavigator()
-            }else{
+            } else {
                 this.openNavigator()
             }
-        }else if(target.matches('a')){
+        } else if (target.matches('a')){
                 let id = target.getAttribute('href').slice(1)
                 document.getElementById(id).scrollIntoView({behavior:"smooth"})
-        }else {
+        } else {
             this.closeNavigator()
         }
     }
@@ -58,9 +58,9 @@ export class ModNavigator {
                 items.push({id: node.attrs.id, textContent: node.textContent, type: node.type})
             }
         })
-        if(items.length){
+        if (items.length){
             return this.navigatorHTML(items)
-        } else{
+        } else {
             return false
         }
     }

@@ -1,4 +1,4 @@
-import {escapeText} from "../../common"
+import {escapeText ,findTarget} from "../../common"
 export class ModNavigator {
     constructor(editor) {
         editor.mod.navigator = this
@@ -12,35 +12,36 @@ export class ModNavigator {
         this.navigatorEl.innerHTML = this.getNavigatorTemplate()
     }
     bindEvents(){
-        this.listeners.onclick = event => this.onclick(event)
-        document.addEventListener('click', this.listeners.onclick)
-    }
-    onclick(event){
-        const target = event.target
-        event.preventDefault()
-        event.stopImmediatePropagation()
-        if (target.matches('#navigator-button')){
-            document.querySelector('#navigator-list').innerHTML = this.populateNavigator() || ""   //Populating the list
-            if (target.firstElementChild.firstElementChild.classList.contains('rotate')){
-                this.closeNavigator()
-            } else {
-                this.openNavigator()
+        document.body.addEventListener('click', event => {
+            //event.preventDefault()
+            event.stopImmediatePropagation()
+            const el = {}
+            switch (true) {
+                case findTarget(event, '#navigator-button', el):
+                    document.querySelector('#navigator-list').innerHTML = this.populateNavigator() || ""   //Populating the list
+                    if (el.target.firstElementChild.firstElementChild.classList.contains('rotate')){
+                        this.closeNavigator()
+                    } else {
+                        this.openNavigator()
+                    }
+                    break
+                case findTarget(event, '.fa-angle-right', el):
+                    document.querySelector('#navigator-list').innerHTML = this.populateNavigator() || ""    //Populating the list
+                    if (el.target.classList.contains('rotate')){
+                        this.closeNavigator()
+                    } else {
+                        this.openNavigator()
+                    }
+                    break
+                case findTarget(event, 'a', el):
+                    document.getElementById(el.target.getAttribute('href').slice(1)).scrollIntoView({behavior:"smooth"})
+                    break
+                default:
+                    this.closeNavigator()
+                    break
             }
-        } else if (target.matches('.fa-angle-right')){
-            document.querySelector('#navigator-list').innerHTML = this.populateNavigator() || ""    //Populating the list
-            if (target.classList.contains('rotate')){
-                this.closeNavigator()
-            } else {
-                this.openNavigator()
-            }
-        } else if (target.matches('a')){
-                const id = target.getAttribute('href').slice(1)
-                document.getElementById(id).scrollIntoView({behavior:"smooth"})
-        } else {
-            this.closeNavigator()
-        }
+        })
     }
-
     openNavigator(){
         document.getElementById('navigator-button').firstElementChild.firstElementChild.classList.add('rotate')
         document.getElementById('navigator').style.left = "0px"

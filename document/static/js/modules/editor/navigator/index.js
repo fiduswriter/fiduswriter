@@ -59,6 +59,13 @@ export class ModNavigator {
                     break
             }
         })
+
+        document.querySelector('#navigator-list').addEventListener('mouseover',() => {
+            document.body.classList.add('no-scroll')
+        })
+        document.querySelector('#navigator-list').addEventListener('mouseout',() => {
+            document.body.classList.remove('no-scroll')
+        })
     }
     openNavigator(){
         document.getElementById('navigator-button').firstElementChild.firstElementChild.classList.add('rotate')
@@ -85,7 +92,7 @@ export class ModNavigator {
         document.getElementById("navigator-filter").classList.add('hide')
         document.getElementById('navigator-filter-back').classList.add('hide')
         document.getElementById("navigator-list").classList.remove('hide')
-        document.getElementById('navigator-filter-icon').classList.remove('hide') 
+        document.getElementById('navigator-filter-icon').classList.remove('hide')
     }
     populateNavigator(){
         const items = []

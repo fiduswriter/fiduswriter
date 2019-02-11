@@ -922,14 +922,12 @@ html[hc=a5] #toolbar {
     float: right;
 }
 
-
 #navigator-filter-back {
     cursor: pointer;
     font-size: 1.3em;
     float: left;
     padding-left: 1.2em;
 }
-
 
 #navigator-filter {
     font-size: 1.2em;
@@ -939,8 +937,7 @@ html[hc=a5] #toolbar {
     padding-top: 1.3em;
 }
 
-.form-checkbox
-{
+.form-checkbox {
      -webkit-appearance: none;
      -moz-appearance: none;
      appearance: none;
@@ -957,28 +954,26 @@ html[hc=a5] #toolbar {
      margin-right: 7px;
      outline: none;
 }
-.form-checkbox:checked::before
-{
+.form-checkbox:checked::before {
      position: absolute;
      left: 3px;
      content: '\2713';
      font-weight: bold;
      font-size: 1.2em;
 }
-.form-checkbox:hover
-{
+.form-checkbox:hover {
      background-color: #f7f7f7;
 }
-.form-checkbox:checked
-{
+.form-checkbox:checked {
      background-color: #f1f1f1;
 }
-label
-{
+label {
      color: white;
      cursor: pointer;
 }
-
 .hide {
     display: none;
+}
+body.no-scroll {
+    overflow: hidden;
 }

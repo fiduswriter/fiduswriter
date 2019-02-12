@@ -51,7 +51,6 @@ class TableView {
 
 const isSelectedTableClicked = (state, $pos) => {
     const pathArr = state.selection.$anchor.path
-    console.log({pathArr, selection: state.selection})
     for (let i = 0; i < pathArr.length ; i++){
         if (pathArr[i].type && pathArr[i].type.name && pathArr[i].type.name === "table" && pathArr[i-1] === $pos){
             return true

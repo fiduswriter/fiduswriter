@@ -32,6 +32,20 @@ import {
     templateHash
 } from "./schema"
 
+// from https://codeburst.io/throttling-and-debouncing-in-javascript-646d076d0a44
+function debounced(delay, fn) {
+    let timerId
+    return function(...args) {
+        if (timerId) {
+            clearTimeout(timerId)
+        }
+        timerId = setTimeout(() => {
+            fn(...args)
+            timerId = null
+        }, delay)
+    }
+}
+
 export class DocumentTemplateDesigner {
     constructor({staticUrl}) {
         this.staticUrl = staticUrl
@@ -41,6 +55,9 @@ export class DocumentTemplateDesigner {
         this.value = []
 
         this.editors = []
+        this.listeners = {
+            onScroll: debounced(200, () => this.onScroll())
+        }
     }
 
     init() {
@@ -413,6 +430,19 @@ export class DocumentTemplateDesigner {
                     break
             }
         })
+
+        document.addEventListener('scroll', this.listeners.onScroll)
+    }
+
+    onScroll() {
+        const fromContainer = this.templateEditor.querySelector('.from-container'),
+            rect = fromContainer.getBoundingClientRect()
+
+        if (rect.height + rect.top > 0) {
+            const contentSize = 6 * 61, // 61px for each content type.
+                maxPadding = rect.height - contentSize - 10 // 10px for padding bottom
+            fromContainer.style.paddingTop = `${Math.min(8-Math.min(rect.top, 0), maxPadding)}px`
+        }
 
     }
 }

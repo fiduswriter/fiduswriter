@@ -87,6 +87,7 @@ export class DocumentTemplateDesigner {
 
     setCurrentValue() {
         let valid = true
+        const ids = []
         this.errors = {}
         this.value = {
             type: 'article',
@@ -165,6 +166,15 @@ export class DocumentTemplateDesigner {
                             valid = false
                             this.errors.missing_id = gettext('All document parts need an ID.')
                         }
+                        if (/\s/.test(id)) {
+                            valid = false
+                            this.errors.no_spaces = gettext('IDs cannot contain spaces.')
+                        }
+                        if (ids.includes(id)) {
+                            valid = false
+                            this.errors.unique_id = gettext('IDs have to be unique.')
+                        }
+                        ids.push(id)
                         return node
                     }
                 )

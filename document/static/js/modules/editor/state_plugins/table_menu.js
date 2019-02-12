@@ -1,4 +1,4 @@
-import {Plugin, PluginKey, TextSelection} from "prosemirror-state"
+import {Plugin, PluginKey, Selection} from "prosemirror-state"
 import {ContentMenu} from '../../common'
 
 const key = new PluginKey('tableMenu')
@@ -11,28 +11,10 @@ class TableView {
         this.options = options
         this.dom = document.createElement("div")
         this.dom.classList.add(`table-${node.attrs.width}`,`table-${node.attrs.aligned}`,'table-container')
-        const menuButton = document.createElement("button")
-        menuButton.classList.add('table-menu-btn')
-        menuButton.innerHTML = '<span class="table-menu-icon"><i class="fa fa-ellipsis-v"></i></span>'
-        this.dom.appendChild(menuButton)
-        menuButton.addEventListener('click', event => {
-            event.preventDefault()
-            event.stopImmediatePropagation()
-            if (!isSelectedTableClicked(this.view.state,getPos())){
-                const tr = view.state.tr
-                const $pos = view.state.doc.resolve(getPos()+2)
-                tr.setSelection(new TextSelection($pos,$pos))
-                view.dispatch(tr)
-            }
-            const contentMenu = new ContentMenu({
-                menu: this.options.editor.menu.tableMenuModel,
-                width: 280,
-                page: this.options.editor,
-                menuPos: {X:event.pageX, Y:event.pageY},
-                onClose: () => {view.focus()}
-            })
-            contentMenu.open()
-        })
+        this.menuButton = document.createElement("button")
+        this.menuButton.classList.add('table-menu-btn')
+        this.menuButton.innerHTML = '<span class="table-menu-icon"><i class="fa fa-ellipsis-v"></i></span>'
+        this.dom.appendChild(this.menuButton)
         const table = document.createElement("table")
         const tbody = document.createElement("tbody")
         table.append(tbody)
@@ -41,10 +23,35 @@ class TableView {
         this.dom.appendChild(this.contentDOM)
     }
 
+    stopEvent(event) {
+        let stopped = false
+        if (event.type === 'mousedown' && event.path.includes(this.menuButton)) {
+            stopped = true
+            if (!isSelectedTableClicked(this.view.state,this.getPos())){
+                const tr = this.view.state.tr
+                const $pos = this.view.state.doc.resolve(this.getPos())
+                tr.setSelection(Selection.findFrom($pos, 1, true))
+                this.view.dispatch(tr)
+            }
+            const contentMenu = new ContentMenu({
+                menu: this.options.editor.menu.tableMenuModel,
+                width: 280,
+                page: this.options.editor,
+                menuPos: {X: event.pageX, Y: event.pageY},
+                onClose: () => {
+                    this.view.focus()
+                }
+            })
+            contentMenu.open()
+        }
+        return stopped
+    }
+
 }
 
 const isSelectedTableClicked = (state, $pos) => {
     const pathArr = state.selection.$anchor.path
+    console.log({pathArr, selection: state.selection})
     for (let i = 0; i < pathArr.length ; i++){
         if (pathArr[i].type && pathArr[i].type.name && pathArr[i].type.name === "table" && pathArr[i-1] === $pos){
             return true

@@ -147,7 +147,7 @@ export class BaseDOMExporter {
         this.contents.querySelectorAll('.comment').forEach(el => {
             el.insertAdjacentHTML(
                 'afterend',
-                el.innerHTMLs
+                el.innerHTML
             )
             el.parentElement.removeChild(el)
         })

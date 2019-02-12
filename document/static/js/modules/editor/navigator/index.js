@@ -1,12 +1,11 @@
 import {escapeText ,findTarget} from "../../common"
-import {navigatorFilterModel} from "./model"
 export class ModNavigator {
     constructor(editor) {
         editor.mod.navigator = this
         this.editor = editor
         this.navigatorEl = document.querySelector('#navigator')
         this.listeners = {}
-        this.navigatorFilters = navigatorFilterModel().content
+        this.navigatorFilters = editor.menu.navigatorFilterModel.content
         this.defaultFilters = ['heading1','heading2','heading3']
         this.render()
         this.bindEvents()
@@ -110,8 +109,7 @@ export class ModNavigator {
         }
     }
     populateNavFilter(){
-        return `
-        ${
+        return (
             this.navigatorFilters.map(
                 item => {
                     const level = item.level
@@ -120,7 +118,7 @@ export class ModNavigator {
                             </span><br/><br/>`
                 }
             ).join('')
-        }`
+        )
     }
     inDefault(level){
         if (this.defaultFilters.includes('heading'+level)){

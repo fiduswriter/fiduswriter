@@ -72,7 +72,8 @@ import {
 import {
     headerbarModel,
     toolbarModel,
-    tableMenuModel
+    tableMenuModel,
+    navigatorFilterModel
 } from "./menus"
 import {
     ModMarginboxes
@@ -153,7 +154,8 @@ export class Editor {
         this.menu = {
             headerbarModel: headerbarModel(),
             toolbarModel: toolbarModel(),
-            tableMenuModel: tableMenuModel()
+            tableMenuModel: tableMenuModel(),
+            navigatorFilterModel: navigatorFilterModel(),
         }
         this.client_id = Math.floor(Math.random() * 0xFFFFFFFF)
         this.clientTimeAdjustment = 0

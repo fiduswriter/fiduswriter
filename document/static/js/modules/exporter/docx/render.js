@@ -81,7 +81,7 @@ export class DocxExporterRender {
         })
         this.tags.push({
             title: '@bibliography', // The '@' triggers handling as block
-            content: pmBib ? pmBib : [{type: 'paragraph', contents: [{type:'text', text: ' '}]}]
+            content: pmBib ? pmBib.content : [{type: 'paragraph', contents: [{type:'text', text: ' '}]}]
         })
     }
 
@@ -141,7 +141,9 @@ export class DocxExporterRender {
         )
         this.tags.forEach(
             tag => {
-                if (tag.title[0]==='@') {
+                if (!tag.title){
+                    return
+                } else if (tag.title[0]==='@') {
                     this.parRender(tag)
                 } else {
                     this.inlineRender(tag)

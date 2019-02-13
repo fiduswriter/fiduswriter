@@ -8,12 +8,8 @@ export class DocxExporterMetadata {
         this.docContents = docContents
         this.coreXml = false
         this.metadata = {
-            authors: this.docContents.content[2].content ?
-                this.docContents.content[2].content.map(authorNode => authorNode.attrs) :
-                [],
-            keywords: this.docContents.content[4].content ?
-                this.docContents.content[4].content.map(keywordNode => keywordNode.attrs.keyword) :
-                [],
+            authors: [], // TODO: define authors field
+            keywords: [], // TODO: define keywords field
             title: textContent(this.docContents.content[0])
         }
     }

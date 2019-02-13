@@ -8,12 +8,8 @@ export class OdtExporterMetadata {
         this.docContents = docContents
         this.metaXml = false
         this.metadata = {
-            authors: this.docContents.content[2].content ?
-                this.docContents.content[2].content.map(authorNode => authorNode.attrs) :
-                [],
-            keywords: this.docContents.content[4].content ?
-                this.docContents.content[4].content.map(keywordNode => keywordNode.attrs.keyword) :
-                [],
+            authors: [], // TODO: define authors
+            keywords: [], // TODO: define keywords
             title: textContent(this.docContents.content[0]),
             language: this.exporter.doc.settings.language
         }
@@ -90,7 +86,7 @@ export class OdtExporterMetadata {
 
         // language
         // LibreOffice seems to ignore the value set in metadata and instead uses
-        // the one set in defualt styles. So we set both.
+        // the one set in default styles. So we set both.
         this.exporter.styles.setLanguage(this.metadata.language)
         let languageEl = this.metaXml.querySelector('language')
         if (!languageEl) {

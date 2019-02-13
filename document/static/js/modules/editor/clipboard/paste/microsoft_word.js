@@ -21,7 +21,7 @@ export class MicrosoftWordPasteHandler extends GeneralPasteHandler {
         } else if (node.nodeType===8) {
             if (node.textContent==="EndFragment") {
                 // End of paste content. Remove all remaining sibling nodes.
-                while(node) {
+                while (node) {
                     const nextSibling = node.nextSibling
                     node.parentNode.removeChild(node)
                     node = nextSibling

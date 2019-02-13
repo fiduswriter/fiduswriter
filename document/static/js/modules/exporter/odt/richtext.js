@@ -21,7 +21,7 @@ export class OdtExporterRichtext {
         let columns
         let latex
         let objectNumber
-        switch(node.type) {
+        switch (node.type) {
             case 'paragraph':
                 if (!options.section) {
                     options.section = 'Text_20_body'
@@ -150,7 +150,7 @@ export class OdtExporterRichtext {
                 }
 
                 if (attributes.length) {
-                    let styleId = this.exporter.styles.getInlineStyleId(attributes)
+                    const styleId = this.exporter.styles.getInlineStyleId(attributes)
                     start += `<text:span text:style-name="T${styleId}">`
                     end = '</text:span>' + end
                 }
@@ -191,18 +191,18 @@ export class OdtExporterRichtext {
                     if (!this.figureCounter[figCat]) {
                         this.figureCounter[figCat] = 1
                     }
-                    let figCount = this.figureCounter[figCat]++
+                    const figCount = this.figureCounter[figCat]++
                     if (caption.length) {
                         caption = `${figCat} ${figCount}: ${caption}`
                     } else {
                         caption = `${figCat} ${figCount}`
                     }
                 }
-                if(node.attrs.image !== false) {
-                    let imgDBEntry = this.images.imageDB.db[node.attrs.image]
-                    let imgFileName = this.images.imgIdTranslation[node.attrs.image]
-                    let height = imgDBEntry.height*3/4 // more or less px to point
-                    let width = imgDBEntry.width*3/4 // more or less px to point
+                if (node.attrs.image !== false) {
+                    const imgDBEntry = this.images.imageDB.db[node.attrs.image]
+                    const imgFileName = this.images.imgIdTranslation[node.attrs.image]
+                    const height = imgDBEntry.height*3/4 // more or less px to point
+                    const width = imgDBEntry.width*3/4 // more or less px to point
                     this.exporter.styles.checkParStyle('Caption')
                     this.exporter.styles.checkGraphicStyle('Graphics')
                     start += noSpaceTmp`
@@ -219,8 +219,8 @@ export class OdtExporterRichtext {
                     </text:p>
                     ` + end
                 } else {
-                    let latex = node.attrs.equation
-                    let objectNumber = this.exporter.math.addMath(latex)
+                    const latex = node.attrs.equation
+                    const objectNumber = this.exporter.math.addMath(latex)
                     this.exporter.styles.checkParStyle('Caption')
                     this.exporter.styles.checkGraphicStyle('Formula')
                     start += noSpaceTmp`

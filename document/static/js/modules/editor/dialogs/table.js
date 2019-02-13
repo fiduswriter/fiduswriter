@@ -16,21 +16,21 @@ export class TableDialog {
         this.dialog.dialogEl.querySelectorAll(`td.${className}`).forEach(el => el.classList.remove(className))
         let colCount = 1
         let countElement = cell
-        while(countElement.previousElementSibling) {
+        while (countElement.previousElementSibling) {
             countElement = countElement.previousElementSibling
             colCount += 1
         }
         let rowCount = 1
         countElement= countElement.parentElement
-        while(countElement.previousElementSibling) {
+        while (countElement.previousElementSibling) {
             countElement = countElement.previousElementSibling
             rowCount += 1
         }
         // add hover class.
         const rows = this.dialog.dialogEl.querySelectorAll('tr')
-        for(let i=0;i<rowCount;i++) {
+        for (let i=0;i<rowCount;i++) {
             const cols = rows[i].querySelectorAll('td')
-            for(let j=0;j<colCount;j++) {
+            for (let j=0;j<colCount;j++) {
                 cols[j].classList.add(className)
             }
         }
@@ -107,8 +107,8 @@ export class TableResizeDialog {
     }
 
     init() {
-        let table = this.findTable(this.editor.currentView.state)
-        if(table){
+        const table = this.findTable(this.editor.currentView.state)
+        if (table){
             this.width = table.attrs.width
             this.aligned = table.attrs.aligned
             this.layout = table.attrs.layout
@@ -117,7 +117,7 @@ export class TableResizeDialog {
     }
 
     setTableAlignment() {
-        if(this.width == "100"){
+        if (this.width == "100"){
             this.dialog.dialogEl.querySelector("#table-alignment-btn").classList.add("disabled")
             this.dialog.dialogEl.querySelector('#table-alignment-btn label').innerHTML = "Center"
             return
@@ -127,10 +127,10 @@ export class TableResizeDialog {
     }
 
     setTableWidth() {
-        if(this.width == "100"){
+        if (this.width == "100"){
             this.dialog.dialogEl.querySelector("#table-alignment-btn").classList.add("disabled")
             this.dialog.dialogEl.querySelector('#table-alignment-btn label').innerHTML = "Center"
-        }else{
+        } else {
             this.dialog.dialogEl.querySelector("#table-alignment-btn").classList.remove("disabled")
         }
         this.dialog.dialogEl.querySelector('#table-width-btn label').innerHTML =
@@ -140,7 +140,7 @@ export class TableResizeDialog {
     setTableLayout() {
         this.dialog.dialogEl.querySelector('#table-layout-btn label').innerHTML =
             document.getElementById(`table-layout-${this.layout}`).innerText
-        if(this.layout === "auto")
+        if (this.layout === "auto")
             this.dialog.dialogEl.querySelector('#table-layout-btn').style.width = "105px"
         else
             this.dialog.dialogEl.querySelector('#table-layout-btn').style.width = "50px"
@@ -153,7 +153,7 @@ export class TableResizeDialog {
     }
 
     submitForm(){
-        let table = this.findTable(this.editor.currentView.state)
+        const table = this.findTable(this.editor.currentView.state)
         table.attrs.width = this.width
         table.attrs['data-width'] = this.width
         table.attrs.aligned = this.width == "100" ? "center" : this.aligned

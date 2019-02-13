@@ -93,7 +93,7 @@ export class ModServerCommunications {
             window.setTimeout(() => {
                 this.createWSConnection()
             }, 2000)
-            if(!this.editor.view.state.plugins.length) {
+            if (!this.editor.view.state.plugins.length) {
                 // doc not initiated
                 return
             }

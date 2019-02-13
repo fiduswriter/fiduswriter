@@ -6,7 +6,7 @@ import {ShrinkFidus} from "./shrink"
   old document was owned by someone else than the current user.
 */
 export class SaveCopy {
-    constructor (doc, bibDB, imageDB, newUser) {
+    constructor(doc, bibDB, imageDB, newUser) {
         this.doc = doc
         this.bibDB = bibDB
         this.imageDB = imageDB
@@ -14,10 +14,10 @@ export class SaveCopy {
     }
 
     init() {
-        let shrinker = new ShrinkFidus(this.doc, this.imageDB, this.bibDB)
+        const shrinker = new ShrinkFidus(this.doc, this.imageDB, this.bibDB)
         return shrinker.init().then(
             ({doc, shrunkImageDB, shrunkBibDB, httpIncludes}) => {
-                let importer = new ImportNative(
+                const importer = new ImportNative(
                     doc,
                     shrunkBibDB,
                     shrunkImageDB,

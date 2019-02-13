@@ -17,7 +17,7 @@ import {
     languagesTemplate,
     papersizesTemplate
 } from "./templates"
-import {whenReady, ensureCSS} from "../common"
+import {whenReady, ensureCSS, findTarget} from "../common"
 import {
     helpSchema,
     helpMenuContent,
@@ -49,6 +49,7 @@ export class DocumentTemplateDesigner {
             'dialog.css',
             'prosemirror.css',
             'prosemirror-menu.css',
+            'prosemirror-example-setup.css',
             'document_template_designer.css',
             'tags.css',
             'contributors.css'
@@ -96,7 +97,10 @@ export class DocumentTemplateDesigner {
                             id = el.querySelector('input.id').value,
                             title = el.querySelector('input.title').value,
                             help = this.getEditorValue(el.querySelector('.instructions')),
-                            initial = this.getEditorValue(el.querySelector('.initial')),
+                            initial = this.getEditorValue(
+                                el.querySelector('.initial'),
+                                true
+                            ),
                             locking = el.querySelector('.locking option:checked') ? el.querySelector('.locking option:checked').value : 'false',
                             optional = el.querySelector('.optional option:checked').value,
                             attrs = {id, title},
@@ -118,7 +122,7 @@ export class DocumentTemplateDesigner {
                             attrs.locking = locking
                         }
                         let language
-                        switch(type) {
+                        switch (type) {
                             case 'richtext_part':
                             case 'heading_part':
                                 attrs.elements = Array.from(el.querySelectorAll('.elements:checked')).map(el => el.value)
@@ -231,8 +235,9 @@ export class DocumentTemplateDesigner {
                 })
             })
         this.editors.push([helpEl, helpView])
-        let plugins = [], menuContent = [], schema
-        switch(type) {
+        const plugins = []
+        let menuContent = [], schema
+        switch (type) {
             case 'richtext_part':
                 schema = richtextPartSchema
                 menuContent = richtextMenuContent
@@ -303,7 +308,7 @@ export class DocumentTemplateDesigner {
 
     }
 
-    getEditorValue(el) {
+    getEditorValue(el, inline = false) {
         const editor = this.editors.find(editor => editor[0]===el)
         if (!editor) {
             return false
@@ -312,7 +317,7 @@ export class DocumentTemplateDesigner {
         // Only return if there is more content that a recently initiated doc
         // would have. The number varies between part types.
         if (state.doc.nodeSize > state.schema.nodes.doc.createAndFill().nodeSize) {
-            return state.doc.firstChild.toJSON().content
+            return inline ? state.doc.firstChild.toJSON().content : state.doc.toJSON().content
         }
         return false
     }
@@ -327,7 +332,7 @@ export class DocumentTemplateDesigner {
                     put: false
                 },
                 sort: false,
-                handle: '.title'
+                handle: '.doc-part-header'
             }
         )
         new Sortable(
@@ -338,7 +343,7 @@ export class DocumentTemplateDesigner {
                     pull: true,
                     put: true
                 },
-                handle: '.title',
+                handle: '.doc-part-header',
                 onAdd: event => {
                     this.setupEditors(
                         event.item,
@@ -354,40 +359,48 @@ export class DocumentTemplateDesigner {
                     name: 'document',
                     put: true
                 },
-                handle: '.title',
+                handle: '.doc-part-header',
                 onAdd: event => event.to.removeChild(event.to.firstElementChild) // Remove the item that was just added
             }
         )
 
-        Array.from(document.querySelectorAll('div.submit-row input[type=submit]')).forEach(
-            button => button.addEventListener('click', event => {
-                if (this.definitionTextarea.style.display==='none' && !this.setCurrentValue()) {
+        document.body.addEventListener('click', event => {
+            const el = {}
+            switch (true) {
+                case findTarget(event, '#toggle-editor', el):
                     event.preventDefault()
-                }
-            })
-        )
-
-        document.getElementById('toggle-editor').addEventListener('click', event => {
-            event.preventDefault()
-            if (this.definitionTextarea.style.display==='none') {
-                this.definitionTextarea.style.display=''
-                this.definitionHashInputBlock.style.display=''
-                this.templateEditor.style.display='none'
-                this.setCurrentValue()
-            } else {
-                this.definitionTextarea.style.display='none'
-                this.definitionHashInputBlock.style.display='none'
-                this.templateEditor.style.display=''
-                this.getInitialValue()
-                this.templateEditor.querySelector('.to-container').innerHTML =
-                    templateEditorValueTemplate({content: this.value.content.slice(1) || []})
-                this.templateEditor.querySelector('.footnote-value').innerHTML =
-                    footnoteTemplate(this.value.attrs)
-                this.templateEditor.querySelector('.languages-value').innerHTML =
-                    languagesTemplate(this.value.attrs)
-                this.templateEditor.querySelector('.papersizes-value').innerHTML =
-                    papersizesTemplate(this.value.attrs)
-                this.setupInitialEditors()
+                    if (this.definitionTextarea.style.display==='none') {
+                        this.definitionTextarea.style.display=''
+                        this.definitionHashInputBlock.style.display=''
+                        this.templateEditor.style.display='none'
+                        this.setCurrentValue()
+                    } else {
+                        this.definitionTextarea.style.display='none'
+                        this.definitionHashInputBlock.style.display='none'
+                        this.templateEditor.style.display=''
+                        this.getInitialValue()
+                        this.templateEditor.querySelector('.to-container').innerHTML =
+                            templateEditorValueTemplate({content: this.value.content.slice(1) || []})
+                        this.templateEditor.querySelector('.footnote-value').innerHTML =
+                            footnoteTemplate(this.value.attrs)
+                        this.templateEditor.querySelector('.languages-value').innerHTML =
+                            languagesTemplate(this.value.attrs)
+                        this.templateEditor.querySelector('.papersizes-value').innerHTML =
+                            papersizesTemplate(this.value.attrs)
+                        this.setupInitialEditors()
+                    }
+                    break
+                case findTarget(event, 'div.submit-row input[type=submit]', el):
+                    if (this.definitionTextarea.style.display==='none' && !this.setCurrentValue()) {
+                        event.preventDefault()
+                    }
+                    break
+                case findTarget(event, '.doc-part .configure', el):
+                    event.preventDefault()
+                    el.target.closest('.doc-part').querySelector('.attrs').classList.toggle('hidden')
+                    break
+                default:
+                    break
             }
         })
 

@@ -10,7 +10,7 @@ export class VerbatimFieldForm{
     }
 
     get value() {
-        let formValue = this.dom.querySelector('input.verbatim').value
+        const formValue = this.dom.querySelector('input.verbatim').value
         // If the form has not been filled out, don't consider this form
         return formValue.length > 0 ? formValue : false
     }

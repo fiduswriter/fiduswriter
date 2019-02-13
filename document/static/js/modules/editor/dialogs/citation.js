@@ -173,7 +173,7 @@ export class CitationDialog {
     // Not when dialog is first opened.
     addToCitedItems(items) {
         const len = items.length
-        for(let i = 0; i < len; i ++) {
+        for (let i = 0; i < len; i ++) {
             const item = items[i]
             document.querySelector('#selected-cite-source-table .fw-document-table-body').insertAdjacentHTML(
                 'beforeend',
@@ -259,8 +259,9 @@ export class CitationDialog {
                         return
                     }
                     data.cells[3].innerHTML = ''
-                    let [db, id] = data.cells[0].textContent.split('-')
-                    id = parseInt(id)
+                    const [db, id] = data.cells[0].textContent.split('-').map(
+                        (val, index) => index ? parseInt(val) : val // only parseInt id (where index > 0)
+                    )
                     if (document.querySelector(`#selected-source-${db}-${id}`)) {
                         return
                     }

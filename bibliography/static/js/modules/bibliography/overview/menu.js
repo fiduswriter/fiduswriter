@@ -2,7 +2,7 @@ import {BibLatexFileExporter} from "../export"
 import {BibEntryForm} from "../form"
 import {BibLatexFileImportDialog} from "../import"
 
-export let menuModel = () => ({
+export const menuModel = () => ({
     content: [
         {
             type: 'select-action-dropdown',

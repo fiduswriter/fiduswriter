@@ -2,13 +2,13 @@ import {BaseDOMExporter} from "../tools/dom_export"
 
 export class BaseEpubExporter extends BaseDOMExporter {
     getTimestamp() {
-        let today = new Date()
+        const today = new Date()
         let second = today.getUTCSeconds()
         let minute = today.getUTCMinutes()
         let hour = today.getUTCHours()
         let day = today.getUTCDate()
         let month = today.getUTCMonth() + 1 //January is 0!
-        let year = today.getUTCFullYear()
+        const year = today.getUTCFullYear()
 
         if (second < 10) {
             second = '0' + second
@@ -32,14 +32,14 @@ export class BaseEpubExporter extends BaseDOMExporter {
 
     styleEpubFootnotes(htmlCode) {
         // Converts RASH style footnotes into epub footnotes.
-        let footnotes = htmlCode.querySelectorAll('section.fnlist section[role=doc-footnote]')
+        const footnotes = htmlCode.querySelectorAll('section.fnlist section[role=doc-footnote]')
         let footnoteCounter = 1
         footnotes.forEach(footnote => {
-            let newFootnote = document.createElement('aside')
+            const newFootnote = document.createElement('aside')
             newFootnote.setAttribute('epub:type', 'footnote')
             newFootnote.id = footnote.id
-            if(footnote.firstChild) {
-                while(footnote.firstChild) {
+            if (footnote.firstChild) {
+                while (footnote.firstChild) {
                     newFootnote.appendChild(footnote.firstChild)
                 }
                 newFootnote.firstChild.innerHTML = footnoteCounter + ' ' + newFootnote.firstChild.innerHTML
@@ -50,11 +50,11 @@ export class BaseEpubExporter extends BaseDOMExporter {
             footnote.parentNode.replaceChild(newFootnote, footnote)
             footnoteCounter++
         })
-        let footnoteMarkers = htmlCode.querySelectorAll('a.fn')
+        const footnoteMarkers = htmlCode.querySelectorAll('a.fn')
         let footnoteMarkerCounter = 1
         footnoteMarkers.forEach(fnMarker => {
-            let newFnMarker = document.createElement('sup')
-            let newFnMarkerLink = document.createElement('a')
+            const newFnMarker = document.createElement('sup')
+            const newFnMarkerLink = document.createElement('a')
             newFnMarkerLink.setAttribute('epub:type', 'noteref')
             newFnMarkerLink.setAttribute('href', fnMarker.getAttribute('href'))
             newFnMarkerLink.innerHTML = footnoteMarkerCounter
@@ -69,12 +69,13 @@ export class BaseEpubExporter extends BaseDOMExporter {
 
 
     setLinks(htmlEl, docNum) {
-        let contentItems = [], title
+        const contentItems = []
+        let title
 
         htmlEl.querySelectorAll('h1,h2,h3,h4,h5,h6').forEach(el => {
             title = el.textContent.trim()
             if (title !== '') {
-                let contentItem = {}
+                const contentItem = {}
                 contentItem.title = title
                 contentItem.level = parseInt(el.tagName.substring(1, 2))
                 if (docNum) {

@@ -92,10 +92,13 @@ export const contributorInputPlugin = function(options) {
                 }
             },
             apply(tr, prev, oldState, state) {
-                let {
-                    decos,
+                const pluginState = this.getState(oldState)
+                const {
                     dropUp
-                } = this.getState(oldState)
+                } = pluginState
+                let {
+                    decos
+                } = pluginState
 
                 if (
                     (options.editor.docInfo.access_rights !== 'write') ||

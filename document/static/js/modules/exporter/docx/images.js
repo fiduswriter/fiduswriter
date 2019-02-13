@@ -23,7 +23,7 @@ export class DocxExporterImages {
 
     // add an image to the list of files
     addImage(imgFileName, image) {
-        let rId = this.rels.addImageRel(imgFileName)
+        const rId = this.rels.addImageRel(imgFileName)
         this.addContentType(imgFileName.split('.').pop())
         this.exporter.xml.addExtraFile(`word/media/${imgFileName}`, image)
         return rId
@@ -31,10 +31,10 @@ export class DocxExporterImages {
 
     // add a global contenttype declaration for an image type (if needed)
     addContentType(fileEnding) {
-        let types = this.ctXml.querySelector('Types')
-        let contentDec = types.querySelector('Default[Extension='+fileEnding+']')
+        const types = this.ctXml.querySelector('Types')
+        const contentDec = types.querySelector('Default[Extension='+fileEnding+']')
         if (!contentDec) {
-            let string = `<Default ContentType="image/${fileEnding}" Extension="${fileEnding}"/>`
+            const string = `<Default ContentType="image/${fileEnding}" Extension="${fileEnding}"/>`
             types.insertAdjacentHTML('beforeEnd', string)
         }
     }
@@ -43,7 +43,7 @@ export class DocxExporterImages {
     // TODO: This will likely fail on image types docx doesn't support such as SVG.
     // Try out and fix.
     exportImages() {
-        let usedImgs = []
+        const usedImgs = []
         descendantNodes(this.docContents).forEach(
             node => {
                 if (node.type==='figure' && node.attrs.image !== false) {
@@ -54,15 +54,15 @@ export class DocxExporterImages {
             }
         )
         return new Promise(resolveExportImages => {
-            let p = []
+            const p = []
             usedImgs.forEach((image) => {
-                let imgDBEntry = this.imageDB.db[image]
+                const imgDBEntry = this.imageDB.db[image]
                 p.push(
                     new Promise(resolve => {
                         JSZipUtils.getBinaryContent(
                             imgDBEntry.image,
                             (err, imageFile) => {
-                                let wImgId = this.addImage(
+                                const wImgId = this.addImage(
                                     imgDBEntry.image.split('/').pop(),
                                     imageFile
                                 )

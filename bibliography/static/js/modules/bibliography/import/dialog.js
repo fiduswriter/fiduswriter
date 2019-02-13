@@ -15,7 +15,7 @@ export class BibLatexFileImportDialog {
     }
 
     init() {
-        let buttons = [
+        const buttons = [
             {
                 text: gettext('Import'),
                 classes: 'fw-dark submit-import',
@@ -29,9 +29,9 @@ export class BibLatexFileImportDialog {
                         return false
                     }
                     activateWait()
-                    let reader = new window.FileReader()
+                    const reader = new window.FileReader()
                     reader.onload = event => {
-                        let importer = new BibLatexImporter(
+                        const importer = new BibLatexImporter(
                             event.target.result,
                             this.bibDB,
                             this.addToListCall,
@@ -48,7 +48,7 @@ export class BibLatexFileImportDialog {
                 type: 'cancel'
             }
         ]
-        let dialog = new Dialog({
+        const dialog = new Dialog({
             id: 'importbibtex',
             title: gettext('Import a BibTex library'),
             body: importBibFileTemplate(),

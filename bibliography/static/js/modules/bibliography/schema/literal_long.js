@@ -2,7 +2,7 @@ import {enquote, sup, sub, smallcaps, url, text, variable} from "./common"
 import {marks} from "prosemirror-schema-basic"
 import {Schema} from "prosemirror-model"
 
-let longliteral = {
+const longliteral = {
     content: 'inline*',
     marks: "_",
     code: true,
@@ -15,7 +15,7 @@ let longliteral = {
     }
 }
 
-let doc = {
+const doc = {
     content: 'longliteral'
 }
 

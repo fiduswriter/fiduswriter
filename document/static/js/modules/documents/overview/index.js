@@ -14,7 +14,7 @@ import {FeedbackTab} from "../../feedback"
 
 export class DocumentOverview {
 
-    constructor ({app, user, staticUrl}) {
+    constructor({app, user, staticUrl}) {
         this.app = app
         this.user = user
         this.staticUrl = staticUrl
@@ -27,7 +27,7 @@ export class DocumentOverview {
     init() {
         whenReady().then(() => {
             this.render()
-            let smenu = new SiteMenu("documents")
+            const smenu = new SiteMenu("documents")
             smenu.init()
             new DocumentOverviewActions(this)
             this.menu = new OverviewMenuView(this, menuModel)
@@ -56,7 +56,8 @@ export class DocumentOverview {
 
     bind() {
         document.body.addEventListener('click', event => {
-            let el = {}, docId
+            const el = {}
+            let docId
             switch (true) {
                 case findTarget(event, '.revisions', el):
                     docId = parseInt(el.target.dataset.id)
@@ -101,11 +102,11 @@ export class DocumentOverview {
         ).catch(
             error => {
                 addAlert('error', gettext('Cannot load data of documents.'))
-                throw(error)
+                throw (error)
             }
         ).then(
             ({json}) => {
-                let ids = new Set()
+                const ids = new Set()
                 this.documentList = json.documents.filter(doc => {
                     if (ids.has(doc.id)) {return false}
                     ids.add(doc.id)
@@ -129,7 +130,7 @@ export class DocumentOverview {
 
     /* Initialize the overview table */
     initTable() {
-        let tableEl = document.createElement('table')
+        const tableEl = document.createElement('table')
         tableEl.classList.add('fw-document-table')
         tableEl.classList.add('fw-large')
         document.querySelector('.fw-contents').appendChild(tableEl)
@@ -201,8 +202,8 @@ export class DocumentOverview {
     }
 
     removeTableRows(ids) {
-        let existingRows = this.table.data.map((data, index) => {
-            let id = parseInt(data.cells[0].textContent)
+        const existingRows = this.table.data.map((data, index) => {
+            const id = parseInt(data.cells[0].textContent)
             if (ids.includes(id)) {
                 return index
             } else {
@@ -222,15 +223,15 @@ export class DocumentOverview {
     }
 
     addExportTemplatesToMenu() {
-        let docSelectMenuItem = this.menu.model.content.find(menuItem => menuItem.id='doc_selector')
+        const docSelectMenuItem = this.menu.model.content.find(menuItem => menuItem.id='doc_selector')
         this.exportTemplates.forEach(template => {
             docSelectMenuItem.content.push({
                 title: `${gettext('Export selected as: ')} ${template.file_name} (${template.file_type})`,
                 action: overview => {
-                    let ids = overview.getSelected()
+                    const ids = overview.getSelected()
                     if (ids.length) {
-                        let fileType = template.file_type
-                        let templateUrl = template.template_file
+                        const fileType = template.file_type
+                        const templateUrl = template.template_file
                         this.mod.actions.downloadTemplateExportFiles(ids, templateUrl, fileType)
                     }
                 }

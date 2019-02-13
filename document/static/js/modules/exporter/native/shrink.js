@@ -11,7 +11,7 @@ export class ShrinkFidus {
     }
 
     init() {
-        let shrunkImageDB = {},
+        const shrunkImageDB = {},
             httpIncludes = []
 
         addAlert('info', gettext('File export has been initiated.'))
@@ -27,8 +27,8 @@ export class ShrinkFidus {
             delete shrunkImageDB[itemId].thumbnail
             delete shrunkImageDB[itemId].pk
             delete shrunkImageDB[itemId].added
-            let imageUrl = shrunkImageDB[itemId].image
-            let filename = imageUrl.split('/').pop()
+            const imageUrl = shrunkImageDB[itemId].image
+            const filename = imageUrl.split('/').pop()
             shrunkImageDB[itemId].image = filename
             httpIncludes.push({
                 url: imageUrl,
@@ -38,7 +38,7 @@ export class ShrinkFidus {
 
         this.citeList = [...new Set(this.citeList)] // unique values
 
-        let shrunkBibDB = {}
+        const shrunkBibDB = {}
         this.citeList.forEach(itemId => {
             shrunkBibDB[itemId] = Object.assign({}, this.bibDB.db[itemId])
             // Remove the entry_cat, as it is only a list of IDs for one
@@ -46,7 +46,7 @@ export class ShrinkFidus {
             delete shrunkBibDB[itemId].entry_cat
         })
 
-        let docCopy = Object.assign({}, this.doc)
+        const docCopy = Object.assign({}, this.doc)
 
         // Remove items that aren't needed.
         delete(docCopy.rights)

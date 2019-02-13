@@ -1,7 +1,7 @@
 import {escapeText} from "../../common"
 
 /** The access rights dialogue template */
-export let accessRightOverviewTemplate = ({contacts, collaborators}) =>
+export const accessRightOverviewTemplate = ({contacts, collaborators}) =>
     `<div id="my-contacts" class="fw-ar-container">
         <h3 class="fw-green-title">${gettext("My contacts")}</h3>
         <table class="fw-document-table">
@@ -29,7 +29,7 @@ export let accessRightOverviewTemplate = ({contacts, collaborators}) =>
     </div>`
 
 /** The template for an individual row in the right hand side list of users (all contacts) of the access rights dialogue. */
-export let accessRightTrTemplate = ({contacts}) =>
+export const accessRightTrTemplate = ({contacts}) =>
     contacts.map(contact =>
         `<tr>
             <td width="337" data-id="${contact.id}" data-avatar="${contact.avatar}" data-name="${escapeText(contact.name)}" class="fw-checkable fw-checkable-td">
@@ -40,7 +40,7 @@ export let accessRightTrTemplate = ({contacts}) =>
     ).join('')
 
 /** The template for an individual row in the left hand side list of users (the collaborators of the current document) of the access rights dialogue. */
-export let collaboratorsTemplate = ({collaborators}) =>
+export const collaboratorsTemplate = ({collaborators}) =>
     collaborators.map(collaborator =>
         `<tr id="collaborator-${collaborator.user_id}" data-id="${collaborator.user_id}"
         class="collaborator-tr" data-right="${collaborator.rights}">

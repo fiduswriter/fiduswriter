@@ -2,12 +2,12 @@ import {enquote, literal, sup, sub, smallcaps, url, text, variable} from "./comm
 import {marks} from "prosemirror-schema-basic"
 import {Schema} from "prosemirror-model"
 
-let nocase = {
+const nocase = {
     parseDOM: [{tag: 'span.nocase'}],
     toDOM() { return ["span",{class:"nocase"}] }
 }
 
-let doc = {
+const doc = {
     content: 'literal'
 }
 

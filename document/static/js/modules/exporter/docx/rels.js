@@ -35,11 +35,11 @@ export class DocxExporterRels {
 
     // Go through a rels xml file and file all the listed relations
     findMaxRelId() {
-        let rels = this.xml.querySelectorAll('Relationship')
+        const rels = this.xml.querySelectorAll('Relationship')
 
         rels.forEach(
             rel => {
-                let id = parseInt(rel.getAttribute("Id").replace(/\D/g,''))
+                const id = parseInt(rel.getAttribute("Id").replace(/\D/g,''))
                 if (id > this.maxRelId) {
                     this.maxRelId = id
                 }
@@ -48,17 +48,17 @@ export class DocxExporterRels {
     }
 
     addRelsToCt() {
-        let override = this.ctXml.querySelector(`Override[PartName="/${this.filePath}"]`)
+        const override = this.ctXml.querySelector(`Override[PartName="/${this.filePath}"]`)
         if (!override) {
-            let types = this.ctXml.querySelector('Types')
+            const types = this.ctXml.querySelector('Types')
             types.insertAdjacentHTML('beforeEnd', `<Override PartName="/${this.filePath}" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>`)
         }
     }
     // Add a relationship for a link
     addLinkRel(link) {
-        let rels = this.xml.querySelector('Relationships')
-        let rId = this.maxRelId + 1
-        let string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="${escapeText(link)}" TargetMode="External"/>`
+        const rels = this.xml.querySelector('Relationships')
+        const rId = this.maxRelId + 1
+        const string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="${escapeText(link)}" TargetMode="External"/>`
         rels.insertAdjacentHTML('beforeEnd', string)
         this.maxRelId = rId
         return rId
@@ -66,39 +66,39 @@ export class DocxExporterRels {
 
     // add a relationship for an image
     addImageRel(imgFileName) {
-        let rels = this.xml.querySelector('Relationships')
-        let rId = this.maxRelId + 1
-        let string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${escapeText(imgFileName)}"/>`
+        const rels = this.xml.querySelector('Relationships')
+        const rId = this.maxRelId + 1
+        const string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${escapeText(imgFileName)}"/>`
         rels.insertAdjacentHTML('beforeEnd', string)
         this.maxRelId = rId
         return rId
     }
 
     addFootnoteRel() {
-        let footnotesRel = this.xml.querySelector('Relationship[Target="footnotes.xml"]')
+        const footnotesRel = this.xml.querySelector('Relationship[Target="footnotes.xml"]')
         if (footnotesRel) {
             // Rel exists already
-            let fnRId = parseInt(footnotesRel.getAttribute('Id').replace(/\D/g,''))
+            const fnRId = parseInt(footnotesRel.getAttribute('Id').replace(/\D/g,''))
             return fnRId
         }
-        let rels = this.xml.querySelector('Relationships')
-        let rId = this.maxRelId + 1
-        let string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footnotes" Target="footnotes.xml"/>`
+        const rels = this.xml.querySelector('Relationships')
+        const rId = this.maxRelId + 1
+        const string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footnotes" Target="footnotes.xml"/>`
         rels.insertAdjacentHTML('beforeEnd', string)
         this.maxRelId = rId
         return rId
     }
 
     addNumberingRel() {
-        let numberingRel = this.xml.querySelector('Relationship[Target="numbering.xml"]')
+        const numberingRel = this.xml.querySelector('Relationship[Target="numbering.xml"]')
         if (numberingRel) {
             // Rel exists already
-            let nuRId = parseInt(numberingRel.getAttribute('Id').replace(/\D/g,''))
+            const nuRId = parseInt(numberingRel.getAttribute('Id').replace(/\D/g,''))
             return nuRId
         }
-        let rels = this.xml.querySelector('Relationships')
-        let rId = this.maxRelId + 1
-        let string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/>`
+        const rels = this.xml.querySelector('Relationships')
+        const rId = this.maxRelId + 1
+        const string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/>`
         rels.insertAdjacentHTML('beforeEnd', string)
         this.maxRelId = rId
         return rId

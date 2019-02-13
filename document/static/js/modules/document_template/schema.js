@@ -29,7 +29,17 @@ const doc = {
 
 export const helpSchema = new Schema({
     nodes: schema.spec.nodes.remove('code_block').remove('image').remove('heading').remove('horizontal_rule').update('doc', doc),
-    marks: schema.spec.marks.remove('code')
+    marks: schema.spec.marks.remove('code').update('link', {
+        attrs: {
+            href: {},
+            title: {default: null}
+        },
+        inclusive: false,
+        parseDOM: [{tag: "a[href]", getAttrs(dom) {
+                return {href: dom.getAttribute("href"), title: dom.getAttribute("title")}
+        }}],
+        toDOM(node) { return ["a", Object.assign({target: '_blank'}, node.attrs), 0] }
+    })
 })
 
 export const helpMenuContent = buildMenuItems(helpSchema).fullMenu
@@ -51,7 +61,7 @@ export const richtextPartSchema = new Schema({
 
 export const richtextMenuContent = buildMenuItems(richtextPartSchema).fullMenu
 for (let i = 1; i <= 6; i++) {
-    let type = richtextPartSchema.nodes[`heading${i}`]
+    const type = richtextPartSchema.nodes[`heading${i}`]
     richtextMenuContent[1][1].content.push(blockTypeItem(type, {
         title: gettext("Change to heading ") + i,
         label: gettext("Heading level ") + i
@@ -70,7 +80,7 @@ export const tablePartSchema = new Schema({
 
 export const tableMenuContent = buildMenuItems(tablePartSchema).fullMenu
 for (let i = 1; i <= 6; i++) {
-    let type = tablePartSchema.nodes[`heading${i}`]
+    const type = tablePartSchema.nodes[`heading${i}`]
     tableMenuContent[1][1].content.push(blockTypeItem(type, {
         title: gettext("Change to heading ") + i,
         label: gettext("Heading level ") + i
@@ -101,7 +111,7 @@ export const headingPartSchema = new Schema({
 
 export const headingMenuContent = buildMenuItems(headingPartSchema).fullMenu
 for (let i = 1; i <= 6; i++) {
-    let type = headingPartSchema.nodes[`heading${i}`]
+    const type = headingPartSchema.nodes[`heading${i}`]
     headingMenuContent[1][1].content.push(blockTypeItem(type, {
         title: gettext("Change to heading ") + i,
         label: gettext("Heading level ") + i

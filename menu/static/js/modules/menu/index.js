@@ -34,7 +34,7 @@ export class SiteMenu {
 
     init() {
         this.activatePlugins()
-        let currentActive = this.navItems.find(item => item.id === this.activeItem)
+        const currentActive = this.navItems.find(item => item.id === this.activeItem)
         if (currentActive) {
             currentActive.active = true
         }
@@ -59,7 +59,7 @@ export class SiteMenu {
             () => {
                 // In addition to adding the dropdown, we also need to add some css
                 // values so that the dropdown is placed close to #preferences-btn
-                let btnOffset = button.getBoundingClientRect()
+                const btnOffset = button.getBoundingClientRect()
                 box.style.left = `${document.body.scrollLeft + btnOffset.left - 52}px`
                 box.style.top = `${document.body.scrollTop + btnOffset.top + 27}px`
             }

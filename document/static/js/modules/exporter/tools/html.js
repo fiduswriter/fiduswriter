@@ -1,9 +1,9 @@
-export let modifyImages = function(htmlEl) {
-    let imageLinks = htmlEl.querySelectorAll('img'),
+export const modifyImages = function(htmlEl) {
+    const imageLinks = htmlEl.querySelectorAll('img'),
         images = []
 
     imageLinks.forEach((el, index) => {
-        let src = el.getAttribute('src').split('?')[0]
+        const src = el.getAttribute('src').split('?')[0]
         let name = src.split('/').pop()
         // JPGs are output as PNG elements as well.
         if (name === '') {
@@ -12,13 +12,13 @@ export let modifyImages = function(htmlEl) {
             name = index
         }
 
-        let newImg = document.createElement('img')
+        const newImg = document.createElement('img')
         // We set the src of the image as "data-src" for now so that the browser
         // won't try to load the file immediately
         newImg.setAttribute('data-src', name)
         el.parentNode.replaceChild(newImg, el)
 
-        if(!images.find(image => image.filename === name)) {
+        if (!images.find(image => image.filename === name)) {
 
             images.push({
                 filename: name,
@@ -31,7 +31,7 @@ export let modifyImages = function(htmlEl) {
 }
 
 // all descendant text nodes for dom nodes
-export let domDescendantTexNodes = function(node) {
+export const domDescendantTexNodes = function(node) {
     let returnValue = []
     node.childNodes.forEach(
         subNode => {

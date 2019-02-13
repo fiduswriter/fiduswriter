@@ -28,20 +28,28 @@ function cleanNode(node, elements, marks) {
     }
 }
 
-export function adjustDocToTemplate(doc, template) {
+export function adjustDocToTemplate(doc, template, documentStyles, citationStyles) {
     const removedFootnoteElements = doc.attrs.footnote_elements.filter(element => !template.attrs.footnote_elements.includes(element)),
         removedFootnoteMarks = doc.attrs.footnote_marks.filter(mark => !template.attrs.footnote_marks.includes(mark)),
         attrs = ['footnote_marks', 'footnote_elements', 'languages', 'papersizes', 'template']
-
     attrs.forEach(attr => doc.attrs[attr] = template.attrs[attr])
 
-    if(!doc.attrs.languages.includes(doc.attrs.language)) {
+    if (!doc.attrs.languages.includes(doc.attrs.language)) {
         doc.attrs.language = doc.attrs.languages[0]
     }
 
     if (!doc.attrs.papersizes.includes(doc.attrs.papersize)) {
         doc.attrs.papersize = doc.attrs.papersizes[0]
     }
+
+    if (!documentStyles.map(style => style.filename).includes(doc.attrs.documentstyle)) {
+        doc.attrs.documentstyle = documentStyles[0].filename
+    }
+
+    if (!citationStyles.map(style => style.short_title).includes(doc.attrs.citationstyle)) {
+        doc.attrs.citationstyle = citationStyles[0].short_title
+    }
+
 
     if (removedFootnoteMarks.length || removedFootnoteElements.length) {
         cleanFootnotes(doc, removedFootnoteElements, removedFootnoteMarks)
@@ -118,7 +126,7 @@ export function adjustDocToTemplate(doc, template) {
                     cleanNode(newNode, removedElements, removedMarks)
                     if (!newNode.content && ['richtext_part', 'heading_part'].includes(part.type)) {
                         newNode.content = [{type: part.attrs.elements[0]}]
-                    } else if(!newNode.content && part.type === 'table_part') {
+                    } else if (!newNode.content && part.type === 'table_part') {
                         newNode.content = [{type: 'table', content: [{type: 'table_row', content: [{type: 'table_cell', content: [{type: 'paragraph'}]}]}]}]
                     }
                 }
@@ -134,7 +142,7 @@ export function adjustDocToTemplate(doc, template) {
     })
 
     // move remaining oldContent items that were not in template.
-    while(oldContent.length) {
+    while (oldContent.length) {
         const newNode = oldContent.shift()
         newNode.attrs.deleted = true
         doc.content.push(newNode)

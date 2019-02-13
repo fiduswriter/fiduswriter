@@ -12,15 +12,15 @@ export class DateFieldForm{
     }
 
     get value() {
-        let formValue = this.dom.querySelector('input.date').value
+        const formValue = this.dom.querySelector('input.date').value
         // If the form has not been filled out, don't consider this form
         return formValue.length > 0 ? formValue : false
     }
 
     check() {
-        let formValue = this.value
+        const formValue = this.value
         if (formValue) {
-            let checkValue = edtfParse(formValue).valid
+            const checkValue = edtfParse(formValue).valid
             if (!checkValue) {
                 this.dom.classList.add('fw-fomt-error')
                 return false

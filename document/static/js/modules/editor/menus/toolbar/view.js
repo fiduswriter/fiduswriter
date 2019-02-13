@@ -67,7 +67,7 @@ export class ToolbarView {
             return
         }
         const target = event.target
-        if(target.matches('.editortoolbar .more-button li:not(.disabled), .editortoolbar .more-button li:not(.disabled) *')) {
+        if (target.matches('.editortoolbar .more-button li:not(.disabled), .editortoolbar .more-button li:not(.disabled) *')) {
             let menuNumber = 0
             let seekItem = target.closest('li')
             while (seekItem.previousElementSibling) {
@@ -97,13 +97,13 @@ export class ToolbarView {
                 }
             }
 
-        } else if(target.matches('.editortoolbar .more-button, .editortoolbar .more-button *')) {
+        } else if (target.matches('.editortoolbar .more-button, .editortoolbar .more-button *')) {
             this.editor.menu.toolbarModel.openMore = true
             if (this.openedMenu) {
                 this.editor.menu.toolbarModel.content[this.openedMenu].open = false
             }
             this.update()
-        } else if(target.matches('.editortoolbar li:not(.disabled), .editortoolbar li:not(.disabled) *')) {
+        } else if (target.matches('.editortoolbar li:not(.disabled), .editortoolbar li:not(.disabled) *')) {
             // A toolbar menu item was clicked. We just need to
             // find out which one
             let itemNumber = 0
@@ -212,7 +212,7 @@ export class ToolbarView {
 
     getToolbarMenuItemHTML(menuItem, _index) {
         let returnValue
-        switch(menuItem.type) {
+        switch (menuItem.type) {
             case 'info':
                 returnValue = this.getInfoHTML(menuItem)
                 break

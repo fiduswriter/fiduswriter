@@ -1,10 +1,10 @@
 import {addAlert, postJson} from "../common"
 import {getSettings} from "../schema/convert"
 
-export let getMissingDocumentListData = function (ids, documentList) {
+export const getMissingDocumentListData = function(ids, documentList) {
     // get extra data for the documents identified by the ids and updates the
     // documentList correspondingly.
-    let incompleteIds = []
+    const incompleteIds = []
 
     ids.forEach(id => {
         if (!documentList.find(doc => doc.id === parseInt(id)).hasOwnProperty('contents')) {
@@ -22,7 +22,7 @@ export let getMissingDocumentListData = function (ids, documentList) {
             ({json}) => {
                 json.documents.forEach(
                     extraValues => {
-                        let doc = documentList.find(entry => entry.id === extraValues.id)
+                        const doc = documentList.find(entry => entry.id === extraValues.id)
                         doc.contents = JSON.parse(extraValues.contents)
                         doc.comments = JSON.parse(extraValues.comments)
                         doc.bibliography = JSON.parse(extraValues.bibliography)

@@ -16,12 +16,12 @@ export class LatexExporterConvert {
 
     init(docContents) {
         this.preWalkJson(docContents)
-        let rawTransformation = this.walkJson(docContents)
-        let body = this.postProcess(rawTransformation)
-        let preamble = this.assemblePreamble()
-        let epilogue = this.assembleEpilogue()
-        let latex = this.docDeclaration + preamble + '\n\\begin{document}\n' + body + epilogue + '\n\\end{document}\n'
-        let returnObject = {
+        const rawTransformation = this.walkJson(docContents)
+        const body = this.postProcess(rawTransformation)
+        const preamble = this.assemblePreamble()
+        const epilogue = this.assembleEpilogue()
+        const latex = this.docDeclaration + preamble + '\n\\begin{document}\n' + body + epilogue + '\n\\end{document}\n'
+        const returnObject = {
             latex,
             imageIds: this.imageIds,
             usedBibDB: this.usedBibDB
@@ -35,14 +35,14 @@ export class LatexExporterConvert {
 
     // Check for things needed before creating raw transofrm
     preWalkJson(node) {
-        switch(node.type) {
+        switch (node.type) {
             // Collect all internal links so that we only set the anchors for those
             // that are being linked to.
             case 'text':
                 if (node.marks) {
-                    let hyperlink = node.marks.find(mark => mark.type === 'link')
+                    const hyperlink = node.marks.find(mark => mark.type === 'link')
                     if (hyperlink) {
-                        let href = hyperlink.attrs.href
+                        const href = hyperlink.attrs.href
                         if (href[0] === '#' && !this.internalLinks.includes(href)) {
                             this.internalLinks.push(href.slice(1))
                         }
@@ -63,7 +63,7 @@ export class LatexExporterConvert {
         let hyperlink, strong, em
         let references, format, citationCommand
         let figureType, caption, innerFigure
-        switch(node.type) {
+        switch (node.type) {
             case 'article':
                 break
             case 'title':
@@ -82,10 +82,10 @@ export class LatexExporterConvert {
                 break
             case 'authors':
                 if (node.content) {
-                    let authorsPerAffil = node.content.map(node => {
-                        let author = node.attrs,
-                            nameParts = [],
-                            affiliation = false
+                    const authorsPerAffil = node.content.map(node => {
+                        const author = node.attrs,
+                            nameParts = []
+                        let affiliation = false
                         if (author.firstname) {
                             nameParts.push(author.firstname)
                         }
@@ -104,7 +104,7 @@ export class LatexExporterConvert {
                             email: author.email
                         }
                     }).reduce((affils, author) => {
-                        let affil = author.affiliation
+                        const affil = author.affiliation
                         affils[affil] = affils[affil] || []
                         affils[affil].push(author)
                         return affils
@@ -167,7 +167,7 @@ export class LatexExporterConvert {
                 break
             case 'heading':
                 level = node.attrs.level
-                switch(level) {
+                switch (level) {
                     case 1:
                         start += '\n\n\\section{'
                         break
@@ -190,7 +190,7 @@ export class LatexExporterConvert {
                     // Add a link target
                     end = `\\texorpdfstring{\\protect\\hypertarget{${node.attrs.id}}{}}{}` + end
                 }
-                if(!options.onlyFootnoteMarkers) {
+                if (!options.onlyFootnoteMarkers) {
                     placeFootnotesAfterBlock = true
                     options = Object.assign({}, options)
                     options.onlyFootnoteMarkers = true
@@ -208,7 +208,7 @@ export class LatexExporterConvert {
             case 'ordered_list':
                 start += '\n\\begin{enumerate}'
                 end = '\n\\end{enumerate}' + end
-                if(!options.onlyFootnoteMarkers) {
+                if (!options.onlyFootnoteMarkers) {
                     placeFootnotesAfterBlock = true
                     options = Object.assign({}, options)
                     options.onlyFootnoteMarkers = true
@@ -218,7 +218,7 @@ export class LatexExporterConvert {
             case 'bullet_list':
                 start += '\n\\begin{itemize}'
                 end = '\n\\end{itemize}' + end
-                if(!options.onlyFootnoteMarkers) {
+                if (!options.onlyFootnoteMarkers) {
                     placeFootnotesAfterBlock = true
                     options = Object.assign({}, options)
                     options.onlyFootnoteMarkers = true
@@ -262,7 +262,7 @@ export class LatexExporterConvert {
                     end = '}' + end
                 }
                 if (hyperlink) {
-                    let href = hyperlink.attrs.href
+                    const href = hyperlink.attrs.href
                     if (href[0] === '#') {
                         // Internal link
                         start += `\\hyperlink{${href.slice(1)}}{`
@@ -284,11 +284,11 @@ export class LatexExporterConvert {
                     references.every(ref => !ref.locator && !ref.prefix)
                 ) {
                     // multi source citation without page numbers or text before.
-                    let citationEntryKeys = []
+                    const citationEntryKeys = []
 
-                    let allCitationItemsPresent = references.map(ref => ref.id).every(
+                    const allCitationItemsPresent = references.map(ref => ref.id).every(
                         citationEntry => {
-                            let bibDBEntry = this.bibDB.db[citationEntry]
+                            const bibDBEntry = this.bibDB.db[citationEntry]
                             if (bibDBEntry) {
                                 if (!bibDBEntry) {
                                     // Not present in bibliography database, skip it.
@@ -296,7 +296,7 @@ export class LatexExporterConvert {
                                     return false
                                 }
                                 if (!this.usedBibDB[citationEntry]) {
-                                    let citationKey = this.createUniqueCitationKey(
+                                    const citationKey = this.createUniqueCitationKey(
                                         bibDBEntry.entry_key
                                     )
                                     this.usedBibDB[citationEntry] = Object.assign({}, bibDBEntry)
@@ -317,9 +317,9 @@ export class LatexExporterConvert {
                         citationCommand += 's' // Switching from \autocite to \autocites
                     }
 
-                    let allCitationItemsPresent = references.every(
+                    const allCitationItemsPresent = references.every(
                         ref => {
-                            let bibDBEntry = this.bibDB.db[ref.id]
+                            const bibDBEntry = this.bibDB.db[ref.id]
                             if (!bibDBEntry) {
                                 // Not present in bibliography database, skip it.
                                 // TODO: Throw an error?
@@ -338,7 +338,7 @@ export class LatexExporterConvert {
                             citationCommand += '{'
 
                             if (!this.usedBibDB[ref.id]) {
-                                let citationKey = this.createUniqueCitationKey(
+                                const citationKey = this.createUniqueCitationKey(
                                     bibDBEntry.entry_key
                                 )
                                 this.usedBibDB[ref.id] = Object.assign({}, bibDBEntry)
@@ -366,10 +366,10 @@ export class LatexExporterConvert {
                 innerFigure = ''
                 if (node.attrs.image) {
                     this.imageIds.push(node.attrs.image)
-                    let imageDBEntry = this.imageDB.db[node.attrs.image],
+                    const imageDBEntry = this.imageDB.db[node.attrs.image],
                         filePathName = imageDBEntry.image,
-                        filename = filePathName.split('/').pop(),
-                        latexPackage
+                        filename = filePathName.split('/').pop()
+                    let latexPackage
                     if (filename.split('.').pop() === 'svg') {
                         latexPackage = 'includesvg'
                         this.features.SVGs = true
@@ -379,7 +379,7 @@ export class LatexExporterConvert {
                     }
                     innerFigure += `\\${latexPackage}{${filename}}\n`
                 } else {
-                    let equation = node.attrs.equation
+                    const equation = node.attrs.equation
                     innerFigure += `\\begin{displaymath}\n${equation}\n\\end{displaymath}\n`
                 }
                 if (figureType==='table') {
@@ -397,8 +397,8 @@ export class LatexExporterConvert {
                 }
                 break
             case 'table':
-                if(node.content && node.content.length) {
-                    let columns = node.content[0].content.reduce(
+                if (node.content && node.content.length) {
+                    const columns = node.content[0].content.reduce(
                         (columns, node) => columns + node.attrs.colspan,
                         0
                     )
@@ -472,7 +472,7 @@ export class LatexExporterConvert {
     // So here we need to make sure that the same key is not used twice in one
     // document.
     createUniqueCitationKey(suggestedKey) {
-        let usedKeys = Object.keys(this.usedBibDB).map(key=>{
+        const usedKeys = Object.keys(this.usedBibDB).map(key=>{
             return this.usedBibDB[key].entry_key
         })
         if (usedKeys.includes(suggestedKey)) {

@@ -43,7 +43,7 @@ export function appendTransaction(trs, oldState, newState, editor) {
                         addedRanges.push(
                             {from: step.from, to: step.gapFrom}
                         )
-                    } else if(!step.slice.size) {// unwrapped from something
+                    } else if (!step.slice.size) {// unwrapped from something
                         tr.docs[index].nodesBetween(step.from, step.gapFrom, (node, pos) => {
                             if (
                                 pos < step.from ||
@@ -316,7 +316,7 @@ export function appendTransaction(trs, oldState, newState, editor) {
                         } else {
                             realDeletedRanges.push({from: pos, to: Math.min(pos + node.nodeSize, delRange.to)})
                         }
-                    } else if(oldDeletionMarks[pos]) {
+                    } else if (oldDeletionMarks[pos]) {
                         // Readd preexisting deletion mark
                         newTr.maybeStep(
                             new AddMarkStep(
@@ -429,7 +429,7 @@ export function appendTransaction(trs, oldState, newState, editor) {
 
         const tr = trs[trs.length-1]
         if (tr.selection instanceof TextSelection) {
-            const assoc = (tr.selection.from < oldState.selection.from || tr.getMeta('inputType') === 'deleteContentBackward' ) ? -1 : 1
+            const assoc = (tr.selection.from < oldState.selection.from || tr.getMeta('inputType') === 'deleteContentBackward') ? -1 : 1
             const caretPos = map.map(tr.selection.from, assoc)
             newTr.setSelection(
                 new TextSelection(

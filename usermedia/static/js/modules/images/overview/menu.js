@@ -1,6 +1,6 @@
 import {ImageEditDialog} from "../edit_dialog"
 
-export let menuModel = () => ({
+export const menuModel = () => ({
     content: [
         {
             type: 'select-action-dropdown',

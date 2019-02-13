@@ -57,7 +57,7 @@ export class RangeFieldForm{
     }
 
     switchMode() {
-        let formValue = this.value
+        const formValue = this.value
         if (formValue) {
             Object.assign(this.currentValue, formValue)
         }

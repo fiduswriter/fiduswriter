@@ -70,7 +70,7 @@ export const removeCollaboratorSelection = function(state, data) {
         caretPositions
     } = key.getState(state)
 
-    let caretPosition = caretPositions.find(carPos => carPos.sessionId === data.session_id)
+    const caretPosition = caretPositions.find(carPos => carPos.sessionId === data.session_id)
 
     if (caretPosition) {
         caretPositions = caretPositions.filter(carPos => carPos !== caretPosition)
@@ -86,7 +86,7 @@ export const removeCollaboratorSelection = function(state, data) {
     return false
 }
 
-export let collabCaretsPlugin = function(options) {
+export const collabCaretsPlugin = function(options) {
     return new Plugin({
         key,
         state: {
@@ -98,7 +98,7 @@ export let collabCaretsPlugin = function(options) {
                 }
             },
             apply(tr, prev, oldState, state) {
-                let meta = tr.getMeta(key)
+                const meta = tr.getMeta(key)
                 if (meta) {
                     // There has been an update, return values from meta instead
                     // of previous values
@@ -134,7 +134,7 @@ export let collabCaretsPlugin = function(options) {
         },
         props: {
             decorations(state) {
-				let {
+				const {
 					decos
 				} = this.getState(state)
 				return decos

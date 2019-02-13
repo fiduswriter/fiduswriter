@@ -1,6 +1,6 @@
 import {addColumnAfter, addColumnBefore, deleteColumn, addRowBefore, addRowAfter, deleteRow, deleteTable,
     mergeCells, splitCell, toggleHeaderRow, toggleHeaderColumn, toggleHeaderCell} from "prosemirror-tables"
-import {TableResizeDialog} from  "../../dialogs"
+import {TableResizeDialog} from "../../dialogs"
 
 // from https://github.com/ProseMirror/prosemirror-tables/blob/master/src/util.js
 const findTable = function(state) {

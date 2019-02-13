@@ -80,9 +80,9 @@ export class OdtExporterCitations {
 
             // We create a standard footnote container DOM node,
             // add the citations into it, and parse it back.
-            let fnNode = fnSchema.nodeFromJSON({type:'footnotecontainer'})
-            let serializer = DOMSerializer.fromSchema(fnSchema)
-            let dom = serializer.serializeNode(fnNode)
+            const fnNode = fnSchema.nodeFromJSON({type:'footnotecontainer'})
+            const serializer = DOMSerializer.fromSchema(fnSchema)
+            const dom = serializer.serializeNode(fnNode)
             dom.innerHTML = citationsHTML
             this.pmCits = DOMParser.fromSchema(fnSchema).parse(dom, {topNode: fnNode}).toJSON().content
         } else {
@@ -90,12 +90,12 @@ export class OdtExporterCitations {
         }
 
         // Now we do the same for the bibliography.
-        let cslBib = this.citFm.bibliography
+        const cslBib = this.citFm.bibliography
         if (cslBib[1].length > 0) {
             this.exporter.styles.addReferenceStyle(cslBib[0])
-            let bibNode = cslBibSchema.nodeFromJSON({type:'cslbib'})
-            let serializer = DOMSerializer.fromSchema(cslBibSchema)
-            let dom = serializer.serializeNode(bibNode)
+            const bibNode = cslBibSchema.nodeFromJSON({type:'cslbib'})
+            const serializer = DOMSerializer.fromSchema(cslBibSchema)
+            const dom = serializer.serializeNode(bibNode)
             dom.innerHTML = cslBib[1].join('')
             this.pmBib = DOMParser.fromSchema(cslBibSchema).parse(dom, {topNode: bibNode}).toJSON()
         }

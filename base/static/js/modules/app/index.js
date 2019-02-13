@@ -18,7 +18,7 @@ export class App {
             "bibliography": () => new BibliographyOverview(this.config),
             "user": pathnameParts => {
                 let returnValue
-                switch(pathnameParts[2]) {
+                switch (pathnameParts[2]) {
                     case "profile":
                         returnValue = new Profile(this.config)
                         break

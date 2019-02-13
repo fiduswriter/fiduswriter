@@ -2,9 +2,9 @@ import {sup, sub, smallcaps, text} from "./common"
 import {marks} from "prosemirror-schema-basic"
 import {Schema} from "prosemirror-model"
 
-let doc = {content: "cslbib"}
+const doc = {content: "cslbib"}
 
-let cslbib = {
+const cslbib = {
     content: "cslentry*",
     parseDOM: [{tag: 'div.csl-bib-body'}],
     toDOM(_node) {
@@ -14,7 +14,7 @@ let cslbib = {
     }
 }
 
-let cslentry = {
+const cslentry = {
     content: "block*",
     parseDOM: [{tag: 'div.csl-entry'}],
     toDOM(_node) {
@@ -28,7 +28,7 @@ let cslentry = {
 // system doesn't allow for the mixing of inline and block content, it "imagines"
 // that this block exists. This---rather than other blocks---is chosen, because
 // it's the first in the list.
-let cslinline = {
+const cslinline = {
     group: "block",
     content: "text*",
     marks: "_",
@@ -40,7 +40,7 @@ let cslinline = {
     }
 }
 
-let cslblock = {
+const cslblock = {
     group: "block",
     content: "text*",
     marks: "_",
@@ -52,7 +52,7 @@ let cslblock = {
     }
 }
 
-let cslleftmargin = {
+const cslleftmargin = {
     group: "block",
     content: "text*",
     marks: "_",
@@ -64,7 +64,7 @@ let cslleftmargin = {
     }
 }
 
-let cslrightinline = {
+const cslrightinline = {
     group: "block",
     content: "text*",
     marks: "_",
@@ -77,7 +77,7 @@ let cslrightinline = {
 }
 
 
-let cslindent = {
+const cslindent = {
     group: "block",
     content: "text*",
     marks: "_",

@@ -41,7 +41,8 @@ export class DocumentRevisionsDialog {
 
         return new Promise(resolve => {
             dialogEl.addEventListener('click', event => {
-                let el = {}, revisionId, revisionFilename
+                const el = {}
+                let revisionId, revisionFilename
                 switch (true) {
                     case findTarget(event, '.download-revision', el):
                         revisionId = parseInt(el.target.dataset.id)
@@ -74,7 +75,7 @@ export class DocumentRevisionsDialog {
             JSZipUtils.getBinaryContent(
                 `/document/get_revision/${id}/`,
                 (err, fidusFile) => {
-                    let importer = new ImportFidusFile(
+                    const importer = new ImportFidusFile(
                         fidusFile,
                         user
                     )
@@ -120,7 +121,7 @@ export class DocumentRevisionsDialog {
 
     delete(id) {
         const buttons = []
-        let returnPromise = new Promise(resolve => {
+        const returnPromise = new Promise(resolve => {
 
             buttons.push({
                 text: gettext('Delete'),
@@ -159,7 +160,7 @@ export class DocumentRevisionsDialog {
             {id}
         ).then(
             () => {
-                let thisTr = document.querySelector(`tr.revision-${id}`),
+                const thisTr = document.querySelector(`tr.revision-${id}`),
                 documentId = thisTr.dataset.document,
                 doc = this.documentList.find(doc => doc.id === parseInt(documentId))
                 thisTr.parentElement.removeChild(thisTr)

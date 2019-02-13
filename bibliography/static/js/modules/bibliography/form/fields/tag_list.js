@@ -18,7 +18,7 @@ export class TagListForm{
     }
 
     get value() {
-        let formValue = this.tokenInput.getItems().map(item=>{return item.name})
+        const formValue = this.tokenInput.getItems().map(item=>{return item.name})
         // If the form has not been filled out, don't consider this form
         return formValue.length > 0 ? formValue : false
     }

@@ -18,8 +18,8 @@ export class DocumentAccessRightsDialog {
     }
 
     createAccessRightsDialog() {
-        let documentCollaborators = {}
-        let len = this.accessRights.length
+        const documentCollaborators = {}
+        const len = this.accessRights.length
 
         for (let i = 0; i < len; i++) {
             if (this.documentIds.includes(this.accessRights[i].document_id)) {
@@ -40,11 +40,11 @@ export class DocumentAccessRightsDialog {
             }
         }
 
-        let collaborators = Object.values(documentCollaborators).filter(
+        const collaborators = Object.values(documentCollaborators).filter(
             col => col.count === this.documentIds.length
         )
 
-        let buttons = [
+        const buttons = [
             {
                 text: gettext('Add new contact'),
                 classes: "fw-light fw-add-button",
@@ -74,7 +74,7 @@ export class DocumentAccessRightsDialog {
                 classes: "fw-dark",
                 click: () => {
                     //apply the current state to server
-                    let collaborators = [],
+                    const collaborators = [],
                         rights = []
                     document.querySelectorAll('#share-member .collaborator-tr').forEach(el => {
                         collaborators.push(el.dataset.id)
@@ -105,10 +105,10 @@ export class DocumentAccessRightsDialog {
 
     bindDialogEvents() {
         this.dialog.dialogEl.querySelector('#add-share-member').addEventListener('click', () => {
-            let selectedData = []
+            const selectedData = []
             document.querySelectorAll('#my-contacts .fw-checkable.checked').forEach(el => {
-                let memberId = el.getAttribute('data-id')
-                let collaboratorEl = document.getElementById(`collaborator-${memberId}`)
+                const memberId = el.getAttribute('data-id')
+                const collaboratorEl = document.getElementById(`collaborator-${memberId}`)
                 if (collaboratorEl) {
                     if (collaboratorEl.dataset.right === 'delete') {
                         collaboratorEl.classList.remove('delete')
@@ -134,7 +134,8 @@ export class DocumentAccessRightsDialog {
             )
         })
         this.dialog.dialogEl.addEventListener('click', event => {
-            let el = {}, newRight, colRow, box
+            const el = {}
+            let newRight, colRow, box
             switch (true) {
                 case findTarget(event, '.fw-checkable', el):
                     setCheckableLabel(el.target)
@@ -147,7 +148,7 @@ export class DocumentAccessRightsDialog {
                     break
                 case findTarget(event, '.edit-right', el):
                     box = el.target.parentElement.querySelector('.fw-pulldown')
-                    if(!box.clientWidth) {
+                    if (!box.clientWidth) {
                         openDropdownBox(box)
                     }
                     break

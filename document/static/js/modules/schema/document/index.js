@@ -95,18 +95,21 @@ specNodes = specNodes.update(
                 track: {default: []},
                 width: {default: '100'},
                 aligned: {default: 'center'},
-                layout: {default: 'fixed'}
+                layout: {default: 'fixed'},
+                color: {default: '#76a698'}
             },
             parseDOM: [{tag: "table", getAttrs(dom) {
                 const track = parseTracks(dom.dataset.track),
                     width = dom.dataset.width,
                     aligned = width === '100' ? 'center' : dom.dataset.aligned,
-                    layout = dom.dataset.layout
+                    layout = dom.dataset.layout,
+                    color = dom.dataset.color
                 return {
                     track,
                     width,
                     aligned,
-                    layout
+                    layout,
+                    color
                 }
             }}],
             toDOM(node) {
@@ -117,7 +120,8 @@ specNodes = specNodes.update(
                 attrs['data-width'] = node.attrs.width
                 attrs['data-aligned'] = node.attrs.aligned
                 attrs['data-layout'] = node.attrs.layout
-                attrs['class'] = `table-${node.attrs.width} table-${node.attrs.aligned} table-${node.attrs.layout}`
+                attrs['data-color'] = node.attrs.color
+                attrs['class'] = `table-${node.attrs.width} table-${node.attrs.aligned} table-${node.attrs.layout} header-${node.attrs.color}`
                 return ["table", attrs, ["tbody", 0]]
             }
         }

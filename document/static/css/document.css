@@ -170,6 +170,18 @@ figure {
     table-layout: auto !important;
 }
 
+.header-red th {
+    background-color: red;
+}
+
+.header-yellow th {
+    background-color: yellow;
+}
+
+.header-green th {
+    background-color: green;
+}
+
 
 .article .table-of-contents h1,
 .article .table-of-contents h2,

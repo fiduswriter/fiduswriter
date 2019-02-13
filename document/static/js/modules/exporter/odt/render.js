@@ -85,7 +85,7 @@ export class OdtExporterRender {
         })
         this.tags.push({
             title: '@bibliography', // The '@' triggers handling as block
-            content: pmBib ? pmBib : [{type: 'paragraph', contents: [{type:'text', text: ' '}]}]
+            content: pmBib ? pmBib.content : [{type: 'paragraph', contents: [{type:'text', text: ' '}]}]
         })
     }
 

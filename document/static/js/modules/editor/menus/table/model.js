@@ -200,8 +200,12 @@ export const tableMenuModel = ()=> ({
                 if (
                     !table ||
                     editor.currentView.state.selection.jsonID !== 'cell' ||
-                    editor.currentView.state.selection.$headCell.pos ===
+                    editor.currentView.state.selection.$headCell.pos !==
                     editor.currentView.state.selection.$anchorCell.pos ||
+                    (
+                        editor.currentView.state.selection.$anchorCell.nodeAfter.attrs.rowspan === 1 &&
+                        editor.currentView.state.selection.$anchorCell.nodeAfter.attrs.colspan === 1
+                    ) ||
                     (
                         editor.docInfo.access_rights === 'write-tracked' &&
                         !tableAddedByUser(table, editor.user.id)

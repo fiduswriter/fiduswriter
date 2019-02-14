@@ -7,7 +7,9 @@ import {menuModel} from "./menu"
 import {activateWait, deactivateWait, addAlert, postJson, OverviewMenuView, findTarget, whenReady, escapeText, localizeDate, baseBodyTemplate, ensureCSS, setDocTitle} from "../../common"
 import {SiteMenu} from "../../menu"
 import {FeedbackTab} from "../../feedback"
-
+import {
+    docSchema
+} from "../../schema/document"
 /*
 * Helper functions for the document overview page.
 */
@@ -18,6 +20,7 @@ export class DocumentOverview {
         this.app = app
         this.user = user
         this.staticUrl = staticUrl
+        this.schema = docSchema
         this.documentList = []
         this.teamMembers = []
         this.accessRights = []

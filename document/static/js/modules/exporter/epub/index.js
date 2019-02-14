@@ -8,13 +8,12 @@ import {ZipFileCreator} from "../tools/zip"
 import {opfTemplate, containerTemplate, ncxTemplate, navTemplate, xhtmlTemplate} from "./templates"
 import {addAlert} from "../../common"
 import {BaseEpubExporter} from "./base"
-import {docSchema} from "../../schema/document"
 
 
 export class EpubExporter extends BaseEpubExporter {
 
-    constructor(doc, bibDB, imageDB, citationStyles, citationLocales, staticUrl) {
-        super()
+    constructor(schema, doc, bibDB, imageDB, citationStyles, citationLocales, staticUrl) {
+        super(schema)
         this.doc = doc
         this.citationStyles = citationStyles
         this.citationLocales = citationLocales
@@ -77,10 +76,9 @@ export class EpubExporter extends BaseEpubExporter {
 
         const timestamp = this.getTimestamp()
 
-        const schema = docSchema
-        schema.cached.imageDB = this.imageDB
-        const serializer = DOMSerializer.fromSchema(schema)
-        const docContents = serializer.serializeNode(schema.nodeFromJSON(this.doc.contents))
+        this.schema.cached.imageDB = this.imageDB
+        const serializer = DOMSerializer.fromSchema(this.schema)
+        const docContents = serializer.serializeNode(this.schema.nodeFromJSON(this.doc.contents))
 
         // Remove hidden parts
         const hiddenEls = docContents.querySelectorAll('[data-hidden=true]')

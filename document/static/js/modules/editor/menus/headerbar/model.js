@@ -137,6 +137,7 @@ export const headerbarModel = () => ({
                     keys: 'Ctrl-p',
                     action: editor => {
                         const exporter = new PrintExporter(
+                            editor.schema,
                             editor.getDoc({changes: 'acceptAllNoInsertions'}),
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB,
@@ -164,6 +165,7 @@ export const headerbarModel = () => ({
                     order: 0,
                     action: editor => {
                         const exporter = new HTMLExporter(
+                            editor.schema,
                             editor.getDoc({changes: 'acceptAllNoInsertions'}),
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB,
@@ -182,6 +184,7 @@ export const headerbarModel = () => ({
                     order: 1,
                     action: editor => {
                         const exporter = new EpubExporter(
+                            editor.schema,
                             editor.getDoc({changes: 'acceptAllNoInsertions'}),
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB,

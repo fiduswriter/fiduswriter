@@ -1,7 +1,6 @@
 import {DOMSerializer} from "prosemirror-model"
 
 import {RenderCitations} from "../../citations/render"
-import {docSchema} from "../../schema/document"
 /*
 
 WARNING: DEPRECATED!
@@ -16,11 +15,14 @@ by little, and they are all based on the BaseDOMExporter class.
 
 export class BaseDOMExporter {
 
+    constructor(schema) {
+        this.schema = schema
+    }
+
     joinDocumentParts() {
-        const schema = docSchema
-        schema.cached.imageDB = this.imageDB
-        const serializer = DOMSerializer.fromSchema(schema)
-        this.contents = serializer.serializeNode(schema.nodeFromJSON(this.doc.contents))
+        this.schema.cached.imageDB = this.imageDB
+        const serializer = DOMSerializer.fromSchema(this.schema)
+        this.contents = serializer.serializeNode(this.schema.nodeFromJSON(this.doc.contents))
 
         // Remove hidden parts
         const hiddenEls = Array.from(this.contents.querySelectorAll('[data-hidden=true]'))

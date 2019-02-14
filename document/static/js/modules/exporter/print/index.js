@@ -6,8 +6,8 @@ import {addAlert} from "../../common"
 
 export class PrintExporter extends HTMLExporter {
 
-    constructor(doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles, staticUrl) {
-        super(doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles, staticUrl)
+    constructor(schema, doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles, staticUrl) {
+        super(schema, doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles, staticUrl)
         this.staticUrl = staticUrl
         this.removeUrlPrefix = false
         this.styleSheets.push({contents:

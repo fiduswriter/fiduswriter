@@ -9,8 +9,8 @@ import {addAlert} from "../../common"
 import {BaseDOMExporter} from "../tools/dom_export"
 
 export class HTMLExporter extends BaseDOMExporter{
-    constructor(doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles, staticUrl) {
-        super()
+    constructor(schema, doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles, staticUrl) {
+        super(schema)
         this.doc = doc
         this.citationStyles = citationStyles
         this.citationLocales = citationLocales

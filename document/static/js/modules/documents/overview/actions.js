@@ -184,6 +184,7 @@ export class DocumentOverviewActions {
             () => ids.forEach(id => {
                 const doc = this.documentOverview.documentList.find(entry => entry.id===id)
                 const exporter = new HTMLExporter(
+                    this.documentOverview.schema,
                     doc,
                     {db:doc.bibliography},
                     {db:doc.images},
@@ -259,6 +260,7 @@ export class DocumentOverviewActions {
                 ids.forEach(id => {
                     const doc = this.documentOverview.documentList.find(entry => entry.id===id)
                     const exporter = new EpubExporter(
+                        this.documentOverview.schema,
                         doc,
                         {db:doc.bibliography},
                         {db:doc.images},

@@ -967,7 +967,7 @@ html[hc=a5] #toolbar {
 .form-checkbox:checked {
      background-color: #f1f1f1;
 }
-label {
+.navigator-label {
      color: white;
      cursor: pointer;
 }

@@ -114,7 +114,7 @@ export class ModNavigator {
                 item => {
                     const level = item.level
                     return `<span><input type="checkbox" class="form-checkbox" id="heading${level}" ${this.inDefault(level)} />
-                                <label for="heading${level}">${item.title}</label>
+                                <label class="navigator-label" for="heading${level}">${item.title}</label>
                             </span><br/><br/>`
                 }
             ).join('')

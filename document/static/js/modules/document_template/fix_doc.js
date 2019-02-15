@@ -111,7 +111,6 @@ export function adjustDocToTemplate(doc, template, documentStyles, citationStyle
                         attrs: {}
                     }
                 )
-
             Object.entries(part.attrs).forEach(([key, value]) => {
                 newNode.attrs[key] = value
             })
@@ -131,7 +130,6 @@ export function adjustDocToTemplate(doc, template, documentStyles, citationStyle
                     }
                 }
             }
-
             doc.content.push(newNode)
 
         } else {

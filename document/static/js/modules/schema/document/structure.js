@@ -87,6 +87,9 @@ const partSpec = (type, content, attrs = {}) => ({
         help: {
             default: false
         },
+        initial: {
+            default: false
+        },
         deleted: { // used when a part is present in a document but not part of the document template due to template changes
             default: false
         }

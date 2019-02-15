@@ -764,7 +764,6 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         document_input = self.driver.find_element_by_class_name(
             'ProseMirror'
         )
-
         # Total: 22
         self.driver.execute_script(
             'window.testCaret.setSelection(25,25)')

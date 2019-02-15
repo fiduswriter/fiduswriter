@@ -13,7 +13,7 @@
         "prosemirror-dropcursor": "1.1.x",
         "prosemirror-example-setup": "1.0.x",
         "prosemirror-gapcursor": "1.0.x",
-        "prosemirror-history": "1.0.x",
+        "prosemirror-history": "johanneswilm/prosemirror-history",
         "prosemirror-keymap": "1.0.x",
         "prosemirror-model": "1.7.x",
         "prosemirror-schema-basic": "1.0.x",

@@ -153,6 +153,8 @@ export const table_part = partSpec('table', 'table', {
 
 export const table_of_contents = {
     group: "part",
+    marks: "annotation track",
+    defining: true,
     parseDOM: [{
         tag: "div.table-of-contents"
     }],
@@ -172,7 +174,7 @@ export const table_of_contents = {
     },
     toDOM(node) {
         const dom = document.createElement('div')
-        dom.classList.add('table-of-contents', 'article-part')
+        dom.classList.add('article-part', 'table-of-contents')
         if (node.attrs.hidden) {
             dom.dataset.hidden = 'true'
         }

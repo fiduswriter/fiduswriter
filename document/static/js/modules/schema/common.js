@@ -152,7 +152,7 @@ export const figure = {
         dom.id = node.attrs.id
         dom.dataset.aligned = node.attrs.aligned
         dom.dataset.width = node.attrs.width
-     //   dom.height = node.attrs.height
+
         switch (node.attrs.aligned) {
             case 'right':
                 dom.classList.add('aligned-right')

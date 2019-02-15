@@ -66,20 +66,19 @@ export const documentTemplatePlugin = function(options) {
                         getPos
                     )
                     // Tags and Contributors have node views defined in tag_input and contributor_input.
+                    // TOCs have node views defined in toc_render.
                 }
 
-                const protectedRanges = []
+                const protectedRanges = [
+                    {from: 0, to: 1} // article node
+                ]
                 state.doc.firstChild.forEach((node, pos) => {
+                    const from = pos + 1 // + 1 to get inside the article node
+                    let to = from + 1 // + 1 for the part node
                     if (node.attrs.locking==='fixed') {
-                        protectedRanges.push({
-                            from: pos + 1, // + 1 to get inside the article node
-                            to: pos + 1 + node.nodeSize
-                        })
+                        to = from + node.nodeSize
                     } else if (node.attrs.locking==='header') { // only relevant for tables
-                        protectedRanges.push({
-                            from: pos + 1 + 1 + 1 + 1 , // + 1 to get inside the article node + 1 for the part node + 1 for the table + 1 for the first row
-                            to: pos + 1 + 1 + 1 + 1 + node.firstChild.firstChild.nodeSize
-                        })
+                        to = from + 1 + 1 + 1 + node.firstChild.firstChild.nodeSize // + 1 for the part node + 1 for the table + 1 for the first row
                     } else if (node.attrs.locking==='start') {
                         let initialFragment = Fragment.fromJSON(options.editor.schema, node.attrs.initial)
                         let protectionSize = initialFragment.size
@@ -100,12 +99,10 @@ export const documentTemplatePlugin = function(options) {
                         ) {
                             // We only add protection if the start of the current content corresponds to the
                             // initial content. This may not be the case if the template has been changed.
-                            protectedRanges.push({
-                                from: pos + 1 + 1, // + 1 to get inside the article node + 1 for inside the part node
-                                to: pos + 1 + 1 + protectionSize
-                            })
+                            to = from + 1 + protectionSize // + 1 for inside the part node
                         }
                     }
+                    protectedRanges.push({from, to})
                 })
 
                 return {
@@ -174,54 +171,20 @@ export const documentTemplatePlugin = function(options) {
 
             })
 
-            let ranges = []
-
-            tr.steps.forEach((step, index) => {
-                ranges.push({from: step.from, to: step.to})
-                ranges = ranges.map(range => ({from: tr.mapping.maps[index].map(range.from, -1), to: tr.mapping.maps[index].map(range.to, 1)}))
-            })
             let allowedElements = false, allowedMarks = false
 
-            ranges.forEach(range => tr.doc.nodesBetween(range.from, range.to, (node, pos, parent, index) => {
+            changingRanges.forEach(range => state.doc.nodesBetween(range.from, range.to, (node, pos, parent, _index) => {
                 if (parent===tr.doc.firstChild) {
-                    const oldNode = state.doc.firstChild.child(index)
-                    if (
-                        oldNode.type !== node.type ||
-                        oldNode.attrs.id !== node.attrs.id ||
-                        oldNode.attrs.title !== node.attrs.title ||
-                        oldNode.attrs.locking !== node.attrs.locking ||
-                        oldNode.attrs.language !== node.attrs.language ||
-                        oldNode.attrs.elements !== node.attrs.elements ||
-                        oldNode.attrs.marks !== node.attrs.marks ||
-                        oldNode.attrs.language !== node.attrs.language ||
-                        oldNode.attrs.item_title !== node.attrs.item_title ||
-                        oldNode.attrs.optional !== node.attrs.optional ||
-                        oldNode.attrs.help !== node.attrs.help
-                    ) {
-                        allowed = false
-                    }
-                    allowedElements = node.attrs.elements ? node.attrs.elements.concat('table_row', 'table_cell', 'table_header', 'list_item', 'text') : false
-                    allowedMarks = node.attrs.marks ? node.attrs.marks.concat('insertion', 'deletion', 'comment') : false
+                    allowedElements = node.attrs.elements ?
+                        node.attrs.elements.concat('table_row', 'table_cell', 'table_header', 'list_item', 'text') :
+                        false
+                    allowedMarks = node.attrs.marks ?
+                        node.attrs.marks.concat('insertion', 'deletion', 'comment') :
+                        false
                     return allowed
                 }
                 if (pos < range.from) {
                     return true
-                }
-                if (node === tr.doc.firstChild) {
-                    // block some settings changes
-                    const oldNode = state.doc.firstChild
-                    if (
-                        oldNode.attrs.footnote_marks !== node.attrs.footnote_marks ||
-                        oldNode.attrs.footnote_elements !== node.attrs.footnote_elements ||
-                        oldNode.attrs.languages !== node.attrs.languages ||
-                        oldNode.attrs.papersizes !== node.attrs.papersizes ||
-                        oldNode.attrs.template !== node.attrs.template ||
-                        !node.attrs.papersizes.includes(node.attrs.papersize) ||
-                        !node.attrs.languages.includes(node.attrs.language)
-                    ) {
-                        allowed = false
-                    }
-                    return allowed
                 }
                 if (
                     allowedElements &&

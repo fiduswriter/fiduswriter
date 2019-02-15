@@ -127,6 +127,7 @@ const headingTemplate = ({
             <select class="locking">
                 <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>
                 <option value="fixed" ${locking==='fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
+                <option value="start" ${locking==='start' ? "selected" : ""}>${gettext('User can only add content')}</option>
             </select>
         </div>
         <div class="label">${gettext('Optional')}
@@ -211,6 +212,7 @@ const contributorsTemplate = ({
             <select class="locking">
                 <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>
                 <option value="fixed" ${locking==='fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
+                <option value="start" ${locking==='start' ? "selected" : ""}>${gettext('User can only add content')}</option>
             </select>
         </div>
         <div class="label">${gettext('Optional')}
@@ -257,6 +259,7 @@ const richtextTemplate = ({
             <select class="locking">
                 <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>
                 <option value="fixed" ${locking==='fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
+                <option value="start" ${locking==='start' ? "selected" : ""}>${gettext('User can only add content')}</option>
             </select>
         </div>
         <div class="label">${gettext('Optional')}
@@ -315,6 +318,7 @@ const tagsTemplate = ({
             <select class="locking">
                 <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>
                 <option value="fixed" ${locking==='fixed' ? "selected" : ""}>${gettext('User can not change contents')}</option>
+                <option value="start" ${locking==='start' ? "selected" : ""}>${gettext('User can only add content')}</option>
             </select>
         </div>
         <div class="label">${gettext('Optional')}

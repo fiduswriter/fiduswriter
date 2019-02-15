@@ -24,12 +24,12 @@
     "@fortawesome/fontawesome-free": "^5.7.2",
     "katex": "0.10.x",
     "w3c-keyname": "1.1.x",
-    "simple-datatables": "^1.7.6",
+    "simple-datatables": "^1.7.9",
     "vivliostyle-print": "1.1.11",
     "eslint": "^5.13.0",
     "eslint-plugin-import": "^2.16.0"
   },
   "devDependencies": {
-    "npm-check-updates": "^2.15.0"
+    "updates": "^7.1.0"
   }
 }

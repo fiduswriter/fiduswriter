@@ -30,7 +30,7 @@ export function appendTransaction(trs, oldState, newState, editor) {
         approved = !editor.view.state.doc.firstChild.attrs.tracked && editor.docInfo.access_rights !== 'write-tracked'
 
     // We go through all trs a first time. The point is to collect arrays of addedRanges , markedDeletionRanges, formatChangeRanges and replacedWrappings.
-    // These are all mapped through to AFTEr the application of the tr.
+    // These are all mapped through to AFTER the application of the tr.
     trs.forEach(tr => {
         tr.steps.forEach((step, index) => {
             if (step instanceof ReplaceStep) {
@@ -446,6 +446,10 @@ export function appendTransaction(trs, oldState, newState, editor) {
     const insertionMark = newState.schema.marks.insertion.create({user, username, date: date10, approved})
 
     addedRanges.forEach(addedRange => {
+        if (addedRange.from === addedRange.to) {
+            // No new content has been added. We don't add insertion marks.
+            return
+        }
         newTr.maybeStep(
             new AddMarkStep(
                 addedRange.from,

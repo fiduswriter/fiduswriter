@@ -1,11 +1,42 @@
+/* eslint-disable */
 import {wrapIn, toggleMark} from "prosemirror-commands"
 import {wrapInList} from "prosemirror-schema-list"
 import {undo, redo, undoDepth, redoDepth} from "prosemirror-history"
+import {sendableSteps} from "prosemirror-collab"
 
 import {CitationDialog, FigureDialog, LinkDialog, MathDialog, TableDialog} from "../../dialogs"
 import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from "../.."
 import {randomAnchorId} from "../../../schema/common"
 import {setBlockType} from "../../keymap"
+
+function getCookie(name) {
+		var nameEQ = name + "=";
+		var ca = document.cookie.split(';');
+		for(var i=0;i < ca.length;i++) {
+			var c = ca[i];
+			while (c.charAt(0)==' ') c = c.substring(1,c.length);
+			if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+		}
+		return null;
+}
+function logError(details) {
+		var xhr = new XMLHttpRequest();
+
+		xhr.open("POST", "/django_js_error_hook/", true);
+		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		var cookie = getCookie('csrftoken');
+		if (cookie) {
+			xhr.setRequestHeader("X-CSRFToken", cookie);
+		}
+		var query = [], data = {
+			context: navigator.userAgent,
+			details: details
+		};
+		for (var key in data) {
+			query.push(encodeURIComponent(key) + '=' + encodeURIComponent(data[key]));
+		}
+		xhr.send(query.join('&'));
+}
 
 const BLOCK_LABELS = {
     'paragraph': gettext('Normal Text'),
@@ -623,7 +654,16 @@ export const toolbarModel = () => ({
             type: 'button',
             title: gettext('Undo'),
             icon: 'undo',
-            action: editor => undo(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('inputType', 'historyUndo'))),
+            action: editor => {
+                logError(JSON.stringify({
+                    sendableSteps: sendableSteps(editor.view.state),
+                    selectionAnchor: editor.view.state.selection.anchor,
+                    selectionHead: editor.view.state.selection.head,
+                    docSize: editor.view.state.doc.nodeSize,
+                    lastMessages: editor.mod.serverCommunications.lastMessages
+                }))
+                return undo(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('inputType', 'historyUndo')))
+            },
             disabled: editor => undoDepth(editor.currentView.state) === 0,
             order: 16
         },

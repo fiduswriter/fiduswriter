@@ -50,7 +50,7 @@ export class ModServerCommunications {
         this.ws.onmessage = event => {
             const data = JSON.parse(event.data)
             this.lastMessages.push(data)
-            this.lastMessages.slice(null, 10)
+            this.lastMessages = this.lastMessages.slice(-10)
             const expectedServer = this.messages.server + 1
             if (data.type === 'request_resend') {
                 this.resend_messages(data.from)
@@ -161,7 +161,7 @@ export class ModServerCommunications {
             this.messages.lastTen.push(data)
             this.messages.lastTen = this.messages['lastTen'].slice(-10)
             this.lastMessages.push(data)
-            this.lastMessages.slice(null, 10)
+            this.lastMessages = this.lastMessages.slice(-10)
             this.ws.send(JSON.stringify(data))
             this.setRecentlySentTimer(timer)
         } else {

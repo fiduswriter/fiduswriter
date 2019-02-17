@@ -1,7 +1,7 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
 
-import {appendTransaction} from "./append_transaction"
+//import {appendTransaction} from "./append_transaction"
 import {findSelectedChanges} from "./find_selected_changes"
 import {deactivateAllSelectedChanges} from "./helpers"
 
@@ -102,7 +102,7 @@ export function trackPlugin(options) {
                     otherView.dispatch(deactivateAllSelectedChanges(otherView.state.tr))
                 }
             }
-        },
-        appendTransaction: (trs, oldState, newState) => appendTransaction(trs, oldState, newState, options.editor)
+        }//,
+        //appendTransaction: (trs, oldState, newState) => appendTransaction(trs, oldState, newState, options.editor)
     })
 }

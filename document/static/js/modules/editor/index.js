@@ -64,7 +64,8 @@ import {
 } from "./tools"
 import {
     ModTrack,
-    acceptAllNoInsertions
+    acceptAllNoInsertions,
+    amendTransaction
 } from "./track"
 import {
     ModNavigator
@@ -285,8 +286,9 @@ export class Editor {
                     view.focus()
                 }
             },
-            dispatchTransaction: (tr) => {
-                const newState = this.view.state.apply(tr)
+            dispatchTransaction: tr => {
+                const trackedTr = amendTransaction(tr, this.view.state, this)
+                const newState = this.view.state.apply(trackedTr)
                 this.view.updateState(newState)
                 this.mod.collab.docChanges.sendToCollaborators()
             }

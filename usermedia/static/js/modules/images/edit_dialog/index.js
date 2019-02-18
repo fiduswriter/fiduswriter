@@ -1,9 +1,10 @@
 import {imageEditTemplate} from "./templates"
-import {setCheckableLabel, addAlert, Dialog} from "../../common"
-
+import {setCheckableLabel, addAlert, Dialog, findTarget, ContentMenu} from "../../common"
+import {figureEditModel} from './figure_edit_model'
 export class ImageEditDialog {
-    constructor(imageDB, imageId = false) {
+    constructor(imageDB, editor, imageId = false) {
         this.imageDB = imageDB
+        this.editor = editor
         this.imageId = imageId
         this.dialog = false
     }
@@ -40,6 +41,27 @@ export class ImageEditDialog {
             el => el.addEventListener('click', () => setCheckableLabel(el))
         )
 
+        document.body.addEventListener('click', event => {
+            const el = {}
+            switch (true) {
+                case findTarget(event, '.figure-edit-menu', el):
+                    const contentMenu = new ContentMenu({
+                        menu: figureEditModel(),
+                        width: 220,
+                        page: this.editor,
+                        menuPos: {X: event.pageX, Y: event.pageY},
+                        onClose: () => {
+                            this.editor.view.focus()
+                        }
+                    })
+                    contentMenu.open()
+                    break;
+
+                default:
+                    break;
+            }
+        });
+
         if (!this.imageId) {
             this.bindMediaUploadEvents()
         }
@@ -58,41 +80,13 @@ export class ImageEditDialog {
             const file = mediaInput.files[0],
                 fr = new window.FileReader()
             fr.onload = () => {
-                this.rotateBase64Image(fr.result,this.callback)
-               // mediaPreviewer.innerHTML = '<img src="' + t + '" />'
+                mediaPreviewer.innerHTML = '<img src="' + fr.result + '" />'
             }
             fr.readAsDataURL(file)
-            console.log(file)
         })
     }
 
-    rotateBase64Image(base64data, callback) {
-        const canvas = document.createElement("canvas")
-        const ctx = canvas.getContext("2d")
-        const image = new Image()
-        image.src = base64data
-        image.onload = ()=> {
-            canvas.height = image.width
-            canvas.width = image.height
-
-            ctx.rotate(90 * Math.PI / 180)
-            ctx.translate(0, -canvas.width)
-            ctx.drawImage(image, 0, 0);
-            callback(canvas.toDataURL())
-        }
-    }
-    callback(base64data){
-        const mediaPreviewer = document.querySelector('#editimage .figure-preview > div')
-        mediaPreviewer.innerHTML = '<img src="' + base64data + '" />'
-
-        var arr = base64data.split(','), mime = arr[0].match(/:(.*?);/)[1],
-        bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-        while(n--){
-            u8arr[n] = bstr.charCodeAt(n);
-        }
-        const f =  new File([u8arr], "test.jpeg", {type:mime});
-        
-    }
+   
 
     displayCreateImageError(errors) {
         Object.keys(errors).forEach(
@@ -115,16 +109,7 @@ export class ImageEditDialog {
 
     saveImage() {
         
-        const mediaPreviewer = document.querySelector('#editimage .figure-preview > div > img')
-        const base64data = mediaPreviewer.src;
-
-        var arr = base64data.split(','), mime = arr[0].match(/:(.*?);/)[1],
-        bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-        console.log(arr[0],mime)
-        while(n--){
-            u8arr[n] = bstr.charCodeAt(n);
-        }
-        const f =  new File([u8arr], "test.png", {type:mime});
+        
 
 
         const imageData = {
@@ -137,7 +122,7 @@ export class ImageEditDialog {
         if (this.imageId) {
             imageData.id = this.imageId
         } else {
-            imageData.image = f//document.querySelector('#editimage .fw-media-file-input').files[0]
+            imageData.image = document.querySelector('#editimage .fw-media-file-input').files[0]
         }
         console.log(imageData.image)
         // Remove old warning messages

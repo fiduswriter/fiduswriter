@@ -37,3 +37,20 @@
 th.figure-preview-row, td.figure-preview-row {
     vertical-align: top;
 }
+
+.figure-edit-menu {
+    background-color: Transparent;
+    background-repeat: no-repeat;
+    border: 1px;
+    cursor: pointer;
+    overflow: hidden;
+    outline: none;
+    position: absolute;
+    right: 0px;
+    top: 65px;
+}
+
+.figure-edit-icon {
+    font-size: 1.5em;
+    color: #4e4e4e;
+}

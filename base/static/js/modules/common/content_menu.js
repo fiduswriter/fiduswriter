@@ -127,6 +127,7 @@ export class ContentMenu {
     getHighestDialogZIndex() {
         let zIndex = 100
         document.querySelectorAll('div.ui-content_menu').forEach(dialogEl => zIndex = Math.max(zIndex, dialogEl.style.zIndex))
+        document.querySelectorAll('div.ui-dialog').forEach(dialogEl => zIndex = Math.max(zIndex, dialogEl.style.zIndex))
         return zIndex
     }
 

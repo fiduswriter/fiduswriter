@@ -185,7 +185,7 @@ export function amendTransaction(tr, state, editor) {
             // We didn't apply the original step in its original place. We adjust the map accordingly.
             map.appendMap(step.invert(doc).getMap())
             if (newStep) {
-                const trTemp = state.tr
+                const trTemp = state.apply(newTr).tr
                 if (trTemp.maybeStep(newStep).failed) {
                     return
                 }

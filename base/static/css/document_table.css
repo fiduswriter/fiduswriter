@@ -10,11 +10,11 @@
 
 .fw-document-table.fw-large tbody {
     width: 985px;
-    height: calc(100vh - 320px);
+    max-height: calc(100vh - 320px);
 }
 .fw-document-table.fw-middle tbody {
     width: 600px;
-    height: calc(100vh - 320px);
+    max-height: calc(100vh - 320px);
 }
 
 .fw-document-table.fw-small tbody {

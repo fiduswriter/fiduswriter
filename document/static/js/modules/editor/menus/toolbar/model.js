@@ -660,7 +660,7 @@ export const toolbarModel = () => ({
                     selectionAnchor: editor.view.state.selection.anchor,
                     selectionHead: editor.view.state.selection.head,
                     docSize: editor.view.state.doc.nodeSize,
-                    lastMessages: editor.mod.serverCommunications.lastMessages
+                    lastMessages: editor.lastMessages
                 }))
                 return undo(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('inputType', 'historyUndo')))
             },

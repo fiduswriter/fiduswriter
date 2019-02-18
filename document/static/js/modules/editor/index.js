@@ -126,6 +126,7 @@ export class Editor {
         this.staticUrl = staticUrl
         this.websocketUrl = websocketUrl
         this.user = user
+        this.lastMessages = []
         this.mod = {}
         // Whether the editor is currently waiting for a document update. Set to true
         // initially so that diffs that arrive before document has been loaded are not
@@ -286,6 +287,8 @@ export class Editor {
                 }
             },
             dispatchTransaction: (tr) => {
+                this.lastMessages.push(tr)
+                this.lastMessages = this.lastMessages.slice(-10)
                 const newState = this.view.state.apply(tr)
                 this.view.updateState(newState)
                 this.mod.collab.docChanges.sendToCollaborators()

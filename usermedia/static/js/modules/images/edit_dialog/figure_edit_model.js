@@ -6,13 +6,13 @@ export const figureEditModel = ()=> ({
             tooltip: gettext('Rotate-left'),
             order: 0,
             action: editor => {
-                const selectButton = document.querySelector('#editimage .fw-media-select-button'),
-                        mediaInput = document.querySelector('#editimage .fw-media-file-input'),
+                const mediaInput = document.querySelector('#editimage .fw-media-file-input').files[0],
                         mediaPreviewer = document.querySelector('#editimage .figure-preview > div > img')
-                rotateBase64Image(mediaPreviewer.src,'left').then((response)=>{
+                rotateBase64Image(mediaPreviewer.src, mediaInput.type, 'left').then((response)=>{
                     mediaPreviewer.src = response
                 })
             },
+            icon: 'redo fa-rotate-180'
         },
         {
             title:gettext('Rotate Right'),
@@ -20,18 +20,19 @@ export const figureEditModel = ()=> ({
             tooltip: gettext('Rotate-right'),
             order: 0,
             action: editor => {
-                const selectButton = document.querySelector('#editimage .fw-media-select-button'),
-                        mediaInput = document.querySelector('#editimage .fw-media-file-input'),
+                const mediaInput = document.querySelector('#editimage .fw-media-file-input').files[0],
                         mediaPreviewer = document.querySelector('#editimage .figure-preview > div > img')
-                rotateBase64Image(mediaPreviewer.src,'right').then((response)=>{
+                rotateBase64Image(mediaPreviewer.src, mediaInput.type, 'right').then((response)=>{
                     mediaPreviewer.src = response
                 })
             },
+
+            icon: 'undo'
         },
     ]
 })
 
-export const rotateBase64Image = (base64data, direction)=> {
+export const rotateBase64Image = (base64data,type, direction)=> {
     return new Promise(resolve => { 
         const canvas = document.createElement("canvas")
         const ctx = canvas.getContext("2d")
@@ -48,32 +49,7 @@ export const rotateBase64Image = (base64data, direction)=> {
                 ctx.translate(-canvas.height, 0);
             }   
             ctx.drawImage(image, 0, 0);
-            resolve(canvas.toDataURL())
+            resolve(canvas.toDataURL(type,0.9))
         }
     })
-}
-
-export const callback = (base64data)=>{
-    const mediaPreviewer = document.querySelector('#editimage .figure-preview > div')
-    mediaPreviewer.innerHTML = '<img src="' + base64data + '" />'
-
-    var arr = base64data.split(','), mime = arr[0].match(/:(.*?);/)[1],
-    bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-    while(n--){
-        u8arr[n] = bstr.charCodeAt(n);
-    }
-    const f =  new File([u8arr], "test.jpeg", {type:mime});
-    
-}
-
-export const base64toFile = (base64data)=>{
-
-        var arr = base64data.split(','), mime = arr[0].match(/:(.*?);/)[1],
-        bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-        console.log(arr[0],mime)
-        while(n--){
-            u8arr[n] = bstr.charCodeAt(n);
-        }
-        const f =  new File([u8arr], "test.png", {type:mime});
-        return f;
 }

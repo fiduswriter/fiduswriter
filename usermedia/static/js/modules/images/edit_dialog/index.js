@@ -41,30 +41,28 @@ export class ImageEditDialog {
             el => el.addEventListener('click', () => setCheckableLabel(el))
         )
 
-        document.body.addEventListener('click', event => {
-            const el = {}
-            switch (true) {
-                case findTarget(event, '.figure-edit-menu', el):
-                    const contentMenu = new ContentMenu({
-                        menu: figureEditModel(),
-                        width: 220,
-                        page: this.editor,
-                        menuPos: {X: event.pageX, Y: event.pageY},
-                        onClose: () => {
-                            this.editor.view.focus()
-                        }
-                    })
-                    contentMenu.open()
-                    break;
-
-                default:
-                    break;
-            }
-        });
+        
 
         if (!this.imageId) {
             this.bindMediaUploadEvents()
         }
+
+        document.querySelector('.figure-edit-menu').addEventListener('click', event => {
+            event.preventDefault()
+            event.stopImmediatePropagation()
+
+            const contentMenu = new ContentMenu({
+                menu: figureEditModel(),
+                width: 220,
+                page: this.editor,
+                menuPos: {X: event.pageX-50, Y: event.pageY+50},
+                onClose: () => {
+                    this.editor.view.focus()
+                }
+            })
+            contentMenu.open()
+        });
+
         return returnPromise
     }
 
@@ -86,8 +84,6 @@ export class ImageEditDialog {
         })
     }
 
-   
-
     displayCreateImageError(errors) {
         Object.keys(errors).forEach(
             eKey => {
@@ -108,9 +104,16 @@ export class ImageEditDialog {
     }
 
     saveImage() {
-        
-        
 
+        const mediaInput = document.querySelector('#editimage .fw-media-file-input').files[0]
+        const mediaPreviewer = document.querySelector('#editimage .figure-preview > div > img')
+        const base64data = mediaPreviewer.src
+        var arr = base64data.split(','), mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+        while(n--){
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        const file =  new File([u8arr], mediaInput.name, {type:mediaInput.type});
 
         const imageData = {
             title: document.querySelector('#editimage .fw-media-title').value,
@@ -122,7 +125,7 @@ export class ImageEditDialog {
         if (this.imageId) {
             imageData.id = this.imageId
         } else {
-            imageData.image = document.querySelector('#editimage .fw-media-file-input').files[0]
+            imageData.image = file;//document.querySelector('#editimage .fw-media-file-input').files[0]
         }
         console.log(imageData.image)
         // Remove old warning messages

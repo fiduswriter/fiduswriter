@@ -158,7 +158,6 @@ export class Editor {
             tableMenuModel: tableMenuModel(),
             navigatorFilterModel: navigatorFilterModel(),
         }
-        
         this.client_id = Math.floor(Math.random() * 0xFFFFFFFF)
         this.clientTimeAdjustment = 0
         this.statePlugins = [

@@ -111,14 +111,14 @@ export const menuModel = () => ({
             title: gettext('Create new document'),
             action: overview => {
                 if (overview.documentTemplates.length < 2) {
-                    window.location.href = '/document/new/'
+                    overview.app.goTo('/document/new/')
                 } else {
                     const position = document.querySelector('.create-new-document').getBoundingClientRect()
                     const templateMenu = new ContentMenu({
                         menu: {
                             content: overview.documentTemplates.map(docTemplate => ({
                                 title: docTemplate.title,
-                                action: () => window.location.href = `/document/n${docTemplate.id}/`
+                                action: () => overview.app.goTo(`/document/n${docTemplate.id}/`)
                             }))
                         },
                         menuPos: {

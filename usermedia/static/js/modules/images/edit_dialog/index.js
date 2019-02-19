@@ -130,8 +130,8 @@ export class ImageEditDialog {
 
     saveImage() {
         let file = ""
-        if(!this.imageId){
-            const mediaInput = document.querySelector('#editimage .fw-media-file-input').files[0] 
+        if (!this.imageId){
+            const mediaInput = document.querySelector('#editimage .fw-media-file-input').files[0]
             const mediaPreviewer = document.querySelector('#editimage .figure-preview > div > img')
             const base64data = mediaPreviewer.src
             const bstr = atob(base64data.split(',')[1])

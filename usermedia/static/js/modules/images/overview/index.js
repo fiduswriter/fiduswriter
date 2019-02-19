@@ -1,5 +1,4 @@
 import {DataTable} from "simple-datatables"
-import {ensureCSS} from "../../common"
 import {ImageOverviewCategories} from "./categories"
 import {
     activateWait,
@@ -13,7 +12,8 @@ import {
     escapeText,
     OverviewMenuView,
     baseBodyTemplate,
-    setDocTitle
+    setDocTitle,
+    ensureCSS
 } from "../../common"
 import {SiteMenu} from "../../menu"
 import {FeedbackTab} from "../../feedback"

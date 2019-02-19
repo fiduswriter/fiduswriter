@@ -1,5 +1,5 @@
 import {imageEditTemplate} from "./templates"
-import {setCheckableLabel, addAlert, Dialog, findTarget, ContentMenu} from "../../common"
+import {setCheckableLabel, addAlert, Dialog, ContentMenu} from "../../common"
 import {figureEditModel} from './figure_edit_model'
 export class ImageEditDialog {
     constructor(imageDB, editor, imageId = false) {
@@ -60,7 +60,7 @@ export class ImageEditDialog {
                 }
             })
             contentMenu.open()
-        });
+        })
 
         return returnPromise
     }
@@ -88,11 +88,11 @@ export class ImageEditDialog {
 
     cropMode(val){
         const div = document.querySelector('#editimage .figure-preview > div')
-        if(val){
+        if (val){
             div.classList.add('crop-mode')
             document.querySelector('.btn-select-crop').classList.remove('hide')
             document.querySelector('.btn-cancel-crop').classList.remove('hide')
-        }else{
+        } else {
             div.classList.remove('crop-mode')
             document.querySelector('.btn-select-crop').classList.add('hide')
             document.querySelector('.btn-cancel-crop').classList.add('hide')
@@ -136,12 +136,13 @@ export class ImageEditDialog {
         const mediaInput = document.querySelector('#editimage .fw-media-file-input').files[0]
         const mediaPreviewer = document.querySelector('#editimage .figure-preview > div > img')
         const base64data = mediaPreviewer.src
-        var arr = base64data.split(','), mime = arr[0].match(/:(.*?);/)[1],
-        bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-        while(n--){
-            u8arr[n] = bstr.charCodeAt(n);
+        const arr = base64data.split(','),
+            bstr = atob(arr[1]), u8arr = new Uint8Array(n)
+        let n = bstr.length
+        while (n--){
+            u8arr[n] = bstr.charCodeAt(n)
         }
-        const file =  new File([u8arr], mediaInput.name, {type:mediaInput.type});
+        const file =  new File([u8arr], mediaInput.name, {type:mediaInput.type})
 
         const imageData = {
             title: document.querySelector('#editimage .fw-media-title').value,
@@ -153,7 +154,7 @@ export class ImageEditDialog {
         if (this.imageId) {
             imageData.id = this.imageId
         } else {
-            imageData.image = file;//document.querySelector('#editimage .fw-media-file-input').files[0]
+            imageData.image = file//document.querySelector('#editimage .fw-media-file-input').files[0]
         }
         // Remove old warning messages
         document.querySelectorAll('#editimage .warning').forEach(

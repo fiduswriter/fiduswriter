@@ -1,11 +1,11 @@
-import Cropper from 'cropperjs';
+import Cropper from 'cropperjs'
 export const figureEditModel = () => ({
     content: [{
             title: gettext('Rotate Left'),
             type: 'action',
             tooltip: gettext('Rotate-left'),
             order: 0,
-            action: editor => {
+            action: () => {
                 const mediaInput = document.querySelector('#editimage .fw-media-file-input').files[0],
                     mediaPreviewer = document.querySelector('#editimage .figure-preview > div > img')
                 rotateBase64Image(mediaPreviewer.src, mediaInput.type, 'left').then((response) => {
@@ -20,7 +20,7 @@ export const figureEditModel = () => ({
             type: 'action',
             tooltip: gettext('Rotate-right'),
             order: 0,
-            action: editor => {
+            action: () => {
                 const mediaInput = document.querySelector('#editimage .fw-media-file-input').files[0],
                     mediaPreviewer = document.querySelector('#editimage .figure-preview > div > img')
                 rotateBase64Image(mediaPreviewer.src, mediaInput.type, 'right').then((response) => {
@@ -35,7 +35,7 @@ export const figureEditModel = () => ({
             type: 'action',
             tooltip: gettext('Crop image'),
             order: 0,
-            action: editor => {
+            action: () => {
                 cropMode(true)
                 const image = document.querySelector('#editimage .figure-preview > div > img')
                 const cropper = new Cropper(image, {
@@ -50,20 +50,19 @@ export const figureEditModel = () => ({
 })
 
 const bindEvents = (cropperObj) => {
-    document.querySelector('.btn-select-crop').onclick = (event)=>{
+    document.querySelector('.btn-select-crop').onclick = ()=>{
         const mediaInput = document.querySelector('#editimage .fw-media-file-input').files[0],
             mediaPreviewer = document.querySelector('#editimage .figure-preview > div > img')
         mediaPreviewer.src = cropperObj.getCroppedCanvas().toDataURL(mediaInput.type)
         cropperObj.destroy()
         cropMode(false)
-        document.querySelector('.btn-select-crop').onclick = null;
+        document.querySelector('.btn-select-crop').onclick = null
     }
 
-    document.querySelector('.btn-cancel-crop').onclick = (event) => {
-        console.log(event)
+    document.querySelector('.btn-cancel-crop').onclick = () => {
         cropperObj.destroy()
         cropMode(false)
-        document.querySelector('.btn-cancel-crop').onclick = null;
+        document.querySelector('.btn-cancel-crop').onclick = null
     }
 }
 export const cropMode = (val) => {
@@ -104,10 +103,10 @@ export const rotateBase64Image = (base64data, type, direction) => {
                 ctx.rotate(90 * Math.PI / 180)
                 ctx.translate(0, -canvas.width)
             } else {
-                ctx.rotate(-90 * Math.PI / 180);
-                ctx.translate(-canvas.height, 0);
+                ctx.rotate(-90 * Math.PI / 180)
+                ctx.translate(-canvas.height, 0)
             }
-            ctx.drawImage(image, 0, 0);
+            ctx.drawImage(image, 0, 0)
             resolve(canvas.toDataURL(type))
         }
     })

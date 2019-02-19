@@ -38,7 +38,7 @@ export class ContentMenu {
         id = false,
         page = false,
         classes = false,
-        menu = [],
+        menu = {content: []},
         height = false,
         width = false,
         onClose = false,
@@ -102,10 +102,10 @@ export class ContentMenu {
         const dialogHeight = this.dialogEl.getBoundingClientRect().height + 10,
             scrollTopOffset = window.pageYOffset,
             clientHeight = window.document.documentElement.clientHeight,
-            left = parseInt(this.menuPos.X)+20
+            left = this.menuPos.X
         // We try to ensure that the menu is seen in the browser at the preferred location.
         // Adjustments are made in case it doesn't fit.
-        let top = parseInt(this.menuPos.Y)-100
+        let top = this.menuPos.Y
 
         if ((top + dialogHeight) > (scrollTopOffset + clientHeight)) {
             top -= ((top + dialogHeight) - (scrollTopOffset + clientHeight))

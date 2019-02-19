@@ -122,6 +122,7 @@ export class DocumentOverview {
                 this.citationLocales = json.citation_locales
                 this.documentStyles = json.document_styles
                 this.exportTemplates = json.export_templates
+                this.documentTemplates = json.document_templates
                 this.initTable()
                 this.addExportTemplatesToMenu()
             }

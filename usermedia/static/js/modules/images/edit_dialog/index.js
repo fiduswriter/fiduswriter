@@ -41,7 +41,6 @@ export class ImageEditDialog {
             el => el.addEventListener('click', () => setCheckableLabel(el))
         )
 
-        
 
         if (!this.imageId) {
             this.bindMediaUploadEvents()
@@ -72,16 +71,45 @@ export class ImageEditDialog {
             mediaInput = document.querySelector('#editimage .fw-media-file-input'),
             mediaPreviewer = document.querySelector('#editimage .figure-preview > div')
 
-        selectButton.addEventListener('click', () => mediaInput.click())
+        selectButton.addEventListener('click', () =>{
+                mediaInput.click()
+        })
 
         mediaInput.addEventListener('change', () =>{
             const file = mediaInput.files[0],
                 fr = new window.FileReader()
             fr.onload = () => {
                 mediaPreviewer.innerHTML = '<img src="' + fr.result + '" />'
+                this.cropMode(false)
             }
             fr.readAsDataURL(file)
         })
+    }
+
+    cropMode(val){
+        const div = document.querySelector('#editimage .figure-preview > div')
+        if(val){
+            div.classList.add('crop-mode')
+            document.querySelector('.btn-select-crop').classList.remove('hide')
+            document.querySelector('.btn-cancel-crop').classList.remove('hide')
+        }else{
+            div.classList.remove('crop-mode')
+            document.querySelector('.btn-select-crop').classList.add('hide')
+            document.querySelector('.btn-cancel-crop').classList.add('hide')
+        }
+        const parentDiv = document.querySelector('#editimage').parentElement
+        this.centerDialog(parentDiv)
+    }
+
+    centerDialog(parentDiv){
+        const totalWidth = window.innerWidth,
+            totalHeight = window.innerHeight,
+            dialogWidth = parentDiv.clientWidth,
+            dialogHeight = parentDiv.clientHeight,
+            scrollTopOffset = window.pageYOffset,
+            scrollLeftOffset = window.pageXOffset
+        parentDiv.style.top = `${(totalHeight - dialogHeight)/2 + scrollTopOffset}px`
+        parentDiv.style.left = `${(totalWidth - dialogWidth)/2 + scrollLeftOffset}px`
     }
 
     displayCreateImageError(errors) {
@@ -127,7 +155,6 @@ export class ImageEditDialog {
         } else {
             imageData.image = file;//document.querySelector('#editimage .fw-media-file-input').files[0]
         }
-        console.log(imageData.image)
         // Remove old warning messages
         document.querySelectorAll('#editimage .warning').forEach(
             el => el.parentElement.removeChild(el)

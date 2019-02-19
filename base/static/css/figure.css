@@ -54,3 +54,41 @@ th.figure-preview-row, td.figure-preview-row {
     font-size: 1.5em;
     color: #4e4e4e;
 }
+
+.crop-mode {
+    height: 500px !important;
+    width: 800px !important;
+}
+
+.btn-select-crop{
+    background-color: #00C957;
+    background-repeat: no-repeat;
+    border: 1px;
+    cursor: pointer;
+    overflow: hidden;
+    outline: none;
+    position: absolute;
+    right: 5.2em;
+    top: 35px;
+    height: 2.4em;
+    width: 5em;
+}
+
+.btn-cancel-crop{
+    background-color: #EA3740;
+    background-repeat: no-repeat;
+    border: 1px;
+    cursor: pointer;
+    overflow: hidden;
+    outline: none;
+    position: absolute;
+    right: 0px;
+    top: 35px;
+    height: 2.5em;
+    width: 5em;
+}
+
+.crop-icon {
+    font-size: 1.2em;
+    color: white
+}

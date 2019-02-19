@@ -154,7 +154,7 @@ export class ImageEditDialog {
         if (this.imageId) {
             imageData.id = this.imageId
         } else {
-            imageData.image = file//document.querySelector('#editimage .fw-media-file-input').files[0]
+            imageData.image = file
         }
         // Remove old warning messages
         document.querySelectorAll('#editimage .warning').forEach(

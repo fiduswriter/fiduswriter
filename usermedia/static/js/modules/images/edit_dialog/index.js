@@ -136,14 +136,13 @@ export class ImageEditDialog {
         const mediaInput = document.querySelector('#editimage .fw-media-file-input').files[0]
         const mediaPreviewer = document.querySelector('#editimage .figure-preview > div > img')
         const base64data = mediaPreviewer.src
-        const arr = base64data.split(','),
-            bstr = atob(arr[1]), u8arr = new Uint8Array(n)
+        const bstr = atob(base64data.split(',')[1])
         let n = bstr.length
+        const u8arr = new Uint8Array(n)
         while (n--){
             u8arr[n] = bstr.charCodeAt(n)
         }
         const file =  new File([u8arr], mediaInput.name, {type:mediaInput.type})
-
         const imageData = {
             title: document.querySelector('#editimage .fw-media-title').value,
             cats: Array.from(document.querySelectorAll('#editimage .entry-cat:checked')).map(

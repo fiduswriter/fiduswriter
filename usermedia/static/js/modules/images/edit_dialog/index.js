@@ -83,6 +83,7 @@ export class ImageEditDialog {
                 this.cropMode(false)
             }
             fr.readAsDataURL(file)
+            document.querySelector('.figure-edit-menu').classList.remove("hide")
         })
     }
 

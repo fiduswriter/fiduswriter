@@ -92,3 +92,7 @@ th.figure-preview-row, td.figure-preview-row {
     font-size: 1.2em;
     color: white
 }
+
+.hide {
+    display: none;
+}

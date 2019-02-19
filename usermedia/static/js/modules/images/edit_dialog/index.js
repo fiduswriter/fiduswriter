@@ -2,7 +2,7 @@ import {imageEditTemplate} from "./templates"
 import {setCheckableLabel, addAlert, Dialog, ContentMenu} from "../../common"
 import {figureEditModel} from './figure_edit_model'
 export class ImageEditDialog {
-    constructor(imageDB, editor, imageId = false) {
+    constructor(imageDB, imageId = false, editor) {
         this.imageDB = imageDB
         this.editor = editor
         this.imageId = imageId
@@ -41,7 +41,6 @@ export class ImageEditDialog {
             el => el.addEventListener('click', () => setCheckableLabel(el))
         )
 
-
         if (!this.imageId) {
             this.bindMediaUploadEvents()
         }
@@ -55,9 +54,6 @@ export class ImageEditDialog {
                 width: 220,
                 page: this.editor,
                 menuPos: {X: event.pageX-50, Y: event.pageY+50},
-                onClose: () => {
-                    this.editor.view.focus()
-                }
             })
             contentMenu.open()
         })
@@ -133,17 +129,19 @@ export class ImageEditDialog {
     }
 
     saveImage() {
-
-        const mediaInput = document.querySelector('#editimage .fw-media-file-input').files[0]
-        const mediaPreviewer = document.querySelector('#editimage .figure-preview > div > img')
-        const base64data = mediaPreviewer.src
-        const bstr = atob(base64data.split(',')[1])
-        let n = bstr.length
-        const u8arr = new Uint8Array(n)
-        while (n--){
-            u8arr[n] = bstr.charCodeAt(n)
+        let file = ""
+        if(!this.imageId){
+            const mediaInput = document.querySelector('#editimage .fw-media-file-input').files[0] 
+            const mediaPreviewer = document.querySelector('#editimage .figure-preview > div > img')
+            const base64data = mediaPreviewer.src
+            const bstr = atob(base64data.split(',')[1])
+            let n = bstr.length
+            const u8arr = new Uint8Array(n)
+            while (n--){
+                u8arr[n] = bstr.charCodeAt(n)
+            }
+            file =  new File([u8arr], mediaInput.name, {type:mediaInput.type})
         }
-        const file =  new File([u8arr], mediaInput.name, {type:mediaInput.type})
         const imageData = {
             title: document.querySelector('#editimage .fw-media-title').value,
             cats: Array.from(document.querySelectorAll('#editimage .entry-cat:checked')).map(

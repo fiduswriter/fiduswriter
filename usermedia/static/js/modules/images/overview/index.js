@@ -1,5 +1,5 @@
 import {DataTable} from "simple-datatables"
-
+import {ensureCSS} from "../../common"
 import {ImageOverviewCategories} from "./categories"
 import {
     activateWait,
@@ -52,6 +52,9 @@ export class ImageOverview {
             username: this.username,
             staticUrl: this.staticUrl
         })
+        ensureCSS([
+            'cropper.min.css'
+        ], this.staticUrl)
         setDocTitle(gettext('Media Manager'))
         const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
         feedbackTab.init()
@@ -230,7 +233,7 @@ export class ImageOverview {
                     break
                 case findTarget(event, '.edit-image', el):
                     imageId = el.target.dataset.id
-                    dialog = new ImageEditDialog(this.imageDB, imageId)
+                    dialog = new ImageEditDialog(this.app.imageDB,imageId)
                     dialog.init().then(
                         imageId => {
                             this.updateTable([imageId])

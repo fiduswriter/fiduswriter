@@ -125,6 +125,9 @@ export class DocumentOverview {
                 this.documentTemplates = json.document_templates
                 this.initTable()
                 this.addExportTemplatesToMenu()
+                if (this.documentTemplates.length > 1) {
+                    this.multipleNewDocumentMenuItem()
+                }
             }
         ).then(
             () => deactivateWait()
@@ -242,6 +245,18 @@ export class DocumentOverview {
             })
         })
         this.menu.update()
+    }
+
+    multipleNewDocumentMenuItem() {
+
+        const menuItem = this.menu.model.content.find(menuItem => menuItem.id==='new_document')
+        menuItem.type = 'dropdown'
+        menuItem.content = this.documentTemplates.map(docTemplate => ({
+            title: docTemplate.title,
+            action: () => this.app.goTo(`/document/n${docTemplate.id}/`)
+        }))
+        this.menu.update()
+
     }
 
     getSelected() {

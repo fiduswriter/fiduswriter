@@ -1,5 +1,5 @@
 import {DocumentAccessRightsDialog} from "../access_rights"
-import {addAlert, ContentMenu} from "../../common"
+import {addAlert} from "../../common"
 
 export const menuModel = () => ({
     content: [
@@ -106,29 +106,10 @@ export const menuModel = () => ({
         },
         {
             type: 'button',
-            id: 'create-new-document',
+            id: 'new_document',
             icon: 'plus-circle',
             title: gettext('Create new document'),
-            action: overview => {
-                if (overview.documentTemplates.length < 2) {
-                    overview.app.goTo('/document/new/')
-                } else {
-                    const position = document.querySelector('.create-new-document').getBoundingClientRect()
-                    const templateMenu = new ContentMenu({
-                        menu: {
-                            content: overview.documentTemplates.map(docTemplate => ({
-                                title: docTemplate.title,
-                                action: () => overview.app.goTo(`/document/n${docTemplate.id}/`)
-                            }))
-                        },
-                        menuPos: {
-                            X: position.right + 5,
-                            Y: position.top
-                        }
-                    })
-                    templateMenu.open()
-                }
-            },
+            action: overview => overview.app.goTo('/document/new/'),
             order: 1
         },
         {

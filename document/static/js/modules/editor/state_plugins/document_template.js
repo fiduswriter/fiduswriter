@@ -1,5 +1,5 @@
 import {Plugin, PluginKey} from "prosemirror-state"
-
+import {Fragment} from "prosemirror-model"
 
 export function addDeletedPartWidget(dom, view, getPos) {
     dom.classList.add('article-deleted')
@@ -48,7 +48,7 @@ export const documentTemplatePlugin = function(options) {
     return new Plugin({
         key,
         state: {
-            init(_config, _state) {
+            init(config, state) {
                 if (options.editor.docInfo.access_rights === 'write') {
                     this.spec.props.nodeViews['richtext_part'] = (node, view, getPos) => new PartView(
                         node,
@@ -66,12 +66,60 @@ export const documentTemplatePlugin = function(options) {
                         getPos
                     )
                     // Tags and Contributors have node views defined in tag_input and contributor_input.
+                    // TOCs have node views defined in toc_render.
                 }
 
-                return {}
+                const protectedRanges = [
+                    {from: 0, to: 1} // article node
+                ]
+                state.doc.firstChild.forEach((node, pos) => {
+                    const from = pos + 1 // + 1 to get inside the article node
+                    let to = from + 1 // + 1 for the part node
+                    if (node.attrs.locking==='fixed') {
+                        to = from + node.nodeSize
+                    } else if (node.attrs.locking==='header') { // only relevant for tables
+                        to = from + 1 + 1 + 1 + node.firstChild.firstChild.nodeSize // + 1 for the part node + 1 for the table + 1 for the first row
+                    } else if (node.attrs.locking==='start') {
+                        let initialFragment = Fragment.fromJSON(options.editor.schema, node.attrs.initial)
+                        let protectionSize = initialFragment.size
+                        if (initialFragment.lastChild.isTextblock) {
+                            protectionSize -= 1 // We allow writing at the end of the last text block.
+                            if (initialFragment.lastChild.nodeSize === 2) {
+                                // The last text block is empty, so we remove all protection from it, even node type
+                                protectionSize -= 1
+                            }
+                            initialFragment = initialFragment.cut(0, protectionSize)
+
+                        }
+                        if (
+                            node.nodeSize >= protectionSize &&
+                            initialFragment.eq(
+                                node.slice(0, protectionSize).content
+                            )
+                        ) {
+                            // We only add protection if the start of the current content corresponds to the
+                            // initial content. This may not be the case if the template has been changed.
+                            to = from + 1 + protectionSize // + 1 for inside the part node
+                        }
+                    }
+                    protectedRanges.push({from, to})
+                })
+
+                return {
+                    protectedRanges
+                }
             },
-            apply(tr, prev) {
-                return prev
+            apply(tr, prev, oldState, _state) {
+                let {
+                    protectedRanges
+                } = this.getState(oldState)
+                protectedRanges = protectedRanges.map(marker => ({
+                    from: tr.mapping.map(marker.from, 1),
+                    to: tr.mapping.map(marker.to, -1)
+                }))
+                return {
+                    protectedRanges
+                }
             }
         },
         props: {
@@ -85,7 +133,6 @@ export const documentTemplatePlugin = function(options) {
                 tr.getMeta('track') ||
                 tr.getMeta('fromFootnote') ||
                 tr.getMeta('filterFree') ||
-                tr.getMeta('untracked') ||
                 tr.getMeta('settings') ||
                 ['historyUndo', 'historyRedo'].includes(tr.getMeta('inputType'))
             ) {
@@ -94,66 +141,50 @@ export const documentTemplatePlugin = function(options) {
             if (state.doc.firstChild.childCount !== tr.doc.firstChild.childCount) {
                 return false
             }
+            const {
+                protectedRanges
+            } = key.getState(state)
             let allowed = true
 
-            let ranges = []
+            let changingRanges = []
 
-            tr.steps.forEach((step, index) => {
-                ranges.push({from: step.from, to: step.to})
-                ranges = ranges.map(range => ({from: tr.mapping.maps[index].map(range.from, -1), to: tr.mapping.maps[index].map(range.to, 1)}))
+            // We map all changes back to the document before changes have been applied.
+            tr.mapping.maps.slice().reverse().forEach(map => {
+                if (changingRanges.length) {
+                    const mapInv = map.invert()
+                    changingRanges = changingRanges.map(range => (
+                        {start: mapInv.map(range.start, -1), end: mapInv.map(range.end, 1)}
+                    ))
+                }
+                map.forEach((start, end) => {
+                    changingRanges.push({start, end})
+                })
             })
+
+            changingRanges.forEach(({start, end}) => {
+                if (protectedRanges.find(({from, to}) => !(
+                    (start <= from && end <= from) ||
+                    (start >= to && end >= to)
+                ))) {
+                    allowed = false
+                }
+
+            })
+
             let allowedElements = false, allowedMarks = false
 
-            ranges.forEach(range => tr.doc.nodesBetween(range.from, range.to, (node, pos, parent, index) => {
-                if (node.attrs && node.attrs.locking === 'fixed') {
-                    allowed = false
-                    return allowed
-                }
+            changingRanges.forEach(range => state.doc.nodesBetween(range.from, range.to, (node, pos, parent, _index) => {
                 if (parent===tr.doc.firstChild) {
-                    const oldNode = state.doc.firstChild.child(index)
-                    if (
-                        oldNode.type !== node.type ||
-                        oldNode.attrs.id !== node.attrs.id ||
-                        oldNode.attrs.title !== node.attrs.title ||
-                        oldNode.attrs.locking !== node.attrs.locking ||
-                        oldNode.attrs.language !== node.attrs.language ||
-                        oldNode.attrs.elements !== node.attrs.elements ||
-                        oldNode.attrs.marks !== node.attrs.marks ||
-                        oldNode.attrs.language !== node.attrs.language ||
-                        oldNode.attrs.item_title !== node.attrs.item_title ||
-                        oldNode.attrs.optional !== node.attrs.optional ||
-                        oldNode.attrs.help !== node.attrs.help
-                    ) {
-                        allowed = false
-                    } else if (
-                        node.type.name === 'table_part' &&
-                        node.attrs.locking === 'header' &&
-                        !node.firstChild.firstChild.eq(oldNode.firstChild.firstChild)
-                    ) {
-                        allowed = false
-                    }
-                    allowedElements = node.attrs.elements ? node.attrs.elements.concat('table_row', 'table_cell', 'table_header', 'list_item', 'text') : false
-                    allowedMarks = node.attrs.marks ? node.attrs.marks.concat('insertion', 'deletion', 'comment') : false
+                    allowedElements = node.attrs.elements ?
+                        node.attrs.elements.concat('table_row', 'table_cell', 'table_header', 'list_item', 'text') :
+                        false
+                    allowedMarks = node.attrs.marks ?
+                        node.attrs.marks.concat('insertion', 'deletion', 'comment') :
+                        false
                     return allowed
                 }
                 if (pos < range.from) {
                     return true
-                }
-                if (node === tr.doc.firstChild) {
-                    // block some settings changes
-                    const oldNode = state.doc.firstChild
-                    if (
-                        oldNode.attrs.footnote_marks !== node.attrs.footnote_marks ||
-                        oldNode.attrs.footnote_elements !== node.attrs.footnote_elements ||
-                        oldNode.attrs.languages !== node.attrs.languages ||
-                        oldNode.attrs.papersizes !== node.attrs.papersizes ||
-                        oldNode.attrs.template !== node.attrs.template ||
-                        !node.attrs.papersizes.includes(node.attrs.papersize) ||
-                        !node.attrs.languages.includes(node.attrs.language)
-                    ) {
-                        allowed = false
-                    }
-                    return allowed
                 }
                 if (
                     allowedElements &&

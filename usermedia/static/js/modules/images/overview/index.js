@@ -230,7 +230,7 @@ export class ImageOverview {
                     break
                 case findTarget(event, '.edit-image', el):
                     imageId = el.target.dataset.id
-                    dialog = new ImageEditDialog(this.imageDB, imageId)
+                    dialog = new ImageEditDialog(this.app.imageDB, imageId)
                     dialog.init().then(
                         imageId => {
                             this.updateTable([imageId])

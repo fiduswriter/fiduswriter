@@ -145,7 +145,7 @@ export class OverviewMenuView {
     getMenuHTML() {
         return `<ul id="fw-overview-menu">${
             this.model.content.map(menuItem =>
-                `<li class="fw-overview-menu-item">${
+                `<li class="fw-overview-menu-item${menuItem.id ? ` ${menuItem.id}` : ''}">${
                     this.getMenuItemHTML(menuItem)
                 }</li>`
             ).join('')

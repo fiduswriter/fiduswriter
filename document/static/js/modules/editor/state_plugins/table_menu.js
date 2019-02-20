@@ -37,7 +37,7 @@ class TableView {
                 menu: this.options.editor.menu.tableMenuModel,
                 width: 280,
                 page: this.options.editor,
-                menuPos: {X: event.pageX, Y: event.pageY},
+                menuPos: {X: parseInt(event.pageX)+20 , Y: parseInt(event.pageY)-100},
                 onClose: () => {
                     this.view.focus()
                 }

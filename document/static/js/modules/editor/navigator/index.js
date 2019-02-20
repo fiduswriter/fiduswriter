@@ -18,10 +18,10 @@ export class ModNavigator {
             const el = {}
             switch (true) {
                 case findTarget(event, '#navigator-button', el):
-                    document.querySelector('#navigator-list').innerHTML = this.populateNavigator() || ""   //Populating the list
                     if (el.target.firstElementChild.firstElementChild.classList.contains('rotate')){
                         this.closeNavigator()
                     } else {
+                        document.querySelector('#navigator-list').innerHTML = this.populateNavigator() || ""   //Populating the list
                         this.openNavigator()
                     }
                     break
@@ -98,7 +98,7 @@ export class ModNavigator {
         this.editor.view.state.doc.descendants((node) => {
             if (node.attrs && node.attrs.hidden) {
                 return false
-            } else if (this.defaultFilters.includes(node.type.name)) {
+            } else if (this.defaultFilters.includes(node.type.name) && node.textContent !== "") {
                 items.push({id: node.attrs.id, textContent: node.textContent, type: node.type})
             }
         })

@@ -69,7 +69,7 @@ export class TextPaste {
 
         const singleNode = this.sliceSingleNode(slice)
         const tr = singleNode ? this.view.state.tr.replaceSelectionWith(singleNode, this.view.shiftKey) : this.view.state.tr.replaceSelection(slice)
-        this.view.dispatch(tr.scrollIntoView().setMeta("paste", true).setMeta("uiEvent", "paste"))
+        this.view.dispatch(tr.scrollIntoView())
     }
 
 }

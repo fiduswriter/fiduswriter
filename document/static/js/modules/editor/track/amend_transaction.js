@@ -141,13 +141,11 @@ function markWrapping(
 export function amendTransaction(tr, state, editor) {
     if (
             !tr.steps.length ||
-            tr.getMeta('fixIds') ||
-            tr.getMeta('remote') ||
-            tr.getMeta('track') ||
-            tr.getMeta('fromFootnote') ||
-            tr.getMeta('filterFree') ||
-            tr.getMeta('settings') ||
-            tr.getMeta('untracked') ||
+            tr.meta && !Object.keys(tr.meta).every(
+                // Only replace TRs that have no metadata or only inputType metadata
+                metadata => ['inputType'].includes(metadata)
+            ) ||
+            // don't replace history TRs
             ['historyUndo', 'historyRedo'].includes(tr.getMeta('inputType'))
     ) {
         // None of the transactions change the doc, or all are remote, come from footnotes, are footnote creations, history or fixing IDs. Give up.
@@ -359,7 +357,11 @@ export function amendTransaction(tr, state, editor) {
 
     })
 
-    newTr.meta = tr.meta // We copy all meta data from the original transaction
+    // We copy the input type meta data from the original transaction.
+    if (tr.getMeta('inputType')) {
+        newTr.setMeta(tr.getMeta('inputType'))
+    }
+
     if (tr.selectionSet) {
         if (tr.selection instanceof TextSelection && (
             tr.selection.from < state.selection.from || tr.getMeta('inputType') === 'deleteContentBackward'

@@ -40,7 +40,7 @@ export class ModTrack {
         otherView.dispatch(deactivateAllSelectedChanges(otherView.state.tr))
         // activate selected change in relevant view
         const tr = setSelectedChanges(
-            view.state.tr,
+            view.state,
             type,
             pos
         )

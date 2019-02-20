@@ -25,6 +25,9 @@ import {
 import {
     accessRightsPlugin
 } from "./state_plugins"
+import {
+    amendTransaction
+} from "../track"
 import {fnNodeToPmNode} from "../../schema/footnotes_convert"
 
 /* Functions related to the footnote editor instance */
@@ -87,8 +90,8 @@ export class ModFootnoteEditor {
                 ) {
                     return
                 }
-
-                const newState = this.view.state.apply(tr)
+                const trackedTr = amendTransaction(tr, this.view.state, this.mod.editor)
+                const newState = this.view.state.apply(trackedTr)
 
                 this.view.updateState(newState)
                 this.onTransaction(tr, remote, filterFree)

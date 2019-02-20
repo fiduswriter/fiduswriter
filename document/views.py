@@ -163,6 +163,13 @@ def get_documentlist_js(request):
         response['document_styles'] = [obj['fields'] for obj in doc_styles]
         response['access_rights'] = get_accessrights(
             AccessRight.objects.filter(document__owner=request.user))
+        doc_templates = DocumentTemplate.objects.filter(
+            Q(user=request.user) | Q(user=None)
+        )
+        response['document_templates'] = [
+            {'id': obj.id, 'title': obj.title} for obj in doc_templates
+        ]
+
     return JsonResponse(
         response,
         status=status

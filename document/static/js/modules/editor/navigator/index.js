@@ -74,6 +74,14 @@ export class ModNavigator {
         document.getElementById("navigator-list").classList.remove('hide')
         document.getElementById('navigator-filter-back').classList.add('hide')
         document.getElementById('navigator-filter-icon').classList.remove('hide')
+        this.scrollToActiveHeading()
+    }
+    scrollToActiveHeading(){
+        const listDOM = document.getElementById("navigator-list")
+        const activeHeading = listDOM.getElementsByClassName('active-heading')[0]
+        if (activeHeading){
+            activeHeading.scrollIntoView()
+        }
     }
     closeNavigator(){
         document.getElementById('navigator-button').firstElementChild.firstElementChild.classList.remove('rotate')
@@ -92,6 +100,8 @@ export class ModNavigator {
         document.getElementById('navigator-filter-back').classList.add('hide')
         document.getElementById("navigator-list").classList.remove('hide')
         document.getElementById('navigator-filter-icon').classList.remove('hide')
+
+        this.scrollToActiveHeading()
     }
     populateNavigator(){
         const currentPos = this.editor.view.state.selection.$head.pos
@@ -145,7 +155,7 @@ export class ModNavigator {
                 item => {
                     const level = item.type.name.substr(-1)
                     if (item.class){
-                        return `<h${level}><a href="#${item.id}" class="${item.class}">${escapeText(item.textContent)}</a></h${level}>`
+                        return `<h${level} class="${item.class}"><a href="#${item.id}">${escapeText(item.textContent)}</a></h${level}>`
                     } else {
                         return `<h${level}><a href="#${item.id}">${escapeText(item.textContent)}</a></h${level}>`
                     }

@@ -835,19 +835,32 @@ html[hc=a5] #toolbar {
 #navigator-content {
     display: inline-block;
     background-color: black;
-    opacity: 0.8;
-    width:250px;
+    opacity: 0.9;
+    width:260px;
     color: white;
-    padding: 15px 15px 20px 0px;
+    padding: 15px 5px 20px 0px; 
+}
+
+#navigator-list {
     min-height: 90px;
     max-height: 550px;
     overflow-y: scroll;
     -ms-overflow-style: none;
-    overflow: -moz-scrollbars-none; 
-
+    overflow: -moz-scrollbars-none;
 }
-#navigator-content::-webkit-scrollbar {
-    display: none;
+
+#navigator-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #181818; 
+    border-radius: 10px;
+}
+  
+::-webkit-scrollbar-thumb:hover {
+    cursor: pointer;
+    background: #0f0f0f; 
 }
 
 #navigator-content a {
@@ -863,7 +876,8 @@ html[hc=a5] #toolbar {
     font-weight: normal;
     margin-bottom: unset;
     padding-left: 3em;
-    padding-top: 1.3em;
+    padding-top: 0.7em;
+    padding-bottom: 0.7em;
     overflow-wrap: break-word;
 }
 #navigator-content h2 {
@@ -895,10 +909,14 @@ html[hc=a5] #toolbar {
     width: 250px;
 }
 
+.active-heading {
+    background: grey
+}
+
 #navigator-button {
     float: right;
     background-color: black;
-    opacity: 0.8;
+    opacity: 0.9;
     cursor: pointer;
     padding: 1em;
     border-top-right-radius: 5px;
@@ -938,38 +956,38 @@ html[hc=a5] #toolbar {
 }
 
 .form-checkbox {
-     -webkit-appearance: none;
-     -moz-appearance: none;
-     appearance: none;
-     display: inline-block;
-     position: relative;
-     background-color: white;
-     color: #444;
-     top: 5px;
-     height: 18px;
-     width: 18px;
-     border: 0;
-     border-radius: 3px;
-     cursor: pointer;     
-     margin-right: 7px;
-     outline: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    display: inline-block;
+    position: relative;
+    background-color: white;
+    color: #444;
+    top: 5px;
+    height: 18px;
+    width: 18px;
+    border: 0;
+    border-radius: 3px;
+    cursor: pointer;     
+    margin-right: 7px;
+    outline: none;
 }
 .form-checkbox:checked::before {
-     position: absolute;
-     left: 3px;
-     content: '\2713';
-     font-weight: bold;
-     font-size: 1.2em;
+    position: absolute;
+    left: 3px;
+    content: '\2713';
+    font-weight: bold;
+    font-size: 1.2em;
 }
 .form-checkbox:hover {
-     background-color: #f7f7f7;
+    background-color: #f7f7f7;
 }
 .form-checkbox:checked {
-     background-color: #f1f1f1;
+    background-color: #f1f1f1;
 }
 .navigator-label {
-     color: white;
-     cursor: pointer;
+    color: white;
+    cursor: pointer;
 }
 .hide {
     display: none;

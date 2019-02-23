@@ -123,7 +123,18 @@ export class ModMarginboxes {
                 if (node.attrs.hidden) {
                     return false
                 }
-                lastNodeTracks = this.getMarginBoxes(node, pos, pos, lastNode, lastNodeTracks, 'main', marginBoxes, referrers, selectedChanges)
+                lastNodeTracks = this.getMarginBoxes(
+                    node,
+                    pos,
+                    pos,
+                    lastNode,
+                    lastNodeTracks,
+                    'main',
+                    marginBoxes,
+                    referrers,
+                    selectedChanges,
+                    this.editor.view.state.selection
+                )
                 lastNode = node
 
                 if (node.type.name==='footnote') {
@@ -140,7 +151,18 @@ export class ModMarginboxes {
                             if (fnPos < fnPosCount) {
                                 return false
                             }
-                            lastFnNodeTracks = this.getMarginBoxes(fnNode, fnPos, pos, lastFnNode, lastFnNodeTracks, 'footnote', marginBoxes, referrers, selectedChanges)
+                            lastFnNodeTracks = this.getMarginBoxes(
+                                fnNode,
+                                fnPos,
+                                pos,
+                                lastFnNode,
+                                lastFnNodeTracks,
+                                'footnote',
+                                marginBoxes,
+                                referrers,
+                                selectedChanges,
+                                this.editor.view.state.selection
+                            )
                             lastFnNode = fnNode
                         }
                     )
@@ -299,14 +321,29 @@ export class ModMarginboxes {
         return fnMarker.from
     }
 
-    getMarginBoxes(node, pos, refPos, lastNode, lastNodeTracks, view, marginBoxes, referrers, selectedChanges) {
+    getMarginBoxes(
+        node,
+        pos,
+        refPos,
+        lastNode,
+        lastNodeTracks,
+        view,
+        marginBoxes,
+        referrers,
+        selectedChanges,
+        selection // Selection in main editor
+    ) {
 
 
         if (node.attrs.help) { // Help/instruction margin boxes
-            marginBoxes.push(Object.assign({
+            const helpBox = {
                 type: 'help',
-                data: node.attrs.help
-            }))
+                data: {
+                    active: selection.$anchor.node(2) === node ? true : false,
+                    help: node.attrs.help
+                }
+            }
+            marginBoxes.push(helpBox)
             referrers.push(refPos)
         }
 

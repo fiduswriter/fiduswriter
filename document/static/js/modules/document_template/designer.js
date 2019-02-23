@@ -7,6 +7,7 @@ import {baseKeymap} from "prosemirror-commands"
 import {gapCursor} from "prosemirror-gapcursor"
 import {menuBar} from "prosemirror-menu"
 import {buildKeymap, buildInputRules} from "prosemirror-example-setup"
+import {tableEditing} from "prosemirror-tables"
 
 import {TagsView, ContributorsView} from "../editor/state_plugins"
 import {
@@ -272,6 +273,7 @@ export class DocumentTemplateDesigner {
             case 'table_part':
                 schema = tablePartSchema
                 menuContent = tableMenuContent
+                plugins.push(tableEditing())
                 break
             case 'heading_part':
                 schema = headingPartSchema

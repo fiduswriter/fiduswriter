@@ -4,7 +4,7 @@
 
 .fw-media-uploader .figure-preview {
     display: table;
-    margin: 18px 0;
+    margin: 18px 10px 0 0;
 }
 
 .fw-media-uploader .figure-preview > div {
@@ -46,13 +46,12 @@ th.figure-preview-row, td.figure-preview-row {
     overflow: hidden;
     outline: none;
     position: absolute;
-    right: 0px;
-    top: 65px;
+    right: -5px;
 }
 
 .figure-edit-icon {
-    font-size: 1.5em;
-    color: #4e4e4e;
+    font-size: 18px;
+    color: #cecece;
 }
 
 .crop-mode {

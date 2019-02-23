@@ -106,9 +106,10 @@ export const menuModel = () => ({
         },
         {
             type: 'button',
+            id: 'new_document',
             icon: 'plus-circle',
             title: gettext('Create new document'),
-            action: _overview => window.location.href = '/document/new/',
+            action: overview => overview.app.goTo('/document/new/'),
             order: 1
         },
         {

@@ -90,7 +90,7 @@ const helpTemplate = ({help, filterOptions}) => {
     if (!filterOptions.help) {
         return '<div class="margin-box help hidden"></div>'
     } else {
-        return `<div class="margin-box help"><div class="help-text-wrapper">${serializeHelp(help)}</div></div>`
+        return `<div class="margin-box help ${help.active ? 'active' : ''}"><div class="help-text-wrapper">${serializeHelp(help.help)}</div></div>`
     }
 }
 

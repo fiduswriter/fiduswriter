@@ -138,3 +138,8 @@ table td {
     background-color: #76a698;
     color: #fff;
 }
+
+.ProseMirror td.selectedCell {
+    background-color: #8cf;
+    caret-color: transparent;
+}

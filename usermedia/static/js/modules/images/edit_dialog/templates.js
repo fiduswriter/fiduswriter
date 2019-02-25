@@ -43,15 +43,6 @@ export const imageEditTemplate = ({image, cats}) =>
         }
     </div>
     <div class="figure-preview">
-        
-        <button class="btn-select-crop hide">
-            <span class="crop-icon"><i class="fa fa-check"></i></span>
-        </button>
-
-        <button class="btn-cancel-crop hide">
-            <span class="crop-icon"><i class="fa fa-times"></i></span>
-        </button>
-        
         <button class="figure-edit-menu hide" title="${gettext('Edit Figure')}">
             <span class="figure-edit-icon"><i class="fa fa-ellipsis-v"></i></span>
         </button>

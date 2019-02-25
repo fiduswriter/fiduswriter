@@ -35,46 +35,44 @@ export const figureEditModel = () => ({
             type: 'action',
             tooltip: gettext('Crop image'),
             order: 0,
-            action: () => {
-                cropMode(true)
+            action: (figureEditClass) => {
                 const image = document.querySelector('#editimage .figure-preview > div > img')
                 const cropper = new Cropper(image, {
                     viewMode: 1,
                     responsive: true,
                 })
-                bindEvents(cropper)
+                cropMode(true,figureEditClass,cropper)
             },
             icon: 'crop'
         },
     ]
 })
 
-const bindEvents = (cropperObj) => {
-    document.querySelector('.btn-select-crop').onclick = ()=>{
-        const mediaInput = document.querySelector('#editimage .fw-media-file-input').files[0],
-            mediaPreviewer = document.querySelector('#editimage .figure-preview > div > img')
-        mediaPreviewer.src = cropperObj.getCroppedCanvas().toDataURL(mediaInput.type)
-        cropperObj.destroy()
-        cropMode(false)
-        document.querySelector('.btn-select-crop').onclick = null
-    }
-
-    document.querySelector('.btn-cancel-crop').onclick = () => {
-        cropperObj.destroy()
-        cropMode(false)
-        document.querySelector('.btn-cancel-crop').onclick = null
-    }
-}
-export const cropMode = (val) => {
+export const cropMode = (val,figureEditClass,cropper) => {
     const div = document.querySelector('#editimage .figure-preview > div')
     if (val) {
         div.classList.add('crop-mode')
-        document.querySelector('.btn-select-crop').classList.remove('hide')
-        document.querySelector('.btn-cancel-crop').classList.remove('hide')
+        document.querySelector('.btn-crop').textContent = gettext("Crop")
+        figureEditClass.dialog.buttons[0].click = ()=>{
+            const mediaInput = document.querySelector('#editimage .fw-media-file-input').files[0],
+                mediaPreviewer = document.querySelector('#editimage .figure-preview > div > img')
+                mediaPreviewer.src = cropper.getCroppedCanvas().toDataURL(mediaInput.type)
+            cropper.destroy()
+            cropMode(false,figureEditClass,cropper)
+        }
+        figureEditClass.dialog.buttons[1].click = ()=>{
+            cropper.destroy()
+            cropMode(false,figureEditClass,cropper)
+        }
     } else {
         div.classList.remove('crop-mode')
-        document.querySelector('.btn-select-crop').classList.add('hide')
-        document.querySelector('.btn-cancel-crop').classList.add('hide')
+        document.querySelector('.btn-crop').textContent = gettext("Upload")
+        figureEditClass.dialog.buttons[0].click = ()=>{
+            figureEditClass.saveImage()
+        }
+        figureEditClass.dialog.buttons[1].click = ()=>{
+            figureEditClass.dialog.close()
+        }
     }
     const parentDiv = document.querySelector('#editimage').parentElement
     centerDialog(parentDiv)

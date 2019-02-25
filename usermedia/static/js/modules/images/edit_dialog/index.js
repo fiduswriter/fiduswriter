@@ -26,10 +26,12 @@ export class ImageEditDialog {
                     {
                         text: this.imageId ? gettext('Update') : gettext('Upload'),
                         click: () => resolve(this.saveImage()),
-                        classes: "fw-dark"
+                        classes: "fw-dark btn-crop"
                     },
                     {
-                        type: 'cancel'
+                        type: 'cancel',
+                        classes: "fw-orange btn-crop-cancel",
+                        click: () => this.dialog.close()
                     }
                 ]
             })
@@ -52,7 +54,7 @@ export class ImageEditDialog {
             const contentMenu = new ContentMenu({
                 menu: figureEditModel(),
                 width: 220,
-                page: this.editor,
+                page: this,
                 menuPos: {X: event.pageX-50, Y: event.pageY+50},
             })
             contentMenu.open()
@@ -87,12 +89,8 @@ export class ImageEditDialog {
         const div = document.querySelector('#editimage .figure-preview > div')
         if (val){
             div.classList.add('crop-mode')
-            document.querySelector('.btn-select-crop').classList.remove('hide')
-            document.querySelector('.btn-cancel-crop').classList.remove('hide')
         } else {
             div.classList.remove('crop-mode')
-            document.querySelector('.btn-select-crop').classList.add('hide')
-            document.querySelector('.btn-cancel-crop').classList.add('hide')
         }
         const parentDiv = document.querySelector('#editimage').parentElement
         this.centerDialog(parentDiv)

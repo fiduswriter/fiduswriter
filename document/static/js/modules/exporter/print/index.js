@@ -56,9 +56,9 @@ export class PrintExporter extends HTMLExporter {
             	order: 2;
             }
             @page {
-                size: ${PAPER_SIZES.find(size => size[0] === this.doc.settings.papersize)[1]}; 
-                @top-left {
-                    content: "${this.doc.title}";
+                size: ${PAPER_SIZES.find(size => size[0] === this.doc.settings.papersize)[1]};
+                @top-center {
+                    content: env(doc-title);
                 }
                 @bottom-center {
                     content: counter(page);

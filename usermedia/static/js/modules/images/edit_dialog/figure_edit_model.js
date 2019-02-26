@@ -41,14 +41,14 @@ export const figureEditModel = () => ({
                     viewMode: 1,
                     responsive: true,
                 })
-                cropMode(true,figureEditClass,cropper)
+                cropMode(true, figureEditClass, cropper)
             },
             icon: 'crop'
         },
     ]
 })
 
-export const cropMode = (val,figureEditClass,cropper) => {
+export const cropMode = (val, figureEditClass, cropper) => {
     const div = document.querySelector('#editimage .figure-preview > div')
     if (val) {
         div.classList.add('crop-mode')
@@ -58,11 +58,11 @@ export const cropMode = (val,figureEditClass,cropper) => {
                 mediaPreviewer = document.querySelector('#editimage .figure-preview > div > img')
                 mediaPreviewer.src = cropper.getCroppedCanvas().toDataURL(mediaInput.type)
             cropper.destroy()
-            cropMode(false,figureEditClass,cropper)
+            cropMode(false, figureEditClass, cropper)
         }
         figureEditClass.dialog.buttons[1].click = ()=>{
             cropper.destroy()
-            cropMode(false,figureEditClass,cropper)
+            cropMode(false, figureEditClass, cropper)
         }
     } else {
         div.classList.remove('crop-mode')
@@ -77,7 +77,7 @@ export const cropMode = (val,figureEditClass,cropper) => {
     const parentDiv = document.querySelector('#editimage').parentElement
     centerDialog(parentDiv)
 }
-export const centerDialog = (parentDiv) => {
+export const centerDialog = parentDiv => {
     const totalWidth = window.innerWidth,
         totalHeight = window.innerHeight,
         dialogWidth = parentDiv.clientWidth,

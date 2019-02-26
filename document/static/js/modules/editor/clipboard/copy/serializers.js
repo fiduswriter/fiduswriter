@@ -111,7 +111,7 @@ class ClipboardDOMSerializer {
 
     getFootnoteAnchor(counter, id) {
         const footnoteAnchor = document.createElement('a')
-        footnoteAnchor.setAttribute('href',`#fn-${id}`)
+        footnoteAnchor.setAttribute('href', `#fn-${id}`)
         footnoteAnchor.classList.add('fn')
         footnoteAnchor.classList.add('sdfootnoteanc')
         footnoteAnchor.innerHTML = `<sup>${counter}</sup>`

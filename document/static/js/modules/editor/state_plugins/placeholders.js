@@ -62,7 +62,7 @@ export const placeholdersPlugin = function(options) {
             }
         })
 
-        return decorations.length ? DecorationSet.create(state.doc,decorations) : false
+        return decorations.length ? DecorationSet.create(state.doc, decorations) : false
 
     }
 

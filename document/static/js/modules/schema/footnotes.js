@@ -34,7 +34,7 @@ const footnotecontainer = {
     marks: "annotation",
     parseDOM: [{tag: "div.footnote-container"}],
     toDOM(_node) {
-        return ['div',{class: 'footnote-container'}, 0]
+        return ['div', {class: 'footnote-container'}, 0]
     }
 }
 

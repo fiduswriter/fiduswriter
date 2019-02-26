@@ -56,7 +56,7 @@ export class ModFootnoteEditor {
     }
 
     init() {
-        const doc = this.schema.nodeFromJSON({"type":"doc","content":[]}),
+        const doc = this.schema.nodeFromJSON({"type":"doc", "content":[]}),
             plugins = this.fnStatePlugins.map(plugin => {
                 if (plugin[1]) {
                     return plugin[0](plugin[1](doc))
@@ -134,7 +134,7 @@ export class ModFootnoteEditor {
 
     renderAllFootnotes() {
         const fnContents = getFootnoteMarkerContents(this.mod.editor.view.state)
-        const doc = this.schema.nodeFromJSON({"type":"doc","content":[]}),
+        const doc = this.schema.nodeFromJSON({"type":"doc", "content":[]}),
             plugins = this.fnStatePlugins.map(plugin => {
                 if (plugin[1]) {
                     return plugin[0](plugin[1](doc))

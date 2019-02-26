@@ -37,7 +37,7 @@ export class ImageSelectionDialog {
                     icon: "plus-circle",
                     click: () => {
                         const imageUpload = new ImageEditDialog(
-                            this.userImageDB,// We can only upload to the user's image db
+                            this.userImageDB, // We can only upload to the user's image db
                             false,
                             this.editor
                         )

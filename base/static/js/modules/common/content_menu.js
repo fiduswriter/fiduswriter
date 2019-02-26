@@ -7,7 +7,7 @@ const menuTemplate = ({id, classes, height, width, zIndex, menu, scroll, page}) 
     <div>
         <ul class="content-menu-list">
         ${
-            menu.content.map((menuItem,index)=>
+            menu.content.map((menuItem, index)=>
                 menuItem.type == "separator" ?
                     '<hr class="content-menu-item-divider"/>' :
                     `<li data-index="${index}" class="content-menu-item${

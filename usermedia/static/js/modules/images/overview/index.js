@@ -194,7 +194,7 @@ export class ImageOverview {
                 top: ""
             },
             data: {
-                headings: ['','&emsp;&emsp;', gettext("File"), gettext("Size (px)"), gettext("Added"), ''],
+                headings: ['', '&emsp;&emsp;', gettext("File"), gettext("Size (px)"), gettext("Added"), ''],
                 data: ids.map(id => this.createTableRow(id))
             },
             columns: [
@@ -203,7 +203,7 @@ export class ImageOverview {
                     hidden: true
                 },
                 {
-                    select: [1,3,5],
+                    select: [1, 3, 5],
                     sortable: false
                 }
             ]

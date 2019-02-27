@@ -1,5 +1,5 @@
 import {Dialog, addDropdownBox} from "../../common"
-import {tableResizeTemplate,tableInsertTemplate} from "./templates"
+import {tableResizeTemplate, tableInsertTemplate} from "./templates"
 import {deleteTable} from "prosemirror-tables"
 
 export class TableDialog {

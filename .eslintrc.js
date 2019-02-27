@@ -40,7 +40,7 @@ module.exports = {
         "capitalized-comments": "off",
         "class-methods-use-this": "off",
         "comma-dangle": "off",
-        "comma-spacing": "off",
+        "comma-spacing": "warn",
         "comma-style": [
             "error",
             "last"

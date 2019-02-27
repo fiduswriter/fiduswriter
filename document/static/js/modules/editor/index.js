@@ -210,7 +210,8 @@ export class Editor {
             'review.css',
             'add_remove_dialog.css',
             'bibliography.css',
-            'table_menu.css'
+            'table_menu.css',
+            'cropper.min.css'
         ], this.staticUrl)
         whenReady().then(() => {
             new ModCitations(this)

@@ -1,9 +1,10 @@
 import {imageEditTemplate} from "./templates"
-import {setCheckableLabel, addAlert, Dialog} from "../../common"
-
+import {setCheckableLabel, addAlert, Dialog, ContentMenu} from "../../common"
+import {imageEditModel} from './model'
 export class ImageEditDialog {
-    constructor(imageDB, imageId = false) {
+    constructor(imageDB, imageId = false, editor) {
         this.imageDB = imageDB
+        this.editor = editor
         this.imageId = imageId
         this.dialog = false
     }
@@ -28,7 +29,9 @@ export class ImageEditDialog {
                         classes: "fw-dark"
                     },
                     {
-                        type: 'cancel'
+                        type: 'cancel',
+                        classes: "fw-orange",
+                        click: () => this.dialog.close()
                     }
                 ]
             })
@@ -43,25 +46,47 @@ export class ImageEditDialog {
         if (!this.imageId) {
             this.bindMediaUploadEvents()
         }
+
+        document.querySelector('.figure-edit-menu').addEventListener('click', event => {
+            event.preventDefault()
+            event.stopImmediatePropagation()
+
+            const contentMenu = new ContentMenu({
+                menu: imageEditModel(),
+                width: 220,
+                page: this,
+                menuPos: {X: event.pageX-50, Y: event.pageY+50},
+            })
+            contentMenu.open()
+        })
+
         return returnPromise
     }
 
     //add image upload events
     bindMediaUploadEvents() {
         const selectButton = document.querySelector('#editimage .fw-media-select-button'),
-            mediaInput = document.querySelector('#editimage .fw-media-file-input'),
-            mediaPreviewer = document.querySelector('#editimage .figure-preview > div')
+            mediaInputSelector = document.querySelector('#editimage .fw-media-file-input')
+        this.mediaPreviewerDiv = document.querySelector('#editimage .figure-preview > div')
+        this.rotation = 0
+        this.cropped = false
 
-        selectButton.addEventListener('click', () => mediaInput.click())
+        selectButton.addEventListener('click', () =>{
+            mediaInputSelector.click()
+        })
 
-        mediaInput.addEventListener('change', function() {
-            const file = mediaInput.files[0],
-                fr = new window.FileReader()
-
+        mediaInputSelector.addEventListener('change', () =>{
+            this.mediaInput = mediaInputSelector.files[0]
+            const fr = new window.FileReader()
             fr.onload = () => {
-                mediaPreviewer.innerHTML = '<img src="' + fr.result + '" />'
+                this.mediaPreviewerDiv.innerHTML = `<img src="${fr.result}" />`
+                this.mediaPreviewer = this.mediaPreviewerDiv.querySelector('img')
+                this.mediaPreviewerDiv.classList.remove('crop-mode')
+                this.dialog.centerDialog()
+                //this.cropMode(false)
             }
-            fr.readAsDataURL(file)
+            fr.readAsDataURL(this.mediaInput)
+            document.querySelector('.figure-edit-menu').classList.remove("hide")
         })
     }
 
@@ -85,25 +110,30 @@ export class ImageEditDialog {
     }
 
     saveImage() {
-
         const imageData = {
             title: document.querySelector('#editimage .fw-media-title').value,
             cats: Array.from(document.querySelectorAll('#editimage .entry-cat:checked')).map(
                 el => parseInt(el.value)
             ).join(',')
         }
-
         if (this.imageId) {
             imageData.id = this.imageId
+        } else if (!this.rotation && !this.cropped) {
+            imageData.image = this.mediaInput
         } else {
-            imageData.image = document.querySelector('#editimage .fw-media-file-input').files[0]
+            const base64data = this.mediaPreviewer.src
+            const bstr = atob(base64data.split(',')[1])
+            let n = bstr.length
+            const u8arr = new Uint8Array(n)
+            while (n--){
+                u8arr[n] = bstr.charCodeAt(n)
+            }
+            imageData.image = new File([u8arr], this.mediaInput.name, {type: this.mediaInput.type})
         }
-
         // Remove old warning messages
         document.querySelectorAll('#editimage .warning').forEach(
             el => el.parentElement.removeChild(el)
         )
-
         return new Promise(resolve => {
             this.imageDB.saveImage(imageData).then(
                 imageId => {

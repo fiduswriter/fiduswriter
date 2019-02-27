@@ -85,7 +85,7 @@ function markDeletion(tr, from, to, user, username, date1, date10) {
                         }
                     } else {
                         removeStep = new ReplaceStep(
-                            deletionMap.map(Math.max(from,pos)),
+                            deletionMap.map(Math.max(from, pos)),
                             deletionMap.map(Math.min(to, pos + node.nodeSize)),
                             Slice.empty
                         )

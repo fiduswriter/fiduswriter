@@ -105,7 +105,7 @@ export class BaseDOMExporter {
 
     getFootnoteAnchor(counter) {
         const footnoteAnchor = document.createElement('a')
-        footnoteAnchor.setAttribute('href','#fn'+counter)
+        footnoteAnchor.setAttribute('href', '#fn'+counter)
         // RASH 0.5 doesn't mark the footnote anchors, so we add this class
         footnoteAnchor.classList.add('fn')
         return footnoteAnchor

@@ -1,4 +1,4 @@
-import {escapeText ,findTarget} from "../../common"
+import {escapeText, findTarget} from "../../common"
 export class ModNavigator {
     constructor(editor) {
         editor.mod.navigator = this
@@ -6,7 +6,7 @@ export class ModNavigator {
         this.navigatorEl = document.querySelector('#navigator')
         this.listeners = {}
         this.navigatorFilters = editor.menu.navigatorFilterModel.content
-        this.defaultFilters = ['heading1','heading2','heading3']
+        this.defaultFilters = ['heading1', 'heading2', 'heading3']
         this.render()
         this.bindEvents()
     }
@@ -59,10 +59,10 @@ export class ModNavigator {
             }
         })
 
-        document.querySelector('#navigator-list').addEventListener('mouseover',() => {
+        document.querySelector('#navigator-list').addEventListener('mouseover', () => {
             document.body.classList.add('no-scroll')
         })
-        document.querySelector('#navigator-list').addEventListener('mouseout',() => {
+        document.querySelector('#navigator-list').addEventListener('mouseout', () => {
             document.body.classList.remove('no-scroll')
         })
     }

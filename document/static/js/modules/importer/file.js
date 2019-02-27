@@ -174,7 +174,7 @@ export class ImportFidusFile {
     checkDocUsersNode(node) { // Check whether all users connected to insertion/deletion marks are known on this system.
         if (node.marks) {
             node.marks.forEach(mark => {
-                if (['insertion','deletion'].includes(mark.type)) {
+                if (['insertion', 'deletion'].includes(mark.type)) {
                     if (!
                         (
                             this.teamMembers.find(member => member.id === mark.attrs.user && member.username === mark.attrs.username) ||

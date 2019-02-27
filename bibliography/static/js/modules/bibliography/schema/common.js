@@ -67,7 +67,7 @@ export const smallcaps = {
 export const url = {
     parseDOM: [{tag: 'span.url'}],
     toDOM() {
-        return ["span",{class:"url"}]
+        return ["span", {class:"url"}]
     }
 }
 

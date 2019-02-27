@@ -167,7 +167,7 @@ export class DocMaintenance {
             zipfs.loadAsync(fidusFile).then(() => {
                 const openedFiles = {}, p = []
                 // We don't open other files as they currently don't need to be changed.
-                const fileNames = ["filetype-version","document.json","bibliography.json"]
+                const fileNames = ["filetype-version", "document.json", "bibliography.json"]
 
                 fileNames.forEach(fileName => {
                     p.push(zipfs.files[fileName].async("text").then((fileContent) => {

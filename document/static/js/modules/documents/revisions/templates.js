@@ -16,7 +16,7 @@ export const documentrevisionsTemplate = ({doc}) =>
         </thead>
         <tbody class="fw-document-table-body fw-middle">
             ${
-                doc.revisions.slice().sort((a,b) => a.date > b.date).map(rev =>
+                doc.revisions.slice().sort((a, b) => a.date > b.date).map(rev =>
                     `<tr class="revision-${rev.pk}" data-document="${doc.id}">
                         <td width="80"><span class="fw-inline">
                             ${localizeDate(rev.date*1000)}

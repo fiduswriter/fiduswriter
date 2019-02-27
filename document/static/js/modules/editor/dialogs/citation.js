@@ -326,7 +326,7 @@ export class CitationDialog {
             })
 
         if (!citeItems.length) {
-            addAlert('info',gettext('Please select at least one citation source!'))
+            addAlert('info', gettext('Please select at least one citation source!'))
             return false
         }
 

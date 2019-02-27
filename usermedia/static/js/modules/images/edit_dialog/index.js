@@ -1,6 +1,6 @@
 import {imageEditTemplate} from "./templates"
 import {setCheckableLabel, addAlert, Dialog, ContentMenu} from "../../common"
-import {figureEditModel} from './figure_edit_model'
+import {imageEditModel} from './model'
 export class ImageEditDialog {
     constructor(imageDB, imageId = false, editor) {
         this.imageDB = imageDB
@@ -26,11 +26,11 @@ export class ImageEditDialog {
                     {
                         text: this.imageId ? gettext('Update') : gettext('Upload'),
                         click: () => resolve(this.saveImage()),
-                        classes: "fw-dark btn-crop"
+                        classes: "fw-dark"
                     },
                     {
                         type: 'cancel',
-                        classes: "fw-orange btn-crop-cancel",
+                        classes: "fw-orange",
                         click: () => this.dialog.close()
                     }
                 ]
@@ -52,7 +52,7 @@ export class ImageEditDialog {
             event.stopImmediatePropagation()
 
             const contentMenu = new ContentMenu({
-                menu: figureEditModel(),
+                menu: imageEditModel(),
                 width: 220,
                 page: this,
                 menuPos: {X: event.pageX-50, Y: event.pageY+50},
@@ -66,45 +66,28 @@ export class ImageEditDialog {
     //add image upload events
     bindMediaUploadEvents() {
         const selectButton = document.querySelector('#editimage .fw-media-select-button'),
-            mediaInput = document.querySelector('#editimage .fw-media-file-input'),
-            mediaPreviewer = document.querySelector('#editimage .figure-preview > div')
+            mediaInputSelector = document.querySelector('#editimage .fw-media-file-input')
+        this.mediaPreviewerDiv = document.querySelector('#editimage .figure-preview > div')
+        this.rotation = 0
+        this.cropped = false
 
         selectButton.addEventListener('click', () =>{
-                mediaInput.click()
+            mediaInputSelector.click()
         })
 
-        mediaInput.addEventListener('change', () =>{
-            const file = mediaInput.files[0],
-                fr = new window.FileReader()
+        mediaInputSelector.addEventListener('change', () =>{
+            this.mediaInput = mediaInputSelector.files[0]
+            const fr = new window.FileReader()
             fr.onload = () => {
-                mediaPreviewer.innerHTML = '<img src="' + fr.result + '" />'
-                this.cropMode(false)
+                this.mediaPreviewerDiv.innerHTML = `<img src="${fr.result}" />`
+                this.mediaPreviewer = this.mediaPreviewerDiv.querySelector('img')
+                this.mediaPreviewerDiv.classList.remove('crop-mode')
+                this.dialog.centerDialog()
+                //this.cropMode(false)
             }
-            fr.readAsDataURL(file)
+            fr.readAsDataURL(this.mediaInput)
             document.querySelector('.figure-edit-menu').classList.remove("hide")
         })
-    }
-
-    cropMode(val){
-        const div = document.querySelector('#editimage .figure-preview > div')
-        if (val){
-            div.classList.add('crop-mode')
-        } else {
-            div.classList.remove('crop-mode')
-        }
-        const parentDiv = document.querySelector('#editimage').parentElement
-        this.centerDialog(parentDiv)
-    }
-
-    centerDialog(parentDiv){
-        const totalWidth = window.innerWidth,
-            totalHeight = window.innerHeight,
-            dialogWidth = parentDiv.clientWidth,
-            dialogHeight = parentDiv.clientHeight,
-            scrollTopOffset = window.pageYOffset,
-            scrollLeftOffset = window.pageXOffset
-        parentDiv.style.top = `${(totalHeight - dialogHeight)/2 + scrollTopOffset}px`
-        parentDiv.style.left = `${(totalWidth - dialogWidth)/2 + scrollLeftOffset}px`
     }
 
     displayCreateImageError(errors) {
@@ -127,30 +110,25 @@ export class ImageEditDialog {
     }
 
     saveImage() {
-        let file = ""
-        if (!this.imageId){
-            const mediaInput = document.querySelector('#editimage .fw-media-file-input').files[0]
-            const mediaPreviewer = document.querySelector('#editimage .figure-preview > div > img')
-            const base64data = mediaPreviewer.src
-            const bstr = atob(base64data.split(',')[1])
-            let n = bstr.length
-            const u8arr = new Uint8Array(n)
-            while (n--){
-                u8arr[n] = bstr.charCodeAt(n)
-            }
-            file =  new File([u8arr], mediaInput.name, {type:mediaInput.type})
-        }
         const imageData = {
             title: document.querySelector('#editimage .fw-media-title').value,
             cats: Array.from(document.querySelectorAll('#editimage .entry-cat:checked')).map(
                 el => parseInt(el.value)
             ).join(',')
         }
-
         if (this.imageId) {
             imageData.id = this.imageId
+        } else if (!this.rotation && !this.cropped) {
+            imageData.image = this.mediaInput
         } else {
-            imageData.image = file
+            const base64data = this.mediaPreviewer.src
+            const bstr = atob(base64data.split(',')[1])
+            let n = bstr.length
+            const u8arr = new Uint8Array(n)
+            while (n--){
+                u8arr[n] = bstr.charCodeAt(n)
+            }
+            imageData.image = new File([u8arr], this.mediaInput.name, {type: this.mediaInput.type})
         }
         // Remove old warning messages
         document.querySelectorAll('#editimage .warning').forEach(

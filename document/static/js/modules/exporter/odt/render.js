@@ -117,14 +117,14 @@ export class OdtExporterRender {
     // Render Tags that only exchange inline content
     inlineRender(tag) {
         const texts = tag.textNode.data.split('{'+tag.title+'}')
-        const fullText = texts[0] + escapeText(tag.content) + texts[1]
+        const fullText = texts[0] + escapeText(tag.content ? tag.content : '') + texts[1]
         tag.textNode.data = fullText
     }
 
     // Render tags that exchange paragraphs
     parRender(tag) {
         const section = tag.par.hasAttribute('text:style-name') ? tag.par.getAttribute('text:style-name') : 'Text_20_body'
-        const outXml = tag.content.map(
+        const outXml = tag.content ? tag.content.map(
             content => this.exporter.richtext.transformRichtext(
                 content,
                 {
@@ -132,7 +132,7 @@ export class OdtExporterRender {
                     section
                 }
             )
-        ).join('')
+        ).join('') : ''
         tag.par.insertAdjacentHTML('beforebegin', outXml)
         tag.par.parentNode.removeChild(tag.par)
     }

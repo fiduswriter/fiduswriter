@@ -22,7 +22,8 @@
             "title": "Authors",
             "optional": "hidden",
             "hidden": true,
-            "item_title": "Author"
+            "item_title": "Author",
+            "authors": true
         }
     }, {
         "type": "richtext_part",
@@ -44,7 +45,8 @@
             "title": "Keywords",
             "optional": "hidden",
             "hidden": true,
-            "item_title": "Keyword"
+            "item_title": "Keyword",
+            "keywords": true
         }
     }, {
         "type": "richtext_part",

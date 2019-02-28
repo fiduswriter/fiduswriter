@@ -200,10 +200,11 @@ export const separator_part = {
         }
     },
     parseDOM: [{
-        tag: "hr"
+        tag: "hr.article-separator_part"
     }],
     toDOM(_node) {
         const dom = document.createElement('hr')
+        dom.classList.add('article-separator_part')
         return dom
     }
 }

@@ -191,7 +191,8 @@ const contributorsTemplate = ({
     title="",
     item_title="",
     locking="false",
-    optional="false"
+    optional="false",
+    authors=false
 }) =>
 `<div class="doc-part" data-type="contributors_part">
     <div class="doc-part-header">
@@ -208,6 +209,7 @@ const contributorsTemplate = ({
     </div>
     <div class="attrs hidden">
         <div class="label">${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(item_title)}"></div>
+        <div class="label">${gettext('Include in document metadata as authors?')} <input class="authors" type="checkbox" ${authors ? 'checked' : ''}></div>
         <div class="label">${gettext('Locking')}
             <select class="locking">
                 <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>
@@ -297,7 +299,8 @@ const tagsTemplate = ({
     title="",
     item_title="",
     locking="false",
-    optional="false"
+    optional="false",
+    keywords=false
 }) =>
 `<div class="doc-part" data-type="tags_part">
     <div class="doc-part-header">
@@ -314,6 +317,7 @@ const tagsTemplate = ({
     </div>
     <div class="attrs hidden">
         <div class="label">${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(item_title)}"></div>
+        <div class="label">${gettext('Include in document metadata as keywords?')} <input class="keywords" type="checkbox" ${keywords ? 'checked' : ''}></div>
         <div class="label">${gettext('Locking')}
             <select class="locking">
                 <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>

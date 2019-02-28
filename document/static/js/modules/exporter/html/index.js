@@ -4,6 +4,7 @@ import pretty from "pretty"
 import {createSlug} from "../tools/file"
 import {modifyImages} from "../tools/html"
 import {ZipFileCreator} from "../tools/zip"
+import {removeHidden} from "../tools/doc_contents"
 import {htmlExportTemplate} from "../html/templates"
 import {addAlert} from "../../common"
 import {BaseDOMExporter} from "../tools/dom_export"
@@ -26,7 +27,7 @@ export class HTMLExporter extends BaseDOMExporter{
 
     init() {
         addAlert('info', `${this.doc.title}: ${gettext('HTML export has been initiated.')}`)
-
+        this.docContents = removeHidden(this.doc.contents, false)
         let docStyle
         return this.addStyle().then(
             style => docStyle = style

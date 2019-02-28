@@ -135,11 +135,17 @@ export const heading_part = partSpec('heading', 'heading', {
 export const contributors_part = partSpec('contributors', 'contributor*', {
     item_title: {
         default: gettext('Contributor')
+    },
+    authors: {
+        default: false
     }
 })
 export const tags_part = partSpec('tags', 'tag*', {
     item_title: {
         default: gettext('Tag')
+    },
+    keywords: {
+        default: false
     }
 })
 export const table_part = partSpec('table', 'table', {

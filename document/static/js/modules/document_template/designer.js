@@ -173,8 +173,12 @@ export class DocumentTemplateDesigner {
                                 }
                                 break
                             case 'contributors_part':
+                                attrs.item_title = el.querySelector('input.item_title').value
+                                attrs.authors = !!el.querySelector('input.authors')
+                                break
                             case 'tags_part':
                                 attrs.item_title = el.querySelector('input.item_title').value
+                                attrs.keywords = !!el.querySelector('input.keywords')
                                 break
                             default:
                                 break

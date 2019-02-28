@@ -181,9 +181,9 @@ export class DocxExporterRender {
             citationType: this.exporter.citations.citFm.citationType,
             section: pStyle ? pStyle.getAttribute('w:val') : 'Normal'
         }
-        const outXML = tag.content.map(
+        const outXML = tag.content ? tag.content.map(
             content => this.exporter.richtext.transformRichtext(content, options)
-        ).join('')
+        ).join('') : ''
         tag.par.insertAdjacentHTML('beforebegin', outXML)
         // sectPr contains information about columns, etc. We need to move this
         // to the last paragraph we will be adding.

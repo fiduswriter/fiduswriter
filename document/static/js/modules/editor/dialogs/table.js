@@ -1,6 +1,6 @@
 import {Dialog, addDropdownBox} from "../../common"
 import {tableResizeTemplate, tableInsertTemplate} from "./templates"
-import {deleteTable} from "prosemirror-tables"
+
 
 export class TableDialog {
     constructor(editor) {
@@ -107,7 +107,7 @@ export class TableResizeDialog {
     }
 
     init() {
-        const table = this.findTable(this.editor.currentView.state)
+        const {table} = this.findTable(this.editor.currentView.state)
         if (table){
             this.width = table.attrs.width
             this.aligned = table.attrs.aligned
@@ -148,24 +148,20 @@ export class TableResizeDialog {
 
     findTable(state) {
         const $head = state.selection.$head
-        for (let d = $head.depth; d > 0; d--) if ($head.node(d).type.spec.tableRole == "table") return $head.node(d)
-        return false
+        for (let d = $head.depth; d > 0; d--) if ($head.node(d).type.spec.tableRole == "table"){
+            return {table: $head.node(d), tablePos: $head.before(d)}}
+        return {table:false}
     }
 
     submitForm(){
-        const table = this.findTable(this.editor.currentView.state)
-        table.attrs.width = this.width
-        table.attrs['data-width'] = this.width
-        table.attrs.aligned = this.width == "100" ? "center" : this.aligned
-        table.attrs['data-aligned'] = this.width == "100" ? "center" : this.aligned
-        table.attrs['data-layout'] = this.layout
-        table.attrs.layout = this.layout
-        deleteTable(this.editor.currentView.state, this.editor.currentView.dispatch)
-        this.editor.currentView.dispatch(
-            this.editor.currentView.state.tr.replaceSelectionWith(
-                table
-            )
-        )
+        const {table, tablePos} = this.findTable(this.editor.currentView.state)
+        if (!table) return
+        const attrs = Object.assign({}, table.attrs, {
+            width : this.width,
+            aligned : this.width === "100" ? "center" : this.aligned,
+            layout : this.layout
+        })
+        this.editor.currentView.dispatch(this.editor.currentView.state.tr.setNodeMarkup(tablePos, false, attrs))
     }
 
     insertDialog() {

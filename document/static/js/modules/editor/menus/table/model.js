@@ -9,6 +9,19 @@ const findTable = function(state) {
     return false
 }
 
+const tableAddedFromTemplate = function(state) {
+    const $head = state.selection.$head
+    for (let d = $head.depth; d > 0; d--)
+        if ($head.node(d).type.spec.tableRole == "table") {
+            if ($head.node(d - 1).type.name === "table_part") {
+                return true
+            } else {
+                return false
+            }
+        }
+    return true
+}
+
 const tableAddedByUser = function(table, userId) {
     return table.attrs.track.find(track => (track.type==='insertion' && track.user === userId)) ? true : false
 }
@@ -315,7 +328,7 @@ export const tableMenuModel = ()=> ({
             action: editor => {
                 deleteTable(editor.currentView.state, editor.currentView.dispatch)
             },
-            disabled: editor => !findTable(editor.currentView.state)
+            disabled: editor => tableAddedFromTemplate(editor.currentView.state)
         }
     ]
 })

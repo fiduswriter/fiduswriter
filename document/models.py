@@ -204,21 +204,33 @@ def delete_document(sender, instance, **kwargs):
 
 
 RIGHTS_CHOICES = (
-    ('read', 'Reader'),
-    ('read-without-comments', 'Reader without comment access'),
-    # Can read the text, but not the comments.
     ('write', 'Writer'),
+    # Can write contents and can read+write comments.
+    # Can chat with collaborators.
     ('write-tracked', 'Write with tracked changes'),
-    ('review', 'Reviewer'),
+    # Can write tracked contents and can read/write comments.
+    # Cannot turn off tracked changes.
+    # Can chat with collaborators.
     ('comment', 'Commentator'),
-    ('edit', 'Editor'),
-    # Editor as in "Editor of Journal X"
+    # Can read contents and can read+write comments.
+    # Can chat with collaborators.
+    ('review', 'Reviewer'),
+    # Can read the contents and can read/write his own comments.
+    # Comments by users with this access right only show the user's
+    # numeric ID, not their username.
+    # Cannot chat with collaborators nor see that they are connected.
+    ('read', 'Reader'),
+    # Can read contents, including comments
+    # Can chat with collaborators.
+    ('read-without-comments', 'Reader without comment access'),
+    # Can read contents, but not the comments.
+    # Cannot chat with collaborators.
 )
 
 # Editor and Reviewer can only comment and not edit document
-COMMENT_ONLY = ('edit', 'review', 'comment')
+COMMENT_ONLY = ('review', 'comment')
 
-CAN_UPDATE_DOCUMENT = ['write', 'write-tracked', 'edit', 'review', 'comment']
+CAN_UPDATE_DOCUMENT = ['write', 'write-tracked', 'review', 'comment']
 
 # Whether the collaborator is allowed to know about other collaborators
 # and communicate with them.

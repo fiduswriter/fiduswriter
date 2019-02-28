@@ -1,7 +1,12 @@
 // Return a json that is the same as the existing json, but with all parts
 // marked as hidden removed.
 
-export const removeHidden = function(node) {
+export const removeHidden = function(
+    node,
+    // Whether to leave the outer part of the removed node.
+    // True for tree-walking exporters, false for DOM-changing exporters.
+    leaveStub = true
+) {
     const returnNode = {}
 
     Object.keys(node).forEach(key => {
@@ -9,9 +14,22 @@ export const removeHidden = function(node) {
             returnNode[key] = node[key]
         }
     })
-    if ((!node.attrs || !node.attrs.hidden) && node.content) {
+    if (node.attrs && node.attrs.hidden) {
+        if (leaveStub) {
+            return returnNode
+        } else {
+            return false
+        }
+    }
+    if (node.content) {
         returnNode.content = []
-        node.content.forEach(child => returnNode.content.push(removeHidden(child)))
+        node.content.forEach(child => {
+            const cleanedChild = removeHidden(child, leaveStub)
+            if (cleanedChild) {
+                returnNode.content.push(cleanedChild)
+            }
+
+        })
     }
     return returnNode
 }

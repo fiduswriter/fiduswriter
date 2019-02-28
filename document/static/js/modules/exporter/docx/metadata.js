@@ -8,8 +8,24 @@ export class DocxExporterMetadata {
         this.docContents = docContents
         this.coreXml = false
         this.metadata = {
-            authors: [], // TODO: define authors field
-            keywords: [], // TODO: define keywords field
+            authors: this.docContents.content.reduce(
+                (authors, part) => {
+                    if (part.type==='contributors_part' && part.attrs.authors) {
+                        return authors.concat(part.content.map(authorNode => authorNode.attrs))
+                    } else {
+                        return authors
+                    }
+                },
+            []),
+            keywords: this.docContents.content.reduce(
+                (keywords, part) => {
+                    if (part.type==='tags_part' && part.attrs.keywords) {
+                        return keywords.concat(part.content.map(keywordNode => keywordNode.attrs.tag))
+                    } else {
+                        return keywords
+                    }
+                },
+            []),
             title: textContent(this.docContents.content[0])
         }
     }
@@ -54,7 +70,6 @@ export class DocxExporterMetadata {
         })
         const lastAuthor = authors.length ? escapeText(authors[0]) : gettext('Unknown')
         const allAuthors = authors.length ? escapeText(authors.join(';')): gettext('Unknown')
-
         let allAuthorsEl = this.coreXml.querySelector('creator')
         if (!allAuthorsEl) {
             corePropertiesEl.insertAdjacentHTML('beforeEnd', '<dc:creator></dc:creator>')

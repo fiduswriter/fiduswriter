@@ -20,7 +20,7 @@ Exporter to Office Open XML docx (Microsoft Word)
 TODO:
 * - Export comments
 * - Export document language
-* - Templating of keywords/authors output
+* - Templating of tag/contributor output
 */
 
 export class DocxExporter {

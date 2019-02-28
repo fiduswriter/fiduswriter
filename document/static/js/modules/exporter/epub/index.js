@@ -1,5 +1,4 @@
 import download from "downloadjs"
-import {DOMSerializer} from "prosemirror-model"
 
 import {obj2Node, node2Obj} from "../tools/json"
 import {createSlug} from "../tools/file"
@@ -8,6 +7,7 @@ import {ZipFileCreator} from "../tools/zip"
 import {opfTemplate, containerTemplate, ncxTemplate, navTemplate, xhtmlTemplate} from "./templates"
 import {addAlert} from "../../common"
 import {BaseEpubExporter} from "./base"
+import {removeHidden} from "../tools/doc_contents"
 
 
 export class EpubExporter extends BaseEpubExporter {
@@ -27,6 +27,7 @@ export class EpubExporter extends BaseEpubExporter {
     init() {
         addAlert('info', this.doc.title + ': ' + gettext(
             'Epub export has been initiated.'))
+        this.docContents = removeHidden(this.doc.contents, false)
         this.joinDocumentParts().then(
             () => this.fillToc()
         ).then(
@@ -76,21 +77,41 @@ export class EpubExporter extends BaseEpubExporter {
 
         const timestamp = this.getTimestamp()
 
-        this.schema.cached.imageDB = this.imageDB
-        const serializer = DOMSerializer.fromSchema(this.schema)
-        const docContents = serializer.serializeNode(this.schema.nodeFromJSON(this.doc.contents))
 
-        // Remove hidden parts
-        const hiddenEls = docContents.querySelectorAll('[data-hidden=true]')
-        hiddenEls.forEach(hiddenEl => hiddenEl.parentElement.removeChild(hiddenEl))
+        const authors = this.docContents.content.reduce(
+            (authors, part) => {
+                if (part.type==='contributors_part' && part.attrs.authors) {
+                    return authors.concat(part.content.map(
+                        authorNode => {
+                            const nameParts = []
+                            if (authorNode.attrs.firstname) {
+                                nameParts.push(authorNode.attrs.firstname)
+                            }
+                            if (authorNode.attrs.lastname) {
+                                nameParts.push(authorNode.attrs.lastname)
+                            }
+                            if (!nameParts.length && authorNode.attrs.institution) {
+                                // We have an institution but no names. Use institution as name.
+                                nameParts.push(authorNode.attrs.institution)
+                            }
+                            return nameParts.join(' ')
+                        }
+                    ))
+                } else {
+                    return authors
+                }
+            },
+        [])
+        const keywords = this.docContents.content.reduce(
+            (keywords, part) => {
+                if (part.type==='tags_part' && part.attrs.keywords) {
+                    return keywords.concat(part.content.map(keywordNode => keywordNode.attrs.tag))
+                } else {
+                    return keywords
+                }
+            },
+        [])
 
-        const authors = Array.from(docContents.querySelectorAll('.article-authors .author')).map(
-            authorEl => authorEl.textContent
-        )
-
-        const keywords = Array.from(docContents.querySelectorAll('.article-keywords .keyword')).map(
-            keywordEl => keywordEl.textContent
-        )
 
         const opfCode = opfTemplate({
             language: this.lang,

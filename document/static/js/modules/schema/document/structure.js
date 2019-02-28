@@ -190,6 +190,25 @@ export const table_of_contents = {
 
 }
 
+export const separator_part = {
+    marks: "annotation track",
+    group: "part",
+    defining: true,
+    attrs : {
+        id: {
+            default: 'separator'
+        }
+    },
+    parseDOM: [{
+        tag: "div.article-separator"
+    }],
+    toDOM(_node) {
+        const dom = document.createElement('div')
+        dom.classList.add('article-separator')
+        return dom
+    }
+}
+
 export const title = {
     content: "text*",
     marks: "annotation track",

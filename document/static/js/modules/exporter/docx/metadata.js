@@ -70,7 +70,6 @@ export class DocxExporterMetadata {
         })
         const lastAuthor = authors.length ? escapeText(authors[0]) : gettext('Unknown')
         const allAuthors = authors.length ? escapeText(authors.join(';')): gettext('Unknown')
-
         let allAuthorsEl = this.coreXml.querySelector('creator')
         if (!allAuthorsEl) {
             corePropertiesEl.insertAdjacentHTML('beforeEnd', '<dc:creator></dc:creator>')

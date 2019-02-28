@@ -822,10 +822,6 @@ html[hc=a5] #toolbar {
     padding: 10px;
 }
 
-.article-separator {
-    border-bottom: 1px dotted grey;
-}
-
 #navigator {
     top: 250px;
     left:-265px;

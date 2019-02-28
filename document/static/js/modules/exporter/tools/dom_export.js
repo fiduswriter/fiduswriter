@@ -22,7 +22,7 @@ export class BaseDOMExporter {
     joinDocumentParts() {
         this.schema.cached.imageDB = this.imageDB
         const serializer = DOMSerializer.fromSchema(this.schema)
-        this.contents = serializer.serializeNode(this.schema.nodeFromJSON(this.docContents))
+        this.contents = serializer.serializeNode(this.schema.nodeFromJSON(this.doc.contents))
 
         const citRenderer = new RenderCitations(
             this.contents,

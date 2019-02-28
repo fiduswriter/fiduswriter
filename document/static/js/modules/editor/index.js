@@ -114,7 +114,7 @@ import {
     buildEditorKeymap
 } from "./keymap"
 
-export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
+export const COMMENT_ONLY_ROLES = ['review', 'comment']
 export const READ_ONLY_ROLES = ['read', 'read-without-comments']
 export const REVIEW_ROLES = ['review']
 

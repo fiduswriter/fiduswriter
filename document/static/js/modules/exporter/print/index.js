@@ -3,6 +3,7 @@ import {vivliostylePrint} from "vivliostyle-print"
 import {PAPER_SIZES} from "../../schema/const"
 import {HTMLExporter} from "../html"
 import {addAlert} from "../../common"
+import {removeHidden} from "../tools/doc_contents"
 
 export class PrintExporter extends HTMLExporter {
 
@@ -69,6 +70,7 @@ export class PrintExporter extends HTMLExporter {
 
     init() {
         addAlert('info', `${this.doc.title}: ${gettext('Printing has been initiated.')}`)
+        this.docContents = removeHidden(this.doc.contents, false)
         return this.addStyle().then(
             () => this.joinDocumentParts()
         ).then(

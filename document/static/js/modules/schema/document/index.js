@@ -124,7 +124,12 @@ specNodes = specNodes.update(
             }
         }
     )
-)
+).update('table_row', {
+    content: "(table_cell | table_header)+",
+    tableRole: "row",
+    parseDOM: [{tag: "tr"}],
+    toDOM() { return ["tr", 0] }
+})
 
 const spec = {
     nodes: specNodes,

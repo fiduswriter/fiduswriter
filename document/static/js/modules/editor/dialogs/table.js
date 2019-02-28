@@ -158,7 +158,7 @@ export class TableResizeDialog {
         if (!table) return
         const attrs = Object.assign({}, table.attrs, {
             width : this.width,
-            aligned : this.width == "100" ? "center" : this.aligned,
+            aligned : this.width === "100" ? "center" : this.aligned,
             layout : this.layout
         })
         this.editor.currentView.dispatch(this.editor.currentView.state.tr.setNodeMarkup(tablePos, false, attrs))

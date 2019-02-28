@@ -71,7 +71,7 @@ export class BibliographyOverview {
                 top: ""
             },
             data: {
-                headings: ['','&emsp;&emsp;', gettext("Title"), gettext("Sourcetype"), gettext("Author"), gettext("Published"), ''],
+                headings: ['', '&emsp;&emsp;', gettext("Title"), gettext("Sourcetype"), gettext("Author"), gettext("Published"), ''],
                 data: ids.map(id => this.createTableRow(id))
             },
             columns: [
@@ -80,7 +80,7 @@ export class BibliographyOverview {
                     hidden: true
                 },
                 {
-                    select: [1,6],
+                    select: [1, 6],
                     sortable: false
                 }
             ]

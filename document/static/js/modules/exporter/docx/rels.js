@@ -39,7 +39,7 @@ export class DocxExporterRels {
 
         rels.forEach(
             rel => {
-                const id = parseInt(rel.getAttribute("Id").replace(/\D/g,''))
+                const id = parseInt(rel.getAttribute("Id").replace(/\D/g, ''))
                 if (id > this.maxRelId) {
                     this.maxRelId = id
                 }
@@ -78,7 +78,7 @@ export class DocxExporterRels {
         const footnotesRel = this.xml.querySelector('Relationship[Target="footnotes.xml"]')
         if (footnotesRel) {
             // Rel exists already
-            const fnRId = parseInt(footnotesRel.getAttribute('Id').replace(/\D/g,''))
+            const fnRId = parseInt(footnotesRel.getAttribute('Id').replace(/\D/g, ''))
             return fnRId
         }
         const rels = this.xml.querySelector('Relationships')
@@ -93,7 +93,7 @@ export class DocxExporterRels {
         const numberingRel = this.xml.querySelector('Relationship[Target="numbering.xml"]')
         if (numberingRel) {
             // Rel exists already
-            const nuRId = parseInt(numberingRel.getAttribute('Id').replace(/\D/g,''))
+            const nuRId = parseInt(numberingRel.getAttribute('Id').replace(/\D/g, ''))
             return nuRId
         }
         const rels = this.xml.querySelector('Relationships')

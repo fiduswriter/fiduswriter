@@ -7,7 +7,7 @@ const menuTemplate = ({id, classes, height, width, zIndex, menu, scroll, page}) 
     <div>
         <ul class="content-menu-list">
         ${
-            menu.content.map((menuItem,index)=>
+            menu.content.map((menuItem, index)=>
                 menuItem.type == "separator" ?
                     '<hr class="content-menu-item-divider"/>' :
                     `<li data-index="${index}" class="content-menu-item${
@@ -127,6 +127,7 @@ export class ContentMenu {
     getHighestDialogZIndex() {
         let zIndex = 100
         document.querySelectorAll('div.ui-content_menu').forEach(dialogEl => zIndex = Math.max(zIndex, dialogEl.style.zIndex))
+        document.querySelectorAll('div.ui-dialog').forEach(dialogEl => zIndex = Math.max(zIndex, dialogEl.style.zIndex))
         return zIndex
     }
 

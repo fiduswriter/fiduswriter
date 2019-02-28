@@ -14,9 +14,9 @@ export class ModToolsWordCount {
         let wholeContent = textContent + ' ' + footnoteContent + ' ' + bibliographyContent
         const numChars = wholeContent.length - 2 // Subtract two for added spaces
 
-        wholeContent = wholeContent.replace(/(^\s*)|(\s*$)/gi,"")
-        wholeContent = wholeContent.replace(/[ ]{2,}/gi," ")
-        wholeContent = wholeContent.replace(/\n /,"\n")
+        wholeContent = wholeContent.replace(/(^\s*)|(\s*$)/gi, "")
+        wholeContent = wholeContent.replace(/[ ]{2,}/gi, " ")
+        wholeContent = wholeContent.replace(/\n /, "\n")
         wholeContent = wholeContent.split(' ')
 
         const numWords = wholeContent.length

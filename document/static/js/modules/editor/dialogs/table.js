@@ -1,5 +1,6 @@
 import {Dialog, addDropdownBox} from "../../common"
-import {tableResizeTemplate,tableInsertTemplate} from "./templates"
+import {tableResizeTemplate, tableInsertTemplate} from "./templates"
+
 
 export class TableDialog {
     constructor(editor) {

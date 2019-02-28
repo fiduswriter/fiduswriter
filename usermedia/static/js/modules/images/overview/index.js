@@ -1,5 +1,4 @@
 import {DataTable} from "simple-datatables"
-
 import {ImageOverviewCategories} from "./categories"
 import {
     activateWait,
@@ -13,7 +12,8 @@ import {
     escapeText,
     OverviewMenuView,
     baseBodyTemplate,
-    setDocTitle
+    setDocTitle,
+    ensureCSS
 } from "../../common"
 import {SiteMenu} from "../../menu"
 import {FeedbackTab} from "../../feedback"
@@ -52,6 +52,9 @@ export class ImageOverview {
             username: this.username,
             staticUrl: this.staticUrl
         })
+        ensureCSS([
+            'cropper.min.css'
+        ], this.staticUrl)
         setDocTitle(gettext('Media Manager'))
         const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
         feedbackTab.init()
@@ -191,7 +194,7 @@ export class ImageOverview {
                 top: ""
             },
             data: {
-                headings: ['','&emsp;&emsp;', gettext("File"), gettext("Size (px)"), gettext("Added"), ''],
+                headings: ['', '&emsp;&emsp;', gettext("File"), gettext("Size (px)"), gettext("Added"), ''],
                 data: ids.map(id => this.createTableRow(id))
             },
             columns: [
@@ -200,7 +203,7 @@ export class ImageOverview {
                     hidden: true
                 },
                 {
-                    select: [1,3,5],
+                    select: [1, 3, 5],
                     sortable: false
                 }
             ]

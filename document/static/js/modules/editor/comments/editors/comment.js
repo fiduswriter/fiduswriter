@@ -21,7 +21,7 @@ export class CommentEditor {
         this.plugins = [
             history(),
             suggestionsPlugin({
-                escapeOnSelectionChange: true ,
+                escapeOnSelectionChange: true,
                 matcher: triggerCharacter('@'),
                 onEnter: (args) => {
                     this.selectedTag = 0

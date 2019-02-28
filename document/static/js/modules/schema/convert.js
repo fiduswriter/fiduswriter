@@ -218,7 +218,7 @@ const convertNodeV13 = function(node, shrunkBib, fullBib, imageIds) {
                 let item = fullBib[ref.id]
                 if (!item) {
                     item = {
-                        fields: {"title":[{"type":"text","text":"Deleted"}]},
+                        fields: {"title":[{"type":"text", "text":"Deleted"}]},
                         bib_type: "misc",
                         entry_key: "FidusWriter"
                     }

@@ -41,7 +41,7 @@ export class OdtExporterStyles {
     getStyleCounters() {
         const styles = this.contentXml.querySelectorAll('automatic-styles style')
         styles.forEach(style => {
-            const styleNumber = parseInt(style.getAttribute('style:name').replace(/\D/g,''))
+            const styleNumber = parseInt(style.getAttribute('style:name').replace(/\D/g, ''))
             const styleFamily = style.getAttribute('style:family')
             if (styleFamily==='text') {
                 if (styleNumber> this.inlineStyleCounter) {
@@ -55,7 +55,7 @@ export class OdtExporterStyles {
         })
         const listStyles = this.contentXml.querySelectorAll('automatic-styles list-style')
         listStyles.forEach(style => {
-            const styleNumber = parseInt(style.getAttribute('style:name').replace(/\D/g,''))
+            const styleNumber = parseInt(style.getAttribute('style:name').replace(/\D/g, ''))
             if (styleNumber> this.listStyleCounter) {
                 this.listStyleCounter = styleNumber
             }

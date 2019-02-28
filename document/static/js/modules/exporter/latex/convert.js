@@ -70,103 +70,153 @@ export class LatexExporterConvert {
                 start += '\n\\title{'
                 end = '}' + end
                 break
-            case 'subtitle':
-                if (node.content) {
+            case 'heading_part':
+                if (node.attrs.metadata === 'subtitle' && node.content) {
                     start += '\n\\subtitle{'
                     end = '}' + end
                     this.features.subtitle = true
+                    options = Object.assign({}, options)
+                    options.ignoreHeading = true
+                } else if (!options.madeTitle) {
+                    start += '\n\n\\maketitle\n'
+                    options.madeTitle = true
                 }
                 break
-            case 'author':
-                // Ignore - we deal with authors instead.
+            case 'contributor':
+                // Ignore - we deal with namelist_part instead.
                 break
-            case 'authors':
+            case 'contributors_part':
                 if (node.content) {
-                    const authorsPerAffil = node.content.map(node => {
-                        const author = node.attrs,
-                            nameParts = []
-                        let affiliation = false
-                        if (author.firstname) {
-                            nameParts.push(author.firstname)
-                        }
-                        if (author.lastname) {
-                            nameParts.push(author.lastname)
-                        }
-                        if (nameParts.length && author.institution) {
-                            affiliation = author.institution
-                        } else if (author.institution) {
-                            // We have an institution but no names. Use institution as name.
-                            nameParts.push(author.institution)
-                        }
-                        return {
-                            name: nameParts.join(' '),
-                            affiliation,
-                            email: author.email
-                        }
-                    }).reduce((affils, author) => {
-                        const affil = author.affiliation
-                        affils[affil] = affils[affil] || []
-                        affils[affil].push(author)
-                        return affils
-                    }, {})
+                    if (node.attrs.metadata === 'authors') {
+                        const authorsPerAffil = node.content.map(node => {
+                            const author = node.attrs,
+                                nameParts = []
+                            let affiliation = false
+                            if (author.firstname) {
+                                nameParts.push(author.firstname)
+                            }
+                            if (author.lastname) {
+                                nameParts.push(author.lastname)
+                            }
+                            if (nameParts.length && author.institution) {
+                                affiliation = author.institution
+                            } else if (author.institution) {
+                                // We have an institution but no names. Use institution as name.
+                                nameParts.push(author.institution)
+                            }
+                            return {
+                                name: nameParts.join(' '),
+                                affiliation,
+                                email: author.email
+                            }
+                        }).reduce((affils, author) => {
+                            const affil = author.affiliation
+                            affils[affil] = affils[affil] || []
+                            affils[affil].push(author)
+                            return affils
+                        }, {})
 
-                    Object.values(authorsPerAffil).forEach(
-                        affil => {
-                            affil.forEach(
-                                author => {
-                                    content +=
-                                        `\n\\author{${escapeLatexText(author.name)}${
-                                            author.email ?
-                                            `\\thanks{${
-                                                escapeLatexText(author.email)
-                                            }}` :
-                                            ''
-                                        }}`
+                        Object.values(authorsPerAffil).forEach(
+                            affil => {
+                                affil.forEach(
+                                    author => {
+                                        content +=
+                                            `\n\\author{${escapeLatexText(author.name)}${
+                                                author.email ?
+                                                `\\thanks{${
+                                                    escapeLatexText(author.email)
+                                                }}` :
+                                                ''
+                                            }}`
+                                    }
+                                )
+
+                                content += `\n\\affil{${
+                                    affil[0].affiliation ?
+                                    escapeLatexText(affil[0].affiliation) :
+                                    ''
+                                }}`
+                            }
+                        )
+                        this.features.authors = true
+                    } else {
+                        if (!options.madeTitle) {
+                            start += '\n\n\\maketitle\n'
+                            options.madeTitle = true
+                        }
+                        // TODO: deal with contributor lists of non-authors properly
+                        content += node.content.map(
+                            contributorNode => {
+                                const nameParts = []
+                                if (contributorNode.attrs.firstname) {
+                                    nameParts.push(contributorNode.attrs.firstname)
                                 }
-                            )
+                                if (contributorNode.attrs.lastname) {
+                                    nameParts.push(contributorNode.attrs.lastname)
+                                }
+                                if (!nameParts.length && contributorNode.attrs.institution) {
+                                    // We have an institution but no names. Use institution as name.
+                                    nameParts.push(contributorNode.attrs.institution)
+                                }
+                                return nameParts.join(' ')
+                            }
+                        ).join(', ')
 
-                            content += `\n\\affil{${
-                                affil[0].affiliation ?
-                                escapeLatexText(affil[0].affiliation) :
-                                ''
-                            }}`
-                        }
-                    )
-                    this.features.authors = true
+                    }
                     content += "\n\n"
                 }
+
                 break
-            case 'keywords':
+            case 'tags_part':
                 if (node.content) {
-                    start += '\n\\keywords{'
-                    start += node.content.map(
-                        keyword => escapeLatexText(keyword.attrs.keyword)
-                    ).join('\\sep ')
-                    end = '}' + end
-                    this.features.keywords = true
+                    if (node.attrs.metadata === 'keywords') {
+                        start += '\n\\keywords{'
+                        start += node.content.map(
+                            keyword => escapeLatexText(keyword.attrs.tag)
+                        ).join('\\sep ')
+                        end = '}' + end
+                        this.features.keywords = true
+                    } else if (!options.madeTitle) {
+                        start += '\n\n\\maketitle\n'
+                        options.madeTitle = true
+                    }
                 }
                 break
-            case 'keyword':
-                // Ignore - we already took all the keywords from the keywords node.
+            case 'tag':
+                // Ignore - we already took all the tags_part from the keywords node.
                 break
-            case 'abstract':
-                // We add the maketitle command here. TODO: This relies on the
-                // existence of a abstract node, even if it has no content.
-                // It would be better if it wouldn't have to rely on this.
-                start += '\n\n\\maketitle\n'
-                if (node.content) {
+            case 'richtext_part':
+                if (!options.madeTitle) {
+                    start += '\n\n\\maketitle\n'
+                    options.madeTitle = true
+                }
+                if (node.content && node.attrs.metadata === 'abstract') {
                     start += '\n\\begin{abstract}\n'
                     end = '\n\\end{abstract}\n' + end
                 }
                 break
-            case 'body':
+            case 'table_of_contents':
+                start += '\n\n\\tableofcontents\n'
+                break
+            case 'separator_part':
+            case 'table_part':
+                // part separators as in page breaks should usually already be handled
+                // by LaTeX and table parts will simply show the table inside of them.
                 break
             case 'paragraph':
                 start += '\n\n'
                 end = '\n' + end
                 break
-            case 'heading':
-                level = node.attrs.level
+            case 'heading1':
+            case 'heading2':
+            case 'heading3':
+            case 'heading4':
+            case 'heading5':
+            case 'heading6':
+                if (options.ignoreHeading) {
+                    break
+                }
+                level = parseInt(node.type.slice(-1))
                 switch (level) {
                     case 1:
                         start += '\n\n\\section{'

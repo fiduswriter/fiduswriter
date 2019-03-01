@@ -380,7 +380,14 @@ export class DocxExporterRichtext {
                     <w:tbl>
                         <w:tblPr>
                             <w:tblStyle w:val="${this.exporter.tables.tableGridStyle}" />
-                            <w:tblW w:w="0" w:type="auto" />
+                            ${
+                                node.attrs.width === '100' ?
+                                    '<w:tblW w:w="0" w:type="auto" />' :
+                                    noSpaceTmp`<w:tblW w:w="${
+                                        50 * parseInt(node.attrs.width)
+                                    }" w:type="pct" />
+                                    <w:jc w:val="${node.attrs.aligned}" />`
+                            }
                             <w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1" />
                         </w:tblPr>
                         <w:tblGrid>`

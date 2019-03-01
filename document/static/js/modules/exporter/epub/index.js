@@ -80,7 +80,7 @@ export class EpubExporter extends BaseEpubExporter {
 
         const authors = this.docContents.content.reduce(
             (authors, part) => {
-                if (part.type==='contributors_part' && part.attrs.authors) {
+                if (part.type==='contributors_part' && part.attrs.metadata === 'authors') {
                     return authors.concat(part.content.map(
                         authorNode => {
                             const nameParts = []
@@ -104,7 +104,7 @@ export class EpubExporter extends BaseEpubExporter {
         [])
         const keywords = this.docContents.content.reduce(
             (keywords, part) => {
-                if (part.type==='tags_part' && part.attrs.keywords) {
+                if (part.type==='tags_part' && part.attrs.metadata === 'keywords') {
                     return keywords.concat(part.content.map(keywordNode => keywordNode.attrs.tag))
                 } else {
                     return keywords

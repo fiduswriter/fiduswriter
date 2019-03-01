@@ -6,7 +6,6 @@ import {removeHidden, fixTables} from "../tools/doc_contents"
 import {LatexExporterConvert} from "./convert"
 import {ZipFileCreator} from "../tools/zip"
 import {readMe} from "./readme"
-import {addAlert} from "../../common"
 /*
  Exporter to LaTeX
 */
@@ -23,10 +22,6 @@ export class LatexExporter {
     }
 
     init() {
-        addAlert('error', 'Latex exporter is temporarily out of order.')
-    }
-
-    disabledInit() { // temporarily disabled
         this.zipFileName = `${createSlug(this.doc.title)}.latex.zip`
         this.docContents = fixTables(removeHidden(this.doc.contents))
         this.converter = new LatexExporterConvert(this, this.imageDB, this.bibDB)

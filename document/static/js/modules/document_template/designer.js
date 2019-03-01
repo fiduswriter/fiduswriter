@@ -140,7 +140,7 @@ export class DocumentTemplateDesigner {
                         if (locking !== 'false') {
                             attrs.locking = locking
                         }
-                        let language
+                        let language, value
                         switch (type) {
                             case 'richtext_part':
                             case 'heading_part':
@@ -156,6 +156,8 @@ export class DocumentTemplateDesigner {
                                 if (!node.content) {
                                     node.content = [{type: attrs.elements[0]}]
                                 }
+                                value = el.querySelector('select.metadata').value
+                                attrs.metadata = value === 'false' ? false : value
                                 break
                             case 'table_part':
                                 attrs.elements = Array.from(el.querySelectorAll('.elements:checked')).map(el => el.value)
@@ -173,12 +175,10 @@ export class DocumentTemplateDesigner {
                                 }
                                 break
                             case 'contributors_part':
-                                attrs.item_title = el.querySelector('input.item_title').value
-                                attrs.authors = !!el.querySelector('input.authors')
-                                break
                             case 'tags_part':
                                 attrs.item_title = el.querySelector('input.item_title').value
-                                attrs.keywords = !!el.querySelector('input.keywords')
+                                value = el.querySelector('select.metadata').value
+                                attrs.metadata = value === 'false' ? false : value
                                 break
                             default:
                                 break

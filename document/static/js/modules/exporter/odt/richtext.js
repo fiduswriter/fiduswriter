@@ -241,7 +241,15 @@ export class OdtExporterRichtext {
                 break
             case 'table':
                 columns = node.content[0].content.length
-                start += '<table:table>'
+                if (node.attrs.width === '100') {
+                    start += '<table:table>'
+                } else {
+                    const styleId = this.exporter.styles.getTableStyleId(
+                        node.attrs.aligned +
+                        node.attrs.width
+                    )
+                    start += `<table:table table:style-name="Table${styleId}">`
+                }
                 start += `<table:table-column table:number-columns-repeated="${columns}" />`
                 end = '</table:table>' + end
                 break

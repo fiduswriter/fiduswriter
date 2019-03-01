@@ -107,7 +107,8 @@ const headingTemplate = ({
     marks=["strong", "em", "highlight", "underline", "link"],
     locking="false",
     optional="false",
-    language=false
+    language=false,
+    metadata=false
 }) =>
 `<div class="doc-part" data-type="heading_part">
     <div class="doc-part-header">
@@ -123,6 +124,12 @@ const headingTemplate = ({
         </div>
     </div>
     <div class="attrs hidden">
+        <div class="label">${gettext('Metadata function')}
+            <select class="metadata">
+                <option value="false" ${metadata===false ? "selected" : ""}>${gettext('None')}</option>
+                <option value="subtitle" ${metadata==='subtitle' ? "selected" : ""}>${gettext('Subtitle')}</option>
+            </select>
+        </div>
         <div class="label">${gettext('Locking')}
             <select class="locking">
                 <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>
@@ -192,7 +199,7 @@ const contributorsTemplate = ({
     item_title="",
     locking="false",
     optional="false",
-    authors=false
+    metadata=false
 }) =>
 `<div class="doc-part" data-type="contributors_part">
     <div class="doc-part-header">
@@ -209,7 +216,12 @@ const contributorsTemplate = ({
     </div>
     <div class="attrs hidden">
         <div class="label">${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(item_title)}"></div>
-        <div class="label">${gettext('Include in document metadata as authors?')} <input class="authors" type="checkbox" ${authors ? 'checked' : ''}></div>
+        <div class="label">${gettext('Metadata function')}
+            <select class="metadata">
+                <option value="false" ${metadata===false ? "selected" : ""}>${gettext('None')}</option>
+                <option value="authors" ${metadata==='authors' ? "selected" : ""}>${gettext('Authors')}</option>
+            </select>
+        </div>
         <div class="label">${gettext('Locking')}
             <select class="locking">
                 <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>
@@ -242,7 +254,8 @@ const richtextTemplate = ({
     marks=["strong", "em", "highlight", "underline", "link"],
     locking="false",
     optional="false",
-    language=false
+    language=false,
+    metadata=false
 }) => `<div class="doc-part" data-type="richtext_part">
     <div class="doc-part-header">
         ${gettext('Richtext')}
@@ -257,6 +270,12 @@ const richtextTemplate = ({
         </div>
     </div>
     <div class="attrs hidden">
+        <div class="label">${gettext('Metadata function')}
+            <select class="metadata">
+                <option value="false" ${metadata===false ? "selected" : ""}>${gettext('None')}</option>
+                <option value="abstract" ${metadata==='abstract' ? "selected" : ""}>${gettext('Abstract')}</option>
+            </select>
+        </div>
         <div class="label">${gettext('Locking')}
             <select class="locking">
                 <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>
@@ -330,7 +349,7 @@ const tagsTemplate = ({
     item_title="",
     locking="false",
     optional="false",
-    keywords=false
+    metadata=false
 }) =>
 `<div class="doc-part" data-type="tags_part">
     <div class="doc-part-header">
@@ -347,7 +366,12 @@ const tagsTemplate = ({
     </div>
     <div class="attrs hidden">
         <div class="label">${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(item_title)}"></div>
-        <div class="label">${gettext('Include in document metadata as keywords?')} <input class="keywords" type="checkbox" ${keywords ? 'checked' : ''}></div>
+        <div class="label">${gettext('Metadata function')}
+            <select class="metadata">
+                <option value="false" ${metadata===false ? "selected" : ""}>${gettext('None')}</option>
+                <option value="keywords" ${metadata==='keywords' ? "selected" : ""}>${gettext('Keywords')}</option>
+            </select>
+        </div>
         <div class="label">${gettext('Locking')}
             <select class="locking">
                 <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>

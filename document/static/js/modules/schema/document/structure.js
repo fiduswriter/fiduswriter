@@ -122,6 +122,9 @@ export const richtext_part = partSpec('richtext', 'block+', {
     },
     marks: {
         default: []
+    },
+    metadata: {
+        default: false
     }
 })
 export const heading_part = partSpec('heading', 'heading', {
@@ -130,13 +133,16 @@ export const heading_part = partSpec('heading', 'heading', {
     },
     marks: {
         default: []
+    },
+    metadata: {
+        default: false
     }
 })
 export const contributors_part = partSpec('contributors', 'contributor*', {
     item_title: {
         default: gettext('Contributor')
     },
-    authors: {
+    metadata: {
         default: false
     }
 })
@@ -144,7 +150,7 @@ export const tags_part = partSpec('tags', 'tag*', {
     item_title: {
         default: gettext('Tag')
     },
-    keywords: {
+    metadata: {
         default: false
     }
 })

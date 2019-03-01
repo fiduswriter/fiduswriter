@@ -21,8 +21,10 @@ export class OdtExporterStyles {
         this.italicStyleId = false
         this.boldItalicStyleId = false
         this.inlineStyleIds = {}
+        this.tableStyleIds = {}
         this.bulletListStyleId = [false, false]
         this.inlineStyleCounter = 0
+        this.tableStyleCounter = 0
         this.blockStyleCounter = 0
         this.listStyleCounter = 0
     }
@@ -47,7 +49,11 @@ export class OdtExporterStyles {
                 if (styleNumber> this.inlineStyleCounter) {
                     this.inlineStyleCounter = styleNumber
                 }
-            } else {
+            } else if (styleFamily==='table') {
+                if (styleNumber> this.tableStyleCounter) {
+                    this.tableStyleCounter = styleNumber
+                }
+            } else if (styleFamily==='paragraph') {
                 if (styleNumber> this.blockStyleCounter) {
                     this.blockStyleCounter = styleNumber
                 }
@@ -97,6 +103,44 @@ export class OdtExporterStyles {
         autoStylesEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
             <style:style style:name="T${styleCounter}" style:family="text">
                 <style:text-properties${styleProperties}/>
+            </style:style>
+        `)
+        return styleCounter
+    }
+
+    /*
+    attributes is a string describing the style (in this order).
+    left/center/right
+    '75'/'50'/'25' = percentage width - 100% doesn't need any style
+
+    Example left50 => left aligned, 50% width
+    */
+    getTableStyleId(attributes) {
+        if (this.tableStyleIds[attributes]) {
+            return this.tableStyleIds[attributes]
+        }
+
+        let styleProperties = ''
+        if (attributes.includes('25')) {
+            styleProperties += ' style:rel-width="25%"'
+        } else if (attributes.includes('50')) {
+            styleProperties += ' style:rel-width="50%"'
+        } else if (attributes.includes('75')) {
+            styleProperties += ' style:rel-width="75%"'
+        }
+        if (attributes.includes('left')) {
+            styleProperties += ' table:align="left"'
+        } else if (attributes.includes('right')) {
+            styleProperties += ' table:align="right"'
+        } else if (attributes.includes('center')) {
+            styleProperties += ' table:align="center"'
+        }
+        const styleCounter = ++this.tableStyleCounter
+        this.tableStyleIds[attributes] = styleCounter
+        const autoStylesEl = this.contentXml.querySelector('automatic-styles')
+        autoStylesEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
+            <style:style style:name="Table${styleCounter}" style:family="table">
+                <style:table-properties${styleProperties}/>
             </style:style>
         `)
         return styleCounter

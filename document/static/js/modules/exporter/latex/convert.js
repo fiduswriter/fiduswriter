@@ -452,8 +452,21 @@ export class LatexExporterConvert {
                         (columns, node) => columns + node.attrs.colspan,
                         0
                     )
-                    start += `\n\n\\begin{tabularx}{\\textwidth}{ |${'X|'.repeat(columns)} }\n\\hline\n\n`
-                    end += `\\hline\n\n\\end{tabularx}`
+                    let aligned = 'left'
+                    if (node.attrs.width !== '100') {
+                        aligned = node.attrs.aligned
+                    }
+                    if (aligned === 'center') {
+                        start += '\n\n\\begin{center}'
+                        end = '\n\n\\end{center}\n' + end
+                    } else if (aligned === 'right') {
+                        start += '\n\n{\\raggedleft' // This is not a typo - raggedleft = aligned: right
+                        end = '\n\n}\n'
+                    } // aligned === 'left' is default
+                    start += `\n\n\\begin{tabu} to ${
+                        node.attrs.width === '100' ? '' : parseInt(node.attrs.width)/100
+                    }\\textwidth { |${'X|'.repeat(columns)} }\n\\hline\n\n`
+                    end = `\\hline\n\n\\end{tabu}` + end
                     this.features.tables = true
                 }
                 break
@@ -555,7 +568,7 @@ export class LatexExporterConvert {
     }
 
     assemblePreamble() {
-        let preamble = '\n\\usepackage[utf8]{luainputenc}'
+        let preamble = ''
 
         if (this.features.subtitle) {
             preamble += `
@@ -617,7 +630,7 @@ export class LatexExporterConvert {
         }
 
         if (this.features.tables) {
-            preamble += '\n\\usepackage{tabularx}'
+            preamble += '\n\\usepackage{tabu}'
         }
         if (this.features.rowspan) {
             preamble += '\n\\usepackage{multirow}'

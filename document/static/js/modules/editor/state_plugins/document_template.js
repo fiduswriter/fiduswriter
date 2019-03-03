@@ -82,7 +82,7 @@ export const documentTemplatePlugin = function(options) {
                     } else if (node.attrs.locking==='start') {
                         let initialFragment = Fragment.fromJSON(options.editor.schema, node.attrs.initial)
                         let protectionSize = initialFragment.size
-                        if (initialFragment.lastChild.isTextblock) {
+                        if (initialFragment.lastChild && initialFragment.lastChild.isTextblock) {
                             protectionSize -= 1 // We allow writing at the end of the last text block.
                             if (initialFragment.lastChild.nodeSize === 2) {
                                 // The last text block is empty, so we remove all protection from it, even node type

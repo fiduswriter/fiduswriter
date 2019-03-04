@@ -72,6 +72,7 @@ figure {
     break-inside: avoid;
     cursor: pointer;
     margin: 10%;
+    clear: both;
 }
 
 .aligned-right {
@@ -125,6 +126,10 @@ figure {
 .user-contents a:hover {
     color: #84b4a7;
     text-decoration: underline;
+}
+
+table {
+    clear: both
 }
 
 .table-25 {

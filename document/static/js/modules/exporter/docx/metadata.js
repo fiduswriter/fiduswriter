@@ -10,7 +10,11 @@ export class DocxExporterMetadata {
         this.metadata = {
             authors: this.docContents.content.reduce(
                 (authors, part) => {
-                    if (part.type==='contributors_part' && part.attrs.metadata === 'authors') {
+                    if (
+                        part.type==='contributors_part' &&
+                        part.attrs.metadata === 'authors' &&
+                        part.content
+                    ) {
                         return authors.concat(part.content.map(authorNode => authorNode.attrs))
                     } else {
                         return authors
@@ -19,7 +23,11 @@ export class DocxExporterMetadata {
             []),
             keywords: this.docContents.content.reduce(
                 (keywords, part) => {
-                    if (part.type==='tags_part' && part.attrs.metadata === 'keywords') {
+                    if (
+                        part.type==='tags_part' &&
+                        part.attrs.metadata === 'keywords' &&
+                        part.content
+                    ) {
                         return keywords.concat(part.content.map(keywordNode => keywordNode.attrs.tag))
                     } else {
                         return keywords

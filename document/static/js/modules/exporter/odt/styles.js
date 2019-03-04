@@ -8,6 +8,10 @@ const GRAPHIC_STYLES = {
     Graphics: noSpaceTmp`
         <style:style style:name="Graphics" style:family="graphic">
             <style:graphic-properties text:anchor-type="paragraph" svg:x="0in" svg:y="0in" style:wrap="dynamic" style:number-wrapped-paragraphs="no-limit" style:wrap-contour="false" style:vertical-pos="top" style:vertical-rel="paragraph" style:horizontal-pos="center" style:horizontal-rel="paragraph"/>
+        </style:style>`,
+    Frame: noSpaceTmp`
+        <style:style style:name="Frame" style:family="graphic">
+            <style:graphic-properties text:anchor-type="paragraph" svg:x="0in" svg:y="0in" style:wrap="dynamic" style:number-wrapped-paragraphs="no-limit" style:wrap-contour="false" style:vertical-pos="top" style:vertical-rel="paragraph" style:horizontal-pos="center" style:horizontal-rel="paragraph"/>
         </style:style>`
 }
 
@@ -22,11 +26,13 @@ export class OdtExporterStyles {
         this.boldItalicStyleId = false
         this.inlineStyleIds = {}
         this.tableStyleIds = {}
+        this.graphicStyleIds = {}
         this.bulletListStyleId = [false, false]
         this.inlineStyleCounter = 0
         this.tableStyleCounter = 0
         this.blockStyleCounter = 0
         this.listStyleCounter = 0
+        this.graphicStyleCounter = 0
     }
 
     init() {
@@ -56,6 +62,10 @@ export class OdtExporterStyles {
             } else if (styleFamily==='paragraph') {
                 if (styleNumber> this.blockStyleCounter) {
                     this.blockStyleCounter = styleNumber
+                }
+            } else if (styleFamily==='graphic') {
+                if (styleNumber> this.graphicStyleCounter) {
+                    this.graphicStyleCounter = styleNumber
                 }
             }
         })
@@ -109,38 +119,19 @@ export class OdtExporterStyles {
     }
 
     /*
-    attributes is a string describing the style (in this order).
-    left/center/right
-    '75'/'50'/'25' = percentage width - 100% doesn't need any style
-
-    Example left50 => left aligned, 50% width
+    aligned: left/center/right
+    width: '75'/'50'/'25' = percentage width - 100% doesn't need any style
     */
-    getTableStyleId(attributes) {
-        if (this.tableStyleIds[attributes]) {
-            return this.tableStyleIds[attributes]
-        }
-
-        let styleProperties = ''
-        if (attributes.includes('25')) {
-            styleProperties += ' style:rel-width="25%"'
-        } else if (attributes.includes('50')) {
-            styleProperties += ' style:rel-width="50%"'
-        } else if (attributes.includes('75')) {
-            styleProperties += ' style:rel-width="75%"'
-        }
-        if (attributes.includes('left')) {
-            styleProperties += ' table:align="left"'
-        } else if (attributes.includes('right')) {
-            styleProperties += ' table:align="right"'
-        } else if (attributes.includes('center')) {
-            styleProperties += ' table:align="center"'
+    getTableStyleId(aligned, width) {
+        if (this.tableStyleIds[aligned+width]) {
+            return this.tableStyleIds[aligned+width]
         }
         const styleCounter = ++this.tableStyleCounter
-        this.tableStyleIds[attributes] = styleCounter
+        this.tableStyleIds[aligned+width] = styleCounter
         const autoStylesEl = this.contentXml.querySelector('automatic-styles')
         autoStylesEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
             <style:style style:name="Table${styleCounter}" style:family="table">
-                <style:table-properties${styleProperties}/>
+                <style:table-properties style:rel-width="${width}%" table:align="${aligned}"/>
             </style:style>
         `)
         return styleCounter
@@ -169,7 +160,30 @@ export class OdtExporterStyles {
                 GRAPHIC_STYLES[styleName]
             )
         }
+    }
 
+    /*
+    styleName: Frame/Formula/Graphics
+    aligned: left/center/right (not used for Formula)
+    */
+    getGraphicStyleId(styleName, aligned = '') {
+        if (this.graphicStyleIds[styleName+aligned]) {
+            return this.graphicStyleIds[styleName+aligned]
+        }
+        this.checkGraphicStyle(styleName)
+
+        const styleCounter = ++this.graphicStyleCounter
+        this.graphicStyleIds[styleName+aligned] = styleCounter
+        const autoStylesEl = this.contentXml.querySelector('automatic-styles')
+        autoStylesEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
+            <style:style style:name="fr${styleCounter}" style:family="graphic" style:parent-style-name="${styleName}">
+                ${
+                    styleName === 'Formula' ?
+                    `<style:graphic-properties style:vertical-pos="from-top" style:horizontal-pos="from-left" style:horizontal-rel="paragraph-content" draw:ole-draw-aspect="1" />` :
+                    `<style:graphic-properties fo:margin-left="0in" fo:margin-right="0in" fo:margin-top="0in" fo:margin-bottom="0in" style:wrap="dynamic" style:number-wrapped-paragraphs="no-limit" style:vertical-pos="top" style:vertical-rel="paragraph" style:horizontal-pos="${aligned}" style:horizontal-rel="paragraph" fo:padding="0in" fo:border="none" />`
+                }
+            </style:style>`)
+        return styleCounter
     }
 
     addReferenceStyle(bibInfo) {

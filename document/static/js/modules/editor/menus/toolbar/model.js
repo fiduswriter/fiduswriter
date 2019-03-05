@@ -361,20 +361,20 @@ export const toolbarModel = () => ({
         },
         {
             type: 'button',
-            title: gettext('Mark'),
-            icon: 'highlighter',
+            title: gettext('Underline'),
+            icon: 'underline',
             action: editor => {
-                const mark = editor.currentView.state.schema.marks['mark']
+                const mark = editor.currentView.state.schema.marks['underline']
                 const command = toggleMark(mark)
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
-            available: editor => markAvailable(editor, 'mark'),
+            available: editor => markAvailable(editor, 'underline'),
             disabled: editor => {
                 if (
                     READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
                     COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
                     editor.currentView.state.selection.jsonID === 'gapcursor' ||
-                    markDisabled(editor, 'mark')
+                    markDisabled(editor, 'underline')
                 ) {
                     return true
                 }
@@ -382,8 +382,8 @@ export const toolbarModel = () => ({
             selected: editor => {
                 const storedMarks = editor.currentView.state.storedMarks
                 if (
-                    storedMarks && storedMarks.some(mark => mark.type.name === 'mark') ||
-                    editor.currentView.state.selection.$head.marks().some(mark => mark.type.name === 'mark')
+                    storedMarks && storedMarks.some(mark => mark.type.name === 'underline') ||
+                    editor.currentView.state.selection.$head.marks().some(mark => mark.type.name === 'underline')
                 ) {
                     return true
                 } else {

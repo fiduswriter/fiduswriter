@@ -212,3 +212,7 @@ table {
 .article .table-of-contents h1.toc {
     font-style: italic;
 }
+
+.underline {
+    text-decoration: underline;
+}

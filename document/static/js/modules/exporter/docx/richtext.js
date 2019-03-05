@@ -13,12 +13,6 @@ export class DocxExporterRichtext {
 
     transformRichtext(node, options = {}) {
         let start = '', content = '', end = ''
-        let hyperlink, em, strong, smallcaps, sup, sub
-        let cit
-        let caption, figCat
-        let columns, cellWidth
-        let latex
-        let textAttr
 
         switch (node.type) {
             case 'paragraph':
@@ -166,12 +160,14 @@ export class DocxExporterRichtext {
                         <w:footnoteReference w:id="${this.fnCounter++}"/>
                     </w:r>`
                 break
-            case 'text':
+            case 'text': {
+                let hyperlink, em, strong, underline, smallcaps, sup, sub
                 // Check for hyperlink, bold/strong and italic/em
                 if (node.marks) {
                     hyperlink = node.marks.find(mark => mark.type === 'link')
                     em = node.marks.find(mark => mark.type === 'em')
                     strong = node.marks.find(mark => mark.type === 'strong')
+                    underline = node.marks.find(mark => mark.type === 'underline')
                     smallcaps = node.marks.find(mark => mark.type === 'smallcaps')
                     sup = node.marks.find(mark => mark.type === 'sup')
                     sub = node.marks.find(mark => mark.type === 'sub')
@@ -194,7 +190,7 @@ export class DocxExporterRichtext {
                     end = '</w:t></w:r>' + end
                 }
 
-                if (hyperlink || em || strong || smallcaps || sup || sub) {
+                if (hyperlink || em || strong || underline || smallcaps || sup || sub) {
                     start += '<w:rPr>'
                     if (hyperlink) {
                         start += '<w:rStyle w:val="Hyperlink"/>'
@@ -204,6 +200,9 @@ export class DocxExporterRichtext {
                     }
                     if (strong) {
                         start += '<w:b/><w:bCs/>'
+                    }
+                    if (underline) {
+                        start += '<w:u w:val="single"/>'
                     }
                     if (smallcaps) {
                         start += '<w:smallCaps/>'
@@ -220,7 +219,7 @@ export class DocxExporterRichtext {
                     start+= '<w:footnoteRef /><w:tab />'
                     options.footnoteRefMissing = false
                 }
-                textAttr = ''
+                let textAttr = ''
                 if (node.text[0] === ' ' || node.text[node.text.length-1] === ' ') {
                     textAttr += 'xml:space="preserve"'
                 }
@@ -228,9 +227,10 @@ export class DocxExporterRichtext {
 
                 content += escapeText(node.text)
                 break
-            case 'citation':
+            }
+            case 'citation': {
                 // We take the first citation from the stack and remove it.
-                cit = this.citations.pmCits.shift()
+                const cit = this.citations.pmCits.shift()
                 if (options.citationType && options.citationType === 'note') {
                     // If the citations are in notes (footnotes), we need to
                     // put the contents of this citation in a footnote.
@@ -270,9 +270,10 @@ export class DocxExporterRichtext {
                     }
                 }
                 break
-            case 'figure':
-                caption = node.attrs.caption
-                figCat = node.attrs.figureCategory
+            }
+            case 'figure': {
+                let caption = node.attrs.caption
+                const figCat = node.attrs.figureCategory
                 if (figCat !== 'none') {
                     if (!this.figureCounter[figCat]) {
                         this.figureCounter[figCat] = 1
@@ -375,7 +376,8 @@ export class DocxExporterRichtext {
                     end =  '</w:p>' + end
                 }
                 break
-            case 'table':
+            }
+            case 'table': {
                 this.exporter.tables.addTableGridStyle()
                 start += noSpaceTmp`
                     <w:tbl>
@@ -392,8 +394,8 @@ export class DocxExporterRichtext {
                             <w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1" />
                         </w:tblPr>
                         <w:tblGrid>`
-                columns = node.content[0].content.length
-                cellWidth = 63500 // standard width
+                const columns = node.content[0].content.length
+                let cellWidth = 63500 // standard width
                 options = Object.assign({}, options)
                 if (options.dimensions && options.dimensions.width) {
                     cellWidth = parseInt(options.dimensions.width / columns) - 2540 // subtracting for border width
@@ -411,6 +413,7 @@ export class DocxExporterRichtext {
                 end = '</w:tbl>' + end
 
                 break
+            }
             case 'table_row':
                 start += '<w:tr>'
                 end = '</w:tr>' + end
@@ -448,10 +451,11 @@ export class DocxExporterRichtext {
                 end = '</w:tc>' + end
 
                 break
-            case 'equation':
-                latex = node.attrs.equation
+            case 'equation': {
+                const latex = node.attrs.equation
                 content += this.exporter.math.getOmml(latex)
                 break
+            }
             case 'hard_break':
                 content += '<w:r><w:br/></w:r>'
                 break

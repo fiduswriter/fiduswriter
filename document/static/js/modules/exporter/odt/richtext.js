@@ -111,12 +111,13 @@ export class OdtExporterRichtext {
 
                 break
             case 'text': {
-                let hyperlink, strong, em, sup, sub, smallcaps
+                let hyperlink, strong, em, underline, sup, sub, smallcaps
                 // Check for hyperlink, bold/strong and italic/em
                 if (node.marks) {
                     hyperlink = node.marks.find(mark => mark.type === 'link')
-                    em = node.marks.find(mark => mark.type === 'em')
                     strong = node.marks.find(mark => mark.type === 'strong')
+                    em = node.marks.find(mark => mark.type === 'em')
+                    underline = node.marks.find(mark => mark.type === 'underline')
                     smallcaps = node.marks.find(mark => mark.type === 'smallcaps')
                     sup = node.marks.find(mark => mark.type === 'sup')
                     sub = node.marks.find(mark => mark.type === 'sub')
@@ -134,6 +135,9 @@ export class OdtExporterRichtext {
                 }
                 if (strong) {
                     attributes += 's'
+                }
+                if (underline) {
+                    attributes += 'u'
                 }
                 if (smallcaps) {
                     attributes += 'c'

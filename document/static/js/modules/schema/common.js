@@ -521,10 +521,10 @@ export const list_item = {
 }
 
 
-export const mark = {
-    parseDOM: [{tag: "mark"}],
+export const underline = {
+    parseDOM: [{tag: "span.underline"}],
     toDOM() {
-        return ["mark", 0]
+        return ["span", {class: 'underline'}, 0]
     }
 }
 

@@ -92,6 +92,7 @@ export class OdtExporterStyles {
     Only one of super/sub possible.
     e = italic/em
     s = bold/strong
+    u = underline
     c = small caps
     p = super
     b = sub
@@ -107,6 +108,9 @@ export class OdtExporterStyles {
         }
         if (attributes.includes('s')) {
             styleProperties += ' fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"'
+        }
+        if (attributes.includes('u')) {
+            styleProperties += ' style:text-underline-style="solid" style:text-underline-width="auto" style:text-underline-color="font-color"'
         }
         if (attributes.includes('c')) {
             styleProperties += ' fo:font-variant="small-caps"'

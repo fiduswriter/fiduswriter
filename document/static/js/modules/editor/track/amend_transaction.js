@@ -271,7 +271,7 @@ export function amendTransaction(tr, state, editor) {
                     )
                 }
                 if (
-                    ['em', 'strong', 'mark'].includes(step.mark.type.name) &&
+                    ['em', 'strong', 'underline'].includes(step.mark.type.name) &&
                     !node.marks.find(mark => mark.type === step.mark.type)
                 ) {
                     const formatChangeMark = node.marks.find(mark => mark.type.name==='format_change')
@@ -320,7 +320,7 @@ export function amendTransaction(tr, state, editor) {
                 }
 
                 if (
-                    ['em', 'strong', 'mark'].includes(step.mark.type.name) &&
+                    ['em', 'strong', 'underline'].includes(step.mark.type.name) &&
                     node.marks.find(mark => mark.type === step.mark.type)
                 ) {
                     const formatChangeMark = node.marks.find(mark => mark.type.name==='format_change')

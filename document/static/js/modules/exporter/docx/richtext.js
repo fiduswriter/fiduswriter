@@ -294,6 +294,7 @@ export class DocxExporterRichtext {
                         if (options.tableSideMargins) {
                             width = width - options.tableSideMargins
                         }
+                        width = width * parseInt(node.attrs.width) / 100
                         if (cx > width) {
                             const rel = cy/cx
                             cx = width

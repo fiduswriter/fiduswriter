@@ -1,4 +1,5 @@
 import {noSpaceTmp, escapeText} from "../../common"
+import {FIG_CATS} from "../../schema/common"
 
 export class DocxExporterRichtext {
     constructor(exporter, rels, citations, images) {
@@ -280,9 +281,9 @@ export class DocxExporterRichtext {
                     }
                     const figCount = this.figureCounter[figCat]++
                     if (caption.length) {
-                        caption = `${figCat} ${figCount}: ${caption}`
+                        caption = `${FIG_CATS[figCat]} ${figCount}: ${caption}`
                     } else {
-                        caption = `${figCat} ${figCount}`
+                        caption = `${FIG_CATS[figCat]} ${figCount}`
                     }
                 }
                 if (node.attrs.image !== false) {

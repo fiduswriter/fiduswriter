@@ -1,4 +1,5 @@
 import {noSpaceTmp, escapeText} from "../../common"
+import {FIG_CATS} from "../../schema/common"
 
 export class OdtExporterRichtext {
     constructor(exporter, images) {
@@ -201,19 +202,19 @@ export class OdtExporterRichtext {
                 }
 
                 let caption = escapeText(node.attrs.caption)
-                // capitalize TODO: make work in other languages
-                const figCat = node.attrs.figureCategory.charAt(0).toUpperCase() +
-                    node.attrs.figureCategory.slice(1)
-                if (figCat !== 'None') {
+                // The figure category should not be in the
+                // user's language but rather the document language
+                const figCat = node.attrs.figureCategory
+                if (figCat !== 'none') {
                     if (!this.figureCounter[figCat]) {
                         this.figureCounter[figCat] = 1
                     }
                     const figCount = this.figureCounter[figCat]++
                     const figCountXml = `<text:sequence text:ref-name="ref${figCat}${figCount-1}" text:name="${figCat}" text:formula="ooow:${figCat}+1" style:num-format="1">${figCount}</text:sequence>`
                     if (caption.length) {
-                        caption = `${figCat} ${figCountXml}: ${caption}`
+                        caption = `${FIG_CATS[figCat]} ${figCountXml}: ${caption}`
                     } else {
-                        caption = `${figCat} ${figCountXml}`
+                        caption = `${FIG_CATS[figCat]} ${figCountXml}`
                     }
                 }
                 let relWidth = node.attrs.width

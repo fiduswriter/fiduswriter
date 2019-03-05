@@ -16,6 +16,15 @@ const GRAPHIC_STYLES = {
 }
 
 
+const PAR_STYLES = {
+    Standard: '<style:style style:name="Standard" style:family="paragraph" style:class="text" />',
+    Caption: noSpaceTmp`<style:style style:name="Caption" style:family="paragraph" style:parent-style-name="Standard" style:class="extra">
+            <style:paragraph-properties fo:margin-top="0.0835in" fo:margin-bottom="0.0835in" loext:contextual-spacing="false" text:number-lines="false" text:line-number="0" />
+            <style:text-properties fo:font-style="italic" style:font-style-asian="italic" style:font-style-complex="italic" />
+        </style:style>`,
+    Figure: '<style:style style:name="Figure" style:family="paragraph" style:parent-style-name="Caption" style:class="extra" />'
+}
+
 export class OdtExporterStyles {
     constructor(exporter) {
         this.exporter = exporter
@@ -145,6 +154,7 @@ export class OdtExporterStyles {
             const displayName = styleName.split('_20_').join(' ')
             stylesEl.insertAdjacentHTML(
                 'beforeEnd',
+                PAR_STYLES[styleName] ||
                 `<style:style style:name="${styleName}" style:display-name="${displayName}" style:family="paragraph" style:parent-style-name="Standard" style:class="text" />`
             )
         }
@@ -180,8 +190,8 @@ export class OdtExporterStyles {
                 ${
                     styleName === 'Formula' ?
                     `<style:graphic-properties style:vertical-pos="from-top" style:horizontal-pos="from-left" style:horizontal-rel="paragraph-content" draw:ole-draw-aspect="1" />` :
-                    `<style:graphic-properties fo:margin-left="0in" fo:margin-right="0in" fo:margin-top="0in" fo:margin-bottom="0in" style:wrap="dynamic" style:number-wrapped-paragraphs="no-limit" style:vertical-pos="top" style:vertical-rel="paragraph" style:horizontal-pos="${aligned}" style:horizontal-rel="paragraph" fo:padding="0in" fo:border="none" />`
-                }
+                    `<style:graphic-properties fo:margin-left="0in" fo:margin-right="0in" fo:margin-top="0in" fo:margin-bottom="0in" ${ aligned === 'center' ? 'style:wrap="none"' : 'style:wrap="dynamic"  style:number-wrapped-paragraphs="no-limit"' } style:vertical-pos="top" style:vertical-rel="paragraph" style:horizontal-pos="${aligned}" style:horizontal-rel="paragraph" fo:padding="0in" fo:border="none" loext:rel-width-rel="paragraph" />`
+                } style:number-wrapped-paragraphs="no-limit"
             </style:style>`)
         return styleCounter
     }

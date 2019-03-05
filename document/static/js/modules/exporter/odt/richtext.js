@@ -8,6 +8,7 @@ export class OdtExporterRichtext {
         this.fnCounter = 0 // real footnotes
         this.fnAlikeCounter = 0 // real footnotes and citations as footnotes
         this.figureCounter = {} // counters for each type of figure (figure/table/photo)
+        this.zIndex = 0
     }
 
     transformRichtext(node, options = {}) {
@@ -182,8 +183,19 @@ export class OdtExporterRichtext {
                 break
             }
             case 'figure': {
-                start += '<text:p>'
+                // NOTE: The difficulty is to make several images with different
+                // alignments/widths not overlap one-another. The below code
+                // makes a reasonable attempt at that, but it seems there is no
+                // way to guarantee it from happening.
+                this.exporter.styles.checkParStyle('Standard')
+                start += '<text:p text:style-name="Standard">'
                 end = '</text:p>' + end
+
+                if (node.attrs.aligned === 'center') {
+                    // Needed to prevent subsequent image from overlapping
+                    end = end + '<text:p text:style-name="Standard"></text:p>'
+                }
+
                 let caption = escapeText(node.attrs.caption)
                 // capitalize TODO: make work in other languages
                 const figCat = node.attrs.figureCategory.charAt(0).toUpperCase() +
@@ -202,11 +214,17 @@ export class OdtExporterRichtext {
                 }
                 let relWidth = node.attrs.width
                 let aligned = node.attrs.aligned
-                if (caption.length || node.attrs.image === false) {
+                let frame
+                if (
+                    caption.length ||
+                    node.attrs.image === false
+                ) {
+                    frame = true
+                    this.exporter.styles.checkParStyle('Caption')
                     this.exporter.styles.checkParStyle('Figure')
                     const graphicStyleId = this.exporter.styles.getGraphicStyleId('Frame', aligned)
-                    start += noSpaceTmp`<draw:frame draw:style-name="fr${graphicStyleId}" draw:name="Frame${graphicStyleId}" text:anchor-type="paragraph" style:rel-width="${relWidth}%" draw:z-index="1">
-                        <draw:text-box>
+                    start += noSpaceTmp`<draw:frame draw:style-name="fr${graphicStyleId}" draw:name="Frame${graphicStyleId}" text:anchor-type="paragraph" svg:width="0.0161in" style:rel-width="${relWidth}%" draw:z-index="${this.zIndex++}">
+                        <draw:text-box fo:min-height="0in">
                             <text:p text:style-name="Figure">`
                     relWidth = '100' // percentage width of image inside of frame is always 100
                     aligned = 'center' // Aligned inside of frame is always 'center'
@@ -218,7 +236,6 @@ export class OdtExporterRichtext {
                         end = `<text:line-break />${caption}` + end
                     }
                 }
-                start += `<text:bookmark text:name="${node.attrs.id}"/>`
                 if (node.attrs.image !== false) {
                     const imgDBEntry = this.images.imageDB.db[node.attrs.image]
                     const imgFileName = this.images.imgIdTranslation[node.attrs.image]
@@ -226,7 +243,7 @@ export class OdtExporterRichtext {
                     const width = imgDBEntry.width*3/4 // more or less px to point
                     const graphicStyleId = this.exporter.styles.getGraphicStyleId('Graphics', aligned)
                     content += noSpaceTmp`
-                        <draw:frame draw:style-name="${graphicStyleId}" draw:name="Image${this.imgCounter++}" text:anchor-type="paragraph" style:rel-width="${relWidth}%" style:rel-height="scale" svg:width="${width}pt" svg:height="${height}pt" draw:z-index="1">
+                        <draw:frame draw:style-name="${graphicStyleId}" draw:name="Image${this.imgCounter++}" text:anchor-type="${frame ? 'paragraph' : 'as-char'}" style:rel-width="${relWidth}%" style:rel-height="scale" svg:width="${width}pt" svg:height="${height}pt" draw:z-index="${this.zIndex++}">
                             <draw:image xlink:href="Pictures/${imgFileName}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/>
                         </draw:frame>`
                 } else {
@@ -234,11 +251,12 @@ export class OdtExporterRichtext {
                     const objectNumber = this.exporter.math.addMath(latex)
                     const graphicStyleId = this.exporter.styles.getGraphicStyleId('Formula')
                     content += noSpaceTmp`
-                        <draw:frame draw:style-name="${graphicStyleId}" draw:name="Object${objectNumber}" text:anchor-type="as-char" draw:z-index="1">
+                        <draw:frame draw:style-name="${graphicStyleId}" draw:name="Object${objectNumber}" text:anchor-type="as-char" draw:z-index="${this.zIndex++}">
                             <draw:object xlink:href="./Object ${objectNumber}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/>
                             <svg:desc>formula</svg:desc>
                         </draw:frame>`
                 }
+                content += `<text:bookmark text:name="${node.attrs.id}"/>`
                 break
             }
             case 'table': {
@@ -282,7 +300,7 @@ export class OdtExporterRichtext {
                 const objectNumber = this.exporter.math.addMath(latex)
                 const styleId = this.exporter.styles.getGraphicStyleId('Formula')
                 content += noSpaceTmp`
-                    <draw:frame draw:style-name="${styleId}" draw:name="Object${objectNumber}" text:anchor-type="as-char" draw:z-index="1">
+                    <draw:frame draw:style-name="${styleId}" draw:name="Object${objectNumber}" text:anchor-type="as-char" draw:z-index="${this.zIndex++}">
                         <draw:object xlink:href="./Object ${objectNumber}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/>
                         <svg:desc>formula</svg:desc>
                     </draw:frame>`

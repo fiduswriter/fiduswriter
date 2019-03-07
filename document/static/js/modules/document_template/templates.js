@@ -88,8 +88,8 @@ const allowedMarksTemplate = ({marks}) =>
     ${gettext('Emphasis')}
 </label>
 <label>
-    <input type="checkbox" class="marks" value="mark" ${marks.includes('mark') ? 'checked' : ''}/>
-    ${gettext('Mark')}
+    <input type="checkbox" class="marks" value="underline" ${marks.includes('underline') ? 'checked' : ''}/>
+    ${gettext('Underline')}
 </label>
 <label>
     <input type="checkbox" class="marks" value="link" ${marks.includes('link') ? 'checked' : ''}/>
@@ -104,7 +104,7 @@ const headingTemplate = ({
     id="",
     title="",
     elements=["heading1", "heading2", "heading3", "heading4", "heading5", "heading6"],
-    marks=["strong", "em", "highlight", "underline", "link"],
+    marks=["strong", "em", "underline", "link"],
     locking="false",
     optional="false",
     language=false,
@@ -251,7 +251,7 @@ const richtextTemplate = ({
     id="",
     title="",
     elements=["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote"],
-    marks=["strong", "em", "highlight", "underline", "link"],
+    marks=["strong", "em", "underline", "link"],
     locking="false",
     optional="false",
     language=false,
@@ -401,7 +401,7 @@ const tableTemplate = ({
     id="",
     title="",
     elements= ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote"],
-    marks= ["strong", "em", "highlight", "underline", "link"],
+    marks= ["strong", "em", "underline", "link"],
     locking="false",
     optional="false",
     language=false
@@ -488,7 +488,7 @@ const tocTemplate = ({
 
 export const footnoteTemplate = ({
     footnote_elements = ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "table"],
-    footnote_marks = ["strong", "em", "highlight", "underline", "link"]
+    footnote_marks = ["strong", "em", "underline", "link"]
 }) => `<div class="doc-part attrs">${allowedElementsTemplate({elements: footnote_elements}, false)}${allowedMarksTemplate({marks: footnote_marks})}</div>`
 
 export const languagesTemplate = ({languages = LANGUAGES.map(lang => lang[0])}) =>

@@ -59,10 +59,6 @@ export class LatexExporterConvert {
     walkJson(node, options = {}) {
         let start = '', content = '', end = '',
             placeFootnotesAfterBlock = false
-        let level
-        let hyperlink, strong, em
-        let references, format, citationCommand
-        let figureType, caption, innerFigure
         switch (node.type) {
             case 'article':
                 break
@@ -212,11 +208,11 @@ export class LatexExporterConvert {
             case 'heading3':
             case 'heading4':
             case 'heading5':
-            case 'heading6':
+            case 'heading6': {
                 if (options.ignoreHeading) {
                     break
                 }
-                level = parseInt(node.type.slice(-1))
+                const level = parseInt(node.type.slice(-1))
                 switch (level) {
                     case 1:
                         start += '\n\n\\section{'
@@ -247,6 +243,7 @@ export class LatexExporterConvert {
                     options.unplacedFootnotes = []
                 }
                 break
+            }
             case 'code':
                 start += '\n\\begin{code}\n\n'
                 end = '\n\n\\end{code}\n'
@@ -296,11 +293,13 @@ export class LatexExporterConvert {
                     end = '}' + end
                 }
                 break
-            case 'text':
-                // Check for hyperlink, bold/strong and italic/em
+            case 'text': {
+                let strong, em, underline, hyperlink
+                // Check for hyperlink, bold/strong, italic/em and underline
                 if (node.marks) {
                     strong = node.marks.find(mark => mark.type === 'strong')
                     em = node.marks.find(mark => mark.type === 'em')
+                    underline = node.marks.find(mark => mark.type === 'underline')
                     hyperlink = node.marks.find(mark => mark.type === 'link')
                 }
                 if (em) {
@@ -309,6 +308,10 @@ export class LatexExporterConvert {
                 }
                 if (strong) {
                     start += '\\textbf{'
+                    end = '}' + end
+                }
+                if (underline) {
+                    start += '\\underline{'
                     end = '}' + end
                 }
                 if (hyperlink) {
@@ -325,10 +328,11 @@ export class LatexExporterConvert {
                 }
                 content += escapeLatexText(node.text)
                 break
-            case 'citation':
-                references = node.attrs.references
-                format = node.attrs.format
-                citationCommand = '\\' + format
+            }
+            case 'citation': {
+                const references = node.attrs.references
+                const format = node.attrs.format
+                let citationCommand = '\\' + format
 
                 if (references.length > 1 &&
                     references.every(ref => !ref.locator && !ref.prefix)
@@ -410,24 +414,34 @@ export class LatexExporterConvert {
                     this.features.citations = true
                 }
                 break
-            case 'figure':
-                figureType = node.attrs.figureCategory
-                caption = node.attrs.caption
-                innerFigure = ''
+            }
+            case 'figure': {
+                const figureType = node.attrs.figureCategory
+                const caption = node.attrs.caption
+                let innerFigure = ''
+                let aligned = 'left'
+                if (node.attrs.width !== '100') {
+                    aligned = node.attrs.aligned
+                }
+                if (aligned === 'center') {
+                    start += '\n\n\\begin{center}'
+                    end = '\n\n\\end{center}\n' + end
+                } else if (aligned === 'right') {
+                    start += '\n\n{\\raggedleft' // This is not a typo - raggedleft = aligned: right
+                    end = '\n\n}\n'
+                } // aligned === 'left' is default
                 if (node.attrs.image) {
                     this.imageIds.push(node.attrs.image)
                     const imageDBEntry = this.imageDB.db[node.attrs.image],
                         filePathName = imageDBEntry.image,
                         filename = filePathName.split('/').pop()
-                    let latexPackage
                     if (filename.split('.').pop() === 'svg') {
-                        latexPackage = 'includesvg'
+                        innerFigure += `\\includesvg[width=${parseInt(node.attrs.width)/100}\\textwidth]{${filename}}\n`
                         this.features.SVGs = true
                     } else {
-                        latexPackage = 'scaledgraphics'
+                        innerFigure += `\\scaledgraphics{${filename}}{${parseInt(node.attrs.width)/100}}\n`
                         this.features.images = true
                     }
-                    innerFigure += `\\${latexPackage}{${filename}}\n`
                 } else {
                     const equation = node.attrs.equation
                     innerFigure += `\\begin{displaymath}\n${equation}\n\\end{displaymath}\n`
@@ -435,17 +449,18 @@ export class LatexExporterConvert {
                 if (figureType==='table') {
                     start += `\n\\begin{table}\n`
                     content += `\\caption{${caption}}\n${innerFigure}`
-                    end += `\\end{table}\n`
+                    end = `\\end{table}\n` + end
                 } else { // TODO: handle photo figure types in a special way
                     start += `\n\\begin{figure}\n`
                     content += `${innerFigure}\\caption{${caption}}\n`
-                    end += `\\end{figure}\n`
+                    end = `\\end{figure}\n` + end
                 }
                 if (this.internalLinks.includes(node.attrs.id)) {
                     // Add a link target
                     end = `\\texorpdfstring{\\protect\\hypertarget{${node.attrs.id}}{}}{}\n` + end
                 }
                 break
+            }
             case 'table':
                 if (node.content && node.content.length) {
                     const columns = node.content[0].content.reduce(
@@ -621,9 +636,9 @@ export class LatexExporterConvert {
             preamble += `
                 \n\\usepackage{calc}
                 \n\\newlength{\\imgwidth}
-                \n\\newcommand\\scaledgraphics[1]{%
+                \n\\newcommand\\scaledgraphics[2]{%
                 \n\\settowidth{\\imgwidth}{\\includegraphics{#1}}%
-                \n\\setlength{\\imgwidth}{\\minof{\\imgwidth}{\\textwidth}}%
+                \n\\setlength{\\imgwidth}{\\minof{\\imgwidth}{#2\\textwidth}}%
                 \n\\includegraphics[width=\\imgwidth,height=\\textheight,keepaspectratio]{#1}%
                 \n}
             `

@@ -1,4 +1,7 @@
 import {escapeText} from "../../common"
+import {
+    FIG_CATS
+} from "../../schema/common"
 
 export const linkDialogTemplate = ({defaultLink, internalTargets, link, linkTitle}) =>
     `${
@@ -242,18 +245,13 @@ export const configureFigureTemplate = ({image, equation, caption, dir}) =>
                 <div id="figure-category-pulldown" class="fw-pulldown fw-left"
                         style="left: 10px;">
                     <ul id="figure-category-list">
-                        <li><span class="fw-pulldown-item" id="figure-category-none">
-                            ${gettext("None")}
-                        </span></li>
-                        <li><span class="fw-pulldown-item" id="figure-category-figure">
-                            ${gettext("Figure")}
-                        </span></li>
-                        <li><span class="fw-pulldown-item" id="figure-category-photo">
-                            ${gettext("Photo")}
-                        </span></li>
-                        <li><span class="fw-pulldown-item" id="figure-category-table">
-                            ${gettext("Table")}
-                        </span></li>
+                        ${
+                            Object.entries(FIG_CATS).map(([id, title]) =>
+                                `<li><span class="fw-pulldown-item" id="figure-category-${id}">
+                                    ${title}
+                                </span></li>`
+                            ).join('')
+                        }
                     </ul>
                 </div>
 

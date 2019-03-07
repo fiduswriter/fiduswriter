@@ -235,7 +235,8 @@ const ACTIONS = {
 
 const FORMAT_MARK_NAMES = {
     'em': gettext('Emphasis'),
-    'strong': gettext('Strong')
+    'strong': gettext('Strong'),
+    'underline': gettext('Underline')
 }
 
 const formatChangeTemplate = ({before, after}) => {

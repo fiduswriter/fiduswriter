@@ -92,7 +92,7 @@ export class DocumentAccessRightsDialog {
             title: gettext('Share your document with others'),
             id: 'access-rights-dialog',
             width: 820,
-            height: 540,
+            height: 440,
             body: accessRightOverviewTemplate({
                 contacts: this.contacts,
                 collaborators

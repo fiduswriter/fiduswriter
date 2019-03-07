@@ -419,20 +419,29 @@ export class LatexExporterConvert {
                 const figureType = node.attrs.figureCategory
                 const caption = node.attrs.caption
                 let innerFigure = ''
+                let aligned = 'left'
+                if (node.attrs.width !== '100') {
+                    aligned = node.attrs.aligned
+                }
+                if (aligned === 'center') {
+                    start += '\n\n\\begin{center}'
+                    end = '\n\n\\end{center}\n' + end
+                } else if (aligned === 'right') {
+                    start += '\n\n{\\raggedleft' // This is not a typo - raggedleft = aligned: right
+                    end = '\n\n}\n'
+                } // aligned === 'left' is default
                 if (node.attrs.image) {
                     this.imageIds.push(node.attrs.image)
                     const imageDBEntry = this.imageDB.db[node.attrs.image],
                         filePathName = imageDBEntry.image,
                         filename = filePathName.split('/').pop()
-                    let latexPackage
                     if (filename.split('.').pop() === 'svg') {
-                        latexPackage = 'includesvg'
+                        innerFigure += `\\includesvg[width=${parseInt(node.attrs.width)/100}\\textwidth]{${filename}}\n`
                         this.features.SVGs = true
                     } else {
-                        latexPackage = 'scaledgraphics'
+                        innerFigure += `\\scaledgraphics{${filename}}{${parseInt(node.attrs.width)/100}}\n`
                         this.features.images = true
                     }
-                    innerFigure += `\\${latexPackage}{${filename}}\n`
                 } else {
                     const equation = node.attrs.equation
                     innerFigure += `\\begin{displaymath}\n${equation}\n\\end{displaymath}\n`
@@ -440,11 +449,11 @@ export class LatexExporterConvert {
                 if (figureType==='table') {
                     start += `\n\\begin{table}\n`
                     content += `\\caption{${caption}}\n${innerFigure}`
-                    end += `\\end{table}\n`
+                    end = `\\end{table}\n` + end
                 } else { // TODO: handle photo figure types in a special way
                     start += `\n\\begin{figure}\n`
                     content += `${innerFigure}\\caption{${caption}}\n`
-                    end += `\\end{figure}\n`
+                    end = `\\end{figure}\n` + end
                 }
                 if (this.internalLinks.includes(node.attrs.id)) {
                     // Add a link target
@@ -627,9 +636,9 @@ export class LatexExporterConvert {
             preamble += `
                 \n\\usepackage{calc}
                 \n\\newlength{\\imgwidth}
-                \n\\newcommand\\scaledgraphics[1]{%
+                \n\\newcommand\\scaledgraphics[2]{%
                 \n\\settowidth{\\imgwidth}{\\includegraphics{#1}}%
-                \n\\setlength{\\imgwidth}{\\minof{\\imgwidth}{\\textwidth}}%
+                \n\\setlength{\\imgwidth}{\\minof{\\imgwidth}{#2\\textwidth}}%
                 \n\\includegraphics[width=\\imgwidth,height=\\textheight,keepaspectratio]{#1}%
                 \n}
             `

@@ -50,3 +50,7 @@ export {
     baseBodyTemplate
 }
 from "./templates"
+export {
+    WebSocketConnector
+}
+from "./ws"

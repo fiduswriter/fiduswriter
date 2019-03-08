@@ -19,7 +19,7 @@ import {
     ordered_list,
     bullet_list,
     list_item,
-    mark,
+    underline,
     deletion,
     insertion,
     format_change,
@@ -34,7 +34,7 @@ const footnotecontainer = {
     marks: "annotation",
     parseDOM: [{tag: "div.footnote-container"}],
     toDOM(_node) {
-        return ['div',{class: 'footnote-container'}, 0]
+        return ['div', {class: 'footnote-container'}, 0]
     }
 }
 
@@ -70,7 +70,7 @@ const spec = {
       strong: marks.strong,
       link: marks.link,
       code: marks.code,
-      mark,
+      underline,
       anchor,
       comment,
       annotation_tag,

@@ -4,7 +4,7 @@
 
 .fw-media-uploader .figure-preview {
     display: table;
-    margin: 18px 0;
+    margin: 18px 10px 0 0;
 }
 
 .fw-media-uploader .figure-preview > div {
@@ -36,4 +36,34 @@
 
 th.figure-preview-row, td.figure-preview-row {
     vertical-align: top;
+}
+
+.figure-edit-menu {
+    background-color: Transparent;
+    background-repeat: no-repeat;
+    border: 1px;
+    cursor: pointer;
+    overflow: hidden;
+    outline: none;
+    position: absolute;
+    right: -5px;
+}
+
+.figure-edit-icon {
+    font-size: 18px;
+    color: #cecece;
+}
+
+.crop-mode {
+    height: 500px !important;
+    width: 800px !important;
+}
+
+.crop-icon {
+    font-size: 1.2em;
+    color: white
+}
+
+.hide {
+    display: none;
 }

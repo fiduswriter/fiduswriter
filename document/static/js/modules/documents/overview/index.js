@@ -152,7 +152,7 @@ export class DocumentOverview {
                 top: ""
             },
             data: {
-                headings: ['','&emsp;&emsp;', gettext("Title"), gettext("Revisions"), gettext("Created"), gettext("Last changed"), gettext("Owner"), gettext("Rights"), ''],
+                headings: ['', '&emsp;&emsp;', gettext("Title"), gettext("Revisions"), gettext("Created"), gettext("Last changed"), gettext("Owner"), gettext("Rights"), ''],
                 data: this.documentList.map(doc => this.createTableRow(doc))
             },
             columns: [
@@ -161,7 +161,7 @@ export class DocumentOverview {
                     hidden: true
                 },
                 {
-                    select: [1,3,7,8],
+                    select: [1, 3, 7, 8],
                     sortable: false
                 }
             ]

@@ -30,7 +30,7 @@ export class citeprocSys {
     }
 
     retrieveLocale(lang) {
-        const langCode = lang.replace('-','')
+        const langCode = lang.replace('-', '')
         let locale = this.citationLocales.find(locale => locale.language_code===langCode)
         if (!locale) {
             locale = this.citationLocales.find(locale => locale.language_code==='enUS')

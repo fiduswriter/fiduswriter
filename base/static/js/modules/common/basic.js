@@ -106,7 +106,7 @@ export const localizeDate = function(milliseconds, type='full') {
                 yyyy = theDate.getFullYear()
                 mm = theDate.getMonth() + 1
                 dd = theDate.getDate()
-                returnValue = `${yyyy}-${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`
+                returnValue = `${yyyy}-${String(mm).padStart(2, '0')}-${String(dd).padStart(2, '0')}`
                 break
             case 'minutes':
                 returnValue = theDate.toLocaleString([], {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute:'2-digit'})
@@ -141,7 +141,7 @@ export const noSpaceTmp = function(_strings) {
 
      let out = ""
      combined.split('\n').forEach(line => {
-         out += line.replace(/^\s*/g,'')
+         out += line.replace(/^\s*/g, '')
      })
      return out
  }

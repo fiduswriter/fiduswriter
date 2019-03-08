@@ -7,6 +7,7 @@ import {baseKeymap} from "prosemirror-commands"
 import {gapCursor} from "prosemirror-gapcursor"
 import {menuBar} from "prosemirror-menu"
 import {buildKeymap, buildInputRules} from "prosemirror-example-setup"
+import {tableEditing} from "prosemirror-tables"
 
 import {TagsView, ContributorsView} from "../editor/state_plugins"
 import {
@@ -139,7 +140,7 @@ export class DocumentTemplateDesigner {
                         if (locking !== 'false') {
                             attrs.locking = locking
                         }
-                        let language
+                        let language, value
                         switch (type) {
                             case 'richtext_part':
                             case 'heading_part':
@@ -155,6 +156,8 @@ export class DocumentTemplateDesigner {
                                 if (!node.content) {
                                     node.content = [{type: attrs.elements[0]}]
                                 }
+                                value = el.querySelector('select.metadata').value
+                                attrs.metadata = value === 'false' ? false : value
                                 break
                             case 'table_part':
                                 attrs.elements = Array.from(el.querySelectorAll('.elements:checked')).map(el => el.value)
@@ -174,6 +177,8 @@ export class DocumentTemplateDesigner {
                             case 'contributors_part':
                             case 'tags_part':
                                 attrs.item_title = el.querySelector('input.item_title').value
+                                value = el.querySelector('select.metadata').value
+                                attrs.metadata = value === 'false' ? false : value
                                 break
                             default:
                                 break
@@ -272,6 +277,7 @@ export class DocumentTemplateDesigner {
             case 'table_part':
                 schema = tablePartSchema
                 menuContent = tableMenuContent
+                plugins.push(tableEditing())
                 break
             case 'heading_part':
                 schema = headingPartSchema

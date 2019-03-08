@@ -85,7 +85,7 @@ function markDeletion(tr, from, to, user, username, date1, date10) {
                         }
                     } else {
                         removeStep = new ReplaceStep(
-                            deletionMap.map(Math.max(from,pos)),
+                            deletionMap.map(Math.max(from, pos)),
                             deletionMap.map(Math.min(to, pos + node.nodeSize)),
                             Slice.empty
                         )
@@ -271,7 +271,7 @@ export function amendTransaction(tr, state, editor) {
                     )
                 }
                 if (
-                    ['em', 'strong', 'mark'].includes(step.mark.type.name) &&
+                    ['em', 'strong', 'underline'].includes(step.mark.type.name) &&
                     !node.marks.find(mark => mark.type === step.mark.type)
                 ) {
                     const formatChangeMark = node.marks.find(mark => mark.type.name==='format_change')
@@ -320,7 +320,7 @@ export function amendTransaction(tr, state, editor) {
                 }
 
                 if (
-                    ['em', 'strong', 'mark'].includes(step.mark.type.name) &&
+                    ['em', 'strong', 'underline'].includes(step.mark.type.name) &&
                     node.marks.find(mark => mark.type === step.mark.type)
                 ) {
                     const formatChangeMark = node.marks.find(mark => mark.type.name==='format_change')

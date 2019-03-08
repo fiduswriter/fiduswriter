@@ -262,7 +262,8 @@ export class FigureDialog {
                 const imageSelection = new ImageSelectionDialog(
                     this.imageDB,
                     this.userImageDB,
-                    this.imgId
+                    this.imgId,
+                    this.editor
                 )
                 imageSelection.init().then(
                     ({

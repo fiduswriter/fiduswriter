@@ -88,8 +88,8 @@ const allowedMarksTemplate = ({marks}) =>
     ${gettext('Emphasis')}
 </label>
 <label>
-    <input type="checkbox" class="marks" value="mark" ${marks.includes('mark') ? 'checked' : ''}/>
-    ${gettext('Mark')}
+    <input type="checkbox" class="marks" value="underline" ${marks.includes('underline') ? 'checked' : ''}/>
+    ${gettext('Underline')}
 </label>
 <label>
     <input type="checkbox" class="marks" value="link" ${marks.includes('link') ? 'checked' : ''}/>
@@ -104,10 +104,11 @@ const headingTemplate = ({
     id="",
     title="",
     elements=["heading1", "heading2", "heading3", "heading4", "heading5", "heading6"],
-    marks=["strong", "em", "highlight", "underline", "link"],
+    marks=["strong", "em", "underline", "link"],
     locking="false",
     optional="false",
-    language=false
+    language=false,
+    metadata=false
 }) =>
 `<div class="doc-part" data-type="heading_part">
     <div class="doc-part-header">
@@ -123,6 +124,12 @@ const headingTemplate = ({
         </div>
     </div>
     <div class="attrs hidden">
+        <div class="label">${gettext('Metadata function')}
+            <select class="metadata">
+                <option value="false" ${metadata===false ? "selected" : ""}>${gettext('None')}</option>
+                <option value="subtitle" ${metadata==='subtitle' ? "selected" : ""}>${gettext('Subtitle')}</option>
+            </select>
+        </div>
         <div class="label">${gettext('Locking')}
             <select class="locking">
                 <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>
@@ -191,7 +198,8 @@ const contributorsTemplate = ({
     title="",
     item_title="",
     locking="false",
-    optional="false"
+    optional="false",
+    metadata=false
 }) =>
 `<div class="doc-part" data-type="contributors_part">
     <div class="doc-part-header">
@@ -208,6 +216,12 @@ const contributorsTemplate = ({
     </div>
     <div class="attrs hidden">
         <div class="label">${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(item_title)}"></div>
+        <div class="label">${gettext('Metadata function')}
+            <select class="metadata">
+                <option value="false" ${metadata===false ? "selected" : ""}>${gettext('None')}</option>
+                <option value="authors" ${metadata==='authors' ? "selected" : ""}>${gettext('Authors')}</option>
+            </select>
+        </div>
         <div class="label">${gettext('Locking')}
             <select class="locking">
                 <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>
@@ -237,10 +251,11 @@ const richtextTemplate = ({
     id="",
     title="",
     elements=["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote"],
-    marks=["strong", "em", "highlight", "underline", "link"],
+    marks=["strong", "em", "underline", "link"],
     locking="false",
     optional="false",
-    language=false
+    language=false,
+    metadata=false
 }) => `<div class="doc-part" data-type="richtext_part">
     <div class="doc-part-header">
         ${gettext('Richtext')}
@@ -255,6 +270,12 @@ const richtextTemplate = ({
         </div>
     </div>
     <div class="attrs hidden">
+        <div class="label">${gettext('Metadata function')}
+            <select class="metadata">
+                <option value="false" ${metadata===false ? "selected" : ""}>${gettext('None')}</option>
+                <option value="abstract" ${metadata==='abstract' ? "selected" : ""}>${gettext('Abstract')}</option>
+            </select>
+        </div>
         <div class="label">${gettext('Locking')}
             <select class="locking">
                 <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>
@@ -292,12 +313,43 @@ const richtextTemplate = ({
     </div>
 </div>`
 
+
+const separatorTemplate = ({
+    id="",
+    title="",
+    optional="false"
+}) =>
+`<div class="doc-part" data-type="separator_part">
+    <div class="doc-part-header">
+        ${gettext('Separator')}
+        <ul class="object-tools right">
+            <li>
+                <span class="link configure">${gettext('Configure')}</span>
+            </li>
+        </ul>
+        <div class="label">
+            ${gettext('ID')} <input type="text" class="id" value="${escapeText(id)}">
+            ${gettext('Title')} <input type="text" class="title" value="${escapeText(title)}">
+        </div>
+    </div>
+    <div class="attrs hidden">
+        <div class="label">${gettext('Optional')}
+            <select class="optional">
+                <option value="false" ${optional==='false' ? "selected" : ""}>${gettext('Obligatory field')}</option>
+                <option value="shown" ${optional==='shown' ? "selected" : ""}>${gettext('Optional, shown by default')}</option>
+                <option value="hidden" ${optional==='hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
+            </select>
+        </div>
+    </div>
+</div>`
+
 const tagsTemplate = ({
     id="",
     title="",
     item_title="",
     locking="false",
-    optional="false"
+    optional="false",
+    metadata=false
 }) =>
 `<div class="doc-part" data-type="tags_part">
     <div class="doc-part-header">
@@ -314,6 +366,12 @@ const tagsTemplate = ({
     </div>
     <div class="attrs hidden">
         <div class="label">${gettext('Item title')} <input type="text" class="item_title" value="${escapeText(item_title)}"></div>
+        <div class="label">${gettext('Metadata function')}
+            <select class="metadata">
+                <option value="false" ${metadata===false ? "selected" : ""}>${gettext('None')}</option>
+                <option value="keywords" ${metadata==='keywords' ? "selected" : ""}>${gettext('Keywords')}</option>
+            </select>
+        </div>
         <div class="label">${gettext('Locking')}
             <select class="locking">
                 <option value="false" ${locking==='false' ? "selected" : ""}>${gettext('User can change contents')}</option>
@@ -343,7 +401,7 @@ const tableTemplate = ({
     id="",
     title="",
     elements= ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote"],
-    marks= ["strong", "em", "highlight", "underline", "link"],
+    marks= ["strong", "em", "underline", "link"],
     locking="false",
     optional="false",
     language=false
@@ -430,7 +488,7 @@ const tocTemplate = ({
 
 export const footnoteTemplate = ({
     footnote_elements = ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "table"],
-    footnote_marks = ["strong", "em", "highlight", "underline", "link"]
+    footnote_marks = ["strong", "em", "underline", "link"]
 }) => `<div class="doc-part attrs">${allowedElementsTemplate({elements: footnote_elements}, false)}${allowedMarksTemplate({marks: footnote_marks})}</div>`
 
 export const languagesTemplate = ({languages = LANGUAGES.map(lang => lang[0])}) =>
@@ -458,6 +516,8 @@ export const templateEditorValueTemplate = ({content}) =>
                 return tableTemplate(docPart.attrs)
             case 'table_of_contents':
                 return tocTemplate(docPart.attrs)
+            case 'separator_part':
+                return separatorTemplate(docPart.attrs)
             default:
                 return ''
         }
@@ -490,6 +550,7 @@ export const documentConstructorTemplate = ({value}) =>
                         ${tagsTemplate({})}
                         ${tableTemplate({})}
                         ${tocTemplate({})}
+                        ${separatorTemplate({})}
                     </td>
                     <td class="to-column">
                         <div class="doc-part fixed" data-type="initial">${gettext('Title')}</div>

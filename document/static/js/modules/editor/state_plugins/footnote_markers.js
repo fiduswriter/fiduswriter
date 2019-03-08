@@ -172,7 +172,7 @@ export const footnoteMarkersPlugin = function(options) {
                                     )
                                 })
                             }
-                            fnMarkers = fnMarkers.concat(newFootnotes).sort((a,b) => a.from > b.from)
+                            fnMarkers = fnMarkers.concat(newFootnotes).sort((a, b) => a.from > b.from ? 1 : -1)
                         }
                     })
                 }

@@ -237,12 +237,12 @@ export class BibEntryForm {
         // key so far.
         let entryKey = ''
         if (bibItem.fields.author) {
-            entryKey += nameToText(bibItem.fields.author).replace(/\s|,|=|;|:|{|}/g,'')
+            entryKey += nameToText(bibItem.fields.author).replace(/\s|,|=|;|:|{|}/g, '')
         } else if (bibItem.fields.editor) {
-            entryKey += nameToText(bibItem.fields.editor).replace(/\s|,|=|;|:|{|}/g,'')
+            entryKey += nameToText(bibItem.fields.editor).replace(/\s|,|=|;|:|{|}/g, '')
         }
         if (bibItem.fields.date) {
-            entryKey += bibItem.fields.date.split('/')[0].replace(/\?|\*|u|~|-/g,'')
+            entryKey += bibItem.fields.date.split('/')[0].replace(/\?|\*|u|~|-/g, '')
         }
         if (entryKey.length) {
             bibItem.entry_key = entryKey

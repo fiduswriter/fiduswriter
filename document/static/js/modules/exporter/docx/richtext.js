@@ -1,4 +1,10 @@
-import {noSpaceTmp, escapeText} from "../../common"
+import {
+    noSpaceTmp,
+    escapeText
+} from "../../common"
+import {
+    FIG_CATS
+} from "../../schema/common"
 
 export class DocxExporterRichtext {
     constructor(exporter, rels, citations, images) {
@@ -9,16 +15,13 @@ export class DocxExporterRichtext {
         this.fnCounter = 2 // footnotes 0 and 1 are occupied by separators by default.
         this.bookmarkCounter = 0
         this.figureCounter = {} // counters for each type of figure (figure/table/photo)
+        this.docPrCount = 0
     }
 
     transformRichtext(node, options = {}) {
-        let start = '', content = '', end = ''
-        let hyperlink, em, strong, smallcaps, sup, sub
-        let cit
-        let caption, figCat
-        let columns, cellWidth
-        let latex
-        let textAttr
+        let start = '',
+            content = '',
+            end = ''
 
         switch (node.type) {
             case 'paragraph':
@@ -167,242 +170,361 @@ export class DocxExporterRichtext {
                     </w:r>`
                 break
             case 'text':
-                // Check for hyperlink, bold/strong and italic/em
-                if (node.marks) {
-                    hyperlink = node.marks.find(mark => mark.type === 'link')
-                    em = node.marks.find(mark => mark.type === 'em')
-                    strong = node.marks.find(mark => mark.type === 'strong')
-                    smallcaps = node.marks.find(mark => mark.type === 'smallcaps')
-                    sup = node.marks.find(mark => mark.type === 'sup')
-                    sub = node.marks.find(mark => mark.type === 'sub')
-                }
-
-                if (hyperlink) {
-                    const href = hyperlink.attrs.href
-                    if (href[0] === '#') {
-                        // Internal link
-                        start += `<w:hyperlink w:anchor="${href.slice(1)}">`
-                    } else {
-                        // External link
-                        const refId = this.rels.addLinkRel(href)
-                        start += `<w:hyperlink r:id="rId${refId}">`
+                {
+                    let hyperlink, em, strong, underline, smallcaps, sup, sub
+                    // Check for hyperlink, bold/strong and italic/em
+                    if (node.marks) {
+                        hyperlink = node.marks.find(mark => mark.type === 'link')
+                        em = node.marks.find(mark => mark.type === 'em')
+                        strong = node.marks.find(mark => mark.type === 'strong')
+                        underline = node.marks.find(mark => mark.type === 'underline')
+                        smallcaps = node.marks.find(mark => mark.type === 'smallcaps')
+                        sup = node.marks.find(mark => mark.type === 'sup')
+                        sub = node.marks.find(mark => mark.type === 'sub')
                     }
-                    start += '<w:r>'
-                    end = '</w:t></w:r></w:hyperlink>' + end
-                } else {
-                    start += '<w:r>'
-                    end = '</w:t></w:r>' + end
-                }
 
-                if (hyperlink || em || strong || smallcaps || sup || sub) {
-                    start += '<w:rPr>'
                     if (hyperlink) {
-                        start += '<w:rStyle w:val="Hyperlink"/>'
-                    }
-                    if (em) {
-                        start += '<w:i/><w:iCs/>'
-                    }
-                    if (strong) {
-                        start += '<w:b/><w:bCs/>'
-                    }
-                    if (smallcaps) {
-                        start += '<w:smallCaps/>'
-                    }
-                    if (sup) {
-                        start += '<w:vertAlign w:val="superscript"/>'
-                    } else if (sub) {
-                        start += '<w:vertAlign w:val="subscript"/>'
+                        const href = hyperlink.attrs.href
+                        if (href[0] === '#') {
+                            // Internal link
+                            start += `<w:hyperlink w:anchor="${href.slice(1)}">`
+                        } else {
+                            // External link
+                            const refId = this.rels.addLinkRel(href)
+                            start += `<w:hyperlink r:id="rId${refId}">`
+                        }
+                        start += '<w:r>'
+                        end = '</w:t></w:r></w:hyperlink>' + end
+                    } else {
+                        start += '<w:r>'
+                        end = '</w:t></w:r>' + end
                     }
 
-                    start += '</w:rPr>'
-                }
-                if (options.footnoteRefMissing) {
-                    start+= '<w:footnoteRef /><w:tab />'
-                    options.footnoteRefMissing = false
-                }
-                textAttr = ''
-                if (node.text[0] === ' ' || node.text[node.text.length-1] === ' ') {
-                    textAttr += 'xml:space="preserve"'
-                }
-                start += `<w:t ${textAttr}>`
+                    if (hyperlink || em || strong || underline || smallcaps || sup || sub) {
+                        start += '<w:rPr>'
+                        if (hyperlink) {
+                            start += '<w:rStyle w:val="Hyperlink"/>'
+                        }
+                        if (em) {
+                            start += '<w:i/><w:iCs/>'
+                        }
+                        if (strong) {
+                            start += '<w:b/><w:bCs/>'
+                        }
+                        if (underline) {
+                            start += '<w:u w:val="single"/>'
+                        }
+                        if (smallcaps) {
+                            start += '<w:smallCaps/>'
+                        }
+                        if (sup) {
+                            start += '<w:vertAlign w:val="superscript"/>'
+                        } else if (sub) {
+                            start += '<w:vertAlign w:val="subscript"/>'
+                        }
 
-                content += escapeText(node.text)
-                break
+                        start += '</w:rPr>'
+                    }
+                    if (options.footnoteRefMissing) {
+                        start += '<w:footnoteRef /><w:tab />'
+                        options.footnoteRefMissing = false
+                    }
+                    let textAttr = ''
+                    if (node.text[0] === ' ' || node.text[node.text.length - 1] === ' ') {
+                        textAttr += 'xml:space="preserve"'
+                    }
+                    start += `<w:t ${textAttr}>`
+
+                    content += escapeText(node.text)
+                    break
+                }
             case 'citation':
-                // We take the first citation from the stack and remove it.
-                cit = this.citations.pmCits.shift()
-                if (options.citationType && options.citationType === 'note') {
-                    // If the citations are in notes (footnotes), we need to
-                    // put the contents of this citation in a footnote.
-                    // We then add the footnote to the footnote file and
-                    // adjust the ids of all subsequent footnotes to be one higher
-                    // than what they were until now.
-                    content += noSpaceTmp`
+                {
+                    // We take the first citation from the stack and remove it.
+                    const cit = this.citations.pmCits.shift()
+                    if (options.citationType && options.citationType === 'note') {
+                        // If the citations are in notes (footnotes), we need to
+                        // put the contents of this citation in a footnote.
+                        // We then add the footnote to the footnote file and
+                        // adjust the ids of all subsequent footnotes to be one higher
+                        // than what they were until now.
+                        content += noSpaceTmp`
                         <w:r>
                             <w:rPr>
                                 <w:rStyle w:val="FootnoteAnchor"/>
                             </w:rPr>
                             <w:footnoteReference w:id="${this.fnCounter}"/>
                         </w:r>`
-                    const fnContents = this.transformRichtext(cit, {
-                        footnoteRefMissing: true,
-                        section: 'Footnote'
-                    })
-                    const fnXml = `<w:footnote w:id="${this.fnCounter}">${fnContents}</w:footnote>`
-                    const xml = this.exporter.footnotes.xml
-                    const lastId = this.fnCounter - 1
-                    const footnotes = xml.querySelectorAll('footnote')
-                    footnotes.forEach(
-                        footnote => {
-                            const id = parseInt(footnote.getAttribute('w:id'))
-                            if (id >= this.fnCounter) {
-                                footnote.setAttribute('w:id', id+1)
+                        const fnContents = this.transformRichtext(cit, {
+                            footnoteRefMissing: true,
+                            section: 'Footnote'
+                        })
+                        const fnXml = `<w:footnote w:id="${this.fnCounter}">${fnContents}</w:footnote>`
+                        const xml = this.exporter.footnotes.xml
+                        const lastId = this.fnCounter - 1
+                        const footnotes = xml.querySelectorAll('footnote')
+                        footnotes.forEach(
+                            footnote => {
+                                const id = parseInt(footnote.getAttribute('w:id'))
+                                if (id >= this.fnCounter) {
+                                    footnote.setAttribute('w:id', id + 1)
+                                }
+                                if (id === lastId) {
+                                    footnote.insertAdjacentHTML('afterend', fnXml)
+                                }
                             }
-                            if (id===lastId) {
-                                footnote.insertAdjacentHTML('afterend', fnXml)
-                            }
-                        }
-                    )
-                    this.fnCounter++
-                } else {
-                    for (let i=0; i < cit.content.length; i++) {
-                        content += this.transformRichtext(cit.content[i], options)
-                    }
-                }
-                break
-            case 'figure':
-                caption = node.attrs.caption
-                figCat = node.attrs.figureCategory
-                if (figCat !== 'none') {
-                    if (!this.figureCounter[figCat]) {
-                        this.figureCounter[figCat] = 1
-                    }
-                    const figCount = this.figureCounter[figCat]++
-                    if (caption.length) {
-                        caption = `${figCat} ${figCount}: ${caption}`
+                        )
+                        this.fnCounter++
                     } else {
-                        caption = `${figCat} ${figCount}`
+                        for (let i = 0; i < cit.content.length; i++) {
+                            content += this.transformRichtext(cit.content[i], options)
+                        }
                     }
+                    break
                 }
-                if (node.attrs.image !== false) {
-                    const imgDBEntry = this.images.imageDB.db[node.attrs.image]
-                    let cx = imgDBEntry.width * 9525 // width in EMU
-                    let cy = imgDBEntry.height * 9525 // height in EMU
-                    // Shrink image if too large for paper.
-                    if (options.dimensions) {
-                        let width = options.dimensions.width
-                        if (options.tableSideMargins) {
-                            width = width - options.tableSideMargins
+            case 'figure':
+                {
+                    const figCat = node.attrs.figureCategory
+                    let caption = escapeText(node.attrs.caption)
+                    let figCountXml = ''
+                    if (figCat !== 'none') {
+                        if (!this.figureCounter[figCat]) {
+                            this.figureCounter[figCat] = 1
                         }
-                        if (cx > width) {
-                            const rel = cy/cx
-                            cx = width
-                            cy = cx * rel
-                        }
-                        if (cy > options.dimensions.height) {
-                            const rel = cx/cy
-                            cy = options.dimensions.height
-                            cx = cy * rel
-                        }
+                        figCountXml = `<w:r>
+                        <w:t xml:space="preserve">${FIG_CATS[node.attrs.figureCategory]} </w:t>
+                    </w:r>
+                    <w:r>
+                        <w:rPr></w:rPr>
+                        <w:fldChar w:fldCharType="begin"></w:fldChar>
+                    </w:r>
+                    <w:r>
+                        <w:rPr></w:rPr>
+                        <w:instrText> SEQ ${node.attrs.figureCategory} \\* ARABIC </w:instrText>
+                    </w:r>
+                    <w:r>
+                        <w:rPr></w:rPr>
+                        <w:fldChar w:fldCharType="separate" />
+                    </w:r>
+                    <w:r>
+                        <w:rPr></w:rPr>
+                        <w:t>${this.figureCounter[figCat]++}</w:t>
+                    </w:r>
+                    <w:r>
+                        <w:rPr></w:rPr>
+                        <w:fldChar w:fldCharType="end" />
+                    </w:r>`
+                        caption = caption.length ? ': ' + caption : ''
                     }
-                    cy = Math.round(cy)
-                    cx = Math.round(cx)
-                    const rId = this.images.imgIdTranslation[node.attrs.image]
-                    start += noSpaceTmp`
+                    let cx, cy
+                    if (node.attrs.image !== false) {
+                        const imgDBEntry = this.images.imageDB.db[node.attrs.image]
+                        cx = imgDBEntry.width * 9525 // width in EMU
+                        cy = imgDBEntry.height * 9525 // height in EMU
+                        const imgTitle = imgDBEntry.title
+                        // Shrink image if too large for paper.
+                        if (options.dimensions) {
+                            let width = options.dimensions.width
+                            if (options.tableSideMargins) {
+                                width = width - options.tableSideMargins
+                            }
+                            width = width * parseInt(node.attrs.width) / 100
+                            if (cx > width) {
+                                const rel = cy / cx
+                                cx = width
+                                cy = cx * rel
+                            }
+                            if (cy > options.dimensions.height) {
+                                const rel = cx / cy
+                                cy = options.dimensions.height
+                                cx = cy * rel
+                            }
+                        }
+                        cy = Math.round(cy)
+                        cx = Math.round(cx)
+                        const rId = this.images.imgIdTranslation[node.attrs.image]
+                        content += noSpaceTmp`<w:r>
+                      <w:rPr/>
+                      <w:drawing>
+                        <wp:inline distT="0" distB="0" distL="0" distR="0">
+                          <wp:extent cx="${cx}" cy="${cy}"/>
+                          <wp:docPr id="${this.docPrCount}" name="Picture${this.docPrCount++}" descr=""/>
+                          <a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+                            <a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">
+                              <pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
+                                <pic:nvPicPr>
+                                  <pic:cNvPr id="0" name="${imgTitle}" descr=""/>
+                                  <pic:cNvPicPr>
+                                    <a:picLocks noChangeAspect="1" noChangeArrowheads="1"/>
+                                  </pic:cNvPicPr>
+                                </pic:nvPicPr>
+                                <pic:blipFill>
+                                  <a:blip r:embed="rId${rId}"/>
+                                  <a:stretch>
+                                    <a:fillRect/>
+                                  </a:stretch>
+                                </pic:blipFill>
+                                <pic:spPr bwMode="auto">
+                                  <a:xfrm>
+                                    <a:off x="0" y="0"/>
+                                    <a:ext cx="${cx}" cy="${cy}"/>
+                                  </a:xfrm>
+                                  <a:prstGeom prst="rect">
+                                    <a:avLst/>
+                                  </a:prstGeom>
+                                  <a:noFill/>
+                                  <a:ln w="9525">
+                                    <a:noFill/>
+                                    <a:miter lim="800000"/>
+                                    <a:headEnd/>
+                                    <a:tailEnd/>
+                                  </a:ln>
+                                </pic:spPr>
+                              </pic:pic>
+                            </a:graphicData>
+                          </a:graphic>
+                        </wp:inline>
+                      </w:drawing>
+                    </w:r>`
+                    } else {
+                        cx = 9525 * 100 // We pick a random size of 100x100. We hope this will fit the formula
+                        cy = 9525 * 100
+                        const latex = node.attrs.equation
+                        content += this.exporter.math.getOmml(latex)
+                    }
+                    const captionSpace = !!(figCountXml.length || caption.length)
+                    if (node.attrs.aligned === 'center') {
+                        start += noSpaceTmp`
                     <w:p>
                       <w:pPr>
                         <w:jc w:val="center"/>
                       </w:pPr>
                       <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
-                      <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>
+                      <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
+                        end = `
+                    </w:p>
+                    ${ captionSpace ?
+                        noSpaceTmp`<w:p>
+                          <w:pPr><w:pStyle w:val="Caption"/><w:rPr></w:rPr></w:pPr>
+                          ${figCountXml}
+                          ${
+                              caption.length ?
+                              noSpaceTmp`<w:r>
+                                  <w:rPr></w:rPr>
+                                  <w:t>${caption}</w:t>
+                              </w:r>` : ''
+                          }</w:p>` : ''
+                    }` + end
+                    } else {
+                        start += noSpaceTmp`
+                    <w:p>
+                      <w:pPr>
+                        <w:jc w:val="center"/>
+                      </w:pPr>
                       <w:r>
                         <w:rPr/>
-                        <w:drawing>
-                          <wp:inline distT="0" distB="0" distL="0" distR="0">
-                            <wp:extent cx="${cx}" cy="${cy}"/>
-                            <wp:docPr id="0" name="Picture" descr=""/>
-                            <a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
-                              <a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">
-                                <pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
-                                  <pic:nvPicPr>
-                                    <pic:cNvPr id="0" name="Picture" descr=""/>
-                                    <pic:cNvPicPr>
-                                      <a:picLocks noChangeAspect="1" noChangeArrowheads="1"/>
-                                    </pic:cNvPicPr>
-                                  </pic:nvPicPr>
-                                  <pic:blipFill>
-                                    <a:blip r:embed="rId${rId}"/>
-                                    <a:stretch>
-                                      <a:fillRect/>
-                                    </a:stretch>
-                                  </pic:blipFill>
-                                  <pic:spPr bwMode="auto">
-                                    <a:xfrm>
-                                      <a:off x="0" y="0"/>
-                                      <a:ext cx="${cx}" cy="${cy}"/>
-                                    </a:xfrm>
-                                    <a:prstGeom prst="rect">
-                                      <a:avLst/>
-                                    </a:prstGeom>
-                                    <a:noFill/>
-                                    <a:ln w="9525">
-                                      <a:noFill/>
-                                      <a:miter lim="800000"/>
-                                      <a:headEnd/>
-                                      <a:tailEnd/>
-                                    </a:ln>
-                                  </pic:spPr>
-                                </pic:pic>
-                              </a:graphicData>
-                            </a:graphic>
-                          </wp:inline>
+                          <w:drawing>
+                            <wp:anchor behindDoc="0" distT="95250" distB="95250" distL="95250" distR="95250" simplePos="0" locked="0" layoutInCell="1" allowOverlap="0" relativeHeight="2">
+                                <wp:simplePos x="0" y="0" />
+                                <wp:positionH relativeFrom="column">
+                                    <wp:align>${node.attrs.aligned}</wp:align>
+                                </wp:positionH>
+                                <wp:positionV relativeFrom="paragraph">
+                                    <wp:posOffset>0</wp:posOffset>
+                                </wp:positionV>
+                                <wp:extent cx="${cx}" cy="${captionSpace ? cy+350520 : cy}" />
+                                <wp:effectExtent l="0" t="0" r="0" b="0" />
+                                <wp:wrapSquare wrapText="largest" />
+                                <wp:docPr id="${this.docPrCount}" name="Frame${this.docPrCount++}" />
+                                <a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+                                    <a:graphicData uri="http://schemas.microsoft.com/office/word/2010/wordprocessingShape">
+                                        <wps:wsp>
+                                            <wps:cNvSpPr txBox="1" />
+                                            <wps:spPr>
+                                                <a:xfrm>
+                                                    <a:off x="0" y="0" />
+                                                    <a:ext cx="${cx}" cy="${captionSpace ? cy+350520 : cy}" />
+                                                </a:xfrm>
+                                                <a:prstGeom prst="rect" />
+                                            </wps:spPr>
+                                            <wps:txbx>
+                                                <w:txbxContent>
+                                                    <w:p>
+                                                        <w:pPr>
+                                                            <w:pStyle w:val="Caption" />
+                                                            <w:spacing w:before="20" w:after="220" />
+                                                            <w:rPr></w:rPr>
+                                                        </w:pPr>
+                                                        <w:bookmarkStart w:name="${node.attrs.id}" w:id="${this.bookmarkCounter}"/>
+                                                        <w:bookmarkEnd w:id="${this.bookmarkCounter++}"/>`
+
+                        end = noSpaceTmp`
+                                                        ${figCountXml}
+                                                        ${
+                                                            caption.length ?
+                                                            `<w:r>
+                                                                <w:rPr></w:rPr>
+                                                                <w:t>${caption}</w:t>
+                                                            </w:r>` :
+                                                            ''
+                                                        }
+                                                    </w:p>
+                                                </w:txbxContent>
+                                            </wps:txbx>
+                                            <wps:bodyPr anchor="t" lIns="0" tIns="0" rIns="0" bIns="0">
+                                                <a:noAutofit />
+                                            </wps:bodyPr>
+                                        </wps:wsp>
+                                    </a:graphicData>
+                                </a:graphic>
+                                  <wp14:sizeRelH relativeFrom="margin">
+                                    <wp14:pctWidth>${node.attrs.width}000</wp14:pctWidth>
+                                </wp14:sizeRelH>
+                            </wp:anchor>
                         </w:drawing>
                       </w:r>
-                    </w:p>
-                    <w:p>
-                      <w:pPr><w:pStyle w:val="Caption"/><w:rPr></w:rPr></w:pPr>`
-                      content += this.transformRichtext({type: 'text', text: caption}, options)
-                      end = '</w:p>' + end
-                } else {
-                    const latex = node.attrs.equation
-                    const omml = this.exporter.math.getOmml(latex)
-                    start += noSpaceTmp`
-                        <w:p>${omml}</w:p>
-                        <w:p>
-                          <w:pPr><w:pStyle w:val="Caption"/><w:rPr></w:rPr></w:pPr>`
-                    content += this.transformRichtext({type: 'text', text: caption}, options)
-                    end =  '</w:p>' + end
+                    </w:p>` + end
+                    }
+                    break
                 }
-                break
             case 'table':
-                this.exporter.tables.addTableGridStyle()
-                start += noSpaceTmp`
+                {
+                    this.exporter.tables.addTableGridStyle()
+                    start += noSpaceTmp`
                     <w:tbl>
                         <w:tblPr>
                             <w:tblStyle w:val="${this.exporter.tables.tableGridStyle}" />
-                            <w:tblW w:w="0" w:type="auto" />
+                            ${
+                                node.attrs.width === '100' ?
+                                    '<w:tblW w:w="0" w:type="auto" />' :
+                                    noSpaceTmp`<w:tblW w:w="${
+                                        50 * parseInt(node.attrs.width)
+                                    }" w:type="pct" />
+                                    <w:jc w:val="${node.attrs.aligned}" />`
+                            }
                             <w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1" />
                         </w:tblPr>
                         <w:tblGrid>`
-                columns = node.content[0].content.length
-                cellWidth = 63500 // standard width
-                options = Object.assign({}, options)
-                if (options.dimensions && options.dimensions.width) {
-                    cellWidth = parseInt(options.dimensions.width / columns) - 2540 // subtracting for border width
-                } else if (!options.dimensions) {
-                    options.dimensions = {}
-                }
+                    const columns = node.content[0].content.length
+                    let cellWidth = 63500 // standard width
+                    options = Object.assign({}, options)
+                    if (options.dimensions && options.dimensions.width) {
+                        cellWidth = parseInt(options.dimensions.width / columns) - 2540 // subtracting for border width
+                    } else if (!options.dimensions) {
+                        options.dimensions = {}
+                    }
 
-                options.dimensions = Object.assign({}, options.dimensions)
-                options.dimensions.width = cellWidth
-                options.tableSideMargins = this.exporter.tables.getSideMargins()
-                for (let i=0;i<columns;i++) {
-                    start += `<w:gridCol w:w="${parseInt(cellWidth / 635)}" />`
-                }
-                start += '</w:tblGrid>'
-                end = '</w:tbl>' + end
+                    options.dimensions = Object.assign({}, options.dimensions)
+                    options.dimensions.width = cellWidth
+                    options.tableSideMargins = this.exporter.tables.getSideMargins()
+                    for (let i = 0; i < columns; i++) {
+                        start += `<w:gridCol w:w="${parseInt(cellWidth / 635)}" />`
+                    }
+                    start += '</w:tblGrid>'
+                    end = '</w:tbl>' + end
 
-                break
+                    break
+                }
             case 'table_row':
                 start += '<w:tr>'
                 end = '</w:tr>' + end
@@ -441,13 +563,15 @@ export class DocxExporterRichtext {
 
                 break
             case 'equation':
-                latex = node.attrs.equation
-                content += this.exporter.math.getOmml(latex)
-                break
+                {
+                    const latex = node.attrs.equation
+                    content += this.exporter.math.getOmml(latex)
+                    break
+                }
             case 'hard_break':
                 content += '<w:r><w:br/></w:r>'
                 break
-            // CSL bib entries
+                // CSL bib entries
             case 'cslbib':
                 options = Object.assign({}, options)
                 options.section = 'Bibliography1'
@@ -479,7 +603,7 @@ export class DocxExporterRichtext {
         }
 
         if (node.content) {
-            for (let i=0; i < node.content.length; i++) {
+            for (let i = 0; i < node.content.length; i++) {
                 content += this.transformRichtext(node.content[i], options)
             }
         }

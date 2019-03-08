@@ -22,13 +22,7 @@ export class BaseDOMExporter {
     joinDocumentParts() {
         this.schema.cached.imageDB = this.imageDB
         const serializer = DOMSerializer.fromSchema(this.schema)
-        this.contents = serializer.serializeNode(this.schema.nodeFromJSON(this.doc.contents))
-
-        // Remove hidden parts
-        const hiddenEls = Array.from(this.contents.querySelectorAll('[data-hidden=true]'))
-        hiddenEls.forEach(hiddenEl => {
-            hiddenEl.parentElement.removeChild(hiddenEl)
-        })
+        this.contents = serializer.serializeNode(this.schema.nodeFromJSON(this.docContents))
 
         const citRenderer = new RenderCitations(
             this.contents,
@@ -105,7 +99,7 @@ export class BaseDOMExporter {
 
     getFootnoteAnchor(counter) {
         const footnoteAnchor = document.createElement('a')
-        footnoteAnchor.setAttribute('href','#fn'+counter)
+        footnoteAnchor.setAttribute('href', '#fn'+counter)
         // RASH 0.5 doesn't mark the footnote anchors, so we add this class
         footnoteAnchor.classList.add('fn')
         return footnoteAnchor

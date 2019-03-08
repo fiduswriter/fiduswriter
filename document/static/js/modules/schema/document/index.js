@@ -19,7 +19,7 @@ import {
     ordered_list,
     bullet_list,
     list_item,
-    mark,
+    underline,
     deletion,
     insertion,
     format_change,
@@ -42,7 +42,8 @@ import {
     contributors_part,
     tags_part,
     table_part,
-    table_of_contents
+    table_of_contents,
+    separator_part
 } from "./structure"
 
 
@@ -55,6 +56,7 @@ let specNodes = OrderedMap.from({
     tags_part,
     table_part,
     table_of_contents,
+    separator_part,
     title,
     contributor,
     tag,
@@ -122,7 +124,12 @@ specNodes = specNodes.update(
             }
         }
     )
-)
+).update('table_row', {
+    content: "(table_cell | table_header)+",
+    tableRole: "row",
+    parseDOM: [{tag: "tr"}],
+    toDOM() { return ["tr", 0] }
+})
 
 const spec = {
     nodes: specNodes,
@@ -131,7 +138,7 @@ const spec = {
         strong: marks.strong,
         link: marks.link,
         code: marks.code,
-        mark,
+        underline,
         comment,
         annotation_tag,
         anchor,

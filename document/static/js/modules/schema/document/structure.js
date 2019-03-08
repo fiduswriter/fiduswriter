@@ -122,6 +122,9 @@ export const richtext_part = partSpec('richtext', 'block+', {
     },
     marks: {
         default: []
+    },
+    metadata: {
+        default: false
     }
 })
 export const heading_part = partSpec('heading', 'heading', {
@@ -130,16 +133,25 @@ export const heading_part = partSpec('heading', 'heading', {
     },
     marks: {
         default: []
+    },
+    metadata: {
+        default: false
     }
 })
 export const contributors_part = partSpec('contributors', 'contributor*', {
     item_title: {
         default: gettext('Contributor')
+    },
+    metadata: {
+        default: false
     }
 })
 export const tags_part = partSpec('tags', 'tag*', {
     item_title: {
         default: gettext('Tag')
+    },
+    metadata: {
+        default: false
     }
 })
 export const table_part = partSpec('table', 'table', {
@@ -182,6 +194,26 @@ export const table_of_contents = {
         return dom
     }
 
+}
+
+export const separator_part = {
+    marks: "annotation track",
+    group: "part",
+    defining: true,
+    attrs : {
+        id: {
+            default: 'separator'
+        }
+    },
+    parseDOM: [{
+        tag: "hr.article-separator_part"
+    }],
+    toDOM(node) {
+        const dom = document.createElement('hr')
+        dom.classList.add('article-separator_part')
+        dom.classList.add(`article-${node.attrs.id}`)
+        return dom
+    }
 }
 
 export const title = {

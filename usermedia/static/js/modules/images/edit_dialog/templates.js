@@ -42,7 +42,11 @@ export const imageEditTemplate = ({image, cats}) =>
             <input name="image" type="file" class="fw-media-file-input">`
         }
     </div>
-    <div class="figure-preview"><div>
+    <div class="figure-preview">
+        <button class="figure-edit-menu hide" title="${gettext('Edit Figure')}">
+            <span class="figure-edit-icon"><i class="fa fa-ellipsis-v"></i></span>
+        </button>
+    <div>
         ${
             image && image.image ?
             `<img src="${image.image}" />` :

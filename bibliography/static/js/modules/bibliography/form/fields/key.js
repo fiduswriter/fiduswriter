@@ -40,11 +40,11 @@ export class KeyFieldForm{
         const selectEl = this.dom.querySelector('.key-selection')
         if (Array.isArray(this.fieldType.options)) {
             this.fieldType.options.forEach(option => {
-                selectEl.insertAdjacentHTML('beforeend',`<option value="${option}">${BibOptionTitles[option]}</option>`)
+                selectEl.insertAdjacentHTML('beforeend', `<option value="${option}">${BibOptionTitles[option]}</option>`)
             })
         } else {
             Object.keys(this.fieldType.options).forEach(option => {
-                selectEl.insertAdjacentHTML('beforeend',`<option value="${option}">${BibOptionTitles[option]}</option>`)
+                selectEl.insertAdjacentHTML('beforeend', `<option value="${option}">${BibOptionTitles[option]}</option>`)
             })
         }
 

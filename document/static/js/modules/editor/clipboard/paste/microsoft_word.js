@@ -69,7 +69,7 @@ export class MicrosoftWordPasteHandler extends GeneralPasteHandler {
                     if (followingNode && followingNode.nodeType === 3) {
                         // If there is a text string right after the footnote
                         // marker, remove any leading spaces.
-                        followingNode.nodeValue = followingNode.nodeValue.replace(/^\s+/,"")
+                        followingNode.nodeValue = followingNode.nodeValue.replace(/^\s+/, "")
                     }
                 }
                 this.footnoteMarkers.push(node)

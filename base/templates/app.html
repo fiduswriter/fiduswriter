@@ -11,6 +11,7 @@
         <meta name="description" content="{% trans "The all in one solution for collaborative academic writing." %}">
         <meta name="author" content="Fidus Writer" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="theme-color" content="#84b4a7">
         <link rel="shortcut icon" href="{% static "img/favicon.png" %}" type="image/png"/>
         <!-- commons styles -->
         {% compress css %}
@@ -39,13 +40,13 @@
         <link type="text/css" rel="stylesheet" href="{% static "css/header_menu.css" %}" />
         {% endcompress %}
         <!-- Check browser -->
-        <script type="text/javascript" src="{% static "js/browser_check.mjs" %}"></script>
+        <script type="text/javascript" src="{% static "js/browser_check.mjs" %}"  crossorigin="anonymous"></script>
         <script type="text/javascript" src="/jsi18n/"></script>
         <!-- JS error handling -->
         <script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>
         {% fiduswriter_config_js %}
         <!-- Main page script -->
-        <script type="text/javascript" src="{% static "js/app.mjs" %}"></script>
+        <script type="text/javascript" src="{% static "js/app.mjs" %}" crossorigin="anonymous"></script>
     </head>
     <body><div id="wait" class="active"><i class="fa fa-spinner fa-pulse"></i></div></body>
 </html>

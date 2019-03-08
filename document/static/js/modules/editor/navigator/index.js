@@ -1,4 +1,4 @@
-import {escapeText ,findTarget} from "../../common"
+import {escapeText, findTarget} from "../../common"
 export class ModNavigator {
     constructor(editor) {
         editor.mod.navigator = this
@@ -6,7 +6,7 @@ export class ModNavigator {
         this.navigatorEl = document.querySelector('#navigator')
         this.listeners = {}
         this.navigatorFilters = editor.menu.navigatorFilterModel.content
-        this.defaultFilters = ['heading1','heading2','heading3']
+        this.defaultFilters = ['heading1', 'heading2', 'heading3']
         this.render()
         this.bindEvents()
     }
@@ -18,10 +18,10 @@ export class ModNavigator {
             const el = {}
             switch (true) {
                 case findTarget(event, '#navigator-button', el):
-                    document.querySelector('#navigator-list').innerHTML = this.populateNavigator() || ""   //Populating the list
                     if (el.target.firstElementChild.firstElementChild.classList.contains('rotate')){
                         this.closeNavigator()
                     } else {
+                        document.querySelector('#navigator-list').innerHTML = this.populateNavigator() || ""   //Populating the list
                         this.openNavigator()
                     }
                     break
@@ -59,10 +59,10 @@ export class ModNavigator {
             }
         })
 
-        document.querySelector('#navigator-list').addEventListener('mouseover',() => {
+        document.querySelector('#navigator-list').addEventListener('mouseover', () => {
             document.body.classList.add('no-scroll')
         })
-        document.querySelector('#navigator-list').addEventListener('mouseout',() => {
+        document.querySelector('#navigator-list').addEventListener('mouseout', () => {
             document.body.classList.remove('no-scroll')
         })
     }
@@ -74,6 +74,14 @@ export class ModNavigator {
         document.getElementById("navigator-list").classList.remove('hide')
         document.getElementById('navigator-filter-back').classList.add('hide')
         document.getElementById('navigator-filter-icon').classList.remove('hide')
+        this.scrollToActiveHeading()
+    }
+    scrollToActiveHeading(){
+        const listDOM = document.getElementById("navigator-list")
+        const activeHeading = listDOM.getElementsByClassName('active-heading')[0]
+        if (activeHeading){
+            activeHeading.scrollIntoView()
+        }
     }
     closeNavigator(){
         document.getElementById('navigator-button').firstElementChild.firstElementChild.classList.remove('rotate')
@@ -92,13 +100,26 @@ export class ModNavigator {
         document.getElementById('navigator-filter-back').classList.add('hide')
         document.getElementById("navigator-list").classList.remove('hide')
         document.getElementById('navigator-filter-icon').classList.remove('hide')
+
+        this.scrollToActiveHeading()
     }
     populateNavigator(){
+        const currentPos = this.editor.view.state.selection.$head.pos
         const items = []
-        this.editor.view.state.doc.descendants((node) => {
+        let nearestHeader = ""
+        this.editor.view.state.doc.descendants((node, pos) => {
             if (node.attrs && node.attrs.hidden) {
                 return false
-            } else if (this.defaultFilters.includes(node.type.name)) {
+            } else if (this.defaultFilters.includes(node.type.name) && node.textContent !== "") {
+                if (pos <= currentPos){
+                    nearestHeader = node
+                } else if (nearestHeader !== ""){
+                    items[items.length-1] = {
+                        ...items[items.length-1],
+                        class: 'active-heading'
+                    }
+                    nearestHeader = ""
+                }
                 items.push({id: node.attrs.id, textContent: node.textContent, type: node.type})
             }
         })
@@ -133,7 +154,11 @@ export class ModNavigator {
             items.map(
                 item => {
                     const level = item.type.name.substr(-1)
-                    return `<h${level}><a href="#${item.id}">${escapeText(item.textContent)}</a></h${level}>`
+                    if (item.class){
+                        return `<h${level} class="${item.class}"><a href="#${item.id}">${escapeText(item.textContent)}</a></h${level}>`
+                    } else {
+                        return `<h${level}><a href="#${item.id}">${escapeText(item.textContent)}</a></h${level}>`
+                    }
                 }
             ).join('')
         }`

@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)
 
 class WebSocket(BaseWebSocketHandler):
     sessions = dict()
+    admin_sessions = dict()
 
     def open(self, arg):
         self.set_nodelay(True)
@@ -57,6 +58,26 @@ class WebSocket(BaseWebSocketHandler):
         response = {
             'type': 'confirm_diff',
             'rid': rid
+        }
+        self.send_message(response)
+
+    def subscribe_admin(self):
+        if not self.user_info.user.is_staff:
+            # User does not have access
+            return
+        if len(WebSocket.admin_sessions) == 0:
+            self.id = 1
+        else:
+            self.id = max(WebSocket.admin_sessions) + 1
+        WebSocket.admin_sessions[self.id] = self
+        participants = 0
+        for id, doc in WebSocket.sessions.items():
+            for part in doc['participants']:
+                participants += 1
+        response = {
+            'type': 'connection_info',
+            'docs': len(WebSocket.sessions),
+            'participants': participants
         }
         self.send_message(response)
 
@@ -246,6 +267,9 @@ class WebSocket(BaseWebSocketHandler):
             if 'template' in parsed:
                 template = parsed['template']
             self.subscribe_document(parsed["id"], template)
+            return
+        if parsed["type"] == 'subscribe_admin':
+            self.subscribe_admin()
             return
         if self.user_info.document_id not in WebSocket.sessions:
             logger.debug('receiving message for closed document')

@@ -252,11 +252,16 @@ const formatChangeTemplate = ({before, after}) => {
 
 const BLOCK_NAMES = {
     paragraph: gettext('Paragraph'),
-    heading: gettext('Heading %(level)s'),
+    heading1: gettext('Heading 1'),
+    heading2: gettext('Heading 2'),
+    heading3: gettext('Heading 3'),
+    heading4: gettext('Heading 4'),
+    heading5: gettext('Heading 5'),
+    heading6: gettext('Heading 6'),
     code_block: gettext('Code block')
 }
 
-const blockChangeTemplate = ({before}) => `<div class="format-change-info"><b>${gettext('Was')}:</b> ${interpolate(BLOCK_NAMES[before.type], before.attrs, true)}</div>`
+const blockChangeTemplate = ({before}) => `<div class="format-change-info"><b>${gettext('Was')}:</b> ${BLOCK_NAMES[before.type]}</div>`
 
 const trackTemplate = ({type, data, node, pos, view, active, docInfo, filterOptions, staticUrl}) => {
     if (!filterOptions.track) {

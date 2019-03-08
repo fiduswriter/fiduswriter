@@ -92,7 +92,7 @@ export const documentTemplatePlugin = function(options) {
 
                         }
                         if (
-                            node.nodeSize >= protectionSize &&
+                            node.content.size >= protectionSize &&
                             initialFragment.eq(
                                 node.slice(0, protectionSize).content
                             )

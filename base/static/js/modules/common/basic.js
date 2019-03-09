@@ -1,3 +1,5 @@
+import {Dialog} from "./dialog"
+
 /** Creates a dropdown box.
  * @param btn The button to open and close the dropdown box.
  * @param box The node containing the contents of the dropdown box.
@@ -89,6 +91,16 @@ export const addAlert = function(alertType, alertMsg) {
             setTimeout(()=>alertsWrapper.removeChild(alertBox), 2000)
         }, 4000)
     }, 1)
+}
+
+// Used for system mesages
+export const showSystemMessage = function(message) {
+    const dialog = new Dialog({
+        title: gettext('System message'),
+        body: `<p>${escapeText(message)}</p>`,
+        buttons: [{type: 'close'}]
+    })
+    dialog.open()
 }
 
 

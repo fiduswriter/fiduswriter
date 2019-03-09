@@ -221,7 +221,7 @@ export class Editor {
                 anythingToSend: () => sendableSteps(this.view.state),
                 initialMessage: () => {
                     const message = {
-                        'type': 'subscribe_doc',
+                        'type': 'subscribe',
                         'id': this.docInfo.id
                     }
 

@@ -1,0 +1,37 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+{% load transpile %}
+{% load fiduswriter %}
+{% block title %}{% trans "Admin Console" %}{% endblock %}
+{% block extrahead %}{{ block.super }}
+{% fiduswriter_config_js %}
+<link type="text/css" rel="stylesheet" href="{% static "css/alerts.css" %}" />
+<!--  Translations -->
+<script type="text/javascript" src="/jsi18n/"></script>
+<!-- JS error handling -->
+<script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>
+<script type="text/javascript" src="{% static "js/admin_console.mjs" %}"></script>
+{% endblock %}
+{% block content %}
+    <div>
+        <h1>{% trans "Admin Console" %}</h1>
+        <p>
+            {% trans "Current number of user sessions:" %} <strong><span id="session_count"></span></strong>
+        </p>
+        <p>{% trans "Send a system message to all connected users:" %}</p>
+        <fieldset class="module aligned">
+            <div class="form-row">
+                <div>
+                    <label class="required" for="user_message">{% trans "Message" %}:</label>
+                    <textarea id="user_message" class="vTextField" cols="40" rows="10" required>
+{% blocktrans %}This system will go offline for scheduled maintenance in 30 minutes. All your work will be saved automatically and we will be back shortly.{% endblocktrans %}
+                    </textarea>
+                </div>
+            </div>
+        </fieldset>
+
+        <div class="submit_row">
+            <input type="submit" class="default" id="submit_user_message" value="{% trans "Send to connected users" %}">
+        </div>
+    </div>
+{% endblock %}

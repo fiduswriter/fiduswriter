@@ -15,7 +15,8 @@ export {
     cancelPromise,
     findTarget,
     whenReady,
-    setDocTitle
+    setDocTitle,
+    showSystemMessage
 }
 from "./basic"
 

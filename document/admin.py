@@ -19,7 +19,7 @@ class DocumentAdmin(admin.ModelAdmin):
 
     def maintenance_view(self, request):
         response = {}
-        return render(request, 'maintenance/index.html', response)
+        return render(request, 'admin/document/maintenance.html', response)
 
 
 admin.site.register(models.Document, DocumentAdmin)

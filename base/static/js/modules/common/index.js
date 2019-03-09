@@ -15,7 +15,8 @@ export {
     cancelPromise,
     findTarget,
     whenReady,
-    setDocTitle
+    setDocTitle,
+    showSystemMessage
 }
 from "./basic"
 
@@ -50,3 +51,7 @@ export {
     baseBodyTemplate
 }
 from "./templates"
+export {
+    WebSocketConnector
+}
+from "./ws"

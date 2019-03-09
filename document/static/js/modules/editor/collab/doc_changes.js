@@ -33,7 +33,7 @@ export class ModCollabDocChanges {
     }
 
     checkVersion() {
-        this.mod.editor.mod.serverCommunications.send(() => {
+        this.mod.editor.ws.send(() => {
             if (this.currentlyCheckingVersion | !this.mod.editor.docInfo
                 .version) {
                 return
@@ -45,7 +45,7 @@ export class ModCollabDocChanges {
                 },
                 1000
             )
-            if (this.mod.editor.mod.serverCommunications.connected) {
+            if (this.mod.editor.ws.connected) {
                 this.disableDiffSending()
             }
             return {
@@ -77,7 +77,7 @@ export class ModCollabDocChanges {
     sendToCollaborators() {
         // Handle either doc change and comment updates OR caret update. Priority
         // for doc change/comment update.
-        this.mod.editor.mod.serverCommunications.send(() => {
+        this.mod.editor.ws.send(() => {
             if (
                 this.awaitingDiffResponse ||
                 this.mod.editor.waitingForDocument ||

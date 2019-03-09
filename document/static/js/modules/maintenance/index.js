@@ -22,9 +22,9 @@ export class DocMaintenance {
             () => document.body.addEventListener('click', event => {
                 const el = {}
                 switch (true) {
-                    case findTarget(event, 'button#update:not(.disabled)', el):
-                        document.querySelector('button#update').disabled = true
-                        document.querySelector('button#update').innerHTML = gettext('Updating...')
+                    case findTarget(event, 'input#update:not(.disabled)', el):
+                        document.querySelector('input#update').disabled = true
+                        document.querySelector('input#update').value = gettext('Updating...')
                         this.getDocBatch()
                         break
                     default:
@@ -223,7 +223,7 @@ export class DocMaintenance {
     }
 
     done() {
-        document.querySelector('button#update').innerHTML = gettext('All documents and revisions updated!')
+        document.querySelector('input#update').value = gettext('All documents and revisions updated!')
     }
 
 }

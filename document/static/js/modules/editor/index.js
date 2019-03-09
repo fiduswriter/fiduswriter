@@ -1,6 +1,7 @@
 import {
     whenReady,
-    ensureCSS
+    ensureCSS,
+    WebSocketConnector
 } from "../common"
 import {
     FeedbackTab
@@ -25,7 +26,8 @@ import {
     keymap
 } from "prosemirror-keymap"
 import {
-    collab
+    collab,
+    sendableSteps
 } from "prosemirror-collab"
 import {
     tableEditing
@@ -82,9 +84,6 @@ import {
 import {
     ModDocumentTemplate
 } from "./document_template"
-import {
-    ModServerCommunications
-} from "./server_communications"
 import {
     getSettings
 } from "../schema/convert"
@@ -216,7 +215,81 @@ export class Editor {
         whenReady().then(() => {
             new ModCitations(this)
             new ModFootnotes(this)
-            new ModServerCommunications(this)
+            this.ws = new WebSocketConnector({
+                url: connectionCount => `${this.websocketUrl}/ws/document/${connectionCount}/`,
+                appLoaded: () => this.view.state.plugins.length,
+                anythingToSend: () => sendableSteps(this.view.state),
+                initialMessage: () => {
+                    const message = {
+                        'type': 'subscribe',
+                        'id': this.docInfo.id
+                    }
+
+                    if ('template' in this.docInfo) {
+                        message.template = this.docInfo.template
+                    }
+                    return message
+                },
+                resubScribed: () => {
+                    this.mod.footnotes.fnEditor.renderAllFootnotes()
+                    this.mod.collab.docChanges.checkVersion()
+                },
+                restartMessage: () => ({type: 'get_document'}), // Too many messages have been lost and we need to restart
+                messagesElement: () => document.getElementById('unobtrusive_messages'),
+                warningNotAllSent: gettext('Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect...'),
+                infoDisconnected: gettext('Disconnected. Attempting to reconnect...'),
+                receiveData: data => {
+                    switch (data.type) {
+                        case 'chat':
+                            this.mod.collab.chat.newMessage(data)
+                            break
+                        case 'connections':
+                            this.mod.collab.updateParticipantList(data.participant_list)
+                            break
+                        case 'styles':
+                            this.mod.documentTemplate.setStyles(data.styles)
+                            break
+                        case 'doc_data':
+                            this.receiveDocument(data)
+                            break
+                        case 'confirm_version':
+                            this.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
+                            if (data["v"] !== this.docInfo.version) {
+                                this.mod.collab.docChanges.checkVersion()
+                                return
+                            }
+                            this.mod.collab.docChanges.enableDiffSending()
+                            break
+                        case 'selection_change':
+                            this.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
+                            if (data["v"] !== this.docInfo.version) {
+                                this.mod.collab.docChanges.checkVersion()
+                                return
+                            }
+                            this.mod.collab.docChanges.receiveSelectionChange(data)
+                            break
+                        case 'diff':
+                            if (data["cid"] === this.client_id) {
+                                // The diff origins from the local user.
+                                this.mod.collab.docChanges.confirmDiff(data["rid"])
+                                return
+                            }
+                            if (data["v"] !== this.docInfo.version) {
+                                this.mod.collab.docChanges.checkVersion()
+                                return
+                            }
+                            this.mod.collab.docChanges.receiveFromCollaborators(data)
+                            break
+                        case 'confirm_diff':
+                            this.mod.collab.docChanges.confirmDiff(data["rid"])
+                            break
+                        case 'reject_diff':
+                            this.mod.collab.docChanges.rejectDiff(data["rid"])
+                            break
+                    }
+                }
+
+            })
             this.render()
             this.initEditor()
         })
@@ -225,7 +298,7 @@ export class Editor {
     close() {
         this.menu.toolbarViews.forEach(view => view.destroy())
         this.menu.headerView.destroy()
-        this.mod.serverCommunications.close()
+        this.ws.close()
     }
 
     render() {
@@ -307,7 +380,7 @@ export class Editor {
         new ModDocumentTemplate(this)
         new ModNavigator(this)
         this.activateFidusPlugins()
-        this.mod.serverCommunications.init()
+        this.ws.init()
     }
 
     activateFidusPlugins() {

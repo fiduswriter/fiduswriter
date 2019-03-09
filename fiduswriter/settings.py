@@ -320,6 +320,8 @@ DOC_TEMPLATE_HASH = open(
     'r'
 ).read()[:22]
 
+WEBSOCKET_PING_INTERVAL = 10
+
 ADMIN_SITE_TITLE = gettext('Fidus Writer Admin')
 ADMIN_SITE_HEADER = gettext('Fidus Writer Administration Site')
 ADMIN_INDEX_TITLE = gettext('Welcome to the Fidus Writer Administration Site')

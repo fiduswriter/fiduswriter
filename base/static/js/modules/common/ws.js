@@ -43,7 +43,6 @@ export class WebSocketConnector {
 
     close() {
         if (this.ws) {
-            window.clearInterval(this.wsPinger)
             this.ws.onclose = () => {}
             this.ws.close()
         }
@@ -105,7 +104,6 @@ export class WebSocketConnector {
 
         this.ws.onclose = () => {
             this.connected = false
-            window.clearInterval(this.wsPinger)
             window.setTimeout(() => {
                 this.createWSConnection()
             }, 2000)
@@ -126,11 +124,6 @@ export class WebSocketConnector {
             }
 
         }
-        this.wsPinger = window.setInterval(() => {
-            this.send(() => ({
-                'type': 'ping'
-            }))
-        }, 50000)
     }
 
     open() {

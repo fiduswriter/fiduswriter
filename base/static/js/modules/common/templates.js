@@ -8,9 +8,7 @@ export const baseBodyTemplate = ({username, contents, staticUrl}) => `
 <header class="fw-header">
 
     <div class="fw-container">
-        <h1 class="fw-logo">
-            <img src="${staticUrl}svg/icon.svg?v=${$StaticUrls.transpile.version$}" />
-        </h1>
+        <h1 class="fw-logo"><span class="fw-logo-text"></span><img src="${staticUrl}svg/icon.svg?v=${$StaticUrls.transpile.version$}" /></h1>
         <nav id="header-nav"></nav>
         <div id="user-preferences" class="fw-user-preferences fw-header-text">
             <h3 class="fw-name">${escapeText(username)}</h3>

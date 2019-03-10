@@ -63,6 +63,9 @@ export class FeedbackTab {
             closeFeedbackEl = document.querySelector('#closeFeedback'),
             feedbackFormEl = document.querySelector('#feedback-form'),
             responseEl = document.querySelector('#response-message')
+        if (!messageEl.value.length) {
+            return
+        }
 
         closeFeedbackEl.style.display = 'none'
         feedbackFormEl.style.visibility = 'hidden'

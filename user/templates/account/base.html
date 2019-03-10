@@ -47,9 +47,7 @@
         </div>
         <header class="fw-header">
             <div class="fw-container">
-                <h1 class="fw-login-logo">
-                    <a href="/"><img src="{% static "img/logo.png" %}" alt="Logo" title="Fiduswriter" width="231" height="39" /></a>
-                </h1>
+                <h1 class="fw-login-logo"><span class="fw-logo-text"></span><img src="{% static "svg/icon.svg" %}" /></h1>
                 <nav class="fw-header-nav">
                     <label for="login-btn">{% block loginlabel %}{% endblock %}</label>
                     <a class="fw-button fw-orange fw-uppercase" href="{% block loginhref %}{% url 'account_login' %}{% endblock %}">{% block loginbtn %}{% trans "Log In" %}{% endblock %}</a>

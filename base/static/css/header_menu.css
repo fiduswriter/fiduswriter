@@ -14,14 +14,33 @@
     margin-left: 10.5px;
 }
 
-h1.fw-logo:before {
-    content: 'Fidus Writer';
-    font-family: 'Cookie', cursive;
-    color:  #fff;
-    font-size: 23pt;
+.fw-logo-text {
     line-height: 0;
     position: relative;
     top: -4px;
+    font-family: 'Roboto', sans-serif;
+    text-transform: uppercase;
+    color:  #fff;
+    font-size: 15pt;
+}
+
+.fw-login-logo .fw-logo-text {
+    font-size: 30pt;
+}
+
+.fw-login-logo img {
+    height: 38px;
+}
+
+.fw-logo-text:before {
+    content: 'Fidus';
+    font-weight: 700;
+}
+
+.fw-logo-text:after {
+    content: 'Writer ';
+    font-weight: 300;
+
 }
 
 .fw-user-preferences {

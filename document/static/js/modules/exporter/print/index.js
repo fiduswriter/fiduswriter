@@ -37,6 +37,7 @@ export class PrintExporter extends HTMLExporter {
                 display: block;
                 font-style:normal;
                 font-weight:normal;
+                text-decoration:none;
             }
             .table-of-contents a {
             	display: inline-flex;

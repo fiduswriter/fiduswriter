@@ -114,10 +114,11 @@ export class ModNavigator {
                 if (pos <= currentPos){
                     nearestHeader = node
                 } else if (nearestHeader !== ""){
-                    items[items.length-1] = {
-                        ...items[items.length-1],
-                        class: 'active-heading'
-                    }
+                    items[items.length-1] = Object.assign(
+                        {},
+                        items[items.length-1],
+                        {class: 'active-heading'}
+                    )
                     nearestHeader = ""
                 }
                 items.push({id: node.attrs.id, textContent: node.textContent, type: node.type})

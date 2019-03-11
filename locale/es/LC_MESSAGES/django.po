@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-05 12:46+0000\n"
+"POT-Creation-Date: 2019-03-10 06:58+0000\n"
 "PO-Revision-Date: 2013-03-03 12:18-0700\n"
 "Last-Translator: Ana Vera Resquín <ani.tavr77@gmail.com>\n"
 "Language-Team: Spanish <ani.tavr77@gmail.com>\n"
@@ -16,6 +16,48 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: base/templates/admin/console.html:5 base/templates/admin/console.html:17
+#: base/templates/admin/overview.html:14
+msgid "Admin Console"
+msgstr ""
+
+#: base/templates/admin/console.html:19
+msgid "Current number of user sessions:"
+msgstr ""
+
+#: base/templates/admin/console.html:21
+msgid "Send a system message to all connected users:"
+msgstr ""
+
+#: base/templates/admin/console.html:25
+#, fuzzy
+msgid "Message"
+msgstr "Mensaje"
+
+#: base/templates/admin/console.html:27
+msgid ""
+"This system will go offline for scheduled maintenance in 30 minutes. All "
+"your work will be saved automatically and we will be back shortly."
+msgstr ""
+
+#: base/templates/admin/console.html:34
+msgid "Send to connected users"
+msgstr ""
+
+#: base/templates/admin/overview.html:10
+msgid "Extras"
+msgstr ""
+
+#: base/templates/admin/overview.html:17
+#: document/templates/admin/document/maintenance.html:17
+#, fuzzy
+msgid "Document Maintenance"
+msgstr "Documentos"
+
+#: base/templates/app.html:11 user/templates/account/base.html:7
+msgid "The all in one solution for collaborative academic writing."
+msgstr "La herramienta perfecta para redactar textos académicos."
 
 #: base/templates/footer.html:7
 msgid "Terms and Conditions"
@@ -39,10 +81,6 @@ msgstr "Estilos de citaciones con CSL"
 msgid "Editing with ProseMirror"
 msgstr ""
 
-#: base/templates/index.html:11 user/templates/account/base.html:7
-msgid "The all in one solution for collaborative academic writing."
-msgstr "La herramienta perfecta para redactar textos académicos."
-
 #: browser_check/templates/browser_check/browser_not_supported.html:4
 #: browser_check/templates/browser_check/browser_not_supported.html:27
 msgid "Browser not supported"
@@ -58,6 +96,16 @@ msgid ""
 "            "
 msgstr ""
 
+#: document/admin.py:45
+#, fuzzy
+#| msgid "Export the document to an HTML file"
+msgid "Duplicate selected document templates"
+msgstr "Exportar el documento a un archivo HTML"
+
+#: document/models.py:83
+msgid "Standard Article"
+msgstr ""
+
 #: document/templates/admin/document/document/change_list_object_tools.html:8
 #, fuzzy, python-format
 #| msgid "Added %(name)s \"%(object)s\"."
@@ -65,16 +113,11 @@ msgid "Add %(name)s"
 msgstr "Añadido %(name)s \"%(object)s\"."
 
 #: document/templates/admin/document/document/change_list_object_tools.html:13
-#: document/templates/maintenance/index.html:5
+#: document/templates/admin/document/maintenance.html:5
 msgid "Maintenance"
 msgstr ""
 
-#: document/templates/maintenance/index.html:17
-#, fuzzy
-msgid "Document Maintenance"
-msgstr "Documentos"
-
-#: document/templates/maintenance/index.html:19
+#: document/templates/admin/document/maintenance.html:19
 msgid ""
 "\n"
 "            Before and after upgrading Fidus Writer, you should update all "
@@ -85,58 +128,101 @@ msgid ""
 "            "
 msgstr ""
 
-#: document/templates/maintenance/index.html:27
+#: document/templates/admin/document/maintenance.html:27
 msgid "Update all documents (DANGER!)"
 msgstr ""
 
-#: document/views.py:229 document/views.py:570
+#: document/views.py:213 document/views.py:600
 #, fuzzy
 msgid "Untitled"
 msgstr "Subtítulo"
 
-#: document/views.py:254
+#: document/views.py:284 document/views.py:686
+#, fuzzy
+#| msgid "Documents"
+msgid "Document"
+msgstr "Documentos"
+
+#: document/views.py:286 document/views.py:688
+msgid "Author"
+msgstr "Autor"
+
+#: document/views.py:288
+#, fuzzy
+#| msgid "Define access rights"
+msgid "Access Rights"
+msgstr "Define derechos de acceso"
+
+#: document/views.py:291 document/views.py:693
+#, fuzzy
+#| msgid "edit documents"
+msgid "Access the document"
+msgstr "editar documentos"
+
+#: document/views.py:294
 #, fuzzy
 msgid "Document shared:"
 msgstr "Documentos"
 
-#: document/views.py:291
-msgid "Fidus Writer document write access"
-msgstr ""
-
-#: document/views.py:596
+#: document/views.py:626
 #, fuzzy
 msgid "Comment on :"
 msgstr "Comentarios"
 
-#: fiduswriter/settings.py:227
+#: document/views.py:647
+#, fuzzy
+msgid "Comment assignment on :"
+msgstr "Comentarios"
+
+#: document/views.py:690
+#, fuzzy
+#| msgid "Comments"
+msgid "Comment"
+msgstr "Comentarios"
+
+#: fiduswriter/settings.py:226
 msgid "English"
 msgstr "Inglés"
 
-#: fiduswriter/settings.py:228
+#: fiduswriter/settings.py:227
 msgid "Bulgarian"
 msgstr "Búlgaro"
 
-#: fiduswriter/settings.py:229
+#: fiduswriter/settings.py:228
 msgid "German"
 msgstr "Alemán"
 
-#: fiduswriter/settings.py:230
+#: fiduswriter/settings.py:229
 msgid "French"
 msgstr "Francés"
 
-#: fiduswriter/settings.py:231
+#: fiduswriter/settings.py:230
 msgid "Italian"
 msgstr "Italiano"
 
-#: fiduswriter/settings.py:232
+#: fiduswriter/settings.py:231
 msgid "Spanish"
 msgstr "Español"
 
-#: fiduswriter/settings.py:233
+#: fiduswriter/settings.py:232
 #, fuzzy
 #| msgid "Portuguese"
 msgid "Portuguese (Brazil)"
 msgstr "Portugués"
+
+#: fiduswriter/settings.py:325
+#, fuzzy
+msgid "Fidus Writer Admin"
+msgstr "editar documentos"
+
+#: fiduswriter/settings.py:326
+#, fuzzy
+msgid "Fidus Writer Administration Site"
+msgstr "editar documentos"
+
+#: fiduswriter/settings.py:327
+msgid "Welcome to the Fidus Writer Administration Site"
+msgstr ""
 
 #: user/templates/account/base.html:55 user/templates/account/login.html:7
 #: user/templates/account/signup.html:9
@@ -319,11 +405,11 @@ msgstr ""
 "        Por favor, contactanos si no lo recibes dentro de unos minutos.\n"
 "        "
 
-#: usermedia/views.py:47
+#: usermedia/views.py:34
 msgid "Filetype not supported"
 msgstr ""
 
-#: usermedia/views.py:73
+#: usermedia/views.py:60
 msgid "No file uploaded"
 msgstr ""
 
@@ -460,9 +546,6 @@ msgstr ""
 #~ msgid "Sourcetype"
 #~ msgstr "Tipo de fuente"
 
-#~ msgid "Author"
-#~ msgstr "Autor"
-
 #~ msgid "Published"
 #~ msgstr "Publicado"
 
@@ -486,12 +569,6 @@ msgstr ""
 
 #~ msgid "Updated"
 #~ msgstr "Cambiado"
-
-#~ msgid "edit documents"
-#~ msgstr "editar documentos"
-
-#~ msgid "Documents"
-#~ msgstr "Documentos"
 
 #~ msgid "manage bibliography library"
 #~ msgstr "administrar bibliografía de biblioteca"
@@ -585,11 +662,6 @@ msgstr ""
 #~ "Exportar el documento a un archivo Latex. Si el documento contiene citas, "
 #~ "incluiremos la bibliografia en formato BibTex."
 
-#, fuzzy
-#~| msgid "Export the document to an HTML file"
-#~ msgid "Export the document to a template:"
-#~ msgstr "Exportar el documento a un archivo HTML"
-
 #~ msgid "Choose your preferred citation style."
 #~ msgstr "Escoger estilo de citas."
 
@@ -665,9 +737,6 @@ msgstr ""
 
 #~ msgid "Show/hide comments"
 #~ msgstr "Mostrar/ocultar comentarios"
-
-#~ msgid "Comments"
-#~ msgstr "Comentarios"
 
 #, fuzzy
 #~ msgid "Filter comments"
@@ -942,10 +1011,6 @@ msgstr ""
 
 #~ msgid "Contents"
 #~ msgstr "Contenido"
-
-#, fuzzy
-#~ msgid "Fidus Writer document shared"
-#~ msgstr "editar documentos"
 
 #~ msgid "Citations by citeproc.js"
 #~ msgstr "Citas con citeproc.js"
@@ -2164,10 +2229,6 @@ msgstr ""
 #~ msgstr "Alemán"
 
 #, fuzzy
-#~ msgid "lazy message"
-#~ msgstr "Mensaje"
-
-#, fuzzy
 #~ msgid "domain name"
 #~ msgstr "Apellido"
 
@@ -2299,9 +2360,6 @@ msgstr ""
 
 #~ msgid "Access"
 #~ msgstr "Acceso"
-
-#~ msgid "Define access rights"
-#~ msgstr "Define derechos de acceso"
 
 #~ msgid "No documents"
 #~ msgstr "Ningún documento"

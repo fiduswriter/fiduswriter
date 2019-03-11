@@ -69,7 +69,7 @@ export class ModCollabChat {
     }
 
     sendMessage(messageText) {
-        this.mod.editor.mod.serverCommunications.send(() => ({
+        this.mod.editor.ws.send(() => ({
             type: 'chat',
             body: messageText
         }))

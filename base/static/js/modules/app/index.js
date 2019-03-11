@@ -4,7 +4,7 @@ import {Editor} from "../editor"
 import {ImageOverview} from "../images/overview"
 import {ContactsOverview} from "../contacts"
 import {Profile} from "../profile"
-import {getUserInfo, findTarget} from "../common"
+import {getUserInfo, findTarget, WebSocketConnector, showSystemMessage} from "../common"
 import {ImageDB} from "../images/database"
 import {BibliographyDB} from "../bibliography/database"
 import * as plugins from "../../plugins/app"
@@ -70,6 +70,22 @@ export class App {
                     break
             }
         })
+
+        this.ws = new WebSocketConnector({
+            url: connectionCount => `${this.config.websocketUrl}/ws/base/${connectionCount}/`,
+            appLoaded: () => true,
+            receiveData: data => {
+                switch (data.type) {
+                    case 'message':
+                            showSystemMessage(data.message)
+                        break
+                    default:
+                        break
+                }
+            }
+
+        })
+        this.ws.init()
     }
 
     activateFidusPlugins() {

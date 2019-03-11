@@ -1,12 +1,28 @@
-import {sendableSteps} from "prosemirror-collab"
-
-/* Sets up communicating with server (retrieving document,
-  saving, collaboration, etc.).
+/* Sets up communicating with server (retrieving document, saving, collaboration, etc.).
  */
-export class ModServerCommunications {
-    constructor(editor) {
-        editor.mod.serverCommunications = this
-        this.editor = editor
+export class WebSocketConnector {
+    constructor({
+        url = _connectionCount => {}, // needs to be specified
+        appLoaded = () => false, // required argument
+        anythingToSend = () => false, // required argument
+        messagesElement = () => false, // element in which to show connection messages
+        initialMessage = () => ({type: 'subscribe'}),
+        resubScribed = () => {}, // Cleanup when the client connects a second or subsequent time
+        restartMessage = () => ({type: 'restart'}), // Too many messages have been lost and we need to restart
+        warningNotAllSent = gettext('Warning! Some data is unsaved'), // Info to show while disconnected WITH unsaved data
+        infoDisconnected = gettext('Disconnected. Attempting to reconnect...'), // Info to show while disconnected WITHOUT unsaved data
+        receiveData = _data => {}
+    }) {
+        this.url = url
+        this.appLoaded = appLoaded
+        this.anythingToSend = anythingToSend
+        this.messagesElement = messagesElement
+        this.initialMessage = initialMessage
+        this.resubScribed = resubScribed
+        this.restartMessage = restartMessage
+        this.warningNotAllSent = warningNotAllSent
+        this.infoDisconnected = infoDisconnected
+        this.receiveData = receiveData
             /* A list of messages to be sent. Only used when temporarily offline.
             Messages will be sent when returning back online. */
         this.messagesToSend = []
@@ -27,7 +43,6 @@ export class ModServerCommunications {
 
     close() {
         if (this.ws) {
-            window.clearInterval(this.wsPinger)
             this.ws.onclose = () => {}
             this.ws.close()
         }
@@ -41,7 +56,7 @@ export class ModServerCommunications {
             lastTen: []
         }
         this.ws = new window.WebSocket(
-            `${this.editor.websocketUrl}/ws/document/${this.connectionCount}/`
+            this.url(this.connectionCount)
         )
 
 
@@ -73,7 +88,7 @@ export class ModServerCommunications {
                     this.messages.client = data.c
                     if (clientDifference > this.messages.lastTen.length) {
                         // We cannot fix the situation
-                        this.send(() =>({type: 'get_document'}))
+                        this.send(this.restartMessage)
                         return
                     }
                     this.messages['lastTen'].slice(0-clientDifference).forEach(data => {
@@ -89,43 +104,36 @@ export class ModServerCommunications {
 
         this.ws.onclose = () => {
             this.connected = false
-            window.clearInterval(this.wsPinger)
             window.setTimeout(() => {
                 this.createWSConnection()
             }, 2000)
-            if (!this.editor.view.state.plugins.length) {
+            if (!this.appLoaded()) {
                 // doc not initiated
                 return
             }
-            const toSend = sendableSteps(this.editor.view.state),
-                unobtrusiveMessages = document.getElementById('unobtrusive_messages')
-            if (toSend) {
-                unobtrusiveMessages.innerHTML =
-                    `<span class="warn">${gettext('Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect...')}</span>`
-            } else if (unobtrusiveMessages) {
-                unobtrusiveMessages.innerHTML = gettext('Disconnected. Attempting to reconnect...')
+
+            const messagesElement = this.messagesElement()
+            if (messagesElement) {
+                if (this.anythingToSend()) {
+                    messagesElement.innerHTML =
+                        `<span class="warn">${this.warningNotAllSent}</span>`
+                } else {
+                    messagesElement.innerHTML = this.infoDisconnected
+                }
+
             }
 
         }
-        this.wsPinger = window.setInterval(() => {
-            this.send(() => ({
-                'type': 'ping'
-            }))
-        }, 50000)
     }
 
     open() {
-        document.getElementById('unobtrusive_messages').innerHTML = ''
+        const messagesElement = this.messagesElement()
+        if (messagesElement) {
+            messagesElement.innerHTML = ''
+        }
         this.connected = true
 
-        const message = {
-            'type': 'subscribe_doc',
-            'id': this.editor.docInfo.id
-        }
-
-        if ('template' in this.editor.docInfo) {
-            message.template = this.editor.docInfo.template
-        }
+        const message = this.initialMessage()
         this.connectionCount++
         this.oldMessages = this.messagesToSend
         this.messagesToSend = []
@@ -135,8 +143,7 @@ export class ModServerCommunications {
 
     subscribed() {
         if (this.connectionCount > 1) {
-            this.editor.mod.footnotes.fnEditor.renderAllFootnotes()
-            this.editor.mod.collab.docChanges.checkVersion()
+            this.resubScribed()
             while (this.oldMessages.length > 0) {
                 this.send(this.oldMessages.shift())
             }
@@ -181,7 +188,7 @@ export class ModServerCommunications {
         this.messages.client = from
         if (toSend > this.messages.lastTen.length) {
             // Too many messages requested. Abort.
-            this.send(() => ({type: 'get_document'}))
+            this.send(this.restartMessage)
             return
         }
         this.messages.lastTen.slice(0-toSend).forEach(data => {
@@ -194,60 +201,17 @@ export class ModServerCommunications {
 
     receive(data) {
         switch (data.type) {
-            case 'chat':
-                this.editor.mod.collab.chat.newMessage(data)
-                break
-            case 'connections':
-                this.editor.mod.collab.updateParticipantList(data.participant_list)
-                break
             case 'welcome':
                 this.open()
                 break
             case 'subscribed':
                 this.subscribed()
                 break
-            case 'styles':
-                this.editor.mod.documentTemplate.setStyles(data.styles)
-                break
-            case 'doc_data':
-                this.editor.receiveDocument(data)
-                break
-            case 'confirm_version':
-                this.editor.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
-                if (data["v"] !== this.editor.docInfo.version) {
-                    this.editor.mod.collab.docChanges.checkVersion()
-                    return
-                }
-                this.editor.mod.collab.docChanges.enableDiffSending()
-                break
-            case 'selection_change':
-                this.editor.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
-                if (data["v"] !== this.editor.docInfo.version) {
-                    this.editor.mod.collab.docChanges.checkVersion()
-                    return
-                }
-                this.editor.mod.collab.docChanges.receiveSelectionChange(data)
-                break
-            case 'diff':
-                if (data["cid"] === this.editor.client_id) {
-                    // The diff origins from the local user.
-                    this.editor.mod.collab.docChanges.confirmDiff(data["rid"])
-                    return
-                }
-                if (data["v"] !== this.editor.docInfo.version) {
-                    this.editor.mod.collab.docChanges.checkVersion()
-                    return
-                }
-                this.editor.mod.collab.docChanges.receiveFromCollaborators(data)
-                break
-            case 'confirm_diff':
-                this.editor.mod.collab.docChanges.confirmDiff(data["rid"])
-                break
-            case 'reject_diff':
-                this.editor.mod.collab.docChanges.rejectDiff(data["rid"])
-                break
             case 'access_denied':
                 window.location.href = '/'
+                break
+            default:
+                this.receiveData(data)
                 break
         }
     }

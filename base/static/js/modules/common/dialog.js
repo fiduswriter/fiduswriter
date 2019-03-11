@@ -139,10 +139,6 @@ export class Dialog {
                     break
             }
         })
-        // this.dialogEl.querySelectorAll('.ui-dialog-buttonpane button').forEach((buttonEl, index) => {
-        //     buttonEl.addEventListener('click', () => this.buttons[index].click())
-        // })
-        // this.dialogEl.querySelector('.ui-dialog-titlebar-close').addEventListener('click', () => this.close())
     }
 
     getHighestDialogZIndex() {

@@ -44,7 +44,11 @@ def make_tornado_server():
     tornado_url_list += [
         ('.*', FallbackHandler, dict(fallback=wsgi_app))
     ]
-    tornado_app = Application(tornado_url_list, debug=settings.DEBUG)
+    tornado_app = Application(
+        tornado_url_list,
+        debug=settings.DEBUG,
+        websocket_ping_interval=settings.WEBSOCKET_PING_INTERVAL
+    )
     server = HTTPServer(tornado_app)
     server.xheaders = True
     return server

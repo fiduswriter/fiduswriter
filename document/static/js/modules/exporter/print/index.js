@@ -35,6 +35,8 @@ export class PrintExporter extends HTMLExporter {
             }
             section:footnote-content {
                 display: block;
+                font-style:normal;
+                font-weight:normal;
             }
             .table-of-contents a {
             	display: inline-flex;

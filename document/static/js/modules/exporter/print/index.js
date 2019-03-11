@@ -20,8 +20,11 @@ export class PrintExporter extends HTMLExporter {
                 });
                 text-decoration: none;
                 color: inherit;
-                vertical-align: super;
+                vertical-align: baseline;
                 font-size: 70%;
+                position: relative;
+                top: -0.3em;
+                
             }
             section[role=doc-footnote] > *:first-child:before {
                 counter-increment: footnote-counter;

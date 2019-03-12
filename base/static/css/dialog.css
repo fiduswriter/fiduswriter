@@ -1,5 +1,5 @@
 .ui-dialog {
-    position: fixed;
+    position: absolute;
     background-color: rgb(242, 242, 242);
     box-shadow: rgb(158, 158, 158) 0px 0px 10px;
     font-size: 14px;

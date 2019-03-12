@@ -116,11 +116,11 @@ export class Dialog {
         this.dialogEl.style.top = `${(totalHeight - dialogHeight)/2 + scrollTopOffset}px`
         this.dialogEl.style.left = `${(totalWidth - dialogWidth)/2 + scrollLeftOffset}px`
     }
-    
+
     scrollevent(){
         this.centerDialog()
     }
-    
+
     bind() {
         window.addEventListener('scroll', this.eventAddress, false)
         this.dialogEl.addEventListener('click', event => {

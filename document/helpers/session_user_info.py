@@ -42,6 +42,8 @@ class SessionUserInfo():
                 document = Document.objects.create(
                     owner_id=self.user.id
                 )
+            if document.id is None:
+                return (False, False)
             self.document_id = document.id
         else:
             document = Document.objects.filter(id=int(document_id)).first()

@@ -253,7 +253,7 @@ export class DocumentOverview {
         menuItem.type = 'dropdown'
         menuItem.content = this.documentTemplates.map(docTemplate => ({
             title: docTemplate.title,
-            action: () => this.app.goTo(`/document/n${docTemplate.id}/`)
+            action: () => this.goToNewDocument(`n${docTemplate.id}`)
         }))
         this.menu.update()
 
@@ -263,6 +263,10 @@ export class DocumentOverview {
         return Array.from(
             document.querySelectorAll('.entry-select:checked:not(:disabled)')
         ).map(el => parseInt(el.getAttribute('data-id')))
+    }
+
+    goToNewDocument(id) {
+        this.app.goTo(`/document/${id}/`)
     }
 
 }

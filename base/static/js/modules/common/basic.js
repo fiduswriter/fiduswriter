@@ -103,7 +103,6 @@ export const showSystemMessage = function(message) {
     dialog.open()
 }
 
-
 /** Turn milliseconds since epoch (UTC) into a local date string.
  * @param {number} milliseconds Number of milliseconds since epoch (1/1/1970 midnight, UTC).
  * @param {boolean} type 'full' for full date (default), 'sortable-date' for sortable date, 'minutes' for minute accuracy

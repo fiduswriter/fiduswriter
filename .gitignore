@@ -1,6 +1,7 @@
 fiduswriter.sql
 fiduswriter.sql.backup
-*.pyc
+__pycache__/
+*.py[cod]
 *~
 *-venv
 .DS_Store
@@ -44,5 +45,6 @@ base/static/css/libs/
 /npm_mjs
 /ojs
 /phplist
+/payment
 fiduswriter_plugins/
 color_menu

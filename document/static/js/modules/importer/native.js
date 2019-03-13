@@ -17,6 +17,9 @@ export class ImportNative {
         const ImageTranslationTable = {}
         return this.createDoc().then(
             () => {
+                if (!this.docId) {
+                    return Promise.reject(new Error('document not created'))
+                }
                 // We first create any new entries in the DB for images.
                 const imageGetter = new GetImages(this.images, this.otherFiles)
                 return imageGetter.init()
@@ -32,7 +35,12 @@ export class ImportNative {
             // We can go ahead and create the new document entry in the
             // bibliography without any changes.
             return this.saveDocument()
-        })
+        }).catch(
+            () => {
+                addAlert('error', 'Could not create document')
+                return Promise.reject(new Error('document not created'))
+            }
+        )
 
     }
 

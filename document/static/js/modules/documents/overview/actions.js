@@ -105,6 +105,8 @@ export class DocumentOverviewActions {
                             this.documentOverview.addDocToTable(doc)
                             importDialog.close()
                         }
+                    ).catch(
+                        ()=>false
                     )
 
                 }
@@ -154,7 +156,7 @@ export class DocumentOverviewActions {
                             this.documentOverview.documentList.push(doc)
                             this.documentOverview.addDocToTable(doc)
                         }
-                    )
+                    ).catch(() => false)
                 })
             }
         )

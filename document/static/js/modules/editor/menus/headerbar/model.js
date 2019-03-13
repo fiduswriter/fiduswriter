@@ -111,7 +111,7 @@ export const headerbarModel = () => ({
                             )
                         copier.init().then(({docInfo}) =>
                             window.location.href = `/document/${docInfo.id}/`
-                        )
+                        ).catch(() => false)
                     }
                 },
                 {

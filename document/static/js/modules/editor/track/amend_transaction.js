@@ -143,7 +143,7 @@ export function amendTransaction(tr, state, editor) {
             !tr.steps.length ||
             tr.meta && !Object.keys(tr.meta).every(
                 // Only replace TRs that have no metadata or only inputType metadata
-                metadata => ['inputType'].includes(metadata)
+                metadata => ['inputType', 'uiEvent'].includes(metadata)
             ) ||
             // don't replace history TRs
             ['historyUndo', 'historyRedo'].includes(tr.getMeta('inputType'))
@@ -360,6 +360,9 @@ export function amendTransaction(tr, state, editor) {
     // We copy the input type meta data from the original transaction.
     if (tr.getMeta('inputType')) {
         newTr.setMeta(tr.getMeta('inputType'))
+    }
+    if (tr.getMeta('uiEvent')) {
+        newTr.setMeta(tr.getMeta('uiEvent'))
     }
 
     if (tr.selectionSet) {

@@ -49,6 +49,7 @@ const BUTTON_TYPES = {
 
 export class Dialog {
     constructor(options) {
+        this.eventAddress = this.scrollevent.bind(this)
         this.id = options.id || false
         this.classes = options.classes || false
         this.title = options.title || ''
@@ -116,7 +117,12 @@ export class Dialog {
         this.dialogEl.style.left = `${(totalWidth - dialogWidth)/2 + scrollLeftOffset}px`
     }
 
+    scrollevent(){
+        this.centerDialog()
+    }
+
     bind() {
+        window.addEventListener('scroll', this.eventAddress, false)
         this.dialogEl.addEventListener('click', event => {
             const el = {}
             let buttonNumber, seekItem
@@ -151,6 +157,7 @@ export class Dialog {
         if (!this.dialogEl) {
             return
         }
+        window.removeEventListener("scroll",  this.eventAddress, false)
         this.dialogEl.parentElement.removeChild(this.dialogEl)
         this.backdropEl.parentElement.removeChild(this.backdropEl)
         if (this.onClose) {

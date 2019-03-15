@@ -64,7 +64,7 @@ const partSpec = (type, content, attrs = {}) => ({
     content,
     group: 'part',
     marks: "annotation track",
-    defining: true,
+    isolating: true,
     attrs: Object.assign({
         title: {
             default: ''

@@ -47,7 +47,7 @@
 .ui-dialog-content {
     position: relative;
     margin-top: 24px;
-    overflow: hidden;
+    overflow-y: scroll;
 }
 
 .ui-dialog-buttonpane {

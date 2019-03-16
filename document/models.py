@@ -76,28 +76,20 @@ class DocumentTemplate(models.Model):
 
 def default_template():
     template = DocumentTemplate.objects.first()
-    if not template:
-        template = DocumentTemplate()
-        template.definition = settings.DOC_TEMPLATE
-        template.definition_hash = settings.DOC_TEMPLATE_HASH
-        template.slug = 'article'
-        template.title = _('Standard Article')
-        template.save()
-    save_template = False
-    if template.citation_styles.count() == 0:
-        for style in CitationStyle.objects.all():
-            template.citation_styles.add(style)
-        save_template = True
-    if template.document_styles.count() == 0:
-        for style in DocumentStyle.objects.all():
-            template.document_styles.add(style)
-        save_template = True
-    if template.export_templates.count() == 0:
-        for exporter in ExportTemplate.objects.all():
-            template.export_templates.add(exporter)
-        save_template = True
-    if save_template:
-        template.save()
+    if template:
+        return template.pk
+    template = DocumentTemplate()
+    template.definition = settings.DOC_TEMPLATE
+    template.definition_hash = settings.DOC_TEMPLATE_HASH
+    template.slug = 'article'
+    template.title = _('Standard Article')
+    template.save()
+    for style in CitationStyle.objects.all():
+        template.citation_styles.add(style)
+    for style in DocumentStyle.objects.all():
+        template.document_styles.add(style)
+    for exporter in ExportTemplate.objects.all():
+        template.export_templates.add(exporter)
     return template.pk
 
 

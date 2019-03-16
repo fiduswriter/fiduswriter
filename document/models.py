@@ -64,11 +64,11 @@ class DocumentTemplate(models.Model):
     def save(self, *args, **kwargs):
         super(DocumentTemplate, self).save(*args, **kwargs)
         if self.citation_styles.count() == 0:
-            style = CitationStyle.objects.get_or_create(short_title='default')
+            style = CitationStyle.objects.get_or_create(short_title='default')[1]
             self.citation_styles.add(style)
         # TODO: add a field to classify document styles by used fields
         if self.document_styles.count() == 0:
-            style = DocumentStyle.objects.get_or_create(filename='default')
+            style = DocumentStyle.objects.get_or_create(filename='default')[1]
             self.document_styles.add(style)
 
 

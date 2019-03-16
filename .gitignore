@@ -24,6 +24,7 @@ base/static/zip/katex-style.zip
 base/static/zip/katex_style.zip
 base/static/js/modules/katex/opf-includes.js
 base/static/js/modules/katex/opf_includes.js
+document/static/js/modules/citations/enUS_locale.js
 chromedriver
 testing.py
 es6-tmp/

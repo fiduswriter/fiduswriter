@@ -1,5 +1,6 @@
 /* Connects Fidus Writer citation system with citeproc */
 import {CSLExporter} from "biblatex-csl-converter"
+import {enUSLocale} from "./enUS_locale.js"
 
 export class citeprocSys {
     constructor(bibDB, citationLocales) {
@@ -31,13 +32,11 @@ export class citeprocSys {
 
     retrieveLocale(lang) {
         const langCode = lang.replace('-', '')
-        let locale = this.citationLocales.find(locale => locale.language_code===langCode)
-        if (!locale) {
-            locale = this.citationLocales.find(locale => locale.language_code==='enUS')
-        }
+        const locale = this.citationLocales.find(locale => locale.language_code===langCode)
         if (locale) {
             return locale.contents
         }
+        return enUSLocale
     }
 
     getAbbreviation(dummy, obj, jurisdiction, vartype, key) {

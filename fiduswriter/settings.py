@@ -320,6 +320,16 @@ DOC_TEMPLATE_HASH = open(
     'r'
 ).read()[:22]
 
+DEFAULT_CITATIONSTYLE = open(
+    os.path.join(
+        os.path.dirname(
+            os.path.realpath(__file__)
+        ),
+        'default_citationstyle.xml'
+    ),
+    'r'
+).read()
+
 WEBSOCKET_PING_INTERVAL = 55
 
 ADMIN_SITE_TITLE = gettext('Fidus Writer Admin')

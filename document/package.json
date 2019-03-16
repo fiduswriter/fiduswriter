@@ -1,4 +1,8 @@
 {
+    "scripts": {
+        "get_citation_locale": "echo -n 'export const enUSLocale=`' > ./document/static/js/modules/citations/enUS_locale.js && wget -qO- https://raw.githubusercontent.com/citation-style-language/locales/master/locales-en-US.xml >> ./document/static/js/modules/citations/enUS_locale.js && echo '`' >> ./document/static/js/modules/citations/enUS_locale.js",
+        "postinstall": "npm run get_citation_locale"
+    },
     "dependencies": {
         "citeproc": "2.1.x",
         "fastdom": "1.0.8",

@@ -35,18 +35,30 @@ export function adjustDocToTemplate(doc, template, documentStyles, citationStyle
     attrs.forEach(attr => doc.attrs[attr] = template.attrs[attr])
 
     if (!doc.attrs.languages.includes(doc.attrs.language)) {
+        if (!doc.attrs.languages.length) {
+            throw new Error('Document template allows no languages.')
+        }
         doc.attrs.language = doc.attrs.languages[0]
     }
 
     if (!doc.attrs.papersizes.includes(doc.attrs.papersize)) {
+        if (!doc.attrs.papersizes.length) {
+            throw new Error('Document template allows no paper sizes.')
+        }
         doc.attrs.papersize = doc.attrs.papersizes[0]
     }
 
     if (!documentStyles.map(style => style.filename).includes(doc.attrs.documentstyle)) {
+        if (!documentStyles.length) {
+            throw new Error('No document styles have been defined for document template.')
+        }
         doc.attrs.documentstyle = documentStyles[0].filename
     }
 
     if (!citationStyles.map(style => style.short_title).includes(doc.attrs.citationstyle)) {
+        if (!citationStyles.length) {
+            throw new Error('No citation styles have been defined for document template.')
+        }
         doc.attrs.citationstyle = citationStyles[0].short_title
     }
 

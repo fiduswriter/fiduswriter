@@ -83,22 +83,16 @@ body.header-closed #margin-box-filter {
     border: 1px solid #c5c5c5;
     left: -18px;
     z-index: 5;
-    padding: 10px;
 }
 
 .margin-box.help.active {
     background-color: #fafafa;
-    padding: 8px;
     left:-15px
 }
 
 .margin-box.help.active:after {
     color: #79b8a5;
     left: -15px
-}
-
-.margin-box.active .comment-item {
-    padding: 0;
 }
 
 .margin-box.active .comment-item:first-child {
@@ -320,4 +314,3 @@ body.header-closed #margin-box-filter {
     margin-left: 5px;
     padding-left: 5px;
 }
-

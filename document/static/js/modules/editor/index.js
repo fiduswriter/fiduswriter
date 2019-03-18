@@ -376,6 +376,7 @@ export class Editor {
         new ModTools(this)
         new ModTrack(this)
         new ModMarginboxes(this)
+        this.mod.marginboxes.init()
         new ModComments(this)
         new ModDocumentTemplate(this)
         new ModNavigator(this)

@@ -1,5 +1,5 @@
 import {Step} from "prosemirror-transform"
-import {collab, receiveTransaction, sendableSteps} from "prosemirror-collab"
+import {collab, receiveTransaction} from "prosemirror-collab"
 import {EditorState} from "prosemirror-state"
 import {EditorView} from "prosemirror-view"
 import {history} from "prosemirror-history"
@@ -133,30 +133,29 @@ export class ModFootnoteEditor {
     }
 
     renderAllFootnotes() {
-        const fnContents = getFootnoteMarkerContents(this.mod.editor.view.state)
-        const doc = this.schema.nodeFromJSON({"type":"doc", "content":[]}),
+        const content = getFootnoteMarkerContents(this.mod.editor.view.state).map(fnContent => ({
+            type: 'footnotecontainer',
+            content: fnContent
+        }))
+        const doc = this.schema.nodeFromJSON(
+                {type:"doc", content}
+            ),
             plugins = this.fnStatePlugins.map(plugin => {
                 if (plugin[1]) {
                     return plugin[0](plugin[1](doc))
                 } else {
                     return plugin[0]()
                 }
+            }),
+            newState = EditorState.create({
+                schema: this.schema,
+                doc,
+                plugins
             })
-
-        const newState = EditorState.create({
-            schema: this.schema,
-            doc,
-            plugins
-        })
-
         this.view.updateState(newState)
-
-        fnContents.forEach((fnContent, index) => {
-            this.renderFootnote(fnContent, index, true)
-        })
     }
 
-    renderFootnote(contents, index = 0, setDoc = false) {
+    renderFootnote(contents, index = 0) {
         const node = fnNodeToPmNode(contents)
         let pos = 0
         for (let i=0; i<index;i++) {
@@ -168,24 +167,10 @@ export class ModFootnoteEditor {
         tr.setMeta('filterFree', true)
 
         this.view.dispatch(tr)
-        if (setDoc) {
-            const initialSteps = sendableSteps(this.view.state)
-            const rTransaction = receiveTransaction(
-                this.view.state,
-                initialSteps.steps,
-                initialSteps.steps.map(
-                    _step => initialSteps.clientID
-                )
-            )
-            this.view.updateState(
-                this.view.state.apply(rTransaction)
-            )
-        } else {
-            // Most changes to the footnotes are followed by a change to the main editor,
-            // so changes are sent to collaborators automatically. When footnotes are added/deleted,
-            // the change is reversed, so we need to inform collabs manually.
-            this.mod.editor.mod.collab.docChanges.sendToCollaborators()
-        }
+        // Most changes to the footnotes are followed by a change to the main editor,
+        // so changes are sent to collaborators automatically. When footnotes are added/deleted,
+        // the change is reversed, so we need to inform collabs manually.
+        this.mod.editor.mod.collab.docChanges.sendToCollaborators()
     }
 
     removeFootnote(index) {

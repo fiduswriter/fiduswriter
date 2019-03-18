@@ -1,15 +1,16 @@
+import fastdom from "fastdom"
+import diffDOM from "diff-dom"
+
 import {findTarget} from "../../common"
 import {marginBoxesTemplate, marginboxFilterTemplate} from "./templates"
 import {getCommentDuringCreationDecoration, getSelectedChanges, getFootnoteMarkers} from "../state_plugins"
 
-import fastdom from "fastdom"
 
 /* Functions related to layouting of comments */
 export class ModMarginboxes {
     constructor(editor) {
         editor.mod.marginboxes = this
         this.editor = editor
-        this.setup()
         this.activeCommentStyle = ''
         this.filterOptions = {
             track: true,
@@ -24,15 +25,20 @@ export class ModMarginboxes {
             marker: '#f9f9f9',
             active: '#fffacf'
         }
-        this.bindEvents()
+        this.dd = new diffDOM({
+            valueDiffing: false
+        })
     }
 
-    setup() {
+    init() {
         // Add two elements to hold dynamic CSS info about comments.
         document.body.insertAdjacentHTML(
             'beforeend',
             '<style type="text/css" id="active-comment-style"></style><style type="text/css" id="margin-box-placement-style"></style>'
         )
+        this.marginBoxesContainer = document.getElementById('margin-box-container')
+        this.activeCommentStyleElement = document.getElementById('active-comment-style')
+        this.bindEvents()
     }
 
     bindEvents() {
@@ -209,12 +215,16 @@ export class ModMarginboxes {
             filterOptions: this.filterOptions,
             staticUrl: this.editor.staticUrl
         })
-        if (document.getElementById('margin-box-container').innerHTML !== marginBoxesHTML) {
-            document.getElementById('margin-box-container').innerHTML = marginBoxesHTML
+        if (this.marginBoxesContainer.innerHTML !== marginBoxesHTML) {
+            const tempEl = document.createElement('div')
+            tempEl.id = 'margin-box-container'
+            tempEl.innerHTML = marginBoxesHTML
+            const diff = this.dd.diff(this.marginBoxesContainer, tempEl)
+            this.dd.apply(this.marginBoxesContainer, diff)
         }
 
-        if (document.getElementById('active-comment-style').innerHTML != this.activeCommentStyle) {
-            document.getElementById('active-comment-style').innerHTML = this.activeCommentStyle
+        if (this.activeCommentStyleElement.innerHTML != this.activeCommentStyle) {
+            this.activeCommentStyleElement.innerHTML = this.activeCommentStyle
         }
 
         const marginBoxFilterHTML = marginboxFilterTemplate({

@@ -1,5 +1,5 @@
 import {Step} from "prosemirror-transform"
-import {collab, receiveTransaction, sendableSteps} from "prosemirror-collab"
+import {collab, receiveTransaction} from "prosemirror-collab"
 import {EditorState} from "prosemirror-state"
 import {EditorView} from "prosemirror-view"
 import {history} from "prosemirror-history"

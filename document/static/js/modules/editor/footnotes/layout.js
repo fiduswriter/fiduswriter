@@ -28,7 +28,7 @@ export class ModFootnoteLayout {
             // DOM read phase
             const footnoteBoxes = document.querySelectorAll('#footnote-box-container .footnote-container'),
                 referrers = getFootnoteMarkers(this.mod.editor.view.state)
-            let totalOffset = document.getElementById('footnote-box-container').getBoundingClientRect().top + 10,
+            let totalOffset = document.getElementById('footnote-box-container').getBoundingClientRect().top,
                 footnotePlacementStyle = ''
             if (referrers.length !== footnoteBoxes.length) {
                 // Apparently not all footnote boxes have been drawn. Abort for now.
@@ -78,8 +78,11 @@ export class ModFootnoteLayout {
                                     footnotePlacementStyle += `${selector} {display: none;}\n`
                                     return
                                 }
-                                if (referrerTop > totalCitationOffset || totalCitationOffset < (totalEditorOffset + topMargin)) {
-                                    topMargin = parseInt(Math.max(referrerTop - totalCitationOffset, totalEditorOffset - totalCitationOffset + topMargin))
+                                if (
+                                    referrerTop > totalCitationOffset ||
+                                    totalCitationOffset < (totalEditorOffset + topMargin)
+                                ) {
+                                    topMargin = parseInt(Math.max(referrerTop - totalCitationOffset, topMargin + totalEditorOffset - totalCitationOffset))
                                     footnotePlacementStyle += `${selector} {margin-top: ${topMargin}px;}\n`
                                 }
                                 totalCitationOffset += footnoteBoxHeight + topMargin

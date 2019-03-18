@@ -23,6 +23,16 @@ because PM needs some content. */
     content: counter(footnote-counter) ' ';
 }
 
+#footnote-box-container .ProseMirror {
+    display: grid;
+}
+
+.user-contents .footnote-container h1, .user-contents .footnote-container h2, .user-contents .footnote-container h3,
+.user-contents .footnote-container h4, .user-contents .footnote-container h5, .user-contents .footnote-container h6,
+.user-contents .footnote-container p, .user-contents .footnote-container blockquote, .user-contents .footnote-container code,
+.user-contents .footnote-container ol, .user-contents .footnote-container ul {
+    margin-bottom: unset;
+}
 
 /* footnotes in main editor */
 

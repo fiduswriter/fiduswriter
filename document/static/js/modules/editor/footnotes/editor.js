@@ -94,7 +94,7 @@ export class ModFootnoteEditor {
                 const newState = this.view.state.apply(trackedTr)
 
                 this.view.updateState(newState)
-                this.onTransaction(tr, remote, filterFree)
+                this.onTransaction(trackedTr, remote, filterFree)
                 this.mod.layout.updateDOM()
             }
         })

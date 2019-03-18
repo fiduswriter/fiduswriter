@@ -180,7 +180,7 @@ export class ModCitations {
              citationFootnoteCounter = 1,
              footnoteCounter = 1
 
-             this.editor.view.state.doc.descendants(function(node){
+             this.editor.view.state.doc.descendants(node => {
                  if (node.isInline && (node.type.name==='footnote' || node.type.name==='citation')) {
                      if (node.type.name==='footnote') {
                          outputCSS += `#footnote-box-container .footnote-container:nth-of-type(${editorFootnoteCounter}) > *:first-child::before {

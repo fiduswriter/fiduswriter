@@ -7,7 +7,7 @@ export const citationRenderPlugin = function(options) {
         key,
         state: {
             init() {
-                return {reset: false}
+                return {action: false}
             },
             apply(tr, prev, oldState, _state) {
                 const meta = tr.getMeta(key)
@@ -16,10 +16,10 @@ export const citationRenderPlugin = function(options) {
                     // of previous values
                     return meta
                 }
-                let {reset} = this.getState(oldState)
+                let {action} = this.getState(oldState)
 
-                if (reset) {
-                    return {reset} // We already need to reset the bibliography. Don't bother checking for more reasons to do so.
+                if (action) {
+                    return {action} // We already need to reset the bibliography. Don't bother checking for more reasons to do so.
                 }
 
                 tr.steps.forEach((step, index) => {
@@ -31,15 +31,27 @@ export const citationRenderPlugin = function(options) {
                                 node => {
                                     if (node.type.name === 'citation') {
                                         // A citation was replaced. We need to reset
-                                        reset = true
+                                        action = 'reset'
+                                    } else if (!action && node.type.name === 'footnote') {
+                                        action = 'numbers'
                                     }
                                 }
                             )
                         }
+                        if (step.slice && step.slice.content) {
+                            step.slice.content.descendants(node => {
+                                if (node.type.name === 'citation') {
+                                    // A citation was added. We need to reset
+                                    action = 'reset'
+                                } else if (!action && node.type.name === 'footnote') {
+                                    action = 'numbers'
+                                }
+                            })
+                        }
                     }
                 })
 
-                return {reset}
+                return {action}
 
             }
         },
@@ -47,13 +59,15 @@ export const citationRenderPlugin = function(options) {
             options.editor.mod.citations.resetCitations()
             return {
                 update: (view, _prevState) => {
-                    const {reset} = key.getState(view.state)
-                    if (reset) {
+                    const {action} = key.getState(view.state)
+                    if (action==='reset') {
                         options.editor.mod.citations.resetCitations()
-                        const tr = view.state.tr.setMeta(key, {reset: false})
+                        const tr = view.state.tr.setMeta(key, {action: false})
                         view.dispatch(tr)
-                    } else {
-                        options.editor.mod.citations.layoutCitations()
+                    } else if (action==='numbers') {
+                        options.editor.mod.citations.footnoteNumberOverride()
+                        const tr = view.state.tr.setMeta(key, {action: false})
+                        view.dispatch(tr)
                     }
                 },
                 destroy: () => {

@@ -114,7 +114,6 @@ export function adjustDocToTemplate(doc, template, documentStyles, citationStyle
                 movedParts = movedParts.filter(oldContentNode => oldContentNode !== oldNode)
             }
         }
-
         if (oldNode) {
             const newNode = Object.assign(
                     {},
@@ -154,8 +153,10 @@ export function adjustDocToTemplate(doc, template, documentStyles, citationStyle
     // move remaining oldContent items that were not in template.
     while (oldContent.length) {
         const newNode = oldContent.shift()
-        newNode.attrs.deleted = true
-        doc.content.push(newNode)
+        if (newNode.attrs.hasOwnProperty('deleted')) {
+            newNode.attrs.deleted = true
+            doc.content.push(newNode)
+        }
     }
 
     return doc

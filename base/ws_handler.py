@@ -1,5 +1,8 @@
 from urllib.parse import urlparse
 from tornado.websocket import WebSocketHandler
+from tornado.websocket import WebSocketClosedError
+from tornado.iostream import StreamClosedError
+import tornado
 from django.db import connection
 import logging
 from logging import info, debug
@@ -48,7 +51,7 @@ class BaseWebSocketHandler(DjangoHandlerMixin, WebSocketHandler):
             self.resend_messages(message["from"])
             return
         if 'c' not in message and 's' not in message:
-            self.write_message({
+            self.send({
                 'type': 'access_denied'
             })
             # Message doesn't contain needed client/server info. Ignore.
@@ -62,7 +65,7 @@ class BaseWebSocketHandler(DjangoHandlerMixin, WebSocketHandler):
         elif message["c"] > (self.messages["client"] + 1):
             # Messages from the client have been lost.
             logger.debug('REQUEST RESEND FROM CLIENT')
-            self.write_message({
+            self.send({
                 'type': 'request_resend',
                 'from': self.messages["client"]
             })
@@ -98,7 +101,14 @@ class BaseWebSocketHandler(DjangoHandlerMixin, WebSocketHandler):
             message['c'],
             self.id
         ))
-        self.write_message(message)
+        self.send(message)
+
+    @tornado.gen.coroutine
+    def send(self, message):
+        try:
+            yield self.write_message(message)
+        except (WebSocketClosedError, StreamClosedError) as e:
+            pass
 
     def resend_messages(self, from_no):
         to_send = self.messages["server"] - from_no

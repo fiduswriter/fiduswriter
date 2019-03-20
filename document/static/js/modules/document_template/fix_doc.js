@@ -1,3 +1,5 @@
+import hash from "object-hash"
+
 function cleanFootnotes(node, elements, marks) {
     if (node.attrs && node.attrs.footnote) {
         // We remove forbidden block nodes
@@ -29,8 +31,12 @@ function cleanNode(node, elements, marks) {
 }
 
 export function adjustDocToTemplate(doc, template, documentStyles, citationStyles) {
-    const removedFootnoteElements = doc.attrs.footnote_elements.filter(element => !template.attrs.footnote_elements.includes(element)),
-        removedFootnoteMarks = doc.attrs.footnote_marks.filter(mark => !template.attrs.footnote_marks.includes(mark)),
+    const removedFootnoteElements = doc.attrs.footnote_elements.filter(
+            element => !template.attrs.footnote_elements.includes(element)
+        ),
+        removedFootnoteMarks = doc.attrs.footnote_marks.filter(
+            mark => !template.attrs.footnote_marks.includes(mark)
+        ),
         attrs = ['footnote_marks', 'footnote_elements', 'languages', 'papersizes', 'template']
     attrs.forEach(attr => doc.attrs[attr] = template.attrs[attr])
 
@@ -76,12 +82,18 @@ export function adjustDocToTemplate(doc, template, documentStyles, citationStyle
 
     template.content.slice(1).forEach(part => {
         let oldNode = oldContent.find(
-            oldContentNode => oldContentNode.type === part.type && oldContentNode.attrs.id === part.attrs.id
+            oldContentNode =>
+                oldContentNode.type === part.type &&
+                oldContentNode.attrs.id === part.attrs.id
         )
         if (oldNode) {
             while (oldNode !== oldContent[0]) {
                 const firstOldContent = oldContent.shift(),
-                    inTemplate = !!template.content.find(part => part.type === firstOldContent.type && part.attrs.id === firstOldContent.attrs.id)
+                    inTemplate = !!template.content.find(
+                        part =>
+                            part.type === firstOldContent.type &&
+                            part.attrs.id === firstOldContent.attrs.id
+                    )
                 if (inTemplate) {
                     movedParts.push(firstOldContent)
                 } else if (
@@ -108,13 +120,14 @@ export function adjustDocToTemplate(doc, template, documentStyles, citationStyle
             oldContent.shift()
         } else {
             oldNode = movedParts.find(
-                oldContentNode => oldContentNode.type === part.type && oldContentNode.attrs.id === part.attrs.id
+                oldContentNode =>
+                    oldContentNode.type === part.type &&
+                    oldContentNode.attrs.id === part.attrs.id
             )
             if (oldNode) {
                 movedParts = movedParts.filter(oldContentNode => oldContentNode !== oldNode)
             }
         }
-
         if (oldNode) {
             const newNode = Object.assign(
                     {},
@@ -129,16 +142,40 @@ export function adjustDocToTemplate(doc, template, documentStyles, citationStyle
             if (newNode.attrs.optional) {
                 newNode.attrs.hidden = oldNode.attrs.hidden
             }
+            if (
+                (newNode.attrs.initial || oldNode.attrs.initial) &&
+                (
+                    oldNode.attrs.locking === 'fixed' ||
+
+                    hash(oldNode.attrs.initial || {}) === hash(oldNode.content || {})
+                )
+            ) {
+                if (newNode.attrs.initial) {
+                    newNode.content = newNode.attrs.initial
+                } else {
+                    delete newNode.content
+                }
+            }
 
             if (oldNode.attrs.elements) { // parts that define elements also define marks.
-                const removedElements = oldNode.attrs.elements.filter(element => !newNode.attrs.elements.includes(element))
-                const removedMarks = oldNode.attrs.marks.filter(mark => !newNode.attrs.marks.includes(mark))
+                const removedElements = oldNode.attrs.elements.filter(
+                    element => !newNode.attrs.elements.includes(element)
+                )
+                const removedMarks = oldNode.attrs.marks.filter(
+                    mark => !newNode.attrs.marks.includes(mark)
+                )
                 if (removedElements.length || removedMarks.length) {
                     cleanNode(newNode, removedElements, removedMarks)
                     if (!newNode.content && ['richtext_part', 'heading_part'].includes(part.type)) {
                         newNode.content = [{type: part.attrs.elements[0]}]
                     } else if (!newNode.content && part.type === 'table_part') {
-                        newNode.content = [{type: 'table', content: [{type: 'table_row', content: [{type: 'table_cell', content: [{type: 'paragraph'}]}]}]}]
+                        newNode.content = [
+                            {type: 'table', content: [
+                                {type: 'table_row', content: [
+                                    {type: 'table_cell', content: [{type: 'paragraph'}]}
+                                ]}
+                            ]}
+                        ]
                     }
                 }
             }
@@ -154,8 +191,10 @@ export function adjustDocToTemplate(doc, template, documentStyles, citationStyle
     // move remaining oldContent items that were not in template.
     while (oldContent.length) {
         const newNode = oldContent.shift()
-        newNode.attrs.deleted = true
-        doc.content.push(newNode)
+        if (newNode.attrs.hasOwnProperty('deleted')) {
+            newNode.attrs.deleted = true
+            doc.content.push(newNode)
+        }
     }
 
     return doc

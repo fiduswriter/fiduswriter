@@ -11,7 +11,6 @@ from document.helpers.serializers import PythonWithURLSerializer
 from base.ws_handler import BaseWebSocketHandler
 import logging
 from tornado.escape import json_decode, json_encode
-from tornado.websocket import WebSocketClosedError
 from document.models import AccessRight, COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
     CAN_COMMUNICATE, FW_DOCUMENT_VERSION
 from document.views import get_accessrights
@@ -521,10 +520,7 @@ class WebSocket(BaseWebSocketHandler):
                     user_id != waiter.user_info.user.id
                 ):
                     continue
-                try:
-                    waiter.send_message(message)
-                except WebSocketClosedError:
-                    logger.error("Error sending message", exc_info=True)
+                waiter.send_message(message)
 
     @classmethod
     def save_document(cls, document_id):

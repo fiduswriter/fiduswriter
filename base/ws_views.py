@@ -1,5 +1,4 @@
 from base.ws_handler import BaseWebSocketHandler
-from tornado.websocket import WebSocketClosedError
 
 
 class WebSocket(BaseWebSocketHandler):
@@ -53,18 +52,12 @@ class WebSocket(BaseWebSocketHandler):
     @classmethod
     def send_message_to_users(cls, message):
         for waiter in list(cls.sessions.values()):
-            try:
-                waiter.send_message(message)
-            except WebSocketClosedError:
-                pass
+            waiter.send_message(message)
 
     @classmethod
     def send_message_to_admins(cls, message):
         for waiter in list(cls.admin_sessions.values()):
-            try:
-                waiter.send_message(message)
-            except WebSocketClosedError:
-                pass
+            waiter.send_message(message)
 
     def on_close(self):
         if not hasattr(self, 'type'):

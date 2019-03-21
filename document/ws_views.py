@@ -15,7 +15,7 @@ from document.models import AccessRight, COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
     CAN_COMMUNICATE, FW_DOCUMENT_VERSION
 from document.views import get_accessrights
 from usermedia.models import Image, DocumentImage, UserImage
-from avatar.templatetags.avatar_tags import avatar_url
+from user.util import get_user_avatar_url
 
 from style.models import CitationLocale
 
@@ -124,7 +124,7 @@ class WebSocket(BaseWebSocketHandler):
                 'id': doc_owner.id,
                 'name': doc_owner.readable_name,
                 'username': doc_owner.username,
-                'avatar': avatar_url(doc_owner, 80),
+                'avatar': get_user_avatar_url(doc_owner)['url'],
                 'team_members': []
             }
         }
@@ -168,7 +168,9 @@ class WebSocket(BaseWebSocketHandler):
             tm_object['id'] = team_member.member.id
             tm_object['name'] = team_member.member.readable_name
             tm_object['username'] = team_member.member.get_username()
-            tm_object['avatar'] = avatar_url(team_member.member, 80)
+            tm_object['avatar'] = get_user_avatar_url(
+                team_member.member
+            )['url']
             response['doc_info']['owner']['team_members'].append(tm_object)
         collaborators = get_accessrights(
             AccessRight.objects.filter(document__owner=doc_owner)
@@ -473,7 +475,7 @@ class WebSocket(BaseWebSocketHandler):
                     'session_id': session_id,
                     'id': waiter.user_info.user.id,
                     'name': waiter.user_info.user.readable_name,
-                    'avatar': avatar_url(waiter.user_info.user, 80)
+                    'avatar': get_user_avatar_url(waiter.user_info.user)['url']
                 })
             message = {
                 "participant_list": participant_list,

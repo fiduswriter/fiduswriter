@@ -476,18 +476,21 @@ def import_js(request):
             definition_hash=template_hash
         ).first()
         if not document_template:
-            document_template = DocumentTemplate.objects.create(
-                user=request.user,
-                title=request.POST['template_title'],
-                definition=json_encode(json_decode(request.POST['template'])),
-                definition_hash=template_hash
-            )
+            title = request.POST['template_title']
+            definition = json_encode(json_decode(request.POST['template']))
+            document_template = DocumentTemplate()
+            document_template.title = title
+            document_template.user = request.user
+            document_template.definition = definition
+            document_template.definition_hash = template_hash
+            document_template.save()
         document.template = document_template
         document.save()
         response['document_id'] = document.id
         response['added'] = time.mktime(document.added.utctimetuple())
         response['updated'] = time.mktime(document.updated.utctimetuple())
         status = 200
+
     return JsonResponse(
         response,
         status=status

@@ -72,7 +72,7 @@ export class App {
         })
 
         this.ws = new WebSocketConnector({
-            url: connectionCount => `${this.config.websocketUrl}/ws/base/${connectionCount}/`,
+            url: `${this.config.websocketUrl}/ws/base/`,
             appLoaded: () => true,
             receiveData: data => {
                 switch (data.type) {

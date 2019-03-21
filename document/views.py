@@ -16,9 +16,7 @@ from django.db.models import Q
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.paginator import Paginator, EmptyPage
 
-from avatar.utils import get_primary_avatar, get_default_avatar_url
-from avatar.templatetags.avatar_tags import avatar_url
-
+from user.util import get_user_avatar_url
 from document.models import Document, AccessRight, DocumentRevision, \
     ExportTemplate, DocumentTemplate, CAN_UPDATE_DOCUMENT
 from usermedia.models import DocumentImage, Image
@@ -32,11 +30,7 @@ from base.html_email import html_email
 def get_accessrights(ars):
     ret = []
     for ar in ars:
-        the_avatar = get_primary_avatar(ar.user, 80)
-        if the_avatar:
-            the_avatar = the_avatar.avatar_url(80)
-        else:
-            the_avatar = get_default_avatar_url()
+        the_avatar = get_user_avatar_url(ar.user)['url']
         ret.append({
             'document_id': ar.document.id,
             'user_id': ar.user.id,
@@ -120,7 +114,7 @@ def documents_list(request):
             'owner': {
                 'id': document.owner.id,
                 'name': document.owner.readable_name,
-                'avatar': avatar_url(document.owner, 80)
+                'avatar': get_user_avatar_url(document.owner)['url']
             },
             'added': added,
             'updated': updated,
@@ -143,7 +137,9 @@ def get_documentlist_js(request):
             tm_object['id'] = team_member.member.id
             tm_object['name'] = team_member.member.readable_name
             tm_object['username'] = team_member.member.get_username()
-            tm_object['avatar'] = avatar_url(team_member.member, 80)
+            tm_object['avatar'] = get_user_avatar_url(
+                team_member.member
+            )['url']
             response['team_members'].append(tm_object)
         serializer = PythonWithURLSerializer()
         export_temps = serializer.serialize(
@@ -369,6 +365,23 @@ def access_right_save_js(request):
 
 
 @login_required
+def create_doc_js(request, template_id):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 201
+        document = Document.objects.create(
+            owner_id=request.user.pk,
+            template_id=template_id
+        )
+        response['id'] = document.id
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@login_required
 def import_create_js(request):
     # First step of import: Create a document and return the id of it
     response = {}
@@ -459,18 +472,22 @@ def import_js(request):
             definition_hash=template_hash
         ).first()
         if not document_template:
-            document_template = DocumentTemplate.objects.create(
-                user=request.user,
-                title=request.POST['template_title'],
-                definition=json_encode(json_decode(request.POST['template'])),
-                definition_hash=template_hash
-            )
+            title = request.POST['template_title']
+            definition = json_encode(json_decode(request.POST['template']))
+            print(definition)
+            document_template = DocumentTemplate()
+            document_template.title = title
+            document_template.user = request.user
+            document_template.definition = definition
+            document_template.definition_hash = template_hash
+            document_template.save()
         document.template = document_template
         document.save()
         response['document_id'] = document.id
         response['added'] = time.mktime(document.added.utctimetuple())
         response['updated'] = time.mktime(document.updated.utctimetuple())
         status = 200
+
     return JsonResponse(
         response,
         status=status

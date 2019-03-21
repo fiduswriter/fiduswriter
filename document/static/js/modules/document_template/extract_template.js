@@ -29,6 +29,12 @@ export function extractTemplate(doc) {
         if (!part.attrs.locking) {
             delete part.attrs.locking
         }
+        if (!part.attrs.initial) {
+            delete part.attrs.initial
+        }
+        if (!part.attrs.metadata) {
+            delete part.attrs.metadata
+        }
         delete part.attrs.hidden
         if (part.attrs.optional === 'hidden') {
             part.attrs.hidden = true

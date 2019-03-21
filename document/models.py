@@ -64,13 +64,15 @@ class DocumentTemplate(models.Model):
     def save(self, *args, **kwargs):
         super(DocumentTemplate, self).save(*args, **kwargs)
         if self.citation_styles.count() == 0:
-            style = CitationStyle.objects.get_or_create(
+            style, created = CitationStyle.objects.get_or_create(
                 short_title='default'
-            )[1]
+            )
             self.citation_styles.add(style)
         # TODO: add a field to classify document styles by used fields
         if self.document_styles.count() == 0:
-            style = DocumentStyle.objects.get_or_create(filename='default')[1]
+            style, created = DocumentStyle.objects.get_or_create(
+                filename='default'
+            )
             self.document_styles.add(style)
 
 
@@ -81,7 +83,6 @@ def default_template():
     template = DocumentTemplate()
     template.definition = settings.DOC_TEMPLATE
     template.definition_hash = settings.DOC_TEMPLATE_HASH
-    template.slug = 'article'
     template.title = _('Standard Article')
     template.save()
     for style in CitationStyle.objects.all():

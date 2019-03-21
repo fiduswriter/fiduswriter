@@ -21,16 +21,15 @@ class BaseWebSocketHandler(DjangoHandlerMixin, WebSocketHandler):
         logger.debug('Websocket opened')
         self.id = 0
         self.user = self.get_current_user()
-        args = arg.split("/")
+        self.args = arg.split("/")
         self.messages = {
             'server': 0,
             'client': 0,
             'last_ten': []
         }
-        if len(args) < 2 or self.user is None:
+        if self.user is None:
             self.access_denied()
             return
-        self.connection_count = int(args[0])
         response = dict()
         response['type'] = 'welcome'
         self.send_message(response)

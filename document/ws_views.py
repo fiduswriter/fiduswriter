@@ -15,7 +15,7 @@ from document.models import AccessRight, COMMENT_ONLY, CAN_UPDATE_DOCUMENT, \
     CAN_COMMUNICATE, FW_DOCUMENT_VERSION
 from document.views import get_accessrights
 from usermedia.models import Image, DocumentImage, UserImage
-from avatar.templatetags.avatar_tags import avatar_url
+from user.util import get_user_avatar_url
 
 from style.models import CitationLocale
 
@@ -25,6 +25,13 @@ logger = logging.getLogger(__name__)
 class WebSocket(BaseWebSocketHandler):
     sessions = dict()
 
+    def open(self, arg):
+        super().open(arg)
+        if len(self.args) < 2:
+            self.access_denied()
+            return
+        self.document_id = int(self.args[0])
+
     def confirm_diff(self, rid):
         response = {
             'type': 'confirm_diff',
@@ -32,17 +39,13 @@ class WebSocket(BaseWebSocketHandler):
         }
         self.send_message(response)
 
-    def subscribe_doc(self, document_id, template_id=0):
+    def subscribe_doc(self, connection_count=0):
         self.user_info = SessionUserInfo(self.user)
         doc_db, can_access = self.user_info.init_access(
-            document_id,
-            template_id
+            self.document_id
         )
         if not can_access or float(doc_db.doc_version) != FW_DOCUMENT_VERSION:
-            response = {
-                'type': 'access_denied'
-            }
-            self.send_message(response)
+            self.access_denied()
             return
         if (
             doc_db.id in WebSocket.sessions and
@@ -77,7 +80,7 @@ class WebSocket(BaseWebSocketHandler):
         self.send_message({
             'type': 'subscribed'
         })
-        if self.connection_count < 1:
+        if connection_count < 1:
             self.send_styles()
             self.send_document()
         if self.can_communicate():
@@ -121,7 +124,7 @@ class WebSocket(BaseWebSocketHandler):
                 'id': doc_owner.id,
                 'name': doc_owner.readable_name,
                 'username': doc_owner.username,
-                'avatar': avatar_url(doc_owner, 80),
+                'avatar': get_user_avatar_url(doc_owner)['url'],
                 'team_members': []
             }
         }
@@ -165,7 +168,9 @@ class WebSocket(BaseWebSocketHandler):
             tm_object['id'] = team_member.member.id
             tm_object['name'] = team_member.member.readable_name
             tm_object['username'] = team_member.member.get_username()
-            tm_object['avatar'] = avatar_url(team_member.member, 80)
+            tm_object['avatar'] = get_user_avatar_url(
+                team_member.member
+            )['url']
             response['doc_info']['owner']['team_members'].append(tm_object)
         collaborators = get_accessrights(
             AccessRight.objects.filter(document__owner=doc_owner)
@@ -183,10 +188,10 @@ class WebSocket(BaseWebSocketHandler):
 
     def handle_message(self, message):
         if message["type"] == 'subscribe':
-            template = 0
-            if 'template' in message:
-                template = message['template']
-            self.subscribe_doc(message["id"], template)
+            connection_count = 0
+            if 'connection' in message:
+                connection_count = message['connection']
+            self.subscribe_doc(connection_count)
             return
         if self.user_info.document_id not in WebSocket.sessions:
             logger.debug('receiving message for closed document')
@@ -470,7 +475,7 @@ class WebSocket(BaseWebSocketHandler):
                     'session_id': session_id,
                     'id': waiter.user_info.user.id,
                     'name': waiter.user_info.user.readable_name,
-                    'avatar': avatar_url(waiter.user_info.user, 80)
+                    'avatar': get_user_avatar_url(waiter.user_info.user)['url']
                 })
             message = {
                 "participant_list": participant_list,

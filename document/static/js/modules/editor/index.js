@@ -1,7 +1,8 @@
 import {
     whenReady,
     ensureCSS,
-    WebSocketConnector
+    WebSocketConnector,
+    postJson
 } from "../common"
 import {
     FeedbackTab
@@ -142,11 +143,11 @@ export class Editor {
         let id = parseInt(idString)
         if (isNaN(id)) {
             id = 0
-            let template = parseInt(idString.slice(1))
-            if (isNaN(template)) {
-                template = 0
+            let templateId = parseInt(idString.slice(1))
+            if (isNaN(templateId)) {
+                templateId = 0
             }
-            this.docInfo.template = template
+            this.docInfo.templateId = templateId
         }
         this.docInfo.id = id
         this.schema = docSchema
@@ -212,21 +213,33 @@ export class Editor {
             'table_menu.css',
             'cropper.min.css'
         ], this.staticUrl)
-        whenReady().then(() => {
+        const initPromises = [whenReady()]
+        if (this.docInfo.hasOwnProperty('templateId')) {
+            initPromises.push(
+                postJson(`/document/create_doc/${this.docInfo.templateId}/`).then(
+                    ({json}) => {
+                        this.docInfo.id = json.id
+                        window.history.replaceState("", "", `/document/${this.docInfo.id}/`)
+                        delete this.docInfo.templateId
+                        return Promise.resolve()
+                    }
+                )
+            )
+        }
+        Promise.all(initPromises).then(() => {
             new ModCitations(this)
             new ModFootnotes(this)
             this.ws = new WebSocketConnector({
-                url: connectionCount => `${this.websocketUrl}/ws/document/${connectionCount}/`,
+                url: `${this.websocketUrl}/ws/document/${this.docInfo.id}/`,
                 appLoaded: () => this.view.state.plugins.length,
                 anythingToSend: () => sendableSteps(this.view.state),
                 initialMessage: () => {
                     const message = {
-                        'type': 'subscribe',
-                        'id': this.docInfo.id
+                        'type': 'subscribe'
                     }
 
-                    if ('template' in this.docInfo) {
-                        message.template = this.docInfo.template
+                    if (this.ws.connectionCount) {
+                        message.connection = this.ws.connectionCount
                     }
                     return message
                 },
@@ -413,10 +426,6 @@ export class Editor {
         this.docInfo = data.doc_info
         this.docInfo.version = doc["v"]
         this.docInfo.template = data.doc.template.definition
-        if (this.docInfo.version === 0) {
-            // If the document is new, change the url.
-            window.history.replaceState("", "", `/document/${this.docInfo.id}/`)
-        }
         new ModDB(this)
         this.mod.db.bibDB.setDB(data.doc.bibliography)
         // assign bibDB to be used in document schema.

@@ -139,6 +139,8 @@ export const contributorsPartSchema = new Schema({
 })
 
 export function templateHash(template) {
+    template = JSON.parse(JSON.stringify(template))
+    delete template.attrs.template // We remove the template title for hash calculation
     return hash(
         template,
         {

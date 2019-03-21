@@ -25,6 +25,13 @@ logger = logging.getLogger(__name__)
 class WebSocket(BaseWebSocketHandler):
     sessions = dict()
 
+    def open(self, arg):
+        super().open(arg)
+        if len(self.args) < 2:
+            self.access_denied()
+            return
+        self.document_id = int(self.args[0])
+
     def confirm_diff(self, rid):
         response = {
             'type': 'confirm_diff',
@@ -32,17 +39,13 @@ class WebSocket(BaseWebSocketHandler):
         }
         self.send_message(response)
 
-    def subscribe_doc(self, document_id, template_id=0):
+    def subscribe_doc(self, connection_count=0):
         self.user_info = SessionUserInfo(self.user)
         doc_db, can_access = self.user_info.init_access(
-            document_id,
-            template_id
+            self.document_id
         )
         if not can_access or float(doc_db.doc_version) != FW_DOCUMENT_VERSION:
-            response = {
-                'type': 'access_denied'
-            }
-            self.send_message(response)
+            self.access_denied()
             return
         if (
             doc_db.id in WebSocket.sessions and
@@ -77,7 +80,7 @@ class WebSocket(BaseWebSocketHandler):
         self.send_message({
             'type': 'subscribed'
         })
-        if self.connection_count < 1:
+        if connection_count < 1:
             self.send_styles()
             self.send_document()
         if self.can_communicate():
@@ -183,10 +186,10 @@ class WebSocket(BaseWebSocketHandler):
 
     def handle_message(self, message):
         if message["type"] == 'subscribe':
-            template = 0
-            if 'template' in message:
-                template = message['template']
-            self.subscribe_doc(message["id"], template)
+            connection_count = 0
+            if 'connection' in message:
+                connection_count = message['connection']
+            self.subscribe_doc(connection_count)
             return
         if self.user_info.document_id not in WebSocket.sessions:
             logger.debug('receiving message for closed document')

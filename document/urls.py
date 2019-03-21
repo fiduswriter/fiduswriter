@@ -19,6 +19,11 @@ urlpatterns = [
         name='get_documentlist_extra_js'
     ),
     url('^delete/$', views.delete_js, name='delete_js'),
+    url(
+        '^create_doc/(?P<template_id>[0-9]+)/$',
+        views.create_doc_js,
+        name='create_doc_js'
+    ),
     url('^import/create/$', views.import_create_js, name='import_create_js'),
     url('^import/image/$', views.import_image_js, name='import_image_js'),
     url('^import/$', views.import_js, name='import_js'),

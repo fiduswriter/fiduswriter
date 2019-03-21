@@ -369,6 +369,23 @@ def access_right_save_js(request):
 
 
 @login_required
+def create_doc_js(request, template_id):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        status = 201
+        document = Document.objects.create(
+            owner_id=request.user.pk,
+            template_id=template_id
+        )
+        response['id'] = document.id
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
+@login_required
 def import_create_js(request):
     # First step of import: Create a document and return the id of it
     response = {}

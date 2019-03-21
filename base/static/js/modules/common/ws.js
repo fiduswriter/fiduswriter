@@ -2,7 +2,7 @@
  */
 export class WebSocketConnector {
     constructor({
-        url = _connectionCount => {}, // needs to be specified
+        url = '', // needs to be specified
         appLoaded = () => false, // required argument
         anythingToSend = () => false, // required argument
         messagesElement = () => false, // element in which to show connection messages
@@ -56,9 +56,8 @@ export class WebSocketConnector {
             lastTen: []
         }
         this.ws = new window.WebSocket(
-            this.url(this.connectionCount)
+            this.url
         )
-
 
         this.ws.onmessage = event => {
             const data = JSON.parse(event.data)

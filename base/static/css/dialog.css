@@ -15,7 +15,7 @@
 }
 
 .ui-dialog-content.ui-scrollable {
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .ui-dialog-titlebar {

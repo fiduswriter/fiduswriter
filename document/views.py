@@ -478,6 +478,7 @@ def import_js(request):
         if not document_template:
             title = request.POST['template_title']
             definition = json_encode(json_decode(request.POST['template']))
+            print(definition)
             document_template = DocumentTemplate()
             document_template.title = title
             document_template.user = request.user

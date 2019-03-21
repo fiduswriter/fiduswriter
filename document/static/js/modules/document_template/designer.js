@@ -140,33 +140,35 @@ export class DocumentTemplateDesigner {
                         if (locking !== 'false') {
                             attrs.locking = locking
                         }
-                        let language, value
                         switch (type) {
                             case 'richtext_part':
-                            case 'heading_part':
+                            case 'heading_part': {
                                 attrs.elements = Array.from(el.querySelectorAll('.elements:checked')).map(el => el.value)
                                 if (!attrs.elements.length) {
                                     attrs.elements = ['paragraph']
                                 }
                                 attrs.marks = Array.from(el.querySelectorAll('.marks:checked')).map(el => el.value)
-                                language = el.querySelector('.language').value
+                                const language = el.querySelector('.language').value
                                 if (language !== 'false') {
                                     attrs.language = language
                                 }
                                 if (!node.content) {
                                     node.content = [{type: attrs.elements[0]}]
                                 }
-                                value = el.querySelector('select.metadata').value
-                                attrs.metadata = value === 'false' ? false : value
+                                const metadata = el.querySelector('select.metadata').value
+                                if (metadata !== 'false') {
+                                    attrs.metadata = metadata
+                                }
                                 break
-                            case 'table_part':
+                            }
+                            case 'table_part': {
                                 attrs.elements = Array.from(el.querySelectorAll('.elements:checked')).map(el => el.value)
                                 if (!attrs.elements.includes('paragraph')) {
                                     // tables need to allow paragraphs
                                     attrs.elements.push('paragraph')
                                 }
                                 attrs.marks = Array.from(el.querySelectorAll('.marks:checked')).map(el => el.value)
-                                language = el.querySelector('.language').value
+                                const language = el.querySelector('.language').value
                                 if (language !== 'false') {
                                     attrs.language = language
                                 }
@@ -174,12 +176,16 @@ export class DocumentTemplateDesigner {
                                     node.content = [{type: 'table', content: [{type: 'table_row', content: [{type: 'table_cell', content: [{type: 'paragraph'}]}]}]}]
                                 }
                                 break
+                            }
                             case 'contributors_part':
-                            case 'tags_part':
+                            case 'tags_part': {
                                 attrs.item_title = el.querySelector('input.item_title').value
-                                value = el.querySelector('select.metadata').value
-                                attrs.metadata = value === 'false' ? false : value
+                                const metadata = el.querySelector('select.metadata').value
+                                if (metadata !== 'false') {
+                                    attrs.metadata = metadata
+                                }
                                 break
+                            }
                             default:
                                 break
                         }

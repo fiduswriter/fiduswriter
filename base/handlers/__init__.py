@@ -44,6 +44,7 @@ class DjangoStaticFilesHandler(StaticFileHandler):
             new_path = instance.find(path)
             if len(new_path) > 0:
                 return new_path
+        return False
 
     def get_class(self, kls):
         parts = kls.split('.')

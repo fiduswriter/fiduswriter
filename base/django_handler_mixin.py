@@ -1,3 +1,5 @@
+import base64
+
 from builtins import object
 from django.contrib import auth
 from django.conf import settings
@@ -34,7 +36,10 @@ class DjangoHandlerMixin(object):
             (kind, data) = self.request.headers['Authorization'].split(' ')
             if kind != 'Basic':
                 return None
-            (username, _, password) = data.decode('base64').partition(':')
+            data += "=" * ((4 - len(data) % 4) % 4)
+            (username, password) = base64.b64decode(
+                data
+            ).decode('utf-8').split(':')
             user = auth.authenticate(username=username, password=password)
             if user is not None and user.is_authenticated:
                 return user

@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 
-from tornado.web import RequestHandler, StaticFileHandler
+from tornado.web import RequestHandler, StaticFileHandler, HTTPError
 
 
 class HelloHandler(RequestHandler):
@@ -34,6 +34,8 @@ class DjangoStaticFilesHandler(StaticFileHandler):
                                                          default_filename=None)
 
     def validate_absolute_path(self, root, absolute_path):
+        if absolute_path is False:
+            raise HTTPError(404)
         return absolute_path
 
     def get_absolute_path(self, root, path):

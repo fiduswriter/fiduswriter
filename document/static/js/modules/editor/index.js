@@ -145,7 +145,7 @@ export class Editor {
             id = 0
             let templateId = parseInt(idString.slice(1))
             if (isNaN(templateId)) {
-                templateId = 0
+                templateId = 1
             }
             this.docInfo.templateId = templateId
         }

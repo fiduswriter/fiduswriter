@@ -151,7 +151,7 @@ export function adjustDocToTemplate(doc, template, documentStyles, citationStyle
                 )
             ) {
                 if (newNode.attrs.initial) {
-                    newNode.attrs.initial = newNode.content 
+                    newNode.attrs.initial = newNode.content
                 } else {
                     delete newNode.content
                 }

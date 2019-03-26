@@ -12,7 +12,7 @@ const answerCommentTemplate = ({
         user,
         staticUrl
     }) =>
-    `<div class="comment-item comment-answer">
+    `<div class="comment-item comment-answer" id="comment-answer-${answer.id}">
         <div class="comment-user">
             <img class="comment-user-avatar" src="${author ? author.avatar : `${staticUrl}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
             <h5 class="comment-user-name">${escapeText(author ? author.name : answer.username)}</h5>

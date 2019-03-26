@@ -2,7 +2,7 @@ import {escapeText} from "../common"
 import {LANGUAGES, PAPER_SIZES} from "../schema/const"
 
 
-const allowedElementsTemplate = ({elements}, footnote=true) =>
+const allowedElementsTemplate = ({elements}, footnote=true, table=true) =>
 `<div class="label">
     ${gettext('Allowed elements')}
 </div>
@@ -70,10 +70,15 @@ ${
     </label>`:
     ''
 }
-<label>
-    <input type="checkbox" class="elements" value="table" ${elements.includes('table') ? 'checked' : ''}/>
-    ${gettext('Table')}
-</label>`
+${
+    table ?
+    `<label>
+        <input type="checkbox" class="elements" value="table" ${elements.includes('table') ? 'checked' : ''}/>
+        ${gettext('Table')}
+    </label>`:
+    ''
+}`
+
 
 const allowedMarksTemplate = ({marks}) =>
 `<div class="label">
@@ -434,7 +439,7 @@ const tableTemplate = ({
                 <option value="hidden" ${optional==='hidden' ? "selected" : ""}>${gettext('Optional, not shown by default')}</option>
             </select>
         </div>
-        ${allowedElementsTemplate({elements})}
+        ${allowedElementsTemplate({elements}, true, false)}
         ${allowedMarksTemplate({marks})}
         <div class="label">${gettext('Language')}
             <select class="language">

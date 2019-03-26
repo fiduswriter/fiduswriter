@@ -25,7 +25,7 @@ class TableView {
 
     stopEvent(event) {
         let stopped = false
-        if (event.type === 'mousedown' && event.path.includes(this.menuButton)) {
+        if (event.type === 'mousedown' && event.composedPath().includes(this.menuButton)) {
             stopped = true
             if (!isSelectedTableClicked(this.view.state, this.getPos())){
                 const tr = this.view.state.tr

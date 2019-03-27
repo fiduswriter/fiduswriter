@@ -302,7 +302,7 @@ export class ModCollabDocChanges {
             tr.doc :
             tr.docs[docNumber]
         this.mod.editor.docInfo.confirmedJson = noEmptyTrack(JSON.parse(JSON.stringify(
-            nthis.mod.editor.docInfo.confirmedDoc.firstChild.toJSON()
+            this.mod.editor.docInfo.confirmedDoc.firstChild.toJSON()
         )))
     }
 

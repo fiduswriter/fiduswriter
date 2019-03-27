@@ -9,6 +9,7 @@ import {menuBar} from "prosemirror-menu"
 import {buildKeymap, buildInputRules} from "prosemirror-example-setup"
 import {tableEditing} from "prosemirror-tables"
 
+import {randomHeadingId} from "../schema/common"
 import {TagsView, ContributorsView} from "../editor/state_plugins"
 import {
     documentConstructorTemplate,
@@ -273,7 +274,46 @@ export class DocumentTemplateDesigner {
                 })
             })
         this.editors.push([helpEl, helpView])
-        const plugins = []
+        const plugins = [new Plugin({
+            // Adding heading IDs to all new headings.
+            appendTransaction: (trs, oldState, newState) => {
+                if (trs.every(tr => !tr.steps.length)) {
+                    return
+                }
+                const newHeadings = [],
+                    usedHeadingIds = []
+                newState.doc.descendants((node, pos) => {
+                    if (node.type.groups.includes('heading')) {
+                        if (node.attrs.id === false) {
+                            newHeadings.push({pos, node})
+                        } else {
+                            usedHeadingIds.push(node.attrs.id)
+                        }
+
+                    }
+                })
+                if (newHeadings.length) {
+                    const newTr = newState.tr
+                    newHeadings.forEach(
+                        newHeading => {
+                            // TODO: this checks for duplicate IDs within the same section,
+                            // but we really should check for duplicate IDs in the entire
+                            // template.
+                            let id
+                            while (!id || usedHeadingIds.includes(id)) {
+                                id = randomHeadingId()
+                            }
+                            newTr.setNodeMarkup(
+                                newHeading.pos,
+                                null,
+                                Object.assign({}, newHeading.node.attrs, {id})
+                            )
+                        }
+                    )
+                    return newTr
+                }
+            }
+        })]
         let menuContent = [], schema
         switch (type) {
             case 'richtext_part':

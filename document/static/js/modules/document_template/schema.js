@@ -19,7 +19,6 @@ import {
 }  from "prosemirror-tables"
 
 import {docSchema} from "../schema/document"
-
 const doc = {
     content: 'block+',
     toDOM(_node) {

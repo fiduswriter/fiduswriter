@@ -269,7 +269,7 @@ export const linksPlugin = function(options) {
                 }
             }
         },
-        appendTransaction: (trs, oldState, state) => {
+        appendTransaction: (trs, oldState, newState) => {
             // Check if any of the transactions are local.
             if (trs.every(tr => !tr.docChanged || tr.getMeta('remote'))) {
                 // All transactions are remote or don't change anything. Give up.
@@ -311,11 +311,10 @@ export const linksPlugin = function(options) {
                     })
                 })
             })
-            const tr = trs.slice(-1)[0]
             let foundIdElement = false, // found heading or figure
                 foundAnchorWithoutId = false // found an anchor without an ID
             ranges.forEach(range => {
-                tr.doc.nodesBetween(
+                newState.doc.nodesBetween(
                     range[0],
                     range[1],
                     node => {
@@ -360,7 +359,7 @@ export const linksPlugin = function(options) {
                 }
             })
 
-            tr.doc.descendants((node, pos) => {
+            newState.doc.descendants((node, pos) => {
                 if (node.type.groups.includes('heading')) {
                     if (headingIds.includes(node.attrs.id) || !node.attrs.id) {
                         // Add node if the id is false (default) or it is present twice
@@ -389,7 +388,7 @@ export const linksPlugin = function(options) {
                 return
             }
 
-            const newTransaction = state.tr.setMeta('fixIds', true)
+            const newTransaction = newState.tr.setMeta('fixIds', true)
             // Change the IDs of the nodes that having an ID that was used previously
             // already.
             doubleHeadingIds.forEach(doubleId => {
@@ -428,11 +427,11 @@ export const linksPlugin = function(options) {
 
             // Remove anchor marks without ID
             if (foundAnchorWithoutId) {
-                const markType = state.schema.marks.anchor.create({id : false})
+                const markType = newState.schema.marks.anchor.create({id : false})
                 newTransaction.step(
                     new RemoveMarkStep(
                         0,
-                        state.doc.content.size,
+                        newState.doc.content.size,
                         markType
                     )
                 )

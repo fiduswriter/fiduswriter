@@ -304,7 +304,13 @@ export class ModCommentInteractions {
     cancelSubmit() {
         // Handle a click on the cancel button of the comment submit form.
         const id = this.activeCommentId
-        if (id==='-1' || this.mod.store.comments[id].comment.length === 0) {
+        if (
+            id==='-1' ||
+            (
+                this.mod.store.comments[id] ||
+                this.mod.store.comments[id].comment.length === 0
+            )
+        ) {
             this.deleteComment(id)
         } else {
             this.deactivateAll()

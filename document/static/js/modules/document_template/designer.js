@@ -303,6 +303,7 @@ export class DocumentTemplateDesigner {
                             while (!id || usedHeadingIds.includes(id)) {
                                 id = randomHeadingId()
                             }
+                            usedHeadingIds.push(id)
                             newTr.setNodeMarkup(
                                 newHeading.pos,
                                 null,

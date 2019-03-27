@@ -51,6 +51,9 @@ function debounced(delay, fn) {
 function noTrack(node) {
     if (node.attrs && node.attrs.track) {
         delete node.attrs.track
+        if (!Object.keys(node.attrs).length) {
+            delete node.attrs
+        }
     }
     if (node.content) {
         node.content.forEach(child => noTrack(child))

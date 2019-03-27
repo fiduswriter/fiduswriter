@@ -284,6 +284,9 @@ export class DocumentTemplateDesigner {
                     usedHeadingIds = []
 
                 this.editors.forEach(([_el, view]) => {
+                    if (view.state === oldState) {
+                        return
+                    }
                     view.state.doc.descendants(node => {
                         if (node.type.groups.includes('heading')) {
                             usedHeadingIds.push(node.attrs.id)

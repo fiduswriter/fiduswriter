@@ -282,9 +282,17 @@ export class DocumentTemplateDesigner {
                 }
                 const newHeadings = [],
                     usedHeadingIds = []
+
+                this.editors.forEach(([_el, view]) => {
+                    view.state.doc.descendants(node => {
+                        if (node.type.groups.includes('heading')) {
+                            usedHeadingIds.push(node.attrs.id)
+                        }
+                    })
+                })
                 newState.doc.descendants((node, pos) => {
                     if (node.type.groups.includes('heading')) {
-                        if (node.attrs.id === false) {
+                        if (node.attrs.id === false || usedHeadingIds.includes(node.attrs.id)) {
                             newHeadings.push({pos, node})
                         } else {
                             usedHeadingIds.push(node.attrs.id)
@@ -296,9 +304,6 @@ export class DocumentTemplateDesigner {
                     const newTr = newState.tr
                     newHeadings.forEach(
                         newHeading => {
-                            // TODO: this checks for duplicate IDs within the same section,
-                            // but we really should check for duplicate IDs in the entire
-                            // template.
                             let id
                             while (!id || usedHeadingIds.includes(id)) {
                                 id = randomHeadingId()

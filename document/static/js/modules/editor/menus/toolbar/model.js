@@ -125,6 +125,7 @@ export const toolbarModel = () => ({
         {
             type: 'info',
             show: editor => {
+                let title = ""
                 if (editor.currentView !== editor.view) {
                     return gettext('Footnote')
                 } else if (
@@ -132,19 +133,22 @@ export const toolbarModel = () => ({
                     editor.currentView.state.selection.$anchor.node(2) ===
                         editor.currentView.state.selection.$head.node(2)
                 ) {
-                    return editor.currentView.state.selection.$anchor.node(2).attrs.title
+                    title = editor.currentView.state.selection.$anchor.node(2).attrs.title
+                    return title.length > 20 ? title.slice(0, 20)+"..." : title
                 } else if (
                     editor.currentView.state.selection.$anchor.depth === 1 &&
                     editor.currentView.state.selection.from ===
                         editor.currentView.state.selection.to
                 ) {
-                    return editor.currentView.state.selection.$anchor.nodeAfter.attrs.title
+                    title = editor.currentView.state.selection.$anchor.nodeAfter.attrs.title
+                    return title.length > 20 ? title.slice(0, 20)+"..." : title
                 } else if (
                     editor.currentView.state.selection.jsonID === 'node' &&
                     editor.currentView.state.selection.node.isBlock &&
                     editor.currentView.state.selection.node.attrs.title
                 ) {
-                    return editor.currentView.state.selection.node.attrs.title
+                    title = editor.currentView.state.selection.node.attrs.title
+                    return title.length > 20 ? title.slice(0, 20)+"..." : title
                 } else {
                     return ''
                 }

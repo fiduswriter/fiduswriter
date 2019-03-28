@@ -9,6 +9,7 @@ import {menuBar} from "prosemirror-menu"
 import {buildKeymap, buildInputRules} from "prosemirror-example-setup"
 import {tableEditing} from "prosemirror-tables"
 
+import {randomHeadingId} from "../schema/common"
 import {TagsView, ContributorsView} from "../editor/state_plugins"
 import {
     documentConstructorTemplate,
@@ -45,6 +46,64 @@ function debounced(delay, fn) {
             timerId = null
         }, delay)
     }
+}
+
+function noTrack(node) {
+    if (node.attrs && node.attrs.track) {
+        delete node.attrs.track
+        if (!Object.keys(node.attrs).length) {
+            delete node.attrs
+        }
+    }
+    if (node.content) {
+        node.content.forEach(child => noTrack(child))
+    }
+    return node
+}
+
+function addHeadingIds(oldState, newState, editors) {
+    const newHeadings = [],
+        usedHeadingIds = []
+
+    editors.forEach(([_el, view]) => {
+        if (view.state === oldState) {
+            return
+        }
+        view.state.doc.descendants(node => {
+            if (node.type.groups.includes('heading')) {
+                usedHeadingIds.push(node.attrs.id)
+            }
+        })
+    })
+    newState.doc.descendants((node, pos) => {
+        if (node.type.groups.includes('heading')) {
+            if (node.attrs.id === false || usedHeadingIds.includes(node.attrs.id)) {
+                newHeadings.push({pos, node})
+            } else {
+                usedHeadingIds.push(node.attrs.id)
+            }
+
+        }
+    })
+    if (!newHeadings.length) {
+        return null
+    }
+    const newTr = newState.tr
+    newHeadings.forEach(
+        newHeading => {
+            let id
+            while (!id || usedHeadingIds.includes(id)) {
+                id = randomHeadingId()
+            }
+            usedHeadingIds.push(id)
+            newTr.setNodeMarkup(
+                newHeading.pos,
+                null,
+                Object.assign({}, newHeading.node.attrs, {id})
+            )
+        }
+    )
+    return newTr
 }
 
 export class DocumentTemplateDesigner {
@@ -120,7 +179,9 @@ export class DocumentTemplateDesigner {
                                 el.querySelector('.initial'),
                                 true
                             ),
-                            locking = el.querySelector('.locking option:checked') ? el.querySelector('.locking option:checked').value : 'false',
+                            locking = el.querySelector('.locking option:checked') ?
+                                el.querySelector('.locking option:checked').value :
+                                'false',
                             optional = el.querySelector('.optional option:checked').value,
                             attrs = {id, title},
                             node = {type, attrs}
@@ -273,7 +334,15 @@ export class DocumentTemplateDesigner {
                 })
             })
         this.editors.push([helpEl, helpView])
-        const plugins = []
+        const plugins = [new Plugin({
+            // Adding heading IDs to all new headings.
+            appendTransaction: (trs, oldState, newState) => {
+                if (trs.every(tr => !tr.steps.length)) {
+                    return
+                }
+                return addHeadingIds(oldState, newState, this.editors)
+            }
+        })]
         let menuContent = [], schema
         switch (type) {
             case 'richtext_part':
@@ -336,18 +405,21 @@ export class DocumentTemplateDesigner {
                         content: initial
                     }]
                 }) :
-                schema.nodes.doc.createAndFill(),
-            initialView = new EditorView(initialEl, {
-                state: EditorState.create({
-                    doc,
-                    plugins
-                })
+                schema.nodes.doc.createAndFill()
+        let state = EditorState.create({
+                doc,
+                plugins
             })
+        const addedHeadings = addHeadingIds(state, state, this.editors)
+        if (addedHeadings) {
+            state = state.apply(addedHeadings)
+        }
+        const initialView = new EditorView(initialEl, {state})
         this.editors.push([initialEl, initialView])
 
     }
 
-    getEditorValue(el, inline = false) {
+    getEditorValue(el, initial = false) {
         const editor = this.editors.find(editor => editor[0]===el)
         if (!editor) {
             return false
@@ -355,8 +427,11 @@ export class DocumentTemplateDesigner {
         const state = editor[1].state
         // Only return if there is more content that a recently initiated doc
         // would have. The number varies between part types.
-        if (state.doc.nodeSize > state.schema.nodes.doc.createAndFill().nodeSize) {
-            return inline ? state.doc.firstChild.toJSON().content : state.doc.toJSON().content
+        if (
+            state.doc.firstChild.type.name === 'heading_part' ||
+            state.doc.nodeSize > state.schema.nodes.doc.createAndFill().nodeSize
+        ) {
+            return initial ? noTrack(state.doc.firstChild.toJSON()).content : noTrack(state.doc.toJSON()).content
         }
         return false
     }

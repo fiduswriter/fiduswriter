@@ -7,6 +7,12 @@
         "attrs": {
             "id": "subtitle",
             "title": "Subtitle",
+            "initial": [{
+                "type": "heading1",
+                "attrs": {
+                    "id": "H6323428"
+                }
+            }],
             "optional": "hidden",
             "hidden": true,
             "elements": ["heading1"],
@@ -14,7 +20,10 @@
             "metadata": "subtitle"
         },
         "content": [{
-            "type": "heading1"
+            "type": "heading1",
+            "attrs": {
+                "id": "H6323428"
+            }
         }]
     }, {
         "type": "contributors_part",
@@ -56,8 +65,7 @@
             "id": "body",
             "title": "Body",
             "elements": ["paragraph", "heading1", "heading2", "heading3", "heading4", "heading5", "heading6", "figure", "ordered_list", "bullet_list", "horizontal_rule", "equation", "citation", "blockquote", "footnote", "table"],
-            "marks": ["strong", "em", "link", "anchor"],
-            "metadata": false
+            "marks": ["strong", "em", "link", "anchor"]
         },
         "content": [{
             "type": "paragraph"
@@ -68,8 +76,8 @@
         "footnote_marks": ["strong", "em", "link", "anchor"],
         "languages": ["af-ZA", "sq-AL", "ar", "ast", "be", "br", "bg", "ca", "ca-ES-Valencia", "zh-CN", "da", "nl", "en-AU", "en-CA", "en-NZ", "en-ZA", "en-GB", "en-US", "eo", "fr", "gl", "de-DE", "de-AU", "de-CH", "el", "he", "is", "it", "ja", "km", "lt", "ml", "nb-NO", "nn-NO", "fa", "pl", "pt-BR", "pt-PT", "ro", "ru", "tr", "sr-SP-Cy", "sr-SP-Lt", "sk", "sl", "es", "sv", "ta", "tl", "uk"],
         "papersizes": ["A4", "US Letter"],
+        "template": "Standard Article",
         "papersize": "A4",
-        "language": "af-ZA",
-        "template": "Article"
+        "language": "af-ZA"
     }
 }

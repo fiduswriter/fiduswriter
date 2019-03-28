@@ -15,6 +15,19 @@ import {
     updateCollaboratorSelection
 } from "../state_plugins"
 
+function noEmptyTrack(node) {
+    if (node.attrs && node.attrs.track && !node.attrs.track.length) {
+        delete node.attrs.track
+        if (!Object.keys(node.attrs).length) {
+            delete node.attrs
+        }
+    }
+    if (node.content) {
+        node.content.forEach(child => noEmptyTrack(child))
+    }
+    return node
+}
+
 export class ModCollabDocChanges {
     constructor(mod) {
         mod.docChanges = this
@@ -127,8 +140,9 @@ export class ModCollabDocChanges {
                     // server.
                     unconfirmedDiff['jd'] = compare(
                         this.mod.editor.docInfo.confirmedJson,
-                        this.mod.editor.view.state.doc.firstChild
-                        .toJSON()
+                        noEmptyTrack(JSON.parse(JSON.stringify(
+                            this.mod.editor.view.state.doc.firstChild.toJSON()
+                        )))
                     )
                     // In case the title changed, we also add a title field to
                     // update the title field instantly - important for the
@@ -287,9 +301,9 @@ export class ModCollabDocChanges {
         this.mod.editor.docInfo.confirmedDoc = docNumber === tr.docs.length ?
             tr.doc :
             tr.docs[docNumber]
-        this.mod.editor.docInfo.confirmedJson = JSON.parse(JSON.stringify(
+        this.mod.editor.docInfo.confirmedJson = noEmptyTrack(JSON.parse(JSON.stringify(
             this.mod.editor.docInfo.confirmedDoc.firstChild.toJSON()
-        ))
+        )))
     }
 
     confirmDiff(request_id) {
@@ -311,9 +325,9 @@ export class ModCollabDocChanges {
             )
             this.mod.editor.view.dispatch(tr)
             this.mod.editor.docInfo.confirmedDoc = unconfirmedDiffs["doc"]
-            this.mod.editor.docInfo.confirmedJson = JSON.parse(JSON.stringify(
+            this.mod.editor.docInfo.confirmedJson = noEmptyTrack(JSON.parse(JSON.stringify(
                 this.mod.editor.docInfo.confirmedDoc.firstChild.toJSON()
-            ))
+            )))
         }
 
         const sentFnSteps = unconfirmedDiffs["fs"] // footnote steps

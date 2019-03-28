@@ -150,7 +150,7 @@ const commentTemplate = ({comment, view, active, editComment, activeCommentAnswe
     }
     ${
         active && !activeCommentAnswerId && !editComment && 0 < comment.comment.length ?
-        `<div class="comment-answer">
+        `<div class="comment-item comment-answer">
             <div id="answer-editor"></div>
         </div>` :
         ''

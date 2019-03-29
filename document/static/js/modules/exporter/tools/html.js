@@ -29,18 +29,3 @@ export const modifyImages = function(htmlEl) {
 
     return images
 }
-
-// all descendant text nodes for dom nodes
-export const domDescendantTexNodes = function(node) {
-    let returnValue = []
-    node.childNodes.forEach(
-        subNode => {
-            if (subNode.nodeType===3) {
-                returnValue.push(subNode)
-            } else if (subNode.nodeType===1) {
-                returnValue = returnValue.concat(domDescendantTexNodes(subNode))
-            }
-        }
-    )
-    return returnValue
-}

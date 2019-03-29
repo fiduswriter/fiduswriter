@@ -99,7 +99,7 @@ export class DocxExporterRender {
                 this.tags.forEach(
                     tag => {
                         const tagString = tag.title
-                        if (text.indexOf('{'+tagString+'}') !== -1) {
+                        if (text.includes(`{${tagString}}`)) {
                             currentTags.push(tag)
                             tag.par = par
                             // We don't worry about the same tag appearing twice in the document,

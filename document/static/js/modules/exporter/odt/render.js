@@ -1,5 +1,4 @@
 import {textContent} from "../tools/doc_contents"
-import {domDescendantTexNodes} from "../tools/html"
 import {escapeText} from "../../common"
 
 export class OdtExporterRender {
@@ -96,29 +95,26 @@ export class OdtExporterRender {
         const pars = this.xml.querySelectorAll('p')
 
         pars.forEach(par => {
-            domDescendantTexNodes(par).forEach(textNode => {
-                const text = textNode.data
-                this.tags.forEach(tag => {
-                    const tagString = tag.title
-                    if (text.indexOf('{'+tagString+'}') !== -1) {
-                        if (tag.title[0]==='@') {
-                            tag.par = par
-                            this.parRender(tag)
-                        } else {
-                            tag.textNode = textNode
-                            this.inlineRender(tag)
-                        }
+            const text = par.textContent
+            this.tags.forEach(tag => {
+                const tagString = tag.title
+                if (text.includes(`{${tagString}}`)) {
+                    tag.par = par
+                    if (tag.title[0]==='@') {
+                        this.parRender(tag)
+                    } else {
+                        this.inlineRender(tag)
                     }
-                })
+                }
             })
         })
     }
 
     // Render Tags that only exchange inline content
     inlineRender(tag) {
-        const texts = tag.textNode.data.split('{'+tag.title+'}')
-        const fullText = texts[0] + escapeText(tag.content ? tag.content : '') + texts[1]
-        tag.textNode.data = fullText
+        const texts = tag.par.textContent.split(`{${tag.title}}`)
+        const fullText = texts[0] + (tag.content ? tag.content : '') + texts[1]
+        tag.par.innerHTML = escapeText(fullText)
     }
 
     // Render tags that exchange paragraphs

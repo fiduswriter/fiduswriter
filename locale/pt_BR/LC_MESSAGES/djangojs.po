@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-30 19:19+0000\n"
+"POT-Creation-Date: 2019-03-30 23:51+0000\n"
 "PO-Revision-Date: 2015-04-24 23:57-0300\n"
 "Last-Translator: Job Diogenes Ribeiro Borges <jobdrb@gmail.com>\n"
 "Language-Team: Brazilian Portuguese <jobdrb@gmail.com>\n"
@@ -2079,6 +2079,8 @@ msgid "Remove"
 msgstr "Remover"
 
 #: document/static/js/modules/editor/dialogs/citation.js:40
+#: document/static/js/modules/editor/dialogs/contributor.js:20
+#: document/static/js/modules/editor/dialogs/contributor.js:77
 #: document/static/js/modules/editor/dialogs/figure.js:104
 #: document/static/js/modules/editor/dialogs/link.js:55
 #: document/static/js/modules/editor/dialogs/math.js:24
@@ -2099,6 +2101,17 @@ msgstr ""
 #: document/static/js/modules/editor/dialogs/citation.js:320
 msgid "Please select at least one citation source!"
 msgstr "Por favor, selecione pelo menos uma fonte de citação!"
+
+#: document/static/js/modules/editor/dialogs/contributor.js:20
+#: document/static/js/modules/editor/dialogs/contributor.js:77
+#: document/static/js/modules/editor/state_plugins/contributor_input.js:37
+#: document/static/js/modules/editor/state_plugins/tag_input.js:47
+msgid "Add"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/contributor.js:33
+msgid "Email is in incorrect format!"
+msgstr ""
 
 #: document/static/js/modules/editor/dialogs/figure.js:135
 msgid "Enter latex math or insert an image"
@@ -3026,11 +3039,6 @@ msgstr ""
 #| msgid "Document style"
 msgid "Document Navigator"
 msgstr "Estilo do Documento"
-
-#: document/static/js/modules/editor/state_plugins/contributor_input.js:37
-#: document/static/js/modules/editor/state_plugins/tag_input.js:47
-msgid "Add"
-msgstr ""
 
 #: document/static/js/modules/editor/state_plugins/keyword_input.js:46
 #, fuzzy

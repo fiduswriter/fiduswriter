@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-30 19:19+0000\n"
+"POT-Creation-Date: 2019-03-30 23:51+0000\n"
 "PO-Revision-Date: 2013-10-08 04:30-0500\n"
 "Last-Translator: Eugenio Battaglia <contafinoasette@gmail.com>\n"
 "Language-Team: Italian <contafinoasette@gmail.com>\n"
@@ -2103,6 +2103,8 @@ msgid "Remove"
 msgstr "Rimuovi"
 
 #: document/static/js/modules/editor/dialogs/citation.js:40
+#: document/static/js/modules/editor/dialogs/contributor.js:20
+#: document/static/js/modules/editor/dialogs/contributor.js:77
 #: document/static/js/modules/editor/dialogs/figure.js:104
 #: document/static/js/modules/editor/dialogs/link.js:55
 #: document/static/js/modules/editor/dialogs/math.js:24
@@ -2123,6 +2125,17 @@ msgstr ""
 #: document/static/js/modules/editor/dialogs/citation.js:320
 msgid "Please select at least one citation source!"
 msgstr "Per cortesia, seleziona almeno una fonte di citazione"
+
+#: document/static/js/modules/editor/dialogs/contributor.js:20
+#: document/static/js/modules/editor/dialogs/contributor.js:77
+#: document/static/js/modules/editor/state_plugins/contributor_input.js:37
+#: document/static/js/modules/editor/state_plugins/tag_input.js:47
+msgid "Add"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/contributor.js:33
+msgid "Email is in incorrect format!"
+msgstr ""
 
 #: document/static/js/modules/editor/dialogs/figure.js:135
 msgid "Enter latex math or insert an image"
@@ -3066,11 +3079,6 @@ msgstr ""
 #| msgid "Document style"
 msgid "Document Navigator"
 msgstr "Stile documento"
-
-#: document/static/js/modules/editor/state_plugins/contributor_input.js:37
-#: document/static/js/modules/editor/state_plugins/tag_input.js:47
-msgid "Add"
-msgstr ""
 
 #: document/static/js/modules/editor/state_plugins/keyword_input.js:46
 #, fuzzy

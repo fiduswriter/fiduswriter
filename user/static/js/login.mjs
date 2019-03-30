@@ -1,3 +1,7 @@
-import {bind} from "./modules/login"
+import {LoginPage} from "./modules/login"
 
-bind()
+const theLoginPage = new LoginPage(window.fidusConfig)
+
+theLoginPage.init()
+
+window.theLoginPage = theLoginPage

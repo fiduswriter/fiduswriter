@@ -1,4 +1,4 @@
-<!DOCTYPE html>{% load i18n %}{% load compress %}{% load transpile %}
+<!DOCTYPE html>{% load i18n %}{% load compress %}{% load transpile %}{% load fiduswriter %}
 <html class="fw-basic-text">
     <head>
         <meta charset="utf-8" />
@@ -38,7 +38,9 @@
         <script type="text/javascript" src="{% static "js/browser_check.mjs" %}" crossorigin="anonymous"></script>
         <!-- JS error handling -->
         <script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>
+        {% fiduswriter_config_js %}
         <script type="text/javascript" src="/jsi18n/"></script>
+
         {% block extraheaders %}{% endblock %}
     </head>
     <body>
@@ -54,7 +56,7 @@
                 </nav>
             </div>
     <!--Add free star-->
-    <div style="width:961px;position:relative;margin:0 auto;"><img src="{% static "img/free_star.png" %}" style="position:absolute;top:0px;left:0px;z-index:3;height:73px;"></div>
+    <div class="star" style="width:961px;position:relative;margin:0 auto;"><img src="{% static "img/free_star.png" %}" style="position:absolute;top:0px;left:0px;z-index:3;height:73px;"></div>
         </header>
 
         <div class="fw-contents">

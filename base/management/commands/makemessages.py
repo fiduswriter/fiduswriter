@@ -7,6 +7,15 @@ from django.core.management.commands import makemessages
 from django.core.management import call_command
 from django.core.management.utils import popen_wrapper
 
+# This makes makemessages create both translations for Python and JavaScript
+# code in one go.
+#
+# Additionally, it works around xgettext not being able to work with ES2015
+# template strings [1] by transpiling the JavaScript files in a special way to
+# replace all template strings.
+#
+# [1] https://savannah.gnu.org/bugs/?50920
+
 
 class Command(makemessages.Command):
 

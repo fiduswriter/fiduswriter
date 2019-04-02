@@ -307,7 +307,7 @@ export class ModCommentInteractions {
         if (
             id==='-1' ||
             (
-                this.mod.store.comments[id] ||
+                this.mod.store.comments[id] &&
                 this.mod.store.comments[id].comment.length === 0
             )
         ) {

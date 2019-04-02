@@ -27,11 +27,11 @@ export class DocumentOverviewActions {
         ).then(
             ({json}) => {
                 if (json.done) {
-                    addAlert('success', gettext(`${gettext('Document has been deleted')}: '${doc.title}'`))
+                    addAlert('success', `${gettext('Document has been deleted')}: '${doc.title}'`)
                     this.documentOverview.removeTableRows([id])
                     this.documentOverview.documentList = this.documentOverview.documentList.filter(doc => doc.id !== id)
                 } else {
-                    addAlert('error', gettext(`${gettext('Could not delete document')}: '${doc.title}'`))
+                    addAlert('error', `${gettext('Could not delete document')}: '${doc.title}'`)
                 }
             }
         )

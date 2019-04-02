@@ -13,7 +13,8 @@
     "copy_mathquill_font": "mkdir -p ./static-libs/css/font/ && cp node_modules/mathquill-jquery/build/font/* ./static-libs/css/font/",
     "copy_vivliostyle_resources": "mkdir -p ./static-libs/vivliostyle-resources/ && cp node_modules/vivliostyle-print/dist/resources/* ./static-libs/vivliostyle-resources/",
     "postinstall": "npm run get_mml2omml && npm run copy_fontawesome && npm run copy_prosemirror_css && npm run copy_mathquill_css && npm run copy_mathquill_font && npm run copy_vivliostyle_resources",
-    "eslint": "eslint ."
+    "eslint": "eslint .",
+    "babel-transform-template-literals": "babel --plugins @babel/plugin-transform-template-literals"
   },
   "author": "Johannes Wilm",
   "license": "AGPL",
@@ -30,6 +31,8 @@
     "eslint-plugin-import": "^2.16.0"
   },
   "devDependencies": {
-    "updates": "^7.2.1"
+    "updates": "^7.2.1",
+    "@babel/cli": "^7.2.3",
+    "@babel/plugin-transform-template-literals": "^7.2.0"
   }
 }

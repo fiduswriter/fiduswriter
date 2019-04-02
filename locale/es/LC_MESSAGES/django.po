@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-10 06:58+0000\n"
+"POT-Creation-Date: 2019-03-30 23:51+0000\n"
 "PO-Revision-Date: 2013-03-03 12:18-0700\n"
 "Last-Translator: Ana Vera Resquín <ani.tavr77@gmail.com>\n"
 "Language-Team: Spanish <ani.tavr77@gmail.com>\n"
@@ -102,7 +102,7 @@ msgstr ""
 msgid "Duplicate selected document templates"
 msgstr "Exportar el documento a un archivo HTML"
 
-#: document/models.py:83
+#: document/models.py:86
 msgid "Standard Article"
 msgstr ""
 
@@ -132,49 +132,49 @@ msgstr ""
 msgid "Update all documents (DANGER!)"
 msgstr ""
 
-#: document/views.py:213 document/views.py:600
+#: document/views.py:209 document/views.py:617
 #, fuzzy
 msgid "Untitled"
 msgstr "Subtítulo"
 
-#: document/views.py:284 document/views.py:686
+#: document/views.py:280 document/views.py:703
 #, fuzzy
 #| msgid "Documents"
 msgid "Document"
 msgstr "Documentos"
 
-#: document/views.py:286 document/views.py:688
+#: document/views.py:282 document/views.py:705
 msgid "Author"
 msgstr "Autor"
 
-#: document/views.py:288
+#: document/views.py:284
 #, fuzzy
 #| msgid "Define access rights"
 msgid "Access Rights"
 msgstr "Define derechos de acceso"
 
-#: document/views.py:291 document/views.py:693
+#: document/views.py:287 document/views.py:710
 #, fuzzy
 #| msgid "edit documents"
 msgid "Access the document"
 msgstr "editar documentos"
 
-#: document/views.py:294
+#: document/views.py:290
 #, fuzzy
 msgid "Document shared:"
 msgstr "Documentos"
 
-#: document/views.py:626
+#: document/views.py:643
 #, fuzzy
 msgid "Comment on :"
 msgstr "Comentarios"
 
-#: document/views.py:647
+#: document/views.py:664
 #, fuzzy
 msgid "Comment assignment on :"
 msgstr "Comentarios"
 
-#: document/views.py:690
+#: document/views.py:707
 #, fuzzy
 #| msgid "Comments"
 msgid "Comment"
@@ -210,19 +210,25 @@ msgstr "Español"
 msgid "Portuguese (Brazil)"
 msgstr "Portugués"
 
-#: fiduswriter/settings.py:325
+#: fiduswriter/settings.py:335
 #, fuzzy
 msgid "Fidus Writer Admin"
 msgstr "editar documentos"
 
-#: fiduswriter/settings.py:326
+#: fiduswriter/settings.py:336
 #, fuzzy
 msgid "Fidus Writer Administration Site"
 msgstr "editar documentos"
 
-#: fiduswriter/settings.py:327
+#: fiduswriter/settings.py:337
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr ""
+
+#: style/models.py:36 style/models.py:61
+#, fuzzy
+#| msgid "Default Avatar"
+msgid "Default"
+msgstr "Imagen de perfil predeterminada"
 
 #: user/templates/account/base.html:55 user/templates/account/login.html:7
 #: user/templates/account/signup.html:9
@@ -1005,9 +1011,6 @@ msgstr ""
 #~ msgstr ""
 #~ "Has actualizado tu foto de perfil <a href=\"%(avatar_url)s\">%(avatar)s</"
 #~ "a>."
-
-#~ msgid "Default Avatar"
-#~ msgstr "Imagen de perfil predeterminada"
 
 #~ msgid "Contents"
 #~ msgstr "Contenido"

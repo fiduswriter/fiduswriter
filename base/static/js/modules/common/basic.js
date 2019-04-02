@@ -107,29 +107,38 @@ export const showSystemMessage = function(message) {
  * @param {number} milliseconds Number of milliseconds since epoch (1/1/1970 midnight, UTC).
  * @param {boolean} type 'full' for full date (default), 'sortable-date' for sortable date, 'minutes' for minute accuracy
  */
+const CACHED_DATES = {
+    'sortable-date': {},
+    'minutes': {},
+    'full': {}
+}
 export const localizeDate = function(milliseconds, type='full') {
-    milliseconds = parseInt(milliseconds)
-    if (milliseconds > 0) {
-        const theDate = new Date(milliseconds)
-        let yyyy, mm, dd, returnValue
-        switch (type) {
-            case 'sortable-date':
-                yyyy = theDate.getFullYear()
-                mm = theDate.getMonth() + 1
-                dd = theDate.getDate()
-                returnValue = `${yyyy}-${String(mm).padStart(2, '0')}-${String(dd).padStart(2, '0')}`
-                break
-            case 'minutes':
-                returnValue = theDate.toLocaleString([], {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute:'2-digit'})
-                break
-            default:
-                returnValue = theDate.toLocaleString()
-        }
-        return returnValue
-    }
-    else {
+    if (milliseconds === 0) {
         return ''
+    } else if (CACHED_DATES[type][milliseconds]) {
+        return CACHED_DATES[type][milliseconds]
     }
+    const theDate = new Date(milliseconds)
+    let returnValue
+    switch (type) {
+        case 'sortable-date': {
+            const yyyy = theDate.getFullYear()
+            const mm = theDate.getMonth() + 1
+            const dd = theDate.getDate()
+            returnValue = `${yyyy}-${String(mm).padStart(2, '0')}-${String(dd).padStart(2, '0')}`
+            break
+        }
+        case 'minutes':
+            returnValue = theDate.toLocaleString([], {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'})
+            break
+        default:
+            returnValue = theDate.toLocaleString()
+    }
+    if (Object.keys(CACHED_DATES[type]).length > 5000) {
+        CACHED_DATES[type] = {}
+    }
+    CACHED_DATES[type][milliseconds] = returnValue
+    return returnValue
 }
 
 /**

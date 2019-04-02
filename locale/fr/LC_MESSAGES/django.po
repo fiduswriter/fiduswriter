@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-10 06:58+0000\n"
+"POT-Creation-Date: 2019-03-30 23:51+0000\n"
 "PO-Revision-Date: 2016-06-17 15:21+0200\n"
 "Last-Translator: Nicolas Rochard <nrochard@gmail.com>\n"
 "Language-Team: français <nrochard@gmail.com>\n"
@@ -101,7 +101,7 @@ msgstr ""
 msgid "Duplicate selected document templates"
 msgstr "Exporter le document en fichier HTML"
 
-#: document/models.py:83
+#: document/models.py:86
 msgid "Standard Article"
 msgstr ""
 
@@ -130,49 +130,49 @@ msgstr ""
 msgid "Update all documents (DANGER!)"
 msgstr ""
 
-#: document/views.py:213 document/views.py:600
+#: document/views.py:209 document/views.py:617
 msgid "Untitled"
 msgstr "Sans Titre"
 
-#: document/views.py:284 document/views.py:686
+#: document/views.py:280 document/views.py:703
 #, fuzzy
 #| msgid "Documents"
 msgid "Document"
 msgstr "Documents"
 
-#: document/views.py:286 document/views.py:688
+#: document/views.py:282 document/views.py:705
 msgid "Author"
 msgstr "Auteur"
 
-#: document/views.py:288
+#: document/views.py:284
 #, fuzzy
 #| msgid "Rights"
 msgid "Access Rights"
 msgstr "Droits"
 
-#: document/views.py:291 document/views.py:693
+#: document/views.py:287 document/views.py:710
 #, fuzzy
 #| msgid "edit documents"
 msgid "Access the document"
 msgstr "éditer les documents"
 
-#: document/views.py:294
+#: document/views.py:290
 msgid "Document shared:"
 msgstr "Document partagé:"
 
-#: document/views.py:626
+#: document/views.py:643
 #, fuzzy
 #| msgid "Comment"
 msgid "Comment on :"
 msgstr "Commentaire"
 
-#: document/views.py:647
+#: document/views.py:664
 #, fuzzy
 #| msgid "Comment"
 msgid "Comment assignment on :"
 msgstr "Commentaire"
 
-#: document/views.py:690
+#: document/views.py:707
 #, fuzzy
 #| msgid "Comments"
 msgid "Comment"
@@ -206,20 +206,24 @@ msgstr "Espagnol"
 msgid "Portuguese (Brazil)"
 msgstr ""
 
-#: fiduswriter/settings.py:325
+#: fiduswriter/settings.py:335
 #, fuzzy
 #| msgid "Fidus Writer document write access"
 msgid "Fidus Writer Admin"
 msgstr "Droits d'écriture du document Fidus Writer"
 
-#: fiduswriter/settings.py:326
+#: fiduswriter/settings.py:336
 #, fuzzy
 #| msgid "Fidus Writer document write access"
 msgid "Fidus Writer Administration Site"
 msgstr "Droits d'écriture du document Fidus Writer"
 
-#: fiduswriter/settings.py:327
+#: fiduswriter/settings.py:337
 msgid "Welcome to the Fidus Writer Administration Site"
+msgstr ""
+
+#: style/models.py:36 style/models.py:61
+msgid "Default"
 msgstr ""
 
 #: user/templates/account/base.html:55 user/templates/account/login.html:7

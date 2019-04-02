@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-10 06:58+0000\n"
+"POT-Creation-Date: 2019-03-30 23:51+0000\n"
 "PO-Revision-Date: 2013-09-18 08:54+0200\n"
 "Last-Translator: Vladimir Vitkov <vvitkov@linux-bg.org>\n"
 "Language-Team: Bulgarian <vvitkov@linux-bg.org>\n"
@@ -101,7 +101,7 @@ msgstr ""
 msgid "Duplicate selected document templates"
 msgstr "Експортирай документа към HTML"
 
-#: document/models.py:83
+#: document/models.py:86
 msgid "Standard Article"
 msgstr ""
 
@@ -130,49 +130,49 @@ msgstr ""
 msgid "Update all documents (DANGER!)"
 msgstr ""
 
-#: document/views.py:213 document/views.py:600
+#: document/views.py:209 document/views.py:617
 #, fuzzy
 msgid "Untitled"
 msgstr "Подзаглавие"
 
-#: document/views.py:284 document/views.py:686
+#: document/views.py:280 document/views.py:703
 #, fuzzy
 #| msgid "Documents"
 msgid "Document"
 msgstr "Документи"
 
-#: document/views.py:286 document/views.py:688
+#: document/views.py:282 document/views.py:705
 msgid "Author"
 msgstr "Автор"
 
-#: document/views.py:288
+#: document/views.py:284
 #, fuzzy
 #| msgid "Rights"
 msgid "Access Rights"
 msgstr "Права"
 
-#: document/views.py:291 document/views.py:693
+#: document/views.py:287 document/views.py:710
 #, fuzzy
 #| msgid "edit documents"
 msgid "Access the document"
 msgstr "редактирай документи"
 
-#: document/views.py:294
+#: document/views.py:290
 #, fuzzy
 msgid "Document shared:"
 msgstr "Документи"
 
-#: document/views.py:626
+#: document/views.py:643
 #, fuzzy
 msgid "Comment on :"
 msgstr "Коментари"
 
-#: document/views.py:647
+#: document/views.py:664
 #, fuzzy
 msgid "Comment assignment on :"
 msgstr "Коментари"
 
-#: document/views.py:690
+#: document/views.py:707
 #, fuzzy
 #| msgid "Comments"
 msgid "Comment"
@@ -206,21 +206,27 @@ msgstr "Испански"
 msgid "Portuguese (Brazil)"
 msgstr ""
 
-#: fiduswriter/settings.py:325
+#: fiduswriter/settings.py:335
 #, fuzzy
 #| msgid "Fidus Writer document shared"
 msgid "Fidus Writer Admin"
 msgstr "Fidus Writer документ бе споделен"
 
-#: fiduswriter/settings.py:326
+#: fiduswriter/settings.py:336
 #, fuzzy
 #| msgid "Fidus Writer document write access"
 msgid "Fidus Writer Administration Site"
 msgstr "Достъп за писане във Fidus Writer документ"
 
-#: fiduswriter/settings.py:327
+#: fiduswriter/settings.py:337
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr ""
+
+#: style/models.py:36 style/models.py:61
+#, fuzzy
+#| msgid "Default Avatar"
+msgid "Default"
+msgstr "Аватар по подразбиране:"
 
 #: user/templates/account/base.html:55 user/templates/account/login.html:7
 #: user/templates/account/signup.html:9
@@ -1068,9 +1074,6 @@ msgstr ""
 #~ "You have updated your avatar <a href=\"%(avatar_url)s\">%(avatar)s</a>."
 #~ msgstr ""
 #~ "Вие обновихте вашият аватар <a href=\"%(avatar_url)s\">%(avatar)s</a>."
-
-#~ msgid "Default Avatar"
-#~ msgstr "Аватар по подразбиране:"
 
 #~ msgid "Contents"
 #~ msgstr "Съдържание"

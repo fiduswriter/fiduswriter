@@ -4,8 +4,7 @@ import diffDOM from "diff-dom"
 import {findTarget} from "../../common"
 import {marginBoxesTemplate, marginboxFilterTemplate} from "./templates"
 import {getCommentDuringCreationDecoration, getSelectedChanges, getFootnoteMarkers} from "../state_plugins"
-
-
+import {setChildren} from 'redom'
 /* Functions related to layouting of comments */
 export class ModMarginboxes {
     constructor(editor) {
@@ -216,11 +215,17 @@ export class ModMarginboxes {
             staticUrl: this.editor.staticUrl
         })
         if (this.marginBoxesContainer.innerHTML !== marginBoxesHTML) {
+            // const hello = el('h1', 'Hello RE:DOM!');
+            // mount(document.querySelector('#margin-box-column'), hello);
+            // console.log(hello)
             const tempEl = document.createElement('div')
             tempEl.id = 'margin-box-container'
             tempEl.innerHTML = marginBoxesHTML
-            const diff = this.dd.diff(this.marginBoxesContainer, tempEl)
-            this.dd.apply(this.marginBoxesContainer, diff)
+
+            setChildren(document.querySelector('#margin-box-container'), [tempEl])
+
+            //const diff = this.dd.diff(this.marginBoxesContainer, tempEl)
+            //this.dd.apply(this.marginBoxesContainer, diff)
         }
 
         if (this.activeCommentStyleElement.innerHTML != this.activeCommentStyle) {

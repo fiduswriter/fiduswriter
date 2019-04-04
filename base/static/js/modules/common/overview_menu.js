@@ -1,11 +1,11 @@
-import diffDOM from "diff-dom"
+import {DiffDOM} from "diff-dom"
 import {escapeText, whenReady} from "./basic"
 
 export class OverviewMenuView {
     constructor(overview, model) {
         this.overview = overview
         this.model = model()
-        this.dd = new diffDOM({
+        this.dd = new DiffDOM({
             valueDiffing: false
         })
         this.openedMenu = false
@@ -135,10 +135,7 @@ export class OverviewMenuView {
             // page has not yet been loaded. abort
             return
         }
-        const tempEl = document.createElement('div')
-        tempEl.innerHTML = this.getMenuHTML()
-        const newMenuEl = tempEl.firstElementChild
-        const diff = this.dd.diff(this.menuEl, newMenuEl)
+        const diff = this.dd.diff(this.menuEl, this.getMenuHTML())
         this.dd.apply(this.menuEl, diff)
     }
 

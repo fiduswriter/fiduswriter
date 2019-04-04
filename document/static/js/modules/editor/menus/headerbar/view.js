@@ -1,4 +1,4 @@
-import diffDOM from "diff-dom"
+import {DiffDOM} from "diff-dom"
 import keyName from "w3c-keyname"
 
 import {escapeText} from "../../../common"
@@ -11,7 +11,7 @@ export class HeaderbarView {
         this.editor = this.options.editor
         this.editor.menu.headerView = this
 
-        this.dd = new diffDOM()
+        this.dd = new DiffDOM()
         this.headerEl = document.querySelector('#headerbar').firstElementChild
         this.listeners = {}
 
@@ -179,9 +179,7 @@ export class HeaderbarView {
 
 
     update() {
-        const newHeader = document.createElement('div')
-        newHeader.innerHTML = this.getHeaderHTML()
-        const diff = this.dd.diff(this.headerEl, newHeader)
+        const diff = this.dd.diff(this.headerEl, this.getHeaderHTML())
         this.dd.apply(this.headerEl, diff)
         if (this.editor.menu.headerbarModel.open) {
             document.body.classList.remove('header-closed')
@@ -194,7 +192,7 @@ export class HeaderbarView {
         const doc = this.editor.view.state.doc
         if (!this.editor.menu.headerbarModel.open) {
             // header is closed
-            return ''
+            return '<div></div>'
         }
         let title = ""
         doc.firstChild.firstChild.forEach(
@@ -208,7 +206,7 @@ export class HeaderbarView {
             title = gettext('Untitled Document')
         }
 
-        return `
+        return `<div>
             <div id="close-document-top" title="${gettext("Close the document and return to the document overview menu.")}">
                 <a href="/">
                     <i class="fa fa-times"></i>
@@ -221,7 +219,7 @@ export class HeaderbarView {
                 </nav>
                 ${this.getParticipantListHTML()}
             </div>
-        `
+        </div>`
     }
 
     getParticipantListHTML() {

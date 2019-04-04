@@ -29,6 +29,7 @@ export class ModMarginboxes {
         })
         this.marginBoxesContainerString = '<div id="margin-box-container"></div>'
         this.marginBoxesContainerObj = stringToObj(this.marginBoxesContainerString)
+        this.marginBoxesPlacementStyle = ''
     }
 
     init() {
@@ -312,8 +313,9 @@ export class ModMarginboxes {
 
                 fastdom.mutate(() => {
                     //DOM write phase
-                    if (document.getElementById('margin-box-placement-style').innerHTML != marginBoxesPlacementStyle) {
+                    if (this.marginBoxesPlacementStyle !== marginBoxesPlacementStyle) {
                         document.getElementById('margin-box-placement-style').innerHTML = marginBoxesPlacementStyle
+                        this.marginBoxesPlacementStyle = marginBoxesPlacementStyle
                     }
                     if (this.editor.mod.comments.store.commentDuringCreation) {
                         this.editor.mod.comments.store.commentDuringCreation.inDOM = true

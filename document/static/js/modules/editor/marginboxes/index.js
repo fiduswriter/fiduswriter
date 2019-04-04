@@ -1,5 +1,5 @@
 import fastdom from "fastdom"
-import {DiffDOM} from "./diffDOM1/src/index"
+import {DiffDOM, stringToObj} from "diff-dom"
 
 import {findTarget} from "../../common"
 import {marginBoxesTemplate, marginboxFilterTemplate} from "./templates"
@@ -27,6 +27,8 @@ export class ModMarginboxes {
         this.dd = new DiffDOM({
             valueDiffing: false
         })
+        this.marginBoxesContainerString = '<div id="margin-box-container"></div>'
+        this.marginBoxesContainerObj = stringToObj(this.marginBoxesContainerString)
     }
 
     init() {
@@ -214,12 +216,13 @@ export class ModMarginboxes {
             filterOptions: this.filterOptions,
             staticUrl: this.editor.staticUrl
         })
-        if (this.marginBoxesContainer.innerHTML !== marginBoxesHTML) {
-            const tempEl = document.createElement('div')
-            tempEl.id = 'margin-box-container'
-            tempEl.innerHTML = marginBoxesHTML
-            const diff = this.dd.diff(this.marginBoxesContainer.innerHTML, tempEl.innerHTML)
+
+        if (this.marginBoxesContainerString !== marginBoxesHTML) {
+            const newMarginBoxesContainerObj = stringToObj(marginBoxesHTML)
+            const diff = this.dd.diff(this.marginBoxesContainerObj, newMarginBoxesContainerObj)
             this.dd.apply(this.marginBoxesContainer, diff)
+            this.marginBoxesContainerString = marginBoxesHTML
+            this.marginBoxesContainerObj = newMarginBoxesContainerObj
         }
 
         if (this.activeCommentStyleElement.innerHTML != this.activeCommentStyle) {

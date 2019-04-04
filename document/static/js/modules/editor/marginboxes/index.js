@@ -1,5 +1,5 @@
 import fastdom from "fastdom"
-import {DiffDOM} from "./diffDOM/src/index"
+import {DiffDOM} from "./diffDOM1/src/index"
 
 import {findTarget} from "../../common"
 import {marginBoxesTemplate, marginboxFilterTemplate} from "./templates"

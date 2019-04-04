@@ -1,10 +1,10 @@
 import fastdom from "fastdom"
-import diffDOM from "diff-dom"
+import {DiffDOM} from "./diffDOM/src/index"
 
 import {findTarget} from "../../common"
 import {marginBoxesTemplate, marginboxFilterTemplate} from "./templates"
 import {getCommentDuringCreationDecoration, getSelectedChanges, getFootnoteMarkers} from "../state_plugins"
-import {setChildren} from 'redom'
+
 /* Functions related to layouting of comments */
 export class ModMarginboxes {
     constructor(editor) {
@@ -24,7 +24,7 @@ export class ModMarginboxes {
             marker: '#f9f9f9',
             active: '#fffacf'
         }
-        this.dd = new diffDOM({
+        this.dd = new DiffDOM({
             valueDiffing: false
         })
     }
@@ -215,17 +215,11 @@ export class ModMarginboxes {
             staticUrl: this.editor.staticUrl
         })
         if (this.marginBoxesContainer.innerHTML !== marginBoxesHTML) {
-            // const hello = el('h1', 'Hello RE:DOM!');
-            // mount(document.querySelector('#margin-box-column'), hello);
-            // console.log(hello)
             const tempEl = document.createElement('div')
             tempEl.id = 'margin-box-container'
             tempEl.innerHTML = marginBoxesHTML
-
-            setChildren(document.querySelector('#margin-box-container'), [tempEl])
-
-            //const diff = this.dd.diff(this.marginBoxesContainer, tempEl)
-            //this.dd.apply(this.marginBoxesContainer, diff)
+            const diff = this.dd.diff(this.marginBoxesContainer.innerHTML, tempEl.innerHTML)
+            this.dd.apply(this.marginBoxesContainer, diff)
         }
 
         if (this.activeCommentStyleElement.innerHTML != this.activeCommentStyle) {

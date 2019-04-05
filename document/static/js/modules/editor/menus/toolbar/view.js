@@ -1,4 +1,4 @@
-import diffDOM from "diff-dom"
+import {DiffDOM} from "diff-dom"
 
 export class ToolbarView {
     constructor(editorView, options) {
@@ -11,7 +11,9 @@ export class ToolbarView {
         }
         this.editor.menu.toolbarViews.push(this)
 
-        this.dd = new diffDOM()
+        this.dd = new DiffDOM({
+            valueDiffing: false
+        })
         this.toolbarEl = document.querySelector('#toolbar').firstElementChild
         this.sideMargins = 14 + 14 + 140 // CSS sets left margin to 14px + 46 px for left most button and we want the same margin on both sides
         this.availableWidth = window.innerWidth - this.sideMargins
@@ -184,15 +186,13 @@ export class ToolbarView {
                 return true
             }
         })
-        const newToolbar = document.createElement('div')
-        newToolbar.innerHTML = this.getToolbarHTML(menuIndexToDrop)
         const toolbarEl = document.querySelector('#toolbar').firstElementChild
-        const diff = this.dd.diff(toolbarEl, newToolbar)
+        const diff = this.dd.diff(toolbarEl, this.getToolbarHTML(menuIndexToDrop))
         this.dd.apply(toolbarEl, diff)
     }
 
     getToolbarHTML(menuIndexToDrop) {
-        return `
+        return `<div>
             <div class="editortoolbar">
                 ${this.editor.menu.toolbarModel.content.map((menuItem, index) => {
                     if (!menuIndexToDrop || index < menuIndexToDrop) {
@@ -207,7 +207,7 @@ export class ToolbarView {
                 }).join('')}
                 ${this.getMoreButtonHTML(menuIndexToDrop)}
             </div>
-        `
+        </div>`
     }
 
     getToolbarMenuItemHTML(menuItem, _index) {

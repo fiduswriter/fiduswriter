@@ -1,10 +1,9 @@
 import fastdom from "fastdom"
-import diffDOM from "diff-dom"
+import {DiffDOM, stringToObj} from "diff-dom"
 
 import {findTarget} from "../../common"
 import {marginBoxesTemplate, marginboxFilterTemplate} from "./templates"
 import {getCommentDuringCreationDecoration, getSelectedChanges, getFootnoteMarkers} from "../state_plugins"
-
 
 /* Functions related to layouting of comments */
 export class ModMarginboxes {
@@ -25,9 +24,12 @@ export class ModMarginboxes {
             marker: '#f9f9f9',
             active: '#fffacf'
         }
-        this.dd = new diffDOM({
+        this.dd = new DiffDOM({
             valueDiffing: false
         })
+        this.marginBoxesContainerString = '<div id="margin-box-container"><div></div></div>'
+        this.marginBoxesContainerObj = stringToObj(this.marginBoxesContainerString)
+        this.marginBoxesPlacementStyle = ''
     }
 
     init() {
@@ -215,12 +217,13 @@ export class ModMarginboxes {
             filterOptions: this.filterOptions,
             staticUrl: this.editor.staticUrl
         })
-        if (this.marginBoxesContainer.innerHTML !== marginBoxesHTML) {
-            const tempEl = document.createElement('div')
-            tempEl.id = 'margin-box-container'
-            tempEl.innerHTML = marginBoxesHTML
-            const diff = this.dd.diff(this.marginBoxesContainer, tempEl)
+
+        if (this.marginBoxesContainerString !== marginBoxesHTML) {
+            const newMarginBoxesContainerObj = stringToObj(marginBoxesHTML)
+            const diff = this.dd.diff(this.marginBoxesContainerObj, newMarginBoxesContainerObj)
             this.dd.apply(this.marginBoxesContainer, diff)
+            this.marginBoxesContainerString = marginBoxesHTML
+            this.marginBoxesContainerObj = newMarginBoxesContainerObj
         }
 
         if (this.activeCommentStyleElement.innerHTML != this.activeCommentStyle) {
@@ -310,8 +313,9 @@ export class ModMarginboxes {
 
                 fastdom.mutate(() => {
                     //DOM write phase
-                    if (document.getElementById('margin-box-placement-style').innerHTML != marginBoxesPlacementStyle) {
+                    if (this.marginBoxesPlacementStyle !== marginBoxesPlacementStyle) {
                         document.getElementById('margin-box-placement-style').innerHTML = marginBoxesPlacementStyle
+                        this.marginBoxesPlacementStyle = marginBoxesPlacementStyle
                     }
                     if (this.editor.mod.comments.store.commentDuringCreation) {
                         this.editor.mod.comments.store.commentDuringCreation.inDOM = true

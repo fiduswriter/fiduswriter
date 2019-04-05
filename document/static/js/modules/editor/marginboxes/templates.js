@@ -383,7 +383,7 @@ export const marginBoxesTemplate = ({
         docInfo,
         filterOptions,
         staticUrl
-    }) => `<div id="margin-box-container">${
+    }) => `<div id="margin-box-container"><div>${
         marginBoxes.map(mBox => {
         let returnValue = ''
         switch (mBox.type) {
@@ -423,4 +423,4 @@ export const marginBoxesTemplate = ({
         }
         return returnValue
     }).join('')
-    }</div>`
+    }</div></div>`

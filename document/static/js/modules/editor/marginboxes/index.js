@@ -27,7 +27,7 @@ export class ModMarginboxes {
         this.dd = new DiffDOM({
             valueDiffing: false
         })
-        this.marginBoxesContainerString = '<div id="margin-box-container"></div>'
+        this.marginBoxesContainerString = '<div id="margin-box-container"><div></div></div>'
         this.marginBoxesContainerObj = stringToObj(this.marginBoxesContainerString)
         this.marginBoxesPlacementStyle = ''
     }

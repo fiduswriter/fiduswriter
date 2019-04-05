@@ -340,7 +340,7 @@ export class Editor {
                 </div>
                 <div id="margin-box-column">
                     <div id="margin-box-filter"></div>
-                    <div id="margin-box-container"></div>
+                    <div id="margin-box-container"><div></div></div>
                 </div>
             </div>
             <div id="chat">

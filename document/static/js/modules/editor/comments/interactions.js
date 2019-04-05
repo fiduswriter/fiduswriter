@@ -71,8 +71,16 @@ export class ModCommentInteractions {
     }
 
     initEditor() {
-        const commentEditorDOM = document.getElementById('comment-editor'),
-            answerEditorDOM = document.getElementById('answer-editor')
+        const commentEditorDOM = document.querySelector('#comment-editor'),
+            answerEditorDOM = document.querySelector('#answer-editor')
+
+        if (
+            (commentEditorDOM  && commentEditorDOM.matches(':not(:empty)')) ||
+            (answerEditorDOM  && answerEditorDOM.matches(':not(:empty)'))
+        ) {
+            // Editor has been set up already. Abort.
+            return
+        }
 
         if (!(commentEditorDOM || answerEditorDOM)) {
             this.editor = false

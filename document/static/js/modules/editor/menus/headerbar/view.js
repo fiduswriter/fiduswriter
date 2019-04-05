@@ -11,7 +11,9 @@ export class HeaderbarView {
         this.editor = this.options.editor
         this.editor.menu.headerView = this
 
-        this.dd = new DiffDOM()
+        this.dd = new DiffDOM({
+            valueDiffing: false
+        })
         this.headerEl = document.querySelector('#headerbar').firstElementChild
         this.listeners = {}
 

@@ -31,13 +31,13 @@ export class NameListForm{
                 </td>
             </tr>`
         )
-        let fieldDOM = this.dom.firstChild.firstChild.lastChild
-        let fieldHandler = new NameFieldForm(fieldDOM.firstChild, fieldValue)
+        const fieldDOM = this.dom.firstChild.firstChild.lastChild
+        const fieldHandler = new NameFieldForm(fieldDOM.firstChild, fieldValue)
         fieldHandler.init()
         this.fields.push(fieldHandler)
 
         // click on plus
-        let addItemEl = fieldDOM.querySelector('.fa-plus-circle')
+        const addItemEl = fieldDOM.querySelector('.fa-plus-circle')
         addItemEl.addEventListener('click', () => {
             if (!this.value) {
                 return
@@ -48,7 +48,7 @@ export class NameListForm{
         })
 
         // Click on minus
-        let removeItemEl = fieldDOM.querySelector('.fa-minus-circle')
+        const removeItemEl = fieldDOM.querySelector('.fa-minus-circle')
         removeItemEl.addEventListener('click', () => {
             if (!this.value) {
                 return
@@ -63,7 +63,7 @@ export class NameListForm{
     }
 
     get value() {
-        let formValue = this.fields.map(field => {return field.value}).filter(
+        const formValue = this.fields.map(field => {return field.value}).filter(
             value => {return value !== false}
         )
         if (formValue.length === 0) {

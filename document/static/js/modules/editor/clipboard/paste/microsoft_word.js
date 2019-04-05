@@ -3,10 +3,6 @@ import {GeneralPasteHandler} from "./general"
 // Microsoft Word 2016 paste handler
 export class MicrosoftWordPasteHandler extends GeneralPasteHandler {
 
-    outputHandlerType() {
-        console.info('word paste handler')
-    }
-
     // Remove unused content
     cleanDOM() {
         // Remove footnote list container with separator line
@@ -25,7 +21,7 @@ export class MicrosoftWordPasteHandler extends GeneralPasteHandler {
         } else if (node.nodeType===8) {
             if (node.textContent==="EndFragment") {
                 // End of paste content. Remove all remaining sibling nodes.
-                while(node) {
+                while (node) {
                     const nextSibling = node.nextSibling
                     node.parentNode.removeChild(node)
                     node = nextSibling
@@ -73,7 +69,7 @@ export class MicrosoftWordPasteHandler extends GeneralPasteHandler {
                     if (followingNode && followingNode.nodeType === 3) {
                         // If there is a text string right after the footnote
                         // marker, remove any leading spaces.
-                        followingNode.nodeValue = followingNode.nodeValue.replace(/^\s+/,"")
+                        followingNode.nodeValue = followingNode.nodeValue.replace(/^\s+/, "")
                     }
                 }
                 this.footnoteMarkers.push(node)

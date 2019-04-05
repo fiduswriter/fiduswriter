@@ -44,7 +44,7 @@ export class BibEntryForm {
     init() {
         if (this.itemId !== false) {
             this.dialogHeader = gettext('Edit Source')
-            let bibEntry = this.bibDB.db[this.itemId]
+            const bibEntry = this.bibDB.db[this.itemId]
             this.currentValues = JSON.parse(JSON.stringify(bibEntry)) // copy current values
         } else {
             this.dialogHeader = gettext('Register New Source')
@@ -59,9 +59,8 @@ export class BibEntryForm {
     }
 
     addDialogToDOM() {
-        let that = this
         // Add form to DOM
-        let buttons = [
+        const buttons = [
             {
                 type: 'close'
             },
@@ -103,7 +102,7 @@ export class BibEntryForm {
                 text: gettext('Submit'),
                 click: () => {
                     if (this.check()) {
-                        let returnValue = this.save()
+                        const returnValue = this.save()
                         this.dialog.close()
                         resolve(returnValue)
                     }
@@ -137,7 +136,7 @@ export class BibEntryForm {
             // Handle tab link clicking
             this.dialog.dialogEl.querySelectorAll('#bib-dialog-tabs .tab-link a').forEach(el => el.addEventListener('click', event => {
                 event.preventDefault()
-                let link = el.getAttribute('href')
+                const link = el.getAttribute('href')
                 this.dialog.dialogEl.querySelectorAll('#bib-dialog-tabs .tab-content').forEach(el => {
                     if (el.matches(link)) {
                         el.style.display = ''
@@ -157,7 +156,7 @@ export class BibEntryForm {
 
 
     addField(fieldName, dom) {
-        let fieldType = BibFieldTypes[fieldName]
+        const fieldType = BibFieldTypes[fieldName]
         let fieldTitle
         if (BibFieldHelp[fieldName]) {
             fieldTitle = noSpaceTmp`
@@ -182,33 +181,31 @@ export class BibEntryForm {
                     <td class="entry-field ${fieldName}"></td>
                 </tr>`
         )
-        let fieldDOM = dom.lastChild.lastChild
-        let FieldClass = FIELD_FORMS[fieldType.type]
+        const fieldDOM = dom.lastChild.lastChild
+        const FieldClass = FIELD_FORMS[fieldType.type]
         if (FieldClass) {
-            let fieldHandler = new FieldClass(fieldDOM, this.currentValues.fields[fieldName], undefined, fieldType)
+            const fieldHandler = new FieldClass(fieldDOM, this.currentValues.fields[fieldName], undefined, fieldType)
             fieldHandler.init()
             this.fields[fieldName] = fieldHandler
-        } else {
-            console.warn(`Unknown fieldtype: ${fieldType.type}`)
         }
     }
 
     createForm() {
-        let dialogPromise = this.addDialogToDOM()
+        const dialogPromise = this.addDialogToDOM()
         if (this.currentValues.bib_type !== false) {
-            let eitherOrFields = document.getElementById('eo-fields')
+            const eitherOrFields = document.getElementById('eo-fields')
             BibTypes[this.currentValues.bib_type].eitheror.forEach(fieldName => {
                 this.addField(fieldName, eitherOrFields)
             })
-            let reqFields = document.getElementById('req-fields')
+            const reqFields = document.getElementById('req-fields')
             BibTypes[this.currentValues.bib_type].required.forEach(fieldName => {
                 this.addField(fieldName, reqFields)
             })
-            let optFields = document.getElementById('opt-fields')
+            const optFields = document.getElementById('opt-fields')
             BibTypes[this.currentValues.bib_type].optional.forEach(fieldName => {
                 this.addField(fieldName, optFields)
             })
-            let entryCatField = document.getElementById('categories-field')
+            const entryCatField = document.getElementById('categories-field')
             this.entryCatForm = new EntryCatForm(entryCatField, this.currentValues.entry_cat, this.bibDB.cats)
             this.entryCatForm.init()
 
@@ -225,7 +222,7 @@ export class BibEntryForm {
     changeBibType() {
         // Add all current values into temporary currentValues, in case the
         // user still wants them.
-        let formValue = this.value
+        const formValue = this.value
         Object.assign(this.currentValues.fields, formValue.fields)
         this.currentValues.entry_cat = formValue.entry_cat
         this.currentValues.bib_type = formValue.bib_type
@@ -240,12 +237,12 @@ export class BibEntryForm {
         // key so far.
         let entryKey = ''
         if (bibItem.fields.author) {
-            entryKey += nameToText(bibItem.fields.author).replace(/\s|,|=|;|:|{|}/g,'')
+            entryKey += nameToText(bibItem.fields.author).replace(/\s|,|=|;|:|{|}/g, '')
         } else if (bibItem.fields.editor) {
-            entryKey += nameToText(bibItem.fields.editor).replace(/\s|,|=|;|:|{|}/g,'')
+            entryKey += nameToText(bibItem.fields.editor).replace(/\s|,|=|;|:|{|}/g, '')
         }
         if (bibItem.fields.date) {
-            entryKey += bibItem.fields.date.split('/')[0].replace(/\?|\*|u|\~|-/g,'')
+            entryKey += bibItem.fields.date.split('/')[0].replace(/\?|\*|u|~|-/g, '')
         }
         if (entryKey.length) {
             bibItem.entry_key = entryKey
@@ -253,15 +250,14 @@ export class BibEntryForm {
     }
 
     get value() {
-        let that = this
-        let returnObj = {
+        const returnObj = {
             bib_type: document.querySelector('#select-bibtype').value,
             entry_cat: this.entryCatForm ? this.entryCatForm.value : [],
             entry_key: this.currentValues.entry_key, // is never updated.
             fields: {}
         }
         Object.keys(this.fields).forEach(fieldName=>{
-            let fieldValue = that.fields[fieldName].value
+            const fieldValue = this.fields[fieldName].value
             if (fieldValue !== false) {
                 returnObj['fields'][fieldName] = fieldValue
             }
@@ -270,14 +266,14 @@ export class BibEntryForm {
     }
 
     save() {
-        let isNew = this.itemId===false ? true : false,
+        const isNew = this.itemId===false ? true : false,
             itemId = this.itemId===false ? 0 : this.itemId,
             item = this.value
 
         if (item.entry_key==='FidusWriter') {
             this.createEntryKey(item)
         }
-        let saveObj = {}
+        const saveObj = {}
         saveObj[itemId] = item
         return this.bibDB.saveBibEntries(
             saveObj,
@@ -286,12 +282,12 @@ export class BibEntryForm {
     }
 
     check() {
-        let that = this, passed = true
+        let passed = true
         if (!this.currentValues.bib_type) {
             return false
         }
         Object.keys(this.fields).forEach(fieldName=>{
-            if(that.fields[fieldName].check() !== true) {
+            if (this.fields[fieldName].check() !== true) {
                 passed = false
             }
         })

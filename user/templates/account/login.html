@@ -9,7 +9,7 @@
 {% block loginhref %}{{signup_url}}{% endblock %}
 {% block loginbtn %}{% trans "Sign up" %}{% endblock %}
 {% block extraheaders %}
-    <script type="text/javascript" src="{% static "js/login.mjs" %}"></script>
+    <script type="text/javascript" src="{% static "js/login.mjs" %}" crossorigin="anonymous"></script>
 {% endblock %}
 
 {% block body %}
@@ -33,7 +33,7 @@
             <li>
                 <a title="{{provider.name}}" class="fw-button fw-socialaccount fw-{{provider.id}}"
                     href="{% provider_login_url provider.id %}">
-                    <span class="fa fa-{{provider.id}}"></span>
+                    <span class="fab fa-{{provider.id}}"></span>
                     {% trans "Login with" %} {{provider.name}}
                 </a>
             </li>

@@ -19,11 +19,12 @@ export class ModCommentInteractions {
         // Bind all the click events related to comments
         document.body.addEventListener('click', event => {
             const el = {}
+            let id
             switch (true) {
                 case findTarget(event, '.edit-comment', el):
                     this.editComment = true
                     this.activeCommentAnswerId = false
-                    const id = el.target.dataset.id
+                    id = el.target.dataset.id
                     if (this.activeCommentId !== id) {
                         this.deactivateSelectedChanges()
                         this.activateComment(id)
@@ -70,8 +71,16 @@ export class ModCommentInteractions {
     }
 
     initEditor() {
-        const commentEditorDOM = document.getElementById('comment-editor'),
-            answerEditorDOM = document.getElementById('answer-editor')
+        const commentEditorDOM = document.querySelector('#comment-editor'),
+            answerEditorDOM = document.querySelector('#answer-editor')
+
+        if (
+            (commentEditorDOM  && commentEditorDOM.matches(':not(:empty)')) ||
+            (answerEditorDOM  && answerEditorDOM.matches(':not(:empty)'))
+        ) {
+            // Editor has been set up already. Abort.
+            return
+        }
 
         if (!(commentEditorDOM || answerEditorDOM)) {
             this.editor = false
@@ -153,7 +162,7 @@ export class ModCommentInteractions {
             view.state.doc.nodesBetween(
                 selection.from,
                 selection.to,
-                (node, pos, parent) => {
+                node => {
                     if (!node.isInline) {
                         return
                     }
@@ -273,7 +282,7 @@ export class ModCommentInteractions {
 
             let username
 
-            if(REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
+            if (REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
                 username = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
             } else {
                 username = this.mod.editor.user.username
@@ -303,7 +312,13 @@ export class ModCommentInteractions {
     cancelSubmit() {
         // Handle a click on the cancel button of the comment submit form.
         const id = this.activeCommentId
-        if (id==='-1' || this.mod.store.comments[id].comment.length === 0) {
+        if (
+            id==='-1' ||
+            (
+                this.mod.store.comments[id] &&
+                this.mod.store.comments[id].comment.length === 0
+            )
+        ) {
             this.deleteComment(id)
         } else {
             this.deactivateAll()
@@ -331,7 +346,7 @@ export class ModCommentInteractions {
 
         let username
 
-        if(REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
+        if (REVIEW_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
             username = `${gettext('Reviewer')} ${this.mod.editor.user.id}`
         } else {
             username = this.mod.editor.user.username

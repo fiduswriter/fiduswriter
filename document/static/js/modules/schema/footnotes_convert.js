@@ -1,5 +1,4 @@
-import {Node} from "prosemirror-model"
-import {DOMSerializer, DOMParser} from "prosemirror-model"
+import {Node, DOMSerializer, DOMParser} from "prosemirror-model"
 
 import {fnSchema} from "./footnotes"
 

@@ -1,7 +1,7 @@
 import {escapeText} from "../../common"
 
 /** A template for the image category edit form. */
-let usermediaCategoryformsTemplate = ({categories}) =>
+const usermediaCategoryformsTemplate = ({categories}) =>
     `${
         categories.map(cat =>
             `<tr id="categoryTr_${cat.id}" class="fw-list-input">
@@ -21,7 +21,7 @@ let usermediaCategoryformsTemplate = ({categories}) =>
     </tr>`
 
 /** A template to edit image categories. */
-export let usermediaEditcategoriesTemplate = ({categories}) =>
+export const usermediaEditcategoriesTemplate = ({categories}) =>
     `<table id="editCategoryList" class="fw-dialog-table">
         <tbody>
             ${usermediaCategoryformsTemplate({categories})}

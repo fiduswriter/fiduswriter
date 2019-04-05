@@ -1,5 +1,3 @@
-const BLOCK_NODE_TAGS = ['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'DIV', 'FIGURE', 'HR', 'CODE', 'BLOCKQUOTE', 'UL', 'META']
-
 // General Fallback handler for paste
 export class GeneralPasteHandler {
 
@@ -13,7 +11,6 @@ export class GeneralPasteHandler {
 
     // Iterate over each node in the body of the pasted content.
     getOutput() {
-        this.outputHandlerType()
         this.dom = this.htmlDoc.getElementsByTagName('body')[0]
         this.inHTML = this.dom.innerHTML
         this.iterateNode(this.dom)
@@ -22,11 +19,6 @@ export class GeneralPasteHandler {
         this.outHTML = this.dom.innerHTML
         return this.outHTML
     }
-
-    outputHandlerType() {
-        console.info('general paste handler')
-    }
-
 
     // Remove unused content
     cleanDOM() {

@@ -7,7 +7,7 @@
 
 {% block head_title %}{% trans "Confirm E-mail Address" %}{% endblock %}
 {% block extraheaders %}
-<script type="text/javascript" src="{% static "js/confirm_account.mjs" %}"></script>
+<script type="text/javascript" src="{% static "js/confirm_account.mjs" %}" crossorigin="anonymous"></script>
 <script type="text/javascript">
     'use strict';
     const testServer = "{{TEST_SERVER}}" === "True" ? true : false

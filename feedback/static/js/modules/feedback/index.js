@@ -55,14 +55,17 @@ export class FeedbackTab {
             event.preventDefault()
         })
 
-        document.querySelector('#feedbackbutton').addEventListener('click', event => this.openFeedback())
+        document.querySelector('#feedbackbutton').addEventListener('click', () => this.openFeedback())
     }
 
     openFeedback() {
-        let messageEl = document.querySelector("textarea#message"),
+        const messageEl = document.querySelector("textarea#message"),
             closeFeedbackEl = document.querySelector('#closeFeedback'),
             feedbackFormEl = document.querySelector('#feedback-form'),
             responseEl = document.querySelector('#response-message')
+        if (!messageEl.value.length) {
+            return
+        }
 
         closeFeedbackEl.style.display = 'none'
         feedbackFormEl.style.visibility = 'hidden'

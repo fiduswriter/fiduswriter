@@ -188,7 +188,6 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
             'bibliography/tests/uploads/bibliography.bib'
         )
         driver.find_element_by_id("bib-uploader").send_keys(bib_path)
-
         driver.find_element_by_css_selector(
             "button.submit-import").click()
         book_title_el = WebDriverWait(driver, self.wait_time).until(

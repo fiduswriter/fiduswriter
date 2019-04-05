@@ -1,36 +1,98 @@
 import {wrapIn, toggleMark} from "prosemirror-commands"
 import {wrapInList} from "prosemirror-schema-list"
 import {undo, redo, undoDepth, redoDepth} from "prosemirror-history"
-import {ReplaceAroundStep} from "prosemirror-transform"
-import {Slice, Fragment} from "prosemirror-model"
 
-import {CitationDialog, FigureDialog, LinkDialog, MathDialog} from "../../dialogs"
+import {CitationDialog, FigureDialog, LinkDialog, MathDialog, TableDialog} from "../../dialogs"
 import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from "../.."
-import {randomHeadingId, randomAnchorId} from "../../../schema/common"
+import {randomAnchorId} from "../../../schema/common"
 import {setBlockType} from "../../keymap"
-
-const PART_LABELS = {
-    'title': gettext('Title'),
-    'subtitle': gettext('Subtitle'),
-    'authors': gettext('Authors'),
-    'abstract': gettext('Abstract'),
-    'keywords': gettext('Keywords'),
-    'body': gettext('Body')
-}
 
 const BLOCK_LABELS = {
     'paragraph': gettext('Normal Text'),
-    'heading_1': gettext('1st Heading'),
-    'heading_2': gettext('2nd Heading'),
-    'heading_3': gettext('3rd Heading'),
-    'heading_4': gettext('4th Heading'),
-    'heading_5': gettext('5th Heading'),
-    'heading_6': gettext('6th Heading'),
+    'heading1': gettext('1st Heading'),
+    'heading2': gettext('2nd Heading'),
+    'heading3': gettext('3rd Heading'),
+    'heading4': gettext('4th Heading'),
+    'heading5': gettext('5th Heading'),
+    'heading6': gettext('6th Heading'),
     'code_block': gettext('Code'),
     'figure': gettext('Figure')
 }
 
-export const TEXT_ONLY_PARTS = ['title', 'subtitle', 'authors', 'keywords']
+// from https://github.com/ProseMirror/prosemirror-tables/blob/master/src/util.js
+const findTable = function(state) {
+    const $head = state.selection.$head
+    for (let d = $head.depth; d > 0; d--) if ($head.node(d).type.spec.tableRole == "table") return $head.node(d)
+    return false
+}
+
+function elementAvailable(editor, elementName) {
+      let elementInDocParts = false
+      editor.view.state.doc.firstChild.forEach(docPart => {
+          if (docPart.attrs.elements && docPart.attrs.elements.includes(elementName)) {
+              elementInDocParts = true
+          }
+      })
+      return (
+          editor.view.state.doc.firstChild.attrs.footnote_elements.includes(elementName) ||
+          elementInDocParts
+      )
+}
+
+export function elementDisabled(editor, elementName) {
+    if (editor.currentView === editor.view) {
+        // main editor
+        const anchorDocPart = editor.currentView.state.selection.$anchor.node(2),
+            headDocPart = editor.currentView.state.selection.$head.node(2)
+        return !anchorDocPart ||
+            headDocPart !== anchorDocPart ||
+            !anchorDocPart.attrs.elements ||
+            !anchorDocPart.attrs.elements.includes(elementName)
+    } else {
+        // footnote editor
+        const anchorFootnote = editor.currentView.state.selection.$anchor.node(1),
+            headFootnote = editor.currentView.state.selection.$head.node(1)
+
+        return !anchorFootnote ||
+            headFootnote !== anchorFootnote ||
+            !editor.view.state.doc.firstChild.attrs.footnote_elements.includes(elementName)
+    }
+
+}
+
+function markAvailable(editor, markName) {
+      let markInDocParts = false
+      editor.view.state.doc.firstChild.forEach(docPart => {
+          if (docPart.attrs.elements && docPart.attrs.marks.includes(markName)) {
+              markInDocParts = true
+          }
+      })
+      return (
+          editor.view.state.doc.firstChild.attrs.footnote_marks.includes(markName) ||
+          markInDocParts
+      )
+}
+
+function markDisabled(editor, markName) {
+    if (editor.currentView === editor.view) {
+        // main editor
+        const anchorDocPart = editor.currentView.state.selection.$anchor.node(2),
+            headDocPart = editor.currentView.state.selection.$head.node(2)
+        return !anchorDocPart ||
+            headDocPart !== anchorDocPart ||
+            !anchorDocPart.attrs.marks ||
+            !anchorDocPart.attrs.marks.includes(markName)
+    } else {
+        // footnote editor
+        const anchorFootnote = editor.currentView.state.selection.$anchor.node(1),
+            headFootnote = editor.currentView.state.selection.$head.node(1)
+
+        return !anchorFootnote ||
+            headFootnote !== anchorFootnote ||
+            !editor.view.state.doc.firstChild.attrs.footnote_marks.includes(markName)
+    }
+
+}
 
 export const toolbarModel = () => ({
     openMore: false, // whether 'more' menu is opened.
@@ -63,13 +125,30 @@ export const toolbarModel = () => ({
         {
             type: 'info',
             show: editor => {
+                let title = ""
                 if (editor.currentView !== editor.view) {
                     return gettext('Footnote')
                 } else if (
                     editor.currentView.state.selection.$anchor.node(2) &&
-                    editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2)
+                    editor.currentView.state.selection.$anchor.node(2) ===
+                        editor.currentView.state.selection.$head.node(2)
                 ) {
-                    return PART_LABELS[editor.currentView.state.selection.$anchor.node(2).type.name]
+                    title = editor.currentView.state.selection.$anchor.node(2).attrs.title
+                    return title.length > 20 ? title.slice(0, 20)+"..." : title
+                } else if (
+                    editor.currentView.state.selection.$anchor.depth === 1 &&
+                    editor.currentView.state.selection.from ===
+                        editor.currentView.state.selection.to
+                ) {
+                    title = editor.currentView.state.selection.$anchor.nodeAfter.attrs.title
+                    return title.length > 20 ? title.slice(0, 20)+"..." : title
+                } else if (
+                    editor.currentView.state.selection.jsonID === 'node' &&
+                    editor.currentView.state.selection.node.isBlock &&
+                    editor.currentView.state.selection.node.attrs.title
+                ) {
+                    title = editor.currentView.state.selection.node.attrs.title
+                    return title.length > 20 ? title.slice(0, 20)+"..." : title
                 } else {
                     return ''
                 }
@@ -78,13 +157,11 @@ export const toolbarModel = () => ({
 
         },
         {
-            type: 'dropdown',
+            type: 'menu',
             show: editor => {
                 if (
                     editor.currentView.state.selection.$anchor.node(2) &&
-                    TEXT_ONLY_PARTS.includes(
-                        editor.currentView.state.selection.$anchor.node(2).type.name
-                    )
+                    !editor.view.state.selection.$anchor.node(2).attrs.elements
                 ) {
                     return ''
                 }
@@ -93,31 +170,23 @@ export const toolbarModel = () => ({
                     editor.currentView.state.selection.node.isBlock
                 ) {
                     const selectedNode = editor.currentView.state.selection.node
-                    return BLOCK_LABELS[
-                        selectedNode.type.name === 'heading' ?
-                        `${selectedNode.type.name}_${selectedNode.attrs.level}` :
-                        selectedNode.type.name
-                    ]
+                    return BLOCK_LABELS[selectedNode.type.name] ? BLOCK_LABELS[selectedNode.type.name] : ''
                 }
                 const startElement = editor.currentView.state.selection.$anchor.parent,
                     endElement = editor.currentView.state.selection.$head.parent
                 if (!startElement || !endElement) {
                     return ''
                 } else if (startElement === endElement) {
-                    const blockNodeType = startElement.type.name === 'heading' ?
-                        `${startElement.type.name}_${startElement.attrs.level}` :
-                        startElement.type.name
+                    const blockNodeType = startElement.type.name
                     return BLOCK_LABELS[blockNodeType] ? BLOCK_LABELS[blockNodeType] : ''
                 } else {
                     let blockNodeType = true
                     editor.currentView.state.doc.nodesBetween(
                         editor.currentView.state.selection.from,
                         editor.currentView.state.selection.to,
-                        (node, pos, parent) => {
+                        node => {
                             if (node.isTextblock) {
-                                const nextBlockNodeType = node.type.name === 'heading' ?
-                                    `${node.type.name}_${node.attrs.level}` :
-                                    node.type.name
+                                const nextBlockNodeType = node.type.name
                                 if (blockNodeType === true) {
                                     blockNodeType = nextBlockNodeType
                                 }
@@ -139,12 +208,9 @@ export const toolbarModel = () => ({
             disabled: editor =>
                     READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
                     COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    !editor.currentView.state.selection.$anchor.node(2) ||
+                    !editor.currentView.state.selection.$anchor.node(2).attrs.elements ||
                     (
-                        editor.currentView.state.selection.$anchor.node(2) &&
-                        TEXT_ONLY_PARTS.includes(
-                            editor.currentView.state.selection.$anchor.node(2).type.name
-                        )
-                    ) || (
                         editor.currentView.state.selection.jsonID === 'node' &&
                         editor.currentView.state.selection.node.isBlock &&
                         !editor.currentView.state.selection.node.isTextblock
@@ -157,54 +223,68 @@ export const toolbarModel = () => ({
                         const view = editor.currentView
                         setBlockType(view.state.schema.nodes.paragraph)(view.state, view.dispatch)
                     },
+                    available: editor => elementAvailable(editor, 'paragraph'),
+                    disabled: editor => elementDisabled(editor, 'paragraph'),
                     order: 0
                 },
                 {
-                    title: BLOCK_LABELS['heading_1'],
+                    title: BLOCK_LABELS['heading1'],
                     action: editor => {
                         const view = editor.currentView
-                        setBlockType(view.state.schema.nodes.heading, {level: 1})(view.state, view.dispatch)
+                        setBlockType(view.state.schema.nodes.heading1)(view.state, view.dispatch)
                     },
+                    available: editor => elementAvailable(editor, 'heading1'),
+                    disabled: editor => elementDisabled(editor, 'heading1'),
                     order: 1
                 },
                 {
-                    title: BLOCK_LABELS['heading_2'],
+                    title: BLOCK_LABELS['heading2'],
                     action: editor => {
                         const view = editor.currentView
-                        setBlockType(view.state.schema.nodes.heading, {level: 2})(view.state, view.dispatch)
+                        setBlockType(view.state.schema.nodes.heading2)(view.state, view.dispatch)
                     },
+                    available: editor => elementAvailable(editor, 'heading2'),
+                    disabled: editor => elementDisabled(editor, 'heading2'),
                     order: 2
                 },
                 {
-                    title: BLOCK_LABELS['heading_3'],
+                    title: BLOCK_LABELS['heading3'],
                     action: editor => {
                         const view = editor.currentView
-                        setBlockType(view.state.schema.nodes.heading, {level: 3})(view.state, view.dispatch)
+                        setBlockType(view.state.schema.nodes.heading3)(view.state, view.dispatch)
                     },
+                    available: editor => elementAvailable(editor, 'heading3'),
+                    disabled: editor => elementDisabled(editor, 'heading3'),
                     order: 3
                 },
                 {
-                    title: BLOCK_LABELS['heading_4'],
+                    title: BLOCK_LABELS['heading4'],
                     action: editor => {
                         const view = editor.currentView
-                        setBlockType(view.state.schema.nodes.heading, {level: 4})(view.state, view.dispatch)
+                        setBlockType(view.state.schema.nodes.heading4)(view.state, view.dispatch)
                     },
+                    available: editor => elementAvailable(editor, 'heading4'),
+                    disabled: editor => elementDisabled(editor, 'heading4'),
                     order: 4
                 },
                 {
-                    title: BLOCK_LABELS['heading_5'],
+                    title: BLOCK_LABELS['heading5'],
                     action: editor => {
                         const view = editor.currentView
-                        setBlockType(view.state.schema.nodes.heading, {level: 5})(view.state, view.dispatch)
+                        setBlockType(view.state.schema.nodes.heading5)(view.state, view.dispatch)
                     },
+                    available: editor => elementAvailable(editor, 'heading5'),
+                    disabled: editor => elementDisabled(editor, 'heading5'),
                     order: 5
                 },
                 {
-                    title: BLOCK_LABELS['heading_6'],
+                    title: BLOCK_LABELS['heading6'],
                     action: editor => {
                         const view = editor.currentView
-                        setBlockType(view.state.schema.nodes.heading, {level: 6})(view.state, view.dispatch)
+                        setBlockType(view.state.schema.nodes.heading6)(view.state, view.dispatch)
                     },
+                    available: editor => elementAvailable(editor, 'heading6'),
+                    disabled: editor => elementDisabled(editor, 'heading6'),
                     order: 6
                 },
                 {
@@ -213,6 +293,8 @@ export const toolbarModel = () => ({
                         const view = editor.currentView
                         setBlockType(view.state.schema.nodes.code_block)(view.state, view.dispatch)
                     },
+                    available: editor => elementAvailable(editor, 'code_block'),
+                    disabled: editor => elementDisabled(editor, 'code_block'),
                     order: 7
                 }
             ],
@@ -220,27 +302,21 @@ export const toolbarModel = () => ({
         },
         {
             type: 'button',
-            title: gettext('Bold'),
+            title: gettext('Strong'),
             icon: 'bold',
             action: editor => {
                 const mark = editor.currentView.state.schema.marks['strong']
                 const command = toggleMark(mark)
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
+            available: editor => markAvailable(editor, 'strong'),
             disabled: editor => {
                 if (
                     READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
                     COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
-                    editor.currentView.state.selection.jsonID === 'gapcursor'
+                    editor.currentView.state.selection.jsonID === 'gapcursor' ||
+                    markDisabled(editor, 'strong')
                 ) {
-                    return true
-                } else if (
-                    editor.currentView.state.selection.$anchor.node(2) &&
-                    editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
-                    !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name)
-                ) {
-                    return false
-                } else {
                     return true
                 }
             },
@@ -260,30 +336,19 @@ export const toolbarModel = () => ({
         },
         {
             type: 'button',
-            title: gettext('Italic'),
+            title: gettext('Emphasis'),
             icon: 'italic',
             action: editor => {
                 const mark = editor.currentView.state.schema.marks['em']
                 const command = toggleMark(mark)
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
-            disabled: editor => {
-                if (
+            available: editor => markAvailable(editor, 'em'),
+            disabled: editor =>
                     READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
                     COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
-                    editor.currentView.state.selection.jsonID === 'gapcursor'
-                ) {
-                    return true
-                } else if (
-                    editor.currentView.state.selection.$anchor.node(2) &&
-                    editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
-                    !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name)
-                ) {
-                    return false
-                } else {
-                    return true
-                }
-            },
+                    editor.currentView.state.selection.jsonID === 'gapcursor' ||
+                    markDisabled(editor, 'em'),
             selected: editor => {
                 const storedMarks = editor.currentView.state.storedMarks
                 if (
@@ -300,6 +365,40 @@ export const toolbarModel = () => ({
         },
         {
             type: 'button',
+            title: gettext('Underline'),
+            icon: 'underline',
+            action: editor => {
+                const mark = editor.currentView.state.schema.marks['underline']
+                const command = toggleMark(mark)
+                command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
+            },
+            available: editor => markAvailable(editor, 'underline'),
+            disabled: editor => {
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    editor.currentView.state.selection.jsonID === 'gapcursor' ||
+                    markDisabled(editor, 'underline')
+                ) {
+                    return true
+                }
+            },
+            selected: editor => {
+                const storedMarks = editor.currentView.state.storedMarks
+                if (
+                    storedMarks && storedMarks.some(mark => mark.type.name === 'underline') ||
+                    editor.currentView.state.selection.$head.marks().some(mark => mark.type.name === 'underline')
+                ) {
+                    return true
+                } else {
+                    return false
+                }
+
+            },
+            order: 5
+        },
+        {
+            type: 'button',
             title: gettext('Numbered list'),
             icon: 'list-ol',
             action: editor => {
@@ -307,21 +406,17 @@ export const toolbarModel = () => ({
                 const command = wrapInList(node)
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
+            available: editor => elementAvailable(editor, 'ordered_list'),
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
-                    return true
-                } else if (
-                    editor.currentView.state.selection.$anchor.node(2) &&
-                    editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
-                    !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
-                    editor.currentView.state.selection.jsonID === 'text'
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    elementDisabled(editor, 'ordered_list')
                 ) {
-                    return false
-                } else {
                     return true
                 }
             },
-            order: 5
+            order: 6
         },
         {
             type: 'button',
@@ -332,21 +427,17 @@ export const toolbarModel = () => ({
                 const command = wrapInList(node)
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
+            available: editor => elementAvailable(editor, 'bullet_list'),
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
-                    return true
-                } else if (
-                    editor.currentView.state.selection.$anchor.node(2) &&
-                    editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
-                    !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
-                    editor.currentView.state.selection.jsonID === 'text'
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    elementDisabled(editor, 'bullet_list')
                 ) {
-                    return false
-                } else {
                     return true
                 }
             },
-            order: 6
+            order: 7
         },
         {
             type: 'button',
@@ -357,21 +448,17 @@ export const toolbarModel = () => ({
                 const command = wrapIn(node)
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
+            available: editor => elementAvailable(editor, 'blockquote'),
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
-                    return true
-                } else if (
-                    editor.currentView.state.selection.$anchor.node(2) &&
-                    editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
-                    !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
-                    editor.currentView.state.selection.jsonID === 'text'
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    elementDisabled(editor, 'blockquote')
                 ) {
-                    return false
-                } else {
                     return true
                 }
             },
-            order: 7
+            order: 8
         },
         {
             id: 'link',
@@ -382,22 +469,18 @@ export const toolbarModel = () => ({
                 const dialog = new LinkDialog(editor)
                 dialog.init()
             },
+            available: editor => markAvailable(editor, 'link'),
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
-                    return true
-                } else if (
-                    editor.currentView.state.selection.$anchor.node(2) &&
-                    editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
-                    !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
-                    editor.currentView.state.selection.jsonID === 'text'
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    markDisabled(editor, 'link')
                 ) {
-                    return false
-                } else {
                     return true
                 }
             },
             selected: editor => editor.currentView.state.selection.$head.marks().some(mark => mark.type.name === 'link'),
-            order: 8
+            order: 9
         },
         {
             type: 'button',
@@ -409,23 +492,18 @@ export const toolbarModel = () => ({
                 editor.view.dispatch(tr)
                 return false
             },
+            available: editor => elementAvailable(editor, 'footnote'),
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
-                    return true
-                } else if (editor.view !== editor.currentView) {
-                    return true
-                } else if (
-                    editor.currentView.state.selection.$anchor.node(2) &&
-                    editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
-                    !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
-                    editor.currentView.state.selection.jsonID === 'text'
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    editor.view !== editor.currentView || // we don't allow footnotes in footnotes
+                    elementDisabled(editor, 'footnote')
                 ) {
-                    return false
-                } else {
                     return true
                 }
             },
-            order: 9
+            order: 10
         },
         {
             type: 'button',
@@ -436,27 +514,22 @@ export const toolbarModel = () => ({
                 dialog.init()
                 return false
             },
+            available: editor => elementAvailable(editor, 'citation'),
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
-                    return true
-                } else if (
-                    editor.currentView.state.selection.$anchor.node(2) &&
-                    editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
-                    !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    elementDisabled(editor, 'citation') ||
+                    !['text', 'node'].includes(editor.currentView.state.selection.jsonID) ||
                     (
-                        editor.currentView.state.selection.jsonID === 'text' ||
-                        (
-                            editor.currentView.state.selection.jsonID === 'node' &&
-                            editor.currentView.state.selection.node.type.name === 'citation'
-                        )
+                        editor.currentView.state.selection.jsonID === 'node' &&
+                        editor.currentView.state.selection.node.type.name !== 'citation'
                     )
                 ) {
-                    return false
-                } else {
                     return true
                 }
             },
-            order: 10
+            order: 11
         },
         {
             type: 'button',
@@ -469,21 +542,17 @@ export const toolbarModel = () => ({
                     state.tr.replaceSelectionWith(state.schema.node("horizontal_rule"))
                 )
             },
+            available: editor => elementAvailable(editor, 'horizontal_rule'),
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
-                    return true
-                } else if (
-                    editor.currentView.state.selection.$anchor.node(2) &&
-                    editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
-                    !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
-                    editor.currentView.state.selection.jsonID === 'text'
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    elementDisabled(editor, 'horizontal_rule')
                 ) {
-                    return false
-                } else {
                     return true
                 }
             },
-            order: 11
+            order: 12
         },
         {
             type: 'button',
@@ -493,55 +562,18 @@ export const toolbarModel = () => ({
                 const dialog = new MathDialog(editor)
                 dialog.init()
             },
+            available: editor => elementAvailable(editor, 'equation'),
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
-                    return true
-                } else if (
-                    editor.currentView.state.selection.$anchor.node(2) &&
-                    editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
-                    !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    elementDisabled(editor, 'equation') ||
+                    !['text', 'node'].includes(editor.currentView.state.selection.jsonID) ||
                     (
-                        editor.currentView.state.selection.jsonID === 'text' ||
-                        (
-                            editor.currentView.state.selection.jsonID === 'node' &&
-                            editor.currentView.state.selection.node.type.name === 'equation'
-                        )
+                        editor.currentView.state.selection.jsonID === 'node' &&
+                        editor.currentView.state.selection.node.type.name !== 'equation'
                     )
                 ) {
-                    return false
-                } else {
-                    return true
-                }
-            },
-            order: 12
-        },
-        {
-            type: 'button',
-            title: gettext('Figure'),
-            icon: 'picture-o',
-            action: editor => {
-                const dialog = new FigureDialog(editor)
-                dialog.init()
-                return false
-            },
-            disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
-                    return true
-                } else if (
-                    editor.currentView.state.selection.$anchor.node(2) &&
-                    editor.currentView.state.selection.$anchor.node(2) === editor.currentView.state.selection.$head.node(2) &&
-                    !TEXT_ONLY_PARTS.includes(editor.currentView.state.selection.$anchor.node(2).type.name) &&
-                    editor.currentView.state.selection.$anchor.node(2).type.name !== 'abstract' &&
-                    (
-                        editor.currentView.state.selection.jsonID === 'text' ||
-                        (
-                            editor.currentView.state.selection.jsonID === 'node' &&
-                            editor.currentView.state.selection.node.type.name === 'figure'
-                        )
-                    )
-                ) {
-                    return false
-                } else {
                     return true
                 }
             },
@@ -549,32 +581,78 @@ export const toolbarModel = () => ({
         },
         {
             type: 'button',
-            title: gettext('Undo'),
-            icon: 'undo',
-            action: editor => undo(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('inputType', 'historyUndo'))),
-            disabled: editor => undoDepth(editor.currentView.state) === 0,
+            title: gettext('Figure'),
+            icon: 'image',
+            action: editor => {
+                const dialog = new FigureDialog(editor)
+                dialog.init()
+                return false
+            },
+            available: editor => elementAvailable(editor, 'figure'),
+            disabled: editor => {
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    elementDisabled(editor, 'figure')
+                ) {
+                    return true
+                }
+            },
             order: 14
         },
         {
             type: 'button',
-            title: gettext('Redo'),
-            icon: 'repeat',
-            action: editor => redo(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('inputType', 'historyRedo'))),
-            disabled: editor => redoDepth(editor.currentView.state) === 0,
+            title: gettext('Table'),
+            tooltip: gettext('Insert a table into the document.'),
+            icon: 'table',
+            action: editor => {
+                const dialog = new TableDialog(editor)
+                dialog.init()
+                return false
+            },
+            available: editor => elementAvailable(editor, 'table'),
+            disabled: editor => {
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    elementDisabled(editor, 'table') ||
+                    findTable(editor.currentView.state)
+                ) {
+                    return true
+                }
+            },
             order: 15
         },
         {
             type: 'button',
+            title: gettext('Undo'),
+            icon: 'undo',
+            action: editor => undo(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('inputType', 'historyUndo'))),
+            disabled: editor => undoDepth(editor.currentView.state) === 0,
+            order: 16
+        },
+        {
+            type: 'button',
+            title: gettext('Redo'),
+            icon: 'redo',
+            action: editor => redo(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('inputType', 'historyRedo'))),
+            disabled: editor => redoDepth(editor.currentView.state) === 0,
+            order: 17
+        },
+        {
+            type: 'button',
             title: gettext('Comment'),
-            icon: 'comment-o',
+            icon: 'comment',
             action: editor => {
                 editor.mod.comments.interactions.createNewComment()
                 return false
             },
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
-                    return true
-                } else if (editor.currentView.state.selection.empty) {
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    editor.currentView.state.selection.empty ||
+                    editor.currentView.state.selection.$anchor.depth < 2
+                ) {
                     return true
                 }
             },
@@ -590,7 +668,7 @@ export const toolbarModel = () => ({
                 }
 
             },
-            order: 16
+            order: 18
         },
         {
             type: 'button',
@@ -601,10 +679,13 @@ export const toolbarModel = () => ({
                 const command = toggleMark(mark, {id: randomAnchorId()})
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
+            available: editor => elementAvailable(editor, 'anchor'),
             disabled: editor => {
-                if (READ_ONLY_ROLES.includes(editor.docInfo.access_rights) || COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)) {
-                    return true
-                } else if (editor.currentView.state.selection.empty) {
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    markDisabled(editor, 'anchor')
+                ) {
                     return true
                 }
             },
@@ -620,7 +701,7 @@ export const toolbarModel = () => ({
                 }
 
             },
-            order: 17
+            order: 19
         }
     ]
 })

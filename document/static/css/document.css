@@ -2,6 +2,7 @@ body {
     counter-reset: figure-cat-0 figure-cat-1 figure-cat-2 footnote-counter footnote-marker-counter;
 }
 
+
 /* CSL */
 
 .csl-bib-body {
@@ -36,7 +37,7 @@ body {
 }
 
 .csl-entry {
-     clear: left;
+    clear: left;
 }
 
 .csl-left-margin {
@@ -54,32 +55,6 @@ span.anchor {
     color: green;
 }
 
-.article-keywords .keyword {
-    margin-right: 5px;
-    margin-bottom: 5px;
-    padding: 0 5px;
-    border-radius: 3px;
-    line-height: 2em;
-    cursor: pointer;
-    color: #fff;
-    background: #76a698;
-    border: 1px solid #7d948e;
-}
-
-.article-authors .author {
-    margin-right: 5px;
-    margin-bottom: 5px;
-    padding: 0 12px;
-    height: 34px;
-    display: inline-block;
-    border-radius: 3px;
-    line-height: 34px;
-    cursor: pointer;
-    color: #fff;
-    background: #76a698;
-    border: 1px solid #7d948e;
-}
-
 figure figcaption {
     margin-top: 10px;
     font-size: .9em;
@@ -89,15 +64,47 @@ figure img {
     max-width: 100%
 }
 
-
 figure {
-    width: 80%;
+    width: calc(80% - 12px);
     border: 1px solid black;
     padding: 5px;
     text-align: center;
-    -webkit-region-break-inside: avoid;
+    break-inside: avoid;
     cursor: pointer;
     margin: 10%;
+    clear: both;
+}
+
+.aligned-right {
+    float: right;
+}
+
+.aligned-left {
+    float: left;
+}
+
+.aligned-center {
+    float: none;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    align-content: center;
+}
+
+.image-width-100 {
+    width: 70%;
+}
+
+.image-width-75 {
+    width: 55%;
+}
+
+.image-width-50 {
+    width: 40%;
+}
+
+.image-width-25 {
+    width: 20%;
 }
 
 .figure-cat-figure::after {
@@ -115,7 +122,97 @@ figure {
     content: ' ' counter(figure-cat-2) ': ';
 }
 
-.user-contents a, .user-contents a:hover {
+.user-contents a,
+.user-contents a:hover {
     color: #84b4a7;
+    text-decoration: underline;
+}
+
+table {
+    clear: both
+}
+
+.table-25 {
+    width: 25%;
+}
+
+.table-50 {
+    width: 50%;
+}
+
+.table-75 {
+    width: 75%;
+}
+
+.table-100 {
+    width: 100%;
+}
+
+.table-center {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    clear: both;
+}
+
+.table-left {
+    float: left;
+}
+
+.table-right {
+    float: right;
+}
+
+.user-contents a,
+.user-contents a:hover {
+    color: #84b4a7;
+    text-decoration: underline;
+}
+
+.table-fixed {
+    table-layout: fixed !important;
+}
+
+.table-auto {
+    table-layout: auto !important;
+}
+
+
+.article .table-of-contents h1,
+.article .table-of-contents h2,
+.article .table-of-contents h3,
+.article .table-of-contents h4,
+.article .table-of-contents h5,
+.article .table-of-contents h6 {
+    font-size: 1em;
+    font-weight: normal;
+    font-family: 'Lato', sans-serif;
+    margin-bottom: unset;
+}
+
+.article .table-of-contents h2 {
+    padding-left: 1em;
+}
+
+.article .table-of-contents h3 {
+    padding-left: 2em;
+}
+
+.article .table-of-contents h4 {
+    padding-left: 3em;
+}
+
+.article .table-of-contents h5 {
+    padding-left: 4em;
+}
+
+.article .table-of-contents h6 {
+    padding-left: 5em;
+}
+
+.article .table-of-contents h1.toc {
+    font-style: italic;
+}
+
+.underline {
     text-decoration: underline;
 }

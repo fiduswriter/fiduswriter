@@ -1,17 +1,18 @@
 import {DOMSerializer, DOMParser} from "prosemirror-model"
 
 import {FormatCitations} from "../../citations/format"
-import {docSchema} from "../../schema/document"
+import {fnSchema} from "../../schema/footnotes"
 import {cslBibSchema} from "../../bibliography/schema/csl_bib"
 import {descendantNodes} from "../tools/doc_contents"
 
 export class OdtExporterCitations {
-    constructor(exporter, bibDB, citationStyles, citationLocales, docContents, origCitInfos = []) {
+    constructor(exporter, bibDB, citationStyles, citationLocales, docContents, docTemplate, origCitInfos = []) {
         this.exporter = exporter
         this.bibDB = bibDB
         this.citationStyles = citationStyles
         this.citationLocales = citationLocales
         this.docContents = docContents
+        this.docTemplate = docTemplate
         // If citInfos were found in a previous run, they are stored here
         // (for example: first citations in main document, then in footnotes)
         this.origCitInfos = origCitInfos
@@ -77,23 +78,24 @@ export class OdtExporterCitations {
                 }
             )
 
-            // We create a standard body DOM node, add the citations into it, and parse it back.
-            let bodyNode = docSchema.nodeFromJSON({type:'body'})
-            let serializer = DOMSerializer.fromSchema(docSchema)
-            let dom = serializer.serializeNode(bodyNode)
+            // We create a standard footnote container DOM node,
+            // add the citations into it, and parse it back.
+            const fnNode = fnSchema.nodeFromJSON({type:'footnotecontainer'})
+            const serializer = DOMSerializer.fromSchema(fnSchema)
+            const dom = serializer.serializeNode(fnNode)
             dom.innerHTML = citationsHTML
-            this.pmCits = DOMParser.fromSchema(docSchema).parse(dom, {topNode: bodyNode}).toJSON().content
+            this.pmCits = DOMParser.fromSchema(fnSchema).parse(dom, {topNode: fnNode}).toJSON().content
         } else {
             this.pmCits = []
         }
 
         // Now we do the same for the bibliography.
-        let cslBib = this.citFm.bibliography
+        const cslBib = this.citFm.bibliography
         if (cslBib[1].length > 0) {
             this.exporter.styles.addReferenceStyle(cslBib[0])
-            let bibNode = cslBibSchema.nodeFromJSON({type:'cslbib'})
-            let serializer = DOMSerializer.fromSchema(cslBibSchema)
-            let dom = serializer.serializeNode(bibNode)
+            const bibNode = cslBibSchema.nodeFromJSON({type:'cslbib'})
+            const serializer = DOMSerializer.fromSchema(cslBibSchema)
+            const dom = serializer.serializeNode(bibNode)
             dom.innerHTML = cslBib[1].join('')
             this.pmBib = DOMParser.fromSchema(cslBibSchema).parse(dom, {topNode: bibNode}).toJSON()
         }

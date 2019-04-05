@@ -1,7 +1,5 @@
 import {OdtExporterCitations} from "./citations"
 import {OdtExporterImages} from "./images"
-//import {OdtExporterRichtext} from "./richtext"
-import {fnSchema} from "../../schema/footnotes"
 import {noSpaceTmp} from "../../common"
 import {descendantNodes} from "../tools/doc_contents"
 
@@ -96,17 +94,17 @@ export class OdtExporterFootnotes {
 
     addStyle(styleName, xml) {
         if (!this.styleXml.querySelector(`style[*|name="${styleName}"]`)) {
-            let stylesEl = this.styleXml.querySelector('styles')
+            const stylesEl = this.styleXml.querySelector('styles')
             stylesEl.insertAdjacentHTML('beforeEnd', xml)
         }
     }
 
     setStyleConfig() {
-        let oldFnStyleConfigEl = this.styleXml.querySelector('notes-configuration[*|note-class="footnote"]')
+        const oldFnStyleConfigEl = this.styleXml.querySelector('notes-configuration[*|note-class="footnote"]')
         if (oldFnStyleConfigEl) {
             oldFnStyleConfigEl.parentNode.removeChild(oldFnStyleConfigEl)
         }
-        let stylesEl = this.styleXml.querySelector('styles')
+        const stylesEl = this.styleXml.querySelector('styles')
         stylesEl.insertAdjacentHTML('beforeEnd', DEFAULT_STYLE_FOOTNOTE_CONFIGURATION)
     }
 
@@ -121,7 +119,7 @@ export class OdtExporterFootnotes {
     }
 
     convertFootnotes() {
-        let fnContent = []
+        const fnContent = []
         this.footnotes.forEach(
             footnote => {
                 fnContent.push({

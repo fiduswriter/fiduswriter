@@ -1,4 +1,5 @@
 import {noSpaceTmp, escapeText} from "../../common"
+import {FIG_CATS} from "../../schema/common"
 
 export class OdtExporterRichtext {
     constructor(exporter, images) {
@@ -8,22 +9,12 @@ export class OdtExporterRichtext {
         this.fnCounter = 0 // real footnotes
         this.fnAlikeCounter = 0 // real footnotes and citations as footnotes
         this.figureCounter = {} // counters for each type of figure (figure/table/photo)
+        this.zIndex = 0
     }
 
     transformRichtext(node, options = {}) {
         let start = '', content = '', end = ''
-
-        switch(node.type) {
-            case 'article':
-                break
-            case 'body':
-                options = Object.assign({}, options)
-                options.section = 'Text_20_body'
-                break
-            case 'abstract':
-                options = Object.assign({}, options)
-                options.section = 'Abstract'
-                break
+        switch (node.type) {
             case 'paragraph':
                 if (!options.section) {
                     options.section = 'Text_20_body'
@@ -32,9 +23,39 @@ export class OdtExporterRichtext {
                 start += `<text:p text:style-name="${options.section}">`
                 end = '</text:p>' + end
                 break
-            case 'heading':
+            case 'heading1':
                 start += `
-                    <text:h text:outline-level="${node.attrs.level}">
+                    <text:h text:outline-level="1">
+                    <text:bookmark text:name="${node.attrs.id}"/>`
+                end = '</text:h>' + end
+                break
+            case 'heading2':
+                start += `
+                    <text:h text:outline-level="2">
+                    <text:bookmark text:name="${node.attrs.id}"/>`
+                end = '</text:h>' + end
+                break
+            case 'heading3':
+                start += `
+                    <text:h text:outline-level="3">
+                    <text:bookmark text:name="${node.attrs.id}"/>`
+                end = '</text:h>' + end
+                break
+            case 'heading4':
+                start += `
+                    <text:h text:outline-level="4">
+                    <text:bookmark text:name="${node.attrs.id}"/>`
+                end = '</text:h>' + end
+                break
+            case 'heading5':
+                start += `
+                    <text:h text:outline-level="5">
+                    <text:bookmark text:name="${node.attrs.id}"/>`
+                end = '</text:h>' + end
+                break
+            case 'heading6':
+                start += `
+                    <text:h text:outline-level="6">
                     <text:bookmark text:name="${node.attrs.id}"/>`
                 end = '</text:h>' + end
                 break
@@ -48,23 +69,25 @@ export class OdtExporterRichtext {
                 options = Object.assign({}, options)
                 options.section = 'Quote'
                 break
-            case 'ordered_list':
-                let olId = options.inOrderedList ?
-                        options.inOrderedList :
-                        this.exporter.styles.getOrderedListStyleId()
+            case 'ordered_list': {
+                const olId = options.inOrderedList ?
+                    options.inOrderedList :
+                    this.exporter.styles.getOrderedListStyleId()
                 start += `<text:list text:style-name="L${olId[0]}">`
                 end = '</text:list>' + end
                 options = Object.assign({}, options)
                 options.section = `P${olId[1]}`
                 options.inOrderedList = olId
                 break
-            case 'bullet_list':
-                let ulId = this.exporter.styles.getBulletListStyleId()
+            }
+            case 'bullet_list': {
+                const ulId = this.exporter.styles.getBulletListStyleId()
                 start += `<text:list text:style-name="L${ulId[0]}">`
                 end = '</text:list>' + end
                 options = Object.assign({}, options)
                 options.section = `P${ulId[1]}`
                 break
+            }
             case 'list_item':
                 start += '<text:list-item>'
                 end = '</text:list-item>' + end
@@ -88,13 +111,14 @@ export class OdtExporterRichtext {
                 </text:note>` + end
 
                 break
-            case 'text':
+            case 'text': {
+                let hyperlink, strong, em, underline, sup, sub, smallcaps
                 // Check for hyperlink, bold/strong and italic/em
-                let hyperlink, strong, em, sup, sub, smallcaps
                 if (node.marks) {
                     hyperlink = node.marks.find(mark => mark.type === 'link')
-                    em = node.marks.find(mark => mark.type === 'em')
                     strong = node.marks.find(mark => mark.type === 'strong')
+                    em = node.marks.find(mark => mark.type === 'em')
+                    underline = node.marks.find(mark => mark.type === 'underline')
                     smallcaps = node.marks.find(mark => mark.type === 'smallcaps')
                     sup = node.marks.find(mark => mark.type === 'sup')
                     sub = node.marks.find(mark => mark.type === 'sub')
@@ -106,11 +130,15 @@ export class OdtExporterRichtext {
                 }
 
                 let attributes = ''
+
                 if (em) {
                     attributes += 'e'
                 }
                 if (strong) {
                     attributes += 's'
+                }
+                if (underline) {
+                    attributes += 'u'
                 }
                 if (smallcaps) {
                     attributes += 'c'
@@ -122,16 +150,17 @@ export class OdtExporterRichtext {
                 }
 
                 if (attributes.length) {
-                    let styleId = this.exporter.styles.getInlineStyleId(attributes)
+                    const styleId = this.exporter.styles.getInlineStyleId(attributes)
                     start += `<text:span text:style-name="T${styleId}">`
                     end = '</text:span>' + end
                 }
 
                 content += escapeText(node.text)
                 break
-            case 'citation':
-                // We take the first citation from the stack and remove it.
+            }
+            case 'citation': {
                 let cit
+                // We take the first citation from the stack and remove it.
                 if (options.inFootnote) {
                     cit = this.exporter.footnotes.citations.pmCits.shift()
                 } else {
@@ -157,67 +186,99 @@ export class OdtExporterRichtext {
                 }
 
                 break
-            case 'figure':
-                let caption = node.attrs.caption
-                let figCat = node.attrs.figureCategory
+            }
+            case 'figure': {
+                // NOTE: The difficulty is to make several images with different
+                // alignments/widths not overlap one-another. The below code
+                // makes a reasonable attempt at that, but it seems there is no
+                // way to guarantee it from happening.
+                this.exporter.styles.checkParStyle('Standard')
+                start += '<text:p text:style-name="Standard">'
+                end = '</text:p>' + end
+
+                if (node.attrs.aligned === 'center') {
+                    // Needed to prevent subsequent image from overlapping
+                    end = end + '<text:p text:style-name="Standard"></text:p>'
+                }
+
+                let caption = escapeText(node.attrs.caption)
+                // The figure category should not be in the
+                // user's language but rather the document language
+                const figCat = node.attrs.figureCategory
                 if (figCat !== 'none') {
                     if (!this.figureCounter[figCat]) {
                         this.figureCounter[figCat] = 1
                     }
-                    let figCount = this.figureCounter[figCat]++
+                    const figCount = this.figureCounter[figCat]++
+                    const figCountXml = `<text:sequence text:ref-name="ref${figCat}${figCount-1}" text:name="${figCat}" text:formula="ooow:${figCat}+1" style:num-format="1">${figCount}</text:sequence>`
                     if (caption.length) {
-                        caption = `${figCat} ${figCount}: ${caption}`
+                        caption = `${FIG_CATS[figCat]} ${figCountXml}: ${caption}`
                     } else {
-                        caption = `${figCat} ${figCount}`
+                        caption = `${FIG_CATS[figCat]} ${figCountXml}`
                     }
                 }
-                if(node.attrs.image !== false) {
-                    let imgDBEntry = this.images.imageDB.db[node.attrs.image]
-                    let imgFileName = this.images.imgIdTranslation[node.attrs.image]
-                    let height = imgDBEntry.height*3/4 // more or less px to point
-                    let width = imgDBEntry.width*3/4 // more or less px to point
+                let relWidth = node.attrs.width
+                let aligned = node.attrs.aligned
+                let frame
+                if (
+                    caption.length ||
+                    node.attrs.image === false
+                ) {
+                    frame = true
                     this.exporter.styles.checkParStyle('Caption')
-                    this.exporter.styles.checkGraphicStyle('Graphics')
-                    start += noSpaceTmp`
-                    <text:p>
-                        <text:bookmark text:name="${node.attrs.id}"/>
-                        <draw:frame draw:style-name="Graphics" draw:name="Image${this.imgCounter++}" text:anchor-type="paragraph" style:rel-width="100%" style:rel-height="scale" svg:width="${width}pt" svg:height="${height}pt" draw:z-index="0">
+                    this.exporter.styles.checkParStyle('Figure')
+                    const graphicStyleId = this.exporter.styles.getGraphicStyleId('Frame', aligned)
+                    start += noSpaceTmp`<draw:frame draw:style-name="fr${graphicStyleId}" draw:name="Frame${graphicStyleId}" text:anchor-type="paragraph" svg:width="0.0161in" style:rel-width="${relWidth}%" draw:z-index="${this.zIndex++}">
+                        <draw:text-box fo:min-height="0in">
+                            <text:p text:style-name="Figure">`
+                    relWidth = '100' // percentage width of image inside of frame is always 100
+                    aligned = 'center' // Aligned inside of frame is always 'center'
+                    end = noSpaceTmp`
+                            </text:p>
+                        </draw:text-box>
+                    </draw:frame>` + end
+                    if (caption.length) {
+                        end = `<text:line-break />${caption}` + end
+                    }
+                }
+                if (node.attrs.image !== false) {
+                    const imgDBEntry = this.images.imageDB.db[node.attrs.image]
+                    const imgFileName = this.images.imgIdTranslation[node.attrs.image]
+                    const height = imgDBEntry.height*3/4 // more or less px to point
+                    const width = imgDBEntry.width*3/4 // more or less px to point
+                    const graphicStyleId = this.exporter.styles.getGraphicStyleId('Graphics', aligned)
+                    content += noSpaceTmp`
+                        <draw:frame draw:style-name="${graphicStyleId}" draw:name="Image${this.imgCounter++}" text:anchor-type="${frame ? 'paragraph' : 'as-char'}" style:rel-width="${relWidth}%" style:rel-height="scale" svg:width="${width}pt" svg:height="${height}pt" draw:z-index="${this.zIndex++}">
                             <draw:image xlink:href="Pictures/${imgFileName}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/>
-                        </draw:frame>
-                    </text:p>
-                    <text:p text:style-name="Caption">`
-                      // TODO: Add "Figure X:"/"Table X": before caption.
-                      content += this.transformRichtext({type: 'text', text: caption}, options)
-                      end = noSpaceTmp`
-                    </text:p>
-                    ` + end
+                        </draw:frame>`
                 } else {
-                    let latex = node.attrs.equation
-                    let objectNumber = this.exporter.math.addMath(latex)
-                    this.exporter.styles.checkParStyle('Caption')
-                    this.exporter.styles.checkGraphicStyle('Formula')
-                    start += noSpaceTmp`
-                    <text:p>
-                        <text:bookmark text:name="${node.attrs.id}"/>
-                        <draw:frame draw:style-name="Formula" draw:name="Object${objectNumber}" text:anchor-type="as-char" draw:z-index="1">
+                    const latex = node.attrs.equation
+                    const objectNumber = this.exporter.math.addMath(latex)
+                    const graphicStyleId = this.exporter.styles.getGraphicStyleId('Formula')
+                    content += noSpaceTmp`
+                        <draw:frame draw:style-name="${graphicStyleId}" draw:name="Object${objectNumber}" text:anchor-type="as-char" draw:z-index="${this.zIndex++}">
                             <draw:object xlink:href="./Object ${objectNumber}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/>
                             <svg:desc>formula</svg:desc>
-                        </draw:frame>
-                    </text:p>
-                    <text:p text:style-name="Caption">`
-                      // TODO: Add "Figure X:"/"Table X": before caption.
-                      content += this.transformRichtext({type: 'text', text: caption}, options)
-                      end = noSpaceTmp`
-                    </text:p>
-                    ` + end
+                        </draw:frame>`
                 }
+                content += `<text:bookmark text:name="${node.attrs.id}"/>`
                 break
-            case 'table':
-                let columns = node.content[0].content.length
-                start += '<table:table>'
+            }
+            case 'table': {
+                const columns = node.content[0].content.length
+                if (node.attrs.width === '100') {
+                    start += '<table:table>'
+                } else {
+                    const styleId = this.exporter.styles.getTableStyleId(
+                        node.attrs.aligned,
+                        node.attrs.width
+                    )
+                    start += `<table:table table:style-name="Table${styleId}">`
+                }
                 start += `<table:table-column table:number-columns-repeated="${columns}" />`
                 end = '</table:table>' + end
                 break
+            }
             case 'table_row':
                 start += '<table:table-row>'
                 end = '</table:table-row>' + end
@@ -239,16 +300,17 @@ export class OdtExporterRichtext {
                     start += '<table:covered-table-cell/>'
                 }
                 break
-            case 'equation':
-                let latex = node.attrs.equation
-                let objectNumber = this.exporter.math.addMath(latex)
-                this.exporter.styles.checkGraphicStyle('Formula')
+            case 'equation': {
+                const latex = node.attrs.equation
+                const objectNumber = this.exporter.math.addMath(latex)
+                const styleId = this.exporter.styles.getGraphicStyleId('Formula')
                 content += noSpaceTmp`
-                    <draw:frame draw:style-name="Formula" draw:name="Object${objectNumber}" text:anchor-type="as-char" draw:z-index="1">
+                    <draw:frame draw:style-name="${styleId}" draw:name="Object${objectNumber}" text:anchor-type="as-char" draw:z-index="${this.zIndex++}">
                         <draw:object xlink:href="./Object ${objectNumber}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/>
                         <svg:desc>formula</svg:desc>
                     </draw:frame>`
                 break
+            }
             case 'hard_break':
                 content += '<text:line-break/>'
                 break
@@ -276,7 +338,6 @@ export class OdtExporterRichtext {
             case 'cslrightinline':
                 break
             default:
-                console.warn('Unhandled node type:' + node.type)
                 break
         }
 

@@ -1,4 +1,4 @@
-from document.models import AccessRight, Document
+from document.models import AccessRight, Document, DocumentTemplate
 
 
 class SessionUserInfo():
@@ -6,14 +6,29 @@ class SessionUserInfo():
     Class for string information about users in session
     author: akorovin
     """
-    def __init__(self):
-        self.user = None
+    def __init__(self, current_user):
+        self.user = current_user
         self.is_owner = False
         self.access_rights = 'read'
         self.document_id = 0
         self.access_rights = dict()
 
-    def init_access(self, document_id, current_user):
+    def create_doc(self, template_id):
+        template = DocumentTemplate.objects.filter(
+            id=int(template_id)
+        ).first()
+        if template:
+            document = Document.objects.create(
+                owner_id=self.user.id,
+                template=template
+            )
+        else:
+            document = Document.objects.create(
+                owner_id=self.user.id
+            )
+        return document
+
+    def init_access(self, document_id):
         """
         Initializes access to document by id,
         :param document_id:
@@ -24,30 +39,22 @@ class SessionUserInfo():
         :rtype: tuple
         """
         can_access = False
-        self.user = current_user
-        if int(document_id) == 0:
-            can_access = True
-            self.is_owner = True
-            self.access_rights = 'write'
-            document = Document.objects.create(owner_id=self.user.id)
-            self.document_id = document.id
+        document = Document.objects.filter(id=int(document_id)).first()
+        if document is None:
+            return (False, False)
         else:
-            document = Document.objects.filter(id=int(document_id)).first()
-            if document is None:
-                return (False, False)
+            self.document_id = document.id
+            if document.owner == self.user:
+                self.access_rights = 'write'
+                self.is_owner = True
+                can_access = True
             else:
-                self.document_id = document.id
-                if document.owner == self.user:
-                    self.access_rights = 'write'
-                    self.is_owner = True
+                self.is_owner = False
+                access_rights = AccessRight.objects.filter(
+                    document=document,
+                    user=self.user
+                ).first()
+                if access_rights:
+                    self.access_rights = access_rights.rights
                     can_access = True
-                else:
-                    self.is_owner = False
-                    access_rights = AccessRight.objects.filter(
-                        document=document,
-                        user=self.user
-                    ).first()
-                    if access_rights:
-                        self.access_rights = access_rights.rights
-                        can_access = True
         return (document, can_access)

@@ -18,7 +18,7 @@ Exporter to Open Document Text (LibreOffice)
 /*
 TODO:
 * - Export comments
-* - Templating of keywords/authors output
+* - Templating of tag/contributor output
 */
 
 export class OdtExporter {

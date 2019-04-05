@@ -1,4 +1,4 @@
-import * as bowser from "bowser/bowser"
+import bowser from "bowser"
 
 var MINIMUM_BROWSER_VERSIONS = {
     msedge: '15',
@@ -7,7 +7,6 @@ var MINIMUM_BROWSER_VERSIONS = {
     chrome: '66',
     safari: '11'
 }
-
 
 // Verify that we are running on a current browser.
 if (bowser.isUnsupportedBrowser(MINIMUM_BROWSER_VERSIONS, true, window.navigator.userAgent)) {

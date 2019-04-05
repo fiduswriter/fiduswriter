@@ -4,13 +4,94 @@ from builtins import object
 from django.db import models
 from django.db.utils import OperationalError, ProgrammingError
 from django.contrib.auth.models import User
+from django.utils.translation import ugettext as _
 from django.core import checks
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
+
+from style.models import DocumentStyle, CitationStyle
+
+from django.conf import settings
 
 # FW_DOCUMENT_VERSION: See also FW_FILETYPE_VERSION specified in export
 # (same value from >= 2.0) in
 # document/static/js/modules/exporter/native/zip.js
 
-FW_DOCUMENT_VERSION = 2.3
+FW_DOCUMENT_VERSION = 3.0
+
+TEMPLATE_CHOICES = (
+    ('docx', 'Docx'),
+    ('odt', 'ODT')
+)
+
+
+def template_filename(instance, filename):
+    return '/'.join(['export-templates', filename])
+
+
+class ExportTemplate(models.Model):
+    file_name = models.CharField(max_length=255, default='', blank=True)
+    file_type = models.CharField(
+        max_length=5,
+        choices=TEMPLATE_CHOICES,
+        blank=False)
+    template_file = models.FileField(upload_to=template_filename)
+
+    class Meta(object):
+        unique_together = (("file_name", "file_type"),)
+
+    def __str__(self):
+        return self.file_name + " (" + self.file_type + ")"
+
+
+class DocumentTemplate(models.Model):
+    title = models.CharField(max_length=255, default='', blank=True)
+    definition = models.TextField(default='{}')
+    definition_hash = models.CharField(max_length=22, default='', blank=True)
+    document_styles = models.ManyToManyField(DocumentStyle)
+    citation_styles = models.ManyToManyField(CitationStyle)
+    export_templates = models.ManyToManyField(ExportTemplate, blank=True)
+    user = models.ForeignKey(
+        User,
+        null=True,
+        blank=True,
+        on_delete=models.deletion.CASCADE
+    )
+
+    def __str__(self):
+        return self.title
+
+    def save(self, *args, **kwargs):
+        super(DocumentTemplate, self).save(*args, **kwargs)
+        if self.citation_styles.count() == 0:
+            style, created = CitationStyle.objects.get_or_create(
+                short_title='default'
+            )
+            self.citation_styles.add(style)
+        # TODO: add a field to classify document styles by used fields
+        if self.document_styles.count() == 0:
+            style, created = DocumentStyle.objects.get_or_create(
+                filename='default'
+            )
+            self.document_styles.add(style)
+
+
+def default_template():
+    template = DocumentTemplate.objects.first()
+    if template:
+        return template.pk
+    template = DocumentTemplate()
+    template.definition = settings.DOC_TEMPLATE
+    template.definition_hash = settings.DOC_TEMPLATE_HASH
+    template.title = _('Standard Article')
+    template.save()
+    for style in CitationStyle.objects.all():
+        template.citation_styles.add(style)
+    for style in DocumentStyle.objects.all():
+        template.document_styles.add(style)
+    for exporter in ExportTemplate.objects.all():
+        template.export_templates.add(exporter)
+    return template.pk
 
 
 class Document(models.Model):
@@ -44,6 +125,11 @@ class Document(models.Model):
     # True by default and for all normal documents. Can be set to False when
     # documents are added in plugins that list these documents somewhere else.
     listed = models.BooleanField(default=True)
+    template = models.ForeignKey(
+        DocumentTemplate,
+        on_delete=models.deletion.CASCADE,
+        default=default_template
+    )
 
     def __str__(self):
         if len(self.title) > 0:
@@ -100,22 +186,45 @@ class Document(models.Model):
             return []
 
 
+@receiver(post_delete)
+def delete_document(sender, instance, **kwargs):
+    if sender == Document:
+        if (
+            instance.template.user and
+            instance.template.document_set.count() == 0
+        ):
+            # User template no longer used.
+            instance.template.delete()
+
+
 RIGHTS_CHOICES = (
-    ('read', 'Reader'),
-    ('read-without-comments', 'Reader without comment access'),
-    # Can read the text, but not the comments.
     ('write', 'Writer'),
+    # Can write contents and can read+write comments.
+    # Can chat with collaborators.
     ('write-tracked', 'Write with tracked changes'),
-    ('review', 'Reviewer'),
+    # Can write tracked contents and can read/write comments.
+    # Cannot turn off tracked changes.
+    # Can chat with collaborators.
     ('comment', 'Commentator'),
-    ('edit', 'Editor'),
-    # Editor as in "Editor of Journal X"
+    # Can read contents and can read+write comments.
+    # Can chat with collaborators.
+    ('review', 'Reviewer'),
+    # Can read the contents and can read/write his own comments.
+    # Comments by users with this access right only show the user's
+    # numeric ID, not their username.
+    # Cannot chat with collaborators nor see that they are connected.
+    ('read', 'Reader'),
+    # Can read contents, including comments
+    # Can chat with collaborators.
+    ('read-without-comments', 'Reader without comment access'),
+    # Can read contents, but not the comments.
+    # Cannot chat with collaborators.
 )
 
 # Editor and Reviewer can only comment and not edit document
-COMMENT_ONLY = ('edit', 'review', 'comment')
+COMMENT_ONLY = ('review', 'comment')
 
-CAN_UPDATE_DOCUMENT = ['write', 'write-tracked', 'edit', 'review', 'comment']
+CAN_UPDATE_DOCUMENT = ['write', 'write-tracked', 'review', 'comment']
 
 # Whether the collaborator is allowed to know about other collaborators
 # and communicate with them.
@@ -161,28 +270,3 @@ class DocumentRevision(models.Model):
                 str(self.document.id)
         else:
             return str(self.id) + ' of ' + str(self.document.id)
-
-
-TEMPLATE_CHOICES = (
-    ('docx', 'Docx'),
-    ('odt', 'ODT')
-)
-
-
-def template_filename(instance, filename):
-    return '/'.join(['export-templates', filename])
-
-
-class ExportTemplate(models.Model):
-    file_name = models.CharField(max_length=255, default='', blank=True)
-    file_type = models.CharField(
-        max_length=5,
-        choices=TEMPLATE_CHOICES,
-        blank=False)
-    template_file = models.FileField(upload_to=template_filename)
-
-    class Meta(object):
-        unique_together = (("file_name", "file_type"),)
-
-    def __str__(self):
-        return self.file_name + " (" + self.file_type + ")"

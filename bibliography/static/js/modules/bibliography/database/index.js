@@ -16,9 +16,9 @@ export class BibliographyDB {
 
     getDB() {
 
+        const localStorageVersion = window.localStorage.getItem('version')
         let lastModified = parseInt(window.localStorage.getItem('last_modified_biblist')),
             numberOfEntries = parseInt(window.localStorage.getItem('number_of_entries')),
-            localStorageVersion = window.localStorage.getItem('version'),
             localStorageOwnerId = parseInt(window.localStorage.getItem('owner_id'))
 
         // A dictionary to look up bib fields by their fw type name.
@@ -57,25 +57,22 @@ export class BibliographyDB {
                         window.localStorage.setItem('version', FW_LOCALSTORAGE_VERSION)
                     } catch (error) {
                         // The local storage was likely too small
-                        throw(error)
+                        throw (error)
                     }
                 } else {
                     bibList = JSON.parse(window.localStorage.getItem('biblist'))
                 }
-                let bibPKs = []
                 bibList.forEach(({id, bibDBEntry}) => {
                     this.db[id] = bibDBEntry
-                    bibPKs.push(id)
                 })
                 deactivateWait()
-                return {bibPKs, bibCats}
+                return
             }
         ).catch(
             error => {
                 addAlert('error', gettext('Could not obtain bibliography data'))
                 deactivateWait()
-                throw(error)
-                return Promise.reject(new Error('Could not obtain bibliography data'))
+                throw (error)
             }
         )
     }
@@ -90,7 +87,7 @@ export class BibliographyDB {
         ).catch(
             error => {
                 addAlert('error', gettext('The bibliography could not be updated'))
-                throw(error)
+                throw (error)
             }
         )
 
@@ -115,10 +112,10 @@ export class BibliographyDB {
         return this.sc.saveCategories(cats).then(
             bibCats => {
                 // Replace the old with the new categories, but don't lose the link to the array (so delete each, then add each).
-                while(this.cats.length > 0) {
+                while (this.cats.length > 0) {
                     this.cats.pop()
                 }
-                while(bibCats.length > 0) {
+                while (bibCats.length > 0) {
                     this.cats.push(bibCats.pop())
                 }
                 addAlert('success', gettext('The categories have been updated'))
@@ -129,8 +126,7 @@ export class BibliographyDB {
             error => {
                 addAlert('error', gettext('The categories could not be updated'))
                 deactivateWait()
-                throw(error)
-                return Promise.reject(new Error('The categories could not be updated'))
+                throw (error)
             }
         )
     }
@@ -143,15 +139,15 @@ export class BibliographyDB {
 
         return this.sc.deleteCategory(ids).then(
             () => {
-                let deletedPks = ids.slice()
-                let deletedBibCats = []
+                const deletedPks = ids.slice()
+                const deletedBibCats = []
                 this.cats.forEach(bibCat => {
                     if (ids.indexOf(bibCat.id) !== -1) {
                         deletedBibCats.push(bibCat)
                     }
                 })
                 deletedBibCats.forEach(bibCat => {
-                    let index = this.cats.indexOf(bibCat)
+                    const index = this.cats.indexOf(bibCat)
                     this.cats.splice(index, 1)
                 })
                 return deletedPks
@@ -181,8 +177,7 @@ export class BibliographyDB {
             error => {
                 addAlert('error', 'The bibliography item(s) could not be deleted')
                 deactivateWait()
-                throw(error)
-                return Promise.reject(new Error('The bibliography item(s) could not be deleted'))
+                throw (error)
             }
         )
 

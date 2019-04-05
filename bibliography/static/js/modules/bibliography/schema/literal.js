@@ -2,7 +2,7 @@ import {enquote, literal, sup, sub, smallcaps, url, variable, text} from "./comm
 import {marks} from "prosemirror-schema-basic"
 import {Schema} from "prosemirror-model"
 
-let doc = {
+const doc = {
     content: 'literal'
 }
 

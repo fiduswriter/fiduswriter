@@ -1,4 +1,4 @@
-export let createSlug = function(str) {
+export const createSlug = function(str) {
     if (str==='') {
         str = gettext('Untitled')
     }

@@ -2,7 +2,7 @@ import {KeyFieldForm} from "./key"
 import {noSpaceTmp} from "../../../common"
 
 export class KeyListForm{
-    constructor(dom, initialValue = [''], unused = undefined, fieldType = undefined) {
+    constructor(dom, initialValue = [''], unused, fieldType = undefined) {
         this.currentValue = initialValue
         this.dom = dom
         this.fieldType = fieldType
@@ -32,13 +32,13 @@ export class KeyListForm{
                 </td>
             </tr>`
         )
-        let fieldDOM = this.dom.firstChild.firstChild.lastChild
-        let fieldHandler = new KeyFieldForm(fieldDOM.firstChild, fieldValue, false, this.fieldType)
+        const fieldDOM = this.dom.firstChild.firstChild.lastChild
+        const fieldHandler = new KeyFieldForm(fieldDOM.firstChild, fieldValue, false, this.fieldType)
         fieldHandler.init()
         this.fields.push(fieldHandler)
 
         // click on plus
-        let addItemEl = fieldDOM.querySelector('.fa-plus-circle')
+        const addItemEl = fieldDOM.querySelector('.fa-plus-circle')
         addItemEl.addEventListener('click', () => {
             if (!this.value) {
                 return
@@ -49,7 +49,7 @@ export class KeyListForm{
         })
 
         // Click on minus
-        let removeItemEl = fieldDOM.querySelector('.fa-minus-circle')
+        const removeItemEl = fieldDOM.querySelector('.fa-minus-circle')
         removeItemEl.addEventListener('click', () => {
             if (!this.value) {
                 return
@@ -64,7 +64,7 @@ export class KeyListForm{
     }
 
     get value() {
-        let formValue = this.fields.map(field => {return field.value}).filter(
+        const formValue = this.fields.map(field => {return field.value}).filter(
             value => {return value !== false}
         )
         if (formValue.length === 0) {

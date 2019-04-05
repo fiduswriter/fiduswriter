@@ -1,5 +1,6 @@
 import {addAlert, postJson} from "../common"
 import {GetImages} from "./get_images"
+import {templateHash, extractTemplate} from "../document_template"
 
 export class ImportNative {
     /* Save document information into the database */
@@ -13,11 +14,14 @@ export class ImportNative {
     }
 
     init() {
-        let ImageTranslationTable = {}
+        const ImageTranslationTable = {}
         return this.createDoc().then(
             () => {
+                if (!this.docId) {
+                    return Promise.reject(new Error('document not created'))
+                }
                 // We first create any new entries in the DB for images.
-                let imageGetter = new GetImages(this.images, this.otherFiles)
+                const imageGetter = new GetImages(this.images, this.otherFiles)
                 return imageGetter.init()
             }
         ).then(
@@ -31,12 +35,17 @@ export class ImportNative {
             // We can go ahead and create the new document entry in the
             // bibliography without any changes.
             return this.saveDocument()
-        })
+        }).catch(
+            () => {
+                addAlert('error', 'Could not create document')
+                return Promise.reject(new Error('document not created'))
+            }
+        )
 
     }
 
     saveImages(images, ImageTranslationTable) {
-        let sendPromises = Object.values(images).map(
+        const sendPromises = Object.values(images).map(
             imageEntry => {
                 return postJson('/document/import/image/', {
                     doc_id: this.docId,
@@ -50,7 +59,7 @@ export class ImportNative {
                         'error',
                         `${gettext('Could not save Image')} ${imageEntry.checksum}`
                     )
-                    throw(error)
+                    throw (error)
                 })
             }
         )
@@ -90,12 +99,14 @@ export class ImportNative {
             ({json}) => this.docId = json.id
         ).catch(error => {
             addAlert('error', gettext('Could not create document'))
-            throw(error)
+            throw (error)
         })
     }
 
     saveDocument() {
-
+        const template = extractTemplate(this.doc.contents),
+            template_hash = templateHash(template),
+            template_title = template.attrs.template
         return postJson(
             '/document/import/',
             {
@@ -103,11 +114,14 @@ export class ImportNative {
                 title: this.doc.title,
                 contents: JSON.stringify(this.doc.contents),
                 comments: JSON.stringify(this.doc.comments),
-                bibliography: JSON.stringify(this.bibliography)
+                bibliography: JSON.stringify(this.bibliography),
+                template: JSON.stringify(template),
+                template_hash,
+                template_title
             }
         ).then(
             ({json}) => {
-                let docInfo = {
+                const docInfo = {
                     is_owner: true,
                     access_rights: 'write',
                     id: this.docId
@@ -117,6 +131,7 @@ export class ImportNative {
                     name: this.user.name,
                     avatar: this.user.avatar.url
                 }
+                this.doc.is_owner = true
                 this.doc.version = 0
                 this.doc.comment_version = 0
                 this.doc.id = this.docId
@@ -130,7 +145,7 @@ export class ImportNative {
         ).catch(
             error => {
                 addAlert('error', `${gettext('Could not save ')} ${this.doc.title}`)
-                throw(error)
+                throw (error)
             }
         )
     }

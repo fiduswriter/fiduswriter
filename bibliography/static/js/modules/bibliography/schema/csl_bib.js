@@ -2,22 +2,22 @@ import {sup, sub, smallcaps, text} from "./common"
 import {marks} from "prosemirror-schema-basic"
 import {Schema} from "prosemirror-model"
 
-let doc = {content: "cslbib"}
+const doc = {content: "cslbib"}
 
-let cslbib = {
+const cslbib = {
     content: "cslentry*",
     parseDOM: [{tag: 'div.csl-bib-body'}],
-    toDOM(node) {
+    toDOM(_node) {
         return ["div", {
             class: 'csl-bib-body'
         }, 0]
     }
 }
 
-let cslentry = {
+const cslentry = {
     content: "block*",
     parseDOM: [{tag: 'div.csl-entry'}],
-    toDOM(node) {
+    toDOM(_node) {
         return ["div", {
             class: 'csl-entry'
         }, 0]
@@ -28,48 +28,48 @@ let cslentry = {
 // system doesn't allow for the mixing of inline and block content, it "imagines"
 // that this block exists. This---rather than other blocks---is chosen, because
 // it's the first in the list.
-let cslinline = {
+const cslinline = {
     group: "block",
     content: "text*",
     marks: "_",
     parseDOM: [{tag: 'div.csl-inline'}],
-    toDOM(node) {
+    toDOM(_node) {
         return ["div", {
             class: 'csl-inline'
         }, 0]
     }
 }
 
-let cslblock = {
+const cslblock = {
     group: "block",
     content: "text*",
     marks: "_",
     parseDOM: [{tag: 'div.csl-block'}],
-    toDOM(node) {
+    toDOM(_node) {
         return ["div", {
             class: 'csl-block'
         }, 0]
     }
 }
 
-let cslleftmargin = {
+const cslleftmargin = {
     group: "block",
     content: "text*",
     marks: "_",
     parseDOM: [{tag: 'div.csl-left-margin'}],
-    toDOM(node) {
+    toDOM(_node) {
         return ["div", {
             class: 'csl-left-margin'
         }, 0]
     }
 }
 
-let cslrightinline = {
+const cslrightinline = {
     group: "block",
     content: "text*",
     marks: "_",
     parseDOM: [{tag: 'div.csl-right-inline'}],
-    toDOM(node) {
+    toDOM(_node) {
         return ["div", {
             class: 'csl-right-inline'
         }, 0]
@@ -77,12 +77,12 @@ let cslrightinline = {
 }
 
 
-let cslindent = {
+const cslindent = {
     group: "block",
     content: "text*",
     marks: "_",
     parseDOM: [{tag: 'div.csl-indent'}],
-    toDOM(node) {
+    toDOM(_node) {
         return ["div", {
             class: 'csl-indent'
         }, 0]

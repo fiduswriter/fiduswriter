@@ -50,7 +50,7 @@ export const changeAvatarDialog = function(app) {
             type: 'cancel'
         }
     ]
-    let dialog = new Dialog({
+    const dialog = new Dialog({
         id: 'change-avatar-dialog',
         title: gettext('Upload your profile picture'),
         body: changeAvatarDialogTemplate(),
@@ -91,7 +91,7 @@ const deleteAvatar = function(app) {
 }
 
 export const deleteAvatarDialog = function(app) {
-    let buttons = [
+    const buttons = [
         {
             text: gettext('Delete'),
             classes: "fw-dark",
@@ -104,7 +104,7 @@ export const deleteAvatarDialog = function(app) {
             type: 'cancel'
         }
     ]
-    let dialog = new Dialog({
+    const dialog = new Dialog({
         title: gettext('Confirm deletion'),
         id: 'confirmdeletion',
         icon: 'exclamation-triangle',
@@ -115,23 +115,23 @@ export const deleteAvatarDialog = function(app) {
 }
 
 export const changePwdDialog = function() {
-    let buttons = [
+    const buttons = [
         {
             text: gettext('Submit'),
             classes: "fw-dark",
             click: () => {
-                let oldPwd = document.getElementById('old-password-input').value,
+                const oldPwd = document.getElementById('old-password-input').value,
                     newPwd1 = document.getElementById('new-password-input1').value,
                     newPwd2 = document.getElementById('new-password-input2').value
 
                 document.getElementById('fw-password-change-error').innerHTML = ''
 
-                if('' === oldPwd || '' === newPwd1 || '' === newPwd2) {
+                if ('' === oldPwd || '' === newPwd1 || '' === newPwd2) {
                     document.getElementById('fw-password-change-error').innerHTML = gettext('All fields are required!')
                     return
                 }
 
-                if(newPwd1 !== newPwd2) {
+                if (newPwd1 !== newPwd2) {
                     document.getElementById('fw-password-change-error').innerHTML = gettext('Please confirm the new password!')
                     return
                 }
@@ -148,16 +148,16 @@ export const changePwdDialog = function() {
                     }
                 ).then(
                     ({json, status}) => {
-                        if(200 === status) {
+                        if (200 === status) {
                             dialog.close()
                             addAlert('info', gettext('The password has been changed.'))
                         } else {
                             let eMsg
-                            if(json.msg.hasOwnProperty('old_password')) {
+                            if (json.msg.hasOwnProperty('old_password')) {
                                 eMsg = json.msg['old_password'][0]
-                            } else if(json.msg.hasOwnProperty('new_password1')) {
+                            } else if (json.msg.hasOwnProperty('new_password1')) {
                                 eMsg = json.msg['new_password1'][0]
-                            } else if(json.msg.hasOwnProperty('new_password2')) {
+                            } else if (json.msg.hasOwnProperty('new_password2')) {
                                 eMsg = json.msg['new_password2'][0]
                             } else {
                                 eMsg = gettext('The password could not be changed!')
@@ -176,7 +176,7 @@ export const changePwdDialog = function() {
             type: 'cancel'
         }
     ]
-    let dialog = new Dialog({
+    const dialog = new Dialog({
         id: 'fw-change-pwd-dialog',
         title: gettext('Change Password'),
         body: changePwdDialogTemplate(),
@@ -188,16 +188,16 @@ export const changePwdDialog = function() {
 
 export const addEmailDialog = function() {
 
-    let buttons = [
+    const buttons = [
         {
             text: gettext('Submit'),
             classes: "fw-dark",
             click: () => {
-                let email = document.getElementById('new-profile-email').value.replace(/(^\s+)|(\s+$)/g, "")
+                const email = document.getElementById('new-profile-email').value.replace(/(^\s+)|(\s+$)/g, "")
 
                 document.getElementById('fw-add-email-error').innerHTML = ''
 
-                if('' === email) {
+                if ('' === email) {
                     document.getElementById('fw-add-email-error').innerHTML = gettext('New email address is required!')
                     return
                 }
@@ -211,7 +211,7 @@ export const addEmailDialog = function() {
                     }
                 ).then(
                     ({json, status}) => {
-                        if(200 === status) {
+                        if (200 === status) {
                             dialog.close()
                             addAlert('info', `${gettext('Confirmation e-mail sent to')}: ${email}`)
                         } else {
@@ -230,7 +230,7 @@ export const addEmailDialog = function() {
         }
     ]
 
-    let dialog = new Dialog({
+    const dialog = new Dialog({
         id: 'fw-add-email-dialog',
         title: gettext('Add Email'),
         body: changeEmailDialogTemplate(),
@@ -241,10 +241,9 @@ export const addEmailDialog = function() {
 }
 
 export const deleteEmailDialog = function(target, app) {
-    let thisTr = target.parentElement.parentElement,
-        email = target.dataset.email
+    const email = target.dataset.email
 
-    let buttons = [
+    const buttons = [
         {
             text: gettext('Remove'),
             classes: "fw-dark",
@@ -280,7 +279,7 @@ export const deleteEmailDialog = function(target, app) {
         }
     ]
 
-    let dialog = new Dialog({
+    const dialog = new Dialog({
         id: 'fw-confirm-email-dialog',
         title: gettext('Confirm remove'),
         body: deleteEmailDialogTemplate({
@@ -294,9 +293,9 @@ export const deleteEmailDialog = function(target, app) {
 }
 
 export const changePrimaryEmailDialog = function(app) {
-    let primEmailRadio = document.querySelector('.primary-email-radio:checked'),
+    const primEmailRadio = document.querySelector('.primary-email-radio:checked'),
         email = primEmailRadio.value
-    let buttons = [
+    const buttons = [
         {
             text: gettext('Submit'),
             classes: "fw-dark",
@@ -318,7 +317,7 @@ export const changePrimaryEmailDialog = function(app) {
                 ).then(
                     () => app.selectPage()
                 ).catch(
-                    error => {
+                    _error => {
                         deactivateWait()
                         addAlert('error', gettext('The email could not be set primary'))
                     }
@@ -330,7 +329,7 @@ export const changePrimaryEmailDialog = function(app) {
         }
     ]
 
-    let dialog = new Dialog({
+    const dialog = new Dialog({
         id: 'change-primary-email',
         title: gettext('Confirm set primary'),
         body: changePrimaryEmailDialogTemplate({

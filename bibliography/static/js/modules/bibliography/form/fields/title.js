@@ -31,32 +31,32 @@ export class TitleFieldForm{
                         "Mod-shift-z": undo,
                         "Mod-y": redo,
                         "Mod-b": () => {
-                            let sMark = this.view.state.schema.marks['strong']
-                            let command = toggleMark(sMark)
+                            const sMark = this.view.state.schema.marks['strong']
+                            const command = toggleMark(sMark)
                             command(this.view.state, tr => this.view.dispatch(tr))
                         },
                         "Mod-i": () => {
-                            let sMark = this.view.state.schema.marks['em']
-                            let command = toggleMark(sMark)
+                            const sMark = this.view.state.schema.marks['em']
+                            const command = toggleMark(sMark)
                             command(this.view.state, tr => this.view.dispatch(tr))
                         }
                     })
                 ]
             }),
             handleDOMEvents: {
-                focus: (view, event) => {
+                focus: (_view, _event) => {
                     document.querySelectorAll('.ui-dialog-buttonset .fw-edit').forEach(el => el.classList.remove('disabled'))
                 },
-                blur: (view, event) => {
+                blur: (_view, _event) => {
                     document.querySelectorAll('.ui-dialog-buttonset .fw-edit').forEach(el => el.classList.add('disabled'))
                 }
             },
             dispatchTransaction: tr => {
-                let newState = this.view.state.apply(tr)
+                const newState = this.view.state.apply(tr)
                 this.view.updateState(newState)
             }
         })
-        let supportedMarks = ['em', 'strong', 'sub', 'sup', 'smallcaps', 'nocase']
+        const supportedMarks = ['em', 'strong', 'sub', 'sup', 'smallcaps', 'nocase']
         supportedMarks.forEach(mark =>{
             this.linkMarkButton(mark)
         })
@@ -69,14 +69,14 @@ export class TitleFieldForm{
             if (!this.view.hasFocus()) {
                 return
             }
-            let sMark = this.view.state.schema.marks[mark]
-            let command = toggleMark(sMark)
+            const sMark = this.view.state.schema.marks[mark]
+            const command = toggleMark(sMark)
             command(this.view.state, tr => this.view.dispatch(tr))
         })
     }
 
     get value() {
-        let titleContents = this.view.state.doc.firstChild.content.toJSON()
+        const titleContents = this.view.state.doc.firstChild.content.toJSON()
         return titleContents && titleContents.length ? titleContents : false
     }
 

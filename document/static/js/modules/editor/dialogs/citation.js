@@ -90,8 +90,8 @@ export class CitationDialog {
         Object.keys(this.editor.mod.db.bibDB.db).forEach(id => {
             data.push(this.createTableRow(this.editor.mod.db.bibDB.db[id], id, 'document', false))
         })
-        Object.keys(this.editor.user.bibDB.db).forEach(id => {
-            const bib = this.editor.user.bibDB.db[id]
+        Object.keys(this.editor.app.bibDB.db).forEach(id => {
+            const bib = this.editor.app.bibDB.db[id]
             if (!this.editor.mod.db.bibDB.hasReference(bib)) {
                 data.push(this.createTableRow(bib, id, 'user', false))
             }
@@ -173,7 +173,7 @@ export class CitationDialog {
     // Not when dialog is first opened.
     addToCitedItems(items) {
         const len = items.length
-        for(let i = 0; i < len; i ++) {
+        for (let i = 0; i < len; i ++) {
             const item = items[i]
             document.querySelector('#selected-cite-source-table .fw-document-table-body').insertAdjacentHTML(
                 'beforeend',
@@ -259,8 +259,9 @@ export class CitationDialog {
                         return
                     }
                     data.cells[3].innerHTML = ''
-                    let [db, id] = data.cells[0].textContent.split('-')
-                    id = parseInt(id)
+                    const [db, id] = data.cells[0].textContent.split('-').map(
+                        (val, index) => index ? parseInt(val) : val // only parseInt id (where index > 0)
+                    )
                     if (document.querySelector(`#selected-source-${db}-${id}`)) {
                         return
                     }
@@ -279,10 +280,10 @@ export class CitationDialog {
 
         this.dialog.dialogEl.addEventListener('click', event => {
             const el = {}
-            let revisionId
+            let documentEl
             switch (true) {
                 case findTarget(event, '.selected-source .delete', el):
-                    const documentEl = document.getElementById(`selected-source-${el.target.dataset.db}-${el.target.dataset.id}`)
+                    documentEl = document.getElementById(`selected-source-${el.target.dataset.db}-${el.target.dataset.id}`)
                     if (documentEl) {
                         documentEl.parentElement.removeChild(documentEl)
                     }
@@ -307,7 +308,7 @@ export class CitationDialog {
                 if (db === 'user') {
                     // entry is from user's bibDB. We need to import it into the
                     // document's bibDB.
-                    const bib = this.editor.user.bibDB.db[id]
+                    const bib = this.editor.app.bibDB.db[id]
                     id = this.editor.mod.db.bibDB.addReference(bib, id)
                 }
                 const returnObj = {
@@ -325,7 +326,7 @@ export class CitationDialog {
             })
 
         if (!citeItems.length) {
-            addAlert('info',gettext('Please select at least one citation source!'))
+            addAlert('info', gettext('Please select at least one citation source!'))
             return false
         }
 

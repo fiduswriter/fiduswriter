@@ -16,12 +16,12 @@ export class LatexExporterConvert {
 
     init(docContents) {
         this.preWalkJson(docContents)
-        let rawTransformation = this.walkJson(docContents)
-        let body = this.postProcess(rawTransformation)
-        let preamble = this.assemblePreamble()
-        let epilogue = this.assembleEpilogue()
-        let latex = this.docDeclaration + preamble + '\n\\begin{document}\n' + body + epilogue + '\n\\end{document}\n'
-        let returnObject = {
+        const rawTransformation = this.walkJson(docContents)
+        const body = this.postProcess(rawTransformation)
+        const preamble = this.assemblePreamble()
+        const epilogue = this.assembleEpilogue()
+        const latex = this.docDeclaration + preamble + '\n\\begin{document}\n' + body + epilogue + '\n\\end{document}\n'
+        const returnObject = {
             latex,
             imageIds: this.imageIds,
             usedBibDB: this.usedBibDB
@@ -35,14 +35,14 @@ export class LatexExporterConvert {
 
     // Check for things needed before creating raw transofrm
     preWalkJson(node) {
-        switch(node.type) {
+        switch (node.type) {
             // Collect all internal links so that we only set the anchors for those
             // that are being linked to.
             case 'text':
                 if (node.marks) {
-                    let hyperlink = node.marks.find(mark => mark.type === 'link')
+                    const hyperlink = node.marks.find(mark => mark.type === 'link')
                     if (hyperlink) {
-                        let href = hyperlink.attrs.href
+                        const href = hyperlink.attrs.href
                         if (href[0] === '#' && !this.internalLinks.includes(href)) {
                             this.internalLinks.push(href.slice(1))
                         }
@@ -59,125 +59,174 @@ export class LatexExporterConvert {
     walkJson(node, options = {}) {
         let start = '', content = '', end = '',
             placeFootnotesAfterBlock = false
-
-        switch(node.type) {
+        switch (node.type) {
             case 'article':
                 break
             case 'title':
                 start += '\n\\title{'
                 end = '}' + end
                 break
-            case 'subtitle':
-                if (node.content) {
+            case 'heading_part':
+                if (node.attrs.metadata === 'subtitle' && node.content) {
                     start += '\n\\subtitle{'
                     end = '}' + end
                     this.features.subtitle = true
+                    options = Object.assign({}, options)
+                    options.ignoreHeading = true
+                } else if (!options.madeTitle) {
+                    start += '\n\n\\maketitle\n'
+                    options.madeTitle = true
                 }
                 break
-            case 'author':
-                // Ignore - we deal with authors instead.
+            case 'contributor':
+                // Ignore - we deal with namelist_part instead.
                 break
-            case 'authors':
+            case 'contributors_part':
                 if (node.content) {
-                    let authorsPerAffil = node.content.map(node => {
-                        let author = node.attrs,
-                            nameParts = [],
-                            affiliation = false
-                        if (author.firstname) {
-                            nameParts.push(author.firstname)
-                        }
-                        if (author.lastname) {
-                            nameParts.push(author.lastname)
-                        }
-                        if (nameParts.length && author.institution) {
-                            affiliation = author.institution
-                        } else if (author.institution) {
-                            // We have an institution but no names. Use institution as name.
-                            nameParts.push(author.institution)
-                        }
-                        return {
-                            name: nameParts.join(' '),
-                            affiliation,
-                            email: author.email
-                        }
-                    }).reduce((affils, author) => {
-                        let affil = author.affiliation
-                        affils[affil] = affils[affil] || []
-                        affils[affil].push(author)
-                        return affils
-                    }, {})
+                    if (node.attrs.metadata === 'authors') {
+                        const authorsPerAffil = node.content.map(node => {
+                            const author = node.attrs,
+                                nameParts = []
+                            let affiliation = false
+                            if (author.firstname) {
+                                nameParts.push(author.firstname)
+                            }
+                            if (author.lastname) {
+                                nameParts.push(author.lastname)
+                            }
+                            if (nameParts.length && author.institution) {
+                                affiliation = author.institution
+                            } else if (author.institution) {
+                                // We have an institution but no names. Use institution as name.
+                                nameParts.push(author.institution)
+                            }
+                            return {
+                                name: nameParts.join(' '),
+                                affiliation,
+                                email: author.email
+                            }
+                        }).reduce((affils, author) => {
+                            const affil = author.affiliation
+                            affils[affil] = affils[affil] || []
+                            affils[affil].push(author)
+                            return affils
+                        }, {})
 
-                    Object.values(authorsPerAffil).forEach(
-                        affil => {
-                            affil.forEach(
-                                author => {
-                                    content +=
-                                        `\n\\author{${escapeLatexText(author.name)}${
-                                            author.email ?
-                                            `\\thanks{${
-                                                escapeLatexText(author.email)
-                                            }}` :
-                                            ''
-                                        }}`
+                        Object.values(authorsPerAffil).forEach(
+                            affil => {
+                                affil.forEach(
+                                    author => {
+                                        content +=
+                                            `\n\\author{${escapeLatexText(author.name)}${
+                                                author.email ?
+                                                `\\thanks{${
+                                                    escapeLatexText(author.email)
+                                                }}` :
+                                                ''
+                                            }}`
+                                    }
+                                )
+
+                                content += `\n\\affil{${
+                                    affil[0].affiliation ?
+                                    escapeLatexText(affil[0].affiliation) :
+                                    ''
+                                }}`
+                            }
+                        )
+                        this.features.authors = true
+                    } else {
+                        if (!options.madeTitle) {
+                            start += '\n\n\\maketitle\n'
+                            options.madeTitle = true
+                        }
+                        // TODO: deal with contributor lists of non-authors properly
+                        content += node.content.map(
+                            contributorNode => {
+                                const nameParts = []
+                                if (contributorNode.attrs.firstname) {
+                                    nameParts.push(contributorNode.attrs.firstname)
                                 }
-                            )
+                                if (contributorNode.attrs.lastname) {
+                                    nameParts.push(contributorNode.attrs.lastname)
+                                }
+                                if (!nameParts.length && contributorNode.attrs.institution) {
+                                    // We have an institution but no names. Use institution as name.
+                                    nameParts.push(contributorNode.attrs.institution)
+                                }
+                                return nameParts.join(' ')
+                            }
+                        ).join(', ')
 
-                            content += `\n\\affil{${
-                                affil[0].affiliation ?
-                                escapeLatexText(affil[0].affiliation) :
-                                ''
-                            }}`
-                        }
-                    )
-                    this.features.authors = true
+                    }
                     content += "\n\n"
                 }
+
                 break
-            case 'keywords':
+            case 'tags_part':
                 if (node.content) {
-                    start += '\n\\keywords{'
-                    start += node.content.map(
-                        keyword => escapeLatexText(keyword.attrs.keyword)
-                    ).join('\\sep ')
-                    end = '}' + end
-                    this.features.keywords = true
+                    if (node.attrs.metadata === 'keywords') {
+                        start += '\n\\keywords{'
+                        start += node.content.map(
+                            keyword => escapeLatexText(keyword.attrs.tag)
+                        ).join('\\sep ')
+                        end = '}' + end
+                        this.features.keywords = true
+                    } else if (!options.madeTitle) {
+                        start += '\n\n\\maketitle\n'
+                        options.madeTitle = true
+                    }
                 }
                 break
-            case 'keyword':
-                // Ignore - we already took all the keywords from the keywords node.
+            case 'tag':
+                // Ignore - we already took all the tags_part from the keywords node.
                 break
-            case 'abstract':
-                // We add the maketitle command here. TODO: This relies on the
-                // existence of a abstract node, even if it has no content.
-                // It would be better if it wouldn't have to rely on this.
-                start += '\n\n\\maketitle\n'
-                if (node.content) {
+            case 'richtext_part':
+                if (!options.madeTitle) {
+                    start += '\n\n\\maketitle\n'
+                    options.madeTitle = true
+                }
+                if (node.content && node.attrs.metadata === 'abstract') {
                     start += '\n\\begin{abstract}\n'
                     end = '\n\\end{abstract}\n' + end
                 }
                 break
-            case 'body':
+            case 'table_of_contents':
+                start += '\n\n\\tableofcontents\n'
+                break
+            case 'separator_part':
+            case 'table_part':
+                // part separators as in page breaks should usually already be handled
+                // by LaTeX and table parts will simply show the table inside of them.
                 break
             case 'paragraph':
                 start += '\n\n'
                 end = '\n' + end
                 break
-            case 'heading':
-                let level = node.attrs.level
-                switch(level) {
+            case 'heading1':
+            case 'heading2':
+            case 'heading3':
+            case 'heading4':
+            case 'heading5':
+            case 'heading6': {
+                if (options.ignoreHeading) {
+                    break
+                }
+                const level = parseInt(node.type.slice(-1))
+                switch (level) {
                     case 1:
                         start += '\n\n\\section{'
-                        break;
+                        break
                     case 2:
                         start += '\n\n\\subsection{'
-                        break;
+                        break
                     case 3:
                     case 4:
                     case 5:
                     case 6:
                         // TODO: Add support for levels 4/5/6
                         start += '\n\n\\subsubsection{'
-                        break;
+                        break
                 }
                 // Check if this heading is being linked to. If this is the case,
                 // place a protected hypertarget here that does not add an extra
@@ -187,13 +236,14 @@ export class LatexExporterConvert {
                     // Add a link target
                     end = `\\texorpdfstring{\\protect\\hypertarget{${node.attrs.id}}{}}{}` + end
                 }
-                if(!options.onlyFootnoteMarkers) {
+                if (!options.onlyFootnoteMarkers) {
                     placeFootnotesAfterBlock = true
                     options = Object.assign({}, options)
                     options.onlyFootnoteMarkers = true
                     options.unplacedFootnotes = []
                 }
                 break
+            }
             case 'code':
                 start += '\n\\begin{code}\n\n'
                 end = '\n\n\\end{code}\n'
@@ -205,7 +255,7 @@ export class LatexExporterConvert {
             case 'ordered_list':
                 start += '\n\\begin{enumerate}'
                 end = '\n\\end{enumerate}' + end
-                if(!options.onlyFootnoteMarkers) {
+                if (!options.onlyFootnoteMarkers) {
                     placeFootnotesAfterBlock = true
                     options = Object.assign({}, options)
                     options.onlyFootnoteMarkers = true
@@ -215,7 +265,7 @@ export class LatexExporterConvert {
             case 'bullet_list':
                 start += '\n\\begin{itemize}'
                 end = '\n\\end{itemize}' + end
-                if(!options.onlyFootnoteMarkers) {
+                if (!options.onlyFootnoteMarkers) {
                     placeFootnotesAfterBlock = true
                     options = Object.assign({}, options)
                     options.onlyFootnoteMarkers = true
@@ -243,12 +293,13 @@ export class LatexExporterConvert {
                     end = '}' + end
                 }
                 break
-            case 'text':
-                // Check for hyperlink, bold/strong and italic/em
-                let hyperlink, strong, em
+            case 'text': {
+                let strong, em, underline, hyperlink
+                // Check for hyperlink, bold/strong, italic/em and underline
                 if (node.marks) {
                     strong = node.marks.find(mark => mark.type === 'strong')
                     em = node.marks.find(mark => mark.type === 'em')
+                    underline = node.marks.find(mark => mark.type === 'underline')
                     hyperlink = node.marks.find(mark => mark.type === 'link')
                 }
                 if (em) {
@@ -259,8 +310,12 @@ export class LatexExporterConvert {
                     start += '\\textbf{'
                     end = '}' + end
                 }
+                if (underline) {
+                    start += '\\underline{'
+                    end = '}' + end
+                }
                 if (hyperlink) {
-                    let href = hyperlink.attrs.href
+                    const href = hyperlink.attrs.href
                     if (href[0] === '#') {
                         // Internal link
                         start += `\\hyperlink{${href.slice(1)}}{`
@@ -273,20 +328,21 @@ export class LatexExporterConvert {
                 }
                 content += escapeLatexText(node.text)
                 break
-            case 'citation':
-                let references = node.attrs.references
-                let format = node.attrs.format
+            }
+            case 'citation': {
+                const references = node.attrs.references
+                const format = node.attrs.format
                 let citationCommand = '\\' + format
 
                 if (references.length > 1 &&
                     references.every(ref => !ref.locator && !ref.prefix)
                 ) {
                     // multi source citation without page numbers or text before.
-                    let citationEntryKeys = []
+                    const citationEntryKeys = []
 
-                    let allCitationItemsPresent = references.map(ref => ref.id).every(
+                    const allCitationItemsPresent = references.map(ref => ref.id).every(
                         citationEntry => {
-                            let bibDBEntry = this.bibDB.db[citationEntry]
+                            const bibDBEntry = this.bibDB.db[citationEntry]
                             if (bibDBEntry) {
                                 if (!bibDBEntry) {
                                     // Not present in bibliography database, skip it.
@@ -294,7 +350,7 @@ export class LatexExporterConvert {
                                     return false
                                 }
                                 if (!this.usedBibDB[citationEntry]) {
-                                    let citationKey = this.createUniqueCitationKey(
+                                    const citationKey = this.createUniqueCitationKey(
                                         bibDBEntry.entry_key
                                     )
                                     this.usedBibDB[citationEntry] = Object.assign({}, bibDBEntry)
@@ -315,9 +371,9 @@ export class LatexExporterConvert {
                         citationCommand += 's' // Switching from \autocite to \autocites
                     }
 
-                    let allCitationItemsPresent = references.every(
+                    const allCitationItemsPresent = references.every(
                         ref => {
-                            let bibDBEntry = this.bibDB.db[ref.id]
+                            const bibDBEntry = this.bibDB.db[ref.id]
                             if (!bibDBEntry) {
                                 // Not present in bibliography database, skip it.
                                 // TODO: Throw an error?
@@ -336,7 +392,7 @@ export class LatexExporterConvert {
                             citationCommand += '{'
 
                             if (!this.usedBibDB[ref.id]) {
-                                let citationKey = this.createUniqueCitationKey(
+                                const citationKey = this.createUniqueCitationKey(
                                     bibDBEntry.entry_key
                                 )
                                 this.usedBibDB[ref.id] = Object.assign({}, bibDBEntry)
@@ -358,50 +414,74 @@ export class LatexExporterConvert {
                     this.features.citations = true
                 }
                 break
-            case 'figure':
-                let figureType = node.attrs.figureCategory,
-                    caption = node.attrs.caption,
-                    innerFigure = ''
+            }
+            case 'figure': {
+                const figureType = node.attrs.figureCategory
+                const caption = node.attrs.caption
+                let innerFigure = ''
+                let aligned = 'left'
+                if (node.attrs.width !== '100') {
+                    aligned = node.attrs.aligned
+                }
+                if (aligned === 'center') {
+                    start += '\n\n\\begin{center}'
+                    end = '\n\n\\end{center}\n' + end
+                } else if (aligned === 'right') {
+                    start += '\n\n{\\raggedleft' // This is not a typo - raggedleft = aligned: right
+                    end = '\n\n}\n'
+                } // aligned === 'left' is default
                 if (node.attrs.image) {
                     this.imageIds.push(node.attrs.image)
-                    let imageDBEntry = this.imageDB.db[node.attrs.image],
+                    const imageDBEntry = this.imageDB.db[node.attrs.image],
                         filePathName = imageDBEntry.image,
-                        filename = filePathName.split('/').pop(),
-                        latexPackage
+                        filename = filePathName.split('/').pop()
                     if (filename.split('.').pop() === 'svg') {
-                        latexPackage = 'includesvg'
+                        innerFigure += `\\includesvg[width=${parseInt(node.attrs.width)/100}\\textwidth]{${filename}}\n`
                         this.features.SVGs = true
                     } else {
-                        latexPackage = 'scaledgraphics'
+                        innerFigure += `\\scaledgraphics{${filename}}{${parseInt(node.attrs.width)/100}}\n`
                         this.features.images = true
                     }
-                    innerFigure += `\\${latexPackage}{${filename}}\n`
                 } else {
-                    let equation = node.attrs.equation
+                    const equation = node.attrs.equation
                     innerFigure += `\\begin{displaymath}\n${equation}\n\\end{displaymath}\n`
                 }
                 if (figureType==='table') {
                     start += `\n\\begin{table}\n`
                     content += `\\caption{${caption}}\n${innerFigure}`
-                    end += `\\end{table}\n`
+                    end = `\\end{table}\n` + end
                 } else { // TODO: handle photo figure types in a special way
                     start += `\n\\begin{figure}\n`
                     content += `${innerFigure}\\caption{${caption}}\n`
-                    end += `\\end{figure}\n`
+                    end = `\\end{figure}\n` + end
                 }
                 if (this.internalLinks.includes(node.attrs.id)) {
                     // Add a link target
                     end = `\\texorpdfstring{\\protect\\hypertarget{${node.attrs.id}}{}}{}\n` + end
                 }
                 break
+            }
             case 'table':
-                if(node.content && node.content.length) {
-                    let columns = node.content[0].content.reduce(
+                if (node.content && node.content.length) {
+                    const columns = node.content[0].content.reduce(
                         (columns, node) => columns + node.attrs.colspan,
                         0
                     )
-                    start += `\n\n\\begin{tabularx}{\\textwidth}{ |${'X|'.repeat(columns)} }\n\\hline\n\n`
-                    end += `\\hline\n\n\\end{tabularx}`
+                    let aligned = 'left'
+                    if (node.attrs.width !== '100') {
+                        aligned = node.attrs.aligned
+                    }
+                    if (aligned === 'center') {
+                        start += '\n\n\\begin{center}'
+                        end = '\n\n\\end{center}\n' + end
+                    } else if (aligned === 'right') {
+                        start += '\n\n{\\raggedleft' // This is not a typo - raggedleft = aligned: right
+                        end = '\n\n}\n'
+                    } // aligned === 'left' is default
+                    start += `\n\n\\begin{tabu} to ${
+                        node.attrs.width === '100' ? '' : parseInt(node.attrs.width)/100
+                    }\\textwidth { |${'X|'.repeat(columns)} }\n\\hline\n\n`
+                    end = `\\hline\n\n\\end{tabu}` + end
                     this.features.tables = true
                 }
                 break
@@ -430,7 +510,6 @@ export class LatexExporterConvert {
                 content += '\n\n'
                 break
             default:
-                console.warn('Unhandled node type:' + node.type)
                 break
         }
 
@@ -471,7 +550,7 @@ export class LatexExporterConvert {
     // So here we need to make sure that the same key is not used twice in one
     // document.
     createUniqueCitationKey(suggestedKey) {
-        let usedKeys = Object.keys(this.usedBibDB).map(key=>{
+        const usedKeys = Object.keys(this.usedBibDB).map(key=>{
             return this.usedBibDB[key].entry_key
         })
         if (usedKeys.includes(suggestedKey)) {
@@ -488,7 +567,7 @@ export class LatexExporterConvert {
         .replace(/\\end{code}\n\n\\begin{code}\n\n/g, '')
         .replace(/\\end{quote}\n\n\\begin{quote}\n\n/g, '')
         // Remove the last divider in any any table row.
-        .replace(/&  \\\\/g, '\\\\')
+        .replace(/& {2}\\\\/g, '\\\\')
         // Remove new lines between table cells.
         .replace(/\n & \n\n/g, ' & ')
         // Remove new lines within itemization
@@ -504,7 +583,7 @@ export class LatexExporterConvert {
     }
 
     assemblePreamble() {
-        let preamble = '\n\\usepackage[utf8]{luainputenc}'
+        let preamble = ''
 
         if (this.features.subtitle) {
             preamble += `
@@ -557,16 +636,16 @@ export class LatexExporterConvert {
             preamble += `
                 \n\\usepackage{calc}
                 \n\\newlength{\\imgwidth}
-                \n\\newcommand\\scaledgraphics[1]{%
+                \n\\newcommand\\scaledgraphics[2]{%
                 \n\\settowidth{\\imgwidth}{\\includegraphics{#1}}%
-                \n\\setlength{\\imgwidth}{\\minof{\\imgwidth}{\\textwidth}}%
+                \n\\setlength{\\imgwidth}{\\minof{\\imgwidth}{#2\\textwidth}}%
                 \n\\includegraphics[width=\\imgwidth,height=\\textheight,keepaspectratio]{#1}%
                 \n}
             `
         }
 
         if (this.features.tables) {
-            preamble += '\n\\usepackage{tabularx}'
+            preamble += '\n\\usepackage{tabu}'
         }
         if (this.features.rowspan) {
             preamble += '\n\\usepackage{multirow}'

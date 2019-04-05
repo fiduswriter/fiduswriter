@@ -21,11 +21,11 @@ export class ImageOverviewCategories {
         ).catch(
             error => {
                 addAlert('error', gettext('Could not update categories'))
-                throw(error)
+                throw (error)
             }
         ).then(
             ({json}) => {
-                this.imageOverview.imageDB.cats = json.entries
+                this.imageOverview.app.imageDB.cats = json.entries
                 this.setImageCategoryList(json.entries)
                 addAlert('success', gettext('The categories have been updated'))
                 deactivateWait()
@@ -34,14 +34,14 @@ export class ImageOverviewCategories {
     }
 
     setImageCategoryList(imageCategories) {
-        let catSelector = this.imageOverview.menu.model.content.find(menuItem => menuItem.id === 'cat_selector')
+        const catSelector = this.imageOverview.menu.model.content.find(menuItem => menuItem.id === 'cat_selector')
         catSelector.content = catSelector.content.filter(cat => cat.type !== 'category')
         catSelector.content = catSelector.content.concat(
             imageCategories.map(cat => ({
                 type: 'category',
                 title: cat.category_title,
-                action: overview => {
-                    let trs = document.querySelectorAll('#bibliography > tbody > tr')
+                action: _overview => {
+                    const trs = document.querySelectorAll('#bibliography > tbody > tr')
                     trs.forEach(tr => {
                         if (tr.classList.contains(`cat_${cat.id}`)) {
                             tr.style.display = ''
@@ -57,17 +57,17 @@ export class ImageOverviewCategories {
 
     //open a dialog for editing categories
     editCategoryDialog() {
-        let buttons = [
+        const buttons = [
             {
                 text: gettext('Submit'),
                 classes: "fw-dark",
                 click: () => {
-                    let cats = {
+                    const cats = {
                         'ids': [],
                         'titles': []
                     }
                     document.querySelectorAll('#editCategories .category-form').forEach(el => {
-                        let thisVal = el.value.trim()
+                        const thisVal = el.value.trim()
                         let thisId = el.dataset.id
                         if ('undefined' == typeof (thisId)) thisId = 0
                         if ('' !== thisVal) {
@@ -84,11 +84,11 @@ export class ImageOverviewCategories {
             }
         ]
 
-        let dialog = new Dialog({
+        const dialog = new Dialog({
             id: 'editCategories',
             title: gettext('Edit Categories'),
             body: usermediaEditcategoriesTemplate({
-                categories: this.imageOverview.imageDB.cats
+                categories: this.imageOverview.app.imageDB.cats
             }),
             width: 350,
             height: 350,

@@ -21,7 +21,7 @@ export class CommentEditor {
         this.plugins = [
             history(),
             suggestionsPlugin({
-                escapeOnSelectionChange: true ,
+                escapeOnSelectionChange: true,
                 matcher: triggerCharacter('@'),
                 onEnter: (args) => {
                     this.selectedTag = 0
@@ -41,11 +41,11 @@ export class CommentEditor {
                         this.showUserTagger()
                     }
                 },
-                onExit: (args) => {
+                onExit: (_args) => {
                     this.selectedTag = 0
                     this.removeTagger()
                 },
-                onKeyDown: ({view, event}) => {
+                onKeyDown: ({event}) => {
                     if (event.key === 'ArrowDown') {
                         if (this.userTaggerList.length > this.selectedTag + 1) {
                             this.selectedTag += 1

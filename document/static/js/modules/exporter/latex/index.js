@@ -6,7 +6,6 @@ import {removeHidden, fixTables} from "../tools/doc_contents"
 import {LatexExporterConvert} from "./convert"
 import {ZipFileCreator} from "../tools/zip"
 import {readMe} from "./readme"
-
 /*
  Exporter to LaTeX
 */
@@ -28,7 +27,7 @@ export class LatexExporter {
         this.converter = new LatexExporterConvert(this, this.imageDB, this.bibDB)
         this.conversion = this.converter.init(this.docContents)
         if (Object.keys(this.conversion.usedBibDB).length > 0) {
-            let bibExport = new BibLatexExporter(this.conversion.usedBibDB)
+            const bibExport = new BibLatexExporter(this.conversion.usedBibDB)
             this.textFiles.push({filename: 'bibliography.bib', contents: bibExport.parse()})
         }
         this.textFiles.push({filename: 'document.tex', contents: this.conversion.latex})
@@ -42,7 +41,7 @@ export class LatexExporter {
             }
         )
 
-        let zipper = new ZipFileCreator(
+        const zipper = new ZipFileCreator(
             this.textFiles,
             this.httpFiles
         )

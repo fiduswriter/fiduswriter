@@ -75,14 +75,14 @@ export class XmlZip {
 
     // Put all currently open XML files into zip.
     allXMLToZip() {
-        for (let fileName in this.docs) {
+        for (const fileName in this.docs) {
             this.xmlToZip(fileName)
         }
     }
 
     // Put all extra files into zip.
     allExtraToZip() {
-        for (let fileName in this.extraFiles) {
+        for (const fileName in this.extraFiles) {
             this.zip.file(fileName, this.extraFiles[fileName])
         }
     }

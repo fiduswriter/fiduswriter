@@ -7,17 +7,20 @@ import {menuModel} from "./menu"
 import {activateWait, deactivateWait, addAlert, postJson, OverviewMenuView, findTarget, whenReady, escapeText, localizeDate, baseBodyTemplate, ensureCSS, setDocTitle} from "../../common"
 import {SiteMenu} from "../../menu"
 import {FeedbackTab} from "../../feedback"
-
+import {
+    docSchema
+} from "../../schema/document"
 /*
 * Helper functions for the document overview page.
 */
 
 export class DocumentOverview {
 
-    constructor ({app, user, staticUrl}) {
+    constructor({app, user, staticUrl}) {
         this.app = app
         this.user = user
         this.staticUrl = staticUrl
+        this.schema = docSchema
         this.documentList = []
         this.teamMembers = []
         this.accessRights = []
@@ -27,7 +30,7 @@ export class DocumentOverview {
     init() {
         whenReady().then(() => {
             this.render()
-            let smenu = new SiteMenu("documents")
+            const smenu = new SiteMenu("documents")
             smenu.init()
             new DocumentOverviewActions(this)
             this.menu = new OverviewMenuView(this, menuModel)
@@ -56,7 +59,8 @@ export class DocumentOverview {
 
     bind() {
         document.body.addEventListener('click', event => {
-            let el = {}, docId
+            const el = {}
+            let docId
             switch (true) {
                 case findTarget(event, '.revisions', el):
                     docId = parseInt(el.target.dataset.id)
@@ -75,12 +79,6 @@ export class DocumentOverview {
                         newAccessRights => this.accessRights = newAccessRights,
                         memberDetails => this.teamMembers.push(memberDetails)
                     )
-                    break
-                case findTarget(event, 'a', el):
-                    if (el.target.hostname === window.location.hostname && el.target.getAttribute('href')[0] === '/') {
-                        event.preventDefault()
-                        this.app.goTo(el.target.href)
-                    }
                     break
                 default:
                     break
@@ -107,11 +105,11 @@ export class DocumentOverview {
         ).catch(
             error => {
                 addAlert('error', gettext('Cannot load data of documents.'))
-                throw(error)
+                throw (error)
             }
         ).then(
             ({json}) => {
-                let ids = new Set()
+                const ids = new Set()
                 this.documentList = json.documents.filter(doc => {
                     if (ids.has(doc.id)) {return false}
                     ids.add(doc.id)
@@ -124,8 +122,12 @@ export class DocumentOverview {
                 this.citationLocales = json.citation_locales
                 this.documentStyles = json.document_styles
                 this.exportTemplates = json.export_templates
+                this.documentTemplates = json.document_templates
                 this.initTable()
                 this.addExportTemplatesToMenu()
+                if (this.documentTemplates.length > 1) {
+                    this.multipleNewDocumentMenuItem()
+                }
             }
         ).then(
             () => deactivateWait()
@@ -135,14 +137,14 @@ export class DocumentOverview {
 
     /* Initialize the overview table */
     initTable() {
-        let tableEl = document.createElement('table')
+        const tableEl = document.createElement('table')
         tableEl.classList.add('fw-document-table')
         tableEl.classList.add('fw-large')
         document.querySelector('.fw-contents').appendChild(tableEl)
         this.table = new DataTable(tableEl, {
             searchable: true,
             paging: false,
-            scrollY: "calc(100vh - 320px)",
+            scrollY: "calc(100vh - 220px)",
             labels: {
                 noRows: gettext("No documents available") // Message shown when there are no search results
             },
@@ -150,7 +152,7 @@ export class DocumentOverview {
                 top: ""
             },
             data: {
-                headings: ['','&emsp;&emsp;', gettext("Title"), gettext("Revisions"), gettext("Created"), gettext("Last changed"), gettext("Owner"), gettext("Rights"), ''],
+                headings: ['', '&emsp;&emsp;', gettext("Title"), gettext("Revisions"), gettext("Created"), gettext("Last changed"), gettext("Owner"), gettext("Rights"), ''],
                 data: this.documentList.map(doc => this.createTableRow(doc))
             },
             columns: [
@@ -159,7 +161,7 @@ export class DocumentOverview {
                     hidden: true
                 },
                 {
-                    select: [1,3,7,8],
+                    select: [1, 3, 7, 8],
                     sortable: false
                 }
             ]
@@ -199,7 +201,7 @@ export class DocumentOverview {
                     data-title="${escapeText(doc.title)}">
                 ${
                     this.user.id === doc.owner.id ?
-                    '<i class="fa fa-trash-o"></i>' :
+                    '<i class="fa fa-trash-alt"></i>' :
                     ''
                 }
             </span>`
@@ -207,8 +209,8 @@ export class DocumentOverview {
     }
 
     removeTableRows(ids) {
-        let existingRows = this.table.data.map((data, index) => {
-            let id = parseInt(data.cells[0].textContent)
+        const existingRows = this.table.data.map((data, index) => {
+            const id = parseInt(data.cells[0].textContent)
             if (ids.includes(id)) {
                 return index
             } else {
@@ -228,15 +230,15 @@ export class DocumentOverview {
     }
 
     addExportTemplatesToMenu() {
-        let docSelectMenuItem = this.menu.model.content.find(menuItem => menuItem.id='doc_selector')
+        const docSelectMenuItem = this.menu.model.content.find(menuItem => menuItem.id='doc_selector')
         this.exportTemplates.forEach(template => {
             docSelectMenuItem.content.push({
                 title: `${gettext('Export selected as: ')} ${template.file_name} (${template.file_type})`,
                 action: overview => {
-                    let ids = overview.getSelected()
+                    const ids = overview.getSelected()
                     if (ids.length) {
-                        let fileType = template.file_type
-                        let templateUrl = template.template_file
+                        const fileType = template.file_type
+                        const templateUrl = template.template_file
                         this.mod.actions.downloadTemplateExportFiles(ids, templateUrl, fileType)
                     }
                 }
@@ -245,10 +247,26 @@ export class DocumentOverview {
         this.menu.update()
     }
 
+    multipleNewDocumentMenuItem() {
+
+        const menuItem = this.menu.model.content.find(menuItem => menuItem.id==='new_document')
+        menuItem.type = 'dropdown'
+        menuItem.content = this.documentTemplates.map(docTemplate => ({
+            title: docTemplate.title,
+            action: () => this.goToNewDocument(`n${docTemplate.id}`)
+        }))
+        this.menu.update()
+
+    }
+
     getSelected() {
         return Array.from(
             document.querySelectorAll('.entry-select:checked:not(:disabled)')
         ).map(el => parseInt(el.getAttribute('data-id')))
+    }
+
+    goToNewDocument(id) {
+        this.app.goTo(`/document/${id}/`)
     }
 
 }

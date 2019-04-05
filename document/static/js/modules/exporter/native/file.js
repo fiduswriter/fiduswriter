@@ -13,10 +13,10 @@ export class ExportFidusFile {
     }
 
     init() {
-        let shrinker = new ShrinkFidus(this.doc, this.imageDB, this.bibDB)
+        const shrinker = new ShrinkFidus(this.doc, this.imageDB, this.bibDB)
         return shrinker.init().then(
             ({doc, shrunkImageDB, shrunkBibDB, httpIncludes}) => {
-                let zipper = new ZipFidus(doc, shrunkImageDB, shrunkBibDB, httpIncludes)
+                const zipper = new ZipFidus(doc, shrunkImageDB, shrunkBibDB, httpIncludes)
                 return zipper.init()
             }
         ).then(

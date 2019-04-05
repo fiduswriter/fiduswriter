@@ -50,8 +50,8 @@ export class ConfirmAccount {
                 }
             }
         ))
-        let submissionButton = document.getElementById('submit')
-        submissionButton.addEventListener('click', event => {
+        const submissionButton = document.getElementById('submit')
+        submissionButton.addEventListener('click', () => {
             if (!this.submissionReady) {
                 return
             }
@@ -78,12 +78,12 @@ export class ConfirmAccount {
     }
 
     setFormHTML() {
-        let contentsDOM = document.querySelector('.fw-contents')
+        const contentsDOM = document.querySelector('.fw-contents')
         contentsDOM.innerHTML = confirmAccountTemplate({confirmationData: this.confirmationData, confirmQuestionsTemplates: this.confirmQuestionsTemplates})
     }
 
     setVerifiedHTML() {
-        let contentsDOM = document.querySelector('.fw-contents')
+        const contentsDOM = document.querySelector('.fw-contents')
         contentsDOM.innerHTML = verifiedAccountTemplate()
     }
 

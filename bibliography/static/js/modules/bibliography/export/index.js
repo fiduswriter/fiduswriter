@@ -10,9 +10,9 @@ export class BibLatexFileExporter {
     }
 
     init() {
-        let exporter = new BibLatexExporter(this.bibDB.db, this.pks)
+        const exporter = new BibLatexExporter(this.bibDB.db, this.pks)
 
-        let zipper = new ZipFileCreator(
+        const zipper = new ZipFileCreator(
             [{
                 'filename': 'bibliography.bib',
                 'contents': exporter.output

@@ -1,6 +1,6 @@
 import {localizeDate, escapeText} from "../../common"
 import {serializeComment} from "../comments/editors"
-
+import {serializeHelp} from "../../document_template"
 
 /** A template for an answer to a comment */
 const answerCommentTemplate = ({
@@ -10,10 +10,9 @@ const answerCommentTemplate = ({
         activeCommentAnswerId,
         active,
         user,
-        docInfo,
         staticUrl
     }) =>
-    `<div class="comment-item comment-answer">
+    `<div class="comment-item comment-answer" id="comment-answer-${answer.id}">
         <div class="comment-user">
             <img class="comment-user-avatar" src="${author ? author.avatar : `${staticUrl}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
             <h5 class="comment-user-name">${escapeText(author ? author.name : answer.username)}</h5>
@@ -53,7 +52,6 @@ const singleCommentTemplate = ({
         author,
         active,
         editComment,
-        user,
         staticUrl
     }) =>
     `<div class="comment-item">
@@ -87,6 +85,14 @@ const firstCommentTemplate = ({
             <div id="comment-editor"></div>
         </div>
     </div>`
+
+const helpTemplate = ({help, filterOptions}) => {
+    if (!filterOptions.help) {
+        return '<div class="margin-box help hidden"></div>'
+    } else {
+        return `<div class="margin-box help ${help.active ? 'active' : ''}"><div class="help-text-wrapper">${serializeHelp(help.help)}</div></div>`
+    }
+}
 
 
 const commentTemplate = ({comment, view, active, editComment, activeCommentAnswerId, user, docInfo, filterOptions, staticUrl}) => {
@@ -144,7 +150,7 @@ const commentTemplate = ({comment, view, active, editComment, activeCommentAnswe
     }
     ${
         active && !activeCommentAnswerId && !editComment && 0 < comment.comment.length ?
-        `<div class="comment-answer">
+        `<div class="comment-item comment-answer">
             <div id="answer-editor"></div>
         </div>` :
         ''
@@ -229,7 +235,8 @@ const ACTIONS = {
 
 const FORMAT_MARK_NAMES = {
     'em': gettext('Emphasis'),
-    'strong': gettext('Strong')
+    'strong': gettext('Strong'),
+    'underline': gettext('Underline')
 }
 
 const formatChangeTemplate = ({before, after}) => {
@@ -245,11 +252,16 @@ const formatChangeTemplate = ({before, after}) => {
 
 const BLOCK_NAMES = {
     paragraph: gettext('Paragraph'),
-    heading: gettext('Heading %(level)s'),
+    heading1: gettext('Heading 1'),
+    heading2: gettext('Heading 2'),
+    heading3: gettext('Heading 3'),
+    heading4: gettext('Heading 4'),
+    heading5: gettext('Heading 5'),
+    heading6: gettext('Heading 6'),
     code_block: gettext('Code block')
 }
 
-const blockChangeTemplate = ({before}) => `<div class="format-change-info"><b>${gettext('Was')}:</b> ${interpolate(BLOCK_NAMES[before.type], before.attrs, true)}</div>`
+const blockChangeTemplate = ({before}) => `<div class="format-change-info"><b>${gettext('Was')}:</b> ${BLOCK_NAMES[before.type]}</div>`
 
 const trackTemplate = ({type, data, node, pos, view, active, docInfo, filterOptions, staticUrl}) => {
     if (!filterOptions.track) {
@@ -294,6 +306,7 @@ const trackTemplate = ({type, data, node, pos, view, active, docInfo, filterOpti
 export const marginboxFilterTemplate = ({marginBoxes, filterOptions, docInfo}) => {
     const comments = marginBoxes.find(box => box.type==='comment')
     const tracks = marginBoxes.find(box => ['insertion', 'deletion', 'format_change', 'block_change'].includes(box.type))
+    const help = marginBoxes.find(box => box.type==='help')
     let filterHTML = ''
     if (comments) {
         filterHTML += `<div id="margin-box-filter-comments" class="margin-box-filter-button${filterOptions.comments ? '' : ' disabled'}">
@@ -351,6 +364,11 @@ export const marginboxFilterTemplate = ({marginBoxes, filterOptions, docInfo}) =
             <span class="label">${gettext('Track changes')}</span>
         </div>`
     }
+    if (help) {
+        filterHTML += `<div id="margin-box-filter-help" class="margin-box-filter-button${filterOptions.help ? '' : ' disabled'}">
+            <span class="label">${gettext('Instructions')}</span>
+        </div>`
+    }
     return filterHTML
 }
 
@@ -365,10 +383,12 @@ export const marginBoxesTemplate = ({
         docInfo,
         filterOptions,
         staticUrl
-    }) => marginBoxes.map(mBox => {
-        switch(mBox.type) {
+    }) => `<div id="margin-box-container"><div>${
+        marginBoxes.map(mBox => {
+        let returnValue = ''
+        switch (mBox.type) {
             case 'comment':
-                return commentTemplate({
+                returnValue = commentTemplate({
                     comment: mBox.data,
                     view: mBox.view,
                     active: mBox.active,
@@ -384,7 +404,7 @@ export const marginBoxesTemplate = ({
             case 'deletion':
             case 'format_change':
             case 'block_change':
-                return trackTemplate({
+                returnValue = trackTemplate({
                     type: mBox.type,
                     node: mBox.node,
                     data: mBox.data,
@@ -396,9 +416,11 @@ export const marginBoxesTemplate = ({
                     staticUrl
                 })
                 break
+            case 'help':
+                return helpTemplate({help: mBox.data, filterOptions})
             default:
-                console.warn(`Unknown margin box type: ${mBox.type}`)
                 break
         }
-        return ''
+        return returnValue
     }).join('')
+    }</div></div>`

@@ -4,7 +4,7 @@ import {ZipFileCreator} from "../tools/zip"
  * The importer will not import from a higher version and the exporter
   * will include this number in all exports.
  */
-export let FW_FILETYPE_VERSION = "2.3"
+export const FW_FILETYPE_VERSION = "3.0"
 
 /** Create a zip blob for a shrunk fidus file.
 */
@@ -18,7 +18,7 @@ export class ZipFidus {
     }
 
     init() {
-        let outputList = [{
+        const outputList = [{
             filename: 'document.json',
             contents: JSON.stringify(this.doc),
         }, {
@@ -32,7 +32,7 @@ export class ZipFidus {
             contents: FW_FILETYPE_VERSION
         }]
 
-        let zipper = new ZipFileCreator(
+        const zipper = new ZipFileCreator(
             outputList,
             this.httpIncludes,
             [],

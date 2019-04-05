@@ -1,5 +1,3 @@
-
-
 from django.contrib import admin
 from usermedia.models import Image, UserImage, ImageCategory, DocumentImage
 

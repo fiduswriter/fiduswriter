@@ -1,3 +1,5 @@
+import {Dialog} from "./dialog"
+
 /** Creates a dropdown box.
  * @param btn The button to open and close the dropdown box.
  * @param box The node containing the contents of the dropdown box.
@@ -8,10 +10,10 @@ export const addDropdownBox = function(btn, box, preopen=false) {
     btn.addEventListener('click', event => {
         event.preventDefault()
         event.stopPropagation()
-        if(btn.classList.contains('disabled')) {
+        if (btn.classList.contains('disabled')) {
             return
         }
-        if(!box.clientWidth) {
+        if (!box.clientWidth) {
             if (preopen) {
                 preopen()
             }
@@ -31,7 +33,7 @@ export const openDropdownBox = function(box) {
     const closeDropdownBox = function(event) {
         event.preventDefault()
         box.style.display = ''
-        document.removeEventListener('click', closeDropdownBox, false);
+        document.removeEventListener('click', closeDropdownBox, false)
     }
     document.body.addEventListener('click', closeDropdownBox, false)
 }
@@ -41,7 +43,7 @@ export const openDropdownBox = function(box) {
  * @param label The node who's parent has to be checked or unchecked.
  */
 export const setCheckableLabel = function(labelEl) {
-    if(labelEl.classList.contains('checked')) {
+    if (labelEl.classList.contains('checked')) {
         labelEl.classList.remove('checked')
     } else {
         labelEl.classList.add('checked')
@@ -71,14 +73,13 @@ export const deactivateWait = function() {
  * @param alertMsg The message text.
  */
 export const addAlert = function(alertType, alertMsg) {
-    const fadeSpeed = 300
     const iconNames = {
         'error': 'exclamation-circle',
         'warning': 'exclamation-circle',
         'info': 'info-circle',
         'success': 'check-circle'
     }
-    if(!document.getElementById('#alerts-outer-wrapper'))
+    if (!document.getElementById('#alerts-outer-wrapper'))
         document.body.insertAdjacentHTML('beforeend', '<div id="alerts-outer-wrapper"><ul id="alerts-wrapper"></ul></div>')
     const alertsWrapper = document.getElementById('alerts-wrapper')
     alertsWrapper.insertAdjacentHTML('beforeend', `<li class="alerts-${alertType} fa fa-${iconNames[alertType]}">${alertMsg}</li>`)
@@ -92,40 +93,59 @@ export const addAlert = function(alertType, alertMsg) {
     }, 1)
 }
 
+// Used for system mesages
+export const showSystemMessage = function(message) {
+    const dialog = new Dialog({
+        title: gettext('System message'),
+        body: `<p>${escapeText(message)}</p>`,
+        buttons: [{type: 'close'}]
+    })
+    dialog.open()
+}
 
 /** Turn milliseconds since epoch (UTC) into a local date string.
  * @param {number} milliseconds Number of milliseconds since epoch (1/1/1970 midnight, UTC).
  * @param {boolean} type 'full' for full date (default), 'sortable-date' for sortable date, 'minutes' for minute accuracy
  */
-export const localizeDate = function (milliseconds, type='full') {
-    milliseconds = parseInt(milliseconds)
-    if (milliseconds > 0) {
-        const theDate = new Date(milliseconds)
-        switch(type) {
-            case 'sortable-date':
-                const yyyy = theDate.getFullYear(),
-                    mm = theDate.getMonth() + 1,
-                    dd = theDate.getDate()
-
-                return `${yyyy}-${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`
-                break
-            case 'minutes':
-                return theDate.toLocaleString([], {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute:'2-digit'})
-                break
-            default:
-                return theDate.toLocaleString()
-        }
-    }
-    else {
+const CACHED_DATES = {
+    'sortable-date': {},
+    'minutes': {},
+    'full': {}
+}
+export const localizeDate = function(milliseconds, type='full') {
+    if (milliseconds === 0) {
         return ''
+    } else if (CACHED_DATES[type][milliseconds]) {
+        return CACHED_DATES[type][milliseconds]
     }
+    const theDate = new Date(milliseconds)
+    let returnValue
+    switch (type) {
+        case 'sortable-date': {
+            const yyyy = theDate.getFullYear()
+            const mm = theDate.getMonth() + 1
+            const dd = theDate.getDate()
+            returnValue = `${yyyy}-${String(mm).padStart(2, '0')}-${String(dd).padStart(2, '0')}`
+            break
+        }
+        case 'minutes':
+            returnValue = theDate.toLocaleString([], {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'})
+            break
+        default:
+            returnValue = theDate.toLocaleString()
+    }
+    if (Object.keys(CACHED_DATES[type]).length > 5000) {
+        CACHED_DATES[type] = {}
+    }
+    CACHED_DATES[type][milliseconds] = returnValue
+    return returnValue
 }
 
 /**
  * Turn string literals into single line, removing spaces at start of line
  */
 
-export const noSpaceTmp = function(strings) {
+export const noSpaceTmp = function(_strings) {
      const values = Array.from(arguments)
      const tmpStrings = Array.from(values.shift())
 
@@ -141,7 +161,7 @@ export const noSpaceTmp = function(strings) {
 
      let out = ""
      combined.split('\n').forEach(line => {
-         out += line.replace(/^\s*/g,'')
+         out += line.replace(/^\s*/g, '')
      })
      return out
  }
@@ -176,7 +196,7 @@ export const whenReady = function() {
         return Promise.resolve()
     } else {
         return new Promise(resolve => {
-            document.addEventListener("readystatechange", event => {
+            document.addEventListener("readystatechange", _event => {
                 if (document.readyState === "complete") {
                     resolve()
                 }

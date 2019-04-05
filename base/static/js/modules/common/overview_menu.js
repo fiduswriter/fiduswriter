@@ -1,12 +1,11 @@
-import diffDOM from "diff-dom"
-import {keydownHandler} from "prosemirror-keymap"
+import {DiffDOM} from "diff-dom"
 import {escapeText, whenReady} from "./basic"
 
 export class OverviewMenuView {
     constructor(overview, model) {
         this.overview = overview
         this.model = model()
-        this.dd = new diffDOM({
+        this.dd = new DiffDOM({
             valueDiffing: false
         })
         this.openedMenu = false
@@ -28,7 +27,7 @@ export class OverviewMenuView {
 
     oninput(event) {
         const target = event.target
-        if(target.matches('#fw-overview-menu > li > .fw-button > input')) {
+        if (target.matches('#fw-overview-menu > li > .fw-button > input')) {
             // A text was enetered in a top entry. we find which one.
             let menuNumber = 0
             let seekItem = target.closest('li')
@@ -45,7 +44,7 @@ export class OverviewMenuView {
 
     onclick(event) {
         const target = event.target
-        if(target.matches('#fw-overview-menu li li, #fw-overview-menu li li *')) {
+        if (target.matches('#fw-overview-menu li li, #fw-overview-menu li li *')) {
             event.preventDefault()
             let itemNumber = 0
             let seekItem = target.closest('li')
@@ -67,7 +66,7 @@ export class OverviewMenuView {
                     this.model.content[menuNumber].content[itemNumber].title
             }
             return false
-        } else if(target.matches('#fw-overview-menu li .select-action input[type=checkbox]')) {
+        } else if (target.matches('#fw-overview-menu li .select-action input[type=checkbox]')) {
             event.preventDefault()
             event.stopImmediatePropagation()
             event.stopPropagation()
@@ -89,7 +88,7 @@ export class OverviewMenuView {
                 menuItem.checkAction(this.overview)
             }
             return true
-        } else if(target.matches('#fw-overview-menu li, #fw-overview-menu li *')) {
+        } else if (target.matches('#fw-overview-menu li, #fw-overview-menu li *')) {
             // A toolbar dropdown menu item was clicked. We just need to
             // find out which one
             let menuNumber = 0
@@ -136,17 +135,14 @@ export class OverviewMenuView {
             // page has not yet been loaded. abort
             return
         }
-        const tempEl = document.createElement('div')
-        tempEl.innerHTML = this.getMenuHTML()
-        const newMenuEl = tempEl.firstElementChild
-        const diff = this.dd.diff(this.menuEl, newMenuEl)
+        const diff = this.dd.diff(this.menuEl, this.getMenuHTML())
         this.dd.apply(this.menuEl, diff)
     }
 
     getMenuHTML() {
         return `<ul id="fw-overview-menu">${
             this.model.content.map(menuItem =>
-                `<li class="fw-overview-menu-item">${
+                `<li class="fw-overview-menu-item${menuItem.id ? ` ${menuItem.id}` : ''}">${
                     this.getMenuItemHTML(menuItem)
                 }</li>`
             ).join('')
@@ -154,23 +150,25 @@ export class OverviewMenuView {
     }
 
     getMenuItemHTML(menuItem) {
-        switch(menuItem.type) {
+        let returnValue
+        switch (menuItem.type) {
             case 'dropdown':
-                return this.getDropdownHTML(menuItem)
+                returnValue = this.getDropdownHTML(menuItem)
                 break
             case 'select-action-dropdown':
-                return this.getSelectionActionDropdownHTML(menuItem)
+                returnValue = this.getSelectionActionDropdownHTML(menuItem)
                 break
             case 'button':
-                return this.getButtonHTML(menuItem)
+                returnValue = this.getButtonHTML(menuItem)
                 break
             case 'search':
-                return this.getSearchHTML(menuItem)
+                returnValue = this.getSearchHTML(menuItem)
                 break
             default:
-                return ''
+                returnValue = ''
                 break
         }
+        return returnValue
     }
 
 

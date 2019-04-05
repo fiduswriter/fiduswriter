@@ -27,7 +27,7 @@ export class ZipFileCreator {
     }
 
     includeZips() {
-        let includePromises = this.zipFiles.map(zipFile => {
+        const includePromises = this.zipFiles.map(zipFile => {
             let zipDir
             if (zipFile.directory === '') {
                 zipDir = this.zipFs
@@ -36,7 +36,7 @@ export class ZipFileCreator {
             }
             return new Promise(
                 resolve => JSZipUtils.getBinaryContent(zipFile.url, (err, contents) => {
-                    zipDir.loadAsync(contents).then(importedZip => {
+                    zipDir.loadAsync(contents).then(_importedZip => {
                         resolve()
                     })
                 })
@@ -52,7 +52,7 @@ export class ZipFileCreator {
         this.textFiles.forEach(textFile => {
             this.zipFs.file(textFile.filename, textFile.contents, {compression: 'DEFLATE'})
         })
-        let httpPromises = this.binaryFiles.map(binaryFile =>
+        const httpPromises = this.binaryFiles.map(binaryFile =>
             new Promise(
                 resolve => {
                     JSZipUtils.getBinaryContent(binaryFile.url, (err, contents) => {

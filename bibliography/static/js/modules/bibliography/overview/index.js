@@ -5,14 +5,12 @@ import {BibLatexImporter} from "../import"
 import {litToText, nameToText} from "../tools"
 import {BibEntryForm} from "../form"
 import {editCategoriesTemplate} from "./templates"
-import {BibliographyDB} from "../database"
 import {BibTypeTitles} from "../form/strings"
 import {SiteMenu} from "../../menu"
-import {OverviewMenuView, findTarget, whenReady, Dialog, baseBodyTemplate, ensureCSS, setDocTitle} from "../../common"
+import {OverviewMenuView, findTarget, whenReady, Dialog, baseBodyTemplate, ensureCSS, setDocTitle, escapeText} from "../../common"
 import {FeedbackTab} from "../../feedback"
 import {menuModel} from "./menu"
 import * as plugins from "../../../plugins/bibliography_overview"
-import {escapeText} from "../../common"
 
 export class BibliographyOverview {
 
@@ -28,11 +26,12 @@ export class BibliographyOverview {
     init() {
         whenReady().then(() => {
             this.render()
-            let smenu = new SiteMenu("bibliography")
+            const smenu = new SiteMenu("bibliography")
             smenu.init()
             this.menu = new OverviewMenuView(this, menuModel)
             this.menu.init()
-            this.getBibDB()
+            this.setBibCategoryList(this.app.bibDB.cats)
+            this.initTable(Object.keys(this.app.bibDB.db))
             this.activatePlugins()
             this.bindEvents()
         })
@@ -54,25 +53,17 @@ export class BibliographyOverview {
         feedbackTab.init()
     }
 
-    /* load data from the bibliography */
-    getBibDB() {
-        this.bibDB = new BibliographyDB()
-        this.bibDB.getDB().then(({bibPKs, bibCats}) => {
-            this.setBibCategoryList(bibCats)
-            this.initTable(bibPKs)
-        })
-    }
 
     /* Initialize the overview table */
     initTable(ids) {
-        let tableEl = document.createElement('table')
+        const tableEl = document.createElement('table')
         tableEl.classList.add('fw-document-table')
         tableEl.classList.add('fw-large')
         document.querySelector('.fw-contents').appendChild(tableEl)
         this.table = new DataTable(tableEl, {
             searchable: true,
             paging: false,
-            scrollY: "calc(100vh - 320px)",
+            scrollY: "calc(100vh - 220px)",
             labels: {
                 noRows: gettext("No sources registered") // Message shown when there are no search results
             },
@@ -80,7 +71,7 @@ export class BibliographyOverview {
                 top: ""
             },
             data: {
-                headings: ['','&emsp;&emsp;', gettext("Title"), gettext("Sourcetype"), gettext("Author"), gettext("Published"), ''],
+                headings: ['', '&emsp;&emsp;', gettext("Title"), gettext("Sourcetype"), gettext("Author"), gettext("Published"), ''],
                 data: ids.map(id => this.createTableRow(id))
             },
             columns: [
@@ -89,7 +80,7 @@ export class BibliographyOverview {
                     hidden: true
                 },
                 {
-                    select: [1,6],
+                    select: [1, 6],
                     sortable: false
                 }
             ]
@@ -106,14 +97,14 @@ export class BibliographyOverview {
      * @param newBibCategories The new categories which will be added to the existing ones.
      */
     setBibCategoryList(bibCategories) {
-        let catSelector = this.menu.model.content.find(menuItem => menuItem.id==='cat_selector')
+        const catSelector = this.menu.model.content.find(menuItem => menuItem.id==='cat_selector')
         catSelector.content = catSelector.content.filter(cat => cat.type !== 'category')
 
         catSelector.content = catSelector.content.concat(bibCategories.map(cat => ({
             title: cat.category_title,
             type: 'category',
-            action: overview => {
-                let trs = document.querySelectorAll('#bibliography > tbody > tr')
+            action: _overview => {
+                const trs = document.querySelectorAll('#bibliography > tbody > tr')
                 trs.forEach(tr => {
                     if (tr.classList.contains(`cat_${cat.id}`)) {
                         tr.style.display = ''
@@ -138,8 +129,8 @@ export class BibliographyOverview {
     }
 
     createTableRow(id) {
-        let bibInfo = this.bibDB.db[id]
-        let bibauthors = bibInfo.fields.author || bibInfo.fields.editor
+        const bibInfo = this.app.bibDB.db[id]
+        const bibauthors = bibInfo.fields.author || bibInfo.fields.editor
         return [
             String(id),
             `<input type="checkbox" class="entry-select" data-id="${id}">`, // checkbox
@@ -152,13 +143,13 @@ export class BibliographyOverview {
             BibTypeTitles[bibInfo.bib_type], // sourcetype
             bibauthors ? nameToText(bibauthors) : '', // author
             `<span class="date">${bibInfo.fields.date ? bibInfo.fields.date.replace('/', ' ') : ''}</span>`, // published,
-            `<span class="delete-bib fw-link-text" data-id="${id}"><i class="fa fa-trash-o">&nbsp;&nbsp;</i></span>` // delete icon
+            `<span class="delete-bib fw-link-text" data-id="${id}"><i class="fa fa-trash-alt">&nbsp;&nbsp;</i></span>` // delete icon
         ]
     }
 
     removeTableRows(ids) {
-        let existingRows = this.table.data.map((data, index) => {
-            let id = parseInt(data.cells[0].textContent)
+        const existingRows = this.table.data.map((data, index) => {
+            const id = parseInt(data.cells[0].textContent)
             if (ids.includes(id)) {
                 return index
             } else {
@@ -174,8 +165,8 @@ export class BibliographyOverview {
     /** Opens a dialog for editing categories.
      * @function editCategoriesDialog
      */
-    editCategoriesDialog () {
-        let buttons = [
+    editCategoriesDialog() {
+        const buttons = [
             {
                 text: gettext('Submit'),
                 classes: "fw-dark",
@@ -184,7 +175,7 @@ export class BibliographyOverview {
                     document.querySelectorAll('#editCategories .category-form').forEach(
                         el => {
                             const title = el.value.trim()
-                            if(title.length) {
+                            if (title.length) {
                                 cats.ids.push(parseInt(el.getAttribute('data-id') || 0))
                                 cats.titles.push(title)
                             }
@@ -199,13 +190,13 @@ export class BibliographyOverview {
             }
         ]
 
-        let dialog = new Dialog({
+        const dialog = new Dialog({
             id: 'editCategories',
             width: 350,
             height: 350,
             title: gettext('Edit Categories'),
             body: editCategoriesTemplate({
-                categories: this.bibDB.cats
+                categories: this.app.bibDB.cats
             }),
             buttons
         })
@@ -218,7 +209,7 @@ export class BibliographyOverview {
           * @param ids Ids of items that are to be deleted.
      */
     deleteBibEntryDialog(ids) {
-        let buttons = [
+        const buttons = [
             {
                 text: gettext('Delete'),
                 class: "fw-dark",
@@ -232,7 +223,7 @@ export class BibliographyOverview {
             }
         ]
 
-        let dialog = new Dialog({
+        const dialog = new Dialog({
             id: 'confirmdeletion',
             title: gettext('Confirm deletion'),
             body: `<p>${gettext('Delete the bibliography item(s)')}?</p>`,
@@ -267,7 +258,8 @@ export class BibliographyOverview {
           */
     bindEvents() {
         document.body.addEventListener('click', event => {
-            let el = {}, bookId
+            const el = {}
+            let bookId, form, itemEl
             switch (true) {
                 case findTarget(event, '.delete-bib', el):
                     bookId = parseInt(el.target.dataset.id)
@@ -275,16 +267,16 @@ export class BibliographyOverview {
                     break
                 case findTarget(event, '.edit-bib', el):
                     bookId = parseInt(el.target.dataset.id)
-                    let form = new BibEntryForm(this.bibDB, bookId)
+                    form = new BibEntryForm(this.app.bibDB, bookId)
                     form.init().then(
                         idTranslations => {
-                            let ids = idTranslations.map(idTrans => idTrans[1])
+                            const ids = idTranslations.map(idTrans => idTrans[1])
                             return this.updateTable(ids)
                         }
                     )
                     break
                 case findTarget(event, '.fw-add-input', el):
-                    let itemEl = el.target.closest('.fw-list-input')
+                    itemEl = el.target.closest('.fw-list-input')
                     if (!itemEl.nextElementSibling) {
                         itemEl.insertAdjacentHTML(
                             'afterend',
@@ -299,12 +291,6 @@ export class BibliographyOverview {
                         itemEl.parentElement.removeChild(itemEl)
                     }
                     break
-                case findTarget(event, 'a', el):
-                    if (el.target.hostname === window.location.hostname && el.target.getAttribute('href')[0] === '/') {
-                        event.preventDefault()
-                        this.app.goTo(el.target.href)
-                    }
-                    break
                 default:
                     break
             }
@@ -316,7 +302,7 @@ export class BibliographyOverview {
                 // We are inside of an input element, cancel.
                 return false
             }
-            let text = event.clipboardData.getData('text')
+            const text = event.clipboardData.getData('text')
             return this.getBibtex(text)
         })
 
@@ -339,7 +325,7 @@ export class BibliographyOverview {
                 // We are inside of an input element, cancel.
                 return false
             }
-            let text = fixUTF8(event.dataTransfer.getData('text'))
+            const text = fixUTF8(event.dataTransfer.getData('text'))
             return this.getBibtex(text)
         })
     }
@@ -348,7 +334,7 @@ export class BibliographyOverview {
     getBibtex(text) {
         const importer = new BibLatexImporter(
             text,
-            this.bibDB,
+            this.app.bibDB,
             newIds => this.updateTable(newIds),
             false,
             this.staticUrl
@@ -359,11 +345,11 @@ export class BibliographyOverview {
 
 
     saveCategories(cats) {
-        this.bibDB.saveCategories(cats).then(bibCats => this.setBibCategoryList(bibCats))
+        this.app.bibDB.saveCategories(cats).then(bibCats => this.setBibCategoryList(bibCats))
     }
 
     deleteBibEntries(ids) {
-        this.bibDB.deleteBibEntries(ids).then(ids => this.removeTableRows(ids))
+        this.app.bibDB.deleteBibEntries(ids).then(ids => this.removeTableRows(ids))
     }
 
 }

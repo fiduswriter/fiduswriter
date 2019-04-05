@@ -1,4 +1,4 @@
-<!DOCTYPE html>{% load i18n %}{% load compress %}{% load transpile %}
+<!DOCTYPE html>{% load i18n %}{% load compress %}{% load transpile %}{% load fiduswriter %}
 <html class="fw-basic-text">
     <head>
         <meta charset="utf-8" />
@@ -25,7 +25,7 @@
             <link type="text/css" rel="stylesheet" href="{% static "css/dropkick.css" %}" />
             <link type="text/css" rel="stylesheet" href="{% static "css/ui_tabs.css" %}" />
             <!-- Font Awesome -->
-            <link type="text/css" rel="stylesheet" href="{% static "css/font-awesome.css" %}" />
+            <link type="text/css" rel="stylesheet" href="{% static "fontawesome/css/all.css" %}" />
         {% endcompress %}
 
         <!-- layout styles -->
@@ -35,10 +35,12 @@
         <link rel="stylesheet" href="{% static "css/registration.css" %}" type="text/css" />
         {% endcompress %}
         <!-- Check browser -->
-        <script type="text/javascript" src="{% static "js/browser_check.mjs" %}"></script>
+        <script type="text/javascript" src="{% static "js/browser_check.mjs" %}" crossorigin="anonymous"></script>
         <!-- JS error handling -->
         <script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>
+        {% fiduswriter_config_js %}
         <script type="text/javascript" src="/jsi18n/"></script>
+
         {% block extraheaders %}{% endblock %}
     </head>
     <body>
@@ -47,16 +49,14 @@
         </div>
         <header class="fw-header">
             <div class="fw-container">
-                <h1 class="fw-login-logo">
-                    <a href="/"><img src="{% static "img/logo.png" %}" alt="Logo" title="Fiduswriter" width="231" height="39" /></a>
-                </h1>
+                <h1 class="fw-login-logo"><span class="fw-logo-text"></span><img src="{% static "svg/icon.svg" %}" /></h1>
                 <nav class="fw-header-nav">
                     <label for="login-btn">{% block loginlabel %}{% endblock %}</label>
                     <a class="fw-button fw-orange fw-uppercase" href="{% block loginhref %}{% url 'account_login' %}{% endblock %}">{% block loginbtn %}{% trans "Log In" %}{% endblock %}</a>
                 </nav>
             </div>
     <!--Add free star-->
-    <div style="width:961px;position:relative;margin:0 auto;"><img src="{% static "img/free_star.png" %}" style="position:absolute;top:0px;left:0px;z-index:3;height:73px;"></div>
+    <div class="star" style="width:961px;position:relative;margin:0 auto;"><img src="{% static "img/free_star.png" %}" style="position:absolute;top:0px;left:0px;z-index:3;height:73px;"></div>
         </header>
 
         <div class="fw-contents">

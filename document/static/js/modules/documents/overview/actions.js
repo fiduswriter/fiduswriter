@@ -11,13 +11,13 @@ import {DocumentRevisionsDialog} from "../revisions"
 import {activateWait, deactivateWait, addAlert, postJson, Dialog} from "../../common"
 
 export class DocumentOverviewActions {
-    constructor (documentOverview) {
+    constructor(documentOverview) {
         documentOverview.mod.actions = this
         this.documentOverview = documentOverview
     }
 
     deleteDocument(id) {
-        let doc = this.documentOverview.documentList.find(doc => doc.id === id)
+        const doc = this.documentOverview.documentList.find(doc => doc.id === id)
         if (!doc) {
             return
         }
@@ -27,11 +27,11 @@ export class DocumentOverviewActions {
         ).then(
             ({json}) => {
                 if (json.done) {
-                    addAlert('success', gettext(`${gettext('Document has been deleted')}: '${doc.title}'`))
+                    addAlert('success', `${gettext('Document has been deleted')}: '${doc.title}'`)
                     this.documentOverview.removeTableRows([id])
                     this.documentOverview.documentList = this.documentOverview.documentList.filter(doc => doc.id !== id)
                 } else {
-                    addAlert('error', gettext(`${gettext('Could not delete document')}: '${doc.title}'`))
+                    addAlert('error', `${gettext('Could not delete document')}: '${doc.title}'`)
                 }
             }
         )
@@ -39,7 +39,7 @@ export class DocumentOverviewActions {
 
     deleteDocumentDialog(ids) {
 
-        let confirmDeletionDialog = new Dialog({
+        const confirmDeletionDialog = new Dialog({
             title: gettext('Confirm deletion'),
             body: `<p>
                 ${gettext('Delete the document(s)?')}
@@ -68,29 +68,23 @@ export class DocumentOverviewActions {
     }
 
     importFidus() {
-        let buttons = [
+        const buttons = [
             {
                 text: gettext('Import'),
                 classes: "fw-dark",
                 click: () => {
                     let fidusFile = document.getElementById('fidus-uploader').files
                     if (0 === fidusFile.length) {
-                        console.warn('no file found')
                         return false
                     }
                     fidusFile = fidusFile[0]
                     if (104857600 < fidusFile.size) {
                         //TODO: This is an arbitrary size. What should be done with huge import files?
-                        console.warn('file too big')
                         return false
                     }
                     activateWait()
-                    let reader = new window.FileReader()
-                    reader.onerror = function (e) {
-                        console.warn('error', e.target.error.code)
-                    }
 
-                    let importer = new ImportFidusFile(
+                    const importer = new ImportFidusFile(
                         fidusFile,
                         this.documentOverview.user,
                         true,
@@ -98,7 +92,7 @@ export class DocumentOverviewActions {
                     )
 
                     importer.init().then(
-                        ({ok, statusText, doc, docInfo}) => {
+                        ({ok, statusText, doc}) => {
                             deactivateWait()
                             if (ok) {
                                 addAlert('info', statusText)
@@ -111,6 +105,8 @@ export class DocumentOverviewActions {
                             this.documentOverview.addDocToTable(doc)
                             importDialog.close()
                         }
+                    ).catch(
+                        ()=>false
                     )
 
                 }
@@ -119,7 +115,7 @@ export class DocumentOverviewActions {
                 type: 'cancel'
             }
         ]
-        let importDialog = new Dialog({
+        const importDialog = new Dialog({
             id: 'importfidus',
             title: gettext('Import a Fidus file'),
             body: importFidusTemplate(),
@@ -147,8 +143,8 @@ export class DocumentOverviewActions {
         getMissingDocumentListData(ids, this.documentOverview.documentList).then(
             () => {
                 ids.forEach(id => {
-                    let doc = this.documentOverview.documentList.find(entry => entry.id === id)
-                    let copier = new SaveCopy(
+                    const doc = this.documentOverview.documentList.find(entry => entry.id === id)
+                    const copier = new SaveCopy(
                         doc,
                         {db:doc.bibliography},
                         {db:doc.images},
@@ -156,11 +152,11 @@ export class DocumentOverviewActions {
                     )
 
                     copier.init().then(
-                        ({doc, docInfo}) => {
+                        ({doc}) => {
                             this.documentOverview.documentList.push(doc)
                             this.documentOverview.addDocToTable(doc)
                         }
-                    )
+                    ).catch(() => false)
                 })
             }
         )
@@ -172,7 +168,7 @@ export class DocumentOverviewActions {
             this.documentOverview.documentList
         ).then(
             () => ids.forEach(id => {
-                let doc = this.documentOverview.documentList.find(entry => entry.id===id)
+                const doc = this.documentOverview.documentList.find(entry => entry.id===id)
                 new ExportFidusFile(
                     doc,
                     {db:doc.bibliography},
@@ -190,6 +186,7 @@ export class DocumentOverviewActions {
             () => ids.forEach(id => {
                 const doc = this.documentOverview.documentList.find(entry => entry.id===id)
                 const exporter = new HTMLExporter(
+                    this.documentOverview.schema,
                     doc,
                     {db:doc.bibliography},
                     {db:doc.images},
@@ -265,6 +262,7 @@ export class DocumentOverviewActions {
                 ids.forEach(id => {
                     const doc = this.documentOverview.documentList.find(entry => entry.id===id)
                     const exporter = new EpubExporter(
+                        this.documentOverview.schema,
                         doc,
                         {db:doc.bibliography},
                         {db:doc.images},
@@ -278,14 +276,14 @@ export class DocumentOverviewActions {
     }
 
     revisionsDialog(documentId) {
-        let revDialog = new DocumentRevisionsDialog(
+        const revDialog = new DocumentRevisionsDialog(
             documentId,
             this.documentOverview.documentList,
             this.documentOverview.user
         )
         revDialog.init().then(
           actionObject => {
-            switch(actionObject.action) {
+            switch (actionObject.action) {
                 case 'added-document':
                     this.documentOverview.documentList.push(actionObject.doc)
                     this.documentOverview.addDocToTable(actionObject.doc)

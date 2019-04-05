@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-05 12:46+0000\n"
+"POT-Creation-Date: 2019-03-30 23:51+0000\n"
 "PO-Revision-Date: 2013-09-18 08:54+0200\n"
 "Last-Translator: Vladimir Vitkov <vvitkov@linux-bg.org>\n"
 "Language-Team: Bulgarian <vvitkov@linux-bg.org>\n"
@@ -15,6 +15,48 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: base/templates/admin/console.html:5 base/templates/admin/console.html:17
+#: base/templates/admin/overview.html:14
+msgid "Admin Console"
+msgstr ""
+
+#: base/templates/admin/console.html:19
+msgid "Current number of user sessions:"
+msgstr ""
+
+#: base/templates/admin/console.html:21
+msgid "Send a system message to all connected users:"
+msgstr ""
+
+#: base/templates/admin/console.html:25
+msgid "Message"
+msgstr ""
+
+#: base/templates/admin/console.html:27
+msgid ""
+"This system will go offline for scheduled maintenance in 30 minutes. All "
+"your work will be saved automatically and we will be back shortly."
+msgstr ""
+
+#: base/templates/admin/console.html:34
+msgid "Send to connected users"
+msgstr ""
+
+#: base/templates/admin/overview.html:10
+msgid "Extras"
+msgstr ""
+
+#: base/templates/admin/overview.html:17
+#: document/templates/admin/document/maintenance.html:17
+#, fuzzy
+#| msgid "Document Style"
+msgid "Document Maintenance"
+msgstr "Стил на Документа"
+
+#: base/templates/app.html:11 user/templates/account/base.html:7
+msgid "The all in one solution for collaborative academic writing."
+msgstr "Комплексно решение за съвместно създаване на академични документи."
 
 #: base/templates/footer.html:7
 msgid "Terms and Conditions"
@@ -38,10 +80,6 @@ msgstr "Цитати с Citation Style Language"
 msgid "Editing with ProseMirror"
 msgstr ""
 
-#: base/templates/index.html:11 user/templates/account/base.html:7
-msgid "The all in one solution for collaborative academic writing."
-msgstr "Комплексно решение за съвместно създаване на академични документи."
-
 #: browser_check/templates/browser_check/browser_not_supported.html:4
 #: browser_check/templates/browser_check/browser_not_supported.html:27
 msgid "Browser not supported"
@@ -57,23 +95,27 @@ msgid ""
 "            "
 msgstr ""
 
+#: document/admin.py:45
+#, fuzzy
+#| msgid "Export the document to an HTML file"
+msgid "Duplicate selected document templates"
+msgstr "Експортирай документа към HTML"
+
+#: document/models.py:86
+msgid "Standard Article"
+msgstr ""
+
 #: document/templates/admin/document/document/change_list_object_tools.html:8
 #, python-format
 msgid "Add %(name)s"
 msgstr ""
 
 #: document/templates/admin/document/document/change_list_object_tools.html:13
-#: document/templates/maintenance/index.html:5
+#: document/templates/admin/document/maintenance.html:5
 msgid "Maintenance"
 msgstr ""
 
-#: document/templates/maintenance/index.html:17
-#, fuzzy
-#| msgid "Document Style"
-msgid "Document Maintenance"
-msgstr "Стил на Документа"
-
-#: document/templates/maintenance/index.html:19
+#: document/templates/admin/document/maintenance.html:19
 msgid ""
 "\n"
 "            Before and after upgrading Fidus Writer, you should update all "
@@ -84,56 +126,107 @@ msgid ""
 "            "
 msgstr ""
 
-#: document/templates/maintenance/index.html:27
+#: document/templates/admin/document/maintenance.html:27
 msgid "Update all documents (DANGER!)"
 msgstr ""
 
-#: document/views.py:229 document/views.py:570
+#: document/views.py:209 document/views.py:617
 #, fuzzy
 msgid "Untitled"
 msgstr "Подзаглавие"
 
-#: document/views.py:254
+#: document/views.py:280 document/views.py:703
+#, fuzzy
+#| msgid "Documents"
+msgid "Document"
+msgstr "Документи"
+
+#: document/views.py:282 document/views.py:705
+msgid "Author"
+msgstr "Автор"
+
+#: document/views.py:284
+#, fuzzy
+#| msgid "Rights"
+msgid "Access Rights"
+msgstr "Права"
+
+#: document/views.py:287 document/views.py:710
+#, fuzzy
+#| msgid "edit documents"
+msgid "Access the document"
+msgstr "редактирай документи"
+
+#: document/views.py:290
 #, fuzzy
 msgid "Document shared:"
 msgstr "Документи"
 
-#: document/views.py:291
-msgid "Fidus Writer document write access"
-msgstr "Достъп за писане във Fidus Writer документ"
-
-#: document/views.py:596
+#: document/views.py:643
 #, fuzzy
 msgid "Comment on :"
 msgstr "Коментари"
 
-#: fiduswriter/settings.py:227
+#: document/views.py:664
+#, fuzzy
+msgid "Comment assignment on :"
+msgstr "Коментари"
+
+#: document/views.py:707
+#, fuzzy
+#| msgid "Comments"
+msgid "Comment"
+msgstr "Коментари"
+
+#: fiduswriter/settings.py:226
 msgid "English"
 msgstr "Английски"
 
-#: fiduswriter/settings.py:228
+#: fiduswriter/settings.py:227
 msgid "Bulgarian"
 msgstr "Български"
 
-#: fiduswriter/settings.py:229
+#: fiduswriter/settings.py:228
 msgid "German"
 msgstr "Немски"
 
-#: fiduswriter/settings.py:230
+#: fiduswriter/settings.py:229
 msgid "French"
 msgstr ""
 
-#: fiduswriter/settings.py:231
+#: fiduswriter/settings.py:230
 msgid "Italian"
 msgstr ""
 
-#: fiduswriter/settings.py:232
+#: fiduswriter/settings.py:231
 msgid "Spanish"
 msgstr "Испански"
 
-#: fiduswriter/settings.py:233
+#: fiduswriter/settings.py:232
 msgid "Portuguese (Brazil)"
 msgstr ""
+
+#: fiduswriter/settings.py:335
+#, fuzzy
+#| msgid "Fidus Writer document shared"
+msgid "Fidus Writer Admin"
+msgstr "Fidus Writer документ бе споделен"
+
+#: fiduswriter/settings.py:336
+#, fuzzy
+#| msgid "Fidus Writer document write access"
+msgid "Fidus Writer Administration Site"
+msgstr "Достъп за писане във Fidus Writer документ"
+
+#: fiduswriter/settings.py:337
+msgid "Welcome to the Fidus Writer Administration Site"
+msgstr ""
+
+#: style/models.py:36 style/models.py:61
+#, fuzzy
+#| msgid "Default Avatar"
+msgid "Default"
+msgstr "Аватар по подразбиране:"
 
 #: user/templates/account/base.html:55 user/templates/account/login.html:7
 #: user/templates/account/signup.html:9
@@ -316,11 +409,11 @@ msgstr ""
 "        Свържете се с нас ако не получите имейла до няколко минути.\n"
 "        "
 
-#: usermedia/views.py:47
+#: usermedia/views.py:34
 msgid "Filetype not supported"
 msgstr ""
 
-#: usermedia/views.py:73
+#: usermedia/views.py:60
 msgid "No file uploaded"
 msgstr ""
 
@@ -462,9 +555,6 @@ msgstr ""
 #~ msgid "Sourcetype"
 #~ msgstr "Тип на източника"
 
-#~ msgid "Author"
-#~ msgstr "Автор"
-
 #~ msgid "Published"
 #~ msgstr "Публикувани"
 
@@ -477,9 +567,6 @@ msgstr ""
 #~ msgid "Owner"
 #~ msgstr "Собственик"
 
-#~ msgid "Rights"
-#~ msgstr "Права"
-
 #~ msgid "File"
 #~ msgstr "Файл"
 
@@ -488,12 +575,6 @@ msgstr ""
 
 #~ msgid "Updated"
 #~ msgstr "Обновен"
-
-#~ msgid "edit documents"
-#~ msgstr "редактирай документи"
-
-#~ msgid "Documents"
-#~ msgstr "Документи"
 
 #~ msgid "manage bibliography library"
 #~ msgstr "управление на библиографска библиотека"
@@ -586,11 +667,6 @@ msgstr ""
 #~ "Експортирай документа като Latex файл. Това ще прикачи и BibTex файл ако "
 #~ "използвате цитати."
 
-#, fuzzy
-#~| msgid "Export the document to an HTML file"
-#~ msgid "Export the document to a template:"
-#~ msgstr "Експортирай документа към HTML"
-
 #~ msgid "Choose your preferred citation style."
 #~ msgstr "Изберете предпочитан стил на цитатите."
 
@@ -658,9 +734,6 @@ msgstr ""
 
 #~ msgid "Show/hide comments"
 #~ msgstr "Покажи/Скрий коментарите"
-
-#~ msgid "Comments"
-#~ msgstr "Коментари"
 
 #, fuzzy
 #~| msgid "Show/hide comments"
@@ -1002,14 +1075,8 @@ msgstr ""
 #~ msgstr ""
 #~ "Вие обновихте вашият аватар <a href=\"%(avatar_url)s\">%(avatar)s</a>."
 
-#~ msgid "Default Avatar"
-#~ msgstr "Аватар по подразбиране:"
-
 #~ msgid "Contents"
 #~ msgstr "Съдържание"
 
 #~ msgid "Fidus Writer book shared"
 #~ msgstr "Fidus Writer книга бе споделена"
-
-#~ msgid "Fidus Writer document shared"
-#~ msgstr "Fidus Writer документ бе споделен"

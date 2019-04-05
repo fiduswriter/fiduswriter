@@ -10,7 +10,7 @@ export class TagListForm{
         this.dom.innerHTML = `<input class="tags" type="text">`
         this.tokenInput = new TokenField({
             el: this.dom.querySelector('.tags'),
-            setItems: this.initialValue.map((key,index) =>{return {id:index, name:key}}),
+            setItems: this.initialValue.map((key, index) =>{return {id:index, name:key}}),
             keys: {
                 188: 'delimiter'
             }
@@ -18,7 +18,7 @@ export class TagListForm{
     }
 
     get value() {
-        let formValue = this.tokenInput.getItems().map(item=>{return item.name})
+        const formValue = this.tokenInput.getItems().map(item=>{return item.name})
         // If the form has not been filled out, don't consider this form
         return formValue.length > 0 ? formValue : false
     }

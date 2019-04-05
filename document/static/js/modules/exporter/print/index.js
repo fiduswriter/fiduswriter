@@ -1,17 +1,14 @@
 import {vivliostylePrint} from "vivliostyle-print"
 
+import {PAPER_SIZES} from "../../schema/const"
 import {HTMLExporter} from "../html"
 import {addAlert} from "../../common"
-
-const CSS_PAPER_SIZES = {
-    'A4': 'A4',
-    'US Letter': 'letter'
-}
+import {removeHidden} from "../tools/doc_contents"
 
 export class PrintExporter extends HTMLExporter {
 
-    constructor(doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles, staticUrl) {
-        super(doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles, staticUrl)
+    constructor(schema, doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles, staticUrl) {
+        super(schema, doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles, staticUrl)
         this.staticUrl = staticUrl
         this.removeUrlPrefix = false
         this.styleSheets.push({contents:
@@ -23,8 +20,11 @@ export class PrintExporter extends HTMLExporter {
                 });
                 text-decoration: none;
                 color: inherit;
-                vertical-align: super;
+                vertical-align: baseline;
                 font-size: 70%;
+                position: relative;
+                top: -0.3em;
+                
             }
             section[role=doc-footnote] > *:first-child:before {
                 counter-increment: footnote-counter;
@@ -35,9 +35,38 @@ export class PrintExporter extends HTMLExporter {
             }
             section:footnote-content {
                 display: block;
+                font-style:normal;
+                font-weight:normal;
+                text-decoration:none;
+            }
+            .table-of-contents a {
+            	display: inline-flex;
+            	width: 100%;
+            	text-decoration: none;
+            	color: currentColor;
+            	break-inside: avoid;
+            	align-items: baseline;
+            }
+            .table-of-contents a::before {
+            	margin-left: 1px;
+            	margin-right: 1px;
+            	border-bottom: solid 1px lightgray;
+            	content: "";
+            	order: 1;
+            	flex: auto;
+            }
+            .table-of-contents a::after {
+            	text-align: right;
+            	content: target-counter(attr(href, url), page);
+            	align-self: flex-end;
+            	flex: none;
+            	order: 2;
             }
             @page {
-                size: ${CSS_PAPER_SIZES[this.doc.settings.papersize]};
+                size: ${PAPER_SIZES.find(size => size[0] === this.doc.settings.papersize)[1]};
+                @top-center {
+                    content: env(doc-title);
+                }
                 @bottom-center {
                     content: counter(page);
                 }
@@ -47,12 +76,21 @@ export class PrintExporter extends HTMLExporter {
 
     init() {
         addAlert('info', `${this.doc.title}: ${gettext('Printing has been initiated.')}`)
+        this.docContents = removeHidden(this.doc.contents, false)
         return this.addStyle().then(
             () => this.joinDocumentParts()
         ).then(
+            () => this.fillToc()
+        ).then(
             () => this.postProcess()
         ).then(
-            ({html, title}) => vivliostylePrint(html, title, `${this.staticUrl}vivliostyle-resources/`)
+            ({html, title}) => vivliostylePrint(
+                html,
+                {
+                    title,
+                    resourcesUrl: `${this.staticUrl}vivliostyle-resources/`
+                }
+            )
         )
     }
 

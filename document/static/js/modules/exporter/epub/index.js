@@ -1,21 +1,19 @@
 import download from "downloadjs"
-import {DOMSerializer} from "prosemirror-model"
-import katex from "katex"
 
 import {obj2Node, node2Obj} from "../tools/json"
 import {createSlug} from "../tools/file"
 import {modifyImages} from "../tools/html"
 import {ZipFileCreator} from "../tools/zip"
-import {opfTemplate, containerTemplate, ncxTemplate, ncxItemTemplate, navTemplate, navItemTemplate, xhtmlTemplate} from "./templates"
+import {opfTemplate, containerTemplate, ncxTemplate, navTemplate, xhtmlTemplate} from "./templates"
 import {addAlert} from "../../common"
 import {BaseEpubExporter} from "./base"
-import {docSchema} from "../../schema/document"
+import {removeHidden} from "../tools/doc_contents"
 
 
 export class EpubExporter extends BaseEpubExporter {
 
-    constructor(doc, bibDB, imageDB, citationStyles, citationLocales, staticUrl) {
-        super()
+    constructor(schema, doc, bibDB, imageDB, citationStyles, citationLocales, staticUrl) {
+        super(schema)
         this.doc = doc
         this.citationStyles = citationStyles
         this.citationLocales = citationLocales
@@ -29,22 +27,25 @@ export class EpubExporter extends BaseEpubExporter {
     init() {
         addAlert('info', this.doc.title + ': ' + gettext(
             'Epub export has been initiated.'))
-
-
-        this.joinDocumentParts().then(() => this.exportTwo())
+        this.docContents = removeHidden(this.doc.contents, false)
+        this.joinDocumentParts().then(
+            () => this.fillToc()
+        ).then(
+            () => this.exportTwo()
+        )
     }
 
     exportTwo() {
-        let styleSheets = [] //TODO: fill style sheets with something meaningful.
-        let title = this.doc.title
+        const styleSheets = [] //TODO: fill style sheets with something meaningful.
+        const title = this.doc.title
 
         let contents = this.contents
 
         contents = this.addFigureNumbers(contents)
 
-        let images = modifyImages(contents)
+        const images = modifyImages(contents)
 
-        let contentsBody = document.createElement('body')
+        const contentsBody = document.createElement('body')
 
         while (contents.firstChild) {
             contentsBody.appendChild(contents.firstChild)
@@ -55,10 +56,10 @@ export class EpubExporter extends BaseEpubExporter {
         const math = equations.length ? true : false
 
         // Make links to all H1-3 and create a TOC list of them
-        let contentItems = this.orderLinks(this.setLinks(
+        const contentItems = this.orderLinks(this.setLinks(
             contentsBody))
 
-        let contentsBodyEpubPrepared = this.styleEpubFootnotes(
+        const contentsBodyEpubPrepared = this.styleEpubFootnotes(
             contentsBody)
 
         let xhtmlCode = xhtmlTemplate({
@@ -72,28 +73,47 @@ export class EpubExporter extends BaseEpubExporter {
 
         xhtmlCode = this.replaceImgSrc(xhtmlCode)
 
-        let containerCode = containerTemplate({})
+        const containerCode = containerTemplate({})
 
-        let timestamp = this.getTimestamp()
+        const timestamp = this.getTimestamp()
 
-        let schema = docSchema
-        schema.cached.imageDB = this.imageDB
-        let serializer = DOMSerializer.fromSchema(schema)
-        let docContents = serializer.serializeNode(schema.nodeFromJSON(this.doc.contents))
 
-        // Remove hidden parts
-        let hiddenEls = docContents.querySelectorAll('[data-hidden=true]')
-        hiddenEls.forEach(hiddenEl => hiddenEl.parentElement.removeChild(hiddenEl))
+        const authors = this.docContents.content.reduce(
+            (authors, part) => {
+                if (part.type==='contributors_part' && part.attrs.metadata === 'authors') {
+                    return authors.concat(part.content.map(
+                        authorNode => {
+                            const nameParts = []
+                            if (authorNode.attrs.firstname) {
+                                nameParts.push(authorNode.attrs.firstname)
+                            }
+                            if (authorNode.attrs.lastname) {
+                                nameParts.push(authorNode.attrs.lastname)
+                            }
+                            if (!nameParts.length && authorNode.attrs.institution) {
+                                // We have an institution but no names. Use institution as name.
+                                nameParts.push(authorNode.attrs.institution)
+                            }
+                            return nameParts.join(' ')
+                        }
+                    ))
+                } else {
+                    return authors
+                }
+            },
+        [])
+        const keywords = this.docContents.content.reduce(
+            (keywords, part) => {
+                if (part.type==='tags_part' && part.attrs.metadata === 'keywords') {
+                    return keywords.concat(part.content.map(keywordNode => keywordNode.attrs.tag))
+                } else {
+                    return keywords
+                }
+            },
+        [])
 
-        let authors = Array.from(docContents.querySelectorAll('.article-authors .author')).map(
-            authorEl => authorEl.textContent
-        )
 
-        let keywords = Array.from(docContents.querySelectorAll('.article-keywords .keyword')).map(
-            keywordEl => keywordEl.textContent
-        )
-
-        let opfCode = opfTemplate({
+        const opfCode = opfTemplate({
             language: this.lang,
             title,
             authors,
@@ -107,7 +127,7 @@ export class EpubExporter extends BaseEpubExporter {
             images
         })
 
-        let ncxCode = ncxTemplate({
+        const ncxCode = ncxTemplate({
             shortLang: this.shortLang,
             title,
             idType: 'fidus',
@@ -115,12 +135,12 @@ export class EpubExporter extends BaseEpubExporter {
             contentItems
         })
 
-        let navCode = navTemplate({
+        const navCode = navTemplate({
             shortLang: this.shortLang,
             contentItems
         })
 
-        let outputList = [{
+        const outputList = [{
             filename: 'META-INF/container.xml',
             contents: containerCode
         }, {
@@ -139,28 +159,28 @@ export class EpubExporter extends BaseEpubExporter {
 
 
         for (let i = 0; i < styleSheets.length; i++) {
-            let styleSheet = styleSheets[i]
+            const styleSheet = styleSheets[i]
             outputList.push({
                 filename: 'EPUB/' + styleSheet.filename,
                 contents: styleSheet.contents
             })
         }
 
-        let httpOutputList = []
+        const httpOutputList = []
         for (let i = 0; i < images.length; i++) {
             httpOutputList.push({
                 filename: 'EPUB/' + images[i].filename,
                 url: images[i].url
             })
         }
-        let includeZips = []
+        const includeZips = []
         if (math) {
             includeZips.push({
                 'directory': 'EPUB',
                 'url': `${this.staticUrl}zip/katex_style.zip?v=${$StaticUrls.transpile.version$}`
             })
         }
-        let zipper = new ZipFileCreator(
+        const zipper = new ZipFileCreator(
             outputList,
             httpOutputList,
             includeZips,

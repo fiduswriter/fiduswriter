@@ -1,6 +1,5 @@
-import diffDOM from "diff-dom"
+import {DiffDOM} from "diff-dom"
 import keyName from "w3c-keyname"
-import {keydownHandler} from "prosemirror-keymap"
 
 import {escapeText} from "../../../common"
 
@@ -12,13 +11,30 @@ export class HeaderbarView {
         this.editor = this.options.editor
         this.editor.menu.headerView = this
 
-        this.dd = new diffDOM()
+        this.dd = new DiffDOM({
+            valueDiffing: false
+        })
         this.headerEl = document.querySelector('#headerbar').firstElementChild
         this.listeners = {}
 
+        this.removeUnavailable(this.options.editor.menu.headerbarModel)
 
         this.bindEvents()
         this.update()
+    }
+
+    removeUnavailable(menu) {
+        // Remove those menu items from the menu model that are not available for this document.
+        // Used for example for language or page size options that aren't permitted according to the
+        // document template.
+        menu.content = menu.content.filter(item => {
+            if (item.available && !item.available(this.editor)) {
+                return false
+            } else if (item.type === 'menu') {
+                this.removeUnavailable(item)
+            }
+            return true
+        })
     }
 
     bindEvents() {
@@ -36,12 +52,12 @@ export class HeaderbarView {
     onclick(event) {
         const target = event.target
 
-        if(target.matches('#headerbar #header-navigation .fw-pulldown-item')) {
+        if (target.matches('#headerbar #header-navigation .fw-pulldown-item')) {
             // A header nav menu item was clicked. Now we just need to find
             // which one and execute the corresponding action.
             const searchPath = []
             let seekItem = target
-            while(seekItem.closest('li')) {
+            while (seekItem.closest('li')) {
                 let itemNumber = 0
                 seekItem = seekItem.closest('li')
                 while (seekItem.previousElementSibling) {
@@ -62,7 +78,7 @@ export class HeaderbarView {
 
             let menuItem = menu
 
-            while(searchPath.length) {
+            while (searchPath.length) {
                 menuItem = menuItem.content[searchPath.pop()]
             }
 
@@ -75,7 +91,7 @@ export class HeaderbarView {
                     menu.open = false
                     this.closeMenu(menu)
                     this.update()
-                    break;
+                    break
                 case 'setting':
                     // Similar to 'action' but not closing menu.
                     if (menuItem.disabled && menuItem.disabled(this.editor)) {
@@ -83,14 +99,14 @@ export class HeaderbarView {
                     }
                     menuItem.action(this.editor)
                     this.update()
-                    break;
+                    break
                 case 'menu':
                     this.closeMenu(menu)
                     menuItem.open = true
                     this.update()
-                    break;
+                    break
                 default:
-                    break;
+                    break
             }
         } else if (target.matches('#headerbar #header-navigation .header-nav-item:not(.disabled)')) {
             // A menu has been clicked, lets find out which one.
@@ -162,10 +178,10 @@ export class HeaderbarView {
         })
     }
 
+
+
     update() {
-        const newHeader = document.createElement('div')
-        newHeader.innerHTML = this.getHeaderHTML()
-        const diff = this.dd.diff(this.headerEl, newHeader)
+        const diff = this.dd.diff(this.headerEl, this.getHeaderHTML())
         this.dd.apply(this.headerEl, diff)
         if (this.editor.menu.headerbarModel.open) {
             document.body.classList.remove('header-closed')
@@ -178,12 +194,12 @@ export class HeaderbarView {
         const doc = this.editor.view.state.doc
         if (!this.editor.menu.headerbarModel.open) {
             // header is closed
-            return ''
+            return '<div></div>'
         }
         let title = ""
         doc.firstChild.firstChild.forEach(
             child => {
-                if(!child.marks.find(mark => mark.type.name==='deletion')) {
+                if (!child.marks.find(mark => mark.type.name==='deletion')) {
                     title += escapeText(child.textContent)
                 }
             }
@@ -192,7 +208,7 @@ export class HeaderbarView {
             title = gettext('Untitled Document')
         }
 
-        return `
+        return `<div>
             <div id="close-document-top" title="${gettext("Close the document and return to the document overview menu.")}">
                 <a href="/">
                     <i class="fa fa-times"></i>
@@ -205,7 +221,7 @@ export class HeaderbarView {
                 </nav>
                 ${this.getParticipantListHTML()}
             </div>
-        `
+        </div>`
     }
 
     getParticipantListHTML() {
@@ -260,19 +276,22 @@ export class HeaderbarView {
     }
 
     getMenuItemHTML(menuItem) {
-        switch(menuItem.type) {
+        let returnValue
+        switch (menuItem.type) {
             case 'action':
             case 'setting':
-                return this.getActionMenuItemHTML(menuItem)
-                break;
+                returnValue = this.getActionMenuItemHTML(menuItem)
+                break
             case 'menu':
-                return this.getMenuMenuItemHTML(menuItem)
-                break;
+                returnValue = this.getMenuMenuItemHTML(menuItem)
+                break
             case 'separator':
-                return '<hr>'
+                returnValue = '<hr>'
+                break
             default:
-                break;
+                break
         }
+        return returnValue
     }
 
     getActionMenuItemHTML(menuItem) {

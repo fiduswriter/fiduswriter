@@ -3,7 +3,6 @@ import JSZip from "jszip"
 import {ImportNative} from "./native"
 import {FW_FILETYPE_VERSION} from "../exporter/native"
 import {updateFile} from "./update"
-import {addAlert} from "../common"
 /** The current Fidus Writer filetype version. The importer will not import from
  * a different version and the exporter will include this number in all exports.
  */
@@ -37,7 +36,7 @@ export class ImportFidusFile {
         }
         return new Promise(resolve => {
             // use a BlobReader to read the zip from a Blob object
-            let reader = new window.FileReader()
+            const reader = new window.FileReader()
             reader.onloadend = () => {
                 if (reader.result.length > 60 && reader.result.substring(0, 2) === 'PK') {
                     this.initZipFileRead().then(() => resolve(this))
@@ -53,9 +52,10 @@ export class ImportFidusFile {
 
     initZipFileRead() {
         // Extract all the files that can be found in every fidus-file (not images)
-        let zipfs = new JSZip()
+        const zipfs = new JSZip()
         return zipfs.loadAsync(this.file).then(() => {
-            let filenames = [], p = [], validFile = true
+            const filenames = [], p = []
+            let validFile = true
 
             zipfs.forEach(filename => filenames.push(filename))
 
@@ -90,24 +90,26 @@ export class ImportFidusFile {
     }
 
     processFidusFile() {
-        let filetypeVersion = parseFloat(this.textFiles.find(file => file.filename === 'filetype-version').contents),
+        const filetypeVersion = parseFloat(this.textFiles.find(file => file.filename === 'filetype-version').contents),
             mimeType = this.textFiles.find(file => file.filename === 'mimetype').contents
         if (mimeType === 'application/fidus+zip' &&
             filetypeVersion >= MIN_FW_FILETYPE_VERSION &&
             filetypeVersion <= MAX_FW_FILETYPE_VERSION) {
             // This seems to be a valid fidus file with current version number.
-            let images = JSON.parse(this.textFiles.find(file => file.filename === 'images.json').contents)
-            let {doc, bibliography} = updateFile(
-                JSON.parse(this.textFiles.find(file => file.filename === 'document.json').contents),
-                JSON.parse(
-                    this.textFiles.find(file => file.filename === 'bibliography.json').contents
+            const images = JSON.parse(this.textFiles.find(file => file.filename === 'images.json').contents),
+                updatedFile =  updateFile(
+                    JSON.parse(this.textFiles.find(file => file.filename === 'document.json').contents),
+                    JSON.parse(
+                        this.textFiles.find(file => file.filename === 'bibliography.json').contents
+                    ),
+                    filetypeVersion
                 ),
-                filetypeVersion
-            )
+                {bibliography} = updatedFile
+            let {doc} = updatedFile
             if (this.check) {
                 doc = this.checkDocUsers(doc)
             }
-            let importer = new ImportNative(
+            const importer = new ImportNative(
                 doc,
                 bibliography,
                 images,
@@ -151,17 +153,19 @@ export class ImportFidusFile {
                 // We could not find matching id/username accessible to current user, so we delete the assignedUser id from comment
                 comment.assignedUser = 0
             }
-            comment.answers.forEach(answer => {
-                if (!
-                    (
-                        this.teamMembers.find(member => member.id === answer.user && member.username === answer.username) ||
-                        (this.user.id === answer.user && this.user.username === answer.username)
-                    )
-                ) {
-                    // We could not find matching id/username accessible to current user, so we delete the user id from comment answer
-                    answer.user = 0
-                }
-            })
+            if (comment.answers) {
+                comment.answers.forEach(answer => {
+                    if (!
+                        (
+                            this.teamMembers.find(member => member.id === answer.user && member.username === answer.username) ||
+                            (this.user.id === answer.user && this.user.username === answer.username)
+                        )
+                    ) {
+                        // We could not find matching id/username accessible to current user, so we delete the user id from comment answer
+                        answer.user = 0
+                    }
+                })
+            }
         })
         this.checkDocUsersNode(doc.contents)
         return doc
@@ -170,7 +174,7 @@ export class ImportFidusFile {
     checkDocUsersNode(node) { // Check whether all users connected to insertion/deletion marks are known on this system.
         if (node.marks) {
             node.marks.forEach(mark => {
-                if(['insertion','deletion'].includes(mark.type)) {
+                if (['insertion', 'deletion'].includes(mark.type)) {
                     if (!
                         (
                             this.teamMembers.find(member => member.id === mark.attrs.user && member.username === mark.attrs.username) ||

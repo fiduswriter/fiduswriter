@@ -47,8 +47,8 @@ export class ModCitations {
                 document.getElementById('paper-editable'),
                 this.editor.view.state.doc.firstChild.attrs.citationstyle,
                 this.editor.mod.db.bibDB,
-                this.editor.mod.styles.citationStyles,
-                this.editor.mod.styles.citationLocales
+                this.editor.mod.documentTemplate.citationStyles,
+                this.editor.mod.documentTemplate.citationLocales
             )
             this.citRenderer.init().then(
                 () => this.layoutCitationsTwo()
@@ -60,7 +60,7 @@ export class ModCitations {
 
     bindBibliographyClicks() {
         document.querySelectorAll('div.csl-entry').forEach((el, index) => {
-            el.addEventListener('click', event => {
+            el.addEventListener('click', () => {
                 const eID = parseInt(this.citRenderer.fm.bibliography[0].entry_ids[index][0])
                 this.checkTrackingDialog().then(
                     () => {
@@ -77,7 +77,7 @@ export class ModCitations {
             return Promise.resolve()
         }
         const buttons = [],
-            promise = new Promise((resolve, reject) => {
+            promise = new Promise(resolve => {
                 buttons.push({
                     type: 'cancel',
                     click: () => {
@@ -118,7 +118,7 @@ export class ModCitations {
         document.querySelector('.article-bibliography').innerHTML = citRenderer.fm.bibHTML
         let styleEl = document.querySelector('.article-bibliography-style')
         if (!styleEl) {
-            document.body.insertAdjacentHTML('beforeend','<style type="text/css" class="article-bibliography-style"></style>')
+            document.body.insertAdjacentHTML('beforeend', '<style type="text/css" class="article-bibliography-style"></style>')
             styleEl = document.querySelector('.article-bibliography-style')
         }
         let css = citRenderer.fm.bibCSS
@@ -180,7 +180,7 @@ export class ModCitations {
              citationFootnoteCounter = 1,
              footnoteCounter = 1
 
-             this.editor.view.state.doc.descendants(function(node){
+             this.editor.view.state.doc.descendants(node => {
                  if (node.isInline && (node.type.name==='footnote' || node.type.name==='citation')) {
                      if (node.type.name==='footnote') {
                          outputCSS += `#footnote-box-container .footnote-container:nth-of-type(${editorFootnoteCounter}) > *:first-child::before {

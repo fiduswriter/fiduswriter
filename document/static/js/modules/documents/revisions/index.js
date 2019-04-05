@@ -22,7 +22,7 @@ export class DocumentRevisionsDialog {
      * @param {number}
      */
     init() {
-        let doc = this.documentList.find(doc => doc.id === this.documentId)
+        const doc = this.documentList.find(doc => doc.id === this.documentId)
         this.dialog = new Dialog({
             title: `${gettext('Saved revisions of')} ${escapeText(doc.title)}`,
             id: 'revisions-dialog',
@@ -37,15 +37,16 @@ export class DocumentRevisionsDialog {
 
 
     bind() {
-        let dialogEl = this.dialog.dialogEl
+        const dialogEl = this.dialog.dialogEl
 
         return new Promise(resolve => {
             dialogEl.addEventListener('click', event => {
-                let el = {}, revisionId
+                const el = {}
+                let revisionId, revisionFilename
                 switch (true) {
                     case findTarget(event, '.download-revision', el):
                         revisionId = parseInt(el.target.dataset.id)
-                        let revisionFilename = el.target.dataset.filename
+                        revisionFilename = el.target.dataset.filename
                         this.download(revisionId, revisionFilename)
                         break
                     case findTarget(event, '.recreate-revision', el):
@@ -74,13 +75,13 @@ export class DocumentRevisionsDialog {
             JSZipUtils.getBinaryContent(
                 `/document/get_revision/${id}/`,
                 (err, fidusFile) => {
-                    let importer = new ImportFidusFile(
+                    const importer = new ImportFidusFile(
                         fidusFile,
                         user
                     )
                     resolve(
                         importer.init().then(
-                            ({ok, statusText, doc, docInfo}) => {
+                            ({ok, statusText, doc}) => {
                                 deactivateWait()
                                 if (ok) {
                                     addAlert('info', statusText)
@@ -119,8 +120,8 @@ export class DocumentRevisionsDialog {
      */
 
     delete(id) {
-        let buttons = [], that = this
-        let returnPromise = new Promise(resolve => {
+        const buttons = []
+        const returnPromise = new Promise(resolve => {
 
             buttons.push({
                 text: gettext('Delete'),
@@ -139,7 +140,7 @@ export class DocumentRevisionsDialog {
             })
         })
 
-        let revisionsConfirmDeleteDialog = new Dialog({
+        const revisionsConfirmDeleteDialog = new Dialog({
             id: 'confirmdeletion',
             title: gettext('Confirm deletion'),
             icon: 'exclamation-triangle',
@@ -159,7 +160,7 @@ export class DocumentRevisionsDialog {
             {id}
         ).then(
             () => {
-                let thisTr = document.querySelector(`tr.revision-${id}`),
+                const thisTr = document.querySelector(`tr.revision-${id}`),
                 documentId = thisTr.dataset.document,
                 doc = this.documentList.find(doc => doc.id === parseInt(documentId))
                 thisTr.parentElement.removeChild(thisTr)

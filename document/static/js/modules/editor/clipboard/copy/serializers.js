@@ -1,6 +1,6 @@
 import {DOMSerializer} from "prosemirror-model"
 import {RenderCitations} from "../../../citations/render"
-import {docCopySchema, fnCopySchema} from "./schema"
+import {createDocCopySchema, fnCopySchema} from "./schema"
 
 
 // Wrap around DOMSerializer, allowing post processing.
@@ -29,8 +29,8 @@ class ClipboardDOMSerializer {
             domFragment,
             this.editor.view.state.doc.firstChild.attrs.citationstyle,
             this.editor.mod.db.bibDB,
-            this.editor.mod.styles.citationStyles,
-            this.editor.mod.styles.citationLocales
+            this.editor.mod.documentTemplate.citationStyles,
+            this.editor.mod.documentTemplate.citationLocales
         )
         citRenderer.init()
         citRenderer.renderCitations()
@@ -111,7 +111,7 @@ class ClipboardDOMSerializer {
 
     getFootnoteAnchor(counter, id) {
         const footnoteAnchor = document.createElement('a')
-        footnoteAnchor.setAttribute('href',`#fn-${id}`)
+        footnoteAnchor.setAttribute('href', `#fn-${id}`)
         footnoteAnchor.classList.add('fn')
         footnoteAnchor.classList.add('sdfootnoteanc')
         footnoteAnchor.innerHTML = `<sup>${counter}</sup>`
@@ -135,5 +135,11 @@ class ClipboardDOMSerializer {
     }
 }
 
-export const docClipboardSerializer = editor => ClipboardDOMSerializer.fromSchema(docCopySchema, editor)
-export const fnClipboardSerializer = editor => ClipboardDOMSerializer.fromSchema(fnCopySchema, editor)
+export const docClipboardSerializer = editor => ClipboardDOMSerializer.fromSchema(
+    createDocCopySchema(editor.schema),
+    editor
+)
+export const fnClipboardSerializer = editor => ClipboardDOMSerializer.fromSchema(
+    fnCopySchema,
+    editor
+)

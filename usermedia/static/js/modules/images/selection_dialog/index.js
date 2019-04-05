@@ -4,9 +4,10 @@ import {ImageEditDialog} from "../edit_dialog"
 import {cancelPromise, Dialog, escapeText, findTarget} from "../../common"
 
 export class ImageSelectionDialog {
-    constructor(imageDB, userImageDB, imgId) {
+    constructor(imageDB, userImageDB, imgId, editor) {
         this.imageDB = imageDB
         this.userImageDB = userImageDB
+        this.editor = editor
         this.imgId = imgId // a preselected image
         this.imgDb = 'document' // the preselection image will always come from the document
         this.images = [] // images from both databases
@@ -28,15 +29,17 @@ export class ImageSelectionDialog {
                 db: 'user'
             })
         })
-        let buttons = []
-        let p = new Promise(resolve => {
+        const buttons = []
+        const p = new Promise(resolve => {
             buttons.push(
                 {
                     text: gettext('Add new image'),
                     icon: "plus-circle",
                     click: () => {
-                        let imageUpload = new ImageEditDialog(
-                            this.userImageDB // We can only upload to the user's image db
+                        const imageUpload = new ImageEditDialog(
+                            this.userImageDB, // We can only upload to the user's image db
+                            false,
+                            this.editor
                         )
 
                         resolve(
@@ -91,7 +94,7 @@ export class ImageSelectionDialog {
 
     initTable() {
         /* Initialize the overview table */
-        let tableEl = document.createElement('table')
+        const tableEl = document.createElement('table')
         tableEl.classList.add('fw-document-table')
         tableEl.classList.add('fw-small')
         this.imageDialog.dialogEl.querySelector('div.image-selection-table').appendChild(tableEl)
@@ -142,8 +145,9 @@ export class ImageSelectionDialog {
     }
 
     checkRow(dataIndex) {
-        let [db, id] = this.table.data[dataIndex].cells[0].textContent.split('-')
-        id = parseInt(id)
+        const [db, id] = this.table.data[dataIndex].cells[0].textContent.split('-').map(
+            (val, index) => index ? parseInt(val) : val // only parseInt id (where index > 0)
+        )
         if (id === this.imgId) {
             this.imgId = false
         } else {
@@ -159,7 +163,7 @@ export class ImageSelectionDialog {
     bindEvents() {
         // functions for the image selection dialog
         this.table.body.addEventListener('click', event => {
-            let el = {}, imageId
+            const el = {}
             switch (true) {
                 case findTarget(event, 'tr', el):
                     this.checkRow(el.target.dataIndex)

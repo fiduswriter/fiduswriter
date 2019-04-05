@@ -18,26 +18,27 @@ export const placeholdersPlugin = function(options) {
         const currentPart = anchorPart === headPart ? anchorPart : false
         const articleNode = state.doc.firstChild
 
-        const placeHolderTexts = [
-            gettext('Title...'),
-            gettext('Subtitle...'),
-            options.editor.docInfo.access_rights === 'write' ? false : gettext('Authors...'),
-            gettext('Abstract...'),
-            options.editor.docInfo.access_rights === 'write' ? false : gettext('Keywords...'),
-            gettext('Body...')
-        ]
-
         const decorations = []
 
-        articleNode.forEach((partElement, offset, index) => {
+        articleNode.forEach((partElement, offset) => {
             if (
                 (partElement.isTextblock && partElement.nodeSize === 2) ||
                 (!partElement.isTextblock && partElement.nodeSize === 4)
             ) {
-                const text = placeHolderTexts[index]
-                if (!text) {
+                if (
+                    [
+                        state.schema.nodes['tags_part'],
+                        state.schema.nodes['contributors_part']
+                    ].includes(partElement.type) &&
+                    options.editor.docInfo.access_rights === 'write'
+                ) {
+                    // We don't need to render placeholders for these kinds
+                    // of nodes in write mode as their nodeviews will take
+                    // care of that.
                     return
                 }
+
+                const text = `${partElement.attrs.title}...`
                 const placeHolder = document.createElement('span')
                 placeHolder.classList.add('placeholder')
                 placeHolder.setAttribute('data-placeholder', text)
@@ -61,7 +62,7 @@ export const placeholdersPlugin = function(options) {
             }
         })
 
-        return decorations.length ? DecorationSet.create(state.doc,decorations) : false
+        return decorations.length ? DecorationSet.create(state.doc, decorations) : false
 
     }
 
@@ -77,7 +78,7 @@ export const placeholdersPlugin = function(options) {
                 let {
                     decos
                 } = this.getState(oldState)
-                if (tr.steps.length || tr.selectionSet) {
+                if (tr.docChanged || tr.selectionSet) {
                     decos = calculatePlaceHolderDecorations(state)
                 }
                 return {

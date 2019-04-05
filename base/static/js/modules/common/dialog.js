@@ -1,3 +1,4 @@
+import {findTarget} from "./basic"
 
 const dialogTemplate = ({id, classes, title, height, width, icon, buttons, zIndex, body, scroll}) =>
 `<div tabindex="-1" role="dialog"
@@ -16,12 +17,12 @@ const dialogTemplate = ({id, classes, title, height, width, icon, buttons, zInde
         ${body}
     </div>
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-        <div class="ui-dialog-buttonset">${
-            buttons.map(button => buttonTemplate(button)).join('')
-        }</div>
+        <div class="ui-dialog-buttonset">${buttonsTemplate({buttons})}</div>
     </div>
 </div>
 <div class="ui-widget-overlay ui-front" style="z-index: ${zIndex-1}"></div>`
+
+const buttonsTemplate = ({buttons}) => buttons.map(button => buttonTemplate(button)).join('')
 
 const buttonTemplate = ({text, classes, icon}) => `<button type="button" class="${classes ? classes : 'fw-light'} fw-button ui-button ui-corner-all ui-widget">
     ${icon ? `<i class="fa fa-${icon}" aria-hidden="true"></i>` : ''}
@@ -48,13 +49,17 @@ const BUTTON_TYPES = {
 
 export class Dialog {
     constructor(options) {
+        this.eventAddress = this.scrollevent.bind(this)
         this.id = options.id || false
         this.classes = options.classes || false
         this.title = options.title || ''
         this.body = options.body || ''
         this.height = options.height ? `${options.height}px` : 'auto'
         this.width = options.width ? `${options.width}px` : 'auto'
-        this.buttons = options.buttons ? this.addDefaultButtons(options.buttons) : []
+        this.buttons = []
+        if (options.buttons) {
+            this.setButtons(options.buttons)
+        }
         this.onClose = options.onClose || false
         this.icon = options.icon || false
         this.scroll = options.scroll || false
@@ -62,8 +67,8 @@ export class Dialog {
         this.backdropEl = false
     }
 
-    addDefaultButtons(buttons) {
-        return buttons.map(button => ({
+    setButtons(buttons) {
+        this.buttons = buttons.map(button => ({
             text: button.text ? button.text : button.type ? BUTTON_TYPES[button.type].text : '',
             classes: button.classes ? button.classes : button.type ? BUTTON_TYPES[button.type].classes : false,
             click: button.click ? button.click : button.type ? BUTTON_TYPES[button.type].click(this) : '',
@@ -96,6 +101,10 @@ export class Dialog {
         this.bind()
     }
 
+    refreshButtons() {
+        this.dialogEl.querySelector('.ui-dialog-buttonset').innerHTML = buttonsTemplate({buttons: this.buttons})
+    }
+
     centerDialog() {
         const totalWidth = window.innerWidth,
             totalHeight = window.innerHeight,
@@ -104,16 +113,38 @@ export class Dialog {
             scrollTopOffset = window.pageYOffset,
             scrollLeftOffset = window.pageXOffset
 
-
         this.dialogEl.style.top = `${(totalHeight - dialogHeight)/2 + scrollTopOffset}px`
         this.dialogEl.style.left = `${(totalWidth - dialogWidth)/2 + scrollLeftOffset}px`
     }
 
+    scrollevent(){
+        this.centerDialog()
+    }
+
     bind() {
-        this.dialogEl.querySelectorAll('.ui-dialog-buttonpane button').forEach((buttonEl, index) => {
-            buttonEl.addEventListener('click', () => this.buttons[index].click())
+        window.addEventListener('scroll', this.eventAddress, false)
+        this.dialogEl.addEventListener('click', event => {
+            const el = {}
+            let buttonNumber, seekItem
+            switch (true) {
+                case findTarget(event, '.ui-dialog-buttonpane button', el):
+                    event.preventDefault()
+                    buttonNumber = 0
+                    seekItem = el.target
+                    while (seekItem.previousElementSibling) {
+                        buttonNumber++
+                        seekItem = seekItem.previousElementSibling
+                    }
+                    this.buttons[buttonNumber].click()
+                    break
+                case findTarget(event, '.ui-dialog-titlebar-close', el):
+                    event.preventDefault()
+                    this.close()
+                    break
+                default:
+                    break
+            }
         })
-        this.dialogEl.querySelector('.ui-dialog-titlebar-close').addEventListener('click', () => this.close())
     }
 
     getHighestDialogZIndex() {
@@ -126,6 +157,7 @@ export class Dialog {
         if (!this.dialogEl) {
             return
         }
+        window.removeEventListener("scroll",  this.eventAddress, false)
         this.dialogEl.parentElement.removeChild(this.dialogEl)
         this.backdropEl.parentElement.removeChild(this.backdropEl)
         if (this.onClose) {

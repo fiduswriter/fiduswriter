@@ -33,13 +33,13 @@ export class RangeListForm{
                 </td>
             </tr>`
         )
-        let fieldDOM = this.dom.firstChild.firstChild.lastChild
-        let fieldHandler = new RangeFieldForm(fieldDOM.firstChild, fieldValue)
+        const fieldDOM = this.dom.firstChild.firstChild.lastChild
+        const fieldHandler = new RangeFieldForm(fieldDOM.firstChild, fieldValue)
         fieldHandler.init()
         this.fields.push(fieldHandler)
 
         // click on plus
-        let addItemEl = fieldDOM.querySelector('.fa-plus-circle')
+        const addItemEl = fieldDOM.querySelector('.fa-plus-circle')
         addItemEl.addEventListener('click', () => {
             if (!this.value) {
                 return
@@ -50,7 +50,7 @@ export class RangeListForm{
         })
 
         // Click on minus
-        let removeItemEl = fieldDOM.querySelector('.fa-minus-circle')
+        const removeItemEl = fieldDOM.querySelector('.fa-minus-circle')
         removeItemEl.addEventListener('click', () => {
             if (!this.value) {
                 return
@@ -65,7 +65,7 @@ export class RangeListForm{
     }
 
     get value() {
-        let formValue = this.fields.map(field => {return field.value}).filter(
+        const formValue = this.fields.map(field => {return field.value}).filter(
             value => {return value !== false}
         )
         if (formValue.length === 0) {

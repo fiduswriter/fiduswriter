@@ -9,15 +9,24 @@ import {
 import {
     Step
 } from "prosemirror-transform"
-
-import {
-    docSchema
-} from "../../schema/document"
 import {
     getSelectionUpdate,
     removeCollaboratorSelection,
     updateCollaboratorSelection
 } from "../state_plugins"
+
+function noEmptyTrack(node) {
+    if (node.attrs && node.attrs.track && !node.attrs.track.length) {
+        delete node.attrs.track
+        if (!Object.keys(node.attrs).length) {
+            delete node.attrs
+        }
+    }
+    if (node.content) {
+        node.content.forEach(child => noEmptyTrack(child))
+    }
+    return node
+}
 
 export class ModCollabDocChanges {
     constructor(mod) {
@@ -37,7 +46,7 @@ export class ModCollabDocChanges {
     }
 
     checkVersion() {
-        this.mod.editor.mod.serverCommunications.send(() => {
+        this.mod.editor.ws.send(() => {
             if (this.currentlyCheckingVersion | !this.mod.editor.docInfo
                 .version) {
                 return
@@ -49,7 +58,7 @@ export class ModCollabDocChanges {
                 },
                 1000
             )
-            if (this.mod.editor.mod.serverCommunications.connected) {
+            if (this.mod.editor.ws.connected) {
                 this.disableDiffSending()
             }
             return {
@@ -81,7 +90,7 @@ export class ModCollabDocChanges {
     sendToCollaborators() {
         // Handle either doc change and comment updates OR caret update. Priority
         // for doc change/comment update.
-        this.mod.editor.mod.serverCommunications.send(() => {
+        this.mod.editor.ws.send(() => {
             if (
                 this.awaitingDiffResponse ||
                 this.mod.editor.waitingForDocument ||
@@ -131,17 +140,17 @@ export class ModCollabDocChanges {
                     // server.
                     unconfirmedDiff['jd'] = compare(
                         this.mod.editor.docInfo.confirmedJson,
-                        this.mod.editor.view.state.doc.firstChild
-                        .toJSON()
+                        noEmptyTrack(JSON.parse(JSON.stringify(
+                            this.mod.editor.view.state.doc.firstChild.toJSON()
+                        )))
                     )
-                    //unconfirmedDiff['confirmed_json'] = confirmedJson
                     // In case the title changed, we also add a title field to
                     // update the title field instantly - important for the
                     // document overview page.
                     let newTitle = ""
                     this.mod.editor.view.state.doc.firstChild.firstChild.forEach(
                         child => {
-                            if(!child.marks.find(mark => mark.type.name==='deletion')) {
+                            if (!child.marks.find(mark => mark.type.name==='deletion')) {
                                 newTitle += child.textContent
                             }
                         }
@@ -150,7 +159,7 @@ export class ModCollabDocChanges {
                     let oldTitle = ""
                     this.mod.editor.docInfo.confirmedDoc.firstChild.firstChild.forEach(
                         child => {
-                            if(!child.marks.find(mark => mark.type.name==='deletion')) {
+                            if (!child.marks.find(mark => mark.type.name==='deletion')) {
                                 oldTitle += child.textContent
                             }
                         }
@@ -252,9 +261,9 @@ export class ModCollabDocChanges {
 
     receiveFromCollaborators(data) {
         this.mod.editor.docInfo.version++
-            if (data["bu"]) { // bibliography updates
-                this.mod.editor.mod.db.bibDB.receive(data["bu"])
-            }
+        if (data["bu"]) { // bibliography updates
+            this.mod.editor.mod.db.bibDB.receive(data["bu"])
+        }
         if (data["iu"]) { // images updates
             this.mod.editor.mod.db.imageDB.receive(data["iu"])
         }
@@ -292,7 +301,9 @@ export class ModCollabDocChanges {
         this.mod.editor.docInfo.confirmedDoc = docNumber === tr.docs.length ?
             tr.doc :
             tr.docs[docNumber]
-        this.mod.editor.docInfo.confirmedJson = JSON.parse(JSON.stringify(this.mod.editor.docInfo.confirmedDoc.firstChild.toJSON()))
+        this.mod.editor.docInfo.confirmedJson = noEmptyTrack(JSON.parse(JSON.stringify(
+            this.mod.editor.docInfo.confirmedDoc.firstChild.toJSON()
+        )))
     }
 
     confirmDiff(request_id) {
@@ -305,7 +316,7 @@ export class ModCollabDocChanges {
         const sentSteps = unconfirmedDiffs["ds"] // document steps
         if (sentSteps) {
             const ourIds = sentSteps.map(
-                step => this.mod.editor.client_id
+                _step => this.mod.editor.client_id
             )
             const tr = receiveTransaction(
                 this.mod.editor.view.state,
@@ -313,10 +324,11 @@ export class ModCollabDocChanges {
                 ourIds
             )
             this.mod.editor.view.dispatch(tr)
+            this.mod.editor.docInfo.confirmedDoc = unconfirmedDiffs["doc"]
+            this.mod.editor.docInfo.confirmedJson = noEmptyTrack(JSON.parse(JSON.stringify(
+                this.mod.editor.docInfo.confirmedDoc.firstChild.toJSON()
+            )))
         }
-
-        this.mod.editor.docInfo.confirmedDoc = unconfirmedDiffs["doc"]
-        this.mod.editor.docInfo.confirmedJson = JSON.parse(JSON.stringify(this.mod.editor.docInfo.confirmedDoc.firstChild.toJSON()))
 
         const sentFnSteps = unconfirmedDiffs["fs"] // footnote steps
         if (sentFnSteps) {
@@ -324,7 +336,7 @@ export class ModCollabDocChanges {
                 this.mod.editor.mod.footnotes.fnEditor.view.state,
                 sentFnSteps,
                 sentFnSteps.map(
-                    step => this.mod.editor.client_id
+                    _step => this.mod.editor.client_id
                 )
             )
             this.mod.editor.mod.footnotes.fnEditor.view.dispatch(fnTr)
@@ -356,8 +368,8 @@ export class ModCollabDocChanges {
 
     applyDiffs(diffs, cid) {
         this.receiving = true
-        const steps = diffs.map(j => Step.fromJSON(docSchema, j))
-        const clientIds = diffs.map(j => cid)
+        const steps = diffs.map(j => Step.fromJSON(this.mod.editor.schema, j))
+        const clientIds = diffs.map(_ => cid)
         const tr = receiveTransaction(
             this.mod.editor.view.state,
             steps,

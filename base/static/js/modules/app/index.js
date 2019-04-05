@@ -4,7 +4,9 @@ import {Editor} from "../editor"
 import {ImageOverview} from "../images/overview"
 import {ContactsOverview} from "../contacts"
 import {Profile} from "../profile"
-import {getUserInfo} from "../common"
+import {getUserInfo, findTarget, WebSocketConnector, showSystemMessage} from "../common"
+import {ImageDB} from "../images/database"
+import {BibliographyDB} from "../bibliography/database"
 import * as plugins from "../../plugins/app"
 
 export class App {
@@ -15,36 +17,75 @@ export class App {
             "usermedia": () => new ImageOverview(this.config),
             "bibliography": () => new BibliographyOverview(this.config),
             "user": pathnameParts => {
-                switch(pathnameParts[2]) {
+                let returnValue
+                switch (pathnameParts[2]) {
                     case "profile":
-                        return new Profile(this.config)
+                        returnValue = new Profile(this.config)
                         break
                     case "team":
-                        return new ContactsOverview(this.config)
+                        returnValue = new ContactsOverview(this.config)
                         break
                     default:
-                        return false
+                        returnValue = false
                 }
+                return returnValue
             },
             "document": pathnameParts => {
-                let id = parseInt(pathnameParts[2])
-                if (isNaN(id)) {
-                    id = 0
-                }
-                return new Editor(id, this.config)
+                const id = pathnameParts[2]
+                return new Editor(this.config, id)
             },
             "": () => new DocumentOverview(this.config)
         }
     }
 
     init() {
-        this.getUserInfo().then(
+        this.bibDB = new BibliographyDB()
+        this.imageDB = new ImageDB()
+        Promise.all([
+            this.bibDB.getDB(),
+            this.imageDB.getDB(),
+            this.getUserInfo()
+        ]).then(
             () => {
                 this.activateFidusPlugins()
                 this.selectPage()
             }
         )
+        this.bind()
+    }
+
+    bind() {
         window.onpopstate = () => this.selectPage()
+        document.addEventListener('click', event => {
+            const el = {}
+            switch (true) {
+                case findTarget(event, 'a', el):
+                    if (
+                        el.target.hostname === window.location.hostname &&
+                        el.target.getAttribute('href')[0] === '/'
+                    ) {
+                        event.preventDefault()
+                        this.goTo(el.target.href)
+                    }
+                    break
+            }
+        })
+
+        this.ws = new WebSocketConnector({
+            url: `${this.config.websocketUrl}/ws/base/`,
+            appLoaded: () => true,
+            receiveData: data => {
+                switch (data.type) {
+                    case 'message':
+                            showSystemMessage(data.message)
+                        break
+                    default:
+                        break
+                }
+            }
+
+        })
+        this.ws.init()
     }
 
     activateFidusPlugins() {

@@ -3,10 +3,6 @@ import {GeneralPasteHandler} from "./general"
 // Fidus Writer paste handler
 export class FidusWriterPasteHandler extends GeneralPasteHandler {
 
-    outputHandlerType() {
-        console.info('Fidus Writer paste handler')
-    }
-
     // Convert an existing node to a different node, if needed.
     convertNode(node) {
         // Replace  nodes with other nodes to not change the number of child nodes

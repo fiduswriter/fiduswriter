@@ -8,9 +8,22 @@ const GRAPHIC_STYLES = {
     Graphics: noSpaceTmp`
         <style:style style:name="Graphics" style:family="graphic">
             <style:graphic-properties text:anchor-type="paragraph" svg:x="0in" svg:y="0in" style:wrap="dynamic" style:number-wrapped-paragraphs="no-limit" style:wrap-contour="false" style:vertical-pos="top" style:vertical-rel="paragraph" style:horizontal-pos="center" style:horizontal-rel="paragraph"/>
+        </style:style>`,
+    Frame: noSpaceTmp`
+        <style:style style:name="Frame" style:family="graphic">
+            <style:graphic-properties text:anchor-type="paragraph" svg:x="0in" svg:y="0in" style:wrap="dynamic" style:number-wrapped-paragraphs="no-limit" style:wrap-contour="false" style:vertical-pos="top" style:vertical-rel="paragraph" style:horizontal-pos="center" style:horizontal-rel="paragraph"/>
         </style:style>`
 }
 
+
+const PAR_STYLES = {
+    Standard: '<style:style style:name="Standard" style:family="paragraph" style:class="text" />',
+    Caption: noSpaceTmp`<style:style style:name="Caption" style:family="paragraph" style:parent-style-name="Standard" style:class="extra">
+            <style:paragraph-properties fo:margin-top="0.0835in" fo:margin-bottom="0.0835in" loext:contextual-spacing="false" text:number-lines="false" text:line-number="0" />
+            <style:text-properties fo:font-style="italic" style:font-style-asian="italic" style:font-style-complex="italic" />
+        </style:style>`,
+    Figure: '<style:style style:name="Figure" style:family="paragraph" style:parent-style-name="Caption" style:class="extra" />'
+}
 
 export class OdtExporterStyles {
     constructor(exporter) {
@@ -21,10 +34,14 @@ export class OdtExporterStyles {
         this.italicStyleId = false
         this.boldItalicStyleId = false
         this.inlineStyleIds = {}
+        this.tableStyleIds = {}
+        this.graphicStyleIds = {}
         this.bulletListStyleId = [false, false]
         this.inlineStyleCounter = 0
+        this.tableStyleCounter = 0
         this.blockStyleCounter = 0
         this.listStyleCounter = 0
+        this.graphicStyleCounter = 0
     }
 
     init() {
@@ -39,24 +56,32 @@ export class OdtExporterStyles {
     }
 
     getStyleCounters() {
-        let styles = this.contentXml.querySelectorAll('automatic-styles style')
+        const styles = this.contentXml.querySelectorAll('automatic-styles style')
         styles.forEach(style => {
-            let styleNumber = parseInt(style.getAttribute('style:name').replace(/\D/g,''))
-            let styleFamily = style.getAttribute('style:family')
+            const styleNumber = parseInt(style.getAttribute('style:name').replace(/\D/g, ''))
+            const styleFamily = style.getAttribute('style:family')
             if (styleFamily==='text') {
-                if (styleNumber>this.inlineStyleCounter) {
+                if (styleNumber> this.inlineStyleCounter) {
                     this.inlineStyleCounter = styleNumber
                 }
-            } else {
-                if (styleNumber>this.blockStyleCounter) {
+            } else if (styleFamily==='table') {
+                if (styleNumber> this.tableStyleCounter) {
+                    this.tableStyleCounter = styleNumber
+                }
+            } else if (styleFamily==='paragraph') {
+                if (styleNumber> this.blockStyleCounter) {
                     this.blockStyleCounter = styleNumber
+                }
+            } else if (styleFamily==='graphic') {
+                if (styleNumber> this.graphicStyleCounter) {
+                    this.graphicStyleCounter = styleNumber
                 }
             }
         })
-        let listStyles = this.contentXml.querySelectorAll('automatic-styles list-style')
+        const listStyles = this.contentXml.querySelectorAll('automatic-styles list-style')
         listStyles.forEach(style => {
-            let styleNumber = parseInt(style.getAttribute('style:name').replace(/\D/g,''))
-            if (styleNumber>this.listStyleCounter) {
+            const styleNumber = parseInt(style.getAttribute('style:name').replace(/\D/g, ''))
+            if (styleNumber> this.listStyleCounter) {
                 this.listStyleCounter = styleNumber
             }
         })
@@ -67,6 +92,7 @@ export class OdtExporterStyles {
     Only one of super/sub possible.
     e = italic/em
     s = bold/strong
+    u = underline
     c = small caps
     p = super
     b = sub
@@ -83,6 +109,9 @@ export class OdtExporterStyles {
         if (attributes.includes('s')) {
             styleProperties += ' fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"'
         }
+        if (attributes.includes('u')) {
+            styleProperties += ' style:text-underline-style="solid" style:text-underline-width="auto" style:text-underline-color="font-color"'
+        }
         if (attributes.includes('c')) {
             styleProperties += ' fo:font-variant="small-caps"'
         }
@@ -91,9 +120,9 @@ export class OdtExporterStyles {
         } else if (attributes.includes('b')) {
             styleProperties += ' style:text-position="sub 58%"'
         }
-        let styleCounter = ++this.inlineStyleCounter
+        const styleCounter = ++this.inlineStyleCounter
         this.inlineStyleIds[attributes] = styleCounter
-        let autoStylesEl = this.contentXml.querySelector('automatic-styles')
+        const autoStylesEl = this.contentXml.querySelector('automatic-styles')
         autoStylesEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
             <style:style style:name="T${styleCounter}" style:family="text">
                 <style:text-properties${styleProperties}/>
@@ -102,57 +131,100 @@ export class OdtExporterStyles {
         return styleCounter
     }
 
+    /*
+    aligned: left/center/right
+    width: '75'/'50'/'25' = percentage width - 100% doesn't need any style
+    */
+    getTableStyleId(aligned, width) {
+        if (this.tableStyleIds[aligned+width]) {
+            return this.tableStyleIds[aligned+width]
+        }
+        const styleCounter = ++this.tableStyleCounter
+        this.tableStyleIds[aligned+width] = styleCounter
+        const autoStylesEl = this.contentXml.querySelector('automatic-styles')
+        autoStylesEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
+            <style:style style:name="Table${styleCounter}" style:family="table">
+                <style:table-properties style:rel-width="${width}%" table:align="${aligned}"/>
+            </style:style>
+        `)
+        return styleCounter
+    }
+
     checkParStyle(styleName) {
-        let stylesParStyle = this.stylesXml.querySelector(`style[*|name="${styleName}"]`)
-        let contentParStyle = this.contentXml.querySelector(`style[*|name="${styleName}"]`)
+        const stylesParStyle = this.stylesXml.querySelector(`style[*|name="${styleName}"]`)
+        const contentParStyle = this.contentXml.querySelector(`style[*|name="${styleName}"]`)
         if ((!stylesParStyle) && (!contentParStyle)) {
-            let stylesEl = this.stylesXml.querySelector('styles')
-            let displayName = styleName.split('_20_').join(' ')
+            const stylesEl = this.stylesXml.querySelector('styles')
+            const displayName = styleName.split('_20_').join(' ')
             stylesEl.insertAdjacentHTML(
                 'beforeEnd',
+                PAR_STYLES[styleName] ||
                 `<style:style style:name="${styleName}" style:display-name="${displayName}" style:family="paragraph" style:parent-style-name="Standard" style:class="text" />`
             )
         }
     }
 
     checkGraphicStyle(styleName) {
-        let stylesParStyle = this.stylesXml.querySelector(`style[*|name="${styleName}"]`)
-        let contentParStyle = this.contentXml.querySelector(`style[*|name="${styleName}"]`)
+        const stylesParStyle = this.stylesXml.querySelector(`style[*|name="${styleName}"]`)
+        const contentParStyle = this.contentXml.querySelector(`style[*|name="${styleName}"]`)
         if ((!stylesParStyle) && (!contentParStyle)) {
-            let stylesEl = this.stylesXml.querySelector('styles')
+            const stylesEl = this.stylesXml.querySelector('styles')
             stylesEl.insertAdjacentHTML(
                 'beforeEnd',
                 GRAPHIC_STYLES[styleName]
             )
         }
+    }
 
+    /*
+    styleName: Frame/Formula/Graphics
+    aligned: left/center/right (not used for Formula)
+    */
+    getGraphicStyleId(styleName, aligned = '') {
+        if (this.graphicStyleIds[styleName+aligned]) {
+            return this.graphicStyleIds[styleName+aligned]
+        }
+        this.checkGraphicStyle(styleName)
+
+        const styleCounter = ++this.graphicStyleCounter
+        this.graphicStyleIds[styleName+aligned] = styleCounter
+        const autoStylesEl = this.contentXml.querySelector('automatic-styles')
+        autoStylesEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
+            <style:style style:name="fr${styleCounter}" style:family="graphic" style:parent-style-name="${styleName}">
+                ${
+                    styleName === 'Formula' ?
+                    `<style:graphic-properties style:vertical-pos="from-top" style:horizontal-pos="from-left" style:horizontal-rel="paragraph-content" draw:ole-draw-aspect="1" />` :
+                    `<style:graphic-properties fo:margin-left="0in" fo:margin-right="0in" fo:margin-top="0in" fo:margin-bottom="0in" ${ aligned === 'center' ? 'style:wrap="none"' : 'style:wrap="dynamic"  style:number-wrapped-paragraphs="no-limit"' } style:vertical-pos="top" style:vertical-rel="paragraph" style:horizontal-pos="${aligned}" style:horizontal-rel="paragraph" fo:padding="0in" fo:border="none" loext:rel-width-rel="paragraph" />`
+                } style:number-wrapped-paragraphs="no-limit"
+            </style:style>`)
+        return styleCounter
     }
 
     addReferenceStyle(bibInfo) {
         // The style called "Bibliography_20_1" will override any previous style
         // of the same name.
-        let stylesParStyle = this.stylesXml.querySelector(`style[*|name="Bibliography_20_1"]`)
+        const stylesParStyle = this.stylesXml.querySelector(`style[*|name="Bibliography_20_1"]`)
         if (stylesParStyle) {
             stylesParStyle.parentNode.removeChild(stylesParStyle)
         }
-        let contentParStyle = this.contentXml.querySelector(`style[*|name="Bibliography_20_1"]`)
+        const contentParStyle = this.contentXml.querySelector(`style[*|name="Bibliography_20_1"]`)
         if (contentParStyle) {
             contentParStyle.parentNode.removeChild(contentParStyle)
         }
 
         this.checkParStyle('Index')
 
-        let lineHeight = `${0.1665*bibInfo.linespacing}in`
-        let marginBottom = `${0.1667*bibInfo.entryspacing}in`
+        const lineHeight = `${0.1665*bibInfo.linespacing}in`
+        const marginBottom = `${0.1667*bibInfo.entryspacing}in`
         let marginLeft = "0in", textIndent = "0in", tabStops = '<style:tab-stops/>'
 
         if (bibInfo.hangingindent) {
             marginLeft = "0.5in"
             textIndent = "-0.5in"
-        } else if(bibInfo["second-field-align"]) {
+        } else if (bibInfo["second-field-align"]) {
             // We calculate 0.55em as roughly equivalent to one letter width.
-            let firstFieldWidth = `${(bibInfo.maxoffset + 1)*0.55}em`
-            if(bibInfo["second-field-align"] === 'margin') {
+            const firstFieldWidth = `${(bibInfo.maxoffset + 1)*0.55}em`
+            if (bibInfo["second-field-align"] === 'margin') {
                 textIndent =  `-${firstFieldWidth}`
                 tabStops = '<style:tab-stops><style:tab-stop style:position="0in"/></style:tab-stops>'
             } else {
@@ -161,13 +233,13 @@ export class OdtExporterStyles {
                 tabStops = `<style:tab-stops><style:tab-stop style:position="${firstFieldWidth}"/></style:tab-stops>`
             }
         }
-        let styleDef = noSpaceTmp`
+        const styleDef = noSpaceTmp`
             <style:style style:name="Bibliography_20_1" style:display-name="Bibliography 1" style:family="paragraph" style:parent-style-name="Index" style:class="index">
                 <style:paragraph-properties fo:margin-left="${marginLeft}" fo:margin-right="0in" fo:margin-top="0in" fo:margin-bottom="${marginBottom}" loext:contextual-spacing="false" fo:text-indent="${textIndent}" style:line-height-at-least="${lineHeight}" style:auto-text-indent="false">
                     ${tabStops}
                 </style:paragraph-properties>
             </style:style>`
-        let stylesEl = this.stylesXml.querySelector('styles')
+        const stylesEl = this.stylesXml.querySelector('styles')
         stylesEl.insertAdjacentHTML('beforeEnd', styleDef)
     }
 
@@ -176,14 +248,14 @@ export class OdtExporterStyles {
             return this.bulletListStyleId
         }
         this.bulletListStyleId[0] = ++this.listStyleCounter
-        let autoStylesEl = this.contentXml.querySelector('automatic-styles')
+        const autoStylesEl = this.contentXml.querySelector('automatic-styles')
         autoStylesEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
             <text:list-style style:name="L${this.bulletListStyleId[0]}">
             </text:list-style>
         `)
-        let listStyleEl = autoStylesEl.lastChild
+        const listStyleEl = autoStylesEl.lastChild
         // ODT files seem to contain ten levels of lists (1-10)
-        for(let level=1;level<11;level++) {
+        for (let level=1;level<11;level++) {
             listStyleEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
                 <text:list-level-style-bullet text:level="${level}" text:style-name="Bullet_20_Symbols" text:bullet-char="•">
                     <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
@@ -197,15 +269,15 @@ export class OdtExporterStyles {
     }
 
     getOrderedListStyleId() {
-        let orderedListStyleId = ++this.listStyleCounter
-        let autoStylesEl = this.contentXml.querySelector('automatic-styles')
+        const orderedListStyleId = ++this.listStyleCounter
+        const autoStylesEl = this.contentXml.querySelector('automatic-styles')
         autoStylesEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
             <text:list-style style:name="L${orderedListStyleId}">
             </text:list-style>
         `)
-        let listStyleEl = autoStylesEl.lastChild
+        const listStyleEl = autoStylesEl.lastChild
         // ODT files seem to contain ten levels of lists (1-10)
-        for(let level=1;level<11;level++) {
+        for (let level=1;level<11;level++) {
             listStyleEl.insertAdjacentHTML('beforeEnd', noSpaceTmp`
                 <text:list-level-style-number text:level="${level}" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
                     <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
@@ -218,9 +290,9 @@ export class OdtExporterStyles {
     }
 
     // Add a paragraph style for either paragraph in bullet or numeric list
-    addListParStyle(listId) {
-        let parStyleId = ++this.blockStyleCounter
-        let autoStylesEl = this.contentXml.querySelector('automatic-styles')
+    addListParStyle(_listId) {
+        const parStyleId = ++this.blockStyleCounter
+        const autoStylesEl = this.contentXml.querySelector('automatic-styles')
         autoStylesEl.insertAdjacentHTML(
             'beforeEnd',
             `<style:style style:name="P1" style:family="paragraph" style:parent-style-name="Standard" style:list-style-name="L1" />`
@@ -229,7 +301,10 @@ export class OdtExporterStyles {
     }
 
     setLanguage(langCode) {
-        let [language, country] = langCode.split('-')
+        const langCodes = langCode.split('-'),
+            [language] = langCodes
+
+        let [, country] = langCodes
 
         if (!country) {
             country = 'none'

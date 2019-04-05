@@ -69,7 +69,7 @@ export class ModCollabChat {
     }
 
     sendMessage(messageText) {
-        this.mod.editor.mod.serverCommunications.send(() => ({
+        this.mod.editor.ws.send(() => ({
             type: 'chat',
             body: messageText
         }))
@@ -86,7 +86,7 @@ export class ModCollabChat {
             const resizeButton = document.querySelector('#chat .resize-button')
             resizeButton.addEventListener(
                 "click",
-                event => {
+                () => {
                     const chatEl = document.getElementById('chat')
                     if (resizeButton.classList.contains('fa-angle-double-down')) {
                         resizeButton.classList.remove('fa-angle-double-down')
@@ -106,9 +106,9 @@ export class ModCollabChat {
 
             const messageForm = document.getElementById("messageform")
 
-            messageForm.addEventListener("focus", event => messageForm.classList.remove('empty'))
+            messageForm.addEventListener("focus", () => messageForm.classList.remove('empty'))
 
-            messageForm.addEventListener("blur", event => {
+            messageForm.addEventListener("blur", () => {
                 if (messageForm.innerText.trim().length === 0) {
                     messageForm.classList.add('empty')
                 }

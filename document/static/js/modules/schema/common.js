@@ -7,7 +7,7 @@ function parseReferences(str) {
     let references
     try {
         references = JSON.parse(str)
-    } catch(error) {
+    } catch (error) {
        return []
    }
    if (!Array.isArray(references)) {
@@ -91,6 +91,14 @@ export function randomFigureId() {
     return 'F' + Math.round(Math.random()*10000000) + 1
 }
 
+export const FIG_CATS = {
+    'none': gettext('None'),
+    'figure': gettext('Figure'),
+    'table': gettext('Table'),
+    'photo': gettext('Photo')
+}
+
+
 export function parseTracks(str) {
     if (!str) {
         return []
@@ -98,7 +106,7 @@ export function parseTracks(str) {
     let tracks
     try {
         tracks = JSON.parse(str)
-    } catch(error) {
+    } catch (error) {
         return []
     }
     if (!Array.isArray(tracks)) {
@@ -121,7 +129,10 @@ export const figure = {
         figureCategory: {default: ""},
         caption: {default: ""},
         id: {default: false},
-        track: {default: []}
+        track: {default: []},
+        aligned: {default: 'center'},
+        width:{default:"100"},
+        //height: {default:"50"},
     },
     parseDOM: [{
         tag: 'figure',
@@ -133,7 +144,10 @@ export const figure = {
                 figureCategory: dom.dataset.figureCategory,
                 caption: dom.dataset.caption,
                 id: dom.dataset.id,
-                track: parseTracks(dom.dataset.track)
+                track: parseTracks(dom.dataset.track),
+                aligned: dom.dataset.aligned,
+                width: dom.dataset.width,
+
             }
         }
     }],
@@ -144,7 +158,38 @@ export const figure = {
         dom.dataset.figureCategory = node.attrs.figureCategory
         dom.dataset.caption = node.attrs.caption
         dom.id = node.attrs.id
-        if(node.attrs.track.length) {
+        dom.dataset.aligned = node.attrs.aligned
+        dom.dataset.width = node.attrs.width
+
+        switch (node.attrs.aligned) {
+            case 'right':
+                dom.classList.add('aligned-right')
+                break
+            case 'left':
+                dom.classList.add('aligned-left')
+                break
+            case 'center':
+                dom.classList.add('aligned-center')
+                break
+            default:
+                dom.classList.add('aligned-center')
+        }
+
+         switch (node.attrs.width) {
+            case '100':
+                dom.classList.add('image-width-100')
+                break
+            case '75':
+                dom.classList.add('image-width-75')
+                break
+            case '50':
+                dom.classList.add('image-width-50')
+                break
+            default:
+                dom.classList.add('image-width-25')
+        }
+
+        if (node.attrs.track.length) {
             dom.dataset.track = JSON.stringify(node.attrs.track)
         }
         if (node.attrs.image !== false) {
@@ -154,7 +199,7 @@ export const figure = {
                     node.type.schema.cached.imageDB.db[node.attrs.image].image) {
                     const imgSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
                     const img = document.createElement("img")
-                    img.setAttribute('src', node.type.schema.cached.imageDB.db[node.attrs.image].image)
+                    img.setAttribute('src', imgSrc)
                     dom.firstChild.appendChild(img)
                     dom.dataset.imageSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
                 } else {
@@ -194,7 +239,7 @@ export const figure = {
             const figureCatNode = document.createElement('span')
             figureCatNode.classList.add(`figure-cat-${node.attrs.figureCategory}`)
             figureCatNode.setAttribute('data-figure-category', node.attrs.figureCategory)
-            figureCatNode.innerHTML = node.attrs.figureCategory
+            figureCatNode.innerHTML = FIG_CATS[node.attrs.figureCategory]
             captionNode.appendChild(figureCatNode)
         }
         if (node.attrs.caption !== '') {
@@ -219,15 +264,13 @@ export const randomHeadingId = () => {
     return `H${Math.round(Math.random()*10000000) + 1}`
 }
 
-export const heading = {
-    group: "block",
+
+const createHeading = level => ({
+    group: "block heading",
     content: "inline*",
     marks: "_",
     defining: true,
     attrs: {
-        level: {
-            default: 1
-        },
         id: {
             default: false
         },
@@ -237,60 +280,9 @@ export const heading = {
     },
     parseDOM: [
         {
-            tag: "h1",
+            tag: `h${level}`,
             getAttrs(dom) {
                 return {
-                    level: 1,
-                    id: dom.id,
-                    track: parseTracks(dom.dataset.track)
-                }
-            }
-        },
-        {
-            tag: "h2",
-            getAttrs(dom) {
-                return {
-                    level: 2,
-                    id: dom.id,
-                    track: parseTracks(dom.dataset.track)
-                }
-             }
-        },
-        {
-            tag: "h3",
-            getAttrs(dom) {
-                return {
-                    level: 3,
-                    id: dom.id,
-                    track: parseTracks(dom.dataset.track)
-                }
-            }
-        },
-        {
-            tag: "h4",
-            getAttrs(dom) {
-                return {
-                    level: 4,
-                    id: dom.id,
-                    track: parseTracks(dom.dataset.track)
-                }
-            }
-        },
-        {
-            tag: "h5",
-            getAttrs(dom) {
-                return {
-                    level: 5,
-                    id: dom.id,
-                    track: parseTracks(dom.dataset.track)
-                }
-            }
-        },
-        {
-            tag: "h6",
-            getAttrs(dom) {
-                return {
-                    level: 6,
                     id: dom.id,
                     track: parseTracks(dom.dataset.track)
                 }
@@ -302,9 +294,16 @@ export const heading = {
         if (node.attrs.track.length) {
             attrs['data-track'] = JSON.stringify(node.attrs.track)
         }
-        return [`h${node.attrs.level}`, attrs, 0]
+        return [`h${level}`, attrs, 0]
     }
-}
+})
+
+export const heading1 = createHeading(1)
+export const heading2 = createHeading(2)
+export const heading3 = createHeading(3)
+export const heading4 = createHeading(4)
+export const heading5 = createHeading(5)
+export const heading6 = createHeading(6)
 
 export const comment = {
     attrs: {
@@ -529,6 +528,14 @@ export const list_item = {
     defining: true
 }
 
+
+export const underline = {
+    parseDOM: [{tag: "span.underline"}],
+    toDOM() {
+        return ["span", {class: 'underline'}, 0]
+    }
+}
+
 export const deletion = {
     attrs: {
         user: {
@@ -572,7 +579,7 @@ function parseFormatList(str) {
     let formatList
     try {
         formatList = JSON.parse(str)
-    } catch(error) {
+    } catch (error) {
        return []
    }
    if (!Array.isArray(formatList)) {
@@ -581,7 +588,7 @@ function parseFormatList(str) {
    return formatList.filter(format => typeof(format)==='string') // ensure there are only strings in list
 }
 
-export let format_change = {
+export const format_change = {
     attrs: {
         user: {
             default: 0
@@ -627,7 +634,7 @@ export let format_change = {
     }
 }
 
-export let insertion = {
+export const insertion = {
     attrs: {
         user: {
             default: 0

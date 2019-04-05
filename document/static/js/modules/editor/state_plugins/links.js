@@ -1,7 +1,6 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
-import {ReplaceAroundStep, RemoveMarkStep, ReplaceStep} from "prosemirror-transform"
-import {Slice, Fragment} from "prosemirror-model"
+import {RemoveMarkStep} from "prosemirror-transform"
 
 import {noSpaceTmp, addAlert} from "../../common"
 import {randomHeadingId, randomFigureId} from "../../schema/common"
@@ -23,7 +22,6 @@ const copyLink = function(href) {
         addAlert('info', gettext(
             'Copy to clipboard failed. Please copy manually.'
         ))
-        console.warn("Copy to clipboard failed.", ex)
     }
 }
 
@@ -271,9 +269,9 @@ export const linksPlugin = function(options) {
                 }
             }
         },
-        appendTransaction: (trs, oldState, state) => {
+        appendTransaction: (trs, oldState, newState) => {
             // Check if any of the transactions are local.
-            if (trs.every(tr => !tr.steps.length || tr.getMeta('remote'))) {
+            if (trs.every(tr => !tr.docChanged || tr.getMeta('remote'))) {
                 // All transactions are remote or don't change anything. Give up.
                 return
             }
@@ -313,17 +311,17 @@ export const linksPlugin = function(options) {
                     })
                 })
             })
-            const tr = trs.slice(-1)[0]
             let foundIdElement = false, // found heading or figure
                 foundAnchorWithoutId = false // found an anchor without an ID
             ranges.forEach(range => {
-                tr.doc.nodesBetween(
+                newState.doc.nodesBetween(
                     range[0],
                     range[1],
-                    (node, pos, parent) => {
-                        if (node.type.name ===
-                            'heading' || node.type.name ===
-                            'figure') {
+                    node => {
+                        if (
+                            node.type.groups.includes('heading') ||
+                            node.type.name === 'figure'
+                        ) {
                             foundIdElement = true
                         }
                         node.marks.forEach(mark => {
@@ -354,15 +352,15 @@ export const linksPlugin = function(options) {
                 options.editor.view.state
 
             otherState.doc.descendants(node => {
-                if (node.type.name === 'heading') {
+                if (node.type.groups.includes('heading')) {
                     headingIds.push(node.attrs.id)
                 } else if (node.type.name === 'figure') {
                     figureIds.push(node.attrs.id)
                 }
             })
 
-            tr.doc.descendants((node, pos) => {
-                if (node.type.name === 'heading') {
+            newState.doc.descendants((node, pos) => {
+                if (node.type.groups.includes('heading')) {
                     if (headingIds.includes(node.attrs.id) || !node.attrs.id) {
                         // Add node if the id is false (default) or it is present twice
                         doubleHeadingIds.push({
@@ -390,7 +388,7 @@ export const linksPlugin = function(options) {
                 return
             }
 
-            const newTransaction = state.tr.setMeta('fixIds', true)
+            const newTransaction = newState.tr.setMeta('fixIds', true)
             // Change the IDs of the nodes that having an ID that was used previously
             // already.
             doubleHeadingIds.forEach(doubleId => {
@@ -429,11 +427,11 @@ export const linksPlugin = function(options) {
 
             // Remove anchor marks without ID
             if (foundAnchorWithoutId) {
-                const markType = state.schema.marks.anchor.create({id : false})
+                const markType = newState.schema.marks.anchor.create({id : false})
                 newTransaction.step(
                     new RemoveMarkStep(
                         0,
-                        state.doc.content.size,
+                        newState.doc.content.size,
                         markType
                     )
                 )
@@ -442,7 +440,7 @@ export const linksPlugin = function(options) {
         },
         props: {
             handleDOMEvents: {
-                focus: (view, event) => {
+                focus: (view, _event) => {
                     const {
                         url
                     } = key.getState(view.state)

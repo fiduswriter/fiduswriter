@@ -6,6 +6,8 @@ from base.views import app
 urlpatterns = [
     url('^$', app, name='index'),
     url('^new/$', app, name='editor'),
+    url('^n\d+/$', app, name='editor'),
+    url('^\d+/$', app, name='editor'),
     url(
         '^documentlist/$',
         views.get_documentlist_js,
@@ -17,6 +19,11 @@ urlpatterns = [
         name='get_documentlist_extra_js'
     ),
     url('^delete/$', views.delete_js, name='delete_js'),
+    url(
+        '^create_doc/(?P<template_id>[0-9]+)/$',
+        views.create_doc_js,
+        name='create_doc_js'
+    ),
     url('^import/create/$', views.import_create_js, name='import_create_js'),
     url('^import/image/$', views.import_image_js, name='import_image_js'),
     url('^import/$', views.import_js, name='import_js'),
@@ -31,7 +38,6 @@ urlpatterns = [
         views.delete_revision_js,
         name='delete_revision_js'
     ),
-    url('^\d+/$', app, name='editor'),
     url(
         '^accessright/save/$',
         views.access_right_save_js,

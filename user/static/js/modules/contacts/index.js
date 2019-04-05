@@ -15,7 +15,7 @@ export class ContactsOverview {
     init() {
         whenReady().then(() => {
             this.render()
-            let smenu = new SiteMenu("") // Nothing highlighted.
+            const smenu = new SiteMenu("") // Nothing highlighted.
             smenu.init()
             this.menu = new OverviewMenuView(this, menuModel)
             this.menu.init()
@@ -59,24 +59,18 @@ export class ContactsOverview {
         ).catch(
             error => {
                 addAlert('error', gettext('Could not obtain contacts list'))
-                throw(error)
+                throw (error)
             }
         )
     }
 
     bind() {
         document.body.addEventListener('click', event => {
-            let el = {}
+            const el = {}
             switch (true) {
                 case findTarget(event, '.delete-single-member', el):
                     //delete single user
                     deleteMemberDialog([el.target.dataset.id])
-                    break
-                case findTarget(event, 'a', el):
-                    if (el.target.hostname === window.location.hostname && el.target.getAttribute('href')[0] === '/') {
-                        event.preventDefault()
-                        this.app.goTo(el.target.href)
-                    }
                     break
                 default:
                     break

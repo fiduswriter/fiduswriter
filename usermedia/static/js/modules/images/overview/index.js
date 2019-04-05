@@ -1,10 +1,21 @@
 import {DataTable} from "simple-datatables"
-
-import {ImageDB} from "../database"
 import {ImageOverviewCategories} from "./categories"
-import {activateWait, deactivateWait, addAlert, post, findTarget, whenReady, Dialog, localizeDate, escapeText} from "../../common"
+import {
+    activateWait,
+    deactivateWait,
+    addAlert,
+    post,
+    findTarget,
+    whenReady,
+    Dialog,
+    localizeDate,
+    escapeText,
+    OverviewMenuView,
+    baseBodyTemplate,
+    setDocTitle,
+    ensureCSS
+} from "../../common"
 import {SiteMenu} from "../../menu"
-import {OverviewMenuView, baseBodyTemplate, setDocTitle} from "../../common"
 import {FeedbackTab} from "../../feedback"
 import {menuModel} from "./menu"
 import {ImageEditDialog} from "../edit_dialog"
@@ -23,13 +34,14 @@ export class ImageOverview {
         whenReady().then(() => {
             this.render()
             new ImageOverviewCategories(this)
-            let smenu = new SiteMenu("images")
+            const smenu = new SiteMenu("images")
             smenu.init()
             this.menu = new OverviewMenuView(this, menuModel)
             this.menu.init()
             this.activatePlugins()
             this.bindEvents()
-            this.getImageDB()
+            this.mod.categories.setImageCategoryList(this.app.imageDB.cats)
+            this.initTable(Object.keys(this.app.imageDB.db))
         })
     }
 
@@ -40,6 +52,9 @@ export class ImageOverview {
             username: this.username,
             staticUrl: this.staticUrl
         })
+        ensureCSS([
+            'cropper.min.css'
+        ], this.staticUrl)
         setDocTitle(gettext('Media Manager'))
         const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
         feedbackTab.init()
@@ -68,12 +83,12 @@ export class ImageOverview {
         ).catch(
             error => {
                 addAlert('error', gettext('The image(s) could not be deleted'))
-                throw(error)
+                throw (error)
             }
         ).then(
             () => {
                 ids.forEach(id => {
-                    delete this.imageDB[id]
+                    delete this.app.imageDB[id]
                 })
                 this.removeTableRows(ids)
                 addAlert('success', gettext('The image(s) have been deleted'))
@@ -85,7 +100,7 @@ export class ImageOverview {
 
     deleteImageDialog(ids) {
 
-        let buttons = [
+        const buttons = [
             {
                 text: gettext('Delete'),
                 classes: "fw-dark",
@@ -98,7 +113,7 @@ export class ImageOverview {
                 type: 'cancel'
             }
         ]
-        let dialog = new Dialog({
+        const dialog = new Dialog({
             id: 'confirmdeletion',
             icon: 'exclamation-triangle',
             title: gettext('Confirm deletion'),
@@ -119,10 +134,10 @@ export class ImageOverview {
     }
 
     createTableRow(id) {
-        let image = this.imageDB.db[id]
+        const image = this.app.imageDB.db[id]
         let fileType = image.file_type.split('/')
 
-        if(1 < fileType.length) {
+        if (1 < fileType.length) {
             fileType = fileType[1].toUpperCase()
         } else {
             fileType = fileType[0].toUpperCase()
@@ -142,14 +157,14 @@ export class ImageOverview {
             `<span class="fw-inline">${image.width} x ${image.height}</span>`,
             `<span class="date">${localizeDate(image.added, 'sortable-date')}</span>`,
             `<span class="delete-image fw-inline fw-link-text" data-id="${id}">
-                <i class="fa fa-trash-o"></i>
+                <i class="fa fa-trash-alt"></i>
             </span>`
         ]
     }
 
     removeTableRows(ids) {
-        let existingRows = this.table.data.map((data, index) => {
-            let id = parseInt(data.cells[0].textContent)
+        const existingRows = this.table.data.map((data, index) => {
+            const id = parseInt(data.cells[0].textContent)
             if (ids.includes(id)) {
                 return index
             } else {
@@ -162,25 +177,16 @@ export class ImageOverview {
         }
     }
 
-    getImageDB() {
-        let imageGetter = new ImageDB()
-        imageGetter.getDB().then(ids => {
-            this.imageDB = imageGetter
-            this.mod.categories.setImageCategoryList(imageGetter.cats)
-            this.initTable(ids)
-        })
-    }
-
     /* Initialize the overview table */
     initTable(ids) {
-        let tableEl = document.createElement('table')
+        const tableEl = document.createElement('table')
         tableEl.classList.add('fw-document-table')
         tableEl.classList.add('fw-large')
         document.querySelector('.fw-contents').appendChild(tableEl)
         this.table = new DataTable(tableEl, {
             searchable: true,
             paging: false,
-            scrollY: "calc(100vh - 320px)",
+            scrollY: "calc(100vh - 220px)",
             labels: {
                 noRows: gettext("No images available") // Message shown when there are no search results
             },
@@ -188,7 +194,7 @@ export class ImageOverview {
                 top: ""
             },
             data: {
-                headings: ['','&emsp;&emsp;', gettext("File"), gettext("Size (px)"), gettext("Added"), ''],
+                headings: ['', '&emsp;&emsp;', gettext("File"), gettext("Size (px)"), gettext("Added"), ''],
                 data: ids.map(id => this.createTableRow(id))
             },
             columns: [
@@ -197,7 +203,7 @@ export class ImageOverview {
                     hidden: true
                 },
                 {
-                    select: [1,3,5],
+                    select: [1, 3, 5],
                     sortable: false
                 }
             ]
@@ -218,7 +224,8 @@ export class ImageOverview {
 
     bindEvents() {
         document.body.addEventListener('click', event => {
-            let el = {}, imageId
+            const el = {}
+            let imageId, itemEl, dialog
             switch (true) {
                 case findTarget(event, '.delete-image', el):
                     imageId = el.target.dataset.id
@@ -226,7 +233,7 @@ export class ImageOverview {
                     break
                 case findTarget(event, '.edit-image', el):
                     imageId = el.target.dataset.id
-                    let dialog = new ImageEditDialog(this.imageDB, imageId)
+                    dialog = new ImageEditDialog(this.app.imageDB, imageId)
                     dialog.init().then(
                         imageId => {
                             this.updateTable([imageId])
@@ -234,7 +241,7 @@ export class ImageOverview {
                     )
                     break
                 case findTarget(event, '.fw-add-input', el):
-                    let itemEl = el.target.closest('.fw-list-input')
+                    itemEl = el.target.closest('.fw-list-input')
                     if (!itemEl.nextElementSibling) {
                         itemEl.insertAdjacentHTML(
                             'afterend',
@@ -247,12 +254,6 @@ export class ImageOverview {
                         )
                     } else {
                         itemEl.parentElement.removeChild(itemEl)
-                    }
-                    break
-                case findTarget(event, 'a', el):
-                    if (el.target.hostname === window.location.hostname && el.target.getAttribute('href')[0] === '/') {
-                        event.preventDefault()
-                        this.app.goTo(el.target.href)
                     }
                     break
                 default:

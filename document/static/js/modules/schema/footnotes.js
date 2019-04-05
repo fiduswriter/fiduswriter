@@ -6,7 +6,12 @@ import {
     figure,
     citation,
     equation,
-    heading,
+    heading1,
+    heading2,
+    heading3,
+    heading4,
+    heading5,
+    heading6,
     anchor,
     paragraph,
     blockquote,
@@ -14,6 +19,7 @@ import {
     ordered_list,
     bullet_list,
     list_item,
+    underline,
     deletion,
     insertion,
     format_change,
@@ -27,8 +33,8 @@ const footnotecontainer = {
     content: "(block|table_block)+",
     marks: "annotation",
     parseDOM: [{tag: "div.footnote-container"}],
-    toDOM(node) {
-        return ['div',{class: 'footnote-container'}, 0]
+    toDOM(_node) {
+        return ['div', {class: 'footnote-container'}, 0]
     }
 }
 
@@ -42,7 +48,12 @@ const spec = {
     doc,
     footnotecontainer,
     paragraph,
-    heading,
+    heading1,
+    heading2,
+    heading3,
+    heading4,
+    heading5,
+    heading6,
     blockquote,
     horizontal_rule,
     figure,
@@ -59,6 +70,7 @@ const spec = {
       strong: marks.strong,
       link: marks.link,
       code: marks.code,
+      underline,
       anchor,
       comment,
       annotation_tag,

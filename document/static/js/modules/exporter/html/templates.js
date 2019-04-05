@@ -1,7 +1,7 @@
 import {escapeText} from "../../common"
 
 /** A template for HTML export of a document. */
-export let htmlExportTemplate = ({title, styleSheets, part, contents, settings, removeUrlPrefix}) =>
+export const htmlExportTemplate = ({title, styleSheets, part, contents, removeUrlPrefix}) =>
 `<!DOCTYPE html>
 <html>
     <head>
@@ -18,7 +18,7 @@ ${
     ).join('')
 }
     </head>
-    <body>
+    <body class="article">
 ${
     part && part.length ? `<h1 class="part">${escapeText(part)}</h1>` : ''
 }

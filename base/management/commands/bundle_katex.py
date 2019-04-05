@@ -1,4 +1,3 @@
-
 from django.core.management.base import BaseCommand
 import zipfile
 import os
@@ -31,7 +30,7 @@ def opf_entries(file_paths):
         '// This file is auto-generated. CHANGES WILL BE OVERWRITTEN! '
         'Re-generate by running ./manage.py bundle_katex.\n'
     )
-    opf_text += 'export let katexOpfIncludes = `\n'
+    opf_text += 'export const katexOpfIncludes = `\n'
     for index, file_path in enumerate(file_paths):
         opf_text += '<item id="katex-%d" href="%s" media-type="%s" />\n' % (
             index, file_path['path'], file_path['mimetype'])

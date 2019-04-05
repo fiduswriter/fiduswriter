@@ -92,7 +92,7 @@ const pastePlugin = function(options) {
 const findKeywordsEndPos = function(state) {
     let pos = 1, // enter article
         child = 0
-    while(state.doc.firstChild.child(child).type.name !== 'keywords') {
+    while (state.doc.firstChild.child(child).type.name !== 'keywords') {
         pos += state.doc.firstChild.child(child).nodeSize
         child++
     }
@@ -154,7 +154,7 @@ export const keywordInputPlugin = function(options) {
                 blur: (view, event) => {
                     event.preventDefault()
                     // Set a timeout so that change of focus can take place first
-                    window.setTimeout(() => {submitKeyword(view.state, undefined, view)},1)
+                    window.setTimeout(() => {submitKeyword(view.state, undefined, view)}, 1)
                 }
             },
             dispatchTransaction: tr => {
@@ -163,7 +163,7 @@ export const keywordInputPlugin = function(options) {
             }
         })
 
-        dom.addEventListener('click', event => {
+        dom.addEventListener('click', () => {
             const state = options.editor.view.state,
                 {decos} = key.getState(state),
                 deco = decos.find()[0],
@@ -239,7 +239,7 @@ export const keywordInputPlugin = function(options) {
                 }
                 let decoDropped = false
                 decos = decos.map(tr.mapping, tr.doc, {
-                    onRemove: oldDeco => decoDropped = true
+                    onRemove: _oldDeco => decoDropped = true
                 })
 
                 if (decoDropped) {

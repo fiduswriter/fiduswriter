@@ -1,19 +1,20 @@
+import fastdom from "fastdom"
+import {DiffDOM, stringToObj} from "diff-dom"
+
 import {findTarget} from "../../common"
 import {marginBoxesTemplate, marginboxFilterTemplate} from "./templates"
 import {getCommentDuringCreationDecoration, getSelectedChanges, getFootnoteMarkers} from "../state_plugins"
-
-import fastdom from "fastdom"
 
 /* Functions related to layouting of comments */
 export class ModMarginboxes {
     constructor(editor) {
         editor.mod.marginboxes = this
         this.editor = editor
-        this.setup()
         this.activeCommentStyle = ''
         this.filterOptions = {
             track: true,
             comments: true,
+            help: true,
             commentsResolved: false,
             author: 0,
             assigned: 0
@@ -23,15 +24,23 @@ export class ModMarginboxes {
             marker: '#f9f9f9',
             active: '#fffacf'
         }
-        this.bindEvents()
+        this.dd = new DiffDOM({
+            valueDiffing: false
+        })
+        this.marginBoxesContainerString = '<div id="margin-box-container"><div></div></div>'
+        this.marginBoxesContainerObj = stringToObj(this.marginBoxesContainerString)
+        this.marginBoxesPlacementStyle = ''
     }
 
-    setup() {
+    init() {
         // Add two elements to hold dynamic CSS info about comments.
         document.body.insertAdjacentHTML(
             'beforeend',
             '<style type="text/css" id="active-comment-style"></style><style type="text/css" id="margin-box-placement-style"></style>'
         )
+        this.marginBoxesContainer = document.getElementById('margin-box-container')
+        this.activeCommentStyleElement = document.getElementById('active-comment-style')
+        this.bindEvents()
     }
 
     bindEvents() {
@@ -65,6 +74,10 @@ export class ModMarginboxes {
                     break
                 case findTarget(event, '#margin-box-filter-comments', el):
                     this.filterOptions.comments = !this.filterOptions.comments
+                    this.view(this.editor.currentView)
+                    break
+                case findTarget(event, '#margin-box-filter-help', el):
+                    this.filterOptions.help = !this.filterOptions.help
                     this.view(this.editor.currentView)
                     break
                 case findTarget(event, '.margin-box.comment.inactive', el):
@@ -115,7 +128,21 @@ export class ModMarginboxes {
 
         this.editor.view.state.doc.descendants(
             (node, pos) => {
-                lastNodeTracks = this.getMarginBoxes(node, pos, pos, lastNode, lastNodeTracks, 'main', marginBoxes, referrers, selectedChanges)
+                if (node.attrs.hidden) {
+                    return false
+                }
+                lastNodeTracks = this.getMarginBoxes(
+                    node,
+                    pos,
+                    pos,
+                    lastNode,
+                    lastNodeTracks,
+                    'main',
+                    marginBoxes,
+                    referrers,
+                    selectedChanges,
+                    this.editor.view.state.selection
+                )
                 lastNode = node
 
                 if (node.type.name==='footnote') {
@@ -132,7 +159,18 @@ export class ModMarginboxes {
                             if (fnPos < fnPosCount) {
                                 return false
                             }
-                            lastFnNodeTracks = this.getMarginBoxes(fnNode, fnPos, pos, lastFnNode, lastFnNodeTracks, 'footnote', marginBoxes, referrers, selectedChanges)
+                            lastFnNodeTracks = this.getMarginBoxes(
+                                fnNode,
+                                fnPos,
+                                pos,
+                                lastFnNode,
+                                lastFnNodeTracks,
+                                'footnote',
+                                marginBoxes,
+                                referrers,
+                                selectedChanges,
+                                this.editor.view.state.selection
+                            )
                             lastFnNode = fnNode
                         }
                     )
@@ -143,7 +181,7 @@ export class ModMarginboxes {
         )
 
         // Add a comment that is currently under construction to the list.
-        if(this.editor.mod.comments.store.commentDuringCreation) {
+        if (this.editor.mod.comments.store.commentDuringCreation) {
             const deco = getCommentDuringCreationDecoration(this.editor.view.state)
             let pos, view
             if (deco) {
@@ -179,12 +217,17 @@ export class ModMarginboxes {
             filterOptions: this.filterOptions,
             staticUrl: this.editor.staticUrl
         })
-        if (document.getElementById('margin-box-container').innerHTML !== marginBoxesHTML) {
-            document.getElementById('margin-box-container').innerHTML = marginBoxesHTML
+
+        if (this.marginBoxesContainerString !== marginBoxesHTML) {
+            const newMarginBoxesContainerObj = stringToObj(marginBoxesHTML)
+            const diff = this.dd.diff(this.marginBoxesContainerObj, newMarginBoxesContainerObj)
+            this.dd.apply(this.marginBoxesContainer, diff)
+            this.marginBoxesContainerString = marginBoxesHTML
+            this.marginBoxesContainerObj = newMarginBoxesContainerObj
         }
 
-        if (document.getElementById('active-comment-style').innerHTML != this.activeCommentStyle) {
-            document.getElementById('active-comment-style').innerHTML = this.activeCommentStyle
+        if (this.activeCommentStyleElement.innerHTML != this.activeCommentStyle) {
+            this.activeCommentStyleElement.innerHTML = this.activeCommentStyle
         }
 
         const marginBoxFilterHTML = marginboxFilterTemplate({
@@ -270,10 +313,11 @@ export class ModMarginboxes {
 
                 fastdom.mutate(() => {
                     //DOM write phase
-                    if (document.getElementById('margin-box-placement-style').innerHTML != marginBoxesPlacementStyle) {
+                    if (this.marginBoxesPlacementStyle !== marginBoxesPlacementStyle) {
                         document.getElementById('margin-box-placement-style').innerHTML = marginBoxesPlacementStyle
+                        this.marginBoxesPlacementStyle = marginBoxesPlacementStyle
                     }
-                    if(this.editor.mod.comments.store.commentDuringCreation) {
+                    if (this.editor.mod.comments.store.commentDuringCreation) {
                         this.editor.mod.comments.store.commentDuringCreation.inDOM = true
                     }
                     resolve()
@@ -291,7 +335,32 @@ export class ModMarginboxes {
         return fnMarker.from
     }
 
-    getMarginBoxes(node, pos, refPos, lastNode, lastNodeTracks, view, marginBoxes, referrers, selectedChanges) {
+    getMarginBoxes(
+        node,
+        pos,
+        refPos,
+        lastNode,
+        lastNodeTracks,
+        view,
+        marginBoxes,
+        referrers,
+        selectedChanges,
+        selection // Selection in main editor
+    ) {
+
+
+        if (node.attrs.help) { // Help/instruction margin boxes
+            const helpBox = {
+                type: 'help',
+                data: {
+                    active: selection.$anchor.node(2) === node ? true : false,
+                    help: node.attrs.help
+                }
+            }
+            marginBoxes.push(helpBox)
+            referrers.push(refPos)
+        }
+
         const commentIds = node.isInline || node.isLeaf ? this.editor.mod.comments.interactions.findCommentIds(node) : []
 
         const nodeTracks = node.attrs.track ?

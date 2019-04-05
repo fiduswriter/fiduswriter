@@ -1,17 +1,17 @@
 import download from "downloadjs"
 import pretty from "pretty"
-import katex from "katex"
 
 import {createSlug} from "../tools/file"
 import {modifyImages} from "../tools/html"
 import {ZipFileCreator} from "../tools/zip"
+import {removeHidden} from "../tools/doc_contents"
 import {htmlExportTemplate} from "../html/templates"
 import {addAlert} from "../../common"
 import {BaseDOMExporter} from "../tools/dom_export"
 
 export class HTMLExporter extends BaseDOMExporter{
-    constructor(doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles, staticUrl) {
-        super()
+    constructor(schema, doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles, staticUrl) {
+        super(schema)
         this.doc = doc
         this.citationStyles = citationStyles
         this.citationLocales = citationLocales
@@ -27,12 +27,14 @@ export class HTMLExporter extends BaseDOMExporter{
 
     init() {
         addAlert('info', `${this.doc.title}: ${gettext('HTML export has been initiated.')}`)
-
+        this.docContents = removeHidden(this.doc.contents, false)
         let docStyle
         return this.addStyle().then(
             style => docStyle = style
         ).then(
             () => this.joinDocumentParts()
+        ).then(
+            () => this.fillToc()
         ).then(
             () => this.postProcess()
         ).then(

@@ -1,11 +1,10 @@
 import {Plugin, PluginKey} from "prosemirror-state"
-import {sendableSteps} from "prosemirror-collab"
 
 const key = new PluginKey('footnoteMarkers')
 
 export const findFootnoteMarkers = function(fromPos, toPos, doc) {
     const footnoteMarkers = []
-    doc.nodesBetween(fromPos, toPos, (node, pos, parent) => {
+    doc.nodesBetween(fromPos, toPos, (node, pos) => {
         if (!node.isInline) {
             return
         }
@@ -91,9 +90,9 @@ export const footnoteMarkersPlugin = function(options) {
     return new Plugin({
         key,
         state: {
-            init(state) {
+            init(config, state) {
                 const fnMarkers = []
-                state.doc.descendants((node, pos, parent) => {
+                state.doc.descendants((node, pos) => {
                     if (node.type.name==='footnote') {
                         fnMarkers.push({
                             from: pos,
@@ -119,7 +118,7 @@ export const footnoteMarkersPlugin = function(options) {
                     fnMarkers
                 } = this.getState(oldState)
 
-                if (!tr.steps.length) {
+                if (!tr.docChanged) {
                     return {
                         fnMarkers
                     }
@@ -173,7 +172,7 @@ export const footnoteMarkersPlugin = function(options) {
                                     )
                                 })
                             }
-                            fnMarkers = fnMarkers.concat(newFootnotes).sort((a,b) => a.from > b.from)
+                            fnMarkers = fnMarkers.concat(newFootnotes).sort((a, b) => a.from > b.from ? 1 : -1)
                         }
                     })
                 }
@@ -184,9 +183,9 @@ export const footnoteMarkersPlugin = function(options) {
                 }
             }
         },
-        view(editorView) {
+        view(_editorView) {
             return {
-                update: (view, prevState) => {
+                update: (_view, _prevState) => {
                     options.editor.mod.footnotes.layout.updateDOM()
                 }
             }

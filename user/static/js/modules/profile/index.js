@@ -1,4 +1,4 @@
-import {addDropdownBox, whenReady, getUserInfo, activateWait, deactivateWait, post, addAlert, baseBodyTemplate, findTarget, setDocTitle} from "../common"
+import {addDropdownBox, whenReady, activateWait, deactivateWait, post, addAlert, baseBodyTemplate, findTarget, setDocTitle} from "../common"
 import {SiteMenu} from "../menu"
 import {changeAvatarDialog, deleteAvatarDialog, changePwdDialog, addEmailDialog, changePrimaryEmailDialog, deleteEmailDialog} from "./dialogs"
 import {profileContents} from "./templates"
@@ -20,6 +20,7 @@ export class Profile {
             addDropdownBox(document.getElementById('edit-avatar-btn'), document.getElementById('edit-avatar-pulldown'))
             document.body.addEventListener('click', event => {
                 const el = {}
+                let dialog
                 switch (true) {
                     case findTarget(event, '#add-profile-email', el):
                         addEmailDialog()
@@ -28,7 +29,7 @@ export class Profile {
                         changePwdDialog()
                         break
                     case findTarget(event, '#delete-account', el):
-                        const dialog = new DeleteUserDialog(document.getElementById('delete-account').dataset.username)
+                        dialog = new DeleteUserDialog(document.getElementById('delete-account').dataset.username)
                         dialog.init()
                         break
                     case findTarget(event, '#submit-profile', el):
@@ -42,12 +43,6 @@ export class Profile {
                         break
                     case findTarget(event, '.delete-avatar', el):
                         deleteAvatarDialog(this.app)
-                        break
-                    case findTarget(event, 'a', el):
-                        if (el.target.hostname === window.location.hostname && el.target.getAttribute('href')[0] === '/') {
-                            event.preventDefault()
-                            this.app.goTo(el.target.href)
-                        }
                         break
                     default:
                         break

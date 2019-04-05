@@ -1,6 +1,4 @@
-import {escapeText} from "../../common"
-
-import "mathquill/build/mathquill"
+import MathQuill from "mathquill-jquery"
 import katex from "katex"
 
 /**
@@ -9,16 +7,13 @@ import katex from "katex"
 export class FormulaEditor {
     constructor(mathDialog, equation) {
         this.dialog = mathDialog
-
         this.mathquillDOM = mathDialog.dialogEl.querySelector("p > .math-field")
         this.rawInputDOM = mathDialog.dialogEl.querySelector("div > .raw-input")
         this.previewDOM = mathDialog.dialogEl.querySelector("div.math-preview")
         this.errorFieldDOM = mathDialog.dialogEl.querySelector("div.math-error")
         this.isRawMode = false
-
         //initializes mathquill library
         this.MQ = MathQuill.getInterface(2)
-
         this.mathField = this.MQ.MathField(this.mathquillDOM, {
             spaceBehavesLikeTab: true,
         })
@@ -54,7 +49,7 @@ export class FormulaEditor {
                     katex.render(this.getLatex(), this.previewDOM)
                     this.hideError()
                 }
-                catch(msg) {
+                catch (msg) {
                     //if error show it
                     this.showError(msg)
                 }

@@ -1,12 +1,27 @@
+from importlib import import_module
+
 from django.conf.urls import include, url
 from django.http import HttpResponse
 from django.contrib import admin
 from django.urls import path
 from django.conf import settings
-from base.views import app as app_view
-
 from django.views.i18n import JavaScriptCatalog
-from importlib import import_module
+
+from base.views import app as app_view
+from base.views import admin_console as admin_console_view
+
+
+admin.site.site_header = settings.ADMIN_SITE_HEADER
+admin.site.site_title = settings.ADMIN_SITE_TITLE
+admin.site.index_title = settings.ADMIN_INDEX_TITLE
+admin.site.index_template = 'admin/overview.html'
+admin_site_urls = (admin.site.urls[0] + [
+    url(
+        r'console/$',
+        admin.site.admin_view(admin_console_view, cacheable=True),
+        name="admin_console"
+    ),
+], admin.site.urls[1], admin.site.urls[2])
 
 # Django URLs -- Notice that these are only consulted after the
 # tornado_url_list found in base/servers/tornado_django_hybrid.py
@@ -27,7 +42,7 @@ urlpatterns = [
     url(r'^jsi18n/$', JavaScriptCatalog.as_view(), name='javascript-catalog'),
 
     # Admin interface
-    path('admin/', admin.site.urls),
+    path('admin/', admin_site_urls),
 
     # Account management
     url('^account/', include('user.urls')),

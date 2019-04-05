@@ -1,23 +1,41 @@
 // Return a json that is the same as the existing json, but with all parts
 // marked as hidden removed.
 
-export let removeHidden = function(node) {
-    let returnNode = {}
+export const removeHidden = function(
+    node,
+    // Whether to leave the outer part of the removed node.
+    // True for tree-walking exporters, false for DOM-changing exporters.
+    leaveStub = true
+) {
+    const returnNode = {}
 
     Object.keys(node).forEach(key => {
         if (key !== 'content') {
             returnNode[key] = node[key]
         }
     })
-    if ((!node.attrs || !node.attrs.hidden) && node.content) {
+    if (node.attrs && node.attrs.hidden) {
+        if (leaveStub) {
+            return returnNode
+        } else {
+            return false
+        }
+    }
+    if (node.content) {
         returnNode.content = []
-        node.content.forEach(child => returnNode.content.push(removeHidden(child)))
+        node.content.forEach(child => {
+            const cleanedChild = removeHidden(child, leaveStub)
+            if (cleanedChild) {
+                returnNode.content.push(cleanedChild)
+            }
+
+        })
     }
     return returnNode
 }
 
 
-export let descendantNodes = function(node) {
+export const descendantNodes = function(node) {
     let returnValue = [node]
     if (node.content) {
         node.content.forEach(childNode => {
@@ -27,10 +45,10 @@ export let descendantNodes = function(node) {
     return returnValue
 }
 
-export let textContent = function(node) {
+export const textContent = function(node) {
     return descendantNodes(node).reduce(
         (returnString, subNode) => {
-            if(subNode.text){
+            if (subNode.text){
                 returnString += subNode.text
             }
             return returnString
@@ -43,12 +61,12 @@ export let textContent = function(node) {
 // PM/HTML don't have cells that have been covered, but in ODT/DOCX, these cells
 // need to be present. So we add them.
 
-let addCoveredTableCells = function(node) {
-    let columns = node.content[0].content.reduce((columns, cell) => columns + cell.attrs.colspan, 0)
-    let rows = node.content.length
+const addCoveredTableCells = function(node) {
+    const columns = node.content[0].content.reduce((columns, cell) => columns + cell.attrs.colspan, 0)
+    const rows = node.content.length
     // Add empty cells for col/rowspan
-    let fixedTableMatrix = Array.apply(0, {length: rows}).map(
-        item => ({type: 'table_row', content: Array.apply(0, {length: columns})})
+    const fixedTableMatrix = Array.apply(0, {length: rows}).map(
+        _item => ({type: 'table_row', content: Array.apply(0, {length: columns})})
     )
     let rowIndex = -1
     node.content.forEach(row => {
@@ -85,7 +103,7 @@ let addCoveredTableCells = function(node) {
     node.content = fixedTableMatrix
 }
 
-export let fixTables = function(node) {
+export const fixTables = function(node) {
     if (node.type==='table') {
         addCoveredTableCells(node)
     }

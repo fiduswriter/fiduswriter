@@ -30,6 +30,7 @@ export class ModMarginboxes {
         this.marginBoxesContainerString = '<div id="margin-box-container"><div></div></div>'
         this.marginBoxesContainerObj = stringToObj(this.marginBoxesContainerString)
         this.marginBoxesPlacementStyle = ''
+        this.marginBoxes = []
     }
 
     init() {
@@ -84,13 +85,21 @@ export class ModMarginboxes {
                     this.editor.mod.comments.interactions.deactivateSelectedChanges()
                     this.editor.mod.comments.interactions.activateComment(el.target.dataset.id)
                     break
-                case findTarget(event, '.margin-box.track.inactive', el):
+                case findTarget(event, '.margin-box.track.inactive', el): {
+                    let boxNumber = 0
+                    let seekItem = el.target
+                    while (seekItem.previousElementSibling) {
+                        boxNumber += 1
+                        seekItem = seekItem.previousElementSibling
+                    }
+                    const box = this.marginBoxes[boxNumber]
                     this.editor.mod.track.activateTrack(
-                        el.target.dataset.view,
-                        el.target.dataset.type,
-                        parseInt(el.target.dataset.pos)
+                        box.view,
+                        box.type,
+                        box.pos
                     )
                     break
+                }
                 default:
                     this.closeAllMenus()
                     break
@@ -217,6 +226,8 @@ export class ModMarginboxes {
             filterOptions: this.filterOptions,
             staticUrl: this.editor.staticUrl
         })
+
+        this.marginBoxes = marginBoxes
 
         if (this.marginBoxesContainerString !== marginBoxesHTML) {
             const newMarginBoxesContainerObj = stringToObj(marginBoxesHTML)

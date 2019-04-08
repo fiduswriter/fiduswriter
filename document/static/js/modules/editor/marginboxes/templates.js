@@ -263,7 +263,7 @@ const BLOCK_NAMES = {
 
 const blockChangeTemplate = ({before}) => `<div class="format-change-info"><b>${gettext('Was')}:</b> ${BLOCK_NAMES[before.type]}</div>`
 
-const trackTemplate = ({type, data, node, pos, view, active, docInfo, filterOptions, staticUrl}) => {
+const trackTemplate = ({type, data, node, active, docInfo, filterOptions, staticUrl}) => {
     if (!filterOptions.track) {
         return '<div class="margin-box track hidden"></div>'
     }
@@ -272,7 +272,7 @@ const trackTemplate = ({type, data, node, pos, view, active, docInfo, filterOpti
         nodeActionType = `${type}_${node.type.name}`
 
     return `
-        <div class="margin-box track ${active ? 'active' : 'inactive'}" data-type="${type}" data-pos="${pos}" data-view="${view}">
+        <div class="margin-box track ${active ? 'active' : 'inactive'}" data-type="${type}">
             <div class="track-${type}">
                 <div class="comment-user">
                     <img class="comment-user-avatar" src="${author ? author.avatar : `${staticUrl}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
@@ -289,10 +289,10 @@ const trackTemplate = ({type, data, node, pos, view, active, docInfo, filterOpti
                 `<span class="show-marginbox-options fa fa-ellipsis-v"></span>
                 <div class="marginbox-options fw-pulldown fw-right">
                     <ul>
-                        <li><span class="fw-pulldown-item track-accept" data-type="${type}" data-pos="${pos}" data-view="${view}" title="${gettext("Accept")}">
+                        <li><span class="fw-pulldown-item track-accept" data-type="${type}" title="${gettext("Accept")}">
                             ${gettext("Accept")}
                         </span></li>
-                        <li><span class="fw-pulldown-item track-reject" data-type="${type}" data-pos="${pos}" data-view="${view}" title="${gettext("Reject")}">
+                        <li><span class="fw-pulldown-item track-reject" data-type="${type}" title="${gettext("Reject")}">
                             ${gettext("Reject")}
                         </span></li>
                     </ul>
@@ -408,8 +408,6 @@ export const marginBoxesTemplate = ({
                     type: mBox.type,
                     node: mBox.node,
                     data: mBox.data,
-                    pos: mBox.pos,
-                    view: mBox.view,
                     active: mBox.active,
                     docInfo,
                     filterOptions,

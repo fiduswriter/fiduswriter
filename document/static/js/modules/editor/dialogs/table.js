@@ -8,7 +8,7 @@ export class TableDialog {
         this.dialogEl = false
     }
 
-    init(){
+    init() {
         this.insertTableDialog()
     }
 
@@ -108,7 +108,7 @@ export class TableResizeDialog {
 
     init() {
         const {table} = this.findTable(this.editor.currentView.state)
-        if (table){
+        if (table) {
             this.width = table.attrs.width
             this.aligned = table.attrs.aligned
             this.layout = table.attrs.layout
@@ -117,7 +117,7 @@ export class TableResizeDialog {
     }
 
     setTableAlignment() {
-        if (this.width == "100"){
+        if (this.width == "100") {
             this.dialog.dialogEl.querySelector("#table-alignment-btn").classList.add("disabled")
             this.dialog.dialogEl.querySelector('#table-alignment-btn label').innerHTML = "Center"
             return
@@ -127,7 +127,7 @@ export class TableResizeDialog {
     }
 
     setTableWidth() {
-        if (this.width == "100"){
+        if (this.width == "100") {
             this.dialog.dialogEl.querySelector("#table-alignment-btn").classList.add("disabled")
             this.dialog.dialogEl.querySelector('#table-alignment-btn label').innerHTML = "Center"
         } else {
@@ -148,12 +148,12 @@ export class TableResizeDialog {
 
     findTable(state) {
         const $head = state.selection.$head
-        for (let d = $head.depth; d > 0; d--) if ($head.node(d).type.spec.tableRole == "table"){
+        for (let d = $head.depth; d > 0; d--) if ($head.node(d).type.spec.tableRole == "table") {
             return {table: $head.node(d), tablePos: $head.before(d)}}
         return {table:false}
     }
 
-    submitForm(){
+    submitForm() {
         const {table, tablePos} = this.findTable(this.editor.currentView.state)
         if (!table) return
         const attrs = Object.assign({}, table.attrs, {

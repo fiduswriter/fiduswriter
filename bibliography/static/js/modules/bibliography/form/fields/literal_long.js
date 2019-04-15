@@ -6,7 +6,7 @@ import {keymap} from "prosemirror-keymap"
 
 import {longLitSchema} from "../../schema/literal_long"
 
-export class LiteralLongFieldForm{
+export class LiteralLongFieldForm {
     constructor(dom, initialValue = []) {
         this.dom = dom
         this.initialValue = initialValue

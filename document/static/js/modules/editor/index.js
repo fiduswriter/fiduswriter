@@ -2,7 +2,9 @@ import {
     whenReady,
     ensureCSS,
     WebSocketConnector,
-    postJson
+    postJson,
+    activateWait,
+    deactivateWait
 } from "../common"
 import {
     FeedbackTab
@@ -308,6 +310,7 @@ export class Editor {
 
             })
             this.render()
+            activateWait(true)
             this.initEditor()
         })
     }
@@ -330,7 +333,7 @@ export class Editor {
             </header>
             <div id="navigator"></div>
             <div id="editor-content">
-                <div id="flow" class="hide">
+                <div id="flow">
                     <div id="paper-editable">
                         <div id="document-editable" class="user-contents"></div>
                         <div id="footnote-box-container" class="user-contents">
@@ -395,6 +398,7 @@ export class Editor {
         new ModComments(this)
         new ModDocumentTemplate(this)
         new ModNavigator(this)
+        this.mod.navigator.init()
         this.activateFidusPlugins()
         this.ws.init()
     }
@@ -470,7 +474,6 @@ export class Editor {
             plugins
         }
 
-        document.getElementById('flow').classList.remove('hide')
         // Set document in prosemirror
         this.view.setProps({state: EditorState.create(stateConfig)})
         this.view.setProps({nodeViews: {}}) // Needed to initialize nodeViews in plugins
@@ -487,6 +490,7 @@ export class Editor {
         // Set part specific settings
         this.mod.documentTemplate.addDocPartSettings()
         this.waitingForDocument = false
+        deactivateWait()
         if (locationHash.length) {
             this.scrollIdIntoView(locationHash.slice(1))
         }

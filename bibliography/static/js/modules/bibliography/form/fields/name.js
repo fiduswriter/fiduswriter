@@ -5,7 +5,7 @@ import {noSpaceTmp} from "../../../common"
 // between NameFieldForm and NameListForm is for keeping consistency with other fields
 // and lists.
 
-export class NameFieldForm{
+export class NameFieldForm {
     constructor(dom, initialValue = {
             given: [],
             family: [],

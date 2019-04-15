@@ -142,14 +142,14 @@ export class ContentMenu {
         }
     }
 
-    onclick(event){
+    onclick(event) {
         event.preventDefault()
         event.stopImmediatePropagation()
         const target = event.target
         if (target.matches('li.content-menu-item')) {
             const menuNumber = target.dataset.index
             const menuItem = this.menu.content[menuNumber]
-            if (menuItem.disabled && menuItem.disabled(this.page)){
+            if (menuItem.disabled && menuItem.disabled(this.page)) {
                 return
             }
             menuItem.action(this.page)

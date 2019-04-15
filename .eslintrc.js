@@ -262,7 +262,7 @@ module.exports = {
         ],
         "sort-keys": "off",
         "sort-vars": "off",
-        "space-before-blocks": "off",
+        "space-before-blocks": "warn",
         "space-before-function-paren": ["warn", "never"],
         "space-in-parens": ["warn", "never"],
         "space-infix-ops": "off",

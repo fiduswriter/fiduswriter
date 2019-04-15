@@ -125,7 +125,7 @@ export class ImageEditDialog {
             const bstr = atob(base64data.split(',')[1])
             let n = bstr.length
             const u8arr = new Uint8Array(n)
-            while (n--){
+            while (n--) {
                 u8arr[n] = bstr.charCodeAt(n)
             }
             imageData.image = new File([u8arr], this.mediaInput.name, {type: this.mediaInput.type})

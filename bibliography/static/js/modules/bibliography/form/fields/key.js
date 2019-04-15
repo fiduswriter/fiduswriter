@@ -2,7 +2,7 @@ import {LiteralFieldForm} from "./literal"
 import {noSpaceTmp} from "../../../common"
 import {BibOptionTitles} from "../strings"
 
-export class KeyFieldForm{
+export class KeyFieldForm {
     constructor(dom, initialValue, unused, fieldType = undefined) {
         this.currentValue = {}
         this.dom = dom

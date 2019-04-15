@@ -1,4 +1,4 @@
-export class URIFieldForm{
+export class URIFieldForm {
     constructor(dom, initialValue = '', placeHolder = '') {
         this.dom = dom
         this.initialValue = initialValue

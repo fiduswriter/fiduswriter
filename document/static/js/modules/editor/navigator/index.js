@@ -10,15 +10,17 @@ export class ModNavigator {
         this.render()
         this.bindEvents()
     }
-    render(){
+
+    render() {
         this.navigatorEl.innerHTML = this.getNavigatorTemplate()
     }
-    bindEvents(){
+
+    bindEvents() {
         document.body.addEventListener('click', event => {
             const el = {}
             switch (true) {
                 case findTarget(event, '#navigator-button', el):
-                    if (el.target.firstElementChild.firstElementChild.classList.contains('rotate')){
+                    if (el.target.firstElementChild.firstElementChild.classList.contains('rotate')) {
                         this.closeNavigator()
                     } else {
                         document.querySelector('#navigator-list').innerHTML = this.populateNavigator() || ""   //Populating the list
@@ -31,7 +33,7 @@ export class ModNavigator {
                     document.getElementById(el.target.getAttribute('href').slice(1)).scrollIntoView({behavior:"smooth", block:"center", inline:"start"})
                     break
                 case findTarget(event, '#navigator-filter-icon', el):
-                    if (document.getElementById("navigator-filter").classList.contains('hide')){
+                    if (document.getElementById("navigator-filter").classList.contains('hide')) {
                         this.showFilters()
                     } else {
                         this.hideFilters()
@@ -41,7 +43,7 @@ export class ModNavigator {
                     this.defaultFilters = []
                     document.querySelectorAll('#navigator-filter input').forEach(
                         item => {
-                            if (item.checked){
+                            if (item.checked) {
                                 this.defaultFilters.push(item.id)
                             }
                         }
@@ -66,7 +68,8 @@ export class ModNavigator {
             document.body.classList.remove('no-scroll')
         })
     }
-    openNavigator(){
+
+    openNavigator() {
         document.getElementById('navigator-button').firstElementChild.firstElementChild.classList.add('rotate')
         document.getElementById('navigator').style.left = "0px"
 
@@ -76,18 +79,21 @@ export class ModNavigator {
         document.getElementById('navigator-filter-icon').classList.remove('hide')
         this.scrollToActiveHeading()
     }
-    scrollToActiveHeading(){
+
+    scrollToActiveHeading() {
         const listDOM = document.getElementById("navigator-list")
         const activeHeading = listDOM.getElementsByClassName('active-heading')[0]
-        if (activeHeading){
+        if (activeHeading) {
             activeHeading.scrollIntoView()
         }
     }
-    closeNavigator(){
+
+    closeNavigator() {
         document.getElementById('navigator-button').firstElementChild.firstElementChild.classList.remove('rotate')
         document.getElementById('navigator').style.left = "-265px"
     }
-    showFilters(){
+
+    showFilters() {
         document.getElementById("navigator-filter").classList.remove('hide')
         document.getElementById('navigator-filter-back').classList.remove('hide')
         document.getElementById("navigator-list").classList.add('hide')
@@ -95,7 +101,8 @@ export class ModNavigator {
         //populating the filter list
         document.getElementById('navigator-filter').innerHTML = this.populateNavFilter()
     }
-    hideFilters(){
+
+    hideFilters() {
         document.getElementById("navigator-filter").classList.add('hide')
         document.getElementById('navigator-filter-back').classList.add('hide')
         document.getElementById("navigator-list").classList.remove('hide')
@@ -103,7 +110,8 @@ export class ModNavigator {
 
         this.scrollToActiveHeading()
     }
-    populateNavigator(){
+
+    populateNavigator() {
         const currentPos = this.editor.view.state.selection.$head.pos
         const items = []
         let nearestHeader = ""
@@ -111,9 +119,9 @@ export class ModNavigator {
             if (node.attrs && node.attrs.hidden) {
                 return false
             } else if (this.defaultFilters.includes(node.type.name) && node.textContent !== "") {
-                if (pos <= currentPos){
+                if (pos <= currentPos) {
                     nearestHeader = node
-                } else if (nearestHeader !== ""){
+                } else if (nearestHeader !== "") {
                     items[items.length-1] = Object.assign(
                         {},
                         items[items.length-1],
@@ -124,13 +132,14 @@ export class ModNavigator {
                 items.push({id: node.attrs.id, textContent: node.textContent, type: node.type})
             }
         })
-        if (items.length){
+        if (items.length) {
             return this.navigatorHTML(items)
         } else {
             return false
         }
     }
-    populateNavFilter(){
+
+    populateNavFilter() {
         return (
             this.navigatorFilters.map(
                 item => {
@@ -142,20 +151,22 @@ export class ModNavigator {
             ).join('')
         )
     }
-    inDefault(level){
-        if (this.defaultFilters.includes('heading'+level)){
+
+    inDefault(level) {
+        if (this.defaultFilters.includes('heading'+level)) {
             return 'checked'
         } else {
             return ''
         }
     }
+
     navigatorHTML(items) {
         return `
         ${
             items.map(
                 item => {
                     const level = item.type.name.substr(-1)
-                    if (item.class){
+                    if (item.class) {
                         return `<h${level} class="${item.class}"><a href="#${item.id}">${escapeText(item.textContent)}</a></h${level}>`
                     } else {
                         return `<h${level}><a href="#${item.id}">${escapeText(item.textContent)}</a></h${level}>`
@@ -164,7 +175,8 @@ export class ModNavigator {
             ).join('')
         }`
     }
-    getNavigatorTemplate(){
+
+    getNavigatorTemplate() {
         return `
                 <div id="navigator-content">
                     <div class="header-container">

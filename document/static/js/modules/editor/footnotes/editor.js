@@ -13,6 +13,7 @@ import {fnSchema} from "../../schema/footnotes"
 import {
     citationRenderPlugin,
     clipboardPlugin,
+    selectionMenuPlugin,
     toolbarPlugin,
     collabCaretsPlugin,
     linksPlugin,
@@ -44,6 +45,7 @@ export class ModFootnoteEditor {
             [collab, () => ({clientID: this.mod.editor.client_id})],
             [dropCursor],
             [gapCursor],
+            [selectionMenuPlugin, () => ({editor: this.mod.editor})],
             [toolbarPlugin, () => ({editor: this.mod.editor})],
             [citationRenderPlugin, () => ({editor: this.mod.editor})],
             [collabCaretsPlugin, () => ({editor: this.mod.editor})],

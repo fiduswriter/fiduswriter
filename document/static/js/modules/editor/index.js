@@ -77,7 +77,8 @@ import {
     headerbarModel,
     toolbarModel,
     tableMenuModel,
-    navigatorFilterModel
+    navigatorFilterModel,
+    selectionMenuModel
 } from "./menus"
 import {
     ModMarginboxes
@@ -104,6 +105,7 @@ import {
     linksPlugin,
     marginboxesPlugin,
     placeholdersPlugin,
+    selectionMenuPlugin,
     settingsPlugin,
     tableMenuPlugin,
     tocRenderPlugin,
@@ -157,6 +159,7 @@ export class Editor {
             toolbarModel: toolbarModel(),
             tableMenuModel: tableMenuModel(),
             navigatorFilterModel: navigatorFilterModel(),
+            selectionMenuModel: selectionMenuModel()
         }
         this.client_id = Math.floor(Math.random() * 0xFFFFFFFF)
         this.clientTimeAdjustment = 0
@@ -175,6 +178,7 @@ export class Editor {
             [citationRenderPlugin, () => ({editor: this})],
             [headerbarPlugin, () => ({editor: this})],
             [toolbarPlugin, () => ({editor: this})],
+            [selectionMenuPlugin, () => ({editor: this})],
             [collabCaretsPlugin, () => ({editor: this})],
             [footnoteMarkersPlugin, () => ({editor: this})],
             [commentsPlugin, () => ({editor: this})],
@@ -310,6 +314,7 @@ export class Editor {
 
     close() {
         this.menu.toolbarViews.forEach(view => view.destroy())
+        this.menu.selectionMenuViews.forEach(view => view.destroy())
         this.menu.headerView.destroy()
         this.ws.close()
     }
@@ -320,12 +325,8 @@ export class Editor {
         document.body.innerHTML = `<div id="editor">
             <div id="wait"><i class="fa fa-spinner fa-pulse"></i></div>
             <header>
-                <nav id="headerbar">
-                    <div></div>
-                </nav>
-                <nav id="toolbar">
-                    <div></div>
-                </nav>
+                <nav id="headerbar"><div></div></nav>
+                <nav id="toolbar"><div></div></nav>
             </header>
             <div id="navigator"></div>
             <div id="editor-content">
@@ -338,6 +339,7 @@ export class Editor {
                     </div>
                     <div class="article-bibliography user-contents"></div>
                 </div>
+                <nav id="selection-menu"><div></div></nav>
                 <div id="margin-box-column">
                     <div id="margin-box-filter"></div>
                     <div id="margin-box-container"><div></div></div>

@@ -74,6 +74,18 @@ header {
     color: white !important;
 }
 
+/*
+ * Selection Menu style
+ */
+#selection-menu {
+    margin-left: -23px;
+    z-index: 1;
+}
+
+#selection-menu > div {
+    width: 46px;
+}
+
 
 /*
  * Toolbar Style
@@ -122,13 +134,13 @@ header {
     background-color: #e0e0e0;
 }
 
-.editortoolbar {
+.editor-toolbar {
     position: relative;
     left: 14px;
     width: auto !important;
 }
 
-.editortoolbar div.ui-buttonset {
+.editor-toolbar div.ui-buttonset {
     position: relative;
     display: inline-block;
     white-space: nowrap;
@@ -136,7 +148,7 @@ header {
     margin-right: 6px;
 }
 
-.editortoolbar div.info {
+.editor-toolbar div.info {
     /*max-width: 90px;*/
     min-width: 62px;
     color: #000;
@@ -158,11 +170,11 @@ header {
     text-align: center;
 }
 
-.editortoolbar div.multiButtons {
+.editor-toolbar div.multiButtons {
     width: auto;
 }
 
-.editortoolbar div.multiButtons .multibuttonsCover {
+.editor-toolbar div.multiButtons .multibuttonsCover {
     position: relative;
     min-width: 85px;
     max-width: 120px;
@@ -175,7 +187,7 @@ header {
     letter-spacing: 0.07px;
 }
 
-.editortoolbar div.multiButtons .multibuttonsCover:after {
+.editor-toolbar div.multiButtons .multibuttonsCover:after {
     display: block;
     position: absolute;
     right: 10px;
@@ -191,16 +203,16 @@ header {
     letter-spacing: 0.15px;
 }
 
-.editortoolbar div.multiButtons .multibuttonsCover.disabled:after {
+.editor-toolbar div.multiButtons .multibuttonsCover.disabled:after {
     display: none;
 }
 
-.editortoolbar .fw-button.no-border {
+.editor-toolbar .fw-button.no-border {
     background: transparent;
     border-color: transparent;
 }
 
-.editortoolbar .fw-button.no-border .ui-button-text {
+.editor-toolbar .fw-button.no-border .ui-button-text {
     width: 10px;
     height: 10px;
     opacity: 0.4;
@@ -211,17 +223,22 @@ header {
     letter-spacing: 0.17px;
 }
 
-.editortoolbar .fw-button {
+.editor-toolbar .fw-button, .editor-selection-menu .fw-button {
     border-width: 0px;
 }
 
-.editortoolbar .fw-button.fw-large {
+.editor-selection-menu .fw-button {
+    margin-bottom: 4px;
+}
+
+
+.editor-toolbar .fw-button.fw-large, .editor-selection-menu .fw-button.fw-large {
     height: 46px;
     line-height: 46px;
     border-radius: 23px;
 }
 
-.editortoolbar .fw-button.fw-large.fw-square {
+.editor-toolbar .fw-button.fw-large.fw-square, .editor-selection-menu .fw-button.fw-large.fw-square {
     width: 46px;
 }
 
@@ -837,7 +854,7 @@ html[hc=a5] #toolbar {
     opacity: 0.9;
     width:260px;
     color: white;
-    padding: 15px 5px 20px 0px; 
+    padding: 15px 5px 20px 0px;
 }
 
 #navigator-list {
@@ -853,13 +870,13 @@ html[hc=a5] #toolbar {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #181818; 
+    background: #181818;
     border-radius: 10px;
 }
-  
+
 ::-webkit-scrollbar-thumb:hover {
     cursor: pointer;
-    background: #0f0f0f; 
+    background: #0f0f0f;
 }
 
 #navigator-content a {
@@ -924,7 +941,7 @@ html[hc=a5] #toolbar {
 .navigator-arrow-icon {
     color: white;
     font-size: 1.4em;
-    
+
 }
 .navigator-arrow-icon i {
     transition: all 0.50s 0.25s;
@@ -967,7 +984,7 @@ html[hc=a5] #toolbar {
     width: 18px;
     border: 0;
     border-radius: 3px;
-    cursor: pointer;     
+    cursor: pointer;
     margin-right: 7px;
     outline: none;
 }

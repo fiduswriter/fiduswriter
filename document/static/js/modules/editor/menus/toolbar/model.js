@@ -4,7 +4,6 @@ import {undo, redo, undoDepth, redoDepth} from "prosemirror-history"
 
 import {CitationDialog, FigureDialog, LinkDialog, MathDialog, TableDialog} from "../../dialogs"
 import {READ_ONLY_ROLES, COMMENT_ONLY_ROLES} from "../.."
-import {randomAnchorId} from "../../../schema/common"
 import {setBlockType} from "../../keymap"
 
 const BLOCK_LABELS = {
@@ -638,70 +637,6 @@ export const toolbarModel = () => ({
             action: editor => redo(editor.currentView.state, tr => editor.currentView.dispatch(tr.setMeta('inputType', 'historyRedo'))),
             disabled: editor => redoDepth(editor.currentView.state) === 0,
             order: 17
-        },
-        {
-            type: 'button',
-            title: gettext('Comment'),
-            icon: 'comment',
-            action: editor => {
-                editor.mod.comments.interactions.createNewComment()
-                return false
-            },
-            disabled: editor => {
-                if (
-                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
-                    editor.currentView.state.selection.empty ||
-                    editor.currentView.state.selection.$anchor.depth < 2
-                ) {
-                    return true
-                }
-            },
-            selected: editor => {
-                if (
-                    editor.currentView.state.selection.$head.marks().some(
-                        mark => mark.type.name === 'comment'
-                    )
-                ) {
-                    return true
-                } else {
-                    return false
-                }
-
-            },
-            order: 18
-        },
-        {
-            type: 'button',
-            title: gettext('Anchor'),
-            icon: 'anchor',
-            action: editor => {
-                const mark = editor.currentView.state.schema.marks['anchor']
-                const command = toggleMark(mark, {id: randomAnchorId()})
-                command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
-            },
-            available: editor => elementAvailable(editor, 'anchor'),
-            disabled: editor => {
-                if (
-                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
-                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
-                    markDisabled(editor, 'anchor')
-                ) {
-                    return true
-                }
-            },
-            selected: editor => {
-                if (
-                    editor.currentView.state.selection.$head.marks().some(
-                        mark => mark.type.name === 'anchor'
-                    )
-                ) {
-                    return true
-                } else {
-                    return false
-                }
-
-            },
-            order: 19
         }
     ]
 })

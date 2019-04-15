@@ -7,6 +7,9 @@ export class ModNavigator {
         this.listeners = {}
         this.navigatorFilters = editor.menu.navigatorFilterModel.content
         this.defaultFilters = ['heading1', 'heading2', 'heading3']
+    }
+
+    init() {
         this.render()
         this.bindEvents()
     }

@@ -679,7 +679,7 @@ export const toolbarModel = () => ({
                 const command = toggleMark(mark, {id: randomAnchorId()})
                 command(editor.currentView.state, tr => editor.currentView.dispatch(tr))
             },
-            available: editor => elementAvailable(editor, 'anchor'),
+            available: editor => markAvailable(editor, 'anchor'),
             disabled: editor => {
                 if (
                     READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||

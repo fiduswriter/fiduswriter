@@ -6,7 +6,7 @@ import {keymap} from "prosemirror-keymap"
 
 import {litSchema} from "../../schema/literal"
 
-export class LiteralFieldForm{
+export class LiteralFieldForm {
     constructor(dom, initialValue = [], placeHolder = false) {
         this.dom = dom
         this.initialValue = initialValue

@@ -1,6 +1,6 @@
 import TokenField from "tokenfield"
 
-export class TagListForm{
+export class TagListForm {
     constructor(dom, initialValue = []) {
         this.dom = dom
         this.initialValue = initialValue

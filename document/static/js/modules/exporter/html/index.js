@@ -9,7 +9,7 @@ import {htmlExportTemplate} from "../html/templates"
 import {addAlert} from "../../common"
 import {BaseDOMExporter} from "../tools/dom_export"
 
-export class HTMLExporter extends BaseDOMExporter{
+export class HTMLExporter extends BaseDOMExporter {
     constructor(schema, doc, bibDB, imageDB, citationStyles, citationLocales, documentStyles, staticUrl) {
         super(schema)
         this.doc = doc

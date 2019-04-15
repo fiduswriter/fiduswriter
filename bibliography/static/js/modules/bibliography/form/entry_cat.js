@@ -1,4 +1,4 @@
-export class EntryCatForm{
+export class EntryCatForm {
     constructor(dom, initialValue = [], options = []) {
         this.dom = dom
         this.currentValue = initialValue

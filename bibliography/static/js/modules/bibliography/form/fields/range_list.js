@@ -1,7 +1,7 @@
 import {RangeFieldForm} from "./range"
 import {noSpaceTmp} from "../../../common"
 
-export class RangeListForm{
+export class RangeListForm {
     constructor(dom, initialValue = [[]]) {
         this.currentValue = initialValue
         this.dom = dom

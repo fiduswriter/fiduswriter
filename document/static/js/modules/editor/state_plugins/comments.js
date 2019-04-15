@@ -32,7 +32,7 @@ const moveComment = function(doc, id, pos) {
     // If we ended up reaching a document part boundary rather than finding
     // text, we try again, this time moving in the opposite direction.
     // We start at the original position and then increase posTo
-    if (doc.resolve(posFrom).depth === 1){
+    if (doc.resolve(posFrom).depth === 1) {
         posFrom = posTo
         posTo++
         while (

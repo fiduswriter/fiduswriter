@@ -1,7 +1,7 @@
 import {LiteralFieldForm} from "./literal"
 import {noSpaceTmp} from "../../../common"
 
-export class LiteralListForm{
+export class LiteralListForm {
     constructor(dom, initialValue = [[]]) {
         this.currentValue = initialValue
         this.dom = dom

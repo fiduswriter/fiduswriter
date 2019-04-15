@@ -1,6 +1,6 @@
 import {edtfParse} from "biblatex-csl-converter"
 
-export class DateFieldForm{
+export class DateFieldForm {
     constructor(dom, initialValue = '', placeHolder = '') {
         this.dom = dom
         this.initialValue = initialValue

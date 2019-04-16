@@ -25,7 +25,7 @@ class EditorHelper(SeleniumHelper):
             doc.get_absolute_url()
         ))
         WebDriverWait(driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CLASS_NAME, 'editortoolbar'))
+            EC.presence_of_element_located((By.CLASS_NAME, 'editor-toolbar'))
         )
         self.inject_helpers(driver)
 

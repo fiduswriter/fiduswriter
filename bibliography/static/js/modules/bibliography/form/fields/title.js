@@ -6,7 +6,7 @@ import {keymap} from "prosemirror-keymap"
 
 import {titleSchema} from "../../schema/title"
 
-export class TitleFieldForm{
+export class TitleFieldForm {
     constructor(dom, initialValue) {
         this.initialValue = initialValue
         this.dom = dom

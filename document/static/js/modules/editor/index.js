@@ -2,7 +2,9 @@ import {
     whenReady,
     ensureCSS,
     WebSocketConnector,
-    postJson
+    postJson,
+    activateWait,
+    deactivateWait
 } from "../common"
 import {
     FeedbackTab
@@ -77,7 +79,8 @@ import {
     headerbarModel,
     toolbarModel,
     tableMenuModel,
-    navigatorFilterModel
+    navigatorFilterModel,
+    selectionMenuModel
 } from "./menus"
 import {
     ModMarginboxes
@@ -104,6 +107,7 @@ import {
     linksPlugin,
     marginboxesPlugin,
     placeholdersPlugin,
+    selectionMenuPlugin,
     settingsPlugin,
     tableMenuPlugin,
     tocRenderPlugin,
@@ -157,6 +161,7 @@ export class Editor {
             toolbarModel: toolbarModel(),
             tableMenuModel: tableMenuModel(),
             navigatorFilterModel: navigatorFilterModel(),
+            selectionMenuModel: selectionMenuModel()
         }
         this.client_id = Math.floor(Math.random() * 0xFFFFFFFF)
         this.clientTimeAdjustment = 0
@@ -175,6 +180,7 @@ export class Editor {
             [citationRenderPlugin, () => ({editor: this})],
             [headerbarPlugin, () => ({editor: this})],
             [toolbarPlugin, () => ({editor: this})],
+            [selectionMenuPlugin, () => ({editor: this})],
             [collabCaretsPlugin, () => ({editor: this})],
             [footnoteMarkersPlugin, () => ({editor: this})],
             [commentsPlugin, () => ({editor: this})],
@@ -304,12 +310,14 @@ export class Editor {
 
             })
             this.render()
+            activateWait(true)
             this.initEditor()
         })
     }
 
     close() {
         this.menu.toolbarViews.forEach(view => view.destroy())
+        this.menu.selectionMenuViews.forEach(view => view.destroy())
         this.menu.headerView.destroy()
         this.ws.close()
     }
@@ -320,16 +328,12 @@ export class Editor {
         document.body.innerHTML = `<div id="editor">
             <div id="wait"><i class="fa fa-spinner fa-pulse"></i></div>
             <header>
-                <nav id="headerbar">
-                    <div></div>
-                </nav>
-                <nav id="toolbar">
-                    <div></div>
-                </nav>
+                <nav id="headerbar"><div></div></nav>
+                <nav id="toolbar"><div></div></nav>
             </header>
             <div id="navigator"></div>
             <div id="editor-content">
-                <div id="flow" class="hide">
+                <div id="flow">
                     <div id="paper-editable">
                         <div id="document-editable" class="user-contents"></div>
                         <div id="footnote-box-container" class="user-contents">
@@ -338,6 +342,7 @@ export class Editor {
                     </div>
                     <div class="article-bibliography user-contents"></div>
                 </div>
+                <nav id="selection-menu"><div></div></nav>
                 <div id="margin-box-column">
                     <div id="margin-box-filter"></div>
                     <div id="margin-box-container"><div></div></div>
@@ -393,6 +398,7 @@ export class Editor {
         new ModComments(this)
         new ModDocumentTemplate(this)
         new ModNavigator(this)
+        this.mod.navigator.init()
         this.activateFidusPlugins()
         this.ws.init()
     }
@@ -468,7 +474,6 @@ export class Editor {
             plugins
         }
 
-        document.getElementById('flow').classList.remove('hide')
         // Set document in prosemirror
         this.view.setProps({state: EditorState.create(stateConfig)})
         this.view.setProps({nodeViews: {}}) // Needed to initialize nodeViews in plugins
@@ -485,6 +490,7 @@ export class Editor {
         // Set part specific settings
         this.mod.documentTemplate.addDocPartSettings()
         this.waitingForDocument = false
+        deactivateWait()
         if (locationHash.length) {
             this.scrollIdIntoView(locationHash.slice(1))
         }

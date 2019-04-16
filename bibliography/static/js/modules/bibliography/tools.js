@@ -19,7 +19,7 @@ export function nameToText(nameList) {
         if (nameList[0]['given']) {
             nameString += `, ${litToText(nameList[0]['given'])}`
         }
-    } else if (nameList[0]['literal']){
+    } else if (nameList[0]['literal']) {
         nameString += litToText(nameList[0]['literal'])
     }
 

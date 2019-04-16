@@ -62,6 +62,10 @@ export {
 }
 from "./placeholders"
 export {
+    selectionMenuPlugin
+}
+from "./selection_menu"
+export {
     settingsPlugin
 }
 from "./settings"

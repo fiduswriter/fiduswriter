@@ -48,7 +48,7 @@ export const descendantNodes = function(node) {
 export const textContent = function(node) {
     return descendantNodes(node).reduce(
         (returnString, subNode) => {
-            if (subNode.text){
+            if (subNode.text) {
                 returnString += subNode.text
             }
             return returnString

@@ -27,7 +27,7 @@ class TableView {
         let stopped = false
         if (event.type === 'mousedown' && event.composedPath().includes(this.menuButton)) {
             stopped = true
-            if (!isSelectedTableClicked(this.view.state, this.getPos())){
+            if (!isSelectedTableClicked(this.view.state, this.getPos())) {
                 const tr = this.view.state.tr
                 const $pos = this.view.state.doc.resolve(this.getPos())
                 tr.setSelection(Selection.findFrom($pos, 1, true))
@@ -51,8 +51,8 @@ class TableView {
 
 const isSelectedTableClicked = (state, $pos) => {
     const pathArr = state.selection.$anchor.path
-    for (let i = 0; i < pathArr.length ; i++){
-        if (pathArr[i].type && pathArr[i].type.name && pathArr[i].type.name === "table" && pathArr[i-1] === $pos){
+    for (let i = 0; i < pathArr.length ; i++) {
+        if (pathArr[i].type && pathArr[i].type.name && pathArr[i].type.name === "table" && pathArr[i-1] === $pos) {
             return true
         }
     }

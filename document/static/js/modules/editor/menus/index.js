@@ -1,4 +1,5 @@
 export {HeaderbarView, headerbarModel} from "./headerbar"
 export {ToolbarView, toolbarModel} from "./toolbar"
-export {tableMenuModel} from './table'
-export {navigatorFilterModel} from './navigator'
+export {SelectionMenuView, selectionMenuModel} from "./selection"
+export {tableMenuModel} from "./table"
+export {navigatorFilterModel} from "./navigator"

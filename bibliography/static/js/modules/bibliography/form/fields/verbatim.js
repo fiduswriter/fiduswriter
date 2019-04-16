@@ -1,4 +1,4 @@
-export class VerbatimFieldForm{
+export class VerbatimFieldForm {
     constructor(dom, initialValue = '', placeHolder = '') {
         this.dom = dom
         this.initialValue = initialValue

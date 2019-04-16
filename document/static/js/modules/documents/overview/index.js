@@ -30,6 +30,7 @@ export class DocumentOverview {
     init() {
         whenReady().then(() => {
             this.render()
+            activateWait(true)
             const smenu = new SiteMenu("documents")
             smenu.init()
             new DocumentOverviewActions(this)
@@ -99,7 +100,6 @@ export class DocumentOverview {
     }
 
     getDocumentListData() {
-        activateWait()
         postJson(
             '/document/documentlist/'
         ).catch(

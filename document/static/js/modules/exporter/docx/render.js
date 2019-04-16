@@ -141,7 +141,7 @@ export class DocxExporterRender {
         )
         this.tags.forEach(
             tag => {
-                if (!tag.title){
+                if (!tag.title) {
                     return
                 } else if (tag.title[0]==='@') {
                     this.parRender(tag)

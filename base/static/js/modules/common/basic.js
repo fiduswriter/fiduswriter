@@ -52,10 +52,13 @@ export const setCheckableLabel = function(labelEl) {
 
 /** Cover the page signaling to the user to wait.
  */
-export const activateWait = function() {
+export const activateWait = function(full = false) {
     const waitEl = document.getElementById('wait')
     if (waitEl) {
         waitEl.classList.add('active')
+        if (full) {
+            waitEl.classList.add('full')
+        }
     }
 }
 
@@ -65,6 +68,7 @@ export const deactivateWait = function() {
     const waitEl = document.getElementById('wait')
     if (waitEl) {
         waitEl.classList.remove('active')
+        waitEl.classList.remove('full')
     }
 }
 

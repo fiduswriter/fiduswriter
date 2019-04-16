@@ -117,7 +117,7 @@ export class Dialog {
         this.dialogEl.style.left = `${(totalWidth - dialogWidth)/2 + scrollLeftOffset}px`
     }
 
-    scrollevent(){
+    scrollevent() {
         this.centerDialog()
     }
 

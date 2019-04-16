@@ -5,7 +5,7 @@ import {noSpaceTmp} from "../../../common"
 // between RangeFieldForm and RangeListForm is for keeping consistency with other fields
 // and lists.
 
-export class RangeFieldForm{
+export class RangeFieldForm {
     constructor(dom, initialValue = [[]]) {
         this.currentValue = initialValue
         this.dom = dom

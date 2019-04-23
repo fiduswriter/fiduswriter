@@ -820,21 +820,29 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         # type formula
         math_field = driver.find_element_by_class_name('math-field')
         math_field.click()
-        driver.find_element_by_class_name('ML__virtual-keyboard-toggle').click()
+        driver.find_element_by_class_name(
+            'ML__virtual-keyboard-toggle'
+        ).click()
 
         # wait for keyboard
         key_2 = WebDriverWait(driver, self.wait_time).until(
-            EC.visibility_of_element_located((By.CSS_SELECTOR, 'li[data-alt-keys="2"]'))
+            EC.visibility_of_element_located(
+                (By.CSS_SELECTOR, 'li[data-alt-keys="2"]')
+                )
         )
         key_2.click()
-        driver.find_element_by_css_selector('li[data-alt-keys="x-var"]').click()
+        driver.find_element_by_css_selector(
+            'li[data-alt-keys="x-var"]'
+        ).click()
         driver.find_element_by_css_selector('li[data-alt-keys="+"]').click()
         driver.find_element_by_css_selector('li[data-alt-keys="3"]').click()
         driver.find_element_by_css_selector('li[data-alt-keys="="]').click()
         driver.find_element_by_css_selector('li[data-alt-keys="7"]').click()
 
         # close keyboard
-        driver.find_element_by_class_name('ML__virtual-keyboard-toggle').click()
+        driver.find_element_by_class_name(
+            'ML__virtual-keyboard-toggle'
+        ).click()
 
         insert_button.click()
 

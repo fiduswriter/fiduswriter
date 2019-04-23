@@ -200,7 +200,8 @@ export class Editor {
     init() {
         ensureCSS([
             'libs/katex/katex.min.css',
-            'mathquill.css',
+            'mathlive.css',
+            'mathlive.core.css',
             'editor.css',
             'tags.css',
             'contributors.css',

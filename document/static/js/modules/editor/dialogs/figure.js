@@ -1,3 +1,4 @@
+import katex from "katex"
 import {
     configureFigureTemplate
 } from "./templates"
@@ -8,7 +9,6 @@ import {
     addDropdownBox,
     Dialog
 } from "../../common"
-import katex from "katex"
 import {
     randomFigureId
 } from "../../schema/common"

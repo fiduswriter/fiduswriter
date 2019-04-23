@@ -1,5 +1,7 @@
+import katex from "katex"
+import MathLive from "mathlive"
+
 import {mathDialogTemplate} from "./templates"
-import {FormulaEditor} from '../tools/formula_editor'
 import {Dialog} from "../../common"
 
 /**
@@ -8,11 +10,10 @@ import {Dialog} from "../../common"
 export class MathDialog {
     constructor(editor) {
         this.editor = editor
-        const defaultEquation = '\\$x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}'
         this.node = this.editor.currentView.state.selection.node
-        this.mathQuill = null
+        this.isRawMode = false
         this.equationSelected = this.node && this.node.attrs && this.node.attrs.equation ? true : false
-        this.equation = this.equationSelected ? this.node.attrs.equation : defaultEquation
+        this.equation = this.equationSelected ? this.node.attrs.equation : ''
     }
 
     init() {
@@ -29,7 +30,7 @@ export class MathDialog {
                         const view = this.editor.currentView,
                             state = view.state
 
-                        this.equation = this.mathQuill.getLatex()
+                        this.equation = this.getLatex()
 
                         if ((new RegExp(/^\s*$/)).test(this.equation)) {
                             // The math input is empty. Delete a math node if it exist. Then close the dialog.
@@ -38,7 +39,7 @@ export class MathDialog {
                             }
                             this.dialog.close()
                             return
-                        } else if (this.equationSelectede && this.equation === this.node.attrs.equation) {
+                        } else if (this.equationSelected && this.equation === this.node.attrs.equation) {
                             // Equation selected, but has not changed from last time.
                             this.dialog.close()
                             return
@@ -55,7 +56,7 @@ export class MathDialog {
                 {
                     text: gettext('LaTeX / Graphic'),
                     classes: 'fw-dark',
-                    click: () => this.mathQuill.switchLatexGraphicMode()
+                    click: () => this.switchLatexGraphicMode()
                 },
                 {
                     type: 'cancel'
@@ -67,10 +68,79 @@ export class MathDialog {
                 this.editor.currentView.focus()
             }
         })
-
         this.dialog.open()
 
-        //initialize advanced formula editor using mathquill
-        this.mathQuill = new FormulaEditor(this.dialog, this.equation)
+        this.mathliveDOM = this.dialog.dialogEl.querySelector("p > .math-field")
+        this.rawInputDOM = this.dialog.dialogEl.querySelector("div > .raw-input")
+        this.previewDOM = this.dialog.dialogEl.querySelector("div.math-preview")
+        this.errorFieldDOM = this.dialog.dialogEl.querySelector("div.math-error")
+
+        this.mathField = MathLive.makeMathField(this.mathliveDOM)
+        this.mathField.$latex(this.equation)
+    }
+
+    /**
+     * Destroy mathlive object. reinitialize it to work with raw latex
+     */
+    switchLatexGraphicMode() {
+        const latexText = this.getLatex()
+
+        if (this.isRawMode) {
+            this.mathField.$latex(latexText)
+            this.mathliveDOM.style.display = ''
+            this.rawInputDOM.style.display = 'none'
+            this.previewDOM.innerHTML = ''
+            this.isRawMode = false
+        } else {
+            //change from span to input in template
+            this.mathliveDOM.style.display = 'none'
+            this.rawInputDOM.style.display = ''
+            this.rawInputDOM.value = latexText
+
+            //render latex formula using katex
+            katex.render(this.getLatex(), this.previewDOM, {throwOnError: false})
+
+            //live-update of katex rendering
+            this.rawInputDOM.addEventListener('input', () => {
+                try {
+                    this.previewDOM.innerHTML = ''
+                    katex.render(this.getLatex(), this.previewDOM)
+                    this.hideError()
+                }
+                catch (msg) {
+                    //if error show it
+                    this.showError(msg)
+                }
+            })
+
+            this.isRawMode = true
+        }
+    }
+
+    /**
+     * Get latex representation as text
+     * @returns {string} latex formula
+     */
+    getLatex() {
+        if (this.isRawMode) {
+            return this.rawInputDOM.value
+        }
+        return this.mathField.$latex()
+    }
+
+    /**
+     *
+     * @param {string} msg Error message
+     */
+    showError(msg) {
+        this.errorFieldDOM.innerText = msg
+        this.errorFieldDOM.style.display = 'block'
+    }
+
+    /**
+     * Hide error span
+     */
+    hideError() {
+        this.errorFieldDOM.style.display = 'none'
     }
 }

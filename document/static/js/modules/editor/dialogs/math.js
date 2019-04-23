@@ -57,12 +57,13 @@ export class MathDialog {
             ],
             title: gettext('Mathematical formula'),
             height: 150,
-            onClose: () => {
+            beforeClose: () => {
                 if (this.mathField) {
                     this.mathField.$revertToOriginalContent()
+                    this.mathField = false
                 }
-                this.editor.currentView.focus()
-            }
+            },
+            onClose: () => this.editor.currentView.focus()
         })
         this.dialog.open()
 

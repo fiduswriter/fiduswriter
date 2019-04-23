@@ -114,6 +114,7 @@ export class FigureDialog {
         if (this.imgId) {
             if (this.mathField) {
                 this.mathField.$revertToOriginalContent()
+                this.mathField = false
             }
             const db = this.imgDb === 'document' ? this.imageDB.db : this.userImageDB.db
             this.dialog.dialogEl.querySelector('.inner-figure-preview').innerHTML =
@@ -247,12 +248,14 @@ export class FigureDialog {
                 dir: this.editor.docInfo.dir
             }),
             buttons,
-            onClose: () => {
+            beforeClose: () => {
                 if (this.mathField) {
                     this.mathField.$revertToOriginalContent()
+                    this.mathField = false
                 }
-                this.editor.currentView.focus()
-            }
+            },
+            onClose: () => this.editor.currentView.focus()
+
         })
 
         this.dialog.open()

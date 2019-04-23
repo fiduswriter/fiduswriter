@@ -812,10 +812,30 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         button = driver.find_element_by_xpath('//*[@title="Math"]')
         button.click()
 
-        # wait to load popup
+        # wait for load of popup
         insert_button = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "insert-math"))
         )
+
+        # type formula
+        math_field = driver.find_element_by_class_name('math-field')
+        math_field.click()
+        driver.find_element_by_class_name('ML__virtual-keyboard-toggle').click()
+
+        # wait for keyboard
+        key_2 = WebDriverWait(driver, self.wait_time).until(
+            EC.visibility_of_element_located((By.CSS_SELECTOR, 'li[data-alt-keys="2"]'))
+        )
+        key_2.click()
+        driver.find_element_by_css_selector('li[data-alt-keys="x-var"]').click()
+        driver.find_element_by_css_selector('li[data-alt-keys="+"]').click()
+        driver.find_element_by_css_selector('li[data-alt-keys="3"]').click()
+        driver.find_element_by_css_selector('li[data-alt-keys="="]').click()
+        driver.find_element_by_css_selector('li[data-alt-keys="7"]').click()
+
+        # close keyboard
+        driver.find_element_by_class_name('ML__virtual-keyboard-toggle').click()
+
         insert_button.click()
 
     def get_mathequation(self, driver):
@@ -875,7 +895,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_sync(self.driver, self.driver2)
 
         self.assertEqual(
-            54,
+            13,
             len(self.get_mathequation(self.driver2))
         )
 

@@ -903,7 +903,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_sync(self.driver, self.driver2)
 
         self.assertEqual(
-            13,
+            12,
             len(self.get_mathequation(self.driver2))
         )
 

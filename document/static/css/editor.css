@@ -554,6 +554,10 @@ span.delete {
 }
 
 
+.image-selection-table tr {
+    cursor: pointer;
+}
+
 /* MathLive Editor Overwrite */
 
 .math-field {
@@ -584,12 +588,12 @@ span.delete {
     padding-left: 5px;
 }
 
-.math-field-header {
+/* .math-field-header {
     font-size: 113%;
     font-weight: 400;
-}
+} */
 
-.math-error {
+/* .math-error {
     margin: 10px 0px;
     padding: 12px;
     color: #D8000C;
@@ -597,7 +601,7 @@ span.delete {
     font-size: 2em;
     vertical-align: middle;
     display: none;
-}
+} */
 
 .ML__popover {
     z-index: 1000;

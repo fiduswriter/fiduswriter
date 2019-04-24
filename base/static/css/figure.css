@@ -21,6 +21,7 @@
     position: absolute;
     right: 10px;
     top: 10px;
+    cursor: pointer;
 }
 
 .fw-media-uploader .figure-preview .inner-figure-preview > img {

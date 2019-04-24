@@ -60,6 +60,7 @@ export class Dialog {
         if (options.buttons) {
             this.setButtons(options.buttons)
         }
+        this.beforeClose = options.onClose || false
         this.onClose = options.onClose || false
         this.icon = options.icon || false
         this.scroll = options.scroll || false
@@ -158,6 +159,9 @@ export class Dialog {
             return
         }
         window.removeEventListener("scroll",  this.eventAddress, false)
+        if (this.beforeClose) {
+            this.beforeClose()
+        }
         this.dialogEl.parentElement.removeChild(this.dialogEl)
         this.backdropEl.parentElement.removeChild(this.backdropEl)
         if (this.onClose) {

@@ -554,15 +554,30 @@ span.delete {
 }
 
 
-/* MathQuill Editor Overwrite */
+.image-selection-table tr {
+    cursor: pointer;
+}
+
+/* MathLive Editor Overwrite */
 
 .math-field {
-    min-width: 250px;
     background-color: white;
-    margin: 9px 0 7px 0;
+    margin: 9px 10px 7px 10px;
     padding-left: 5px;
     font-size: 20px;
     display: block;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: solid 1px #d3d3d3;
+    cursor: text;
+    position: relative;
+}
+
+.math-field .placeholder {
+    position: absolute;
+    top: 20px;
+    left: 10px;
+    color: #d3d3d3;
 }
 
 .math-latex {
@@ -573,12 +588,12 @@ span.delete {
     padding-left: 5px;
 }
 
-.math-field-header {
+/* .math-field-header {
     font-size: 113%;
     font-weight: 400;
-}
+} */
 
-.math-error {
+/* .math-error {
     margin: 10px 0px;
     padding: 12px;
     color: #D8000C;
@@ -586,7 +601,15 @@ span.delete {
     font-size: 2em;
     vertical-align: middle;
     display: none;
+} */
+
+.ML__popover {
+    z-index: 1000;
 }
+
+/* .ML__base:empty:before, .ML__base > span:first-child:empty:before {
+    content: 'Type here';
+} */
 
 div.table-edit-button-group {
     margin-bottom: 10px;

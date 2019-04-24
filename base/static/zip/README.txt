@@ -1,7 +1,7 @@
-The file base/static/zip/katex_style.zip contains a copy of the base/static/css/libs/katex folder.
+The file base/static/zip/mathlive_style.zip contains a copy of the base/static/css/libs/mathlive folder.
 
-To regenerate katex_style.zip, run:
+To regenerate mathlive_style.zip, run:
 
-python manage.py bundle_katex
+python manage.py bundle_mathlive
 
-katex_style.zip is included in EPUB and HTML exports.
+mathlive_style.zip is included in EPUB and HTML exports.

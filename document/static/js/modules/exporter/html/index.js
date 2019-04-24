@@ -67,7 +67,7 @@ export class HTMLExporter extends BaseDOMExporter {
         const math = this.contents.querySelectorAll('.equation, .figure-equation').length ? true : false
 
         if (math) {
-            this.styleSheets.push({filename: `${this.staticUrl}css/libs/katex/katex.min.css?v=${$StaticUrls.transpile.version$}`})
+            this.styleSheets.push({filename: `${this.staticUrl}css/libs/mathlive/mathlive.css?v=${$StaticUrls.transpile.version$}`})
         }
 
         const imageFiles = this.removeUrlPrefix ? modifyImages(this.contents) : []
@@ -111,7 +111,7 @@ export class HTMLExporter extends BaseDOMExporter {
         if (math) {
             includeZips.push({
                 'directory': '',
-                'url': `${this.staticUrl}zip/katex_style.zip?v=${$StaticUrls.transpile.version$}`,
+                'url': `${this.staticUrl}zip/mathlive_style.zip?v=${$StaticUrls.transpile.version$}`,
             })
         }
 

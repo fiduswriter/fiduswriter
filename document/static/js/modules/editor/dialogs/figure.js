@@ -1,3 +1,4 @@
+import MathLive from "mathlive"
 import {
     configureFigureTemplate
 } from "./templates"
@@ -8,7 +9,6 @@ import {
     addDropdownBox,
     Dialog
 } from "../../common"
-import katex from "katex"
 import {
     randomFigureId
 } from "../../schema/common"
@@ -33,20 +33,102 @@ export class FigureDialog {
         this.dialog = false
     }
 
-    layoutMathPreview() {
-        const previewNode = document.getElementById('inner-figure-preview')
-        katex.render(this.equation, previewNode, {
-            displayMode: true,
-            throwOnError: false
+    layoutMathEditor() {
+        this.dialog.dialogEl.querySelector('.inner-figure-preview').innerHTML =
+            `<div><span class="math-field" type="text" name="math" ></span></div>
+            <p class="formula-or-figure">${gettext('or')}</p>
+            <p><button type="button" id="insert-figure-image" class="fw-button fw-light">
+                ${gettext("Insert image")} <i class="fa fa-image"></i>
+            </button></p>`
+
+        this.mathliveDOM = this.dialog.dialogEl.querySelector(".math-field")
+        this.nonMathElements = [
+            this.dialog.dialogEl.querySelector("#insert-figure-image"),
+            this.dialog.dialogEl.querySelector(".formula-or-figure")
+        ]
+        this.mathField = MathLive.makeMathField(this.mathliveDOM, {
+            virtualKeyboardMode: 'manual',
+            onBlur: () => this.showPlaceHolder(),
+            onFocus: () => this.hidePlaceHolder(),
+            onContentDidChange: () => {
+                this.equation = this.mathField.$latex()
+                this.showHideNonMathElements()
+            }
         })
+        this.mathField.$latex(this.equation)
+        this.showPlaceHolder()
+        this.showHideNonMathElements()
+        this.dialog.dialogEl.querySelector('#insert-figure-image').addEventListener(
+            'click',
+            () => this.selectImage()
+        )
+    }
+
+    showPlaceHolder() {
+        if (!this.mathField.$latex().length) {
+            this.mathliveDOM.insertAdjacentHTML('beforeend', `<span class="placeholder" >${gettext('Type formula')}</span>`)
+        }
+    }
+
+    hidePlaceHolder() {
+        const placeHolder = this.mathliveDOM.querySelector('.placeholder')
+        if (placeHolder) {
+            this.mathliveDOM.removeChild(placeHolder)
+        }
+    }
+
+    showHideNonMathElements() {
+        if (this.equation.length) {
+            this.nonMathElements.forEach(el => el.style.display = 'none')
+        } else {
+            this.nonMathElements.forEach(el => el.style.display = '')
+        }
+    }
+
+    selectImage() {
+        const imageSelection = new ImageSelectionDialog(
+            this.imageDB,
+            this.userImageDB,
+            this.imgId,
+            this.editor
+        )
+        imageSelection.init().then(
+            ({
+                id,
+                db
+            }) => {
+                if (id) {
+                    this.imgId = id
+                    this.imgDb = db
+                    this.layoutImagePreview()
+                } else {
+                    this.imgId = false
+                    this.imgDb = false
+                    this.layoutMathEditor()
+                }
+            }
+        )
     }
 
     layoutImagePreview() {
         if (this.imgId) {
+            if (this.mathField) {
+                this.mathField.$revertToOriginalContent()
+                this.mathField = false
+            }
             const db = this.imgDb === 'document' ? this.imageDB.db : this.userImageDB.db
-            document.getElementById('inner-figure-preview').innerHTML =
-                `<img src="${db[this.imgId].image}"
-                        style="max-width: 400px;max-height:220px">`
+            this.dialog.dialogEl.querySelector('.inner-figure-preview').innerHTML =
+                `<img src="${db[this.imgId].image}" style="max-width: 400px;max-height:220px">
+                <i class="fas fa-times-circle remove-image"></i>`
+            this.dialog.dialogEl.querySelector('.inner-figure-preview .remove-image').addEventListener(
+                'click',
+                () => {
+                    this.imgId = false
+                    this.imgDb = false
+                    this.layoutMathEditor()
+                }
+            )
+
         }
     }
 
@@ -67,9 +149,7 @@ export class FigureDialog {
     }
 
     submitForm() {
-        const mathInput = this.dialog.dialogEl.querySelector('input[name=figure-math]')
         const captionInput = this.dialog.dialogEl.querySelector('input[name=figure-caption]')
-        this.equation = mathInput.value
         this.caption = captionInput.value
 
         if ((new RegExp(/^\s*$/)).test(this.equation) && (!this.imgId)) {
@@ -162,15 +242,20 @@ export class FigureDialog {
             id: 'figure-dialog',
             title: gettext("Enter latex math or insert an image"),
             body: configureFigureTemplate({
-                equation: this.equation,
                 caption: this.caption,
-                image: this.imgId,
                 aligned: this.aligned,
                 width: this.width,
                 dir: this.editor.docInfo.dir
             }),
             buttons,
+            beforeClose: () => {
+                if (this.mathField) {
+                    this.mathField.$revertToOriginalContent()
+                    this.mathField = false
+                }
+            },
             onClose: () => this.editor.currentView.focus()
+
         })
 
         this.dialog.open()
@@ -183,10 +268,10 @@ export class FigureDialog {
         this.setFigureAlignment()
         this.setFigureWidth()
 
-        if (this.equation) {
-            this.layoutMathPreview()
-        } else if (this.imgId) {
+        if (this.imgId) {
             this.layoutImagePreview()
+        } else {
+            this.layoutMathEditor()
         }
 
         addDropdownBox(
@@ -232,59 +317,5 @@ export class FigureDialog {
             }
         ))
 
-        document.querySelector('input[name=figure-math]').addEventListener('focus',
-            () => {
-                // If a figure is being entered, disable the image button
-                document.getElementById('insertFigureImage').classList.add('disabled')
-                document.getElementById('insertFigureImage').setAttribute('disabled', 'disabled')
-            })
-
-        const mathInput = document.querySelector('input[name=figure-math]')
-        mathInput.addEventListener('blur',
-            () => {
-                if (mathInput.value === '') {
-                    document.getElementById('inner-figure-preview').innerHTML = ''
-                    // enable image button
-                    document.getElementById('insertFigureImage').classList.remove('disabled')
-                    document.getElementById('insertFigureImage').removeAttribute('disabled')
-                } else {
-                    this.equation = mathInput.value
-                    this.layoutMathPreview()
-                }
-            }
-        )
-        const insertFigureImage = document.getElementById('insertFigureImage')
-        insertFigureImage.addEventListener('click',
-            () => {
-                if (insertFigureImage.classList.contains('disabled')) {
-                    return
-                }
-                const imageSelection = new ImageSelectionDialog(
-                    this.imageDB,
-                    this.userImageDB,
-                    this.imgId,
-                    this.editor
-                )
-                imageSelection.init().then(
-                    ({
-                        id,
-                        db
-                    }) => {
-                        if (id) {
-                            this.imgId = id
-                            this.imgDb = db
-                            this.layoutImagePreview()
-                            document.querySelector('input[name=figure-math]').setAttribute('disabled', 'disabled')
-                        } else {
-                            this.imgId = false
-                            this.imgDb = false
-                            document.getElementById('inner-figure-preview').innerHTML = ''
-                            document.querySelector('input[name=figure-math]').removeAttribute('disabled')
-                        }
-                    }
-                )
-
-            }
-        )
     }
 }

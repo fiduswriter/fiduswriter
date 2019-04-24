@@ -290,7 +290,6 @@ module.exports = {
     "globals": {
         "gettext": false,
         "interpolate": false,
-        "MathQuill": true,
         "$StaticUrls": false
     }
 };

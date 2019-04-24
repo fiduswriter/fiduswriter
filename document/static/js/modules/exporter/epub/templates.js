@@ -1,4 +1,4 @@
-import {katexOpfIncludes} from "../../katex/opf_includes"
+import {mathliveOpfIncludes} from "../../mathlive/opf_includes"
 import {escapeText} from "../../common"
 
 /** A template for the OPF file of an epub. */
@@ -45,7 +45,7 @@ ${
 }
 ${
     math ?
-    katexOpfIncludes :
+    mathliveOpfIncludes :
     ''
 }
         <!-- ncx included for 2.0 reading system compatibility: -->
@@ -108,7 +108,7 @@ export const xhtmlTemplate = ({shortLang, title, math, styleSheets, part, body})
         <title>${escapeText(title)}</title>
 ${
     math ?
-    '\t\t<link rel="stylesheet" type="text/css" href="katex.min.css" />\n' :
+    '\t\t<link rel="stylesheet" type="text/css" href="mathlive.css" />\n' :
     ''
 }
 ${

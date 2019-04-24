@@ -170,9 +170,6 @@ export const mathDialogTemplate = () =>
 
     `<div title="${gettext("Math")}">
         <p><span class="math-field" type="text" name="math" ></span></p>
-        <div><input type="text" class="raw-input" style="display:none"></div>
-        <div class="math-preview"></div>
-        <div class="math-error"></div>
     </div>`
 
 export const figureImageItemTemplate =  ({id, cats, image, thumbnail, title}) =>
@@ -224,17 +221,8 @@ export const figureImageTemplate = ({imageDB}) =>
     </div>`
 
     /** A template to configure the display of a figure in the editor. */
-export const configureFigureTemplate = ({image, equation, caption, dir}) =>
+export const configureFigureTemplate = ({caption, dir}) =>
     `<div class="fw-media-uploader">
-            <div>
-                <input class="fw-media-title figure-math" type="text" name="figure-math"
-                    placeholder="${gettext("Insert formula")}" value="${escapeText(equation)}"
-                    ${image ? 'disabled="disabled"' : ''} />
-                <button type="button" id="insertFigureImage" class="fw-button fw-light
-                        ${equation === '' ? '' : 'disabled'}">
-                    ${gettext("Insert image")} <i class="fa fa-image"></i>
-                </button>
-            </div>
             <input type="hidden" id="figure-category">
             <div style="margin-top: 10px;">
                 <div id="figure-category-btn" class="fw-button fw-light fw-large">
@@ -254,7 +242,6 @@ export const configureFigureTemplate = ({image, equation, caption, dir}) =>
                         }
                     </ul>
                 </div>
-
                 <div id="figure-alignment-btn" class="fw-button fw-light fw-large">
                     <input type="hidden" id="figure-alignment" />
                     <label></label>
@@ -274,8 +261,6 @@ export const configureFigureTemplate = ({image, equation, caption, dir}) =>
                         </span></li>
                     </ul>
                 </div>
-
-
                 <div id="figure-width-btn" class="fw-button fw-light fw-large">
                     <input type="hidden" id="figure-width" />
                     <label></label>
@@ -296,13 +281,11 @@ export const configureFigureTemplate = ({image, equation, caption, dir}) =>
                        <li><span class="fw-pulldown-item" id="figure-width-25">
                             Size : ${gettext('25')} %
                         </span></li>
-
                     </ul>
                 </div>
-
             </div>
             <div class="figure-preview">
-                <div id="inner-figure-preview"></div>
+                <div class="inner-figure-preview"></div>
             </div>
             <div style="margin-top: 10px;">
                 <input style="width: 402px;" class="caption"

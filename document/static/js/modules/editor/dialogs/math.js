@@ -83,7 +83,7 @@ export class MathDialog {
                     "keyboard.tooltip.roman": gettext("Symbols and Roman Letters"),
                     "tooltip.copy to clipboard": gettext("Copy to Clipboard"),
                     "tooltip.redo": gettext("Redo"),
-                    "tooltip.toggle virtual keyboard": gettext("Tovggle Virtual Keyboard"),
+                    "tooltip.toggle virtual keyboard": gettext("Toggle Virtual Keyboard"),
                     "tooltip.undo": gettext("Undo")
                 }
             }

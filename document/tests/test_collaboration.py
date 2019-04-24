@@ -825,12 +825,15 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         ).click()
 
         # wait for keyboard
-        key_2 = WebDriverWait(driver, self.wait_time).until(
+        WebDriverWait(driver, self.wait_time).until(
             EC.visibility_of_element_located(
-                (By.CSS_SELECTOR, 'li[data-alt-keys="2"]')
+                (
+                    By.CSS_SELECTOR,
+                    'div.ML__keyboard.is-visible li[data-alt-keys="="]'
                 )
+            )
         )
-        key_2.click()
+        driver.find_element_by_css_selector('li[data-alt-keys="2"]').click()
         driver.find_element_by_css_selector(
             'li[data-alt-keys="x-var"]'
         ).click()

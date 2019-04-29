@@ -55,7 +55,7 @@ export class ImageOverview {
         ensureCSS([
             'cropper.min.css'
         ], this.staticUrl)
-        setDocTitle(gettext('Media Manager'))
+        setDocTitle(gettext('Media Manager'), this.app)
         const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
         feedbackTab.init()
     }

@@ -209,8 +209,8 @@ export const whenReady = function() {
     }
 }
 
-export const setDocTitle = function(title) {
-    const titleText = `${title} - Fidus Writer`
+export const setDocTitle = function(title, app) {
+    const titleText = `${title} - ${app.name}`
     if (document.title !== titleText) {
         document.title = titleText
     }

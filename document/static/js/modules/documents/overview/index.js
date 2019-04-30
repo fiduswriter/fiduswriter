@@ -53,7 +53,7 @@ export class DocumentOverview {
             'add_remove_dialog.css',
             'access_rights_dialog.css'
         ], this.staticUrl)
-        setDocTitle(gettext('Document Overview'))
+        setDocTitle(gettext('Document Overview'), this.app)
         const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
         feedbackTab.init()
     }

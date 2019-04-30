@@ -45,7 +45,7 @@ export class ContactsOverview {
             username: this.username,
             staticUrl: this.staticUrl
         })
-        setDocTitle(gettext('Team Members'))
+        setDocTitle(gettext('Team Members'), this.app)
         const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
         feedbackTab.init()
     }

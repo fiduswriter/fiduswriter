@@ -33,7 +33,7 @@ export class ModNavigator {
                 case findTarget(event, '#navigator-list a', el):
                     event.preventDefault()
                     event.stopImmediatePropagation()
-                    document.getElementById(el.target.getAttribute('href').slice(1)).scrollIntoView({behavior:"smooth", block:"center", inline:"start"})
+                    document.getElementById(el.target.getAttribute('href').slice(1)).scrollIntoView({behavior:"smooth", block:"center"})
                     break
                 case findTarget(event, '#navigator-filter-icon', el):
                     if (document.getElementById("navigator-filter").classList.contains('hide')) {

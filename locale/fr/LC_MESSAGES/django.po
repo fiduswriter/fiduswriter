@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-30 23:51+0000\n"
+"POT-Creation-Date: 2019-05-05 23:52+0000\n"
 "PO-Revision-Date: 2016-06-17 15:21+0200\n"
 "Last-Translator: Nicolas Rochard <nrochard@gmail.com>\n"
 "Language-Team: français <nrochard@gmail.com>\n"
@@ -69,7 +69,9 @@ msgid "Privacy policy"
 msgstr ""
 
 #: base/templates/footer.html:17
-msgid "Equations and Math by KaTeX"
+#, fuzzy
+#| msgid "Equations and Math by KaTeX"
+msgid "Equations and Math with MathLive"
 msgstr "Équations et Math par KaTeX"
 
 #: base/templates/footer.html:22
@@ -130,17 +132,17 @@ msgstr ""
 msgid "Update all documents (DANGER!)"
 msgstr ""
 
-#: document/views.py:209 document/views.py:617
+#: document/views.py:209 document/views.py:616
 msgid "Untitled"
 msgstr "Sans Titre"
 
-#: document/views.py:280 document/views.py:703
+#: document/views.py:280 document/views.py:702
 #, fuzzy
 #| msgid "Documents"
 msgid "Document"
 msgstr "Documents"
 
-#: document/views.py:282 document/views.py:705
+#: document/views.py:282 document/views.py:704
 msgid "Author"
 msgstr "Auteur"
 
@@ -150,7 +152,7 @@ msgstr "Auteur"
 msgid "Access Rights"
 msgstr "Droits"
 
-#: document/views.py:287 document/views.py:710
+#: document/views.py:287 document/views.py:709
 #, fuzzy
 #| msgid "edit documents"
 msgid "Access the document"
@@ -160,19 +162,19 @@ msgstr "éditer les documents"
 msgid "Document shared:"
 msgstr "Document partagé:"
 
-#: document/views.py:643
+#: document/views.py:642
 #, fuzzy
 #| msgid "Comment"
 msgid "Comment on :"
 msgstr "Commentaire"
 
-#: document/views.py:664
+#: document/views.py:663
 #, fuzzy
 #| msgid "Comment"
 msgid "Comment assignment on :"
 msgstr "Commentaire"
 
-#: document/views.py:707
+#: document/views.py:706
 #, fuzzy
 #| msgid "Comments"
 msgid "Comment"

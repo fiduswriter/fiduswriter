@@ -49,15 +49,15 @@ class Command(BaseCommand):
         print("Bundling MathLive")
         # Copy MathLive CSS
         mathlive_css_path = os.path.join(
-            settings.PROJECT_PATH, "base/static/css/libs/mathlive/")
+            settings.PROJECT_PATH, "static-libs/css/libs/mathlive/")
         if not os.path.exists(mathlive_css_path):
             os.makedirs(mathlive_css_path)
-        call(["cp", "node_modules/mathlive/dist/mathlive.css",
-              "base/static/css/libs/mathlive"])
-        call(["cp", "-R", "node_modules/mathlive/dist/fonts",
-              "base/static/css/libs/mathlive"])
+        call(["cp", ".transpile/node_modules/mathlive/dist/mathlive.css",
+              mathlive_css_path])
+        call(["cp", "-R", ".transpile/node_modules/mathlive/dist/fonts",
+              mathlive_css_path])
         zip_file_path = os.path.join(
-            settings.PROJECT_PATH, 'base/static/zip/mathlive_style.zip')
+            settings.PROJECT_PATH, 'static-libs/zip/mathlive_style.zip')
         zip_dir = os.path.dirname(zip_file_path)
         if not os.path.exists(zip_dir):
             os.makedirs(zip_dir)
@@ -71,7 +71,7 @@ class Command(BaseCommand):
         opf_file_contents = opf_entries(file_paths)
         opf_file_path = os.path.join(
             settings.PROJECT_PATH,
-            'base/static/js/modules/mathlive/opf_includes.js'
+            'static-libs/js/modules/mathlive/opf_includes.js'
         )
         opf_dir = os.path.dirname(opf_file_path)
         if not os.path.exists(opf_dir):

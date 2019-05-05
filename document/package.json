@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "get_citation_locale": "echo -n 'export const enUSLocale=`' > ./document/static/js/modules/citations/enUS_locale.js && wget -qO- https://raw.githubusercontent.com/citation-style-language/locales/master/locales-en-US.xml >> ./document/static/js/modules/citations/enUS_locale.js && echo '`' >> ./document/static/js/modules/citations/enUS_locale.js",
+        "get_citation_locale": "mkdir -p ../static-libs/js/modules/citations/ && echo -n 'export const enUSLocale=`' > ../static-libs/js/modules/citations/enUS_locale.js && wget -qO- https://raw.githubusercontent.com/citation-style-language/locales/master/locales-en-US.xml >> ../static-libs/js/modules/citations/enUS_locale.js && echo '`' >> ../static-libs/js/modules/citations/enUS_locale.js",
         "postinstall": "npm run get_citation_locale"
     },
     "dependencies": {
@@ -10,7 +10,6 @@
         "fix-utf8": "1.0.4",
         "jszip": "3.1.5",
         "jszip-utils": "0.0.2",
-        "mathlive": "0.27.4",
         "orderedmap": "1.0.0",
         "prosemirror-collab": "1.1.x",
         "prosemirror-commands": "1.0.x",
@@ -27,7 +26,8 @@
         "prosemirror-transform": "1.1.x",
         "prosemirror-view": "1.7.x",
         "prosemirror-suggestions": "0.2.x",
-        "texzilla": "0.9.9",
+        "texzilla": "1.0.1",
+        "system": "2.0.1",
         "pretty": "2.0.0",
         "sortablejs": "1.8.x",
         "object-hash": "1.3.1"

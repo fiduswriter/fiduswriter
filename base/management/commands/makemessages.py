@@ -56,6 +56,7 @@ class Command(makemessages.Command):
                     file.dirpath
                 )
                 file.dirpath = out_path
+            os.chdir('.transpile/')
             out, err, status = popen_wrapper([
                 'npm',
                 'run',

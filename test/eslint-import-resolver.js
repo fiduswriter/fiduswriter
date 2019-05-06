@@ -54,5 +54,13 @@ exports.resolve = function(source, file, config) {
         return false
     })
 
+    if (!returnValue.found) {
+        const resolvedPath = fullPath.replace(/\/\w*\/static\/js\//g, `/static-libs/js/`)
+        if (isFile(`${resolvedPath}.js`)) {
+            returnValue.path = `${resolvedPath}.js`
+            returnValue.found = true
+        }
+    }
+
     return returnValue
 }

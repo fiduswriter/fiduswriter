@@ -6,14 +6,13 @@
   "name": "fidus-writer",
   "description": "Install dependencies for ES6 transpilation",
   "scripts": {
-    "get_mml2omml": "mkdir -p ./static-libs/xsl/ && wget https://raw.githubusercontent.com/AbiWord/abiword/14cbf144cb10a5a5ea6ee11275f7178ca4ff055a/plugins/openxml/omml_xslt/mml2omml.xsl -O ./static-libs/xsl/mml2omml.xsl",
-    "copy_fontawesome": "mkdir -p ./static-libs/fontawesome/ && cp -r node_modules/@fortawesome/fontawesome-free/css ./static-libs/fontawesome/ && cp -r node_modules/@fortawesome/fontawesome-free/webfonts ./static-libs/fontawesome/",
-    "copy_prosemirror_css": "mkdir -p ./static-libs/css/ && cp node_modules/prosemirror-view/style/prosemirror.css ./static-libs/css/ && cp node_modules/prosemirror-menu/style/menu.css ./static-libs/css/prosemirror-menu.css && cp node_modules/prosemirror-example-setup/style/style.css ./static-libs/css/prosemirror-example-setup.css",
-    "copy_mathlive_css": "mkdir -p ./static-libs/css/ && cp node_modules/mathlive/dist/mathlive*.css ./static-libs/css/",
-    "copy_mathlive_fonts": "mkdir -p ./static-libs/css/fonts/ && cp node_modules/mathlive/dist/fonts/* ./static-libs/css/fonts/",
-    "copy_vivliostyle_resources": "mkdir -p ./static-libs/vivliostyle-resources/ && cp node_modules/vivliostyle-print/dist/resources/* ./static-libs/vivliostyle-resources/",
+    "get_mml2omml": "mkdir -p ../static-libs/xsl/ && wget https://raw.githubusercontent.com/AbiWord/abiword/14cbf144cb10a5a5ea6ee11275f7178ca4ff055a/plugins/openxml/omml_xslt/mml2omml.xsl -O ../static-libs/xsl/mml2omml.xsl",
+    "copy_fontawesome": "mkdir -p ../static-libs/fontawesome/ && cp -r node_modules/@fortawesome/fontawesome-free/css ../static-libs/fontawesome/ && cp -r node_modules/@fortawesome/fontawesome-free/webfonts ../static-libs/fontawesome/",
+    "copy_prosemirror_css": "mkdir -p ../static-libs/css/ && cp node_modules/prosemirror-view/style/prosemirror.css ../static-libs/css/ && cp node_modules/prosemirror-menu/style/menu.css ../static-libs/css/prosemirror-menu.css && cp node_modules/prosemirror-example-setup/style/style.css ../static-libs/css/prosemirror-example-setup.css",
+    "copy_mathlive_css": "mkdir -p ../static-libs/css/ && cp node_modules/mathlive/dist/mathlive*.css ../static-libs/css/",
+    "copy_mathlive_fonts": "mkdir -p ../static-libs/css/fonts/ && cp node_modules/mathlive/dist/fonts/* ../static-libs/css/fonts/",
+    "copy_vivliostyle_resources": "mkdir -p ../static-libs/vivliostyle-resources/ && cp node_modules/vivliostyle-print/dist/resources/* ../static-libs/vivliostyle-resources/",
     "postinstall": "npm run get_mml2omml && npm run copy_fontawesome && npm run copy_prosemirror_css && npm run copy_mathlive_css && npm run copy_mathlive_fonts && npm run copy_vivliostyle_resources",
-    "eslint": "eslint .",
     "babel-transform-template-literals": "babel --plugins @babel/plugin-transform-template-literals"
   },
   "author": "Johannes Wilm",
@@ -27,7 +26,9 @@
     "simple-datatables": "^1.7.9",
     "vivliostyle-print": "1.1.13",
     "eslint": "^5.15.3",
-    "eslint-plugin-import": "^2.16.0"
+    "eslint-plugin-import": "^2.16.0",
+    "babel-eslint": "^10.0.1",
+    "mathlive": "0.27.4"
   },
   "devDependencies": {
     "updates": "^7.2.1",

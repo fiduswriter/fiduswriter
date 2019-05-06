@@ -13,7 +13,7 @@ local_settings.py
 /media/
 .elasticbeanstalk/
 *.mo
-node_modules/
+/node_modules/
 style/static/
 venv/
 .idea/
@@ -30,9 +30,10 @@ document/static/js/modules/citations/enUS_locale.js
 chromedriver
 testing.py
 es6-tmp/
-.transpile-cache/
-static-transpile/
-static-libs/
+/.transpile-cache/
+/.transpile/
+/static-transpile/
+/static-libs/
 *.es5.js
 base/static/css/libs/
 .coverage

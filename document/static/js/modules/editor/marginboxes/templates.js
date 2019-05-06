@@ -14,7 +14,7 @@ const answerCommentTemplate = ({
     }) =>
     `<div class="comment-item comment-answer" id="comment-answer-${answer.id}">
         <div class="comment-user">
-            <img class="comment-user-avatar" src="${author ? author.avatar : `${staticUrl}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
+            <img class="comment-user-avatar" src="${author ? author.avatar : `${staticUrl}img/default_avatar.png?v=${process.env.TRANSPILE_VERSION}`}">
             <h5 class="comment-user-name">${escapeText(author ? author.name : answer.username)}</h5>
             <p class="comment-date">${localizeDate(answer.date)}</p>
         </div>
@@ -56,7 +56,7 @@ const singleCommentTemplate = ({
     }) =>
     `<div class="comment-item">
         <div class="comment-user">
-            <img class="comment-user-avatar" src="${author ? author.avatar : `${staticUrl}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
+            <img class="comment-user-avatar" src="${author ? author.avatar : `${staticUrl}img/default_avatar.png?v=${process.env.TRANSPILE_VERSION}`}">
             <h5 class="comment-user-name">${escapeText(author ? author.name : comment.username)}</h5>
             <p class="comment-date">${localizeDate(comment.date)}</p>
         </div>
@@ -77,7 +77,7 @@ const firstCommentTemplate = ({
     }) =>
     `<div class="comment-item">
         <div class="comment-user">
-            <img class="comment-user-avatar" src="${author ? author.avatar : `${staticUrl}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
+            <img class="comment-user-avatar" src="${author ? author.avatar : `${staticUrl}img/default_avatar.png?v=${process.env.TRANSPILE_VERSION}`}">
             <h5 class="comment-user-name">${escapeText(author ? author.name : comment.username)}</h5>
             <p class="comment-date">${localizeDate(comment.date)}</p>
         </div>
@@ -271,7 +271,7 @@ const trackTemplate = ({type, data, node, active, docInfo, filterOptions, static
         <div class="margin-box track ${active ? 'active' : 'inactive'}" data-type="${type}">
             <div class="track-${type}">
                 <div class="comment-user">
-                    <img class="comment-user-avatar" src="${author ? author.avatar : `${staticUrl}img/default_avatar.png?v=${$StaticUrls.transpile.version$}`}">
+                    <img class="comment-user-avatar" src="${author ? author.avatar : `${staticUrl}img/default_avatar.png?v=${process.env.TRANSPILE_VERSION}`}">
                     <h5 class="comment-user-name">${escapeText(author ? author.name : data.username)}</h5>
                     <p class="comment-date">${node.type.name==='text' ? `${gettext('ca.')} ` : ''}${localizeDate(data.date*60000, 'minutes')}</p>
                 </div>

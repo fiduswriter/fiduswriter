@@ -66,6 +66,7 @@ class Command(makemessages.Command):
                 self.temp_dir_out,
                 self.temp_dir_in
             ])
+            os.chdir('../')
 
         super().process_locale_dir(locale_dir, files)
 

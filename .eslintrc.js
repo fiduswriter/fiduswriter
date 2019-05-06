@@ -18,10 +18,18 @@ module.exports = {
             [path.resolve('test/eslint-import-resolver')]: {}
         }
     },
+    "parser": "babel-eslint",
     "parserOptions": {
-        "ecmaVersion": 2018,
-        "sourceType": "module"
+      "sourceType": "module",
+      "allowImportExportEverywhere": true,
+      "ecmaFeatures": {
+        "globalReturn": false,
+      }
     },
+    // "parserOptions": {
+    //     "ecmaVersion": 2018,
+    //     "sourceType": "module"
+    // },
     "rules": {
         "accessor-pairs": "error",
         "array-bracket-newline": "off",

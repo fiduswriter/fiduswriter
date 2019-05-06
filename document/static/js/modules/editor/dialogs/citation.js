@@ -1,7 +1,6 @@
 import {DataTable} from "simple-datatables"
 
 import {configureCitationTemplate, selectedCitationTemplate} from "./templates"
-import {BibEntryForm} from "../../bibliography/form"
 import {setCheckableLabel, Dialog, findTarget, escapeText, addAlert} from "../../common"
 import {nameToText, litToText} from "../../bibliography/tools"
 import * as plugins from "../../../plugins/citation_dialog"
@@ -135,13 +134,15 @@ export class CitationDialog {
     }
 
     registerNewSource() {
-        const form = new BibEntryForm(this.editor.mod.db.bibDB)
-        form.init().then(
-            idTranslations => {
-                const ids = idTranslations.map(idTrans => idTrans[1])
-                this.addToCitableItems(ids)
-            }
-        )
+        import("../../bibliography/form").then(({BibEntryForm}) => {
+            const form = new BibEntryForm(this.editor.mod.db.bibDB)
+            form.init().then(
+                idTranslations => {
+                    const ids = idTranslations.map(idTrans => idTrans[1])
+                    this.addToCitableItems(ids)
+                }
+            )
+        })
     }
 
     bibDBToBibEntry(bib, id, db) {

@@ -1,5 +1,3 @@
-import JSZipUtils from "jszip-utils"
-
 import {descendantNodes} from "../tools/doc_contents"
 
 export class OdtExporterImages {
@@ -69,16 +67,18 @@ export class OdtExporterImages {
                 p.push(
                     new Promise(
                         resolve => {
-                            JSZipUtils.getBinaryContent(
-                                imgDBEntry.image,
-                                (err, imageFile) => {
-                                    const wImgId = this.addImage(
-                                        imgDBEntry.image.split('/').pop(),
-                                        imageFile
-                                    )
-                                    this.imgIdTranslation[image] = wImgId
-                                    resolve()
-                                }
+                            import("jszip-utils").then(
+                                JSZipUtils => JSZipUtils.getBinaryContent(
+                                    imgDBEntry.image,
+                                    (err, imageFile) => {
+                                        const wImgId = this.addImage(
+                                            imgDBEntry.image.split('/').pop(),
+                                            imageFile
+                                        )
+                                        this.imgIdTranslation[image] = wImgId
+                                        resolve()
+                                    }
+                                )
                             )
                         }
                     )

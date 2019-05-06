@@ -23,7 +23,7 @@ export class ModNavigator {
             const el = {}
             switch (true) {
                 case findTarget(event, '#navigator-button', el):
-                    if (el.target.firstElementChild.firstElementChild.classList.contains('rotate')) {
+                    if (this.navigatorEl.classList.contains('opened')) {
                         this.closeNavigator()
                     } else {
                         document.querySelector('#navigator-list').innerHTML = this.populateNavigator() || ""   //Populating the list
@@ -73,9 +73,7 @@ export class ModNavigator {
     }
 
     openNavigator() {
-        document.getElementById('navigator-button').firstElementChild.firstElementChild.classList.add('rotate')
-        document.getElementById('navigator').style.left = "0px"
-
+        document.getElementById('navigator').classList.add('opened')
         document.getElementById("navigator-filter").classList.add('hide')
         document.getElementById("navigator-list").classList.remove('hide')
         document.getElementById('navigator-filter-back').classList.add('hide')
@@ -92,8 +90,7 @@ export class ModNavigator {
     }
 
     closeNavigator() {
-        document.getElementById('navigator-button').firstElementChild.firstElementChild.classList.remove('rotate')
-        document.getElementById('navigator').style.left = "-265px"
+        document.getElementById('navigator').classList.remove('opened')
     }
 
     showFilters() {
@@ -149,7 +146,7 @@ export class ModNavigator {
                     const level = item.level
                     return `<span><input type="checkbox" class="form-checkbox" id="heading${level}" ${this.inDefault(level)} />
                                 <label class="navigator-label" for="heading${level}">${item.title}</label>
-                            </span><br/><br/>`
+                            </span>`
                 }
             ).join('')
         )
@@ -185,14 +182,14 @@ export class ModNavigator {
                     <div class="header-container">
                         <span id="navigator-filter-back" class="hide"><i class="fas fa-arrow-left"></i></span>
                         <h1 class="header">${gettext('Document Navigator')}</h1>
-                        <span id="navigator-filter-icon"><i class="fas fa-filter"></i></span>
+                        <span id="navigator-filter-icon"><i class="fas fa-cog"></i></span>
                     </div>
                     <div id="navigator-list"></div>
                     <div id="navigator-filter" class="hide">
                     </div>
                 </div>
                 <div id="navigator-button">
-                    <span class="navigator-arrow-icon"><i class="fas fa-angle-right"></i></span>
+                    <span class="navigator-arrow-icon"><i class="fas fa-scroll"></i></span>
                 </div>
                 `
     }

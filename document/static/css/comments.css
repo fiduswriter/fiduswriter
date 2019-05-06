@@ -3,24 +3,25 @@
 #margin-box-column {
     width: 240px;
     padding-left: 20px;
-    margin-top: -50px;
+    margin-top: -.5in;
 }
 
 #margin-box-filter {
     height: 44px;
     z-index: 5;
     position: relative;
+    position: sticky;
     width: 220px;
     margin-bottom: 6px;
     margin-left: -3px;
     display: flex;
     border: 2px solid #f2f2f2;
-    position: sticky;
-    top: 179px;
+    border-top: 0 none;
+    top: 225px;
 }
 
 body.header-closed #margin-box-filter {
-    top: 70px;
+    top: 72px;
 }
 
 .margin-box-filter-button {
@@ -115,17 +116,23 @@ body.header-closed #margin-box-filter {
 }
 
 .comment-item {
-    padding: 10px;
-    border-top: solid 1px #ccc;
+    padding: 12px 10px;
 }
 
 .comment-item.comment-answer {
     position: relative;
 }
 
-.comment-item:first-child {
-    margin-top: 0;
-    border-top: none;
+.inactive .comment-answer + .comment-answer[id]:before,
+.active .comment-answer[id]:before {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    top: 0;
+    display: block;
+    height: 1px;
+    background-color: rgba(0,0,0,0.2);
+    content: "";
 }
 
 .comment-item.wait,
@@ -246,6 +253,39 @@ body.header-closed #margin-box-filter {
 
 .comment-is-major {
     margin: 5px 5px 9px 3px;
+}
+
+.comment-is-major-bgc .comment-item:first-child:before {
+    display: block;
+    content: "HP";
+    position: absolute;
+    right: 30px;
+    top: 0;
+    background-color: #af3515;
+    color: white;
+    font-size: 8px;
+    width: 18px;
+    text-align: center;
+    height: 20px;
+    padding-top: 5px;
+    font-weight: 700;
+}
+
+.comment-is-major-bgc .comment-item:first-child:after {
+    display: block;
+    content: "";
+    position: absolute;
+    right: 30px;
+    top: 18px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 9px 7px 9px;
+    border-color: transparent transparent #f4c9d9 transparent;
+}
+
+.comment-is-major-bgc.active .comment-item:first-child:after {
+    border-bottom-color: #fffacf;
 }
 
 .comment-is-major-bgc .comment-item:first-child {

@@ -904,7 +904,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         # Wait for the two editors to be synched
         self.wait_for_doc_sync(self.driver, self.driver2)
         math_two = self.get_mathequation(self.driver2)
-        print(math2_two)
+        print(math_two)
         self.assertEqual(
             6,
             len(math_two)

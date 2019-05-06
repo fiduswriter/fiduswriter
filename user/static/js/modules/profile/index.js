@@ -61,7 +61,7 @@ export class Profile {
             username: this.user.username,
             staticUrl: this.staticUrl
         })
-        setDocTitle(gettext('Configure profile'))
+        setDocTitle(gettext('Configure profile'), this.app)
         const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
         feedbackTab.init()
     }

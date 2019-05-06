@@ -11,6 +11,7 @@ import * as plugins from "../../plugins/app"
 export class App {
     constructor(config = {}) {
         this.config = config
+        this.name = 'Fidus Writer'
         this.config.app = this
         this.routes = {
             "usermedia": () => new ImageOverview(this.config),

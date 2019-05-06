@@ -1,7 +1,6 @@
 import fixUTF8 from "fix-utf8"
 import {DataTable} from "simple-datatables"
 
-import {BibLatexImporter} from "../import"
 import {litToText, nameToText} from "../tools"
 import {BibEntryForm} from "../form"
 import {editCategoriesTemplate} from "./templates"
@@ -332,14 +331,16 @@ export class BibliographyOverview {
 
     // find bibtex in pasted or dropped data.
     getBibtex(text) {
-        const importer = new BibLatexImporter(
-            text,
-            this.app.bibDB,
-            newIds => this.updateTable(newIds),
-            false,
-            this.staticUrl
-        )
-        importer.init()
+        import("../import").then(({BibLatexImporter}) => {
+            const importer = new BibLatexImporter(
+                text,
+                this.app.bibDB,
+                newIds => this.updateTable(newIds),
+                false,
+                this.staticUrl
+            )
+            importer.init()
+        })
         return true
     }
 

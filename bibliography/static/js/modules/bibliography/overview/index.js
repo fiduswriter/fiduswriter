@@ -2,7 +2,6 @@ import fixUTF8 from "fix-utf8"
 import {DataTable} from "simple-datatables"
 
 import {litToText, nameToText} from "../tools"
-import {BibEntryForm} from "../form"
 import {editCategoriesTemplate} from "./templates"
 import {BibTypeTitles} from "../form/strings"
 import {SiteMenu} from "../../menu"
@@ -258,24 +257,27 @@ export class BibliographyOverview {
     bindEvents() {
         document.body.addEventListener('click', event => {
             const el = {}
-            let bookId, form, itemEl
             switch (true) {
-                case findTarget(event, '.delete-bib', el):
-                    bookId = parseInt(el.target.dataset.id)
+                case findTarget(event, '.delete-bib', el): {
+                    const bookId = parseInt(el.target.dataset.id)
                     this.deleteBibEntryDialog([bookId])
                     break
-                case findTarget(event, '.edit-bib', el):
-                    bookId = parseInt(el.target.dataset.id)
-                    form = new BibEntryForm(this.app.bibDB, bookId)
-                    form.init().then(
-                        idTranslations => {
-                            const ids = idTranslations.map(idTrans => idTrans[1])
-                            return this.updateTable(ids)
-                        }
-                    )
+                }
+                case findTarget(event, '.edit-bib', el): {
+                    const bookId = parseInt(el.target.dataset.id)
+                    import("../form").then(({BibEntryForm}) => {
+                        const form = new BibEntryForm(this.app.bibDB, bookId)
+                        form.init().then(
+                            idTranslations => {
+                                const ids = idTranslations.map(idTrans => idTrans[1])
+                                return this.updateTable(ids)
+                            }
+                        )
+                    })
                     break
-                case findTarget(event, '.fw-add-input', el):
-                    itemEl = el.target.closest('.fw-list-input')
+                }
+                case findTarget(event, '.fw-add-input', el): {
+                    const itemEl = el.target.closest('.fw-list-input')
                     if (!itemEl.nextElementSibling) {
                         itemEl.insertAdjacentHTML(
                             'afterend',
@@ -290,6 +292,7 @@ export class BibliographyOverview {
                         itemEl.parentElement.removeChild(itemEl)
                     }
                     break
+                }
                 default:
                     break
             }

@@ -1,4 +1,3 @@
-import MathLive from "mathlive"
 import {
     configureFigureTemplate
 } from "./templates"
@@ -46,22 +45,25 @@ export class FigureDialog {
             this.dialog.dialogEl.querySelector("#insert-figure-image"),
             this.dialog.dialogEl.querySelector(".formula-or-figure")
         ]
-        this.mathField = MathLive.makeMathField(this.mathliveDOM, {
-            virtualKeyboardMode: 'manual',
-            onBlur: () => this.showPlaceHolder(),
-            onFocus: () => this.hidePlaceHolder(),
-            onContentDidChange: () => {
-                this.equation = this.mathField.$latex()
-                this.showHideNonMathElements()
-            }
+        import("mathlive").then(MathLive => {
+            this.mathField = MathLive.makeMathField(this.mathliveDOM, {
+                virtualKeyboardMode: 'manual',
+                onBlur: () => this.showPlaceHolder(),
+                onFocus: () => this.hidePlaceHolder(),
+                onContentDidChange: () => {
+                    this.equation = this.mathField.$latex()
+                    this.showHideNonMathElements()
+                }
+            })
+            this.mathField.$latex(this.equation)
+            this.showPlaceHolder()
+            this.showHideNonMathElements()
+            this.dialog.dialogEl.querySelector('#insert-figure-image').addEventListener(
+                'click',
+                () => this.selectImage()
+            )
         })
-        this.mathField.$latex(this.equation)
-        this.showPlaceHolder()
-        this.showHideNonMathElements()
-        this.dialog.dialogEl.querySelector('#insert-figure-image').addEventListener(
-            'click',
-            () => this.selectImage()
-        )
+
     }
 
     showPlaceHolder() {

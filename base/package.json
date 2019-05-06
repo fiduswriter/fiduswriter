@@ -23,7 +23,7 @@
     "downloadjs": "1.4.7",
     "@fortawesome/fontawesome-free": "^5.7.2",
     "w3c-keyname": "1.1.x",
-    "simple-datatables": "^1.7.9",
+    "simple-datatables": "^2.0.0",
     "vivliostyle-print": "1.1.13",
     "eslint": "^5.15.3",
     "eslint-plugin-import": "^2.16.0",

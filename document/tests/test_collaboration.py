@@ -851,11 +851,10 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
     def get_mathequation(self, driver):
         math = driver.find_element_by_xpath(
-            # '//*[contains(@class, "article-body")]/p[1]/span[1]'
             '//*[@class="equation"]'
         )
 
-        return math.text
+        return math.get_attribute('data-equation')
 
     def test_mathequation(self):
         """
@@ -906,7 +905,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_sync(self.driver, self.driver2)
         print(self.get_mathequation(self.driver2))
         self.assertEqual(
-            12,
+            6,
             len(self.get_mathequation(self.driver2))
         )
 

@@ -152,7 +152,7 @@ export const settingsPlugin = function(options) {
             return {
                 update: (view, prevState) => {
                     updateSettings(view.state.doc.firstChild.attrs, prevState.doc.firstChild.attrs)
-                    setDocTitle(view.state.doc.firstChild.firstChild.textContent)
+                    setDocTitle(view.state.doc.firstChild.firstChild.textContent, options.editor.app)
                 }
             }
         }

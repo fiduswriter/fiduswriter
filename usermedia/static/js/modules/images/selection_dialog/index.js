@@ -1,6 +1,5 @@
 import {DataTable} from "simple-datatables"
 
-import {ImageEditDialog} from "../edit_dialog"
 import {cancelPromise, Dialog, escapeText, findTarget} from "../../common"
 
 export class ImageSelectionDialog {
@@ -36,22 +35,24 @@ export class ImageSelectionDialog {
                     text: gettext('Add new image'),
                     icon: "plus-circle",
                     click: () => {
-                        const imageUpload = new ImageEditDialog(
-                            this.userImageDB, // We can only upload to the user's image db
-                            false,
-                            this.editor
-                        )
-
-                        resolve(
-                            imageUpload.init().then(
-                                imageId => {
-                                    this.imgId = imageId
-                                    this.imgDb = 'user'
-                                    this.imageDialog.close()
-                                    return this.init()
-                                }
+                        import("../edit_dialog").then(({ImageEditDialog}) => {
+                            const imageUpload = new ImageEditDialog(
+                                this.userImageDB, // We can only upload to the user's image db
+                                false,
+                                this.editor
                             )
-                        )
+
+                            resolve(
+                                imageUpload.init().then(
+                                    imageId => {
+                                        this.imgId = imageId
+                                        this.imgDb = 'user'
+                                        this.imageDialog.close()
+                                        return this.init()
+                                    }
+                                )
+                            )
+                        })
                     }
                 }
             )

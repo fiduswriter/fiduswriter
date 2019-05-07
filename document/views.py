@@ -601,12 +601,20 @@ def comment_notify_js(request):
         not comment_text or
         not comment_html or
         not has_doc_access(document, request.user) or
-        not has_doc_access(document, collaborator) or
         not notification_type
     ):
         return JsonResponse(
             response,
             status=403
+        )
+    if (
+        not has_doc_access(document, collaborator)
+    ):
+        # Tagged user has no access to document and will therefore not be
+        # notified
+        return JsonResponse(
+            response,
+            status=200
         )
     commentator = request.user.readable_name
     collaborator_name = collaborator.readable_name

@@ -1,6 +1,3 @@
-import JSZip from "jszip"
-import JSZipUtils from "jszip-utils"
-
 /** Creates a zip file.
  * @function zipFileCreator
  * @param {list} textFiles A list of files in plain text format.
@@ -18,12 +15,14 @@ export class ZipFileCreator {
     }
 
     init() {
-        this.zipFs = new JSZip()
-        if (this.mimeType !== 'application/zip') {
-            this.zipFs.file('mimetype', this.mimeType, {compression: 'STORE'})
-        }
+        return import("jszip").then(JSZip => {
+            this.zipFs = new JSZip()
+            if (this.mimeType !== 'application/zip') {
+                this.zipFs.file('mimetype', this.mimeType, {compression: 'STORE'})
+            }
 
-        return this.includeZips()
+            return this.includeZips()
+        })
     }
 
     includeZips() {
@@ -35,11 +34,13 @@ export class ZipFileCreator {
                 zipDir = this.zipFs.folder(zipFile.directory)
             }
             return new Promise(
-                resolve => JSZipUtils.getBinaryContent(zipFile.url, (err, contents) => {
-                    zipDir.loadAsync(contents).then(_importedZip => {
-                        resolve()
+                resolve => import("jszip-utils").then(
+                    JSZipUtils => JSZipUtils.getBinaryContent(zipFile.url, (err, contents) => {
+                        zipDir.loadAsync(contents).then(_importedZip => {
+                            resolve()
+                        })
                     })
-                })
+                )
             )
         })
         return Promise.all(includePromises).then(
@@ -54,12 +55,12 @@ export class ZipFileCreator {
         })
         const httpPromises = this.binaryFiles.map(binaryFile =>
             new Promise(
-                resolve => {
+                resolve => import("jszip-utils").then(JSZipUtils => {
                     JSZipUtils.getBinaryContent(binaryFile.url, (err, contents) => {
                         this.zipFs.file(binaryFile.filename, contents, {binary: true, compression: 'DEFLATE'})
                         resolve()
                     })
-                }
+                })
             )
         )
         return Promise.all(httpPromises).then(

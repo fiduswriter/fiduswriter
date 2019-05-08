@@ -1,6 +1,5 @@
 import {importBibFileTemplate} from "./templates"
 import {activateWait, deactivateWait, Dialog} from "../../common"
-import {BibLatexImporter} from "./biblatex"
 /** First step of the BibTeX file import. Creates a dialog box to specify upload file.
  */
 
@@ -31,14 +30,17 @@ export class BibLatexFileImportDialog {
                     activateWait()
                     const reader = new window.FileReader()
                     reader.onload = event => {
-                        const importer = new BibLatexImporter(
-                            event.target.result,
-                            this.bibDB,
-                            this.addToListCall,
-                            () => deactivateWait(),
-                            this.staticUrl
-                        )
-                        importer.init()
+                        import("./biblatex").then(({BibLatexImporter}) => {
+                            const importer = new BibLatexImporter(
+                                event.target.result,
+                                this.bibDB,
+                                this.addToListCall,
+                                () => deactivateWait(),
+                                this.staticUrl
+                            )
+                            importer.init()
+                        })
+
                     }
                     reader.readAsText(bibFile)
                     dialog.close()

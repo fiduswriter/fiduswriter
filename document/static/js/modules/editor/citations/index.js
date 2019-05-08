@@ -1,5 +1,4 @@
 import {RenderCitations} from "../../citations/render"
-import {BibEntryForm} from "../../bibliography/form"
 import {Dialog, cancelPromise} from "../../common"
 
 export class ModCitations {
@@ -63,7 +62,9 @@ export class ModCitations {
             el.addEventListener('click', () => {
                 const eID = parseInt(this.citRenderer.fm.bibliography[0].entry_ids[index][0])
                 this.checkTrackingDialog().then(
-                    () => {
+                    () => import("../../bibliography/form")
+                ).then(
+                    ({BibEntryForm}) => {
                         const form = new BibEntryForm(this.editor.mod.db.bibDB, eID)
                         form.init()
                     }

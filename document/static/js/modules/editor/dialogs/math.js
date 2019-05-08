@@ -1,5 +1,3 @@
-import MathLive from "mathlive"
-
 import {mathDialogTemplate} from "./templates"
 import {Dialog} from "../../common"
 
@@ -69,13 +67,15 @@ export class MathDialog {
 
         this.mathliveDOM = this.dialog.dialogEl.querySelector(".math-field")
 
-        this.mathField = MathLive.makeMathField(this.mathliveDOM, {
-            virtualKeyboardMode: 'manual',
-            onBlur: () => this.showPlaceHolder(),
-            onFocus: () => this.hidePlaceHolder()
+        import("mathlive").then(MathLive => {
+            this.mathField = MathLive.makeMathField(this.mathliveDOM, {
+                virtualKeyboardMode: 'manual',
+                onBlur: () => this.showPlaceHolder(),
+                onFocus: () => this.hidePlaceHolder()
+            })
+            this.mathField.$latex(this.equation)
+            this.showPlaceHolder()
         })
-        this.mathField.$latex(this.equation)
-        this.showPlaceHolder()
     }
 
     /**

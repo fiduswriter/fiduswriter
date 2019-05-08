@@ -2,8 +2,6 @@ import fixUTF8 from "fix-utf8"
 
 import {__parseFromClipboard} from "prosemirror-view"
 
-import {BibLatexImporter} from "../../../bibliography/import"
-
 
 export class TextPaste {
     constructor(editor, inText, view) {
@@ -19,33 +17,35 @@ export class TextPaste {
     }
 
     init() {
+        import("../../../bibliography/import").then(({BibLatexImporter}) => {
+            const importer = new BibLatexImporter(
+                this.text,
+                this.editor.mod.db.bibDB,
+                newIds => {
+                    this.foundBibEntries = true
+                    const format = 'autocite',
+                        references = newIds.map(id => ({id}))
 
-        const importer = new BibLatexImporter(
-            this.text,
-            this.editor.mod.db.bibDB,
-            newIds => {
-                this.foundBibEntries = true
-                const format = 'autocite',
-                    references = newIds.map(id => ({id}))
+                    const citationNode = this.editor.currentView.state.schema.nodes['citation'].create(
+                        {format, references}
+                    )
+                    const tr = this.editor.currentView.state.tr.replaceSelectionWith(
+                        citationNode, true
+                    )
+                    this.view.dispatch(tr)
+                },
+                () => {
+                    if (!this.foundBibEntries) {
+                        // There were no citations in the pasted text.
+                        this.insertText()
+                    }
+                },
+                this.editor.staticUrl,
+                false // no messages to end user. Would be confusing if user just wants to paste unrelated text.
+            )
+            importer.init()
+        })
 
-                const citationNode = this.editor.currentView.state.schema.nodes['citation'].create(
-                    {format, references}
-                )
-                const tr = this.editor.currentView.state.tr.replaceSelectionWith(
-                    citationNode, true
-                )
-                this.view.dispatch(tr)
-            },
-            () => {
-                if (!this.foundBibEntries) {
-                    // There were no citations in the pasted text.
-                    this.insertText()
-                }
-            },
-            this.editor.staticUrl,
-            false // no messages to end user. Would be confusing if user just wants to paste unrelated text.
-        )
-        importer.init()
     }
 
     sliceSingleNode(slice) {

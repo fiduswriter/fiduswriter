@@ -34,6 +34,7 @@ export class ModNavigator {
                     event.preventDefault()
                     event.stopImmediatePropagation()
                     document.getElementById(el.target.getAttribute('href').slice(1)).scrollIntoView({behavior:"smooth", block:"center"})
+                    this.switchActiveHeading(el.target.parentNode)
                     break
                 case findTarget(event, '#navigator-filter-icon', el):
                     if (document.getElementById("navigator-filter").classList.contains('hide')) {
@@ -70,6 +71,11 @@ export class ModNavigator {
         document.querySelector('#navigator-list').addEventListener('mouseout', () => {
             document.body.classList.remove('no-scroll')
         })
+    }
+
+    switchActiveHeading(new_heading) {
+        Array.prototype.forEach.call(document.querySelectorAll("#navigator-list .active-heading"), active_heading => active_heading.classList.remove('active-heading'))
+        new_heading.classList.add('active-heading')
     }
 
     openNavigator() {

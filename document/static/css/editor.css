@@ -995,7 +995,7 @@ html[hc=a5] #toolbar {
 }
 
 .active-heading {
-    background: grey
+    text-decoration: underline;
 }
 
 #navigator-button {

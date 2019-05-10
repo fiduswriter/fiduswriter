@@ -160,7 +160,7 @@ export class DocMaintenance {
         Promise.all([
             import("jszip-utils"),
             import("jszip")
-        ]).then(([JSZipUtils, JSZip]) => {
+        ]).then(([{default: JSZipUtils}, {default: JSZip}]) => {
             JSZipUtils.getBinaryContent(
                 `/document/get_revision/${id}/`,
                 (err, fidusFile) => {

@@ -178,14 +178,14 @@ export class DocumentOverview {
             String(doc.id),
             `<input type="checkbox" class="entry-select" data-id="${doc.id}">`,
             `<span class="fw-document-table-title fw-inline">
-                <i class="fa fa-file-text-o"></i>
+                <i class="far fa-file-alt"></i>
                 <a class="doc-title fw-link-text fw-searchable" href="/document/${doc.id}/">
                     ${doc.title.length ? escapeText(doc.title) : gettext('Untitled')}
                 </a>
             </span>`,
             doc.revisions.length ?
             `<span class="fw-inline revisions" data-id="${doc.id}">
-                <i class="fa fa-clock-o"></i>
+                <i class="fas fa-history"></i>
             </span>` :
             '',
             `<span class="date">${localizeDate(doc.added*1000, 'sortable-date')}</span>`,

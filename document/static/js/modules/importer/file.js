@@ -50,7 +50,7 @@ export class ImportFidusFile {
 
     initZipFileRead() {
         // Extract all the files that can be found in every fidus-file (not images)
-        return import("jszip").then(JSZip => new JSZip()).then(
+        return import("jszip").then(({default: JSZip}) => new JSZip()).then(
             zipfs => zipfs.loadAsync(this.file)
         ).then(zipfs => {
             const filenames = [], p = []

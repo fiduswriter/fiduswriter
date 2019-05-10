@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-10 21:28+0000\n"
+"POT-Creation-Date: 2019-05-10 21:50+0000\n"
 "PO-Revision-Date: 2013-03-03 12:18-0700\n"
 "Last-Translator: Ana Vera Resquín <ani.tavr77@gmail.com>\n"
 "Language-Team: Spanish <ani.tavr77@gmail.com>\n"
@@ -58,28 +58,6 @@ msgstr "Documentos"
 #: base/templates/app.html:11 user/templates/account/base.html:7
 msgid "The all in one solution for collaborative academic writing."
 msgstr "La herramienta perfecta para redactar textos académicos."
-
-#: base/templates/footer.html:7
-msgid "Terms and Conditions"
-msgstr "Términos y Condiciones"
-
-#: base/templates/footer.html:12
-msgid "Privacy policy"
-msgstr ""
-
-#: base/templates/footer.html:17
-#, fuzzy
-#| msgid "Equations and Math by mathjax"
-msgid "Equations and Math with MathLive"
-msgstr "Matemáticas con mathjax"
-
-#: base/templates/footer.html:22
-msgid "Citations with Citation Style Language"
-msgstr "Estilos de citaciones con CSL"
-
-#: base/templates/footer.html:27
-msgid "Editing with ProseMirror"
-msgstr ""
 
 #: browser_check/templates/browser_check/browser_not_supported.html:4
 #: browser_check/templates/browser_check/browser_not_supported.html:27
@@ -235,6 +213,28 @@ msgstr "Imagen de perfil predeterminada"
 msgid "Log In"
 msgstr "Iniciar sesión"
 
+#: user/templates/account/base.html:74
+msgid "Terms and Conditions"
+msgstr "Términos y Condiciones"
+
+#: user/templates/account/base.html:79
+msgid "Privacy policy"
+msgstr ""
+
+#: user/templates/account/base.html:84
+#, fuzzy
+#| msgid "Equations and Math by mathjax"
+msgid "Equations and Math with MathLive"
+msgstr "Matemáticas con mathjax"
+
+#: user/templates/account/base.html:89
+msgid "Citations with Citation Style Language"
+msgstr "Estilos de citaciones con CSL"
+
+#: user/templates/account/base.html:94
+msgid "Editing with ProseMirror"
+msgstr ""
+
 #: user/templates/account/email/email_confirmation_message.html:7
 #: user/templates/account/email/password_reset_key_message.html:7
 #, python-format
@@ -362,15 +362,6 @@ msgstr "Recuerda tu contraseña"
 msgid "Forgot Password?"
 msgstr "¿Olvidaste tu Contraseña?"
 
-#: user/templates/account/logout.html:5 user/templates/account/logout.html:9
-#: user/templates/account/logout.html:19
-msgid "Sign Out"
-msgstr "Regístrate"
-
-#: user/templates/account/logout.html:11
-msgid "Are you sure you want to sign out?"
-msgstr "¿Estás seguro que deseas cerrar la sesión?"
-
 #: user/templates/account/password_reset.html:6
 #: user/templates/account/password_reset.html:13
 msgid "Password reset"
@@ -380,8 +371,8 @@ msgstr "Restablece tu contraseña"
 #, fuzzy, python-format
 msgid ""
 "\n"
-"    <p>Forgotten your password? Enter your e-mail address below, and we'll "
-"send you an e-mail allowing you to reset it.</p>\n"
+"    <p>Forgotten your password? Enter your e-mail address in the form, and "
+"we'll send you an e-mail allowing you to reset it.</p>\n"
 "    <p>If you have any trouble resetting your password, please <a href="
 "\"mailto:%(CONTACT_EMAIL)s\">contact us</a>.</p>\n"
 "    "
@@ -475,6 +466,12 @@ msgstr ""
 #: usermedia/views.py:60
 msgid "No file uploaded"
 msgstr ""
+
+#~ msgid "Sign Out"
+#~ msgstr "Regístrate"
+
+#~ msgid "Are you sure you want to sign out?"
+#~ msgstr "¿Estás seguro que deseas cerrar la sesión?"
 
 #~ msgid "Edit profile"
 #~ msgstr "Edita tu perfil"

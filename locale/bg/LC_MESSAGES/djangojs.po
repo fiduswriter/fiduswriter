@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-05 23:52+0000\n"
+"POT-Creation-Date: 2019-05-10 21:50+0000\n"
 "PO-Revision-Date: 2013-09-18 08:52+0200\n"
 "Last-Translator: Vladimir Vitkov <vvitkov@linux-bg.org>\n"
 "Language-Team: Bulgarian <vvitkov@linux-bg.org>\n"
@@ -37,7 +37,7 @@ msgstr ""
 
 #: base/static/js/modules/common/dialog.js:14
 #: base/static/js/modules/common/dialog.js:30
-#: document/static/js/modules/editor/menus/headerbar/model.js:56
+#: document/static/js/modules/editor/menus/headerbar/model.js:52
 msgid "Close"
 msgstr "Затвори"
 
@@ -216,7 +216,7 @@ msgid "CasE ProTecT"
 msgstr ""
 
 #: bibliography/static/js/modules/bibliography/form/index.js:124
-#: bibliography/static/js/modules/bibliography/overview/index.js:172
+#: bibliography/static/js/modules/bibliography/overview/index.js:170
 #: document/static/js/modules/documents/access_rights/index.js:57
 #: document/static/js/modules/editor/comments/editors/answer.js:11
 #: document/static/js/modules/editor/comments/editors/comment.js:87
@@ -578,7 +578,7 @@ msgid "Subtitle"
 msgstr "Подзаглавие"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:86
-#: bibliography/static/js/modules/bibliography/overview/index.js:76
+#: bibliography/static/js/modules/bibliography/overview/index.js:74
 #: document/static/js/modules/document_template/templates.js:21
 #: document/static/js/modules/document_template/templates.js:32
 #: document/static/js/modules/document_template/templates.js:43
@@ -588,12 +588,12 @@ msgstr "Подзаглавие"
 #: document/static/js/modules/document_template/templates.js:82
 #: document/static/js/modules/document_template/templates.js:130
 #: document/static/js/modules/documents/overview/index.js:149
-#: document/static/js/modules/editor/dialogs/citation.js:193
+#: document/static/js/modules/editor/dialogs/citation.js:196
 #: document/static/js/modules/editor/dialogs/templates.js:28
 #: document/static/js/modules/editor/dialogs/templates.js:40
 #: document/static/js/modules/editor/state_plugins/links.js:125
 #: document/static/js/modules/schema/document/structure.js:242
-#: usermedia/static/js/modules/images/selection_dialog/index.js:102
+#: usermedia/static/js/modules/images/selection_dialog/index.js:105
 msgid "Title"
 msgstr "Заглавие"
 
@@ -958,7 +958,7 @@ msgid "Danish"
 msgstr ""
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:189
-#: document/static/js/modules/editor/menus/headerbar/model.js:189
+#: document/static/js/modules/editor/menus/headerbar/model.js:201
 #: document/static/js/modules/schema/const.js:1
 msgid "Dutch"
 msgstr ""
@@ -1004,7 +1004,7 @@ msgid "Finnish"
 msgstr ""
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:200
-#: document/static/js/modules/editor/menus/headerbar/model.js:189
+#: document/static/js/modules/editor/menus/headerbar/model.js:201
 #: document/static/js/modules/schema/const.js:1
 msgid "French"
 msgstr ""
@@ -1041,13 +1041,13 @@ msgid "Icelandic"
 msgstr ""
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:208
-#: document/static/js/modules/editor/menus/headerbar/model.js:189
+#: document/static/js/modules/editor/menus/headerbar/model.js:201
 #: document/static/js/modules/schema/const.js:1
 msgid "Italian"
 msgstr ""
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:209
-#: document/static/js/modules/editor/menus/headerbar/model.js:189
+#: document/static/js/modules/editor/menus/headerbar/model.js:201
 #: document/static/js/modules/schema/const.js:1
 msgid "Japanese"
 msgstr ""
@@ -1082,7 +1082,7 @@ msgid "New Norwegian"
 msgstr ""
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:217
-#: document/static/js/modules/editor/menus/headerbar/model.js:189
+#: document/static/js/modules/editor/menus/headerbar/model.js:201
 #: document/static/js/modules/schema/const.js:1
 #, fuzzy
 #| msgid "Publisher"
@@ -1104,7 +1104,7 @@ msgid "Romanian"
 msgstr ""
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:222
-#: document/static/js/modules/editor/menus/headerbar/model.js:189
+#: document/static/js/modules/editor/menus/headerbar/model.js:201
 #: document/static/js/modules/schema/const.js:1
 msgid "Russian"
 msgstr ""
@@ -1127,7 +1127,7 @@ msgid "Slovene"
 msgstr ""
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:227
-#: document/static/js/modules/editor/menus/headerbar/model.js:189
+#: document/static/js/modules/editor/menus/headerbar/model.js:201
 #: document/static/js/modules/schema/const.js:1
 msgid "Spanish"
 msgstr ""
@@ -1197,12 +1197,12 @@ msgstr ""
 msgid "There was an issue with the bibtex import"
 msgstr ""
 
-#: bibliography/static/js/modules/bibliography/import/dialog.js:17
-#: document/static/js/modules/documents/overview/actions.js:66
+#: bibliography/static/js/modules/bibliography/import/dialog.js:16
+#: document/static/js/modules/documents/overview/actions.js:61
 msgid "Import"
 msgstr "Импортиране"
 
-#: bibliography/static/js/modules/bibliography/import/dialog.js:48
+#: bibliography/static/js/modules/bibliography/import/dialog.js:51
 #, fuzzy
 msgid "Import a BibTex library"
 msgstr "Импортирай BibTex библиотека"
@@ -1214,55 +1214,55 @@ msgstr "Импортирай BibTex библиотека"
 msgid "Select a file"
 msgstr "Изберете файл"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:50
+#: bibliography/static/js/modules/bibliography/overview/index.js:48
 #, fuzzy
 #| msgid "Bibliography"
 msgid "Bibliography Manager"
 msgstr "Библиография"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:69
-#: document/static/js/modules/editor/dialogs/citation.js:184
+#: bibliography/static/js/modules/bibliography/overview/index.js:67
+#: document/static/js/modules/editor/dialogs/citation.js:187
 msgid "No sources registered"
 msgstr ""
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:76
+#: bibliography/static/js/modules/bibliography/overview/index.js:74
 #, fuzzy
 #| msgid "Select source type"
 msgid "Sourcetype"
 msgstr "Избери тип на източника"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:76
-#: document/static/js/modules/editor/dialogs/citation.js:193
+#: bibliography/static/js/modules/bibliography/overview/index.js:74
+#: document/static/js/modules/editor/dialogs/citation.js:196
 #: document/static/js/modules/editor/dialogs/templates.js:40
 #: document/static/js/modules/editor/marginboxes/templates.js:182
 msgid "Author"
 msgstr "Автор"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:76
+#: bibliography/static/js/modules/bibliography/overview/index.js:74
 #, fuzzy
 #| msgid "Publisher"
 msgid "Published"
 msgstr "Издател"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:142
+#: bibliography/static/js/modules/bibliography/overview/index.js:140
 #: document/static/js/modules/documents/overview/index.js:173
-#: document/static/js/modules/editor/dialogs/citation.js:99
-#: document/static/js/modules/editor/dialogs/citation.js:136
+#: document/static/js/modules/editor/dialogs/citation.js:98
+#: document/static/js/modules/editor/dialogs/citation.js:139
 #: document/static/js/modules/exporter/tools/file.js:3
-#: usermedia/static/js/modules/images/overview/index.js:124
+#: usermedia/static/js/modules/images/overview/index.js:123
 msgid "Untitled"
 msgstr "Неозаглавен"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:197
+#: bibliography/static/js/modules/bibliography/overview/index.js:195
 #: usermedia/static/js/modules/images/overview/categories.js:76
 msgid "Edit Categories"
 msgstr "Редактирай категории"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:213
+#: bibliography/static/js/modules/bibliography/overview/index.js:211
 #: document/static/js/modules/document_template/templates.js:130
 #: document/static/js/modules/documents/access_rights/templates.js:9
-#: document/static/js/modules/documents/overview/actions.js:47
-#: document/static/js/modules/documents/revisions/index.js:124
+#: document/static/js/modules/documents/overview/actions.js:42
+#: document/static/js/modules/documents/revisions/index.js:129
 #: document/static/js/modules/documents/revisions/templates.js:6
 #: document/static/js/modules/editor/marginboxes/templates.js:14
 #: document/static/js/modules/editor/marginboxes/templates.js:85
@@ -1271,63 +1271,63 @@ msgstr "Редактирай категории"
 #: user/static/js/modules/profile/delete_user.js:10
 #: user/static/js/modules/profile/dialogs.js:58
 #: user/static/js/modules/profile/templates.js:58
-#: usermedia/static/js/modules/images/overview/index.js:84
+#: usermedia/static/js/modules/images/overview/index.js:83
 msgid "Delete"
 msgstr "Изтрий"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:224
-#: document/static/js/modules/documents/overview/actions.js:42
-#: document/static/js/modules/documents/revisions/index.js:141
+#: bibliography/static/js/modules/bibliography/overview/index.js:222
+#: document/static/js/modules/documents/overview/actions.js:37
+#: document/static/js/modules/documents/revisions/index.js:146
 #: user/static/js/modules/contacts/manage.js:104
 #: user/static/js/modules/profile/delete_user.js:25
 #: user/static/js/modules/profile/dialogs.js:68
-#: usermedia/static/js/modules/images/overview/index.js:96
+#: usermedia/static/js/modules/images/overview/index.js:95
 msgid "Confirm deletion"
 msgstr "Потвърди изтриването"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:225
+#: bibliography/static/js/modules/bibliography/overview/index.js:223
 msgid "Delete the bibliography item(s)"
 msgstr "Изтриване на библиграфски запис(и)"
 
-#: bibliography/static/js/modules/bibliography/overview/menu.js:19
+#: bibliography/static/js/modules/bibliography/overview/menu.js:18
 #: document/static/js/modules/documents/overview/menu.js:18
 #: user/static/js/modules/contacts/menu.js:18
-#: usermedia/static/js/modules/images/overview/menu.js:17
+#: usermedia/static/js/modules/images/overview/menu.js:16
 #, fuzzy
 #| msgid "Use selected image"
 msgid "Delete selected"
 msgstr "Използване на избраното изображение"
 
-#: bibliography/static/js/modules/bibliography/overview/menu.js:29
+#: bibliography/static/js/modules/bibliography/overview/menu.js:28
 msgid "Export selected"
 msgstr ""
 
-#: bibliography/static/js/modules/bibliography/overview/menu.js:45
-#: usermedia/static/js/modules/images/overview/menu.js:32
+#: bibliography/static/js/modules/bibliography/overview/menu.js:44
+#: usermedia/static/js/modules/images/overview/menu.js:31
 #, fuzzy
 #| msgid "Select categories"
 msgid "All categories"
 msgstr "Избери категории"
 
-#: bibliography/static/js/modules/bibliography/overview/menu.js:55
-#: usermedia/static/js/modules/images/overview/menu.js:42
+#: bibliography/static/js/modules/bibliography/overview/menu.js:54
+#: usermedia/static/js/modules/images/overview/menu.js:41
 #, fuzzy
 #| msgid "Edit Categories"
 msgid "Edit categories"
 msgstr "Редактирай категории"
 
-#: bibliography/static/js/modules/bibliography/overview/menu.js:61
-#: document/static/js/modules/editor/dialogs/citation.js:25
+#: bibliography/static/js/modules/bibliography/overview/menu.js:60
+#: document/static/js/modules/editor/dialogs/citation.js:24
 msgid "Register new source"
 msgstr "Добавяне на нов източник"
 
-#: bibliography/static/js/modules/bibliography/overview/menu.js:73
+#: bibliography/static/js/modules/bibliography/overview/menu.js:76
 #, fuzzy
 #| msgid "Upload new image"
 msgid "Upload BibTeX file"
 msgstr "Качване на ново изображение"
 
-#: bibliography/static/js/modules/bibliography/overview/menu.js:82
+#: bibliography/static/js/modules/bibliography/overview/menu.js:85
 #, fuzzy
 #| msgid "Search for Bibliography"
 msgid "Search bibliography"
@@ -1897,23 +1897,23 @@ msgstr "Документи"
 msgid "Comment, but not see comments and chats of others"
 msgstr ""
 
-#: document/static/js/modules/documents/overview/actions.js:31
+#: document/static/js/modules/documents/overview/actions.js:26
 #, fuzzy
 #| msgid "The document(s) have been deleted"
 msgid "Document has been deleted"
 msgstr "Документ(и) бяха изтрити"
 
-#: document/static/js/modules/documents/overview/actions.js:35
+#: document/static/js/modules/documents/overview/actions.js:30
 #, fuzzy
 #| msgid "Untitled document"
 msgid "Could not delete document"
 msgstr "Неозаглавен документ"
 
-#: document/static/js/modules/documents/overview/actions.js:43
+#: document/static/js/modules/documents/overview/actions.js:38
 msgid "Delete the document(s)?"
 msgstr "Изтрий документ(и)?"
 
-#: document/static/js/modules/documents/overview/actions.js:108
+#: document/static/js/modules/documents/overview/actions.js:103
 #, fuzzy
 msgid "Import a Fidus file"
 msgstr "Импортирайте друг Fidus файл"
@@ -2009,19 +2009,19 @@ msgstr "Неозаглавен документ"
 msgid "Search documents"
 msgstr "Търсене за документ"
 
-#: document/static/js/modules/documents/revisions/index.js:28
+#: document/static/js/modules/documents/revisions/index.js:27
 msgid "Saved revisions of"
 msgstr ""
 
-#: document/static/js/modules/documents/revisions/index.js:143
+#: document/static/js/modules/documents/revisions/index.js:148
 msgid "Do you really want to delete the revision?"
 msgstr ""
 
-#: document/static/js/modules/documents/revisions/index.js:159
+#: document/static/js/modules/documents/revisions/index.js:164
 msgid "Revision deleted"
 msgstr ""
 
-#: document/static/js/modules/documents/revisions/index.js:166
+#: document/static/js/modules/documents/revisions/index.js:171
 msgid "Could not delete revision."
 msgstr ""
 
@@ -2040,7 +2040,7 @@ msgid "Recreate"
 msgstr "Създаден"
 
 #: document/static/js/modules/documents/revisions/templates.js:6
-#: document/static/js/modules/editor/menus/headerbar/model.js:92
+#: document/static/js/modules/editor/menus/headerbar/model.js:88
 msgid "Download"
 msgstr ""
 
@@ -2048,11 +2048,11 @@ msgstr ""
 msgid "Could not obtain extra document data"
 msgstr ""
 
-#: document/static/js/modules/editor/citations/index.js:88
+#: document/static/js/modules/editor/citations/index.js:89
 msgid "No tracking"
 msgstr ""
 
-#: document/static/js/modules/editor/citations/index.js:89
+#: document/static/js/modules/editor/citations/index.js:90
 msgid "Changes to citation sources are not being tracked!"
 msgstr ""
 
@@ -2084,44 +2084,44 @@ msgstr ""
 msgid "Reviewer"
 msgstr ""
 
-#: document/static/js/modules/editor/dialogs/citation.js:15
-#: document/static/js/modules/editor/dialogs/figure.js:22
+#: document/static/js/modules/editor/dialogs/citation.js:14
+#: document/static/js/modules/editor/dialogs/figure.js:21
 #: document/static/js/modules/editor/dialogs/link.js:10
-#: document/static/js/modules/editor/dialogs/math.js:22
+#: document/static/js/modules/editor/dialogs/math.js:21
 #: document/static/js/modules/editor/dialogs/table.js:53
 #: document/static/js/modules/editor/dialogs/templates.js:28
 msgid "Insert"
 msgstr "Вмъкване"
 
-#: document/static/js/modules/editor/dialogs/citation.js:32
-#: document/static/js/modules/editor/dialogs/figure.js:172
+#: document/static/js/modules/editor/dialogs/citation.js:31
+#: document/static/js/modules/editor/dialogs/figure.js:187
 #: document/static/js/modules/editor/dialogs/templates.js:40
 #: document/static/js/modules/editor/state_plugins/links.js:125
 #: user/static/js/modules/profile/dialogs.js:179
 msgid "Remove"
 msgstr "Изтриване"
 
-#: document/static/js/modules/editor/dialogs/citation.js:40
+#: document/static/js/modules/editor/dialogs/citation.js:39
 #: document/static/js/modules/editor/dialogs/contributor.js:20
 #: document/static/js/modules/editor/dialogs/contributor.js:77
-#: document/static/js/modules/editor/dialogs/figure.js:163
+#: document/static/js/modules/editor/dialogs/figure.js:178
 #: document/static/js/modules/editor/dialogs/link.js:55
-#: document/static/js/modules/editor/dialogs/math.js:22
+#: document/static/js/modules/editor/dialogs/math.js:21
 #: document/static/js/modules/editor/dialogs/table.js:194
 #: usermedia/static/js/modules/images/edit_dialog/index.js:24
 msgid "Update"
 msgstr "Обновяване"
 
-#: document/static/js/modules/editor/dialogs/citation.js:58
+#: document/static/js/modules/editor/dialogs/citation.js:57
 msgid "Configure Citation"
 msgstr "Настройка на цитати"
 
-#: document/static/js/modules/editor/dialogs/citation.js:186
-#: usermedia/static/js/modules/images/selection_dialog/index.js:95
+#: document/static/js/modules/editor/dialogs/citation.js:189
+#: usermedia/static/js/modules/images/selection_dialog/index.js:98
 msgid "Search..."
 msgstr ""
 
-#: document/static/js/modules/editor/dialogs/citation.js:320
+#: document/static/js/modules/editor/dialogs/citation.js:323
 msgid "Please select at least one citation source!"
 msgstr "Моля изберете поне един източник на цитати!"
 
@@ -2136,24 +2136,75 @@ msgstr ""
 msgid "Email is in incorrect format!"
 msgstr ""
 
-#: document/static/js/modules/editor/dialogs/figure.js:27
+#: document/static/js/modules/editor/dialogs/figure.js:26
 #, fuzzy
 #| msgid "Sort"
 msgid "or"
 msgstr "Сортиране"
 
-#: document/static/js/modules/editor/dialogs/figure.js:27
+#: document/static/js/modules/editor/dialogs/figure.js:26
 msgid "Insert image"
 msgstr "Вмъкни изображение"
 
-#: document/static/js/modules/editor/dialogs/figure.js:47
-#: document/static/js/modules/editor/dialogs/math.js:84
+#: document/static/js/modules/editor/dialogs/figure.js:37
+#: document/static/js/modules/editor/dialogs/math.js:71
+#, fuzzy
+#| msgid "Institution"
+msgid "Functions"
+msgstr "Институция"
+
+#: document/static/js/modules/editor/dialogs/figure.js:38
+#: document/static/js/modules/editor/dialogs/math.js:72
+msgid "Greek Letters"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/figure.js:39
+#: document/static/js/modules/editor/dialogs/math.js:73
+msgid "LaTeX Command Mode"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/figure.js:40
+#: document/static/js/modules/editor/dialogs/math.js:74
+msgid "Numeric"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/figure.js:41
+#: document/static/js/modules/editor/dialogs/math.js:75
+msgid "Symbols and Roman Letters"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/figure.js:42
+#: document/static/js/modules/editor/dialogs/math.js:76
+msgid "Copy to Clipboard"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/figure.js:43
+#: document/static/js/modules/editor/dialogs/math.js:77
+#: document/static/js/modules/editor/menus/toolbar/model.js:486
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Redo"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/figure.js:44
+#: document/static/js/modules/editor/dialogs/math.js:78
+msgid "Toggle Virtual Keyboard"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/figure.js:45
+#: document/static/js/modules/editor/dialogs/math.js:79
+#: document/static/js/modules/editor/menus/toolbar/model.js:479
+#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
+msgid "Undo"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/figure.js:62
+#: document/static/js/modules/editor/dialogs/math.js:99
 #, fuzzy
 #| msgid "Insert formula"
 msgid "Type formula"
 msgstr "Вмъкни формула"
 
-#: document/static/js/modules/editor/dialogs/figure.js:194
+#: document/static/js/modules/editor/dialogs/figure.js:209
 msgid "Enter latex math or insert an image"
 msgstr "Въведете Latex формула или изображение"
 
@@ -2169,7 +2220,7 @@ msgstr "Приеми промяната"
 msgid "Change language of the document"
 msgstr "Подзаглавието на документа"
 
-#: document/static/js/modules/editor/dialogs/math.js:52
+#: document/static/js/modules/editor/dialogs/math.js:51
 msgid "Mathematical formula"
 msgstr ""
 
@@ -2280,7 +2331,7 @@ msgid "Math"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/templates.js:28
-#: usermedia/static/js/modules/images/selection_dialog/index.js:102
+#: usermedia/static/js/modules/images/selection_dialog/index.js:105
 msgid "Image"
 msgstr "Изображение"
 
@@ -2350,33 +2401,33 @@ msgstr "Фамилия"
 msgid "Email"
 msgstr "Добави имейл"
 
-#: document/static/js/modules/editor/document_template/index.js:43
+#: document/static/js/modules/editor/document_template/index.js:41
 msgid "Metadata"
 msgstr ""
 
-#: document/static/js/modules/editor/document_template/index.js:45
+#: document/static/js/modules/editor/document_template/index.js:43
 msgid "Choose which metadata to enable."
 msgstr ""
 
-#: document/static/js/modules/editor/document_template/index.js:51
+#: document/static/js/modules/editor/document_template/index.js:49
 msgid "Show/hide"
 msgstr ""
 
-#: document/static/js/modules/editor/document_template/index.js:75
+#: document/static/js/modules/editor/document_template/index.js:73
 msgid "Safari bug warning"
 msgstr ""
 
-#: document/static/js/modules/editor/document_template/index.js:77
+#: document/static/js/modules/editor/document_template/index.js:75
 msgid ""
 "Unfortunately Safari has a bug which makes it impossible to export to this "
 "format. Please use Chrome or Firefox (on a desktop computer)."
 msgstr ""
 
-#: document/static/js/modules/editor/document_template/index.js:95
+#: document/static/js/modules/editor/document_template/index.js:93
 msgid "Export the document to a DOCX file with the given template."
 msgstr ""
 
-#: document/static/js/modules/editor/document_template/index.js:113
+#: document/static/js/modules/editor/document_template/index.js:115
 msgid "Export the document to an ODT file with the given template."
 msgstr ""
 
@@ -2569,7 +2620,7 @@ msgid "Removed"
 msgstr "Изтриване"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:132
-#: usermedia/static/js/modules/images/overview/index.js:162
+#: usermedia/static/js/modules/images/overview/index.js:161
 #, fuzzy
 #| msgid "Addendum"
 msgid "Added"
@@ -2634,67 +2685,67 @@ msgid "Any/None"
 msgstr ""
 
 #: document/static/js/modules/editor/marginboxes/templates.js:186
-#: document/static/js/modules/editor/menus/headerbar/model.js:281
+#: document/static/js/modules/editor/menus/headerbar/model.js:293
 #, fuzzy
 #| msgid "Last Updated"
 msgid "Track changes"
 msgstr "Последно обновен"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:35
-#: usermedia/static/js/modules/images/overview/index.js:162
+#: document/static/js/modules/editor/menus/headerbar/model.js:31
+#: usermedia/static/js/modules/images/overview/index.js:161
 msgid "File"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:36
+#: document/static/js/modules/editor/menus/headerbar/model.js:32
 msgid "File handling"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:40
+#: document/static/js/modules/editor/menus/headerbar/model.js:36
 msgid "Share"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:43
+#: document/static/js/modules/editor/menus/headerbar/model.js:39
 #, fuzzy
 #| msgid "Share your document with others"
 msgid "Share the document with other users."
 msgstr "Сподели документа с други потребители"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:59
+#: document/static/js/modules/editor/menus/headerbar/model.js:55
 #: document/static/js/modules/editor/menus/headerbar/view.js:225
 msgid "Close the document and return to the document overview menu."
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:65
+#: document/static/js/modules/editor/menus/headerbar/model.js:61
 #: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
 #, fuzzy
 msgid "Save revision"
 msgstr "Версия"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:68
+#: document/static/js/modules/editor/menus/headerbar/model.js:64
 msgid "Save a revision of the current document."
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:80
+#: document/static/js/modules/editor/menus/headerbar/model.js:76
 #, fuzzy
 #| msgid "Created by"
 msgid "Create Copy"
 msgstr "Създадено от"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:83
+#: document/static/js/modules/editor/menus/headerbar/model.js:79
 #, fuzzy
 #| msgid "The abstract of the document"
 msgid "Create copy of the current document."
 msgstr "Обобщение на документа"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:95
+#: document/static/js/modules/editor/menus/headerbar/model.js:91
 msgid "Download the current document."
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:101
+#: document/static/js/modules/editor/menus/headerbar/model.js:97
 msgid "Print/PDF"
 msgstr "Печат/PDF"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:104
+#: document/static/js/modules/editor/menus/headerbar/model.js:100
 msgid "Either print or create a PDF using your browser print dialog."
 msgstr ""
 
@@ -2718,179 +2769,179 @@ msgstr ""
 msgid "Export the document to an HTML file."
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:132
+#: document/static/js/modules/editor/menus/headerbar/model.js:136
 msgid "Epub"
 msgstr "Epub"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:134
+#: document/static/js/modules/editor/menus/headerbar/model.js:138
 msgid "Export the document to an Epub electronic reader file."
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:143
+#: document/static/js/modules/editor/menus/headerbar/model.js:151
 msgid "LaTeX"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:145
+#: document/static/js/modules/editor/menus/headerbar/model.js:153
 msgid "Export the document to an LaTeX file."
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:156
+#: document/static/js/modules/editor/menus/headerbar/model.js:168
 msgid "Settings"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:157
+#: document/static/js/modules/editor/menus/headerbar/model.js:169
 #, fuzzy
 #| msgid "The subtitle of the document"
 msgid "Configure settings of this document."
 msgstr "Подзаглавието на документа"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:162
+#: document/static/js/modules/editor/menus/headerbar/model.js:174
 #, fuzzy
 #| msgid "Citation style"
 msgid "Citation Style"
 msgstr "Стил на цитатите"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:164
+#: document/static/js/modules/editor/menus/headerbar/model.js:176
 msgid "Choose your preferred citation style."
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:172
+#: document/static/js/modules/editor/menus/headerbar/model.js:184
 #, fuzzy
 #| msgid "Document style"
 msgid "Document Style"
 msgstr "Стил на Документа"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:174
+#: document/static/js/modules/editor/menus/headerbar/model.js:186
 msgid "Choose your preferred document style."
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:182
+#: document/static/js/modules/editor/menus/headerbar/model.js:194
 #, fuzzy
 #| msgid "Language"
 msgid "Text Language"
 msgstr "Език"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:184
+#: document/static/js/modules/editor/menus/headerbar/model.js:196
 #, fuzzy
 #| msgid "The subtitle of the document"
 msgid "Choose the language of the document."
 msgstr "Подзаглавието на документа"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:189
+#: document/static/js/modules/editor/menus/headerbar/model.js:201
 #: document/static/js/modules/schema/const.js:1
 msgid "English (United States)"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:189
+#: document/static/js/modules/editor/menus/headerbar/model.js:201
 #: document/static/js/modules/schema/const.js:1
 msgid "English (United Kingdom)"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:189
+#: document/static/js/modules/editor/menus/headerbar/model.js:201
 #: document/static/js/modules/schema/const.js:1
 msgid "German (Germany)"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:189
+#: document/static/js/modules/editor/menus/headerbar/model.js:201
 #: document/static/js/modules/schema/const.js:1
 msgid "Chinese (Simplified)"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:189
+#: document/static/js/modules/editor/menus/headerbar/model.js:201
 #: document/static/js/modules/schema/const.js:1
 msgid "Portuguese (Brazil)"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:198
+#: document/static/js/modules/editor/menus/headerbar/model.js:210
 msgid "Other"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:213
+#: document/static/js/modules/editor/menus/headerbar/model.js:225
 #, fuzzy
 #| msgid "Paper size"
 msgid "Paper Size"
 msgstr "Размер на листите"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:215
+#: document/static/js/modules/editor/menus/headerbar/model.js:227
 msgid "Choose a papersize for print and PDF generation."
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:221
+#: document/static/js/modules/editor/menus/headerbar/model.js:233
 msgid "DIN A4"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:223
+#: document/static/js/modules/editor/menus/headerbar/model.js:235
 msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:238
+#: document/static/js/modules/editor/menus/headerbar/model.js:250
 msgid "US Letter"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:240
+#: document/static/js/modules/editor/menus/headerbar/model.js:252
 msgid "The format used by the USA and some other American countries."
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:258
+#: document/static/js/modules/editor/menus/headerbar/model.js:270
 msgid "Tools"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:259
+#: document/static/js/modules/editor/menus/headerbar/model.js:271
 msgid "Select document editing tool."
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:263
+#: document/static/js/modules/editor/menus/headerbar/model.js:275
 #: document/static/js/modules/editor/tools/word_count.js:32
 msgid "Word counter"
 msgstr "Брой Думи"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:265
+#: document/static/js/modules/editor/menus/headerbar/model.js:277
 msgid "See document statistics."
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:271
+#: document/static/js/modules/editor/menus/headerbar/model.js:283
 msgid "Keyboard shortcuts"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:273
+#: document/static/js/modules/editor/menus/headerbar/model.js:285
 msgid "Show an overview of available keyboard shortcuts."
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:283
+#: document/static/js/modules/editor/menus/headerbar/model.js:295
 #, fuzzy
 #| msgid "The subtitle of the document"
 msgid "Tracking changes to the document"
 msgstr "Подзаглавието на документа"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:289
+#: document/static/js/modules/editor/menus/headerbar/model.js:301
 msgid "Record"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:291
+#: document/static/js/modules/editor/menus/headerbar/model.js:303
 #, fuzzy
 #| msgid "My documents"
 msgid "Record document changes"
 msgstr "Моите документи"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:306
+#: document/static/js/modules/editor/menus/headerbar/model.js:318
 #, fuzzy
 #| msgid "Accept Change"
 msgid "Accept all"
 msgstr "Приеми промяната"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:308
+#: document/static/js/modules/editor/menus/headerbar/model.js:320
 #, fuzzy
 #| msgid "Accept Change"
 msgid "Accept all tracked changes."
 msgstr "Приеми промяната"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:314
+#: document/static/js/modules/editor/menus/headerbar/model.js:326
 #, fuzzy
 #| msgid "Reject Change"
 msgid "Reject all"
 msgstr "Отхвърли промяната"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:316
+#: document/static/js/modules/editor/menus/headerbar/model.js:328
 #, fuzzy
 #| msgid "Reject Change"
 msgid "Reject all tracked changes."
@@ -3064,21 +3115,11 @@ msgstr ""
 msgid "Insert a table into the document."
 msgstr "Подзаглавието на документа"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:479
-#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
-msgid "Undo"
-msgstr ""
-
-#: document/static/js/modules/editor/menus/toolbar/model.js:486
-#: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
-msgid "Redo"
-msgstr ""
-
 #: document/static/js/modules/editor/menus/toolbar/view.js:255
 msgid "More"
 msgstr ""
 
-#: document/static/js/modules/editor/navigator/index.js:187
+#: document/static/js/modules/editor/navigator/index.js:186
 #, fuzzy
 #| msgid "Document style"
 msgid "Document Navigator"
@@ -3211,16 +3252,16 @@ msgstr "Експортирането беше стартирано."
 msgid "Printing has been initiated."
 msgstr "Започнат бе Epub експорт."
 
-#: document/static/js/modules/importer/file.js:43
-#: document/static/js/modules/importer/file.js:67
+#: document/static/js/modules/importer/file.js:42
+#: document/static/js/modules/importer/file.js:65
 msgid "The uploaded file does not appear to be a Fidus Writer file."
 msgstr ""
 
-#: document/static/js/modules/importer/file.js:123
+#: document/static/js/modules/importer/file.js:121
 msgid " successfully imported."
 msgstr " успешно импортиран."
 
-#: document/static/js/modules/importer/file.js:128
+#: document/static/js/modules/importer/file.js:126
 msgid ""
 "The uploaded file does not appear to be of the version used on this server: "
 msgstr ""
@@ -3241,33 +3282,33 @@ msgstr "Не можа да бъде запазен"
 msgid "Could not save "
 msgstr "Не можа да бъде запазен"
 
-#: document/static/js/modules/maintenance/index.js:26
+#: document/static/js/modules/maintenance/index.js:24
 #, fuzzy
 #| msgid "Update"
 msgid "Updating..."
 msgstr "Обновяване"
 
-#: document/static/js/modules/maintenance/index.js:46
+#: document/static/js/modules/maintenance/index.js:44
 msgid "Downloaded batch"
 msgstr ""
 
-#: document/static/js/modules/maintenance/index.js:57
+#: document/static/js/modules/maintenance/index.js:55
 #, fuzzy
 #| msgid "Could not save "
 msgid "Could not download batch"
 msgstr "Не можа да бъде запазен"
 
-#: document/static/js/modules/maintenance/index.js:129
+#: document/static/js/modules/maintenance/index.js:127
 #, fuzzy
 #| msgid "The document(s) have been deleted"
 msgid "The document has been updated"
 msgstr "Документ(и) бяха изтрити"
 
-#: document/static/js/modules/maintenance/index.js:133
+#: document/static/js/modules/maintenance/index.js:131
 msgid "All documents updated!"
 msgstr ""
 
-#: document/static/js/modules/maintenance/index.js:140
+#: document/static/js/modules/maintenance/index.js:138
 #, fuzzy
 msgid "Updating saved revisions."
 msgstr "Версия"
@@ -3435,7 +3476,7 @@ msgid "manage bibliography library"
 msgstr "Изтриване на библиграфски запис(и)"
 
 #: menu/static/js/modules/menu/index.js:21
-#: usermedia/static/js/modules/images/selection_dialog/index.js:72
+#: usermedia/static/js/modules/images/selection_dialog/index.js:75
 msgid "Images"
 msgstr "Изображения"
 
@@ -3841,50 +3882,50 @@ msgstr "Редактиране на източник"
 msgid "Could not update categories"
 msgstr "Не можа да бъде запазен"
 
-#: usermedia/static/js/modules/images/overview/index.js:46
+#: usermedia/static/js/modules/images/overview/index.js:45
 msgid "Media Manager"
 msgstr ""
 
-#: usermedia/static/js/modules/images/overview/index.js:71
+#: usermedia/static/js/modules/images/overview/index.js:70
 #, fuzzy
 #| msgid "The image(s) have been deleted"
 msgid "The image(s) could not be deleted"
 msgstr "Изображенията бяха изтрити"
 
-#: usermedia/static/js/modules/images/overview/index.js:78
+#: usermedia/static/js/modules/images/overview/index.js:77
 msgid "The image(s) have been deleted"
 msgstr "Изображенията бяха изтрити"
 
-#: usermedia/static/js/modules/images/overview/index.js:97
+#: usermedia/static/js/modules/images/overview/index.js:96
 msgid "Delete the image(s)"
 msgstr "Изтрий изображенията"
 
-#: usermedia/static/js/modules/images/overview/index.js:155
-#: usermedia/static/js/modules/images/selection_dialog/index.js:93
+#: usermedia/static/js/modules/images/overview/index.js:154
+#: usermedia/static/js/modules/images/selection_dialog/index.js:96
 msgid "No images available"
 msgstr ""
 
-#: usermedia/static/js/modules/images/overview/index.js:162
+#: usermedia/static/js/modules/images/overview/index.js:161
 msgid "Size (px)"
 msgstr ""
 
-#: usermedia/static/js/modules/images/overview/menu.js:48
+#: usermedia/static/js/modules/images/overview/menu.js:47
 msgid "Upload new image"
 msgstr "Качване на ново изображение"
 
-#: usermedia/static/js/modules/images/overview/menu.js:59
+#: usermedia/static/js/modules/images/overview/menu.js:62
 #, fuzzy
 #| msgid "Cover image"
 msgid "Search images"
 msgstr "Изображение за корица"
 
-#: usermedia/static/js/modules/images/selection_dialog/index.js:36
+#: usermedia/static/js/modules/images/selection_dialog/index.js:35
 #, fuzzy
 #| msgid "Upload new image"
 msgid "Add new image"
 msgstr "Качване на ново изображение"
 
-#: usermedia/static/js/modules/images/selection_dialog/index.js:50
+#: usermedia/static/js/modules/images/selection_dialog/index.js:53
 #, fuzzy
 #| msgid "Update image"
 msgid "Use image"

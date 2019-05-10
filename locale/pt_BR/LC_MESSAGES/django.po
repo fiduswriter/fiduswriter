@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer git Version\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-10 21:28+0000\n"
+"POT-Creation-Date: 2019-05-10 21:50+0000\n"
 "PO-Revision-Date: 2015-04-25 21:29-0300\n"
 "Last-Translator: Job Diogenes Ribeiro Borges <jobdrb@gmail.com>\n"
 "Language-Team: Portuguese Brazil <jobdrb@gmail.com>\n"
@@ -58,28 +58,6 @@ msgid "The all in one solution for collaborative academic writing."
 msgstr ""
 "A solução completa para a escrita acadêmica colaborativa usando tecnologia "
 "latex."
-
-#: base/templates/footer.html:7
-msgid "Terms and Conditions"
-msgstr "Termos e Condições"
-
-#: base/templates/footer.html:12
-msgid "Privacy policy"
-msgstr ""
-
-#: base/templates/footer.html:17
-#, fuzzy
-#| msgid "Equations and Math by mathjax"
-msgid "Equations and Math with MathLive"
-msgstr "Equações e matemática por MathJax"
-
-#: base/templates/footer.html:22
-msgid "Citations with Citation Style Language"
-msgstr "Citações usando Citation Style Language"
-
-#: base/templates/footer.html:27
-msgid "Editing with ProseMirror"
-msgstr ""
 
 #: browser_check/templates/browser_check/browser_not_supported.html:4
 #: browser_check/templates/browser_check/browser_not_supported.html:27
@@ -230,6 +208,28 @@ msgstr ""
 msgid "Log In"
 msgstr "Entrar"
 
+#: user/templates/account/base.html:74
+msgid "Terms and Conditions"
+msgstr "Termos e Condições"
+
+#: user/templates/account/base.html:79
+msgid "Privacy policy"
+msgstr ""
+
+#: user/templates/account/base.html:84
+#, fuzzy
+#| msgid "Equations and Math by mathjax"
+msgid "Equations and Math with MathLive"
+msgstr "Equações e matemática por MathJax"
+
+#: user/templates/account/base.html:89
+msgid "Citations with Citation Style Language"
+msgstr "Citações usando Citation Style Language"
+
+#: user/templates/account/base.html:94
+msgid "Editing with ProseMirror"
+msgstr ""
+
 #: user/templates/account/email/email_confirmation_message.html:7
 #: user/templates/account/email/password_reset_key_message.html:7
 #, python-format
@@ -356,15 +356,6 @@ msgstr "Lembre-se de mim"
 msgid "Forgot Password?"
 msgstr "Esqueceu asenha?"
 
-#: user/templates/account/logout.html:5 user/templates/account/logout.html:9
-#: user/templates/account/logout.html:19
-msgid "Sign Out"
-msgstr "Sair"
-
-#: user/templates/account/logout.html:11
-msgid "Are you sure you want to sign out?"
-msgstr "Tem certeza de que desejasair?"
-
 #: user/templates/account/password_reset.html:6
 #: user/templates/account/password_reset.html:13
 msgid "Password reset"
@@ -379,8 +370,8 @@ msgstr "Redefinir asenha"
 #| "%(CONTACT_EMAIL)s\">contact us</a>.</p>    "
 msgid ""
 "\n"
-"    <p>Forgotten your password? Enter your e-mail address below, and we'll "
-"send you an e-mail allowing you to reset it.</p>\n"
+"    <p>Forgotten your password? Enter your e-mail address in the form, and "
+"we'll send you an e-mail allowing you to reset it.</p>\n"
 "    <p>If you have any trouble resetting your password, please <a href="
 "\"mailto:%(CONTACT_EMAIL)s\">contact us</a>.</p>\n"
 "    "
@@ -475,6 +466,12 @@ msgstr ""
 #: usermedia/views.py:60
 msgid "No file uploaded"
 msgstr ""
+
+#~ msgid "Sign Out"
+#~ msgstr "Sair"
+
+#~ msgid "Are you sure you want to sign out?"
+#~ msgstr "Tem certeza de que desejasair?"
 
 #~ msgid "Edit profile"
 #~ msgstr "Editar Perfil"

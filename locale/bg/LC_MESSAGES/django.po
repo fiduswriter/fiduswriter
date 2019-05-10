@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-10 21:28+0000\n"
+"POT-Creation-Date: 2019-05-10 21:50+0000\n"
 "PO-Revision-Date: 2013-09-18 08:54+0200\n"
 "Last-Translator: Vladimir Vitkov <vvitkov@linux-bg.org>\n"
 "Language-Team: Bulgarian <vvitkov@linux-bg.org>\n"
@@ -57,28 +57,6 @@ msgstr "Стил на Документа"
 #: base/templates/app.html:11 user/templates/account/base.html:7
 msgid "The all in one solution for collaborative academic writing."
 msgstr "Комплексно решение за съвместно създаване на академични документи."
-
-#: base/templates/footer.html:7
-msgid "Terms and Conditions"
-msgstr "Общи условия"
-
-#: base/templates/footer.html:12
-msgid "Privacy policy"
-msgstr ""
-
-#: base/templates/footer.html:17
-#, fuzzy
-#| msgid "Equations and Math by mathjax"
-msgid "Equations and Math with MathLive"
-msgstr "Формули и Уравнения от mathjax"
-
-#: base/templates/footer.html:22
-msgid "Citations with Citation Style Language"
-msgstr "Цитати с Citation Style Language"
-
-#: base/templates/footer.html:27
-msgid "Editing with ProseMirror"
-msgstr ""
 
 #: browser_check/templates/browser_check/browser_not_supported.html:4
 #: browser_check/templates/browser_check/browser_not_supported.html:27
@@ -233,6 +211,28 @@ msgstr "Аватар по подразбиране:"
 msgid "Log In"
 msgstr "Вход"
 
+#: user/templates/account/base.html:74
+msgid "Terms and Conditions"
+msgstr "Общи условия"
+
+#: user/templates/account/base.html:79
+msgid "Privacy policy"
+msgstr ""
+
+#: user/templates/account/base.html:84
+#, fuzzy
+#| msgid "Equations and Math by mathjax"
+msgid "Equations and Math with MathLive"
+msgstr "Формули и Уравнения от mathjax"
+
+#: user/templates/account/base.html:89
+msgid "Citations with Citation Style Language"
+msgstr "Цитати с Citation Style Language"
+
+#: user/templates/account/base.html:94
+msgid "Editing with ProseMirror"
+msgstr ""
+
 #: user/templates/account/email/email_confirmation_message.html:7
 #: user/templates/account/email/password_reset_key_message.html:7
 #, python-format
@@ -359,15 +359,6 @@ msgstr "Запомни ме"
 msgid "Forgot Password?"
 msgstr "Забравена Парола?"
 
-#: user/templates/account/logout.html:5 user/templates/account/logout.html:9
-#: user/templates/account/logout.html:19
-msgid "Sign Out"
-msgstr "Изход"
-
-#: user/templates/account/logout.html:11
-msgid "Are you sure you want to sign out?"
-msgstr "Сигурни ли сте, че искате да излезете?"
-
 #: user/templates/account/password_reset.html:6
 #: user/templates/account/password_reset.html:13
 msgid "Password reset"
@@ -377,8 +368,8 @@ msgstr "Смяна на парола"
 #, fuzzy, python-format
 msgid ""
 "\n"
-"    <p>Forgotten your password? Enter your e-mail address below, and we'll "
-"send you an e-mail allowing you to reset it.</p>\n"
+"    <p>Forgotten your password? Enter your e-mail address in the form, and "
+"we'll send you an e-mail allowing you to reset it.</p>\n"
 "    <p>If you have any trouble resetting your password, please <a href="
 "\"mailto:%(CONTACT_EMAIL)s\">contact us</a>.</p>\n"
 "    "
@@ -472,6 +463,12 @@ msgstr ""
 #: usermedia/views.py:60
 msgid "No file uploaded"
 msgstr ""
+
+#~ msgid "Sign Out"
+#~ msgstr "Изход"
+
+#~ msgid "Are you sure you want to sign out?"
+#~ msgstr "Сигурни ли сте, че искате да излезете?"
 
 #~ msgid "Edit profile"
 #~ msgstr "Редактирай профил"

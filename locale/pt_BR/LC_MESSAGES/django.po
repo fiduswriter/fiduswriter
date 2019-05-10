@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer git Version\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-05 23:52+0000\n"
+"POT-Creation-Date: 2019-05-10 21:28+0000\n"
 "PO-Revision-Date: 2015-04-25 21:29-0300\n"
 "Last-Translator: Job Diogenes Ribeiro Borges <jobdrb@gmail.com>\n"
 "Language-Team: Portuguese Brazil <jobdrb@gmail.com>\n"
@@ -129,17 +129,17 @@ msgstr ""
 msgid "Update all documents (DANGER!)"
 msgstr ""
 
-#: document/views.py:209 document/views.py:616
+#: document/views.py:209 document/views.py:624
 msgid "Untitled"
 msgstr "Sem título"
 
-#: document/views.py:280 document/views.py:702
+#: document/views.py:280 document/views.py:710
 #, fuzzy
 #| msgid "Documents"
 msgid "Document"
 msgstr "Documentos"
 
-#: document/views.py:282 document/views.py:704
+#: document/views.py:282 document/views.py:712
 msgid "Author"
 msgstr "Autor"
 
@@ -149,7 +149,7 @@ msgstr "Autor"
 msgid "Access Rights"
 msgstr "Direitos"
 
-#: document/views.py:287 document/views.py:709
+#: document/views.py:287 document/views.py:717
 #, fuzzy
 #| msgid "edit documents"
 msgid "Access the document"
@@ -159,19 +159,19 @@ msgstr "editar documentos"
 msgid "Document shared:"
 msgstr "Documento compartilhado:"
 
-#: document/views.py:642
+#: document/views.py:650
 #, fuzzy
 #| msgid "Comment"
 msgid "Comment on :"
 msgstr "Comente"
 
-#: document/views.py:663
+#: document/views.py:671
 #, fuzzy
 #| msgid "Comment"
 msgid "Comment assignment on :"
 msgstr "Comente"
 
-#: document/views.py:706
+#: document/views.py:714
 #, fuzzy
 #| msgid "Comments"
 msgid "Comment"
@@ -229,6 +229,62 @@ msgstr ""
 #: user/templates/account/signup.html:9
 msgid "Log In"
 msgstr "Entrar"
+
+#: user/templates/account/email/email_confirmation_message.html:7
+#: user/templates/account/email/password_reset_key_message.html:7
+#, python-format
+msgid ""
+"\n"
+"        Hello from %(site_name)s!\n"
+"    "
+msgstr ""
+
+#: user/templates/account/email/email_confirmation_message.html:14
+#, python-format
+msgid ""
+"\n"
+"        You're receiving this e-mail because user %(user_display)s has given "
+"yours as an e-mail address to connect their account.\n"
+"    "
+msgstr ""
+
+#: user/templates/account/email/email_confirmation_message.html:20
+#, python-format
+msgid ""
+"\n"
+"        To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</a>.\n"
+"    "
+msgstr ""
+
+#: user/templates/account/email/email_confirmation_message.html:26
+#: user/templates/account/email/password_reset_key_message.html:32
+#, python-format
+msgid ""
+"\n"
+"        Thank you from %(site_name)s!\n"
+"    "
+msgstr ""
+
+#: user/templates/account/email/password_reset_key_message.html:13
+msgid ""
+"\n"
+"        You're receiving this e-mail because you or someone else has "
+"requested a password for your user account.\n"
+"    "
+msgstr ""
+
+#: user/templates/account/email/password_reset_key_message.html:18
+msgid ""
+"\n"
+"        It can be safely ignored if you did not request a password reset. "
+"Click the link below to reset your password.\n"
+"    "
+msgstr ""
+
+#: user/templates/account/email/password_reset_key_message.html:27
+#, python-format
+msgid "In case you forgot, your username is %(username)s."
+msgstr ""
 
 #: user/templates/account/email_confirm.html:8
 msgid "Confirm E-mail Address"

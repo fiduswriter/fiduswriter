@@ -1,6 +1,6 @@
 import bowser from "bowser"
 
-var MINIMUM_BROWSER_VERSIONS = {
+const MINIMUM_BROWSER_VERSIONS = {
     msedge: '15',
     msie: '15', // effectively none
     firefox: '52',

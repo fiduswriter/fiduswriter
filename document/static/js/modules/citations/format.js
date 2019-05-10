@@ -1,7 +1,3 @@
-import CSL from "citeproc"
-
-import {citeprocSys} from "./citeproc_sys"
-
 /*
 * Use CSL and bibDB to format all citations for the given prosemirror json citation nodes
 */
@@ -92,67 +88,72 @@ export class FormatCitations {
     }
 
     getFormattedCitations() {
-
-        this.citationStyleDef = this.citationStyles.find(style => style.short_title === this.citationStyle)
-        if (!this.citationStyleDef && this.citationStyles.length) {
-            this.citationStyleDef = this.citationStyles[0]
-        }
-        const citeprocConnector = new citeprocSys(this.bibDB, this.citationLocales)
-        const citeprocInstance = new CSL.Engine(
-            citeprocConnector,
-            this.citationStyleDef.contents
-        )
-        const allIds = []
-        this.citations.forEach(cit =>
-            cit.citationItems.forEach(item => allIds.push(String(item.id)))
-        )
-        citeprocInstance.updateItems(allIds)
-
-        const inText = citeprocInstance.cslXml.dataObj.attrs.class === 'in-text'
-        const len = this.citations.length
-        for (let i = 0; i < len; i++) {
-            const citation = this.citations[i],
-                citationTexts = citeprocInstance.appendCitationCluster(citation, true)
-            if (inText && 'textcite' == this.bibFormats[i]) {
-                const items = citation.citationItems
-                let newCiteText = ''
-
-                for (let j = 0; j < items.length; j++) {
-                    const onlyNameOption = [{
-                        id: items[j].id,
-                        "author-only": 1
-                    }]
-
-                    const onlyDateOption = [{
-                        id: items[j].id,
-                        "suppress-author": 1
-                    }]
-
-                    if (items[j].locator) {
-                        onlyDateOption[0].locator = items[j].locator
-                    }
-
-                    if (items[j].prefix) {
-                        onlyDateOption[0].prefix = items[j].prefix
-                    }
-
-                    if (0 < j) {
-                        newCiteText += '; '
-                    }
-                    newCiteText += `${citeprocInstance.makeCitationCluster(onlyNameOption)} ${citeprocInstance.makeCitationCluster(onlyDateOption)}`
-                }
-                citationTexts.find(citationText => citationText[0] === i)[1] = newCiteText
+        return Promise.all([
+            import("citeproc"),
+            import("./citeproc_sys")
+        ]).then(([CSL, {citeprocSys}]) => {
+            this.citationStyleDef = this.citationStyles.find(style => style.short_title === this.citationStyle)
+            if (!this.citationStyleDef && this.citationStyles.length) {
+                this.citationStyleDef = this.citationStyles[0]
             }
-            citationTexts.forEach(([index, citationText]) => this.citationTexts[index] = citationText)
-        }
-        this.citationType = citeprocInstance.cslXml.dataObj.attrs.class
-        this.bibliography = citeprocInstance.makeBibliography()
+            const citeprocConnector = new citeprocSys(this.bibDB, this.citationLocales)
+            const citeprocInstance = new CSL.Engine(
+                citeprocConnector,
+                this.citationStyleDef.contents
+            )
+            const allIds = []
+            this.citations.forEach(cit =>
+                cit.citationItems.forEach(item => allIds.push(String(item.id)))
+            )
+            citeprocInstance.updateItems(allIds)
 
-        if (citeprocConnector.missingItems.length > 0) {
-            return this.reloadCitations(citeprocConnector.missingItems)
-        } else {
-            return Promise.resolve()
-        }
+            const inText = citeprocInstance.cslXml.dataObj.attrs.class === 'in-text'
+            const len = this.citations.length
+            for (let i = 0; i < len; i++) {
+                const citation = this.citations[i],
+                    citationTexts = citeprocInstance.appendCitationCluster(citation, true)
+                if (inText && 'textcite' == this.bibFormats[i]) {
+                    const items = citation.citationItems
+                    let newCiteText = ''
+
+                    for (let j = 0; j < items.length; j++) {
+                        const onlyNameOption = [{
+                            id: items[j].id,
+                            "author-only": 1
+                        }]
+
+                        const onlyDateOption = [{
+                            id: items[j].id,
+                            "suppress-author": 1
+                        }]
+
+                        if (items[j].locator) {
+                            onlyDateOption[0].locator = items[j].locator
+                        }
+
+                        if (items[j].prefix) {
+                            onlyDateOption[0].prefix = items[j].prefix
+                        }
+
+                        if (0 < j) {
+                            newCiteText += '; '
+                        }
+                        newCiteText += `${citeprocInstance.makeCitationCluster(onlyNameOption)} ${citeprocInstance.makeCitationCluster(onlyDateOption)}`
+                    }
+                    citationTexts.find(citationText => citationText[0] === i)[1] = newCiteText
+                }
+                citationTexts.forEach(([index, citationText]) => this.citationTexts[index] = citationText)
+            }
+            this.citationType = citeprocInstance.cslXml.dataObj.attrs.class
+            this.bibliography = citeprocInstance.makeBibliography()
+
+            if (citeprocConnector.missingItems.length > 0) {
+                return this.reloadCitations(citeprocConnector.missingItems)
+            } else {
+                return Promise.resolve()
+            }
+        })
+
 
     }
 }

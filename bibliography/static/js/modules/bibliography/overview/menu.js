@@ -1,5 +1,4 @@
 import {BibLatexFileExporter} from "../export"
-import {BibEntryForm} from "../form"
 import {BibLatexFileImportDialog} from "../import"
 
 export const menuModel = () => ({
@@ -68,13 +67,15 @@ export const menuModel = () => ({
             icon: 'plus-circle',
             title: gettext('Register new source'),
             action: overview => {
-                const form = new BibEntryForm(overview.app.bibDB)
-                form.init().then(
-                    idTranslations => {
-                        const ids = idTranslations.map(idTrans => idTrans[1])
-                        return overview.updateTable(ids)
-                    }
-                )
+                import("../form").then(({BibEntryForm}) => {
+                    const form = new BibEntryForm(overview.app.bibDB)
+                    form.init().then(
+                        idTranslations => {
+                            const ids = idTranslations.map(idTrans => idTrans[1])
+                            return overview.updateTable(ids)
+                        }
+                    )
+                })
             },
             order: 3
         },

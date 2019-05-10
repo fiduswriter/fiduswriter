@@ -833,6 +833,14 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
                 )
             )
         )
+        WebDriverWait(driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (
+                    By.CSS_SELECTOR,
+                    'li[data-alt-keys="2"]'
+                )
+            )
+        )
         driver.find_element_by_css_selector('li[data-alt-keys="2"]').click()
         driver.find_element_by_css_selector(
             'li[data-alt-keys="x-var"]'
@@ -851,11 +859,10 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
     def get_mathequation(self, driver):
         math = driver.find_element_by_xpath(
-            # '//*[contains(@class, "article-body")]/p[1]/span[1]'
             '//*[@class="equation"]'
         )
 
-        return math.text
+        return math.get_attribute('data-equation')
 
     def test_mathequation(self):
         """
@@ -906,12 +913,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_sync(self.driver, self.driver2)
 
         self.assertEqual(
-            12,
+            len(self.get_mathequation(self.driver)),
             len(self.get_mathequation(self.driver2))
         )
 
         self.assertEqual(
-            len(self.get_mathequation(self.driver)),
+            6,
             len(self.get_mathequation(self.driver2))
         )
 

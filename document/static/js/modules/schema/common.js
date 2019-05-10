@@ -1,5 +1,3 @@
-import MathLive from "mathlive"
-
 function parseReferences(str) {
     if (!str) {
         return []
@@ -79,7 +77,9 @@ export const equation = {
         const dom = document.createElement('span')
         dom.dataset.equation = node.attrs.equation
         dom.classList.add('equation')
-        dom.innerHTML = MathLive.latexToMarkup(node.attrs.equation, 'textstyle')
+        import("mathlive").then(MathLive => {
+            dom.innerHTML = MathLive.latexToMarkup(node.attrs.equation, 'textstyle')
+        })
         dom.setAttribute('contenteditable', 'false')
         return dom
     }
@@ -225,8 +225,9 @@ export const figure = {
             const domEquation = document.createElement('div')
             domEquation.classList.add('figure-equation')
             domEquation.setAttribute('data-equation', node.attrs.equation)
-
-            domEquation.innerHTML = MathLive.latexToMarkup(node.attrs.equation, 'displaystyle')
+            import("mathlive").then(MathLive => {
+                domEquation.innerHTML = MathLive.latexToMarkup(node.attrs.equation, 'displaystyle')
+            })
             dom.appendChild(domEquation)
         }
         const captionNode = document.createElement("figcaption")

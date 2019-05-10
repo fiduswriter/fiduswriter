@@ -1,4 +1,3 @@
-import MathLive from "mathlive"
 import {
     configureFigureTemplate
 } from "./templates"
@@ -46,36 +45,39 @@ export class FigureDialog {
             this.dialog.dialogEl.querySelector("#insert-figure-image"),
             this.dialog.dialogEl.querySelector(".formula-or-figure")
         ]
-        this.mathField = MathLive.makeMathField(this.mathliveDOM, {
-            virtualKeyboardMode: 'manual',
-            onBlur: () => this.showPlaceHolder(),
-            onFocus: () => this.hidePlaceHolder(),
-            onContentDidChange: () => {
-                this.equation = this.mathField.$latex()
-                this.showHideNonMathElements()
-            },
-            locale: 'int',
-            strings: {
-                'int': {
-                    "keyboard.tooltip.functions": gettext("Functions"),
-                    "keyboard.tooltip.greek": gettext("Greek Letters"),
-                    "keyboard.tooltip.command": gettext("LaTeX Command Mode"),
-                    "keyboard.tooltip.numeric": gettext("Numeric"),
-                    "keyboard.tooltip.roman": gettext("Symbols and Roman Letters"),
-                    "tooltip.copy to clipboard": gettext("Copy to Clipboard"),
-                    "tooltip.redo": gettext("Redo"),
-                    "tooltip.toggle virtual keyboard": gettext("Toggle Virtual Keyboard"),
-                    "tooltip.undo": gettext("Undo")
+        import("mathlive").then(MathLive => {
+            this.mathField = MathLive.makeMathField(this.mathliveDOM, {
+                virtualKeyboardMode: 'manual',
+                onBlur: () => this.showPlaceHolder(),
+                onFocus: () => this.hidePlaceHolder(),
+                locale: 'int',
+                strings: {
+                    'int': {
+                        "keyboard.tooltip.functions": gettext("Functions"),
+                        "keyboard.tooltip.greek": gettext("Greek Letters"),
+                        "keyboard.tooltip.command": gettext("LaTeX Command Mode"),
+                        "keyboard.tooltip.numeric": gettext("Numeric"),
+                        "keyboard.tooltip.roman": gettext("Symbols and Roman Letters"),
+                        "tooltip.copy to clipboard": gettext("Copy to Clipboard"),
+                        "tooltip.redo": gettext("Redo"),
+                        "tooltip.toggle virtual keyboard": gettext("Toggle Virtual Keyboard"),
+                        "tooltip.undo": gettext("Undo")
+                    }
+                },
+                onContentDidChange: () => {
+                    this.equation = this.mathField.$latex()
+                    this.showHideNonMathElements()
                 }
-            }
+            })
+            this.mathField.$latex(this.equation)
+            this.showPlaceHolder()
+            this.showHideNonMathElements()
+            this.dialog.dialogEl.querySelector('#insert-figure-image').addEventListener(
+                'click',
+                () => this.selectImage()
+            )
         })
-        this.mathField.$latex(this.equation)
-        this.showPlaceHolder()
-        this.showHideNonMathElements()
-        this.dialog.dialogEl.querySelector('#insert-figure-image').addEventListener(
-            'click',
-            () => this.selectImage()
-        )
+
     }
 
     showPlaceHolder() {

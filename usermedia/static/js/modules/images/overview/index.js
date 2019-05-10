@@ -18,7 +18,6 @@ import {
 import {SiteMenu} from "../../menu"
 import {FeedbackTab} from "../../feedback"
 import {menuModel} from "./menu"
-import {ImageEditDialog} from "../edit_dialog"
 import * as plugins from "../../../plugins/images_overview"
  /** Helper functions for user added images/SVGs.*/
 
@@ -55,7 +54,7 @@ export class ImageOverview {
         ensureCSS([
             'cropper.min.css'
         ], this.staticUrl)
-        setDocTitle(gettext('Media Manager'))
+        setDocTitle(gettext('Media Manager'), this.app)
         const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
         feedbackTab.init()
     }
@@ -225,23 +224,26 @@ export class ImageOverview {
     bindEvents() {
         document.body.addEventListener('click', event => {
             const el = {}
-            let imageId, itemEl, dialog
             switch (true) {
-                case findTarget(event, '.delete-image', el):
-                    imageId = el.target.dataset.id
+                case findTarget(event, '.delete-image', el): {
+                    const imageId = el.target.dataset.id
                     this.deleteImageDialog([imageId])
                     break
-                case findTarget(event, '.edit-image', el):
-                    imageId = el.target.dataset.id
-                    dialog = new ImageEditDialog(this.app.imageDB, imageId)
-                    dialog.init().then(
-                        imageId => {
-                            this.updateTable([imageId])
-                        }
-                    )
+                }
+                case findTarget(event, '.edit-image', el): {
+                    const imageId = el.target.dataset.id
+                    import("../edit_dialog").then(({ImageEditDialog}) => {
+                        const dialog = new ImageEditDialog(this.app.imageDB, imageId)
+                        dialog.init().then(
+                            () => {
+                                this.updateTable([imageId])
+                            }
+                        )
+                    })
                     break
-                case findTarget(event, '.fw-add-input', el):
-                    itemEl = el.target.closest('.fw-list-input')
+                }
+                case findTarget(event, '.fw-add-input', el): {
+                    const itemEl = el.target.closest('.fw-list-input')
                     if (!itemEl.nextElementSibling) {
                         itemEl.insertAdjacentHTML(
                             'afterend',
@@ -256,6 +258,7 @@ export class ImageOverview {
                         itemEl.parentElement.removeChild(itemEl)
                     }
                     break
+                }
                 default:
                     break
             }

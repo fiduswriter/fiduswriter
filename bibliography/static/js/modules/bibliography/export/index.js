@@ -1,4 +1,3 @@
-import {BibLatexExporter} from "biblatex-csl-converter"
 import {ZipFileCreator} from "../../exporter/tools/zip"
 import download from "downloadjs"
 
@@ -10,19 +9,20 @@ export class BibLatexFileExporter {
     }
 
     init() {
-        const exporter = new BibLatexExporter(this.bibDB.db, this.pks)
+        import("biblatex-csl-converter").then(({BibLatexExporter}) => {
+            const exporter = new BibLatexExporter(this.bibDB.db, this.pks)
 
-        const zipper = new ZipFileCreator(
-            [{
-                'filename': 'bibliography.bib',
-                'contents': exporter.output
-            }]
-        )
+            const zipper = new ZipFileCreator(
+                [{
+                    'filename': 'bibliography.bib',
+                    'contents': exporter.output
+                }]
+            )
 
-        zipper.init().then(
-            blob => download(blob, 'bibliography.zip', 'application/zip')
-        )
-
+            zipper.init().then(
+                blob => download(blob, 'bibliography.zip', 'application/zip')
+            )
+        })
     }
 
 }

@@ -1,5 +1,3 @@
-import {ImageEditDialog} from "../edit_dialog"
-
 export const menuModel = () => ({
     content: [
         {
@@ -55,14 +53,16 @@ export const menuModel = () => ({
             icon: 'plus-circle',
             title: gettext('Upload new image'),
             action: overview => {
-                const imageUpload = new ImageEditDialog(
-                    overview.app.imageDB
-                )
-                imageUpload.init().then(
-                    imageId => {
-                        overview.updateTable([imageId])
-                    }
-                )
+                import("../edit_dialog").then(({ImageEditDialog}) => {
+                    const imageUpload = new ImageEditDialog(
+                        overview.app.imageDB
+                    )
+                    imageUpload.init().then(
+                        imageId => {
+                            overview.updateTable([imageId])
+                        }
+                    )
+                })
             },
             order: 3
         },

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-30 23:51+0000\n"
+"POT-Creation-Date: 2019-05-05 23:52+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,7 +29,7 @@ msgstr ""
 msgid "Sending..."
 msgstr ""
 
-#: base/static/js/modules/common/basic.js:100
+#: base/static/js/modules/common/basic.js:105
 msgid "System message"
 msgstr ""
 
@@ -69,7 +69,7 @@ msgid "Warning! Some data is unsaved"
 msgstr ""
 
 #: base/static/js/modules/common/ws.js:24
-#: document/static/js/modules/editor/index.js:169
+#: document/static/js/modules/editor/index.js:172
 msgid "Disconnected. Attempting to reconnect..."
 msgstr ""
 
@@ -168,14 +168,14 @@ msgstr ""
 #: bibliography/static/js/modules/bibliography/form/index.js:98
 #: document/static/js/modules/document_template/templates.js:10
 #: document/static/js/modules/editor/marginboxes/templates.js:117
-#: document/static/js/modules/editor/menus/toolbar/model.js:246
+#: document/static/js/modules/editor/menus/toolbar/model.js:245
 msgid "Strong"
 msgstr ""
 
 #: bibliography/static/js/modules/bibliography/form/index.js:102
 #: document/static/js/modules/document_template/templates.js:10
 #: document/static/js/modules/editor/marginboxes/templates.js:116
-#: document/static/js/modules/editor/menus/toolbar/model.js:271
+#: document/static/js/modules/editor/menus/toolbar/model.js:270
 msgid "Emphasis"
 msgstr ""
 
@@ -363,7 +363,7 @@ msgid "Title for indexing"
 msgstr ""
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:39
-#: document/static/js/modules/editor/dialogs/templates.js:56
+#: document/static/js/modules/editor/dialogs/templates.js:54
 msgid "Institution"
 msgstr ""
 
@@ -566,7 +566,7 @@ msgstr ""
 #: document/static/js/modules/documents/overview/index.js:149
 #: document/static/js/modules/editor/dialogs/citation.js:193
 #: document/static/js/modules/editor/dialogs/templates.js:28
-#: document/static/js/modules/editor/dialogs/templates.js:42
+#: document/static/js/modules/editor/dialogs/templates.js:40
 #: document/static/js/modules/editor/state_plugins/links.js:125
 #: document/static/js/modules/schema/document/structure.js:242
 #: usermedia/static/js/modules/images/selection_dialog/index.js:102
@@ -791,7 +791,7 @@ msgid "Collaborator"
 msgstr ""
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:159
-#: document/static/js/modules/editor/dialogs/templates.js:53
+#: document/static/js/modules/editor/dialogs/templates.js:51
 msgid "Page"
 msgstr ""
 
@@ -1178,8 +1178,8 @@ msgstr ""
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:76
 #: document/static/js/modules/editor/dialogs/citation.js:193
-#: document/static/js/modules/editor/dialogs/templates.js:42
-#: document/static/js/modules/editor/marginboxes/templates.js:184
+#: document/static/js/modules/editor/dialogs/templates.js:40
+#: document/static/js/modules/editor/marginboxes/templates.js:182
 msgid "Author"
 msgstr ""
 
@@ -1346,8 +1346,8 @@ msgstr ""
 #: document/static/js/modules/document_template/schema.js:112
 #: document/static/js/modules/document_template/templates.js:6
 #: document/static/js/modules/document_template/templates.js:72
-#: document/static/js/modules/editor/menus/toolbar/model.js:463
-#: document/static/js/modules/schema/common.js:109
+#: document/static/js/modules/editor/menus/toolbar/model.js:462
+#: document/static/js/modules/schema/common.js:107
 msgid "Table"
 msgstr ""
 
@@ -1398,9 +1398,9 @@ msgid "Heading 6"
 msgstr ""
 
 #: document/static/js/modules/document_template/templates.js:6
-#: document/static/js/modules/editor/menus/toolbar/model.js:17
-#: document/static/js/modules/editor/menus/toolbar/model.js:447
-#: document/static/js/modules/schema/common.js:108
+#: document/static/js/modules/editor/menus/toolbar/model.js:16
+#: document/static/js/modules/editor/menus/toolbar/model.js:446
+#: document/static/js/modules/schema/common.js:106
 msgid "Figure"
 msgstr ""
 
@@ -1409,7 +1409,7 @@ msgid "Ordered list"
 msgstr ""
 
 #: document/static/js/modules/document_template/templates.js:6
-#: document/static/js/modules/editor/menus/toolbar/model.js:333
+#: document/static/js/modules/editor/menus/toolbar/model.js:332
 msgid "Bullet list"
 msgstr ""
 
@@ -1426,13 +1426,13 @@ msgid "Citation"
 msgstr ""
 
 #: document/static/js/modules/document_template/templates.js:6
-#: document/static/js/modules/editor/menus/toolbar/model.js:349
+#: document/static/js/modules/editor/menus/toolbar/model.js:348
 msgid "Blockquote"
 msgstr ""
 
 #: document/static/js/modules/document_template/templates.js:6
-#: document/static/js/modules/editor/menus/toolbar/model.js:111
-#: document/static/js/modules/editor/menus/toolbar/model.js:382
+#: document/static/js/modules/editor/menus/toolbar/model.js:110
+#: document/static/js/modules/editor/menus/toolbar/model.js:381
 msgid "Footnote"
 msgstr ""
 
@@ -1442,18 +1442,18 @@ msgstr ""
 
 #: document/static/js/modules/document_template/templates.js:10
 #: document/static/js/modules/editor/marginboxes/templates.js:118
-#: document/static/js/modules/editor/menus/toolbar/model.js:292
+#: document/static/js/modules/editor/menus/toolbar/model.js:291
 msgid "Underline"
 msgstr ""
 
 #: document/static/js/modules/document_template/templates.js:10
 #: document/static/js/modules/editor/dialogs/link.js:154
-#: document/static/js/modules/editor/menus/toolbar/model.js:366
+#: document/static/js/modules/editor/menus/toolbar/model.js:365
 msgid "Link"
 msgstr ""
 
 #: document/static/js/modules/document_template/templates.js:10
-#: document/static/js/modules/editor/menus/toolbar/model.js:515
+#: document/static/js/modules/editor/menus/selection/model.js:43
 #: document/static/js/modules/editor/state_plugins/links.js:125
 msgid "Anchor"
 msgstr ""
@@ -1493,7 +1493,7 @@ msgstr ""
 #: document/static/js/modules/document_template/templates.js:32
 #: document/static/js/modules/document_template/templates.js:43
 #: document/static/js/modules/document_template/templates.js:62
-#: document/static/js/modules/schema/common.js:107
+#: document/static/js/modules/schema/common.js:105
 msgid "None"
 msgstr ""
 
@@ -1597,7 +1597,7 @@ msgstr ""
 #: document/static/js/modules/document_template/templates.js:47
 #: document/static/js/modules/document_template/templates.js:62
 #: document/static/js/modules/document_template/templates.js:76
-#: document/static/js/modules/editor/marginboxes/templates.js:192
+#: document/static/js/modules/editor/marginboxes/templates.js:190
 msgid "Instructions"
 msgstr ""
 
@@ -1722,7 +1722,7 @@ msgid "Write tracked"
 msgstr ""
 
 #: document/static/js/modules/documents/access_rights/templates.js:21
-#: document/static/js/modules/editor/menus/toolbar/model.js:494
+#: document/static/js/modules/editor/menus/selection/model.js:32
 msgid "Comment"
 msgstr ""
 
@@ -1766,7 +1766,7 @@ msgstr ""
 msgid "Import a Fidus file"
 msgstr ""
 
-#: document/static/js/modules/documents/overview/index.js:52
+#: document/static/js/modules/documents/overview/index.js:53
 msgid "Document Overview"
 msgstr ""
 
@@ -1910,8 +1910,8 @@ msgstr ""
 msgid "High priority"
 msgstr ""
 
-#: document/static/js/modules/editor/comments/interactions.js:302
-#: document/static/js/modules/editor/comments/interactions.js:360
+#: document/static/js/modules/editor/comments/interactions.js:307
+#: document/static/js/modules/editor/comments/interactions.js:365
 #: document/static/js/modules/editor/comments/store.js:50
 msgid "Reviewer"
 msgstr ""
@@ -1919,15 +1919,15 @@ msgstr ""
 #: document/static/js/modules/editor/dialogs/citation.js:15
 #: document/static/js/modules/editor/dialogs/figure.js:22
 #: document/static/js/modules/editor/dialogs/link.js:10
-#: document/static/js/modules/editor/dialogs/math.js:24
+#: document/static/js/modules/editor/dialogs/math.js:22
 #: document/static/js/modules/editor/dialogs/table.js:53
 #: document/static/js/modules/editor/dialogs/templates.js:28
 msgid "Insert"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/citation.js:32
-#: document/static/js/modules/editor/dialogs/figure.js:113
-#: document/static/js/modules/editor/dialogs/templates.js:42
+#: document/static/js/modules/editor/dialogs/figure.js:172
+#: document/static/js/modules/editor/dialogs/templates.js:40
 #: document/static/js/modules/editor/state_plugins/links.js:125
 #: user/static/js/modules/profile/dialogs.js:179
 msgid "Remove"
@@ -1936,9 +1936,9 @@ msgstr ""
 #: document/static/js/modules/editor/dialogs/citation.js:40
 #: document/static/js/modules/editor/dialogs/contributor.js:20
 #: document/static/js/modules/editor/dialogs/contributor.js:77
-#: document/static/js/modules/editor/dialogs/figure.js:104
+#: document/static/js/modules/editor/dialogs/figure.js:163
 #: document/static/js/modules/editor/dialogs/link.js:55
-#: document/static/js/modules/editor/dialogs/math.js:24
+#: document/static/js/modules/editor/dialogs/math.js:22
 #: document/static/js/modules/editor/dialogs/table.js:194
 #: usermedia/static/js/modules/images/edit_dialog/index.js:24
 msgid "Update"
@@ -1968,7 +1968,20 @@ msgstr ""
 msgid "Email is in incorrect format!"
 msgstr ""
 
-#: document/static/js/modules/editor/dialogs/figure.js:135
+#: document/static/js/modules/editor/dialogs/figure.js:27
+msgid "or"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/figure.js:27
+msgid "Insert image"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/figure.js:47
+#: document/static/js/modules/editor/dialogs/math.js:84
+msgid "Type formula"
+msgstr ""
+
+#: document/static/js/modules/editor/dialogs/figure.js:194
 msgid "Enter latex math or insert an image"
 msgstr ""
 
@@ -1981,10 +1994,6 @@ msgid "Change language of the document"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/math.js:52
-msgid "LaTeX / Graphic"
-msgstr ""
-
-#: document/static/js/modules/editor/dialogs/math.js:58
 msgid "Mathematical formula"
 msgstr ""
 
@@ -2029,17 +2038,17 @@ msgid "Position"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/templates.js:15
-#: document/static/js/modules/editor/dialogs/templates.js:36
+#: document/static/js/modules/editor/dialogs/templates.js:34
 msgid "Center"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/templates.js:15
-#: document/static/js/modules/editor/dialogs/templates.js:36
+#: document/static/js/modules/editor/dialogs/templates.js:34
 msgid "Right"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/templates.js:15
-#: document/static/js/modules/editor/dialogs/templates.js:36
+#: document/static/js/modules/editor/dialogs/templates.js:34
 msgid "Left"
 msgstr ""
 
@@ -2076,7 +2085,7 @@ msgid "Fit the content"
 msgstr ""
 
 #: document/static/js/modules/editor/dialogs/templates.js:16
-#: document/static/js/modules/editor/menus/toolbar/model.js:432
+#: document/static/js/modules/editor/menus/toolbar/model.js:431
 msgid "Math"
 msgstr ""
 
@@ -2091,63 +2100,55 @@ msgstr ""
 msgid "Upload"
 msgstr ""
 
-#: document/static/js/modules/editor/dialogs/templates.js:36
-msgid "Insert formula"
-msgstr ""
-
-#: document/static/js/modules/editor/dialogs/templates.js:36
-msgid "Insert image"
-msgstr ""
-
-#: document/static/js/modules/editor/dialogs/templates.js:36
+#: document/static/js/modules/editor/dialogs/templates.js:34
 msgid "100"
 msgstr ""
 
-#: document/static/js/modules/editor/dialogs/templates.js:36
+#: document/static/js/modules/editor/dialogs/templates.js:34
 msgid "75"
 msgstr ""
 
-#: document/static/js/modules/editor/dialogs/templates.js:36
+#: document/static/js/modules/editor/dialogs/templates.js:34
 msgid "50"
 msgstr ""
 
-#: document/static/js/modules/editor/dialogs/templates.js:36
+#: document/static/js/modules/editor/dialogs/templates.js:34
 msgid "25"
 msgstr ""
 
-#: document/static/js/modules/editor/dialogs/templates.js:36
+#: document/static/js/modules/editor/dialogs/templates.js:34
 msgid "Insert caption"
 msgstr ""
 
-#: document/static/js/modules/editor/dialogs/templates.js:42
+#: document/static/js/modules/editor/dialogs/templates.js:40
 msgid "My sources"
 msgstr ""
 
-#: document/static/js/modules/editor/dialogs/templates.js:42
+#: document/static/js/modules/editor/dialogs/templates.js:40
 msgid "Citation format"
 msgstr ""
 
-#: document/static/js/modules/editor/dialogs/templates.js:42
+#: document/static/js/modules/editor/dialogs/templates.js:40
 msgid "(Author, 1998)"
 msgstr ""
 
-#: document/static/js/modules/editor/dialogs/templates.js:42
+#: document/static/js/modules/editor/dialogs/templates.js:40
 msgid "Author (1998)"
 msgstr ""
 
-#: document/static/js/modules/editor/dialogs/templates.js:53
+#: document/static/js/modules/editor/dialogs/templates.js:51
 msgid "Text before"
 msgstr ""
 
-#: document/static/js/modules/editor/dialogs/templates.js:56
+#: document/static/js/modules/editor/dialogs/templates.js:54
 msgid "Firstname"
 msgstr ""
 
-#: document/static/js/modules/editor/dialogs/templates.js:56
+#: document/static/js/modules/editor/dialogs/templates.js:54
 msgid "Lastname"
 msgstr ""
 
-#: document/static/js/modules/editor/dialogs/templates.js:56
+#: document/static/js/modules/editor/dialogs/templates.js:54
 #: document/static/js/modules/schema/document/content.js:53
 #: user/static/js/modules/profile/templates.js:58
 msgid "Email"
@@ -2183,7 +2184,7 @@ msgstr ""
 msgid "Export the document to an ODT file with the given template."
 msgstr ""
 
-#: document/static/js/modules/editor/index.js:168
+#: document/static/js/modules/editor/index.js:171
 msgid ""
 "Warning! Not all your changes have been saved! You could suffer data loss. "
 "Attempting to reconnect..."
@@ -2347,47 +2348,47 @@ msgstr ""
 msgid "Was"
 msgstr ""
 
-#: document/static/js/modules/editor/marginboxes/templates.js:170
+#: document/static/js/modules/editor/marginboxes/templates.js:168
 msgid "ca."
 msgstr ""
 
-#: document/static/js/modules/editor/marginboxes/templates.js:170
+#: document/static/js/modules/editor/marginboxes/templates.js:168
 msgid "Accept"
 msgstr ""
 
-#: document/static/js/modules/editor/marginboxes/templates.js:170
+#: document/static/js/modules/editor/marginboxes/templates.js:168
 msgid "Reject"
 msgstr ""
 
-#: document/static/js/modules/editor/marginboxes/templates.js:184
+#: document/static/js/modules/editor/marginboxes/templates.js:182
 msgid "Comments"
 msgstr ""
 
-#: document/static/js/modules/editor/marginboxes/templates.js:184
+#: document/static/js/modules/editor/marginboxes/templates.js:182
 msgid "Show resolved comments"
 msgstr ""
 
-#: document/static/js/modules/editor/marginboxes/templates.js:184
+#: document/static/js/modules/editor/marginboxes/templates.js:182
 msgid "Show comments from all authors."
 msgstr ""
 
-#: document/static/js/modules/editor/marginboxes/templates.js:184
+#: document/static/js/modules/editor/marginboxes/templates.js:182
 msgid "Any"
 msgstr ""
 
-#: document/static/js/modules/editor/marginboxes/templates.js:184
+#: document/static/js/modules/editor/marginboxes/templates.js:182
 msgid "Show comments of "
 msgstr ""
 
-#: document/static/js/modules/editor/marginboxes/templates.js:184
+#: document/static/js/modules/editor/marginboxes/templates.js:182
 msgid "Assignee"
 msgstr ""
 
-#: document/static/js/modules/editor/marginboxes/templates.js:184
+#: document/static/js/modules/editor/marginboxes/templates.js:182
 msgid "Any/None"
 msgstr ""
 
-#: document/static/js/modules/editor/marginboxes/templates.js:188
+#: document/static/js/modules/editor/marginboxes/templates.js:186
 #: document/static/js/modules/editor/menus/headerbar/model.js:281
 msgid "Track changes"
 msgstr ""
@@ -2711,64 +2712,64 @@ msgstr ""
 msgid "Delete currently selected table"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:9
+#: document/static/js/modules/editor/menus/toolbar/model.js:8
 msgid "Normal Text"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:10
+#: document/static/js/modules/editor/menus/toolbar/model.js:9
 msgid "1st Heading"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:11
+#: document/static/js/modules/editor/menus/toolbar/model.js:10
 msgid "2nd Heading"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:12
+#: document/static/js/modules/editor/menus/toolbar/model.js:11
 msgid "3rd Heading"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:13
+#: document/static/js/modules/editor/menus/toolbar/model.js:12
 msgid "4th Heading"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:14
+#: document/static/js/modules/editor/menus/toolbar/model.js:13
 msgid "5th Heading"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:15
+#: document/static/js/modules/editor/menus/toolbar/model.js:14
 msgid "6th Heading"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:16
+#: document/static/js/modules/editor/menus/toolbar/model.js:15
 msgid "Code"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:82
+#: document/static/js/modules/editor/menus/toolbar/model.js:81
 msgid "Open/close header menu"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:317
+#: document/static/js/modules/editor/menus/toolbar/model.js:316
 msgid "Numbered list"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:400
+#: document/static/js/modules/editor/menus/toolbar/model.js:399
 msgid "Cite"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:416
+#: document/static/js/modules/editor/menus/toolbar/model.js:415
 msgid "Horizontal line"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:464
+#: document/static/js/modules/editor/menus/toolbar/model.js:463
 msgid "Insert a table into the document."
 msgstr ""
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:480
+#: document/static/js/modules/editor/menus/toolbar/model.js:479
 #: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
 msgid "Undo"
 msgstr ""
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:487
+#: document/static/js/modules/editor/menus/toolbar/model.js:486
 #: document/static/js/modules/editor/tools/show_key_bindings_templates.js:1
 msgid "Redo"
 msgstr ""
@@ -2777,7 +2778,7 @@ msgstr ""
 msgid "More"
 msgstr ""
 
-#: document/static/js/modules/editor/navigator/index.js:182
+#: document/static/js/modules/editor/navigator/index.js:187
 msgid "Document Navigator"
 msgstr ""
 
@@ -2953,7 +2954,7 @@ msgstr ""
 msgid "All documents and revisions updated!"
 msgstr ""
 
-#: document/static/js/modules/schema/common.js:110
+#: document/static/js/modules/schema/common.js:108
 msgid "Photo"
 msgstr ""
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-30 23:51+0000\n"
+"POT-Creation-Date: 2019-05-05 23:52+0000\n"
 "PO-Revision-Date: 2013-03-03 12:18-0700\n"
 "Last-Translator: Ana Vera Resquín <ani.tavr77@gmail.com>\n"
 "Language-Team: Spanish <ani.tavr77@gmail.com>\n"
@@ -70,7 +70,7 @@ msgstr ""
 #: base/templates/footer.html:17
 #, fuzzy
 #| msgid "Equations and Math by mathjax"
-msgid "Equations and Math by KaTeX"
+msgid "Equations and Math with MathLive"
 msgstr "Matemáticas con mathjax"
 
 #: base/templates/footer.html:22
@@ -132,18 +132,18 @@ msgstr ""
 msgid "Update all documents (DANGER!)"
 msgstr ""
 
-#: document/views.py:209 document/views.py:617
+#: document/views.py:209 document/views.py:616
 #, fuzzy
 msgid "Untitled"
 msgstr "Subtítulo"
 
-#: document/views.py:280 document/views.py:703
+#: document/views.py:280 document/views.py:702
 #, fuzzy
 #| msgid "Documents"
 msgid "Document"
 msgstr "Documentos"
 
-#: document/views.py:282 document/views.py:705
+#: document/views.py:282 document/views.py:704
 msgid "Author"
 msgstr "Autor"
 
@@ -153,7 +153,7 @@ msgstr "Autor"
 msgid "Access Rights"
 msgstr "Define derechos de acceso"
 
-#: document/views.py:287 document/views.py:710
+#: document/views.py:287 document/views.py:709
 #, fuzzy
 #| msgid "edit documents"
 msgid "Access the document"
@@ -164,17 +164,17 @@ msgstr "editar documentos"
 msgid "Document shared:"
 msgstr "Documentos"
 
-#: document/views.py:643
+#: document/views.py:642
 #, fuzzy
 msgid "Comment on :"
 msgstr "Comentarios"
 
-#: document/views.py:664
+#: document/views.py:663
 #, fuzzy
 msgid "Comment assignment on :"
 msgstr "Comentarios"
 
-#: document/views.py:707
+#: document/views.py:706
 #, fuzzy
 #| msgid "Comments"
 msgid "Comment"

@@ -15,7 +15,7 @@ export class ZipFileCreator {
     }
 
     init() {
-        return import("jszip").then(JSZip => {
+        return import("jszip").then(({default: JSZip}) => {
             this.zipFs = new JSZip()
             if (this.mimeType !== 'application/zip') {
                 this.zipFs.file('mimetype', this.mimeType, {compression: 'STORE'})
@@ -35,7 +35,7 @@ export class ZipFileCreator {
             }
             return new Promise(
                 resolve => import("jszip-utils").then(
-                    JSZipUtils => JSZipUtils.getBinaryContent(zipFile.url, (err, contents) => {
+                    ({default: JSZipUtils}) => JSZipUtils.getBinaryContent(zipFile.url, (err, contents) => {
                         zipDir.loadAsync(contents).then(_importedZip => {
                             resolve()
                         })
@@ -55,7 +55,7 @@ export class ZipFileCreator {
         })
         const httpPromises = this.binaryFiles.map(binaryFile =>
             new Promise(
-                resolve => import("jszip-utils").then(JSZipUtils => {
+                resolve => import("jszip-utils").then(({default: JSZipUtils}) => {
                     JSZipUtils.getBinaryContent(binaryFile.url, (err, contents) => {
                         this.zipFs.file(binaryFile.filename, contents, {binary: true, compression: 'DEFLATE'})
                         resolve()

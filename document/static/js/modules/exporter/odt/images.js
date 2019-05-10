@@ -68,7 +68,7 @@ export class OdtExporterImages {
                     new Promise(
                         resolve => {
                             import("jszip-utils").then(
-                                JSZipUtils => JSZipUtils.getBinaryContent(
+                                ({default: JSZipUtils}) => JSZipUtils.getBinaryContent(
                                     imgDBEntry.image,
                                     (err, imageFile) => {
                                         const wImgId = this.addImage(

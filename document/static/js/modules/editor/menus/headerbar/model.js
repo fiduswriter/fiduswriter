@@ -39,7 +39,7 @@ export const headerbarModel = () => ({
                 {
                     title: gettext('Share'),
                     type: 'action',
-                    icon: 'share',
+                    //icon: 'share',
                     tooltip: gettext('Share the document with other users.'),
                     order: 0,
                     action: editor => {
@@ -62,7 +62,7 @@ export const headerbarModel = () => ({
                 {
                     title: gettext('Close'),
                     type: 'action',
-                    icon: 'times-circle',
+                    //icon: 'times-circle',
                     tooltip: gettext('Close the document and return to the document overview menu.'),
                     order: 1,
                     action: editor => {
@@ -72,7 +72,7 @@ export const headerbarModel = () => ({
                 {
                     title: gettext('Save revision'),
                     type: 'action',
-                    icon: 'save',
+                    //icon: 'save',
                     tooltip: gettext('Save a revision of the current document.'),
                     order: 2,
                     keys: 'Ctrl-s',
@@ -95,7 +95,7 @@ export const headerbarModel = () => ({
                 {
                     title: gettext('Create Copy'),
                     type: 'action',
-                    icon: 'copy',
+                    //icon: 'copy',
                     tooltip: gettext('Create copy of the current document.'),
                     order: 3,
                     action: editor => {
@@ -113,7 +113,7 @@ export const headerbarModel = () => ({
                 {
                     title: gettext('Download'),
                     type: 'action',
-                    icon: 'download',
+                    //icon: 'download',
                     tooltip: gettext('Download the current document.'),
                     order: 4,
                     action: editor => {
@@ -127,7 +127,7 @@ export const headerbarModel = () => ({
                 {
                     title: gettext('Print/PDF'),
                     type: 'action',
-                    icon: 'print',
+                    //icon: 'print',
                     tooltip: gettext('Either print or create a PDF using your browser print dialog.'),
                     order: 5,
                     keys: 'Ctrl-p',

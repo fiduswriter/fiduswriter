@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-05 23:52+0000\n"
+"POT-Creation-Date: 2019-05-10 21:50+0000\n"
 "PO-Revision-Date: 2013-03-03 12:18-0700\n"
 "Last-Translator: Ana Vera Resquín <ani.tavr77@gmail.com>\n"
 "Language-Team: Spanish <ani.tavr77@gmail.com>\n"
@@ -58,28 +58,6 @@ msgstr "Documentos"
 #: base/templates/app.html:11 user/templates/account/base.html:7
 msgid "The all in one solution for collaborative academic writing."
 msgstr "La herramienta perfecta para redactar textos académicos."
-
-#: base/templates/footer.html:7
-msgid "Terms and Conditions"
-msgstr "Términos y Condiciones"
-
-#: base/templates/footer.html:12
-msgid "Privacy policy"
-msgstr ""
-
-#: base/templates/footer.html:17
-#, fuzzy
-#| msgid "Equations and Math by mathjax"
-msgid "Equations and Math with MathLive"
-msgstr "Matemáticas con mathjax"
-
-#: base/templates/footer.html:22
-msgid "Citations with Citation Style Language"
-msgstr "Estilos de citaciones con CSL"
-
-#: base/templates/footer.html:27
-msgid "Editing with ProseMirror"
-msgstr ""
 
 #: browser_check/templates/browser_check/browser_not_supported.html:4
 #: browser_check/templates/browser_check/browser_not_supported.html:27
@@ -132,18 +110,18 @@ msgstr ""
 msgid "Update all documents (DANGER!)"
 msgstr ""
 
-#: document/views.py:209 document/views.py:616
+#: document/views.py:209 document/views.py:624
 #, fuzzy
 msgid "Untitled"
 msgstr "Subtítulo"
 
-#: document/views.py:280 document/views.py:702
+#: document/views.py:280 document/views.py:710
 #, fuzzy
 #| msgid "Documents"
 msgid "Document"
 msgstr "Documentos"
 
-#: document/views.py:282 document/views.py:704
+#: document/views.py:282 document/views.py:712
 msgid "Author"
 msgstr "Autor"
 
@@ -153,7 +131,7 @@ msgstr "Autor"
 msgid "Access Rights"
 msgstr "Define derechos de acceso"
 
-#: document/views.py:287 document/views.py:709
+#: document/views.py:287 document/views.py:717
 #, fuzzy
 #| msgid "edit documents"
 msgid "Access the document"
@@ -164,17 +142,17 @@ msgstr "editar documentos"
 msgid "Document shared:"
 msgstr "Documentos"
 
-#: document/views.py:642
+#: document/views.py:650
 #, fuzzy
 msgid "Comment on :"
 msgstr "Comentarios"
 
-#: document/views.py:663
+#: document/views.py:671
 #, fuzzy
 msgid "Comment assignment on :"
 msgstr "Comentarios"
 
-#: document/views.py:706
+#: document/views.py:714
 #, fuzzy
 #| msgid "Comments"
 msgid "Comment"
@@ -234,6 +212,85 @@ msgstr "Imagen de perfil predeterminada"
 #: user/templates/account/signup.html:9
 msgid "Log In"
 msgstr "Iniciar sesión"
+
+#: user/templates/account/base.html:74
+msgid "Terms and Conditions"
+msgstr "Términos y Condiciones"
+
+#: user/templates/account/base.html:79
+msgid "Privacy policy"
+msgstr ""
+
+#: user/templates/account/base.html:84
+#, fuzzy
+#| msgid "Equations and Math by mathjax"
+msgid "Equations and Math with MathLive"
+msgstr "Matemáticas con mathjax"
+
+#: user/templates/account/base.html:89
+msgid "Citations with Citation Style Language"
+msgstr "Estilos de citaciones con CSL"
+
+#: user/templates/account/base.html:94
+msgid "Editing with ProseMirror"
+msgstr ""
+
+#: user/templates/account/email/email_confirmation_message.html:7
+#: user/templates/account/email/password_reset_key_message.html:7
+#, python-format
+msgid ""
+"\n"
+"        Hello from %(site_name)s!\n"
+"    "
+msgstr ""
+
+#: user/templates/account/email/email_confirmation_message.html:14
+#, python-format
+msgid ""
+"\n"
+"        You're receiving this e-mail because user %(user_display)s has given "
+"yours as an e-mail address to connect their account.\n"
+"    "
+msgstr ""
+
+#: user/templates/account/email/email_confirmation_message.html:20
+#, python-format
+msgid ""
+"\n"
+"        To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</a>.\n"
+"    "
+msgstr ""
+
+#: user/templates/account/email/email_confirmation_message.html:26
+#: user/templates/account/email/password_reset_key_message.html:32
+#, python-format
+msgid ""
+"\n"
+"        Thank you from %(site_name)s!\n"
+"    "
+msgstr ""
+
+#: user/templates/account/email/password_reset_key_message.html:13
+#, fuzzy
+msgid ""
+"\n"
+"        You're receiving this e-mail because you or someone else has "
+"requested a password for your user account.\n"
+"    "
+msgstr "Estás recibiendo ese correo porque pediste restablecer tu contraseña"
+
+#: user/templates/account/email/password_reset_key_message.html:18
+msgid ""
+"\n"
+"        It can be safely ignored if you did not request a password reset. "
+"Click the link below to reset your password.\n"
+"    "
+msgstr ""
+
+#: user/templates/account/email/password_reset_key_message.html:27
+#, python-format
+msgid "In case you forgot, your username is %(username)s."
+msgstr ""
 
 #: user/templates/account/email_confirm.html:8
 msgid "Confirm E-mail Address"
@@ -305,15 +362,6 @@ msgstr "Recuerda tu contraseña"
 msgid "Forgot Password?"
 msgstr "¿Olvidaste tu Contraseña?"
 
-#: user/templates/account/logout.html:5 user/templates/account/logout.html:9
-#: user/templates/account/logout.html:19
-msgid "Sign Out"
-msgstr "Regístrate"
-
-#: user/templates/account/logout.html:11
-msgid "Are you sure you want to sign out?"
-msgstr "¿Estás seguro que deseas cerrar la sesión?"
-
 #: user/templates/account/password_reset.html:6
 #: user/templates/account/password_reset.html:13
 msgid "Password reset"
@@ -323,8 +371,8 @@ msgstr "Restablece tu contraseña"
 #, fuzzy, python-format
 msgid ""
 "\n"
-"    <p>Forgotten your password? Enter your e-mail address below, and we'll "
-"send you an e-mail allowing you to reset it.</p>\n"
+"    <p>Forgotten your password? Enter your e-mail address in the form, and "
+"we'll send you an e-mail allowing you to reset it.</p>\n"
 "    <p>If you have any trouble resetting your password, please <a href="
 "\"mailto:%(CONTACT_EMAIL)s\">contact us</a>.</p>\n"
 "    "
@@ -418,6 +466,12 @@ msgstr ""
 #: usermedia/views.py:60
 msgid "No file uploaded"
 msgstr ""
+
+#~ msgid "Sign Out"
+#~ msgstr "Regístrate"
+
+#~ msgid "Are you sure you want to sign out?"
+#~ msgstr "¿Estás seguro que deseas cerrar la sesión?"
 
 #~ msgid "Edit profile"
 #~ msgstr "Edita tu perfil"
@@ -1986,13 +2040,6 @@ msgstr ""
 #~ msgstr ""
 #~ "Te hemos enviado por correo electrónico las instrucciones para "
 #~ "restablecer tu contraseña. En breve recibirás el correo."
-
-#, fuzzy
-#~ msgid ""
-#~ "You're receiving this email because you requested a password reset for "
-#~ "your user account at %(site_name)s."
-#~ msgstr ""
-#~ "Estás recibiendo ese correo porque pediste restablecer tu contraseña"
 
 #~ msgid "Please go to the following page and choose a new password:"
 #~ msgstr "Por favor, haz clic acá y elige una nueva contraseña:"

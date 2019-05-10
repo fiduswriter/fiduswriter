@@ -50,6 +50,20 @@ export class FigureDialog {
                 virtualKeyboardMode: 'manual',
                 onBlur: () => this.showPlaceHolder(),
                 onFocus: () => this.hidePlaceHolder(),
+                locale: 'int',
+                strings: {
+                    'int': {
+                        "keyboard.tooltip.functions": gettext("Functions"),
+                        "keyboard.tooltip.greek": gettext("Greek Letters"),
+                        "keyboard.tooltip.command": gettext("LaTeX Command Mode"),
+                        "keyboard.tooltip.numeric": gettext("Numeric"),
+                        "keyboard.tooltip.roman": gettext("Symbols and Roman Letters"),
+                        "tooltip.copy to clipboard": gettext("Copy to Clipboard"),
+                        "tooltip.redo": gettext("Redo"),
+                        "tooltip.toggle virtual keyboard": gettext("Toggle Virtual Keyboard"),
+                        "tooltip.undo": gettext("Undo")
+                    }
+                },
                 onContentDidChange: () => {
                     this.equation = this.mathField.$latex()
                     this.showHideNonMathElements()

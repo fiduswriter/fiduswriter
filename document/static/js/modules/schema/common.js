@@ -117,6 +117,12 @@ export function parseTracks(str) {
     )
 }
 
+function addTracks(node, attrs) {
+    if (node.attrs.track && node.attrs.track.length) {
+        attrs['data-track'] = JSON.stringify(node.attrs.track)
+    }
+}
+
 let imageDBBroken = false
 
 export const figure = {
@@ -187,7 +193,7 @@ export const figure = {
                 dom.classList.add('image-width-25')
         }
 
-        if (node.attrs.track.length) {
+        if (node.attrs.track && node.attrs.track.length) {
             dom.dataset.track = JSON.stringify(node.attrs.track)
         }
         if (node.attrs.image !== false) {
@@ -287,9 +293,7 @@ const createHeading = level => ({
     ],
     toDOM(node) {
         const attrs = {id: node.attrs.id}
-        if (node.attrs.track.length) {
-            attrs['data-track'] = JSON.stringify(node.attrs.track)
-        }
+        addTracks(node, attrs)
         return [`h${level}`, attrs, 0]
     }
 })
@@ -379,7 +383,7 @@ export const paragraph = {
         track: parseTracks(dom.dataset.track)
     }}}],
     toDOM(node) {
-        const attrs = node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
+        const attrs = node.attrs.track && node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
         return ['p', attrs, 0]
     }
 }
@@ -399,7 +403,7 @@ export const blockquote = {
         track: parseTracks(dom.dataset.track)
     }}}],
     toDOM(node) {
-        const attrs = node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
+        const attrs = node.attrs.track && node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
         return ["blockquote", attrs, 0]
     }
 }
@@ -416,7 +420,7 @@ export const horizontal_rule = {
         track: parseTracks(dom.dataset.track)
     }}}],
     toDOM(node) {
-        const attrs = node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
+        const attrs = node.attrs.track && node.attrs.track.length ? {'data-track': JSON.stringify(node.attrs.track)} : {}
         return ["hr", attrs]
     }
 }
@@ -472,9 +476,7 @@ export const ordered_list = {
         if (node.attrs.order !== 1) {
             attrs.start = node.attrs.order
         }
-        if (node.attrs.track.length) {
-            attrs['data-track'] = JSON.stringify(node.attrs.track)
-        }
+        addTracks(node, attrs)
         return ["ol", attrs, 0]
     }
 }
@@ -494,9 +496,7 @@ export const bullet_list = {
     }}],
     toDOM(node) {
         const attrs = {}
-        if (node.attrs.track.length) {
-            attrs['data-track'] = JSON.stringify(node.attrs.track)
-        }
+        addTracks(node, attrs)
         return ["ul", attrs, 0]
     }
 }
@@ -516,9 +516,7 @@ export const list_item = {
     }}],
     toDOM(node) {
         const attrs = {}
-        if (node.attrs.track.length) {
-            attrs['data-track'] = JSON.stringify(node.attrs.track)
-        }
+        addTracks(node, attrs)
         return ["li", attrs, 0]
     },
     defining: true

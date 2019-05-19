@@ -12,14 +12,24 @@ module.exports = {
     ],
     "settings": {
         "import/resolver": {
-            "node": {},
+            "node": {
+                "moduleDirectory": '.transpile/node_modules'
+            },
             [path.resolve('test/eslint-import-resolver')]: {}
         }
     },
+    "parser": "babel-eslint",
     "parserOptions": {
-        "ecmaVersion": 2018,
-        "sourceType": "module"
+      "sourceType": "module",
+      "allowImportExportEverywhere": true,
+      "ecmaFeatures": {
+        "globalReturn": false,
+      }
     },
+    // "parserOptions": {
+    //     "ecmaVersion": 2018,
+    //     "sourceType": "module"
+    // },
     "rules": {
         "accessor-pairs": "error",
         "array-bracket-newline": "off",
@@ -159,7 +169,7 @@ module.exports = {
         "no-param-reassign": "off",
         "no-path-concat": "error",
         "no-plusplus": "off",
-        "no-process-env": "error",
+        "no-process-env": "off",
         "no-process-exit": "error",
         "no-proto": "error",
         "no-prototype-builtins": "off",
@@ -290,7 +300,6 @@ module.exports = {
     "globals": {
         "gettext": false,
         "interpolate": false,
-        "MathQuill": true,
-        "$StaticUrls": false
+        "process": false
     }
 };

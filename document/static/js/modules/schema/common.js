@@ -1,5 +1,3 @@
-import katex from "katex"
-
 function parseReferences(str) {
     if (!str) {
         return []
@@ -79,8 +77,8 @@ export const equation = {
         const dom = document.createElement('span')
         dom.dataset.equation = node.attrs.equation
         dom.classList.add('equation')
-        katex.render(node.attrs.equation, dom, {
-            throwOnError: false
+        import("mathlive").then(MathLive => {
+            dom.innerHTML = MathLive.latexToMarkup(node.attrs.equation, 'textstyle')
         })
         dom.setAttribute('contenteditable', 'false')
         return dom
@@ -233,10 +231,8 @@ export const figure = {
             const domEquation = document.createElement('div')
             domEquation.classList.add('figure-equation')
             domEquation.setAttribute('data-equation', node.attrs.equation)
-
-            katex.render(node.attrs.equation, domEquation, {
-                displayMode: true,
-                throwOnError: false
+            import("mathlive").then(MathLive => {
+                domEquation.innerHTML = MathLive.latexToMarkup(node.attrs.equation, 'displaystyle')
             })
             dom.appendChild(domEquation)
         }

@@ -25,15 +25,18 @@ header {
     font-size: 22px;
     color: #fff;
     font-style: italic;
-    padding-left: 108px;
-    background: url(../img/fidus_face.png) no-repeat 68px 0;
-    background-size: 17px 21px;
+    padding: 0 48px 0 110px;
+    background: url(../img/fidus_face.png) no-repeat 42px 0;
+    background-size: 23px auto;
     line-height: 32px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 #header-navigation {
     position: relative;
-    margin: 20px 0 0 68px;
+    margin: 20px 0 0 110px;
     -webkit-user-select: none;
 }
 
@@ -74,6 +77,18 @@ header {
     color: white !important;
 }
 
+/*
+ * Selection Menu style
+ */
+#selection-menu {
+    margin-left: -23px;
+    z-index: 1;
+}
+
+#selection-menu > div {
+    width: 46px;
+}
+
 
 /*
  * Toolbar Style
@@ -84,7 +99,7 @@ header {
     z-index: 88;
     width: 100%;
     -webkit-user-select: none;
-    padding: 12px 0;
+    padding: 34px 0;
     background-color: #f2f2f2;
 }
 
@@ -122,13 +137,13 @@ header {
     background-color: #e0e0e0;
 }
 
-.editortoolbar {
+.editor-toolbar {
     position: relative;
-    left: 14px;
     width: auto !important;
+    padding-left: 110px
 }
 
-.editortoolbar div.ui-buttonset {
+.editor-toolbar div.ui-buttonset {
     position: relative;
     display: inline-block;
     white-space: nowrap;
@@ -136,7 +151,12 @@ header {
     margin-right: 6px;
 }
 
-.editortoolbar div.info {
+.editor-toolbar div.ui-buttonset:first-child {
+    position: absolute;
+    left: 30px;
+}
+
+.editor-toolbar div.info {
     /*max-width: 90px;*/
     min-width: 62px;
     color: #000;
@@ -158,11 +178,11 @@ header {
     text-align: center;
 }
 
-.editortoolbar div.multiButtons {
+.editor-toolbar div.multiButtons {
     width: auto;
 }
 
-.editortoolbar div.multiButtons .multibuttonsCover {
+.editor-toolbar div.multiButtons .multibuttonsCover {
     position: relative;
     min-width: 85px;
     max-width: 120px;
@@ -173,13 +193,14 @@ header {
     font-size: 13px;
     font-weight: 700;
     letter-spacing: 0.07px;
+    padding: 0 40px 0 20px;
 }
 
-.editortoolbar div.multiButtons .multibuttonsCover:after {
+.editor-toolbar div.multiButtons .multibuttonsCover:after {
     display: block;
     position: absolute;
     right: 10px;
-    top: 14px;
+    top: 16px;
     text-align: right;
     margin-top: 0;
     width: 9px;
@@ -191,16 +212,16 @@ header {
     letter-spacing: 0.15px;
 }
 
-.editortoolbar div.multiButtons .multibuttonsCover.disabled:after {
+.editor-toolbar div.multiButtons .multibuttonsCover.disabled:after {
     display: none;
 }
 
-.editortoolbar .fw-button.no-border {
+.editor-toolbar .fw-button.no-border {
     background: transparent;
     border-color: transparent;
 }
 
-.editortoolbar .fw-button.no-border .ui-button-text {
+.editor-toolbar .fw-button.no-border .ui-button-text {
     width: 10px;
     height: 10px;
     opacity: 0.4;
@@ -211,17 +232,22 @@ header {
     letter-spacing: 0.17px;
 }
 
-.editortoolbar .fw-button {
+.editor-toolbar .fw-button, .editor-selection-menu .fw-button {
     border-width: 0px;
 }
 
-.editortoolbar .fw-button.fw-large {
+.editor-selection-menu .fw-button {
+    margin-bottom: 4px;
+}
+
+
+.editor-toolbar .fw-button.fw-large, .editor-selection-menu .fw-button.fw-large {
     height: 46px;
     line-height: 46px;
     border-radius: 23px;
 }
 
-.editortoolbar .fw-button.fw-large.fw-square {
+.editor-toolbar .fw-button.fw-large.fw-square, .editor-selection-menu .fw-button.fw-large.fw-square {
     width: 46px;
 }
 
@@ -257,15 +283,19 @@ div#statusarea .error {
 
 #editor-content {
     display: flex;
-    top: 200px;
-    bottom: 50px;
     position: relative;
+    top: 225px;
     max-width: 1600px;
-    padding: .5in 68px 0 68px;
+    padding: .5in 54px 0 110px;
+}
+
+body.header-closed #toolbar {
+    padding-top: 12px;
+    padding-bottom: 12px;
 }
 
 body.header-closed #editor-content {
-    top: 91px;
+    top: 72px;
 }
 
 #flow .article-bibliography {
@@ -406,7 +436,6 @@ span.delete {
     position: relative;
     width: 100%;
     bottom: 50px;
-    border: 1px solid #d1d1d1;
 }
 
 #flow.hide {
@@ -537,15 +566,30 @@ span.delete {
 }
 
 
-/* MathQuill Editor Overwrite */
+.image-selection-table tr {
+    cursor: pointer;
+}
+
+/* MathLive Editor Overwrite */
 
 .math-field {
-    min-width: 250px;
     background-color: white;
-    margin: 9px 0 7px 0;
+    margin: 9px 10px 7px 10px;
     padding-left: 5px;
     font-size: 20px;
     display: block;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: solid 1px #d3d3d3;
+    cursor: text;
+    position: relative;
+}
+
+.math-field .placeholder {
+    position: absolute;
+    top: 20px;
+    left: 10px;
+    color: #d3d3d3;
 }
 
 .math-latex {
@@ -556,12 +600,12 @@ span.delete {
     padding-left: 5px;
 }
 
-.math-field-header {
+/* .math-field-header {
     font-size: 113%;
     font-weight: 400;
-}
+} */
 
-.math-error {
+/* .math-error {
     margin: 10px 0px;
     padding: 12px;
     color: #D8000C;
@@ -569,7 +613,15 @@ span.delete {
     font-size: 2em;
     vertical-align: middle;
     display: none;
+} */
+
+.ML__popover {
+    z-index: 1000;
 }
+
+/* .ML__base:empty:before, .ML__base > span:first-child:empty:before {
+    content: 'Type here';
+} */
 
 div.table-edit-button-group {
     margin-bottom: 10px;
@@ -650,7 +702,7 @@ table.insert-table-selection td.selected.hover {
     font-weight: 400;
     line-height: 18px;
     letter-spacing: 0.13px;
-    border-radius: 5px 5px 0 0;
+    border-radius: 6px 6px 0 0;
 }
 
 .drop-up-head .link-href a {
@@ -659,18 +711,21 @@ table.insert-table-selection td.selected.hover {
     font-family: Lato;
     font-size: 12px;
     font-weight: 700;
-    line-height: 40px;
     text-decoration: none;
+}
+
+.drop-up-head > * + * {
+    margin-top: 14px;
 }
 
 .link.drop-up-inner {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.11);
-    border-radius: 5px;
+    border-radius: 6px;
 }
 
 .user-contents ul.drop-up-options li {
     border-top: 1px solid #eeeeee;
-    padding: 18px 31px 15px 31px;
+    padding: 16px 30px;
     color: #2c2723;
     font-family: Lato;
     font-size: 13px;
@@ -680,12 +735,20 @@ table.insert-table-selection td.selected.hover {
 
 .user-contents ul.drop-up-options {
     list-style: none;
-    padding: 0 0 5px 0;
+    padding: 0 0 12px 0;
     cursor: pointer;
 }
 
 ul.drop-up-options li:hover {
     background-color: #eeeeee;
+}
+
+.drop-up-options .remove-link:after {
+    font-family: "Font Awesome 5 Free";
+    content: "\f2ed";
+    opacity: 0.4;
+    float: right;
+    display: block;
 }
 
 .drop-up-inner .edit {
@@ -699,28 +762,40 @@ ul.drop-up-options li:hover {
 
 
 /* Additions for tablets + mobile */
-
-@media screen and (max-width: 1023px) {
-    #editor-content {
-        padding: 0.5in 0 0 0;
-    }
-    #flow {
-        border-width: 0;
-    }
+@media screen and (max-width: 1279px) {
     #document-top>h1 {
-        padding-left: 50px;
-        background: initial;
+        padding-left: 52px;
+        background-position: 14px 0;
     }
+
     #header-navigation {
-        margin-left: 50px;
+        margin-left: 52px;
+    }
+
+    .editor-toolbar div.ui-buttonset:first-child {
+        left: 3px;
+    }
+
+    .editor-toolbar {
+        padding-left: 52px;
+    }
+
+    #editor-content {
+        padding-left: 52px;
+        padding-right: 30px;
     }
 }
 
-@media screen and (max-width: 767px) {
+
+@media screen and (max-width: 1023px) {
+    #editor-content {
+        padding-right: 15px;
+    }
     #flow {
         padding-left: 8px;
     }
     #document-top>h1 {
+        background: initial;
         padding-left: 8px;
     }
     #header-navigation {
@@ -824,28 +899,49 @@ html[hc=a5] #toolbar {
 
 #navigator {
     top: 250px;
-    left:-265px;
+    left: 0;
     position: fixed;
     z-index: 9;
-    -webkit-transition: left 0.7s; /* Safari */
-    transition: left 0.7s;
+}
+
+#navigator.opened #navigator-content {
+    transform: translateX(0);
 }
 
 #navigator-content {
-    display: inline-block;
-    background-color: black;
-    opacity: 0.9;
-    width:260px;
+    position: fixed;
+    top: auto;
+    left: 0;
+    display: block;
+    background-color: rgba(0,0,0,0.8);
+    min-width: 216px;
+    max-width:480px;
     color: white;
-    padding: 15px 5px 20px 0px; 
+    padding: 15px 30px 15px 50px;
+    box-sizing: border-box;
+    font-size: 13px;
+    line-height: 1.2;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease-out;
 }
 
 #navigator-list {
-    min-height: 90px;
     max-height: 550px;
     overflow-y: scroll;
     -ms-overflow-style: none;
     overflow: -moz-scrollbars-none;
+}
+
+#navigator-filter span {
+    display: block;
+    padding-bottom: 10px;
+}
+
+#navigator-list.hide,
+#navigator-filter.hide {
+    display: block;
+    height: 0;
+    overflow: hidden;
 }
 
 #navigator-list::-webkit-scrollbar {
@@ -853,78 +949,70 @@ html[hc=a5] #toolbar {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #181818; 
+    background: #181818;
     border-radius: 10px;
 }
-  
+
 ::-webkit-scrollbar-thumb:hover {
     cursor: pointer;
-    background: #0f0f0f; 
+    background: #0f0f0f;
 }
 
 #navigator-content a {
     color: white;
 }
-#navigator-content h1,
-#navigator-content h2,
-#navigator-content h3,
-#navigator-content h4,
-#navigator-content h5,
-#navigator-content h6 {
-    font-size: 1.2em;
-    font-weight: normal;
-    margin-bottom: unset;
-    padding-left: 3em;
-    padding-top: 0.7em;
-    padding-bottom: 0.7em;
-    overflow-wrap: break-word;
+
+#navigator-list > * {
+    padding-bottom: 12px;
 }
+
+#navigator-list a:hover {
+    text-decoration: underline;
+}
+
 #navigator-content h2 {
-    padding-left: 3.5em;
+    padding-left: 1em;
 }
 #navigator-content h3 {
-    padding-left: 4em;
+    padding-left: 2em;
 }
 #navigator-content h4 {
-    padding-left: 4.5em;
+    padding-left: 3em;
 }
 #navigator-content h5 {
-    padding-left: 5em;
+    padding-left: 4em;
 }
 #navigator-content h6 {
-    padding-left: 5.5em;
+    padding-left: 5em;
 }
 #navigator-content .header {
-    font-size: 1.1em;
-    font-weight: bold;
-    text-decoration: underline;
     text-transform: uppercase;
-    display: inline-block;
-    padding: 0 0 1em 2em;
+    padding-bottom: 20px;
 }
 .header-container {
-    display: inline-block;
-    text-align: center;
-    width: 250px;
+    position: relative;
+    padding-right: 28px;
 }
 
 .active-heading {
-    background: grey
+    text-decoration: underline;
 }
 
 #navigator-button {
-    float: right;
-    background-color: black;
-    opacity: 0.9;
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: block;
+    width: 42px;
+    height: 42px;
+    text-align: center;
+    line-height: 42px;
+    background-color: #303030;
     cursor: pointer;
-    padding: 1em;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
+    z-index: 4;
 }
 .navigator-arrow-icon {
     color: white;
-    font-size: 1.4em;
-    
 }
 .navigator-arrow-icon i {
     transition: all 0.50s 0.25s;
@@ -933,25 +1021,20 @@ html[hc=a5] #toolbar {
     transform: rotate(180deg);
 }
 
-#navigator-filter-icon {
-    cursor: pointer;
-    font-size: 1.2em;
-    float: right;
-}
-
+#navigator-filter-icon,
 #navigator-filter-back {
     cursor: pointer;
-    font-size: 1.3em;
-    float: left;
-    padding-left: 1.2em;
+    position: absolute;
+    right: 0;
+    top: 0;
 }
 
-#navigator-filter {
-    font-size: 1.2em;
-    font-weight: normal;
-    margin-bottom: unset;
-    padding-left: 5em;
-    padding-top: 1.3em;
+#navigator-filter-icon {
+    transition: transform 0.2s;
+}
+
+#navigator-filter-icon:hover {
+    transform: rotate(90deg);
 }
 
 .form-checkbox {
@@ -967,7 +1050,7 @@ html[hc=a5] #toolbar {
     width: 18px;
     border: 0;
     border-radius: 3px;
-    cursor: pointer;     
+    cursor: pointer;
     margin-right: 7px;
     outline: none;
 }
@@ -987,6 +1070,8 @@ html[hc=a5] #toolbar {
 .navigator-label {
     color: white;
     cursor: pointer;
+    display: inline-block;
+    vertical-align: middle;
 }
 .hide {
     display: none;

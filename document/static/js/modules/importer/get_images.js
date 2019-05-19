@@ -1,5 +1,3 @@
-import JSZipUtils from "jszip-utils"
-
 export class GetImages {
     constructor(images, entries) {
         this.images = images
@@ -45,15 +43,17 @@ export class GetImages {
             return new Promise(resolve => {
                 const getUrl = this.entries.find(entry => entry.filename === this.imageEntries[this.counter].image.split('/').pop()).url
                 const mimeString = this.imageEntries[this.counter].file_type
-                JSZipUtils.getBinaryContent(getUrl, (err, data) => {
-                    const dataView = new DataView(data)
-                    const blob = new window.Blob([dataView], {type: mimeString})
-                    this.imageEntries[this.counter]['file'] = blob
-                    this.counter++
-                    this.getImageUrlEntry().then(()=>{
-                        resolve()
+                import("jszip-utils").then(
+                    ({default: JSZipUtils}) => JSZipUtils.getBinaryContent(getUrl, (err, data) => {
+                        const dataView = new DataView(data)
+                        const blob = new window.Blob([dataView], {type: mimeString})
+                        this.imageEntries[this.counter]['file'] = blob
+                        this.counter++
+                        this.getImageUrlEntry().then(()=>{
+                            resolve()
+                        })
                     })
-                })
+                )
             })
         } else {
             return Promise.resolve()

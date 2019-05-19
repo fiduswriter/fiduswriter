@@ -1,5 +1,4 @@
 import {mathDialogTemplate} from "./templates"
-import {FormulaEditor} from '../tools/formula_editor'
 import {Dialog} from "../../common"
 
 /**
@@ -8,11 +7,9 @@ import {Dialog} from "../../common"
 export class MathDialog {
     constructor(editor) {
         this.editor = editor
-        const defaultEquation = '\\$x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}'
         this.node = this.editor.currentView.state.selection.node
-        this.mathQuill = null
         this.equationSelected = this.node && this.node.attrs && this.node.attrs.equation ? true : false
-        this.equation = this.equationSelected ? this.node.attrs.equation : defaultEquation
+        this.equation = this.equationSelected ? this.node.attrs.equation : ''
     }
 
     init() {
@@ -29,7 +26,7 @@ export class MathDialog {
                         const view = this.editor.currentView,
                             state = view.state
 
-                        this.equation = this.mathQuill.getLatex()
+                        this.equation = this.getLatex()
 
                         if ((new RegExp(/^\s*$/)).test(this.equation)) {
                             // The math input is empty. Delete a math node if it exist. Then close the dialog.
@@ -38,7 +35,7 @@ export class MathDialog {
                             }
                             this.dialog.close()
                             return
-                        } else if (this.equationSelectede && this.equation === this.node.attrs.equation) {
+                        } else if (this.equationSelected && this.equation === this.node.attrs.equation) {
                             // Equation selected, but has not changed from last time.
                             this.dialog.close()
                             return
@@ -53,24 +50,66 @@ export class MathDialog {
                     }
                 },
                 {
-                    text: gettext('LaTeX / Graphic'),
-                    classes: 'fw-dark',
-                    click: () => this.mathQuill.switchLatexGraphicMode()
-                },
-                {
                     type: 'cancel'
                 }
             ],
             title: gettext('Mathematical formula'),
-            height: 90,
-            onClose: () => {
-                this.editor.currentView.focus()
-            }
+            height: 150,
+            beforeClose: () => {
+                if (this.mathField) {
+                    this.mathField.$revertToOriginalContent()
+                    this.mathField = false
+                }
+            },
+            onClose: () => this.editor.currentView.focus()
         })
-
         this.dialog.open()
 
-        //initialize advanced formula editor using mathquill
-        this.mathQuill = new FormulaEditor(this.dialog, this.equation)
+        this.mathliveDOM = this.dialog.dialogEl.querySelector(".math-field")
+
+        import("mathlive").then(MathLive => {
+            this.mathField = MathLive.makeMathField(this.mathliveDOM, {
+                virtualKeyboardMode: 'manual',
+                onBlur: () => this.showPlaceHolder(),
+                onFocus: () => this.hidePlaceHolder(),
+                locale: 'int',
+                strings: {
+                    'int': {
+                        "keyboard.tooltip.functions": gettext("Functions"),
+                        "keyboard.tooltip.greek": gettext("Greek Letters"),
+                        "keyboard.tooltip.command": gettext("LaTeX Command Mode"),
+                        "keyboard.tooltip.numeric": gettext("Numeric"),
+                        "keyboard.tooltip.roman": gettext("Symbols and Roman Letters"),
+                        "tooltip.copy to clipboard": gettext("Copy to Clipboard"),
+                        "tooltip.redo": gettext("Redo"),
+                        "tooltip.toggle virtual keyboard": gettext("Toggle Virtual Keyboard"),
+                        "tooltip.undo": gettext("Undo")
+                    }
+                }
+            })
+            this.mathField.$latex(this.equation)
+            this.showPlaceHolder()
+        })
+    }
+
+    /**
+     * Get latex representation as text
+     * @returns {string} latex formula
+     */
+    getLatex() {
+        return this.mathField.$latex()
+    }
+
+    showPlaceHolder() {
+        if (!this.getLatex().length) {
+            this.mathliveDOM.insertAdjacentHTML('beforeend', `<span class="placeholder" >${gettext('Type formula')}</span>`)
+        }
+    }
+
+    hidePlaceHolder() {
+        const placeHolder = this.mathliveDOM.querySelector('.placeholder')
+        if (placeHolder) {
+            this.mathliveDOM.removeChild(placeHolder)
+        }
     }
 }

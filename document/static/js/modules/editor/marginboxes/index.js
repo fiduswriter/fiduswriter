@@ -304,7 +304,7 @@ export class ModMarginboxes {
                     activeIndex++
                 }
 
-                const initialOffset = document.body.classList.contains('header-closed') ? 91 + 60 : 200 + 60
+                const initialOffset = document.body.classList.contains('header-closed') ? 72 + 90 : 225 + 90
                 let totalOffset = 0
 
                 const marginBoxesPlacementStyle = marginBoxPlacements.map((mboxPlacement, index) => {

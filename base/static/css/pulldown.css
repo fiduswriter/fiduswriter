@@ -2,8 +2,11 @@
 .fw-pulldown {
     position: absolute;
     display: none;
-    margin-top: 9px;
     z-index: 100;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    background-color: white;
+    border-radius: 6px;
+    color: black;
 }
 .fw-pulldown.fw-open {
     display: block;
@@ -21,15 +24,10 @@
     margin-top: 0;
 }
 
-.fw-pulldown .fw-pulldown:after {
-    content: '';
-}
-
 .fw-pulldown > ul {
     position: relative;
-    background-color: #2b2b2b;
-    padding: 8px 0;
-    border: 1px solid #abaaaa;
+    padding: 12px 0;
+    border: 0 none;
 }
 
 .fw-pulldown-header {
@@ -40,29 +38,28 @@
 }
 
 .fw-pulldown-item {
-    white-space: nowrap;
+    position: relative;
     display: block;
     width: auto;
     height: auto;
-    padding: 0 21px 0 11px;
-    font-size: 11px;
-    line-height: 24px;
+    min-width: 110px;
+    padding: 16px 30px;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1;
     text-align: left;
     text-decoration: none;
+    white-space: nowrap;
     cursor: pointer;
-    color: #2c2723;
-    position: relative;
-    color: #ffffff;
-    font-family: Lato;
-    font-size: 12px;
-    font-weight: 400;
-    line-height: 25px;
-    letter-spacing: 0.06px;
+    border-bottom: 1px solid #f2f2f2;
+}
+
+.fw-pulldown li:last-child .fw-pulldown-item {
+    border-bottom: 0 none;
 }
 
 .fw-pulldown-item.selected {
-    background-color: #fff;
-    color: #2b2b2b;
+    background-color: #f2f2f2;
 }
 
 .fw-pulldown-item .fw-icon-right {
@@ -82,8 +79,16 @@
     background-color: #ccc;
 }
 
+.fw-pulldown .delete-comment:after {
+    font-family: "Font Awesome 5 Free";
+    content: "\f2ed";
+    opacity: 0.4;
+    float: right;
+    display: block;
+}
+
 .disabled .fw-pulldown-item {
-    color: #cccccc;
+    color: #999999;
 }
 
 .fw-pulldown-icon {
@@ -91,25 +96,7 @@
 }
 
 .fw-pulldown-item:hover {
-    background-color: #e0e0e0;
-    color: #2b2b2b;
-}
-
-.fw-pulldown:after {
-    position: absolute;
-    top: -13px;
-    font-size: 20px;
-    line-height: 1em;
-    color: #2b2b2b;
-}
-.fw-pulldown.fw-left:after {
-    left: 13px;
-}
-.fw-pulldown.fw-center:after {
-    left: 25px;
-}
-.fw-pulldown.fw-right:after {
-    right: 25px;
+    background-color: #f2f2f2;
 }
 
 .fw-pulldown input[type=radio] {

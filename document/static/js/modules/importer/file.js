@@ -1,5 +1,3 @@
-import JSZip from "jszip"
-
 import {ImportNative} from "./native"
 import {FW_FILETYPE_VERSION} from "../exporter/native"
 import {updateFile} from "./update"
@@ -52,8 +50,9 @@ export class ImportFidusFile {
 
     initZipFileRead() {
         // Extract all the files that can be found in every fidus-file (not images)
-        const zipfs = new JSZip()
-        return zipfs.loadAsync(this.file).then(() => {
+        return import("jszip").then(({default: JSZip}) => new JSZip()).then(
+            zipfs => zipfs.loadAsync(this.file)
+        ).then(zipfs => {
             const filenames = [], p = []
             let validFile = true
 

@@ -1,6 +1,3 @@
-import JSZip from "jszip"
-import JSZipUtils from "jszip-utils"
-
 import {updateFile} from "../importer/update"
 import {updateDoc} from "../schema/convert"
 import {addAlert, post, postJson, findTarget, whenReady} from "../common"
@@ -160,42 +157,48 @@ export class DocMaintenance {
     }
 
     updateRevision(id) {
-        JSZipUtils.getBinaryContent(
-            `/document/get_revision/${id}/`,
-            (err, fidusFile) => {
-            const zipfs = new JSZip()
-            zipfs.loadAsync(fidusFile).then(() => {
-                const openedFiles = {}, p = []
-                // We don't open other files as they currently don't need to be changed.
-                const fileNames = ["filetype-version", "document.json", "bibliography.json"]
+        Promise.all([
+            import("jszip-utils"),
+            import("jszip")
+        ]).then(([{default: JSZipUtils}, {default: JSZip}]) => {
+            JSZipUtils.getBinaryContent(
+                `/document/get_revision/${id}/`,
+                (err, fidusFile) => {
+                const zipfs = new JSZip()
+                zipfs.loadAsync(fidusFile).then(() => {
+                    const openedFiles = {}, p = []
+                    // We don't open other files as they currently don't need to be changed.
+                    const fileNames = ["filetype-version", "document.json", "bibliography.json"]
 
-                fileNames.forEach(fileName => {
-                    p.push(zipfs.files[fileName].async("text").then((fileContent) => {
-                        openedFiles[fileName] = fileContent
-                    }))
-                })
-                Promise.all(p).then(() => {
-                    const filetypeVersion = parseFloat(openedFiles["filetype-version"])
-                    if (filetypeVersion !== parseFloat(FW_FILETYPE_VERSION)) {
-                        const {bib, doc} = updateFile(
-                            window.JSON.parse(openedFiles["document.json"]),
-                            window.JSON.parse(openedFiles["bibliography.json"]),
-                            filetypeVersion
-                        )
-                        zipfs.file("filetype-version", FW_FILETYPE_VERSION)
-                        zipfs.file("document.json", window.JSON.stringify(doc))
-                        zipfs.file("bibliography.json", window.JSON.stringify(bib))
-                        this.saveRevision(id, zipfs)
-                    } else {
-                        this.revSavesLeft--
-                        if (this.revSavesLeft===0) {
-                            this.done()
+                    fileNames.forEach(fileName => {
+                        p.push(zipfs.files[fileName].async("text").then((fileContent) => {
+                            openedFiles[fileName] = fileContent
+                        }))
+                    })
+                    Promise.all(p).then(() => {
+                        const filetypeVersion = parseFloat(openedFiles["filetype-version"])
+                        if (filetypeVersion !== parseFloat(FW_FILETYPE_VERSION)) {
+                            const {bib, doc} = updateFile(
+                                window.JSON.parse(openedFiles["document.json"]),
+                                window.JSON.parse(openedFiles["bibliography.json"]),
+                                filetypeVersion
+                            )
+                            zipfs.file("filetype-version", FW_FILETYPE_VERSION)
+                            zipfs.file("document.json", window.JSON.stringify(doc))
+                            zipfs.file("bibliography.json", window.JSON.stringify(bib))
+                            this.saveRevision(id, zipfs)
+                        } else {
+                            this.revSavesLeft--
+                            if (this.revSavesLeft===0) {
+                                this.done()
+                            }
                         }
-                    }
 
+                    })
                 })
             })
         })
+
     }
 
     saveRevision(id, zipfs) {

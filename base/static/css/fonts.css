@@ -47,7 +47,7 @@
     right: 12px;
 }
 
-.editortoolbar div.multiButtons .multibuttonsCover:after {
+.editor-toolbar div.multiButtons .multibuttonsCover:after {
     display: inline-block;
     font-family: 'Font Awesome 5 Free';
     font-weight: 900;
@@ -148,16 +148,6 @@ table.dataTable-table thead th[data-sortable]:not([data-sortable=false]).desc a:
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     content: '\f00c';
-}
-.fw-pulldown:after {
-    display: inline-block;
-    font-family: 'Font Awesome 5 Free';
-    font-weight: 900;
-    font-size: inherit;
-    text-rendering: auto;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    content: '\f0d8';
 }
 
 

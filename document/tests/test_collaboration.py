@@ -812,19 +812,57 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         button = driver.find_element_by_xpath('//*[@title="Math"]')
         button.click()
 
-        # wait to load popup
+        # wait for load of popup
         insert_button = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "insert-math"))
         )
+
+        # type formula
+        math_field = driver.find_element_by_class_name('math-field')
+        math_field.click()
+        driver.find_element_by_class_name(
+            'ML__virtual-keyboard-toggle'
+        ).click()
+
+        # wait for keyboard
+        WebDriverWait(driver, self.wait_time).until(
+            EC.visibility_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    'div.ML__keyboard.is-visible li[data-alt-keys="="]'
+                )
+            )
+        )
+        WebDriverWait(driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (
+                    By.CSS_SELECTOR,
+                    'li[data-alt-keys="2"]'
+                )
+            )
+        )
+        driver.find_element_by_css_selector('li[data-alt-keys="2"]').click()
+        driver.find_element_by_css_selector(
+            'li[data-alt-keys="x-var"]'
+        ).click()
+        driver.find_element_by_css_selector('li[data-alt-keys="+"]').click()
+        driver.find_element_by_css_selector('li[data-alt-keys="3"]').click()
+        driver.find_element_by_css_selector('li[data-alt-keys="="]').click()
+        driver.find_element_by_css_selector('li[data-alt-keys="7"]').click()
+
+        # close keyboard
+        driver.find_element_by_class_name(
+            'ML__virtual-keyboard-toggle'
+        ).click()
+
         insert_button.click()
 
     def get_mathequation(self, driver):
         math = driver.find_element_by_xpath(
-            # '//*[contains(@class, "article-body")]/p[1]/span[1]'
             '//*[@class="equation"]'
         )
 
-        return math.text
+        return math.get_attribute('data-equation')
 
     def test_mathequation(self):
         """
@@ -875,12 +913,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.wait_for_doc_sync(self.driver, self.driver2)
 
         self.assertEqual(
-            54,
+            len(self.get_mathequation(self.driver)),
             len(self.get_mathequation(self.driver2))
         )
 
         self.assertEqual(
-            len(self.get_mathequation(self.driver)),
+            6,
             len(self.get_mathequation(self.driver2))
         )
 
@@ -974,7 +1012,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.input_text(caption, "My figure")
 
         # click on 'Insert image' button
-        driver.find_element_by_id('insertFigureImage').click()
+        driver.find_element_by_id('insert-figure-image').click()
 
         upload_button = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located(

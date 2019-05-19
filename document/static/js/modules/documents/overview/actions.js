@@ -1,11 +1,6 @@
 import {getMissingDocumentListData} from "../tools"
 import {importFidusTemplate} from "./templates"
 import {SaveCopy, ExportFidusFile} from "../../exporter/native"
-import {EpubExporter} from "../../exporter/epub"
-import {HTMLExporter} from "../../exporter/html"
-import {LatexExporter} from "../../exporter/latex"
-import {DocxExporter} from "../../exporter/docx"
-import {OdtExporter} from "../../exporter/odt"
 import {ImportFidusFile} from "../../importer/file"
 import {DocumentRevisionsDialog} from "../revisions"
 import {activateWait, deactivateWait, addAlert, postJson, Dialog} from "../../common"
@@ -185,17 +180,19 @@ export class DocumentOverviewActions {
         ).then(
             () => ids.forEach(id => {
                 const doc = this.documentOverview.documentList.find(entry => entry.id===id)
-                const exporter = new HTMLExporter(
-                    this.documentOverview.schema,
-                    doc,
-                    {db:doc.bibliography},
-                    {db:doc.images},
-                    this.documentOverview.citationStyles,
-                    this.documentOverview.citationLocales,
-                    this.documentOverview.documentStyles,
-                    this.documentOverview.staticUrl
-                )
-                exporter.init()
+                import("../../exporter/html").then(({HTMLExporter}) => {
+                    const exporter = new HTMLExporter(
+                        this.documentOverview.schema,
+                        doc,
+                        {db:doc.bibliography},
+                        {db:doc.images},
+                        this.documentOverview.citationStyles,
+                        this.documentOverview.citationLocales,
+                        this.documentOverview.documentStyles,
+                        this.documentOverview.staticUrl
+                    )
+                    exporter.init()
+                })
             })
         )
     }
@@ -209,26 +206,30 @@ export class DocumentOverviewActions {
                 ids.forEach(id => {
                     const doc = this.documentOverview.documentList.find(entry => entry.id===id)
                     if (templateType==='docx') {
-                        const exporter = new DocxExporter(
-                            doc,
-                            templateUrl,
-                            {db:doc.bibliography},
-                            {db:doc.images},
-                            this.documentOverview.citationStyles,
-                            this.documentOverview.citationLocales,
-                            this.documentOverview.staticUrl
-                        )
-                        exporter.init()
+                        import("../../exporter/docx").then(({DocxExporter}) => {
+                            const exporter = new DocxExporter(
+                                doc,
+                                templateUrl,
+                                {db:doc.bibliography},
+                                {db:doc.images},
+                                this.documentOverview.citationStyles,
+                                this.documentOverview.citationLocales,
+                                this.documentOverview.staticUrl
+                            )
+                            exporter.init()
+                        })
                     } else {
-                        const exporter = new OdtExporter(
-                            doc,
-                            templateUrl,
-                            {db:doc.bibliography},
-                            {db:doc.images},
-                            this.documentOverview.citationStyles,
-                            this.documentOverview.citationLocales
-                        )
-                        exporter.init()
+                        import("../../exporter/odt").then(({OdtExporter}) => {
+                            const exporter = new OdtExporter(
+                                doc,
+                                templateUrl,
+                                {db:doc.bibliography},
+                                {db:doc.images},
+                                this.documentOverview.citationStyles,
+                                this.documentOverview.citationLocales
+                            )
+                            exporter.init()
+                        })
                     }
                 })
             }
@@ -243,12 +244,14 @@ export class DocumentOverviewActions {
             () =>
                 ids.forEach(id => {
                     const doc = this.documentOverview.documentList.find(entry => entry.id===id)
-                    const exporter = new LatexExporter(
-                        doc,
-                        {db:doc.bibliography},
-                        {db:doc.images}
-                    )
-                    exporter.init()
+                    import("../../exporter/latex").then(({LatexExporter}) => {
+                        const exporter = new LatexExporter(
+                            doc,
+                            {db:doc.bibliography},
+                            {db:doc.images}
+                        )
+                        exporter.init()
+                    })
                 })
         )
     }
@@ -261,16 +264,18 @@ export class DocumentOverviewActions {
             () =>
                 ids.forEach(id => {
                     const doc = this.documentOverview.documentList.find(entry => entry.id===id)
-                    const exporter = new EpubExporter(
-                        this.documentOverview.schema,
-                        doc,
-                        {db:doc.bibliography},
-                        {db:doc.images},
-                        this.documentOverview.citationStyles,
-                        this.documentOverview.citationLocales,
-                        this.documentOverview.staticUrl
-                    )
-                    exporter.init()
+                    import("../../exporter/epub").then(({EpubExporter}) => {
+                        const exporter = new EpubExporter(
+                            this.documentOverview.schema,
+                            doc,
+                            {db:doc.bibliography},
+                            {db:doc.images},
+                            this.documentOverview.citationStyles,
+                            this.documentOverview.citationLocales,
+                            this.documentOverview.staticUrl
+                        )
+                        exporter.init()
+                    })
                 })
         )
     }

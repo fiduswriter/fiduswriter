@@ -1,4 +1,3 @@
-import JSZipUtils from "jszip-utils"
 import download from "downloadjs"
 
 import {documentrevisionsTemplate} from "./templates"
@@ -71,35 +70,37 @@ export class DocumentRevisionsDialog {
      */
 
     recreate(id, user) {
-        return new Promise (resolve => {
-            JSZipUtils.getBinaryContent(
-                `/document/get_revision/${id}/`,
-                (err, fidusFile) => {
-                    const importer = new ImportFidusFile(
-                        fidusFile,
-                        user
-                    )
-                    resolve(
-                        importer.init().then(
-                            ({ok, statusText, doc}) => {
-                                deactivateWait()
-                                if (ok) {
-                                    addAlert('info', statusText)
-                                    return {
-                                        action: 'added-document',
-                                        doc
-                                    }
-                                } else {
-                                    addAlert('error', statusText)
-                                    return Promise.reject(new Error(statusText))
-                                }
-
-                            }
+        return new Promise (resolve =>
+            import("jszip-utils").then(({default: JSZipUtils}) => {
+                JSZipUtils.getBinaryContent(
+                    `/document/get_revision/${id}/`,
+                    (err, fidusFile) => {
+                        const importer = new ImportFidusFile(
+                            fidusFile,
+                            user
                         )
-                    )
-                }
-            )
-        })
+                        resolve(
+                            importer.init().then(
+                                ({ok, statusText, doc}) => {
+                                    deactivateWait()
+                                    if (ok) {
+                                        addAlert('info', statusText)
+                                        return {
+                                            action: 'added-document',
+                                            doc
+                                        }
+                                    } else {
+                                        addAlert('error', statusText)
+                                        return Promise.reject(new Error(statusText))
+                                    }
+
+                                }
+                            )
+                        )
+                    }
+                )
+            })
+        )
     }
 
     /**
@@ -108,10 +109,12 @@ export class DocumentRevisionsDialog {
      */
 
     download(id, filename) {
-        JSZipUtils.getBinaryContent(
-            `/document/get_revision/${id}/`,
-            (err, fidusFile) => download(fidusFile, filename, 'application/fidus+zip')
-        )
+        import("jszip-utils").then(({default: JSZipUtils}) => {
+            JSZipUtils.getBinaryContent(
+                `/document/get_revision/${id}/`,
+                (err, fidusFile) => download(fidusFile, filename, 'application/fidus+zip')
+            )
+        })
     }
 
     /**

@@ -69,7 +69,7 @@ export class ToolbarView {
             return
         }
         const target = event.target
-        if (target.matches('.editortoolbar .more-button li:not(.disabled), .editortoolbar .more-button li:not(.disabled) *')) {
+        if (target.matches('.editor-toolbar .more-button li:not(.disabled), .editor-toolbar .more-button li:not(.disabled) *')) {
             let menuNumber = 0
             let seekItem = target.closest('li')
             while (seekItem.previousElementSibling) {
@@ -99,13 +99,13 @@ export class ToolbarView {
                 }
             }
 
-        } else if (target.matches('.editortoolbar .more-button, .editortoolbar .more-button *')) {
+        } else if (target.matches('.editor-toolbar .more-button, .editor-toolbar .more-button *')) {
             this.editor.menu.toolbarModel.openMore = true
             if (this.openedMenu) {
                 this.editor.menu.toolbarModel.content[this.openedMenu].open = false
             }
             this.update()
-        } else if (target.matches('.editortoolbar li:not(.disabled), .editortoolbar li:not(.disabled) *')) {
+        } else if (target.matches('.editor-toolbar li:not(.disabled), .editor-toolbar li:not(.disabled) *')) {
             // A toolbar menu item was clicked. We just need to
             // find out which one
             let itemNumber = 0
@@ -128,7 +128,7 @@ export class ToolbarView {
             if (focus !== false) {
                 this.editor.currentView.focus()
             }
-        } else if (target.matches('.editortoolbar > div:not(.disabled), .editortoolbar > div:not(.disabled) *')) {
+        } else if (target.matches('.editor-toolbar > div:not(.disabled), .editor-toolbar > div:not(.disabled) *')) {
             // A menu item has been clicked, lets find out which one.
             let menuNumber = 0
             let seekItem = target.closest('div.ui-buttonset')
@@ -193,7 +193,7 @@ export class ToolbarView {
 
     getToolbarHTML(menuIndexToDrop) {
         return `<div>
-            <div class="editortoolbar">
+            <div class="editor-toolbar">
                 ${this.editor.menu.toolbarModel.content.map((menuItem, index) => {
                     if (!menuIndexToDrop || index < menuIndexToDrop) {
                         return `

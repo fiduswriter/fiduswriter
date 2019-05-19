@@ -1,5 +1,3 @@
-import {DocxExporter} from "../../exporter/docx"
-import {OdtExporter} from "../../exporter/odt"
 import bowser from "bowser"
 import {Dialog} from "../../common"
 
@@ -96,16 +94,18 @@ export class ModDocumentTemplate {
                             this.showSafariErrorMessage()
                             return
                         }
-                        const exporter = new DocxExporter(
-                            editor.getDoc({changes: 'acceptAllNoInsertions'}),
-                            template.template_file,
-                            editor.mod.db.bibDB,
-                            editor.mod.db.imageDB,
-                            editor.mod.documentTemplate.citationStyles,
-                            editor.mod.documentTemplate.citationLocales,
-                            editor.staticUrl
-                        )
-                        exporter.init()
+                        import("../../exporter/docx").then(({DocxExporter}) => {
+                            const exporter = new DocxExporter(
+                                editor.getDoc({changes: 'acceptAllNoInsertions'}),
+                                template.template_file,
+                                editor.mod.db.bibDB,
+                                editor.mod.db.imageDB,
+                                editor.mod.documentTemplate.citationStyles,
+                                editor.mod.documentTemplate.citationLocales,
+                                editor.staticUrl
+                            )
+                            exporter.init()
+                        })
                     }
                 }
             } else {
@@ -119,15 +119,17 @@ export class ModDocumentTemplate {
                             this.showSafariErrorMessage()
                             return
                         }
-                        const exporter = new OdtExporter(
-                            editor.getDoc({changes: 'acceptAllNoInsertions'}),
-                            template.template_file,
-                            editor.mod.db.bibDB,
-                            editor.mod.db.imageDB,
-                            editor.mod.documentTemplate.citationStyles,
-                            editor.mod.documentTemplate.citationLocales
-                        )
-                        exporter.init()
+                        import("../../exporter/odt").then(({OdtExporter}) => {
+                            const exporter = new OdtExporter(
+                                editor.getDoc({changes: 'acceptAllNoInsertions'}),
+                                template.template_file,
+                                editor.mod.db.bibDB,
+                                editor.mod.db.imageDB,
+                                editor.mod.documentTemplate.citationStyles,
+                                editor.mod.documentTemplate.citationLocales
+                            )
+                            exporter.init()
+                        })
                     }
                 }
             }

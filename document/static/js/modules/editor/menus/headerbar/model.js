@@ -1,10 +1,6 @@
 import {DocumentAccessRightsDialog} from "../../../documents/access_rights"
 import {SaveRevision, SaveCopy} from "../../../exporter/native"
 import {ExportFidusFile} from "../../../exporter/native/file"
-import {LatexExporter} from "../../../exporter/latex"
-import {HTMLExporter} from "../../../exporter/html"
-import {EpubExporter} from "../../../exporter/epub"
-import {PrintExporter} from "../../../exporter/print"
 import {RevisionDialog, LanguageDialog} from "../../dialogs"
 
 const languageItem = function(code, name, order) {
@@ -43,7 +39,7 @@ export const headerbarModel = () => ({
                 {
                     title: gettext('Share'),
                     type: 'action',
-                    icon: 'share',
+                    //icon: 'share',
                     tooltip: gettext('Share the document with other users.'),
                     order: 0,
                     action: editor => {
@@ -66,7 +62,7 @@ export const headerbarModel = () => ({
                 {
                     title: gettext('Close'),
                     type: 'action',
-                    icon: 'times-circle',
+                    //icon: 'times-circle',
                     tooltip: gettext('Close the document and return to the document overview menu.'),
                     order: 1,
                     action: editor => {
@@ -76,7 +72,7 @@ export const headerbarModel = () => ({
                 {
                     title: gettext('Save revision'),
                     type: 'action',
-                    icon: 'save',
+                    //icon: 'save',
                     tooltip: gettext('Save a revision of the current document.'),
                     order: 2,
                     keys: 'Ctrl-s',
@@ -99,7 +95,7 @@ export const headerbarModel = () => ({
                 {
                     title: gettext('Create Copy'),
                     type: 'action',
-                    icon: 'copy',
+                    //icon: 'copy',
                     tooltip: gettext('Create copy of the current document.'),
                     order: 3,
                     action: editor => {
@@ -117,7 +113,7 @@ export const headerbarModel = () => ({
                 {
                     title: gettext('Download'),
                     type: 'action',
-                    icon: 'download',
+                    //icon: 'download',
                     tooltip: gettext('Download the current document.'),
                     order: 4,
                     action: editor => {
@@ -131,22 +127,24 @@ export const headerbarModel = () => ({
                 {
                     title: gettext('Print/PDF'),
                     type: 'action',
-                    icon: 'print',
+                    //icon: 'print',
                     tooltip: gettext('Either print or create a PDF using your browser print dialog.'),
                     order: 5,
                     keys: 'Ctrl-p',
                     action: editor => {
-                        const exporter = new PrintExporter(
-                            editor.schema,
-                            editor.getDoc({changes: 'acceptAllNoInsertions'}),
-                            editor.mod.db.bibDB,
-                            editor.mod.db.imageDB,
-                            editor.mod.documentTemplate.citationStyles,
-                            editor.mod.documentTemplate.citationLocales,
-                            editor.mod.documentTemplate.documentStyles,
-                            editor.staticUrl
-                        )
-                        exporter.init()
+                        import("../../../exporter/print").then(({PrintExporter}) => {
+                            const exporter = new PrintExporter(
+                                editor.schema,
+                                editor.getDoc({changes: 'acceptAllNoInsertions'}),
+                                editor.mod.db.bibDB,
+                                editor.mod.db.imageDB,
+                                editor.mod.documentTemplate.citationStyles,
+                                editor.mod.documentTemplate.citationLocales,
+                                editor.mod.documentTemplate.documentStyles,
+                                editor.staticUrl
+                            )
+                            exporter.init()
+                        })
                     }
                 }
             ]
@@ -164,17 +162,19 @@ export const headerbarModel = () => ({
                     tooltip: gettext('Export the document to an HTML file.'),
                     order: 0,
                     action: editor => {
-                        const exporter = new HTMLExporter(
-                            editor.schema,
-                            editor.getDoc({changes: 'acceptAllNoInsertions'}),
-                            editor.mod.db.bibDB,
-                            editor.mod.db.imageDB,
-                            editor.mod.documentTemplate.citationStyles,
-                            editor.mod.documentTemplate.citationLocales,
-                            editor.mod.documentTemplate.documentStyles,
-                            editor.staticUrl
-                        )
-                        exporter.init()
+                        import("../../../exporter/html").then(({HTMLExporter}) => {
+                            const exporter = new HTMLExporter(
+                                editor.schema,
+                                editor.getDoc({changes: 'acceptAllNoInsertions'}),
+                                editor.mod.db.bibDB,
+                                editor.mod.db.imageDB,
+                                editor.mod.documentTemplate.citationStyles,
+                                editor.mod.documentTemplate.citationLocales,
+                                editor.mod.documentTemplate.documentStyles,
+                                editor.staticUrl
+                            )
+                            exporter.init()
+                        })
                     }
                 },
                 {
@@ -183,16 +183,18 @@ export const headerbarModel = () => ({
                     tooltip: gettext('Export the document to an Epub electronic reader file.'),
                     order: 1,
                     action: editor => {
-                        const exporter = new EpubExporter(
-                            editor.schema,
-                            editor.getDoc({changes: 'acceptAllNoInsertions'}),
-                            editor.mod.db.bibDB,
-                            editor.mod.db.imageDB,
-                            editor.mod.documentTemplate.citationStyles,
-                            editor.mod.documentTemplate.citationLocales,
-                            editor.staticUrl
-                        )
-                        exporter.init()
+                        import("../../../exporter/epub").then(({EpubExporter}) => {
+                            const exporter = new EpubExporter(
+                                editor.schema,
+                                editor.getDoc({changes: 'acceptAllNoInsertions'}),
+                                editor.mod.db.bibDB,
+                                editor.mod.db.imageDB,
+                                editor.mod.documentTemplate.citationStyles,
+                                editor.mod.documentTemplate.citationLocales,
+                                editor.staticUrl
+                            )
+                            exporter.init()
+                        })
                     }
                 },
                 {
@@ -201,12 +203,14 @@ export const headerbarModel = () => ({
                     tooltip: gettext('Export the document to an LaTeX file.'),
                     order: 2,
                     action: editor => {
-                        const exporter = new LatexExporter(
-                            editor.getDoc({changes: 'acceptAllNoInsertions'}),
-                            editor.mod.db.bibDB,
-                            editor.mod.db.imageDB
-                        )
-                        exporter.init()
+                        import("../../../exporter/latex").then(({LatexExporter}) => {
+                            const exporter = new LatexExporter(
+                                editor.getDoc({changes: 'acceptAllNoInsertions'}),
+                                editor.mod.db.bibDB,
+                                editor.mod.db.imageDB
+                            )
+                            exporter.init()
+                        })
                     }
                 }
             ]

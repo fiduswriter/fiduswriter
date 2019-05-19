@@ -26,13 +26,8 @@ def fiduswriter_config_js(context):
         ws_server = settings.SERVER_INFO['WS_SERVER']
     else:
         ws_server = ''
-    if 'user' in context:
-        username = context['user'].get_username()
-    else:
-        username = ''
     return {
         'static_url': static_url,
         'ws_port': ws_port,
-        'ws_server': ws_server,
-        'username': username
+        'ws_server': ws_server
     }

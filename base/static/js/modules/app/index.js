@@ -1,6 +1,5 @@
 import {BibliographyOverview} from "../bibliography/overview"
 import {DocumentOverview} from "../documents/overview"
-import {Editor} from "../editor"
 import {ImageOverview} from "../images/overview"
 import {ContactsOverview} from "../contacts"
 import {Profile} from "../profile"
@@ -33,7 +32,7 @@ export class App {
             },
             "document": pathnameParts => {
                 const id = pathnameParts[2]
-                return new Editor(this.config, id)
+                return import('../editor').then(({Editor}) => new Editor(this.config, id))
             },
             "": () => new DocumentOverview(this.config)
         }
@@ -106,9 +105,17 @@ export class App {
             this.page.close()
         }
         const pathnameParts = window.location.pathname.split('/')
-        this.page = this.routes[pathnameParts[1]] ? this.routes[pathnameParts[1]](pathnameParts) : false
-        if (this.page) {
-            this.page.init()
+        const page = this.routes[pathnameParts[1]] ? this.routes[pathnameParts[1]](pathnameParts) : false
+        if (page) {
+            if (page.then) {
+                page.then(thisPage => {
+                    this.page = thisPage
+                    this.page.init()
+                })
+            } else {
+                this.page = page
+                this.page.init()
+            }
         } else {
             window.location = window.location
         }

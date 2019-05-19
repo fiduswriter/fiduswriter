@@ -5,6 +5,7 @@ export class OdtExporterMath {
         this.exporter = exporter
         this.objectCounter = 1
         this.manifestXml = false
+        this.domParser = new DOMParser()
     }
 
     init() {
@@ -14,6 +15,10 @@ export class OdtExporterMath {
                 this.checkObjectCounter()
                 return Promise.resolve()
             }
+        ).then(
+            () => import("mathlive")
+        ).then(
+            MathLive => this.mathLive = MathLive
         )
     }
 
@@ -37,7 +42,15 @@ export class OdtExporterMath {
     }
 
     addMath(latex) {
-        const mathml = TeXZilla.toMathML(latex)
+        const mathml = this.domParser.parseFromString(
+            `<math xmlns="http://www.w3.org/1998/Math/MathML"><semantics>${
+                this.mathLive.latexToMathML(latex).replace(/\&InvisibleTimes;/g, '&#8290;')
+            }</semantics></math>`,
+            "application/xml"
+        ).documentElement
+        console.log(this.mathLive.latexToMathML(latex))
+        const mathml2 = TeXZilla.toMathML(latex)
+        console.log({mathml: mathml.outerHTML, mathml2: mathml2.outerHTML})
         const objectNumber = this.objectCounter++
         this.exporter.xml.addXmlFile(`Object ${objectNumber}/content.xml`, mathml)
         const manifestEl = this.manifestXml.querySelector('manifest')

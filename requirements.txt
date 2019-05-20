@@ -1,4 +1,4 @@
-wheel==0.33.2
+wheel==0.33.4
 Django==2.2.1
 Pillow==6.0.0
 django-allauth==0.39.1

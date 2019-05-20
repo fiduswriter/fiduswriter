@@ -24,6 +24,11 @@
     margin-top: 0;
 }
 
+.fw-pulldown.fw-right .fw-pulldown {
+    left: auto;
+    right: 100%;
+}
+
 .fw-pulldown > ul {
     position: relative;
     padding: 12px 0;

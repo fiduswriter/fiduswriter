@@ -30,6 +30,10 @@ export class ImageOverview {
     }
 
     init() {
+        ensureCSS([
+            'dialog_usermedia.css'
+        ], this.staticUrl)
+
         whenReady().then(() => {
             this.render()
             new ImageOverviewCategories(this)
@@ -162,6 +166,8 @@ export class ImageOverview {
     }
 
     removeTableRows(ids) {
+        ids = ids.map(id => parseInt(id))
+
         const existingRows = this.table.data.map((data, index) => {
             const id = parseInt(data.cells[0].textContent)
             if (ids.includes(id)) {

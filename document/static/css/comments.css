@@ -44,13 +44,13 @@ body.header-closed #margin-box-filter {
 }
 
 .margin-box-filter-button .label {
-    top: 17px;
+    top: 0;
     left: 16px;
     position: absolute;
-    font-family: Lato;
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.06px;
+    line-height: 44px;
 }
 
 .margin-box-filter-button:nth-child(1):nth-last-child(3) .label,
@@ -74,8 +74,19 @@ body.header-closed #margin-box-filter {
 }
 
 .margin-box.track {
-    background-color: #98a9c5;
+    background-color: rgba(45, 82, 144, 0.63);
     color: #fff;
+}
+
+.margin-box.track.active {
+    background-color: #788fb4;
+    color: #fff;
+    border: 0 none;
+}
+
+.margin-box.track.active:after {
+    color: #788fb4;
+    text-shadow: none;
 }
 
 .margin-box.active {
@@ -237,13 +248,13 @@ body.header-closed #margin-box-filter {
 
 .show-marginbox-options {
     position: absolute;
-    right: 0px;
-    top: 0px;
+    right: 0;
+    top: 0;
     cursor: pointer;
     opacity: 0.4;
-    height: 24px;
+    height: auto;
     width: 17px;
-    line-height: 40px;
+    line-height: 44px;
 }
 
 .marginbox-options.fw-pulldown.fw-right {
@@ -255,13 +266,12 @@ body.header-closed #margin-box-filter {
     margin: 5px 5px 9px 3px;
 }
 
+.comment.resolved .comment-item:first-child:before,
 .comment-is-major-bgc .comment-item:first-child:before {
     display: block;
-    content: "HP";
     position: absolute;
     right: 30px;
     top: 0;
-    background-color: #af3515;
     color: white;
     font-size: 8px;
     width: 18px;
@@ -271,6 +281,17 @@ body.header-closed #margin-box-filter {
     font-weight: 700;
 }
 
+.comment.resolved .comment-item:first-child:before {
+    content: 'RC';
+    background-color: #3c3c3c;
+}
+
+.comment-is-major-bgc .comment-item:first-child:before {
+    content: "HP";
+    background-color: #af3515;
+}
+
+.comment.resolved .comment-item:first-child:after,
 .comment-is-major-bgc .comment-item:first-child:after {
     display: block;
     content: "";
@@ -281,9 +302,18 @@ body.header-closed #margin-box-filter {
     height: 0;
     border-style: solid;
     border-width: 0 9px 7px 9px;
-    border-color: transparent transparent #f4c9d9 transparent;
+    border-color: transparent;
 }
 
+.comment.resolved .comment-item:first-child:after {
+    border-bottom-color: white;
+}
+
+.comment-is-major-bgc .comment-item:first-child:after {
+    border-bottom-color: #f4c9d9;
+}
+
+.comment.resolved.active .comment-item:first-child:after,
 .comment-is-major-bgc.active .comment-item:first-child:after {
     border-bottom-color: #fffacf;
 }

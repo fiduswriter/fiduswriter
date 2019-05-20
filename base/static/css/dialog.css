@@ -58,6 +58,7 @@
     position: relative;
     margin-top: 24px;
     overflow-y: auto;
+    max-height: calc(100vh - 200px);
 }
 
 .ui-dialog-buttonpane {

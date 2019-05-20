@@ -99,10 +99,6 @@ tr.fw-checkable.checked:after {
     margin-bottom: 10px;
 }
 
-.fw-checkable-label.checked:after {
-    top: 7px
-}
-
 .fw-checkable-input {
     display: none;
 }

@@ -282,18 +282,10 @@ const trackTemplate = ({type, data, node, active, docInfo, filterOptions, static
             </div>
             ${
                 docInfo.access_rights === 'write' ?
-                `<span class="show-marginbox-options fa fa-ellipsis-v"></span>
-                <div class="marginbox-options fw-pulldown fw-right">
-                    <ul>
-                        <li><span class="fw-pulldown-item track-accept" data-type="${type}" title="${gettext("Accept")}">
-                            ${gettext("Accept")}
-                        </span></li>
-                        <li><span class="fw-pulldown-item track-reject" data-type="${type}" title="${gettext("Reject")}">
-                            ${gettext("Reject")}
-                        </span></li>
-                    </ul>
-                </div>` :
-                ''
+                    `<div class="track-ctas">
+                        <button class="track-accept fw-button fw-dark" type="submit" data-type="${type}">${gettext("Accept")}</button>
+                        <button class="track-reject fw-button fw-orange" type="submit" data-type="${type}">${gettext("Reject")}</button>
+                    </div>` : ''
             }
 
         </div>`

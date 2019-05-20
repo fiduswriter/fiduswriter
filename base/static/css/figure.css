@@ -5,6 +5,8 @@
 .fw-media-uploader .figure-preview {
     display: table;
     margin: 18px 10px 0 0;
+    max-width: calc(100vw - 200px);
+    max-height: calc(100vh - 100px);
 }
 
 .fw-media-uploader .figure-preview .inner-figure-preview {

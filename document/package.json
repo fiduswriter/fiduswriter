@@ -10,7 +10,7 @@
         "fix-utf8": "1.0.4",
         "jszip": "3.2.1",
         "jszip-utils": "0.0.2",
-        "mathlive": "0.29.0",
+        "mathlive": "0.29.x",
         "orderedmap": "1.0.0",
         "prosemirror-collab": "1.1.x",
         "prosemirror-commands": "1.0.x",

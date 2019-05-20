@@ -1,1 +1,1 @@
-MySQL-python==1.2.5
+mysqlclient==1.4.2.post1

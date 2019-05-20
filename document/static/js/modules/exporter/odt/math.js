@@ -42,17 +42,23 @@ export class OdtExporterMath {
     }
 
     addMath(latex) {
-        const mathml = this.domParser.parseFromString(
-            `<math xmlns="http://www.w3.org/1998/Math/MathML"><semantics>${
-                this.mathLive.latexToMathML(latex).replace(/\&InvisibleTimes;/g, '&#8290;')
-            }</semantics></math>`,
-            "application/xml"
-        ).documentElement
-        console.log(this.mathLive.latexToMathML(latex))
-        const mathml2 = TeXZilla.toMathML(latex)
-        console.log({mathml: mathml.outerHTML, mathml2: mathml2.outerHTML})
+        // const mathml = this.domParser.parseFromString(
+        //     `<math xmlns="http://www.w3.org/1998/Math/MathML">${
+        //         this.mathLive.latexToMathML(latex)//.replace(/\&InvisibleTimes;/g, '&#8290;')
+        //     }</math>`,
+        //     "application/xml"
+        // ).documentElement
+        // console.log(this.mathLive.latexToMathML(latex))
+        // const mathml2 = TeXZilla.toMathML(latex)
+        // console.log({mathml: mathml.outerHTML, mathml2: mathml2.outerHTML})
         const objectNumber = this.objectCounter++
-        this.exporter.xml.addXmlFile(`Object ${objectNumber}/content.xml`, mathml)
+        //this.exporter.xml.addXmlFile(`Object ${objectNumber}/content.xml`, mathml)
+        this.exporter.xml.addExtraFile(
+            `Object ${objectNumber}/content.xml`,
+            `<math xmlns="http://www.w3.org/1998/Math/MathML">${
+                this.mathLive.latexToMathML(latex)
+            }</math>`
+        )
         const manifestEl = this.manifestXml.querySelector('manifest')
         const stringOne = `<manifest:file-entry manifest:full-path="Object ${objectNumber}/content.xml" manifest:media-type="text/xml"/>`
         manifestEl.insertAdjacentHTML('beforeEnd', stringOne)

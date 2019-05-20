@@ -7,24 +7,22 @@
 
 {% block head_title %}{% trans "Confirm E-mail Address" %}{% endblock %}
 {% block extraheaders %}
-<script type="text/javascript" src="{% static "js/confirm_account.mjs" %}" crossorigin="anonymous"></script>
 <script type="text/javascript">
     'use strict';
-    const testServer = "{{TEST_SERVER}}" === "True" ? true : false
+    window.testServer = "{{TEST_SERVER}}" === "True" ? true : false
     {% if confirmation %}
-        const confirmationData = {
+        window.confirmationData = {
             confirmed: true,
             userName: "{{ confirmation.email_address.user }}",
             email: "{{ confirmation.email_address.email }}",
             submissionUrl: "{% url 'account_confirm_email' confirmation.key %}"
         }
     {% else %}
-        const confirmationData = {
+        window.confirmationData = {
             confirmed: false,
             emailUrl: "{% url 'account_email' %}"
         }
     {% endif %}
-    window.theAccountConfirmer = new ConfirmAccount(confirmationData, testServer)
-    theAccountConfirmer.init()
 </script>
+<script type="text/javascript" src="{% static "js/confirm_account.mjs" %}" crossorigin="anonymous"></script>
 {% endblock %}

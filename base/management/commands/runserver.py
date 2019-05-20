@@ -24,6 +24,7 @@ naiveip_re = re.compile(r"""^(?:
     (?P<fqdn>[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*) # FQDN
 ):)?(?P<port>\d+)$""", re.X)
 
+
 class Command(BaseCommand):
     help = 'Run django using the tornado server'
     requires_migrations_checks = True
@@ -42,8 +43,10 @@ class Command(BaseCommand):
         if options['addrport']:
             m = re.match(naiveip_re, options['addrport'])
             if m is None:
-                raise CommandError('"%s" is not a valid port number '
-                                   'or address:port pair.' % options['addrport'])
+                raise CommandError(
+                    '"%s" is not a valid port number '
+                    'or address:port pair.' % options['addrport']
+                )
             self.addr, _ipv4, _ipv6, _fqdn, self.port = m.groups()
         else:
             self.addr = self.default_addr

@@ -71,7 +71,7 @@ export class DocumentRevisionsDialog {
 
     recreate(id, user) {
         return new Promise (resolve =>
-            import("jszip-utils").then(({JSZipUtils}) => {
+            import("jszip-utils").then(({default: JSZipUtils}) => {
                 JSZipUtils.getBinaryContent(
                     `/document/get_revision/${id}/`,
                     (err, fidusFile) => {
@@ -109,7 +109,7 @@ export class DocumentRevisionsDialog {
      */
 
     download(id, filename) {
-        import("jszip-utils").then(({JSZipUtils}) => {
+        import("jszip-utils").then(({default: JSZipUtils}) => {
             JSZipUtils.getBinaryContent(
                 `/document/get_revision/${id}/`,
                 (err, fidusFile) => download(fidusFile, filename, 'application/fidus+zip')

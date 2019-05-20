@@ -14,7 +14,7 @@ export class XmlZip {
 
     init() {
         return import("jszip").then(
-            JSZip => {
+            ({default: JSZip}) => {
                 this.zip = new JSZip()
                 return this.downloadZip()
             }
@@ -24,7 +24,7 @@ export class XmlZip {
     downloadZip() {
         return new Promise(resolve => {
             import("jszip-utils").then(
-                JSZipUtils => JSZipUtils.getBinaryContent(
+                ({default: JSZipUtils}) => JSZipUtils.getBinaryContent(
                     this.url,
                     (err, rawFile) => {
                         this.rawFile = rawFile

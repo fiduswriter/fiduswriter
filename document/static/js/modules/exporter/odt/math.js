@@ -40,6 +40,7 @@ export class OdtExporterMath {
     }
 
     addMath(latex) {
+        const objectNumber = this.objectCounter++
         this.exporter.xml.addExtraFile(
             `Object ${objectNumber}/content.xml`,
             `<math xmlns="http://www.w3.org/1998/Math/MathML">${

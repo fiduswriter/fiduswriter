@@ -18,7 +18,7 @@ body {
     position: relative;
     height: auto;
     margin: 0 auto;
-    padding: 0 40px;
+    padding: 0 34px;
     overflow: hidden;
 }
 
@@ -28,8 +28,15 @@ body {
     width: auto;
     height: auto;
     min-width: 985px;
-    margin: 0 auto;
-    padding: 20px 40px;
+    margin: 0 213px;
+    padding: 40px 0;
+}
+
+@media (max-width: 1429px) {
+    .fw-contents {
+        margin: 0 auto;
+        max-width: 1004px;
+    }
 }
 
 .fw-contents h1 {
@@ -71,6 +78,63 @@ table .fw-inline {
     border: solid 1px #e0e0e0;
 }
 
+.fw-string-avatar {
+    display: inline-block;
+    line-height: 1;
+    text-align: center;
+    text-transform: uppercase;
+    border-radius: 50%;
+    background-color: grey;
+    color: white;
+}
+
+.fw-string-avatar > span {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.fw-string-avatar:before,
+.fw-string-avatar:after {
+    display: inline-block;
+    width: 0;
+    padding-top: 100%;
+    vertical-align: middle;
+    content: "";
+}
+
+.fw-avatar-card {
+    display: block;
+}
+
+.fw-avatar-card .fw-avatar-card-avatar .fw-avatar,
+.fw-avatar-card .fw-avatar-card-avatar .fw-string-avatar {
+    width: 56px;
+    height: 56px;
+    font-size: 23px;
+}
+
+.fw-avatar-card-avatar {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.fw-avatar-card-name {
+    display: inline-block;
+    vertical-align: middle;
+    padding-left: 8px;
+}
+
+.fw-avatar-card-name {
+    font-size: 17px;
+}
+
+.fw-avatar-card-email {
+    font-size: 13px;
+    display: block;
+    padding-top: 6px;
+    color: #a8a8a8;
+}
+
 .ProseMirror span.placeholder::before {
     color: #cecece;
     content: attr(data-placeholder);
@@ -83,4 +147,10 @@ table .fw-inline {
 
 .ProseMirror-focused .ProseMirror:not(.ProseMirror-focused) span.placeholder.selected {
     display: inline;
+}
+
+.clearfix:after {
+    content: "";
+    clear: both;
+    display: block;
 }

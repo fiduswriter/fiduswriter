@@ -10,6 +10,7 @@ import {FeedbackTab} from "../../feedback"
 import {
     docSchema
 } from "../../schema/document"
+
 /*
 * Helper functions for the document overview page.
 */
@@ -46,8 +47,8 @@ export class DocumentOverview {
         document.body = document.createElement('body')
         document.body.innerHTML = baseBodyTemplate({
             contents: '<ul id="fw-overview-menu"></ul>',
-            username: this.user.username,
-            staticUrl: this.staticUrl
+            user: this.user,
+            staticUrl: this.staticUrl,
         })
         ensureCSS([
             'add_remove_dialog.css',
@@ -191,7 +192,7 @@ export class DocumentOverview {
             `<span class="date">${localizeDate(doc.added*1000, 'sortable-date')}</span>`,
             `<span class="date">${localizeDate(doc.updated*1000, 'sortable-date')}</span>`,
             `<span>
-                <img class="fw-avatar" src="${doc.owner.avatar}" />
+                ${doc.owner.avatar.html}
             </span>
             <span class="fw-inline fw-searchable">${escapeText(doc.owner.name)}</span>`,
             `<span class="rights fw-inline" data-id="${doc.id}" title="${doc.rights}">

@@ -14,7 +14,7 @@ export class BibliographyOverview {
 
     constructor({app, user, staticUrl}) {
         this.app = app
-        this.username = user.username
+        this.user = user
         this.staticUrl = staticUrl
     }
 
@@ -39,7 +39,7 @@ export class BibliographyOverview {
         document.body = document.createElement('body')
         document.body.innerHTML = baseBodyTemplate({
             contents: '<ul id="fw-overview-menu"></ul>',
-            username: this.username,
+            user: this.user,
             staticUrl: this.staticUrl
         })
         ensureCSS([

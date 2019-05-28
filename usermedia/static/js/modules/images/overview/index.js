@@ -25,7 +25,7 @@ export class ImageOverview {
     constructor({app, staticUrl, user}) {
         this.app = app
         this.staticUrl = staticUrl
-        this.username = user.username
+        this.user = user
         this.mod = {}
     }
 
@@ -52,7 +52,7 @@ export class ImageOverview {
         document.body = document.createElement('body')
         document.body.innerHTML = baseBodyTemplate({
             contents: '<ul id="fw-overview-menu"></ul>',
-            username: this.username,
+            user: this.user,
             staticUrl: this.staticUrl
         })
         ensureCSS([

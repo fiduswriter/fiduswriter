@@ -184,6 +184,14 @@ body.header-closed #margin-box-filter {
     content: '';
 }
 
+.comment-user .fw-avatar,
+.comment-user .fw-string-avatar {
+    width: 26px;
+    height: 26px;
+    float: left;
+    margin-right: 8px;
+}
+
 .comment-user-avatar {
     width: 26px;
     height: 26px;

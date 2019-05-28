@@ -11,7 +11,6 @@
 .fw-logo > img {
     width: auto;
     height: 27px;
-    margin-left: 10.5px;
 }
 
 .fw-logo-text {
@@ -46,7 +45,7 @@
 .fw-user-preferences {
     position: absolute;
     right: 40px;
-    top: 0;
+    top: -3px;
 }
 
 .fw-user-preferences .fw-name {
@@ -61,6 +60,7 @@
 
 .fw-nav-container {
     overflow: visible;
+    padding-left: 22px;
 }
 
 .fw-nav-item {
@@ -89,10 +89,6 @@
     opacity: 1.0;
 }
 
-#user-preferences-pulldown {
-    position: fixed;
-    right: auto;
-}
 .fw-logout-button {
     background: none!important;
     border: none;
@@ -104,4 +100,20 @@
 }
 .fw-logout-button:hover {
     color: #000;
+}
+
+#user-preferences .fw-button {
+    padding: 0;
+    border: 0 none;
+}
+
+#preferences-btn .fw-avatar,
+#preferences-btn .fw-string-avatar {
+    width: 35px;
+    height: 35px;
+}
+
+#user-preferences-pulldown a,
+#user-preferences-pulldown .fw-logout-button {
+    color: #2c2723;
 }

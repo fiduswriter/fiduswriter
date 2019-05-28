@@ -10,7 +10,7 @@ export const teammemberTemplate = ({members}) =>
                 </span>
             </td>
             <td width="350">
-                <span><img class="fw-avatar" src="${member.avatar}" /></span>
+                <span>${member.avatar.html}</span>
                 <span class="fw-inline">${escapeText(member.name)}</span>
             </td>
             <td width="350">

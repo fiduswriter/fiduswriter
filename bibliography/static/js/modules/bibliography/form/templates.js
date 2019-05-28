@@ -25,13 +25,13 @@ export const bibDialog = ({bib_type, BibTypes, BibTypeTitles}) =>
                 <div class="fw-select-arrow fa fa-caret-down"></div>
             </div>
             <ul class="ui-tabs-nav">
-                <li class="tab-link"><a href="#req-fields-tab" class="fw-button fw-large">
+                <li class="tab-link"><a href="#req-fields-tab" class="tab-link-inner">
                     ${gettext('Required Fields')}
                 </a></li>
-                <li class="tab-link"><a href="#opt-fields-tab" class="fw-button fw-large">
+                <li class="tab-link"><a href="#opt-fields-tab" class="tab-link-inner">
                     ${gettext('Optional Fields')}
                 </a></li>
-                <li class="tab-link" id="categories-link"><a href="#categories-tab" class="fw-button fw-large">
+                <li class="tab-link" id="categories-link"><a href="#categories-tab" class="tab-link-inner">
                     ${gettext('Categories')}
                 </a></li>
             </ul>

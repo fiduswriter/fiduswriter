@@ -133,9 +133,15 @@ export class BibEntryForm {
                 }
             })
 
+            this.dialog.dialogEl.querySelector('#bib-dialog-tabs .tab-link').classList.add('current-tab')
+
             // Handle tab link clicking
             this.dialog.dialogEl.querySelectorAll('#bib-dialog-tabs .tab-link a').forEach(el => el.addEventListener('click', event => {
                 event.preventDefault()
+
+                el.parentNode.parentNode.querySelectorAll('.tab-link.current-tab').forEach(el => el.classList.remove('current-tab'))
+                el.parentNode.classList.add('current-tab')
+
                 const link = el.getAttribute('href')
                 this.dialog.dialogEl.querySelectorAll('#bib-dialog-tabs .tab-content').forEach(el => {
                     if (el.matches(link)) {

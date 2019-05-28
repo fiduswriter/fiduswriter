@@ -151,15 +151,15 @@ export class ImageOverview {
             `<span class="fw-usermedia-image">
                 <img src="${image.thumbnail ? image.thumbnail : image.image}">
             </span>
-            <span class="fw-inline fw-usermedia-title">
+            <span class="fw-usermedia-title">
                 <span class="edit-image fw-link-text fw-searchable" data-id="${id}">
                     ${image.title.length ? escapeText(image.title) : gettext('Untitled')}
                 </span>
                 <span class="fw-usermedia-type">${fileType}</span>
             </span>`,
-            `<span class="fw-inline">${image.width} x ${image.height}</span>`,
+            `<span>${image.width} x ${image.height}</span>`,
             `<span class="date">${localizeDate(image.added, 'sortable-date')}</span>`,
-            `<span class="delete-image fw-inline fw-link-text" data-id="${id}">
+            `<span class="delete-image fw-link-text" data-id="${id}">
                 <i class="fa fa-trash-alt"></i>
             </span>`
         ]

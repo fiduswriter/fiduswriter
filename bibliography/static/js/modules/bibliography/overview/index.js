@@ -132,7 +132,7 @@ export class BibliographyOverview {
         return [
             String(id),
             `<input type="checkbox" class="entry-select" data-id="${id}">`, // checkbox
-            `<span class="fw-document-table-title fw-inline">
+            `<span class="fw-document-table-title">
                 <i class="fa fa-book"></i>
                 <span class="edit-bib fw-link-text fw-searchable" data-id="${id}">
                     ${bibInfo.fields.title ? escapeText(litToText(bibInfo.fields.title)) : gettext('Untitled')}

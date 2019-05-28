@@ -178,14 +178,14 @@ export class DocumentOverview {
         return [
             String(doc.id),
             `<input type="checkbox" class="entry-select" data-id="${doc.id}">`,
-            `<span class="fw-document-table-title fw-inline">
+            `<span class="fw-document-table-title">
                 <i class="far fa-file-alt"></i>
                 <a class="doc-title fw-link-text fw-searchable" href="/document/${doc.id}/">
                     ${doc.title.length ? escapeText(doc.title) : gettext('Untitled')}
                 </a>
             </span>`,
             doc.revisions.length ?
-            `<span class="fw-inline revisions" data-id="${doc.id}">
+            `<span class="revisions" data-id="${doc.id}">
                 <i class="fas fa-history"></i>
             </span>` :
             '',
@@ -194,11 +194,11 @@ export class DocumentOverview {
             `<span>
                 ${doc.owner.avatar.html}
             </span>
-            <span class="fw-inline fw-searchable">${escapeText(doc.owner.name)}</span>`,
-            `<span class="rights fw-inline" data-id="${doc.id}" title="${doc.rights}">
+            <span class="fw-searchable">${escapeText(doc.owner.name)}</span>`,
+            `<span class="rights" data-id="${doc.id}" title="${doc.rights}">
                 <i data-id="${doc.id}" class="icon-access-right icon-access-${doc.rights}"></i>
             </span>`,
-            `<span class="delete-document fw-inline fw-link-text" data-id="${doc.id}"
+            `<span class="delete-document fw-link-text" data-id="${doc.id}"
                     data-title="${escapeText(doc.title)}">
                 ${
                     this.user.id === doc.owner.id ?

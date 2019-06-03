@@ -1,5 +1,4 @@
 import hash from "object-hash"
-
 import {schema} from "prosemirror-schema-basic"
 import {Schema, DOMSerializer} from "prosemirror-model"
 import {buildMenuItems} from "prosemirror-example-setup"
@@ -15,7 +14,8 @@ import {
     splitCell,
     toggleHeaderRow,
     toggleHeaderColumn,
-    toggleHeaderCell
+    toggleHeaderCell,
+    deleteTable
 }  from "prosemirror-tables"
 
 import {docSchema} from "../schema/document"
@@ -24,6 +24,13 @@ const doc = {
     toDOM(_node) {
         return ["div", 0]
     }
+}
+
+// from https://github.com/ProseMirror/prosemirror-tables/blob/master/src/util.js
+const findTable = function(state) {
+    const $head = state.selection.$head
+    for (let d = $head.depth; d > 0; d--) if ($head.node(d).type.spec.tableRole == "table") return $head.node(d)
+    return false
 }
 
 export const helpSchema = new Schema({
@@ -67,6 +74,33 @@ for (let i = 1; i <= 6; i++) {
     }))
 }
 
+const type = richtextPartSchema.nodes['table']
+richtextMenuContent[1][0].content.push(blockTypeItem(type, {
+    title: gettext("Insert Table"),
+    label:  gettext("Insert Table"),
+    enable(state) {
+        return !findTable(state)
+    },
+    run(state, dispatch) {
+        const table = {type: 'table', content: [{type: 'table_row', content: [{type: 'table_cell', content: [{type: 'paragraph'}]}]}]}
+        const schema = state.schema
+        dispatch(state.tr.replaceSelectionWith(
+            schema.nodeFromJSON(table))
+        )
+    }
+}))
+
+richtextMenuContent[1][0].content.push(blockTypeItem(type, {
+    title: gettext("Delete Table"),
+    label:  gettext("Delete Table"),
+    enable(state) {
+        return findTable(state)
+    },
+    run(state, dispatch) {
+        deleteTable(state, dispatch)
+    }
+}))
+
 export const tablePartSchema = new Schema({
     nodes: docSchema.spec.nodes.update('doc', {content: 'table_part'}).update('table_row', {
         content: "(table_cell | table_header)+",
@@ -102,6 +136,8 @@ const tableMenu = [
     tableMenuItem(gettext("Toggle header cells"), toggleHeaderCell)
 ]
 tableMenuContent.splice(2, 0, [new Dropdown(tableMenu, {label: gettext("Table")})])
+
+richtextMenuContent.splice(2, 0, [new Dropdown(tableMenu, {label: gettext("Table")})])
 
 export const headingPartSchema = new Schema({
     nodes: docSchema.spec.nodes.update('doc', {content: 'heading_part'}).remove('horizontal_rule').remove('paragraph').remove('code_block'),

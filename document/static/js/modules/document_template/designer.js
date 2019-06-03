@@ -348,6 +348,7 @@ export class DocumentTemplateDesigner {
             case 'richtext_part':
                 schema = richtextPartSchema
                 menuContent = richtextMenuContent
+                plugins.push(tableEditing())
                 break
             case 'table_part':
                 schema = tablePartSchema

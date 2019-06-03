@@ -78,10 +78,10 @@ const type = richtextPartSchema.nodes['table']
 richtextMenuContent[1][0].content.push(blockTypeItem(type, {
     title: gettext("Insert Table"),
     label:  gettext("Insert Table"),
-    enable(state){
+    enable(state) {
         return !findTable(state)
     },
-    run(state,dispatch){
+    run(state, dispatch) {
         const table = {type: 'table', content: [{type: 'table_row', content: [{type: 'table_cell', content: [{type: 'paragraph'}]}]}]}
         const schema = state.schema
         dispatch(state.tr.replaceSelectionWith(
@@ -93,11 +93,11 @@ richtextMenuContent[1][0].content.push(blockTypeItem(type, {
 richtextMenuContent[1][0].content.push(blockTypeItem(type, {
     title: gettext("Delete Table"),
     label:  gettext("Delete Table"),
-    enable(state){
+    enable(state) {
         return findTable(state)
     },
-    run(state,dispatch){
-        deleteTable(state,dispatch)
+    run(state, dispatch) {
+        deleteTable(state, dispatch)
     }
 }))
 

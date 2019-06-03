@@ -131,7 +131,7 @@ export class BibliographyOverview {
         const bibauthors = bibInfo.fields.author || bibInfo.fields.editor
         return [
             String(id),
-            `<input type="checkbox" class="entry-select" data-id="${id}">`, // checkbox
+            `<input type="checkbox" class="entry-select fw-check" data-id="${id}" id="bib-${id}"><label for="bib-${id}"></label>`, // checkbox
             `<span class="fw-document-table-title">
                 <i class="fa fa-book"></i>
                 <span class="edit-bib fw-link-text fw-searchable" data-id="${id}">

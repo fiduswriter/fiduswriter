@@ -177,7 +177,7 @@ export class DocumentOverview {
     createTableRow(doc) {
         return [
             String(doc.id),
-            `<input type="checkbox" class="entry-select" data-id="${doc.id}">`,
+            `<input type="checkbox" class="entry-select fw-check" data-id="${doc.id}" id="doc-${doc.id}"><label for="doc-${doc.id}"></label>`,
             `<span class="fw-document-table-title">
                 <i class="far fa-file-alt"></i>
                 <a class="doc-title fw-link-text fw-searchable" href="/document/${doc.id}/">

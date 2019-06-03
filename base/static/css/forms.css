@@ -109,6 +109,45 @@ tr.fw-checkable.checked:after {
     display: none;
 }
 
+/**
+ * Checkbox
+ */
+.fw-check {
+    position: absolute;
+    opacity: 0;
+}
+
+.fw-check + label {
+    position: relative;
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+.fw-check + label:before {
+    content: "";
+    position: relative;
+    display: block;
+    width: 13px;
+    height: 13px;
+    border: 1px solid #a7a6a7;
+    border-radius: 2px;
+    background: linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
+}
+
+.fw-check:checked + label:after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    display: block;
+    width: 3px;
+    height: 7px;
+    border-bottom: 2px solid black;
+    border-right: 2px solid black;
+    transform: rotate(45deg);
+}
+
 /*
  * addable input fields button
  */

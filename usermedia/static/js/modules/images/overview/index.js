@@ -147,7 +147,7 @@ export class ImageOverview {
         }
         return [
             String(id),
-            `<input type="checkbox" class="entry-select" data-id="${id}">`,
+            `<input type="checkbox" class="entry-select fw-check" id="doc-img-${id}" data-id="${id}"><label for="doc-img-${id}"></label>`,
             `<span class="fw-usermedia-image">
                 <img src="${image.thumbnail ? image.thumbnail : image.image}">
             </span>

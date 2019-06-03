@@ -34,6 +34,10 @@ body.header-closed #margin-box-filter {
     cursor: pointer;
 }
 
+.margin-box-filter-button:hover {
+    background-color: #97cdbe;
+}
+
 .margin-box-filter-button.disabled {
     background-color: #e0e0e0;
     color: #545454;

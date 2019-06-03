@@ -102,6 +102,10 @@
     color: #000;
 }
 
+#user-preferences {
+    z-index: 2;
+}
+
 #user-preferences .fw-button {
     padding: 0;
     border: 0 none;
@@ -111,6 +115,11 @@
 #preferences-btn .fw-string-avatar {
     width: 35px;
     height: 35px;
+}
+
+#preferences-btn .fw-avatar:hover,
+#preferences-btn .fw-string-avatar:hover {
+    opacity: 0.7;
 }
 
 #user-preferences-pulldown a,

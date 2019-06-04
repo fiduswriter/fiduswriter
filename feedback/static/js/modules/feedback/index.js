@@ -37,13 +37,13 @@ export class FeedbackTab {
             </div>`
         )
 
-        let header_nav_wrapper = document.querySelector('.fw-header .fw-container');
+        let header_nav_wrapper = document.querySelector('.fw-header .fw-container')
         if (null === header_nav_wrapper) {
-            header_nav_wrapper = document.querySelector('#headerbar');
+            header_nav_wrapper = document.querySelector('#headerbar')
         }
 
         if (null === header_nav_wrapper) {
-            header_nav_wrapper = document.body;
+            header_nav_wrapper = document.body
         }
 
         header_nav_wrapper.insertAdjacentHTML(

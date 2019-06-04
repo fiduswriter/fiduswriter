@@ -1,4 +1,3 @@
-import {escapeText} from "./basic"
 import {getCsrfToken} from "./network"
 import {filterPrimaryEmail} from "./user_util"
 

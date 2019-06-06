@@ -32,7 +32,7 @@
         {% compress css %}
         <link type="text/css" rel="stylesheet" href="{% static "css/common.css" %}" />
         <link type="text/css" rel="stylesheet" href="{% static "css/header_menu.css" %}" />
-        <link rel="stylesheet" href="{% static "css/registration.css" %}" type="text/css" />
+        <link rel="stylesheet" href="{% static "css/prelogin.css" %}" type="text/css" />
         {% endcompress %}
         <!-- Check browser -->
         <script type="text/javascript" src="{% static "js/browser_check.mjs" %}" crossorigin="anonymous"></script>
@@ -47,7 +47,7 @@
         <div id="wait">
             <i class="fa fa-spinner fa-pulse"></i>
         </div>
-        <header class="fw-header">
+        <header class="fw-header prelogin">
             <div class="fw-container">
                 <h1 class="fw-login-logo"><span class="fw-logo-text"></span><img src="{% static "svg/icon.svg" %}" /></h1>
                 <nav class="fw-header-nav">
@@ -59,10 +59,10 @@
     <div class="star" style="width:961px;position:relative;margin:0 auto;"><img src="{% static "img/free_star.png" %}" style="position:absolute;top:0px;left:0px;z-index:3;height:73px;"></div>
         </header>
 
-        <div class="fw-contents">
+        <div class="fw-contents prelogin">
             {% block contents %}{% endblock contents %}
         </div>
-        <footer id="footer-menu">
+        <footer id="footer-menu" class="prelogin">
             <div class="fw-container">
                 <ul class="fw-footer-links">
                     <li>

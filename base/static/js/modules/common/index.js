@@ -33,7 +33,8 @@ from "./network"
 
 export {
     getUserInfo,
-    setLanguage
+    setLanguage,
+    loginUser
 }
 from "./user"
 

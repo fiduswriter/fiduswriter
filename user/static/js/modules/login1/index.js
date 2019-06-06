@@ -1,4 +1,4 @@
-import {whenReady, basePreloginTemplate, ensureCSS, setDocTitle, setLanguage} from "../common"
+import {whenReady, basePreloginTemplate, ensureCSS, setDocTitle, setLanguage, loginUser} from "../common"
 import * as plugins from "../../plugins/login"
 import {FeedbackTab} from "../feedback"
 
@@ -64,7 +64,7 @@ export class LoginPage {
                     <input type="password" name="password" placeholder="${gettext("Password")}" required="" id="id_password">
                 </div>
                 <div class="submit-wrapper">
-                    <button class="fw-button fw-dark fw-uppercase" type="submit">${gettext("Log in")}</button>
+                    <button class="fw-button fw-dark fw-uppercase" type="submit" id="login-submit">${gettext("Log in")}</button>
                     <br>
                     <input type="checkbox" name="remember" id="id_remember">
                     <label for="id_remember">${gettext("Remember me")}</label>
@@ -75,7 +75,7 @@ export class LoginPage {
             staticUrl: this.staticUrl
         })
         ensureCSS([
-            'registration.css'
+            'prelogin.css'
         ], this.staticUrl)
         setDocTitle(gettext('Login'), this.app)
         const feedbackTab = new FeedbackTab({staticUrl: this.staticUrl})
@@ -111,10 +111,19 @@ export class LoginPage {
             button => button.style.width = `${btnWidth}px`
         )
 
-        document.getElementById('langSelection').addEventListener('change', event => {
-            const language = event.target.value
-            return setLanguage(this.app.config, language).then(
+        document.getElementById('lang-selection').addEventListener('change', event => {
+            this.language = event.target.value
+            return setLanguage(this.app.config, this.language).then(
                 () => this.init()
+            )
+        })
+
+        document.getElementById('login-submit').addEventListener('click', () => {
+            const login = document.getElementById('id_login').value,
+                password = document.getElementById('id_password').value,
+                remember = document.getElementById('id_remember').checked
+            return loginUser(this.app.config, login, password, remember).then(
+                () => this.app.init()
             )
         })
     }

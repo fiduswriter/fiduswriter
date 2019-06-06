@@ -1,4 +1,4 @@
-import {post, postJson} from "./network"
+import {post, postJson, getCsrfToken} from "./network"
 
 export const setLanguage = function(config, language) {
     return post('/i18n/setlang/', {language}).then(
@@ -23,4 +23,10 @@ export const setLanguage = function(config, language) {
 
 export const getUserInfo = function() {
     return postJson('/user/info/')
+}
+
+export const loginUser = function(config, login, password, remember) {
+    return post('/account/login/', {login, password, remember}).then(
+        response => config.loggedIn = true
+    )
 }

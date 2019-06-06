@@ -46,7 +46,7 @@ export const basePreloginTemplate = ({contents, staticUrl, isFree, language}) =>
 <div id="wait">
    <i class="fa fa-spinner fa-pulse"></i>
 </div>
-<header class="fw-header">
+<header class="fw-header prelogin">
    <div class="fw-container">
       <h1 class="fw-login-logo"><span class="fw-logo-text"></span><img src="${staticUrl}svg/icon.svg?v=${process.env.TRANSPILE_VERSION}" /></h1>
       <nav class="fw-header-nav"></nav>
@@ -56,10 +56,10 @@ export const basePreloginTemplate = ({contents, staticUrl, isFree, language}) =>
        ''
    }
 </header>
-<div class="fw-contents">
+<div class="fw-contents prelogin">
     ${contents}
 </div>
-<footer id="footer-menu">
+<footer id="footer-menu" class="prelogin">
     <div class="fw-container">
         <ul class="fw-footer-links">
             <li>
@@ -88,7 +88,7 @@ export const basePreloginTemplate = ({contents, staticUrl, isFree, language}) =>
                 </a>
             </li>
         </ul>
-        <select id="langSelection" name="language">
+        <select id="lang-selection">
             <option value="bg" ${language === 'bg' ? 'selected' : ''}>Български</option>
             <option value="de" ${language === 'de' ? 'selected' : ''}>Deutsch</option>
             <option value="en" ${language === 'en' ? 'selected' : ''}>English</option>

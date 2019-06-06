@@ -1,4 +1,4 @@
-import {whenReady, basePreloginTemplate, ensureCSS, setDocTitle, setLanguage, loginUser} from "../common"
+import {whenReady, basePreloginTemplate, ensureCSS, setDocTitle, setLanguage, loginUser, escapeText} from "../common"
 import * as plugins from "../../plugins/login"
 import {FeedbackTab} from "../feedback"
 
@@ -54,14 +54,16 @@ export class LoginPage {
                 }
             </div>
             <div class="fw-login-right">
-                <div id="non_field_errors"></div>
+                <ul id="non_field_errors" class="errorlist"></ul>
                 <div class="input-wrapper">
                     <label for="id_login">${gettext("Username")}</label>
                     <input type="text" name="login" placeholder="${gettext("Username or e-mail")}" autofocus="autofocus" required="" id="id_login">
+                    <ul id="id_login_errors" class="errorlist"></ul>
                 </div>
                 <div class="input-wrapper">
                     <label for="id_password">${gettext("Password")}</label>
                     <input type="password" name="password" placeholder="${gettext("Password")}" required="" id="id_password">
+                    <ul id="id_password_errors" class="errorlist"></ul>
                 </div>
                 <div class="submit-wrapper">
                     <button class="fw-button fw-dark fw-uppercase" type="submit" id="login-submit">${gettext("Log in")}</button>
@@ -119,11 +121,38 @@ export class LoginPage {
         })
 
         document.getElementById('login-submit').addEventListener('click', () => {
+            document.querySelector('#non_field_errors').innerHTML = ''
+            document.querySelector('#id_login_errors').innerHTML = ''
+            document.querySelector('#id_password_errors').innerHTML = ''
+
             const login = document.getElementById('id_login').value,
                 password = document.getElementById('id_password').value,
                 remember = document.getElementById('id_remember').checked
+            if (!login.length) {
+                document.querySelector('#id_login_errors').innerHTML = gettext('This field is required.')
+            }
+            if (!password.length) {
+                document.querySelector('#id_password_errors').innerHTML = gettext('This field is required.')
+            }
+            if (!login.length || !password.length) {
+                return
+            }
             return loginUser(this.app.config, login, password, remember).then(
                 () => this.app.init()
+            ).catch(
+                response => response.json().then(
+                    json => {
+                        json.form.errors.forEach(
+                            error => document.querySelector("#non_field_errors").innerHTML += `<li>${escapeText(error)}</li>`
+                        )
+                        json.form.fields.login.errors.forEach(
+                            error => document.querySelector('#id_login_errors').innerHTML += `<li>${escapeText(error)}</li>`
+                        )
+                        json.form.fields.password.errors.forEach(
+                            error => document.querySelector('#id_password_errors').innerHTML += `<li>${escapeText(error)}</li>`
+                        )
+                    }
+                )
             )
         })
     }

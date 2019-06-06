@@ -47,6 +47,10 @@ body {
     font-size: 1.4em;
 }
 
+.fw-contents .errorlist:empty {
+    display: none;
+}
+
 .fw-contents label[for="id_password1"], .fw-contents label[for="id_password2"] {
     display: none;
 }

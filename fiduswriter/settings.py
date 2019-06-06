@@ -294,6 +294,10 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
+        'tornado.access': {
+            'handlers': ['null'],
+            'propagate': False,
+        }
     }
 }
 

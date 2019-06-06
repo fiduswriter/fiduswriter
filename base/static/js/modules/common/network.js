@@ -24,7 +24,7 @@ export const getCsrfToken = function() {
 
 /* from https://www.tjvantoll.com/2015/09/13/fetch-and-errors/ */
 const handleFetchErrors = function(response) {
-    if (!response.ok) { throw Error(response.statusText) }
+    if (!response.ok) { throw response }
     return response
 }
 

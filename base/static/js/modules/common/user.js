@@ -27,6 +27,8 @@ export const getUserInfo = function() {
 
 export const loginUser = function(config, login, password, remember) {
     return post('/account/login/', {login, password, remember}).then(
-        response => config.loggedIn = true
+        response => {
+            config.loggedIn = true
+        }
     )
 }

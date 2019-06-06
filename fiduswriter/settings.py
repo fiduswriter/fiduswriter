@@ -45,6 +45,9 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000
 # Whether anyone surfing to the site can open an account.
 REGISTRATION_OPEN = True
 
+# This determines whether there is a star labeled "Free" on the login page
+IS_FREE = True
+
 # Send emails to console.
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 

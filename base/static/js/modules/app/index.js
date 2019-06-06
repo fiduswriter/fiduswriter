@@ -4,6 +4,7 @@ import {ImageOverview} from "../images/overview"
 import {ContactsOverview} from "../contacts"
 import {Profile} from "../profile"
 import {getUserInfo, findTarget, WebSocketConnector, showSystemMessage} from "../common"
+import {LoginPage} from "../login1"
 import {ImageDB} from "../images/database"
 import {BibliographyDB} from "../bibliography/database"
 import * as plugins from "../../plugins/app"
@@ -39,6 +40,13 @@ export class App {
     }
 
     init() {
+        if (!this.config.loggedIn) {
+            this.activateFidusPlugins()
+            this.page = new LoginPage(this.config)
+            this.page.init()
+            this.bind()
+            return
+        }
         this.bibDB = new BibliographyDB()
         this.imageDB = new ImageDB()
         Promise.all([
@@ -51,6 +59,13 @@ export class App {
                 this.selectPage()
             }
         )
+        this.bind()
+        this.connectWs()
+    }
+
+    initWithoutUser() {
+        this.activateFidusPlugins()
+        this.selectPage()
         this.bind()
     }
 
@@ -70,7 +85,9 @@ export class App {
                     break
             }
         })
+    }
 
+    connectWs() {
         this.ws = new WebSocketConnector({
             url: `${this.config.websocketUrl}/ws/base/`,
             appLoaded: () => true,

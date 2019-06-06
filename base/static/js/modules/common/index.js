@@ -27,10 +27,15 @@ export {
     post,
     postJson,
     postBare,
-    ensureCSS,
-    getUserInfo
+    ensureCSS
 }
 from "./network"
+
+export {
+    getUserInfo,
+    setLanguage
+}
+from "./user"
 
 export {
     Dialog,
@@ -48,7 +53,8 @@ export {
 from "./worker"
 
 export {
-    baseBodyTemplate
+    baseBodyTemplate,
+    basePreloginTemplate
 }
 from "./templates"
 export {

@@ -256,7 +256,7 @@ export class DocumentTemplateDesigner {
                         if (!id.length) {
                             valid = false
                             this.errors.missing_id = gettext('All document parts need an ID.')
-                            el.classList.add("error-element");
+                            el.classList.add("error-element")
                             el.scrollIntoView({block:"center" , behavior :"smooth"})
                         }
                         if (/\s/.test(id)) {

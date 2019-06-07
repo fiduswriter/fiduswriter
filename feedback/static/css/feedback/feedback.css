@@ -54,6 +54,21 @@ a.feedback-tab:before {
     top: 23px;
 }
 
+#footer-menu.prelogin a.feedback-tab {
+    position: relative;
+    right: auto;
+    top: auto;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 20px;
+}
+
+@media (max-width: 1079px) {
+    #footer-menu.prelogin a.feedback-tab {
+        margin-left: 12px;
+    }
+}
+
 a.feedback-tab:hover {
   background-color: #e6d180;
 }
